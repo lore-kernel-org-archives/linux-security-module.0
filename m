@@ -2,184 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BB9C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 21:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBBFC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 22:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2F39610CE
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 21:05:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 377D860F51
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 22:52:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347896AbhIMVGd (ORCPT
+        id S1349760AbhIMWxl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Sep 2021 17:06:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53506 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343577AbhIMVGd (ORCPT
+        Mon, 13 Sep 2021 18:53:41 -0400
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com ([66.163.187.38]:34087
+        "EHLO sonic308-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1349783AbhIMWw4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Sep 2021 17:06:33 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B62C061760
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 14:05:16 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id c21so8531961edj.0
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 14:05:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=373m7inPGNTCDOiEZsbke1WmzoymEFvAttGADuwHDDA=;
-        b=dZApan+/iH4NW1oyIBh56hyWC0xvVWqlTSK28qynQC4TgDjgqY/p3DDGCieGAdnE+I
-         0aAGZTbnqRM5fK3TAuLjdF7NMMeCiV0kCAfGdpzcWIOkp6sGMVlUrfxYCH3SD3gyogJC
-         4YUBZARL2myz4qpAuMZTGYV2rnkRZ9K57xrX/1azGmh55BtgXM4p6fR98t3Lj/TtI5og
-         R/GBhjg5GXvtd+GgOVsER1+uWOFoeaerYmB9DSE925/Yk+BqT4PYFMFnKhDH3tmHZ5eB
-         xUYs9eTg/9uBmvVggoWXp8e0Cnzsirc3guy7n646rKKVwHb6iHMN/jX2KPg7JseQr8+1
-         ToQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=373m7inPGNTCDOiEZsbke1WmzoymEFvAttGADuwHDDA=;
-        b=E2F+lPV1J9kgfcF6xRvgqxr8/qX86DxIY2DIw/oi9G2niu+XMgypIRfQT4vdTV/Fbx
-         mXn5tLL9DbXM/aFE5DSon3Pem+94JZVWBWkKc92HO8MxCmw/ptcePSGR3e1d7HnMIZEN
-         LsGTIDpg6yuerG3tpBerU5TOAhNDj0MO14fTr/33bGORh8boBZRktMhY+2IHD4YC5ry1
-         qApM/X5V8XRdBOZQXhdGchHXleTHeq6cRRitvEI2IEO+OQC97hKpVgssWVBpCwBwsYNN
-         lYrhOzDH/o2bFSkkANuKUxRD9GpUHp8H/cn0VRk5ducQo62vvdSZBbc4s6V2Q/WDkugO
-         8XRA==
-X-Gm-Message-State: AOAM533SdN8GDg2tIndmy4Iw1Di8QxOpHvccoYAIR8jNcNvKgm3z/E2e
-        s5QccNnRhJRGIKqpeXsM+XewiZaLqJAlUBj/EfwjAT3EoQ==
-X-Google-Smtp-Source: ABdhPJyhjptYpi0mwh96yMlLzxckfq2tRXqkGTb/ZQJf0dLr8KeUC8PkrIaOITSWhjWsL1Ai+gNDn5oE1rgV2wDOPdI=
-X-Received: by 2002:a05:6402:2810:: with SMTP id h16mr14507917ede.293.1631567115278;
- Mon, 13 Sep 2021 14:05:15 -0700 (PDT)
+        Mon, 13 Sep 2021 18:52:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1631573460; bh=sYQ8064JvZAlfIQTcwo6O636nTsfvY3nO8CpK+HeHRY=; h=To:From:Subject:Cc:Date:References:From:Subject:Reply-To; b=SYX1P7ZuDT7Nn0KJXwFyz68H4tPWkJl6gx43IY43I+aKR8G7u60nqiPvPcxOdUUTzYGv7bfuEPKPrflvnrpREH15R6L8gKZLZCC/gRmg76l8IqtF+0hqOnXLDvv8y5aA7HdCPDFAPNUcootZI74RxA7N2UJdTAJ3qADkRnN0BwHp275WP9RCiaymTkkq9qD4ep/cFqJ6KkUb2q4mjzyqGW9gmCMGolQb6H5NhHlV16qJH8MSPgGUDM+LD7jvP3+/FvmLDPYqCGJQp1dtLnb4GBkoJhErMYLJpqSdydary6kjrAvsBhkWeHxv/0LihZj7qiEBQ4Rb28S4JLaMgYJfkA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1631573460; bh=w9sSIvLNn9YM43mBvwanETdU/DhbIl5sCUJlwjx+/qX=; h=X-Sonic-MF:To:From:Subject:Date:From:Subject; b=tVAeDlty4+4tT6S6W7u8wmCGwBZ8UAIoxuSYfmPcF5Hz4lFmhNxNL/AyQ6DytbMYJU6jgZWoozR6oJtNq3AUqabOKBReNjCWfEytyg7uIJ5WBfDYO0IUT4cXCA/+sVMHe1RN0Z9iXgigZCVk8g/1r7/gohb2OBM1ZIvDz71Y7lt6lkUzE+YGz2TZ1pubLrFykGFNzSUXvVHZxmarjQaRVPlg8x1kS/1PsjbkR0O/T9jiCni1TxhOs4oJ/65vZSlMvn6sV7l/U4ivRrlY2iDfOEcLXAJB74yDUkSqRqscvzUeWhf1egfh3xHVQbTy2IBafqzNecT0EcJ8u1NLkvxztw==
+X-YMail-OSG: pOHZwhoVM1mq0TqefoDBJEHCXK8NihV6bVkejVhDHIQQhkC8DGv.RetJSVpKi9Y
+ 5UID8vzNNTTXIbA7ICwOXuncoo3E8cs16.tsRK0cCJ6MoQn3ui1j4Thc6eCawz1_uZ5BapgeLVry
+ 9RBd3vCH0x2d7JKdTo5_rk2cK4DRRvJ1.TyDQrgM8hjiyzyswMuRACrFAqUnVyHxdYUfcB.22w2v
+ oG2FITOV0AVhXzRmNiK.I78hRXk8KrzPEBjzdB3Hib6aOViwu5b76kDf_CaLnMBIk6XzkcWhsQVl
+ 8pgqh_U2i0rIHs5VJeyArEnJD8mft1fHQXd4zJAh5dGuSifqy5k0aJ3.AaHy1s3kwe5KOKGl8hXI
+ y8DOy6JM2URjlPj9ZNT4Cwf.mmuAk7dqYnEv_r7G6a7Ob3hNstDs4UfdHzJS0dWcVwTmzGsybFEn
+ jc0_BkjAQrpoZgJ_4HJn3ZGZfDqbS.JT2kp1bR6egR3veiJaeaBEp6n8jorLuOu2DfNRD8qmmhkV
+ fprObtwjAHP817kNYoYBe4QTnScRFF1nYVVpgtMBiu_NPQO3kVV8Kcfbeyh.qq_eh3LQyQ3xsW3M
+ xulGgxeQxHQ4kYsAzEKIe96RUpICane.7re9zi_07DZly5pAX52eAgotZA.gj.wR_ffObwxI55lY
+ VD_2Yg51bxCKMVecb2rWub4h6FmpNlW7Tfc17rwsqH6lIoICcUIRwg6w5C3gwmtoRGwLqgLISRBk
+ MsXmE_9Zc9lHrxxtKMXU2XfIxyOd.V_9h7AhxKDH32ddDrqt4x8QxJiW1pDfeNDlhtDXdb4oW2NU
+ ZgS9188wCegbn0N4K0H7u3dCldgmx4qCk4hnNJCc9kiVc_3EIyotRKwAIiWBGTHRUUq_XjSbPTFd
+ .hmOheBrFEJG8WjKXaqUpBvbxcPndvvzLf_oCjyYBEyXxnbJ_yyDIVGNwT5NCnNfnowWhQc73QUu
+ T18tRldys6YeKSx9YJXtMjuePS3..Yw.T6Tbas4HKd2nPVKX.fAuCK5QzongXWK18.4DMcFQweeN
+ iaHnIFNreenideXtw73z_pTkgvQKZSDk1dF64TGqOFgKHK94DQc75R9nHxfaEhMfCojAFBg4.F6G
+ _hmeO3KZqTjEDUnW38EFqPAsTEMKbzJpoaiIX6oLZe8pfuu5t8p6wvDk9J3mMOQN0LVA1lHIwDNv
+ nPBcTMfPy3aMtGRwsLrCu4Vp_tSoufEfpVfJ.yATNp8lbDSyqWwwC3h5_DP50SZNFh03j3_LCqmL
+ j0fwaFLye79GHatX1JsVhE9ii2vbh5sheaUfbasMLeypeeVXVdmLWJHfYQY8PCBCv672doHJe9Af
+ Z59XQA3VsIgVFIsHDEr9ct_3G.Gs4.L1Y.bq4oFfFbR0x2udOsaQA1Vg.8JlCOiIaAlcIDjrln8E
+ hxdm6NXhuTy2d1TXnrnhv.ECOgWobUWWeyBlZzpY9QeyBmFGrWYyNe9a6m46iVlcNAMZ8486hMvh
+ Qo.0VT3ugFHr7wcRjdA990CnA.Pas3kSSe.9wv5ZKX7os9sfYBNOERtz6xv9rrt1LFqa8JUwDLVb
+ 9rdYIhN0A5j8fUbET_cQj.oFJMCxIJ0ZFoXwSHyo6CGD4gY_SZP20kOchqe7A__nntPYSiNIDEsp
+ YD0qPFENrI_amlrE9msMbfY0knyqsqUgjdEqENxzQ76feQSO33bnHu1_KnmQ9U8MHtfkbU3tRGnP
+ qqU_nDKH4yBIaKCdLhnMLdZ6mPsRUbcE.ZOtp4KwuzxHCOPQVWCDOBtbmkWBOVvCQAlGcV3r0aE2
+ R_Dpw6gnan8d87jcUQ7wy.9R9OQhnqaHho0.ZokpgLMLiazjFvVkM5BW1xvge.oEqAjQ2WkLQBcE
+ 8k_THiF_SJ2tqhOUmHmnGPJZcdeBnQXj.XRmWqQ05J_.Qc846lGnx9F1b0Qf..X5H5G3dUoytpl3
+ 3S1ghCAPyZn4uKBw7VEoJj4UYfmyAEZlzFrArv3wzgAqiHnomZxHdnlhM0GsU8fPE_MJ.gCYHHxn
+ vWKNA42zyupM8WAtB43RgTWljQTKIH4PKtGbb3BcxUPGNK_xw0jgOlZc3NzBprvQWoXwh1YYvE5N
+ p3d77ItxfjRfkbVSB.PNi1OdUo9SDySPvS1ki_IklPb4csM69JF6OnsCeeriv8rU9FjdBxl0d_4z
+ V7vdRLmxpKiTB3TYUjglqHIai7VJudYGvm.r1uwSveze_fnJNKoLsuwWObzmcxxB1otFdhPukslm
+ 3LKTOJGD0MkEtvuIU_i5o2rt7y1l8X9biF2QoNc3cdFpDq2qEoKLjjDxAY2_JRrjemxZbySnFTSk
+ _5ian3HIos.G2dWMSDC9CzEbts7keOY9irftANliOA.OtUdj2oPmQPh90
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Mon, 13 Sep 2021 22:51:00 +0000
+Received: by kubenode507.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 31bf212b9f7aab4595d5b770d9482fa7;
+          Mon, 13 Sep 2021 22:50:57 +0000 (UTC)
+To:     Jiang Wang <jiang.wang@bytedance.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: Regression in unix stream sockets with the Smack LSM
+Cc:     Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <a507efa7-066b-decf-8605-89cdb0ac1951@schaufler-ca.com>
+Date:   Mon, 13 Sep 2021 15:50:55 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-References: <20210913140229.24797-1-omosnace@redhat.com>
-In-Reply-To: <20210913140229.24797-1-omosnace@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 13 Sep 2021 17:05:04 -0400
-Message-ID: <CAHC9VhRw-S+zZUFz5QFFLMBATjo+YbPAiR21jX6p7cT0T+MVLA@mail.gmail.com>
-Subject: Re: [PATCH v4] lockdown,selinux: fix wrong subject in some SELinux
- lockdown checks
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org, linux-acpi@vger.kernel.org,
-        linux-cxl@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+References: <a507efa7-066b-decf-8605-89cdb0ac1951.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.19013 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 13, 2021 at 10:02 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-> lockdown") added an implementation of the locked_down LSM hook to
-> SELinux, with the aim to restrict which domains are allowed to perform
-> operations that would breach lockdown.
->
-> However, in several places the security_locked_down() hook is called in
-> situations where the current task isn't doing any action that would
-> directly breach lockdown, leading to SELinux checks that are basically
-> bogus.
->
-> To fix this, add an explicit struct cred pointer argument to
-> security_lockdown() and define NULL as a special value to pass instead
-> of current_cred() in such situations. LSMs that take the subject
-> credentials into account can then fall back to some default or ignore
-> such calls altogether. In the SELinux lockdown hook implementation, use
-> SECINITSID_KERNEL in case the cred argument is NULL.
->
-> Most of the callers are updated to pass current_cred() as the cred
-> pointer, thus maintaining the same behavior. The following callers are
-> modified to pass NULL as the cred pointer instead:
-> 1. arch/powerpc/xmon/xmon.c
->      Seems to be some interactive debugging facility. It appears that
->      the lockdown hook is called from interrupt context here, so it
->      should be more appropriate to request a global lockdown decision.
-> 2. fs/tracefs/inode.c:tracefs_create_file()
->      Here the call is used to prevent creating new tracefs entries when
->      the kernel is locked down. Assumes that locking down is one-way -
->      i.e. if the hook returns non-zero once, it will never return zero
->      again, thus no point in creating these files. Also, the hook is
->      often called by a module's init function when it is loaded by
->      userspace, where it doesn't make much sense to do a check against
->      the current task's creds, since the task itself doesn't actually
->      use the tracing functionality (i.e. doesn't breach lockdown), just
->      indirectly makes some new tracepoints available to whoever is
->      authorized to use them.
-> 3. net/xfrm/xfrm_user.c:copy_to_user_*()
->      Here a cryptographic secret is redacted based on the value returned
->      from the hook. There are two possible actions that may lead here:
->      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
->         task context is relevant, since the dumped data is sent back to
->         the current task.
->      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
->         dumped SA is broadcasted to tasks subscribed to XFRM events -
->         here the current task context is not relevant as it doesn't
->         represent the tasks that could potentially see the secret.
->      It doesn't seem worth it to try to keep using the current task's
->      context in the a) case, since the eventual data leak can be
->      circumvented anyway via b), plus there is no way for the task to
->      indicate that it doesn't care about the actual key value, so the
->      check could generate a lot of "false alert" denials with SELinux.
->      Thus, let's pass NULL instead of current_cred() here faute de
->      mieux.
->
-> Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
-> Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
-> Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
-> Acked-by: Dan Williams <dan.j.williams@intel.com>         [cxl]
-> Acked-by: Steffen Klassert <steffen.klassert@secunet.com> [xfrm]
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->
-> v4:
-> - rebase on top of TODO
-> - fix rebase conflicts:
->   * drivers/cxl/pci.c
->     - trivial: the lockdown reason was corrected in mainline
->   * kernel/bpf/helpers.c, kernel/trace/bpf_trace.c
->     - trivial: LOCKDOWN_BPF_READ was renamed to LOCKDOWN_BPF_READ_KERNEL
->       in mainline
->   * kernel/power/hibernate.c
->     - trivial: !secretmem_active() was added to the condition in
->       hibernation_available()
-> - cover new security_locked_down() call in kernel/bpf/helpers.c
->   (LOCKDOWN_BPF_WRITE_USER in BPF_FUNC_probe_write_user case)
->
-> v3: https://lore.kernel.org/lkml/20210616085118.1141101-1-omosnace@redhat.com/
-> - add the cred argument to security_locked_down() and adapt all callers
-> - keep using current_cred() in BPF, as the hook calls have been shifted
->   to program load time (commit ff40e51043af ("bpf, lockdown, audit: Fix
->   buggy SELinux lockdown permission checks"))
-> - in SELinux, don't ignore hook calls where cred == NULL, but use
->   SECINITSID_KERNEL as the subject instead
-> - update explanations in the commit message
->
-> v2: https://lore.kernel.org/lkml/20210517092006.803332-1-omosnace@redhat.com/
-> - change to a single hook based on suggestions by Casey Schaufler
->
-> v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
+Commit 77462de14a43f4d98dbd8de0f5743a4e02450b1d=20
 
-The changes between v3 and v4 all seem sane to me, but I'm going to
-let this sit for a few days in hopes that we can collect a few more
-Reviewed-bys and ACKs.  If I don't see any objections I'll merge it
-mid-week(ish) into selinux/stable-5.15 and plan on sending it to Linus
-after it goes through a build/test cycle.
+	af_unix: Add read_sock for stream socket types
 
--- 
-paul moore
-www.paul-moore.com
+introduced a regression in UDS socket connections for the Smack LSM.
+I have not tracked done the details of why the change broke the code,
+but this is where bisecting the kernel indicates the problem lies, and
+I have verified that reverting this change repairs the problem.
+
+You can verify the problem with the Smack test suite:
+
+	https://github.com/smack-team/smack-testsuite.git
+
+The failing test is tests/uds-access.sh.
+
+I have not looked to see if there's a similar problem with SELinux.
+There may be, but if there isn't it doesn't matter, there's still a
+bug.
+
+Thank you.
+
+
