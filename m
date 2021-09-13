@@ -2,108 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA79C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 10:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A405C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 11:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00DFE61029
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 10:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1456B6103B
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 11:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239195AbhIMKwv (ORCPT
+        id S238266AbhIMLSY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Sep 2021 06:52:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50674 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238690AbhIMKwu (ORCPT
+        Mon, 13 Sep 2021 07:18:24 -0400
+Received: from smtp-8fab.mail.infomaniak.ch ([83.166.143.171]:48477 "EHLO
+        smtp-8fab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238463AbhIMLSY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Sep 2021 06:52:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CF84960F12;
-        Mon, 13 Sep 2021 10:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1631530295;
-        bh=IhPIOl/NMzmrDUdQKEmqfIrz63UGwWOSS7/ZZTB+y0Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GlRcHrWvyTlfET/uSqrfMr4HviMxaajNjqPm7yNSwGqV3rPiaepZNfvg6vJv0YJJF
-         JZ6N8P/cODT+bI7R7rdqlhe/hratbkSowmt56+vYba/WMgbTXjWDDCO6iVfYGeqtUW
-         395/rvJ8KL756rVGr1g6tD7ADX4qcz2iqFxRYkPk=
-Date:   Mon, 13 Sep 2021 12:51:33 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marco Elver <elver@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        llvm@lists.linux.dev,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-toolchains@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vipin Sharma <vipinsh@google.com>,
-        Chris Down <chris@chrisdown.name>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Revert "Enable '-Werror' by default for all kernel
- builds"
-Message-ID: <YT8tNfXkbFmGtYbe@kroah.com>
-References: <20210907183843.33028-1-ndesaulniers@google.com>
- <CAHk-=whJOxDefgSA1_ojGbweRJGonWX9_nihA-=fbXFV1DhuxQ@mail.gmail.com>
- <CAKwvOdkuYoke=Sa8Qziveo9aSA2zaNWEcKW8LZLg+d3TPwHkoA@mail.gmail.com>
- <YTfkO2PdnBXQXvsm@elver.google.com>
- <CAHk-=wgPaQsEr+En=cqCqAC_sWmVP6x5rD2rmZRomH9EnTQL7Q@mail.gmail.com>
- <c8fb537f-26e5-b305-6bc5-06f0d27a4029@infradead.org>
- <20210913093256.GA12225@amd>
- <YT8d5a6ZVW7JlsRl@kroah.com>
- <20210913100230.GB11752@amd>
+        Mon, 13 Sep 2021 07:18:24 -0400
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4H7P832GLXzMppGC;
+        Mon, 13 Sep 2021 13:17:07 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4H7P821s1xzlhKSC;
+        Mon, 13 Sep 2021 13:17:06 +0200 (CEST)
+Subject: Re: [PATCH] landlock: Drop "const" argument qualifier to avoid GCC
+ 4.9 warnings
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20210910223613.3225685-1-keescook@chromium.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <b269cdc1-a4f0-d614-f026-dc0f7c455da0@digikod.net>
+Date:   Mon, 13 Sep 2021 13:19:19 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210913100230.GB11752@amd>
+In-Reply-To: <20210910223613.3225685-1-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 13, 2021 at 12:02:30PM +0200, Pavel Machek wrote:
-> Hi!
+
+On 11/09/2021 00:36, Kees Cook wrote:
+> When building under GCC 4.9, the compiler warns about const mismatches:
 > 
-> > > Do we really want developers treat warnings as errors? When the code
-> > > is okay but some random version of gcc dislikes it...
-> > > 
-> > > Plus, there's question of stable. We already get ton of churn there
-> > > ("this fixes random warning"). WERROR will only encourage that...
-> > 
-> > I will not be backporting this patch to older stable kernels, but I
-> > _want_ to see stable builds build with no warnings.  When we add
-> > warnings, they are almost always things we need to fix up properly.
+> security/landlock/ruleset.c: In function 'insert_rule':
+> security/landlock/ruleset.c:196:34: error: passing argument 2 of 'create_rule' from incompatible pointer type [-Werror]
+>    new_rule = create_rule(object, &this->layers, this->num_layers,
+>                                   ^
+> security/landlock/ruleset.c:69:30: note: expected 'const struct landlock_layer ** const' but argument is of type 'struct landlock_layer (*)[]'
+>  static struct landlock_rule *create_rule(
+>                               ^
+> security/landlock/ruleset.c: In function 'landlock_insert_rule':
+> security/landlock/ruleset.c:240:38: error: passing argument 3 of 'insert_rule' from incompatible pointer type [-Werror]
+>   return insert_rule(ruleset, object, &layers, ARRAY_SIZE(layers));
+>                                       ^
+> security/landlock/ruleset.c:144:12: note: expected 'const struct landlock_layer ** const' but argument is of type 'struct landlock_layer (*)[1]'
+>  static int insert_rule(struct landlock_ruleset *const ruleset,
+
+I guess this is a bug in GCC 4.9 (i.e. missing automatic const upgrade).
+Couldn't we backport a fix to GCC 4.9 instead?
+
+>             ^
 > 
-> Well, everyone _wants_ to see clean builds... unless the price is too
-> high.
+> Drop "const" from the function definition.
 > 
-> > Over time, I have worked to reduce the number of build warnings in older
-> > stable kernels.  For newer versions of gcc, sometimes that is
-> > impossible, but we are close...
+> Cc: "Mickaël Salaün" <mic@digikod.net>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-security-module@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  security/landlock/ruleset.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> You clearly can't backport this patch, but for 5.16-stable, you'll
-> have it in, and now warnings are same as errors... and I don't believe
-> that's good idea for stable.
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index ec72b9262bf3..64c37af88ee7 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -68,7 +68,7 @@ static void build_check_rule(void)
+>  
+>  static struct landlock_rule *create_rule(
+>  		struct landlock_object *const object,
+> -		const struct landlock_layer (*const layers)[],
+> +		struct landlock_layer (*layers)[],
 
-I do, it will force us to keep these trees clean over time.
+The "const layers" is not an issue, it should not be removed.
 
-And it will be in 5.15, not 5.16 :)
+>  		const u32 num_layers,
+>  		const struct landlock_layer *const new_layer)
+>  {
+> @@ -143,7 +143,7 @@ static void build_check_ruleset(void)
+>   */
+>  static int insert_rule(struct landlock_ruleset *const ruleset,
+>  		struct landlock_object *const object,
+> -		const struct landlock_layer (*const layers)[],
+> +		struct landlock_layer (*layers)[],
 
-Worst case, we disable it in 4 years when gcc 15 or so generates so
-many errors we can't resolve them in this old kernel.
+Same here for the second const.
 
-thanks,
-
-greg k-h
+>  		size_t num_layers)
+>  {
+>  	struct rb_node **walker_node;
+> 
