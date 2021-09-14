@@ -2,128 +2,254 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_TVD_FUZZY_SECURITIES autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCD5C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 10:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF488C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 12:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 639A46112E
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 10:39:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9825D6109E
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 12:52:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231513AbhINKkk (ORCPT
+        id S232883AbhINMxU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Sep 2021 06:40:40 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:48904 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231420AbhINKki (ORCPT
+        Tue, 14 Sep 2021 08:53:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56022 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232664AbhINMxU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Sep 2021 06:40:38 -0400
-Received: by mail-io1-f72.google.com with SMTP id z26-20020a05660200da00b005b86e36a1f4so16002440ioe.15
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Sep 2021 03:39:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=d+K/DZOWlylDTOK+FeJU8FsbbRqRUbkYTkMWd9k9EOQ=;
-        b=BhP72W7wN3BsPGuj4fyDYQ0BKXJ+Yyz9GornpVX5nzvHSyeqAFW2E7DvXxekFH5Rac
-         X74pG7cZms8cjqLSVsoGapN7skEV2eiAErtVcoe8tdAP1JXW5lRtfmD8H8P7xGgxaiku
-         7p/dO3imxfteQ38AfWlrss+Y0M1lfnwDJX0TNmzhnFktffoiNnppe/wiRcSwwNY2Bn1e
-         MMdhrDlE0t55HGZ50FWgRTAXWaWIFDgYavQvGQYlVpkXrcVZ3L70uvzXa4fQG4HcDGtG
-         fJIpfYolPHU8MVsohtHGojmahBlirrvKoSTgj2nnGI5MPJo1iajDyNm0BFO8EbZMrIf1
-         BzBQ==
-X-Gm-Message-State: AOAM530aII/ohBUxvJaKhbjtj23HBNdsmtzb0Q+5zQw6y3O2ntz9r7X2
-        3S9G3WUCWN0y6bOoupoaMaWS3JYdNHDN36YsfrMSixbDuklt
-X-Google-Smtp-Source: ABdhPJyiSPRw9Faymwb4Xvjt8BfZoQWvGmFCB9bZHOGL2RB25E/cLIK6AfJPR/Qj9csYix5ohjJYgZ3wzCOr4Yh5Z3jc//mhqX8W
+        Tue, 14 Sep 2021 08:53:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631623922;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZChv2040w8kh2fxqWTvSsejGrn3bEO5wpgltjJDlvDk=;
+        b=Pie7SLedsVI8Z07jl54cGYGvbWcfr0GAyCvqP4tgQetIfDIn3J4M6TYXl2G80Hxa9Yul+A
+        z/w1GcCzs4uA3M9P7kBIR8TaBvbFRcezx6jbKNwNJC1moEHHBuz7qrYpbrGpAapaIiycc7
+        kU3+NmJGYQGRURD3sGo5wutW2xLIHwU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-194-wDjwVCCYP0eYlf0jikgUJQ-1; Tue, 14 Sep 2021 08:52:01 -0400
+X-MC-Unique: wDjwVCCYP0eYlf0jikgUJQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A309A9017C2;
+        Tue, 14 Sep 2021 12:51:59 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.9.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 202505C25A;
+        Tue, 14 Sep 2021 12:51:55 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 9E428220779; Tue, 14 Sep 2021 08:51:54 -0400 (EDT)
+Date:   Tue, 14 Sep 2021 08:51:54 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
+        dwalsh@redhat.com, christian.brauner@ubuntu.com,
+        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, tytso@mit.edu, miklos@szeredi.hu,
+        gscrivan@redhat.com, bfields@redhat.com,
+        stephen.smalley.work@gmail.com, agruenba@redhat.com,
+        david@fromorbit.com
+Subject: Re: [PATCH v3 0/1] Relax restrictions on user.* xattr
+Message-ID: <YUCa6pWpr5cjCNrU@redhat.com>
+References: <20210902152228.665959-1-vgoyal@redhat.com>
+ <79dcd300-a441-cdba-e523-324733f892ca@schaufler-ca.com>
+ <YTEEPZJ3kxWkcM9x@redhat.com>
+ <YTENEAv6dw9QoYcY@redhat.com>
+ <3bca47d0-747d-dd49-a03f-e0fa98eaa2f7@schaufler-ca.com>
+ <YTEur7h6fe4xBJRb@redhat.com>
+ <1f33e6ef-e896-09ef-43b1-6c5fac40ba5f@schaufler-ca.com>
+ <YTYr4MgWnOgf/SWY@work-vm>
+ <496e92bf-bf9e-a56b-bd73-3c1d0994a064@schaufler-ca.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:8d8a:: with SMTP id p132mr12670021iod.81.1631615961274;
- Tue, 14 Sep 2021 03:39:21 -0700 (PDT)
-Date:   Tue, 14 Sep 2021 03:39:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c81e6305cbf2319c@google.com>
-Subject: [syzbot] riscv/fixes boot error: BUG: unable to handle kernel NULL
- pointer dereference in corrupted
-From:   syzbot <syzbot+2a1797e8845b57b4a3c2@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <496e92bf-bf9e-a56b-bd73-3c1d0994a064@schaufler-ca.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On Mon, Sep 13, 2021 at 12:05:07PM -0700, Casey Schaufler wrote:
+> On 9/6/2021 7:55 AM, Dr. David Alan Gilbert wrote:
+> > * Casey Schaufler (casey@schaufler-ca.com) wrote:
+> >> On 9/2/2021 1:06 PM, Vivek Goyal wrote:
+> >>>  If LSMs are not configured,
+> >>> then hiding the directory is the solution.
+> >> It's not a solution at all. It's wishful thinking that
+> >> some admin is going to do absolutely everything right, will
+> >> never make a mistake and will never, ever, read the mount(2)
+> >> man page.
+> > That is why we run our virtiofsd with a sandbox setup and seccomp; and
+> > frankly anything we can or could turn on we would.
+> 
+> That doesn't address my concern at all. Being able to create an
+> environment in which a feature can be used safely does not make
+> the feature safe.
 
-syzbot found the following issue on:
+That's the requirement of virtiofs shared directory. It is a shared
+directory, potentially being used by untrusted guest. So it should
+not be accessible to unprivileged entities on host.
 
-HEAD commit:    7d2a07b76933 Linux 5.14
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=15cb131b300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f8211b06020972e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=2a1797e8845b57b4a3c2
-compiler:       riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
-userspace arch: riscv64
+Same is the requirement for regular containers and that's why
+podman (and possibly other container managers), make top level
+storage directory only readable and searchable by root, so that
+unpriveleged entities on host can not access container root filesystem
+data.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2a1797e8845b57b4a3c2@syzkaller.appspotmail.com
+I think similar requirements are there for idmapped mounts. One
+will shift container images into user namespaces. And that means,
+through idmapped mounts one can write files which will actually
+show up as owned by root in original directory. And that original
+directory should not be accessible to unprivileged users otherwise
+user found an easy way to drop root owned files on system and
+exectute these.
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000d48
-Oops [#1]
-Modules linked in:
-CPU: 1 PID: 2924 Comm: kworker/u4:5 Not tainted 5.14.0-syzkaller #0
-Hardware name: riscv-virtio,qemu (DT)
-epc : slab_alloc_node mm/slub.c:2900 [inline]
-epc : slab_alloc mm/slub.c:2967 [inline]
-epc : __kmalloc+0xce/0x388 mm/slub.c:4111
- ra : slab_pre_alloc_hook mm/slab.h:494 [inline]
- ra : slab_alloc_node mm/slub.c:2880 [inline]
- ra : slab_alloc mm/slub.c:2967 [inline]
- ra : __kmalloc+0x6e/0x388 mm/slub.c:4111
-epc : ffffffff803e3568 ra : ffffffff803e3508 sp : ffffffe008c6f780
- gp : ffffffff83f967d8 tp : ffffffe00b71df00 t0 : ffffffc400b37600
- t1 : 0000000000000001 t2 : 0000000000000000 s0 : ffffffe008c6f820
- s1 : ffffffe005601500 a0 : 0000000000000000 a1 : ffffffe008c6fb6c
- a2 : 1ffffffc016e3d07 a3 : 0000000000000d48 a4 : 0000000000000001
- a5 : ffffffff82e4b290 a6 : 0000000000f00000 a7 : ffffffff8038ca52
- s2 : ffffffff83f96adc s3 : 0000000000000d40 s4 : 0000000000000019
- s5 : ffffffff8080a860 s6 : ffffffff83f9a0d0 s7 : 0000000000000000
- s8 : 0000000000000d40 s9 : 0000000000000001 s10: ffffffe005aeb6e0
- s11: 000000000000002f t3 : 4f89673883b77f00 t4 : ffffffc40118df07
- t5 : ffffffc40118df09 t6 : ffffffe0059baffe
-status: 0000000000000120 badaddr: 0000000000000d48 cause: 000000000000000d
-[<ffffffff803e3568>] slab_alloc_node mm/slub.c:2900 [inline]
-[<ffffffff803e3568>] slab_alloc mm/slub.c:2967 [inline]
-[<ffffffff803e3568>] __kmalloc+0xce/0x388 mm/slub.c:4111
-[<ffffffff8080a860>] kmalloc include/linux/slab.h:596 [inline]
-[<ffffffff8080a860>] kzalloc include/linux/slab.h:721 [inline]
-[<ffffffff8080a860>] tomoyo_encode2.part.0+0xf0/0x262 security/tomoyo/realpath.c:45
-[<ffffffff8080abc2>] tomoyo_encode2 security/tomoyo/realpath.c:31 [inline]
-[<ffffffff8080abc2>] tomoyo_encode security/tomoyo/realpath.c:80 [inline]
-[<ffffffff8080abc2>] tomoyo_realpath_from_path+0x14c/0x3f4 security/tomoyo/realpath.c:288
-[<ffffffff807f17e8>] tomoyo_init_log+0x7a2/0x13aa security/tomoyo/audit.c:263
-[<ffffffff807f9c1e>] tomoyo_supervisor+0x1bc/0xb0c security/tomoyo/common.c:2097
-[<ffffffff80801ca0>] tomoyo_audit_env_log security/tomoyo/environ.c:36 [inline]
-[<ffffffff80801ca0>] tomoyo_env_perm+0x100/0x120 security/tomoyo/environ.c:63
-[<ffffffff80801798>] tomoyo_environ security/tomoyo/domain.c:672 [inline]
-[<ffffffff80801798>] tomoyo_find_next_domain+0xd24/0x109a security/tomoyo/domain.c:879
-[<ffffffff8080c098>] tomoyo_bprm_check_security security/tomoyo/tomoyo.c:101 [inline]
-[<ffffffff8080c098>] tomoyo_bprm_check_security+0xdc/0x136 security/tomoyo/tomoyo.c:91
-[<ffffffff807e8b8e>] security_bprm_check+0x44/0x96 security/security.c:866
-[<ffffffff80438242>] search_binary_handler fs/exec.c:1709 [inline]
-[<ffffffff80438242>] exec_binprm fs/exec.c:1762 [inline]
-[<ffffffff80438242>] bprm_execve fs/exec.c:1831 [inline]
-[<ffffffff80438242>] bprm_execve+0x4ba/0x10a6 fs/exec.c:1793
-[<ffffffff80439e7c>] kernel_execve+0x204/0x288 fs/exec.c:1974
-[<ffffffff8005afec>] call_usermodehelper_exec_async+0x1bc/0x2d8 kernel/umh.c:112
-[<ffffffff8000515e>] ret_from_exception+0x0/0x14
----[ end trace 77235688c0a8656b ]---
+So more and more use cases are there which are relying on directory
+not being accessible to unprivileged users.
 
+I understand it is not going to be easy to get the configurations
+right all the time. But orchestration tools can be helpful. container
+managers can make sure kata container rootfs are not accessible.
+libvirt can probably warn if shared directory is accessible to
+unprivileged users. And all that will help in getting configuration
+right.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> 
+> > So why that's not a solution and only relying on CAP_SYS_ADMIN is the
+> > solution. I don't understand that part.
+> 
+> Sure you do. If you didn't, you wouldn't be so concerned about
+> requiring CAP_SYS_ADMIN. You're trying hard to avoid taking the
+> level of responsibility that running with privilege requires.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Running with minimal capabilities is always desired. So we want
+to do away with CAP_SYS_ADMIN. And this reduces our risk in
+case virtiofsd gets compromised.
+
+I thought we had similar reasons that we did not want setuid
+root binaries and wanted to give them limited set of capabilites
+depending on what they are doing.
+
+> To do that, you're introducing a massive security hole, a backdoor
+> into the file system security attributes.
+
+Shared directory is not accessible to unprivileged entities. If
+configuration is not right, then it is user's problem and we
+need to fix that.
+
+> 
+> >> It comes back to your design, which is fundamentally flawed. You
+> >> can't store system security information in an attribute that can
+> >> be manipulated by untrusted entities. That's why we have system.*
+> >> xattrs. You want to have an attribute on the host that maps to a
+> >> security attribute on the guest. The host has to protect the attribute
+> >> on the guest with mechanisms of comparable strength as the guest's
+> >> mechanisms.
+> > Can you just explain this line to me a bit more: 
+> >> Otherwise you can't trust the guest with host data.
+> > Note we're not trying to trust the guest with the host data here;
+> > we're trying to allow the guest to store the data on the host, while
+> > trusting the host.
+> 
+> But you can't trust the host! You're allowing unprivileged processes
+> on the host to modify security state of the guest.
+
+No we are not. Shared directory should not be accessible to
+unpriviliged entities on host.
+
+> 
+> >> It's a real shame that CAP_SYS_ADMIN is so scary. The capability
+> >> mechanism as implemented today won't scale to the hundreds of individual
+> >> capabilities it would need to break CAP_SYS_ADMIN up. Maybe someday.
+> >> I'm not convinced that there isn't a way to accomplish what you're
+> >> trying to do without privilege, but this isn't it, and I don't know
+> >> what is. Sorry.
+> >>
+> >>> Also if directory is not hidden, unprivileged users can change file
+> >>> data and other metadata.
+> >> I assumed that you've taken that into account. Are you saying that
+> >> isn't going to be done correctly either?
+> >>
+> >>>  Why that's not a concern and why there is
+> >>> so much of focus only security xattr.
+> >> As with an NFS mount, the assumption is that UID 567 (or its magically
+> >> mapped equivalent) has the same access rights on both the server/host
+> >> and client/guest. I'm not worried about the mode bits because they are
+> >> presented consistently on both machines. If, on the other hand, an
+> >> attribute used to determine access is security.esprit on the guest and
+> >> user.security.esprit on the host, the unprivileged user on the host
+> >> can defeat the privilege requirements on the guest. That's why.
+> > We're OK with that;
+> 
+> I understand that. I  am  not  OK  with  that.
+
+Unprivileged entities can't modify "user.viritiofs.security.selinux"
+as shared directory is not accessible to them.
+
+Sorry, I have to repeat this so many times because you are 
+completely ignoring this requirement saying users will get it
+wrong. Sure if they do get it wrong, they need to fix it.  But
+that does not mean we start giving CAP_SYS_ADMIN to daemon. 
+
+If shared direcotry is accessible to unprivileged entities, game
+is already over (setuid root binaries). Being able to modify
+security attributes of a file seems like such a minor concern
+in comparison.
+
+> 
+> >  remember that the host can do wth it likes to the
+> > guest anyway
+> 
+> We're not talking about "the host", we're talking about an
+> unprivileged user on the host.
+> 
+> >  - it can just go in and poke at the guests RAM if it wants
+> > to do something evil to the guest.
+> > We wouldn't suggest using a scheme like this once you have
+> > encrypted/protected guest RAM for example (SEV/TDX etc)
+> >
+> >>>  If you were to block modification
+> >>> of file then you will have rely on LSMs.
+> >> No. We're talking about the semantics of the xattr namespaces.
+> >> LSMs can further constrain access to xattrs, but the basic rules
+> >> of access to the user.* and security.* attributes are different
+> >> in any case. This is by design.
+> > I'm happy if you can suggest somewhere else to store the guests xattr
+> > data other than in one of the hosts xattr's - the challenge is doing
+> > that in a non-racy way, and making sure that the xattr's never get
+> > associated with the wrong file as seen by a guest.
+> 
+> I'm sorry, but I've got a bunch of other stuff on my plate.
+> I've already suggested implementing xattr namespaces a'la user
+> namespaces, but I understand that is beyond the scope of your
+> current needs, and has its own set of dragons.
+> 
+> >>>  And if LSMs are not configured,
+> >>> then we will rely on shared directory not being visible.
+> >> LSMs are not the problem. LSMs use security.* xattrs, which is why
+> >> they come up in the discussion.
+> >>
+> >>> Can you please help me understand why hiding shared directory from
+> >>> unprivileged users is not a solution
+> >> Maybe you can describe the mechanism you use to "hide" a shared directory
+> >> on the host. If the filesystem is mounted on the host it seems unlikely
+> >> that you can provide a convincing argument for sufficient protection.
+> > Why?
+> 
+> Because 99-44/100% of admins out there aren't as skilled at "hiding"
+> data as you are. Many (I almost said "most". I'm still not sure which.)
+> of them don't even know how to use mode bits correctly.
+
+We need to rely on orchestration tools to this by default.
+podman already does that for containers. We probably need to
+add something to libvirt too and warn users.
+
+Vivek
+
