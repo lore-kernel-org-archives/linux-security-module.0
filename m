@@ -2,163 +2,78 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC02C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 03:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 268EAC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 09:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8B80610EA
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 03:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05AD16113B
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 09:53:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239115AbhINDfP (ORCPT
+        id S230379AbhINJyh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Sep 2021 23:35:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239179AbhINDfC (ORCPT
+        Tue, 14 Sep 2021 05:54:37 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:9040 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230310AbhINJyd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Sep 2021 23:35:02 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55EB5C0613E4
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 20:33:43 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id ay33so13174895qkb.10
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 20:33:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:date:message-id:in-reply-to:references:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=54Sbzge3G+aat3VcychMMrLelhIpqQAZp6yuJG+ykt8=;
-        b=aZ6thOvMHLr+wxTevjEA1i5Ht/W/KrKBQJDrsm43lV+2/eSbhr0/w/m5LaTbRZv97v
-         13VV/f6a5EZn+YwNo+evAqqV68Rk0Q3ZSZ7p66Z50xOHLmTvSRidUUAQqWKoRmufA//s
-         TRdH5DrwLc8h6Fex7ElS7A8hxXq9SCFZnCMT2WXwEZFLdqa6eaRHhZuYOqmQZA+UPyb8
-         U6kNemODgsXPNN7mcEVByROU8emfLbr8Vnk/Yuyf9KR1xQgvIKEYcEbjkCJLJqdNEz8k
-         K9dZzuNqP701EebgEt1oQ05r+hhjxT6DR0Y1fY8t9nmU0Lbxbb7cA5vBOG5ann40QGgU
-         C7rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=54Sbzge3G+aat3VcychMMrLelhIpqQAZp6yuJG+ykt8=;
-        b=rxlPpsS9fa7vYcguFdUR/lUfkPBwWI50fXFAQU7O1D13P+lh7CNyqREMgyQuCMzCyI
-         W+b4oXRCHt/zYA4nw6uSvDH0Bza+PKSdsS2OifkdBRMJ3kKAzYCR49Rzv/TdFF1UAQ6G
-         p7C6iVkPit6BZ1FCgFSdbuIHZEOViiHn7GArHGvew6sEXY2ssx8P4ilrx4xg1H6q7/rv
-         +ZDM/MHvghU9hLmfVAptcuuZxi9PJBUqOENI4dibacZiRqw/s117DVCRgoqLX3VvObwe
-         TyapaVuduszB0NESVWt6YKpGDFnqOfFIU/bgo686W6K1tsK5Ltnhje/JbodX/Lnkx++K
-         Tbmw==
-X-Gm-Message-State: AOAM530HoZvFanFAoTXIj9rFFDYVgpxmds24pMbUqxBJOHNPeaDTFdNj
-        axOl/8PPO7c6WcwBzCzNQyjdloJSSw/n
-X-Google-Smtp-Source: ABdhPJxCTwAyD5dWI5ou1pL9SVHqbRt3WXQyP3KXoalYRryIJkcZ1TtZ+jPi+4HNVU0jJ4AhyxpGgA==
-X-Received: by 2002:a37:6691:: with SMTP id a139mr2900014qkc.310.1631590422163;
-        Mon, 13 Sep 2021 20:33:42 -0700 (PDT)
-Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id b1sm5212672qtj.76.2021.09.13.20.33.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Sep 2021 20:33:41 -0700 (PDT)
-Subject: [PATCH v3 8/8] Smack: Brutalist io_uring support with debug
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date:   Mon, 13 Sep 2021 23:33:41 -0400
-Message-ID: <163159042110.470089.9405201508228711833.stgit@olly>
-In-Reply-To: <163159032713.470089.11728103630366176255.stgit@olly>
-References: <163159032713.470089.11728103630366176255.stgit@olly>
-User-Agent: StGit/1.1
+        Tue, 14 Sep 2021 05:54:33 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4H7zCg1fbPzVwhs;
+        Tue, 14 Sep 2021 17:52:15 +0800 (CST)
+Received: from dggema769-chm.china.huawei.com (10.1.198.211) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2308.8; Tue, 14 Sep 2021 17:53:14 +0800
+Received: from localhost (10.174.179.215) by dggema769-chm.china.huawei.com
+ (10.1.198.211) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.8; Tue, 14
+ Sep 2021 17:53:13 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <john.johansen@canonical.com>, <jmorris@namei.org>,
+        <serge@hallyn.com>, <trix@redhat.com>, <yuehaibing@huawei.com>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] apparmor: Remove unused inline function label_is_visible()
+Date:   Tue, 14 Sep 2021 17:53:12 +0800
+Message-ID: <20210914095313.11496-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.174.179.215]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggema769-chm.china.huawei.com (10.1.198.211)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Casey Schaufler <casey@schaufler-ca.com>
+There is no caller in tree, so can remove it.
 
-Add Smack privilege checks for io_uring. Use CAP_MAC_OVERRIDE
-for the override_creds case and CAP_MAC_ADMIN for creating a
-polling thread. These choices are based on conjecture regarding
-the intent of the surrounding code.
-
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-[PM: make the smack_uring_* funcs static, remove debug code]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
-v3:
-- removed debug code
-v2:
-- made the smack_uring_* funcs static
-v1:
-- initial draft
----
- security/smack/smack_lsm.c |   46 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ security/apparmor/label.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index cacbe7518519..f90ab1efeb6d 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4691,6 +4691,48 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
- 	return 0;
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index 6222fdfebe4e..a86ac938ca88 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -1255,12 +1255,6 @@ struct aa_label *aa_label_merge(struct aa_label *a, struct aa_label *b,
+ 	return label;
  }
  
-+#ifdef CONFIG_IO_URING
-+/**
-+ * smack_uring_override_creds - Is io_uring cred override allowed?
-+ * @new: the target creds
-+ *
-+ * Check to see if the current task is allowed to override it's credentials
-+ * to service an io_uring operation.
-+ */
-+static int smack_uring_override_creds(const struct cred *new)
-+{
-+	struct task_smack *tsp = smack_cred(current_cred());
-+	struct task_smack *nsp = smack_cred(new);
-+
-+	/*
-+	 * Allow the degenerate case where the new Smack value is
-+	 * the same as the current Smack value.
-+	 */
-+	if (tsp->smk_task == nsp->smk_task)
-+		return 0;
-+
-+	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+/**
-+ * smack_uring_sqpoll - check if a io_uring polling thread can be created
-+ *
-+ * Check to see if the current task is allowed to create a new io_uring
-+ * kernel polling thread.
-+ */
-+static int smack_uring_sqpoll(void)
-+{
-+	if (smack_privileged_cred(CAP_MAC_ADMIN, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+#endif /* CONFIG_IO_URING */
-+
- struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct task_smack),
- 	.lbs_file = sizeof(struct smack_known *),
-@@ -4843,6 +4885,10 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_copy_up, smack_inode_copy_up),
- 	LSM_HOOK_INIT(inode_copy_up_xattr, smack_inode_copy_up_xattr),
- 	LSM_HOOK_INIT(dentry_create_files_as, smack_dentry_create_files_as),
-+#ifdef CONFIG_IO_URING
-+	LSM_HOOK_INIT(uring_override_creds, smack_uring_override_creds),
-+	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
-+#endif
- };
- 
- 
+-static inline bool label_is_visible(struct aa_profile *profile,
+-				    struct aa_label *label)
+-{
+-	return aa_ns_visible(profile->ns, labels_ns(label), true);
+-}
+-
+ /* match a profile and its associated ns component if needed
+  * Assumes visibility test has already been done.
+  * If a subns profile is not to be matched should be prescreened with
+-- 
+2.17.1
 
