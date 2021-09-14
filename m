@@ -7,311 +7,150 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB1DC4167E
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 03:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704E8C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 03:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF84861159
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 03:33:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EB3960F12
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 03:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238756AbhINDec (ORCPT
+        id S239120AbhINDeh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Sep 2021 23:34:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55810 "EHLO
+        Mon, 13 Sep 2021 23:34:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238906AbhINDe3 (ORCPT
+        with ESMTP id S239040AbhINDef (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Sep 2021 23:34:29 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA47CC061574
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 20:33:12 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id r21so10135203qtw.11
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 20:33:12 -0700 (PDT)
+        Mon, 13 Sep 2021 23:34:35 -0400
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C31D8C0613C1
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 20:33:18 -0700 (PDT)
+Received: by mail-qt1-x82a.google.com with SMTP id x5so10130040qtq.13
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 20:33:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:date:message-id:in-reply-to:references:user-agent
          :mime-version:content-transfer-encoding;
-        bh=vMfQCt+uLiO0djmjLUrPCnseEyBZjnenjfAhu7qlx0c=;
-        b=DELMydZBjcy90XHQNhrcdYJK+dNl9s7myCh4iee3FoXNQTcewYIs7pPA+h+8CLJITi
-         uDDyjDuqZHtMuCUaVz+KXwCocx6X//HZta2IaG6EdZgs7vz04Hj355uWD4Alzbeuc192
-         x7Bnvhh0Wj8lsR7kT0Y6soGJC1y5pfYT1z3tz07pvKbMgEvlQKQbIY1Z/jtDc0s6j6+N
-         5iSyQtxwMeY+ByidHXn2mbUKyKloCKMuCt2kUyBErVjpe82Z82B8zT0dupSFu8Z9u4t3
-         c6T7zSHMOZPMTAkV+2tqTctzK2uxl57jWHZzei170essgxv1D5CR9okx9a284y1ASK9q
-         9t5A==
+        bh=yIvUop3P/60QYLtm8bDVCxAY3B7HwxRQ7AkWTc9jkh8=;
+        b=UgU+ZGMcIRDHUazzWyvjbnYgPk38HeUD054UfCNUk/5P8rMXNbD5DbpJzY2/NwJnbk
+         B+FrHS7LvYvCnLVPoGMgntRSQFOsg9Nl2QuKfmRRuwVlVHaPeLR3hTpWCAdxJD1Tqjxx
+         fKv8n0cbftyErcP0rY5NC1WMglM9KHmxLUXmHHwrTVoapBa6SN75vlNjd8L601C/hW+E
+         K23NCl8EpLdbAFG+GCr1uW2f2QeqmRPnnT4V3q/Da25J1ItCbI4ajKE4Y6jAo10guLnV
+         s7/cYgSka8Q9cSrCPWDyvf+FBqMVkoscIqz/iiVoX61wrdHFN5316lXkBzpQ1De4hVXQ
+         TDtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=vMfQCt+uLiO0djmjLUrPCnseEyBZjnenjfAhu7qlx0c=;
-        b=rniweFbJADs2nCSMp/FcB+Q7S3ht6BacbdNQZ0qVKfq/wTzHXchXdmDLSMmLUxgnd3
-         g0toV6Sk1zMVBjqsdlXYHTiBWSbB+M01suusfGxfbLfkgk30vhQSXfvNIlVK/PMWMoQK
-         wkRDvs/OGTSUjAlG924rSoaXsu0njnwOWzL4fyFP8UHlMZUEhrRUNOQoEPgAut8Mx7i1
-         XV+Jlq4ADJlA/8b7/lHyjYaLqHEaR4VIGkIgPKzeUEwWmaN2KaN5p8qiJhuBRP8DDi/c
-         57zBR/W5NWyevwa8uwP1+KRO6ZNesKNwhUktE6uM9yGoOPNyfAl4O2MPWTiwq29SHvl0
-         ZKFA==
-X-Gm-Message-State: AOAM532Xhp8LtZ8zYrIVsMnzXJBrdhhosAYq+lJGSQH5HkRD3q12TCD0
-        z7+EeR11Y/eUOaOceNGjtfs/zhRwNChy
-X-Google-Smtp-Source: ABdhPJzHVPH6/dQ4CfMF8kWcsd/i6+k7cFmQWVNP6WoHx1hyTmgKpJ1LDwYfNyuZxdo259sPFpBGBQ==
-X-Received: by 2002:a05:622a:1911:: with SMTP id w17mr2845124qtc.228.1631590391328;
-        Mon, 13 Sep 2021 20:33:11 -0700 (PDT)
+        bh=yIvUop3P/60QYLtm8bDVCxAY3B7HwxRQ7AkWTc9jkh8=;
+        b=FEH+DXf5qTamOZBR1LJDvsJf18DUPZxb3d/pyzk+dsqf4HRt0jMSudxy47Fq2QZhhA
+         R5vIu1ps9DHVQjgi5TYF69bzANZ1MAFCM9sEnWw2nxSjDtC7VXPfEj4k/yJxFHYKBVmP
+         oUzqNIQO/zg0Eo+6FcM22CgHKq87/qjL3P/B3AdKeWn7BelCmZ8jFvHYFnNcdRUEhXpI
+         ClK3WmTaXvoh2vv64ynh/mKc/MbSjkDxdWM7mZgvYWNooNJEFSDK0B4Ud8gK1a+Wfj8D
+         DQddn+FQ2Eeg7gVSVAgb9m7Yjs3PkrQJvIX+IM3KH66r0Bms580/1iqS77eid5EKcDqW
+         Q0vA==
+X-Gm-Message-State: AOAM533GaH4uNw8dpNfxLiHW7LRGPFp08PD3nbs0de2B+jWmgf1AItMT
+        5xg2dMxHSysOFn5ypEF9KB56Hm09Kv5o
+X-Google-Smtp-Source: ABdhPJyBLgu6nnMNu0XNtQrmb84WAJq+QQFJ7unI1AirZRKDx5A8vQSop0c3lfor668lSPDvc9ZMMA==
+X-Received: by 2002:a05:622a:1c6:: with SMTP id t6mr2748253qtw.390.1631590397433;
+        Mon, 13 Sep 2021 20:33:17 -0700 (PDT)
 Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id 21sm6682576qkk.51.2021.09.13.20.33.10
+        by smtp.gmail.com with ESMTPSA id u7sm5288981qtc.75.2021.09.13.20.33.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Sep 2021 20:33:10 -0700 (PDT)
-Subject: [PATCH v3 3/8] audit: add filtering for io_uring records
+        Mon, 13 Sep 2021 20:33:17 -0700 (PDT)
+Subject: [PATCH v3 4/8] fs: add anon_inode_getfile_secure() similar to
+ anon_inode_getfd_secure()
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-audit@redhat.com, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date:   Mon, 13 Sep 2021 23:33:10 -0400
-Message-ID: <163159039025.470089.10174083902520146275.stgit@olly>
+Date:   Mon, 13 Sep 2021 23:33:16 -0400
+Message-ID: <163159039643.470089.15401020922378832012.stgit@olly>
 In-Reply-To: <163159032713.470089.11728103630366176255.stgit@olly>
 References: <163159032713.470089.11728103630366176255.stgit@olly>
 User-Agent: StGit/1.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch adds basic audit io_uring filtering, using as much of the
-existing audit filtering infrastructure as possible.  In order to do
-this we reuse the audit filter rule's syscall mask for the io_uring
-operation and we create a new filter for io_uring operations as
-AUDIT_FILTER_URING_EXIT/audit_filter_list[7].
+Extending the secure anonymous inode support to other subsystems
+requires that we have a secure anon_inode_getfile() variant in
+addition to the existing secure anon_inode_getfd() variant.
 
-Thanks to Richard Guy Briggs for his review, feedback, and work on
-the corresponding audit userspace changes.
+Thankfully we can reuse the existing __anon_inode_getfile() function
+and just wrap it with the proper arguments.
 
+Acked-by: Mickaël Salaün <mic@linux.microsoft.com>
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 
 ---
 v3:
-- removed work-in-progress warning from the description
+- no change
 v2:
-- incorporate feedback from Richard
+- no change
 v1:
 - initial draft
 ---
- include/uapi/linux/audit.h |    3 +-
- kernel/audit_tree.c        |    3 +-
- kernel/audit_watch.c       |    3 +-
- kernel/auditfilter.c       |   15 +++++++++--
- kernel/auditsc.c           |   61 ++++++++++++++++++++++++++++++++++----------
- 5 files changed, 65 insertions(+), 20 deletions(-)
+ fs/anon_inodes.c            |   29 +++++++++++++++++++++++++++++
+ include/linux/anon_inodes.h |    4 ++++
+ 2 files changed, 33 insertions(+)
 
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index a1997697c8b1..ecf1edd2affa 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -167,8 +167,9 @@
- #define AUDIT_FILTER_EXCLUDE	0x05	/* Apply rule before record creation */
- #define AUDIT_FILTER_TYPE	AUDIT_FILTER_EXCLUDE /* obsolete misleading naming */
- #define AUDIT_FILTER_FS		0x06	/* Apply rule at __audit_inode_child */
-+#define AUDIT_FILTER_URING_EXIT	0x07	/* Apply rule at io_uring op exit */
- 
--#define AUDIT_NR_FILTERS	7
-+#define AUDIT_NR_FILTERS	8
- 
- #define AUDIT_FILTER_PREPEND	0x10	/* Prepend to front of list */
- 
-diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-index 2cd7b5694422..338c53a961c5 100644
---- a/kernel/audit_tree.c
-+++ b/kernel/audit_tree.c
-@@ -726,7 +726,8 @@ int audit_make_tree(struct audit_krule *rule, char *pathname, u32 op)
- {
- 
- 	if (pathname[0] != '/' ||
--	    rule->listnr != AUDIT_FILTER_EXIT ||
-+	    (rule->listnr != AUDIT_FILTER_EXIT &&
-+	     rule->listnr != AUDIT_FILTER_URING_EXIT) ||
- 	    op != Audit_equal ||
- 	    rule->inode_f || rule->watch || rule->tree)
- 		return -EINVAL;
-diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-index 2acf7ca49154..698b62b4a2ec 100644
---- a/kernel/audit_watch.c
-+++ b/kernel/audit_watch.c
-@@ -183,7 +183,8 @@ int audit_to_watch(struct audit_krule *krule, char *path, int len, u32 op)
- 		return -EOPNOTSUPP;
- 
- 	if (path[0] != '/' || path[len-1] == '/' ||
--	    krule->listnr != AUDIT_FILTER_EXIT ||
-+	    (krule->listnr != AUDIT_FILTER_EXIT &&
-+	     krule->listnr != AUDIT_FILTER_URING_EXIT) ||
- 	    op != Audit_equal ||
- 	    krule->inode_f || krule->watch || krule->tree)
- 		return -EINVAL;
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index db2c6b59dfc3..d75acb014ccd 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -44,7 +44,8 @@ struct list_head audit_filter_list[AUDIT_NR_FILTERS] = {
- 	LIST_HEAD_INIT(audit_filter_list[4]),
- 	LIST_HEAD_INIT(audit_filter_list[5]),
- 	LIST_HEAD_INIT(audit_filter_list[6]),
--#if AUDIT_NR_FILTERS != 7
-+	LIST_HEAD_INIT(audit_filter_list[7]),
-+#if AUDIT_NR_FILTERS != 8
- #error Fix audit_filter_list initialiser
- #endif
- };
-@@ -56,6 +57,7 @@ static struct list_head audit_rules_list[AUDIT_NR_FILTERS] = {
- 	LIST_HEAD_INIT(audit_rules_list[4]),
- 	LIST_HEAD_INIT(audit_rules_list[5]),
- 	LIST_HEAD_INIT(audit_rules_list[6]),
-+	LIST_HEAD_INIT(audit_rules_list[7]),
- };
- 
- DEFINE_MUTEX(audit_filter_mutex);
-@@ -151,7 +153,8 @@ char *audit_unpack_string(void **bufp, size_t *remain, size_t len)
- static inline int audit_to_inode(struct audit_krule *krule,
- 				 struct audit_field *f)
- {
--	if (krule->listnr != AUDIT_FILTER_EXIT ||
-+	if ((krule->listnr != AUDIT_FILTER_EXIT &&
-+	     krule->listnr != AUDIT_FILTER_URING_EXIT) ||
- 	    krule->inode_f || krule->watch || krule->tree ||
- 	    (f->op != Audit_equal && f->op != Audit_not_equal))
- 		return -EINVAL;
-@@ -248,6 +251,7 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule_data *
- 		pr_err("AUDIT_FILTER_ENTRY is deprecated\n");
- 		goto exit_err;
- 	case AUDIT_FILTER_EXIT:
-+	case AUDIT_FILTER_URING_EXIT:
- 	case AUDIT_FILTER_TASK:
- #endif
- 	case AUDIT_FILTER_USER:
-@@ -332,6 +336,10 @@ static int audit_field_valid(struct audit_entry *entry, struct audit_field *f)
- 		if (entry->rule.listnr != AUDIT_FILTER_FS)
- 			return -EINVAL;
- 		break;
-+	case AUDIT_PERM:
-+		if (entry->rule.listnr == AUDIT_FILTER_URING_EXIT)
-+			return -EINVAL;
-+		break;
- 	}
- 
- 	switch (entry->rule.listnr) {
-@@ -980,7 +988,8 @@ static inline int audit_add_rule(struct audit_entry *entry)
- 	}
- 
- 	entry->rule.prio = ~0ULL;
--	if (entry->rule.listnr == AUDIT_FILTER_EXIT) {
-+	if (entry->rule.listnr == AUDIT_FILTER_EXIT ||
-+	    entry->rule.listnr == AUDIT_FILTER_URING_EXIT) {
- 		if (entry->rule.flags & AUDIT_FILTER_PREPEND)
- 			entry->rule.prio = ++prio_high;
- 		else
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 62fb502da3fc..3cbcc999aff6 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -805,6 +805,35 @@ static int audit_in_mask(const struct audit_krule *rule, unsigned long val)
- 	return rule->mask[word] & bit;
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index a280156138ed..e0c3e33c4177 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -148,6 +148,35 @@ struct file *anon_inode_getfile(const char *name,
  }
+ EXPORT_SYMBOL_GPL(anon_inode_getfile);
  
 +/**
-+ * audit_filter_uring - apply filters to an io_uring operation
-+ * @tsk: associated task
-+ * @ctx: audit context
++ * anon_inode_getfile_secure - Like anon_inode_getfile(), but creates a new
++ *                             !S_PRIVATE anon inode rather than reuse the
++ *                             singleton anon inode and calls the
++ *                             inode_init_security_anon() LSM hook.  This
++ *                             allows for both the inode to have its own
++ *                             security context and for the LSM to enforce
++ *                             policy on the inode's creation.
++ *
++ * @name:    [in]    name of the "class" of the new file
++ * @fops:    [in]    file operations for the new file
++ * @priv:    [in]    private data for the new file (will be file's private_data)
++ * @flags:   [in]    flags
++ * @context_inode:
++ *           [in]    the logical relationship with the new inode (optional)
++ *
++ * The LSM may use @context_inode in inode_init_security_anon(), but a
++ * reference to it is not held.  Returns the newly created file* or an error
++ * pointer.  See the anon_inode_getfile() documentation for more information.
 + */
-+static void audit_filter_uring(struct task_struct *tsk,
-+			       struct audit_context *ctx)
++struct file *anon_inode_getfile_secure(const char *name,
++				       const struct file_operations *fops,
++				       void *priv, int flags,
++				       const struct inode *context_inode)
 +{
-+	struct audit_entry *e;
-+	enum audit_state state;
-+
-+	if (auditd_test_task(tsk))
-+		return;
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_URING_EXIT],
-+				list) {
-+		if (audit_in_mask(&e->rule, ctx->uring_op) &&
-+		    audit_filter_rules(tsk, &e->rule, ctx, NULL, &state,
-+				       false)) {
-+			rcu_read_unlock();
-+			ctx->current_state = state;
-+			return;
-+		}
-+	}
-+	rcu_read_unlock();
-+	return;
++	return __anon_inode_getfile(name, fops, priv, flags,
++				    context_inode, true);
 +}
 +
- /* At syscall exit time, this filter is called if the audit_state is
-  * not low enough that auditing cannot take place, but is also not
-  * high enough that we already know we have to write an audit record
-@@ -1765,7 +1794,7 @@ static void audit_log_exit(void)
-  * __audit_free - free a per-task audit context
-  * @tsk: task whose audit context block to free
-  *
-- * Called from copy_process and do_exit
-+ * Called from copy_process, do_exit, and the io_uring code
-  */
- void __audit_free(struct task_struct *tsk)
- {
-@@ -1783,15 +1812,21 @@ void __audit_free(struct task_struct *tsk)
- 	 * random task_struct that doesn't doesn't have any meaningful data we
- 	 * need to log via audit_log_exit().
- 	 */
--	if (tsk == current && !context->dummy &&
--	    context->context == AUDIT_CTX_SYSCALL) {
-+	if (tsk == current && !context->dummy) {
- 		context->return_valid = AUDITSC_INVALID;
- 		context->return_code = 0;
--
--		audit_filter_syscall(tsk, context);
--		audit_filter_inodes(tsk, context);
--		if (context->current_state == AUDIT_STATE_RECORD)
--			audit_log_exit();
-+		if (context->context == AUDIT_CTX_SYSCALL) {
-+			audit_filter_syscall(tsk, context);
-+			audit_filter_inodes(tsk, context);
-+			if (context->current_state == AUDIT_STATE_RECORD)
-+				audit_log_exit();
-+		} else if (context->context == AUDIT_CTX_URING) {
-+			/* TODO: verify this case is real and valid */
-+			audit_filter_uring(tsk, context);
-+			audit_filter_inodes(tsk, context);
-+			if (context->current_state == AUDIT_STATE_RECORD)
-+				audit_log_uring(context);
-+		}
- 	}
- 
- 	audit_set_context(tsk, NULL);
-@@ -1875,12 +1910,6 @@ void __audit_uring_exit(int success, long code)
- {
- 	struct audit_context *ctx = audit_context();
- 
--	/*
--	 * TODO: At some point we will likely want to filter on io_uring ops
--	 *       and other things similar to what we do for syscalls, but that
--	 *       is something for another day; just record what we can here.
--	 */
--
- 	if (ctx->context == AUDIT_CTX_SYSCALL) {
- 		/*
- 		 * NOTE: See the note in __audit_uring_entry() about the case
-@@ -1903,6 +1932,8 @@ void __audit_uring_exit(int success, long code)
- 		 * the behavior here.
- 		 */
- 		audit_filter_syscall(current, ctx);
-+		if (ctx->current_state != AUDIT_STATE_RECORD)
-+			audit_filter_uring(current, ctx);
- 		audit_filter_inodes(current, ctx);
- 		if (ctx->current_state != AUDIT_STATE_RECORD)
- 			return;
-@@ -1915,6 +1946,8 @@ void __audit_uring_exit(int success, long code)
- 	if (!list_empty(&ctx->killed_trees))
- 		audit_kill_trees(ctx);
- 
-+	/* run through both filters to ensure we set the filterkey properly */
-+	audit_filter_uring(current, ctx);
- 	audit_filter_inodes(current, ctx);
- 	if (ctx->current_state != AUDIT_STATE_RECORD)
- 		goto out;
+ static int __anon_inode_getfd(const char *name,
+ 			      const struct file_operations *fops,
+ 			      void *priv, int flags,
+diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+index 71881a2b6f78..5deaddbd7927 100644
+--- a/include/linux/anon_inodes.h
++++ b/include/linux/anon_inodes.h
+@@ -15,6 +15,10 @@ struct inode;
+ struct file *anon_inode_getfile(const char *name,
+ 				const struct file_operations *fops,
+ 				void *priv, int flags);
++struct file *anon_inode_getfile_secure(const char *name,
++				       const struct file_operations *fops,
++				       void *priv, int flags,
++				       const struct inode *context_inode);
+ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		     void *priv, int flags);
+ int anon_inode_getfd_secure(const char *name,
 
