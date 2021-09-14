@@ -2,126 +2,145 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BEFC433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 00:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991BAC43219
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 01:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B100760F35
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 00:17:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 833F461155
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 01:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235988AbhINASU (ORCPT
+        id S232396AbhINBvr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Sep 2021 20:18:20 -0400
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com ([66.163.190.153]:39327
-        "EHLO sonic315-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235818AbhINAST (ORCPT
+        Mon, 13 Sep 2021 21:51:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60542 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231953AbhINBvo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Sep 2021 20:18:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1631578623; bh=ntjT0rcK1OmnRZ8ta15Sfc04v6zcyhqyHorTN6THSNc=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=llehXd3euQAkNFHF29pjB1J3jABj8P9pgEDI0fzWdiPbWRzYPrppiWU2Trny5VuoWhQLQxtLMc0vVAKXFV3BOWfVpMK4PhXOCfll6k4QOqiVjTOEmJVJRzPdkrnlIdar+yXCwis2DAjzrBl3IqHHmC9Pkn4brYQ9fPZnruuXuNO1Jho4Yevu94ygwmY50x/e6ySiPGdFajBjI9exoZBHBiD8vd/1U59+6tCzB+gXgwRra/PrNpqmMoWj3pN+5P2jvxWOHzeDm0CMHcvIOkdmv5mBkYK0Zr6bw4giYKvWDWv12qSkdjBmtw1YOf0KlmrV64iCz7h7MiRiIzEYiNRKpA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1631578623; bh=hKtMDTuENotN/iosBlromYKl4uNO6mLK6InLs/lzkWl=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=oVqsU62nmGEQFOsFyPvgiBPBTcFguZQFoSaqkvn+jsuuz3ZWkgwrUXvWpF+jBsLMqoInk0Vp0fd6RPqlN3/uUTIigAjjaeRNyNKP/9rqNZNDUC8B/NDp7lOjSeYCyBVMB4ssiSUe3iusPM9vUqoyTbM/hwXRvAJTyariJDm4gj/WLSeMod5x4UaUmsGrbJhgj8bQ6y2XRUNHREWnhqWotHuOWCEP+t3vFKVPvJyAK+vtJrX8LJtlFAJKbQVp44Uz4acglRnNn4Ujc8OpWMsWjTvDa2P1vyJK3LewgPhDR9LKcx0+qin2Qh4RvIKO9NCMeLulonj/5Zi+KDW3Gam2Yw==
-X-YMail-OSG: qW3xPLQVM1m2c1H81xahWx3qlSZu8F_Lr_Cl73rCDyNDum_TLDwSpW7z.sp3SyN
- mltje3Tok4StWvPhWZweyUcML_lhypm33YfNfZEnrkjN8MQyc0UA3yhZFxJjtg0Ic2icWjRPNjlX
- jM9ZEjfeY0M8IMEL1NJTQm1DAsDr615VcueO86q4RN2aaD9gvut_k7PWpkhavrfGKdVML6r4smYb
- mWOX6q8Pn5oEmZuWJPg70GzoHrdJve14Vw3ff1c3xOkcvCY9viEu3GwCPCElnbqsE_FCrue.BBJP
- 9ggh6T7SAMaHoiQpaz.H2YLIJ_Yj.xynbeGnOCP9IBTbFKv1u4ZMd2g4W3MIHXfLSsnDslLCpC2p
- tORn7Q3FGuTx4iya_FnurvitGGBUVw4NSE85QW4iNwGSKs1gMT9GEJbgidxwlMK2ArBViveR4E4o
- D6nF9yuF9riMRMjTAIV8miLc5gytFQAQXeHB6LdpmPQR2b.n4OuLTgnV45xioVD5P4ekOkOSX3LD
- BoiHlU0mX06PQV9sROLHJcs0UgAr2epjaG.M6Wfk8lWPOaUH9NRT983Qtm7bee5rvcHqx3tUysJF
- vWMLhj8Ykkv.rzpLEuvTEiFZcyE_zsI53d1svD_bp2rNZPfnU78lnUmeTxgoOpFLjNeWx_qTJSvG
- BQm6tBm7aeqWAWOtDPCgNs1bs8y.mXmnkjL45tkpnYGxp6M9VH5qzzQzVHMe2O1uHc9nkecfUIsg
- q9g360l3GYfxlbwDbqYw9F9veROXatuk0_vcHbBP2QQIy4IsRHluH1NG5Uj9yUX0Ouu0k_mVq091
- ewqUoehVqcnuvm0fDVNX5n3LDAMj3cVRq0XtsqKcUTjGs5nOFBjDN2lq0P.U46d7nVfXQMO5ylvQ
- dlQ0FMfsFuDs4cJz4j_OhpzudwGQd17O37xzmFE5VDiLQZXVFzdlm7qJiJ.BxtC_7JFkHgI8ennq
- cNi_k57MkII3DYQHmpf51SvrVvPT5rSUCUrPOH3oGSg5tp1.zER8tQBtAv4MfdOzDdIjaFt9PU_F
- hWzEUFeCZDuDnh7r88si4zww4K6cy30J79J2xYvNxjBAWSNXBpVQQl2uqRbnyKinCxs_VDsgSRRC
- _XgvPtSZUxVeXvp0DGJH3RoUuE7iSEwd9hyr62k2d15HOYIBQ1L5LswrR2ATpBMieQLWPB4aLznK
- tm_YwNKBRZQ95N6NUKoSaFkHxphB79_BePaVIe.MZJoSEbUqRpPtiftZ8QYw76iV2xQYH5JsF5qs
- GGmq9h731_V.clodYOAyRM1YctNiFzdtUq5sMeXbLWH4ACDPishrrDDdeZcnBkRYGyPFbGqgq_Ci
- l4dA4Cz0nOR_G0aqt5B8mcHbMDJsynL0haQJNmARd07CF_SRnB4pYg8SoRrmqDbAkaildewQ5guf
- V6ZA24PaOym2MHzlK4GjzQBNhLVwweuKMhYHP6KERK.6bpKF4RWf7pwawfu98Y8bjNHz0dSCTLiT
- nf.2ycsfn.Im7teTv2bfZ2zBEQG0HtzofVsIzI1snqIyeY_CDKz6T8KsaVRGYD6A_b0n61PbASci
- utwqY.6l4JRm.puGzPr8rJ6fuhZDn.mfPy7JxZdQuZ8aZg4aiChkNmmMtecUj0UrtI5jrDI3r3Oj
- Mu89MFME.1tgt00Oz3Zyh4NL1_uZg7Srs4Vd9sqahOqEyd9Hjj.B15O0O68cDjlL7QAC51WulNed
- j7KA8zG8MNZ5xvjx9lUyJY56wRgMgGQa_BxDh.CvOTVG8wev8dYahF_c.zVhaaOpSwqpsLIFlCUp
- BRdmLejV2A14XtSfvjctqqQpNO8JudrE1vZlGwvh.2yDotdt413rzw7bZ672K8iSIE5npvRmmFMB
- C.hnd0EujWK.Yy6VUpIEvlRvQuUo6Oo0n8kX7kac7jl1OJ2aJRN5haCwrGmQVLrz7RP.rLBDo.u7
- 8KAiTU1KIOClnQIsdCESwIvyFVPbHpNy3KGT40983yIuUq6lVaVARu6dunzEh1Gpfk0WPwMMxHCC
- 0cwk293FW7m7_Rq5ASBE_DjIpJCBm9NF9nToZxSZ3ZbsArb250sGhAmmAw_JX44PJ4TESkmrCf9S
- IhFLe7CbYtTZ3.e409JlFVEDa.ctpMOWUHGuFzT15dCzgrFkxaStATq07q8MRsaPtytNCi1xYtpz
- 0iqiLR_2DX_5JnqbhpmA7oH7Y1TQOVZ7DzqsSM86x5s0wFrEUpgzyDwex8beWPqBvyFeX5aYqjR9
- BhbrfkhOpqrYKUVBiujQ0S9LX1UDLjKEPw_X2HMWGauVrmG9cYRPbFGpEJyh0THGb.Kf2jaS5MaB
- BtBKVYo5QZ.whup9UEV5NtHzgtxVOhh0TgbYDlQCoKj3I0QUaNg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 14 Sep 2021 00:17:03 +0000
-Received: by kubenode514.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID dbd16c7549513381c3ce92384c0d1ee0;
-          Tue, 14 Sep 2021 00:17:01 +0000 (UTC)
-Subject: Re: Regression in unix stream sockets with the Smack LSM
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Jiang Wang <jiang.wang@bytedance.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-References: <a507efa7-066b-decf-8605-89cdb0ac1951.ref@schaufler-ca.com>
- <a507efa7-066b-decf-8605-89cdb0ac1951@schaufler-ca.com>
- <CAHC9VhR9SKX_-SAmtcCj+vuUvcdq-SWzKs86BKMjBcC8GhJ1gg@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <8b5f2cc8-4a3e-8e33-9161-4a68a61e9ad7@schaufler-ca.com>
-Date:   Mon, 13 Sep 2021 17:16:59 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Mon, 13 Sep 2021 21:51:44 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F145CC061764
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 18:50:27 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id c21so9416062edj.0
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 18:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jPu3h9CQPcnJEoZBnk22cJi+iEEAQklCzeiD4Yt6F+4=;
+        b=ViM5QgV3bdhBUnRbzSzh9HBc/gtTqBCotJ+JMSFQthJmEDXZ9S9mjR1RKsWsWlI3D/
+         DvpQAeCLfEdvvtfSo0kxE0IL7QiAMaQeHPwLKM5DSFGsAu+o5T+hXxZy3zq0vI4ArzZu
+         cGA2HBMNSt56w0+6BO3RwBu6GVVjRsR6v6PjsTnK9pSz25FxtFWjPG4vmvhyiLFoqNcl
+         x42bOj4TXZrV2i1+MvQMWj4Dc8JJLhyVIS0GaMF1NPB++uv9dab/nVRbOvkD1Pt4jx8Y
+         JE8FZo7CE6G5j6ErdyzN5p/04LD8zrnYw2TRBSLojwarDBtqFnxHcCQoYFFadNIrVpiI
+         lZrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jPu3h9CQPcnJEoZBnk22cJi+iEEAQklCzeiD4Yt6F+4=;
+        b=piky70TU10zsdd1wEjIlkFvlE/gZqQLFhe6tdF2l2K8VNE0jpSHbSfcIEAfOFGIUDa
+         E4I4cpXy4Hn5m8FaZxKYb8JaV4piussSAeyYk1Xaitnp5DOFGxxzX39iN1Ss90isWkUr
+         gd1P4isRqLPqz43V7Vicq7sD0mRnqk+4j7vy1f0PYv1L9LpPVc7rwzzJuwKdv/EuiMgH
+         Kv4YByWi8lDH4ovvVUnTQMDRkZiW0mSFr+8DJFBBxWdxAJOvVXs0FJpROn2kfOC/u6go
+         R00V96eeAeTcUr1+bbNG7OIyGfK5iZuyWlkkFAcN11vhzibmsW9XITTMUHfgzS4FxaHR
+         Xu1A==
+X-Gm-Message-State: AOAM5328kxS7Mw+RXmtYx9BHpi1BS+YmsFy19tk+rCKmzaHvGeJrTpvp
+        7VXWYK/RDsCbh0EPJZFVQA3BYZ2SvCtHeo+Neggo
+X-Google-Smtp-Source: ABdhPJxh9C/8a1CsAbh15aNiNt0zThWTeKtkQZUPvHU1ASlce16mrq98gj9qsXKgpDoK44hWmc7N9M7URgGcpkj+mxk=
+X-Received: by 2002:a05:6402:13d0:: with SMTP id a16mr12628569edx.155.1631584226307;
+ Mon, 13 Sep 2021 18:50:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhR9SKX_-SAmtcCj+vuUvcdq-SWzKs86BKMjBcC8GhJ1gg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.19013 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
+ <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
+ <20210826163230.GF490529@madcap2.tricolour.ca> <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+ <20210827133559.GG490529@madcap2.tricolour.ca> <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
+ <20210828150356.GH490529@madcap2.tricolour.ca> <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
+ <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
+ <20210910005858.GL490529@madcap2.tricolour.ca> <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 13 Sep 2021 21:50:15 -0400
+Message-ID: <CAHC9VhTrimTds_miuyRhhHjoG_Fhmk2vH7G3hKeeFWO3BdLpKw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     sgrubb@redhat.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-audit@redhat.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/13/2021 4:47 PM, Paul Moore wrote:
-> On Mon, Sep 13, 2021 at 6:53 PM Casey Schaufler <casey@schaufler-ca.com=
-> wrote:
->> Commit 77462de14a43f4d98dbd8de0f5743a4e02450b1d
->>
->>         af_unix: Add read_sock for stream socket types
->>
->> introduced a regression in UDS socket connections for the Smack LSM.
->> I have not tracked done the details of why the change broke the code,
->> but this is where bisecting the kernel indicates the problem lies, and=
-
->> I have verified that reverting this change repairs the problem.
->>
->> You can verify the problem with the Smack test suite:
->>
->>         https://github.com/smack-team/smack-testsuite.git
->>
->> The failing test is tests/uds-access.sh.
->>
->> I have not looked to see if there's a similar problem with SELinux.
->> There may be, but if there isn't it doesn't matter, there's still a
->> bug.
-> FWIW, the selinux-testsuite tests ran clean today with v5.15-rc1 (it
-> looks like this code is only in v5.15) but as Casey said, a regression
-> is a regression.
+On Mon, Sep 13, 2021 at 3:23 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Thu, Sep 9, 2021 at 8:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2021-09-01 15:21, Paul Moore wrote:
+> > > On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > I did set a syscall filter for
+> > > > >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
+> > > > > and that yielded some records with a couple of orphans that surprised me
+> > > > > a bit.
+> > > >
+> > > > Without looking too closely at the log you sent, you can expect URING
+> > > > records without an associated SYSCALL record when the uring op is
+> > > > being processed in the io-wq or sqpoll context.  In the io-wq case the
+> > > > processing is happening after the thread finished the syscall but
+> > > > before the execution context returns to userspace and in the case of
+> > > > sqpoll the processing is handled by a separate kernel thread with no
+> > > > association to a process thread.
+> > >
+> > > I spent some time this morning/afternoon playing with the io_uring
+> > > audit filtering capability and with your audit userspace
+> > > ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
+> > > the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
+> > > map the io_uring ops correctly), but I know you mentioned you have a
+> > > number of fixes/improvements still as a work-in-progress there so I'm
+> > > not too concerned.  The important part is that the kernel pieces look
+> > > to be working correctly.
+> >
+> > Ok, I have squashed and pushed the audit userspace support for iouring:
+> >         https://github.com/rgbriggs/audit-userspace/commit/e8bd8d2ea8adcaa758024cb9b8fa93895ae35eea
+> >         https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghak-iouring-filtering.v2.1
+> > There are test rpms for f35 here:
+> >         http://people.redhat.com/~rbriggs/ghak-iouring/git-e8bd8d2-fc35/
+> >
+> > userspace v2 changelog:
+> > - check for watch before adding perm
+> > - update manpage to include filesystem filter
+> > - update support for the uring filter list: doc, -U op, op names
+> > - add support for the AUDIT_URINGOP record type
+> > - add uringop support to ausearch
+> > - add uringop support to aureport
+> > - lots of bug fixes
+> >
+> > "auditctl -a uring,always -S ..." will now throw an error and require
+> > "-U" instead.
 >
-> Casey, what actually fails on the Smack system with this commit?
+> Thanks Richard.
+>
+> FYI, I rebased the io_uring/LSM/audit patchset on top of v5.15-rc1
+> today and tested both with your v1.0 and with your v2.1 branch and the
+> various combinations seemed to work just fine (of course the v2.1
+> userspace branch was more polished, less warts, etc.).  I'm going to
+> go over the patch set one more time to make sure everything is still
+> looking good, write up an updated cover letter, and post a v3 revision
+> later tonight with the hope of merging it into -next later this week.
 
-It's a simple
-	"socat - UNIX-LISTEN:path"
-	"socat - UNIX-CONNECT:path"
+Best laid plans of mice and men ...
 
-In one case the processes have the same Smack label,
-and that usually succeeds. I'm trying to track down exactly when
-it doesn't. The case where the processes have different Smack labels
-but a rule allows them mutual write access always fails. I *think*
-that's because the underlying UDS code is now requiring read access it
-didn't used to. I'm trying to track that down, too.=20
+It turns out the LSM hook macros are full of warnings-now-errors that
+should likely be resolved before sending anything LSM related to
+Linus.  I'll post v3 once I fix this, which may not be until tomorrow.
 
+(To be clear, the warnings/errors aren't new to this patchset, I'm
+likely just the first person to notice them.)
 
+-- 
+paul moore
+www.paul-moore.com
