@@ -2,78 +2,89 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268EAC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 09:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210FEC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 10:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05AD16113B
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 09:53:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF04361108
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Sep 2021 10:28:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbhINJyh (ORCPT
+        id S229924AbhINKaH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Sep 2021 05:54:37 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:9040 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230310AbhINJyd (ORCPT
+        Tue, 14 Sep 2021 06:30:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229591AbhINKaG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Sep 2021 05:54:33 -0400
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4H7zCg1fbPzVwhs;
-        Tue, 14 Sep 2021 17:52:15 +0800 (CST)
-Received: from dggema769-chm.china.huawei.com (10.1.198.211) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2308.8; Tue, 14 Sep 2021 17:53:14 +0800
-Received: from localhost (10.174.179.215) by dggema769-chm.china.huawei.com
- (10.1.198.211) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.8; Tue, 14
- Sep 2021 17:53:13 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <john.johansen@canonical.com>, <jmorris@namei.org>,
-        <serge@hallyn.com>, <trix@redhat.com>, <yuehaibing@huawei.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] apparmor: Remove unused inline function label_is_visible()
-Date:   Tue, 14 Sep 2021 17:53:12 +0800
-Message-ID: <20210914095313.11496-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Tue, 14 Sep 2021 06:30:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8FCD660F21;
+        Tue, 14 Sep 2021 10:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631615329;
+        bh=IothWu7mCcEpfkccHVCp122mEcJcmkyW3Tzq9Brg0d4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TI7IjmyK6rB156grO+FnLIpz+kC8luvhmMaVvZCScsz/BZ21THgUKHYZtg7IJothM
+         ubTq3/jqoIzMWOXx0k9tZWs74+4pqqtCvR8cw22fgL+8g6DiXBLeBBCWYHWyIcYASf
+         Nx85o8CSRuu/hpoyhl98dppRgyOmmZ4NrWdKDlQepBkPkjZ+6LTrJTv7pKuY9cQ3ck
+         SLaaLdsOUxrd+KO4JZRIqqe+y6g2d6cZlqpYtaAVIBEGNXa4mMSTXwpDBe7xgwED+Q
+         XuyM6DXhtB7huGV1Kstqv0ft6ZT9CaK560MI9gTuyYN2vDhoJ51KM1AknRs/RWiRJh
+         +KSQIePrkRZrA==
+From:   Will Deacon <will@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] hardening: Default to INIT_STACK_ALL_ZERO if CC_HAS_AUTO_VAR_INIT_ZERO
+Date:   Tue, 14 Sep 2021 11:28:37 +0100
+Message-Id: <20210914102837.6172-1-will@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.174.179.215]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggema769-chm.china.huawei.com (10.1.198.211)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There is no caller in tree, so can remove it.
+CC_HAS_AUTO_VAR_INIT_ZERO requires a supported set of compiler options
+distinct from those needed by CC_HAS_AUTO_VAR_INIT_PATTERN, Fix up
+the Kconfig dependency for INIT_STACK_ALL_ZERO to test for the former
+instead of the latter, as these are the options passed by the top-level
+Makefile.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: dcb7c0b9461c ("hardening: Clarify Kconfig text for auto-var-init")
+Signed-off-by: Will Deacon <will@kernel.org>
 ---
- security/apparmor/label.c | 6 ------
- 1 file changed, 6 deletions(-)
 
-diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-index 6222fdfebe4e..a86ac938ca88 100644
---- a/security/apparmor/label.c
-+++ b/security/apparmor/label.c
-@@ -1255,12 +1255,6 @@ struct aa_label *aa_label_merge(struct aa_label *a, struct aa_label *b,
- 	return label;
- }
- 
--static inline bool label_is_visible(struct aa_profile *profile,
--				    struct aa_label *label)
--{
--	return aa_ns_visible(profile->ns, labels_ns(label), true);
--}
--
- /* match a profile and its associated ns component if needed
-  * Assumes visibility test has already been done.
-  * If a subns profile is not to be matched should be prescreened with
+I just noticed this while reading the code and I suspect it doesn't really
+matter in practice.
+
+ security/Kconfig.hardening | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 90cbaff86e13..341e2fdcba94 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -29,7 +29,7 @@ choice
+ 	prompt "Initialize kernel stack variables at function entry"
+ 	default GCC_PLUGIN_STRUCTLEAK_BYREF_ALL if COMPILE_TEST && GCC_PLUGINS
+ 	default INIT_STACK_ALL_PATTERN if COMPILE_TEST && CC_HAS_AUTO_VAR_INIT_PATTERN
+-	default INIT_STACK_ALL_ZERO if CC_HAS_AUTO_VAR_INIT_PATTERN
++	default INIT_STACK_ALL_ZERO if CC_HAS_AUTO_VAR_INIT_ZERO
+ 	default INIT_STACK_NONE
+ 	help
+ 	  This option enables initialization of stack variables at
 -- 
-2.17.1
+2.33.0.309.g3052b89438-goog
 
