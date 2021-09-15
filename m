@@ -2,362 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C1EC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 17:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9E6C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 17:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22A1A60FBF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 17:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FF2F610E9
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 17:57:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230155AbhIORbO (ORCPT
+        id S230264AbhIOR7B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Sep 2021 13:31:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229465AbhIORbO (ORCPT
+        Wed, 15 Sep 2021 13:59:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229479AbhIOR7A (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Sep 2021 13:31:14 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7371C061574
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Sep 2021 10:29:54 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id k4so7522182lfj.7
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Sep 2021 10:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4S1PpO9lSJ1Wd14e9W10Q5srPqp9E33rs5In3v8xrMY=;
-        b=GTLjtWThlHkBmvJjm7fPtNRGZxgG1v/Ezlyl1qwawF4nFPPPbOtQ38afgqOVBZkE9Y
-         7BDnKe0sdvrriLk4V8cb/oLDj/udRmTmayzUQt6So8TH/irylPIXxXu6E9fHTjZYPYaN
-         IdE+pLbFBQROltsNzEuDKruLxoC3GW+Q6cyk4guzFwalIahADOK4YPb9hUCGfO8saH1i
-         ybSSoolKqzU0dbbqlUQ2P9qdok/lNf6yhE9RK0PMimnlfTW9x1E4XOLE3MRau2aSJSQ8
-         mE9wbSu2cvh3c5grzm6RUiHC+E8h94cfbYQoCoiHB0q5rpnCj6bsKjtEPPpQ2DMzddSY
-         6ktg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4S1PpO9lSJ1Wd14e9W10Q5srPqp9E33rs5In3v8xrMY=;
-        b=Nr+BX3XwTSspWMGG/Y2LaRByxBwS1hvRco3NM8HWEf9LMPcHZgR1wV1J1IMY3vy1f/
-         vTfD/8AYpjiCiHCroEZHQqrYvB30rhoMO4aZwp7hwLKYcBXDxtrRSR1bPvK/aiAfke/5
-         iOB+V7rKYekJDsTBN1rQeOmPKNGvXkaGfyczJi08y4nCbmULH8wZ95MzaU+xQ3uJDijz
-         6e0OugmQfz9JK/15ZYufl52AXkLbBgX6zhHgFbOQdZmB6rCo32BNMMbGtbA3tgkn42hG
-         jMDwFVutfPNuNuI9sxe/oR1lJ1RkDeYJqW36uEtFxe7WVUsdWphNxrxu91VOj7LWK7E0
-         Pw/Q==
-X-Gm-Message-State: AOAM530SGfSmfHWP5APOWSdkJgS4aZzp5iivP7LUL72oI8zfN/g7oVwl
-        06GrXpMDpweB3avL7SX9S8/ZyaBvMWRJpAwywPnkEQ==
-X-Google-Smtp-Source: ABdhPJxPv77SBv93nfxD287C8pPVAUUQThYvtWfSSSEj45L4OF4d5Q4/3ayV/E7681T6fn+NKeJmv3OgU8eFhDY/51s=
-X-Received: by 2002:a05:6512:3ba0:: with SMTP id g32mr805734lfv.216.1631726992841;
- Wed, 15 Sep 2021 10:29:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <a507efa7-066b-decf-8605-89cdb0ac1951.ref@schaufler-ca.com>
- <a507efa7-066b-decf-8605-89cdb0ac1951@schaufler-ca.com> <CAHC9VhR9SKX_-SAmtcCj+vuUvcdq-SWzKs86BKMjBcC8GhJ1gg@mail.gmail.com>
- <dd58bbf5-7983-ca26-c335-6bf8e492fcaa@schaufler-ca.com>
-In-Reply-To: <dd58bbf5-7983-ca26-c335-6bf8e492fcaa@schaufler-ca.com>
-From:   "Jiang Wang ." <jiang.wang@bytedance.com>
-Date:   Wed, 15 Sep 2021 10:29:42 -0700
-Message-ID: <CAP_N_Z8CWhpCDyyQAwM4hkEw0P_6DYTAUMtwKU4zp0+oSb+Mtw@mail.gmail.com>
-Subject: Re: Re: Regression in unix stream sockets with the Smack LSM
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+        Wed, 15 Sep 2021 13:59:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D72FB61130;
+        Wed, 15 Sep 2021 17:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631728661;
+        bh=yrPKjuUAh/sdrdlpsTPesM9BsBY/6gkpojv1C9xWAqM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=JN4FWT29WA8Z/iQH8pcgaOxa32DCkxL0QtG/mDJAkZlzU9xXBjlR8oayw4o5UWM4Y
+         zQtFBFZQkyhvLiimmiRRIaOz1oTYqEH8Cfo98SgoFuOrszdiqvyKwrHTzLSVkJfhm4
+         X+TXJnMNrLt22+J1zv/S8TTsqrUQmfKeyGLcmX4PbndLH9lTf18xCCw0IRiSE3tJkv
+         69ASCnzHHNfcn37B4EGmgtbYd59AE77Wq9StUtyeXWgX9X9ufg1RhLAL3CBbGwDW7v
+         biZrSipYtrE3H35ITRT2/gGTlkNJyaV+tXwQgwVSGHaScrE7S70cqLlnnOj9cv/hs9
+         jsmcF04IvUwZw==
+Message-ID: <bee0ebc354a651ea5b263897f9b155dc604fa7c5.camel@kernel.org>
+Subject: Re: [PATCH v6 00/13] Enroll kernel keys thru MOK
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
+        torvalds@linux-foundation.org, scott.branden@broadcom.com,
+        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
+        ardb@kernel.org, nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
+        konrad.wilk@oracle.com
+Date:   Wed, 15 Sep 2021 20:57:39 +0300
+In-Reply-To: <20210914211416.34096-1-eric.snowberg@oracle.com>
+References: <20210914211416.34096-1-eric.snowberg@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+On Tue, 2021-09-14 at 17:14 -0400, Eric Snowberg wrote:
+> Back in 2013 Linus requested a feature to allow end-users to have the=20
+> ability "to add their own keys and sign modules they trust". This was
+> his *second* order outlined here [1]. There have been many attempts=20
+> over the years to solve this problem, all have been rejected.  Many=20
+> of the failed attempts loaded all preboot firmware keys into the kernel,
+> including the Secure Boot keys. Many distributions carry one of these=20
+> rejected attempts [2], [3], [4]. This series tries to solve this problem=
+=20
+> with a solution that takes into account all the problems brought up in=
+=20
+> the previous attempts.
+>=20
+> On UEFI based systems, this series introduces a new Linux kernel keyring=
+=20
+> containing the Machine Owner Keys (MOK) called machine. It also defines
+> a new MOK variable in shim. This variable allows the end-user to decide=
+=20
+> if they want to load MOK keys into the machine keyring. Mimi has suggeste=
+d=20
+> that only CA keys contained within the MOK be loaded into the machine=20
+> keyring. All other certs will load into the platform keyring instead.
+>=20
+> By default, nothing changes; MOK keys are not loaded into the machine
+> keyring.  They are only loaded after the end-user makes the decision=20
+> themselves.  The end-user would set this through mokutil using a new=20
+> --trust-mok option [5]. This would work similar to how the kernel uses=
+=20
+> MOK variables to enable/disable signature validation as well as use/ignor=
+e=20
+> the db. Any kernel operation that uses either the builtin or secondary=
+=20
+> trusted keys as a trust source shall also reference the new machine=20
+> keyring as a trust source.
+>=20
+> Secure Boot keys will never be loaded into the machine keyring.  They
+> will always be loaded into the platform keyring.  If an end-user wanted=
+=20
+> to load one, they would need to enroll it into the MOK.
+>=20
+> Steps required by the end user:
+>=20
+> Sign kernel module with user created key:
+> $ /usr/src/kernels/$(uname -r)/scripts/sign-file sha512 \
+>    machine_signing_key.priv machine_signing_key.x509 my_module.ko
+>=20
+> Import the key into the MOK
+> $ mokutil --import machine_signing_key.x509
+>=20
+> Setup the kernel to load MOK keys into the .machine keyring
+> $ mokutil --trust-mok
+>=20
+> Then reboot, the MokManager will load and ask if you want to trust the
+> MOK key and enroll the MOK into the MOKList.  Afterwards the signed kerne=
+l
+> module will load.
+>=20
+> I have included links to both the mokutil [5] and shim [6] changes I
+> have made to support this new functionality.
 
-Thanks for the detailed report.  I will check what causes the read to fail.
+How hard it is to self-compile shim and boot it with QEMU (I
+do not know even the GIT location of Shim)?
 
-Regards,
+I'm all my SGX testing already with TianoCore and QEMU so I
+thought it might not be that huge stretch to get testing env
+for this.
 
-Jiang
-
-On Wed, Sep 15, 2021 at 9:52 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 9/13/2021 4:47 PM, Paul Moore wrote:
-> > On Mon, Sep 13, 2021 at 6:53 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> Commit 77462de14a43f4d98dbd8de0f5743a4e02450b1d
-> >>
-> >>         af_unix: Add read_sock for stream socket types
-> >>
-> >> introduced a regression in UDS socket connections for the Smack LSM.
-> >> I have not tracked done the details of why the change broke the code,
-> >> but this is where bisecting the kernel indicates the problem lies, and
-> >> I have verified that reverting this change repairs the problem.
-> >>
-> >> You can verify the problem with the Smack test suite:
-> >>
-> >>         https://github.com/smack-team/smack-testsuite.git
-> >>
-> >> The failing test is tests/uds-access.sh.
-> >>
-> >> I have not looked to see if there's a similar problem with SELinux.
-> >> There may be, but if there isn't it doesn't matter, there's still a
-> >> bug.
-> > FWIW, the selinux-testsuite tests ran clean today with v5.15-rc1 (it
-> > looks like this code is only in v5.15) but as Casey said, a regression
-> > is a regression.
-> >
-> > Casey, what actually fails on the Smack system with this commit?
->
-> This problem occurs with security=none as well as with security=smack.
->
-> There isn't a problem with connect, that always works correctly.
-> The problem is an unexpected read() failure in the connecting process.
-> This doesn't occur all the time, and sometimes happens in the first
-> of my two tests, sometimes the second, sometimes neither and, you guessed
-> it, sometimes both.
->
-> Here's a sample socat log demonstrating the problem. The first run,
-> ending at "uds-access RC=0" behaves as expected. The second, ending
-> at "uds-access RC=1", demonstrates the read failure. This case was
-> run with Smack enabled, but I see the same problem with the same
-> unpredictability on the same kernel with security=none.
->
-> I've tried to convince myself that there's a flaw in the way I've
-> set up the scripts. They've been pretty robust and I've never seen
-> socat behaving erratically before. I've instrumented the kernel
-> code and all the security checks are behaving as expected. Plus,
-> as I mentioned above, the problem also occurs without an LSM.
->
-> 2021/09/15 08:49:50 socat[2215] D getpid()
-> 2021/09/15 08:49:50 socat[2215] D getpid() -> 2215
-> 2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_PID", "2215", 1)
-> 2021/09/15 08:49:50 socat[2215] D setenv() -> 0
-> 2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_PPID", "2215", 1)
-> 2021/09/15 08:49:50 socat[2215] D setenv() -> 0
-> 2021/09/15 08:49:50 socat[2215] I socat by Gerhard Rieger and contributors - see www.dest-unreach.org
-> 2021/09/15 08:49:50 socat[2215] I This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
-> 2021/09/15 08:49:50 socat[2215] I This product includes software written by Tim Hudson (tjh@cryptsoft.com)
-> 2021/09/15 08:49:50 socat[2215] D socat version 1.7.4.1 on Jan 27 2021 00:00:00
-> 2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_VERSION", "1.7.4.1", 1)
-> 2021/09/15 08:49:50 socat[2215] D setenv() -> 0
-> 2021/09/15 08:49:50 socat[2215] D running on Linux version #58 SMP Wed Sep 15 08:40:38 PDT 2021, release 5.15.0-rc1bisect, machine x86_64
->
-> 2021/09/15 08:49:50 socat[2215] D argv[0]: "socat"
-> 2021/09/15 08:49:50 socat[2215] D argv[1]: "-d"
-> 2021/09/15 08:49:50 socat[2215] D argv[2]: "-d"
-> 2021/09/15 08:49:50 socat[2215] D argv[3]: "-d"
-> 2021/09/15 08:49:50 socat[2215] D argv[4]: "-d"
-> 2021/09/15 08:49:50 socat[2215] D argv[5]: "-"
-> 2021/09/15 08:49:50 socat[2215] D argv[6]: "UNIX-CONNECT:./targets/uds-notroot/uds-access-socket"
-> 2021/09/15 08:49:50 socat[2215] D sigaction(1, 0x7fffaec50b50, 0x0)
-> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> 2021/09/15 08:49:50 socat[2215] D sigaction(2, 0x7fffaec50b50, 0x0)
-> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> 2021/09/15 08:49:50 socat[2215] D sigaction(3, 0x7fffaec50b50, 0x0)
-> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> 2021/09/15 08:49:50 socat[2215] D sigaction(4, 0x7fffaec50b50, 0x0)
-> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> 2021/09/15 08:49:50 socat[2215] D sigaction(6, 0x7fffaec50b50, 0x0)
-> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> 2021/09/15 08:49:50 socat[2215] D sigaction(7, 0x7fffaec50b50, 0x0)
-> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> 2021/09/15 08:49:50 socat[2215] D sigaction(8, 0x7fffaec50b50, 0x0)
-> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> 2021/09/15 08:49:50 socat[2215] D sigaction(11, 0x7fffaec50b50, 0x0)
-> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> 2021/09/15 08:49:50 socat[2215] D sigaction(15, 0x7fffaec50b50, 0x0)
-> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> 2021/09/15 08:49:50 socat[2215] D signal(13, 0x1)
-> 2021/09/15 08:49:50 socat[2215] D signal() -> 0x0
-> 2021/09/15 08:49:50 socat[2215] D atexit(0x55aa5d645110)
-> 2021/09/15 08:49:50 socat[2215] D atexit() -> 0
-> 2021/09/15 08:49:50 socat[2215] D xioopen("-")
-> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
-> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f0139d0
-> 2021/09/15 08:49:50 socat[2215] D malloc(1024)
-> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f013d30
-> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
-> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f014140
-> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
-> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f014bc0
-> 2021/09/15 08:49:50 socat[2215] D isatty(0)
-> 2021/09/15 08:49:50 socat[2215] D isatty() -> 0
-> 2021/09/15 08:49:50 socat[2215] D isatty(1)
-> 2021/09/15 08:49:50 socat[2215] D isatty() -> 0
-> 2021/09/15 08:49:50 socat[2215] D malloc(128)
-> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f014f00
-> 2021/09/15 08:49:50 socat[2215] D malloc(128)
-> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f014f90
-> 2021/09/15 08:49:50 socat[2215] N reading from and writing to stdio
-> 2021/09/15 08:49:50 socat[2215] D xioopen("UNIX-CONNECT:./targets/uds-notroot/uds-access-socket")
-> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
-> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f015020
-> 2021/09/15 08:49:50 socat[2215] D malloc(1024)
-> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f015360
-> 2021/09/15 08:49:50 socat[2215] D malloc(128)
-> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f015770
-> 2021/09/15 08:49:50 socat[2215] N opening connection to AF=1 "./targets/uds-notroot/uds-access-socket"
-> 2021/09/15 08:49:50 socat[2215] D socket(1, 1, 0)
-> 2021/09/15 08:49:50 socat[2215] I socket(1, 1, 0) -> 5
-> 2021/09/15 08:49:50 socat[2215] D fcntl(5, 2, 1)
-> 2021/09/15 08:49:50 socat[2215] D fcntl() -> 0
-> 2021/09/15 08:49:50 socat[2215] D connect(5, {1,AF=1 "./targets/uds-notroot/uds-access-socket"}, 41)
-> 2021/09/15 08:49:50 socat[2215] D connect() -> 0
-> 2021/09/15 08:49:50 socat[2215] D getsockname(5, 0x7fffaec50580, 0x7fffaec50564{112})
-> 2021/09/15 08:49:50 socat[2215] D getsockname(, {AF=1 "<anon>"}, {2}) -> 0
-> 2021/09/15 08:49:50 socat[2215] N successfully connected from local address AF=1 "uds-notroot/ud\xEE\xEE\xEE\xEEcess-socket")\n"
-> 2021/09/15 08:49:50 socat[2215] I resolved and opened all sock addresses
-> 2021/09/15 08:49:50 socat[2215] D posix_memalign(0x7fffaec50b28, 4096, 16385)
-> 2021/09/15 08:49:50 socat[2215] D posix_memalign(...) -> 0
-> 2021/09/15 08:49:50 socat[2215] N starting data transfer loop with FDs [0,1] and [5,5]
-> 2021/09/15 08:49:50 socat[2215] D data loop: sock1->eof=0, sock2->eof=0, closing=0, wasaction=1, total_to={0.000000}
-> 2021/09/15 08:49:50 socat[2215] D select(6, &0x21, &0x22, &0x0, NULL/0.000000)
-> 2021/09/15 08:49:50 socat[2215] D select -> (, 0x21, 0x22, 0x0, NULL/0.000000), 4
-> 2021/09/15 08:49:50 socat[2215] D read(0, 0x55aa5f016000, 8192)
-> 2021/09/15 08:49:50 socat[2215] D read -> 4
-> 2021/09/15 08:49:50 socat[2215] D write(5, 0x55aa5f016000, 4)
-> Pop
-> 2021/09/15 08:49:50 socat[2215] D write -> 4
-> 2021/09/15 08:49:50 socat[2215] I transferred 4 bytes from 0 to 5
-> 2021/09/15 08:49:50 socat[2215] D read(5, 0x55aa5f016000, 8192)
-> 2021/09/15 08:49:50 socat[2215] D read -> 4
-> 2021/09/15 08:49:50 socat[2215] D write(1, 0x55aa5f016000, 4)
-> Pop
-> 2021/09/15 08:49:50 socat[2215] D write -> 4
-> 2021/09/15 08:49:50 socat[2215] I transferred 4 bytes from 5 to 1
-> 2021/09/15 08:49:50 socat[2215] D data loop: sock1->eof=0, sock2->eof=0, closing=0, wasaction=1, total_to={0.000000}
-> 2021/09/15 08:49:50 socat[2215] D select(6, &0x21, &0x22, &0x0, NULL/0.000000)
-> 2021/09/15 08:49:50 socat[2215] D select -> (, 0x21, 0x22, 0x0, NULL/0.000000), 4
-> 2021/09/15 08:49:50 socat[2215] D read(0, 0x55aa5f016000, 8192)
-> 2021/09/15 08:49:50 socat[2215] D read -> 0
-> 2021/09/15 08:49:50 socat[2215] D read(5, 0x55aa5f016000, 8192)
-> 2021/09/15 08:49:50 socat[2215] D read -> 0
-> 2021/09/15 08:49:50 socat[2215] N socket 1 (fd 0) is at EOF
-> 2021/09/15 08:49:50 socat[2215] I shutdown(5, 1)
-> 2021/09/15 08:49:50 socat[2215] D shutdown()  -> 0
-> 2021/09/15 08:49:50 socat[2215] N socket 2 (fd 5) is at EOF
-> 2021/09/15 08:49:50 socat[2215] I shutdown(5, 2)
-> 2021/09/15 08:49:50 socat[2215] D shutdown()  -> 0
-> 2021/09/15 08:49:50 socat[2215] N exiting with status 0
-> 2021/09/15 08:49:50 socat[2215] D exit(0)
-> 2021/09/15 08:49:50 socat[2215] D starting xioexit()
-> 2021/09/15 08:49:50 socat[2215] D finished xioexit()
-> uds-access RC=0
-> 2021/09/15 08:49:52 socat[2240] D getpid()
-> 2021/09/15 08:49:52 socat[2240] D getpid() -> 2240
-> 2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_PID", "2240", 1)
-> 2021/09/15 08:49:52 socat[2240] D setenv() -> 0
-> 2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_PPID", "2240", 1)
-> 2021/09/15 08:49:52 socat[2240] D setenv() -> 0
-> 2021/09/15 08:49:52 socat[2240] I socat by Gerhard Rieger and contributors - see www.dest-unreach.org
-> 2021/09/15 08:49:52 socat[2240] I This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
-> 2021/09/15 08:49:52 socat[2240] I This product includes software written by Tim Hudson (tjh@cryptsoft.com)
-> 2021/09/15 08:49:52 socat[2240] D socat version 1.7.4.1 on Jan 27 2021 00:00:00
-> 2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_VERSION", "1.7.4.1", 1)
-> 2021/09/15 08:49:52 socat[2240] D setenv() -> 0
-> 2021/09/15 08:49:52 socat[2240] D running on Linux version #58 SMP Wed Sep 15 08:40:38 PDT 2021, release 5.15.0-rc1bisect, machine x86_64
->
-> 2021/09/15 08:49:52 socat[2240] D argv[0]: "socat"
-> 2021/09/15 08:49:52 socat[2240] D argv[1]: "-d"
-> 2021/09/15 08:49:52 socat[2240] D argv[2]: "-d"
-> 2021/09/15 08:49:52 socat[2240] D argv[3]: "-d"
-> 2021/09/15 08:49:52 socat[2240] D argv[4]: "-d"
-> 2021/09/15 08:49:52 socat[2240] D argv[5]: "-"
-> 2021/09/15 08:49:52 socat[2240] D argv[6]: "UNIX-CONNECT:./targets/uds-notroot/uds-access-socket"
-> 2021/09/15 08:49:52 socat[2240] D sigaction(1, 0x7ffcca7e26c0, 0x0)
-> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> 2021/09/15 08:49:52 socat[2240] D sigaction(2, 0x7ffcca7e26c0, 0x0)
-> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> 2021/09/15 08:49:52 socat[2240] D sigaction(3, 0x7ffcca7e26c0, 0x0)
-> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> 2021/09/15 08:49:52 socat[2240] D sigaction(4, 0x7ffcca7e26c0, 0x0)
-> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> 2021/09/15 08:49:52 socat[2240] D sigaction(6, 0x7ffcca7e26c0, 0x0)
-> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> 2021/09/15 08:49:52 socat[2240] D sigaction(7, 0x7ffcca7e26c0, 0x0)
-> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> 2021/09/15 08:49:52 socat[2240] D sigaction(8, 0x7ffcca7e26c0, 0x0)
-> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> 2021/09/15 08:49:52 socat[2240] D sigaction(11, 0x7ffcca7e26c0, 0x0)
-> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> 2021/09/15 08:49:52 socat[2240] D sigaction(15, 0x7ffcca7e26c0, 0x0)
-> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> 2021/09/15 08:49:52 socat[2240] D signal(13, 0x1)
-> 2021/09/15 08:49:52 socat[2240] D signal() -> 0x0
-> 2021/09/15 08:49:52 socat[2240] D atexit(0x560590a15110)
-> 2021/09/15 08:49:52 socat[2240] D atexit() -> 0
-> 2021/09/15 08:49:52 socat[2240] D xioopen("-")
-> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
-> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e899d0
-> 2021/09/15 08:49:52 socat[2240] D malloc(1024)
-> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e89d30
-> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
-> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8a140
-> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
-> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8abc0
-> 2021/09/15 08:49:52 socat[2240] D isatty(0)
-> 2021/09/15 08:49:52 socat[2240] D isatty() -> 0
-> 2021/09/15 08:49:52 socat[2240] D isatty(1)
-> 2021/09/15 08:49:52 socat[2240] D isatty() -> 0
-> 2021/09/15 08:49:52 socat[2240] D malloc(128)
-> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8af00
-> 2021/09/15 08:49:52 socat[2240] D malloc(128)
-> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8af90
-> 2021/09/15 08:49:52 socat[2240] N reading from and writing to stdio
-> 2021/09/15 08:49:52 socat[2240] D xioopen("UNIX-CONNECT:./targets/uds-notroot/uds-access-socket")
-> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
-> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8b020
-> 2021/09/15 08:49:52 socat[2240] D malloc(1024)
-> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8b360
-> 2021/09/15 08:49:52 socat[2240] D malloc(128)
-> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8b770
-> 2021/09/15 08:49:52 socat[2240] N opening connection to AF=1 "./targets/uds-notroot/uds-access-socket"
-> 2021/09/15 08:49:52 socat[2240] D socket(1, 1, 0)
-> 2021/09/15 08:49:52 socat[2240] I socket(1, 1, 0) -> 5
-> 2021/09/15 08:49:52 socat[2240] D fcntl(5, 2, 1)
-> 2021/09/15 08:49:52 socat[2240] D fcntl() -> 0
-> 2021/09/15 08:49:52 socat[2240] D connect(5, {1,AF=1 "./targets/uds-notroot/uds-access-socket"}, 41)
-> 2021/09/15 08:49:52 socat[2240] D connect() -> 0
-> 2021/09/15 08:49:52 socat[2240] D getsockname(5, 0x7ffcca7e20f0, 0x7ffcca7e20d4{112})
-> 2021/09/15 08:49:52 socat[2240] D getsockname(, {AF=1 "<anon>"}, {2}) -> 0
-> 2021/09/15 08:49:52 socat[2240] N successfully connected from local address AF=1 "uds-notroot/ud\xEE\xEE\xEE\xEEcess-socket")\n"
-> 2021/09/15 08:49:52 socat[2240] I resolved and opened all sock addresses
-> 2021/09/15 08:49:52 socat[2240] D posix_memalign(0x7ffcca7e2698, 4096, 16385)
-> 2021/09/15 08:49:52 socat[2240] D posix_memalign(...) -> 0
-> 2021/09/15 08:49:52 socat[2240] N starting data transfer loop with FDs [0,1] and [5,5]
-> 2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=0, sock2->eof=0, closing=0, wasaction=1, total_to={0.000000}
-> 2021/09/15 08:49:52 socat[2240] D select(6, &0x21, &0x22, &0x0, NULL/0.000000)
-> 2021/09/15 08:49:52 socat[2240] D select -> (, 0x1, 0x22, 0x0, NULL/0.000000), 3
-> 2021/09/15 08:49:52 socat[2240] D read(0, 0x560591e8c000, 8192)
-> 2021/09/15 08:49:52 socat[2240] D read -> 5
-> 2021/09/15 08:49:52 socat[2240] D write(5, 0x560591e8c000, 5)
-> 2021/09/15 08:49:52 socat[2240] D write -> 5
-> 2021/09/15 08:49:52 socat[2240] I transferred 5 bytes from 0 to 5
-> 2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=0, sock2->eof=0, closing=0, wasaction=1, total_to={0.000000}
-> 2021/09/15 08:49:52 socat[2240] D select(6, &0x21, &0x20, &0x0, NULL/0.000000)
-> 2021/09/15 08:49:52 socat[2240] D select -> (, 0x1, 0x20, 0x0, NULL/0.000000), 2
-> 2021/09/15 08:49:52 socat[2240] D read(0, 0x560591e8c000, 8192)
-> 2021/09/15 08:49:52 socat[2240] D read -> 0
-> 2021/09/15 08:49:52 socat[2240] N socket 1 (fd 0) is at EOF
-> 2021/09/15 08:49:52 socat[2240] I shutdown(5, 1)
-> 2021/09/15 08:49:52 socat[2240] D shutdown()  -> 0
-> 2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3, sock2->eof=0, closing=1, wasaction=1, total_to={0.000000}
-> 2021/09/15 08:49:52 socat[2240] D select(6, &0x20, &0x0, &0x0, &0.500000)
-> Snap
-> 2021/09/15 08:49:52 socat[2240] D select -> (, 0x20, 0x0, 0x0, &0.500000), 1
-> 2021/09/15 08:49:52 socat[2240] D read(5, 0x560591e8c000, 8192)
-> 2021/09/15 08:49:52 socat[2240] D read -> -1
-> 2021/09/15 08:49:52 socat[2240] E read(5, 0x560591e8c000, 8192): Invalid argument
-> 2021/09/15 08:49:52 socat[2240] N exit(1)
-> 2021/09/15 08:49:52 socat[2240] D starting xioexit()
-> 2021/09/15 08:49:52 socat[2240] I shutdown(5, 2)
-> 2021/09/15 08:49:52 socat[2240] D shutdown()  -> 0
-> 2021/09/15 08:49:52 socat[2240] D finished xioexit()
-> uds-access RC=1
->
->
->
->
+/Jarkko
