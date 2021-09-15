@@ -2,80 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE7FC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 06:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A4DC433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 07:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 806DF6121E
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 06:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A54C76121E
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 07:50:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236485AbhIOG4J (ORCPT
+        id S232025AbhIOHvm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Sep 2021 02:56:09 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3808 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236408AbhIOG4E (ORCPT
+        Wed, 15 Sep 2021 03:51:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44726 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231591AbhIOHvl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Sep 2021 02:56:04 -0400
-Received: from fraeml708-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4H8W9c0BTkz67Jjw;
-        Wed, 15 Sep 2021 14:52:20 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml708-chm.china.huawei.com (10.206.15.36) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Wed, 15 Sep 2021 08:54:43 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.008;
- Wed, 15 Sep 2021 08:54:43 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 01/13] diglim: Overview
-Thread-Topic: [PATCH v3 01/13] diglim: Overview
-Thread-Index: AQHXqYZfRxnX/6KOFkyr4fwMQ3melaujn2qAgAEJqYA=
-Date:   Wed, 15 Sep 2021 06:54:43 +0000
-Message-ID: <d6895db82ec440338b75821b5f1d0131@huawei.com>
-References: <20210914163401.864635-1-roberto.sassu@huawei.com>
-         <20210914163401.864635-2-roberto.sassu@huawei.com>
- <d642b9c5e2bef4a76535627dc84e76073078bf7e.camel@iki.fi>
-In-Reply-To: <d642b9c5e2bef4a76535627dc84e76073078bf7e.camel@iki.fi>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 15 Sep 2021 03:51:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id ADF2D60FC0;
+        Wed, 15 Sep 2021 07:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631692222;
+        bh=rOV6VdXOkJfIxOZPAprG0bTwTgNrwNK0GLwnyoOsXsw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CosvF/2mEpaBVAjk53vkw4rFZiBvUkNPDmFsfVfB8AfAS5yKMJtJV7Y0n9VW7nXSW
+         UvG1NsbzUEVdWxb/8+mUtvh2ifCubaNGGvEYAUm08wx36HbFK088m8v+2hra9wu2jh
+         sWoZW8Jj4vByrYnQTEiu1EQ1Y2ZR7IR3AbV7vvpaY/iknKCt+E26mYv1aHOG627H5M
+         xjE6Tql5nC5Ewy5IST3yo3/SRyx4pEgwAnAHgk0MW5MD4+50RRRk1RBjEFLW90V2ld
+         ohXEW9BtfzBlPBGqAa2MMXpaaSEYtPTUvU40gQ7po2aPVi681FStvYPDlvnLWk0x/p
+         1TjIrJPBhXsiA==
+Date:   Wed, 15 Sep 2021 08:50:17 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <masahiroy@kernel.org>, llvm@lists.linux.dev,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] hardening: Avoid harmless Clang option under
+ CONFIG_INIT_STACK_ALL_ZERO
+Message-ID: <20210915075011.GA7321@willie-the-truck>
+References: <20210914200203.1667751-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210914200203.1667751-1-keescook@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBKYXJra28gU2Fra2luZW4gW21haWx0bzpqYXJra28uc2Fra2luZW5AaWtpLmZpXQ0K
-PiBTZW50OiBUdWVzZGF5LCBTZXB0ZW1iZXIgMTQsIDIwMjEgNzowMCBQTQ0KPiBPbiBUdWUsIDIw
-MjEtMDktMTQgYXQgMTg6MzMgKzAyMDAsIFJvYmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4gQWRkIGFu
-IG92ZXJ2aWV3IG9mIERJR0xJTSB0bw0KPiBEb2N1bWVudGF0aW9uL3NlY3VyaXR5L2RpZ2xpbS9p
-bnRyb2R1Y3Rpb24ucnN0DQo+ID4gYW5kIHRoZSBhcmNoaXRlY3R1cmUgdG8gRG9jdW1lbnRhdGlv
-bi9zZWN1cml0eS9kaWdsaW0vYXJjaGl0ZWN0dXJlLnJzdA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogUm9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3ZWkuY29tPg0KPiANCj4gWW91IGNv
-dWxkIGJyb2FkbHkgZGVzY3JpYmUgd2hhdCBESUdMSU0gaXMgaW4gdGhlIGNvbW1pdCBtZXNzYWdl
-Lg0KDQpIaSBKYXJra28NCg0KSSBjb3VsZCBhZGQgdGhlIGZpcnN0IHNlbnRlbmNlIGluIGludHJv
-ZHVjdGlvbi5yc3QuDQoNCj4gV2hhdCBkbyB5b3UgbWVhbiBieSBhcmNoaXRlY3R1cmU/IEtlcm5l
-bCBpbXBsZW1lbnRhdGlvbiwgb3Igc29tZXRoaW5nDQo+IGVsc2U/DQoNCkJ5IGFyY2hpdGVjdHVy
-ZSBJIG1lYW4gaGlnaCBsZXZlbCBkZXNpZ24gd2l0aCBjb21wb25lbnRzIGFuZA0KcmVsYXRpb25z
-aGlwIGJldHdlZW4gdGhlbS4NCg0KTG93IGxldmVsIGRldGFpbHMgYXJlIGluY2x1ZGVkIGluIGlt
-cGxlbWVudGF0aW9uLnJzdC4NCg0KVGhhbmtzDQoNClJvYmVydG8NCg0KSFVBV0VJIFRFQ0hOT0xP
-R0lFUyBEdWVzc2VsZG9yZiBHbWJILCBIUkIgNTYwNjMNCk1hbmFnaW5nIERpcmVjdG9yOiBMaSBQ
-ZW5nLCBaaG9uZyBSb25naHVhDQo=
+On Tue, Sep 14, 2021 at 01:02:03PM -0700, Kees Cook wrote:
+> Currently under Clang, CC_HAS_AUTO_VAR_INIT_ZERO requires an extra
+> -enable flag compared to CC_HAS_AUTO_VAR_INIT_PATTERN. GCC does not,
+> and will happily ignore the Clang-specific flag. However, its presence
+> on the command-line is both cumbersome and confusing. Due to GCC's
+> tolerant behavior, though, we can continue to use a single Kconfig
+> cc-option test for the feature on both compilers, but then drop the
+> Clang-specific option in the Makefile.
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: llvm@lists.linux.dev
+> Fixes: dcb7c0b9461c ("hardening: Clarify Kconfig text for auto-var-init")
+> Suggested-by: Will Deacon <will@kernel.org>
+> Link: https://lore.kernel.org/lkml/20210914102837.6172-1-will@kernel.org/
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  Makefile                   | 6 +++---
+>  security/Kconfig.hardening | 5 ++++-
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+
+Acked-by: Will Deacon <will@kernel.org>
+
+Cheers for sorting this out!
+
+Will
