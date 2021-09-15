@@ -2,165 +2,413 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC9EC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB20C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04DE66121F
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42BCB61216
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230470AbhIOQvc (ORCPT
+        id S229882AbhIOQxX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Sep 2021 12:51:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36680 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230443AbhIOQva (ORCPT
+        Wed, 15 Sep 2021 12:53:23 -0400
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com ([66.163.187.38]:33589
+        "EHLO sonic308-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229479AbhIOQxW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Sep 2021 12:51:30 -0400
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 121F1C061767
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Sep 2021 09:50:11 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id w8so2323246qvt.0
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Sep 2021 09:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:date:message-id:in-reply-to:references:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=znV6h22uLT4tju8GfDCyoAJth/iE5nhq2gX552Nh+J8=;
-        b=yR4M9FMq5YkZZZnLVBGoHE8n/L7LBcuRYu45AIK6rpu6q86Bt8q97V42UpmZakk9Hk
-         qy1Abyuha691Im0rYc9EK/tOxPEZ+1p++dVyuU49SBOnF3DsCPgp/ECkkaOcSk9hOYg9
-         uZwNWDENAneb/b3kwwfPpFtKTclqgTySmd7avIWwSBqFJauyZ+YBc6bH4I/Gmz4clP5w
-         UOG2/ZoGWt1ti8+ruNUFKiGZJPPEEa2XjAF0DA2xVI/cJ3BaH4r06uP8JDKIZQ63Cap9
-         ayT/rIEu7My8B35KdwQFfy0AsExXY/vMA5Y0BemiwrEF4O/6W75CvXEWvQeBY3Bhk5kO
-         rFyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=znV6h22uLT4tju8GfDCyoAJth/iE5nhq2gX552Nh+J8=;
-        b=kikBUKJw82YVlqOf22Ci/h61IAAkOwmCDcOMbAGMVQGR7tQgvdjxa0fYK1ZU9SFQ1f
-         PpsERstgdN01WCeaDJgx9A+sG9wgCc9Z3Cv57s69aMpeN63yInMr+C+jiZz7HyF0fkKv
-         XsUifYcGb3m8luoW8Z1HURYXj/f2gziiuGI0AyNUx+EtxCEZkMbY36aiDy8xERHqh2u9
-         Or5UbP5BmPfUv2ilZLO7NSEqhLOTUspYUE626rAgrkz7prUhtPwQeIWKm0T16d8FTu5/
-         q1ALzMin5/s3D/QAHPxaQWDnBA6bonngjkAHhSXeNk6OP2IHotg8SfofECcsEHy5k8Sf
-         GxiA==
-X-Gm-Message-State: AOAM531jKr0Wp0mafZl4UHJEX7WbQFi/MqMwbwET+IhYJRWMUtKpsZ4u
-        oNK8Jp0+655+yMHovQD8TJztCteoQgEv
-X-Google-Smtp-Source: ABdhPJx75T0dQPzt4WSic6uHD74Uop3/gZqSo+/ev3KVEiS5rzNOA3M5qoWYDRrYR2z4q+uilRE4LA==
-X-Received: by 2002:a05:6214:1394:: with SMTP id g20mr812980qvz.21.1631724609746;
-        Wed, 15 Sep 2021 09:50:09 -0700 (PDT)
-Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id w20sm377308qkj.116.2021.09.15.09.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 09:50:09 -0700 (PDT)
-Subject: [PATCH v4 8/8] Smack: Brutalist io_uring support
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date:   Wed, 15 Sep 2021 12:50:08 -0400
-Message-ID: <163172460848.88001.15344229885190060624.stgit@olly>
-In-Reply-To: <163172413301.88001.16054830862146685573.stgit@olly>
-References: <163172413301.88001.16054830862146685573.stgit@olly>
-User-Agent: StGit/1.1
+        Wed, 15 Sep 2021 12:53:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1631724723; bh=8OsBQAEmYbQirWbEzOEU0rdx/zbceRiJdgiojyK/op8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=KJaSrA/CeCXCZY+I5vVtsZLAXcBA04vIbkw5aCX74GaLhCRU0FxNXQqmu0WUUXJrFO8YuOcDJz4Ss2LUPirMDgxyLOSvaaDuv2uicHcxFtaqi31pqNGdDZQq8LMG83Ndq5jw6bEAuoEJrkxVhdhDyYO5soZuR8SU+EXJkiFSTH5hhGM4N3vAUloUK0CPmASnYZi1EDbJt7lYtX4V0DcAzFK4c3NpWHtXgnSIU0sco4aNtGSI2fOCaLsaKCr+fF7lyztFcmqmG23+OsXLetH8qCmsiVeIY+eOGH8TxGud8gn9Xt8pkavB1CJPgekQuPV8LGeEMwzdjLTmPEIJqzJALg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1631724723; bh=ri7OMIueXAICmsGifSmtK6dmnWuWIbfmvst9Y7U5UXh=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=bepyupE6BvZ743mR/FkiZiOrbLNeQPoMnF+7v015T/+DtJbOdPwQj/pKyEsS2HVfXB/sWfDjcCos0dDzEAUOoEoME0Ww0PjsOlc9kx3jQR1qiKK+1s3wS4Kil73qKIu74btZzY0pARFfFT6r6TPNN6xry5iDBRDKKcDaq91ZkbTNjbmAJZOrCtzhHS2dkWMdxYWikxQNnOTjItR24ud4YhR/1q3oKDFL1Nf7BeM8dlBHu0zNQX3ncaHhfEeULhwQ45sL/qbD8NOb6t0OS8fW5dAG9mq1g4/EzySS5jZmorfrSxTGK8rou1KPY/f1KgGlWiSlZ6tuCuiOw2T7sQg2RQ==
+X-YMail-OSG: jB7Ze54VM1m9p.C0XgMPwzJcSPrVUukTYgkaAaYVdJnAeA2ME3PcVICp3FhbHsS
+ 3oTBhf32Vq20BucBvJp.SArzjK7HUAYkeAfQED1aPlksGyyI1uuBVAVkaAgz8aluo6xDqs9glBpM
+ WKGWg77OMc_2QKMBVpe63WooIoyQoLU5UldxJFnzF_U4qdeaXiCtSbAGZUX4.DPxuyJZVhCe9ZR0
+ agZg5NoI6ra4qaMCBBzxkEcf54PL7WWfP3IgnyaqPjMXnrcBOCi9lEYCjyoT3qg2BFUe1lJra9br
+ 0I2bBD3ahBXoYRKoWVEq10QnodSoBXX5xVWgMtvxS9xaKrhZCvEcjQJIgdmpZe.ZZ_RNge.ViyBy
+ aGbJNkODwbS.EiUkLdX7QT_e_._diVdjAtZul4RARErpQV06EKLA1dPJ23oQUY.RGhMfj3kHvthj
+ kiNyEijT9zHCwTNRKzn6g5uF4wRx20EmgBxykDWf9qmDP4Tylx56ofL6zYO5BjUcQjeGNFaqf1EP
+ Fdz0wggReW0AYgOxGA3kwUpYtYGWN7Ftt_jiyUb393JaSGnmPLm4mK0igRye_U4X0gbMqIB1dy5l
+ L.msM2SrNuVWOvlCD84MN.aCZWdHTTljLSVMPkVBQmbUZWGJuW9CKfndyai0nw_9LI5lj_sdNH0p
+ cYYwmqDeqvFV8wqATkh6yHIj0PtvpnKUKhryv08aDQfRyt6Hh0hHY0Z2GK3.Ubkao7WOsc9k9TUw
+ 7UEyaQ64NEzoeE8TccuY1ZGZF.LzPbHY3jHleLrijn6t7Ulkia.wLFQPaax_np9jYzwL4eUd49j7
+ 7mIPsipR0WmGIkGsT_qvdcaCAu_LVBDsSlTE2JAEiGIP32.Ep7nHVzN2JFNnvOahOWMP_4wd8TC8
+ .bxEF_x8ke44Al3hAVHses9Ahzvkd1Juyh8CewUHnkxd04ekpAJEezp1BZ2bBVW0Vt6sOdZCNy4_
+ thq59Enyu9RS7s1Q94zKbLrXNN3ibUW3A_nojOPM9ECxjhgjsvqIjcDgA_kqfUKrauElVMrIBHYx
+ HNnPJqjg2QMWTrPACm1s1NdgvMDuygsL_gTmRrkwB4ckkokkynxEndBpBN4Q9ixGGyOU2sgdBUuj
+ fjL7QIdXNyA073v2sXVBPN9KN.Pvgpcixp0pjGoKyfxg3vkNHDLb6liGHrF5EM.YyCHWaH17Wrhi
+ KYNCs2v6nZ5Ucd7427sbDiTlahmHqTsBvH.AEEX00QmUQEcbaCIb.3K0AHDgWdZV83KpoHGZHQLv
+ BGwYHj3pUs.vSJhfezIw7oCWZnsu8f7oUhKHrlJo.YRvf6G5bH.W8zVB1Nl4Cg_JeYaJCApD3fg8
+ VGuoB8wxVPen0ZcEw915idl9g0cxdMmijEWWCk5fxRVry50ArZJskYTX3qeFR1YMJYOFMU0tsBEN
+ o8I566eNC0WP6pLpHVsmUPw_H6hXPm7AzEBb8QwjvuikjYTkjx46_ZnzBqNvNYp7EaxMJqrbc0p7
+ nvyL9AGTuYvbFdJDdOtHPY8mrAzmNqR9TrLyFN5KNGweg.0rjzw9cJdABVLbHAfJxPus_aSCLvSG
+ AhxGPvQsYAQ_dPOaHJNaMPPB6Q6yIoDOA8U4KeOlBJTgkWwO8JTuxDpwNKSJIAdjDOZInQRqCGGp
+ PEm8SFXTkyP0QzeeNKwoxq.Pg2JBY_xMKHYxIkbFpUYgxtST8.wDkElVvphjm3ewwvqUDxz4Tnnz
+ rflbsFrwHEj9bHAclnk7GClQgaqIbEpIIIoWPr7JGuFBntSBr5SstZ9PSy68ZSDrKG3d.OMQriax
+ PCsr0u3J2cfCgURGOWI526jD9p0O4DIOHO8EFESYOVyO0yrbFkZKjtOHGwmHmjyCeMaBzwV78ocn
+ qhIfqPFLegObgrpZv4RDxc41mIm4dIwGgsmDTCoGRmJMVfkhGvUqh5.pAs2PgaOjfDQldxfVCtJ2
+ RkrCcvQeNAicsN6xd.5Cp.hKpCKd51uYPAbAjyZ7OV3d3eOwrr0XF.SZHXR9GULlNQ_iAobFdPe.
+ mjEAhV2hxZv1Aen5n0Hh2cykL1CuB7QMDF8lELdHROPgjEBAn1Shf8uadWoLjYqDHfW3sVUUS_ET
+ uBRRXimldVeXm0sV911qaH7v6vBbyWDVf0LSGPguIeyGoIeSJ6quWyawG4Q_PSdrD6RuUdE3z7Ol
+ 3xWsZ7y2tqeftg3u0.74U5cXkiD62aQIJ5FGvsuLF0x7xoO13WuZ7MzMVT3NfIMPFOPss0ZEU_Ju
+ AByLJoze9ucAzjMySbbrnrPQqTaVu8OLUN9T7DuZHOHY_oZgRpm3sKDusa8b9AeBHJM9Y6Ck-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Wed, 15 Sep 2021 16:52:03 +0000
+Received: by kubenode584.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID e7eeaedbd502fe08050235c5f7bd0351;
+          Wed, 15 Sep 2021 16:52:00 +0000 (UTC)
+Subject: Re: Regression in unix stream sockets with the Smack LSM
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Jiang Wang <jiang.wang@bytedance.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <a507efa7-066b-decf-8605-89cdb0ac1951.ref@schaufler-ca.com>
+ <a507efa7-066b-decf-8605-89cdb0ac1951@schaufler-ca.com>
+ <CAHC9VhR9SKX_-SAmtcCj+vuUvcdq-SWzKs86BKMjBcC8GhJ1gg@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <dd58bbf5-7983-ca26-c335-6bf8e492fcaa@schaufler-ca.com>
+Date:   Wed, 15 Sep 2021 09:51:58 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAHC9VhR9SKX_-SAmtcCj+vuUvcdq-SWzKs86BKMjBcC8GhJ1gg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.19013 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Casey Schaufler <casey@schaufler-ca.com>
+On 9/13/2021 4:47 PM, Paul Moore wrote:
+> On Mon, Sep 13, 2021 at 6:53 PM Casey Schaufler <casey@schaufler-ca.com=
+> wrote:
+>> Commit 77462de14a43f4d98dbd8de0f5743a4e02450b1d
+>>
+>>         af_unix: Add read_sock for stream socket types
+>>
+>> introduced a regression in UDS socket connections for the Smack LSM.
+>> I have not tracked done the details of why the change broke the code,
+>> but this is where bisecting the kernel indicates the problem lies, and=
 
-Add Smack privilege checks for io_uring. Use CAP_MAC_OVERRIDE
-for the override_creds case and CAP_MAC_ADMIN for creating a
-polling thread. These choices are based on conjecture regarding
-the intent of the surrounding code.
+>> I have verified that reverting this change repairs the problem.
+>>
+>> You can verify the problem with the Smack test suite:
+>>
+>>         https://github.com/smack-team/smack-testsuite.git
+>>
+>> The failing test is tests/uds-access.sh.
+>>
+>> I have not looked to see if there's a similar problem with SELinux.
+>> There may be, but if there isn't it doesn't matter, there's still a
+>> bug.
+> FWIW, the selinux-testsuite tests ran clean today with v5.15-rc1 (it
+> looks like this code is only in v5.15) but as Casey said, a regression
+> is a regression.
+>
+> Casey, what actually fails on the Smack system with this commit?
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-[PM: make the smack_uring_* funcs static, remove debug code]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+This problem occurs with security=3Dnone as well as with security=3Dsmack=
+=2E
 
----
-v4:
-- updated subject line
-v3:
-- removed debug code
-v2:
-- made the smack_uring_* funcs static
-v1:
-- initial draft
----
- security/smack/smack_lsm.c |   46 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+There isn't a problem with connect, that always works correctly.
+The problem is an unexpected read() failure in the connecting process.
+This doesn't occur all the time, and sometimes happens in the first
+of my two tests, sometimes the second, sometimes neither and, you guessed=
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index cacbe7518519..f90ab1efeb6d 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4691,6 +4691,48 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
- 	return 0;
- }
- 
-+#ifdef CONFIG_IO_URING
-+/**
-+ * smack_uring_override_creds - Is io_uring cred override allowed?
-+ * @new: the target creds
-+ *
-+ * Check to see if the current task is allowed to override it's credentials
-+ * to service an io_uring operation.
-+ */
-+static int smack_uring_override_creds(const struct cred *new)
-+{
-+	struct task_smack *tsp = smack_cred(current_cred());
-+	struct task_smack *nsp = smack_cred(new);
-+
-+	/*
-+	 * Allow the degenerate case where the new Smack value is
-+	 * the same as the current Smack value.
-+	 */
-+	if (tsp->smk_task == nsp->smk_task)
-+		return 0;
-+
-+	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+/**
-+ * smack_uring_sqpoll - check if a io_uring polling thread can be created
-+ *
-+ * Check to see if the current task is allowed to create a new io_uring
-+ * kernel polling thread.
-+ */
-+static int smack_uring_sqpoll(void)
-+{
-+	if (smack_privileged_cred(CAP_MAC_ADMIN, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+#endif /* CONFIG_IO_URING */
-+
- struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct task_smack),
- 	.lbs_file = sizeof(struct smack_known *),
-@@ -4843,6 +4885,10 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_copy_up, smack_inode_copy_up),
- 	LSM_HOOK_INIT(inode_copy_up_xattr, smack_inode_copy_up_xattr),
- 	LSM_HOOK_INIT(dentry_create_files_as, smack_dentry_create_files_as),
-+#ifdef CONFIG_IO_URING
-+	LSM_HOOK_INIT(uring_override_creds, smack_uring_override_creds),
-+	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
-+#endif
- };
- 
- 
+it, sometimes both.
+
+Here's a sample socat log demonstrating the problem. The first run,
+ending at "uds-access RC=3D0" behaves as expected. The second, ending
+at "uds-access RC=3D1", demonstrates the read failure. This case was
+run with Smack enabled, but I see the same problem with the same
+unpredictability on the same kernel with security=3Dnone.
+
+I've tried to convince myself that there's a flaw in the way I've
+set up the scripts. They've been pretty robust and I've never seen
+socat behaving erratically before. I've instrumented the kernel
+code and all the security checks are behaving as expected. Plus,
+as I mentioned above, the problem also occurs without an LSM.
+
+2021/09/15 08:49:50 socat[2215] D getpid()
+2021/09/15 08:49:50 socat[2215] D getpid() -> 2215
+2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_PID", "2215", 1)
+2021/09/15 08:49:50 socat[2215] D setenv() -> 0
+2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_PPID", "2215", 1)
+2021/09/15 08:49:50 socat[2215] D setenv() -> 0
+2021/09/15 08:49:50 socat[2215] I socat by Gerhard Rieger and contributor=
+s - see www.dest-unreach.org
+2021/09/15 08:49:50 socat[2215] I This product includes software develope=
+d by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.open=
+ssl.org/)
+2021/09/15 08:49:50 socat[2215] I This product includes software written =
+by Tim Hudson (tjh@cryptsoft.com)
+2021/09/15 08:49:50 socat[2215] D socat version 1.7.4.1 on Jan 27 2021 00=
+:00:00
+2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_VERSION", "1.7.4.1", 1)
+2021/09/15 08:49:50 socat[2215] D setenv() -> 0
+2021/09/15 08:49:50 socat[2215] D running on Linux version #58 SMP Wed Se=
+p 15 08:40:38 PDT 2021, release 5.15.0-rc1bisect, machine x86_64
+
+2021/09/15 08:49:50 socat[2215] D argv[0]: "socat"
+2021/09/15 08:49:50 socat[2215] D argv[1]: "-d"
+2021/09/15 08:49:50 socat[2215] D argv[2]: "-d"
+2021/09/15 08:49:50 socat[2215] D argv[3]: "-d"
+2021/09/15 08:49:50 socat[2215] D argv[4]: "-d"
+2021/09/15 08:49:50 socat[2215] D argv[5]: "-"
+2021/09/15 08:49:50 socat[2215] D argv[6]: "UNIX-CONNECT:./targets/uds-no=
+troot/uds-access-socket"
+2021/09/15 08:49:50 socat[2215] D sigaction(1, 0x7fffaec50b50, 0x0)
+2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+2021/09/15 08:49:50 socat[2215] D sigaction(2, 0x7fffaec50b50, 0x0)
+2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+2021/09/15 08:49:50 socat[2215] D sigaction(3, 0x7fffaec50b50, 0x0)
+2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+2021/09/15 08:49:50 socat[2215] D sigaction(4, 0x7fffaec50b50, 0x0)
+2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+2021/09/15 08:49:50 socat[2215] D sigaction(6, 0x7fffaec50b50, 0x0)
+2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+2021/09/15 08:49:50 socat[2215] D sigaction(7, 0x7fffaec50b50, 0x0)
+2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+2021/09/15 08:49:50 socat[2215] D sigaction(8, 0x7fffaec50b50, 0x0)
+2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+2021/09/15 08:49:50 socat[2215] D sigaction(11, 0x7fffaec50b50, 0x0)
+2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+2021/09/15 08:49:50 socat[2215] D sigaction(15, 0x7fffaec50b50, 0x0)
+2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+2021/09/15 08:49:50 socat[2215] D signal(13, 0x1)
+2021/09/15 08:49:50 socat[2215] D signal() -> 0x0
+2021/09/15 08:49:50 socat[2215] D atexit(0x55aa5d645110)
+2021/09/15 08:49:50 socat[2215] D atexit() -> 0
+2021/09/15 08:49:50 socat[2215] D xioopen("-")
+2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
+2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f0139d0
+2021/09/15 08:49:50 socat[2215] D malloc(1024)
+2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f013d30
+2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
+2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f014140
+2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
+2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f014bc0
+2021/09/15 08:49:50 socat[2215] D isatty(0)
+2021/09/15 08:49:50 socat[2215] D isatty() -> 0
+2021/09/15 08:49:50 socat[2215] D isatty(1)
+2021/09/15 08:49:50 socat[2215] D isatty() -> 0
+2021/09/15 08:49:50 socat[2215] D malloc(128)
+2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f014f00
+2021/09/15 08:49:50 socat[2215] D malloc(128)
+2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f014f90
+2021/09/15 08:49:50 socat[2215] N reading from and writing to stdio
+2021/09/15 08:49:50 socat[2215] D xioopen("UNIX-CONNECT:./targets/uds-not=
+root/uds-access-socket")
+2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
+2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f015020
+2021/09/15 08:49:50 socat[2215] D malloc(1024)
+2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f015360
+2021/09/15 08:49:50 socat[2215] D malloc(128)
+2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f015770
+2021/09/15 08:49:50 socat[2215] N opening connection to AF=3D1 "./targets=
+/uds-notroot/uds-access-socket"
+2021/09/15 08:49:50 socat[2215] D socket(1, 1, 0)
+2021/09/15 08:49:50 socat[2215] I socket(1, 1, 0) -> 5
+2021/09/15 08:49:50 socat[2215] D fcntl(5, 2, 1)
+2021/09/15 08:49:50 socat[2215] D fcntl() -> 0
+2021/09/15 08:49:50 socat[2215] D connect(5, {1,AF=3D1 "./targets/uds-not=
+root/uds-access-socket"}, 41)
+2021/09/15 08:49:50 socat[2215] D connect() -> 0
+2021/09/15 08:49:50 socat[2215] D getsockname(5, 0x7fffaec50580, 0x7fffae=
+c50564{112})
+2021/09/15 08:49:50 socat[2215] D getsockname(, {AF=3D1 "<anon>"}, {2}) -=
+> 0
+2021/09/15 08:49:50 socat[2215] N successfully connected from local addre=
+ss AF=3D1 "uds-notroot/ud\xEE\xEE\xEE\xEEcess-socket")\n"
+2021/09/15 08:49:50 socat[2215] I resolved and opened all sock addresses
+2021/09/15 08:49:50 socat[2215] D posix_memalign(0x7fffaec50b28, 4096, 16=
+385)
+2021/09/15 08:49:50 socat[2215] D posix_memalign(...) -> 0
+2021/09/15 08:49:50 socat[2215] N starting data transfer loop with FDs [0=
+,1] and [5,5]
+2021/09/15 08:49:50 socat[2215] D data loop: sock1->eof=3D0, sock2->eof=3D=
+0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
+2021/09/15 08:49:50 socat[2215] D select(6, &0x21, &0x22, &0x0, NULL/0.00=
+0000)
+2021/09/15 08:49:50 socat[2215] D select -> (, 0x21, 0x22, 0x0, NULL/0.00=
+0000), 4
+2021/09/15 08:49:50 socat[2215] D read(0, 0x55aa5f016000, 8192)
+2021/09/15 08:49:50 socat[2215] D read -> 4
+2021/09/15 08:49:50 socat[2215] D write(5, 0x55aa5f016000, 4)
+Pop
+2021/09/15 08:49:50 socat[2215] D write -> 4
+2021/09/15 08:49:50 socat[2215] I transferred 4 bytes from 0 to 5
+2021/09/15 08:49:50 socat[2215] D read(5, 0x55aa5f016000, 8192)
+2021/09/15 08:49:50 socat[2215] D read -> 4
+2021/09/15 08:49:50 socat[2215] D write(1, 0x55aa5f016000, 4)
+Pop
+2021/09/15 08:49:50 socat[2215] D write -> 4
+2021/09/15 08:49:50 socat[2215] I transferred 4 bytes from 5 to 1
+2021/09/15 08:49:50 socat[2215] D data loop: sock1->eof=3D0, sock2->eof=3D=
+0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
+2021/09/15 08:49:50 socat[2215] D select(6, &0x21, &0x22, &0x0, NULL/0.00=
+0000)
+2021/09/15 08:49:50 socat[2215] D select -> (, 0x21, 0x22, 0x0, NULL/0.00=
+0000), 4
+2021/09/15 08:49:50 socat[2215] D read(0, 0x55aa5f016000, 8192)
+2021/09/15 08:49:50 socat[2215] D read -> 0
+2021/09/15 08:49:50 socat[2215] D read(5, 0x55aa5f016000, 8192)
+2021/09/15 08:49:50 socat[2215] D read -> 0
+2021/09/15 08:49:50 socat[2215] N socket 1 (fd 0) is at EOF
+2021/09/15 08:49:50 socat[2215] I shutdown(5, 1)
+2021/09/15 08:49:50 socat[2215] D shutdown()  -> 0
+2021/09/15 08:49:50 socat[2215] N socket 2 (fd 5) is at EOF
+2021/09/15 08:49:50 socat[2215] I shutdown(5, 2)
+2021/09/15 08:49:50 socat[2215] D shutdown()  -> 0
+2021/09/15 08:49:50 socat[2215] N exiting with status 0
+2021/09/15 08:49:50 socat[2215] D exit(0)
+2021/09/15 08:49:50 socat[2215] D starting xioexit()
+2021/09/15 08:49:50 socat[2215] D finished xioexit()
+uds-access RC=3D0
+2021/09/15 08:49:52 socat[2240] D getpid()
+2021/09/15 08:49:52 socat[2240] D getpid() -> 2240
+2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_PID", "2240", 1)
+2021/09/15 08:49:52 socat[2240] D setenv() -> 0
+2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_PPID", "2240", 1)
+2021/09/15 08:49:52 socat[2240] D setenv() -> 0
+2021/09/15 08:49:52 socat[2240] I socat by Gerhard Rieger and contributor=
+s - see www.dest-unreach.org
+2021/09/15 08:49:52 socat[2240] I This product includes software develope=
+d by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.open=
+ssl.org/)
+2021/09/15 08:49:52 socat[2240] I This product includes software written =
+by Tim Hudson (tjh@cryptsoft.com)
+2021/09/15 08:49:52 socat[2240] D socat version 1.7.4.1 on Jan 27 2021 00=
+:00:00
+2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_VERSION", "1.7.4.1", 1)
+2021/09/15 08:49:52 socat[2240] D setenv() -> 0
+2021/09/15 08:49:52 socat[2240] D running on Linux version #58 SMP Wed Se=
+p 15 08:40:38 PDT 2021, release 5.15.0-rc1bisect, machine x86_64
+
+2021/09/15 08:49:52 socat[2240] D argv[0]: "socat"
+2021/09/15 08:49:52 socat[2240] D argv[1]: "-d"
+2021/09/15 08:49:52 socat[2240] D argv[2]: "-d"
+2021/09/15 08:49:52 socat[2240] D argv[3]: "-d"
+2021/09/15 08:49:52 socat[2240] D argv[4]: "-d"
+2021/09/15 08:49:52 socat[2240] D argv[5]: "-"
+2021/09/15 08:49:52 socat[2240] D argv[6]: "UNIX-CONNECT:./targets/uds-no=
+troot/uds-access-socket"
+2021/09/15 08:49:52 socat[2240] D sigaction(1, 0x7ffcca7e26c0, 0x0)
+2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+2021/09/15 08:49:52 socat[2240] D sigaction(2, 0x7ffcca7e26c0, 0x0)
+2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+2021/09/15 08:49:52 socat[2240] D sigaction(3, 0x7ffcca7e26c0, 0x0)
+2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+2021/09/15 08:49:52 socat[2240] D sigaction(4, 0x7ffcca7e26c0, 0x0)
+2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+2021/09/15 08:49:52 socat[2240] D sigaction(6, 0x7ffcca7e26c0, 0x0)
+2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+2021/09/15 08:49:52 socat[2240] D sigaction(7, 0x7ffcca7e26c0, 0x0)
+2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+2021/09/15 08:49:52 socat[2240] D sigaction(8, 0x7ffcca7e26c0, 0x0)
+2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+2021/09/15 08:49:52 socat[2240] D sigaction(11, 0x7ffcca7e26c0, 0x0)
+2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+2021/09/15 08:49:52 socat[2240] D sigaction(15, 0x7ffcca7e26c0, 0x0)
+2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+2021/09/15 08:49:52 socat[2240] D signal(13, 0x1)
+2021/09/15 08:49:52 socat[2240] D signal() -> 0x0
+2021/09/15 08:49:52 socat[2240] D atexit(0x560590a15110)
+2021/09/15 08:49:52 socat[2240] D atexit() -> 0
+2021/09/15 08:49:52 socat[2240] D xioopen("-")
+2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
+2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e899d0
+2021/09/15 08:49:52 socat[2240] D malloc(1024)
+2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e89d30
+2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
+2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8a140
+2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
+2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8abc0
+2021/09/15 08:49:52 socat[2240] D isatty(0)
+2021/09/15 08:49:52 socat[2240] D isatty() -> 0
+2021/09/15 08:49:52 socat[2240] D isatty(1)
+2021/09/15 08:49:52 socat[2240] D isatty() -> 0
+2021/09/15 08:49:52 socat[2240] D malloc(128)
+2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8af00
+2021/09/15 08:49:52 socat[2240] D malloc(128)
+2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8af90
+2021/09/15 08:49:52 socat[2240] N reading from and writing to stdio
+2021/09/15 08:49:52 socat[2240] D xioopen("UNIX-CONNECT:./targets/uds-not=
+root/uds-access-socket")
+2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
+2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8b020
+2021/09/15 08:49:52 socat[2240] D malloc(1024)
+2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8b360
+2021/09/15 08:49:52 socat[2240] D malloc(128)
+2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8b770
+2021/09/15 08:49:52 socat[2240] N opening connection to AF=3D1 "./targets=
+/uds-notroot/uds-access-socket"
+2021/09/15 08:49:52 socat[2240] D socket(1, 1, 0)
+2021/09/15 08:49:52 socat[2240] I socket(1, 1, 0) -> 5
+2021/09/15 08:49:52 socat[2240] D fcntl(5, 2, 1)
+2021/09/15 08:49:52 socat[2240] D fcntl() -> 0
+2021/09/15 08:49:52 socat[2240] D connect(5, {1,AF=3D1 "./targets/uds-not=
+root/uds-access-socket"}, 41)
+2021/09/15 08:49:52 socat[2240] D connect() -> 0
+2021/09/15 08:49:52 socat[2240] D getsockname(5, 0x7ffcca7e20f0, 0x7ffcca=
+7e20d4{112})
+2021/09/15 08:49:52 socat[2240] D getsockname(, {AF=3D1 "<anon>"}, {2}) -=
+> 0
+2021/09/15 08:49:52 socat[2240] N successfully connected from local addre=
+ss AF=3D1 "uds-notroot/ud\xEE\xEE\xEE\xEEcess-socket")\n"
+2021/09/15 08:49:52 socat[2240] I resolved and opened all sock addresses
+2021/09/15 08:49:52 socat[2240] D posix_memalign(0x7ffcca7e2698, 4096, 16=
+385)
+2021/09/15 08:49:52 socat[2240] D posix_memalign(...) -> 0
+2021/09/15 08:49:52 socat[2240] N starting data transfer loop with FDs [0=
+,1] and [5,5]
+2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3D0, sock2->eof=3D=
+0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
+2021/09/15 08:49:52 socat[2240] D select(6, &0x21, &0x22, &0x0, NULL/0.00=
+0000)
+2021/09/15 08:49:52 socat[2240] D select -> (, 0x1, 0x22, 0x0, NULL/0.000=
+000), 3
+2021/09/15 08:49:52 socat[2240] D read(0, 0x560591e8c000, 8192)
+2021/09/15 08:49:52 socat[2240] D read -> 5
+2021/09/15 08:49:52 socat[2240] D write(5, 0x560591e8c000, 5)
+2021/09/15 08:49:52 socat[2240] D write -> 5
+2021/09/15 08:49:52 socat[2240] I transferred 5 bytes from 0 to 5
+2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3D0, sock2->eof=3D=
+0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
+2021/09/15 08:49:52 socat[2240] D select(6, &0x21, &0x20, &0x0, NULL/0.00=
+0000)
+2021/09/15 08:49:52 socat[2240] D select -> (, 0x1, 0x20, 0x0, NULL/0.000=
+000), 2
+2021/09/15 08:49:52 socat[2240] D read(0, 0x560591e8c000, 8192)
+2021/09/15 08:49:52 socat[2240] D read -> 0
+2021/09/15 08:49:52 socat[2240] N socket 1 (fd 0) is at EOF
+2021/09/15 08:49:52 socat[2240] I shutdown(5, 1)
+2021/09/15 08:49:52 socat[2240] D shutdown()  -> 0
+2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3D3, sock2->eof=3D=
+0, closing=3D1, wasaction=3D1, total_to=3D{0.000000}
+2021/09/15 08:49:52 socat[2240] D select(6, &0x20, &0x0, &0x0, &0.500000)=
+
+Snap
+2021/09/15 08:49:52 socat[2240] D select -> (, 0x20, 0x0, 0x0, &0.500000)=
+, 1
+2021/09/15 08:49:52 socat[2240] D read(5, 0x560591e8c000, 8192)
+2021/09/15 08:49:52 socat[2240] D read -> -1
+2021/09/15 08:49:52 socat[2240] E read(5, 0x560591e8c000, 8192): Invalid =
+argument
+2021/09/15 08:49:52 socat[2240] N exit(1)
+2021/09/15 08:49:52 socat[2240] D starting xioexit()
+2021/09/15 08:49:52 socat[2240] I shutdown(5, 2)
+2021/09/15 08:49:52 socat[2240] D shutdown()  -> 0
+2021/09/15 08:49:52 socat[2240] D finished xioexit()
+uds-access RC=3D1
+
+=C2=A0
+
 
