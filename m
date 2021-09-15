@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-21.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF596C4167B
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389F2C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B978761216
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 280B961242
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230494AbhIOQfj (ORCPT
+        id S230509AbhIOQfk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Sep 2021 12:35:39 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3830 "EHLO
+        Wed, 15 Sep 2021 12:35:40 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3832 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbhIOQfb (ORCPT
+        with ESMTP id S230226AbhIOQfd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Sep 2021 12:35:31 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4H8m2Q2bSMz67hKh;
-        Thu, 16 Sep 2021 00:31:58 +0800 (CST)
+        Wed, 15 Sep 2021 12:35:33 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4H8m2B67JVz67vP9;
+        Thu, 16 Sep 2021 00:31:46 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Wed, 15 Sep 2021 18:34:09 +0200
+ 15.1.2308.8; Wed, 15 Sep 2021 18:34:10 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
         <mchehab+huawei@kernel.org>
@@ -36,9 +36,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 7/9] diglim: Digest list uploader
-Date:   Wed, 15 Sep 2021 18:31:43 +0200
-Message-ID: <20210915163145.1046505-8-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 9/9] diglim: Admin guide
+Date:   Wed, 15 Sep 2021 18:31:45 +0200
+Message-ID: <20210915163145.1046505-10-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210915163145.1046505-1-roberto.sassu@huawei.com>
 References: <20210915163145.1046505-1-roberto.sassu@huawei.com>
@@ -52,308 +52,189 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Introduce a digest list uploader. Its syntax is:
+Introduce a DIGLIM administration guide. Its main purpose is to help users
+to configure a system to load to the kernel all the digests of executable
+and firmware from the RPM DB, and kernel modules of a custom kernel and a
+temporary file mapped as executable as custom digest lists.
 
-upload_digest_lists <add|del> <digest list file/directory>
-
-Its main function is to determine which digest list parsers must be
-executed to parse the digest lists in the specified location. The uploader
-then executes the parsers in sequence, which are expected to be in the same
-directory as the uploader.
-
-Given that this tool is not involved in the conversion of the digest lists,
-it does not need to be identified as a parser by DIGLIM LSM.
-
-It is intentionally compiled as a static binary. Otherwise, a build service
-of a Linux distribution would need to be modified to generate a digest list
-for each of the shared library the uploader depends on (e.g. glibc).
-Instead, with a static binary, only a digest list for that binary has to be
-generated.
+With further patch sets, it will be possible to load an execution policy in
+IMA and create a measurement list only with digest lists and unknown files,
+and to perform secure boot at application level.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- MAINTAINERS                        |   1 +
- tools/diglim/Makefile              |   5 +-
- tools/diglim/upload_digest_lists.c | 238 +++++++++++++++++++++++++++++
- 3 files changed, 243 insertions(+), 1 deletion(-)
- create mode 100644 tools/diglim/upload_digest_lists.c
+ Documentation/admin-guide/diglim.rst | 136 +++++++++++++++++++++++++++
+ Documentation/admin-guide/index.rst  |   1 +
+ MAINTAINERS                          |   1 +
+ 3 files changed, 138 insertions(+)
+ create mode 100644 Documentation/admin-guide/diglim.rst
 
+diff --git a/Documentation/admin-guide/diglim.rst b/Documentation/admin-guide/diglim.rst
+new file mode 100644
+index 000000000000..886100cf5a62
+--- /dev/null
++++ b/Documentation/admin-guide/diglim.rst
+@@ -0,0 +1,136 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++======
++DIGLIM
++======
++
++Digest Lists Integrity Module (DIGLIM) is an integrity extension aiming to
++facilitate the deployment of remote attestation and secure boot solutions
++based on Integrity Measurement Architecture (IMA).
++
++DIGLIM documentation can be retrieved at ``Documentation/security/diglim``.
++
++Kernel Configuration Options
++============================
++
++DIGLIM can be enabled by setting ``CONFIG_DIGLIM=y`` in the kernel
++configuration. Optionally, it is possible to set
++``CONFIG_DIGLIM_DIGEST_LISTS_DIR`` with the directory digest lists are
++taken from by a kernel loader executed at kernel initialization time.
++Finally, with ``CONFIG_DIGLIM_UPLOADER_PATH`` it is possible to specify the
++path of the digest list uploader, which will execute user space parsers to
++process the digest lists in ``CONFIG_DIGLIM_DIGEST_LISTS_DIR`` that are not
++in the format recognized by the kernel.
++
++
++LSM
++===
++
++DIGLIM includes an LSM to protect user space parsers from other processes,
++when the parsers convert a digest list and uploads it to the kernel. As for
++other LSMs, ``diglim`` should be added to the list of enabled LSMs,
++provided with the ``lsm=`` kernel option. If DIGLIM LSM is not enabled,
++digest lists uploaded by the parser will not be marked as processed by IMA
++and will not be suitable for use.
++
++
++Setup
++=====
++
++Digest lists must be loaded as soon as possible, before files are accessed,
++so that IMA finds the digest of those files with a query. More details on
++the benefits of DIGLIM for IMA can be found in
++``Documentation/security/diglim/introduction.rst``.
++
++
++Digest List Generation
++----------------------
++
++Digest lists can be generated with the tools provided in ``tools/diglim``
++in the kernel sources. In order to compile the tools, it is necessary to
++install the ``glibc-static`` and ``rpm-devel`` packages.
++
++``compact_gen`` can be used to generate digest lists in the compact format,
++which can be directly uploaded to the kernel.
++
++In order to upload digests from the RPM database, it is necessary to
++generate three digest lists: one for ``upload_digest_lists``, which is
++responsible to execute the parsers for digest lists not in the compact
++format; two for ``rpm_parser``, which actually loads the RPM digest lists.
++
++``rpm_parser`` requires two digest lists, one for identification by DIGLIM
++LSM, and the other for measurement and appraisal with IMA. The commands
++are::
++
++ # tools/diglim/compact_gen -d /etc/digest_lists -i /usr/libexec/diglim/rpm_parser -t parser
++ # tools/diglim/compact_gen -d /etc/digest_lists -i /usr/libexec/diglim/rpm_parser -t file
++ # tools/diglim/compact_gen -d /etc/digest_lists -i /usr/libexec/diglim/upload_digest_lists -t file
++
++Optionally, an appended signature can be added to the generated digest
++lists, with the sign-file tool included in the kernel sources::
++
++ # scripts/sign-file sha256 certs/signing_key.pem certs/signing_key.pem /etc/digest_lists/0-parser_list-compact-rpm_parser
++ # scripts/sign-file sha256 certs/signing_key.pem certs/signing_key.pem /etc/digest_lists/0-file_list-compact-rpm_parser
++ # scripts/sign-file sha256 certs/signing_key.pem certs/signing_key.pem /etc/digest_lists/0-file_list-compact-upload_digest_lists
++
++With an appropriate policy, appended signatures can be seen in the
++measurement, by selecting the ``ima-modsig`` template.
++
++Afterwards, digest lists can be generated from the RPM database with the
++command::
++
++ # tools/diglim/rpm_gen -d /etc/digest_lists
++
++If a custom kernel is used, an additional digest list should be generated
++for kernel modules::
++
++ # tools/diglim/compact_gen -d /etc/digest_lists -i /lib/modules/`uname -r` -t file
++ # scripts/sign-file sha256 certs/signing_key.pem certs/signing_key.pem /etc/digest_lists/0-file_list-compact-`uname -r`
++
++Finally, in Fedora there is an mmap with execution permission on a file
++with 4K of zeros. A digest list can be generated by executing::
++
++ # dd if=/dev/zero of=/tmp/mmap bs=4096 count=1
++ # tools/diglim/compact_gen -d /etc/digest_lists -i /tmp/mmap -f
++ # scripts/sign-file sha256 certs/signing_key.pem certs/signing_key.pem /etc/digest_lists/0-file_list-compact-mmap
++
++
++Initial Ram Disk
++----------------
++
++Generated digest lists should be copied to the initial ram disk in the
++``CONFIG_DIGLIM_DIGEST_LISTS_DIR`` directory. This can be accomplished,
++with dracut, by adding in /etc/dracut.conf::
++
++ install_optional_items+=" /etc/digest_lists/* "
++
++if ``CONFIG_DIGLIM_DIGEST_LISTS_DIR=/etc/digest_lists``.
++
++``upload_digest_lists`` and ``rpm_parser`` can be also copied to the
++initial ram disk by adding the following lines in /etc/dracut.conf::
++
++ install_optional_items+=" /usr/libexec/diglim/upload_digest_lists "
++ install_optional_items+=" /usr/libexec/diglim/rpm_parser "
++
++assuming that the binaries are installed in /usr/libexec/diglim.
++
++Another important option is::
++
++ do_strip="no"
++
++This prevents dracut from stripping the symbols from binaries. If binaries
++are altered, their digest will be different from the reference value and
++will not be found in the DIGLIM hash table.
++
++
++Boot and Digest List Upload
++---------------------------
++
++After generating the initial ram disk and rebooting, digest lists should
++have been added to the DIGLIM hash table. This can be checked by executing::
++
++ # cat /sys/kernel/security/integrity/diglim/digests_count
++ Parser digests: 1
++ File digests: 104273
++ Metadata digests: 0
++ Digest list digests: 2430
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index dc00afcabb95..1cc7d3b3e79c 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -79,6 +79,7 @@ configure specific aspects of kernel behavior to your liking.
+    cputopology
+    dell_rbu
+    device-mapper/index
++   diglim
+    edid
+    efi-stub
+    ext4
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 04b252ebd7e1..148a2a7957b7 100644
+index 1efc1724376e..953c86915c49 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -5527,6 +5527,7 @@ F:	tools/diglim/common.c
- F:	tools/diglim/common.h
- F:	tools/diglim/compact_gen.c
- F:	tools/diglim/rpm_gen.c
-+F:	tools/diglim/upload_digest_lists.c
- F:	tools/testing/selftests/diglim/
- 
- DIOLAN U2C-12 I2C DRIVER
-diff --git a/tools/diglim/Makefile b/tools/diglim/Makefile
-index 332bcd93af78..a22125ad0281 100644
---- a/tools/diglim/Makefile
-+++ b/tools/diglim/Makefile
-@@ -3,7 +3,7 @@
- CC := $(CROSS_COMPILE)gcc
- CFLAGS += -O2 -Wall -g -I./ -I../../usr/include/ -ggdb
- 
--PROGS := compact_gen rpm_gen
-+PROGS := compact_gen rpm_gen upload_digest_lists
- PROGS_EXTENDED := common.o
- 
- all: $(PROGS)
-@@ -19,3 +19,6 @@ compact_gen: compact_gen.c $(PROGS_EXTENDED)
- 
- rpm_gen: rpm_gen.c $(PROGS_EXTENDED)
- 	$(CC) $(CFLAGS) $< $(PROGS_EXTENDED) -o $@ $(LDFLAGS) -lrpm -lrpmio
-+
-+upload_digest_lists: upload_digest_lists.c
-+	$(CC) $(CFLAGS) -static $< -o $@ $(LDFLAGS)
-diff --git a/tools/diglim/upload_digest_lists.c b/tools/diglim/upload_digest_lists.c
-new file mode 100644
-index 000000000000..06086dd64aa3
---- /dev/null
-+++ b/tools/diglim/upload_digest_lists.c
-@@ -0,0 +1,238 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Run parsers of digest list formats not recognizable by the kernel.
-+ */
-+
-+#include <stdio.h>
-+#include <errno.h>
-+#include <fts.h>
-+#include <string.h>
-+#include <stdbool.h>
-+#include <fcntl.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <sys/wait.h>
-+#include <linux/limits.h>
-+#include <sys/mount.h>
-+#include <sys/vfs.h>
-+#include <sys/stat.h>
-+#include <linux/magic.h>
-+
-+#define MOUNT_FLAGS (MS_NOSUID | MS_NODEV | MS_NOEXEC | MS_RELATIME)
-+#define PROCFS_MNTPOINT "/proc"
-+#define SYSFS_MNTPOINT "/sys"
-+#define SECURITYFS_MNTPOINT SYSFS_MNTPOINT "/kernel/security"
-+#define DIGLIM_DIR SECURITYFS_MNTPOINT "/integrity/diglim"
-+
-+struct format_entry {
-+	struct format_entry *next;
-+	char *format;
-+};
-+
-+struct format_entry *head;
-+bool procfs_mounted;
-+bool sysfs_mounted;
-+bool securityfs_mounted;
-+
-+int add_format_parser(char *path)
-+{
-+	char *name;
-+	char *type_start, *format_start, *format_end;
-+	struct format_entry *cur, *new;
-+	int ret = 0;
-+
-+	name = strrchr(path, '/');
-+	if (!name)
-+		return -EINVAL;
-+
-+	name++;
-+
-+	type_start = strchr(name, '-');
-+	if (!type_start++)
-+		return 0;
-+
-+	format_start = strchr(type_start, '-');
-+	if (!format_start++)
-+		return 0;
-+
-+	format_end = strchr(format_start, '-');
-+	if (!format_end)
-+		return 0;
-+
-+	if (!strncmp(format_start, "compact", format_end - format_start))
-+		return 0;
-+
-+	cur = head;
-+
-+	while (cur) {
-+		if (!strncmp(format_start, cur->format,
-+			     format_end - format_start))
-+			goto out;
-+
-+		cur = cur->next;
-+	}
-+
-+	new = malloc(sizeof(*new));
-+	if (!new) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	new->format = strndup(format_start, format_end - format_start);
-+	if (!new->format) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	new->next = head;
-+	head = new;
-+out:
-+	if (ret < 0)
-+		free(new);
-+
-+	return ret;
-+}
-+
-+void free_list(void)
-+{
-+	struct format_entry *cur = head, *tmp;
-+
-+	while (cur) {
-+		tmp = cur;
-+		cur = tmp->next;
-+		free(tmp->format);
-+		free(tmp);
-+	}
-+}
-+
-+static int mount_filesystems(void)
-+{
-+	struct stat st;
-+	struct statfs stf;
-+	int ret;
-+
-+	if (stat("/proc/self", &st) == -1 ||
-+	    statfs("/proc/self", &stf) == -1 || stf.f_type != 0x9fa0) {
-+		ret = mount(PROCFS_MNTPOINT, PROCFS_MNTPOINT, "proc",
-+			    MOUNT_FLAGS, NULL);
-+		if (ret < 0) {
-+			printf("Cannot mount procfs\n");
-+			return ret;
-+		}
-+
-+		procfs_mounted = true;
-+	}
-+
-+	if (stat(SECURITYFS_MNTPOINT, &st) == -1 ||
-+	    statfs(SYSFS_MNTPOINT, &stf) == -1 ||
-+	    stf.f_type != 0x62656572) {
-+		ret = mount(SYSFS_MNTPOINT, SYSFS_MNTPOINT, "sysfs",
-+			    MOUNT_FLAGS, NULL);
-+		if (ret < 0) {
-+			printf("Cannot mount sysfs\n");
-+			return ret;
-+		}
-+
-+		sysfs_mounted = true;
-+	}
-+
-+	if (stat(DIGLIM_DIR, &st) == -1 ||
-+	    statfs(SECURITYFS_MNTPOINT, &stf) == -1 ||
-+	    stf.f_type != 0x73636673) {
-+		ret = mount(SECURITYFS_MNTPOINT, SECURITYFS_MNTPOINT,
-+			    "securityfs", MOUNT_FLAGS, NULL);
-+		if (ret < 0) {
-+			printf("Cannot mount securityfs\n");
-+			return ret;
-+		}
-+
-+		securityfs_mounted = true;
-+	}
-+
-+	return 0;
-+}
-+
-+static void umount_filesystems(void)
-+{
-+	if (procfs_mounted)
-+		umount(PROCFS_MNTPOINT);
-+	if (securityfs_mounted)
-+		umount(SECURITYFS_MNTPOINT);
-+	if (sysfs_mounted)
-+		umount(SYSFS_MNTPOINT);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	char *paths[2] = { NULL, NULL };
-+	struct format_entry *cur;
-+	char parser_path[PATH_MAX], *sep;
-+	FTS *fts = NULL;
-+	FTSENT *ftsent;
-+	int fts_flags = (FTS_PHYSICAL | FTS_COMFOLLOW | FTS_NOCHDIR | FTS_XDEV);
-+	int ret;
-+
-+	if (argc != 3) {
-+		printf("Usage: %s add|del <digest list path>\n", argv[0]);
-+		return -EINVAL;
-+	}
-+
-+	paths[0] = argv[2];
-+
-+	fts = fts_open(paths, fts_flags, NULL);
-+	if (!fts)
-+		return -EACCES;
-+
-+	while ((ftsent = fts_read(fts)) != NULL) {
-+		switch (ftsent->fts_info) {
-+		case FTS_F:
-+			ret = add_format_parser(ftsent->fts_path);
-+			if (ret < 0)
-+				printf("Cannot upload %s\n", ftsent->fts_path);
-+
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
-+	fts_close(fts);
-+	fts = NULL;
-+
-+	ret = mount_filesystems();
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = readlink("/proc/self/exe", parser_path, sizeof(parser_path));
-+	if (ret < 0)
-+		goto out;
-+
-+	sep = strrchr(parser_path, '/');
-+	if (!sep++) {
-+		ret = -ENOENT;
-+		goto out;
-+	}
-+
-+	cur = head;
-+
-+	while (cur) {
-+		if (fork() == 0) {
-+			snprintf(sep, sizeof(parser_path) - (sep - parser_path),
-+				 "%s_parser", cur->format);
-+			return execlp(parser_path, parser_path, argv[1],
-+				      argv[2], NULL);
-+		}
-+
-+		wait(NULL);
-+		cur = cur->next;
-+	}
-+
-+out:
-+	free_list();
-+	umount_filesystems();
-+	return ret;
-+}
+@@ -5507,6 +5507,7 @@ M:	Roberto Sassu <roberto.sassu@huawei.com>
+ L:	linux-integrity@vger.kernel.org
+ S:	Supported
+ T:	git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
++F:	Documentation/admin-guide/diglim.rst
+ F:	Documentation/security/diglim/architecture.rst
+ F:	Documentation/security/diglim/implementation.rst
+ F:	Documentation/security/diglim/index.rst
 -- 
 2.25.1
 
