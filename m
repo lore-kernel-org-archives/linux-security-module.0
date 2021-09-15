@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8163BC4167E
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5ECC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A47261242
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B660A610D1
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbhIOQfk (ORCPT
+        id S229956AbhIOQgQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Sep 2021 12:35:40 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3831 "EHLO
+        Wed, 15 Sep 2021 12:36:16 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3827 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229992AbhIOQfc (ORCPT
+        with ESMTP id S229894AbhIOQeK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Sep 2021 12:35:32 -0400
+        Wed, 15 Sep 2021 12:34:10 -0400
 Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4H8m296JqLz67tWW;
-        Thu, 16 Sep 2021 00:31:45 +0800 (CST)
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4H8m0c3vhRz67yV7;
+        Thu, 16 Sep 2021 00:30:24 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Wed, 15 Sep 2021 18:34:10 +0200
+ 15.1.2308.8; Wed, 15 Sep 2021 18:32:48 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
         <mchehab+huawei@kernel.org>
@@ -36,9 +36,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 8/9] diglim: RPM parser
-Date:   Wed, 15 Sep 2021 18:31:44 +0200
-Message-ID: <20210915163145.1046505-9-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 4/9] diglim: Tests - LSM
+Date:   Wed, 15 Sep 2021 18:31:40 +0200
+Message-ID: <20210915163145.1046505-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210915163145.1046505-1-roberto.sassu@huawei.com>
 References: <20210915163145.1046505-1-roberto.sassu@huawei.com>
@@ -52,544 +52,515 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Introduce a parser of the RPM digest list, which converts the digest lists
-to the compact format and uploads the converted digest lists to the kernel.
+Introduce more tests to ensure that DIGLIM LSM works as expected:
 
-It takes as input the type of operation to perform, add or delete, and the
-file or directory with the files to process.
+- digest_list_add_del_test_parser_upload;
+- digest_list_add_del_test_parser_upload_not_measured;
+- digest_list_add_del_test_parser_upload_write;
+- digest_list_add_del_test_parser_upload_read;
+- digest_list_add_del_test_parser_upload_char_dev.
 
-Also the RPM parser is intentionally compiled as a static binary to avoid
-to generate a compact digest list also for its dependencies.
+The tests are in tools/testing/selftests/diglim/selftest.c.
+
+A description of the tests can be found in
+Documentation/security/diglim/tests.rst.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- MAINTAINERS               |   1 +
- tools/diglim/Makefile     |   5 +-
- tools/diglim/rpm_parser.c | 483 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 488 insertions(+), 1 deletion(-)
- create mode 100644 tools/diglim/rpm_parser.c
+ Documentation/security/diglim/tests.rst   |  18 +-
+ tools/testing/selftests/diglim/Makefile   |  12 +-
+ tools/testing/selftests/diglim/common.h   |   9 +
+ tools/testing/selftests/diglim/selftest.c | 357 +++++++++++++++++++++-
+ 4 files changed, 378 insertions(+), 18 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 148a2a7957b7..1efc1724376e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5527,6 +5527,7 @@ F:	tools/diglim/common.c
- F:	tools/diglim/common.h
- F:	tools/diglim/compact_gen.c
- F:	tools/diglim/rpm_gen.c
-+F:	tools/diglim/rpm_parser.c
- F:	tools/diglim/upload_digest_lists.c
- F:	tools/testing/selftests/diglim/
+diff --git a/Documentation/security/diglim/tests.rst b/Documentation/security/diglim/tests.rst
+index 899e7d6683cf..21874918433d 100644
+--- a/Documentation/security/diglim/tests.rst
++++ b/Documentation/security/diglim/tests.rst
+@@ -14,7 +14,12 @@ expected:
+ - ``digest_list_add_del_test_file_upload_measured``;
+ - ``digest_list_add_del_test_file_upload_measured_chown``;
+ - ``digest_list_check_measurement_list_test_file_upload``;
+-- ``digest_list_check_measurement_list_test_buffer_upload``.
++- ``digest_list_check_measurement_list_test_buffer_upload``;
++- ``digest_list_add_del_test_parser_upload``;
++- ``digest_list_add_del_test_parser_upload_not_measured``
++- ``digest_list_add_del_test_parser_upload_write``;
++- ``digest_list_add_del_test_parser_upload_read``;
++- ``digest_list_add_del_test_parser_upload_char_dev``.
  
-diff --git a/tools/diglim/Makefile b/tools/diglim/Makefile
-index a22125ad0281..7019c5b9fad9 100644
---- a/tools/diglim/Makefile
-+++ b/tools/diglim/Makefile
-@@ -3,7 +3,7 @@
- CC := $(CROSS_COMPILE)gcc
- CFLAGS += -O2 -Wall -g -I./ -I../../usr/include/ -ggdb
+ The tests are in ``tools/testing/selftests/diglim/selftest.c``.
  
--PROGS := compact_gen rpm_gen upload_digest_lists
-+PROGS := compact_gen rpm_gen upload_digest_lists rpm_parser
- PROGS_EXTENDED := common.o
+@@ -68,3 +73,14 @@ addition.
  
- all: $(PROGS)
-@@ -22,3 +22,6 @@ rpm_gen: rpm_gen.c $(PROGS_EXTENDED)
+ The ``file_upload`` variant uploads a file, while the ``buffer_upload``
+ variant uploads a buffer.
++
++The ``digest_list_add_del_test_parser`` tests verify the correctness of
++DIGLIM LSM. The ``upload`` variant ensures that files opened by the parser
++are evaluated and the actions are copied to the converted digest list. The
++``upload_not_measured`` variant ensures that the IMA measure action is not
++set to the converted digest list if the parser read a file not measured.
++The ``upload_write`` variant ensures that the parser cannot access a file
++concurrently written by another process. The ``upload_read`` variant
++ensures that files being read by the parser cannot be written by other
++processes. Finally, the ``upload_char_dev`` variant ensures that the parser
++cannot access files without measurable content (e.g. character device).
+diff --git a/tools/testing/selftests/diglim/Makefile b/tools/testing/selftests/diglim/Makefile
+index 100c219955d7..0e68d8363dd3 100644
+--- a/tools/testing/selftests/diglim/Makefile
++++ b/tools/testing/selftests/diglim/Makefile
+@@ -7,13 +7,19 @@ LDLIBS += -lpthread
  
- upload_digest_lists: upload_digest_lists.c
- 	$(CC) $(CFLAGS) -static $< -o $@ $(LDFLAGS)
+ OVERRIDE_TARGETS = 1
+ 
+-TEST_GEN_PROGS = selftest
+-TEST_GEN_PROGS_EXTENDED = libcommon.so
++TEST_GEN_PROGS = selftest manage_digest_lists
++TEST_GEN_PROGS_EXTENDED = libcommon.so libcommon.a common.o
+ 
+ include ../lib.mk
+ 
+ $(OUTPUT)/libcommon.so: common.c
+ 	$(CC) $(CFLAGS) -shared -fPIC $< $(LDLIBS) -o $@
+ 
++$(OUTPUT)/libcommon.a: common.o
++	ar rcs libcommon.a common.o
 +
-+rpm_parser: rpm_parser.c $(PROGS_EXTENDED)
-+	$(CC) $(CFLAGS) -static $< $(PROGS_EXTENDED) -o $@ $(LDFLAGS)
-diff --git a/tools/diglim/rpm_parser.c b/tools/diglim/rpm_parser.c
-new file mode 100644
-index 000000000000..f8a4b63b2fa8
---- /dev/null
-+++ b/tools/diglim/rpm_parser.c
-@@ -0,0 +1,483 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Parse RPM header and upload digest list to the kernel.
-+ */
+ $(OUTPUT)/selftest: selftest.c $(TEST_GEN_PROGS_EXTENDED)
+-	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS) -lcommon
++	$(CC) $(CFLAGS) -DOUTPUT=\"$(OUTPUT)\" $< -o $@ $(LDFLAGS) -lcommon
 +
-+#include <stdio.h>
-+#include <string.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <stdbool.h>
-+#include <ctype.h>
-+#include <fts.h>
-+#include <rpm/rpmtag.h>
-+#include <rpm/rpmpgp.h>
-+#include <sys/stat.h>
-+#include <sys/mman.h>
-+#include <sys/xattr.h>
-+#include <sys/mount.h>
-+#include <linux/diglim.h>
-+#include <linux/hash_info.h>
-+#include <bits/endianness.h>
++$(OUTPUT)/manage_digest_lists: manage_digest_lists.c $(TEST_GEN_PROGS_EXTENDED)
++	$(CC) $(CFLAGS) -static $< -o $@ $(LDFLAGS) -lcommon
+diff --git a/tools/testing/selftests/diglim/common.h b/tools/testing/selftests/diglim/common.h
+index 6c7979f4182e..b71031adb830 100644
+--- a/tools/testing/selftests/diglim/common.h
++++ b/tools/testing/selftests/diglim/common.h
+@@ -26,6 +26,15 @@
+ 
+ #define BUFFER_SIZE 1024
+ 
++#define INTEGRITY_DIR "/sys/kernel/security/integrity"
++#define DIGEST_LIST_DIR INTEGRITY_DIR "/diglim"
++#define DIGEST_QUERY_PATH DIGEST_LIST_DIR "/digest_query"
++#define DIGEST_LABEL_PATH DIGEST_LIST_DIR "/digest_list_label"
++#define DIGEST_LIST_ADD_PATH DIGEST_LIST_DIR "/digest_list_add"
++#define DIGEST_LIST_DEL_PATH DIGEST_LIST_DIR "/digest_list_del"
++#define DIGEST_LISTS_LOADED_PATH DIGEST_LIST_DIR "/digest_lists_loaded"
++#define DIGESTS_COUNT DIGEST_LIST_DIR "/digests_count"
 +
-+#include "common.h"
+ int write_buffer(char *path, char *buffer, size_t buffer_len, int uid);
+ int read_buffer(char *path, char **buffer, size_t *buffer_len, bool alloc,
+ 		bool is_char);
+diff --git a/tools/testing/selftests/diglim/selftest.c b/tools/testing/selftests/diglim/selftest.c
+index 273ba80c43fd..af7a590c445f 100644
+--- a/tools/testing/selftests/diglim/selftest.c
++++ b/tools/testing/selftests/diglim/selftest.c
+@@ -63,16 +63,6 @@ typedef uint64_t u64;
+ 
+ #define DIGEST_LIST_PATH_TEMPLATE "/tmp/digest_list.XXXXXX"
+ 
+-#define INTEGRITY_DIR "/sys/kernel/security/integrity"
+-
+-#define DIGEST_LIST_DIR INTEGRITY_DIR "/diglim"
+-#define DIGEST_QUERY_PATH DIGEST_LIST_DIR "/digest_query"
+-#define DIGEST_LABEL_PATH DIGEST_LIST_DIR "/digest_list_label"
+-#define DIGEST_LIST_ADD_PATH DIGEST_LIST_DIR "/digest_list_add"
+-#define DIGEST_LIST_DEL_PATH DIGEST_LIST_DIR "/digest_list_del"
+-#define DIGEST_LISTS_LOADED_PATH DIGEST_LIST_DIR "/digest_lists_loaded"
+-#define DIGESTS_COUNT DIGEST_LIST_DIR "/digests_count"
+-
+ #define IMA_POLICY_PATH INTEGRITY_DIR "/ima/policy"
+ #define IMA_MEASUREMENTS_PATH INTEGRITY_DIR "/ima/ascii_runtime_measurements"
+ 
+@@ -94,7 +84,11 @@ typedef uint64_t u64;
+ #define MAX_DIGEST_LIST_SIZE 10000
+ #define NUM_ITERATIONS 100000
+ 
+-enum upload_types { UPLOAD_FILE, UPLOAD_FILE_CHOWN, UPLOAD_BUFFER };
++#define DIGEST_LIST_PARSER_PATH OUTPUT "/manage_digest_lists"
++#define DIGEST_LIST_PARSER_PATH_COPY "/tmp/diglim/manage_digest_lists"
 +
-+#if __BYTE_ORDER == __BIG_ENDIAN
-+#include <linux/byteorder/big_endian.h>
-+#else
-+#include <linux/byteorder/little_endian.h>
-+#endif
-+
-+#define SYSFS_MNTPOINT "/sys"
-+#define SECURITYFS_MNTPOINT SYSFS_MNTPOINT "/kernel/security"
-+#define DIGLIM_DIR SECURITYFS_MNTPOINT "/integrity/diglim"
-+#define DIGEST_LIST_ADD DIGLIM_DIR "/digest_list_add"
-+#define DIGEST_LIST_DEL DIGLIM_DIR "/digest_list_del"
-+#define DIGEST_LIST_LABEL DIGLIM_DIR "/digest_list_label"
-+#define DIGEST_LIST_DIR "/etc/digest_lists"
-+
-+#define MOUNT_FLAGS (MS_NOSUID | MS_NODEV | MS_NOEXEC | MS_RELATIME)
-+
-+enum hash_algo pgp_algo_mapping[PGPHASHALGO_SHA224 + 1] = {
-+	[PGPHASHALGO_MD5] = HASH_ALGO_MD5,
-+	[PGPHASHALGO_SHA1] = HASH_ALGO_SHA1,
-+	[PGPHASHALGO_SHA224] = HASH_ALGO_SHA224,
-+	[PGPHASHALGO_SHA256] = HASH_ALGO_SHA256,
-+	[PGPHASHALGO_SHA384] = HASH_ALGO_SHA384,
-+	[PGPHASHALGO_SHA512] = HASH_ALGO_SHA512,
-+};
-+
-+struct rpm_hdr {
-+	int32_t magic;
-+	int32_t reserved;
-+	int32_t tags;
-+	int32_t datasize;
-+} __attribute__((packed));
-+
-+struct rpm_entryinfo {
-+	int32_t tag;
-+	int32_t type;
-+	int32_t offset;
-+	int32_t count;
-+} __attribute__((packed));
-+
-+/* from lib/hexdump.c (Linux kernel) */
-+static int hex_to_bin(char ch)
++enum upload_types { UPLOAD_FILE, UPLOAD_FILE_CHOWN, UPLOAD_BUFFER,
++		    UPLOAD_PARSER, UPLOAD_PARSER_CHOWN, NO_UPLOAD };
+ 
+ const char *const hash_algo_name[HASH_ALGO__LAST] = {
+ 	[HASH_ALGO_MD4]		= "md4",
+@@ -486,6 +480,69 @@ static struct digest_list_item *digest_list_generate_random(void)
+ 	return !ret ? digest_list : NULL;
+ }
+ 
++static struct digest_list_item *digest_list_generate_file(char *file_path,
++							enum compact_types type)
 +{
-+	if ((ch >= '0') && (ch <= '9'))
-+		return ch - '0';
-+	ch = tolower(ch);
-+	if ((ch >= 'a') && (ch <= 'f'))
-+		return ch - 'a' + 10;
-+	return -1;
-+}
-+
-+int _hex2bin(unsigned char *dst, const char *src, size_t count)
-+{
-+	while (count--) {
-+		int hi = hex_to_bin(*src++);
-+		int lo = hex_to_bin(*src++);
-+
-+		if ((hi < 0) || (lo < 0))
-+			return -1;
-+
-+		*dst++ = (hi << 4) | lo;
-+	}
-+	return 0;
-+}
-+
-+static u8 *new_digest_list(enum hash_algo algo, enum compact_types type,
-+			   u16 modifiers, u32 count)
-+{
-+	u8 *digest_list;
++	struct digest_list_item *digest_list;
 +	struct compact_list_hdr *hdr;
++	u8 digest[64];
++	int ret;
 +
-+	digest_list = calloc(1, sizeof(struct compact_list_hdr) +
-+			     count * hash_digest_size[algo]);
++	digest_list = calloc(1, sizeof(*digest_list));
 +	if (!digest_list)
 +		return NULL;
 +
-+	hdr = (struct compact_list_hdr *)digest_list;
++	digest_list->size = sizeof(struct compact_list_hdr) +
++			    hash_digest_size[HASH_ALGO_SHA256];
++	digest_list->buf = calloc(digest_list->size, sizeof(unsigned char));
++	if (!digest_list->buf) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	hdr = (struct compact_list_hdr *)digest_list->buf;
++
 +	hdr->version = 1;
-+	hdr->type = __cpu_to_le16(type);
-+	hdr->modifiers = __cpu_to_le16(modifiers);
-+	hdr->algo = __cpu_to_le16(algo);
-+	return digest_list;
-+}
++	hdr->_reserved = 0;
++	hdr->type = type;
++	hdr->modifiers = 0;
++	hdr->algo = HASH_ALGO_SHA256;
++	hdr->count = 1;
++	hdr->datalen = hash_digest_size[hdr->algo];
 +
-+static int upload_digest_list(int add_del_fd, int label_fd, u8 *digest_list,
-+			      char *label)
-+{
-+	struct compact_list_hdr *hdr;
-+	u32 datalen;
-+	ssize_t ret;
-+
-+	hdr = (struct compact_list_hdr *)digest_list;
-+	if (!hdr->count)
-+		return 0;
-+
-+	datalen = hdr->datalen;
++	hdr->type = __cpu_to_le16(hdr->type);
++	hdr->algo = __cpu_to_le16(hdr->algo);
 +	hdr->count = __cpu_to_le32(hdr->count);
 +	hdr->datalen = __cpu_to_le32(hdr->datalen);
 +
-+	ret = write(label_fd, label, strlen(label) + 1);
-+	if (ret < 0 || ret != strlen(label) + 1)
-+		return -EIO;
++	ret = calc_file_digest(digest_list->buf + sizeof(*hdr), file_path,
++			       HASH_ALGO_SHA256);
++	if (ret < 0)
++		goto out;
 +
-+	ret = write(add_del_fd, digest_list, sizeof(*hdr) + datalen);
-+	if (ret < 0) {
-+		if (errno == EEXIST || errno == ENOENT)
-+			return 0;
-+
-+		return ret;
-+	} else if (ret != sizeof(*hdr) + datalen) {
-+		return -EIO;
-+	}
-+
-+	return ret;
-+}
-+
-+static int parse_rpm(int add_del_fd, int label_fd, char *path,
-+		     struct stat *st, bool only_immutable)
-+{
-+	void *buf, *bufp, *bufendp, *datap;
-+	struct rpm_hdr *hdr;
-+	int32_t tags;
-+	struct rpm_entryinfo *entry;
-+	void *digests = NULL, *algo_buf = NULL, *modes = NULL, *sizes = NULL;
-+	void *dirnames = NULL, *basenames = NULL, *dirindexes = NULL;
-+	char **dirnames_ptr = NULL;
-+	u8 *digest_list = NULL, *digest_list_immutable = NULL;
-+	u32 digests_count = 0, dirnames_count = 0;
-+	u16 algo = HASH_ALGO_MD5;
-+	char *label = strrchr(path, '/') + 1;
-+	int ret = 0, fd_rpm, i, dirname_len;
-+
-+	const unsigned char rpm_header_magic[8] = {
-+		0x8e, 0xad, 0xe8, 0x01, 0x00, 0x00, 0x00, 0x00
-+	};
-+
-+	if (st->st_size < sizeof(*hdr)) {
-+		printf("Missing RPM header\n");
-+		return -EINVAL;
-+	}
-+
-+	fd_rpm = open(path, O_RDONLY);
-+	if (fd_rpm < 0) {
-+		printf("Cannot access %s (%d)\n", path, -errno);
-+		return -EACCES;
-+	}
-+
-+	buf = bufp = mmap(NULL, st->st_size, PROT_READ | PROT_WRITE,
-+			  MAP_PRIVATE, fd_rpm, 0);
-+
-+	close(fd_rpm);
-+
-+	if (bufp == MAP_FAILED)
-+		return -ENOMEM;
-+
-+	if (memcmp(bufp, rpm_header_magic, sizeof(rpm_header_magic))) {
-+		printf("Invalid RPM header\n");
-+		ret = -EINVAL;
++	digest_list->algo = get_ima_hash_algo();
++	if (digest_list->algo == HASH_ALGO__LAST) {
++		ret = -ENOENT;
 +		goto out;
 +	}
 +
-+	hdr = (struct rpm_hdr *)bufp;
-+	tags = __be32_to_cpu(hdr->tags);
-+	datap = bufp + sizeof(*hdr) + tags * sizeof(struct rpm_entryinfo);
-+	bufendp = bufp + st->st_size;
-+	bufp += sizeof(*hdr);
++	ret = calc_digest(digest, digest_list->buf, digest_list->size,
++			  digest_list->algo);
++	if (ret < 0)
++		goto out;
 +
-+	for (i = 0; i < tags && (bufp + sizeof(*entry)) <= bufendp;
-+	     i++, bufp += sizeof(*entry)) {
-+		entry = bufp;
-+
-+		switch (__be32_to_cpu(entry->tag)) {
-+		case RPMTAG_FILEDIGESTS:
-+			digests = datap + __be32_to_cpu(entry->offset);
-+			digests_count = __be32_to_cpu(entry->count);
-+			break;
-+		case RPMTAG_FILEDIGESTALGO:
-+			algo_buf = datap + __be32_to_cpu(entry->offset);
-+			break;
-+		case RPMTAG_DIRNAMES:
-+			dirnames = datap + __be32_to_cpu(entry->offset);
-+			dirnames_count = __be32_to_cpu(entry->count);
-+			break;
-+		case RPMTAG_BASENAMES:
-+			basenames = datap + __be32_to_cpu(entry->offset);
-+			break;
-+		case RPMTAG_DIRINDEXES:
-+			dirindexes = datap + __be32_to_cpu(entry->offset);
-+			break;
-+		case RPMTAG_FILEMODES:
-+			modes = datap + __be32_to_cpu(entry->offset);
-+			break;
-+		case RPMTAG_FILESIZES:
-+			sizes = datap + __be32_to_cpu(entry->offset);
-+			break;
-+
-+		if (digests && algo_buf && modes && dirnames && basenames &&
-+		    dirindexes)
-+			break;
-+		}
++	_bin2hex(digest_list->digest_str, digest,
++		 hash_digest_size[digest_list->algo]);
++out:
++	if (ret < 0) {
++		free(digest_list->buf);
++		free(digest_list);
++		return NULL;
 +	}
 +
-+	if (!digests || !modes || !sizes || !dirnames || !basenames ||
-+	    !dirindexes) {
++	return digest_list;
++}
++
+ static int digest_list_upload(struct digest_list_item *digest_list, enum ops op,
+ 			      enum upload_types upload_type, int uid)
+ {
+@@ -494,16 +551,20 @@ static int digest_list_upload(struct digest_list_item *digest_list, enum ops op,
+ 	unsigned char *buffer = digest_list->buf;
+ 	size_t buffer_len = digest_list->size;
+ 	unsigned char rnd[3];
+-	int ret = 0, fd;
++	int ret = 0, fd, status;
+ 
+ 	if (op == DIGEST_LIST_ADD) {
+ 		if (upload_type == UPLOAD_FILE ||
+-		    upload_type == UPLOAD_FILE_CHOWN) {
++		    upload_type == UPLOAD_FILE_CHOWN ||
++		    upload_type == UPLOAD_PARSER ||
++		    upload_type == UPLOAD_PARSER_CHOWN ||
++		    upload_type == NO_UPLOAD) {
+ 			fd = mkstemp(path_template);
+ 			if (fd < 0)
+ 				return -EPERM;
+ 
+-			if (upload_type == UPLOAD_FILE_CHOWN)
++			if (upload_type == UPLOAD_FILE_CHOWN ||
++			    upload_type == UPLOAD_PARSER_CHOWN)
+ 				ret = fchown(fd, 3000, -1);
+ 
+ 			fchmod(fd, 0644);
+@@ -550,6 +611,25 @@ static int digest_list_upload(struct digest_list_item *digest_list, enum ops op,
+ 				   strlen(basename), -1);
+ 		if (ret < 0)
+ 			goto out;
++	} else if (upload_type == UPLOAD_PARSER ||
++		   upload_type == UPLOAD_PARSER_CHOWN) {
++		if (fork() == 0) {
++			execlp(DIGEST_LIST_PARSER_PATH_COPY,
++			       DIGEST_LIST_PARSER_PATH_COPY,
++			       path_template, path_upload, NULL);
++			exit(1);
++		}
++
++		ret = 0;
++
++		wait(&status);
++		if (WEXITSTATUS(status) != 0)
++			ret = -EINVAL;
++
++		goto out;
++	} else if (upload_type == NO_UPLOAD) {
 +		ret = 0;
 +		goto out;
+ 	}
+ 
+ 	ret = write_buffer(path_upload, (char *)buffer, buffer_len, uid);
+@@ -1439,4 +1519,253 @@ TEST_F_TIMEOUT(test_measure,
+ 						       UPLOAD_BUFFER);
+ }
+ 
++FIXTURE(test_parser)
++{
++	struct digest_list_item *digest_list;
++};
++
++#define PARSER_RULES "measure func=DIGEST_LIST_CHECK fowner=3000 \n"
++
++FIXTURE_SETUP(test_parser)
++{
++	int ret;
++
++	ret = load_ima_policy(PARSER_RULES);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("load_ima_policy() failed");
 +	}
 +
-+	if (algo_buf && algo_buf + sizeof(u32) <= bufendp)
-+		algo = pgp_algo_mapping[__be32_to_cpu(*(u32 *)algo_buf)];
++	unlink(DIGEST_LIST_PARSER_PATH_COPY);
++	mkdir("/tmp/diglim", 0700);
 +
-+	digest_list = new_digest_list(algo, COMPACT_FILE, 0, digests_count);
-+	if (!digest_list) {
-+		ret = -ENOMEM;
-+		goto out;
++	ret = copy_file(DIGEST_LIST_PARSER_PATH, DIGEST_LIST_PARSER_PATH_COPY);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("copy_file() failed");
 +	}
 +
-+	digest_list_immutable = new_digest_list(algo, COMPACT_FILE,
-+						(1 << COMPACT_MOD_IMMUTABLE),
-+						digests_count);
-+	if (!digest_list_immutable) {
-+		ret = -ENOMEM;
-+		goto out;
++	ret = chown(DIGEST_LIST_PARSER_PATH_COPY, 3000, -1);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("chown() failed");
 +	}
 +
-+	dirnames_ptr = calloc(dirnames_count, sizeof(*dirnames_ptr));
-+	if (!dirnames_ptr) {
-+		ret = -ENOMEM;
-+		goto out;
++	chmod(DIGEST_LIST_PARSER_PATH_COPY, 0755);
++
++	self->digest_list = digest_list_generate_file(
++						DIGEST_LIST_PARSER_PATH_COPY,
++						COMPACT_PARSER);
++	ASSERT_NE(NULL, self->digest_list) {
++		TH_LOG("Cannot generate digest list");
 +	}
 +
-+	for (i = 0; i < dirnames_count; i++) {
-+		dirname_len = strlen(dirnames) + 1;
++	self->digest_list->actions |= (1 << COMPACT_ACTION_IMA_MEASURED);
 +
-+		if (dirnames + dirname_len > bufendp) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		dirnames_ptr[i] = dirnames;
-+		dirnames += dirname_len;
++	ret = digest_list_upload(self->digest_list, DIGEST_LIST_ADD,
++				 UPLOAD_FILE, 1000);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_upload() failed");
 +	}
 +
-+	for (i = 0; i < digests_count; i++) {
-+		int digest_str_len = strlen(digests);
-+		int basename_str_len = strlen(basenames);
-+		u8 *digest_list_ptr = digest_list;
-+		struct compact_list_hdr *cur_hdr;
-+		u32 dirindex;
-+		u32 size;
-+		u16 mode;
++	ret = digest_list_check(self->digest_list, DIGEST_LIST_ADD);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_check() failed");
++	}
++}
 +
-+		if (digests + digest_str_len * 2 + 1 > bufendp) {
-+			printf("RPM header read at invalid offset\n");
-+			ret = -EINVAL;
-+			goto out;
-+		}
++FIXTURE_TEARDOWN(test_parser)
++{
++	int ret;
 +
-+		if (basenames + basename_str_len + 1 > bufendp) {
-+			printf("RPM header read at invalid offset\n");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (dirindexes + sizeof(u32) > bufendp) {
-+			printf("RPM header read at invalid offset\n");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (sizes + sizeof(u32) > bufendp) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (modes + sizeof(u16) > bufendp) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (!digest_str_len) {
-+			digests += digest_str_len + 1;
-+			basenames += basename_str_len + 1;
-+			dirindexes += sizeof(u32);
-+			sizes += sizeof(u32);
-+			modes += sizeof(u16);
-+			continue;
-+		}
-+
-+		dirindex = __be32_to_cpu(*(u32 *)dirindexes);
-+		size = __be32_to_cpu(*(u32 *)sizes);
-+		mode = __be16_to_cpu(*(u16 *)modes);
-+
-+		if (((mode & 0111) || !(mode & 0222)) && size)
-+			digest_list_ptr = digest_list_immutable;
-+
-+		if ((strstr(dirnames_ptr[dirindex], "/lib/modules") &&
-+		    strncmp(basenames, "modules.", 8)) ||
-+		    strstr(dirnames_ptr[dirindex], "/lib/firmware") ||
-+		    strstr(dirnames_ptr[dirindex], "/usr/libexec/sudo"))
-+			digest_list_ptr = digest_list_immutable;
-+
-+		if (only_immutable && digest_list_ptr != digest_list_immutable)
-+			continue;
-+
-+		cur_hdr = (struct compact_list_hdr *)digest_list_ptr;
-+
-+		ret = _hex2bin(digest_list_ptr + sizeof(*cur_hdr) +
-+			       cur_hdr->count * hash_digest_size[algo],
-+			       digests, digest_str_len / 2);
-+		if (ret < 0)
-+			goto out;
-+
-+		digests += digest_str_len + 1;
-+		basenames += basename_str_len + 1;
-+		dirindexes += sizeof(u32);
-+		sizes += sizeof(u32);
-+		modes += sizeof(u16);
-+
-+		cur_hdr->count++;
-+		cur_hdr->datalen += hash_digest_size[algo];
++	ret = digest_list_upload(self->digest_list, DIGEST_LIST_DEL,
++				 UPLOAD_FILE, 1000);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_upload() failed");
 +	}
 +
-+	ret = upload_digest_list(add_del_fd, label_fd, digest_list, label);
-+	if (ret < 0) {
-+		printf("Failed to upload digest list\n");
-+		goto out;
++	free(self->digest_list->buf);
++	free(self->digest_list);
++}
++
++TEST_F_TIMEOUT(test_parser, digest_list_add_del_test_parser_upload, UINT_MAX)
++{
++	struct digest_list_item *digest_list;
++	int ret;
++
++	digest_list = digest_list_generate_file("/bin/cat", COMPACT_FILE);
++	ASSERT_NE(NULL, digest_list) {
++		TH_LOG("Cannot generate digest list");
 +	}
 +
-+	ret = upload_digest_list(add_del_fd, label_fd, digest_list_immutable,
-+				 label);
-+	if (ret < 0)
-+		printf("Failed to upload digest list\n");
-+out:
-+	munmap(buf, st->st_size);
++	digest_list->actions |= (1 << COMPACT_ACTION_IMA_MEASURED);
++
++	ret = digest_list_upload(digest_list, DIGEST_LIST_ADD,
++				 UPLOAD_PARSER_CHOWN, -1);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_upload() failed");
++	}
++
++	ret = digest_list_check(digest_list, DIGEST_LIST_ADD);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_check() failed");
++	}
++
++	ret = digest_list_upload(digest_list, DIGEST_LIST_DEL,
++				 UPLOAD_PARSER_CHOWN, -1);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_upload() failed");
++	}
++
++	ret = digest_list_check(digest_list, DIGEST_LIST_DEL);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_check() failed");
++	}
++
 +	free(digest_list);
-+	free(digest_list_immutable);
-+	free(dirnames_ptr);
-+	return ret;
 +}
 +
-+int parse_digest_list(char *name)
++TEST_F_TIMEOUT(test_parser, digest_list_add_del_test_parser_upload_not_measured,
++	       UINT_MAX)
 +{
-+	char *type_start, *format_start, *format_end;
++	struct digest_list_item *digest_list;
++	int ret;
 +
-+	type_start = strchr(name, '-');
-+	if (!type_start++)
-+		return 0;
++	digest_list = digest_list_generate_file("/bin/cat", COMPACT_FILE);
++	ASSERT_NE(NULL, digest_list) {
++		TH_LOG("Cannot generate digest list");
++	}
 +
-+	format_start = strchr(type_start, '-');
-+	if (!format_start++)
-+		return 0;
++	ret = digest_list_upload(digest_list, DIGEST_LIST_ADD,
++				 UPLOAD_PARSER, -1);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_upload() failed");
++	}
 +
-+	format_end = strchr(format_start, '-');
-+	if (!format_end)
-+		return 0;
++	ret = digest_list_check(digest_list, DIGEST_LIST_ADD);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_check() failed");
++	}
 +
-+	if (format_end - format_start != 3 ||
-+	    strncmp(format_start, "rpm", 3))
-+		return 0;
++	ret = digest_list_upload(digest_list, DIGEST_LIST_DEL,
++				 UPLOAD_PARSER, -1);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_upload() failed");
++	}
 +
-+	return 1;
++	ret = digest_list_check(digest_list, DIGEST_LIST_DEL);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_check() failed");
++	}
++
++	free(digest_list);
 +}
 +
-+int main(int argc, char *argv[])
++TEST_F_TIMEOUT(test_parser, digest_list_add_del_test_parser_upload_write,
++	       UINT_MAX)
 +{
-+	FTS *fts = NULL;
-+	FTSENT *ftsent;
-+	int fts_flags = (FTS_PHYSICAL | FTS_COMFOLLOW | FTS_NOCHDIR | FTS_XDEV);
-+	char *paths[2] = { NULL, NULL };
-+	char *add_del_path = DIGEST_LIST_ADD;
-+	char path[PATH_MAX], *path_ptr = path;
-+	bool only_immutable = false;
-+	struct stat st;
-+	int ret, add_del_fd = -1, label_fd = -1;
++	char path_template[] = DIGEST_LIST_PATH_TEMPLATE;
++	struct digest_list_item *digest_list;
++	int ret, fd, status, fds[2];
++	char c = 0;
 +
-+	if (argc < 3) {
-+		printf("Usage: %s add|del <digest list path>\n",
-+		       argv[0]);
-+		return -EINVAL;
++	digest_list = digest_list_generate_file("/bin/cat", COMPACT_FILE);
++	ASSERT_NE(NULL, digest_list) {
++		TH_LOG("Cannot generate digest list");
 +	}
 +
-+	if (stat(argv[2], &st) == -1)
-+		return -ENOENT;
++	digest_list->actions |= (1 << COMPACT_ACTION_IMA_MEASURED);
 +
-+	strncpy(path, argv[2], sizeof(path) - 1);
-+
-+	if (!S_ISDIR(st.st_mode)) {
-+		path_ptr = strrchr(path, '/');
-+		if (!path_ptr)
-+			path_ptr = path;
-+		else
-+			path_ptr++;
-+	} else {
-+		path_ptr = path + strlen(path);
++	ret = digest_list_upload(digest_list, DIGEST_LIST_ADD, NO_UPLOAD, -1);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_upload() failed");
 +	}
 +
-+	strncpy(path_ptr, "/.immutable", sizeof(path) - (path_ptr - path));
-+	if (!stat(path, &st))
-+		only_immutable = true;
++	memcpy(path_template + sizeof(DIGEST_LIST_PATH_TEMPLATE) - 7,
++	       digest_list->filename_suffix, 6);
 +
-+	paths[0] = argv[2];
-+
-+	if (!strcmp(argv[1], "del"))
-+		add_del_path = DIGEST_LIST_DEL;
-+
-+	add_del_fd = open(add_del_path, O_WRONLY);
-+	if (add_del_fd < 0) {
-+		printf("Unable to open %s\n", add_del_path);
-+		return -EACCES;
++	ret = pipe(fds);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("pipe() failed");
 +	}
 +
-+	label_fd = open(DIGEST_LIST_LABEL, O_WRONLY);
-+	if (label_fd < 0) {
-+		printf("Unable to open %s\n", DIGEST_LIST_LABEL);
-+		ret = -EACCES;
-+		goto out;
++	if (fork() == 0) {
++		fd = open(path_template, O_WRONLY);
++		if (fd < 0)
++			exit(1);
++
++		close(fds[1]);
++		ret = read(fds[0], &c, sizeof(c));
++		exit(1);
 +	}
 +
-+	fts = fts_open(paths, fts_flags, NULL);
-+	if (!fts) {
-+		printf("Unable to open %s\n", argv[2]);
-+		ret = -EACCES;
-+		goto out;
++	close(fds[0]);
++
++	if (fork() == 0) {
++		execlp(DIGEST_LIST_PARSER_PATH, DIGEST_LIST_PARSER_PATH,
++		       path_template, DIGEST_LIST_ADD_PATH, NULL);
++		exit(1);
 +	}
 +
-+	while ((ftsent = fts_read(fts)) != NULL) {
-+		switch (ftsent->fts_info) {
-+		case FTS_F:
-+			if (!parse_digest_list(ftsent->fts_name))
-+				break;
-+
-+			ret = parse_rpm(add_del_fd, label_fd,
-+					ftsent->fts_path, ftsent->fts_statp,
-+					only_immutable);
-+			if (ret < 0)
-+				printf("Cannot parse %s\n", ftsent->fts_path);
-+			break;
-+		default:
-+			break;
-+		}
++	wait(&status);
++	ASSERT_EQ(1, WEXITSTATUS(status)) {
++		TH_LOG("digest list parser unexpected exit code %d",
++		       WEXITSTATUS(status));
 +	}
 +
-+out:
-+	if (add_del_fd >= 0)
-+		close(add_del_fd);
-+	if (label_fd >= 0)
-+		close(label_fd);
-+	if (fts)
-+		fts_close(fts);
-+
-+	return 0;
++	free(digest_list);
 +}
++
++TEST_F_TIMEOUT(test_parser, digest_list_add_del_test_parser_upload_read,
++	       UINT_MAX)
++{
++	char path_template[] = DIGEST_LIST_PATH_TEMPLATE;
++	struct digest_list_item *digest_list;
++	int ret, fd;
++
++	digest_list = digest_list_generate_file("/bin/cat", COMPACT_FILE);
++	ASSERT_NE(NULL, digest_list) {
++		TH_LOG("Cannot generate digest list");
++	}
++
++	ret = digest_list_upload(digest_list, DIGEST_LIST_ADD, NO_UPLOAD, -1);
++	ASSERT_EQ(0, ret) {
++		TH_LOG("digest_list_upload() failed");
++	}
++
++	memcpy(path_template + sizeof(DIGEST_LIST_PATH_TEMPLATE) - 7,
++	       digest_list->filename_suffix, 6);
++
++	if (fork() == 0) {
++		execlp(DIGEST_LIST_PARSER_PATH, DIGEST_LIST_PARSER_PATH,
++		       path_template, DIGEST_LIST_ADD_PATH, "open_and_wait",
++		       NULL);
++		exit(1);
++	}
++
++	fd = open(path_template, O_WRONLY);
++	ASSERT_LT(0, fd) {
++		TH_LOG("digest list open success unexpected");
++		close(fd);
++	}
++
++	wait(NULL);
++	free(digest_list);
++	unlink(path_template);
++}
++
++TEST_F_TIMEOUT(test_parser, digest_list_add_del_test_parser_upload_char_dev,
++	       UINT_MAX)
++{
++	int status;
++
++	if (fork() == 0) {
++		execlp(DIGEST_LIST_PARSER_PATH, DIGEST_LIST_PARSER_PATH,
++		       "/dev/null", DIGEST_LIST_ADD_PATH, NULL);
++		exit(1);
++	}
++
++	wait(&status);
++	ASSERT_NE(0, WEXITSTATUS(status)) {
++		TH_LOG("digest list parser success unexpected");
++	}
++}
++
+ TEST_HARNESS_MAIN
 -- 
 2.25.1
 
