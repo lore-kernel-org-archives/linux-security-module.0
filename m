@@ -2,170 +2,189 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BDAC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 22:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAC8C4321E
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 02:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B7F761178
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Sep 2021 22:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52A676120C
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 02:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbhIOWOW (ORCPT
+        id S234118AbhIPDA6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Sep 2021 18:14:22 -0400
-Received: from sonic313-22.consmr.mail.bf2.yahoo.com ([74.6.133.196]:46140
-        "EHLO sonic313-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229461AbhIOWOW (ORCPT
+        Wed, 15 Sep 2021 23:00:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60776 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234065AbhIPDA5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Sep 2021 18:14:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1631743982; bh=iL0ogtABgO5oNSBLc+GgdEAUeIcigQxmlq4Qs4c5FTk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=S/kj2Cx5EcR9BwyptxvoHwh8/RAU04UeQw5ven0E2wq4LoHyAJ5QyU1FQGJ9v+syEn5oa6VctRDzCvT9HiuMmtRlTM0HZVGtlG3yUIhWmu/QOZdaO/OE0xXvo2hGTicnwCCTVr6vc7p6Pn+lOEkaZYi3Tr5KgGHVPhuXCPZkbsYAfv2dlE4WY4TFIQG79o7oHScbM/B1vHB6Gt40LIcbzIXfwFLoeT3cNZ+jj/oxKq30HRbd6GS5+2kfz3m9SMY2IUuQ8+voaGmWT/9+1Psx+WFDhNEGg+ZtfXvHMINtRga0roDiugByEHDXVyeti61uX9NiyoUD08Q2qdrPbURHOA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1631743982; bh=JK4MqExRh+PJWVRPOYv6G+P+K4PqB3Gu/yTCCFJsWdh=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=orJXqm9qcZlCSh/NosMq+jUpphvPHhoBnrC7r0z0gNCr7wRh7z3omfascW36zSKbYx2lu7TvAmPFknB4nSVdTkYamivXs6T56wptNJZmLHlR8VI8hiux+t4rv8lsYGU0L4Ay6ox2Ol2q7y1oFVT3anz+vvOOAMQahtVNZRnxVCNdwwlQWbweDJwH0CFBwt8DXa+otXl9woECIXqj47ODDAF93JkNssw64aZPwt2Jvm2S18h5BrMptVfqDw7CgwQ/gvPFHwd1pz+A2pRQ5yzv44oY2T74JjjYReJwUkeDeKHIUSnmP7uGMC4UT3stopmuN4ErjhXD1HaGo4oHzW+8cQ==
-X-YMail-OSG: tuYRgg8VM1lHsl0K6ixbTSBAhF66dc99JiFHhIz7EvTSarjxerKB18W9i_tFJkr
- DAPjHvBMbZghYRLK_hlvSRx19Az6J.K_m1Hjz3ZoqekknuyzS.P3YXQ4d_6Aw9jesrtHSTz4xdqO
- SUERe84yCxgU9vqja56KZLWCeLAHI3VhVdAPAh0KY9e4ArMNKJVhtXqBaG_f.NJaId3Pmsk.wbTl
- OuWah95gF0.YmsaSdi71xrH.0QoCvUiEtp0sO69NKJbueAe4jCNpdfym47nOzz9sNshGE7bQbU7p
- Xl3nAiCUvt6fC4fkELkB0XhyeoqCqI2qDFkMtsWlRK7isL6NLplCIfrji00Dj0u5GywA08DMVQpv
- 2qJgaaW9uN490Md8kG1yv7FH2zGcLvOtORXwGlbefMBd0rP5KHWVUFGRQGizHsGoj57O_BtjdG.Q
- 6Xp0Oj1eLXgdyFUVPkigaKdBc80NhUhWDycRsdRIw_mnqtVC_oZjFWzY4zY_fJFb9y83q2Ywks7V
- F7NYmJ3kCqyUgp14tzRyHn.fcfZfxS82I.EZbjm7ANFG406wUPzwyChRi9QC0K0Iro.7a8ECLVdS
- 7NENpRLL17Lj5ZUTMvhrBEPgu9GrByKrGuT9c7qeFC0k7AZtW8qb2FblSr6rdrpI9YYRDWhnI6bZ
- FzuEwao7nqBvbmpJJjdkBYWOeC9vUyEgRo7umBp5Gn9GeeCMmoNl9TGe8KERT23Jll2seqshwjAr
- lRKLYekAoNgUGjXLDw5l9PMgtp8XqkCXemU8UEpja095YhJOp45.cCiYOfCkUPqSU6voNRkLQC3d
- RTYgHfP.2W6nxmPqcAcMFJ6EC_uFV1bkaJ2zIAJTdINdLQ.YxZhdpWiQr0TPZRM9_azAW7MSlZgB
- J80Mx_LQJ1y_4_hi2AVDrRUN32knehjr04WAI2T3wKBgQFa3KLqknateQCplDLufmsP7ViCrwSvO
- MWvi_kvAl1uMjBtfKkDD6FEZTYO.HQc9sOXIJ2fn8r07xAuPnkY22C2yJj0YQF44pKq.n0Ih1W42
- uRhEUjLWYdzNfSs1lqysiiwCS.NIJ4rOxPuVMLc7sjSKp5yQ6b9Ibe_4f4J8Kgf4OdhTDW5o0tzm
- Q0CDznLMJ9AAhnGvwGPgCZWF45gi3g9LUWMOrbTFMj3b18LPsEAUxIuCOu4YRfapx4zP8pqWFfsF
- 5InRvmsSL9gkxQti6NIrzIX2s177caNobQWQFbtYsvBZImF_VnxDchg2zsRq04xyAmsnP0QQQvYo
- aukAh8aEbkn65I41nmGFVfEra6wSY9YDdU9J6D4rXw3y2W7WcLX2NH2rPt7XNMbRE85f1c8LkE9w
- AqFUYL77dlKALsfSfwwy5eZiLc3RoANEJSxOqTLqPEB_ehZDER13XJRHdY__nVcQ2dA89njBxBNe
- UkDHlvjPOYr90vcDzX7ENFXDtuG696ZcARcmNkdcX_gC1lQONLb8.3ZnhawGV.VOAJKY4oezT1Mr
- IpyfPglfXeaoXynU4dlqMZXZHKhsOaCTvx.CtVYcNmXn3Q655.gm4F71kcrDpTGE2dV6dOUn92YY
- Xqt4OWUS110epy_iQ1n5iMF_q3HiHvmFaBvV2HHbwaij3UIQ3oa01DHIYY.G0nVPlcyZQLPoSURR
- qYTcMbvNXxu3dnsKJFRMJ7UweUtKt6ckNMtsnjRwUoRQYthnc61c4Aq1P_9o8Xi8147SUqKOOpiX
- N_xV._BI.eV_1ZXSkifLmlWaU_8rIKKeZeUxaXq.EP8L9_a2G1v9QQ0RGiS6hmPLRDj9o8m5Qp2c
- d9gIex1s7XlyiRJDgVfPM_xlHmqex.0IQuEABLW86fUlm_YS8j9o7MITY8Q9BKo2Lbodm7GtivrW
- Frt.8vV6.MuaWTfnIFJWP9UbCdnUiku3IrBF22lx8SI9_gOAQFwjEj_anWUdCT7aUyXu9J5QljjZ
- duv3DpxCTo_CLY0EqYfsd_iGDUto1skUhDdM4aH6zvFX2TNSTH3AcjFuHXi8ge4XlfgNaRHvPd61
- N3iJ5ReEByRY1CppMvdGoPYWwjMV97YC6ZNzwshPoi7ec9guo_EkXmhf_wvHKLXcwPWpiqr8NwKW
- Ll1x_ChaueoNDwY9RrDTedOXNM1I.Ck1_ZwSwF9VEoT11pe7egfWS.3NUcfMNDVWZ59R_7ONA2R.
- 0Dde2WkHgEutcgQd3Vrwe0BbEoqt6io_Yt6X3x_yYvFN6nHDj4t1jRwInBnJoYPkNUmLVoCbqX_z
- HtMFm.n8_dxX1smToNQI1eRlQUtQ5s9k.QpkWO76MOKAj_MMX1TKTcMcU0P6kKZwQTQMUdBXSdt1
- BtNsy1XHQ_A--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Wed, 15 Sep 2021 22:13:02 +0000
-Received: by kubenode517.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID e742603612be60ce41c54e7e4112e0ff;
-          Wed, 15 Sep 2021 22:13:00 +0000 (UTC)
-Subject: Re: [PATCH] smack: Guard smack_ipv6_lock definition within a
- SMACK_IPV6_PORT_LABELING block
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-security-module@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210910094544.3430125-1-bigeasy@linutronix.de>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <dd60e060-7b88-c742-125f-5b560e2bd1c9@schaufler-ca.com>
-Date:   Wed, 15 Sep 2021 15:12:59 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Wed, 15 Sep 2021 23:00:57 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A9E3C0613DE
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Sep 2021 19:59:37 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id i6so11143766edu.1
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Sep 2021 19:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bK17SO3X70z4YqfpudbGkJpUfQn3wXsVxii6aCrF/hI=;
+        b=EyxUWdCtuNTuayC9lkcXPgWleZ8bHcRF7PdMazQqlX+DjN9DeK/P5kGPXL3QuXc4XW
+         kCgGjVmBNRQnk+BE9t74LsnVFUsl79l/tR744ZWrHrY1q1f8UXZIfqGeNr9nIVh/Q8XZ
+         dWMhuOOQvK/PO5kIKb7pDZQmaBTkjQ3/i/zTAK5Zm+2YJjLZG5lfLuc2ORkyvnY34dye
+         Xj+oZOtcMXWk5RLjnJN9KnknPwThumRU8WZHr0gufgDmlXKMMBoCNzRhyy4O28ek49cR
+         P8hMd3liqmlSRporSijNz40h8Nv8X4Chbv8pQaKssVolCWCDl8dX0L29zoZoTm+1Zjjd
+         Qr2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bK17SO3X70z4YqfpudbGkJpUfQn3wXsVxii6aCrF/hI=;
+        b=OY/i7t6o59iEtGnBHBE7tbTo+Gm3t6CC0yv8KyZqqSnqWNUZz4DU0yHzSXV+2kWzcQ
+         RpjHj0h+KfnY5iI5G/DvCWnoLCAtOx7Kw0Xz/OabRRwfRtn3ku1ysODTts7kz3cWdwOa
+         Fv/l1N4kxRtVGcZ5HGrvX6+aEcaV9FSwpf5ZOBxDaKB7zhpDNRLxNRrZ1HhXX9K0c9/Z
+         LaIbFhc9ZJ2QPViSLWy6IQbmXeu2+CU07gUJDldoethfy7qKKpalqRks6fPUeXVEIvcq
+         mNhbFslwjr8JtoVuil1NO7M7xfrutpuf5Mwg30iqZ7PPebzmdBYHkWeUBeCnw9lYn1ma
+         xCPQ==
+X-Gm-Message-State: AOAM530lgQhZ3RBFOHIV02nRU8a8SJ/xMf70ogz3k6a46GO7ZMnGOU+Z
+        TzjZP4yikXQEBS2cpSaFlw3gh4iqlG4IMIF9+9XI
+X-Google-Smtp-Source: ABdhPJxYzI63Wh7B932JufxmCVl5MRmcZoWxKUOX5ts9dsculQ1nMB73xM3IEM0/sD5sdM0oPHDUFMQFvAvBgYyICR4=
+X-Received: by 2002:a17:907:76e7:: with SMTP id kg7mr3719013ejc.344.1631761175250;
+ Wed, 15 Sep 2021 19:59:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210910094544.3430125-1-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.19013 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20210913140229.24797-1-omosnace@redhat.com> <CAHC9VhRw-S+zZUFz5QFFLMBATjo+YbPAiR21jX6p7cT0T+MVLA@mail.gmail.com>
+In-Reply-To: <CAHC9VhRw-S+zZUFz5QFFLMBATjo+YbPAiR21jX6p7cT0T+MVLA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 15 Sep 2021 22:59:23 -0400
+Message-ID: <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
+Subject: Re: [PATCH v4] lockdown,selinux: fix wrong subject in some SELinux
+ lockdown checks
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, linux-acpi@vger.kernel.org,
+        linux-cxl@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        bpf@vger.kernel.org, netdev@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/10/2021 2:45 AM, Sebastian Andrzej Siewior wrote:
-> The mutex smack_ipv6_lock is only used with the SMACK_IPV6_PORT_LABELIN=
-G
-> block but its definition is outside of the block. This leads to a
-> defined-but-not-used warning on PREEMPT_RT.
+On Mon, Sep 13, 2021 at 5:05 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> Moving smack_ipv6_lock down to the block where it is used where it used=
-
-> raises the question why is smk_ipv6_port_list read if nothing is added
-> to it.
-> Turns out, only smk_ipv6_port_check() is using it outside of an ifdef
-> SMACK_IPV6_PORT_LABELING block. However two of three caller invoke
-> smk_ipv6_port_check() from a ifdef block and only one is using
-> __is_defined() macro which requires the function and smk_ipv6_port_list=
-
-> to be around.
+> On Mon, Sep 13, 2021 at 10:02 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >
+> > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> > lockdown") added an implementation of the locked_down LSM hook to
+> > SELinux, with the aim to restrict which domains are allowed to perform
+> > operations that would breach lockdown.
+> >
+> > However, in several places the security_locked_down() hook is called in
+> > situations where the current task isn't doing any action that would
+> > directly breach lockdown, leading to SELinux checks that are basically
+> > bogus.
+> >
+> > To fix this, add an explicit struct cred pointer argument to
+> > security_lockdown() and define NULL as a special value to pass instead
+> > of current_cred() in such situations. LSMs that take the subject
+> > credentials into account can then fall back to some default or ignore
+> > such calls altogether. In the SELinux lockdown hook implementation, use
+> > SECINITSID_KERNEL in case the cred argument is NULL.
+> >
+> > Most of the callers are updated to pass current_cred() as the cred
+> > pointer, thus maintaining the same behavior. The following callers are
+> > modified to pass NULL as the cred pointer instead:
+> > 1. arch/powerpc/xmon/xmon.c
+> >      Seems to be some interactive debugging facility. It appears that
+> >      the lockdown hook is called from interrupt context here, so it
+> >      should be more appropriate to request a global lockdown decision.
+> > 2. fs/tracefs/inode.c:tracefs_create_file()
+> >      Here the call is used to prevent creating new tracefs entries when
+> >      the kernel is locked down. Assumes that locking down is one-way -
+> >      i.e. if the hook returns non-zero once, it will never return zero
+> >      again, thus no point in creating these files. Also, the hook is
+> >      often called by a module's init function when it is loaded by
+> >      userspace, where it doesn't make much sense to do a check against
+> >      the current task's creds, since the task itself doesn't actually
+> >      use the tracing functionality (i.e. doesn't breach lockdown), just
+> >      indirectly makes some new tracepoints available to whoever is
+> >      authorized to use them.
+> > 3. net/xfrm/xfrm_user.c:copy_to_user_*()
+> >      Here a cryptographic secret is redacted based on the value returned
+> >      from the hook. There are two possible actions that may lead here:
+> >      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
+> >         task context is relevant, since the dumped data is sent back to
+> >         the current task.
+> >      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
+> >         dumped SA is broadcasted to tasks subscribed to XFRM events -
+> >         here the current task context is not relevant as it doesn't
+> >         represent the tasks that could potentially see the secret.
+> >      It doesn't seem worth it to try to keep using the current task's
+> >      context in the a) case, since the eventual data leak can be
+> >      circumvented anyway via b), plus there is no way for the task to
+> >      indicate that it doesn't care about the actual key value, so the
+> >      check could generate a lot of "false alert" denials with SELinux.
+> >      Thus, let's pass NULL instead of current_cred() here faute de
+> >      mieux.
+> >
+> > Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
+> > Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
+> > Acked-by: Dan Williams <dan.j.williams@intel.com>         [cxl]
+> > Acked-by: Steffen Klassert <steffen.klassert@secunet.com> [xfrm]
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > ---
+> >
+> > v4:
+> > - rebase on top of TODO
+> > - fix rebase conflicts:
+> >   * drivers/cxl/pci.c
+> >     - trivial: the lockdown reason was corrected in mainline
+> >   * kernel/bpf/helpers.c, kernel/trace/bpf_trace.c
+> >     - trivial: LOCKDOWN_BPF_READ was renamed to LOCKDOWN_BPF_READ_KERNEL
+> >       in mainline
+> >   * kernel/power/hibernate.c
+> >     - trivial: !secretmem_active() was added to the condition in
+> >       hibernation_available()
+> > - cover new security_locked_down() call in kernel/bpf/helpers.c
+> >   (LOCKDOWN_BPF_WRITE_USER in BPF_FUNC_probe_write_user case)
+> >
+> > v3: https://lore.kernel.org/lkml/20210616085118.1141101-1-omosnace@redhat.com/
+> > - add the cred argument to security_locked_down() and adapt all callers
+> > - keep using current_cred() in BPF, as the hook calls have been shifted
+> >   to program load time (commit ff40e51043af ("bpf, lockdown, audit: Fix
+> >   buggy SELinux lockdown permission checks"))
+> > - in SELinux, don't ignore hook calls where cred == NULL, but use
+> >   SECINITSID_KERNEL as the subject instead
+> > - update explanations in the commit message
+> >
+> > v2: https://lore.kernel.org/lkml/20210517092006.803332-1-omosnace@redhat.com/
+> > - change to a single hook based on suggestions by Casey Schaufler
+> >
+> > v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
 >
-> Put the lock and list inside an ifdef SMACK_IPV6_PORT_LABELING block to=
+> The changes between v3 and v4 all seem sane to me, but I'm going to
+> let this sit for a few days in hopes that we can collect a few more
+> Reviewed-bys and ACKs.  If I don't see any objections I'll merge it
+> mid-week(ish) into selinux/stable-5.15 and plan on sending it to Linus
+> after it goes through a build/test cycle.
 
-> avoid the warning regarding unused mutex. Extend the ifdef-block to als=
-o
-> cover smk_ipv6_port_check(). Make smack_socket_connect() use ifdef
-> instead of __is_defined() to avoid complains about missing function.
->
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
+Time's up, I just merged this into selinux/stable-5.15 and I'll send
+this to Linus once it passes testing.
 
-This is the Smack maintainer, to whom you should send the next revision.
-
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  security/smack/smack_lsm.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index cacbe75185194..fd9e6b54907ee 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -51,8 +51,10 @@
->  #define SMK_RECEIVING	1
->  #define SMK_SENDING	2
-> =20
-> +#ifdef SMACK_IPV6_PORT_LABELING
->  static DEFINE_MUTEX(smack_ipv6_lock);
->  static LIST_HEAD(smk_ipv6_port_list);
-> +#endif
->  struct kmem_cache *smack_rule_cache;
->  int smack_enabled __initdata;
-> =20
-> @@ -2603,7 +2605,6 @@ static void smk_ipv6_port_label(struct socket *so=
-ck, struct sockaddr *address)
->  	mutex_unlock(&smack_ipv6_lock);
->  	return;
->  }
-> -#endif
-> =20
->  /**
->   * smk_ipv6_port_check - check Smack port access
-> @@ -2666,6 +2667,7 @@ static int smk_ipv6_port_check(struct sock *sk, s=
-truct sockaddr_in6 *address,
-> =20
->  	return smk_ipv6_check(skp, object, address, act);
->  }
-> +#endif
-> =20
->  /**
->   * smack_inode_setsecurity - set smack xattrs
-> @@ -2852,8 +2854,9 @@ static int smack_socket_connect(struct socket *so=
-ck, struct sockaddr *sap,
->  			rc =3D smk_ipv6_check(ssp->smk_out, rsp, sip,
->  					    SMK_CONNECTING);
->  		}
-> -		if (__is_defined(SMACK_IPV6_PORT_LABELING))
-> +#ifdef SMACK_IPV6_PORT_LABELING
->  			rc =3D smk_ipv6_port_check(sock->sk, sip, SMK_CONNECTING);
-> +#endif
-
-Fix the indentation.
-
-Also, the patch came through with some html artifacts. Please fix the
-indentation and resubmit. Thank you.
-
-> =20
->  		return rc;
->  	}
-
+-- 
+paul moore
+www.paul-moore.com
