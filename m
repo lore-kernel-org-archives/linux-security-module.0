@@ -2,380 +2,159 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 899BEC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 14:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B9FC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 14:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E72861214
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 14:46:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C262B604DC
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 14:47:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238780AbhIPOrs (ORCPT
+        id S238863AbhIPOsw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Sep 2021 10:47:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238711AbhIPOrr (ORCPT
+        Thu, 16 Sep 2021 10:48:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52726 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238768AbhIPOsw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Sep 2021 10:47:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6415361244;
-        Thu, 16 Sep 2021 14:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631803586;
-        bh=22rxIjv1rE4uFsJEAEsxB7/kV1REJ7s4P+7NA+MQ5W4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=M26To7GpoyidZEq4IMoswguBpMqd/c7BbfA4As2rCccNv15dLH2bLTWHVo4vJAqvo
-         y3mwhmVIVl36DacmAGkddFy8KRnnyf39m03qAYKgnCKFlXVVszimW3feigR1iuL8qx
-         eAEUrl1iimFcxLZqRBSNlhNHXXSm/SxJcvcX/GQiuTB/kt6SBsEjq1OiorGGRFOI0S
-         THyCEU/7epKJ4gpI3LYulYTMre8eSgVoQ7JuKnhKr5CCyLeFjGJFD2YsHX8xxuHvFp
-         6CgaxV3L9lmh31X439vY4R6FddEpn8Em+zEtXgJ18P378ySuIEjLas3lopDROb720A
-         Dc8fAYuja1fJw==
-Message-ID: <8b8678505d4fe299a2f3a82133d81f41b2c527b7.camel@kernel.org>
-Subject: Re: [PATCH v2] integrity: support including firmware ".platform"
- keys at build time
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org
-Cc:     dhowells@redhat.com, zohar@linux.ibm.com,
-        seth.forshee@canonical.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Date:   Thu, 16 Sep 2021 17:46:24 +0300
-In-Reply-To: <20210916125756.89908-1-nayna@linux.ibm.com>
-References: <20210916125756.89908-1-nayna@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Thu, 16 Sep 2021 10:48:52 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D4A6C061574
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Sep 2021 07:47:31 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id g8so17824602edt.7
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Sep 2021 07:47:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/LN2BDmi9UsBIWySN0ychwT/uhYm29Xfzmok+wmBDy8=;
+        b=AEC8lQsO9zbk8axhvjI03XhRIUJx/B4a9jFhaBa3v37vO8TCEmLvpdoY7wlJ6Lu7S0
+         b6bX8mGLqsaqxaE0ks8Jv5N/BgZK/BVnsw9oDjdf33Utbxa/T6L+3MKRLnU1QJo9AiOz
+         NAzhoiewaYehtagaq7yLAR1V2QSSkq58aYyVedF6dYoo1iUzhXa2xHOtU+N401lDDaay
+         jAPJmKLnpkn9C/CS3vQf0wu+8uGJG8Vjpeig+iaW8iSMyVFeQQaQLz0q5MqxbGgd6Xfb
+         MnOllDna+U77qIIxrcmXjPwNWE4hkTidkb3AqcBA5OBq0a4SX6qtK3Sh3g82pNa80m97
+         8gsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/LN2BDmi9UsBIWySN0ychwT/uhYm29Xfzmok+wmBDy8=;
+        b=Pz4O9S/L6dFthOYcOH5NGQTn6VCMT9IFA/ovjQKIIInZ+OQIt1mIS3GA5zXmF9hCgW
+         GhmF+suq381b2so8aT9279g1nz3au5mXekK6e4IpsaTyFUffHf+8w8gKM4mXXnDI2ewh
+         YGIDAsHNIgRxkMhjJKndzzx2LmEVkhgIuxUG8eEBr5MrXNoxa6a5zPICTRWuNBCh/65v
+         ayzJf0tnBpV4Jx24eggEt4pWxu30iqvpbBcGQCi/CGDKgR7PvWI0en9j4F9hI9aTRc2Y
+         4M5pWeHVdePm/SlVFCdfitwSMS3uu+OnUSdgB6RYtm/oo5JcdDAn3tjbyQytZBOhZLdU
+         8xYw==
+X-Gm-Message-State: AOAM533BlZNe3Y/WXRZ4GclegD7xd1cNwv/DIOZrhkreItx+zsxjKdi2
+        RqVafmM21YXNat6VvolOs3amoz6ZvCI3hOTqm6GT
+X-Google-Smtp-Source: ABdhPJzbE9JbdEMAljCVP0OQkTSQ2+WpTRWjM1H7jtthNk52AzYJG8qEWm1u5LejTzmCtwxSRqQp8HbZECnGpK5a4yY=
+X-Received: by 2002:a17:906:686:: with SMTP id u6mr6524873ejb.569.1631803648838;
+ Thu, 16 Sep 2021 07:47:28 -0700 (PDT)
 MIME-Version: 1.0
+References: <163172413301.88001.16054830862146685573.stgit@olly>
+ <163172457152.88001.12700049763432531651.stgit@olly> <20210916133308.GP490529@madcap2.tricolour.ca>
+ <CAHC9VhSEj8b7+jH9Atkj3FH+SOdc5iwytxhS3_O1HmTahdj3dQ@mail.gmail.com> <20210916141935.GQ490529@madcap2.tricolour.ca>
+In-Reply-To: <20210916141935.GQ490529@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 16 Sep 2021 10:47:17 -0400
+Message-ID: <CAHC9VhTo8XPEeNPddHzXS8qCvzTvJUnLALF38VxeFEsXJRbn_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/8] audit,io_uring,io-wq: add some basic audit support
+ to io_uring
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2021-09-16 at 08:57 -0400, Nayna Jain wrote:
-> Some firmware support secureboot by embedding static keys to verify the
-> Linux kernel during boot. However, these firmware do not expose an
-> interface for the kernel to load firmware keys onto ".platform" keyring.
-> This would prevent kernel signature verification on kexec. For those
-> environments, allow firmware keys to be compiled into the kernel and
-> loaded onto the ".platform" keyring.
+On Thu, Sep 16, 2021 at 10:19 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2021-09-16 10:02, Paul Moore wrote:
+> > On Thu, Sep 16, 2021 at 9:33 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2021-09-15 12:49, Paul Moore wrote:
+> > > > This patch adds basic auditing to io_uring operations, regardless of
+> > > > their context.  This is accomplished by allocating audit_context
+> > > > structures for the io-wq worker and io_uring SQPOLL kernel threads
+> > > > as well as explicitly auditing the io_uring operations in
+> > > > io_issue_sqe().  Individual io_uring operations can bypass auditing
+> > > > through the "audit_skip" field in the struct io_op_def definition for
+> > > > the operation; although great care must be taken so that security
+> > > > relevant io_uring operations do not bypass auditing; please contact
+> > > > the audit mailing list (see the MAINTAINERS file) with any questions.
+> > > >
+> > > > The io_uring operations are audited using a new AUDIT_URINGOP record,
+> > > > an example is shown below:
+> > > >
+> > > >   type=UNKNOWN[1336] msg=audit(1630523381.288:260):
+> > > >     uring_op=19 success=yes exit=0 items=0 ppid=853 pid=1204
+> > > >     uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0
+> > > >     subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> > > >     key=(null)
+> > > >     AUID="root" UID="root" GID="root" EUID="root" SUID="root"
+> > > >     FSUID="root" EGID="root" SGID="root" FSGID="root"
+> > > >
+> > > > Thanks to Richard Guy Briggs for review and feedback.
+> > >
+> > > I share Steve's concerns about the missing auid and ses.  The userspace
+> > > log interpreter conjured up AUID="root" from the absent auid=.
+> > >
+> > > Some of the creds are here including ppid, pid, a herd of *id and subj.
+> > > *Something* initiated this action and then delegated it to iouring to
+> > > carry out.  That should be in there somewhere.  You had a concern about
+> > > shared queues and mis-attribution.  All of these creds including auid
+> > > and ses should be kept together to get this right.
+> >
+> > Look, there are a lot of things about io_uring that frustrate me from
+> > a security perspective - this is one of them - but I've run out of
+> > ways to say it's not possible to reliably capture the audit ID or
+> > session ID here.  With io_uring it is possible to submit an io_uring
+> > operation, and capture the results, by simply reading and writing to a
+> > mmap'd buffer.  Yes, it would be nice to have that information, but I
+> > don't believe there is a practical way to capture it.  If you have any
+> > suggestions on how to do so, please share, but please make it
+> > concrete; hand wavy solutions aren't useful at this stage.
+>
+> I was hoping to give a more concrete solution but have other
+> distractions at the moment.  My concern is adding it later once the
+> message format is committed.  We have too many field orderings already.
+> Recognizing this adds useless characters to the record type at this
+> time, I'm even thinking auid=? ses=? until a solution can be found.
 
-"allow" means absolutely nothing. Just tell what your patch does,=20
-and approach taken. Already the patch description should roughly
-give idea what and why of code changes. There's nothing here.
+You know my feelings on audit record field orderings, so let's not
+follow that distraction right now.
 
->=20
-> Reported-by: kernel test robot <lkp@intel.com>
+Regarding proactively inserting a placeholder for auid= and ses=, I'm
+reasonably convinced it is not practical, and likely not possible, to
+capture that information for the audit record.  As a result, I see no
+reason to waste the space in the record.  However, if you  (or anyone
+else for that matter) can show that we can reliably capture that
+information then I'm in complete agreement that it should be added.
 
-I don't get this reported-by here.
+What I'm not going to do is hold this patchset any longer on a vague
+feeling that it should be possible.  On the plus side I'm only merging
+this into selinux/next, not selinux/stable-5.15, so worst case you
+have a couple more weeks before things are "set".  I realize we all
+have competing priorities, but as the saying goes, "it's time to put
+up or shut up" ;)
 
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> ---
->=20
-> v2:
-> * Fixed the error reported by kernel test robot
-> * Updated patch description based on Jarkko's feedback.
->=20
->  certs/Makefile                                |  3 ++-
->  certs/blacklist.c                             |  1 -
->  certs/common.c                                |  2 +-
->  certs/common.h                                |  9 -------
->  certs/system_keyring.c                        |  1 -
->  include/keys/system_keyring.h                 |  3 +++
->  security/integrity/Kconfig                    | 10 +++++++
->  security/integrity/Makefile                   | 17 +++++++++++-
->  security/integrity/digsig.c                   |  2 +-
->  security/integrity/integrity.h                |  6 +++++
->  .../integrity/platform_certs/platform_cert.S  | 23 ++++++++++++++++
->  .../platform_certs/platform_keyring.c         | 26 +++++++++++++++++++
->  12 files changed, 88 insertions(+), 15 deletions(-)
->  delete mode 100644 certs/common.h
->  create mode 100644 security/integrity/platform_certs/platform_cert.S
->=20
-> diff --git a/certs/Makefile b/certs/Makefile
-> index 279433783b10..64ee37f38b85 100644
-> --- a/certs/Makefile
-> +++ b/certs/Makefile
-> @@ -3,7 +3,8 @@
->  # Makefile for the linux kernel signature checking certificates.
->  #
-> =20
-> -obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) +=3D system_keyring.o system_certif=
-icates.o common.o
-> +obj-$(CONFIG_KEYS) +=3D common.o
-> +obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) +=3D system_keyring.o system_certif=
-icates.o
->  obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) +=3D blacklist.o common.o
->  obj-$(CONFIG_SYSTEM_REVOCATION_LIST) +=3D revocation_certificates.o
->  ifneq ($(CONFIG_SYSTEM_BLACKLIST_HASH_LIST),"")
-> diff --git a/certs/blacklist.c b/certs/blacklist.c
-> index c9a435b15af4..b95e9b19c42f 100644
-> --- a/certs/blacklist.c
-> +++ b/certs/blacklist.c
-> @@ -17,7 +17,6 @@
->  #include <linux/uidgid.h>
->  #include <keys/system_keyring.h>
->  #include "blacklist.h"
-> -#include "common.h"
-> =20
->  static struct key *blacklist_keyring;
-> =20
-> diff --git a/certs/common.c b/certs/common.c
-> index 16a220887a53..41f763415a00 100644
-> --- a/certs/common.c
-> +++ b/certs/common.c
-> @@ -2,7 +2,7 @@
-> =20
->  #include <linux/kernel.h>
->  #include <linux/key.h>
-> -#include "common.h"
+> So you are sure the rest of the creds are correct?
 
-Why this include is removed?
+Yes, the credentials that are logged in audit_log_uring() are all
+taken from the currently executing task via a call to current_cred().
+Regardless of the io_uring calling context (synchronous, io-wq,
+sqpoll) the current_cred() call should always return the correct
+credentials; look at how io_uring manages credentials in
+io_issue_sqe().  While the audit log treats the audit ID just as if it
+were another credential on the system, it is definitely not like a
+normal credential and requires special handling; this is why there was
+the mixup where I mistakenly left it in the audit record, and one of
+the reasons why we will not always have a valid audit ID for io_uring
+operations.
 
-You should include to your commit message *also* the approach
-you are taking. If you export a function, you should mention
-it explicitly.
-
-> +#include <keys/system_keyring.h>
-> =20
->  int load_certificate_list(const u8 cert_list[],
->  			  const unsigned long list_size,
-> diff --git a/certs/common.h b/certs/common.h
-> deleted file mode 100644
-> index abdb5795936b..000000000000
-> --- a/certs/common.h
-> +++ /dev/null
-> @@ -1,9 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0-or-later */
-> -
-> -#ifndef _CERT_COMMON_H
-> -#define _CERT_COMMON_H
-> -
-> -int load_certificate_list(const u8 cert_list[], const unsigned long list=
-_size,
-> -			  const struct key *keyring);
-> -
-> -#endif
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index 692365dee2bd..d130d5a96e09 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -16,7 +16,6 @@
->  #include <keys/asymmetric-type.h>
->  #include <keys/system_keyring.h>
->  #include <crypto/pkcs7.h>
-> -#include "common.h"
-> =20
->  static struct key *builtin_trusted_keys;
->  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
-> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.=
-h
-> index 6acd3cf13a18..842d770b2a46 100644
-> --- a/include/keys/system_keyring.h
-> +++ b/include/keys/system_keyring.h
-> @@ -10,6 +10,9 @@
-> =20
->  #include <linux/key.h>
-> =20
-> +extern int load_certificate_list(const u8 cert_list[],
-> +				 const unsigned long list_size,
-> +				 const struct key *keyring);
-
-Remove "extern". It's not needed for functions.
-
->  #ifdef CONFIG_SYSTEM_TRUSTED_KEYRING
-> =20
->  extern int restrict_link_by_builtin_trusted(struct key *keyring,
-> diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
-> index 71f0177e8716..b2009b792882 100644
-> --- a/security/integrity/Kconfig
-> +++ b/security/integrity/Kconfig
-> @@ -62,6 +62,16 @@ config INTEGRITY_PLATFORM_KEYRING
->           provided by the platform for verifying the kexec'ed kerned imag=
-e
->           and, possibly, the initramfs signature.
-> =20
-> +config INTEGRITY_PLATFORM_BUILTIN_KEYS
-> +        string "Builtin X.509 keys for .platform keyring"
-> +        depends on KEYS
-> +        depends on ASYMMETRIC_KEY_TYPE
-> +        depends on INTEGRITY_PLATFORM_KEYRING
-> +        help
-> +          If set, this option should be the filename of a PEM-formatted =
-file
-> +          containing X.509 certificates to be loaded onto the ".platform=
-"
-> +          keyring.
-> +
->  config LOAD_UEFI_KEYS
->         depends on INTEGRITY_PLATFORM_KEYRING
->         depends on EFI
-> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-> index 7ee39d66cf16..a45f083589b8 100644
-> --- a/security/integrity/Makefile
-> +++ b/security/integrity/Makefile
-> @@ -3,13 +3,18 @@
->  # Makefile for caching inode integrity data (iint)
->  #
-> =20
-> +quiet_cmd_extract_certs  =3D EXTRACT_CERTS   $(patsubst "%",%,$(2))
-> +      cmd_extract_certs  =3D scripts/extract-cert $(2) $@
-> +$(eval $(call config_filename,INTEGRITY_PLATFORM_BUILTIN_KEYS))
-> +
->  obj-$(CONFIG_INTEGRITY) +=3D integrity.o
-> =20
->  integrity-y :=3D iint.o
->  integrity-$(CONFIG_INTEGRITY_AUDIT) +=3D integrity_audit.o
->  integrity-$(CONFIG_INTEGRITY_SIGNATURE) +=3D digsig.o
->  integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) +=3D digsig_asymmetric.o
-> -integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) +=3D platform_certs/platf=
-orm_keyring.o
-> +integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) +=3D platform_certs/platf=
-orm_keyring.o \
-> +						  platform_certs/platform_cert.o
->  integrity-$(CONFIG_LOAD_UEFI_KEYS) +=3D platform_certs/efi_parser.o \
->  				      platform_certs/load_uefi.o \
->  				      platform_certs/keyring_handler.o
-> @@ -19,3 +24,13 @@ integrity-$(CONFIG_LOAD_PPC_KEYS) +=3D platform_certs/=
-efi_parser.o \
->                                       platform_certs/keyring_handler.o
->  obj-$(CONFIG_IMA)			+=3D ima/
->  obj-$(CONFIG_EVM)			+=3D evm/
-> +
-> +
-> +$(obj)/platform_certs/platform_cert.o: $(obj)/platform_certs/platform_ce=
-rtificate_list
-> +
-> +targets +=3D platform_certificate_list
-> +
-> +$(obj)/platform_certs/platform_certificate_list: scripts/extract-cert $(=
-INTEGRITY_PLATFORM_BUILTIN_KEYS_FILENAME) FORCE
-> +	$(call if_changed,extract_certs,$(CONFIG_INTEGRITY_PLATFORM_BUILTIN_KEY=
-S))
-> +
-> +clean-files :=3D platform_certs/platform_certificate_list
-> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-> index 3b06a01bd0fd..0ea40ed8dfcb 100644
-> --- a/security/integrity/digsig.c
-> +++ b/security/integrity/digsig.c
-> @@ -38,7 +38,7 @@ static const char * const keyring_name[INTEGRITY_KEYRIN=
-G_MAX] =3D {
->  #define restrict_link_to_ima restrict_link_by_builtin_trusted
->  #endif
-> =20
-> -static struct key *integrity_keyring_from_id(const unsigned int id)
-> +struct key *integrity_keyring_from_id(const unsigned int id)
->  {
->  	if (id >=3D INTEGRITY_KEYRING_MAX)
->  		return ERR_PTR(-EINVAL);
-> diff --git a/security/integrity/integrity.h b/security/integrity/integrit=
-y.h
-> index 547425c20e11..feb84e1b1105 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -167,6 +167,7 @@ int __init integrity_init_keyring(const unsigned int =
-id);
->  int __init integrity_load_x509(const unsigned int id, const char *path);
->  int __init integrity_load_cert(const unsigned int id, const char *source=
-,
->  			       const void *data, size_t len, key_perm_t perm);
-> +struct key *integrity_keyring_from_id(const unsigned int id);
->  #else
-> =20
->  static inline int integrity_digsig_verify(const unsigned int id,
-> @@ -194,6 +195,11 @@ static inline int __init integrity_load_cert(const u=
-nsigned int id,
->  {
->  	return 0;
->  }
-> +
-> +static inline struct key *integrity_keyring_from_id(const unsigned int i=
-d)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
->  #endif /* CONFIG_INTEGRITY_SIGNATURE */
-> =20
->  #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
-> diff --git a/security/integrity/platform_certs/platform_cert.S b/security=
-/integrity/platform_certs/platform_cert.S
-> new file mode 100644
-> index 000000000000..20bccce5dc5a
-> --- /dev/null
-> +++ b/security/integrity/platform_certs/platform_cert.S
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#include <linux/export.h>
-> +#include <linux/init.h>
-> +
-> +	__INITRODATA
-> +
-> +	.align 8
-> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> +	.globl platform_certificate_list
-> +platform_certificate_list:
-> +__cert_list_start:
-> +	.incbin "security/integrity/platform_certs/platform_certificate_list"
-> +__cert_list_end:
-> +#endif
-> +
-> +	.align 8
-> +	.globl platform_certificate_list_size
-> +platform_certificate_list_size:
-> +#ifdef CONFIG_64BIT
-> +	.quad __cert_list_end - __cert_list_start
-> +#else
-> +	.long __cert_list_end - __cert_list_start
-> +#endif
-> diff --git a/security/integrity/platform_certs/platform_keyring.c b/secur=
-ity/integrity/platform_certs/platform_keyring.c
-> index bcafd7387729..17535050d08d 100644
-> --- a/security/integrity/platform_certs/platform_keyring.c
-> +++ b/security/integrity/platform_certs/platform_keyring.c
-> @@ -12,8 +12,12 @@
->  #include <linux/cred.h>
->  #include <linux/err.h>
->  #include <linux/slab.h>
-> +#include <keys/system_keyring.h>
->  #include "../integrity.h"
-> =20
-> +extern __initconst const u8 platform_certificate_list[];
-> +extern __initconst const unsigned long platform_certificate_list_size;
-> +
->  /**
->   * add_to_platform_keyring - Add to platform keyring without validation.
->   * @source: Source of key
-> @@ -37,6 +41,28 @@ void __init add_to_platform_keyring(const char *source=
-, const void *data,
->  		pr_info("Error adding keys to platform keyring %s\n", source);
->  }
-> =20
-> +static __init int load_builtin_platform_cert(void)
-> +{
-> +	const u8 *p;
-> +	unsigned long size;
-> +	int rc;
-> +	struct key *keyring;
-> +
-> +	p =3D platform_certificate_list;
-> +	size =3D platform_certificate_list_size;
-> +
-> +	keyring =3D integrity_keyring_from_id(INTEGRITY_KEYRING_PLATFORM);
-> +	if (IS_ERR(keyring))
-> +		return PTR_ERR(keyring);
-> +
-> +	rc =3D load_certificate_list(p, size, keyring);
-> +	if (rc)
-> +		pr_info("Error adding keys to platform keyring %d\n", rc);
-> +
-> +	return rc;
-> +}
-> +late_initcall(load_builtin_platform_cert);
-> +
->  /*
->   * Create the trusted keyrings.
->   */
-
-
-/Jarkko
-
+-- 
+paul moore
+www.paul-moore.com
