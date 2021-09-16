@@ -2,207 +2,375 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE02C43219
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 06:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F32C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 12:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04BB961207
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 06:57:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EA5B61246
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Sep 2021 12:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234660AbhIPG6j (ORCPT
+        id S239611AbhIPM7p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Sep 2021 02:58:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23274 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234657AbhIPG6g (ORCPT
+        Thu, 16 Sep 2021 08:59:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:1556 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239521AbhIPM7o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Sep 2021 02:58:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631775436;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8RB13z4WWFvpQhPAtaErfMzrxHDfvjm55tbgAkFGFds=;
-        b=ZBAJKGHeTQAAls0kn8k6LPMvXMKAHXMry7i+6tnxK7bO8TShzF/vDBg3Pro5mnPDaKfoso
-        2P/voGX3guUEqajPOHXVAaEOZpiXkPe6KJpAyuZy7iVISrGu0cKMJrIdKQA6fUsZz7PZny
-        hcW8Cyp1cns8fuUiUG7QHIfUf9e1W90=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-375-rFdp46Q-Pb2RQjpM7UcteQ-1; Thu, 16 Sep 2021 02:57:15 -0400
-X-MC-Unique: rFdp46Q-Pb2RQjpM7UcteQ-1
-Received: by mail-yb1-f200.google.com with SMTP id b84-20020a253457000000b0059e6b730d45so11378641yba.6
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Sep 2021 23:57:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8RB13z4WWFvpQhPAtaErfMzrxHDfvjm55tbgAkFGFds=;
-        b=523jCs3w5EU9h5RgnLa9/HGAjX2H/CiUN1Rx6eKctn5vSHVcGwbrm9dNQkbZlukzHW
-         rSC2KFMHu5e8WwlwO8XEH7XiSUy1elf4QxacsLtzlk5OVsjDHbFVYLbrW/2k948JlOc0
-         U9fQlRsXAEIaP0Ip8Jzv+O85BU01MJ8iW8SBPdJ6BLK8CQ6KNIJ16cEbieQ/A2/AMTHS
-         VJAMtpccZtkwtjyFTax1qLzN6SjsQEWXnHqvO5thJARljTx9Lh448gE+1LwIsKayFZYt
-         a0+UokJAqDu9S+8N6BXKY9cvMtr/UtxBu1G2888nf98MeAM0/NNd8r4rrqu21Q3LZz+Q
-         zsCA==
-X-Gm-Message-State: AOAM530OArdqCdg5QQQYBKn82P6491NtR4Kv4ivFtkI5tA/xd6jnDhsF
-        iIC2AdRFitMP5m8Jq4nNS4PcpckxFc2hkp1JeMK55CHJX3FFqNvHCYmMy24u3BWjriP1Hs584eV
-        kCoL74q0+N7GwRvwjWkqI1yGp2SxNb6v1Tiri/xnBmC/7kfywwFXt
-X-Received: by 2002:a25:bb8b:: with SMTP id y11mr5374069ybg.384.1631775434452;
-        Wed, 15 Sep 2021 23:57:14 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwLucYeWhnPNQkeQVqS3EcyyweAYtvQL9fa++UxRdE70ZRSeCy7mhVRsSSA5lCGz3A636eqomK45lUsdY3V5KU=
-X-Received: by 2002:a25:bb8b:: with SMTP id y11mr5374044ybg.384.1631775434181;
- Wed, 15 Sep 2021 23:57:14 -0700 (PDT)
+        Thu, 16 Sep 2021 08:59:44 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 18GCVeZ5007375;
+        Thu, 16 Sep 2021 08:58:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=bi2GIyw34qeEtMOV9SmMrU2UFqQOwH9P/FgEZMFESZI=;
+ b=qoGlS7K3UHsqGuqCKaOpP2jFsgyr6dt9ezM+ya5SDPqJ7MXRIkwqwzpTNJ+AD36pUwD+
+ HMJQuCNJoFJSc/JF1S7JmO45Mp9PX/+Z1M/MYYOmWAuFA8aOGsnsApO5U+LoVoQQ6Hah
+ +7IC5GWrUJvwpe11RMKeYLNJWI1WzjItqg1L+L/KCYR4wnkxqMBCRr3w3/x3eGes8XJs
+ nvo/7JZUgm2uhYcLdE62YpvABK2LFth9kJdfjfIkan/8wBwvvAu6YclIZCJ+D4m5pr+u
+ rAFBBW4pzsD8n3qQLq56X9mDxwQSVZsK1RdKysAGXX0pI0RUl4KAyIYcd2NeYLCrAQtU 3A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3b44143ty1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Sep 2021 08:58:20 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 18GBiMoB018524;
+        Thu, 16 Sep 2021 08:58:20 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3b44143tx9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Sep 2021 08:58:20 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18GCqYNH018249;
+        Thu, 16 Sep 2021 12:58:17 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma03fra.de.ibm.com with ESMTP id 3b0m3a0v7s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Sep 2021 12:58:17 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18GCwDpH54133014
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Sep 2021 12:58:13 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6ADB5A4065;
+        Thu, 16 Sep 2021 12:58:13 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B4A52A405D;
+        Thu, 16 Sep 2021 12:58:10 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.163.30.115])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 16 Sep 2021 12:58:10 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
+        seth.forshee@canonical.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH v2] integrity: support including firmware ".platform" keys at build time
+Date:   Thu, 16 Sep 2021 08:57:56 -0400
+Message-Id: <20210916125756.89908-1-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20210913140229.24797-1-omosnace@redhat.com> <CAHC9VhRw-S+zZUFz5QFFLMBATjo+YbPAiR21jX6p7cT0T+MVLA@mail.gmail.com>
- <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Thu, 16 Sep 2021 08:57:02 +0200
-Message-ID: <CAFqZXNsLZE18YugJYDzxUwjY36Gt2iX=KYtuuu-erY_+_mmvqg@mail.gmail.com>
-Subject: Re: [PATCH v4] lockdown,selinux: fix wrong subject in some SELinux
- lockdown checks
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        X86 ML <x86@kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        linux-cxl@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        linux-serial@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        network dev <netdev@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: b6O6liwob2zHYLyOdTJOMrdlUs0TRidq
+X-Proofpoint-ORIG-GUID: VWqfsWs6ggXAa8S6WoyCvgdeRjWBAr_B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ bulkscore=0 spamscore=0 clxscore=1015 mlxlogscore=999 adultscore=0
+ phishscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109030001 definitions=main-2109160072
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 16, 2021 at 4:59 AM Paul Moore <paul@paul-moore.com> wrote:
-> On Mon, Sep 13, 2021 at 5:05 PM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Mon, Sep 13, 2021 at 10:02 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > >
-> > > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-> > > lockdown") added an implementation of the locked_down LSM hook to
-> > > SELinux, with the aim to restrict which domains are allowed to perform
-> > > operations that would breach lockdown.
-> > >
-> > > However, in several places the security_locked_down() hook is called in
-> > > situations where the current task isn't doing any action that would
-> > > directly breach lockdown, leading to SELinux checks that are basically
-> > > bogus.
-> > >
-> > > To fix this, add an explicit struct cred pointer argument to
-> > > security_lockdown() and define NULL as a special value to pass instead
-> > > of current_cred() in such situations. LSMs that take the subject
-> > > credentials into account can then fall back to some default or ignore
-> > > such calls altogether. In the SELinux lockdown hook implementation, use
-> > > SECINITSID_KERNEL in case the cred argument is NULL.
-> > >
-> > > Most of the callers are updated to pass current_cred() as the cred
-> > > pointer, thus maintaining the same behavior. The following callers are
-> > > modified to pass NULL as the cred pointer instead:
-> > > 1. arch/powerpc/xmon/xmon.c
-> > >      Seems to be some interactive debugging facility. It appears that
-> > >      the lockdown hook is called from interrupt context here, so it
-> > >      should be more appropriate to request a global lockdown decision.
-> > > 2. fs/tracefs/inode.c:tracefs_create_file()
-> > >      Here the call is used to prevent creating new tracefs entries when
-> > >      the kernel is locked down. Assumes that locking down is one-way -
-> > >      i.e. if the hook returns non-zero once, it will never return zero
-> > >      again, thus no point in creating these files. Also, the hook is
-> > >      often called by a module's init function when it is loaded by
-> > >      userspace, where it doesn't make much sense to do a check against
-> > >      the current task's creds, since the task itself doesn't actually
-> > >      use the tracing functionality (i.e. doesn't breach lockdown), just
-> > >      indirectly makes some new tracepoints available to whoever is
-> > >      authorized to use them.
-> > > 3. net/xfrm/xfrm_user.c:copy_to_user_*()
-> > >      Here a cryptographic secret is redacted based on the value returned
-> > >      from the hook. There are two possible actions that may lead here:
-> > >      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
-> > >         task context is relevant, since the dumped data is sent back to
-> > >         the current task.
-> > >      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
-> > >         dumped SA is broadcasted to tasks subscribed to XFRM events -
-> > >         here the current task context is not relevant as it doesn't
-> > >         represent the tasks that could potentially see the secret.
-> > >      It doesn't seem worth it to try to keep using the current task's
-> > >      context in the a) case, since the eventual data leak can be
-> > >      circumvented anyway via b), plus there is no way for the task to
-> > >      indicate that it doesn't care about the actual key value, so the
-> > >      check could generate a lot of "false alert" denials with SELinux.
-> > >      Thus, let's pass NULL instead of current_cred() here faute de
-> > >      mieux.
-> > >
-> > > Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
-> > > Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
-> > > Acked-by: Dan Williams <dan.j.williams@intel.com>         [cxl]
-> > > Acked-by: Steffen Klassert <steffen.klassert@secunet.com> [xfrm]
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> > >
-> > > v4:
-> > > - rebase on top of TODO
-> > > - fix rebase conflicts:
-> > >   * drivers/cxl/pci.c
-> > >     - trivial: the lockdown reason was corrected in mainline
-> > >   * kernel/bpf/helpers.c, kernel/trace/bpf_trace.c
-> > >     - trivial: LOCKDOWN_BPF_READ was renamed to LOCKDOWN_BPF_READ_KERNEL
-> > >       in mainline
-> > >   * kernel/power/hibernate.c
-> > >     - trivial: !secretmem_active() was added to the condition in
-> > >       hibernation_available()
-> > > - cover new security_locked_down() call in kernel/bpf/helpers.c
-> > >   (LOCKDOWN_BPF_WRITE_USER in BPF_FUNC_probe_write_user case)
-> > >
-> > > v3: https://lore.kernel.org/lkml/20210616085118.1141101-1-omosnace@redhat.com/
-> > > - add the cred argument to security_locked_down() and adapt all callers
-> > > - keep using current_cred() in BPF, as the hook calls have been shifted
-> > >   to program load time (commit ff40e51043af ("bpf, lockdown, audit: Fix
-> > >   buggy SELinux lockdown permission checks"))
-> > > - in SELinux, don't ignore hook calls where cred == NULL, but use
-> > >   SECINITSID_KERNEL as the subject instead
-> > > - update explanations in the commit message
-> > >
-> > > v2: https://lore.kernel.org/lkml/20210517092006.803332-1-omosnace@redhat.com/
-> > > - change to a single hook based on suggestions by Casey Schaufler
-> > >
-> > > v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
-> >
-> > The changes between v3 and v4 all seem sane to me, but I'm going to
-> > let this sit for a few days in hopes that we can collect a few more
-> > Reviewed-bys and ACKs.  If I don't see any objections I'll merge it
-> > mid-week(ish) into selinux/stable-5.15 and plan on sending it to Linus
-> > after it goes through a build/test cycle.
->
-> Time's up, I just merged this into selinux/stable-5.15 and I'll send
-> this to Linus once it passes testing.
+Some firmware support secureboot by embedding static keys to verify the
+Linux kernel during boot. However, these firmware do not expose an
+interface for the kernel to load firmware keys onto ".platform" keyring.
+This would prevent kernel signature verification on kexec. For those
+environments, allow firmware keys to be compiled into the kernel and
+loaded onto the ".platform" keyring.
 
-Thanks!
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+---
 
+v2:
+* Fixed the error reported by kernel test robot
+* Updated patch description based on Jarkko's feedback.
+
+ certs/Makefile                                |  3 ++-
+ certs/blacklist.c                             |  1 -
+ certs/common.c                                |  2 +-
+ certs/common.h                                |  9 -------
+ certs/system_keyring.c                        |  1 -
+ include/keys/system_keyring.h                 |  3 +++
+ security/integrity/Kconfig                    | 10 +++++++
+ security/integrity/Makefile                   | 17 +++++++++++-
+ security/integrity/digsig.c                   |  2 +-
+ security/integrity/integrity.h                |  6 +++++
+ .../integrity/platform_certs/platform_cert.S  | 23 ++++++++++++++++
+ .../platform_certs/platform_keyring.c         | 26 +++++++++++++++++++
+ 12 files changed, 88 insertions(+), 15 deletions(-)
+ delete mode 100644 certs/common.h
+ create mode 100644 security/integrity/platform_certs/platform_cert.S
+
+diff --git a/certs/Makefile b/certs/Makefile
+index 279433783b10..64ee37f38b85 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -3,7 +3,8 @@
+ # Makefile for the linux kernel signature checking certificates.
+ #
+ 
+-obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o common.o
++obj-$(CONFIG_KEYS) += common.o
++obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o
+ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist.o common.o
+ obj-$(CONFIG_SYSTEM_REVOCATION_LIST) += revocation_certificates.o
+ ifneq ($(CONFIG_SYSTEM_BLACKLIST_HASH_LIST),"")
+diff --git a/certs/blacklist.c b/certs/blacklist.c
+index c9a435b15af4..b95e9b19c42f 100644
+--- a/certs/blacklist.c
++++ b/certs/blacklist.c
+@@ -17,7 +17,6 @@
+ #include <linux/uidgid.h>
+ #include <keys/system_keyring.h>
+ #include "blacklist.h"
+-#include "common.h"
+ 
+ static struct key *blacklist_keyring;
+ 
+diff --git a/certs/common.c b/certs/common.c
+index 16a220887a53..41f763415a00 100644
+--- a/certs/common.c
++++ b/certs/common.c
+@@ -2,7 +2,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/key.h>
+-#include "common.h"
++#include <keys/system_keyring.h>
+ 
+ int load_certificate_list(const u8 cert_list[],
+ 			  const unsigned long list_size,
+diff --git a/certs/common.h b/certs/common.h
+deleted file mode 100644
+index abdb5795936b..000000000000
+--- a/certs/common.h
++++ /dev/null
+@@ -1,9 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-
+-#ifndef _CERT_COMMON_H
+-#define _CERT_COMMON_H
+-
+-int load_certificate_list(const u8 cert_list[], const unsigned long list_size,
+-			  const struct key *keyring);
+-
+-#endif
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 692365dee2bd..d130d5a96e09 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -16,7 +16,6 @@
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include <crypto/pkcs7.h>
+-#include "common.h"
+ 
+ static struct key *builtin_trusted_keys;
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+index 6acd3cf13a18..842d770b2a46 100644
+--- a/include/keys/system_keyring.h
++++ b/include/keys/system_keyring.h
+@@ -10,6 +10,9 @@
+ 
+ #include <linux/key.h>
+ 
++extern int load_certificate_list(const u8 cert_list[],
++				 const unsigned long list_size,
++				 const struct key *keyring);
+ #ifdef CONFIG_SYSTEM_TRUSTED_KEYRING
+ 
+ extern int restrict_link_by_builtin_trusted(struct key *keyring,
+diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+index 71f0177e8716..b2009b792882 100644
+--- a/security/integrity/Kconfig
++++ b/security/integrity/Kconfig
+@@ -62,6 +62,16 @@ config INTEGRITY_PLATFORM_KEYRING
+          provided by the platform for verifying the kexec'ed kerned image
+          and, possibly, the initramfs signature.
+ 
++config INTEGRITY_PLATFORM_BUILTIN_KEYS
++        string "Builtin X.509 keys for .platform keyring"
++        depends on KEYS
++        depends on ASYMMETRIC_KEY_TYPE
++        depends on INTEGRITY_PLATFORM_KEYRING
++        help
++          If set, this option should be the filename of a PEM-formatted file
++          containing X.509 certificates to be loaded onto the ".platform"
++          keyring.
++
+ config LOAD_UEFI_KEYS
+        depends on INTEGRITY_PLATFORM_KEYRING
+        depends on EFI
+diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+index 7ee39d66cf16..a45f083589b8 100644
+--- a/security/integrity/Makefile
++++ b/security/integrity/Makefile
+@@ -3,13 +3,18 @@
+ # Makefile for caching inode integrity data (iint)
+ #
+ 
++quiet_cmd_extract_certs  = EXTRACT_CERTS   $(patsubst "%",%,$(2))
++      cmd_extract_certs  = scripts/extract-cert $(2) $@
++$(eval $(call config_filename,INTEGRITY_PLATFORM_BUILTIN_KEYS))
++
+ obj-$(CONFIG_INTEGRITY) += integrity.o
+ 
+ integrity-y := iint.o
+ integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
+ integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+ integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+-integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
++integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
++						  platform_certs/platform_cert.o
+ integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+ 				      platform_certs/load_uefi.o \
+ 				      platform_certs/keyring_handler.o
+@@ -19,3 +24,13 @@ integrity-$(CONFIG_LOAD_PPC_KEYS) += platform_certs/efi_parser.o \
+                                      platform_certs/keyring_handler.o
+ obj-$(CONFIG_IMA)			+= ima/
+ obj-$(CONFIG_EVM)			+= evm/
++
++
++$(obj)/platform_certs/platform_cert.o: $(obj)/platform_certs/platform_certificate_list
++
++targets += platform_certificate_list
++
++$(obj)/platform_certs/platform_certificate_list: scripts/extract-cert $(INTEGRITY_PLATFORM_BUILTIN_KEYS_FILENAME) FORCE
++	$(call if_changed,extract_certs,$(CONFIG_INTEGRITY_PLATFORM_BUILTIN_KEYS))
++
++clean-files := platform_certs/platform_certificate_list
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 3b06a01bd0fd..0ea40ed8dfcb 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -38,7 +38,7 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+ #define restrict_link_to_ima restrict_link_by_builtin_trusted
+ #endif
+ 
+-static struct key *integrity_keyring_from_id(const unsigned int id)
++struct key *integrity_keyring_from_id(const unsigned int id)
+ {
+ 	if (id >= INTEGRITY_KEYRING_MAX)
+ 		return ERR_PTR(-EINVAL);
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 547425c20e11..feb84e1b1105 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -167,6 +167,7 @@ int __init integrity_init_keyring(const unsigned int id);
+ int __init integrity_load_x509(const unsigned int id, const char *path);
+ int __init integrity_load_cert(const unsigned int id, const char *source,
+ 			       const void *data, size_t len, key_perm_t perm);
++struct key *integrity_keyring_from_id(const unsigned int id);
+ #else
+ 
+ static inline int integrity_digsig_verify(const unsigned int id,
+@@ -194,6 +195,11 @@ static inline int __init integrity_load_cert(const unsigned int id,
+ {
+ 	return 0;
+ }
++
++static inline struct key *integrity_keyring_from_id(const unsigned int id)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
+ #endif /* CONFIG_INTEGRITY_SIGNATURE */
+ 
+ #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+diff --git a/security/integrity/platform_certs/platform_cert.S b/security/integrity/platform_certs/platform_cert.S
+new file mode 100644
+index 000000000000..20bccce5dc5a
+--- /dev/null
++++ b/security/integrity/platform_certs/platform_cert.S
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include <linux/export.h>
++#include <linux/init.h>
++
++	__INITRODATA
++
++	.align 8
++#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
++	.globl platform_certificate_list
++platform_certificate_list:
++__cert_list_start:
++	.incbin "security/integrity/platform_certs/platform_certificate_list"
++__cert_list_end:
++#endif
++
++	.align 8
++	.globl platform_certificate_list_size
++platform_certificate_list_size:
++#ifdef CONFIG_64BIT
++	.quad __cert_list_end - __cert_list_start
++#else
++	.long __cert_list_end - __cert_list_start
++#endif
+diff --git a/security/integrity/platform_certs/platform_keyring.c b/security/integrity/platform_certs/platform_keyring.c
+index bcafd7387729..17535050d08d 100644
+--- a/security/integrity/platform_certs/platform_keyring.c
++++ b/security/integrity/platform_certs/platform_keyring.c
+@@ -12,8 +12,12 @@
+ #include <linux/cred.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
++#include <keys/system_keyring.h>
+ #include "../integrity.h"
+ 
++extern __initconst const u8 platform_certificate_list[];
++extern __initconst const unsigned long platform_certificate_list_size;
++
+ /**
+  * add_to_platform_keyring - Add to platform keyring without validation.
+  * @source: Source of key
+@@ -37,6 +41,28 @@ void __init add_to_platform_keyring(const char *source, const void *data,
+ 		pr_info("Error adding keys to platform keyring %s\n", source);
+ }
+ 
++static __init int load_builtin_platform_cert(void)
++{
++	const u8 *p;
++	unsigned long size;
++	int rc;
++	struct key *keyring;
++
++	p = platform_certificate_list;
++	size = platform_certificate_list_size;
++
++	keyring = integrity_keyring_from_id(INTEGRITY_KEYRING_PLATFORM);
++	if (IS_ERR(keyring))
++		return PTR_ERR(keyring);
++
++	rc = load_certificate_list(p, size, keyring);
++	if (rc)
++		pr_info("Error adding keys to platform keyring %d\n", rc);
++
++	return rc;
++}
++late_initcall(load_builtin_platform_cert);
++
+ /*
+  * Create the trusted keyrings.
+  */
 -- 
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+2.27.0
 
