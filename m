@@ -2,186 +2,160 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8218EC4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Sep 2021 18:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE17C433FE
+	for <linux-security-module@archiver.kernel.org>; Sat, 18 Sep 2021 03:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73E6F60ED7
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Sep 2021 18:02:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4801D61268
+	for <linux-security-module@archiver.kernel.org>; Sat, 18 Sep 2021 03:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240075AbhIQSEE (ORCPT
+        id S241182AbhIRDOw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Sep 2021 14:04:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47308 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230115AbhIQSED (ORCPT
+        Fri, 17 Sep 2021 23:14:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38344 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241067AbhIRDOl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Sep 2021 14:04:03 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18HHTsnv017258;
-        Fri, 17 Sep 2021 14:02:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=6dl0XdISYgflLHA8V5h7HYVl7CaFpcLBWAuWqzylDms=;
- b=sTobmfwgVTNOV/NRtxCApV+FSlmKV5v/M3S9hvq3zHx0OPlo/PhPGm9HnC+1xLNFzOvi
- p/feHcH57Lf/MUuc9W0liRw7y51JFu1lVsg702HTyHC0qLmNoNQWzLBeKD6Iw7inKIrZ
- YL+OQN9yInH/Z9+KQmbuSeCrf+4x5fIVJW7ivxOBIw0aJZd2qNmJcbtWuuKZsl/eEH4N
- jx6Gw6AFwYYU0sG8qGZZF4skO+jGIF9k5lv4GuL03GXIOsqhB+YxVb0vCz6+tazIPWtQ
- hsvs7jciwTZ3h5kdgHnjD6M7HCDuf9FcmMYv9W5XMdzi306CunRPRfUu4qW1gxPQUI2A 3g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3b4yf5gpkj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Sep 2021 14:02:17 -0400
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 18HHnpBA022627;
-        Fri, 17 Sep 2021 14:02:16 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3b4yf5gpj6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Sep 2021 14:02:16 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18HHqYZ4014044;
-        Fri, 17 Sep 2021 18:02:13 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06ams.nl.ibm.com with ESMTP id 3b0kqksh93-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Sep 2021 18:02:13 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18HI2BsQ54329800
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Sep 2021 18:02:11 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4403B11C05C;
-        Fri, 17 Sep 2021 18:02:11 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A30BD11C06E;
-        Fri, 17 Sep 2021 18:02:06 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.166.232])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 17 Sep 2021 18:02:06 +0000 (GMT)
-Message-ID: <12efec9ce26b0f372653935379dc8ebfd6086804.camel@linux.ibm.com>
-Subject: Re: [PATCH v6 00/13] Enroll kernel keys thru MOK
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>,
-        Nayna <nayna@linux.vnet.ibm.com>
-Cc:     keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        scott.branden@broadcom.com, weiyongjun1@huawei.com,
-        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
-        nramas@linux.microsoft.com, lszubowi@redhat.com,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Fri, 17 Sep 2021 23:14:41 -0400
+Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0E1EDC061574;
+        Fri, 17 Sep 2021 20:13:13 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha0.nfschina.com (Postfix) with ESMTP id A7171AE0E22;
+        Sat, 18 Sep 2021 11:13:19 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha0.nfschina.com ([127.0.0.1])
+        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4dTRWk8QdBbU; Sat, 18 Sep 2021 11:12:56 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by ha0.nfschina.com (Postfix) with ESMTPA id 399A5AE0DCF;
+        Sat, 18 Sep 2021 11:12:52 +0800 (CST)
+From:   liqiong <liqiong@nfschina.com>
+To:     Simon.THOBY@viveris.fr, zohar@linux.ibm.com
+Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-Date:   Fri, 17 Sep 2021 14:02:05 -0400
-In-Reply-To: <37D6AC4A-372D-497A-AF97-CEA03EFC9BBA@oracle.com>
-References: <20210914211416.34096-1-eric.snowberg@oracle.com>
-         <7e83a42f-22ff-350a-2017-d286b1b1b02c@linux.vnet.ibm.com>
-         <37D6AC4A-372D-497A-AF97-CEA03EFC9BBA@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: YXy4Tj_1a00UooTNj6_41O1SpLTr5v-1
-X-Proofpoint-ORIG-GUID: ZrGZZcum32u3kchhxHKbi9J7MPo0oO7l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
- definitions=2021-09-17_07,2021-09-17_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0
- bulkscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109030001 definitions=main-2109170109
+        linux-kernel@vger.kernel.org, liqiong@nfschina.com
+Subject: [PATCH] ima: fix deadlock when traversing "ima_default_rules".
+Date:   Sat, 18 Sep 2021 11:11:39 +0800
+Message-Id: <20210918031139.22674-1-liqiong@nfschina.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20210827103536.4149-1-liqiong@nfschina.com>
+References: <20210827103536.4149-1-liqiong@nfschina.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2021-09-16 at 19:55 -0600, Eric Snowberg wrote:
-> > On Sep 16, 2021, at 2:03 PM, Nayna <nayna@linux.vnet.ibm.com> wrote:
-> > 
-> > 
-> > On 9/14/21 5:14 PM, Eric Snowberg wrote:
-> >> Back in 2013 Linus requested a feature to allow end-users to have the
-> >> ability "to add their own keys and sign modules they trust". This was
-> >> his *second* order outlined here [1]. There have been many attempts
-> >> over the years to solve this problem, all have been rejected.  Many
-> >> of the failed attempts loaded all preboot firmware keys into the kernel,
-> >> including the Secure Boot keys. Many distributions carry one of these
-> >> rejected attempts [2], [3], [4]. This series tries to solve this problem
-> >> with a solution that takes into account all the problems brought up in
-> >> the previous attempts.
-> >> 
-> >> On UEFI based systems, this series introduces a new Linux kernel keyring
-> >> containing the Machine Owner Keys (MOK) called machine. It also defines
-> >> a new MOK variable in shim. This variable allows the end-user to decide
-> >> if they want to load MOK keys into the machine keyring. Mimi has suggested
-> >> that only CA keys contained within the MOK be loaded into the machine
-> >> keyring. All other certs will load into the platform keyring instead.
-> >> 
-> >> By default, nothing changes; MOK keys are not loaded into the machine
-> >> keyring.  They are only loaded after the end-user makes the decision
-> >> themselves.  The end-user would set this through mokutil using a new
-> >> --trust-mok option [5]. This would work similar to how the kernel uses
-> >> MOK variables to enable/disable signature validation as well as use/ignore
-> >> the db. Any kernel operation that uses either the builtin or secondary
-> >> trusted keys as a trust source shall also reference the new machine
-> >> keyring as a trust source.
-> >> 
-> >> Secure Boot keys will never be loaded into the machine keyring.  They
-> >> will always be loaded into the platform keyring.  If an end-user wanted
-> >> to load one, they would need to enroll it into the MOK.
-> >> 
-> >> Steps required by the end user:
-> >> 
-> >> Sign kernel module with user created key:
-> >> $ /usr/src/kernels/$(uname -r)/scripts/sign-file sha512 \
-> >>    machine_signing_key.priv machine_signing_key.x509 my_module.ko
-> >> 
-> >> Import the key into the MOK
-> >> $ mokutil --import machine_signing_key.x509
-> >> 
-> >> Setup the kernel to load MOK keys into the .machine keyring
-> >> $ mokutil --trust-mok
-> >> 
-> >> Then reboot, the MokManager will load and ask if you want to trust the
-> >> MOK key and enroll the MOK into the MOKList.  Afterwards the signed kernel
-> >> module will load.
-> > 
-> > machine_signing_key.x509 appears to be a code-signing, self-signed key.  It's not a CA key, but the intent of the patchset is to load only CA keys to .machine keyring.
-> > 
-> > Shouldn't there be two steps: one to load the CA key into MOK, and a second one to load the code-signing key which is signed by this CA ?
-> 
-> I think that would depend on how the end-user wants to do things. If they 
-> are just looking to quickly self-sign their own kernel module, I doubt they 
-> would go through the effort of having two keys.  This is what I tried to 
-> document in the example above. 
+The current IMA ruleset is identified by the variable "ima_rules"
+that default to "&ima_default_rules". When loading a custom policy
+for the first time, the variable is updated to "&ima_policy_rules"
+instead. That update isn't RCU-safe, and deadlocks are possible.
+Indeed, some functions like ima_match_policy() may loop indefinitely
+when traversing "ima_default_rules" with list_for_each_entry_rcu().
 
-Thank you for providing the example.  We've spent quite a bit of time
-discussing CA keys stored in the MOK db being the new root(s) of trust.
-While other certificates signed by the new root(s) of trust would be
-added to the secondary or IMA keyrings.
+When iterating over the default ruleset back to head, if the list
+head is "ima_default_rules", and "ima_rules" have been updated to
+"&ima_policy_rules", the loop condition (&entry->list != ima_rules)
+stays always true, traversing won't terminate, causing a soft lockup
+and RCU stalls.
 
-At this point, the patch descriptions, and probably code, are written
-in terms of CA keys stored in the MOK db, which the self signed
-certificate restriction does not require.  With this design, these self
-signed certs may be loaded directly onto the IMA keyring.  That's a
-problem.  To fix the discrepancy between the cover letter, patch
-descriptions and code, all that is needed is to verify that the self-
-signed cert is in fact a CA.
+Introduce a temporary value for "ima_rules" when iterating over
+the ruleset to avoid the deadlocks.
 
-thanks,
+Signed-off-by: liqiong <liqiong@nfschina.com>
+Reviewed-by: THOBY Simon <Simon.THOBY@viveris.fr>
+Fixes: 38d859f991f3 ("IMA: policy can now be updated multiple times")
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Fix sparse: incompatible types in comparison expression.
+---
+ security/integrity/ima/ima_policy.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-Mimi
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 87b9b71cb820..480de75eaf8c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -228,7 +228,7 @@ static struct ima_rule_entry *arch_policy_entry __ro_after_init;
+ static LIST_HEAD(ima_default_rules);
+ static LIST_HEAD(ima_policy_rules);
+ static LIST_HEAD(ima_temp_rules);
+-static struct list_head *ima_rules = &ima_default_rules;
++static struct list_head __rcu *ima_rules = (struct list_head __rcu *)(&ima_default_rules);
+ 
+ static int ima_policy __initdata;
+ 
+@@ -675,12 +675,14 @@ int ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
+ {
+ 	struct ima_rule_entry *entry;
+ 	int action = 0, actmask = flags | (flags << 1);
++	struct list_head *ima_rules_tmp;
+ 
+ 	if (template_desc && !*template_desc)
+ 		*template_desc = ima_template_desc_current();
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(entry, ima_rules, list) {
++	ima_rules_tmp = rcu_dereference(ima_rules);
++	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
+ 
+ 		if (!(entry->action & actmask))
+ 			continue;
+@@ -970,8 +972,8 @@ void ima_update_policy(void)
+ 
+ 	if (ima_rules != policy) {
+ 		ima_policy_flag = 0;
+-		ima_rules = policy;
+ 
++		rcu_assign_pointer(ima_rules, policy);
+ 		/*
+ 		 * IMA architecture specific policy rules are specified
+ 		 * as strings and converted to an array of ima_entry_rules
+@@ -1768,9 +1770,11 @@ void *ima_policy_start(struct seq_file *m, loff_t *pos)
+ {
+ 	loff_t l = *pos;
+ 	struct ima_rule_entry *entry;
++	struct list_head *ima_rules_tmp;
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(entry, ima_rules, list) {
++	ima_rules_tmp = rcu_dereference(ima_rules);
++	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
+ 		if (!l--) {
+ 			rcu_read_unlock();
+ 			return entry;
+@@ -1789,7 +1793,8 @@ void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos)
+ 	rcu_read_unlock();
+ 	(*pos)++;
+ 
+-	return (&entry->list == ima_rules) ? NULL : entry;
++	return (&entry->list == &ima_default_rules ||
++		&entry->list == &ima_policy_rules) ? NULL : entry;
+ }
+ 
+ void ima_policy_stop(struct seq_file *m, void *v)
+@@ -2014,6 +2019,7 @@ bool ima_appraise_signature(enum kernel_read_file_id id)
+ 	struct ima_rule_entry *entry;
+ 	bool found = false;
+ 	enum ima_hooks func;
++	struct list_head *ima_rules_tmp;
+ 
+ 	if (id >= READING_MAX_ID)
+ 		return false;
+@@ -2021,7 +2027,8 @@ bool ima_appraise_signature(enum kernel_read_file_id id)
+ 	func = read_idmap[id] ?: FILE_CHECK;
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(entry, ima_rules, list) {
++	ima_rules_tmp = rcu_dereference(ima_rules);
++	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
+ 		if (entry->action != APPRAISE)
+ 			continue;
+ 
+-- 
+2.11.0
 
