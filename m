@@ -2,120 +2,498 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC103C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Sep 2021 16:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2799C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Sep 2021 23:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A615761019
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Sep 2021 16:27:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9989960F3A
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Sep 2021 23:46:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233955AbhITQ23 (ORCPT
+        id S232644AbhITXsF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Sep 2021 12:28:29 -0400
-Received: from mail-ua1-f52.google.com ([209.85.222.52]:39439 "EHLO
-        mail-ua1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229914AbhITQ21 (ORCPT
+        Mon, 20 Sep 2021 19:48:05 -0400
+Received: from sonic308-16.consmr.mail.ne1.yahoo.com ([66.163.187.39]:39365
+        "EHLO sonic308-16.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234259AbhITXqF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Sep 2021 12:28:27 -0400
-Received: by mail-ua1-f52.google.com with SMTP id o13so11529695uat.6;
-        Mon, 20 Sep 2021 09:27:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9xo0jIRnxuOOhc30CoYi6LuiF/umxAgJKZ4MGnDGawY=;
-        b=AvbAGzmFZrVlKy02rhpai2UDe2k2fRcVQCIo8Cf5AP/tqrfdBVVqyhHDCGwVloe8GA
-         i1Y+ItCUBbpJps8OjHbxe5ce1r/TzjRnz3njhy3XP5/0Nn+SrSbCASMbhGurJ0VDf0CF
-         Sv8/55IjhgONNhrn6xLPlDoCuGn7SJUt10L/CrPRHn6eI5q9gQ1jJUWhyFLElXH9Tmt1
-         bZM5hV2y+sqxFsKDT1LN3XKQq1Kea8jnmScItGLZRqB9uXpfogHTd+S4NZrMNJtnEHDf
-         Ax9Kdr+kC2JAHEFC/HAthiHSA4jJjl2lS7V6AemPEj1MPFOa+HAFY1MecWYb+jjbu+Ly
-         HinA==
-X-Gm-Message-State: AOAM533GBVXpl2NVjfxeQGFZW/t1rw/hT6Qs6T22J0IxAyIj1r1UAELu
-        7LjRf+xMJ6wU+U3NaGNZs+uedINMh7s3YeGwjLQ=
-X-Google-Smtp-Source: ABdhPJwoB/0/VBD9Bv7XJkpjjyCTFva9x1S/l0eGg68vZoWX7Uope7tWe5j8vOPoSsjhkKDy81kIFBG7m6cIsfz+iVo=
-X-Received: by 2002:ab0:6dc7:: with SMTP id r7mr12548577uaf.14.1632155219490;
- Mon, 20 Sep 2021 09:26:59 -0700 (PDT)
+        Mon, 20 Sep 2021 19:46:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1632181477; bh=q/+1FTR6kdByQ3fktcKlOWvcmDsBmPI6Yn4r1obazFQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=qyiVXdCd+S2MblRei0eCFa/22tdHwANDC3FKAub1eEkrhVhhMWHgpV5++S69qkXpJL2NoibEl8KmFMfmrxmFgRouKBvsil5WCG36ERsM7HzLzawEip8Q04ybPXhbkhzlfb8QtLA83urY4kbKdVbN1Yffy81CP4SjVkWbnJls9ExDqnEAmZzWTRV56AmAo6IncgrC+NWPSH3E7Pn4245xdOwp9KTQY3cZE1bL75uFvbbX3gYnt4XZW00i/0TvokUTyNPVm/Wg6aa2lUJtgbvrMwt8dMM3tEs2H1zW9cRMfGooy9BxVLWLMBR8v/E0PzDdARY06QYBejwx0OeSjWz+qg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1632181477; bh=8JU0ixhXnk8UJjfMYbYFvTl8dvdP0p0trCNWo+hP60c=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=NRE0ViHYetrtIp/afKNcWA/IkyuIaMCe/vfpWwQerhAODllqP1jFZeqEj0bOlzbHV29xauF1VaxetupqVwdqyXqFv3z8IaM8dmky9ofD8gq5nwb3yqcixmxbNtxMWY3RxlqSa1MMDECojnd3dhGZcaLsanVe83heXF1u7mgV8jaUudqh+L2CZ0kQbflGspdCXGENkyMeryRrpeLa3zcMwJI7PsG2FH6WR0Xc26NC+i7e72BuOGrkiDZvy+JX0rR51HrUsKY2YYfx0zQa09ZvFY7K7CARPG9ULrzGWUcHBGWaGF4XCTXO2VsaPvxLW3vumyVfyzlNnjGCdkM8Rml9PA==
+X-YMail-OSG: 390Dmg8VM1lVbeev6GwFBCGxG_llrDKWHT2.hLDRJULiHL1zlMVZ3VY4sUZzJCf
+ m9V7KFjZsWKvMlkf22gspeLiEUa3juLYUnAMoVxqyRUDMl498mzBYzjQv7q2519zeEn9dQU1FZvJ
+ 7ofhmaqZMae1oTCp.edwFErrieqXe7Ip8CNZZi4wSoif52nitrMF9sFNY4DjyqdIjN7EKxvcWyRT
+ ZbGuah3u2CfzNbkUbFUAebRasYwjl5CR4bbDFkvm5OB1rWOjTLNfxZSzB6.1PG5gPif18PzilyRt
+ jkne217GJ0d0vXRhTH_sZcghoEV7.6bU9ysmGmbVtOne5PezZC8mYcZmYxkgeQPjnyPD.mbJ_dAI
+ ta0ZXXm7InvoFMs9XYKUHNkYSeEx6TwS_jZaMhHlSw2Fi7BTcqpGEb8c2meKk8XpLPpGtMNTUO09
+ 6PizQvD5p3IoLw9VAEZl7xI1wuGgLvyfa5ChgaVOoX.gCiPl6EffkHk4gIvB3Iz1a6bbAjWAz55C
+ u46hfWVsGdbTo37zouAAcMt2pr_mpb0nN9rWvcfEVM9UyyLcDtxB51ntPtBt3WJHKeh3dSpvvzV7
+ 0Zwsm_894I8WOFUwUVsPil5zTHLYtQo6aBm9nfkVUXVYBRvP.gpmtZQDvNW83nOoCqsfewtwrbiD
+ fnxR.K6oqJkUO3.I_teNkus7IfGxWbOMUmEk14DyPH_02b1E23K5zZNxNXvJ8X_O9MlSOrOvmpRN
+ W0gpcJ291jZYbmW8dJIe1OpqFEVV2siDhARf4QI4_oXY0TmM7jlfKR_945IZoBKJF7aDlQJQzSPt
+ KeT5At0Iv5N6Rn6f9917eH1SDOqUkWD.tdyirBQ9yplz2bdFpuQ8TVZnZ1awOzSd7yXWlogDosDV
+ fL6MgdgxQVj1nw7U8pkUDEq1_31ZQzA1wbtwCkCKfywajPWC2cQpWp313Oc7KV0jHEDX608T.GLa
+ rTLztU.lp76GnKWLNyGGhuGlRH1WCRiEbt8_Gn82ux2qmr9aeTnoMU7Y6uKn2vhQStf..qlz.NdG
+ n0MKYjNz9ijjYzjCc5CrBNYZxWaX51h0xZG52IGFHxPhv2znmNBVZPzrfFCBcY2sSV5MrRBTWR9K
+ vz7WbRGJ7RequVJCn.SBf7lKDK6V1KKUpgy3jy4pcD2FNL9Xn6mo3DNgZL8ZHuWH8bd8ty7TTAIz
+ aqIH5aJH7TjqRsm11VgOosc_mnSRamfmVj9s8yom7r413peQAGM9D5xSrYI2rrEUXJvo8KUDsiGr
+ rI9064fPyjVHOoGL6YkW39FQbpxOw5HTmXgoidq0XFkxBDxC08RlS1V53gyD0A50ISgdHpAq5sXs
+ _5M4e64JNXH6U48fICLz6udfsS53cQasBS.phhFk47r8wxWHWMTuhTafTlYggVEY5xsfhf2JoATe
+ iYdXuPQwbB8FP8EBrDQprlbng3KjTlzzoDoorOjo0AMzAVNBhFyqalSAyCNGidQVP_7GLgmR7MVb
+ BJpQc_DIB.chKStmg81m1iHRd1Ukb5QWIIh1U4XFlVfEZ7jG0nkFgH1ialxpmnp42soXaF8XJY3n
+ YNWG7ApQuPMbmwfR1M2db8QOASNBJgVvroonzW.VKFfL.Sg.MDjwlZcgIghpT8Y9PBEwPTva6FiQ
+ Bz.01K.cUAj7qyhmn5h5zKz4x9qJR3cxnQ2IdRs9fRUL.JTVR9LKWm8ujVbrci4jB5JHSs7Uig2J
+ wdvihC2wXr_JEfI85Ti53zi7qJEedad3xTUTlM6WeIF5jQnF4X0oyINHYdgG4qOOYw9slfLuOjZA
+ T6oVyrhDWWtSAriRrp2iyT6QNlqcH27zCi6ctYpjWH8VjdjVhPSaCO8HRgFfS89ZUNwS2KF6blDk
+ KKB_klpsFhUei91uro_WAL29w7nntMn_GiI95gPHKf6QeAtC6QXvNlm6CrKxP1N1pKVNmUg9bjDb
+ dygshvyzHZPkgXLyb6cks1QFvnOIgbTO6wbZSi1GSHSsPnxhwlKW9yQHzHuhDc0l8MSZG.U_F2tr
+ cKvfrwmx7glzNb_hdcjFuLJRQK4itn3jeIR62M9EpBCi3IxffE33P_f5r08_aLXB2eyovcBhECmK
+ MuXmQiiYFdayn0u23rLl.dksTZFnoAfyka.7QSLdD.M8HtlFjpnx9Z5dGqBlS4M4zF9Dbxh95Nh1
+ UcSL8l3__BHetcsOI.UDvYo8T_8lJJMwIvIQybY1jd8EMvC8OS6aKHpH.S_ueCC8_yJmTQjRXGxl
+ NOcI9qrS4cGJa0XugewhUhfBJiRtwoXXCnRdTKiFt8yNeSQQrZ_9UgKDjSGjQ0gji3PiTzR6zdb5
+ nV1QbMXmr7nYKMstiDhwZq1pAzJPHRT.WSWjRER0ZQOZbeHlb
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Mon, 20 Sep 2021 23:44:37 +0000
+Received: by kubenode541.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 99664d0fb461305fcde124f7db83b93c;
+          Mon, 20 Sep 2021 23:44:32 +0000 (UTC)
+Subject: Re: Regression in unix stream sockets with the Smack LSM
+To:     "Jiang Wang ." <jiang.wang@bytedance.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <a507efa7-066b-decf-8605-89cdb0ac1951.ref@schaufler-ca.com>
+ <a507efa7-066b-decf-8605-89cdb0ac1951@schaufler-ca.com>
+ <CAHC9VhR9SKX_-SAmtcCj+vuUvcdq-SWzKs86BKMjBcC8GhJ1gg@mail.gmail.com>
+ <dd58bbf5-7983-ca26-c335-6bf8e492fcaa@schaufler-ca.com>
+ <CAP_N_Z9iCP_xNNNSRVEzgGER7Zg+bb_nROzBUct=V6UyWn1P5A@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <2409eb92-aff5-7e1f-db9d-3c3ff3a12ad7@schaufler-ca.com>
+Date:   Mon, 20 Sep 2021 16:44:30 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-References: <20210907183843.33028-1-ndesaulniers@google.com>
- <CAHk-=whJOxDefgSA1_ojGbweRJGonWX9_nihA-=fbXFV1DhuxQ@mail.gmail.com>
- <CAKwvOdkuYoke=Sa8Qziveo9aSA2zaNWEcKW8LZLg+d3TPwHkoA@mail.gmail.com>
- <YTfkO2PdnBXQXvsm@elver.google.com> <CAHk-=wgPaQsEr+En=cqCqAC_sWmVP6x5rD2rmZRomH9EnTQL7Q@mail.gmail.com>
- <c8fb537f-26e5-b305-6bc5-06f0d27a4029@infradead.org> <20210913093256.GA12225@amd>
- <YT8d5a6ZVW7JlsRl@kroah.com> <20210913100230.GB11752@amd>
-In-Reply-To: <20210913100230.GB11752@amd>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 20 Sep 2021 18:26:48 +0200
-Message-ID: <CAMuHMdXGK165nXPJSDdB1hsAfqu3nprXtskZz4z1GcgH_vz+ow@mail.gmail.com>
-Subject: Re: [PATCH] Revert "Enable '-Werror' by default for all kernel builds"
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marco Elver <elver@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        llvm@lists.linux.dev,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-toolchains@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vipin Sharma <vipinsh@google.com>,
-        Chris Down <chris@chrisdown.name>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAP_N_Z9iCP_xNNNSRVEzgGER7Zg+bb_nROzBUct=V6UyWn1P5A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.19043 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 13, 2021 at 12:50 PM Pavel Machek <pavel@ucw.cz> wrote:
-> > > Do we really want developers treat warnings as errors? When the code
-> > > is okay but some random version of gcc dislikes it...
-> > >
-> > > Plus, there's question of stable. We already get ton of churn there
-> > > ("this fixes random warning"). WERROR will only encourage that...
-> >
-> > I will not be backporting this patch to older stable kernels, but I
-> > _want_ to see stable builds build with no warnings.  When we add
-> > warnings, they are almost always things we need to fix up properly.
+On 9/20/2021 3:35 PM, Jiang Wang . wrote:
+> On Wed, Sep 15, 2021 at 9:52 AM Casey Schaufler <casey@schaufler-ca.com=
+> wrote:
+>> On 9/13/2021 4:47 PM, Paul Moore wrote:
+>>> On Mon, Sep 13, 2021 at 6:53 PM Casey Schaufler <casey@schaufler-ca.c=
+om> wrote:
+>>>> Commit 77462de14a43f4d98dbd8de0f5743a4e02450b1d
+>>>>
+>>>>         af_unix: Add read_sock for stream socket types
+>>>>
+>>>> introduced a regression in UDS socket connections for the Smack LSM.=
+
+>>>> I have not tracked done the details of why the change broke the code=
+,
+>>>> but this is where bisecting the kernel indicates the problem lies, a=
+nd
+>>>> I have verified that reverting this change repairs the problem.
+>>>>
+>>>> You can verify the problem with the Smack test suite:
+>>>>
+>>>>         https://github.com/smack-team/smack-testsuite.git
+>>>>
+>>>> The failing test is tests/uds-access.sh.
+>>>>
+> I tried to reproduce with tests/uds-access.sh, but the first two test
+> cases always failed.
+
+That was my initial impression as well. However, when I started
+running the tests outside the routine "make test-results" I started
+observing that they succeeded irregularly.
+
+My biggest concern is that the test ever fails. The uds-access test
+has not failed in several releases. The erratic behavior just adds
+spice to the problem.=20
+
+>  I tried different kernels with and without my
+> unix-stream sockmap patches. Also tried standard debian 4.19
+> kernel and they all have the same result.  What distro did you use? cen=
+tos?
+> Fedora?
+
+I have been testing on Fedora32 and Fedora34.
+
+>  Have you tested on debian based distros?
+
+Ubuntu 20.04.3 with a 5.15-rc1 kernel is exhibiting the same
+behavior. The Ubuntu system fails the test more regularly, but
+does succeed on occasion.
+
+> failing log:
+> root@gitlab-runner-stretch:~/smack-testsuite# tests/uds-access.sh -v
+
+# tools/clean-targets.sh
+# tests/uds-access.sh -v
+
+will remove the UDS filesystem entry before the test runs.
+=C2=A0
+
+> mkdir: cannot create directory =E2=80=98./targets/uds-notroot=E2=80=99:=
+ File exists
+> tests/uds-access.sh:71 FAIL
+> tests/uds-access.sh:76 FAIL
+> tests/uds-access.sh:81 PASS
+> tests/uds-access.sh:86 PASS
+> tests/uds-access.sh:91 PASS
+> tests/uds-access.sh PASS=3D3 FAIL=3D2
+> root@gitlab-runner-stretch:~/smack-testsuite# uname -a
+> Linux gitlab-runner-stretch 5.14.0-rc5.bm.1-amd64+ #6 SMP Mon Sep 20
+> 22:01:10 UTC 2021 x86_64 GNU/Linux
+> root@gitlab-runner-stretch:~/smack-testsuite#
 >
-> Well, everyone _wants_ to see clean builds... unless the price is too
-> high.
->
-> > Over time, I have worked to reduce the number of build warnings in older
-> > stable kernels.  For newer versions of gcc, sometimes that is
-> > impossible, but we are close...
->
-> You clearly can't backport this patch, but for 5.16-stable, you'll
-> have it in, and now warnings are same as errors... and I don't believe
-> that's good idea for stable.
+>>>> I have not looked to see if there's a similar problem with SELinux.
+>>>> There may be, but if there isn't it doesn't matter, there's still a
+>>>> bug.
+>>> FWIW, the selinux-testsuite tests ran clean today with v5.15-rc1 (it
+>>> looks like this code is only in v5.15) but as Casey said, a regressio=
+n
+>>> is a regression.
+>>>
+>>> Casey, what actually fails on the Smack system with this commit?
+>> This problem occurs with security=3Dnone as well as with security=3Dsm=
+ack.
+>>
+>> There isn't a problem with connect, that always works correctly.
+>> The problem is an unexpected read() failure in the connecting process.=
 
-The good thing about the config option is that there's now a single point
-to enable or disable -Werror.  In the past, maintainers sprinkled -Werror
-all over the various Makefiles in the tree, which means you have to
-edit multiple files to disable it again.
+>> This doesn't occur all the time, and sometimes happens in the first
+>> of my two tests, sometimes the second, sometimes neither and, you gues=
+sed
+>> it, sometimes both.
+>>
+>> Here's a sample socat log demonstrating the problem. The first run,
+>> ending at "uds-access RC=3D0" behaves as expected. The second, ending
+>> at "uds-access RC=3D1", demonstrates the read failure. This case was
+> I tried to compare logs between RC=3D0 and RC=3D1, but they look  to me=
 
-Background: I've been investigating an issue that involved building old
-v2.6.x kernels. Apart from having to use very old compilers, it still caused
-compiler warnings that obviously weren't seen with the slightly different
-compiler versions used by maintainers who added -Werror.
+> not apple to apple comparison? The read syscall have different paramete=
+rs
+> and the syscall sequences are different. I am not sure which syscall
+> is the first failure.  See more comments below.
 
-Gr{oetje,eeting}s,
+The data being feed to socat is the Smack label, so the data passed acros=
+s
+the socket will be of different length ("Pop" vs. "Snap") between the
+two test cases, but that should be the only difference.
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>> run with Smack enabled, but I see the same problem with the same
+>> unpredictability on the same kernel with security=3Dnone.
+>>
+>> I've tried to convince myself that there's a flaw in the way I've
+>> set up the scripts. They've been pretty robust and I've never seen
+>> socat behaving erratically before. I've instrumented the kernel
+>> code and all the security checks are behaving as expected. Plus,
+>> as I mentioned above, the problem also occurs without an LSM.
+>>
+>> 2021/09/15 08:49:50 socat[2215] D getpid()
+>> 2021/09/15 08:49:50 socat[2215] D getpid() -> 2215
+>> 2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_PID", "2215", 1)
+>> 2021/09/15 08:49:50 socat[2215] D setenv() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_PPID", "2215", 1)
+>> 2021/09/15 08:49:50 socat[2215] D setenv() -> 0
+>> 2021/09/15 08:49:50 socat[2215] I socat by Gerhard Rieger and contribu=
+tors - see www.dest-unreach.org
+>> 2021/09/15 08:49:50 socat[2215] I This product includes software devel=
+oped by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.o=
+penssl.org/)
+>> 2021/09/15 08:49:50 socat[2215] I This product includes software writt=
+en by Tim Hudson (tjh@cryptsoft.com)
+>> 2021/09/15 08:49:50 socat[2215] D socat version 1.7.4.1 on Jan 27 2021=
+ 00:00:00
+>> 2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_VERSION", "1.7.4.1", 1=
+)
+>> 2021/09/15 08:49:50 socat[2215] D setenv() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D running on Linux version #58 SMP Wed=
+ Sep 15 08:40:38 PDT 2021, release 5.15.0-rc1bisect, machine x86_64
+>>
+>> 2021/09/15 08:49:50 socat[2215] D argv[0]: "socat"
+>> 2021/09/15 08:49:50 socat[2215] D argv[1]: "-d"
+>> 2021/09/15 08:49:50 socat[2215] D argv[2]: "-d"
+>> 2021/09/15 08:49:50 socat[2215] D argv[3]: "-d"
+>> 2021/09/15 08:49:50 socat[2215] D argv[4]: "-d"
+>> 2021/09/15 08:49:50 socat[2215] D argv[5]: "-"
+>> 2021/09/15 08:49:50 socat[2215] D argv[6]: "UNIX-CONNECT:./targets/uds=
+-notroot/uds-access-socket"
+>> 2021/09/15 08:49:50 socat[2215] D sigaction(1, 0x7fffaec50b50, 0x0)
+>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D sigaction(2, 0x7fffaec50b50, 0x0)
+>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D sigaction(3, 0x7fffaec50b50, 0x0)
+>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D sigaction(4, 0x7fffaec50b50, 0x0)
+>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D sigaction(6, 0x7fffaec50b50, 0x0)
+>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D sigaction(7, 0x7fffaec50b50, 0x0)
+>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D sigaction(8, 0x7fffaec50b50, 0x0)
+>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D sigaction(11, 0x7fffaec50b50, 0x0)
+>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D sigaction(15, 0x7fffaec50b50, 0x0)
+>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D signal(13, 0x1)
+>> 2021/09/15 08:49:50 socat[2215] D signal() -> 0x0
+>> 2021/09/15 08:49:50 socat[2215] D atexit(0x55aa5d645110)
+>> 2021/09/15 08:49:50 socat[2215] D atexit() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D xioopen("-")
+>> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
+>> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f0139d0
+>> 2021/09/15 08:49:50 socat[2215] D malloc(1024)
+>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f013d30
+>> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
+>> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f014140
+>> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
+>> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f014bc0
+>> 2021/09/15 08:49:50 socat[2215] D isatty(0)
+>> 2021/09/15 08:49:50 socat[2215] D isatty() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D isatty(1)
+>> 2021/09/15 08:49:50 socat[2215] D isatty() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D malloc(128)
+>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f014f00
+>> 2021/09/15 08:49:50 socat[2215] D malloc(128)
+>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f014f90
+>> 2021/09/15 08:49:50 socat[2215] N reading from and writing to stdio
+>> 2021/09/15 08:49:50 socat[2215] D xioopen("UNIX-CONNECT:./targets/uds-=
+notroot/uds-access-socket")
+>> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
+>> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f015020
+>> 2021/09/15 08:49:50 socat[2215] D malloc(1024)
+>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f015360
+>> 2021/09/15 08:49:50 socat[2215] D malloc(128)
+>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f015770
+>> 2021/09/15 08:49:50 socat[2215] N opening connection to AF=3D1 "./targ=
+ets/uds-notroot/uds-access-socket"
+>> 2021/09/15 08:49:50 socat[2215] D socket(1, 1, 0)
+>> 2021/09/15 08:49:50 socat[2215] I socket(1, 1, 0) -> 5
+>> 2021/09/15 08:49:50 socat[2215] D fcntl(5, 2, 1)
+>> 2021/09/15 08:49:50 socat[2215] D fcntl() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D connect(5, {1,AF=3D1 "./targets/uds-=
+notroot/uds-access-socket"}, 41)
+>> 2021/09/15 08:49:50 socat[2215] D connect() -> 0
+>> 2021/09/15 08:49:50 socat[2215] D getsockname(5, 0x7fffaec50580, 0x7ff=
+faec50564{112})
+>> 2021/09/15 08:49:50 socat[2215] D getsockname(, {AF=3D1 "<anon>"}, {2}=
+) -> 0
+>> 2021/09/15 08:49:50 socat[2215] N successfully connected from local ad=
+dress AF=3D1 "uds-notroot/ud\xEE\xEE\xEE\xEEcess-socket")\n"
+>> 2021/09/15 08:49:50 socat[2215] I resolved and opened all sock address=
+es
+>> 2021/09/15 08:49:50 socat[2215] D posix_memalign(0x7fffaec50b28, 4096,=
+ 16385)
+>> 2021/09/15 08:49:50 socat[2215] D posix_memalign(...) -> 0
+>> 2021/09/15 08:49:50 socat[2215] N starting data transfer loop with FDs=
+ [0,1] and [5,5]
+>> 2021/09/15 08:49:50 socat[2215] D data loop: sock1->eof=3D0, sock2->eo=
+f=3D0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
+>> 2021/09/15 08:49:50 socat[2215] D select(6, &0x21, &0x22, &0x0, NULL/0=
+=2E000000)
+>> 2021/09/15 08:49:50 socat[2215] D select -> (, 0x21, 0x22, 0x0, NULL/0=
+=2E000000), 4
+>> 2021/09/15 08:49:50 socat[2215] D read(0, 0x55aa5f016000, 8192)
+>> 2021/09/15 08:49:50 socat[2215] D read -> 4
+>> 2021/09/15 08:49:50 socat[2215] D write(5, 0x55aa5f016000, 4)
+>> Pop
+>> 2021/09/15 08:49:50 socat[2215] D write -> 4
+>> 2021/09/15 08:49:50 socat[2215] I transferred 4 bytes from 0 to 5
+>> 2021/09/15 08:49:50 socat[2215] D read(5, 0x55aa5f016000, 8192)
+>> 2021/09/15 08:49:50 socat[2215] D read -> 4
+>> 2021/09/15 08:49:50 socat[2215] D write(1, 0x55aa5f016000, 4)
+>> Pop
+>> 2021/09/15 08:49:50 socat[2215] D write -> 4
+>> 2021/09/15 08:49:50 socat[2215] I transferred 4 bytes from 5 to 1
+>> 2021/09/15 08:49:50 socat[2215] D data loop: sock1->eof=3D0, sock2->eo=
+f=3D0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
+>> 2021/09/15 08:49:50 socat[2215] D select(6, &0x21, &0x22, &0x0, NULL/0=
+=2E000000)
+>> 2021/09/15 08:49:50 socat[2215] D select -> (, 0x21, 0x22, 0x0, NULL/0=
+=2E000000), 4
+>> 2021/09/15 08:49:50 socat[2215] D read(0, 0x55aa5f016000, 8192)
+>> 2021/09/15 08:49:50 socat[2215] D read -> 0
+>> 2021/09/15 08:49:50 socat[2215] D read(5, 0x55aa5f016000, 8192)
+>> 2021/09/15 08:49:50 socat[2215] D read -> 0
+>> 2021/09/15 08:49:50 socat[2215] N socket 1 (fd 0) is at EOF
+>> 2021/09/15 08:49:50 socat[2215] I shutdown(5, 1)
+>> 2021/09/15 08:49:50 socat[2215] D shutdown()  -> 0
+>> 2021/09/15 08:49:50 socat[2215] N socket 2 (fd 5) is at EOF
+>> 2021/09/15 08:49:50 socat[2215] I shutdown(5, 2)
+>> 2021/09/15 08:49:50 socat[2215] D shutdown()  -> 0
+>> 2021/09/15 08:49:50 socat[2215] N exiting with status 0
+>> 2021/09/15 08:49:50 socat[2215] D exit(0)
+>> 2021/09/15 08:49:50 socat[2215] D starting xioexit()
+>> 2021/09/15 08:49:50 socat[2215] D finished xioexit()
+>> uds-access RC=3D0
+>> 2021/09/15 08:49:52 socat[2240] D getpid()
+>> 2021/09/15 08:49:52 socat[2240] D getpid() -> 2240
+>> 2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_PID", "2240", 1)
+>> 2021/09/15 08:49:52 socat[2240] D setenv() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_PPID", "2240", 1)
+>> 2021/09/15 08:49:52 socat[2240] D setenv() -> 0
+>> 2021/09/15 08:49:52 socat[2240] I socat by Gerhard Rieger and contribu=
+tors - see www.dest-unreach.org
+>> 2021/09/15 08:49:52 socat[2240] I This product includes software devel=
+oped by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.o=
+penssl.org/)
+>> 2021/09/15 08:49:52 socat[2240] I This product includes software writt=
+en by Tim Hudson (tjh@cryptsoft.com)
+>> 2021/09/15 08:49:52 socat[2240] D socat version 1.7.4.1 on Jan 27 2021=
+ 00:00:00
+>> 2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_VERSION", "1.7.4.1", 1=
+)
+>> 2021/09/15 08:49:52 socat[2240] D setenv() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D running on Linux version #58 SMP Wed=
+ Sep 15 08:40:38 PDT 2021, release 5.15.0-rc1bisect, machine x86_64
+>>
+>> 2021/09/15 08:49:52 socat[2240] D argv[0]: "socat"
+>> 2021/09/15 08:49:52 socat[2240] D argv[1]: "-d"
+>> 2021/09/15 08:49:52 socat[2240] D argv[2]: "-d"
+>> 2021/09/15 08:49:52 socat[2240] D argv[3]: "-d"
+>> 2021/09/15 08:49:52 socat[2240] D argv[4]: "-d"
+>> 2021/09/15 08:49:52 socat[2240] D argv[5]: "-"
+>> 2021/09/15 08:49:52 socat[2240] D argv[6]: "UNIX-CONNECT:./targets/uds=
+-notroot/uds-access-socket"
+>> 2021/09/15 08:49:52 socat[2240] D sigaction(1, 0x7ffcca7e26c0, 0x0)
+>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D sigaction(2, 0x7ffcca7e26c0, 0x0)
+>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D sigaction(3, 0x7ffcca7e26c0, 0x0)
+>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D sigaction(4, 0x7ffcca7e26c0, 0x0)
+>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D sigaction(6, 0x7ffcca7e26c0, 0x0)
+>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D sigaction(7, 0x7ffcca7e26c0, 0x0)
+>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D sigaction(8, 0x7ffcca7e26c0, 0x0)
+>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D sigaction(11, 0x7ffcca7e26c0, 0x0)
+>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D sigaction(15, 0x7ffcca7e26c0, 0x0)
+>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D signal(13, 0x1)
+>> 2021/09/15 08:49:52 socat[2240] D signal() -> 0x0
+>> 2021/09/15 08:49:52 socat[2240] D atexit(0x560590a15110)
+>> 2021/09/15 08:49:52 socat[2240] D atexit() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D xioopen("-")
+>> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
+>> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e899d0
+>> 2021/09/15 08:49:52 socat[2240] D malloc(1024)
+>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e89d30
+>> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
+>> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8a140
+>> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
+>> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8abc0
+>> 2021/09/15 08:49:52 socat[2240] D isatty(0)
+>> 2021/09/15 08:49:52 socat[2240] D isatty() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D isatty(1)
+>> 2021/09/15 08:49:52 socat[2240] D isatty() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D malloc(128)
+>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8af00
+>> 2021/09/15 08:49:52 socat[2240] D malloc(128)
+>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8af90
+>> 2021/09/15 08:49:52 socat[2240] N reading from and writing to stdio
+>> 2021/09/15 08:49:52 socat[2240] D xioopen("UNIX-CONNECT:./targets/uds-=
+notroot/uds-access-socket")
+>> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
+>> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8b020
+>> 2021/09/15 08:49:52 socat[2240] D malloc(1024)
+>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8b360
+>> 2021/09/15 08:49:52 socat[2240] D malloc(128)
+>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8b770
+>> 2021/09/15 08:49:52 socat[2240] N opening connection to AF=3D1 "./targ=
+ets/uds-notroot/uds-access-socket"
+>> 2021/09/15 08:49:52 socat[2240] D socket(1, 1, 0)
+>> 2021/09/15 08:49:52 socat[2240] I socket(1, 1, 0) -> 5
+>> 2021/09/15 08:49:52 socat[2240] D fcntl(5, 2, 1)
+>> 2021/09/15 08:49:52 socat[2240] D fcntl() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D connect(5, {1,AF=3D1 "./targets/uds-=
+notroot/uds-access-socket"}, 41)
+>> 2021/09/15 08:49:52 socat[2240] D connect() -> 0
+>> 2021/09/15 08:49:52 socat[2240] D getsockname(5, 0x7ffcca7e20f0, 0x7ff=
+cca7e20d4{112})
+>> 2021/09/15 08:49:52 socat[2240] D getsockname(, {AF=3D1 "<anon>"}, {2}=
+) -> 0
+>> 2021/09/15 08:49:52 socat[2240] N successfully connected from local ad=
+dress AF=3D1 "uds-notroot/ud\xEE\xEE\xEE\xEEcess-socket")\n"
+>> 2021/09/15 08:49:52 socat[2240] I resolved and opened all sock address=
+es
+>> 2021/09/15 08:49:52 socat[2240] D posix_memalign(0x7ffcca7e2698, 4096,=
+ 16385)
+>> 2021/09/15 08:49:52 socat[2240] D posix_memalign(...) -> 0
+>> 2021/09/15 08:49:52 socat[2240] N starting data transfer loop with FDs=
+ [0,1] and [5,5]
+>> 2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3D0, sock2->eo=
+f=3D0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
+>> 2021/09/15 08:49:52 socat[2240] D select(6, &0x21, &0x22, &0x0, NULL/0=
+=2E000000)
+>> 2021/09/15 08:49:52 socat[2240] D select -> (, 0x1, 0x22, 0x0, NULL/0.=
+000000), 3
+>> 2021/09/15 08:49:52 socat[2240] D read(0, 0x560591e8c000, 8192)
+>> 2021/09/15 08:49:52 socat[2240] D read -> 5
+>> 2021/09/15 08:49:52 socat[2240] D write(5, 0x560591e8c000, 5)
+>> 2021/09/15 08:49:52 socat[2240] D write -> 5
+>> 2021/09/15 08:49:52 socat[2240] I transferred 5 bytes from 0 to 5
+>> 2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3D0, sock2->eo=
+f=3D0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
+>> 2021/09/15 08:49:52 socat[2240] D select(6, &0x21, &0x20, &0x0, NULL/0=
+=2E000000)
+>> 2021/09/15 08:49:52 socat[2240] D select -> (, 0x1, 0x20, 0x0, NULL/0.=
+000000), 2
+>> 2021/09/15 08:49:52 socat[2240] D read(0, 0x560591e8c000, 8192)
+>> 2021/09/15 08:49:52 socat[2240] D read -> 0
+>> 2021/09/15 08:49:52 socat[2240] N socket 1 (fd 0) is at EOF
+>> 2021/09/15 08:49:52 socat[2240] I shutdown(5, 1)
+>> 2021/09/15 08:49:52 socat[2240] D shutdown()  -> 0
+> Is this shutdown expected?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I'm not an expert on the internals of socat, but I don't think it
+is expected.
+
+> 2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3D3, sock2->eof=
+=3D0, closing=3D1, wasaction=3D1, total_to=3D{0.000000}
+> 2021/09/15 08:49:52 socat[2240] D select(6, &0x20, &0x0, &0x0, &0.50000=
+0)
+> Snap
+> 2021/09/15 08:49:52 socat[2240] D select -> (, 0x20, 0x0, 0x0, &0.50000=
+0), 1
+> 2021/09/15 08:49:52 socat[2240] D read(5, 0x560591e8c000, 8192)
+> 2021/09/15 08:49:52 socat[2240] D read -> -1
+> This read failure seems due to the previous shutdown, right?
+
+Again, I'm not the socat expert, but that would seem reasonable
+to me.
+
+
+>> 2021/09/15 08:49:52 socat[2240] E read(5, 0x560591e8c000, 8192): Inval=
+id argument
+>> 2021/09/15 08:49:52 socat[2240] N exit(1)
+>> 2021/09/15 08:49:52 socat[2240] D starting xioexit()
+>> 2021/09/15 08:49:52 socat[2240] I shutdown(5, 2)
+>> 2021/09/15 08:49:52 socat[2240] D shutdown()  -> 0
+>> 2021/09/15 08:49:52 socat[2240] D finished xioexit()
+>> uds-access RC=3D1
+>>
+>>
+>>
+>>
+
