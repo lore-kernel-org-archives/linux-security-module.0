@@ -3,132 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A02E9C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Sep 2021 02:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 059BDC433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Sep 2021 02:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77E1760FBF
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Sep 2021 02:45:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9A88604DA
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Sep 2021 02:49:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231258AbhITCqa (ORCPT
+        id S233763AbhITCuw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 19 Sep 2021 22:46:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34406 "EHLO
+        Sun, 19 Sep 2021 22:50:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231642AbhITCq3 (ORCPT
+        with ESMTP id S229805AbhITCuv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 19 Sep 2021 22:46:29 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D88C061766
-        for <linux-security-module@vger.kernel.org>; Sun, 19 Sep 2021 19:45:03 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id co2so8695803edb.8
-        for <linux-security-module@vger.kernel.org>; Sun, 19 Sep 2021 19:45:03 -0700 (PDT)
+        Sun, 19 Sep 2021 22:50:51 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A88C061574
+        for <linux-security-module@vger.kernel.org>; Sun, 19 Sep 2021 19:49:25 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id h17so55342875edj.6
+        for <linux-security-module@vger.kernel.org>; Sun, 19 Sep 2021 19:49:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=3Ifk3gkF4EZgOSOMd5BgLpaHigpIrEHERLHWxDsnhms=;
-        b=LVf1yeUaOvahbvnAr8QSl4J6ZtcbeULCwPTL7dt53FaJqSzp6G2JD/v8RAm+KDo8sc
-         1qAdKYmaeRzsm7I3CY1R1cnpCx+XM862SyESXguq2cv13yt5vMg1VMR4JFhGE4vfhoKk
-         w8FVR6rMzHt8XvuNyTW6Ztp7bihmi8Iypi1Iisxahzi1iAxmuj1yVBWgavP0uthDHohY
-         lvKtLRtrDQLxh5uiOZNgN/MaR4JIYdgjHT8oMYOZiABn2JTBBFrxq0vBroAsfzZG0X3A
-         o05l6ouifQ63PVw5owy9FwvYWmqGfcvrcVTtTDeJkvIMcYW7WHBeZl73sqRhvcmhAGOR
-         DzCg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0PP3bc+mj1V45SFNdXYKQe5FNL6cSGV9CSgoKWm4SK8=;
+        b=k20AHUyc/YOtmR9xEdj7hvYERAXgH8ckegkKEY9mnl2Z/o8dqA9xE2SwDhH5qCfhvz
+         AwP7q1ueg27rwry+MV2Mlqy/K0WHshxcVokp+14F9+o9ewkj9GJiAIOPsEAwwBFz1hSD
+         blzLcI2ys7yslE4ReMhpvrhPy3n/y4swYzduNlPokGpnmNhbbqKI0iu/Zub/+2OD1Cyy
+         WxYXTU9LXaa1aPNQqA6CdQlHon7mLqjQReM6KvcRJk9q+Q2axQmS9ALv0ZxsRgSLC905
+         Q6IXnD8lfzWvGALQNeWJ2mz1j5ILhHRVngNhnf2VMxUT8QD+upKm2K7bX6IeioyYFQg/
+         qCtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=3Ifk3gkF4EZgOSOMd5BgLpaHigpIrEHERLHWxDsnhms=;
-        b=p/f+YREgHNNgAClzuGborCEZSlyxIBKBN6+FPu8aP/u3mbG3dAQoDTVhyfkk/E1UNa
-         8ziE22PwsrNQScSlC0OlLFVLxeUq14AS0O8DTqZ4pAVReXKlFdhBC0UDmX7l1OpOSruu
-         8Xo5MnjqM1NTLA1GeeUQbvA5YBA3G8SLr0A8y7G6IMNlGBjj9ui6oew+IZ0P0SqJhyXq
-         rW61ZW3R+57EgSgu3WHekqqF31CWALVHjgWDxGVWHveUCYG5khN+p6Cls3omupNXgKW0
-         YDVhcxEUGuZwJwtH8CmI7X8Ll5vzYHLiLeb7wxegbMcRktsyphqX2NpOhXb8UKR0FTIh
-         uL2w==
-X-Gm-Message-State: AOAM533rPPeAHdFQo6K4WsnoLjF6yJNY7aeqBfAHS3DT8Hm67K4eDCCL
-        Qj4reD4xE2VzGup1GJw4Qhge38sccNlAU7NJqbAKQqzxHw==
-X-Google-Smtp-Source: ABdhPJw2UlastqklS4OK5FaL+3CWPBvyDVpEb1e1t4MZvuTxLVTwSniWgJwO2vosjrYuK5Il/R6vvtG2InMyHm29HSQ=
-X-Received: by 2002:a50:cf48:: with SMTP id d8mr16576051edk.293.1632105901532;
- Sun, 19 Sep 2021 19:45:01 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=0PP3bc+mj1V45SFNdXYKQe5FNL6cSGV9CSgoKWm4SK8=;
+        b=5q65PfjZgMnWaDJmxkYUAET/LzxWP/wAM4q5cYgjjio/sZZN3ntYvg6416FhCgpXWT
+         5deyM2YonP9qr+1CKp6xNkB90ZnR6jxJfBnMPFK0FqHLLbe65VpTAMM0kul0uPA7gGoM
+         Cu7uycR0KSCSZH+Izu9lQvjR3e5Q416t47l6cE7FvzXbSR5qlos9NnWWs33+ctgvRbYn
+         t/0hndr5eJKeV88rf7SzK54Aj/kpyu3d8d83nkpzk8g2GEmOoJwbw+qNadNgOhiQRCQG
+         sFhnbHPKGD4qIEeuTRfG3oh9ciW3+X7mM2hSoI3bJ5MtIo54yhf7akTaHQjcMMEJ5kI8
+         Eykg==
+X-Gm-Message-State: AOAM533831WoaQQTBeWymVsUqydz07DqCIOQSdBz6dLscC9w5X4Kw97e
+        z7IJswjRZbw4WYskC0iUaDWq9qBOhsoA29115CWGsrFr4A==
+X-Google-Smtp-Source: ABdhPJypXxL+vQ5ePHV7fGZpHgMBFe/zfZbAaSuCtCNp63BRQj0+oVqEIlD8zVZiGPyLrR7QFTFLq+iYNGmo9mxXnb0=
+X-Received: by 2002:a50:d805:: with SMTP id o5mr25868291edj.104.1632106164164;
+ Sun, 19 Sep 2021 19:49:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <163172413301.88001.16054830862146685573.stgit@olly>
-In-Reply-To: <163172413301.88001.16054830862146685573.stgit@olly>
+References: <20210914131516.128823-1-omosnace@redhat.com> <CAHC9VhTLvAy4QtmSunpA+cHSuYrnYt_-f6dTiu+VSX2ifiJ2Xg@mail.gmail.com>
+In-Reply-To: <CAHC9VhTLvAy4QtmSunpA+cHSuYrnYt_-f6dTiu+VSX2ifiJ2Xg@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 19 Sep 2021 22:44:50 -0400
-Message-ID: <CAHC9VhSn3pvUgUo5_T=TfiBXw3=f6Pn6GaAUVS=jfg-Kfr_ZEw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Add LSM access controls and auditing to io_uring
-To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date:   Sun, 19 Sep 2021 22:49:13 -0400
+Message-ID: <CAHC9VhRKqcxg5kYC7VvAriZA7-CJ2QGA9-n68r7AvyCCmCJQYw@mail.gmail.com>
+Subject: Re: [PATCH] lsm_audit: avoid overloading the "key" audit field
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 15, 2021 at 12:49 PM Paul Moore <paul@paul-moore.com> wrote:
+On Tue, Sep 14, 2021 at 10:49 AM Paul Moore <paul@paul-moore.com> wrote:
 >
-> A quick update to the v3 patchset with a small change to the audit
-> record format (remove the audit login ID on io_uring records) and
-> a subject line fix on the Smack patch.  I also caught a few minor
-> things in the code comments and fixed those up.  All told, nothing
-> significant but I really dislike merging patches that haven't hit
-> the list so here ya go ...
+> On Tue, Sep 14, 2021 at 9:15 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >
+> > The "key" field is used to associate records with the rule that
+> > triggered them, os it's not a good idea to overload it with an
+> > additional IPC key semantic. Moreover, as the classic "key" field is a
+> > text field, while the IPC key is numeric, AVC records containing the IPC
+> > key info actually confuse audit userspace, which tries to interpret the
+> > number as a hex-encoded string, thus showing garbage for example in the
+> > ausearch "interpret" output mode.
+> >
+> > Hence, change it to "ipc_key" to fix both issues and also make the
+> > meaning of this field more clear.
+> >
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > ---
+> >  security/lsm_audit.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> As a reminder, I'm planning to merge these in the selinux/next tree
-> later this week and it would be *really* nice to get some ACKs from
-> the io_uring folks; this patchset is implementing the ideas we all
-> agreed to back in the v1 patchset so there shouldn't be anything
-> surprising in here.
->
-> For reference the v3 patchset can be found here:
-> https://lore.kernel.org/linux-security-module/163159032713.470089.11728103630366176255.stgit@olly/T/#t
->
-> Those who would prefer to fetch these patches directly from git can
-> do so using the tree/branch below:
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
->  (checkout branch "working-io_uring")
->
-> ---
->
-> Casey Schaufler (1):
->       Smack: Brutalist io_uring support
->
-> Paul Moore (7):
->       audit: prepare audit_context for use in calling contexts beyond syscalls
->       audit,io_uring,io-wq: add some basic audit support to io_uring
->       audit: add filtering for io_uring records
->       fs: add anon_inode_getfile_secure() similar to anon_inode_getfd_secure()
->       io_uring: convert io_uring to the secure anon inode interface
->       lsm,io_uring: add LSM hooks to io_uring
->       selinux: add support for the io_uring access controls
->
->
->  fs/anon_inodes.c                    |  29 ++
->  fs/io-wq.c                          |   4 +
->  fs/io_uring.c                       |  69 +++-
->  include/linux/anon_inodes.h         |   4 +
->  include/linux/audit.h               |  26 ++
->  include/linux/lsm_hook_defs.h       |   5 +
->  include/linux/lsm_hooks.h           |  13 +
->  include/linux/security.h            |  16 +
->  include/uapi/linux/audit.h          |   4 +-
->  kernel/audit.h                      |   7 +-
->  kernel/audit_tree.c                 |   3 +-
->  kernel/audit_watch.c                |   3 +-
->  kernel/auditfilter.c                |  15 +-
->  kernel/auditsc.c                    | 469 ++++++++++++++++++++++------
->  security/security.c                 |  12 +
->  security/selinux/hooks.c            |  34 ++
->  security/selinux/include/classmap.h |   2 +
->  security/smack/smack_lsm.c          |  46 +++
->  18 files changed, 646 insertions(+), 115 deletions(-)
+> Seems reasonable to me, I can merge it via the audit/next tree unless
+> James would prefer to take it via the LSM tree.
 
-With no serious objections or outstanding comments, I just merged
-these patches into selinux/next.  If anyone has any follow-on patches
-please base them against selinux/next, thanks.
+As this is pretty minor and unlikely to conflict with any LSMs, I've
+gone ahead and merged this into the audit/next tree.
 
 -- 
 paul moore
