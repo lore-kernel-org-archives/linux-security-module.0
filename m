@@ -2,101 +2,174 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8353C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Sep 2021 19:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 825DDC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Sep 2021 21:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC72961186
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Sep 2021 19:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65EBB611BD
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Sep 2021 21:03:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233908AbhIUTCo (ORCPT
+        id S233740AbhIUVE4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Sep 2021 15:02:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43614 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232465AbhIUTCn (ORCPT
+        Tue, 21 Sep 2021 17:04:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37634 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235206AbhIUVEx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Sep 2021 15:02:43 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14965C061575
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Sep 2021 12:01:15 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id t1so57154pgv.3
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Sep 2021 12:01:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uUvwtgDvS9z+MmLCsIbndyuppV43gHnzlz5qvL6KeNg=;
-        b=c9uP+rap/UfN7fREE6h8u3lsZij8/9nesp5oAq6rWx9xNnYvzMF9PP463fCmsUqDar
-         kEwNNzzupFjl3iVssQImb8bF3h2/B/8MlMGNIDKsuMe9bchBPSyFkLc+uuhUiy9QTIMI
-         6UVxssDsqkegyngHCgoDjyvtGGXIsR18yy7Rg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uUvwtgDvS9z+MmLCsIbndyuppV43gHnzlz5qvL6KeNg=;
-        b=3QT+Z7RhVBYY5q1qqu0Bisf5TAB1TZINe+DlhOzcWDtfvLidQCIw8Q71YQtVDv3BeL
-         cPzRgZkvDdVlh5QYRwxcXNhBgDbfEXvr7iaclQgOvOMRQySRCy2DOek5NMb31m+FLQPw
-         h4OPJ60toa2FJpRCnbVpzzb7gTg3fCoystWcmi7AQJKyOmqgT1EtA+vtwVbmXLT6mvJS
-         tHI/IS9H8vEe/H1RGa02qzYJx9sDAebXiorBiF+VGqcU1e29xuAWbI0i0kGCX2maWKK2
-         Mh2+wvtRzQvHfRyl5+UnoxjClFD1Q0Vr3x0yq1Uw5T48MwSRe5TSDGzftWxCEmeVX3kW
-         +ybg==
-X-Gm-Message-State: AOAM531auoIl4RBCpDM5lcQfsMHSsH5BiuA8U1DJ92ghSGjIQpj5GMO1
-        eBO+8WQgz0s748fypQpdl7jcyA==
-X-Google-Smtp-Source: ABdhPJyhkEtFnUnBg+9qtMK4KmQYa6j/evLKD74iespv+jzZ07EoQOA7rlY7bUrm0t6g+7REwX8YJw==
-X-Received: by 2002:a63:2cce:: with SMTP id s197mr3869655pgs.45.1632250874538;
-        Tue, 21 Sep 2021 12:01:14 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t6sm3451285pjr.36.2021.09.21.12.01.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Sep 2021 12:01:13 -0700 (PDT)
-Date:   Tue, 21 Sep 2021 12:01:12 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Stephen Kitt <steve@sk2.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, linux-mm@kvack.org,
+        Tue, 21 Sep 2021 17:04:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6410C611C6;
+        Tue, 21 Sep 2021 21:03:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632258204;
+        bh=YhqVrip59Rt+ejldx4zOH6RSKXsNMGSJzfGiFZHPJQc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=CzO/y6fFJ5EozaaIMR4bExW75mL3X4I3kZntrlReVCg/MSN9Xyp4w+ey6grOjXyx9
+         0e7cCoz80zS26yz4soxWvi+mOYguNKYyG5MEGgBiMYCQ/KKgNzRxAu7wYQmBUthCkw
+         ruQ4ODbvgWE+W5JmFNcnNEJ4spGkzPW+nVo9lFFgCFsy/Dy6pUJV6MaizMpmOiQ7aL
+         BHVLpelKbsLEM5OoWkge8lytmNrrWOt2QmNaDbWQkSjn4b/4wcFSOoCvE5BtCm2Eyq
+         uai6QSRBqwSnvQbiC1iFs0NZqIM2aYyOPxm/Ex6LAJztu0nOY8o59SbQnlcm66zAaL
+         Im6OUuqSAQ25w==
+Message-ID: <270f47e1b152a1fb8fd909ec188b5573176980fc.camel@kernel.org>
+Subject: Re: [PATCH v6 00/13] Enroll kernel keys thru MOK
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Peter Jones <pjones@redhat.com>
+Cc:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+        scott.branden@broadcom.com, weiyongjun1@huawei.com,
+        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
+        nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] mm: Remove HARDENED_USERCOPY_FALLBACK
-Message-ID: <202109211200.14E421C@keescook>
-References: <20210921061149.1091163-1-steve@sk2.org>
+        James.Bottomley@HansenPartnership.com,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
+Date:   Wed, 22 Sep 2021 00:03:22 +0300
+In-Reply-To: <20210916221416.onvqgz5iij3c7e6j@redhat.com>
+References: <20210914211416.34096-1-eric.snowberg@oracle.com>
+         <bee0ebc354a651ea5b263897f9b155dc604fa7c5.camel@kernel.org>
+         <A02EE1DA-12BE-4998-ACE6-2D74FF380297@oracle.com>
+         <f6e2e17cc6c8a3056cc066a7baa4d943eeb47c84.camel@kernel.org>
+         <20210916221416.onvqgz5iij3c7e6j@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210921061149.1091163-1-steve@sk2.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 21, 2021 at 08:11:49AM +0200, Stephen Kitt wrote:
-> This has served its purpose and is no longer used. All usercopy
-> violations appear to have been handled by now, any remaining
-> instances (or new bugs) will cause copies to be rejected.
-> 
-> This isn't a direct revert of commit 2d891fbc3bb6 ("usercopy: Allow
-> strict enforcement of whitelists"); since usercopy_fallback is
-> effectively 0, the fallback handling is removed too.
-> 
-> This also removes the usercopy_fallback module parameter on
-> slab_common.
-> 
-> Link: https://github.com/KSPP/linux/issues/153
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
-> Suggested-by: Kees Cook <keescook@chromium.org>
+On Thu, 2021-09-16 at 18:14 -0400, Peter Jones wrote:
+> On Thu, Sep 16, 2021 at 06:15:50PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, 2021-09-15 at 15:28 -0600, Eric Snowberg wrote:
+> > > > On Sep 15, 2021, at 11:57 AM, Jarkko Sakkinen <jarkko@kernel.org> w=
+rote:
+> > > >=20
+> > > > On Tue, 2021-09-14 at 17:14 -0400, Eric Snowberg wrote:
+> > > > > Back in 2013 Linus requested a feature to allow end-users to have=
+ the=20
+> > > > > ability "to add their own keys and sign modules they trust". This=
+ was
+> > > > > his *second* order outlined here [1]. There have been many attemp=
+ts=20
+> > > > > over the years to solve this problem, all have been rejected.  Ma=
+ny=20
+> > > > > of the failed attempts loaded all preboot firmware keys into the =
+kernel,
+> > > > > including the Secure Boot keys. Many distributions carry one of t=
+hese=20
+> > > > > rejected attempts [2], [3], [4]. This series tries to solve this =
+problem=20
+> > > > > with a solution that takes into account all the problems brought =
+up in=20
+> > > > > the previous attempts.
+> > > > >=20
+> > > > > On UEFI based systems, this series introduces a new Linux kernel =
+keyring=20
+> > > > > containing the Machine Owner Keys (MOK) called machine. It also d=
+efines
+> > > > > a new MOK variable in shim. This variable allows the end-user to =
+decide=20
+> > > > > if they want to load MOK keys into the machine keyring. Mimi has =
+suggested=20
+> > > > > that only CA keys contained within the MOK be loaded into the mac=
+hine=20
+> > > > > keyring. All other certs will load into the platform keyring inst=
+ead.
+> > > > >=20
+> > > > > By default, nothing changes; MOK keys are not loaded into the mac=
+hine
+> > > > > keyring.  They are only loaded after the end-user makes the decis=
+ion=20
+> > > > > themselves.  The end-user would set this through mokutil using a =
+new=20
+> > > > > --trust-mok option [5]. This would work similar to how the kernel=
+ uses=20
+> > > > > MOK variables to enable/disable signature validation as well as u=
+se/ignore=20
+> > > > > the db. Any kernel operation that uses either the builtin or seco=
+ndary=20
+> > > > > trusted keys as a trust source shall also reference the new machi=
+ne=20
+> > > > > keyring as a trust source.
+> > > > >=20
+> > > > > Secure Boot keys will never be loaded into the machine keyring.  =
+They
+> > > > > will always be loaded into the platform keyring.  If an end-user =
+wanted=20
+> > > > > to load one, they would need to enroll it into the MOK.
+> > > > >=20
+> > > > > Steps required by the end user:
+> > > > >=20
+> > > > > Sign kernel module with user created key:
+> > > > > $ /usr/src/kernels/$(uname -r)/scripts/sign-file sha512 \
+> > > > >   machine_signing_key.priv machine_signing_key.x509 my_module.ko
+> > > > >=20
+> > > > > Import the key into the MOK
+> > > > > $ mokutil --import machine_signing_key.x509
+> > > > >=20
+> > > > > Setup the kernel to load MOK keys into the .machine keyring
+> > > > > $ mokutil --trust-mok
+> > > > >=20
+> > > > > Then reboot, the MokManager will load and ask if you want to trus=
+t the
+> > > > > MOK key and enroll the MOK into the MOKList.  Afterwards the sign=
+ed kernel
+> > > > > module will load.
+> > > > >=20
+> > > > > I have included links to both the mokutil [5] and shim [6] change=
+s I
+> > > > > have made to support this new functionality.
+> > > >=20
+> > > > How hard it is to self-compile shim and boot it with QEMU (I
+> > > > do not know even the GIT location of Shim)?
+> > >=20
+> > > It is not hard, that is the setup I use for my testing.  Upstream shi=
+m=20
+> > > is located here [1].  Or you can use my repo which contains the neces=
+sary
+> > > changes [2].
+> > >=20
+> > > [1] https://github.com/rhboot/shim
+> > > [2] https://github.com/esnowberg/shim/tree/mokvars-v2
+> > >=20
+> >=20
+> > So, my 2nd Q would be: which order these should be upstreamed?
+> >=20
+> > Linux patch set cannot depend on "yet to be upstreamed" things.
+> >=20
+> > Code changes look good enough to me.
+>=20
+> We can carry this support in shim before it's in kernel.  Eric's current
+> patch for shim and mokutil looks mostly reasonable, though I see a few
+> minor nits we'll have to sort out.
 
-Thanks for doing this!
+I would revisit this patch set after there is an official shim release
+out containing the new API. No  kernel patches, which depend on any
+non-upstream changes, can be rightfully reviewed.
 
-Acked-by: Kees Cook <keescook@chromium.org>
-
--- 
-Kees Cook
+/Jarkko
