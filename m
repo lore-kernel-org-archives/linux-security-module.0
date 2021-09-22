@@ -2,240 +2,162 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCCEC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Sep 2021 23:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD893C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Sep 2021 17:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CEBE61178
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Sep 2021 23:50:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99E0060F4C
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Sep 2021 17:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231149AbhIUXvw (ORCPT
+        id S236888AbhIVR7P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Sep 2021 19:51:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53282 "EHLO
+        Wed, 22 Sep 2021 13:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbhIUXvu (ORCPT
+        with ESMTP id S233552AbhIVR7O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Sep 2021 19:51:50 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985C2C061574;
-        Tue, 21 Sep 2021 16:50:21 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id c7so3609253qka.2;
-        Tue, 21 Sep 2021 16:50:21 -0700 (PDT)
+        Wed, 22 Sep 2021 13:59:14 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC644C061574
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 10:57:43 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id c22so12829487edn.12
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 10:57:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3pBdD6hrMTmywMpC16GHqHBzp8LFNfLUt8n19YiipuE=;
-        b=j98HoVhGODFy30aSZxYuX/CaYVRRgrLXGPZZcL3+5TEMk0kxZ9rEUZ5VzStdEt0IGw
-         3GdBetANKHrXw0Bg13KgU9vZfOKAKCK8ysvqoLeq2CE8u8xSqc/YIrNHWmSlqDbYFesa
-         fd4+CZ0W6h3HDeC+g6xK4UlALy3rQ5FspPWvw=
+        bh=rUoAkDJVUB1Jp/ntmfoD0RhFCUd1Ba0OZgr54iuvb4I=;
+        b=juXU2At/IQAYZGJaKJGk25EiXTcFd0nSjo06r2qsC+K8RfbmAEZkrgNBPBwUgSzftr
+         AJ5SEAtgfCPBZMnxkk6SmEthVuLlDe7pwJ10MiEwYzqUh7JI4l4spD4UDYUC89pd/YIj
+         UDokUNjmytAfFr/B2GnT4zmVRg+91UuGCmVGM6UcPo3iOdIhZsrpAmWi9MUMgpyO8j3Z
+         27VZ3tC7JwXLomhlfoC4txdPWeGLQkkNfVfBQPaNVZQnO2fDVdBBs4DmPdnPV0ZGkskf
+         3qsSTfmEQ9l7shw+NqsCBRjpj0+kWaFPqOkmfuaTuarl/VlpoPIBf4efbwRmQLCBX0Aj
+         2D9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3pBdD6hrMTmywMpC16GHqHBzp8LFNfLUt8n19YiipuE=;
-        b=vslkV3CsHe4z0JIxkIbXwCPK09gGvwaUmWUbLqAR73qmBtYd6UusMWoGwbBy5UvdEG
-         au1VHoSleK34TopmxsEv/Y761l7pMnhgYDIIqYhMrvAcKNjMuSUhXkbEvqRZQlCdtrgq
-         ntgut/BpmamBy1dkP1Sz9AFpCZ7XvHexF1Wc5lGUn7Uzhd1gVPtnR8X+TH4YgDUqE4kY
-         oeR/UKPtRVDEfQPJMRPldwGf3g8kwQS7eoTstMBkvddieIo6mEluzuVEv5tn3VBclu7F
-         XVn+GoNDJYqbhCzeTas3LQEBX5VpJi9iLq7tYOrUSGVeCmqSp0WRvjNvNXWtEDFYDXwE
-         HN6Q==
-X-Gm-Message-State: AOAM532Y+4IqssVI40nYb9579QkNcomVs2ojo8fWlkE+D/slYCI3NWwP
-        AmQha6KXXjiUKxoQ1K2KtWGKtUbXrkMg1b3h6CE=
-X-Google-Smtp-Source: ABdhPJzmNaG8eSfVVVJ//FXKvDj4/vyLvQR0ArS164V3qTiwONEwO8r07klh3oIBYs3tiqkXwlfH9eLZGel8VCFwWKo=
-X-Received: by 2002:a37:6596:: with SMTP id z144mr18531657qkb.292.1632268220710;
- Tue, 21 Sep 2021 16:50:20 -0700 (PDT)
+        bh=rUoAkDJVUB1Jp/ntmfoD0RhFCUd1Ba0OZgr54iuvb4I=;
+        b=KVTIPA2qY78g++LbsIbYjt+xWdwofOv+1V/58p4ePbhkpGNAqGwlAKM2nwvDRqUW5n
+         09r2niQTpb74CCDGLcMEfJOOMY3LgpicQLFSLBa89crNMIg6Ef2Dway4fGVTN6CpQB2j
+         GCefERNK5MuSjotHBMBd2QHX5lTZRMswMtAssl3JGgcw0gvBM+yeF4/5+vFq10KyuXtI
+         ajxsmILxHpAIfcJxc5fOaYvJ7yBFGZLXe3MEEc4ywxnwuurmK7IgAn+GLgUk+w54M6wc
+         GaobSHUwpZWd2rA3IlUhCy7oBqjLXwl0lqiFzF6dB+O+u3AiMkL45glxIYBR7W2yc9GB
+         3iZA==
+X-Gm-Message-State: AOAM530kfHbBoVLKIDd1Ia9azTIg5r5JI08S19Mgag16TsS3Q9CHwYZ5
+        HcyzG/Ob63AlH1lFlhRupIaVprdonWF62FnS1/I9iYcVCw==
+X-Google-Smtp-Source: ABdhPJzBlsbgvP0tiCsHiJk1brrzD1bvd/rhCZ4aJDVGEM+6VZfmkRGngQPZEUhyPUg0WJVr766yxdSXq1zoAfX9AZI=
+X-Received: by 2002:a17:906:ecae:: with SMTP id qh14mr505441ejb.195.1632333461903;
+ Wed, 22 Sep 2021 10:57:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210921061149.1091163-1-steve@sk2.org>
-In-Reply-To: <20210921061149.1091163-1-steve@sk2.org>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 21 Sep 2021 23:50:08 +0000
-Message-ID: <CACPK8XeH55MGGPHEXXq1jmeQHQYuOfEuDYTbQiG6SWhwgLd7Sw@mail.gmail.com>
-Subject: Re: [PATCH] mm: Remove HARDENED_USERCOPY_FALLBACK
-To:     Stephen Kitt <steve@sk2.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        linux-hardening@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <CAHC9VhQcxm=Zhe2XEesx3UsBgr8H6H=BtJc92roqeF8o+DK+XQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQcxm=Zhe2XEesx3UsBgr8H6H=BtJc92roqeF8o+DK+XQ@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 22 Sep 2021 13:57:31 -0400
+Message-ID: <CAHC9VhSu=ZWymS3RHa7jakQOU8gujGQ=PKO1BTcrNAM9-P4bmQ@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux fixes for v5.15 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 21 Sept 2021 at 09:50, Stephen Kitt <steve@sk2.org> wrote:
+On Thu, Sep 16, 2021 at 9:14 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> This has served its purpose and is no longer used. All usercopy
-> violations appear to have been handled by now, any remaining
-> instances (or new bugs) will cause copies to be rejected.
+> Hi Linus,
 >
-> This isn't a direct revert of commit 2d891fbc3bb6 ("usercopy: Allow
-> strict enforcement of whitelists"); since usercopy_fallback is
-> effectively 0, the fallback handling is removed too.
+> A single patch to address some issues with the incorrect subject being
+> used in some of the SELinux lockdown access controls.  You saw, and
+> joined the discussion, earlier versions of this patch that included
+> the related BPF changes; the BPF changes have already been merged,
+> this patch has all the remainders.  Beyond that, the commit
+> description is pretty good so if you are interested in more detail I
+> would suggest reading that first.
 >
-> This also removes the usercopy_fallback module parameter on
-> slab_common.
->
-> Link: https://github.com/KSPP/linux/issues/153
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
-> Suggested-by: Kees Cook <keescook@chromium.org>
-> ---
->  arch/powerpc/configs/skiroot_defconfig |  1 -
+> Please merge for the next v5.15-rcX release, thank you.
+> -Paul
 
-For the defconfig change:
+I wanted to check in on this PR to see if you were planning on merging
+it for v5.15-rcX, kicking it back for -next instead, or simply glaring
+at it with quiet disgust?
 
-Reviewed-by: Joel Stanley <joel@jms.id.au>
-
-Cheers,
-
-Joel
-
->  include/linux/slab.h                   |  2 --
->  mm/slab.c                              | 13 -------------
->  mm/slab_common.c                       |  8 --------
->  mm/slub.c                              | 14 --------------
->  security/Kconfig                       | 14 --------------
->  6 files changed, 52 deletions(-)
->
-> diff --git a/arch/powerpc/configs/skiroot_defconfig b/arch/powerpc/configs/skiroot_defconfig
-> index b806a5d3a695..c3ba614c973d 100644
-> --- a/arch/powerpc/configs/skiroot_defconfig
-> +++ b/arch/powerpc/configs/skiroot_defconfig
-> @@ -275,7 +275,6 @@ CONFIG_NLS_UTF8=y
->  CONFIG_ENCRYPTED_KEYS=y
->  CONFIG_SECURITY=y
->  CONFIG_HARDENED_USERCOPY=y
-> -# CONFIG_HARDENED_USERCOPY_FALLBACK is not set
->  CONFIG_HARDENED_USERCOPY_PAGESPAN=y
->  CONFIG_FORTIFY_SOURCE=y
->  CONFIG_SECURITY_LOCKDOWN_LSM=y
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index 0c97d788762c..5b21515afae0 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -142,8 +142,6 @@ struct mem_cgroup;
->  void __init kmem_cache_init(void);
->  bool slab_is_available(void);
->
-> -extern bool usercopy_fallback;
-> -
->  struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
->                         unsigned int align, slab_flags_t flags,
->                         void (*ctor)(void *));
-> diff --git a/mm/slab.c b/mm/slab.c
-> index d0f725637663..4d826394ffcb 100644
-> --- a/mm/slab.c
-> +++ b/mm/slab.c
-> @@ -4207,19 +4207,6 @@ void __check_heap_object(const void *ptr, unsigned long n, struct page *page,
->             n <= cachep->useroffset - offset + cachep->usersize)
->                 return;
->
-> -       /*
-> -        * If the copy is still within the allocated object, produce
-> -        * a warning instead of rejecting the copy. This is intended
-> -        * to be a temporary method to find any missing usercopy
-> -        * whitelists.
-> -        */
-> -       if (usercopy_fallback &&
-> -           offset <= cachep->object_size &&
-> -           n <= cachep->object_size - offset) {
-> -               usercopy_warn("SLAB object", cachep->name, to_user, offset, n);
-> -               return;
-> -       }
-> -
->         usercopy_abort("SLAB object", cachep->name, to_user, offset, n);
->  }
->  #endif /* CONFIG_HARDENED_USERCOPY */
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index a4a571428c51..925b00c1d4e8 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -37,14 +37,6 @@ LIST_HEAD(slab_caches);
->  DEFINE_MUTEX(slab_mutex);
->  struct kmem_cache *kmem_cache;
->
-> -#ifdef CONFIG_HARDENED_USERCOPY
-> -bool usercopy_fallback __ro_after_init =
-> -               IS_ENABLED(CONFIG_HARDENED_USERCOPY_FALLBACK);
-> -module_param(usercopy_fallback, bool, 0400);
-> -MODULE_PARM_DESC(usercopy_fallback,
-> -               "WARN instead of reject usercopy whitelist violations");
-> -#endif
-> -
->  static LIST_HEAD(slab_caches_to_rcu_destroy);
->  static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work);
->  static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 3f96e099817a..77f53e76a3c3 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -4125,7 +4125,6 @@ void __check_heap_object(const void *ptr, unsigned long n, struct page *page,
->  {
->         struct kmem_cache *s;
->         unsigned int offset;
-> -       size_t object_size;
->         bool is_kfence = is_kfence_address(ptr);
->
->         ptr = kasan_reset_tag(ptr);
-> @@ -4158,19 +4157,6 @@ void __check_heap_object(const void *ptr, unsigned long n, struct page *page,
->             n <= s->useroffset - offset + s->usersize)
->                 return;
->
-> -       /*
-> -        * If the copy is still within the allocated object, produce
-> -        * a warning instead of rejecting the copy. This is intended
-> -        * to be a temporary method to find any missing usercopy
-> -        * whitelists.
-> -        */
-> -       object_size = slab_ksize(s);
-> -       if (usercopy_fallback &&
-> -           offset <= object_size && n <= object_size - offset) {
-> -               usercopy_warn("SLUB object", s->name, to_user, offset, n);
-> -               return;
-> -       }
-> -
->         usercopy_abort("SLUB object", s->name, to_user, offset, n);
->  }
->  #endif /* CONFIG_HARDENED_USERCOPY */
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 0ced7fd33e4d..d9698900c9b7 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -163,20 +163,6 @@ config HARDENED_USERCOPY
->           or are part of the kernel text. This kills entire classes
->           of heap overflow exploits and similar kernel memory exposures.
->
-> -config HARDENED_USERCOPY_FALLBACK
-> -       bool "Allow usercopy whitelist violations to fallback to object size"
-> -       depends on HARDENED_USERCOPY
-> -       default y
-> -       help
-> -         This is a temporary option that allows missing usercopy whitelists
-> -         to be discovered via a WARN() to the kernel log, instead of
-> -         rejecting the copy, falling back to non-whitelisted hardened
-> -         usercopy that checks the slab allocation size instead of the
-> -         whitelist size. This option will be removed once it seems like
-> -         all missing usercopy whitelists have been identified and fixed.
-> -         Booting with "slab_common.usercopy_fallback=Y/N" can change
-> -         this setting.
-> -
->  config HARDENED_USERCOPY_PAGESPAN
->         bool "Refuse to copy allocations that span multiple pages"
->         depends on HARDENED_USERCOPY
->
-> base-commit: 368094df48e680fa51cedb68537408cfa64b788e
 > --
-> 2.30.2
+> The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
 >
+>  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
+>
+> are available in the Git repository at:
+>
+>  git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+>    tags/selinux-pr-20210916
+>
+> for you to fetch changes up to fdc9cbff7a764513a5e72a03b796087fcadb2fa3:
+>
+>  lockdown,selinux: fix wrong subject in some SELinux lockdown checks
+>    (2021-09-16 21:04:44 -0400)
+>
+> ----------------------------------------------------------------
+> selinux/stable-5.15 PR 20210916
+>
+> ----------------------------------------------------------------
+> Ondrej Mosnacek (1):
+>      lockdown,selinux: fix wrong subject in some SELinux lockdown checks
+>
+> arch/powerpc/xmon/xmon.c             |  4 ++--
+> arch/x86/kernel/ioport.c             |  4 ++--
+> arch/x86/kernel/msr.c                |  4 ++--
+> arch/x86/mm/testmmiotrace.c          |  2 +-
+> drivers/acpi/acpi_configfs.c         |  2 +-
+> drivers/acpi/custom_method.c         |  2 +-
+> drivers/acpi/osl.c                   |  3 ++-
+> drivers/acpi/tables.c                |  2 +-
+> drivers/char/mem.c                   |  2 +-
+> drivers/cxl/pci.c                    |  2 +-
+> drivers/firmware/efi/efi.c           |  2 +-
+> drivers/firmware/efi/test/efi_test.c |  2 +-
+> drivers/pci/pci-sysfs.c              |  6 +++---
+> drivers/pci/proc.c                   |  6 +++---
+> drivers/pci/syscall.c                |  2 +-
+> drivers/pcmcia/cistpl.c              |  2 +-
+> drivers/tty/serial/serial_core.c     |  2 +-
+> fs/debugfs/file.c                    |  2 +-
+> fs/debugfs/inode.c                   |  2 +-
+> fs/proc/kcore.c                      |  2 +-
+> fs/tracefs/inode.c                   |  2 +-
+> include/linux/lsm_hook_defs.h        |  2 +-
+> include/linux/lsm_hooks.h            |  1 +
+> include/linux/security.h             |  5 +++--
+> kernel/bpf/helpers.c                 | 10 ++++++----
+> kernel/events/core.c                 |  2 +-
+> kernel/kexec.c                       |  2 +-
+> kernel/kexec_file.c                  |  2 +-
+> kernel/module.c                      |  2 +-
+> kernel/params.c                      |  2 +-
+> kernel/power/hibernate.c             |  2 +-
+> kernel/trace/bpf_trace.c             | 25 +++++++++++++++----------
+> kernel/trace/ftrace.c                |  4 ++--
+> kernel/trace/ring_buffer.c           |  2 +-
+> kernel/trace/trace.c                 | 10 +++++-----
+> kernel/trace/trace_events.c          |  2 +-
+> kernel/trace/trace_events_hist.c     |  4 ++--
+> kernel/trace/trace_events_synth.c    |  2 +-
+> kernel/trace/trace_events_trigger.c  |  2 +-
+> kernel/trace/trace_kprobe.c          |  6 +++---
+> kernel/trace/trace_printk.c          |  2 +-
+> kernel/trace/trace_stack.c           |  2 +-
+> kernel/trace/trace_stat.c            |  2 +-
+> kernel/trace/trace_uprobe.c          |  4 ++--
+> net/xfrm/xfrm_user.c                 | 11 +++++++++--
+> security/lockdown/lockdown.c         |  3 ++-
+> security/security.c                  |  4 ++--
+> security/selinux/hooks.c             |  7 +++++--
+> 48 files changed, 100 insertions(+), 79 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
