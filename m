@@ -6,66 +6,66 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78C4C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Sep 2021 20:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED80C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Sep 2021 21:10:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2E99608FB
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Sep 2021 20:56:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 403B7611C9
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Sep 2021 21:10:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237968AbhIVU60 (ORCPT
+        id S237978AbhIVVMZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Sep 2021 16:58:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34110 "EHLO
+        Wed, 22 Sep 2021 17:12:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238014AbhIVU6V (ORCPT
+        with ESMTP id S237958AbhIVVMY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Sep 2021 16:58:21 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F16C061764
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 13:56:18 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id g41so17108076lfv.1
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 13:56:18 -0700 (PDT)
+        Wed, 22 Sep 2021 17:12:24 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC4D9C061574
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 14:10:53 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id z24so17809719lfu.13
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 14:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=snAHFG5xCkeTvyFu2mD4X2wabo24gdMDn530482Xypw=;
-        b=cTEvG+kHc4uB7yEtKNHCaR8BVCBCKx/AXjDqWSalmiqES3V438gK0Wr3VHWEE7fFnC
-         jOfbPqcPi7D6EiPN9jh0bUTMxJJ/BARQh3eK1gAPGiAueMThy4Vjzgd2rqp5A+Q0ARos
-         cfJaQrPjgEZ85kDS8LVy0KAD7yWeCE+u5uE2s=
+        bh=GP6CZBA3eD/IT4DzplzBkxmwKra5+3ru6Q3LIyU/W9A=;
+        b=KqSSJtCeked0SA1tw/NjFwzUk1jRrGMLi5V8kYMtiu7V4P6830H33s76KRGF3uMy6N
+         u7Pc12nQ5gfzOhaoMByd+dxZFQ0sG8BD0uu2/A+2aejrflzaBvY7PnAXLpGDxOCK2wkT
+         mb1upbY4uHLAqEGFsh3W1U9+aPS45OucgtjF8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=snAHFG5xCkeTvyFu2mD4X2wabo24gdMDn530482Xypw=;
-        b=Ybp8iJjD0mVuFe2ruvZdW98/DcEcuSVK+wmCn5rIeLhAL188QS7zmvUpgqCq6q6S3J
-         4rzNDRuolNKLhmLroNEnWHI5ZOa/Wdxs0AzYGjYU/U1mNMW9eXtl6j9OpCw03wfKa2e8
-         q0kh6FKVDJeF7Sc1grx6LskBPpiUGwR6ySUqgAM4R0qRqWq6xQ5UNsgbuWTgfKsWAMRz
-         E3XyQ7BXYiNI5wKHafoVRUr+JXoi88d2+Ju/a+K/K7dXW0lD9PICcKomTEFXJ/9/EYOE
-         D7BVgm2nmcU/7MyAm2LcHH69WCSmA4udiJ8nSmFp/DSpcd2tZIcrd300WAAD1ukD5+0r
-         DJJA==
-X-Gm-Message-State: AOAM531u0bc144uxZkRw+xit8sTScI9Khp17UZY08BRNI5qXa58/bn/E
-        fWydKJrC7RHSr3mnPw2OWn/RzKUH/2IQCzxi/gM=
-X-Google-Smtp-Source: ABdhPJy5Nq+qTFkFaGE/1jZCQKa4KJgbLWv6c2bxawqubGs8Vopi98aYBqm0ecWDUMFZ/GJXfgCFbA==
-X-Received: by 2002:a2e:9150:: with SMTP id q16mr1380714ljg.418.1632344176783;
-        Wed, 22 Sep 2021 13:56:16 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id m12sm364948ljh.21.2021.09.22.13.56.15
+        bh=GP6CZBA3eD/IT4DzplzBkxmwKra5+3ru6Q3LIyU/W9A=;
+        b=xmLFJAAWJntaukyKdEMkoczB/wriAkro8QmhQWEx+ZKTVY+ogejtsq6SUDvr5Hw7Yj
+         hSkxTxgjHHMHx/4V/isCDEbnDU7HKloRsveBpO2GNKQaG1486fbNGv8fwUAxrQJ+663U
+         OQcdmCm2bduke67vJbpdxUdIS2jGQ8KjQQUF17KVXAelsvOQ70YmSe7Fhw2labEnECY+
+         +F/g/4diZDJNBZZWDa4dzKC9GwAFNRdM8kExbdR6gnNFguxRRsQHkIrDVns0Vpw/0FX5
+         dNDma2ROIWM4Nv+5yus/cQudeGhjb1kElbtW7gU1bYdCoUwRlk/1OhmERAWx27HsPOTx
+         jBGA==
+X-Gm-Message-State: AOAM532NRUVz9uZph73cvzAzYPqHmF2//UTUuQTxOcxSvGi0BXyH6KbL
+        mDEpgvXeyjuBF073/mtOjK9vIROXLGtU1U33WhQ=
+X-Google-Smtp-Source: ABdhPJwAgSm61VP2kQVrlZX/yG14CGi6ZTpc7nb75SEworadjJvq/ysdnzgrYpP+hScUPHShVO82dQ==
+X-Received: by 2002:a05:6512:4008:: with SMTP id br8mr950729lfb.23.1632345051769;
+        Wed, 22 Sep 2021 14:10:51 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id x6sm357318ljm.60.2021.09.22.14.10.51
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Sep 2021 13:56:15 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id y28so17150960lfb.0
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 13:56:15 -0700 (PDT)
-X-Received: by 2002:a19:ae15:: with SMTP id f21mr922847lfc.402.1632344175487;
- Wed, 22 Sep 2021 13:56:15 -0700 (PDT)
+        Wed, 22 Sep 2021 14:10:51 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id i25so17600419lfg.6
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 14:10:51 -0700 (PDT)
+X-Received: by 2002:a2e:7f1c:: with SMTP id a28mr1466277ljd.56.1632345050955;
+ Wed, 22 Sep 2021 14:10:50 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAHC9VhQcxm=Zhe2XEesx3UsBgr8H6H=BtJc92roqeF8o+DK+XQ@mail.gmail.com>
- <CAHC9VhSu=ZWymS3RHa7jakQOU8gujGQ=PKO1BTcrNAM9-P4bmQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSu=ZWymS3RHa7jakQOU8gujGQ=PKO1BTcrNAM9-P4bmQ@mail.gmail.com>
+ <CAHC9VhSu=ZWymS3RHa7jakQOU8gujGQ=PKO1BTcrNAM9-P4bmQ@mail.gmail.com> <CAHk-=wj=ADdpVjsKGuOyKDT2eO2UwfgW+cGsKAkxvTkP7=1Osg@mail.gmail.com>
+In-Reply-To: <CAHk-=wj=ADdpVjsKGuOyKDT2eO2UwfgW+cGsKAkxvTkP7=1Osg@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 22 Sep 2021 13:55:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj=ADdpVjsKGuOyKDT2eO2UwfgW+cGsKAkxvTkP7=1Osg@mail.gmail.com>
-Message-ID: <CAHk-=wj=ADdpVjsKGuOyKDT2eO2UwfgW+cGsKAkxvTkP7=1Osg@mail.gmail.com>
+Date:   Wed, 22 Sep 2021 14:10:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=winh0gLMqnQipt7VpbsxBL1frJQ-hJpRpe=kbR3U+DRHg@mail.gmail.com>
+Message-ID: <CAHk-=winh0gLMqnQipt7VpbsxBL1frJQ-hJpRpe=kbR3U+DRHg@mail.gmail.com>
 Subject: Re: [GIT PULL] SELinux fixes for v5.15 (#1)
 To:     Paul Moore <paul@paul-moore.com>
 Cc:     SElinux list <selinux@vger.kernel.org>,
@@ -75,98 +75,31 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 22, 2021 at 10:57 AM Paul Moore <paul@paul-moore.com> wrote:
+On Wed, Sep 22, 2021 at 1:55 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> I wanted to check in on this PR to see if you were planning on merging
-> it for v5.15-rcX, kicking it back for -next instead, or simply glaring
-> at it with quiet disgust?
+> Make the regular security_locked_down() function do that, and add a
+>
+>     if (WARN_ON_ONCE(!in_task()))
+>         return -EPERM;
+>
+> so that any bad cases get flagged and refuse to continue.
 
-Heh. I glanced at it with quiet disgust when it came in, and then it
-just got lost.
+Actually, no, I take that back.
 
-But now I'm looking at it again since you reminded me, and I don't
-understand why it has to be done in such an ugly manner.
+It's not the "!in_task()" case that is the problem. That's just the symptom.
 
-And I also don't think the thing makes a whit of sense in the first place.
+The real problem is that we clearly have some lock-down rule that
+seems to care about credentials and who it is that does the lockdown
+query. That seems to be the real issue here. Doing lockdown checks
+from interrupts should be fine.
 
-Honestly, that whole "lockdown depends on current creds" makes NO
-SENSE at all to me. The whole and only point about lockdown is that
-it's locked down. Not that "oh, root can do X". That's against the
-point.
+The security layer really seems to be doing odd and random things.
+Maybe we should have some debug switch with the above WARN_ON() inside
+current_cred() (and a number of other 'current' users too). Just to
+see if there are other cases where people look up basically random
+credentials.
 
-The whole and only point of lockdown was as a global thing. Now
-somebody seems to have noticed that they violated that basic rule, and
-that it's about permissions after all, and it's just a complete mess.
+When the security layer is confused, that's not a good sign.
 
-But why the heck would a normal lockdown user have to care about this
-fundamental design mistake? Why should a normal lockdown user pass in
-a credential that doesn't make sense?
-
-Since 99% of all users DON'T want special rules, why isn't the normal
-security_locked_down() kept the way it is?
-
-Make the few special cases do special things, in other words.
-
-This is *literally* why we have all those wrapper functions in
-security/security.c - so that people can do sane interfaces and not
-call down to the raw hooks.
-
-(Yeah, yeah, a lot of them do nothing but pass it down, but others do
-other sanity stuff so that callers don't have to do pointless
-boilerplate)
-
-IOW, why is this changing all the normal users that *really* don't
-want it, and that really have absolutely no business looking up the
-current creds?
-
-Make the regular security_locked_down() function do that, and add a
-
-    if (WARN_ON_ONCE(!in_task()))
-        return -EPERM;
-
-so that any bad cases get flagged and refuse to continue.
-
-And then the couple of special users (whether due to interrupt context
-or whatever), could get their own wrapper function.
-
-Note how that would
- (a) make the patch smaller
- (b) not pollute normal users pointlessly
- (c) actually be a kind of documentation too
- (d) not make the default lockdown testing function be senseless
-
-because right now you have absolutely no explanation in the crazy
-cases, so y9ou have code like this:
-
-        lockdown = !!security_locked_down(NULL, LOCKDOWN_XMON_RW);
-
-in xmon_is_locked_down(), and it makes no sense to anybody. Why the
-NULL? What is going on?
-
-Yes, yes, I can tell why the NULL, and what is going on, because I
-read the commit message and it's in my context. But look at that line,
-and tell me that it makes sense as code to anybody who has paged out
-that context (or never had it in the first place).
-
-If it said "security_globally_locked_down()" maybe it would at least
-give a hint about what's going on.
-
-But the other side of the argument is that the *common* lockdown
-functions are insane too after the patch. In kernel/module.c, this
-line:
-
-        return security_locked_down(current_cred(), LOCKDOWN_MODULE_SIGNATURE);
-
-really screams "lockdown is fundamentally broken and mis-designed".
-
-Seriously. If lockdown needs "current creds" then lockdown is wrong.
-
-I was unhappy about lockdown from before, so maybe I'm more likely to
-just reject this kind of garbage, but this really looks completely
-broken to me.
-
-Hmm? This lockdown stuff is some ugly random code to begin with, I
-think the interfaces need to make SENSE. Passing in credentials
-fundamentally does not make sense to me.
-
-              Linus
+                 Linus
