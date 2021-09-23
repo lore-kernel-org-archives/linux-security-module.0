@@ -2,130 +2,165 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7877C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 17:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19181C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 17:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A66CE61211
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 17:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAED060F70
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 17:14:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233256AbhIWRGk (ORCPT
+        id S242297AbhIWRPi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Sep 2021 13:06:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56454 "EHLO
+        Thu, 23 Sep 2021 13:15:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233219AbhIWRGj (ORCPT
+        with ESMTP id S242529AbhIWRPa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Sep 2021 13:06:39 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 973E9C061574
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Sep 2021 10:05:07 -0700 (PDT)
-Date:   Thu, 23 Sep 2021 19:05:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1632416705;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=WCJoIC7W3UzoxxoBXvBipnb9QI36GbGCC8qwcvEAaBI=;
-        b=PqJzVwLiZEirkUnp2VKhgf29w1YF+kBX1w5ODS6DoF0y4f4A/WQtRZWNMU09V1RhoEakD7
-        WpxdXooNRZjd+XjU7R07cXapyl5Xs2fai+OnppVjqpLinWSivXxADjENiocQXA4BlmvTsA
-        /iiKp+xip7B1UIHI8SByblHg2JsU6IYuNHjwJ2lG93/iPYNhowSajhlQ3jB0a/IaIjx6nX
-        45G7yDinoG/N3t2M/H2vUDJ1c4XIfbiQZ3tbVDswMSqeGpgd5mckwgQEtbzo5XJ7St0+7P
-        v0hx0yy2PWV6HlAoW+r0GEPs+61/mhQ3vB8mZnaFXxDcchi+c9Nvlv6GdLSWKw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1632416705;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=WCJoIC7W3UzoxxoBXvBipnb9QI36GbGCC8qwcvEAaBI=;
-        b=EVoGPL7oi4V48lpoX0AIJnY9w6gnPU4uH2AxeKzdcrY6CK/FyWxx+5LhGEiw/j4Fsb92Oa
-        ++tCewTvlkknRUDg==
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH v2] smack: Guard smack_ipv6_lock definition within a
- SMACK_IPV6_PORT_LABELING block
-Message-ID: <20210923170503.pvu6r3rj3z2idme2@linutronix.de>
+        Thu, 23 Sep 2021 13:15:30 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F8CC0613E6
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Sep 2021 10:13:49 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id v10so21017253edj.10
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Sep 2021 10:13:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=moyQHAXFsEWkQTSeR+QwttAi//JsAcJ9MwD7pPn60J0=;
+        b=6SuFaPpSttis5h/NPr3G3LiA3lXCFrN3pGb9QxTzu6R0D/0Wuieu5/pZ6Nh40h39X7
+         5lw5I/jpCVFd4VZ07B0Htw1/H8GVl7Vc7GK8S1etKIAl2dKczLJyaeSjx8gEuuLYFhCU
+         NeEdAxPrhEcycGgTrpkKK2fUG3ayBib2b6SaDoTAbQCiQoBfIh7piANfu32+hc9tLrW7
+         bFaiFkvG9imxJWRw0BDqnlKQGjeUykbGOEJUMg134Fuzw1xDZnCZP5LeL35JBi+KXrXd
+         YJUdpWs2gOP3UvAXgrJZ7zzZMXWrexQqD4ErmGlIKoBphoeplte1XtScQojjjrJqi2v5
+         /oWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=moyQHAXFsEWkQTSeR+QwttAi//JsAcJ9MwD7pPn60J0=;
+        b=QG7lmPAi9js1vEdCO0AO6qLxi4zpvBOn/Ca+Pa6tdICN4zELsdmd2UQJOxhmwfxgvQ
+         UQUWeoWu0ciNiaYKxUqlVyAtu0p3vtwZkBQH5HLtWdudKGDpuRF7HzeoB1BMjQuqu8x1
+         3yh7KoP9/QRd+nsWU1MkpuumDemxnPC/giiB6yeG5quMWEUzSewPoN9Ohn+mbPxxDv8k
+         sKWDAFXJJJm6LDEn4zuSqiKgxZnQxcsoOJy1pIg+0myxg5pOPRXSZKsXBwh4BF5g2xAE
+         LFQNRqPqr7JcjGDQ0UURCEL6tNwKWUd9+IgWNbnZB3PQIEsoLLnHzba3l8Quo63q458F
+         SyDQ==
+X-Gm-Message-State: AOAM531/AsJuvIymqLorXPwdLyi0nz9/TJkJYeNvDkaRh/AH2ylna57O
+        L44va1XSUxv686M/KZo/SB/HFF1KyR5LzGZAFNq+
+X-Google-Smtp-Source: ABdhPJypE6DfFR6lPWO/hvONHMTprcqME1sjRRuc+g49CTkuS98ah3V2NClNkyntVi/zIm4svekOxzqpZDd8UlhD6vw=
+X-Received: by 2002:a50:e10d:: with SMTP id h13mr6813705edl.77.1632417228001;
+ Thu, 23 Sep 2021 10:13:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+References: <CAHC9VhQcxm=Zhe2XEesx3UsBgr8H6H=BtJc92roqeF8o+DK+XQ@mail.gmail.com>
+ <CAHC9VhSu=ZWymS3RHa7jakQOU8gujGQ=PKO1BTcrNAM9-P4bmQ@mail.gmail.com>
+ <CAHk-=wj=ADdpVjsKGuOyKDT2eO2UwfgW+cGsKAkxvTkP7=1Osg@mail.gmail.com>
+ <CAHk-=winh0gLMqnQipt7VpbsxBL1frJQ-hJpRpe=kbR3U+DRHg@mail.gmail.com>
+ <CAHC9VhSZp1-Qi7ApoQHauaFXDgoNaFTwFEieEFFuBtdPqAtXQg@mail.gmail.com>
+ <CAHk-=whoExoB6xGD0as0kpfwr38B=W7GRkO2NXWDRW-tmQS6Qw@mail.gmail.com>
+ <CAHC9VhTtz_aNY6MOCM6ypbz+SHvS30hx42PWjXJhG1Z=t5jpBw@mail.gmail.com> <CAHk-=wivxthY49NPyPG0QG302dmH_hrioE7NdDKMR1Fus0GHow@mail.gmail.com>
+In-Reply-To: <CAHk-=wivxthY49NPyPG0QG302dmH_hrioE7NdDKMR1Fus0GHow@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 23 Sep 2021 13:13:37 -0400
+Message-ID: <CAHC9VhSgG9wRJk9pyUnz90Th8MLfJ9LAMsFKyFMZMjK097+ZXw@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux fixes for v5.15 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The mutex smack_ipv6_lock is only used with the SMACK_IPV6_PORT_LABELING
-block but its definition is outside of the block. This leads to a
-defined-but-not-used warning on PREEMPT_RT.
+On Thu, Sep 23, 2021 at 11:53 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, Sep 23, 2021 at 8:43 AM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > However, we have the LSM framework because there is never one way to
+> > solve a problem,
+>
+> The thing is, the lockdown patches were merged because they were allegedly sane.
+>
+> As far as I can tell, this is purely a SELinux internal bug.
 
-Moving smack_ipv6_lock down to the block where it is used where it used
-raises the question why is smk_ipv6_port_list read if nothing is added
-to it.
-Turns out, only smk_ipv6_port_check() is using it outside of an ifdef
-SMACK_IPV6_PORT_LABELING block. However two of three caller invoke
-smk_ipv6_port_check() from a ifdef block and only one is using
-__is_defined() macro which requires the function and smk_ipv6_port_list
-to be around.
+I'm not sure why that matters, but sure.  There is a problem, we are
+working to fix it.
 
-Put the lock and list inside an ifdef SMACK_IPV6_PORT_LABELING block to
-avoid the warning regarding unused mutex. Extend the ifdef-block to also
-cover smk_ipv6_port_check(). Make smack_socket_connect() use ifdef
-instead of __is_defined() to avoid complains about missing function.
+> SELinux did something wrong. Stop doing it.
 
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-v1=E2=80=A6v2: Properly ident smk_ipv6_port_check() in that ifdef block.
+We *are* trying to fix the problem.  Please stop pretending we are
+not.  You can certainly disagree with our approach, but I'm getting
+tired of the chastising where you imply we are actively trying to
+screw things up or do bad things.  We care about the kernel.  We care
+a lot.  I care more than I probably should, and probably more than is
+healthy at times.  You can disagree with the design and/or
+implementation, but making claims that we are "thinking it's ok for
+SELinux to just do bad things." is just plain wrong not to mention
+insulting.
 
- security/smack/smack_lsm.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> Stop sending patches to
+> then screw up the generic security layer, and violate the rules under
+> which these patches were accepted.
 
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -51,8 +51,10 @@
- #define SMK_RECEIVING	1
- #define SMK_SENDING	2
-=20
-+#ifdef SMACK_IPV6_PORT_LABELING
- static DEFINE_MUTEX(smack_ipv6_lock);
- static LIST_HEAD(smk_ipv6_port_list);
-+#endif
- struct kmem_cache *smack_rule_cache;
- int smack_enabled __initdata;
-=20
-@@ -2603,7 +2605,6 @@ static void smk_ipv6_port_label(struct s
- 	mutex_unlock(&smack_ipv6_lock);
- 	return;
- }
--#endif
-=20
- /**
-  * smk_ipv6_port_check - check Smack port access
-@@ -2666,6 +2667,7 @@ static int smk_ipv6_port_check(struct so
-=20
- 	return smk_ipv6_check(skp, object, address, act);
- }
-+#endif
-=20
- /**
-  * smack_inode_setsecurity - set smack xattrs
-@@ -2852,8 +2854,9 @@ static int smack_socket_connect(struct s
- 			rc =3D smk_ipv6_check(ssp->smk_out, rsp, sip,
- 					    SMK_CONNECTING);
- 		}
--		if (__is_defined(SMACK_IPV6_PORT_LABELING))
--			rc =3D smk_ipv6_port_check(sock->sk, sip, SMK_CONNECTING);
-+#ifdef SMACK_IPV6_PORT_LABELING
-+		rc =3D smk_ipv6_port_check(sock->sk, sip, SMK_CONNECTING);
-+#endif
-=20
- 		return rc;
- 	}
+*Sigh*
+
+There was plenty of discussion about this patch and the previous
+drafts, no one was overly upset about adding the caller context/cred
+info.  The other LSM folks were okay with it.  We've got plenty of
+historical examples of the LSM hook evolving over time to adapt to
+LSMs adding new functionality, new LSMs, and new kernel modules.  So
+let's look at why you are shouting about "screwing up the generic
+security layer", but let's try to keep the focus at the LSM interface
+level.
+
+Prior to this patch there was one relevant LSM hook for lockdown:
+
+  int security_locked_down(enum lockdown_reason what);
+
+... the patch in this PR changed it to this:
+
+  int security_locked_down(const struct cred *cred,
+                           enum lockdown_reason what);
+
+It's become clear you *really* don't like passing the cred pointer
+here, presumably based on a very specific security model for lockdown.
+At this point there are two thoughts that spring to mind: 1) how else
+can we enable the SELinux model that we want to implement and 2) why
+is the LSM forcing a single security model on LSMs for the lockdown
+hook?
+
+Let's deal with the first point first.  If you aren't going to merge a
+change to the LSM framework that allows for the context credentials,
+would you be willing to merge a new LSM hook that is used in place of
+the existing lockdown hook for callers that are not associated with a
+user task?  Both hooks would take a single lockdown_reason as the only
+argument and would look something like this:
+
+  int security_locked_down(enum lockdown_reason what);
+  int security_locked_down_kern(enum lockdown_reason what);
+
+There is already precedence in the kernel as a whole for LSM hooks
+that exist solely for kernel (non-user tasks) operations so this
+wouldn't be a big stretch.  LSMs that don't care to make a distinction
+between the two, e.g. the existing lockdown LSM, could set the LSM
+hook to point to the same function (in the case of lockdown this would
+be lockdown_is_locked_down()).
+
+However, if the above doesn't fly, let's move on to the second thought
+I mentioned above: why is the LSM forcing a single security model on
+LSMs for the lockdown hook?  If the lockdown functionality is really
+going to be restricted to just a single security model, why is it
+implemented as a LSM and not as core kernel functionality?  The
+original motivation for the LSM was that the kernel needed an
+abstraction layer to support multiple security models and we've seen
+it do just that over the years; SELinux may have been the first, but
+the number has certainly grown over the years and the LSM framework
+has evolved right along with it.  Putting restrictions on the LSM
+framework so that only specific security models could be implemented
+is not something we have really done, and at this point I think it
+would be a major mistake.
+
+--
+paul moore
+www.paul-moore.com
