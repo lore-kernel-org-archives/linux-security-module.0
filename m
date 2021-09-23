@@ -2,145 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE755C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 15:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CBCC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 15:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3FA261107
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 15:49:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 846D860E9B
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 15:52:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242221AbhIWPvI (ORCPT
+        id S242120AbhIWPyO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Sep 2021 11:51:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38580 "EHLO
+        Thu, 23 Sep 2021 11:54:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242235AbhIWPuY (ORCPT
+        with ESMTP id S242068AbhIWPyN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Sep 2021 11:50:24 -0400
-Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A8CBC0613EF
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Sep 2021 08:47:48 -0700 (PDT)
-Received: by mail-qt1-x829.google.com with SMTP id j13so6591209qtq.6
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Sep 2021 08:47:48 -0700 (PDT)
+        Thu, 23 Sep 2021 11:54:13 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87943C061756
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Sep 2021 08:43:43 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id v22so24445440edd.11
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Sep 2021 08:43:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=subject:from:to:cc:date:message-id:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=eanBuwDkgOLZs3AUy1n+xC0OqqvkchufmO8SEsSq0R4=;
-        b=U6kusfQhFDPVN3HHPOiJ9H7kNIlTpfE+ijkhxf7HBluJA3lGuHlBqbrpQqTS6BVz03
-         oFegILOVRjlVHnsGd+RXoC5XrBXiZIugjqW/mF6CnkYyaJoH0foFW/5Ua+83PAg6Wbg/
-         umOCEddZW9F4M29qD2v8niTnvCnWCqyVXnTGYqsVLfBx97QYieKu8pvSkK/Qju8AVkh5
-         vO/xU+BURJfW+FqVtKULILjXBFzxSgV7LjKAFfCvilL+uy4sVwfVKwhWu9zLP2gWnHjl
-         FYhGk3UMKkmxCV5siHGsqdWdnaEl1cS2FvbhHKzbhKF3uAwhrDFrkvfFMDRST7k4m7kT
-         9QIA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lCqhKC48Ib46nZOgyDtYvMpK1Oh3xFWx5ZwtZeirTi4=;
+        b=DXcsVudKdVqjRNW+msi7GFg4ORsGEDDKrRqhXgtJuErK5Ilgrm9sbmop5lo89WqLW8
+         7Ww7N3T7H2Il4BA9fMcyFhNevAc2sxO6Ntc1FQcqsmld7If6M1BwUK8Vah8z7i6e7bs5
+         bQrV5WEeouOpgHi96i3/PFqes/VhcqyULcMiof0sOUfKCVBAIjww7Ygy1xpxB4Z37fuP
+         S/23MCOVKN5ZVWU8u8Qt/bOM+C7fd5qMknizwVpLWfiDhznd5Hh5U1p4m0XtMApxxvSj
+         f15H3QfCaH9OIRktUMurfDwXjgwMl2yZuzpwoeTTR0PZ/MmKByMQm3OOIIaNBbyUC8i9
+         8tZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=eanBuwDkgOLZs3AUy1n+xC0OqqvkchufmO8SEsSq0R4=;
-        b=VPgw8mjiFpe0aLq59T+lOy86eYSQOsRQ9acR0NSYRsYbNaYyy03dLCNcLu+5wOiPy2
-         eGu1iNMXCLPGqmNn2sC1Iu8mWgjWxLjtiedU5hOjw6fUUItVCvkQ506+6DSJwfcIQnaM
-         v5LVWnMnTRwwWjDkAh0p6rSWbMdGu8afSpp9wH4YeocDWe8Jtlb+HytugwKmeIbqpSZa
-         We1dDivJpZneu/RCVm/nWMEn50vTIGlcqs2e1WmE/j+DZjL4XOFqpYI819x0HmFZ91TS
-         KMcKuialFuOoX+PqzlOy7QD0yMrVVA+tMr99+Ei28hXE9C3Dixw1df7L4L7URwuAFV7+
-         Mz4g==
-X-Gm-Message-State: AOAM532bVjNtJXPrj7UpPkAErlyBZ455k/XdmfNmSYu56YFenBLOv6MZ
-        eNiXUygnbddgrW2ARox2Brvm
-X-Google-Smtp-Source: ABdhPJyFKJzNhWMOvwK0AtGx03qKP4YsFJJ9MfZISiOWIWfu7AIY4PV1fipuIltFZ1S77yWb+c30aA==
-X-Received: by 2002:ac8:5ad5:: with SMTP id d21mr5558066qtd.345.1632412067337;
-        Thu, 23 Sep 2021 08:47:47 -0700 (PDT)
-Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id m139sm4801445qke.18.2021.09.23.08.47.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 08:47:46 -0700 (PDT)
-Subject: [PATCH] selinux,smack: fix subjective/objective credential use mixups
-From:   Paul Moore <paul@paul-moore.com>
-To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc:     casey@schaufler-ca.com, jannh@google.com
-Date:   Thu, 23 Sep 2021 11:47:45 -0400
-Message-ID: <163241206546.71956.16494958077958683533.stgit@olly>
-User-Agent: StGit/1.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lCqhKC48Ib46nZOgyDtYvMpK1Oh3xFWx5ZwtZeirTi4=;
+        b=xxN3w+5GH3VHdq+5C9wEnllJNW6uUABh9DmvIPkXcgiyLcBO3/mzl15yXqz+SQTxRk
+         XBjqFLdI7FKOej4LGnZ2Myo06O709DuQ/WX3EtwaybuMZhifXHKXEssTOGo3wQHVhrdD
+         7lH+KkGng+v95mflXL5+HNygg6lUqyocALX0jekV0XizVSr4J0kXw1Kef32/7e1U4UKt
+         YWndAsNSjhXdwNSk/DzOiGNPmUg+7dEVwT5hBvjrQ8d/U5hApSMVTAhdXDwUL0GD2/8D
+         BAEyoe7gedSRqMpZ8fqhLxANg4FoIk2I9lYrvgvxpmysFomuMhGEMY/3tQpnMZzpzGni
+         pntg==
+X-Gm-Message-State: AOAM530M9Awfh1OfuPl3CMX2m5Q8yG9zL7lyyR2Lds8f9J/ROYupP2Gh
+        A3S4EJFqWEPKMga769JXaVvXbWrUhpMkzOlFtKNPiVpKNA==
+X-Google-Smtp-Source: ABdhPJy83COw5p8Q5Ilg+btpwgWRQxkNonsH+wQ0Nbm+1kO8xf/vOFZ5SX3YI3NhjjmBoolF6ftnlL0sTIDhmYfTnvc=
+X-Received: by 2002:a05:6402:3587:: with SMTP id y7mr6222941edc.362.1632411821608;
+ Thu, 23 Sep 2021 08:43:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <CAHC9VhQcxm=Zhe2XEesx3UsBgr8H6H=BtJc92roqeF8o+DK+XQ@mail.gmail.com>
+ <CAHC9VhSu=ZWymS3RHa7jakQOU8gujGQ=PKO1BTcrNAM9-P4bmQ@mail.gmail.com>
+ <CAHk-=wj=ADdpVjsKGuOyKDT2eO2UwfgW+cGsKAkxvTkP7=1Osg@mail.gmail.com>
+ <CAHk-=winh0gLMqnQipt7VpbsxBL1frJQ-hJpRpe=kbR3U+DRHg@mail.gmail.com>
+ <CAHC9VhSZp1-Qi7ApoQHauaFXDgoNaFTwFEieEFFuBtdPqAtXQg@mail.gmail.com> <CAHk-=whoExoB6xGD0as0kpfwr38B=W7GRkO2NXWDRW-tmQS6Qw@mail.gmail.com>
+In-Reply-To: <CAHk-=whoExoB6xGD0as0kpfwr38B=W7GRkO2NXWDRW-tmQS6Qw@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 23 Sep 2021 11:43:30 -0400
+Message-ID: <CAHC9VhTtz_aNY6MOCM6ypbz+SHvS30hx42PWjXJhG1Z=t5jpBw@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux fixes for v5.15 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Jann Horn reported a problem with commit eb1231f73c4d ("selinux:
-clarify task subjective and objective credentials") where some LSM
-hooks were attempting to access the subjective credentials of a task
-other than the current task.  Generally speaking, it is not safe to
-access another task's subjective credentials and doing so can cause
-a number of problems.
+On Wed, Sep 22, 2021 at 7:43 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Wed, Sep 22, 2021 at 2:40 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > The basic idea, or problem from a LSM point of view, is that in some
+> > cases you have a user task which is doing the lockdown access check
+> > and in others you have the kernel itself
+>
+> I don't understand. In that case, it would be a boolean for "kernel vs user".
+>
+> But that's not what it is. It literally seems to care about _which_
+> user, and looks at cred_sid().
 
-Further, while looking into the problem, I realized that Smack was
-suffering from a similar problem brought about by a similar commit
-1fb057dcde11 ("smack: differentiate between subjective and objective
-task credentials").
+Well, yes, it does look at the credential if it is passed; I guess I
+wrongly assumed that was understood.  If it was just a simple
+user/kernel decision then yes, it would be a boolean (or similar).
 
-This patch addresses this problem by restoring the use of the task's
-objective credentials in those cases where the task is other than the
-current executing task.  Not only does this resolve the problem
-reported by Jann, it is arguably the correct thing to do in these
-cases.
+> This is what makes no sense to me. If it's about lockdown,. then the
+> user is immaterial. Either it's locked down, or it's not.
 
-Cc: stable@vger.kernel.org
-Fixes: eb1231f73c4d ("selinux: clarify task subjective and objective credentials")
-Fixes: 1fb057dcde11 ("smack: differentiate between subjective and objective task credentials")
-Reported-by: Jann Horn <jannh@google.com>
-Acked-by: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- security/selinux/hooks.c   |    4 ++--
- security/smack/smack_lsm.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+If all you have is the lockdown LSM, then yes, lockdown doesn't take
+into account the context of the request, it is simply a test of the
+lockdown threshold: only disclosures on the proper side of the
+lockdown value are allowed.
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 6517f221d52c..e7ebd45ca345 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2157,7 +2157,7 @@ static int selinux_ptrace_access_check(struct task_struct *child,
- static int selinux_ptrace_traceme(struct task_struct *parent)
- {
- 	return avc_has_perm(&selinux_state,
--			    task_sid_subj(parent), task_sid_obj(current),
-+			    task_sid_obj(parent), task_sid_obj(current),
- 			    SECCLASS_PROCESS, PROCESS__PTRACE, NULL);
- }
- 
-@@ -6222,7 +6222,7 @@ static int selinux_msg_queue_msgrcv(struct kern_ipc_perm *msq, struct msg_msg *m
- 	struct ipc_security_struct *isec;
- 	struct msg_security_struct *msec;
- 	struct common_audit_data ad;
--	u32 sid = task_sid_subj(target);
-+	u32 sid = task_sid_obj(target);
- 	int rc;
- 
- 	isec = selinux_ipc(msq);
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index cacbe7518519..21a0e7c3b8de 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2016,7 +2016,7 @@ static int smk_curacc_on_task(struct task_struct *p, int access,
- 				const char *caller)
- {
- 	struct smk_audit_info ad;
--	struct smack_known *skp = smk_of_task_struct_subj(p);
-+	struct smack_known *skp = smk_of_task_struct_obj(p);
- 	int rc;
- 
- 	smk_ad_init(&ad, caller, LSM_AUDIT_DATA_TASK);
-@@ -3480,7 +3480,7 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
-  */
- static int smack_getprocattr(struct task_struct *p, char *name, char **value)
- {
--	struct smack_known *skp = smk_of_task_struct_subj(p);
-+	struct smack_known *skp = smk_of_task_struct_obj(p);
- 	char *cp;
- 	int slen;
- 
+However, we have the LSM framework because there is never one way to
+solve a problem, and the LSM hooks have always changed to support
+these different approaches to access control.  While the lockdown LSM
+takes a context-free approach to enforcing the lockdown setting, the
+SELinux LSM takes a different enforcement approach which not only
+better integrates with the SELinux policy, but it offers new
+functionality beyond the lockdown LSM:
 
+* Access based on the integrity and confidentiality reasons can be
+specified independently with SELinux.
+
+* Provide the ability to define the lockdown level within the context
+of individual security domains.
+
+It's also worth noting that with LSM stacking and the combination of
+the lockdown and SELinux LSMs, the SELinux lockdown controls would not
+grant any additional disclosures beyond what the lockdown LSM would
+allow, the SELinux controls would only further restrict the disclosure
+of specific security domains as specified in the SELinux policy.
+
+--
+paul moore
+www.paul-moore.com
