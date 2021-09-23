@@ -2,117 +2,145 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D010EC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Sep 2021 23:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE755C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 15:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0EDB6115A
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Sep 2021 23:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3FA261107
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Sep 2021 15:49:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238481AbhIVXpa (ORCPT
+        id S242221AbhIWPvI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Sep 2021 19:45:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44432 "EHLO
+        Thu, 23 Sep 2021 11:51:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230414AbhIVXp3 (ORCPT
+        with ESMTP id S242235AbhIWPuY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Sep 2021 19:45:29 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321F7C061756
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 16:43:56 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id u18so18228179lfd.12
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 16:43:56 -0700 (PDT)
+        Thu, 23 Sep 2021 11:50:24 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A8CBC0613EF
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Sep 2021 08:47:48 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id j13so6591209qtq.6
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Sep 2021 08:47:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e9k72VTW22NLqhNCFibUNzlVRlOLQo+ivDkN/xGzIL0=;
-        b=iAQ5fOkNypbYTDMHDwefmxHPG3BnavaFtPjdsc6K5IFf8v4Aa05F1WOz/dqXf9D5eN
-         VU9v9NDhqobgAH7LoBpnsbaNZxLD7pRX/kq2DnHdo1fZh5AcIdAV8GkZH4839jcnx9EZ
-         W1YcQ3jdEj1KMiYH+mn3Qra281xA8lW3Id9vs=
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=eanBuwDkgOLZs3AUy1n+xC0OqqvkchufmO8SEsSq0R4=;
+        b=U6kusfQhFDPVN3HHPOiJ9H7kNIlTpfE+ijkhxf7HBluJA3lGuHlBqbrpQqTS6BVz03
+         oFegILOVRjlVHnsGd+RXoC5XrBXiZIugjqW/mF6CnkYyaJoH0foFW/5Ua+83PAg6Wbg/
+         umOCEddZW9F4M29qD2v8niTnvCnWCqyVXnTGYqsVLfBx97QYieKu8pvSkK/Qju8AVkh5
+         vO/xU+BURJfW+FqVtKULILjXBFzxSgV7LjKAFfCvilL+uy4sVwfVKwhWu9zLP2gWnHjl
+         FYhGk3UMKkmxCV5siHGsqdWdnaEl1cS2FvbhHKzbhKF3uAwhrDFrkvfFMDRST7k4m7kT
+         9QIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e9k72VTW22NLqhNCFibUNzlVRlOLQo+ivDkN/xGzIL0=;
-        b=oADk3yFX9F27VH0b8Q9zQ08Yyk0tfWWGElPXPOgteVnY+JUBdbMBx/NImr3XqhmX7Z
-         4TBMNfKJqLnVlNcU58TucfIQLY3mP/sE5l/Lp/9Ya/l2V5xTkeNko5629NpUbbjpbBAX
-         bNXYwi3sLYdeJXIqrIYwlypvzvxKbG+q1PmRnoKoG8avjC7orCWa3uuplhByW56XWxlZ
-         VrRndHz6+CDri/ABT9/2Wc0OCEYWotWCyBR9R9RwqH3qhp7QAK8RtAvy9ug+D8YVp1mZ
-         rYnVYywJ4WS1KhKra7v7YEbDUGHF/GkrnTMw3nogXMHqjZQTyI4uXTQxGlKDu9IOzXvZ
-         hM6A==
-X-Gm-Message-State: AOAM5309TUYBU2So4SWXFyvAJL0d3gf5N0cJNGUJCb1GKmeSI6BLqYFY
-        iOyp/9B94FC7SgIjudrRbArxCECJ3froLwE698E=
-X-Google-Smtp-Source: ABdhPJyMoG+6INTxPVH7mpW0Yr/Q83661q+tffzGnqrWK8OqcmG8xJgoN/6zIfHpNJvDdtAHZSz7yA==
-X-Received: by 2002:a2e:a276:: with SMTP id k22mr2005443ljm.343.1632354234041;
-        Wed, 22 Sep 2021 16:43:54 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id m29sm291214lfo.191.2021.09.22.16.43.53
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Sep 2021 16:43:53 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id e15so18722819lfr.10
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Sep 2021 16:43:53 -0700 (PDT)
-X-Received: by 2002:a05:6512:984:: with SMTP id w4mr268356lft.141.1632354233111;
- Wed, 22 Sep 2021 16:43:53 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=eanBuwDkgOLZs3AUy1n+xC0OqqvkchufmO8SEsSq0R4=;
+        b=VPgw8mjiFpe0aLq59T+lOy86eYSQOsRQ9acR0NSYRsYbNaYyy03dLCNcLu+5wOiPy2
+         eGu1iNMXCLPGqmNn2sC1Iu8mWgjWxLjtiedU5hOjw6fUUItVCvkQ506+6DSJwfcIQnaM
+         v5LVWnMnTRwwWjDkAh0p6rSWbMdGu8afSpp9wH4YeocDWe8Jtlb+HytugwKmeIbqpSZa
+         We1dDivJpZneu/RCVm/nWMEn50vTIGlcqs2e1WmE/j+DZjL4XOFqpYI819x0HmFZ91TS
+         KMcKuialFuOoX+PqzlOy7QD0yMrVVA+tMr99+Ei28hXE9C3Dixw1df7L4L7URwuAFV7+
+         Mz4g==
+X-Gm-Message-State: AOAM532bVjNtJXPrj7UpPkAErlyBZ455k/XdmfNmSYu56YFenBLOv6MZ
+        eNiXUygnbddgrW2ARox2Brvm
+X-Google-Smtp-Source: ABdhPJyFKJzNhWMOvwK0AtGx03qKP4YsFJJ9MfZISiOWIWfu7AIY4PV1fipuIltFZ1S77yWb+c30aA==
+X-Received: by 2002:ac8:5ad5:: with SMTP id d21mr5558066qtd.345.1632412067337;
+        Thu, 23 Sep 2021 08:47:47 -0700 (PDT)
+Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
+        by smtp.gmail.com with ESMTPSA id m139sm4801445qke.18.2021.09.23.08.47.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Sep 2021 08:47:46 -0700 (PDT)
+Subject: [PATCH] selinux,smack: fix subjective/objective credential use mixups
+From:   Paul Moore <paul@paul-moore.com>
+To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     casey@schaufler-ca.com, jannh@google.com
+Date:   Thu, 23 Sep 2021 11:47:45 -0400
+Message-ID: <163241206546.71956.16494958077958683533.stgit@olly>
+User-Agent: StGit/1.1
 MIME-Version: 1.0
-References: <CAHC9VhQcxm=Zhe2XEesx3UsBgr8H6H=BtJc92roqeF8o+DK+XQ@mail.gmail.com>
- <CAHC9VhSu=ZWymS3RHa7jakQOU8gujGQ=PKO1BTcrNAM9-P4bmQ@mail.gmail.com>
- <CAHk-=wj=ADdpVjsKGuOyKDT2eO2UwfgW+cGsKAkxvTkP7=1Osg@mail.gmail.com>
- <CAHk-=winh0gLMqnQipt7VpbsxBL1frJQ-hJpRpe=kbR3U+DRHg@mail.gmail.com> <CAHC9VhSZp1-Qi7ApoQHauaFXDgoNaFTwFEieEFFuBtdPqAtXQg@mail.gmail.com>
-In-Reply-To: <CAHC9VhSZp1-Qi7ApoQHauaFXDgoNaFTwFEieEFFuBtdPqAtXQg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 22 Sep 2021 16:43:37 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whoExoB6xGD0as0kpfwr38B=W7GRkO2NXWDRW-tmQS6Qw@mail.gmail.com>
-Message-ID: <CAHk-=whoExoB6xGD0as0kpfwr38B=W7GRkO2NXWDRW-tmQS6Qw@mail.gmail.com>
-Subject: Re: [GIT PULL] SELinux fixes for v5.15 (#1)
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 22, 2021 at 2:40 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> The basic idea, or problem from a LSM point of view, is that in some
-> cases you have a user task which is doing the lockdown access check
-> and in others you have the kernel itself
+Jann Horn reported a problem with commit eb1231f73c4d ("selinux:
+clarify task subjective and objective credentials") where some LSM
+hooks were attempting to access the subjective credentials of a task
+other than the current task.  Generally speaking, it is not safe to
+access another task's subjective credentials and doing so can cause
+a number of problems.
 
-I don't understand. In that case, it would be a boolean for "kernel vs user".
+Further, while looking into the problem, I realized that Smack was
+suffering from a similar problem brought about by a similar commit
+1fb057dcde11 ("smack: differentiate between subjective and objective
+task credentials").
 
-But that's not what it is. It literally seems to care about _which_
-user, and looks at cred_sid().
+This patch addresses this problem by restoring the use of the task's
+objective credentials in those cases where the task is other than the
+current executing task.  Not only does this resolve the problem
+reported by Jann, it is arguably the correct thing to do in these
+cases.
 
-This is what makes no sense to me. If it's about lockdown,. then the
-user is immaterial. Either it's locked down, or it's not.
+Cc: stable@vger.kernel.org
+Fixes: eb1231f73c4d ("selinux: clarify task subjective and objective credentials")
+Fixes: 1fb057dcde11 ("smack: differentiate between subjective and objective task credentials")
+Reported-by: Jann Horn <jannh@google.com>
+Acked-by: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ security/selinux/hooks.c   |    4 ++--
+ security/smack/smack_lsm.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Yeah, yeah, clearly that isn't how it works. Something is very rotten
-in the state of lockdown. But that rottenness shouldn't then be
-exposed as a horrible interface.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 6517f221d52c..e7ebd45ca345 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2157,7 +2157,7 @@ static int selinux_ptrace_access_check(struct task_struct *child,
+ static int selinux_ptrace_traceme(struct task_struct *parent)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    task_sid_subj(parent), task_sid_obj(current),
++			    task_sid_obj(parent), task_sid_obj(current),
+ 			    SECCLASS_PROCESS, PROCESS__PTRACE, NULL);
+ }
+ 
+@@ -6222,7 +6222,7 @@ static int selinux_msg_queue_msgrcv(struct kern_ipc_perm *msq, struct msg_msg *m
+ 	struct ipc_security_struct *isec;
+ 	struct msg_security_struct *msec;
+ 	struct common_audit_data ad;
+-	u32 sid = task_sid_subj(target);
++	u32 sid = task_sid_obj(target);
+ 	int rc;
+ 
+ 	isec = selinux_ipc(msq);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index cacbe7518519..21a0e7c3b8de 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2016,7 +2016,7 @@ static int smk_curacc_on_task(struct task_struct *p, int access,
+ 				const char *caller)
+ {
+ 	struct smk_audit_info ad;
+-	struct smack_known *skp = smk_of_task_struct_subj(p);
++	struct smack_known *skp = smk_of_task_struct_obj(p);
+ 	int rc;
+ 
+ 	smk_ad_init(&ad, caller, LSM_AUDIT_DATA_TASK);
+@@ -3480,7 +3480,7 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+  */
+ static int smack_getprocattr(struct task_struct *p, char *name, char **value)
+ {
+-	struct smack_known *skp = smk_of_task_struct_subj(p);
++	struct smack_known *skp = smk_of_task_struct_obj(p);
+ 	char *cp;
+ 	int slen;
+ 
 
-Why has selinux allowed the SID to be an issue for SECCLASS_LOCKDOWN at all?
-
-And why is selinux foceing it's very odd and arguably completely
-misguided "lockdown" logic onto the security layer?
-
-Yes, using "current_sid()" in selinux_lockdown() is clearly wrong,
-since it's not sensible in an interrupt, but lockdown questions are.
-
-But why isn't that just considered a selinux bug, and that
-
-        u32 sid = current_sid();
-
-just replaced with something silly like
-
-        // lockdown is lockdown, user labeling isn't relevant
-        u32 sid = SECINITSID_UNLABELED;
-
-and solve that issue that way? Just say that lockdown cannot depend on
-who is asking for it.
-
-         Linus
