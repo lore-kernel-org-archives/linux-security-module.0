@@ -2,123 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6738FC433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Sep 2021 11:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42435C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Sep 2021 14:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4686E60EFD
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Sep 2021 11:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C63660F46
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Sep 2021 14:06:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233998AbhI0L3H (ORCPT
+        id S234716AbhI0OH5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Sep 2021 07:29:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:6324 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233948AbhI0L3G (ORCPT
+        Mon, 27 Sep 2021 10:07:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:60957 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234461AbhI0OH4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Sep 2021 07:29:06 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18RBH9Gq009251;
-        Mon, 27 Sep 2021 07:27:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=jXvrqG/pK/EG/1k6diP9NW5ornENCC97YX+sh9Hwmvk=;
- b=pXTJbNDkre9oldiT0B0MLSxP9N8SMQFAxfUcO4hFQYxFsz2ybKz4SCeXaO4kRGuWBDc9
- RAaBa2FRImsjwt39QPiqfk6YH9aQuebjG0se32UxRpxrq4C92zW6zu2mUkQpdO12F+CW
- 23foSCo2wepzSj3eDMGIAiMcCRgMTt+CgiDZd25X0U8zkB9COmtP2S23fAOjr7YlVQAj
- vO/D5i5M/6ThXobAJUaHj2N5U8eWJ+68o4OMZ5BgkxvS27SPZrLf2myVYHa38bn7zQeP
- nakNGDqdHVa/PlDSHFrvvzvXCK1MpU5pK0zraL+EaSzSUZwQj7256qLft1iwFqKPLgVZ Tg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3bbark3200-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Sep 2021 07:27:13 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 18RBRDfB019816;
-        Mon, 27 Sep 2021 07:27:13 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3bbark31ye-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Sep 2021 07:27:13 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18RBDE9d028488;
-        Mon, 27 Sep 2021 11:27:11 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma06ams.nl.ibm.com with ESMTP id 3b9u1j46ry-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Sep 2021 11:27:11 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18RBR8hn65536282
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 Sep 2021 11:27:08 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9965F52065;
-        Mon, 27 Sep 2021 11:27:08 +0000 (GMT)
-Received: from sig-9-65-214-62.ibm.com (unknown [9.65.214.62])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C7A1652063;
-        Mon, 27 Sep 2021 11:27:05 +0000 (GMT)
-Message-ID: <856359f263575f01d0ce2fcf8f042321f750b38c.camel@linux.ibm.com>
-Subject: Re: [PATCH v3] KEYS: trusted: Fix trusted key backends when
- building as module
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Andreas Rammhold <andreas@rammhold.de>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 27 Sep 2021 07:27:04 -0400
-In-Reply-To: <20210927085104.vq42feghtaqiv6ni@wrt>
-References: <20210730012822.3460913-1-andreas@rammhold.de>
-         <0d42a11a-0117-49a9-d2c9-bc6cc405235d@pengutronix.de>
-         <20210927085104.vq42feghtaqiv6ni@wrt>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: QJJQKuPvR8AdPEhBR82xAwkKMDK5eaBi
-X-Proofpoint-GUID: qhGXlaO4FS7Mt2HHRv_t-mcV73Yxgmg7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
- definitions=2021-09-27_04,2021-09-24_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- spamscore=0 lowpriorityscore=0 mlxlogscore=999 impostorscore=0
- malwarescore=0 mlxscore=0 clxscore=1011 phishscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109230001 definitions=main-2109270076
+        Mon, 27 Sep 2021 10:07:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632751578;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Njho4Z4V5IX6IqXLiubSzD1xQsvCLZJLI7bOJydcHoY=;
+        b=D5rvBJWR+WiQAbJYjL45iXu6ZrV3xBv871tF2QA3kwFYzgGPnd8cfJV996YvlGMDN1VRIW
+        daKQ9aum0v3jVVzs9CWWFTNYalxSAn1gTHQLsoCnB9XsYzzZIEh5HQ3DDejmwPlHoDY70B
+        u6FDtsU8NBY6OVq7uXkeknW0UDnVKwQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-503-gV7HNcYQMLCDryw8qDYK9g-1; Mon, 27 Sep 2021 10:06:16 -0400
+X-MC-Unique: gV7HNcYQMLCDryw8qDYK9g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F0E913626F;
+        Mon, 27 Sep 2021 14:06:14 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.16.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C5F586A900;
+        Mon, 27 Sep 2021 14:05:57 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 342E3222E4F; Mon, 27 Sep 2021 10:05:57 -0400 (EDT)
+Date:   Mon, 27 Sep 2021 10:05:57 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org,
+        virtio-fs@redhat.com, selinux@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        chirantan@chromium.org, Miklos Szeredi <miklos@szeredi.hu>,
+        stephen.smalley.work@gmail.com, Daniel J Walsh <dwalsh@redhat.com>
+Subject: Re: [PATCH 2/2] fuse: Send security context of inode on file creation
+Message-ID: <YVHPxYRnZvs/dH7N@redhat.com>
+References: <20210924192442.916927-1-vgoyal@redhat.com>
+ <20210924192442.916927-3-vgoyal@redhat.com>
+ <a02d3e08-3abc-448a-be32-2640d8a991e0@www.fastmail.com>
+ <YU5gF9xDhj4g+0Oe@redhat.com>
+ <8a46efbf-354c-db20-c24a-ee73d9bbe9d6@schaufler-ca.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a46efbf-354c-db20-c24a-ee73d9bbe9d6@schaufler-ca.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2021-09-27 at 10:51 +0200, Andreas Rammhold wrote:
-> On 09:47 13.09.21, Ahmad Fatoum wrote:
-> > Dear trusted key maintainers,
-> > 
-> > On 30.07.21 03:28, Andreas Rammhold wrote:
-> > > Before this commit the kernel could end up with no trusted key sources
-> > > even though both of the currently supported backends (TPM and TEE) were
-> > > compiled as modules. This manifested in the trusted key type not being
-> > > registered at all.
-> > > 
-> > > When checking if a CONFIG_… preprocessor variable is defined we only
-> > > test for the builtin (=y) case and not the module (=m) case. By using
-> > > the IS_REACHABLE() macro we do test for both cases.
-> > > 
-> > > Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
-> > > Signed-off-by: Andreas Rammhold <andreas@rammhold.de>
-> > > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > Does anyone intend to pick this up?
+On Sun, Sep 26, 2021 at 05:53:11PM -0700, Casey Schaufler wrote:
+> On 9/24/2021 4:32 PM, Vivek Goyal wrote:
+> > On Fri, Sep 24, 2021 at 06:00:10PM -0400, Colin Walters wrote:
+> >>
+> >> On Fri, Sep 24, 2021, at 3:24 PM, Vivek Goyal wrote:
+> >>> When a new inode is created, send its security context to server along
+> >>> with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SYMLINK).
+> >>> This gives server an opportunity to create new file and set security
+> >>> context (possibly atomically). In all the configurations it might not
+> >>> be possible to set context atomically.
+> >>>
+> >>> Like nfs and ceph, use security_dentry_init_security() to dermine security
+> >>> context of inode and send it with create, mkdir, mknod, and symlink requests.
+> >>>
+> >>> Following is the information sent to server.
+> >>>
+> >>> - struct fuse_secctx.
+> >>>   This contains total size of security context which follows this structure.
+> >>>
+> >>> - xattr name string.
+> >>>   This string represents name of xattr which should be used while setting
+> >>>   security context. As of now it is hardcoded to "security.selinux".
+> >> Any reason not to just send all `security.*` xattrs found on the inode? 
+> >>
+> >> (I'm not super familiar with this code, it looks like we're going from the LSM-cached version attached to the inode, but presumably since we're sending bytes we can just ask the filesytem for the raw data instead)
+> > So this inode is about to be created. There are no xattrs yet. And
+> > filesystem is asking LSMs, what security labels should be set on this
+> > inode before it is published. 
 > 
-> Did this end up in any tree by now? I am wondering if I should resend
-> the patch instead. Perhaps it was just overlooked?
+> No. That's imprecise. It's what SELinux does. An LSM can add any
+> number of attributes on inode creation, or none. These attributes
+> may or may not be "security labels". Assuming that they are is the
+> kind of thinking that leads people like Linus to conclude that the
+> LSM community is clueless.
+> 
+> 
+> >
+> > For local filesystems it is somewhat easy. They are the one creating
+> > inode and can set all xattrs/labels before inode is added to inode
+> > cache.
+> >
+> > But for remote like filesystems, it is more tricky. Actual inode
+> > creation first will happen on server and then client will instantiate
+> > an inode based on information returned by server (Atleast that's
+> > what fuse does).
+> >
+> > So security_dentry_init_security() was created (I think by NFS folks)
+> > so that they can query the label and send it along with create
+> > request and server can take care of setting label (along with file
+> > creation).
+> >
+> > One limitation of security_dentry_init_security() is that it practically
+> > supports only one label. And only SELinux has implemented. So for
+> > all practical purposes this is a hook to obtain selinux label. NFS
+> > and ceph already use it in that way.
+> >
+> > Now there is a desire to be able to return more than one security
+> > labels and support smack and possibly other LSMs. Sure, that great.
+> > But I think for that we will have to implement a new hook which
+> > can return multiple labels and filesystems like nfs, ceph and fuse
+> > will have to be modified to cope with this new hook to support
+> > multiple lables. 
+> >
+> > And I am arguing that we can modify fuse when that hook has been
+> > implemented. There is no point in adding that complexity in fuse
+> > code as well all fuse-server implementations when there is nobody
+> > generating multiple labels. We can't even test it.
+> 
+> There's a little bit of chicken-and-egg going on here.
+> There's no point in accommodating multiple labels in
+> this code because you can't have multiple labels. There's
+> no point in trying to support multiple labels because
+> you can't use them in virtiofs and a bunch of other
+> places.
 
-For EVM environments only using trusted and encrypted keys, not file
-signatures, the trusted key is needed to decrypt the "master" key in
-order to verify kernel modules.
+Once security subsystem provides a hook to support multiple lables, then
+atleast one filesystem will have to be converted to make use of this new
+hook at the same time and rest of the filesystems can catch up later.
 
-Mimi
-
+Vivek
 
