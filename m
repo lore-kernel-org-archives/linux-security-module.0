@@ -2,490 +2,468 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF1C8C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Sep 2021 18:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 597D3C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Sep 2021 19:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B691261216
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Sep 2021 18:36:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BB4061505
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Sep 2021 19:17:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346100AbhI2SiZ (ORCPT
+        id S1346545AbhI2TTH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Sep 2021 14:38:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44846 "EHLO
+        Wed, 29 Sep 2021 15:19:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345901AbhI2SiW (ORCPT
+        with ESMTP id S1346542AbhI2TTE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Sep 2021 14:38:22 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6A04C061764
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Sep 2021 11:36:40 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id j5so9805310lfg.8
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Sep 2021 11:36:40 -0700 (PDT)
+        Wed, 29 Sep 2021 15:19:04 -0400
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0697C061765
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Sep 2021 12:17:22 -0700 (PDT)
+Received: by mail-qk1-x72c.google.com with SMTP id 72so3400673qkk.7
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Sep 2021 12:17:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=30gTw4/rMDKI6yq7yX+hC0yjowpbiiQ805lH/tDCQ54=;
-        b=p1AeK2LRGxvcimtWPi7gRnDb50BhdiI8hPHI/ieGfA0AM9FnZgZ6aDtFa55oqG/g/x
-         fB/ZitDqxw0k9tCccEC8A69ggx+MsObevkxyiwfRw56dc+rLMetiN9t3DQgz/4vt+ifi
-         asy2xYm5Jy6t9erLoEitWfCug5tY+bpoNGXKxfHH4RkTH7awiGbckKiSOiQ8f1vvjd7s
-         /s88xg/Hg2H4IQ7hvrFqt7Re/XLfah0Tb2o1fvwRIfqb+ACR78mMS8ukMa+7rVQjA+Lc
-         w1ML+3+aY6s5RROfNOMb3oYCevLs9NiCRKmkNzq1VIyTGVMd2aWRU4hua7EQlJ+GOFDk
-         eHKg==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=subject:from:to:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=eJb/JVp3FxYYy6amy1IruEIALBdW9MHQB109k6uN/v8=;
+        b=OEg0DHRNuXRLc1V6+7F9NDFSHuy5GLz7adaD9dNnKQ2LH4tCZuMxOvXXke8u4VMmgI
+         eNTaryQUc7DvC0oCa3ObnN+arXUoi1Ko8YF4AQCqqM9GTgWxMROQMA9pZSZqGIC/r/3Z
+         KjJQOJdSy02pE0aysiM4IvfqA2M/c3CgFI14uarMi/NrKaoxPEu7/G1q2+YlsyEmmLeF
+         QQ+xVjDyBvXl9yw0i/V5eLs+Lt5u+8Hh1CmSoBejuA8pqxbKOb3joxu3PSYIr9RiAjzc
+         +0NZxupcyAcNfLnnMjdRQR2YvSQCCZ8smHAVZv6/X6IDxCRKM4s013UarKsSOh0mo98c
+         703Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=30gTw4/rMDKI6yq7yX+hC0yjowpbiiQ805lH/tDCQ54=;
-        b=cJ4waNAlgVfSiTJZDtOUiefwo7EC9q3ELbnO2Dl+Dua4ovZwsCPCaVzKGRNCRYgbKS
-         +jtdkcDLplu3438wttcuL6ibMBYyMGBc7J/lzo3HGZ7YRMFcgyPaagW/GgsRBJSzc427
-         4MoZRPurik1k/yWxnlY2vpZRFZilPw8+LuOeeXwUgrwCQzAxzk77HwNb6wix1LEN0SfD
-         qMqxxbNBePnIUFkPuFeY8wKdSTihHEKX5uFPtzv1Ixo06r25ZWU3vWCxEH2/2Qpnry3w
-         zbvTrc+E1moYXWXLlbruxKG/DLLXdNXGp9AEyYJWN7ZkdsP2KjmT1DHzSLA6TGqPWEYz
-         q0+Q==
-X-Gm-Message-State: AOAM533eWcKWnin01gnxaHtH1uL1ejCZFVkSCimmK0k9pGsuOE2HSegN
-        mKw2Jn8Xo9xAn9rGhxGE0WjHW3BKxDNM8GSmQWQyHSt383Y=
-X-Google-Smtp-Source: ABdhPJxbSa3iBTQHzsjyqJp8X0riqQ6PzO0B+GzOjGNQOpJg5j+H9cojxJYqf7N0BmHwYSMGlw8wonmW1eRYsArx6+k=
-X-Received: by 2002:ac2:489b:: with SMTP id x27mr1128184lfc.43.1632940598743;
- Wed, 29 Sep 2021 11:36:38 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=eJb/JVp3FxYYy6amy1IruEIALBdW9MHQB109k6uN/v8=;
+        b=VMVNuacZDsut19Pn9XS02L9LELIustGAb8safAR1HZ8GovlGJvmzt7a/XnRXRfdeHr
+         cA6wJt5nc59gRRzPfm0PQvnIOHajy8P4rQifMhyqIV/fazRMpjocnrQXFabq6NZdpMAZ
+         RLuV8nthr9H2qRm3J8wgyVbmQAlZ4JRFxdGMuEobUzC/imQjGyIgsp9ExfkSsUBzawkP
+         16KUJTqy4xdqqIcsLzUlqiGZEDwANizGMhN1qYfr0F+fqEX+p4OXGkomrG4NIwZYCaLa
+         VBTwRIzfyUXVpXpNP38d4xObiKdoN+ma9yvrD6VlZ0fvStU0nGjffgmA51JAie96+dQ7
+         Z7Mg==
+X-Gm-Message-State: AOAM530vIxU/Zc7FH07e7kx0+Z0Ut8+qHrlGvIb+Tq69sK72ZQMBGsIU
+        3Xg7geS5yMVdUr0he+pMw/fcd6BhGz8Y
+X-Google-Smtp-Source: ABdhPJw55jw6kvvccB5JEofP9H+Em3wj1Gp4II+pjFc1Lw/J5XL6Pter86UGn/JG5SfWjT6KzQNjKA==
+X-Received: by 2002:ae9:d8c6:: with SMTP id u189mr1363042qkf.391.1632943041787;
+        Wed, 29 Sep 2021 12:17:21 -0700 (PDT)
+Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
+        by smtp.gmail.com with ESMTPSA id l7sm407623qtr.87.2021.09.29.12.17.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Sep 2021 12:17:21 -0700 (PDT)
+Subject: [PATCH] lsm: security_task_getsecid_subj() ->
+ security_current_getsecid_subj()
+From:   Paul Moore <paul@paul-moore.com>
+To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+Date:   Wed, 29 Sep 2021 15:17:20 -0400
+Message-ID: <163294304032.208242.9097581875096098591.stgit@olly>
+User-Agent: StGit/1.3
 MIME-Version: 1.0
-References: <a507efa7-066b-decf-8605-89cdb0ac1951.ref@schaufler-ca.com>
- <a507efa7-066b-decf-8605-89cdb0ac1951@schaufler-ca.com> <CAHC9VhR9SKX_-SAmtcCj+vuUvcdq-SWzKs86BKMjBcC8GhJ1gg@mail.gmail.com>
- <dd58bbf5-7983-ca26-c335-6bf8e492fcaa@schaufler-ca.com> <CAP_N_Z9iCP_xNNNSRVEzgGER7Zg+bb_nROzBUct=V6UyWn1P5A@mail.gmail.com>
- <2409eb92-aff5-7e1f-db9d-3c3ff3a12ad7@schaufler-ca.com> <5fd9974b-531b-b7e9-81d3-ffefbad3ee96@schaufler-ca.com>
-In-Reply-To: <5fd9974b-531b-b7e9-81d3-ffefbad3ee96@schaufler-ca.com>
-From:   "Jiang Wang ." <jiang.wang@bytedance.com>
-Date:   Wed, 29 Sep 2021 11:36:28 -0700
-Message-ID: <CAP_N_Z93qyofipbRzdq2MmzhzsgPFC43+790fpxjRwGNcbwcig@mail.gmail.com>
-Subject: Re: [External] Re: Regression in unix stream sockets with the Smack LSM
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Cong Wang <cong.wang@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 29, 2021 at 8:44 AM Casey Schaufler <casey@schaufler-ca.com> wr=
-ote:
->
-> On 9/20/2021 4:44 PM, Casey Schaufler wrote:
-> > On 9/20/2021 3:35 PM, Jiang Wang . wrote:
-> >> On Wed, Sep 15, 2021 at 9:52 AM Casey Schaufler <casey@schaufler-ca.co=
-m> wrote:
-> >>> On 9/13/2021 4:47 PM, Paul Moore wrote:
-> >>>> On Mon, Sep 13, 2021 at 6:53 PM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> >>>>> Commit 77462de14a43f4d98dbd8de0f5743a4e02450b1d
-> >>>>>
-> >>>>>         af_unix: Add read_sock for stream socket types
-> >>>>>
-> >>>>> introduced a regression in UDS socket connections for the Smack LSM=
-.
-> >>>>> I have not tracked done the details of why the change broke the cod=
-e,
-> >>>>> but this is where bisecting the kernel indicates the problem lies, =
-and
-> >>>>> I have verified that reverting this change repairs the problem.
-> >>>>>
-> >>>>> You can verify the problem with the Smack test suite:
-> >>>>>
-> >>>>>         https://github.com/smack-team/smack-testsuite.git
-> >>>>>
-> >>>>> The failing test is tests/uds-access.sh.
-> >>>>>
-> >> I tried to reproduce with tests/uds-access.sh, but the first two test
-> >> cases always failed.
->
-> Just piping in that the behavior hasn't changed in 5.15-rc3.
-> It still usually fails, with the occasional success. These
-> tests used to succeed.
->
-Got it. I am still working on it. I noticed that I did not enable smack
-related kernel configs in my previous tests. I will try again.
-Also, just to make sure, could you send me your kernel config?
+The security_task_getsecid_subj() LSM hook invites misuse by allowing
+callers to specify a task even though the hook is only safe when the
+current task is referenced.  Fix this by removing the task_struct
+argument to the hook, requiring LSM implementations to use the
+current task.  While we are changing the hook declaration we also
+rename the function to security_current_getsecid_subj() in an effort
+to reinforce that the hook captures the subjective credentials of the
+current task and not an arbitrary task on the system.
 
-I think there is a chance that other commits break the test, but I
-will test more to make sure. Thanks.
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ include/linux/lsm_hook_defs.h         |    3 +--
+ include/linux/lsm_hooks.h             |    8 +++-----
+ include/linux/security.h              |    4 ++--
+ kernel/audit.c                        |    4 ++--
+ kernel/auditfilter.c                  |    3 +--
+ kernel/auditsc.c                      |   10 +++++++++-
+ net/netlabel/netlabel_unlabeled.c     |    2 +-
+ net/netlabel/netlabel_user.h          |    2 +-
+ security/apparmor/lsm.c               |   13 ++++++++++---
+ security/integrity/ima/ima_appraise.c |    2 +-
+ security/integrity/ima/ima_main.c     |   14 +++++++-------
+ security/security.c                   |    6 +++---
+ security/selinux/hooks.c              |   19 +++----------------
+ security/smack/smack.h                |   16 ----------------
+ security/smack/smack_lsm.c            |    9 ++++-----
+ 15 files changed, 48 insertions(+), 67 deletions(-)
 
-> > That was my initial impression as well. However, when I started
-> > running the tests outside the routine "make test-results" I started
-> > observing that they succeeded irregularly.
-> >
-> > My biggest concern is that the test ever fails. The uds-access test
-> > has not failed in several releases. The erratic behavior just adds
-> > spice to the problem.
-> >
-> >>  I tried different kernels with and without my
-> >> unix-stream sockmap patches. Also tried standard debian 4.19
-> >> kernel and they all have the same result.  What distro did you use? ce=
-ntos?
-> >> Fedora?
-> > I have been testing on Fedora32 and Fedora34.
-> >
-> >>  Have you tested on debian based distros?
-> > Ubuntu 20.04.3 with a 5.15-rc1 kernel is exhibiting the same
-> > behavior. The Ubuntu system fails the test more regularly, but
-> > does succeed on occasion.
-> >
-> >> failing log:
-> >> root@gitlab-runner-stretch:~/smack-testsuite# tests/uds-access.sh -v
-> > # tools/clean-targets.sh
-> > # tests/uds-access.sh -v
-> >
-> > will remove the UDS filesystem entry before the test runs.
-> >
-> >
-> >> mkdir: cannot create directory =E2=80=98./targets/uds-notroot=E2=80=99=
-: File exists
-> >> tests/uds-access.sh:71 FAIL
-> >> tests/uds-access.sh:76 FAIL
-> >> tests/uds-access.sh:81 PASS
-> >> tests/uds-access.sh:86 PASS
-> >> tests/uds-access.sh:91 PASS
-> >> tests/uds-access.sh PASS=3D3 FAIL=3D2
-> >> root@gitlab-runner-stretch:~/smack-testsuite# uname -a
-> >> Linux gitlab-runner-stretch 5.14.0-rc5.bm.1-amd64+ #6 SMP Mon Sep 20
-> >> 22:01:10 UTC 2021 x86_64 GNU/Linux
-> >> root@gitlab-runner-stretch:~/smack-testsuite#
-> >>
-> >>>>> I have not looked to see if there's a similar problem with SELinux.
-> >>>>> There may be, but if there isn't it doesn't matter, there's still a
-> >>>>> bug.
-> >>>> FWIW, the selinux-testsuite tests ran clean today with v5.15-rc1 (it
-> >>>> looks like this code is only in v5.15) but as Casey said, a regressi=
-on
-> >>>> is a regression.
-> >>>>
-> >>>> Casey, what actually fails on the Smack system with this commit?
-> >>> This problem occurs with security=3Dnone as well as with security=3Ds=
-mack.
-> >>>
-> >>> There isn't a problem with connect, that always works correctly.
-> >>> The problem is an unexpected read() failure in the connecting process=
-.
-> >>> This doesn't occur all the time, and sometimes happens in the first
-> >>> of my two tests, sometimes the second, sometimes neither and, you gue=
-ssed
-> >>> it, sometimes both.
-> >>>
-> >>> Here's a sample socat log demonstrating the problem. The first run,
-> >>> ending at "uds-access RC=3D0" behaves as expected. The second, ending
-> >>> at "uds-access RC=3D1", demonstrates the read failure. This case was
-> >> I tried to compare logs between RC=3D0 and RC=3D1, but they look  to m=
-e
-> >> not apple to apple comparison? The read syscall have different paramet=
-ers
-> >> and the syscall sequences are different. I am not sure which syscall
-> >> is the first failure.  See more comments below.
-> > The data being feed to socat is the Smack label, so the data passed acr=
-oss
-> > the socket will be of different length ("Pop" vs. "Snap") between the
-> > two test cases, but that should be the only difference.
-> >
-> >
-> >>> run with Smack enabled, but I see the same problem with the same
-> >>> unpredictability on the same kernel with security=3Dnone.
-> >>>
-> >>> I've tried to convince myself that there's a flaw in the way I've
-> >>> set up the scripts. They've been pretty robust and I've never seen
-> >>> socat behaving erratically before. I've instrumented the kernel
-> >>> code and all the security checks are behaving as expected. Plus,
-> >>> as I mentioned above, the problem also occurs without an LSM.
-> >>>
-> >>> 2021/09/15 08:49:50 socat[2215] D getpid()
-> >>> 2021/09/15 08:49:50 socat[2215] D getpid() -> 2215
-> >>> 2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_PID", "2215", 1)
-> >>> 2021/09/15 08:49:50 socat[2215] D setenv() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_PPID", "2215", 1)
-> >>> 2021/09/15 08:49:50 socat[2215] D setenv() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] I socat by Gerhard Rieger and contrib=
-utors - see www.dest-unreach.org
-> >>> 2021/09/15 08:49:50 socat[2215] I This product includes software deve=
-loped by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.op=
-enssl.org/)
-> >>> 2021/09/15 08:49:50 socat[2215] I This product includes software writ=
-ten by Tim Hudson (tjh@cryptsoft.com)
-> >>> 2021/09/15 08:49:50 socat[2215] D socat version 1.7.4.1 on Jan 27 202=
-1 00:00:00
-> >>> 2021/09/15 08:49:50 socat[2215] D setenv("SOCAT_VERSION", "1.7.4.1", =
-1)
-> >>> 2021/09/15 08:49:50 socat[2215] D setenv() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D running on Linux version #58 SMP We=
-d Sep 15 08:40:38 PDT 2021, release 5.15.0-rc1bisect, machine x86_64
-> >>>
-> >>> 2021/09/15 08:49:50 socat[2215] D argv[0]: "socat"
-> >>> 2021/09/15 08:49:50 socat[2215] D argv[1]: "-d"
-> >>> 2021/09/15 08:49:50 socat[2215] D argv[2]: "-d"
-> >>> 2021/09/15 08:49:50 socat[2215] D argv[3]: "-d"
-> >>> 2021/09/15 08:49:50 socat[2215] D argv[4]: "-d"
-> >>> 2021/09/15 08:49:50 socat[2215] D argv[5]: "-"
-> >>> 2021/09/15 08:49:50 socat[2215] D argv[6]: "UNIX-CONNECT:./targets/ud=
-s-notroot/uds-access-socket"
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction(1, 0x7fffaec50b50, 0x0)
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction(2, 0x7fffaec50b50, 0x0)
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction(3, 0x7fffaec50b50, 0x0)
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction(4, 0x7fffaec50b50, 0x0)
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction(6, 0x7fffaec50b50, 0x0)
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction(7, 0x7fffaec50b50, 0x0)
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction(8, 0x7fffaec50b50, 0x0)
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction(11, 0x7fffaec50b50, 0x0)
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction(15, 0x7fffaec50b50, 0x0)
-> >>> 2021/09/15 08:49:50 socat[2215] D sigaction() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D signal(13, 0x1)
-> >>> 2021/09/15 08:49:50 socat[2215] D signal() -> 0x0
-> >>> 2021/09/15 08:49:50 socat[2215] D atexit(0x55aa5d645110)
-> >>> 2021/09/15 08:49:50 socat[2215] D atexit() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D xioopen("-")
-> >>> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
-> >>> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f0139d0
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc(1024)
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f013d30
-> >>> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
-> >>> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f014140
-> >>> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
-> >>> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f014bc0
-> >>> 2021/09/15 08:49:50 socat[2215] D isatty(0)
-> >>> 2021/09/15 08:49:50 socat[2215] D isatty() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D isatty(1)
-> >>> 2021/09/15 08:49:50 socat[2215] D isatty() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc(128)
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f014f00
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc(128)
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f014f90
-> >>> 2021/09/15 08:49:50 socat[2215] N reading from and writing to stdio
-> >>> 2021/09/15 08:49:50 socat[2215] D xioopen("UNIX-CONNECT:./targets/uds=
--notroot/uds-access-socket")
-> >>> 2021/09/15 08:49:50 socat[2215] D calloc(1, 824)
-> >>> 2021/09/15 08:49:50 socat[2215] D calloc() -> 0x55aa5f015020
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc(1024)
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f015360
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc(128)
-> >>> 2021/09/15 08:49:50 socat[2215] D malloc() -> 0x55aa5f015770
-> >>> 2021/09/15 08:49:50 socat[2215] N opening connection to AF=3D1 "./tar=
-gets/uds-notroot/uds-access-socket"
-> >>> 2021/09/15 08:49:50 socat[2215] D socket(1, 1, 0)
-> >>> 2021/09/15 08:49:50 socat[2215] I socket(1, 1, 0) -> 5
-> >>> 2021/09/15 08:49:50 socat[2215] D fcntl(5, 2, 1)
-> >>> 2021/09/15 08:49:50 socat[2215] D fcntl() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D connect(5, {1,AF=3D1 "./targets/uds=
--notroot/uds-access-socket"}, 41)
-> >>> 2021/09/15 08:49:50 socat[2215] D connect() -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D getsockname(5, 0x7fffaec50580, 0x7f=
-ffaec50564{112})
-> >>> 2021/09/15 08:49:50 socat[2215] D getsockname(, {AF=3D1 "<anon>"}, {2=
-}) -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] N successfully connected from local a=
-ddress AF=3D1 "uds-notroot/ud\xEE\xEE\xEE\xEEcess-socket")\n"
-> >>> 2021/09/15 08:49:50 socat[2215] I resolved and opened all sock addres=
-ses
-> >>> 2021/09/15 08:49:50 socat[2215] D posix_memalign(0x7fffaec50b28, 4096=
-, 16385)
-> >>> 2021/09/15 08:49:50 socat[2215] D posix_memalign(...) -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] N starting data transfer loop with FD=
-s [0,1] and [5,5]
-> >>> 2021/09/15 08:49:50 socat[2215] D data loop: sock1->eof=3D0, sock2->e=
-of=3D0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
-> >>> 2021/09/15 08:49:50 socat[2215] D select(6, &0x21, &0x22, &0x0, NULL/=
-0.000000)
-> >>> 2021/09/15 08:49:50 socat[2215] D select -> (, 0x21, 0x22, 0x0, NULL/=
-0.000000), 4
-> >>> 2021/09/15 08:49:50 socat[2215] D read(0, 0x55aa5f016000, 8192)
-> >>> 2021/09/15 08:49:50 socat[2215] D read -> 4
-> >>> 2021/09/15 08:49:50 socat[2215] D write(5, 0x55aa5f016000, 4)
-> >>> Pop
-> >>> 2021/09/15 08:49:50 socat[2215] D write -> 4
-> >>> 2021/09/15 08:49:50 socat[2215] I transferred 4 bytes from 0 to 5
-> >>> 2021/09/15 08:49:50 socat[2215] D read(5, 0x55aa5f016000, 8192)
-> >>> 2021/09/15 08:49:50 socat[2215] D read -> 4
-> >>> 2021/09/15 08:49:50 socat[2215] D write(1, 0x55aa5f016000, 4)
-> >>> Pop
-> >>> 2021/09/15 08:49:50 socat[2215] D write -> 4
-> >>> 2021/09/15 08:49:50 socat[2215] I transferred 4 bytes from 5 to 1
-> >>> 2021/09/15 08:49:50 socat[2215] D data loop: sock1->eof=3D0, sock2->e=
-of=3D0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
-> >>> 2021/09/15 08:49:50 socat[2215] D select(6, &0x21, &0x22, &0x0, NULL/=
-0.000000)
-> >>> 2021/09/15 08:49:50 socat[2215] D select -> (, 0x21, 0x22, 0x0, NULL/=
-0.000000), 4
-> >>> 2021/09/15 08:49:50 socat[2215] D read(0, 0x55aa5f016000, 8192)
-> >>> 2021/09/15 08:49:50 socat[2215] D read -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] D read(5, 0x55aa5f016000, 8192)
-> >>> 2021/09/15 08:49:50 socat[2215] D read -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] N socket 1 (fd 0) is at EOF
-> >>> 2021/09/15 08:49:50 socat[2215] I shutdown(5, 1)
-> >>> 2021/09/15 08:49:50 socat[2215] D shutdown()  -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] N socket 2 (fd 5) is at EOF
-> >>> 2021/09/15 08:49:50 socat[2215] I shutdown(5, 2)
-> >>> 2021/09/15 08:49:50 socat[2215] D shutdown()  -> 0
-> >>> 2021/09/15 08:49:50 socat[2215] N exiting with status 0
-> >>> 2021/09/15 08:49:50 socat[2215] D exit(0)
-> >>> 2021/09/15 08:49:50 socat[2215] D starting xioexit()
-> >>> 2021/09/15 08:49:50 socat[2215] D finished xioexit()
-> >>> uds-access RC=3D0
-> >>> 2021/09/15 08:49:52 socat[2240] D getpid()
-> >>> 2021/09/15 08:49:52 socat[2240] D getpid() -> 2240
-> >>> 2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_PID", "2240", 1)
-> >>> 2021/09/15 08:49:52 socat[2240] D setenv() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_PPID", "2240", 1)
-> >>> 2021/09/15 08:49:52 socat[2240] D setenv() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] I socat by Gerhard Rieger and contrib=
-utors - see www.dest-unreach.org
-> >>> 2021/09/15 08:49:52 socat[2240] I This product includes software deve=
-loped by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.op=
-enssl.org/)
-> >>> 2021/09/15 08:49:52 socat[2240] I This product includes software writ=
-ten by Tim Hudson (tjh@cryptsoft.com)
-> >>> 2021/09/15 08:49:52 socat[2240] D socat version 1.7.4.1 on Jan 27 202=
-1 00:00:00
-> >>> 2021/09/15 08:49:52 socat[2240] D setenv("SOCAT_VERSION", "1.7.4.1", =
-1)
-> >>> 2021/09/15 08:49:52 socat[2240] D setenv() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D running on Linux version #58 SMP We=
-d Sep 15 08:40:38 PDT 2021, release 5.15.0-rc1bisect, machine x86_64
-> >>>
-> >>> 2021/09/15 08:49:52 socat[2240] D argv[0]: "socat"
-> >>> 2021/09/15 08:49:52 socat[2240] D argv[1]: "-d"
-> >>> 2021/09/15 08:49:52 socat[2240] D argv[2]: "-d"
-> >>> 2021/09/15 08:49:52 socat[2240] D argv[3]: "-d"
-> >>> 2021/09/15 08:49:52 socat[2240] D argv[4]: "-d"
-> >>> 2021/09/15 08:49:52 socat[2240] D argv[5]: "-"
-> >>> 2021/09/15 08:49:52 socat[2240] D argv[6]: "UNIX-CONNECT:./targets/ud=
-s-notroot/uds-access-socket"
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction(1, 0x7ffcca7e26c0, 0x0)
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction(2, 0x7ffcca7e26c0, 0x0)
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction(3, 0x7ffcca7e26c0, 0x0)
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction(4, 0x7ffcca7e26c0, 0x0)
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction(6, 0x7ffcca7e26c0, 0x0)
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction(7, 0x7ffcca7e26c0, 0x0)
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction(8, 0x7ffcca7e26c0, 0x0)
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction(11, 0x7ffcca7e26c0, 0x0)
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction(15, 0x7ffcca7e26c0, 0x0)
-> >>> 2021/09/15 08:49:52 socat[2240] D sigaction() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D signal(13, 0x1)
-> >>> 2021/09/15 08:49:52 socat[2240] D signal() -> 0x0
-> >>> 2021/09/15 08:49:52 socat[2240] D atexit(0x560590a15110)
-> >>> 2021/09/15 08:49:52 socat[2240] D atexit() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D xioopen("-")
-> >>> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
-> >>> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e899d0
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc(1024)
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e89d30
-> >>> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
-> >>> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8a140
-> >>> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
-> >>> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8abc0
-> >>> 2021/09/15 08:49:52 socat[2240] D isatty(0)
-> >>> 2021/09/15 08:49:52 socat[2240] D isatty() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D isatty(1)
-> >>> 2021/09/15 08:49:52 socat[2240] D isatty() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc(128)
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8af00
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc(128)
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8af90
-> >>> 2021/09/15 08:49:52 socat[2240] N reading from and writing to stdio
-> >>> 2021/09/15 08:49:52 socat[2240] D xioopen("UNIX-CONNECT:./targets/uds=
--notroot/uds-access-socket")
-> >>> 2021/09/15 08:49:52 socat[2240] D calloc(1, 824)
-> >>> 2021/09/15 08:49:52 socat[2240] D calloc() -> 0x560591e8b020
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc(1024)
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8b360
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc(128)
-> >>> 2021/09/15 08:49:52 socat[2240] D malloc() -> 0x560591e8b770
-> >>> 2021/09/15 08:49:52 socat[2240] N opening connection to AF=3D1 "./tar=
-gets/uds-notroot/uds-access-socket"
-> >>> 2021/09/15 08:49:52 socat[2240] D socket(1, 1, 0)
-> >>> 2021/09/15 08:49:52 socat[2240] I socket(1, 1, 0) -> 5
-> >>> 2021/09/15 08:49:52 socat[2240] D fcntl(5, 2, 1)
-> >>> 2021/09/15 08:49:52 socat[2240] D fcntl() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D connect(5, {1,AF=3D1 "./targets/uds=
--notroot/uds-access-socket"}, 41)
-> >>> 2021/09/15 08:49:52 socat[2240] D connect() -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D getsockname(5, 0x7ffcca7e20f0, 0x7f=
-fcca7e20d4{112})
-> >>> 2021/09/15 08:49:52 socat[2240] D getsockname(, {AF=3D1 "<anon>"}, {2=
-}) -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] N successfully connected from local a=
-ddress AF=3D1 "uds-notroot/ud\xEE\xEE\xEE\xEEcess-socket")\n"
-> >>> 2021/09/15 08:49:52 socat[2240] I resolved and opened all sock addres=
-ses
-> >>> 2021/09/15 08:49:52 socat[2240] D posix_memalign(0x7ffcca7e2698, 4096=
-, 16385)
-> >>> 2021/09/15 08:49:52 socat[2240] D posix_memalign(...) -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] N starting data transfer loop with FD=
-s [0,1] and [5,5]
-> >>> 2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3D0, sock2->e=
-of=3D0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
-> >>> 2021/09/15 08:49:52 socat[2240] D select(6, &0x21, &0x22, &0x0, NULL/=
-0.000000)
-> >>> 2021/09/15 08:49:52 socat[2240] D select -> (, 0x1, 0x22, 0x0, NULL/0=
-.000000), 3
-> >>> 2021/09/15 08:49:52 socat[2240] D read(0, 0x560591e8c000, 8192)
-> >>> 2021/09/15 08:49:52 socat[2240] D read -> 5
-> >>> 2021/09/15 08:49:52 socat[2240] D write(5, 0x560591e8c000, 5)
-> >>> 2021/09/15 08:49:52 socat[2240] D write -> 5
-> >>> 2021/09/15 08:49:52 socat[2240] I transferred 5 bytes from 0 to 5
-> >>> 2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3D0, sock2->e=
-of=3D0, closing=3D0, wasaction=3D1, total_to=3D{0.000000}
-> >>> 2021/09/15 08:49:52 socat[2240] D select(6, &0x21, &0x20, &0x0, NULL/=
-0.000000)
-> >>> 2021/09/15 08:49:52 socat[2240] D select -> (, 0x1, 0x20, 0x0, NULL/0=
-.000000), 2
-> >>> 2021/09/15 08:49:52 socat[2240] D read(0, 0x560591e8c000, 8192)
-> >>> 2021/09/15 08:49:52 socat[2240] D read -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] N socket 1 (fd 0) is at EOF
-> >>> 2021/09/15 08:49:52 socat[2240] I shutdown(5, 1)
-> >>> 2021/09/15 08:49:52 socat[2240] D shutdown()  -> 0
-> >> Is this shutdown expected?
-> > I'm not an expert on the internals of socat, but I don't think it
-> > is expected.
-> >
-> >> 2021/09/15 08:49:52 socat[2240] D data loop: sock1->eof=3D3, sock2->eo=
-f=3D0, closing=3D1, wasaction=3D1, total_to=3D{0.000000}
-> >> 2021/09/15 08:49:52 socat[2240] D select(6, &0x20, &0x0, &0x0, &0.5000=
-00)
-> >> Snap
-> >> 2021/09/15 08:49:52 socat[2240] D select -> (, 0x20, 0x0, 0x0, &0.5000=
-00), 1
-> >> 2021/09/15 08:49:52 socat[2240] D read(5, 0x560591e8c000, 8192)
-> >> 2021/09/15 08:49:52 socat[2240] D read -> -1
-> >> This read failure seems due to the previous shutdown, right?
-> > Again, I'm not the socat expert, but that would seem reasonable
-> > to me.
-> >
-> >
-> >>> 2021/09/15 08:49:52 socat[2240] E read(5, 0x560591e8c000, 8192): Inva=
-lid argument
-> >>> 2021/09/15 08:49:52 socat[2240] N exit(1)
-> >>> 2021/09/15 08:49:52 socat[2240] D starting xioexit()
-> >>> 2021/09/15 08:49:52 socat[2240] I shutdown(5, 2)
-> >>> 2021/09/15 08:49:52 socat[2240] D shutdown()  -> 0
-> >>> 2021/09/15 08:49:52 socat[2240] D finished xioexit()
-> >>> uds-access RC=3D1
-> >>>
-> >>>
-> >>>
-> >>>
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 2adeea44c0d5..8d04b18155a3 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -205,8 +205,7 @@ LSM_HOOK(int, 0, task_fix_setgid, struct cred *new, const struct cred * old,
+ LSM_HOOK(int, 0, task_setpgid, struct task_struct *p, pid_t pgid)
+ LSM_HOOK(int, 0, task_getpgid, struct task_struct *p)
+ LSM_HOOK(int, 0, task_getsid, struct task_struct *p)
+-LSM_HOOK(void, LSM_RET_VOID, task_getsecid_subj,
+-	 struct task_struct *p, u32 *secid)
++LSM_HOOK(void, LSM_RET_VOID, current_getsecid_subj, u32 *secid)
+ LSM_HOOK(void, LSM_RET_VOID, task_getsecid_obj,
+ 	 struct task_struct *p, u32 *secid)
+ LSM_HOOK(int, 0, task_setnice, struct task_struct *p, int nice)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 5c4c5c0602cb..9f5b93011ecb 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -716,11 +716,9 @@
+  *	@p.
+  *	@p contains the task_struct for the process.
+  *	Return 0 if permission is granted.
+- * @task_getsecid_subj:
+- *	Retrieve the subjective security identifier of the task_struct in @p
+- *	and return it in @secid.  Special care must be taken to ensure that @p
+- *	is the either the "current" task, or the caller has exclusive access
+- *	to @p.
++ * @current_getsecid_subj:
++ *	Retrieve the subjective security identifier of the current task and
++ *	return it in @secid.
+  *	In case of failure, @secid will be set to zero.
+  * @task_getsecid_obj:
+  *	Retrieve the objective security identifier of the task_struct in @p
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5b7288521300..24190cf61858 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -417,7 +417,7 @@ int security_task_fix_setgid(struct cred *new, const struct cred *old,
+ int security_task_setpgid(struct task_struct *p, pid_t pgid);
+ int security_task_getpgid(struct task_struct *p);
+ int security_task_getsid(struct task_struct *p);
+-void security_task_getsecid_subj(struct task_struct *p, u32 *secid);
++void security_current_getsecid_subj(u32 *secid);
+ void security_task_getsecid_obj(struct task_struct *p, u32 *secid);
+ int security_task_setnice(struct task_struct *p, int nice);
+ int security_task_setioprio(struct task_struct *p, int ioprio);
+@@ -1112,7 +1112,7 @@ static inline int security_task_getsid(struct task_struct *p)
+ 	return 0;
+ }
+ 
+-static inline void security_task_getsecid_subj(struct task_struct *p, u32 *secid)
++static inline void security_current_getsecid_subj(u32 *secid)
+ {
+ 	*secid = 0;
+ }
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 121d37e700a6..d4084751cfe6 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -2132,7 +2132,7 @@ int audit_log_task_context(struct audit_buffer *ab)
+ 	int error;
+ 	u32 sid;
+ 
+-	security_task_getsecid_subj(current, &sid);
++	security_current_getsecid_subj(&sid);
+ 	if (!sid)
+ 		return 0;
+ 
+@@ -2353,7 +2353,7 @@ int audit_signal_info(int sig, struct task_struct *t)
+ 			audit_sig_uid = auid;
+ 		else
+ 			audit_sig_uid = uid;
+-		security_task_getsecid_subj(current, &audit_sig_sid);
++		security_current_getsecid_subj(&audit_sig_sid);
+ 	}
+ 
+ 	return audit_signal_info_syscall(t);
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index db2c6b59dfc3..f4ebd2f1cfca 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -1359,8 +1359,7 @@ int audit_filter(int msgtype, unsigned int listtype)
+ 			case AUDIT_SUBJ_SEN:
+ 			case AUDIT_SUBJ_CLR:
+ 				if (f->lsm_rule) {
+-					security_task_getsecid_subj(current,
+-								    &sid);
++					security_current_getsecid_subj(&sid);
+ 					result = security_audit_rule_match(sid,
+ 						   f->type, f->op, f->lsm_rule);
+ 				}
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 8dd73a64f921..e0987ee71b8f 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -673,7 +673,15 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 			   logged upon error */
+ 			if (f->lsm_rule) {
+ 				if (need_sid) {
+-					security_task_getsecid_subj(tsk, &sid);
++					/* @tsk should always be equal to
++					 * @current with the exception of
++					 * fork()/copy_process() in which case
++					 * the new @tsk creds are still a dup
++					 * of @current's creds so we can still
++					 * use security_current_getsecid_subj()
++					 * here even though it always refs
++					 * @current's creds */
++					security_current_getsecid_subj(&sid);
+ 					need_sid = 0;
+ 				}
+ 				result = security_audit_rule_match(sid, f->type,
+diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+index 566ba4397ee4..8490e46359ae 100644
+--- a/net/netlabel/netlabel_unlabeled.c
++++ b/net/netlabel/netlabel_unlabeled.c
+@@ -1537,7 +1537,7 @@ int __init netlbl_unlabel_defconf(void)
+ 	/* Only the kernel is allowed to call this function and the only time
+ 	 * it is called is at bootup before the audit subsystem is reporting
+ 	 * messages so don't worry to much about these values. */
+-	security_task_getsecid_subj(current, &audit_info.secid);
++	security_current_getsecid_subj(&audit_info.secid);
+ 	audit_info.loginuid = GLOBAL_ROOT_UID;
+ 	audit_info.sessionid = 0;
+ 
+diff --git a/net/netlabel/netlabel_user.h b/net/netlabel/netlabel_user.h
+index 6190cbf94bf0..d6c5b31eb4eb 100644
+--- a/net/netlabel/netlabel_user.h
++++ b/net/netlabel/netlabel_user.h
+@@ -32,7 +32,7 @@
+  */
+ static inline void netlbl_netlink_auditinfo(struct netlbl_audit *audit_info)
+ {
+-	security_task_getsecid_subj(current, &audit_info->secid);
++	security_current_getsecid_subj(&audit_info->secid);
+ 	audit_info->loginuid = audit_get_loginuid(current);
+ 	audit_info->sessionid = audit_get_sessionid(current);
+ }
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index f72406fe1bf2..fc21190c4f4f 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -728,7 +728,14 @@ static void apparmor_bprm_committed_creds(struct linux_binprm *bprm)
+ 	return;
+ }
+ 
+-static void apparmor_task_getsecid(struct task_struct *p, u32 *secid)
++static void apparmor_current_getsecid_subj(u32 *secid)
++{
++	struct aa_label *label = aa_get_task_label(current);
++	*secid = label->secid;
++	aa_put_label(label);
++}
++
++static void apparmor_task_getsecid_obj(struct task_struct *p, u32 *secid)
+ {
+ 	struct aa_label *label = aa_get_task_label(p);
+ 	*secid = label->secid;
+@@ -1252,8 +1259,8 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 
+ 	LSM_HOOK_INIT(task_free, apparmor_task_free),
+ 	LSM_HOOK_INIT(task_alloc, apparmor_task_alloc),
+-	LSM_HOOK_INIT(task_getsecid_subj, apparmor_task_getsecid),
+-	LSM_HOOK_INIT(task_getsecid_obj, apparmor_task_getsecid),
++	LSM_HOOK_INIT(current_getsecid_subj, apparmor_current_getsecid_subj),
++	LSM_HOOK_INIT(task_getsecid_obj, apparmor_task_getsecid_obj),
+ 	LSM_HOOK_INIT(task_setrlimit, apparmor_task_setrlimit),
+ 	LSM_HOOK_INIT(task_kill, apparmor_task_kill),
+ 
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index dbba51583e7c..17232bbfb9f9 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -76,7 +76,7 @@ int ima_must_appraise(struct user_namespace *mnt_userns, struct inode *inode,
+ 	if (!ima_appraise)
+ 		return 0;
+ 
+-	security_task_getsecid_subj(current, &secid);
++	security_current_getsecid_subj(&secid);
+ 	return ima_match_policy(mnt_userns, inode, current_cred(), secid,
+ 				func, mask, IMA_APPRAISE | IMA_HASH, NULL,
+ 				NULL, NULL, NULL);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 465865412100..8c6e4514d494 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -408,7 +408,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+ 	u32 secid;
+ 
+ 	if (file && (prot & PROT_EXEC)) {
+-		security_task_getsecid_subj(current, &secid);
++		security_current_getsecid_subj(&secid);
+ 		return process_measurement(file, current_cred(), secid, NULL,
+ 					   0, MAY_EXEC, MMAP_CHECK);
+ 	}
+@@ -446,7 +446,7 @@ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+ 	    !(prot & PROT_EXEC) || (vma->vm_flags & VM_EXEC))
+ 		return 0;
+ 
+-	security_task_getsecid_subj(current, &secid);
++	security_current_getsecid_subj(&secid);
+ 	inode = file_inode(vma->vm_file);
+ 	action = ima_get_action(file_mnt_user_ns(vma->vm_file), inode,
+ 				current_cred(), secid, MAY_EXEC, MMAP_CHECK,
+@@ -487,7 +487,7 @@ int ima_bprm_check(struct linux_binprm *bprm)
+ 	int ret;
+ 	u32 secid;
+ 
+-	security_task_getsecid_subj(current, &secid);
++	security_current_getsecid_subj(&secid);
+ 	ret = process_measurement(bprm->file, current_cred(), secid, NULL, 0,
+ 				  MAY_EXEC, BPRM_CHECK);
+ 	if (ret)
+@@ -512,7 +512,7 @@ int ima_file_check(struct file *file, int mask)
+ {
+ 	u32 secid;
+ 
+-	security_task_getsecid_subj(current, &secid);
++	security_current_getsecid_subj(&secid);
+ 	return process_measurement(file, current_cred(), secid, NULL, 0,
+ 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+ 					   MAY_APPEND), FILE_CHECK);
+@@ -709,7 +709,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
+ 
+ 	/* Read entire file for all partial reads. */
+ 	func = read_idmap[read_id] ?: FILE_CHECK;
+-	security_task_getsecid_subj(current, &secid);
++	security_current_getsecid_subj(&secid);
+ 	return process_measurement(file, current_cred(), secid, NULL,
+ 				   0, MAY_READ, func);
+ }
+@@ -752,7 +752,7 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 	}
+ 
+ 	func = read_idmap[read_id] ?: FILE_CHECK;
+-	security_task_getsecid_subj(current, &secid);
++	security_current_getsecid_subj(&secid);
+ 	return process_measurement(file, current_cred(), secid, buf, size,
+ 				   MAY_READ, func);
+ }
+@@ -905,7 +905,7 @@ int process_buffer_measurement(struct user_namespace *mnt_userns,
+ 	 * buffer measurements.
+ 	 */
+ 	if (func) {
+-		security_task_getsecid_subj(current, &secid);
++		security_current_getsecid_subj(&secid);
+ 		action = ima_get_action(mnt_userns, inode, current_cred(),
+ 					secid, 0, func, &pcr, &template,
+ 					func_data, NULL);
+diff --git a/security/security.c b/security/security.c
+index 9ffa9e9c5c55..827bd161f8b0 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1807,12 +1807,12 @@ int security_task_getsid(struct task_struct *p)
+ 	return call_int_hook(task_getsid, 0, p);
+ }
+ 
+-void security_task_getsecid_subj(struct task_struct *p, u32 *secid)
++void security_current_getsecid_subj(u32 *secid)
+ {
+ 	*secid = 0;
+-	call_void_hook(task_getsecid_subj, p, secid);
++	call_void_hook(current_getsecid_subj, secid);
+ }
+-EXPORT_SYMBOL(security_task_getsecid_subj);
++EXPORT_SYMBOL(security_current_getsecid_subj);
+ 
+ void security_task_getsecid_obj(struct task_struct *p, u32 *secid)
+ {
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index e7ebd45ca345..5c766b901f66 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -229,19 +229,6 @@ static inline u32 cred_sid(const struct cred *cred)
+ 	return tsec->sid;
+ }
+ 
+-/*
+- * get the subjective security ID of a task
+- */
+-static inline u32 task_sid_subj(const struct task_struct *task)
+-{
+-	u32 sid;
+-
+-	rcu_read_lock();
+-	sid = cred_sid(rcu_dereference(task->cred));
+-	rcu_read_unlock();
+-	return sid;
+-}
+-
+ /*
+  * get the objective security ID of a task
+  */
+@@ -4222,9 +4209,9 @@ static int selinux_task_getsid(struct task_struct *p)
+ 			    PROCESS__GETSESSION, NULL);
+ }
+ 
+-static void selinux_task_getsecid_subj(struct task_struct *p, u32 *secid)
++static void selinux_current_getsecid_subj(u32 *secid)
+ {
+-	*secid = task_sid_subj(p);
++	*secid = current_sid();
+ }
+ 
+ static void selinux_task_getsecid_obj(struct task_struct *p, u32 *secid)
+@@ -7221,7 +7208,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
+ 	LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
+ 	LSM_HOOK_INIT(task_getsid, selinux_task_getsid),
+-	LSM_HOOK_INIT(task_getsecid_subj, selinux_task_getsecid_subj),
++	LSM_HOOK_INIT(current_getsecid_subj, selinux_current_getsecid_subj),
+ 	LSM_HOOK_INIT(task_getsecid_obj, selinux_task_getsecid_obj),
+ 	LSM_HOOK_INIT(task_setnice, selinux_task_setnice),
+ 	LSM_HOOK_INIT(task_setioprio, selinux_task_setioprio),
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 99c3422596ab..fc837dcebf96 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -389,22 +389,6 @@ static inline struct smack_known *smk_of_task(const struct task_smack *tsp)
+ 	return tsp->smk_task;
+ }
+ 
+-static inline struct smack_known *smk_of_task_struct_subj(
+-						const struct task_struct *t)
+-{
+-	struct smack_known *skp;
+-	const struct cred *cred;
+-
+-	rcu_read_lock();
+-
+-	cred = rcu_dereference(t->cred);
+-	skp = smk_of_task(smack_cred(cred));
+-
+-	rcu_read_unlock();
+-
+-	return skp;
+-}
+-
+ static inline struct smack_known *smk_of_task_struct_obj(
+ 						const struct task_struct *t)
+ {
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 21a0e7c3b8de..40e1d764e616 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2061,15 +2061,14 @@ static int smack_task_getsid(struct task_struct *p)
+ }
+ 
+ /**
+- * smack_task_getsecid_subj - get the subjective secid of the task
+- * @p: the task
++ * smack_current_getsecid_subj - get the subjective secid of the current task
+  * @secid: where to put the result
+  *
+  * Sets the secid to contain a u32 version of the task's subjective smack label.
+  */
+-static void smack_task_getsecid_subj(struct task_struct *p, u32 *secid)
++static void smack_current_getsecid_subj(u32 *secid)
+ {
+-	struct smack_known *skp = smk_of_task_struct_subj(p);
++	struct smack_known *skp = smk_of_current();
+ 
+ 	*secid = skp->smk_secid;
+ }
+@@ -4756,7 +4755,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(task_setpgid, smack_task_setpgid),
+ 	LSM_HOOK_INIT(task_getpgid, smack_task_getpgid),
+ 	LSM_HOOK_INIT(task_getsid, smack_task_getsid),
+-	LSM_HOOK_INIT(task_getsecid_subj, smack_task_getsecid_subj),
++	LSM_HOOK_INIT(current_getsecid_subj, smack_current_getsecid_subj),
+ 	LSM_HOOK_INIT(task_getsecid_obj, smack_task_getsecid_obj),
+ 	LSM_HOOK_INIT(task_setnice, smack_task_setnice),
+ 	LSM_HOOK_INIT(task_setioprio, smack_task_setioprio),
+
