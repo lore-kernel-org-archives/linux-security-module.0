@@ -2,181 +2,227 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8964FC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B74E7C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 19:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C606619FA
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9482361284
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 19:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350644AbhI3L6o (ORCPT
+        id S1345455AbhI3TB4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Sep 2021 07:58:44 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3902 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350691AbhI3L6n (ORCPT
+        Thu, 30 Sep 2021 15:01:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25176 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1345426AbhI3TBx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Sep 2021 07:58:43 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4HKs8X2nRYz685Yr;
-        Thu, 30 Sep 2021 19:53:48 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Thu, 30 Sep 2021 13:56:59 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
-        <mchehab+huawei@kernel.org>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 7/7] ima: Add support for appraisal with digest lists
-Date:   Thu, 30 Sep 2021 13:55:33 +0200
-Message-ID: <20210930115533.878169-8-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210930115533.878169-1-roberto.sassu@huawei.com>
-References: <20210930115533.878169-1-roberto.sassu@huawei.com>
+        Thu, 30 Sep 2021 15:01:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633028407;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=2pk1sHN9IiEVNwyrRIA+irxwkyugDUv380w1Nyihj+s=;
+        b=I4svXZDjLTu9f7mz9Id9snq7Y8o0bSMAE1u6zPUEFM7vn3uPnPYlwx2R1SlVjMf1GFXnUm
+        P6JTw7d3NubPLKW6gB5Qr9LkrcQEjoyYYY2Q7ufyWhprkcZ3u8pmaw2tvKxsc6qUqmOyRT
+        5WG+QbO81Rpl4s9yVlnrRm9pMwgdqGY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-565-_9nMR1BVNSy7EKgIZIIGLA-1; Thu, 30 Sep 2021 15:00:01 -0400
+X-MC-Unique: _9nMR1BVNSy7EKgIZIIGLA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 89E2F1007928;
+        Thu, 30 Sep 2021 18:59:33 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.17.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0BDC260CD1;
+        Thu, 30 Sep 2021 18:59:11 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id D77042201CC; Thu, 30 Sep 2021 14:59:10 -0400 (EDT)
+Date:   Thu, 30 Sep 2021 14:59:10 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        casey@schaufler-ca.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel J Walsh <dwalsh@redhat.com>, jlayton@kernel.org,
+        idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, bfields@fieldses.org,
+        chuck.lever@oracle.com, stephen.smalley.work@gmail.com
+Subject: [PATCH] security: Return xattr name from
+ security_dentry_init_security()
+Message-ID: <YVYI/p1ipDFiQ5OR@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.63.22]
-X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Introduce a new appraisal method based on the lookup of the file and
-metadata digest in the DIGLIM hash table, enabled with the use_diglim
-directive.
+Right now security_dentry_init_security() only supports single security
+label and is used by SELinux only. There are two users of of this hook,
+namely ceph and nfs.
 
-First pass to ima_appraise_measurement() the actions performed on the
-digest lists containing the found digests.
+NFS does not care about xattr name. Ceph hardcodes the xattr name to
+security.selinux (XATTR_NAME_SELINUX).
 
-Then, consider the metadata verification as successful if EVM returned the
-status INTEGRITY_NOLABEL (no security.evm), if the metadata digest was
-found in the DIGLIM hash table and at least one digest list containing it
-was succefully appraised with a signature.
+I am making changes to fuse/virtiofs to send security label to virtiofsd
+and I need to send xattr name as well. I also hardcoded the name of
+xattr to security.selinux.
 
-Finally, consider the file content verification as successful if there is
-no security.ima or appended signature, if the file or metadata digest
-(calculated with the actual file digest) were found in the DIGLIM hash
-table and at least one digest list containing it has a valid signature.
+Stephen Smalley suggested that it probably is a good idea to modify
+security_dentry_init_security() to also return name of xattr so that
+we can avoid this hardcoding in the callers.
 
-Furthermore, mark the file as immutable if the COMPACT_MOD_IMMUTABLE
-modifier was set in the header of the digest lists containing the found
-digests.
+This patch adds a new parameter "const char **xattr_name" to
+security_dentry_init_security() and LSM puts the name of xattr
+too if caller asked for it (xattr_name != NULL).
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- security/integrity/ima/ima.h          |  4 ++-
- security/integrity/ima/ima_appraise.c | 37 +++++++++++++++++++++++----
- security/integrity/ima/ima_main.c     |  6 ++++-
- 3 files changed, 40 insertions(+), 7 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 550805b79984..631e9e4c343b 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -319,7 +319,9 @@ int ima_appraise_measurement(enum ima_hooks func,
- 			     struct integrity_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, const struct modsig *modsig);
-+			     int xattr_len, const struct modsig *modsig,
-+			     u16 file_modifiers, u8 file_actions,
-+			     u16 metadata_modifiers, u8 metadata_actions);
- int ima_must_appraise(struct user_namespace *mnt_userns, struct inode *inode,
- 		      int mask, enum ima_hooks func);
- void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file);
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index e1b9a5bc4252..a0885272411e 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -377,7 +377,9 @@ int ima_appraise_measurement(enum ima_hooks func,
- 			     struct integrity_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, const struct modsig *modsig)
-+			     int xattr_len, const struct modsig *modsig,
-+			     u16 file_modifiers, u8 file_actions,
-+			     u16 metadata_modifiers, u8 metadata_actions)
+I have compile tested this patch. Don't know how to setup ceph and
+test it. Its a very simple change. Hopefully ceph developers can
+have a quick look at it.
+
+A similar attempt was made three years back.
+
+https://lore.kernel.org/linux-security-module/20180626080429.27304-1-zyan@redhat.com/T/
+---
+ fs/ceph/xattr.c               |    3 +--
+ fs/nfs/nfs4proc.c             |    3 ++-
+ include/linux/lsm_hook_defs.h |    3 ++-
+ include/linux/lsm_hooks.h     |    1 +
+ include/linux/security.h      |    6 ++++--
+ security/security.c           |    7 ++++---
+ security/selinux/hooks.c      |    6 +++++-
+ 7 files changed, 19 insertions(+), 10 deletions(-)
+
+Index: redhat-linux/security/selinux/hooks.c
+===================================================================
+--- redhat-linux.orig/security/selinux/hooks.c	2021-09-28 11:36:03.559785943 -0400
++++ redhat-linux/security/selinux/hooks.c	2021-09-30 14:01:05.869195347 -0400
+@@ -2948,7 +2948,8 @@ static void selinux_inode_free_security(
+ }
+ 
+ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+-					const struct qstr *name, void **ctx,
++					const struct qstr *name,
++					const char **xattr_name, void **ctx,
+ 					u32 *ctxlen)
  {
- 	static const char op[] = "appraise_data";
- 	const char *cause = "unknown";
-@@ -387,12 +389,26 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	int rc = xattr_len;
- 	bool try_modsig = iint->flags & IMA_MODSIG_ALLOWED && modsig;
+ 	u32 newsid;
+@@ -2961,6 +2962,9 @@ static int selinux_dentry_init_security(
+ 	if (rc)
+ 		return rc;
  
--	/* If not appraising a modsig, we need an xattr. */
--	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
-+	/* We are interested only in appraisal-related flags. */
-+	file_actions &= COMPACT_ACTION_IMA_APPRAISED_DIGSIG;
-+	metadata_actions &= COMPACT_ACTION_IMA_APPRAISED_DIGSIG;
++	if (xattr_name)
++		*xattr_name = XATTR_NAME_SELINUX;
 +
-+	/* Disable DIGLIM method for appraisal if not enabled in the policy. */
-+	if (!(iint->flags & IMA_USE_DIGLIM_APPRAISE)) {
-+		file_actions = 0;
-+		metadata_actions = 0;
-+	}
-+
-+	/* If not appraising a modsig or using DIGLIM, we need an xattr. */
-+	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig &&
-+	    !file_actions && !metadata_actions)
- 		return INTEGRITY_UNKNOWN;
+ 	return security_sid_to_context(&selinux_state, newsid, (char **)ctx,
+ 				       ctxlen);
+ }
+Index: redhat-linux/security/security.c
+===================================================================
+--- redhat-linux.orig/security/security.c	2021-08-16 10:39:28.518988836 -0400
++++ redhat-linux/security/security.c	2021-09-30 13:54:36.367195347 -0400
+@@ -1052,11 +1052,12 @@ void security_inode_free(struct inode *i
+ }
  
--	/* If reading the xattr failed and there's no modsig, error out. */
--	if (rc <= 0 && !try_modsig) {
-+	/*
-+	 * If reading the xattr failed, there's no modsig and the DIGLIM
-+	 * appraisal method is not available, error out.
-+	 */
-+	if (rc <= 0 && !try_modsig && !file_actions && !metadata_actions) {
- 		if (rc && rc != -ENODATA)
- 			goto out;
+ int security_dentry_init_security(struct dentry *dentry, int mode,
+-					const struct qstr *name, void **ctx,
+-					u32 *ctxlen)
++				  const struct qstr *name,
++				  const char **xattr_name, void **ctx,
++				  u32 *ctxlen)
+ {
+ 	return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
+-				name, ctx, ctxlen);
++				name, xattr_name, ctx, ctxlen);
+ }
+ EXPORT_SYMBOL(security_dentry_init_security);
  
-@@ -420,6 +436,10 @@ int ima_appraise_measurement(enum ima_hooks func,
- 			break;
- 		fallthrough;
- 	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
-+		if (metadata_actions) {
-+			status = INTEGRITY_PASS_IMMUTABLE;
-+			break;
-+		}
- 		cause = "missing-HMAC";
- 		goto out;
- 	case INTEGRITY_FAIL_IMMUTABLE:
-@@ -455,6 +475,13 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	     rc == -ENOKEY))
- 		rc = modsig_verify(func, modsig, &status, &cause);
+Index: redhat-linux/include/linux/lsm_hooks.h
+===================================================================
+--- redhat-linux.orig/include/linux/lsm_hooks.h	2021-06-02 10:20:27.717485143 -0400
++++ redhat-linux/include/linux/lsm_hooks.h	2021-09-30 13:56:48.440195347 -0400
+@@ -196,6 +196,7 @@
+  *	@dentry dentry to use in calculating the context.
+  *	@mode mode used to determine resource type.
+  *	@name name of the last path component used to create file
++ *	@xattr_name pointer to place the pointer to security xattr name
+  *	@ctx pointer to place the pointer to the resulting context in.
+  *	@ctxlen point to place the length of the resulting context.
+  * @dentry_create_files_as:
+Index: redhat-linux/include/linux/security.h
+===================================================================
+--- redhat-linux.orig/include/linux/security.h	2021-08-16 10:39:28.484988836 -0400
++++ redhat-linux/include/linux/security.h	2021-09-30 13:59:00.288195347 -0400
+@@ -317,8 +317,9 @@ int security_add_mnt_opt(const char *opt
+ 				int len, void **mnt_opts);
+ int security_move_mount(const struct path *from_path, const struct path *to_path);
+ int security_dentry_init_security(struct dentry *dentry, int mode,
+-					const struct qstr *name, void **ctx,
+-					u32 *ctxlen);
++				  const struct qstr *name,
++				  const char **xattr_name, void **ctx,
++				  u32 *ctxlen);
+ int security_dentry_create_files_as(struct dentry *dentry, int mode,
+ 					struct qstr *name,
+ 					const struct cred *old,
+@@ -739,6 +740,7 @@ static inline void security_inode_free(s
+ static inline int security_dentry_init_security(struct dentry *dentry,
+ 						 int mode,
+ 						 const struct qstr *name,
++						 const char **xattr_name,
+ 						 void **ctx,
+ 						 u32 *ctxlen)
+ {
+Index: redhat-linux/include/linux/lsm_hook_defs.h
+===================================================================
+--- redhat-linux.orig/include/linux/lsm_hook_defs.h	2021-07-07 11:54:59.673549151 -0400
++++ redhat-linux/include/linux/lsm_hook_defs.h	2021-09-30 14:02:13.114195347 -0400
+@@ -83,7 +83,8 @@ LSM_HOOK(int, 0, sb_add_mnt_opt, const c
+ LSM_HOOK(int, 0, move_mount, const struct path *from_path,
+ 	 const struct path *to_path)
+ LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,
+-	 int mode, const struct qstr *name, void **ctx, u32 *ctxlen)
++	 int mode, const struct qstr *name, const char **xattr_name,
++	 void **ctx, u32 *ctxlen)
+ LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
+ 	 struct qstr *name, const struct cred *old, struct cred *new)
  
-+	if (!xattr_value && !try_modsig && (file_actions || metadata_actions)) {
-+		status = INTEGRITY_PASS;
-+
-+		if ((file_modifiers & (1 << COMPACT_MOD_IMMUTABLE)) ||
-+		    (metadata_modifiers & (1 << COMPACT_MOD_IMMUTABLE)))
-+			set_bit(IMA_DIGSIG, &iint->atomic_flags);
-+	}
- out:
- 	/*
- 	 * File signatures on some filesystems can not be properly verified.
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 7add0e70f67a..7a9a2392d49c 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -416,7 +416,11 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 			inode_lock(inode);
- 			rc = ima_appraise_measurement(func, iint, file,
- 						      pathname, xattr_value,
--						      xattr_len, modsig);
-+						      xattr_len, modsig,
-+						      file_modifiers,
-+						      file_actions,
-+						      metadata_modifiers,
-+						      metadata_actions);
- 			inode_unlock(inode);
- 		}
- 		if (!rc)
--- 
-2.32.0
+Index: redhat-linux/fs/nfs/nfs4proc.c
+===================================================================
+--- redhat-linux.orig/fs/nfs/nfs4proc.c	2021-07-14 14:47:42.732842926 -0400
++++ redhat-linux/fs/nfs/nfs4proc.c	2021-09-30 14:06:02.249195347 -0400
+@@ -127,7 +127,8 @@ nfs4_label_init_security(struct inode *d
+ 		return NULL;
+ 
+ 	err = security_dentry_init_security(dentry, sattr->ia_mode,
+-				&dentry->d_name, (void **)&label->label, &label->len);
++				&dentry->d_name, NULL,
++				(void **)&label->label, &label->len);
+ 	if (err == 0)
+ 		return label;
+ 
+Index: redhat-linux/fs/ceph/xattr.c
+===================================================================
+--- redhat-linux.orig/fs/ceph/xattr.c	2021-09-09 13:05:21.800611264 -0400
++++ redhat-linux/fs/ceph/xattr.c	2021-09-30 14:14:59.892195347 -0400
+@@ -1311,7 +1311,7 @@ int ceph_security_init_secctx(struct den
+ 	int err;
+ 
+ 	err = security_dentry_init_security(dentry, mode, &dentry->d_name,
+-					    &as_ctx->sec_ctx,
++					    &name, &as_ctx->sec_ctx,
+ 					    &as_ctx->sec_ctxlen);
+ 	if (err < 0) {
+ 		WARN_ON_ONCE(err != -EOPNOTSUPP);
+@@ -1335,7 +1335,6 @@ int ceph_security_init_secctx(struct den
+ 	 * It only supports single security module and only selinux has
+ 	 * dentry_init_security hook.
+ 	 */
+-	name = XATTR_NAME_SELINUX;
+ 	name_len = strlen(name);
+ 	err = ceph_pagelist_reserve(pagelist,
+ 				    4 * 2 + name_len + as_ctx->sec_ctxlen);
 
