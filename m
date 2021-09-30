@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 779F5C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85855C4167D
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58DA561A03
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6829661A03
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350625AbhI3L5b (ORCPT
+        id S1350549AbhI3L5d (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Sep 2021 07:57:31 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3896 "EHLO
+        Thu, 30 Sep 2021 07:57:33 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3898 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350553AbhI3L5a (ORCPT
+        with ESMTP id S1350600AbhI3L5b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Sep 2021 07:57:30 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4HKs7n662Yz686cr;
-        Thu, 30 Sep 2021 19:53:09 +0800 (CST)
+        Thu, 30 Sep 2021 07:57:31 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4HKs7q02VQz67MlK;
+        Thu, 30 Sep 2021 19:53:11 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Thu, 30 Sep 2021 13:55:45 +0200
+ 15.1.2308.8; Thu, 30 Sep 2021 13:55:46 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
         <mchehab+huawei@kernel.org>
@@ -30,9 +30,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 2/7] ima: Introduce new policy keyword use_diglim
-Date:   Thu, 30 Sep 2021 13:55:28 +0200
-Message-ID: <20210930115533.878169-3-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 4/7] ima: Query file digest and retrieve info from its digest lists
+Date:   Thu, 30 Sep 2021 13:55:30 +0200
+Message-ID: <20210930115533.878169-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210930115533.878169-1-roberto.sassu@huawei.com>
 References: <20210930115533.878169-1-roberto.sassu@huawei.com>
@@ -46,145 +46,79 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Introduce the 'use_diglim' policy keyword to enable the usage of
-DIGLIM if the file matches the other criteria of the rule.
+If a file is going to be measured or appraised, and the use_diglim keyword
+has been added to the matching rule, query the calculated file digest with
+DIGLIM and retrieve some information: the actions (logical OR) done on the
+digest lists containing that digest; modifiers (logical OR) associated to
+the type.
 
-If the file or metadata digest is found in the DIGLIM hash table,
-'use_diglim':
-- skips the creation of a new measurement entry (action=measure)
-- allows access to the file (action=appraise)
+Retrieved actions and modifiers will be then processed by the corresponding
+IMA submodules.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/ABI/testing/ima_policy |  4 +++-
- security/integrity/ima/ima_policy.c  | 36 +++++++++++++++++++++++++---
- security/integrity/integrity.h       |  2 ++
- 3 files changed, 38 insertions(+), 4 deletions(-)
+ security/integrity/ima/ima.h      |  1 +
+ security/integrity/ima/ima_main.c | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index a8a5791db14c..4979fc068b0e 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -27,7 +27,7 @@ Description:
- 			lsm:	[[subj_user=] [subj_role=] [subj_type=]
- 				 [obj_user=] [obj_role=] [obj_type=]]
- 			option:	[[appraise_type=]] [template=] [permit_directio]
--				[appraise_flag=] [appraise_algos=] [keyrings=]
-+				[appraise_flag=] [appraise_algos=] [keyrings=] [use_diglim]
- 		  base:
- 			func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
-@@ -60,6 +60,8 @@ Description:
- 			For example, "sha256,sha512" to only accept to appraise
- 			files where the security.ima xattr was hashed with one
- 			of these two algorithms.
-+			use_diglim: enables usage of DIGLIM for measurement and
-+			appraisal
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index cde2e1c2a6be..550805b79984 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -21,6 +21,7 @@
+ #include <linux/tpm.h>
+ #include <linux/audit.h>
+ #include <crypto/hash_info.h>
++#include <linux/diglim.h>
  
- 		  default policy:
- 			# PROC_SUPER_MAGIC
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 084b5d9257da..dfab21aeb7e1 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1048,7 +1048,7 @@ enum {
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag, Opt_appraise_algos,
- 	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
--	Opt_label, Opt_err
-+	Opt_label, Opt_use_diglim, Opt_err
- };
+ #include "../integrity.h"
  
- static const match_table_t policy_tokens = {
-@@ -1087,6 +1087,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_template, "template=%s"},
- 	{Opt_keyrings, "keyrings=%s"},
- 	{Opt_label, "label=%s"},
-+	{Opt_use_diglim, "use_diglim"},
- 	{Opt_err, NULL}
- };
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index fe1f4ef1bb9d..b32c4f8d19ea 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -198,6 +198,20 @@ void ima_file_free(struct file *file)
+ 	ima_check_last_writer(iint, inode, file);
+ }
  
-@@ -1181,6 +1182,15 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 	if (entry->action != MEASURE && entry->flags & IMA_PCR)
- 		return false;
- 
-+	/*
-+	 * Ensure that measurements made with DIGLIM don't have the standard
-+	 * IMA PCR.
-+	 */
-+	if ((entry->flags & IMA_USE_DIGLIM_MEASURE) &&
-+	    (!(entry->flags & IMA_PCR) ||
-+	     entry->pcr == CONFIG_IMA_MEASURE_PCR_IDX))
-+		return false;
++static void diglim_file_digest_lookup(struct file *file,
++				      struct integrity_iint_cache *iint,
++				      int action, u16 *modifiers, u8 *actions)
++{
++	if ((file->f_mode & FMODE_CREATED) && !i_size_read(file_inode(file)))
++		return;
 +
- 	if (entry->action != APPRAISE &&
- 	    entry->flags & (IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED |
- 			    IMA_CHECK_BLACKLIST | IMA_VALIDATE_ALGOS |
-@@ -1215,7 +1225,9 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 				     IMA_INMASK | IMA_EUID | IMA_PCR |
- 				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
- 				     IMA_PERMIT_DIRECTIO | IMA_VALIDATE_ALGOS |
--				     IMA_META_IMMUTABLE_REQUIRED))
-+				     IMA_META_IMMUTABLE_REQUIRED |
-+				     IMA_USE_DIGLIM_MEASURE |
-+				     IMA_USE_DIGLIM_APPRAISE))
- 			return false;
- 
- 		break;
-@@ -1229,7 +1241,9 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
- 				     IMA_PERMIT_DIRECTIO | IMA_MODSIG_ALLOWED |
- 				     IMA_CHECK_BLACKLIST | IMA_VALIDATE_ALGOS |
--				     IMA_META_IMMUTABLE_REQUIRED))
-+				     IMA_META_IMMUTABLE_REQUIRED |
-+				     IMA_USE_DIGLIM_MEASURE |
-+				     IMA_USE_DIGLIM_APPRAISE))
- 			return false;
- 
- 		break;
-@@ -1719,6 +1733,19 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 						 &(template_desc->num_fields));
- 			entry->template = template_desc;
- 			break;
-+		case Opt_use_diglim:
-+			ima_log_string(ab, "use_diglim", args[0].from);
-+			if (entry->action != IMA_MEASURE &&
-+			    entry->action != IMA_APPRAISE) {
-+				result = -EINVAL;
-+				break;
-+			}
++	if (!(iint->flags & IMA_COLLECTED))
++		return;
 +
-+			if (entry->action == IMA_MEASURE)
-+				entry->flags |= IMA_USE_DIGLIM_MEASURE;
-+			else
-+				entry->flags |= IMA_USE_DIGLIM_APPRAISE;
-+			break;
- 		case Opt_err:
- 			ima_log_string(ab, "UNKNOWN", p);
- 			result = -EINVAL;
-@@ -2058,6 +2085,9 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, "appraise_type=meta_immutable ");
- 	if (entry->flags & IMA_PERMIT_DIRECTIO)
- 		seq_puts(m, "permit_directio ");
-+	if ((entry->flags & IMA_USE_DIGLIM_MEASURE) ||
-+	    (entry->flags & IMA_USE_DIGLIM_APPRAISE))
-+		seq_puts(m, "use_diglim ");
- 	rcu_read_unlock();
- 	seq_puts(m, "\n");
- 	return 0;
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index cb4a8cd2a213..89ed87a957bc 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -44,6 +44,8 @@
- #define IMA_MODSIG_ALLOWED	0x0000000020000000
- #define IMA_CHECK_BLACKLIST	0x0000000040000000
- #define IMA_META_IMMUTABLE_REQUIRED	0x0000000080000000
-+#define IMA_USE_DIGLIM_MEASURE	0x0000000100000000
-+#define IMA_USE_DIGLIM_APPRAISE	0x0000000200000000
++	diglim_digest_get_info(iint->ima_hash->digest, iint->ima_hash->algo,
++			       COMPACT_FILE, modifiers, actions);
++}
++
+ static int process_measurement(struct file *file, const struct cred *cred,
+ 			       u32 secid, char *buf, loff_t size, int mask,
+ 			       enum ima_hooks func)
+@@ -209,6 +223,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	char filename[NAME_MAX];
+ 	const char *pathname = NULL;
+ 	u64 action;
++	u16 file_modifiers = 0;
++	u8 file_actions = 0;
+ 	int rc = 0, must_appraise = 0;
+ 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
+ 	struct evm_ima_xattr_data *xattr_value = NULL;
+@@ -344,6 +360,11 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
  
- #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
- 				 IMA_HASH | IMA_APPRAISE_SUBMASK)
++	if (iint->flags & IMA_USE_DIGLIM_MEASURE ||
++	    iint->flags & IMA_USE_DIGLIM_APPRAISE)
++		diglim_file_digest_lookup(file, iint, action, &file_modifiers,
++					  &file_actions);
++
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+ 		rc = ima_check_blacklist(iint, modsig, pcr);
+ 		if (rc != -EPERM) {
 -- 
 2.32.0
 
