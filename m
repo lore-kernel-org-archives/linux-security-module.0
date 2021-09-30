@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9157FC4167E
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1E0C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E0DE619EC
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA3D961507
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Sep 2021 11:57:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350641AbhI3L5d (ORCPT
+        id S1350643AbhI3L6n (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Sep 2021 07:57:33 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3897 "EHLO
+        Thu, 30 Sep 2021 07:58:43 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3900 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350576AbhI3L5a (ORCPT
+        with ESMTP id S1350553AbhI3L6m (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Sep 2021 07:57:30 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4HKs773cbdz67t01;
-        Thu, 30 Sep 2021 19:52:35 +0800 (CST)
+        Thu, 30 Sep 2021 07:58:42 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4HKs8r5ryKz687L9;
+        Thu, 30 Sep 2021 19:54:04 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Thu, 30 Sep 2021 13:55:46 +0200
+ 15.1.2308.8; Thu, 30 Sep 2021 13:56:57 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
         <mchehab+huawei@kernel.org>
@@ -30,9 +30,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 3/7] ima: Introduce diglim and appraise_diglim policies
-Date:   Thu, 30 Sep 2021 13:55:29 +0200
-Message-ID: <20210930115533.878169-4-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 5/7] ima: Query metadata digest and retrieve info from its digest lists
+Date:   Thu, 30 Sep 2021 13:55:31 +0200
+Message-ID: <20210930115533.878169-6-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210930115533.878169-1-roberto.sassu@huawei.com>
 References: <20210930115533.878169-1-roberto.sassu@huawei.com>
@@ -46,255 +46,201 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Introduce two new hardcoded policies, 'diglim' and 'appraise_diglim' to
-measure and appraise digest lists and related files.
+First, introduce the new function evm_get_hash() to obtain the EVM digest
+of file metadata. The EVM digest is calculated depending on the passed
+security.evm type.
 
-In particular, the 'diglim' policy adds the new rule:
+Then, introduce the new function diglim_metadata_digest_lookup(), to search
+the metadata digest obtained from evm_get_hash() with type
+EVM_XATTR_PORTABLE_DIGSIG in the DIGLIM hash table and to obtain the
+actions and modifiers (logical OR) associated to the EVM digest, taken from
+the digest lists that contain that digest.
 
-measure func=DIGEST_LIST_CHECK pcr=<PCR value> use_diglim
-
-where PCR value is 11 or the one chosen with the ima_diglim_pcr= kernel
-option. It also adds the use_diglim directive to existing selected rules
-with hooks BPRM_CHECK, CREDS_CHECK, MMAP_CHECK, FILE_CHECK, MODULE_CHECK,
-FIRMWARE_CHECK and DIGEST_LIST_CHECK.
-
-A rule with the DIGEST_LIST_CHECK hook is sufficient to cover all aspects
-of the digest list loading process. For direct upload, the kernel reads the
-file with type READING_DIGEST_LIST, which is mapped to that hook. For
-upload by a user space parser, DIGLIM LSM performs a second read for every
-file opened by the parser (including the executable), also with type
-READING_DIGEST_LIST.
-
-The 'appraise_diglim' policy adds the new rule:
-
-appraise func=DIGEST_LIST_CHECK appraise_type=imasig|modsig use_diglim
-
-and, like for the 'diglim' policy, adds the use_diglim directive for the
-selected IMA rules with action appraise.
+Retrieved actions and modifiers will be then processed by the corresponding
+IMA submodules.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- .../admin-guide/kernel-parameters.txt         |  19 +++-
- security/integrity/ima/ima_policy.c           | 102 +++++++++++++++++-
- 2 files changed, 119 insertions(+), 2 deletions(-)
+ include/linux/evm.h               | 14 +++++++++
+ security/integrity/evm/evm_main.c | 40 ++++++++++++++++++++++++
+ security/integrity/ima/ima_main.c | 51 +++++++++++++++++++++++++++++--
+ 3 files changed, 102 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index e0db162ba202..fa4959a321d8 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1835,6 +1835,13 @@
- 			Use the canonical format for the binary runtime
- 			measurements, instead of host native format.
+diff --git a/include/linux/evm.h b/include/linux/evm.h
+index 4c374be70247..92856a7dbcab 100644
+--- a/include/linux/evm.h
++++ b/include/linux/evm.h
+@@ -11,6 +11,7 @@
  
-+	ima_diglim_pcr=
-+			[IMA]
-+			Format: 0 - 23
-+			default: 11
-+			Define the PCR to be used for measurement entries
-+			created with the diglim IMA policy.
-+
- 	ima_hash=	[IMA]
- 			Format: { md5 | sha1 | rmd160 | sha256 | sha384
- 				   | sha512 | ... }
-@@ -1846,7 +1853,8 @@
- 	ima_policy=	[IMA]
- 			The builtin policies to load during IMA setup.
- 			Format: "tcb | appraise_tcb | secure_boot |
--				 fail_securely | critical_data"
-+				 fail_securely | critical_data | diglim |
-+				 appraise_diglim"
+ #include <linux/integrity.h>
+ #include <linux/xattr.h>
++#include <crypto/hash_info.h>
  
- 			The "tcb" policy measures all programs exec'd, files
- 			mmap'd for exec, and all files opened with the read
-@@ -1860,6 +1868,11 @@
- 			the tmpfs filesystem, for the "ima_tcb", "tcb" and
- 			"exec_tcb" policies.
+ struct integrity_iint_cache;
  
-+			The "diglim" policy enables measurement of
-+			DIGLIM-related files (e.g. digest lists, parsers) and
-+			usage of DIGLIM for measurement (exec, mmap, open,
-+			firmware and module loading).
-+
- 			The "appraise_tcb" policy appraises the integrity of
- 			all files owned by root.
- 
-@@ -1876,6 +1889,10 @@
- 			rule for the tmpfs and ramfs filesystems for the
- 			"appraise_tcb" and "appraise_exec_tcb" policies.
- 
-+			The "appraise_diglim" policy enables appraisal of
-+			DIGLIM-related files and usage of DIGLIM for appraisal
-+			(exec, mmap, open, firmware and module loading).
-+
- 			The "secure_boot" policy appraises the integrity
- 			of files (eg. kexec kernel image, kernel modules,
- 			firmware, policy, etc) based on file signatures.
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index dfab21aeb7e1..5e1532abca5d 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -162,6 +162,10 @@ static struct ima_rule_entry default_measurement_rules[] __ro_after_init = {
- 	{.action = MEASURE, .func = POLICY_CHECK, .flags = IMA_FUNC},
- };
- 
-+static struct ima_rule_entry diglim_measure_rule __ro_after_init = {
-+	.action = MEASURE, .func = DIGEST_LIST_CHECK, .flags = IMA_FUNC
-+};
-+
- static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
- 	{.action = DONT_APPRAISE, .fsmagic = PROC_SUPER_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = SYSFS_MAGIC, .flags = IMA_FSMAGIC},
-@@ -228,6 +232,11 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
- 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
- };
- 
-+static struct ima_rule_entry diglim_appraise_rule __ro_after_init = {
-+	.action = APPRAISE, .func = DIGEST_LIST_CHECK,
-+	.flags = IMA_FUNC | IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED
-+};
-+
- static struct ima_rule_entry critical_data_rules[] __ro_after_init = {
- 	{.action = MEASURE, .func = CRITICAL_DATA, .flags = IMA_FUNC},
- };
-@@ -253,9 +262,12 @@ static int __init default_measure_policy_setup(char *str)
- __setup("ima_tcb", default_measure_policy_setup);
- 
- static unsigned int ima_measure_skip_flags __initdata;
-+static unsigned int ima_measure_diglim __initdata;
- static unsigned int ima_appraise_skip_flags __initdata;
-+static unsigned int ima_diglim_pcr __initdata = 11;
- static bool ima_use_appraise_tcb __initdata;
- static bool ima_use_appraise_exec_immutable __initdata;
-+static bool ima_use_appraise_diglim __initdata;
- static bool ima_use_secure_boot __initdata;
- static bool ima_use_critical_data __initdata;
- static bool ima_fail_unverifiable_sigs __ro_after_init;
-@@ -273,7 +285,9 @@ static int __init policy_setup(char *str)
- 		else if ((strcmp(p, "exec_tcb") == 0) && !ima_policy) {
- 			ima_policy = DEFAULT_TCB;
- 			ima_measure_skip_flags |= IMA_SKIP_OPEN;
--		} else if (strcmp(p, "appraise_tcb") == 0)
-+		} else if (strcmp(p, "diglim") == 0)
-+			ima_measure_diglim = true;
-+		else if (strcmp(p, "appraise_tcb") == 0)
- 			ima_use_appraise_tcb = true;
- 		else if ((strcmp(p, "appraise_tmpfs") == 0))
- 			ima_appraise_skip_flags |= IMA_SKIP_TMPFS;
-@@ -282,6 +296,8 @@ static int __init policy_setup(char *str)
- 			ima_appraise_skip_flags |= IMA_SKIP_OPEN;
- 		} else if (strcmp(p, "appraise_exec_immutable") == 0)
- 			ima_use_appraise_exec_immutable = true;
-+		else if (strcmp(p, "appraise_diglim") == 0)
-+			ima_use_appraise_diglim = true;
- 		else if (strcmp(p, "secure_boot") == 0)
- 			ima_use_secure_boot = true;
- 		else if (strcmp(p, "critical_data") == 0)
-@@ -303,6 +319,28 @@ static int __init default_appraise_policy_setup(char *str)
- }
- __setup("ima_appraise_tcb", default_appraise_policy_setup);
- 
-+static int __init default_diglim_pcr_setup(char *str)
-+{
-+	unsigned int pcr;
-+	int ret;
-+
-+	ret = kstrtouint(str, 10, &pcr);
-+	if (ret < 0 || pcr > 23) {
-+		pr_err("Invalid value for ima_diglim_pcr=\n");
-+		return 1;
-+	}
-+
-+	/* Using the default IMA PCR is forbidden. */
-+	if (ret == CONFIG_IMA_MEASURE_PCR_IDX) {
-+		pr_err("Default IMA PCR cannot be used for ima_diglim_pcr=\n");
-+		return 1;
-+	}
-+
-+	ima_diglim_pcr = pcr;
-+	return 1;
-+}
-+__setup("ima_diglim_pcr=", default_diglim_pcr_setup);
-+
- static struct ima_rule_opt_list *ima_alloc_rule_opt_list(const substring_t *src)
+@@ -42,6 +43,10 @@ extern int evm_protected_xattr_if_enabled(const char *req_xattr_name);
+ extern int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+ 				     int buffer_size, char type,
+ 				     bool canonical_fmt);
++extern int evm_get_hash(struct dentry *dentry, const char *req_xattr_name,
++			const char *req_xattr_value, size_t req_xattr_value_len,
++			char type, enum hash_algo algo, u8 *digest,
++			size_t digest_len);
+ #ifdef CONFIG_FS_POSIX_ACL
+ extern int posix_xattr_acl(const char *xattrname);
+ #else
+@@ -129,6 +134,15 @@ static inline int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
  {
- 	struct ima_rule_opt_list *opt_list;
-@@ -812,6 +850,61 @@ void ima_update_policy_flags(void)
- 	ima_policy_flag = new_policy_flag;
+ 	return -EOPNOTSUPP;
  }
++static inline int evm_get_hash(struct dentry *dentry,
++			       const char *req_xattr_name,
++			       const char *req_xattr_value,
++			       size_t req_xattr_value_len, char type,
++			       enum hash_algo algo, u8 *digest,
++			       size_t digest_len)
++{
++	return -EOPNOTSUPP;
++}
  
-+/*
-+ * Add the IMA_USE_DIGLIM_MEASURE and IMA_USE_DIGLIM_APPRAISE flags to the
-+ * initial policy depending on the options in the kernel command line, and set
-+ * the correct PCR for the measure rules.
+ #endif /* CONFIG_EVM */
+ #endif /* LINUX_EVM_H */
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index a8d7c761853e..3d45873f9266 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -429,6 +429,46 @@ enum integrity_status evm_verifyxattr(struct dentry *dentry,
+ }
+ EXPORT_SYMBOL_GPL(evm_verifyxattr);
+ 
++/**
++ * evm_get_hash - obtain the EVM digest calculated according to the passed type
++ * @dentry: object the EVM digest is calculated from
++ * @req_xattr_name: requested xattr
++ * @req_xattr_value: requested xattr value
++ * @req_xattr_value_len: requested xattr value length
++ * @type: requested security.evm type
++ * @algo: requested EVM digest algorithm
++ * @digest: the buffer the EVM digest is written to
++ * @digest_len: size of the buffer
++ *
++ * Calculate the EVM digest from metadata according to the passed security.evm
++ * type.
++ *
++ * Returns 0 if the digest has been calculated successfully, a negative value
++ * otherwise.
++ *
++ * This function requires the caller to lock the inode's i_mutex before it
++ * is executed.
 + */
-+static void __init ima_add_diglim_flag(void)
++int evm_get_hash(struct dentry *dentry, const char *req_xattr_name,
++		 const char *req_xattr_value, size_t req_xattr_value_len,
++		 char type, enum hash_algo algo, u8 *digest, size_t digest_len)
 +{
-+	struct ima_rule_entry *entry;
++	struct evm_digest evm_digest;
++	int rc;
 +
-+	if (!IS_ENABLED(CONFIG_DIGLIM))
-+		return;
++	if (digest_len < hash_digest_size[algo])
++		return -EINVAL;
 +
-+	if (!ima_measure_diglim && !ima_use_appraise_diglim)
-+		return;
++	evm_digest.hdr.algo = algo;
++	rc = evm_calc_hash(dentry, req_xattr_name, req_xattr_value,
++			   req_xattr_value_len, type, &evm_digest);
++	if (rc < 0)
++		return rc;
 +
-+	list_for_each_entry(entry, ima_rules, list) {
-+		if (entry->action != IMA_MEASURE &&
-+		    entry->action != IMA_APPRAISE)
-+			continue;
-+
-+		if (entry->action == IMA_MEASURE && !ima_measure_diglim)
-+			continue;
-+
-+		if (entry->action == IMA_APPRAISE &&
-+		    !ima_use_appraise_diglim)
-+			continue;
-+
-+		switch (entry->func) {
-+		case BPRM_CHECK:
-+			fallthrough;
-+		case CREDS_CHECK:
-+			fallthrough;
-+		case MMAP_CHECK:
-+			fallthrough;
-+		case FILE_CHECK:
-+			fallthrough;
-+		case MODULE_CHECK:
-+			fallthrough;
-+		case FIRMWARE_CHECK:
-+			fallthrough;
-+		case DIGEST_LIST_CHECK:
-+			if (entry->action == IMA_MEASURE) {
-+				entry->flags |= IMA_USE_DIGLIM_MEASURE;
-+				entry->flags |= IMA_PCR;
-+				entry->pcr = ima_diglim_pcr;
-+			} else {
-+				entry->flags |= IMA_USE_DIGLIM_APPRAISE;
-+			}
-+			break;
-+		default:
-+			break;
-+		}
-+	}
++	memcpy(digest, evm_digest.digest, hash_digest_size[algo]);
++	return 0;
 +}
 +
- static int ima_appraise_flag(enum ima_hooks func)
- {
- 	if (func == MODULE_CHECK)
-@@ -989,7 +1082,14 @@ void __init ima_init_policy(void)
+ /*
+  * evm_verify_current_integrity - verify the dentry's metadata integrity
+  * @dentry: pointer to the affected dentry
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index b32c4f8d19ea..84ccb76f6c3c 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/xattr.h>
+ #include <linux/ima.h>
++#include <linux/evm.h>
+ #include <linux/iversion.h>
+ #include <linux/fs.h>
  
- 	atomic_set(&ima_setxattr_allowed_hash_algorithms, 0);
- 
-+	if (ima_measure_diglim)
-+		add_rules(&diglim_measure_rule, 1, IMA_DEFAULT_POLICY, 0);
-+
-+	if (ima_use_appraise_diglim)
-+		add_rules(&diglim_appraise_rule, 1, IMA_DEFAULT_POLICY, 0);
-+
- 	ima_update_policy_flags();
-+	ima_add_diglim_flag();
+@@ -212,6 +213,44 @@ static void diglim_file_digest_lookup(struct file *file,
+ 			       COMPACT_FILE, modifiers, actions);
  }
  
- /* Make sure we have a valid policy, at least containing some rules. */
++static void diglim_metadata_digest_lookup(struct file *file,
++					struct integrity_iint_cache *iint,
++					int action,
++					struct evm_ima_xattr_data *xattr_value,
++					int xattr_len, u16 *modifiers,
++					u8 *actions)
++{
++	u8 digest[IMA_MAX_DIGEST_SIZE];
++	struct evm_xattr fake_ima_xattr;
++	struct evm_ima_xattr_data *ima_xattr = xattr_value;
++	int rc;
++
++	if ((file->f_mode & FMODE_CREATED) && !i_size_read(file_inode(file)))
++		return;
++
++	if (!(iint->flags & IMA_COLLECTED))
++		return;
++
++	if (!xattr_value) {
++		fake_ima_xattr.data.type = IMA_XATTR_DIGEST_NG;
++		fake_ima_xattr.data.data[0] = iint->ima_hash->algo;
++		memcpy(&fake_ima_xattr.data.data[1], iint->ima_hash->digest,
++		       hash_digest_size[iint->ima_hash->algo]);
++		ima_xattr = &fake_ima_xattr.data;
++		xattr_len = 2 + hash_digest_size[iint->ima_hash->algo];
++	}
++
++	rc = evm_get_hash(file_dentry(file), XATTR_NAME_IMA,
++			  (const char *)ima_xattr, xattr_len,
++			  EVM_XATTR_PORTABLE_DIGSIG, iint->ima_hash->algo,
++			  digest, sizeof(digest));
++	if (rc < 0)
++		return;
++
++	diglim_digest_get_info(digest, iint->ima_hash->algo, COMPACT_METADATA,
++			       modifiers, actions);
++}
++
+ static int process_measurement(struct file *file, const struct cred *cred,
+ 			       u32 secid, char *buf, loff_t size, int mask,
+ 			       enum ima_hooks func)
+@@ -223,8 +262,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	char filename[NAME_MAX];
+ 	const char *pathname = NULL;
+ 	u64 action;
+-	u16 file_modifiers = 0;
+-	u8 file_actions = 0;
++	u16 file_modifiers = 0, metadata_modifiers = 0;
++	u8 file_actions = 0, metadata_actions = 0;
+ 	int rc = 0, must_appraise = 0;
+ 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
+ 	struct evm_ima_xattr_data *xattr_value = NULL;
+@@ -361,9 +400,15 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+ 
+ 	if (iint->flags & IMA_USE_DIGLIM_MEASURE ||
+-	    iint->flags & IMA_USE_DIGLIM_APPRAISE)
++	    iint->flags & IMA_USE_DIGLIM_APPRAISE) {
+ 		diglim_file_digest_lookup(file, iint, action, &file_modifiers,
+ 					  &file_actions);
++		inode_lock(inode);
++		diglim_metadata_digest_lookup(file, iint, action, xattr_value,
++					      xattr_len, &metadata_modifiers,
++					      &metadata_actions);
++		inode_unlock(inode);
++	}
+ 
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+ 		rc = ima_check_blacklist(iint, modsig, pcr);
 -- 
 2.32.0
 
