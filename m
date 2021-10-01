@@ -2,60 +2,60 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16CB8C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Oct 2021 14:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 894B0C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Oct 2021 17:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F204661A40
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Oct 2021 14:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F4E61A50
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Oct 2021 17:14:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354649AbhJAOqu (ORCPT
+        id S1353598AbhJARQd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Oct 2021 10:46:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57566 "EHLO
+        Fri, 1 Oct 2021 13:16:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354643AbhJAOqt (ORCPT
+        with ESMTP id S238603AbhJARQc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Oct 2021 10:46:49 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D220AC06177F
-        for <linux-security-module@vger.kernel.org>; Fri,  1 Oct 2021 07:45:04 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id g8so35836895edt.7
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Oct 2021 07:45:04 -0700 (PDT)
+        Fri, 1 Oct 2021 13:16:32 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26337C06177D
+        for <linux-security-module@vger.kernel.org>; Fri,  1 Oct 2021 10:14:48 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id b20so41680171lfv.3
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Oct 2021 10:14:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/H4joMu0i9PRc5y/5IfyO1O3DFiCiHeAFXYOy9MybLU=;
-        b=Sqtq3HVEmFqyq/iZGy3bAUBBvoIIgqDCQe03hPij1pHQ+afGQ+qW4oxzfc6+IQYFAk
-         8sdQMlTfSDwM/Vdd1CJBkNXlYzqUIs7kjIrH/2t+zg3ttq27VO3sQ43AlcBfvpXxKTvl
-         LJ3PlZ6m4VGH2MQRjDVCng2EuhT9h0wVEaeNU4baqn2jFjdOfQHFiF2yKOb9Jj/nE2WT
-         +c/MWFqDTQ0Mz7EPjLT8UhMOzISMjhG8DhpniuDVQDNev5vXymJFaLiemoBg6FM8YkNB
-         qKOz2aScbgR3tKjPuAU54oJVPgg5Bzspd8vBSSjyF4fyOuUspQHrydXkPUbbOutVmVuA
-         y+2Q==
+        bh=0XGy+GRK48SGGxR1ZCE+Ciu2OxM1nuqOBwlHN8oBD9U=;
+        b=dLtBJrwYeEb7m8l51kN8I5xA2EeE3Dsu8p9BDuk1SrsxjeEvG5/uleGiLvQbFFC92g
+         RD4vaTnfZQRHi4pqOjTLit9ltpn5kI3c0QumTpCcv1Po4n8Ts2MOt3KILylZ+9P5SdGP
+         aoRbyvGQ8QEEBwZKtzcUDx52FRT7TdM+RMYmOog3f6tYJ/sGkgq27zxKKlnAJjW8VstJ
+         BH0SN9qrivJjIsjpc6cuiCqQl51RYOosDjTww5eDFx4TnBumDxGBqE6sXLEq75IsZ+We
+         udTzoCg21agxIeb5swqZnmgji7bzWuCDy8ALYDlWLfuH8l6mOPJN6tLTpE7xxQZmMZPu
+         VGxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/H4joMu0i9PRc5y/5IfyO1O3DFiCiHeAFXYOy9MybLU=;
-        b=orlDj892kVds/7blFMbnvsy/FswY56hpxjnjae8qGVYtemCt2wEt/e0AafyVR2UqDL
-         FQRPh5s0bBNJxHHZMmsmYI7f9VGg9k9d52WQxaPfqtFivlh74TaWn4E15MSw2xwLu4bN
-         +nmVEXA/bY4mfqoatMnZzxfotrEKKUMJlI7LLAq7vvD5ZNqhjEEnuqSI/qDlZQjTnN4q
-         nPPdw5fx2vXkGdKem8BLabT0a1HFujPmsvrBKuZL65JITPE7q1VriUZEKf9kNOASUCY5
-         RKCDrQgUz7o1Z4PryOJMiWXePDMZBVgSehsFI/AE8soHumnfur0ZGc+RujHY/DYYbKfM
-         yWrg==
-X-Gm-Message-State: AOAM532IFHlzF5F+IIlnDgo9+vkc1Db1BdxB8IF9qvGq/vNgIrhN8FqN
-        ltCAly55Eu3nNV4Sb6BAmW8yDt+WKutr/3UHRljW
-X-Google-Smtp-Source: ABdhPJzS4Iw/cDlHH6KS55tisJ+ktQs+SukEzIuiCOuC5dk2GUdyTS52lv4qmMGUFGDGNBh9PabWSBxWmsNBGr46Xdw=
-X-Received: by 2002:a50:9b06:: with SMTP id o6mr14719691edi.284.1633099502606;
- Fri, 01 Oct 2021 07:45:02 -0700 (PDT)
+        bh=0XGy+GRK48SGGxR1ZCE+Ciu2OxM1nuqOBwlHN8oBD9U=;
+        b=i9YTIknzFnrzgipBb3x+ORjQNeHOk8CNwHgapLLx0EvIBnSSWCakCCLygUE604ddaB
+         X7/hBvkxG8e4lGD8k0q4J+ZQg1HXs9iO+2A94lOyYm3+B/vISHN/XP3fsoX4xq6J5pGM
+         kEb25tLpt9CFXI0nanIUSnHAy7zPbaWmMA29DYuqonBwHB/zMBhuq1+/Gj380FPMkY1k
+         ggeLXBMjyo6aRBg1kudfANU6rYldGmLvhuxAw6PDVYH3oKC8OYy8xQ2rE+HCNuOLCxiC
+         32sNsXvuaoVjM50jzuVW16lB/ZCd5ys2CTr7fAAkHmo7zsujw+ZkPQ/ND0efXTHtPSqI
+         RPXg==
+X-Gm-Message-State: AOAM530g8qNIbatjb7zJ01bWIS1fKT7IQL2KQsWBfSGmPEh656fIR7qk
+        lO6g6NNjJBkY7/+D6ZsFDjoJ5fDKqkGV0x7swDnQdw==
+X-Google-Smtp-Source: ABdhPJzG2fpX+4ES3rah/rrVmMzv/jiF6NJ2zEQzoLdi+59TjyjMidoiQzhXf5vKJHWd+QnCCW46WpFl5hztiSkqOw0=
+X-Received: by 2002:a2e:1302:: with SMTP id 2mr13534028ljt.280.1633108486155;
+ Fri, 01 Oct 2021 10:14:46 -0700 (PDT)
 MIME-Version: 1.0
 References: <20211001024506.3762647-1-tkjos@google.com> <CAHC9VhQ-uziaYRYWaah=RMmz7HUVvxGs+4F=g2sizVXR0ZSWVw@mail.gmail.com>
 In-Reply-To: <CAHC9VhQ-uziaYRYWaah=RMmz7HUVvxGs+4F=g2sizVXR0ZSWVw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 1 Oct 2021 10:44:51 -0400
-Message-ID: <CAHC9VhSet40x697Of5GJhpuWo-AH4TzEu_SgfBDMmANSzByQEw@mail.gmail.com>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Fri, 1 Oct 2021 10:14:34 -0700
+Message-ID: <CAHRSSEyq2yUmznpr9G1kxoC_8RcGXzHo37h471uxygFUbD_nrg@mail.gmail.com>
 Subject: Re: [PATCH] binder: use cred instead of task for selinux checks
-To:     Todd Kjos <tkjos@google.com>
+To:     Paul Moore <paul@paul-moore.com>
 Cc:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
         maco@android.com, christian@brauner.io,
         James Morris <jmorris@namei.org>,
@@ -71,7 +71,8 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 1, 2021 at 10:38 AM Paul Moore <paul@paul-moore.com> wrote:
+On Fri, Oct 1, 2021 at 7:38 AM Paul Moore <paul@paul-moore.com> wrote:
+>
 > On Thu, Sep 30, 2021 at 10:45 PM Todd Kjos <tkjos@google.com> wrote:
 > >
 > > Save the struct cred associated with a binder process
@@ -104,12 +105,103 @@ On Fri, Oct 1, 2021 at 10:38 AM Paul Moore <paul@paul-moore.com> wrote:
 > Thanks Todd, I'm happy to see someone with a better understanding of
 > binder than me pitch in to clean this up :)  A couple of quick
 > comments/questions below ...
+>
+> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > index 9edacc8b9768..ca599ebdea4a 100644
+> > --- a/drivers/android/binder.c
+> > +++ b/drivers/android/binder.c
+> > @@ -5055,6 +5056,7 @@ static int binder_open(struct inode *nodp, struct file *filp)
+> >         spin_lock_init(&proc->outer_lock);
+> >         get_task_struct(current->group_leader);
+> >         proc->tsk = current->group_leader;
+> > +       proc->cred = get_cred(filp->f_cred);
+>
+> Is it *always* true that filp->f_cred is going to be the same as
+> current->group_leader->cred?
 
-Ooops, I was a little over zealous when trimming my response and I
-accidentally cut off my comment that the associated comment blocks in
-include/linux/lsm_hooks.h should also be updated to reflect the binder
-LSM hook changes.
+Not necessarily -- it is current->cred of the task in binder_open()
+(not group_leader). This is fine. We used to set proc->tsk to current,
+but switched to group_leader a few years ago to make it easier to
+detect the same process with multiple opens during mmap (to solve some
+unrelated issues). We still use group_leader for that purpose, but for
+the cred, the current cred in binder_open() is sufficient.
 
--- 
-paul moore
-www.paul-moore.com
+> Or rather does this help resolve the
+> issue of wanting the subjective creds but not being able to access
+> them mentioned in the task_sid_binder() comment?  If the latter, it
+> might be nice to add something to the related comment in struct
+> binder_ref (below).
+
+Yes, we want the subjective cred so that is part of the point. I
+started with "proc->cred = get_task_cred(current->group_leader)" and
+got feedback that the "subjective" cred is preferred to avoid some
+subtle races that could be introduced, for example, if /dev/binder is
+opened through io_uring.
+
+>
+> >         INIT_LIST_HEAD(&proc->todo);
+> >         init_waitqueue_head(&proc->freeze_wait);
+> >         proc->default_priority = task_nice(current);
+> > diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
+> > index 402c4d4362a8..886fc327a534 100644
+> > --- a/drivers/android/binder_internal.h
+> > +++ b/drivers/android/binder_internal.h
+> > @@ -364,6 +364,8 @@ struct binder_ref {
+> >   *                        (invariant after initialized)
+> >   * @tsk                   task_struct for group_leader of process
+> >   *                        (invariant after initialized)
+> > + * @cred                  struct cred for group_leader of process
+> > + *                        (invariant after initialized)
+>
+> Related to the question above.  At the very least the comment should
+> probably be changed to indicate to make it clear the creds are coming
+> directly from the binder file/device and not always the group_leader.
+
+Good catch. Will update the comment (it's actually struct binder_proc).
+
+>
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index e7ebd45ca345..c8bf3db90c8b 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -255,29 +255,6 @@ static inline u32 task_sid_obj(const struct task_struct *task)
+> >         return sid;
+> >  }
+> >
+> > -/*
+> > - * get the security ID of a task for use with binder
+> > - */
+> > -static inline u32 task_sid_binder(const struct task_struct *task)
+> > -{
+> > -       /*
+> > -        * In many case where this function is used we should be using the
+> > -        * task's subjective SID, but we can't reliably access the subjective
+> > -        * creds of a task other than our own so we must use the objective
+> > -        * creds/SID, which are safe to access.  The downside is that if a task
+> > -        * is temporarily overriding it's creds it will not be reflected here;
+> > -        * however, it isn't clear that binder would handle that case well
+> > -        * anyway.
+> > -        *
+> > -        * If this ever changes and we can safely reference the subjective
+> > -        * creds/SID of another task, this function will make it easier to
+> > -        * identify the various places where we make use of the task SIDs in
+> > -        * the binder code.  It is also likely that we will need to adjust
+> > -        * the main drivers/android binder code as well.
+> > -        */
+> > -       return task_sid_obj(task);
+> > -}
+>
+> --
+> paul moore
+> www.paul-moore.com
+
+and from your next response:
+
+> Ooops, I was a little over zealous when trimming my response and I
+> accidentally cut off my comment that the associated comment blocks in
+> include/linux/lsm_hooks.h should also be updated to reflect the binder
+> LSM hook changes.
+
+Thanks for pointing this out! I didn't notice these comment blocks.
+
+-Todd
