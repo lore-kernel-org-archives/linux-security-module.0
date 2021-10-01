@@ -2,126 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A77C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Oct 2021 22:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1093C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Oct 2021 23:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4871C61AD0
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Oct 2021 22:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86E3061A63
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Oct 2021 23:37:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230511AbhJAXAS (ORCPT
+        id S231816AbhJAXjH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Oct 2021 19:00:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230404AbhJAXAR (ORCPT
+        Fri, 1 Oct 2021 19:39:07 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:60244
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230368AbhJAXjG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Oct 2021 19:00:17 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57809C061775
-        for <linux-security-module@vger.kernel.org>; Fri,  1 Oct 2021 15:58:32 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id i4so44767144lfv.4
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Oct 2021 15:58:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZQM3XM8xdLXddRKZW1XX+RPtGmZTJVt7CAVEe+7hVj0=;
-        b=HrPYP0UEVwuiTywHkbK3uNSlC5jNJRCt7l8EaoQMi0GpVMSFINwhrAt0s6xN2VsWnd
-         Myc5mNipqTNZcxOhUQEgTc+wNrFHHij90mG+lt2XElY+2NHha97StErPB8G12+Q/FdL7
-         kv/yBjF0tdcFFbh62Zzs85vTUFMkD27saQD001r+EBb1yzThD0/29HuX9TwewcOvoPID
-         6NmUoW0KSr6AgRtw5foBD1kqg7x7DEk0pD9byZrdGV8vM4cRAhBOa6eltRHMuoC79vmd
-         2qSPM4v3FgGl7AoaJFBY9KUW1L0pWlhtgS3WiXRLGRjfXTBWphGxNH6YWjpddXQ9JqG2
-         uaRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZQM3XM8xdLXddRKZW1XX+RPtGmZTJVt7CAVEe+7hVj0=;
-        b=LMynFT+2OvfvBwEg6QlT+UfjQlfpmU3NTcVrvI18uO84AhZU0llcehJLDoZv1cCgwF
-         spJ7sNTIqsvMXL4YH0z/U3/ea3A5RGpQRUGw+56nhD7vaCn1l0XIma1TUq1DfvNgjfI3
-         chAlARTnw6tuGERs92wbhhmT1oSRTlTYKidDUEbJsm49ZEaF/puUTgHTzGHNXLkyErEV
-         cH3FvfoYmK7uOxWdoLaDjoiqGKc/tSOl+w66gZk9dqXEvCL+UeE9h65dPiQHH6/DBr/s
-         kj9y18zCEnkRZo9+IPihSkjuehliQFYDqFAWwpq5M4rmvTYzsADGbBRNnvy2OHWVORCE
-         z9MA==
-X-Gm-Message-State: AOAM5319EjoIBv2r8Ij6e/X+AyvvRnEI64vEFhnvaUHCmB0r6gHSf0y3
-        ljb4rJpYsI/Gbv1IxAAeVtPAt+YYBmBFF7/6W6x7dQ==
-X-Google-Smtp-Source: ABdhPJxDRqKz8OAWDsnkLn4xH3d0hvk5cFN9OA2tx3QD1FlVd+hZKPEVe8R6GTnDW2zwiLwPxa2Ij4nuoD+ZhZ0oE9A=
-X-Received: by 2002:a05:6512:20cb:: with SMTP id u11mr633226lfr.237.1633129110528;
- Fri, 01 Oct 2021 15:58:30 -0700 (PDT)
+        Fri, 1 Oct 2021 19:39:06 -0400
+Received: from [192.168.192.153] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 738543F070;
+        Fri,  1 Oct 2021 23:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633131437;
+        bh=vRkTc7a319YRKj25e89fGcdfX8UPZN/zppQ98ri+pck=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=bsPRuL2qT9FakZgkoHJUgt8/iIpL+rJrxE18oGlZTSKlry8ifMyNtrPUdQpj8QhMa
+         92Hld23/DA5KAR+p3DOpn09sklKYe41mZtqqCajJ1DsRtgmIjcUbMNmG65K+f3c7Ol
+         pZb948s+/qUnBI9FnJDjZ529lfxkC0FTh0x7MSD4KotRQoXp2Fkd5bRaIH1cXavih0
+         kNo6c8kIkJqKYHqSBiuxxqCKzwdlGiOcRfFvg/8XRVs3eMk9XBprCT9kVDWbIJz0xn
+         uDE6fPZfE367enZwBVWafDS2dqwywqfALONDGOgawSe5Iqq+rXd+MyTIxopTsLvmYS
+         F8CUt+BL8QFjQ==
+Subject: Re: [PATCH][next] apparmor: Use struct_size() helper in kzalloc()
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20210929220526.GA355783@embeddedor>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+Message-ID: <4c851990-45d7-a0ff-e398-92ecb2454242@canonical.com>
+Date:   Fri, 1 Oct 2021 16:37:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20211001175521.3853257-1-tkjos@google.com> <c6a650e4-15e4-2943-f759-0e9577784c7a@schaufler-ca.com>
- <CAG48ez2tejBUXJGf0R9qpEiauL9-ABgkds6mZTQD7sZKLMdAAQ@mail.gmail.com>
- <CAG48ez1SRau1Tnge5HVqxCFsNCizmnQLErqnC=eSeERv8jg-zQ@mail.gmail.com> <f59c6e9f-2892-32da-62f8-8bbeec18ee4c@schaufler-ca.com>
-In-Reply-To: <f59c6e9f-2892-32da-62f8-8bbeec18ee4c@schaufler-ca.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Sat, 2 Oct 2021 00:58:04 +0200
-Message-ID: <CAG48ez0yF0u=QBLVL2XrGB8r8ouQj-_aS9SScu4O4f+LhZxCDw@mail.gmail.com>
-Subject: Re: [PATCH v2] binder: use cred instead of task for selinux checks
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Todd Kjos <tkjos@google.com>, gregkh@linuxfoundation.org,
-        arve@android.com, tkjos@android.com, maco@android.com,
-        christian@brauner.io, jmorris@namei.org, serge@hallyn.com,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, keescook@chromium.org, jeffv@google.com,
-        zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
-        kernel-team@android.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210929220526.GA355783@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 1, 2021 at 10:10 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 10/1/2021 12:50 PM, Jann Horn wrote:
-> > On Fri, Oct 1, 2021 at 9:36 PM Jann Horn <jannh@google.com> wrote:
-> >> On Fri, Oct 1, 2021 at 8:46 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >>> On 10/1/2021 10:55 AM, Todd Kjos wrote:
-> >>>> Save the struct cred associated with a binder process
-> >>>> at initial open to avoid potential race conditions
-> >>>> when converting to a security ID.
-> >>>>
-> >>>> Since binder was integrated with selinux, it has passed
-> >>>> 'struct task_struct' associated with the binder_proc
-> >>>> to represent the source and target of transactions.
-> >>>> The conversion of task to SID was then done in the hook
-> >>>> implementations. It turns out that there are race conditions
-> >>>> which can result in an incorrect security context being used.
-> >>> In the LSM stacking patch set I've been posting for a while
-> >>> (on version 29 now) I use information from the task structure
-> >>> to ensure that the security information passed via the binder
-> >>> interface is agreeable to both sides. Passing the cred will
-> >>> make it impossible to do this check. The task information
-> >>> required is not appropriate to have in the cred.
-> >> Why not? Why can't you put the security identity of the task into the creds?
-> > Ah, I get it now, you're concerned about different processes wanting
-> > to see security contexts formatted differently (e.g. printing the
-> > SELinux label vs printing the AppArmor label), right?
->
-> That is correct.
->
-> > But still, I don't think you can pull that information from the
-> > receiving task. Maybe the easiest solution would be to also store that
-> > in the creds? Or you'd have to manually grab that information when
-> > /dev/binder is opened.
->
-> I'm storing the information in the task security blob because that's
-> the appropriate scope. Today the LSM hook is given both task_struct's.
+On 9/29/21 3:05 PM, Gustavo A. R. Silva wrote:
+> Make use of the struct_size() helper instead of an open-coded version,
+> in order to avoid any potential type mistakes or integer overflows that,
+> in the worse scenario, could lead to heap overflows.
+>> Link: https://github.com/KSPP/linux/issues/160
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-Which is wrong, because you have no idea who the semantic "recipient
-task" is - any task that has a mapping of the binder fd can
-effectively receive transactions from it.
+nice
 
-(And the current "sender task" is also wrong, because binder looks at
-the task that opened the binder device, not the task currently
-performing the action.)
+I will pull this into my tree
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-> It's easy to compare to make sure the tasks are compatible.
+> ---
+>  security/apparmor/label.c  | 3 +--
+>  security/apparmor/policy.c | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+> index 6222fdfebe4e..0b0265da1926 100644
+> --- a/security/apparmor/label.c
+> +++ b/security/apparmor/label.c
+> @@ -425,8 +425,7 @@ struct aa_label *aa_label_alloc(int size, struct aa_proxy *proxy, gfp_t gfp)
+>  	AA_BUG(size < 1);
+>  
+>  	/*  + 1 for null terminator entry on vec */
+> -	new = kzalloc(sizeof(*new) + sizeof(struct aa_profile *) * (size + 1),
+> -			gfp);
+> +	new = kzalloc(struct_size(new, vec, size + 1), gfp);
+>  	AA_DEBUG("%s (%p)\n", __func__, new);
+>  	if (!new)
+>  		goto fail;
+> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+> index 17191a9eae41..5827dbdfbfca 100644
+> --- a/security/apparmor/policy.c
+> +++ b/security/apparmor/policy.c
+> @@ -260,8 +260,7 @@ struct aa_profile *aa_alloc_profile(const char *hname, struct aa_proxy *proxy,
+>  	struct aa_profile *profile;
+>  
+>  	/* freed by free_profile - usually through aa_put_profile */
+> -	profile = kzalloc(sizeof(*profile) + sizeof(struct aa_profile *) * 2,
+> -			  gfp);
+> +	profile = kzalloc(struct_size(profile, label.vec, 2), gfp);
+>  	if (!profile)
+>  		return NULL;
+>  
+> 
 
-It would be, if you actually had a pair of tasks that accurately
-represent the sender and the recipient.
-
-> Adding the
-> information to the cred would be yet another case where the scope of
-> security information is wrong.
-
-Can you elaborate on why you think that?
