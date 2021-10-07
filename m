@@ -2,104 +2,220 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AC9C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 00:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E81C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 06:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEA8460F4A
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 00:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF9576105A
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 06:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240124AbhJGAsi (ORCPT
+        id S240217AbhJGGVD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Oct 2021 20:48:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39686 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240142AbhJGAsd (ORCPT
+        Thu, 7 Oct 2021 02:21:03 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36734 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240203AbhJGGVC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Oct 2021 20:48:33 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4C4C061764
-        for <linux-security-module@vger.kernel.org>; Wed,  6 Oct 2021 17:46:40 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id g2-20020a256b02000000b005b71ee6a855so5707036ybc.8
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Oct 2021 17:46:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=zPCs1rEpKuQz4LUSoTxaJ0G3vwf7KAFSlUITLwZs6tU=;
-        b=p7C8NObDL/qgsnHg5/TYMe/e2qJ6I/Lq4YqPZ2gUnySyfykd5F/A2vU/1m3ceyFytV
-         I/7OeC1DNhDBO/Sg1SZmblT8zSDOS20AEaXhLm2H/qlJpIU+UkrwJgwQR6ZhajMJlwdg
-         H0AQ8c2Ji4cC5UGLPFyjbyHiVLS1+KBXJaeDkVYrBsKAL2mDeRIuBNWlxuMFkZA9ZGV8
-         A7qky4OO4I/PaZtI6fTe4+d1q4NwNuqcs2UJX5Gqm7isuGeOruusB375wUngfU0n4dV1
-         v6iAo7zDuAInyEyLRn9Rt/0nvTXYRScq+aeug+gsRlashaZxAnGdEcAqgBxeJf60frPU
-         Y76A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=zPCs1rEpKuQz4LUSoTxaJ0G3vwf7KAFSlUITLwZs6tU=;
-        b=YPdf6h9H+9/BRtfEcGYQDmXot8pUzgjqTkWbbVI0oWYKQS8dxDU/ej4BfT7Xp2i1lA
-         8FJ0P9Zpsxu5W6m5A9iqpjteM88HPsvHqYrry+GFRfU2vqLlUqbgciUWEm1U7bOCR0n0
-         37nHR9LwljuEurUbJxCMNHr+M+Ud+T4d2DZ1YjdhZFT4L2PqGDOKrs4+5It2WZsoutEv
-         cw01xQaHGiUe0/QX5Vd7fqCDWP4tkhRPYPpS8v6E9xoEtivr9xhRrcHIbeOyJgELEw0f
-         Z/MfWc+b9uYgMhzA0pGn9iBFNYcfnFX3jf0EbW5NV7+NaLYJTybLynvAvf3zZk+sW2J+
-         N6og==
-X-Gm-Message-State: AOAM532/48PL2AVIrWfxRWiNcejYhKYEtwg9fRgUQjd7OGeEivDD9r6u
-        78sP3buhd8NoH6Kpy0lgE9nEQrJ1sg==
-X-Google-Smtp-Source: ABdhPJyjO6u79sIe1Ctn1/EYwfXuBQtVGMw40kM5yChFcDVNsb4RU39eXJBDBGttGXiLTmWRzysZNXQWxg==
-X-Received: from ava-linux2.mtv.corp.google.com ([2620:15c:211:200:6ff2:347f:ac4a:8a04])
- (user=tkjos job=sendgmr) by 2002:a5b:501:: with SMTP id o1mr1359354ybp.402.1633567600035;
- Wed, 06 Oct 2021 17:46:40 -0700 (PDT)
-Date:   Wed,  6 Oct 2021 17:46:29 -0700
-In-Reply-To: <20211007004629.1113572-1-tkjos@google.com>
-Message-Id: <20211007004629.1113572-4-tkjos@google.com>
-Mime-Version: 1.0
-References: <20211007004629.1113572-1-tkjos@google.com>
-X-Mailer: git-send-email 2.33.0.800.g4c38ced690-goog
-Subject: [PATCH v4 3/3] binder: use euid from cred instead of using task
-From:   Todd Kjos <tkjos@google.com>
-To:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, christian@brauner.io, jmorris@namei.org,
-        serge@hallyn.com, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        keescook@chromium.org, jannh@google.com, jeffv@google.com,
-        zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, devel@driverdev.osuosl.org,
+        Thu, 7 Oct 2021 02:21:02 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1975douw019084;
+        Thu, 7 Oct 2021 02:18:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=g3OfHoJPvrV8tRdPiXlhQT3CLKaqzhip7yaVidL+hG0=;
+ b=e+VLBKQ2XO2evYBqYGqPDwEukY1vxt4yc1BIUmtDGkMQ6cL5YaLXmIMO/e7DB/Jf4DMD
+ llVU1NbDQiaDejg18rvk9bD5V3llvjJ3wsVFqMElC8fQGT4z56LN6ZVdNEVPYG1jYlTB
+ hnyO157xbnS9B0JqPqOs9oiX34fbB40/OeztohGOUEPFpXWGl5udUC6CiZVPDqCKbapZ
+ hLCcfy2lEXwftMmLDmGoBlrlcWQKtEd15uAqJIIYRcqU00SwXXTNWycBEpzBWB63oqId
+ V17qtGZwVqxKVGAxKak3KOp2tiZ0oWbvzMjUdet2chDWGBjJM7Hg6iEXODSW+mTbrxPv 2A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhp04eck6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Oct 2021 02:18:45 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1975wlwK017115;
+        Thu, 7 Oct 2021 02:18:44 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhp04ecjv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Oct 2021 02:18:44 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1976IEXJ026505;
+        Thu, 7 Oct 2021 06:18:43 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma01dal.us.ibm.com with ESMTP id 3bef2efmfe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Oct 2021 06:18:43 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1976If7e41353714
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Oct 2021 06:18:41 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0FC19AE062;
+        Thu,  7 Oct 2021 06:18:41 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE71AAE05C;
+        Thu,  7 Oct 2021 06:18:40 +0000 (GMT)
+Received: from amdrome3.watson.ibm.com (unknown [9.2.130.16])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Oct 2021 06:18:40 +0000 (GMT)
+From:   Dov Murik <dovmurik@linux.ibm.com>
+To:     linux-efi@vger.kernel.org
+Cc:     Dov Murik <dovmurik@linux.ibm.com>, Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     joel@joelfernandes.org, kernel-team@android.com,
-        Todd Kjos <tkjos@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v2 0/4] Allow access to confidential computing secret area in SEV guests
+Date:   Thu,  7 Oct 2021 06:18:34 +0000
+Message-Id: <20211007061838.1381129-1-dovmurik@linux.ibm.com>
+X-Mailer: git-send-email 2.25.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: vrzvuigXL_kjcBhWCQLVlf-tx_m249zl
+X-Proofpoint-ORIG-GUID: kFaosjDh9HkQJ35h7nn0vFc0USuGC6RD
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
+ definitions=2021-10-06_04,2021-10-07_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 phishscore=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 bulkscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109230001 definitions=main-2110070039
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Set a transaction's sender_euid from the 'struct cred'
-saved at binder_open() instead of looking up the euid
-from the binder proc's 'struct task'. This ensures
-the euid is associated with the security context that
-of the task that opened binder.
+Confidential computing (coco) hardware such as AMD SEV (Secure Encrypted
+Virtualization) allows guest owners to inject secrets into the VMs
+memory without the host/hypervisor being able to read them.  In SEV,
+secret injection is performed early in the VM launch process, before the
+guest starts running.
 
-Fixes: 457b9a6f09f0 ("Staging: android: add binder driver")
-Signed-off-by: Todd Kjos <tkjos@google.com>
-Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: stable@vger.kernel.org # 4.4+
+OVMF already reserves designated area for secret injection (in its
+AmdSev package; see edk2 commit 01726b6d23d4 "OvmfPkg/AmdSev: Expose the
+Sev Secret area using a configuration table" [1]), but the secrets were
+not available in the guest kernel.
+
+The patch series copies the secrets from the EFI-provided memory to
+kernel reserved memory, and optionally exposes them to userspace via
+securityfs using a new sev_secret kernel module.
+
+Patch 1 exports the clean_cache_range function which will be used in
+patch 4.  Patch 2 in efi/libstub copies the secret area from the EFI
+memory to specially allocated memory; patch 3 reserves that
+memory block.  Finally, patch 4 introduces the new sev_secret module
+that exposes the content of the secret entries as securityfs files, and
+allows clearing out secrets with a file unlink interface.
+
+As a usage example, consider a guest performing computations on
+encrypted files.  The Guest Owner provides the decryption key (= secret)
+using the secret injection mechanism.  The guest application reads the
+secret from the sev_secret filesystem and proceeds to decrypt the files
+into memory and then performs the needed computations on the content.
+
+In this example, the host can't read the files from the disk image
+because they are encrypted.  Host can't read the decryption key because
+it is passed using the secret injection mechanism (= secure channel).
+Host can't read the decrypted content from memory because it's a
+confidential (memory-encrypted) guest.
+
+This has been tested with AMD SEV and SEV-ES guests, but the kernel side
+of handling the secret area has no SEV-specific dependencies, and
+therefore might be usable (perhaps with minor changes) for any
+confidential computing hardware that can publish the secret area via the
+standard EFI config table entry.
+
+Here is a simple example for usage of the sev_secret module in a guest
+to which a secret are with 4 secrets was injected during launch:
+
+# modprobe sev_secret
+# ls -la /sys/kernel/security/coco/sev_secret
+total 0
+drwxr-xr-x 2 root root 0 Jun 28 11:54 .
+drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
+-r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
+-r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
+-r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
+-r--r----- 1 root root 0 Jun 28 11:54 e6f5a162-d67f-4750-a67c-5d065f2a9910
+
+# xxd /sys/kernel/security/coco/sev_secret/e6f5a162-d67f-4750-a67c-5d065f2a9910
+00000000: 7468 6573 652d 6172 652d 7468 652d 6b61  these-are-the-ka
+00000010: 7461 2d73 6563 7265 7473 0001 0203 0405  ta-secrets......
+00000020: 0607                                     ..
+
+# rm /sys/kernel/security/coco/sev_secret/e6f5a162-d67f-4750-a67c-5d065f2a9910
+
+# ls -la /sys/kernel/security/coco/sev_secret
+total 0
+drwxr-xr-x 2 root root 0 Jun 28 11:55 .
+drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
+-r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
+-r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
+-r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
+
+
+[1] https://github.com/tianocore/edk2/commit/01726b6d23d4
+
 ---
-v3: added this patch to series
 
- drivers/android/binder.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2 changes:
+ - Export clean_cache_range()
+ - When deleteing a secret, call clean_cache_range() after explicit_memzero
+ - Add Documentation/ABI/testing/securityfs-coco-sev_secret
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 989afd0804ca..26382e982c5e 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -2711,7 +2711,7 @@ static void binder_transaction(struct binder_proc *proc,
- 		t->from = thread;
- 	else
- 		t->from = NULL;
--	t->sender_euid = task_euid(proc->tsk);
-+	t->sender_euid = proc->cred->euid;
- 	t->to_proc = target_proc;
- 	t->to_thread = target_thread;
- 	t->code = tr->code;
+v1: https://lore.kernel.org/linux-coco/20210809190157.279332-1-dovmurik@linux.ibm.com/
+
+RFC: https://lore.kernel.org/linux-coco/20210628183431.953934-1-dovmurik@linux.ibm.com/
+
+
+Dov Murik (4):
+  x86: Export clean_cache_range()
+  efi/libstub: Copy confidential computing secret area
+  efi: Reserve confidential computing secret area
+  virt: Add sev_secret module to expose confidential computing secrets
+
+ .../ABI/testing/securityfs-coco-sev_secret    |  49 +++
+ arch/x86/include/asm/cacheflush.h             |   1 +
+ arch/x86/lib/usercopy_64.c                    |  21 --
+ arch/x86/mm/pat/set_memory.c                  |  30 ++
+ arch/x86/platform/efi/efi.c                   |   1 +
+ drivers/firmware/efi/Makefile                 |   2 +-
+ drivers/firmware/efi/coco.c                   |  41 +++
+ drivers/firmware/efi/efi.c                    |   3 +
+ drivers/firmware/efi/libstub/Makefile         |   2 +-
+ drivers/firmware/efi/libstub/coco.c           |  68 ++++
+ drivers/firmware/efi/libstub/efi-stub.c       |   2 +
+ drivers/firmware/efi/libstub/efistub.h        |   2 +
+ drivers/firmware/efi/libstub/x86-stub.c       |   2 +
+ drivers/virt/Kconfig                          |   3 +
+ drivers/virt/Makefile                         |   1 +
+ drivers/virt/coco/sev_secret/Kconfig          |  11 +
+ drivers/virt/coco/sev_secret/Makefile         |   2 +
+ drivers/virt/coco/sev_secret/sev_secret.c     | 320 ++++++++++++++++++
+ include/linux/efi.h                           |   9 +
+ 19 files changed, 547 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/ABI/testing/securityfs-coco-sev_secret
+ create mode 100644 drivers/firmware/efi/coco.c
+ create mode 100644 drivers/firmware/efi/libstub/coco.c
+ create mode 100644 drivers/virt/coco/sev_secret/Kconfig
+ create mode 100644 drivers/virt/coco/sev_secret/Makefile
+ create mode 100644 drivers/virt/coco/sev_secret/sev_secret.c
+
+
+base-commit: 60a9483534ed0d99090a2ee1d4bb0b8179195f51
 -- 
-2.33.0.800.g4c38ced690-goog
+2.25.1
 
