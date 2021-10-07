@@ -2,105 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468B9C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Oct 2021 22:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF55C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 00:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F8DE610A8
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Oct 2021 22:03:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0174D60FC0
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 00:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239776AbhJFWFO (ORCPT
+        id S239940AbhJGAs0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Oct 2021 18:05:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59138 "EHLO
+        Wed, 6 Oct 2021 20:48:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239755AbhJFWFO (ORCPT
+        with ESMTP id S232203AbhJGAs0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Oct 2021 18:05:14 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1227C061755
-        for <linux-security-module@vger.kernel.org>; Wed,  6 Oct 2021 15:03:21 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id m5so3560537pfk.7
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Oct 2021 15:03:21 -0700 (PDT)
+        Wed, 6 Oct 2021 20:48:26 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B70DC061746
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Oct 2021 17:46:33 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id z2-20020a254c02000000b005b68ef4fe24so5717973yba.11
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Oct 2021 17:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=S8r+rc6bFIU7cXArQnf6Qtpwv2FoCGPsccPj2q+K1zk=;
-        b=BlcpB5NSeXXefPepERXjr0jUHlucP3qusHB3fY//2ntWT4PaA2nle9ET0X3AI1HmEH
-         feGtjzF6zI0ZgP3SazGlzI7XQsy/joCst2lDK+wX83vnR+9++PDS05+ZQtLJy+cp0Zww
-         49ZwkdVQHaEFSC8vTVzcnAqC2r7EwFKG1KnMo=
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=RiNo10qigaewXNskXWDjf8RGesyfVGXCVVY+c8mvumk=;
+        b=s9RM15/OlUmOcNzsadQlUngC5XCaFRvZDrvfpjpvjqc/Khpftz2AcowOqC++yIXKVX
+         TbIowssKA+A1UTSXFVb6NNrpOCYjeZKB4DYG08HgyUn84iBIugHKvVpIY5/3IhQPH56g
+         FeyZHf2B3CnS2uFxt/c/+CQrNtD28AY72artX5WoAZy4uoxz4FMFQCBhzLTkHEWEfvSQ
+         pVJHFl2wSjwbX422PVf+sLxVugd5HFL6dxUdeJmOKMl11pFoivbdB4autoVk2iRo3cfC
+         ccwCnvzY4faO5Pwpo3Bcql9HnMyQHBhqxNjqpPcEirGmjKeMMXX9KnpRKCq4tFKOrIrz
+         Yilg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=S8r+rc6bFIU7cXArQnf6Qtpwv2FoCGPsccPj2q+K1zk=;
-        b=JBpu90gHLU4tgTKv2CkUUdtLKsPOegSr0bbX8seHxbvC0I6qpKvnQf/LbeAYbVEpcK
-         7BmZuqnR3FWvE1S5cqNYwuqqaReaJcrHHdXCNbU/qcO32py0wA4puXwgYYLBpe22iPZE
-         1F7slfiXI0bw2ZlqasXu2+pptnyuIBQVEGPTw3iAug8MztkB+0/uX9wTbdDt51PZVPKT
-         u5X1R+7GsCFfjEthbvvfK/y/HBIGROf2RdkXeHHLUnFvlq+hgMBR3/xpcxWpysdGVD0v
-         Wqjfa2v4Z1OUTBtJ30qd68yqc+UYgBTk4pRX2D4nOX4+mgk+agGqsBlPjHhbbCwj8Gm0
-         b53Q==
-X-Gm-Message-State: AOAM533Hf3bCy+m3Mrc81d4f30bfjUBvUEwdfNpl4ldPCn3kIwcWzCiH
-        D2l0MCfszVj6WyC6Kn18hMGS1A==
-X-Google-Smtp-Source: ABdhPJzouFSoNpCm18n4Iwn3EUMcJjerfXPUN9YpUneFa6F70rdyCB8CBylaxKHlD/YEVHoOYPZFMQ==
-X-Received: by 2002:a63:e651:: with SMTP id p17mr420929pgj.66.1633557801181;
-        Wed, 06 Oct 2021 15:03:21 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k17sm2947437pff.214.2021.10.06.15.03.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 15:03:20 -0700 (PDT)
-Date:   Wed, 6 Oct 2021 15:03:19 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     bauen1 <j2468h@googlemail.com>, akpm@linux-foundation.org,
-        arnd@arndb.de, casey@schaufler-ca.com,
-        christian.brauner@ubuntu.com, christian@python.org, corbet@lwn.net,
-        cyphar@cyphar.com, deven.desai@linux.microsoft.com,
-        dvyukov@google.com, ebiggers@kernel.org, ericchiang@google.com,
-        fweimer@redhat.com, geert@linux-m68k.org, jack@suse.cz,
-        jannh@google.com, jmorris@namei.org,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, luto@kernel.org,
-        madvenka@linux.microsoft.com, mjg59@google.com,
-        mszeredi@redhat.com, mtk.manpages@gmail.com,
-        nramas@linux.microsoft.com, philippe.trebuchet@ssi.gouv.fr,
-        scottsh@microsoft.com, sean.j.christopherson@intel.com,
-        sgrubb@redhat.com, shuah@kernel.org, steve.dower@python.org,
-        thibaut.sautereau@clip-os.org, vincent.strubel@ssi.gouv.fr,
-        viro@zeniv.linux.org.uk, willy@infradead.org, zohar@linux.ibm.com
-Subject: Re: [PATCH v12 0/3] Add trusted_for(2) (was O_MAYEXEC)
-Message-ID: <202110061500.B8F821C@keescook>
-References: <20201203173118.379271-1-mic@digikod.net>
- <d3b0da18-d0f6-3f72-d3ab-6cf19acae6eb@gmail.com>
- <2a4cf50c-7e79-75d1-7907-8218e669f7fa@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a4cf50c-7e79-75d1-7907-8218e669f7fa@digikod.net>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=RiNo10qigaewXNskXWDjf8RGesyfVGXCVVY+c8mvumk=;
+        b=H5CVNG9vd03FpozTePMmwFjGxobyB+jLYtEhOCVaB/2RwjNa/NdlIuiWScjDa/IuRY
+         mbECJCTC1IHy1h8D694S8fi64uI8NDWY4R9e3ei7bQgbgCaZOllLcLmdZ/RrWgm8pzp3
+         tyjx54kJXHAuICgExHI0+MzlkEIfQeXP4r0D2xFl5GbUz3YU3Z2svh5vgNSNfvCBo6VA
+         qEE/j+c1cHO4clSr4gLWYxSH0p0lXlinbVg/uncYhxkPZGq7apo6y2o5/n6NPAaxGDGL
+         p8dlLo7GjymnI6LGELq98hLafyTcvg/0RQD+JIgNcxVvqgkA6+rI5u9+5Fi3phksNf2d
+         4rvg==
+X-Gm-Message-State: AOAM532R2nm4zez7JZbmFvXuLhUAudJV+2MLXUiyweUJbZ9uIJJfkAQf
+        6mJ6lMHd210ZuWCgU5xd3CSa4QSefw==
+X-Google-Smtp-Source: ABdhPJxv2Ot34RxVC2xJ0cMsLDuUENvC7xNWUpRNm7n8iUeJR1ye6f3+WgWQS4WtMn+OZXXvuRQNZAs1AA==
+X-Received: from ava-linux2.mtv.corp.google.com ([2620:15c:211:200:6ff2:347f:ac4a:8a04])
+ (user=tkjos job=sendgmr) by 2002:a25:a525:: with SMTP id h34mr1545139ybi.168.1633567592745;
+ Wed, 06 Oct 2021 17:46:32 -0700 (PDT)
+Date:   Wed,  6 Oct 2021 17:46:26 -0700
+Message-Id: <20211007004629.1113572-1-tkjos@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.33.0.800.g4c38ced690-goog
+Subject: [PATCH v4 0/3] binder: use cred instead of task for security context
+From:   Todd Kjos <tkjos@google.com>
+To:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+        maco@android.com, christian@brauner.io, jmorris@namei.org,
+        serge@hallyn.com, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        keescook@chromium.org, jannh@google.com, jeffv@google.com,
+        zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Cc:     joel@joelfernandes.org, kernel-team@android.com,
+        Todd Kjos <tkjos@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 09, 2021 at 07:15:42PM +0200, Mickaël Salaün wrote:
-> There was no new reviews, probably because the FS maintainers were busy,
-> and I was focused on Landlock (which is now in -next), but I plan to
-> send a new patch series for trusted_for(2) soon.
+This series fixes the possible use of an incorrect security context
+when checking selinux permissions, getting a security ID, or lookup
+up the euid.
 
-Hi!
+The previous behavior was to save the group_leader 'struct task_struct'
+in binder_open() and using that to obtain security IDs or euids.
 
-Did this ever happen? It looks like it's in good shape, and I think it's
-a nice building block for userspace to have. Are you able to rebase and
-re-send this?
+This has been shown to be unreliable, so this series instead saves the
+'struct cred' of the task that called binder_open(). This cred is used
+for these lookups instead of the task.
 
-I've tended to aim these things at akpm if Al gets busy. (And since
-you've had past review from Al, that should be hopefully sufficient.)
+v1 and v2 of this series were a single patch "binder: use euid from"
+cred instead of using task". During review, Stephen Smalley identified
+two more related issues so the corresponding patches were added to
+the series.
 
-Thanks for chasing this!
+v3:
+- add 2 patches to fix getsecid and euid
 
--Kees
+v4:
+- fix minor checkpatch issues
+- fix build-break for !CONFIG_SECURITY
 
--- 
-Kees Cook
+Todd Kjos (3):
+  binder: use cred instead of task for selinux checks
+  binder: use cred instead of task for getsecid
+  binder: use euid from cred instead of using task
+
+ drivers/android/binder.c          | 14 ++++++++------
+ drivers/android/binder_internal.h |  4 ++++
+ include/linux/lsm_hook_defs.h     | 14 +++++++-------
+ include/linux/lsm_hooks.h         | 14 +++++++-------
+ include/linux/security.h          | 28 ++++++++++++++--------------
+ security/security.c               | 14 +++++++-------
+ security/selinux/hooks.c          | 48 +++++++++++++-----------------------------------
+ 7 files changed, 60 insertions(+), 76 deletions(-)
