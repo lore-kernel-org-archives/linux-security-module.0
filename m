@@ -2,60 +2,60 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 995AFC4321E
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 06:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E85C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 06:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8019461245
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 06:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CA156113E
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 06:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240203AbhJGGVE (ORCPT
+        id S240253AbhJGGVF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Oct 2021 02:21:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36662 "EHLO
+        Thu, 7 Oct 2021 02:21:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19770 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231797AbhJGGVC (ORCPT
+        by vger.kernel.org with ESMTP id S240216AbhJGGVC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Thu, 7 Oct 2021 02:21:02 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19766soG026300;
-        Thu, 7 Oct 2021 02:18:46 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1975dRF5008889;
+        Thu, 7 Oct 2021 02:18:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=42jey/J7MkoU4a7hbVMgG0u/fh44icbwRuYrZCzqWoE=;
- b=BsHkd3NmovE0xNUASjtmACNzQ+QnYTA68NY1HMghZdmOwwSho1FC+0Pbeb1NSJXycAsx
- rAkG21gLv+WPRv5kVDf6++khWcQ24s7jQuAL6vfpJHvJCzFYrcaBt7+g2Q+ADkCaPMBI
- Ej481iFlqOLCEMKKCW7+LIWqizbXwqJPeJU70/39lOvILu5cQfpsHwhsYBVKMUFUpCWz
- 6Jkm8dMV1Fp0WN3+oy4Eco41yOVmstE6SKYQpzW5Ffw4hzMOiiSWZJA/RA5yHGmoPHWA
- udChiY3s/c0JVcU9/72/UX2uBHkomkHOB17IIoEMlht43WZAINW9E0/EFJfRI4p2ZyF7 3Q== 
+ bh=VZIyRqthO6pl/kMcGKnVcZFJWGn3auCwdoSboG+e8xA=;
+ b=kEOfxVEA3mRWYeNMpr4XeUnQc328vUwKZVqGjNYVxvwX2kcM8sTc27rioVpCirQPk143
+ eP/qDoJ0IC6E8fEmmccLrs7vJrnt65H/YfZ1EmVgw2m+nvYaQh9SkcIwqwuM7y8Wmw2g
+ p/qB8m8KSbwuyVMxFALXk5EKVpkGL1brturEJ5EaV0yPUrlwfaHY9Gx0dnwFqGEaqfg4
+ dlCxMhmqNWOJ3e+Ds7I62eTvMBNQk7bKR3zyXlkeIjSTHEuyzNn2OC8D25zxOGxwGQG1
+ 17JAmzsvjma6oDOfSdF5qo56OlRQs6UcD6zjtJYXap5H/WXQbrCgmZstOMLPVxKiB+MA yg== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhsgpaddm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Oct 2021 02:18:46 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1976BuQ1021710;
-        Thu, 7 Oct 2021 02:18:45 -0400
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhsgpadcv-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhkcx17mg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 07 Oct 2021 02:18:45 -0400
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1976HsY8032334;
-        Thu, 7 Oct 2021 06:18:44 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma01wdc.us.ibm.com with ESMTP id 3bef2bsuey-1
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1975mPqG007928;
+        Thu, 7 Oct 2021 02:18:44 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhkcx17ky-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Oct 2021 06:18:44 +0000
+        Thu, 07 Oct 2021 02:18:44 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1976Hsq1032341;
+        Thu, 7 Oct 2021 06:18:43 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma01wdc.us.ibm.com with ESMTP id 3bef2bsuep-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Oct 2021 06:18:43 +0000
 Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1976IgPk53936470
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1976Ifpe42533262
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Oct 2021 06:18:42 GMT
+        Thu, 7 Oct 2021 06:18:41 GMT
 Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 58B81AE062;
-        Thu,  7 Oct 2021 06:18:42 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 76468AE063;
+        Thu,  7 Oct 2021 06:18:41 +0000 (GMT)
 Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0721EAE063;
-        Thu,  7 Oct 2021 06:18:42 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 1F9FCAE066;
+        Thu,  7 Oct 2021 06:18:41 +0000 (GMT)
 Received: from amdrome3.watson.ibm.com (unknown [9.2.130.16])
         by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu,  7 Oct 2021 06:18:41 +0000 (GMT)
@@ -78,155 +78,126 @@ Cc:     Dov Murik <dovmurik@linux.ibm.com>, Borislav Petkov <bp@suse.de>,
         Daniele Buono <dbuono@linux.vnet.ibm.com>,
         linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/4] efi: Reserve confidential computing secret area
-Date:   Thu,  7 Oct 2021 06:18:37 +0000
-Message-Id: <20211007061838.1381129-4-dovmurik@linux.ibm.com>
+Subject: [PATCH v2 1/4] x86: Export clean_cache_range()
+Date:   Thu,  7 Oct 2021 06:18:35 +0000
+Message-Id: <20211007061838.1381129-2-dovmurik@linux.ibm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211007061838.1381129-1-dovmurik@linux.ibm.com>
 References: <20211007061838.1381129-1-dovmurik@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: hZ96oJHV3vQGjRymjLpIbmcL8kOMJltl
-X-Proofpoint-ORIG-GUID: n3XjYuVTlvd4cF0KPusrhhj-yEbMPyTd
+X-Proofpoint-GUID: nS7OZlRa22gZYQdylIC3i34dfCSB_Jfc
+X-Proofpoint-ORIG-GUID: c_LBawc6OxqucSbZGPuFu_Nd6JHtSM-9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
  definitions=2021-10-06_04,2021-10-07_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- malwarescore=0 suspectscore=0 mlxscore=0 phishscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109230001 definitions=main-2110070039
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 phishscore=0 spamscore=0
+ impostorscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2109230001 definitions=main-2110070039
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When efi-stub copies an EFI-provided confidential computing (coco)
-secret area, reserve that memory block for future use within the kernel.
+Export clean_cache_range() which is similar to the existing
+clflush_cache_range() but uses the CLWB (cache line write back)
+instruction instead of CLFLUSH.
+
+Remove existing implementation of clean_cache_range() from
+arch/x86/lib/usercopy_64.c .
 
 Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
 ---
- arch/x86/platform/efi/efi.c   |  1 +
- drivers/firmware/efi/Makefile |  2 +-
- drivers/firmware/efi/coco.c   | 41 +++++++++++++++++++++++++++++++++++
- drivers/firmware/efi/efi.c    |  3 +++
- include/linux/efi.h           |  3 +++
- 5 files changed, 49 insertions(+), 1 deletion(-)
- create mode 100644 drivers/firmware/efi/coco.c
+ arch/x86/include/asm/cacheflush.h |  1 +
+ arch/x86/lib/usercopy_64.c        | 21 ---------------------
+ arch/x86/mm/pat/set_memory.c      | 30 ++++++++++++++++++++++++++++++
+ 3 files changed, 31 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 147c30a81f15..35e082e5f603 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -93,6 +93,7 @@ static const unsigned long * const efi_tables[] = {
- #ifdef CONFIG_LOAD_UEFI_KEYS
- 	&efi.mokvar_table,
- #endif
-+	&efi.coco_secret,
- };
+diff --git a/arch/x86/include/asm/cacheflush.h b/arch/x86/include/asm/cacheflush.h
+index b192d917a6d0..76452ba1bafb 100644
+--- a/arch/x86/include/asm/cacheflush.h
++++ b/arch/x86/include/asm/cacheflush.h
+@@ -9,5 +9,6 @@
+ #include <asm/special_insns.h>
  
- u64 efi_setup;		/* efi setup_data physical address */
-diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-index c02ff25dd477..bfd35294703e 100644
---- a/drivers/firmware/efi/Makefile
-+++ b/drivers/firmware/efi/Makefile
-@@ -12,7 +12,7 @@ KASAN_SANITIZE_runtime-wrappers.o	:= n
+ void clflush_cache_range(void *addr, unsigned int size);
++void clean_cache_range(void *vaddr, unsigned int size);
  
- obj-$(CONFIG_ACPI_BGRT) 		+= efi-bgrt.o
- obj-$(CONFIG_EFI)			+= efi.o vars.o reboot.o memattr.o tpm.o
--obj-$(CONFIG_EFI)			+= memmap.o
-+obj-$(CONFIG_EFI)			+= memmap.o coco.o
- ifneq ($(CONFIG_EFI_CAPSULE_LOADER),)
- obj-$(CONFIG_EFI)			+= capsule.o
- endif
-diff --git a/drivers/firmware/efi/coco.c b/drivers/firmware/efi/coco.c
-new file mode 100644
-index 000000000000..42f477d6188c
---- /dev/null
-+++ b/drivers/firmware/efi/coco.c
-@@ -0,0 +1,41 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Confidential computing (coco) secret area handling
-+ *
-+ * Copyright (C) 2021 IBM Corporation
-+ * Author: Dov Murik <dovmurik@linux.ibm.com>
-+ */
-+
-+#define pr_fmt(fmt) "efi: " fmt
-+
-+#include <linux/efi.h>
-+#include <linux/init.h>
-+#include <linux/memblock.h>
-+#include <asm/early_ioremap.h>
-+
-+/*
-+ * Reserve the confidential computing secret area memory
-+ */
-+int __init efi_coco_secret_area_reserve(void)
+ #endif /* _ASM_X86_CACHEFLUSH_H */
+diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+index 508c81e97ab1..ffd39f1d4251 100644
+--- a/arch/x86/lib/usercopy_64.c
++++ b/arch/x86/lib/usercopy_64.c
+@@ -57,27 +57,6 @@ unsigned long clear_user(void __user *to, unsigned long n)
+ EXPORT_SYMBOL(clear_user);
+ 
+ #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE
+-/**
+- * clean_cache_range - write back a cache range with CLWB
+- * @vaddr:	virtual start address
+- * @size:	number of bytes to write back
+- *
+- * Write back a cache range using the CLWB (cache line write back)
+- * instruction. Note that @size is internally rounded up to be cache
+- * line size aligned.
+- */
+-static void clean_cache_range(void *addr, size_t size)
+-{
+-	u16 x86_clflush_size = boot_cpu_data.x86_clflush_size;
+-	unsigned long clflush_mask = x86_clflush_size - 1;
+-	void *vend = addr + size;
+-	void *p;
+-
+-	for (p = (void *)((unsigned long)addr & ~clflush_mask);
+-	     p < vend; p += x86_clflush_size)
+-		clwb(p);
+-}
+-
+ void arch_wb_cache_pmem(void *addr, size_t size)
+ {
+ 	clean_cache_range(addr, size);
+diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+index ad8a5c586a35..8de029a21e03 100644
+--- a/arch/x86/mm/pat/set_memory.c
++++ b/arch/x86/mm/pat/set_memory.c
+@@ -319,6 +319,36 @@ void clflush_cache_range(void *vaddr, unsigned int size)
+ }
+ EXPORT_SYMBOL_GPL(clflush_cache_range);
+ 
++static void clean_cache_range_opt(void *vaddr, unsigned int size)
 +{
-+	struct linux_efi_coco_secret_area *secret_area;
-+	unsigned long secret_area_size;
++	const unsigned long clflush_size = boot_cpu_data.x86_clflush_size;
++	void *p = (void *)((unsigned long)vaddr & ~(clflush_size - 1));
++	void *vend = vaddr + size;
 +
-+	if (efi.coco_secret == EFI_INVALID_TABLE_ADDR)
-+		return 0;
++	if (p >= vend)
++		return;
 +
-+	secret_area = early_memremap(efi.coco_secret, sizeof(*secret_area));
-+	if (!secret_area) {
-+		pr_err("Failed to map confidential computing secret area\n");
-+		efi.coco_secret = EFI_INVALID_TABLE_ADDR;
-+		return -ENOMEM;
-+	}
-+
-+	secret_area_size = sizeof(*secret_area) + secret_area->size;
-+	memblock_reserve(efi.coco_secret, secret_area_size);
-+
-+	pr_info("Reserved memory of EFI-provided confidential computing secret area");
-+
-+	early_memunmap(secret_area, sizeof(*secret_area));
-+	return 0;
++	for (; p < vend; p += clflush_size)
++		clwb(p);
 +}
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 847f33ffc4ae..07e17ad225a6 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -526,6 +526,7 @@ static const efi_config_table_type_t common_tables[] __initconst = {
- #ifdef CONFIG_LOAD_UEFI_KEYS
- 	{LINUX_EFI_MOK_VARIABLE_TABLE_GUID,	&efi.mokvar_table,	"MOKvar"	},
- #endif
-+	{LINUX_EFI_COCO_SECRET_AREA_GUID,	&efi.coco_secret,	"CocoSecret"	},
- 	{},
- };
- 
-@@ -613,6 +614,8 @@ int __init efi_config_parse_tables(const efi_config_table_t *config_tables,
- 
- 	efi_tpm_eventlog_init();
- 
-+	efi_coco_secret_area_reserve();
 +
- 	if (mem_reserve != EFI_INVALID_TABLE_ADDR) {
- 		unsigned long prsv = mem_reserve;
- 
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 9021dd521302..e86600af5dfd 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -550,6 +550,7 @@ extern struct efi {
- 	unsigned long			tpm_log;		/* TPM2 Event Log table */
- 	unsigned long			tpm_final_log;		/* TPM2 Final Events Log table */
- 	unsigned long			mokvar_table;		/* MOK variable config table */
-+	unsigned long			coco_secret;		/* Confidential computing secret table */
- 
- 	efi_get_time_t			*get_time;
- 	efi_set_time_t			*set_time;
-@@ -1189,6 +1190,8 @@ extern int efi_tpm_final_log_size;
- 
- extern unsigned long rci2_table_phys;
- 
-+extern int efi_coco_secret_area_reserve(void);
++/**
++ * clean_cache_range - write back a cache range with CLWB
++ * @vaddr:	virtual start address
++ * @size:	number of bytes to write back
++ *
++ * CLWB (cache line write back) is an unordered instruction which needs fencing
++ * with MFENCE or SFENCE to avoid ordering issues. Note that @size is
++ * internally rounded up to be cache line size aligned.
++ */
++void clean_cache_range(void *vaddr, unsigned int size)
++{
++	mb();
++	clean_cache_range_opt(vaddr, size);
++	mb();
++}
++EXPORT_SYMBOL_GPL(clean_cache_range);
 +
- /*
-  * efi_runtime_service() function identifiers.
-  * "NONE" is used by efi_recover_from_page_fault() to check if the page
+ #ifdef CONFIG_ARCH_HAS_PMEM_API
+ void arch_invalidate_pmem(void *addr, size_t size)
+ {
 -- 
 2.25.1
 
