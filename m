@@ -2,55 +2,55 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CE2C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 19:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5B0C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 19:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA66A610A1
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 19:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6A4A610C8
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Oct 2021 19:26:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241215AbhJGT13 (ORCPT
+        id S241467AbhJGT2Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Oct 2021 15:27:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42116 "EHLO
+        Thu, 7 Oct 2021 15:28:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234732AbhJGT1X (ORCPT
+        with ESMTP id S232829AbhJGT2O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Oct 2021 15:27:23 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570CAC061762
-        for <linux-security-module@vger.kernel.org>; Thu,  7 Oct 2021 12:25:29 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id 145so6148567pfz.11
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Oct 2021 12:25:29 -0700 (PDT)
+        Thu, 7 Oct 2021 15:28:14 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06131C061760
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Oct 2021 12:26:21 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id q7-20020a17090a2e0700b001a01027dd88so4532101pjd.1
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Oct 2021 12:26:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=/n8Me6J9c/0Aaoq12l4632VyTlikQYiCethpuj+aLbY=;
-        b=SQli1vTaGmeF3OtZ3pEx09pCBMoHEts7mbTOISN2rhw8hmBquS/IZbR87v5QBBLbqv
-         /pqrMUBoSis9z+SqnCrcggOh95LPt3XnzSnyEUY5qxiV3KUqfrJavcG97WH/T17gpSTR
-         ocgOZSBiyES6Ow7gBhMre0GdCndxIz5XD9k68=
+        bh=NZdCC7CS4dz4WubheIViknJtIIkaL8xCwtFH+zR8MvM=;
+        b=eHzzunjEiw0c49/WWP7ttbNMcB3anVXl2I3BhWlHxCkAgfUZJaQlEQ4yj49eW+O5Qd
+         V/tr9/w7+oeASdwfi2gPR+2A9dR5TzHngo0qjndDetXgsqoAB1QXDYqUefhEG8akLtkm
+         NXtn7bxmsTq3rNyvns/y2bVgOPK39DmHni93s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=/n8Me6J9c/0Aaoq12l4632VyTlikQYiCethpuj+aLbY=;
-        b=ED3ykxy7BGYffny8+Xk/l/oPrtBsULXGISvzEyyjIkG0dJBr+W3QsptdoyXufqHQHK
-         RkCAdFzgTS9P9EDOaYoMZm7XYbuMDWks5sFw6izBig+0nUIuwOFCJbxtRBA4PEVxpaZ0
-         tMKm0SgSklLOlecZzTRCPh1XDQhmwld2HKVuRXoOlbmRCERII6c1Iwbd3ZqsvbHpv4Uh
-         nDl0oStQvYbTn9MySxGwkgipZ/AHwVtoi8HxddLTa3hdbtdzOr4fRb83zZOpghyPVTOT
-         Vg+YHkU4FqWeD3HQtYyzZ78M7lUiWeqJ+bV2knRLVSBKeXuHjLhfEIdivX0hec5KfN5+
-         mGEQ==
-X-Gm-Message-State: AOAM531WBdyKWpvEeDt0WMNXMudzwZsUr3LlVhF+lJalJ2A8Dyh8XDvB
-        3A8SzYt9QUQgSbMDnODz1KOuBA==
-X-Google-Smtp-Source: ABdhPJyWbT/2wfJkhN3zmahv5/28fdw9q8dBvfcBa/rkLKicY5/v7uqqy3nFOrQlBaExCnpIUB7yjQ==
-X-Received: by 2002:a63:7118:: with SMTP id m24mr1146122pgc.332.1633634728739;
-        Thu, 07 Oct 2021 12:25:28 -0700 (PDT)
+        bh=NZdCC7CS4dz4WubheIViknJtIIkaL8xCwtFH+zR8MvM=;
+        b=mGOsm8F0ylJYC7TX1ptZ7cfw8vRDO8avOpQpJSF95GRnMkEW7HYg8a8KNY22Z4B6uU
+         +U5qRs5bz1sDcGhq+MosGNfRaScN6jOI4Kd26w5J55tHdXw0Yvu+7Nanp1hwGgjXdkG5
+         sw52hDJoR1ws1mTZEAk7YVEJx+D+EbtD5dCLLuZh11eNffl7jwwF/yu/M0Gf4B54EoPp
+         afzimbwUmqTif28SZRdW0lDF9+dP/7b1OONxSI8EsVlBRsoDvu3l3bpUZjPqwN5DVWxo
+         u+MJ89E3TbSR5lxASuW1/XAyg/j+sQHzIHAc27QoGROHF/XC7cpeTjCY2qpWckmPL+/W
+         ufLQ==
+X-Gm-Message-State: AOAM533/hPdJrLoFiTkc7eaI1JEeJwrkQ39HrXFS5vVf5oRX/78tepRu
+        VtfLUffWyGIjCdf9rq5tSdSw4A==
+X-Google-Smtp-Source: ABdhPJx4Tw35x1xl9BQYB1be7fBA/xGCyy08poTnjhSNtRNoa/m8AG/GdRnhqGS7ZQ1VLaYiOhqwvw==
+X-Received: by 2002:a17:90a:6b4d:: with SMTP id x13mr2840636pjl.208.1633634780607;
+        Thu, 07 Oct 2021 12:26:20 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b13sm9790176pjl.15.2021.10.07.12.25.28
+        by smtp.gmail.com with ESMTPSA id y24sm210615pfo.69.2021.10.07.12.26.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 12:25:28 -0700 (PDT)
-Date:   Thu, 7 Oct 2021 12:25:27 -0700
+        Thu, 07 Oct 2021 12:26:20 -0700 (PDT)
+Date:   Thu, 7 Oct 2021 12:26:19 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
@@ -90,49 +90,30 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
-Subject: Re: [PATCH v13 1/3] fs: Add trusted_for(2) syscall implementation
- and related sysctl
-Message-ID: <202110071217.16C7208F@keescook>
+Subject: Re: [PATCH v13 2/3] arch: Wire up trusted_for(2)
+Message-ID: <202110071226.750297A@keescook>
 References: <20211007182321.872075-1-mic@digikod.net>
- <20211007182321.872075-2-mic@digikod.net>
+ <20211007182321.872075-3-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211007182321.872075-2-mic@digikod.net>
+In-Reply-To: <20211007182321.872075-3-mic@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 07, 2021 at 08:23:18PM +0200, Mickaël Salaün wrote:
+On Thu, Oct 07, 2021 at 08:23:19PM +0200, Mickaël Salaün wrote:
 > From: Mickaël Salaün <mic@linux.microsoft.com>
 > 
-> The trusted_for() syscall enables user space tasks to check that files
-> are trusted to be executed or interpreted by user space.  This may allow
-> script interpreters to check execution permission before reading
-> commands from a file, or dynamic linkers to allow shared object loading.
-> This may be seen as a way for a trusted task (e.g. interpreter) to check
-> the trustworthiness of files (e.g. scripts) before extending its control
-> flow graph with new ones originating from these files.
-> [...]
->  aio-nr & aio-max-nr
-> @@ -382,3 +383,52 @@ Each "watch" costs roughly 90 bytes on a 32bit kernel, and roughly 160 bytes
->  on a 64bit one.
->  The current default value for  max_user_watches  is the 1/25 (4%) of the
->  available low memory, divided for the "watch" cost in bytes.
-> +
-> +
-> +trust_policy
-> +------------
+> Wire up trusted_for(2) for all architectures.
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 
-bikeshed: can we name this "trusted_for_policy"? Both "trust" and
-"policy" are very general words, but "trusted_for" (after this series)
-will have a distinct meaning, so "trusted_for_policy" becomes more
-specific/searchable.
-
-With that renamed, I think it looks good! I'm looking forward to
-interpreters using this. :)
-
-Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
 Kees Cook
