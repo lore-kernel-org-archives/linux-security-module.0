@@ -2,26 +2,68 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADBDC4167B
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Oct 2021 13:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A37CC433F5
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Oct 2021 13:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD80A61076
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Oct 2021 13:08:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3604660F70
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Oct 2021 13:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233333AbhJINKc (ORCPT
+        id S233498AbhJINcr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 9 Oct 2021 09:10:32 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:48112 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233117AbhJINKb (ORCPT
+        Sat, 9 Oct 2021 09:32:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35754 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233209AbhJINcq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 9 Oct 2021 09:10:31 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0Ur7b0Ea_1633784909;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Ur7b0Ea_1633784909)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 09 Oct 2021 21:08:30 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     James Bottomley <jejb@linux.ibm.com>,
+        Sat, 9 Oct 2021 09:32:46 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 199BVVke007307;
+        Sat, 9 Oct 2021 09:30:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : reply-to : to : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=4Cro3IpcEkZeGz4yDmnXZpwZJa3Nd2CCDYW1ytGiNbw=;
+ b=kJ7qtltQ0cYEWq9Lsxp0UM1v5srrA8BPAPXxyvYye4whtqVWi3TgImbPmsfmprD86HXF
+ iM12jbOG82a13N1wuYMU/e6kvgisuf284d/QN2GNfh5qqGPXXPx8ZOBZmA/Wn30IsUC1
+ ofOJpzLxywpXCtcesGvjZZNj7EuGGjSWX156V7h7F0tLkzwAIu8Qfc9Rr6s+ceM+Mxwo
+ UtqUvIR4UWeEnl+Bwf1D/EE7Q16y1uXFweOztbcFgMDy51D/NNSfEFSh52tzKUUPpN2I
+ ckOIexRjkrTrYbu5qNA3tEfLjKrJfEayKnEsPqY/7YiNrQq0xW0VVZ+9zAy3zZV8xbKh uQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bka9ksax0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 09 Oct 2021 09:30:00 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 199DPc6I032508;
+        Sat, 9 Oct 2021 09:29:59 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bka9ksawm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 09 Oct 2021 09:29:59 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 199DMVM5028876;
+        Sat, 9 Oct 2021 13:29:58 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma05wdc.us.ibm.com with ESMTP id 3bk2q9mj6t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 09 Oct 2021 13:29:57 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 199DTuDp35717580
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 9 Oct 2021 13:29:57 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D67417806B;
+        Sat,  9 Oct 2021 13:29:56 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1127778060;
+        Sat,  9 Oct 2021 13:29:53 +0000 (GMT)
+Received: from [172.17.101.49] (unknown [9.211.116.119])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Sat,  9 Oct 2021 13:29:53 +0000 (GMT)
+Message-ID: <1749e7c3b528d361c09b40e5758b92c7386ffe1f.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/2] tpm: use SM3 instead of SM3_256
+From:   James Bottomley <jejb@linux.ibm.com>
+Reply-To: jejb@linux.ibm.com
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -36,119 +78,45 @@ To:     James Bottomley <jejb@linux.ibm.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH 1/2] crypto: use SM3 instead of SM3_256
-Date:   Sat,  9 Oct 2021 21:08:27 +0800
-Message-Id: <20211009130828.101396-2-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.3.ge56e4f7
+Date:   Sat, 09 Oct 2021 08:29:52 -0500
 In-Reply-To: <20211009130828.101396-1-tianjia.zhang@linux.alibaba.com>
 References: <20211009130828.101396-1-tianjia.zhang@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: WI7fZO2iFMsMT2VYtdPhk3sDP0oOa09u
+X-Proofpoint-ORIG-GUID: 55pBK2apPaN51qGasERyyQnEDHOUSIei
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
+ definitions=2021-10-09_03,2021-10-07_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 adultscore=0 mlxscore=0 malwarescore=0
+ bulkscore=0 clxscore=1011 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2109230001 definitions=main-2110090093
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
-SM3 always produces a 256-bit hash value and there are no plans for
-other length development, so there is no ambiguity in the name of sm3.
+On Sat, 2021-10-09 at 21:08 +0800, Tianjia Zhang wrote:
+> According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+> SM3 always produces a 256-bit hash value and there are no plans for
+> other length development, so there is no ambiguity in the name of
+> sm3.
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
- Documentation/security/keys/trusted-encrypted.rst | 2 +-
- crypto/hash_info.c                                | 4 ++--
- drivers/char/tpm/tpm2-cmd.c                       | 2 +-
- include/crypto/hash_info.h                        | 2 +-
- include/uapi/linux/hash_info.h                    | 2 +-
- security/keys/trusted-keys/trusted_tpm2.c         | 2 +-
- 6 files changed, 7 insertions(+), 7 deletions(-)
+For the TPM we're following the TPM Library specification
 
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index 80d5a5af62a1..3292461517f6 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -162,7 +162,7 @@ Usage::
-                      default 1 (resealing allowed)
-        hash=         hash algorithm name as a string. For TPM 1.x the only
-                      allowed value is sha1. For TPM 2.x the allowed values
--                     are sha1, sha256, sha384, sha512 and sm3-256.
-+                     are sha1, sha256, sha384, sha512 and sm3.
-        policydigest= digest for the authorization policy. must be calculated
-                      with the same hash algorithm as specified by the 'hash='
-                      option.
-diff --git a/crypto/hash_info.c b/crypto/hash_info.c
-index a49ff96bde77..fe0119407219 100644
---- a/crypto/hash_info.c
-+++ b/crypto/hash_info.c
-@@ -26,7 +26,7 @@ const char *const hash_algo_name[HASH_ALGO__LAST] = {
- 	[HASH_ALGO_TGR_128]	= "tgr128",
- 	[HASH_ALGO_TGR_160]	= "tgr160",
- 	[HASH_ALGO_TGR_192]	= "tgr192",
--	[HASH_ALGO_SM3_256]	= "sm3",
-+	[HASH_ALGO_SM3]		= "sm3",
- 	[HASH_ALGO_STREEBOG_256] = "streebog256",
- 	[HASH_ALGO_STREEBOG_512] = "streebog512",
- };
-@@ -50,7 +50,7 @@ const int hash_digest_size[HASH_ALGO__LAST] = {
- 	[HASH_ALGO_TGR_128]	= TGR128_DIGEST_SIZE,
- 	[HASH_ALGO_TGR_160]	= TGR160_DIGEST_SIZE,
- 	[HASH_ALGO_TGR_192]	= TGR192_DIGEST_SIZE,
--	[HASH_ALGO_SM3_256]	= SM3256_DIGEST_SIZE,
-+	[HASH_ALGO_SM3]		= SM3_DIGEST_SIZE,
- 	[HASH_ALGO_STREEBOG_256] = STREEBOG256_DIGEST_SIZE,
- 	[HASH_ALGO_STREEBOG_512] = STREEBOG512_DIGEST_SIZE,
- };
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index a25815a6f625..20f55de9d87b 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -19,7 +19,7 @@ static struct tpm2_hash tpm2_hash_map[] = {
- 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
- 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
- 	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
--	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
-+	{HASH_ALGO_SM3, TPM_ALG_SM3_256},
- };
- 
- int tpm2_get_timeouts(struct tpm_chip *chip)
-diff --git a/include/crypto/hash_info.h b/include/crypto/hash_info.h
-index dd4f06785049..c1e6b2884732 100644
---- a/include/crypto/hash_info.h
-+++ b/include/crypto/hash_info.h
-@@ -32,7 +32,7 @@
- #define TGR192_DIGEST_SIZE 24
- 
- /* not defined in include/crypto/ */
--#define SM3256_DIGEST_SIZE 32
-+#define SM3_DIGEST_SIZE 32
- 
- extern const char *const hash_algo_name[HASH_ALGO__LAST];
- extern const int hash_digest_size[HASH_ALGO__LAST];
-diff --git a/include/uapi/linux/hash_info.h b/include/uapi/linux/hash_info.h
-index 74a8609fcb4d..1355525dd4aa 100644
---- a/include/uapi/linux/hash_info.h
-+++ b/include/uapi/linux/hash_info.h
-@@ -32,7 +32,7 @@ enum hash_algo {
- 	HASH_ALGO_TGR_128,
- 	HASH_ALGO_TGR_160,
- 	HASH_ALGO_TGR_192,
--	HASH_ALGO_SM3_256,
-+	HASH_ALGO_SM3,
- 	HASH_ALGO_STREEBOG_256,
- 	HASH_ALGO_STREEBOG_512,
- 	HASH_ALGO__LAST
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 0165da386289..52a696035176 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -23,7 +23,7 @@ static struct tpm2_hash tpm2_hash_map[] = {
- 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
- 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
- 	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
--	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
-+	{HASH_ALGO_SM3, TPM_ALG_SM3_256},
- };
- 
- static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
--- 
-2.19.1.3.ge56e4f7
+https://trustedcomputinggroup.org/resource/tpm-library-specification/
+
+Which is very clear: the algorithm name is TPM_ALG_SM3_256
+
+We're using sm3 as our exposed name because that's what linux crypto
+uses, so there should be no problem in what the end user sees, but
+changing to non standard TPM definitions is only going to cause
+confusion at the kernel level.
+
+James
+
 
