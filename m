@@ -2,111 +2,76 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E64AC433FE
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Oct 2021 22:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D257CC433EF
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Oct 2021 06:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5361060EB6
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Oct 2021 22:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0FB060F70
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Oct 2021 06:28:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243505AbhJHWtf (ORCPT
+        id S232663AbhJIGas (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Oct 2021 18:49:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49266 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231876AbhJHWtf (ORCPT
+        Sat, 9 Oct 2021 02:30:48 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:23357 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229538AbhJIGar (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Oct 2021 18:49:35 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CAD7C061570
-        for <linux-security-module@vger.kernel.org>; Fri,  8 Oct 2021 15:47:39 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id s75so4441889pgs.5
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Oct 2021 15:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=IDL1dGbYQGd5Z4n8MbIk3dyJApzaVNleP7ehAou5XC4=;
-        b=k/DtfYhTXoNzDDeSt76IrPgiHKVbJzl+yCmhiVP/k9h8OwZ+VHDbs2A9FEOSncQ6Nu
-         c0oNPpuSA0nexNb/AGdFb+q1kORF6YZCNXJNkA0aiLO369TZ7sk5ShzhZMZeTnhRLb7A
-         UNQpET4n7Z7KsW9liWrD/WoMIMHK7Ci23ktRY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=IDL1dGbYQGd5Z4n8MbIk3dyJApzaVNleP7ehAou5XC4=;
-        b=mDUrCM5WynqAw9uQI1AW83+h5MKV0f3dvXg9kx8dsov73yZWpCmkVp1UMdMxoizs0p
-         c+SDaVwKrut4HFRy2LO0K/TGFwjutRxJ1T65nRXOgexDxd1KMole+6ZoJf9Qu8Wkc2p7
-         57a1MI99iBzNayhOWu7TN6Z2NbL4dIDoqC3DUcj1cnf72IGxi1N1r1KFMXSatTE6mbYd
-         fk/GpY3V/QneG3v52Nx59snggSKtNmI3TAOeIxwb3g7QAiaqQQeZr85QvkOw2KkhsAsI
-         xUofTu5kQ43guDsfQkHFx94u5+Q5JqCr5uVBnWaBfcgn4vycU16zcHG1YMB4NY+itkVB
-         chCA==
-X-Gm-Message-State: AOAM532wiq/GsYoqmSG2ThznTBfnrwItcBwMjdRrfVkEWFteMs/MG4+u
-        kQjX614q3LX7xy7rOVLCQSgvYA==
-X-Google-Smtp-Source: ABdhPJwvnmLJjnp89CGi8tOitxi5+0+62XoRbPGjNi0V+bAyRDLPPpqmm4mrkramzCbREIT8ipI6YQ==
-X-Received: by 2002:a05:6a00:1944:b0:438:d002:6e35 with SMTP id s4-20020a056a00194400b00438d0026e35mr12543299pfk.20.1633733258954;
-        Fri, 08 Oct 2021 15:47:38 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k17sm295225pff.214.2021.10.08.15.47.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Oct 2021 15:47:38 -0700 (PDT)
-Date:   Fri, 8 Oct 2021 15:47:37 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v14 0/3] Add trusted_for(2) (was O_MAYEXEC)
-Message-ID: <202110081545.8D8C2980@keescook>
-References: <20211008104840.1733385-1-mic@digikod.net>
+        Sat, 9 Oct 2021 02:30:47 -0400
+Received: from dggeme762-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4HRFQJ0Wl2zYdZv;
+        Sat,  9 Oct 2021 14:24:24 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.44) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.8; Sat, 9 Oct 2021 14:28:48 +0800
+From:   Gaosheng Cui <cuigaosheng1@huawei.com>
+To:     <jmorris@namei.org>, <serge@hallyn.com>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xiujianfeng@huawei.com>,
+        <wangweiyang2@huawei.com>
+Subject: [PATCH -next] integrity: return early if audit_log_start return NULL
+Date:   Sat, 9 Oct 2021 14:30:53 +0800
+Message-ID: <20211009063053.187953-1-cuigaosheng1@huawei.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211008104840.1733385-1-mic@digikod.net>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.67.174.44]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 08, 2021 at 12:48:37PM +0200, Mickaël Salaün wrote:
-> This patch series is mainly a rebase on v5.15-rc4 with some cosmetic
-> changes suggested by Kees Cook.  Andrew, can you please consider to
-> merge this into your tree?
+audit_log_start() may return NULL in below cases:
+  - when audit is not initialized.
+  - when audit backlog limit exceeds.
 
-Thanks for staying on this series! This is a good step in the right
-direction for finally plugging the "interpreter" noexec hole. I'm pretty
-sure Chrome OS will immediately use this as they've been carrying
-similar functionality for a long time.
+After the call to audit_log_start() is made and then possible NULL audit
+buffer argument is passed to audit_log_*() functions, audit_log_*()
+functions return immediately in case of a NULL audit buffer argument.
 
+It is not necessary for audit_log_*() functions to be called with
+NULL audit buffer argument, so return early when audit_log_start()
+returns NULL.
+
+Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+---
+ security/integrity/integrity_audit.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
+index 29220056207f..fbc032185d72 100644
+--- a/security/integrity/integrity_audit.c
++++ b/security/integrity/integrity_audit.c
+@@ -45,6 +45,8 @@ void integrity_audit_message(int audit_msgno, struct inode *inode,
+ 		return;
+ 
+ 	ab = audit_log_start(audit_context(), GFP_KERNEL, audit_msgno);
++	if (unlikely(!ab))
++		return;
+ 	audit_log_format(ab, "pid=%d uid=%u auid=%u ses=%u",
+ 			 task_pid_nr(current),
+ 			 from_kuid(&init_user_ns, current_uid()),
 -- 
-Kees Cook
+2.30.0
+
