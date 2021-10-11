@@ -2,151 +2,121 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FD1C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Oct 2021 21:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C95C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Oct 2021 22:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C0CD60184
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Oct 2021 21:59:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE81760F22
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Oct 2021 22:40:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235441AbhJKWBw (ORCPT
+        id S235576AbhJKWmb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Oct 2021 18:01:52 -0400
-Received: from sonic313-15.consmr.mail.ne1.yahoo.com ([66.163.185.38]:42105
-        "EHLO sonic313-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235397AbhJKWBv (ORCPT
+        Mon, 11 Oct 2021 18:42:31 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:46169
+        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235504AbhJKWmb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Oct 2021 18:01:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633989590; bh=Zqhg448+kp6mEiue7M5/FNvpz96vUnZrgGFVgDvWQDQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=Et9ee1Csb2UNZamsi+KZ4pRLbTprSEvdYjruG+zGhpRBL0S/VFpbGIkMg3z8PhibobYmFekZ8DlpCm/u9axYfxHKphk+W/RocVMOgXm4zATIWIpYUCQEdmwwBkBTU540lPEb9Jw3iIITiovwaCBFt88na28VZSmlUvTbwi3eTZeWr7xQ3iWdi8shbqbG01P5Bh6MgoeK/toC9hIyLY8ihXKSDSxJofkZXe8dGiYuvxLgTsLlz91pG4+XKGr4E4KLiJKdPkBAd4AwphRvxMu+A8BuO49OrHXca8RxhybPLA3v5YGUGzg32YZy67lQXtUj5FnVOJavxOVlDz0ik1XF7Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633989590; bh=gCBOFNRCnbv//7buHKjtp80F2ar0lHhJO5vz1hXnyui=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=CPWvjbYrYq7iCfRzzXq+1LRR1zc1HraeIoZvoIASJ0fSmgKvDg+/tjfHBA8+26ASkd4YV7KqTr33xu+M1paQtCPPcF5FoKXp+zY09VMZRVlG0K7n3nj3vo9DEvjyIH/IrMFGK9FMl2deFzhFviD4EEx3OoW2YROT52PcTvs9zYJ9i5PCZopNvWpMnlMJk5Jel5/tIPmWC2cD/MLoDjunmVvApKrEaX0WngSEa7iK7BPTjPxfWu73xgkI7a8A/XLdCELd9UbhDiYR0/gQ10AG4RYwAyWk8C791u6q2dk3Nazfx3NWp194dumoY7mTAFH/D0vd1B4LbU9931OO3nChwg==
-X-YMail-OSG: aC0JH90VM1kfDaKTkIdU2qA35lYCCxBu2otVh_5jlPvwsFge4HpFDaXmDW5vvOB
- GwrAbfYk95JHT2s.peY5piTSdcmT9U_lm97avpy2QuRQeg232Yvj3mMDUdhLtPc4n39COSGc0mXA
- SpEWvgxiBhukIU7D5LYOZ1IW7ifATJ418D.5spvthYI4iTdsJX_A8JhTOpKvLGL46FgLVPFK29to
- afKhuG9_i5hLuhPKVfigyf0c7ebxBcMF5lGT_pJES8NN_wykPN_9H7RHqhs6VDCfzYcFHxyBQlBY
- MCL_8sxRupLd_TDuiEoMOvFyxEzsUzfBnF3M9CxtMMeaDbtVadc2bWgiDeYMfvXrGdo7i4K6CnPs
- 9yKe0m3YOzmVGGrKF7EpiE0lC5aM5m3ZwuBUAVKfRLiUbtt.0afW8JFkq_nBLqy6BMjzD_Nu.z4z
- Up7EvQ0z88cOrjZzfjVqeJZSSLkVO8loo8opin59vIFvJMoRgWObKmg.IzgfSmmQ4fB9gAkHmUAS
- XYhgiceXQL1oka6ysLgZWAidGXoKac8ja7PehpFWMUzqNXHfknNdUcO8f.MBFCtsVfi.PtVxc_Wk
- gyCE2V2rQIpbPTcULt_qIp9MSCkeillZ.qcXsaJxe8vRy0uEdrzXzfXYQ3ft0TiCEq3Hj93bcMLQ
- G_3eq5svQzY6utGHIac5sCV5KYqEyflwc6RbuCLLXWiIGfXtZfUj2_LGShDLWqVmQSDQ.HqTL4hK
- xdOL6zx0JbdmHiacB0FAZGV7BIkF9_aagRSxHjkSYLOcY1oHXmlcbtpbw6E16ewy7m0HQHEOzoF_
- j0hwF8qFaILSMtkVuNp1rtMC3Nq5ebOrX43moO.S73qqRRCgRwEXNnVVjufX5G12jTrT7wZqjhme
- 6Kt5U29KCovNh3qqvyZVAb3Gl.Hlnqmn4ez8T3i0sI4TDcbo3w3MFS.DOfayLt3HobrosfZAsVUL
- _5sa7awUj2cUka.3xSAOctPBXFnhT_xt3mgW2lnGPxEM7s0DAfY3VuQ9Y3s1D4c9CF.riQYX3pch
- j7b4_EJDLR_NXc5951c7iaV7pQB.rmExBnVkjk1AygQ7XR4MQEmfywB0UDQnCLW0NP.9nSopLh1t
- AA7RNBPODRXPYC551LrFF7k1aH5zCKo.8GOleu_KvxA9VulVtzujEyScr6xzPjar2o1LJ8gKz98c
- xlx6qvslsSHHn6H_LCxQG6EqEkgTPdQPwKYpL3PmBq6fzS_6PidclodJdHHok1wJp5Q35Gv1EHul
- tYP62nckwEuNQa1w1NFR7CV0WH6VkSgKlCu80PnK5HsrZB0E1H919DLFpHFK7K.EHyOzpIW_FwMb
- uqzOGmM.z35liqYIz7hOMfdAYYfPlKA5_6kyLDVYX3YG_Pa_vOmFLB7jcyIkaJP.UmUC_1ERZCpN
- TmZXer7IfecorSQtCBufKfV97KYRJ6MdIYoLO4RgQ8pHU1toRGnWYC_ELrJ8i4NPoH1dA3h58gRn
- vfh5pmkbS0kwFRsZLcTAddGgceXNDipMTmtT2QCVdzxIWlGJQSmOdUwVizvoUjCIsH.K9AzZrt1R
- hwRO5HzeR.ewqXZyY1961LOfeG69sI0VAVhfGMVhuQXe66_fsyqi7fuNQ90n_fpykS285RATFuar
- GIjaWeQqtZtlVgejKB7354d_F3vHWKDEbahvr9dJG.bnwVpZXPo3k_8vaGUl_qrgG3nfBzCTRUFF
- tINgV_vwbsjh_YN3kAws4bkHGP8O2Yq0vVSHUtXhdW2Kxg7lsF0JPlu5wIESd7p8aE8p6DP0vKHy
- wZFDZjM1ttPuLzZwx1z4LYou06eLhbtdAE7x4oy9KAA26emlZic4dMHsmzprft1YKtT18U9OYbbV
- XX8ywJgOzQd9tEc.6It0nNurBrn1DeCaQZY7LA9okkv_oHDE8j4qfJbs6.yWAfM9nkUBanvdU1kt
- Xih8M.n2ArtWIf6rVCol3M0tNt5d7_NP16o60lKxQZXHykvJjjGtr4_TxZlRVGucwJgiFepVhMgr
- Q56u_fYQ8GT.ciwl.FbzivVzoBCI9H7DI1XvWkAyv8YZyT6WlQWfUI_NN3AfHlP_4_AAgcYKjaXT
- fSP8476K9iTcQFK.V2jrt3bD9hklRFUQhud5wNUgD0RpNqPLBe0KZ6Ukm2CCaOPsj9BcNCObdXGg
- rlHRPVVRmY1uDkeX6.oolgkhPHf.2T6o.Gtk1igEHCu3XwYbwD1xWtKerIWoDlSz_LyU5bo9bT.C
- 8uSrQAiPf.hLyNn00JtN9oLvLwD4eJ6UqJA8c
+        Mon, 11 Oct 2021 18:42:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633992027; bh=jLQluOCMPO5rRjRMl+Q68u9ZH7qqQfyDRJUR6BJ2huY=; h=From:Subject:To:Cc:Date:References:From:Subject:Reply-To; b=ijGoSwinX9Rir2agJRG26TqgBbberIguVcPSmPSJEYVJoD9r//vqNCH1UMhjJap/P+/9Ase4i/7GvPgi/0XmbBru7ZUQoYxw05tZmLWlU8NcJFG1SF8KUOzez2PWDnMwGqjD7r9nOfj0K4dtyHxem3vVk9cplDocX51tDJdqeqN+mBUWqlTMZVopYJBYOjKJbRpEv/YMpd/byBcWCOWUQjTMeMcSJZQ2bZ+p7L3hw6+ebtgpdcU75jgLJmfy6dldZ4NbrEaeVU9RN3YdX5ZEuJTKrCBeg9TX9MJ/vzuUQHTwqGKNJTzns5kdNRQzEHqiVLCrXi4yc8gqKN5xmqRkhg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633992027; bh=2NSEyr+UEwaAiyOvJyRV5A9MRNYgSMLHldikQZIKAaA=; h=X-Sonic-MF:From:Subject:To:Date:From:Subject; b=nIut1lOmM2ziHv9OOjNQkFojQzm9FU8n8yLpMqdLQHDBezg8GduVBInIv1oQrw4dkcMtaDlFDBHqpIscVn4N9KVIGmwweJyBqChrSoBgK1ap+TKnScJrXvRRt0aFCmDX8DyzWSQnTJzOASqUchfXmSZKGDyLfnrdDjxm+JpdpUiL4nTCMSMOOtElmEKu+gj/qCHLw1D/6r6gpk13GqIHxdUCGyVhhnpKnnNgKNYcYqucr60QOb5gJbPg8Qn/gQQJmwLMOovzspKEGxOn88se6xQxfWEUkWhCyiqXF1BPPw9ss+XCLmR1N4QcqX/g8Cjv+y3TvfXqYifJ6jsd2dUu4w==
+X-YMail-OSG: ul8tsh4VM1kSmoq8PSS.5GHSk2Jrqvk6pvXuXpfWvb7jm8Fsjaqc.fQ_o1gr0Ws
+ tgAl.6uBGfMrNNzvu2_VQ3YzrkhMzmzOMgGR7sK0A7.m1sP.utDG1n2jxiahlr1I4dZODwuNwxJR
+ MLNPUM5TZDy9aha4eSEL01hQMiv9eiXEAW4_qom_odoG6lkl_lqJEo_XRTAey93NhCl0NHoY6nsX
+ v.70p6bZMcK0AMnNOyu6mG7rSzn2r.m2kPhFZNuGcngdNXuDO81u1sA1UsHlXmBBOO.zgNEJm0DF
+ m.rnCQU2nrxd4NnSGlvaczYccEsE7RLY8Jqoe3OjM26hxebAgVzIaQB3fNV.eeKiLk03u6VrZ1bH
+ aIXvhyusIr.qS7.tfBz5xbBFWi1uEaxB4_K7Pl2STw7iwD5LOc_vr.LwumwO6RDw373ol1CeTen0
+ Fq.iiTUNn5McZbCsTyXNrIkjrDXzlJzUhutPxNXTHRftKX_.wfEtCJ7XEOYKYrEPdIesIKaASEZz
+ 6Dt7E4whVGuxMLqbIohtsdCyAylD1wX5OuQ1J_VNX2UcWQhbiGmKGvZZYWpf7flGs89Jgp46aWlJ
+ Z9jTCcFP.MFthVfj_p.qL1piCgXrX8HJlSiEQyKVWDZd_Krp8c8cgAcY1ohozs35KhpSPCdljJWo
+ dlPebdgetxudvj2x3H3ixjMHwBNywQHzsOqeKXvlEOePsZ1lo.U5p.se95Aaizk3OPecB9STaRsW
+ DFc4PEOWD7w4xMK2cUqFyTEFAK6Ohp84Z9Q_duVllfVwCj6w4byEwk0eFMoP9rBBmuPlh8sg7.uw
+ M6t15i5GpPNsVTOrMUBNq8VBbqhuRARcuXFKVkX2ox6x5J5LWGD.qKckc317OCpEbYAfznsTaUL4
+ lqyinpmnMqt4r5x9KPfYq2GInx01BFHkk7hgRcAQLW7Uz3Apf5maf9MFEtWK7hoyIIG1cGVX86e8
+ RU.PbjYxqkhlLEfkhZosMUz7yTtUZTpvNtX9HWuIvFwZXVkVzl3.HEUTBw9uo96_2hSss5GArXNe
+ dwcd4qPaPP7h2wTcfhOyKf7DXS1sYNfKnAD8d0wdmcFfp2lMS90.P5Yh9_NLXXh0Wl_cfHczYGKt
+ O_2WCSubtQzCHgqI7_FuT.mtcIgqMYz6_TCprcv8b8dcFWLXKsbBofBqEbrfywfg10EWipmtm0p3
+ rQhk3.RzMGZIOxIBQJ9j8_xp1xBLFm65uLvsyI0hFArW5zyQbKdP1yTQ.LpKsG.6G_eFVqoW5v_M
+ kfjPOnx8fa7wGdNnv9q8XygooTwLSsdqB0UvN2ueCX6km21HJZdMEgtSgn.6GuXdA_JZMT44fK71
+ LGXPhJfai4ouaXIjj5SWExRCdpWdctV4Q3wrgVx7s.bZOudYIEDnro55YY6j34hds9gxvX73wDJl
+ 2wFPkXZypQVR3q4IpePJueHupXtM8OJ5v09HloNZX3b2MwjiG4AUT3tAoqg.l7MN9PROvFEFTysD
+ kMIqeVR.OfuvJqL7vF6aagjWQXdrkfnAUqBasVd5Z3Xi2Cfuc7cCEH2YfJecjW7KQuCWJPMOqtaj
+ jJSDU0esPrvhI2VDx53h8ONFXBJNqudEk6we8pd9cozFnSYAahygWKFAdHn97YAO4.m8dhH_07SY
+ wQe.muuHb7mdPBn_T4TO7WCzC3OJqB1V2HfizSzYU2NnLxmphq79lQ2N3CwjnXE371jFteds9JAB
+ L8gmDpDlVOeNglelFDL.RR_ZoqNJyCJUafYJzss1O.HU6j1gqsTB1JIWsEHsKUrQrcS3gUN5ysHz
+ fMeqJK5bnNPqxfRZUh.0TrptlIKI7cQMhmaF9XS5hzisS1tBxwKPdlufp_0DxdPwKDcai_fuuwVc
+ tfOU7zT.5lGTfqVo0oVBk5tpsgyJzgDd4VvSf8O0ugzvuAzvhnr6RaNI2wa0bzP2YimgY6Gsb184
+ YQk7TMWujNZZZQzAzsOynaaEvi2mW_Zy4YxxuYauH4BiMC_pk7B5VaaC8ILchpPaAwJROna0NhaE
+ rX44KS2s2AYnnFOplS8igSnmvyRnfz88tkrsyMSRCWf8b8IhoirzsHRViQXnC6ei_oLv7uxfWT_N
+ nr6ieCOtUGHUpzVEVU81fbTJirdAIbfFlBxnJc84Uege5WRSmoQaei.Id.e2CltqgN00BH11wDxy
+ YjHxdcnWOpP_HdnLWIsMzm30cqY_NHEGYcG0mjSkjVa8tfnY2.rMm97NIfodC3gy2MTNntNUgRLI
+ UgSkVUmbSbR179sntPTSM1XQ2yc.0iSe9ezF5PXJ3FX3qEVk-
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Mon, 11 Oct 2021 21:59:50 +0000
-Received: by kubenode517.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 3ba437dd57240fce1e91852cfbdd0152;
-          Mon, 11 Oct 2021 21:59:14 +0000 (UTC)
-Subject: Re: [PATCH v4 2/3] binder: use cred instead of task for getsecid
-To:     Paul Moore <paul@paul-moore.com>, Todd Kjos <tkjos@google.com>
-Cc:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, christian@brauner.io,
-        James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, keescook@chromium.org,
-        jannh@google.com, Jeffrey Vander Stoep <jeffv@google.com>,
-        zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
-        kernel-team@android.com, kernel test robot <lkp@intel.com>,
-        stable@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20211007004629.1113572-1-tkjos@google.com>
- <20211007004629.1113572-3-tkjos@google.com>
- <CAHC9VhSDnwapGk6Pvn5iuKv0zCtZSbfnGAkZwKcxVYLVRH6CLg@mail.gmail.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 11 Oct 2021 22:40:27 +0000
+Received: by kubenode543.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 2e663ab451f2d92c944ad4412edf944a;
+          Mon, 11 Oct 2021 22:40:23 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <8c07f9b7-58b8-18b5-84f8-9b6c78acb08b@schaufler-ca.com>
-Date:   Mon, 11 Oct 2021 14:59:13 -0700
+Subject: [PATCH] LSM: general protection fault in legacy_parse_param
+To:     Christian Brauner <christian@brauner.io>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com>
+Date:   Mon, 11 Oct 2021 15:40:22 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhSDnwapGk6Pvn5iuKv0zCtZSbfnGAkZwKcxVYLVRH6CLg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
+References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
 X-Mailer: WebService/1.1.19116 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/11/2021 2:33 PM, Paul Moore wrote:
-> On Wed, Oct 6, 2021 at 8:46 PM Todd Kjos <tkjos@google.com> wrote:
->> Use the 'struct cred' saved at binder_open() to lookup
->> the security ID via security_cred_getsecid(). This
->> ensures that the security context that opened binder
->> is the one used to generate the secctx.
->>
->> Fixes: ec74136ded79 ("binder: create node flag to request sender's
->> security context")
->> Signed-off-by: Todd Kjos <tkjos@google.com>
->> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Cc: stable@vger.kernel.org # 5.4+
->> ---
->> v3: added this patch to series
->> v4: fix build-break for !CONFIG_SECURITY
->>
->>  drivers/android/binder.c | 11 +----------
->>  include/linux/security.h |  4 ++++
->>  2 files changed, 5 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
->> index ca599ebdea4a..989afd0804ca 100644
->> --- a/drivers/android/binder.c
->> +++ b/drivers/android/binder.c
->> @@ -2722,16 +2722,7 @@ static void binder_transaction(struct binder_proc *proc,
->>                 u32 secid;
->>                 size_t added_size;
->>
->> -               /*
->> -                * Arguably this should be the task's subjective LSM secid but
->> -                * we can't reliably access the subjective creds of a task
->> -                * other than our own so we must use the objective creds, which
->> -                * are safe to access.  The downside is that if a task is
->> -                * temporarily overriding it's creds it will not be reflected
->> -                * here; however, it isn't clear that binder would handle that
->> -                * case well anyway.
->> -                */
->> -               security_task_getsecid_obj(proc->tsk, &secid);
->> +               security_cred_getsecid(proc->cred, &secid);
->>                 ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
->>                 if (ret) {
->>                         return_error = BR_FAILED_REPLY;
->> diff --git a/include/linux/security.h b/include/linux/security.h
->> index 6344d3362df7..f02cc0211b10 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -1041,6 +1041,10 @@ static inline void security_transfer_creds(struct cred *new,
->>  {
->>  }
->>
->> +static inline void security_cred_getsecid(const struct cred *c, u32 *secid)
->> +{
->> +}
-> Since security_cred_getsecid() doesn't return an error code we should
-> probably set the secid to 0 in this case, for example:
->
->   static inline void security_cred_getsecid(...)
->   {
->     *secid = 0;
->   }
+The usual LSM hook "bail on fail" scheme doesn't work for cases where
+a security module may return an error code indicating that it does not
+recognize an input.  In this particular case Smack sees a mount option
+that it recognizes, and returns 0. A call to a BPF hook follows, which
+returns -ENOPARAM, which confuses the caller because Smack has processed
+its data.
 
-If CONFIG_SECURITY is unset there shouldn't be any case where
-the secid value is ever used for anything. Are you suggesting that
-it be set out of an abundance of caution?
+Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+=C2=A0security/security.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/security/security.c b/security/security.c
+index 09533cbb7221..3cf0faaf1c5b 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -885,7 +885,19 @@ int security_fs_context_dup(struct fs_context *fc, s=
+truct fs_context *src_fc)
+=20
+ int security_fs_context_parse_param(struct fs_context *fc, struct fs_par=
+ameter *param)
+ {
+-	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
++	struct security_hook_list *hp;
++	int trc;
++	int rc =3D -ENOPARAM;
++
++	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
++			     list) {
++		trc =3D hp->hook.fs_context_parse_param(fc, param);
++		if (trc =3D=3D 0)
++			rc =3D 0;
++		else if (trc !=3D -ENOPARAM)
++			return trc;
++	}
++	return rc;
+ }
+=20
+ int security_sb_alloc(struct super_block *sb)
+
 
