@@ -2,84 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7744C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Oct 2021 10:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBC0C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Oct 2021 13:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A74A760F3A
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Oct 2021 10:19:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2FD060F21
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Oct 2021 13:37:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235846AbhJKKVX (ORCPT
+        id S235931AbhJKNjP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Oct 2021 06:21:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235572AbhJKKVW (ORCPT
+        Mon, 11 Oct 2021 09:39:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59362 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237061AbhJKNjN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Oct 2021 06:21:22 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7A7C06161C
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Oct 2021 03:19:23 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1mZsOv-0000l7-F2; Mon, 11 Oct 2021 12:19:21 +0200
-Subject: Re: [PATCH v3] KEYS: trusted: Fix trusted key backends when building
- as module
-To:     Andreas Rammhold <andreas@rammhold.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210730012822.3460913-1-andreas@rammhold.de>
- <0d42a11a-0117-49a9-d2c9-bc6cc405235d@pengutronix.de>
- <20210927085104.vq42feghtaqiv6ni@wrt>
- <856359f263575f01d0ce2fcf8f042321f750b38c.camel@linux.ibm.com>
- <20210927200835.wvazk73cek3t5tkf@wrt>
- <2ad2c536367028ef6d9300745586a123cb13d9f1.camel@linux.ibm.com>
- <20210927205521.7c4psu4vz5eoyfnf@wrt>
- <81602197662f3e6d032103bd1ac3690342544b7e.camel@linux.ibm.com>
- <20211002214725.fqmtbfjwtlom745c@wrt>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <db5ea3c2-42df-420b-6813-f6ef2c30df6f@pengutronix.de>
-Date:   Mon, 11 Oct 2021 12:19:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Mon, 11 Oct 2021 09:39:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EC1E660551;
+        Mon, 11 Oct 2021 13:37:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633959433;
+        bh=XKO3LiuJj8DgefFwiJxIPYOvisoP7j6O+k6qVn+L2cA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VwY4D94AiZ4xEiWtCHWdhdhgejDFScgJXGegPMpYQ4QWiR3Au8QhOFs1w1GHtxWGR
+         bRgE9KL85bso+b9uz649hSrtd7TE31fN5wnB74XW6mcSgMOBl6Vm12rIFoBjyZ/ejJ
+         N6Yn+we5rl+OQl6ul8yIAYHOPKtaZYkyxmU5PHX5KvQxFV6yE7CcnoxkxbMkZkfspM
+         dUYPyoViZPyasVbbQ3vyDqdqJ42G5mdluavQDB84rLZhD4Evk+nslZ2AGAzLmx2m5O
+         M+vO6v3uNy/OgApiEIz+v2Zf4Xa9G345kQfMkXdTal0ZcRQBzrDDrGidPTBqEje4Lw
+         a+RMJLG2X3xnA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH] security/landlock: use square brackets around "landlock-ruleset"
+Date:   Mon, 11 Oct 2021 15:37:04 +0200
+Message-Id: <20211011133704.1704369-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20211002214725.fqmtbfjwtlom745c@wrt>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1441; h=from:subject; bh=ucJWxYJd1kyro1LLC/sCj7pGwHraVd1WKTUy1gC45mI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSm2P7dGfXw+snvmraRL1et/OiseSmiwPPver5ZYkn6DB+/ KvMd6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIoR2MDCvlQvMsdoaylioFJk6vPf X4Xlbe5jrPH0yNIuWnWA+U6DL8le+VP2K0nu2+CENPeo+vsVppc/Tpy9e+PnX13zp9rmsBDwA=
+X-Developer-Key: i=christian.brauner@ubuntu.com; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Mimi, David, Jarkko and James,
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-On 02.10.21 23:47, Andreas Rammhold wrote:
->> My mistake.  Trusted and encrypted key types have always been defined
->> as tristate.  Only when EVM selects encrypted keys, and by extension
->> trusted keys, are they builtin.
-> 
-> So how do we go about this patch? Building the TPM support as module has
-> broken actually using the trusted backend. This patch fixes that while
-> still allowing it to be a builtin. If there is some configuration there
-> a module isn't acceptable I am sure that is handled within Kconfig?
-Can anyone of you four pick this up? Andreas' regression fix has
-had Jarkko's Reviewed-by for close to two months and a half now.
+Make the name of the anon inode fd "[landlock-ruleset]" instead of
+"landlock-ruleset". This is minor but most anon inode fds already
+carry square brackets around their name:
 
-Thanks,
-Ahmad
+    [eventfd]
+    [eventpoll]
+    [fanotify]
+    [fscontext]
+    [io_uring]
+    [pidfd]
+    [signalfd]
+    [timerfd]
+    [userfaultfd]
 
+For the sake of consistency lets do the same for the landlock-ruleset anon
+inode fd that comes with landlock. We did the same in
+1cdc415f1083 ("uapi, fsopen: use square brackets around "fscontext" [ver #2]")
+for the new mount api.
+
+Cc: Mickaël Salaün <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ security/landlock/syscalls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 32396962f04d..7e27ce394020 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -192,7 +192,7 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+ 		return PTR_ERR(ruleset);
+ 
+ 	/* Creates anonymous FD referring to the ruleset. */
+-	ruleset_fd = anon_inode_getfd("landlock-ruleset", &ruleset_fops,
++	ruleset_fd = anon_inode_getfd("[landlock-ruleset]", &ruleset_fops,
+ 			ruleset, O_RDWR | O_CLOEXEC);
+ 	if (ruleset_fd < 0)
+ 		landlock_put_ruleset(ruleset);
+
+base-commit: 9e1ff307c779ce1f0f810c7ecce3d95bbae40896
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.30.2
+
