@@ -2,101 +2,83 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B41C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 10:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F758C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 10:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB3560EFE
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 10:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A74D61078
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 10:38:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235796AbhJLKeu (ORCPT
+        id S235885AbhJLKkf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Oct 2021 06:34:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44680 "EHLO mail.kernel.org"
+        Tue, 12 Oct 2021 06:40:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234014AbhJLKeu (ORCPT
+        id S235900AbhJLKkf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Oct 2021 06:34:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 553E660E53;
-        Tue, 12 Oct 2021 10:32:46 +0000 (UTC)
-Date:   Tue, 12 Oct 2021 12:32:43 +0200
+        Tue, 12 Oct 2021 06:40:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B716961050;
+        Tue, 12 Oct 2021 10:38:32 +0000 (UTC)
+Date:   Tue, 12 Oct 2021 12:38:30 +0200
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] LSM: general protection fault in legacy_parse_param
-Message-ID: <20211012103243.xumzerhvhklqrovj@wittgenstein>
-References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
- <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] security/landlock: use square brackets around
+ "landlock-ruleset"
+Message-ID: <20211012103830.s7kzijrn25ucjasr@wittgenstein>
+References: <20211011133704.1704369-1-brauner@kernel.org>
+ <06b6f249-06e6-f472-c74c-bb3ff6f4b4ee@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com>
+In-Reply-To: <06b6f249-06e6-f472-c74c-bb3ff6f4b4ee@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 11, 2021 at 03:40:22PM -0700, Casey Schaufler wrote:
-> The usual LSM hook "bail on fail" scheme doesn't work for cases where
-> a security module may return an error code indicating that it does not
-> recognize an input.  In this particular case Smack sees a mount option
-> that it recognizes, and returns 0. A call to a BPF hook follows, which
-> returns -ENOPARAM, which confuses the caller because Smack has processed
-> its data.
+On Mon, Oct 11, 2021 at 04:38:55PM +0200, Mickaël Salaün wrote:
 > 
-> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
-
-Thanks!
-Note, I think that we still have the SELinux issue we discussed in the
-other thread:
-
-	rc = selinux_add_opt(opt, param->string, &fc->security);
-	if (!rc) {
-		param->string = NULL;
-		rc = 1;
-	}
-
-SELinux returns 1 not the expected 0. Not sure if that got fixed or is
-queued-up for -next. In any case, this here seems correct independent of
-that:
-
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-
->  security/security.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+> On 11/10/2021 15:37, Christian Brauner wrote:
+> > From: Christian Brauner <christian.brauner@ubuntu.com>
+> > 
+> > Make the name of the anon inode fd "[landlock-ruleset]" instead of
+> > "landlock-ruleset". This is minor but most anon inode fds already
+> > carry square brackets around their name:
+> > 
+> >     [eventfd]
+> >     [eventpoll]
+> >     [fanotify]
+> >     [fscontext]
+> >     [io_uring]
+> >     [pidfd]
+> >     [signalfd]
+> >     [timerfd]
+> >     [userfaultfd]
+> > 
+> > For the sake of consistency lets do the same for the landlock-ruleset anon
+> > inode fd that comes with landlock. We did the same in
+> > 1cdc415f1083 ("uapi, fsopen: use square brackets around "fscontext" [ver #2]")
+> > for the new mount api.
 > 
-> diff --git a/security/security.c b/security/security.c
-> index 09533cbb7221..3cf0faaf1c5b 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -885,7 +885,19 @@ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
->  
->  int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  {
-> -	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
-> +	struct security_hook_list *hp;
-> +	int trc;
-> +	int rc = -ENOPARAM;
-> +
-> +	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
-> +			     list) {
-> +		trc = hp->hook.fs_context_parse_param(fc, param);
-> +		if (trc == 0)
-> +			rc = 0;
-> +		else if (trc != -ENOPARAM)
-> +			return trc;
-> +	}
-> +	return rc;
->  }
->  
->  int security_sb_alloc(struct super_block *sb)
+> Before creating "landlock-ruleset" FD, I looked at other anonymous FD
+> and saw this kind of inconsistency. I don't get why we need to add extra
+> characters to names, those brackets seem useless. If it should be part
+
+Past inconsistency shouldn't justify future inconsistency. If you have a
+strong opinion about this for landlock I'm not going to push for it.
+Exchanging more than 2-3 email about something like this seems too much.
+
+> of the interface, why is it not enforced by anon_inode_getfd()?
+
+Sure, we can add that too.
+
 > 
-> 
+> There is a lot of other names that come without brackets (e.g. inotify,
+> bpf-*, btf, kvm-*, iio*). Do you plan to send patches for those too?
+> Changing such FD names could break user space because they may already
+> be exposed and used (e.g. through SELinux).
+
+We didn't do it for bpf and kvm stuff because it has been that way for
+a long time. We try to do it for all new ones.
+
+Christian
