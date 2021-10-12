@@ -2,48 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90DDC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 14:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08BA0C43219
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 15:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D10C46101D
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 14:40:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E24C96103D
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 15:22:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237394AbhJLOmW (ORCPT
+        id S237418AbhJLPYD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Oct 2021 10:42:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34168 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237260AbhJLOmW (ORCPT
+        Tue, 12 Oct 2021 11:24:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229633AbhJLPYB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Oct 2021 10:42:22 -0400
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:12e:520::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1DEC061570;
-        Tue, 12 Oct 2021 07:40:20 -0700 (PDT)
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-        (envelope-from <fw@strlen.de>)
-        id 1maIwx-0007iq-Fb; Tue, 12 Oct 2021 16:40:15 +0200
-Date:   Tue, 12 Oct 2021 16:40:15 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Florian Westphal <fw@strlen.de>,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH smack] smack: remove duplicated hook function
-Message-ID: <20211012144015.GD2942@breakpoint.cc>
-References: <20211011143309.17203-1-fw@strlen.de>
- <700b26f3-a8ef-969b-dd3c-4ad849d8c4ab@schaufler-ca.com>
+        Tue, 12 Oct 2021 11:24:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7E13A60E97;
+        Tue, 12 Oct 2021 15:21:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634052120;
+        bh=7kLs+anK8k4vNTJePwcFay1rHFEUNiKPKTkIEwb7lwg=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=Lh/U8KEpnd0AV4fQ2vdTWljX2AdZEDVW+cizGOOUT3kljayrHoKbQNSQY5U0rtFQ0
+         EVlWZirNeLCQNlTVHGqzBygB3+VrjFQ2aAozexudpy+UIysKF2cEA2Y+nqg4syafOZ
+         vdhRPoXJ37fmo2FtHGD2ChP3tzIoO3TFEYOTSeqVre1o0Kf9J45LdOf6UwntHu/CzK
+         9ELsfgEd6iPBuGBR+WKqVmoy6MSHcDWe2qPK7pr/8w0Jx+iU+yHuKmjG65R3v6PB6J
+         0nKuoNUZSbluZxxUDX1uihmCchN4jku4K0uu0MYbYItJyl8M2w9FUNr7j2b2SOQtDy
+         7zStw67Xf4C2Q==
+Message-ID: <c6c2337ed83c237f70716cb4c62794d1d3da31f2.camel@kernel.org>
+Subject: Re: [PATCH 2/2] tpm: use SM3 instead of SM3_256
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+Date:   Tue, 12 Oct 2021 18:21:57 +0300
+In-Reply-To: <20211009130828.101396-3-tianjia.zhang@linux.alibaba.com>
+References: <20211009130828.101396-1-tianjia.zhang@linux.alibaba.com>
+         <20211009130828.101396-3-tianjia.zhang@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.40.0-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <700b26f3-a8ef-969b-dd3c-4ad849d8c4ab@schaufler-ca.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > Signed-off-by: Florian Westphal <fw@strlen.de>
-> 
-> Looks fine, with the one change I've noted below. If you're
-> OK with that change I can take it for smack-next.
+On Sat, 2021-10-09 at 21:08 +0800, Tianjia Zhang wrote:
+> According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+> SM3 always produces a 256-bit hash value and there are no plans for
+> other length development, so there is no ambiguity in the name of sm3.
+>=20
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 
-Sure, smack_ip_output() is fine.
+This is not enough to make any changes because the commit message
+does not describe what goes wrong if we keep it as it was.
+
+/Jarkko
+
