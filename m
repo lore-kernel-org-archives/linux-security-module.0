@@ -2,86 +2,162 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC36C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 15:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5105EC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 16:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2DD061074
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 15:26:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ADBD60462
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 16:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237250AbhJLP2g (ORCPT
+        id S231826AbhJLQyp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Oct 2021 11:28:36 -0400
-Received: from sonic317-38.consmr.mail.ne1.yahoo.com ([66.163.184.49]:38899
-        "EHLO sonic317-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234330AbhJLP2f (ORCPT
+        Tue, 12 Oct 2021 12:54:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36246 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229809AbhJLQyn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Oct 2021 11:28:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1634052393; bh=2nz1UL+/i59bF1JQNp/CRy7h9MRCjukc4ooD4NdF7Ug=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=anxXjQu5kjdf2eyEEsiggmU5orVUdiee/rzbAn63STBz/cdULVOZmYMziSOnxamrkIjWD38wua1sFSHSMRWYwiYEuSmF8HUFn8YvZi19C5FUnoUAa2Q+Dx7WmtMkgsk3XsJBoaLaSpc+NDezNnVucSSJN6QGXfGVb0Ei3VAAXlFkf3AOehjSycKD5GUVG/Z4lhiwM6e2t+D3L4iG9IqFbMEImlFES/SgETOVReUdqJA1OgCL5FaOit9QnD/P1wl0+M3HFto0qx39qFTlc5NSEAFb2P//qQjLGwTu82QdNf7cZAz2W4/VyWD43fsregjQKoKUU+WK2cZiNPur6fbxRw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1634052393; bh=idWVnrTSL2rt0ncv8l/zkVDpfjvpK+DvPqWHrfhmrSx=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=h0d9uKS6UiMjw2Qj3KzFOt0axwviyqFdZB7aElRXwD6skn7ira79o/HqjP24NXXJntWIUrOkXq3/P101Gk7ymwh0Sh1KAgBcYVGZHgKaYIIIbf9hhOHnJZaX1LRVdFZ3IGcJIfDYRcIa3EGT9GN4nb2tiCCCuZo9QL3YjTuvAOkBQ8ao9Uu8gZyrbCEMdyhJQZSY3EDE54fldiCw50E8w7UXkplnZbm5oQTlCnY26hAVRcxhgMfLZ9Fut7o+VZ6qYvrMxzS1a971h92B46zdrUCe6kugvFFeuzUsdSUoCJHair8HKRBBOH367JDsDf9V5aFjY50y/30lCCHl6vZgKQ==
-X-YMail-OSG: iVz0YiQVM1lNsYkfddRUmaJRAQaWkMA6jixHuiKUXIy4g6mdlD139zHt.s1toi1
- BN9OWFet79sKYu7FY_rbY0dmqVeN7ruSZxErHlOsAN33ZbDjVFBMqHX75SBtDNLr6hE1p.umqkNr
- 90vz7.AiIZ5_jf41DvCr4k2uuHFFBHMfKUTqSz9VcaaCIcb_mZZhxNMRdhQQF6lKNE0Iyl6ga03N
- BkHtS1GoPkKas8biQ1j3wSgyrFVm1cAe0wT_RsXZJu7ML.tjfIhXBpl3D9bYdWmTUjENWBfSP7vA
- WhdYu0I7Q2lz2_c5izOBuxx9SAIFvNv19haZH7vZcyOXRlhABCirmC06uzLFqQHLDzn5EKuPLino
- cPRDXldzusZzFXV_iD5104T25xdhmaJl1.in7yYhovtMh08Z3V7crj5ti353Ebd58qyDVQbPCVUK
- 1FRBQsbjFjDrjcH6wqFwcize4O1zLOmBCEvqy_9S03TW6JoS1WsiiiL79HYal3GgQ2hncJeuGU_E
- R1VsEP5FD0ZMDCtTmDWUOTdWYdTRqC9ii9ltDVwCmd9LF_UtJA.sg_umrbOfVJqWZI9ES19O0mx6
- fMqLnVmc6udhifAqct9HCL.bT0isqGxZ6JORYHA7BCZepa0dv8jJuj.IVAhuGHUavwY8OqEuMezd
- _1N08I_jBMqLXhB2p7r_L_n4RpYsOUBRHz4PtaPDbqjyWBLOLETkkxvOFE4CglbCOSC3lMc37Amq
- zaz4OfrzhnFlay2buzOd17hvLX5wquFsNuD8AF.cpXr3CUfXlggu1R01lj5g.REuasFZ0a5SIK4F
- ol3xhopJg5zrCdyp5F2pNPFWZp7u.8x1mkAcOLfil.FD_eEsNNMmtOkgWNe2PyiBDmqgdw3XxB3b
- gVGYpI5C2Zp34hh2mvgTq5x8JJ_GJT7QqYfgcNylZjA6K9fe7NFijl2UcdKDFDjLsQHGB.yj3zLF
- mkn6aKUwwwU7j4zxE.W4AkEsudPISeBcA3jqEIKBs2Z2WvEDyWnmnpcwFpPJdR2EZP7GNEVSJuoo
- jevVbd7yNEMPU_AJX01FXhAC_F6o_3k57K_YfgBsaraSiuLssas9Lx__UiQRHdTJiUXJv2aEbNRu
- e9s02.Edg42JrzkpPSPdbr.A.6CkfXXmwwn4P1ch.5BR1KpkbY90Z2T8V19qGIJA4zAvyQmIVYGr
- HdbZY2nQa9BO0XtkmPNubMIIwc6GLDmZ0L4iGDsaaPqkW5YEmSglFhSmlyzCzmb5eJ1V0dU4oHOu
- .6hWkYob14rqiw2YwsUwEAAlFQJ7suy0nCCHWwlTPz7CbpmKAwjnVEXQs7LP6zrvf4XmfQ5x3Ne_
- CvfAgFPm9Q8iDRHT4jyiP9IekIFWxlVZ1dWFv9p4re88CyNkV_znbxwn7ls7N4iMuqyMOSf7YGwf
- aPZwEbEV3OcJy.VG12nU5VVpRL9YUnfEK6u7SrT.RZj2Gxpxv1BDP8UeT09zOmGaATnQ._pyHrHw
- 0Sg9HckplkGa72yhAqeD2ywesA2nBoCkD5KMBhY5yJuYjHUtVPflJOW7XueugJFv6crh7Pv88sbU
- 9OP5jPwAu14Edu94RSneMVl05CE262lSgY05OnBeAx4mmsOIt7_75b20qqW_BbWUpmSNnBYwAp2R
- WNhcqC_T5eZEpO5Gr7FrKZCPk4VfzNUJnao1kLiXCtROG1.hByD4jrfv0lwCTjz.piYmJz1q04Cc
- VqEGiLMoDvEteJNVrySEOWvrwwQLuwKZhzcvKYdY1s8oIahuki39yqTpAESb8ZHwf2L_IQ.hcS5D
- kpKflobY45a_jlDpeg85Bs3hDZZUJsl40SoJcFsJd_qMjTdJHBO1Ej1FI_qNJ5GvlrMgAApoSABC
- P2DWqBRuL9fJqRtBX1hU70eReh5a1L6Kuw.YU3MYoYtALK3iLOA3joChtZ5FR50Q7DEhjg3xionD
- LCZY2hEsT1TpwlwfAuej_fRYNwBLMbYjW7D3q7J_MVJWOP5qBrfIrfqyVXRUDrgnK7LJyX132kXc
- wgb7QBJe28WYjqC_wM38dgMDwqqxx65BafqNz1_O8PU1aOazYP1iLRZGFSTylZ1lCzoY2AAGimOu
- ad_0Nwj87AwDp6mMkx9A16DKaMHGj6MSuZ5.uIwPOvmRpV2JVJFAhZ3sswZg.b8JYSPjbVHnV0Dm
- B.koXySjGDyq8IxY.ARYZifRo1rxIzubfCs41Bn35owuRp_HZrrJqRGoavwF.OK8UlBv42uOFxxt
- JCgguDxSbBx.92heCPGwPhIxOZPF392CMKJU8X2JYGZ6Px8wupweKPCUlMPGJs3QSxPk7sMEwnYH
- RJg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Tue, 12 Oct 2021 15:26:33 +0000
-Received: by kubenode534.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID c75242736be9955228ad0cd21120aad6;
-          Tue, 12 Oct 2021 15:26:31 +0000 (UTC)
-Subject: Re: [PATCH smack] smack: remove duplicated hook function
-To:     Florian Westphal <fw@strlen.de>
-Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20211011143309.17203-1-fw@strlen.de>
- <700b26f3-a8ef-969b-dd3c-4ad849d8c4ab@schaufler-ca.com>
- <20211012144015.GD2942@breakpoint.cc>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <1f59eff5-966c-f2a0-8596-0caced591171@schaufler-ca.com>
-Date:   Tue, 12 Oct 2021 08:26:31 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Tue, 12 Oct 2021 12:54:43 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643CFC061746
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Oct 2021 09:52:40 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id r19so87387950lfe.10
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Oct 2021 09:52:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xawnIR012Yk1jlMpJVQsdMc2RuzZeUTjtaZq6SPv/vQ=;
+        b=CKhySEFvBmeBz2lcrERZC74hIR/KWwGPXSyIVPq6Td7ba04vZohMLOQL35RLwjANyH
+         tfRgYDWy9nS8fywNgnSJSAzXNkbXoJ8qv+rsx9CVsCqcxvQWM6yTOBwjT6GIxGxTJ309
+         bdaopyFfF+TiJh1ryg3F2OgcV1MxRjt94pHkqLEqDjFEn71AgZ/T64PwP29o9jxf8FOf
+         JQqiSaU7BsB1x3DmlIPL0UmzMPqNnYAeenGf9Xc0aIPeoz1FxZofoYiGi9sCj348z2MM
+         I5RdGgQMykcHrAo3w2BRDPeuDZh+Mh1f0p5hwizFdVfDfL5rTmqE5UK7aKtZ8hzLJi02
+         vXYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xawnIR012Yk1jlMpJVQsdMc2RuzZeUTjtaZq6SPv/vQ=;
+        b=RAQuyrQJoV9duGTrFKno2DmuhiLjPVxYVNsVzIE8qB0+M6jSVfTOruPmHLBHHMI9K2
+         hG2qMS2+NNhjV68EsgkGztf/V9Tkkk+hupPFmyPsESHOxTFKomFiFjjk/P2xo91+9mgp
+         uthddHcPRVxmLOF1If9YwLHPhqi2+l5odxQBUL7mMGd567AvfNoJpVP05DAhwvkJyH36
+         hs/NsJyFOEj1SY6hfTC7ydDc6pON0FNdeFXBU2z+lE6VYQMEb/m7lwpBTvO1256bxZD4
+         m/FnrWv1hWUN4fuwjfPSGWDrSGguidD0pJl4Os7P7TGgm/6hujEh7OYBgK/wIfl3lkcu
+         OojA==
+X-Gm-Message-State: AOAM533x68BB+jqcV1bSeBP0Qy6sYXKB87/WoI2uieYvSVaFYg2jfZtR
+        heC9guOF6KVu8aD/V91kYmIk/YD3PI+za8WuZKdmnQ==
+X-Google-Smtp-Source: ABdhPJwB9dqUf+AUdpqZ35D03WL9djp77vt7gTwCxcfcHj8MfPK1AU+kSPKFzNG8xdRVQ054ptpUFcbbXHlOvgM1N1Q=
+X-Received: by 2002:a05:6512:13a5:: with SMTP id p37mr34642679lfa.403.1634057558265;
+ Tue, 12 Oct 2021 09:52:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20211012144015.GD2942@breakpoint.cc>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.19116 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20211007004629.1113572-1-tkjos@google.com> <20211007004629.1113572-4-tkjos@google.com>
+ <CAHC9VhTRTcZW9eyXXvAN7T=ZCQ_zwH5iBz+d0h2ntf7=XHE-Vw@mail.gmail.com>
+ <CAHRSSEy=eC0rbHUzDmCo6Na7Ya=uCq7zJ6_cXysi0oWQB=19YQ@mail.gmail.com>
+ <CAHC9VhQVKTxwUUP02U43=zVZrEFWc0hhmpaR1YSxe+KHjhnhbw@mail.gmail.com>
+ <CAHRSSEwYrqFum7gS0XOYG0p3F+0Hv8qvaZbWLUyXUm0oCWpX9w@mail.gmail.com> <CAEjxPJ5YT36ZvrN6uSDOCNv3pYrWBzcutsnSjSzya-5e0v9Rpw@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5YT36ZvrN6uSDOCNv3pYrWBzcutsnSjSzya-5e0v9Rpw@mail.gmail.com>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Tue, 12 Oct 2021 09:52:26 -0700
+Message-ID: <CAHRSSExyd--=r2g6FaRdhh5YtWBWPDOezyqW+8-HSOJw2bZhUw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] binder: use euid from cred instead of using task
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        arve@android.com, tkjos@android.com, maco@android.com,
+        christian@brauner.io, James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        devel@driverdev.osuosl.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/12/2021 7:40 AM, Florian Westphal wrote:
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> Signed-off-by: Florian Westphal <fw@strlen.de>
->> Looks fine, with the one change I've noted below. If you're
->> OK with that change I can take it for smack-next.
-> Sure, smack_ip_output() is fine.
+On Tue, Oct 12, 2021 at 5:24 AM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Mon, Oct 11, 2021 at 7:39 PM Todd Kjos <tkjos@google.com> wrote:
+> >
+> > On Mon, Oct 11, 2021 at 2:39 PM Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > On Fri, Oct 8, 2021 at 5:24 PM Todd Kjos <tkjos@google.com> wrote:
+> > > >
+> > > > On Fri, Oct 8, 2021 at 2:12 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > >
+> > > > > On Wed, Oct 6, 2021 at 8:46 PM Todd Kjos <tkjos@google.com> wrote:
+> > > > > >
+> > > > > > Set a transaction's sender_euid from the 'struct cred'
+> > > > > > saved at binder_open() instead of looking up the euid
+> > > > > > from the binder proc's 'struct task'. This ensures
+> > > > > > the euid is associated with the security context that
+> > > > > > of the task that opened binder.
+> > > > > >
+> > > > > > Fixes: 457b9a6f09f0 ("Staging: android: add binder driver")
+> > > > > > Signed-off-by: Todd Kjos <tkjos@google.com>
+> > > > > > Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > > > > > Cc: stable@vger.kernel.org # 4.4+
+> > > > > > ---
+> > > > > > v3: added this patch to series
+> > > > > >
+> > > > > >  drivers/android/binder.c | 2 +-
+> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >
+> > > > > This is an interesting ordering of the patches.  Unless I'm missing
+> > > > > something I would have expected patch 3/3 to come first, followed by
+> > > > > 2/3, with patch 1/3 at the end; basically the reverse of what was
+> > > > > posted here.
+> > > >
+> > > > 2/3 and 3/3 both depend on 1/3 (add "cred" member of struct
+> > > > binder_proc). I kept that in 1/3 to keep that patch the same as what
+> > > > had already been reviewed. I didn't think much about the ordering
+> > > > between 2/3 and 3/3 -- but I agree that it would have been sensible to
+> > > > reverse their order.
+> > > >
+> > > > >
+> > > > > My reading of the previous thread was that Casey has made his peace
+> > > > > with these changes so unless anyone has any objections I'll plan on
+> > > > > merging 2/3 and 3/3 into selinux/stable-5.15 and merging 1/3 into
+> > > > > selinux/next.
+> > > >
+> > > > Thanks Paul. I'm not familiar with the branch structure, but you need
+> > > > 1/3 in selinux/stable-5.15 to resolve the dependency on proc->cred.
+> > >
+> > > Yep, thanks.  My eyes kinda skipped over that part when looking at the
+> > > patchset but that would have fallen out as soon as I merged them.
+> > >
+> > > Unfortunately that pretty much defeats the purpose of splitting this
+> > > into three patches.  While I suppose one could backport patches 2/3
+> > > and 3/3 individually, both of them have a very small footprint
+> > > especially considering their patch 1/3 dependency.  At the very least
+> > > it looks like patch 2/3 needs to be respun to address the
+> > > !CONFIG_SECURITY case and seeing the split patches now I think the
+> > > smart thing is to just combine them into a single patch.  I apologize
+> > > for the bad recommendation earlier, I should have followed that thread
+> > > a bit closer after the discussion with Casey and Stephen.
+> >
+> > I'm happy to submit a single patch for all of this. Another part of
+> > the rationale
+> > for splitting it into 3 patches was correctly identify the patch that introduced
+> > the patch that introduced the issue -- so each of the 3 had a different
+> > "Fixes:" tag. Should I cite the oldest (binder introduction) with the "Fixes"
+> > tag and perhaps mention the other two in the commit message?
+>
+> Couldn't you just split patch 1 into the "add cred to binder proc"
+> part and "use cred in LSM/SELinux hooks" part, combine patch 3 with
+> the "add cred to binder proc" part to create new patch 1, then "use
+> cred in LSM/SELinux hooks" part is patch 2, and "switch task_getsecid
+> to cred_getsecid" to patch 3? Then patch 1 can be cherry-picked/ported
+> all the way back to the introduction of binder, patch 2 all the way
+> back to the introduction of binder LSM/SELinux hooks, and patch 3 just
+> back to where passing the secctx across binder was introduced.
 
-Added to smack-next#next. Thank you.
-
+Sending a v5 with this refactoring and the !CONFIG_SECURITY fix
