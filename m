@@ -2,258 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C23C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Oct 2021 17:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F41A5C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Oct 2021 17:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AA376109F
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Oct 2021 17:23:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D131F6109F
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Oct 2021 17:24:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230225AbhJMRZy (ORCPT
+        id S230488AbhJMR0a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Oct 2021 13:25:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34754 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229967AbhJMRZx (ORCPT
+        Wed, 13 Oct 2021 13:26:30 -0400
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com ([66.163.189.89]:45690
+        "EHLO sonic306-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230404AbhJMR03 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Oct 2021 13:25:53 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665DDC061570
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Oct 2021 10:23:50 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id d13-20020a17090ad3cd00b0019e746f7bd4so4987493pjw.0
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Oct 2021 10:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=AReqUsvUnaE5V/ZN9b0ppTuXb1nDxknf4Hjq7OACTEs=;
-        b=LzeYOVqQ36j1vI/uWUXC4KHwbsb4O+j1y6/IW2atZfL4h72eCwu7l3xYJMJflGr5FK
-         Z7jY2uMPWrV7XyvZCBO3S2Wg6nh9maU5hCqRm5AEywpOziTLdJRVz1RNW5K91G5+1QH/
-         DmaDwCCcurB16U92weFP6Hz/FvCnn/fEdhB+Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AReqUsvUnaE5V/ZN9b0ppTuXb1nDxknf4Hjq7OACTEs=;
-        b=oY/VVeVKZD4TbWXs/Ad1lFQiiQr+UdCS8hFAGj1l8WARLVAXQRHXgfKVuHAA81g3nO
-         RYr/hIFyun8oai2tkyOcPt/Hn1BlGrMo7BAOAfDpmIB8oBSKQCszInEdlngJW+d6LLYf
-         G/nfemevZD15dXNBOj2jka2b1Yg4+5XdQ8X+3X1d/UDntRAHu4T5BUCT28y6jHTSyFWg
-         aYC/WiXrZIilhwLIITFPbRleFP/ZN7Y2SS9qIZlS38GtwpEAS4+JjVQDTjUqjPs7izpr
-         xHXJ+FqwsttE/YFenSVprgglFn6NDR07lLNdZ9MUNZUQUcFVeXt5ZdHJoso2m9OTCAhJ
-         tm3A==
-X-Gm-Message-State: AOAM530zMXYHvMYxAjxMBl90pXCe1cMMxEdqTZK/xrZWjU5LZHv6/8H/
-        tMIyyjJYK5TYf8EixfxBEzLeJg==
-X-Google-Smtp-Source: ABdhPJwB3H4gvqFzLk9j4t9+PVB2J1yxAPAKBWzSDTBOtHBwL+ATEGU/JmICD28G8wuHiUdUtzrpHQ==
-X-Received: by 2002:a17:90a:47:: with SMTP id 7mr643888pjb.46.1634145829789;
-        Wed, 13 Oct 2021 10:23:49 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t28sm112484pfq.158.2021.10.13.10.23.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Oct 2021 10:23:49 -0700 (PDT)
-Date:   Wed, 13 Oct 2021 10:23:48 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        kernel test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
+        Wed, 13 Oct 2021 13:26:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1634145865; bh=YfWdFeNX9j8HGBH6/puh7ZcMtMPOePbBXN+kznyhhSY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=G/ZGqQHutTll0M8fSbqQr7iFNVfGc8KSmGM9HvoAbAn6xdSPi8G1PQwKoH80+uOmmXD+f3LCw95rgFArEzhmTMPZiG9VDpaPCgTdkOK73ET7aRVZcUf6dZlt1Ez4k2PAc1+1N+4dFhhLYXyh84ABa58dEgcyzbX1FAivDqiSy3uyQeDVl+Nh3o8/koMx9C6ezuO0jAJ7/8UK3vdzyp2jBMG/0lGDjzuudXGAERGw1GV/VW4fPIDojlyz1NPe0CWx8I4hR8O9HHd8x0FZxnOrbRH4sahRHClNuDhOWmSElW0AkeluxcQdfy0RSE7kUHSFgq/8ks1kjduZAuqGPfal7Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1634145865; bh=QCeugzJnpQYOF442BowmyKhkM0fxyl09S2QaVxCOpHX=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=Afi1Yd2APpFrBxp4u+Vw35+a9IhTKivanbvlG8+/xkr2KRRW7eC75T1bB/GtYZVkW0azm0KqHlSSzSNiE5k9sYAFGu2tWQeR6Gb0V8bVcujslabACShH1m5LjmJ2hh2GNNtv2Kak0nS8fXi/iuW9zgXNdB93VL4Yo/4KfD1FgAXu0vhiIaZ764CNNKktQYT15jYf3sFWfh9AyNi7gZpSrtJu0VDxqKWdtdzG2lL5K4BuSo1AjoOpZIwP+2o28+li8iuOEB7h5P3ahdCQkx/A0slvRoaveQOoWMTs8DZICpMJQ4HXkg4BGjBifeIUmSZmQaLYaVGVH0oSz0sBG2y5+Q==
+X-YMail-OSG: NiryiCoVM1lwH9Ia1yKJc1ljAA4_ghmPFOjBCJL8CnrPLxmdo76MIRPfEHvRZKD
+ .G4M_yxm7_RlIpTPrFGWLH7258ANn6f2Uwvvqrwb7Pv2Di.QldK6WUkTyzNVhB9UTOeXT1kcU4uW
+ v2n433NnuKHQQfBUiXuH616VHtAm_mQnKO0N3GDOjSacqpTF0LESRJiT6aDMK0z..aX8waHLpeBh
+ PiHccNVeax3Xf5x891DpDeCn5_iq4Az3jCeyB14iXQmIujE4DqKqJAbHfV7FNkVtuz15rVVhFOjf
+ 0eLHWEbBP.Qf5z0HLT1oHEEd5iMbjdbPRFHz7.YfLmSLRjtdLTiXqmt0OAvFOLmhgDqQMM.tXwMX
+ 84NEm.LApMzHd86lNHrYT6DnihOA_Dui0eungGFUyUMPGg7GPF359pR59xHeTRnG8lmPM_2SDKpX
+ pjuVybXJ0xmKGCIXLrsBNfD7gTagg6U0RvtjCEJOnhdlEwzCTL36mU2.l9h8kJHXleq0YFQSCK3j
+ IIWzfGqOH4KxS7JcYM40B8rbf4sR6eIvW1h5bj6hwBMOKR0EeAFb2.Lwx_kciJaFzM1aEUBGyNJ2
+ CI1hBKB6HGt4y0SkrweTKpm8KMMWBLtegfy4fV4KP9yr7v5sbE6kyoDsW6q9C0DszXyMjT8ypwao
+ bE9ZYQRziSxm8MM3bZgIeWcy9aFE.XzXauIOvDsLc1xvZNdGEfpeD5Pw7jogqiaG6tyh2S5wette
+ 1XksY54.Ho.yPmeKcXBowF4A1udwoJMkA2bVwIWIRr0feBHyNp7FJ9E0mN4k9WyXgq4RY1ffRuxh
+ .YaJtEp9LYeAdmZHZcvpUaWJJXNS3XnEn8c38CFJjFiITd5MAz5tDZ6sQ7Fcx8n7E60087e7xRb1
+ ghhUNdn2biP5zFk_UvQ52xX6jr0VXrkNM_gx1JEJTcOGaVh__NYAkS8E0DRqWD0jD2pPAKgL5oaH
+ SPFdpPwFE2Bdd2Fpql0naen265TGz1LvTQhw_ePgZgfffnLVCuoRArJEejVKAXxAlFNvHDoz_mzQ
+ 0tu6xEZV1udyDUvmOEY4y9yhYPGlxesBiiplhivsg2qvaVFDOTq03OzpKsJ.86EISM6JVo9h3txO
+ bSsLOL3Ej.pQ4xgrQBf4w27AR_exdxkP6JlPe5MhCOJPeoysOmoNB8v9HWevs4quZjMD7_AcihvX
+ vVYwtVowYexKwvbyLfDDNz0NqFFnA9w5EyQCcltvHF3yD0A_H8svETwtp3huPUyFV48T258crma1
+ veNjq5urIUxsek.psU4a5N39WNDZgOzdhkT3CFZiGwjhb1NnP_qPWJgbao_x3q3W8BEFFhjkum9N
+ QFiOGeCbtcseh4WdnJm7.14p9z7ghRE8n7gjSFDtQ8ftUVRpSvqSlRa5vG06rcTJlXuJUPt8FTaJ
+ pDvp.Idm7bzeuGJJyPBWoC8XZOkR2dqfhGK6A4VkE5WePr5RwOhPtLFSz6mP48i9eQI1W0p6c6dJ
+ Nw3RXXAVXjGjpg5PV_bkC2XV8NQefiOzQ9_ksLa018Fwij.dgHeIASI66wnR_PS_HxNuqF_uyI61
+ EFlnjbJ0xoQzzxTB49VkKaRlbu40Fc_IC1N7IiJkS75KbByE5JJmdORE3kn8TWvQpoRN3g61QcFO
+ p3Hxh5jG7NLkw5yR3v2NTqHj1tR7775cx57ryp2z_IoqHy7oux5.ydfkcv8N.LIyv29j43RVGiCJ
+ 2bydw0Y6plZhTVxPmrQ3KlEooXpcA6iGIZVut9xvdKKiihUFgw3QlyHnq4r9MDlAZ8TvynUycuR9
+ omBB2zcFUHcc9Sp2pDH6vE3D9cZVWhNSX1B9ER.fDCR6tDBmTMDQHvyIsXPIPlFHTFjTcjg7wuce
+ mUkKocv.ZH_076ySmuRQsb0iVoYxn4T1nCgg7mZdoNgw7yn6jhZbIuKCQVk8rBAfRTp3_j1_ZKVj
+ x2Oa1of87dRDn.zIU4_sY0werSIa13En5r7INQjC997a2WoWZ5WphmQ6URg1q3HXsMrkLNE7UpGc
+ g7F5LM0Lcwq6zX5d0X7sTqR6kDaXi8hhSMSUbsv0CUViWu5MTOrYjaieHp2AbD6lw7U5Xu3aUBCe
+ ekTCN3g59mUuCSJCLeieIhpV3op3wVg4YsQVqbsXwwohz5GY3i6BAxdca._PoF0yWiLBuxppWPRw
+ b8DBu7caXnjC_xJTfipc.8s9JumNrQ.73ui44NhYArQHZI7Lyf0Iu2IDgdgVV5.wXWIT.szr.gVg
+ PusaWMtQJAJghEtlpbmle6RwUJrR0qpAy4mPaPGREYc.HljMPOb17v4cQ..20cTHQe5meZNX7Mrs
+ NopWiVgqo8DOKbxpd
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Oct 2021 17:24:25 +0000
+Received: by kubenode504.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 15281eb7306d6ee34512e3b2f6b2cc89;
+          Wed, 13 Oct 2021 17:24:22 +0000 (UTC)
+Subject: Re: [PATCH 2/2] fs: extend the trusted_for syscall to call IMA
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        KP Singh <kpsingh@chromium.org>
-Subject: Re: [linux-next:master 1997/7806]
- include/linux/lsm_hook_defs.h:408:18: error: 'uring_sqpoll_default' defined
- but not used
-Message-ID: <202110131023.9C246EBC4@keescook>
-References: <202110131608.zms53FPR-lkp@intel.com>
- <CAHC9VhQAkv=jaPM4U1umSXTFtbP4vdXo-tk9vfKGnpAmrxhj1w@mail.gmail.com>
- <64f0bc36-ce94-3572-2c07-07e36c34a266@schaufler-ca.com>
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20211013110113.13239-1-zohar@linux.ibm.com>
+ <20211013110113.13239-2-zohar@linux.ibm.com>
+ <d4273866-607e-37be-076b-a920bbf08bf9@digikod.net>
+ <e1c2d34acb37d85e94af15ca1edd162e1e7f9a2a.camel@linux.ibm.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <4df99ebd-ca38-a829-b437-bd42dc4b6b1a@schaufler-ca.com>
+Date:   Wed, 13 Oct 2021 10:24:22 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64f0bc36-ce94-3572-2c07-07e36c34a266@schaufler-ca.com>
+In-Reply-To: <e1c2d34acb37d85e94af15ca1edd162e1e7f9a2a.camel@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.19116 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 13, 2021 at 08:52:15AM -0700, Casey Schaufler wrote:
-> On 10/13/2021 7:57 AM, Paul Moore wrote:
-> > On Wed, Oct 13, 2021 at 4:17 AM kernel test robot <lkp@intel.com> wrote:
-> >> Hi Paul,
-> >>
-> >> FYI, the error/warning still remains.
-> > I'm not sure if anyone is monitoring the kernel test robot mail, but
-> > this issue isn't unique to the LSM/audit/io_uring patches, it appears
-> > to be a general LSM hook issue.
-> 
-> Looks like fallout from KP Singh's MACRO stuff for BPF.
+On 10/13/2021 8:45 AM, Mimi Zohar wrote:
+> [CC'ing Casey]
+>
+> On Wed, 2021-10-13 at 17:26 +0200, Micka=EBl Sala=FCn wrote:
+>> Nice!
+>>
+>> On 13/10/2021 13:01, Mimi Zohar wrote:
+>>> Extend the trusted_for syscall to call the newly defined
+>>> ima_trusted_for hook.
+>>>
+>>> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+>>> ---
+>>>  fs/open.c           | 3 +++
+>>>  include/linux/ima.h | 9 +++++++++
+>>>  2 files changed, 12 insertions(+)
+>>>
+>>> diff --git a/fs/open.c b/fs/open.c
+>>> index c79c138a638c..4d54e2a727e1 100644
+>>> --- a/fs/open.c
+>>> +++ b/fs/open.c
+>>> @@ -585,6 +585,9 @@ SYSCALL_DEFINE3(trusted_for, const int, fd, const=
+ enum trusted_for_usage, usage,
+>>>  	err =3D inode_permission(file_mnt_user_ns(f.file), inode,
+>>>  			mask | MAY_ACCESS);
+>>> =20
+>>> +	if (!err)
+>>> +		err =3D ima_trusted_for(f.file, usage);
+>> Could you please implement a new LSM hook instead? Other LSMs may want=
 
-Does this fix it?
+>> to use this information as well.
+> Casey normally pushes back on my defining a new LSM hook, when IMA is
+> the only user.  If any of the LSM maintainers are planning on defining
+> this hook, please chime in.
+
+That's correct. Adding the overhead of checking for security module hooks=
+
+when we know there aren't any does nothing to dispel the perception that
+security developers don't care about performance.
 
 
-diff --git a/security/security.c b/security/security.c
-index 9ffa9e9c5c55..462f14354c2c 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -706,7 +706,7 @@ static int lsm_superblock_alloc(struct super_block *sb)
- #define LSM_RET_DEFAULT(NAME) (NAME##_default)
- #define DECLARE_LSM_RET_DEFAULT_void(DEFAULT, NAME)
- #define DECLARE_LSM_RET_DEFAULT_int(DEFAULT, NAME) \
--	static const int LSM_RET_DEFAULT(NAME) = (DEFAULT);
-+	static const int __maybe_unused LSM_RET_DEFAULT(NAME) = (DEFAULT);
- #define LSM_HOOK(RET, DEFAULT, NAME, ...) \
- 	DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
- 
+> thanks,
+>
+> Mimi
+>
 
-I will go try it...
-
--Kees
-
-> 
-> >
-> >> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-> >> head:   8006b911c90a4ec09958447d24c8a4c3538f5723
-> >> commit: cdc1404a40461faba23c5a5ad40adcc7eecc1580 [1997/7806] lsm,io_uring: add LSM hooks to io_uring
-> >> config: microblaze-buildonly-randconfig-r002-20211012 (attached as .config)
-> >> compiler: microblaze-linux-gcc (GCC) 11.2.0
-> >> reproduce (this is a W=1 build):
-> >>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> >>         chmod +x ~/bin/make.cross
-> >>         # https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=cdc1404a40461faba23c5a5ad40adcc7eecc1580
-> >>         git remote add linux-next https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> >>         git fetch --no-tags linux-next master
-> >>         git checkout cdc1404a40461faba23c5a5ad40adcc7eecc1580
-> >>         # save the attached .config to linux build tree
-> >>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross ARCH=microblaze
-> >>
-> >> If you fix the issue, kindly add following tag as appropriate
-> >> Reported-by: kernel test robot <lkp@intel.com>
-> >>
-> >> All errors (new ones prefixed by >>):
-> >>
-> >>>> include/linux/lsm_hook_defs.h:408:18: error: 'uring_sqpoll_default' defined but not used [-Werror=unused-const-variable=]
-> >>      408 | LSM_HOOK(int, 0, uring_sqpoll, void)
-> >>          |                  ^~~~~~~~~~~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>          |                                ^~~~
-> >>    security/security.c:711:9: note: in expansion of macro 'DECLARE_LSM_RET_DEFAULT_int'
-> >>      711 |         DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:408:1: note: in expansion of macro 'LSM_HOOK'
-> >>      408 | LSM_HOOK(int, 0, uring_sqpoll, void)
-> >>          | ^~~~~~~~
-> >>>> include/linux/lsm_hook_defs.h:407:18: error: 'uring_override_creds_default' defined but not used [-Werror=unused-const-variable=]
-> >>      407 | LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
-> >>          |                  ^~~~~~~~~~~~~~~~~~~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>          |                                ^~~~
-> >>    security/security.c:711:9: note: in expansion of macro 'DECLARE_LSM_RET_DEFAULT_int'
-> >>      711 |         DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:407:1: note: in expansion of macro 'LSM_HOOK'
-> >>      407 | LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
-> >>          | ^~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:396:18: error: 'locked_down_default' defined but not used [-Werror=unused-const-variable=]
-> >>      396 | LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
-> >>          |                  ^~~~~~~~~~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>          |                                ^~~~
-> >>    security/security.c:711:9: note: in expansion of macro 'DECLARE_LSM_RET_DEFAULT_int'
-> >>      711 |         DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:396:1: note: in expansion of macro 'LSM_HOOK'
-> >>      396 | LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
-> >>          | ^~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:392:18: error: 'bpf_prog_alloc_security_default' defined but not used [-Werror=unused-const-variable=]
-> >>      392 | LSM_HOOK(int, 0, bpf_prog_alloc_security, struct bpf_prog_aux *aux)
-> >>          |                  ^~~~~~~~~~~~~~~~~~~~~~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>          |                                ^~~~
-> >>    security/security.c:711:9: note: in expansion of macro 'DECLARE_LSM_RET_DEFAULT_int'
-> >>      711 |         DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:392:1: note: in expansion of macro 'LSM_HOOK'
-> >>      392 | LSM_HOOK(int, 0, bpf_prog_alloc_security, struct bpf_prog_aux *aux)
-> >>          | ^~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:390:18: error: 'bpf_map_alloc_security_default' defined but not used [-Werror=unused-const-variable=]
-> >>      390 | LSM_HOOK(int, 0, bpf_map_alloc_security, struct bpf_map *map)
-> >>          |                  ^~~~~~~~~~~~~~~~~~~~~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>          |                                ^~~~
-> >>    security/security.c:711:9: note: in expansion of macro 'DECLARE_LSM_RET_DEFAULT_int'
-> >>      711 |         DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:390:1: note: in expansion of macro 'LSM_HOOK'
-> >>      390 | LSM_HOOK(int, 0, bpf_map_alloc_security, struct bpf_map *map)
-> >>          | ^~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:389:18: error: 'bpf_prog_default' defined but not used [-Werror=unused-const-variable=]
-> >>      389 | LSM_HOOK(int, 0, bpf_prog, struct bpf_prog *prog)
-> >>          |                  ^~~~~~~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>          |                                ^~~~
-> >>    security/security.c:711:9: note: in expansion of macro 'DECLARE_LSM_RET_DEFAULT_int'
-> >>      711 |         DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:389:1: note: in expansion of macro 'LSM_HOOK'
-> >>      389 | LSM_HOOK(int, 0, bpf_prog, struct bpf_prog *prog)
-> >>          | ^~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:388:18: error: 'bpf_map_default' defined but not used [-Werror=unused-const-variable=]
-> >>      388 | LSM_HOOK(int, 0, bpf_map, struct bpf_map *map, fmode_t fmode)
-> >>          |                  ^~~~~~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>          |                                ^~~~
-> >>    security/security.c:711:9: note: in expansion of macro 'DECLARE_LSM_RET_DEFAULT_int'
-> >>      711 |         DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:388:1: note: in expansion of macro 'LSM_HOOK'
-> >>      388 | LSM_HOOK(int, 0, bpf_map, struct bpf_map *map, fmode_t fmode)
-> >>          | ^~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:387:18: error: 'bpf_default' defined but not used [-Werror=unused-const-variable=]
-> >>      387 | LSM_HOOK(int, 0, bpf, int cmd, union bpf_attr *attr, unsigned int size)
-> >>          |                  ^~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>          |                                ^~~~
-> >>    security/security.c:711:9: note: in expansion of macro 'DECLARE_LSM_RET_DEFAULT_int'
-> >>      711 |         DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:387:1: note: in expansion of macro 'LSM_HOOK'
-> >>      387 | LSM_HOOK(int, 0, bpf, int cmd, union bpf_attr *attr, unsigned int size)
-> >>          | ^~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:382:18: error: 'audit_rule_match_default' defined but not used [-Werror=unused-const-variable=]
-> >>      382 | LSM_HOOK(int, 0, audit_rule_match, u32 secid, u32 field, u32 op, void *lsmrule)
-> >>          |                  ^~~~~~~~~~~~~~~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>          |                                ^~~~
-> >>    security/security.c:711:9: note: in expansion of macro 'DECLARE_LSM_RET_DEFAULT_int'
-> >>      711 |         DECLARE_LSM_RET_DEFAULT_##RET(DEFAULT, NAME)
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:382:1: note: in expansion of macro 'LSM_HOOK'
-> >>      382 | LSM_HOOK(int, 0, audit_rule_match, u32 secid, u32 field, u32 op, void *lsmrule)
-> >>          | ^~~~~~~~
-> >>    include/linux/lsm_hook_defs.h:381:18: error: 'audit_rule_known_default' defined but not used [-Werror=unused-const-variable=]
-> >>      381 | LSM_HOOK(int, 0, audit_rule_known, struct audit_krule *krule)
-> >>          |                  ^~~~~~~~~~~~~~~~
-> >>    security/security.c:706:32: note: in definition of macro 'LSM_RET_DEFAULT'
-> >>      706 | #define LSM_RET_DEFAULT(NAME) (NAME##_default)
-> >>
-> >>
-> >> vim +/uring_sqpoll_default +408 include/linux/lsm_hook_defs.h
-> >>
-> >>    405
-> >>    406  #ifdef CONFIG_IO_URING
-> >>  > 407  LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
-> >>  > 408  LSM_HOOK(int, 0, uring_sqpoll, void)
-> >>
-> >> ---
-> >> 0-DAY CI Kernel Test Service, Intel Corporation
-> >> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
-> >
-> >
-> 
-
--- 
-Kees Cook
