@@ -2,141 +2,196 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1E4C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 21:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D6AC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Oct 2021 11:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3442D60E90
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Oct 2021 21:10:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F15C608FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Oct 2021 11:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232829AbhJLVMH (ORCPT
+        id S231358AbhJMLEQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Oct 2021 17:12:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39508 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232418AbhJLVMG (ORCPT
+        Wed, 13 Oct 2021 07:04:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25438 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233422AbhJMLDy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Oct 2021 17:12:06 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 981B1C061570
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Oct 2021 14:10:04 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id ec8so1364393edb.6
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Oct 2021 14:10:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EIc7J0I6FwSkiki0MmnUpJSfDb1DE1q0Qfd20XtQZGE=;
-        b=sCl/s36AnuHjjSjZlTl4dMn27h1JVRb4iDvBU/MdVjbwFaWy1Zy9l9+e40FQLo/UG9
-         WgE216AhaJMkhWLLRr45EOFJ6Qj2n6j+0sjKP0U44jvE6oo+PJYHNO1hlhfsruegmRlD
-         YPZ7h6tjM0R3fFU6HRwID9wFC3kxvVHnYzS8AS71LTqdNxgCUccyZzqXtTDuKBhqoT4i
-         rpJumK9Q3+9vuNUTDb8LhJ0bgWQflES/c+XJ7mriPBb6J2jOglaWERCpri8UOIPtgmFY
-         o/DXY8IGKWd7AGetWMTFcZJNohPPQebDr/P/KWANobgAPXeBCdiYKIK6UBOG6XVDChaL
-         DFbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EIc7J0I6FwSkiki0MmnUpJSfDb1DE1q0Qfd20XtQZGE=;
-        b=mxQHNm8QLauwb1bjQ4poNi4iltHi//k2wDk2iRF1YbbJmCYUb8vCSgxxueHiPzD5BH
-         3DYEV5pxtYR07JMswVYulx7Ea1asfWCx5XbHcN3ZbS7RvzgB/BT8WanXu6jSOx6rRHWi
-         fXDdTctFLPHUQE3XZMVdSw6q1LyU3hYqWGdcD28DpSp+3FjmCb50uJG6rnHDfOiYkvVU
-         K9CEi33IvtdFVYNX7T/tvPVOvKz4SSTzHfUTU7Tf5wBL/GkLdva0fJygW5G0ksvIAWjw
-         N+vta356J/yifV/fDaDgmnQSSg4jzt7CJeZOqG739Sv4rjYM19uCbw0tUwjb2tGEOAep
-         Uxag==
-X-Gm-Message-State: AOAM531qNB1Rrtyih4NbolLHJrcSi1BqDRxc1Is3YDxFwh3SiFqZ78Bg
-        gbiFiBFSi95ZgN9mNpRfaOylEgzWLDIkacS9bB0U
-X-Google-Smtp-Source: ABdhPJwoz8GHidIBsTuYLRywH+7rV4r6zIPCZy4GmxzdM4b+0NCo6+Qre0OXbJU2v/mBZ3BAvCDSEyiXFRAnNEvY/MU=
-X-Received: by 2002:a05:6402:1778:: with SMTP id da24mr2941132edb.318.1634073003025;
- Tue, 12 Oct 2021 14:10:03 -0700 (PDT)
+        Wed, 13 Oct 2021 07:03:54 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19DAWjNY021851;
+        Wed, 13 Oct 2021 07:01:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=pp1;
+ bh=Px8pkOv21BYoBjV0MsiMZ5RdlpIGjMih1XX8iRmQ+n4=;
+ b=dmq+KU4lWzoORY+icHikD573vDLKwHwp+Ei5VdCCYXYnfzl9o+ShFJqGp/xZDs5NZgx1
+ lO0taxXD8oHOdySQZ/VuGtKhbd9/p1CrDoFVxoTbAIhz4vqIkZKmq6mZwdmrAkSkLYAi
+ GuSBTFi6jhBq6sj2Dd5A5v4twi0jhOcUXcqLJ6gVtrziJG/CaCzIlMDyyoLeDS2wKd39
+ 1uUuDsFqbtHDenpM+lkl14BKvSmQ5ISq87Vd+fLSa5aSJnqw69xzPMay9HXzaa5TsSY3
+ JIc81C6E/diex3HtC/lJfRJXnCmsYKN7Weh9VtgfrDZOxd4vGAU5Vdarr4aopDc3/SoH 8w== 
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bnr79fry8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Oct 2021 07:01:40 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19DAxbEu001715;
+        Wed, 13 Oct 2021 11:01:32 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03fra.de.ibm.com with ESMTP id 3bk2qa7mj7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Oct 2021 11:01:32 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19DB1Ptj52363708
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Oct 2021 11:01:25 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 50FEEAE065;
+        Wed, 13 Oct 2021 11:01:25 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 71110AE055;
+        Wed, 13 Oct 2021 11:01:20 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.27.171])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Oct 2021 11:01:19 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 1/2] ima: define ima_trusted_for hook
+Date:   Wed, 13 Oct 2021 07:01:12 -0400
+Message-Id: <20211013110113.13239-1-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20211011133704.1704369-1-brauner@kernel.org> <06b6f249-06e6-f472-c74c-bb3ff6f4b4ee@digikod.net>
- <20211012103830.s7kzijrn25ucjasr@wittgenstein> <CAHC9VhSd32Q_tCctwYB0y4EXGCV8_9QajkNkkc96EwjdFsVkJw@mail.gmail.com>
- <CAFqZXNu7OEFVaS-oJH_JhsCWg3aN67Hajbiw8U8Zd+TSMKatOQ@mail.gmail.com>
-In-Reply-To: <CAFqZXNu7OEFVaS-oJH_JhsCWg3aN67Hajbiw8U8Zd+TSMKatOQ@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 12 Oct 2021 17:09:51 -0400
-Message-ID: <CAHC9VhR2kvwaYWZtXrZty7X_uQCr+pHnm6rHFAGzUDrstBpT_g@mail.gmail.com>
-Subject: Re: [PATCH] security/landlock: use square brackets around "landlock-ruleset"
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Chris PeBenito <pebenito@ieee.org>,
-        Petr Lautrbach <plautrba@redhat.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 0Qa3CeZ6ycpWRLqrL4IA72DQIGVC8Lle
+X-Proofpoint-ORIG-GUID: 0Qa3CeZ6ycpWRLqrL4IA72DQIGVC8Lle
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-10-13_04,2021-10-13_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=955 malwarescore=0 adultscore=0
+ suspectscore=0 bulkscore=0 spamscore=0 phishscore=0 mlxscore=0
+ priorityscore=1501 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2109230001 definitions=main-2110130071
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 12, 2021 at 4:38 PM Ondrej Mosnacek <omosnace@redhat.com> wrote=
-:
->
-> On Tue, Oct 12, 2021 at 8:12 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Tue, Oct 12, 2021 at 6:38 AM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > > On Mon, Oct 11, 2021 at 04:38:55PM +0200, Micka=C3=ABl Sala=C3=BCn wr=
-ote:
-> > > > On 11/10/2021 15:37, Christian Brauner wrote:
-> > > > > From: Christian Brauner <christian.brauner@ubuntu.com>
-> > > > >
-> > > > > Make the name of the anon inode fd "[landlock-ruleset]" instead o=
-f
-> > > > > "landlock-ruleset". This is minor but most anon inode fds already
-> > > > > carry square brackets around their name:
-> > > > >
-> > > > >     [eventfd]
-> > > > >     [eventpoll]
-> > > > >     [fanotify]
-> > > > >     [fscontext]
-> > > > >     [io_uring]
-> > > > >     [pidfd]
-> > > > >     [signalfd]
-> > > > >     [timerfd]
-> > > > >     [userfaultfd]
-> > > > >
-> > > > > For the sake of consistency lets do the same for the landlock-rul=
-eset anon
-> > > > > inode fd that comes with landlock. We did the same in
-> > > > > 1cdc415f1083 ("uapi, fsopen: use square brackets around "fscontex=
-t" [ver #2]")
-> > > > > for the new mount api.
-> > > >
-> > > > Before creating "landlock-ruleset" FD, I looked at other anonymous =
-FD
-> > > > and saw this kind of inconsistency. I don't get why we need to add =
-extra
-> > > > characters to names, those brackets seem useless. If it should be p=
-art
-> > >
-> > > Past inconsistency shouldn't justify future inconsistency. If you hav=
-e a
-> > > strong opinion about this for landlock I'm not going to push for it.
-> > > Exchanging more than 2-3 email about something like this seems too mu=
-ch.
-> >
-> > [NOTE: adding the SELinux list as well as Chris (SELinux refrence
-> > policy maintainer) and Petr (Fedora/RHEL SELinux)]
-> >
-> > Chris and Petr, do either of you currently have any policy that
-> > references the "landlock-ruleset" anonymous inode?  In other words,
-> > would adding the brackets around the name cause you any problems?
->
-> AFAIU, the anon_inode transitions (the only mechanism where the "file
-> name" would be exposed to the policy) are done only for inodes created
-> by anon_inode_getfd_secure(), which is currently only used by
-> userfaultfd. So you don't even need to ask that question; at this
-> point it should be safe to change any of the names except
-> "[userfaultfd]" as far as SELinux policy is concerned.
+A major interpreter integrity gap exists which allows files read by
+the interpreter to be executed without measuring the file or verifying
+the file's signature.
 
-There is also io_uring if you look at selinux/next.
+The kernel has no knowledge about the file being read by the interpreter.
+Only the interpreter knows the context(eg. data, execute) and must be
+trusted to provide that information accurately.
 
-Regardless, thanks, I didn't check to see if landlock was using the
-new anon inode interface, since both Micka=C3=ABl and Christian were
-concerned about breaking SELinux I had assumed they were using it :)
+To close this integrity gap, define an ima_trusted_for hook to allow
+IMA to measure the file and verify the file's signature based on policy.
 
---=20
-paul moore
-www.paul-moore.com
+Sample policy rules:
+	measure func=TRUSTED_FOR_CHECK
+	appraise func=TRUSTED_FOR_CHECK
+
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+Mickaël, here is the first LSM/integrity instantiation of the trusted_for
+hook.
+
+ Documentation/ABI/testing/ima_policy |  2 +-
+ security/integrity/ima/ima.h         |  1 +
+ security/integrity/ima/ima_main.c    | 23 +++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c  |  3 +++
+ 4 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index e1a04bd3b9e5..85618e726801 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -34,7 +34,7 @@ Description:
+ 				[FIRMWARE_CHECK]
+ 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
+ 				[KEXEC_CMDLINE] [KEY_CHECK] [CRITICAL_DATA]
+-				[SETXATTR_CHECK]
++				[SETXATTR_CHECK] [TRUSTED_FOR_CHECK]
+ 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
+ 			       [[^]MAY_EXEC]
+ 			fsmagic:= hex value
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index be965a8715e4..827236dbbefb 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -202,6 +202,7 @@ static inline unsigned int ima_hash_key(u8 *digest)
+ 	hook(KEY_CHECK, key)				\
+ 	hook(CRITICAL_DATA, critical_data)		\
+ 	hook(SETXATTR_CHECK, setxattr_check)		\
++	hook(TRUSTED_FOR_CHECK, trusted_for_check)	\
+ 	hook(MAX_CHECK, none)
+ 
+ #define __ima_hook_enumify(ENUM, str)	ENUM,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 465865412100..e09054ac3352 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -26,6 +26,7 @@
+ #include <linux/ima.h>
+ #include <linux/iversion.h>
+ #include <linux/fs.h>
++#include <uapi/linux/trusted-for.h>
+ 
+ #include "ima.h"
+ 
+@@ -519,6 +520,28 @@ int ima_file_check(struct file *file, int mask)
+ }
+ EXPORT_SYMBOL_GPL(ima_file_check);
+ 
++/**
++ * ima_trusted_for - based on policy, measure/appraise/audit measurement
++ * @file: pointer to the file to be measured/appraised/audit
++ * @usage: limit enumeration to TRUSTED_FOR_EXECUTION
++ *
++ * Measure/appraise/audit files being executed by an interpreter.
++ *
++ * On success return 0.  On integrity appraisal error, assuming the file
++ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
++ */
++int ima_trusted_for(struct file *file, const enum trusted_for_usage usage)
++{
++	u32 secid;
++
++	if (usage != TRUSTED_FOR_EXECUTION)
++		return 0;
++
++	security_task_getsecid_subj(current, &secid);
++	return process_measurement(file, current_cred(), secid, NULL,
++				   0, MAY_EXEC, TRUSTED_FOR_CHECK);
++}
++
+ static int __ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
+ {
+ 	struct integrity_iint_cache *iint;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 320ca80aacab..847803a24201 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1210,6 +1210,7 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+ 	case POST_SETATTR:
+ 	case FIRMWARE_CHECK:
+ 	case POLICY_CHECK:
++	case TRUSTED_FOR_CHECK:
+ 		if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
+ 				     IMA_UID | IMA_FOWNER | IMA_FSUUID |
+ 				     IMA_INMASK | IMA_EUID | IMA_PCR |
+@@ -1423,6 +1424,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			/* PATH_CHECK is for backwards compat */
+ 			else if (strcmp(args[0].from, "PATH_CHECK") == 0)
+ 				entry->func = FILE_CHECK;
++			else if (strcmp(args[0].from, "TRUSTED_FOR_CHECK") == 0)
++				entry->func = TRUSTED_FOR_CHECK;
+ 			else if (strcmp(args[0].from, "MODULE_CHECK") == 0)
+ 				entry->func = MODULE_CHECK;
+ 			else if (strcmp(args[0].from, "FIRMWARE_CHECK") == 0)
+-- 
+2.27.0
