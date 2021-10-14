@@ -2,88 +2,87 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FAFAC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Oct 2021 13:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3E7C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Oct 2021 20:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1356661130
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Oct 2021 13:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 540B561151
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Oct 2021 20:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230257AbhJNNie (ORCPT
+        id S231156AbhJNUNB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Oct 2021 09:38:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230010AbhJNNid (ORCPT
+        Thu, 14 Oct 2021 16:13:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33640 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231299AbhJNUM5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Oct 2021 09:38:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 10B59610F9;
-        Thu, 14 Oct 2021 13:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1634218588;
-        bh=yb0ExzouNkOeX4mfCayvzzwWXqG8VFL8qAlMemOcvC4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zTpbbbvxGO5lbAptCbEEw8h+Xf8OQcLwq/+Gv3SIOLh4CyoZvCN+Oe1lbRowNaRPS
-         c3ZIku/+kJ2fGgGNuiHK/z1oOiEjY13jAyTUfdi9esYCNiTMLbZitSUtrfJnWtceCn
-         kBR95wrcmQyr9+FWiFE069J2vt/eXubcPCwf/dpw=
-Date:   Thu, 14 Oct 2021 15:36:25 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] efi: Reserve confidential computing secret area
-Message-ID: <YWgyWeoreYusT9/s@kroah.com>
-References: <20211014130848.592611-1-dovmurik@linux.ibm.com>
- <20211014130848.592611-3-dovmurik@linux.ibm.com>
+        Thu, 14 Oct 2021 16:12:57 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7CDAC061570
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Oct 2021 13:10:51 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id y12so30029633eda.4
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Oct 2021 13:10:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tnnTzxnLXt4VhkUHGABCkclql/5mQjOOyO0ZD6llwjE=;
+        b=YVgy1WUwNLioe4mblTZvY/cP233J0tPnkTam5Is7eNATlCxUx/WtIh74YFVOuvYTU5
+         Lwx0jsTh4o/tx/iZNazYJxYNXBn9MJZfCqTP/A1iaXy61G5eKZhYYwscjpOY8Y/2fbby
+         1D0AwGVXRXyE+iibw+nRzZwHWm9UEAbAGD8UErd8BMBkx6HkWCJ8PZS4IH6MsaPbxpY5
+         X09gArNgj6GVMAUzxOb01c/0+Hpr64QKswGHB8uIdVN50VfAXnQKJOXot6SF1T4PuAwW
+         TSOc92YjljESMytDSDpmyNoI2Z37QJ0KTiZucBmEFTvENyEqIVjAiwk/HnEcpiJ0yVjA
+         wwzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tnnTzxnLXt4VhkUHGABCkclql/5mQjOOyO0ZD6llwjE=;
+        b=BZEskbGfP4gpXv/iVoObeJL71Fm8rTZnZzviO1WNBK8oIeERb5S3zQF+rCsQLupy/Y
+         Zg/4G53+NJ399CHHQ2xfKAUJA4MsOMV77Dge6OQJCrLtrv1wwEpTk8Ae/6SsZE1Lfy8H
+         h0EpOJkijgnbsySnyniTuTd4NnLeTkkHGnFNEE2dAD8oraucCrZRPWriS4L8prT9pNRu
+         qHzyTRPOqkmP/OjkvVsiItWbXD26n3KOVaKa8E+QfK6IBrPpqp8MkqQKKys/n0poleo6
+         XhRwWF2cxyi3XihFbG+tJw28eKc4mLUtsVXAAz78NEegOmNqMqxoIGy3qepWfr/ZX86R
+         suBQ==
+X-Gm-Message-State: AOAM531CglqnXryghNleIvSXao41kwgCgYpFJJqvPpD/np5JrMzxonMz
+        YtaoOhNyAVVMHETFlMBBaBZmnp//8PZp2gQ366dRkb5lQA==
+X-Google-Smtp-Source: ABdhPJwWzJGR2cUTRpXT12uyqjsVzaNPhaCMo8lo50fa/jfWtK5qqfDyeGaFwjWlT2u8poeE65KLID+G4JukGveV9Sg=
+X-Received: by 2002:a17:907:7601:: with SMTP id jx1mr1370420ejc.69.1634242250176;
+ Thu, 14 Oct 2021 13:10:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211014130848.592611-3-dovmurik@linux.ibm.com>
+References: <20211013172847.1196305-1-keescook@chromium.org>
+ <CAHC9VhT0+omwDjqrJ2BtnRfa8SSGAkyUvB6WX95E=ntf9gUbmQ@mail.gmail.com> <f1a143f5-7972-413d-497c-617b915c4b30@namei.org>
+In-Reply-To: <f1a143f5-7972-413d-497c-617b915c4b30@namei.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 14 Oct 2021 16:10:39 -0400
+Message-ID: <CAHC9VhSA+B5-C5+3kR-zM+O-k3+=A31Hd=3YoZ7Q+3zkAB8=fg@mail.gmail.com>
+Subject: Re: [PATCH] LSM: Avoid warnings about potentially unused hook variables
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        KP Singh <kpsingh@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        kernel test robot <lkp@intel.com>,
+        linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 14, 2021 at 01:08:47PM +0000, Dov Murik wrote:
-> When efi-stub copies an EFI-provided confidential computing (coco)
-> secret area, reserve that memory block for future use within the kernel.
-> 
-> Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
-> ---
->  arch/x86/platform/efi/efi.c   |  1 +
->  drivers/firmware/efi/Makefile |  2 +-
->  drivers/firmware/efi/coco.c   | 41 +++++++++++++++++++++++++++++++++++
->  drivers/firmware/efi/efi.c    |  4 ++++
->  include/linux/efi.h           |  3 +++
->  5 files changed, 50 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/firmware/efi/coco.c
-> 
-> diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-> index 147c30a81f15..35e082e5f603 100644
-> --- a/arch/x86/platform/efi/efi.c
-> +++ b/arch/x86/platform/efi/efi.c
-> @@ -93,6 +93,7 @@ static const unsigned long * const efi_tables[] = {
->  #ifdef CONFIG_LOAD_UEFI_KEYS
->  	&efi.mokvar_table,
->  #endif
-> +	&efi.coco_secret,
+On Wed, Oct 13, 2021 at 6:01 PM James Morris <jmorris@namei.org> wrote:
+> On Wed, 13 Oct 2021, Paul Moore wrote:
+>
+> > Looks reasonable to me, thanks Kees.  Unless James wants to pick this
+> > up for the security tree, I can pull this into the SElinux tree with
+> > the io_uring change which is causing the testing robot to complain.
+> >
+> > Acked-by: Paul Moore <paul@paul-moore.com>
+>
+> Sounds good.
+>
+> Acked-by: James Morris <jamorris@linux.microsoft.com>
 
-Shouldn't this depend on CONFIG_EFI_SECRET?
+I just merged this into selinux/next, thanks everyone!
 
-Why build all of this code if that option is not enabled?
-
-thanks,
-
-greg k-h
+-- 
+paul moore
+www.paul-moore.com
