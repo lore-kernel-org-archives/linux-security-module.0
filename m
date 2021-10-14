@@ -2,55 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE68C43217
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Oct 2021 13:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A4AC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Oct 2021 13:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE4061056
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Oct 2021 13:01:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B1B161056
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Oct 2021 13:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231308AbhJNNDr (ORCPT
+        id S231376AbhJNNDt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Oct 2021 09:03:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43138 "EHLO
+        Thu, 14 Oct 2021 09:03:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58269 "EHLO
         mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231300AbhJNNDq (ORCPT
+        by vger.kernel.org with ESMTP id S231300AbhJNNDs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Oct 2021 09:03:46 -0400
+        Thu, 14 Oct 2021 09:03:48 -0400
 Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19EBDFLH008993;
-        Thu, 14 Oct 2021 09:01:36 -0400
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19ECpWBc008814;
+        Thu, 14 Oct 2021 09:01:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=teLW8J+lrbmfY0wiZKBnolVNto5Rpg+cKO9JZOfoh5c=;
- b=jbLzsaepeykRAliWbtMRJDJUrLT80VfOHZrPMSebSAsSbwB8r13lnBCp0hmCm8tBqhAh
- afTlSd+E6grypLxkPSrNWtC+UL/8D/JMAqwzQB1p9HmCkr3lsvLEr+LijB6iqi2jt6MC
- Y0ltjfR/YT5+x699K26t5XG5yl2EaetvWSNyO2Xbyp5NdLkmBt66/SgzZG4346ZwbgYD
- WS9u3M8HtRVT50EfEwTgzTbuWTQ4c6PrsEwnLZnV7s7kMdRVawEYwOuAA7n42WAbEQQH
- q1EyzbfMr3bhTqbCDTB3vnCONmH0jm7NCkDl5xfoA6ASOaejSbycwLxrJxH4HOp8ikPU Yg== 
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3bnpf49fkg-1
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=UA1kmBYZNSZFLMxUcvWpCjz4k7dlKYSlZ3+y5G1nDJQ=;
+ b=aGaHln61iYM7f+ztu6FeoAitk9UnQ3BkGTqKzw+NHUIIwAHv27tii2RgSXRR8334k2gi
+ 8JNafo0dw5J1BKYHcDPQEIQyc3Ae8BUNgWtbkFmo5rdfJ9UmiXWc3pSeJU1ttlg7XSMY
+ 5plQW90y9RsxtrJ2ewnxmLVw5ujnhDvDTblx9jO7y/nZXNyhi3AUlLILYDEcEZEMJoN/
+ aOHPxg5KQsRpwM+dz+If6f61b6Qjy2+ZST+X8FPbHrTa6sfCh+gwtCSpG72xVHbKd3mH
+ 3JlcEHrg1QfasIvG9l8a1gGP1IjL/gCXnWmXYrUVwXP0fn0h6HUDQ0MPy2+FKkAVCjnT 8w== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bnpf49fp8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Oct 2021 09:01:35 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19ECpn4j002932;
-        Thu, 14 Oct 2021 13:01:33 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma03fra.de.ibm.com with ESMTP id 3bk2qajf7x-1
+        Thu, 14 Oct 2021 09:01:39 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19ECpf7N027922;
+        Thu, 14 Oct 2021 13:01:36 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma04ams.nl.ibm.com with ESMTP id 3bk2qancyq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Oct 2021 13:01:33 +0000
+        Thu, 14 Oct 2021 13:01:36 +0000
 Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19ECtsrn57278968
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19ED1YMx62783848
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Oct 2021 12:55:54 GMT
+        Thu, 14 Oct 2021 13:01:34 GMT
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 59F4DA404D;
-        Thu, 14 Oct 2021 13:01:31 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0BC36A4040;
+        Thu, 14 Oct 2021 13:01:34 +0000 (GMT)
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2A615A4051;
-        Thu, 14 Oct 2021 13:01:30 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id EA63EA4055;
+        Thu, 14 Oct 2021 13:01:32 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.55.249])
         by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 14 Oct 2021 13:01:30 +0000 (GMT)
+        Thu, 14 Oct 2021 13:01:32 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
@@ -59,136 +60,130 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v1 1/3] ima: define ima_trusted_for hook
-Date:   Thu, 14 Oct 2021 09:01:23 -0400
-Message-Id: <20211014130125.6991-1-zohar@linux.ibm.com>
+Subject: [PATCH v1 3/3] security: define a trusted_for hook
+Date:   Thu, 14 Oct 2021 09:01:25 -0400
+Message-Id: <20211014130125.6991-3-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20211014130125.6991-1-zohar@linux.ibm.com>
+References: <20211014130125.6991-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rysSjnn3QQwge_o2i28xQFuLM5pm0zh6
-X-Proofpoint-ORIG-GUID: rysSjnn3QQwge_o2i28xQFuLM5pm0zh6
+X-Proofpoint-GUID: 0GJHVo6txvxQZZ0d_-W2ilKy9rJC_3JI
+X-Proofpoint-ORIG-GUID: 0GJHVo6txvxQZZ0d_-W2ilKy9rJC_3JI
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
  definitions=2021-10-14_07,2021-10-14_02,2020-04-07_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
  priorityscore=1501 clxscore=1015 lowpriorityscore=0 mlxscore=0
  phishscore=0 adultscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- spamscore=0 mlxlogscore=921 classifier=spam adjust=0 reason=mlx
+ spamscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.12.0-2109230001 definitions=main-2110140084
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A major interpreter integrity gap exists which allows files read by
-the interpreter to be executed without measuring the file or verifying
-the file's signature.
-
-The kernel has no knowledge about the file being read by the interpreter.
-Only the interpreter knows the context(eg. data, execute) and must be
-trusted to provide that information accurately.
-
-To close this integrity gap, define an ima_trusted_for hook to allow
-IMA to measure the file and verify the file's signature based on policy.
-
-Sample policy rules:
-	measure func=TRUSTED_FOR_CHECK
-	appraise func=TRUSTED_FOR_CHECK appraise_type=imasig
+Extend the trusted_for syscall to call the security_trusted_for hook,
+which calls registered LSMs and IMA, instead of calling IMA directly.
 
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- Documentation/ABI/testing/ima_policy |  2 +-
- security/integrity/ima/ima.h         |  1 +
- security/integrity/ima/ima_main.c    | 23 +++++++++++++++++++++++
- security/integrity/ima/ima_policy.c  |  3 +++
- 4 files changed, 28 insertions(+), 1 deletion(-)
+Mickaël, Casey, assuming there is a need...
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index e1a04bd3b9e5..85618e726801 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -34,7 +34,7 @@ Description:
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
- 				[KEXEC_CMDLINE] [KEY_CHECK] [CRITICAL_DATA]
--				[SETXATTR_CHECK]
-+				[SETXATTR_CHECK] [TRUSTED_FOR_CHECK]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index be965a8715e4..827236dbbefb 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -202,6 +202,7 @@ static inline unsigned int ima_hash_key(u8 *digest)
- 	hook(KEY_CHECK, key)				\
- 	hook(CRITICAL_DATA, critical_data)		\
- 	hook(SETXATTR_CHECK, setxattr_check)		\
-+	hook(TRUSTED_FOR_CHECK, trusted_for_check)	\
- 	hook(MAX_CHECK, none)
+ fs/open.c                     |  2 +-
+ include/linux/lsm_hook_defs.h |  3 +++
+ include/linux/lsm_hooks.h     |  6 ++++++
+ include/linux/security.h      | 12 ++++++++++++
+ security/security.c           | 10 ++++++++++
+ 5 files changed, 32 insertions(+), 1 deletion(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index 4d54e2a727e1..75336ca7020d 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -586,7 +586,7 @@ SYSCALL_DEFINE3(trusted_for, const int, fd, const enum trusted_for_usage, usage,
+ 			mask | MAY_ACCESS);
  
- #define __ima_hook_enumify(ENUM, str)	ENUM,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 465865412100..e09054ac3352 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -26,6 +26,7 @@
- #include <linux/ima.h>
- #include <linux/iversion.h>
- #include <linux/fs.h>
+ 	if (!err)
+-		err = ima_trusted_for(f.file, usage);
++		err = security_trusted_for(f.file, usage);
+ 
+ out_fd:
+ 	fdput(f);
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 2adeea44c0d5..f847fc0fd030 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -402,3 +402,6 @@ LSM_HOOK(void, LSM_RET_VOID, perf_event_free, struct perf_event *event)
+ LSM_HOOK(int, 0, perf_event_read, struct perf_event *event)
+ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
+ #endif /* CONFIG_PERF_EVENTS */
++
++LSM_HOOK(int, 0, trusted_for, struct file *file,
++	 const enum trusted_for_usage usage)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 5c4c5c0602cb..88e4f08f01ca 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1557,6 +1557,12 @@
+  * 	Read perf_event security info if allowed.
+  * @perf_event_write:
+  * 	Write perf_event security info if allowed.
++ *
++ * Security hooks for trusted applications (e.g. interpreters)
++ *
++ * @trusted_for:
++ *	Return kernel file integrity status to trusted application
++ *
+  */
+ union security_list_options {
+ 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5b7288521300..b067e22c8903 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -31,6 +31,7 @@
+ #include <linux/err.h>
+ #include <linux/string.h>
+ #include <linux/mm.h>
 +#include <uapi/linux/trusted-for.h>
  
- #include "ima.h"
+ struct linux_binprm;
+ struct cred;
+@@ -2038,4 +2039,15 @@ static inline int security_perf_event_write(struct perf_event *event)
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_PERF_EVENTS */
  
-@@ -519,6 +520,28 @@ int ima_file_check(struct file *file, int mask)
- }
- EXPORT_SYMBOL_GPL(ima_file_check);
- 
-+/**
-+ * ima_trusted_for - based on policy, measure/appraise/audit measurement
-+ * @file: pointer to the file to be measured/appraised/audit
-+ * @usage: limit enumeration to TRUSTED_FOR_EXECUTION
-+ *
-+ * Measure/appraise/audit files being executed by an interpreter.
-+ *
-+ * On success return 0.  On integrity appraisal error, assuming the file
-+ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-+ */
-+int ima_trusted_for(struct file *file, const enum trusted_for_usage usage)
++#ifdef CONFIG_SECURITY
++extern int security_trusted_for(struct file *file,
++				const enum trusted_for_usage usage);
++#else
++static int security_trusted_for(struct file *file,
++				const enum trusted_for_usage usage)
 +{
-+	u32 secid;
-+
-+	if (usage != TRUSTED_FOR_EXECUTION)
-+		return 0;
-+
-+	security_task_getsecid_subj(current, &secid);
-+	return process_measurement(file, current_cred(), secid, NULL,
-+				   0, MAY_EXEC, TRUSTED_FOR_CHECK);
++	return 0;
 +}
++#endif /* CONFIG_SECURITY */
 +
- static int __ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
- {
- 	struct integrity_iint_cache *iint;
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 320ca80aacab..847803a24201 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1210,6 +1210,7 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 	case POST_SETATTR:
- 	case FIRMWARE_CHECK:
- 	case POLICY_CHECK:
-+	case TRUSTED_FOR_CHECK:
- 		if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
- 				     IMA_UID | IMA_FOWNER | IMA_FSUUID |
- 				     IMA_INMASK | IMA_EUID | IMA_PCR |
-@@ -1423,6 +1424,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			/* PATH_CHECK is for backwards compat */
- 			else if (strcmp(args[0].from, "PATH_CHECK") == 0)
- 				entry->func = FILE_CHECK;
-+			else if (strcmp(args[0].from, "TRUSTED_FOR_CHECK") == 0)
-+				entry->func = TRUSTED_FOR_CHECK;
- 			else if (strcmp(args[0].from, "MODULE_CHECK") == 0)
- 				entry->func = MODULE_CHECK;
- 			else if (strcmp(args[0].from, "FIRMWARE_CHECK") == 0)
+ #endif /* ! __LINUX_SECURITY_H */
+diff --git a/security/security.c b/security/security.c
+index 9ffa9e9c5c55..f8e2a131d5cd 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2625,3 +2625,13 @@ int security_perf_event_write(struct perf_event *event)
+ 	return call_int_hook(perf_event_write, 0, event);
+ }
+ #endif /* CONFIG_PERF_EVENTS */
++
++int security_trusted_for(struct file *file, const enum trusted_for_usage usage)
++{
++	int ret;
++
++	ret = call_int_hook(trusted_for, 0, file, usage);
++	if (ret)
++		return ret;
++	return ima_trusted_for(file, usage);
++}
 -- 
 2.27.0
 
