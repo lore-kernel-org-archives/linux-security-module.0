@@ -2,112 +2,209 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEBF6C43217
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Oct 2021 13:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFBAC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Oct 2021 07:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B990860F25
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Oct 2021 13:58:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5738060F8F
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Oct 2021 07:14:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234597AbhJROAj (ORCPT
+        id S233540AbhJSHQm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Oct 2021 10:00:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38242 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234664AbhJRN63 (ORCPT
+        Tue, 19 Oct 2021 03:16:42 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:47686 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234132AbhJSHQh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Oct 2021 09:58:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BAF7F61A40;
-        Mon, 18 Oct 2021 13:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634564489;
-        bh=iyQNCJw3F2btWylGkoSsJbiuAqzwxr7VZp84T8arEwk=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=Muk1xW0O5fPkNs1SObNldVoKqidRwndzDDCkNEC0B0lO2IyZKUCtY8K+mMfUuaYZd
-         cL0KbWMGwXTcZritJ7+AqX/i/Slq2vQ3TFT8qH4dnzifxwAlHnTB0R7fXbt/9Ydo6o
-         R6TW5vdR2I6vipcf13Wm9iIo7VWkS1eEmHIv3H14gJR2CmDKO2uFtJ4JYn5d5YXnpq
-         vEb7U3LYwRzjycvD69cavPuejBiYJODJwHhnF1zOLy2p7gCguIkj9PfbV2Ef/Rzk88
-         Ktx6XBGnB9cYIhgCbMozT4+fkladPBDQqNT0gUOFJuK42Tvn0S19FEBuRX06p0kTdR
-         7iRo20kZTREzw==
-Message-ID: <41aba1e1c5849b58f83108eb9f9f115d0cd5826f.camel@kernel.org>
-Subject: Re: [PATCH 1/2] crypto: use SM3 instead of SM3_256
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     jejb@linux.ibm.com,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
-Date:   Mon, 18 Oct 2021 16:41:26 +0300
-In-Reply-To: <af8c2098c4cfe23b941a191f7b4ec0e3a5251760.camel@linux.ibm.com>
-References: <20211009130828.101396-1-tianjia.zhang@linux.alibaba.com>
-         <20211009130828.101396-2-tianjia.zhang@linux.alibaba.com>
-         <7035153d58e220473fe3cd17c9f574f2d91c740b.camel@linux.ibm.com>
-         <dbac037710d711959d5ce0969f80ea0dd18a176e.camel@kernel.org>
-         <af8c2098c4cfe23b941a191f7b4ec0e3a5251760.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.40.0-1 
+        Tue, 19 Oct 2021 03:16:37 -0400
+Received: by mail-il1-f200.google.com with SMTP id i15-20020a056e021b0f00b002593fb7cd9eso9541363ilv.14
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Oct 2021 00:14:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=CXKVnUGmYGztxjAsNd+4B7UFAUm4UxN5Bde/sRxdqFg=;
+        b=go8H6S7F6bxflTw5vaIVNZziSa9pAy9JnOcZ/F37PSzPhSId6TOVTZ8JwhkgLBCdLm
+         wtR1VDBo68o2D7hBdwv+Qw8Uun+fPOaJlNk/b8AbB+Gr65koCzfgCXZgi6Zz656ZjGGu
+         Mfbf6YMb60m8gOAMqv/MHW8AmcbcfTtxwdaNKJuLx1CnoMzEGmC5s9F6wede1FCIpcA1
+         vKlueBekGrub+XKrQYmJLGJW7u4NX5TzooEIUraqdZxcIJiZ4GrLxOz6wLmfmJ3sfAOo
+         GE0JwzgUmpenKkjRcb3jkITL3I9NJBWFNG27r+271SLNOvyDX6/dH/VDGFj0GV/VPKu3
+         UFdA==
+X-Gm-Message-State: AOAM533yEFJ2nkuOy4vsoCA5yxiXy4Tah9QgwWD/0x08sBuXCtULfBug
+        HHIlCMrkZzgBwuRiyrHzFmKYxdrRnlLYFDSu+j8f5zJXsKSM
+X-Google-Smtp-Source: ABdhPJxGmij+PCT4D9LnfkRCqcQCHZWhCvbAaRvQu8+p+R5mmcMXkCsB75dXrbxeVEE2K9ajgSoxQCKBNb/1/ZRQBEolZqc32Idv
 MIME-Version: 1.0
+X-Received: by 2002:a02:ccf1:: with SMTP id l17mr2998059jaq.131.1634627664695;
+ Tue, 19 Oct 2021 00:14:24 -0700 (PDT)
+Date:   Tue, 19 Oct 2021 00:14:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004b5a3705ceaf6908@google.com>
+Subject: [syzbot] KASAN: use-after-free Read in cipso_v4_doi_add
+From:   syzbot <syzbot+93dba5b91f0fed312cbd@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        paul@paul-moore.com, syzkaller-bugs@googlegroups.com,
+        yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2021-10-18 at 09:32 -0400, James Bottomley wrote:
-> On Mon, 2021-10-18 at 16:27 +0300, Jarkko Sakkinen wrote:
-> > On Mon, 2021-10-18 at 09:05 -0400, James Bottomley wrote:
-> > > On Sat, 2021-10-09 at 21:08 +0800, Tianjia Zhang wrote:
-> > > [...]
-> > > > diff --git a/include/uapi/linux/hash_info.h
-> > > > b/include/uapi/linux/hash_info.h
-> > > > index 74a8609fcb4d..1355525dd4aa 100644
-> > > > --- a/include/uapi/linux/hash_info.h
-> > > > +++ b/include/uapi/linux/hash_info.h
-> > > > @@ -32,7 +32,7 @@ enum hash_algo {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HASH_ALGO_TGR_128,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HASH_ALGO_TGR_160,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HASH_ALGO_TGR_192,
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HASH_ALGO_SM3_256,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HASH_ALGO_SM3,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HASH_ALGO_STREEBOG_256,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HASH_ALGO_STREEBOG_512,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HASH_ALGO__LAST
-> > >=20
-> > > This is another one you can't do: all headers in UAPI are exports
-> > > to userspace and the definitions constitute an ABI.=C2=A0 If you simp=
-ly
-> > > do a rename, every userspace program that uses the current
-> > > definition will immediately break on compile.=C2=A0 You could add
-> > > HASH_ALGO_SM3, but you can't remove HASH_ALGO_SM3_256
-> > >=20
-> > > James
-> >=20
-> > So: shouldn't then also the old symbol continue to work also
-> > semantically?
->=20
-> Yes, that's the point: you can add a new definition ... in this case an
-> alias for the old one, but you can't remove a definition that's been
-> previously exported.
+Hello,
 
-Thanks, this of course obvious :-) I forgot temporarily that crypto
-has uapi interface. Tianjia, this patch set break production systems,
-so no chance we would ever merge it in this form.
+syzbot found the following issue on:
 
-Why not just do this:
+HEAD commit:    26d657410983 MAINTAINERS: Update entry for the Stratix10 f..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=110cb258b00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1de5da8af5c2277d
+dashboard link: https://syzkaller.appspot.com/bug?extid=93dba5b91f0fed312cbd
+compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
 
-...
-HASH_ALGO_SM3_256,
-HASH_ALOG_SM3 =3D HASH_ALOG_SM_256,
-...
+Unfortunately, I don't have any reproducer for this issue yet.
 
-There is not good reason to mod the implementation because both symbols
-are kept.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+93dba5b91f0fed312cbd@syzkaller.appspotmail.com
 
-/Jarkko
+==================================================================
+BUG: KASAN: use-after-free in cipso_v4_doi_search net/ipv4/cipso_ipv4.c:363 [inline]
+BUG: KASAN: use-after-free in cipso_v4_doi_add+0x4e0/0x7c0 net/ipv4/cipso_ipv4.c:420
+Read of size 4 at addr ffff88803f6a5a00 by task syz-executor.3/14359
+
+CPU: 1 PID: 14359 Comm: syz-executor.3 Not tainted 5.15.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1dc/0x2d8 lib/dump_stack.c:106
+ print_address_description+0x66/0x3e0 mm/kasan/report.c:256
+ __kasan_report mm/kasan/report.c:442 [inline]
+ kasan_report+0x19a/0x1f0 mm/kasan/report.c:459
+ cipso_v4_doi_search net/ipv4/cipso_ipv4.c:363 [inline]
+ cipso_v4_doi_add+0x4e0/0x7c0 net/ipv4/cipso_ipv4.c:420
+ smk_cipso_doi+0x2d3/0x580 security/smack/smackfs.c:706
+ smk_write_doi+0x1ab/0x270 security/smack/smackfs.c:1615
+ vfs_write+0x327/0xe90 fs/read_write.c:592
+ ksys_write+0x18f/0x2c0 fs/read_write.c:647
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f31447cba39
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3141d41188 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f31448cef60 RCX: 00007f31447cba39
+RDX: 0000000000000014 RSI: 0000000020000640 RDI: 0000000000000003
+RBP: 00007f3144825c5f R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffd5bc3df9f R14: 00007f3141d41300 R15: 0000000000022000
+
+Allocated by task 14339:
+ kasan_save_stack mm/kasan/common.c:38 [inline]
+ kasan_set_track mm/kasan/common.c:46 [inline]
+ set_alloc_info mm/kasan/common.c:434 [inline]
+ ____kasan_kmalloc+0xdc/0x110 mm/kasan/common.c:513
+ kasan_kmalloc include/linux/kasan.h:264 [inline]
+ kmem_cache_alloc_trace+0x9f/0x310 mm/slub.c:3233
+ kmalloc include/linux/slab.h:591 [inline]
+ smk_cipso_doi+0x200/0x580 security/smack/smackfs.c:696
+ smk_write_doi+0x1ab/0x270 security/smack/smackfs.c:1615
+ vfs_write+0x327/0xe90 fs/read_write.c:592
+ ksys_write+0x18f/0x2c0 fs/read_write.c:647
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+Freed by task 14339:
+ kasan_save_stack mm/kasan/common.c:38 [inline]
+ kasan_set_track+0x4c/0x80 mm/kasan/common.c:46
+ kasan_set_free_info+0x1f/0x40 mm/kasan/generic.c:360
+ ____kasan_slab_free+0x10d/0x150 mm/kasan/common.c:366
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:1700 [inline]
+ slab_free_freelist_hook+0x129/0x1a0 mm/slub.c:1725
+ slab_free mm/slub.c:3483 [inline]
+ kfree+0xcf/0x2f0 mm/slub.c:4543
+ smk_cipso_doi+0x3b7/0x580
+ smk_write_doi+0x1ab/0x270 security/smack/smackfs.c:1615
+ vfs_write+0x327/0xe90 fs/read_write.c:592
+ ksys_write+0x18f/0x2c0 fs/read_write.c:647
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+The buggy address belongs to the object at ffff88803f6a5a00
+ which belongs to the cache kmalloc-64 of size 64
+The buggy address is located 0 bytes inside of
+ 64-byte region [ffff88803f6a5a00, ffff88803f6a5a40)
+The buggy address belongs to the page:
+page:ffffea0000fda940 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x3f6a5
+flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000200 ffffea0000866240 000000170000000d ffff888011041640
+raw: 0000000000000000 0000000000200020 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 6522, ts 209857791495, free_ts 209857731843
+ prep_new_page mm/page_alloc.c:2424 [inline]
+ get_page_from_freelist+0x779/0xa30 mm/page_alloc.c:4153
+ __alloc_pages+0x255/0x580 mm/page_alloc.c:5375
+ alloc_slab_page mm/slub.c:1763 [inline]
+ allocate_slab+0xcc/0x4d0 mm/slub.c:1900
+ new_slab mm/slub.c:1963 [inline]
+ ___slab_alloc+0x41e/0xc40 mm/slub.c:2994
+ __slab_alloc mm/slub.c:3081 [inline]
+ slab_alloc_node mm/slub.c:3172 [inline]
+ kmem_cache_alloc_node_trace+0x2c4/0x350 mm/slub.c:3256
+ kmalloc_node include/linux/slab.h:609 [inline]
+ kzalloc_node include/linux/slab.h:732 [inline]
+ __get_vm_area_node+0x13a/0x2f0 mm/vmalloc.c:2416
+ __vmalloc_node_range+0xe3/0x890 mm/vmalloc.c:3010
+ __vmalloc_node mm/vmalloc.c:3069 [inline]
+ vzalloc+0x75/0x80 mm/vmalloc.c:3139
+ alloc_counters+0xd2/0x800 net/ipv6/netfilter/ip6_tables.c:817
+ copy_entries_to_user net/ipv6/netfilter/ip6_tables.c:839 [inline]
+ get_entries net/ipv6/netfilter/ip6_tables.c:1041 [inline]
+ do_ip6t_get_ctl+0xf57/0x1f40 net/ipv6/netfilter/ip6_tables.c:1672
+ nf_getsockopt+0x2ab/0x2d0 net/netfilter/nf_sockopt.c:116
+ ipv6_getsockopt+0x4ae/0x3f30 net/ipv6/ipv6_sockglue.c:1486
+ __sys_getsockopt+0x29f/0x560 net/socket.c:2220
+ __do_sys_getsockopt net/socket.c:2235 [inline]
+ __se_sys_getsockopt net/socket.c:2232 [inline]
+ __x64_sys_getsockopt+0xb1/0xc0 net/socket.c:2232
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1338 [inline]
+ free_pcp_prepare+0xc29/0xd20 mm/page_alloc.c:1389
+ free_unref_page_prepare mm/page_alloc.c:3315 [inline]
+ free_unref_page+0x7d/0x580 mm/page_alloc.c:3394
+ __vunmap+0x926/0xa70 mm/vmalloc.c:2621
+ copy_entries_to_user net/ipv6/netfilter/ip6_tables.c:884 [inline]
+ get_entries net/ipv6/netfilter/ip6_tables.c:1041 [inline]
+ do_ip6t_get_ctl+0x186d/0x1f40 net/ipv6/netfilter/ip6_tables.c:1672
+ nf_getsockopt+0x2ab/0x2d0 net/netfilter/nf_sockopt.c:116
+ ipv6_getsockopt+0x4ae/0x3f30 net/ipv6/ipv6_sockglue.c:1486
+ __sys_getsockopt+0x29f/0x560 net/socket.c:2220
+ __do_sys_getsockopt net/socket.c:2235 [inline]
+ __se_sys_getsockopt net/socket.c:2232 [inline]
+ __x64_sys_getsockopt+0xb1/0xc0 net/socket.c:2232
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+Memory state around the buggy address:
+ ffff88803f6a5900: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff88803f6a5980: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>ffff88803f6a5a00: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+                   ^
+ ffff88803f6a5a80: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff88803f6a5b00: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
