@@ -2,128 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C1AC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 13:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E45C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 15:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C52761373
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 13:59:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 435646103D
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 15:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230261AbhJTOBo (ORCPT
+        id S230281AbhJTPK5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Oct 2021 10:01:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51640 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230233AbhJTOBo (ORCPT
+        Wed, 20 Oct 2021 11:10:57 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4010 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229570AbhJTPK4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Oct 2021 10:01:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9CACF61354;
-        Wed, 20 Oct 2021 13:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1634738370;
-        bh=EogA4m8QcEPrdZgSxOG4zqctZRvv2RAgbCI5sSqQN6U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E8Zo6QDi6gTuq8flLTOs5+88WYCzw6dHMnFok+3MBmFzJ1ZT5yJLkUREELCYEfZ63
-         FuppCEhDtToFOGkwKMC5CTAjEdZQsudcrkirqI0LOXYjtrdgNHc5UjVlSAEbbvuB47
-         xVUr9zkn4RIbMRtfdChrESCuBkSVVUUZOcwT2Azk=
-Date:   Wed, 20 Oct 2021 15:59:27 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>, linux-efi@vger.kernel.org,
-        Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] efi/libstub: Copy confidential computing secret
- area
-Message-ID: <YXAgvyZ9ZxPxJ3lp@kroah.com>
-References: <20211020061408.3447533-1-dovmurik@linux.ibm.com>
- <20211020061408.3447533-2-dovmurik@linux.ibm.com>
- <YW+5phDcxynJD2qy@kroah.com>
- <fb309e2686ca42df2c053cc1b060b1bc774fd3e7.camel@linux.ibm.com>
- <YXAHgkcfwSCBeCbh@kroah.com>
- <bfa4872d-f64a-0559-1c5d-c5d1ae333eee@linux.ibm.com>
+        Wed, 20 Oct 2021 11:10:56 -0400
+Received: from fraeml712-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4HZDRj3tffz67Xsj;
+        Wed, 20 Oct 2021 23:04:49 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml712-chm.china.huawei.com (10.206.15.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.15; Wed, 20 Oct 2021 17:08:39 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.015;
+ Wed, 20 Oct 2021 17:08:39 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Eric Biggers <ebiggers@kernel.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "eparis@redhat.com" <eparis@redhat.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: [RFC PATCH v7 12/16] fsverity|security: add security hooks to
+ fsverity digest and signature
+Thread-Topic: [RFC PATCH v7 12/16] fsverity|security: add security hooks to
+ fsverity digest and signature
+Thread-Index: AQHXwGWUN6BqcPCg3Uma5jdt5usPz6vRLYAAgAMlHYCAAAy0gIAHoD6w
+Date:   Wed, 20 Oct 2021 15:08:39 +0000
+Message-ID: <5c1f800ba554485cb3659da689d2079a@huawei.com>
+References: <1634151995-16266-1-git-send-email-deven.desai@linux.microsoft.com>
+ <1634151995-16266-13-git-send-email-deven.desai@linux.microsoft.com>
+ <YWcyYBuNppjrVOe2@gmail.com>
+ <9089bdb0-b28a-9fa0-c510-00fa275af621@linux.microsoft.com>
+ <YWngaVdvMyWBlITZ@gmail.com>
+In-Reply-To: <YWngaVdvMyWBlITZ@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bfa4872d-f64a-0559-1c5d-c5d1ae333eee@linux.ibm.com>
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 20, 2021 at 03:52:49PM +0300, Dov Murik wrote:
-> 
-> 
-> On 20/10/2021 15:11, Greg KH wrote:
-> > On Wed, Oct 20, 2021 at 08:00:28AM -0400, James Bottomley wrote:
-> >> On Wed, 2021-10-20 at 08:39 +0200, Greg KH wrote:
-> >>> On Wed, Oct 20, 2021 at 06:14:06AM +0000, Dov Murik wrote:
-> >> [...]
-> >>>> +	help
-> >>>> +	  Copy memory reserved by EFI for Confidential Computing (coco)
-> >>>> +	  injected secrets, if EFI exposes such a table entry.
-> >>>
-> >>> Why would you want to "copy" secret memory?
-> >>>
-> >>> This sounds really odd here, it sounds like you are opening up a
-> >>> security hole.  Are you sure this is the correct text that everyone
-> >>> on the "COCO" group agrees with?
-> >>
-> >> The way this works is that EFI covers the secret area with a boot time
-> >> handoff block, which means it gets destroyed as soon as
-> >> ExitBootServices is called as a security measure ... if you do nothing
-> >> the secret is shredded.  This means you need to make a copy of it
-> >> before that happens if there are secrets that need to live beyond the
-> >> EFI boot stub.
-> > 
-> > Ok, but "copy secrets" does sound really odd, so you all need a much
-> > better description here, and hopefully somewhere else in Documentation/
-> > to describe exactly what this new API is and is to be used for.
-> > 
-> 
-> 
-> So something like:
-> 
-> 
-> config EFI_COCO_SECRET
-> 	bool "Keep the EFI Confidential Computing secret area"
-> 	depends on EFI
-> 	help
-> 	  Confidential Computing platforms (such as AMD SEV) allow for
-> 	  secrets injection during guest VM launch.  The secrets are
-> 	  placed in a designated EFI memory area.  EFI destorys
-> 	  the confidential computing secret area when ExitBootServices
-> 	  is called.
-
-That last sentence does not make much sense to me, sorry.
-
-> 	  In order to use the secrets in the kernel, the secret area
-> 	  must be copied to kernel-reserved memory (before it is erased).
-> 
-> 	  If you say Y here, the EFI stub will copy the EFI secret area (if
-> 	  available) and reserve it for use inside the kernel.  This will
-> 	  allow the virt/coco/efi_secret module to access the secrets.
-
-Really this is about getting that data out to userspace, right?  Should
-you mention that here?
-
-> and some new file like Documentation/security/coco/efi_secret.rst which
-> describes this whole protocol (from secret injection at VM launch
-> into an EFI page, through efistub and efi in linux, to the efi_secret
-> module which exposes the secrets).
-
-Yes, that would be good to have documented.
-
-thanks,
-
-greg k-h
+PiBGcm9tOiBFcmljIEJpZ2dlcnMgW21haWx0bzplYmlnZ2Vyc0BrZXJuZWwub3JnXQ0KPiBTZW50
+OiBGcmlkYXksIE9jdG9iZXIgMTUsIDIwMjEgMTA6MTEgUE0NCj4gT24gRnJpLCBPY3QgMTUsIDIw
+MjEgYXQgMTI6MjU6NTNQTSAtMDcwMCwgRGV2ZW4gQm93ZXJzIHdyb3RlOg0KPiA+DQo+ID4gT24g
+MTAvMTMvMjAyMSAxMjoyNCBQTSwgRXJpYyBCaWdnZXJzIHdyb3RlOg0KPiA+ID4gT24gV2VkLCBP
+Y3QgMTMsIDIwMjEgYXQgMTI6MDY6MzFQTSAtMDcwMCwNCj4gZGV2ZW4uZGVzYWlAbGludXgubWlj
+cm9zb2Z0LmNvbSB3cm90ZToNCj4gPiA+ID4gRnJvbTogRmFuIFd1IDx3dWZhbkBsaW51eC5taWNy
+b3NvZnQuY29tPg0KPiA+ID4gPg0KPiA+ID4gPiBBZGQgc2VjdXJpdHlfaW5vZGVfc2V0c2VjdXJp
+dHkgdG8gZnN2ZXJpdHkgc2lnbmF0dXJlIHZlcmlmaWNhdGlvbi4NCj4gPiA+ID4gVGhpcyBjYW4g
+bGV0IExTTXMgc2F2ZSB0aGUgc2lnbmF0dXJlIGRhdGEgYW5kIGRpZ2VzdCBoYXNoZXMgcHJvdmlk
+ZWQNCj4gPiA+ID4gYnkgZnN2ZXJpdHkuDQo+ID4gPiBDYW4geW91IGVsYWJvcmF0ZSBvbiB3aHkg
+TFNNcyBuZWVkIHRoaXMgaW5mb3JtYXRpb24/DQo+ID4NCj4gPiBUaGUgcHJvcG9zZWQgTFNNIChJ
+UEUpIG9mIHRoaXMgc2VyaWVzIHdpbGwgYmUgdGhlIG9ubHkgb25lIHRvIG5lZWQNCj4gPiB0aGlz
+IGluZm9ybWF0aW9uIGF0IHRoZcKgIG1vbWVudC4gSVBF4oCZcyBnb2FsIGlzIHRvIGhhdmUgcHJv
+dmlkZQ0KPiA+IHRydXN0LWJhc2VkIGFjY2VzcyBjb250cm9sLiBUcnVzdCBhbmQgSW50ZWdyaXR5
+IGFyZSB0aWVkIHRvZ2V0aGVyLA0KPiA+IGFzIHlvdSBjYW5ub3QgcHJvdmUgdHJ1c3Qgd2l0aG91
+dCBwcm92aW5nIGludGVncml0eS4NCj4gDQo+IEkgdGhpbmsgeW91IG1lYW4gYXV0aGVudGljaXR5
+LCBub3QgaW50ZWdyaXR5Pw0KPiANCj4gQWxzbyBob3cgZG9lcyB0aGlzIGRpZmZlciBmcm9tIElN
+QT8gIEkga25vdyB0aGF0IElNQSBkb2Vzbid0IHN1cHBvcnQgZnMtdmVyaXR5DQo+IGZpbGUgaGFz
+aGVzLCBidXQgdGhhdCBjb3VsZCBiZSBjaGFuZ2VkLiAgV2h5IG5vdCBleHRlbmQgSU1BIHRvIGNv
+dmVyIHlvdXIgdXNlDQo+IGNhc2Uocyk/DQo+IA0KPiA+IElQRSBuZWVkcyB0aGUgZGlnZXN0IGlu
+Zm9ybWF0aW9uIHRvIGJlIGFibGUgdG8gY29tcGFyZSBhIGRpZ2VzdA0KPiA+IHByb3ZpZGVkIGJ5
+IHRoZSBwb2xpY3kgYXV0aG9yLCBhZ2FpbnN0IHRoZSBkaWdlc3QgY2FsY3VsYXRlZCBieQ0KPiA+
+IGZzdmVyaXR5IHRvIG1ha2UgYSBkZWNpc2lvbiBvbiB3aGV0aGVyIHRoYXQgc3BlY2lmaWMgZmls
+ZSwgcmVwcmVzZW50ZWQNCj4gPiBieSB0aGUgZGlnZXN0IGlzIGF1dGhvcml6ZWQgZm9yIHRoZSBh
+Y3Rpb25zIHNwZWNpZmllZCBpbiB0aGUgcG9saWN5Lg0KPiA+DQo+ID4gQSBtb3JlIGNvbmNyZXRl
+IGV4YW1wbGUsIGlmIGFuIElQRSBwb2xpY3kgYXV0aG9yIHdyaXRlczoNCj4gPg0KPiA+IMKgwqDC
+oCBvcD1FWEVDVVRFIGZzdmVyaXR5X2RpZ2VzdD08SGV4RGlnZXN0ID4gYWN0aW9uPURFTlkNCj4g
+Pg0KPiA+IElQRSB0YWtlcyB0aGUgZGlnZXN0IHByb3ZpZGVkIGJ5IHRoaXMgc2VjdXJpdHkgaG9v
+aywgc3RvcmVzIGl0DQo+ID4gaW4gSVBFJ3Mgc2VjdXJpdHkgYmxvYiBvbiB0aGUgaW5vZGUuIElm
+IHRoaXMgZmlsZSBpcyBsYXRlcg0KPiA+IGV4ZWN1dGVkLCBJUEUgY29tcGFyZXMgdGhlIGRpZ2Vz
+dCBzdG9yZWQgaW4gdGhlIExTTSBibG9iLA0KPiA+IHByb3ZpZGVkIGJ5IHRoaXMgaG9vaywgYWdh
+aW5zdCA8SGV4RGlnZXN0PiBpbiB0aGUgcG9saWN5LCBpZg0KPiA+IGl0IG1hdGNoZXMsIGl0IGRl
+bmllcyB0aGUgYWNjZXNzLCBwZXJmb3JtaW5nIGEgcmV2b2NhdGlvbg0KPiA+IG9mIHRoYXQgZmls
+ZS4NCj4gDQo+IERvIHlvdSBoYXZlIGEgYmV0dGVyIGV4YW1wbGU/ICBUaGlzIG9uZSBpcyBwcmV0
+dHkgdXNlbGVzcyBzaW5jZSBvbmUgY2FuIGdldA0KPiBhcm91bmQgaXQganVzdCBieSBleGVjdXRp
+bmcgYSBmaWxlIHRoYXQgZG9lc24ndCBoYXZlIGZzLXZlcml0eSBlbmFibGVkLg0KDQpJIHdhcyB3
+b25kZXJpbmcgaWYgdGhlIGZvbGxvd2luZyB1c2UgY2FzZSBjYW4gYmUgc3VwcG9ydGVkOg0KYWxs
+b3cgdGhlIGV4ZWN1dGlvbiBvZiBmaWxlcyBwcm90ZWN0ZWQgd2l0aCBmc3Zlcml0eSBpZiB0aGUg
+cm9vdA0KZGlnZXN0IGlzIGZvdW5kIGFtb25nIHJlZmVyZW5jZSB2YWx1ZXMgKGluc3RlYWQgb2Yg
+cHJvdmlkaW5nDQp0aGVtIG9uZSBieSBvbmUgaW4gdGhlIHBvbGljeSkuDQoNClNvbWV0aGluZyBs
+aWtlOg0KDQpvcD1FWEVDVVRFIGZzdmVyaXR5X2RpZ2VzdD1kaWdsaW0gYWN0aW9uPUFMTE9XDQoN
+CkRJR0xJTSBpcyBhIGNvbXBvbmVudCBJJ20gd29ya2luZyBvbiB0aGF0IGdlbmVyaWNhbGx5DQpz
+dG9yZXMgZGlnZXN0cy4gVGhlIGN1cnJlbnQgdXNlIGNhc2UgaXMgdG8gc3RvcmUgZmlsZSBkaWdl
+c3RzDQpmcm9tIFJQTVRBR19GSUxFRElHRVNUUyBhbmQgdXNlIHRoZW0gd2l0aCBJTUEsIGJ1dA0K
+dGhlIGZzdmVyaXR5IHVzZSBjYXNlIGNvdWxkIGJlIGVhc2lseSBzdXBwb3J0ZWQgKGlmIHRoZSBy
+b290DQpkaWdlc3QgaXMgc3RvcmVkIGluIHRoZSBSUE0gaGVhZGVyKS4NCg0KRElHTElNIGFsc28g
+dGVsbHMgd2hldGhlciBvciBub3QgdGhlIHNpZ25hdHVyZSBvZiB0aGUgc291cmNlDQpjb250YWlu
+aW5nIGZpbGUgZGlnZXN0cyAob3IgZnN2ZXJpdHkgZGlnZXN0cykgaXMgdmFsaWQgKHRoZSBzaWdu
+YXR1cmUNCm9mIHRoZSBSUE0gaGVhZGVyIGlzIHRha2VuIGZyb20gUlBNVEFHX1JTQUhFQURFUiku
+DQoNClRoZSBtZW1vcnkgb2NjdXBhdGlvbiBpcyByZWxhdGl2ZWx5IHNtYWxsIGZvciBleGVjdXRh
+Ymxlcw0KYW5kIHNoYXJlZCBsaWJyYXJpZXMuIEkgcHVibGlzaGVkIGEgZGVtbyBmb3IgRmVkb3Jh
+IGFuZA0Kb3BlblNVU0Ugc29tZSB0aW1lIGFnbzoNCg0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcv
+bGludXgtaW50ZWdyaXR5LzQ4Y2Q3MzdjNTA0ZDQ1MjA4Mzc3ZGFhMjdkNjI1NTMxQGh1YXdlaS5j
+b20vDQoNClRoYW5rcw0KDQpSb2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRv
+cmYgR21iSCwgSFJCIDU2MDYzDQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgWmhvbmcgUm9u
+Z2h1YQ0KDQo+ID4gVGhpcyBicmluZ3MgbWUgdG8geW91ciBuZXh0IGNvbW1lbnQ6DQo+ID4NCj4g
+PiA+IFRoZSBkaWdlc3QgaXNuJ3QgbWVhbmluZ2Z1bCB3aXRob3V0IGtub3dpbmcgdGhlIGhhc2gg
+YWxnb3JpdGhtIGl0IHVzZXMuDQo+ID4gSXQncyBhdmFpbGFibGUgaGVyZSwgYnV0IHlvdSBhcmVu
+J3QgcGFzc2luZyBpdCB0byB0aGlzIGZ1bmN0aW9uLg0KPiA+DQo+ID4gVGhlIGRpZ2VzdCBpcyBt
+ZWFuaW5nZnVsIHdpdGhvdXQgdGhlIGFsZ29yaXRobSBpbiB0aGlzIGNhc2UuDQo+IA0KPiBObywg
+aXQncyBub3QuDQo+IA0KPiBEaWdlc3RzIGFyZSBtZWFuaW5nbGVzcyB3aXRob3V0IGtub3dpbmcg
+d2hhdCBhbGdvcml0aG0gdGhleSB3ZXJlIGNyZWF0ZWQNCj4gd2l0aC4NCj4gDQo+IElmIHlvdXIg
+c2VjdXJpdHkgcG9saWN5IGlzIHNvbWV0aGluZyBsaWtlICJUcnVzdCB0aGUgZmlsZSB3aXRoIGRp
+Z2VzdCAkZm9vIiBhbmQNCj4gbXVsdGlwbGUgaGFzaCBhbGdvcml0aG1zIGFyZSBwb3NzaWJsZSwg
+dGhlbiB0aGUgYWxvcml0aG0gaW50ZW5kZWQgdG8gYmUgdXNlZA0KPiBuZWVkcyB0byBiZSBleHBs
+aWNpdGx5IHNwZWNpZmllZC4gIE90aGVyd2lzZSBhbnkgYWxnb3JpdGhtIHdpdGggdGhlIHNhbWUg
+bGVuZ3RoDQo+IGRpZ2VzdCB3aWxsIGJlIGFjY2VwdGVkLiAgVGhhdCdzIGEgZmF0YWwgZmxhdyBp
+ZiBhbnkgb2YgdGhlc2UgYWxnb3JpdGhtcyBpcw0KPiBjcnlwdG9ncmFwaGljYWxseSBicm9rZW4g
+b3Igd2FzIG5ldmVyIGludGVuZGVkIHRvIGJlIGEgY3J5cHRvZ3JhcGhpYyBhbGdvcml0aG0NCj4g
+aW4gdGhlIGZpcnN0IHBsYWNlIChlLmcuLCBhIG5vbi1jcnlwdG9ncmFwaGljIGNoZWNrc3VtKS4N
+Cj4gDQo+IENyeXB0b3N5c3RlbXMgYWx3YXlzIG5lZWQgdG8gc3BlY2lmeSB0aGUgY3J5cHRvIGFs
+Z29yaXRobShzKSB1c2VkOyB0aGUNCj4gYWR2ZXJzYXJ5DQo+IG11c3Qgbm90IGJlIGFsbG93ZWQg
+dG8gY2hvb3NlIHRoZSBhbGdvcml0aG1zLg0KPiANCj4gSSdtIG5vdCBzdXJlIGhvdyB0aGVzZSBw
+YXRjaGVzIGNhbiBiZSB0YWtlbiBzZXJpb3VzbHkgd2hlbiB0aGV5J3JlIGdldHRpbmcgdGhpcw0K
+PiBzb3J0IG9mIHRoaW5nIHdyb25nLg0KPiANCj4gPiA+ID4gKwkJCQkJRlNfVkVSSVRZX1NJR05B
+VFVSRV9TRUNfTkFNRSwNCj4gPiA+ID4gKwkJCQkJc2lnbmF0dXJlLCBzaWdfc2l6ZSwgMCk7DQo+
+ID4gPiBUaGlzIGlzIG9ubHkgZm9yIGZzLXZlcml0eSBidWlsdC1pbiBzaWduYXR1cmVzIHdoaWNo
+IGFyZW4ndCB0aGUgb25seSB3YXkgdG8gZG8NCj4gPiA+IHNpZ25hdHVyZXMgd2l0aCBmcy12ZXJp
+dHkuICBBcmUgeW91IHN1cmUgdGhpcyBpcyB3aGF0IHlvdSdyZSBsb29raW5nIGZvcj8NCj4gPg0K
+PiA+IENvdWxkIHlvdSBlbGFib3JhdGUgb24gdGhlIG90aGVyIHNpZ25hdHVyZSB0eXBlcyB0aGF0
+IGNhbiBiZSB1c2VkDQo+ID4gd2l0aCBmcy12ZXJpdHk/IEnigJltIDk5JSBzdXJlIHRoaXMgaXMg
+d2hhdCBJ4oCZbSBsb29raW5nIGZvciBhcyB0aGlzDQo+ID4gaXMgYSBzaWduYXR1cmUgdmFsaWRh
+dGVkIGluIHRoZSBrZXJuZWwgYWdhaW5zdCB0aGUgZnMtdmVyaXR5IGtleXJpbmcNCj4gPiBhcyBw
+YXJ0IG9mIHRoZSDigJxmc3Zlcml0eSBlbmFibGXigJ0gdXRpbGl0eS4NCj4gPg0KPiA+IEl0J3Mg
+aW1wb3J0YW50IHRoYXQgdGhlIHNpZ25hdHVyZSBpcyB2YWxpZGF0ZWQgaW4gdGhlIGtlcm5lbCwg
+YXMNCj4gPiB1c2Vyc3BhY2UgaXMgY29uc2lkZXJlZCB1bnRydXN0ZWQgdW50aWwgdGhlIHNpZ25h
+dHVyZSBpcyB2YWxpZGF0ZWQNCj4gPiBmb3IgdGhpcyBjYXNlLg0KPiA+DQo+ID4gPiBDYW4geW91
+IGVsYWJvcmF0ZSBvbiB5b3VyIHVzZSBjYXNlIGZvciBmcy12ZXJpdHkgYnVpbHQtaW4gc2lnbmF0
+dXJlcywNCj4gPiBTdXJlLCBzaWduYXR1cmVzLCBsaWtlIGRpZ2VzdHMsIGFsc28gcHJvdmlkZSBh
+IHdheSB0byBwcm92ZSBpbnRlZ3JpdHksDQo+ID4gYW5kIHRoZSB0cnVzdCBjb21wb25lbnQgY29t
+ZXMgZnJvbSB0aGUgdmFsaWRhdGlvbiBhZ2FpbnN0IHRoZSBrZXlyaW5nLA0KPiA+IGFzIG9wcG9z
+ZWQgdG8gYSBmaXhlZCB2YWx1ZSBpbiBJUEXigJlzIHBvbGljeS4gVGhlIHVzZSBjYXNlIGZvciBm
+cy12ZXJpdHkNCj4gPiBidWlsdC1pbiBzaWduYXR1cmVzIGlzIHRoYXQgd2UgaGF2ZSBhIHJ3IGV4
+dDQgZmlsZXN5c3RlbSB0aGF0IGhhcyBzb21lDQo+ID4gZXhlY3V0YWJsZSBmaWxlcywgYW5kIHdl
+IHdhbnQgdG8gaGF2ZSBhIGV4ZWN1dGlvbiBwb2xpY3kgKHRocm91Z2ggSVBFKQ0KPiA+IHRoYXQg
+b25seSBfdHJ1c3RlZF8gZXhlY3V0YWJsZXMgY2FuIHJ1bi4gUGVyZiBpcyBpbXBvcnRhbnQgaGVy
+ZSwgaGVuY2UNCj4gPiBmcy12ZXJpdHkuDQo+IA0KPiBNb3N0IHVzZXJzIG9mIGZzLXZlcml0eSBi
+dWlsdC1pbiBzaWduYXR1cmVzIGhhdmUgYWN0dWFsbHkgYmVlbiBlbmZvcmNpbmcgdGhlaXINCj4g
+c2VjdXJpdHkgcG9saWN5IGluIHVzZXJzcGFjZSwgYnkgY2hlY2tpbmcgd2hldGhlciBzcGVjaWZp
+YyBmaWxlcyBoYXZlIHRoZQ0KPiBmcy12ZXJpdHkgYml0IHNldCBvciBub3QuICBTdWNoIHVzZXJz
+IGNvdWxkIGp1c3Qgc3RvcmUgYW5kIHZlcmlmeSBzaWduYXR1cmVzIGluDQo+IHVzZXJzcGFjZSBp
+bnN0ZWFkLCB3aXRob3V0IGFueSBrZXJuZWwgaW52b2x2ZW1lbnQuICBTbyB0aGF0J3Mgd2hhdCBJ
+J3ZlIGJlZW4NCj4gcmVjb21tZW5kaW5nICh3aXRoIGxpbWl0ZWQgc3VjY2VzcywgdW5mb3J0dW5h
+dGVseSkuDQo+IA0KPiBJZiB5b3UgcmVhbGx5IGRvIG5lZWQgaW4ta2VybmVsIHNpZ25hdHVyZSB2
+ZXJpZmljYXRpb24sIHRoZW4gdGhhdCBtYXkgYmUgYQ0KPiBsZWdpdGltYXRlIHVzZSBjYXNlIGZv
+ciB0aGUgZnMtdmVyaXR5IGJ1aWx0LWluIHNpZ25hdHVyZXMsIGFsdGhvdWdoIEkgZG8gd29uZGVy
+DQo+IHdoeSB5b3UgYXJlbid0IHVzaW5nIElNQSBhbmQgaXRzIHNpZ25hdHVyZSBtZWNoYW5pc20g
+aW5zdGVhZC4NCj4gDQo+IC0gRXJpYw0K
