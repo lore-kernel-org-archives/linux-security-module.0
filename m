@@ -2,181 +2,199 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E45C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 15:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828B6C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 17:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 435646103D
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 15:08:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64DF360F57
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 17:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230281AbhJTPK5 (ORCPT
+        id S230422AbhJTRiM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Oct 2021 11:10:57 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:4010 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbhJTPK4 (ORCPT
+        Wed, 20 Oct 2021 13:38:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38422 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230351AbhJTRiL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Oct 2021 11:10:56 -0400
-Received: from fraeml712-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4HZDRj3tffz67Xsj;
-        Wed, 20 Oct 2021 23:04:49 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml712-chm.china.huawei.com (10.206.15.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.15; Wed, 20 Oct 2021 17:08:39 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.015;
- Wed, 20 Oct 2021 17:08:39 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "eparis@redhat.com" <eparis@redhat.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: [RFC PATCH v7 12/16] fsverity|security: add security hooks to
- fsverity digest and signature
-Thread-Topic: [RFC PATCH v7 12/16] fsverity|security: add security hooks to
- fsverity digest and signature
-Thread-Index: AQHXwGWUN6BqcPCg3Uma5jdt5usPz6vRLYAAgAMlHYCAAAy0gIAHoD6w
-Date:   Wed, 20 Oct 2021 15:08:39 +0000
-Message-ID: <5c1f800ba554485cb3659da689d2079a@huawei.com>
-References: <1634151995-16266-1-git-send-email-deven.desai@linux.microsoft.com>
- <1634151995-16266-13-git-send-email-deven.desai@linux.microsoft.com>
- <YWcyYBuNppjrVOe2@gmail.com>
- <9089bdb0-b28a-9fa0-c510-00fa275af621@linux.microsoft.com>
- <YWngaVdvMyWBlITZ@gmail.com>
-In-Reply-To: <YWngaVdvMyWBlITZ@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 20 Oct 2021 13:38:11 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC944C06174E
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Oct 2021 10:35:56 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id kk10so3006037pjb.1
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Oct 2021 10:35:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ws4j8gO4JntA0wlKwlmQrmrVOGmPKcOTbGQbFPeYxe8=;
+        b=SbblMPzMlPY8A4MSnv3l2Wo17xTLRkKnbJY1T9AlW16vMzYUT4nWpQKHzWojxD0zmD
+         XoRT6OhfgXgfV1c+OPJinKiJUviKMLxu/lh6trMG9rbv6gPZyRud3Dud8n5nD/cYt61f
+         8qfrMQBiYBwpJS1T6d3noRRz41Pc8/yRc4kGo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ws4j8gO4JntA0wlKwlmQrmrVOGmPKcOTbGQbFPeYxe8=;
+        b=n7bzJAjLxSdAcuO+9DzbVjBoZwjLxW1x5JWUHWgQ6hifmswytkCSD7TK4cd/lACMJf
+         cLov9En4TXXOkOpq3x1wLznO6JHBrCBssOz53uLiLS6IuxRbDl3DxBOb1L0yLFaS0hnj
+         iMiNj2jrYYlshmAuWostVCzYx8tblqsOxSYQM+7XNXKGUDBjsvtx78nh2IOlGgG4k/IY
+         Qfv6H/C87cPbPqvR/O+A+pw9gMRn5cdG+BpDkBbeRGcbqOaX/KuIotiFpWwf8zPZ+5Nw
+         AJkybsi9XydQ88EefXin6q1AOfDzpato3mdhy94HVctRwmgfyd/+lQhHoPCFqA5kSmvf
+         oD4Q==
+X-Gm-Message-State: AOAM5323yy0dT2mtBavhuFoACRGpXLODqiwBJ2fJK89Rj9nxMxMg2AWB
+        51kams/lguVcX6stCtQQfkFX1Q==
+X-Google-Smtp-Source: ABdhPJx6T/k29TC03YiaucAFwr0Br6abF98oVDvUsim52qn/NPhaCpNs2adzvGgXzay2hOX7y0jVNQ==
+X-Received: by 2002:a17:90b:4c4a:: with SMTP id np10mr233234pjb.233.1634751356359;
+        Wed, 20 Oct 2021 10:35:56 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id i124sm3266217pfc.153.2021.10.20.10.35.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Oct 2021 10:35:56 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
+        llvm@lists.linux.dev, Dan Li <ashimida@linux.alibaba.com>,
+        ardb@kernel.org, ojeda@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] gcc-plugins: Explicitly document purpose and deprecation schedule
+Date:   Wed, 20 Oct 2021 10:35:53 -0700
+Message-Id: <20211020173554.38122-2-keescook@chromium.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211020173554.38122-1-keescook@chromium.org>
+References: <20211020173554.38122-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4804; h=from:subject; bh=Kk2hDVQKDHU81p/hq2gHwgV4ExxhvGmxDL3o/9ljT8c=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhcFN5m7tUmu78WD8GEq7nnZOssuJVi1eV1tkp6m44 ECcS0E6JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYXBTeQAKCRCJcvTf3G3AJjDfEA CG4zTatumYmooLLsrwZmk+APIY3n++Qt3f+4SACaWAkayQIe/8CR+Sc83nQEFXZPJwYBX66E5Jq72K XuPj98uHYA/nj55MwLSarOYeLKJI937+zb0ROuprJ5VyWAqSlOnOALL4wxKpSr/kNsXtgSlutct9bS eqwPzdnsY7YLng50ABUBwSWkPdmjmZlJpy9rpaCgOJ9eesgfB8J8SUY9At3crZXZU6tg0/HDb8MDly zQ308qV/hez5lb/H0+qkYrAhjydssyqvd7cObO8EAQzA29yS7TQIcAnU3/Rk1SNtUrGa8gJ9qDJNMP X5wE4Q5tTW1ttTwaVf0rnrnlPgJtDutpqyPTn9yK31lG/6BGuTDj7QS0vnvE8MQ/Lw8dEX/geDnJXN isrvLzJssEcui65dEnb+DXxYW/8Nq3sGJdMB4SJb1P+rvC1JDKpi0I5K/EcKe2QoG4s4ol4w+Aq5nW dubO68BLqUePSjF2m5X0pdbRbnbM+Fl0MTbPOmhUpeI0Hbat5H0citqCqLPWxQn3hpsbEYCr8Bb3nn l3JY539yxClVsZeChRYvzZ+XPbA0ql9AtQ3GynE6JAY2VejJjFSAHwXAM3a6sR7/dApqQyZDreMVBZ r0z/ASfvImyAno48Mxiic8p+hfy/E4p1gbB+eYpjcIVezmhm02Lhxup5H2Hw==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBFcmljIEJpZ2dlcnMgW21haWx0bzplYmlnZ2Vyc0BrZXJuZWwub3JnXQ0KPiBTZW50
-OiBGcmlkYXksIE9jdG9iZXIgMTUsIDIwMjEgMTA6MTEgUE0NCj4gT24gRnJpLCBPY3QgMTUsIDIw
-MjEgYXQgMTI6MjU6NTNQTSAtMDcwMCwgRGV2ZW4gQm93ZXJzIHdyb3RlOg0KPiA+DQo+ID4gT24g
-MTAvMTMvMjAyMSAxMjoyNCBQTSwgRXJpYyBCaWdnZXJzIHdyb3RlOg0KPiA+ID4gT24gV2VkLCBP
-Y3QgMTMsIDIwMjEgYXQgMTI6MDY6MzFQTSAtMDcwMCwNCj4gZGV2ZW4uZGVzYWlAbGludXgubWlj
-cm9zb2Z0LmNvbSB3cm90ZToNCj4gPiA+ID4gRnJvbTogRmFuIFd1IDx3dWZhbkBsaW51eC5taWNy
-b3NvZnQuY29tPg0KPiA+ID4gPg0KPiA+ID4gPiBBZGQgc2VjdXJpdHlfaW5vZGVfc2V0c2VjdXJp
-dHkgdG8gZnN2ZXJpdHkgc2lnbmF0dXJlIHZlcmlmaWNhdGlvbi4NCj4gPiA+ID4gVGhpcyBjYW4g
-bGV0IExTTXMgc2F2ZSB0aGUgc2lnbmF0dXJlIGRhdGEgYW5kIGRpZ2VzdCBoYXNoZXMgcHJvdmlk
-ZWQNCj4gPiA+ID4gYnkgZnN2ZXJpdHkuDQo+ID4gPiBDYW4geW91IGVsYWJvcmF0ZSBvbiB3aHkg
-TFNNcyBuZWVkIHRoaXMgaW5mb3JtYXRpb24/DQo+ID4NCj4gPiBUaGUgcHJvcG9zZWQgTFNNIChJ
-UEUpIG9mIHRoaXMgc2VyaWVzIHdpbGwgYmUgdGhlIG9ubHkgb25lIHRvIG5lZWQNCj4gPiB0aGlz
-IGluZm9ybWF0aW9uIGF0IHRoZcKgIG1vbWVudC4gSVBF4oCZcyBnb2FsIGlzIHRvIGhhdmUgcHJv
-dmlkZQ0KPiA+IHRydXN0LWJhc2VkIGFjY2VzcyBjb250cm9sLiBUcnVzdCBhbmQgSW50ZWdyaXR5
-IGFyZSB0aWVkIHRvZ2V0aGVyLA0KPiA+IGFzIHlvdSBjYW5ub3QgcHJvdmUgdHJ1c3Qgd2l0aG91
-dCBwcm92aW5nIGludGVncml0eS4NCj4gDQo+IEkgdGhpbmsgeW91IG1lYW4gYXV0aGVudGljaXR5
-LCBub3QgaW50ZWdyaXR5Pw0KPiANCj4gQWxzbyBob3cgZG9lcyB0aGlzIGRpZmZlciBmcm9tIElN
-QT8gIEkga25vdyB0aGF0IElNQSBkb2Vzbid0IHN1cHBvcnQgZnMtdmVyaXR5DQo+IGZpbGUgaGFz
-aGVzLCBidXQgdGhhdCBjb3VsZCBiZSBjaGFuZ2VkLiAgV2h5IG5vdCBleHRlbmQgSU1BIHRvIGNv
-dmVyIHlvdXIgdXNlDQo+IGNhc2Uocyk/DQo+IA0KPiA+IElQRSBuZWVkcyB0aGUgZGlnZXN0IGlu
-Zm9ybWF0aW9uIHRvIGJlIGFibGUgdG8gY29tcGFyZSBhIGRpZ2VzdA0KPiA+IHByb3ZpZGVkIGJ5
-IHRoZSBwb2xpY3kgYXV0aG9yLCBhZ2FpbnN0IHRoZSBkaWdlc3QgY2FsY3VsYXRlZCBieQ0KPiA+
-IGZzdmVyaXR5IHRvIG1ha2UgYSBkZWNpc2lvbiBvbiB3aGV0aGVyIHRoYXQgc3BlY2lmaWMgZmls
-ZSwgcmVwcmVzZW50ZWQNCj4gPiBieSB0aGUgZGlnZXN0IGlzIGF1dGhvcml6ZWQgZm9yIHRoZSBh
-Y3Rpb25zIHNwZWNpZmllZCBpbiB0aGUgcG9saWN5Lg0KPiA+DQo+ID4gQSBtb3JlIGNvbmNyZXRl
-IGV4YW1wbGUsIGlmIGFuIElQRSBwb2xpY3kgYXV0aG9yIHdyaXRlczoNCj4gPg0KPiA+IMKgwqDC
-oCBvcD1FWEVDVVRFIGZzdmVyaXR5X2RpZ2VzdD08SGV4RGlnZXN0ID4gYWN0aW9uPURFTlkNCj4g
-Pg0KPiA+IElQRSB0YWtlcyB0aGUgZGlnZXN0IHByb3ZpZGVkIGJ5IHRoaXMgc2VjdXJpdHkgaG9v
-aywgc3RvcmVzIGl0DQo+ID4gaW4gSVBFJ3Mgc2VjdXJpdHkgYmxvYiBvbiB0aGUgaW5vZGUuIElm
-IHRoaXMgZmlsZSBpcyBsYXRlcg0KPiA+IGV4ZWN1dGVkLCBJUEUgY29tcGFyZXMgdGhlIGRpZ2Vz
-dCBzdG9yZWQgaW4gdGhlIExTTSBibG9iLA0KPiA+IHByb3ZpZGVkIGJ5IHRoaXMgaG9vaywgYWdh
-aW5zdCA8SGV4RGlnZXN0PiBpbiB0aGUgcG9saWN5LCBpZg0KPiA+IGl0IG1hdGNoZXMsIGl0IGRl
-bmllcyB0aGUgYWNjZXNzLCBwZXJmb3JtaW5nIGEgcmV2b2NhdGlvbg0KPiA+IG9mIHRoYXQgZmls
-ZS4NCj4gDQo+IERvIHlvdSBoYXZlIGEgYmV0dGVyIGV4YW1wbGU/ICBUaGlzIG9uZSBpcyBwcmV0
-dHkgdXNlbGVzcyBzaW5jZSBvbmUgY2FuIGdldA0KPiBhcm91bmQgaXQganVzdCBieSBleGVjdXRp
-bmcgYSBmaWxlIHRoYXQgZG9lc24ndCBoYXZlIGZzLXZlcml0eSBlbmFibGVkLg0KDQpJIHdhcyB3
-b25kZXJpbmcgaWYgdGhlIGZvbGxvd2luZyB1c2UgY2FzZSBjYW4gYmUgc3VwcG9ydGVkOg0KYWxs
-b3cgdGhlIGV4ZWN1dGlvbiBvZiBmaWxlcyBwcm90ZWN0ZWQgd2l0aCBmc3Zlcml0eSBpZiB0aGUg
-cm9vdA0KZGlnZXN0IGlzIGZvdW5kIGFtb25nIHJlZmVyZW5jZSB2YWx1ZXMgKGluc3RlYWQgb2Yg
-cHJvdmlkaW5nDQp0aGVtIG9uZSBieSBvbmUgaW4gdGhlIHBvbGljeSkuDQoNClNvbWV0aGluZyBs
-aWtlOg0KDQpvcD1FWEVDVVRFIGZzdmVyaXR5X2RpZ2VzdD1kaWdsaW0gYWN0aW9uPUFMTE9XDQoN
-CkRJR0xJTSBpcyBhIGNvbXBvbmVudCBJJ20gd29ya2luZyBvbiB0aGF0IGdlbmVyaWNhbGx5DQpz
-dG9yZXMgZGlnZXN0cy4gVGhlIGN1cnJlbnQgdXNlIGNhc2UgaXMgdG8gc3RvcmUgZmlsZSBkaWdl
-c3RzDQpmcm9tIFJQTVRBR19GSUxFRElHRVNUUyBhbmQgdXNlIHRoZW0gd2l0aCBJTUEsIGJ1dA0K
-dGhlIGZzdmVyaXR5IHVzZSBjYXNlIGNvdWxkIGJlIGVhc2lseSBzdXBwb3J0ZWQgKGlmIHRoZSBy
-b290DQpkaWdlc3QgaXMgc3RvcmVkIGluIHRoZSBSUE0gaGVhZGVyKS4NCg0KRElHTElNIGFsc28g
-dGVsbHMgd2hldGhlciBvciBub3QgdGhlIHNpZ25hdHVyZSBvZiB0aGUgc291cmNlDQpjb250YWlu
-aW5nIGZpbGUgZGlnZXN0cyAob3IgZnN2ZXJpdHkgZGlnZXN0cykgaXMgdmFsaWQgKHRoZSBzaWdu
-YXR1cmUNCm9mIHRoZSBSUE0gaGVhZGVyIGlzIHRha2VuIGZyb20gUlBNVEFHX1JTQUhFQURFUiku
-DQoNClRoZSBtZW1vcnkgb2NjdXBhdGlvbiBpcyByZWxhdGl2ZWx5IHNtYWxsIGZvciBleGVjdXRh
-Ymxlcw0KYW5kIHNoYXJlZCBsaWJyYXJpZXMuIEkgcHVibGlzaGVkIGEgZGVtbyBmb3IgRmVkb3Jh
-IGFuZA0Kb3BlblNVU0Ugc29tZSB0aW1lIGFnbzoNCg0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcv
-bGludXgtaW50ZWdyaXR5LzQ4Y2Q3MzdjNTA0ZDQ1MjA4Mzc3ZGFhMjdkNjI1NTMxQGh1YXdlaS5j
-b20vDQoNClRoYW5rcw0KDQpSb2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRv
-cmYgR21iSCwgSFJCIDU2MDYzDQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgWmhvbmcgUm9u
-Z2h1YQ0KDQo+ID4gVGhpcyBicmluZ3MgbWUgdG8geW91ciBuZXh0IGNvbW1lbnQ6DQo+ID4NCj4g
-PiA+IFRoZSBkaWdlc3QgaXNuJ3QgbWVhbmluZ2Z1bCB3aXRob3V0IGtub3dpbmcgdGhlIGhhc2gg
-YWxnb3JpdGhtIGl0IHVzZXMuDQo+ID4gSXQncyBhdmFpbGFibGUgaGVyZSwgYnV0IHlvdSBhcmVu
-J3QgcGFzc2luZyBpdCB0byB0aGlzIGZ1bmN0aW9uLg0KPiA+DQo+ID4gVGhlIGRpZ2VzdCBpcyBt
-ZWFuaW5nZnVsIHdpdGhvdXQgdGhlIGFsZ29yaXRobSBpbiB0aGlzIGNhc2UuDQo+IA0KPiBObywg
-aXQncyBub3QuDQo+IA0KPiBEaWdlc3RzIGFyZSBtZWFuaW5nbGVzcyB3aXRob3V0IGtub3dpbmcg
-d2hhdCBhbGdvcml0aG0gdGhleSB3ZXJlIGNyZWF0ZWQNCj4gd2l0aC4NCj4gDQo+IElmIHlvdXIg
-c2VjdXJpdHkgcG9saWN5IGlzIHNvbWV0aGluZyBsaWtlICJUcnVzdCB0aGUgZmlsZSB3aXRoIGRp
-Z2VzdCAkZm9vIiBhbmQNCj4gbXVsdGlwbGUgaGFzaCBhbGdvcml0aG1zIGFyZSBwb3NzaWJsZSwg
-dGhlbiB0aGUgYWxvcml0aG0gaW50ZW5kZWQgdG8gYmUgdXNlZA0KPiBuZWVkcyB0byBiZSBleHBs
-aWNpdGx5IHNwZWNpZmllZC4gIE90aGVyd2lzZSBhbnkgYWxnb3JpdGhtIHdpdGggdGhlIHNhbWUg
-bGVuZ3RoDQo+IGRpZ2VzdCB3aWxsIGJlIGFjY2VwdGVkLiAgVGhhdCdzIGEgZmF0YWwgZmxhdyBp
-ZiBhbnkgb2YgdGhlc2UgYWxnb3JpdGhtcyBpcw0KPiBjcnlwdG9ncmFwaGljYWxseSBicm9rZW4g
-b3Igd2FzIG5ldmVyIGludGVuZGVkIHRvIGJlIGEgY3J5cHRvZ3JhcGhpYyBhbGdvcml0aG0NCj4g
-aW4gdGhlIGZpcnN0IHBsYWNlIChlLmcuLCBhIG5vbi1jcnlwdG9ncmFwaGljIGNoZWNrc3VtKS4N
-Cj4gDQo+IENyeXB0b3N5c3RlbXMgYWx3YXlzIG5lZWQgdG8gc3BlY2lmeSB0aGUgY3J5cHRvIGFs
-Z29yaXRobShzKSB1c2VkOyB0aGUNCj4gYWR2ZXJzYXJ5DQo+IG11c3Qgbm90IGJlIGFsbG93ZWQg
-dG8gY2hvb3NlIHRoZSBhbGdvcml0aG1zLg0KPiANCj4gSSdtIG5vdCBzdXJlIGhvdyB0aGVzZSBw
-YXRjaGVzIGNhbiBiZSB0YWtlbiBzZXJpb3VzbHkgd2hlbiB0aGV5J3JlIGdldHRpbmcgdGhpcw0K
-PiBzb3J0IG9mIHRoaW5nIHdyb25nLg0KPiANCj4gPiA+ID4gKwkJCQkJRlNfVkVSSVRZX1NJR05B
-VFVSRV9TRUNfTkFNRSwNCj4gPiA+ID4gKwkJCQkJc2lnbmF0dXJlLCBzaWdfc2l6ZSwgMCk7DQo+
-ID4gPiBUaGlzIGlzIG9ubHkgZm9yIGZzLXZlcml0eSBidWlsdC1pbiBzaWduYXR1cmVzIHdoaWNo
-IGFyZW4ndCB0aGUgb25seSB3YXkgdG8gZG8NCj4gPiA+IHNpZ25hdHVyZXMgd2l0aCBmcy12ZXJp
-dHkuICBBcmUgeW91IHN1cmUgdGhpcyBpcyB3aGF0IHlvdSdyZSBsb29raW5nIGZvcj8NCj4gPg0K
-PiA+IENvdWxkIHlvdSBlbGFib3JhdGUgb24gdGhlIG90aGVyIHNpZ25hdHVyZSB0eXBlcyB0aGF0
-IGNhbiBiZSB1c2VkDQo+ID4gd2l0aCBmcy12ZXJpdHk/IEnigJltIDk5JSBzdXJlIHRoaXMgaXMg
-d2hhdCBJ4oCZbSBsb29raW5nIGZvciBhcyB0aGlzDQo+ID4gaXMgYSBzaWduYXR1cmUgdmFsaWRh
-dGVkIGluIHRoZSBrZXJuZWwgYWdhaW5zdCB0aGUgZnMtdmVyaXR5IGtleXJpbmcNCj4gPiBhcyBw
-YXJ0IG9mIHRoZSDigJxmc3Zlcml0eSBlbmFibGXigJ0gdXRpbGl0eS4NCj4gPg0KPiA+IEl0J3Mg
-aW1wb3J0YW50IHRoYXQgdGhlIHNpZ25hdHVyZSBpcyB2YWxpZGF0ZWQgaW4gdGhlIGtlcm5lbCwg
-YXMNCj4gPiB1c2Vyc3BhY2UgaXMgY29uc2lkZXJlZCB1bnRydXN0ZWQgdW50aWwgdGhlIHNpZ25h
-dHVyZSBpcyB2YWxpZGF0ZWQNCj4gPiBmb3IgdGhpcyBjYXNlLg0KPiA+DQo+ID4gPiBDYW4geW91
-IGVsYWJvcmF0ZSBvbiB5b3VyIHVzZSBjYXNlIGZvciBmcy12ZXJpdHkgYnVpbHQtaW4gc2lnbmF0
-dXJlcywNCj4gPiBTdXJlLCBzaWduYXR1cmVzLCBsaWtlIGRpZ2VzdHMsIGFsc28gcHJvdmlkZSBh
-IHdheSB0byBwcm92ZSBpbnRlZ3JpdHksDQo+ID4gYW5kIHRoZSB0cnVzdCBjb21wb25lbnQgY29t
-ZXMgZnJvbSB0aGUgdmFsaWRhdGlvbiBhZ2FpbnN0IHRoZSBrZXlyaW5nLA0KPiA+IGFzIG9wcG9z
-ZWQgdG8gYSBmaXhlZCB2YWx1ZSBpbiBJUEXigJlzIHBvbGljeS4gVGhlIHVzZSBjYXNlIGZvciBm
-cy12ZXJpdHkNCj4gPiBidWlsdC1pbiBzaWduYXR1cmVzIGlzIHRoYXQgd2UgaGF2ZSBhIHJ3IGV4
-dDQgZmlsZXN5c3RlbSB0aGF0IGhhcyBzb21lDQo+ID4gZXhlY3V0YWJsZSBmaWxlcywgYW5kIHdl
-IHdhbnQgdG8gaGF2ZSBhIGV4ZWN1dGlvbiBwb2xpY3kgKHRocm91Z2ggSVBFKQ0KPiA+IHRoYXQg
-b25seSBfdHJ1c3RlZF8gZXhlY3V0YWJsZXMgY2FuIHJ1bi4gUGVyZiBpcyBpbXBvcnRhbnQgaGVy
-ZSwgaGVuY2UNCj4gPiBmcy12ZXJpdHkuDQo+IA0KPiBNb3N0IHVzZXJzIG9mIGZzLXZlcml0eSBi
-dWlsdC1pbiBzaWduYXR1cmVzIGhhdmUgYWN0dWFsbHkgYmVlbiBlbmZvcmNpbmcgdGhlaXINCj4g
-c2VjdXJpdHkgcG9saWN5IGluIHVzZXJzcGFjZSwgYnkgY2hlY2tpbmcgd2hldGhlciBzcGVjaWZp
-YyBmaWxlcyBoYXZlIHRoZQ0KPiBmcy12ZXJpdHkgYml0IHNldCBvciBub3QuICBTdWNoIHVzZXJz
-IGNvdWxkIGp1c3Qgc3RvcmUgYW5kIHZlcmlmeSBzaWduYXR1cmVzIGluDQo+IHVzZXJzcGFjZSBp
-bnN0ZWFkLCB3aXRob3V0IGFueSBrZXJuZWwgaW52b2x2ZW1lbnQuICBTbyB0aGF0J3Mgd2hhdCBJ
-J3ZlIGJlZW4NCj4gcmVjb21tZW5kaW5nICh3aXRoIGxpbWl0ZWQgc3VjY2VzcywgdW5mb3J0dW5h
-dGVseSkuDQo+IA0KPiBJZiB5b3UgcmVhbGx5IGRvIG5lZWQgaW4ta2VybmVsIHNpZ25hdHVyZSB2
-ZXJpZmljYXRpb24sIHRoZW4gdGhhdCBtYXkgYmUgYQ0KPiBsZWdpdGltYXRlIHVzZSBjYXNlIGZv
-ciB0aGUgZnMtdmVyaXR5IGJ1aWx0LWluIHNpZ25hdHVyZXMsIGFsdGhvdWdoIEkgZG8gd29uZGVy
-DQo+IHdoeSB5b3UgYXJlbid0IHVzaW5nIElNQSBhbmQgaXRzIHNpZ25hdHVyZSBtZWNoYW5pc20g
-aW5zdGVhZC4NCj4gDQo+IC0gRXJpYw0K
+GCC plugins should only exist when some compiler feature needs to be
+proven but does not exist in either GCC nor Clang. For example, if a
+desired feature is already in Clang, it should be added to GCC upstream.
+Document this explicitly.
+
+Additionally, mark the plugins with matching upstream GCC features as
+removable past their respective GCC versions.
+
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-hardening@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: llvm@lists.linux.dev
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ Documentation/kbuild/gcc-plugins.rst | 26 ++++++++++++++++++++++++++
+ scripts/gcc-plugins/Kconfig          |  4 ++--
+ security/Kconfig.hardening           |  9 ++++++---
+ 3 files changed, 34 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/kbuild/gcc-plugins.rst b/Documentation/kbuild/gcc-plugins.rst
+index 3349966f213d..4b28c7a4032f 100644
+--- a/Documentation/kbuild/gcc-plugins.rst
++++ b/Documentation/kbuild/gcc-plugins.rst
+@@ -32,6 +32,32 @@ This infrastructure was ported from grsecurity [6]_ and PaX [7]_.
+ .. [7] https://pax.grsecurity.net/
+ 
+ 
++Purpose
++=======
++
++GCC plugins are designed to provide a place to experiment with potential
++compiler features that are neither in GCC nor Clang upstream. Once
++their utility is proven, the goal is to upstream the feature into GCC
++(and Clang), and then to finally remove them from the kernel once the
++feature is available in all supported versions of GCC.
++
++Specifically, new plugins should implement only features that have no
++upstream compiler support (in either GCC or Clang).
++
++When a feature exists in Clang but not GCC, effort should be made to
++bring the feature to upstream GCC (rather than just as a kernel-specific
++GCC plugin), so the entire ecosystem can benefit from it.
++
++Similarly, even if a feature provided by a GCC plugin does *not* exist
++in Clang, but the feature is proven to be useful, effort should be spent
++to upstream the feature to GCC (and Clang).
++
++After a feature is available in upstream GCC, the plugin will be made
++unbuildable for the corresponding GCC version (and later). Once all
++kernel-supported versions of GCC provide the feature, the plugin will
++be removed from the kernel.
++
++
+ Files
+ =====
+ 
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+index ab9eb4cbe33a..3f5d3580ec06 100644
+--- a/scripts/gcc-plugins/Kconfig
++++ b/scripts/gcc-plugins/Kconfig
+@@ -37,6 +37,8 @@ config GCC_PLUGIN_CYC_COMPLEXITY
+ 
+ config GCC_PLUGIN_SANCOV
+ 	bool
++	# Plugin can be removed once the kernel only supports GCC 6.1.0+
++	depends on !CC_HAS_SANCOV_TRACE_PC
+ 	help
+ 	  This plugin inserts a __sanitizer_cov_trace_pc() call at the start of
+ 	  basic blocks. It supports all gcc versions with plugin support (from
+@@ -83,8 +85,6 @@ config GCC_PLUGIN_RANDSTRUCT
+ 	  the existing seed and will be removed by a make mrproper or
+ 	  make distclean.
+ 
+-	  Note that the implementation requires gcc 4.7 or newer.
+-
+ 	  This plugin was ported from grsecurity/PaX. More information at:
+ 	   * https://grsecurity.net/
+ 	   * https://pax.grsecurity.net/
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 90cbaff86e13..d30c6225de74 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -53,7 +53,8 @@ choice
+ 
+ 	config GCC_PLUGIN_STRUCTLEAK_USER
+ 		bool "zero-init structs marked for userspace (weak)"
+-		depends on GCC_PLUGINS
++		# Plugin can be removed once the kernel only supports GCC 12+
++		depends on GCC_PLUGINS && !CC_HAS_AUTO_VAR_INIT_ZERO
+ 		select GCC_PLUGIN_STRUCTLEAK
+ 		help
+ 		  Zero-initialize any structures on the stack containing
+@@ -64,7 +65,8 @@ choice
+ 
+ 	config GCC_PLUGIN_STRUCTLEAK_BYREF
+ 		bool "zero-init structs passed by reference (strong)"
+-		depends on GCC_PLUGINS
++		# Plugin can be removed once the kernel only supports GCC 12+
++		depends on GCC_PLUGINS && !CC_HAS_AUTO_VAR_INIT_ZERO
+ 		depends on !(KASAN && KASAN_STACK)
+ 		select GCC_PLUGIN_STRUCTLEAK
+ 		help
+@@ -82,7 +84,8 @@ choice
+ 
+ 	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+ 		bool "zero-init everything passed by reference (very strong)"
+-		depends on GCC_PLUGINS
++		# Plugin can be removed once the kernel only supports GCC 12+
++		depends on GCC_PLUGINS && !CC_HAS_AUTO_VAR_INIT_ZERO
+ 		depends on !(KASAN && KASAN_STACK)
+ 		select GCC_PLUGIN_STRUCTLEAK
+ 		help
+-- 
+2.30.2
+
