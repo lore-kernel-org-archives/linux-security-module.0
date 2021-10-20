@@ -2,70 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14896C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4259AC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED39B61212
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:02:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DF916135E
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbhJTMEQ (ORCPT
+        id S230182AbhJTMOD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Oct 2021 08:04:16 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:46545 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229548AbhJTMEP (ORCPT
+        Wed, 20 Oct 2021 08:14:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230091AbhJTMOC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Oct 2021 08:04:15 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Ut2XJgK_1634731319;
-Received: from 30.240.99.221(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Ut2XJgK_1634731319)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 20 Oct 2021 20:01:59 +0800
-Message-ID: <416a13af-beee-ac09-38ba-166a691a8482@linux.alibaba.com>
-Date:   Wed, 20 Oct 2021 20:01:55 +0800
+        Wed, 20 Oct 2021 08:14:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3B553611C6;
+        Wed, 20 Oct 2021 12:11:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1634731908;
+        bh=/7MMHoYfZK7XLnUrE2PQLC1zWR1tC3EW2Hg6y4POQUA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KnG137UxBUNq+tAFiuBegbFpBqPiWBkXFxzbh0G/hCORY/I1RUNpOzov3Yaun84At
+         kkxE+Vr5ue7UsnvsRDv2JDt/bun8Kvz9SSjvfQ+xX/8L0e3KU9lg1VtUnMJgNO64PC
+         ZluY515zwhcw+NufsIT5v0Z9fRRT9CDvvc7d9xVE=
+Date:   Wed, 20 Oct 2021 14:11:46 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     James Bottomley <jejb@linux.ibm.com>
+Cc:     Dov Murik <dovmurik@linux.ibm.com>, linux-efi@vger.kernel.org,
+        Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] efi/libstub: Copy confidential computing secret
+ area
+Message-ID: <YXAHgkcfwSCBeCbh@kroah.com>
+References: <20211020061408.3447533-1-dovmurik@linux.ibm.com>
+ <20211020061408.3447533-2-dovmurik@linux.ibm.com>
+ <YW+5phDcxynJD2qy@kroah.com>
+ <fb309e2686ca42df2c053cc1b060b1bc774fd3e7.camel@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.2.0
-Subject: Re: [PATCH 0/2] tpm: use SM3 instead of SM3_256
-Content-Language: en-US
-To:     Ken Goldman <kgold@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20211009130828.101396-1-tianjia.zhang@linux.alibaba.com>
- <1749e7c3b528d361c09b40e5758b92c7386ffe1f.camel@linux.ibm.com>
- <c39fe737-203e-b124-db70-fce471ac6459@linux.alibaba.com>
- <c0768f9d-ef60-1a97-ec2d-a5e1130cbe03@linux.ibm.com>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <c0768f9d-ef60-1a97-ec2d-a5e1130cbe03@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fb309e2686ca42df2c053cc1b060b1bc774fd3e7.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Ken,
+On Wed, Oct 20, 2021 at 08:00:28AM -0400, James Bottomley wrote:
+> On Wed, 2021-10-20 at 08:39 +0200, Greg KH wrote:
+> > On Wed, Oct 20, 2021 at 06:14:06AM +0000, Dov Murik wrote:
+> [...]
+> > > +	help
+> > > +	  Copy memory reserved by EFI for Confidential Computing (coco)
+> > > +	  injected secrets, if EFI exposes such a table entry.
+> > 
+> > Why would you want to "copy" secret memory?
+> > 
+> > This sounds really odd here, it sounds like you are opening up a
+> > security hole.  Are you sure this is the correct text that everyone
+> > on the "COCO" group agrees with?
+> 
+> The way this works is that EFI covers the secret area with a boot time
+> handoff block, which means it gets destroyed as soon as
+> ExitBootServices is called as a security measure ... if you do nothing
+> the secret is shredded.  This means you need to make a copy of it
+> before that happens if there are secrets that need to live beyond the
+> EFI boot stub.
 
-On 10/20/21 6:26 AM, Ken Goldman wrote:
-> 
-> 
-> 
-> On 10/11/2021 3:02 AM, Tianjia Zhang wrote:
->>
->> Thanks for your attention. This is really tricky. I will contact 
->> trustedcomputinggroup first and give some suggestions, It would be 
->> best if a more standard algorithm name can be used from the source of 
->> the specification.
-> 
-> This was discussed in the TCG's TPM WG in February, 2020.  At the time,
-> someone said that there was a possibility of a 512-bit version in the
-> future.
-> 
-> For TCG members:
-> 
-> https://members.trustedcomputinggroup.org/wg/TPMWG/mail/thread/61442#136758
-> 
-> My guess is that, since it's already in many TCG specs and code, TCG
-> will want to leave it as is.
-> 
+Ok, but "copy secrets" does sound really odd, so you all need a much
+better description here, and hopefully somewhere else in Documentation/
+to describe exactly what this new API is and is to be used for.
 
-I got it. thanks for your information.
+Otherwise I read this as "hey a backdoor to read the secrets I wasn't
+supposed to be able to see!"
 
-Best regards,
-Tianjia
+thanks,
+
+greg k-h
