@@ -2,123 +2,186 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7FAC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC70C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0028961371
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:31:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9201961355
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:53:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbhJTMdy (ORCPT
+        id S229998AbhJTMz1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Oct 2021 08:33:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:53772 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230187AbhJTMdx (ORCPT
+        Wed, 20 Oct 2021 08:55:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:63620 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229817AbhJTMz1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Oct 2021 08:33:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634733099;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=uBksMSRlzVzIRqYRz7FTRO//MQHxY7XrIS8vzdTdH/0=;
-        b=Q1nsMALkJtWvrA3DSWZgdIosxQp9zBRWafQtN/s0RLjA9QogNok7kAwA61FxR6FVlGtUHJ
-        ATVuHQH6UIMd9Qa7jLjL6Af6IRiw5f3n7ta9QuVc+hmvUjyjKskgQOubcEQOtjZmt2qmC7
-        r+yQxd63WS4gTf2DgYsiIVZFj1OzNto=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-234-H756tWO_PiG8kexqIt7lSA-1; Wed, 20 Oct 2021 08:31:35 -0400
-X-MC-Unique: H756tWO_PiG8kexqIt7lSA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9CC578042EF;
-        Wed, 20 Oct 2021 12:31:32 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8177D62A44;
-        Wed, 20 Oct 2021 12:31:28 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id ED5F02256F7; Wed, 20 Oct 2021 08:31:27 -0400 (EDT)
-Date:   Wed, 20 Oct 2021 08:31:27 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Dan Walsh <dwalsh@redhat.com>, jlayton@kernel.org,
-        idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, bfields@fieldses.org,
-        chuck.lever@oracle.com, anna.schumaker@netapp.com,
-        trond.myklebust@hammerspace.com,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        casey@schaufler-ca.com, Ondrej Mosnacek <omosnace@redhat.com>
-Subject: Re: [PATCH v2] security: Return xattr name from
- security_dentry_init_security()
-Message-ID: <YXAMH1nyfM+IA4Ce@redhat.com>
-References: <YWWMO/ZDrvDZ5X4c@redhat.com>
- <CAHC9VhRv8xOoPtfpSYSvUrcHUjhqQWw5LiDSfwR2f4VJ=9Qr8Q@mail.gmail.com>
+        Wed, 20 Oct 2021 08:55:27 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19KBGer5014964;
+        Wed, 20 Oct 2021 08:53:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=dosEoDlYtTInTfi1/yQjumNEs7jtVu68a+r+D2/Dpko=;
+ b=Xd8lAlXjGHdnA2F530UfWnwbebYEmsVnl8NNuTKcFiDuzfPr18wHIUzCsgJSd4+xQksc
+ /VhLFseOesFDcSDvp/zN2zc3mezBcIFCyN76JD5tE+XYzCgw5hRgHoe1UQrVvPE64kdu
+ d0UhXueDLhinTMjm5/fiLH3GA4Hk171kMRXZJDsQYh6qIbCisY4GMJFNMNrHQRHyH4+m
+ ZsrC9P9VDN40VnYEE97o9XaBUyxbd4AagogjgrvJeJGW7z80aqztCObK64TzztxppYJm
+ nUPghAfdbEOP9pTexwKOIz1jHc7hjHtthToqjtfvoROxK1Fx0J8pc8tSc8l+pnU1YEgn NQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3btj3mt0vv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 20 Oct 2021 08:53:00 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 19KC0KPh000593;
+        Wed, 20 Oct 2021 08:52:59 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3btj3mt0un-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 20 Oct 2021 08:52:59 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19KCm2o4014037;
+        Wed, 20 Oct 2021 12:52:57 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma03wdc.us.ibm.com with ESMTP id 3bt4ss5vbc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 20 Oct 2021 12:52:57 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19KCqtr153412148
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Oct 2021 12:52:55 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 877156A058;
+        Wed, 20 Oct 2021 12:52:55 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3529B6A063;
+        Wed, 20 Oct 2021 12:52:50 +0000 (GMT)
+Received: from [9.160.85.241] (unknown [9.160.85.241])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Oct 2021 12:52:49 +0000 (GMT)
+Message-ID: <bfa4872d-f64a-0559-1c5d-c5d1ae333eee@linux.ibm.com>
+Date:   Wed, 20 Oct 2021 15:52:49 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRv8xOoPtfpSYSvUrcHUjhqQWw5LiDSfwR2f4VJ=9Qr8Q@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v4 1/3] efi/libstub: Copy confidential computing secret
+ area
+Content-Language: en-US
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        James Bottomley <jejb@linux.ibm.com>
+Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>
+References: <20211020061408.3447533-1-dovmurik@linux.ibm.com>
+ <20211020061408.3447533-2-dovmurik@linux.ibm.com>
+ <YW+5phDcxynJD2qy@kroah.com>
+ <fb309e2686ca42df2c053cc1b060b1bc774fd3e7.camel@linux.ibm.com>
+ <YXAHgkcfwSCBeCbh@kroah.com>
+From:   Dov Murik <dovmurik@linux.ibm.com>
+In-Reply-To: <YXAHgkcfwSCBeCbh@kroah.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: OyB3zMS8e-9L6NOZrI_Bg92OFViYc8s0
+X-Proofpoint-ORIG-GUID: DBap7xKIVhMrvg7LFGHxKYHR_vkG6y_z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-10-20_04,2021-10-20_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 phishscore=0 suspectscore=0 adultscore=0
+ clxscore=1015 mlxlogscore=999 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109230001 definitions=main-2110200072
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 20, 2021 at 08:24:44AM -0400, Paul Moore wrote:
-> On Tue, Oct 12, 2021 at 9:23 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > Right now security_dentry_init_security() only supports single security
-> > label and is used by SELinux only. There are two users of of this hook,
-> > namely ceph and nfs.
-> >
-> > NFS does not care about xattr name. Ceph hardcodes the xattr name to
-> > security.selinux (XATTR_NAME_SELINUX).
-> >
-> > I am making changes to fuse/virtiofs to send security label to virtiofsd
-> > and I need to send xattr name as well. I also hardcoded the name of
-> > xattr to security.selinux.
-> >
-> > Stephen Smalley suggested that it probably is a good idea to modify
-> > security_dentry_init_security() to also return name of xattr so that
-> > we can avoid this hardcoding in the callers.
-> >
-> > This patch adds a new parameter "const char **xattr_name" to
-> > security_dentry_init_security() and LSM puts the name of xattr
-> > too if caller asked for it (xattr_name != NULL).
-> >
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >
-> > Changes since v1:
-> > - Updated comment to make it clear caller does not have to free the
-> >   xattr_name. (Jeff Layton).
-> > - Captured Jeff's Reviewed-by ack.
-> >
-> > I have tested this patch with virtiofs and compile tested for ceph and nfs.
-> >
-> > NFS changes are trivial. Looking for an ack from NFS maintainers.
-> >
-> > ---
-> >  fs/ceph/xattr.c               |    3 +--
-> >  fs/nfs/nfs4proc.c             |    3 ++-
-> >  include/linux/lsm_hook_defs.h |    3 ++-
-> >  include/linux/lsm_hooks.h     |    3 +++
-> >  include/linux/security.h      |    6 ++++--
-> >  security/security.c           |    7 ++++---
-> >  security/selinux/hooks.c      |    6 +++++-
-> >  7 files changed, 21 insertions(+), 10 deletions(-)
+
+
+On 20/10/2021 15:11, Greg KH wrote:
+> On Wed, Oct 20, 2021 at 08:00:28AM -0400, James Bottomley wrote:
+>> On Wed, 2021-10-20 at 08:39 +0200, Greg KH wrote:
+>>> On Wed, Oct 20, 2021 at 06:14:06AM +0000, Dov Murik wrote:
+>> [...]
+>>>> +	help
+>>>> +	  Copy memory reserved by EFI for Confidential Computing (coco)
+>>>> +	  injected secrets, if EFI exposes such a table entry.
+>>>
+>>> Why would you want to "copy" secret memory?
+>>>
+>>> This sounds really odd here, it sounds like you are opening up a
+>>> security hole.  Are you sure this is the correct text that everyone
+>>> on the "COCO" group agrees with?
+>>
+>> The way this works is that EFI covers the secret area with a boot time
+>> handoff block, which means it gets destroyed as soon as
+>> ExitBootServices is called as a security measure ... if you do nothing
+>> the secret is shredded.  This means you need to make a copy of it
+>> before that happens if there are secrets that need to live beyond the
+>> EFI boot stub.
 > 
-> This looks fine to me and considering the trivial nature of the NFS
-> changes I'm okay with merging this without an explicit ACK from the
-> NFS folks.  Similarly, I generally dislike merging new functionality
-> once we hit -rc6, but this is trivial enough that I think it's okay;
-> I'm merging this into selinux/next now, thanks everyone.
+> Ok, but "copy secrets" does sound really odd, so you all need a much
+> better description here, and hopefully somewhere else in Documentation/
+> to describe exactly what this new API is and is to be used for.
+> 
 
-Thanks Paul. I agree that this a trivial fix with no functionality
-change and probability of this breaking something is very very low.
 
-Vivek
+So something like:
 
+
+config EFI_COCO_SECRET
+	bool "Keep the EFI Confidential Computing secret area"
+	depends on EFI
+	help
+	  Confidential Computing platforms (such as AMD SEV) allow for
+	  secrets injection during guest VM launch.  The secrets are
+	  placed in a designated EFI memory area.  EFI destorys
+	  the confidential computing secret area when ExitBootServices
+	  is called.
+
+	  In order to use the secrets in the kernel, the secret area
+	  must be copied to kernel-reserved memory (before it is erased).
+
+	  If you say Y here, the EFI stub will copy the EFI secret area (if
+	  available) and reserve it for use inside the kernel.  This will
+	  allow the virt/coco/efi_secret module to access the secrets.
+
+
+
+and some new file like Documentation/security/coco/efi_secret.rst which
+describes this whole protocol (from secret injection at VM launch
+into an EFI page, through efistub and efi in linux, to the efi_secret
+module which exposes the secrets).
+
+
+Is that what you're looking for?
+
+
+
+> Otherwise I read this as "hey a backdoor to read the secrets I wasn't
+> supposed to be able to see!"
+> 
+
+Note that both EFI and kernel (and userspace, for that matter) are inside
+the trusted zone in terms of AMD SEV (host/hypervisor => untrusted,
+guest VM => trusted).  So it's OK for the guest kernel to see these secrets.
+
+
+-Dov
+
+> thanks,
+> 
+> greg k-h
+> 
