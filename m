@@ -2,129 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B98CBC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14896C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F2D761361
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED39B61212
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Oct 2021 12:02:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbhJTMDK (ORCPT
+        id S230111AbhJTMEQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Oct 2021 08:03:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39474 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229548AbhJTMDK (ORCPT
+        Wed, 20 Oct 2021 08:04:16 -0400
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:46545 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229548AbhJTMEP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Oct 2021 08:03:10 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19KBMh4i001140;
-        Wed, 20 Oct 2021 08:00:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : reply-to : to : cc : date : in-reply-to : references : content-type
- : mime-version : content-transfer-encoding; s=pp1;
- bh=2atfIvf5ixrkwBkxddiwe1JyhuUXA4C0o6cch/eYBP0=;
- b=i+wo5AXB739rhOsrv7fJJkPOW4K+qGHZx2ii3jp9u6G88MfrP6oVw8n17VdHs09AXVQ5
- nIHH4uk73tFrFRk/eLVXVv7CMHekEAz/zWLPBzcGQGN/jpjkVS1NLxIz2i/HMjyZWtZr
- tcxWgJJDuBZ2XixYlug0I2JxKZv5pyn8cfa/bWhZZOBkEGZK0FNMcd9W65nxFbNg9Ibh
- 7RTD3e32kfLIORsI/qust+Fh5RDjTbA2GdZ6k+kwIQDihpBf3R1AmrSeElbPMYdQrWJu
- HYtXBiY0nAwcjrS/907/mD9wwX9+QofumBxZ3UJ05fpx7TWNTMyk1xY55mrhGXBdIQiG jg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3btj6f8qpf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 20 Oct 2021 08:00:42 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 19KBOCY8007783;
-        Wed, 20 Oct 2021 08:00:41 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3btj6f8qmp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 20 Oct 2021 08:00:41 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19KBxHGw027484;
-        Wed, 20 Oct 2021 12:00:36 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma02dal.us.ibm.com with ESMTP id 3bqpcc5e9f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 20 Oct 2021 12:00:36 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19KC0Y0W36635064
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Oct 2021 12:00:34 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E729678091;
-        Wed, 20 Oct 2021 12:00:33 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E09CB7807B;
-        Wed, 20 Oct 2021 12:00:29 +0000 (GMT)
-Received: from jarvis.int.hansenpartnership.com (unknown [9.211.92.132])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Oct 2021 12:00:29 +0000 (GMT)
-Message-ID: <fb309e2686ca42df2c053cc1b060b1bc774fd3e7.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 1/3] efi/libstub: Copy confidential computing secret
- area
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 20 Oct 2021 08:00:28 -0400
-In-Reply-To: <YW+5phDcxynJD2qy@kroah.com>
-References: <20211020061408.3447533-1-dovmurik@linux.ibm.com>
-         <20211020061408.3447533-2-dovmurik@linux.ibm.com>
-         <YW+5phDcxynJD2qy@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Wed, 20 Oct 2021 08:04:15 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Ut2XJgK_1634731319;
+Received: from 30.240.99.221(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Ut2XJgK_1634731319)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 20 Oct 2021 20:01:59 +0800
+Message-ID: <416a13af-beee-ac09-38ba-166a691a8482@linux.alibaba.com>
+Date:   Wed, 20 Oct 2021 20:01:55 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: fXfdxmVhmW-oHxGkZz5qlolZAwivX7I6
-X-Proofpoint-GUID: EdATHeW8N-0HlDMOIkTMqEVygdiToCfx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-10-20_04,2021-10-20_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- priorityscore=1501 suspectscore=0 spamscore=0 malwarescore=0 clxscore=1011
- mlxlogscore=969 bulkscore=0 lowpriorityscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109230001 definitions=main-2110200070
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.2.0
+Subject: Re: [PATCH 0/2] tpm: use SM3 instead of SM3_256
+Content-Language: en-US
+To:     Ken Goldman <kgold@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20211009130828.101396-1-tianjia.zhang@linux.alibaba.com>
+ <1749e7c3b528d361c09b40e5758b92c7386ffe1f.camel@linux.ibm.com>
+ <c39fe737-203e-b124-db70-fce471ac6459@linux.alibaba.com>
+ <c0768f9d-ef60-1a97-ec2d-a5e1130cbe03@linux.ibm.com>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <c0768f9d-ef60-1a97-ec2d-a5e1130cbe03@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2021-10-20 at 08:39 +0200, Greg KH wrote:
-> On Wed, Oct 20, 2021 at 06:14:06AM +0000, Dov Murik wrote:
-[...]
-> > +	help
-> > +	  Copy memory reserved by EFI for Confidential Computing (coco)
-> > +	  injected secrets, if EFI exposes such a table entry.
+Hi Ken,
+
+On 10/20/21 6:26 AM, Ken Goldman wrote:
 > 
-> Why would you want to "copy" secret memory?
 > 
-> This sounds really odd here, it sounds like you are opening up a
-> security hole.  Are you sure this is the correct text that everyone
-> on the "COCO" group agrees with?
+> 
+> On 10/11/2021 3:02 AM, Tianjia Zhang wrote:
+>>
+>> Thanks for your attention. This is really tricky. I will contact 
+>> trustedcomputinggroup first and give some suggestions, It would be 
+>> best if a more standard algorithm name can be used from the source of 
+>> the specification.
+> 
+> This was discussed in the TCG's TPM WG in February, 2020.  At the time,
+> someone said that there was a possibility of a 512-bit version in the
+> future.
+> 
+> For TCG members:
+> 
+> https://members.trustedcomputinggroup.org/wg/TPMWG/mail/thread/61442#136758
+> 
+> My guess is that, since it's already in many TCG specs and code, TCG
+> will want to leave it as is.
+> 
 
-The way this works is that EFI covers the secret area with a boot time
-handoff block, which means it gets destroyed as soon as
-ExitBootServices is called as a security measure ... if you do nothing
-the secret is shredded.  This means you need to make a copy of it
-before that happens if there are secrets that need to live beyond the
-EFI boot stub.
+I got it. thanks for your information.
 
-James
-
-
+Best regards,
+Tianjia
