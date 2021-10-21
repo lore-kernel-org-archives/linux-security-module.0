@@ -2,98 +2,139 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2720CC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Oct 2021 10:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF883C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Oct 2021 15:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F70460F6E
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Oct 2021 10:28:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE45D611C7
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Oct 2021 15:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbhJUKaq (ORCPT
+        id S230184AbhJUPlH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Oct 2021 06:30:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230077AbhJUKah (ORCPT
+        Thu, 21 Oct 2021 11:41:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25952 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230020AbhJUPlH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Oct 2021 06:30:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 874596120C;
-        Thu, 21 Oct 2021 10:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634812101;
-        bh=XZqwcRi8eGbcHfTa8FsBo0CyV+VMmanZEXSL34v2xNA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LSIZboXeBiM2XeY8Wt+EdS5vzOT0y1ZBbT9bRqQsj3JP7BP/yWGDJFdQJDSckB09B
-         7uqGgy/9ZJHs5HkWP1mzK+b4YDPzJqFGxOwtsNXcSuJd++RJzuPnbSBghUV5uvPrQr
-         48FXQ0hb3XPEUFdAkHZ8go/OfpfNzL7Oi+qwtMWOwsIoe54SPCBCf3WNrap+GInr0V
-         yGABj0eWy+Oy4uHPhX+84IqzwjRnnFriSooLwDn9DdP3ldmXSfRxTG8Sqpob+snAai
-         xloBuBSX8vt6kna/4iXumpsepFj39VfqjUz5ICYwwc7ll2r4XouRi6EbQQOqDpLgmh
-         FssfdAsIY4+8g==
-Received: by mail-oi1-f170.google.com with SMTP id o83so295125oif.4;
-        Thu, 21 Oct 2021 03:28:21 -0700 (PDT)
-X-Gm-Message-State: AOAM532DDyVNWD56Lze+VMe2j0wrKXyHFoz1vzJF7HGTawJ3pxUd+IoB
-        fsnsREcnrxDYexSext4MlwHcM8cep6MuXn6B43k=
-X-Google-Smtp-Source: ABdhPJwJS57ISbZcVKqBAD81WN0NdiqSiFCaDg4V8so9PFGuh1YHfNT+etwlr7CUC37Bkxt5mEwG0tXwsqwrLAT+eTk=
-X-Received: by 2002:aca:4bc4:: with SMTP id y187mr3602617oia.174.1634812100804;
- Thu, 21 Oct 2021 03:28:20 -0700 (PDT)
+        Thu, 21 Oct 2021 11:41:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634830731;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+EcsA5xA62SASzXixhmC93KNhr9lJl6sDYMGeSe6uVI=;
+        b=F/tDXjMbh/5XVx0u05pxDiu61ZEQXbbdaB1C1+cuo1xPnniQBSZR097df1Xa+vW0OI4u8x
+        cTR8v7Rr8WZ02u9Z/xMms/ZKBoA7hDP7lq4eFJ33zhTrZqxj/b6GQaMB94ebhEUCzLno3N
+        +q4DvBMq5A8/wgy9TcoxHszAxsJQwwY=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-24-1lI_4c6tPEinhHNjNMuuHg-1; Thu, 21 Oct 2021 11:38:49 -0400
+X-MC-Unique: 1lI_4c6tPEinhHNjNMuuHg-1
+Received: by mail-ed1-f71.google.com with SMTP id e14-20020a056402088e00b003db6ebb9526so711467edy.22
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Oct 2021 08:38:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+EcsA5xA62SASzXixhmC93KNhr9lJl6sDYMGeSe6uVI=;
+        b=bwUtCouLkp5zOXp1QK+nDb9ApPJ7GZa1XLp3q3noL7enuNy+hxDOsHq3hkBqejwYIB
+         Pa4/DOqB8RIN19/6R+GoHezKMHDJzSr8+aJqdmQHKuDHdSqMWuQzJRkb/9PZsoN1Zqxn
+         klXY8X8C+rh6aSXtYE+CZ/v8aNn8UrsDVqRPTlvLrlNLow97qXJQEhFBj6XtU4n4NcRl
+         u3NUEn/7AUY2fzZdEpH8H6ZwBm34o1LlDWRAQIdPqX+WGxU3U9sTWVkXo6IVhlv1Aae2
+         Iz+uGpPmoqOMuDqicAUbdYRhXr+pJkhZjx6DLNlrdxd05yJCSj04sX06g6qPM/FSx5zT
+         cpbA==
+X-Gm-Message-State: AOAM5329hUDF/SAEFznbk6+wf4Yv5MuPuOj+o2gcezuwEOMBCTo986Kb
+        EYt83WyratSlir2Ohs7qzkjrvQhTUjaOCPYljCW+EBOP68W1Xd3HrK/b70mLp+zrOYF5tzBt3Ug
+        KiltcjGfYHLBNd5TzfMlYGb3gSZmwOOrgXZ1g
+X-Received: by 2002:a17:906:2f16:: with SMTP id v22mr8071847eji.126.1634830728417;
+        Thu, 21 Oct 2021 08:38:48 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyZR+CO01yUtF69fE5uCzw+dfcRHloUejfPdnzpavQSqGCijkHMjiG35GlcCLD4jjcVPR+jBw==
+X-Received: by 2002:a17:906:2f16:: with SMTP id v22mr8071810eji.126.1634830728139;
+        Thu, 21 Oct 2021 08:38:48 -0700 (PDT)
+Received: from localhost.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id j11sm2659826ejt.114.2021.10.21.08.38.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 08:38:47 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Richard Haines <richard_c_haines@btinternet.com>
+Subject: [PATCH] sctp: initialize endpoint LSM labels also on the client side
+Date:   Thu, 21 Oct 2021 17:38:46 +0200
+Message-Id: <20211021153846.745289-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <20211020173554.38122-1-keescook@chromium.org>
-In-Reply-To: <20211020173554.38122-1-keescook@chromium.org>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Thu, 21 Oct 2021 12:28:09 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEw2P+Q2Nd-+vf6U5apx+v5Q4TTW6y0m-MFaB1O2OAehQ@mail.gmail.com>
-Message-ID: <CAMj1kXEw2P+Q2Nd-+vf6U5apx+v5Q4TTW6y0m-MFaB1O2OAehQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] gcc-plugins: Explicitly document purpose and
- deprecation schedule
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Dan Li <ashimida@linux.alibaba.com>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-hardening@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 20 Oct 2021 at 19:35, Kees Cook <keescook@chromium.org> wrote:
->
-> Hi,
->
-> GCC plugins should only exist when some compiler feature needs to be
-> proven but does not exist in either GCC nor Clang. For example, if a
-> desired feature is already in Clang, it should be added to GCC upstream.
-> Document this explicitly.
->
-> I'll put this in -next unless there are objections. :)
->
-> Thanks!
->
-> -Kees
->
->
-> Kees Cook (2):
->   gcc-plugins: Explicitly document purpose and deprecation schedule
->   gcc-plugins: Remove cyc_complexity
->
+The secid* fields in struct sctp_endpoint are used to initialize the
+labels of a peeloff socket created from the given association. Currently
+they are initialized properly when a new association is created on the
+server side (upon receiving an INIT packet), but not on the client side.
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+As a result, when the client obtains a peeloff socket via
+sctp_peeloff(3) under SELinux, it ends up unlabeled, leading to
+unexpected denials.
 
->  Documentation/kbuild/gcc-plugins.rst        | 28 ++++++++-
->  scripts/Makefile.gcc-plugins                |  2 -
->  scripts/gcc-plugins/Kconfig                 | 20 +-----
->  scripts/gcc-plugins/cyc_complexity_plugin.c | 69 ---------------------
->  security/Kconfig.hardening                  |  9 ++-
->  5 files changed, 34 insertions(+), 94 deletions(-)
->  delete mode 100644 scripts/gcc-plugins/cyc_complexity_plugin.c
->
-> --
-> 2.30.2
->
+Fix this by calling the security_sctp_assoc_request() hook also upon
+receiving a valid INIT-ACK response from the server, so that the
+endpoint labels are properly initialized also on the client side.
+
+Fixes: 2277c7cd75e3 ("sctp: Add LSM hooks")
+Cc: Richard Haines <richard_c_haines@btinternet.com>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+ include/net/sctp/structs.h | 11 ++++++-----
+ net/sctp/sm_statefuns.c    |  5 +++++
+ 2 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/include/net/sctp/structs.h b/include/net/sctp/structs.h
+index 651bba654d77..033a955592dd 100644
+--- a/include/net/sctp/structs.h
++++ b/include/net/sctp/structs.h
+@@ -1356,11 +1356,12 @@ struct sctp_endpoint {
+ 
+ 	__u8  strreset_enable;
+ 
+-	/* Security identifiers from incoming (INIT). These are set by
+-	 * security_sctp_assoc_request(). These will only be used by
+-	 * SCTP TCP type sockets and peeled off connections as they
+-	 * cause a new socket to be generated. security_sctp_sk_clone()
+-	 * will then plug these into the new socket.
++	/* Security identifiers from incoming (INIT/INIT-ACK). These
++	 * are set by security_sctp_assoc_request(). These will only
++	 * be used by SCTP TCP type sockets and peeled off connections
++	 * as they cause a new socket to be generated.
++	 * security_sctp_sk_clone() will then plug these into the new
++	 * socket.
+ 	 */
+ 
+ 	u32 secid;
+diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
+index 32df65f68c12..cb291c7f5fb7 100644
+--- a/net/sctp/sm_statefuns.c
++++ b/net/sctp/sm_statefuns.c
+@@ -521,6 +521,11 @@ enum sctp_disposition sctp_sf_do_5_1C_ack(struct net *net,
+ 	if (!sctp_vtag_verify(chunk, asoc))
+ 		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
+ 
++	/* Update socket peer label if first association. */
++	if (security_sctp_assoc_request((struct sctp_endpoint *)ep,
++					chunk->skb))
++		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
++
+ 	/* 6.10 Bundling
+ 	 * An endpoint MUST NOT bundle INIT, INIT ACK or
+ 	 * SHUTDOWN COMPLETE with any other chunks.
+-- 
+2.31.1
+
