@@ -2,127 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13690C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Oct 2021 17:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AB0C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Oct 2021 18:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E97116120D
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Oct 2021 17:32:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3324960232
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Oct 2021 18:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233727AbhJVRe1 (ORCPT
+        id S233417AbhJVSEr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Oct 2021 13:34:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54972 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233653AbhJVRe0 (ORCPT
+        Fri, 22 Oct 2021 14:04:47 -0400
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com ([66.163.189.89]:35859
+        "EHLO sonic306-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233380AbhJVSEq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Oct 2021 13:34:26 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19MFGnDF011671;
-        Fri, 22 Oct 2021 13:32:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=LGet4gWh6uuOfKai4o/ygLsRdjpy8G+X5B+4rb0PL7Q=;
- b=UpGC8iWc9gCDlpaUNL8dybendO09hmNF9xAUtsulp+G2yLL9iQA1bHreouend5R9Er2P
- kaEZj2HnDd2R3Ril8laz+IrwgfZdQ4UP3yCTx0ZzvNnK+1wQXausDGobu7dR73x/LiB7
- h14jjd7w0CfS5cIf+CfLdKJtUYBGYUJbyLFUBJz8PXzWDVm//1SCLj2PzGIlq8wUcKGZ
- 8/4bQqLxV2dihnYb1TBqwnBYfAHibLC+9HeqEaVcH6wgAgOV86ES1aKb0Lu98Y1hU5Z+
- 0R3+563RcIduA1PmqZ/h2H+YlY5lnzJeqAFbveB5XEC8S/V3zEe2ckSo0Gb3eUDBw+3J aQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3bux284vxa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Oct 2021 13:32:04 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 19MHS5SH000485;
-        Fri, 22 Oct 2021 13:32:03 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3bux284vwq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Oct 2021 13:32:03 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19MHEUqs026478;
-        Fri, 22 Oct 2021 17:32:02 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma04ams.nl.ibm.com with ESMTP id 3bqpcbjgmx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Oct 2021 17:32:01 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19MHVxMw65536374
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Oct 2021 17:31:59 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 741244204B;
-        Fri, 22 Oct 2021 17:31:59 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 098634204C;
-        Fri, 22 Oct 2021 17:31:58 +0000 (GMT)
-Received: from sig-9-65-85-11.ibm.com (unknown [9.65.85.11])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 22 Oct 2021 17:31:57 +0000 (GMT)
-Message-ID: <beedd453a1ec674d3986f7c3851f30df516d2fbb.camel@linux.ibm.com>
-Subject: Re: [PATCH v3] integrity: support including firmware ".platform"
- keys at build time
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna <nayna@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org
-Cc:     dhowells@redhat.com, jarkko@kernel.org, seth.forshee@canonical.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Date:   Fri, 22 Oct 2021 13:31:57 -0400
-In-Reply-To: <03ed8621-8fd0-a83f-24f6-eb9455dc0ca5@linux.vnet.ibm.com>
-References: <20211004145258.14056-1-nayna@linux.ibm.com>
-         <03ed8621-8fd0-a83f-24f6-eb9455dc0ca5@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: LNCtwtP0OBEhkJW0v2DbrWymUsDmRESP
-X-Proofpoint-ORIG-GUID: KWv8y4aHdsvB_sL2g0M-TsRM8m0xDpz1
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Fri, 22 Oct 2021 14:04:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1634925748; bh=15kyE09GJEsIucVKESALSRHC669hJjIdHKy2VkPcIYQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ZCqS7GHMX4jXk5LhzzXOJcxK3ktpVS2LOUQSdrLdXXyB6xc5cu3WW7s0wlFy2r7sYzTLMKCercLSy2r6xmixCE9j++OsjvB5Ty125DSlfzQFJf4Pwky9q3yBcBtEx9YOFXp2A2VBAtKPunoGEYGfaV/JgpMWKkVyQrKGmfvWHqPfo0yG76lwl0N94U+aB4W5JpYsIAEMNhJosqWry/PPtufhyP10o+EpWKYzYIwRqtZvuVw5s/+WSBXcN+Yu5xWwvFBt3XHjWTpXDw4h3zJhPaNBcuHBGmXUuOMPTX2GdNEkglAN8S2ADbRYZv2ML7TTz1ChInXg4Btupb9s8tt89g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1634925748; bh=tEZifpmuQ2NqlUKc9oMu6Kj8N5piUno32Pw6tAVUBDP=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=njwPtHEgpHU5SPFHsVcjlZteHbU20G+n3roohBgl/xKk8a0aLCE9V9AkEpzV/O+0uQAeHWjrNpGpT/rFlcMA4ny5y51llgfhugbh6DhXm7N8E0N0vfeDqs1jEXhcT9557Jjhu9LKFbQQeXlOoaAUZAssgzMX19DWzABKUs8Iqb2VPvxZqxalj/uTYR5amOpPo2NqzHTjbr2YRR8+zCH8mPAp86R6NnLQaU9b6726cjKoz8ViIS46WMdy5qNaZtzLWqy6UGTZGegdQsCpnvUkXfSTrqqzFXzuA9VRiu5kPu7MVn8veJGXgEa4VraRcYDl26AAfIz+HugYQQpz5I0oog==
+X-YMail-OSG: 7RXHQEoVM1kFNQk4taIAs5JU9dqF6_4h8HL4E_i.HIUdasT9_fuLPKufRMXDPNE
+ uufWeoqmuVe.5g_2YWXt2b9Uzq_6s6SV.y4k6FTlwvgvdwQfk6RhlfTirwvXzCPkOe2tKXWzgDIf
+ _9O6f2ttwDnrf5i_tnj6Vt4IdL9zGoD10poqXTh1rhBL9j8rS7ofD.XFdj39zxwxzx8.T6S5yTgp
+ vgOJTPLpDpfa2W0ZFLUl8kDzwUAXxQSRmurUKtVKuCXuh2BUcV0k5z_1TPAIOnPeyzsaN3KmtF7K
+ B4tywSIxExCIPdx.DSVpeMC1_XQ2BkqgaR31pX3BKfxpUPzmbxtupU7ZwMfA.KvlFX6goZZajjlz
+ T400brPvjaP9WhzCj5kVuYRomHjVKYMAqckj1yXuyYuUApfMwssJ_7HoZKFiCflRL6sIL88MdAUM
+ G.HDGwYHH4eYmeC2.qO.g6dtnlmRbUlc96wicOfnEomW0LLDl7Cshq6T_Dhffe7GN_D0rY.IJugp
+ bqcpESg7qfmsRD5vJxkRrYpqdm2c47zWge4SEJFNiNJljfv2DtUTiAV5ZyqemAZy0UEddFYs.cnK
+ Weu6AR717AO2Q8tPy2Fp0AcU7nn0fwOTS2FT20jKLuUpd9okrePytJvhBm83.U0QDCjgVV8Tf7US
+ 4uahw8mJyy06xJah0yzVhLa_gPD5K_CwRHKi1nx7pG_nU97lAywRHVBQMFLIONyJ.FZTXr2e5jMg
+ _G86RbZpoh5sVWb1O9h3mNSJud588__tAB5.2HnPnD9PzBP0nAVyaC8awmpBlV7380Ux1obHxGL3
+ wbl297nVyiJK6AB4pK9FcvJD0NWeIm4Q0Dk_SAPxsNOWTjl9tQi6_lYJF4ydrFxbKMt8pGn6zNsW
+ ONwm2rnukS82jcYniXNbTBUwP.Y5x8gYX1kT2HrJ8kbBFkMbYiNsDkohLc3GH5YE7wUsuMnEKrx6
+ TYP18Y..LbNGYlFEJnzBIdUhvyJgwpD0YANMenrtlS.EkrANHcXs8P7RrWSkJ5jcRcrFoy6TE_Ei
+ YoLou4kdKpB0zYSMz4uFibxjMGnQZCLvMkH9nFhWYct9SEwK2Gi3190u4fq9CXCNygVUJd9nUpCP
+ SgyGEO6Uhzf4KkxWH3z8B8_brNSjoZ7.xDBA10COtJFzTkUK3L5dJBkIfX3bDAg6heHdulWrNebs
+ 51sMCHernuhy0U.xFX0ODTJ.9rmQP435FXC5oBC1xngSTqHT80nnUuAPV1UeH9W3SAv2UX0iCa.Y
+ RO6i68eVMSYhjpq4X6IEBKfWGexh_1oT1YHp01ZcDYXYILIl.VFeOSf6v6p6dqgvaHcKpRcX3mE1
+ HL2PJ8kZ7sVzx7p9sCvUHQsJNTJr.65OmfNxE8DTETFsfTqGuVeZweZuMxVi5rUBVdMKLVZVj_R2
+ oPMhgwP7n2nN6ofVc5k6K94qmkr4wlTCThEovTcWkVWO9hAdTk2Efm7j6W1ZeWrhUf_5i0IAJsm6
+ BLjpAD0LvMmAG6QkYr4z9BojJfYtG9VezDsSwbd3JXjOJIwMK3L3GZsYzxDHQLzcVJxHfpi8xmQt
+ _0VGUhiQ3hH1WP9fgBj.AR4itv7PcxxMZinv2Xc1TvIvdGJkqpKx9JI00Vel2GDSA.0g6TCqMhKY
+ hjJp.LthWs2hjh8OyB6xD3nLyICl5E8tUHKMwuZ9sxxV.pWYmbq870MEYHJIQOzeq9mt.7MXJBwo
+ 06BphM9Dw2smKdB.IU_3mIp7lUJWhH62uakdRRHEkDdqO4Oc4TElGe7YFZf88hf6VYjjxoalApbp
+ vK4iGc9YC49LurP9OWZgaAYJJ20g3yzVM0CeM_3LJDqddMzGcFG5AJF.ytavUxwXaYD9Ef1cxUnr
+ s9orr0iN9rqrT218q7e6tQUMAURZfIVDGUUIVQrg88dVAVgMkL6HkacMY0q804XymUf8IEZy3MD8
+ u.V.7ykVtelbx79NKcWVjcT_S7jpiI46Z.Tnx1SqmaXERH8oQ3sjt2Zpi9xerse5jcgYkrMYt75n
+ CuJavW6di9Gj606YKSc1oSFcuRKBFTKjdhjBxbzPaUnwNiwLebN0H133gCRL7p_88ahS9MJ5kGuG
+ CsgI6RDGK2EofvmGrQHAdxIB.BtDbMu9BMp3OQI7kgfFZWr.x8ottBzfFMUn4U.I9hKshAUNUxv2
+ aijtMF8m57kYDnpBqTqi_R3dd6_G9gTOXuHd8nOAZWRrpbDGtO2pgSwgEKF_ovljB5QweIzzGiW6
+ wYI.X27BCnS8YSkxJEJJL3kB1P8PdneBGYccJJCBicRSGibmjIuDuMXBYZo2aqQUE5t7MoPPkuy5
+ 1Nh25SIbtEaIU
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Fri, 22 Oct 2021 18:02:28 +0000
+Received: by kubenode549.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 6bd622872be18523a08fb626739387ff;
+          Fri, 22 Oct 2021 18:02:25 +0000 (UTC)
+Message-ID: <d1ec69ba-77a3-504b-e2a4-56d0ad7556fd@schaufler-ca.com>
+Date:   Fri, 22 Oct 2021 11:02:25 -0700
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-10-22_04,2021-10-22_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0 phishscore=0
- adultscore=0 spamscore=0 bulkscore=0 clxscore=1011 lowpriorityscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109230001 definitions=main-2110220101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH] smackfs: use netlbl_cfg_cipsov4_del() for deleting
+ cipso_v4_doi
+Content-Language: en-US
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        paul@paul-moore.com, Paul Moore <paul.moore@hp.com>
+Cc:     linux-security-module@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+93dba5b91f0fed312cbd@syzkaller.appspotmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <0000000000004b5a3705ceaf6908@google.com>
+ <3be0eeb1-c1d7-9809-ac27-e36fdb62074d@i-love.sakura.ne.jp>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <3be0eeb1-c1d7-9809-ac27-e36fdb62074d@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.19198 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2021-10-19 at 14:25 -0400, Nayna wrote:
-> Gentle reminder for v3. Is this version good now for acceptance ?
-> 
-> Thanks & Regards,
-> 
->       - Nayna
-> 
-> On 10/4/21 10:52 AM, Nayna Jain wrote:
-> > Some firmware support secure boot by embedding static keys to verify the
-> > Linux kernel during boot. However, these firmware do not expose an
-> > interface for the kernel to load firmware keys onto ".platform" keyring.
-> > This would prevent kernel signature verification on kexec.
-> >
-> > For these environments, a new function load_builtin_platform_cert() is
-> > defined to load compiled in certificates onto the ".platform" keyring.
-> >
-> > load_certificate_list() is currently used for parsing compiled in
-> > certificates to be loaded onto the .builtin or .blacklist keyrings.
-> > Export load_certificate_list() allowing it to be used for parsing compiled
-> > in ".platform" keyring certificates as well.
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>(auto build test ERROR)
-> > Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> > ---
-> > NOTE: I am wondering if we should split this patch into two:
-> > (https://lore.kernel.org/linux-integrity/be4bd13d-659d-710d-08b9-1a34a65e5c5d@linux.vnet.ibm.com/).
-> > I can do so if you also prefer the same.
+On 10/19/2021 4:27 AM, Tetsuo Handa wrote:
+> syzbot is reporting UAF at cipso_v4_doi_search() [1], for smk_cipso_doi()
+> is calling kfree() without removing from the cipso_v4_doi_list list after
+> netlbl_cfg_cipsov4_map_add() returned an error. We need to use
+> netlbl_cfg_cipsov4_del() in order to remove from the list and wait for
+> RCU grace period before kfree().
+>
+> Link: https://syzkaller.appspot.com/bug?extid=93dba5b91f0fed312cbd [1]
+> Reported-by: syzbot <syzbot+93dba5b91f0fed312cbd@syzkaller.appspotmail.com>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Fixes: 6c2e8ac0953fccdd ("netlabel: Update kernel configuration API")
 
-Yes, splitting this patch would make it easier to review and upstream.
+Added to smack-next. Thank you.
 
-thanks,
-
-Mimi
-
+> ---
+>   security/smack/smackfs.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 3a75d2a8f517..83b90442f963 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -714,7 +714,7 @@ static void smk_cipso_doi(void)
+>   	if (rc != 0) {
+>   		printk(KERN_WARNING "%s:%d map add rc = %d\n",
+>   		       __func__, __LINE__, rc);
+> -		kfree(doip);
+> +		netlbl_cfg_cipsov4_del(doip->doi, &nai);
+>   		return;
+>   	}
+>   }
