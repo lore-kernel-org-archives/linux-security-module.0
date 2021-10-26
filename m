@@ -2,271 +2,141 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FAAC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Oct 2021 04:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11350C4321E
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Oct 2021 07:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3EAB60E74
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Oct 2021 04:48:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93B6610A6
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Oct 2021 07:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233795AbhJZEuW (ORCPT
+        id S233804AbhJZH6z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Oct 2021 00:50:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36764 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231801AbhJZEuW (ORCPT
+        Tue, 26 Oct 2021 03:58:55 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:59953 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233200AbhJZH6y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Oct 2021 00:50:22 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 148BCC061745;
-        Mon, 25 Oct 2021 21:47:59 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id j35-20020a05600c1c2300b0032caeca81b7so392613wms.0;
-        Mon, 25 Oct 2021 21:47:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ogj4eBeAfTKK8WIOyg9YWchm0dOp9i9W9v/NbD+SjQg=;
-        b=QW7P8Gy29glpN04+9FL04HkTHc7LcJr7A0CwspjFBMjerDAfpKK0R6YxEXsQhP8C5R
-         jZBAsgPFLzY8OaCzJzA6vqP1PNoz19kdSdQe74Q8EoR4CgNdZRlJwjCNZ+LhXZhaHsCp
-         xOKg/7WBW0mMUSlz08/L6Rp6FXlXu1QMZGeP+C6gbwZYo+bMPw7ktMueUEgCbLrrjbdv
-         1Qre+0wSya0HAuk9u1iKqUXfqSJLkn+HQfngQ8qIKWEP6NvaDtN5vXtxSHibsoHUFxx1
-         erzvYWw/5pJeeAvIWK3JJEW+5OTH6EvUjNPzDcP9FYI+f8zbvZyQLplRB2Csn50kUPY8
-         c1dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ogj4eBeAfTKK8WIOyg9YWchm0dOp9i9W9v/NbD+SjQg=;
-        b=nTVe0hQW4teS9rL8NOWOvH3Ci/BijxXwuDZIybaEWIKbibdBj+I3bpafW/lvy4BO3H
-         jFYuWxNQ3h47Et5fLjZhyxlf86pWMC09hpH7kxGggjeb485PhXwj4R03518jubULGz95
-         rUP7YiTPEnIxzMifcgNMggZqVWGuU171OdTGzNR+9KD5tm2ioRoSeUuiSGc7qM6+za1h
-         ov6UtJ1dTeyXCL2ruCskK6ScRkTyhuXRkqy5AV2+8GI9UTdpmlRcNAws/MfyinibIOU2
-         Oq3nn4i6evN/+DUmH+KOWeTRk1dHHRpFpXWNYaMcdWZisjgN6s94eCOlXgREfO20Q2fu
-         VZVQ==
-X-Gm-Message-State: AOAM532Q20XVNSytVnLChqBNKPaiDfRgRNqm19GI9kZ5oNfegTWcBij0
-        EuZntYfgHJpv2yzEpEWLYkWIADQ/QNaeVGkyw14=
-X-Google-Smtp-Source: ABdhPJzFh0xsUUTR7xru4f1MDrUuQqtdz1qjNfW4XgRTMTyeZhv5Bxtk6q/1HP9uVLsdba7na40COkSn9Y4LDepV51Q=
-X-Received: by 2002:a1c:7dcb:: with SMTP id y194mr25593547wmc.8.1635223677613;
- Mon, 25 Oct 2021 21:47:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1634884487.git.lucien.xin@gmail.com> <53026dedd66beeaf18a4570437c4e6c9e760bb90.1634884487.git.lucien.xin@gmail.com>
- <CAFqZXNs89yGcoXumNwavLRQpYutfnLY-SM2qrHbvpjJxVtiniw@mail.gmail.com>
- <CADvbK_djVKxjfRaLS0EZRY2mkzWXTMnwvbe-b7cK-T3BR8jzKQ@mail.gmail.com>
- <CAFqZXNsnEwPcEXB-4O983bxGj5BfZVMB6sor7nZVkT-=uiZ2mw@mail.gmail.com>
- <CADvbK_eE9VhB2cWzHSk_LNm_VemEt9vm=FMMVYzo5eVH=zEhKw@mail.gmail.com> <CAHC9VhTfVmcLOG3NfgQ3Tjpe769XzPntG24fejzSCvnZt_XZ9A@mail.gmail.com>
-In-Reply-To: <CAHC9VhTfVmcLOG3NfgQ3Tjpe769XzPntG24fejzSCvnZt_XZ9A@mail.gmail.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Tue, 26 Oct 2021 12:47:46 +0800
-Message-ID: <CADvbK_dwLCOvS8YzFXcXoDF6F69_sc7voPbxn5Ov4ygBR_5FXw@mail.gmail.com>
-Subject: Re: [PATCH net 4/4] security: implement sctp_assoc_established hook
- in selinux
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        Tue, 26 Oct 2021 03:58:54 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R891e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0Utl7WGR_1635234987;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Utl7WGR_1635234987)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 26 Oct 2021 15:56:27 +0800
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        David Howells <dhowells@redhat.com>,
         James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
-        network dev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH v3 1/2] crypto: use SM3 instead of SM3_256
+Date:   Tue, 26 Oct 2021 15:56:25 +0800
+Message-Id: <20211026075626.61975-2-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.3.ge56e4f7
+In-Reply-To: <20211026075626.61975-1-tianjia.zhang@linux.alibaba.com>
+References: <20211026075626.61975-1-tianjia.zhang@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 26, 2021 at 5:51 AM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Oct 25, 2021 at 10:11 AM Xin Long <lucien.xin@gmail.com> wrote:
-> > On Mon, Oct 25, 2021 at 8:08 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >> On Mon, Oct 25, 2021 at 12:51 PM Xin Long <lucien.xin@gmail.com> wrote:
-> >> > On Mon, Oct 25, 2021 at 4:17 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >> > > On Fri, Oct 22, 2021 at 8:36 AM Xin Long <lucien.xin@gmail.com> wrote:
-> >> > > > Different from selinux_inet_conn_established(), it also gives the
-> >> > > > secid to asoc->peer_secid in selinux_sctp_assoc_established(),
-> >> > > > as one UDP-type socket may have more than one asocs.
-> >> > > >
-> >> > > > Note that peer_secid in asoc will save the peer secid for this
-> >> > > > asoc connection, and peer_sid in sksec will just keep the peer
-> >> > > > secid for the latest connection. So the right use should be do
-> >> > > > peeloff for UDP-type socket if there will be multiple asocs in
-> >> > > > one socket, so that the peeloff socket has the right label for
-> >> > > > its asoc.
-> >> > >
-> >> > > Hm... this sounds like something we should also try to fix (if
-> >> > > possible). In access control we can't trust userspace to do the right
-> >> > > thing - receiving from multiple peers on one SOCK_SEQPACKET socket
-> >> > > shouldn't cause checking against the wrong peer_sid. But that can be
-> >> > > addressed separately. (And maybe it's even already accounted for
-> >> > > somehow - I didn't yet look at the code closely.)
->
-> There are a couple of things we need to worry about here: the
-> per-packet access controls (e.g. can this packet be received by this
-> socket?) and the userspace peer label queries (e.g. SO_GETPEERSEC and
-> IP_CMSG_PASSSEC).
->
-> The per-packet access controls work by checking the individual
-> packet's security label against the corresponding sock label on the
-> system (sk->sk_security->sid).  Because of this it is important that
-> the sock's label is correct.  For unconnected sockets this is fairly
-> straightforward as it follows the usual inherit-from-parent[1]
-> behavior we see in other areas of SELinux.  For connected stream
-> sockets this can be a bit more complicated.  However, since we are
-> only discussing the client side things aren't too bad with the
-> behavior essentially the same, inherit-from-parent, with the only
-> interesting piece worth noting being the sksec->peer_sid
-> (sk->sk_security->peer_sid) that we record from the packet passed to
-> the LSM/SELinux hook (using selinux_skb_peerlbl_sid()).  The
-> sksec->peer_sid is recorded primarily so that the kernel can correctly
-> respond to SO_GETPEERSEC requests from userspace; it shouldn't be used
-> in any access control decisions.
-Hi, Paul
+According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+SM3 always produces a 256-bit hash value and there are no plans for
+other length development, so there is no ambiguity in the name of sm3.
 
-Understand now, the issue reported seems caused by when
-doing peel-off the peel-off socket gets the uninitialised sid
-from 'ep' on the client, though it should be "asoc".
+Suggested-by: James Bottomley <jejb@linux.ibm.com>
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+---
+ crypto/hash_info.c                        | 4 ++--
+ drivers/char/tpm/tpm2-cmd.c               | 2 +-
+ include/crypto/hash_info.h                | 2 +-
+ include/uapi/linux/hash_info.h            | 3 ++-
+ security/keys/trusted-keys/trusted_tpm2.c | 2 +-
+ 5 files changed, 7 insertions(+), 6 deletions(-)
 
-Thanks!
+diff --git a/crypto/hash_info.c b/crypto/hash_info.c
+index a49ff96bde77..fe0119407219 100644
+--- a/crypto/hash_info.c
++++ b/crypto/hash_info.c
+@@ -26,7 +26,7 @@ const char *const hash_algo_name[HASH_ALGO__LAST] = {
+ 	[HASH_ALGO_TGR_128]	= "tgr128",
+ 	[HASH_ALGO_TGR_160]	= "tgr160",
+ 	[HASH_ALGO_TGR_192]	= "tgr192",
+-	[HASH_ALGO_SM3_256]	= "sm3",
++	[HASH_ALGO_SM3]		= "sm3",
+ 	[HASH_ALGO_STREEBOG_256] = "streebog256",
+ 	[HASH_ALGO_STREEBOG_512] = "streebog512",
+ };
+@@ -50,7 +50,7 @@ const int hash_digest_size[HASH_ALGO__LAST] = {
+ 	[HASH_ALGO_TGR_128]	= TGR128_DIGEST_SIZE,
+ 	[HASH_ALGO_TGR_160]	= TGR160_DIGEST_SIZE,
+ 	[HASH_ALGO_TGR_192]	= TGR192_DIGEST_SIZE,
+-	[HASH_ALGO_SM3_256]	= SM3256_DIGEST_SIZE,
++	[HASH_ALGO_SM3]		= SM3_DIGEST_SIZE,
+ 	[HASH_ALGO_STREEBOG_256] = STREEBOG256_DIGEST_SIZE,
+ 	[HASH_ALGO_STREEBOG_512] = STREEBOG512_DIGEST_SIZE,
+ };
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index a25815a6f625..20f55de9d87b 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -19,7 +19,7 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+ 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+ 	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+-	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
++	{HASH_ALGO_SM3, TPM_ALG_SM3_256},
+ };
+ 
+ int tpm2_get_timeouts(struct tpm_chip *chip)
+diff --git a/include/crypto/hash_info.h b/include/crypto/hash_info.h
+index dd4f06785049..c1e6b2884732 100644
+--- a/include/crypto/hash_info.h
++++ b/include/crypto/hash_info.h
+@@ -32,7 +32,7 @@
+ #define TGR192_DIGEST_SIZE 24
+ 
+ /* not defined in include/crypto/ */
+-#define SM3256_DIGEST_SIZE 32
++#define SM3_DIGEST_SIZE 32
+ 
+ extern const char *const hash_algo_name[HASH_ALGO__LAST];
+ extern const int hash_digest_size[HASH_ALGO__LAST];
+diff --git a/include/uapi/linux/hash_info.h b/include/uapi/linux/hash_info.h
+index 74a8609fcb4d..3829279b2d37 100644
+--- a/include/uapi/linux/hash_info.h
++++ b/include/uapi/linux/hash_info.h
+@@ -32,7 +32,8 @@ enum hash_algo {
+ 	HASH_ALGO_TGR_128,
+ 	HASH_ALGO_TGR_160,
+ 	HASH_ALGO_TGR_192,
+-	HASH_ALGO_SM3_256,
++	HASH_ALGO_SM3,
++	HASH_ALGO_SM3_256 = HASH_ALGO_SM3,
+ 	HASH_ALGO_STREEBOG_256,
+ 	HASH_ALGO_STREEBOG_512,
+ 	HASH_ALGO__LAST
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 0165da386289..52a696035176 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -23,7 +23,7 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+ 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+ 	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+-	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
++	{HASH_ALGO_SM3, TPM_ALG_SM3_256},
+ };
+ 
+ static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
+-- 
+2.19.1.3.ge56e4f7
 
->
-> In the case of SCTP, I would expect things to behave similarly: the
-> sksec->peer_sid should match the packet label of the traffic which
-> acknowledged/accepted the new connection, e.g. the other end of the
-> connected socket.  You will have to forgive me some of the details,
-> it's been a while since I last looked at the SCTP bits, but I would
-> expect that if a client created a new connection and/or spun-off a new
-> socket the new socket's sksec->peer_sid would have the same property,
-> it would represent the security label of the other end of the
-> connection/association.
-In SCTP, a socket doesn't represent a peer connection, it's more an
-object binding some addresses and receiving incoming connecting
-request, then creates 'asoc' to represent the connection, so asoc->
-peer_secid represents the security label of the other end of the
-connection/association.
-
-After doing peel-off, it makes one asoc 'bind' to one new socket,
-and this socket is used for userspace to control this asoc (conection),
-so naturally we set sksec->peer_sid to asoc->secid for access control
-in socket. As for the 'parent' sk/ep, we can't use it to record
-peer_scid, as when there are multiple connections, the later one
-will overwrite the older one.
-
->
-> [1] Yes, there is setsockcreatecon(), but that isn't important for
-> this discussion.
->
-> >> > > > Fixes: 72e89f50084c ("security: Add support for SCTP security hooks")
-> >> > > > Reported-by: Prashanth Prahlad <pprahlad@redhat.com>
-> >> > > > Signed-off-by: Xin Long <lucien.xin@gmail.com>
-> >> > > > ---
-> >> > > >  security/selinux/hooks.c | 16 ++++++++++++++++
-> >> > > >  1 file changed, 16 insertions(+)
-> >> > > >
-> >> > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> >> > > > index f025fc00421b..793fdcbc68bd 100644
-> >> > > > --- a/security/selinux/hooks.c
-> >> > > > +++ b/security/selinux/hooks.c
-> >> > > > @@ -5525,6 +5525,21 @@ static void selinux_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk
-> >> > > >         selinux_netlbl_sctp_sk_clone(sk, newsk);
-> >> > > >  }
-> >> > > >
-> >> > > > +static void selinux_sctp_assoc_established(struct sctp_association *asoc,
-> >> > > > +                                          struct sk_buff *skb)
-> >> > > > +{
-> >> > > > +       struct sk_security_struct *sksec = asoc->base.sk->sk_security;
-> >> > > > +       u16 family = asoc->base.sk->sk_family;
-> >> > > > +
-> >> > > > +       /* handle mapped IPv4 packets arriving via IPv6 sockets */
-> >> > > > +       if (family == PF_INET6 && skb->protocol == htons(ETH_P_IP))
-> >> > > > +               family = PF_INET;
-> >> > > > +
-> >> > > > +       selinux_skb_peerlbl_sid(skb, family, &sksec->peer_sid);
-> >> > >
-> >> > > You could replace the above with
-> >> > > `selinux_inet_conn_established(asoc->base.sk, skb);` to reduce code
-> >> > > duplication.
-> >> > Hi Ondrej,
-> >> >
-> >> > will do, thanks!
-> >> >
-> >> > >
-> >> > > > +       asoc->secid = sksec->sid;
-> >> > > > +       asoc->peer_secid = sksec->peer_sid;
-> >> > > > +}
-> >> > > > +
-> >> > Now I'm thinking: 'peer_sid' should be correct here.
-> >> >
-> >> > BUT 'sid' is copied from its parent socket. Later when doing peel-off,
-> >> > asoc->secid will be set back to the peel-off socket's sksec->sid.
-> >>
-> >> Hi,
-> >>
-> >> I'm not sure I follow... When doing peel-off, security_sctp_sk_clone()
-> >> should be called, which sets the peel-off socket's sksec->sid to
-> >> asoc->secid, not the other way around. (Are we hitting the language
-> >> barrier here? :)
-> >
-> > Right, sorry.
-> >
-> > Set the peel-off socket's sksec->sid to asoc->secid, I meant :D
->
-> For the sake of clarity, let's scribble down some pseudo code to
-> discuss :)  Taking into account the feedback above, I arrived at the
-> code below (corrections are welcome if I misunderstood what you wanted
-> to convey) with my comments after:
->
->   static void selinux_sctp_assoc_established(asoc, skb)
->   {
->     struct sock *sk = asoc->base.sk;
->     struct sk_security_struct *sksec = sk->sk_security;
->
->     selinux_inet_conn_established(sk, skb);
->     asoc->secid = sksec->peer_sid;
->     asoc->peer_secid = sksec->peer_sid;
->   }
->
-> My only concern with the above code is the 'asoc->secid =
-> sksec->peer_sid' assignment.  As this particular association is a
-> client side association I would expect it to follow the normal
-> inherit-from-parent behavior as described above and not take the label
-> of remote peer, however I could be misunderstanding some of the SCTP
-selinux_sctp_assoc_established() is the first place to set
-sksec->peer_sid for this connection on client, so sksec->peer_sid
-is the 'parent' socket's peer_sid to this asoc.
-
-> specifics here.  My initial reaction is that we need to adjust the
-> LSM/SELinux hook as well as the call site in sctp_sf_do_5_1D_ce() to
-> pass both 'new_asoc' as well 'asoc' and set 'new_asoc->secid' to
-> 'asoc->secid' to better mirror the existing stream/TCP behavior on the
-> client side.
-Sorry, there's something about SCTP that I should've made clear:
-
-sctp_sf_do_5_1D_ce() is normally called when no existing asoc
-(in most cases) or the existing asoc's state is CLOSE.
-
-#define TYPE_SCTP_COOKIE_ECHO { \
-        /* SCTP_STATE_CLOSED */ \ <---- (also include asoc is NULL)
-        TYPE_SCTP_FUNC(sctp_sf_do_5_1D_ce), \
-
-and for the existing asoc case, SCTP doesn't use anything from it
-for the new asoc, but just ignores it. IF these are conflicts when
-inserting transports for the new asoc with the existing asoc,
-sctp_process_init() will handle it and return errors.
-
-Just note that the existing asoc is NOT the one created when
-processing INIT chunk, and that INIT one is a temporary asoc
-and is deleted right after finishing processing INIT.
-
-But if you mean the hooks in sctp_sf_do_5_2_4_dupcook()
-where it's processing a duplicate COOKIE_ECHO and copying
-things from the existing asoc, maybe it should do such things,
-we can make another thread for this corner case.
-
->
-> Does that make sense?  If not, what am I missing :)
->
-> --
-> paul moore
-> www.paul-moore.com
