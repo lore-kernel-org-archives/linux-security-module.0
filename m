@@ -2,266 +2,187 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AB2C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Oct 2021 19:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BEAC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Oct 2021 20:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CFA86103C
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Oct 2021 19:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EB1160F24
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Oct 2021 20:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238517AbhJZTG0 (ORCPT
+        id S239187AbhJZUcw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Oct 2021 15:06:26 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:56334 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238368AbhJZTGS (ORCPT
+        Tue, 26 Oct 2021 16:32:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54586 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239181AbhJZUcv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Oct 2021 15:06:18 -0400
-Received: from [10.137.106.139] (unknown [131.107.159.11])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2A6E420A5C29;
-        Tue, 26 Oct 2021 12:03:54 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2A6E420A5C29
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1635275034;
-        bh=CpfYk836igqDoUQTiFnJrqG9YNeYd0h2icXWecLV0bk=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-        b=ZViKJkN4UY9Yc0gS5sxY88yn6huX32kbojQl+7KSvjEx85E0KwloitsdVd9eoEpXS
-         zWvHYtdmjIG6hB3GObByUI5befjkF37YYQv8BValpdzLl1JIHoHL5qhTLJDtmJPgvn
-         5l2bhcRZr5SlvyzbetzAH5MD+qniA6iggwrPhtr4=
-Message-ID: <f027e3fa-2f70-0cdb-ac7b-255cee68edbb@linux.microsoft.com>
-Date:   Tue, 26 Oct 2021 12:03:53 -0700
+        Tue, 26 Oct 2021 16:32:51 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6B6C061745
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Oct 2021 13:30:27 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id s1so1455285edd.3
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Oct 2021 13:30:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QxDBfmjXP4YqwxsO+6iS7FY8iQGJLFVCJVXK+8EOsBg=;
+        b=RKFwvRvwD0sHEgLp5/JP2Pn/bmgSvqpkFt0UOxL7CSXOeehWPX/6PBaZ5st+hyD8CQ
+         YuJX4wga4jqjTh0ckLFk1zznRzP3zcIk55trAAWCIHVo5vrzNnXjsubCvSNd1scpo3jJ
+         klim90/2yWHehcKvdCTKyVNSbxyc2DzCmDWE8aPlX0YTZXO/vHDWHblkU/0gkKJgiRqf
+         lZ/Jip+7SB+ny/F4NL57MfbAl+lZvKtKnb66J5bpR+me02K2gS9G0/+J49YxAS0Ftmsj
+         CLlkxwKPV/PA5Qn2JIkrGvLI6WUYhIHWlLLzTSvUmcoawnSBy2mOpKIlNAaboGSHdrk+
+         YFxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QxDBfmjXP4YqwxsO+6iS7FY8iQGJLFVCJVXK+8EOsBg=;
+        b=kQXGlegV3t+620jEM8p/mUX8WpFJuFtyeL6D8XMDLyjyYWfRPVI+Vj2XmEsfkDLgYl
+         0Z1xF/SvbTrZrBtPF7mx81fjTmFcAV+o9vUPIdILAl+wxa7kz4YO710bzJp4Sf3bEGtO
+         I3+9Dp/glIxVwOVbvNralPHslnyVeCebyYtWN9qeBVcTqnG0yTXpV06GSj3ZygL6fLnS
+         5wcOGHNxNwohkqIwQ1vC9vz8hYOJ9v03hdjw196EOoHgu+4Y8GQAFuk2TGjfnLCTnIk2
+         lI83rzDNb/Olc2jg+apKt8gmd0l7pMjg40TDQvbcYiBGvF3BndlL8qSlBJvq+3/DxHrl
+         2BHg==
+X-Gm-Message-State: AOAM533B28Ok59PZ0qdZx3eI/97Vajiq6h7mdQgoLF+Bgw84ATPQeXPH
+        /v/1jQ31vXMhGtROcAR9Xez1tqKw0H5FCHcJ8O4I
+X-Google-Smtp-Source: ABdhPJyprHJsbis7NLS+TOyUm7gG4e8ssfPeoqPQw6DPFNzjiQmJ8qsFB3iOWeedSscDOBDWRoDKcJtiBcZ6xI93uR0=
+X-Received: by 2002:a05:6402:5112:: with SMTP id m18mr38150360edd.101.1635280225664;
+ Tue, 26 Oct 2021 13:30:25 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.1
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [RFC PATCH v7 12/16] fsverity|security: add security hooks to
- fsverity digest and signature
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     corbet@lwn.net, axboe@kernel.dk, agk@redhat.com,
-        snitzer@redhat.com, tytso@mit.edu, paul@paul-moore.com,
-        eparis@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        jannh@google.com, dm-devel@redhat.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-audit@redhat.com,
-        linux-security-module@vger.kernel.org
-References: <1634151995-16266-1-git-send-email-deven.desai@linux.microsoft.com>
- <1634151995-16266-13-git-send-email-deven.desai@linux.microsoft.com>
- <YWcyYBuNppjrVOe2@gmail.com>
- <9089bdb0-b28a-9fa0-c510-00fa275af621@linux.microsoft.com>
- <YWngaVdvMyWBlITZ@gmail.com>
-Content-Language: en-US
-In-Reply-To: <YWngaVdvMyWBlITZ@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1634884487.git.lucien.xin@gmail.com> <53026dedd66beeaf18a4570437c4e6c9e760bb90.1634884487.git.lucien.xin@gmail.com>
+ <CAFqZXNs89yGcoXumNwavLRQpYutfnLY-SM2qrHbvpjJxVtiniw@mail.gmail.com>
+ <CADvbK_djVKxjfRaLS0EZRY2mkzWXTMnwvbe-b7cK-T3BR8jzKQ@mail.gmail.com>
+ <CAFqZXNsnEwPcEXB-4O983bxGj5BfZVMB6sor7nZVkT-=uiZ2mw@mail.gmail.com>
+ <CADvbK_eE9VhB2cWzHSk_LNm_VemEt9vm=FMMVYzo5eVH=zEhKw@mail.gmail.com>
+ <CAHC9VhTfVmcLOG3NfgQ3Tjpe769XzPntG24fejzSCvnZt_XZ9A@mail.gmail.com> <CADvbK_dwLCOvS8YzFXcXoDF6F69_sc7voPbxn5Ov4ygBR_5FXw@mail.gmail.com>
+In-Reply-To: <CADvbK_dwLCOvS8YzFXcXoDF6F69_sc7voPbxn5Ov4ygBR_5FXw@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 26 Oct 2021 16:30:14 -0400
+Message-ID: <CAHC9VhREfztHQ8mqA_WM6NF=jKf0fTFTSRp_D5XhOVxckckwzw@mail.gmail.com>
+Subject: Re: [PATCH net 4/4] security: implement sctp_assoc_established hook
+ in selinux
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/15/2021 1:11 PM, Eric Biggers wrote:
-
-> On Fri, Oct 15, 2021 at 12:25:53PM -0700, Deven Bowers wrote:
->> On 10/13/2021 12:24 PM, Eric Biggers wrote:
->>> On Wed, Oct 13, 2021 at 12:06:31PM -0700,deven.desai@linux.microsoft.com  wrote:
->>>> From: Fan Wu<wufan@linux.microsoft.com>
->>>>
->>>> Add security_inode_setsecurity to fsverity signature verification.
->>>> This can let LSMs save the signature data and digest hashes provided
->>>> by fsverity.
->>> Can you elaborate on why LSMs need this information?
->> The proposed LSM (IPE) of this series will be the only one to need
->> this information at the  moment. IPE’s goal is to have provide
->> trust-based access control. Trust and Integrity are tied together,
->> as you cannot prove trust without proving integrity.
-> I think you mean authenticity, not integrity?
-I’ve heard a lot of people use these terms in overloaded ways.
-
-If we’re working with the definition of authenticity being
-“the property that a resource was _actually_ sent/created by a
-party”, and integrity being “the property that a resource was not
-modified from a point of time”, then yes. Though the statement isn’t
-false, though, because you’d need to prove integrity in the process of
-proving authenticity.
-
-If not, could you clarify what you mean by authenticity and integrity,
-so that we can use consistent definitions?
-> Also how does this differ from IMA?  I know that IMA doesn't support fs-verity
-> file hashes, but that could be changed.  Why not extend IMA to cover your use
-> case(s)?
-We looked at extending IMA to cover our requirements extensively the 
-past year
-based on feedback the last time I posted these patches. We implemented a
-prototype that had half of our requirements, but found it resulted in a
-large change list that would result in a large amount of pain in respect
-to maintenance, in addition to other more architectural concerns about the
-implementation. We weren’t convinced it was the correct direction, for our
-needs.
-
-There was a presentation done at LSS 2021 around this prototype done by my
-colleague, Fan, who authored this patch and implemented the aforementioned
-prototype.
-
-In general, IMA provides a whole suite of amazing functionality when it
-comes to everything integrity, as the fs-verity documentation states
-itself:
-
-    IMA specifies a system-wide policy that specifies which
-    files are hashed and what to do with those hashes, such
-    as log them, authenticate them, or add them to a
-    measurement list.
-
-Instead, IPE provides a fine-tuned way to _only_ enforce an access control
-policy to these files based on the defined trust requirements in the policy,
-under various contexts, (you might have different requirements for what
-executes in a general purpose, versus loadable kernel modules, for example).
-It will never provide bother to log, measure, or revalidate these hashes 
-because
-that’s not its purpose. This is why it belongs at the LSM layer instead 
-of the
-integrity subsystem layer, as it is providing access control based on a 
-policy,
-versus providing deep integrations with the actual integrity claim.
-
-IPE is trying to be agnostic to how precisely “trust” is provided, as
-opposed to be deeply integrated into the mechanism that provides
-“trust”.
->> IPE needs the digest information to be able to compare a digest
->> provided by the policy author, against the digest calculated by
->> fsverity to make a decision on whether that specific file, represented
->> by the digest is authorized for the actions specified in the policy.
->>
->> A more concrete example, if an IPE policy author writes:
->>
->>      op=EXECUTE fsverity_digest=<HexDigest > action=DENY
->>
->> IPE takes the digest provided by this security hook, stores it
->> in IPE's security blob on the inode. If this file is later
->> executed, IPE compares the digest stored in the LSM blob,
->> provided by this hook, against <HexDigest> in the policy, if
->> it matches, it denies the access, performing a revocation
->> of that file.
-> Do you have a better example?  This one is pretty useless since one can get
-> around it just by executing a file that doesn't have fs-verity enabled.
-Here’s a more complete example:
-
-    policy_name=”fs-exec-only” policy_version=0.0.1
-    DEFAULT action=ALLOW
-
-    DEFAULT op=EXECUTE action=DENY
-    op=EXECUTE fsverity_digest=<Digest> action=DENY
-    op=EXECUTE fsverity_signature=TRUE action=ALLOW
-
-Execution is prohibited unless it is a signed fs-verity file;
-However, after one of those executables was signed and published,
-an exploitable vulnerability in said executable was found, a new
-version was published without that vulnerability. We need to
-revoke trust for that executable since it could be used to exploit
-the system, so the first rule prevents it from matching the second.
->> This brings me to your next comment:
->>
->>> The digest isn't meaningful without knowing the hash algorithm it uses.
->> It's available here, but you aren't passing it to this function.
->>
->> The digest is meaningful without the algorithm in this case.
-> No, it's not.
+On Tue, Oct 26, 2021 at 12:47 AM Xin Long <lucien.xin@gmail.com> wrote:
+> On Tue, Oct 26, 2021 at 5:51 AM Paul Moore <paul@paul-moore.com> wrote:
+> > On Mon, Oct 25, 2021 at 10:11 AM Xin Long <lucien.xin@gmail.com> wrote:
+> > > On Mon, Oct 25, 2021 at 8:08 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > >> On Mon, Oct 25, 2021 at 12:51 PM Xin Long <lucien.xin@gmail.com> wrote:
+> > >> > On Mon, Oct 25, 2021 at 4:17 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > >> > > On Fri, Oct 22, 2021 at 8:36 AM Xin Long <lucien.xin@gmail.com> wrote:
+> > >> > > > Different from selinux_inet_conn_established(), it also gives the
+> > >> > > > secid to asoc->peer_secid in selinux_sctp_assoc_established(),
+> > >> > > > as one UDP-type socket may have more than one asocs.
+> > >> > > >
+> > >> > > > Note that peer_secid in asoc will save the peer secid for this
+> > >> > > > asoc connection, and peer_sid in sksec will just keep the peer
+> > >> > > > secid for the latest connection. So the right use should be do
+> > >> > > > peeloff for UDP-type socket if there will be multiple asocs in
+> > >> > > > one socket, so that the peeloff socket has the right label for
+> > >> > > > its asoc.
+> > >> > >
+> > >> > > Hm... this sounds like something we should also try to fix (if
+> > >> > > possible). In access control we can't trust userspace to do the right
+> > >> > > thing - receiving from multiple peers on one SOCK_SEQPACKET socket
+> > >> > > shouldn't cause checking against the wrong peer_sid. But that can be
+> > >> > > addressed separately. (And maybe it's even already accounted for
+> > >> > > somehow - I didn't yet look at the code closely.)
+> >
+> > There are a couple of things we need to worry about here: the
+> > per-packet access controls (e.g. can this packet be received by this
+> > socket?) and the userspace peer label queries (e.g. SO_GETPEERSEC and
+> > IP_CMSG_PASSSEC).
+> >
+> > The per-packet access controls work by checking the individual
+> > packet's security label against the corresponding sock label on the
+> > system (sk->sk_security->sid).  Because of this it is important that
+> > the sock's label is correct.  For unconnected sockets this is fairly
+> > straightforward as it follows the usual inherit-from-parent[1]
+> > behavior we see in other areas of SELinux.  For connected stream
+> > sockets this can be a bit more complicated.  However, since we are
+> > only discussing the client side things aren't too bad with the
+> > behavior essentially the same, inherit-from-parent, with the only
+> > interesting piece worth noting being the sksec->peer_sid
+> > (sk->sk_security->peer_sid) that we record from the packet passed to
+> > the LSM/SELinux hook (using selinux_skb_peerlbl_sid()).  The
+> > sksec->peer_sid is recorded primarily so that the kernel can correctly
+> > respond to SO_GETPEERSEC requests from userspace; it shouldn't be used
+> > in any access control decisions.
 >
-> Digests are meaningless without knowing what algorithm they were created with.
+> Hi, Paul
 >
-> If your security policy is something like "Trust the file with digest $foo" and
-> multiple hash algorithms are possible, then the alorithm intended to be used
-> needs to be explicitly specified.  Otherwise any algorithm with the same length
-> digest will be accepted.  That's a fatal flaw if any of these algorithms is
-> cryptographically broken or was never intended to be a cryptographic algorithm
-> in the first place (e.g., a non-cryptographic checksum).
+> Understand now, the issue reported seems caused by when
+> doing peel-off the peel-off socket gets the uninitialised sid
+> from 'ep' on the client, though it should be "asoc".
+
+Hi Xin Long,
+
+Yes, that is my understanding.  I got the impression from the thread
+that there was some confusion about the different labels and what they
+were used for in SELinux, I was trying to provide some background in
+the text above.  If you are already familiar with how things should
+work you can disregard it :)
+
+> > In the case of SCTP, I would expect things to behave similarly: the
+> > sksec->peer_sid should match the packet label of the traffic which
+> > acknowledged/accepted the new connection, e.g. the other end of the
+> > connected socket.  You will have to forgive me some of the details,
+> > it's been a while since I last looked at the SCTP bits, but I would
+> > expect that if a client created a new connection and/or spun-off a new
+> > socket the new socket's sksec->peer_sid would have the same property,
+> > it would represent the security label of the other end of the
+> > connection/association.
 >
-> Cryptosystems always need to specify the crypto algorithm(s) used; the adversary
-> must not be allowed to choose the algorithms.
-Oof. You’re completely right. The part I was missing is that as time 
-goes on,
-the secure status of these cryptographic algorithms will change, and 
-then we’ll
-need a way to migrate between algorithms. Additionally, tooling and the 
-like will
-likely need a way to identify this from the policy text without 
-consulting anything
-else. This is a major oversight for general use, the system that this 
-was originally
-designed for only had support for a subset of the sha2-family (all 
-separate lengths)
-so I hadn’t even considered it.
+> In SCTP, a socket doesn't represent a peer connection, it's more an
+> object binding some addresses and receiving incoming connecting
+> request, then creates 'asoc' to represent the connection, so asoc->
+> peer_secid represents the security label of the other end of the
+> connection/association.
 
-It's trivial to correct in a minimal amount of code, making the policy 
-express the
-digest like so:
+As mentioned previously the asoc->peer_secid *should* be the security
+label of the remote end, so I think we are okay here.  My concern
+remains the asoc->secid label as I don't believe it is being set to
+the correct value (more on that below).
 
-    fsverity_digest=<algo>:<digest>
+> After doing peel-off, it makes one asoc 'bind' to one new socket,
+> and this socket is used for userspace to control this asoc (conection),
+> so naturally we set sksec->peer_sid to asoc->secid for access control
+> in socket.
 
-and change the argument passed to the LSM hook to accept a structure 
-containing these
-two fields.
+The sksec->peer_sid represents the security label of the remote end so
+it should be set to the asoc->peer_secid and *not* the asoc->secid
+value.  Yes, they are presently the same value in your patches, but I
+believe that is a mistake; I believe the asoc->secid value should be
+set to that of the parent (see the prior inherit-from-parent
+discussion) which in this case would likely be either the parent
+association or the client process, I'm not entirely clear on which is
+correct in the SCTP case.  The initial SCTP client association would
+need to take it's label from the parent process so perhaps that is the
+right answer for all SCTP client associations[2].
 
-> I'm not sure how these patches can be taken seriously when they're getting this
-> sort of thing wrong.
-That said, I, personally, hope that an honest mistake, in a series 
-submitted as
-an RFC submitted in good faith, is not a reason to discount an entire patch
-series.
+[1] I would expect server side associations to follow the more
+complicated selinux_conn_sid() labeling, just as we do for TCP/stream
+connections today.
 
-I hope you continue to provide feedback, as it is invaluable to making this
-system better, and making me, personally, a better developer.
->>>> +					FS_VERITY_SIGNATURE_SEC_NAME,
->>>> +					signature, sig_size, 0);
->>> This is only for fs-verity built-in signatures which aren't the only way to do
->>> signatures with fs-verity.  Are you sure this is what you're looking for?
->> Could you elaborate on the other signature types that can be used
->> with fs-verity? I’m 99% sure this is what I’m looking for as this
->> is a signature validated in the kernel against the fs-verity keyring
->> as part of the “fsverity enable” utility.
->>
->> It's important that the signature is validated in the kernel, as
->> userspace is considered untrusted until the signature is validated
->> for this case.
->>
->>> Can you elaborate on your use case for fs-verity built-in signatures,
->> Sure, signatures, like digests, also provide a way to prove integrity,
->> and the trust component comes from the validation against the keyring,
->> as opposed to a fixed value in IPE’s policy. The use case for fs-verity
->> built-in signatures is that we have a rw ext4 filesystem that has some
->> executable files, and we want to have a execution policy (through IPE)
->> that only _trusted_ executables can run. Perf is important here, hence
->> fs-verity.
-> Most users of fs-verity built-in signatures have actually been enforcing their
-> security policy in userspace, by checking whether specific files have the
-> fs-verity bit set or not.  Such users could just store and verify signatures in
-> userspace instead, without any kernel involvement.  So that's what I've been
-> recommending (with limited success, unfortunately).
-I believe the difference in security models comes from this line
-(emphasis, mine):
+[2] I'm guessing the client associations might also want to follow the
+setsockcreatecon(3) behavior, see selinux_sockcreate_sid() for more
+info.
 
- > by checking whether _specific files_ have the fs-verity bit set or not.
-
-IPE policy is written by a system author who owns the system, but may
-not have 100% control over all of the application code running on the
-system.  In the case of applications which are not aware of IPE, the policy
-can still enforce that all of the code running on the system is trusted.
-
-An example attack of what we're trying to mitigate:  A hostile actor
-could downloads a binary off the internet with all required
-dependencies into tmpfs and runs their malicious executable.
-
-With us validating this information in the kernel, even if the attacker
-downloaded their malicious executable to /tmp and executed it, it would
-still fail to pass policy and be denied, as the kernel is the common
-entrypoint across all executables.
-
-Operationally, this _could_ be done by digest, but the policies would
-quickly become gigantic on a cartoonish proportion, as you'll have to
-authorize every single executable and dependency by digest - and
-there would be a complicated update story as the policy would have to
-be updated to onboard new digests.
-
-By using signatures, we can prevent the policy update, and keep the
-policy size small.
-
-> If you really do need in-kernel signature verification, then that may be a
-> legitimate use case for the fs-verity built-in signatures, although I do wonder
-> why you aren't using IMA and its signature mechanism instead.
->
-> - Eric
+-- 
+paul moore
+www.paul-moore.com
