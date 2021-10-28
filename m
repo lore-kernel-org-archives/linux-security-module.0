@@ -2,131 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BEDC43219
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Oct 2021 13:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BB3C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Oct 2021 18:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 631E160F56
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Oct 2021 13:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5F08610E7
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Oct 2021 18:11:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230299AbhJ1NKu (ORCPT
+        id S230478AbhJ1SNo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Oct 2021 09:10:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59274 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229603AbhJ1NKt (ORCPT
+        Thu, 28 Oct 2021 14:13:44 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:47562 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230435AbhJ1SNn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Oct 2021 09:10:49 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19SCnGYv016294;
-        Thu, 28 Oct 2021 13:08:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : reply-to : to : cc : date : in-reply-to : references : content-type
- : content-transfer-encoding : mime-version; s=pp1;
- bh=8fiPYKyw0EhWbEal4tnK6baVTfmvbJ8ImkJJsxDI9cM=;
- b=W8DVNNVEqayOpJIMfqMvblEkGSgR3F9Bg8XTzVObqD/Bdjgxn7H/I+MFqCROVRWtayZ/
- iM90MsGJlPf+JhYpQlB04dyDsz9+Oefjc1L8vtmqdI0ld+v7Y7AP/4okzJvyCjj0s707
- AONemM+DNsD3rBdhE+uOc16Bk5qenX4tS3XsKwYwjopXf4tRHFiJY2OiQ2mLOdpClf31
- b2JvOneB3BE3TVbRKhWsSHNVhV46Jq2tHcBhQPlELIO3yO3Tn1zsF0tz3g9xks5pLCSB
- jMbmDfCLMWUHm4zAVxE0M1683kIkgDxY7K2JL4Yq7kiTUjXv4v3/0sfivlze8MZHTvzb Og== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3byv6r0ebr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Oct 2021 13:08:11 +0000
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 19SCnaA6016537;
-        Thu, 28 Oct 2021 13:08:11 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3byv6r0eb1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Oct 2021 13:08:10 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19SCvNEW020620;
-        Thu, 28 Oct 2021 13:08:09 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma03dal.us.ibm.com with ESMTP id 3bx4fn598y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Oct 2021 13:08:09 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19SD88Pd24183174
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Oct 2021 13:08:08 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 88DC378240;
-        Thu, 28 Oct 2021 13:08:07 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3233D7807C;
-        Thu, 28 Oct 2021 13:07:46 +0000 (GMT)
-Received: from jarvis.int.hansenpartnership.com (unknown [9.163.12.226])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 28 Oct 2021 13:07:45 +0000 (GMT)
-Message-ID: <ff3d1d11291b7e115317b06503f0ec52949122ca.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 0/2] use SM3 instead of SM3_256
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     Ard Biesheuvel <ardb@kernel.org>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Date:   Thu, 28 Oct 2021 09:07:43 -0400
-In-Reply-To: <CAMj1kXGiC-LCc-50cfddJxJ-mezO=fcLqhJHiK110CgxKusy9w@mail.gmail.com>
-References: <20211026075626.61975-1-tianjia.zhang@linux.alibaba.com>
-         <CAMj1kXGiC-LCc-50cfddJxJ-mezO=fcLqhJHiK110CgxKusy9w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: KOLHtfetbXM2M_5ECkPDVsAXdzorivCz
-X-Proofpoint-GUID: ThYkNwItNh-c7SaFT-nOwuL1brdOArJ_
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 28 Oct 2021 14:13:43 -0400
+Received: from [10.137.106.139] (unknown [131.107.159.11])
+        by linux.microsoft.com (Postfix) with ESMTPSA id A2C8B209F33F;
+        Thu, 28 Oct 2021 11:11:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A2C8B209F33F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1635444675;
+        bh=xaWJlPOkgwmSC4Z42bn0ksBEBLLvZTO2Sn6BQavTIXo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=dDNeeyMjx4g/tOoo4kJSDD/tgC63NmK5mmzKrPpNd382Z9+2QjW8Wa6rQwM4sdcvw
+         531P0qZXyZDSmmRmcXSG2JPJ3jsx+kPTha80B2J4xzECdL9HF/RUMZKv9GBd2gjNq0
+         XoPOT+KetImd5KipF13ipc3zU3OfsWUMxl99upBA=
+Message-ID: <9b2695ac-f6db-ac75-5451-4ea9667ce04f@linux.microsoft.com>
+Date:   Thu, 28 Oct 2021 11:11:15 -0700
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-10-28_01,2021-10-26_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxscore=0 suspectscore=0 clxscore=1015
- phishscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2110280073
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.1
+Subject: Re: [RFC PATCH v7 12/16] fsverity|security: add security hooks to
+ fsverity digest and signature
+Content-Language: en-US
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     corbet@lwn.net, axboe@kernel.dk, agk@redhat.com,
+        snitzer@redhat.com, tytso@mit.edu, paul@paul-moore.com,
+        eparis@redhat.com, jmorris@namei.org, serge@hallyn.com,
+        jannh@google.com, dm-devel@redhat.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-audit@redhat.com,
+        linux-security-module@vger.kernel.org
+References: <1634151995-16266-1-git-send-email-deven.desai@linux.microsoft.com>
+ <1634151995-16266-13-git-send-email-deven.desai@linux.microsoft.com>
+ <YWcyYBuNppjrVOe2@gmail.com>
+ <9089bdb0-b28a-9fa0-c510-00fa275af621@linux.microsoft.com>
+ <YWngaVdvMyWBlITZ@gmail.com>
+ <f027e3fa-2f70-0cdb-ac7b-255cee68edbb@linux.microsoft.com>
+ <YXodhzYto5BRxqYO@sol.localdomain>
+From:   Deven Bowers <deven.desai@linux.microsoft.com>
+In-Reply-To: <YXodhzYto5BRxqYO@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2021-10-26 at 18:08 +0200, Ard Biesheuvel wrote:
-> On Tue, 26 Oct 2021 at 09:56, Tianjia Zhang
-> <tianjia.zhang@linux.alibaba.com> wrote:
-> > According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html
-> > ,
-> > SM3 always produces a 256-bit hash value and there are no plans for
-> > other length development, so there is no ambiguity in the name of
-> > sm3.
-> > 
-> 
-> What is the point of these changes? Having '256' in the identifiers
-> is merely redundant and not factually incorrect, so why can't we just
-> leave these as they are?
 
-Me too on this.  Plus the various standards bodies we follow are still
-using the 256 suffix and it's not clear they'll change.
-
-Finally, I'm not sure, given the confusion over sha256 and sha3-256,
-that the IETF won't eventually decide that all hash algorithms should
-be designated by <algorithm>-<bitlength> in which case this will get
-churned again ...
-
-James
-
-
+On 10/27/2021 8:48 PM, Eric Biggers wrote:
+> On Tue, Oct 26, 2021 at 12:03:53PM -0700, Deven Bowers wrote:
+>>>> The proposed LSM (IPE) of this series will be the only one to need
+>>>> this information at the  moment. IPE’s goal is to have provide
+>>>> trust-based access control. Trust and Integrity are tied together,
+>>>> as you cannot prove trust without proving integrity.
+>>> I think you mean authenticity, not integrity?
+>> I’ve heard a lot of people use these terms in overloaded ways.
+>>
+>> If we’re working with the definition of authenticity being
+>> “the property that a resource was _actually_ sent/created by a
+>> party”, and integrity being “the property that a resource was not
+>> modified from a point of time”, then yes. Though the statement isn’t
+>> false, though, because you’d need to prove integrity in the process of
+>> proving authenticity.
+>>
+>> If not, could you clarify what you mean by authenticity and integrity,
+>> so that we can use consistent definitions?
+> In cryptography, integrity normally means knowing whether data has been
+> non-maliciously changed, while authenticity means knowing whether data is from a
+> particular source, which implies knowing whether it has been changed at all
+> (whether maliciously or not).  Consider that there are "Message Authentication
+> Codes" (MACs) and "Authenticated Encryption", not "Message Integrity Codes" and
+> "Intact Encryption".
+>
+> Unfortunately lots of people do overload "integrity" to mean authenticity, so
+> you're not alone.  But it's confusing, so if you're going to do that then please
+> make sure to clearly explain what you mean.
+>
+>>> Also how does this differ from IMA?  I know that IMA doesn't support fs-verity
+>>> file hashes, but that could be changed.  Why not extend IMA to cover your use
+>>> case(s)?
+>> We looked at extending IMA to cover our requirements extensively the past
+>> year
+>> based on feedback the last time I posted these patches. We implemented a
+>> prototype that had half of our requirements, but found it resulted in a
+>> large change list that would result in a large amount of pain in respect
+>> to maintenance, in addition to other more architectural concerns about the
+>> implementation. We weren’t convinced it was the correct direction, for our
+>> needs.
+>>
+>> There was a presentation done at LSS 2021 around this prototype done by my
+>> colleague, Fan, who authored this patch and implemented the aforementioned
+>> prototype.
+>>
+>> In general, IMA provides a whole suite of amazing functionality when it
+>> comes to everything integrity, as the fs-verity documentation states
+>> itself:
+>>
+>>     IMA specifies a system-wide policy that specifies which
+>>     files are hashed and what to do with those hashes, such
+>>     as log them, authenticate them, or add them to a
+>>     measurement list.
+>>
+>> Instead, IPE provides a fine-tuned way to _only_ enforce an access control
+>> policy to these files based on the defined trust requirements in the policy,
+>> under various contexts, (you might have different requirements for what
+>> executes in a general purpose, versus loadable kernel modules, for example).
+>> It will never provide bother to log, measure, or revalidate these hashes
+>> because
+>> that’s not its purpose. This is why it belongs at the LSM layer instead of
+>> the
+>> integrity subsystem layer, as it is providing access control based on a
+>> policy,
+>> versus providing deep integrations with the actual integrity claim.
+>>
+>> IPE is trying to be agnostic to how precisely “trust” is provided, as
+>> opposed to be deeply integrated into the mechanism that provides
+>> “trust”.
+> IMA doesn't require logging or "measuring" hashes, though.  Those are just some
+> of its supported features.  And I thought the IMA developers were planning to
+> add support for fs-verity hashes, and that it wouldn't require an entirely new
+> architecture to do so.
+>
+> Anyway, while it does sound to me like you're duplicating IMA, I don't really
+> have a horse in this race, and I defer to the IMA developers on this.  I trust
+> that you've been engaging with them?  This patchset isn't even Cc'ed to
+> linux-integrity, so it's unclear that's been happening.
+That was entirely my mistake. Mimi and the linux-integrity list was CC'd 
+on previous
+versions (Roberto actually added the list to his responses) - when I was 
+reconstructing
+the To: line with get-maintainers.pl, the list didn't pop up and I did 
+not remember to
+add it manually. I've corrected my mailing script to re-add them again.
