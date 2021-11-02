@@ -2,136 +2,166 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C11ECC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Nov 2021 19:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E86C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Nov 2021 19:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A83C760EB4
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Nov 2021 19:09:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BF1360F58
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Nov 2021 19:45:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbhKBTLq (ORCPT
+        id S230348AbhKBTrn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Nov 2021 15:11:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:60769 "EHLO
+        Tue, 2 Nov 2021 15:47:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23356 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229530AbhKBTLp (ORCPT
+        by vger.kernel.org with ESMTP id S230413AbhKBTrm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Nov 2021 15:11:45 -0400
+        Tue, 2 Nov 2021 15:47:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635880150;
+        s=mimecast20190719; t=1635882306;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=doMZ0eRqCZW9lV+d3+3sJlDFNI0EgereCdR+DU6HYmI=;
-        b=OJxb+WcKYV/TBvudbEN5D7nxQyoFWOx5w9L9zaENZUfYZ81QjjbMPrDG0vqpW459Fdqo1N
-        cCfaV0eNH+9tuwR+ECgPUpMoO8BSJsUyKL6O2UqJ+/aAZexEyWGSf/6XiqVonhpKc+NAaY
-        0MbnBcP2+gf3h/woW2ZR3iOKq+BXjXg=
+        bh=PQ8nOSDyThuDlZIiMZiN+QTPFuYT+d2aZ2ikFkCkMcE=;
+        b=Qbl0jfWtiCEk76R0WzU1VJ9Ru1fDMrbe8xTORoVPpcRVE0itskxCIMfHnP3GfI6Fb0IK7K
+        zHdTpACZvN8VtXGlB8ucVItcgPuxbXjtE0FP8she3QM6uzt0/sh56uwQgbxschYKr3m5Y0
+        lFzdSmGhqsHepDLjum9ilxIPYNzCZAo=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-550-7JjlXjHFMDmnbPjb_To_yQ-1; Tue, 02 Nov 2021 15:09:05 -0400
-X-MC-Unique: 7JjlXjHFMDmnbPjb_To_yQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-560-y6Rqj8xoM72y-c7aEUSFdA-1; Tue, 02 Nov 2021 15:45:03 -0400
+X-MC-Unique: y6Rqj8xoM72y-c7aEUSFdA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BC308106B7D9;
-        Tue,  2 Nov 2021 19:09:03 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.9.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A62A57CD2;
-        Tue,  2 Nov 2021 19:09:03 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 0D03F222F94; Tue,  2 Nov 2021 15:09:03 -0400 (EDT)
-Date:   Tue, 2 Nov 2021 15:09:02 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Subject: Re: [PATCH v2 2/2] fuse: Send security context of inode on file
- creation
-Message-ID: <YYGMzi2EJwIX4cIn@redhat.com>
-References: <20211012180624.447474-1-vgoyal@redhat.com>
- <20211012180624.447474-3-vgoyal@redhat.com>
- <CAJfpegs-EHBjjnsVQdPWfH=idVENj9Aw0e-L4tjcgx3v38NJtg@mail.gmail.com>
- <YYFZl3egeX88G3FQ@redhat.com>
- <CAJfpeguMLE1rgpuP7gWWNcip6R+cgp-BdDfdQGtV=TouOVEn4A@mail.gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 958001808320;
+        Tue,  2 Nov 2021 19:45:00 +0000 (UTC)
+Received: from x2.localnet (unknown [10.22.9.231])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 20627226E9;
+        Tue,  2 Nov 2021 19:44:31 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     corbet@lwn.net, axboe@kernel.dk, agk@redhat.com,
+        snitzer@redhat.com, ebiggers@kernel.org, tytso@mit.edu,
+        paul@paul-moore.com, eparis@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, linux-audit@redhat.com,
+        Deven Bowers <deven.desai@linux.microsoft.com>
+Cc:     linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        jannh@google.com, linux-fscrypt@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com
+Subject: Re: [RFC PATCH v7 07/16] ipe: add auditing support
+Date:   Tue, 02 Nov 2021 15:44:30 -0400
+Message-ID: <1898302.usQuhbGJ8B@x2>
+Organization: Red Hat
+In-Reply-To: <8802b1ff-3028-642a-22c5-bc4896450a60@linux.microsoft.com>
+References: <1634151995-16266-1-git-send-email-deven.desai@linux.microsoft.com> <2159283.iZASKD2KPV@x2> <8802b1ff-3028-642a-22c5-bc4896450a60@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpeguMLE1rgpuP7gWWNcip6R+cgp-BdDfdQGtV=TouOVEn4A@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 02, 2021 at 04:38:06PM +0100, Miklos Szeredi wrote:
-> On Tue, 2 Nov 2021 at 16:30, Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Tue, Nov 02, 2021 at 03:00:30PM +0100, Miklos Szeredi wrote:
-> > > On Tue, 12 Oct 2021 at 20:06, Vivek Goyal <vgoyal@redhat.com> wrote:
-> 
-> > > > @@ -633,7 +713,29 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
-> > > >         args->out_numargs = 1;
-> > > >         args->out_args[0].size = sizeof(outarg);
-> > > >         args->out_args[0].value = &outarg;
-> > > > +
-> > > > +       if (init_security) {
-> > >
-> >
-> > Hi Miklos,
-> >
-> > > Instead of a new arg to create_new_entry(), this could check
-> > > args.opcode != FUSE_LINK.
-> >
-> > Will do.
-> >
-> > >
-> > > > +               unsigned short idx = args->in_numargs;
-> > > > +
-> > > > +               if ((size_t)idx >= ARRAY_SIZE(args->in_args)) {
-> > > > +                       err = -ENOMEM;
-> > > > +                       goto out_put_forget_req;
-> > > > +               }
-> > > > +
-> > > > +               err = get_security_context(entry, mode, &security_ctx,
-> > > > +                                          &security_ctxlen);
-> > > > +               if (err)
-> > > > +                       goto out_put_forget_req;
-> > > > +
-> > > > +               if (security_ctxlen > 0) {
-> > >
-> > > This doesn't seem right.  How would the server know if this is arg is missing?
-> > >
-> > > I think if FUSE_SECURITY_CTX was negotiated, then the secctx header
-> > > will always need to be added to the MK* requests.
-> >
-> > Even for the case of FUSE_LINK request? I think I put this check because
-> > FUSE_LINK is not sending secctx header. Other requests are appending
-> > this header even if a security module is not loaded/enabled.
-> 
-> No, FUSE_LINK wouldn't even get this far.
+Hello,
 
-You are right. My bad. So looks like this check will always be true
-given the current code. get_security_context() will either all
-headers with security context or just return zeroed "struct fuse_secctxs",
-indicating there are no security context. 
+On Friday, October 15, 2021 3:25:47 PM EDT Deven Bowers wrote:
+> On 10/13/2021 1:02 PM, Steve Grubb wrote:
+> > On Wednesday, October 13, 2021 3:06:26 PM EDT
+> > deven.desai@linux.microsoft.com>=20
+> > wrote:
+> >> Users of IPE require a way to identify when and why an operation fails,
+> >> allowing them to both respond to violations of policy and be notified
+> >> of potentially malicious actions on their systens with respect to IPE
+> >> itself.
+> >=20
+> > Would you mind sending examples of audit events so that we can see what
+> > the end result is? Some people add them to the commit text. But we still
+> > need to see what they look like.
+>=20
+> Sure, sorry. I=E2=80=99ll add them to the commit description (and the doc=
+umentation
+> patch at the end) for v8 =E2=80=93 In the interest of asynchronous feedba=
+ck, I=E2=80=99ve
+> copied the relevant examples:
 
-If that's the case, I should be able to get rid of this check. I will
-do some more testing.
+Thanks for sending these. This helps.
 
-> 
-> > I guess it makes more sense to add secctx header even for FUSE_LINK
-> > request. Just that header will mention 0 security contexts are
-> > following. This will interface more uniform. I will make this change.
-> 
-> Why? FUSE_LINK is not an inode creation op, it just shares the
-> instantiation part with creation.
+=20
+> AUDIT1420 IPE ctx_pid=3D229 ctx_op=3DEXECUTE ctx_hook=3DMMAP ctx_enforce=
+=3D0
+> ctx_comm=3D"grep" ctx_pathname=3D"/usr/lib/libc-2.23.so"
+> ctx_ino=3D532 ctx_dev=3Dvda rule=3D"DEFAULT op=3DEXECUTE action=3DDENY"
 
-Ok, got it. Makes sense. So no sending of zeroed security context header
-with FUSE_LINK.
+Question...why do all of these have a ctx_  prefix? Is it possible to trigg=
+er=20
+an audit context so that the audit machinery collects all of this stuff in=
+=20
+it's own way? Which means you could drop everything execept op, hook,=20
+enforce, rule, and action.
 
-Vivek
+We also have a field dictionary here:
+https://github.com/linux-audit/audit-documentation/blob/main/specs/fields/
+field-dictionary.csv
+
+which names the known fields and how they should be formatted. If there is =
+a=20
+collision where they are something else and cannot be in the same format,=20
+then we make a new name and hopefully update the dictionary. For example, i=
+f=20
+you are collecting a process id, use pid and not ctx_pid so that it matches=
+ a=20
+known definition.
+
+Also, I don't thnk these events can stand on their own. Who did this action=
+?=20
+You have the pid, but no uid, auid, or session_id.
+
+Hope this helps...
+
+=2DSteve
+
+=20
+> AUDIT1420 IPE ctx_pid=3D229 ctx_op=3DEXECUTE ctx_hook=3DMMAP ctx_enforce=
+=3D0
+> ctx_comm=3D"grep" ctx_pathname=3D"/usr/lib/libc-2.23.so"
+> ctx_ino=3D532 ctx_dev=3Dvda rule=3D"DEFAULT action=3DDENY"
+>=20
+> AUDIT1420 IPE ctx_pid=3D253 ctx_op=3DEXECUTE ctx_hook=3DMMAP ctx_enforce=
+=3D1
+> ctx_comm=3D"anon" rule=3D"DEFAULT op=3DEXECUTE action=3DDENY"
+>=20
+> These three audit records represent various types of results after
+> evaluating
+> the trust of a resource. The first two differ in the rule that was
+> matched in
+> IPE's policy, the first being an operation-specific default, the second
+> being
+> a global default. The third is an example of what is audited when anonymo=
+us
+> memory is blocked (as there is no way to verify the trust of an anonymous
+> page).
+>=20
+> The remaining three events, AUDIT_TRUST_POLICY_LOAD (1421),
+> AUDIT_TRUST_POLICY_ACTIVATE (1422), and AUDIT_TRUST_STATUS (1423) have th=
+is
+> form:
+>=20
+> AUDIT1421 IPE policy_name=3D"my-policy" policy_version=3D0.0.0
+> <hash_alg_name>=3D<hash>
+> AUDIT1422 IPE policy_name=3D"my-policy" policy_version=3D0.0.0
+> <hash_alg_name>=3D<hash>
+> AUDIT1423 IPE enforce=3D1
+>=20
+> The 1421 (AUDIT_TRUST_POLICY_LOAD) event represents a new policy was load=
+ed
+> into the kernel, but not is not marked as the policy to enforce. The
+>=20
+> The 1422 (AUDIT_TRUST_POLICY_ACTIVATE) event represents a policy that was
+> already loaded was made the enforcing policy.
+>=20
+> The 1423 (AUDIT_TRUST_STATUS) event represents a switch between
+> permissive and
+> enforce, it is added in 08/16 (the following patch)
+
+
+
 
