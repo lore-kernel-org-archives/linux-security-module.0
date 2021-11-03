@@ -2,63 +2,63 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B646C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 07:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C7BC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 07:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD88E60EB4
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 07:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41CB661166
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 07:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231960AbhKCHRN (ORCPT
+        id S231985AbhKCHeO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Nov 2021 03:17:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43354 "EHLO
+        Wed, 3 Nov 2021 03:34:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230152AbhKCHRN (ORCPT
+        with ESMTP id S232033AbhKCHeM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Nov 2021 03:17:13 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E52C061714;
-        Wed,  3 Nov 2021 00:14:32 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id om14so658290pjb.5;
-        Wed, 03 Nov 2021 00:14:32 -0700 (PDT)
+        Wed, 3 Nov 2021 03:34:12 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D449C061714;
+        Wed,  3 Nov 2021 00:31:36 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id gb13-20020a17090b060d00b001a674e2c4a8so723781pjb.4;
+        Wed, 03 Nov 2021 00:31:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=vIcH6VSb3RqnkaS/PUnjKDu1+Sak6IV6g8yYKpiakmU=;
-        b=Lq5t1Y4fLvypYia5nTI2xau1T/c6ci6WmenoecOI0/EYYq51iqq3ULJaR9RqbMMP8H
-         LkJXe7eDNfl67/7SrsD3VSs9G+w+9woXU0ZAQvREk+QKm1xCeBDvkE7hxlL4E+aLvGf6
-         Cx3JWyauaKqkkf34sr7zHUa2LS2z8wHaO7mWt03pn3aCk6LDPX5bbsVhMfTiK8UJvNsw
-         KlNP7JHgduTn2nGadl9EmWfhzsVAjGy84eyuI/7SgRu8Tps8dPRWJi9MrMwAzsetyBWB
-         sL5n3s/d77wrYrgWtKvkbmNgIqYFxNUpck16KH0FoNCtwAQT0e2nHyzbs3u95ZroBpr+
-         315A==
+        bh=tlBDlVal1KG6zXw+Y+LdgDK2QBV75F/H10pKxwlc5xU=;
+        b=DoIqXaUgabSui7mO3St0+U75IJrVAVBvEuOv9BPHzR5GA+gnJhKEad18SN3sloRfvN
+         wVYA9SjbiIQEVyvtjMmAtTbN1m6hv6NJcGDgUPAuFRRBw9oqMKiDOLQhBlflWyeMZebV
+         LARaZ6nXbZoXya7omSoodYZtZLSkzWPxeuOzeaJG2rWj5Y6ACiUHyrpLowb1UcziB0al
+         U/zPJx/eBsXH5REwYnnZeJJrAHO5ZxMD46CyW1Ke1UVw9oFS5/tTu9aMuAcQlXp4339J
+         hNNyPDolVuyurN6ggsRzoq7aLQH1db+UxQ6B3RqRnK9bZXbBjT+C4zb/GudNfedy37Og
+         8yjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=vIcH6VSb3RqnkaS/PUnjKDu1+Sak6IV6g8yYKpiakmU=;
-        b=3MvplVEKaLOU0eMfQnyttOuyL3Vkwf4xcisM6/Rq/YNP1cG9rHcIfdqngLgngfk1pZ
-         CXV4WA+llA7S2LlIzRr9psU6+APhUJnfZhH4TT6lIHGQjJSJEDdrmRcuGHINapAoROPa
-         8uL/38jBDnJfs8MCGysAqQGXx1OQ7rt7hSas5U0LtMvn1KEbtMpIPOd4nidlhS1g9jRB
-         uzn3xCjYi/WH/N0OKIbblR3M2Jy+nIDDkUVqZmtT4fhwBFNhd89ACDKCggSwnQ73KPIs
-         KlWDR5Hx/4agvRm5d+FgCMVT2NaRPURaN9Rh7L624HBepVP0HeGFa58hHeXsaL3Ys5Rl
-         MU9A==
-X-Gm-Message-State: AOAM531YAdBcgCDVbU+Cj7N2uXapX8k3mFGki1IH3tIacPmelttXr+Xf
-        4FjWWB3lTQfHYyCBamTZaMP0MpCglRHeSg==
-X-Google-Smtp-Source: ABdhPJxPiQGFTlOLn9RJQgWr5NAmGQkkFVuVTaEgQKpQUJp0krt0Qrl0llC2xJX1+iQHwiLbBjYxQg==
-X-Received: by 2002:a17:90b:3b4c:: with SMTP id ot12mr12699054pjb.196.1635923672440;
-        Wed, 03 Nov 2021 00:14:32 -0700 (PDT)
+        bh=tlBDlVal1KG6zXw+Y+LdgDK2QBV75F/H10pKxwlc5xU=;
+        b=qiN4irn0RFJJ0FwgJpEQi69LOsogOdF55neRUFth7m3pSJTmNiC/UlK5uC+T5EHOqK
+         DY/pOWYFyR8BeCu+IjOk/a1o9Yd/iSFMgcgjcyLLT3zRcnSARCCpmcQVCxYldWtz/vGX
+         X3DLYumwk8G6XuKq6Q//iFMMpQBmFYuYKJc14rxyWLlI5vZ9ewzAljDmn3TK1Q3a4jQW
+         C3eWtIvdR2eJPtf/QBoy+XUI+iTClQ6tt9zA+/vqkDBQ84QiVj1ZYa8xubApwCYtuD1U
+         k2McbsRs8B0Crbl7Del7EYmXo0PHsTfOdmk6hwXL5UkPOkxshekurmzHrWWcmIEdaMT7
+         tnhA==
+X-Gm-Message-State: AOAM532Hq8W982quCqOJIGUtDESD+NF1CIh2Ygd7CyVDixtp0tQU0Fku
+        uUSMt8GhhSsMnAl9bCRek2Ccw7akgs70Ow==
+X-Google-Smtp-Source: ABdhPJxDStkl0WN6KfNlIGGMahJI6wXL8tpPGOrcMt66IsojNI3Rz7HZ/LqKD3FiT6HtTdgFrowSFg==
+X-Received: by 2002:a17:90a:8c0f:: with SMTP id a15mr12954457pjo.25.1635924696053;
+        Wed, 03 Nov 2021 00:31:36 -0700 (PDT)
 Received: from raspberrypi ([49.166.114.232])
-        by smtp.gmail.com with ESMTPSA id n9sm4387701pjk.3.2021.11.03.00.14.30
+        by smtp.gmail.com with ESMTPSA id c1sm1475326pfv.54.2021.11.03.00.31.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Nov 2021 00:14:32 -0700 (PDT)
-Date:   Wed, 3 Nov 2021 07:14:27 +0000
+        Wed, 03 Nov 2021 00:31:35 -0700 (PDT)
+Date:   Wed, 3 Nov 2021 07:31:31 +0000
 From:   Austin Kim <austindh.kim@gmail.com>
-To:     mic@digikod.net, serge@hallyn.com
-Cc:     serge@hallyn.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, austindh.kim@gmail.com
-Subject: [PATCH] landlock: Initialize kernel stack variables properly
-Message-ID: <20211103071427.GA13854@raspberrypi>
+To:     casey@schaufler-ca.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com
+Subject: [PATCH] smack: clean up smack_enabled to be more readable
+Message-ID: <20211103073131.GA15173@raspberrypi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -66,28 +66,78 @@ User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In case kernel stack variables are not initialized properly, there might 
-be a little chance of kernel information disclosure. So it is better for 
-kernel stack variables to be initialized with null characters.
+The smack_enabled is only set to 0, 1. So changing type of smack_enabled 
+as bool may make relevant routine be more readable.
 
 Signed-off-by: Austin Kim <austindh.kim@gmail.com>
 ---
- security/landlock/syscalls.c | 2 ++
- 1 file changed, 2 insertions(+)
+ security/smack/smack.h           | 2 +-
+ security/smack/smack_lsm.c       | 4 ++--
+ security/smack/smack_netfilter.c | 2 +-
+ security/smack/smackfs.c         | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 32396962f04d..50a6f7091428 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -320,6 +320,8 @@ SYSCALL_DEFINE4(landlock_add_rule,
- 	if (rule_type != LANDLOCK_RULE_PATH_BENEATH)
- 		return -EINVAL;
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 99c3422596ab..dc1726f5953f 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -302,7 +302,7 @@ int smack_populate_secattr(struct smack_known *skp);
+ /*
+  * Shared data.
+  */
+-extern int smack_enabled __initdata;
++extern bool smack_enabled __initdata;
+ extern int smack_cipso_direct;
+ extern int smack_cipso_mapped;
+ extern struct smack_known *smack_net_ambient;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index efd35b07c7f8..ba3b46bd2ceb 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -56,7 +56,7 @@ static DEFINE_MUTEX(smack_ipv6_lock);
+ static LIST_HEAD(smk_ipv6_port_list);
+ #endif
+ struct kmem_cache *smack_rule_cache;
+-int smack_enabled __initdata;
++bool smack_enabled __initdata;
  
-+	memset(&path_beneath_attr, 0, sizeof(path_beneath_attr));
-+
- 	/* Copies raw user space buffer, only one type for now. */
- 	res = copy_from_user(&path_beneath_attr, rule_attr,
- 			sizeof(path_beneath_attr));
+ #define A(s) {"smack"#s, sizeof("smack"#s) - 1, Opt_##s}
+ static struct {
+@@ -4953,7 +4953,7 @@ static __init int smack_init(void)
+ 	 * Register with LSM
+ 	 */
+ 	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
+-	smack_enabled = 1;
++	smack_enabled = true;
+ 
+ 	pr_info("Smack:  Initializing.\n");
+ #ifdef CONFIG_SECURITY_SMACK_NETFILTER
+diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
+index b945c1d3a743..82092d9387a3 100644
+--- a/security/smack/smack_netfilter.c
++++ b/security/smack/smack_netfilter.c
+@@ -70,7 +70,7 @@ static struct pernet_operations smack_net_ops = {
+ 
+ static int __init smack_nf_ip_init(void)
+ {
+-	if (smack_enabled == 0)
++	if (smack_enabled == false)
+ 		return 0;
+ 
+ 	printk(KERN_DEBUG "Smack: Registering netfilter hooks\n");
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index 658eab05599e..7649ad8cc335 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -2993,7 +2993,7 @@ static int __init init_smk_fs(void)
+ 	int err;
+ 	int rc;
+ 
+-	if (smack_enabled == 0)
++	if (smack_enabled == false)
+ 		return 0;
+ 
+ 	err = smk_init_sysfs();
 -- 
 2.20.1
 
