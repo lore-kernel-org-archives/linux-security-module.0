@@ -2,166 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E86C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Nov 2021 19:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B646C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 07:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BF1360F58
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Nov 2021 19:45:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD88E60EB4
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 07:14:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230348AbhKBTrn (ORCPT
+        id S231960AbhKCHRN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Nov 2021 15:47:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23356 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230413AbhKBTrm (ORCPT
+        Wed, 3 Nov 2021 03:17:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43354 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230152AbhKCHRN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Nov 2021 15:47:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635882306;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PQ8nOSDyThuDlZIiMZiN+QTPFuYT+d2aZ2ikFkCkMcE=;
-        b=Qbl0jfWtiCEk76R0WzU1VJ9Ru1fDMrbe8xTORoVPpcRVE0itskxCIMfHnP3GfI6Fb0IK7K
-        zHdTpACZvN8VtXGlB8ucVItcgPuxbXjtE0FP8she3QM6uzt0/sh56uwQgbxschYKr3m5Y0
-        lFzdSmGhqsHepDLjum9ilxIPYNzCZAo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-560-y6Rqj8xoM72y-c7aEUSFdA-1; Tue, 02 Nov 2021 15:45:03 -0400
-X-MC-Unique: y6Rqj8xoM72y-c7aEUSFdA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 958001808320;
-        Tue,  2 Nov 2021 19:45:00 +0000 (UTC)
-Received: from x2.localnet (unknown [10.22.9.231])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 20627226E9;
-        Tue,  2 Nov 2021 19:44:31 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     corbet@lwn.net, axboe@kernel.dk, agk@redhat.com,
-        snitzer@redhat.com, ebiggers@kernel.org, tytso@mit.edu,
-        paul@paul-moore.com, eparis@redhat.com, jmorris@namei.org,
-        serge@hallyn.com, linux-audit@redhat.com,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-Cc:     linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        jannh@google.com, linux-fscrypt@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com
-Subject: Re: [RFC PATCH v7 07/16] ipe: add auditing support
-Date:   Tue, 02 Nov 2021 15:44:30 -0400
-Message-ID: <1898302.usQuhbGJ8B@x2>
-Organization: Red Hat
-In-Reply-To: <8802b1ff-3028-642a-22c5-bc4896450a60@linux.microsoft.com>
-References: <1634151995-16266-1-git-send-email-deven.desai@linux.microsoft.com> <2159283.iZASKD2KPV@x2> <8802b1ff-3028-642a-22c5-bc4896450a60@linux.microsoft.com>
+        Wed, 3 Nov 2021 03:17:13 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E52C061714;
+        Wed,  3 Nov 2021 00:14:32 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id om14so658290pjb.5;
+        Wed, 03 Nov 2021 00:14:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=vIcH6VSb3RqnkaS/PUnjKDu1+Sak6IV6g8yYKpiakmU=;
+        b=Lq5t1Y4fLvypYia5nTI2xau1T/c6ci6WmenoecOI0/EYYq51iqq3ULJaR9RqbMMP8H
+         LkJXe7eDNfl67/7SrsD3VSs9G+w+9woXU0ZAQvREk+QKm1xCeBDvkE7hxlL4E+aLvGf6
+         Cx3JWyauaKqkkf34sr7zHUa2LS2z8wHaO7mWt03pn3aCk6LDPX5bbsVhMfTiK8UJvNsw
+         KlNP7JHgduTn2nGadl9EmWfhzsVAjGy84eyuI/7SgRu8Tps8dPRWJi9MrMwAzsetyBWB
+         sL5n3s/d77wrYrgWtKvkbmNgIqYFxNUpck16KH0FoNCtwAQT0e2nHyzbs3u95ZroBpr+
+         315A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=vIcH6VSb3RqnkaS/PUnjKDu1+Sak6IV6g8yYKpiakmU=;
+        b=3MvplVEKaLOU0eMfQnyttOuyL3Vkwf4xcisM6/Rq/YNP1cG9rHcIfdqngLgngfk1pZ
+         CXV4WA+llA7S2LlIzRr9psU6+APhUJnfZhH4TT6lIHGQjJSJEDdrmRcuGHINapAoROPa
+         8uL/38jBDnJfs8MCGysAqQGXx1OQ7rt7hSas5U0LtMvn1KEbtMpIPOd4nidlhS1g9jRB
+         uzn3xCjYi/WH/N0OKIbblR3M2Jy+nIDDkUVqZmtT4fhwBFNhd89ACDKCggSwnQ73KPIs
+         KlWDR5Hx/4agvRm5d+FgCMVT2NaRPURaN9Rh7L624HBepVP0HeGFa58hHeXsaL3Ys5Rl
+         MU9A==
+X-Gm-Message-State: AOAM531YAdBcgCDVbU+Cj7N2uXapX8k3mFGki1IH3tIacPmelttXr+Xf
+        4FjWWB3lTQfHYyCBamTZaMP0MpCglRHeSg==
+X-Google-Smtp-Source: ABdhPJxPiQGFTlOLn9RJQgWr5NAmGQkkFVuVTaEgQKpQUJp0krt0Qrl0llC2xJX1+iQHwiLbBjYxQg==
+X-Received: by 2002:a17:90b:3b4c:: with SMTP id ot12mr12699054pjb.196.1635923672440;
+        Wed, 03 Nov 2021 00:14:32 -0700 (PDT)
+Received: from raspberrypi ([49.166.114.232])
+        by smtp.gmail.com with ESMTPSA id n9sm4387701pjk.3.2021.11.03.00.14.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Nov 2021 00:14:32 -0700 (PDT)
+Date:   Wed, 3 Nov 2021 07:14:27 +0000
+From:   Austin Kim <austindh.kim@gmail.com>
+To:     mic@digikod.net, serge@hallyn.com
+Cc:     serge@hallyn.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, austindh.kim@gmail.com
+Subject: [PATCH] landlock: Initialize kernel stack variables properly
+Message-ID: <20211103071427.GA13854@raspberrypi>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+In case kernel stack variables are not initialized properly, there might 
+be a little chance of kernel information disclosure. So it is better for 
+kernel stack variables to be initialized with null characters.
 
-On Friday, October 15, 2021 3:25:47 PM EDT Deven Bowers wrote:
-> On 10/13/2021 1:02 PM, Steve Grubb wrote:
-> > On Wednesday, October 13, 2021 3:06:26 PM EDT
-> > deven.desai@linux.microsoft.com>=20
-> > wrote:
-> >> Users of IPE require a way to identify when and why an operation fails,
-> >> allowing them to both respond to violations of policy and be notified
-> >> of potentially malicious actions on their systens with respect to IPE
-> >> itself.
-> >=20
-> > Would you mind sending examples of audit events so that we can see what
-> > the end result is? Some people add them to the commit text. But we still
-> > need to see what they look like.
->=20
-> Sure, sorry. I=E2=80=99ll add them to the commit description (and the doc=
-umentation
-> patch at the end) for v8 =E2=80=93 In the interest of asynchronous feedba=
-ck, I=E2=80=99ve
-> copied the relevant examples:
+Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+---
+ security/landlock/syscalls.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks for sending these. This helps.
-
-=20
-> AUDIT1420 IPE ctx_pid=3D229 ctx_op=3DEXECUTE ctx_hook=3DMMAP ctx_enforce=
-=3D0
-> ctx_comm=3D"grep" ctx_pathname=3D"/usr/lib/libc-2.23.so"
-> ctx_ino=3D532 ctx_dev=3Dvda rule=3D"DEFAULT op=3DEXECUTE action=3DDENY"
-
-Question...why do all of these have a ctx_  prefix? Is it possible to trigg=
-er=20
-an audit context so that the audit machinery collects all of this stuff in=
-=20
-it's own way? Which means you could drop everything execept op, hook,=20
-enforce, rule, and action.
-
-We also have a field dictionary here:
-https://github.com/linux-audit/audit-documentation/blob/main/specs/fields/
-field-dictionary.csv
-
-which names the known fields and how they should be formatted. If there is =
-a=20
-collision where they are something else and cannot be in the same format,=20
-then we make a new name and hopefully update the dictionary. For example, i=
-f=20
-you are collecting a process id, use pid and not ctx_pid so that it matches=
- a=20
-known definition.
-
-Also, I don't thnk these events can stand on their own. Who did this action=
-?=20
-You have the pid, but no uid, auid, or session_id.
-
-Hope this helps...
-
-=2DSteve
-
-=20
-> AUDIT1420 IPE ctx_pid=3D229 ctx_op=3DEXECUTE ctx_hook=3DMMAP ctx_enforce=
-=3D0
-> ctx_comm=3D"grep" ctx_pathname=3D"/usr/lib/libc-2.23.so"
-> ctx_ino=3D532 ctx_dev=3Dvda rule=3D"DEFAULT action=3DDENY"
->=20
-> AUDIT1420 IPE ctx_pid=3D253 ctx_op=3DEXECUTE ctx_hook=3DMMAP ctx_enforce=
-=3D1
-> ctx_comm=3D"anon" rule=3D"DEFAULT op=3DEXECUTE action=3DDENY"
->=20
-> These three audit records represent various types of results after
-> evaluating
-> the trust of a resource. The first two differ in the rule that was
-> matched in
-> IPE's policy, the first being an operation-specific default, the second
-> being
-> a global default. The third is an example of what is audited when anonymo=
-us
-> memory is blocked (as there is no way to verify the trust of an anonymous
-> page).
->=20
-> The remaining three events, AUDIT_TRUST_POLICY_LOAD (1421),
-> AUDIT_TRUST_POLICY_ACTIVATE (1422), and AUDIT_TRUST_STATUS (1423) have th=
-is
-> form:
->=20
-> AUDIT1421 IPE policy_name=3D"my-policy" policy_version=3D0.0.0
-> <hash_alg_name>=3D<hash>
-> AUDIT1422 IPE policy_name=3D"my-policy" policy_version=3D0.0.0
-> <hash_alg_name>=3D<hash>
-> AUDIT1423 IPE enforce=3D1
->=20
-> The 1421 (AUDIT_TRUST_POLICY_LOAD) event represents a new policy was load=
-ed
-> into the kernel, but not is not marked as the policy to enforce. The
->=20
-> The 1422 (AUDIT_TRUST_POLICY_ACTIVATE) event represents a policy that was
-> already loaded was made the enforcing policy.
->=20
-> The 1423 (AUDIT_TRUST_STATUS) event represents a switch between
-> permissive and
-> enforce, it is added in 08/16 (the following patch)
-
-
-
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 32396962f04d..50a6f7091428 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -320,6 +320,8 @@ SYSCALL_DEFINE4(landlock_add_rule,
+ 	if (rule_type != LANDLOCK_RULE_PATH_BENEATH)
+ 		return -EINVAL;
+ 
++	memset(&path_beneath_attr, 0, sizeof(path_beneath_attr));
++
+ 	/* Copies raw user space buffer, only one type for now. */
+ 	res = copy_from_user(&path_beneath_attr, rule_attr,
+ 			sizeof(path_beneath_attr));
+-- 
+2.20.1
 
