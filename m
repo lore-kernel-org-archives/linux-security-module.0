@@ -2,182 +2,433 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3972AC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70167C43219
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F2ED61073
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:41:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 576E76112E
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232911AbhKCQng (ORCPT
+        id S232926AbhKCQpy convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Nov 2021 12:43:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46073 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232883AbhKCQna (ORCPT
+        Wed, 3 Nov 2021 12:45:54 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4060 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232860AbhKCQpy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Nov 2021 12:43:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635957653;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ObJtuoaapJJGEbJZc8cfzuq4RMDCflGvo4MQve1C3eA=;
-        b=TPjbaCiwbbIWyMiGUNWoEMWZEJFlkpRtodXD4HLaoaPRyiaGvShzzRDToUp3l5t7WyLRXL
-        VrVZj+m0++JSz9KOyHt1XrK7Ycred4RAC9VGjve/GZUeMAHe81k7fy8arnbnhVooRJFR5B
-        vurzszwGjenmkgv1sBgrQbTX1rhaULI=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-393-mjHpxFK6OmeidDQcuzgFwQ-1; Wed, 03 Nov 2021 12:40:51 -0400
-X-MC-Unique: mjHpxFK6OmeidDQcuzgFwQ-1
-Received: by mail-yb1-f199.google.com with SMTP id v133-20020a25c58b000000b005c20153475dso4688324ybe.17
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Nov 2021 09:40:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ObJtuoaapJJGEbJZc8cfzuq4RMDCflGvo4MQve1C3eA=;
-        b=lsjofwre+mgV+HKN4WZEwIkn/Dy/8JmBzN6jYtpu0FIs5oeOubV6fM43FwQmnGyRG4
-         4Ezp9kjfAs1cKjqphPHtVj+8f7Q65byhnHXUrpg8l0rNMTWTRxDDX4ePxPOcjvIcKTW+
-         N11ENIuNMS02xCHMnQcfaPkiYMoL02dp9uEEekbzmWJm3eSR0CKTgbHIB8zMwmzeMn0W
-         R0+xXLtK6JA0FCBQ4pTufoUAgrc386idPav3ZqUfugj2N0DN8kT9h4bghbxamDGcFfnT
-         jdtZhqeLQ2OxMnlxtTFM/DXz7Wf6BLGIr7zDT+uv0RONCMvwKNPhpbfDbQCEtK6Ob2Dx
-         dsIg==
-X-Gm-Message-State: AOAM533PwDlQdu5+RIieLeMMV/SYPrb6gbD7i491RJMQv1FGJxuDytUp
-        +qfQFasBkSfsTekYE0GdTjYBNt3mK2TPUBAMhyNUGPoW0ioduEgcwQSfIxgcrFPPMQhlSstdV7k
-        ZRxCgb0MR6XAtygUpgIHWsW1qT+9JevY15k2Qmixz0gQXHh2XUyIg
-X-Received: by 2002:a25:6c83:: with SMTP id h125mr51636607ybc.467.1635957650582;
-        Wed, 03 Nov 2021 09:40:50 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwxWFhiDuICc6YKn86C716LVFuJk9yQi428rP55b3gzR5tefg9j8tQ0KZLT1Idz9mC3l4Sn/nNKYawYLLNlybU=
-X-Received: by 2002:a25:6c83:: with SMTP id h125mr51636562ybc.467.1635957650236;
- Wed, 03 Nov 2021 09:40:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1635854268.git.lucien.xin@gmail.com> <cdca8eaca8a0ec5fe4aa58412a6096bb08c3c9bc.1635854268.git.lucien.xin@gmail.com>
-In-Reply-To: <cdca8eaca8a0ec5fe4aa58412a6096bb08c3c9bc.1635854268.git.lucien.xin@gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Wed, 3 Nov 2021 17:40:40 +0100
-Message-ID: <CAFqZXNtJNnk+iwLnGq6mpdTKuWFmZ4W0PCTj4ira7G2HHPU1tA@mail.gmail.com>
-Subject: Re: [PATCHv2 net 4/4] security: implement sctp_assoc_established hook
- in selinux
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     network dev <netdev@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
+        Wed, 3 Nov 2021 12:45:54 -0400
+Received: from fraeml708-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Hkssc70vfz67mL5;
+        Thu,  4 Nov 2021 00:38:44 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml708-chm.china.huawei.com (10.206.15.36) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.15; Wed, 3 Nov 2021 17:43:15 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.015;
+ Wed, 3 Nov 2021 17:43:15 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     "deven.desai@linux.microsoft.com" <deven.desai@linux.microsoft.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "eparis@redhat.com" <eparis@redhat.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>
+CC:     "jannh@google.com" <jannh@google.com>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Richard Haines <richard_c_haines@btinternet.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: RE: [RFC PATCH v7 14/16] scripts: add boot policy generation program
+Thread-Topic: [RFC PATCH v7 14/16] scripts: add boot policy generation program
+Thread-Index: AQHXwGWMtob3cI5FPU6KyidED8CNc6vyIPKA
+Date:   Wed, 3 Nov 2021 16:43:14 +0000
+Message-ID: <12aec559d6df4191a39ecaec7a0a378e@huawei.com>
+References: <1634151995-16266-1-git-send-email-deven.desai@linux.microsoft.com>
+ <1634151995-16266-15-git-send-email-deven.desai@linux.microsoft.com>
+In-Reply-To: <1634151995-16266-15-git-send-email-deven.desai@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.204.63.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Xin,
-
-On Tue, Nov 2, 2021 at 1:03 PM Xin Long <lucien.xin@gmail.com> wrote:
->
-> Different from selinux_inet_conn_established(), it also gives the
-> secid to asoc->peer_secid in selinux_sctp_assoc_established(),
-> as one UDP-type socket may have more than one asocs.
->
-> Note that peer_secid in asoc will save the peer secid for this
-> asoc connection, and peer_sid in sksec will just keep the peer
-> secid for the latest connection. So the right use should be do
-> peeloff for UDP-type socket if there will be multiple asocs in
-> one socket, so that the peeloff socket has the right label for
-> its asoc.
->
-> v1->v2:
->   - call selinux_inet_conn_established() to reduce some code
->     duplication in selinux_sctp_assoc_established(), as Ondrej
->     suggested.
->   - when doing peeloff, it calls sock_create() where it actually
->     gets secid for socket from socket_sockcreate_sid(). So reuse
->     SECSID_WILD to ensure the peeloff socket keeps using that
->     secid after calling selinux_sctp_sk_clone() for client side.
-
-Interesting... I find strange that SCTP creates the peeloff socket
-using sock_create() rather than allocating it directly via
-sock_alloc() like the other callers of sctp_copy_sock() (which calls
-security_sctp_sk_clone()) do. Wouldn't it make more sense to avoid the
-sock_create() call and just rely on the security_sctp_sk_clone()
-semantic to set up the labels? Would anything break if
-sctp_do_peeloff() switched to plain sock_alloc()?
-
-I'd rather we avoid this SECSID_WILD hack to support the weird
-created-but-also-cloned socket hybrid and just make the peeloff socket
-behave the same as an accept()-ed socket (i.e. no
-security_socket_[post_]create() hook calls, just
-security_sctp_sk_clone()).
-
->
-> Fixes: 72e89f50084c ("security: Add support for SCTP security hooks")
-> Reported-by: Prashanth Prahlad <pprahlad@redhat.com>
-> Reviewed-by: Richard Haines <richard_c_haines@btinternet.com>
-> Tested-by: Richard Haines <richard_c_haines@btinternet.com>
-
-You made non-trivial changes since the last revision in this patch, so
-you should have also dropped the Reviewed-by and Tested-by here. Now
-David has merged the patches probably under the impression that they
-have been reviewed/approved from the SELinux side, which isn't
-completely true.
-
-> Signed-off-by: Xin Long <lucien.xin@gmail.com>
+> From: deven.desai@linux.microsoft.com
+> [mailto:deven.desai@linux.microsoft.com]
+> From: Deven Bowers <deven.desai@linux.microsoft.com>
+> 
+> Enables an IPE policy to be enforced from kernel start, enabling access
+> control based on trust from kernel startup. This is accomplished by
+> transforming an IPE policy indicated by CONFIG_IPE_BOOT_POLICY into a
+> c-string literal that is parsed at kernel startup as an unsigned policy.
+> 
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 > ---
->  security/selinux/hooks.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index a9977a2ae8ac..341cd5dccbf5 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -5519,7 +5519,8 @@ static void selinux_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk
->         if (!selinux_policycap_extsockclass())
->                 return selinux_sk_clone_security(sk, newsk);
->
-> -       newsksec->sid = asoc->secid;
-> +       if (asoc->secid != SECSID_WILD)
-> +               newsksec->sid = asoc->secid;
->         newsksec->peer_sid = asoc->peer_secid;
->         newsksec->sclass = sksec->sclass;
->         selinux_netlbl_sctp_sk_clone(sk, newsk);
-> @@ -5575,6 +5576,16 @@ static void selinux_inet_conn_established(struct sock *sk, struct sk_buff *skb)
->         selinux_skb_peerlbl_sid(skb, family, &sksec->peer_sid);
->  }
->
-> +static void selinux_sctp_assoc_established(struct sctp_association *asoc,
-> +                                          struct sk_buff *skb)
-> +{
-> +       struct sk_security_struct *sksec = asoc->base.sk->sk_security;
+> 
+> Relevant changes since v6:
+>   * Move patch 01/12 to [14/16] of the series
+> 
+> ---
+>  MAINTAINERS                   |   1 +
+>  scripts/Makefile              |   1 +
+>  scripts/ipe/Makefile          |   2 +
+>  scripts/ipe/polgen/.gitignore |   1 +
+>  scripts/ipe/polgen/Makefile   |   6 ++
+>  scripts/ipe/polgen/polgen.c   | 145 ++++++++++++++++++++++++++++++++++
+>  security/ipe/.gitignore       |   1 +
+>  security/ipe/Kconfig          |  10 +++
+>  security/ipe/Makefile         |  13 +++
+>  security/ipe/ctx.c            |  18 +++++
+>  10 files changed, 198 insertions(+)
+>  create mode 100644 scripts/ipe/Makefile
+>  create mode 100644 scripts/ipe/polgen/.gitignore
+>  create mode 100644 scripts/ipe/polgen/Makefile
+>  create mode 100644 scripts/ipe/polgen/polgen.c
+>  create mode 100644 security/ipe/.gitignore
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f1e76f791d47..a84ca781199b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9283,6 +9283,7 @@ INTEGRITY POLICY ENFORCEMENT (IPE)
+>  M:	Deven Bowers <deven.desai@linux.microsoft.com>
+>  M:	Fan Wu <wufan@linux.microsoft.com>
+>  S:	Supported
+> +F:	scripts/ipe/
+>  F:	security/ipe/
+> 
+>  INTEL 810/815 FRAMEBUFFER DRIVER
+> diff --git a/scripts/Makefile b/scripts/Makefile
+> index 9adb6d247818..a31da6d57a36 100644
+> --- a/scripts/Makefile
+> +++ b/scripts/Makefile
+> @@ -41,6 +41,7 @@ targets += module.lds
+>  subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
+>  subdir-$(CONFIG_MODVERSIONS) += genksyms
+>  subdir-$(CONFIG_SECURITY_SELINUX) += selinux
+> +subdir-$(CONFIG_SECURITY_IPE) += ipe
+> 
+>  # Let clean descend into subdirs
+>  subdir-	+= basic dtc gdb kconfig mod
+> diff --git a/scripts/ipe/Makefile b/scripts/ipe/Makefile
+> new file mode 100644
+> index 000000000000..e87553fbb8d6
+> --- /dev/null
+> +++ b/scripts/ipe/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +subdir-y := polgen
+> diff --git a/scripts/ipe/polgen/.gitignore b/scripts/ipe/polgen/.gitignore
+> new file mode 100644
+> index 000000000000..80f32f25d200
+> --- /dev/null
+> +++ b/scripts/ipe/polgen/.gitignore
+> @@ -0,0 +1 @@
+> +polgen
+> diff --git a/scripts/ipe/polgen/Makefile b/scripts/ipe/polgen/Makefile
+> new file mode 100644
+> index 000000000000..066060c22b4a
+> --- /dev/null
+> +++ b/scripts/ipe/polgen/Makefile
+> @@ -0,0 +1,6 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +hostprogs-always-y	:= polgen
+> +HOST_EXTRACFLAGS += \
+> +	-I$(srctree)/include \
+> +	-I$(srctree)/include/uapi \
 > +
-> +       selinux_inet_conn_established(asoc->base.sk, skb);
-> +       asoc->peer_secid = sksec->peer_sid;
-> +       asoc->secid = SECSID_WILD;
+> diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
+> new file mode 100644
+> index 000000000000..73cf13e743f7
+> --- /dev/null
+> +++ b/scripts/ipe/polgen/polgen.c
+> @@ -0,0 +1,145 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) Microsoft Corporation. All rights reserved.
+> + */
+> +
+> +#include <stdlib.h>
+> +#include <stddef.h>
+> +#include <stdio.h>
+> +#include <unistd.h>
+> +#include <errno.h>
+> +
+> +static void usage(const char *const name)
+> +{
+> +	printf("Usage: %s OutputFile (PolicyFile)\n", name);
+> +	exit(EINVAL);
 > +}
 > +
->  static int selinux_secmark_relabel_packet(u32 sid)
+> +static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
+> +{
+> +	int rc = 0;
+> +	FILE *fd;
+> +	char *lbuf;
+> +	size_t fsize;
+> +	size_t read;
+> +
+> +	fd = fopen(pathname, "r");
+> +	if (!fd) {
+> +		rc = errno;
+> +		goto out;
+> +	}
+> +
+> +	fseek(fd, 0, SEEK_END);
+> +	fsize = ftell(fd);
+> +	rewind(fd);
+> +
+> +	lbuf = malloc(fsize);
+> +	if (!lbuf) {
+> +		rc = ENOMEM;
+> +		goto out_close;
+> +	}
+> +
+> +	read = fread((void *)lbuf, sizeof(*lbuf), fsize, fd);
+> +	if (read != fsize) {
+> +		rc = -1;
+> +		goto out_free;
+> +	}
+> +
+> +	*buffer = lbuf;
+> +	*size = fsize;
+> +	fclose(fd);
+> +
+> +	return rc;
+> +
+> +out_free:
+> +	free(lbuf);
+> +out_close:
+> +	fclose(fd);
+> +out:
+> +	return rc;
+> +}
+> +
+> +static int write_boot_policy(const char *pathname, const char *buf, size_t size)
+> +{
+> +	int rc = 0;
+> +	FILE *fd;
+> +	size_t i;
+> +
+> +	fd = fopen(pathname, "w");
+> +	if (!fd) {
+> +		rc = errno;
+> +		goto err;
+> +	}
+> +
+> +	fprintf(fd, "/* This file is automatically generated.");
+> +	fprintf(fd, " Do not edit. */\n");
+> +	fprintf(fd, "#include <stddef.h>\n");
+> +	fprintf(fd, "\nextern const char *const ipe_boot_policy;\n\n");
+> +	fprintf(fd, "const char *const ipe_boot_policy =\n");
+> +
+> +	if (!buf || size == 0) {
+> +		fprintf(fd, "\tNULL;\n");
+> +		fclose(fd);
+> +		return 0;
+> +	}
+> +
+> +	fprintf(fd, "\t\"");
+> +
+> +	for (i = 0; i < size; ++i) {
+> +		switch (buf[i]) {
+> +		case '"':
+> +			fprintf(fd, "\\\"");
+> +			break;
+> +		case '\'':
+> +			fprintf(fd, "'");
+> +			break;
+> +		case '\n':
+> +			fprintf(fd, "\\n\"\n\t\"");
+> +			break;
+> +		case '\\':
+> +			fprintf(fd, "\\\\");
+> +			break;
+> +		case '\t':
+> +			fprintf(fd, "\\t");
+> +			break;
+> +		case '\?':
+> +			fprintf(fd, "\\?");
+> +			break;
+> +		default:
+> +			fprintf(fd, "%c", buf[i]);
+> +		}
+> +	}
+> +	fprintf(fd, "\";\n");
+> +	fclose(fd);
+> +
+> +	return 0;
+> +
+> +err:
+> +	if (fd)
+> +		fclose(fd);
+> +	return rc;
+> +}
+> +
+> +int main(int argc, const char *const argv[])
+> +{
+> +	int rc = 0;
+> +	size_t len = 0;
+> +	char *policy = NULL;
+> +
+> +	if (argc < 2)
+> +		usage(argv[0]);
+> +
+> +	if (argc > 2) {
+> +		rc = policy_to_buffer(argv[2], &policy, &len);
+> +		if (rc != 0)
+> +			goto cleanup;
+> +	}
+> +
+> +	rc = write_boot_policy(argv[1], policy, len);
+> +cleanup:
+> +	if (policy)
+> +		free(policy);
+> +	if (rc != 0)
+> +		perror("An error occurred during policy conversion: ");
+> +	return rc;
+> +}
+> diff --git a/security/ipe/.gitignore b/security/ipe/.gitignore
+> new file mode 100644
+> index 000000000000..eca22ad5ed22
+> --- /dev/null
+> +++ b/security/ipe/.gitignore
+> @@ -0,0 +1 @@
+> +boot-policy.c
+> \ No newline at end of file
+> diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
+> index fcf82a8152ec..39df680b67a2 100644
+> --- a/security/ipe/Kconfig
+> +++ b/security/ipe/Kconfig
+> @@ -20,6 +20,16 @@ menuconfig SECURITY_IPE
+> 
+>  if SECURITY_IPE
+> 
+> +config IPE_BOOT_POLICY
+> +	string "Integrity policy to apply on system startup"
+> +	help
+> +	  This option specifies a filepath to a IPE policy that is compiled
+> +	  into the kernel. This policy will be enforced until a policy update
+> +	  is deployed via the $securityfs/ipe/policies/$policy_name/active
+> +	  interface.
+> +
+> +	  If unsure, leave blank.
+> +
+>  choice
+>  	prompt "Hash algorithm used in auditing policies"
+>  	default IPE_AUDIT_HASH_SHA1
+> diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+> index 1e7b2d7fcd9e..89fec670f954 100644
+> --- a/security/ipe/Makefile
+> +++ b/security/ipe/Makefile
+> @@ -7,7 +7,18 @@
+> 
+>  ccflags-y := -I$(srctree)/security/ipe/modules
+> 
+> +quiet_cmd_polgen = IPE_POL $(2)
+> +      cmd_polgen = scripts/ipe/polgen/polgen security/ipe/boot-policy.c $(2)
+> +
+> +$(eval $(call config_filename,IPE_BOOT_POLICY))
+> +
+> +targets += boot-policy.c
+> +
+> +$(obj)/boot-policy.c: scripts/ipe/polgen/polgen
+> $(IPE_BOOT_POLICY_FILENAME) FORCE
+> +	$(call if_changed,polgen,$(IPE_BOOT_POLICY_FILENAME))
+> +
+>  obj-$(CONFIG_SECURITY_IPE) += \
+> +	boot-policy.o \
+>  	ctx.o \
+>  	eval.o \
+>  	fs.o \
+> @@ -21,3 +32,5 @@ obj-$(CONFIG_SECURITY_IPE) += \
+>  	policyfs.o \
+> 
+>  obj-$(CONFIG_AUDIT) += audit.o
+> +
+> +clean-files := boot-policy.c \
+> diff --git a/security/ipe/ctx.c b/security/ipe/ctx.c
+> index fc9b8e467bc9..879acf4ceac5 100644
+> --- a/security/ipe/ctx.c
+> +++ b/security/ipe/ctx.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/moduleparam.h>
+> 
+> +extern const char *const ipe_boot_policy;
+>  static bool success_audit;
+>  static bool enforce = true;
+> 
+> @@ -329,6 +330,7 @@ void ipe_put_ctx(struct ipe_context *ctx)
+>  int __init ipe_init_ctx(void)
 >  {
->         const struct task_security_struct *__tsec;
-> @@ -7290,6 +7301,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
->         LSM_HOOK_INIT(sctp_assoc_request, selinux_sctp_assoc_request),
->         LSM_HOOK_INIT(sctp_sk_clone, selinux_sctp_sk_clone),
->         LSM_HOOK_INIT(sctp_bind_connect, selinux_sctp_bind_connect),
-> +       LSM_HOOK_INIT(sctp_assoc_established, selinux_sctp_assoc_established),
->         LSM_HOOK_INIT(inet_conn_request, selinux_inet_conn_request),
->         LSM_HOOK_INIT(inet_csk_clone, selinux_inet_csk_clone),
->         LSM_HOOK_INIT(inet_conn_established, selinux_inet_conn_established),
-> --
-> 2.27.0
->
+>  	int rc = 0;
+> +	struct ipe_policy *p = NULL;
+>  	struct ipe_context *lns = NULL;
+> 
+>  	lns = create_ctx();
+> @@ -342,10 +344,26 @@ int __init ipe_init_ctx(void)
+>  	WRITE_ONCE(lns->enforce, enforce);
+>  	spin_unlock(&lns->lock);
+> 
+> +	if (ipe_boot_policy) {
+> +		p = ipe_new_policy(ipe_boot_policy, strlen(ipe_boot_policy),
+> +				   NULL, 0);
+> +		if (IS_ERR(p)) {
+> +			rc = PTR_ERR(lns);
 
---
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+This should be:
+
+	rc = PTR_ERR(p);
+
+> +			goto err;
+> +		}
+> +
+> +		ipe_add_policy(lns, p);
+> +		rc = ipe_set_active_pol(p);
+> +		if (!rc)
+
+Here you need to set a non-zero value, so that ipe_init()
+does not enable the LSM.
+
+I would set to 1 a new global variable, like ipe_lsm_enabled,
+in ipe_init() just before security_add_hooks().
+
+Then, I would add a check of this variable in ipe_init_securityfs()
+to avoid the kernel panic.
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Zhong Ronghua
+
+> +			goto err;
+> +	}
+> +
+>  	rcu_assign_pointer(*ipe_tsk_ctx(current), lns);
+> +	ipe_put_policy(p);
+> 
+>  	return 0;
+>  err:
+> +	ipe_put_policy(p);
+>  	ipe_put_ctx(lns);
+>  	return rc;
+>  }
+> --
+> 2.33.0
 
