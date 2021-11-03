@@ -2,158 +2,182 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A05D6C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3972AC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85A0360F39
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F2ED61073
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:41:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232493AbhKCQDp (ORCPT
+        id S232911AbhKCQng (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Nov 2021 12:03:45 -0400
-Received: from sonic302-27.consmr.mail.ne1.yahoo.com ([66.163.186.153]:39679
-        "EHLO sonic302-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232495AbhKCQDo (ORCPT
+        Wed, 3 Nov 2021 12:43:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46073 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232883AbhKCQna (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Nov 2021 12:03:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1635955267; bh=ez72d6VR8oS1WYl73ilfBW46j/lX6BB50JuEfp8ISU4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=SVFrf81iRQ20qvf5cqSQYU8pCRFBRonhFzV4oOhsfCuXzQFyDN78UhQeSQxMIjNT6jqc8ky/bQsyto+scKjVbO3vqJ+DEoURyfEHG7bBNH6pvg4GlJTpbW6xk1yBt/uFK6NSglajbry2lAF5vKGKUTynd3rpHs+cZqaKnBcL0KSAbSuccPvjH/nsQsqjeULaQYA4dEuNJSQzsQbpi+YoawJECn2C4hAkCjcfoRmY8FPL75mzUmpMJFGogHoW8AfLEoywAgjZfJflP/mLsb7fpazjSQe1X89CtilFnpi1/mDN73fsHLngcFYeCzvay4Tr5StdiNkcGVrhPnZSBroo4g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1635955267; bh=XTIxGnpjm14zteDjpGCuWjtglidRjI9RrUDPf4PATt6=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=e/DwjbaANsxzTM8/sJpzQdXB5pcKeSDIYtJ+1xjHpqvQP8W9PLc7GuD7pqjd7js4JtksyYGSg5FWIOpH8hARyp6xJfG4niotI+98toSgaoU7jR5J4GdsS1+lkYr1AghrUMCxT2ZryZID8pqKBD+6ecwtR/bk26jgIWKhrll6Qw5dBAvtPJJVHGnENMoO0PoLDl/nC60vZFjo75uFS6AeoZbyhXCeubNgI8SNIn2rIpp3R84dhuXCy9zQq33gLjXE2UtfNfmz2B71O7JyOlz8OjSpKcpdEdmFIrn3JferfNzNLochjGs0QbL4XhTG5Fu+YsKgh9mjsVv9L/qiODcYug==
-X-YMail-OSG: WAkYTMEVM1lgqzEpzgDMsHalwVg5QolGjdrLFdHsu_G.0vNyt5TklZWw6AvGZ05
- MgwhRLON73s3FTohvvpQRoFk7OVtDhlBzZty6Nv5vE7GnnNn2C1UiHBhvXhi.9cv7_l4UoLGL6qe
- cnEqRP.AFiOnFZGtLDLn6wPuuP4bk4tjk45duBL9P1IboAwBX7pvDAu.xejEKeej.ScJJ8lpXxyX
- VcrOR4ZFWXww8sGxkoNUnF.MsA2s_Zr2DwYOQ6erYTIFUhqDK70yrm9eWlB0md1bGcUoKizJieJh
- v9BwzE.2ZDdhsSHet7nFweAMKAznUk.EKoXvUEejpnauWDDvsRaGN8kr0gtIYtFQ6eYKg4S79Bu_
- wAdbgkHGOzSDo8YhjPY0bS1CUm6EIqNXVWIaOtg0lTjRzWdtRo4xQA3XlbpGjxOpKj9AbqUc67X3
- k3erh.sUZ2lUA.BrOQ.VTtoV6jY_QEtkpi6I06MdYXyZ_GkkrsXMBe_MXeL2G1CDIhuRr4I3s0yU
- HAClcO2p82FSucRV3qQ8QWNs8EbnJgtcH3XhafqHaHh2zG3s5Gjjziv.E0SDajdGYxLEP.ZO0pwo
- 5AKZFBqYXtg9MZLkG71pmmQAPJItUHUSqdUqHuqcO4CgssqfcwDIfTRsMP16fasfOaxnclfGKtZi
- E2JfH.6uW72DhYWSFkZNxJSUngPMf51zUXAowscKLiqBd7J8Md57XZcoHau33hsGY0NLUJIoBYje
- IcQiB_0M4XivK_w362SlSkleC6QZ1PGdi8WYjVOBGirW_DfrTK58qoIY8m2jWHVs2Xp898pGljEo
- RhPY2t0XrMJSJetxFhH4.PSJIeqp1bXKOsUURMDVh6DNAyFrqHdiQs1EvMvxtTlHRSBQg7gtp6Ai
- B8YnDqwTtPfjVoHI.DCMHqtg8wLRmL4JbWXwgQVa6a9Ct2wU_ajxGzm4B.4i.3nvagW59k5wto5M
- GBsEORTV_dgZl9iBeAMK6Mvya2qZ2v_hagow_ansCrGur8HGVWnLQYDTcfzNHZYPAV5YBuMg2kls
- .sRiklkak8zPSNsUXaqDFY4eRF5XqmU1AWKlXrPOzgFsYvCB1Ak0eKh98cxPPtVwPClQDD1VSfuu
- mDaLYWnRYtQeeFj5uvOx8elqofObO1vs7I0YRMCUrYUZABwiNJEQvqAVfoMrnIc1yizmTA2LYcNJ
- K75aLbKn.WYG1bGBj6iBANtSKSBKldYL1jxed8hACL0YaDFICSsIQ0lFMYwh6cZXlMXZRXm3vnxd
- cSW5NMWAagNIMr65Z0b0_V0KE32FC9tTIcct9EEyE7pWUbwgIsivog_pEfbs7VmdtTCeWSKhrnVO
- o2l0BjCQLEAmjIFQggtGo4R4dCCwXt6S9DWM9OmQnTrwcHOQ_JgQBwOui32HMCSqrZWwnuiR8aeN
- ApWCZ9pHeXuLEa4QwDqX1YRXtyKvZHXOBwMylIBRpLzL.0MG2ESeHlQSyAn1LQHEZBOzM69ci8Jo
- kTfZVP7ACabyRSn5t1OONRLj1FZYcJYPqrgphxJyFnXRXHBrw0lwGVymdM_TPoRIZkTD9LvxkX9Y
- AI.od7bR7n9pYjKZL0Ow3sEdQEGzXX6LgrgXEYB6NeuMUGdk591lfM1BLXsL1Wkd9E80rGAvjJO3
- SL3Ed2IBhxEnkwEX7KTu1DzYUB51_FYKKuWawn3USIanJN21EVS._t0mWooSfRltSaTZgWr3EHwY
- d7DGMqi2gUS4lPlfjGlF5yWHI4BDgSVrwfLiMlgIJye1uKLB._aXZfO30QoEBX_B7W4o0aZlQfTk
- DuywDHyknNufhvnNkcHGNfK4lxEZJA41VUEdfhuTpVaNnY8UTT2zYCP9iR5ciL7uy9GPdg1E2js.
- cVUWhaef1ocKWPslBteBL8kZQhsJ0dKvSnTZJqsaOTykYh2QBwP8l0W_kwdIZYycff0CzZNA5qzl
- GTPhLyQEHTIScE6kKwScDhFzzRCSwYZmZNYIMWMphLD1hOocLOUqCrgQLjZ7fDb4_1UldoXSQdug
- 1u6IJr5x175y6AcdRmLHfOZASXnEMBd7x2q1ope7_si94dj4RzIaN18cwnga73BhL80vi.XWGxPa
- u_ToTJvi0GsEoX0xHOBttuunSvA4S3y0Mg5JzV2cWAef5NYWIH1o87ePN_kyvPUDPH29rIhsSpmt
- TYOxmfKdMMo.Sjxxw1d0g9hVn2vpwcsoqGXHXg0QkH33XM6ocr.nZRwZUR4EdbkN_G5lIKHQfGbS
- pgqOEh9snzZmk16Ccrn56AqxJbMHvM_ZFx.dPzT_XSxiPX1gYQZ6dSa2deKOk1K89PK9YT7Y-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Wed, 3 Nov 2021 16:01:07 +0000
-Received: by kubenode505.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 804923039b303be64eac486475e577ab;
-          Wed, 03 Nov 2021 16:01:02 +0000 (UTC)
-Message-ID: <79835dce-7e15-38e2-5341-2fb246a445e7@schaufler-ca.com>
-Date:   Wed, 3 Nov 2021 09:01:00 -0700
+        Wed, 3 Nov 2021 12:43:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635957653;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ObJtuoaapJJGEbJZc8cfzuq4RMDCflGvo4MQve1C3eA=;
+        b=TPjbaCiwbbIWyMiGUNWoEMWZEJFlkpRtodXD4HLaoaPRyiaGvShzzRDToUp3l5t7WyLRXL
+        VrVZj+m0++JSz9KOyHt1XrK7Ycred4RAC9VGjve/GZUeMAHe81k7fy8arnbnhVooRJFR5B
+        vurzszwGjenmkgv1sBgrQbTX1rhaULI=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-393-mjHpxFK6OmeidDQcuzgFwQ-1; Wed, 03 Nov 2021 12:40:51 -0400
+X-MC-Unique: mjHpxFK6OmeidDQcuzgFwQ-1
+Received: by mail-yb1-f199.google.com with SMTP id v133-20020a25c58b000000b005c20153475dso4688324ybe.17
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Nov 2021 09:40:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ObJtuoaapJJGEbJZc8cfzuq4RMDCflGvo4MQve1C3eA=;
+        b=lsjofwre+mgV+HKN4WZEwIkn/Dy/8JmBzN6jYtpu0FIs5oeOubV6fM43FwQmnGyRG4
+         4Ezp9kjfAs1cKjqphPHtVj+8f7Q65byhnHXUrpg8l0rNMTWTRxDDX4ePxPOcjvIcKTW+
+         N11ENIuNMS02xCHMnQcfaPkiYMoL02dp9uEEekbzmWJm3eSR0CKTgbHIB8zMwmzeMn0W
+         R0+xXLtK6JA0FCBQ4pTufoUAgrc386idPav3ZqUfugj2N0DN8kT9h4bghbxamDGcFfnT
+         jdtZhqeLQ2OxMnlxtTFM/DXz7Wf6BLGIr7zDT+uv0RONCMvwKNPhpbfDbQCEtK6Ob2Dx
+         dsIg==
+X-Gm-Message-State: AOAM533PwDlQdu5+RIieLeMMV/SYPrb6gbD7i491RJMQv1FGJxuDytUp
+        +qfQFasBkSfsTekYE0GdTjYBNt3mK2TPUBAMhyNUGPoW0ioduEgcwQSfIxgcrFPPMQhlSstdV7k
+        ZRxCgb0MR6XAtygUpgIHWsW1qT+9JevY15k2Qmixz0gQXHh2XUyIg
+X-Received: by 2002:a25:6c83:: with SMTP id h125mr51636607ybc.467.1635957650582;
+        Wed, 03 Nov 2021 09:40:50 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwxWFhiDuICc6YKn86C716LVFuJk9yQi428rP55b3gzR5tefg9j8tQ0KZLT1Idz9mC3l4Sn/nNKYawYLLNlybU=
+X-Received: by 2002:a25:6c83:: with SMTP id h125mr51636562ybc.467.1635957650236;
+ Wed, 03 Nov 2021 09:40:50 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.1
-Subject: Re: [PATCH] smack: clean up smack_enabled to be more readable
-Content-Language: en-US
-To:     Austin Kim <austindh.kim@gmail.com>, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20211103073131.GA15173@raspberrypi>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20211103073131.GA15173@raspberrypi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.19266 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <cover.1635854268.git.lucien.xin@gmail.com> <cdca8eaca8a0ec5fe4aa58412a6096bb08c3c9bc.1635854268.git.lucien.xin@gmail.com>
+In-Reply-To: <cdca8eaca8a0ec5fe4aa58412a6096bb08c3c9bc.1635854268.git.lucien.xin@gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Wed, 3 Nov 2021 17:40:40 +0100
+Message-ID: <CAFqZXNtJNnk+iwLnGq6mpdTKuWFmZ4W0PCTj4ira7G2HHPU1tA@mail.gmail.com>
+Subject: Re: [PATCHv2 net 4/4] security: implement sctp_assoc_established hook
+ in selinux
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     network dev <netdev@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Richard Haines <richard_c_haines@btinternet.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/3/2021 12:31 AM, Austin Kim wrote:
-> The smack_enabled is only set to 0, 1. So changing type of smack_enabled
-> as bool may make relevant routine be more readable.
+Hi Xin,
+
+On Tue, Nov 2, 2021 at 1:03 PM Xin Long <lucien.xin@gmail.com> wrote:
 >
-> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+> Different from selinux_inet_conn_established(), it also gives the
+> secid to asoc->peer_secid in selinux_sctp_assoc_established(),
+> as one UDP-type socket may have more than one asocs.
+>
+> Note that peer_secid in asoc will save the peer secid for this
+> asoc connection, and peer_sid in sksec will just keep the peer
+> secid for the latest connection. So the right use should be do
+> peeloff for UDP-type socket if there will be multiple asocs in
+> one socket, so that the peeloff socket has the right label for
+> its asoc.
+>
+> v1->v2:
+>   - call selinux_inet_conn_established() to reduce some code
+>     duplication in selinux_sctp_assoc_established(), as Ondrej
+>     suggested.
+>   - when doing peeloff, it calls sock_create() where it actually
+>     gets secid for socket from socket_sockcreate_sid(). So reuse
+>     SECSID_WILD to ensure the peeloff socket keeps using that
+>     secid after calling selinux_sctp_sk_clone() for client side.
 
-A couple of changes below.
+Interesting... I find strange that SCTP creates the peeloff socket
+using sock_create() rather than allocating it directly via
+sock_alloc() like the other callers of sctp_copy_sock() (which calls
+security_sctp_sk_clone()) do. Wouldn't it make more sense to avoid the
+sock_create() call and just rely on the security_sctp_sk_clone()
+semantic to set up the labels? Would anything break if
+sctp_do_peeloff() switched to plain sock_alloc()?
 
+I'd rather we avoid this SECSID_WILD hack to support the weird
+created-but-also-cloned socket hybrid and just make the peeloff socket
+behave the same as an accept()-ed socket (i.e. no
+security_socket_[post_]create() hook calls, just
+security_sctp_sk_clone()).
+
+>
+> Fixes: 72e89f50084c ("security: Add support for SCTP security hooks")
+> Reported-by: Prashanth Prahlad <pprahlad@redhat.com>
+> Reviewed-by: Richard Haines <richard_c_haines@btinternet.com>
+> Tested-by: Richard Haines <richard_c_haines@btinternet.com>
+
+You made non-trivial changes since the last revision in this patch, so
+you should have also dropped the Reviewed-by and Tested-by here. Now
+David has merged the patches probably under the impression that they
+have been reviewed/approved from the SELinux side, which isn't
+completely true.
+
+> Signed-off-by: Xin Long <lucien.xin@gmail.com>
 > ---
->   security/smack/smack.h           | 2 +-
->   security/smack/smack_lsm.c       | 4 ++--
->   security/smack/smack_netfilter.c | 2 +-
->   security/smack/smackfs.c         | 2 +-
->   4 files changed, 5 insertions(+), 5 deletions(-)
+>  security/selinux/hooks.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 >
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index 99c3422596ab..dc1726f5953f 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -302,7 +302,7 @@ int smack_populate_secattr(struct smack_known *skp);
->   /*
->    * Shared data.
->    */
-> -extern int smack_enabled __initdata;
-> +extern bool smack_enabled __initdata;
->   extern int smack_cipso_direct;
->   extern int smack_cipso_mapped;
->   extern struct smack_known *smack_net_ambient;
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index efd35b07c7f8..ba3b46bd2ceb 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -56,7 +56,7 @@ static DEFINE_MUTEX(smack_ipv6_lock);
->   static LIST_HEAD(smk_ipv6_port_list);
->   #endif
->   struct kmem_cache *smack_rule_cache;
-> -int smack_enabled __initdata;
-> +bool smack_enabled __initdata;
->   
->   #define A(s) {"smack"#s, sizeof("smack"#s) - 1, Opt_##s}
->   static struct {
-> @@ -4953,7 +4953,7 @@ static __init int smack_init(void)
->   	 * Register with LSM
->   	 */
->   	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
-> -	smack_enabled = 1;
-> +	smack_enabled = true;
->   
->   	pr_info("Smack:  Initializing.\n");
->   #ifdef CONFIG_SECURITY_SMACK_NETFILTER
-> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
-> index b945c1d3a743..82092d9387a3 100644
-> --- a/security/smack/smack_netfilter.c
-> +++ b/security/smack/smack_netfilter.c
-> @@ -70,7 +70,7 @@ static struct pernet_operations smack_net_ops = {
->   
->   static int __init smack_nf_ip_init(void)
->   {
-> -	if (smack_enabled == 0)
-> +	if (smack_enabled == false)
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index a9977a2ae8ac..341cd5dccbf5 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -5519,7 +5519,8 @@ static void selinux_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk
+>         if (!selinux_policycap_extsockclass())
+>                 return selinux_sk_clone_security(sk, newsk);
+>
+> -       newsksec->sid = asoc->secid;
+> +       if (asoc->secid != SECSID_WILD)
+> +               newsksec->sid = asoc->secid;
+>         newsksec->peer_sid = asoc->peer_secid;
+>         newsksec->sclass = sksec->sclass;
+>         selinux_netlbl_sctp_sk_clone(sk, newsk);
+> @@ -5575,6 +5576,16 @@ static void selinux_inet_conn_established(struct sock *sk, struct sk_buff *skb)
+>         selinux_skb_peerlbl_sid(skb, family, &sksec->peer_sid);
+>  }
+>
+> +static void selinux_sctp_assoc_established(struct sctp_association *asoc,
+> +                                          struct sk_buff *skb)
+> +{
+> +       struct sk_security_struct *sksec = asoc->base.sk->sk_security;
+> +
+> +       selinux_inet_conn_established(asoc->base.sk, skb);
+> +       asoc->peer_secid = sksec->peer_sid;
+> +       asoc->secid = SECSID_WILD;
+> +}
+> +
+>  static int selinux_secmark_relabel_packet(u32 sid)
+>  {
+>         const struct task_security_struct *__tsec;
+> @@ -7290,6 +7301,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>         LSM_HOOK_INIT(sctp_assoc_request, selinux_sctp_assoc_request),
+>         LSM_HOOK_INIT(sctp_sk_clone, selinux_sctp_sk_clone),
+>         LSM_HOOK_INIT(sctp_bind_connect, selinux_sctp_bind_connect),
+> +       LSM_HOOK_INIT(sctp_assoc_established, selinux_sctp_assoc_established),
+>         LSM_HOOK_INIT(inet_conn_request, selinux_inet_conn_request),
+>         LSM_HOOK_INIT(inet_csk_clone, selinux_inet_csk_clone),
+>         LSM_HOOK_INIT(inet_conn_established, selinux_inet_conn_established),
+> --
+> 2.27.0
+>
 
-If you want to use a bool you should use it fully.
-  +	if (!smack_enabled)
+--
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
->   		return 0;
->   
->   	printk(KERN_DEBUG "Smack: Registering netfilter hooks\n");
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index 658eab05599e..7649ad8cc335 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -2993,7 +2993,7 @@ static int __init init_smk_fs(void)
->   	int err;
->   	int rc;
->   
-> -	if (smack_enabled == 0)
-> +	if (smack_enabled == false)
-
-Same here.
-
->   		return 0;
->   
->   	err = smk_init_sysfs();
