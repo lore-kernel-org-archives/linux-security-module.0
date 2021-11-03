@@ -2,450 +2,158 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F605C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 14:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A05D6C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89EF86109F
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 14:17:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85A0360F39
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Nov 2021 16:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232096AbhKCOUM (ORCPT
+        id S232493AbhKCQDp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Nov 2021 10:20:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230472AbhKCOUJ (ORCPT
+        Wed, 3 Nov 2021 12:03:45 -0400
+Received: from sonic302-27.consmr.mail.ne1.yahoo.com ([66.163.186.153]:39679
+        "EHLO sonic302-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232495AbhKCQDo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Nov 2021 10:20:09 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6029AC061203;
-        Wed,  3 Nov 2021 07:17:32 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id z11-20020a1c7e0b000000b0030db7b70b6bso4748050wmc.1;
-        Wed, 03 Nov 2021 07:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=t6rIdjDXk6ljG0KS5GNyyKZHnfu2gQXbvrfcvDn+xl4=;
-        b=hrch5JtQDFJnq3lq0m5EhCrPWoHHjKdQqH4Arc9WrY/idHuA6TfqtKZjh/UrprK9Gb
-         evH2xPRb9lwLo35vjVv2A8GqXVpDgEUqirUo3YSWku4omLpdlh/dgcuCmU9Vgqy4j1m0
-         SZd2oZg/4szmz1tO90GJ5KPGNj5LEQ0hTWGGD5isOxd5Q99qM2tLi2YiVyvumcz2kG9Q
-         aPoj3enS7L0h1DuGpr/r938PkLRD+O75Dcqat3CTujCQ8XGPMsyxkDvjsd0rE9rGF3gE
-         +BvYAwmLOlX9y5QBqBP9aHDgf4TzL5sFB5qWWtKoj7M6s7SIe1xe50y6Vl5z0E6vdlwI
-         i3AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=t6rIdjDXk6ljG0KS5GNyyKZHnfu2gQXbvrfcvDn+xl4=;
-        b=uhcqHYGAX8mN2R40Yw0ntdZaUTBjH8bI+w0Du47joCq/HobVaUx0srHPOLrmaUtrGl
-         LPcXB4vKOOJPAxqPx2lXutKmJu6LnNQoUNVvqXlIuiZSYlaGn78mRMNfG3JH5ZpRAdZ5
-         qxS4Xmz2MNJa0AqfliQz60h6gIMK33qP2ubM6Fi1zgZQ81A2sbEysmfT1e9kzcUpB2s0
-         5Lk01LZZEwvrxcv9yubHamgoPRy91HfYve6LYwKcHYJJ/QYYXwYZquUYvx+vEl6vfTJ0
-         cygIQQwRT9wqzzcCrNhZooJx2TRMngVZeNpuF7tMV5Z0UewNqMi/XTBIMpXQOkmXlVN7
-         A0EA==
-X-Gm-Message-State: AOAM533EvO2Hc4yD0dueJLLtZ2mwpUYohRbyuVeSeKTxfhhOCTcmGtAZ
-        Aky81kBS6DShDhueoyBtX2RF2DMA0Ik=
-X-Google-Smtp-Source: ABdhPJwkwMZm6zOclFKT2/+Av11/6XqvPPtrn/Fw+w5FaWhMfC3cEp9XIeVeammfVyQOX2BwA92T1w==
-X-Received: by 2002:a1c:4681:: with SMTP id t123mr15653414wma.83.1635949050756;
-        Wed, 03 Nov 2021 07:17:30 -0700 (PDT)
-Received: from [10.8.0.130] ([195.53.121.100])
-        by smtp.gmail.com with ESMTPSA id a9sm2092285wrt.66.2021.11.03.07.17.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Nov 2021 07:17:30 -0700 (PDT)
-Message-ID: <94dca922-87b8-eb07-8bdb-f5803d6ffe21@gmail.com>
-Date:   Wed, 3 Nov 2021 15:17:28 +0100
+        Wed, 3 Nov 2021 12:03:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1635955267; bh=ez72d6VR8oS1WYl73ilfBW46j/lX6BB50JuEfp8ISU4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=SVFrf81iRQ20qvf5cqSQYU8pCRFBRonhFzV4oOhsfCuXzQFyDN78UhQeSQxMIjNT6jqc8ky/bQsyto+scKjVbO3vqJ+DEoURyfEHG7bBNH6pvg4GlJTpbW6xk1yBt/uFK6NSglajbry2lAF5vKGKUTynd3rpHs+cZqaKnBcL0KSAbSuccPvjH/nsQsqjeULaQYA4dEuNJSQzsQbpi+YoawJECn2C4hAkCjcfoRmY8FPL75mzUmpMJFGogHoW8AfLEoywAgjZfJflP/mLsb7fpazjSQe1X89CtilFnpi1/mDN73fsHLngcFYeCzvay4Tr5StdiNkcGVrhPnZSBroo4g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1635955267; bh=XTIxGnpjm14zteDjpGCuWjtglidRjI9RrUDPf4PATt6=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=e/DwjbaANsxzTM8/sJpzQdXB5pcKeSDIYtJ+1xjHpqvQP8W9PLc7GuD7pqjd7js4JtksyYGSg5FWIOpH8hARyp6xJfG4niotI+98toSgaoU7jR5J4GdsS1+lkYr1AghrUMCxT2ZryZID8pqKBD+6ecwtR/bk26jgIWKhrll6Qw5dBAvtPJJVHGnENMoO0PoLDl/nC60vZFjo75uFS6AeoZbyhXCeubNgI8SNIn2rIpp3R84dhuXCy9zQq33gLjXE2UtfNfmz2B71O7JyOlz8OjSpKcpdEdmFIrn3JferfNzNLochjGs0QbL4XhTG5Fu+YsKgh9mjsVv9L/qiODcYug==
+X-YMail-OSG: WAkYTMEVM1lgqzEpzgDMsHalwVg5QolGjdrLFdHsu_G.0vNyt5TklZWw6AvGZ05
+ MgwhRLON73s3FTohvvpQRoFk7OVtDhlBzZty6Nv5vE7GnnNn2C1UiHBhvXhi.9cv7_l4UoLGL6qe
+ cnEqRP.AFiOnFZGtLDLn6wPuuP4bk4tjk45duBL9P1IboAwBX7pvDAu.xejEKeej.ScJJ8lpXxyX
+ VcrOR4ZFWXww8sGxkoNUnF.MsA2s_Zr2DwYOQ6erYTIFUhqDK70yrm9eWlB0md1bGcUoKizJieJh
+ v9BwzE.2ZDdhsSHet7nFweAMKAznUk.EKoXvUEejpnauWDDvsRaGN8kr0gtIYtFQ6eYKg4S79Bu_
+ wAdbgkHGOzSDo8YhjPY0bS1CUm6EIqNXVWIaOtg0lTjRzWdtRo4xQA3XlbpGjxOpKj9AbqUc67X3
+ k3erh.sUZ2lUA.BrOQ.VTtoV6jY_QEtkpi6I06MdYXyZ_GkkrsXMBe_MXeL2G1CDIhuRr4I3s0yU
+ HAClcO2p82FSucRV3qQ8QWNs8EbnJgtcH3XhafqHaHh2zG3s5Gjjziv.E0SDajdGYxLEP.ZO0pwo
+ 5AKZFBqYXtg9MZLkG71pmmQAPJItUHUSqdUqHuqcO4CgssqfcwDIfTRsMP16fasfOaxnclfGKtZi
+ E2JfH.6uW72DhYWSFkZNxJSUngPMf51zUXAowscKLiqBd7J8Md57XZcoHau33hsGY0NLUJIoBYje
+ IcQiB_0M4XivK_w362SlSkleC6QZ1PGdi8WYjVOBGirW_DfrTK58qoIY8m2jWHVs2Xp898pGljEo
+ RhPY2t0XrMJSJetxFhH4.PSJIeqp1bXKOsUURMDVh6DNAyFrqHdiQs1EvMvxtTlHRSBQg7gtp6Ai
+ B8YnDqwTtPfjVoHI.DCMHqtg8wLRmL4JbWXwgQVa6a9Ct2wU_ajxGzm4B.4i.3nvagW59k5wto5M
+ GBsEORTV_dgZl9iBeAMK6Mvya2qZ2v_hagow_ansCrGur8HGVWnLQYDTcfzNHZYPAV5YBuMg2kls
+ .sRiklkak8zPSNsUXaqDFY4eRF5XqmU1AWKlXrPOzgFsYvCB1Ak0eKh98cxPPtVwPClQDD1VSfuu
+ mDaLYWnRYtQeeFj5uvOx8elqofObO1vs7I0YRMCUrYUZABwiNJEQvqAVfoMrnIc1yizmTA2LYcNJ
+ K75aLbKn.WYG1bGBj6iBANtSKSBKldYL1jxed8hACL0YaDFICSsIQ0lFMYwh6cZXlMXZRXm3vnxd
+ cSW5NMWAagNIMr65Z0b0_V0KE32FC9tTIcct9EEyE7pWUbwgIsivog_pEfbs7VmdtTCeWSKhrnVO
+ o2l0BjCQLEAmjIFQggtGo4R4dCCwXt6S9DWM9OmQnTrwcHOQ_JgQBwOui32HMCSqrZWwnuiR8aeN
+ ApWCZ9pHeXuLEa4QwDqX1YRXtyKvZHXOBwMylIBRpLzL.0MG2ESeHlQSyAn1LQHEZBOzM69ci8Jo
+ kTfZVP7ACabyRSn5t1OONRLj1FZYcJYPqrgphxJyFnXRXHBrw0lwGVymdM_TPoRIZkTD9LvxkX9Y
+ AI.od7bR7n9pYjKZL0Ow3sEdQEGzXX6LgrgXEYB6NeuMUGdk591lfM1BLXsL1Wkd9E80rGAvjJO3
+ SL3Ed2IBhxEnkwEX7KTu1DzYUB51_FYKKuWawn3USIanJN21EVS._t0mWooSfRltSaTZgWr3EHwY
+ d7DGMqi2gUS4lPlfjGlF5yWHI4BDgSVrwfLiMlgIJye1uKLB._aXZfO30QoEBX_B7W4o0aZlQfTk
+ DuywDHyknNufhvnNkcHGNfK4lxEZJA41VUEdfhuTpVaNnY8UTT2zYCP9iR5ciL7uy9GPdg1E2js.
+ cVUWhaef1ocKWPslBteBL8kZQhsJ0dKvSnTZJqsaOTykYh2QBwP8l0W_kwdIZYycff0CzZNA5qzl
+ GTPhLyQEHTIScE6kKwScDhFzzRCSwYZmZNYIMWMphLD1hOocLOUqCrgQLjZ7fDb4_1UldoXSQdug
+ 1u6IJr5x175y6AcdRmLHfOZASXnEMBd7x2q1ope7_si94dj4RzIaN18cwnga73BhL80vi.XWGxPa
+ u_ToTJvi0GsEoX0xHOBttuunSvA4S3y0Mg5JzV2cWAef5NYWIH1o87ePN_kyvPUDPH29rIhsSpmt
+ TYOxmfKdMMo.Sjxxw1d0g9hVn2vpwcsoqGXHXg0QkH33XM6ocr.nZRwZUR4EdbkN_G5lIKHQfGbS
+ pgqOEh9snzZmk16Ccrn56AqxJbMHvM_ZFx.dPzT_XSxiPX1gYQZ6dSa2deKOk1K89PK9YT7Y-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Wed, 3 Nov 2021 16:01:07 +0000
+Received: by kubenode505.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 804923039b303be64eac486475e577ab;
+          Wed, 03 Nov 2021 16:01:02 +0000 (UTC)
+Message-ID: <79835dce-7e15-38e2-5341-2fb246a445e7@schaufler-ca.com>
+Date:   Wed, 3 Nov 2021 09:01:00 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.2.1
-Subject: Re: [PATCH v4 0/4] Add Landlock man pages
+Subject: Re: [PATCH] smack: clean up smack_enabled to be more readable
 Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
-        landlock@lists.linux.dev, Michael Kerrisk <mtk.manpages@gmail.com>,
-        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        "G . Branden Robinson" <g.branden.robinson@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20210818155931.484070-1-mic@digikod.net>
- <5020f3da-1022-d8ee-3e8f-a62920db1c87@digikod.net>
-From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-In-Reply-To: <5020f3da-1022-d8ee-3e8f-a62920db1c87@digikod.net>
+To:     Austin Kim <austindh.kim@gmail.com>, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20211103073131.GA15173@raspberrypi>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20211103073131.GA15173@raspberrypi>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.19266 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mickaël,
+On 11/3/2021 12:31 AM, Austin Kim wrote:
+> The smack_enabled is only set to 0, 1. So changing type of smack_enabled
+> as bool may make relevant routine be more readable.
+>
+> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
 
-On 11/3/21 13:07, Mickaël Salaün wrote:
-> Alejandro, is there something more to do or is it OK for you?
+A couple of changes below.
 
-I applied the patchset, plus a few minor fixes (see below).
+> ---
+>   security/smack/smack.h           | 2 +-
+>   security/smack/smack_lsm.c       | 4 ++--
+>   security/smack/smack_netfilter.c | 2 +-
+>   security/smack/smackfs.c         | 2 +-
+>   4 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index 99c3422596ab..dc1726f5953f 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -302,7 +302,7 @@ int smack_populate_secattr(struct smack_known *skp);
+>   /*
+>    * Shared data.
+>    */
+> -extern int smack_enabled __initdata;
+> +extern bool smack_enabled __initdata;
+>   extern int smack_cipso_direct;
+>   extern int smack_cipso_mapped;
+>   extern struct smack_known *smack_net_ambient;
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index efd35b07c7f8..ba3b46bd2ceb 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -56,7 +56,7 @@ static DEFINE_MUTEX(smack_ipv6_lock);
+>   static LIST_HEAD(smk_ipv6_port_list);
+>   #endif
+>   struct kmem_cache *smack_rule_cache;
+> -int smack_enabled __initdata;
+> +bool smack_enabled __initdata;
+>   
+>   #define A(s) {"smack"#s, sizeof("smack"#s) - 1, Opt_##s}
+>   static struct {
+> @@ -4953,7 +4953,7 @@ static __init int smack_init(void)
+>   	 * Register with LSM
+>   	 */
+>   	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
+> -	smack_enabled = 1;
+> +	smack_enabled = true;
+>   
+>   	pr_info("Smack:  Initializing.\n");
+>   #ifdef CONFIG_SECURITY_SMACK_NETFILTER
+> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
+> index b945c1d3a743..82092d9387a3 100644
+> --- a/security/smack/smack_netfilter.c
+> +++ b/security/smack/smack_netfilter.c
+> @@ -70,7 +70,7 @@ static struct pernet_operations smack_net_ops = {
+>   
+>   static int __init smack_nf_ip_init(void)
+>   {
+> -	if (smack_enabled == 0)
+> +	if (smack_enabled == false)
 
-Thanks!
+If you want to use a bool you should use it fully.
+  +	if (!smack_enabled)
 
-Alex
+>   		return 0;
+>   
+>   	printk(KERN_DEBUG "Smack: Registering netfilter hooks\n");
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 658eab05599e..7649ad8cc335 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -2993,7 +2993,7 @@ static int __init init_smk_fs(void)
+>   	int err;
+>   	int rc;
+>   
+> -	if (smack_enabled == 0)
+> +	if (smack_enabled == false)
 
-> 
-> On 18/08/2021 17:59, Mickaël Salaün wrote:
->> From: Mickaël Salaün <mic@linux.microsoft.com>
->>
->> Hi,
->>
->> These four documents give a global overview of Landlock and explain each
->> system calls.  This is mainly a formatting of the current kernel
->> documentation with some new additional details.
->>
->> This fourth patch series fixes spelling issues pointed out by Alejandro
->> Colomar and Branden Robinson.  I also removed some recipients.
->>
->> This patch series can be found in a Git repository:
->> https://github.com/landlock-lsm/man-pages/commits/landlock-v4
->>
->> Previous version:
->> https://lore.kernel.org/landlock/20210730144116.332091-1-mic@digikod.net/
->>
->> Regards,
->>
->> Mickaël Salaün (4):
->>    landlock.7: Add a new page to introduce Landlock
->>    landlock_create_ruleset.2: Document new syscall
->>    landlock_add_rule.2: Document new syscall
->>    landlock_restrict_self.2: Document new syscall
->>
->>   man2/landlock_add_rule.2       | 144 +++++++++++++
->>   man2/landlock_create_ruleset.2 | 139 +++++++++++++
->>   man2/landlock_restrict_self.2  | 133 ++++++++++++
->>   man7/landlock.7                | 361 +++++++++++++++++++++++++++++++++
->>   4 files changed, 777 insertions(+)
->>   create mode 100644 man2/landlock_add_rule.2
->>   create mode 100644 man2/landlock_create_ruleset.2
->>   create mode 100644 man2/landlock_restrict_self.2
->>   create mode 100644 man7/landlock.7
->>
->>
->> base-commit: 7127973e0c8ca36fda1f5d2d0adae04d61fa0d01
->>
+Same here.
 
----
-     landlock_add_rule.2, landlock_create_ruleset.2, 
-landlock_restrict_self.2, landlock.7: Minor tweaks to Mickaël's patches
-
-     - exit(EXIT_FAILURE) instead of return 1, for consistency with the
-       rest of the manual pages.
-     - Use old declarations: variables defined at the top, separate
-       from code.  Initialization other than zero doesn't belong there.
-     - Don't break URIs in weird ways (a trailing slash on a new line
-       would be weird).
-     - Break URIs after the slash; not before.  Per Branden's advise.
-     - Use uint32_t instead of __u32 in prototypes.
-     - tfix
-     - A few semantic newline improvements.
-     - ffix
-
-     Cc: Mickaël Salaün <mic@digikod.net>
-     Signed-off-by: Alejandro Colomar <alx.manpages@gmail.com>
-
-diff --git a/man2/landlock_add_rule.2 b/man2/landlock_add_rule.2
-index eafb8f820..c3f6e84e0 100644
---- a/man2/landlock_add_rule.2
-+++ b/man2/landlock_add_rule.2
-@@ -34,10 +34,12 @@ landlock_add_rule \- add a new Landlock rule to a 
-ruleset
-  .PP
-  .BI "int syscall(SYS_landlock_add_rule, int " ruleset_fd ,
-  .BI "            enum landlock_rule_type " rule_type ,
--.BI "            const void *" rule_attr ", __u32 " flags );
-+.BI "            const void *" rule_attr ", uint32_t " flags );
-+.fi
-  .SH DESCRIPTION
-  A Landlock rule describes an action on an object.
--An object is currently a file hierarchy, and the related filesystem actions
-+An object is currently a file hierarchy,
-+and the related filesystem actions
-  are defined with a set of access rights.
-  This
-  .BR landlock_add_rule ()
-@@ -114,13 +116,15 @@ is 0).
-  .TP
-  .B EBADF
-  .I ruleset_fd
--is not a file descriptor for the current thread, or a member of
-+is not a file descriptor for the current thread,
-+or a member of
-  .I rule_attr
-  is not a file descriptor as expected.
-  .TP
-  .B EBADFD
-  .I ruleset_fd
--is not a ruleset file descriptor, or a member of
-+is not a ruleset file descriptor,
-+or a member of
-  .I rule_attr
-  is not the expected file descriptor type.
-  .TP
-diff --git a/man2/landlock_create_ruleset.2 b/man2/landlock_create_ruleset.2
-index e1ca4bcf8..11a8f08de 100644
---- a/man2/landlock_create_ruleset.2
-+++ b/man2/landlock_create_ruleset.2
-@@ -34,7 +34,8 @@ landlock_create_ruleset \- create a new Landlock ruleset
-  .PP
-  .BI "int syscall(SYS_landlock_create_ruleset,
-  .BI "            const struct landlock_ruleset_attr *" attr ,
--.BI "            size_t " size " , __u32 " flags );
-+.BI "            size_t " size " , uint32_t " flags );
-+.fi
-  .SH DESCRIPTION
-  A Landlock ruleset identifies a set of rules (i.e., actions on objects).
-  This
-@@ -55,14 +56,14 @@ It points to the following structure:
-  .in +4n
-  .EX
-  struct landlock_ruleset_attr {
--       __u64 handled_access_fs;
-+    __u64 handled_access_fs;
-  };
-  .EE
-  .in
-  .IP
-  .I handled_access_fs
--is a bitmask of actions that is handled by this ruleset and should then be
--forbidden if no rule explicitly allow them
-+is a bitmask of actions that is handled by this ruleset and
-+should then be forbidden if no rule explicitly allows them
-  (see
-  .B Filesystem actions
-  in
-@@ -98,12 +99,13 @@ All features documented in these man pages are 
-available with the version
-  .SH RETURN VALUE
-  On success,
-  .BR landlock_create_ruleset ()
--returns a new Landlock ruleset file descriptor, or a Landlock ABI version
-+returns a new Landlock ruleset file descriptor,
-+or a Landlock ABI version,
-  according to
-  .IR flags .
-  .SH ERRORS
-  .BR landlock_create_ruleset ()
--can failed for the following reasons:
-+can fail for the following reasons:
-  .TP
-  .B EOPNOTSUPP
-  Landlock is supported by the kernel but disabled at boot time.
-diff --git a/man2/landlock_restrict_self.2 b/man2/landlock_restrict_self.2
-index 4b10997e2..77c71bbf8 100644
---- a/man2/landlock_restrict_self.2
-+++ b/man2/landlock_restrict_self.2
-@@ -33,7 +33,7 @@ landlock_restrict_self \- enforce a Landlock ruleset
-  .BR "#include <sys/syscall.h>" "     /* Definition of " SYS_* " 
-constants */"
-  .PP
-  .BI "int syscall(SYS_landlock_restrict_self, int " ruleset_fd ,
--.BI "            __u32 " flags );
-+.BI "            uint32_t " flags );
-  .SH DESCRIPTION
-  Once a Landlock ruleset is populated with the desired rules, the
-  .BR landlock_restrict_self ()
-@@ -42,13 +42,13 @@ See
-  .BR landlock (7)
-  for a global overview.
-  .PP
--A thread can be restricted with multiple rulesets that are then composed
--together to form the thread's Landlock domain.
--This can be seen as a stack of rulesets but it is implemented in a more
--efficient way.
--A domain can only be updated in such a way that the constraints of each
--past and future composed rulesets will restrict the thread and its future
--children for their entire life.
-+A thread can be restricted with multiple rulesets that are then
-+composed together to form the thread's Landlock domain.
-+This can be seen as a stack of rulesets but
-+it is implemented in a more efficient way.
-+A domain can only be updated in such a way that
-+the constraints of each past and future composed rulesets
-+will restrict the thread and its future children for their entire life.
-  It is then possible to gradually enforce tailored access control policies
-  with multiple independant rulesets coming from different sources
-  (e.g., init system configuration, user session policy,
-@@ -68,8 +68,8 @@ capability in its user namespace, or the thread must 
-already have the
-  bit set.
-  As for
-  .BR seccomp (2),
--this avoids scenarios where unprivileged processes can affect the behavior
--of privileged children (e.g., because of set-user-ID binaries).
-+this avoids scenarios where unprivileged processes can affect
-+the behavior of privileged children (e.g., because of set-user-ID 
-binaries).
-  If that bit was not already set by an ancestor of this thread,
-  the thread must make the following call:
-  .IP
-@@ -91,7 +91,7 @@ On success,
-  returns 0.
-  .SH ERRORS
-  .BR landlock_restrict_self ()
--can failed for the following reasons:
-+can fail for the following reasons:
-  .TP
-  .B EOPNOTSUPP
-  Landlock is supported by the kernel but disabled at boot time.
-diff --git a/man7/landlock.7 b/man7/landlock.7
-index 710e7feb7..80d9f2bf1 100644
---- a/man7/landlock.7
-+++ b/man7/landlock.7
-@@ -31,8 +31,9 @@ Landlock \- unprivileged access-control
-  Landlock is an access-control system that enables any processes to
-  securely restrict themselves and their future children.
-  Because Landlock is a stackable Linux Security Module (LSM),
--it makes it possible to create safe security sandboxes as new security
--layers in addition to the existing system-wide access-controls.
-+it makes it possible to create safe security sandboxes
-+as new security layers in addition to
-+the existing system-wide access-controls.
-  This kind of sandbox is expected to help mitigate
-  the security impact of bugs,
-  and unexpected or malicious behaviors in applications.
-@@ -128,8 +129,8 @@ Create (or rename or link) a symbolic link.
-  .SS Layers of file path access rights
-  Each time a thread enforces a ruleset on itself,
-  it updates its Landlock domain with a new layer of policy.
--Indeed, this complementary policy is composed with the potentially other
--rulesets already restricting this thread.
-+Indeed, this complementary policy is composed with the
-+potentially other rulesets already restricting this thread.
-  A sandboxed thread can then safely add more constraints to itself with a
-  new enforced ruleset.
-  .PP
-@@ -165,8 +166,8 @@ From a Landlock policy point of view,
-  each of the OverlayFS layers and merge hierarchies is standalone and
-  contains its own set of files and directories,
-  which is different from a bind mount.
--A policy restricting an OverlayFS layer will not restrict the resulted
--merged hierarchy, and vice versa.
-+A policy restricting an OverlayFS layer will not restrict
-+the resulted merged hierarchy, and vice versa.
-  Landlock users should then only think about file hierarchies they want to
-  allow access to, regardless of the underlying filesystem.
-  .\"
-@@ -244,9 +245,10 @@ See below for the description of filesystem actions.
-  .PP
-  .in +4n
-  .EX
-+struct landlock_ruleset_attr ruleset_attr = {0};
-  int ruleset_fd;
--struct landlock_ruleset_attr ruleset_attr = {
--    .handled_access_fs =
-+
-+ruleset_attr.handled_access_fs =
-          LANDLOCK_ACCESS_FS_EXECUTE |
-          LANDLOCK_ACCESS_FS_WRITE_FILE |
-          LANDLOCK_ACCESS_FS_READ_FILE |
-@@ -259,13 +261,12 @@ struct landlock_ruleset_attr ruleset_attr = {
-          LANDLOCK_ACCESS_FS_MAKE_SOCK |
-          LANDLOCK_ACCESS_FS_MAKE_FIFO |
-          LANDLOCK_ACCESS_FS_MAKE_BLOCK |
--        LANDLOCK_ACCESS_FS_MAKE_SYM,
--};
-+        LANDLOCK_ACCESS_FS_MAKE_SYM;
-
-  ruleset_fd = landlock_create_ruleset(&ruleset_attr, 
-sizeof(ruleset_attr), 0);
--if (ruleset_fd < 0) {
-+if (ruleset_fd == -1) {
-      perror("Failed to create a ruleset");
--    return 1;
-+    exit(EXIT_FAILURE);
-  }
-  .EE
-  .in
-@@ -285,19 +286,19 @@ with this file descriptor.
-  .PP
-  .in +4n
-  .EX
-+struct landlock_path_beneath_attr path_beneath = {0};
-  int err;
--struct landlock_path_beneath_attr path_beneath = {
--    .allowed_access =
-+
-+path_beneath.allowed_access =
-          LANDLOCK_ACCESS_FS_EXECUTE |
-          LANDLOCK_ACCESS_FS_READ_FILE |
--        LANDLOCK_ACCESS_FS_READ_DIR,
--};
-+        LANDLOCK_ACCESS_FS_READ_DIR;
-
-  path_beneath.parent_fd = open("/usr", O_PATH | O_CLOEXEC);
--if (path_beneath.parent_fd < 0) {
-+if (path_beneath.parent_fd == -1) {
-      perror("Failed to open file");
-      close(ruleset_fd);
--    return 1;
-+    exit(EXIT_FAILURE);
-  }
-  err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-                          &path_beneath, 0);
-@@ -305,7 +306,7 @@ close(path_beneath.parent_fd);
-  if (err) {
-      perror("Failed to update ruleset");
-      close(ruleset_fd);
--    return 1;
-+    exit(EXIT_FAILURE);
-  }
-  .EE
-  .in
-@@ -322,7 +323,7 @@ privileges
-  if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-      perror("Failed to restrict privileges");
-      close(ruleset_fd);
--    return 1;
-+    exit(EXIT_FAILURE);
-  }
-  .EE
-  .in
-@@ -334,7 +335,7 @@ The current thread is now ready to sandbox itself 
-with the ruleset.
-  if (landlock_restrict_self(ruleset_fd, 0)) {
-      perror("Failed to enforce ruleset");
-      close(ruleset_fd);
--    return 1;
-+    exit(EXIT_FAILURE);
-  }
-  close(ruleset_fd);
-  .EE
-@@ -342,20 +343,20 @@ close(ruleset_fd);
-  .PP
-  If the
-  .BR landlock_restrict_self (2)
--system call succeeds, the current thread is now restricted and this policy
--will be enforced on all its subsequently created children as well.
-+system call succeeds, the current thread is now restricted and
-+this policy will be enforced on all its subsequently created children 
-as well.
-  Once a thread is landlocked, there is no way to remove its security 
-policy;
-  only adding more restrictions is allowed.
-  These threads are now in a new Landlock domain,
-  merge of their parent one (if any) with the new ruleset.
-  .PP
-  Full working code can be found in
--.UR 
-https://git.kernel.org\:/pub\:/scm\:/linux\:/kernel\:/git\:/stable\:/linux.git\:/tree\:/samples\:/landlock\:/sandboxer.c
-+.UR 
-https://git.kernel.org/\:pub/\:scm/\:linux/\:kernel/\:git/\:stable/\:linux.git/\:tree/\:samples/\:landlock/\:sandboxer.c
-  .UE
-  .SH SEE ALSO
-  .BR landlock_create_ruleset (2),
-  .BR landlock_add_rule (2),
-  .BR landlock_restrict_self (2)
-  .PP
--.UR https://landlock.io\:/
-+.UR https://landlock.io/
-  .UE
-
-
--- 
-Alejandro Colomar
-Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
-http://www.alejandro-colomar.es/
+>   		return 0;
+>   
+>   	err = smk_init_sysfs();
