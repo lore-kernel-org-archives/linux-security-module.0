@@ -2,94 +2,107 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCC6C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Nov 2021 18:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2B8C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Nov 2021 19:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF6E261051
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Nov 2021 18:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3C4B61216
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Nov 2021 19:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231823AbhKDTAU (ORCPT
+        id S234213AbhKDTN0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Nov 2021 15:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49026 "EHLO
+        Thu, 4 Nov 2021 15:13:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231684AbhKDTAT (ORCPT
+        with ESMTP id S234204AbhKDTNT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Nov 2021 15:00:19 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 138BAC061714
-        for <linux-security-module@vger.kernel.org>; Thu,  4 Nov 2021 11:57:41 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id ee33so25085034edb.8
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Nov 2021 11:57:41 -0700 (PDT)
+        Thu, 4 Nov 2021 15:13:19 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC44CC061714
+        for <linux-security-module@vger.kernel.org>; Thu,  4 Nov 2021 12:10:40 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id o8so24914834edc.3
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Nov 2021 12:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+UumUZrJhlq3hNY8ny+XSNEmoAHaJP3vhujdIKzTzhk=;
-        b=RBPzTVMstrJU0x+mE/LR78sV6eL9yARAVMySYiGYKDyULq/TaxK//6OgwmJabROneV
-         4cjTt+fpfPuhGlbR7CBuu/wP0hBgyAVTiggVWaSOgzBmh+L3O5b0ieHXaiVBjg1gavag
-         HpZJvZHenlXAlU6Dt/g/v5LDjlETXVjmZyaqAySmfDZVRjtq6VL6m7ZBaQaS8S0GXH1Y
-         JMn+/mdRbRsMTPGcTDI/HNO9ei0Kg40cI7FpZG1Iefpu20f9fgC/b3fBwGHIt9qRF2fl
-         7eGNyfoSmpIIigyOyjKNY3RCdXavEU626puU8l8hfBJHMLzwH/re4Kq9hqPeC1YdAkGg
-         s5rg==
+        bh=NH1hAfvi+I4370XeV24vwAJMjY68rCJZqPqZJpWaQC8=;
+        b=CTFC0aT1kl3ldDGN7A63/pPZn/knkHUG1Y86+2vgLApjmgjAXNfv4QsK78E7ZmmMhF
+         OvLF4OEtRu2b2mrzOG7fk8r25FQ5hn0HWf034uc8ml9d/OfOJWnqX6ikLbr8FBXSekxU
+         IQg1JVMOqVVdCN7KqM0a3kMVSVSHfPPK9obose8M40j8hJf7qWjvA4zHwNu4dwatAsZT
+         sJSfxrVnkCr1LqrIRbexoMhk76V6J9oOW1bBGQxsYRkBCi1F4jAZn3qkpxHEQR98oFC5
+         vqZ0w7iw6cFjLHTfA4otkRwl53QM+gnpV/yn2yfkbfNQ7YaiL5q2kkiMyZW/nt9VUphS
+         iEqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+UumUZrJhlq3hNY8ny+XSNEmoAHaJP3vhujdIKzTzhk=;
-        b=6ShUnwLLfaDRcp8D2XinbAmjJB+T2AXKE0HM/SzYV3FiAxSCQGp1Mz/7XKWVoGW4Ik
-         bOHj7uF4px+lWcMxTmj10njbaZYTVfXxdrHoGLqLA1tBD48cO5r46dUJxk9hSox4olBw
-         dK9t0Bvh55h0/whSFA+q+My/TuvPt6yeytxhBs5f2NL6mD0L/7FjLR7c+VBb7HYVyYmx
-         pPVKrrE709e2PSmJGz2cLQKjEeHvzotYbiCkg+v1fuZP/Qnb1rPmqwjtncpPNTX7bUkx
-         aF9qZj+hPc4QB5aVcXKVu2r611HLGEcQ9wl3riJq5PbErnGy4nZeIhayKN9BZE95gzo7
-         tpAA==
-X-Gm-Message-State: AOAM530NrnmkwaF+/5YuLg0vejznDBH/CF1Vym8zo341W3Vo7hj14Y6i
-        50+CQ8DcXeJs8IZtfJ/1LoGCCqxdlKq7oBjnaXB+jKK8VA==
-X-Google-Smtp-Source: ABdhPJzKbh1HxkeGG8jqQ1nxmOwVv7ypNcEY3A+oZUPe64DOdz92+S2wSssWLSRI9pHEVnEJiooAeJpIhoa/6A4VNlE=
-X-Received: by 2002:a17:907:2d12:: with SMTP id gs18mr45974304ejc.126.1636052259578;
- Thu, 04 Nov 2021 11:57:39 -0700 (PDT)
+        bh=NH1hAfvi+I4370XeV24vwAJMjY68rCJZqPqZJpWaQC8=;
+        b=Zt8wtRUNmM2dtNyBo4E4gu/h0vZ/pWELrCBfNGe7mYAChM2gamkdwn+Mv6fJHJonWV
+         bQgUoHTVJu+i4QRZC8C8aqN6L0y4TSQ68y3mAiZ9UWw6LsGJQg8ORM8xR1mGr9n3RG+H
+         0ntsJtFMEJhgNPtW1V8+vKi4U5PXWt0Y4xnSWLr7ITggLFt2nyYgy72UcyFWgPJ79toW
+         tuM77q7xBTDN29tiTwITloNePUxBrZqwDEssk/BZXKSsyAToIG8T7Hl0UeK+YoGuk1fr
+         8+VuZju9fi3sxaAhOJoVOIgK2hNLWecSGLh9jPcGSfGXD4DoV6dj9/gdpJkkFHEOXd73
+         Cifw==
+X-Gm-Message-State: AOAM531YamchrqCoDS4xOs/fHOVvfhCJyWddyIyiSIQlaEMl8vpUd+gS
+        tuOpH8TA170zpIM8DeIO2RZ5dea4hq/Fg+6kOARJ
+X-Google-Smtp-Source: ABdhPJxwMN13Ohq4ksEEAgvk2n+Rrl8sdlV2f6hojDOE00hlUM8/gLrBdZwdU+SDaAJW4dxN5kG3X04PDE8YRvZnWLM=
+X-Received: by 2002:a05:6402:4309:: with SMTP id m9mr9997327edc.93.1636053039080;
+ Thu, 04 Nov 2021 12:10:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <ef82b8f5-082c-d2c5-2781-8a6bd90306cd.ref@schaufler-ca.com> <ef82b8f5-082c-d2c5-2781-8a6bd90306cd@schaufler-ca.com>
-In-Reply-To: <ef82b8f5-082c-d2c5-2781-8a6bd90306cd@schaufler-ca.com>
+References: <CAHC9VhRQ3wGRTL1UXEnnhATGA_zKASVJJ6y4cbWYoA19CZyLbA@mail.gmail.com>
+ <CADvbK_fVENGZhyUXKqpQ7mpva5PYJk2_o=jWKbY1jR_1c-4S-Q@mail.gmail.com>
+ <CAHC9VhSjPVotYVb8-ABescHmnNnDL=9B3M0J=txiDOuyJNoYuw@mail.gmail.com> <20211104.110213.948977313836077922.davem@davemloft.net>
+In-Reply-To: <20211104.110213.948977313836077922.davem@davemloft.net>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 4 Nov 2021 14:57:28 -0400
-Message-ID: <CAHC9VhSDXYfd3uZoFM=+onQcz=oM+3ZUr875SYvkDqhJA-QkWA@mail.gmail.com>
-Subject: Re: Disassociating ima_filter_rule* from security_audit_rule*
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>
+Date:   Thu, 4 Nov 2021 15:10:28 -0400
+Message-ID: <CAHC9VhQUdU6iXrnMTGsHd4qg7DnHDVoiWE9rfOQPjNoasLBbUA@mail.gmail.com>
+Subject: Re: [PATCHv2 net 4/4] security: implement sctp_assoc_established hook
+ in selinux
+To:     David Miller <davem@davemloft.net>
+Cc:     lucien.xin@gmail.com, omosnace@redhat.com, netdev@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-sctp@vger.kernel.org, kuba@kernel.org,
+        marcelo.leitner@gmail.com, jmorris@namei.org,
+        richard_c_haines@btinternet.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 4, 2021 at 1:35 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Thu, Nov 4, 2021 at 7:02 AM David Miller <davem@davemloft.net> wrote:
+> From: Paul Moore <paul@paul-moore.com>
+> Date: Wed, 3 Nov 2021 23:17:00 -0400
+> >
+> > While I understand you did not intend to mislead DaveM and the netdev
+> > folks with the v2 patchset, your failure to properly manage the
+> > patchset's metadata *did* mislead them and as a result a patchset with
+> > serious concerns from the SELinux side was merged.  You need to revert
+> > this patchset while we continue to discuss, develop, and verify a
+> > proper fix that we can all agree on.  If you decide not to revert this
+> > patchset I will work with DaveM to do it for you, and that is not
+> > something any of us wants.
 >
-> After the last round of comments on the LSM stacking patches
-> Dmitry Mastykin <dmastykin@astralinux.ru> pointed out a
-> conundrum with reuse of the security_audit_rule functions
-> in integrity rule processing. The audit system wants to
-> match rules for any security module that as one. The
-> integrity system wants to match rules for a single, explicitly
-> defined LSM. The two sub-systems use common code in security.c
-> which needs to be changed to support multiple LSMs, but needs
-> to be changed differently for each of these cases. While it
-> would be possible to create frankensteinish versions of the
-> security_audit_rule functions that would handle both cases
-> it seems that creating "real" versions of the ima_filter_rule
-> functions would be considerably cleaner and easier to maintain
-> going forward.
+> I would prefer a follow-up rathewr than a revert at this point.
 >
-> I'm suggesting this now, while I'm still working on the patches,
-> in case there's a solid reason that frankencode is absolutely
-> everybody's favored approach. I plan to propose the disassociation
-> as a patch separate from and in advance of the stacking series.
+> Please work with Xin to come up with a fix that works for both of you.
 
-I'm not 100% clear on what you are talking about, but since you are
-currently working on the next revision to the LSM stacking patchset
-perhaps it's best to just wait and see what the code looks like.
+We are working with Xin (see this thread), but you'll notice there is
+still not a clear consensus on the best path forward.  The only thing
+I am clear on at this point is that the current code in linux-next is
+*not* something we want from a SELinux perspective.  I don't like
+leaving known bad code like this in linux-next for more than a day or
+two so please revert it, now.  If your policy is to merge substantive
+non-network subsystem changes into the network tree without the proper
+ACKs from the other subsystem maintainers, it would seem reasonable to
+also be willing to revert those patches when the affected subsystems
+request it.
+
+I understand that if a patchset is being ignored you might feel the
+need to act without an explicit ACK, but this particular patchset
+wasn't even a day old before you merged into the netdev tree.  Not to
+mention that the patchset was posted during the second day of the
+merge window, a time when many maintainers are busy testing code,
+sending pull requests to Linus, and generally managing merge window
+fallout.
 
 -- 
 paul moore
