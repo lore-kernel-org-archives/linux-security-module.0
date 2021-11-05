@@ -2,212 +2,436 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E394C4167D
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Nov 2021 09:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DD9C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Nov 2021 14:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78F2F61252
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Nov 2021 09:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9699D61215
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Nov 2021 14:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232968AbhKEJ6A (ORCPT
+        id S233006AbhKEOIG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Nov 2021 05:58:00 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:51872 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232951AbhKEJ5y (ORCPT
+        Fri, 5 Nov 2021 10:08:06 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:47798
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232773AbhKEOIF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Nov 2021 05:57:54 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id E6596212BD;
-        Fri,  5 Nov 2021 09:55:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1636106111; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=N2IrrNGggoBJszqOFq3EqLZ/1vvIbTQ/MEl4PSiVjrk=;
-        b=O5S1I1vN2m29YuV+QfXPUec/wJqGbomni09qZHmaaYkHY02ezB84cpfAuwoWOd6pHkcy5C
-        PZtiD4IVM1vbRD2b31RkrQ7/C8Id9S9yVJdAjp6L6eQrTUpY0vEqUT0vtdWo52U7U0QfQs
-        cKQ9YljFxtnH1SkwBeeQlOylD5/PQ2c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1636106111;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=N2IrrNGggoBJszqOFq3EqLZ/1vvIbTQ/MEl4PSiVjrk=;
-        b=PVdlto+ESoz/1dIczDDDBZU8SXphcj7LOSqZucxrH/9eB171xbwhOC3Er3e3QQ7uikKEPd
-        401tswzyswImc2CA==
-Received: from kitsune.suse.cz (kitsune.suse.cz [10.100.12.127])
-        by relay2.suse.de (Postfix) with ESMTP id A60D72C157;
-        Fri,  5 Nov 2021 09:55:11 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     keyrings@vger.kernel.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Jessica Yu <jeyu@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Rob Herring <robh@kernel.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Frank van der Linden <fllinden@amazon.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 1/2] module: Use key_being_used_for for log messages in verify_appended_signature
-Date:   Fri,  5 Nov 2021 10:55:04 +0100
-Message-Id: <3e5ad3138ea72468027768bbd69f04a1dae44af8.1636105912.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1636105912.git.msuchanek@suse.de>
-References: <cover.1635948742.git.msuchanek@suse.de> <cover.1636105912.git.msuchanek@suse.de>
+        Fri, 5 Nov 2021 10:08:05 -0400
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 92EB13FFE0
+        for <linux-security-module@vger.kernel.org>; Fri,  5 Nov 2021 14:05:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1636121122;
+        bh=CSGVzne6nEVrrdYkYe9odL+tYVCKVWjj9rAAFICz7Ow=;
+        h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+         In-Reply-To:Content-Type;
+        b=OsHf1bvVljsZk9d0HOZ6ckKubNIZPyOcJQe057Y8naZfb64uUvDYLr4rB7AeXjYI5
+         T5ZGMCHYeV5MkgpulCXzF7mElZ2Xwx1iOqLF+VhjT3hk6oVKTB4zsjtYga2pVICiCW
+         SCjjcqI0U2I8JQ0aYFC9lQh2FDtBDXCf+UOvdBjYQNgKDhgGrA3zkjQv45xI9JM6Vh
+         wi/dcKBObp0Tst4bE9fP49eO8tjSV7Y9ZJkw6Wk8GT8vzVSREKakzazhHLjhG6bhIU
+         8OuXG2gYbdb+KGjhG58a6rCoIrArkWiJdRYPtLr3lG4ZvOYw6JlNiIrqafaeY+A40g
+         dSwKwBoqI7NvA==
+Received: by mail-ed1-f70.google.com with SMTP id f4-20020a50e084000000b003db585bc274so8902632edl.17
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Nov 2021 07:05:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:subject:in-reply-to
+         :content-transfer-encoding;
+        bh=CSGVzne6nEVrrdYkYe9odL+tYVCKVWjj9rAAFICz7Ow=;
+        b=KnRHGRpXYtP/NXsOuGgoRfFfenOh806MA8T3jNpOM4omoQItCUQiIK0K0DrR6OFiit
+         Na/dSE+EJrz9sY4myOhBGBCczI4A+bT8tbkFthx5pu464vnMRJ7/Dq9tBwvtuBiQI4dS
+         hdx1MoWpRyC61W0U3dIWiivVKH+CSKZcHwXNMoQFbpIUedTWalRFujgo2iAoKXucLdQC
+         oONtFqaMvhZNYqZ2IDRn1e5Aq02UrQ2cw0eLPp4Adi9I0kDA3+0PK+0j3FJBDrlBVYYB
+         2f9jEdsZLMq4ihirukADBIqbEgcOkWdcDxVYzzjtrmF71yXLS3372j2TpIalL+6RKGlc
+         9gtQ==
+X-Gm-Message-State: AOAM533EhBsdluE2pu87f/0tGaOBJ1YYeadqHCgTM0cQmW+6ExT1Pj63
+        bmCqNIoWSiYw8jkAVNXbLyqK0OrtIw3cJsbTC1tjTSrNNXyJWWZJRJeMmvjzz7fddDXrPh6X7jC
+        GFTMdg3YUdprmfz2fA678kfK9IPANusfxh2pXKzJxOKCwNz9xaZO+Fg==
+X-Received: by 2002:a17:907:d07:: with SMTP id gn7mr70410778ejc.272.1636121121716;
+        Fri, 05 Nov 2021 07:05:21 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzhzQNZQ3+8dyhBUvypJa4qfu48lMb1hQuX65yB4IdfIPrrrtkrkIxU2IVzJPoS1HoHhMW5ng==
+X-Received: by 2002:a17:907:d07:: with SMTP id gn7mr70410736ejc.272.1636121121377;
+        Fri, 05 Nov 2021 07:05:21 -0700 (PDT)
+Received: from [10.172.193.92] (uk.sesame.canonical.com. [91.189.88.160])
+        by smtp.gmail.com with ESMTPSA id sc27sm3906186ejc.125.2021.11.05.07.05.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Nov 2021 07:05:21 -0700 (PDT)
+Message-ID: <8d7e1609-f77e-834e-cf40-05e19bbc3dbe@canonical.com>
+Date:   Fri, 5 Nov 2021 14:05:19 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.1
+Content-Language: en-US
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Seth Forshee <seth@forshee.me>
+References: <20211004145258.14056-1-nayna@linux.ibm.com>
+From:   Dimitri John Ledkov <dimitri.ledkov@canonical.com>
+Subject: Re: [PATCH v3] integrity: support including firmware ".platform" keys
+ at build time
+In-Reply-To: <20211004145258.14056-1-nayna@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add value for kexec appended signature and pass in key_being_used_for
-enum rather than a string to verify_appended_signature to produce log
-messages about the signature.
+(Changing Seth's email to personal domain one)
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- arch/powerpc/kexec/elf_64.c              |  2 +-
- arch/s390/kernel/machine_kexec_file.c    |  2 +-
- crypto/asymmetric_keys/asymmetric_type.c |  1 +
- include/linux/verification.h             |  3 ++-
- kernel/module.c                          |  3 ++-
- kernel/module_signing.c                  | 11 ++++++-----
- 6 files changed, 13 insertions(+), 9 deletions(-)
+On 04/10/2021 15:52, Nayna Jain wrote:
+> Some firmware support secure boot by embedding static keys to verify the
+> Linux kernel during boot. However, these firmware do not expose an
+> interface for the kernel to load firmware keys onto ".platform" keyring.
+> This would prevent kernel signature verification on kexec.
+> 
+> For these environments, a new function load_builtin_platform_cert() is
+> defined to load compiled in certificates onto the ".platform" keyring.
+> 
+> load_certificate_list() is currently used for parsing compiled in
+> certificates to be loaded onto the .builtin or .blacklist keyrings.
+> Export load_certificate_list() allowing it to be used for parsing compiled
+> in ".platform" keyring certificates as well.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>(auto build test ERROR)
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> ---
+> NOTE: I am wondering if we should split this patch into two:
+> (https://lore.kernel.org/linux-integrity/be4bd13d-659d-710d-08b9-1a34a65e5c5d@linux.vnet.ibm.com/).
+> I can do so if you also prefer the same. 
+>
 
-diff --git a/arch/powerpc/kexec/elf_64.c b/arch/powerpc/kexec/elf_64.c
-index e8dff6b23ac5..3aa5269f6e0f 100644
---- a/arch/powerpc/kexec/elf_64.c
-+++ b/arch/powerpc/kexec/elf_64.c
-@@ -158,7 +158,7 @@ int elf64_verify_sig(const char *kernel, unsigned long length)
- 	size_t kernel_len = length;
- 
- 	return verify_appended_signature(kernel, &kernel_len, VERIFY_USE_PLATFORM_KEYRING,
--					 "kexec_file");
-+					 VERIFYING_KEXEC_APPENDED_SIGNATURE);
- }
- #endif /* CONFIG_KEXEC_SIG */
- 
-diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
-index 82260bb61060..37fcbb149368 100644
---- a/arch/s390/kernel/machine_kexec_file.c
-+++ b/arch/s390/kernel/machine_kexec_file.c
-@@ -32,7 +32,7 @@ int s390_verify_sig(const char *kernel, unsigned long length)
- 		return 0;
- 
- 	return verify_appended_signature(kernel, &kernel_len, VERIFY_USE_PLATFORM_KEYRING,
--					"kexec_file");
-+					VERIFYING_KEXEC_APPENDED_SIGNATURE);
- }
- #endif /* CONFIG_KEXEC_SIG */
- 
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index ad8af3d70ac0..6fd20eec3882 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -25,6 +25,7 @@ const char *const key_being_used_for[NR__KEY_BEING_USED_FOR] = {
- 	[VERIFYING_KEXEC_PE_SIGNATURE]		= "kexec PE sig",
- 	[VERIFYING_KEY_SIGNATURE]		= "key sig",
- 	[VERIFYING_KEY_SELF_SIGNATURE]		= "key self sig",
-+	[VERIFYING_KEXEC_APPENDED_SIGNATURE]	= "kexec appended sig",
- 	[VERIFYING_UNSPECIFIED_SIGNATURE]	= "unspec sig",
- };
- EXPORT_SYMBOL_GPL(key_being_used_for);
-diff --git a/include/linux/verification.h b/include/linux/verification.h
-index c1cf0582012a..23748feb9e03 100644
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -26,6 +26,7 @@ enum key_being_used_for {
- 	VERIFYING_KEXEC_PE_SIGNATURE,
- 	VERIFYING_KEY_SIGNATURE,
- 	VERIFYING_KEY_SELF_SIGNATURE,
-+	VERIFYING_KEXEC_APPENDED_SIGNATURE,
- 	VERIFYING_UNSPECIFIED_SIGNATURE,
- 	NR__KEY_BEING_USED_FOR
- };
-@@ -61,7 +62,7 @@ extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
- #endif
- 
- int verify_appended_signature(const void *data, size_t *len, struct key *trusted_keys,
--			      const char *what);
-+			      enum key_being_used_for purpose);
- 
- #endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
- #endif /* _LINUX_VERIFY_PEFILE_H */
-diff --git a/kernel/module.c b/kernel/module.c
-index 1c421b0442e3..5f1cf989e1cf 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2891,7 +2891,8 @@ static int module_sig_check(struct load_info *info, int flags)
- 	 */
- 	if (flags == 0) {
- 		err = verify_appended_signature(mod, &info->len,
--						VERIFY_USE_SECONDARY_KEYRING, "module");
-+						VERIFY_USE_SECONDARY_KEYRING,
-+						VERIFYING_MODULE_SIGNATURE);
- 		if (!err) {
- 			info->sig_ok = true;
- 			return 0;
-diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-index 4c28cb55275f..cef72a6f6b5d 100644
---- a/kernel/module_signing.c
-+++ b/kernel/module_signing.c
-@@ -19,17 +19,18 @@
-  * @data: The data to be verified
-  * @len: Size of @data.
-  * @trusted_keys: Keyring to use for verification
-- * @what: Informational string for log messages
-+ * @purpose: The use to which the key is being put
-  */
- int verify_appended_signature(const void *data, size_t *len,
--			      struct key *trusted_keys, const char *what)
-+			      struct key *trusted_keys,
-+			      enum key_being_used_for purpose)
- {
- 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
- 	struct module_signature ms;
- 	size_t sig_len, modlen = *len;
- 	int ret;
- 
--	pr_devel("==>%s(,%zu)\n", __func__, modlen);
-+	pr_devel("==>%s %s(,%zu)\n", __func__, key_being_used_for[purpose], modlen);
- 
- 	if (markerlen > modlen)
- 		return -ENODATA;
-@@ -44,7 +45,7 @@ int verify_appended_signature(const void *data, size_t *len,
- 
- 	memcpy(&ms, data + (modlen - sizeof(ms)), sizeof(ms));
- 
--	ret = mod_check_sig(&ms, modlen, what);
-+	ret = mod_check_sig(&ms, modlen, key_being_used_for[purpose]);
- 	if (ret)
- 		return ret;
- 
-@@ -54,6 +55,6 @@ int verify_appended_signature(const void *data, size_t *len,
- 
- 	return verify_pkcs7_signature(data, modlen, data + modlen, sig_len,
- 				      trusted_keys,
--				      VERIFYING_MODULE_SIGNATURE,
-+				      purpose,
- 				      NULL, NULL);
- }
--- 
-2.31.1
+Yes, i think you should split the patches into refactor & new feature.
+It allows one to clearly inspect/validate the no-change refactor, and
+separately review the newly added feature with clarity.
 
+Or maybe avoid the refactor all together, see my optional suggestion at
+the end.
+
+> v3:
+> * Included Jarkko's feedback
+>  ** updated patch description to include approach.
+>  ** removed extern for function declaration in the .h file.
+> * Included load_certificate_list() within #ifdef CONFIG_KEYS condition.
+> 
+> v2:
+> * Fixed the error reported by kernel test robot
+> * Updated patch description based on Jarkko's feedback.
+> 
+>  certs/Makefile                                |  3 ++-
+>  certs/blacklist.c                             |  1 -
+>  certs/common.c                                |  2 +-
+>  certs/common.h                                |  9 -------
+>  certs/system_keyring.c                        |  1 -
+>  include/keys/system_keyring.h                 |  6 +++++
+>  security/integrity/Kconfig                    | 10 +++++++
+>  security/integrity/Makefile                   | 17 +++++++++++-
+>  security/integrity/digsig.c                   |  2 +-
+>  security/integrity/integrity.h                |  6 +++++
+>  .../integrity/platform_certs/platform_cert.S  | 23 ++++++++++++++++
+>  .../platform_certs/platform_keyring.c         | 26 +++++++++++++++++++
+>  12 files changed, 91 insertions(+), 15 deletions(-)
+>  delete mode 100644 certs/common.h
+>  create mode 100644 security/integrity/platform_certs/platform_cert.S
+> 
+> diff --git a/certs/Makefile b/certs/Makefile
+> index 279433783b10..64ee37f38b85 100644
+> --- a/certs/Makefile
+> +++ b/certs/Makefile
+> @@ -3,7 +3,8 @@
+>  # Makefile for the linux kernel signature checking certificates.
+>  #
+>  
+> -obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o common.o
+> +obj-$(CONFIG_KEYS) += common.o
+> +obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o
+>  obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist.o common.o
+>  obj-$(CONFIG_SYSTEM_REVOCATION_LIST) += revocation_certificates.o
+>  ifneq ($(CONFIG_SYSTEM_BLACKLIST_HASH_LIST),"")
+> diff --git a/certs/blacklist.c b/certs/blacklist.c
+> index c9a435b15af4..b95e9b19c42f 100644
+> --- a/certs/blacklist.c
+> +++ b/certs/blacklist.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/uidgid.h>
+>  #include <keys/system_keyring.h>
+>  #include "blacklist.h"
+> -#include "common.h"
+>  
+>  static struct key *blacklist_keyring;
+>  
+> diff --git a/certs/common.c b/certs/common.c
+> index 16a220887a53..41f763415a00 100644
+> --- a/certs/common.c
+> +++ b/certs/common.c
+> @@ -2,7 +2,7 @@
+>  
+>  #include <linux/kernel.h>
+>  #include <linux/key.h>
+> -#include "common.h"
+> +#include <keys/system_keyring.h>
+>  
+>  int load_certificate_list(const u8 cert_list[],
+>  			  const unsigned long list_size,
+> diff --git a/certs/common.h b/certs/common.h
+> deleted file mode 100644
+> index abdb5795936b..000000000000
+> --- a/certs/common.h
+> +++ /dev/null
+> @@ -1,9 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0-or-later */
+> -
+> -#ifndef _CERT_COMMON_H
+> -#define _CERT_COMMON_H
+> -
+> -int load_certificate_list(const u8 cert_list[], const unsigned long list_size,
+> -			  const struct key *keyring);
+> -
+> -#endif
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 692365dee2bd..d130d5a96e09 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -16,7 +16,6 @@
+>  #include <keys/asymmetric-type.h>
+>  #include <keys/system_keyring.h>
+>  #include <crypto/pkcs7.h>
+> -#include "common.h"
+>  
+>  static struct key *builtin_trusted_keys;
+>  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+> index 6acd3cf13a18..d3f914d9a632 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -10,6 +10,12 @@
+>  
+>  #include <linux/key.h>
+>  
+> +#ifdef CONFIG_KEYS
+> +int load_certificate_list(const u8 cert_list[],
+> +			  const unsigned long list_size,
+> +			  const struct key *keyring);
+> +#endif
+> +
+>  #ifdef CONFIG_SYSTEM_TRUSTED_KEYRING
+>  
+>  extern int restrict_link_by_builtin_trusted(struct key *keyring,
+> diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+> index 71f0177e8716..b2009b792882 100644
+> --- a/security/integrity/Kconfig
+> +++ b/security/integrity/Kconfig
+> @@ -62,6 +62,16 @@ config INTEGRITY_PLATFORM_KEYRING
+>           provided by the platform for verifying the kexec'ed kerned image
+>           and, possibly, the initramfs signature.
+>  
+> +config INTEGRITY_PLATFORM_BUILTIN_KEYS
+> +        string "Builtin X.509 keys for .platform keyring"
+> +        depends on KEYS
+> +        depends on ASYMMETRIC_KEY_TYPE
+> +        depends on INTEGRITY_PLATFORM_KEYRING
+> +        help
+> +          If set, this option should be the filename of a PEM-formatted file
+> +          containing X.509 certificates to be loaded onto the ".platform"
+> +          keyring.
+> +
+>  config LOAD_UEFI_KEYS
+>         depends on INTEGRITY_PLATFORM_KEYRING
+>         depends on EFI
+> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+> index 7ee39d66cf16..a45f083589b8 100644
+> --- a/security/integrity/Makefile
+> +++ b/security/integrity/Makefile
+> @@ -3,13 +3,18 @@
+>  # Makefile for caching inode integrity data (iint)
+>  #
+>  
+> +quiet_cmd_extract_certs  = EXTRACT_CERTS   $(patsubst "%",%,$(2))
+> +      cmd_extract_certs  = scripts/extract-cert $(2) $@
+> +$(eval $(call config_filename,INTEGRITY_PLATFORM_BUILTIN_KEYS))
+> +
+>  obj-$(CONFIG_INTEGRITY) += integrity.o
+>  
+>  integrity-y := iint.o
+>  integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
+>  integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+>  integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+> -integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
+> +integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
+> +						  platform_certs/platform_cert.o
+>  integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+>  				      platform_certs/load_uefi.o \
+>  				      platform_certs/keyring_handler.o
+> @@ -19,3 +24,13 @@ integrity-$(CONFIG_LOAD_PPC_KEYS) += platform_certs/efi_parser.o \
+>                                       platform_certs/keyring_handler.o
+>  obj-$(CONFIG_IMA)			+= ima/
+>  obj-$(CONFIG_EVM)			+= evm/
+> +
+> +
+> +$(obj)/platform_certs/platform_cert.o: $(obj)/platform_certs/platform_certificate_list
+> +
+> +targets += platform_certificate_list
+> +
+> +$(obj)/platform_certs/platform_certificate_list: scripts/extract-cert $(INTEGRITY_PLATFORM_BUILTIN_KEYS_FILENAME) FORCE
+> +	$(call if_changed,extract_certs,$(CONFIG_INTEGRITY_PLATFORM_BUILTIN_KEYS))
+> +
+> +clean-files := platform_certs/platform_certificate_list
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index 3b06a01bd0fd..0ea40ed8dfcb 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -38,7 +38,7 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+>  #define restrict_link_to_ima restrict_link_by_builtin_trusted
+>  #endif
+>  
+> -static struct key *integrity_keyring_from_id(const unsigned int id)
+> +struct key *integrity_keyring_from_id(const unsigned int id)
+>  {
+>  	if (id >= INTEGRITY_KEYRING_MAX)
+>  		return ERR_PTR(-EINVAL);
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 547425c20e11..feb84e1b1105 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -167,6 +167,7 @@ int __init integrity_init_keyring(const unsigned int id);
+>  int __init integrity_load_x509(const unsigned int id, const char *path);
+>  int __init integrity_load_cert(const unsigned int id, const char *source,
+>  			       const void *data, size_t len, key_perm_t perm);
+> +struct key *integrity_keyring_from_id(const unsigned int id);
+>  #else
+>  
+>  static inline int integrity_digsig_verify(const unsigned int id,
+> @@ -194,6 +195,11 @@ static inline int __init integrity_load_cert(const unsigned int id,
+>  {
+>  	return 0;
+>  }
+> +
+> +static inline struct key *integrity_keyring_from_id(const unsigned int id)
+> +{
+> +	return ERR_PTR(-EOPNOTSUPP);
+> +}
+>  #endif /* CONFIG_INTEGRITY_SIGNATURE */
+>  
+>  #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+> diff --git a/security/integrity/platform_certs/platform_cert.S b/security/integrity/platform_certs/platform_cert.S
+> new file mode 100644
+> index 000000000000..20bccce5dc5a
+> --- /dev/null
+> +++ b/security/integrity/platform_certs/platform_cert.S
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+
+My personal preference would be to have platform_cert.S next to all the
+other "extract certs and build an object out of them", as in
+/certs/platform_cert.S right next to the other similar .S files, i.e
+system_certificates.S and revocation_certificates.S it would make it
+easier to inspect the build and find all the various types of built-in keys.
+
+This is a minor comment/suggestion, that you can reject.
+
+> +#include <linux/export.h>
+> +#include <linux/init.h>
+> +
+> +	__INITRODATA
+> +
+> +	.align 8
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +	.globl platform_certificate_list
+> +platform_certificate_list:
+> +__cert_list_start:
+> +	.incbin "security/integrity/platform_certs/platform_certificate_list"
+> +__cert_list_end:
+> +#endif
+> +
+> +	.align 8
+> +	.globl platform_certificate_list_size
+> +platform_certificate_list_size:
+> +#ifdef CONFIG_64BIT
+> +	.quad __cert_list_end - __cert_list_start
+> +#else
+> +	.long __cert_list_end - __cert_list_start
+> +#endif
+> diff --git a/security/integrity/platform_certs/platform_keyring.c b/security/integrity/platform_certs/platform_keyring.c
+> index bcafd7387729..17535050d08d 100644
+> --- a/security/integrity/platform_certs/platform_keyring.c
+> +++ b/security/integrity/platform_certs/platform_keyring.c
+> @@ -12,8 +12,12 @@
+>  #include <linux/cred.h>
+>  #include <linux/err.h>
+>  #include <linux/slab.h>
+> +#include <keys/system_keyring.h>
+>  #include "../integrity.h"
+>  
+> +extern __initconst const u8 platform_certificate_list[];
+> +extern __initconst const unsigned long platform_certificate_list_size;
+> +
+>  /**
+>   * add_to_platform_keyring - Add to platform keyring without validation.
+>   * @source: Source of key
+> @@ -37,6 +41,28 @@ void __init add_to_platform_keyring(const char *source, const void *data,
+>  		pr_info("Error adding keys to platform keyring %s\n", source);
+>  }
+>  
+
+I think the below hunk should be guarded with #ifdef
+CONFIG_INTEGRITY_PLATFORM_BUILTIN_KEYS, similar to how similar call is
+ifdef'ed in case of revocation keys i.e. see ifdef
+CONFIG_SYSTEM_REVOCATION_LIST in certs/blacklist.c. Because one can
+configure a kernel with a platform keyring, but without platform builtin
+keys.
+
+I think this must be be fixed.
+
+> +static __init int load_builtin_platform_cert(void)
+> +{
+> +	const u8 *p;
+> +	unsigned long size;
+> +	int rc;
+> +	struct key *keyring;
+> +
+> +	p = platform_certificate_list;
+> +	size = platform_certificate_list_size;
+> +
+> +	keyring = integrity_keyring_from_id(INTEGRITY_KEYRING_PLATFORM);
+> +	if (IS_ERR(keyring))
+> +		return PTR_ERR(keyring);
+> +
+> +	rc = load_certificate_list(p, size, keyring);
+> +	if (rc)
+> +		pr_info("Error adding keys to platform keyring %d\n", rc);
+> +
+> +	return rc;
+> +}
+> +late_initcall(load_builtin_platform_cert);
+> +
+
+
+Some more general comment:
+I do wonder if the refactor of load_certificate_list can be somehow
+avoided. For example, when platform keyring is allocated it calls
+set_platform_trusted_keys() from certs/system-keyring.c which could add
+a call to load_builtin_platform_cert, and it already has a handle to the
+platform keyring. The set_platform_trusted_keys() could call to
+load_certificate_list there without late_initcall, alocating variables,
+and looking up the integrity_keyring_from id. It would make this feature
+patch very concise and straight forward then.
+
+That way builtin platform certs will be done before platform specific
+load_*.c things are done. But also it will make builtin certs loading be
+done in a different place from the rest of the platform certs loading
+(e.g. the uefi one). So maybe doing builtin certs loading, next to all
+other platform cert loading makes sense, despite it being away from
+other builtin certs loading into other keyrings.
+
+I am divided on this =)
+
+>  /*
+>   * Create the trusted keyrings.
+>   */
+> 
+Regards,
+
+Dimitri.
