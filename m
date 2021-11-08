@@ -2,123 +2,99 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 543B8C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Nov 2021 16:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC138C43217
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31782610D0
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Nov 2021 16:58:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D430861360
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:00:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233723AbhKERBa (ORCPT
+        id S241554AbhKIBDC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Nov 2021 13:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33572 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229763AbhKERB3 (ORCPT
+        Mon, 8 Nov 2021 20:03:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241539AbhKIBC7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Nov 2021 13:01:29 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A010C061714;
-        Fri,  5 Nov 2021 09:58:50 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id gn3so3462829pjb.0;
-        Fri, 05 Nov 2021 09:58:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Dm/tkXe8vrCYnsbfNrGgeQZgPuQ1rWi9SOlQuOERJiI=;
-        b=UlgE/YQSPQJWMfUCwYhCOqMFMyTOzpcRoFGeVLHrFwMjU1iG9rKTvQzHGlDVFkLOif
-         nz2oGZJ1mrmILyfc7DAGyBmoFpWLwE0snPV1E61vYv2HKle3i6L0B/nWriJgQhTwrmTl
-         TF0QAerEaUNMjLFqoXZRVALTfh9NDSHa1TYrtBzJrspT16kiXkysTx2ZbisaMpJ9RTSz
-         IImS8hwU48HL1JpMLXPxI1xKjNop82xMh9LoIIiFRHSnVNOtxVU++8lGU47O9fpN6Mtv
-         FVnrIkBVcs0aBL1B+y04O2oLdA70zx0tvk6GMz8LM1cIKWxAQa2O1KD6vDo15qloWAPN
-         zbXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Dm/tkXe8vrCYnsbfNrGgeQZgPuQ1rWi9SOlQuOERJiI=;
-        b=otzEm1PISloyZN7zf0gwW2o00zcBBKQ+rs9y1NKaANJq8vIMtw/sGQ85tdkllsK/FH
-         i1Ha9ZD4+Gp8f5Nykx4yFX0PMSANHscXf9p+CpOMbrD1ZL43FTgX2Y5RvdQb7uxSL2Fm
-         A35CDhkE+5WJ+Xm96DV/LFFvS39mXpiVAHPzIlEEk/D8GWeNLo0hhh1pRe7TYTA8+zgM
-         4KACmPESBEiEh6y88DwceTHwInl+8P41a/0vS6Kfvjo88NkBNZYLMZmsszhWyFLmHqOU
-         PjWfyobFIGaJA0Y2yH78GvnHebJUK5pT7kOyrbd9VA7D2cbL+2rtWVw5I2iOzR1q8v1g
-         Hoyw==
-X-Gm-Message-State: AOAM531U1scfbZ03zT/FUHfQ45hUYGb7Rm79XpGbwuSDMFtlzWrIzxcA
-        aECn6px0cuKzLzxy59ONBxA=
-X-Google-Smtp-Source: ABdhPJxM2R0qJcfJqVo7o/snSZySDmo6F9vZuLLmqo8/DfMX02pan77bXrd9rpIJGITUbEsvFUv7iQ==
-X-Received: by 2002:a17:90b:4d84:: with SMTP id oj4mr26973402pjb.90.1636131529539;
-        Fri, 05 Nov 2021 09:58:49 -0700 (PDT)
-Received: from [192.168.1.194] ([50.39.237.102])
-        by smtp.gmail.com with ESMTPSA id mz7sm4659568pjb.7.2021.11.05.09.58.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Nov 2021 09:58:48 -0700 (PDT)
-Message-ID: <136709ac-1fbe-80d0-f49f-8a0399106ad8@gmail.com>
-Date:   Fri, 5 Nov 2021 09:58:47 -0700
+        Mon, 8 Nov 2021 20:02:59 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 935E56124D;
+        Tue,  9 Nov 2021 01:00:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636419614;
+        bh=VqO9UX80S7KII/tWuH8caqgUVnPtn1KRxFD1AbG4BM8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OqOXf5ZQLEKcCdcIGTuLU/B1czn0khtaFinuA3ILYOisly6IOZt/t+nHiUO6pn2bo
+         RrIKFcFw58QgLVE/4HI0eWwy7Pk0qpHQ1wCWGEa0UCmoMhUOh+4D5ZEAubf8Wf3hiN
+         RhIGUQUU7jtykD5cSVWzSepAmCSybbJ+wte09pyERW0cT6SblYT2CeX/A/IgDoooCK
+         VadoWQVNr4VDcg8C3XMgMPiFnKBujWJwuGP/YUADfjfhv4anxMo4lcndk9qyFuVI5c
+         7robOW5CuAPtDAmaPVja020mWK7AJUpZ3G6JPcpG43WmppnfExn6WfeB/NaKF82U6N
+         VX91vOsYUJ3QA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        syzbot+3f91de0b813cc3d19a80@syzkaller.appspotmail.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Sasha Levin <sashal@kernel.org>, jmorris@namei.org,
+        serge@hallyn.com, linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 018/146] smackfs: Fix use-after-free in netlbl_catmap_walk()
+Date:   Mon,  8 Nov 2021 12:42:45 -0500
+Message-Id: <20211108174453.1187052-18-sashal@kernel.org>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211108174453.1187052-1-sashal@kernel.org>
+References: <20211108174453.1187052-1-sashal@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.2.1
-Subject: Re: [PATCH] landlock: Initialize kernel stack variables properly
-Content-Language: en-US
-To:     Austin Kim <austindh.kim@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20211103071427.GA13854@raspberrypi>
- <7a71215c-58f4-081b-6a2e-030073f2737e@digikod.net>
- <CADLLry4zYn-NZBtC3pdQpb4c_3vvzNfc71rBrXc-oXqgSZNHaQ@mail.gmail.com>
-From:   J Freyensee <why2jjj.linux@gmail.com>
-In-Reply-To: <CADLLry4zYn-NZBtC3pdQpb4c_3vvzNfc71rBrXc-oXqgSZNHaQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 
+[ Upstream commit 0817534ff9ea809fac1322c5c8c574be8483ea57 ]
 
-On 11/4/21 4:41 AM, Austin Kim wrote:
-> 2021년 11월 3일 (수) 오후 9:14, Mickaël Salaün <mic@digikod.net>님이 작성:
->> Hi Austin,
->>
->> On 03/11/2021 08:14, Austin Kim wrote:
->>> In case kernel stack variables are not initialized properly, there might
->>> be a little chance of kernel information disclosure. So it is better for
->>> kernel stack variables to be initialized with null characters.
->>>
->>> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
->>> ---
->>>   security/landlock/syscalls.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
->>> index 32396962f04d..50a6f7091428 100644
->>> --- a/security/landlock/syscalls.c
->>> +++ b/security/landlock/syscalls.c
->>> @@ -320,6 +320,8 @@ SYSCALL_DEFINE4(landlock_add_rule,
->>>        if (rule_type != LANDLOCK_RULE_PATH_BENEATH)
->>>                return -EINVAL;
->>>
->>> +     memset(&path_beneath_attr, 0, sizeof(path_beneath_attr));
->>> +
->> This memset is already done with the copy_from_user() call just below.
->>
-> It seems that memset() is done inside copy_from_user().
-> Thanks for feedback.
+Syzkaller reported use-after-free bug as described in [1]. The bug is
+triggered when smk_set_cipso() tries to free stale category bitmaps
+while there are concurrent reader(s) using the same bitmaps.
 
-If you are really sensitive of what information may be disclosed in this 
-case you can consider memzero_explicit() to use instead:
+Wait for RCU grace period to finish before freeing the category bitmaps
+in smk_set_cipso(). This makes sure that there are no more readers using
+the stale bitmaps and freeing them should be safe.
 
-https://www.kernel.org/doc/htmldocs/kernel-api/API-memzero-explicit.html
+[1] https://lore.kernel.org/netdev/000000000000a814c505ca657a4e@google.com/
 
-Jay
+Reported-by: syzbot+3f91de0b813cc3d19a80@syzkaller.appspotmail.com
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/smack/smackfs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
->
-> BR,
-> Austin Kim
->
->>>        /* Copies raw user space buffer, only one type for now. */
->>>        res = copy_from_user(&path_beneath_attr, rule_attr,
->>>                        sizeof(path_beneath_attr));
->>>
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index 3a75d2a8f5178..9d853c0e55b84 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -831,6 +831,7 @@ static int smk_open_cipso(struct inode *inode, struct file *file)
+ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 				size_t count, loff_t *ppos, int format)
+ {
++	struct netlbl_lsm_catmap *old_cat;
+ 	struct smack_known *skp;
+ 	struct netlbl_lsm_secattr ncats;
+ 	char mapcatset[SMK_CIPSOLEN];
+@@ -920,9 +921,11 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 
+ 	rc = smk_netlbl_mls(maplevel, mapcatset, &ncats, SMK_CIPSOLEN);
+ 	if (rc >= 0) {
+-		netlbl_catmap_free(skp->smk_netlabel.attr.mls.cat);
++		old_cat = skp->smk_netlabel.attr.mls.cat;
+ 		skp->smk_netlabel.attr.mls.cat = ncats.attr.mls.cat;
+ 		skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
++		synchronize_rcu();
++		netlbl_catmap_free(old_cat);
+ 		rc = count;
+ 		/*
+ 		 * This mapping may have been cached, so clear the cache.
+-- 
+2.33.0
 
