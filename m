@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF9EC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E41EBC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 364C261242
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:19:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFCE9610A2
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242894AbhKIBVe (ORCPT
+        id S242759AbhKIB0U (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Nov 2021 20:21:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46194 "EHLO mail.kernel.org"
+        Mon, 8 Nov 2021 20:26:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243117AbhKIBTb (ORCPT
+        id S243262AbhKIBPW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Nov 2021 20:19:31 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E27A61B03;
-        Tue,  9 Nov 2021 01:07:49 +0000 (UTC)
+        Mon, 8 Nov 2021 20:15:22 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2B9C561AD2;
+        Tue,  9 Nov 2021 01:06:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636420070;
+        s=k20201202; t=1636419985;
         bh=8oDn/mKKwZW39jfc27elu3K7XvGSEnv0UEF+EV8qVY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=boJ/ROJhiWSpfPM5Byzk80MYgGVsIW9j106//QG155JIDRjIpsjK+wojV0ag/zgzl
-         FNKwICYuvJc2hiTefTlLJxvJg/JlyQk3PuQjpDm6215Tml2ZqALtJIWARQH09ZOx+8
-         EEgNFtK43cA89HgWtmd+O6aNz8IX5g/FeXEsvEfFArV2FlDY+BTR2GOQSjqwGzTHoH
-         8CRtODpp4DaB9v5pqiriQpEYaM8iLAeHl95E+Uk1dzWvAcFX6UEiJmslXQKgYIJzgT
-         qyzFMVpTRdybTiOQ6u0/0zFbnNVm97xCRLTVDvw1W9KFt11RvIQzbTDNc9Vm9o0+D/
-         ToplmFJvcFPKA==
+        b=nBH+2tjL16WoCQYp709ua5F1r1WN2iaKWmPIqmc9P0gv0dvpXJTaaZQccKvz/5LcB
+         h6CUfhPOk9b2KDBMZg19QQmumjDfEuzg0xrZARuX9HgcfwE+oAiFKOo+ffiAP887SM
+         buXqdwKYUj7aF30P69Em8HKkntP8hoBLastDVvm0spNXpkUqa9Bu7YeoLQ+eQVVSA/
+         lqwhCWAT/Vuxrjy0ujSvI9wsZuj3mjQfNC+6vv0GTz+Pqc2SvTM3J6BjVojdjrmvTv
+         GdGpvlVYbRgfO7SJs6iiFUeFYX4gahIvvpF470LzROyXu59XR+8H6J0oSTNi9LIfoz
+         lb1IkU39QThhA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
@@ -36,12 +36,12 @@ Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Sasha Levin <sashal@kernel.org>, jmorris@namei.org,
         serge@hallyn.com, linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 32/39] smackfs: use __GFP_NOFAIL for smk_cipso_doi()
-Date:   Mon,  8 Nov 2021 20:06:42 -0500
-Message-Id: <20211109010649.1191041-32-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 37/47] smackfs: use __GFP_NOFAIL for smk_cipso_doi()
+Date:   Mon,  8 Nov 2021 12:50:21 -0500
+Message-Id: <20211108175031.1190422-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211109010649.1191041-1-sashal@kernel.org>
-References: <20211109010649.1191041-1-sashal@kernel.org>
+In-Reply-To: <20211108175031.1190422-1-sashal@kernel.org>
+References: <20211108175031.1190422-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
