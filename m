@@ -2,46 +2,45 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66414C43219
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B1D7C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5220F610A2
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:23:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72460610A2
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Nov 2021 01:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242842AbhKIB0Y (ORCPT
+        id S241672AbhKIB1o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Nov 2021 20:26:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47704 "EHLO mail.kernel.org"
+        Mon, 8 Nov 2021 20:27:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243507AbhKIBXW (ORCPT
+        id S244215AbhKIBY7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Nov 2021 20:23:22 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C2CBF61B40;
-        Tue,  9 Nov 2021 01:09:02 +0000 (UTC)
+        Mon, 8 Nov 2021 20:24:59 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E04A261B2F;
+        Tue,  9 Nov 2021 01:09:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636420143;
-        bh=oOJPV2CNc0bd5QaZ5EFIK0Cp7xJoqO2+pimK1Z2tLv0=;
+        s=k20201202; t=1636420171;
+        bh=I6YMP7D0RXYm5hmeBrttZmTmHBoqWCzSufs82EJtph0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fan2aw1f3wDiaLq5JhRmNCSqI/3LgQDIWb/xSdCVtUq1brUF9RP/WEqx7kqwv/NSW
-         JtboXTKD+toBRDH0NLMXDpk6mFuqBQZy9prw6a01As7cCr9Ps7FUzVtBVc8xZvoPzH
-         yjB+mA6Qvo/qrLWGOjs7MlZsxk5izo/NaAZbo5b2ID56IRMvx1GnKbHkJ7dTR/zDkJ
-         PJsas8voXubya9892SnGjNpwpdDX6YUiVzETeHQz8jDxZiZXaCBm4YcZ3v/uvSsZQF
-         cmYU8NWQXu+SlT6sC6xw8bGo8sZ+J1A+M/AEqYRo2uhj5cjorV+ZbNoQYw30Lut3ij
-         Khb7MCK7K4ewQ==
+        b=erFMbmJdU1QykTCShwcctnZr+MIeY/QB6xdIcvuwyqGe/bB7Ua35vWmBXJBmKeX06
+         Jjkd2AUEFFzdBIfi4WO/nxS5pzCe9DKeFREuAw3+jI6pXguuY5xWRL2+RcVro31Wmo
+         5FMu4mCNcPfTZDY9/gzt3fpPrEWLDoG5fL+xJyvW4rcdOGAGblB0sZ2o28j+lqvOTO
+         zoOUxV0z9LokyiQQciOFmfvMn6EFKuHDI+etyNByuZk1WRhkT9flJYF6Q4SWnfAKO6
+         StHWyOqUiqmk50fpvPvxue3zUxol4FipfPztZu+I9eLi8SQVEXiex97guipQeeXNIJ
+         wcF9pr24oWogw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+89731ccb6fec15ce1c22@syzkaller.appspotmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Sasha Levin <sashal@kernel.org>, jmorris@namei.org,
-        serge@hallyn.com, linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 28/33] smackfs: use __GFP_NOFAIL for smk_cipso_doi()
-Date:   Mon,  8 Nov 2021 20:08:02 -0500
-Message-Id: <20211109010807.1191567-28-sashal@kernel.org>
+Cc:     wangzhitong <wangzhitong@uniontech.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, paul@paul-moore.com,
+        yoshfuji@linux-ipv6.org, dsahern@kernel.org, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 07/30] NET: IPV4: fix error "do not initialise globals to 0"
+Date:   Mon,  8 Nov 2021 20:08:55 -0500
+Message-Id: <20211109010918.1192063-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211109010807.1191567-1-sashal@kernel.org>
-References: <20211109010807.1191567-1-sashal@kernel.org>
+In-Reply-To: <20211109010918.1192063-1-sashal@kernel.org>
+References: <20211109010918.1192063-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -49,39 +48,34 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+From: wangzhitong <wangzhitong@uniontech.com>
 
-[ Upstream commit f91488ee15bd3cac467e2d6a361fc2d34d1052ae ]
+[ Upstream commit db9c8e2b1e246fc2dc20828932949437793146cc ]
 
-syzbot is reporting kernel panic at smk_cipso_doi() due to memory
-allocation fault injection [1]. The reason for need to use panic() was
-not explained. But since no fix was proposed for 18 months, for now
-let's use __GFP_NOFAIL for utilizing syzbot resource on other bugs.
+this patch fixes below Errors reported by checkpatch
+    ERROR: do not initialise globals to 0
+    +int cipso_v4_rbm_optfmt = 0;
 
-Link: https://syzkaller.appspot.com/bug?extid=89731ccb6fec15ce1c22 [1]
-Reported-by: syzbot <syzbot+89731ccb6fec15ce1c22@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: wangzhitong <wangzhitong@uniontech.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/smack/smackfs.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/ipv4/cipso_ipv4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index e26e7fbb89657..cf1f92a04359a 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -716,9 +716,7 @@ static void smk_cipso_doi(void)
- 		printk(KERN_WARNING "%s:%d remove rc = %d\n",
- 		       __func__, __LINE__, rc);
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index e798e27b3c7d3..15d224cfe7c92 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -87,7 +87,7 @@ struct cipso_v4_map_cache_entry {
+ static struct cipso_v4_map_cache_bkt *cipso_v4_cache;
  
--	doip = kmalloc(sizeof(struct cipso_v4_doi), GFP_KERNEL);
--	if (doip == NULL)
--		panic("smack:  Failed to initialize cipso DOI.\n");
-+	doip = kmalloc(sizeof(struct cipso_v4_doi), GFP_KERNEL | __GFP_NOFAIL);
- 	doip->map.std = NULL;
- 	doip->doi = smk_cipso_doi_value;
- 	doip->type = CIPSO_V4_MAP_PASS;
+ /* Restricted bitmap (tag #1) flags */
+-int cipso_v4_rbm_optfmt = 0;
++int cipso_v4_rbm_optfmt;
+ int cipso_v4_rbm_strictvalid = 1;
+ 
+ /*
 -- 
 2.33.0
 
