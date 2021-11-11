@@ -2,126 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E813C43219
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Nov 2021 23:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADCDC433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Nov 2021 00:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 367486108B
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Nov 2021 23:00:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 265A961251
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Nov 2021 00:21:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234103AbhKJXDd (ORCPT
+        id S232733AbhKKAYQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Nov 2021 18:03:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46468 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234180AbhKJXDc (ORCPT
+        Wed, 10 Nov 2021 19:24:16 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46464 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232242AbhKKAYO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Nov 2021 18:03:32 -0500
-Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B30B8C061766
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Nov 2021 15:00:44 -0800 (PST)
-Received: by mail-pg1-x549.google.com with SMTP id z19-20020a630a53000000b002dc2f4542faso2231296pgk.13
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Nov 2021 15:00:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=akg642f7HDeisDI17y1/ahPZ+9iAX4nebtKtHRS0FT0=;
-        b=tYlvx8oO3Ox97muMYpX13r1a/mvmZk08+xfJ29QkGgOrWb7Yr7bEE0TBHzndmJ6ieu
-         WLd/RCgFiGXhnctk6ifoQcszWap/Hhs8FGuwNzTxWOEtxT18a9RP/vM5/+W148LjVfbo
-         9KYs9Bt/YeXsBATtT6nP7unifCeZpwKgz0rXCnduN7+b+iQ7lk0w8QRBoBxl9jNndcEa
-         UbGY1/Lp9g7lVpEGxsKyRNbpzAU2/xTCA5cq07Tb7Sa0ImJ1488YfBtLBGTVEPWCpsG2
-         +src/caUTiZWvW2i5hLlkFPfrYC6+fJLPFkocE9tdiscEUgGDCMjAI/zBTQUVTJgWhk7
-         J0ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=akg642f7HDeisDI17y1/ahPZ+9iAX4nebtKtHRS0FT0=;
-        b=ppSjfFbJdR3DWOrL7vJQhYj9r6R5Uu5o3bfuMI6JIz80M4QBxbSfpLc6JRExNWMcnt
-         GHNktNFALiAAoyFLrvhjj8SAkLv5btDkVltQnhEFnzlQ+T0jF9tzjYorrdTPjp82howO
-         CKjPKrV9RxtPrkqI2elFnaLalz/Mmk3nE6optqjCk7690UHGzImVJ95NRcQ/kP920+sK
-         m9yp8E5Fsw4ZT16J/Z9nfIAdRJ7wDnQJmiFisvHhvOmUKM+ceL3vmQWr0d+CcJyJPYC2
-         CbvuGFVRm8rIH4plpC1NspTM679cNOKpKkO5SZAy8W/eaLZnXkUKq9RGkSKxYe/p9sPZ
-         NJOw==
-X-Gm-Message-State: AOAM530icAa/Vlc2YyLjjNcqkHLItprhpSJBCSFQOK3bzwZ7YTcZINwQ
-        REvbXwhYQFCS8MxBmIR3pwEnCkVfPA==
-X-Google-Smtp-Source: ABdhPJxxCupVj5ImDPnY2F8WAukfAsjSmvOKv44ciI5NXs0e9uEd08daIFxS+YgObqo/u75TDbTqI1VcDw==
-X-Received: from tkjos-desktop.mtv.corp.google.com ([2620:15c:211:200:4a73:99b6:9694:8c4d])
- (user=tkjos job=sendgmr) by 2002:a63:144e:: with SMTP id 14mr1668364pgu.14.1636585244153;
- Wed, 10 Nov 2021 15:00:44 -0800 (PST)
-Date:   Wed, 10 Nov 2021 15:00:36 -0800
-In-Reply-To: <20211110230036.3274365-1-tkjos@google.com>
-Message-Id: <20211110230036.3274365-3-tkjos@google.com>
-Mime-Version: 1.0
-References: <20211110230036.3274365-1-tkjos@google.com>
-X-Mailer: git-send-email 2.34.0.rc0.344.g81b53c2807-goog
-Subject: [PATCH 5.10 3/3] binder: use cred instead of task for getsecid
-From:   Todd Kjos <tkjos@google.com>
-To:     stable@vger.kernel.org, gregkh@linuxfoundation.org,
-        arve@android.com, tkjos@android.com, maco@android.com,
-        christian@brauner.io, jmorris@namei.org, serge@hallyn.com,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, keescook@chromium.org, jannh@google.com,
-        jeffv@google.com, zohar@linux.ibm.com,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Cc:     joel@joelfernandes.org, kernel-team@android.com,
-        Todd Kjos <tkjos@google.com>,
-        kernel test robot <lkp@intel.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 10 Nov 2021 19:24:14 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AB0CBrG018727;
+        Thu, 11 Nov 2021 00:21:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=PgvywXPtaCATSQBCMJYCsYKc0v2NKPYGKy72rwxXR9U=;
+ b=WSpRLAuTGUMRsjiRweP9nn+W3UXsiQsEhfIcxqis470u3ufTb3BkAhgB+XFxI6IFekKq
+ YEvpxiPlnO0LHrFHGqa28JAxbzHGVgOVyxiBG0r9wZh0U5le7KrUCizUz80GiirNGZ82
+ Vm2Ax9Y6sQVWNnFzdf9gqKqIdLTw+rpAYFure8bI6Si922eqFAWIux6WQc4NQ6IopRFJ
+ 4n/KdYCuTk9gOTZFLtZbMYwzpzcUZU/9pIYMhRg8wdQnpCx237rKQKIHbhBk/FaMTU0U
+ ynCaInPf8n2qbcYz9d798A6tTKyfEK1Fqen/4xUkCYtlWir7NCxjJIJ5fkwYNfMfk5m6 Tw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3c8re084sd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 11 Nov 2021 00:21:22 +0000
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1AB0Ft8o030064;
+        Thu, 11 Nov 2021 00:21:21 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3c8re084ry-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 11 Nov 2021 00:21:21 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1AB0Ci9K002114;
+        Thu, 11 Nov 2021 00:21:20 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06ams.nl.ibm.com with ESMTP id 3c5gyjyuda-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 11 Nov 2021 00:21:19 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1AB0LGt46095558
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 Nov 2021 00:21:16 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 819EE42057;
+        Thu, 11 Nov 2021 00:21:16 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 29D4B4204D;
+        Thu, 11 Nov 2021 00:21:14 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.115.32])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 11 Nov 2021 00:21:13 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dimitri John Ledkov <dimitri.ledkov@canonical.com>,
+        Seth Forshee <seth@forshee.me>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v4 0/2] integrity: support including firmware ".platform" keys at build time 
+Date:   Wed, 10 Nov 2021 19:20:55 -0500
+Message-Id: <20211111002057.123741-1-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: MV7t3mKwrVzwsPytorjnL3rRCEk37dUb
+X-Proofpoint-ORIG-GUID: I7qZHhBwjmKO3_0xTgFsNLyxikkwa1Tp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-10_14,2021-11-08_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ malwarescore=0 mlxscore=0 impostorscore=0 spamscore=0 bulkscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2111100116
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-commit 4d5b5539742d2554591751b4248b0204d20dcc9d upstream.
+Some firmware support secure boot by embedding static keys to verify the
+Linux kernel during boot. However, these firmware do not expose an
+interface for the kernel to load firmware keys onto the ".platform"
+keyring, preventing the kernel from verifying the kexec kernel image
+signature.
 
-Use the 'struct cred' saved at binder_open() to lookup
-the security ID via security_cred_getsecid(). This
-ensures that the security context that opened binder
-is the one used to generate the secctx.
+This patchset exports load_certificate_list() and defines a new function
+load_builtin_platform_cert() to load compiled in certificates onto the
+".platform" keyring.
 
-Cc: stable@vger.kernel.org # 5.4+
-Fixes: ec74136ded79 ("binder: create node flag to request sender's security context")
-Signed-off-by: Todd Kjos <tkjos@google.com>
-Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Change-Id: Ia7b59804a0bdbd51191bbcca556414840307c623
----
- drivers/android/binder.c | 2 +-
- include/linux/security.h | 5 +++++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+Changelog:
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 50fff726dc70..3ba3944a9e1f 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -3103,7 +3103,7 @@ static void binder_transaction(struct binder_proc *proc,
- 		u32 secid;
- 		size_t added_size;
- 
--		security_task_getsecid(proc->tsk, &secid);
-+		security_cred_getsecid(proc->cred, &secid);
- 		ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
- 		if (ret) {
- 			return_error = BR_FAILED_REPLY;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index e67cc8c40865..35355429648e 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1003,6 +1003,11 @@ static inline void security_transfer_creds(struct cred *new,
- {
- }
- 
-+static inline void security_cred_getsecid(const struct cred *c, u32 *secid)
-+{
-+	*secid = 0;
-+}
-+
- static inline int security_kernel_act_as(struct cred *cred, u32 secid)
- {
- 	return 0;
+v4:
+* Split into two patches as per Mimi Zohar and Dimitri John Ledkov
+recommendation.
+
+v3:
+* Included Jarkko's feedback
+ ** updated patch description to include approach.
+ ** removed extern for function declaration in the .h file.
+* Included load_certificate_list() within #ifdef CONFIG_KEYS condition.
+
+v2:
+* Fixed the error reported by kernel test robot
+* Updated patch description based on Jarkko's feedback.
+
+
+Nayna Jain (2):
+  certs: export load_certificate_list() to be used outside certs/
+  integrity: support including firmware ".platform" keys at build time
+
+ certs/Makefile                                |  5 ++--
+ certs/blacklist.c                             |  1 -
+ certs/common.c                                |  2 +-
+ certs/common.h                                |  9 -------
+ certs/system_keyring.c                        |  1 -
+ include/keys/system_keyring.h                 |  6 +++++
+ security/integrity/Kconfig                    | 10 +++++++
+ security/integrity/Makefile                   | 17 +++++++++++-
+ security/integrity/digsig.c                   |  2 +-
+ security/integrity/integrity.h                |  6 +++++
+ .../integrity/platform_certs/platform_cert.S  | 23 ++++++++++++++++
+ .../platform_certs/platform_keyring.c         | 26 +++++++++++++++++++
+ 12 files changed, 92 insertions(+), 16 deletions(-)
+ delete mode 100644 certs/common.h
+ create mode 100644 security/integrity/platform_certs/platform_cert.S
+
 -- 
-2.34.0.rc0.344.g81b53c2807-goog
-
+2.27.0
