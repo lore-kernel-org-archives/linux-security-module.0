@@ -2,219 +2,383 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0015C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Nov 2021 03:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C89E9C43217
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Nov 2021 14:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F41061261
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Nov 2021 03:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDC886117A
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Nov 2021 14:32:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231676AbhKKDd2 (ORCPT
+        id S233708AbhKKOfc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Nov 2021 22:33:28 -0500
-Received: from mga18.intel.com ([134.134.136.126]:43891 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230256AbhKKDd0 (ORCPT
+        Thu, 11 Nov 2021 09:35:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:33080 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233712AbhKKOfa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Nov 2021 22:33:26 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10164"; a="219732205"
-X-IronPort-AV: E=Sophos;i="5.87,225,1631602800"; 
-   d="scan'208";a="219732205"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2021 19:30:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,225,1631602800"; 
-   d="scan'208";a="670102683"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orsmga005.jf.intel.com with ESMTP; 10 Nov 2021 19:30:36 -0800
-Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.12; Wed, 10 Nov 2021 19:30:36 -0800
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.12; Wed, 10 Nov 2021 19:30:36 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.12 via Frontend Transport; Wed, 10 Nov 2021 19:30:36 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.177)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2242.12; Wed, 10 Nov 2021 19:30:35 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nM7mOL4Isqqd/OGWBmGLIcdESL2rmw8N7NPoFWAE/D0IEY01dn++vrwcOG/AaNuTNwsdbVvXpxps5/drhpt7hWuyW2rwZwXYDt60MHtagbLcy9aKaDJszJEFrggEElx5KpZ4VEIpiyRBwZzqUQmtcEyt5Juv3Sk+cOsxa0Xpq288Bf9Vx3JWmLU6W13NRvejcm+/RtNwsOQwbdzKyo5T8VwZUHVrKQmLOKH/1wQNavQbvLZaZpWsYzWO240vXiLzsFUO9R+y28UB0ixGtM4mb6NjqPzPAJSV1dHA2nDa9VB6dGKl1TA1GC2hPk6x0Wyu+HI6eBa25jj51uc/K5Lung==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HJ9PUPbgM6ABBJt4mzkOQY38bN1I725+AKLT6wzoK6o=;
- b=ej7lTNGJeWSHOBhLdgQnYQbpMPSnvDJQUXOLx5Ga7jxuHLX3d3wOS9kdA76rMX06PeciZSdsfp+qDxXqgi5FdHPxE42kw2qt/S+FPBftBal2vzFJJkgTBdNfFQcB4OJnxm7MDPy2vr5J6bmD9XkmwCuGTIGW+ILEZi/mP1mnj/5qyomoS9FKjsX9hnPZgTfrRgPo1ryKnetwtzYNFqYRrgIWo87Yb4AjgV0cJlkwx3SBRBY52QbWHxJ/q5qZsV8GddX7VoWjZNKl5hm3bdDzfOAqQbLN2bLxPMpMG64EVn6DGf9SsibpyhIV2lwPswm0CAITSTGkMwuH/nxNLeSYqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
- s=selector2-intel-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HJ9PUPbgM6ABBJt4mzkOQY38bN1I725+AKLT6wzoK6o=;
- b=TNiKV9p8SwgFChKbtUwLp89UKeTM3oNRW1IAbDIxO/9jpNrPz8G9FYBaRmYrDlXQZ4swAdT1hbLaPiQz1mYXpwmrSIPys0fzjIlXm6RzqYWvuJW0D4z8s+rOwFlflxdVuy0OsCGQOrah+t+6U/G6UC15e7CR+9KRA28UZEl/ssQ=
-Authentication-Results: digikod.net; dkim=none (message not signed)
- header.d=none;digikod.net; dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB4820.namprd11.prod.outlook.com (2603:10b6:303:6f::8)
- by MWHPR11MB0013.namprd11.prod.outlook.com (2603:10b6:301:67::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.11; Thu, 11 Nov
- 2021 03:30:17 +0000
-Received: from CO1PR11MB4820.namprd11.prod.outlook.com
- ([fe80::b5eb:b136:3d26:d4e6]) by CO1PR11MB4820.namprd11.prod.outlook.com
- ([fe80::b5eb:b136:3d26:d4e6%7]) with mapi id 15.20.4669.016; Thu, 11 Nov 2021
- 03:30:17 +0000
-Message-ID: <00da8188-8b8f-d1c0-ad8c-dfd79e52f289@intel.com>
-Date:   Thu, 11 Nov 2021 11:29:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.3.0
-Subject: Re: [fs] a0918006f9: netperf.Throughput_tps -11.6% regression
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Kees Cook <keescook@chromium.org>,
-        kernel test robot <oliver.sang@intel.com>
-CC:     <lkp@lists.01.org>, <lkp@intel.com>, <ying.huang@intel.com>,
-        <feng.tang@intel.com>, <zhengjun.xing@linux.intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Aleksa Sarai" <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, "Jan Kara" <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        "Shuah Khan" <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20211012192410.2356090-2-mic@digikod.net>
- <20211105064159.GB17949@xsang-OptiPlex-9020>
- <202111090920.4958E610D1@keescook>
- <95966337-b36e-f45e-6b16-f433bcb90c4d@digikod.net>
-From:   Yin Fengwei <fengwei.yin@intel.com>
-In-Reply-To: <95966337-b36e-f45e-6b16-f433bcb90c4d@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR06CA0115.apcprd06.prod.outlook.com
- (2603:1096:1:1d::17) To CO1PR11MB4820.namprd11.prod.outlook.com
- (2603:10b6:303:6f::8)
+        Thu, 11 Nov 2021 09:35:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1636641161;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aw7H8zO61pxcusBQKbpzVlsUX4j1BJy8dcGa6C8abRE=;
+        b=GCnD4+uwMSse3uo9bbdEVvr9//GRh27ryQWVYVZqGIQ49nj8pIk0RxKHrQIKbmYT45cKcP
+        ykzau/LsIUmhaxsP20ft953nVhRzZLhXEzSdoRov/l4JNZ3RIoQp31fK08B3oj8hCNrXZ8
+        t1J4hCmA4tCQiyi074eaCepm95uLLhw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-331-1d76gEt7OSKqIJNT5KNTuQ-1; Thu, 11 Nov 2021 09:32:37 -0500
+X-MC-Unique: 1d76gEt7OSKqIJNT5KNTuQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5E7B51006AA1;
+        Thu, 11 Nov 2021 14:32:34 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.33.232])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 84B761002D71;
+        Thu, 11 Nov 2021 14:32:22 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 218F7220EED; Thu, 11 Nov 2021 09:32:22 -0500 (EST)
+Date:   Thu, 11 Nov 2021 09:32:22 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, virtio-fs@redhat.com,
+        chirantan@chromium.org, stephen.smalley.work@gmail.com,
+        dwalsh@redhat.com, casey@schaufler-ca.com, omosnace@redhat.com
+Subject: Re: [PATCH v3 1/1] fuse: Send security context of inode on file
+ creation
+Message-ID: <YY0pdhKBCalzPvs6@redhat.com>
+References: <20211110225528.48601-1-vgoyal@redhat.com>
+ <20211110225528.48601-2-vgoyal@redhat.com>
 MIME-Version: 1.0
-Received: from [10.238.3.74] (192.198.143.17) by SG2PR06CA0115.apcprd06.prod.outlook.com (2603:1096:1:1d::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.11 via Frontend Transport; Thu, 11 Nov 2021 03:30:04 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c42d377b-7ae4-4adf-77dc-08d9a4c39461
-X-MS-TrafficTypeDiagnostic: MWHPR11MB0013:
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-Microsoft-Antispam-PRVS: <MWHPR11MB00136B0892AD88AEB9AAB951EE949@MWHPR11MB0013.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WSDlhl4UGWxTs87qEM0zJVPdIZQtK1/sSlwKXiU2uO90JpDA+MIEmjan/job9AhBChd3RgPLMccdq7hnEJSMrSIpECGARt/s5OKBrDMVpLHVjIGCppJUZRZmyncRR9UWQV70jCbFvpH+h0+7wfpN+cL40XwP93z8bTz3mkQ6gWzrP3SRNEndWb5ZV4n6LDJ0OCCCNXE+z3PFEnzUHAG+2n7vnrSUGXDGxFjC47LVRdHmrI/tlIxj5GhZazoIgCV7xRysiKbmWP6WBRsnac6ZlZd7ApV/MJq54u50Xd/iuiB/Y1nXgEr6j2ZsJm+lGEguUzspxyWYNdOYbL6z7REL3gqOUR5AAQkapAm1KiiDijhmIDUOepn++7+XS1fVWrkjbpj4Yhc6ToVKz4zeVLphTAeb8wU86tGV8uCa/1W17gYcEivvIvlkfpwTPOncu3KqZl8uGJkEl/1EB6SLLhf8GsMCVmB+eZT9Qb48PPf63A2EiDziE0KAA7gDf2kLu5oy7E06/+qeY22hQUVBmYFuxvyEoo1BXu1txd6uqntO7VtCK9mX1e5tJTWctGy1qBknwOk9kdQFq9WMU8Jsg91sc4X1h9GPA4dhK3BQN6b8/vCPE8KXBRMdJVyKHc8kvBdj6XGly54LN/oBN+kZ8JWPAlDdnBmRmueMRf7+pPkuosLVGYNcTcE6igrzNspLxnPQ7f9aMOlYsR0J3bLgjDegz+Q0c+D4ImF4q+glkNEKXUc=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4820.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(38100700002)(8936002)(2906002)(66556008)(7406005)(7416002)(66476007)(6636002)(66574015)(31696002)(82960400001)(8676002)(508600001)(2616005)(4326008)(36756003)(6666004)(956004)(16576012)(316002)(86362001)(53546011)(110136005)(54906003)(26005)(186003)(31686004)(6486002)(5660300002)(66946007)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T1JtV0JvRGlONGYxRDVnWHRmdk1uK0hzRzA0QWd2L0hzTGh5UG51L0d1ek9X?=
- =?utf-8?B?Z3hvMklMRmN6dWNjUEZJdGZ0QWNmSFlqa3EyWGhDcUgza2pCejdEckFIZGdN?=
- =?utf-8?B?Z1oyTkxYTEovQW1XVVl0K1p1UXFPQ0J3L1BuVy9kYXB6Y0RnTHFSKzNsVUJI?=
- =?utf-8?B?cmJKVTkzb1dvamlFWmdiZEZKaTFYNW1zalB5LzFnNzVUcWxVZEtBRFU2ZmNn?=
- =?utf-8?B?SmFRVWlNbDlSa0VxR1o5aVRtblZCTmJJZjZyMk01MHVsQnZpTkwvWGc3RHU2?=
- =?utf-8?B?b0JiNXF4RWw4NmtlbmE2TGFNWTVheTBQaWZ5NHNQOHpNaWZaNGRPQ1kwL1Bh?=
- =?utf-8?B?VkcvMkdPYWhJWTNIUEJVVWNwLzZkNzBYNlhYcDRjSGVMNWVuZ0E1N2tISWE2?=
- =?utf-8?B?bHh3Yk1SYWNTZmpWZ1dNV2QvcXRnK1VoUWZ5ZDVPOEQvTHQwM1lTeEFuZlFZ?=
- =?utf-8?B?andpazg5SndHNmJpRlZ1UXpUL1lCVTYxV243WDI2d2Q4QU15b05PeUFKZll4?=
- =?utf-8?B?K2ZDaVh0b2ljRlI3cnhRa2Zna1pFZzY5MUZFa1RsNW5JZXpyWGQ5Tk9DbVMx?=
- =?utf-8?B?U0RUdFA1WnVUT3ZQSWNYNUdOc0hpa2pzSzhldXlYV28xN3BKZ3QxRkFGNEMy?=
- =?utf-8?B?ZU9KamIyWjBTWFNUbUNjOVVQbFBrckJoS0IxcHNyWGhZRlA4QU9qRFdTMlc0?=
- =?utf-8?B?aDNQRjlDY0c0dWJHc2tva1lEKzRET25iSG9OaDRqbXVQQnpsSmRTdVdqVUFU?=
- =?utf-8?B?Rm04NWR4Sk1lQlA5YkhhUHdYMVU4aHZxTnZ0elFFZ0c5bmkyR3J2d0szL3hn?=
- =?utf-8?B?U29GTTJsY05IWGRLM2V6eUZnN3dOOFM0elEzRFppalZXREsrdnR2RTB0bzJD?=
- =?utf-8?B?b2FReWpPM3EwSWw2MFZ3MW1qOVF2dVlRTUw2MjE5VHI0SDd2dFZaOG9sRzFE?=
- =?utf-8?B?L0VwbXlQVkdMdGo4ajJSSWxnTjBTRmFERHRZdEpuRm9pRGlkMnJzMUp0T3o0?=
- =?utf-8?B?cG5yVytkMlhGSjlESytCdkFIUXpBY3ZpMTJ0K290dVlkWG0xVXMrTUUwWFlI?=
- =?utf-8?B?TmpZcTAzanJwMnh0N2x2bUpPS0pBaGdIVEkxbU5wVnNKOXRHQzJiUCtkZGRT?=
- =?utf-8?B?QWc3TzkwVUFwck1OYm9EckkyQ0twbktRSnJpVEUvN1JkWitVcnYzTWNhNDIx?=
- =?utf-8?B?c3RjWDhDRXVXTzVVZkFKS0owaExtbkNTZ2l6VGRONjBaZnlJVUUzbjJSOExn?=
- =?utf-8?B?QU1vcHJXM3FWOUNvQVRWR1I0RmtJMTBjVXU4T2FSKzk4MmoydkVvTUNaUjd6?=
- =?utf-8?B?NEhkMjZyU2Q3NzYwNWVvTlNqd3UwRXlwaTBGWmhIdUhjTk8vWTMxSWtOdVU3?=
- =?utf-8?B?QU8xRkZQWTFiWFptcXZsdHVjdFVibURBZFZQK1FNN1liUTBRNU1ZaTJRcTNw?=
- =?utf-8?B?NVVWRkpFQ2l0bCtFNWEwVFI0TWVTYUEzaHQvK2ZYZXJTcmpXQldsUVJYUDIz?=
- =?utf-8?B?bkczKzZGWTdoNERtVWx4dXFHcHp5N1Vna3ZGQlh4WCt4TjZYRndQU1BMMVBn?=
- =?utf-8?B?U0haWnBGYmNBb0ZwMkVaVUE3U2I2Zm1xZmpUQ1FrQStlM3BTSHhFclNoZkZX?=
- =?utf-8?B?TzZnUGVYbU56TnZQM3lzTXl3R3Y0ZlVHVVlVdUNJOS95YUpmMG1QSk5Ha0JK?=
- =?utf-8?B?K0VJMDdjS1NtOGhkcnljdmUxM2x4R0RzWDFMdFZkRlVBRlJYRFhHOUl3TXZS?=
- =?utf-8?B?UisrV09TaGFCR0JkSlI1VDBaUDZCQ2lvVXZLeHVrNlNqYUMvNUF5M1lHVXRZ?=
- =?utf-8?B?dEkxOGpFWjdpWlFrRjNTczRONENPWlY3L01aMFVXMTQ2NWRPSzFYdUNjbEQ3?=
- =?utf-8?B?ampaRE1HQ1VTdGw1ZUVMZzZoZjNWQ290MjdCSmwzQXFKV3VjLzR5aDRhZWpS?=
- =?utf-8?B?OVc4UFg0Vmw0Q0VCV0lHbTFxSDlDSkdRZDRoVzJkendweTFhYlUxSHdrRkpr?=
- =?utf-8?B?NUlVMlZUUldoMWZYQS9YU20vNmxiSURRWWRkWlJHZUFnKytLYTdDRThsMWRW?=
- =?utf-8?B?SHNYdjlZdS95VWd4QXJoODB1cWxjRXNqN0Rvak9lTmNhNzZoL1dMcXUwb0Nr?=
- =?utf-8?B?U0JldHA1SVFwVS9lWVZlWU1PeFhDUGlaNVg3dXFYMHgzTHlBTm1KQWZUZ1Y1?=
- =?utf-8?Q?krV0niuf2N9tAINj5JJn16c=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c42d377b-7ae4-4adf-77dc-08d9a4c39461
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4820.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2021 03:30:17.1877
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cwyHjDHpFErkZerhdSgvnulIphR02Pqbj2H0nhXudyjQC5vbuY7FzQGVgZ8iaX1tngSxLaahbSyi0OZz8jFwuA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB0013
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211110225528.48601-2-vgoyal@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 11/10/2021 4:52 PM, Mickaël Salaün wrote:
->>> ---------------- ---------------------------
->>>          %stddev     %change         %stddev
->>>              \          |                \
->>>     555600            -0.1%     555305        netperf.Throughput_total_tps
->>>      34725            -0.1%      34706        netperf.Throughput_tps
->>>
->>>
->>> Fengwei also helped review these results and commented:
->>> I suppose these three CPUs have different cache policy. It also could be
->>> related with netperf throughput testing.
->> Does moving the syscall implementation somewhere else change things?
->> That's a _huge_ performance change for something that isn't even called.
->> What's going on here?
-> This regression doesn't make sense. I guess this is the result of a
-> flaky netperf test, maybe because the test machine was overloaded at
-> that time.
+I noticed that this patch is conflicting with some fuse patches
+merged in Linus's tree. I will post updated version. 
 
-I agree the test result looks strange. But I don't think the test machine
-or test methodology has issue. It's not possible the test box is overloaded
-when test case is running. We did test several times (> 12 times) on different
-days. Thanks.
+Vivek
 
+On Wed, Nov 10, 2021 at 05:55:28PM -0500, Vivek Goyal wrote:
+> When a new inode is created, send its security context to server along
+> with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SYMLINK).
+> This gives server an opportunity to create new file and set security
+> context (possibly atomically). In all the configurations it might not
+> be possible to set context atomically.
+> 
+> Like nfs and ceph, use security_dentry_init_security() to dermine security
+> context of inode and send it with create, mkdir, mknod, and symlink requests.
+> 
+> Following is the information sent to server.
+> 
+> fuse_sectx_header, fuse_secctx, xattr_name, security_context
+> 
+> - struct fuse_secctx_header
+>   This contains total number of security contexts being sent and total
+>   size of all the security contexts (including size of fuse_secctx_header).
+> 
+> - struct fuse_secctx.
+>   This contains size of security context which follows this structure.
+>   There is one fuse_secctx instance per security context.
+> 
+> - xattr name string.
+>   This string represents name of xattr which should be used while setting
+>   security context.
+> 
+> - security context.
+>   This is the actual security context whose size is specified in fuse_secctx
+>   struct.
+> 
+> Also add the FUSE_SECURITY_CTX flag for the `flags` field of the
+> fuse_init_out struct.  When this flag is set the kernel will append the
+> security context for a newly created inode to the request (create,
+> mkdir, mknod, and symlink).  The server is responsible for ensuring that
+> the inode appears atomically (preferrably) with the requested security
+> context.
+> 
+> For example, If the server is using SELinux and backed by a "real" linux
+> file system that supports extended attributes it can write the security
+> context value to /proc/thread-self/attr/fscreate before making the syscall
+> to create the inode.
+> 
+> This patch is based on patch from Chirantan Ekbote <chirantan@chromium.org>.
+> 
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/fuse/dir.c             | 103 ++++++++++++++++++++++++++++++++++++++
+>  fs/fuse/fuse_i.h          |   3 ++
+>  fs/fuse/inode.c           |   4 +-
+>  include/uapi/linux/fuse.h |  31 +++++++++++-
+>  4 files changed, 139 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index d9b977c0f38d..69398eb7b325 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -17,6 +17,9 @@
+>  #include <linux/xattr.h>
+>  #include <linux/iversion.h>
+>  #include <linux/posix_acl.h>
+> +#include <linux/security.h>
+> +#include <linux/types.h>
+> +#include <linux/kernel.h>
+>  
+>  static void fuse_advise_use_readdirplus(struct inode *dir)
+>  {
+> @@ -456,6 +459,69 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
+>  	return ERR_PTR(err);
+>  }
+>  
+> +static int get_security_context(struct dentry *entry, umode_t mode,
+> +				void **security_ctx, u32 *security_ctxlen)
+> +{
+> +	struct fuse_secctx *fsecctx;
+> +	struct fuse_secctx_header *fsecctx_header;
+> +	void *ctx, *full_ctx;
+> +	u32 ctxlen, full_ctxlen;
+> +	int err = 0;
+> +	const char *name;
+> +
+> +	err = security_dentry_init_security(entry, mode, &entry->d_name,
+> +					    &name, &ctx, &ctxlen);
+> +	if (err) {
+> +		if (err != -EOPNOTSUPP)
+> +			goto out_err;
+> +		/* No LSM is supporting this security hook. Ignore error */
+> +		err = 0;
+> +		ctxlen = 0;
+> +	}
+> +
+> +	if (ctxlen > 0) {
+> +		void *ptr;
+> +
+> +		full_ctxlen = sizeof(*fsecctx_header) + sizeof(*fsecctx) +
+> +			      strlen(name) + ctxlen + 1;
+> +		full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
+> +		if (!full_ctx) {
+> +			err = -ENOMEM;
+> +			kfree(ctx);
+> +			goto out_err;
+> +		}
+> +
+> +		ptr = full_ctx;
+> +		fsecctx_header = (struct fuse_secctx_header*) ptr;
+> +		fsecctx_header->nr_secctx = 1;
+> +		fsecctx_header->size = full_ctxlen;
+> +		ptr += sizeof(*fsecctx_header);
+> +
+> +		fsecctx = (struct fuse_secctx*) ptr;
+> +		fsecctx->size = ctxlen;
+> +		ptr += sizeof(*fsecctx);
+> +
+> +		strcpy(ptr, name);
+> +		ptr += strlen(name) + 1;
+> +		memcpy(ptr, ctx, ctxlen);
+> +		kfree(ctx);
+> +	} else {
+> +		full_ctxlen = sizeof(*fsecctx_header);
+> +		full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
+> +		if (!full_ctx) {
+> +			err = -ENOMEM;
+> +			goto out_err;
+> +		}
+> +		fsecctx_header = full_ctx;
+> +		fsecctx_header->size = full_ctxlen;
+> +	}
+> +
+> +	*security_ctxlen = full_ctxlen;
+> +	*security_ctx = full_ctx;
+> +out_err:
+> +	return err;
+> +}
+> +
+>  /*
+>   * Atomic create+open operation
+>   *
+> @@ -476,6 +542,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>  	struct fuse_entry_out outentry;
+>  	struct fuse_inode *fi;
+>  	struct fuse_file *ff;
+> +	void *security_ctx = NULL;
+> +	u32 security_ctxlen;
+>  
+>  	/* Userspace expects S_IFREG in create mode */
+>  	BUG_ON((mode & S_IFMT) != S_IFREG);
+> @@ -517,6 +585,18 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>  	args.out_args[0].value = &outentry;
+>  	args.out_args[1].size = sizeof(outopen);
+>  	args.out_args[1].value = &outopen;
+> +
+> +	if (fm->fc->init_security) {
+> +		err = get_security_context(entry, mode, &security_ctx,
+> +					   &security_ctxlen);
+> +		if (err)
+> +			goto out_put_forget_req;
+> +
+> +		args.in_numargs = 3;
+> +		args.in_args[2].size = security_ctxlen;
+> +		args.in_args[2].value = security_ctx;
+> +	}
+> +
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err)
+>  		goto out_free_ff;
+> @@ -554,6 +634,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>  
+>  out_free_ff:
+>  	fuse_file_free(ff);
+> +	kfree(security_ctx);
+>  out_put_forget_req:
+>  	kfree(forget);
+>  out_err:
+> @@ -620,6 +701,8 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+>  	struct dentry *d;
+>  	int err;
+>  	struct fuse_forget_link *forget;
+> +	void *security_ctx = NULL;
+> +	u32 security_ctxlen = 0;
+>  
+>  	if (fuse_is_bad(dir))
+>  		return -EIO;
+> @@ -633,7 +716,27 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+>  	args->out_numargs = 1;
+>  	args->out_args[0].size = sizeof(outarg);
+>  	args->out_args[0].value = &outarg;
+> +
+> +	if (fm->fc->init_security && args->opcode != FUSE_LINK) {
+> +		unsigned short idx = args->in_numargs;
+> +
+> +		if ((size_t)idx >= ARRAY_SIZE(args->in_args)) {
+> +			err = -ENOMEM;
+> +			goto out_put_forget_req;
+> +		}
+> +
+> +		err = get_security_context(entry, mode, &security_ctx,
+> +					   &security_ctxlen);
+> +		if (err)
+> +			goto out_put_forget_req;
+> +
+> +		args->in_args[idx].size = security_ctxlen;
+> +		args->in_args[idx].value = security_ctx;
+> +		args->in_numargs++;
+> +	}
+> +
+>  	err = fuse_simple_request(fm, args);
+> +	kfree(security_ctx);
+>  	if (err)
+>  		goto out_put_forget_req;
+>  
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index f55f9f94b1a4..0d257c4eeb70 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -765,6 +765,9 @@ struct fuse_conn {
+>  	/* Propagate syncfs() to server */
+>  	unsigned int sync_fs:1;
+>  
+> +	/* Initialize security xattrs when creating a new inode */
+> +	unsigned int init_security:1;
+> +
+>  	/** The number of requests waiting for completion */
+>  	atomic_t num_waiting;
+>  
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 12d49a1914e8..40c5533243c0 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1143,6 +1143,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  			}
+>  			if (arg->flags & FUSE_SETXATTR_EXT)
+>  				fc->setxattr_ext = 1;
+> +			if (arg->flags & FUSE_SECURITY_CTX)
+> +				fc->init_security = 1;
+>  		} else {
+>  			ra_pages = fc->max_read / PAGE_SIZE;
+>  			fc->no_lock = 1;
+> @@ -1186,7 +1188,7 @@ void fuse_send_init(struct fuse_mount *fm)
+>  		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+>  		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+>  		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
+> -		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT;
+> +		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_SECURITY_CTX;
+>  #ifdef CONFIG_FUSE_DAX
+>  	if (fm->fc->dax)
+>  		ia->in.flags |= FUSE_MAP_ALIGNMENT;
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 36ed092227fa..710cdf20608d 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -184,6 +184,10 @@
+>   *
+>   *  7.34
+>   *  - add FUSE_SYNCFS
+> + *
+> + *  7.35
+> + *  - add FUSE_SECURITY_CTX flag for fuse_init_out
+> + *  - add security context to create, mkdir, symlink, and mknod requests
+>   */
+>  
+>  #ifndef _LINUX_FUSE_H
+> @@ -219,7 +223,7 @@
+>  #define FUSE_KERNEL_VERSION 7
+>  
+>  /** Minor version number of this interface */
+> -#define FUSE_KERNEL_MINOR_VERSION 34
+> +#define FUSE_KERNEL_MINOR_VERSION 35
+>  
+>  /** The node ID of the root inode */
+>  #define FUSE_ROOT_ID 1
+> @@ -336,6 +340,8 @@ struct fuse_file_lock {
+>   *			write/truncate sgid is killed only if file has group
+>   *			execute permission. (Same as Linux VFS behavior).
+>   * FUSE_SETXATTR_EXT:	Server supports extended struct fuse_setxattr_in
+> + * FUSE_SECURITY_CTX:	add security context to create, mkdir, symlink, and
+> + * 			mknod
+>   */
+>  #define FUSE_ASYNC_READ		(1 << 0)
+>  #define FUSE_POSIX_LOCKS	(1 << 1)
+> @@ -367,6 +373,7 @@ struct fuse_file_lock {
+>  #define FUSE_SUBMOUNTS		(1 << 27)
+>  #define FUSE_HANDLE_KILLPRIV_V2	(1 << 28)
+>  #define FUSE_SETXATTR_EXT	(1 << 29)
+> +#define FUSE_SECURITY_CTX	(1 << 30)
+>  
+>  /**
+>   * CUSE INIT request/reply flags
+> @@ -979,4 +986,26 @@ struct fuse_syncfs_in {
+>  	uint64_t	padding;
+>  };
+>  
+> +/*
+> + * For each security context, send fuse_secctx with size of security context
+> + * fuse_secctx will be followed by security context name and this in turn
+> + * will be followed by actual context label.
+> + * fuse_secctx, name, context
+> + * */
+> +struct fuse_secctx {
+> +	uint32_t	size;
+> +	uint32_t	padding;
+> +};
+> +
+> +/*
+> + * Contains the information about how many fuse_secctx structures are being
+> + * sent and what's the total size of all security contexts (including
+> + * size of fuse_secctx_header).
+> + *
+> + */
+> +struct fuse_secctx_header {
+> +	uint32_t	size;
+> +	uint32_t	nr_secctx;
+> +};
+> +
+>  #endif /* _LINUX_FUSE_H */
+> -- 
+> 2.31.1
+> 
 
-Regards
-Yin, Fengwei
