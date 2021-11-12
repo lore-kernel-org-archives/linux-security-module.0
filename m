@@ -2,209 +2,294 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD266C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 19:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9527C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 23:18:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B06C61076
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 19:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C39E361073
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 23:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235638AbhKLTS6 (ORCPT
+        id S233128AbhKLXVF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Nov 2021 14:18:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50408 "EHLO
+        Fri, 12 Nov 2021 18:21:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230137AbhKLTS5 (ORCPT
+        with ESMTP id S231320AbhKLXVE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Nov 2021 14:18:57 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84546C06127A;
-        Fri, 12 Nov 2021 11:16:06 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id d72-20020a1c1d4b000000b00331140f3dc8so7563110wmd.1;
-        Fri, 12 Nov 2021 11:16:06 -0800 (PST)
+        Fri, 12 Nov 2021 18:21:04 -0500
+Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 390E5C061767
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Nov 2021 15:18:13 -0800 (PST)
+Received: by mail-vk1-xa2b.google.com with SMTP id e64so5950587vke.4
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Nov 2021 15:18:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=R4ezy0Y4KPXp1tXNQDpaUBacCpK19eND/tfIECpPASc=;
-        b=YBAsL5+dMv+AtdCI71meU1aglw9me3H8v1QOrePgPB15Qdk6rfgsmCdUa3yRRslChm
-         ZvwFGybUYmH0pUsRB4iG1vgM5KuZsjKJedZTGh9aqBW5D7uE8Zhq4sadE0/TJznNFJJv
-         vkafBQ6sMgd0Iu2yRmQLoXMAQCuTVFhemjROjYpBjO77jx+BxZ9HyKBbFAhPT9Y91Mqw
-         6ZDocCpHjmTV53A+K8h4+cTq7LsnGH7HYUqNUxGkRDidrKfR/dMZFR3ZbllKD7NW/SJ8
-         xHA3zhUcjwK7nluuLxnneD0QK9CXYo2T8596s7qhzcqLGGplshe7hfyK18Y+2/guOa18
-         wvMA==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=+YE0TrBkdCf4EZe+j3BveCgvkeZJosSzwCNS1cd/eyI=;
+        b=0W/L60VxiHRXO4r7xOkyJecumZ+/eFBtAT63q4n+1hAl/dWdVw185gD9zGu/eCqYaC
+         rjmGFWUZkr+qihpm7m8Kyaayk/gW8EfQpPu4cg6S0iRtJ/qL7xj7WYaHd9MHe5EUGvjL
+         7ZBhrjSZcDJVRr927myBsLqH2kfspvn5gNwzrDnwwgKEJBYwn47tWxQ9jFtmL88RxQBN
+         UDz2EAwbWG4CRO/lKSuJ4ztUpNflEfhq9XIc12ujLw6RkNKr+8SZ4v/banm9aIQvhObk
+         BoAdgkPleOZIqQtDWbUoK+M0CcCgFloiVJdPtUry7u8BTIPRfqULk1oFD/0idReY1u8r
+         6iGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=R4ezy0Y4KPXp1tXNQDpaUBacCpK19eND/tfIECpPASc=;
-        b=v6f//MRtxMtC3U1K0vSeWTOSDAJ75y2i0LOA5FZ6BMcSyZ6kJNs6aI2KbECO0uLj8j
-         fmGtmd6ouiyKoTWL1N7a3LC5DGjGf/pchcZJzIHcK8XAtLN0tQVJ2O4VWd8WZm99d7ro
-         uG8myOO3c8Q93Rze2Bm8CjrtAJVadUJLHQGNOd1xjfEiRuK+g6QVr8TDlw4sD5pqv4MT
-         WoZohFxCCyZAIPY1ua2USt75Ps3zYESU/AUJvp7sx4AWkZai/YmZfEIofzDjrrDPL+85
-         FntF4BytoDFD1UYwTfKfbswxITWWTjbhZpSV1I2WobN8kZo8JGCqD/htDtDUiFq8/LIu
-         2KeQ==
-X-Gm-Message-State: AOAM530NgCOxWQABjTAYCKoWPq/eYCTC2CcyS8J1BKM3RnDDoYiMaaWH
-        0iT04/45UXbBdw20i0ixGWs=
-X-Google-Smtp-Source: ABdhPJztY+FW6YVXoupcUTvo6LglloVd3KdIeP82Ahk9x8OJslbogmifLiXmtGgsz7nnMioMPxUcgQ==
-X-Received: by 2002:a05:600c:a05:: with SMTP id z5mr19436348wmp.73.1636744565070;
-        Fri, 12 Nov 2021 11:16:05 -0800 (PST)
-Received: from [10.168.10.170] ([170.253.36.171])
-        by smtp.gmail.com with ESMTPSA id t127sm12995735wma.9.2021.11.12.11.16.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Nov 2021 11:16:04 -0800 (PST)
-Message-ID: <8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com>
-Date:   Fri, 12 Nov 2021 20:16:01 +0100
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=+YE0TrBkdCf4EZe+j3BveCgvkeZJosSzwCNS1cd/eyI=;
+        b=tEat5y2wWw39iiTMYZmc2z0FcYStK9ucYfH6schKT14PDLDuqtAucgh3MrvpyqrJzc
+         Wk6yjB6U8G9qU7DaLTpVio2cHQ0gCiYy9XOaFTYtZ8M0qNjT4G5EoHcqVFgsoCmv6fKO
+         G3+lN0ch7BC6SVwl7+F9goVfzYfLECeCNYN0EO/1SHncCgG7Sf0Z7dONpbjHzl9OxPCM
+         2/NMEU7kEZvwc2KBh4pT01NNNLfrQiDASBrNMgzjhiLkxumbaAK2nJJeM9UTCBOyNLsE
+         OvSco/oxPyxEV1OVnrussXCL0mB65N2Onv988CjeRKzrwmhR4AYjx9dRiIHX0z0Mf2Rm
+         /YVw==
+X-Gm-Message-State: AOAM5309lSLJe7zSerapRP4y9pTLDgTWfbD/aJgvPjL/tt7XW1uRKJ2h
+        0ZlCzovt5AFw9Iw56hrE2xkw
+X-Google-Smtp-Source: ABdhPJx1VOVJA+qE9T71YUKWFlny/IO5ty631r/bvGyoBCyGO8ZVXWDyhZZP71LcpAwAGmXcfZPAIA==
+X-Received: by 2002:a05:6122:2214:: with SMTP id bb20mr28607030vkb.9.1636759092195;
+        Fri, 12 Nov 2021 15:18:12 -0800 (PST)
+Received: from localhost (pool-96-237-52-46.bstnma.fios.verizon.net. [96.237.52.46])
+        by smtp.gmail.com with ESMTPSA id k1sm5399233uaq.0.2021.11.12.15.18.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Nov 2021 15:18:11 -0800 (PST)
+Subject: [PATCH] net,lsm,selinux: revert the security_sctp_assoc_established()
+ hook
+From:   Paul Moore <paul@paul-moore.com>
+To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     netdev@vger.kernel.org
+Date:   Fri, 12 Nov 2021 18:18:10 -0500
+Message-ID: <163675909043.176428.14878151490285663317.stgit@olly>
+User-Agent: StGit/1.4
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v16 1/3] fs: Add trusted_for(2) syscall implementation and
- related sysctl
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yin Fengwei <fengwei.yin@intel.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20211110190626.257017-1-mic@digikod.net>
- <20211110190626.257017-2-mic@digikod.net>
-From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-In-Reply-To: <20211110190626.257017-2-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mickaël,
+This patch reverts two prior patches, e7310c94024c
+("security: implement sctp_assoc_established hook in selinux") and
+7c2ef0240e6a ("security: add sctp_assoc_established hook"), which
+create the security_sctp_assoc_established() LSM hook and provide a
+SELinux implementation.  Unfortunately these two patches were merged
+without proper review (the Reviewed-by and Tested-by tags from
+Richard Haines were for previous revisions of these patches that
+were significantly different) and there are outstanding objections
+from the SELinux maintainers regarding these patches.
 
-On 11/10/21 20:06, Mickaël Salaün wrote:
-> diff --git a/fs/open.c b/fs/open.c
-> index f732fb94600c..96a80abec41b 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -480,6 +482,114 @@ SYSCALL_DEFINE2(access, const char __user *, filename, int, mode)
->   	return do_faccessat(AT_FDCWD, filename, mode, 0);
->   }
->   
-> +#define TRUST_POLICY_EXEC_MOUNT			BIT(0)
-> +#define TRUST_POLICY_EXEC_FILE			BIT(1)
-> +
-> +int sysctl_trusted_for_policy __read_mostly;
-> +
-> +/**
-...
-> + */
-> +SYSCALL_DEFINE3(trusted_for, const int, fd, const enum trusted_for_usage, usage,
+Work is currently ongoing to correct the problems identified in the
+reverted patches, as well as others that have come up during review,
+but it is unclear at this point in time when that work will be ready
+for inclusion in the mainline kernel.  In the interest of not keeping
+objectionable code in the kernel for multiple weeks, and potentially
+a kernel release, we are reverting the two problematic patches.
 
-Please, don't use enums for interfaces.  They are implementation defined 
-types, and vary between compilers and within the same compiler also 
-depending on optimization flags.
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ Documentation/security/SCTP.rst |   22 ++++++++++++----------
+ include/linux/lsm_hook_defs.h   |    2 --
+ include/linux/lsm_hooks.h       |    5 -----
+ include/linux/security.h        |    7 -------
+ net/sctp/sm_statefuns.c         |    2 +-
+ security/security.c             |    7 -------
+ security/selinux/hooks.c        |   14 +-------------
+ 7 files changed, 14 insertions(+), 45 deletions(-)
 
-C17::6.7.2.2.4:
-[
-Each enumerated type shall be compatible with char,
-a signed integer type, or an unsigned integer type.
-The choice of type is implementation-defined,130)
-but shall be capable of representing the values of
-all the members of the enumeration.
-]
+diff --git a/Documentation/security/SCTP.rst b/Documentation/security/SCTP.rst
+index 406cc68b8808..d5fd6ccc3dcb 100644
+--- a/Documentation/security/SCTP.rst
++++ b/Documentation/security/SCTP.rst
+@@ -15,7 +15,10 @@ For security module support, three SCTP specific hooks have been implemented::
+     security_sctp_assoc_request()
+     security_sctp_bind_connect()
+     security_sctp_sk_clone()
+-    security_sctp_assoc_established()
++
++Also the following security hook has been utilised::
++
++    security_inet_conn_established()
+ 
+ The usage of these hooks are described below with the SELinux implementation
+ described in the `SCTP SELinux Support`_ chapter.
+@@ -119,12 +122,11 @@ calls **sctp_peeloff**\(3).
+     @newsk - pointer to new sock structure.
+ 
+ 
+-security_sctp_assoc_established()
++security_inet_conn_established()
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-Called when a COOKIE ACK is received, and the peer secid will be
+-saved into ``@asoc->peer_secid`` for client::
++Called when a COOKIE ACK is received::
+ 
+-    @asoc - pointer to sctp association structure.
++    @sk  - pointer to sock structure.
+     @skb - pointer to skbuff of the COOKIE ACK packet.
+ 
+ 
+@@ -132,7 +134,7 @@ Security Hooks used for Association Establishment
+ -------------------------------------------------
+ 
+ The following diagram shows the use of ``security_sctp_bind_connect()``,
+-``security_sctp_assoc_request()``, ``security_sctp_assoc_established()`` when
++``security_sctp_assoc_request()``, ``security_inet_conn_established()`` when
+ establishing an association.
+ ::
+ 
+@@ -170,7 +172,7 @@ establishing an association.
+           <------------------------------------------- COOKIE ACK
+           |                                               |
+     sctp_sf_do_5_1E_ca                                    |
+- Call security_sctp_assoc_established()                   |
++ Call security_inet_conn_established()                    |
+  to set the peer label.                                   |
+           |                                               |
+           |                               If SCTP_SOCKET_TCP or peeled off
+@@ -196,7 +198,7 @@ hooks with the SELinux specifics expanded below::
+     security_sctp_assoc_request()
+     security_sctp_bind_connect()
+     security_sctp_sk_clone()
+-    security_sctp_assoc_established()
++    security_inet_conn_established()
+ 
+ 
+ security_sctp_assoc_request()
+@@ -269,12 +271,12 @@ sockets sid and peer sid to that contained in the ``@asoc sid`` and
+     @newsk - pointer to new sock structure.
+ 
+ 
+-security_sctp_assoc_established()
++security_inet_conn_established()
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Called when a COOKIE ACK is received where it sets the connection's peer sid
+ to that in ``@skb``::
+ 
+-    @asoc - pointer to sctp association structure.
++    @sk  - pointer to sock structure.
+     @skb - pointer to skbuff of the COOKIE ACK packet.
+ 
+ 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 442a611fa0fb..df8de62f4710 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -335,8 +335,6 @@ LSM_HOOK(int, 0, sctp_bind_connect, struct sock *sk, int optname,
+ 	 struct sockaddr *address, int addrlen)
+ LSM_HOOK(void, LSM_RET_VOID, sctp_sk_clone, struct sctp_association *asoc,
+ 	 struct sock *sk, struct sock *newsk)
+-LSM_HOOK(void, LSM_RET_VOID, sctp_assoc_established, struct sctp_association *asoc,
+-	 struct sk_buff *skb)
+ #endif /* CONFIG_SECURITY_NETWORK */
+ 
+ #ifdef CONFIG_SECURITY_INFINIBAND
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index d6823214d5c1..d45b6f6e27fd 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1050,11 +1050,6 @@
+  *	@asoc pointer to current sctp association structure.
+  *	@sk pointer to current sock structure.
+  *	@newsk pointer to new sock structure.
+- * @sctp_assoc_established:
+- *	Passes the @asoc and @chunk->skb of the association COOKIE_ACK packet
+- *	to the security module.
+- *	@asoc pointer to sctp association structure.
+- *	@skb pointer to skbuff of association packet.
+  *
+  * Security hooks for Infiniband
+  *
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 06eac4e61a13..bbf44a466832 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1430,8 +1430,6 @@ int security_sctp_bind_connect(struct sock *sk, int optname,
+ 			       struct sockaddr *address, int addrlen);
+ void security_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk,
+ 			    struct sock *newsk);
+-void security_sctp_assoc_established(struct sctp_association *asoc,
+-				     struct sk_buff *skb);
+ 
+ #else	/* CONFIG_SECURITY_NETWORK */
+ static inline int security_unix_stream_connect(struct sock *sock,
+@@ -1651,11 +1649,6 @@ static inline void security_sctp_sk_clone(struct sctp_association *asoc,
+ 					  struct sock *newsk)
+ {
+ }
+-
+-static inline void security_sctp_assoc_established(struct sctp_association *asoc,
+-						   struct sk_buff *skb)
+-{
+-}
+ #endif	/* CONFIG_SECURITY_NETWORK */
+ 
+ #ifdef CONFIG_SECURITY_INFINIBAND
+diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
+index 39ba82ee87ce..354c1c4de19b 100644
+--- a/net/sctp/sm_statefuns.c
++++ b/net/sctp/sm_statefuns.c
+@@ -946,7 +946,7 @@ enum sctp_disposition sctp_sf_do_5_1E_ca(struct net *net,
+ 	sctp_add_cmd_sf(commands, SCTP_CMD_INIT_COUNTER_RESET, SCTP_NULL());
+ 
+ 	/* Set peer label for connection. */
+-	security_sctp_assoc_established((struct sctp_association *)asoc, chunk->skb);
++	security_inet_conn_established(ep->base.sk, chunk->skb);
+ 
+ 	/* RFC 2960 5.1 Normal Establishment of an Association
+ 	 *
+diff --git a/security/security.c b/security/security.c
+index 779a9edea0a0..c88167a414b4 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2388,13 +2388,6 @@ void security_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk,
+ }
+ EXPORT_SYMBOL(security_sctp_sk_clone);
+ 
+-void security_sctp_assoc_established(struct sctp_association *asoc,
+-				     struct sk_buff *skb)
+-{
+-	call_void_hook(sctp_assoc_established, asoc, skb);
+-}
+-EXPORT_SYMBOL(security_sctp_assoc_established);
+-
+ #endif	/* CONFIG_SECURITY_NETWORK */
+ 
+ #ifdef CONFIG_SECURITY_INFINIBAND
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 5e5215fe2e83..62d30c0a30c2 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -5502,8 +5502,7 @@ static void selinux_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk
+ 	if (!selinux_policycap_extsockclass())
+ 		return selinux_sk_clone_security(sk, newsk);
+ 
+-	if (asoc->secid != SECSID_WILD)
+-		newsksec->sid = asoc->secid;
++	newsksec->sid = asoc->secid;
+ 	newsksec->peer_sid = asoc->peer_secid;
+ 	newsksec->sclass = sksec->sclass;
+ 	selinux_netlbl_sctp_sk_clone(sk, newsk);
+@@ -5559,16 +5558,6 @@ static void selinux_inet_conn_established(struct sock *sk, struct sk_buff *skb)
+ 	selinux_skb_peerlbl_sid(skb, family, &sksec->peer_sid);
+ }
+ 
+-static void selinux_sctp_assoc_established(struct sctp_association *asoc,
+-					   struct sk_buff *skb)
+-{
+-	struct sk_security_struct *sksec = asoc->base.sk->sk_security;
+-
+-	selinux_inet_conn_established(asoc->base.sk, skb);
+-	asoc->peer_secid = sksec->peer_sid;
+-	asoc->secid = SECSID_WILD;
+-}
+-
+ static int selinux_secmark_relabel_packet(u32 sid)
+ {
+ 	const struct task_security_struct *__tsec;
+@@ -7239,7 +7228,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(sctp_assoc_request, selinux_sctp_assoc_request),
+ 	LSM_HOOK_INIT(sctp_sk_clone, selinux_sctp_sk_clone),
+ 	LSM_HOOK_INIT(sctp_bind_connect, selinux_sctp_bind_connect),
+-	LSM_HOOK_INIT(sctp_assoc_established, selinux_sctp_assoc_established),
+ 	LSM_HOOK_INIT(inet_conn_request, selinux_inet_conn_request),
+ 	LSM_HOOK_INIT(inet_csk_clone, selinux_inet_csk_clone),
+ 	LSM_HOOK_INIT(inet_conn_established, selinux_inet_conn_established),
 
-See also:
-<https://stackoverflow.com/questions/366017/what-is-the-size-of-an-enum-in-c>
-
-So, please use only standard integer types for interfaces.
-
-And in the case of enums, since the language specifies that enumeration 
-constants (the macro-like identifiers) are of type int, it makes sense 
-for functions to use int.
-
-C17::6.7.2.2.3:
-[
-The identifiers in an enumerator list are declared as constants
-that have type int and may appear wherever such are permitted.
-]
-
-I'd use an int for the API/ABI, even if it's expected to be assigned 
-values of 'enum trusted_for_usage' (that should be specified in the 
-manual page in DESCRIPTION, but not in SYNOPSIS, which should specify int).
-
-
-
-TL;DR:
-
-ISO C specifies that for the following code:
-
-	enum foo {BAR};
-
-	enum foo foobar;
-
-typeof(foo)    shall be int
-typeof(foobar) is implementation-defined
-
-Since foobar = BAR; assigns an int, the best thing to do to avoid 
-implementation-defined behavior, is to declare foobar as int too.
-
-
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 528a478dbda8..c535e0e43cc8 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -462,6 +463,7 @@ asmlinkage long sys_fallocate(int fd, int mode, loff_t offset, loff_t len);
->   asmlinkage long sys_faccessat(int dfd, const char __user *filename, int mode);
->   asmlinkage long sys_faccessat2(int dfd, const char __user *filename, int mode,
->   			       int flags);
-> +asmlinkage long sys_trusted_for(int fd, enum trusted_for_usage usage, u32 flags);
-
-Same here.
-
->   asmlinkage long sys_chdir(const char __user *filename);
->   asmlinkage long sys_fchdir(unsigned int fd);
->   asmlinkage long sys_chroot(const char __user *filename);
-
-Thanks,
-Alex
-
-
--- 
-Alejandro Colomar
-Linux man-pages comaintainer; http://www.kernel.org/doc/man-pages/
-http://www.alejandro-colomar.es/
-
--- 
-Alejandro Colomar
-Linux man-pages comaintainer; http://www.kernel.org/doc/man-pages/
-http://www.alejandro-colomar.es/
