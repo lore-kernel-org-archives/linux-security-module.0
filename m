@@ -2,62 +2,79 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43145C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Nov 2021 23:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24FDC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 01:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B71C61179
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Nov 2021 23:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B849061284
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 01:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234493AbhKKXMP (ORCPT
+        id S229908AbhKLB2j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Nov 2021 18:12:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234524AbhKKXMI (ORCPT
+        Thu, 11 Nov 2021 20:28:39 -0500
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47028
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229835AbhKLB2j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Nov 2021 18:12:08 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 1C77061179;
-        Thu, 11 Nov 2021 23:09:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636672159;
-        bh=Xm5ZLkxbi8t6dvqYpz1O+nCNi3Gh1zo2srZF/JYZC+E=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=kjWHGYLa0KOwvZmxHHZl+sxbflHC+FvU1UrlrJI12Ou1Qe2i/CDdhr9TcGcwMJ1IE
-         u3dKGU/PTV2NTdQV0Shb9cEPnHBk3/POdPpHLZe17k1kkj46lIlaWjO0yMn72BXi98
-         dJZlPq7n0Pr5JezdJxW1kGynBse5xWvY/TtoaVXngW2FsOqnf3LIBbgIIguz+tVixk
-         FKLQyY5ZHRpsm26JdMC+SwfanBSurT1jVdJodC6rhsAqqYPGPLkm/fRH/3f4jUjK4F
-         mi6CHP4MeouublRLvKCgVCI78ZF4KG9tlCfjMWLdEXN9JSuONYp6Jh7+mRPfvN5TyR
-         fY4liK4UV/5OQ==
-Subject: Re: [GIT PULL] apparmor changes for 5.16
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <92f2d63e-02ac-0990-672d-43a646c2c42a@canonical.com>
-References: <92f2d63e-02ac-0990-672d-43a646c2c42a@canonical.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <92f2d63e-02ac-0990-672d-43a646c2c42a@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2021-11-10
-X-PR-Tracked-Commit-Id: 582122f1d73af28407234321c94711e09aa3fd04
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5593a733f968521444df84902901902233c17d8f
-Message-Id: <163667215908.13198.15561124807009017786.pr-tracker-bot@kernel.org>
-Date:   Thu, 11 Nov 2021 23:09:19 +0000
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
+        Thu, 11 Nov 2021 20:28:39 -0500
+Received: from [192.168.192.153] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 3988B3F213;
+        Fri, 12 Nov 2021 01:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1636680345;
+        bh=PCSur0ZtY7MRvBGP7BdvoVh93lbY+NBrxaqer9dSa1I=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=Et1gZsbXueowidj9n3U9eKC5djQ12lsbR++yrEEEBIm/UiFwNQFhX5oiRdhvrMCQa
+         TdRuqWoM7m5y8ERvdSaCgEXSHwrWauVa2z0cXmSqCz7IaiRX4RGinfT70UkCWwy/mW
+         88xt5GRTbxBkNwpmmehbBnKSrh2Qy1A1HUTnizoQmAmguYQaBNHcinuREQ8vhcfmlU
+         2VLR0j2mfz9audJ8I+TmdGCbwWVasKy7tLW7ndiVmR45yYlsSFhf17VezQ7dCe0Dcn
+         JSWA4/bJwcPz7O/W/EngoApcLbDb2MIEVhoughXfwokvGbfohuolZajk228FLAONxS
+         Yz7PU5Os6rQmA==
+Subject: Re: [PATCH] apparmor: remove duplicated 'Returns:' comments
+To:     Austin Kim <austindh.kim@gmail.com>, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211103092531.GA25721@raspberrypi>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+Message-ID: <f4447f61-59f2-cfc2-1157-df00175c6a10@canonical.com>
+Date:   Thu, 11 Nov 2021 17:25:41 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <20211103092531.GA25721@raspberrypi>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Wed, 10 Nov 2021 13:45:25 -0800:
+On 11/3/21 2:25 AM, Austin Kim wrote:
+> It might look better if duplicated 'Returns:' comment is removed.
+> 
+> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2021-11-10
+sorry, it looks like I forgot to reply to this. I pulled this into the
+apparmor tree and it has been merged for 5.16
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5593a733f968521444df84902901902233c17d8f
+> ---
+>  security/apparmor/procattr.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/security/apparmor/procattr.c b/security/apparmor/procattr.c
+> index c929bf4a3df1..fde332e0ea7d 100644
+> --- a/security/apparmor/procattr.c
+> +++ b/security/apparmor/procattr.c
+> @@ -21,8 +21,6 @@
+>   * @profile: the profile to print profile info about  (NOT NULL)
+>   * @string: Returns - string containing the profile info (NOT NULL)
+>   *
+> - * Returns: length of @string on success else error on failure
+> - *
+>   * Requires: profile != NULL
+>   *
+>   * Creates a string containing the namespace_name://profile_name for
+> 
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
