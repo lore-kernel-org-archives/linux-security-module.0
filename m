@@ -2,106 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20240C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 01:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FBADC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 02:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 042E46134F
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 01:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 444CA60E90
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 02:07:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231919AbhKLB3B (ORCPT
+        id S234213AbhKLCKk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Nov 2021 20:29:01 -0500
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47064
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229835AbhKLB26 (ORCPT
+        Thu, 11 Nov 2021 21:10:40 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:27200 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229908AbhKLCKj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Nov 2021 20:28:58 -0500
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6A9663F213;
-        Fri, 12 Nov 2021 01:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1636680368;
-        bh=uW6RI9EgL3J/zRhraSfskUGkLZ10MJZhG2zpxNHtMK4=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=QErOZCoIWvcWQZhc0MyxjDYtml+m2gi3zWSuLrxq8IIIXbij0GVBVPe1wpA8DEfmV
-         wRKdjAZqOpYe3mvFfSHzSrMCs/v0GM/coqvKrj4ginoBmLh+S/MbDoMxZ196id9UN8
-         riqlRiqDP6jZTiWfbuBXsjEDQLpWLibWGgB1ykdpVXtjs8B8FZsNHx+EEdWXhev/8k
-         H26QTmkmMim5sNdI3o+p4TPDKIEjy5RN/DGBzagu+YhdVSW2vxM3dN5QyqrUNLpIkV
-         CcxnAJVxKrkPt3qetnhJlTprtKDtpSVfuJoexKxm3/ZpP7ol2jFIrvIOJ4C8GTGH1N
-         tHAwWYqGJQw4A==
-Subject: Re: [PATCH apparmor] apparmor: remove unneeded one-line hook wrappers
-To:     Florian Westphal <fw@strlen.de>,
-        linux-security-module@vger.kernel.org
-Cc:     jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org
-References: <20211011143854.17917-1-fw@strlen.de>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-Message-ID: <0525571e-9950-b953-f6df-e6a81f5c54cc@canonical.com>
-Date:   Thu, 11 Nov 2021 17:26:06 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Thu, 11 Nov 2021 21:10:39 -0500
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Hr24d4mTmz8vNQ;
+        Fri, 12 Nov 2021 10:06:09 +0800 (CST)
+Received: from dggpemm500024.china.huawei.com (7.185.36.203) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.15; Fri, 12 Nov 2021 10:07:47 +0800
+Received: from [127.0.0.1] (10.67.110.173) by dggpemm500024.china.huawei.com
+ (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.15; Fri, 12 Nov
+ 2021 10:07:47 +0800
+Message-ID: <0ca23345-28a6-07f7-0424-9aaae283caba@huawei.com>
+Date:   Fri, 12 Nov 2021 10:07:47 +0800
 MIME-Version: 1.0
-In-Reply-To: <20211011143854.17917-1-fw@strlen.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.2
+To:     <dhowells@redhat.com>, <jarkko@kernel.org>
+CC:     <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>, <jmorris@namei.org>,
+        <serge@hallyn.com>, <linux-kernel@vger.kernel.org>,
+        <xuqiang36@huawei.com>, <wangweiyang2@huawei.com>,
+        <xiujianfeng@huawei.com>, <yanjin.yan@huawei.com>,
+        <rui.xiang@huawei.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+Subject: kernel BUG at assoc_array.c:LINE! while adding key to keyring
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/11/21 7:38 AM, Florian Westphal wrote:
-> Use the common function directly.
-> 
-> Signed-off-by: Florian Westphal <fw@strlen.de>
+Hi all,
 
-sorry, it looks like I forgot to reply to this. I pulled this into the
-apparmor tree and it has been merged for 5.16
+A BUG_ON error was reported during our FUZZ test recently which happens 
+while trying to insert new key into keyring.
 
-> ---
->  security/apparmor/lsm.c | 20 ++------------------
->  1 file changed, 2 insertions(+), 18 deletions(-)
-> 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index f72406fe1bf2..eafb44aa553a 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1773,32 +1773,16 @@ static unsigned int apparmor_ip_postroute(void *priv,
->  
->  }
->  
-> -static unsigned int apparmor_ipv4_postroute(void *priv,
-> -					    struct sk_buff *skb,
-> -					    const struct nf_hook_state *state)
-> -{
-> -	return apparmor_ip_postroute(priv, skb, state);
-> -}
-> -
-> -#if IS_ENABLED(CONFIG_IPV6)
-> -static unsigned int apparmor_ipv6_postroute(void *priv,
-> -					    struct sk_buff *skb,
-> -					    const struct nf_hook_state *state)
-> -{
-> -	return apparmor_ip_postroute(priv, skb, state);
-> -}
-> -#endif
-> -
->  static const struct nf_hook_ops apparmor_nf_ops[] = {
->  	{
-> -		.hook =         apparmor_ipv4_postroute,
-> +		.hook =         apparmor_ip_postroute,
->  		.pf =           NFPROTO_IPV4,
->  		.hooknum =      NF_INET_POST_ROUTING,
->  		.priority =     NF_IP_PRI_SELINUX_FIRST,
->  	},
->  #if IS_ENABLED(CONFIG_IPV6)
->  	{
-> -		.hook =         apparmor_ipv6_postroute,
-> +		.hook =         apparmor_ip_postroute,
->  		.pf =           NFPROTO_IPV6,
->  		.hooknum =      NF_INET_POST_ROUTING,
->  		.priority =     NF_IP6_PRI_SELINUX_FIRST,
-> 
+The call stack goes like this:
+
+kernel BUG at assoc_array.c:644!
+Internal error: Oops - BUG: 0 [#1] SMP
+Process syz-executor.24 (pid: 27933, stack limit = 0x000000004a6537a3)
+CPU: 3 PID: 27933 Comm: syz-executor.24 Not tainted 4.19.95 #2
+Hardware name: linux,dummy-virt (DT)
+pstate: 20400005 (nzCv daif +PAN -UAO)
+pc : assoc_array_insert_into_terminal_node+0x924/0x10c8 
+root/polaris/workspace/kernel/kernel/lib/assoc_array.c:644
+lr : assoc_array_insert_into_terminal_node+0x924/0x10c8 
+root/polaris/workspace/kernel/kernel/lib/assoc_array.c:644
+sp : fffff02972e379b0
+x29: fffff02972e379b0 x28: 0000000000000011
+x27: fffff029659af600 x26: fffff0297812e000
+x25: fffff0298c215540 x24: 0000000000000010
+x23: fffff0298c215400 x22: 00000000ffffffff
+x21: fffff0298c215541 x20: 0000000000000001
+x19: 000000000000000f x18: 0000000000000000
+x17: 0000000000000000 x16: 0000000000000000
+x15: 0000000000000000 x14: 0000000000000000
+x13: 0000000000000000 x12: 0000000000000000
+x11: 1ffffe052e5c6f1e x10: ffff1e052e5c6f1e
+x9 : dfff200000000000 x8 : 0000000000000004
+x7 : 0000000000000003 x6 : fffff02972e378f4
+x5 : ffff1e052e5c6f1e x4 : 1ffffe0531842aa8
+x3 : ffff200084a00000 x2 : ffff200033b46000
+x1 : ffffffff83600000 x0 : 000000000000357d
+Call trace:
+  assoc_array_insert_into_terminal_node+0x924/0x10c8 
+root/polaris/workspace/kernel/kernel/lib/assoc_array.c:644
+  assoc_array_insert+0x1e8/0x300 
+root/polaris/workspace/kernel/kernel/lib/assoc_array.c:1005
+  __key_link_begin+0xc4/0x1e0 
+root/polaris/workspace/kernel/kernel/security/keys/keyring.c:1227
+  construct_alloc_key 
+root/polaris/workspace/kernel/kernel/security/keys/request_key.c:375 
+[inline]
+  construct_key_and_link 
+root/polaris/workspace/kernel/kernel/security/keys/request_key.c:466 
+[inline]
+  request_key_and_link+0x358/0x800 
+root/polaris/workspace/kernel/kernel/security/keys/request_key.c:580
+  __do_sys_request_key 
+root/polaris/workspace/kernel/kernel/security/keys/keyctl.c:211 [inline]
+  __se_sys_request_key 
+root/polaris/workspace/kernel/kernel/security/keys/keyctl.c:156 [inline]
+  __arm64_sys_request_key+0x174/0x2c0 
+root/polaris/workspace/kernel/kernel/security/keys/keyctl.c:156
+  __invoke_syscall 
+root/polaris/workspace/kernel/kernel/arch/arm64/kernel/syscall.c:36 [inline]
+  invoke_syscall 
+root/polaris/workspace/kernel/kernel/arch/arm64/kernel/syscall.c:48 [inline]
+  el0_svc_common+0xdc/0x3a0 
+root/polaris/workspace/kernel/kernel/arch/arm64/kernel/syscall.c:121
+  el0_svc_handler+0x50/0xb0 
+root/polaris/workspace/kernel/kernel/arch/arm64/kernel/syscall.c:193
+  el0_svc+0x14/0x244 
+root/polaris/workspace/kernel/kernel/arch/arm64/kernel/entry.S:1028
+Code: 97e908f1 f9002efb 17fffe0d 97e038d6 (d4210000)
+Modules linked in:
+---[ end trace 6a3a83359c05a38f ]---
+
+I've dug a little bit into the issue. The issue happened during the 
+split node process when it trys to find two leafs to be put into the new 
+node. If it fails, it gives this BUG_ON error.
+
+I was suspecting a race condition. However when I check the 
+__key_link_begin and key_unlink function there seems to be suffice 
+locking. And the assoc_array seems to be robust.
+
+It seems that this happened once before 
+(https://syzkaller.appspot.com/bug?id=ae9f975f9395c1519048e29bfeb4cd162982eb6d).
+
+Any thoughts? Thanks!
+
+Best Regards,
+Zihua Guo
 
