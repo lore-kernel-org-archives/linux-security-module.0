@@ -2,79 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24FDC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 01:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20240C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 01:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B849061284
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 01:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 042E46134F
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Nov 2021 01:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbhKLB2j (ORCPT
+        id S231919AbhKLB3B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Nov 2021 20:28:39 -0500
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47028
+        Thu, 11 Nov 2021 20:29:01 -0500
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47064
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229835AbhKLB2j (ORCPT
+        by vger.kernel.org with ESMTP id S229835AbhKLB26 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Nov 2021 20:28:39 -0500
+        Thu, 11 Nov 2021 20:28:58 -0500
 Received: from [192.168.192.153] (unknown [50.126.114.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 3988B3F213;
-        Fri, 12 Nov 2021 01:25:45 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6A9663F213;
+        Fri, 12 Nov 2021 01:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1636680345;
-        bh=PCSur0ZtY7MRvBGP7BdvoVh93lbY+NBrxaqer9dSa1I=;
+        s=20210705; t=1636680368;
+        bh=uW6RI9EgL3J/zRhraSfskUGkLZ10MJZhG2zpxNHtMK4=;
         h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=Et1gZsbXueowidj9n3U9eKC5djQ12lsbR++yrEEEBIm/UiFwNQFhX5oiRdhvrMCQa
-         TdRuqWoM7m5y8ERvdSaCgEXSHwrWauVa2z0cXmSqCz7IaiRX4RGinfT70UkCWwy/mW
-         88xt5GRTbxBkNwpmmehbBnKSrh2Qy1A1HUTnizoQmAmguYQaBNHcinuREQ8vhcfmlU
-         2VLR0j2mfz9audJ8I+TmdGCbwWVasKy7tLW7ndiVmR45yYlsSFhf17VezQ7dCe0Dcn
-         JSWA4/bJwcPz7O/W/EngoApcLbDb2MIEVhoughXfwokvGbfohuolZajk228FLAONxS
-         Yz7PU5Os6rQmA==
-Subject: Re: [PATCH] apparmor: remove duplicated 'Returns:' comments
-To:     Austin Kim <austindh.kim@gmail.com>, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211103092531.GA25721@raspberrypi>
+        b=QErOZCoIWvcWQZhc0MyxjDYtml+m2gi3zWSuLrxq8IIIXbij0GVBVPe1wpA8DEfmV
+         wRKdjAZqOpYe3mvFfSHzSrMCs/v0GM/coqvKrj4ginoBmLh+S/MbDoMxZ196id9UN8
+         riqlRiqDP6jZTiWfbuBXsjEDQLpWLibWGgB1ykdpVXtjs8B8FZsNHx+EEdWXhev/8k
+         H26QTmkmMim5sNdI3o+p4TPDKIEjy5RN/DGBzagu+YhdVSW2vxM3dN5QyqrUNLpIkV
+         CcxnAJVxKrkPt3qetnhJlTprtKDtpSVfuJoexKxm3/ZpP7ol2jFIrvIOJ4C8GTGH1N
+         tHAwWYqGJQw4A==
+Subject: Re: [PATCH apparmor] apparmor: remove unneeded one-line hook wrappers
+To:     Florian Westphal <fw@strlen.de>,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org
+References: <20211011143854.17917-1-fw@strlen.de>
 From:   John Johansen <john.johansen@canonical.com>
 Organization: Canonical
-Message-ID: <f4447f61-59f2-cfc2-1157-df00175c6a10@canonical.com>
-Date:   Thu, 11 Nov 2021 17:25:41 -0800
+Message-ID: <0525571e-9950-b953-f6df-e6a81f5c54cc@canonical.com>
+Date:   Thu, 11 Nov 2021 17:26:06 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20211103092531.GA25721@raspberrypi>
+In-Reply-To: <20211011143854.17917-1-fw@strlen.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/3/21 2:25 AM, Austin Kim wrote:
-> It might look better if duplicated 'Returns:' comment is removed.
+On 10/11/21 7:38 AM, Florian Westphal wrote:
+> Use the common function directly.
 > 
-> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+> Signed-off-by: Florian Westphal <fw@strlen.de>
 
 sorry, it looks like I forgot to reply to this. I pulled this into the
 apparmor tree and it has been merged for 5.16
 
 > ---
->  security/apparmor/procattr.c | 2 --
->  1 file changed, 2 deletions(-)
+>  security/apparmor/lsm.c | 20 ++------------------
+>  1 file changed, 2 insertions(+), 18 deletions(-)
 > 
-> diff --git a/security/apparmor/procattr.c b/security/apparmor/procattr.c
-> index c929bf4a3df1..fde332e0ea7d 100644
-> --- a/security/apparmor/procattr.c
-> +++ b/security/apparmor/procattr.c
-> @@ -21,8 +21,6 @@
->   * @profile: the profile to print profile info about  (NOT NULL)
->   * @string: Returns - string containing the profile info (NOT NULL)
->   *
-> - * Returns: length of @string on success else error on failure
-> - *
->   * Requires: profile != NULL
->   *
->   * Creates a string containing the namespace_name://profile_name for
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index f72406fe1bf2..eafb44aa553a 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1773,32 +1773,16 @@ static unsigned int apparmor_ip_postroute(void *priv,
+>  
+>  }
+>  
+> -static unsigned int apparmor_ipv4_postroute(void *priv,
+> -					    struct sk_buff *skb,
+> -					    const struct nf_hook_state *state)
+> -{
+> -	return apparmor_ip_postroute(priv, skb, state);
+> -}
+> -
+> -#if IS_ENABLED(CONFIG_IPV6)
+> -static unsigned int apparmor_ipv6_postroute(void *priv,
+> -					    struct sk_buff *skb,
+> -					    const struct nf_hook_state *state)
+> -{
+> -	return apparmor_ip_postroute(priv, skb, state);
+> -}
+> -#endif
+> -
+>  static const struct nf_hook_ops apparmor_nf_ops[] = {
+>  	{
+> -		.hook =         apparmor_ipv4_postroute,
+> +		.hook =         apparmor_ip_postroute,
+>  		.pf =           NFPROTO_IPV4,
+>  		.hooknum =      NF_INET_POST_ROUTING,
+>  		.priority =     NF_IP_PRI_SELINUX_FIRST,
+>  	},
+>  #if IS_ENABLED(CONFIG_IPV6)
+>  	{
+> -		.hook =         apparmor_ipv6_postroute,
+> +		.hook =         apparmor_ip_postroute,
+>  		.pf =           NFPROTO_IPV6,
+>  		.hooknum =      NF_INET_POST_ROUTING,
+>  		.priority =     NF_IP6_PRI_SELINUX_FIRST,
 > 
 
