@@ -2,73 +2,86 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EABACC433F5
-	for <linux-security-module@archiver.kernel.org>; Sun, 14 Nov 2021 12:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70464C433F5
+	for <linux-security-module@archiver.kernel.org>; Sun, 14 Nov 2021 14:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFFA561163
-	for <linux-security-module@archiver.kernel.org>; Sun, 14 Nov 2021 12:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F5CE60EE7
+	for <linux-security-module@archiver.kernel.org>; Sun, 14 Nov 2021 14:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234477AbhKNMdC (ORCPT
+        id S234703AbhKNOQq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 14 Nov 2021 07:33:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46888 "EHLO mail.kernel.org"
+        Sun, 14 Nov 2021 09:16:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235756AbhKNMdB (ORCPT
+        id S231831AbhKNOQe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 14 Nov 2021 07:33:01 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 8A40A61164;
-        Sun, 14 Nov 2021 12:30:07 +0000 (UTC)
+        Sun, 14 Nov 2021 09:16:34 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1F12D61167;
+        Sun, 14 Nov 2021 14:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636893007;
-        bh=cx51PSUwREeky8Z/ulRMdAX/ywe1FUYhUu22mpwW6G8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=A3AS2d0qVE7XMFIbN0MVXlHCBNAqFuu0nJqROwLdzffBSbMTycjTlockDev8PZJyy
-         5bOxElLpl+nrzuQ0NipXN5EX89UNG5plBa4+3gInAFpsl9SFCUCdaZchi5E9AWNh/E
-         I8m9UWp7QQGbad/iZ0Fi6U2wltc+fH/zAoqonWO9WleVWyHayBxzrjd7bnHHhL0IVK
-         OAVAWhJpXcgPTmCW2MeHzCDSNhaDoUSKfE78XBP9PlwE/2wsWYGXueFsaDyWUeIiVR
-         ntkB2N0gvpDZwcfYUW6+rke1pJoDTS9AioTuN8KceoQw7PIko2wTlrYvMGr/kqMrJ8
-         Zw4WtjEMpUaYw==
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1636899215;
+        bh=GshcvNMl7nHoyVvs6uuk+cER4EyiAezsBOCfQqcH6RM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HR1fLsgYhMx5dkhQLX3evgPr1XLzZ39upvlmCcy6ohosf21tg9KZpMh8/kwzEM3vC
+         MeuJHtLyvp5XipCQ8+GFXSdKb0uJwoFLS8jv0udPck1fo34eVXhz8LKwm4DCdx5P45
+         FjxqBzsrsibzmxXpQRS/xhbQSSAyKVqOTJfDy9r461Q7LJ5b3ES62qMUbCHDg5Aq6X
+         XmAmEmh4nrrgV7xi0MWA0wlZYzz+NODD0GdZuJudq3pqPdn9+/P9B3gXoXlkQpcP3x
+         nfOCMuLcbBUAcjlCxKA692IMRHFyBa0cJoAy4os2ZYDoOJnuDmp+GpYfhzAnS0Zivh
+         HVlrrlQmJttRg==
+Date:   Sun, 14 Nov 2021 09:13:33 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        wangzhitong <wangzhitong@uniontech.com>,
+        "David S . Miller" <davem@davemloft.net>, paul@paul-moore.com,
+        yoshfuji@linux-ipv6.org, dsahern@kernel.org, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 10/47] NET: IPV4: fix error "do not
+ initialise globals to 0"
+Message-ID: <YZEZjZfsfbN2IKpA@sashalap>
+References: <20211108175031.1190422-1-sashal@kernel.org>
+ <20211108175031.1190422-10-sashal@kernel.org>
+ <f527316e1ea4017af37857dd6d3eeecffc3bbce0.camel@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net,lsm,selinux: revert the security_sctp_assoc_established()
- hook
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163689300751.19604.8326940151173653633.git-patchwork-notify@kernel.org>
-Date:   Sun, 14 Nov 2021 12:30:07 +0000
-References: <163675909043.176428.14878151490285663317.stgit@olly>
-In-Reply-To: <163675909043.176428.14878151490285663317.stgit@olly>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <f527316e1ea4017af37857dd6d3eeecffc3bbce0.camel@perches.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
+On Mon, Nov 08, 2021 at 05:49:04PM -0800, Joe Perches wrote:
+>On Mon, 2021-11-08 at 12:49 -0500, Sasha Levin wrote:
+>> From: wangzhitong <wangzhitong@uniontech.com>
+>>
+>> [ Upstream commit db9c8e2b1e246fc2dc20828932949437793146cc ]
+>>
+>> this patch fixes below Errors reported by checkpatch
+>>     ERROR: do not initialise globals to 0
+>>     +int cipso_v4_rbm_optfmt = 0;
+>>
+>> Signed-off-by: wangzhitong <wangzhitong@uniontech.com>
+>> Signed-off-by: David S. Miller <davem@davemloft.net>
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> ---
+>>  net/ipv4/cipso_ipv4.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+>> index e8b8dd1cb1576..75908722de47a 100644
+>> --- a/net/ipv4/cipso_ipv4.c
+>> +++ b/net/ipv4/cipso_ipv4.c
+>> @@ -87,7 +87,7 @@ struct cipso_v4_map_cache_entry {
+>>  static struct cipso_v4_map_cache_bkt *cipso_v4_cache;
+>>
+>>  /* Restricted bitmap (tag #1) flags */
+>> -int cipso_v4_rbm_optfmt = 0;
+>> +int cipso_v4_rbm_optfmt;
+>
+>I think this is a silly thing to backport unless it's required
+>for some other patch.
 
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
+You're right - it's silly. I'll drop it.
 
-On Fri, 12 Nov 2021 18:18:10 -0500 you wrote:
-> This patch reverts two prior patches, e7310c94024c
-> ("security: implement sctp_assoc_established hook in selinux") and
-> 7c2ef0240e6a ("security: add sctp_assoc_established hook"), which
-> create the security_sctp_assoc_established() LSM hook and provide a
-> SELinux implementation.  Unfortunately these two patches were merged
-> without proper review (the Reviewed-by and Tested-by tags from
-> Richard Haines were for previous revisions of these patches that
-> were significantly different) and there are outstanding objections
-> from the SELinux maintainers regarding these patches.
-> 
-> [...]
-
-Here is the summary with links:
-  - net,lsm,selinux: revert the security_sctp_assoc_established() hook
-    https://git.kernel.org/netdev/net/c/1aa3b2207e88
-
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
+Sasha
