@@ -2,175 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65114C433EF
-	for <linux-security-module@archiver.kernel.org>; Sun, 14 Nov 2021 15:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14EAC433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Nov 2021 18:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44F1D60FD8
-	for <linux-security-module@archiver.kernel.org>; Sun, 14 Nov 2021 15:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9083F63301
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Nov 2021 18:14:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234578AbhKNPsZ (ORCPT
+        id S240919AbhKOSQt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 14 Nov 2021 10:48:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35594 "EHLO
+        Mon, 15 Nov 2021 13:16:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234393AbhKNPsV (ORCPT
+        with ESMTP id S240078AbhKOSMK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 14 Nov 2021 10:48:21 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D37C061746;
-        Sun, 14 Nov 2021 07:45:22 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id i8-20020a7bc948000000b0030db7b70b6bso13776917wml.1;
-        Sun, 14 Nov 2021 07:45:22 -0800 (PST)
+        Mon, 15 Nov 2021 13:12:10 -0500
+Received: from mail-pf1-x44a.google.com (mail-pf1-x44a.google.com [IPv6:2607:f8b0:4864:20::44a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B694C0386D2
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Nov 2021 09:38:52 -0800 (PST)
+Received: by mail-pf1-x44a.google.com with SMTP id w2-20020a627b02000000b0049fa951281fso10342445pfc.9
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Nov 2021 09:38:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=1fqt4RZHpU7qFJuzFqI1H78E6IxKKO9+0LC3as8rskQ=;
-        b=QLyrd50D2+gddfO/MdBmL6WEqXJM7fq+YotiW1DPonEzTrWt/IxdkOFdbX4AV4uNMw
-         Zv+MBHT8wDJJwlmG0e7z0S+FOku9Gj7lrvq8Zcn2plROXeAJTXIGZ8M9tL3C3+mWVHmC
-         HSFZ1xCytx56w+Z+Doo13FhtRFhAtoPyX077AUv77/hK/7Pp9tSE1yGw0A2VJ0m0xKMD
-         M1CbBOPlqajk49cvrolZQXOx9jkPP0ovJK3y3FJ6NlKfINCCyNFXDa1hNCVW/JsY5HBn
-         PtcuM41BThONaap82BWpmhAPXP8t/d5v7eRqjM5uF37ucRwKu3sGi78GhaRqETKmyaYo
-         rufA==
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=gFHzpDmZVv3KTzaa99s4GcDQLq8lkQoNbMRzfWvXXRU=;
+        b=E0lMrhcUzQ+Xxg7MzzracGH2o8ZPywwPNThCN8B2PV1+YsxQ7pcG6fw/LsdoL5DhpJ
+         Po3s0ulyU4vPeedC/oWHYgY2QT/E5n8f1j7yGJCR4TH0EDLR7pHs43w4Fn0CYmqbDa0b
+         C0axRULUIX1exCYTmfoFg2/WV3luxC+wnavfxXcrma1naBKaP+Qwb/UAzxoe3aOMfF+9
+         /LhYB/QdqhlAwXaExqi0xERMWK/ww3Q0LLDDgsSqjoH2cQ6ymB4g9FuH95+4++E+m+gv
+         gJIlxXphc6ecxg7H1I/CcfAWBgO6rECPBHy08g79iQ2oAy5ZYNMdQUXVfhQ7q0IgGMdk
+         CAhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=1fqt4RZHpU7qFJuzFqI1H78E6IxKKO9+0LC3as8rskQ=;
-        b=KTMB+QQUWzUg6yeQtsQS0VeNLDzaU1f9sxm01OiiUUWf5MLK95biYaUL/hHN6EtIpl
-         iJ2Z9niT9Bd3V3KXoG5l+PxQhDb63kxCpiszrKPWe+MZuodZQFq3ivH4/eGfKbM3tF+Y
-         5A+r+zofgE2kCZbUAW+Tllphzm5GGvSYKqYLx5GLjX6NBwwRf2xAJ7bLr4KmwrbYpHjl
-         LqRh08/CM/0ZeovoxwZllOTrHFUToxIFktVnIITcOAwNym0GcFJX8iMRvFeu3FsUNKih
-         87KaaVxiuWWMR/XxemqE0KmMVgeNLAsxsj4MzSgMxLLhRZod29P49nZwJtQxDF8HGDfb
-         CR3Q==
-X-Gm-Message-State: AOAM533VwXCo/7DJ8KZEtIRBhZ5urS1OasSk5NZ7AxzaChf/52oYW5oD
-        lRGDj1e3yRBoCGoUdT0oYaQ=
-X-Google-Smtp-Source: ABdhPJzpK+Kweyt++e3ASXD/8ASda3oraQCNNMZRWMfw5g1bpbfyyMdlIBznIU8unhQD5grLbIISGA==
-X-Received: by 2002:a05:600c:3788:: with SMTP id o8mr29757561wmr.82.1636904721156;
-        Sun, 14 Nov 2021 07:45:21 -0800 (PST)
-Received: from [10.168.10.170] ([170.253.36.171])
-        by smtp.gmail.com with ESMTPSA id l5sm18152582wms.16.2021.11.14.07.45.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Nov 2021 07:45:20 -0800 (PST)
-Message-ID: <03ddd6e6-55ff-fff4-95f3-8c0b008443f8@gmail.com>
-Date:   Sun, 14 Nov 2021 16:45:17 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v16 1/3] fs: Add trusted_for(2) syscall implementation and
- related sysctl
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yin Fengwei <fengwei.yin@intel.com>,
-        kernel-hardening@lists.openwall.com,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20211110190626.257017-1-mic@digikod.net>
- <20211110190626.257017-2-mic@digikod.net>
- <8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com>
- <5312f022-96ea-5555-8d17-4e60a33cf8f8@digikod.net>
- <34779736-e875-c3e0-75d5-0f0a55d729aa@gmail.com>
- <CAMuHMdXj8fHDq-eFd41GJ4oNwGD5sxhPx82izNwKxE_=x8dqEA@mail.gmail.com>
-From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-In-Reply-To: <CAMuHMdXj8fHDq-eFd41GJ4oNwGD5sxhPx82izNwKxE_=x8dqEA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=gFHzpDmZVv3KTzaa99s4GcDQLq8lkQoNbMRzfWvXXRU=;
+        b=TKkilk8Ue3w3BF2SBzKnu1WFedxGT0WAFzTz0nrNh+vkaWtZaVjOh3q2PwzFVXbeO0
+         aGGkKi1EWhmD24s6kbDroXYvejK30ppSkFqMcoAVDfsW96ZkCAtSDgt+SiklYF45zyHs
+         o/5djDQ1e4tDfZuTaekfbGUGTdwS/pXwmnvUrDy+ptlJwWPG2N0joh8rVOEK8mM0JzuK
+         O77yb3r9lPsa3yOBs3/Guev4am7HzVnfE/Qvrh4Ske5OBhyWZH4pZUvIWdOszOUx761a
+         4iEn05YFtTtBhcrrQdSDSKn2Yx6QUb4ei917OibQNoTp8pKbEQAqTtt0DLz6OYkeHtJQ
+         VyHw==
+X-Gm-Message-State: AOAM533kEFRptz4Ux3jZsZCuKRE6Mw6SObF4LCnitdMJjZMus26nDr2O
+        uAuIB8a9QLsrXxYTzzUFp/UHesdaMYE=
+X-Google-Smtp-Source: ABdhPJwTAV+ZG+2XqLkeiSQpjZ7KK5I0FTpAB9sdXiyOS+6eC4Xc72hJckhedQD25PX8UC+kT43g6OJrmDU=
+X-Received: from adelva.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:b2b])
+ (user=adelva job=sendgmr) by 2002:a17:90a:c287:: with SMTP id
+ f7mr60754043pjt.114.1636997931798; Mon, 15 Nov 2021 09:38:51 -0800 (PST)
+Date:   Mon, 15 Nov 2021 17:38:50 +0000
+Message-Id: <20211115173850.3598768-1-adelva@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.34.0.rc1.387.gb447b232ab-goog
+Subject: [PATCH] block: Check ADMIN before NICE for IOPRIO_CLASS_RT
+From:   Alistair Delva <adelva@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Khazhismel Kumykov <khazhy@google.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Serge Hallyn <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-team@android.com,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Geert,
+Booting to Android userspace on 5.14 or newer triggers the following
+SELinux denial:
 
-On 11/14/21 16:32, Geert Uytterhoeven wrote:
-> Hi Alejandro,
-> 
-> On Sat, Nov 13, 2021 at 8:56 PM Alejandro Colomar (man-pages)
-> <alx.manpages@gmail.com> wrote:
->> On 11/13/21 14:02, Mickaël Salaün wrote:
->>>> TL;DR:
->>>>
->>>> ISO C specifies that for the following code:
->>>>
->>>>       enum foo {BAR};
->>>>
->>>>       enum foo foobar;
->>>>
->>>> typeof(foo)    shall be int
->>>> typeof(foobar) is implementation-defined
->>>
->>> I tested with some version of GCC (from 4.9 to 11) and clang (10 and 11)
->>> with different optimizations and the related sizes are at least the same
->>> as for the int type.
->>
->> GCC has -fshort-enums to make enum types be as short as possible.  I
->> expected -Os to turn this on, since it saves space, but it doesn't.
-> 
-> Changing optimization level must not change the ABI, else debugging
-> would become even more of a nightmare.
+avc: denied { sys_nice } for comm="init" capability=23
+     scontext=u:r:init:s0 tcontext=u:r:init:s0 tclass=capability
+     permissive=0
 
-I agree, but if you invoke implementation-defined,
-then it's not (only) the compiler's fault.
+Init is PID 0 running as root, so it already has CAP_SYS_ADMIN. For
+better compatibility with older SEPolicy, check ADMIN before NICE.
 
-Instead of not allowing GCC to enable -fshort-enums ever,
-one can write ISO C-complying code in the parts that
-will be exposed as an interface,
-by just using int.
+Fixes: 9d3a39a5f1e4 ("block: grant IOPRIO_CLASS_RT to CAP_SYS_NICE")
+Signed-off-by: Alistair Delva <adelva@google.com>
+Cc: Khazhismel Kumykov <khazhy@google.com>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: stable@vger.kernel.org # v5.14+
+---
+ block/ioprio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-That allows using -fshort-enums
-for whatever reasons it might be good.
-
-Not saying that the kernel wants to enable it,
-but it costs nothing to write non-implementation-defined code
-that doesn't forbid it.
-
-
-It's comparable to passing a struct (not a pointer to it)
-to a function.
-If you change the size of the struct,
-you screw the interface.
-Better pass pointers, or standard types.
-
-
-Cheers,
-Alex
-
+diff --git a/block/ioprio.c b/block/ioprio.c
+index 0e4ff245f2bf..4d59c559e057 100644
+--- a/block/ioprio.c
++++ b/block/ioprio.c
+@@ -69,7 +69,7 @@ int ioprio_check_cap(int ioprio)
+ 
+ 	switch (class) {
+ 		case IOPRIO_CLASS_RT:
+-			if (!capable(CAP_SYS_NICE) && !capable(CAP_SYS_ADMIN))
++			if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_NICE))
+ 				return -EPERM;
+ 			fallthrough;
+ 			/* rt has prio field too */
 -- 
-Alejandro Colomar
-Linux man-pages comaintainer; http://www.kernel.org/doc/man-pages/
-http://www.alejandro-colomar.es/
+2.34.0.rc1.387.gb447b232ab-goog
+
