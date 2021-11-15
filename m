@@ -2,64 +2,62 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7D7C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 00:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C06C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 00:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE96261B4D
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 00:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4269F61A0C
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 00:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345159AbhKPAzv (ORCPT
+        id S1343968AbhKPA4i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Nov 2021 19:55:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36182 "EHLO
+        Mon, 15 Nov 2021 19:56:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343560AbhKOTVU (ORCPT
+        with ESMTP id S245620AbhKOTUv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Nov 2021 14:21:20 -0500
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD403C03D78E
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Nov 2021 10:17:43 -0800 (PST)
-Received: by mail-ua1-x92c.google.com with SMTP id v3so36666862uam.10
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Nov 2021 10:17:43 -0800 (PST)
+        Mon, 15 Nov 2021 14:20:51 -0500
+Received: from mail-pj1-x1049.google.com (mail-pj1-x1049.google.com [IPv6:2607:f8b0:4864:20::1049])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F16C07794E
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Nov 2021 10:16:57 -0800 (PST)
+Received: by mail-pj1-x1049.google.com with SMTP id p8-20020a17090a748800b001a6cceee8afso5427587pjk.4
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Nov 2021 10:16:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+a8ZktNn6ZKD5SR+F36fH6n6kb1h7BS7jd1Wp45NaFM=;
-        b=gKjpO0lLV7NAzCVw+nwCxA8yC44R21WAWD2XjYYi0XvHIj7m390XTLd0lEN5Nn7rcB
-         BuK4C1Cfgw1j9IVR5y4ccOOC9HnZhA9Q9ERm3Q22nj0xyYhHPPZ+IYpHX27qbjUCyDa9
-         FjBo+0o5USkN9WjUnl/bLBY+ePanR03FsUeaamVOMTsyk1ZuvITwcd6QcOScign6Qmun
-         u7WUTMpODzERw1+OGJLsaUtAupMXVPh3UXvanz5tAdren74UjX5wDmMwtt0tuKXcncWg
-         TUyJQc40cjABQb16NUrbV/xR8FV0L6K9gaV5knCQzF0+juocFBSz2mXCLAEddrjvWuAo
-         708w==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=FwJDATwzjGtvu7NR7Shvf/aZ67V95VELoUfFC2/GuTA=;
+        b=nmdQlF+e5rttD5iwDgkE1MUxn19ManaNMDrW+ry0SsYxN0le/eMgPM8c63170AFHnv
+         fvElydaowIs56AAMPyRB+panPcsFZd5+JI8Jsh+CFMEM76+hjoLKwp1JXuXNHeGgUKtw
+         sFmI70OePIveC3XtgJg8K0ZaxBWRTkSbBNJaOMjrs3iRm5HFAvyUHhkKc7LixppiBWZU
+         4+hWLqpoSJ+iMvcDFfcz4X0hc8p5lO1Jrh5Z7invhv9lUjDRHU7sN3LfG/lHh2AgmB1A
+         hyBN5FUIaTU8CPWkCQIvjAgJsHjJWpBM6Tnz9318HLZvO3CXoegifROsq2bShNPGNveA
+         5svw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+a8ZktNn6ZKD5SR+F36fH6n6kb1h7BS7jd1Wp45NaFM=;
-        b=yurLGhu/91PmpgoXOdHlI0Z9vxAhjotLclLEO1UCux7Iaa2wk+iA/KsmrXFnuRd7as
-         0XYV6zmZjbLvc8R6TdRV4se/mTu4RMZdGQfZ5RemMLdQSdUWVFlw8Nonbxh6VlWuOk6V
-         L1PtAJ6yb1pAamOxUuGdiLwQiT/Qdm0wItJSsmc8IGWSaNDTX2R3POsTT7XMtOHrU3R9
-         OXzrQgYXIVq3fA6juYcm2m850dtrWcTt/CDjuuwJ4YE0svCEjdv037LYzttAc0vAmk3i
-         XBnkIPu6b+Hm/lVNbCZLxXWKDALWOIDwl0Co6fsDjNvVEamgRi+oM5C8BLJUVGpK0zRJ
-         6F0A==
-X-Gm-Message-State: AOAM531v2vFj9eMNEVbrnc6jqAlqaUcMnzv9WfOw3MJc60pk+RE7krtS
-        CCZyUotUGVJnd9q7oS79UkHfuImn6Wssy8c34NdlSA==
-X-Google-Smtp-Source: ABdhPJya8J9a4P+RjZgEeXSNntVJy86MJNmzIPw9P4CUF+9L+z4wnWDoOasaaQi9RrdEFaJXT3F+c+2vxQUEakzHjTg=
-X-Received: by 2002:a67:df96:: with SMTP id x22mr46045260vsk.9.1637000262835;
- Mon, 15 Nov 2021 10:17:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20211115173850.3598768-1-adelva@google.com> <74179f08-3529-7502-db33-2ea18cab3f58@kernel.dk>
-In-Reply-To: <74179f08-3529-7502-db33-2ea18cab3f58@kernel.dk>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=FwJDATwzjGtvu7NR7Shvf/aZ67V95VELoUfFC2/GuTA=;
+        b=JYTK1Fzpqj89adF+czr0X7j4NGwPHyPGSL2UlagdNE3LWX3cRaEx9c5lSe+/WaLuif
+         Y6uHV7BVV3GhmNBDkFBjAQxiK36yPUd4PmESNUuiObM+nJZSLAJzJdBoGfp77tATqeU8
+         EKOBiH9fANufmFceV0mJxAwxGUic+xuu8wL+fPwknG29I1UHtsL40wkMr8Ni3aI6Z4ch
+         gdZUdpQNdkZOjHTXBItdSIVjghB4dne8i/TMDzs4sN5kXWFV/NlOs47AKC5R045arzyX
+         doLyF0rQPRAQ5NBS7PofCNjNXvclgg+MpwU6pM0DBVjy1sHyWnCu/bBflRlwcJtb3MDY
+         wObQ==
+X-Gm-Message-State: AOAM533zKwI38aPPT5ixYiL7IwOwWMO60bc3wsooyRxJL3zhCosIiw+L
+        LPc5yUHZ4r/0DTd7X5zmnPDjL/S4BOI=
+X-Google-Smtp-Source: ABdhPJy1pQPDXJRd+FI7EQeQ2PNWdyQ8KKfOWRM3xN7JeY3y1F6RP5Su6cd8vNrhVoUwwXOY7mJxYAQq2y8=
+X-Received: from adelva.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:b2b])
+ (user=adelva job=sendgmr) by 2002:a17:902:8d8a:b0:143:bb4a:d1a with SMTP id
+ v10-20020a1709028d8a00b00143bb4a0d1amr21891956plo.1.1637000217085; Mon, 15
+ Nov 2021 10:16:57 -0800 (PST)
+Date:   Mon, 15 Nov 2021 18:16:55 +0000
+Message-Id: <20211115181655.3608659-1-adelva@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.34.0.rc1.387.gb447b232ab-goog
+Subject: [PATCH v2] block: Check ADMIN before NICE for IOPRIO_CLASS_RT
 From:   Alistair Delva <adelva@google.com>
-Date:   Mon, 15 Nov 2021 10:17:30 -0800
-Message-ID: <CANDihLE5oO2=MDiPtGmUzZgaPuzT2_X7da-vKe+ybBJkXgnsAQ@mail.gmail.com>
-Subject: Re: [PATCH] block: Check ADMIN before NICE for IOPRIO_CLASS_RT
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org,
-        Khazhismel Kumykov <khazhy@google.com>,
+To:     linux-kernel@vger.kernel.org
+Cc:     Khazhismel Kumykov <khazhy@google.com>,
         Bart Van Assche <bvanassche@acm.org>,
-        Serge Hallyn <serge@hallyn.com>,
+        Serge Hallyn <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
         linux-security-module@vger.kernel.org, kernel-team@android.com,
@@ -68,29 +66,53 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 15, 2021 at 10:04 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 11/15/21 10:38 AM, Alistair Delva wrote:
-> > Booting to Android userspace on 5.14 or newer triggers the following
-> > SELinux denial:
-> >
-> > avc: denied { sys_nice } for comm="init" capability=23
-> >      scontext=u:r:init:s0 tcontext=u:r:init:s0 tclass=capability
-> >      permissive=0
-> >
-> > Init is PID 0 running as root, so it already has CAP_SYS_ADMIN. For
-> > better compatibility with older SEPolicy, check ADMIN before NICE.
->
-> Seems a bit wonky to me, but the end result is the same.
+Booting to Android userspace on 5.14 or newer triggers the following
+SELinux denial:
 
-No argument from me..
+avc: denied { sys_nice } for comm="init" capability=23
+     scontext=u:r:init:s0 tcontext=u:r:init:s0 tclass=capability
+     permissive=0
 
-> In any case,
-> this warrants a comment above it detailing why the ordering is
-> seemingly important.
+Init is PID 0 running as root, so it already has CAP_SYS_ADMIN. For
+better compatibility with older SEPolicy, check ADMIN before NICE.
 
-Sent v2.
+Fixes: 9d3a39a5f1e4 ("block: grant IOPRIO_CLASS_RT to CAP_SYS_NICE")
+Signed-off-by: Alistair Delva <adelva@google.com>
+Cc: Khazhismel Kumykov <khazhy@google.com>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: stable@vger.kernel.org # v5.14+
+---
+v2: added comment requested by Jens
+ block/ioprio.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-> --
-> Jens Axboe
->
+diff --git a/block/ioprio.c b/block/ioprio.c
+index 0e4ff245f2bf..313c14a70bbd 100644
+--- a/block/ioprio.c
++++ b/block/ioprio.c
+@@ -69,7 +69,14 @@ int ioprio_check_cap(int ioprio)
+ 
+ 	switch (class) {
+ 		case IOPRIO_CLASS_RT:
+-			if (!capable(CAP_SYS_NICE) && !capable(CAP_SYS_ADMIN))
++			/*
++			 * Originally this only checked for CAP_SYS_ADMIN,
++			 * which was implicitly allowed for pid 0 by security
++			 * modules such as SELinux. Make sure we check
++			 * CAP_SYS_ADMIN first to avoid a denial/avc for
++			 * possibly missing CAP_SYS_NICE permission.
++			 */
++			if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_NICE))
+ 				return -EPERM;
+ 			fallthrough;
+ 			/* rt has prio field too */
+-- 
+2.34.0.rc1.387.gb447b232ab-goog
+
