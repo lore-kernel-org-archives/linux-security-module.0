@@ -2,95 +2,130 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C87C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 01:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F506C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 08:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD22661BC1
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 01:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8659461B49
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 08:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352196AbhKPBQ3 (ORCPT
+        id S231876AbhKPIYn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Nov 2021 20:16:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34572 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244349AbhKOTNw (ORCPT
+        Tue, 16 Nov 2021 03:24:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38478 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231869AbhKPIYm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Nov 2021 14:13:52 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B1DCC04C341
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Nov 2021 10:04:57 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id x9so17589528ilu.6
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Nov 2021 10:04:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oNWkn0euYrddlaTUxBt9RiKgvk8R4zpd09YZVYXC3PM=;
-        b=HJJsyzPFhUHPoNx6u4rIshbZ6jGAPTmRri3/8H4wPY4YDZBbXrbW+JD1PHIZBXSs8r
-         13t5MIS62BpH/ywAzixrUC0Rz5y7XZ7Gedbsa8xLAJk1u9ddZZrhYSvMK7TOA3eMC/rp
-         CL9kcM0FsXlvzb34vvbZnCGe0w+eyxKG4vXEqE1F5Wdhx88mn993b+plVNDee+RjldCr
-         ukxMJCSO5lEuVYaLSq+BY3JD240Hm3aWkUKHDVg54/AmHUyA+73JH/JmV89WX2Zgwo68
-         uMHLMwZMq66bjiHdWfxcU10tWeR+UxPL5jOJ2R4zOKp1U8m9NTHK07vx7EaeJT424wUJ
-         wh7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oNWkn0euYrddlaTUxBt9RiKgvk8R4zpd09YZVYXC3PM=;
-        b=4WFLPlxIcVjQUVYE9jpzbmQlz+40ZzljtGf+ofEBQ/jWnSP2L4ubqPbaNOEuyJGiMG
-         WCCu++wfXvQRUu8YtoWJHZP3DjSPF21QCjuE08gDSLNnJCA1AzLXPrkxPrxXqy2O+w1M
-         jVUWA33SbLYAGXrR7fO9hKqQ4rWY87pXJvb28SWyWYG5XnCKdZAzJgr/gyeujWZSCasW
-         Bp8PfK31OWs1z4dAWtAdw5J4AxYRpmMCO1LWmqxu1dwnoC/GnslxoT6Ibs7aeMiXM70V
-         HV18fF7v8R5sSKfk64Y7K2MTlh0H6doJvpGooOYlbu0L1IJMde/IilZO9AMOFBCPpiD9
-         RE/Q==
-X-Gm-Message-State: AOAM531K2V681CWZqsYbZg3/VrcDBVNjeUMFX+MeWMYo+5cNl8bLelfF
-        qmUMRk5DNIwUUs2nI/YhSXQoSA==
-X-Google-Smtp-Source: ABdhPJyp6zFNAuBeuoyQU4kkL68fGK2NiaH9e5RPs0cd09v4NWGILyi6DmolYUr1ntMgjfQFN9p19g==
-X-Received: by 2002:a92:c569:: with SMTP id b9mr517353ilj.39.1636999496758;
-        Mon, 15 Nov 2021 10:04:56 -0800 (PST)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id b15sm10200671iln.36.2021.11.15.10.04.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Nov 2021 10:04:56 -0800 (PST)
-Subject: Re: [PATCH] block: Check ADMIN before NICE for IOPRIO_CLASS_RT
-To:     Alistair Delva <adelva@google.com>, linux-kernel@vger.kernel.org
-Cc:     Khazhismel Kumykov <khazhy@google.com>,
+        Tue, 16 Nov 2021 03:24:42 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 263636321A;
+        Tue, 16 Nov 2021 08:21:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1637050905;
+        bh=bYQKZcw7c2FQMHwIW5aHteUVhe1xXATHDDnJ7Fn6nvM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1z3iMBeJeljTxggjE+0L4THG0ujjtzEQL65xZOXcDaQ8VjpANvvoVWED04LYF/AvB
+         zolX6Blbg9K0nCBEp8ls4ve8p+qV/bno+gOYeqaePLr6geYTIfVXQ8NKk+AV79pi9x
+         yP+uvpZlqW/eCULiDCmjGWF4n5whDdDU0TmcqRPs=
+Date:   Tue, 16 Nov 2021 09:21:43 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Alistair Delva <adelva@google.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
         Bart Van Assche <bvanassche@acm.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kernel-team@android.com,
-        stable@vger.kernel.org
+        Serge Hallyn <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>,
+        Paul Moore <paul@paul-moore.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux Stable maillist <stable@vger.kernel.org>
+Subject: Re: [PATCH] block: Check ADMIN before NICE for IOPRIO_CLASS_RT
+Message-ID: <YZNqF7fuwLTd8IIM@kroah.com>
 References: <20211115173850.3598768-1-adelva@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <74179f08-3529-7502-db33-2ea18cab3f58@kernel.dk>
-Date:   Mon, 15 Nov 2021 11:04:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <CAFqZXNvVHv8Oje-WV6MWMF96kpR6epTsbc-jv-JF+YJw=55i1w@mail.gmail.com>
+ <CANDihLEFZAz8DwkkMGiDJnDMjxiUuSCanYsJtkRwa9RoyruLFA@mail.gmail.com>
+ <ead81edf-ca8f-9e97-96ca-984202e7d8ac@schaufler-ca.com>
 MIME-Version: 1.0
-In-Reply-To: <20211115173850.3598768-1-adelva@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ead81edf-ca8f-9e97-96ca-984202e7d8ac@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/15/21 10:38 AM, Alistair Delva wrote:
-> Booting to Android userspace on 5.14 or newer triggers the following
-> SELinux denial:
+On Mon, Nov 15, 2021 at 01:42:54PM -0800, Casey Schaufler wrote:
+> On 11/15/2021 11:08 AM, Alistair Delva wrote:
+> > On Mon, Nov 15, 2021 at 11:04 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > > On Mon, Nov 15, 2021 at 7:14 PM Alistair Delva <adelva@google.com> wrote:
+> > > > Booting to Android userspace on 5.14 or newer triggers the following
+> > > > SELinux denial:
+> > > > 
+> > > > avc: denied { sys_nice } for comm="init" capability=23
+> > > >       scontext=u:r:init:s0 tcontext=u:r:init:s0 tclass=capability
+> > > >       permissive=0
+> > > > 
+> > > > Init is PID 0 running as root, so it already has CAP_SYS_ADMIN. For
+> > > > better compatibility with older SEPolicy, check ADMIN before NICE.
+> > > But with this patch you in turn punish the new/better policies that
+> > > try to avoid giving domains CAP_SYS_ADMIN unless necessary (using only
+> > > the more granular capabilities wherever possible), which may now get a
+> > > bogus sys_admin denial. IMHO the order is better as it is, as it
+> > > motivates the "good" policy writing behavior - i.e. spelling out the
+> > > capability permissions more explicitly and avoiding CAP_SYS_ADMIN.
+> > > 
+> > > IOW, if you domain does CAP_SYS_NICE things, and you didn't explicitly
+> > > grant it that (and instead rely on the CAP_SYS_ADMIN fallback), then
+> > > the denial correctly flags it as an issue in your policy and
+> > > encourages you to add that sys_nice permission to the domain. Then
+> > > when one beautiful hypothetical day the CAP_SYS_ADMIN fallback is
+> > > removed, your policy will be ready for that and things will keep
+> > > working.
+> > > 
+> > > Feel free to carry that patch downstream if patching the kernel is
+> > > easier for you than fixing the policy, but for the upstream kernel
+> > > this is just a step in the wrong direction.
+> > I'm personally fine with this position, but I am curious why "never
+> > break userspace" doesn't apply to SELinux policies.
 > 
-> avc: denied { sys_nice } for comm="init" capability=23
->      scontext=u:r:init:s0 tcontext=u:r:init:s0 tclass=capability
->      permissive=0
+> Because SELinux policy is configuration data, not system code.
+> One is free to modify SELinux policy to suit one's whims without
+> making any change to the Linux kernel or its APIs.
+
+Sure, but the problem here is when the kernel is updated and the
+userspace configuration is not changed and then the kernel can not boot
+or has other problems.  That is a kernel regression.
+
+> >   At the end of the
+> > day, booting 5.13 or older, we don't get a denial, and there's nothing
+> > for the sysadmin to do. On 5.14 and newer, we get denials. This is a
+> > common pattern we see each year: some new capability or permission is
+> > required where it wasn't required before, and there's no compatibility
+> > mechanism to grandfather in old policies.
 > 
-> Init is PID 0 running as root, so it already has CAP_SYS_ADMIN. For
-> better compatibility with older SEPolicy, check ADMIN before NICE.
+> This is an artifact of separating policy from mechanism. The
+> capability mechanism does not suffer from this issue because
+> it embodies its policy. SELinux, Smack, AppArmor and "containers"
+> are vulnerable to it because they explicitly deny the kernel and
+> kernel developers permission to make assumptions about how they
+> define "policy".
+> 
+> >   So, we have to touch
+> > userspace. If this is just how things are, I can certainly update our
+> > init.te definitions.
+> 
+> If SELinux was a required kernel mechanism and the policy was
+> included in the kernel tree you might be able to argue that
+> kernel developers are responsible for changes to SELinux policy.
+> But it ain't, and it isn't.   By design.
 
-Seems a bit wonky to me, but the end result is the same. In any case,
-this warrants a comment above it detailing why the ordering is
-seemingly important.
+Again, when you change the logic in the kernel that then requires you to
+also somehow change userspace files in order to keep the kernel booting
+properly, that is a problem.
 
--- 
-Jens Axboe
+Same thing if we changed the tty api to require different options to be
+handled differently.  There is nothing "special" about security policies
+from any other user/kernel interaction and api.
 
+thanks,
+
+greg k-h
