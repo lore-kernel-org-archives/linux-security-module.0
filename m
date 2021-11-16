@@ -2,58 +2,82 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B9BC433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 08:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3CFC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 09:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5756763212
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 08:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B05061B44
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 09:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232509AbhKPIyX (ORCPT
+        id S233095AbhKPJdY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Nov 2021 03:54:23 -0500
-Received: from mail.bizjoindeal.pl ([80.211.97.164]:48952 "EHLO
-        mail.bizjoindeal.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232473AbhKPIyT (ORCPT
+        Tue, 16 Nov 2021 04:33:24 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:25732 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233132AbhKPJdN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Nov 2021 03:54:19 -0500
-X-Greylist: delayed 558 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Nov 2021 03:54:18 EST
-Received: by mail.bizjoindeal.pl (Postfix, from userid 1001)
-        id 8F274A21FF; Tue, 16 Nov 2021 08:41:29 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizjoindeal.pl;
-        s=mail; t=1637052112;
-        bh=JZuQ1fK7zFtz2oeUB7Xfid9vb7kUywdmDd2OluR8ywA=;
-        h=Date:From:To:Subject:From;
-        b=wzEO9fBaxfIogYEB0TS3CuUpBqHs13SX/hMpQU3mu833jjq6IQztbjNKIrwpep2Ot
-         UxzAsw7TIUUDV4EIHLtNgfJ8vqQAwUI7NnF2aZoAWjlf8husHiY7MDtccVxZAV36fo
-         mIIpIKe0uepVJc9Z4uGECOy6mQ/PKYaf6Rw9uiS8kKLzWq5RvP6vI+KAKkoKznp1wP
-         Jf5Q5gEQrYJxv0kiri9l+uIvWkVYrxGpN/rSxizzIeVBblU8EW/dHdatqLVquhGFlH
-         sAZd1iRnfQK1LjFMsMLVOQ8vjISQxMmtJE9+VtSIoHjdYdKaxAvUhU3wO8eMtAg5W4
-         Lq6yNMMPfLpIg==
-Received: by mail.bizjoindeal.pl for <linux-security-module@vger.kernel.org>; Tue, 16 Nov 2021 08:41:09 GMT
-Message-ID: <20211116074500-0.1.60.ezv0.0.2czcarf12s@bizjoindeal.pl>
-Date:   Tue, 16 Nov 2021 08:41:09 GMT
-From:   "Dorian Kwiatkowski" <dorian.kwiatkowski@bizjoindeal.pl>
-To:     <linux-security-module@vger.kernel.org>
-Subject: Fotowoltaika dla firm
-X-Mailer: mail.bizjoindeal.pl
+        Tue, 16 Nov 2021 04:33:13 -0500
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-239--w25oYSSNc6H4O020wqeeA-1; Tue, 16 Nov 2021 09:30:13 +0000
+X-MC-Unique: -w25oYSSNc6H4O020wqeeA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.26; Tue, 16 Nov 2021 09:30:12 +0000
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.026; Tue, 16 Nov 2021 09:30:12 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Alistair Delva' <adelva@google.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>
+CC:     Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        "Khazhismel Kumykov" <khazhy@google.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Serge Hallyn" <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux Stable maillist <stable@vger.kernel.org>
+Subject: RE: [PATCH] block: Check ADMIN before NICE for IOPRIO_CLASS_RT
+Thread-Topic: [PATCH] block: Check ADMIN before NICE for IOPRIO_CLASS_RT
+Thread-Index: AQHX2n2CNxSicaUdZEuXqRynLrd2WawF4ZBA
+Date:   Tue, 16 Nov 2021 09:30:12 +0000
+Message-ID: <43aeb7451621474ea0d7bee6b99039c3@AcuMS.aculab.com>
+References: <20211115173850.3598768-1-adelva@google.com>
+ <CAFqZXNvVHv8Oje-WV6MWMF96kpR6epTsbc-jv-JF+YJw=55i1w@mail.gmail.com>
+ <CANDihLEFZAz8DwkkMGiDJnDMjxiUuSCanYsJtkRwa9RoyruLFA@mail.gmail.com>
+In-Reply-To: <CANDihLEFZAz8DwkkMGiDJnDMjxiUuSCanYsJtkRwa9RoyruLFA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+RnJvbTogQWxpc3RhaXIgRGVsdmENCj4gU2VudDogMTUgTm92ZW1iZXIgMjAyMSAxOTowOQ0KLi4u
+DQo+ID4gPiAtICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWNhcGFibGUoQ0FQX1NZU19OSUNF
+KSAmJiAhY2FwYWJsZShDQVBfU1lTX0FETUlOKSkNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAg
+ICAgIGlmICghY2FwYWJsZShDQVBfU1lTX0FETUlOKSAmJiAhY2FwYWJsZShDQVBfU1lTX05JQ0Up
+KQ0KPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVQRVJNOw0K
+DQpJc24ndCB0aGUgcmVhbCBwcm9ibGVtIHRoYXQgeW91IGFjdHVhbGx5IHdhbnQgdG8gdGVzdDoN
+CgkJaWYgKCFjYXBhYmxlKENBUF9TWVNfTklDRSB8IENBUF9TWVNfQURNSU4pKQ0KCQkJcmV0dXJu
+IC1FUEVSTTsNCnNvIHRoYXQgeW91IG9ubHkgZ2V0IHRoZSBmYWlsICdzcGxhdCcgd2hlbiBuZWl0
+aGVyIGlzIHNldC4NCg0KVGhpcyB3aWxsIGJlIHRydWUgd2hlbmV2ZXIgbW9yZSB0aGFuIG9uZSBj
+YXBhYmlsaXR5IGVuYWJsZXMgc29tZXRoaW5nLg0KDQpQb3NzaWJseSB0aGlzIG5lZWRzIHNvbWV0
+aGluZyBsaWtlOg0KaW50IGNhcGFiYWxlX29yKHVuc2lnbmVkIGludCwgLi4uKTsNCiNkZWZpbmUg
+Y2FwYWJhbGVfb3IoLi4uKSBjYXBhYmFibGVfb3IoX19WQV9MSVNUX18sIH4wdSkNCg0KCURhdmlk
+DQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBG
+YXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2
+IChXYWxlcykNCg==
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC dostrzegam mo=C5=BC=
-liwo=C5=9B=C4=87 redukcji op=C5=82at za pr=C4=85d.
-
-Odpowiednio dobrana instalacja fotowoltaiczna to rozwi=C4=85zanie, kt=C3=B3=
-re pozwala wygenerowa=C4=87 spore oszcz=C4=99dno=C5=9Bci w skali roku.
-
-Chcia=C5=82bym porozmawia=C4=87 z Pa=C5=84stwem o tego typu rozwi=C4=85za=
-niu, a tak=C5=BCe przedstawi=C4=87 wst=C4=99pne kalkulacje.
-
-Czy s=C4=85 Pa=C5=84stwo zainteresowani?
-
-Pozdrawiam,
-Dorian Kwiatkowski
