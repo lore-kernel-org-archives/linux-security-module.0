@@ -2,55 +2,79 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20DFC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 09:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1545EC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 13:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE53463222
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 09:37:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB0BA615E3
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Nov 2021 13:36:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233059AbhKPJk3 (ORCPT
+        id S236517AbhKPNj3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Nov 2021 04:40:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34388 "EHLO mail.kernel.org"
+        Tue, 16 Nov 2021 08:39:29 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:42656 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232916AbhKPJk2 (ORCPT
+        id S232201AbhKPNj3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Nov 2021 04:40:28 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8BC9E61BFB;
-        Tue, 16 Nov 2021 09:37:26 +0000 (UTC)
-Date:   Tue, 16 Nov 2021 10:37:23 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Todd Kjos <tkjos@google.com>
-Cc:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, christian@brauner.io, jmorris@namei.org,
-        serge@hallyn.com, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        keescook@chromium.org, jannh@google.com, jeffv@google.com,
-        zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
-        kernel-team@android.com, stable@vger.kernel.org
-Subject: Re: [PATCH] binder: fix test regression due to sender_euid change
-Message-ID: <20211116093723.ttwv4e77v43lgb45@wittgenstein>
-References: <20211112180720.2858135-1-tkjos@google.com>
+        Tue, 16 Nov 2021 08:39:29 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 8F708546; Tue, 16 Nov 2021 07:36:28 -0600 (CST)
+Date:   Tue, 16 Nov 2021 07:36:28 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Alistair Delva' <adelva@google.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Serge Hallyn <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux Stable maillist <stable@vger.kernel.org>,
+        john.johansen@canonical.com, James Morris <jmorris@namei.org>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: Re: [PATCH] block: Check ADMIN before NICE for IOPRIO_CLASS_RT
+Message-ID: <20211116133628.GA6728@mail.hallyn.com>
+References: <20211115173850.3598768-1-adelva@google.com>
+ <CAFqZXNvVHv8Oje-WV6MWMF96kpR6epTsbc-jv-JF+YJw=55i1w@mail.gmail.com>
+ <CANDihLEFZAz8DwkkMGiDJnDMjxiUuSCanYsJtkRwa9RoyruLFA@mail.gmail.com>
+ <43aeb7451621474ea0d7bee6b99039c3@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211112180720.2858135-1-tkjos@google.com>
+In-Reply-To: <43aeb7451621474ea0d7bee6b99039c3@AcuMS.aculab.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 12, 2021 at 10:07:20AM -0800, Todd Kjos wrote:
-> This is a partial revert of commit
-> 29bc22ac5e5b ("binder: use euid from cred instead of using task").
-> Setting sender_euid using proc->cred caused some Android system test
-> regressions that need further investigation. It is a partial
-> reversion because subsequent patches rely on proc->cred.
+On Tue, Nov 16, 2021 at 09:30:12AM +0000, David Laight wrote:
+> From: Alistair Delva
+> > Sent: 15 November 2021 19:09
+> ...
+> > > > -                       if (!capable(CAP_SYS_NICE) && !capable(CAP_SYS_ADMIN))
+> > > > +                       if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_NICE))
+> > > >                                 return -EPERM;
 > 
-> Cc: stable@vger.kernel.org # 4.4+
-> Fixes: 29bc22ac5e5b ("binder: use euid from cred instead of using task")
-> Signed-off-by: Todd Kjos <tkjos@google.com>
-> Change-Id: I9b1769a3510fed250bb21859ef8beebabe034c66
-> ---
+> Isn't the real problem that you actually want to test:
+> 		if (!capable(CAP_SYS_NICE | CAP_SYS_ADMIN))
+> 			return -EPERM;
+> so that you only get the fail 'splat' when neither is set.
+> 
+> This will be true whenever more than one capability enables something.
+> 
+> Possibly this needs something like:
+> int capabale_or(unsigned int, ...);
+> #define capabale_or(...) capabable_or(__VA_LIST__, ~0u)
+> 
+> 	David
 
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Right, that's what i was suggesting yesterday.  We do this in other
+places, where we split off a more fine-grained version of a gross
+capability.  If we care enough about the audit messages, then we
+probably do need a new primitive.
+
+-serge
