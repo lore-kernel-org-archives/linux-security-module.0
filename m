@@ -2,110 +2,114 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5C2C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 07:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B3BC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 07:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 051FD61C4F
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 07:38:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3539361BFE
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 07:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234177AbhKQHlH (ORCPT
+        id S234238AbhKQHxf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Nov 2021 02:41:07 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:43680 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231718AbhKQHlF (ORCPT
+        Wed, 17 Nov 2021 02:53:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42534 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232915AbhKQHxe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Nov 2021 02:41:05 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Ux0WGiI_1637134683;
-Received: from j63c13417.sqa.eu95.tbsite.net(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0Ux0WGiI_1637134683)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 17 Nov 2021 15:38:05 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     john.johansen@canonical.com
-Cc:     jmorris@namei.org, serge@hallyn.com, nathan@kernel.org,
-        ndesaulniers@google.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        Yang Li <yang.lee@linux.alibaba.com>
-Subject: [PATCH -next] apparmor: Fix kernel-doc
-Date:   Wed, 17 Nov 2021 15:37:58 +0800
-Message-Id: <1637134678-81292-1-git-send-email-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 17 Nov 2021 02:53:34 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F13C361BD2;
+        Wed, 17 Nov 2021 07:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637135436;
+        bh=yQY9R0lrcyoB7swIATJ2qgVM1QwPaUY/bwGkzyWzf8o=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=CG89rB9WFnNZQ2FJ4DaQ81FyG0DEkn0fnW4Y25UINXiGfEvq7s9BN7oCK7ncXIP4X
+         ekg7NdN9ETKoDjr+/P+6rT3TvH/aWrwev33yMMPFRSEP3DVY4WAEmSTV8kyjcrtxps
+         /CHNGB53jrt22BZE2sTtk4MpOvA2iPYOn1pND5NFiOz3jQy6QEFjQAMdVrf+X6AD2R
+         UED/q6YKAXV+F7xO+xGtvlln3PgQYIguDIWuskjME2RcJnv34MD+mZgvioWZyhmC1g
+         tsY/5sAIGGgGBr74tKuSf0VKhtNQ1ExBg3+AGs/fnTdVucxMJnK806hUsPXZUNv405
+         SexUNgmrzN33A==
+Message-ID: <8fcadcf2a5da5118fb7f9caea0a61440525a67b2.camel@kernel.org>
+Subject: Re: [PATCH v7 00/17] Enroll kernel keys thru MOK
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        torvalds@linux-foundation.org, weiyongjun1@huawei.com,
+        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
+        nramas@linux.microsoft.com, lszubowi@redhat.com, jason@zx2c4.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com
+Date:   Wed, 17 Nov 2021 09:50:33 +0200
+In-Reply-To: <YZPevFtTucji7gIm@0xbeefdead.lan>
+References: <20211116001545.2639333-1-eric.snowberg@oracle.com>
+         <eac5f11d7ddcc65d16a9a949c5cf44851bff8f5f.camel@kernel.org>
+         <YZPZww0bafYEQ0VS@0xbeefdead.lan>
+         <f30a1399208a88257b3ff25b369088cf88a96367.camel@kernel.org>
+         <YZPevFtTucji7gIm@0xbeefdead.lan>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.40.4-1 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fix function name in security/apparmor/label.c, policy.c, procattr.c
-kernel-doc comment to remove some warnings found by clang(make W=1 LLVM=1).
+On Tue, 2021-11-16 at 11:39 -0500, Konrad Rzeszutek Wilk wrote:
+> On Tue, Nov 16, 2021 at 06:24:52PM +0200, Jarkko Sakkinen wrote:
+> > On Tue, 2021-11-16 at 11:18 -0500, Konrad Rzeszutek Wilk wrote:
+> > > > > I have included=C2=A0 a link to the mokutil [5] changes I have ma=
+de to support=20
+> > > > > this new functionality.=C2=A0 The shim changes have now been acce=
+pted
+> > > > > upstream [6].
+> > >=20
+> > > ..snip..
+> > > > > [6] https://github.com/rhboot/shim/commit/4e513405b4f164171011578=
+0d19dcec130c5208f
+> > >=20
+> > > ..snip..
+> > > >=20
+> > > > Does shim have the necessary features in a release?
+> > >=20
+> > > Hi!
+> > >=20
+> > > It has been accepted in the upstream shim. If you are looking
+> > > for a distribution having rolled out a shim with this feature (so sig=
+ned
+> > > by MSF) I fear that distributions are not that fast with shim release=
+s.
+         ~~~
 
-security/apparmor/label.c:499: warning: expecting prototype for
-aa_label_next_not_in_set(). Prototype was for
-__aa_label_next_not_in_set() instead
-security/apparmor/label.c:2147: warning: expecting prototype for
-__aa_labelset_udate_subtree(). Prototype was for
-__aa_labelset_update_subtree() instead
+Should that be MS, or what does MSF mean?
 
-security/apparmor/policy.c:434: warning: expecting prototype for
-aa_lookup_profile(). Prototype was for aa_lookupn_profile() instead
+> > >=20
+> > > Also these:
+> > > https://github.com/rhboot/shim/pulls
+> > > https://github.com/rhboot/shim/issues
+> > >=20
+> > > do mean some extra work would need to go in before an official
+> > > release is cut.
+> > >=20
+> > > Hope this helps?
+> >=20
+> > Yes. I'll hold with this up until there is an official release. Thank y=
+ou.
+>=20
+> Not sure I understand - but what are the concerns you have with shim
+> code that has been accepted?
 
-security/apparmor/procattr.c:101: warning: expecting prototype for
-aa_setprocattr_chagnehat(). Prototype was for aa_setprocattr_changehat()
-instead
+Maybe my concern is that none of the patches have a tested-by?
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- security/apparmor/label.c    | 4 ++--
- security/apparmor/policy.c   | 2 +-
- security/apparmor/procattr.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Probably would be easier to get a test coverage, e.g. for people like
+me who do not even know how to self-compile Shim, how to setup user
+space using the product and so forth.
 
-diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-index 0b0265d..e8ada60 100644
---- a/security/apparmor/label.c
-+++ b/security/apparmor/label.c
-@@ -485,7 +485,7 @@ int aa_label_next_confined(struct aa_label *label, int i)
- }
- 
- /**
-- * aa_label_next_not_in_set - return the next profile of @sub not in @set
-+ * __aa_label_next_not_in_set - return the next profile of @sub not in @set
-  * @I: label iterator
-  * @set: label to test against
-  * @sub: label to if is subset of @set
-@@ -2136,7 +2136,7 @@ static void __labelset_update(struct aa_ns *ns)
- }
- 
- /**
-- * __aa_labelset_udate_subtree - update all labels with a stale component
-+ * __aa_labelset_update_subtree - update all labels with a stale component
-  * @ns: ns to start update at (NOT NULL)
-  *
-  * Requires: @ns lock be held
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index b0cbc4906..8357f4a 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -422,7 +422,7 @@ static struct aa_profile *__lookup_profile(struct aa_policy *base,
- }
- 
- /**
-- * aa_lookup_profile - find a profile by its full or partial name
-+ * aa_lookupn_profile - find a profile by its full or partial name
-  * @ns: the namespace to start from (NOT NULL)
-  * @hname: name to do lookup on.  Does not contain namespace prefix (NOT NULL)
-  * @n: size of @hname
-diff --git a/security/apparmor/procattr.c b/security/apparmor/procattr.c
-index fde332e..86ad26e 100644
---- a/security/apparmor/procattr.c
-+++ b/security/apparmor/procattr.c
-@@ -90,7 +90,7 @@ static char *split_token_from_name(const char *op, char *args, u64 *token)
- }
- 
- /**
-- * aa_setprocattr_chagnehat - handle procattr interface to change_hat
-+ * aa_setprocattr_changehat - handle procattr interface to change_hat
-  * @args: args received from writing to /proc/<pid>/attr/current (NOT NULL)
-  * @size: size of the args
-  * @flags: set of flags governing behavior
--- 
-1.8.3.1
+I don't demand a release, if the changes have been accepted, but 17
+patches do need to be tested.
+
+/Jarkko
+
 
