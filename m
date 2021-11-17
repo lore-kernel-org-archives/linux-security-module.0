@@ -2,176 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6430C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 07:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5C2C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 07:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1A0D62F90
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 07:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 051FD61C4F
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 07:38:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234162AbhKQHjw (ORCPT
+        id S234177AbhKQHlH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Nov 2021 02:39:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46902 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231718AbhKQHjw (ORCPT
+        Wed, 17 Nov 2021 02:41:07 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:43680 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231718AbhKQHlF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Nov 2021 02:39:52 -0500
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63D0CC061570;
-        Tue, 16 Nov 2021 23:36:54 -0800 (PST)
-Received: by mail-il1-x12b.google.com with SMTP id h23so1803576ila.4;
-        Tue, 16 Nov 2021 23:36:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ml92anNYg6Ol/pP55oyNEwNFL7suIN1WFPiqqoxKiVk=;
-        b=Uh8sFmLip2HBxGtTSenKgCOkxqdCjoU3qdIh2aLRSKqAkdVgVk1ErMays9ZWQ00a3z
-         BAsN1YoabWXcsZAjC6YTaWDMOFpRCRMOuQxbjlNOzd7xbPNRgiKLnmpSY5IgH8Gfs4m8
-         nDePIk2pycl3drPxzHDskoUOxp7fw6VDWVIuXwcRKIyxYPqR2tG8me2M8QUrxxMoLqsK
-         DioKSN+TthmvHYRS7ybzjIIkFfItZ/r22xTKmOUJJY3G6HGDQC0bveqljfJMDx+MQUGk
-         CCutnBYvFucF/HKsuaR2g221srr/NLPDrodBMeT/VF4V7Ge5LYtfPMV07crcDqTgRnsz
-         Cgog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ml92anNYg6Ol/pP55oyNEwNFL7suIN1WFPiqqoxKiVk=;
-        b=iyhexfVPeN6EQgTClHEq/wwERV13CDtNVVistriyhmOlzMgrUEvNAE/43J/sEyD9Bt
-         ahJNz/N4VQDdr1hB6QJVyNnFDWj+4gU+5J+8VqBRqAbGJiguEOmmKArQh6J4jcIbptEj
-         x+q1IvaZNatZP7ftOsInsoClc+2Z10lM3QuT8Xec8ZORStVXbHEpSoGsb5yqPdZudwxC
-         T9ZSy+lfSsaLvqn/gLZ6+AW5hF4kAC/4Bk3aloN75XnHyLqjpt+RXyPnU95kzIuHlNYv
-         vH9iRo7KOTIZu41TQpRYF+M2xyGZ+I/srhbj9lp1LoW7226aHT6o1l+grrycSub7Ucqz
-         zz7A==
-X-Gm-Message-State: AOAM530aRmw/LWjKivvVV0/tNIDj+Vs/zx3JkGxh6HmHgtHsn7Ys2FuC
-        MnUZUeHCQ/LJ7DW72oWIuLNnGLdnENeoSFpN8UVyOZ3jHeA=
-X-Google-Smtp-Source: ABdhPJzT4UQ2YWWOOZ9rkGhbi8sVGIpV4ZNn7w/xcKDZf1shkwR/HU7Q+tAud0i5glnQXlD7+DpzFcaexcCjFYHH33U=
-X-Received: by 2002:a92:c983:: with SMTP id y3mr8487862iln.24.1637134613816;
- Tue, 16 Nov 2021 23:36:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20211117015806.2192263-1-dvander@google.com>
-In-Reply-To: <20211117015806.2192263-1-dvander@google.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 17 Nov 2021 09:36:42 +0200
-Message-ID: <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
-Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
-To:     David Anderson <dvander@google.com>
-Cc:     Mark Salyzyn <salyzyn@android.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
-        paulmoore@microsoft.com, Luca.Boccassi@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 17 Nov 2021 02:41:05 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Ux0WGiI_1637134683;
+Received: from j63c13417.sqa.eu95.tbsite.net(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0Ux0WGiI_1637134683)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 17 Nov 2021 15:38:05 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     john.johansen@canonical.com
+Cc:     jmorris@namei.org, serge@hallyn.com, nathan@kernel.org,
+        ndesaulniers@google.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        Yang Li <yang.lee@linux.alibaba.com>
+Subject: [PATCH -next] apparmor: Fix kernel-doc
+Date:   Wed, 17 Nov 2021 15:37:58 +0800
+Message-Id: <1637134678-81292-1-git-send-email-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 17, 2021 at 3:58 AM David Anderson <dvander@google.com> wrote:
->
-> Mark Salyzyn (3):
->   Add flags option to get xattr method paired to __vfs_getxattr
->   overlayfs: handle XATTR_NOSECURITY flag for get xattr method
->   overlayfs: override_creds=off option bypass creator_cred
->
-> Mark Salyzyn + John Stultz (1):
->   overlayfs: inode_owner_or_capable called during execv
->
-> The first three patches address fundamental security issues that should
-> be solved regardless of the override_creds=off feature.
->
-> The fourth adds the feature depends on these other fixes.
->
-> By default, all access to the upper, lower and work directories is the
-> recorded mounter's MAC and DAC credentials.  The incoming accesses are
-> checked against the caller's credentials.
->
-> If the principles of least privilege are applied for sepolicy, the
-> mounter's credentials might not overlap the credentials of the caller's
-> when accessing the overlayfs filesystem.  For example, a file that a
-> lower DAC privileged caller can execute, is MAC denied to the
-> generally higher DAC privileged mounter, to prevent an attack vector.
->
-> We add the option to turn off override_creds in the mount options; all
-> subsequent operations after mount on the filesystem will be only the
-> caller's credentials.  The module boolean parameter and mount option
-> override_creds is also added as a presence check for this "feature",
-> existence of /sys/module/overlay/parameters/overlay_creds
->
-> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-> Signed-off-by: David Anderson <dvander@google.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: kernel-team@android.com
-> Cc: selinux@vger.kernel.org
-> Cc: paulmoore@microsoft.com
-> Cc: Luca.Boccassi@microsoft.com
->
-> ---
->
-> v19
-> - rebase.
->
+Fix function name in security/apparmor/label.c, policy.c, procattr.c
+kernel-doc comment to remove some warnings found by clang(make W=1 LLVM=1).
 
-Hi David,
+security/apparmor/label.c:499: warning: expecting prototype for
+aa_label_next_not_in_set(). Prototype was for
+__aa_label_next_not_in_set() instead
+security/apparmor/label.c:2147: warning: expecting prototype for
+__aa_labelset_udate_subtree(). Prototype was for
+__aa_labelset_update_subtree() instead
 
-I see that the patch set has changed hands (presumably to Android upstreaming
-team), but you just rebased v18 without addressing the maintainers concerns [1].
+security/apparmor/policy.c:434: warning: expecting prototype for
+aa_lookup_profile(). Prototype was for aa_lookupn_profile() instead
 
-Specifically, the patch 2/4 is very wrong for unprivileged mount and
-I think that the very noisy patch 1/4 could be completely avoided:
-Can't you use -o userxattr mount option for Android use case and limit
-the manipulation of user.ovrelay.* xattr based on sepolicy for actors
-that are allowed
-to make changes in overlayfs mount? or not limit at all?
-The access to those xattr is forbidden via "incoming" xattr ops on
-overlay inodes.
+security/apparmor/procattr.c:101: warning: expecting prototype for
+aa_setprocattr_chagnehat(). Prototype was for aa_setprocattr_changehat()
+instead
 
-Also, IMO, the Documentation section about "Non overlapping credentials" does
-not hold the same standards as the section about "Permission model" -
-it does not
-state the requirements clear enough for my non-security-oriented brain to be
-able to understand if the "Ignore mounter's credentials" model can be exploited.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ security/apparmor/label.c    | 4 ++--
+ security/apparmor/policy.c   | 2 +-
+ security/apparmor/procattr.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-Can an unprivileged user create an overlay over a directory that they have
-access to and redirect an innocent looking file name to an underlying file that
-said the mounting user has no access to and by doing that, tricking a privileged
-user to modify the innocent looking file on the  mounter's behalf?
-Of course this could be avoided by forbidding unprivileged mount with
-override_creds=off, but there could be other scenarios, so a clear model
-would help to understand the risks.
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index 0b0265d..e8ada60 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -485,7 +485,7 @@ int aa_label_next_confined(struct aa_label *label, int i)
+ }
+ 
+ /**
+- * aa_label_next_not_in_set - return the next profile of @sub not in @set
++ * __aa_label_next_not_in_set - return the next profile of @sub not in @set
+  * @I: label iterator
+  * @set: label to test against
+  * @sub: label to if is subset of @set
+@@ -2136,7 +2136,7 @@ static void __labelset_update(struct aa_ns *ns)
+ }
+ 
+ /**
+- * __aa_labelset_udate_subtree - update all labels with a stale component
++ * __aa_labelset_update_subtree - update all labels with a stale component
+  * @ns: ns to start update at (NOT NULL)
+  *
+  * Requires: @ns lock be held
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index b0cbc4906..8357f4a 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -422,7 +422,7 @@ static struct aa_profile *__lookup_profile(struct aa_policy *base,
+ }
+ 
+ /**
+- * aa_lookup_profile - find a profile by its full or partial name
++ * aa_lookupn_profile - find a profile by its full or partial name
+  * @ns: the namespace to start from (NOT NULL)
+  * @hname: name to do lookup on.  Does not contain namespace prefix (NOT NULL)
+  * @n: size of @hname
+diff --git a/security/apparmor/procattr.c b/security/apparmor/procattr.c
+index fde332e..86ad26e 100644
+--- a/security/apparmor/procattr.c
++++ b/security/apparmor/procattr.c
+@@ -90,7 +90,7 @@ static char *split_token_from_name(const char *op, char *args, u64 *token)
+ }
+ 
+ /**
+- * aa_setprocattr_chagnehat - handle procattr interface to change_hat
++ * aa_setprocattr_changehat - handle procattr interface to change_hat
+  * @args: args received from writing to /proc/<pid>/attr/current (NOT NULL)
+  * @size: size of the args
+  * @flags: set of flags governing behavior
+-- 
+1.8.3.1
 
-For example:
-If user 1 was able to read in lower dir A, now the content of overlay dir A
-is cached and user 2, that has permissions to read upper dir A and does
-not have read permissions on lower dir A will see the content of lower dir A.
-
-I think that the core problem with the approach is using Non-uniform
-credentials to access underlying layers. I don't see a simple way around
-a big audit that checks all those cases, but maybe I'm missing some quick
-shortcut or maybe your use case can add some restrictions about the
-users that could access this overlay that would simplify the generic problem.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-unionfs/CAJfpegtMoD85j5namV592sJD23QeUMD=+tq4SvFDqjVxsAszYQ@mail.gmail.com/
