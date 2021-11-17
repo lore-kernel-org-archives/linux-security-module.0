@@ -2,143 +2,277 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E04C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 01:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32E6C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 01:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C0AB61881
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 01:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC5D763215
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Nov 2021 01:58:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230490AbhKQBzn (ORCPT
+        id S232654AbhKQCBZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Nov 2021 20:55:43 -0500
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com ([66.163.190.153]:42793
-        "EHLO sonic315-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229791AbhKQBzl (ORCPT
+        Tue, 16 Nov 2021 21:01:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55660 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232640AbhKQCBY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Nov 2021 20:55:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1637113963; bh=7IefSrs4sQ+/sdaDh3ZwbvI5TR9Vgjl8PNWbxAhUdn0=; h=Date:Subject:To:References:From:Cc:In-Reply-To:From:Subject:Reply-To; b=gq0ISQIq5OvUPBhaSWX7d8eM2nFRsN5mtJl1HAtaYR6vdPgBUGCasm6YlqNv2e/Ao6S8JY5p7pKBXzhTvOiywmGq1JjlgTKqXCvOU5WovOEUzqKu9kzoXM+avOUQtwthhXEuTa/QN/d1f7LMQsmsV/bhCUnG0fJb+tdW9pat/xJc6z8Xj/ip9n37a4JPjWvWbF09PXo8yqt+dz2GJXt1b/bnLe9x2HFburauadDwCodMTEa4ytxoYoo5Lid8EzV7eDaFi9/H1BM/r1Qe5EjddMP+Wk/xxcR9HC8QXWkV3JqD8YKXn41l6d1sq9h7FZ5uivSPnkPj+JdpW1hit+6buA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1637113963; bh=vSg1qibxM29+5cVDqlZO9lRd3v7jB0ZahGBULmOR8nm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=fHwtsx9AcB8GONF9zCWkiqaWhO4C5Q3pIJ14NtesZFZsaYgoMl5Cy3MGVW/f27Iq2l9v5fQvUM/nEAJlepX5giMUvkHkqDk2rTtu9SmzdvWFiCfytzGcAztmONjK4oCcUk+y3z1eGnBk9UFlbP7GKdrxljYop5DHbehTb/ErpM9KrBunEaB3UOWTkgOIJHbq7D3KXGnfZ2CBUEDvcIKV7+ic55DslMj8/Dcow406iiPvExUHXnlzdlF5/cbzr9oYKhPqywBm8iUS4PDP+WxEEsjHsqGtgYBOB9hHNKgTmZp5v8FcQ+t8vc9GH192OBDlmlwAHe11fha2hLaonZCl/Q==
-X-YMail-OSG: qCkvN_MVM1kY1ry9Kx7GLdmU75SqUIsuRS7hUOSNd1lqewUYXgK_erBQJ1V6h.8
- .hRRYE5X.x237GZWk3Ld_o2fP2oj4KCQhQ7zJ4cQQRy.DI_A0.kVI0V109yngVsk0EK1ZDUL96GG
- BZmREgQukGhXU7QCeRSaLjlyjHCQYZLldB5dwYvB_aPSWLAMsAhEJEhOPLlQqV2dUjXAyzxYm2OH
- Oc8R2oZEwZM6xKQgZ9FJZeeo_3y..6HPSpqkOfx_h8ay2Sd9NacpJ6L44u3tWpvLsFAvgTqBX5uq
- 5vE6nXNCHQOxT2L2RjavZ2uV_KnkWtegzsvbdFoJgLHLNjV3JvUKivEKpmRDw6LPv8EI3H9MJPG_
- BjDiAJ6swZkYV6Jn2_EoCjq_7RE8v.2noqSwTI8YDxxS3RuD16QJlIUk49Vol2aC6NU3U7I1ZglZ
- hdzloCI7y_Q509iql.ASGUl5lcdxO9aGpuzLPQ1KoExRJilZRW5bB86SgIKPlAOoIu9DS4TItM_C
- g2KqDlDWgF7ZW1NcneCDoEaq.v2kdnFmQeMeAcSEh4HP73AlXnSv6Jb.cVijYlhubvAyjPeShGpY
- PiEWFEBCKfkRxGXHIP6G6vyil0fiIbZ8UPw1PMthsJzOihB0pbxGoxA3IfEDYOMrl.I1evNTUdbL
- 5LmSz9lm502O0Kat3ja6MKeb6YhJK_F3awejO3BX2Ri1WW78Kd.MfDxSL2qS3yCwBWFRy3n7Md9M
- IEWvRfDmX9fgxJ52HBa2qnIyYyVWHijvWBc9jL6UG60YHolZGn2qS1nRiDjnIu7Q.24VW8_b3bhL
- Yya_U8SzTCer0tI4WL278TYsdTgXB0eqFrtJdxk.3A81SUexlbJR8zkR8vv37kfNUR0ZcOLJqZjE
- woT.VOy.u_BmvKWAYetXm_3IKxDjwPSKOqhujlSYJHkax1hik.ZASVHkPd2ZHF69s1t_EKxg.eI7
- IOAiLAPmJyDv1wwG_Xa85cslZYoVg_d_zGf219AIuIUpyuphnGeNcNz5IW6pjAU2fbLbPSIgN56M
- vuIoRp7ToYgL6c0ndVCG8g5jmOThr6U8GATw0n0I7XBFZ69N7XsROY3TkSHkAoOfxzfRzqURTq_z
- wDivhnOwsJe5FkHjvDfHFMZZocbxRVeOsGR5nH1mAnUgFq6Prt5Y1NKdlyGQMu9BBZlAGQv5wQ8N
- BmOGNyrtnmc_c4OBDtOU7U5HiaEIAURyondkO7XC2kryULxBza5hDkrYdpccwJe2ahvKK3sG7yeA
- tZc2Ep_ioUasGukmt_1I9dYt5wVJNh09Wa26g3i7fvKxwoPd1XJ1KPEsDGIDmLPNvE0nWw7_qL0b
- 14s8SQkjw4tExjC8NWUwsngXHbbNl7k5mSsZVMeHEC4J4N5QLvvTq659H_PKIRbYHIvFIEtQBe5J
- DEyHt1._B_CK9_kmv_G6_n9N0IzRhUY9V1_BZDp4pxH31UG6hmOGkgTaievBYHtZzuWGDU8fxSPX
- ZfL7DrPDgHjDU.YsUcT2oB5fRyJWmAKSTGCNJLkoLHOhllfImWVr81uDioXykWUWKQ.9dFELMKxi
- 8R4WZIACDekPBMKNaX5lOwORMCjrazJ_g7j5MOg4KfKos1eQQdOm6nH4AHux7O6dFShtx20rS0Rp
- vYiSUBAdvUkQkNKLHZ9Wsppch7cek7Xtf.f5JE.YxqRofA4ZD8VmBCkj6WpLXq_XDz7e5xjdI.fg
- KBAZaziy4T0K1MlXKH1sEY0SFiK8yu7h_wqHpAV66JWh_Mgu2uCZbRdVOWSWJHz6VsJ8YH7ubVKH
- KcTquCRfLwDZ8j.VhXPeWxJWaoDhqEPLxKeIfl30pTi0k6UogwiCduMja28fKsCZhmWNbaru4k9h
- iaHp5ScN7yEXJjd9W9MqhCDiz14pNndUz4kaNyAXCoEbrK4W30CLsYc.KTmIFN0GfT_dImsqIy5f
- eVvRLAXGXFJEEx0xcjGMoUvok2Fx4DOf4T2Ysp81GEUmrgOwFdKzk5Uww5_gEDsn7y0gSlM6t8Oo
- h_KNkI9z2sh9xxftSiJZN49wHNp9IkUmVUaiuV8j.3lv1gI7x1tGFdM6gVfoLvXtuANrRyUviQpX
- tJkyb0_nYpDzK8usAfxW4fGoiFkXBKl6HztbjdLtivFyKpNYLDYRM4yX_N6qLG2WQw6ijhdiDLsF
- TPOR9gD7O6.YnHjjXrOoSAZxWq2ntSx8bgL6A.vHknT.qOhiwTfge0P3CHRWKnxDH3yaC6pcEJ4h
- elMjkUBt_3mPHbPmMeQhHsfFKRw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Wed, 17 Nov 2021 01:52:43 +0000
-Received: by kubenode550.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID ab6e3596d8a773ce225187d1bb9f9cc9;
-          Wed, 17 Nov 2021 01:52:41 +0000 (UTC)
-Message-ID: <bfcea6fa-4f13-8499-49ed-6cc690b6fb67@schaufler-ca.com>
-Date:   Tue, 16 Nov 2021 17:52:39 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: SMACK: access is granted while smack-utils report that it
- shouldn't be
-Content-Language: en-US
-To:     Denis Obrezkov <denisobrezkov@gmail.com>,
-        linux-security-module@vger.kernel.org
-References: <3b0bd664-fbb5-0182-bc3a-89058dafc164@gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <3b0bd664-fbb5-0182-bc3a-89058dafc164@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.19306 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+        Tue, 16 Nov 2021 21:01:24 -0500
+Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7529EC061767
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Nov 2021 17:58:26 -0800 (PST)
+Received: by mail-qk1-x74a.google.com with SMTP id bm9-20020a05620a198900b004629c6f44c4so642357qkb.21
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Nov 2021 17:58:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:cc;
+        bh=caymuj0MGZCptln9VP4sHWU9D/RHZZIA+lbDSv4W7ok=;
+        b=b/fh0XJxqafyv9gl1yZedFfi5zsajwqjK2zxACnx0pWf5P2vKvj9M/vt0QY8/8XiYt
+         OcjCdGB5EVbawiItfV8N5xJLb4YciC1ec1luYWBeVcAYGJsHaRO8ZjLRWm4jxJs/dCbp
+         U63DLfZiahYLTG4Rsy9J5aUJcGGbCqanUoaHlCp8GvWyTPZYTNj14YlC5R+EvOM+wHhr
+         8HEk753sk1mRjZ+z8+k2tUytJOk4u12jYh3COQOKQHlSDqK1dxj1AMtBDaXPYBAvUxfX
+         MPsV6dQrGJ0YlLa4lTcT3d2wC+p677qtHWyaVX6HfQ0ba5Sa0Nst7Q0/91CWCG4NIe32
+         2yKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:cc;
+        bh=caymuj0MGZCptln9VP4sHWU9D/RHZZIA+lbDSv4W7ok=;
+        b=ukwNuObEz2Okh8mP8DTcZmGHYUXJ1fIyhKGioGbNWDlTf60jl561ZnATedtKqpy+Oi
+         5lDiAlN7+7XzGSQHfjNTZOd3m/G+1eyPEtH54tkUBKa2E9ORiX8CFPuaWtndAwbuLqE3
+         LAe/2KnFzZXbntOpXaRJeiG7/i8IYxJVgTnQ34iJ8m9AEZCyh+aQNf0PPZp3z7IDt/xq
+         2ygWvGdG7G7fcBIcJb0iO08XM3WNpWz8q8OSr0ZkVpfAmC+t15KFxsyibpo9kDDzAeCp
+         o2n+1SUUfIoGCPPdmgB/s+gSsZLMtTwaTVBzpYv7S685DSkDBC+Mek5q5/dVLD1T0hCe
+         JLoA==
+X-Gm-Message-State: AOAM532llt5igMampAH9exm6Wf7ZcXIwLvh3uUQZpuwxxFUxas0O/svE
+        zJW7ovEDwXr6dj5i3JhsEf8oXlovZK2d
+X-Google-Smtp-Source: ABdhPJxBUPweJJY1+GgjaWTueZl7r8rLT33zDT9CZEWPJcotxU7v3nj++XPJdokw9KvwTukqUAIxF/x78Zxm
+X-Received: from dvandertop.c.googlers.com ([fda3:e722:ac3:cc00:14:4d90:c0a8:2862])
+ (user=dvander job=sendgmr) by 2002:a05:622a:293:: with SMTP id
+ z19mr6613270qtw.46.1637114305033; Tue, 16 Nov 2021 17:58:25 -0800 (PST)
+Date:   Wed, 17 Nov 2021 01:58:02 +0000
+Message-Id: <20211117015806.2192263-1-dvander@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.34.0.rc1.387.gb447b232ab-goog
+Subject: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+From:   David Anderson <dvander@google.com>
+Cc:     David Anderson <dvander@google.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-team@android.com,
+        selinux@vger.kernel.org, paulmoore@microsoft.com,
+        Luca.Boccassi@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/16/2021 5:18 PM, Denis Obrezkov wrote:
-> Hi,
->
-> I installed smack (enabled it in the kernel and installed smack-utils)
-> in my Linux From Scratch distro. I am trying to regulate access with it
-> but access is always granted.
->
-> I created a file and installed the labels (with attr -S -s ...), they
-> were attached:
->
-> echo "foobar text" > foobar
->
-> # attr -S -g SMACK64 foobar
-> Attribute "SMACK64" had a 8 byte value for foobar:
-> objlabel
->
-> # attr -S -g SMACK64EXEC /bin/cat
-> Attribute "SMACK64EXEC" had a 9 byte value for /bin/cat:
-> subjlabel
->
-> I wrote simple rules, reading is forbidden:
->
-> echo subjlabel objlabel -w--- > /sys/fs/smackfs/load2
-> # smackaccess subjlabel objlabel w
-> 1
-> # smackaccess subjlabel objlabel r
-> 0
->
-> but when I try to read the file I succeed:
->
-> # cat foobar
-> foobar text
->
-> And the relevant output in dmesg shows that the access was granted:
->
-> [ 4341.952360] audit: type=1400 audit(1637110820.839:108): lsm=SMACK
-> fn=smack_inode_permission action=granted subject="subjlabel"
-> object="objlabel" requested=r pid=427 comm="cat" name="foobar"
-> dev="sda1" ino=820571
-> [ 4341.955501] audit: type=1400 audit(1637110820.839:109): lsm=SMACK
-> fn=smack_file_open action=granted subject="subjlabel" object="objlabel"
-> requested=r pid=427 comm="cat" path="/root/foobar" dev="sda1" ino=820571
-> [ 4341.958411] audit: type=1400 audit(1637110820.839:110): lsm=SMACK
-> fn=smack_inode_getattr action=granted subject="subjlabel"
-> object="objlabel" requested=r pid=427 comm="cat" path="/root/foobar"
-> dev="sda1" ino=820571
->
-> What can be the problem?
+Mark Salyzyn (3):
+  Add flags option to get xattr method paired to __vfs_getxattr
+  overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+  overlayfs: override_creds=off option bypass creator_cred
 
-Smack is integrated with the Linux privilege model.
-Smack policy can be modified by a process that possesses
-CAP_MAC_ADMIN. This includes setting labels on files,
-changing its own process label and creating Smack access
-rules. Smack access policy can be violated by a process
-that possesses CAP_MAC_OVERRIDE. Today's Linux distributions
-give root processes all capabilities, including these two.
+Mark Salyzyn + John Stultz (1):
+  overlayfs: inode_owner_or_capable called during execv
 
-Your problem is that you are running as root.
+The first three patches address fundamental security issues that should
+be solved regardless of the override_creds=off feature.
 
-You can restrict CAP_MAC_ADMIN and CAP_MAC_OVERRIDE to
-processes running with specific Smack labels using the
-onlycap feature. I suggest that you defer playing with
-that for the time being as it is quite easy to create
-non-functional systems using onlycap.
+The fourth adds the feature depends on these other fixes.
 
-You may find the Tizen documentation helpful:
+By default, all access to the upper, lower and work directories is the
+recorded mounter's MAC and DAC credentials.  The incoming accesses are
+checked against the caller's credentials.
 
-	https://wiki.tizen.org/Security:TizenSmackReferencePolicy
+If the principles of least privilege are applied for sepolicy, the
+mounter's credentials might not overlap the credentials of the caller's
+when accessing the overlayfs filesystem.  For example, a file that a
+lower DAC privileged caller can execute, is MAC denied to the
+generally higher DAC privileged mounter, to prevent an attack vector.
+
+We add the option to turn off override_creds in the mount options; all
+subsequent operations after mount on the filesystem will be only the
+caller's credentials.  The module boolean parameter and mount option
+override_creds is also added as a presence check for this "feature",
+existence of /sys/module/overlay/parameters/overlay_creds
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Signed-off-by: David Anderson <dvander@google.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: selinux@vger.kernel.org
+Cc: paulmoore@microsoft.com
+Cc: Luca.Boccassi@microsoft.com
+
+---
+
+v19
+- rebase.
+
+v18
+- rebase + fix minor cut and paste error for inode argument in __vfs_getxattr
+
+v17
+- correct some zero-day build failures.
+- fix up documentation
+
+v16
+- rebase and merge of two patches.
+- add adjustment to deal with execv when overrides is off.
+
+v15
+- Revert back to v4 with fixes from on the way from v5-v14. The single
+  structure argument passing to address the complaints about too many
+  arguments was rejected by the community.
+- Drop the udner discussion fix for an additional CAP_DAC_READ_SEARCH
+  check. Can address that independently.
+- ToDo: upstream test frame for thes security fixes (currently testing
+  is all in Android).
+
+v14:
+- Rejoin, rebase and a few adjustments.
+
+v13:
+- Pull out first patch and try to get it in alone feedback, some
+  Acks, and then <crickets> because people forgot why we were doing i.
+
+v12:
+- Restore squished out patch 2 and 3 in the series,
+  then change algorithm to add flags argument.
+  Per-thread flag is a large security surface.
+
+v11:
+- Squish out v10 introduced patch 2 and 3 in the series,
+  then and use per-thread flag instead for nesting.
+- Switch name to ovl_do_vds_getxattr for __vds_getxattr wrapper.
+- Add sb argument to ovl_revert_creds to match future work.
+
+v10:
+- Return NULL on CAP_DAC_READ_SEARCH
+- Add __get xattr method to solve sepolicy logging issue
+- Drop unnecessary sys_admin sepolicy checking for administrative
+  driver internal xattr functions.
+
+v6:
+- Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
+- Do better with the documentation, drop rationalizations.
+- pr_warn message adjusted to report consequences.
+
+v5:
+- beefed up the caveats in the Documentation
+- Is dependent on
+  "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
+  "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
+- Added prwarn when override_creds=off
+
+v4:
+- spelling and grammar errors in text
+
+v3:
+- Change name from caller_credentials / creator_credentials to the
+  boolean override_creds.
+- Changed from creator to mounter credentials.
+- Updated and fortified the documentation.
+- Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
+
+v2:
+- Forward port changed attr to stat, resulting in a build error.
+- altered commit message.
+
+David Anderson (4):
+  Add flags option to get xattr method paired to __vfs_getxattr
+  overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+  overlayfs: override_creds=off option bypass creator_cred
+  overlayfs: inode_owner_or_capable called during execv
+
+ Documentation/filesystems/locking.rst   |  2 +-
+ Documentation/filesystems/overlayfs.rst | 26 ++++++++++++++-
+ fs/9p/acl.c                             |  3 +-
+ fs/9p/xattr.c                           |  3 +-
+ fs/afs/xattr.c                          | 10 +++---
+ fs/attr.c                               |  2 +-
+ fs/btrfs/xattr.c                        |  3 +-
+ fs/ceph/xattr.c                         |  3 +-
+ fs/cifs/xattr.c                         |  2 +-
+ fs/ecryptfs/inode.c                     |  6 ++--
+ fs/ecryptfs/mmap.c                      |  5 +--
+ fs/erofs/xattr.c                        |  3 +-
+ fs/ext2/xattr_security.c                |  2 +-
+ fs/ext2/xattr_trusted.c                 |  2 +-
+ fs/ext2/xattr_user.c                    |  2 +-
+ fs/ext4/xattr_hurd.c                    |  2 +-
+ fs/ext4/xattr_security.c                |  2 +-
+ fs/ext4/xattr_trusted.c                 |  2 +-
+ fs/ext4/xattr_user.c                    |  2 +-
+ fs/f2fs/xattr.c                         |  4 +--
+ fs/fuse/xattr.c                         |  4 +--
+ fs/gfs2/xattr.c                         |  3 +-
+ fs/hfs/attr.c                           |  2 +-
+ fs/hfsplus/xattr.c                      |  3 +-
+ fs/hfsplus/xattr_security.c             |  3 +-
+ fs/hfsplus/xattr_trusted.c              |  3 +-
+ fs/hfsplus/xattr_user.c                 |  3 +-
+ fs/inode.c                              |  7 +++--
+ fs/internal.h                           |  3 +-
+ fs/jffs2/security.c                     |  3 +-
+ fs/jffs2/xattr_trusted.c                |  3 +-
+ fs/jffs2/xattr_user.c                   |  3 +-
+ fs/jfs/xattr.c                          |  5 +--
+ fs/kernfs/inode.c                       |  3 +-
+ fs/nfs/nfs4proc.c                       |  9 ++++--
+ fs/ntfs3/xattr.c                        |  2 +-
+ fs/ocfs2/xattr.c                        |  9 ++++--
+ fs/open.c                               |  2 +-
+ fs/orangefs/xattr.c                     |  3 +-
+ fs/overlayfs/copy_up.c                  |  2 +-
+ fs/overlayfs/dir.c                      | 17 +++++-----
+ fs/overlayfs/file.c                     | 25 ++++++++-------
+ fs/overlayfs/inode.c                    | 29 ++++++++---------
+ fs/overlayfs/namei.c                    |  6 ++--
+ fs/overlayfs/overlayfs.h                |  7 +++--
+ fs/overlayfs/ovl_entry.h                |  1 +
+ fs/overlayfs/readdir.c                  |  8 ++---
+ fs/overlayfs/super.c                    | 34 ++++++++++++++++----
+ fs/overlayfs/util.c                     | 13 ++++++--
+ fs/posix_acl.c                          |  2 +-
+ fs/reiserfs/xattr_security.c            |  3 +-
+ fs/reiserfs/xattr_trusted.c             |  3 +-
+ fs/reiserfs/xattr_user.c                |  3 +-
+ fs/squashfs/xattr.c                     |  2 +-
+ fs/ubifs/xattr.c                        |  3 +-
+ fs/xattr.c                              | 42 +++++++++++++------------
+ fs/xfs/xfs_xattr.c                      |  3 +-
+ include/linux/lsm_hook_defs.h           |  3 +-
+ include/linux/security.h                |  6 ++--
+ include/linux/xattr.h                   |  6 ++--
+ include/uapi/linux/xattr.h              |  7 +++--
+ mm/shmem.c                              |  3 +-
+ net/socket.c                            |  3 +-
+ security/commoncap.c                    | 11 ++++---
+ security/integrity/evm/evm_main.c       | 13 +++++---
+ security/security.c                     |  5 +--
+ security/selinux/hooks.c                | 19 ++++++-----
+ security/smack/smack_lsm.c              | 18 ++++++-----
+ 68 files changed, 289 insertions(+), 167 deletions(-)
+
+-- 
+2.34.0.rc1.387.gb447b232ab-goog
 
