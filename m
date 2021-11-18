@@ -2,166 +2,346 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A9AC43217
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Nov 2021 03:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FCCC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Nov 2021 07:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 505DD61B49
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Nov 2021 03:14:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDA1061B39
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Nov 2021 07:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241692AbhKRDRQ (ORCPT
+        id S244166AbhKRICe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Nov 2021 22:17:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239637AbhKRDRP (ORCPT
+        Thu, 18 Nov 2021 03:02:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39792 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244104AbhKRIC0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Nov 2021 22:17:15 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CDD9E61507;
-        Thu, 18 Nov 2021 03:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637205255;
-        bh=/CsQ1mpqXvq8j6eKOBaGsDwpNoQJqGhnqNZpfFmZkMQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kgVX51Asa5Wqvj478HWtq/8Z1Vsf5aZMylfhRQ1T193i10YWv3gZwPGyMPXRHCSzK
-         uBax/QkQCeXGQxDkLk3FkLANV/E5fFPAg4i1OqZTRb9rxZunNe9ZVtfZ4eI7Kr+xZm
-         hUWpXCFPw74+6C2pEa1DV+hLeTwaylX65yZ/AuHCPGJJndSIwFLzrFxzi0bNEOh67i
-         Ocvkq5iJjXnK5LFDPjmK22CvHLOIFcGm5wDx0FUKkKm2WmR8X6upcHDDUtTILWN2OQ
-         SSRG3v6qjE4l+eDRwnTSxQViCMTYStpxud7nSltF8WPErPt/mLqJ3BvjoW+a5sYecD
-         qK97S67Sg6/nQ==
-Message-ID: <10919ebd45263cd790ef928891ff54e4b3dd1407.camel@kernel.org>
-Subject: Re: [PATCH v7 00/17] Enroll kernel keys thru MOK
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Eric Snowberg <eric.snowberg@oracle.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>
-Cc:     "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        "nramas@linux.microsoft.com" <nramas@linux.microsoft.com>,
-        "lszubowi@redhat.com" <lszubowi@redhat.com>,
-        "jason@zx2c4.com" <jason@zx2c4.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "pjones@redhat.com" <pjones@redhat.com>
-Date:   Thu, 18 Nov 2021 05:14:12 +0200
-In-Reply-To: <7E672BCB-EEA7-4DB8-AEB1-644B46EBE124@oracle.com>
-References: <20211116001545.2639333-1-eric.snowberg@oracle.com>
-         <eac5f11d7ddcc65d16a9a949c5cf44851bff8f5f.camel@kernel.org>
-         <YZPZww0bafYEQ0VS@0xbeefdead.lan>
-         <f30a1399208a88257b3ff25b369088cf88a96367.camel@kernel.org>
-         <YZPevFtTucji7gIm@0xbeefdead.lan>
-         <8fcadcf2a5da5118fb7f9caea0a61440525a67b2.camel@kernel.org>
-         <3939a2fac50d2e836c48855b1b00c7b36659f23f.camel@kernel.org>
-         <YZU1lkBkphf73dF+@0xbeefdead.lan>
-         <7E672BCB-EEA7-4DB8-AEB1-644B46EBE124@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.40.4-1 
+        Thu, 18 Nov 2021 03:02:26 -0500
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8695C061202
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Nov 2021 23:59:24 -0800 (PST)
+Received: by mail-ua1-x92a.google.com with SMTP id az37so11718536uab.13
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Nov 2021 23:59:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NxQbOxx3ZpwH4aRXAUnKT4xbBtBALtrVRecKHEhBeTI=;
+        b=n8NnFalaUhCosKhDfSTZ/BdBwCKkHBF8lMQcbw8Azy+UHOpwIIj3TLSANd9dVE72fq
+         4k9LQTN6prVkomvhvuMFmF0ZCtkVdbFDPzTv8kn+vvYcGDISFUAW7aa4byy9iqRfb7ep
+         qs3fNPa6x+H8ivDqYGqu3oclCNLzCFl8+2ERlEXdnbmJ4+moVeChx6xsWNEgcNitDbHE
+         aDVH7diC1Zf21DReWGsXmfkmVzWPDvUyVCQ2AZoF5X3YWLTJdu4toOZMnmxHmGYRBDnq
+         BFxILhpcIG0mGqPmrptLOEP1BHLzeAsLCRpGyyAov4IS2L0osSm72B3g+I1kCmkHJKOi
+         DFEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NxQbOxx3ZpwH4aRXAUnKT4xbBtBALtrVRecKHEhBeTI=;
+        b=YnXV9hEcuWetGJdyMic3nkmH9QZWTNjnPy32UuZLxBp468TY3ntTzs2q9K1W3I0CH1
+         9ikNtR4ONfYhc2/yWeWEbYOnTRPihxwen84XsWgrhznrgJJVx3kRsC87qDPiDsNnIMlj
+         XYVzeUTlpdG53Yg+yiwlE1ZV5daDDsb/l5ZinjdDLAhFUvUxR5W4s7ODWPaHHPiZmsFk
+         g3dIWNbFwJyWWjWmu3HMtNJ9kvxQ2pa5lryYHOE1TJrT2PUJxHLCWoAqgEEnH/n+zhDl
+         BsdBA3yOIo5XwiIZvpAmtQlQUTd9DYOnS/7ZryePceBHLsbM9V6jPljI0DJ5nUmUWFVy
+         I4ww==
+X-Gm-Message-State: AOAM531lLs9LQVBpELDTvq5UW6/W6TslzCfvwkNoqn5cNlU2pCmJw74e
+        IkqnF+QQmRmHks9gtezsR23nF5RtVl1rHUpS6m3e+Q==
+X-Google-Smtp-Source: ABdhPJzMisD9vHQ3BkKJwNs23ZenX0uJVPOB9omsnLpqaIrRAKetxCQiViS00ulhfuM23ZIpUkBYlF7OxmH9y2WfFMI=
+X-Received: by 2002:ab0:2041:: with SMTP id g1mr33435500ual.131.1637222363686;
+ Wed, 17 Nov 2021 23:59:23 -0800 (PST)
 MIME-Version: 1.0
+References: <20211117015806.2192263-1-dvander@google.com> <a64aa4af-67b1-536c-9bd0-7b34e6cc1abe@schaufler-ca.com>
+In-Reply-To: <a64aa4af-67b1-536c-9bd0-7b34e6cc1abe@schaufler-ca.com>
+From:   David Anderson <dvander@google.com>
+Date:   Wed, 17 Nov 2021 23:59:12 -0800
+Message-ID: <CA+FmFJCS+CnDmYw3cOCCjNVhMkq6+i6JaSjWAxjgV674_KZtLA@mail.gmail.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-team@android.com,
+        selinux@vger.kernel.org, paulmoore@microsoft.com,
+        luca.boccassi@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2021-11-17 at 17:20 +0000, Eric Snowberg wrote:
->=20
->=20
-> > On Nov 17, 2021, at 10:02 AM, Konrad Wilk <konrad.wilk@oracle.com> wrot=
-e:
-> >=20
-> > On Wed, Nov 17, 2021 at 09:51:25AM +0200, Jarkko Sakkinen wrote:
-> > > On Wed, 2021-11-17 at 09:50 +0200, Jarkko Sakkinen wrote:
-> > > > On Tue, 2021-11-16 at 11:39 -0500, Konrad Rzeszutek Wilk wrote:
-> > > > > On Tue, Nov 16, 2021 at 06:24:52PM +0200, Jarkko Sakkinen wrote:
-> > > > > > On Tue, 2021-11-16 at 11:18 -0500, Konrad Rzeszutek Wilk wrote:
-> > > > > > > > > I have included=C2=A0 a link to the mokutil [5] changes I=
- have made to support=20
-> > > > > > > > > this new functionality.=C2=A0 The shim changes have now b=
-een accepted
-> > > > > > > > > upstream [6].
-> > > > > > >=20
-> > > > > > > ..snip..
-> > > > > > > > > [6] https://github.com/rhboot/shim/commit/4e513405b4f1641=
-710115780d19dcec130c5208f
-> > > > > > >=20
-> > > > > > > ..snip..
-> > > > > > > >=20
-> > > > > > > > Does shim have the necessary features in a release?
-> > > > > > >=20
-> > > > > > > Hi!
-> > > > > > >=20
-> > > > > > > It has been accepted in the upstream shim. If you are looking
-> > > > > > > for a distribution having rolled out a shim with this feature=
- (so signed
-> > > > > > > by MSF) I fear that distributions are not that fast with shim=
- releases.
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ~~~
-> > > >=20
-> > > > Should that be MS, or what does MSF mean?
-> >=20
-> > Microsoft :-)
->=20
-> Correct, I=E2=80=99ll fix that in the next round.
->=20
-> > > > > > >=20
-> > > > > > > Also these:
-> > > > > > > https://github.com/rhboot/shim/pulls
-> > > > > > > https://github.com/rhboot/shim/issues
-> > > > > > >=20
-> > > > > > > do mean some extra work would need to go in before an officia=
-l
-> > > > > > > release is cut.
-> > > > > > >=20
-> > > > > > > Hope this helps?
-> > > > > >=20
-> > > > > > Yes. I'll hold with this up until there is an official release.=
- Thank you.
-> > > > >=20
-> > > > > Not sure I understand - but what are the concerns you have with s=
-him
-> > > > > code that has been accepted?
-> > > >=20
-> > > > Maybe my concern is that none of the patches have a tested-by?
-> > > >=20
-> > > > Probably would be easier to get a test coverage, e.g. for people li=
-ke
-> > > > me who do not even know how to self-compile Shim, how to setup user
-> > > > space using the product and so forth.
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ~~~~~~~~~~~~~~~~~
-> > >=20
-> > > for the end product
-> >=20
-> > <nods> That makes total sense. Thanks for the explanation, let me doubl=
-e
-> > check whether
-> >=20
-> > https://github.com/rhboot/shim/blob/main/BUILDING
-> >=20
-> > is still correct.
->=20
-> Those are the steps I use for building.=C2=A0=C2=A0 I then move over mmx6=
-4.efi and=C2=A0=20
-> shimx64.efi to the ESP.=C2=A0 I can add the shim build/install instructio=
-ns to the next
-> cover letter If you think that would be appropriate.
+On Tue, Nov 16, 2021 at 6:18 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 11/16/2021 5:58 PM, David Anderson wrote:
+> > Mark Salyzyn (3):
+> >
+> > By default, all access to the upper, lower and work directories is the
+> > recorded mounter's MAC and DAC credentials.  The incoming accesses are
+> > checked against the caller's credentials.
+>
+> This isn't very clear. Are you saying that the security attributes
+> of the upper, lower, and work directories are determined by the
+> attributes of the process that mounted the filesystem? What is an
+> "incoming access"? I'm sure that means something if you're steeped
+> in the lore of overlayfs, but it isn't obvious to me.
 
-Yeah, that would be great. I'll try to setup VM for that purpose. I have
-already a script to build UEFI enabled archlinux VM's, which I use to
-test SGX patches. I can probably tailor that for this purpose.
+(Sorry, hitting "Reply All" this time...)
 
-/Jarkko
+Thanks for taking a look - Yes. An "incoming access" is the user
+application security context accessing the filesystem.
 
+> > If the principles of least privilege are applied for sepolicy, the
+> > mounter's credentials might not overlap the credentials of the caller's
+> > when accessing the overlayfs filesystem.
+>
+> I'm sorry, but I've tried pretty hard, and can't puzzle that one out.
+
+If your sepolicy is designed to give processes minimal privileges (as ours is),
+then "init" might lack privileges even though other processes have them. For
+example, init can mount /x but not access /x/y/z. But, process XYZ can access
+/x/y/z. In our system processes have no privileges to anything by default,
+and permissions are granted as needed, as narrowly as possible.
+
+> DAC privileges are not hierarchical. This doesn't make any sense.
+
+Sorry, that was probably not the right word. The intent was to say that a
+process with minimal DAC privileges might be able to access a file, but
+a process with expansive DAC privileges might be denied access to the
+same file due to MAC restrictions.
+
+> I think I might have figured that one out, but in order to do so
+> I have to make way too many assumptions about the earlier paragraph.
+> Could you please try to explain what you're doing with more context?
+
+Hopefully the above helps explain: overlayfs uses the mounter's privileges,
+which does not work on a system where the mounter does not have a
+superset of child processes' privileges. That's the crux of the issue and
+I'll keep working on how it's communicated in the patch description.
+
+-David
+
+On Tue, Nov 16, 2021 at 6:18 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 11/16/2021 5:58 PM, David Anderson wrote:
+> > Mark Salyzyn (3):
+> >    Add flags option to get xattr method paired to __vfs_getxattr
+> >    overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+> >    overlayfs: override_creds=off option bypass creator_cred
+> >
+> > Mark Salyzyn + John Stultz (1):
+> >    overlayfs: inode_owner_or_capable called during execv
+> >
+> > The first three patches address fundamental security issues that should
+> > be solved regardless of the override_creds=off feature.
+> >
+> > The fourth adds the feature depends on these other fixes.
+> >
+> > By default, all access to the upper, lower and work directories is the
+> > recorded mounter's MAC and DAC credentials.  The incoming accesses are
+> > checked against the caller's credentials.
+>
+> This isn't very clear. Are you saying that the security attributes
+> of the upper, lower, and work directories are determined by the
+> attributes of the process that mounted the filesystem? What is an
+> "incoming access"? I'm sure that means something if you're steeped
+> in the lore of overlayfs, but it isn't obvious to me.
+>
+> > If the principles of least privilege are applied for sepolicy, the
+> > mounter's credentials might not overlap the credentials of the caller's
+> > when accessing the overlayfs filesystem.
+>
+> I'm sorry, but I've tried pretty hard, and can't puzzle that one out.
+>
+> >    For example, a file that a
+> > lower DAC privileged caller can execute, is MAC denied to the
+> > generally higher DAC privileged mounter, to prevent an attack vector.
+>
+> DAC privileges are not hierarchical. This doesn't make any sense.
+>
+> > We add the option to turn off override_creds in the mount options; all
+> > subsequent operations after mount on the filesystem will be only the
+> > caller's credentials.
+>
+> I think I might have figured that one out, but in order to do so
+> I have to make way too many assumptions about the earlier paragraph.
+> Could you please try to explain what you're doing with more context?
+>
+> >    The module boolean parameter and mount option
+> > override_creds is also added as a presence check for this "feature",
+> > existence of /sys/module/overlay/parameters/overlay_creds
+> >
+> > Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> > Signed-off-by: David Anderson <dvander@google.com>
+> > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > Cc: Jonathan Corbet <corbet@lwn.net>
+> > Cc: Vivek Goyal <vgoyal@redhat.com>
+> > Cc: Eric W. Biederman <ebiederm@xmission.com>
+> > Cc: Amir Goldstein <amir73il@gmail.com>
+> > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> > Cc: John Stultz <john.stultz@linaro.org>
+> > Cc: linux-doc@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Cc: linux-unionfs@vger.kernel.org
+> > Cc: linux-security-module@vger.kernel.org
+> > Cc: kernel-team@android.com
+> > Cc: selinux@vger.kernel.org
+> > Cc: paulmoore@microsoft.com
+> > Cc: Luca.Boccassi@microsoft.com
+> >
+> > ---
+> >
+> > v19
+> > - rebase.
+> >
+> > v18
+> > - rebase + fix minor cut and paste error for inode argument in __vfs_getxattr
+> >
+> > v17
+> > - correct some zero-day build failures.
+> > - fix up documentation
+> >
+> > v16
+> > - rebase and merge of two patches.
+> > - add adjustment to deal with execv when overrides is off.
+> >
+> > v15
+> > - Revert back to v4 with fixes from on the way from v5-v14. The single
+> >    structure argument passing to address the complaints about too many
+> >    arguments was rejected by the community.
+> > - Drop the udner discussion fix for an additional CAP_DAC_READ_SEARCH
+> >    check. Can address that independently.
+> > - ToDo: upstream test frame for thes security fixes (currently testing
+> >    is all in Android).
+> >
+> > v14:
+> > - Rejoin, rebase and a few adjustments.
+> >
+> > v13:
+> > - Pull out first patch and try to get it in alone feedback, some
+> >    Acks, and then <crickets> because people forgot why we were doing i.
+> >
+> > v12:
+> > - Restore squished out patch 2 and 3 in the series,
+> >    then change algorithm to add flags argument.
+> >    Per-thread flag is a large security surface.
+> >
+> > v11:
+> > - Squish out v10 introduced patch 2 and 3 in the series,
+> >    then and use per-thread flag instead for nesting.
+> > - Switch name to ovl_do_vds_getxattr for __vds_getxattr wrapper.
+> > - Add sb argument to ovl_revert_creds to match future work.
+> >
+> > v10:
+> > - Return NULL on CAP_DAC_READ_SEARCH
+> > - Add __get xattr method to solve sepolicy logging issue
+> > - Drop unnecessary sys_admin sepolicy checking for administrative
+> >    driver internal xattr functions.
+> >
+> > v6:
+> > - Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
+> > - Do better with the documentation, drop rationalizations.
+> > - pr_warn message adjusted to report consequences.
+> >
+> > v5:
+> > - beefed up the caveats in the Documentation
+> > - Is dependent on
+> >    "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
+> >    "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
+> > - Added prwarn when override_creds=off
+> >
+> > v4:
+> > - spelling and grammar errors in text
+> >
+> > v3:
+> > - Change name from caller_credentials / creator_credentials to the
+> >    boolean override_creds.
+> > - Changed from creator to mounter credentials.
+> > - Updated and fortified the documentation.
+> > - Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
+> >
+> > v2:
+> > - Forward port changed attr to stat, resulting in a build error.
+> > - altered commit message.
+> >
+> > David Anderson (4):
+> >    Add flags option to get xattr method paired to __vfs_getxattr
+> >    overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+> >    overlayfs: override_creds=off option bypass creator_cred
+> >    overlayfs: inode_owner_or_capable called during execv
+> >
+> >   Documentation/filesystems/locking.rst   |  2 +-
+> >   Documentation/filesystems/overlayfs.rst | 26 ++++++++++++++-
+> >   fs/9p/acl.c                             |  3 +-
+> >   fs/9p/xattr.c                           |  3 +-
+> >   fs/afs/xattr.c                          | 10 +++---
+> >   fs/attr.c                               |  2 +-
+> >   fs/btrfs/xattr.c                        |  3 +-
+> >   fs/ceph/xattr.c                         |  3 +-
+> >   fs/cifs/xattr.c                         |  2 +-
+> >   fs/ecryptfs/inode.c                     |  6 ++--
+> >   fs/ecryptfs/mmap.c                      |  5 +--
+> >   fs/erofs/xattr.c                        |  3 +-
+> >   fs/ext2/xattr_security.c                |  2 +-
+> >   fs/ext2/xattr_trusted.c                 |  2 +-
+> >   fs/ext2/xattr_user.c                    |  2 +-
+> >   fs/ext4/xattr_hurd.c                    |  2 +-
+> >   fs/ext4/xattr_security.c                |  2 +-
+> >   fs/ext4/xattr_trusted.c                 |  2 +-
+> >   fs/ext4/xattr_user.c                    |  2 +-
+> >   fs/f2fs/xattr.c                         |  4 +--
+> >   fs/fuse/xattr.c                         |  4 +--
+> >   fs/gfs2/xattr.c                         |  3 +-
+> >   fs/hfs/attr.c                           |  2 +-
+> >   fs/hfsplus/xattr.c                      |  3 +-
+> >   fs/hfsplus/xattr_security.c             |  3 +-
+> >   fs/hfsplus/xattr_trusted.c              |  3 +-
+> >   fs/hfsplus/xattr_user.c                 |  3 +-
+> >   fs/inode.c                              |  7 +++--
+> >   fs/internal.h                           |  3 +-
+> >   fs/jffs2/security.c                     |  3 +-
+> >   fs/jffs2/xattr_trusted.c                |  3 +-
+> >   fs/jffs2/xattr_user.c                   |  3 +-
+> >   fs/jfs/xattr.c                          |  5 +--
+> >   fs/kernfs/inode.c                       |  3 +-
+> >   fs/nfs/nfs4proc.c                       |  9 ++++--
+> >   fs/ntfs3/xattr.c                        |  2 +-
+> >   fs/ocfs2/xattr.c                        |  9 ++++--
+> >   fs/open.c                               |  2 +-
+> >   fs/orangefs/xattr.c                     |  3 +-
+> >   fs/overlayfs/copy_up.c                  |  2 +-
+> >   fs/overlayfs/dir.c                      | 17 +++++-----
+> >   fs/overlayfs/file.c                     | 25 ++++++++-------
+> >   fs/overlayfs/inode.c                    | 29 ++++++++---------
+> >   fs/overlayfs/namei.c                    |  6 ++--
+> >   fs/overlayfs/overlayfs.h                |  7 +++--
+> >   fs/overlayfs/ovl_entry.h                |  1 +
+> >   fs/overlayfs/readdir.c                  |  8 ++---
+> >   fs/overlayfs/super.c                    | 34 ++++++++++++++++----
+> >   fs/overlayfs/util.c                     | 13 ++++++--
+> >   fs/posix_acl.c                          |  2 +-
+> >   fs/reiserfs/xattr_security.c            |  3 +-
+> >   fs/reiserfs/xattr_trusted.c             |  3 +-
+> >   fs/reiserfs/xattr_user.c                |  3 +-
+> >   fs/squashfs/xattr.c                     |  2 +-
+> >   fs/ubifs/xattr.c                        |  3 +-
+> >   fs/xattr.c                              | 42 +++++++++++++------------
+> >   fs/xfs/xfs_xattr.c                      |  3 +-
+> >   include/linux/lsm_hook_defs.h           |  3 +-
+> >   include/linux/security.h                |  6 ++--
+> >   include/linux/xattr.h                   |  6 ++--
+> >   include/uapi/linux/xattr.h              |  7 +++--
+> >   mm/shmem.c                              |  3 +-
+> >   net/socket.c                            |  3 +-
+> >   security/commoncap.c                    | 11 ++++---
+> >   security/integrity/evm/evm_main.c       | 13 +++++---
+> >   security/security.c                     |  5 +--
+> >   security/selinux/hooks.c                | 19 ++++++-----
+> >   security/smack/smack_lsm.c              | 18 ++++++-----
+> >   68 files changed, 289 insertions(+), 167 deletions(-)
+> >
