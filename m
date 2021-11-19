@@ -1,213 +1,471 @@
 Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E2AC433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Nov 2021 02:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 434AF61AA3
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Nov 2021 02:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B755EC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Nov 2021 22:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233106AbhKSCxj (ORCPT
+        id S234515AbhKSWzt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Nov 2021 21:53:39 -0500
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:41040 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230059AbhKSCxi (ORCPT
+        Fri, 19 Nov 2021 17:55:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60842 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233887AbhKSWzs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Nov 2021 21:53:38 -0500
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AJ2QbPF019316;
-        Fri, 19 Nov 2021 02:50:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=pwMqgUTNlMwxQDQCxlGP2x07zuezjnWAAKy4Aehwk50=;
- b=InqYB9sdNT/xo/LWchGKUwoxSIYTkoRqtgFIjxBiwCAu0u8NK3smNryKco1dhy0y8bCy
- 6C+HBJhb/7U0PYU49R3ZAn22k+GLc3MoiG+X7kMPQ0VdyQyLyiPolx1sFKkIJJ7Avdvf
- QpNnLdjkW95MgCm0wJjmsmOKFGPARlHpm+ucPWlpnZwLSaleI4tBy+Q5e+gImN4plPrH
- y2MA0F2pkzi63CLh9r0BGlrOZnPBIIS+YECRGPrDLT6/Nus2gs6qNcIfuGN6wRp5Rky1
- D/U7iIeC831ApqZw/lZFViYwqnUjgEQo6zIA692/8iwj5sxxHPepaEB/vEK/M9K1i+tD ew== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3cd2w93bja-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Nov 2021 02:50:14 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AJ2kaXq117278;
-        Fri, 19 Nov 2021 02:50:13 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2175.outbound.protection.outlook.com [104.47.57.175])
-        by aserp3030.oracle.com with ESMTP id 3ccccssvaj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Nov 2021 02:50:13 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HOSX51gnROGKIaiH3WRlDMWaUOB3hYTf+xsQdwHsGjsi6OLPrqVlAuGEMcWq30EnbxFlaS8VoVNQwHOs1V0gb1fRnN5cfmZTVMiuQ3gNMuI6/YmNCzWC9gxZIG3XiaaBUjpPLvPqYiBWfIrdtETZ4g0grE1onmOvjHl5l1f6UdvABiqzTK0+qjNrKRoKdZrtALyDCdC8D9yP6FcGN7HVirCfGxmKxb9LxRg5IjJ7CX1B/u3TI7c8Kx6ZwzQPJBhuCwODfgWGo4G79IjDcrleCLwaxLDS8SUWUmhM/hpgWcTOvMKQi+uXRW8glNlfEChcrsH5IQNaS/LYPtj0qCPiaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pwMqgUTNlMwxQDQCxlGP2x07zuezjnWAAKy4Aehwk50=;
- b=B68zIyXMw6Cwmx2zbPPdGh2fb8eZwZkExK724ljkUpYeBrlfZKcqNh1h9N10SSdgh4vNonnDdRNneKxp3YD3OYX2eXhW+p3fg2kHefEszc/EYBNM2vhNTm4hQHPwYkkCuWuS9MFmlregmY4bqLWLzv90n+LEpvQXaNBaxt02mlDLtry1/4bdriWlAEbQmpV6lZjJE3ng7BtidqR3sn4q5gVTD2vFPiTxCXEi+bUsusFR+f+6D3xjujf4ImrXi5CXO0QpNV7GomkfsEQHD1HoLC8dwbXzQKJAR/cjM7bUZLGb8EfTNJIJQSDv+b5dIdzXq3NQ0nwzsBSVkxMbNyuS2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Fri, 19 Nov 2021 17:55:48 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 100A4C061574
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Nov 2021 14:52:46 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id z5so48759846edd.3
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Nov 2021 14:52:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pwMqgUTNlMwxQDQCxlGP2x07zuezjnWAAKy4Aehwk50=;
- b=cCoSAa1puyJK4yT4zr6nGzamGyVknrSWIe7yM13MYF52E/FEO1Ygg6hmU3rZyhYrnfU3UryGRrHtjTS+6Xh6HEe4vxaFi56Q58vUl1qrpi5DDVIRDf5flqrTh7VRyW0N/uv+mruHKtcJb5qzJb/YKxUdbwe5jUS7IANOWMQNdQI=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by CH0PR10MB4954.namprd10.prod.outlook.com (2603:10b6:610:ca::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.27; Fri, 19 Nov
- 2021 02:50:11 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::65b8:d8e7:e373:4896]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::65b8:d8e7:e373:4896%9]) with mapi id 15.20.4713.021; Fri, 19 Nov 2021
- 02:50:11 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-CC:     "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        "nramas@linux.microsoft.com" <nramas@linux.microsoft.com>,
-        "lszubowi@redhat.com" <lszubowi@redhat.com>,
-        "jason@zx2c4.com" <jason@zx2c4.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "pjones@redhat.com" <pjones@redhat.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>
-Subject: Re: [PATCH v7 11/17] KEYS: Introduce link restriction for machine
- keys
-Thread-Topic: [PATCH v7 11/17] KEYS: Introduce link restriction for machine
- keys
-Thread-Index: AQHX2n86aqCce8ZTIUCo0lA3thol4awKAWkAgAAp6wA=
-Date:   Fri, 19 Nov 2021 02:50:11 +0000
-Message-ID: <FEEBC8B5-EF20-41A7-9883-018C6B25C6B6@oracle.com>
-References: <20211116001545.2639333-1-eric.snowberg@oracle.com>
- <20211116001545.2639333-12-eric.snowberg@oracle.com>
- <f1007bba5daa81d6abdb89fffa6237b54d1ad496.camel@linux.ibm.com>
-In-Reply-To: <f1007bba5daa81d6abdb89fffa6237b54d1ad496.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3693.20.0.1.32)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 79ea79c9-971d-4d68-ecd1-08d9ab074e39
-x-ms-traffictypediagnostic: CH0PR10MB4954:
-x-microsoft-antispam-prvs: <CH0PR10MB495433FC108158335CA613F7879C9@CH0PR10MB4954.namprd10.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3RccSCo4eue3ye2IeZP/FIsPj1KeiXAZKB+TW7pI2Ytho0wouzIeNC/54NQbnAZmSoyWEdy/OqdM4kWMMuWayngU8bePTa0IRJm2qcxLstmUlYaABV8MHaWxB0Zn4dP0ZVfqGz8AE5CTBV+n4mD4U44w0SB99AOncz66RH5GlbCEaVnUL+yEYXeYY+MhgaQEL7vB/wcyZzVA1bgw4VQm+OhG93UtH3Dyv/qNXV7HDfquFHpqttj2XnL/7BG3S/s8TFbNWeTAgNbfZPZ889+QWPPlIg7ezwUFmlgz2Menx8Y1kGwKbmqc717A2SLPDRaD+vc08G9W4qJdnDu5TEWFjnrJe8QB1s1mSSWgGoIRK1E9zCtlg8Ene2ywa2TB5xTDotH3+dWViIGsy453koC4SXNByUCfetO/jxBDwPRx4yhyxKitO2U4kccM/8tKYHb71yrTHSZ6/6CMoJkWc+FIi67UzpcHp89pOFf1v05j/5KrP4+IFmGChST2uMzxl/oV5OdJpFWjGhmxiNBvh8zLxHLYOqVp9gdgatOe0WrdiRGhL1GQZ8Zy5+7Dgki3EXUdlZXe2gl1MxQqnIpSCSDYjc7Czav43vth8rdHKy0pFXOvRs/P4ZdiZLO6f9oR+4ZYYQWebObH1I/DfIJ579dzlTPQ2PTOT9a807l7pqHP7TNlw2ENJxsdC+yO8zhBWwjOJggtS9dntEP8pUqnOIO8CjGurja9RxpsPyb9QUtelZpyOhKVvpmAM6SUJ02Hy5Bb
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(91956017)(2616005)(8936002)(33656002)(316002)(508600001)(38100700002)(4326008)(7416002)(66946007)(71200400001)(66446008)(38070700005)(76116006)(4001150100001)(54906003)(107886003)(64756008)(44832011)(66476007)(6506007)(186003)(122000001)(6916009)(86362001)(66556008)(6512007)(2906002)(36756003)(53546011)(8676002)(6486002)(5660300002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TlloU3FCYVQrUldjTjExa1BrK1RlZ0JackRPYWptSURFUUFnSVRHWU9TeFNx?=
- =?utf-8?B?SWNLdnZldTB1UFV3UmVUWnBIYmtvYUlDeXpCZXFRZTV4NmFSdnVjT09oMVZK?=
- =?utf-8?B?Tkw4djZVY2RpcmlsQSt3bDZIUVZTM1VvL1N2alFxN3BBZlc1R1VPMlZ5YUVo?=
- =?utf-8?B?UW5hSjhPOU5FUS9ESE9aY2JMM3dLVUx6cUdUT2RtZ1NuMkxBdU1MMzJ0RDRK?=
- =?utf-8?B?eEIwTkluY0h6ekFUV1NkOEc5d0FDbFJoMVdSNjdKbVh4bXR3a2JTZ2k3cGFm?=
- =?utf-8?B?K1pPSkFBWElCVDU0a29JdEFLYWRBZ0p0ZVU1NlV6TEtSajlWalhpcnYvY2Zw?=
- =?utf-8?B?ekV6bzV3YVU4cXhodyttb0JiZHd0MGYwbmpyU2VFaUhYZnVNK0MvNDFTaExo?=
- =?utf-8?B?SmZSRi8xVXV5Ukg1d1NLenErLzFPK256aU9QUWdteWgzb2lqMTJKUXlFaTBP?=
- =?utf-8?B?ZTVEbkxhTmxQblNXYlBjWnFTc3Jtb0RmOU1kbHNVUTJRQW1aaWZtOG9jamx2?=
- =?utf-8?B?bk9sTXJyazBBbUQwQUQvVHZnbXdoY2tsT2ZKbWxWUW8vU0NPbzU2ZVR3amxl?=
- =?utf-8?B?TmhxTlF1V1ZSMUVvejRsQ21jM1RiN3ljVlhVbjVBeGFRcXVSYUtvN0tFZkhX?=
- =?utf-8?B?K2dWTGlvTmJzVExUY2NiMk9zT05EUUxzWjMrSWVzeHh6RGVadUtzVFNYVU5t?=
- =?utf-8?B?V3dnMTJCQytwcWtPN3Nvb3FiRnZxL3l6Q2Q4OWhIWFJzcFV0bWRMbFBoQlRO?=
- =?utf-8?B?MUpLVEVpSXpnWTcxVlNJZ1pwMEk5Mng5TlJlektvZy9XR3M2SHVFTzNxbE1T?=
- =?utf-8?B?d1RnTkRRS2NLMUMrVWZaLzJCNnZYdGN6WVFjT2JSYStzOWtQTHU3T3U4cEl6?=
- =?utf-8?B?cm1GQlhXSzhpd1VaazVMMzRESG91Rkx6VjhnSlp5cFR6YldKejZlc1QyUldU?=
- =?utf-8?B?NlhRUmJSU1l6ZWNSWGs5RjZJSkRzdkVuVWpzcVF4MHZkbUFCdlB0NVdWTmFS?=
- =?utf-8?B?YU9jT2FkN09YbnB2ajlleUpzb0lYRmJ5NC9wWE51bHlWQzUrVlN0RmdDUkFq?=
- =?utf-8?B?ckg2Z0greDVzSUxCM2xCS1pmVW16YUhleS8rQ1ZyaDdrVk01YmZ6QmxqNCtG?=
- =?utf-8?B?RE5BVWQycnQ5Mjd2UlM1YnRaRnlpb1VSOGtOODg1RS9RRVAraDFSZ1J3QXEy?=
- =?utf-8?B?SlZ2bVJ2TFRBLytUblNpNkVLYmZvSDFQRHM1V3dxVnRZQWl1NXkyM0hnVy9G?=
- =?utf-8?B?YS8zNjBKN2ZLUTBRekNDdUZxR2ppaDZ3TERra1ZPOWQxT1FtN2hSM3B4ZDN3?=
- =?utf-8?B?WGxlZm5PQkM0Qm9WM1Q3T28wNE03K2xaZkFMRXBBRnlxS01neVp5aEJtWjd0?=
- =?utf-8?B?VWQyTklXODBVREF4Y1pHK0Y2d0RRY3g2ZkN3dUUyNmtIdWsvSHI3NXhsSWlF?=
- =?utf-8?B?cGY4dEMwRXE2Ty95TktEYTY1bjBhd0Y1empzek56NDRaUmhKL1piWGxaRmtL?=
- =?utf-8?B?Y2VKcDltS3VOaUhjOFgrN1B2bXBoMkptRnNzbDI2TjBFcFcwRG9HR0V6eTlI?=
- =?utf-8?B?NVpzUW9DaUVkTmhkZ0ExMVRxVEFGUkdEVnhoOUNOdi84RUU1bnlFbEhDbzJE?=
- =?utf-8?B?YVpNOXpBQy8zaUlRejNHaUhsdThYVTBINHBpTjJ0b20xTUxEcXRuUnBnN1Ur?=
- =?utf-8?B?K1g5VitpRWNhampzRXpTOHUrVGZ6R0pDdGVoMGNVdVJVUU55TGxqVjZ5ellU?=
- =?utf-8?B?NWV3RFkxbkhzb1c3NUhsTU5XVEpBY01DaVVQdjdQQkJtb1BZQWVkeFVteEZD?=
- =?utf-8?B?eHdhaFBKb1VGT09HeXFOM05NcHJwWWxDZVNjeFp1VnBBV2d5SFpublU4RmJX?=
- =?utf-8?B?ZjlvR1p0QzRURXZxMDJyMkg3SEdhYStPUXFJd3kzRXdhdFF2ekxRSjFLUjNX?=
- =?utf-8?B?QUNUTmNsZEtVUTNoWDljb3Z1UUVvMGtHRllCY3pSMVBQNitib282WWZsR0lr?=
- =?utf-8?B?S1pDbXp3R05Ic3pCazQ0N1JBcEZkZEZ2NVh2UW9GSjdacGt3blVDc0VucVJL?=
- =?utf-8?B?S0t2UW5wK0Irdkc1SVlqZ1YwQVIyVXMrVE9GT1BMd3lXYVkwaFlvUC94VFBL?=
- =?utf-8?B?UUZnTkZiL1VFVWdvek9LQUZna1E0MzFqYmhkcmJPU01nN0Vidk9lMmkzVE5N?=
- =?utf-8?B?Snprd3J6S2Zta2FvbFFSQUIyQVRpT3RRR2drOC93L2RkN2dnR3c4UWREOU4x?=
- =?utf-8?B?dEhUMTI2UUxhMVI1L3llOFJQS2hyMExsUDV6VE50YnVDdmRUR3FzMWh5cDdE?=
- =?utf-8?Q?bejn61oRiWHoUK0an6?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A5D2EB41AB5673498FE32004D0A5D313@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=CFX2h8LqVu1/zbSsnVDm1QEw7vciSmvIhpKaZTmpSK8=;
+        b=QepHaVpzFBtaYPuS88YzFfk3aTqKuoC6XfiqXFOFuoVmJUu/pmhbnPyfhg79ZeJi03
+         uQm/QoFKKZryKRpJCq1gJWGo013w6oCdvWydF/iT8dQv67YD+K0Aw1+y48zC758q4HJR
+         zr4uixu3mYXoUhB/pCK6xwlHBryPfqDMdDBeWf0tiMQD4/HX+Egwny55cYrtQZpXsehC
+         j4Dq1CeL0rvkUuOHeHW4UInReSGWC0Kd/XoceIzylNy6TVLk4UWIwzkyDqfryUFG58wg
+         qkygCiNLRAZo1phKmgu8T5JZHri6gHMtxhhCqS1SEc1eodnvJ8mr5b6UerGCLqOAjJZC
+         8fgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=CFX2h8LqVu1/zbSsnVDm1QEw7vciSmvIhpKaZTmpSK8=;
+        b=ybmG3mB6FeObfc9LbJTxHg9fWkkS/RnW3qFB00wPbWfcH3LshdKj3pmMOE6ihTM1W8
+         /32kdkc8odtXXWxMWyKLJ1sFjnA2KOUmoedhX5GidIKA/0qf8Quw8yJ15B7zlFtQ52FM
+         8Jyw8xuRFjqej9hwsDC1AlcPKGoZflIVH/nJ3disBfuUKvsWnDyrg4XqI8NH2dyhk3Tr
+         sClz1Z0TNkYLLst4Qs5EICCqeDZtqU/0uYWfQfYBdFY1Hx9O5gL7F4OdYDfPT19i7kpG
+         0D7tfLYDug5sn5tGIhHANJx4HsTwmdod5+SjE+nQNLR74IQrQ1Nz7C7SbZhVLHs7Oz24
+         Pndg==
+X-Gm-Message-State: AOAM532t1Em/jzkzfmiCA7HgrijSHxYn89AoxC2gUEdB9UCGHbeoh/Vp
+        EKn+UHKAJT/RvgvMGuX/h6ajLIoqCIUD7ZIWttfLF9F/kg==
+X-Google-Smtp-Source: ABdhPJzFfajDvnGcB7zgZnstJXFCPTw/3g4Go22QsT4HOBjZQOmwDgPRth3r9uChIKkUxq0tbFrq3bvz3+UtPFHTK6w=
+X-Received: by 2002:a17:906:fac1:: with SMTP id lu1mr12579381ejb.171.1637362364321;
+ Fri, 19 Nov 2021 14:52:44 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79ea79c9-971d-4d68-ecd1-08d9ab074e39
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2021 02:50:11.2855
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: V+E0eTvjuoMJh6gPjK8BRD7Tzy8n6gEn61kiH7qOAXqddadWrqzaH+wMAF2+czXL3479P8RP5wPcPwVEGu2UNmlozt8FG9nt+hXewtGYECg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4954
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10172 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
- adultscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2111190011
-X-Proofpoint-GUID: cZdhJPyxecjB9bzU1MqbjlI9L9vBaCRa
-X-Proofpoint-ORIG-GUID: cZdhJPyxecjB9bzU1MqbjlI9L9vBaCRa
+References: <163294304032.208242.9097581875096098591.stgit@olly>
+In-Reply-To: <163294304032.208242.9097581875096098591.stgit@olly>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 19 Nov 2021 17:52:33 -0500
+Message-ID: <CAHC9VhQtGcLg3cv6dzB=UeZng+xBOwvC2PrvTfJG6V5ASrbxvw@mail.gmail.com>
+Subject: Re: [PATCH] lsm: security_task_getsecid_subj() -> security_current_getsecid_subj()
+To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-DQoNCj4gT24gTm92IDE4LCAyMDIxLCBhdCA1OjIwIFBNLCBNaW1pIFpvaGFyIDx6b2hhckBsaW51
-eC5pYm0uY29tPiB3cm90ZToNCj4gDQo+IEhpIEVyaWMsDQo+IA0KPiBPbiBNb24sIDIwMjEtMTEt
-MTUgYXQgMTk6MTUgLTA1MDAsIEVyaWMgU25vd2Jlcmcgd3JvdGU6DQo+PiBJbnRyb2R1Y2UgYSBu
-ZXcgbGluayByZXN0cmljdGlvbiB0aGF0IGluY2x1ZGVzIHRoZSB0cnVzdGVkIGJ1aWx0aW4sDQo+
-PiBzZWNvbmRhcnkgYW5kIG1hY2hpbmUga2V5cy4gVGhlIHJlc3RyaWN0aW9uIGlzIGJhc2VkIG9u
-IHRoZSBrZXkgdG8gYmUNCj4+IGFkZGVkIGJlaW5nIHZvdWNoZWQgZm9yIGJ5IGEga2V5IGluIGFu
-eSBvZiB0aGVzZSB0aHJlZSBrZXlyaW5ncy4NCj4+IA0KPj4gU3VnZ2VzdGVkLWJ5OiBNaW1pIFpv
-aGFyIDx6b2hhckBsaW51eC5pYm0uY29tPg0KPj4gU2lnbmVkLW9mZi1ieTogRXJpYyBTbm93YmVy
-ZyA8ZXJpYy5zbm93YmVyZ0BvcmFjbGUuY29tPg0KPj4gLS0tDQo+PiB2MzogSW5pdGlhbCB2ZXJz
-aW9uDQo+PiB2NDogbW92ZWQgY29kZSB1bmRlciBDT05GSUdfSU5URUdSSVRZX01PS19LRVlSSU5H
-DQo+PiB2NTogUmVuYW1lIHRvIG1hY2hpbmUga2V5cmluZw0KPj4gdjY6IENoYW5nZSBzdWJqZWN0
-IG5hbWUgKHN1Z2dlc3RlZCBieSBNaW1pKQ0KPj4gICAgUmVuYW1lIHJlc3RyaWN0X2xpbmtfYnlf
-YnVpbHRpbl9zZWNvbmRhcnlfYW5kX2NhX3RydXN0ZWQNCj4+ICAgICAgdG8gcmVzdHJpY3RfbGlu
-a19ieV9idWlsdGluX3NlY29uZGFyeV9hbmRfbWFjaGluZSAoc3VnZ2VzdGVkIGJ5DQo+PiAgICAg
-IE1pbWkpDQo+PiB2NzogVW5tb2RpZmllZCBmcm9tIHY2DQo+PiAtLS0NCj4+IGNlcnRzL3N5c3Rl
-bV9rZXlyaW5nLmMgICAgICAgIHwgMjMgKysrKysrKysrKysrKysrKysrKysrKysNCj4+IGluY2x1
-ZGUva2V5cy9zeXN0ZW1fa2V5cmluZy5oIHwgIDYgKysrKysrDQo+PiAyIGZpbGVzIGNoYW5nZWQs
-IDI5IGluc2VydGlvbnMoKykNCj4+IA0KPj4gZGlmZiAtLWdpdCBhL2NlcnRzL3N5c3RlbV9rZXly
-aW5nLmMgYi9jZXJ0cy9zeXN0ZW1fa2V5cmluZy5jDQo+PiBpbmRleCBiYzdlNDRmYzgyYzIuLjcx
-YTAwYWRkOTgwNSAxMDA2NDQNCj4+IC0tLSBhL2NlcnRzL3N5c3RlbV9rZXlyaW5nLmMNCj4+ICsr
-KyBiL2NlcnRzL3N5c3RlbV9rZXlyaW5nLmMNCj4+IEBAIC05OSw2ICs5OSwyOSBAQCB2b2lkIF9f
-aW5pdCBzZXRfbWFjaGluZV90cnVzdGVkX2tleXMoc3RydWN0IGtleSAqa2V5cmluZykNCj4+IHsN
-Cj4+IAltYWNoaW5lX3RydXN0ZWRfa2V5cyA9IGtleXJpbmc7DQo+PiB9DQo+PiArDQo+PiArLyoq
-DQo+IA0KPiBUaGlzIGJlZ2lucyB0aGUgc3RhcnQgb2Yga2VybmVsIGRvYy4gDQo+IA0KPj4gKyAq
-IHJlc3RyaWN0X2xpbmtfYnlfYnVpbHRpbl9zZWNvbmRhcnlfYW5kX21hY2hpbmUNCj4gDQo+IE1p
-c3NpbmcgYXJlIHRoZSBwYXJhbWV0ZXIgZGVmaW50aW9ucy4gIFBsZWFzZSByZWZlciB0bw0KPiBE
-b2N1bWVudGF0aW9uL2RvYy1ndWlkZS9rZXJuZWwtZG9jLnJzdCBmb3IgZGV0YWlscy4NCg0KSeKA
-mWxsIGFkZCB0aGlzIGluIHRoZSBuZXh0IHJvdW5kLCB0aGFua3MuDQoNCg==
+On Wed, Sep 29, 2021 at 3:17 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> The security_task_getsecid_subj() LSM hook invites misuse by allowing
+> callers to specify a task even though the hook is only safe when the
+> current task is referenced.  Fix this by removing the task_struct
+> argument to the hook, requiring LSM implementations to use the
+> current task.  While we are changing the hook declaration we also
+> rename the function to security_current_getsecid_subj() in an effort
+> to reinforce that the hook captures the subjective credentials of the
+> current task and not an arbitrary task on the system.
+>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  include/linux/lsm_hook_defs.h         |    3 +--
+>  include/linux/lsm_hooks.h             |    8 +++-----
+>  include/linux/security.h              |    4 ++--
+>  kernel/audit.c                        |    4 ++--
+>  kernel/auditfilter.c                  |    3 +--
+>  kernel/auditsc.c                      |   10 +++++++++-
+>  net/netlabel/netlabel_unlabeled.c     |    2 +-
+>  net/netlabel/netlabel_user.h          |    2 +-
+>  security/apparmor/lsm.c               |   13 ++++++++++---
+>  security/integrity/ima/ima_appraise.c |    2 +-
+>  security/integrity/ima/ima_main.c     |   14 +++++++-------
+>  security/security.c                   |    6 +++---
+>  security/selinux/hooks.c              |   19 +++----------------
+>  security/smack/smack.h                |   16 ----------------
+>  security/smack/smack_lsm.c            |    9 ++++-----
+>  15 files changed, 48 insertions(+), 67 deletions(-)
+
+I never saw any comments, positive or negative, on this patch so I'll
+plan on merging it early next week.  If you've got objections, now is
+the time to speak up.
+
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 2adeea44c0d5..8d04b18155a3 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -205,8 +205,7 @@ LSM_HOOK(int, 0, task_fix_setgid, struct cred *new, const struct cred * old,
+>  LSM_HOOK(int, 0, task_setpgid, struct task_struct *p, pid_t pgid)
+>  LSM_HOOK(int, 0, task_getpgid, struct task_struct *p)
+>  LSM_HOOK(int, 0, task_getsid, struct task_struct *p)
+> -LSM_HOOK(void, LSM_RET_VOID, task_getsecid_subj,
+> -        struct task_struct *p, u32 *secid)
+> +LSM_HOOK(void, LSM_RET_VOID, current_getsecid_subj, u32 *secid)
+>  LSM_HOOK(void, LSM_RET_VOID, task_getsecid_obj,
+>          struct task_struct *p, u32 *secid)
+>  LSM_HOOK(int, 0, task_setnice, struct task_struct *p, int nice)
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 5c4c5c0602cb..9f5b93011ecb 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -716,11 +716,9 @@
+>   *     @p.
+>   *     @p contains the task_struct for the process.
+>   *     Return 0 if permission is granted.
+> - * @task_getsecid_subj:
+> - *     Retrieve the subjective security identifier of the task_struct in @p
+> - *     and return it in @secid.  Special care must be taken to ensure that @p
+> - *     is the either the "current" task, or the caller has exclusive access
+> - *     to @p.
+> + * @current_getsecid_subj:
+> + *     Retrieve the subjective security identifier of the current task and
+> + *     return it in @secid.
+>   *     In case of failure, @secid will be set to zero.
+>   * @task_getsecid_obj:
+>   *     Retrieve the objective security identifier of the task_struct in @p
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 5b7288521300..24190cf61858 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -417,7 +417,7 @@ int security_task_fix_setgid(struct cred *new, const struct cred *old,
+>  int security_task_setpgid(struct task_struct *p, pid_t pgid);
+>  int security_task_getpgid(struct task_struct *p);
+>  int security_task_getsid(struct task_struct *p);
+> -void security_task_getsecid_subj(struct task_struct *p, u32 *secid);
+> +void security_current_getsecid_subj(u32 *secid);
+>  void security_task_getsecid_obj(struct task_struct *p, u32 *secid);
+>  int security_task_setnice(struct task_struct *p, int nice);
+>  int security_task_setioprio(struct task_struct *p, int ioprio);
+> @@ -1112,7 +1112,7 @@ static inline int security_task_getsid(struct task_struct *p)
+>         return 0;
+>  }
+>
+> -static inline void security_task_getsecid_subj(struct task_struct *p, u32 *secid)
+> +static inline void security_current_getsecid_subj(u32 *secid)
+>  {
+>         *secid = 0;
+>  }
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 121d37e700a6..d4084751cfe6 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -2132,7 +2132,7 @@ int audit_log_task_context(struct audit_buffer *ab)
+>         int error;
+>         u32 sid;
+>
+> -       security_task_getsecid_subj(current, &sid);
+> +       security_current_getsecid_subj(&sid);
+>         if (!sid)
+>                 return 0;
+>
+> @@ -2353,7 +2353,7 @@ int audit_signal_info(int sig, struct task_struct *t)
+>                         audit_sig_uid = auid;
+>                 else
+>                         audit_sig_uid = uid;
+> -               security_task_getsecid_subj(current, &audit_sig_sid);
+> +               security_current_getsecid_subj(&audit_sig_sid);
+>         }
+>
+>         return audit_signal_info_syscall(t);
+> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> index db2c6b59dfc3..f4ebd2f1cfca 100644
+> --- a/kernel/auditfilter.c
+> +++ b/kernel/auditfilter.c
+> @@ -1359,8 +1359,7 @@ int audit_filter(int msgtype, unsigned int listtype)
+>                         case AUDIT_SUBJ_SEN:
+>                         case AUDIT_SUBJ_CLR:
+>                                 if (f->lsm_rule) {
+> -                                       security_task_getsecid_subj(current,
+> -                                                                   &sid);
+> +                                       security_current_getsecid_subj(&sid);
+>                                         result = security_audit_rule_match(sid,
+>                                                    f->type, f->op, f->lsm_rule);
+>                                 }
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 8dd73a64f921..e0987ee71b8f 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -673,7 +673,15 @@ static int audit_filter_rules(struct task_struct *tsk,
+>                            logged upon error */
+>                         if (f->lsm_rule) {
+>                                 if (need_sid) {
+> -                                       security_task_getsecid_subj(tsk, &sid);
+> +                                       /* @tsk should always be equal to
+> +                                        * @current with the exception of
+> +                                        * fork()/copy_process() in which case
+> +                                        * the new @tsk creds are still a dup
+> +                                        * of @current's creds so we can still
+> +                                        * use security_current_getsecid_subj()
+> +                                        * here even though it always refs
+> +                                        * @current's creds */
+> +                                       security_current_getsecid_subj(&sid);
+>                                         need_sid = 0;
+>                                 }
+>                                 result = security_audit_rule_match(sid, f->type,
+> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+> index 566ba4397ee4..8490e46359ae 100644
+> --- a/net/netlabel/netlabel_unlabeled.c
+> +++ b/net/netlabel/netlabel_unlabeled.c
+> @@ -1537,7 +1537,7 @@ int __init netlbl_unlabel_defconf(void)
+>         /* Only the kernel is allowed to call this function and the only time
+>          * it is called is at bootup before the audit subsystem is reporting
+>          * messages so don't worry to much about these values. */
+> -       security_task_getsecid_subj(current, &audit_info.secid);
+> +       security_current_getsecid_subj(&audit_info.secid);
+>         audit_info.loginuid = GLOBAL_ROOT_UID;
+>         audit_info.sessionid = 0;
+>
+> diff --git a/net/netlabel/netlabel_user.h b/net/netlabel/netlabel_user.h
+> index 6190cbf94bf0..d6c5b31eb4eb 100644
+> --- a/net/netlabel/netlabel_user.h
+> +++ b/net/netlabel/netlabel_user.h
+> @@ -32,7 +32,7 @@
+>   */
+>  static inline void netlbl_netlink_auditinfo(struct netlbl_audit *audit_info)
+>  {
+> -       security_task_getsecid_subj(current, &audit_info->secid);
+> +       security_current_getsecid_subj(&audit_info->secid);
+>         audit_info->loginuid = audit_get_loginuid(current);
+>         audit_info->sessionid = audit_get_sessionid(current);
+>  }
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index f72406fe1bf2..fc21190c4f4f 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -728,7 +728,14 @@ static void apparmor_bprm_committed_creds(struct linux_binprm *bprm)
+>         return;
+>  }
+>
+> -static void apparmor_task_getsecid(struct task_struct *p, u32 *secid)
+> +static void apparmor_current_getsecid_subj(u32 *secid)
+> +{
+> +       struct aa_label *label = aa_get_task_label(current);
+> +       *secid = label->secid;
+> +       aa_put_label(label);
+> +}
+> +
+> +static void apparmor_task_getsecid_obj(struct task_struct *p, u32 *secid)
+>  {
+>         struct aa_label *label = aa_get_task_label(p);
+>         *secid = label->secid;
+> @@ -1252,8 +1259,8 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+>
+>         LSM_HOOK_INIT(task_free, apparmor_task_free),
+>         LSM_HOOK_INIT(task_alloc, apparmor_task_alloc),
+> -       LSM_HOOK_INIT(task_getsecid_subj, apparmor_task_getsecid),
+> -       LSM_HOOK_INIT(task_getsecid_obj, apparmor_task_getsecid),
+> +       LSM_HOOK_INIT(current_getsecid_subj, apparmor_current_getsecid_subj),
+> +       LSM_HOOK_INIT(task_getsecid_obj, apparmor_task_getsecid_obj),
+>         LSM_HOOK_INIT(task_setrlimit, apparmor_task_setrlimit),
+>         LSM_HOOK_INIT(task_kill, apparmor_task_kill),
+>
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index dbba51583e7c..17232bbfb9f9 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -76,7 +76,7 @@ int ima_must_appraise(struct user_namespace *mnt_userns, struct inode *inode,
+>         if (!ima_appraise)
+>                 return 0;
+>
+> -       security_task_getsecid_subj(current, &secid);
+> +       security_current_getsecid_subj(&secid);
+>         return ima_match_policy(mnt_userns, inode, current_cred(), secid,
+>                                 func, mask, IMA_APPRAISE | IMA_HASH, NULL,
+>                                 NULL, NULL, NULL);
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 465865412100..8c6e4514d494 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -408,7 +408,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+>         u32 secid;
+>
+>         if (file && (prot & PROT_EXEC)) {
+> -               security_task_getsecid_subj(current, &secid);
+> +               security_current_getsecid_subj(&secid);
+>                 return process_measurement(file, current_cred(), secid, NULL,
+>                                            0, MAY_EXEC, MMAP_CHECK);
+>         }
+> @@ -446,7 +446,7 @@ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+>             !(prot & PROT_EXEC) || (vma->vm_flags & VM_EXEC))
+>                 return 0;
+>
+> -       security_task_getsecid_subj(current, &secid);
+> +       security_current_getsecid_subj(&secid);
+>         inode = file_inode(vma->vm_file);
+>         action = ima_get_action(file_mnt_user_ns(vma->vm_file), inode,
+>                                 current_cred(), secid, MAY_EXEC, MMAP_CHECK,
+> @@ -487,7 +487,7 @@ int ima_bprm_check(struct linux_binprm *bprm)
+>         int ret;
+>         u32 secid;
+>
+> -       security_task_getsecid_subj(current, &secid);
+> +       security_current_getsecid_subj(&secid);
+>         ret = process_measurement(bprm->file, current_cred(), secid, NULL, 0,
+>                                   MAY_EXEC, BPRM_CHECK);
+>         if (ret)
+> @@ -512,7 +512,7 @@ int ima_file_check(struct file *file, int mask)
+>  {
+>         u32 secid;
+>
+> -       security_task_getsecid_subj(current, &secid);
+> +       security_current_getsecid_subj(&secid);
+>         return process_measurement(file, current_cred(), secid, NULL, 0,
+>                                    mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+>                                            MAY_APPEND), FILE_CHECK);
+> @@ -709,7 +709,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
+>
+>         /* Read entire file for all partial reads. */
+>         func = read_idmap[read_id] ?: FILE_CHECK;
+> -       security_task_getsecid_subj(current, &secid);
+> +       security_current_getsecid_subj(&secid);
+>         return process_measurement(file, current_cred(), secid, NULL,
+>                                    0, MAY_READ, func);
+>  }
+> @@ -752,7 +752,7 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+>         }
+>
+>         func = read_idmap[read_id] ?: FILE_CHECK;
+> -       security_task_getsecid_subj(current, &secid);
+> +       security_current_getsecid_subj(&secid);
+>         return process_measurement(file, current_cred(), secid, buf, size,
+>                                    MAY_READ, func);
+>  }
+> @@ -905,7 +905,7 @@ int process_buffer_measurement(struct user_namespace *mnt_userns,
+>          * buffer measurements.
+>          */
+>         if (func) {
+> -               security_task_getsecid_subj(current, &secid);
+> +               security_current_getsecid_subj(&secid);
+>                 action = ima_get_action(mnt_userns, inode, current_cred(),
+>                                         secid, 0, func, &pcr, &template,
+>                                         func_data, NULL);
+> diff --git a/security/security.c b/security/security.c
+> index 9ffa9e9c5c55..827bd161f8b0 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1807,12 +1807,12 @@ int security_task_getsid(struct task_struct *p)
+>         return call_int_hook(task_getsid, 0, p);
+>  }
+>
+> -void security_task_getsecid_subj(struct task_struct *p, u32 *secid)
+> +void security_current_getsecid_subj(u32 *secid)
+>  {
+>         *secid = 0;
+> -       call_void_hook(task_getsecid_subj, p, secid);
+> +       call_void_hook(current_getsecid_subj, secid);
+>  }
+> -EXPORT_SYMBOL(security_task_getsecid_subj);
+> +EXPORT_SYMBOL(security_current_getsecid_subj);
+>
+>  void security_task_getsecid_obj(struct task_struct *p, u32 *secid)
+>  {
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index e7ebd45ca345..5c766b901f66 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -229,19 +229,6 @@ static inline u32 cred_sid(const struct cred *cred)
+>         return tsec->sid;
+>  }
+>
+> -/*
+> - * get the subjective security ID of a task
+> - */
+> -static inline u32 task_sid_subj(const struct task_struct *task)
+> -{
+> -       u32 sid;
+> -
+> -       rcu_read_lock();
+> -       sid = cred_sid(rcu_dereference(task->cred));
+> -       rcu_read_unlock();
+> -       return sid;
+> -}
+> -
+>  /*
+>   * get the objective security ID of a task
+>   */
+> @@ -4222,9 +4209,9 @@ static int selinux_task_getsid(struct task_struct *p)
+>                             PROCESS__GETSESSION, NULL);
+>  }
+>
+> -static void selinux_task_getsecid_subj(struct task_struct *p, u32 *secid)
+> +static void selinux_current_getsecid_subj(u32 *secid)
+>  {
+> -       *secid = task_sid_subj(p);
+> +       *secid = current_sid();
+>  }
+>
+>  static void selinux_task_getsecid_obj(struct task_struct *p, u32 *secid)
+> @@ -7221,7 +7208,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>         LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
+>         LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
+>         LSM_HOOK_INIT(task_getsid, selinux_task_getsid),
+> -       LSM_HOOK_INIT(task_getsecid_subj, selinux_task_getsecid_subj),
+> +       LSM_HOOK_INIT(current_getsecid_subj, selinux_current_getsecid_subj),
+>         LSM_HOOK_INIT(task_getsecid_obj, selinux_task_getsecid_obj),
+>         LSM_HOOK_INIT(task_setnice, selinux_task_setnice),
+>         LSM_HOOK_INIT(task_setioprio, selinux_task_setioprio),
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index 99c3422596ab..fc837dcebf96 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -389,22 +389,6 @@ static inline struct smack_known *smk_of_task(const struct task_smack *tsp)
+>         return tsp->smk_task;
+>  }
+>
+> -static inline struct smack_known *smk_of_task_struct_subj(
+> -                                               const struct task_struct *t)
+> -{
+> -       struct smack_known *skp;
+> -       const struct cred *cred;
+> -
+> -       rcu_read_lock();
+> -
+> -       cred = rcu_dereference(t->cred);
+> -       skp = smk_of_task(smack_cred(cred));
+> -
+> -       rcu_read_unlock();
+> -
+> -       return skp;
+> -}
+> -
+>  static inline struct smack_known *smk_of_task_struct_obj(
+>                                                 const struct task_struct *t)
+>  {
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 21a0e7c3b8de..40e1d764e616 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -2061,15 +2061,14 @@ static int smack_task_getsid(struct task_struct *p)
+>  }
+>
+>  /**
+> - * smack_task_getsecid_subj - get the subjective secid of the task
+> - * @p: the task
+> + * smack_current_getsecid_subj - get the subjective secid of the current task
+>   * @secid: where to put the result
+>   *
+>   * Sets the secid to contain a u32 version of the task's subjective smack label.
+>   */
+> -static void smack_task_getsecid_subj(struct task_struct *p, u32 *secid)
+> +static void smack_current_getsecid_subj(u32 *secid)
+>  {
+> -       struct smack_known *skp = smk_of_task_struct_subj(p);
+> +       struct smack_known *skp = smk_of_current();
+>
+>         *secid = skp->smk_secid;
+>  }
+> @@ -4756,7 +4755,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+>         LSM_HOOK_INIT(task_setpgid, smack_task_setpgid),
+>         LSM_HOOK_INIT(task_getpgid, smack_task_getpgid),
+>         LSM_HOOK_INIT(task_getsid, smack_task_getsid),
+> -       LSM_HOOK_INIT(task_getsecid_subj, smack_task_getsecid_subj),
+> +       LSM_HOOK_INIT(current_getsecid_subj, smack_current_getsecid_subj),
+>         LSM_HOOK_INIT(task_getsecid_obj, smack_task_getsecid_obj),
+>         LSM_HOOK_INIT(task_setnice, smack_task_setnice),
+>         LSM_HOOK_INIT(task_setioprio, smack_task_setioprio),
+>
+
+
+-- 
+paul moore
+www.paul-moore.com
