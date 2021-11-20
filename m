@@ -2,102 +2,103 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EFBC433F5
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Nov 2021 15:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE68C433EF
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Nov 2021 15:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237624AbhKTPIT (ORCPT
+        id S237612AbhKTPJ6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 Nov 2021 10:08:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47128 "EHLO
+        Sat, 20 Nov 2021 10:09:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237578AbhKTPIO (ORCPT
+        with ESMTP id S229794AbhKTPJ5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 Nov 2021 10:08:14 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E31C061574
-        for <linux-security-module@vger.kernel.org>; Sat, 20 Nov 2021 07:05:11 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id g14so55632925edb.8
-        for <linux-security-module@vger.kernel.org>; Sat, 20 Nov 2021 07:05:11 -0800 (PST)
+        Sat, 20 Nov 2021 10:09:57 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0898BC061574
+        for <linux-security-module@vger.kernel.org>; Sat, 20 Nov 2021 07:06:54 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id e3so55650593edu.4
+        for <linux-security-module@vger.kernel.org>; Sat, 20 Nov 2021 07:06:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fzXH6/BOaOyR+jOlLVV20rWFQH1HC0nLxgMbwNTLeoI=;
-        b=VnIx/cKqCwk7FUlSoVAV4wSek3kpa3WFUTdjwmdqZMRL96DRCl0Hknvun9NouwIiE5
-         nimOfQku7kHUbG+NdnxA1I3SzQv4rOaPBkIerrluolnSLHGSaVwDgo4kz2ENY0W0jb+z
-         ybzjoTA2xfI3bpx10DPjOWg3xXXdfyuJQAmyYIQff7rKwKX8IcWX1bnd9R5XO9CyZ37k
-         SLvD3gM8e9DvI7IOmvGRoa7BEhld8JChZEyprR4UnIlUYTkWXSad5vxa4ffUlwXxlDm6
-         wHh4JdR0GBZOz6nmiT/LRDpv2bU8EMsG3sXyJ5XeUJF7pXg3GVUCglQXoAGEBBwgQ2d5
-         lrhA==
+        bh=229GptHGTuugtPeXarOWaGw8aaoT6JC7W/mP33NcG8M=;
+        b=fwK7L/vLhxYZlrksx1+Ak+HfDA49veNHLebqZZNqbMQfYSHPM5oT9SD2XB4NzaEMUw
+         kF0AEjlEmy+tjU65RqJiFh2/+jNhpEPdSF5adLlQZK6ApvLsIijLfJUnNdz6qEVX7eBd
+         NxYH9+UHPFYqZoLV6ziWRllhxd+YoiwKEI/cdEdD+IG+aM3SN/9yfA+FxpK1EjdAib/g
+         G3mibns6fkh2XOLDam6NMZmodSkTT7qSK9ojDnPKN26KAqplo4+jX6sbVZ4rlc9N/n5b
+         oko4ENvvJObgYSIjGXeFgU+uLgheP8LnWJz38LY/WwutoCR7mfVRrJ9qtMAKFYB7rH6J
+         RRXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fzXH6/BOaOyR+jOlLVV20rWFQH1HC0nLxgMbwNTLeoI=;
-        b=LGdwSLT6aEOTD4xeliJcen0gY9YchrAaqhKE2/gBjjAqjUKFC3WFzWuGHQU/NHZAUg
-         ekwtcIL6Z1wNVzhS6YX+OmcgbFmYeqvuq7ZA7U0WIMyonaBVsqu1pnlqCr50omI/h+9a
-         z1zDubKcAh2CtWZ8vknPLqrs7RmbuTPpULyBYGaUejqARNH1gYGFJG2/jmdcL2nMomPH
-         x0i8Wp6avYgFgCYdILYxqPwJ8XhYxPrgeM0bZZWXuNVG2VjVVxJUk0gjptn0M2RXiHvc
-         ZxCvIsIdsuWDgKZnNsZeZ+45rQm3gSimvM+WtTHcR9Sl+O7oYr2XWN0SxsPyYNFjhu+f
-         g5ug==
-X-Gm-Message-State: AOAM533+KY8Uwq5qtCI0F22kXXUzV6tPwJ2mkWpZS7HEUje46IGSj1X/
-        oSWFujYYtVjoaaBVtAwQsUUfM1/fru19LjLB65eKYNNuAA==
-X-Google-Smtp-Source: ABdhPJxju8kR43yEDBDGQj/pr7f6xBNBvAklXH+iF7Vnxl/SDis6Bwh8preUc40IJfplUuRIPyCeJggoZvlMh2CCBx0=
-X-Received: by 2002:a05:6402:1a4d:: with SMTP id bf13mr39139436edb.101.1637420709675;
- Sat, 20 Nov 2021 07:05:09 -0800 (PST)
+        bh=229GptHGTuugtPeXarOWaGw8aaoT6JC7W/mP33NcG8M=;
+        b=SSgU0n2y497KhZWttiQC4schJnS7xGK6AniVWEfwfN/5Z14UEVhEEdsEwOLA1bOlG+
+         g2fazbxKUPmaY6HYYPRd1B9QGx7IcKPiBWsv4C3W4LIcsCS0iygYcDvciGtESXfpZCMC
+         syPdCoIc/zOS+Y9ihLxI9qbACrfe2SrTqiN0NM2K4L9O7ptfVEWQ/ipttOKsG8u7SvL8
+         /UOxHdmpoQDIYM8dZuMOj74a8Pba9pw3k4ZjFW+tdjuosm7mTdxrEBq56z12472fK+0F
+         iwWF9ZeVYKvndNdIMYmDeoOj4x83R5y/hN5Ye8v6vFEiClD55hU/osHpkPk4QIxsQpmM
+         /fWQ==
+X-Gm-Message-State: AOAM530Zcbm8KyUHmfrF0qitWC38EBz6RXaItwf/oWJzbDoxmtYlC6cC
+        iAJ+8x1G+qQpP6uFg8qdSAVV5+QZ30ApxH0lL+1NbEf7yg==
+X-Google-Smtp-Source: ABdhPJzvRoPzdV3fOPhd8tKiRJ9PDS8uU4hw7694pkvmRePkrALjlKV0vjAi2RR7ktacNNjUQKHKEC5HkZbH8li9nX0=
+X-Received: by 2002:a17:907:868f:: with SMTP id qa15mr20385085ejc.187.1637420812528;
+ Sat, 20 Nov 2021 07:06:52 -0800 (PST)
 MIME-Version: 1.0
 References: <163294304032.208242.9097581875096098591.stgit@olly>
- <CAHC9VhQtGcLg3cv6dzB=UeZng+xBOwvC2PrvTfJG6V5ASrbxvw@mail.gmail.com>
- <20211119232305.GA32613@mail.hallyn.com> <aeb3a040-b1b2-f6dc-6744-4e9d1979e351@canonical.com>
-In-Reply-To: <aeb3a040-b1b2-f6dc-6744-4e9d1979e351@canonical.com>
+ <CAHC9VhQtGcLg3cv6dzB=UeZng+xBOwvC2PrvTfJG6V5ASrbxvw@mail.gmail.com> <e5f141ee-43fe-56e9-e47f-f9da518b3e73@schaufler-ca.com>
+In-Reply-To: <e5f141ee-43fe-56e9-e47f-f9da518b3e73@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 20 Nov 2021 10:04:58 -0500
-Message-ID: <CAHC9VhSoJZdTgBaXxAT+5=xi1HD_B4gSKVjx2ZQL56qOvRBagw@mail.gmail.com>
+Date:   Sat, 20 Nov 2021 10:06:41 -0500
+Message-ID: <CAHC9VhRx4KSMunuijEF+Bf7GzmBr7zXKwwW2mhOgTg8DfOCsWw@mail.gmail.com>
 Subject: Re: [PATCH] lsm: security_task_getsecid_subj() -> security_current_getsecid_subj()
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 19, 2021 at 6:59 PM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 11/19/21 3:23 PM, Serge E. Hallyn wrote:
-> > On Fri, Nov 19, 2021 at 05:52:33PM -0500, Paul Moore wrote:
-> >> On Wed, Sep 29, 2021 at 3:17 PM Paul Moore <paul@paul-moore.com> wrote:
-> >>>
-> >>> The security_task_getsecid_subj() LSM hook invites misuse by allowing
-> >>> callers to specify a task even though the hook is only safe when the
-> >>> current task is referenced.  Fix this by removing the task_struct
-> >>> argument to the hook, requiring LSM implementations to use the
-> >>> current task.  While we are changing the hook declaration we also
-> >>> rename the function to security_current_getsecid_subj() in an effort
-> >>> to reinforce that the hook captures the subjective credentials of the
-> >>> current task and not an arbitrary task on the system.
-> >>>
-> >>> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> >
-> > Makes perfect sense given the motivation of 4ebd7651b  :)
-> >
-> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> >
-> > Oh, actually, one question below (cc:ing John explicitly)
-> >
+On Fri, Nov 19, 2021 at 7:42 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> << snip >>
+> On 11/19/2021 2:52 PM, Paul Moore wrote:
+> > On Wed, Sep 29, 2021 at 3:17 PM Paul Moore <paul@paul-moore.com> wrote:
+> >> The security_task_getsecid_subj() LSM hook invites misuse by allowing
+> >> callers to specify a task even though the hook is only safe when the
+> >> current task is referenced.  Fix this by removing the task_struct
+> >> argument to the hook, requiring LSM implementations to use the
+> >> current task.  While we are changing the hook declaration we also
+> >> rename the function to security_current_getsecid_subj() in an effort
+> >> to reinforce that the hook captures the subjective credentials of the
+> >> current task and not an arbitrary task on the system.
+> >>
+> >> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >> ---
+> >>   include/linux/lsm_hook_defs.h         |    3 +--
+> >>   include/linux/lsm_hooks.h             |    8 +++-----
+> >>   include/linux/security.h              |    4 ++--
+> >>   kernel/audit.c                        |    4 ++--
+> >>   kernel/auditfilter.c                  |    3 +--
+> >>   kernel/auditsc.c                      |   10 +++++++++-
+> >>   net/netlabel/netlabel_unlabeled.c     |    2 +-
+> >>   net/netlabel/netlabel_user.h          |    2 +-
+> >>   security/apparmor/lsm.c               |   13 ++++++++++---
+> >>   security/integrity/ima/ima_appraise.c |    2 +-
+> >>   security/integrity/ima/ima_main.c     |   14 +++++++-------
+> >>   security/security.c                   |    6 +++---
+> >>   security/selinux/hooks.c              |   19 +++----------------
+> >>   security/smack/smack.h                |   16 ----------------
+> >>   security/smack/smack_lsm.c            |    9 ++++-----
+> >>   15 files changed, 48 insertions(+), 67 deletions(-)
+> > I never saw any comments, positive or negative, on this patch so I'll
+> > plan on merging it early next week.  If you've got objections, now is
+> > the time to speak up.
 >
-> >>> -static void apparmor_task_getsecid(struct task_struct *p, u32 *secid)
-> >>> +static void apparmor_current_getsecid_subj(u32 *secid)
-> >>> +{
-> >>> +       struct aa_label *label = aa_get_task_label(current);
-> >
-> > Should you use aa_get_current_label() here instead?
-> >
+> It's OK by me.
 >
-> yes, that would be better
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Will do, thanks guys.
+Thanks Casey.  Are you okay with the AppArmor tweak mentioned by Serge and John?
 
 -- 
 paul moore
