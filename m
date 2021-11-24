@@ -2,64 +2,64 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2037C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Nov 2021 04:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20CF1C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Nov 2021 04:43:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241176AbhKXEqf (ORCPT
+        id S241128AbhKXEqd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Nov 2021 23:46:35 -0500
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:62652 "EHLO
+        Tue, 23 Nov 2021 23:46:33 -0500
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:61732 "EHLO
         mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241047AbhKXEqA (ORCPT
+        by vger.kernel.org with ESMTP id S241042AbhKXEp7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Nov 2021 23:46:00 -0500
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AO2xVsH017989;
-        Wed, 24 Nov 2021 04:42:35 GMT
+        Tue, 23 Nov 2021 23:45:59 -0500
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AO2pLtw011710;
+        Wed, 24 Nov 2021 04:42:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2021-07-09;
- bh=snr3xQmzBk/LUQDKPkNtwD8VZ8jb68osOi5mIh434bw=;
- b=Y6Bmo9/kLsKwdqIQQvfzbckRh7sK8I+5Heevt8bauv0RdIzntZBfQxeXeBSRWvKK8gG1
- PPhGyeEdZ82FguXSI4GnHdWLQXZD7KLi0mf3K8FtYjW8o70Z73Uz9X8p7Zozk4tIIVqu
- G395h6OVNgVe2/ksRAKbn2YFCZjmybHrBr9azFYk2bu42lbmIeNuBOsbxg9NXHJG4Wqo
- eyvGujxsVDbDeil4YIYlvprHzUO2ZOG0f02kestnwi5KjvZbB//7JsKSI3Y91G2K5knh
- Xc6Auwr9tGT7q9gvPEYghRcRCBgEUJFMLKNdzY6ow9XO61sGWoWJdUaoM36OF8q7Ox04 0Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3cg305dpfb-1
+ bh=xMlCfdFVGWyitMdYY8+0D/BgfNqZdYXGLvgJQGc2sUI=;
+ b=grC/9V5ubBQYgP5ssJiyhA4WrtjWGs0VmFV+NxWBsG/okqV2Ms9br5ffe7FsAuW179XS
+ MpSWBAUB1oLKd0qQ+MjdgTmH89lyJqAXQbI2K1dFbfilbOD5EgizLfikPsTOt8lHiz5k
+ x9em9g9Ak4NDhJUAyZfdpNu4SjafZUS5xv9YlVRvtsBQIm2L0PQSl7b1rkfkohXmqkDV
+ QQGLVxCkEpNy1R5LeBcSYgIgHFpIZFzNTDQ8n+N0EfU6A0QT9eS9//pgKPcQjfe8cDFr
+ ZyXUIQWNstIcwQ662UZFA6GE3oqHme5i45wsR9NZzc0jPvwhY9d1J5VNoE0Eu0z4B3Ts HA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cg5gje9f1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Nov 2021 04:42:34 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AO4epXH137205;
-        Wed, 24 Nov 2021 04:42:33 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2108.outbound.protection.outlook.com [104.47.55.108])
-        by aserp3030.oracle.com with ESMTP id 3ceq2fbuq3-1
+        Wed, 24 Nov 2021 04:42:28 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AO4edmG036817;
+        Wed, 24 Nov 2021 04:42:27 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2104.outbound.protection.outlook.com [104.47.70.104])
+        by userp3030.oracle.com with ESMTP id 3cep50s6fs-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Nov 2021 04:42:33 +0000
+        Wed, 24 Nov 2021 04:42:27 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L+WLdDMpTkU3nTv3+ILTQJg1dw3elRxTJRSEbfv6MUnCGePAjdF8NmGamBD55Xp6ZVFSz2k3GxzfIyX5IGcMQmAPNkdemOI4LxweI/As3Y5IlRL8CMtp2OaMOeES0w0eErUYXBTaMXHYXZWZzH9z7x9s4D6RAj7Wmz2WjLrFp5PC5rTGOm31Qip7r60WFvuzF1Y/MFz1aYl+7hEnNwBbBmUPeVE5I/4pZIcB6IJBqyEUqUnillSMrDRBTGSTtxLLvVj86uG0EYBaPjVsNokAGCW/QUy1wOb/H5o5U82o5QSlgaPXNPX04bigr+TdvV0QUfyTD/H2/DbX7bcX3mXrNg==
+ b=BOGQRN433cH+xNzKpC1T9ItOMyLzPLDXsIOKiAibkKBTGobebolANzRCm03+VLMiT67QS8YzVG6Gq9gzaDRfd6S6Wq628SxM8zXDnk8P97fxJGh6bUKZ33U7QPVjBDCD9jNNcuYGa4cpk4aMy+LBMEN1CE01QAyn1vqeW0jRc0k7a2/SYtZg81+A0RX/3qW2CtESeleQ0wJEiaYudFW693N+fmkyVDZN3COvcTy2So9WLpoCY9ZTX1d7IMW7070NOJKq6eNmmerQoMTjNcSTuQA19s1oM1fMThq/uQJAhvJhQe7oC2vjDHcN3aohHYmcnODCinN2zYxyHdd1ZyQ/7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=snr3xQmzBk/LUQDKPkNtwD8VZ8jb68osOi5mIh434bw=;
- b=EQzF/6RipB9QC0i/EzKXFb/oc+dDYoMO73X4/+Ww2qrniZjpe0M7DWc8EPDadqWqxHRquYml24s0gl2G5nSherWrj4oQWA2TksLtIFYH6A55W+aGBUsfyNsxCUk1Lz+zmEjREHFn20KSgH/yhJXJZesgDND4BMKHw3UNMNdowHmwL3BvsQqKeO3WQD8LCDi4rNYdluuapzbER4QP7pgurwEaqF8axONmC75FZdw31Lz2EAhd9lmCQMKFMFdyRkzlJWYv0XBCqDfndrD6QtghZ57O4AZ2Oc2X5OC6psHD0QBcMSz1/Q32JHIObwQWBs2UNTi7IcQWasPtYZYv+ck6og==
+ bh=xMlCfdFVGWyitMdYY8+0D/BgfNqZdYXGLvgJQGc2sUI=;
+ b=kU8phO2XltmDEZn95p92XFWt4zdbCyerdglQIPIkJ9fWuZQiF0D3uit7gnPi+vvNopZgPBnO4uZ6CKYrcRURgg+zeDlohDNybRPloSErKidrNHXUCsiuUcWauTPu75xvOEG9B78YsHvxAUlF/ZeeCIgdgY4LiH4C4CFbo2gPk0InwJHNpYatF7n+mKlw/ngibhW02CbLEMBmEWarcCvHqpEzCN0nnZji2HQzk1p83udTNnezodLnnsB9NaL2kczn5SWr3FZn+wXHEo/PqQJh26wnmw+7FNF/5eqCvcOqtaGr+uf+KLSNWEqtQRxe27TnoY2Ig3WJeaVsni5Y8Qp/EQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=snr3xQmzBk/LUQDKPkNtwD8VZ8jb68osOi5mIh434bw=;
- b=KUML0XwllLW9x5jQOeK9lwDCioUBqrVgn67pw3zh902f/deFlfjFEIMikh42SOAzIgPprqd3ir+zdhs3yfMCHulWWoz5kzD516NlOLsqkWnzEafpbhZoqsEZUfelcr+XzeKecDe3NYZ0+aRrw6/842BnIBnktxnWGtLH2Uip/T4=
+ bh=xMlCfdFVGWyitMdYY8+0D/BgfNqZdYXGLvgJQGc2sUI=;
+ b=eF/wlP/iFr09E3ywq3B00zrQa4QpuagEbDm6vKIVU8Uczpa3aRlGR1JoyvfYzlvXtnryupAuDhAGYlHH812JfjsBbzJ/oiiSOQpdeCEpqZPT/p1Jxn+A9cwyl3J+2q+bk2p28gzUnVS4GJ0BvnkEh2zeV8Frg4gqcwK2gXbnjTc=
 Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by CH2PR10MB3894.namprd10.prod.outlook.com (2603:10b6:610:8::23) with
+ by CH2PR10MB3957.namprd10.prod.outlook.com (2603:10b6:610:b::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.20; Wed, 24 Nov
- 2021 04:42:31 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19; Wed, 24 Nov
+ 2021 04:42:25 +0000
 Received: from CH2PR10MB4150.namprd10.prod.outlook.com
  ([fe80::65b8:d8e7:e373:4896]) by CH2PR10MB4150.namprd10.prod.outlook.com
  ([fe80::65b8:d8e7:e373:4896%9]) with mapi id 15.20.4713.021; Wed, 24 Nov 2021
- 04:42:31 +0000
+ 04:42:25 +0000
 From:   Eric Snowberg <eric.snowberg@oracle.com>
 To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         zohar@linux.ibm.com, dhowells@redhat.com, dwmw2@infradead.org,
@@ -73,9 +73,9 @@ Cc:     eric.snowberg@oracle.com, keescook@chromium.org,
         linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
         James.Bottomley@HansenPartnership.com, pjones@redhat.com,
         konrad.wilk@oracle.com
-Subject: [PATCH v8 13/17] integrity: store reference to machine keyring
-Date:   Tue, 23 Nov 2021 23:41:20 -0500
-Message-Id: <20211124044124.998170-14-eric.snowberg@oracle.com>
+Subject: [PATCH v8 11/17] KEYS: Introduce link restriction for machine keys
+Date:   Tue, 23 Nov 2021 23:41:18 -0500
+Message-Id: <20211124044124.998170-12-eric.snowberg@oracle.com>
 X-Mailer: git-send-email 2.18.4
 In-Reply-To: <20211124044124.998170-1-eric.snowberg@oracle.com>
 References: <20211124044124.998170-1-eric.snowberg@oracle.com>
@@ -84,96 +84,146 @@ X-ClientProxiedBy: SA9PR13CA0127.namprd13.prod.outlook.com
  (2603:10b6:806:27::12) To CH2PR10MB4150.namprd10.prod.outlook.com
  (2603:10b6:610:ac::13)
 MIME-Version: 1.0
-Received: from ca-dev113.us.oracle.com (148.87.23.10) by SA9PR13CA0127.namprd13.prod.outlook.com (2603:10b6:806:27::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.12 via Frontend Transport; Wed, 24 Nov 2021 04:42:27 +0000
+Received: from ca-dev113.us.oracle.com (148.87.23.10) by SA9PR13CA0127.namprd13.prod.outlook.com (2603:10b6:806:27::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.12 via Frontend Transport; Wed, 24 Nov 2021 04:42:22 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: aeae2ddc-3305-47af-e0fe-08d9af04d32a
-X-MS-TrafficTypeDiagnostic: CH2PR10MB3894:
-X-Microsoft-Antispam-PRVS: <CH2PR10MB3894D7C216E8683FE6826CC287619@CH2PR10MB3894.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Office365-Filtering-Correlation-Id: 9e5b7768-42cb-4969-2068-08d9af04cf6a
+X-MS-TrafficTypeDiagnostic: CH2PR10MB3957:
+X-Microsoft-Antispam-PRVS: <CH2PR10MB395747BF9131AFAF9F7ABDD787619@CH2PR10MB3957.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5lUtTBeMJdOvdWoaHnVEJ4y45kHu1fBZgZZhAsUR2VgxrXamj8uKEcI7vYnOWaw3AzT79n78AIAd4HA1lIihpEl6pYxY4viIU570mqKdmvzfd9OIj4pOg4iqNDemBpPOo3cP8dTYwIP/0OOCiYFM51PYJ/Xq8/Mcrfw2NEAX3PpXsq+iBH1ctfCFPSWrSuQ3Yuz/jPmuvSvpjOwC+7NdNkr7M8E+oQHph9KdaKxUmefYGKi8PQgthTlbBOGId9OLWfQ58vmQp92lozJdPtY7GKjPyy25qeyiybhjm86PEyeFzrB/42DcSmaJRNqO2kXV7YODv3PyyQUmfeW56ORPxxCltFjqi32sWSJNy3c6N64n5aCukyZaEImcHl+eA0MjwdLp2lQR0zVAKKOyn2nmxI6illV9Bd/bAcVOD2yN30qlLPWAp8UE9Ph2akwUO+SuyQ+RFAL0pdwuShQMyDXPaRz47uETD1Nq0gvUqqB54TUmjnc4asC3qvT1AlmgfgBeU+730CO/rNS6MmFABh4e5QgwekfxhmkJSNVHuzPrQ1O8I3MmFhzNX8CTrTlkCTyzlDkvK0Zzj74P9hohP5GeCmMCBQdYa6PYhZYFdA+iiSbDuRdy3B7wOcBjnoRowfveFJLA8tZXEbpJCx9LVWg0kwBxQi2Kzq+wOqZSW42mPd0I55EA3VgC/JjtmCuAC3AAvf8lsXN6MrssrQyPwmaQAS9e3FcFiveZ1j6ewJb1qOQ=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(956004)(921005)(36756003)(86362001)(83380400001)(508600001)(5660300002)(4326008)(2616005)(6486002)(186003)(7696005)(44832011)(26005)(4744005)(8936002)(66946007)(52116002)(8676002)(7416002)(2906002)(66556008)(66476007)(316002)(107886003)(38350700002)(38100700002)(6666004)(1076003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: G6o3HrS0wjU7OgazH1YQ3Mi3xO5gLIRcNqTY8d4XMNMHJR5tSI7ceT8IH/50rGRQb05OCqrIdPxrNdF/iEiedv6oBM1xNSuf5GsW9VzgoFnpKNEVqDn02Ekken2HtKUFXDoqXZMesuMHjzXOzs4R5/10jx4LPNFCIUyGgfnMfXh9lVmCZNSAv9QcLWl0GzugcZZv0/zrjIe8jsWvXiHQf+sCTKNSmpFW7eMYf8gGN5iqBr34RDz90jvKqZx2RKpM6h9Ghow3TXeYjPwpmr2DXVa2cNYE8NAa38uaiGq3c7oVL7rlRfbnSU59+u6D1wJVIzCbrLZPNdeMYPTedm0yEW5l3slrnPJgECmjjIRRvRQkLgc+3/3nIcaskE53MFFrq6qn7da6FIKRME5hmJ+FCBwmd0umRB6xp4JL0TRlESy2yQCib/fdSt5U3c9z/3+BjnNxtbIW6TIkLRVAK0w5UNQATFZhlxNnnpz/DlkzDlIYVt+WyXcijZfUJM3Us9T1XCLcq/gkxjn6CVkKHfNPT8gSaX+mwabz8qFr59N0XaL/RL9fXjxC00yjgMMGNx1gC6/vTY7weOUw/GiJ9i9e0RibNVJMwF27DWueh9kmUTuXTyWmWV1oWZ+JzP3X/tkPX48l/nereoQUrKvoH4HpKHYeNdpslyt4dLJMecjr5FKXCncbXQfEGYTUUyduRmFVcM19wQnvfqunx8WmZdneeTFeQ2w9sp1XdqPmKbgKjkg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(6486002)(5660300002)(36756003)(66476007)(921005)(66556008)(186003)(7416002)(8936002)(52116002)(4326008)(956004)(44832011)(316002)(107886003)(38100700002)(38350700002)(66946007)(8676002)(86362001)(2906002)(7696005)(1076003)(508600001)(6666004)(2616005)(26005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YdH5e+nvujvRQ/r69X8tfxVl9LUZOVYmgtZeJTWt3gYAiCIjW8jf7IPd3yH2?=
- =?us-ascii?Q?IZ5Cguinb8ne3NHbKY/U7P+kiFL/vXLwOTdKuYUvAC4XrEfoBx0L5ezw5MTQ?=
- =?us-ascii?Q?G+aJVtcjyOqvbXLAs/mZ5LuOYOLYqBuviJjE0wbNh/re4Mdq3/DYDbCf6fAP?=
- =?us-ascii?Q?3RkdalwomaDFtKOITvPgJjXhOaqfCpwGx1EmLuoaZ0Y9ABQ6ZfZiB7yH2D6u?=
- =?us-ascii?Q?OHypitawUztkGzo7oe9uWN6tFZAjN13fHn3DBBgfkGQ01MR59IeIQ+aK0xRe?=
- =?us-ascii?Q?Oipx7RA1Oy3uk9xEp9ppF6/YF7jDyBTulobImzWpuo4I6Ms3SnmrmBoDYPzD?=
- =?us-ascii?Q?p5nyGu7APmYK9VEWEE5WUtjIZL/lDuiAxvvLvyK5wjTJKeyHZ/gsOHtTXxT3?=
- =?us-ascii?Q?Xfn18o2Zh+H6AADE/J8D5hkoOgANK0Pk6+hCvt9wy59r+E7+3faUn+4wJvN3?=
- =?us-ascii?Q?g+gvuFXDvWWoWbnIUZFxvdnKY0j15y/G5iWky+QeMGgleH0tFPEB3JoLdEJ5?=
- =?us-ascii?Q?BulWvKgaZmwwfenvyvSoONdmN8XfdD5iTOT58l04VZ+tBn4JjAd5MiIWZMHn?=
- =?us-ascii?Q?8K7i3U+9/iKsEcExymiLk3I5mCfwJGQo1RWBVAnbcNuw196X0z7bjPnYB7tg?=
- =?us-ascii?Q?rRYrSlA4r3G4fhB991ZUCJkogyqr7CkKXryGvH6Kt43U+Z4luRetMzLlxNwz?=
- =?us-ascii?Q?qDe8/zJ5cb+oR9oLTqMAYV//JtHc4ynW0EstZGCv7+0QtnhJWuZaR6N4sCBZ?=
- =?us-ascii?Q?LOha3r8gYEt4HPggn3Tz0aDeI1ngW4KVbWqLNOT6RuadKhcx/WuWyn9W9px+?=
- =?us-ascii?Q?cpr2sEWxsJen9q5BoHr3gVylJ/2ZT2w1tlc87tNL66VCC8Yfm69Cjm9h4sCW?=
- =?us-ascii?Q?00gdSSUJn76al9OMtM/o2Lf9z+ZCKyM7qe1LpHvj9GtPv8lVcv1gGnPoSVzg?=
- =?us-ascii?Q?4Bj+ZYwP2WIm98oYVpKGRUhgJvCU0umK2HUimDlUUy9UNz/qm7/CuRZVkO/J?=
- =?us-ascii?Q?/0VQ7D7PfLJ9exUOSZy33yM0s+ceozTPXQCnOo15y2jx2xYG0kLZt5PidOp+?=
- =?us-ascii?Q?oRmHN/RcNDBFhKIWuP1ErThjAiI1hwJH0qPpnghR8OQZLDJCSql5JX17Wk5z?=
- =?us-ascii?Q?oBeksFxWXvfpuKGn9L6wj/wsL882WxfAsTw9dDmJsLWO6nVVxbPhpn3pdYUS?=
- =?us-ascii?Q?aNojo0d02llHuaVWvW87CcvAfNNDru7UyRNr1+8zWulh/mUc/DqIUTJLSk39?=
- =?us-ascii?Q?l2rWWgKybZIVHUjVJPEMw6T+KafqyKKs9u5nxQ6cuzoiZ1S/WBo/+PxTeNz2?=
- =?us-ascii?Q?noCLcYCOCu6mOYXIaDCcDkms3JUYsHU/EzVyA7gWQrAZQBWVEZsx7b/jiLdF?=
- =?us-ascii?Q?p/+BMB4oQxboohFV3Dda/R3gv1RS/ufIdojoa2m3i1o9Mij/psEpdgmM5DBV?=
- =?us-ascii?Q?9qwaWfIzze7qsSRyW6knoDj3i89+qUzL4HuOX5ctKop/srPARXF9duOJsD+X?=
- =?us-ascii?Q?4XfZ4lUSh0j0kX96BxNlAB5ziTE91+F+aw1pE8wCWMrNhciwldcLW82tmQaL?=
- =?us-ascii?Q?Se9BK3rS7XZEpJooawyXAKuwJMIcomlReCwwYV+AanrW68Kih4dSfMvp1z/r?=
- =?us-ascii?Q?5C9bF5ethmemiANrBZMcq168BqrUYKIgB2Dm3PVDvb/rue3vv7obMfVo1/uK?=
- =?us-ascii?Q?tw6Vgg=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?fgkczo32cuXBaaeBO4oGMDwA7/3roEzzO4OGTdISBLFnqZ2XkRmmrMFASZc9?=
+ =?us-ascii?Q?rzbUeHC2YJ4eXbpXcL2X3ITqYsImMAqD2NLmGzBShChqptB3IjA4tEj2vjv7?=
+ =?us-ascii?Q?sthz6OQHqheXGrfirGykb6qclhy7VjIHdW8bBKC41MC+w81d6OUIGGaWxDir?=
+ =?us-ascii?Q?NSxCY3pKd8S7Kx/L+3clJ4JNHCCchp4Aml5kuQ+yA8JOdCovT/BsAHamdzbr?=
+ =?us-ascii?Q?OMY4VuIDGxnRjwAiq4QTF3/br36E7rleCDL1/Oddu6z0yis06sSixBhQAVnh?=
+ =?us-ascii?Q?uIfCa+H1Lna6DHrEGNnb1fgA2s9mEMIWWwzza5jq01rMYbf3G27yFrdbiy1i?=
+ =?us-ascii?Q?8TeYsr+te8pJKYFnOLNEX6RhGHEwgyx3u+WrK3B2iZvM9sj+yZhaHDkR9ILl?=
+ =?us-ascii?Q?b961uz8NsK0vnqHuS1/Qhj9ldYI8aWMC7rgZUmoDfS57IADj1/L1e6h37qD3?=
+ =?us-ascii?Q?RTtgPxNIbt6ko4VDU19x1aKi4+/9FJ0fxa0aPfBY5xo60Rw83NuLm5dCaxdA?=
+ =?us-ascii?Q?rMLIsGw8YflQMKOyoQ8g9vKcFTC+e/rcha66OUr4WNdc6XzWjtq6g+m8Ee1U?=
+ =?us-ascii?Q?V1rkAeSeLD1J+4TsPKuZ0JvxVd2ZqIkY2NtbPw0yzYGBAc2mw38tzezv2XCX?=
+ =?us-ascii?Q?opI4Jt8dhTRAC9BkyfxbiCYEUAMdhnqOCfEN3owEmiwlU3hlSom1PIHzx6Ht?=
+ =?us-ascii?Q?E7Eyo0gowmnegNeIZgBlp++AqmEPWd7LleiVEjfkCdDj6IRK3/Dc98BJyrN9?=
+ =?us-ascii?Q?piEY1JvR+lqQXz+eGm3776nb5Mb5cqcp2Otw+jdeDscpmcftV1dn3X9+3k2F?=
+ =?us-ascii?Q?BMPRs6tgf3C6gWHF+rbZjNfMPOIjwqzr/9/MR/6Zbq3sI1IRK0j4GB4rYr6A?=
+ =?us-ascii?Q?pXAw9zfL+Rp+Q80kduQDgL7CAx8ZDK4QV12Tgi2B1ebs6uz6oOmsW0HZDDRw?=
+ =?us-ascii?Q?B5Dq1F4d//oVE9eqSTr2SF1/b2Rf2ph9Prw11pSbqXbVqOf8B1CIckzrceny?=
+ =?us-ascii?Q?+7TTREhnoZTNCwJqyp9zBwVaOMufx3pSHOB2fQhwMR4FsfPeD9wKQY2twBu1?=
+ =?us-ascii?Q?ao8IzVBFDp6HrQsywNE29X54/HVLmafpEp6Xz+cvqkgmn7h1dNU/2tiesd3P?=
+ =?us-ascii?Q?1ZSQw8WJ5ab9ppd9VRcLfXevhcSaGwR3ewyNs6z4Honhy+GcZFyS4OBJJvmE?=
+ =?us-ascii?Q?4BKCBlCl1NVWqPreReg6VxrBqV7leLJKtLLfpg39nT0T08tM0WsrrhdCKXh4?=
+ =?us-ascii?Q?0wONCkhZGsiLRTS9djpGF7bXhl1lwPGSu9z9YSmDhPykjHod2l8J+svq1j2x?=
+ =?us-ascii?Q?7G6PfjK3lxzawCOqi2qLEYYkn8defdJXThi+Heup4As+c+iCLoLwwKwr4Ml0?=
+ =?us-ascii?Q?lHSPMSe14g3PnaZKeHFtXIBsJ1PBEsFsCpHdrlH7oCxurGVsbw/CDikh7/Ih?=
+ =?us-ascii?Q?X9tUqnLJlxgGFKetFTL1VzScd8kbBaILeXHV6Sr0yrBCtMv7MfObG0mjqg1W?=
+ =?us-ascii?Q?mrXZguuzYQi6ObHSaPbbmP321AWFSN9f8krJVqV4i3oQdzyAoXuyoydMnOcm?=
+ =?us-ascii?Q?ixKMDkakiyPLmIOrN/y2L77Fg9/eUxDXp4UvrxuM+dcvT4rVoSbID+VZqmwI?=
+ =?us-ascii?Q?W+Eb7wlExN1oewh0Su+sQqv8E14Z/DQQA1kXgSrgj38lWhTS5WtwsxWbeEIC?=
+ =?us-ascii?Q?Y4VwaQ=3D=3D?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aeae2ddc-3305-47af-e0fe-08d9af04d32a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e5b7768-42cb-4969-2068-08d9af04cf6a
 X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2021 04:42:30.9607
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2021 04:42:24.9571
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7eXKT+VMeKg6mHKKEAw5a+KYVcVjeNWqgwY1IYe1jd3LfSl8gxhAwDQMFGkJkn8vR4AXYVLI8PZpxueUXiQQhDl6JtstqY0N0WO0U3KzWp0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB3894
+X-MS-Exchange-CrossTenant-UserPrincipalName: wlJ3L6VR9TYg2bOPKQIE6J7ex6Tb/esfrycpGJ74d6lzyCug6dxGmgvrCPEUmaqZ9rNtoa9kbOLVtcd77ILMbmXUPFGTCDUsyy4rMzx2uoo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB3957
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10177 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 spamscore=0
- bulkscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 suspectscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
  definitions=main-2111240026
-X-Proofpoint-GUID: e_C2tgCCP4sucOPTNTG3ZMkfvyqRIxN0
-X-Proofpoint-ORIG-GUID: e_C2tgCCP4sucOPTNTG3ZMkfvyqRIxN0
+X-Proofpoint-GUID: 3hYKo_I-qoN2PKe5jxPUZzn2VFarWQbU
+X-Proofpoint-ORIG-GUID: 3hYKo_I-qoN2PKe5jxPUZzn2VFarWQbU
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Store a reference to the machine keyring in system keyring code. The
-system keyring code needs this to complete the keyring link to
-to machine keyring.
+Introduce a new link restriction that includes the trusted builtin,
+secondary and machine keys. The restriction is based on the key to be
+added being vouched for by a key in any of these three keyrings.
 
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 ---
-v2: Initial version
-v3: Unmodified from v2
-v4: Removed trust_moklist check
+v3: Initial version
+v4: moved code under CONFIG_INTEGRITY_MOK_KEYRING
 v5: Rename to machine keyring
-v8: Unmodified from v5
+v6: Change subject name (suggested by Mimi)
+    Rename restrict_link_by_builtin_secondary_and_ca_trusted
+      to restrict_link_by_builtin_secondary_and_machine (suggested by
+      Mimi)
+v7: Unmodified from v6
+v8: Add missing parameter definitions (suggested by Mimi)
 ---
- security/integrity/digsig.c | 2 ++
- 1 file changed, 2 insertions(+)
+ certs/system_keyring.c        | 27 +++++++++++++++++++++++++++
+ include/keys/system_keyring.h |  6 ++++++
+ 2 files changed, 33 insertions(+)
 
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 74f73f7cc4fe..109b58840d45 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -116,6 +116,8 @@ static int __init __integrity_init_keyring(const unsigned int id,
- 	} else {
- 		if (id == INTEGRITY_KEYRING_PLATFORM)
- 			set_platform_trusted_keys(keyring[id]);
-+		if (id == INTEGRITY_KEYRING_MACHINE)
-+			set_machine_trusted_keys(keyring[id]);
- 		if (id == INTEGRITY_KEYRING_IMA)
- 			load_module_cert(keyring[id]);
- 	}
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index bc7e44fc82c2..8a2fd1dc15db 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -99,6 +99,33 @@ void __init set_machine_trusted_keys(struct key *keyring)
+ {
+ 	machine_trusted_keys = keyring;
+ }
++
++/**
++ * restrict_link_by_builtin_secondary_and_machine - Restrict keyring addition.
++ * @dest_keyring: Keyring being linked to.
++ * @type: The type of key being added.
++ * @payload: The payload of the new key.
++ * @restrict_key: A ring of keys that can be used to vouch for the new cert.
++ *
++ * Restrict the addition of keys into a keyring based on the key-to-be-added
++ * being vouched for by a key in either the built-in, the secondary, or
++ * the machine keyrings.
++ */
++int restrict_link_by_builtin_secondary_and_machine(
++	struct key *dest_keyring,
++	const struct key_type *type,
++	const union key_payload *payload,
++	struct key *restrict_key)
++{
++	if (machine_trusted_keys && type == &key_type_keyring &&
++	    dest_keyring == secondary_trusted_keys &&
++	    payload == &machine_trusted_keys->payload)
++		/* Allow the machine keyring to be added to the secondary */
++		return 0;
++
++	return restrict_link_by_builtin_and_secondary_trusted(dest_keyring, type,
++							      payload, restrict_key);
++}
+ #endif
+ 
+ /*
+diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+index 98c9b10cdc17..2419a735420f 100644
+--- a/include/keys/system_keyring.h
++++ b/include/keys/system_keyring.h
+@@ -39,8 +39,14 @@ extern int restrict_link_by_builtin_and_secondary_trusted(
+ #endif
+ 
+ #ifdef CONFIG_INTEGRITY_MACHINE_KEYRING
++extern int restrict_link_by_builtin_secondary_and_machine(
++	struct key *dest_keyring,
++	const struct key_type *type,
++	const union key_payload *payload,
++	struct key *restrict_key);
+ extern void __init set_machine_trusted_keys(struct key *keyring);
+ #else
++#define restrict_link_by_builtin_secondary_and_machine restrict_link_by_builtin_trusted
+ static inline void __init set_machine_trusted_keys(struct key *keyring)
+ {
+ }
 -- 
 2.18.4
 
