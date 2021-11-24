@@ -2,140 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80297C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Nov 2021 18:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBD3C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Nov 2021 20:47:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243345AbhKXSiV (ORCPT
+        id S239147AbhKXUut (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Nov 2021 13:38:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242504AbhKXSiL (ORCPT
+        Wed, 24 Nov 2021 15:50:49 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2154 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235709AbhKXUur (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Nov 2021 13:38:11 -0500
-Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE4DEC061574;
-        Wed, 24 Nov 2021 10:35:01 -0800 (PST)
-Received: by mail-ot1-x330.google.com with SMTP id a23-20020a9d4717000000b0056c15d6d0caso5638528otf.12;
-        Wed, 24 Nov 2021 10:35:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oH9617U/I6DUrRnDR7qed36ELwMrT7li0leYhJzrg/Q=;
-        b=OMApE8FVHQTEHQAlJlWDdzx0Hkuhoy8ec9F6qIx8r+SrqRiCwLxpfi9lj+aIUZvmvh
-         Kpqn0fYhcAwYDHoCaVqpUe0lw5GtPbJGNwqH+1jt82etMsOVUDhZO12orREQGQWRbIph
-         ctoZ/DcnSuSoUdlxm5Zp5K/gmzyjOph3nJDcryFI/stliQRn6/8RA90XJ0mXwv/WgAoC
-         X0OHQFxkL2TGLvPTo2ou+hyEpOxV4OGcx8nT0i9i0JrAX+Ck42w7VzYYhIbmLd5+tYGq
-         gR127Jp7DVtKhE+t1kW4/fJCU5V/MK6DlC44PWkVOHNGM4MvgO3Qlrgcac+5NrK5BxRx
-         fTIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oH9617U/I6DUrRnDR7qed36ELwMrT7li0leYhJzrg/Q=;
-        b=1tr1qZgJVecgNtULcVHI6EEazlVjKJEGQACQf/6v7+57HtrYuOgJ8hon/LdI8Xx/OE
-         LZpwiYSEIOOQ2b1Gy8po3n3PbvNPcumX+u/A/wx11HQSYywRyXSfBVbmUeEt28b8aaMe
-         zQ/mE6RBdwYu0ong1pJKTyK/h/xJyVZCP9qCKfEFiZEe0vYFvFy3gQdT5WVloL+igaZL
-         AG+uDMGfcKXI+h7ifgS0RHLbtX9fpfVQbBXYgmVWQ7cegK/oEF/EomOSWhk0LP9gGTC+
-         ps9L+NXROlI6qgrVsfLuDM1E2lvHsjqYCv3NzLaOOd86QiHptzvsB+udwItW6/S8m/DD
-         EvfQ==
-X-Gm-Message-State: AOAM531twmssBxyPD7sZun9pnsG8if4v6f5OJeg8EZksUEhGgNyUoy5p
-        sfUr6WgBkFyXv0XEDPoIO54zfdFdlr6DzaINoBY=
-X-Google-Smtp-Source: ABdhPJxWqBKi3hO9YjvGnIaDU9k+d5+vybcoHZCPY7s6hCAFNZPj4lQgQtQ/b3shnR02c+nj7oV9jkFcKq/YeXCZgXU=
-X-Received: by 2002:a9d:63d2:: with SMTP id e18mr15490894otl.28.1637778901019;
- Wed, 24 Nov 2021 10:35:01 -0800 (PST)
+        Wed, 24 Nov 2021 15:50:47 -0500
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AOKOpeg017746;
+        Wed, 24 Nov 2021 20:47:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=A9bqNV1Jy3zIemg25SOA8ivP5X6E17/v2bKeKAuwHlM=;
+ b=E/Aog28GYCWBW/Z+CXRAVgFW5JuMzck15BRE3ABOhqKVH2Z6hKi9b/QM8dCyJbVaW50G
+ sUiIzVDpS6e3h0otQPA8xFTKnHJ1vkiwAI7PKXuZwpQ0je7BLGR4wWj/tTymDbjS3p8r
+ DxeNmKnbvOeVPOeF9kZzZp8up2DsGZdL/eKodFfJ5YpZSyQ4QR1HArAW1A8j+qXAuX1C
+ qxTCNMZIDPS4y5jy4pMMX7zeDi/1/DqB3O63ooG+wEczqjCiIwoJmR8AruoKDCnSvEU1
+ kqmwOeP/Gf/UsqZkj+4o4Fot7J3n01jUiGYoyrS+d+Y5ZGa+Pik8pJxMSvqIb/O81epe oA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3chu00242k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Nov 2021 20:47:32 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1AOKXEbi033083;
+        Wed, 24 Nov 2021 20:47:32 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3chu002423-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Nov 2021 20:47:31 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1AOKd1nV032104;
+        Wed, 24 Nov 2021 20:47:29 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma03ams.nl.ibm.com with ESMTP id 3cernadamt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Nov 2021 20:47:29 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1AOKlQX619464544
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Nov 2021 20:47:26 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 29FD552052;
+        Wed, 24 Nov 2021 20:47:26 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.59.116])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id CF7075204F;
+        Wed, 24 Nov 2021 20:47:22 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dimitri John Ledkov <dimitri.ledkov@canonical.com>,
+        Seth Forshee <seth@forshee.me>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v5 0/2] integrity: support including firmware ".platform" keys at build time 
+Date:   Wed, 24 Nov 2021 15:47:12 -0500
+Message-Id: <20211124204714.82514-1-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20211124115702.361983534@linuxfoundation.org> <20211124115706.507376250@linuxfoundation.org>
- <619E4ABA.DC78AA58@users.sourceforge.net> <YZ5ayhuOMZwkd9j6@kroah.com>
- <20211124173310.GA12039@mail.hallyn.com> <YZ6BR09OXP8x7lRs@kroah.com>
-In-Reply-To: <YZ6BR09OXP8x7lRs@kroah.com>
-From:   =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date:   Wed, 24 Nov 2021 19:34:50 +0100
-Message-ID: <CAJ2a_DejJibTyiiA-+A1WbhcyYD17-h+9FuXL5=sCHEs9Qv+BA@mail.gmail.com>
-Subject: Re: [PATCH 5.10 130/154] block: Check ADMIN before NICE for IOPRIO_CLASS_RT
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Jari Ruusu <jariruusu@users.sourceforge.net>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Alistair Delva <adelva@google.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Jens Axboe <axboe@kernel.dk>, Paul Moore <paul@paul-moore.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: bLgZ8gi3qI0QiBF3sOZZsJojyrtQw9a2
+X-Proofpoint-GUID: vfQycDDeUUbr_gXLI41Z43iN6NcxGoEZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-24_06,2021-11-24_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ priorityscore=1501 mlxscore=0 adultscore=0 phishscore=0 suspectscore=0
+ malwarescore=0 bulkscore=0 impostorscore=0 clxscore=1015 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2111240103
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 24 Nov 2021 at 19:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Nov 24, 2021 at 11:33:11AM -0600, Serge E. Hallyn wrote:
-> > On Wed, Nov 24, 2021 at 04:31:22PM +0100, Greg Kroah-Hartman wrote:
-> > > On Wed, Nov 24, 2021 at 04:22:50PM +0200, Jari Ruusu wrote:
-> > > > Greg Kroah-Hartman wrote:
-> > > > > From: Alistair Delva <adelva@google.com>
-> > > > >
-> > > > > commit 94c4b4fd25e6c3763941bdec3ad54f2204afa992 upstream.
-> > > >  [SNIP]
-> > > > > --- a/block/ioprio.c
-> > > > > +++ b/block/ioprio.c
-> > > > > @@ -69,7 +69,14 @@ int ioprio_check_cap(int ioprio)
-> > > > >
-> > > > >         switch (class) {
-> > > > >                 case IOPRIO_CLASS_RT:
-> > > > > -                       if (!capable(CAP_SYS_NICE) && !capable(CAP_SYS_ADMIN))
-> > > > > +                       /*
-> > > > > +                        * Originally this only checked for CAP_SYS_ADMIN,
-> > > > > +                        * which was implicitly allowed for pid 0 by security
-> > > > > +                        * modules such as SELinux. Make sure we check
-> > > > > +                        * CAP_SYS_ADMIN first to avoid a denial/avc for
-> > > > > +                        * possibly missing CAP_SYS_NICE permission.
-> > > > > +                        */
-> > > > > +                       if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_NICE))
-> > > > >                                 return -EPERM;
-> > > > >                         fallthrough;
-> > > > >                         /* rt has prio field too */
-> > > >
-> > > > What exactly is above patch trying to fix?
-> > > > It does not change control flow at all, and added comment is misleading.
-> > >
-> > > See the thread on the mailing list for what it does and why it is
-> > > needed.
-> > >
-> > > It does change the result when selinux is enabled.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > The case where we create a newer more fine grained capability which is a
-> > sub-cap of a broader capability like CAP_SYS_ADMIN is analogous.  See
-> > check_syslog_permissions() for instance.
-> >
-> > So I think a helper like
-> >
-> > int capable_either_or(int cap1, int cap2) {
-> >       if (has_capability_noaudit(current, cap1))
-> >               return 0;
-> >       return capable(cap2);
-> > }
-> >
-> > might be worthwhile.
->
+Some firmware support secure boot by embedding static keys to verify the
+Linux kernel during boot. However, these firmware do not expose an
+interface for the kernel to load firmware keys onto the ".platform"
+keyring, preventing the kernel from verifying the kexec kernel image
+signature.
 
-I proposed an early prototype at
-https://patchwork.kernel.org/project/selinux/patch/20211116112437.43412-1-cgzones@googlemail.com/
+This patchset exports load_certificate_list() and defines a new function
+load_builtin_platform_cert() to load compiled in certificates onto the
+".platform" keyring.
 
-> Sure, feel free to work on that and submit it, but for now, this change
-> is needed.
->
+Changelog:
 
-I would argue this change is not necessary since the actual syscall
-still succeeds as this is only an informative avc denial message about
-a failed capability check. But this ship has sailed...
+v5:
+* Renamed load_builtin_platform_cert() to load_platform_certificate_list()
+and config INTEGRITY_PLATFORM_BUILTIN_KEYS to INTEGRITY_PLATFORM_KEYS, as
+suggested by Mimi Zohar.
 
-> thanks,
->
-> greg k-h
+v4:
+* Split into two patches as per Mimi Zohar and Dimitri John Ledkov
+recommendation.
+
+v3:
+* Included Jarkko's feedback
+ ** updated patch description to include approach.
+ ** removed extern for function declaration in the .h file.
+* Included load_certificate_list() within #ifdef CONFIG_KEYS condition.
+
+v2:
+* Fixed the error reported by kernel test robot
+* Updated patch description based on Jarkko's feedback.
+
+Nayna Jain (2):
+  certs: export load_certificate_list() to be used outside certs/
+  integrity: support including firmware ".platform" keys at build time
+
+ certs/Makefile                                |  5 ++--
+ certs/blacklist.c                             |  1 -
+ certs/common.c                                |  2 +-
+ certs/common.h                                |  9 -------
+ certs/system_keyring.c                        |  1 -
+ include/keys/system_keyring.h                 |  6 +++++
+ security/integrity/Kconfig                    | 10 +++++++
+ security/integrity/Makefile                   | 17 +++++++++++-
+ security/integrity/digsig.c                   |  2 +-
+ security/integrity/integrity.h                |  6 +++++
+ .../integrity/platform_certs/platform_cert.S  | 23 ++++++++++++++++
+ .../platform_certs/platform_keyring.c         | 26 +++++++++++++++++++
+ 12 files changed, 92 insertions(+), 16 deletions(-)
+ delete mode 100644 certs/common.h
+ create mode 100644 security/integrity/platform_certs/platform_cert.S
+
+-- 
+2.27.0
