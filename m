@@ -2,124 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD49C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Nov 2021 17:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F84DC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Nov 2021 17:33:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349386AbhKXRFT (ORCPT
+        id S233534AbhKXRgY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Nov 2021 12:05:19 -0500
-Received: from mail-m972.mail.163.com ([123.126.97.2]:47782 "EHLO
-        mail-m972.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242707AbhKXRFT (ORCPT
+        Wed, 24 Nov 2021 12:36:24 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:40444 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233311AbhKXRgX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Nov 2021 12:05:19 -0500
-X-Greylist: delayed 924 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Nov 2021 12:05:17 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=8ERBp
-        /cCG6WzioJCfEWJSK1orI4R+L3An4qXLiZdnB0=; b=OXoqhebDEZzeJ7/tZsJ8J
-        SmHIkZsNHWXXKsahcfmp5T5PaR4vFOn43TKWCwZtcdsvse2Y3iS9n2yfkEkCP2Ci
-        UjVtEpPgC5S6Qv0Tiq1HAYq9yLfeKz9fnQYKqFL7FONJ8brCFR5+TGnmQhNDGfVy
-        crGX80h2iLKCQeg3+CzZFY=
-Received: from localhost.localdomain (unknown [218.106.182.227])
-        by smtp2 (Coremail) with SMTP id GtxpCgBHHNXNa55h7hmJKQ--.39097S4;
-        Thu, 25 Nov 2021 00:44:01 +0800 (CST)
-From:   Jianglei Nie <niejianglei2021@163.com>
-To:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
-        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jianglei Nie <niejianglei@gmail.com>
-Subject: [PATCH] security:trusted_tpm2: Fix memory leak in tpm2_key_encode()
-Date:   Thu, 25 Nov 2021 00:43:54 +0800
-Message-Id: <20211124164354.20448-1-niejianglei2021@163.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 24 Nov 2021 12:36:23 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 12E4DD1E; Wed, 24 Nov 2021 11:33:11 -0600 (CST)
+Date:   Wed, 24 Nov 2021 11:33:11 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, serge@hallyn.com
+Cc:     Jari Ruusu <jariruusu@users.sourceforge.net>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Alistair Delva <adelva@google.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Serge Hallyn <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>,
+        Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 5.10 130/154] block: Check ADMIN before NICE for
+ IOPRIO_CLASS_RT
+Message-ID: <20211124173310.GA12039@mail.hallyn.com>
+References: <20211124115702.361983534@linuxfoundation.org>
+ <20211124115706.507376250@linuxfoundation.org>
+ <619E4ABA.DC78AA58@users.sourceforge.net>
+ <YZ5ayhuOMZwkd9j6@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GtxpCgBHHNXNa55h7hmJKQ--.39097S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJw18Ww1kWF15Gry3XrWrZrb_yoW5XryUpF
-        ZxKF17ZrWagry7Ary7Ja1Svr1fCay5Gr47GwsrW39rGasxJFsxtFy7ArWYgrnrAFWfKw15
-        ZF4qvFWUWrWDtrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bY2-5UUUUU=
-X-Originating-IP: [218.106.182.227]
-X-CM-SenderInfo: xqlhyxxdqjzvrlsqjii6rwjhhfrp/1tbi6xFVjFXlyRVF+AAAsy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YZ5ayhuOMZwkd9j6@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jianglei Nie <niejianglei@gmail.com>
+On Wed, Nov 24, 2021 at 04:31:22PM +0100, Greg Kroah-Hartman wrote:
+> On Wed, Nov 24, 2021 at 04:22:50PM +0200, Jari Ruusu wrote:
+> > Greg Kroah-Hartman wrote:
+> > > From: Alistair Delva <adelva@google.com>
+> > > 
+> > > commit 94c4b4fd25e6c3763941bdec3ad54f2204afa992 upstream.
+> >  [SNIP]
+> > > --- a/block/ioprio.c
+> > > +++ b/block/ioprio.c
+> > > @@ -69,7 +69,14 @@ int ioprio_check_cap(int ioprio)
+> > > 
+> > >         switch (class) {
+> > >                 case IOPRIO_CLASS_RT:
+> > > -                       if (!capable(CAP_SYS_NICE) && !capable(CAP_SYS_ADMIN))
+> > > +                       /*
+> > > +                        * Originally this only checked for CAP_SYS_ADMIN,
+> > > +                        * which was implicitly allowed for pid 0 by security
+> > > +                        * modules such as SELinux. Make sure we check
+> > > +                        * CAP_SYS_ADMIN first to avoid a denial/avc for
+> > > +                        * possibly missing CAP_SYS_NICE permission.
+> > > +                        */
+> > > +                       if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_NICE))
+> > >                                 return -EPERM;
+> > >                         fallthrough;
+> > >                         /* rt has prio field too */
+> > 
+> > What exactly is above patch trying to fix?
+> > It does not change control flow at all, and added comment is misleading.
+> 
+> See the thread on the mailing list for what it does and why it is
+> needed.
+> 
+> It does change the result when selinux is enabled.
+> 
+> thanks,
+> 
+> greg k-h
 
-Line 36 (#1) allocates a memory chunk for scratch by kmalloc(), but
-it is never freed through the function, which will lead to a memory
-leak.
+The case where we create a newer more fine grained capability which is a
+sub-cap of a broader capability like CAP_SYS_ADMIN is analogous.  See
+check_syslog_permissions() for instance.
 
-We should kfree() scratch before the function returns (#2, #3 and #4).
+So I think a helper like
 
-31 static int tpm2_key_encode(struct trusted_key_payload *payload,
-32			   struct trusted_key_options *options,
-33			   u8 *src, u32 len)
-34 {
-36	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
-        // #1: kmalloc space
-37	u8 *work = scratch, *work1;
-50	if (!scratch)
-51		return -ENOMEM;
+int capable_either_or(int cap1, int cap2) {
+	if (has_capability_noaudit(current, cap1))
+		return 0;
+	return capable(cap2);
+}
 
-56	if (options->blobauth_len == 0) {
-60		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
-61			return PTR_ERR(w); // #2: missing kfree
-63	}
-
-71	if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
-72		 "BUG: scratch buffer is too small"))
-73		return -EINVAL; // #3: missing kfree
-
-  	// #4: missing kfree: scratch is never used afterwards.
-82	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
-83		return PTR_ERR(work1);
-
-85	return work1 - payload->blob;
-86 }
-
-Signed-off-by: Jianglei Nie <niejianglei@gmail.com>
----
- security/keys/trusted-keys/trusted_tpm2.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 0165da386289..99bb8b2409ac 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -57,8 +57,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 		unsigned char bool[3], *w = bool;
- 		/* tag 0 is emptyAuth */
- 		w = asn1_encode_boolean(w, w + sizeof(bool), true);
--		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
-+		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode")) {
-+			kfree(scratch);
- 			return PTR_ERR(w);
-+		}
- 		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
- 	}
- 
-@@ -69,8 +71,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	 * trigger, so if it does there's something nefarious going on
- 	 */
- 	if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
--		 "BUG: scratch buffer is too small"))
-+		 "BUG: scratch buffer is too small")){
-+		kfree(scratch);
- 		return -EINVAL;
-+	}
- 
- 	work = asn1_encode_integer(work, end_work, options->keyhandle);
- 	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
-@@ -79,6 +83,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	work1 = payload->blob;
- 	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
- 				     scratch, work - scratch);
-+	kfree(scratch);
- 	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
- 		return PTR_ERR(work1);
- 
--- 
-2.25.1
-
+might be worthwhile.
