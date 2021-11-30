@@ -2,55 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9646C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Nov 2021 16:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E25D7C43217
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Nov 2021 16:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243668AbhK3QLZ (ORCPT
+        id S243645AbhK3QLX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Nov 2021 11:11:25 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29540 "EHLO
+        Tue, 30 Nov 2021 11:11:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13406 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243452AbhK3QLA (ORCPT
+        by vger.kernel.org with ESMTP id S243435AbhK3QLA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 30 Nov 2021 11:11:00 -0500
 Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AUFlUc4001239;
-        Tue, 30 Nov 2021 16:07:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : content-transfer-encoding
- : mime-version; s=pp1; bh=lGwNHCJCYs+XuGS6svOUrR9B9L2FrXF0CRsXbHhmFHU=;
- b=lv1UoZ6o/nyL0wT25CDj9Rrjkx8bl7X1OzNZgaRJ8pHxfz04O33YarLqaPHU9E+oaf/o
- PyvnbnvIvjix+KeVW7N6P4Q6JviSOy5A+hWUdg220MqtLTI/aqDg6KrxkXECxaiT1tRr
- cxn98cAXgW6g3UZrHRMwdi6XIjCOPjUgRufcOBaSwjPhshxn6BTH1BQTQTVG7O+iW6Yd
- 87k7zBll2XiQhaflaKI39ronJ/HMO5U48uoganUmHRTFODBL7joUoN8e1si6Q6RFeP1T
- gH4H6Y2oIonq2u4ucAD4CMPGJEHYnl2gRV+HaECAnt4wWKdl9+xONiqLQ5TDkZmCN1g0 vw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cnpwm0gwf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 Nov 2021 16:07:17 +0000
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1AUFnhUf007457;
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AUFlXpT001758;
         Tue, 30 Nov 2021 16:07:16 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cnpwm0gv9-1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=k87Qh4JL58PaoWjNxP/QguzWPYNVZIv9+Y+W20HNtnw=;
+ b=TzgE3B6B2rL5kO2qjyusvL0XhJhbp8IAb1AAjqvbIBYUVLgzjGMk+8WcRGL0IiBNaxwR
+ lfSBeS653bbrbbDeavC/LR1Od2obnw/SfbYOpeVHihwDiwlEh/F9j4H2H1DYIDZemlZB
+ Vu4h/L0SljfvgfrMC9KX4KxyUb6meK43fGgX0LrxaA4LDBADU1VQCqttfE6KJt++zn4N
+ ImbhjXpgV2vfoAZ6MFpn8DUVKH0ZmrrF+aVqakVBY+GK5xVAoUlH4nycAMWUJWaxgJrM
+ /NRCfkBgnl1Xepq7oUibMQX7FPYE1v/KY09a8GCO5oFV93zYRHRrVZxKCkVuce4rRBW9 QA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cnpwm0gvh-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 Nov 2021 16:07:16 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1AUG3dhW014046;
+        Tue, 30 Nov 2021 16:07:15 +0000
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1AUFm61Z003286;
         Tue, 30 Nov 2021 16:07:15 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma03wdc.us.ibm.com with ESMTP id 3cn3k1qgtg-1
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cnpwm0guw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Nov 2021 16:07:15 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1AUG2j4x009853;
+        Tue, 30 Nov 2021 16:07:14 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma02wdc.us.ibm.com with ESMTP id 3ckcab7tjv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Tue, 30 Nov 2021 16:07:14 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1AUG7Dp853084494
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1AUG7Ck754919658
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Nov 2021 16:07:13 GMT
+        Tue, 30 Nov 2021 16:07:12 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0735BB2099;
-        Tue, 30 Nov 2021 16:07:13 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 53ACDB20A9;
+        Tue, 30 Nov 2021 16:07:12 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D8758B2073;
+        by IMSVA (Postfix) with ESMTP id 3FC03B2095;
         Tue, 30 Nov 2021 16:07:12 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
@@ -65,20 +66,18 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com,
         puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
         linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Denis Semakin <denis.semakin@huawei.com>,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [RFC 15/20] capabilities: Introduce CAP_INTEGRITY_ADMIN
-Date:   Tue, 30 Nov 2021 11:06:49 -0500
-Message-Id: <20211130160654.1418231-16-stefanb@linux.ibm.com>
+Subject: [RFC 11/20] securityfs: Prefix global variables with securityfs_
+Date:   Tue, 30 Nov 2021 11:06:45 -0500
+Message-Id: <20211130160654.1418231-12-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211130160654.1418231-1-stefanb@linux.ibm.com>
 References: <20211130160654.1418231-1-stefanb@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: a7hRstFw5cN4Jrq9GzLR9-QfelfNqLLx
-X-Proofpoint-GUID: JE_eh3-sQtu9kwX3hHFaojkO0LQXbXRH
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: SzPnfeCdJ1Gj2rHiauPRxSbAkUUzGn4e
+X-Proofpoint-GUID: qiRaAPH9iTBG7hniYl5_31WY5hDaHatM
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
  definitions=2021-11-30_09,2021-11-28_01,2020-04-07_01
@@ -90,80 +89,81 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishsc
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Denis Semakin <denis.semakin@huawei.com>
+Prefix global variables 'mount' and 'mount_count' with securityfs_ so they
+are easier to distinguish as variables belonging to securityfs rather than
+variables being passed in through new APIs we will introduce.
 
-This patch introduces CAP_INTEGRITY_ADMIN, a new capability that allows
-to setup IMA (Integrity Measurement Architecture) policies per container
-for non-root users.
-
-The main purpose of this new capability is discribed in this document:
-https://kernsec.org/wiki/index.php/IMA_Namespacing_design_considerations
-It is said: "setting the policy should be possibly without the powerful
-CAP_SYS_ADMIN and there should be the opportunity to gate this with a new
-capability CAP_INTEGRITY_ADMIN that allows a user to set the IMA policy
-during container runtime.."
-
-In other words it should be possible to setup IMA policies while not
-giving too many privilges to the user, therefore splitting the
-CAP_INTEGRITY_ADMIN off from CAP_SYS_ADMIN.
-
-Signed-off-by: Denis Semakin <denis.semakin@huawei.com>
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- include/linux/capability.h          | 6 ++++++
- include/uapi/linux/capability.h     | 7 ++++++-
- security/selinux/include/classmap.h | 4 ++--
- 3 files changed, 14 insertions(+), 3 deletions(-)
+ security/inode.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/capability.h b/include/linux/capability.h
-index 65efb74c3585..ea6d58acb95e 100644
---- a/include/linux/capability.h
-+++ b/include/linux/capability.h
-@@ -278,4 +278,10 @@ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
- int cap_convert_nscap(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		      const void **ivalue, size_t size);
+diff --git a/security/inode.c b/security/inode.c
+index 6c326939750d..e523829c22cb 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -22,8 +22,8 @@
+ #include <linux/lsm_hooks.h>
+ #include <linux/magic.h>
  
-+static inline bool integrity_admin_ns_capable(struct user_namespace *ns)
-+{
-+	return ns_capable(ns, CAP_INTEGRITY_ADMIN) ||
-+		ns_capable(ns, CAP_SYS_ADMIN);
-+}
-+
- #endif /* !_LINUX_CAPABILITY_H */
-diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-index 463d1ba2232a..48b08e4b3895 100644
---- a/include/uapi/linux/capability.h
-+++ b/include/uapi/linux/capability.h
-@@ -417,7 +417,12 @@ struct vfs_ns_cap_data {
+-static struct vfsmount *mount;
+-static int mount_count;
++static struct vfsmount *securityfs_mount;
++static int securityfs_mount_count;
  
- #define CAP_CHECKPOINT_RESTORE	40
+ static void securityfs_free_inode(struct inode *inode)
+ {
+@@ -66,7 +66,7 @@ static int securityfs_init_fs_context(struct fs_context *fc)
+ 	return 0;
+ }
  
--#define CAP_LAST_CAP         CAP_CHECKPOINT_RESTORE
-+/* Allow setup IMA policy per container independently */
-+/* No necessary to be superuser */
-+
-+#define CAP_INTEGRITY_ADMIN	41
-+
-+#define CAP_LAST_CAP		CAP_INTEGRITY_ADMIN
+-static struct file_system_type fs_type = {
++static struct file_system_type securityfs_type = {
+ 	.owner =	THIS_MODULE,
+ 	.name =		"securityfs",
+ 	.init_fs_context = securityfs_init_fs_context,
+@@ -118,12 +118,12 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
  
- #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
+ 	pr_debug("securityfs: creating file '%s'\n",name);
  
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index 35aac62a662e..7ff532b90f09 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -28,9 +28,9 @@
+-	error = simple_pin_fs(&fs_type, &mount, &mount_count);
++	error = simple_pin_fs(&securityfs_type, &securityfs_mount, &securityfs_mount_count);
+ 	if (error)
+ 		return ERR_PTR(error);
  
- #define COMMON_CAP2_PERMS  "mac_override", "mac_admin", "syslog", \
- 		"wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf", \
--		"checkpoint_restore"
-+		"checkpoint_restore", "integrity_admin"
+ 	if (!parent)
+-		parent = mount->mnt_root;
++		parent = securityfs_mount->mnt_root;
  
--#if CAP_LAST_CAP > CAP_CHECKPOINT_RESTORE
-+#if CAP_LAST_CAP > CAP_INTEGRITY_ADMIN
- #error New capability defined, please update COMMON_CAP2_PERMS.
- #endif
+ 	dir = d_inode(parent);
  
+@@ -168,7 +168,7 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+ 	dentry = ERR_PTR(error);
+ out:
+ 	inode_unlock(dir);
+-	simple_release_fs(&mount, &mount_count);
++	simple_release_fs(&securityfs_mount, &securityfs_mount_count);
+ 	return dentry;
+ }
+ 
+@@ -309,7 +309,7 @@ void securityfs_remove(struct dentry *dentry)
+ 		dput(dentry);
+ 	}
+ 	inode_unlock(dir);
+-	simple_release_fs(&mount, &mount_count);
++	simple_release_fs(&securityfs_mount, &securityfs_mount_count);
+ }
+ EXPORT_SYMBOL_GPL(securityfs_remove);
+ 
+@@ -336,7 +336,7 @@ static int __init securityfs_init(void)
+ 	if (retval)
+ 		return retval;
+ 
+-	retval = register_filesystem(&fs_type);
++	retval = register_filesystem(&securityfs_type);
+ 	if (retval) {
+ 		sysfs_remove_mount_point(kernel_kobj, "security");
+ 		return retval;
 -- 
 2.31.1
 
