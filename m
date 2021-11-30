@@ -2,197 +2,272 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F99C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Nov 2021 22:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B2DC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Nov 2021 10:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236048AbhK2W5n (ORCPT
+        id S233146AbhK3KhH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Nov 2021 17:57:43 -0500
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:19950 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235742AbhK2W5H (ORCPT
+        Tue, 30 Nov 2021 05:37:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233110AbhK3KhG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Nov 2021 17:57:07 -0500
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1ATM54HP020991;
-        Mon, 29 Nov 2021 22:51:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=lTjzQjdEk+dBdS/m9E+KTgEs3d7HSW+rr3w8kvk3mGo=;
- b=AW8OE4HuaGYsvn04QNXAFIrRTQLTiBQun8ADtsnKOQjXuIWUwiuXRe0xA0AIc0rhSMxZ
- jlEf2DlH0Nyvl1vj8sznLkIZqSBnzdB6onHzx/d3PaE3x0UKAkCt9FXx4n2jH8shImJF
- DZB5us9ZmRKJGPjgy/OnEURisVgGOn0yXKS62zb3RJUvqc+JI39Lzr9PqrxIJTf8ketD
- KbBM6+msvsaws9p+Bhct94kDVa8H97FwBojJBsDefl0xVTBgqWa4skFvYL8ggb/+RQxK
- jTVAfZENQJ16QI1i1OtCLPJE129ru+MgtKmuT1gL6qx8Of1HuzQweMRRAUu+Em3BmDJr 1g== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3cmvmwmr19-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Nov 2021 22:51:00 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1ATMfiUg164686;
-        Mon, 29 Nov 2021 22:50:58 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2104.outbound.protection.outlook.com [104.47.70.104])
-        by userp3030.oracle.com with ESMTP id 3ck9sx9nk2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Nov 2021 22:50:58 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XVm6o/3ia+CmKYh57tGVJsG0wE/UT6En8EglHzTf+DWarFqV3R2A3XHXAPV6Hjib+37jnf3alBRaKX/bMja8cQIiRnUA5Yk9UCaChwMT9k1FT3KbbEA/uM1H68Z3RAoB2G7ga8L68THreduT8n8wBrMLdZyTCRKMTSyYl20BcDkE9dfYl20WRcAdsTKmhoUOxfwQazA1SK+MomhkmMMapnPYX2U0qY3zA9wz3pN/bC7/xnEjlNir28BOgB8xH9bw6zDDlvv8+tzcKij+fRUBffvnEEaP0AnTshvIeNzDtfKOjqbOm8OVznhoUaGtS4ZpqkPCJit1QQ07LD90Whj9Pw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lTjzQjdEk+dBdS/m9E+KTgEs3d7HSW+rr3w8kvk3mGo=;
- b=hxmo2ekIr4yMrX2KL+7aGMS+XShrhZ0sQRcrkzEDNGoxpzmWO8LSTSuxFLDwL4SO7kxQ9Vr5wY8kju2l1OYDl7JKozuMhkedpcnOMFtb+DyBjCouliaE9Vq1775Kg8ok6L2An2mmiHagYP/P5ub5w63MQ5M4fnYp4THTvgJ76pBcjz3rNjhao4nYWc5bJDYZmztCx480y1YoX6hlJjLT9SyeQy96pYxqWofBmw1ZXF8OuHvstciP6C5nSiZlh0MvD5BQU+cIwf6zcfeguzqy8Aqob2MvL80/FqpKLVPaUALa6dphEtxZGN8hGlEfwkQBnjLBTAeq/e+/E8N3XQjSXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lTjzQjdEk+dBdS/m9E+KTgEs3d7HSW+rr3w8kvk3mGo=;
- b=rwL0LJOo+k67yqmegud0NZ4YQIa+46lxc57yJRXKseDjnew+YLprnpzkq0TS/YplapXvIO+aCLlm9gfp+7Jh7wcm3H9JN0OBBNAp/4bXB9FKu80YKWG3H6hWgiqwPhaf03ck4yO0USlzDnBS9kfuD+qx4RFF2T48BQKNXmwW2wE=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by CH2PR10MB3879.namprd10.prod.outlook.com (2603:10b6:610:f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.20; Mon, 29 Nov
- 2021 22:50:55 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::65b8:d8e7:e373:4896]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::65b8:d8e7:e373:4896%9]) with mapi id 15.20.4713.021; Mon, 29 Nov 2021
- 22:50:55 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-CC:     "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        "nramas@linux.microsoft.com" <nramas@linux.microsoft.com>,
-        "lszubowi@redhat.com" <lszubowi@redhat.com>,
-        "jason@zx2c4.com" <jason@zx2c4.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "pjones@redhat.com" <pjones@redhat.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>
-Subject: Re: [PATCH v8 03/17] integrity: Introduce a Linux keyring called
- machine
-Thread-Topic: [PATCH v8 03/17] integrity: Introduce a Linux keyring called
- machine
-Thread-Index: AQHX4O2fNnT5om4rjEOI1ag/jS1B5qwTjDqAgAeZCIA=
-Date:   Mon, 29 Nov 2021 22:50:55 +0000
-Message-ID: <DF08B019-DBE7-4236-B784-E5A62EC39198@oracle.com>
-References: <20211124044124.998170-1-eric.snowberg@oracle.com>
- <20211124044124.998170-4-eric.snowberg@oracle.com>
- <15a001964945969dd7fc2422f0ab1eecfa299211.camel@linux.ibm.com>
-In-Reply-To: <15a001964945969dd7fc2422f0ab1eecfa299211.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3693.20.0.1.32)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3351590c-5806-4602-dd0b-08d9b38ab41a
-x-ms-traffictypediagnostic: CH2PR10MB3879:
-x-microsoft-antispam-prvs: <CH2PR10MB387942191C94B94E1F31ADEA87669@CH2PR10MB3879.namprd10.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: bco0qwYw2jZdKX4qavut1GppcxSU0XPO+iL87cKZ2voi+HldFp69dsxRtT/z3A9sOfEoN/u//dLpegj+w/XqQ2j7mrNcN/z9Agr7MSj7+yjbVOOMcR5SqzEJgZNelTcV77dQZ9PeRUIhz/wQUwe9HHmKgQZnDC9i1xBxJK/1eEnxTFSSDOmkbrp5LRcc6TvwZgeZuUF8WEjuunsRqyOeLYQsTAQfDtjvBtEhDxwZP4hxMfrKNAT8ku7SA1HnPqSWT8SRUAZPOzcE8WQaiv/MdRiunyQXEFrThcGyTw6WR56SLgVtfMafJZA4dVoUIqOWKQaA0wNypYnXr8+48m2e1em0JVhInl0bYcFyF2WNPUNwk3Oc8bB6mAIG+G2vKXH/Gv/bGs+R3bdkThpw0SyduY8KB0+O4BlFZSzLgvpB864htaflEjqOp6cW+Ew0p+9BWbIT52iX17v1JbQyka5jYeCUrz64qYW7UEmuLbaqo+EStZjGkTfmQ62FYCEN3n9f202hPxRPItF5Li33yBPqOnYAuNrWIYLuenLtRWe8FtzfpcXnOE1TfQLhGsoGv+b9vgnQOGBRneD9nRadxjnfek7Pyf7xW/8Xby9GsnFl5V5pCYCPXNTNBaCl8Fk13MfrS+XA5RBC1MjAiTExA8YsY5EPnMCUg4i2dBJx5LdYd5RDc7+aFC/6vk7FxD0M9ZT3cvc2SzLQQsA+BN0Q/2KkQQSr6e+Z9p3RCCdOaiACp2E=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(4744005)(86362001)(2906002)(66946007)(8936002)(4001150100001)(6512007)(54906003)(107886003)(53546011)(7416002)(508600001)(33656002)(44832011)(6486002)(2616005)(8676002)(91956017)(6506007)(36756003)(122000001)(4326008)(71200400001)(38070700005)(66446008)(66556008)(66476007)(64756008)(5660300002)(83380400001)(38100700002)(6916009)(76116006)(26005)(186003)(316002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VXMyck01Qk9OOExsM0ZmNHVZbWUzRnRQTTJBYTBUbmRtRUJ6c0xKTzVWVU1O?=
- =?utf-8?B?TUFwY0JqVFZWT2t4NURGWXV1aVBwdnNGRnI5ZlZlSTFtRDVrVVQxUllpUitV?=
- =?utf-8?B?c0FSM3NkYml3M3I0SXo1N1R0NEE4cGN2Z3NFajRraUxjVDZiNHlvUmFiQUhB?=
- =?utf-8?B?aVZydmtaWldnL1FEaHVreGdWRWdid05ndGM3UDMvSXllcTdRMWQzU3IxNU9H?=
- =?utf-8?B?YzB2R0IwRWxoaGdTM3dwZ3hlVGRSTGdlWkM0OFI5VTc1RjZWWS9KYS9neEpG?=
- =?utf-8?B?R3I1RWJpOHZWSFRCbFRTbFNFMXRMVlZUMXBucEdNcFo5cjBnT2hGM2VtODJz?=
- =?utf-8?B?aVVRajFacXlCT3hpdHp6M0MxSUxlUGpZbDBNSmF3czhOcnVvTUNvTittN1hh?=
- =?utf-8?B?MTNhWFAzbFBtMms3ME9pWFJkMWtiY0NyMzVvaS8wUGRKanhYQXBpSE5nSGpj?=
- =?utf-8?B?RHk3QzFaR3Y3MFRsMkVRWjVJYnplUHZxM2FBdVlaRXNrb1dOSm5CeW0yclFK?=
- =?utf-8?B?M3JEbER2cUtoWHhNaHZLdExiZnU0c0FTbEJwa0dvQmlSdCt1dTFaaFRiTldO?=
- =?utf-8?B?U2lVSi9RS0tsdk1vU1hqTHVSb3RkYkpWb2pMeEorQXhyZWhCRzVVM0pHekt5?=
- =?utf-8?B?a0tXenpvRTUzNDl2eXdOcmtuMjhCV0dBbUQyR05LYURISFV2OGsydmxkQkEw?=
- =?utf-8?B?Vm5IUks1ZElodWg1NEJWZkgvOXJzenhaaURuM1hVaFpLMCtrYjNuS3hlbWVG?=
- =?utf-8?B?aFBUWEZOQklSVzlvZjdNV1lLazlyQWVvYjNKS3VMeTlVN0dsN05VRmZKSXBm?=
- =?utf-8?B?QVFUYWUwNy9HdXpMVjRQS3lEc2t1K01PUWc3RDNJd2JuUnVIVGl5MHBTQzZY?=
- =?utf-8?B?WWdQeTNiWmUyNWtUVXJsRkNsRFFtV2grZmJRVWdLd0VzV3ZVbnFxMG5GWVpB?=
- =?utf-8?B?Y1BDZFFQb010Um1KRmpXWmozL2pnVUl4SXpqcFVCSjZTUGl2TnVWOElIWVJt?=
- =?utf-8?B?czB5Y3pvSnRmVGp5Z1FMZTlmRS9Ed0lxOUVUNE9hdjlNZ2YyNFBSSWNOOXNO?=
- =?utf-8?B?L2VobHRYdUI3Mis1bGRzVlA0bjRhSS9tenlHcThYMmJIR3lTTmplak5nQkJt?=
- =?utf-8?B?ZThpWkxhVHFHS25wNmpjMllkTzRFUkhtcG9IWHdUZkRCL3VHUGxlYjkwdWhB?=
- =?utf-8?B?dzVMblo4cGtrSE1HN0U1MGpYQUpSb0NnYmswZ1lYMG9zVkpRNFVhNmhQQWR0?=
- =?utf-8?B?WmRxbi9QSm9xZ2tjbUJ5Z252TWhPTTI3WGl1Nmg0ZmxEQkYyN0N5blVVckdH?=
- =?utf-8?B?YmlrbjRya3NkUDd1WS8xWjhuOXc2MVRUNUZZalFpUXM0SUFYM2lLWEZlc2Nk?=
- =?utf-8?B?YjJBRnJHeWUvZEc1a3JsK2tHRXVaNTlDVDJQb0xUeUt5MW44dnJ4bEdhTDdB?=
- =?utf-8?B?ODFrUnZzWjAxTGErVXl5RUR0MS9wRnp5OWRDY2drYTVmUm4xQkVPRlAzWk9M?=
- =?utf-8?B?S2c3QVN1Z3dKVXhDbmNFd1MrNmo4YjB0Y2p1ZGJkMUtjSUp2Y2Nzc3RCNzZD?=
- =?utf-8?B?MzM2NzE0SWVCRVFQUklNZkR6U0Y4MjFySlg1YmxGVXZaNnZjZ0pzVGlLTnFt?=
- =?utf-8?B?NUFETC9aRUFPcCthNUczZmpoS0lxTVlyUU9PYmhsNkkxcjlGM09aV05FazNl?=
- =?utf-8?B?QU1SeEF0SGNaVGVMQjR0KzNiRU04em9BeU1RU29SZ2pMQVZPRmFncGIrdHJt?=
- =?utf-8?B?RGVrNmg5bDZFQjRlbDFGd3N4UmtZMVU3OWZ6bGRZcTNTbFNLWDlkV1orei9U?=
- =?utf-8?B?WFUySHRwa0ZpUldUSWk0a3BidERzZzJKbnAzVDJ5NmhwNUNiMnUyQkhtRzBP?=
- =?utf-8?B?ems5MGdyR1BoUEd6L2hrMDN1aGZqVUhkRTd6dmUrYVhkR3dRMXBwaTV4Ujd2?=
- =?utf-8?B?MzRKSGlTemUxWWs0dE9iZ2JmSHVQSzBYSTBRUjNlWHVOSjF1Y3ZKMTdjcFFw?=
- =?utf-8?B?Y0tXczZRVk9ua01PM2w3VzRDVWNsalJ2ck1GT3BNN1Mydnd6N2FDNXE4UW5a?=
- =?utf-8?B?KzNEWndQWGRBMmdtRWJMdFdEd0RzQXhBTnNCdFJaVU9CdlZyWDNDbktOUWdF?=
- =?utf-8?B?MTQ4Tjd3bEtkVnhnSms0TWVuMFRNQmlJS2lFUmE4VERLUmExTzJZMnpCM05J?=
- =?utf-8?B?RXA5NElONXZjaGcveGE4YTc4RlZFdnl0K09xajFIY0JKRXp0YjBjY1MxUzJh?=
- =?utf-8?B?cjRRVm5qc3RFWWRqWGJLYVN0cVhRPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0D3F7C0DA9369748993F9327616CDA37@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 30 Nov 2021 05:37:06 -0500
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD46C061748
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Nov 2021 02:33:44 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4J3JTx0DbszMq2FX;
+        Tue, 30 Nov 2021 11:33:41 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4J3JTr6kV7zlhNx2;
+        Tue, 30 Nov 2021 11:33:35 +0100 (CET)
+Message-ID: <86c3fdf8-bc00-8868-1ff1-96e6e1ca9203@digikod.net>
+Date:   Tue, 30 Nov 2021 11:35:00 +0100
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3351590c-5806-4602-dd0b-08d9b38ab41a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2021 22:50:55.5187
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: J57rD4ryN1932xKzaBs1AKKRfU3d78h3gf0g72RHFRSJEVHNWAe5JWm/63R4BOy1VA5ojMTeaPPBmGxnuVxynHrGro+A0cOeaS2Fc3i3qjw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB3879
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10183 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 malwarescore=0
- spamscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2111290107
-X-Proofpoint-ORIG-GUID: TZAEgxJHNj0L7_Yf2d-lRt_hB-SyqYgw
-X-Proofpoint-GUID: TZAEgxJHNj0L7_Yf2d-lRt_hB-SyqYgw
+User-Agent: 
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alejandro Colomar <alx.manpages@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yin Fengwei <fengwei.yin@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20211115185304.198460-1-mic@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v17 0/3] Add trusted_for(2) (was O_MAYEXEC)
+In-Reply-To: <20211115185304.198460-1-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-DQoNCj4gT24gTm92IDI0LCAyMDIxLCBhdCA3OjQ5IFBNLCBNaW1pIFpvaGFyIDx6b2hhckBsaW51
-eC5pYm0uY29tPiB3cm90ZToNCj4gT24gVHVlLCAyMDIxLTExLTIzIGF0IDIzOjQxIC0wNTAwLCBF
-cmljIFNub3diZXJnIHdyb3RlOg0KPj4gK2NvbmZpZyBJTlRFR1JJVFlfTUFDSElORV9LRVlSSU5H
-DQo+PiArICAgICAgIGJvb2wgIlByb3ZpZGUgYSBrZXlyaW5nIHRvIHdoaWNoIENBIE1hY2hpbmUg
-T3duZXIgS2V5cyBtYXkgYmUgYWRkZWQiDQo+PiArICAgICAgIGRlcGVuZHMgb24gU0VDT05EQVJZ
-X1RSVVNURURfS0VZUklORw0KPj4gKyAgICAgICBkZXBlbmRzIG9uIElOVEVHUklUWV9BU1lNTUVU
-UklDX0tFWVMNCj4gDQo+IFNob3VsZG4ndCB0aGlzIGJlICJBU1lNTUVUUklDX1BVQkxJQ19LRVlf
-U1VCVFlQRT15Ij8gICBXaXRoIHRoaXMNCj4gY2hhbmdlLCBpcyAgIktFWVM6IENyZWF0ZSBzdGF0
-aWMgdmVyc2lvbiBvZg0KPiBwdWJsaWNfa2V5X3ZlcmlmeV9zaWduYXR1cmUiIHRydXN0ZWQgbmVl
-ZGVkPw0KDQpJIGJlbGlldmUgaXQgaXMgc3RpbGwgbmVlZGVkLiBJZiBzb21lb25lIHdlcmUgdG8g
-dXNlIHRoZSBzYW1lIGNvbmZpZyBhcyB0aGUgYnVpbGQgYm90LCANCndoZXJlIEFTWU1NRVRSSUNf
-UFVCTElDX0tFWV9TVUJUWVBFIGlzIG5vdCBkZWZpbmVkIGFuZCANCklOVEVHUklUWV9NQUNISU5F
-X0tFWVJJTkcgaXMgbm90IGRlZmluZWQsIHRoZXkgd291bGQgc3RpbGwgaGl0IHRoZSBwcm9ibGVt
-IHRoYXQgDQpoYXMgbm93IGJlZW4gZml4ZWQgaW4gICJLRVlTOiBDcmVhdGUgc3RhdGljIHZlcnNp
-b24gb2YgcHVibGljX2tleV92ZXJpZnlfc2lnbmF0dXJl4oCdLiANCg0KSSB3aXNoIHRoZSBmaXJz
-dCB0d28gcGF0Y2hlcyBpbiB0aGlzIHNlcmllcyB3b3VsZCBiZSBhY2NlcHRlZCwgc2luY2UgSeKA
-mW0gb25seSBjYXJyeWluZyANCnRoZW0gdG8gZ2V0IHBhc3QgdGhlIGJ1aWxkIGJvdC4NCg0K
+Hello Al,
+
+I think there is no more comment on this series, everything has been 
+addressed. Could you please consider to merge this into your tree or 
+push it to linux-next?
+
+Regards,
+  Mickaël
+
+
+On 15/11/2021 19:53, Mickaël Salaün wrote:
+> Hi,
+> 
+> This new patch series fix the syscall signature as suggested by
+> Alejandro Colomar.  It applies on Linus's master branch (v5.16-rc1) and
+> next-20211115.
+> 
+> Andrew, can you please consider to merge this into your tree?
+> 
+> Overview
+> ========
+> 
+> The final goal of this patch series is to enable the kernel to be a
+> global policy manager by entrusting processes with access control at
+> their level.  To reach this goal, two complementary parts are required:
+> * user space needs to be able to know if it can trust some file
+>    descriptor content for a specific usage;
+> * and the kernel needs to make available some part of the policy
+>    configured by the system administrator.
+> 
+> Primary goal of trusted_for(2)
+> ==============================
+> 
+> This new syscall enables user space to ask the kernel: is this file
+> descriptor's content trusted to be used for this purpose?  The set of
+> usage currently only contains execution, but other may follow (e.g.
+> configuration, sensitive data).  If the kernel identifies the file
+> descriptor as trustworthy for this usage, user space should then take
+> this information into account.  The "execution" usage means that the
+> content of the file descriptor is trusted according to the system policy
+> to be executed by user space, which means that it interprets the content
+> or (try to) maps it as executable memory.
+> 
+> A simple system-wide security policy can be set by the system
+> administrator through a sysctl configuration consistent with the mount
+> points or the file access rights.  The documentation explains the
+> prerequisites.
+> 
+> It is important to note that this can only enable to extend access
+> control managed by the kernel.  Hence it enables current access control
+> mechanism to be extended and become a superset of what they can
+> currently control.  Indeed, the security policy could also be delegated
+> to an LSM, either a MAC system or an integrity system.  For instance,
+> this is required to close a major IMA measurement/appraisal interpreter
+> integrity gap by bringing the ability to check the use of scripts [1].
+> Other uses are expected, such as for magic-links [2], SGX integration
+> [3], bpffs [4].
+> 
+> Complementary W^X protections can be brought by SELinux, IPE [5] and
+> trampfd [6].
+> 
+> System call description
+> =======================
+> 
+> trusted_for(int fd, enum trusted_for_usage usage, u32 flags);
+> 
+> @fd is the file descriptor to check.
+> 
+> @usage identifies the user space usage intended for @fd: only
+> TRUSTED_FOR_EXECUTION for now, but trusted_for_usage could be extended
+> to identify other usages (e.g. configuration, sensitive data).
+> 
+> @flags must be 0 for now but it could be used in the future to do
+> complementary checks (e.g. signature or integrity requirements, origin
+> of the file).
+> 
+> This system call returns 0 on success, or -EACCES if the kernel policy
+> denies the specified usage (which should be enforced by the caller).
+> 
+> The first patch contains the full syscall and sysctl documentation.
+> 
+> Prerequisite of its use
+> =======================
+> 
+> User space needs to adapt to take advantage of this new feature.  For
+> example, the PEP 578 [7] (Runtime Audit Hooks) enables Python 3.8 to be
+> extended with policy enforcement points related to code interpretation,
+> which can be used to align with the PowerShell audit features.
+> Additional Python security improvements (e.g. a limited interpreter
+> without -c, stdin piping of code) are on their way [8].
+> 
+> Examples
+> ========
+> 
+> The initial idea comes from CLIP OS 4 and the original implementation
+> has been used for more than 13 years:
+> https://github.com/clipos-archive/clipos4_doc
+> Chrome OS has a similar approach:
+> https://chromium.googlesource.com/chromiumos/docs/+/master/security/noexec_shell_scripts.md
+> 
+> Userland patches can be found here:
+> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+> Actually, there is more than the O_MAYEXEC changes (which matches this search)
+> e.g., to prevent Python interactive execution. There are patches for
+> Bash, Wine, Java (Icedtea), Busybox's ash, Perl and Python. There are
+> also some related patches which do not directly rely on O_MAYEXEC but
+> which restrict the use of browser plugins and extensions, which may be
+> seen as scripts too:
+> https://github.com/clipos-archive/clipos4_portage-overlay/tree/master/www-client
+> 
+> An introduction to O_MAYEXEC was given at the Linux Security Summit
+> Europe 2018 - Linux Kernel Security Contributions by ANSSI:
+> https://www.youtube.com/watch?v=chNjCRtPKQY&t=17m15s
+> The "write xor execute" principle was explained at Kernel Recipes 2018 -
+> CLIP OS: a defense-in-depth OS:
+> https://www.youtube.com/watch?v=PjRE0uBtkHU&t=11m14s
+> See also a first LWN article about O_MAYEXEC and a new one about
+> trusted_for(2) and its background:
+> * https://lwn.net/Articles/820000/
+> * https://lwn.net/Articles/832959/
+> 
+> This can be tested with CONFIG_SYSCTL.  I would really appreciate
+> constructive comments on this patch series.
+> 
+> [1] https://lore.kernel.org/lkml/20211014130125.6991-1-zohar@linux.ibm.com/
+> [2] https://lore.kernel.org/lkml/20190904201933.10736-6-cyphar@cyphar.com/
+> [3] https://lore.kernel.org/lkml/CALCETrVovr8XNZSroey7pHF46O=kj_c5D9K8h=z2T_cNrpvMig@mail.gmail.com/
+> [4] https://lore.kernel.org/lkml/CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com/
+> [5] https://lore.kernel.org/lkml/20200406221439.1469862-12-deven.desai@linux.microsoft.com/
+> [6] https://lore.kernel.org/lkml/20200922215326.4603-1-madvenka@linux.microsoft.com/
+> [7] https://www.python.org/dev/peps/pep-0578/
+> [8] https://lore.kernel.org/lkml/0c70debd-e79e-d514-06c6-4cd1e021fa8b@python.org/
+> 
+> Previous versions:
+> v16: https://lore.kernel.org/r/20211110190626.257017-1-mic@digikod.net/
+> v15: https://lore.kernel.org/r/20211012192410.2356090-1-mic@digikod.net/
+> v14: https://lore.kernel.org/r/20211008104840.1733385-1-mic@digikod.net/
+> v13: https://lore.kernel.org/r/20211007182321.872075-1-mic@digikod.net/
+> v12: https://lore.kernel.org/r/20201203173118.379271-1-mic@digikod.net/
+> v11: https://lore.kernel.org/r/20201019164932.1430614-1-mic@digikod.net/
+> v10: https://lore.kernel.org/r/20200924153228.387737-1-mic@digikod.net/
+> v9: https://lore.kernel.org/r/20200910164612.114215-1-mic@digikod.net/
+> v8: https://lore.kernel.org/r/20200908075956.1069018-1-mic@digikod.net/
+> v7: https://lore.kernel.org/r/20200723171227.446711-1-mic@digikod.net/
+> v6: https://lore.kernel.org/r/20200714181638.45751-1-mic@digikod.net/
+> v5: https://lore.kernel.org/r/20200505153156.925111-1-mic@digikod.net/
+> v4: https://lore.kernel.org/r/20200430132320.699508-1-mic@digikod.net/
+> v3: https://lore.kernel.org/r/20200428175129.634352-1-mic@digikod.net/
+> v2: https://lore.kernel.org/r/20190906152455.22757-1-mic@digikod.net/
+> v1: https://lore.kernel.org/r/20181212081712.32347-1-mic@digikod.net/
+> 
+> Regards,
+> 
+> Mickaël Salaün (3):
+>    fs: Add trusted_for(2) syscall implementation and related sysctl
+>    arch: Wire up trusted_for(2)
+>    selftest/interpreter: Add tests for trusted_for(2) policies
+> 
+>   Documentation/admin-guide/sysctl/fs.rst       |  50 +++
+>   arch/alpha/kernel/syscalls/syscall.tbl        |   2 +
+>   arch/arm/tools/syscall.tbl                    |   1 +
+>   arch/arm64/include/asm/unistd.h               |   2 +-
+>   arch/arm64/include/asm/unistd32.h             |   2 +
+>   arch/ia64/kernel/syscalls/syscall.tbl         |   2 +
+>   arch/m68k/kernel/syscalls/syscall.tbl         |   2 +
+>   arch/microblaze/kernel/syscalls/syscall.tbl   |   2 +
+>   arch/mips/kernel/syscalls/syscall_n32.tbl     |   2 +
+>   arch/mips/kernel/syscalls/syscall_n64.tbl     |   2 +
+>   arch/mips/kernel/syscalls/syscall_o32.tbl     |   2 +
+>   arch/parisc/kernel/syscalls/syscall.tbl       |   2 +
+>   arch/powerpc/kernel/syscalls/syscall.tbl      |   2 +
+>   arch/s390/kernel/syscalls/syscall.tbl         |   2 +
+>   arch/sh/kernel/syscalls/syscall.tbl           |   2 +
+>   arch/sparc/kernel/syscalls/syscall.tbl        |   2 +
+>   arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+>   arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+>   arch/xtensa/kernel/syscalls/syscall.tbl       |   2 +
+>   fs/open.c                                     | 111 ++++++
+>   include/linux/fs.h                            |   1 +
+>   include/linux/syscalls.h                      |   1 +
+>   include/uapi/asm-generic/unistd.h             |   4 +-
+>   include/uapi/linux/trusted-for.h              |  18 +
+>   kernel/sysctl.c                               |  12 +-
+>   tools/testing/selftests/Makefile              |   1 +
+>   .../testing/selftests/interpreter/.gitignore  |   2 +
+>   tools/testing/selftests/interpreter/Makefile  |  21 +
+>   tools/testing/selftests/interpreter/config    |   1 +
+>   .../selftests/interpreter/trust_policy_test.c | 362 ++++++++++++++++++
+>   30 files changed, 613 insertions(+), 4 deletions(-)
+>   create mode 100644 include/uapi/linux/trusted-for.h
+>   create mode 100644 tools/testing/selftests/interpreter/.gitignore
+>   create mode 100644 tools/testing/selftests/interpreter/Makefile
+>   create mode 100644 tools/testing/selftests/interpreter/config
+>   create mode 100644 tools/testing/selftests/interpreter/trust_policy_test.c
+> 
+> 
+> base-commit: 8ab774587903771821b59471cc723bba6d893942
+> 
