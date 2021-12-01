@@ -2,169 +2,191 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE62C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Dec 2021 13:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F29C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Dec 2021 13:48:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245115AbhLANVu (ORCPT
+        id S1349641AbhLANvZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Dec 2021 08:21:50 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58864 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234027AbhLANVt (ORCPT
+        Wed, 1 Dec 2021 08:51:25 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:9180 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1349647AbhLANvK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Dec 2021 08:21:49 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B1CmnDu017582;
-        Wed, 1 Dec 2021 13:15:08 GMT
+        Wed, 1 Dec 2021 08:51:10 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B1DcDDM019892;
+        Wed, 1 Dec 2021 13:47:03 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=o7MU5ZEW3BlvRrPu95u+FYlzxn/o3dCRZhGlSHuRGvs=;
- b=EQbqU93mjERx4tytUgOTiHfb/lGWvW4J+OdQxiFYvTJWsC9Vey7ux6eqqUnHWQJ9Ai9O
- g/wRbQgnAFsSFPnc/XoUuIDZj3ekriraPETjJ4J/tSi9r8nwllxlrbPqJ8zVxHppZBDL
- AjKLO5zZgQy3InnVnUXy7CNWjK2EBI0vc0oKVOLOBTOwzzJZXQ9coo5EZlDugBy5CfTj
- OdpSsG5IWScTeMLAZdSB/JScFrGrYBr3uDP6LU/V48PKwScFi+wmMEIFqjX1lHcEGhIB
- YgRfaMkqpNiilRRfjr/frM0L9e4sThP4RLpWDxEZqzygsR49fInvTUDAOPZIUyOf1U3I aw== 
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=kLrwl+sjdutKijzkkRE3ijtdTFL3tqrSpl9/QVu7zds=;
+ b=dg4EXzmMpz7zee6v+kPfKEj4zvO4Ui3JsGX2AaIlIuxZ6bw2HUlpOktbMEZYq5rX+7ly
+ d8Pg9yE9zet+zMbknV+j4qNfp7DKruwgMmJWRQMUIn8m2Js32Yfiq1gbzVJOc4D8He8Q
+ x5LAJWwjNbvkunnyjhmu00GA2R2SZu29EgSHMGqGoaEipAeX8XqEweeGtcWR9ADiFGam
+ VRVm0VQ80ldo/mtOK8MVDtOv5/WZjt/dZO4VdOR3WpFfmpZktMCRddmCqrMXbnsvrcJj
+ To7Akl58jpyeNCU1Xupkcqg5ZNM2kbImDziP1SvTFqfj+TOyPF+9GT9l1sYy+pc8wkNK 0g== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cp9cqrhvt-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cp9bshbhe-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Dec 2021 13:15:08 +0000
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B1CsDlt010900;
-        Wed, 1 Dec 2021 13:15:07 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cp9cqrhu4-1
+        Wed, 01 Dec 2021 13:47:03 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B1DcDj9020017;
+        Wed, 1 Dec 2021 13:47:02 GMT
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cp9bshbgj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Dec 2021 13:15:06 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B1DD03i022753;
-        Wed, 1 Dec 2021 13:15:03 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma06fra.de.ibm.com with ESMTP id 3ckbxk04ak-1
+        Wed, 01 Dec 2021 13:47:02 +0000
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B1DTFWN020620;
+        Wed, 1 Dec 2021 13:47:00 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma05fra.de.ibm.com with ESMTP id 3ckca9rdrr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Dec 2021 13:15:03 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B1DF0xY23789982
+        Wed, 01 Dec 2021 13:47:00 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B1DkvHR21954996
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 Dec 2021 13:15:00 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D8BF11C050;
-        Wed,  1 Dec 2021 13:15:00 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E98D511C05B;
-        Wed,  1 Dec 2021 13:14:54 +0000 (GMT)
+        Wed, 1 Dec 2021 13:46:57 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BFB27AE04D;
+        Wed,  1 Dec 2021 13:46:57 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 76185AE055;
+        Wed,  1 Dec 2021 13:46:54 +0000 (GMT)
 Received: from sig-9-65-78-183.ibm.com (unknown [9.65.78.183])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  1 Dec 2021 13:14:54 +0000 (GMT)
-Message-ID: <e91d238422f8df139acf84cc2df6ddb4fd300b87.camel@linux.ibm.com>
-Subject: Re: [PATCH v17 0/3] Add trusted_for(2) (was O_MAYEXEC)
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  1 Dec 2021 13:46:54 +0000 (GMT)
+Message-ID: <61f5d74f861ce1015831649d3bca9272a2e3b7bf.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 09/17] KEYS: Rename
+ get_builtin_and_secondary_restriction
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Florian Weimer <fweimer@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alejandro Colomar <alx.manpages@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yin Fengwei <fengwei.yin@intel.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Date:   Wed, 01 Dec 2021 08:14:54 -0500
-In-Reply-To: <4a88f95b-d54d-ad70-fb49-e3c3f1d097f2@digikod.net>
-References: <20211115185304.198460-1-mic@digikod.net>
-         <87sfvd8k4c.fsf@oldenburg.str.redhat.com>
-         <4a88f95b-d54d-ad70-fb49-e3c3f1d097f2@digikod.net>
-Content-Type: text/plain; charset="UTF-8"
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        "nramas@linux.microsoft.com" <nramas@linux.microsoft.com>,
+        "lszubowi@redhat.com" <lszubowi@redhat.com>,
+        "jason@zx2c4.com" <jason@zx2c4.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "James.Bottomley@hansenpartnership.com" 
+        <James.Bottomley@hansenpartnership.com>,
+        "pjones@redhat.com" <pjones@redhat.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>
+Date:   Wed, 01 Dec 2021 08:46:53 -0500
+In-Reply-To: <YadOLrHb14MEfphi@iki.fi>
+References: <20211124044124.998170-1-eric.snowberg@oracle.com>
+         <20211124044124.998170-10-eric.snowberg@oracle.com>
+         <fb1d583f588e3f46fdadbe3cf6288bb098ff45f8.camel@kernel.org>
+         <8906F8A4-313F-45E5-8ABD-A1A2D07BFD93@oracle.com> <YadOLrHb14MEfphi@iki.fi>
+Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 4_DbnL0LEYui2lYeqbE8yT4i3z_a1Jb2
-X-Proofpoint-GUID: 9Log-g6aWaMUBg8JjxhDYCR2BbjEsiMa
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
+X-Proofpoint-ORIG-GUID: m7A-PkvjVAc_VwmPRrA3SGHBXpos4Gvu
+X-Proofpoint-GUID: CoTpQMEuZT4FveB5sK-lbS6R6yGDSE-Z
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
  definitions=2021-11-30_10,2021-12-01_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
- mlxlogscore=999 impostorscore=0 bulkscore=0 phishscore=0 clxscore=1011
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ bulkscore=0 adultscore=0 impostorscore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
  suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112010076
+ engine=8.12.0-2110150000 definitions=main-2112010078
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2021-12-01 at 10:23 +0100, Mickaël Salaün wrote:
-> On 30/11/2021 21:27, Florian Weimer wrote:
-> > * Mickaël Salaün:
+On Wed, 2021-12-01 at 12:27 +0200, Jarkko Sakkinen wrote:
+> On Tue, Nov 30, 2021 at 05:21:45PM +0000, Eric Snowberg wrote:
 > > 
-> >> Primary goal of trusted_for(2)
-> >> ==============================
-> >>
-> >> This new syscall enables user space to ask the kernel: is this file
-> >> descriptor's content trusted to be used for this purpose?  The set of
-> >> usage currently only contains execution, but other may follow (e.g.
-> >> configuration, sensitive data).  If the kernel identifies the file
-> >> descriptor as trustworthy for this usage, user space should then take
-> >> this information into account.  The "execution" usage means that the
-> >> content of the file descriptor is trusted according to the system policy
-> >> to be executed by user space, which means that it interprets the content
-> >> or (try to) maps it as executable memory.
 > > 
-> > I sketched my ideas about “IMA gadgets” here:
-> > 
-> >    IMA gadgets
-> >    <https://www.openwall.com/lists/oss-security/2021/11/30/1>
-> > 
-> > I still don't think the proposed trusted_for interface is sufficient.
-> > The example I gave is a Perl module that does nothing (on its own) when
-> > loaded as a Perl module (although you probably don't want to sign it
-> > anyway, given what it implements), but triggers an unwanted action when
-> > sourced (using .) as a shell script.
+> > > On Nov 26, 2021, at 5:49 PM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > > 
+> > > On Tue, 2021-11-23 at 23:41 -0500, Eric Snowberg wrote:
+> > >> In preparation for returning either the existing
+> > >> restrict_link_by_builtin_and_secondary_trusted or the upcoming
+> > >> restriction that includes the trusted builtin, secondary and
+> > >> machine keys, to improve clarity, rename
+> > >> get_builtin_and_secondary_restriction to get_secondary_restriction.
+> > >> 
+> > >> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> > >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> > >> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > >> ---
+> > >> v6: Initial version
+> > >> v7: Unmodified from v7
+> > >> v8: Code unmodified from v7, added Mimi's Reviewed-by
+> > >> ---
+> > >>  certs/system_keyring.c | 4 ++--
+> > >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >> 
+> > >> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> > >> index 692365dee2bd..8f1f87579819 100644
+> > >> --- a/certs/system_keyring.c
+> > >> +++ b/certs/system_keyring.c
+> > >> @@ -77,7 +77,7 @@ int restrict_link_by_builtin_and_secondary_trusted(
+> > >>   * Allocate a struct key_restriction for the "builtin and secondary trust"
+> > >>   * keyring. Only for use in system_trusted_keyring_init().
+> > >>   */
+> > >> -static __init struct key_restriction *get_builtin_and_secondary_restriction(void)
+> > >> +static __init struct key_restriction *get_secondary_restriction(void)
+> > >>  {
+> > >>         struct key_restriction *restriction;
+> > >>  
+> > >> @@ -117,7 +117,7 @@ static __init int system_trusted_keyring_init(void)
+> > >>                                KEY_USR_VIEW | KEY_USR_READ | KEY_USR_SEARCH |
+> > >>                                KEY_USR_WRITE),
+> > >>                               KEY_ALLOC_NOT_IN_QUOTA,
+> > >> -                             get_builtin_and_secondary_restriction(),
+> > >> +                             get_secondary_restriction(),
+> > >>                               NULL);
+> > >>         if (IS_ERR(secondary_trusted_keys))
+> > >>                 panic("Can't allocate secondary trusted keyring\n");
+> > > 
+> > > This is wrong order.
+> > > 
+> > > You should first do the changes that make the old name
+> > > obsolete and only after that have a patch that does the
+> > > rename. Unfortunately, this patch cannot possibly acked
+> > > with the current order.
+> >
+> > I can change the order, but I'm confused how this would work for a git bisect. 
+> > If the rename happens afterwards, now two patches will always need to be 
+> > reverted instead of the possibility of one.  Is this your expectation?
+
+If the keyring name change is independent of any other changes, as
+Jarkko suggested, nothing would break.
+
+> I'd drop this patch altogether. Old name is a bit ugly but does it matter
+> all that much?
+
+The name "get_builtin_and_secondary_restriction" implies trust based on
+keys in the ".builtin_trusted_keys" and ".secondary_trusted_keys"
+keyrings.  This patch set is extending that to include keys on the new
+".machine" keyring, by linking it to the secondary keyring.  Is leaving
+the name unchanged really an option?
+
 > 
-> The fact that IMA doesn't cover all metadata, file names nor the file 
-> hierarchies is well known and the solution can be implemented with 
-> dm-verity (which has its own drawbacks).
+> You already 16 patches without this.
 
-Thanks, Mickaël, for responding.  I'll go even farther and say that IMA
-wasn't ever meant to protect file metadata.  Another option is EVM,
-which addresses some, but not all of the issues.
-
-thanks,
+Agreed, it's a lot.  In the past, I've asked Eric to see if some of
+them could be squashed.
 
 Mimi
-
-> 
-> trusted_for is a tool for interpreters to enforce a security policy 
-> centralized by the kernel. The kind of file confusion attacks you are 
-> talking about should be addressed by a system policy. If the mount point 
-> options are not enough to express such policy, then we need to rely on 
-> IMA, SELinux or IPE to reduce the scope of legitimate mapping between 
-> scripts and interpreters.
 
