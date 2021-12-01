@@ -2,143 +2,147 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F62C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Dec 2021 02:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65414C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Dec 2021 09:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346214AbhLACl3 (ORCPT
+        id S242020AbhLAJZm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Nov 2021 21:41:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32776 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1346219AbhLACl1 (ORCPT
+        Wed, 1 Dec 2021 04:25:42 -0500
+Received: from smtp-190a.mail.infomaniak.ch ([185.125.25.10]:55861 "EHLO
+        smtp-190a.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230048AbhLAJZm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Nov 2021 21:41:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638326287;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=W0n5k4sl9AYBphe6cujkRUTAtSAAGA+Ca8Fn1jgb3kw=;
-        b=N3mzgk9UowmoT9bOELTegEg+modpoOEo2XRxoZTD2ZXoKI8rBY5ktzlsSp7cEDex0f4GM5
-        PbSWp/f4WI7VrjtC8cbiIG/PUy4NLouem1PL0surhgLCqlVQxmJtyJR33k858Un97cROcV
-        jgl/5eajJjl23AtbjXmW4lJNzUyD28c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-420-PtZgyoLZM6iWg_vjmPTmng-1; Tue, 30 Nov 2021 21:38:04 -0500
-X-MC-Unique: PtZgyoLZM6iWg_vjmPTmng-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 133C5102C7EB;
-        Wed,  1 Dec 2021 02:37:59 +0000 (UTC)
-Received: from localhost (ovpn-12-42.pek2.redhat.com [10.72.12.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3ADC560C13;
-        Wed,  1 Dec 2021 02:37:50 +0000 (UTC)
-Date:   Wed, 1 Dec 2021 10:37:47 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Suchanek <msuchanek@suse.de>
-Cc:     keyrings@vger.kernel.org, kexec@lists.infradead.org,
-        Philipp Rudo <prudo@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
-        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Frank van der Linden <fllinden@amazon.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] KEXEC_SIG with appended signature
-Message-ID: <20211201023747.GN21646@MiWiFi-R3L-srv>
-References: <cover.1637862358.git.msuchanek@suse.de>
+        Wed, 1 Dec 2021 04:25:42 -0500
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4J3ts80dGnzMqdLy;
+        Wed,  1 Dec 2021 10:22:20 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4J3ts25XFnzlhKSV;
+        Wed,  1 Dec 2021 10:22:14 +0100 (CET)
+Message-ID: <4a88f95b-d54d-ad70-fb49-e3c3f1d097f2@digikod.net>
+Date:   Wed, 1 Dec 2021 10:23:42 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1637862358.git.msuchanek@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+User-Agent: 
+Content-Language: en-US
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yin Fengwei <fengwei.yin@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20211115185304.198460-1-mic@digikod.net>
+ <87sfvd8k4c.fsf@oldenburg.str.redhat.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v17 0/3] Add trusted_for(2) (was O_MAYEXEC)
+In-Reply-To: <87sfvd8k4c.fsf@oldenburg.str.redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
 
-On 11/25/21 at 07:02pm, Michal Suchanek wrote:
-> Hello,
+On 30/11/2021 21:27, Florian Weimer wrote:
+> * Mickaël Salaün:
 > 
-> This is resend of the KEXEC_SIG patchset.
+>> Primary goal of trusted_for(2)
+>> ==============================
+>>
+>> This new syscall enables user space to ask the kernel: is this file
+>> descriptor's content trusted to be used for this purpose?  The set of
+>> usage currently only contains execution, but other may follow (e.g.
+>> configuration, sensitive data).  If the kernel identifies the file
+>> descriptor as trustworthy for this usage, user space should then take
+>> this information into account.  The "execution" usage means that the
+>> content of the file descriptor is trusted according to the system policy
+>> to be executed by user space, which means that it interprets the content
+>> or (try to) maps it as executable memory.
 > 
-> The first patch is new because it'a a cleanup that does not require any
-> change to the module verification code.
+> I sketched my ideas about “IMA gadgets” here:
 > 
-> The second patch is the only one that is intended to change any
-> functionality.
+>    IMA gadgets
+>    <https://www.openwall.com/lists/oss-security/2021/11/30/1>
 > 
-> The rest only deduplicates code but I did not receive any review on that
-> part so I don't know if it's desirable as implemented.
+> I still don't think the proposed trusted_for interface is sufficient.
+> The example I gave is a Perl module that does nothing (on its own) when
+> loaded as a Perl module (although you probably don't want to sign it
+> anyway, given what it implements), but triggers an unwanted action when
+> sourced (using .) as a shell script.
 
-Do you have the link of your 1st version?
+The fact that IMA doesn't cover all metadata, file names nor the file 
+hierarchies is well known and the solution can be implemented with 
+dm-verity (which has its own drawbacks).
 
-And after going through the whole series, it doesn't tell what this
-patch series intends to do in cover-letter or patch log.
+trusted_for is a tool for interpreters to enforce a security policy 
+centralized by the kernel. The kind of file confusion attacks you are 
+talking about should be addressed by a system policy. If the mount point 
+options are not enough to express such policy, then we need to rely on 
+IMA, SELinux or IPE to reduce the scope of legitimate mapping between 
+scripts and interpreters.
 
-Thanks
-Baoquan
+> 
+>> @usage identifies the user space usage intended for @fd: only
+>> TRUSTED_FOR_EXECUTION for now, but trusted_for_usage could be extended
+>> to identify other usages (e.g. configuration, sensitive data).
+> 
+> We would need TRUSTED_FOR_EXECUTION_BY_BASH,
+> TRUSTED_FOR_EXECUTION_BY_PERL, etc.  I'm not sure that actually works.
+
+Well, this doesn't scale and that is the reason trusted_for usage is 
+more generic. The kernel already has all the information required to 
+identify scripts and interpreters types. We don't need to make the user 
+space interface more complex by listing all types. The kernel only miss 
+the semantic of how the intrepreter wants to interpret files, and that 
+is the purpose of trusted_for. LSMs are designed to define complex 
+policies and trusted_for enables them to extend such policies.
 
 > 
-> The first two patches can be applied separately without the rest.
-> 
-> Thanks
-> 
-> Michal
-> 
-> Michal Suchanek (6):
->   s390/kexec_file: Don't opencode appended signature check.
->   powerpc/kexec_file: Add KEXEC_SIG support.
->   kexec_file: Don't opencode appended signature verification.
->   module: strip the signature marker in the verification function.
->   module: Use key_being_used_for for log messages in
->     verify_appended_signature
->   module: Move duplicate mod_check_sig users code to mod_parse_sig
-> 
->  arch/powerpc/Kconfig                     | 11 +++++
->  arch/powerpc/kexec/elf_64.c              | 14 ++++++
->  arch/s390/kernel/machine_kexec_file.c    | 42 ++----------------
->  crypto/asymmetric_keys/asymmetric_type.c |  1 +
->  include/linux/module_signature.h         |  1 +
->  include/linux/verification.h             |  4 ++
->  kernel/module-internal.h                 |  2 -
->  kernel/module.c                          | 12 +++--
->  kernel/module_signature.c                | 56 +++++++++++++++++++++++-
->  kernel/module_signing.c                  | 33 +++++++-------
->  security/integrity/ima/ima_modsig.c      | 22 ++--------
->  11 files changed, 113 insertions(+), 85 deletions(-)
-> 
-> -- 
-> 2.31.1
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
-> 
+> Caller process context does not work because we have this confusion
+> internally between glibc's own use (for the dynamic linker
+> configuration), and for loading programs/shared objects (there seems to
+> be a corner case where you can execute arbitrary code even without
+> executable mappings in the ELF object), and the script interpreter
+> itself (the primary target for trusted_for).
 
+The current use case for trusted_for is script interpreters, but we can 
+extend the trusted_for_usage enum with new usages like TRUSTED_FOR_LINK 
+and others. I'm not convinced glibc should be treated differently than 
+other executable code that want to load a shared library, but it is a 
+discussion we can have when trusted_for will be in mainline and someone 
+will propose a new usage. ;)
+
+> 
+> But for generating auditing events, trusted_for seems is probably quite
+> helpful.
+
+Indeed, it enables to add semantic to audit events.
