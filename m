@@ -2,60 +2,60 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FD4C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Dec 2021 02:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A75C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Dec 2021 02:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378291AbhLCCfc (ORCPT
+        id S1378301AbhLCCfe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Dec 2021 21:35:32 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:21782 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1378090AbhLCCfT (ORCPT
+        Thu, 2 Dec 2021 21:35:34 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49776 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1378156AbhLCCfT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Thu, 2 Dec 2021 21:35:19 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B31M387001105;
-        Fri, 3 Dec 2021 02:31:47 GMT
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B31qlJq008772;
+        Fri, 3 Dec 2021 02:31:44 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=ElT1R68eFHoxWm54sqUuqKvMeDAzTrpTAfv6wJD2+Kg=;
- b=NEfO+PpJAmU/AMVCqZPR/VVNjbFlQzi0k5BxQ7WiGvhUvShArXjnttWHFThc4/sspB3S
- /v3WIzvobv8icZceAIjbx5YPvXCDp2HR9WnJboSMKLb0tlQ0ExDIaFCBUmKFyNJoCxcd
- aLbI/QO1ZF99r04cbN+CSHIbgoYlvQMERu637T53g5OLbkBir/Me/UL5VIqYtGLcFPs8
- AM87dywdhFWnapg2TUzbtdsuRWUNCMdMIOBbtMwK1RUJ7o2VXTvUXtHHGeih9S9NyfCV
- vbrbu0S3ywIIMKexXzbios1GqZIBypWDArFku4bAwR8ITGAxNuYXxOOQXc9Z4FHGjqYR kw== 
+ bh=hEdI4aBLFFLpCOrcNtnP/fiAlaQIVSyXlVHCjtm7n/M=;
+ b=rQA0hVqwgL2LXsUDySA0Nn9MeV35/C8QXvusyMBOoG4CuJ/AaVWK6K02ten9g/aV4TY/
+ Voeg+s3D1MfpGgLERJukxriINycfzG4UPXRzYbh/2WUvM1bNgo+6fK0x64hI+Lt9O3jr
+ SHfsg8a3ywFBe2xa+mfjecuVs5CVRwN4P3Pr4L0dN6q+IA8//iBRwKWDMJ66A86QyBFm
+ 5k/ggb7ZGnkAOp1LQiQ1QNTXzfbr4haU74yTpUSlPbRciYU8KoSpQtVvSVBBf5kCuk7H
+ JzuY/RNpD4a9hrKQt7TfGXqTz9NHIIaETWTo34ZSNtcUdYRyzFsjVst4py3l/BbYwC6s RA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cq9gx114n-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cq9y40h2h-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Dec 2021 02:31:47 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B32UWg6010224;
-        Fri, 3 Dec 2021 02:31:46 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cq9gx112t-1
+        Fri, 03 Dec 2021 02:31:43 +0000
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B32Vg9l011202;
+        Fri, 3 Dec 2021 02:31:42 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cq9y40h22-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Dec 2021 02:31:46 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B32SMxb014583;
-        Fri, 3 Dec 2021 02:31:38 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma03wdc.us.ibm.com with ESMTP id 3cn3k3k55u-1
+        Fri, 03 Dec 2021 02:31:42 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B32RkoO025349;
+        Fri, 3 Dec 2021 02:31:41 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma01wdc.us.ibm.com with ESMTP id 3ckcacuf04-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Dec 2021 02:31:38 +0000
+        Fri, 03 Dec 2021 02:31:41 +0000
 Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B32VZRq8978960
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B32Vdb956426834
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 3 Dec 2021 02:31:36 GMT
+        Fri, 3 Dec 2021 02:31:39 GMT
 Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D71536E087;
-        Fri,  3 Dec 2021 02:31:35 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 8669D6E06A;
+        Fri,  3 Dec 2021 02:31:39 +0000 (GMT)
 Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA53F6E056;
-        Fri,  3 Dec 2021 02:31:34 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 738A46E052;
+        Fri,  3 Dec 2021 02:31:38 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri,  3 Dec 2021 02:31:34 +0000 (GMT)
+        Fri,  3 Dec 2021 02:31:38 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, serge@hallyn.com,
@@ -67,223 +67,85 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com,
         linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [RFC v2 08/19] ima: Move measurement list related variables into ima_namespace
-Date:   Thu,  2 Dec 2021 21:31:07 -0500
-Message-Id: <20211203023118.1447229-9-stefanb@linux.ibm.com>
+Subject: [RFC v2 11/19] securityfs: Prefix global variables with securityfs_
+Date:   Thu,  2 Dec 2021 21:31:10 -0500
+Message-Id: <20211203023118.1447229-12-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211203023118.1447229-1-stefanb@linux.ibm.com>
 References: <20211203023118.1447229-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: urfKDGN2bIasTm5Atm2oWEIbhYcBJHML
-X-Proofpoint-ORIG-GUID: pO4i1BYQc5D99Sz0WKz_nfgd-VtZK9yP
+X-Proofpoint-ORIG-GUID: syknhlNM_dun_8oVrXuy8HwT4qZxrP_p
+X-Proofpoint-GUID: QFoYem00JcNejYosv21QR7fvlklao97R
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-02_16,2021-12-02_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- bulkscore=0 phishscore=0 spamscore=0 lowpriorityscore=0 clxscore=1015
- adultscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112030014
+ definitions=2021-12-03_01,2021-12-02_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 mlxscore=0 phishscore=0 malwarescore=0 bulkscore=0
+ suspectscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999
+ impostorscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2110150000 definitions=main-2112030014
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Move measurement list related variables into the ima_namespace. This way a
-front-end like SecurityFS can show the measurement list inside an IMA
-namespace.
-
-Implement ima_free_measurements() to free a list of measurements
-and call it when an IMA namespace is deleted.
+Prefix global variables 'mount' and 'mount_count' with securityfs_ so they
+are easier to distinguish as variables belonging to securityfs rather than
+variables being passed in through new APIs we will introduce.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- include/linux/ima.h                      |  2 ++
- security/integrity/ima/ima.h             |  4 +--
- security/integrity/ima/ima_fs.c          |  6 +++--
- security/integrity/ima/ima_init_ima_ns.c |  5 ++++
- security/integrity/ima/ima_ns.c          |  1 +
- security/integrity/ima/ima_queue.c       | 33 ++++++++++++++----------
- 6 files changed, 33 insertions(+), 18 deletions(-)
+ security/inode.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 929bf87b1bbf..53f944469de7 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -259,6 +259,8 @@ struct ima_namespace {
- 	int ima_policy_flag;
+diff --git a/security/inode.c b/security/inode.c
+index 6c326939750d..71d93108de55 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -22,8 +22,8 @@
+ #include <linux/lsm_hooks.h>
+ #include <linux/magic.h>
  
- 	struct ima_h_table ima_htable;
-+	struct list_head ima_measurements;
-+	unsigned long binary_runtime_size;
- };
+-static struct vfsmount *mount;
+-static int mount_count;
++static struct vfsmount *securityfs_mount;
++static int securityfs_mount_count;
  
- extern struct ima_namespace init_ima_ns;
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index a7e6c8fb152a..bb9763cd5fb1 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -104,7 +104,6 @@ struct ima_queue_entry {
- 	struct list_head later;		/* place in ima_measurements list */
- 	struct ima_template_entry *entry;
- };
--extern struct list_head ima_measurements;	/* list of all measurements */
- 
- /* Some details preceding the binary serialized measurement list */
- struct ima_kexec_hdr {
-@@ -168,8 +167,9 @@ int ima_restore_measurement_entry(struct ima_namespace *ns,
- 				  struct ima_template_entry *entry);
- int ima_restore_measurement_list(struct ima_namespace *ns,
- 				 loff_t bufsize, void *buf);
-+void ima_free_measurements(struct ima_namespace *ns);
- int ima_measurements_show(struct seq_file *m, void *v);
--unsigned long ima_get_binary_runtime_size(void);
-+unsigned long ima_get_binary_runtime_size(struct ima_namespace *ns);
- int ima_init_template(void);
- void ima_init_template_list(void);
- int __init ima_init_digests(void);
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 9df8648ad64d..c35e15fb313f 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -80,12 +80,13 @@ static const struct file_operations ima_measurements_count_ops = {
- /* returns pointer to hlist_node */
- static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+ static void securityfs_free_inode(struct inode *inode)
  {
-+	struct ima_namespace *ns = get_current_ns();
- 	loff_t l = *pos;
- 	struct ima_queue_entry *qe;
+@@ -118,12 +118,12 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
  
- 	/* we need a lock since pos could point beyond last element */
- 	rcu_read_lock();
--	list_for_each_entry_rcu(qe, &ima_measurements, later) {
-+	list_for_each_entry_rcu(qe, &ns->ima_measurements, later) {
- 		if (!l--) {
- 			rcu_read_unlock();
- 			return qe;
-@@ -97,6 +98,7 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+ 	pr_debug("securityfs: creating file '%s'\n",name);
  
- static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
- {
-+	struct ima_namespace *ns = get_current_ns();
- 	struct ima_queue_entry *qe = v;
+-	error = simple_pin_fs(&fs_type, &mount, &mount_count);
++	error = simple_pin_fs(&fs_type, &securityfs_mount, &securityfs_mount_count);
+ 	if (error)
+ 		return ERR_PTR(error);
  
- 	/* lock protects when reading beyond last element
-@@ -107,7 +109,7 @@ static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
- 	rcu_read_unlock();
- 	(*pos)++;
+ 	if (!parent)
+-		parent = mount->mnt_root;
++		parent = securityfs_mount->mnt_root;
  
--	return (&qe->later == &ima_measurements) ? NULL : qe;
-+	return (&qe->later == &ns->ima_measurements) ? NULL : qe;
+ 	dir = d_inode(parent);
+ 
+@@ -168,7 +168,7 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+ 	dentry = ERR_PTR(error);
+ out:
+ 	inode_unlock(dir);
+-	simple_release_fs(&mount, &mount_count);
++	simple_release_fs(&securityfs_mount, &securityfs_mount_count);
+ 	return dentry;
  }
  
- static void ima_measurements_stop(struct seq_file *m, void *v)
-diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
-index e13adc3287ed..57e46a10c001 100644
---- a/security/integrity/ima/ima_init_ima_ns.c
-+++ b/security/integrity/ima/ima_init_ima_ns.c
-@@ -43,6 +43,11 @@ int ima_init_namespace(struct ima_namespace *ns)
- 	atomic_long_set(&ns->ima_htable.len, 0);
- 	atomic_long_set(&ns->ima_htable.violations, 0);
- 	memset(&ns->ima_htable.queue, 0, sizeof(ns->ima_htable.queue));
-+	INIT_LIST_HEAD(&ns->ima_measurements);
-+	if (IS_ENABLED(CONFIG_IMA_KEXEC) && ns == &init_ima_ns)
-+		ns->binary_runtime_size = 0;
-+	else
-+		ns->binary_runtime_size = ULONG_MAX;
- 
- 	return 0;
- }
-diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index efbf7087a8ee..debe863364fd 100644
---- a/security/integrity/ima/ima_ns.c
-+++ b/security/integrity/ima/ima_ns.c
-@@ -69,6 +69,7 @@ static void destroy_ima_ns(struct ima_namespace *ns)
- 	pr_debug("DESTROY ima_ns: 0x%p\n", ns);
- 	ima_free_policy_rules(ns);
- 	free_ns_status_cache(ns);
-+	ima_free_measurements(ns);
- 	kmem_cache_free(imans_cachep, ns);
- }
- 
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 373154039b91..f15f776918ec 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -25,13 +25,6 @@
- /* pre-allocated array of tpm_digest structures to extend a PCR */
- static struct tpm_digest *digests;
- 
--LIST_HEAD(ima_measurements);	/* list of all measurements */
--#ifdef CONFIG_IMA_KEXEC
--static unsigned long binary_runtime_size;
--#else
--static unsigned long binary_runtime_size = ULONG_MAX;
--#endif
--
- /* mutex protects atomicity of extending measurement list
-  * and extending the TPM PCR aggregate. Since tpm_extend can take
-  * long (and the tpm driver uses a mutex), we can't use the spinlock.
-@@ -107,7 +100,7 @@ static int ima_add_digest_entry(struct ima_namespace *ns,
- 	qe->entry = entry;
- 
- 	INIT_LIST_HEAD(&qe->later);
--	list_add_tail_rcu(&qe->later, &ima_measurements);
-+	list_add_tail_rcu(&qe->later, &ns->ima_measurements);
- 
- 	atomic_long_inc(&ns->ima_htable.len);
- 	if (update_htable) {
-@@ -116,12 +109,12 @@ static int ima_add_digest_entry(struct ima_namespace *ns,
- 	} else
- 		INIT_HLIST_NODE(&qe->hnext);
- 
--	if (binary_runtime_size != ULONG_MAX) {
-+	if (ns->binary_runtime_size != ULONG_MAX) {
- 		int size;
- 
- 		size = get_binary_runtime_size(entry);
--		binary_runtime_size = (binary_runtime_size < ULONG_MAX - size) ?
--		     binary_runtime_size + size : ULONG_MAX;
-+		ns->binary_runtime_size = (ns->binary_runtime_size < ULONG_MAX - size) ?
-+		     ns->binary_runtime_size + size : ULONG_MAX;
+@@ -309,7 +309,7 @@ void securityfs_remove(struct dentry *dentry)
+ 		dput(dentry);
  	}
- 	return 0;
+ 	inode_unlock(dir);
+-	simple_release_fs(&mount, &mount_count);
++	simple_release_fs(&securityfs_mount, &securityfs_mount_count);
  }
-@@ -131,12 +124,12 @@ static int ima_add_digest_entry(struct ima_namespace *ns,
-  * entire binary_runtime_measurement list, including the ima_kexec_hdr
-  * structure.
-  */
--unsigned long ima_get_binary_runtime_size(void)
-+unsigned long ima_get_binary_runtime_size(struct ima_namespace *ns)
- {
--	if (binary_runtime_size >= (ULONG_MAX - sizeof(struct ima_kexec_hdr)))
-+	if (ns->binary_runtime_size >= (ULONG_MAX - sizeof(struct ima_kexec_hdr)))
- 		return ULONG_MAX;
- 	else
--		return binary_runtime_size + sizeof(struct ima_kexec_hdr);
-+		return ns->binary_runtime_size + sizeof(struct ima_kexec_hdr);
- }
+ EXPORT_SYMBOL_GPL(securityfs_remove);
  
- static int ima_pcr_extend(struct tpm_digest *digests_arg, int pcr)
-@@ -217,6 +210,18 @@ int ima_restore_measurement_entry(struct ima_namespace *ns,
- 	return result;
- }
- 
-+void ima_free_measurements(struct ima_namespace *ns)
-+{
-+	struct ima_queue_entry *qe, *tmp;
-+
-+	list_for_each_entry_safe(qe, tmp, &ns->ima_measurements, later) {
-+		list_del(&qe->later);
-+		if (!hlist_unhashed(&qe->hnext))
-+			hlist_del(&qe->hnext);
-+		kfree(qe);
-+	}
-+}
-+
- int __init ima_init_digests(void)
- {
- 	u16 digest_size;
 -- 
 2.31.1
 
