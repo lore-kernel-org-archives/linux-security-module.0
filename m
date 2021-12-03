@@ -2,255 +2,243 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE890C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Dec 2021 18:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D333C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Dec 2021 18:34:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359319AbhLCSKK (ORCPT
+        id S1343833AbhLCSiB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Dec 2021 13:10:10 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56932 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1353418AbhLCSKI (ORCPT
+        Fri, 3 Dec 2021 13:38:01 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:40500 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239790AbhLCSiB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Dec 2021 13:10:08 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B3FpZi2030775;
-        Fri, 3 Dec 2021 18:06:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=siyREWmz2+sW8HcsCvJYgd9SEIscCNn5ZgDPBq8SHHE=;
- b=hiiRtF4SgiZlbF1X4g7zPwdvd3y2p3NY5NJDMOZLvQftljDkdfVoT9S1IXncEovChOMN
- AQ+Vvwr97rFIts53N/bfUXxOmtXNIAundDkvcwxFq6/E8eJ9CaNSk1rVLW7Hyzr5wBOw
- ip7clAI8w+se591PzziCYkJWiXbWhJe+Q+u2A9JQcLBkGbb66FtxKTNdk9vlBI0wanNo
- FLhC6DjvbYjE5UMzB2/huJ6d42b+XGV2Zhm1g+58BTWglTk0kp0cihy3NYffjvaXmblR
- Qw/pQMKx0H8vEBARlsbMBDBQd//Q61ZCGBZD1XOcc04Wk19uY0CVCjE03/iFmT8cb4UR vw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3cqp8haq95-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Dec 2021 18:06:18 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B3HsqpS008034;
-        Fri, 3 Dec 2021 18:06:18 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3cqp8haq8x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Dec 2021 18:06:18 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B3I4GFg025496;
-        Fri, 3 Dec 2021 18:06:17 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma03dal.us.ibm.com with ESMTP id 3ckcaeb8q7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Dec 2021 18:06:17 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B3I6E0O66650470
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 3 Dec 2021 18:06:14 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3DB05AE067;
-        Fri,  3 Dec 2021 18:06:14 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB874AE060;
-        Fri,  3 Dec 2021 18:06:13 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  3 Dec 2021 18:06:13 +0000 (GMT)
-Message-ID: <6306b4e5-f26d-1704-6344-354eb5387abf@linux.ibm.com>
-Date:   Fri, 3 Dec 2021 13:06:13 -0500
+        Fri, 3 Dec 2021 13:38:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638556476;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WUI79xqNEENMen9B3CXBnLIKWOQn9yjmbJ/XPxVuasQ=;
+        b=chJaFdpdJCHEjg1R0P5H2mBd/ZmwIYx+6ewxVXzADSlQdrn8rKEolmGY7XZZKLbdLgdC/z
+        M09Y3dnmLJONxmIiFOxtuqRTyFOnOl1DhB8H0zVkXNLP+0jo4DrIdfNKpAhaeH4MP+UydT
+        oip9Tf6Jhaffx4m148WDic6IsDyjfFc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-512-HEje0DGGMamEpzA9R28HJQ-1; Fri, 03 Dec 2021 13:34:33 -0500
+X-MC-Unique: HEje0DGGMamEpzA9R28HJQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A2C1594EE1;
+        Fri,  3 Dec 2021 18:34:30 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.33.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F249A5C643;
+        Fri,  3 Dec 2021 18:34:29 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 8A4F1225EC0; Fri,  3 Dec 2021 13:34:29 -0500 (EST)
+Date:   Fri, 3 Dec 2021 13:34:29 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     David Anderson <dvander@google.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
+        paulmoore@microsoft.com, Luca.Boccassi@microsoft.com
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr
+ fix
+Message-ID: <YapjNRrjpDu2a5qQ@redhat.com>
+References: <20211117015806.2192263-1-dvander@google.com>
+ <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
+ <Yao51m9EXszPsxNN@redhat.com>
+ <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [RFC v2 19/19] ima: Setup securityfs for IMA namespace
-Content-Language: en-US
-To:     jejb@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20211203023118.1447229-1-stefanb@linux.ibm.com>
- <20211203023118.1447229-20-stefanb@linux.ibm.com>
- <df433bc52ca1e0408d48bbace4c34a573991f5ba.camel@linux.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <df433bc52ca1e0408d48bbace4c34a573991f5ba.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: lWcBeCjaWeVDNMaRIbVwCWN9gF0yiUFI
-X-Proofpoint-GUID: -0WCxuWP3EctpDJDj3AWClbN7ztDSNL-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-03_07,2021-12-02_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=999
- clxscore=1015 phishscore=0 spamscore=0 adultscore=0 impostorscore=0
- suspectscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2110150000 definitions=main-2112030115
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Dec 03, 2021 at 06:31:01PM +0200, Amir Goldstein wrote:
+> On Fri, Dec 3, 2021 at 5:38 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Wed, Nov 17, 2021 at 09:36:42AM +0200, Amir Goldstein wrote:
+> > > On Wed, Nov 17, 2021 at 3:58 AM David Anderson <dvander@google.com> wrote:
+> > > >
+> > > > Mark Salyzyn (3):
+> > > >   Add flags option to get xattr method paired to __vfs_getxattr
+> > > >   overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+> > > >   overlayfs: override_creds=off option bypass creator_cred
+> > > >
+> > > > Mark Salyzyn + John Stultz (1):
+> > > >   overlayfs: inode_owner_or_capable called during execv
+> > > >
+> > > > The first three patches address fundamental security issues that should
+> > > > be solved regardless of the override_creds=off feature.
+> > > >
+> > > > The fourth adds the feature depends on these other fixes.
+> > > >
+> > > > By default, all access to the upper, lower and work directories is the
+> > > > recorded mounter's MAC and DAC credentials.  The incoming accesses are
+> > > > checked against the caller's credentials.
+> > > >
+> > > > If the principles of least privilege are applied for sepolicy, the
+> > > > mounter's credentials might not overlap the credentials of the caller's
+> > > > when accessing the overlayfs filesystem.  For example, a file that a
+> > > > lower DAC privileged caller can execute, is MAC denied to the
+> > > > generally higher DAC privileged mounter, to prevent an attack vector.
+> > > >
+> > > > We add the option to turn off override_creds in the mount options; all
+> > > > subsequent operations after mount on the filesystem will be only the
+> > > > caller's credentials.  The module boolean parameter and mount option
+> > > > override_creds is also added as a presence check for this "feature",
+> > > > existence of /sys/module/overlay/parameters/overlay_creds
+> > > >
+> > > > Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> > > > Signed-off-by: David Anderson <dvander@google.com>
+> > > > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > > > Cc: Jonathan Corbet <corbet@lwn.net>
+> > > > Cc: Vivek Goyal <vgoyal@redhat.com>
+> > > > Cc: Eric W. Biederman <ebiederm@xmission.com>
+> > > > Cc: Amir Goldstein <amir73il@gmail.com>
+> > > > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > > > Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> > > > Cc: John Stultz <john.stultz@linaro.org>
+> > > > Cc: linux-doc@vger.kernel.org
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > Cc: linux-fsdevel@vger.kernel.org
+> > > > Cc: linux-unionfs@vger.kernel.org
+> > > > Cc: linux-security-module@vger.kernel.org
+> > > > Cc: kernel-team@android.com
+> > > > Cc: selinux@vger.kernel.org
+> > > > Cc: paulmoore@microsoft.com
+> > > > Cc: Luca.Boccassi@microsoft.com
+> > > >
+> > > > ---
+> > > >
+> > > > v19
+> > > > - rebase.
+> > > >
+> > >
+> > > Hi David,
+> > >
+> > > I see that the patch set has changed hands (presumably to Android upstreaming
+> > > team), but you just rebased v18 without addressing the maintainers concerns [1].
+> > >
+> >
+> > BTW, where is patch 1 of the series. I can't seem to find it.
+> >
+> > I think I was running into issues with getxattr() on underlying filesystem
+> > as well (if mounter did not have sufficient privileges) and tried to fix
+> > it. But did not find a good solution at that point of time.
+> >
+> > https://lore.kernel.org/linux-unionfs/1467733854-6314-6-git-send-email-vgoyal@redhat.com/
+> >
+> > So basically when overlay inode is being initialized, code will try to
+> > query "security.selinux" xattr on underlying file to initialize selinux
+> > label on the overlay inode. For regular filesystems, they bypass the
+> > security check by calling __vfs_getxattr() when trying to initialize
+> > this selinux security label. But with layered filesystem, it still
+> > ends up calling vfs_getxattr() on underlying filesyste. Which means
+> > it checks for caller's creds and if caller is not priviliged enough,
+> > access will be denied.
+> >
+> > To solve this problem, looks like this patch set is passing a flag
+> > XATTR_NOSECUROTY so that permission checks are skipped in getxattr()
+> > path in underlying filesystem. As long as this information is
+> > not leaked to user space (and remains in overlayfs), it probably is
+> > fine? And if information is not going to user space, then it probably
+> > is fine for unprivileged overlayfs mounts as well?
+> >
+> > I see a comment from Miklos as well as you that it is not safe to
+> > do for unprivileged mounts. Can you help me understand why that's
+> > the case.
+> >
+> >
+> > > Specifically, the patch 2/4 is very wrong for unprivileged mount and
+> >
+> > Can you help me understand why it is wrong. (/me should spend more
+> > time reading the patch. But I am taking easy route of asking you. :-)).
+> >
+> 
+> I should have spent more time reading the patch too :-)
+> I was not referring to the selinux part. That looks fine I guess.
+> 
+> I was referring to the part of:
+> "Check impure, opaque, origin & meta xattr with no sepolicy audit
+> (using __vfs_getxattr) since these operations are internal to
+> overlayfs operations and do not disclose any data."
+> I don't know how safe that really is to ignore the security checks
+> for reading trusted xattr and allow non-privileged mounts to do that.
 
-On 12/3/21 12:03, James Bottomley wrote:
-> On Thu, 2021-12-02 at 21:31 -0500, Stefan Berger wrote:
-> [...]
->>   static int securityfs_init_fs_context(struct fs_context *fc)
->>   {
->> +	int rc;
->> +
->> +	if (fc->user_ns->ima_ns->late_fs_init) {
->> +		rc = fc->user_ns->ima_ns->late_fs_init(fc->user_ns);
->> +		if (rc)
->> +			return rc;
->> +	}
->>   	fc->ops = &securityfs_context_ops;
->>   	return 0;
->>   }
-> I know I suggested this, but to get this to work in general, it's going
-> to have to not be specific to IMA, so it's going to have to become
-> something generic like a notifier chain.  The other problem is it's
-> only working still by accident:
+I am also concerned about this.
 
-I had thought about this also but the rationale was:
+> Certainly since non privileged mounts are likely to use userxattr
+> anyway, so what's the reason to bypass security?
 
-securityfs is compiled due to CONFIG_IMA_NS and the user namespace 
-exists there and that has a pointer now to ima_namespace, which can have 
-that callback. I assumed that other namespaced subsystems could also be 
-reached then via such a callback, but I don't know.
+I am not sure. In the early version of patches I think argument was
+that do not switch to mounter's creds and use caller's creds on 
+underlying filesystem as well. And each caller will be privileged
+enough to be able to perform the operation.
 
-I suppose any late filesystem init callchain would have to be connected 
-to the user_namespace somehow?
+Our take was that how is this model better because in current model
+only mounter needs to be privileged while in this new model each
+caller will have to be privileged. But Android guys seemed to be ok
+with that. So has this assumption changed since early days. If callers
+are privileged, then vfs_getxattr() on underlying filesystem for
+overaly internal xattrs should succeed and there is no need for this
+change.
 
+I suspect patches have evolved since then and callers are not as
+privileged as we expect them to and that's why we are bypassing this
+check on all overlayfs internal trusted xattrs? This definitely requires
+much close scrutiny. My initial reaction is that this sounds very scary.
 
->
->> +int ima_fs_ns_init(struct ima_namespace *ns)
->> +{
->> +	ns->mount = securityfs_ns_create_mount(ns->user_ns);
-> This actually triggers on the call to securityfs_init_fs_context, but
-> nothing happens because the callback is null.  Every subsequent use of
-> fscontext will trigger this.  The point of a keyed supeblock is that
-> fill_super is only called once per key, that's the place we should be
-> doing this.   It should also probably be a blocking notifier so any
-> consumer of securityfs can be namespaced by registering for this
-> notifier.
+In general I would think overlayfs should not bypass the check on
+underlying fs. Either checks should be done in mounter's context or
+caller's context (depending on override_creds=on/off).
 
+Thanks
+Vivek
 
-What I don't like about the fill_super is that it gets called too early:
-
-[   67.058611] securityfs_ns_create_mount @ 102 target user_ns: 
-ffff95c010698c80; nr_extents: 0
-[   67.059836] securityfs_fill_super @ 47  user_ns: ffff95c010698c80; 
-nr_extents: 0
-
-We are switching to the target user namespace in 
-securityfs_ns_create_mount. The expected nr_extents at this point is 0, 
-since user_ns hasn't been configured, yet. But then security_fill_super 
-is also called with nr_extents 0. We cannot use that, it's too early!
-
-
->
->> +	if (IS_ERR(ns->mount)) {
->> +		ns->mount = NULL;
->> +		return -1;
->> +	}
->> +	ns->mount_count = 1;
-> This is a bit nasty, too: we're spilling the guts of mount count
-> tracking into IMA instead of encapsulating it inside securityfs.
-
-
-Ok, I can make this disappear.
-
-
->
->> +
->> +	/* Adjust the trigger for user namespace's early teardown of
->> dependent
->> +	 * namespaces. Due to the filesystem there's an additional
->> reference
->> +	 * to the user namespace.
->> +	 */
->> +	ns->user_ns->refcount_teardown += 1;
->> +
->> +	ns->late_fs_init = ima_fs_ns_late_init;
->> +
->> +	return 0;
->> +}
-> I think what should be happening is that we shouldn't so the
-> simple_pin_fs, which creates the inodes, ahead of time; we should do it
-> inside fill_super using a notifier, meaning it gets called once per
-
-fill_super would only work for the init_user_ns from what I can see.
-
-
-> key, creates the root dentry then triggers the notifier which
-> instantiates all the namespaced entries.  We can still use
-> simple_pin_fs for this because there's no locking across fill_super.
-> This would mean fill_super would be called the first time the
-> securityfs is mounted inside the namespace.
-
-
-I guess I would need to know how fill_super would work or how it could 
-be called late/delayed as well.
-
-
->
-> If we do it this way, we can now make securityfs have its own mount and
-> mount_count inside the user namespace, which it uses internally to the
-> securityfs code, thus avoiding exposing them to ima or any other
-> namespaced consumer.
->
-> I also think we now don't need the securityfs_ns_ duplicated functions
-> because the callback via the notifier chain now ensures we can use the
-> namespace they were created in to distinguish between non namespaced
-> and namespaced entries.
-
-Is there then no need to pass a separate vfsmount * in anymore? Where 
-would the vfsmount pointer reside? For now it's in ima_namespace, but it 
-sounds like it should be in a more centralized place? Should it also be 
-connected to the user_namespace so we can pick it up using get_user_ns()?
-
-
->
-> So non-namespaced consumers of securityfs would do what they do now
-> (calling the securityfs_create on initialization) and namespaced
-> consumers would register a callback on the notifier which would get
-> called once for every namespace the securityfs gets mounted in.
->
-> I also theorize if we do it with notifiers, we could have a notifier on
-> kill_sb to tear down all the entires.  If we do this, I think we don't
-> have to pin any more.
->
-> James
->
->
-
-diff --git a/security/inode.c b/security/inode.c
-index ed5f1c533776..49c9839642ed 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -44,6 +44,8 @@ static int securityfs_fill_super(struct super_block 
-*sb, struct fs_context *fc)
-         static const struct tree_descr files[] = {{""}};
-         int error;
-
-+       printk(KERN_INFO "%s @ %u  user_ns: %px; nr_extents: %d\n", 
-__func__, __LINE__, fc->user_ns, fc->user_ns->uid_map.nr_extents);
-+
-         error = simple_fill_super(sb, SECURITYFS_MAGIC, files);
-         if (error)
-                 return error;
-@@ -97,6 +99,8 @@ struct vfsmount *securityfs_ns_create_mount(struct 
-user_namespace *user_ns)
-         put_user_ns(fc->user_ns);
-         fc->user_ns = get_user_ns(user_ns);
-
-+       printk(KERN_INFO "%s @ %u target user_ns: %px; nr_extents: 
-%d\n", __func__, __LINE__, fc->user_ns, fc->user_ns->uid_map.nr_extents);
-+
-         mnt = fc_mount(fc);
-         put_fs_context(fc);
-         return mnt;
+> 
+> > > I think that the very noisy patch 1/4 could be completely avoided:
+> >
+> > How can it completely avoided. If mounter is not privileged then
+> > vfs_getxattr() on underlying filesystem will fail. Or if
+> > override_creds=off, then caller might not be privileged enough to
+> > do getxattr() but we still should be able to initialize overlay
+> > inode security label.
+> >
+> 
+> My bad. I didn't read the description of the selinux problem
+> with the re-post and forgot about it.
+> 
+> > > Can't you use -o userxattr mount option
+> >
+> > user xattrs done't work for device nodes and symlinks.
+> >
+> > BTW, how will userxattr solve the problem completely. It can be used
+> > to store overlay specific xattrs but accessing security xattrs on
+> > underlying filesystem will still be a problem?
+> 
+> It cannot.
+> As long as the patch sticks with passing through the
+> getxattr flags, it looks fine to me.
+> passing security for trusted.overlay seems dodgy.
+> 
+> Thanks,
+> Amir.
+> 
 
