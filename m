@@ -2,81 +2,262 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AFEC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 18:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F1DC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 21:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347537AbhLFSwe (ORCPT
+        id S1350558AbhLFVSk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Dec 2021 13:52:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52730 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbhLFSw3 (ORCPT
+        Mon, 6 Dec 2021 16:18:40 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:6052 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1350866AbhLFVSO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Dec 2021 13:52:29 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80126C0613F8
-        for <linux-security-module@vger.kernel.org>; Mon,  6 Dec 2021 10:49:00 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id o20so46987507eds.10
-        for <linux-security-module@vger.kernel.org>; Mon, 06 Dec 2021 10:49:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gFNd9y7zjP1MZt+ih91bQ58I7tOdLaR33IaqrsbckfE=;
-        b=zYi/8H3h0HaydowF6DdzwRAt0sz/3H5Pq+cHBdGWCuTMKu7JSTORqS0A6zV3mPtJ2E
-         vRqUkbTs8Cg8eI677C2XlsG0/5FiKn+7Lb2/ihT6gY9EGRDaKjTBrIIh2N2y0TbfJ7o/
-         MJNtHdUyuYjRXPqOYV4ZvcteHTujspI17XREkjh5dlY7yaMfzHptTsYmkDw5MaEFGNd3
-         9J1ho+R+etgUcwdQNnEHvfMpLB9E2o4203w2/Q2uynX4RHURBgAjPXF96VYmK0ggVz+1
-         KRPIzB8cLSeysPfNlHWrNBlUqUyOiHMklYV2OP+ise3AeE+pt//Y7WxRBz81q9Jlf8N1
-         bWEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gFNd9y7zjP1MZt+ih91bQ58I7tOdLaR33IaqrsbckfE=;
-        b=u5yikqyTmHHuoFk1ANk2C4yLzfShHiwKl0+03A85AR1ERnfuIfjknBQDfL1dWQZ6m9
-         rKZImMwR6kcNGr6vEyho2WCRFefyfo2ShGrA8V2q7EZdkglkadi+Qwrq8AT8JWhl4TeU
-         A//r6+jXa0Bldl6kH9nt4tsSXGRMjm9/9iNHKoDoDK02qICK9xuFf861hSAnlxDoXc5B
-         0I7TqII4pJHODN5kHMyI/HEZRzcWbl7HK7BabjBHW9QcCNG0wMxx636LayIw2J18Brso
-         Rrz1WCko9x6pwyEuBXybNl1n3e89EzOuxiUFCW8Ky/jEPphCgHGdKS0kGYRXlG1pBazG
-         HpIg==
-X-Gm-Message-State: AOAM531JLNM0aU8W8m8+Vp4qlhMbnClqOb0k3l9D+7YSyjYTe5qVyPpI
-        9Lvk6J7MRTrh2ht6pyt8DFuODPB1x3QLi0Qu7ebnQ4h6lQ==
-X-Google-Smtp-Source: ABdhPJwliFX2CTvdqeiZsfHMs1CAYWPPZBKN2puXETpr9zGqcYUg+dPnOsqRPmLnQmc1k0vjyaRfj8WX054yJd0iuXg=
-X-Received: by 2002:a05:6402:12d3:: with SMTP id k19mr1275316edx.244.1638816538988;
- Mon, 06 Dec 2021 10:48:58 -0800 (PST)
-MIME-Version: 1.0
-References: <20211206132406.235872-1-omosnace@redhat.com>
-In-Reply-To: <20211206132406.235872-1-omosnace@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 6 Dec 2021 13:48:48 -0500
-Message-ID: <CAHC9VhQABwr1y09i6=KB8UjhvW0C8UwYMJpdatznTYDxFVhZLw@mail.gmail.com>
-Subject: Re: [PATCH] security,selinux: remove security_add_mnt_opt()
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+        Mon, 6 Dec 2021 16:18:14 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B6KpEPh031874;
+        Mon, 6 Dec 2021 21:14:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : reply-to : to : cc : date : in-reply-to : references : content-type
+ : mime-version : content-transfer-encoding; s=pp1;
+ bh=ShB4uba5GUGqtY+f8M5TLlSaUG5gbp9vI+lNh9lyRLc=;
+ b=NC1NtVj+3gHx+N0s4+zflOvoHTe33eb2Mhijok8HmXNyBecE7iSxsX2JmygdKunhOr6g
+ 8B4CkB2qXk/a/bR207GWZDZ8iWAO3BVJMfMLEfBFxlND77y5ZZI5SJX6kQyGhJciAdTg
+ n1O1n32zldXGn7V+422YDp6iAOV1yt25Vd6S9ySX423tjdpxNFn4N1rpDhIEPlFn+Iy3
+ bNH+Dn9gpLPyULV9PcijOJxJMolbsnclIKrrAASBh2NnsiiWKQM1PcnkkjsSxxDkV19t
+ 6PSvIYFVk4SUDIlygMUbIszHZvxACO++Aq+uGajbW8h+RTry9SVu5Z9CfwvbSqZRUk/0 yg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3csswy8d56-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Dec 2021 21:14:23 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B6KpTMN032458;
+        Mon, 6 Dec 2021 21:14:22 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3csswy8d52-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Dec 2021 21:14:22 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B6LDiYK015162;
+        Mon, 6 Dec 2021 21:14:21 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma03dal.us.ibm.com with ESMTP id 3cqyya7mnd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Dec 2021 21:14:21 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B6LEKgA53084512
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Dec 2021 21:14:20 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 815567806E;
+        Mon,  6 Dec 2021 21:14:20 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AFF0C7805E;
+        Mon,  6 Dec 2021 21:14:16 +0000 (GMT)
+Received: from jarvis.int.hansenpartnership.com (unknown [9.211.77.2])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Dec 2021 21:14:16 +0000 (GMT)
+Message-ID: <97ca7651b7ae9a0b6dce4d23c76af266fbd5642f.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 00/16] ima: Namespace IMA with audit support in IMA-ns
+From:   James Bottomley <jejb@linux.ibm.com>
+Reply-To: jejb@linux.ibm.com
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+Date:   Mon, 06 Dec 2021 16:14:15 -0500
+In-Reply-To: <20211206172600.1495968-1-stefanb@linux.ibm.com>
+References: <20211206172600.1495968-1-stefanb@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 5DiuQODpqbkjb6W1U0bDD77_9ZmriIw8
+X-Proofpoint-GUID: 9ClYdqg6AUGKpHh4k17z3C3sxFygYh-H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-06_07,2021-12-06_02,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ mlxlogscore=999 spamscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
+ impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2112060128
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 6, 2021 at 8:24 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> Its last user has been removed in commit f2aedb713c28 ("NFS: Add
-> fs_context support.").
->
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  include/linux/lsm_hook_defs.h |  2 --
->  include/linux/lsm_hooks.h     |  2 --
->  include/linux/security.h      |  8 -------
->  security/security.c           |  8 -------
->  security/selinux/hooks.c      | 39 -----------------------------------
->  5 files changed, 59 deletions(-)
+On Mon, 2021-12-06 at 12:25 -0500, Stefan Berger wrote:
+[...]
+> v3:
+>  - Further modifications to virtualized SecurityFS following James's
+> posted patch
+>  - Dropping of early teardown for user_namespaces since not needed
+> anymore
 
-Good catch.  As this really only affects SELinux, I've merged this
-into the selinux/next tree.
+This is my incremental to this series that moves the namespaced
+securityfs away from using a vfsmount and on to a root dentry instead,
+meaning we can call the blocking notifier from fill_super as Christian
+requested (and thus can remove the securityfs_notifier_sent indicator
+since it's only called once).
 
+James
+
+---
+
+From 07b680d5fd59f5d3cea5580be25a2c9e08a01c3b Mon Sep 17 00:00:00 2001
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Date: Mon, 6 Dec 2021 20:27:00 +0000
+Subject: [PATCH] Incremental for d_root
+
+---
+ include/linux/user_namespace.h |  3 +-
+ security/inode.c               | 55 +++++++++++++---------------------
+ 2 files changed, 22 insertions(+), 36 deletions(-)
+
+diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+index 6b8bd060d8c4..03a0879376a0 100644
+--- a/include/linux/user_namespace.h
++++ b/include/linux/user_namespace.h
+@@ -104,8 +104,7 @@ struct user_namespace {
+ 	struct ima_namespace	*ima_ns;
+ #endif
+ #ifdef CONFIG_SECURITYFS
+-	struct vfsmount		*securityfs_mount;
+-	bool			securityfs_notifier_sent;
++	struct dentry		*securityfs_root;
+ #endif
+ } __randomize_layout;
+ 
+diff --git a/security/inode.c b/security/inode.c
+index 45211845fc31..f8b6cb3dfb87 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -24,6 +24,7 @@
+ #include <linux/magic.h>
+ #include <linux/user_namespace.h>
+ 
++static struct vfsmount *securityfs_mount;
+ static int securityfs_mount_count;
+ 
+ static BLOCKING_NOTIFIER_HEAD(securityfs_ns_notifier);
+@@ -40,43 +41,24 @@ static const struct super_operations securityfs_super_operations = {
+ 	.free_inode	= securityfs_free_inode,
+ };
+ 
+-static struct file_system_type fs_type;
+-
+-static void securityfs_free_context(struct fs_context *fc)
+-{
+-	struct user_namespace *ns = fc->user_ns;
+-
+-	if (ns == &init_user_ns ||
+-	    ns->securityfs_notifier_sent)
+-		return;
+-
+-	ns->securityfs_notifier_sent = true;
+-
+-	ns->securityfs_mount = vfs_kern_mount(&fs_type, SB_KERNMOUNT,
+-					      fs_type.name, NULL);
+-	if (IS_ERR(ns->securityfs_mount)) {
+-		printk(KERN_ERR "kern mount on securityfs ERROR: %ld\n",
+-		       PTR_ERR(ns->securityfs_mount));
+-		ns->securityfs_mount = NULL;
+-		return;
+-	}
+-
+-	blocking_notifier_call_chain(&securityfs_ns_notifier,
+-				     SECURITYFS_NS_ADD, fc->user_ns);
+-	mntput(ns->securityfs_mount);
+-}
+-
+ static int securityfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	static const struct tree_descr files[] = {{""}};
+ 	int error;
++	struct user_namespace *ns = fc->user_ns;
+ 
+ 	error = simple_fill_super(sb, SECURITYFS_MAGIC, files);
+ 	if (error)
+ 		return error;
+ 
++	ns->securityfs_root = dget(sb->s_root);
++
+ 	sb->s_op = &securityfs_super_operations;
+ 
++	if (ns != &init_user_ns)
++		blocking_notifier_call_chain(&securityfs_ns_notifier,
++					     SECURITYFS_NS_ADD, ns);
++
+ 	return 0;
+ }
+ 
+@@ -87,7 +69,6 @@ static int securityfs_get_tree(struct fs_context *fc)
+ 
+ static const struct fs_context_operations securityfs_context_ops = {
+ 	.get_tree	= securityfs_get_tree,
+-	.free		= securityfs_free_context,
+ };
+ 
+ static int securityfs_init_fs_context(struct fs_context *fc)
+@@ -104,8 +85,10 @@ static void securityfs_kill_super(struct super_block *sb)
+ 		blocking_notifier_call_chain(&securityfs_ns_notifier,
+ 					     SECURITYFS_NS_REMOVE,
+ 					     sb->s_fs_info);
+-	ns->securityfs_notifier_sent = false;
+-	ns->securityfs_mount = NULL;
++
++	dput(ns->securityfs_root);
++	ns->securityfs_root = NULL;
++
+ 	kill_litter_super(sb);
+ }
+ 
+@@ -174,14 +157,18 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+ 	pr_debug("securityfs: creating file '%s'\n",name);
+ 
+ 	if (ns == &init_user_ns) {
+-		error = simple_pin_fs(&fs_type, &ns->securityfs_mount,
++		error = simple_pin_fs(&fs_type, &securityfs_mount,
+ 				      &securityfs_mount_count);
+ 		if (error)
+ 			return ERR_PTR(error);
+ 	}
+ 
+-	if (!parent)
+-		parent = ns->securityfs_mount->mnt_root;
++	if (!parent) {
++		if (ns == &init_user_ns)
++			parent = securityfs_mount->mnt_root;
++		else
++			parent = ns->securityfs_root;
++	}
+ 
+ 	dir = d_inode(parent);
+ 
+@@ -227,7 +214,7 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+ out:
+ 	inode_unlock(dir);
+ 	if (ns == &init_user_ns)
+-		simple_release_fs(&ns->securityfs_mount,
++		simple_release_fs(&securityfs_mount,
+ 				  &securityfs_mount_count);
+ 	return dentry;
+ }
+@@ -371,7 +358,7 @@ void securityfs_remove(struct dentry *dentry)
+ 	}
+ 	inode_unlock(dir);
+ 	if (ns == &init_user_ns)
+-		simple_release_fs(&ns->securityfs_mount,
++		simple_release_fs(&securityfs_mount,
+ 				  &securityfs_mount_count);
+ }
+ EXPORT_SYMBOL_GPL(securityfs_remove);
 -- 
-paul moore
-www.paul-moore.com
+2.33.0
+
+
