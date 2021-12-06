@@ -2,56 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBE7C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 02:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4926C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 02:44:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234712AbhLFCrx (ORCPT
+        id S234786AbhLFCsI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 5 Dec 2021 21:47:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55198 "EHLO
+        Sun, 5 Dec 2021 21:48:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234685AbhLFCrx (ORCPT
+        with ESMTP id S234697AbhLFCsI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 5 Dec 2021 21:47:53 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6238EC0613F8
-        for <linux-security-module@vger.kernel.org>; Sun,  5 Dec 2021 18:44:25 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id l25so36801551eda.11
-        for <linux-security-module@vger.kernel.org>; Sun, 05 Dec 2021 18:44:25 -0800 (PST)
+        Sun, 5 Dec 2021 21:48:08 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4334AC061359
+        for <linux-security-module@vger.kernel.org>; Sun,  5 Dec 2021 18:44:40 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id y12so36598497eda.12
+        for <linux-security-module@vger.kernel.org>; Sun, 05 Dec 2021 18:44:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Jolb7Z2E3vQPbl5IKSlRQLil6VgsmE1hIu1eFEbQx74=;
-        b=NMyAehe6JFrvDzK0o0k7ivWHR/WAgEYmeG+ZSsEKSr1OF56N6qvSfnMUIJE72ZNfLC
-         3C0NDd3FKEujWoJuLUlLjiLO/O13sJbdj0gmzJgss4YqdSzo+C898LLfqNZFEgdsjLFn
-         UX1QukprgJMj5fTLkRrjK6/alcGWQF8mW6aMo335/jtGkLkjRo0QER1/4SISoqAEnfbl
-         0eONp2bTGmI+HWyoSmUGoxQ+ndouumBaN53GUxgD/36HZppEqpyCUZXxBO8f22fuvDYu
-         lm8WV2M3AOr145B2SCatd0cy0e9rfC7LCIwPrHLzBv12/5k0ZRxZx5UD+QAPD4FjqMtI
-         wBdQ==
+        bh=ZEpXl2rjEsQ/iZu4ZR5a4fZjtkeItsGvSxcWdc7M5Zk=;
+        b=fEC0JL3Q3DjRFMGWonua7hcYvacbTymemEAL9m0L1IKQTYU7jXdvqbKOdfIpkZL9PP
+         LOK81AbIdOhxqqfzvEagihtDvbP1lSk6FfLLVqgzCsbu5dYFHc4zoGRR1IZWg6MR2JQG
+         akNV1TgQ9qiDpcTn8e1M942LzVjUjeeuaeihjCg3eoPQzL/111zPayRC0gOZcZYOyB2a
+         1kUox4ZvMvtFNj5mlra3Cu3c6819pwgWHkTbqGqFxvuFkMjsQNcG6PMSgVL/3KCm1MEQ
+         99sze4mx73lV+Lc2HQOjxFTsVw8RZXRn24p2v1pC0xXiRVRSo3Tsp9/DID/WopxTP8d7
+         CBTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Jolb7Z2E3vQPbl5IKSlRQLil6VgsmE1hIu1eFEbQx74=;
-        b=PswMudTNucwvxMsYa8GhX8K8djQhaAgmKPC7rpKZbHi/NAnuLin65E+RmJwmv1yIKK
-         gSkBjIw9T3hnjpj5dewdfusw0PZoxNLPF9BnJUguluW8ptMNV6qzNj0HD4ghZ085fTPh
-         zy4NgGcf8IUQCHFeMU+VVk04Iwl85lq/BYW9UyexMX1RpzNet/Kj4IyGI1YtoYxr592V
-         88jfxMowNxJgjRH0REvYijmzknEz4of/I9FOD0T4jQpWgeRxJGMxVmti9hwrTkKtIg9R
-         WIQljirab/Xt/EvkhQu0U5IlZDSCwJx6yLboyl8vUJldXGs3xv3KS24efrQfMBEPHelS
-         LJdg==
-X-Gm-Message-State: AOAM533/VlDHMw7Q/bOe3AU6ogIJtIxkeU1R94JP3YXWyP6bg3JZKH7d
-        L3VgiCq1VCpbUhjvAKstURchxj1t1Pua9GxyNMj3
-X-Google-Smtp-Source: ABdhPJwRrhPSJNMuYDnyiTs9XT+eCI/7geA7mQVYBBaRGEqrkv/s51N3owOCPU+A7cUhUd/5tWXCxsHI4JIFMWpxV7U=
-X-Received: by 2002:a17:907:868f:: with SMTP id qa15mr42542158ejc.187.1638758663920;
- Sun, 05 Dec 2021 18:44:23 -0800 (PST)
+        bh=ZEpXl2rjEsQ/iZu4ZR5a4fZjtkeItsGvSxcWdc7M5Zk=;
+        b=rB1CrJFUYbleIF6rmfyELMTYAcaPzyy1nPgFBCFCJbZXAEtTELjkHLXUfz5m1rneJp
+         4c6N8wNtrSWrFFHzyKbvVl9BS0Dna27nHLdFSFde1Ce9i2YWvgy0/FmSCMpqQy+RSs1j
+         rxoIlc1ehFUZLHYncJtEVARHj0C5WNAYPbIaINvDXSDM9fn+6sp7NlAhf7phssbQTxNU
+         IsFAOShcjIHEAgtULWKZ1n9epWau7orlLS3iGwNwZ9eyI7urnoVQrehNQZMLwyirl1nE
+         isPN7TG778hx3w/p2ZC2hJ2OJ3gVzXj3yAqcPfdciSIPVjJUO0ryrB74C1UdYRt6rn1e
+         hGJA==
+X-Gm-Message-State: AOAM531AsYpxmAN5bO0Kw5OPL/aqGEb99PyixhQzjz0JUrMhY3+gaNN0
+        +83gwlGd4zHqLm5pmgASiF+Ba0kgxwyKkd27Sh8J
+X-Google-Smtp-Source: ABdhPJz88VaoH/gPDTPj32gZHevyPs1vCaW00GNL3rgM+vqLPf2Urzonomb/cc2eL8/nvqRm7/jHabq1R3VDBOzvnNo=
+X-Received: by 2002:a17:907:9196:: with SMTP id bp22mr40290591ejb.69.1638758678834;
+ Sun, 05 Dec 2021 18:44:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20211124014332.36128-1-casey@schaufler-ca.com> <20211124014332.36128-4-casey@schaufler-ca.com>
-In-Reply-To: <20211124014332.36128-4-casey@schaufler-ca.com>
+References: <20211124014332.36128-1-casey@schaufler-ca.com> <20211124014332.36128-7-casey@schaufler-ca.com>
+In-Reply-To: <20211124014332.36128-7-casey@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 5 Dec 2021 21:44:13 -0500
-Message-ID: <CAHC9VhTOMt3NSvpJ2uE4tD4t3PTK6p6_ribSOXwRo8nucZ2XqA@mail.gmail.com>
-Subject: Re: [PATCH v30 03/28] LSM: Add the lsmblob data structure.
+Date:   Sun, 5 Dec 2021 21:44:28 -0500
+Message-ID: <CAHC9VhRnFehuM4ODOMeUo9MZ-6K5bDL6KdakgzrivJKeUGDQFA@mail.gmail.com>
+Subject: Re: [PATCH v30 06/28] LSM: Use lsmblob in security_audit_rule_match
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
@@ -62,96 +62,57 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 23, 2021 at 8:47 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Tue, Nov 23, 2021 at 8:50 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> When more than one security module is exporting data to
-> audit and networking sub-systems a single 32 bit integer
-> is no longer sufficient to represent the data. Add a
-> structure to be used instead.
+> Change the secid parameter of security_audit_rule_match
+> to a lsmblob structure pointer. Pass the entry from the
+> lsmblob structure for the approprite slot to the LSM hook.
 >
-> The lsmblob structure is currently an array of
-> u32 "secids". There is an entry for each of the
-> security modules built into the system that would
-> use secids if active. The system assigns the module
-> a "slot" when it registers hooks. If modules are
-> compiled in but not registered there will be unused
-> slots.
->
-> A new lsm_id structure, which contains the name
-> of the LSM and its slot number, is created. There
-> is an instance for each LSM, which assigns the name
-> and passes it to the infrastructure to set the slot.
->
-> The audit rules data is expanded to use an array of
-> security module data rather than a single instance.
-> A new structure audit_rules is defined to avoid the
-> confusion which commonly accompanies the use of
-> void ** parameters.
+> Change the users of security_audit_rule_match to use the
+> lsmblob instead of a u32. The scaffolding function lsmblob_init()
+> fills the blob with the value of the old secid, ensuring that
+> it is available to the appropriate module hook. The sources of
+> the secid, security_task_getsecid() and security_inode_getsecid(),
+> will be converted to use the blob structure later in the series.
+> At the point the use of lsmblob_init() is dropped.
 >
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: linux-audit@redhat.com
 > ---
->  include/linux/audit.h        | 10 ++++-
->  include/linux/lsm_hooks.h    | 12 +++++-
->  include/linux/security.h     | 74 +++++++++++++++++++++++++++++---
->  kernel/auditfilter.c         | 24 ++++++-----
->  kernel/auditsc.c             | 17 +++-----
->  security/apparmor/lsm.c      |  7 ++-
->  security/bpf/hooks.c         | 12 +++++-
->  security/commoncap.c         |  7 ++-
->  security/landlock/cred.c     |  2 +-
->  security/landlock/fs.c       |  2 +-
->  security/landlock/ptrace.c   |  2 +-
->  security/landlock/setup.c    |  5 +++
->  security/landlock/setup.h    |  1 +
->  security/loadpin/loadpin.c   |  8 +++-
->  security/lockdown/lockdown.c |  7 ++-
->  security/safesetid/lsm.c     |  8 +++-
->  security/security.c          | 82 ++++++++++++++++++++++++++++++------
->  security/selinux/hooks.c     |  8 +++-
->  security/smack/smack_lsm.c   |  7 ++-
->  security/tomoyo/tomoyo.c     |  8 +++-
->  security/yama/yama_lsm.c     |  7 ++-
->  21 files changed, 254 insertions(+), 56 deletions(-)
+>  include/linux/security.h |  5 +++--
+>  kernel/auditfilter.c     |  6 ++++--
+>  kernel/auditsc.c         | 16 +++++++++++-----
+>  security/security.c      |  5 +++--
+>  4 files changed, 21 insertions(+), 11 deletions(-)
 >
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index d06134ac6245..943584128399 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -11,6 +11,7 @@
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index ddd4cf48413c..d846d90f5624 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -1954,7 +1954,7 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
+>  int security_audit_rule_init(u32 field, u32 op, char *rulestr,
+>                              struct audit_rules *lsmrules);
+>  int security_audit_rule_known(struct audit_krule *krule);
+> -int security_audit_rule_match(u32 secid, u32 field, u32 op,
+> +int security_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
+>                               struct audit_rules *lsmrules);
+>  void security_audit_rule_free(struct audit_rules *lsmrules);
 >
->  #include <linux/sched.h>
->  #include <linux/ptrace.h>
-> +#include <linux/security.h>
->  #include <linux/audit_arch.h>
->  #include <uapi/linux/audit.h>
->  #include <uapi/linux/netfilter/nf_tables.h>
-> @@ -59,6 +60,10 @@ struct audit_krule {
->  /* Flag to indicate legacy AUDIT_LOGINUID unset usage */
->  #define AUDIT_LOGINUID_LEGACY          0x1
+> @@ -1971,7 +1971,8 @@ static inline int security_audit_rule_known(struct audit_krule *krule)
+>         return 0;
+>  }
 >
-> +struct audit_rules {
-> +       void    *rule[LSMBLOB_ENTRIES];
-> +};
+> -static inline int security_audit_rule_match(u32 secid, u32 field, u32 op,
+> +static inline int security_audit_rule_match(struct lsmblob *blob secid,
+> +                                           u32 field, u32 op,
+>                                             struct audit_rules *lsmrules)
+>  {
+>         return 0;
 
-It would be nice to call this struct "audit_lsm_rules" to help
-distinguish it from general audit filter rules.
+Assuming you fixup the typo above that the test robot found it looks
+reasonable to me.
 
->  struct audit_field {
->         u32                             type;
->         union {
-> @@ -66,8 +71,9 @@ struct audit_field {
->                 kuid_t                  uid;
->                 kgid_t                  gid;
->                 struct {
-> -                       char            *lsm_str;
-> -                       void            *lsm_rule;
-> +                       bool                    lsm_isset;
-> +                       char                    *lsm_str;
-> +                       struct audit_rules      lsm_rules;
->                 };
-
-Is lsm_isset strictly necessary?  Unless I missed something it seems
-like a NULL check on lsm_str would serve the same purpose.
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 --
 paul moore
