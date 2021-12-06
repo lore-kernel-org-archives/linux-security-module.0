@@ -2,100 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 925EAC433EF
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Dec 2021 13:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418E2C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 02:43:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234306AbhLENtf (ORCPT
+        id S234509AbhLFCrJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 5 Dec 2021 08:49:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18564 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234296AbhLENtd (ORCPT
+        Sun, 5 Dec 2021 21:47:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55030 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234657AbhLFCrI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 5 Dec 2021 08:49:33 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B5BpqID012887;
-        Sun, 5 Dec 2021 13:45:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=jzT/tAJSsWD3NmD7AyVv5ElgyWFuPszONu9lyp3gYvs=;
- b=b9neRlTZdEFdd/NKf5eHuychFwhjPs1lVaTQdLzLSp9ai+9JXoiJNKse3tWMXcNLPxcn
- AA4haouNIMEo+U6Id3GiMO2l+yAV7szqEB7N9T8ybN3qphIfuNp2RjvY8KzRgaigFRps
- jux6TZ1tdVRWgGOPYwf7tGtyFFGN6rS/rhj5Tjm9+8BO0KOL/KyfwGBIwh+9dlzzeZ0e
- VmX8bqP5RC+Yfx+ISRC8EK4OLCZgrfMdJykEhWhdJSjrLPF+refnPDpx7mf0tjKtCDRK
- SyOdM+Xykcqve/UvplvR32utG8Q9DtKNYbgU9POSMsokvqkqdQA8vho/Qp/DTXBnTgN5 NQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3crvx21230-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 05 Dec 2021 13:45:56 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B5DjtGY028630;
-        Sun, 5 Dec 2021 13:45:55 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3crvx2122r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 05 Dec 2021 13:45:55 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B5DikR9017739;
-        Sun, 5 Dec 2021 13:45:53 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06ams.nl.ibm.com with ESMTP id 3cqykhnpbn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 05 Dec 2021 13:45:53 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B5DcEnp29491488
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 5 Dec 2021 13:38:14 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EAE494203F;
-        Sun,  5 Dec 2021 13:45:50 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BADF342041;
-        Sun,  5 Dec 2021 13:45:49 +0000 (GMT)
-Received: from sig-9-65-73-15.ibm.com (unknown [9.65.73.15])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun,  5 Dec 2021 13:45:49 +0000 (GMT)
-Message-ID: <61282ef92ad508d34e4444f6983a06804174e0ac.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 2/2] integrity: support including firmware
- ".platform" keys at build time
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org
-Cc:     dhowells@redhat.com, jarkko@kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dimitri John Ledkov <dimitri.ledkov@canonical.com>,
-        Seth Forshee <seth@forshee.me>
-Date:   Sun, 05 Dec 2021 08:45:49 -0500
-In-Reply-To: <20211124204714.82514-3-nayna@linux.ibm.com>
-References: <20211124204714.82514-1-nayna@linux.ibm.com>
-         <20211124204714.82514-3-nayna@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 9F-uV3BV89HIkd5W_HgTufai1Raump-5
-X-Proofpoint-ORIG-GUID: Emi7WJWQnWdwKBttCIGldM1kFycgyNmo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-05_03,2021-12-02_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- bulkscore=0 phishscore=0 priorityscore=1501 spamscore=0 mlxlogscore=913
- malwarescore=0 clxscore=1015 adultscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112050076
+        Sun, 5 Dec 2021 21:47:08 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C702C061359
+        for <linux-security-module@vger.kernel.org>; Sun,  5 Dec 2021 18:43:40 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id t5so36865384edd.0
+        for <linux-security-module@vger.kernel.org>; Sun, 05 Dec 2021 18:43:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ymd6P5lILm8kCnpIAJpyY3MsDDsYTeqTIxl8Yef5YWE=;
+        b=2kbZxWStBRfrT81SzE2HO3kF9ABLfHYL5BL3VYUs6WwWLjmIDonJdWwwSJ9a0FvgR7
+         hHRmvcq5ouCeg94MAMPJaHwsVNINcmhY2+ZqsiMQpJZo5reyI+DDzmzM9MauDkiiYvtr
+         v7M/5wqBN8XVpod5/DwNhhFA6zy8xjJL5b5QSgbzR/FKNyLtCKjRwhm9PAm+6rqUIrK4
+         Y8STUO1xfj0nt+F9BpY0n1I6XFzf6itjiN53dg3KSj3chasVh48UWyjDBJ2HyutQ2vCe
+         vT4UrdgFcjdr6YP+oL4Dugb3Uo18z5zmJHqTj6aL/LtYKoUL/DALbbHT1XQhpZ/LeNt+
+         X6fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ymd6P5lILm8kCnpIAJpyY3MsDDsYTeqTIxl8Yef5YWE=;
+        b=pM0Epfow1IAaigedIP12ESehh4+V+IoPyDeLZQjFYly2UbcPUawYLs995m8SfsASmx
+         Kh8wUJnMflpmyQaSPqolSI8YacQwo5sq3e3//nwWE2ki4iBdETgafaK7fGEKrc+9rjVq
+         PRO+P0+fPNlxjFZ3sNvxTmJmzAbDuVvWtubM5Y4NSyJYESZ0aWCaO6xlzGNngohrbEot
+         cHgJ6ynPxyqytl7Do9awohi4Z7f1Mge/GuFj3wFDiCPRSmy2iO/o7ov8XKjWerqBlxi6
+         VRttY8+ZiqX12GwTneeeD2SqYdhYx986qnsa8ByX4W6ylZXRFqCQNBdXxndmsy0PGmkb
+         1OMQ==
+X-Gm-Message-State: AOAM532rz7Hogi3le80gpUR7pFn18X/zXNxHr6eJOgU2P3hNEFX86aEm
+        QiOZ+nBdoKeGookx7Eaw6hoU0Bf+fSx0p8C3+S5z0/XM6Q==
+X-Google-Smtp-Source: ABdhPJx69ThSSJXqiAFgrgGcClluUyTxJgmFaPaaQ09XYzcsxYERZ20FcG40EB3q9kgHLNGQC2XObsEZv7oJQWgCako=
+X-Received: by 2002:a17:907:2d12:: with SMTP id gs18mr41876657ejc.126.1638758618582;
+ Sun, 05 Dec 2021 18:43:38 -0800 (PST)
+MIME-Version: 1.0
+References: <20211124014332.36128-1-casey@schaufler-ca.com> <20211124014332.36128-2-casey@schaufler-ca.com>
+In-Reply-To: <20211124014332.36128-2-casey@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 5 Dec 2021 21:43:27 -0500
+Message-ID: <CAHC9VhRSnxf2S=Re8etrDnBqEkRemFwA0F9THK9FNeV3edLXfg@mail.gmail.com>
+Subject: Re: [PATCH v30 01/28] integrity: disassociate ima_filter_rule from security_audit_rule
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2021-11-24 at 15:47 -0500, Nayna Jain wrote:
-> A new function load_builtin_platform_cert() is defined to load compiled
-> in certificates onto the ".platform" keyring.
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+On Tue, Nov 23, 2021 at 8:45 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> Create real functions for the ima_filter_rule interfaces.
+> These replace #defines that obscure the reuse of audit
+> interfaces. The new fuctions are put in security.c because
+> they use security module registered hooks that we don't
+> want exported.
+>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  include/linux/security.h     | 26 ++++++++++++++++++++++++++
+>  security/integrity/ima/ima.h | 26 --------------------------
+>  security/security.c          | 21 +++++++++++++++++++++
+>  3 files changed, 47 insertions(+), 26 deletions(-)
 
-Thanks, Nayna.
+Acked-by: Paul Moore <paul@paul-moore.com> # audit
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
+--
+paul moore
+www.paul-moore.com
