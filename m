@@ -2,56 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC0BC43219
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 17:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB692C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 17:27:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242209AbhLFRaC (ORCPT
+        id S242105AbhLFRaB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Dec 2021 12:30:02 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58030 "EHLO
+        Mon, 6 Dec 2021 12:30:01 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37522 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240066AbhLFR3z (ORCPT
+        by vger.kernel.org with ESMTP id S240064AbhLFR3z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Mon, 6 Dec 2021 12:29:55 -0500
 Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B6GMhWo026886;
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B6GMhb8026877;
         Mon, 6 Dec 2021 17:26:11 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=du/FPgwh0G86yGWU94cNZQOyQr5s6qD4r4AdyELNrSQ=;
- b=jn4pxIyq2zpxkVVa77vSt4So2MbCbASNpurm0H4sF44H80msw7nkZov+BCtEfTlRkpnB
- 3rNL4FYUDD70kfIQm8omGdTdfc1h7Yi7W90ZDs4kOqySvkW7lOKzcZE6zc88b1FLipcT
- i+d/uT9uRZ9CIR5V7xxeyvYBiSCl4UzSR872bdC7xRI5teNGPCbP5y+9rOA/YVyUvDsT
- X5891D7zU/LNY/AVlUM86BBx257DaGEguL0CqHJHNYk8OHNNkdrXAV6976yYcea5TKrS
- JHTZfcXQigiEFph0ajBsLsfdVFF5Jo62a66tvgcDMZTdxksP+AF9nPLmluqNzdUkAMOe Sg== 
+ bh=kam4NmZjtyntuJGkgmwzdj/JA5LKy1TUmOTyLXzHXhc=;
+ b=jsF8h8M8YBjIpogdlSNhUOn10qV0Yhhhz0QkzL2RJcDBdHFbkLAcBr9WBqOUrLRhLvEK
+ gqbRPLNxeFuJn8BLQVPwE+k9xuDin6D+cBgym7icWnXwccx+8pr3TFg0rqDB3VtOr/s/
+ icXZLUpbMWlsQGS7qrp142CVdY/ctKrMTW0ojD4WTC9msfHZVciMvLu9M23kZEw+9jhU
+ ULMwc56NKhLmM40Wl3QK8swyZ5UX38Dl5mJaOzaL8hXyhQkwydelqMBAFvrT63ZX6PnY
+ 5JjWxVCkMSGWJSgh8fdy9QiixH5twAqtfDm91bbEjwRw1HDyDzc3RejJ1bult4T5csRU sQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3csp03h8pp-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3csp03h8pv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Mon, 06 Dec 2021 17:26:11 +0000
 Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B6GMgpn026781;
-        Mon, 6 Dec 2021 17:26:10 GMT
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3csp03h8pa-1
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B6GMgpq026781;
+        Mon, 6 Dec 2021 17:26:11 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3csp03h8pf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Dec 2021 17:26:10 +0000
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B6HDjTE029894;
-        Mon, 6 Dec 2021 17:26:09 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma02wdc.us.ibm.com with ESMTP id 3cqyy9tc18-1
+        Mon, 06 Dec 2021 17:26:11 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B6HD6BH000540;
+        Mon, 6 Dec 2021 17:26:10 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma02dal.us.ibm.com with ESMTP id 3cqyya2mxh-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Mon, 06 Dec 2021 17:26:09 +0000
 Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B6HQ7JN48365916
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B6HQ8cT19792610
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 6 Dec 2021 17:26:07 GMT
+        Mon, 6 Dec 2021 17:26:08 GMT
 Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A464628064;
+        by IMSVA (Postfix) with ESMTP id E8EF328058;
         Mon,  6 Dec 2021 17:26:07 +0000 (GMT)
 Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8ECB828059;
+        by IMSVA (Postfix) with ESMTP id D437D28064;
         Mon,  6 Dec 2021 17:26:07 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
@@ -66,18 +66,18 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com,
         puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
         linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-Subject: [PATCH v3 03/16] ima: Namespace audit status flags
-Date:   Mon,  6 Dec 2021 12:25:47 -0500
-Message-Id: <20211206172600.1495968-4-stefanb@linux.ibm.com>
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v3 05/16] ima: Move IMA's keys queue related variables into ima_namespace
+Date:   Mon,  6 Dec 2021 12:25:49 -0500
+Message-Id: <20211206172600.1495968-6-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211206172600.1495968-1-stefanb@linux.ibm.com>
 References: <20211206172600.1495968-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: AscC4ZWS14Cqnk26Ace9BXVrQYJRPhci
-X-Proofpoint-ORIG-GUID: tVS6uVtt_bRwsom4rMPkyoasziTqUSJe
+X-Proofpoint-GUID: qZeUKMyZOoSfpno9iRtm3llZarvUViE-
+X-Proofpoint-ORIG-GUID: -07m1WNsPd2y5PEC-19jgiEqYakiM1pn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2021-12-06_06,2021-12-06_02,2021-12-02_01
@@ -89,251 +89,218 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultsc
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+Move variables from keys queue into ima_namespace.
 
-The iint cache stores whether the file is measured, appraised, audited
-etc. This patch moves the IMA_AUDITED flag into the per-namespace
-ns_status, enabling IMA audit mechanism to audit the same file each time
-it is accessed in a new namespace.
+Some variables have to be initialized before ima_init() runs, so statically
+initialize them for the init_ima_ns.
 
-The ns_status is not looked up if the CONFIG_IMA_NS is disabled or if
-any of the IMA_NS_STATUS_ACTIONS (currently only IMA_AUDIT) is not
-enabled.
+Since only init_ima_ns uses the queued keys there's no need to free the
+list of queued keys when tearing down IMA namespaces.
 
-Read and write operations on the iint flags is replaced with function
-calls. For reading, iint_flags() returns the bitwise AND of iint->flags
-and ns_status->flags. The ns_status flags are masked with
-IMA_NS_STATUS_FLAGS (currently only IMA_AUDITED). Similarly
-set_iint_flags() only writes the masked portion to the ns_status flags,
-while the iint flags is set as before. The ns_status parameter added to
-ima_audit_measurement() is used with the above functions to query and
-set the ns_status flags.
-
-Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-
-Changelog:
-v2:
- * fixed flag calculation in iint_flags()
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- init/Kconfig                      |  3 +++
- security/integrity/ima/ima.h      | 23 ++++++++++++++++++++++-
- security/integrity/ima/ima_api.c  |  8 +++++---
- security/integrity/ima/ima_main.c | 24 +++++++++++++++++-------
- security/integrity/ima/ima_ns.c   | 20 ++++++++++++++++++++
- 5 files changed, 67 insertions(+), 11 deletions(-)
+ include/linux/ima.h                          | 11 ++++++
+ security/integrity/ima/ima.h                 |  9 ++---
+ security/integrity/ima/ima_asymmetric_keys.c |  5 +--
+ security/integrity/ima/ima_init_ima_ns.c     |  5 +++
+ security/integrity/ima/ima_ns.c              |  6 ++++
+ security/integrity/ima/ima_queue_keys.c      | 37 +++++++-------------
+ 6 files changed, 43 insertions(+), 30 deletions(-)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 27890607e8cb..1e1c49f1d129 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1251,6 +1251,9 @@ config IMA_NS
- 	  Allow the creation of IMA namespaces for each user namespace.
- 	  Namespaced IMA enables having IMA features work separately
- 	  in each IMA namespace.
-+	  Currently, only the audit status flags are stored in the namespace,
-+	  which allows the same file to be audited each time it is accessed
-+	  in a new namespace.
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 4b5dada581e4..977df9155cde 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -219,6 +219,17 @@ struct ima_namespace {
+ 	struct kmem_cache *ns_status_cache;
  
- endif # NAMESPACES
- 
+ #ifdef CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS
++	/*
++	 * Flag to indicate whether a key can be processed
++	 * right away or should be queued for processing later.
++	 */
++	bool ima_process_keys;
++
++	/*
++	 * To synchronize access to the list of keys that need to be measured
++	 */
++	struct mutex ima_keys_lock;
++	struct list_head ima_keys;
+ 	/*
+ 	 * If custom IMA policy is not loaded then keys queued up
+ 	 * for measurement should be freed. This worker is used
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 28896d256e36..dd06e16c4e1c 100644
+index 9edab9050dc7..97eb03376855 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -282,7 +282,8 @@ int process_buffer_measurement(struct user_namespace *mnt_userns,
- 			       int pcr, const char *func_data,
- 			       bool buf_hash, u8 *digest, size_t digest_len);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
--			   const unsigned char *filename);
-+			   const unsigned char *filename,
-+			   struct ns_status *status);
- int ima_alloc_init_template(struct ima_event_data *event_data,
- 			    struct ima_template_entry **entry,
- 			    struct ima_template_desc *template_desc);
-@@ -426,6 +427,9 @@ static inline void ima_free_modsig(struct modsig *modsig)
- }
- #endif /* CONFIG_IMA_APPRAISE_MODSIG */
- 
-+#define IMA_NS_STATUS_ACTIONS   IMA_AUDIT
-+#define IMA_NS_STATUS_FLAGS     IMA_AUDITED
-+
- int ima_ns_init(void);
- struct ima_namespace;
- int ima_init_namespace(struct ima_namespace *ns);
-@@ -436,6 +440,10 @@ struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
- 
- void free_ns_status_cache(struct ima_namespace *ns);
- 
-+unsigned long iint_flags(struct integrity_iint_cache *iint,
-+			 struct ns_status *status);
-+unsigned long set_iint_flags(struct integrity_iint_cache *iint,
-+			     struct ns_status *status, unsigned long flags);
+@@ -250,14 +250,15 @@ struct ima_key_entry {
+ 	char *keyring_name;
+ };
+ void ima_init_key_queue(struct ima_namespace *ns);
+-bool ima_should_queue_key(void);
+-bool ima_queue_key(struct key *keyring, const void *payload,
++bool ima_should_queue_key(struct ima_namespace *ns);
++bool ima_queue_key(struct ima_namespace *ns, struct key *keyring, const void *payload,
+ 		   size_t payload_len);
+ void ima_process_queued_keys(struct ima_namespace *ns);
+ void ima_keys_handler(struct work_struct *work);
  #else
- 
- static inline struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
-@@ -444,6 +452,19 @@ static inline struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
- 	return NULL;
- }
- 
-+static inline unsigned long iint_flags(struct integrity_iint_cache *iint,
-+				       struct ns_status *status)
-+{
-+	return iint->flags;
-+}
-+
-+static inline unsigned long set_iint_flags(struct integrity_iint_cache *iint,
-+					   struct ns_status *status,
-+					   unsigned long flags)
-+{
-+	iint->flags = flags;
-+	return flags;
-+}
- #endif /* CONFIG_IMA_NS */
- 
- /* LSM based policy rules require audit */
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index a64fb0130b01..8f7bab17b784 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -342,14 +342,16 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
- }
- 
- void ima_audit_measurement(struct integrity_iint_cache *iint,
--			   const unsigned char *filename)
-+			   const unsigned char *filename,
-+			   struct ns_status *status)
+-static inline bool ima_should_queue_key(void) { return false; }
+-static inline bool ima_queue_key(struct key *keyring,
++static inline bool ima_should_queue_key(struct ima_namespace *ns) { return false; }
++static inline bool ima_queue_key(struct ima_namespace *ns,
++				 struct key *keyring,
+ 				 const void *payload,
+ 				 size_t payload_len) { return false; }
+ static inline void ima_process_queued_keys(struct ima_namespace *ns) {}
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index f6aa0b47a772..b20e82eda8f4 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -30,6 +30,7 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 				   const void *payload, size_t payload_len,
+ 				   unsigned long flags, bool create)
  {
- 	struct audit_buffer *ab;
- 	char *hash;
- 	const char *algo_name = hash_algo_name[iint->ima_hash->algo];
- 	int i;
-+	unsigned long flags = iint_flags(iint, status);
++	struct ima_namespace *ns = get_current_ns();
+ 	bool queued = false;
  
--	if (iint->flags & IMA_AUDITED)
-+	if (flags & IMA_AUDITED)
+ 	/* Only asymmetric keys are handled by this hook. */
+@@ -39,8 +40,8 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 	if (!payload || (payload_len == 0))
  		return;
  
- 	hash = kzalloc((iint->ima_hash->length * 2) + 1, GFP_KERNEL);
-@@ -372,7 +374,7 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
- 	audit_log_task_info(ab);
- 	audit_log_end(ab);
+-	if (ima_should_queue_key())
+-		queued = ima_queue_key(keyring, payload, payload_len);
++	if (ima_should_queue_key(ns))
++		queued = ima_queue_key(ns, keyring, payload, payload_len);
  
--	iint->flags |= IMA_AUDITED;
-+	set_iint_flags(iint, status, flags | IMA_AUDITED);
- out:
- 	kfree(hash);
- 	return;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 465865412100..4df60dbb56f7 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -204,6 +204,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- {
- 	struct inode *inode = file_inode(file);
- 	struct integrity_iint_cache *iint = NULL;
-+	struct ns_status *status = NULL;
- 	struct ima_template_desc *template_desc = NULL;
- 	char *pathbuf = NULL;
- 	char filename[NAME_MAX];
-@@ -216,6 +217,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	bool violation_check;
- 	enum hash_algo hash_algo;
- 	unsigned int allowed_algos = 0;
-+	unsigned long flags;
- 
- 	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
- 		return 0;
-@@ -244,6 +246,12 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 		iint = integrity_inode_get(inode);
- 		if (!iint)
- 			rc = -ENOMEM;
-+
-+		if (!rc && (action & IMA_NS_STATUS_ACTIONS)) {
-+			status = ima_get_ns_status(get_current_ns(), inode);
-+			if (IS_ERR(status))
-+				rc = PTR_ERR(status);
-+		}
- 	}
- 
- 	if (!rc && violation_check)
-@@ -259,11 +267,13 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 
- 	mutex_lock(&iint->mutex);
- 
-+	flags = iint_flags(iint, status);
-+
- 	if (test_and_clear_bit(IMA_CHANGE_ATTR, &iint->atomic_flags))
- 		/* reset appraisal flags if ima_inode_post_setattr was called */
--		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
--				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
--				 IMA_ACTION_FLAGS);
-+		flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
-+			   IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
-+			   IMA_ACTION_FLAGS);
- 
- 	/*
- 	 * Re-evaulate the file if either the xattr has changed or the
-@@ -274,7 +284,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	    ((inode->i_sb->s_iflags & SB_I_IMA_UNVERIFIABLE_SIGNATURE) &&
- 	     !(inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) &&
- 	     !(action & IMA_FAIL_UNVERIFIABLE_SIGS))) {
--		iint->flags &= ~IMA_DONE_MASK;
-+		flags &= ~IMA_DONE_MASK;
- 		iint->measured_pcrs = 0;
- 	}
- 
-@@ -282,9 +292,9 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
- 	 *  IMA_AUDIT, IMA_AUDITED)
- 	 */
--	iint->flags |= action;
-+	flags = set_iint_flags(iint, status, flags | action);
- 	action &= IMA_DO_MASK;
--	action &= ~((iint->flags & (IMA_DONE_MASK ^ IMA_MEASURED)) >> 1);
-+	action &= ~((flags & (IMA_DONE_MASK ^ IMA_MEASURED)) >> 1);
- 
- 	/* If target pcr is already measured, unset IMA_MEASURE action */
- 	if ((action & IMA_MEASURE) && (iint->measured_pcrs & (0x1 << pcr)))
-@@ -359,7 +369,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 						  &pathname, filename);
- 	}
- 	if (action & IMA_AUDIT)
--		ima_audit_measurement(iint, pathname);
-+		ima_audit_measurement(iint, pathname, status);
- 
- 	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
- 		rc = 0;
+ 	if (queued)
+ 		return;
+diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
+index 3bc2d3611739..7b66fe598789 100644
+--- a/security/integrity/ima/ima_init_ima_ns.c
++++ b/security/integrity/ima/ima_init_ima_ns.c
+@@ -45,5 +45,10 @@ int __init ima_ns_init(void)
+ struct ima_namespace init_ima_ns = {
+ 	.kref = KREF_INIT(1),
+ 	.user_ns = &init_user_ns,
++#ifdef CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS
++	.ima_process_keys = false,
++	.ima_keys_lock = __MUTEX_INITIALIZER(init_ima_ns.ima_keys_lock),
++	.ima_keys = LIST_HEAD_INIT(init_ima_ns.ima_keys),
++#endif
+ };
+ EXPORT_SYMBOL(init_ima_ns);
 diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index 566e59524958..1fe1d910996b 100644
+index 1fe1d910996b..11e0343f1f55 100644
 --- a/security/integrity/ima/ima_ns.c
 +++ b/security/integrity/ima/ima_ns.c
-@@ -75,6 +75,26 @@ void free_ima_ns(struct kref *kref)
- 	destroy_ima_ns(ns);
+@@ -38,6 +38,12 @@ static struct ima_namespace *create_ima_ns(struct user_namespace *user_ns)
+ 	if (err)
+ 		goto fail_free;
+ 
++#ifdef CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS
++	ns->ima_process_keys = false;
++	mutex_init(&ns->ima_keys_lock);
++	INIT_LIST_HEAD(&ns->ima_keys);
++#endif
++
+ 	return ns;
+ 
+ fail_free:
+diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
+index fcaa1645dba3..9e5e9a178253 100644
+--- a/security/integrity/ima/ima_queue_keys.c
++++ b/security/integrity/ima/ima_queue_keys.c
+@@ -14,17 +14,6 @@
+ #include <keys/asymmetric-type.h>
+ #include "ima.h"
+ 
+-/*
+- * Flag to indicate whether a key can be processed
+- * right away or should be queued for processing later.
+- */
+-static bool ima_process_keys;
+-
+-/*
+- * To synchronize access to the list of keys that need to be measured
+- */
+-static DEFINE_MUTEX(ima_keys_lock);
+-static LIST_HEAD(ima_keys);
+ 
+ /*
+  * This worker function frees keys that may still be
+@@ -95,7 +84,7 @@ static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
+ 	return entry;
  }
  
-+unsigned long iint_flags(struct integrity_iint_cache *iint,
-+			 struct ns_status *status)
-+{
-+	if (!status)
-+		return iint->flags;
-+
-+	return (iint->flags & ~IMA_NS_STATUS_FLAGS) |
-+	       (status->flags & IMA_NS_STATUS_FLAGS);
-+}
-+
-+unsigned long set_iint_flags(struct integrity_iint_cache *iint,
-+			     struct ns_status *status, unsigned long flags)
-+{
-+	iint->flags = flags;
-+	if (status)
-+		status->flags = flags & IMA_NS_STATUS_FLAGS;
-+
-+	return flags;
-+}
-+
- static int __init imans_cache_init(void)
+-bool ima_queue_key(struct key *keyring, const void *payload,
++bool ima_queue_key(struct ima_namespace *ns, struct key *keyring, const void *payload,
+ 		   size_t payload_len)
  {
- 	imans_cachep = KMEM_CACHE(ima_namespace, SLAB_PANIC);
+ 	bool queued = false;
+@@ -105,12 +94,12 @@ bool ima_queue_key(struct key *keyring, const void *payload,
+ 	if (!entry)
+ 		return false;
+ 
+-	mutex_lock(&ima_keys_lock);
+-	if (!ima_process_keys) {
+-		list_add_tail(&entry->list, &ima_keys);
++	mutex_lock(&ns->ima_keys_lock);
++	if (!ns->ima_process_keys) {
++		list_add_tail(&entry->list, &ns->ima_keys);
+ 		queued = true;
+ 	}
+-	mutex_unlock(&ima_keys_lock);
++	mutex_unlock(&ns->ima_keys_lock);
+ 
+ 	if (!queued)
+ 		ima_free_key_entry(entry);
+@@ -129,7 +118,7 @@ void ima_process_queued_keys(struct ima_namespace *ns)
+ 	struct ima_key_entry *entry, *tmp;
+ 	bool process = false;
+ 
+-	if (ima_process_keys)
++	if (ns->ima_process_keys)
+ 		return;
+ 
+ 	/*
+@@ -138,12 +127,12 @@ void ima_process_queued_keys(struct ima_namespace *ns)
+ 	 * First one setting the ima_process_keys flag to true will
+ 	 * process the queued keys.
+ 	 */
+-	mutex_lock(&ima_keys_lock);
+-	if (!ima_process_keys) {
+-		ima_process_keys = true;
++	mutex_lock(&ns->ima_keys_lock);
++	if (!ns->ima_process_keys) {
++		ns->ima_process_keys = true;
+ 		process = true;
+ 	}
+-	mutex_unlock(&ima_keys_lock);
++	mutex_unlock(&ns->ima_keys_lock);
+ 
+ 	if (!process)
+ 		return;
+@@ -151,7 +140,7 @@ void ima_process_queued_keys(struct ima_namespace *ns)
+ 	if (!ns->timer_expired)
+ 		cancel_delayed_work_sync(&ns->ima_keys_delayed_work);
+ 
+-	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
++	list_for_each_entry_safe(entry, tmp, &ns->ima_keys, list) {
+ 		if (!ns->timer_expired)
+ 			process_buffer_measurement(&init_user_ns, NULL,
+ 						   entry->payload,
+@@ -165,7 +154,7 @@ void ima_process_queued_keys(struct ima_namespace *ns)
+ 	}
+ }
+ 
+-inline bool ima_should_queue_key(void)
++inline bool ima_should_queue_key(struct ima_namespace *ns)
+ {
+-	return !ima_process_keys;
++	return !ns->ima_process_keys;
+ }
 -- 
 2.31.1
 
