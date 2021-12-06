@@ -2,215 +2,215 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AB4C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 12:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA58C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 13:24:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242912AbhLFMM1 (ORCPT
+        id S244362AbhLFN1j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Dec 2021 07:12:27 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:54076 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242776AbhLFMM1 (ORCPT
+        Mon, 6 Dec 2021 08:27:39 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32121 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244249AbhLFN1j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Dec 2021 07:12:27 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4FECCB8105C;
-        Mon,  6 Dec 2021 12:08:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B880C341C2;
-        Mon,  6 Dec 2021 12:08:50 +0000 (UTC)
-Date:   Mon, 6 Dec 2021 13:08:47 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     jejb@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-Subject: Re: [RFC v2 19/19] ima: Setup securityfs for IMA namespace
-Message-ID: <20211206120847.ayr3zycigld6rf4j@wittgenstein>
-References: <20211203023118.1447229-1-stefanb@linux.ibm.com>
- <20211203023118.1447229-20-stefanb@linux.ibm.com>
- <df433bc52ca1e0408d48bbace4c34a573991f5ba.camel@linux.ibm.com>
- <6306b4e5-f26d-1704-6344-354eb5387abf@linux.ibm.com>
- <11b557b58de74828b1c16334a5fb52c4d3f6ad0f.camel@linux.ibm.com>
- <ed654d0f-6194-ce29-a854-3d9128d81b7a@schaufler-ca.com>
+        Mon, 6 Dec 2021 08:27:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638797050;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=GE8rS8B7TgD3oAAB+bsdlmZuYbB0s8Cq6GpzoDwBv7g=;
+        b=PpcPtdw60wnFqI++ODpv1+aCsgoq3jtRR3fijS7EmhofBEgJHd/XwThu60xXzMfVRSH7xJ
+        b85kPpDgs+z00l4QMObkcgj1N9Zm4oEmhTZCM86Sxi4RoYGrOpZ9sHbRv6GmWaQOeowg62
+        Oc2v8cAWXpGXirmeJn30ZnLyYNWU1tg=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-280-uJMElbh8P3qD4EA00BAu7g-1; Mon, 06 Dec 2021 08:24:09 -0500
+X-MC-Unique: uJMElbh8P3qD4EA00BAu7g-1
+Received: by mail-ed1-f69.google.com with SMTP id d13-20020a056402516d00b003e7e67a8f93so8409711ede.0
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Dec 2021 05:24:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GE8rS8B7TgD3oAAB+bsdlmZuYbB0s8Cq6GpzoDwBv7g=;
+        b=MlPdIZUv4LMad1Ubb+3yOO/uxlEnudniqemx0JTmQAMXf91/Js+trp82d0VGvZsVAb
+         c8BYgmH6vj6JAM5rnYH6d5yHDKTexzcpnPODqNOmNriK5E8Ek3UuZB/DiXioIfJrcRK5
+         Jic5ztq+FBdhwjCimyNNYhLPSCisBBdXs03zUal+VJDPoBy5wJQc6Zuc5IOCLnT0r0P+
+         clEYt8FzXs5ynv0CSENAYH9o1Bl+M0TAKrCOJhB16Y3l+5GnFMYSKrqZHkXW5aQ6/IAs
+         IKqJ4fO28eJkG6cKJtkUtPB7B5R/t5WRwgNbb7O7fHLILNmKFUUct7m54pQ5kMooK0DU
+         uhVw==
+X-Gm-Message-State: AOAM530u9P8yTzzzViyhPJhY6fkVSFLbrbdS24UiTPj1Qo5fa7zuXS0C
+        AFzQeNSrrRB49fH1ldK2+ppVlvt7xjGDeMuyeMacs80Gh4DVsexFKVRktOsnD472GE97G68884x
+        Z6/9BvJWsUrcU0uVn6kRsxXpEcZAWeeXgSkYi
+X-Received: by 2002:a17:906:4dd0:: with SMTP id f16mr44063503ejw.454.1638797047662;
+        Mon, 06 Dec 2021 05:24:07 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJya0mVj56ngOA1ahoNflPjokyKEwdsaRAqOEsv4zX6Y9gdF0qFE2FqW+wSCQhYK1T99c5Jjsw==
+X-Received: by 2002:a17:906:4dd0:: with SMTP id f16mr44063489ejw.454.1638797047471;
+        Mon, 06 Dec 2021 05:24:07 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8308:b105:dd00:d067:83f0:d612:b70f])
+        by smtp.gmail.com with ESMTPSA id nd36sm7003806ejc.17.2021.12.06.05.24.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Dec 2021 05:24:06 -0800 (PST)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: [PATCH] security,selinux: remove security_add_mnt_opt()
+Date:   Mon,  6 Dec 2021 14:24:06 +0100
+Message-Id: <20211206132406.235872-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ed654d0f-6194-ce29-a854-3d9128d81b7a@schaufler-ca.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 03, 2021 at 11:37:14AM -0800, Casey Schaufler wrote:
-> On 12/3/2021 10:50 AM, James Bottomley wrote:
-> > On Fri, 2021-12-03 at 13:06 -0500, Stefan Berger wrote:
-> > > On 12/3/21 12:03, James Bottomley wrote:
-> > > > On Thu, 2021-12-02 at 21:31 -0500, Stefan Berger wrote:
-> > > > [...]
-> > > > >    static int securityfs_init_fs_context(struct fs_context *fc)
-> > > > >    {
-> > > > > +	int rc;
-> > > > > +
-> > > > > +	if (fc->user_ns->ima_ns->late_fs_init) {
-> > > > > +		rc = fc->user_ns->ima_ns->late_fs_init(fc->user_ns);
-> > > > > +		if (rc)
-> > > > > +			return rc;
-> > > > > +	}
-> > > > >    	fc->ops = &securityfs_context_ops;
-> > > > >    	return 0;
-> > > > >    }
-> > > > I know I suggested this, but to get this to work in general, it's
-> > > > going to have to not be specific to IMA, so it's going to have to
-> > > > become something generic like a notifier chain.  The other problem
-> > > > is it's only working still by accident:
-> > > I had thought about this also but the rationale was:
-> > > 
-> > > securityfs is compiled due to CONFIG_IMA_NS and the user namespace
-> > > exists there and that has a pointer now to ima_namespace, which can
-> > > have that callback. I assumed that other namespaced subsystems could
-> > > also be  reached then via such a callback, but I don't know.
-> > Well securityfs is supposed to exist for LSMs.  At some point each of
-> > those is going to need to be namespaced, which may eventually be quite
-> > a pile of callbacks, which is why I thought of a notifier.
-> 
-> While AppArmor, lockdown and the integrity family use securityfs,
-> SELinux and Smack do not. They have their own independent filesystems.
-> Implementations of namespacing for each of SELinux and Smack have been
-> proposed, but nothing has been adopted. It would be really handy to
-> namespace the infrastructure rather than each individual LSM, but I
-> fear that's a bigger project than anyone will be taking on any time
-> soon. It's likely to encounter many of the same issues that I've been
-> dealing with for module stacking.
+Its last user has been removed in commit f2aedb713c28 ("NFS: Add
+fs_context support.").
 
-The main thing that bothers me is that it uses simple_pin_fs() and
-simple_unpin_fs() which I would try hard to get rid of if possible. The
-existence of this global pinning logic makes namespacing it properly
-more difficult then it needs to be and it creates imho wonky semantics
-where the last unmount doesn't really destroy the superblock. Instead
-subsequents mounts resurface the same superblock. There might be an
-inherent design reason why this needs to be this way but I would advise
-against these semantics for anything that wants to be namespaced.
-Probably the first securityfs mount in init_user_ns can follow these
-semantics but ones tied to a non-initial user namespace should not as
-the userns can go away. In that case the pinning logic seems strange as
-conceptually the userns pins the securityfs mount as evidenced by the
-fact that we key by it in get_tree_keyed().
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+ include/linux/lsm_hook_defs.h |  2 --
+ include/linux/lsm_hooks.h     |  2 --
+ include/linux/security.h      |  8 -------
+ security/security.c           |  8 -------
+ security/selinux/hooks.c      | 39 -----------------------------------
+ 5 files changed, 59 deletions(-)
 
-> 
-> > 
-> > > I suppose any late filesystem init callchain would have to be
-> > > connected to the user_namespace somehow?
-> > I don't think so; I think just moving some securityfs entries into the
-> > user_namespace and managing the notifier chain from within securityfs
-> > will do for now.  [although I'd have to spec this out in code before I
-> > knew for sure].
-> > 
-> > > > > +int ima_fs_ns_init(struct ima_namespace *ns)
-> > > > > +{
-> > > > > +	ns->mount = securityfs_ns_create_mount(ns->user_ns);
-> > > > This actually triggers on the call to securityfs_init_fs_context,
-> > > > but nothing happens because the callback is null.  Every subsequent
-> > > > use of fscontext will trigger this.  The point of a keyed supeblock
-> > > > is that fill_super is only called once per key, that's the place we
-> > > > should be doing this.   It should also probably be a blocking
-> > > > notifier so anyconsumer of securityfs can be namespaced by
-> > > > registering for this notifier.
-> > > What I don't like about the fill_super is that it gets called too
-> > > early:
-> > > 
-> > > [   67.058611] securityfs_ns_create_mount @ 102 target user_ns:
-> > > ffff95c010698c80; nr_extents: 0
-> > > [   67.059836] securityfs_fill_super @ 47  user_ns:
-> > > ffff95c010698c80;
-> > > nr_extents: 0
-> > Right, it's being activated by securityfs_ns_create_mount which is
-> > called as soon as the user_ns is created.
-> > 
-> > > We are switching to the target user namespace in
-> > > securityfs_ns_create_mount. The expected nr_extents at this point is
-> > > 0, since user_ns hasn't been configured, yet. But then
-> > > security_fill_super is also called with nr_extents 0. We cannot use
-> > > that, it's too early!
-> > Exactly, so I was thinking of not having a securityfs_ns_create_mount
-> > at all.  All the securityfs_ns_create.. calls would be in the notifier
-> > call chain. This means there's nothing to fill the superblock until an
-> > actual mount on it is called.
-> > 
-> > > > > +	if (IS_ERR(ns->mount)) {
-> > > > > +		ns->mount = NULL;
-> > > > > +		return -1;
-> > > > > +	}
-> > > > > +	ns->mount_count = 1;
-> > > > This is a bit nasty, too: we're spilling the guts of mount count
-> > > > tracking into IMA instead of encapsulating it inside securityfs.
-> > > Ok, I can make this disappear.
-> > > 
-> > > 
-> > > > > +
-> > > > > +	/* Adjust the trigger for user namespace's early teardown of
-> > > > > dependent
-> > > > > +	 * namespaces. Due to the filesystem there's an additional
-> > > > > reference
-> > > > > +	 * to the user namespace.
-> > > > > +	 */
-> > > > > +	ns->user_ns->refcount_teardown += 1;
-> > > > > +
-> > > > > +	ns->late_fs_init = ima_fs_ns_late_init;
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > I think what should be happening is that we shouldn't so the
-> > > > simple_pin_fs, which creates the inodes, ahead of time; we should
-> > > > do it inside fill_super using a notifier, meaning it gets called
-> > > > once per
-> > > fill_super would only work for the init_user_ns from what I can see.
-> > > 
-> > > 
-> > > > key, creates the root dentry then triggers the notifier which
-> > > > instantiates all the namespaced entries.  We can still use
-> > > > simple_pin_fs for this because there's no locking across
-> > > > fill_super.
-> > > > This would mean fill_super would be called the first time the
-> > > > securityfs is mounted inside the namespace.
-> > > I guess I would need to know how fill_super would work or how it
-> > > could be called late/delayed as well.
-> > So it would be called early in the init_user_ns by non-namespaced
-> > consumers of securityfs, like it is now.
-> > 
-> > Namespaced consumers wouldn't call any securityfs_ns_create callbacks
-> > to create dentries until they were notified from the fill_super
-> > notifier, which would now only be triggered on first mount of
-> > securityfs inside the namespace.
-> > 
-> > > > If we do it this way, we can now make securityfs have its own mount
-> > > > and mount_count inside the user namespace, which it uses internally
-> > > > to the securityfs code, thus avoiding exposing them to ima or any
-> > > > other namespaced consumer.
-> > > > 
-> > > > I also think we now don't need the securityfs_ns_ duplicated
-> > > > functions because the callback via the notifier chain now ensures
-> > > > we can usethe namespace they were created in to distinguish between
-> > > > non namespaced and namespaced entries.
-> > > Is there then no need to pass a separate vfsmount * in anymore?
-> > I don't think so no.  It could be entirely managed internally to
-> > securityfs.
-> > 
-> > > Where would the vfsmount pointer reside? For now it's in
-> > > ima_namespace, but it sounds like it should be in a more centralized
-> > > place? Should it also be  connected to the user_namespace so we can
-> > > pick it up using get_user_ns()?
-> > exactly.  I think struct user_namespace should have two elements gated
-> > by a #ifdef CONFIG_SECURITYFS which are the vfsmount and the
-> > mount_count for passing into simple_pin_fs.
-> > 
-> > 
-> > James
-> > 
-> > 
-> 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index df8de62f4710..7f5c35d72082 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -78,8 +78,6 @@ LSM_HOOK(int, 0, sb_set_mnt_opts, struct super_block *sb, void *mnt_opts,
+ LSM_HOOK(int, 0, sb_clone_mnt_opts, const struct super_block *oldsb,
+ 	 struct super_block *newsb, unsigned long kern_flags,
+ 	 unsigned long *set_kern_flags)
+-LSM_HOOK(int, 0, sb_add_mnt_opt, const char *option, const char *val,
+-	 int len, void **mnt_opts)
+ LSM_HOOK(int, 0, move_mount, const struct path *from_path,
+ 	 const struct path *to_path)
+ LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index d45b6f6e27fd..73cb0ab2bc03 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -180,8 +180,6 @@
+  *	Copy all security options from a given superblock to another
+  *	@oldsb old superblock which contain information to clone
+  *	@newsb new superblock which needs filled in
+- * @sb_add_mnt_opt:
+- * 	Add one mount @option to @mnt_opts.
+  * @sb_parse_opts_str:
+  *	Parse a string of security data filling in the opts structure
+  *	@options string containing all mount options known by the LSM
+diff --git a/include/linux/security.h b/include/linux/security.h
+index bbf44a466832..a4f0c421dd0c 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -313,8 +313,6 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+ 				struct super_block *newsb,
+ 				unsigned long kern_flags,
+ 				unsigned long *set_kern_flags);
+-int security_add_mnt_opt(const char *option, const char *val,
+-				int len, void **mnt_opts);
+ int security_move_mount(const struct path *from_path, const struct path *to_path);
+ int security_dentry_init_security(struct dentry *dentry, int mode,
+ 				  const struct qstr *name,
+@@ -711,12 +709,6 @@ static inline int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+ 	return 0;
+ }
+ 
+-static inline int security_add_mnt_opt(const char *option, const char *val,
+-					int len, void **mnt_opts)
+-{
+-	return 0;
+-}
+-
+ static inline int security_move_mount(const struct path *from_path,
+ 				      const struct path *to_path)
+ {
+diff --git a/security/security.c b/security/security.c
+index c88167a414b4..0c49a1f05ac4 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -994,14 +994,6 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+ }
+ EXPORT_SYMBOL(security_sb_clone_mnt_opts);
+ 
+-int security_add_mnt_opt(const char *option, const char *val, int len,
+-			 void **mnt_opts)
+-{
+-	return call_int_hook(sb_add_mnt_opt, -EINVAL,
+-					option, val, len, mnt_opts);
+-}
+-EXPORT_SYMBOL(security_add_mnt_opt);
+-
+ int security_move_mount(const struct path *from_path, const struct path *to_path)
+ {
+ 	return call_int_hook(move_mount, 0, from_path, to_path);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 62d30c0a30c2..8ea92f08e6bd 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -1023,44 +1023,6 @@ Einval:
+ 	return -EINVAL;
+ }
+ 
+-static int selinux_add_mnt_opt(const char *option, const char *val, int len,
+-			       void **mnt_opts)
+-{
+-	int token = Opt_error;
+-	int rc, i;
+-
+-	for (i = 0; i < ARRAY_SIZE(tokens); i++) {
+-		if (strcmp(option, tokens[i].name) == 0) {
+-			token = tokens[i].opt;
+-			break;
+-		}
+-	}
+-
+-	if (token == Opt_error)
+-		return -EINVAL;
+-
+-	if (token != Opt_seclabel) {
+-		val = kmemdup_nul(val, len, GFP_KERNEL);
+-		if (!val) {
+-			rc = -ENOMEM;
+-			goto free_opt;
+-		}
+-	}
+-	rc = selinux_add_opt(token, val, mnt_opts);
+-	if (unlikely(rc)) {
+-		kfree(val);
+-		goto free_opt;
+-	}
+-	return rc;
+-
+-free_opt:
+-	if (*mnt_opts) {
+-		selinux_free_mnt_opts(*mnt_opts);
+-		*mnt_opts = NULL;
+-	}
+-	return rc;
+-}
+-
+ static int show_sid(struct seq_file *m, u32 sid)
+ {
+ 	char *context = NULL;
+@@ -7298,7 +7260,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
+ 	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
+ 	LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
+-	LSM_HOOK_INIT(sb_add_mnt_opt, selinux_add_mnt_opt),
+ #ifdef CONFIG_SECURITY_NETWORK_XFRM
+ 	LSM_HOOK_INIT(xfrm_policy_clone_security, selinux_xfrm_policy_clone),
+ #endif
+-- 
+2.33.1
+
