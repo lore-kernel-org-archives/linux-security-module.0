@@ -2,114 +2,194 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A58C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 22:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F64AC433EF
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Dec 2021 23:55:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353323AbhLFWRB (ORCPT
+        id S1377702AbhLFX7A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Dec 2021 17:17:01 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39354 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1353310AbhLFWQ7 (ORCPT
+        Mon, 6 Dec 2021 18:59:00 -0500
+Received: from namei.org ([65.99.196.166]:54950 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1355866AbhLFX67 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Dec 2021 17:16:59 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B6M7B7L003110;
-        Mon, 6 Dec 2021 22:13:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=uZ41HTN1GylIpvKaQE/oIG+gEXrT5wV9Be5l7n5latM=;
- b=DTCSmv6KjSipYhYcLYoc83pI3rwpVED+T4Y33fX5i3nuHsospIA92eKyVRWo9puGBtPt
- x0OobmMgO+93Ns/3xQrnVPgunGKG+50HmHC+OnbE5uKNG9BaPJ859grDWzbxWVesidKs
- CvKUpGvSVZIxMLdcpjSz1fj1eZkoL7Itf+es9tG6rLylrKKVtLxDXXroYP1uWCI5tY6M
- lEy7T54lvnwW6tRv5r2oJfweXiStDact2ZGsGwefgqS4VmR6qqbCFVRvMy8hahyNNK47
- dt2GJyolztXRqWkm7ScoK/jChJowHs+KpgYJL3yhk57Izg8Hhi7E75bz+y0O6BW17lSM Hg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3csr40ut0b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Dec 2021 22:13:18 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B6M0ivX023812;
-        Mon, 6 Dec 2021 22:13:18 GMT
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3csr40ut02-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Dec 2021 22:13:17 +0000
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B6LvhW6007380;
-        Mon, 6 Dec 2021 22:13:16 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma04wdc.us.ibm.com with ESMTP id 3cqyy9yck9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Dec 2021 22:13:16 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B6MDFbp39387518
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 6 Dec 2021 22:13:15 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 502D06E090;
-        Mon,  6 Dec 2021 22:13:15 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35B806E088;
-        Mon,  6 Dec 2021 22:13:14 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Dec 2021 22:13:14 +0000 (GMT)
-Message-ID: <8f4f9759-33c3-d2b0-7849-509cb91392cc@linux.ibm.com>
-Date:   Mon, 6 Dec 2021 17:13:13 -0500
+        Mon, 6 Dec 2021 18:58:59 -0500
+X-Greylist: delayed 455 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Dec 2021 18:58:59 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id 15C12AE;
+        Mon,  6 Dec 2021 23:36:21 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.namei.org 15C12AE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=namei.org; s=2;
+        t=1638833781; bh=teWzeRtiiMhFmCSfu+gbKtdiScbY7O3Ci2mlIEInb+E=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=b0o4/kuCjIsSxsv0s+8F4AnjWMqzgy2CNaK3dHVSZBHiOPGtcFre5AubDK8dM6ORD
+         uSnEDfyc21Ntsvfbb3wuK8/evIMDee5OkqRQDhV/7vZMDJnUu85AUdbBirLNOG4u2M
+         7KnZO2A7pT6k9Wyp+RX/yAw559iCvv6Fc8Zu1rC8=
+Date:   Tue, 7 Dec 2021 10:36:21 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+cc:     "Serge E . Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH] security,selinux: remove security_add_mnt_opt()
+In-Reply-To: <20211206132406.235872-1-omosnace@redhat.com>
+Message-ID: <5841d6ca-c316-36b-4087-a5affffa7a0@namei.org>
+References: <20211206132406.235872-1-omosnace@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v3 00/16] ima: Namespace IMA with audit support in IMA-ns
-Content-Language: en-US
-To:     jejb@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20211206172600.1495968-1-stefanb@linux.ibm.com>
- <97ca7651b7ae9a0b6dce4d23c76af266fbd5642f.camel@linux.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <97ca7651b7ae9a0b6dce4d23c76af266fbd5642f.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: E3qnUXYbNFOjNf4UUQ5MDor8ZeauYUQX
-X-Proofpoint-GUID: 4tvY-_qhWip3DB3zfZ7QRfrzP3TiCt4i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-06_08,2021-12-06_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 suspectscore=0 mlxlogscore=763 lowpriorityscore=0
- phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015 bulkscore=0
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112060136
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, 6 Dec 2021, Ondrej Mosnacek wrote:
 
-On 12/6/21 16:14, James Bottomley wrote:
-> On Mon, 2021-12-06 at 12:25 -0500, Stefan Berger wrote:
-> [...]
->> v3:
->>   - Further modifications to virtualized SecurityFS following James's
->> posted patch
->>   - Dropping of early teardown for user_namespaces since not needed
->> anymore
-> This is my incremental to this series that moves the namespaced
-> securityfs away from using a vfsmount and on to a root dentry instead,
-> meaning we can call the blocking notifier from fill_super as Christian
-> requested (and thus can remove the securityfs_notifier_sent indicator
-> since it's only called once).
-
-Thanks. I have this now in a branch for v4.
+> Its last user has been removed in commit f2aedb713c28 ("NFS: Add
+> fs_context support.").
+> 
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 
 
-    Stefan
+Acked-by: James Morris <jamorris@linux.microsoft.com>
 
+> ---
+>  include/linux/lsm_hook_defs.h |  2 --
+>  include/linux/lsm_hooks.h     |  2 --
+>  include/linux/security.h      |  8 -------
+>  security/security.c           |  8 -------
+>  security/selinux/hooks.c      | 39 -----------------------------------
+>  5 files changed, 59 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index df8de62f4710..7f5c35d72082 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -78,8 +78,6 @@ LSM_HOOK(int, 0, sb_set_mnt_opts, struct super_block *sb, void *mnt_opts,
+>  LSM_HOOK(int, 0, sb_clone_mnt_opts, const struct super_block *oldsb,
+>  	 struct super_block *newsb, unsigned long kern_flags,
+>  	 unsigned long *set_kern_flags)
+> -LSM_HOOK(int, 0, sb_add_mnt_opt, const char *option, const char *val,
+> -	 int len, void **mnt_opts)
+>  LSM_HOOK(int, 0, move_mount, const struct path *from_path,
+>  	 const struct path *to_path)
+>  LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index d45b6f6e27fd..73cb0ab2bc03 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -180,8 +180,6 @@
+>   *	Copy all security options from a given superblock to another
+>   *	@oldsb old superblock which contain information to clone
+>   *	@newsb new superblock which needs filled in
+> - * @sb_add_mnt_opt:
+> - * 	Add one mount @option to @mnt_opts.
+>   * @sb_parse_opts_str:
+>   *	Parse a string of security data filling in the opts structure
+>   *	@options string containing all mount options known by the LSM
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index bbf44a466832..a4f0c421dd0c 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -313,8 +313,6 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+>  				struct super_block *newsb,
+>  				unsigned long kern_flags,
+>  				unsigned long *set_kern_flags);
+> -int security_add_mnt_opt(const char *option, const char *val,
+> -				int len, void **mnt_opts);
+>  int security_move_mount(const struct path *from_path, const struct path *to_path);
+>  int security_dentry_init_security(struct dentry *dentry, int mode,
+>  				  const struct qstr *name,
+> @@ -711,12 +709,6 @@ static inline int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+>  	return 0;
+>  }
+>  
+> -static inline int security_add_mnt_opt(const char *option, const char *val,
+> -					int len, void **mnt_opts)
+> -{
+> -	return 0;
+> -}
+> -
+>  static inline int security_move_mount(const struct path *from_path,
+>  				      const struct path *to_path)
+>  {
+> diff --git a/security/security.c b/security/security.c
+> index c88167a414b4..0c49a1f05ac4 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -994,14 +994,6 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+>  }
+>  EXPORT_SYMBOL(security_sb_clone_mnt_opts);
+>  
+> -int security_add_mnt_opt(const char *option, const char *val, int len,
+> -			 void **mnt_opts)
+> -{
+> -	return call_int_hook(sb_add_mnt_opt, -EINVAL,
+> -					option, val, len, mnt_opts);
+> -}
+> -EXPORT_SYMBOL(security_add_mnt_opt);
+> -
+>  int security_move_mount(const struct path *from_path, const struct path *to_path)
+>  {
+>  	return call_int_hook(move_mount, 0, from_path, to_path);
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 62d30c0a30c2..8ea92f08e6bd 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -1023,44 +1023,6 @@ Einval:
+>  	return -EINVAL;
+>  }
+>  
+> -static int selinux_add_mnt_opt(const char *option, const char *val, int len,
+> -			       void **mnt_opts)
+> -{
+> -	int token = Opt_error;
+> -	int rc, i;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(tokens); i++) {
+> -		if (strcmp(option, tokens[i].name) == 0) {
+> -			token = tokens[i].opt;
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (token == Opt_error)
+> -		return -EINVAL;
+> -
+> -	if (token != Opt_seclabel) {
+> -		val = kmemdup_nul(val, len, GFP_KERNEL);
+> -		if (!val) {
+> -			rc = -ENOMEM;
+> -			goto free_opt;
+> -		}
+> -	}
+> -	rc = selinux_add_opt(token, val, mnt_opts);
+> -	if (unlikely(rc)) {
+> -		kfree(val);
+> -		goto free_opt;
+> -	}
+> -	return rc;
+> -
+> -free_opt:
+> -	if (*mnt_opts) {
+> -		selinux_free_mnt_opts(*mnt_opts);
+> -		*mnt_opts = NULL;
+> -	}
+> -	return rc;
+> -}
+> -
+>  static int show_sid(struct seq_file *m, u32 sid)
+>  {
+>  	char *context = NULL;
+> @@ -7298,7 +7260,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>  	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
+>  	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
+>  	LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
+> -	LSM_HOOK_INIT(sb_add_mnt_opt, selinux_add_mnt_opt),
+>  #ifdef CONFIG_SECURITY_NETWORK_XFRM
+>  	LSM_HOOK_INIT(xfrm_policy_clone_security, selinux_xfrm_policy_clone),
+>  #endif
+> -- 
+> 2.33.1
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
 
