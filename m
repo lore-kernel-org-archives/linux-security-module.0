@@ -2,60 +2,60 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A9DC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Dec 2021 22:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA0BC43219
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Dec 2021 22:19:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240717AbhLHWXB (ORCPT
+        id S240930AbhLHWXD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Dec 2021 17:23:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62654 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240643AbhLHWWO (ORCPT
+        Wed, 8 Dec 2021 17:23:03 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31822 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240648AbhLHWWO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 8 Dec 2021 17:22:14 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B8M2nDv018264;
-        Wed, 8 Dec 2021 22:18:29 GMT
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B8KX578008578;
+        Wed, 8 Dec 2021 22:18:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=SnSnTm1PB90pI8Qe6SlC9VcztsKW6e9iEXPZsyVca9M=;
- b=pn2orsz/qQAu/K4BiUYWEGo9SrwtoDmhgcYpe4rStfT7rEohYXFS+20KVgnF0p8f//Ue
- JjFFrOg3piK3W157Ne2tXmX9pVua23gZlxAnfw2AbLN3ZRzQdM5fkCF+D69slBKNsgql
- QnBVd12OBy3TY4IGspvwPufMDIom3efaOLqA274XHaDGw68rQ2jZNeGcYooHw0WVnIpB
- BugsFohreRYq/6JfkH7rtn6M04yqC7k9c/TXXdyjrFcWx/EyPnGrAQJbfh+48BB3NQgL
- ni714Ox2cI1A9YdwVNXg1Tl5ryajhYFIGbFjxBxY5Wt7v9J7XPYfHGzvzJkAkRNCAATo Rg== 
+ bh=AN+1+hN6dUIYMoRnUd/eX8dbLzBYCz36RDtbC7/oJcA=;
+ b=hGTeo3uyRd2s0V1Vk25fZA66toUHzm+KzOXKOKLB7Piq+Nm1XC9WSLqMkbXes9qYc7h7
+ gItpNMMZnfBPv+HXq0N6kd7ZkpKK7cqVjyobiji+E0Z/zjrVLuPEIpIoPTwrpDCLU9vV
+ Wv43RyCBb4l331n3tNuZFtDgCfmRFYpDbO5TgLfTa0Lch8t7eG0Uu0lkexh4FgspGMQp
+ RdAl0wyrexR15m3C7iDZ/1JdvYaLSFKaHQxoWyXR+26ShndFteX9YoUmbXdpEYkLBpQi
+ UPC4mi8XC0MKKpYjri9A8n2exNn22cyzx1O8wSMyosG7d3dZRn0lERhbnRsk+0ot2t+G Kg== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cu55g07ep-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cu3b9j99c-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Dec 2021 22:18:28 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B8MFhqi004767;
-        Wed, 8 Dec 2021 22:18:28 GMT
+        Wed, 08 Dec 2021 22:18:26 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B8MHAxi032675;
+        Wed, 8 Dec 2021 22:18:26 GMT
 Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cu55g07ee-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cu3b9j992-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Dec 2021 22:18:28 +0000
+        Wed, 08 Dec 2021 22:18:26 +0000
 Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B8MDuaP021830;
-        Wed, 8 Dec 2021 22:18:27 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma03dal.us.ibm.com with ESMTP id 3cqyybyknt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Dec 2021 22:18:27 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B8MIP2Y15139128
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B8MDvgt021859;
         Wed, 8 Dec 2021 22:18:25 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma03dal.us.ibm.com with ESMTP id 3cqyybykn4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Dec 2021 22:18:25 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B8MINkD26804684
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Dec 2021 22:18:23 GMT
 Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CBD728059;
-        Wed,  8 Dec 2021 22:18:25 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id A8EAC28059;
+        Wed,  8 Dec 2021 22:18:23 +0000 (GMT)
 Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D64C2805E;
-        Wed,  8 Dec 2021 22:18:25 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 866592805A;
+        Wed,  8 Dec 2021 22:18:23 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  8 Dec 2021 22:18:25 +0000 (GMT)
+        Wed,  8 Dec 2021 22:18:23 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, serge@hallyn.com,
@@ -68,245 +68,400 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
         Stefan Berger <stefanb@linux.ibm.com>,
         James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: [PATCH v5 16/16] ima: Setup securityfs for IMA namespace
-Date:   Wed,  8 Dec 2021 17:18:18 -0500
-Message-Id: <20211208221818.1519628-17-stefanb@linux.ibm.com>
+Subject: [PATCH v5 01/16] ima: Add IMA namespace support
+Date:   Wed,  8 Dec 2021 17:18:03 -0500
+Message-Id: <20211208221818.1519628-2-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211208221818.1519628-1-stefanb@linux.ibm.com>
 References: <20211208221818.1519628-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: MYrHImFelqNxSpFEJsD4ZmdBlsXibsuV
-X-Proofpoint-ORIG-GUID: W13sAap3KwackieVGKEhhrZY8ljl2dA3
+X-Proofpoint-ORIG-GUID: R2l1BnVc2sNKF1yD0h6tQH-A5p_EG2OF
+X-Proofpoint-GUID: 2XMcu5XDmUvRCeGfAFf2xpp_w0l7CGQf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2021-12-08_08,2021-12-08_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- suspectscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
- priorityscore=1501 spamscore=0 bulkscore=0 impostorscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2112080121
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ bulkscore=0 phishscore=0 adultscore=0 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 clxscore=1015 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112080121
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Setup securityfs with symlinks, directories, and files for IMA
-namespacing support. The same directory structure that IMA uses on the
-host is also created for the namespacing case.
-
-The securityfs file and directory ownerships cannot be set when the
-IMA namespace is initialized. Therefore, delay the setup of the file
-system to a later point when securityfs is in securityfs_fill_super.
-
-Only take an additional reference on the dentry in the init_user_ns
-case. This avoids having to explicitly free the dentries when the
-superblock is killed. Adjust the documentation of securityfs_create_dentry
-to reflect this.
-
-This filesystem can now be mounted as follows:
-
-mount -t securityfs /sys/kernel/security/ /sys/kernel/security/
-
-The following directories, symlinks, and files are then available.
-
-$ ls -l sys/kernel/security/
-total 0
-lr--r--r--. 1 root root 0 Dec  2 00:18 ima -> integrity/ima
-drwxr-xr-x. 3 root root 0 Dec  2 00:18 integrity
-
-$ ls -l sys/kernel/security/ima/
-total 0
--r--r-----. 1 root root 0 Dec  2 00:18 ascii_runtime_measurements
--r--r-----. 1 root root 0 Dec  2 00:18 binary_runtime_measurements
--rw-------. 1 root root 0 Dec  2 00:18 policy
--r--r-----. 1 root root 0 Dec  2 00:18 runtime_measurements_count
--r--r-----. 1 root root 0 Dec  2 00:18 violations
+Implement an IMA namespace data structure that gets created alongside a
+user namespace with CLONE_NEWUSER. This lays down the foundation for
+namespacing the different aspects of IMA (eg. IMA-audit, IMA-measurement,
+IMA-appraisal).
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 ---
- include/linux/ima.h             | 12 ++++++++++-
- security/inode.c                | 20 ++++++++++++++-----
- security/integrity/ima/ima_fs.c | 35 ++++++++++++++++++++++++++-------
- 3 files changed, 54 insertions(+), 13 deletions(-)
+ include/linux/ima.h                      | 62 ++++++++++++++++++++
+ include/linux/user_namespace.h           |  4 ++
+ init/Kconfig                             | 10 ++++
+ kernel/user.c                            |  7 +++
+ kernel/user_namespace.c                  |  8 +++
+ security/integrity/ima/Makefile          |  3 +-
+ security/integrity/ima/ima.h             |  4 ++
+ security/integrity/ima/ima_init.c        |  4 ++
+ security/integrity/ima/ima_init_ima_ns.c | 32 +++++++++++
+ security/integrity/ima/ima_ns.c          | 73 ++++++++++++++++++++++++
+ 10 files changed, 206 insertions(+), 1 deletion(-)
+ create mode 100644 security/integrity/ima/ima_init_ima_ns.c
+ create mode 100644 security/integrity/ima/ima_ns.c
 
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 4dd64e318b15..32bf98092143 100644
+index b6ab66a546ae..d81df821c85b 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -66,6 +66,9 @@ static inline const char * const *arch_get_ima_policy(void)
- }
- #endif
+@@ -11,6 +11,7 @@
+ #include <linux/fs.h>
+ #include <linux/security.h>
+ #include <linux/kexec.h>
++#include <linux/user_namespace.h>
+ #include <crypto/hash_info.h>
+ struct linux_binprm;
  
-+extern int ima_securityfs_init(struct user_namespace *user_ns,
-+			       struct dentry *root);
+@@ -210,6 +211,67 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
+ }
+ #endif /* CONFIG_IMA_APPRAISE */
+ 
++struct ima_namespace {
++	struct kref kref;
++	struct user_namespace *user_ns;
++};
 +
++extern struct ima_namespace init_ima_ns;
++
++#ifdef CONFIG_IMA_NS
++
++void free_ima_ns(struct kref *kref);
++
++static inline struct ima_namespace *get_ima_ns(struct ima_namespace *ns)
++{
++	if (ns)
++		kref_get(&ns->kref);
++
++	return ns;
++}
++
++static inline void put_ima_ns(struct user_namespace *user_ns)
++{
++	struct ima_namespace *ns = user_ns->ima_ns;
++
++	if (ns) {
++		pr_debug("DEREF   ima_ns: 0x%p  ctr: %d\n", ns, kref_read(&ns->kref));
++		kref_put(&ns->kref, free_ima_ns);
++	}
++}
++
++int create_ima_ns(struct user_namespace *user_ns);
++
++static inline struct ima_namespace *get_current_ns(void)
++{
++	return current_user_ns()->ima_ns;
++}
++
++#else
++
++static inline struct ima_namespace *get_ima_ns(struct ima_namespace *ns)
++{
++	return ns;
++}
++
++static inline void put_ima_ns(struct user_namespace *user_ns)
++{
++}
++
++static inline int create_ima_ns(struct user_namespace *user_ns)
++{
++#if CONFIG_IMA
++	user_ns->ima_ns = get_ima_ns(&init_ima_ns);
++#endif
++	return 0;
++}
++
++static inline struct ima_namespace *get_current_ns(void)
++{
++	return &init_ima_ns;
++}
++#endif /* CONFIG_IMA_NS */
++
+ #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
+ extern bool ima_appraise_signature(enum kernel_read_file_id func);
  #else
- static inline enum hash_algo ima_get_current_hash_algo(void)
- {
-@@ -154,6 +157,11 @@ static inline int ima_measure_critical_data(const char *event_label,
- 	return -ENOENT;
- }
+diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+index 33a4240e6a6f..5249db04d62b 100644
+--- a/include/linux/user_namespace.h
++++ b/include/linux/user_namespace.h
+@@ -36,6 +36,7 @@ struct uid_gid_map { /* 64 bytes -- 1 cache line */
+ #define USERNS_INIT_FLAGS USERNS_SETGROUPS_ALLOWED
  
-+static inline int ima_securityfs_init(struct user_namespace *ns, struct dentry *root)
+ struct ucounts;
++struct ima_namespace;
+ 
+ enum ucount_type {
+ 	UCOUNT_USER_NAMESPACES,
+@@ -99,6 +100,9 @@ struct user_namespace {
+ #endif
+ 	struct ucounts		*ucounts;
+ 	long ucount_max[UCOUNT_COUNTS];
++#ifdef CONFIG_IMA
++	struct ima_namespace	*ima_ns;
++#endif
+ } __randomize_layout;
+ 
+ struct ucounts {
+diff --git a/init/Kconfig b/init/Kconfig
+index 11f8a845f259..27890607e8cb 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1242,6 +1242,16 @@ config NET_NS
+ 	  Allow user space to create what appear to be multiple instances
+ 	  of the network stack.
+ 
++config IMA_NS
++	bool "IMA namespace"
++	depends on USER_NS
++	depends on IMA
++	default y
++	help
++	  Allow the creation of IMA namespaces for each user namespace.
++	  Namespaced IMA enables having IMA features work separately
++	  in each IMA namespace.
++
+ endif # NAMESPACES
+ 
+ config CHECKPOINT_RESTORE
+diff --git a/kernel/user.c b/kernel/user.c
+index e2cf8c22b539..287751d89b44 100644
+--- a/kernel/user.c
++++ b/kernel/user.c
+@@ -20,6 +20,10 @@
+ #include <linux/user_namespace.h>
+ #include <linux/proc_ns.h>
+ 
++#ifdef CONFIG_IMA
++extern struct ima_namespace init_ima_ns;
++#endif
++
+ /*
+  * userns count is 1 for root user, 1 for init_uts_ns,
+  * and 1 for... ?
+@@ -67,6 +71,9 @@ struct user_namespace init_user_ns = {
+ 	.keyring_name_list = LIST_HEAD_INIT(init_user_ns.keyring_name_list),
+ 	.keyring_sem = __RWSEM_INITIALIZER(init_user_ns.keyring_sem),
+ #endif
++#ifdef CONFIG_IMA
++	.ima_ns = &init_ima_ns,
++#endif
+ };
+ EXPORT_SYMBOL_GPL(init_user_ns);
+ 
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index 6b2e3ca7ee99..0985e1c86e59 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -20,6 +20,7 @@
+ #include <linux/fs_struct.h>
+ #include <linux/bsearch.h>
+ #include <linux/sort.h>
++#include <linux/ima.h>
+ 
+ static struct kmem_cache *user_ns_cachep __read_mostly;
+ static DEFINE_MUTEX(userns_state_mutex);
+@@ -141,8 +142,14 @@ int create_user_ns(struct cred *new)
+ 	if (!setup_userns_sysctls(ns))
+ 		goto fail_keyring;
+ 
++	ret = create_ima_ns(ns);
++	if (ret)
++		goto fail_sysctls;
++
+ 	set_cred_user_ns(new, ns);
+ 	return 0;
++fail_sysctls:
++	retire_userns_sysctls(ns);
+ fail_keyring:
+ #ifdef CONFIG_PERSISTENT_KEYRINGS
+ 	key_put(ns->persistent_keyring_register);
+@@ -196,6 +203,7 @@ static void free_user_ns(struct work_struct *work)
+ 			kfree(ns->projid_map.forward);
+ 			kfree(ns->projid_map.reverse);
+ 		}
++		put_ima_ns(ns);
+ 		retire_userns_sysctls(ns);
+ 		key_free_user_ns(ns);
+ 		ns_free_inum(&ns->ns);
+diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+index 2499f2485c04..b86a35fbed60 100644
+--- a/security/integrity/ima/Makefile
++++ b/security/integrity/ima/Makefile
+@@ -7,13 +7,14 @@
+ obj-$(CONFIG_IMA) += ima.o
+ 
+ ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+-	 ima_policy.o ima_template.o ima_template_lib.o
++	 ima_policy.o ima_template.o ima_template_lib.o ima_init_ima_ns.o
+ ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+ ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
+ ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+ ima-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+ ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+ ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
++ima-$(CONFIG_IMA_NS) += ima_ns.o
+ 
+ ifeq ($(CONFIG_EFI),y)
+ ima-$(CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT) += ima_efi.o
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index be965a8715e4..2f8adf383054 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -418,6 +418,10 @@ static inline void ima_free_modsig(struct modsig *modsig)
+ }
+ #endif /* CONFIG_IMA_APPRAISE_MODSIG */
+ 
++int ima_ns_init(void);
++struct ima_namespace;
++int ima_init_namespace(struct ima_namespace *ns);
++
+ /* LSM based policy rules require audit */
+ #ifdef CONFIG_IMA_LSM_RULES
+ 
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index b26fa67476b4..f6ae4557a0da 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -120,6 +120,10 @@ int __init ima_init(void)
+ {
+ 	int rc;
+ 
++	rc = ima_ns_init();
++	if (rc)
++		return rc;
++
+ 	ima_tpm_chip = tpm_default_chip();
+ 	if (!ima_tpm_chip)
+ 		pr_info("No TPM chip found, activating TPM-bypass!\n");
+diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
+new file mode 100644
+index 000000000000..c225b89818ac
+--- /dev/null
++++ b/security/integrity/ima/ima_init_ima_ns.c
+@@ -0,0 +1,32 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2016-2021 IBM Corporation
++ * Author:
++ *   Yuqiong Sun <suny@us.ibm.com>
++ *   Stefan Berger <stefanb@linux.vnet.ibm.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, version 2 of the License.
++ */
++
++#include <linux/export.h>
++#include <linux/user_namespace.h>
++#include <linux/ima.h>
++#include <linux/proc_ns.h>
++
++int ima_init_namespace(struct ima_namespace *ns)
 +{
 +	return 0;
 +}
 +
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-@@ -221,7 +229,8 @@ struct ima_h_table {
- };
- 
- enum {
--	IMAFS_DENTRY_DIR = 0,
-+	IMAFS_DENTRY_INTEGRITY_DIR = 0,
-+	IMAFS_DENTRY_DIR,
- 	IMAFS_DENTRY_SYMLINK,
- 	IMAFS_DENTRY_BINARY_RUNTIME_MEASUREMENTS,
- 	IMAFS_DENTRY_ASCII_RUNTIME_MEASUREMENTS,
-@@ -336,6 +345,7 @@ static inline struct ima_namespace *get_current_ns(void)
- {
- 	return &init_ima_ns;
- }
++int __init ima_ns_init(void)
++{
++	return ima_init_namespace(&init_ima_ns);
++}
 +
- #endif /* CONFIG_IMA_NS */
- 
- #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-diff --git a/security/inode.c b/security/inode.c
-index c1aef4613a17..eaccba7017d9 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -16,6 +16,7 @@
- #include <linux/fs_context.h>
- #include <linux/mount.h>
- #include <linux/pagemap.h>
-+#include <linux/ima.h>
- #include <linux/init.h>
- #include <linux/namei.h>
- #include <linux/security.h>
-@@ -41,6 +42,7 @@ static const struct super_operations securityfs_super_operations = {
- static int securityfs_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	static const struct tree_descr files[] = {{""}};
-+	struct user_namespace *ns = fc->user_ns;
- 	int error;
- 
- 	error = simple_fill_super(sb, SECURITYFS_MAGIC, files);
-@@ -49,7 +51,10 @@ static int securityfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	sb->s_op = &securityfs_super_operations;
- 
--	return 0;
-+	if (ns != &init_user_ns)
-+		error = ima_securityfs_init(ns, sb->s_root);
-+
-+	return error;
- }
- 
- static int securityfs_get_tree(struct fs_context *fc)
-@@ -97,11 +102,15 @@ static struct file_system_type fs_type = {
-  * securityfs_create_dir() function is recommended to be used
-  * instead).
-  *
-- * This function returns a pointer to a dentry if it succeeds.  This
-+ * This function returns a pointer to a dentry if it succeeds. If the
-+ * dentry was created while the init_user_ns was active, then this
-  * pointer must be passed to the securityfs_remove() function when the
-  * file is to be removed (no automatic cleanup happens if your module
-- * is unloaded, you are responsible here).  If an error occurs, the
-- * function will return the error value (via ERR_PTR).
-+ * is unloaded, you are responsible here). If any other user namespace
-+ * was active then the dentry may be removed using securityfs_remove()
-+ * when a module is removed but no cleanup must be done once the
-+ * superblock was delete since then it will be deleted automatically.
-+ * If an error occurs, the function will return the error value (via ERR_PTR).
-  *
-  * If securityfs is not enabled in the kernel, the value %-ENODEV is
-  * returned.
-@@ -169,7 +178,8 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 		inode->i_fop = fops;
- 	}
- 	d_instantiate(dentry, inode);
--	dget(dentry);
-+	if (ns == &init_user_ns)
-+		dget(dentry);
- 	inode_unlock(dir);
- 	return dentry;
- 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 3810d11fb463..778983fd9a73 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -447,8 +447,12 @@ static const struct file_operations ima_measure_policy_ops = {
- 	.llseek = generic_file_llseek,
- };
- 
--static void ima_fs_ns_free_dentries(struct ima_namespace *ns)
-+/* Remove the dentries. In case user_ns == &init_user_ns this function
-+ * does not need to be called since there's one less reference to dentries.
++struct ima_namespace init_ima_ns = {
++	.kref = KREF_INIT(1),
++	.user_ns = &init_user_ns,
++};
++EXPORT_SYMBOL(init_ima_ns);
+diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
+new file mode 100644
+index 000000000000..91557cae5b80
+--- /dev/null
++++ b/security/integrity/ima/ima_ns.c
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2016-2021 IBM Corporation
++ * Author:
++ *  Yuqiong Sun <suny@us.ibm.com>
++ *  Stefan Berger <stefanb@linux.vnet.ibm.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, version 2 of the License.
 + */
-+static void ima_fs_ns_free_dentries(struct user_namespace *user_ns)
- {
-+	struct ima_namespace *ns = user_ns->ima_ns;
- 	int i;
- 
- 	for (i = IMAFS_DENTRY_LAST - 1; i >= 0; i--)
-@@ -457,18 +461,35 @@ static void ima_fs_ns_free_dentries(struct ima_namespace *ns)
- 	memset(ns->dentry, 0, sizeof(ns->dentry));
- }
- 
--static int __init ima_securityfs_init(struct user_namespace *user_ns)
-+int ima_securityfs_init(struct user_namespace *user_ns, struct dentry *root)
- {
- 	struct ima_namespace *ns = user_ns->ima_ns;
- 	struct dentry *ima_dir;
- 
--	ns->dentry[IMAFS_DENTRY_DIR] = securityfs_create_dir("ima", integrity_dir);
-+	/* already initialized? */
-+	if (ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR])
-+		return 0;
 +
-+	/* FIXME: update when evm and integrity are namespaced */
-+	if (user_ns != &init_user_ns) {
-+		ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR] =
-+			securityfs_create_dir("integrity", root);
-+		if (IS_ERR(ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR])) {
-+			ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR] = NULL;
-+			return -1;
-+		}
-+	} else
-+		ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR] = integrity_dir;
++#include <linux/kref.h>
++#include <linux/slab.h>
++#include <linux/ima.h>
++#include <linux/mount.h>
++#include <linux/proc_ns.h>
++#include <linux/lsm_hooks.h>
 +
-+	ns->dentry[IMAFS_DENTRY_DIR] =
-+	    securityfs_create_dir("ima",
-+				  ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR]);
- 	if (IS_ERR(ns->dentry[IMAFS_DENTRY_DIR]))
--		return -1;
-+		goto out;
- 	ima_dir = ns->dentry[IMAFS_DENTRY_DIR];
- 
- 	ns->dentry[IMAFS_DENTRY_SYMLINK] =
--	    securityfs_create_symlink("ima", NULL, "integrity/ima", NULL);
-+	    securityfs_create_symlink("ima", root, "integrity/ima", NULL);
- 	if (IS_ERR(ns->dentry[IMAFS_DENTRY_SYMLINK]))
- 		goto out;
- 
-@@ -508,11 +529,11 @@ static int __init ima_securityfs_init(struct user_namespace *user_ns)
- 
- 	return 0;
- out:
--	ima_fs_ns_free_dentries(ns);
-+	ima_fs_ns_free_dentries(user_ns);
- 	return -1;
- }
- 
- int __init ima_fs_init(void)
- {
--	return ima_securityfs_init(&init_user_ns);
-+	return ima_securityfs_init(&init_user_ns, NULL);
- }
++#include "ima.h"
++
++static struct kmem_cache *imans_cachep;
++
++int create_ima_ns(struct user_namespace *user_ns)
++{
++	struct ima_namespace *ns;
++	int err;
++
++	ns = kmem_cache_zalloc(imans_cachep, GFP_KERNEL);
++	if (!ns)
++		return -ENOMEM;
++	pr_debug("NEW     ima_ns: 0x%p\n", ns);
++
++	kref_init(&ns->kref);
++	ns->user_ns = user_ns;
++
++	err = ima_init_namespace(ns);
++	if (err)
++		goto fail_free;
++
++	user_ns->ima_ns = ns;
++
++	return 0;
++
++fail_free:
++	kmem_cache_free(imans_cachep, ns);
++
++	return err;
++}
++
++static void destroy_ima_ns(struct ima_namespace *ns)
++{
++	pr_debug("DESTROY ima_ns: 0x%p\n", ns);
++	kmem_cache_free(imans_cachep, ns);
++}
++
++void free_ima_ns(struct kref *kref)
++{
++	struct ima_namespace *ns;
++
++	ns = container_of(kref, struct ima_namespace, kref);
++	if (WARN_ON(ns == &init_ima_ns))
++		return;
++
++	destroy_ima_ns(ns);
++}
++
++static int __init imans_cache_init(void)
++{
++	imans_cachep = KMEM_CACHE(ima_namespace, SLAB_PANIC);
++	return 0;
++}
++subsys_initcall(imans_cache_init)
 -- 
 2.31.1
 
