@@ -2,292 +2,188 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA810C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Dec 2021 20:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6358C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Dec 2021 09:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241515AbhLGU0f (ORCPT
+        id S231245AbhLHJ6t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Dec 2021 15:26:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31504 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241304AbhLGU0S (ORCPT
+        Wed, 8 Dec 2021 04:58:49 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:48825 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231190AbhLHJ6t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Dec 2021 15:26:18 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B7Jbfb7027243;
-        Tue, 7 Dec 2021 20:22:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=JUuy3t+8HN+Piv8GDxJ6jewhg6X4npu2ObmOtAqQBVs=;
- b=ejSKBfkesazQ2q+FlsQ/lAozebF3lJPIM5CTElCaapVqPzAUmnEsdXMSgio9NKRHBCr3
- +5KBpYAVlJ0C3VwnCQgGc8QyRYw3xWh/4Wp6gWGppRKC9YjL1tb2wWs9XPdk2x9SFfRd
- m+onmxFzW2PHKZudDFzhrwJWoA/WjAHrrFErWzNoJmlsSdy7kb263RIhhRyJ36b/Vdte
- wJX8ecgvAmDuJaHnkis+imPPrW6YtUuDRWYX9lFix2UHWJsyRl+kevLawpUC7oGCCcrS
- y2IXNRN2kJR2WJxby1z4+SMQ6GIXO4eQlHTpCYJ1kIvTWSXfMxN0ECaKkG5JGfgSGG5j WQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ct811j0aa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 20:22:38 +0000
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B7K9RPv027980;
-        Tue, 7 Dec 2021 20:22:38 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ct811j09y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 20:22:38 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B7K7pZd018282;
-        Tue, 7 Dec 2021 20:22:37 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma03dal.us.ibm.com with ESMTP id 3cqyyb2dvx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 20:22:37 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B7KMZWD35979676
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Dec 2021 20:22:35 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2CC6136055;
-        Tue,  7 Dec 2021 20:22:35 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 34326136063;
-        Tue,  7 Dec 2021 20:22:33 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Dec 2021 20:22:33 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: [PATCH v4 16/16] ima: Setup securityfs for IMA namespace
-Date:   Tue,  7 Dec 2021 15:21:27 -0500
-Message-Id: <20211207202127.1508689-17-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211207202127.1508689-1-stefanb@linux.ibm.com>
-References: <20211207202127.1508689-1-stefanb@linux.ibm.com>
+        Wed, 8 Dec 2021 04:58:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638957317;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RbXsax9ldMWCPX0huGTH/ykVh4lOIdMfM3HnOVtd9Sg=;
+        b=aIngM+RNlDJYqmFVsxxa/oDJnNiNn9DbRcV1bedZrbJoegN7HM4sl68oOoNS5OtMBiHZPZ
+        +9VnOhbTUpfLg+4+W7TaUhK5oWXD7mYxvh3Kf/s3RfcImuIz1SRGQWreGeFlFK94l7QSXV
+        38KpndJoC2fotNGC0rhLRX6MPZmDVTw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-413-MBArii7hOAGNVhEwT_QDGA-1; Wed, 08 Dec 2021 04:55:12 -0500
+X-MC-Unique: MBArii7hOAGNVhEwT_QDGA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8C4231023F4D;
+        Wed,  8 Dec 2021 09:55:07 +0000 (UTC)
+Received: from rhtmp (unknown [10.39.193.91])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A1B142B178;
+        Wed,  8 Dec 2021 09:54:57 +0000 (UTC)
+Date:   Wed, 8 Dec 2021 10:54:55 +0100
+From:   Philipp Rudo <prudo@redhat.com>
+To:     Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+Cc:     keyrings@vger.kernel.org, kexec@lists.infradead.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Frank van der Linden <fllinden@amazon.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Baoquan He <bhe@redhat.com>, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] KEXEC_SIG with appended signature
+Message-ID: <20211208105455.00085532@rhtmp>
+In-Reply-To: <20211207173221.GM117207@kunlun.suse.cz>
+References: <cover.1637862358.git.msuchanek@suse.de>
+        <20211207171014.2cfc4a54@rhtmp>
+        <20211207173221.GM117207@kunlun.suse.cz>
+Organization: Red Hat inc.
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: u5JWlByzX5ou1sDi1oDbOtGqTmc2uSwR
-X-Proofpoint-GUID: 8zMaXG6qlEx67FT8-zaOzXLNt8u15auB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-07_07,2021-12-06_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 suspectscore=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 spamscore=0 malwarescore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2110150000 definitions=main-2112070122
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Setup securityfs with symlinks, directories, and files for IMA
-namespacing support. The same directory structure that IMA uses on the
-host is also created for the namespacing case.
+Hi Michal,
 
-The securityfs file and directory ownerships cannot be set when the
-IMA namespace is initialized. Therefore, delay the setup of the file
-system to a later point when securityfs is in securityfs_fill_super.
+On Tue, 7 Dec 2021 18:32:21 +0100
+Michal Such=C3=A1nek <msuchanek@suse.de> wrote:
 
-This filesystem can now be mounted as follows:
+> On Tue, Dec 07, 2021 at 05:10:14PM +0100, Philipp Rudo wrote:
+> > Hi Michal,
+> >=20
+> > i finally had the time to take a closer look at the series. Except for
+> > the nit in patch 4 and my personal preference in patch 6 the code looks
+> > good to me.
+> >=20
+> > What I don't like are the commit messages on the first commits. In my
+> > opinion they are so short that they are almost useless. For example in
+> > patch 2 there is absolutely no explanation why you can simply copy the
+> > s390 over to ppc. =20
+>=20
+> They use the same signature format. I suppose I can add a note saying
+> that.
 
-mount -t securityfs /sys/kernel/security/ /sys/kernel/security/
+The note is what I was asking for. For me the commit message is an
+important piece of documentation for other developers (or yourself in a
+year). That's why in my opinion it's important to describe _why_ you do
+something in it as you cannot get the _why_ by reading the code.
 
-The following directories, symlinks, and files are then available.
+> > Or in patch 3 you are silently changing the error
+> > code in kexec from EKEYREJECT to ENODATA. So I would appreciate it if =
+=20
+>=20
+> Not sure what I should do about this. The different implementations use
+> different random error codes, and when they are unified the error code
+> clearly changes for one or the other.
 
-$ ls -l sys/kernel/security/
-total 0
-lr--r--r--. 1 root root 0 Dec  2 00:18 ima -> integrity/ima
-drwxr-xr-x. 3 root root 0 Dec  2 00:18 integrity
+My complaint wasn't that you change the return code. There's no way to
+avoid choosing one over the other. It's again that you don't document
+the change in the commit message for others.
 
-$ ls -l sys/kernel/security/ima/
-total 0
--r--r-----. 1 root root 0 Dec  2 00:18 ascii_runtime_measurements
--r--r-----. 1 root root 0 Dec  2 00:18 binary_runtime_measurements
--rw-------. 1 root root 0 Dec  2 00:18 policy
--r--r-----. 1 root root 0 Dec  2 00:18 runtime_measurements_count
--r--r-----. 1 root root 0 Dec  2 00:18 violations
+> Does anything depend on a particular error code returned?
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- include/linux/ima.h             | 17 ++++++++++++++++-
- security/inode.c                | 12 +++++++++++-
- security/integrity/ima/ima_fs.c | 33 ++++++++++++++++++++++++++-------
- 3 files changed, 53 insertions(+), 9 deletions(-)
+Not that I know of. At least in the kexec-tools ENODATA and EKEYREJECT
+are handled the same way.
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index bfb978a7f8d5..a8017272d78d 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -66,6 +66,10 @@ static inline const char * const *arch_get_ima_policy(void)
- }
- #endif
- 
-+extern int ima_fs_ns_init(struct user_namespace *user_ns,
-+			  struct dentry *root);
-+extern void ima_fs_ns_free_dentries(struct user_namespace *user_ns);
-+
- #else
- static inline enum hash_algo ima_get_current_hash_algo(void)
- {
-@@ -154,6 +158,15 @@ static inline int ima_measure_critical_data(const char *event_label,
- 	return -ENOENT;
- }
- 
-+static inline int ima_fs_ns_init(struct user_namespace *ns, struct dentry *root)
-+{
-+	return 0;
-+}
-+
-+static inline void ima_fs_ns_free_dentries(struct user_namespace *user_ns)
-+{
-+}
-+
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-@@ -221,7 +234,8 @@ struct ima_h_table {
- };
- 
- enum {
--	IMAFS_DENTRY_DIR = 0,
-+	IMAFS_DENTRY_INTEGRITY_DIR = 0,
-+	IMAFS_DENTRY_DIR,
- 	IMAFS_DENTRY_SYMLINK,
- 	IMAFS_DENTRY_BINARY_RUNTIME_MEASUREMENTS,
- 	IMAFS_DENTRY_ASCII_RUNTIME_MEASUREMENTS,
-@@ -333,6 +347,7 @@ static inline struct ima_namespace *get_current_ns(void)
- {
- 	return &init_ima_ns;
- }
-+
- #endif /* CONFIG_IMA_NS */
- 
- #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-diff --git a/security/inode.c b/security/inode.c
-index 121ac1874dde..10ee20917f42 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -16,6 +16,7 @@
- #include <linux/fs_context.h>
- #include <linux/mount.h>
- #include <linux/pagemap.h>
-+#include <linux/ima.h>
- #include <linux/init.h>
- #include <linux/namei.h>
- #include <linux/security.h>
-@@ -41,6 +42,7 @@ static const struct super_operations securityfs_super_operations = {
- static int securityfs_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	static const struct tree_descr files[] = {{""}};
-+	struct user_namespace *ns = fc->user_ns;
- 	int error;
- 
- 	error = simple_fill_super(sb, SECURITYFS_MAGIC, files);
-@@ -49,7 +51,10 @@ static int securityfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	sb->s_op = &securityfs_super_operations;
- 
--	return 0;
-+	if (ns != &init_user_ns)
-+		error = ima_fs_ns_init(ns, sb->s_root);
-+
-+	return error;
- }
- 
- static int securityfs_get_tree(struct fs_context *fc)
-@@ -69,6 +74,11 @@ static int securityfs_init_fs_context(struct fs_context *fc)
- 
- static void securityfs_kill_super(struct super_block *sb)
- {
-+	struct user_namespace *ns = sb->s_fs_info;
-+
-+	if (ns != &init_user_ns)
-+		ima_fs_ns_free_dentries(ns);
-+
- 	kill_litter_super(sb);
- }
- 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index e2cee1457aaa..ea366c8e68c6 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -447,8 +447,9 @@ static const struct file_operations ima_measure_policy_ops = {
- 	.llseek = generic_file_llseek,
- };
- 
--static void ima_fs_ns_free_dentries(struct ima_namespace *ns)
-+void ima_fs_ns_free_dentries(struct user_namespace *user_ns)
- {
-+	struct ima_namespace *ns = user_ns->ima_ns;
- 	int i;
- 
- 	for (i = IMAFS_DENTRY_LAST - 1; i >= 0; i--)
-@@ -457,18 +458,36 @@ static void ima_fs_ns_free_dentries(struct ima_namespace *ns)
- 	memset(ns->dentry, 0, sizeof(ns->dentry));
- }
- 
--static int __init ima_fs_ns_init(struct user_namespace *user_ns)
-+int ima_fs_ns_init(struct user_namespace *user_ns,
-+		   struct dentry *root)
- {
- 	struct ima_namespace *ns = user_ns->ima_ns;
- 	struct dentry *ima_dir;
- 
--	ns->dentry[IMAFS_DENTRY_DIR] = securityfs_create_dir("ima", integrity_dir);
-+	/* already initialized? */
-+	if (ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR])
-+		return 0;
-+
-+	/* FIXME: update when evm and integrity are namespaced */
-+	if (user_ns != &init_user_ns) {
-+		ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR] =
-+			securityfs_create_dir("integrity", root);
-+		if (IS_ERR(ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR])) {
-+			ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR] = NULL;
-+			return -1;
-+		}
-+	} else
-+		ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR] = integrity_dir;
-+
-+	ns->dentry[IMAFS_DENTRY_DIR] =
-+	    securityfs_create_dir("ima",
-+				  ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR]);
- 	if (IS_ERR(ns->dentry[IMAFS_DENTRY_DIR]))
--		return -1;
-+		goto out;
- 	ima_dir = ns->dentry[IMAFS_DENTRY_DIR];
- 
- 	ns->dentry[IMAFS_DENTRY_SYMLINK] =
--	    securityfs_create_symlink("ima", NULL, "integrity/ima", NULL);
-+	    securityfs_create_symlink("ima", root, "integrity/ima", NULL);
- 	if (IS_ERR(ns->dentry[IMAFS_DENTRY_SYMLINK]))
- 		goto out;
- 
-@@ -508,11 +527,11 @@ static int __init ima_fs_ns_init(struct user_namespace *user_ns)
- 
- 	return 0;
- out:
--	ima_fs_ns_free_dentries(ns);
-+	ima_fs_ns_free_dentries(user_ns);
- 	return -1;
- }
- 
- int __init ima_fs_init(void)
- {
--	return ima_fs_ns_init(&init_user_ns);
-+	return ima_fs_ns_init(&init_user_ns, NULL);
- }
--- 
-2.31.1
+Thanks
+Philipp
+
+
+> Thanks
+>=20
+> Michal
+>=20
+> > you could improve them a little.
+> >=20
+> > Thanks
+> > Philipp
+> >=20
+> > On Thu, 25 Nov 2021 19:02:38 +0100
+> > Michal Suchanek <msuchanek@suse.de> wrote:
+> >  =20
+> > > Hello,
+> > >=20
+> > > This is resend of the KEXEC_SIG patchset.
+> > >=20
+> > > The first patch is new because it'a a cleanup that does not require a=
+ny
+> > > change to the module verification code.
+> > >=20
+> > > The second patch is the only one that is intended to change any
+> > > functionality.
+> > >=20
+> > > The rest only deduplicates code but I did not receive any review on t=
+hat
+> > > part so I don't know if it's desirable as implemented.
+> > >=20
+> > > The first two patches can be applied separately without the rest.
+> > >=20
+> > > Thanks
+> > >=20
+> > > Michal
+> > >=20
+> > > Michal Suchanek (6):
+> > >   s390/kexec_file: Don't opencode appended signature check.
+> > >   powerpc/kexec_file: Add KEXEC_SIG support.
+> > >   kexec_file: Don't opencode appended signature verification.
+> > >   module: strip the signature marker in the verification function.
+> > >   module: Use key_being_used_for for log messages in
+> > >     verify_appended_signature
+> > >   module: Move duplicate mod_check_sig users code to mod_parse_sig
+> > >=20
+> > >  arch/powerpc/Kconfig                     | 11 +++++
+> > >  arch/powerpc/kexec/elf_64.c              | 14 ++++++
+> > >  arch/s390/kernel/machine_kexec_file.c    | 42 ++----------------
+> > >  crypto/asymmetric_keys/asymmetric_type.c |  1 +
+> > >  include/linux/module_signature.h         |  1 +
+> > >  include/linux/verification.h             |  4 ++
+> > >  kernel/module-internal.h                 |  2 -
+> > >  kernel/module.c                          | 12 +++--
+> > >  kernel/module_signature.c                | 56 ++++++++++++++++++++++=
++-
+> > >  kernel/module_signing.c                  | 33 +++++++-------
+> > >  security/integrity/ima/ima_modsig.c      | 22 ++--------
+> > >  11 files changed, 113 insertions(+), 85 deletions(-)
+> > >  =20
+> >  =20
+>=20
 
