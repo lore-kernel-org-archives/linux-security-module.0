@@ -2,145 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B874C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Dec 2021 01:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD424C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Dec 2021 07:22:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237922AbhLIBzU (ORCPT
+        id S233738AbhLIH0E convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Dec 2021 20:55:20 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62774 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229680AbhLIBzT (ORCPT
+        Thu, 9 Dec 2021 02:26:04 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4235 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233730AbhLIH0D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Dec 2021 20:55:19 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B8NpFij020559;
-        Thu, 9 Dec 2021 01:51:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=lzNkL6HlG8uoD4LD2dknfufOrMTAzaPjmA2GavdwoYk=;
- b=bGfF52MtqCIan3T31khGXLZ5V9SQmsU4tNjRDTsPk0R+5fMLn2gtnBKPbdfDuVa5s9QK
- XmTVr0wMHAec3IqMumy0uRK150V/ZkYtf4Px4RsbTrVM9NS2NME5CgfEGqgnV82aUZ00
- papvyzMMEPdotAsvuLc65+p4/1d6b7TvD2FdY3ubuGHJYgUW4w64dSV5iQqjf1stp22s
- j91697c2DmCOoxj+0FsETRnoxKIVyspCZ/X0ets/IywZblS6I8ZBW/n5mKd5sRTVMANF
- C8GODj+RezSazeQblBkrne22Q7MD+gT2+p8iZAbeqaa2y20zWnjaUpcNtyfi0g7Nsbgn 0w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cu1gk88we-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Dec 2021 01:51:01 +0000
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B91k8st023060;
-        Thu, 9 Dec 2021 01:51:00 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cu1gk88w2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Dec 2021 01:51:00 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B91mA8k014682;
-        Thu, 9 Dec 2021 01:50:59 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma04dal.us.ibm.com with ESMTP id 3cqyybtxwq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Dec 2021 01:50:59 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B91ovro28115566
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 Dec 2021 01:50:57 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 00C6BC6063;
-        Thu,  9 Dec 2021 01:50:57 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F1C6DC6062;
-        Thu,  9 Dec 2021 01:50:54 +0000 (GMT)
-Received: from [9.211.91.166] (unknown [9.211.91.166])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Dec 2021 01:50:54 +0000 (GMT)
-Message-ID: <b5e6ec36-a9ec-22f4-be58-28d48bdc38b4@linux.vnet.ibm.com>
-Date:   Wed, 8 Dec 2021 20:50:54 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v2 0/6] KEXEC_SIG with appended signature
+        Thu, 9 Dec 2021 02:26:03 -0500
+Received: from fraeml709-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4J8lnm3T3Kz67yRx;
+        Thu,  9 Dec 2021 15:21:16 +0800 (CST)
+Received: from lhreml727-chm.china.huawei.com (10.201.108.78) by
+ fraeml709-chm.china.huawei.com (10.206.15.37) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Thu, 9 Dec 2021 08:22:28 +0100
+Received: from lhreml738-chm.china.huawei.com (10.201.108.188) by
+ lhreml727-chm.china.huawei.com (10.201.108.78) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Thu, 9 Dec 2021 07:22:27 +0000
+Received: from lhreml738-chm.china.huawei.com ([10.201.108.188]) by
+ lhreml738-chm.china.huawei.com ([10.201.108.188]) with mapi id
+ 15.01.2308.020; Thu, 9 Dec 2021 07:22:27 +0000
+From:   Denis Semakin <denis.semakin@huawei.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>,
+        "containers@lists.linux.dev" <containers@lists.linux.dev>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        "mpeters@redhat.com" <mpeters@redhat.com>,
+        "lhinds@redhat.com" <lhinds@redhat.com>,
+        "lsturman@redhat.com" <lsturman@redhat.com>,
+        "puiterwi@redhat.com" <puiterwi@redhat.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "jamjoom@us.ibm.com" <jamjoom@us.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "rgb@redhat.com" <rgb@redhat.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>
+Subject: RE: [PATCH v5 14/16] ima: Use mac_admin_ns_capable() to check
+ corresponding capability
+Thread-Topic: [PATCH v5 14/16] ima: Use mac_admin_ns_capable() to check
+ corresponding capability
+Thread-Index: AQHX7IGL3eM2VvpvvUagKdVUk4BPk6wpv2mA
+Date:   Thu, 9 Dec 2021 07:22:27 +0000
+Message-ID: <0299fefc764b453a9449b0df2ca06dc7@huawei.com>
+References: <20211208221818.1519628-1-stefanb@linux.ibm.com>
+ <20211208221818.1519628-15-stefanb@linux.ibm.com>
+In-Reply-To: <20211208221818.1519628-15-stefanb@linux.ibm.com>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Michal Suchanek <msuchanek@suse.de>, keyrings@vger.kernel.org
-Cc:     kexec@lists.infradead.org, Philipp Rudo <prudo@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Rob Herring <robh@kernel.org>, linux-s390@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Frank van der Linden <fllinden@amazon.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <cover.1637862358.git.msuchanek@suse.de>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <cover.1637862358.git.msuchanek@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: xrnPnY685HKWDzMtt8FN4mvhzwUwSKub
-X-Proofpoint-ORIG-GUID: PnjZLCiMbUjVAQT56miJWZSqnDdO6KM6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-09_01,2021-12-08_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=984
- lowpriorityscore=0 malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 mlxscore=0 clxscore=1011
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112090006
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.122.133.14]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi. 
+My question won't be about capabilities. I'm wondering how IMA-ns which is associated with USER-ns and is created during USER-ns creation
+would be used by some namespaces orchestration systems, e.g. Kubernetes?.. It seems that it can be run without any user namespaces... 
+Their community just discuss this opportunity to support User namespaces. (see https://github.com/kubernetes/enhancements/pull/2101)
+Looks like currently IMA-ns will not be applicable for Kubernetes.
 
-On 11/25/21 13:02, Michal Suchanek wrote:
-> Hello,
+Br,
+Denis
 
-Hi Michael,
+-----Original Message-----
+From: Stefan Berger [mailto:stefanb@linux.ibm.com] 
+Sent: Thursday, December 9, 2021 1:18 AM
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.ibm.com; serge@hallyn.com; christian.brauner@ubuntu.com; containers@lists.linux.dev; dmitry.kasatkin@gmail.com; ebiederm@xmission.com; Krzysztof Struczynski <krzysztof.struczynski@huawei.com>; Roberto Sassu <roberto.sassu@huawei.com>; mpeters@redhat.com; lhinds@redhat.com; lsturman@redhat.com; puiterwi@redhat.com; jejb@linux.ibm.com; jamjoom@us.ibm.com; linux-kernel@vger.kernel.org; paul@paul-moore.com; rgb@redhat.com; linux-security-module@vger.kernel.org; jmorris@namei.org; Stefan Berger <stefanb@linux.ibm.com>; Denis Semakin <denis.semakin@huawei.com>
+Subject: [PATCH v5 14/16] ima: Use mac_admin_ns_capable() to check corresponding capability
 
->
-> This is resend of the KEXEC_SIG patchset.
->
-> The first patch is new because it'a a cleanup that does not require any
-> change to the module verification code.
->
-> The second patch is the only one that is intended to change any
-> functionality.
->
-> The rest only deduplicates code but I did not receive any review on that
-> part so I don't know if it's desirable as implemented.
->
-> The first two patches can be applied separately without the rest.
+Use mac_admin_ns_capable() to check corresponding capability to allow read/write IMA policy without CAP_SYS_ADMIN but with CAP_MAC_ADMIN.
 
-Patch 2 fails to apply on v5.16-rc4. Can you please also include git 
-tree/branch while posting the patches ?
+Signed-off-by: Denis Semakin <denis.semakin@huawei.com>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ include/linux/capability.h      | 6 ++++++
+ security/integrity/ima/ima_fs.c | 2 +-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Secondly, I see that you add the powerpc support in Patch 2 and then 
-modify it again in Patch 5 after cleanup. Why not add the support for 
-powerpc after the clean up ? This will reduce some rework and also 
-probably simplify patches.
-
-Thanks & Regards,
-
-      - Nayna
+diff --git a/include/linux/capability.h b/include/linux/capability.h index 65efb74c3585..991579178f32 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -270,6 +270,12 @@ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
+ 		ns_capable(ns, CAP_SYS_ADMIN);
+ }
+ 
++static inline bool mac_admin_ns_capable(struct user_namespace *ns) {
++	return ns_capable(ns, CAP_MAC_ADMIN) ||
++		ns_capable(ns, CAP_SYS_ADMIN);
++}
++
+ /* audit system wants to get cap info from files as well */  int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
+ 			   const struct dentry *dentry,
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c index 0e582ceecc7f..a749a3e79304 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -394,7 +394,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)  #else
+ 		if ((filp->f_flags & O_ACCMODE) != O_RDONLY)
+ 			return -EACCES;
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!mac_admin_ns_capable(ns->user_ns))
+ 			return -EPERM;
+ 		return seq_open(filp, &ima_policy_seqops);  #endif
+--
+2.31.1
 
