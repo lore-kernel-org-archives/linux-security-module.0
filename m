@@ -2,28 +2,25 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E9CC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Dec 2021 15:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8D6C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Dec 2021 19:11:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240139AbhLIPut (ORCPT
+        id S230304AbhLITO6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Dec 2021 10:50:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234325AbhLIPus (ORCPT
+        Thu, 9 Dec 2021 14:14:58 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:42156 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229508AbhLITO5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Dec 2021 10:50:48 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C960C061746;
-        Thu,  9 Dec 2021 07:47:15 -0800 (PST)
+        Thu, 9 Dec 2021 14:14:57 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0204DB8251E;
-        Thu,  9 Dec 2021 15:47:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8730FC004DD;
-        Thu,  9 Dec 2021 15:47:06 +0000 (UTC)
-Date:   Thu, 9 Dec 2021 16:47:03 +0100
+        by sin.source.kernel.org (Postfix) with ESMTPS id 43783CE27EF;
+        Thu,  9 Dec 2021 19:11:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E17AC341CA;
+        Thu,  9 Dec 2021 19:11:14 +0000 (UTC)
+Date:   Thu, 9 Dec 2021 20:11:09 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Stefan Berger <stefanb@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
@@ -34,172 +31,218 @@ Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
         puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
         linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org
-Subject: Re: [PATCH v5 15/16] ima: Move dentries into ima_namespace
-Message-ID: <20211209154703.4mprhv2rcgvgkmx5@wittgenstein>
+Subject: Re: [PATCH v5 13/16] ima: Move some IMA policy and filesystem
+ related variables into ima_namespace
+Message-ID: <20211209191109.o3x7nynnm52zhygz@wittgenstein>
 References: <20211208221818.1519628-1-stefanb@linux.ibm.com>
- <20211208221818.1519628-16-stefanb@linux.ibm.com>
- <20211209143428.ip6bwry5hqtee5vy@wittgenstein>
- <20211209143749.wk4agkynfqdzftbl@wittgenstein>
- <20211209144109.4xkyibwsuaqkbu47@wittgenstein>
- <f0710142-0d91-d6c4-8d2c-7eac1a946969@linux.ibm.com>
+ <20211208221818.1519628-14-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f0710142-0d91-d6c4-8d2c-7eac1a946969@linux.ibm.com>
+In-Reply-To: <20211208221818.1519628-14-stefanb@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 09, 2021 at 10:00:59AM -0500, Stefan Berger wrote:
+On Wed, Dec 08, 2021 at 05:18:15PM -0500, Stefan Berger wrote:
+> Move the ima_write_mutex, ima_fs_flag, and valid_policy variables into
+> ima_namespace. This way each IMA namespace can set those variables
+> independently.
 > 
-> On 12/9/21 09:41, Christian Brauner wrote:
-> > On Thu, Dec 09, 2021 at 03:37:49PM +0100, Christian Brauner wrote:
-> > > On Thu, Dec 09, 2021 at 03:34:28PM +0100, Christian Brauner wrote:
-> > > > On Wed, Dec 08, 2021 at 05:18:17PM -0500, Stefan Berger wrote:
-> > > > > Move the dentries into the ima_namespace for reuse by virtualized
-> > > > > SecurityFS. Implement function freeing the dentries in order of
-> > > > > files and symlinks before directories.
-> > > > > 
-> > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > ---
-> > > > This doesn't work as implemented, I think.
-> > > > 
-> > > > What I would have preferred and what I tried to explain in the earlier
-> > > > review was:
-> > > > Keep the dentry stashing global since it is only needed for init_ima_ns.
-> > > > Then struct ima_namespace becomes way smaller and simpler.
-> > > > If you do that then it makes sense to remove the additional dget() in
-> > > > securityfs_create_dentry() for non-init_ima_ns.
-> > > > Then you can rely on auto-cleanup in .kill_sb() or on
-> > > > ima_securityfs_init() failure and you only need to call
-> > > > ima_fs_ns_free_dentries() if ns != init_ima_ns.
-> > s/ns != init_ima_ns/ns == init_ima_ns/
-> > 
-> > > > IIuc, it seems you're currently doing one dput() too many since you're
-> > > > calling securityfs_remove() in the error path for non-init_ima_ns which
-> > > > relies on the previous increased dget() which we removed.
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  include/linux/ima.h                      |  5 ++++
+>  security/integrity/ima/ima_fs.c          | 32 +++++++++++-------------
+>  security/integrity/ima/ima_init_ima_ns.c |  4 +++
+>  3 files changed, 23 insertions(+), 18 deletions(-)
 > 
-> I thought that securityfs_remove() will now simply influence when a dentry
-> is removed and freed. If we call it in the error cleanup path in
-> non-init_user_ns case it would go away right there and leave nothing to do
-> for .kill_sb() while an additional dget() would require the cleanup as well
-> but do another cleanup then in .kill_sb() since that brings the reference
-> count to 0 via the dput()s that it does. Am I wrong on this?
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 2ce801bfc449..3aaf6e806db4 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -261,6 +261,11 @@ struct ima_namespace {
+>  	struct ima_h_table ima_htable;
+>  	struct list_head ima_measurements;
+>  	unsigned long binary_runtime_size;
+> +
+> +	/* IMA's filesystem */
+> +	struct mutex ima_write_mutex;
+> +	unsigned long ima_fs_flags;
+> +	int valid_policy;
+>  };
+>  
+>  extern struct ima_namespace init_ima_ns;
+> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+> index 38b1c26479b3..0e582ceecc7f 100644
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@ -25,8 +25,6 @@
+>  
+>  #include "ima.h"
+>  
+> -static DEFINE_MUTEX(ima_write_mutex);
+> -
+>  bool ima_canonical_fmt;
+>  static int __init default_canonical_fmt_setup(char *str)
+>  {
+> @@ -37,8 +35,6 @@ static int __init default_canonical_fmt_setup(char *str)
+>  }
+>  __setup("ima_canonical_fmt", default_canonical_fmt_setup);
+>  
+> -static int valid_policy = 1;
+> -
+>  static ssize_t ima_show_htable_value(char __user *buf, size_t count,
+>  				     loff_t *ppos, atomic_long_t *val)
+>  {
+> @@ -339,7 +335,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+>  		goto out;
+>  	}
+>  
+> -	result = mutex_lock_interruptible(&ima_write_mutex);
+> +	result = mutex_lock_interruptible(&ns->ima_write_mutex);
+>  	if (result < 0)
+>  		goto out_free;
+>  
+> @@ -354,12 +350,12 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+>  	} else {
+>  		result = ima_parse_add_rule(ns, data);
+>  	}
+> -	mutex_unlock(&ima_write_mutex);
+> +	mutex_unlock(&ns->ima_write_mutex);
+>  out_free:
+>  	kfree(data);
+>  out:
+>  	if (result < 0)
+> -		valid_policy = 0;
+> +		ns->valid_policy = 0;
+>  
+>  	return result;
+>  }
+> @@ -376,8 +372,6 @@ enum ima_fs_flags {
+>  	IMA_FS_BUSY,
+>  };
+>  
+> -static unsigned long ima_fs_flags;
+> -
+>  #ifdef	CONFIG_IMA_READ_POLICY
+>  static const struct seq_operations ima_policy_seqops = {
+>  		.start = ima_policy_start,
+> @@ -392,6 +386,8 @@ static const struct seq_operations ima_policy_seqops = {
+>   */
+>  static int ima_open_policy(struct inode *inode, struct file *filp)
+>  {
+> +	struct ima_namespace *ns = get_current_ns();
+> +
 
-With your change you get one dget() from lookup_one_len() in
-securityfs_create_dentry() for non-init_ima_ns. That's added to the
-dcache via d_instantiate().
-If you call securityfs_dentry_remove() in the error path or anywhere
-else it does:
+I'm a bit confused here. In all those callbacks:
+	.open = ima_open_policy,
+	.write = ima_write_policy,
+	.release = ima_release_policy,
+you're calling get_current_ns() at the top of it. What guarantees that
+the same ima_namespace is returned here? What if the fd is sent to
+someone who is in a different user namespace and the write to that
+file?
 
-	dir = d_inode(dentry->d_parent);
-	inode_lock(dir);
-	if (simple_positive(dentry)) {
-		if (d_is_dir(dentry))
-			simple_rmdir(dir, dentry);
-		else
-			simple_unlink(dir, dentry);
-		dput(dentry);
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Maybe I'm just confused but wouldn't you want something like this?
 
-That dput() right there is for the additional dget() in
-securityfs_create_dentry() but we didn't take that. So the dput() is one
-too many now since simple_rmdir() and simple_unlink() will have consumed
-one already. (You should be able to easily see this if you compile with
-sanitizers on and let your init function fail somewhere in the middle.)
+From 1f03dc427c583d5e9ebc9ebe9de77c3c535bbebe Mon Sep 17 00:00:00 2001
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Thu, 9 Dec 2021 20:07:02 +0100
+Subject: [PATCH] !!!! HERE BE DRAGONS - UNTESTED !!!!
 
-(What usually should happen is sm like this:
+---
+ security/integrity/ima/ima_fs.c | 43 +++++++++++++++++++++++++++++----
+ 1 file changed, 38 insertions(+), 5 deletions(-)
 
-void binderfs_remove_file(struct dentry *dentry)
-{
-	struct inode *parent_inode;
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 583462b29cb5..d5b302b925b8 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -317,10 +317,14 @@ static ssize_t ima_read_policy(char *path)
+ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 				size_t datalen, loff_t *ppos)
+ {
+-	struct ima_namespace *ns = get_current_ns();
++	struct ima_namespace *ns;
++	struct user_namespace *user_ns;
+ 	char *data;
+ 	ssize_t result;
+ 
++	user_ns = ima_filp_private(filp);
++	ns = user_ns->ima_ns
++
+ 	if (datalen >= PAGE_SIZE)
+ 		datalen = PAGE_SIZE - 1;
+ 
+@@ -373,26 +377,51 @@ static const struct seq_operations ima_policy_seqops = {
+ };
+ #endif
+ 
++static struct user_namespace *ima_filp_private(struct file *filp)
++{
++	if (!(filp->f_flags & O_WRONLY)) {
++#ifdef CONFIG_IMA_READ_POLICY
++		struct seq_file *seq;
++
++		seq = filp->private_data;
++		return seq->private;
++#endif
++	}
++	return filp->private_data;
++}
++
+ /*
+  * ima_open_policy: sequentialize access to the policy file
+  */
+ static int ima_open_policy(struct inode *inode, struct file *filp)
+ {
+-	struct ima_namespace *ns = get_current_ns();
++	struct user_namespace *user_ns = current_user_ns();
++	struct ima_namespace *ns = user_ns->ima_ns;
+ 
+ 	if (!(filp->f_flags & O_WRONLY)) {
+ #ifndef	CONFIG_IMA_READ_POLICY
+ 		return -EACCES;
+ #else
++		int err;
++		struct seq_file *seq;
++
+ 		if ((filp->f_flags & O_ACCMODE) != O_RDONLY)
+ 			return -EACCES;
+-		if (!mac_admin_ns_capable(ima_user_ns(ns)))
++		if (!mac_admin_ns_capable(user_ns))
+ 			return -EPERM;
+-		return seq_open(filp, &ima_policy_seqops);
++		err = seq_open(filp, &ima_policy_seqops);
++		if (err)
++			return err;
++
++		seq = filp->private_data;
++		seq->private = user_ns;
++		return 0;
+ #endif
+ 	}
+ 	if (test_and_set_bit(IMA_FS_BUSY, &ns->ima_fs_flags))
+ 		return -EBUSY;
++
++	filp->private_data = user_ns;
+ 	return 0;
+ }
+ 
+@@ -405,9 +434,13 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
+  */
+ static int ima_release_policy(struct inode *inode, struct file *file)
+ {
+-	struct ima_namespace *ns = get_current_ns();
++	struct ima_namespace *ns;
++	struct user_namespace *user_ns;
+ 	const char *cause = ns->valid_policy ? "completed" : "failed";
+ 
++	user_ns = ima_filp_private(filp);
++	ns = user_ns->ima_ns
++
+ 	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
+ 		return seq_release(inode, file);
+ 
+-- 
+2.30.2
 
-	parent_inode = d_inode(dentry->d_parent);
-	inode_lock(parent_inode);
-	if (simple_positive(dentry)) {
-		dget(dentry);
-		simple_unlink(parent_inode, dentry);
-		d_delete(dentry);
-		dput(dentry);
-	}
-	inode_unlock(parent_inode);
-})
-
-> 
-> 
-> > > If you really want to move the dentry stashing into struct ima_namespace
-> > > even though it's really unnecessary then you may as well not care about
-> > > the auto-cleanup and keep that additional ima_fs_ns_free_dentries(ns)
-> > > call in .kill_sb(). But I really think not dragging dentry stashing into
-> > > struct ima_namespace is the correct way to go about this.
-> 
-> 
-> I moved the dentries into the ima_namespace so that each namespace holds a
-> pointer to the dentries it owns and isolates them. We certainly wouldn't
-> want to have IMA namespaces write over the current static variables and
-> create a mess with what these are pointing to ( https://elixir.bootlin.com/linux/latest/source/security/integrity/ima/ima_fs.c#L359
-> ) and possible race conditions when doing parallel initialization (if that's
-> possible at all). This also reduces the code size and we don't need two
-> different implementations for init_user_ns and non-init_user_ns. So I don't
-> quite understand whey we wouldn't want to have the dentries isolated via
-> ima_namespace?
-
-My point was this:
-Afaict, nowhere in ima are the stashed dentries needed apart from
-ima_policy_release() which is the .release method of the
-file_operations where the policy dentry is removed.
-
-The dentries only exist because for pre-namespaced ima if you created a
-dentry going through securityfs_create_dentry() you're pinning the
-super_block of init-securityfs via simple_pin_fs(). That obliges you to
-call securityfs_remove() later on in order to call simple_unpin_fs() for
-all dentries.
-
-But for namespaced-ima with namespaced-securityfs there is no more call
-to simple_{pin,unpin}_fs(). Consequently you don't need to stash the
-dentries anywhere to have them available for removal later on. They will
-be automatically cleaned up during .kill_sb().
-
-The one exception I was unaware of reading the code before is in
-ima_policy_release(). So apologies, I didn't see that. There you remove:
-
-static int ima_release_policy(struct inode *inode, struct file *file)
-{
-	struct ima_namespace *ns = get_current_ns();
-	const char *cause = ns->valid_policy ? "completed" : "failed";
-
-	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
-		return seq_release(inode, file);
-
-	if (ns->valid_policy && ima_check_policy(ns) < 0) {
-		cause = "failed";
-		ns->valid_policy = 0;
-	}
-
-	pr_info("policy update %s\n", cause);
-	integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
-			    "policy_update", cause, !ns->valid_policy, 0);
-
-	if (!ns->valid_policy) {
-		ima_delete_rules(ns);
-		ns->valid_policy = 1;
-		clear_bit(IMA_FS_BUSY, &ns->ima_fs_flags);
-		return 0;
-	}
-
-	ima_update_policy(ns);
-#if !defined(CONFIG_IMA_WRITE_POLICY) && !defined(CONFIG_IMA_READ_POLICY)
-	securityfs_remove(ns->dentry[IMAFS_DENTRY_IMA_POLICY]);
-	ns->dentry[IMAFS_DENTRY_IMA_POLICY] = NULL;
-
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-But even so, why then stash all those dentries if the only dentry that
-you ever remove while ima is active - and ima isn't a module so can't be
-unloaded - is the IMAFS_DENTRY_IMA_POLICY. Simply stash the single
-dentry in struct ima_namespace and forget about all the other ones and
-avoid wasting memory. But maybe I'm misunderstanding something.
-
-I'm going to get my booster shot and hopefully I'll be able to work
-tomorrow and later today but I wouldn't bet on it.
-
-Christian
