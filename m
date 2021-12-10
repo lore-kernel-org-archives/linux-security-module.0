@@ -2,159 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA520C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Dec 2021 00:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD5CC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Dec 2021 05:57:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234997AbhLJBA4 (ORCPT
+        id S236822AbhLJGAv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Dec 2021 20:00:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:1402 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230506AbhLJBAz (ORCPT
+        Fri, 10 Dec 2021 01:00:51 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:33840 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232524AbhLJGAv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Dec 2021 20:00:55 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B9MSYlJ028194;
-        Fri, 10 Dec 2021 00:57:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=bYl6OXKjNhwkrKbObOa7WeUgWt4eULrYYuSW1M5WMkc=;
- b=TcmzgoUPSB0Oxr43xX5qWPh3YfgsGa5EDZ/ZBZ4OpVEA3uAWPiK1mCPzk8mDBRkEJ4b0
- bwpMtMxfx4eW03X0wQy6KQHNCJmGzeCBam7aSx4W2GMPhykddk86loAiJFXaLqTtIzcT
- NGTRgKGM8q1e3BBzLeCWSopZXF87kjGvT2yjJZNVcdzmDv+rTQJ/nXqE35OShDNXFfmQ
- GNaTw3bC0Q/rs13kAuLDzE9YK13s7WzTJEm5teiMvNPjKNVjbWIUTaw1pSjTvXqc4nhv
- pXwoVbh2rkapJvSN9NahhDy5FxSiyWSO2Vh9ttm4HLrV9jA/A53GQ74QifoqI9t8SPtS yA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cutmjj8t4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Dec 2021 00:57:07 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BA0v6CS025861;
-        Fri, 10 Dec 2021 00:57:06 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cutmjj8ss-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Dec 2021 00:57:06 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BA0qI2s005029;
-        Fri, 10 Dec 2021 00:57:05 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma04dal.us.ibm.com with ESMTP id 3cqyycqkc4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Dec 2021 00:57:05 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BA0v4k421954888
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Dec 2021 00:57:04 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 208FD78068;
-        Fri, 10 Dec 2021 00:57:04 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0BD3E7805E;
-        Fri, 10 Dec 2021 00:57:02 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 10 Dec 2021 00:57:02 +0000 (GMT)
-Message-ID: <0ab33fbc-8438-27b6-ff4c-0321bfc73855@linux.ibm.com>
-Date:   Thu, 9 Dec 2021 19:57:02 -0500
+        Fri, 10 Dec 2021 01:00:51 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0V-8.hYj_1639115834;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0V-8.hYj_1639115834)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 10 Dec 2021 13:57:14 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     john.johansen@canonical.com
+Cc:     jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] lsm: Fix kernel-doc
+Date:   Fri, 10 Dec 2021 13:57:12 +0800
+Message-Id: <20211210055712.16949-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v5 13/16] ima: Move some IMA policy and filesystem related
- variables into ima_namespace
-Content-Language: en-US
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20211208221818.1519628-1-stefanb@linux.ibm.com>
- <20211208221818.1519628-14-stefanb@linux.ibm.com>
- <20211209191109.o3x7nynnm52zhygz@wittgenstein>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20211209191109.o3x7nynnm52zhygz@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: symyAyegdhTQxTtL2MgyzkzvjLhsszWr
-X-Proofpoint-ORIG-GUID: zN6DzbJMsFFbMYqjPokhmKfyYqgJy7v6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-09_09,2021-12-08_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0 clxscore=1015
- impostorscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2112100001
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Fix function name in lsm.c kernel-doc comment
+to remove some warnings found by running scripts/kernel-doc,
+which is caused by using 'make W=1'.
 
-On 12/9/21 14:11, Christian Brauner wrote:
->
->  From 1f03dc427c583d5e9ebc9ebe9de77c3c535bbebe Mon Sep 17 00:00:00 2001
-> From: Christian Brauner <christian.brauner@ubuntu.com>
-> Date: Thu, 9 Dec 2021 20:07:02 +0100
-> Subject: [PATCH] !!!! HERE BE DRAGONS - UNTESTED !!!!
->
-> ---
->   security/integrity/ima/ima_fs.c | 43 +++++++++++++++++++++++++++++----
->   1 file changed, 38 insertions(+), 5 deletions(-)
->
-> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-> index 583462b29cb5..d5b302b925b8 100644
-> --- a/security/integrity/ima/ima_fs.c
-> +++ b/security/integrity/ima/ima_fs.c
-> @@ -317,10 +317,14 @@ static ssize_t ima_read_policy(char *path)
->   static ssize_t ima_write_policy(struct file *file, const char __user *buf,
->   				size_t datalen, loff_t *ppos)
->   {
-> -	struct ima_namespace *ns = get_current_ns();
-> +	struct ima_namespace *ns;
-> +	struct user_namespace *user_ns;
->   	char *data;
->   	ssize_t result;
->   
-> +	user_ns = ima_filp_private(filp);
-> +	ns = user_ns->ima_ns
-> +
->   	if (datalen >= PAGE_SIZE)
->   		datalen = PAGE_SIZE - 1;
->   
-> @@ -373,26 +377,51 @@ static const struct seq_operations ima_policy_seqops = {
->   };
->   #endif
->   
-> +static struct user_namespace *ima_filp_private(struct file *filp)
-> +{
-> +	if (!(filp->f_flags & O_WRONLY)) {
-> +#ifdef CONFIG_IMA_READ_POLICY
-> +		struct seq_file *seq;
-> +
-> +		seq = filp->private_data;
-> +		return seq->private;
-> +#endif
-> +	}
-> +	return filp->private_data;
-> +}
-> +
->   /*
->    * ima_open_policy: sequentialize access to the policy file
->    */
->   static int ima_open_policy(struct inode *inode, struct file *filp)
->   {
-> -	struct ima_namespace *ns = get_current_ns();
-> +	struct user_namespace *user_ns = current_user_ns();
+security/apparmor/lsm.c:819: warning: expecting prototype for
+apparmor_clone_security(). Prototype was for
+apparmor_sk_clone_security() instead
+security/apparmor/lsm.c:923: warning: expecting prototype for
+apparmor_socket_list(). Prototype was for apparmor_socket_listen()
+instead
+security/apparmor/lsm.c:1028: warning: expecting prototype for
+apparmor_getsockopt(). Prototype was for apparmor_socket_getsockopt()
+instead
+security/apparmor/lsm.c:1038: warning: expecting prototype for
+apparmor_setsockopt(). Prototype was for apparmor_socket_setsockopt()
+instead
+ecurity/apparmor/lsm.c:1061: warning: expecting prototype for
+apparmor_socket_sock_recv_skb(). Prototype was for
+apparmor_socket_sock_rcv_skb() instead
 
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ security/apparmor/lsm.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Do we have to take a reference on the user namespace assuming one can 
-open the file, pass the fd down the hierarchy, and then the user 
-namespace with the opened file goes away? Or is there anything else that 
-keeps the user namespace alive?
-
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 4f0eecb67dde..ce7d96627810 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -812,7 +812,7 @@ static void apparmor_sk_free_security(struct sock *sk)
+ }
+ 
+ /**
+- * apparmor_clone_security - clone the sk_security field
++ * apparmor_sk_clone_security - clone the sk_security field
+  */
+ static void apparmor_sk_clone_security(const struct sock *sk,
+ 				       struct sock *newsk)
+@@ -917,7 +917,7 @@ static int apparmor_socket_connect(struct socket *sock,
+ }
+ 
+ /**
+- * apparmor_socket_list - check perms before allowing listen
++ * apparmor_socket_listen - check perms before allowing listen
+  */
+ static int apparmor_socket_listen(struct socket *sock, int backlog)
+ {
+@@ -1021,7 +1021,7 @@ static int aa_sock_opt_perm(const char *op, u32 request, struct socket *sock,
+ }
+ 
+ /**
+- * apparmor_getsockopt - check perms before getting socket options
++ * apparmor_socket_getsockopt - check perms before getting socket options
+  */
+ static int apparmor_socket_getsockopt(struct socket *sock, int level,
+ 				      int optname)
+@@ -1031,7 +1031,7 @@ static int apparmor_socket_getsockopt(struct socket *sock, int level,
+ }
+ 
+ /**
+- * apparmor_setsockopt - check perms before setting socket options
++ * apparmor_socket_setsockopt - check perms before setting socket options
+  */
+ static int apparmor_socket_setsockopt(struct socket *sock, int level,
+ 				      int optname)
+@@ -1050,7 +1050,7 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
+ 
+ #ifdef CONFIG_NETWORK_SECMARK
+ /**
+- * apparmor_socket_sock_recv_skb - check perms before associating skb to sk
++ * apparmor_socket_sock_rcv_skb - check perms before associating skb to sk
+  *
+  * Note: can not sleep may be called with locks held
+  *
+-- 
+2.20.1.7.g153144c
 
