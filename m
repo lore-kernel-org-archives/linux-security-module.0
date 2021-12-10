@@ -2,50 +2,50 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D755C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Dec 2021 17:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD2EC433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Dec 2021 17:33:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241506AbhLJRhX (ORCPT
+        id S244594AbhLJRh1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Dec 2021 12:37:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44282 "EHLO
+        Fri, 10 Dec 2021 12:37:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244553AbhLJRhQ (ORCPT
+        with ESMTP id S244663AbhLJRhQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 10 Dec 2021 12:37:16 -0500
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4744EC0698C7
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Dec 2021 09:33:36 -0800 (PST)
-Received: by mail-ot1-x32a.google.com with SMTP id r10-20020a056830080a00b0055c8fd2cebdso10312073ots.6
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Dec 2021 09:33:36 -0800 (PST)
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57697C0698CC
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Dec 2021 09:33:38 -0800 (PST)
+Received: by mail-ot1-x32f.google.com with SMTP id n17-20020a9d64d1000000b00579cf677301so10321223otl.8
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Dec 2021 09:33:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linuxfoundation.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=l/J3xxEJxkEvAAiRy+g/i0IsA4cENLPTzNbNRnvQozU=;
-        b=MO5T+UaVz8ug6bW9OaRnZMX373bpG+BInMrxZgZYu0IMhZklmmEfDKCyN/K2MoiODa
-         G6hO3uQZa9blhM3SlfDIt7aLnyMgJDl58ZaCKTgRJS1BUllpVaSen47Y590oxNA+YWox
-         87Qo100HIDOoVJD0mJaPMQpUlA9+yPM0r9/9k=
+        bh=z8DvdE8cQs/ahPWAnUud5n5yToq2pjtImEbhrWCSKj4=;
+        b=A2U4egVLtJIpoFQ30tstUVGzUGtOmsoHZ0xs8fseV5579Sz4E00j5WbNj12yVBrh10
+         gBjWd+OSjLozqsC67VnD+TKT5lsMslmI9Dan2YNX0NvXY97ryAY1BHSC/uJesx1iBcpC
+         Pd1bwFa6CQTZ3aeMIGkPxRo3I016VxH2gMgzU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=l/J3xxEJxkEvAAiRy+g/i0IsA4cENLPTzNbNRnvQozU=;
-        b=Xa/4KfIWKa9pTiZKoAbGkLojRPU+9oSJPUPIhQT9RcEonHXGhdH2sTSnD6VJQunWRQ
-         OwMFF1YzbByuKcUpW5MLKjK9Jli75TQ/ZMBLV1nriXzosuf1eIRD+NtYjlyiVmknmVJt
-         OvrHzxhwRhOzkfwKAf1bnPYz0zS57B6fpldyVDR2TAkslaRh6edl7f9U4EyB8K22r2EF
-         Y178GcC4sQ5eTURaMLSpm4NvrDyfxgh1OqNu1kR+arG4GXd1MYO01TAA7K84BuhjuWkd
-         7IHgQa5qSkqpva9eZK++6LzYLdr9psUqgCFggjE+Jif34vZAUOisbuTDF1E9J2L7BDEa
-         5B4A==
-X-Gm-Message-State: AOAM533Z5YADKCwyz77Yj4SQ52LRAOyAaG63yRosuZqkSeIaNPOcHhof
-        3PEIMZ73vgWPe37Sqcy0hNCxtA==
-X-Google-Smtp-Source: ABdhPJyBok/xLU4m7kmNcpabZivXV4eEhLTbuaMZiVGExFqxo43MXq9in4SCZUd7RRqOP++fZsAALA==
-X-Received: by 2002:a9d:7993:: with SMTP id h19mr12393753otm.245.1639157615401;
-        Fri, 10 Dec 2021 09:33:35 -0800 (PST)
+        bh=z8DvdE8cQs/ahPWAnUud5n5yToq2pjtImEbhrWCSKj4=;
+        b=sfVF+jRd4GdofBwTuBxHHZtVMJm7f1xSvqMOtbDif8jx/vR7EeZ0vvuKtr0cg0NYM6
+         LKLH/n34PuA2W6zbAczQ00kFCxEFyLh520t7sJ8RfmkMxYguhzH83DK9eXQAWr9SR+Fa
+         4ZE3nmpGQpNPFHAuEB79NX/iaHclHs7cs3UWBQA8SdxvaD+vjkXNjwBZqehKJXPeYcwc
+         ZJb0LdumsOLVodmSPjI0kPgUC+C8XIH8+xHHmUUkKd747ooazRZLCVBNywlMIa2KX2D+
+         uVRffYBaMHhpWQ0ik+qOeLgjr/LFjKofzrj+95x58rDSsvaRMz+uzpDKgjt6GzyFLF+x
+         EAYA==
+X-Gm-Message-State: AOAM531VEMzPrAQE5YbPsv/2stYAdzCOpArxS6/CGduNIpQJ0tLCl8QX
+        a91nTDnnHZs1OWhD3iFcEEN4Yg==
+X-Google-Smtp-Source: ABdhPJw/EV9rFIsA/Y2l9EL9YhWZjVYVklXozZh2QN5jLKH28l9K6PLS2YIbrdvs6ptrFP99TR5idg==
+X-Received: by 2002:a05:6830:1216:: with SMTP id r22mr12680706otp.10.1639157617637;
+        Fri, 10 Dec 2021 09:33:37 -0800 (PST)
 Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id x4sm892224oiv.35.2021.12.10.09.33.34
+        by smtp.gmail.com with ESMTPSA id x4sm892224oiv.35.2021.12.10.09.33.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 09:33:35 -0800 (PST)
+        Fri, 10 Dec 2021 09:33:37 -0800 (PST)
 From:   Shuah Khan <skhan@linuxfoundation.org>
 To:     catalin.marinas@arm.com, will@kernel.org, shuah@kernel.org,
         keescook@chromium.org, mic@digikod.net, davem@davemloft.net,
@@ -55,9 +55,9 @@ Cc:     Shuah Khan <skhan@linuxfoundation.org>,
         linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 10/12] selftests/sparc64: remove ARRAY_SIZE define from adi-test
-Date:   Fri, 10 Dec 2021 10:33:20 -0700
-Message-Id: <1d59b5b24a98ffbc83de257c1a9cbe1fd9f01c63.1639156389.git.skhan@linuxfoundation.org>
+Subject: [PATCH 12/12] selftests/vm: remove ARRAY_SIZE define from individual tests
+Date:   Fri, 10 Dec 2021 10:33:22 -0700
+Message-Id: <18321f68b399cd2c2709131d6d6eb1d0f58e8b4f.1639156389.git.skhan@linuxfoundation.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1639156389.git.skhan@linuxfoundation.org>
 References: <cover.1639156389.git.skhan@linuxfoundation.org>
@@ -66,34 +66,67 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-ARRAY_SIZE is defined in several selftests. Remove definition from
+ARRAY_SIZE is defined in several selftests. Remove definitions from
 individual test files and include header file for the define instead.
 ARRAY_SIZE define is added in a separate patch to prepare for this
 change.
 
-Remove ARRAY_SIZE from adi-test and pickup the one defined in
+Remove ARRAY_SIZE from vm tests and pickup the one defined in
 kselftest.h.
 
 Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 ---
- tools/testing/selftests/sparc64/drivers/adi-test.c | 4 ----
- 1 file changed, 4 deletions(-)
+ tools/testing/selftests/vm/mremap_test.c    | 1 -
+ tools/testing/selftests/vm/pkey-helpers.h   | 3 ++-
+ tools/testing/selftests/vm/va_128TBswitch.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/sparc64/drivers/adi-test.c b/tools/testing/selftests/sparc64/drivers/adi-test.c
-index 95d93c6a88a5..84e5d9fd20b0 100644
---- a/tools/testing/selftests/sparc64/drivers/adi-test.c
-+++ b/tools/testing/selftests/sparc64/drivers/adi-test.c
-@@ -24,10 +24,6 @@
- #define DEBUG_LEVEL_4_BIT	(0x0008)
- #define DEBUG_TIMING_BIT	(0x1000)
+diff --git a/tools/testing/selftests/vm/mremap_test.c b/tools/testing/selftests/vm/mremap_test.c
+index 0624d1bd71b5..7c0b0617b9f8 100644
+--- a/tools/testing/selftests/vm/mremap_test.c
++++ b/tools/testing/selftests/vm/mremap_test.c
+@@ -20,7 +20,6 @@
+ #define VALIDATION_DEFAULT_THRESHOLD 4	/* 4MB */
+ #define VALIDATION_NO_THRESHOLD 0	/* Verify the entire region */
  
--#ifndef ARRAY_SIZE
--# define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
--#endif
--
- /* bit mask of enabled bits to print */
- #define DEBUG 0x0001
+-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+ #define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
  
+ struct config {
+diff --git a/tools/testing/selftests/vm/pkey-helpers.h b/tools/testing/selftests/vm/pkey-helpers.h
+index 622a85848f61..92f3be3dd8e5 100644
+--- a/tools/testing/selftests/vm/pkey-helpers.h
++++ b/tools/testing/selftests/vm/pkey-helpers.h
+@@ -13,6 +13,8 @@
+ #include <ucontext.h>
+ #include <sys/mman.h>
+ 
++#include "../kselftest.h"
++
+ /* Define some kernel-like types */
+ #define  u8 __u8
+ #define u16 __u16
+@@ -175,7 +177,6 @@ static inline void __pkey_write_allow(int pkey, int do_allow_write)
+ 	dprintf4("pkey_reg now: %016llx\n", read_pkey_reg());
+ }
+ 
+-#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
+ #define ALIGN_UP(x, align_to)	(((x) + ((align_to)-1)) & ~((align_to)-1))
+ #define ALIGN_DOWN(x, align_to) ((x) & ~((align_to)-1))
+ #define ALIGN_PTR_UP(p, ptr_align_to)	\
+diff --git a/tools/testing/selftests/vm/va_128TBswitch.c b/tools/testing/selftests/vm/va_128TBswitch.c
+index 83acdff26a13..da6ec3b53ea8 100644
+--- a/tools/testing/selftests/vm/va_128TBswitch.c
++++ b/tools/testing/selftests/vm/va_128TBswitch.c
+@@ -9,7 +9,7 @@
+ #include <sys/mman.h>
+ #include <string.h>
+ 
+-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
++#include "../kselftest.h"
+ 
+ #ifdef __powerpc64__
+ #define PAGE_SIZE	(64 << 10)
 -- 
 2.32.0
 
