@@ -2,60 +2,60 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C33C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Dec 2021 19:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502BFC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Dec 2021 19:48:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242413AbhLJTvw (ORCPT
+        id S1343723AbhLJTvw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Fri, 10 Dec 2021 14:51:52 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42992 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48442 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1343837AbhLJTvn (ORCPT
+        by vger.kernel.org with ESMTP id S1343784AbhLJTvn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 10 Dec 2021 14:51:43 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BAIBdnn021647;
-        Fri, 10 Dec 2021 19:47:41 GMT
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BAI873k011051;
+        Fri, 10 Dec 2021 19:47:42 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=R+pZGmNvVG7emKY0Ef5iuZaEeMQd6uyBrd2oSobvPgA=;
- b=QJBOE9pXrnXdojSIrkBpEY/kEJXSzPiq91ZbQpNuD/MsL9mL7Db0Bg+v3lof2coGkkcM
- ROCviG2MLDPvI6ADOlzZas3oCQE6Pn/5HiTxLtF4k0sR894d5N2xRCnWVRwWmHzWwfjI
- DWzGpyuTR5wuyE2v7Yhgv1jXrdlu6IFRz5Ht+Y2WaJs9xH3WCUhB7RH2+btam03NXZv+
- UscuOwpLg3lagzgnC5inr6GDSzM8ZletmAEkMVjbQCW+mJQ8hdpju4zVpGaGNITHgGK6
- TbBmg6Hstr8rkCjgcT+3lrik7qxgq+6h4bypYdRQKJpDojGcht0zew1oPLsR+z+pdgIg Mg== 
+ bh=9RmU5lKfZ5PEbMv5qG3TyQvw1FSleHbq6OtkG5qdlvU=;
+ b=AxUdt87o0TYUFGirU2YFYtt4KB7+dOtGwSu3W7gEGOvfcRQk3Zl6gmoYTXS182GXcI4Z
+ jYHzI+zk6i+BKrYENSgOAcNjxAd9jFMh4GI35NXGV2XP8o3hbd5Z6tE6DCFjDpg6/30P
+ Sa2/D3PUL3m1dHvvXt5hgAcyNCsFxvsKB+3KvbWZc90I46acPDYHMUnOkoNB0MpowCe4
+ cU1s6va7uLBLLA1XE5uPlF0zoRYBkAP0ZQZd5Ba/P+q5U7zuri7l/sUxOdKFjyyRemJH
+ 90qJ0TJFRHlN2z5JGReMXdlL67O9VLZawXTJmNX4jYHTKMLhsi8GdNorYHyQc4HuHy8L BA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cvby41tvj-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cvbatjcd6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Dec 2021 19:47:42 +0000
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BAJaEUR017223;
+        Fri, 10 Dec 2021 19:47:41 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cvbatjccq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Fri, 10 Dec 2021 19:47:41 +0000
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BAIcs1o026398;
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BAJlIQd029473;
         Fri, 10 Dec 2021 19:47:40 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3cvby41tva-1
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma02dal.us.ibm.com with ESMTP id 3cqyydm09e-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Fri, 10 Dec 2021 19:47:40 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BAJcTSl002022;
-        Fri, 10 Dec 2021 19:47:39 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma04dal.us.ibm.com with ESMTP id 3cqyydbsq3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Dec 2021 19:47:39 +0000
 Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BAJlc3955247318
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BAJldRD22610394
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Dec 2021 19:47:38 GMT
+        Fri, 10 Dec 2021 19:47:39 GMT
 Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A7ECAE064;
-        Fri, 10 Dec 2021 19:47:38 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 3136EAE067;
+        Fri, 10 Dec 2021 19:47:39 +0000 (GMT)
 Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C68AAE060;
-        Fri, 10 Dec 2021 19:47:38 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 1FD78AE071;
+        Fri, 10 Dec 2021 19:47:39 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 10 Dec 2021 19:47:38 +0000 (GMT)
+        Fri, 10 Dec 2021 19:47:39 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, serge@hallyn.com,
@@ -67,276 +67,106 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com,
         linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v6 04/17] ima: Move delayed work queue and variables into ima_namespace
-Date:   Fri, 10 Dec 2021 14:47:23 -0500
-Message-Id: <20211210194736.1538863-5-stefanb@linux.ibm.com>
+Subject: [PATCH v6 10/17] ima: Implement hierarchical processing of file accesses
+Date:   Fri, 10 Dec 2021 14:47:29 -0500
+Message-Id: <20211210194736.1538863-11-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211210194736.1538863-1-stefanb@linux.ibm.com>
 References: <20211210194736.1538863-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: mqRIZ2CKwx8B5_-t-gBd9ZHTz5IMD-gz
-X-Proofpoint-GUID: bm9wVBuOqZL4qg2U1of6dnhQNJAxFFn_
+X-Proofpoint-ORIG-GUID: 8RCH_TY1yDOeMePp04PF3cWZ_lfsPnky
+X-Proofpoint-GUID: b0zkdrDhrIjxNPfxpZYdSBciGEoYLHx0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2021-12-10_07,2021-12-10_01,2021-12-02_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 priorityscore=1501
- suspectscore=0 mlxlogscore=999 mlxscore=0 phishscore=0 clxscore=1015
- malwarescore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112100106
+ malwarescore=0 phishscore=0 spamscore=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2110150000 definitions=main-2112100106
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Move the delayed work queue and associated variables to the
-ima_namespace and initialize them.
-
-Since keys queued up for measurement currently are only relevant in the
-init_ima_ns, call ima_init_key_queue() only when the init_ima_ns is
-initialized.
+Implement hierarchical processing of file accesses in IMA namespaces by
+walking the list of IMA namespaces towards the init_ima_ns. This way
+file accesses can be audited in an IMA namespace and also be evaluated
+against the IMA policies of parent IMA namespaces.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- include/linux/ima.h                      | 11 ++++++++
- security/integrity/ima/ima.h             | 12 +++++----
- security/integrity/ima/ima_fs.c          |  4 ++-
- security/integrity/ima/ima_init.c        |  2 --
- security/integrity/ima/ima_init_ima_ns.c |  8 ++++++
- security/integrity/ima/ima_policy.c      |  4 +--
- security/integrity/ima/ima_queue_keys.c  | 34 ++++++++++--------------
- 7 files changed, 45 insertions(+), 30 deletions(-)
+ include/linux/ima.h               |  9 +++++++++
+ security/integrity/ima/ima_main.c | 29 +++++++++++++++++++++++++----
+ 2 files changed, 34 insertions(+), 4 deletions(-)
 
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 19e6936250ea..5540ddd39eab 100644
+index 85903f40acfd..fda371cbde50 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -215,6 +215,17 @@ struct ima_namespace {
- 	struct rb_root ns_status_tree;
- 	rwlock_t ns_status_lock;
- 	struct kmem_cache *ns_status_cache;
-+
-+#ifdef CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS
-+	/*
-+	 * If custom IMA policy is not loaded then keys queued up
-+	 * for measurement should be freed. This worker is used
-+	 * for handling this scenario.
-+	 */
-+	struct delayed_work ima_keys_delayed_work;
-+	long ima_key_queue_timeout;
-+	bool timer_expired;
-+#endif
- };
+@@ -66,6 +66,15 @@ static inline const char * const *arch_get_ima_policy(void)
+ }
+ #endif
  
- extern struct ima_namespace init_ima_ns;
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index dd06e16c4e1c..9edab9050dc7 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -77,6 +77,8 @@ struct ima_field_data {
- 	u32 len;
- };
- 
-+struct ima_namespace;
++static inline struct user_namespace *ima_user_ns(struct ima_namespace *ns)
++{
++	struct user_namespace *user_ns;
 +
- /* IMA template field definition */
- struct ima_template_field {
- 	const char field_id[IMA_TEMPLATE_FIELD_ID_MAX_LEN];
-@@ -247,18 +249,18 @@ struct ima_key_entry {
- 	size_t payload_len;
- 	char *keyring_name;
- };
--void ima_init_key_queue(void);
-+void ima_init_key_queue(struct ima_namespace *ns);
- bool ima_should_queue_key(void);
- bool ima_queue_key(struct key *keyring, const void *payload,
- 		   size_t payload_len);
--void ima_process_queued_keys(void);
-+void ima_process_queued_keys(struct ima_namespace *ns);
-+void ima_keys_handler(struct work_struct *work);
++	user_ns = current_user_ns();
++	WARN_ON(user_ns->ima_ns != ns);
++	return user_ns;
++}
++
  #else
--static inline void ima_init_key_queue(void) {}
- static inline bool ima_should_queue_key(void) { return false; }
- static inline bool ima_queue_key(struct key *keyring,
- 				 const void *payload,
- 				 size_t payload_len) { return false; }
--static inline void ima_process_queued_keys(void) {}
-+static inline void ima_process_queued_keys(struct ima_namespace *ns) {}
- #endif /* CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS */
- 
- /* LIM API function definitions */
-@@ -300,7 +302,7 @@ int ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
- 		     struct ima_template_desc **template_desc,
- 		     const char *func_data, unsigned int *allowed_algos);
- void ima_init_policy(void);
--void ima_update_policy(void);
-+void ima_update_policy(struct ima_namespace *ns);
- void ima_update_policy_flags(void);
- ssize_t ima_parse_add_rule(char *);
- void ima_delete_rules(void);
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 3d8e9d5db5aa..5cff3d6c3dc7 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -21,6 +21,7 @@
- #include <linux/rcupdate.h>
- #include <linux/parser.h>
- #include <linux/vmalloc.h>
-+#include <linux/ima.h>
- 
- #include "ima.h"
- 
-@@ -410,6 +411,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
- static int ima_release_policy(struct inode *inode, struct file *file)
+ static inline enum hash_algo ima_get_current_hash_algo(void)
  {
- 	const char *cause = valid_policy ? "completed" : "failed";
-+	struct ima_namespace *ns = get_current_ns();
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2121a831f38a..6ebc57cd91d3 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -200,10 +200,10 @@ void ima_file_free(struct file *file)
+ 	ima_check_last_writer(iint, inode, file);
+ }
  
- 	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
- 		return seq_release(inode, file);
-@@ -430,7 +432,7 @@ static int ima_release_policy(struct inode *inode, struct file *file)
- 		return 0;
- 	}
- 
--	ima_update_policy();
-+	ima_update_policy(ns);
- #if !defined(CONFIG_IMA_WRITE_POLICY) && !defined(CONFIG_IMA_READ_POLICY)
- 	securityfs_remove(ima_policy);
- 	ima_policy = NULL;
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index f6ae4557a0da..24848373a061 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -155,8 +155,6 @@ int __init ima_init(void)
- 	if (rc != 0)
- 		return rc;
- 
--	ima_init_key_queue();
--
- 	ima_measure_critical_data("kernel_info", "kernel_version",
- 				  UTS_RELEASE, strlen(UTS_RELEASE), false,
- 				  NULL, 0);
-diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
-index 08781a44f7bf..be31d696bdd3 100644
---- a/security/integrity/ima/ima_init_ima_ns.c
-+++ b/security/integrity/ima/ima_init_ima_ns.c
-@@ -26,6 +26,14 @@ int ima_init_namespace(struct ima_namespace *ns)
- 	if (!ns->ns_status_cache)
- 		return -ENOMEM;
- 
-+#ifdef CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS
-+	INIT_DELAYED_WORK(&ns->ima_keys_delayed_work, ima_keys_handler);
-+	ns->ima_key_queue_timeout = 300000;
-+	ns->timer_expired = false;
-+	if (ns == &init_ima_ns)
-+		ima_init_key_queue(ns);
-+#endif
-+
+-static int process_measurement(struct ima_namespace *ns,
+-			       struct file *file, const struct cred *cred,
+-			       u32 secid, char *buf, loff_t size, int mask,
+-			       enum ima_hooks func)
++static int __process_measurement(struct ima_namespace *ns,
++				 struct file *file, const struct cred *cred,
++				 u32 secid, char *buf, loff_t size, int mask,
++				 enum ima_hooks func)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	struct integrity_iint_cache *iint = NULL;
+@@ -405,6 +405,27 @@ static int process_measurement(struct ima_namespace *ns,
  	return 0;
  }
  
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 320ca80aacab..e5aef287d14d 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -986,7 +986,7 @@ int ima_check_policy(void)
-  * Policy rules are never deleted so ima_policy_flag gets zeroed only once when
-  * we switch from the default policy to user defined.
-  */
--void ima_update_policy(void)
-+void ima_update_policy(struct ima_namespace *ns)
- {
- 	struct list_head *policy = &ima_policy_rules;
- 
-@@ -1007,7 +1007,7 @@ void ima_update_policy(void)
- 	ima_update_policy_flags();
- 
- 	/* Custom IMA policy has been loaded */
--	ima_process_queued_keys();
-+	ima_process_queued_keys(ns);
- }
- 
- /* Keep the enumeration in sync with the policy_tokens! */
-diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-index 93056c03bf5a..fcaa1645dba3 100644
---- a/security/integrity/ima/ima_queue_keys.c
-+++ b/security/integrity/ima/ima_queue_keys.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/user_namespace.h>
- #include <linux/workqueue.h>
-+#include <linux/ima.h>
- #include <keys/asymmetric-type.h>
- #include "ima.h"
- 
-@@ -25,34 +26,27 @@ static bool ima_process_keys;
- static DEFINE_MUTEX(ima_keys_lock);
- static LIST_HEAD(ima_keys);
- 
--/*
-- * If custom IMA policy is not loaded then keys queued up
-- * for measurement should be freed. This worker is used
-- * for handling this scenario.
-- */
--static long ima_key_queue_timeout = 300000; /* 5 Minutes */
--static void ima_keys_handler(struct work_struct *work);
--static DECLARE_DELAYED_WORK(ima_keys_delayed_work, ima_keys_handler);
--static bool timer_expired;
--
- /*
-  * This worker function frees keys that may still be
-  * queued up in case custom IMA policy was not loaded.
-  */
--static void ima_keys_handler(struct work_struct *work)
-+void ima_keys_handler(struct work_struct *work)
- {
--	timer_expired = true;
--	ima_process_queued_keys();
-+	struct ima_namespace *ns;
++static int process_measurement(struct ima_namespace *ns,
++			       struct file *file, const struct cred *cred,
++			       u32 secid, char *buf, loff_t size, int mask,
++			       enum ima_hooks func)
++{
++	struct user_namespace *user_ns = ima_user_ns(ns);
++	int ret = 0;
 +
-+	ns = container_of(work, struct ima_namespace, ima_keys_delayed_work.work);
-+	ns->timer_expired = true;
-+	ima_process_queued_keys(ns);
- }
- 
- /*
-  * This function sets up a worker to free queued keys in case
-  * custom IMA policy was never loaded.
-  */
--void ima_init_key_queue(void)
-+void ima_init_key_queue(struct ima_namespace *ns)
- {
--	schedule_delayed_work(&ima_keys_delayed_work,
--			      msecs_to_jiffies(ima_key_queue_timeout));
-+	schedule_delayed_work(&ns->ima_keys_delayed_work,
-+			      msecs_to_jiffies(ns->ima_key_queue_timeout));
- }
- 
- static void ima_free_key_entry(struct ima_key_entry *entry)
-@@ -130,7 +124,7 @@ bool ima_queue_key(struct key *keyring, const void *payload,
-  * This function sets ima_process_keys to true and processes queued keys.
-  * From here on keys will be processed right away (not queued).
-  */
--void ima_process_queued_keys(void)
-+void ima_process_queued_keys(struct ima_namespace *ns)
- {
- 	struct ima_key_entry *entry, *tmp;
- 	bool process = false;
-@@ -154,11 +148,11 @@ void ima_process_queued_keys(void)
- 	if (!process)
- 		return;
- 
--	if (!timer_expired)
--		cancel_delayed_work_sync(&ima_keys_delayed_work);
-+	if (!ns->timer_expired)
-+		cancel_delayed_work_sync(&ns->ima_keys_delayed_work);
- 
- 	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
--		if (!timer_expired)
-+		if (!ns->timer_expired)
- 			process_buffer_measurement(&init_user_ns, NULL,
- 						   entry->payload,
- 						   entry->payload_len,
++	while (user_ns) {
++		ns = user_ns->ima_ns;
++
++		ret = __process_measurement(ns, file, cred, secid, buf, size, mask, func);
++		if (ret)
++			break;
++
++		user_ns = user_ns->parent;
++	};
++
++	return ret;
++}
++
+ /**
+  * ima_file_mmap - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured (May be NULL)
 -- 
 2.31.1
 
