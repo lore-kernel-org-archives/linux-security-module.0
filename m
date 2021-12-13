@@ -2,85 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDE3C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Dec 2021 20:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7450FC433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Dec 2021 21:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238690AbhLMUi1 (ORCPT
+        id S238753AbhLMVLe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Dec 2021 15:38:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42866 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242021AbhLMUi0 (ORCPT
+        Mon, 13 Dec 2021 16:11:34 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44012 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237803AbhLMVLd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Dec 2021 15:38:26 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 688D6C061748
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Dec 2021 12:38:26 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id np6-20020a17090b4c4600b001a90b011e06so14302284pjb.5
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Dec 2021 12:38:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GwERbAEJEYetlBmVr24GKF6wnmy9fFMxfSPteuwkvvo=;
-        b=QkmtBO5ecCKOZ1yTEfXFCCEy2xRBZ4PtTMSi0hv/hRUjHqGSEs7j1w2ic+7SFt5May
-         Z6QlP2HDNFJGAXp4Sj6V6jqVJ/2J6gWF+PMnxAsDKRPokuVfAc6hAQvtXz4C87td4OYC
-         wcFhxBziORrdQgWQZiOCK3QXH3RFOIDx9XLv0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GwERbAEJEYetlBmVr24GKF6wnmy9fFMxfSPteuwkvvo=;
-        b=6kRXtkXI3TtWhopniBELcoYmyjVdKY8Y9MPBOqUz5HZ56laXwtMbLt1g0aCaTjOeOD
-         X5N4owitAn4ZP7gNmoZta/h/6cHonyyDr+00jH3M/eFiwOVRexlrusv9lnuuzyI0Yv1q
-         K3oQtrOuWABekal1RCmfGaKHYS6X35LqtF8Lh0LUKzr71i4RbiUtISBhZKfuoThks7KS
-         zgHZ2eWXQ64Ff18QlzHChDX9hzVcrNUgzylJgFv9h0ArYgESKt7pR278+OGZUcxIFrkG
-         SFpjvdKeV8opa7S7vgDpBW07Hwc+4xdteqUARkG536Y87jSkPpZ+Jdx2dPoVGrznpKKv
-         W/9g==
-X-Gm-Message-State: AOAM532i0VARNNQ9HvNAni4PcfVlr7LYTSEww5vZtk0T1i4SXYr8PAVB
-        zG+OnT9x6lie+JD33fqkzI0iaA==
-X-Google-Smtp-Source: ABdhPJwo2Nr0F37opgJzEGzkcrZjV2E64UleT9NH5LxGOFMvGsMYzel84/SkNj6ItbHIGzS/d3PWtA==
-X-Received: by 2002:a17:90a:c257:: with SMTP id d23mr611796pjx.42.1639427905929;
-        Mon, 13 Dec 2021 12:38:25 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q1sm14244472pfu.33.2021.12.13.12.38.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Dec 2021 12:38:25 -0800 (PST)
-Date:   Mon, 13 Dec 2021 12:38:25 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     catalin.marinas@arm.com, will@kernel.org, shuah@kernel.org,
-        mic@digikod.net, davem@davemloft.net, kuba@kernel.org,
-        peterz@infradead.org, paulmck@kernel.org, boqun.feng@gmail.com,
-        akpm@linux-foundation.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 09/12] selftests/seccomp: remove ARRAY_SIZE define from
- seccomp_benchmark
-Message-ID: <202112131238.245527E@keescook>
-References: <cover.1639156389.git.skhan@linuxfoundation.org>
- <80fa7078e0645649b6e31be4844a3cffbe67a79b.1639156389.git.skhan@linuxfoundation.org>
+        Mon, 13 Dec 2021 16:11:33 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BDKEYpp014358;
+        Mon, 13 Dec 2021 21:11:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=cxglZ7/AwM4mImr+J8Y9KgqOLtRmaU0v6+QCAKtir84=;
+ b=pkeFxYzcXYc9PKF0qDkCBQRKslxnE43g05QRkRgL98YPVFTZ4tduo4FmAm5IoHZuec8k
+ f/UvXFtX13/B0kaDbZgy8yd5imxdMb/zOrvwj9aqVlQbtq8EyW9Tx4PwlqKuY/oKY6mB
+ lfJrTn87DsQx4Y47bl4/I6IuwhkqkKHAIozKe7/mFuH535hv+41FTUKYekaaipVGs8aq
+ CNtSNk1X5ue16FQnDnu4RlYuurBpJ4NwU5RIOjTwIEFJD8glweC9kOre35iQomPRg9MP
+ o4S4Q2SQvnjojTGWSVqM2jvhusRqp+blpELvooXByVLgO1CUyDYGuepw7IX8OjkWo0YF Ig== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cx9r86udf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Dec 2021 21:11:21 +0000
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BDKgbv1012728;
+        Mon, 13 Dec 2021 21:11:20 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cx9r86ucr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Dec 2021 21:11:20 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BDL8BNH002690;
+        Mon, 13 Dec 2021 21:11:19 GMT
+Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
+        by ppma04dal.us.ibm.com with ESMTP id 3cvkma10pg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Dec 2021 21:11:19 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BDLBIVo19267986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Dec 2021 21:11:18 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D0CB6A047;
+        Mon, 13 Dec 2021 21:11:18 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AEB486A064;
+        Mon, 13 Dec 2021 21:11:16 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 13 Dec 2021 21:11:16 +0000 (GMT)
+Message-ID: <b4249c5d-da3d-4306-8d9b-10f06ec80cba@linux.ibm.com>
+Date:   Mon, 13 Dec 2021 16:11:16 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80fa7078e0645649b6e31be4844a3cffbe67a79b.1639156389.git.skhan@linuxfoundation.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v6 01/17] ima: Add IMA namespace support
+Content-Language: en-US
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+References: <20211210194736.1538863-1-stefanb@linux.ibm.com>
+ <20211210194736.1538863-2-stefanb@linux.ibm.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20211210194736.1538863-2-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Gl0VRmzp9YJ5KhbgF-xrGoeCYfy5bvkM
+X-Proofpoint-ORIG-GUID: 1Da7rQz0f_76s6BMfzO3OG24C7Y4_6HE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-13_10,2021-12-13_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 mlxlogscore=999 phishscore=0 adultscore=0 bulkscore=0
+ spamscore=0 priorityscore=1501 mlxscore=0 clxscore=1015 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112130125
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 10, 2021 at 10:33:19AM -0700, Shuah Khan wrote:
-> ARRAY_SIZE is defined in several selftests. Remove definitions from
-> individual test files and include header file for the define instead.
-> ARRAY_SIZE define is added in a separate patch to prepare for this
-> change.
-> 
-> Remove ARRAY_SIZE from seccomp_benchmark and pickup the one defined in
-> kselftest.h.
-> 
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Good idea to clean these up; thanks!
+On 12/10/21 14:47, Stefan Berger wrote:
+> Implement an IMA namespace data structure that gets created alongside a
+> user namespace with CLONE_NEWUSER. This lays down the foundation for
+> namespacing the different aspects of IMA (eg. IMA-audit, IMA-measurement,
+> IMA-appraisal).
+>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> ---
+>   include/linux/ima.h                      | 37 +++++++++++++
+>   include/linux/user_namespace.h           |  4 ++
+>   init/Kconfig                             | 10 ++++
+>   kernel/user.c                            |  7 +++
+>   kernel/user_namespace.c                  |  8 +++
+>   security/integrity/ima/Makefile          |  3 +-
+>   security/integrity/ima/ima.h             |  4 ++
+>   security/integrity/ima/ima_init.c        |  4 ++
+>   security/integrity/ima/ima_init_ima_ns.c | 32 +++++++++++
+>   security/integrity/ima/ima_ns.c          | 69 ++++++++++++++++++++++++
+>   10 files changed, 177 insertions(+), 1 deletion(-)
+>   create mode 100644 security/integrity/ima/ima_init_ima_ns.c
+>   create mode 100644 security/integrity/ima/ima_ns.c
+>
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index b6ab66a546ae..f282e40c316c 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -11,6 +11,7 @@
+>   #include <linux/fs.h>
+>   #include <linux/security.h>
+>   #include <linux/kexec.h>
+> +#include <linux/user_namespace.h>
+>   #include <crypto/hash_info.h>
+>   struct linux_binprm;
+>   
+> @@ -210,6 +211,42 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
+>   }
+>   #endif /* CONFIG_IMA_APPRAISE */
+>   
+> +struct ima_namespace {
+> +	int avoid_zero_size;
+> +};
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
 
--- 
-Kees Cook
+I moved the structure to security/integrity/ima/ima.h for v7 and added 
+__randomize_layout to it.
+
+   Stefan
