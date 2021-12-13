@@ -2,84 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E929C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Dec 2021 15:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EA9C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Dec 2021 15:50:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234484AbhLMPpf (ORCPT
+        id S234376AbhLMPud (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Dec 2021 10:45:35 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:44896 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238567AbhLMPpe (ORCPT
+        Mon, 13 Dec 2021 10:50:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59720 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229752AbhLMPud (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Dec 2021 10:45:34 -0500
+        Mon, 13 Dec 2021 10:50:33 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06A6DC061574;
+        Mon, 13 Dec 2021 07:50:33 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 871D5B81170;
-        Mon, 13 Dec 2021 15:45:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A9BC34603;
-        Mon, 13 Dec 2021 15:45:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639410331;
-        bh=Ao91dUn6XXbxJljUQAY30y01sFzBbCwfaEKGZFOIXhA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qigBmnQIrUB/Z6ggANp9VM7BGGs44upAt7O007zkJqQk/mn1q4OTf3WIEdH5HK9+x
-         B+Q0iBi5BWaYj/cfaDxKkhl4hOxx1gTHcIowtBlEgN4z3uvISpgoO5HHr+6ano8l0S
-         It4eAJsC0e3ljcohdb+OUOqaRyFIvStktwhY7dp0wNQF/k14Ok+R18DQF3n0fLDfZv
-         13rNXb+tfSFXyz+G3r4gOALvKxPUZPkh8BKsvy95s3Q6GTFFOOhvk8iD6J0iUUa2yT
-         A6eL+gWTg/1AA9aD8MLX3mREy9hvdeijzP17GU20aLl3hYOMsbSUzydQiXdku7nFJ7
-         3HoKzNWwYKygg==
-Date:   Mon, 13 Dec 2021 15:45:25 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     catalin.marinas@arm.com, shuah@kernel.org, keescook@chromium.org,
-        mic@digikod.net, davem@davemloft.net, kuba@kernel.org,
-        peterz@infradead.org, paulmck@kernel.org, boqun.feng@gmail.com,
-        akpm@linux-foundation.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 02/12] selftests/arm64: remove ARRAY_SIZE define from
- vec-syscfg.c
-Message-ID: <20211213154524.GA11839@willie-the-truck>
-References: <cover.1639156389.git.skhan@linuxfoundation.org>
- <7f6d7252af5c8efda140b6b5f626b9e5a267016a.1639156389.git.skhan@linuxfoundation.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 96B446115A;
+        Mon, 13 Dec 2021 15:50:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B359C34603;
+        Mon, 13 Dec 2021 15:50:26 +0000 (UTC)
+Date:   Mon, 13 Dec 2021 16:50:20 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+Subject: Re: [PATCH v5 13/16] ima: Move some IMA policy and filesystem
+ related variables into ima_namespace
+Message-ID: <20211213155020.pvadnomqnsub5vg2@wittgenstein>
+References: <20211208221818.1519628-1-stefanb@linux.ibm.com>
+ <20211208221818.1519628-14-stefanb@linux.ibm.com>
+ <20211209191109.o3x7nynnm52zhygz@wittgenstein>
+ <0ab33fbc-8438-27b6-ff4c-0321bfc73855@linux.ibm.com>
+ <20211210113244.odv2ibrifz2jzft5@wittgenstein>
+ <dca4e7c9-87a7-9a9e-b1f2-df16f1a45019@linux.ibm.com>
+ <20211211095026.i2gvqjy4df3sxq42@wittgenstein>
+ <85b75c98-6452-9706-7549-10b416350b7d@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7f6d7252af5c8efda140b6b5f626b9e5a267016a.1639156389.git.skhan@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <85b75c98-6452-9706-7549-10b416350b7d@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 10, 2021 at 10:33:12AM -0700, Shuah Khan wrote:
-> ARRAY_SIZE is defined in several selftests. Remove definitions from
-> individual test files and include header file for the define instead.
-> ARRAY_SIZE define is added in a separate patch to prepare for this
-> change.
+On Mon, Dec 13, 2021 at 10:33:40AM -0500, Stefan Berger wrote:
 > 
-> Remove ARRAY_SIZE from vec-syscfg.c and pickup the one defined in
-> kselftest.h.
+> On 12/11/21 04:50, Christian Brauner wrote:
+> > On Fri, Dec 10, 2021 at 08:57:11AM -0500, Stefan Berger wrote:
+> > > 
+> > > 
+> > > there anything that would prevent us from setns()'ing to that target user
+> > > namespace so that we would now see that of a user namespace that we are not
+> > > allowed to see?
+> > If you're really worried about someone being able to access a securityfs
+> > instance whose userns doesn't match the userns the securityfs instance
+> > was mounted in there are multiple ways to fix it. The one that I tend to
+> > prefer is:
+> > 
+> >  From e0ff6a8dcc573763568e685dd70d1547efd68df9 Mon Sep 17 00:00:00 2001
+> > From: Christian Brauner <christian.brauner@ubuntu.com>
+> > Date: Fri, 10 Dec 2021 11:47:37 +0100
+> > Subject: !!!! HERE BE DRAGONS - COMPLETELY UNTESTED !!!!
+> > 
+> > securityfs: only allow access to securityfs from within same namespace
+> > 
+> > Limit opening of securityfs files to callers located in the same namespace.
+> > 
+> > ---
+> >   security/inode.c | 33 +++++++++++++++++++++++++++++++--
+> >   1 file changed, 31 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/security/inode.c b/security/inode.c
+> > index eaccba7017d9..9eaf757c08cb 100644
+> > --- a/security/inode.c
+> > +++ b/security/inode.c
+> > @@ -80,6 +80,35 @@ static struct file_system_type fs_type = {
+> >   	.fs_flags =	FS_USERNS_MOUNT,
+> >   };
+> > +static int securityfs_permission(struct user_namespace *mnt_userns,
+> > +				 struct inode *inode, int mask)
+> > +{
+> > +	int err;
+> > +
+> > +	err = generic_permission(&init_user_ns, inode, mask);
+> > +	if (!err) {
+> > +		if (inode->i_sb->s_user_ns != current_user_ns())
+> > +			err = -EACCES;
+> > +	}
+> > +
+> > +	return err;
+> > +}
+> > +
+> > +const struct inode_operations securityfs_dir_inode_operations = {
+> > +	.permission	= securityfs_permission,
+> > +	.lookup		= simple_lookup,
+> > +};
+> > +
+> > +const struct file_operations securityfs_dir_operations = {
+> > +	.permission	= securityfs_permission,
 > 
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> ---
->  tools/testing/selftests/arm64/fp/vec-syscfg.c | 2 --
->  1 file changed, 2 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/arm64/fp/vec-syscfg.c b/tools/testing/selftests/arm64/fp/vec-syscfg.c
-> index 272b888e018e..c90658811a83 100644
-> --- a/tools/testing/selftests/arm64/fp/vec-syscfg.c
-> +++ b/tools/testing/selftests/arm64/fp/vec-syscfg.c
-> @@ -21,8 +21,6 @@
->  #include "../../kselftest.h"
->  #include "rdvl.h"
->  
-> -#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-> -
->  #define ARCH_MIN_VL SVE_VL_MIN
->  
->  struct vec_data {
+> This interface function on file operations doesn't exist.
 
-Acked-by: Will Deacon <will@kernel.org>
+It's almost as if the subject line of this patch warned about its draft
+character. That was supposed for regular files.
 
-Will
+> 
+> I'll use the inode_operations and also hook it to the root dentry of the
+> super_block. Then there's no need to have this check on symlinks and
+> files...
+
+Don't special case the inode_operations for the root inode!
+If a privileged process opens an fd refering to a struct file for the
+root inode and leaks it to an unprivileged process by accident the
+unprivileged process can open any file or directory beneath via openat()
+and friends.
+
+Symlinks don't need a .permission handler anyway because they just
+contain the name of another file and that is checked for .permission
+unless you have a separate .getlink handler where you want to restrict
+link contents further.
+
+But regular files need to have a .permission method see openat().
