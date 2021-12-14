@@ -2,131 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A36A1C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Dec 2021 12:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A5E8C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Dec 2021 13:13:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232207AbhLNMiA (ORCPT
+        id S234273AbhLNNNN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Dec 2021 07:38:00 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:65524 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229879AbhLNMh7 (ORCPT
+        Tue, 14 Dec 2021 08:13:13 -0500
+Received: from mga11.intel.com ([192.55.52.93]:21967 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234259AbhLNNNM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Dec 2021 07:37:59 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BEC9FVr026528;
-        Tue, 14 Dec 2021 12:37:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=hbZqTvW5RpWfz1tHUyVuzB89t1W/UKtkT/ce8c4PuTM=;
- b=AiCoTmCmwtSe9EgSNa7rl3KV2YbtNu9tE6yYyOtaOF0NCWSPRrf1vj3q9OPMYf1cyOAA
- QLD0QP1H746M+zpFvHkWr7BfgZWH636nbCE4kswt4iyFlkTWt1+5wEKIMRKPoP3/IG2f
- ntFR6EtWhoNvZ0WDmLp/SI03waXgbJ4m4lAWKafXmNBypFfatd2WKW4AASNumlVoCmgj
- tyaCBSooJJWTRQxB/In/yrH1hp87iQgCWNk1uhIjve4Ye3qn0MVKOiSJjVTriK7UM8AR
- 3b8r+GBKAZOVMATB+Fah+JpkVZCjfl5hgvfbI3nYiSUwCwrn3sEDHuvLkROkqAPcF5Qh ig== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3cx9raktus-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Dec 2021 12:37:38 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BEBiSas008727;
-        Tue, 14 Dec 2021 12:37:38 GMT
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3cx9raktu2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Dec 2021 12:37:38 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BECWLqs017901;
-        Tue, 14 Dec 2021 12:37:36 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma04ams.nl.ibm.com with ESMTP id 3cvkmaehnn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Dec 2021 12:37:36 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BECbXVC43647348
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Dec 2021 12:37:33 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EFC87A405B;
-        Tue, 14 Dec 2021 12:37:32 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B43FA4066;
-        Tue, 14 Dec 2021 12:37:31 +0000 (GMT)
-Received: from sig-9-65-91-220.ibm.com (unknown [9.65.91.220])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Dec 2021 12:37:31 +0000 (GMT)
-Message-ID: <ec2ec0a9a7ba1adc6e54bbf7051a83ba90a39c0b.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] Instantiate key with user-provided decrypted data.
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Yael Tiomkin <yaelt@google.com>, linux-integrity@vger.kernel.org
-Cc:     jejb@linux.ibm.com, jarkko@kernel.org, corbet@lwn.net,
-        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Date:   Tue, 14 Dec 2021 07:37:30 -0500
-In-Reply-To: <20211213192030.125091-1-yaelt@google.com>
-References: <20211213192030.125091-1-yaelt@google.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: D5ObSYjxBMxL_UG1wLCE99QXZ86MxLfD
-X-Proofpoint-GUID: YPhVzS-YIZzTG2fikzYR2viNWL3Iff8S
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-14_06,2021-12-14_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 phishscore=0 adultscore=0 bulkscore=0 clxscore=1011
- spamscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2110150000 definitions=main-2112140072
+        Tue, 14 Dec 2021 08:13:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1639487592; x=1671023592;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wcWhPHwDj9HtBzvbM6bLmy4NfBYJMo1g1NSkD6o5BZA=;
+  b=Zx5YcAvM7ANxBHrDn95WeaUYuDIkE8qNH22NL4Oc6Wjg4Tl/Y3jrnI0S
+   8pkWnVHfARI833+Ztk8Vk4+kNibXIF3CIxm9BP/zKJsnlhWigDc6BePv+
+   63u25VEd7o8IMkpe4+Scyh9ZsOmAPAfmxayr42FT+nAVgOVu0pBAS76HI
+   BtubF4zLUYNUM/b/HsymcAQh4hoOI3RAT7s/cMv7qyAl49J1hOBdNizgm
+   RmoZv1oNlFIR4sEzhueyFq98kY/OF7RFemfMi3D0P9JDz/8jPQy8RNsX5
+   xLUPmsdce/Y9FcxFPdpH5Pe7o3jbuI9QatAYnAP7uVE2yDFDBewgEBgJ2
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10197"; a="236506286"
+X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
+   d="scan'208";a="236506286"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2021 05:13:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
+   d="scan'208";a="583441448"
+Received: from lkp-server02.sh.intel.com (HELO 9f38c0981d9f) ([10.239.97.151])
+  by fmsmga004.fm.intel.com with ESMTP; 14 Dec 2021 05:13:09 -0800
+Received: from kbuild by 9f38c0981d9f with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mx7cC-0000L6-ML; Tue, 14 Dec 2021 13:13:08 +0000
+Date:   Tue, 14 Dec 2021 21:12:24 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, casey@schaufler-ca.com,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com
+Subject: Re: [PATCH v31 26/28] Audit: Add record for multiple object security
+  contexts
+Message-ID: <202112142141.E8wcYag3-lkp@intel.com>
+References: <20211213234034.111891-27-casey@schaufler-ca.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211213234034.111891-27-casey@schaufler-ca.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Yael,
+Hi Casey,
 
-On Mon, 2021-12-13 at 14:20 -0500, Yael Tiomkin wrote:
-> The encrypted.c class supports instantiation of encrypted keys with
-> either an already-encrypted key material, or by generating new key
-> material based on random numbers. To support encryption of
-> user-provided decrypted data, this patch defines a new datablob
-> format: [<format>] <master-key name> <decrypted data length>
-> <decrypted data>.
-> 
-> Signed-off-by: Yael Tiomkin <yaelt@google.com>
+I love your patch! Yet something to improve:
 
-Other than the comment below,
-    Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+[auto build test ERROR on nf-next/master]
+[cannot apply to pcmoore-audit/next nf/master linus/master v5.16-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Could you also provide an LTP test for defining, exporting, and loading
-an encrypted key based on user provided key data?
+url:    https://github.com/0day-ci/linux/commits/Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20211214-084057
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git master
+config: sparc64-randconfig-r015-20211213 (https://download.01.org/0day-ci/archive/20211214/202112142141.E8wcYag3-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/2a62f660ff9d766a192fda713edfa3ea129efdee
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20211214-084057
+        git checkout 2a62f660ff9d766a192fda713edfa3ea129efdee
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=sparc64 SHELL=/bin/bash
 
-thanks,
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-Mimi
+All errors (new ones prefixed by >>):
 
-> ---
+   In file included from arch/sparc/kernel/ptrace_64.c:25:
+   include/linux/audit.h:262:1: error: expected identifier or '(' before '{' token
+     262 | { }
+         | ^
+>> include/linux/audit.h:260:20: error: 'audit_log_object_context' declared 'static' but never defined [-Werror=unused-function]
+     260 | static inline void audit_log_object_context(struct audit_buffer *ab,
+         |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: all warnings being treated as errors
 
-> @@ -303,6 +306,16 @@ Load an encrypted key "evm" from saved blob::
->      82dbbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564e0
->      24717c64 5972dcb82ab2dde83376d82b2e3c09ffc
->  
-> +Instantiate an encrypted key "evm" using user-provided decrypted data::
-> +
-> +    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm.blob`" @u
-> +    794890253
 
-The existing references to "evm.blob" refer to the encrypted key data. 
-Here "evm.blob" is unencrypted data.  Perhaps name it something like
-"evm.user-provided-data" data.
+vim +260 include/linux/audit.h
 
-> +
-> +    $ keyctl print 794890253
-> +    default user:kmk 32 2375725ad57798846a9bbd240de8906f006e66c03af53b1b382d
-> +    bbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564e0247
-> +    17c64 5972dcb82ab2dde83376d82b2e3c09ffc
-> +
+   220	
+   221	#else /* CONFIG_AUDIT */
+   222	static inline __printf(4, 5)
+   223	void audit_log(struct audit_context *ctx, gfp_t gfp_mask, int type,
+   224		       const char *fmt, ...)
+   225	{ }
+   226	static inline struct audit_buffer *audit_log_start(struct audit_context *ctx,
+   227							   gfp_t gfp_mask, int type)
+   228	{
+   229		return NULL;
+   230	}
+   231	static inline __printf(2, 3)
+   232	void audit_log_format(struct audit_buffer *ab, const char *fmt, ...)
+   233	{ }
+   234	static inline void audit_log_end(struct audit_buffer *ab)
+   235	{ }
+   236	static inline void audit_log_n_hex(struct audit_buffer *ab,
+   237					   const unsigned char *buf, size_t len)
+   238	{ }
+   239	static inline void audit_log_n_string(struct audit_buffer *ab,
+   240					      const char *buf, size_t n)
+   241	{ }
+   242	static inline void  audit_log_n_untrustedstring(struct audit_buffer *ab,
+   243							const char *string, size_t n)
+   244	{ }
+   245	static inline void audit_log_untrustedstring(struct audit_buffer *ab,
+   246						     const char *string)
+   247	{ }
+   248	static inline void audit_log_d_path(struct audit_buffer *ab,
+   249					    const char *prefix,
+   250					    const struct path *path)
+   251	{ }
+   252	static inline void audit_log_key(struct audit_buffer *ab, char *key)
+   253	{ }
+   254	static inline void audit_log_path_denied(int type, const char *operation)
+   255	{ }
+   256	static inline int audit_log_task_context(struct audit_buffer *ab)
+   257	{
+   258		return 0;
+   259	}
+ > 260	static inline void audit_log_object_context(struct audit_buffer *ab,
+   261						    struct lsmblob *blob);
+   262	{ }
+   263	static inline void audit_log_task_info(struct audit_buffer *ab)
+   264	{ }
+   265	
 
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
