@@ -2,85 +2,145 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FDAC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 18:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AAFFC433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 19:41:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343736AbhLOS2U (ORCPT
+        id S230184AbhLOTlw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Dec 2021 13:28:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50814 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231138AbhLOS2Q (ORCPT
+        Wed, 15 Dec 2021 14:41:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56542 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229492AbhLOTlw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Dec 2021 13:28:16 -0500
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9132EC061574;
-        Wed, 15 Dec 2021 10:28:16 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id g19so21441765pfb.8;
-        Wed, 15 Dec 2021 10:28:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ljp+r2/uwwJFUdX/+JTcBmL6u7/IlJQzL4z/nVQyjLQ=;
-        b=DMRQ5tYS8xfdjkB/0Bu6POtAC9xPB3oOWHQ3zp+tyyxHvPYs/QTZTi3zPJX4A6Y5F3
-         nGEdDCNDIi88nqZqirGia2JnkFbUNdlY3RGfvIBjp9s6OD2sYnPeP4Q7r5Wed7PJZ0Y3
-         +AMiAEx2pHtnQ/86Qy4BtgxnoumB1K+ZkR+Ym9t5p0kW4ZzIe2uRaD9LdVAlS8XcMKOW
-         Ll37jAXwZgET3DQMqrmd6+YoemVFMwBYKaoP467YQ5LUTNKJxMRyFqPsqRwjbXsNw1aN
-         txz/TDUtfF4BADU1sWh7PR9Gc3AvMFIeHeTVSpfp3mDwV7xLtbDNTUMwKHEkl9hBRrb+
-         TYag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=ljp+r2/uwwJFUdX/+JTcBmL6u7/IlJQzL4z/nVQyjLQ=;
-        b=HoRZfAN3eb6iWpuolTunvpyvTSDGHs2L52VntpN67flwLTSudxPKa/XviOoMLqEQlB
-         3YNNj+JBMsotAYJC7YluqfnJuIB1hpty6AQ812eZNPeGUAJbfgVqL/5yTsvGHSIQRI4B
-         8U0d+XiOn7RFq91Max9I2xgaE8GjFCLce5nzCV3Z1bIGgM92hOKAVunHJIB+MfUH27sk
-         W9JrLKDOcCVj/5mMP/IkUuKtfFOkadFiZcgz4nMYNBST08dFZv9HNAGMenwfaroFQwvx
-         xHj7Nud4iMf6szV5XtZfrsp1TvVPr7mjMLZrl4diVw6ZHIHuF06ND/wgSel9178WkMvs
-         Eyxg==
-X-Gm-Message-State: AOAM533YSPdON91sTU5E0Zx9J4YBVQ60NW/i4U0kTAmQC7HBrJ5/pgoS
-        +JvGfWgAMawy5at0JwhQWq4=
-X-Google-Smtp-Source: ABdhPJx8gJqM3Sl9c9Tcn5jfoWFOx30/5A2bh9SJMye4DepATryrjx2PnUq/V3OU+0j6rSODVlG8Fg==
-X-Received: by 2002:a62:1614:0:b0:4a2:fa59:c1ad with SMTP id 20-20020a621614000000b004a2fa59c1admr10090808pfw.80.1639592895935;
-        Wed, 15 Dec 2021 10:28:15 -0800 (PST)
-Received: from localhost (2603-800c-1a02-1bae-e24f-43ff-fee6-449f.res6.spectrum.com. [2603:800c:1a02:1bae:e24f:43ff:fee6:449f])
-        by smtp.gmail.com with ESMTPSA id np1sm7404824pjb.22.2021.12.15.10.28.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 10:28:15 -0800 (PST)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 15 Dec 2021 08:28:14 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     daniel@iogearbox.net, ast@kernel.org, andrii@kernel.org,
-        bpf@vger.kernel.org, kafai@fb.com, songliubraving@fb.com,
-        yhs@fb.com, john.fastabend@gmail.com, kpsingh@kernel.org,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, rostedt@goodmis.org,
-        mingo@redhat.com, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
-        jmorris@namei.org, serge@hallyn.com, cgroups@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH bpf-next v4 2/3] add missing bpf-cgroup.h includes
-Message-ID: <YbozvuaPMu58RqU2@slm.duckdns.org>
-References: <20211215181231.1053479-1-kuba@kernel.org>
- <20211215181231.1053479-3-kuba@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211215181231.1053479-3-kuba@kernel.org>
+        Wed, 15 Dec 2021 14:41:52 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BFJMLwo019508;
+        Wed, 15 Dec 2021 19:41:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=WVxT8Ac1ecpQQh6nIH+u25zf/5rW1smXIP/iJTHQdeM=;
+ b=ripz63iKQvZqSvpaSXllo/SsrjWkonan9A2grYqOLJDVL5yWeURSqprIqLwJHT4zRvaT
+ cFH4dCwim5BC/En8atA1D7WWMUK2qwiGh/m6DLDkKEmDnuTtbMVkwdTB9b7kqQdt6r9v
+ U0Z9xeE8nqfXqKqVpMdX3cllR/3bvi3nGQoS6TOUVmUjTW0g7hF6EnWi5vYTV0TfR8Af
+ VgdkPzzDHJxP2Dk3l1r1n3V/cmvZVlUK/LmqJSkgrNDFbcjgNPVvtQuW1e5FPjVQD6Fh
+ 1A4TLw0nokUecCmf0Og/JbAheLyGu0d9Ve0whXaLKhrkTt4m6GGAo7LR7UJg8DcCQWnS jQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3cym1w3x9f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 19:41:30 +0000
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BFInbUh004824;
+        Wed, 15 Dec 2021 19:41:30 GMT
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3cym1w3x8n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 19:41:30 +0000
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BFJW1Fx023310;
+        Wed, 15 Dec 2021 19:41:28 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma05fra.de.ibm.com with ESMTP id 3cy78h8b9p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 19:41:28 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BFJfO7T19333376
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Dec 2021 19:41:25 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DC00752052;
+        Wed, 15 Dec 2021 19:41:24 +0000 (GMT)
+Received: from sig-9-65-74-182.ibm.com (unknown [9.65.74.182])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E90A952063;
+        Wed, 15 Dec 2021 19:41:21 +0000 (GMT)
+Message-ID: <1de0d8ba760edb7dd18b24bdd39d5424a8c14679.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 01/17] ima: Add IMA namespace support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Date:   Wed, 15 Dec 2021 14:41:21 -0500
+In-Reply-To: <b4249c5d-da3d-4306-8d9b-10f06ec80cba@linux.ibm.com>
+References: <20211210194736.1538863-1-stefanb@linux.ibm.com>
+         <20211210194736.1538863-2-stefanb@linux.ibm.com>
+         <b4249c5d-da3d-4306-8d9b-10f06ec80cba@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: oREshSvqnATV2pCYT10KD5J60IWkR0P_
+X-Proofpoint-GUID: -eqw95S4oVfluCyVXu6WjBSyFPIwCFRJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-15_11,2021-12-14_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112150108
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 15, 2021 at 10:12:30AM -0800, Jakub Kicinski wrote:
-> We're about to break the cgroup-defs.h -> bpf-cgroup.h dependency,
-> make sure those who actually need more than the definition of
-> struct cgroup_bpf include bpf-cgroup.h explicitly.
+On Mon, 2021-12-13 at 16:11 -0500, Stefan Berger wrote:
+> On 12/10/21 14:47, Stefan Berger wrote:
+> > Implement an IMA namespace data structure that gets created alongside a
+> > user namespace with CLONE_NEWUSER. This lays down the foundation for
+> > namespacing the different aspects of IMA (eg. IMA-audit, IMA-measurement,
+> > IMA-appraisal).
+> >
+> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> > ---
+> >   include/linux/ima.h                      | 37 +++++++++++++
+> >   include/linux/user_namespace.h           |  4 ++
+> >   init/Kconfig                             | 10 ++++
+> >   kernel/user.c                            |  7 +++
+> >   kernel/user_namespace.c                  |  8 +++
+> >   security/integrity/ima/Makefile          |  3 +-
+> >   security/integrity/ima/ima.h             |  4 ++
+> >   security/integrity/ima/ima_init.c        |  4 ++
+> >   security/integrity/ima/ima_init_ima_ns.c | 32 +++++++++++
+> >   security/integrity/ima/ima_ns.c          | 69 ++++++++++++++++++++++++
+> >   10 files changed, 177 insertions(+), 1 deletion(-)
+> >   create mode 100644 security/integrity/ima/ima_init_ima_ns.c
+> >   create mode 100644 security/integrity/ima/ima_ns.c
+> >
+> > diff --git a/include/linux/ima.h b/include/linux/ima.h
+> > index b6ab66a546ae..f282e40c316c 100644
+> > --- a/include/linux/ima.h
+> > +++ b/include/linux/ima.h
+> > @@ -11,6 +11,7 @@
+> >   #include <linux/fs.h>
+> >   #include <linux/security.h>
+> >   #include <linux/kexec.h>
+> > +#include <linux/user_namespace.h>
+> >   #include <crypto/hash_info.h>
+> >   struct linux_binprm;
+> >   
+> > @@ -210,6 +211,42 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
+> >   }
+> >   #endif /* CONFIG_IMA_APPRAISE */
+> >   
+> > +struct ima_namespace {
+> > +	int avoid_zero_size;
+> > +};
 > 
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> 
+> I moved the structure to security/integrity/ima/ima.h for v7 and added 
+> __randomize_layout to it.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Much better than being in the public ima.h.
 
-Thanks.
+thanks!
 
--- 
-tejun
+Mimi
+
