@@ -2,131 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1657C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 21:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 929B4C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 21:11:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233539AbhLOVGg (ORCPT
+        id S229553AbhLOVK7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Dec 2021 16:06:36 -0500
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37226
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232544AbhLOVGf (ORCPT
+        Wed, 15 Dec 2021 16:10:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39980 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229555AbhLOVK7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Dec 2021 16:06:35 -0500
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 7C2153F1EB;
-        Wed, 15 Dec 2021 21:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639602394;
-        bh=RWzxkXzAVp/A9fejasmC/on0nYacq+ErNHO8Y6i1/Yc=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=M2We8DIImoLjKFS67Q3bg6htGqMpSrjhwvUfGL0gbS5zqAQyiTIH+cQtYEPtRxccw
-         4qzZsBzucrmzyuIvQBnjzS5ddn96CjQbRn1NxK+Mxy6BLPMdc0ATJDNDQimEs5jd3k
-         VCix+EW1yuzmrXnDW4ciXavpJ8zJLC1UNgvA89QqLbQ+IKJoomyPTOYDSoP7grxat/
-         QxO95Yon4fyslvxMXKbpQhGIfr1r89AGQ3me+maQoLbfAklzQ013GQpr9j4Fmb1QtR
-         3jwvzrjSU9H5qXGUqyPkoxJdus2nB1bc6yP3VZwdIWdbZoc9oA0l1bwCOTV6ZG3b59
-         633Kf6pYW/ycw==
-Subject: Re: [PATCH -next] apparmor: Fix kernel-doc
-To:     Yang Li <yang.lee@linux.alibaba.com>
-Cc:     jmorris@namei.org, serge@hallyn.com, nathan@kernel.org,
-        ndesaulniers@google.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <1637134678-81292-1-git-send-email-yang.lee@linux.alibaba.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-Message-ID: <b9523142-cb9b-eac7-3ee2-5f4ae02d1f75@canonical.com>
-Date:   Wed, 15 Dec 2021 13:06:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-MIME-Version: 1.0
-In-Reply-To: <1637134678-81292-1-git-send-email-yang.lee@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 15 Dec 2021 16:10:59 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BFIFOwT006516;
+        Wed, 15 Dec 2021 21:10:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=0H21dSWks6lfyzIA33adcnIvPkdeT84cDPY1BPRGV2k=;
+ b=n/W/vOSJtXI2Uk9JudUWHoIN6QrLwRfi2sOR80VUdotUNJPA24xqsl24W0/STrtFvEQT
+ WW3WTHcoyfBBvLp/W2uFtftkhgraTrGMICHicGig83kpE1MZN7ZOpIucWTppQEwR8F4g
+ wIxsxnAh6AiBCRLnnsvaKXw1x6KckAwYeTiSfwSOvnuNdFnbsRwlYuezRqZ49Q6LmKrw
+ AOJHDktX3aU4IGu4VOkV6FL+RVoAsu7nj2GN3dBXclvpXd9aebOCRyUH1flTGwuQxJ/I
+ fxFWn3ZuV+VG/QMnF+4Cvi6t67uu5BeZUf2MihqB2PtjBzM71knj4lTEZHBHKSBbPPbk tQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cynfvufrs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 21:10:32 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BFLAW12012765;
+        Wed, 15 Dec 2021 21:10:32 GMT
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cynfvufqd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 21:10:31 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BFL3IEF001970;
+        Wed, 15 Dec 2021 21:10:29 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma06fra.de.ibm.com with ESMTP id 3cy77p8rmj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 21:10:29 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BFLAQOD37552580
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Dec 2021 21:10:26 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0FEF55204E;
+        Wed, 15 Dec 2021 21:10:26 +0000 (GMT)
+Received: from sig-9-65-74-182.ibm.com (unknown [9.65.74.182])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 2CC7C52057;
+        Wed, 15 Dec 2021 21:10:23 +0000 (GMT)
+Message-ID: <004908152121f617497a71ce3602a70cb25d5a38.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 01/17] ima: Add IMA namespace support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Date:   Wed, 15 Dec 2021 16:10:22 -0500
+In-Reply-To: <20211210194736.1538863-2-stefanb@linux.ibm.com>
+References: <20211210194736.1538863-1-stefanb@linux.ibm.com>
+         <20211210194736.1538863-2-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: wdhGOcRm93yZVojXRKgJt-RC8mg6YyA2
+X-Proofpoint-ORIG-GUID: tPua4oCeCeXDqJqB0JqY-lXZonMETbrk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-15_12,2021-12-14_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=992 malwarescore=0
+ suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2110150000 definitions=main-2112150116
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/16/21 11:37 PM, Yang Li wrote:
-> Fix function name in security/apparmor/label.c, policy.c, procattr.c
-> kernel-doc comment to remove some warnings found by clang(make W=1 LLVM=1).
-> 
-> security/apparmor/label.c:499: warning: expecting prototype for
-> aa_label_next_not_in_set(). Prototype was for
-> __aa_label_next_not_in_set() instead
-> security/apparmor/label.c:2147: warning: expecting prototype for
-> __aa_labelset_udate_subtree(). Prototype was for
-> __aa_labelset_update_subtree() instead
-> 
-> security/apparmor/policy.c:434: warning: expecting prototype for
-> aa_lookup_profile(). Prototype was for aa_lookupn_profile() instead
-> 
-> security/apparmor/procattr.c:101: warning: expecting prototype for
-> aa_setprocattr_chagnehat(). Prototype was for aa_setprocattr_changehat()
-> instead
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
+Hi Stefan,
 
-I have pulled this into my tree
+On Fri, 2021-12-10 at 14:47 -0500, Stefan Berger wrote:
+> Implement an IMA namespace data structure that gets created alongside a
+> user namespace with CLONE_NEWUSER. This lays down the foundation for
+> namespacing the different aspects of IMA (eg. IMA-audit, IMA-measurement,
+> IMA-appraisal).
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-> ---
->  security/apparmor/label.c    | 4 ++--
->  security/apparmor/policy.c   | 2 +-
->  security/apparmor/procattr.c | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-> index 0b0265d..e8ada60 100644
-> --- a/security/apparmor/label.c
-> +++ b/security/apparmor/label.c
-> @@ -485,7 +485,7 @@ int aa_label_next_confined(struct aa_label *label, int i)
->  }
->  
->  /**
-> - * aa_label_next_not_in_set - return the next profile of @sub not in @set
-> + * __aa_label_next_not_in_set - return the next profile of @sub not in @set
->   * @I: label iterator
->   * @set: label to test against
->   * @sub: label to if is subset of @set
-> @@ -2136,7 +2136,7 @@ static void __labelset_update(struct aa_ns *ns)
->  }
->  
->  /**
-> - * __aa_labelset_udate_subtree - update all labels with a stale component
-> + * __aa_labelset_update_subtree - update all labels with a stale component
->   * @ns: ns to start update at (NOT NULL)
->   *
->   * Requires: @ns lock be held
-> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-> index b0cbc4906..8357f4a 100644
-> --- a/security/apparmor/policy.c
-> +++ b/security/apparmor/policy.c
-> @@ -422,7 +422,7 @@ static struct aa_profile *__lookup_profile(struct aa_policy *base,
->  }
->  
->  /**
-> - * aa_lookup_profile - find a profile by its full or partial name
-> + * aa_lookupn_profile - find a profile by its full or partial name
->   * @ns: the namespace to start from (NOT NULL)
->   * @hname: name to do lookup on.  Does not contain namespace prefix (NOT NULL)
->   * @n: size of @hname
-> diff --git a/security/apparmor/procattr.c b/security/apparmor/procattr.c
-> index fde332e..86ad26e 100644
-> --- a/security/apparmor/procattr.c
-> +++ b/security/apparmor/procattr.c
-> @@ -90,7 +90,7 @@ static char *split_token_from_name(const char *op, char *args, u64 *token)
->  }
->  
->  /**
-> - * aa_setprocattr_chagnehat - handle procattr interface to change_hat
-> + * aa_setprocattr_changehat - handle procattr interface to change_hat
->   * @args: args received from writing to /proc/<pid>/attr/current (NOT NULL)
->   * @size: size of the args
->   * @flags: set of flags governing behavior
-> 
+Thanks, this patch set is looking a lot better.  Hopefully it isn't
+premature for generic comments:
+
+- With the SPDX line, the license info should be removed.
+
+thanks,
+
+Mimi
 
