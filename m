@@ -2,74 +2,71 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC9DC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 21:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1657C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 21:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232391AbhLOVGX (ORCPT
+        id S233539AbhLOVGg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Dec 2021 16:06:23 -0500
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37206
+        Wed, 15 Dec 2021 16:06:36 -0500
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37226
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232544AbhLOVGW (ORCPT
+        by vger.kernel.org with ESMTP id S232544AbhLOVGf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Dec 2021 16:06:22 -0500
+        Wed, 15 Dec 2021 16:06:35 -0500
 Received: from [192.168.192.153] (unknown [50.126.114.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 1529F3F1EB;
-        Wed, 15 Dec 2021 21:06:16 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 7C2153F1EB;
+        Wed, 15 Dec 2021 21:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639602378;
-        bh=D0DDBMYppB7uzxzFJaFo6S/xEHFMOvYmG90YmtCZOJw=;
+        s=20210705; t=1639602394;
+        bh=RWzxkXzAVp/A9fejasmC/on0nYacq+ErNHO8Y6i1/Yc=;
         h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=taDzMVP+jVnh0PMpJGuO3EB5Gr/0bE9kr7ylJgB1lXLpQEuMm2KKwyHUgxhdvr07I
-         snLNrBCtdka/Kc7W/vS+PYhnnLRsvxVwPZ+tsv3Lh4DfKv0IHkUTGZFqGWG5S4pjCk
-         pc+LQfz1eBGkKHrwWy1k3IND42eh6ihuHZNyp47Zsi6AUlZDUEgES0LSKZpo0qrrb4
-         /goCYAT5qCkB8Gces0cdpr60eXpgwS1aOJuZPKkiu9g00Jf/XWMQSTr0DVGneutLKS
-         L45WJ3aJ2y2wCrseITWk/QvUwToZlxmWE9G7jeELyZWgFUutPjHYtA4eBADIfLk33A
-         WQauGU9df9Lkw==
-Subject: Re: [PATCH -next] lsm: Fix kernel-doc
+        b=M2We8DIImoLjKFS67Q3bg6htGqMpSrjhwvUfGL0gbS5zqAQyiTIH+cQtYEPtRxccw
+         4qzZsBzucrmzyuIvQBnjzS5ddn96CjQbRn1NxK+Mxy6BLPMdc0ATJDNDQimEs5jd3k
+         VCix+EW1yuzmrXnDW4ciXavpJ8zJLC1UNgvA89QqLbQ+IKJoomyPTOYDSoP7grxat/
+         QxO95Yon4fyslvxMXKbpQhGIfr1r89AGQ3me+maQoLbfAklzQ013GQpr9j4Fmb1QtR
+         3jwvzrjSU9H5qXGUqyPkoxJdus2nB1bc6yP3VZwdIWdbZoc9oA0l1bwCOTV6ZG3b59
+         633Kf6pYW/ycw==
+Subject: Re: [PATCH -next] apparmor: Fix kernel-doc
 To:     Yang Li <yang.lee@linux.alibaba.com>
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-References: <20211210055712.16949-1-yang.lee@linux.alibaba.com>
+Cc:     jmorris@namei.org, serge@hallyn.com, nathan@kernel.org,
+        ndesaulniers@google.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <1637134678-81292-1-git-send-email-yang.lee@linux.alibaba.com>
 From:   John Johansen <john.johansen@canonical.com>
 Organization: Canonical
-Message-ID: <6f704cb0-cafd-f28b-a6cb-66717645d6b9@canonical.com>
-Date:   Wed, 15 Dec 2021 13:06:15 -0800
+Message-ID: <b9523142-cb9b-eac7-3ee2-5f4ae02d1f75@canonical.com>
+Date:   Wed, 15 Dec 2021 13:06:32 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <20211210055712.16949-1-yang.lee@linux.alibaba.com>
+In-Reply-To: <1637134678-81292-1-git-send-email-yang.lee@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/9/21 9:57 PM, Yang Li wrote:
-> Fix function name in lsm.c kernel-doc comment
-> to remove some warnings found by running scripts/kernel-doc,
-> which is caused by using 'make W=1'.
+On 11/16/21 11:37 PM, Yang Li wrote:
+> Fix function name in security/apparmor/label.c, policy.c, procattr.c
+> kernel-doc comment to remove some warnings found by clang(make W=1 LLVM=1).
 > 
-> security/apparmor/lsm.c:819: warning: expecting prototype for
-> apparmor_clone_security(). Prototype was for
-> apparmor_sk_clone_security() instead
-> security/apparmor/lsm.c:923: warning: expecting prototype for
-> apparmor_socket_list(). Prototype was for apparmor_socket_listen()
+> security/apparmor/label.c:499: warning: expecting prototype for
+> aa_label_next_not_in_set(). Prototype was for
+> __aa_label_next_not_in_set() instead
+> security/apparmor/label.c:2147: warning: expecting prototype for
+> __aa_labelset_udate_subtree(). Prototype was for
+> __aa_labelset_update_subtree() instead
+> 
+> security/apparmor/policy.c:434: warning: expecting prototype for
+> aa_lookup_profile(). Prototype was for aa_lookupn_profile() instead
+> 
+> security/apparmor/procattr.c:101: warning: expecting prototype for
+> aa_setprocattr_chagnehat(). Prototype was for aa_setprocattr_changehat()
 > instead
-> security/apparmor/lsm.c:1028: warning: expecting prototype for
-> apparmor_getsockopt(). Prototype was for apparmor_socket_getsockopt()
-> instead
-> security/apparmor/lsm.c:1038: warning: expecting prototype for
-> apparmor_setsockopt(). Prototype was for apparmor_socket_setsockopt()
-> instead
-> ecurity/apparmor/lsm.c:1061: warning: expecting prototype for
-> apparmor_socket_sock_recv_skb(). Prototype was for
-> apparmor_socket_sock_rcv_skb() instead
 > 
 > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
 > Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
@@ -78,57 +75,58 @@ Acked-by: John Johansen <john.johansen@canonical.com>
 I have pulled this into my tree
 
 > ---
->  security/apparmor/lsm.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  security/apparmor/label.c    | 4 ++--
+>  security/apparmor/policy.c   | 2 +-
+>  security/apparmor/procattr.c | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 4f0eecb67dde..ce7d96627810 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -812,7 +812,7 @@ static void apparmor_sk_free_security(struct sock *sk)
+> diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+> index 0b0265d..e8ada60 100644
+> --- a/security/apparmor/label.c
+> +++ b/security/apparmor/label.c
+> @@ -485,7 +485,7 @@ int aa_label_next_confined(struct aa_label *label, int i)
 >  }
 >  
 >  /**
-> - * apparmor_clone_security - clone the sk_security field
-> + * apparmor_sk_clone_security - clone the sk_security field
->   */
->  static void apparmor_sk_clone_security(const struct sock *sk,
->  				       struct sock *newsk)
-> @@ -917,7 +917,7 @@ static int apparmor_socket_connect(struct socket *sock,
+> - * aa_label_next_not_in_set - return the next profile of @sub not in @set
+> + * __aa_label_next_not_in_set - return the next profile of @sub not in @set
+>   * @I: label iterator
+>   * @set: label to test against
+>   * @sub: label to if is subset of @set
+> @@ -2136,7 +2136,7 @@ static void __labelset_update(struct aa_ns *ns)
 >  }
 >  
 >  /**
-> - * apparmor_socket_list - check perms before allowing listen
-> + * apparmor_socket_listen - check perms before allowing listen
->   */
->  static int apparmor_socket_listen(struct socket *sock, int backlog)
->  {
-> @@ -1021,7 +1021,7 @@ static int aa_sock_opt_perm(const char *op, u32 request, struct socket *sock,
->  }
->  
->  /**
-> - * apparmor_getsockopt - check perms before getting socket options
-> + * apparmor_socket_getsockopt - check perms before getting socket options
->   */
->  static int apparmor_socket_getsockopt(struct socket *sock, int level,
->  				      int optname)
-> @@ -1031,7 +1031,7 @@ static int apparmor_socket_getsockopt(struct socket *sock, int level,
->  }
->  
->  /**
-> - * apparmor_setsockopt - check perms before setting socket options
-> + * apparmor_socket_setsockopt - check perms before setting socket options
->   */
->  static int apparmor_socket_setsockopt(struct socket *sock, int level,
->  				      int optname)
-> @@ -1050,7 +1050,7 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
->  
->  #ifdef CONFIG_NETWORK_SECMARK
->  /**
-> - * apparmor_socket_sock_recv_skb - check perms before associating skb to sk
-> + * apparmor_socket_sock_rcv_skb - check perms before associating skb to sk
+> - * __aa_labelset_udate_subtree - update all labels with a stale component
+> + * __aa_labelset_update_subtree - update all labels with a stale component
+>   * @ns: ns to start update at (NOT NULL)
 >   *
->   * Note: can not sleep may be called with locks held
->   *
+>   * Requires: @ns lock be held
+> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+> index b0cbc4906..8357f4a 100644
+> --- a/security/apparmor/policy.c
+> +++ b/security/apparmor/policy.c
+> @@ -422,7 +422,7 @@ static struct aa_profile *__lookup_profile(struct aa_policy *base,
+>  }
+>  
+>  /**
+> - * aa_lookup_profile - find a profile by its full or partial name
+> + * aa_lookupn_profile - find a profile by its full or partial name
+>   * @ns: the namespace to start from (NOT NULL)
+>   * @hname: name to do lookup on.  Does not contain namespace prefix (NOT NULL)
+>   * @n: size of @hname
+> diff --git a/security/apparmor/procattr.c b/security/apparmor/procattr.c
+> index fde332e..86ad26e 100644
+> --- a/security/apparmor/procattr.c
+> +++ b/security/apparmor/procattr.c
+> @@ -90,7 +90,7 @@ static char *split_token_from_name(const char *op, char *args, u64 *token)
+>  }
+>  
+>  /**
+> - * aa_setprocattr_chagnehat - handle procattr interface to change_hat
+> + * aa_setprocattr_changehat - handle procattr interface to change_hat
+>   * @args: args received from writing to /proc/<pid>/attr/current (NOT NULL)
+>   * @size: size of the args
+>   * @flags: set of flags governing behavior
 > 
 
