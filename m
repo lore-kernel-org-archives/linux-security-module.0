@@ -2,84 +2,213 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED54C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 13:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273EEC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 18:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242792AbhLONRy (ORCPT
+        id S239635AbhLOSMg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Dec 2021 08:17:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33754 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237406AbhLONRx (ORCPT
+        Wed, 15 Dec 2021 13:12:36 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:40496 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233548AbhLOSMf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Dec 2021 08:17:53 -0500
-Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE3BC06173E
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Dec 2021 05:17:53 -0800 (PST)
-Received: by mail-oo1-xc33.google.com with SMTP id t9-20020a4a8589000000b002c5c4d19723so5884191ooh.11
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Dec 2021 05:17:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Au62n4m8uRCaSs4+vVgR5PSbqPQx8MPEQSlKHv3tUvo=;
-        b=aj3Sj5liapebe6SJRITNXLiI4KThaaqInZzt1i7hIMcEYfQBChC3pmnPuyo/QhSqGd
-         w+qBZtYaSwZXwS3iv2DNaZBZXcu/KXH2LkO1SDZs3EPHQpQuyaDT7dMkqVp/ZSGBugLU
-         hQLFsviUCObiQTbgbt00h0krz180Dl/L0DDUQkJz975590I9K3aYpjCnFaCuKB1VD4yP
-         fv+5FM6+bpIo1c+c0X9F7i0ttHfPQCnE5Nsm/oLT37XcCBOVqpfPGg6TtaNe6ugIGVWa
-         XeqpPhcMqc+W76crBy6NMiel0a2RDjhiHty4L8YVDo+/gbcwBfUjrm9iSuNDYHRaMJFm
-         p6oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Au62n4m8uRCaSs4+vVgR5PSbqPQx8MPEQSlKHv3tUvo=;
-        b=QQJ4tccd11ChnzxKfs7gC4PdYPCqWH/ejjBgU2YuF9h+GxzJJlqw3VhEDYenzqKPwb
-         Ih9/cd4uG7acgixuf5qQG5rIK6mKwaF4aKYN1x6owveIyZHjH49vmw/cR0GyqJ9vdjPR
-         5u3NdgM2o7O5qe1Z0yTfFK+xskl65BUCzzqliLg722RLG+sy3kWFVCclx1yX7yWpBRJF
-         XMgSj4yoYjIZwDCWF3p4ccRi5GbPFGWlFcIbXnGWfbY9u/25/AD0Y5IDcW/jC4/xhTud
-         9BcT29TdFJNtuOSB3xmAo3zY5CvS+PXeJE8lmBLQQvrix/RqHYc/95Tc2gde7K2KmtkV
-         HZwg==
-X-Gm-Message-State: AOAM530ynhAFkzkJlJl4YhpzI1MQ83vcZbJimFhJ73NQpSyFiX8yNcXD
-        VOouj9CNlNIzCtvkXoIQ6kOR5sgpeqjl6GFIrWNcmg+WEBI=
-X-Google-Smtp-Source: ABdhPJyKiNrM46sQnQOVNCpuufZLZX8vH6amPXzMUo6ihOAnqKOaK6XOQiIg+OSbQaN3W3LYcklzBmCcOWCR2/ChcDg=
-X-Received: by 2002:a4a:96f1:: with SMTP id t46mr7147958ooi.53.1639574272532;
- Wed, 15 Dec 2021 05:17:52 -0800 (PST)
+        Wed, 15 Dec 2021 13:12:35 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 762E161A24;
+        Wed, 15 Dec 2021 18:12:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D1C7C36AEA;
+        Wed, 15 Dec 2021 18:12:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639591954;
+        bh=WwyqEtjUotmnanbN1E83H06sbRzb9ghbZ1H2nit9uhk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KGS/jaC5JApsm4oaLQ43CX23xNEtGG2wGvxeE9BrdOeZHvheibwmuCWKhOvL1TYAi
+         e6Aa4pkLrfB/qKIc4RcqqdmslDgammhk7DO7zHcdQ2cVYafhJwqB0niNODEihk1nEd
+         Qxy6tIlZS0lKlOZ1HxqAous9DzYieztghIk5R8sXxERwtUT3BjOBjrE4pq5LACy/T9
+         fsXQSNlS2fjuuPGELQPD0A+j4Ps2iiLdwGX0BcSrA1WLg8P9YMndeq/PqNX888xsZm
+         x+eYecn1lWsCnEpAFdpanBvpHBZCWA1vF5gG/7Z+YDE5tW2Qe0FrnKl4a425+dPfAA
+         Kft/LNEYBXvqQ==
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     daniel@iogearbox.net, ast@kernel.org, andrii@kernel.org
+Cc:     bpf@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, tj@kernel.org,
+        lizefan.x@bytedance.com, hannes@cmpxchg.org, rostedt@goodmis.org,
+        mingo@redhat.com, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
+        jmorris@namei.org, serge@hallyn.com, cgroups@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH bpf-next v4 2/3] add missing bpf-cgroup.h includes
+Date:   Wed, 15 Dec 2021 10:12:30 -0800
+Message-Id: <20211215181231.1053479-3-kuba@kernel.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20211215181231.1053479-1-kuba@kernel.org>
+References: <20211215181231.1053479-1-kuba@kernel.org>
 MIME-Version: 1.0
-References: <20211214094526.2442154-1-dvyukov@google.com> <4ad30f21-9955-a72c-d7f0-912de6c205be@i-love.sakura.ne.jp>
- <CACT4Y+Z63jk9cFgkcKeU0HN6ES_CBhrotY0Zabae17R-gqG6SA@mail.gmail.com> <8da31317-9306-70d0-2bf7-382ed157bc5c@i-love.sakura.ne.jp>
-In-Reply-To: <8da31317-9306-70d0-2bf7-382ed157bc5c@i-love.sakura.ne.jp>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 15 Dec 2021 14:17:41 +0100
-Message-ID: <CACT4Y+ZyXhm39R-HBgcsLawQCtDsE5YRppxADjBG7NwkEwgn4A@mail.gmail.com>
-Subject: Re: [PATCH] tomoyo: Check exceeded quota early in tomoyo_domain_quota_is_ok().
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     takedakn@nttdata.co.jp, jmorris@namei.org, serge@hallyn.com,
-        nogikh@google.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 15 Dec 2021 at 12:46, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2021/12/14 20:42, Dmitry Vyukov wrote:
-> >> Therefore, asking administrator to also clear domain->flags[TOMOYO_DIF_QUOTA_WARNED] after
-> >> increasing pref[TOMOYO_PREF_MAX_LEARNING_ENTRY] value (or changing domain->profile) would be
-> >> tolerable...
-> >
-> > Should we reset flags[TOMOYO_DIF_QUOTA_WARNED] on any writes that
-> > change TOMOYO_PREF_MAX_LEARNING_ENTRY?
-> >
-> > If I am increasing TOMOYO_PREF_MAX_LEARNING_ENTRY because I observed
-> > the warning, it's useful for me to receive the warning again.
->
-> I decided not to reset flags[TOMOYO_DIF_QUOTA_WARNED] automatically, and
-> applied your proposal as-is. Thank you.
->
-> https://osdn.net/projects/tomoyo/scm/git/tomoyo-test1/commits/04e57a2d952bbd34bc45744e72be3eecdc344294
+We're about to break the cgroup-defs.h -> bpf-cgroup.h dependency,
+make sure those who actually need more than the definition of
+struct cgroup_bpf include bpf-cgroup.h explicitly.
 
-Thanks!
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+---
+CC: ast@kernel.org
+CC: daniel@iogearbox.net
+CC: andrii@kernel.org
+CC: kafai@fb.com
+CC: songliubraving@fb.com
+CC: yhs@fb.com
+CC: john.fastabend@gmail.com
+CC: kpsingh@kernel.org
+CC: tj@kernel.org
+CC: lizefan.x@bytedance.com
+CC: hannes@cmpxchg.org
+CC: rostedt@goodmis.org
+CC: mingo@redhat.com
+CC: yoshfuji@linux-ipv6.org
+CC: dsahern@kernel.org
+CC: jmorris@namei.org
+CC: serge@hallyn.com
+CC: bpf@vger.kernel.org
+CC: cgroups@vger.kernel.org
+CC: linux-security-module@vger.kernel.org
+---
+ kernel/bpf/helpers.c        | 1 +
+ kernel/bpf/syscall.c        | 1 +
+ kernel/bpf/verifier.c       | 1 +
+ kernel/cgroup/cgroup.c      | 1 +
+ kernel/trace/trace_kprobe.c | 1 +
+ kernel/trace/trace_uprobe.c | 1 +
+ net/ipv4/udp.c              | 1 +
+ net/ipv6/udp.c              | 1 +
+ net/socket.c                | 1 +
+ security/device_cgroup.c    | 1 +
+ 10 files changed, 10 insertions(+)
 
-It will appear in v5.17, right?
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index 8babae03d30a..34d6f91dec1c 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -2,6 +2,7 @@
+ /* Copyright (c) 2011-2014 PLUMgrid, http://plumgrid.com
+  */
+ #include <linux/bpf.h>
++#include <linux/bpf-cgroup.h>
+ #include <linux/rcupdate.h>
+ #include <linux/random.h>
+ #include <linux/smp.h>
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index ddd81d543203..da07bdf71697 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2,6 +2,7 @@
+ /* Copyright (c) 2011-2014 PLUMgrid, http://plumgrid.com
+  */
+ #include <linux/bpf.h>
++#include <linux/bpf-cgroup.h>
+ #include <linux/bpf_trace.h>
+ #include <linux/bpf_lirc.h>
+ #include <linux/bpf_verifier.h>
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index d74e8a99412e..f0604796132f 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2018 Covalent IO, Inc. http://covalent.io
+  */
+ #include <uapi/linux/btf.h>
++#include <linux/bpf-cgroup.h>
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/slab.h>
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 919194de39c8..cd4c23f7e3df 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -30,6 +30,7 @@
+ 
+ #include "cgroup-internal.h"
+ 
++#include <linux/bpf-cgroup.h>
+ #include <linux/cred.h>
+ #include <linux/errno.h>
+ #include <linux/init_task.h>
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 33272a7b6912..4e1257f50aa3 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -7,6 +7,7 @@
+  */
+ #define pr_fmt(fmt)	"trace_kprobe: " fmt
+ 
++#include <linux/bpf-cgroup.h>
+ #include <linux/security.h>
+ #include <linux/module.h>
+ #include <linux/uaccess.h>
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index f5f0039d31e5..4f35514a48f3 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -7,6 +7,7 @@
+  */
+ #define pr_fmt(fmt)	"trace_uprobe: " fmt
+ 
++#include <linux/bpf-cgroup.h>
+ #include <linux/security.h>
+ #include <linux/ctype.h>
+ #include <linux/module.h>
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index 69d30053fed9..99536127650b 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -74,6 +74,7 @@
+ 
+ #define pr_fmt(fmt) "UDP: " fmt
+ 
++#include <linux/bpf-cgroup.h>
+ #include <linux/uaccess.h>
+ #include <asm/ioctls.h>
+ #include <linux/memblock.h>
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index 6a0e569f0bb8..ba8986d12413 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -17,6 +17,7 @@
+  *      YOSHIFUJI Hideaki @USAGI:	convert /proc/net/udp6 to seq_file.
+  */
+ 
++#include <linux/bpf-cgroup.h>
+ #include <linux/errno.h>
+ #include <linux/types.h>
+ #include <linux/socket.h>
+diff --git a/net/socket.c b/net/socket.c
+index 7f64a6eccf63..721a5a1b1106 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -52,6 +52,7 @@
+  *	Based upon Swansea University Computer Society NET3.039
+  */
+ 
++#include <linux/bpf-cgroup.h>
+ #include <linux/ethtool.h>
+ #include <linux/mm.h>
+ #include <linux/socket.h>
+diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+index 04375df52fc9..842889f3dcb7 100644
+--- a/security/device_cgroup.c
++++ b/security/device_cgroup.c
+@@ -5,6 +5,7 @@
+  * Copyright 2007 IBM Corp
+  */
+ 
++#include <linux/bpf-cgroup.h>
+ #include <linux/device_cgroup.h>
+ #include <linux/cgroup.h>
+ #include <linux/ctype.h>
+-- 
+2.31.1
+
