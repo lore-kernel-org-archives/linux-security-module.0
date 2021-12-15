@@ -2,113 +2,280 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B76C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 09:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00F2C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Dec 2021 11:34:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbhLOJO7 (ORCPT
+        id S236693AbhLOLeT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Dec 2021 04:14:59 -0500
-Received: from mga14.intel.com ([192.55.52.115]:54350 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241064AbhLOJO6 (ORCPT
+        Wed, 15 Dec 2021 06:34:19 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53352 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S236792AbhLOLeS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Dec 2021 04:14:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1639559698; x=1671095698;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZcRH6JYRSqZQ5XGTBMIbU967GQwZZfyY+KkVtbMFbxs=;
-  b=FvMzqNWAV3iuPQsTTLDzqQTuLDzMstjgUKzaXUF4K4BvlMFk7cE4dNF6
-   F+nEIIsS6v0JtLLCw1KXkfr2LCXApzGfshs5GCX8yugevrt2fRPLk1Jt7
-   1GfqOMXwmlhux2yqY44wJ1X2mIMEwsUq5fn2hKiAiSCbt2w4mUHcr4vHD
-   pFcUh3t5t7CsOiszo1QyukYfIVPe7YOIcyF/ohUIEPkbMw+fUW+Hs4dO6
-   q/u8M1YaLU6uNldRNX7UvcEyDNS+9MwClWjzeQ+OKNMLY/PQcWaU43iAn
-   5XIsizwetYUnf8SaVRYShFQ9jfABFnuu29WmdqyLLKBlcLkqphLxYzFaK
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10198"; a="239406384"
-X-IronPort-AV: E=Sophos;i="5.88,207,1635231600"; 
-   d="scan'208";a="239406384"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2021 01:14:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,207,1635231600"; 
-   d="scan'208";a="465482545"
-Received: from lkp-server02.sh.intel.com (HELO 9f38c0981d9f) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 15 Dec 2021 01:14:55 -0800
-Received: from kbuild by 9f38c0981d9f with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mxQNC-0001XG-Dt; Wed, 15 Dec 2021 09:14:54 +0000
-Date:   Wed, 15 Dec 2021 17:14:22 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, casey@schaufler-ca.com,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com
-Subject: Re: [PATCH v31 13/28] LSM: Use lsmblob in security_cred_getsecid
-Message-ID: <202112151753.otSGYmsF-lkp@intel.com>
-References: <20211213234034.111891-14-casey@schaufler-ca.com>
+        Wed, 15 Dec 2021 06:34:18 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BFAKVE5023098;
+        Wed, 15 Dec 2021 11:33:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=L644OjBdzFPsq/YquI+P6d7uOsLFgxSZU53iJeNxdnk=;
+ b=ZwQzMGVslKCLELDUXOCS/0ZPVGXoKpRZWBWN7oDvxUzshxTfu+E7XfqN77/9anggMv5f
+ ArGKB51Ka0voTBfQT9vn3YdV3GesjMITCdZeF/0cIhdTOPZaTubETOg785S3fvikuy+K
+ Ipe3S9LOJOXbRrxQo0ODn0FVVf30IX0ofCY0Bx+Sc314YQk4ibvx+YGFx4eowt4iGaIj
+ v2as8m86QzdEa/el94FUp1BN4wJsIlfKgFtK41QFJh/7OebWrSESGvjfxgyVzaV6q2DQ
+ uKV6OOOI1aijdpdV71mov/e/wpsaQIr/xQCerFeHXtYIK1VmBIhYWPZn/Y1JQfMOGxwM cw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3cyehb9fkw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 11:33:56 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BFBABav015166;
+        Wed, 15 Dec 2021 11:33:55 GMT
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3cyehb9fkk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 11:33:55 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BFBXXkV031255;
+        Wed, 15 Dec 2021 11:33:54 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma03wdc.us.ibm.com with ESMTP id 3cy7gb07ac-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 11:33:54 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BFBXra127460076
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Dec 2021 11:33:53 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AA9D1136051;
+        Wed, 15 Dec 2021 11:33:53 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1840013607D;
+        Wed, 15 Dec 2021 11:33:47 +0000 (GMT)
+Received: from [9.160.32.17] (unknown [9.160.32.17])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 15 Dec 2021 11:33:47 +0000 (GMT)
+Message-ID: <01d31dc7-c97f-ae76-9ba4-be6fcf03e605@linux.ibm.com>
+Date:   Wed, 15 Dec 2021 13:33:45 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH v6 0/5] Allow guest access to EFI confidential computing
+ secret area
+Content-Language: en-US
+To:     linux-efi@vger.kernel.org
+Cc:     Borislav Petkov <bp@suse.de>, Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>
+References: <20211129114251.3741721-1-dovmurik@linux.ibm.com>
+From:   Dov Murik <dovmurik@linux.ibm.com>
+In-Reply-To: <20211129114251.3741721-1-dovmurik@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3uemAoFOx95GS7tZ3voZGXBW3IE9kNN5
+X-Proofpoint-ORIG-GUID: NRsLm0WCwRCFBmHP78PCHglO1YRY9z2q
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211213234034.111891-14-casey@schaufler-ca.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-15_08,2021-12-14_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
+ spamscore=0 lowpriorityscore=0 impostorscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112150064
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+Gentle ping for this series.
 
-I love your patch! Perhaps something to improve:
+(also at https://lore.kernel.org/linux-coco/20211129114251.3741721-1-dovmurik@linux.ibm.com/ )
 
-[auto build test WARNING on nf-next/master]
-[also build test WARNING on nf/master linus/master v5.16-rc5]
-[cannot apply to pcmoore-audit/next jmorris-security/next-testing next-20211214]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+[+cc Gerd, Lenny]
 
-url:    https://github.com/0day-ci/linux/commits/Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20211214-084057
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git master
-config: microblaze-randconfig-s032-20211214 (https://download.01.org/0day-ci/archive/20211215/202112151753.otSGYmsF-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 11.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-dirty
-        # https://github.com/0day-ci/linux/commit/e66d6e6a2f53e0b36b78003ee8399a554ae82e3c
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20211214-084057
-        git checkout e66d6e6a2f53e0b36b78003ee8399a554ae82e3c
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=microblaze SHELL=/bin/bash
+Thanks,
+-Dov
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
->> kernel/audit.c:128:25: sparse: sparse: symbol 'audit_sig_lsm' was not declared. Should it be static?
-   kernel/audit.c:2181:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
-   kernel/audit.c:2181:9: sparse:     expected struct spinlock [usertype] *lock
-   kernel/audit.c:2181:9: sparse:     got struct spinlock [noderef] __rcu *
-   kernel/audit.c:2184:40: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
-   kernel/audit.c:2184:40: sparse:     expected struct spinlock [usertype] *lock
-   kernel/audit.c:2184:40: sparse:     got struct spinlock [noderef] __rcu *
-
-vim +/audit_sig_lsm +128 kernel/audit.c
-
-   124	
-   125	/* The identity of the user shutting down the audit system. */
-   126	static kuid_t		audit_sig_uid = INVALID_UID;
-   127	static pid_t		audit_sig_pid = -1;
- > 128	struct lsmblob		audit_sig_lsm;
-   129	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+On 29/11/2021 13:42, Dov Murik wrote:
+> Confidential computing (coco) hardware such as AMD SEV (Secure Encrypted
+> Virtualization) allows guest owners to inject secrets into the VMs
+> memory without the host/hypervisor being able to read them.  In SEV,
+> secret injection is performed early in the VM launch process, before the
+> guest starts running.
+> 
+> OVMF already reserves designated area for secret injection (in its
+> AmdSev package; see edk2 commit 01726b6d23d4 "OvmfPkg/AmdSev: Expose the
+> Sev Secret area using a configuration table" [1]), but the secrets were
+> not available in the guest kernel.
+> 
+> The patch series keeps the address of the EFI-provided memory for
+> injected secrets, and exposes the secrets to userspace via securityfs
+> using a new efi_secret kernel module.  The module is autoloaded (by the
+> EFI driver) if the secret area is populated.
+> 
+> The first patch in EFI keeps the address of the secret area as passed in
+> the EFI configuration table.  The second patch is a quirk fix for older
+> firmwares didn't mark the secrets page as EFI_RESERVED_TYPE.  The third
+> patch introduces the new efi_secret module that exposes the content of
+> the secret entries as securityfs files, and allows clearing out secrets
+> with a file unlink interface.  The fourth patch auto-loads the
+> efi_secret module during startup if the injected secrets area is
+> populated.  The last patch documents the data flow of confidential
+> computing secret injection.
+> 
+> As a usage example, consider a guest performing computations on
+> encrypted files.  The Guest Owner provides the decryption key (= secret)
+> using the secret injection mechanism.  The guest application reads the
+> secret from the efi_secret filesystem and proceeds to decrypt the files
+> into memory and then performs the needed computations on the content.
+> 
+> In this example, the host can't read the files from the disk image
+> because they are encrypted.  Host can't read the decryption key because
+> it is passed using the secret injection mechanism (= secure channel).
+> Host can't read the decrypted content from memory because it's a
+> confidential (memory-encrypted) guest.
+> 
+> This has been tested with AMD SEV and SEV-ES guests, but the kernel side
+> of handling the secret area has no SEV-specific dependencies, and
+> therefore might be usable (perhaps with minor changes) for any
+> confidential computing hardware that can publish the secret area via the
+> standard EFI config table entry.
+> 
+> To enable this functionality, set CONFIG_EFI_SECRET=m when building the
+> guest kernel.
+> 
+> Here is a simple example for usage of the efi_secret module in a guest
+> to which an EFI secret area with 4 secrets was injected during launch:
+> 
+> # ls -la /sys/kernel/security/coco/efi_secret
+> total 0
+> drwxr-xr-x 2 root root 0 Jun 28 11:54 .
+> drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
+> -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
+> -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
+> -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
+> -r--r----- 1 root root 0 Jun 28 11:54 e6f5a162-d67f-4750-a67c-5d065f2a9910
+> 
+> # xxd /sys/kernel/security/coco/efi_secret/e6f5a162-d67f-4750-a67c-5d065f2a9910
+> 00000000: 7468 6573 652d 6172 652d 7468 652d 6b61  these-are-the-ka
+> 00000010: 7461 2d73 6563 7265 7473 0001 0203 0405  ta-secrets......
+> 00000020: 0607                                     ..
+> 
+> # rm /sys/kernel/security/coco/efi_secret/e6f5a162-d67f-4750-a67c-5d065f2a9910
+> 
+> # ls -la /sys/kernel/security/coco/efi_secret
+> total 0
+> drwxr-xr-x 2 root root 0 Jun 28 11:55 .
+> drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
+> -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
+> -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
+> -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
+> 
+> 
+> [1] https://github.com/tianocore/edk2/commit/01726b6d23d4
+> 
+> 
+> ---
+> 
+> v6 changes:
+>  - Autoload the efi_secret module if the secret area is populated
+>    (thanks Greg KH).
+>  - efi_secret: Depend on X86_64 because we use ioremap_encrypted() which
+>    is only defined for this arch.
+>  - efi_secret.c: Remove unneeded tableheader_guid local variable.
+>  - Documentation fixes.
+> 
+> v5: https://lore.kernel.org/linux-coco/20211118113359.642571-1-dovmurik@linux.ibm.com/
+> v5 changes:
+>  - Simplify EFI code: instead of copying the secret area, the firmware
+>    marks the secret area as EFI_RESERVED_TYPE, and then the uefi_init()
+>    code just keeps the pointer as it appears in the EFI configuration
+>    table.  The use of reserved pages is similar to the AMD SEV-SNP
+>    patches for handling SNP-Secrets and SNP-CPUID pages.
+>  - In order to handle OVMF releases out there which mark the
+>    confidential computing secrets page as EFI_BOOT_SERVICES_DATA, add
+>    efi/libstub code that detects this and fixes the E820 map to reserve
+>    this page.
+>  - In the efi_secret module code, map the secrets page using
+>    ioremap_encrypted (again, similar to the AMD SEV-SNP guest patches
+>    for accessing SNP-Secrets and SNP-CPUID pages).
+>  - Add documentation in Documentation/security/coco/efi_secret.
+> 
+> v4: https://lore.kernel.org/linux-coco/20211020061408.3447533-1-dovmurik@linux.ibm.com/
+> v4 changes:
+>  - Guard all the new EFI and efi-stub code (patches 1+2) with #ifdef
+>    CONFIG_EFI_COCO_SECRET (thanks Greg KH).  Selecting
+>    CONFIG_EFI_SECRET=m (patch 3) will enable the EFI parts as well.
+>  - Guard call to clflush_cache_range() with #ifdef CONFIG_X86
+>    (Reported-by: kernel test robot <lkp@intel.com>)
+> 
+> v3: https://lore.kernel.org/linux-coco/20211014130848.592611-1-dovmurik@linux.ibm.com/
+> v3 changes:
+>  - Rename the module to efi_secret
+>  - Remove the exporting of clean_cache_range
+>  - Use clflush_cache_range in wipe_memory
+>  - Document function wipe_memory
+>  - Initialize efi.coco_secret to EFI_INVALID_TABLE_ADDR to correctly detect
+>    when there's no secret area published in the EFI configuration tables
+> 
+> v2: https://lore.kernel.org/linux-coco/20211007061838.1381129-1-dovmurik@linux.ibm.com
+> v2 changes:
+>  - Export clean_cache_range()
+>  - When deleteing a secret, call clean_cache_range() after explicit_memzero
+>  - Add Documentation/ABI/testing/securityfs-coco-sev_secret
+> 
+> v1: https://lore.kernel.org/linux-coco/20210809190157.279332-1-dovmurik@linux.ibm.com/
+> 
+> RFC: https://lore.kernel.org/linux-coco/20210628183431.953934-1-dovmurik@linux.ibm.com/
+> 
+> 
+> Dov Murik (5):
+>   efi: Save location of EFI confidential computing area
+>   efi/libstub: Reserve confidential computing secret area
+>   virt: Add efi_secret module to expose confidential computing secrets
+>   efi: Load efi_secret module if EFI secret area is populated
+>   docs: security: Add coco/efi_secret documentation
+> 
+>  .../ABI/testing/securityfs-coco-efi_secret    |  51 +++
+>  Documentation/security/coco/efi_secret.rst    | 102 ++++++
+>  Documentation/security/coco/index.rst         |   9 +
+>  Documentation/security/index.rst              |   1 +
+>  arch/x86/platform/efi/efi.c                   |   3 +
+>  drivers/firmware/efi/Kconfig                  |  16 +
+>  drivers/firmware/efi/Makefile                 |   1 +
+>  drivers/firmware/efi/coco.c                   |  58 +++
+>  drivers/firmware/efi/efi.c                    |   6 +
+>  drivers/firmware/efi/libstub/x86-stub.c       |  28 ++
+>  drivers/virt/Kconfig                          |   3 +
+>  drivers/virt/Makefile                         |   1 +
+>  drivers/virt/coco/efi_secret/Kconfig          |  14 +
+>  drivers/virt/coco/efi_secret/Makefile         |   2 +
+>  drivers/virt/coco/efi_secret/efi_secret.c     | 337 ++++++++++++++++++
+>  include/linux/efi.h                           |  10 +
+>  16 files changed, 642 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/securityfs-coco-efi_secret
+>  create mode 100644 Documentation/security/coco/efi_secret.rst
+>  create mode 100644 Documentation/security/coco/index.rst
+>  create mode 100644 drivers/firmware/efi/coco.c
+>  create mode 100644 drivers/virt/coco/efi_secret/Kconfig
+>  create mode 100644 drivers/virt/coco/efi_secret/Makefile
+>  create mode 100644 drivers/virt/coco/efi_secret/efi_secret.c
+> 
+> 
+> base-commit: 42eb8fdac2fc5d62392dcfcf0253753e821a97b0
