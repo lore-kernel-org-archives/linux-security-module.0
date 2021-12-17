@@ -2,191 +2,121 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD61DC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Dec 2021 09:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68823C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Dec 2021 09:55:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231220AbhLQJhK (ORCPT
+        id S231880AbhLQJzW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Dec 2021 04:37:10 -0500
-Received: from smtp-42af.mail.infomaniak.ch ([84.16.66.175]:58207 "EHLO
-        smtp-42af.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231765AbhLQJhK (ORCPT
+        Fri, 17 Dec 2021 04:55:22 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:56542 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234631AbhLQJzW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Dec 2021 04:37:10 -0500
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JFkQs0fsQzMqGbj;
-        Fri, 17 Dec 2021 10:37:09 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4JFkQr41vPzlj4cc;
-        Fri, 17 Dec 2021 10:37:08 +0100 (CET)
-Message-ID: <c8588051-8795-9b8a-cb36-f5440b590581@digikod.net>
-Date:   Fri, 17 Dec 2021 10:39:23 +0100
+        Fri, 17 Dec 2021 04:55:22 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 19AE062070;
+        Fri, 17 Dec 2021 09:55:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C25DCC36AE8;
+        Fri, 17 Dec 2021 09:55:16 +0000 (UTC)
+Date:   Fri, 17 Dec 2021 10:55:13 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v7 01/14] ima: Add IMA namespace support
+Message-ID: <20211217095513.bzlkwboq3y6yqeyx@wittgenstein>
+References: <20211216054323.1707384-1-stefanb@linux.vnet.ibm.com>
+ <20211216054323.1707384-2-stefanb@linux.vnet.ibm.com>
+ <20211216140806.hi4jxw54yvbu5cox@wittgenstein>
+ <f408c42b74e28d90fce262abd50fc8a3079c0fa3.camel@HansenPartnership.com>
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     yusongping <yusongping@huawei.com>,
-        Artem Kuzin <artem.kuzin@huawei.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        netfilter@vger.kernel.org
-References: <20211210072123.386713-1-konstantin.meskhidze@huawei.com>
- <b50ed53a-683e-77cf-9dc2-f4ae1b5fa0fd@digikod.net>
- <12467d8418f04fbf9fd4a456a2a999f1@huawei.com>
- <b535d1d4-3564-b2af-a5e8-3ba6c0fa86c9@digikod.net>
-Subject: Re: [RFC PATCH 0/2] Landlock network PoC implementation
-In-Reply-To: <b535d1d4-3564-b2af-a5e8-3ba6c0fa86c9@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f408c42b74e28d90fce262abd50fc8a3079c0fa3.camel@HansenPartnership.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-New discussions and RFCs should also include netdev and netfilter 
-mailing lists. For people new to Landlock, the goal is to enable 
-unprivileged processes (and then potentially malicious ones) to limit 
-their own network access (i.e. create a security sandbox for themselves).
-
-Thinking more about network access control for Landlock use case, here 
-are better suggestions:
-
-On 14/12/2021 12:51, Mickaël Salaün wrote:
+On Thu, Dec 16, 2021 at 04:52:47PM -0500, James Bottomley wrote:
+> On Thu, 2021-12-16 at 15:08 +0100, Christian Brauner wrote:
+> > On Thu, Dec 16, 2021 at 12:43:10AM -0500, Stefan Berger wrote:
+> [...]
+> > > diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> > > index 6b2e3ca7ee99..6fa01323aac9 100644
+> > > --- a/kernel/user_namespace.c
+> > > +++ b/kernel/user_namespace.c
+> > > @@ -20,6 +20,7 @@
+> > >  #include <linux/fs_struct.h>
+> > >  #include <linux/bsearch.h>
+> > >  #include <linux/sort.h>
+> > > +#include <linux/ima.h>
+> > >  
+> > >  static struct kmem_cache *user_ns_cachep __read_mostly;
+> > >  static DEFINE_MUTEX(userns_state_mutex);
+> > > @@ -141,8 +142,14 @@ int create_user_ns(struct cred *new)
+> > >  	if (!setup_userns_sysctls(ns))
+> > >  		goto fail_keyring;
+> > >  
+> > > +	ret = create_ima_ns(ns);
+> > 
+> > Instead of greedily allocating a new ima namespace for each new user
+> > namespace creation and wasting memory that is likely wasted since
+> > most containers won't use ima (for a long time at least) have you
+> > considered lazily allocating it like I suggested in one of my first
+> > reviews?
+> > 
+> > So under the assumption that the only way for a container to get its
+> > own ima policy it needs to have mounted a new securityfs instance you
+> > can move the ima namespace allocation into
+> > fill_super/ima_fs_ns_init():
 > 
-> On 14/12/2021 04:49, Konstantin Meskhidze wrote:
->> Hi Mickaёl.
->> I've been thinking about your reply:
->>
->>> 4. Kernel objects.
->>> For filesystem restrictions inodes objects are used to tie landlock 
->>> rules.
->>> But for socket operations it's preferred to use task_struct object of
->>> a process, cause sockets' inodes are created just after
->>> security_socket_create() hook is called, and if its needed to have
->>> some restriction rule for creating sockets, this rule can't be tied
->>> to a socket inode cause there is no any has been created at the hook's
->>> catching moment, see the sock_create_lite() function below:
->>
->> - For the file system, we use inodes to identify hierarchies. We can't
->> - safely rely on stateless objects (e.g. path strings) because the file
->> - system changes, and then the rules must change with it.
->>
->> - To identify network objects (from the user point of view), we can rely
->> - on stateless rule definitions because they may be absolute (i.e. IP
->> - address), e.g. sandbox process creating a new connection or 
->> receveing an
->> - UDP packet. It is not be the case with UNIX socket if they are come 
->> from
->> - a path (i.e. inode) though. In this case we'll have to use the existing
->> - file system identification mechanism and probably extend the current FS
->> - access rights.
->> - A sandbox is a set of processes handled as "subjects". Generic inet
->> - rules should not be tied to processes (for now) but on 
->> subnets/protocols.
->>
->> In current Landlock version inodes are the objects to tie rules to.
->> For network you are saying that we can rely on stateless rule 
->> definitions and
->> rules should be tied to subnets/protocols, not to processes' 
->> task_struct objects.
->> Cause Landlock architecture requires all rules to be tied to a different
->> kernel objects, and when LSM hooks are caught there must be search
->> procedure completed in a ruleset's red-black tree structure:
->>     kernel_object -> landlock_object <- landlock_rule 
->> <-----landlock_ruleset
->>
->> What kind of kernel objects do you mean by subnets/protocols?
->> Do you suggest using sockets' inodes in this case or using network rules
->> without to be tied to any kernel object?
-> 
-> The subnets/protocols is the definition provided when creating a rule 
-> (i.e. the object from the user point of view), but the kernel may relies 
-> on other internal representations. I guess datagram packets would need 
-> to be matched against IP/port everytime they are received by a sandboxed 
-> process, but tagging sockets or their underlying inodes for stream 
-> connections make sense.
-> 
-> I don't have experience in the network LSM hooks though, any input is 
-> welcome.
-> 
->>     socket_inode -> landlock_object <- landlock_rule 
->> <-----landlock_ruleset
->>              OR
->>     landlock_object <- landlock_rule <-----landlock_ruleset
->>
->> -----Original Message-----
->> From: Mickaël Salaün <mic@digikod.net>
->> Sent: Monday, December 13, 2021 4:30 PM
->> To: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->> Cc: linux-security-module@vger.kernel.org; yusongping 
->> <yusongping@huawei.com>; Artem Kuzin <artem.kuzin@huawei.com>
->> Subject: Re: [RFC PATCH 0/2] Landlock network PoC implementation
->>
->> Hi Konstantin,
->>
->> On 10/12/2021 08:21, Konstantin Meskhidze wrote:
+> The current patch set has the ima namespace born with an empty policy,
+> meaning it can never do anything until a new policy is inserted via a
+> write to the securityfs, and therefore the IMA namespace could be
+> lazily allocated.  However, that's not quite how the initial IMA
+> namespace behaves because a policy can be passed in on the kernel
+> command line (or built into the kernel).  If the ima NS were born with
+> a default policy (say taken from the initial IMA default policy, or
+> simply inherited from the parent at creation time) then we wouldn't be
+> able to do lazy allocation.  Before we tie ourselves to never being
+> able to have a default policy for an IMA namespace, perhaps we should
+> discuss if this is the correct behaviour we want to nail into the
+> system.
 
-[...]
+If ima in the future decides to do policy inheritance it can simply
+switch from delayed allocation at mount time to allocation at userns
+creation time. So we can proceed with lazy allocation without much
+problem for now.
 
->>
->> To sum up, for IPv4 restrictions, we need a new rule type identified
->> with LANDLOCK_RULE_NET_CIDR4. This will handle a new
->> struct landlock_net_cidr4_attr {
->>       __u64 allowed_access;
->>       __u32 address; // IPv4
->>       __u8 prefix; // From 0 to 32
->>       __u8 type; // SOCK_DGRAM, SOCK_STREAM
->>       __u16 port;
->> } __attribute__((packed));
->> // https://datatracker.ietf.org/doc/html/rfc4632
+In addition what is happening now is in effect policy inheritance, i.e.
+each container is bound by the parent ima_ns policy until it decides to
+setup its own.
 
-IP addresses (and subnets) should not be part of a rule, at least for 
-now. Indeed, IP addresses are tied either to the system architecture 
-(e.g. container configuration), the local network or Internet, hence 
-moving targets not controlled by application developers. Moreover, from 
-a kernel point of view, it is more complex to check and handle subnets, 
-which are most of the time tied to the Netfilter infrastructure, not 
-suitable for Landlock because of its unprivileged nature.
+Aside from that the container manager can and should be responsible for
+the default ima policy to apply to containers. The default ima policy
+can be passed through the spec file, configuration file, or - for the
+hardcore people - compiled into the container manager itself. This is
+not different from LSMs (e.g. AppArmor, seccomp) where the policy for
+each container is generated from a fixed template that was built into
+the container manager binary and then written via
+/proc/<pid>/attr/current during container setup.
 
-On the other side, protocols such as TCP and their associated ports are 
-normalized and are tied to an application semantic (e.g. TCP/443 for HTTPS).
-
-There is other advantages to exclude subnets from this type of rules for 
-now (e.g. they could be composed with protocols/ports), but that may 
-come later.
-
-I then think that a first MVP to bring network access control support to 
-Landlock should focus only on TCP and related ports (i.e. services). I 
-propose to not use my previous definition of landlock_net_cidr4_attr but 
-to have a landlock_net_service_attr instead:
-
-struct landlock_net_service_attr {
-     __u64 allowed_access; // LANDLOCK_NET_*_TCP
-     __u16 port;
-} __attribute__((packed));
-
-This attribute should handle IPv4 and IPv6 indistinguishably.
-
-[...]
-
->>
->> Accesses/suffixes should be:
->> - CREATE
->> - ACCEPT
->> - BIND
->> - LISTEN
->> - CONNECT
->> - RECEIVE (RECEIVE_FROM and SEND_TO should not be needed)
->> - SEND
->> - SHUTDOWN
->> - GET_OPTION (GETSOCKOPT)
->> - SET_OPTION (SETSOCKOPT)
-
-For now, the only access rights should be LANDLOCK_ACCESS_NET_BIND_TCP 
-and LANDLOCK_ACCESS_NET_CONNECT_TCP (tie to two LSM hooks with struct 
-sockaddr).
-
-These attribute and access right changes reduce the scope of the network 
-access control and make it simpler but still really useful. Datagram 
-(e.g. UDP, which could add BIND_UDP and SEND_UDP) sockets will be more 
-complex to restrict correctly and should then come in another patch 
-series, once TCP is supported.
+During container setup the process that ultimately calls exec to execute
+the payload does all of the required setup work. The setup process
+should not be automatically bound by a default policy that gets created
+when the userns is created. That will just cause problems during
+container setup.
+Until the setup process has decided that all preliminary setup steps are
+done only the ancestor policy should restrict it.
+This is exactly the same for all LSMs and seccomp. They all are usually
+setup closely before calling exec. I see no reason for ima to diverge
+from this model.
