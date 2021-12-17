@@ -2,249 +2,66 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF17C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Dec 2021 21:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8816DC4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Dec 2021 21:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbhLQV3k (ORCPT
+        id S229899AbhLQVnT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Dec 2021 16:29:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56718 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbhLQV3k (ORCPT
+        Fri, 17 Dec 2021 16:43:19 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:39662 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229893AbhLQVnT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Dec 2021 16:29:40 -0500
-Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8FCEC061574
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Dec 2021 13:29:39 -0800 (PST)
-Received: by mail-ua1-x92a.google.com with SMTP id w23so6782454uao.5
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Dec 2021 13:29:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=sS2Tx3qqz7Li8BP/fRubzm0Ncwq+oKY/TagJZ69ZPYA=;
-        b=hRMpnddSPOcq8yc7gN/zxE2pwePua3qK/x60WhZrFmB6XnueKn06n3aceN+aZ5AlhS
-         bppJe+bF0O4DwtzvJa9Ua5p8ilySKCXbctZ/oZL18nreSttYRMlIiyJ+X84jw//yNw9l
-         IIuPcblPABvRVIAeCzZdB+3ZlKv24ftymr7mvGRqbrtGYJOYAT4HDtfPzmnbmgamMAUP
-         ynKmnEcc6qF4tQR2uHPUDsTbjcbkfZFou8dVDEhijzND6ylYBw6v6Fh40OuiODpwVAS4
-         Nus9NaKIhnBboEXtqylCe4N2bQpE/RIYo5ScPQmg75E3BVQ12jWyHiWdgtWesNuBdr7g
-         XOfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sS2Tx3qqz7Li8BP/fRubzm0Ncwq+oKY/TagJZ69ZPYA=;
-        b=Sl40OOWwBIFU6+qvgoHrAKkW3dztw/2LnbCbz1k2/YSJgOdRVJuM4Z3pBzHSxClZhn
-         1xaFCgGFqvlyhTpppE2hTNiLT2OJo/b04m2x1IgILBmbaYVKraVpRl1Q/mHif0QPNIv4
-         tlzojsKozR7cZcnIr2axKrBA+6fw4DmURDMdTj2M3MiimfLvoWITnxA7ob2FKR7ydDC5
-         VQ7QnLYDI/JfrtzByUmZVFMHnsbKTgvqJjVij/ZVydHmOeh3s273rHie09LMDGraL+sh
-         sTlOwM/tRbpZiiWPaOXQbz2uTzaQD/Qb7dINyceuXl8dW5w5FnZkpjiO/XstCwy4Rff0
-         Rjpg==
-X-Gm-Message-State: AOAM532C09Dfpt1R5ZJA2IPFUEv9dsm9MoJxF4t1OyQu2EYL3YqrxmP1
-        Wih6LEhuZzS4mJVmgge1o61xHRkHKbw=
-X-Google-Smtp-Source: ABdhPJzcfF5v5TZ25MCqY0p5w2agmOfMQ59KcRNZM0qeG9B+zwfIVibWdrNVHIrsO0RxIopaRMHFBA==
-X-Received: by 2002:a05:6102:316c:: with SMTP id l12mr2005267vsm.1.1639776578569;
-        Fri, 17 Dec 2021 13:29:38 -0800 (PST)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id 66sm2165313uao.0.2021.12.17.13.29.37
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Dec 2021 13:29:37 -0800 (PST)
-Received: by mail-vk1-f178.google.com with SMTP id u68so2368630vke.11
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Dec 2021 13:29:37 -0800 (PST)
-X-Received: by 2002:a05:6122:130f:: with SMTP id e15mr2169281vkp.14.1639776577209;
- Fri, 17 Dec 2021 13:29:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20211210072123.386713-1-konstantin.meskhidze@huawei.com>
- <b50ed53a-683e-77cf-9dc2-f4ae1b5fa0fd@digikod.net> <12467d8418f04fbf9fd4a456a2a999f1@huawei.com>
- <b535d1d4-3564-b2af-a5e8-3ba6c0fa86c9@digikod.net> <c8588051-8795-9b8a-cb36-f5440b590581@digikod.net>
-In-Reply-To: <c8588051-8795-9b8a-cb36-f5440b590581@digikod.net>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Fri, 17 Dec 2021 16:29:00 -0500
-X-Gmail-Original-Message-ID: <CA+FuTSd8RxC9UGfJZA99p3CMxAQhESR_huXYScgwJWGonwbxOw@mail.gmail.com>
-Message-ID: <CA+FuTSd8RxC9UGfJZA99p3CMxAQhESR_huXYScgwJWGonwbxOw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] Landlock network PoC implementation
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        yusongping <yusongping@huawei.com>,
-        Artem Kuzin <artem.kuzin@huawei.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        netfilter@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 17 Dec 2021 16:43:19 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EF85E623E9;
+        Fri, 17 Dec 2021 21:43:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5E1D3C36AE2;
+        Fri, 17 Dec 2021 21:43:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639777398;
+        bh=I/BND2fPxe3b1WESDucx+tHLIhBolRhvSKQcU58rbFs=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=tXWhaTrMDf+85oNeMQRX7wKsGgDPSj9IKLoCRVxKa0UxxGWwII8lZCUw2zfMhYj31
+         RjLW0HyqS+sDdR3zGO7Jt1K4vjKMgQujmI/FTSn2y9R1OrDbIj7JEyqJD5WIgxkRNX
+         Gre6yTwKYofEG6ke+ZmQ3NQb40Z+2Q67J9Q/aR+5HvMxh6F/LhNV2SaP2R1hgaY8lZ
+         VqFfGKee7rSgw7Yn/CchvnmJaF2n23o5tb338lorDtZaj6hyczqQekJrHNRaQlosfc
+         1XuXMuzlAodwBM1Fo0koFbxlxbRwvmUqXc+75eOiEOh8Jp31Rl0MYioBqrGjABFaL/
+         ZBDCDUp4n6O+w==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 4C05360A27;
+        Fri, 17 Dec 2021 21:43:18 +0000 (UTC)
+Subject: Re: [GIT PULL] SELinux fixes for v5.16 (#3)
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhS=WgqJgqpQq9J+0Pec9u8e1VnvGwqOimR54wm6TRptVA@mail.gmail.com>
+References: <CAHC9VhS=WgqJgqpQq9J+0Pec9u8e1VnvGwqOimR54wm6TRptVA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhS=WgqJgqpQq9J+0Pec9u8e1VnvGwqOimR54wm6TRptVA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20211217
+X-PR-Tracked-Commit-Id: cc274ae7763d9700a56659f3228641d7069e7a3f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f1f05ef38382021c9279cca8e9589f16fdfd1f40
+Message-Id: <163977739830.30898.10474255826465226501.pr-tracker-bot@kernel.org>
+Date:   Fri, 17 Dec 2021 21:43:18 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 17, 2021 at 4:38 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
->
-> New discussions and RFCs should also include netdev and netfilter
-> mailing lists. For people new to Landlock, the goal is to enable
-> unprivileged processes (and then potentially malicious ones) to limit
-> their own network access (i.e. create a security sandbox for themselves).
->
-> Thinking more about network access control for Landlock use case, here
-> are better suggestions:
->
-> On 14/12/2021 12:51, Micka=C3=ABl Sala=C3=BCn wrote:
-> >
-> > On 14/12/2021 04:49, Konstantin Meskhidze wrote:
-> >> Hi Micka=D1=91l.
-> >> I've been thinking about your reply:
-> >>
-> >>> 4. Kernel objects.
-> >>> For filesystem restrictions inodes objects are used to tie landlock
-> >>> rules.
-> >>> But for socket operations it's preferred to use task_struct object of
-> >>> a process, cause sockets' inodes are created just after
-> >>> security_socket_create() hook is called, and if its needed to have
-> >>> some restriction rule for creating sockets, this rule can't be tied
-> >>> to a socket inode cause there is no any has been created at the hook'=
-s
-> >>> catching moment, see the sock_create_lite() function below:
-> >>
-> >> - For the file system, we use inodes to identify hierarchies. We can't
-> >> - safely rely on stateless objects (e.g. path strings) because the fil=
-e
-> >> - system changes, and then the rules must change with it.
-> >>
-> >> - To identify network objects (from the user point of view), we can re=
-ly
-> >> - on stateless rule definitions because they may be absolute (i.e. IP
-> >> - address), e.g. sandbox process creating a new connection or
-> >> receveing an
-> >> - UDP packet. It is not be the case with UNIX socket if they are come
-> >> from
-> >> - a path (i.e. inode) though. In this case we'll have to use the exist=
-ing
-> >> - file system identification mechanism and probably extend the current=
- FS
-> >> - access rights.
-> >> - A sandbox is a set of processes handled as "subjects". Generic inet
-> >> - rules should not be tied to processes (for now) but on
-> >> subnets/protocols.
-> >>
-> >> In current Landlock version inodes are the objects to tie rules to.
-> >> For network you are saying that we can rely on stateless rule
-> >> definitions and
-> >> rules should be tied to subnets/protocols, not to processes'
-> >> task_struct objects.
-> >> Cause Landlock architecture requires all rules to be tied to a differe=
-nt
-> >> kernel objects, and when LSM hooks are caught there must be search
-> >> procedure completed in a ruleset's red-black tree structure:
-> >>     kernel_object -> landlock_object <- landlock_rule
-> >> <-----landlock_ruleset
-> >>
-> >> What kind of kernel objects do you mean by subnets/protocols?
-> >> Do you suggest using sockets' inodes in this case or using network rul=
-es
-> >> without to be tied to any kernel object?
-> >
-> > The subnets/protocols is the definition provided when creating a rule
-> > (i.e. the object from the user point of view), but the kernel may relie=
-s
-> > on other internal representations. I guess datagram packets would need
-> > to be matched against IP/port everytime they are received by a sandboxe=
-d
-> > process, but tagging sockets or their underlying inodes for stream
-> > connections make sense.
-> >
-> > I don't have experience in the network LSM hooks though, any input is
-> > welcome.
-> >
-> >>     socket_inode -> landlock_object <- landlock_rule
-> >> <-----landlock_ruleset
-> >>              OR
-> >>     landlock_object <- landlock_rule <-----landlock_ruleset
-> >>
-> >> -----Original Message-----
-> >> From: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> >> Sent: Monday, December 13, 2021 4:30 PM
-> >> To: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> >> Cc: linux-security-module@vger.kernel.org; yusongping
-> >> <yusongping@huawei.com>; Artem Kuzin <artem.kuzin@huawei.com>
-> >> Subject: Re: [RFC PATCH 0/2] Landlock network PoC implementation
-> >>
-> >> Hi Konstantin,
-> >>
-> >> On 10/12/2021 08:21, Konstantin Meskhidze wrote:
->
-> [...]
->
-> >>
-> >> To sum up, for IPv4 restrictions, we need a new rule type identified
-> >> with LANDLOCK_RULE_NET_CIDR4. This will handle a new
-> >> struct landlock_net_cidr4_attr {
-> >>       __u64 allowed_access;
-> >>       __u32 address; // IPv4
-> >>       __u8 prefix; // From 0 to 32
-> >>       __u8 type; // SOCK_DGRAM, SOCK_STREAM
-> >>       __u16 port;
-> >> } __attribute__((packed));
-> >> // https://datatracker.ietf.org/doc/html/rfc4632
->
-> IP addresses (and subnets) should not be part of a rule, at least for
-> now. Indeed, IP addresses are tied either to the system architecture
-> (e.g. container configuration), the local network or Internet, hence
-> moving targets not controlled by application developers. Moreover, from
-> a kernel point of view, it is more complex to check and handle subnets,
-> which are most of the time tied to the Netfilter infrastructure, not
-> suitable for Landlock because of its unprivileged nature.
->
-> On the other side, protocols such as TCP and their associated ports are
-> normalized and are tied to an application semantic (e.g. TCP/443 for HTTP=
-S).
->
-> There is other advantages to exclude subnets from this type of rules for
-> now (e.g. they could be composed with protocols/ports), but that may
-> come later.
->
-> I then think that a first MVP to bring network access control support to
-> Landlock should focus only on TCP and related ports (i.e. services). I
-> propose to not use my previous definition of landlock_net_cidr4_attr but
-> to have a landlock_net_service_attr instead:
->
-> struct landlock_net_service_attr {
->      __u64 allowed_access; // LANDLOCK_NET_*_TCP
->      __u16 port;
-> } __attribute__((packed));
->
-> This attribute should handle IPv4 and IPv6 indistinguishably.
->
-> [...]
->
-> >>
-> >> Accesses/suffixes should be:
-> >> - CREATE
-> >> - ACCEPT
-> >> - BIND
-> >> - LISTEN
-> >> - CONNECT
-> >> - RECEIVE (RECEIVE_FROM and SEND_TO should not be needed)
-> >> - SEND
-> >> - SHUTDOWN
-> >> - GET_OPTION (GETSOCKOPT)
-> >> - SET_OPTION (SETSOCKOPT)
->
-> For now, the only access rights should be LANDLOCK_ACCESS_NET_BIND_TCP
-> and LANDLOCK_ACCESS_NET_CONNECT_TCP (tie to two LSM hooks with struct
-> sockaddr).
->
-> These attribute and access right changes reduce the scope of the network
-> access control and make it simpler but still really useful. Datagram
-> (e.g. UDP, which could add BIND_UDP and SEND_UDP) sockets will be more
-> complex to restrict correctly and should then come in another patch
-> series, once TCP is supported.
+The pull request you sent on Fri, 17 Dec 2021 15:02:34 -0500:
 
-Thanks for cc:ing the netdev list. I miss some of context, assume that
-limits are configured on a socket basis.
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20211217
 
-One practical use-case I had for voluntary relinquish of privileges:
-do not allow connect AF_UNSPEC. This is a little-used feature that
-allows an already established connection to disconnect and create a
-new connection. Without this option, it is possible for a privileged
-process to create connections and hand those off to a less privileged
-process. Also, do not allow listen calls, to avoid elevating a socket
-to a listener.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f1f05ef38382021c9279cca8e9589f16fdfd1f40
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
