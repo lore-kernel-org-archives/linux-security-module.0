@@ -2,108 +2,249 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB49C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Dec 2021 21:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF17C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Dec 2021 21:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235715AbhLQVIq (ORCPT
+        id S229545AbhLQV3k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Dec 2021 16:08:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51988 "EHLO
+        Fri, 17 Dec 2021 16:29:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbhLQVIp (ORCPT
+        with ESMTP id S229668AbhLQV3k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Dec 2021 16:08:45 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CDACC061574;
-        Fri, 17 Dec 2021 13:08:45 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id g14so12593796edb.8;
-        Fri, 17 Dec 2021 13:08:45 -0800 (PST)
+        Fri, 17 Dec 2021 16:29:40 -0500
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8FCEC061574
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Dec 2021 13:29:39 -0800 (PST)
+Received: by mail-ua1-x92a.google.com with SMTP id w23so6782454uao.5
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Dec 2021 13:29:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eYNpYpBKR1zDDv4bK52aJuxv15cY9lkr4toXIMOz8FY=;
-        b=jISnVxyo1zZVEFpDhJlYcXthjoYXHbC5n+ko7/eTmjJXZImO8Wkk7Z3WRrD7jtgZLt
-         AYvvhc4FOHHjPrdETCQbQNlymFEHNgdIx8MtbSZDTF4/0ZdgWcJAmNNgX0h7p14r11jk
-         Q1i8uOLjLw2t9M2cp6a4tV8lYvQWP45zvzrl3tOc2A8EuqGnq1A8JXhYe0dvM8TS9JQn
-         SnqfAigtCjxyphRncO3yVul1KoK6rVu2jTRoaDKUIDmP5EYzz8EZAbeU6YafU1b1MO1z
-         yiB4bZJTY7ptQP9e+KxGi5QDsCqtOs8jy4OIg/td15VlK+Ry3a310pWoDGl/jP+JyGCl
-         VF0Q==
+         :cc:content-transfer-encoding;
+        bh=sS2Tx3qqz7Li8BP/fRubzm0Ncwq+oKY/TagJZ69ZPYA=;
+        b=hRMpnddSPOcq8yc7gN/zxE2pwePua3qK/x60WhZrFmB6XnueKn06n3aceN+aZ5AlhS
+         bppJe+bF0O4DwtzvJa9Ua5p8ilySKCXbctZ/oZL18nreSttYRMlIiyJ+X84jw//yNw9l
+         IIuPcblPABvRVIAeCzZdB+3ZlKv24ftymr7mvGRqbrtGYJOYAT4HDtfPzmnbmgamMAUP
+         ynKmnEcc6qF4tQR2uHPUDsTbjcbkfZFou8dVDEhijzND6ylYBw6v6Fh40OuiODpwVAS4
+         Nus9NaKIhnBboEXtqylCe4N2bQpE/RIYo5ScPQmg75E3BVQ12jWyHiWdgtWesNuBdr7g
+         XOfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eYNpYpBKR1zDDv4bK52aJuxv15cY9lkr4toXIMOz8FY=;
-        b=bO7UkbF4fi8gNkO/SnO9zpE/8BDMwNYtAoI1z4pi1OkAf41pdXOopM5/7pFaqyzjdT
-         FwZO4MVoGAshqdhg7HajUG3yFuiENL7yjam++4BC9ObZo4FOofQgmo64QPsbDu3/3Th6
-         VqGUsbIopfmSwdUCkkbC/hkUH3ImkTLBNGTN6hvCYOur07eXOAw62toKkmWyxIZfxpjk
-         VTB0hyXKse5d3DFNXcyGqFgCvOCfcraW1sFRDjsP3mM8d1VNFRj3GNV9d3fC9E3+eMsw
-         Z2geJhNubmMstHNobx9RlrYM1gztAX+Q6+4HWx/5DIELTr3E2SXSe9bkp5n0nDKaeIQw
-         hFog==
-X-Gm-Message-State: AOAM533wkt8s/FdV88VndSKPgjBYvrsmnI9Iuo0uzErkVNISvv7QO0Lo
-        a70ta22yyA5VEeSslmKwUHcZ7lBM+k9E1OZXrwo=
-X-Google-Smtp-Source: ABdhPJxvptOuIWBSwczLxlVUcKo4BLqOeEWQy7lO3OL2bzt+p2LblmpD8W5s1JXOLXjEJYnduO3NC8FqkUDRm3tMh8w=
-X-Received: by 2002:a17:906:cec5:: with SMTP id si5mr4151841ejb.17.1639775323779;
- Fri, 17 Dec 2021 13:08:43 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sS2Tx3qqz7Li8BP/fRubzm0Ncwq+oKY/TagJZ69ZPYA=;
+        b=Sl40OOWwBIFU6+qvgoHrAKkW3dztw/2LnbCbz1k2/YSJgOdRVJuM4Z3pBzHSxClZhn
+         1xaFCgGFqvlyhTpppE2hTNiLT2OJo/b04m2x1IgILBmbaYVKraVpRl1Q/mHif0QPNIv4
+         tlzojsKozR7cZcnIr2axKrBA+6fw4DmURDMdTj2M3MiimfLvoWITnxA7ob2FKR7ydDC5
+         VQ7QnLYDI/JfrtzByUmZVFMHnsbKTgvqJjVij/ZVydHmOeh3s273rHie09LMDGraL+sh
+         sTlOwM/tRbpZiiWPaOXQbz2uTzaQD/Qb7dINyceuXl8dW5w5FnZkpjiO/XstCwy4Rff0
+         Rjpg==
+X-Gm-Message-State: AOAM532C09Dfpt1R5ZJA2IPFUEv9dsm9MoJxF4t1OyQu2EYL3YqrxmP1
+        Wih6LEhuZzS4mJVmgge1o61xHRkHKbw=
+X-Google-Smtp-Source: ABdhPJzcfF5v5TZ25MCqY0p5w2agmOfMQ59KcRNZM0qeG9B+zwfIVibWdrNVHIrsO0RxIopaRMHFBA==
+X-Received: by 2002:a05:6102:316c:: with SMTP id l12mr2005267vsm.1.1639776578569;
+        Fri, 17 Dec 2021 13:29:38 -0800 (PST)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id 66sm2165313uao.0.2021.12.17.13.29.37
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Dec 2021 13:29:37 -0800 (PST)
+Received: by mail-vk1-f178.google.com with SMTP id u68so2368630vke.11
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Dec 2021 13:29:37 -0800 (PST)
+X-Received: by 2002:a05:6122:130f:: with SMTP id e15mr2169281vkp.14.1639776577209;
+ Fri, 17 Dec 2021 13:29:37 -0800 (PST)
 MIME-Version: 1.0
-References: <CAHC9VhS=WgqJgqpQq9J+0Pec9u8e1VnvGwqOimR54wm6TRptVA@mail.gmail.com>
- <CAHk-=wiiqvcA3noHDqJt2=ik5ikQbycdFQ7s=uq70FcGxWgXvg@mail.gmail.com>
-In-Reply-To: <CAHk-=wiiqvcA3noHDqJt2=ik5ikQbycdFQ7s=uq70FcGxWgXvg@mail.gmail.com>
-From:   Olga Kornievskaia <aglo@umich.edu>
-Date:   Fri, 17 Dec 2021 16:08:32 -0500
-Message-ID: <CAN-5tyEKGQu1Y=o8KfsX3q9NkP4XZRos5stwmrT=ZV1hr1fWrQ@mail.gmail.com>
-Subject: Re: [GIT PULL] SELinux fixes for v5.16 (#3)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20211210072123.386713-1-konstantin.meskhidze@huawei.com>
+ <b50ed53a-683e-77cf-9dc2-f4ae1b5fa0fd@digikod.net> <12467d8418f04fbf9fd4a456a2a999f1@huawei.com>
+ <b535d1d4-3564-b2af-a5e8-3ba6c0fa86c9@digikod.net> <c8588051-8795-9b8a-cb36-f5440b590581@digikod.net>
+In-Reply-To: <c8588051-8795-9b8a-cb36-f5440b590581@digikod.net>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Fri, 17 Dec 2021 16:29:00 -0500
+X-Gmail-Original-Message-ID: <CA+FuTSd8RxC9UGfJZA99p3CMxAQhESR_huXYScgwJWGonwbxOw@mail.gmail.com>
+Message-ID: <CA+FuTSd8RxC9UGfJZA99p3CMxAQhESR_huXYScgwJWGonwbxOw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] Landlock network PoC implementation
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        yusongping <yusongping@huawei.com>,
+        Artem Kuzin <artem.kuzin@huawei.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        netfilter@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 17, 2021 at 3:29 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Fri, Dec 17, 2021 at 4:38 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
 >
-> On Fri, Dec 17, 2021 at 12:02 PM Paul Moore <paul@paul-moore.com> wrote:
+> New discussions and RFCs should also include netdev and netfilter
+> mailing lists. For people new to Landlock, the goal is to enable
+> unprivileged processes (and then potentially malicious ones) to limit
+> their own network access (i.e. create a security sandbox for themselves).
+>
+> Thinking more about network access control for Landlock use case, here
+> are better suggestions:
+>
+> On 14/12/2021 12:51, Micka=C3=ABl Sala=C3=BCn wrote:
 > >
-> > Another small SELinux fix for v5.16 to ensure that we don't block on
-> > memory allocations while holding a spinlock.  This passes all our
-> > tests without problem, please merge this for the next v5.16-rcX
-> > release.
+> > On 14/12/2021 04:49, Konstantin Meskhidze wrote:
+> >> Hi Micka=D1=91l.
+> >> I've been thinking about your reply:
+> >>
+> >>> 4. Kernel objects.
+> >>> For filesystem restrictions inodes objects are used to tie landlock
+> >>> rules.
+> >>> But for socket operations it's preferred to use task_struct object of
+> >>> a process, cause sockets' inodes are created just after
+> >>> security_socket_create() hook is called, and if its needed to have
+> >>> some restriction rule for creating sockets, this rule can't be tied
+> >>> to a socket inode cause there is no any has been created at the hook'=
+s
+> >>> catching moment, see the sock_create_lite() function below:
+> >>
+> >> - For the file system, we use inodes to identify hierarchies. We can't
+> >> - safely rely on stateless objects (e.g. path strings) because the fil=
+e
+> >> - system changes, and then the rules must change with it.
+> >>
+> >> - To identify network objects (from the user point of view), we can re=
+ly
+> >> - on stateless rule definitions because they may be absolute (i.e. IP
+> >> - address), e.g. sandbox process creating a new connection or
+> >> receveing an
+> >> - UDP packet. It is not be the case with UNIX socket if they are come
+> >> from
+> >> - a path (i.e. inode) though. In this case we'll have to use the exist=
+ing
+> >> - file system identification mechanism and probably extend the current=
+ FS
+> >> - access rights.
+> >> - A sandbox is a set of processes handled as "subjects". Generic inet
+> >> - rules should not be tied to processes (for now) but on
+> >> subnets/protocols.
+> >>
+> >> In current Landlock version inodes are the objects to tie rules to.
+> >> For network you are saying that we can rely on stateless rule
+> >> definitions and
+> >> rules should be tied to subnets/protocols, not to processes'
+> >> task_struct objects.
+> >> Cause Landlock architecture requires all rules to be tied to a differe=
+nt
+> >> kernel objects, and when LSM hooks are caught there must be search
+> >> procedure completed in a ruleset's red-black tree structure:
+> >>     kernel_object -> landlock_object <- landlock_rule
+> >> <-----landlock_ruleset
+> >>
+> >> What kind of kernel objects do you mean by subnets/protocols?
+> >> Do you suggest using sockets' inodes in this case or using network rul=
+es
+> >> without to be tied to any kernel object?
+> >
+> > The subnets/protocols is the definition provided when creating a rule
+> > (i.e. the object from the user point of view), but the kernel may relie=
+s
+> > on other internal representations. I guess datagram packets would need
+> > to be matched against IP/port everytime they are received by a sandboxe=
+d
+> > process, but tagging sockets or their underlying inodes for stream
+> > connections make sense.
+> >
+> > I don't have experience in the network LSM hooks though, any input is
+> > welcome.
+> >
+> >>     socket_inode -> landlock_object <- landlock_rule
+> >> <-----landlock_ruleset
+> >>              OR
+> >>     landlock_object <- landlock_rule <-----landlock_ruleset
+> >>
+> >> -----Original Message-----
+> >> From: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> >> Sent: Monday, December 13, 2021 4:30 PM
+> >> To: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> >> Cc: linux-security-module@vger.kernel.org; yusongping
+> >> <yusongping@huawei.com>; Artem Kuzin <artem.kuzin@huawei.com>
+> >> Subject: Re: [RFC PATCH 0/2] Landlock network PoC implementation
+> >>
+> >> Hi Konstantin,
+> >>
+> >> On 10/12/2021 08:21, Konstantin Meskhidze wrote:
 >
-> Ugh, pulled.
+> [...]
 >
-> GFP_NOWAIT can very easily fail, so I'm not convinced your tests would
-> catch any of the interesting cases.
+> >>
+> >> To sum up, for IPv4 restrictions, we need a new rule type identified
+> >> with LANDLOCK_RULE_NET_CIDR4. This will handle a new
+> >> struct landlock_net_cidr4_attr {
+> >>       __u64 allowed_access;
+> >>       __u32 address; // IPv4
+> >>       __u8 prefix; // From 0 to 32
+> >>       __u8 type; // SOCK_DGRAM, SOCK_STREAM
+> >>       __u16 port;
+> >> } __attribute__((packed));
+> >> // https://datatracker.ietf.org/doc/html/rfc4632
 >
-> There is only one single caller of the new
-> security_sb_mnt_opts_compat() callback, and I get the feeling that
-> maybe we could parse the options first - into a temporary new
-> superblock, and then at "test" time (when we're under that sb_lock) it
-> could compare that temporary sb with pre-existing ones?
+> IP addresses (and subnets) should not be part of a rule, at least for
+> now. Indeed, IP addresses are tied either to the system architecture
+> (e.g. container configuration), the local network or Internet, hence
+> moving targets not controlled by application developers. Moreover, from
+> a kernel point of view, it is more complex to check and handle subnets,
+> which are most of the time tied to the Netfilter infrastructure, not
+> suitable for Landlock because of its unprivileged nature.
 >
-> That would also avoid the need for doing that mount option parsing
-> over and over and over again for each sb on the 'fs_supers' lists.
+> On the other side, protocols such as TCP and their associated ports are
+> normalized and are tied to an application semantic (e.g. TCP/443 for HTTP=
+S).
 >
-> I've pulled this, bit it does smell bad to me, and I think that
-> original commit 69c4a42d72eb ("lsm,selinux: add new hook to compare
-> new mount to an existing mount") and ec1ade6a0448 ("nfs: account for
-> selinux security context when deciding to share superblock") may not
-> have been fully thought out.
+> There is other advantages to exclude subnets from this type of rules for
+> now (e.g. they could be composed with protocols/ports), but that may
+> come later.
+>
+> I then think that a first MVP to bring network access control support to
+> Landlock should focus only on TCP and related ports (i.e. services). I
+> propose to not use my previous definition of landlock_net_cidr4_attr but
+> to have a landlock_net_service_attr instead:
+>
+> struct landlock_net_service_attr {
+>      __u64 allowed_access; // LANDLOCK_NET_*_TCP
+>      __u16 port;
+> } __attribute__((packed));
+>
+> This attribute should handle IPv4 and IPv6 indistinguishably.
+>
+> [...]
+>
+> >>
+> >> Accesses/suffixes should be:
+> >> - CREATE
+> >> - ACCEPT
+> >> - BIND
+> >> - LISTEN
+> >> - CONNECT
+> >> - RECEIVE (RECEIVE_FROM and SEND_TO should not be needed)
+> >> - SEND
+> >> - SHUTDOWN
+> >> - GET_OPTION (GETSOCKOPT)
+> >> - SET_OPTION (SETSOCKOPT)
+>
+> For now, the only access rights should be LANDLOCK_ACCESS_NET_BIND_TCP
+> and LANDLOCK_ACCESS_NET_CONNECT_TCP (tie to two LSM hooks with struct
+> sockaddr).
+>
+> These attribute and access right changes reduce the scope of the network
+> access control and make it simpler but still really useful. Datagram
+> (e.g. UDP, which could add BIND_UDP and SEND_UDP) sockets will be more
+> complex to restrict correctly and should then come in another patch
+> series, once TCP is supported.
 
-Can you please elaborate on what is problematic with the two patches
-you've highlighted. NFS needs a way to determine if the security mount
-options have changed between the two mounts in order to determine if
-superblock can be shared.
+Thanks for cc:ing the netdev list. I miss some of context, assume that
+limits are configured on a socket basis.
 
-> It may have *looked* like just adding that check  to
-> 'nfs_compare_super' was a simple and good idea, but it really doesn't
-> look great.
->
-> Adding a few more people to the cc.
->
->                  Linus
+One practical use-case I had for voluntary relinquish of privileges:
+do not allow connect AF_UNSPEC. This is a little-used feature that
+allows an already established connection to disconnect and create a
+new connection. Without this option, it is possible for a privileged
+process to create connections and hand those off to a less privileged
+process. Also, do not allow listen calls, to avoid elevating a socket
+to a listener.
