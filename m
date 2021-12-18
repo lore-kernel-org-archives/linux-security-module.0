@@ -2,154 +2,196 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84ECCC433EF
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 Dec 2021 02:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BC1C433F5
+	for <linux-security-module@archiver.kernel.org>; Sat, 18 Dec 2021 08:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230112AbhLRCiq (ORCPT
+        id S230146AbhLRI0S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Dec 2021 21:38:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4304 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230032AbhLRCiq (ORCPT
+        Sat, 18 Dec 2021 03:26:18 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4306 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229684AbhLRI0S (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Dec 2021 21:38:46 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BI1w58Z005912;
-        Sat, 18 Dec 2021 02:38:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=7zu87PXAcjLj9MwqYNntGAFI5MmEH0+4qQz2VAHHJJk=;
- b=PjnalKm7c4SRXtmg98d1937aHZH1YjLEazZQLY8vtYu9LqoSY2yHJUa/nBfrN1TjiS6d
- sLuBd40STpBKxnc3G+tYRjPLmnI+kP1N244ue7fUdpTdRddq27+svcZTavywvavsgqeV
- W1VZf6WikRkFzu+UajqJqEMJSjer9Qvn50Or7JyzpBYPpT05w6QzAmLpSVC7NwRNPweE
- K66ecnWZIhstQTiDmIyG0WTVMuc7HZOwfTRUq9GZPncJEmTb7cWfl47POOqYPL5nOvxJ
- JbCGJK7YrQc2IlSDMEFDNBYhoQFmmTDS7gyoxmLAlKyWONUJE37yuI9+RfoFCqWZaDEv Lw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3d16er0eyy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 18 Dec 2021 02:38:19 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BI2LJQf013012;
-        Sat, 18 Dec 2021 02:38:19 GMT
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3d16er0eyu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 18 Dec 2021 02:38:19 +0000
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BI2TrdD007495;
-        Sat, 18 Dec 2021 02:38:17 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma02wdc.us.ibm.com with ESMTP id 3cy780nf99-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 18 Dec 2021 02:38:17 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BI2cGag26542506
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 18 Dec 2021 02:38:16 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AB840AE063;
-        Sat, 18 Dec 2021 02:38:16 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6A821AE062;
-        Sat, 18 Dec 2021 02:38:16 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat, 18 Dec 2021 02:38:16 +0000 (GMT)
-Message-ID: <0d6d0a22-0f3a-5f99-e603-f139d8fe7801@linux.ibm.com>
-Date:   Fri, 17 Dec 2021 21:38:16 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v7 00/14] ima: Namespace IMA with audit support in IMA-ns
+        Sat, 18 Dec 2021 03:26:18 -0500
+Received: from fraeml744-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JGJmk1rQpz67KPR;
+        Sat, 18 Dec 2021 16:24:38 +0800 (CST)
+Received: from lhreml738-chm.china.huawei.com (10.201.108.188) by
+ fraeml744-chm.china.huawei.com (10.206.15.225) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Sat, 18 Dec 2021 09:26:15 +0100
+Received: from fraeml704-chm.china.huawei.com (10.206.15.53) by
+ lhreml738-chm.china.huawei.com (10.201.108.188) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2308.20; Sat, 18 Dec 2021 08:26:14 +0000
+Received: from fraeml704-chm.china.huawei.com ([10.206.112.182]) by
+ fraeml704-chm.china.huawei.com ([10.206.112.182]) with mapi id
+ 15.01.2308.020; Sat, 18 Dec 2021 09:26:14 +0100
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+To:     =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+CC:     yusongping <yusongping@huawei.com>,
+        Artem Kuzin <artem.kuzin@huawei.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "Network Development" <netdev@vger.kernel.org>,
+        "netfilter@vger.kernel.org" <netfilter@vger.kernel.org>
+Subject: RE: [RFC PATCH 0/2] Landlock network PoC implementation
+Thread-Topic: [RFC PATCH 0/2] Landlock network PoC implementation
+Thread-Index: AQHX7/uQOxxQo4G2OECEIp7P5i26MqwxPnBQgACSyYCABJH+gIABge7g
+Date:   Sat, 18 Dec 2021 08:26:14 +0000
+Message-ID: <a1769c4239ee4e8aadb65f9ebb6061d8@huawei.com>
+References: <20211210072123.386713-1-konstantin.meskhidze@huawei.com>
+ <b50ed53a-683e-77cf-9dc2-f4ae1b5fa0fd@digikod.net>
+ <12467d8418f04fbf9fd4a456a2a999f1@huawei.com>
+ <b535d1d4-3564-b2af-a5e8-3ba6c0fa86c9@digikod.net>
+ <c8588051-8795-9b8a-cb36-f5440b590581@digikod.net>
+In-Reply-To: <c8588051-8795-9b8a-cb36-f5440b590581@digikod.net>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20211216054323.1707384-1-stefanb@linux.vnet.ibm.com>
- <20211216125027.fte6625wu5vxkjpi@wittgenstein>
- <20211216133148.aw3xs4sxuebkampb@wittgenstein>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20211216133148.aw3xs4sxuebkampb@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: A0GJBnBlQXWp4PxXPatzjUOVrk3uUXSn
-X-Proofpoint-GUID: tqeWImRGSmQGMHofzBCeoZRt7cJw7G8N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-17_10,2021-12-16_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- clxscore=1015 malwarescore=0 suspectscore=0 adultscore=0 mlxscore=0
- spamscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112180012
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.146.86.144]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 12/16/21 08:31, Christian Brauner wrote:
->
-> 1. namespace securityfs
->     This patch is thematically standalone and should move to the
->     beginning of the series.
->     I would strongly recommend to fold patch 9 and 10 into a single patch
->     and add a lengthy explanation. You should be able to recycle a lof of
->     stuff I wrote in earlier reviews.
->
-> 2. Introduce struct ima_namespace and pass it through to all callers:
->     - introduce struct ima_namespace
->     - move all the relevant things into this structure (this also avoids
->       the "avoid_zero_size" hack).
-
-
-We could defer the kmalloc() that doesn't work on a zero-sized request. 
-I would say this  is minor.
-
-
->     - define, setup, and expose init_ima_ns
->     - introduce get_current_ns() and always have it return &init_ima_ns for now
->     - replace all accesses to global variables to go through &init_ima_ns
->     - add new infrastructure you'll need later on
->     Bonus is that you can extend all the functions that later need access
->     to a specific ima namespace to take a struct ima_namespace * argument
->     and pass down &init_ima_ns down (retrieved via get_current_ns()). This
->     will make the actual namespace patch very easy to follow.
->
-> 3. namespace ima
->     - add a new entry for struct ima_namespace to struct user_namespace
->     - add creation helpers, kmem cache etc.
->     - create files in securityfs per ns
-
-I have tried this now and I am looking at 4 remaining patches that need 
-to somehow find its way into v8 without causing too many disturbances. 
-At what point (over how many patches) can I introduce CONFIG_IMA_NS 
-without anything related to IMA namespacing happening? I need it early 
-in 'your 3rd part' since it is also used for conditional compilation 
-(Makefile) and #ifdef's where Makefile content and what the #ifdefs are 
-doing probably shouldn't be squeezed into a single patch just so it's 
-all enabled in one patch, but it should probably still remain logically 
-separated into different patches. Enablement of IMA namespace would be 
-in the very last patch. But there may be several patches between the 
-very last one and CONFIG_IMA_NS is introduced...
-
-v7 at least, before the requirement to do late/lazy initialization, 
-enabled CONFIG_IMA_NS right away and built ever step on top of it, even 
-if the IMA namespace only became **configurable** in the last patch when 
-securityfs was enbled and one could set a policy. From that perspective 
-it would be easier to switch to late initialization in a patch on top of 
-v7 but .. ok, we cannot do that.
-
-
-> This way at all points in the series we have clearly defined semantics
-> where ima namespacing is either fully working or fully not working and
-> the switch is atomic in the patch(es) part of 3.
-Atomic over multiple patches? So introducing CONFIG_IMA_NS that doesn't 
-do anything for several patches is still considered 'atomic' then ?
+SGksIE1pY2th0ZFsDQpUaGFua3MgYWdhaW4gZm9yIHlvdXIgb3BpbmlvbiBhYm91dCBtaW5pbWFs
+IExhbmRsb2NrIElQdjQgbmV0d29yayB2ZXJzaW9uLg0KSSBoYXZlIGFscmVhZHkgc3RhcnRlZCBy
+ZWZhY3RvcmluZyB0aGUgY29kZS4NCkhlcmUgYXJlIHNvbWUgYWRkaXRpb25hbCB0aG91Z2h0cyBh
+Ym91dCB0aGUgZGVzaWduLg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTWlj
+a2HDq2wgU2FsYcO8biA8bWljQGRpZ2lrb2QubmV0PiANClNlbnQ6IEZyaWRheSwgRGVjZW1iZXIg
+MTcsIDIwMjEgNTozOSBQTQ0KVG86IEtvbnN0YW50aW4gTWVza2hpZHplIDxrb25zdGFudGluLm1l
+c2toaWR6ZUBodWF3ZWkuY29tPg0KQ2M6IHl1c29uZ3BpbmcgPHl1c29uZ3BpbmdAaHVhd2VpLmNv
+bT47IEFydGVtIEt1emluIDxhcnRlbS5rdXppbkBodWF3ZWkuY29tPjsgbGludXgtc2VjdXJpdHkt
+bW9kdWxlIDxsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnPjsgTmV0d29yayBE
+ZXZlbG9wbWVudCA8bmV0ZGV2QHZnZXIua2VybmVsLm9yZz47IG5ldGZpbHRlckB2Z2VyLmtlcm5l
+bC5vcmcNClN1YmplY3Q6IFJlOiBbUkZDIFBBVENIIDAvMl0gTGFuZGxvY2sgbmV0d29yayBQb0Mg
+aW1wbGVtZW50YXRpb24NCg0KTmV3IGRpc2N1c3Npb25zIGFuZCBSRkNzIHNob3VsZCBhbHNvIGlu
+Y2x1ZGUgbmV0ZGV2IGFuZCBuZXRmaWx0ZXIgbWFpbGluZyBsaXN0cy4gRm9yIHBlb3BsZSBuZXcg
+dG8gTGFuZGxvY2ssIHRoZSBnb2FsIGlzIHRvIGVuYWJsZSB1bnByaXZpbGVnZWQgcHJvY2Vzc2Vz
+IChhbmQgdGhlbiBwb3RlbnRpYWxseSBtYWxpY2lvdXMgb25lcykgdG8gbGltaXQgdGhlaXIgb3du
+IG5ldHdvcmsgYWNjZXNzIChpLmUuIGNyZWF0ZSBhIHNlY3VyaXR5IHNhbmRib3ggZm9yIHRoZW1z
+ZWx2ZXMpLg0KDQpUaGlua2luZyBtb3JlIGFib3V0IG5ldHdvcmsgYWNjZXNzIGNvbnRyb2wgZm9y
+IExhbmRsb2NrIHVzZSBjYXNlLCBoZXJlIGFyZSBiZXR0ZXIgc3VnZ2VzdGlvbnM6DQoNCk9uIDE0
+LzEyLzIwMjEgMTI6NTEsIE1pY2thw6tsIFNhbGHDvG4gd3JvdGU6DQo+IA0KPiBPbiAxNC8xMi8y
+MDIxIDA0OjQ5LCBLb25zdGFudGluIE1lc2toaWR6ZSB3cm90ZToNCj4+IEhpIE1pY2th0ZFsLg0K
+Pj4gSSd2ZSBiZWVuIHRoaW5raW5nIGFib3V0IHlvdXIgcmVwbHk6DQo+Pg0KPj4+IDQuIEtlcm5l
+bCBvYmplY3RzLg0KPj4+IEZvciBmaWxlc3lzdGVtIHJlc3RyaWN0aW9ucyBpbm9kZXMgb2JqZWN0
+cyBhcmUgdXNlZCB0byB0aWUgbGFuZGxvY2sgDQo+Pj4gcnVsZXMuDQo+Pj4gQnV0IGZvciBzb2Nr
+ZXQgb3BlcmF0aW9ucyBpdCdzIHByZWZlcnJlZCB0byB1c2UgdGFza19zdHJ1Y3Qgb2JqZWN0IA0K
+Pj4+IG9mIGEgcHJvY2VzcywgY2F1c2Ugc29ja2V0cycgaW5vZGVzIGFyZSBjcmVhdGVkIGp1c3Qg
+YWZ0ZXINCj4+PiBzZWN1cml0eV9zb2NrZXRfY3JlYXRlKCkgaG9vayBpcyBjYWxsZWQsIGFuZCBp
+ZiBpdHMgbmVlZGVkIHRvIGhhdmUgDQo+Pj4gc29tZSByZXN0cmljdGlvbiBydWxlIGZvciBjcmVh
+dGluZyBzb2NrZXRzLCB0aGlzIHJ1bGUgY2FuJ3QgYmUgdGllZCANCj4+PiB0byBhIHNvY2tldCBp
+bm9kZSBjYXVzZSB0aGVyZSBpcyBubyBhbnkgaGFzIGJlZW4gY3JlYXRlZCBhdCB0aGUgDQo+Pj4g
+aG9vaydzIGNhdGNoaW5nIG1vbWVudCwgc2VlIHRoZSBzb2NrX2NyZWF0ZV9saXRlKCkgZnVuY3Rp
+b24gYmVsb3c6DQo+Pg0KPj4gLSBGb3IgdGhlIGZpbGUgc3lzdGVtLCB3ZSB1c2UgaW5vZGVzIHRv
+IGlkZW50aWZ5IGhpZXJhcmNoaWVzLiBXZSANCj4+IGNhbid0DQo+PiAtIHNhZmVseSByZWx5IG9u
+IHN0YXRlbGVzcyBvYmplY3RzIChlLmcuIHBhdGggc3RyaW5ncykgYmVjYXVzZSB0aGUgDQo+PiBm
+aWxlDQo+PiAtIHN5c3RlbSBjaGFuZ2VzLCBhbmQgdGhlbiB0aGUgcnVsZXMgbXVzdCBjaGFuZ2Ug
+d2l0aCBpdC4NCj4+DQo+PiAtIFRvIGlkZW50aWZ5IG5ldHdvcmsgb2JqZWN0cyAoZnJvbSB0aGUg
+dXNlciBwb2ludCBvZiB2aWV3KSwgd2UgY2FuIA0KPj4gcmVseQ0KPj4gLSBvbiBzdGF0ZWxlc3Mg
+cnVsZSBkZWZpbml0aW9ucyBiZWNhdXNlIHRoZXkgbWF5IGJlIGFic29sdXRlIChpLmUuIElQDQo+
+PiAtIGFkZHJlc3MpLCBlLmcuIHNhbmRib3ggcHJvY2VzcyBjcmVhdGluZyBhIG5ldyBjb25uZWN0
+aW9uIG9yIA0KPj4gcmVjZXZlaW5nIGFuDQo+PiAtIFVEUCBwYWNrZXQuIEl0IGlzIG5vdCBiZSB0
+aGUgY2FzZSB3aXRoIFVOSVggc29ja2V0IGlmIHRoZXkgYXJlIGNvbWUgDQo+PiBmcm9tDQo+PiAt
+IGEgcGF0aCAoaS5lLiBpbm9kZSkgdGhvdWdoLiBJbiB0aGlzIGNhc2Ugd2UnbGwgaGF2ZSB0byB1
+c2UgdGhlIA0KPj4gZXhpc3RpbmcNCj4+IC0gZmlsZSBzeXN0ZW0gaWRlbnRpZmljYXRpb24gbWVj
+aGFuaXNtIGFuZCBwcm9iYWJseSBleHRlbmQgdGhlIA0KPj4gY3VycmVudCBGUw0KPj4gLSBhY2Nl
+c3MgcmlnaHRzLg0KPj4gLSBBIHNhbmRib3ggaXMgYSBzZXQgb2YgcHJvY2Vzc2VzIGhhbmRsZWQg
+YXMgInN1YmplY3RzIi4gR2VuZXJpYyBpbmV0DQo+PiAtIHJ1bGVzIHNob3VsZCBub3QgYmUgdGll
+ZCB0byBwcm9jZXNzZXMgKGZvciBub3cpIGJ1dCBvbiANCj4+IHN1Ym5ldHMvcHJvdG9jb2xzLg0K
+Pj4NCj4+IEluIGN1cnJlbnQgTGFuZGxvY2sgdmVyc2lvbiBpbm9kZXMgYXJlIHRoZSBvYmplY3Rz
+IHRvIHRpZSBydWxlcyB0by4NCj4+IEZvciBuZXR3b3JrIHlvdSBhcmUgc2F5aW5nIHRoYXQgd2Ug
+Y2FuIHJlbHkgb24gc3RhdGVsZXNzIHJ1bGUgDQo+PiBkZWZpbml0aW9ucyBhbmQgcnVsZXMgc2hv
+dWxkIGJlIHRpZWQgdG8gc3VibmV0cy9wcm90b2NvbHMsIG5vdCB0byANCj4+IHByb2Nlc3NlcycN
+Cj4+IHRhc2tfc3RydWN0IG9iamVjdHMuDQo+PiBDYXVzZSBMYW5kbG9jayBhcmNoaXRlY3R1cmUg
+cmVxdWlyZXMgYWxsIHJ1bGVzIHRvIGJlIHRpZWQgdG8gYSANCj4+IGRpZmZlcmVudCBrZXJuZWwg
+b2JqZWN0cywgYW5kIHdoZW4gTFNNIGhvb2tzIGFyZSBjYXVnaHQgdGhlcmUgbXVzdCBiZSANCj4+
+IHNlYXJjaCBwcm9jZWR1cmUgY29tcGxldGVkIGluIGEgcnVsZXNldCdzIHJlZC1ibGFjayB0cmVl
+IHN0cnVjdHVyZToNCj4+IMKgwqDCoMKga2VybmVsX29iamVjdCAtPiBsYW5kbG9ja19vYmplY3Qg
+PC0gbGFuZGxvY2tfcnVsZSANCj4+IDwtLS0tLWxhbmRsb2NrX3J1bGVzZXQNCj4+DQo+PiBXaGF0
+IGtpbmQgb2Yga2VybmVsIG9iamVjdHMgZG8geW91IG1lYW4gYnkgc3VibmV0cy9wcm90b2NvbHM/
+DQo+PiBEbyB5b3Ugc3VnZ2VzdCB1c2luZyBzb2NrZXRzJyBpbm9kZXMgaW4gdGhpcyBjYXNlIG9y
+IHVzaW5nIG5ldHdvcmsgDQo+PiBydWxlcyB3aXRob3V0IHRvIGJlIHRpZWQgdG8gYW55IGtlcm5l
+bCBvYmplY3Q/DQo+IA0KPiBUaGUgc3VibmV0cy9wcm90b2NvbHMgaXMgdGhlIGRlZmluaXRpb24g
+cHJvdmlkZWQgd2hlbiBjcmVhdGluZyBhIHJ1bGUgDQo+IChpLmUuIHRoZSBvYmplY3QgZnJvbSB0
+aGUgdXNlciBwb2ludCBvZiB2aWV3KSwgYnV0IHRoZSBrZXJuZWwgbWF5IA0KPiByZWxpZXMgb24g
+b3RoZXIgaW50ZXJuYWwgcmVwcmVzZW50YXRpb25zLiBJIGd1ZXNzIGRhdGFncmFtIHBhY2tldHMg
+DQo+IHdvdWxkIG5lZWQgdG8gYmUgbWF0Y2hlZCBhZ2FpbnN0IElQL3BvcnQgZXZlcnl0aW1lIHRo
+ZXkgYXJlIHJlY2VpdmVkIA0KPiBieSBhIHNhbmRib3hlZCBwcm9jZXNzLCBidXQgdGFnZ2luZyBz
+b2NrZXRzIG9yIHRoZWlyIHVuZGVybHlpbmcgaW5vZGVzIA0KPiBmb3Igc3RyZWFtIGNvbm5lY3Rp
+b25zIG1ha2Ugc2Vuc2UuDQo+IA0KPiBJIGRvbid0IGhhdmUgZXhwZXJpZW5jZSBpbiB0aGUgbmV0
+d29yayBMU00gaG9va3MgdGhvdWdoLCBhbnkgaW5wdXQgaXMgDQo+IHdlbGNvbWUuDQo+IA0KPj4g
+wqDCoMKgwqBzb2NrZXRfaW5vZGUgLT4gbGFuZGxvY2tfb2JqZWN0IDwtIGxhbmRsb2NrX3J1bGUg
+DQo+PiA8LS0tLS1sYW5kbG9ja19ydWxlc2V0DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+T1INCj4+IMKgwqDCoMKgbGFuZGxvY2tfb2JqZWN0IDwtIGxhbmRsb2NrX3J1bGUgPC0tLS0tbGFu
+ZGxvY2tfcnVsZXNldA0KPj4NCj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+PiBGcm9t
+OiBNaWNrYcOrbCBTYWxhw7xuIDxtaWNAZGlnaWtvZC5uZXQ+DQo+PiBTZW50OiBNb25kYXksIERl
+Y2VtYmVyIDEzLCAyMDIxIDQ6MzAgUE0NCj4+IFRvOiBLb25zdGFudGluIE1lc2toaWR6ZSA8a29u
+c3RhbnRpbi5tZXNraGlkemVAaHVhd2VpLmNvbT4NCj4+IENjOiBsaW51eC1zZWN1cml0eS1tb2R1
+bGVAdmdlci5rZXJuZWwub3JnOyB5dXNvbmdwaW5nIA0KPj4gPHl1c29uZ3BpbmdAaHVhd2VpLmNv
+bT47IEFydGVtIEt1emluIDxhcnRlbS5rdXppbkBodWF3ZWkuY29tPg0KPj4gU3ViamVjdDogUmU6
+IFtSRkMgUEFUQ0ggMC8yXSBMYW5kbG9jayBuZXR3b3JrIFBvQyBpbXBsZW1lbnRhdGlvbg0KPj4N
+Cj4+IEhpIEtvbnN0YW50aW4sDQo+Pg0KPj4gT24gMTAvMTIvMjAyMSAwODoyMSwgS29uc3RhbnRp
+biBNZXNraGlkemUgd3JvdGU6DQoNClsuLi5dDQoNCj4+DQo+PiBUbyBzdW0gdXAsIGZvciBJUHY0
+IHJlc3RyaWN0aW9ucywgd2UgbmVlZCBhIG5ldyBydWxlIHR5cGUgaWRlbnRpZmllZCANCj4+IHdp
+dGggTEFORExPQ0tfUlVMRV9ORVRfQ0lEUjQuIFRoaXMgd2lsbCBoYW5kbGUgYSBuZXcgc3RydWN0
+IA0KPj4gbGFuZGxvY2tfbmV0X2NpZHI0X2F0dHIgew0KPj4gwqDCoMKgwqDCoCBfX3U2NCBhbGxv
+d2VkX2FjY2VzczsNCj4+IMKgwqDCoMKgwqAgX191MzIgYWRkcmVzczsgLy8gSVB2NA0KPj4gwqDC
+oMKgwqDCoCBfX3U4IHByZWZpeDsgLy8gRnJvbSAwIHRvIDMyDQo+PiDCoMKgwqDCoMKgIF9fdTgg
+dHlwZTsgLy8gU09DS19ER1JBTSwgU09DS19TVFJFQU0NCj4+IMKgwqDCoMKgwqAgX191MTYgcG9y
+dDsNCj4+IH0gX19hdHRyaWJ1dGVfXygocGFja2VkKSk7DQo+PiAvLyBodHRwczovL2RhdGF0cmFj
+a2VyLmlldGYub3JnL2RvYy9odG1sL3JmYzQ2MzINCg0KPj4gSVAgYWRkcmVzc2VzIChhbmQgc3Vi
+bmV0cykgc2hvdWxkIG5vdCBiZSBwYXJ0IG9mIGEgcnVsZSwgYXQgbGVhc3QgZm9yIG5vdy4gSW5k
+ZWVkLCBJUCBhZGRyZXNzZXMgYXJlIHRpZWQgZWl0aGVyIHRvIHRoZSBzeXN0ZW0gYXJjaGl0ZWN0
+dXJlIChlLmcuIGNvbnRhaW5lciBjb25maWd1cmF0aW9uKSwgdGhlIGxvY2FsIG5ldHdvcmsgb3Ig
+SW50ZXJuZXQsIGhlbmNlIG1vdmluZyB0YXJnZXRzIG5vdCA+PiBjb250cm9sbGVkIGJ5IGFwcGxp
+Y2F0aW9uIGRldmVsb3BlcnMuIE1vcmVvdmVyLCBmcm9tIGEga2VybmVsIHBvaW50IG9mIHZpZXcs
+IGl0IGlzIG1vcmUgY29tcGxleCB0byBjaGVjayBhbmQgaGFuZGxlIHN1Ym5ldHMsIHdoaWNoIGFy
+ZSBtb3N0IG9mIHRoZSB0aW1lIHRpZWQgdG8gdGhlIE5ldGZpbHRlciBpbmZyYXN0cnVjdHVyZSwg
+bm90IHN1aXRhYmxlIGZvciBMYW5kbG9jayBiZWNhdXNlID4+IG9mIGl0cyB1bnByaXZpbGVnZWQg
+bmF0dXJlLg0KDQo+PiBPbiB0aGUgb3RoZXIgc2lkZSwgcHJvdG9jb2xzIHN1Y2ggYXMgVENQIGFu
+ZCB0aGVpciBhc3NvY2lhdGVkIHBvcnRzIGFyZSBub3JtYWxpemVkIGFuZCBhcmUgdGllZCB0byBh
+biBhcHBsaWNhdGlvbiBzZW1hbnRpYyAoZS5nLiBUQ1AvNDQzIGZvciBIVFRQUykuDQoNCj4+IFRo
+ZXJlIGlzIG90aGVyIGFkdmFudGFnZXMgdG8gZXhjbHVkZSBzdWJuZXRzIGZyb20gdGhpcyB0eXBl
+IG9mIHJ1bGVzIGZvciBub3cgKGUuZy4gdGhleSBjb3VsZCBiZSBjb21wb3NlZCB3aXRoIHByb3Rv
+Y29scy9wb3J0cyksIGJ1dCB0aGF0IG1heSBjb21lIGxhdGVyLg0KDQo+PiBJIHRoZW4gdGhpbmsg
+dGhhdCBhIGZpcnN0IE1WUCB0byBicmluZyBuZXR3b3JrIGFjY2VzcyBjb250cm9sIHN1cHBvcnQg
+dG8gTGFuZGxvY2sgc2hvdWxkIGZvY3VzIG9ubHkgb24gVENQIGFuZCByZWxhdGVkIHBvcnRzIChp
+LmUuIHNlcnZpY2VzKS4gSSBwcm9wb3NlIHRvIG5vdCB1c2UgbXkgcHJldmlvdXMgZGVmaW5pdGlv
+biBvZiBsYW5kbG9ja19uZXRfY2lkcjRfYXR0ciBidXQgdG8gaGF2ZSBhID4+IGxhbmRsb2NrX25l
+dF9zZXJ2aWNlX2F0dHIgaW5zdGVhZDoNCg0KPj4gc3RydWN0IGxhbmRsb2NrX25ldF9zZXJ2aWNl
+X2F0dHIgew0KPj4gICAgIF9fdTY0IGFsbG93ZWRfYWNjZXNzOyAvLyBMQU5ETE9DS19ORVRfKl9U
+Q1ANCj4+ICAgICBfX3UxNiBwb3J0Ow0KPj4gfSBfX2F0dHJpYnV0ZV9fKChwYWNrZWQpKTsNCg0K
+Pj4gVGhpcyBhdHRyaWJ1dGUgc2hvdWxkIGhhbmRsZSBJUHY0IGFuZCBJUHY2IGluZGlzdGluZ3Vp
+c2hhYmx5Lg0KDQpbLi4uXQ0KDQo+Pg0KPj4gQWNjZXNzZXMvc3VmZml4ZXMgc2hvdWxkIGJlOg0K
+Pj4gLSBDUkVBVEUNCj4+IC0gQUNDRVBUDQo+PiAtIEJJTkQNCj4+IC0gTElTVEVODQo+PiAtIENP
+Tk5FQ1QNCj4+IC0gUkVDRUlWRSAoUkVDRUlWRV9GUk9NIGFuZCBTRU5EX1RPIHNob3VsZCBub3Qg
+YmUgbmVlZGVkKQ0KPj4gLSBTRU5EDQo+PiAtIFNIVVRET1dODQo+PiAtIEdFVF9PUFRJT04gKEdF
+VFNPQ0tPUFQpDQo+PiAtIFNFVF9PUFRJT04gKFNFVFNPQ0tPUFQpDQoNCj4+IEZvciBub3csIHRo
+ZSBvbmx5IGFjY2VzcyByaWdodHMgc2hvdWxkIGJlIExBTkRMT0NLX0FDQ0VTU19ORVRfQklORF9U
+Q1AgYW5kIExBTkRMT0NLX0FDQ0VTU19ORVRfQ09OTkVDVF9UQ1AgKHRpZSB0byB0d28gTFNNIGhv
+b2tzIHdpdGggc3RydWN0IHNvY2thZGRyKS4NCg0KPj4gVGhlc2UgYXR0cmlidXRlIGFuZCBhY2Nl
+c3MgcmlnaHQgY2hhbmdlcyByZWR1Y2UgdGhlIHNjb3BlIG9mIHRoZSBuZXR3b3JrIGFjY2VzcyBj
+b250cm9sIGFuZCBtYWtlIGl0IHNpbXBsZXIgYnV0IHN0aWxsIHJlYWxseSB1c2VmdWwuIERhdGFn
+cmFtIChlLmcuIFVEUCwgd2hpY2ggY291bGQgYWRkIEJJTkRfVURQIGFuZCBTRU5EX1VEUCkgc29j
+a2V0cyB3aWxsIGJlIG1vcmUgDQo+PmNvbXBsZXggdG8gcmVzdHJpY3QgY29ycmVjdGx5IGFuZCBz
+aG91bGQgdGhlbiBjb21lIGluIGFub3RoZXIgcGF0Y2ggc2VyaWVzLCBvbmNlIFRDUCBpcyBzdXBw
+b3J0ZWQuDQoNCkkgdGhpbmsgdGhhdCBoYXZpbmcgYWNjZXNzIHJpZ2h0cyBsaWtlIExBTkRMT0NL
+X0FDQ0VTU19ORVRfQ1JFQVRFX1RDUF9TT0NLRVRfREVOWS9MQU5ETE9DS19BQ0NFU1NfTkVUX0NS
+RUFURV9VRFBfU09DS0VUX0RFTlkgbWlnaHQgYmUgdXNlZnVsIGR1cmluZyBpbml0aWFsaXphdGlv
+biBwaGFzZSBvZiBjb250YWluZXIvc2FuZGJveCwgY2F1c2UgYSB1c2VyIGNvdWxkIGhhdmUgdGhl
+IHBvc3NpYmlsaXR5IHRvIHJlc3RyaWN0IHRoZSBjcmVhdGlvbiBvZiBzb21lIHR5cGUgb2Ygc29j
+a2V0cyBhdCBhbGwsIGFuZCB0byByZWR1Y2UgdGhlIGF0dGFjayBzdXJmYWNlIHJlbGF0ZWQgdG8g
+c2VjdXJpdHkgYXNwZWN0Lg0KU28gdGhlIGxvZ2ljIGNvdWxkIGJlIHRoZSBmb2xsb3dpbmc6DQoJ
+MS4gUHJvY2VzcyByZXN0cmljdHMgY3JlYXRpb24gVURQIHNvY2tldHMsIGFsbG93cyBUQ1Agb25l
+LiAgDQoJCS0gTEFORExPQ0tfQUNDRVNTX05FVF9DUkVBVEVfKl9TT0NLRVRfREVOWSBydWxlcyBh
+cmUgdGllZCB0byBwcm9jZXNzIHRhc2tfc3RydWN0IGNhdXNlIHRoZXJlIGFyZSBubyBzb2NrZXRz
+IGlub2RlcyBjcmVhdGVkIGF0IHRoaXMgbW9tZW50Lg0KCTIuIENyZWF0ZXMgbmVjZXNzYXJ5IG51
+bWJlciBvZiBzb2NrZXRzLg0KCTMuIFJlc3RyaWN0cyBzb2NrZXRzJyBhY2Nlc3MgcmlnaHRzLiAN
+CgkJLSBMQU5ETE9DS19BQ0NFU1NfTkVUX0JJTkRfKiAvIExBTkRMT0NLX0FDQ0VTU19ORVRfQ09O
+TkVDVF8qIGFjY2VzcyByaWdodHMgYXJlIHRpZWQgdG8gc29ja2V0cyBpbm9kZXMgaW5kaXZpZHVh
+bGx5LgkNCg==
