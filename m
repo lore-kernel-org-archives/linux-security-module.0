@@ -2,96 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C96CC433EF
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 Dec 2021 10:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15243C433EF
+	for <linux-security-module@archiver.kernel.org>; Sat, 18 Dec 2021 13:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232767AbhLRK7D (ORCPT
+        id S231916AbhLRNkU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 18 Dec 2021 05:59:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34982 "EHLO
+        Sat, 18 Dec 2021 08:40:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbhLRK7D (ORCPT
+        with ESMTP id S229580AbhLRNkU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 18 Dec 2021 05:59:03 -0500
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [IPv6:2001:1600:3:17::42af])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE3F3C061574
-        for <linux-security-module@vger.kernel.org>; Sat, 18 Dec 2021 02:59:02 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JGNBr62JtzMqHGq;
-        Sat, 18 Dec 2021 11:59:00 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4JGNBr2HYYzlj3vs;
-        Sat, 18 Dec 2021 11:59:00 +0100 (CET)
-Message-ID: <c325e5f6-d8d5-b085-fd2d-7f454629a1ec@digikod.net>
-Date:   Sat, 18 Dec 2021 12:01:15 +0100
+        Sat, 18 Dec 2021 08:40:20 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC28AC061574;
+        Sat, 18 Dec 2021 05:40:19 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id g14so18709762edb.8;
+        Sat, 18 Dec 2021 05:40:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p/UqZ/upQjkHGa9bi+yKS/UZ7AQ0AqXRlMB4Am1SrGQ=;
+        b=e/IMQgAemgDsxjxrh8euApfhM10ZNYlxBo5XoHX1FVakKBP33qmVYSm0XAgcf+sGt9
+         N+pdVlpVrGCSvQ6RT36/A1wgbAhnh54CRAQM08W1Vf2qs4S6P8VVVlbE9KYzRp7suzKO
+         c9JC7HvfyY+C0c1s5kwo16zGXovSE+ExAWKOYpgvZI+Gs3989DGHwoOoC3Uyex5HCp9F
+         /2y/bxEriQgKzy2TxsZ5Wjgz1oV2iweJGNqEtDvHh4Uz8gdKEnblAHM9jxe0BKH3Fc5H
+         gP8Y3apJlIDw0YsD5JieWdxvbQUHp7M48cnMwVuLqZFs7jpZDRJdHCrNS3nLBASNBASK
+         FKlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p/UqZ/upQjkHGa9bi+yKS/UZ7AQ0AqXRlMB4Am1SrGQ=;
+        b=zKWBNNDbWP/5PLooBb+GmtddU4otKquugFExPAGWZ66AjMx4L/8WATo7NYI+vikPF6
+         k7YgaqSVhDtsq0dK5MAIAXAidslq6iBN/IiQtEWw6KlwgZJDCsYxOHKvoj31ke2vc4qn
+         yhPZLjuq9nsxLeKxC1atP0S1SINQbvp9Li3q+2f32raq5KHO/aVgoCRnS2KDyhBgpoHd
+         JfRAVJy6/sSv05oBfGMAvYwJO+gPZS6qYMEeTVK8IGZahUL7N8jIWss+MfkprPi0vUH+
+         ysR1vdnyJMB0U58ROlHON6cvpor7UIXnuEJByS9Sb2bXTfXH4R+7YO1rRVNWX7Jyh+b5
+         G8Bw==
+X-Gm-Message-State: AOAM530A+boLCvF4TzDCa4QYFb5b689pNhJreDfCux60jEPFOK415WFq
+        BddWZe4fHiCfCftTNMeo4WYO8ifhYtqmtrrQYdM=
+X-Google-Smtp-Source: ABdhPJz6mWnc12+sqhGlOiMgvbp8wGfd4d2dqfrf3Ls2jNpW+376Cl2K3k6X9RT/2x/qLIbTy2HMOHGzuqI6Z/rEm6Y=
+X-Received: by 2002:aa7:d593:: with SMTP id r19mr2727512edq.168.1639834818167;
+ Sat, 18 Dec 2021 05:40:18 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     yusongping <yusongping@huawei.com>,
-        Artem Kuzin <artem.kuzin@huawei.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        "netfilter@vger.kernel.org" <netfilter@vger.kernel.org>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-References: <20211210072123.386713-1-konstantin.meskhidze@huawei.com>
- <b50ed53a-683e-77cf-9dc2-f4ae1b5fa0fd@digikod.net>
- <12467d8418f04fbf9fd4a456a2a999f1@huawei.com>
- <b535d1d4-3564-b2af-a5e8-3ba6c0fa86c9@digikod.net>
- <c8588051-8795-9b8a-cb36-f5440b590581@digikod.net>
- <a1769c4239ee4e8aadb65f9ebb6061d8@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH 0/2] Landlock network PoC implementation
-In-Reply-To: <a1769c4239ee4e8aadb65f9ebb6061d8@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CAHC9VhS=WgqJgqpQq9J+0Pec9u8e1VnvGwqOimR54wm6TRptVA@mail.gmail.com>
+ <CAHk-=wiiqvcA3noHDqJt2=ik5ikQbycdFQ7s=uq70FcGxWgXvg@mail.gmail.com>
+ <CAN-5tyEKGQu1Y=o8KfsX3q9NkP4XZRos5stwmrT=ZV1hr1fWrQ@mail.gmail.com> <CAHk-=wiDT0aZO6UFnb9sW4rfuxp4xfPTSydnifVgL6H8b5Rb4Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wiDT0aZO6UFnb9sW4rfuxp4xfPTSydnifVgL6H8b5Rb4Q@mail.gmail.com>
+From:   Olga Kornievskaia <aglo@umich.edu>
+Date:   Sat, 18 Dec 2021 08:40:06 -0500
+Message-ID: <CAN-5tyEfuh9zNUsmrNd6kVFuuwmhVdGXM4JboA4OzgQqiqCC_Q@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux fixes for v5.16 (#3)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Dec 17, 2021 at 4:47 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Fri, Dec 17, 2021 at 1:08 PM Olga Kornievskaia <aglo@umich.edu> wrote:
+> >
+> > Can you please elaborate on what is problematic with the two patches
+> > you've highlighted.
+>
+> Commit ec1ade6a0448 ("nfs: account for selinux security context when
+> deciding to share superblock") adds the call to
+> security_sb_mnt_opts_compat() from the nfs_compare_mount_options()
+> function.
+>
+> But nfs_compare_mount_options() is called from nfs_compare_super(),
+> which is used as the the "test" callback function for the "sget_fc()"
+> call:
+>
+>         s = sget_fc(fc, compare_super, nfs_set_super);
+>
+> and sget_fc() traverses all the mounted filesystems of this type -
+> while holding the superblock lock that protects that list.
+>
+> So nfs_compare_super() may not sleep. It's called while holding a very
+> core low-level lock, and it really is supposed to only do a "test".
+> Not some complex operation that may do dynamic memory allocations and
+> sleep.
+>
+> Yet that is exactly what security_sb_mnt_opts_compat() does, as done
+> in 69c4a42d72eb ("lsm,selinux: add new hook to compare new mount to an
+> existing mount").
+>
+> So those two patches are completely broken.
+>
+> Now, commit cc274ae7763d ("selinux: fix sleeping function called from
+> invalid context") that I just merged "fixes" this by making the
+> allocations in parse_sid() be GFP_NOWAIT.
+>
+> That is a *HORRIBLE* fix. It's a horrible fix because
+>
+>  (a) GFP_NOWAIT can fail very easily, causing the mount to randomly
+> fail for non-obvious reasons.
+>
+>  (b) even when it doesn't fail, you really shouldn't do things like
+> this under a very core spinlock.
+>
+> Also, the original place - nfs_compare_mount_options() is called over
+> and over for each mount, so you're parsing those same mount options
+> over and over again. So not only was this sequence buggy, it's really
+> not very smart to begin with.
+>
+> That's why I say that a much better approach would have been to parse
+> the mount options _once_ at the beginning, saving them off in some
+> temporary supoerblock (or whatever - anything that can hold those
+> pre-parsed mount options), and then have the "test" callback literally
+> just check those parsed options.
+>
+> That's not necessarily the only way to go about this - there are
+> probably other approaches too, I didn't really think too much about
+> this. But those two commits on their own are buggy, and the fix is
+> somewhat problematic too.
 
-On 18/12/2021 09:26, Konstantin Meskhidze wrote:
-> Hi, Mickaёl
-> Thanks again for your opinion about minimal Landlock IPv4 network version.
-> I have already started refactoring the code.
-> Here are some additional thoughts about the design.
+Thank you for the explanation. We will try to accomplish what you
+describe. We'll separate the ability to parse mount options without
+checking them and then add the ability to compare/check security
+contexts (if that's the right term). Then selinux parsing can allocate
+without setting GFP_NOWAIT but do it outside of the nfs_compare_super.
 
-[...]
-
->>>
->>> Accesses/suffixes should be:
->>> - CREATE
->>> - ACCEPT
->>> - BIND
->>> - LISTEN
->>> - CONNECT
->>> - RECEIVE (RECEIVE_FROM and SEND_TO should not be needed)
->>> - SEND
->>> - SHUTDOWN
->>> - GET_OPTION (GETSOCKOPT)
->>> - SET_OPTION (SETSOCKOPT)
-> 
->>> For now, the only access rights should be LANDLOCK_ACCESS_NET_BIND_TCP and LANDLOCK_ACCESS_NET_CONNECT_TCP (tie to two LSM hooks with struct sockaddr).
-> 
->>> These attribute and access right changes reduce the scope of the network access control and make it simpler but still really useful. Datagram (e.g. UDP, which could add BIND_UDP and SEND_UDP) sockets will be more
->>> complex to restrict correctly and should then come in another patch series, once TCP is supported.
-> 
-> I think that having access rights like LANDLOCK_ACCESS_NET_CREATE_TCP_SOCKET_DENY/LANDLOCK_ACCESS_NET_CREATE_UDP_SOCKET_DENY might be useful during initialization phase of container/sandbox, cause a user could have the possibility to restrict the creation of some type of sockets at all, and to reduce the attack surface related to security aspect.
-> So the logic could be the following:
-> 	1. Process restricts creation UDP sockets, allows TCP one.
-> 		- LANDLOCK_ACCESS_NET_CREATE_*_SOCKET_DENY rules are tied to process task_struct cause there are no sockets inodes created at this moment.
-> 	2. Creates necessary number of sockets.
-> 	3. Restricts sockets' access rights.
-> 		- LANDLOCK_ACCESS_NET_BIND_* / LANDLOCK_ACCESS_NET_CONNECT_* access rights are tied to sockets inodes individually.	
-> 
-
-Reducing the attack surface on the kernel is valuable but not the 
-primary goal of Landlock. seccomp is designed for this task and a 
-seccomp filters can easily forbid creation of specific sockets. We 
-should consider using both Landlock and seccomp, and your use case of 
-denying UDP vs. TCP is good.
-
-Anyway, the LANDLOCK_ACCESS_NET_CREATE_TCP_SOCKET_DENY name in not 
-appropriate. Indeed, mixing "access" and "deny" doesn't make sense. A 
-LANDLOCK_ACCESS_NET_CREATE_TCP access could be useful if we can define 
-such TCP socket semantic, e.g. with a port, which is not possible when 
-creating a socket, and it is OK.
+>
+>                      Linus
