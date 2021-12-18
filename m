@@ -2,99 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D238DC433EF
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 Dec 2021 02:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84ECCC433EF
+	for <linux-security-module@archiver.kernel.org>; Sat, 18 Dec 2021 02:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbhLRCJd (ORCPT
+        id S230112AbhLRCiq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Dec 2021 21:09:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33792 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbhLRCJc (ORCPT
+        Fri, 17 Dec 2021 21:38:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4304 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230032AbhLRCiq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Dec 2021 21:09:32 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55392C061574;
-        Fri, 17 Dec 2021 18:09:32 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id x1-20020a17090a2b0100b001b103e48cfaso5336193pjc.0;
-        Fri, 17 Dec 2021 18:09:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=88sLAXKbpDtuckNappVG5AxY3AxdKv0wD92jwdKYDFo=;
-        b=NUrwECMo5wRr//176ypvuNcJwzdwMws77hAy68rN50243IdUlXqijNxYYgjZ/CBHdW
-         V9SC9dPsvIREFD+NY8Fpl7wi1DcDLZ5/VhaeknCxTuxsb1J71doLDFfBJBwIvZLfiCTX
-         dPl9oEjL8LGrO19q2PreIr0WnebmmJGQU8aRqjtShHvyQmydjuXk1RUiKWN+pF1N6PrR
-         ZPNBdThKUCHDiRHuf59glurWn6xoMS6Vx2qZMZjCwqyhBL9qNfJRACp2F6IjSh8cDHPJ
-         HBKMi9E92EL+C7JrKnaQ/Ac3m5yyJWgm/hLuahj4Zn0y1q4r1aoMzm1JSKnY2gawSQ+3
-         JObg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=88sLAXKbpDtuckNappVG5AxY3AxdKv0wD92jwdKYDFo=;
-        b=GvwcqA0Rn1He+hEY+DWl4Dg7BbsaFUvbb6I2LL4DRkA0DsXFn1FJ82LsqNNKVI3CJS
-         DLSOwlWxG01idjGP+DXhdy0aY40OU8HNJ1C29A67U5gD8kAVPEE9Jb8Qy1q+0k01tngD
-         fyKfReehz40AmBBBscXSUd/6Y00wL0SORBgIRO0J2RYF+rbwguMncb+bfOCy9hxBWoXH
-         Bgy4McUZYBk0220JkMPW1JdDDgB0YCWuuaSXfKqNx2hpb7qkheDhrXBTdvg1xO05yBNL
-         8WDpKbkEJciIkunVqsNMBhthBAlkb941rPCLi/JreEiAgz5YqytCOmYGDXWIA8PmdoG/
-         xvjw==
-X-Gm-Message-State: AOAM531C0Eo+zdnAd1Zj5YI608spTVMMg6i3c4PKbjBjdb+NQHKsC4jU
-        VwIfGg+cidPz7/9oa1JddP0=
-X-Google-Smtp-Source: ABdhPJx2Au3Ajb0Yhbc6biqjKH3SIVs1XyMXKIWSWaA9YTHtB7mStvh3YfgJz7bdn9865v/FP6tT5w==
-X-Received: by 2002:a17:90b:2504:: with SMTP id ns4mr8461021pjb.40.1639793371832;
-        Fri, 17 Dec 2021 18:09:31 -0800 (PST)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id g1sm9287137pgm.23.2021.12.17.18.09.28
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Dec 2021 18:09:31 -0800 (PST)
-From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>
-Subject: [PATCH] integrity: Do not load MOK and MOKx when secure boot be disabled
-Date:   Sat, 18 Dec 2021 10:09:05 +0800
-Message-Id: <20211218020905.7187-1-jlee@suse.com>
-X-Mailer: git-send-email 2.12.3
+        Fri, 17 Dec 2021 21:38:46 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BI1w58Z005912;
+        Sat, 18 Dec 2021 02:38:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=7zu87PXAcjLj9MwqYNntGAFI5MmEH0+4qQz2VAHHJJk=;
+ b=PjnalKm7c4SRXtmg98d1937aHZH1YjLEazZQLY8vtYu9LqoSY2yHJUa/nBfrN1TjiS6d
+ sLuBd40STpBKxnc3G+tYRjPLmnI+kP1N244ue7fUdpTdRddq27+svcZTavywvavsgqeV
+ W1VZf6WikRkFzu+UajqJqEMJSjer9Qvn50Or7JyzpBYPpT05w6QzAmLpSVC7NwRNPweE
+ K66ecnWZIhstQTiDmIyG0WTVMuc7HZOwfTRUq9GZPncJEmTb7cWfl47POOqYPL5nOvxJ
+ JbCGJK7YrQc2IlSDMEFDNBYhoQFmmTDS7gyoxmLAlKyWONUJE37yuI9+RfoFCqWZaDEv Lw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3d16er0eyy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 18 Dec 2021 02:38:19 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BI2LJQf013012;
+        Sat, 18 Dec 2021 02:38:19 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3d16er0eyu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 18 Dec 2021 02:38:19 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BI2TrdD007495;
+        Sat, 18 Dec 2021 02:38:17 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma02wdc.us.ibm.com with ESMTP id 3cy780nf99-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 18 Dec 2021 02:38:17 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BI2cGag26542506
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 18 Dec 2021 02:38:16 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AB840AE063;
+        Sat, 18 Dec 2021 02:38:16 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A821AE062;
+        Sat, 18 Dec 2021 02:38:16 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat, 18 Dec 2021 02:38:16 +0000 (GMT)
+Message-ID: <0d6d0a22-0f3a-5f99-e603-f139d8fe7801@linux.ibm.com>
+Date:   Fri, 17 Dec 2021 21:38:16 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v7 00/14] ima: Namespace IMA with audit support in IMA-ns
+Content-Language: en-US
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+References: <20211216054323.1707384-1-stefanb@linux.vnet.ibm.com>
+ <20211216125027.fte6625wu5vxkjpi@wittgenstein>
+ <20211216133148.aw3xs4sxuebkampb@wittgenstein>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20211216133148.aw3xs4sxuebkampb@wittgenstein>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: A0GJBnBlQXWp4PxXPatzjUOVrk3uUXSn
+X-Proofpoint-GUID: tqeWImRGSmQGMHofzBCeoZRt7cJw7G8N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-17_10,2021-12-16_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ clxscore=1015 malwarescore=0 suspectscore=0 adultscore=0 mlxscore=0
+ spamscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112180012
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The security of Machine Owner Key (MOK) relies on secure boot. When
-secure boot is disabled, EFI firmware will not verify binary code. Then
-arbitrary efi binary code can modify MOK when rebooting.
 
-This patch prevents MOK/MOKx be loaded when secure boot be disabled.
+On 12/16/21 08:31, Christian Brauner wrote:
+>
+> 1. namespace securityfs
+>     This patch is thematically standalone and should move to the
+>     beginning of the series.
+>     I would strongly recommend to fold patch 9 and 10 into a single patch
+>     and add a lengthy explanation. You should be able to recycle a lof of
+>     stuff I wrote in earlier reviews.
+>
+> 2. Introduce struct ima_namespace and pass it through to all callers:
+>     - introduce struct ima_namespace
+>     - move all the relevant things into this structure (this also avoids
+>       the "avoid_zero_size" hack).
 
-Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
----
- security/integrity/platform_certs/load_uefi.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index f290f78c3f30..08b6d12f99b4 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -6,6 +6,7 @@
- #include <linux/err.h>
- #include <linux/efi.h>
- #include <linux/slab.h>
-+#include <linux/ima.h>
- #include <keys/asymmetric-type.h>
- #include <keys/system_keyring.h>
- #include "../integrity.h"
-@@ -176,6 +177,10 @@ static int __init load_uefi_certs(void)
- 		kfree(dbx);
- 	}
- 
-+	/* the MOK/MOKx can not be trusted when secure boot is disabled */
-+	if (!arch_ima_get_secureboot())
-+		return 0;
-+
- 	mokx = get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status);
- 	if (!mokx) {
- 		if (status == EFI_NOT_FOUND)
--- 
-2.26.2
+We could defer the kmalloc() that doesn't work on a zero-sized request. 
+I would say this  is minor.
 
+
+>     - define, setup, and expose init_ima_ns
+>     - introduce get_current_ns() and always have it return &init_ima_ns for now
+>     - replace all accesses to global variables to go through &init_ima_ns
+>     - add new infrastructure you'll need later on
+>     Bonus is that you can extend all the functions that later need access
+>     to a specific ima namespace to take a struct ima_namespace * argument
+>     and pass down &init_ima_ns down (retrieved via get_current_ns()). This
+>     will make the actual namespace patch very easy to follow.
+>
+> 3. namespace ima
+>     - add a new entry for struct ima_namespace to struct user_namespace
+>     - add creation helpers, kmem cache etc.
+>     - create files in securityfs per ns
+
+I have tried this now and I am looking at 4 remaining patches that need 
+to somehow find its way into v8 without causing too many disturbances. 
+At what point (over how many patches) can I introduce CONFIG_IMA_NS 
+without anything related to IMA namespacing happening? I need it early 
+in 'your 3rd part' since it is also used for conditional compilation 
+(Makefile) and #ifdef's where Makefile content and what the #ifdefs are 
+doing probably shouldn't be squeezed into a single patch just so it's 
+all enabled in one patch, but it should probably still remain logically 
+separated into different patches. Enablement of IMA namespace would be 
+in the very last patch. But there may be several patches between the 
+very last one and CONFIG_IMA_NS is introduced...
+
+v7 at least, before the requirement to do late/lazy initialization, 
+enabled CONFIG_IMA_NS right away and built ever step on top of it, even 
+if the IMA namespace only became **configurable** in the last patch when 
+securityfs was enbled and one could set a policy. From that perspective 
+it would be easier to switch to late initialization in a patch on top of 
+v7 but .. ok, we cannot do that.
+
+
+> This way at all points in the series we have clearly defined semantics
+> where ima namespacing is either fully working or fully not working and
+> the switch is atomic in the patch(es) part of 3.
+Atomic over multiple patches? So introducing CONFIG_IMA_NS that doesn't 
+do anything for several patches is still considered 'atomic' then ?
