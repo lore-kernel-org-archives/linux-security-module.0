@@ -2,299 +2,165 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B30C5C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Dec 2021 16:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1B0C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Dec 2021 00:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238015AbhLTQlw (ORCPT
+        id S233416AbhLUAjv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Dec 2021 11:41:52 -0500
-Received: from sonic304-27.consmr.mail.ne1.yahoo.com ([66.163.191.153]:33315
-        "EHLO sonic304-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237548AbhLTQlw (ORCPT
+        Mon, 20 Dec 2021 19:39:51 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55418 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231365AbhLUAju (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Dec 2021 11:41:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1640018511; bh=U1INV95iV39LSCIAVQMAUE6C5MMxLcUABNWpxW2R8sw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=HJRphVhYzOpwGNAHrxR6KQzcK7slHf+b9OrNSrlN9IeaUpjP3jzyFJE8u+ckdZE23FvbPHfUxTcDcHFClMeK9J1oRnTJSYHfyl7HWCpf/c79KAh4uz09RV+LV4w8pnC4ahd+zw05zqgIgcEm/cHhatJ8QqJie72YfYSK9K7kghsmSgZhVV7la3Ql4nTjrkXGjUlLjfnch+Azyue9sDU4UOCfqhdWydMQid4h9rPc/l5DfpzTc0O4hBViY8GlFd4KADA4MIVAFBOI7UXKRVpU5TwvcdpEEa5BUkRhvnvb+ezXuUqak68Hs2iLPiP5rhiO+CzFWgoQ147cc+a9JMvHiA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1640018511; bh=I0XeNtQmT0Irx0Rftp1dXQq21EFx4cla3mwogsdSlHE=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=IkeoPOBrcgZk+5pZqMXGbWB2QcHWdr3q7/fFT8ErQ7Dej+Aw2WPHcO+2xnwmCxIQfrmaYAAqckhtkp+rK4se0XPGYL+aM+jw2JERRtvMBL8NoQOHrBm0E4UBTR+W8cJ1BVdM+8K0xLApygFG5GxaCC32hkeZMAHnzobVOU5XiRNdITj5GTYtZaIFdX+J+KzFbRQUC/WtCDZPN3u6FQQhVL+9VzsNXprN3aqaPypVf8KrWuhlLPhMw9zlOQm7H2Cqo32MLWpDyBT7ZmOE3ix+11x0rajajj7D6LKxQz96dGJq4ttfpuKvFkUNccwGliGqrRjH2ASF7VTeYEiChV448Q==
-X-YMail-OSG: NVpTcKcVM1nuZ_hh9odpETKe8X89m8xhkEuVLn3AirFeDUQzSEZC7j9HXrxdt1K
- 1fKAr64UuMYr.GjVCzoBmx.7XXk4mkDpL9VTg5ubJNHctbDzy3rvag0H7QipW.KiDHVhFWhpz_zz
- YebI7LoHlISN_HvEdX8ykmQYAwUVj4Ov3ih8Vy8mOxsYt9GWB.8IG3D6qcVowsZTzPPS9gU6pyeZ
- .w0_kBM1zra_hc8Y2zkO_zag5HIe1quqJdUzbOeQrTVY3VmzaJU0L4nVNW4Of4pFur_NfdUewi7k
- ebBgKU_lNyesZMgszO5x9fKm78hxrHHcynL2X0hZLFdZK0HvotFxS1VTbhIQu9MmUkWSTTafdnUz
- ZdJ892BK6ScKvNeSGb4YbrOyGO57NS3QTIjS8bZIcWpo8aEwsUXP4RGOyW3LUKqVMStn.EGKAswf
- oDazjYt3DGKRdV5ta9os4gfXZWkub5D.fUVKfEedb3PqFRNeYwGTvy7Kv7IL4bxu3SmRa1NdiEj9
- n0yeH04TOCTLOlMKgJ9UFT5M_H5B7lGadobbnzuUX9quYWhvJ9qMG_J0EBrx26W21N6UAvDnBsE_
- Sw3GT4mvjhsRNp8H5WAmcGz0LrJUHdM8Rqf7S6GF0fKhrv_qv1FcFo76ARJk1phX8fsx0wd6jjRi
- 0aezHKN0x2wIAPvdoQ2x2MP6Pw73SJgnHYlJmCaoubzygwYKvoRjooAuc_6gKzMAOqrV.wzusd.G
- CtNGN4Hl727xebSeuZ1MBpI3UgULl788Unm5L90DQ9aUc4fYI30m9iT0UE8w8krMmrId26Exui4T
- SV3_fCS90QjAt2HPMgGHO09c3BGY.sHTqzIEQDwfUlYTRtdG04usfHPWFlulOzLHU.6twYoQcbRb
- 69g9YKPI4dXQmVXpbQRgPp.YIZB7WckSWwINQGKc8VRbnl6vFtqU_7e5sE0BWeJgbCFonzbjpTHO
- EOGzndRfDteqhRTfv4QMZEwy2IB5VhrvLkaBqGIz.NKKQZuyXhosv.py6a7dtVRMZyc07wK2K6pA
- EvCnIwIGyLWMMq_O9C5Ocr4CP17UCTJ3pyfGX8ItGI.hNNIb_FCNQ1cRe0RoQb0sjua2wP8KURES
- Yw231Ugk.WexUtjnG4BEKazZzfutmDBADLdHoBGWBZIP9.x4_CrdKq7bvyKQOm5j5Td6H8lM.lbX
- j2MjNrlV3D56k2lVmjpVZLLRfRK4YnWGVxhAmcXJTDy20nkJDVvoEKHpPLmb2M8Je1CgP1UyQm7K
- .EkHbrfo.9cgpYjhmzz8QkAeeJMEBOSJMNAXjAu1eYhQwd2eNyRhChEtGhA1OpqCa_6Bg.EZ46vW
- EMwgpBCtN7Jc3wgOcwtYO6Cl8a3X61SuLQO9lXWo7cmIuTEWyynCLW4pwXiscoA_eYOMpmxjgVMp
- NWIUzeNPwlsIKLxvlRnwmR419dNerDTxoMXjOnO27OgFeJKnobsU1NuI8ZeWHdRhLp.p0Ju8A0wL
- tW.UFBcyly79Sna7eY7zqY9Eqc5OfjX5.3JZV6BgJMIankO8likQzGsVOkE4gNMpWiOyl_i9FT2v
- x.HUCiG5hAmf7bS899TGxMgDRBrr0zjkSWFAYRt71R9QWtcneUnDn7XdiDchm9eqEy6zGNTvWdhg
- KOU6De.z45AS1N_YiaN6s246gF9n6rdHbuzvB73KgShQ1SfMrxggAYcjqWVUcS1nux6lQ8CHkENL
- k_zP4zqpbVXoWbyEhok6GO0JVwHVeZ63AVvGuZDTUhZLK9MOuEKWTC7Vg6DTCrBtM7APvy4859go
- NUvICIoPx3fIB2FcT0y_HBP1aJiUBb9jQNnberKLc05e0Gc7GtiWQkvo1yHmntRXHMdd79JJ1DUk
- kR2T88qVzNhpjpIEy0mtlBCcayhOAb.7N6KLkuMoa5JbSA.itx_68nhKXlRftDRb4RkYDYk3XGNx
- poZuXXOAMYApFRvhFjGjV1U5b1TvGJ8IivLBOW5rOFLgN2jljD5SnMRUuiwTDxYxr3we4bm9QqiX
- dQxZuyWSwZ8m.uPnl6hnbrmyINSjVBzHc2FRMTJ7AJyDlf7FNPVOtQ8WKMIF3EAQRQkMmGAHGoh.
- fMPD_UY0MK8ZUy_31wOTgmyvPtZxefWXGrpwn_FB6HmMumv0zImbbk6clEQ8XLdAbaVYXo0Te7b8
- 5cpWsRJ1y.gGI7qKp2jqt0r2xIrk2Y4HbZMnuRu6ye7.Tmft19bg9J1p0rgyMaaAwzRXo_BxC6T4
- K9KYkGlKLq1DMBDCP4UM7iuQwMrP7jE5datFT7fsfhi_.bHhXjauRqJ5Fm.TS5XI1tQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Mon, 20 Dec 2021 16:41:51 +0000
-Received: by kubenode534.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID e8eb317fa886ab93cf30e22b9fb5ef37;
-          Mon, 20 Dec 2021 16:41:50 +0000 (UTC)
-Message-ID: <3ccb78ef-905c-4914-c77a-24765c0e6675@schaufler-ca.com>
-Date:   Mon, 20 Dec 2021 08:41:48 -0800
+        Mon, 20 Dec 2021 19:39:50 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BKMXn64022063;
+        Tue, 21 Dec 2021 00:39:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=pJWP2Dxbq//tgGh2ocH4HUS1hE/2OXhsKSEwQgCVods=;
+ b=mUn3z2oE30K/ksGTnwMpR7UEAEo9Vm/sD3jkC9EtR8fznKrK2gc4ROvtMQyZGoPXj4C9
+ oYAmCc989lE73fIaq4dgV49yc5ZotdFPJ0iKIe0sWVOEL5yCFEmVL8gVuT2681iXuAuO
+ zjP8tRtNE+JzQFmiMsVuLT5V1ZbWjBzKlUoLcGRVDN973mNVLjvcN3zO39l66LB9zE7T
+ doIJsC1oaCzMJeTEouTD5tXxTsPzIMnsXnNMfLEJLHjUAgmabp2GDxXnhfkmarNg7Btg
+ Ce0MNRKuIw57/1VXFQ37OmSFvilWAMi8OBYRbT9f3Uz7R++ISSG6qZGNtbH7XQnfl6vW Wg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3d1skerbh7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Dec 2021 00:39:42 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BL0dfDj032349;
+        Tue, 21 Dec 2021 00:39:41 GMT
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3d1skerbh3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Dec 2021 00:39:41 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BL0YUA2012585;
+        Tue, 21 Dec 2021 00:39:40 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma04wdc.us.ibm.com with ESMTP id 3d179hq9sc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Dec 2021 00:39:40 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BL0dbxH20840798
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Dec 2021 00:39:37 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A469B78068;
+        Tue, 21 Dec 2021 00:39:37 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 029807805C;
+        Tue, 21 Dec 2021 00:39:35 +0000 (GMT)
+Received: from oc6857751186.ibm.com (unknown [9.65.210.85])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 21 Dec 2021 00:39:35 +0000 (GMT)
+Subject: Re: [PATCH] tpm: Fix kexec crash due to access to ops NULL pointer
+ (powerpc)
+To:     Stefan Berger <stefanb@linux.ibm.com>, jarkko@kernel.org,
+        peterhuewe@gmx.de, linux-integrity@vger.kernel.org
+Cc:     Korrapati.Likhitha@ibm.com, pavrampu@in.ibm.com,
+        linux-kernel@vger.kernel.org, jgg@ziepe.ca,
+        linux-security-module@vger.kernel.org, gcwilson@us.ibm.com,
+        linuxppc-dev@lists.ozlabs.org
+References: <20211212012804.1555661-1-stefanb@linux.ibm.com>
+From:   Tyrel Datwyler <tyreld@linux.ibm.com>
+Message-ID: <1052cd36-1b85-5d36-045f-5c5bf9f0fc4e@linux.ibm.com>
+Date:   Mon, 20 Dec 2021 16:39:34 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH 1/1] Smack:- Fix the issue of wrong info printed in ptrace
- error logs
+In-Reply-To: <20211212012804.1555661-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-To:     Vishal Goel <vishal.goel@samsung.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     a.sahrawat@samsung.com, v.narang@samsung.com,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>
-References: <CGME20211220101352epcas5p3aec72d06d04f71a7c387570957a0f6c7@epcas5p3.samsung.com>
- <20211220101318.3538824-1-vishal.goel@samsung.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20211220101318.3538824-1-vishal.goel@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.19498 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: QyNPFZP8_EbRuNziPa7ZwPP5OjW4qjZt
+X-Proofpoint-GUID: bqMRiNrnxVf4QSAoFvw2J_KnKY2riSYc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-20_11,2021-12-20_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 mlxscore=0 malwarescore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112210001
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/20/2021 2:13 AM, Vishal Goel wrote:
-> Currently tracer process info is printed in object field in
-> smack error log for ptrace check which is wrong.
-> Object process should print the tracee process info.
-> Tracee info is not printed in the smack error logs.
-> So it is not possible to debug the ptrace smack issues.
->
-> Now changes has been done to print both tracer and tracee
-> process info in smack error logs for ptrace scenarios
->
-> Old logs:-
-> [  378.098330] audit: type=1400 audit(1637212273.300:2): lsm=SMACK fn=smack_ptrace_access_check action=denied subject="Tracer_lbl" object="Tracee_lbl" requested= pid=9397 comm="tst_pt" opid=9397 ocomm="tst_pt"
-> [  520.261605] audit: type=1400 audit(1637212415.464:3): lsm=SMACK fn=smack_ptrace_traceme action=denied subject="Tracer_lbl" object="Tracee_lbl" requested= pid=12685 comm="tst_pt_me" opid=12563 ocomm="bash"
-> [ 1445.259319] audit: type=1400 audit(1637213340.460:5): lsm=SMACK fn=smack_bprm_set_creds action=denied subject="Tracer_lbl" object="Tracee_lbl" requested= pid=1778 comm="tst_bprm" opid=1776 ocomm="tst_bprm"
->
-> New logs:-
-> [  378.098330] audit: type=1400 audit(1637212273.300:2): lsm=SMACK fn=smack_ptrace_access_check action=denied subject="Tracer_lbl" object="Tracee_lbl" requested= tracer-pid=5189 tracer-comm="tst_pt" pid=5189 comm="tst_pt" tracee-pid=962 tracee-comm="test_tracee"
-> [  520.261605] audit: type=1400 audit(1637212415.464:3): lsm=SMACK fn=smack_ptrace_traceme action=denied subject="Tracer_lbl" object="Tracee_lbl" requested= tracer-pid=6161 tracer-comm="bash" pid=6310 comm="tst_pt_me" tracee-pid=6310 tracee-comm="tst_pt_me"
-> [ 1445.259319] audit: type=1400 audit(1637213340.460:5): lsm=SMACK fn=smack_bprm_set_creds action=denied subject="Tracer_lbl" object="Tracee_lbl" requested= tracer-pid=6435 tracer-comm="tst_bprm" pid=6436 comm="tst_bprm" tracee-pid=6436 tracee-comm="tst_bprm"
->
-> Signed-off-by: Vishal Goel <vishal.goel@samsung.com>
+On 12/11/21 5:28 PM, Stefan Berger wrote:
+> Fix the following crash on kexec by checking chip->ops for a NULL pointer
+> in tpm_chip_start() and returning an error code if this is the case.
+> 
+> BUG: Kernel NULL pointer dereference on read at 0x00000060
+> Faulting instruction address: 0xc00000000099a06c
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> ...
+> NIP [c00000000099a06c] tpm_chip_start+0x2c/0x140
+>  LR [c00000000099a808] tpm_chip_unregister+0x108/0x170
+> Call Trace:
+> [c0000000188bfa00] [c000000002b03930] fw_devlink_strict+0x0/0x8 (unreliable)
+> [c0000000188bfa30] [c00000000099a808] tpm_chip_unregister+0x108/0x170
+> [c0000000188bfa70] [c0000000009a3874] tpm_ibmvtpm_remove+0x34/0x130
+> [c0000000188bfae0] [c000000000110dbc] vio_bus_remove+0x5c/0xb0
+> [c0000000188bfb20] [c0000000009bc154] device_shutdown+0x1d4/0x3a8
+> [c0000000188bfbc0] [c000000000196e14] kernel_restart_prepare+0x54/0x70
+> 
+> The referenced patch below introduced a function to shut down the VIO bus.
+> The bus shutdown now calls tpm_del_char_device (via tpm_chip_unregister)
+> after a call to tpm_class_shutdown, which already set chip->ops to NULL.
+> The crash occurrs when tpm_del_char_device calls tpm_chip_start with the
+> chip->ops NULL pointer.
 
-Added linux-audit to the CC list.
+It was unclear to me at first, but IIUC the problem is the ibmvtpm device
+receives two shutdown calls, the first is a class shutdown call for TPM devices,
+followed by a bus shutdown call for VIO devices.
 
+It appears that the class shutdown routines are meant to be a pre-shutdown
+routine as they are defined as class->shutdown_pre(), and it is clearly allowed
+to call class->shutdown_pre() followed by one of but not both of the following
+bus->shutdown() or driver->shutdown(). Even tpm_class_shutdown() mentions in the
+function comment that bus/device shutdown to follow.
+
+> 
+> Fixes: 39d0099f9439 ("powerpc/pseries: Add shutdown() to vio_driver and vio_bus")
+
+This patch left implementing each vio driver shutdown routine as an exercise for
+the respective maintainers, and instead just big hammers anything that doesn't
+have a shutdown routine by calling the driver->remove().
+
+If tpm_class_shutdown() quiecses ibmvtpm enough implementing a no-op
+ibmvtpm->shutdown() with a comment saying so suffices.
+
+However, the generic TPM code is still introducing a bug that an attempt to call
+tpm_chip_unregister() after tpm_class_shutdown() will crash as mentioned above.
+
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 > ---
->   include/linux/lsm_audit.h     |  1 +
->   security/lsm_audit.c          | 15 +++++++++++++++
->   security/smack/smack.h        | 19 +++++++++++++++++++
->   security/smack/smack_access.c | 16 ++++++++++++++++
->   security/smack/smack_lsm.c    | 33 ++++++++++++++++++++++-----------
->   5 files changed, 73 insertions(+), 11 deletions(-)
->
-> diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-> index 17d02eda9..6d752ea16 100644
-> --- a/include/linux/lsm_audit.h
-> +++ b/include/linux/lsm_audit.h
-> @@ -76,6 +76,7 @@ struct common_audit_data {
->   #define LSM_AUDIT_DATA_IBENDPORT 14
->   #define LSM_AUDIT_DATA_LOCKDOWN 15
->   #define LSM_AUDIT_DATA_NOTIFICATION 16
-> +#define LSM_AUDIT_DATA_PTRACE   17
->   	union 	{
->   		struct path path;
->   		struct dentry *dentry;
-> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> index 1897cbf6f..069e0282c 100644
-> --- a/security/lsm_audit.c
-> +++ b/security/lsm_audit.c
-> @@ -318,6 +318,21 @@ static void dump_common_audit_data(struct audit_buffer *ab,
->   		}
->   		break;
->   	}
-> +	case LSM_AUDIT_DATA_PTRACE: {
-> +		struct task_struct *tsk = a->u.tsk;
-> +		if (tsk) {
-> +			pid_t pid = task_tgid_nr(tsk);
+>  drivers/char/tpm/tpm-chip.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index ddaeceb7e109..cca1bde296ee 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -101,6 +101,9 @@ int tpm_chip_start(struct tpm_chip *chip)
+>  {
+>  	int ret;
+> 
+> +	if (!chip->ops)
+> +		return -EINVAL;
 > +
-> +			if (pid) {
-> +				char comm[sizeof(tsk->comm)];
-> +
-> +				audit_log_format(ab, " tracee-pid=%d tracee-comm=", pid);
-> +				audit_log_untrustedstring(ab,
-> +					memcpy(comm, tsk->comm, sizeof(comm)));
-> +			}
-> +		}
-> +		break;
-> +	}
->   	case LSM_AUDIT_DATA_NET:
->   		if (a->u.net->sk) {
->   			const struct sock *sk = a->u.net->sk;
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index 99c342259..901228205 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -266,6 +266,7 @@ struct smack_audit_data {
->   	char *object;
->   	char *request;
->   	int result;
-> +	struct task_struct *tracer_tsk;
->   };
->   
->   /*
-> @@ -497,6 +498,16 @@ static inline void smk_ad_setfield_u_net_sk(struct smk_audit_info *a,
->   {
->   	a->a.u.net->sk = sk;
->   }
-> +static inline void smk_ad_setfield_u_tracer(struct smk_audit_info *a,
-> +                                        struct task_struct *t)
-> +{
-> +       a->a.smack_audit_data->tracer_tsk = t;
-> +}
-> +static inline void smk_ad_setfield_u_tracee(struct smk_audit_info *a,
-> +                                        struct task_struct *t)
-> +{
-> +       a->a.u.tsk = t;
-> +}
->   
->   #else /* no AUDIT */
->   
-> @@ -524,6 +535,14 @@ static inline void smk_ad_setfield_u_net_sk(struct smk_audit_info *a,
->   					    struct sock *sk)
->   {
->   }
-> +static inline void smk_ad_setfield_u_tracer(struct smk_audit_info *a,
-> +						struct task_struct *t)
-> +{
-> +}
-> +static inline void smk_ad_setfield_u_tracee(struct smk_audit_info *a,
-> +						struct task_struct *t)
-> +{
-> +}
->   #endif
->   
->   #endif  /* _SECURITY_SMACK_H */
-> diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-> index d2186e275..f39e3ac92 100644
-> --- a/security/smack/smack_access.c
-> +++ b/security/smack/smack_access.c
-> @@ -323,6 +323,22 @@ static void smack_log_callback(struct audit_buffer *ab, void *a)
->   		audit_log_format(ab, " labels_differ");
->   	else
->   		audit_log_format(ab, " requested=%s", sad->request);
-> +
-> +        if (ad->type == LSM_AUDIT_DATA_PTRACE) {
-> +                struct task_struct *tsk = sad->tracer_tsk;
-> +
-> +                if (tsk) {
-> +                        pid_t pid = task_tgid_nr(tsk);
-> +
-> +                        if (pid) {
-> +                                char comm[sizeof(tsk->comm)];
-> +
-> +                                audit_log_format(ab, " tracer-pid=%d tracer-comm=", pid);
-> +                                audit_log_untrustedstring(ab,
-> +                                        memcpy(comm, tsk->comm, sizeof(comm)));
-> +                        }
-> +                }
-> +	}
->   }
->   
->   /**
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index efd35b07c..47e8a9461 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -416,20 +416,13 @@ static inline unsigned int smk_ptrace_mode(unsigned int mode)
->    */
->   static int smk_ptrace_rule_check(struct task_struct *tracer,
->   				 struct smack_known *tracee_known,
-> -				 unsigned int mode, const char *func)
-> +				 unsigned int mode, struct smk_audit_info *saip)
->   {
->   	int rc;
-> -	struct smk_audit_info ad, *saip = NULL;
->   	struct task_smack *tsp;
->   	struct smack_known *tracer_known;
->   	const struct cred *tracercred;
->   
-> -	if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
-> -		smk_ad_init(&ad, func, LSM_AUDIT_DATA_TASK);
-> -		smk_ad_setfield_u_tsk(&ad, tracer);
-> -		saip = &ad;
-> -	}
-> -
->   	rcu_read_lock();
->   	tracercred = __task_cred(tracer);
->   	tsp = smack_cred(tracercred);
-> @@ -480,10 +473,17 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
->   static int smack_ptrace_access_check(struct task_struct *ctp, unsigned int mode)
->   {
->   	struct smack_known *skp;
-> +	struct smk_audit_info ad, *saip = NULL;
->   
->   	skp = smk_of_task_struct_obj(ctp);
-> +	if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
-> +		smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PTRACE);
-> +		smk_ad_setfield_u_tracer(&ad, current);
-> +		smk_ad_setfield_u_tracee(&ad, ctp);
-> +		saip = &ad;
-> +	}
->   
-> -	return smk_ptrace_rule_check(current, skp, mode, __func__);
-> +	return smk_ptrace_rule_check(current, skp, mode, saip);
->   }
->   
->   /**
-> @@ -498,10 +498,15 @@ static int smack_ptrace_traceme(struct task_struct *ptp)
->   {
->   	int rc;
->   	struct smack_known *skp;
-> +	struct smk_audit_info ad, *saip = NULL;
->   
->   	skp = smk_of_task(smack_cred(current_cred()));
-> +	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PTRACE);
-> +	smk_ad_setfield_u_tracer(&ad, ptp);
-> +	smk_ad_setfield_u_tracee(&ad, current);
-> +	saip = &ad;
->   
-> -	rc = smk_ptrace_rule_check(ptp, skp, PTRACE_MODE_ATTACH, __func__);
-> +	rc = smk_ptrace_rule_check(ptp, skp, PTRACE_MODE_ATTACH, saip);
->   	return rc;
->   }
->   
-> @@ -897,15 +902,21 @@ static int smack_bprm_creds_for_exec(struct linux_binprm *bprm)
->   
->   	if (bprm->unsafe & LSM_UNSAFE_PTRACE) {
->   		struct task_struct *tracer;
-> +		struct smk_audit_info ad, *saip = NULL;
->   		rc = 0;
->   
-> +		smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PTRACE);
-> +		smk_ad_setfield_u_tracee(&ad, current);
-> +		saip = &ad;
-> +
->   		rcu_read_lock();
->   		tracer = ptrace_parent(current);
-> +		smk_ad_setfield_u_tracer(&ad, tracer);
->   		if (likely(tracer != NULL))
->   			rc = smk_ptrace_rule_check(tracer,
->   						   isp->smk_task,
->   						   PTRACE_MODE_ATTACH,
-> -						   __func__);
-> +						   saip);
->   		rcu_read_unlock();
->   
->   		if (rc != 0)
+
+I wonder if a better fix would to have tpm_del_char_device() check for valid
+chip->ops and call tpm_class_shutdown() when the ops are still valid. Calling
+tpm_class_shutdown() allows for some code deduplication in tpm_del_char_device().
+
+-Tyrel
+
+>  	tpm_clk_enable(chip);
+> 
+>  	if (chip->locality == -1) {
+> 
+
