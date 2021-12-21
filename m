@@ -2,190 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4D5C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Dec 2021 14:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98429C43219
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Dec 2021 17:01:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235475AbhLUOSP (ORCPT
+        id S240127AbhLURBN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Dec 2021 09:18:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19106 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S235448AbhLUOSO (ORCPT
+        Tue, 21 Dec 2021 12:01:13 -0500
+Received: from sonic301-38.consmr.mail.ne1.yahoo.com ([66.163.184.207]:46714
+        "EHLO sonic301-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240111AbhLURBK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Dec 2021 09:18:14 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BLCUbPL029863;
-        Tue, 21 Dec 2021 14:18:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : from : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=L38EGZPh0MTK7NIKzTy3tAX0A1zg41J+OOXfyktAzos=;
- b=lIbz9bhgeJEXz9BYEKAHi7UW8HPXmksdmPfqxdD6hDCW9sCkMC/fuApL/rQ972RjeifS
- e7/xsqgmUmYVbBatgUfOgb8XnMBY0V5S5WTOFmQzBojuak04MABLgr6+p3H5EgdzYia4
- MT2DzojUnPmPq7n5+CGvTyteZWSZU6eHTNu5beFOQDvJsdTR3hUtZcpS7w31HoUc673J
- PErTPa39Dq9Z2zhRobf20NgqPOf5cOmxGcigjzU5wWXhvNPluwpMhx/9Jqcsb27RBPAu
- 4RZg00yeQxUHutUoGdmGT1gKbuHo8julHaYby/ok0mILUhwxKmJhy2gkkG/8xXi3mG/M MQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3d3f0aj5n6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 21 Dec 2021 14:18:09 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BLDiVUS029320;
-        Tue, 21 Dec 2021 14:18:09 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3d3f0aj5n1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 21 Dec 2021 14:18:09 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BLEH1w8004500;
-        Tue, 21 Dec 2021 14:18:08 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma02dal.us.ibm.com with ESMTP id 3d179axght-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 21 Dec 2021 14:18:08 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BLEI4Lc23462334
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Dec 2021 14:18:04 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 178E011206B;
-        Tue, 21 Dec 2021 14:18:04 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 048FC112061;
-        Tue, 21 Dec 2021 14:18:03 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 21 Dec 2021 14:18:03 +0000 (GMT)
-Message-ID: <eca48e99-3aad-d2fc-c073-aa5ff18c9b51@linux.ibm.com>
-Date:   Tue, 21 Dec 2021 09:17:00 -0500
+        Tue, 21 Dec 2021 12:01:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1640106070; bh=B52Bi9SSUTeVc5dexD1iu0wdQkDqh0C1Oku/cCpF37s=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=HqMy8/Tr/WrEca3GqxMYe6FuvBbSIiswbiUVjSEElcw1HAuGhSCHGZpSGp+NW08nQjYRu7p0cW3YNOpTeTw7MF+voqf23078IJysvruZFWSB1glDD/IJMNeS+/nVCxcIu3fvouZYUzMNAQG8b9l1gTpgFbUCDPxbdubBr5sDPk9StXheLUEZyEWmy2FXO5gddg/BbFWUFyNHC5FV6cASLHfgmzoikg9aSTF3aOPmD6y4ln42Q/2pZKd0Ev3IiCP4nR6QtoWRqEjRxQyEw5C8p1TASbnlWivtUPt9wZPD7LesmM2FolfkkPdjwQb0GniiaBM8rcuZJsVZO1kUJL3fMA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1640106070; bh=ONILMENR5AfCI6T+sI4sezGmmGsXWo66OodpxoEAb5P=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=uLovyd6fT7eCOdSKzdZi3VT/KpFw28x2U9YTR3N3pw1x5HkiDTt3IZ5WLksoUnqytjYEs8qT6JgTwkjKqCeIdIOEMOYXzYvqFvMXFiSIfMSQHqTAFB+Y3UyAIS6cR7W7hPDJ4TqQ1P6LdaMb1R+ZBco88nJgb6LWKvZkkwjLg2RsZvY32QSyQqMCTFcE/AHJ9H6XOhR3vgz+OD72npPhQTAhETsThHynbUlmY6tnY1mYbFaYuXrGrNXgP6Vz1VVbvha0BDodW4UKN0ralYOSqF/Z37cR84LK1iIsMMDLqsFsrt5q1hV2EMuzmKNENEjS47DMF7HPGQbHyMIBQLaLwA==
+X-YMail-OSG: qPllEeoVM1nWKCNmboo9wkyLOWVIY86d2ePomLULgH2f1SBFzdnlxGdNP08gRzP
+ 2221ETu67Gw3dBcviI376k283WrMcwPuPB6iB_uL6o7j5ur.vlTzkTt4_sQntueL1abttamuYGk.
+ 8.iSlo8rGHHEjPtudN0FhpoOG.xtm9FIulv_MSRKZgsJORhVh4.xdCaRBh8LxtU0qeYxLc4tAiYE
+ D7vWGoZAwYEOeoSVNcMgobDqDPXA5NV_b_2Ei.wSZVEBIZ0Uw5VatRfvTANDFAWolFLnQ.HmdFSW
+ gwmJVAGiVJ_pX6VYc8ODYs9xs1ga5vf.tdDE.cpuUu2lPAl9KtoV0uaC181ZHVult4xDq1meVz1r
+ kxT7z940N1NR0l6urteuTu9NHkbIxLM1Rxykpd.fmZnI5oK2El.GqDWPLcLr5SUTR.mpoKOACAON
+ gmx5vokvh0YYmfrV8GWlFrsD946k4z3zVhsez3xGTK5gcj048Saw8drwgiPosF5TvAdqYdK1OR8a
+ yRrZJ9Hz5JYO6eyip.tWw9yp8kIdKpgLNBHPpdgP1v601fFAHWcgvZYBtIm.GYvCmiTEni872kuK
+ iyG_GNnCqXrpzk5KcH9v.xBX6.fUnIcLTDd51.Grgt.BWZ0.ohvy5aVAZMD7Nk1uzXKWRz5EiEVI
+ 9rNjyC5ylmWAhE97qdUDY7rmD5ecVTah_0xG6lb4FP4ZSpvvIhKmA8IB0KlUBuP11cLJqs7P13V5
+ .LJJhzlTMUXyZWnY2da7fnwjOHb2dD71KYKGqOeW_C2yY4vuKYuWHCK2VXb5sbeVnPT0Ckr2cba9
+ kbtj1wQYObw41uGuJK.tEDO3Kg7_v9QIQnX98n64hh2t5siu7dZN7QebIJo9kpsB82rXw2rTyWDA
+ Q1CPne_VSO7.peJCg3lB1BVTYCwcBkPHsRb.IhQ067Ywf8kb88yQXhYPI0rmgnIhkPukhHYV.G5p
+ qqUSopZnCkPkw.q73oz9fzYk3o7JbpAusqIZDqZeIm9G5sPS7F9qHfnpvOdGqpuGNRNrlT2cmNGE
+ 02qOOSYOuMkeZSCBtMrxFjjJOnQU0Ar_tBC3_Ltq2EgJ9tmNVfT8gOG68MxS3gQ6lCAxQA.akMNx
+ y_TENldWWrrGrzoetH3Pe7tvuM5qbwVwRjE0zmdcA4bq1v0YRCe_9KLrGKinq8Hh18ECT7lF87hj
+ y1LhGucAqBzzoKAAvUdVpSq81ctvE99vphMDHBpLFs0MsVAsKr3sTmIzKqqa5lzDYyL7UMLtjMO4
+ rj6Z9sXJE1JcCWzi6uLOAOBjkEfTkIqheX1nLUw2OMWwEGRZa7NeHQv8_ZTycwF4T0ULPJQXaRya
+ 7ht.dXvdkiirYb00IABtXCa0yGqkTbKKg81CA.8IR11YKdy40jjHimhxt32xZULQe8FyGswXygB_
+ F0wW2EPhRMXonqxs4kEDs2nP6oucUBmQa91c3oP4YjMpEt4MOLPo8a1MmhxB1mYiZhqF9_yp7dZz
+ ZjVBQ8HGiCa14pPNpBfmZ6tv31pzIKcP0aF6HSJoWlroQA_vPCZg948QcpaGWSKD0T61yd5sjvUf
+ 07OqXzcXUm4Cj98kGXhApaNFIYUgBvjEjW49pLpKkWKo2PGGd8z46uW9FxWZBB5cOKYovFwQnWKe
+ Kog28tN2Ygb.1Gd6j_vVcKa1PSdVNNnuuGDequ1NO7Ypr_Q_mQq_E1405kI4w0TzdORcO2rw0Cuv
+ GxL88_whWDQXxTwZEAUrsysOZDaeLR4coe1I0yU2T_MuRY.0qXMTu.SohQaeU8f_zTHm96Mdfh6L
+ JbSaeC4ahbn_SWsRSrJ5Bb8cEBwbA4kh9MuRu4FjMEBHcO5aBdiuBTw7ZOimljccHxwvKQf6WLv8
+ jsg5hjapwhCRnqeVZyHy7xipAwLBrwVg3r3Wrscw6iKg_JmNmzMtfDTK4axLRiLW6RFhRmgI_KtV
+ dN6qQCIWknW2SI5xMa7zAV7QmEaPNAl00v.bSE6XAOMuoD7Gt69novcpzP2R.p4qzb2Yi2D7CDtX
+ vwHUe2cRav_kzmf22IGOi65xHA6UCAsU.4oS6IzWiVgmJpbpPUKBw9bIFDs7Ykk8aiiAUGKDbHPF
+ 4p9epA1upYphi4LnrZlxJsAHjL7XYlAlAV4VXuldJtfwb1r8kHn_.X4i6gOffx20tZBDG8K_DSRn
+ xPrjcycKnugqUby4o.qD02kskPv0BstOodHBOTDc0TeAQXsCTXJY51katVonT7hTxhEynARjfGp6
+ Y1j0msYkU7tkf
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Dec 2021 17:01:10 +0000
+Received: by kubenode531.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 36fbb5b50f8120d1c4a48feac20131ee;
+          Tue, 21 Dec 2021 17:01:04 +0000 (UTC)
+Message-ID: <0163902a-a442-7e43-8f73-5321109e8985@schaufler-ca.com>
+Date:   Tue, 21 Dec 2021 09:01:04 -0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH] tpm: Fix kexec crash due to access to ops NULL pointer
- (powerpc)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH 1/1] Smack:- Fix the issue of wrong info printed in ptrace
+ error logs
 Content-Language: en-US
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     peterhuewe@gmx.de, linux-integrity@vger.kernel.org, jgg@ziepe.ca,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, pavrampu@in.ibm.com,
-        Korrapati.Likhitha@ibm.com, gcwilson@us.ibm.com
-References: <20211212012804.1555661-1-stefanb@linux.ibm.com>
- <YcGUoJCtmqfCWER0@iki.fi>
- <8b0c9683-d29b-38a2-8dfe-8f47db6544f2@linux.ibm.com>
-In-Reply-To: <8b0c9683-d29b-38a2-8dfe-8f47db6544f2@linux.ibm.com>
+To:     vishal.goel@samsung.com,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     AMIT SAHRAWAT <a.sahrawat@samsung.com>,
+        Vaneet Narang <v.narang@samsung.com>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <a648c816-3093-8023-d96c-b1b8d459430f@schaufler-ca.com>
+ <20211220101318.3538824-1-vishal.goel@samsung.com>
+ <3ccb78ef-905c-4914-c77a-24765c0e6675@schaufler-ca.com>
+ <CGME20211220101352epcas5p3aec72d06d04f71a7c387570957a0f6c7@epcms5p2>
+ <20211221131233epcms5p2e334598b208dcd76f6efec26f879c784@epcms5p2>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20211221131233epcms5p2e334598b208dcd76f6efec26f879c784@epcms5p2>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: d0EAq7upulZ-bLNmTEwKI7py22Jw1x5e
-X-Proofpoint-GUID: gOxxZfjsrUmlle-J1uOvqKzwxS0PQYrO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-21_04,2021-12-21_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- clxscore=1015 priorityscore=1501 bulkscore=0 adultscore=0 spamscore=0
- mlxscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112210065
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.19498 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 12/21/21 09:01, Stefan Berger wrote:
+On 12/21/2021 5:12 AM, Vishal Goel wrote:
+> Hi,
 >
-> On 12/21/21 03:47, Jarkko Sakkinen wrote:
->> On Sat, Dec 11, 2021 at 08:28:04PM -0500, Stefan Berger wrote:
->>> Fix the following crash on kexec by checking chip->ops for a NULL 
->>> pointer
->>> in tpm_chip_start() and returning an error code if this is the case.
->>>
->>> BUG: Kernel NULL pointer dereference on read at 0x00000060
->>> Faulting instruction address: 0xc00000000099a06c
->>> Oops: Kernel access of bad area, sig: 11 [#1]
->>> ...
->>> NIP [c00000000099a06c] tpm_chip_start+0x2c/0x140
->>>   LR [c00000000099a808] tpm_chip_unregister+0x108/0x170
->>> Call Trace:
->>> [c0000000188bfa00] [c000000002b03930] fw_devlink_strict+0x0/0x8 
->>> (unreliable)
->>> [c0000000188bfa30] [c00000000099a808] tpm_chip_unregister+0x108/0x170
->>> [c0000000188bfa70] [c0000000009a3874] tpm_ibmvtpm_remove+0x34/0x130
->>> [c0000000188bfae0] [c000000000110dbc] vio_bus_remove+0x5c/0xb0
->>> [c0000000188bfb20] [c0000000009bc154] device_shutdown+0x1d4/0x3a8
->>> [c0000000188bfbc0] [c000000000196e14] kernel_restart_prepare+0x54/0x70
->>>
->>> The referenced patch below introduced a function to shut down the 
->>> VIO bus.
->>> The bus shutdown now calls tpm_del_char_device (via 
->>> tpm_chip_unregister)
->>> after a call to tpm_class_shutdown, which already set chip->ops to 
->>> NULL.
->>> The crash occurrs when tpm_del_char_device calls tpm_chip_start with 
->>> the
->>> chip->ops NULL pointer.
->>>
->>> Fixes: 39d0099f9439 ("powerpc/pseries: Add shutdown() to vio_driver 
->>> and vio_bus")
->>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->>> ---
->>>   drivers/char/tpm/tpm-chip.c | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->>> index ddaeceb7e109..cca1bde296ee 100644
->>> --- a/drivers/char/tpm/tpm-chip.c
->>> +++ b/drivers/char/tpm/tpm-chip.c
->>> @@ -101,6 +101,9 @@ int tpm_chip_start(struct tpm_chip *chip)
->>>   {
->>>       int ret;
->>>   +    if (!chip->ops)
->>> +        return -EINVAL;
->> This triggers to all drivers, not just tpm_ibmvtpm, i.e. the fix has
->> side-effects.
+>>>> Signed-off-by: Vishal Goel <vishal.goel@samsung.com>
+>> What test case do you have that generates these records?
+
+Could you include a permissive license with this code?
+I'd like to add it or a derivative of it to the Smack test suite.
+
+> Test case for 1st log:-
+> void main(int argc,char *argv[])
+> {
+>          int pid;
 >
-> What are those side-effects?
+>          if (argc < 2) {
+>                  printf("enter pid of the tracee process\n");
+>                  exit(0);
+>          }
 >
+>          pid = atoi(argv[1]);
+>          fprintf(stderr,"Inside\n");
+>          ptrace(PTRACE_ATTACH, pid,NULL,NULL);
+>          while(1)
+>          {
+>                  sleep(10);
+>          }
+> }
 >
-I am asking because if one entered tpm_chip_start() with chip->ops = 
-NULL it would crash any system. So now the side-effect is that one can 
-call this function without crashing the system but gets an -EINVAL back.
-
-Another alternative that prevents these crashes is this change here 
-including code deduplication:
-
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index ddaeceb7e109..888d37293091 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -296,7 +296,7 @@ static int tpm_class_shutdown(struct device *dev)
-         struct tpm_chip *chip = container_of(dev, struct tpm_chip, dev);
-
-         down_write(&chip->ops_sem);
--       if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+       if (chip->ops && chip->flags & TPM_CHIP_FLAG_TPM2) {
-                 if (!tpm_chip_start(chip)) {
-                         tpm2_shutdown(chip, TPM2_SU_CLEAR);
-                         tpm_chip_stop(chip);
-@@ -473,15 +473,7 @@ static void tpm_del_char_device(struct tpm_chip *chip)
-         mutex_unlock(&idr_lock);
-
-         /* Make the driver uncallable. */
--       down_write(&chip->ops_sem);
--       if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--               if (!tpm_chip_start(chip)) {
--                       tpm2_shutdown(chip, TPM2_SU_CLEAR);
--                       tpm_chip_stop(chip);
--               }
--       }
--       chip->ops = NULL;
--       up_write(&chip->ops_sem);
-+       tpm_class_shutdown(&chip->dev);
-  }
-
-  static void tpm_del_legacy_sysfs(struct tpm_chip *chip)
-
-
-
-     Stefan
-
+> Test case for 2nd log:-
+> void main(int argc,char *argv[])
+> {
+>          int pid;
+>
+>          pid = getpid();
+>          fprintf(stderr,"Inside\n");
+>          ptrace(PTRACE_TRACEME, pid,NULL,NULL);
+>          while(1)
+>          {
+>                 sleep(10);
+>          }
+> }
+>
+> Test case for 3rd log:-
+> void main()
+> {
+>          int pid;
+>          char *argv[2];
+>
+>          fprintf(stderr,"Inside\n");
+>          pid = fork();
+>          if(pid == 0) {
+>                  argv[0] = "/tst_pt";
+>                  argv[1] = NULL;
+>
+>                  if(ptrace(PTRACE_TRACEME, pid,NULL,NULL))
+>                          printf("attached child\n");
+>
+>                  printf("going for exec\n");
+>                  execv("/tst_pt",argv);
+>          }
+>          else
+>          {
+>                  while(1)
+>                  {
+>                          sleep(10);
+>                  }
+>          }
+> }
+>
+>>> Added linux-audit to the CC list.
+>>>
+> Thanks
+> Vishal Goel
