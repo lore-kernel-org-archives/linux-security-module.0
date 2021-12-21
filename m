@@ -2,156 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB46C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Dec 2021 13:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D14C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Dec 2021 14:01:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232415AbhLUNTs (ORCPT
+        id S234715AbhLUOBZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Dec 2021 08:19:48 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:10869 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232418AbhLUNTs (ORCPT
+        Tue, 21 Dec 2021 09:01:25 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:24518 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229453AbhLUOBY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Dec 2021 08:19:48 -0500
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20211221131945epoutp033bafeeb350926ad962ba99388d668222~Cx7MAVYdK0258402584epoutp030
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Dec 2021 13:19:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20211221131945epoutp033bafeeb350926ad962ba99388d668222~Cx7MAVYdK0258402584epoutp030
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1640092785;
-        bh=CXyCFLfPQb3fk0Wa9KEUmKrY1neR+3waQ8bjm8cVIlM=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=jYyt4iUh2SM1HYBePfDav+jg3RCggvI1ZupsX236AROTIz7UgQYepColkItYMa576
-         n9HW9FdMSIWH0WolN+lLn1jik+LoarVLMEFzy15NiPrw+fxGXzABbkrfnaa+k2N37N
-         0DubQdTQwk3jwCrGPdC6HDUaYNZkS/l8WP+r6exA=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20211221131945epcas5p2f0be3374955094396b6faba21043836b~Cx7Lvtuuy1205912059epcas5p2-;
-        Tue, 21 Dec 2021 13:19:45 +0000 (GMT)
-X-AuditID: b6c32a49-b13ff70000001917-3f-61c1d471d241
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C5.71.06423.174D1C16; Tue, 21 Dec 2021 22:19:45 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH 1/1] Smack:- Fix the issue of wrong info printed in
- ptrace error logs
-Reply-To: vishal.goel@samsung.com
-Sender: Vishal Goel <vishal.goel@samsung.com>
-From:   Vishal Goel <vishal.goel@samsung.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     AMIT SAHRAWAT <a.sahrawat@samsung.com>,
-        Vaneet Narang <v.narang@samsung.com>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <a648c816-3093-8023-d96c-b1b8d459430f@schaufler-ca.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20211221131233epcms5p2e334598b208dcd76f6efec26f879c784@epcms5p2>
-Date:   Tue, 21 Dec 2021 22:12:33 +0900
-X-CMS-MailID: 20211221131233epcms5p2e334598b208dcd76f6efec26f879c784
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjleLIzCtJLcpLzFFi42LZdlhTXbfwysFEgwv75C0u7k61uLftF5vF
-        wRN7GS0u75rDZvGh5xGbxaGTcxkd2Dze77vK5tG3ZRWjx9H9i9g8Pm+SC2CJ4rJJSc3JLEst
-        0rdL4Mq4+Gw9Y8Ea7or/6/oZGxjnsHUxcnJICJhItB3+z9rFyMUhJLCbUaLj3hzmLkYODl4B
-        QYm/O4RBaoQF4iVu/37CDmILCShKrFg+jxGkRFhAV2LelACQMJuAtkTvvLtMIGNEBA4xSpz9
-        toIRxGEWaGWU2D5rJxPEMl6JGe1PWSBsaYnty7cygticAi4Sr5res0PERSVurn4LZ78/Np8R
-        whaRaL13lhnCFpR48HM3VFxGYsKcs2APSAi0M0qc/neSEcKZwCjRtPo4VJW5xPolq9ghPvOV
-        2NDFCRJmEVCVOLBzH9QyF4l1T76AHccsIC+x/S0kIJgFNCXW79KHKJGVmHpqHRNECZ9E7+8n
-        cH/tmAdjq0pMndTNDvPj4RtnoP71kHi/rAca0L8YJdb0/GebwKgwCxHWs5BsnoWweQEj8ypG
-        ydSC4tz01GLTAsO81HK94sTc4tK8dL3k/NxNjOCkouW5g/Hugw96hxiZOBiBEcDBrCTCu2X2
-        /kQh3pTEyqrUovz4otKc1OJDjNIcLErivKfTNyQKCaQnlqRmp6YWpBbBZJk4OKUamJqWM71K
-        vxv5k5/z3vLsHVbGE17aMVlFSR9NZ/2zvrp+35dnzUJifrcuqZ54fzFBL2/P1MNi3+v4rsY8
-        yLmwaXbFchGf1p8T+/Iqn827EuukkdWx8t7Zdu8EUcG0eU8+PDnr5B/4qu/J8UdNjPUskbN1
-        Sorj/oWoZh/gqkoXf2P8o0/r7v89H3j5j5p8PMvBsHt7Q3OlyzuV+b/0HMX8Le/ePhrDccD0
-        xQNnkbCDc5eoHXyt7Jrov8Vwb+tuv18bLDv2rl/r1zFf0nLPxA2XF2xY9ua5C+/qKdPaogy2
-        rpzgqnz/xOsvUqo3nqnNsmrK331uVfXl/AVdC5TNGbf9DHwetakhcJXEzamzWhzl9+xTYinO
-        SDTUYi4qTgQA0BqADJkDAAA=
-X-CMS-RootMailID: 20211220101352epcas5p3aec72d06d04f71a7c387570957a0f6c7
-References: <a648c816-3093-8023-d96c-b1b8d459430f@schaufler-ca.com>
-        <20211220101318.3538824-1-vishal.goel@samsung.com>
-        <3ccb78ef-905c-4914-c77a-24765c0e6675@schaufler-ca.com>
-        <CGME20211220101352epcas5p3aec72d06d04f71a7c387570957a0f6c7@epcms5p2>
+        Tue, 21 Dec 2021 09:01:24 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BLDe0Cd007258;
+        Tue, 21 Dec 2021 14:01:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=Y2f1JQNiS0TkECCmHkDm6yIUjMCDTlb5T57vxkzTkfw=;
+ b=NzgLPNLHcmIx4YuA5k/SH/RKRK1Z7XuLM1O63eg/eZpzQGqQCw7ni63kJTvpUKWTxcDj
+ CaZZOoqzz8IfKk9oknUJ8FrKL9/PC0pG16viZOobfPRMzDxs9yrEzybyZ59quOwQ0Azt
+ ULy+VwhwTRdbCqnRO1fX3m9TED82UW0s8nM2uPEH5gJfuzfXfQA/kCIJPUCixmqzmokn
+ nkBZZ2Gbm0Xks3Ln3bOTT3mpf4twdjvoZwr3GkvG4CQ9h0v2KB3UWuUpkGF4LnQw0j4o
+ b/PfjsfkgjYzbfedX83Z/ontygBgH0zyPqPwSuRtKEeHsOAqhxq89QSNFz1vsaNWGb39 EA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3d3g0u8emv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Dec 2021 14:01:14 +0000
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BLDehno008320;
+        Tue, 21 Dec 2021 14:01:14 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3d3g0u8emf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Dec 2021 14:01:14 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BLDwHRb012382;
+        Tue, 21 Dec 2021 14:01:13 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma02wdc.us.ibm.com with ESMTP id 3d179ahx1r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Dec 2021 14:01:13 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BLE19dV11075864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Dec 2021 14:01:09 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9ED297805C;
+        Tue, 21 Dec 2021 14:01:09 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CB41878098;
+        Tue, 21 Dec 2021 14:01:07 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 21 Dec 2021 14:01:07 +0000 (GMT)
+Message-ID: <8b0c9683-d29b-38a2-8dfe-8f47db6544f2@linux.ibm.com>
+Date:   Tue, 21 Dec 2021 09:01:06 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH] tpm: Fix kexec crash due to access to ops NULL pointer
+ (powerpc)
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     peterhuewe@gmx.de, linux-integrity@vger.kernel.org, jgg@ziepe.ca,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, pavrampu@in.ibm.com,
+        Korrapati.Likhitha@ibm.com, gcwilson@us.ibm.com
+References: <20211212012804.1555661-1-stefanb@linux.ibm.com>
+ <YcGUoJCtmqfCWER0@iki.fi>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <YcGUoJCtmqfCWER0@iki.fi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: YHJNSFTPngVAQ5P_j1u33_1jnTL2ToE9
+X-Proofpoint-ORIG-GUID: RMqKfdeYynsKsm3JE-UXzhEFk2o4fXi2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-21_04,2021-12-21_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 mlxscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2112210065
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
 
->>> Signed-off-by: Vishal Goel <vishal.goel@samsung.com>
-> 
-> What test case do you have that generates these records?
-
-Test case for 1st log:-
-void main(int argc,char *argv[])
-{
-        int pid;
-
-        if (argc < 2) {
-                printf("enter pid of the tracee process\n");
-                exit(0);
-        }
-
-        pid = atoi(argv[1]);
-        fprintf(stderr,"Inside\n");
-        ptrace(PTRACE_ATTACH, pid,NULL,NULL);
-        while(1)
-        {
-                sleep(10);
-        }
-}
-
-Test case for 2nd log:-
-void main(int argc,char *argv[])
-{
-        int pid;
-
-        pid = getpid();
-        fprintf(stderr,"Inside\n");
-        ptrace(PTRACE_TRACEME, pid,NULL,NULL);
-        while(1)
-        {
-               sleep(10);
-        }
-}
-
-Test case for 3rd log:-
-void main()
-{
-        int pid;
-        char *argv[2];
-
-        fprintf(stderr,"Inside\n");
-        pid = fork();
-        if(pid == 0) {
-                argv[0] = "/tst_pt";
-                argv[1] = NULL;
-
-                if(ptrace(PTRACE_TRACEME, pid,NULL,NULL))
-                        printf("attached child\n");
-
-                printf("going for exec\n");
-                execv("/tst_pt",argv);
-        }
-        else
-        {
-                while(1)
-                {
-                        sleep(10);
-                }
-        }
-}
-
+On 12/21/21 03:47, Jarkko Sakkinen wrote:
+> On Sat, Dec 11, 2021 at 08:28:04PM -0500, Stefan Berger wrote:
+>> Fix the following crash on kexec by checking chip->ops for a NULL pointer
+>> in tpm_chip_start() and returning an error code if this is the case.
 >>
->> Added linux-audit to the CC list.
+>> BUG: Kernel NULL pointer dereference on read at 0x00000060
+>> Faulting instruction address: 0xc00000000099a06c
+>> Oops: Kernel access of bad area, sig: 11 [#1]
+>> ...
+>> NIP [c00000000099a06c] tpm_chip_start+0x2c/0x140
+>>   LR [c00000000099a808] tpm_chip_unregister+0x108/0x170
+>> Call Trace:
+>> [c0000000188bfa00] [c000000002b03930] fw_devlink_strict+0x0/0x8 (unreliable)
+>> [c0000000188bfa30] [c00000000099a808] tpm_chip_unregister+0x108/0x170
+>> [c0000000188bfa70] [c0000000009a3874] tpm_ibmvtpm_remove+0x34/0x130
+>> [c0000000188bfae0] [c000000000110dbc] vio_bus_remove+0x5c/0xb0
+>> [c0000000188bfb20] [c0000000009bc154] device_shutdown+0x1d4/0x3a8
+>> [c0000000188bfbc0] [c000000000196e14] kernel_restart_prepare+0x54/0x70
 >>
+>> The referenced patch below introduced a function to shut down the VIO bus.
+>> The bus shutdown now calls tpm_del_char_device (via tpm_chip_unregister)
+>> after a call to tpm_class_shutdown, which already set chip->ops to NULL.
+>> The crash occurrs when tpm_del_char_device calls tpm_chip_start with the
+>> chip->ops NULL pointer.
+>>
+>> Fixes: 39d0099f9439 ("powerpc/pseries: Add shutdown() to vio_driver and vio_bus")
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> ---
+>>   drivers/char/tpm/tpm-chip.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>> index ddaeceb7e109..cca1bde296ee 100644
+>> --- a/drivers/char/tpm/tpm-chip.c
+>> +++ b/drivers/char/tpm/tpm-chip.c
+>> @@ -101,6 +101,9 @@ int tpm_chip_start(struct tpm_chip *chip)
+>>   {
+>>   	int ret;
+>>   
+>> +	if (!chip->ops)
+>> +		return -EINVAL;
+> This triggers to all drivers, not just tpm_ibmvtpm, i.e. the fix has
+> side-effects.
 
-Thanks
-Vishal Goel
+What are those side-effects?
+
+   Stefan
+
+>
+> /Jarkko
+>
