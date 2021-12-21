@@ -2,60 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 383ABC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Dec 2021 08:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17859C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Dec 2021 08:47:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234962AbhLUIdG (ORCPT
+        id S235801AbhLUIrd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Dec 2021 03:33:06 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:52438 "EHLO
+        Tue, 21 Dec 2021 03:47:33 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:58058 "EHLO
         ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232572AbhLUIdG (ORCPT
+        with ESMTP id S235803AbhLUIrc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Dec 2021 03:33:06 -0500
+        Tue, 21 Dec 2021 03:47:32 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6A507B80E07;
-        Tue, 21 Dec 2021 08:33:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFAABC36AE2;
-        Tue, 21 Dec 2021 08:33:02 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E1807B81211;
+        Tue, 21 Dec 2021 08:47:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29483C36AE7;
+        Tue, 21 Dec 2021 08:47:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640075583;
-        bh=kwsneyhmyLhbyS5yR1DIRC8tJK+kc2ih3L52VQGqI60=;
+        s=k20201202; t=1640076449;
+        bh=z+hWLz9eeYZRs6D3BG6fArBnZ7wr2Rh1s9m2i6WbG8w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WoplRsbp4U+lKpzxxSZWZvNO+XJAYvj935JOcldaVjxtj/Qb/yjMgf2adiofNNJYi
-         D1p34vecFCvVMwj/501sDtWs/Gvmc5f0f/86yApE71eDoXL8G1kbq4R7kSsqwP/T4x
-         s2zbLN8gd9P/XGYJQmQwhE2M+1y4XKZKbhLQDTBiIC1EY2V2PI4qfXediQ7Wfawhwf
-         7Px/EK6dgh4+V3bD8fLDgYcffyduZ9FhsYr36NEiORZ6e+10mC+5pBuHcunLM2dYTg
-         SWlFINXbMOCRi8E2cNgT4Ie17ax0NN0TVpvlxTV4A1jHzq5/39qtxqdpPr7FjTgstb
-         bNkqbZK/peUlw==
-Date:   Tue, 21 Dec 2021 10:33:01 +0200
+        b=cDzIu2g9SuwaZPs5b1Pd4gxYHd/Mgpt/Wo662d8GXD2H19BbQJi5YNA7R7wNn3LK1
+         czEaugp5uTg5DXI7aVIiF9w/LxW2dEEEaw4imLIvgSqFhNTwF3N5NPexO60Ixpe8NQ
+         RkjgwFRxssPH8amrZfly6vB7GCpM7qsZnTkvQBq80nvLi2hBQzsohOsxeqBZAjDPDj
+         ebdPAK5SYJpLYMcWpIyOzNfoWD7BC0TDxZ+6SxIYdQ6y5czKCuLqZxVNCH6/XwFX+h
+         rgOQPMcV3UsjL7Y1O2BEHQ9VdLkXiAzLm8CGx/j9YSbLW5VS/YUrgt1ZmJp/szIWTA
+         OKfzYlA6k9/NA==
+Date:   Tue, 21 Dec 2021 10:47:28 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Jianglei Nie <niejianglei2021@163.com>
-Cc:     jejb@linux.ibm.com, zohar@linux.ibm.com, dhowells@redhat.com,
-        jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] security:trusted_tpm2: Fix memory leak in
- tpm2_key_encode()
-Message-ID: <YcGRPdqkX94hCGG5@iki.fi>
-References: <20211212135403.59724-1-niejianglei2021@163.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     peterhuewe@gmx.de, linux-integrity@vger.kernel.org, jgg@ziepe.ca,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, pavrampu@in.ibm.com,
+        Korrapati.Likhitha@ibm.com, gcwilson@us.ibm.com
+Subject: Re: [PATCH] tpm: Fix kexec crash due to access to ops NULL pointer
+ (powerpc)
+Message-ID: <YcGUoJCtmqfCWER0@iki.fi>
+References: <20211212012804.1555661-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211212135403.59724-1-niejianglei2021@163.com>
+In-Reply-To: <20211212012804.1555661-1-stefanb@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Dec 12, 2021 at 09:54:03PM +0800, Jianglei Nie wrote:
-> Line 36 (#1) allocates a memory chunk for scratch by kmalloc(), but
-> it is never freed through the function, which will lead to a memory
-> leak.
+On Sat, Dec 11, 2021 at 08:28:04PM -0500, Stefan Berger wrote:
+> Fix the following crash on kexec by checking chip->ops for a NULL pointer
+> in tpm_chip_start() and returning an error code if this is the case.
 > 
+> BUG: Kernel NULL pointer dereference on read at 0x00000060
+> Faulting instruction address: 0xc00000000099a06c
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> ...
+> NIP [c00000000099a06c] tpm_chip_start+0x2c/0x140
+>  LR [c00000000099a808] tpm_chip_unregister+0x108/0x170
+> Call Trace:
+> [c0000000188bfa00] [c000000002b03930] fw_devlink_strict+0x0/0x8 (unreliable)
+> [c0000000188bfa30] [c00000000099a808] tpm_chip_unregister+0x108/0x170
+> [c0000000188bfa70] [c0000000009a3874] tpm_ibmvtpm_remove+0x34/0x130
+> [c0000000188bfae0] [c000000000110dbc] vio_bus_remove+0x5c/0xb0
+> [c0000000188bfb20] [c0000000009bc154] device_shutdown+0x1d4/0x3a8
+> [c0000000188bfbc0] [c000000000196e14] kernel_restart_prepare+0x54/0x70
+> 
+> The referenced patch below introduced a function to shut down the VIO bus.
+> The bus shutdown now calls tpm_del_char_device (via tpm_chip_unregister)
+> after a call to tpm_class_shutdown, which already set chip->ops to NULL.
+> The crash occurrs when tpm_del_char_device calls tpm_chip_start with the
+> chip->ops NULL pointer.
+> 
+> Fixes: 39d0099f9439 ("powerpc/pseries: Add shutdown() to vio_driver and vio_bus")
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-chip.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index ddaeceb7e109..cca1bde296ee 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -101,6 +101,9 @@ int tpm_chip_start(struct tpm_chip *chip)
+>  {
+>  	int ret;
+>  
+> +	if (!chip->ops)
+> +		return -EINVAL;
 
-through the function => in the implementation
-
-Also, "line 36" is a relative to something, right? What is it?
+This triggers to all drivers, not just tpm_ibmvtpm, i.e. the fix has
+side-effects.
 
 /Jarkko
+
