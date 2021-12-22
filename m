@@ -2,104 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1D0C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Dec 2021 23:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFC7C43217
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Dec 2021 16:32:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237272AbhLUX2t (ORCPT
+        id S241856AbhLVQcF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Dec 2021 18:28:49 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:31020 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S237379AbhLUX2o (ORCPT
+        Wed, 22 Dec 2021 11:32:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33624 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241859AbhLVQcE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Dec 2021 18:28:44 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BLLg29G030372;
-        Tue, 21 Dec 2021 23:28:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=5Q5nX0xPxlbdmfm+TOYaEU9eV542ne1Rzw3ZwZVZQxc=;
- b=CP4BTk2rtNfZu1903JoSu98tig09Q+D+AdboHDxMHotziaSWttdGvJd+72xlz1888FCm
- n3DUNdjrF5tl82eUQTp4jDXA8sOcT/mZu5pHNYshiLo2ZJhBYTYQ4Q24a48m8XhSlH9n
- CQWLtP+A6NRIIiOasJ52O38I9dLGtCefrSzPVbIyelHP1Q557N4v4cn7/KvucwdmT7iZ
- 9kLTH7ZHjZi53D/1wp/CLBGIjf6ZN2QIXZAIH/EfxRiSqJMFkwbxUtC2sZy9KKF9HsgX
- 5GpVEdB1fvbHd5V0k/cVdNAMVgc4p0ZVSkxqXYU2ztx7mHVZvFqudMNu1j4VFyedk3Gy Pg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3d3f0auh6j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 21 Dec 2021 23:28:38 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BLNSbET000958;
-        Tue, 21 Dec 2021 23:28:38 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3d3f0auh6a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 21 Dec 2021 23:28:37 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BLNMk3U007083;
-        Tue, 21 Dec 2021 23:28:36 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 3d16wjsmku-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 21 Dec 2021 23:28:35 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BLNSXCN26804562
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Dec 2021 23:28:33 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B3FBA4054;
-        Tue, 21 Dec 2021 23:28:33 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 012CAA405B;
-        Tue, 21 Dec 2021 23:28:32 +0000 (GMT)
-Received: from sig-9-65-67-220.ibm.com (unknown [9.65.67.220])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 21 Dec 2021 23:28:31 +0000 (GMT)
-Message-ID: <9b93e099fc6ee2a56d70ed338cd79f2c1ddcffa5.camel@linux.ibm.com>
-Subject: Re: [PATCH] integrity: Do not load MOK and MOKx when secure boot be
- disabled
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        James Morris <jmorris@namei.org>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>
-Date:   Tue, 21 Dec 2021 18:28:31 -0500
-In-Reply-To: <20211218020905.7187-1-jlee@suse.com>
-References: <20211218020905.7187-1-jlee@suse.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: uQeJ8f_8ZN-B_o8ZQ_exHqD5LVj-hBYw
-X-Proofpoint-GUID: Tc_s0b3RL0D8sWFFCGoJoXmr8vfhRfAO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-21_07,2021-12-21_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=823 phishscore=0
- clxscore=1015 priorityscore=1501 bulkscore=0 adultscore=0 spamscore=0
- mlxscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112210115
+        Wed, 22 Dec 2021 11:32:04 -0500
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66467C061747
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Dec 2021 08:32:04 -0800 (PST)
+Received: by mail-qk1-x733.google.com with SMTP id l11so2795267qke.11
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Dec 2021 08:32:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GVq0Lkiq1jbxQVK9A6lpW+BwXHCHGEmsYVl2rEAV60Y=;
+        b=iv0i8LFszW7AfFHKMoHpVVENR7IkX+qRUoG8cYeDB22IY2avyba2NmJPr4bdYp9TPp
+         xYlccU5Dq6xkOR3j9t8IH9Bz3t+AnnLgezD6PhYfPxQFs38nswabHw1wFPhfV6rTNdbz
+         WyO2Pp3MJCJjHvt70R+Mnlolk8FiLEha9tLciLluapBneoq3RGZcmrgmkMk/52vHjLlu
+         py7bHoFni1qyxynw7XFowlIlgqxAoA1hLjYoR8pl1CstFgICqTsNjbGtyXPjIQzvavPQ
+         Dw5k//PbwXPHAV/rvHOrYvuFgfRsIXbiV96jQYpDTveKZIHEtsm7XkcaYx60/Zif0X6l
+         fpeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GVq0Lkiq1jbxQVK9A6lpW+BwXHCHGEmsYVl2rEAV60Y=;
+        b=NHQdO6HQQeEPNPKPgdWOP2P4Nry8qaamSILEvCO+pvlvkjnyA28GXcagdOudTZfEwO
+         Nwzhpldf0L4dJK4kfIhlrHX84gvh5Hta/jmhpGT69xR8EMHFFBTQ62d0riqH9Pk5ekBS
+         uPIJy/76PqN+aJvvd1Cp03PgMI4tf7c1ZMOo3K24UUvsaaJQUdoa9e5c7LiwJuUURtHd
+         zyEX9P+rlGC/wl1RFO4PC8EnIU9YdAS+9sXtTFZqVcnYo8igzG3ubvEnYcdYbMWku5Ko
+         M2Uqv8tLf6e64JRtfBi+nx5I57q73NT4sQEFjgPSbKn/ToRl8AiSO63TUGz2GSvRnzu2
+         ccFw==
+X-Gm-Message-State: AOAM531lf8qnAj/3epZRb9LdsBE8YQV/UKLfaMEZ8WIHU23f9nMQxd/P
+        F2vDPkgTqk0X8/jwd3nRG1Fh9uOx4bclf6B1+TcGVQ==
+X-Google-Smtp-Source: ABdhPJxDn4eTGAjkL0ahiBxdGuYS4W5B2EFD8qOqlWwHv0RL2u2pL3vuXz9YL9Pwo2b4hlaPu5CRfvxrwXuFCweqBz0=
+X-Received: by 2002:a37:a3c7:: with SMTP id m190mr2513404qke.288.1640190723204;
+ Wed, 22 Dec 2021 08:32:03 -0800 (PST)
+MIME-Version: 1.0
+References: <20211213192030.125091-1-yaelt@google.com> <ec2ec0a9a7ba1adc6e54bbf7051a83ba90a39c0b.camel@linux.ibm.com>
+In-Reply-To: <ec2ec0a9a7ba1adc6e54bbf7051a83ba90a39c0b.camel@linux.ibm.com>
+From:   Yael Tiomkin <yaelt@google.com>
+Date:   Wed, 22 Dec 2021 11:31:51 -0500
+Message-ID: <CAKoutNvhYYiKgCLFFqzczuT444TraMhmEhzFwC7u42ALTdSqaQ@mail.gmail.com>
+Subject: Re: [PATCH v2] Instantiate key with user-provided decrypted data.
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, jejb@linux.ibm.com,
+        Jarkko Sakkinen <jarkko@kernel.org>, corbet@lwn.net,
+        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
+        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 2021-12-18 at 10:09 +0800, Lee, Chun-Yi wrote:
-> The security of Machine Owner Key (MOK) relies on secure boot. When
-> secure boot is disabled, EFI firmware will not verify binary code. Then
-> arbitrary efi binary code can modify MOK when rebooting.
-> 
-> This patch prevents MOK/MOKx be loaded when secure boot be disabled.
-> 
-> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+On Tue, Dec 14, 2021 at 7:37 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> Hi Yael,
+>
+> On Mon, 2021-12-13 at 14:20 -0500, Yael Tiomkin wrote:
+> > The encrypted.c class supports instantiation of encrypted keys with
+> > either an already-encrypted key material, or by generating new key
+> > material based on random numbers. To support encryption of
+> > user-provided decrypted data, this patch defines a new datablob
+> > format: [<format>] <master-key name> <decrypted data length>
+> > <decrypted data>.
+> >
+> > Signed-off-by: Yael Tiomkin <yaelt@google.com>
+>
+> Other than the comment below,
+>     Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+>
+> Could you also provide an LTP test for defining, exporting, and loading
+> an encrypted key based on user provided key data?
+>
+> thanks,
+>
+> Mimi
+>
+> > ---
+>
+> > @@ -303,6 +306,16 @@ Load an encrypted key "evm" from saved blob::
+> >      82dbbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564e0
+> >      24717c64 5972dcb82ab2dde83376d82b2e3c09ffc
+> >
+> > +Instantiate an encrypted key "evm" using user-provided decrypted data::
+> > +
+> > +    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm.blob`" @u
+> > +    794890253
+>
+> The existing references to "evm.blob" refer to the encrypted key data.
+> Here "evm.blob" is unencrypted data.  Perhaps name it something like
+> "evm.user-provided-data" data.
+>
+> > +
+> > +    $ keyctl print 794890253
+> > +    default user:kmk 32 2375725ad57798846a9bbd240de8906f006e66c03af53b1b382d
+> > +    bbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564e0247
+> > +    17c64 5972dcb82ab2dde83376d82b2e3c09ffc
+> > +
+>
 
-Thanks, Joey!
+Hi Mimi,
 
-This patch is now queued in the next-integrity-testing branch waiting
-further review/tags.
+I have posted the ltp test:
+https://lore.kernel.org/all/20211221023721.129689-1-yaelt@google.com/
 
-Mimi
+I will update the documentation per your suggestion.
 
+Thanks,
+Yael
