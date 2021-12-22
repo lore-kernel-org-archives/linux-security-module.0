@@ -2,120 +2,344 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFC7C43217
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Dec 2021 16:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5944AC433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Dec 2021 17:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241856AbhLVQcF (ORCPT
+        id S1344264AbhLVRTk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Dec 2021 11:32:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33624 "EHLO
+        Wed, 22 Dec 2021 12:19:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241859AbhLVQcE (ORCPT
+        with ESMTP id S1344254AbhLVRTe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Dec 2021 11:32:04 -0500
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66467C061747
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Dec 2021 08:32:04 -0800 (PST)
-Received: by mail-qk1-x733.google.com with SMTP id l11so2795267qke.11
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Dec 2021 08:32:04 -0800 (PST)
+        Wed, 22 Dec 2021 12:19:34 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C725C061401
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Dec 2021 09:19:34 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id w9-20020a25c709000000b00608a9489fc1so5030717ybe.20
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Dec 2021 09:19:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GVq0Lkiq1jbxQVK9A6lpW+BwXHCHGEmsYVl2rEAV60Y=;
-        b=iv0i8LFszW7AfFHKMoHpVVENR7IkX+qRUoG8cYeDB22IY2avyba2NmJPr4bdYp9TPp
-         xYlccU5Dq6xkOR3j9t8IH9Bz3t+AnnLgezD6PhYfPxQFs38nswabHw1wFPhfV6rTNdbz
-         WyO2Pp3MJCJjHvt70R+Mnlolk8FiLEha9tLciLluapBneoq3RGZcmrgmkMk/52vHjLlu
-         py7bHoFni1qyxynw7XFowlIlgqxAoA1hLjYoR8pl1CstFgICqTsNjbGtyXPjIQzvavPQ
-         Dw5k//PbwXPHAV/rvHOrYvuFgfRsIXbiV96jQYpDTveKZIHEtsm7XkcaYx60/Zif0X6l
-         fpeg==
+        h=date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=eq8kg+Nq7s6ci7KQ2Pljuhksj8Xw03VdBUWBwy7DJtU=;
+        b=WIMis9rQiP91hFFBxdI4UKQZ5eQXuPUr3fmPwFArzRyCYEboxG3lYWxyZmeAt+JVF1
+         sMb3JBwfvRsaqLr6O7v9LS+AA3tfNZxzfwL9fb3QUYAsRo8iNIhNnGb/q6M2GkHB7oWX
+         HW7GQEAFL9NZZ09q0DVEAbw6lp/EMHYDkCbf4XoYV3mwJ4u7Umkb4IUQEr3JZuXtikQL
+         C9uwfaRNXbuzXFjeyPEjAKOP9FqsXcmTE/jhKo2Eq4sBx5wc0weNqG+KCP/c7R5YrqTF
+         wKL5c1JhM1XVcyDXeIrpDN3FUE617vDxzhABRPHuhwziWDsQYBj32YrAWfqOj9+ARDAT
+         Wi7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GVq0Lkiq1jbxQVK9A6lpW+BwXHCHGEmsYVl2rEAV60Y=;
-        b=NHQdO6HQQeEPNPKPgdWOP2P4Nry8qaamSILEvCO+pvlvkjnyA28GXcagdOudTZfEwO
-         Nwzhpldf0L4dJK4kfIhlrHX84gvh5Hta/jmhpGT69xR8EMHFFBTQ62d0riqH9Pk5ekBS
-         uPIJy/76PqN+aJvvd1Cp03PgMI4tf7c1ZMOo3K24UUvsaaJQUdoa9e5c7LiwJuUURtHd
-         zyEX9P+rlGC/wl1RFO4PC8EnIU9YdAS+9sXtTFZqVcnYo8igzG3ubvEnYcdYbMWku5Ko
-         M2Uqv8tLf6e64JRtfBi+nx5I57q73NT4sQEFjgPSbKn/ToRl8AiSO63TUGz2GSvRnzu2
-         ccFw==
-X-Gm-Message-State: AOAM531lf8qnAj/3epZRb9LdsBE8YQV/UKLfaMEZ8WIHU23f9nMQxd/P
-        F2vDPkgTqk0X8/jwd3nRG1Fh9uOx4bclf6B1+TcGVQ==
-X-Google-Smtp-Source: ABdhPJxDn4eTGAjkL0ahiBxdGuYS4W5B2EFD8qOqlWwHv0RL2u2pL3vuXz9YL9Pwo2b4hlaPu5CRfvxrwXuFCweqBz0=
-X-Received: by 2002:a37:a3c7:: with SMTP id m190mr2513404qke.288.1640190723204;
- Wed, 22 Dec 2021 08:32:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20211213192030.125091-1-yaelt@google.com> <ec2ec0a9a7ba1adc6e54bbf7051a83ba90a39c0b.camel@linux.ibm.com>
-In-Reply-To: <ec2ec0a9a7ba1adc6e54bbf7051a83ba90a39c0b.camel@linux.ibm.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=eq8kg+Nq7s6ci7KQ2Pljuhksj8Xw03VdBUWBwy7DJtU=;
+        b=iTScgBipBD0f3nntVg3eS1ZWjPoBCSLABbyu00Y/qAGLaeWn2IKZJ0Ai89uTX/mlW6
+         YO8dXRhKKy3Sdnong+L4FIgvZPh7lFLTvrGhNKcyj+O3MSJiXytE62PBICLld4waBAe+
+         qaCLOWDhE812btIup7b39fJX0rcUo5OwFQr2Q/6mhgrCGT6tD6J7Bs06FgP0Yc8MVj1j
+         N7UlDDw58RX1R0ntwHREtBSBI3Y3A3QJnPEpldSWm04vugjx+VpX8SHmY1CGqovAhqTT
+         TZOWM1S0lolcJ3r1NcfUHIri9W/E+y4YUAmA53XEdhlfc39f99en28bNTzhjmV4HlMrX
+         749A==
+X-Gm-Message-State: AOAM530Q0GUKhrk2rpW2Cx88ToH3h8l3xqNwXCCNHXCtfm3YSeF7Z5g+
+        /yg5AEAkfvreUkuAgt8XTgafDqMWLA==
+X-Google-Smtp-Source: ABdhPJzaBm3F2KCgstVEGJQrVFDDUQCZXabjU35JwKcTfc0amzt8kJz7DsYSgRWz/HqyBOS+UG2Zk9OxxQ==
+X-Received: from yaelt.nyc.corp.google.com ([2620:0:1003:415:6bb1:a282:3a87:2cee])
+ (user=yaelt job=sendgmr) by 2002:a25:6b09:: with SMTP id g9mr5680530ybc.207.1640193573714;
+ Wed, 22 Dec 2021 09:19:33 -0800 (PST)
+Date:   Wed, 22 Dec 2021 12:17:57 -0500
+Message-Id: <20211222171757.851754-1-yaelt@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.34.1.307.g9b7440fafd-goog
+Subject: [PATCH v3] Instantiate key with user-provided decrypted data.
 From:   Yael Tiomkin <yaelt@google.com>
-Date:   Wed, 22 Dec 2021 11:31:51 -0500
-Message-ID: <CAKoutNvhYYiKgCLFFqzczuT444TraMhmEhzFwC7u42ALTdSqaQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Instantiate key with user-provided decrypted data.
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, jejb@linux.ibm.com,
-        Jarkko Sakkinen <jarkko@kernel.org>, corbet@lwn.net,
-        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
+        corbet@lwn.net, dhowells@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, keyrings@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Yael Tiomkin <yaelt@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 14, 2021 at 7:37 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> Hi Yael,
->
-> On Mon, 2021-12-13 at 14:20 -0500, Yael Tiomkin wrote:
-> > The encrypted.c class supports instantiation of encrypted keys with
-> > either an already-encrypted key material, or by generating new key
-> > material based on random numbers. To support encryption of
-> > user-provided decrypted data, this patch defines a new datablob
-> > format: [<format>] <master-key name> <decrypted data length>
-> > <decrypted data>.
-> >
-> > Signed-off-by: Yael Tiomkin <yaelt@google.com>
->
-> Other than the comment below,
->     Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->
-> Could you also provide an LTP test for defining, exporting, and loading
-> an encrypted key based on user provided key data?
->
-> thanks,
->
-> Mimi
->
-> > ---
->
-> > @@ -303,6 +306,16 @@ Load an encrypted key "evm" from saved blob::
-> >      82dbbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564e0
-> >      24717c64 5972dcb82ab2dde83376d82b2e3c09ffc
-> >
-> > +Instantiate an encrypted key "evm" using user-provided decrypted data::
-> > +
-> > +    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm.blob`" @u
-> > +    794890253
->
-> The existing references to "evm.blob" refer to the encrypted key data.
-> Here "evm.blob" is unencrypted data.  Perhaps name it something like
-> "evm.user-provided-data" data.
->
-> > +
-> > +    $ keyctl print 794890253
-> > +    default user:kmk 32 2375725ad57798846a9bbd240de8906f006e66c03af53b1b382d
-> > +    bbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564e0247
-> > +    17c64 5972dcb82ab2dde83376d82b2e3c09ffc
-> > +
->
+The encrypted.c class supports instantiation of encrypted keys with
+either an already-encrypted key material, or by generating new key
+material based on random numbers. To support encryption of
+user-provided decrypted data, this patch defines a new datablob
+format: [<format>] <master-key name> <decrypted data length>
+<decrypted data>.
 
-Hi Mimi,
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Yael Tiomkin <yaelt@google.com>
+---
 
-I have posted the ltp test:
-https://lore.kernel.org/all/20211221023721.129689-1-yaelt@google.com/
+Notes:
+    v -> v2: fixed compilation error.
+   =20
+    v2 -> v3: modified documentation.
 
-I will update the documentation per your suggestion.
+ .../security/keys/trusted-encrypted.rst       | 25 ++++++--
+ security/keys/encrypted-keys/encrypted.c      | 61 +++++++++++++------
+ 2 files changed, 62 insertions(+), 24 deletions(-)
 
-Thanks,
-Yael
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentat=
+ion/security/keys/trusted-encrypted.rst
+index 80d5a5af62a1..f614dad7de12 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -107,12 +107,13 @@ Encrypted Keys
+ --------------
+=20
+ Encrypted keys do not depend on a trust source, and are faster, as they us=
+e AES
+-for encryption/decryption. New keys are created from kernel-generated rand=
+om
+-numbers, and are encrypted/decrypted using a specified =E2=80=98master=E2=
+=80=99 key. The
+-=E2=80=98master=E2=80=99 key can either be a trusted-key or user-key type.=
+ The main disadvantage
+-of encrypted keys is that if they are not rooted in a trusted key, they ar=
+e only
+-as secure as the user key encrypting them. The master user key should ther=
+efore
+-be loaded in as secure a way as possible, preferably early in boot.
++for encryption/decryption. New keys are created either from kernel-generat=
+ed
++random numbers or user-provided decrypted data, and are encrypted/decrypte=
+d
++using a specified =E2=80=98master=E2=80=99 key. The =E2=80=98master=E2=80=
+=99 key can either be a trusted-key or
++user-key type. The main disadvantage of encrypted keys is that if they are=
+ not
++rooted in a trusted key, they are only as secure as the user key encryptin=
+g
++them. The master user key should therefore be loaded in as secure a way as
++possible, preferably early in boot.
+=20
+=20
+ Usage
+@@ -199,6 +200,8 @@ Usage::
+=20
+     keyctl add encrypted name "new [format] key-type:master-key-name keyle=
+n"
+         ring
++    keyctl add encrypted name "new [format] key-type:master-key-name keyle=
+n
++        decrypted-data" ring
+     keyctl add encrypted name "load hex_blob" ring
+     keyctl update keyid "update key-type:master-key-name"
+=20
+@@ -303,6 +306,16 @@ Load an encrypted key "evm" from saved blob::
+     82dbbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564=
+e0
+     24717c64 5972dcb82ab2dde83376d82b2e3c09ffc
+=20
++Instantiate an encrypted key "evm" using user-provided decrypted data::
++
++    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm_decrypted=
+_data.blob`" @u
++    794890253
++
++    $ keyctl print 794890253
++    default user:kmk 32 2375725ad57798846a9bbd240de8906f006e66c03af53b1b38=
+2d
++    bbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564e02=
+47
++    17c64 5972dcb82ab2dde83376d82b2e3c09ffc
++
+ Other uses for trusted and encrypted keys, such as for disk and file encry=
+ption
+ are anticipated.  In particular the new format 'ecryptfs' has been defined
+ in order to use encrypted keys to mount an eCryptfs filesystem.  More deta=
+ils
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encry=
+pted-keys/encrypted.c
+index 87432b35d771..9921ed4de488 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -159,6 +159,7 @@ static int valid_master_desc(const char *new_desc, cons=
+t char *orig_desc)
+  *
+  * datablob format:
+  * new [<format>] <master-key name> <decrypted data length>
++ * new [<format>] <master-key name> <decrypted data length> <decrypted dat=
+a>
+  * load [<format>] <master-key name> <decrypted data length>
+  *     <encrypted iv + data>
+  * update <new-master-key name>
+@@ -170,7 +171,7 @@ static int valid_master_desc(const char *new_desc, cons=
+t char *orig_desc)
+  */
+ static int datablob_parse(char *datablob, const char **format,
+ 			  char **master_desc, char **decrypted_datalen,
+-			  char **hex_encoded_iv)
++			  char **hex_encoded_iv, char **decrypted_data)
+ {
+ 	substring_t args[MAX_OPT_ARGS];
+ 	int ret =3D -EINVAL;
+@@ -231,6 +232,8 @@ static int datablob_parse(char *datablob, const char **=
+format,
+ 				"when called from .update method\n", keyword);
+ 			break;
+ 		}
++		*decrypted_data =3D strsep(&datablob, " \t");
++
+ 		ret =3D 0;
+ 		break;
+ 	case Opt_load:
+@@ -595,7 +598,8 @@ static int derived_key_decrypt(struct encrypted_key_pay=
+load *epayload,
+ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 							 const char *format,
+ 							 const char *master_desc,
+-							 const char *datalen)
++							 const char *datalen,
++							 const char *decrypted_data)
+ {
+ 	struct encrypted_key_payload *epayload =3D NULL;
+ 	unsigned short datablob_len;
+@@ -604,6 +608,7 @@ static struct encrypted_key_payload *encrypted_key_allo=
+c(struct key *key,
+ 	unsigned int encrypted_datalen;
+ 	unsigned int format_len;
+ 	long dlen;
++	int i;
+ 	int ret;
+=20
+ 	ret =3D kstrtol(datalen, 10, &dlen);
+@@ -613,6 +618,20 @@ static struct encrypted_key_payload *encrypted_key_all=
+oc(struct key *key,
+ 	format_len =3D (!format) ? strlen(key_format_default) : strlen(format);
+ 	decrypted_datalen =3D dlen;
+ 	payload_datalen =3D decrypted_datalen;
++
++	if (decrypted_data) {
++		if (strlen(decrypted_data) !=3D decrypted_datalen) {
++			pr_err("encrypted key: decrypted data provided does not match decrypted=
+ data length provided\n");
++			return ERR_PTR(-EINVAL);
++		}
++		for (i =3D 0; i < strlen(decrypted_data); i++) {
++			if (!isalnum(decrypted_data[i])) {
++				pr_err("encrypted key: decrypted data provided must be alphanumeric\n"=
+);
++				return ERR_PTR(-EINVAL);
++			}
++		}
++	}
++
+ 	if (format) {
+ 		if (!strcmp(format, key_format_ecryptfs)) {
+ 			if (dlen !=3D ECRYPTFS_MAX_KEY_BYTES) {
+@@ -740,13 +759,14 @@ static void __ekey_init(struct encrypted_key_payload =
+*epayload,
+ /*
+  * encrypted_init - initialize an encrypted key
+  *
+- * For a new key, use a random number for both the iv and data
+- * itself.  For an old key, decrypt the hex encoded data.
++ * For a new key, use either a random number or user-provided decrypted da=
+ta in
++ * case it is provided. A random number is used for the iv in both cases. =
+For
++ * an old key, decrypt the hex encoded data.
+  */
+ static int encrypted_init(struct encrypted_key_payload *epayload,
+ 			  const char *key_desc, const char *format,
+ 			  const char *master_desc, const char *datalen,
+-			  const char *hex_encoded_iv)
++			  const char *hex_encoded_iv, const char *decrypted_data)
+ {
+ 	int ret =3D 0;
+=20
+@@ -760,21 +780,25 @@ static int encrypted_init(struct encrypted_key_payloa=
+d *epayload,
+ 	}
+=20
+ 	__ekey_init(epayload, format, master_desc, datalen);
+-	if (!hex_encoded_iv) {
+-		get_random_bytes(epayload->iv, ivsize);
+-
+-		get_random_bytes(epayload->decrypted_data,
+-				 epayload->decrypted_datalen);
+-	} else
++	if (hex_encoded_iv) {
+ 		ret =3D encrypted_key_decrypt(epayload, format, hex_encoded_iv);
++	} else if (decrypted_data) {
++		get_random_bytes(epayload->iv, ivsize);
++		memcpy(epayload->decrypted_data, decrypted_data, epayload->decrypted_dat=
+alen);
++	} else {
++		get_random_bytes(epayload->iv, ivsize);
++		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
++	}
+ 	return ret;
+ }
+=20
+ /*
+  * encrypted_instantiate - instantiate an encrypted key
+  *
+- * Decrypt an existing encrypted datablob or create a new encrypted key
+- * based on a kernel random number.
++ * Instantiates the key:
++ * - by decrypting an existing encrypted datablob, or
++ * - by creating a new encrypted key based on a kernel random number, or
++ * - using provided decrypted data.
+  *
+  * On success, return 0. Otherwise return errno.
+  */
+@@ -787,6 +811,7 @@ static int encrypted_instantiate(struct key *key,
+ 	char *master_desc =3D NULL;
+ 	char *decrypted_datalen =3D NULL;
+ 	char *hex_encoded_iv =3D NULL;
++	char *decrypted_data =3D NULL;
+ 	size_t datalen =3D prep->datalen;
+ 	int ret;
+=20
+@@ -799,18 +824,18 @@ static int encrypted_instantiate(struct key *key,
+ 	datablob[datalen] =3D 0;
+ 	memcpy(datablob, prep->data, datalen);
+ 	ret =3D datablob_parse(datablob, &format, &master_desc,
+-			     &decrypted_datalen, &hex_encoded_iv);
++			     &decrypted_datalen, &hex_encoded_iv, &decrypted_data);
+ 	if (ret < 0)
+ 		goto out;
+=20
+ 	epayload =3D encrypted_key_alloc(key, format, master_desc,
+-				       decrypted_datalen);
++				       decrypted_datalen, decrypted_data);
+ 	if (IS_ERR(epayload)) {
+ 		ret =3D PTR_ERR(epayload);
+ 		goto out;
+ 	}
+ 	ret =3D encrypted_init(epayload, key->description, format, master_desc,
+-			     decrypted_datalen, hex_encoded_iv);
++			     decrypted_datalen, hex_encoded_iv, decrypted_data);
+ 	if (ret < 0) {
+ 		kfree_sensitive(epayload);
+ 		goto out;
+@@ -860,7 +885,7 @@ static int encrypted_update(struct key *key, struct key=
+_preparsed_payload *prep)
+=20
+ 	buf[datalen] =3D 0;
+ 	memcpy(buf, prep->data, datalen);
+-	ret =3D datablob_parse(buf, &format, &new_master_desc, NULL, NULL);
++	ret =3D datablob_parse(buf, &format, &new_master_desc, NULL, NULL, NULL);
+ 	if (ret < 0)
+ 		goto out;
+=20
+@@ -869,7 +894,7 @@ static int encrypted_update(struct key *key, struct key=
+_preparsed_payload *prep)
+ 		goto out;
+=20
+ 	new_epayload =3D encrypted_key_alloc(key, epayload->format,
+-					   new_master_desc, epayload->datalen);
++					   new_master_desc, epayload->datalen, NULL);
+ 	if (IS_ERR(new_epayload)) {
+ 		ret =3D PTR_ERR(new_epayload);
+ 		goto out;
+--=20
+2.34.1.307.g9b7440fafd-goog
+
