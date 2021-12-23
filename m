@@ -2,243 +2,145 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C3AC4167B
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Dec 2021 01:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 214A7C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Dec 2021 04:10:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242480AbhLWBjq (ORCPT
+        id S238726AbhLWEKx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Dec 2021 20:39:46 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40504 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239866AbhLWBjp (ORCPT
+        Wed, 22 Dec 2021 23:10:53 -0500
+Received: from de-smtp-delivery-102.mimecast.com ([194.104.109.102]:26584 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238699AbhLWEKx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Dec 2021 20:39:45 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BN172d7002332;
-        Thu, 23 Dec 2021 01:39:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=8R4K9C9ZuDPbuJe6V0JoqAmBwLKXgc7zt8sYMRwfRbs=;
- b=GpWFH2mNrf8FeLf8P1UyYACBAcZzBu2Gbh1la1ZDUZnxBg7JM/9wsjZ1lTwIo4iuoFP4
- UKdEcV7819Q2phh3Usbhro5PDsL0TxMu0KetUFqHHTvgE1LCsu4RxfaKXaS2eZ0HsGNa
- lUYu6HWGBQAcpvfhuk073xFx17uGrc0gvA84wh+xhwlngPkavkstHRnxpqUMocJaR+nJ
- vTe1TgTdr5/0yQOpl34LJ8oo8C2FR0ifLD0Lwm9/QDudFbH8OSlN8KTndaLANfk/NGZx
- 2/W4vkcRMhNaHds5j3MBryyotLbfdsAmI2SvvApDNkXXFDLCthrWOHwG5b4X0NTswXz5 hA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3d4d1kjd6v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 23 Dec 2021 01:39:41 +0000
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BN1ZRgL007146;
-        Thu, 23 Dec 2021 01:39:41 GMT
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3d4d1kjd67-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 23 Dec 2021 01:39:41 +0000
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BN1buXP013247;
-        Thu, 23 Dec 2021 01:39:39 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma04fra.de.ibm.com with ESMTP id 3d179agvxq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 23 Dec 2021 01:39:39 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BN1dao148628034
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 Dec 2021 01:39:36 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 168924C058;
-        Thu, 23 Dec 2021 01:39:36 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 14B7A4C044;
-        Thu, 23 Dec 2021 01:39:34 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.41.75])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Dec 2021 01:39:33 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
-Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
-        seth@forshee.me, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v6 3/3] integrity: support including firmware ".platform" keys at build time
-Date:   Wed, 22 Dec 2021 20:39:19 -0500
-Message-Id: <20211223013919.206273-4-nayna@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211223013919.206273-1-nayna@linux.ibm.com>
-References: <20211223013919.206273-1-nayna@linux.ibm.com>
+        Wed, 22 Dec 2021 23:10:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1640232651;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NsMUhOJ/A50PHNUUY0eWTcNXPSVZRY8gKR7yuTzIePQ=;
+        b=ijzzotRP6KDKhcH/bRj5Aq5wdlEunwC6fJGmdis3Zistz3gLSuqInxEkmFvp/JdpyLSBBa
+        YPK25ISQe0apL3IMmEPK2kgpeJbFPf/72uHDni/JVGNuvjsFz1lavmRMW5KGFtg/vk5r6t
+        7uLDzSZm4bwIyB57HWoYXwJl64pYC/w=
+Received: from EUR03-AM5-obe.outbound.protection.outlook.com
+ (mail-am5eur03lp2050.outbound.protection.outlook.com [104.47.8.50]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ de-mta-27-aW4lXDK2N-Oqiu3TM2n69w-1; Thu, 23 Dec 2021 05:10:50 +0100
+X-MC-Unique: aW4lXDK2N-Oqiu3TM2n69w-1
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dwd8KLTlLEKJhWkpU53myJ/z4Pf9hCzE7CrofkJU11gryYN7VxiuQlHhE4mN0iCfCXI0JwgW9OxYexGE1fb0uew0FUQn4IQEb/pQ8GGPiZ5Op1rvd+QcfEMhf9UT0Aj3NpxAqfKnp15OafB3EklsGw3mBwrdpt8vK6mty8FZRYES39OQsx9o7aaxS+QaXDkBrhoWq9kLdOksgoSfARGMdY7r+lorb8KMnym+HPt4XJkoE91zlV1oAP5NSIhzvL2eK+tX1DvBCuyCl+PzjGM+IQ6vWVKu66wi0wNJx1tzEn0PPgUP6UV0ZT6skYMwVL37j2q50jJmf7mKqacPhsGDfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NsMUhOJ/A50PHNUUY0eWTcNXPSVZRY8gKR7yuTzIePQ=;
+ b=Jdgd4nM5hzKm32P7bruM7csGetV1C2UAoyXQTGmdQCUMC2wnv50JyIzym8gOncnvQh/OjMS+KRBd8mv6EXFrR15kNQ2OKdN50KN41o73do7Rkj6AzBCih0L1j8gyKB6BmVpqwTx4HFyRMV/qqvkO1BmuUvDbi8Yg6cIFlhhz1/jmu1ICf8QHOjlYWIBdBrx3uN+vXX0T8xarSMWJdnEL+z28uwvxWd9iDDmGU5AKbpj+GaQuVX4jjMSXKyopHHXlY/mtxlk9FsgpcGHAycTuySRxVnDOaa5x9DjrS/D5TVoRys6hlk8oqkzLbWw6dRPZbLqn5q91LkjwyPmi5e/Zlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=suse.com;
+Received: from VI1PR04MB7102.eurprd04.prod.outlook.com (2603:10a6:800:124::12)
+ by VI1PR04MB4576.eurprd04.prod.outlook.com (2603:10a6:803:74::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.17; Thu, 23 Dec
+ 2021 04:10:49 +0000
+Received: from VI1PR04MB7102.eurprd04.prod.outlook.com
+ ([fe80::ed2c:83e2:fbe4:c891]) by VI1PR04MB7102.eurprd04.prod.outlook.com
+ ([fe80::ed2c:83e2:fbe4:c891%9]) with mapi id 15.20.4823.019; Thu, 23 Dec 2021
+ 04:10:49 +0000
+Date:   Thu, 23 Dec 2021 12:10:14 +0800
+From:   joeyli <jlee@suse.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] integrity: Do not load MOK and MOKx when secure boot be
+ disabled
+Message-ID: <20211223041014.GB1178@linux-l9pv.suse>
+References: <20211218020905.7187-1-jlee@suse.com>
+ <9b93e099fc6ee2a56d70ed338cd79f2c1ddcffa5.camel@linux.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b93e099fc6ee2a56d70ed338cd79f2c1ddcffa5.camel@linux.ibm.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-ClientProxiedBy: AM6P192CA0070.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:209:82::47) To VI1PR04MB7102.eurprd04.prod.outlook.com
+ (2603:10a6:800:124::12)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Tiu-Tvb1lZFYknj1zXoXXef9FleVPNdk
-X-Proofpoint-GUID: -u2GjD4n9vCSBYYGotqnK8m4Z61K1vGU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-22_09,2021-12-22_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- adultscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 suspectscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112230005
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ed416c3b-ed91-4fbe-040e-08d9c5ca338d
+X-MS-TrafficTypeDiagnostic: VI1PR04MB4576:EE_
+X-Microsoft-Antispam-PRVS: <VI1PR04MB457611F10DC8E299EDEEC406A37E9@VI1PR04MB4576.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PTG0fi4M4Jy7nMNcqu0rRchl4ZeKIs6F04Xkj2b2TcGZXs0rVhqGmOkgVcCw4TLk8QdxjhLBIocLwJpmNMEkW1QkgfELxTihOVlJ+GqACzrNIADdsPUrsovNJHNV/SQ1oAOgOXKFGPatlDkoinUuIvDSkNUArz/MfAedwhlV/ZX4RQmqJ6VQjriJp9MZVbBlllljT4Vg5HXbAnY2DuAZisT3t02PQtnh0Xqw8g+HdKSheMK1zCe6z3WtDVLsYG0pTKyzIqzcapwr9jA2Wk0DtL8rljRQKMCk4504tCV/zmtSVlbwCZASOeo1SHImrz3cerBx0DRukKmUMmbPZ8gsB0qyXMtlUSMBolBDvH4MnJcPEo3gR7uqkvIbRHMObqvXcnwqZNdvqf7j0EYnVlvB+L61Q9VeSEFCNnBfkEFPHxMTQ+2491R1wC46lre/c8V2UjPxYTrkhwoMObYTPvUiUUyl6KKQlnlf8phuuDyhtMdZD78IzgOzbIHzbk+89/bAclSMamNtxcNT0pxvimqEtVo9D0GXVxZ6f2GsG3TJft6olO/l4B6YBwqeOcmiZmm0sRqLMUhKgT0x11lNpl+2Ugcg0BSbE3d5WckI8HVLUA2GQF4dgzPrRDCcAjnbZTVHIwjkzZlm5IzmUNhDolDRnAXHHvaxbjZx0d3QY5qlXyNAiAZmxasGrp/mYB3XecdO
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB7102.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(6486002)(33656002)(9686003)(54906003)(6512007)(66556008)(66476007)(83380400001)(6666004)(2906002)(6506007)(1076003)(508600001)(4001150100001)(8936002)(66946007)(5660300002)(26005)(6916009)(8676002)(186003)(38100700002)(4326008)(316002)(86362001)(4744005)(36756003)(43062005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3MX95mhp/5zIa5W2U2NiZ5HUvnrUCOZAWqEpKzctQts5QQCQqaLD91Q4ZrMm?=
+ =?us-ascii?Q?u1FKPAzVbS1h4stV3zaHC39YVrai55kJDGeHGDWkPRsw3nvbBh3gxGC9xbqz?=
+ =?us-ascii?Q?pJ6nyzZ2N3q2XbD2V5Ls1c+alNJeurBeBg2nh078NzuRSdTZuGCllyJ56Iwk?=
+ =?us-ascii?Q?k3Iq1X/R3yx7xgKs+jGhgMxtbeOzzgBQSNS1t6NiPRCZdbyEGhvm+kI4eE4d?=
+ =?us-ascii?Q?jC3EswDS33GW8RnRx2cwZZtFZG8iCkfV8fwXdtJIyd/jUefE56zfVCRI3kDa?=
+ =?us-ascii?Q?mpmqxDJsxsILS0CzL21ZE09DSZhuCMV2vNBu+WzNLO14cjRpL5iD6Zx+cnxJ?=
+ =?us-ascii?Q?a6FQlWC2dP3+UoS0GZRpQci6K79z8v/5xkMQtpQd8BQsNSae9pHoBO0OtaDW?=
+ =?us-ascii?Q?hvrIOvwKwHSg2jBN2+FNFre4xfQe5ub5HUYJFMJzkMnH3URRI6jOmXC3KjlZ?=
+ =?us-ascii?Q?VHwBXZXfARjC6vZshMJA0Z5ZY0CsMRzeA8mB85KRdRryKy5qasTGEOwEGNMK?=
+ =?us-ascii?Q?LEuUPEBAdXqiv+FXi8mKLlO/h6dSkV3oVT/sC97M3yAm5njPZ+lLgHTUtbGf?=
+ =?us-ascii?Q?qj6ZKUSqfPcEuHSUOi44x0UuynzxvGBSddDDeTuZwFazraFt918vTS8I3Izc?=
+ =?us-ascii?Q?xvla0/WzXWOkHjIEwp4Zf0VGPLYDr/3sutH/Zhihwg3RotsK4N/jo7hzafab?=
+ =?us-ascii?Q?kneScVSvAY6qnP6nmdG15MxlY5Ts2caqgl05d5S//m+nmgygW0z6q2z3dWWp?=
+ =?us-ascii?Q?pZRQ8HJBCnjtHG3alEsadY+arXtbe9bxZSywi2ojxFJj3c8/NMwFgE+ShT/+?=
+ =?us-ascii?Q?qJHA4rEcKHb2R0kti9b4nmG0Gio3yt2iMZDFDQPe59pglKsMv7IePrMPV4O8?=
+ =?us-ascii?Q?QTjOoTtwxkcEKBW8WVv3RX7LRGisP0QRNLqys9prgmV6zj0G9E4vSQfDu56r?=
+ =?us-ascii?Q?R5l9PyA0FMqlK4k6wcjzyPruHhn+tj1FntM7kjdJN5oiLW2dL+k9eyLl7ihC?=
+ =?us-ascii?Q?FacIH7nTnwjv9A+CLCMWmcH+LoLUiPUfJ2kwuFvTeOdWfGVho98edMhMkIl6?=
+ =?us-ascii?Q?rombtmB84J3x/yo35jlPk+yuEl73UF0rCe2KqS4zdKhSBeqiDacp9Q9a8Fgb?=
+ =?us-ascii?Q?ezEBZFkgAHRPdRspVG7Aqfd2ubVg6GQ3jYr0wPmmwMrFCWTJ5ZDNM79+uNCu?=
+ =?us-ascii?Q?bh4zGlAGzeHcaOAfv4fyemJjYzylpypDDlGuB1vCEbv6ToLnfKWTEL/IHvWc?=
+ =?us-ascii?Q?JwcAGW39IiElHrrsOpCVwWLgED1eRtX2UYIepDPpaEOoX+EwXYI68xkDFgI5?=
+ =?us-ascii?Q?wuatIk9DPR3yq4RCgsZAeG5Pt/WwAdsddnKX9RbjPAbQvd7XW3Bib/dwlv+F?=
+ =?us-ascii?Q?l0QZiTo9dgrJnWp+5gj8n3yArr1Uu9mNA0d7LlX4RMQWg+7N/Gybtj6KnGDQ?=
+ =?us-ascii?Q?fMgKVfJNSCa3K/lBPjrZiVtnQlxqi8YOss6fCGqtVRWwLb/zbO4Fx4wxpV9F?=
+ =?us-ascii?Q?8i7ru5AK6437W/4+hkTGgHLCCVNsx7zTM3+bQllLSVYhVf2XTdOD02qFpcx5?=
+ =?us-ascii?Q?J1oncFNjWGLZcseZjdM=3D?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed416c3b-ed91-4fbe-040e-08d9c5ca338d
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB7102.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Dec 2021 04:10:49.0900
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZaKwM4ZXPq3OuJiGS0WqFep2ikqSH2j0eJ5fdFyRsvN22FHupeHEE8hKskch+yXv
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4576
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Allow firmware keys to be embedded in the Linux kernel and loaded onto
-the ".platform" keyring on boot.
+Hi Mimi,
 
-The firmware keys can be specified in a file as a list of PEM encoded
-certificates using new config INTEGRITY_PLATFORM_KEYS. The certificates
-are embedded in the image by converting the PEM-formatted certificates
-into DER(binary) and generating
-security/integrity/platform_certs/platform_certificate_list file at
-build time. On boot, the embedded certs from the image are loaded onto
-the ".platform" keyring.
+On Tue, Dec 21, 2021 at 06:28:31PM -0500, Mimi Zohar wrote:
+> On Sat, 2021-12-18 at 10:09 +0800, Lee, Chun-Yi wrote:
+> > The security of Machine Owner Key (MOK) relies on secure boot. When
+> > secure boot is disabled, EFI firmware will not verify binary code. Then
+> > arbitrary efi binary code can modify MOK when rebooting.
+> > 
+> > This patch prevents MOK/MOKx be loaded when secure boot be disabled.
+> > 
+> > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> 
+> Thanks, Joey!
+> 
+> This patch is now queued in the next-integrity-testing branch waiting
+> further review/tags.
+> 
+> Mimi
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
----
- security/integrity/Kconfig                    | 10 +++++++
- security/integrity/Makefile                   | 17 +++++++++++-
- .../integrity/platform_certs/platform_cert.S  | 23 ++++++++++++++++
- .../platform_certs/platform_keyring.c         | 26 +++++++++++++++++++
- 4 files changed, 75 insertions(+), 1 deletion(-)
- create mode 100644 security/integrity/platform_certs/platform_cert.S
-
-diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
-index 71f0177e8716..9fccf1368b8a 100644
---- a/security/integrity/Kconfig
-+++ b/security/integrity/Kconfig
-@@ -62,6 +62,16 @@ config INTEGRITY_PLATFORM_KEYRING
-          provided by the platform for verifying the kexec'ed kerned image
-          and, possibly, the initramfs signature.
- 
-+config INTEGRITY_PLATFORM_KEYS
-+        string "Builtin X.509 keys for .platform keyring"
-+        depends on KEYS
-+        depends on ASYMMETRIC_KEY_TYPE
-+        depends on INTEGRITY_PLATFORM_KEYRING
-+        help
-+          If set, this option should be the filename of a PEM-formatted file
-+          containing X.509 certificates to be loaded onto the ".platform"
-+          keyring.
-+
- config LOAD_UEFI_KEYS
-        depends on INTEGRITY_PLATFORM_KEYRING
-        depends on EFI
-diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-index 7ee39d66cf16..46629f5ef4f6 100644
---- a/security/integrity/Makefile
-+++ b/security/integrity/Makefile
-@@ -3,13 +3,18 @@
- # Makefile for caching inode integrity data (iint)
- #
- 
-+quiet_cmd_extract_certs  = EXTRACT_CERTS   $(patsubst "%",%,$(2))
-+      cmd_extract_certs  = scripts/extract-cert $(2) $@
-+$(eval $(call config_filename,INTEGRITY_PLATFORM_KEYS))
-+
- obj-$(CONFIG_INTEGRITY) += integrity.o
- 
- integrity-y := iint.o
- integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
- integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
- integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
--integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
-+integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
-+						  platform_certs/platform_cert.o
- integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
- 				      platform_certs/load_uefi.o \
- 				      platform_certs/keyring_handler.o
-@@ -19,3 +24,13 @@ integrity-$(CONFIG_LOAD_PPC_KEYS) += platform_certs/efi_parser.o \
-                                      platform_certs/keyring_handler.o
- obj-$(CONFIG_IMA)			+= ima/
- obj-$(CONFIG_EVM)			+= evm/
-+
-+
-+$(obj)/platform_certs/platform_cert.o: $(obj)/platform_certs/platform_certificate_list
-+
-+targets += platform_certificate_list
-+
-+$(obj)/platform_certs/platform_certificate_list: scripts/extract-cert $(INTEGRITY_PLATFORM_KEYS_FILENAME) FORCE
-+	$(call if_changed,extract_certs,$(CONFIG_INTEGRITY_PLATFORM_KEYS))
-+
-+clean-files := platform_certs/platform_certificate_list
-diff --git a/security/integrity/platform_certs/platform_cert.S b/security/integrity/platform_certs/platform_cert.S
-new file mode 100644
-index 000000000000..20bccce5dc5a
---- /dev/null
-+++ b/security/integrity/platform_certs/platform_cert.S
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <linux/export.h>
-+#include <linux/init.h>
-+
-+	__INITRODATA
-+
-+	.align 8
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+	.globl platform_certificate_list
-+platform_certificate_list:
-+__cert_list_start:
-+	.incbin "security/integrity/platform_certs/platform_certificate_list"
-+__cert_list_end:
-+#endif
-+
-+	.align 8
-+	.globl platform_certificate_list_size
-+platform_certificate_list_size:
-+#ifdef CONFIG_64BIT
-+	.quad __cert_list_end - __cert_list_start
-+#else
-+	.long __cert_list_end - __cert_list_start
-+#endif
-diff --git a/security/integrity/platform_certs/platform_keyring.c b/security/integrity/platform_certs/platform_keyring.c
-index bcafd7387729..b45de142c5f5 100644
---- a/security/integrity/platform_certs/platform_keyring.c
-+++ b/security/integrity/platform_certs/platform_keyring.c
-@@ -12,8 +12,12 @@
- #include <linux/cred.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-+#include <keys/system_keyring.h>
- #include "../integrity.h"
- 
-+extern __initconst const u8 platform_certificate_list[];
-+extern __initconst const unsigned long platform_certificate_list_size;
-+
- /**
-  * add_to_platform_keyring - Add to platform keyring without validation.
-  * @source: Source of key
-@@ -37,6 +41,28 @@ void __init add_to_platform_keyring(const char *source, const void *data,
- 		pr_info("Error adding keys to platform keyring %s\n", source);
- }
- 
-+static __init int load_platform_certificate_list(void)
-+{
-+	const u8 *p;
-+	unsigned long size;
-+	int rc;
-+	struct key *keyring;
-+
-+	p = platform_certificate_list;
-+	size = platform_certificate_list_size;
-+
-+	keyring = integrity_keyring_from_id(INTEGRITY_KEYRING_PLATFORM);
-+	if (IS_ERR(keyring))
-+		return PTR_ERR(keyring);
-+
-+	rc = load_certificate_list(p, size, keyring);
-+	if (rc)
-+		pr_info("Error adding keys to platform keyring %d\n", rc);
-+
-+	return rc;
-+}
-+late_initcall(load_platform_certificate_list);
-+
- /*
-  * Create the trusted keyrings.
-  */
--- 
-2.27.0
+Thanks for your review!
+Joey Lee
 
