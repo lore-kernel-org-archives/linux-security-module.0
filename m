@@ -2,49 +2,46 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E77C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Dec 2021 19:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA38DC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Dec 2021 19:06:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232099AbhL0TFD (ORCPT
+        id S232621AbhL0TF6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Dec 2021 14:05:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56524 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231951AbhL0TEQ (ORCPT
+        Mon, 27 Dec 2021 14:05:58 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:40830 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232763AbhL0TF2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Dec 2021 14:04:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69D40C061763;
-        Mon, 27 Dec 2021 11:04:16 -0800 (PST)
+        Mon, 27 Dec 2021 14:05:28 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 08FFA6116E;
-        Mon, 27 Dec 2021 19:04:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D73C36AED;
-        Mon, 27 Dec 2021 19:04:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 742B760FB3;
+        Mon, 27 Dec 2021 19:05:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E962DC36AEC;
+        Mon, 27 Dec 2021 19:05:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640631855;
-        bh=e6+pXrEBPpHq42k1fiqzkjtZ/G+OfbbfNM0/EKa6+YU=;
+        s=k20201202; t=1640631926;
+        bh=gde+0MGjiDKzg9yAHZB053ZG7CKZtiptNN9QN03QLMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ceE8JVF6fytNeXImAFzYZD78OVSxXcAnL+2sArt9UjO4wQ8tzqYwOMFbw6HP3ug08
-         8niuq5a2UyjQqhILegbn5NOLk+PmZ94f8qOfxRhYOBdBWwfMhjTA+wAkk5k+3SzQL/
-         rqnktDYsA++m/NtuN5I9p5JNEzxpeBoyN9PUwQ6LPaCJsrRzl4/W001rc98MnUQMkF
-         mvN3kNl2y/itIf6RI81SRy9b6rFN13ptJPr1/HW+rwX7CYEs9WSgsOQLFEZSE+c+sk
-         vYPIRr8c1KPz60aJpPjitTvfUKWLyOFRUNRKeJsjFKuOzWL+obHAlRxPOfmRu8AD3U
-         csb4yJCNh+5Bg==
+        b=lcTHuXl30F0DFde2A8j6TykITQVuXY2B6i79Q8wbLjTIQ7LRac8XgLnzgUdYHm9aK
+         BIcC29jM3l6HgtqiLZeQDxvR59hTTWmYwuHGnJvlvfbPPVL53iJV5/1f5Q8UtWlyGm
+         Ss9b1lQZZwSWxeGaeUDER3TM/70g7nbRws9UMUaVG56eIuNNDNTWbShBZG8wwv4qph
+         hTd3FpWabZhMpDZ168RjHCkyvEBKo0q0oNsaZUXv2zrQPlvm4L/jxgZn0gHNtAxQ+Q
+         NahgDY+F5oJ280M775PH8sAmq8QrwtGG6AG76zXcncVlN1QuRN+RP5BF4BSWm5k1Nn
+         EQBcn6Tw/zr5g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Sasha Levin <sashal@kernel.org>, takedakn@nttdata.co.jp,
         jmorris@namei.org, serge@hallyn.com,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 13/26] tomoyo: use hwight16() in tomoyo_domain_quota_is_ok()
-Date:   Mon, 27 Dec 2021 14:03:14 -0500
-Message-Id: <20211227190327.1042326-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 09/14] tomoyo: use hwight16() in tomoyo_domain_quota_is_ok()
+Date:   Mon, 27 Dec 2021 14:04:47 -0500
+Message-Id: <20211227190452.1042714-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211227190327.1042326-1-sashal@kernel.org>
-References: <20211227190327.1042326-1-sashal@kernel.org>
+In-Reply-To: <20211227190452.1042714-1-sashal@kernel.org>
+References: <20211227190452.1042714-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -67,10 +64,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+), 10 deletions(-)
 
 diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
-index af8cd2af3466d..6799b1122c9d8 100644
+index ee9c2aa0c8df9..11dd8260c9cc7 100644
 --- a/security/tomoyo/util.c
 +++ b/security/tomoyo/util.c
-@@ -1056,7 +1056,6 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
+@@ -1051,7 +1051,6 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
  	list_for_each_entry_rcu(ptr, &domain->acl_info_list, list,
  				srcu_read_lock_held(&tomoyo_ss)) {
  		u16 perm;
@@ -78,7 +75,7 @@ index af8cd2af3466d..6799b1122c9d8 100644
  
  		if (ptr->is_deleted)
  			continue;
-@@ -1067,23 +1066,23 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
+@@ -1062,23 +1061,23 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
  		 */
  		switch (ptr->type) {
  		case TOMOYO_TYPE_PATH_ACL:
@@ -108,7 +105,7 @@ index af8cd2af3466d..6799b1122c9d8 100644
  			break;
  		case TOMOYO_TYPE_MANUAL_TASK_ACL:
  			perm = 0;
-@@ -1091,9 +1090,7 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
+@@ -1086,9 +1085,7 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
  		default:
  			perm = 1;
  		}
