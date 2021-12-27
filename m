@@ -2,145 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CC3C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Dec 2021 17:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A0BC433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Dec 2021 19:04:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbhL0RaH (ORCPT
+        id S232040AbhL0TET (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Dec 2021 12:30:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28014 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229940AbhL0RaH (ORCPT
+        Mon, 27 Dec 2021 14:04:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56516 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231987AbhL0TEP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Dec 2021 12:30:07 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BRGfv0N012232;
-        Mon, 27 Dec 2021 17:29:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=eHAnbEje+2RXpyDwqsUtjn5Q13CEzo0k3hqNmbHRXSU=;
- b=adhp57RcGPFlDF8EFfaPeCpfvM3d2Md+wFFRPxmz6elorLHQxW65OIkRrC9zZFeFJ9Sv
- injVbw4RJ9ictBWhuInfA+luh861526L+0jk8uj7etuvYrdu5uuWPWGRD68gyFp9hiyT
- FyzEs9onl7BTaTkAuUdpfxxfh3Tbvex2CEeXK60/hu/e+MBW8nGae6x4GJdWny0iwYC1
- UJRvNGawF4DTcAjucoPdUFNCbHPs3TG3/X24NOU+oM6JgPD9i8oCNd3bca9CfgpMBmla
- LFWaRYic5WBL3HIe0xgsphOFgRdIF1zz73I+gR42PjfsC0Yu+K2tL03mOz3XJInMIV6c Eg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3d7h7ugt71-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Dec 2021 17:29:45 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BRHSx9H005148;
-        Mon, 27 Dec 2021 17:29:45 GMT
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3d7h7ugt6p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Dec 2021 17:29:45 +0000
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BRHSfHm015004;
-        Mon, 27 Dec 2021 17:29:44 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma04wdc.us.ibm.com with ESMTP id 3d70g0vqy1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Dec 2021 17:29:44 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BRHTh6R31392220
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 Dec 2021 17:29:43 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8DAA0B206E;
-        Mon, 27 Dec 2021 17:29:43 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D80FB2064;
-        Mon, 27 Dec 2021 17:29:43 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 27 Dec 2021 17:29:43 +0000 (GMT)
-Message-ID: <175831be-4c26-bd86-27c1-dd822514f06f@linux.ibm.com>
-Date:   Mon, 27 Dec 2021 12:29:42 -0500
+        Mon, 27 Dec 2021 14:04:15 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 104B3C061761;
+        Mon, 27 Dec 2021 11:04:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A501761151;
+        Mon, 27 Dec 2021 19:04:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA43C36AEB;
+        Mon, 27 Dec 2021 19:04:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640631854;
+        bh=BZ20Galzn1I8vy3gFLN6Zn7/ni5xt6lwWKK/pr0QZBo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SpY6zarmmcc6Cti2XzuqXu9gqgJEAIFE3hPbw31oJrP8vmtONkngAV5/2Ru7ZyWBK
+         usPxZ6Rt+VouPHUg8ptwLp8cdfmqEYbxjov8swQad/6CQuaCT7ON1uebVgmWJZWENJ
+         xu1833Jy4kClXTuUXbOEkxRvCtEAr4TFmpU5TdVyVAyAkQeDKDZvcdypbbCQGyy1W7
+         Fq3R3PRSjAVqEaBU56R8jWAB07lsq2eWL77/S2EaZ7c0pBFQpgH+Kf+BeK8VVWZvOg
+         j6ak+II4Ml5SXki+EXWyX0N/5P//8U2Udd9XNTejfycYFz86chuxrNLjBZx4f8z9DQ
+         fXc1xjLiQQJ6A==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Sasha Levin <sashal@kernel.org>, takedakn@nttdata.co.jp,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 12/26] tomoyo: Check exceeded quota early in tomoyo_domain_quota_is_ok().
+Date:   Mon, 27 Dec 2021 14:03:13 -0500
+Message-Id: <20211227190327.1042326-12-sashal@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211227190327.1042326-1-sashal@kernel.org>
+References: <20211227190327.1042326-1-sashal@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v7 00/14] ima: Namespace IMA with audit support in IMA-ns
-Content-Language: en-US
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20211216054323.1707384-1-stefanb@linux.vnet.ibm.com>
- <20211216125027.fte6625wu5vxkjpi@wittgenstein>
- <07c28891-5ac1-3c0d-bb67-cc49aca0aae2@linux.ibm.com>
- <20211217100659.2iah5prshavjk6v6@wittgenstein>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20211217100659.2iah5prshavjk6v6@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 6DFbx2RFHmnbDm17CXs8OzEzTwTavoQ7
-X-Proofpoint-ORIG-GUID: av2GHDpP0c4hDkUguJNiO-8MRToECKsu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-27_08,2021-12-24_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- phishscore=0 spamscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- adultscore=0 mlxscore=0 mlxlogscore=999 lowpriorityscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2112270080
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Dmitry Vyukov <dvyukov@google.com>
 
-On 12/17/21 05:06, Christian Brauner wrote:
-> On Thu, Dec 16, 2021 at 04:00:40PM -0500, Stefan Berger wrote:
->>
->> But that could still mean a lot of contention on iint->mutex since this
->> lock is global, i.e. in this context: for all ima namespaces. You might
->> want to consider coming up with some rough ideas for how to solve this
->> _if_ this becomes a problem in the future.
->>
->> The plan is that each IMA namespace will have its own rbtree with its own
->> set of iints. We cannot do it all at the same time, so this will take while
->> until things can be completely moved over into a per-IMA namespace rbtree
->> and each IMA namespace becomes fully independent.
-> Ok, good to hear that you have already thought about that.
+[ Upstream commit 04e57a2d952bbd34bc45744e72be3eecdc344294 ]
 
+If tomoyo is used in a testing/fuzzing environment in learning mode,
+for lots of domains the quota will be exceeded and stay exceeded
+for prolonged periods of time. In such cases it's pointless (and slow)
+to walk the whole acl list again and again just to rediscover that
+the quota is exceeded. We already have the TOMOYO_DIF_QUOTA_WARNED flag
+that notes the overflow condition. Check it early to avoid the slowdown.
 
-Well, yes, we thought about it. However, as far as I can look ahead we 
-cannot get rid of the iint->mutex:
+[penguin-kernel]
+This patch causes a user visible change that the learning mode will not be
+automatically resumed after the quota is increased. To resume the learning
+mode, administrator will need to explicitly clear TOMOYO_DIF_QUOTA_WARNED
+flag after increasing the quota. But I think that this change is generally
+preferable, for administrator likely wants to optimize the acl list for
+that domain before increasing the quota, or that domain likely hits the
+quota again. Therefore, don't try to care to clear TOMOYO_DIF_QUOTA_WARNED
+flag automatically when the quota for that domain changed.
 
-Obviously we have to organize the data structures where IMA is recording 
-what it has done with a file/inode in such a way that each namespace can 
-efficiently determine whether it needs to audit/measure/appraise a file 
-or re-audit/re-measure/re-appraise it after file modification. The 
-organization of these data structures also has to reflect the fact that 
-files can be shared between IMA namespaces via setns() on mount 
-namespaces or shared files or shared mount namespaces between containers 
-etc.. So, the first thing we do already is move audit-related flags into 
-what is called the ns_status (namespace status) structure that are kept 
-in a per-IMA namespace rbtree. This allows IMA to remember that a file 
-was already audited and it doesn't need to audit it again. The lookup 
-via rbtree is quick: O(log(n).
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/tomoyo/util.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Unfortunately the previous series had a bug so that files were not 
-re-audited after they were modified. I fixed this now in the new series 
-(upcoming v8) by connecting each ns_status also to a list. This list 
-starts in the global inode integrity cache (the iint rbtree) where each 
-inode that any IMA namespace accessed has an iint entry today. The lists 
-start on the iint entries representing inodes.  When files are deleted 
-or modified or xattrs are modified then all IMA namespaces need to 
-re-audit/re-measure/re-appraise the file (depending on policy) and for 
-this we have to reset flags across all the IMA namespaces by walking the 
-list of ns_status entries. The organization via iint rbtree and 
-ns_status list allows for quick lookup of the inode where the 
-modification happened and quick reset of the flags: O(log(n)) + O(n). 
-This is better than having to search all namespaces to reset the flags 
-(O(log(n) * n) if there was no list.
+diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
+index 1da2e3722b126..af8cd2af3466d 100644
+--- a/security/tomoyo/util.c
++++ b/security/tomoyo/util.c
+@@ -1051,6 +1051,8 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
+ 		return false;
+ 	if (!domain)
+ 		return true;
++	if (READ_ONCE(domain->flags[TOMOYO_DIF_QUOTA_WARNED]))
++		return false;
+ 	list_for_each_entry_rcu(ptr, &domain->acl_info_list, list,
+ 				srcu_read_lock_held(&tomoyo_ss)) {
+ 		u16 perm;
+@@ -1096,14 +1098,12 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
+ 	if (count < tomoyo_profile(domain->ns, domain->profile)->
+ 	    pref[TOMOYO_PREF_MAX_LEARNING_ENTRY])
+ 		return true;
+-	if (!domain->flags[TOMOYO_DIF_QUOTA_WARNED]) {
+-		domain->flags[TOMOYO_DIF_QUOTA_WARNED] = true;
+-		/* r->granted = false; */
+-		tomoyo_write_log(r, "%s", tomoyo_dif[TOMOYO_DIF_QUOTA_WARNED]);
++	WRITE_ONCE(domain->flags[TOMOYO_DIF_QUOTA_WARNED], true);
++	/* r->granted = false; */
++	tomoyo_write_log(r, "%s", tomoyo_dif[TOMOYO_DIF_QUOTA_WARNED]);
+ #ifndef CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
+-		pr_warn("WARNING: Domain '%s' has too many ACLs to hold. Stopped learning mode.\n",
+-			domain->domainname->name);
++	pr_warn("WARNING: Domain '%s' has too many ACLs to hold. Stopped learning mode.\n",
++		domain->domainname->name);
+ #endif
+-	}
+ 	return false;
+ }
+-- 
+2.34.1
 
-
-     Stefan
