@@ -2,37 +2,37 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FF3C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Dec 2021 19:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F49C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Dec 2021 19:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232661AbhL0TGA (ORCPT
+        id S232788AbhL0TGs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Dec 2021 14:06:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56888 "EHLO
+        Mon, 27 Dec 2021 14:06:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232314AbhL0TF2 (ORCPT
+        with ESMTP id S232792AbhL0TGG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Dec 2021 14:05:28 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FFAC061394;
-        Mon, 27 Dec 2021 11:05:27 -0800 (PST)
+        Mon, 27 Dec 2021 14:06:06 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3221C061759;
+        Mon, 27 Dec 2021 11:06:05 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 949C6B81142;
-        Mon, 27 Dec 2021 19:05:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B759C36AEE;
-        Mon, 27 Dec 2021 19:05:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5475661129;
+        Mon, 27 Dec 2021 19:06:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC7C2C36AED;
+        Mon, 27 Dec 2021 19:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640631925;
-        bh=5oKonMdfPWcTcP5aLeNS3LwAb3WS0ZaSP+v5iP7J+QU=;
+        s=k20201202; t=1640631964;
+        bh=8GgqGsbxpCWx8a0xDbp37nRZ70LFcMCuY9GWf0vsys4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kBY/RM9gWWFDpytCcCSL9gh1DAQo3Eb+ql9iH1GJEq6EDkBlfuEmSKjY2Tumks4Gb
-         YdFTtWnMFeB+NDfKW49+Qeh/He3tJ+BM1Hghi/V9tXfSu2dYpOrftatUQHrqNpvAAp
-         AvPewcAvz7mOxuM5Arnb17h06RFU6mmXjpOXj0cdduijKMlkxL8T5gd2Yqt3lZRm9S
-         /4jp0gIVukWADh/Hymx4PQrBeNAHR055YoLtQ1OuFMRAFdDwLwCgaNf3xlrVWOfXqG
-         +24lY7Xsrp76WU5GjzfLlXUD4Yx6kb0msAki7D5+yUurOR2K6H5NjiILkOEBoFiGXX
-         jm0m3hlMjXbwQ==
+        b=NzB+bz3Y4sshmFfZ8OdGoG8U+QgZoGKs7u4p+35hECEUIXHrWFuY4VuhTU8bOHY1W
+         KZagh2WfrQeRjVrLmn1Zy5qxa00DDRTBPkK6IRkpKUfQeRrmb6LGGoCUtAPu/ycDP6
+         M6+ZzCUvt+fDUpsGAHelz3qURdKe3oWVkuKe8U+Lfg2Ml+UVkyWx63NQLgGMvgzjT4
+         m3CiX+2KB8NA/gB9EK5bNcVLeWOVriD+Bgi9DMxSoowTQzV3ew7yY1JWq4pvZwcf8C
+         MAZ9KBGJqFUE/afOHvRvZuirAGmz0IWmcleycsHREQybhp0jVeY72z08KVagh9tSWq
+         6GOMs8h0sk0xw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Vyukov <dvyukov@google.com>,
@@ -40,12 +40,12 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Sasha Levin <sashal@kernel.org>, takedakn@nttdata.co.jp,
         jmorris@namei.org, serge@hallyn.com,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 08/14] tomoyo: Check exceeded quota early in tomoyo_domain_quota_is_ok().
-Date:   Mon, 27 Dec 2021 14:04:46 -0500
-Message-Id: <20211227190452.1042714-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 5/9] tomoyo: Check exceeded quota early in tomoyo_domain_quota_is_ok().
+Date:   Mon, 27 Dec 2021 14:05:32 -0500
+Message-Id: <20211227190536.1042975-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211227190452.1042714-1-sashal@kernel.org>
-References: <20211227190452.1042714-1-sashal@kernel.org>
+In-Reply-To: <20211227190536.1042975-1-sashal@kernel.org>
+References: <20211227190536.1042975-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -82,10 +82,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
-index cd458e10cf2af..ee9c2aa0c8df9 100644
+index eba0b3395851e..861fc6f4ebfb7 100644
 --- a/security/tomoyo/util.c
 +++ b/security/tomoyo/util.c
-@@ -1046,6 +1046,8 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
+@@ -1029,6 +1029,8 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
  		return false;
  	if (!domain)
  		return true;
@@ -94,7 +94,7 @@ index cd458e10cf2af..ee9c2aa0c8df9 100644
  	list_for_each_entry_rcu(ptr, &domain->acl_info_list, list,
  				srcu_read_lock_held(&tomoyo_ss)) {
  		u16 perm;
-@@ -1091,14 +1093,12 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
+@@ -1074,14 +1076,12 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
  	if (count < tomoyo_profile(domain->ns, domain->profile)->
  	    pref[TOMOYO_PREF_MAX_LEARNING_ENTRY])
  		return true;
