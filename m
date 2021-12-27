@@ -2,118 +2,103 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F49C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Dec 2021 19:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13924C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Dec 2021 20:55:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232788AbhL0TGs (ORCPT
+        id S231370AbhL0Uz1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Dec 2021 14:06:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56578 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232792AbhL0TGG (ORCPT
+        Mon, 27 Dec 2021 15:55:27 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:39680 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229579AbhL0Uz1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Dec 2021 14:06:06 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3221C061759;
-        Mon, 27 Dec 2021 11:06:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5475661129;
-        Mon, 27 Dec 2021 19:06:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC7C2C36AED;
-        Mon, 27 Dec 2021 19:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640631964;
-        bh=8GgqGsbxpCWx8a0xDbp37nRZ70LFcMCuY9GWf0vsys4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NzB+bz3Y4sshmFfZ8OdGoG8U+QgZoGKs7u4p+35hECEUIXHrWFuY4VuhTU8bOHY1W
-         KZagh2WfrQeRjVrLmn1Zy5qxa00DDRTBPkK6IRkpKUfQeRrmb6LGGoCUtAPu/ycDP6
-         M6+ZzCUvt+fDUpsGAHelz3qURdKe3oWVkuKe8U+Lfg2Ml+UVkyWx63NQLgGMvgzjT4
-         m3CiX+2KB8NA/gB9EK5bNcVLeWOVriD+Bgi9DMxSoowTQzV3ew7yY1JWq4pvZwcf8C
-         MAZ9KBGJqFUE/afOHvRvZuirAGmz0IWmcleycsHREQybhp0jVeY72z08KVagh9tSWq
-         6GOMs8h0sk0xw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sasha Levin <sashal@kernel.org>, takedakn@nttdata.co.jp,
-        jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 5/9] tomoyo: Check exceeded quota early in tomoyo_domain_quota_is_ok().
-Date:   Mon, 27 Dec 2021 14:05:32 -0500
-Message-Id: <20211227190536.1042975-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211227190536.1042975-1-sashal@kernel.org>
-References: <20211227190536.1042975-1-sashal@kernel.org>
+        Mon, 27 Dec 2021 15:55:27 -0500
+Received: from machine.home (lfbn-lyo-1-1484-111.w86-207.abo.wanadoo.fr [86.207.51.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id DDEE120B7179;
+        Mon, 27 Dec 2021 12:55:25 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DDEE120B7179
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1640638526;
+        bh=HueOl0icIDbW5HbZ9Pw28VTajfXTkM3xtqaOIywQqds=;
+        h=From:To:Cc:Subject:Date:From;
+        b=n/PQxvSbhewEGU4/bJ22YzxtVbSQtFaobXDzl4vdMJJxsKvoWkPfJrfzInEjxtVjS
+         Ccj0FKh2ogv9n6YYW7TVEGJibQ0Oi2zgva2A+X5xgO8xh2oRQjRTVKv/4VSgyXTY2f
+         fO6/hmaZlpspoTof1fWf/kWVZ0zkylmEuq4mfhzY=
+From:   Francis Laniel <flaniel@linux.microsoft.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Serge Hallyn <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Francis Laniel <flaniel@linux.microsoft.com>
+Subject: [RFC PATCH v1 0/2] Add capabilities file to sysfs
+Date:   Mon, 27 Dec 2021 21:54:58 +0100
+Message-Id: <20211227205500.214777-1-flaniel@linux.microsoft.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Dmitry Vyukov <dvyukov@google.com>
+Hi.
 
-[ Upstream commit 04e57a2d952bbd34bc45744e72be3eecdc344294 ]
 
-If tomoyo is used in a testing/fuzzing environment in learning mode,
-for lots of domains the quota will be exceeded and stay exceeded
-for prolonged periods of time. In such cases it's pointless (and slow)
-to walk the whole acl list again and again just to rediscover that
-the quota is exceeded. We already have the TOMOYO_DIF_QUOTA_WARNED flag
-that notes the overflow condition. Check it early to avoid the slowdown.
+First, I hope you are fine and the same for your relatives.
 
-[penguin-kernel]
-This patch causes a user visible change that the learning mode will not be
-automatically resumed after the quota is increased. To resume the learning
-mode, administrator will need to explicitly clear TOMOYO_DIF_QUOTA_WARNED
-flag after increasing the quota. But I think that this change is generally
-preferable, for administrator likely wants to optimize the acl list for
-that domain before increasing the quota, or that domain likely hits the
-quota again. Therefore, don't try to care to clear TOMOYO_DIF_QUOTA_WARNED
-flag automatically when the quota for that domain changed.
+Capabilities are used to check if a thread has the right to perform a given
+action [1].
+For example, a thread with CAP_BPF set can use the bpf() syscall.
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Capabilities are used in the container world.
+In terms of code, several projects related to container maintain code where the
+capabilities are written alike include/uapi/linux/capability.h [2][3][4][5].
+For these projects, their codebase should be updated when a new capability is
+added to the kernel.
+Some other projects rely on <sys/capability.h> [6].
+In this case, this header file should reflect the capabilities offered by the
+kernel.
+
+So, in this series, I added a new file to sysfs: /sys/kernel/capabilities.
+The goal of this file is to be used by "container world" software to know kernel
+capabilities at run time instead of compile time.
+
+The underlying kernel attribute is read-only and its content is the capability
+number associated with the capability name:
+root@vm-amd64:~# cat /sys/kernel/capabilities
+0       CAP_CHOWN
+1       CAP_DAC_OVERRIDE
+...
+39      CAP_BPF
+
+The kernel already exposes the last capability number under:
+/proc/sys/kernel/cap_last_cap
+So, I think there should not be any issue exposing all the capabilities it
+offers.
+If there is any, please share it as I do not want to introduce issue with this
+series.
+
+Also, if you see any way to improve this series please share it as it would
+increase this contribution quality.
+
+Francis Laniel (2):
+  capability: Add cap_strings.
+  kernel/ksysfs.c: Add capabilities attribute.
+
+ include/uapi/linux/capability.h |  1 +
+ kernel/capability.c             | 45 +++++++++++++++++++++++++++++++++
+ kernel/ksysfs.c                 | 18 +++++++++++++
+ 3 files changed, 64 insertions(+)
+
+
+Best regards and thank you in advance for your reviews.
 ---
- security/tomoyo/util.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+[1] man capabilities
+[2] https://github.com/containerd/containerd/blob/1a078e6893d07fec10a4940a5664fab21d6f7d1e/pkg/cap/cap_linux.go#L135
+[3] https://github.com/moby/moby/commit/485cf38d48e7111b3d1f584d5e9eab46a902aabc#diff-2e04625b209932e74c617de96682ed72fbd1bb0d0cb9fb7c709cf47a86b6f9c1
+moby relies on containerd code.
+[4] https://github.com/syndtr/gocapability/blob/42c35b4376354fd554efc7ad35e0b7f94e3a0ffb/capability/enum.go#L47
+[5] https://github.com/opencontainers/runc/blob/00f56786bb220b55b41748231880ba0e6380519a/libcontainer/capabilities/capabilities.go#L12
+runc relies on syndtr package.
+[6] https://github.com/containers/crun/blob/fafb556f09e6ffd4690c452ff51856b880c089f1/src/libcrun/linux.c#L35
 
-diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
-index eba0b3395851e..861fc6f4ebfb7 100644
---- a/security/tomoyo/util.c
-+++ b/security/tomoyo/util.c
-@@ -1029,6 +1029,8 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
- 		return false;
- 	if (!domain)
- 		return true;
-+	if (READ_ONCE(domain->flags[TOMOYO_DIF_QUOTA_WARNED]))
-+		return false;
- 	list_for_each_entry_rcu(ptr, &domain->acl_info_list, list,
- 				srcu_read_lock_held(&tomoyo_ss)) {
- 		u16 perm;
-@@ -1074,14 +1076,12 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
- 	if (count < tomoyo_profile(domain->ns, domain->profile)->
- 	    pref[TOMOYO_PREF_MAX_LEARNING_ENTRY])
- 		return true;
--	if (!domain->flags[TOMOYO_DIF_QUOTA_WARNED]) {
--		domain->flags[TOMOYO_DIF_QUOTA_WARNED] = true;
--		/* r->granted = false; */
--		tomoyo_write_log(r, "%s", tomoyo_dif[TOMOYO_DIF_QUOTA_WARNED]);
-+	WRITE_ONCE(domain->flags[TOMOYO_DIF_QUOTA_WARNED], true);
-+	/* r->granted = false; */
-+	tomoyo_write_log(r, "%s", tomoyo_dif[TOMOYO_DIF_QUOTA_WARNED]);
- #ifndef CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
--		pr_warn("WARNING: Domain '%s' has too many ACLs to hold. Stopped learning mode.\n",
--			domain->domainname->name);
-+	pr_warn("WARNING: Domain '%s' has too many ACLs to hold. Stopped learning mode.\n",
-+		domain->domainname->name);
- #endif
--	}
- 	return false;
- }
 -- 
-2.34.1
+2.30.2
 
