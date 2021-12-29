@@ -2,230 +2,349 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C29EC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Dec 2021 20:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBE6C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Dec 2021 21:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbhL2U4y (ORCPT
+        id S232378AbhL2VyG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Dec 2021 15:56:54 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:44216 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230317AbhL2U4y (ORCPT
+        Wed, 29 Dec 2021 16:54:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47760 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230505AbhL2VyF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Dec 2021 15:56:54 -0500
-Received: from machine.localnet (lfbn-lyo-1-1484-111.w86-207.abo.wanadoo.fr [86.207.51.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2D44D20B7179;
-        Wed, 29 Dec 2021 12:56:53 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2D44D20B7179
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1640811414;
-        bh=UU8ronrNd3j0ukiSb777vN/bd/mcwfaqLvvGrOt8aqw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qLv3CPASYGEaVxdSOxLupj+tR0ITFPZs6yUPrMZP5t7C95t+gAWK2nHjhuesE4f9t
-         aj7PyVDurt3WZvXHzEZw+7dlev/zkh7OB2De6nhIOs9VBWX9unmEO8NQB+KhSJpivo
-         LuSDHHX/gUkpeWDCLEAHRRySt3dmiFvGtBtZMe+k=
-From:   Francis Laniel <flaniel@linux.microsoft.com>
-To:     linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Serge Hallyn <serge@hallyn.com>,
+        Wed, 29 Dec 2021 16:54:05 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59280C06173E
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Dec 2021 13:54:05 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id u130-20020a254788000000b0060a9645f781so28446919yba.19
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Dec 2021 13:54:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=sWjORqABOdOtCeJq4LhyQJ9mB4LVqlD/Y4aoFLyP20c=;
+        b=E4G4E/ZYBEC7Hau2pCewdeMnYUhT4PDZoqdLtC7UA+3Yv7qVvoHHNszhGpdOVRz75I
+         fdC/vCXCTJyBQcYKn6lgpVeEhx2/HGMwKof1r/iycf+pVrBXpRPSvFJ4Fa+lnBw4ZfLN
+         A4NY5g3HoRmF8jWpuaR0QVcwdeF1mF8VCjQqgqDZe+PZH8NC7Tb5ZPEdzEJSAv6U9t0m
+         Tw5JWtda0Hjv2od0KZQ9LUPGmhQQfxo7na78ELvLRXdu29/eSzysM0cDKWbbMtTGzNJK
+         0985xsWwG5NZvNHXNg9hM67GI6ZfgmhULcT4JuQhucEVRL6tMEivruZXGegf9rqxAEfv
+         5Rvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=sWjORqABOdOtCeJq4LhyQJ9mB4LVqlD/Y4aoFLyP20c=;
+        b=Fmp6M6oIlLuRVDGJGWi6orX8ZV0dE0KEtsE1lF3eo7blHKQoLt27xm6qkQZt1V4zlq
+         zpMBOjckn5ugKW+3n1aV1uAesEDW+5m+kyKtQrR1QMQousr/OoDXvI3wAfEpiS8ml041
+         TrGJwGJc+iDaOHLGcStqucjCRRgGZCJ1rsWa2Mut5haqq2ONOzRHBwDn42ZCqVYbZh+n
+         KfT0GtdrorZV2XfqMmA4m3T09QnHXcIoMEiA58WWAFyOeSe0VAnz39rxIbWcBMgOtYmN
+         INNAyIFy5U7K/wofEYbpIhO4WXe/uFuB/Zpyq/ympFqrDfbx9irRmD0gFUHJTVoBYEXa
+         m/Ig==
+X-Gm-Message-State: AOAM530cH9skWQJHYZvTxqLmCkU1BCwEnvGrMvWcq6HH25Nms52uaDyW
+        H3Wp4FBUT1TnAxGijDHAIEK6bkNyGw==
+X-Google-Smtp-Source: ABdhPJzcw0GCm56DEx+tsE86Jr7lIzH9bwMfnb7zB8Pv11yK1M4TASLlfJ5NiuG1ubcTR0BwNFtltNuZMQ==
+X-Received: from yaelt.nyc.corp.google.com ([2620:0:1003:415:20d1:e249:eb05:ae62])
+ (user=yaelt job=sendgmr) by 2002:a25:aa8e:: with SMTP id t14mr21363549ybi.363.1640814844152;
+ Wed, 29 Dec 2021 13:54:04 -0800 (PST)
+Date:   Wed, 29 Dec 2021 16:53:30 -0500
+Message-Id: <20211229215330.4134835-1-yaelt@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.34.1.448.ga2b2bfdf31-goog
+Subject: [PATCH v4] KEYS: encrypted: Instantiate key with user-provided
+ decrypted data
+From:   Yael Tiomkin <yaelt@google.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
+        corbet@lwn.net, dhowells@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, keyrings@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [RFC PATCH v1 0/2] Add capabilities file to sysfs
-Date:   Wed, 29 Dec 2021 21:56:50 +0100
-Message-ID: <2076353.rJHahMSf2P@machine>
-In-Reply-To: <48103715-6e22-10ab-6b4f-06946e00a28e@schaufler-ca.com>
-References: <20211227205500.214777-1-flaniel@linux.microsoft.com> <2639798.l7ez0hRiAL@machine> <48103715-6e22-10ab-6b4f-06946e00a28e@schaufler-ca.com>
-MIME-Version: 1.0
+        Yael Tiomkin <yaelt@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Le mercredi 29 d=E9cembre 2021, 02:26:20 CET Casey Schaufler a =E9crit :
-> On 12/28/2021 5:34 AM, Francis Laniel wrote:
-> > Hi.
-> >=20
-> > Le lundi 27 d=E9cembre 2021, 23:22:41 CET Casey Schaufler a =E9crit :
-> >> On 12/27/2021 12:54 PM, Francis Laniel wrote:
-> >>> Hi.
-> >>>=20
-> >>>=20
-> >>> First, I hope you are fine and the same for your relatives.
-> >>>=20
-> >>> Capabilities are used to check if a thread has the right to perform a
-> >>> given
-> >>> action [1].
-> >>> For example, a thread with CAP_BPF set can use the bpf() syscall.
-> >>>=20
-> >>> Capabilities are used in the container world.
-> >>> In terms of code, several projects related to container maintain code
-> >>> where the capabilities are written alike include/uapi/linux/capabilit=
-y.h
-> >>> [2][3][4][5]. For these projects, their codebase should be updated wh=
-en
-> >>> a
-> >>> new capability is added to the kernel.
-> >>> Some other projects rely on <sys/capability.h> [6].
-> >>> In this case, this header file should reflect the capabilities offered
-> >>> by
-> >>> the kernel.
-> >>>=20
-> >>> So, in this series, I added a new file to sysfs:
-> >>> /sys/kernel/capabilities.
-> >>=20
-> >> This should be /sys/kernel/security/capabilities.
-> >=20
-> > I began to write code to move this under /sys/kernel/security/capabilit=
-ies
-> > but I realized this directory is linked to CONFIG_SECURITYFS.
-> > This option is not required to be able to run container [1].
->=20
-> You're going to need to handle the case where the file is missing
-> regardless. It is hard to design a kernel feature based on what a
-> container expects when there are so many definitions of a container.
+The encrypted.c class supports instantiation of encrypted keys with
+either an already-encrypted key material, or by generating new key
+material based on random numbers. This patch defines a new datablob
+format: [<format>] <master-key name> <decrypted data length>
+<decrypted data> that allows to instantiate encrypted keys using
+user-provided decrypted data, and therefore allows to perform key
+encryption from userspace. The decrypted key material will be
+inaccessible from userspace.
 
-The goal would be to always have this file, as if I need to handle the case=
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Yael Tiomkin <yaelt@google.com>
+---
+
+Notes:
+    v -> v2: fixed compilation error.
+   =20
+    v2 -> v3: modified documentation.
+   =20
+    v3 -> v4: modified commit message.
+
+ .../security/keys/trusted-encrypted.rst       | 25 ++++++--
+ security/keys/encrypted-keys/encrypted.c      | 62 +++++++++++++------
+ 2 files changed, 63 insertions(+), 24 deletions(-)
+
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentat=
+ion/security/keys/trusted-encrypted.rst
+index 80d5a5af62a1..f614dad7de12 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -107,12 +107,13 @@ Encrypted Keys
+ --------------
 =20
-where it is missing, it surely means having hardcoded values for capabiliti=
-es=20
-like today situation.
-I think it should be always here if its definition lies in a source file ma=
-rked=20
-as 'obj-y', right?
-
-Nonetheless, I understand your point of having this "capabilities printing"=
+ Encrypted keys do not depend on a trust source, and are faster, as they us=
+e AES
+-for encryption/decryption. New keys are created from kernel-generated rand=
+om
+-numbers, and are encrypted/decrypted using a specified =E2=80=98master=E2=
+=80=99 key. The
+-=E2=80=98master=E2=80=99 key can either be a trusted-key or user-key type.=
+ The main disadvantage
+-of encrypted keys is that if they are not rooted in a trusted key, they ar=
+e only
+-as secure as the user key encrypting them. The master user key should ther=
+efore
+-be loaded in as secure a way as possible, preferably early in boot.
++for encryption/decryption. New keys are created either from kernel-generat=
+ed
++random numbers or user-provided decrypted data, and are encrypted/decrypte=
+d
++using a specified =E2=80=98master=E2=80=99 key. The =E2=80=98master=E2=80=
+=99 key can either be a trusted-key or
++user-key type. The main disadvantage of encrypted keys is that if they are=
+ not
++rooted in a trusted key, they are only as secure as the user key encryptin=
+g
++them. The master user key should therefore be loaded in as secure a way as
++possible, preferably early in boot.
 =20
-file under /sys/kernel/security.
-But, this would lead to add CONFIG_SECURITYFS as a needed CONFIG_ to "run=20
-container".
-And, if "container stack" runs on a kernel which does not provide this opti=
-on,=20
-then "container software" would need to rely on hardcoded capabilities (lik=
-e=20
-today situation).
-
-> > Also, kernel/capability.c is always compiled, so I think it is better if
-> > this file (i.e. the one which prints capabilities to user) does not
-> > depend on any CONFIG_.
->=20
-> CONFIG_MULTUSER is going to be an issue if you really care.
-
-I did not know about CONFIG_MULTIUSER and thinking a bit about at it, it=20
-should be a needed CONFIG_ to run container.
-Nonetheless, when CONFIG_MULTIUSER=3Dn and if my understanding of 2813893f8=
-b197=20
-is correct, calling capset() leads to sys_ni_syscall() which returns -ENOSY=
-S.
-Thus, an user trying to "run container" with specific capabilities on a ker=
-nel=20
-compiled with CONFIG_MULTIUSER=3Dn will have trouble with all capabilities =
-(and=20
-will then have to first fix its CONFIG_ issue instead of knowing which=20
-capabilities he/she can use).
-
-> > What do you think of it? Does this sound acceptable for you?
->=20
-> Meh. I'm not going to get worked up over it, but your rationale
-> is a little weak.
-
-I agree this contribution will not revolutionize how user interact with the=
 =20
-kernel.
-But I see two advantages:
-1. By removing hardcoded capabilities values from "container software", it=
+ Usage
+@@ -199,6 +200,8 @@ Usage::
 =20
-will ease these software maintainability.
-Indeed, someone will not need to add new values to their code base when the=
+     keyctl add encrypted name "new [format] key-type:master-key-name keyle=
+n"
+         ring
++    keyctl add encrypted name "new [format] key-type:master-key-name keyle=
+n
++        decrypted-data" ring
+     keyctl add encrypted name "load hex_blob" ring
+     keyctl update keyid "update key-type:master-key-name"
 =20
-kernel get a new capability.
-2. On the user side, without hardcoded capabilities values, you can use any=
+@@ -303,6 +306,16 @@ Load an encrypted key "evm" from saved blob::
+     82dbbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564=
+e0
+     24717c64 5972dcb82ab2dde83376d82b2e3c09ffc
 =20
-version of "container software" on a recent kernel to be able to use all th=
-e=20
-capabilities the kernel offers.
-=46or the anecdote, it was my case some time ago and I had to compile newer=
++Instantiate an encrypted key "evm" using user-provided decrypted data::
++
++    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm_decrypted=
+_data.blob`" @u
++    794890253
++
++    $ keyctl print 794890253
++    default user:kmk 32 2375725ad57798846a9bbd240de8906f006e66c03af53b1b38=
+2d
++    bbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564e02=
+47
++    17c64 5972dcb82ab2dde83376d82b2e3c09ffc
++
+ Other uses for trusted and encrypted keys, such as for disk and file encry=
+ption
+ are anticipated.  In particular the new format 'ecryptfs' has been defined
+ in order to use encrypted keys to mount an eCryptfs filesystem.  More deta=
+ils
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encry=
+pted-keys/encrypted.c
+index 87432b35d771..baf6fba5e05e 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -159,6 +159,7 @@ static int valid_master_desc(const char *new_desc, cons=
+t char *orig_desc)
+  *
+  * datablob format:
+  * new [<format>] <master-key name> <decrypted data length>
++ * new [<format>] <master-key name> <decrypted data length> <decrypted dat=
+a>
+  * load [<format>] <master-key name> <decrypted data length>
+  *     <encrypted iv + data>
+  * update <new-master-key name>
+@@ -170,7 +171,7 @@ static int valid_master_desc(const char *new_desc, cons=
+t char *orig_desc)
+  */
+ static int datablob_parse(char *datablob, const char **format,
+ 			  char **master_desc, char **decrypted_datalen,
+-			  char **hex_encoded_iv)
++			  char **hex_encoded_iv, char **decrypted_data)
+ {
+ 	substring_t args[MAX_OPT_ARGS];
+ 	int ret =3D -EINVAL;
+@@ -231,6 +232,8 @@ static int datablob_parse(char *datablob, const char **=
+format,
+ 				"when called from .update method\n", keyword);
+ 			break;
+ 		}
++		*decrypted_data =3D strsep(&datablob, " \t");
++
+ 		ret =3D 0;
+ 		break;
+ 	case Opt_load:
+@@ -595,7 +598,8 @@ static int derived_key_decrypt(struct encrypted_key_pay=
+load *epayload,
+ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 							 const char *format,
+ 							 const char *master_desc,
+-							 const char *datalen)
++							 const char *datalen,
++							 const char *decrypted_data)
+ {
+ 	struct encrypted_key_payload *epayload =3D NULL;
+ 	unsigned short datablob_len;
+@@ -604,6 +608,7 @@ static struct encrypted_key_payload *encrypted_key_allo=
+c(struct key *key,
+ 	unsigned int encrypted_datalen;
+ 	unsigned int format_len;
+ 	long dlen;
++	int i;
+ 	int ret;
 =20
-version of "container software" to use underlying kernel capabilities [1].
-This was not a big deal, but if this "container software" were capabilities=
+ 	ret =3D kstrtol(datalen, 10, &dlen);
+@@ -613,6 +618,20 @@ static struct encrypted_key_payload *encrypted_key_all=
+oc(struct key *key,
+ 	format_len =3D (!format) ? strlen(key_format_default) : strlen(format);
+ 	decrypted_datalen =3D dlen;
+ 	payload_datalen =3D decrypted_datalen;
++
++	if (decrypted_data) {
++		if (strlen(decrypted_data) !=3D decrypted_datalen) {
++			pr_err("encrypted key: decrypted data provided does not match decrypted=
+ data length provided\n");
++			return ERR_PTR(-EINVAL);
++		}
++		for (i =3D 0; i < strlen(decrypted_data); i++) {
++			if (!isalnum(decrypted_data[i])) {
++				pr_err("encrypted key: decrypted data provided must be alphanumeric\n"=
+);
++				return ERR_PTR(-EINVAL);
++			}
++		}
++	}
++
+ 	if (format) {
+ 		if (!strcmp(format, key_format_ecryptfs)) {
+ 			if (dlen !=3D ECRYPTFS_MAX_KEY_BYTES) {
+@@ -740,13 +759,14 @@ static void __ekey_init(struct encrypted_key_payload =
+*epayload,
+ /*
+  * encrypted_init - initialize an encrypted key
+  *
+- * For a new key, use a random number for both the iv and data
+- * itself.  For an old key, decrypt the hex encoded data.
++ * For a new key, use either a random number or user-provided decrypted da=
+ta in
++ * case it is provided. A random number is used for the iv in both cases. =
+For
++ * an old key, decrypt the hex encoded data.
+  */
+ static int encrypted_init(struct encrypted_key_payload *epayload,
+ 			  const char *key_desc, const char *format,
+ 			  const char *master_desc, const char *datalen,
+-			  const char *hex_encoded_iv)
++			  const char *hex_encoded_iv, const char *decrypted_data)
+ {
+ 	int ret =3D 0;
 =20
-agnostic, it would have gain me a bit of time.
-=46rom this experience, I had the idea of this contribution.
-
-> >>> The goal of this file is to be used by "container world" software to
-> >>> know
-> >>> kernel capabilities at run time instead of compile time.
-> >>>=20
-> >>> The underlying kernel attribute is read-only and its content is the
-> >>> capability number associated with the capability name:
-> >>> root@vm-amd64:~# cat /sys/kernel/capabilities
-> >>> 0       CAP_CHOWN
-> >>> 1       CAP_DAC_OVERRIDE
-> >>> ...
-> >>> 39      CAP_BPF
-> >>>=20
-> >>> The kernel already exposes the last capability number under:
-> >>> /proc/sys/kernel/cap_last_cap
-> >>> So, I think there should not be any issue exposing all the capabiliti=
-es
-> >>> it
-> >>> offers.
-> >>> If there is any, please share it as I do not want to introduce issue
-> >>> with
-> >>> this series.
-> >>>=20
-> >>> Also, if you see any way to improve this series please share it as it
-> >>> would
-> >>> increase this contribution quality.
-> >>>=20
-> >>> Francis Laniel (2):
-> >>>     capability: Add cap_strings.
-> >>>     kernel/ksysfs.c: Add capabilities attribute.
-> >>>   =20
-> >>>    include/uapi/linux/capability.h |  1 +
-> >>>    kernel/capability.c             | 45
-> >>>    +++++++++++++++++++++++++++++++++
-> >>>    kernel/ksysfs.c                 | 18 +++++++++++++
-> >>>    3 files changed, 64 insertions(+)
-> >>>=20
-> >>> Best regards and thank you in advance for your reviews.
-> >>> ---
-> >>> [1] man capabilities
-> >>> [2]
-> >>> https://github.com/containerd/containerd/blob/1a078e6893d07fec10a4940=
-a56
-> >>> 6
-> >>> 4fab21d6f7d1e/pkg/cap/cap_linux.go#L135 [3]
-> >>> https://github.com/moby/moby/commit/485cf38d48e7111b3d1f584d5e9eab46a=
-902
-> >>> a
-> >>> abc#diff-2e04625b209932e74c617de96682ed72fbd1bb0d0cb9fb7c709cf47a86b6=
-f9c
-> >>> 1
-> >>> moby relies on containerd code.
-> >>> [4]
-> >>> https://github.com/syndtr/gocapability/blob/42c35b4376354fd554efc7ad3=
-5e0
-> >>> b
-> >>> 7f94e3a0ffb/capability/enum.go#L47 [5]
-> >>> https://github.com/opencontainers/runc/blob/00f56786bb220b55b41748231=
-880
-> >>> b
-> >>> a0e6380519a/libcontainer/capabilities/capabilities.go#L12 runc relies=
- on
-> >>> syndtr package.
-> >>> [6]
-> >>> https://github.com/containers/crun/blob/fafb556f09e6ffd4690c452ff5185=
-6b8
-> >>> 8
-> >>> 0c089f1/src/libcrun/linux.c#L35
-> >=20
-> > Best regards.
-> > ---
-> > [1] https://github.com/moby/moby/blob/
-> > 10aecb0e652d346130a37e5b4383eca28f594c21/contrib/check-config.sh
-=2D--
-[1] https://github.com/kinvolk/minikube/commit/
-51bf81c816c004ca0d0f3e3e368bc59f8a208387
-
-
+@@ -760,21 +780,26 @@ static int encrypted_init(struct encrypted_key_payloa=
+d *epayload,
+ 	}
+=20
+ 	__ekey_init(epayload, format, master_desc, datalen);
+-	if (!hex_encoded_iv) {
+-		get_random_bytes(epayload->iv, ivsize);
+-
+-		get_random_bytes(epayload->decrypted_data,
+-				 epayload->decrypted_datalen);
+-	} else
++	if (hex_encoded_iv) {
+ 		ret =3D encrypted_key_decrypt(epayload, format, hex_encoded_iv);
++	} else if (decrypted_data) {
++		get_random_bytes(epayload->iv, ivsize);
++		memcpy(epayload->decrypted_data, decrypted_data,
++				epayload->decrypted_datalen);
++	} else {
++		get_random_bytes(epayload->iv, ivsize);
++		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
++	}
+ 	return ret;
+ }
+=20
+ /*
+  * encrypted_instantiate - instantiate an encrypted key
+  *
+- * Decrypt an existing encrypted datablob or create a new encrypted key
+- * based on a kernel random number.
++ * Instantiates the key:
++ * - by decrypting an existing encrypted datablob, or
++ * - by creating a new encrypted key based on a kernel random number, or
++ * - using provided decrypted data.
+  *
+  * On success, return 0. Otherwise return errno.
+  */
+@@ -787,6 +812,7 @@ static int encrypted_instantiate(struct key *key,
+ 	char *master_desc =3D NULL;
+ 	char *decrypted_datalen =3D NULL;
+ 	char *hex_encoded_iv =3D NULL;
++	char *decrypted_data =3D NULL;
+ 	size_t datalen =3D prep->datalen;
+ 	int ret;
+=20
+@@ -799,18 +825,18 @@ static int encrypted_instantiate(struct key *key,
+ 	datablob[datalen] =3D 0;
+ 	memcpy(datablob, prep->data, datalen);
+ 	ret =3D datablob_parse(datablob, &format, &master_desc,
+-			     &decrypted_datalen, &hex_encoded_iv);
++			     &decrypted_datalen, &hex_encoded_iv, &decrypted_data);
+ 	if (ret < 0)
+ 		goto out;
+=20
+ 	epayload =3D encrypted_key_alloc(key, format, master_desc,
+-				       decrypted_datalen);
++				       decrypted_datalen, decrypted_data);
+ 	if (IS_ERR(epayload)) {
+ 		ret =3D PTR_ERR(epayload);
+ 		goto out;
+ 	}
+ 	ret =3D encrypted_init(epayload, key->description, format, master_desc,
+-			     decrypted_datalen, hex_encoded_iv);
++			     decrypted_datalen, hex_encoded_iv, decrypted_data);
+ 	if (ret < 0) {
+ 		kfree_sensitive(epayload);
+ 		goto out;
+@@ -860,7 +886,7 @@ static int encrypted_update(struct key *key, struct key=
+_preparsed_payload *prep)
+=20
+ 	buf[datalen] =3D 0;
+ 	memcpy(buf, prep->data, datalen);
+-	ret =3D datablob_parse(buf, &format, &new_master_desc, NULL, NULL);
++	ret =3D datablob_parse(buf, &format, &new_master_desc, NULL, NULL, NULL);
+ 	if (ret < 0)
+ 		goto out;
+=20
+@@ -869,7 +895,7 @@ static int encrypted_update(struct key *key, struct key=
+_preparsed_payload *prep)
+ 		goto out;
+=20
+ 	new_epayload =3D encrypted_key_alloc(key, epayload->format,
+-					   new_master_desc, epayload->datalen);
++					   new_master_desc, epayload->datalen, NULL);
+ 	if (IS_ERR(new_epayload)) {
+ 		ret =3D PTR_ERR(new_epayload);
+ 		goto out;
+--=20
+2.34.1.448.ga2b2bfdf31-goog
 
