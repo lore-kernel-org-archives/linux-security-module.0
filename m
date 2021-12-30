@@ -2,39 +2,39 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B472EC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Dec 2021 01:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71AC8C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Dec 2021 02:56:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234107AbhL3BnV (ORCPT
+        id S235053AbhL3C4p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Dec 2021 20:43:21 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:4327 "EHLO
+        Wed, 29 Dec 2021 21:56:45 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4328 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234040AbhL3BnU (ORCPT
+        with ESMTP id S234683AbhL3C4o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Dec 2021 20:43:20 -0500
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JPWFZ5Khkz67wjx;
-        Thu, 30 Dec 2021 09:41:06 +0800 (CST)
+        Wed, 29 Dec 2021 21:56:44 -0500
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JPXtH5TN2z67xQP;
+        Thu, 30 Dec 2021 10:54:31 +0800 (CST)
 Received: from [10.122.132.241] (10.122.132.241) by
  fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.20; Thu, 30 Dec 2021 02:43:16 +0100
-Message-ID: <02806c8e-e255-232b-1722-65ea1dba2948@huawei.com>
-Date:   Thu, 30 Dec 2021 04:43:14 +0300
+ 15.1.2308.20; Thu, 30 Dec 2021 03:56:41 +0100
+Message-ID: <62cf5983-2a81-a273-d892-58b014a90997@huawei.com>
+Date:   Thu, 30 Dec 2021 05:56:40 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.4.1
 Subject: Re: [RFC PATCH 0/1] Landlock network PoC
 Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     Casey Schaufler <casey@schaufler-ca.com>, <mic@digikod.net>
 CC:     <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
         <netfilter@vger.kernel.org>, <yusongping@huawei.com>,
         <artem.kuzin@huawei.com>
 References: <20211228115212.703084-1-konstantin.meskhidze@huawei.com>
- <d9aa57a7-9978-d0a4-3aa0-4512fd9459df@digikod.net>
+ <ea82de6a-0b28-7d96-a84e-49fa0be39f0e@schaufler-ca.com>
 From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <d9aa57a7-9978-d0a4-3aa0-4512fd9459df@digikod.net>
+In-Reply-To: <ea82de6a-0b28-7d96-a84e-49fa0be39f0e@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.122.132.241]
@@ -44,63 +44,15 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mickaël,
-Thanks for the quick reply.
-I apologise that I did not follow some rules here.
-I'm a newbie in the Linux community communication and probably missed 
-some important points.
-Thank you for noticing about them - I will fix my misses.
+Hi!
+Thank you for the quick reply.
+Also thanks for you reply on previous
+RFC patch:
+https://lore.kernel.org/linux-security-module/802be0d0-cb8c-7fda-dd4e-2eb83d228ead@schaufler-ca.com/
 
-12/29/2021 1:09 AM, Mickaël Salaün wrote:
-> Hi Konstantin,
-> 
-> Please read the full how-to about sending patches: 
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html
-> 
-> There are at least these issues:
-> - no link to the previous version: 
-> https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/ 
-> 
-> - no version: [RFC PATCH v2 0/1]
-> - even if there is only one patch, please make the cover letter a 
-> separate email (i.e. git format-patch --cover-letter).
 
-I got it. My mistake.
-Anyway I can resend the patch ,if you would like, with all corrections.
-
-> 
-> It seems that you missed some of my previous (inlined) comments, you 
-> didn't reply to most of them: 
-> https://lore.kernel.org/linux-security-module/b50ed53a-683e-77cf-9dc2-f4ae1b5fa0fd@digikod.net/ 
-> 
-
-Sorry about that. I will take it into account.
-I will reply your previous comments.
-
-> 
-> Did you test your changes before submitting this patch series?
-
-I tested it into QEMU environment. I wrote net_sandboxer.c
-file just for test insering network rules and bind() and connect() syscalls.
-Also I launched your sandboxer.c and it worked well.
-I'm going to provide seltests in another patch series.
-
-> 
-> This series can only forbids TCP connects and binds to processes other 
-> than the one creating the ruleset, which doesn't make sense here (as I 
-> already explained). TCP ports are not checked.
-
-Yes. I provided just inserting network access rules into a prosess 
-ruleset.For the port checking, I wanted to ask your opinion about how it 
-would possible to insert port rule. Cause I have my view, that differs 
-from your one.
-
-> 
-> If you have any doubts about any of the comments, please rephrase, 
-> challenge them and ask questions.
-> 
-> 
-> On 28/12/2021 12:52, Konstantin Meskhidze wrote:
+12/28/2021 9:14 PM, Casey Schaufler wrote:
+> On 12/28/2021 3:52 AM, Konstantin Meskhidze wrote:
 >> Hi, all!
 >> Here is another PoC patch for Landlock network confinement.
 >> Now 2 hooks are supported for TCP sockets:
@@ -136,39 +88,6 @@ from your one.
 >>     u32 num_layers;
 >>
 >>     u16 port;
-> 
-> In this case the "object" is indeed defined by a port. You can then 
-> create an union containing either a struct landlock_object pointer or a 
-> raw value (here a u16 port). Of course, every code that use the object 
-> field must be audited and updated accordingly. I think the following 
-> update should be a good approach (with updated documentation):
-> 
-> struct landlock_rule {
-> [...]
->      union {
->          struct landlock_object *ptr;
->          uintptr_t data;
->      } object;
-> [...]
-> };
-> 
-> …and then a function helper to convert raw data to/from port.
-> 
-> It would be a good idea to use a dedicated tree for objects identified 
-> by (typed) data vs. pointer:
-> 
-> struct landlock_ruleset {
->      struct rb_root root_inode; // i.e. the current "root" field.
->      struct rb_root root_net_port;
-> [...]
-> };
-> 
-
-This approach makes sense. I did not think in this way. I was following 
-the concept that every rule must be tied to a real kernel object. Using 
-pseudo "object" defined by a port is a good idea. Thanks.
-
-> 
 >>     ...
 >> };
 >>
@@ -190,14 +109,6 @@ pseudo "object" defined by a port is a good idea. Thanks.
 >>     u16 access;
 >>
 >>     u16 port;
-> 
-> No, struct landlock_layer doesn't need to be modified. This struct is 
-> independent from the type of object. I talked about that in the previous 
-> series.
-
-I got it. Thanks for the comment.
-
-> 
 >> };
 >> so, just one landlock_insert_rule() must be slightly refactored.
 >> Also many new attributes could be easily supported in future versions.
@@ -209,20 +120,6 @@ I got it. Thanks for the comment.
 >>
 >> But its also possible to use 1D array with modulo arithmetic:
 >>     access_masks[rule_type % layer_level]
-> 
-> What about my previous suggestion to use a (well defined) upper bit to 
-> identify the type of access?
-> 
-
-Maybe I missed your point here. But I can't see how to identify 
-different rule types here. If there just one ruleset created, so there 
-is just one access_mask[0] in the ruleset. Its either can be used for 
-filesystem mask or for network one. To support both rule type we need to 
-use at least access_mask[] array with size of 2.
-Also using upper bit to identify access rule type will narrow down
-possible access ammount in future version.
-Anyway please corrent me if I'm wrong here.
-
 >>
 >> 3. Kernel objects.
 >> As was disscussed earlier, base Landlock version supports some file 
@@ -234,6 +131,70 @@ Anyway please corrent me if I'm wrong here.
 >> landlock rules and it's perfectly fits to subject-object concept where
 >> proccess is a subject and object is one of kernel objects: inodes, 
 >> sockets,
+> 
+> I will repeat myself this one time and then be quiet.
+> Sockets are not objects. A socket is a collection of
+> data used to identify the endpoints of an interprocess
+> communication. Objects are passive. If process A writes
+> to socket SA and process B reads from socket SB what
+> subject is responsible for moving the message from
+> SA to SB? Are you proposing that SA is a subject, which
+> writes to SB? If you do that, you have to identify the
+> subject attributes of SA as well as the object attributes
+> of SB. No doubt you will choose to use the attributes of
+> A. Since the object attributes on SB undoubtedly came
+> from B (passed descriptors excepted, of course) you are
+> making it unnecessarily complicated to introduce a socket
+> as an object. The access is A writes B. Store all the
+> attributes in the socket, that's fine. But that doesn't
+> make the socket an object.
+> 
+> On the other hand, the code doesn't care if you call
+> the socket an object, and you have to store the access
+> attributes in the socket for a number of reasons. Also,
+> the restrictions you're proposing aren't really access
+> controls, so it doesn't matter if you call a socket an
+> object. I doubt you're going to be taking this through
+> any sort of formal analysis.
+> 
+I have read the article you sent in previous reply:
+https://books.google.com/books?id=vQEHUD51YNEC&pg=PA97&lpg=PA97&dq=\
+schaufler+bsd+ipc+policy+and+model&source=bl&ots=59ogRfQYy-&sig=\
+ACfU3U07kZnTRD_1InkS4tk-f05OJgRd2w&hl=en&sa=X&ved=2ahUKEwiA8aH3y9n0AhXCN30KHfzhAg4Q6AF6BAgQEAM
+
+I think there is a misunderstanding here about what I meant. Its my 
+mistake that I could not explain it properly. Sorry about that.
+
+I tried to follow the main idea of Landlock impementation, at least
+for filesystem confinement:
+	- A Landlock rule describes an action on an object.
+	An object is currently a file hierarchy, and the related 	
+	filesystem actions are defined with access rights.
+(https://www.kernel.org/doc/html/latest/userspace-api/landlock.html).
+
+So all rules are attached to uderlying inodes of a file hierarchy.
+As for the sockets I was following the same way - rules could be tied to
+uderlying socket inodes. So "object" here is a socket inode like in 
+filesytem approach.
+LSM mechanism adds security data fields inside kernel objects:
+For pipe, file and socket, security field added to
+– struct inode and struct file.
+I got it from the next articles:
+https://elinux.org/images/0/0a/ELC_Inside_LSM.pdf
+https://www.usenix.org/legacy/events/sec02/full_papers/wright/wright.pdf
+
+So the main point here: Under sockets objects I meant sockets inodes.
+But I agree, that socket itself (as collection of data used for 
+interproccess communication) could be not be an object.
+
+Anyway, my approach would not work in containerized environment: RUNC, 
+containerd ect. Mickaёl suggested to go another way for Landlock network 
+confinement: Defining "object" with connection port.
+Can be checked here:
+https://lore.kernel.org/netdev/d9aa57a7-9978-d0a4-3aa0-4512fd9459df@digikod.net
+
+Hope I exlained my point. Thanks again for your comments.
+> 
 >> ect. But here is one issue that should be also discussed and solved.
 >> Now there is an undergoing work for Landlock support in RUNC and other
 >> container environments:
@@ -289,14 +250,6 @@ Anyway please corrent me if I'm wrong here.
 >>   proccess. These rules are global for all sockets in a container and,
 >>   then user could add additional restrictions to any socket connection,
 >>   imposing some kind of granularity.
-> 
-> The proposed net_service mechanism doesn't tie anything to socket. I 
-> don't see any issue here.
-
-Yes. With the approach you proposed there are no questions here. I 
-totally agree.
-
-> 
 >>
 >> Konstantin Meskhidze (1):
 >>    landlock: TCP network hooks implementation
@@ -318,10 +271,7 @@ totally agree.
 >> -- 
 >> 2.25.1
 >>
-> 
-> The following should be an independent email.
-> 
->>> From fee4f0dbec1e4a8fa8d34cec57a8cdbf351e9c12 Mon Sep 17 00:00:00 2001
+>> >From fee4f0dbec1e4a8fa8d34cec57a8cdbf351e9c12 Mon Sep 17 00:00:00 2001
 >> From: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 >> Date: Tue, 28 Dec 2021 14:47:39 +0800
 >> Subject: [RFC PATCH 1/1] landlock: TCP network hooks implementation
@@ -388,12 +338,6 @@ totally agree.
 >>
 >> +/**
 >> + * struct landlock_net_service_attr - TCP subnet definition
-> 
-> No subnet here.
-
-I will fix it with your net_service mechanism.
-
-> 
 >> + *
 >> + * Argument of sys_landlock_add_rule().
 >> + */
@@ -430,20 +374,8 @@ I will fix it with your net_service mechanism.
 >> + * TCP sockets with allowed actions:
 >> + *
 >> + * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a IP address.
-> 
-> Bind a TCP socket to a local port.
-
-Got it. Will be fixed.
-
-> 
 >> + * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
 >> + *   a listening one.
-> 
-> Connect a TCP socket to a remote port.
-
-Got it. Will be fixed.
-
-> 
 >> + */
 >> +#define LANDLOCK_ACCESS_NET_BIND_TCP            (1ULL << 0)
 >> +#define LANDLOCK_ACCESS_NET_CONNECT_TCP            (1ULL << 1)
@@ -626,15 +558,6 @@ Got it. Will be fixed.
 >> +    task = current;
 >> +
 >> +    rule = landlock_find_rule(domain, landlock_task(task)->object);
-> 
-> Again, it doesn't make sense to check tasks in this use case. The 
-> subject is already the current task. The object should be a TCP port.
-> 
-> Please take a look at my previous review.
-
-Got it. I will fix it with your net_service mechanism.
-
-> 
 >> +
 >> +    /* Grant access if there is no rule for an oject */
 >> +    if (!rule)
@@ -730,12 +653,6 @@ Got it. I will fix it with your net_service mechanism.
 >> +        return 0;
 >> +
 >> +    return check_socket_access(dom, LANDLOCK_ACCESS_NET_BIND_TCP);
-> 
-> There is no port check.
-
-Got it. I will refactor the code.
-
-> 
 >> +}
 >> +
 >> +static int hook_socket_connect(struct socket *sock, struct sockaddr 
@@ -759,12 +676,6 @@ Got it. I will refactor the code.
 >> +        return 0;
 >> +
 >> +    return check_socket_access(dom, LANDLOCK_ACCESS_NET_CONNECT_TCP);
-> 
-> There is no port check.
-
-Got it. I will refactor the code.
-
-> 
 >> +}
 >> +
 >> +static struct security_hook_list landlock_hooks[] __lsm_ro_after_init 
@@ -836,14 +747,6 @@ Got it. I will refactor the code.
 >> +
 >> +    new_ruleset = kzalloc(sizeof *new_ruleset +
 >> +                  sizeof *(new_ruleset->access_masks),
-> 
-> sizeof(access_masks) is 0.
-
-Actually sizeof *(new_ruleset->access_masks) is 8.
-It's a 64 bit pointer to u16 array[]. I checked this
-2D FAM array implementation in a standalone test.
-
-> 
 >> +                  GFP_KERNEL_ACCOUNT);
 >> +
 >> +    rules_types_num = LANDLOCK_RULE_TYPE_NUM;
@@ -858,35 +761,9 @@ It's a 64 bit pointer to u16 array[]. I checked this
 >> +        for (col = 0; col < num_layers; col++)
 >> +            new_ruleset->access_masks[row][col] = 0;
 >> +    }
-> 
-> This code may segfault. I guess it wasn't tested. Please enable most 
-> test/check features as I suggested in the previous series.
-
-I compiled the kernel 5.13 with this patch and tested it in QEMU. No 
-crashes. I tested your sandboxer.c and it works without segfaults.
-But I will provide seltests in future patch.
-
-
-> 
 >>
 >> -    new_ruleset = kzalloc(struct_size(new_ruleset, fs_access_masks,
 >> -                num_layers), GFP_KERNEL_ACCOUNT);
-> 
-> What about my comment in the previous series?
-
-As I replied above.
-Maybe I missed your point here. But I can't see how to identify 
-different rule types here. If there just one ruleset created, so there 
-is just one access_mask[0] in the ruleset. Its either can be used for 
-filesystem mask or for network one. To support both rule type we need to 
-use at least access_mask[] array with size of 2.
-Also using upper bit to identify access rule type will narrow down
-possible access ammount in future version.
-I suggest using 2D array or 1D array with module arithmetic to
-support different rule type masks.
-Anyway please corrent me if I'm wrong here.
-
-> 
 >>       if (!new_ruleset)
 >>           return ERR_PTR(-ENOMEM);
 >>       refcount_set(&new_ruleset->usage, 1);
@@ -1302,5 +1179,4 @@ Anyway please corrent me if I'm wrong here.
 >> -- 
 >> 2.25.1
 >>
-> 
 > .
