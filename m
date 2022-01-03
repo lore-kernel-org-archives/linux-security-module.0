@@ -2,111 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB16C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jan 2022 18:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF489C43219
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jan 2022 19:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235944AbiACS7N (ORCPT
+        id S236037AbiACTKS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jan 2022 13:59:13 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:33200 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235933AbiACS7N (ORCPT
+        Mon, 3 Jan 2022 14:10:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47872 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235986AbiACTKR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jan 2022 13:59:13 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 612F41F38A;
-        Mon,  3 Jan 2022 18:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1641236351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TdDYxb7brFIwjLIMOPbmEZrjtTPyGQuN72CDxmaZLfg=;
-        b=dWmDaI2oEiMKNQ/h2pK0gxKOhJGVFjqcUfy5WlLeoTMbtoQQlT8wuOTfxE0x54/RsZa+VZ
-        /++EBkwRXtP2t7HGhnoqHczEUh9lk4s3e8BAYaec/1xND8s+vcu8XL+Ce07b2z3U/vd19h
-        El2EFPp6oC8CiFoxXn7gR0qjByjVfrU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1641236351;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TdDYxb7brFIwjLIMOPbmEZrjtTPyGQuN72CDxmaZLfg=;
-        b=YY2KJsZYLgiXY7d81omY33Rcs8bANCVR9IR8Ege9ggRmiN7gbjvK84EFOydeMNM37fS8jH
-        d82mn+0A4voKtTAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3D3F013B14;
-        Mon,  3 Jan 2022 18:59:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Yr13Dn9H02EBPQAAMHmgww
-        (envelope-from <bp@suse.de>); Mon, 03 Jan 2022 18:59:11 +0000
-Date:   Mon, 3 Jan 2022 19:59:14 +0100
-From:   Borislav Petkov <bp@suse.de>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/5] Allow guest access to EFI confidential computing
- secret area
-Message-ID: <YdNHgtuVoLofL4cW@zn.tnic>
-References: <20211129114251.3741721-1-dovmurik@linux.ibm.com>
+        Mon, 3 Jan 2022 14:10:17 -0500
+X-Greylist: delayed 1244 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 03 Jan 2022 11:10:16 PST
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E83C061761;
+        Mon,  3 Jan 2022 11:10:16 -0800 (PST)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n4SNN-00Gymw-Sf; Mon, 03 Jan 2022 18:48:10 +0000
+Date:   Mon, 3 Jan 2022 18:48:09 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Walt Drummond <walt@drummond.us>
+Cc:     aacraid@microsemi.com, anna.schumaker@netapp.com, arnd@arndb.de,
+        bsegall@google.com, bp@alien8.de, chuck.lever@oracle.com,
+        bristot@redhat.com, dave.hansen@linux.intel.com,
+        dwmw2@infradead.org, dietmar.eggemann@arm.com, dinguyen@kernel.org,
+        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
+        idryomov@gmail.com, mingo@redhat.com, yzaikin@google.com,
+        ink@jurassic.park.msu.ru, jejb@linux.ibm.com, jmorris@namei.org,
+        bfields@fieldses.org, jlayton@kernel.org, jirislaby@kernel.org,
+        john.johansen@canonical.com, juri.lelli@redhat.com,
+        keescook@chromium.org, mcgrof@kernel.org,
+        martin.petersen@oracle.com, mattst88@gmail.com, mgorman@suse.de,
+        oleg@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
+        rth@twiddle.net, richard@nod.at, serge@hallyn.com,
+        rostedt@goodmis.org, tglx@linutronix.de,
+        trond.myklebust@hammerspace.com, vincent.guittot@linaro.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 0/8] signals: Support more than 64 signals
+Message-ID: <YdNE6UXRT02135Pd@zeniv-ca.linux.org.uk>
+References: <20220103181956.983342-1-walt@drummond.us>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211129114251.3741721-1-dovmurik@linux.ibm.com>
+In-Reply-To: <20220103181956.983342-1-walt@drummond.us>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 29, 2021 at 11:42:46AM +0000, Dov Murik wrote:
-> As a usage example, consider a guest performing computations on
-> encrypted files.  The Guest Owner provides the decryption key (= secret)
-> using the secret injection mechanism.  The guest application reads the
-> secret from the efi_secret filesystem and proceeds to decrypt the files
-> into memory and then performs the needed computations on the content.
-> 
-> In this example, the host can't read the files from the disk image
-> because they are encrypted.  Host can't read the decryption key because
-> it is passed using the secret injection mechanism (= secure channel).
-> Host can't read the decrypted content from memory because it's a
-> confidential (memory-encrypted) guest.
+On Mon, Jan 03, 2022 at 10:19:48AM -0800, Walt Drummond wrote:
+> This patch set expands the number of signals in Linux beyond the
+> current cap of 64.  It sets a new cap at the somewhat arbitrary limit
+> of 1024 signals, both because it’s what GLibc and MUSL support and
+> because many architectures pad sigset_t or ucontext_t in the kernel to
+> this cap.  This limit is not fixed and can be further expanded within
+> reason.
 
-So maybe I don't understand the example properly or something's missing
-but why can't the guest owner simply scp the secrets into the guest? Why
-is this special thing needed?
+Could you explain the point of the entire exercise?  Why do we need more
+rt signals in the first place?
 
-The secret below says "...kata-secrets" so this sounds like
-something-automated-containers-thing where they'd profit from getting
-secrets automatically supplied to the guest. But I guess there you can
-scp too...
-
-So what am I missing?
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Software Solutions Germany GmbH, GF: Ivo Totev, HRB 36809, AG Nürnberg
+glibc has quite a bit of utterly pointless future-proofing.  So "they
+allow more" is not a good reason - not without a plausible use-case,
+at least.
