@@ -2,158 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAFCC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jan 2022 14:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 921DAC433EF
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jan 2022 18:35:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232099AbiACOKK (ORCPT
+        id S235661AbiACSfA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jan 2022 09:10:10 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:5548 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232091AbiACOKK (ORCPT
+        Mon, 3 Jan 2022 13:35:00 -0500
+Received: from drummond.us ([74.95.14.229]:40377 "EHLO
+        talisker.home.drummond.us" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S235673AbiACSez (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jan 2022 09:10:10 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 203DDart028657;
-        Mon, 3 Jan 2022 14:09:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=v2ghILQ+1jhsJwkVkfQ4PDvXvqOTFTxfb49TgDMC0dg=;
- b=TVs7eLyhQ5pfpRACGjD2c0PDMReATd9YCt6ukUuudUKmv77UH65en0sx1yzLuEzThJ9P
- I6Lhkt3QccJfVhJK+7yVxJ6eQKzMtiaUq5AXSA4sYkwQDjbdLiHvuuJNzLrwp2XFjWEf
- ARgJntRz9jzI6ssBXv1wDQE+vnR80e1HCNAPmZiXPhIMyRG11EWPcNkp/IGM5lofg3lK
- 80T9xIPWYsfM2EIdfdxpOH7tFgo2EtqVtDy1uDZETfUgettaYqxz2EnYuPvF195ng2v6
- CdPE0CdD0sj8jD9OTtbqcVHkwg7Es0xB99fZZEkqf9WMapLefLdVBGDE579bZMCtvfz1 HA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dc1uf0vcj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jan 2022 14:09:44 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 203Dptg6011938;
-        Mon, 3 Jan 2022 14:09:43 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dc1uf0vcb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jan 2022 14:09:43 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 203E8G6X003424;
-        Mon, 3 Jan 2022 14:09:42 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma04dal.us.ibm.com with ESMTP id 3daekahcch-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jan 2022 14:09:42 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 203E9fdE36438500
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Jan 2022 14:09:41 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04E9E13605E;
-        Mon,  3 Jan 2022 14:09:41 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 88F83136059;
-        Mon,  3 Jan 2022 14:09:38 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  3 Jan 2022 14:09:38 +0000 (GMT)
-Message-ID: <0626de21-d22f-329c-fc64-ecd7eab1331a@linux.ibm.com>
-Date:   Mon, 3 Jan 2022 09:09:37 -0500
+        Mon, 3 Jan 2022 13:34:55 -0500
+X-Greylist: delayed 836 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Jan 2022 13:34:55 EST
+Received: from talisker.home.drummond.us (localhost [127.0.0.1])
+        by talisker.home.drummond.us (8.15.2/8.15.2/Debian-20) with ESMTP id 203IKXWJ983520;
+        Mon, 3 Jan 2022 10:20:33 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=home.drummond.us;
+        s=default; t=1641234033;
+        bh=cfkDVUC04N1/5TKLzChdaVzjxjk6gzgwbrbQoSLvShw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=3bO7fBxepM4+/51f0L5qyw/bOgsjQRd0fcDGjKx7c40y65UfrwqkoWMcaCES5BrN+
+         nKUb6uagsnHUTHJSULqwvRKsCgqW8BQWZINOK9KZcOlVzVOOcxk9pax4Xeml/9DZvT
+         0x29XgMTtXonYouglW8+Jearv13ejCZnKViYIIzsICH7kNq1p/nA+R+VO/fleXM9jM
+         NLDHVByAShijXnZLRxOBLlC4QnB/7SJBCrgGxHWHjkv2liiZMYy0VVqqqEINsP+j34
+         gyu9RYX96ayZW6dsA+FKzRMPlkU/qOGHtc9saAcEGyQonMqzGiG/z4oHRqhE1bbP0H
+         CEKRA26oxA4nw==
+Received: (from walt@localhost)
+        by talisker.home.drummond.us (8.15.2/8.15.2/Submit) id 203IKXpq983519;
+        Mon, 3 Jan 2022 10:20:33 -0800
+From:   Walt Drummond <walt@drummond.us>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-kernel@vger.kernel.org, Walt Drummond <walt@drummond.us>,
+        linux-security-module@vger.kernel.org
+Subject: [RFC PATCH 3/8] signals: Use a helper function to test if a signal is a real-time signal.
+Date:   Mon,  3 Jan 2022 10:19:51 -0800
+Message-Id: <20220103181956.983342-4-walt@drummond.us>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220103181956.983342-1-walt@drummond.us>
+References: <20220103181956.983342-1-walt@drummond.us>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v7 10/14] securityfs: Extend securityfs with namespacing
- support
-Content-Language: en-US
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-References: <20211216054323.1707384-1-stefanb@linux.vnet.ibm.com>
- <20211216054323.1707384-11-stefanb@linux.vnet.ibm.com>
- <20211216134027.33sprdmhol2tbctf@wittgenstein>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20211216134027.33sprdmhol2tbctf@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: jsA1Gn0Zs6K0t0IbxU9x7rtF5PCW93Ws
-X-Proofpoint-ORIG-GUID: uXiAfUfvBh1c5O8bgcGxgWWeD9yraZ7d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-03_05,2022-01-01_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
- phishscore=0 adultscore=0 spamscore=0 clxscore=1015 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2201030096
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Rather than testing against SIGRTMIN/SIGRTMAX directly, use this
+helper to determine if a signal is a real-time signal.
 
-On 12/16/21 08:40, Christian Brauner wrote:
-> On Thu, Dec 16, 2021 at 12:43:19AM -0500, Stefan Berger wrote:
->> From: Stefan Berger <stefanb@linux.ibm.com>
->>
->> Extend 'securityfs' for support of IMA namespacing so that each
->> IMA (user) namespace can have its own front-end for showing the currently
->> active policy, the measurement list, number of violations and so on.
->>
->> Drop the addition dentry reference to enable simple cleanup of dentries
->> upon umount.
->>
->> Prevent mounting of an instance of securityfs in another user namespace
->> than it belongs to. Also, prevent accesses to directories when another
->> user namespace is active than the one that the instance of securityfs
->> belongs to.
->>
->> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
->> ---
->>   security/inode.c | 37 ++++++++++++++++++++++++++++++++++---
->>   1 file changed, 34 insertions(+), 3 deletions(-)
->>
->> diff --git a/security/inode.c b/security/inode.c
->> index fee01ff4d831..a0d9f086e3d5 100644
->> --- a/security/inode.c
->> +++ b/security/inode.c
->> @@ -26,6 +26,29 @@
->>   static struct vfsmount *init_securityfs_mount;
->>   static int init_securityfs_mount_count;
->>   
->> +static int securityfs_permission(struct user_namespace *mnt_userns,
->> +				 struct inode *inode, int mask)
->> +{
->> +	int err;
->> +
->> +	err = generic_permission(&init_user_ns, inode, mask);
->> +	if (!err) {
->> +		if (inode->i_sb->s_user_ns != current_user_ns())
->> +			err = -EACCES;
-> I really think the correct semantics is to grant all callers access
-> whose user namespace is the same as or an ancestor of the securityfs
-> userns. It's weird to deny access to callers who are located in an
-> ancestor userns.
+Signed-off-by: Walt Drummond <walt@drummond.us>
+---
+ include/linux/signal.h     | 8 ++++++++
+ kernel/signal.c            | 6 +++---
+ kernel/time/posix-timers.c | 3 ++-
+ security/apparmor/ipc.c    | 4 ++--
+ 4 files changed, 15 insertions(+), 6 deletions(-)
 
-Ok, will be using current_in_userns() or the more explicit in_userns() 
-for the check.
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index c66d4f520228..a730f3d4615e 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -53,6 +53,14 @@ enum siginfo_layout {
+ 
+ enum siginfo_layout siginfo_layout(unsigned sig, int si_code);
+ 
++/* Test if 'sig' is a realtime signal.  Use this instead of testing
++ * SIGRTMIN/SIGRTMAX directly.
++ */
++static inline int realtime_signal(unsigned long sig)
++{
++	return (sig >= SIGRTMIN) && (sig <= SIGRTMAX);
++}
++
+ /*
+  * Define some primitives to manipulate sigset_t.
+  */
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 94b1828ae973..a2f0e38ba934 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1065,7 +1065,7 @@ static void complete_signal(int sig, struct task_struct *p, enum pid_type type)
+ 
+ static inline bool legacy_queue(struct sigpending *signals, int sig)
+ {
+-	return (sig < SIGRTMIN) && sigismember(&signals->signal, sig);
++	return !realtime_signal(sig) && sigismember(&signals->signal, sig);
+ }
+ 
+ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struct *t,
+@@ -1108,7 +1108,7 @@ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struc
+ 	 * make sure at least one signal gets delivered and don't
+ 	 * pass on the info struct.
+ 	 */
+-	if (sig < SIGRTMIN)
++	if (!realtime_signal(sig))
+ 		override_rlimit = (is_si_special(info) || info->si_code >= 0);
+ 	else
+ 		override_rlimit = 0;
+@@ -1144,7 +1144,7 @@ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struc
+ 			break;
+ 		}
+ 	} else if (!is_si_special(info) &&
+-		   sig >= SIGRTMIN && info->si_code != SI_USER) {
++		   realtime_signal(sig) && info->si_code != SI_USER) {
+ 		/*
+ 		 * Queue overflow, abort.  We may abort if the
+ 		 * signal was rt and sent by user using something
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 1cd10b102c51..6afb98eadd1d 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -442,7 +442,8 @@ static struct pid *good_sigevent(sigevent_t * event)
+ 		fallthrough;
+ 	case SIGEV_SIGNAL:
+ 	case SIGEV_THREAD:
+-		if (event->sigev_signo <= 0 || event->sigev_signo > SIGRTMAX)
++		/* Signal 0 is a valid signal, just not here. */
++		if (!valid_signal(event->sigev_signo) || event->sigev_signo == 0)
+ 			return NULL;
+ 		fallthrough;
+ 	case SIGEV_NONE:
+diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
+index fe36d112aad9..8149b989b665 100644
+--- a/security/apparmor/ipc.c
++++ b/security/apparmor/ipc.c
+@@ -130,9 +130,9 @@ int aa_may_ptrace(struct aa_label *tracer, struct aa_label *tracee,
+ 
+ static inline int map_signal_num(int sig)
+ {
+-	if (sig > SIGRTMAX)
++	if (!valid_signal(sig))
+ 		return SIGUNKNOWN;
+-	else if (sig >= SIGRTMIN)
++	else if (realtime_signal(sig))
+ 		return sig - SIGRTMIN + SIGRT_BASE;
+ 	else if (sig < MAXMAPPED_SIG)
+ 		return sig_map[sig];
+-- 
+2.30.2
 
-
->
-> For example, a privileged process on the host should be allowed to setns
-> to the userns of an unprivileged container and inspect its securityfs
-> instance.
->
-> We're mostly interested to block such as scenarios where two sibling
-> unprivileged containers are created in the initial userns and an fd
-> proxy or something funnels a file descriptor from one sibling container
-> to the another one and the receiving sibling container can use readdir()
-> or openat() on this fd. (I'm not even convinced that this is actually a
-> problem but stricter semantics at the beginning can't hurt. We can
-> always relax this later.)
