@@ -2,139 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CACC433F5
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jan 2022 06:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7021C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jan 2022 11:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiACGvT (ORCPT
+        id S231493AbiACLSV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jan 2022 01:51:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51092 "EHLO
+        Mon, 3 Jan 2022 06:18:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231925AbiACGvT (ORCPT
+        with ESMTP id S230135AbiACLSU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jan 2022 01:51:19 -0500
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B9BC061785
-        for <linux-security-module@vger.kernel.org>; Sun,  2 Jan 2022 22:51:18 -0800 (PST)
-Received: by mail-lj1-x231.google.com with SMTP id by39so54476661ljb.2
-        for <linux-security-module@vger.kernel.org>; Sun, 02 Jan 2022 22:51:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dAzVrnb858O63Q3XBgubcfTdy81Z6So6rI7A56IA41A=;
-        b=q2I0bIKDCcbo4LKRzdhRHiirZxQE1khPOkPIIddoVFcxaPpHdMffNmMaMjEoKm6mhG
-         ZLJgu7nza4KYBdvvawyough4ceq0queDDYCn0JDonA5FPskpthhzX+k5gOL1VcYjyFKC
-         XmG/J0raUOX7B9iRiEcgm3c46u6d8P7FfhMqeTlrVdJSsuYVt2W7FpnsqgVT3esAcUOq
-         v1KKx27k0ym0LPaCplbpSAxcqiiCgsudWu4N2pSI9mvpz0gODZ2/0CjNgPVHCZJeLa6U
-         8BIROPU8O4mut+7qx60zrR9luMwvb1XEvzGEy3t1WPLgnbFWO69rmZOr+q6BYs8r3OQ0
-         XdKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dAzVrnb858O63Q3XBgubcfTdy81Z6So6rI7A56IA41A=;
-        b=508t125XGDLOTOdhu7k/X4krlrpFXKGawbSf+V0t8VxwiReZ4G4WmuhJ/ykO1n5EIr
-         WC1wCb2BqLsnBND7HvCJ4WZE2gQxyE1BuwxvSIlv6Er50ZBM8gyVbJEFnb1VqhloL3hk
-         ryMdHb+XNJc4qfZjqQXvc0y00TDfc6nn0gcbuvYqRZFivbOUck/MuHpedPKjruKOZpeA
-         kYjahZSFcxCc6crEDj+N9bBjS9zxjY/+06k7vOj7l78mHpgI0asAD3DgsMNIFTIJA0fG
-         K6C6k+DYJDC+Re2NJ2F0N5GRiJCA5xI+9iJC/JGbA8Bytc/wBzE4pmcb7ckg5EXBATJA
-         ID+A==
-X-Gm-Message-State: AOAM533SU+JHYyreNhZmlPA+DSfUq+d2L0RDIXa7eVaEp3E0SJel/dum
-        dZU7yCVhO8BVoFz5NvYIVp5m6Zh7l2B3wY03eV2ZCw==
-X-Google-Smtp-Source: ABdhPJzaIj8bPdR2AP/fkIHOVO8Js8TuL0VI7GXTi5ZobA/AyT/1w440fgE5XJK3YxeqlFmsdWW3hO4UsffME+a47ao=
-X-Received: by 2002:a2e:bf01:: with SMTP id c1mr4483485ljr.511.1641192675956;
- Sun, 02 Jan 2022 22:51:15 -0800 (PST)
+        Mon, 3 Jan 2022 06:18:20 -0500
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 916F7C061785
+        for <linux-security-module@vger.kernel.org>; Mon,  3 Jan 2022 03:18:20 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JSCsh2xRmzMqtF9;
+        Mon,  3 Jan 2022 12:18:16 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4JSCsg72DpzljsWP;
+        Mon,  3 Jan 2022 12:18:15 +0100 (CET)
+Message-ID: <a1a17348-61f3-9524-c76a-513422ed0332@digikod.net>
+Date:   Mon, 3 Jan 2022 12:23:20 +0100
 MIME-Version: 1.0
-References: <20211229215330.4134835-1-yaelt@google.com> <CAFA6WYPuPHgcnzt6j+Q-EA2Dos6vBDukrjpheo5srLVXFrifEg@mail.gmail.com>
- <5a38824152eeee0fc9ba0a4fd2308bb6e0970059.camel@linux.ibm.com>
-In-Reply-To: <5a38824152eeee0fc9ba0a4fd2308bb6e0970059.camel@linux.ibm.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Mon, 3 Jan 2022 12:21:04 +0530
-Message-ID: <CAFA6WYOJt3=YMTt_QQSq6Z-MK42hwWspgSpasw2fuPtVFcP3uA@mail.gmail.com>
-Subject: Re: [PATCH v4] KEYS: encrypted: Instantiate key with user-provided
- decrypted data
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Yael Tiomkin <yaelt@google.com>, linux-integrity@vger.kernel.org,
-        jejb@linux.ibm.com, jarkko@kernel.org, corbet@lwn.net,
-        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20211228115212.703084-1-konstantin.meskhidze@huawei.com>
+ <d9aa57a7-9978-d0a4-3aa0-4512fd9459df@digikod.net>
+ <02806c8e-e255-232b-1722-65ea1dba2948@huawei.com>
+ <bdbae25f-5136-8905-ca64-03314b125a40@digikod.net>
+ <174f2bef-f005-c29a-1ef7-7eea96516b10@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [RFC PATCH 0/1] Landlock network PoC
+In-Reply-To: <174f2bef-f005-c29a-1ef7-7eea96516b10@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mimi,
 
-Apologies for the delayed reply as I was on leave for a long new year weekend.
+On 31/12/2021 10:50, Konstantin Meskhidze wrote:
+> 12/31/2021 2:26 AM, Mickaël Salaün wrote:
 
-On Thu, 30 Dec 2021 at 18:59, Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> Hi Sumit,
->
-> On Thu, 2021-12-30 at 15:37 +0530, Sumit Garg wrote:
-> > + Jan, Ahmad
-> >
-> > On Thu, 30 Dec 2021 at 03:24, Yael Tiomkin <yaelt@google.com> wrote:
-> > >
-> > > The encrypted.c class supports instantiation of encrypted keys with
-> > > either an already-encrypted key material, or by generating new key
-> > > material based on random numbers. This patch defines a new datablob
-> > > format: [<format>] <master-key name> <decrypted data length>
-> > > <decrypted data> that allows to instantiate encrypted keys using
-> > > user-provided decrypted data, and therefore allows to perform key
-> > > encryption from userspace. The decrypted key material will be
-> > > inaccessible from userspace.
-> >
-> > This type of user-space key import feature has already been discussed
-> > at large in the context of trusted keys here [1]. So what makes it
-> > special in case of encrypted keys such that it isn't a "UNSAFE_IMPORT"
-> > or "DEBUGGING_IMPORT" or "DEVELOPMENT_IMPORT", ...?
-> >
-> > [1] https://lore.kernel.org/linux-integrity/74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de/
-> >
-> > -Sumit
-> >
-> > >
-> > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > Signed-off-by: Yael Tiomkin <yaelt@google.com>
->
-> There is a difference between trusted and encrypted keys.
+[...]
 
-Yeah I understand the implementation differences.
+>>>>> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+>>>>> index ec72b9262bf3..a335c475965c 100644
+>>>>> --- a/security/landlock/ruleset.c
+>>>>> +++ b/security/landlock/ruleset.c
+>>>>> @@ -27,9 +27,24 @@
+>>>>>   static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>>>>>   {
+>>>>>       struct landlock_ruleset *new_ruleset;
+>>>>> +    u16 row, col, rules_types_num;
+>>>>> +
+>>>>> +    new_ruleset = kzalloc(sizeof *new_ruleset +
+>>>>> +                  sizeof *(new_ruleset->access_masks),
+>>>>
+>>>> sizeof(access_masks) is 0.
+>>>
+>>> Actually sizeof *(new_ruleset->access_masks) is 8.
+>>> It's a 64 bit pointer to u16 array[]. I checked this
+>>> 2D FAM array implementation in a standalone test.
+>>
+>> Yes, this gives the size of the pointed element, but I wanted to point 
+>> out that access_masks doesn't have a size (actually a sizeof() call on 
+>> it would failed). This kzalloc() only allocates one element in the 
+>> array. What happen when there is more than one layer?
+> 
+> Here kzalloc() only allocates a pointer to the array;
+> The whole array is allocated here:
+> 
+> rules_types_num = LANDLOCK_RULE_TYPE_NUM;
+>      /* Initializes access_mask array for multiple rule types.
+>       * Double array semantic is used convenience:
+>       * access_mask[rule_type][num_layer].
+>       */
+>      for (row = 0; row < rules_types_num; row++) {
+>          new_ruleset->access_masks[row] = kzalloc(sizeof
+>                      *(new_ruleset->access_masks[row]),
+>                      GFP_KERNEL_ACCOUNT);
+>          for (col = 0; col < num_layers; col++)
+>              new_ruleset->access_masks[row][col] = 0;
+> 
+> If it's needed more the one layer, the code above supports creating
+> array of LANDLOCK_RULE_TYPE_NUM*num_layer size (see create_ruleset() 
+> function)
 
->  So in
-> addition to pointing to the rather long discussion thread, please
-> summarize the conclusion and, assuming you agree, include why in once
-> case it was acceptable and in the other it wasn't to provide userspace
-> key data.
+Indeed, this should work, but using a 1D array is less complex and 
+enables to easily allocate the whole struct+array on contiguous memory.
 
-My major concern with importing user-space key data in *plain* format
-is that if import is *not* done in a safe (manufacturing or
-production) environment then the plain key data is susceptible to
-user-space compromises when the device is in the field.
+[...]
 
-And it sounds like we are diverting from basic definition [1] of encrypted keys:
+>>
+>> BTW, you should test with the latest kernel (i.e. latest Linus's tag).
+>>
+> I thought it was not even important what kernel version to use.
+> So I started with the first one with Landlock support. Anyway in future
+> it would be easy to rebase landlock network branch or cherry-pick all 
+> necessary commits to the latest Linus's tag.
 
-"Trusted and Encrypted Keys are two new key types added to the
-existing kernel key ring service. Both of these new types are variable
-length symmetric keys, and in both cases all keys are created in the
-kernel, and **user space sees, stores, and loads** only encrypted
-blobs."
-
-Also, as Jarrko mentioned earlier the use-case is still not clear to
-me as well. Isn't user logon keys an alternative option for
-non-readable user-space keys?
-
-[1] https://www.kernel.org/doc/html/v4.13/security/keys/trusted-encrypted.html
-
--Sumit
-
->
-> thanks,
->
-> Mimi
->
+For this patch it should be straightforward because the updated part 
+didn't change, but it may not always be the case. Anyway, we always work 
+on up-to-date code.
