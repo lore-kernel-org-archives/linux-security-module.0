@@ -2,110 +2,158 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7021C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jan 2022 11:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAFCC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Jan 2022 14:10:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231493AbiACLSV (ORCPT
+        id S232099AbiACOKK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Jan 2022 06:18:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53270 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230135AbiACLSU (ORCPT
+        Mon, 3 Jan 2022 09:10:10 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:5548 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232091AbiACOKK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Jan 2022 06:18:20 -0500
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 916F7C061785
-        for <linux-security-module@vger.kernel.org>; Mon,  3 Jan 2022 03:18:20 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JSCsh2xRmzMqtF9;
-        Mon,  3 Jan 2022 12:18:16 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4JSCsg72DpzljsWP;
-        Mon,  3 Jan 2022 12:18:15 +0100 (CET)
-Message-ID: <a1a17348-61f3-9524-c76a-513422ed0332@digikod.net>
-Date:   Mon, 3 Jan 2022 12:23:20 +0100
+        Mon, 3 Jan 2022 09:10:10 -0500
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 203DDart028657;
+        Mon, 3 Jan 2022 14:09:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=v2ghILQ+1jhsJwkVkfQ4PDvXvqOTFTxfb49TgDMC0dg=;
+ b=TVs7eLyhQ5pfpRACGjD2c0PDMReATd9YCt6ukUuudUKmv77UH65en0sx1yzLuEzThJ9P
+ I6Lhkt3QccJfVhJK+7yVxJ6eQKzMtiaUq5AXSA4sYkwQDjbdLiHvuuJNzLrwp2XFjWEf
+ ARgJntRz9jzI6ssBXv1wDQE+vnR80e1HCNAPmZiXPhIMyRG11EWPcNkp/IGM5lofg3lK
+ 80T9xIPWYsfM2EIdfdxpOH7tFgo2EtqVtDy1uDZETfUgettaYqxz2EnYuPvF195ng2v6
+ CdPE0CdD0sj8jD9OTtbqcVHkwg7Es0xB99fZZEkqf9WMapLefLdVBGDE579bZMCtvfz1 HA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dc1uf0vcj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jan 2022 14:09:44 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 203Dptg6011938;
+        Mon, 3 Jan 2022 14:09:43 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dc1uf0vcb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jan 2022 14:09:43 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 203E8G6X003424;
+        Mon, 3 Jan 2022 14:09:42 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma04dal.us.ibm.com with ESMTP id 3daekahcch-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jan 2022 14:09:42 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 203E9fdE36438500
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Jan 2022 14:09:41 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 04E9E13605E;
+        Mon,  3 Jan 2022 14:09:41 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 88F83136059;
+        Mon,  3 Jan 2022 14:09:38 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon,  3 Jan 2022 14:09:38 +0000 (GMT)
+Message-ID: <0626de21-d22f-329c-fc64-ecd7eab1331a@linux.ibm.com>
+Date:   Mon, 3 Jan 2022 09:09:37 -0500
 MIME-Version: 1.0
-User-Agent: 
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v7 10/14] securityfs: Extend securityfs with namespacing
+ support
 Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20211228115212.703084-1-konstantin.meskhidze@huawei.com>
- <d9aa57a7-9978-d0a4-3aa0-4512fd9459df@digikod.net>
- <02806c8e-e255-232b-1722-65ea1dba2948@huawei.com>
- <bdbae25f-5136-8905-ca64-03314b125a40@digikod.net>
- <174f2bef-f005-c29a-1ef7-7eea96516b10@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH 0/1] Landlock network PoC
-In-Reply-To: <174f2bef-f005-c29a-1ef7-7eea96516b10@huawei.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+References: <20211216054323.1707384-1-stefanb@linux.vnet.ibm.com>
+ <20211216054323.1707384-11-stefanb@linux.vnet.ibm.com>
+ <20211216134027.33sprdmhol2tbctf@wittgenstein>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20211216134027.33sprdmhol2tbctf@wittgenstein>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jsA1Gn0Zs6K0t0IbxU9x7rtF5PCW93Ws
+X-Proofpoint-ORIG-GUID: uXiAfUfvBh1c5O8bgcGxgWWeD9yraZ7d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-03_05,2022-01-01_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ phishscore=0 adultscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201030096
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 31/12/2021 10:50, Konstantin Meskhidze wrote:
-> 12/31/2021 2:26 AM, Mickaël Salaün wrote:
-
-[...]
-
->>>>> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
->>>>> index ec72b9262bf3..a335c475965c 100644
->>>>> --- a/security/landlock/ruleset.c
->>>>> +++ b/security/landlock/ruleset.c
->>>>> @@ -27,9 +27,24 @@
->>>>>   static struct landlock_ruleset *create_ruleset(const u32 num_layers)
->>>>>   {
->>>>>       struct landlock_ruleset *new_ruleset;
->>>>> +    u16 row, col, rules_types_num;
->>>>> +
->>>>> +    new_ruleset = kzalloc(sizeof *new_ruleset +
->>>>> +                  sizeof *(new_ruleset->access_masks),
->>>>
->>>> sizeof(access_masks) is 0.
->>>
->>> Actually sizeof *(new_ruleset->access_masks) is 8.
->>> It's a 64 bit pointer to u16 array[]. I checked this
->>> 2D FAM array implementation in a standalone test.
+On 12/16/21 08:40, Christian Brauner wrote:
+> On Thu, Dec 16, 2021 at 12:43:19AM -0500, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
 >>
->> Yes, this gives the size of the pointed element, but I wanted to point 
->> out that access_masks doesn't have a size (actually a sizeof() call on 
->> it would failed). This kzalloc() only allocates one element in the 
->> array. What happen when there is more than one layer?
-> 
-> Here kzalloc() only allocates a pointer to the array;
-> The whole array is allocated here:
-> 
-> rules_types_num = LANDLOCK_RULE_TYPE_NUM;
->      /* Initializes access_mask array for multiple rule types.
->       * Double array semantic is used convenience:
->       * access_mask[rule_type][num_layer].
->       */
->      for (row = 0; row < rules_types_num; row++) {
->          new_ruleset->access_masks[row] = kzalloc(sizeof
->                      *(new_ruleset->access_masks[row]),
->                      GFP_KERNEL_ACCOUNT);
->          for (col = 0; col < num_layers; col++)
->              new_ruleset->access_masks[row][col] = 0;
-> 
-> If it's needed more the one layer, the code above supports creating
-> array of LANDLOCK_RULE_TYPE_NUM*num_layer size (see create_ruleset() 
-> function)
-
-Indeed, this should work, but using a 1D array is less complex and 
-enables to easily allocate the whole struct+array on contiguous memory.
-
-[...]
-
+>> Extend 'securityfs' for support of IMA namespacing so that each
+>> IMA (user) namespace can have its own front-end for showing the currently
+>> active policy, the measurement list, number of violations and so on.
 >>
->> BTW, you should test with the latest kernel (i.e. latest Linus's tag).
+>> Drop the addition dentry reference to enable simple cleanup of dentries
+>> upon umount.
 >>
-> I thought it was not even important what kernel version to use.
-> So I started with the first one with Landlock support. Anyway in future
-> it would be easy to rebase landlock network branch or cherry-pick all 
-> necessary commits to the latest Linus's tag.
+>> Prevent mounting of an instance of securityfs in another user namespace
+>> than it belongs to. Also, prevent accesses to directories when another
+>> user namespace is active than the one that the instance of securityfs
+>> belongs to.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+>> ---
+>>   security/inode.c | 37 ++++++++++++++++++++++++++++++++++---
+>>   1 file changed, 34 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/security/inode.c b/security/inode.c
+>> index fee01ff4d831..a0d9f086e3d5 100644
+>> --- a/security/inode.c
+>> +++ b/security/inode.c
+>> @@ -26,6 +26,29 @@
+>>   static struct vfsmount *init_securityfs_mount;
+>>   static int init_securityfs_mount_count;
+>>   
+>> +static int securityfs_permission(struct user_namespace *mnt_userns,
+>> +				 struct inode *inode, int mask)
+>> +{
+>> +	int err;
+>> +
+>> +	err = generic_permission(&init_user_ns, inode, mask);
+>> +	if (!err) {
+>> +		if (inode->i_sb->s_user_ns != current_user_ns())
+>> +			err = -EACCES;
+> I really think the correct semantics is to grant all callers access
+> whose user namespace is the same as or an ancestor of the securityfs
+> userns. It's weird to deny access to callers who are located in an
+> ancestor userns.
 
-For this patch it should be straightforward because the updated part 
-didn't change, but it may not always be the case. Anyway, we always work 
-on up-to-date code.
+Ok, will be using current_in_userns() or the more explicit in_userns() 
+for the check.
+
+
+>
+> For example, a privileged process on the host should be allowed to setns
+> to the userns of an unprivileged container and inspect its securityfs
+> instance.
+>
+> We're mostly interested to block such as scenarios where two sibling
+> unprivileged containers are created in the initial userns and an fd
+> proxy or something funnels a file descriptor from one sibling container
+> to the another one and the receiving sibling container can use readdir()
+> or openat() on this fd. (I'm not even convinced that this is actually a
+> problem but stricter semantics at the beginning can't hurt. We can
+> always relax this later.)
