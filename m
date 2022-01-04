@@ -2,123 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D3EC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jan 2022 18:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C7DC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Jan 2022 18:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236048AbiADSBF convert rfc822-to-8bit (ORCPT
+        id S236245AbiADS03 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Jan 2022 13:01:05 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:48840 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234971AbiADSBD (ORCPT
+        Tue, 4 Jan 2022 13:26:29 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:33236 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236206AbiADS02 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Jan 2022 13:01:03 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51]:57206)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1n4o7C-00Fz0d-Et; Tue, 04 Jan 2022 11:00:55 -0700
-Received: from ip68-110-24-146.om.om.cox.net ([68.110.24.146]:33276 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1n4o73-006IOp-EO; Tue, 04 Jan 2022 11:00:50 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Walt Drummond <walt@drummond.us>
-Cc:     aacraid@microsemi.com, viro@zeniv.linux.org.uk,
-        anna.schumaker@netapp.com, arnd@arndb.de, bsegall@google.com,
-        bp@alien8.de, chuck.lever@oracle.com, bristot@redhat.com,
-        dave.hansen@linux.intel.com, dwmw2@infradead.org,
-        dietmar.eggemann@arm.com, dinguyen@kernel.org,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        idryomov@gmail.com, mingo@redhat.com, yzaikin@google.com,
-        ink@jurassic.park.msu.ru, jejb@linux.ibm.com, jmorris@namei.org,
-        bfields@fieldses.org, jlayton@kernel.org, jirislaby@kernel.org,
-        john.johansen@canonical.com, juri.lelli@redhat.com,
-        keescook@chromium.org, mcgrof@kernel.org,
-        martin.petersen@oracle.com, mattst88@gmail.com, mgorman@suse.de,
-        oleg@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
-        rth@twiddle.net, richard@nod.at, serge@hallyn.com,
-        rostedt@goodmis.org, tglx@linutronix.de,
-        trond.myklebust@hammerspace.com, vincent.guittot@linaro.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20220103181956.983342-1-walt@drummond.us>
-Date:   Tue, 04 Jan 2022 12:00:34 -0600
-In-Reply-To: <20220103181956.983342-1-walt@drummond.us> (Walt Drummond's
-        message of "Mon, 3 Jan 2022 10:19:48 -0800")
-Message-ID: <87iluzidod.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 4 Jan 2022 13:26:28 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id F00FF1F37F;
+        Tue,  4 Jan 2022 18:26:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1641320787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gCQy3yoyFL7ECUYAU0Ae6aUvtK+Hq4hiYnMytj5+eik=;
+        b=YK05IgeZLaqlRHJRD81Jr3Oh5vHQqFGLshx9xtpB7BFXFMrT+Np6Dx3fuaFwIQyqmirm8u
+        4j8AYIMWQvhHAL5Hnx8BioTAHsf/JdQalSROq9A7dfHWGkzG4MdRQYnCKHfGZGGbkdFgKS
+        REUsm064g7UiIFYclhkCU+RCJz0klAY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1641320787;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gCQy3yoyFL7ECUYAU0Ae6aUvtK+Hq4hiYnMytj5+eik=;
+        b=9EWMIxklog7t5O4tilO9nSmkB3H6W8Zd5Y5nwPXvGAlAVC8audRwReWlcJFgMJPldYH/RA
+        cakI+rxBva851tCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CDE4B13B35;
+        Tue,  4 Jan 2022 18:26:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id hmG+MVKR1GEhfQAAMHmgww
+        (envelope-from <bp@suse.de>); Tue, 04 Jan 2022 18:26:26 +0000
+Date:   Tue, 4 Jan 2022 19:26:34 +0100
+From:   Borislav Petkov <bp@suse.de>
+To:     Dov Murik <dovmurik@linux.ibm.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/5] Allow guest access to EFI confidential computing
+ secret area
+Message-ID: <YdSRWmqdNY7jRcer@zn.tnic>
+References: <20211129114251.3741721-1-dovmurik@linux.ibm.com>
+ <YdNHgtuVoLofL4cW@zn.tnic>
+ <0280e20e-8459-dd35-0b7d-8dbc1e4a274a@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1n4o73-006IOp-EO;;;mid=<87iluzidod.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.24.146;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/0+Xd8qpWrAnE4XcvYwEAmBpc7eG84nVw=
-X-SA-Exim-Connect-IP: 68.110.24.146
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFC PATCH 0/8] signals: Support more than 64 signals
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0280e20e-8459-dd35-0b7d-8dbc1e4a274a@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Walt Drummond <walt@drummond.us> writes:
+On Tue, Jan 04, 2022 at 09:02:03AM +0200, Dov Murik wrote:
+> If the Guest Owner chooses to inject secrets via scp, it needs
+> to be sure it is scp-ing to the correct VM - the one that has SEV
+> enabled and was measured at launch.
 
-> This patch set expands the number of signals in Linux beyond the
-> current cap of 64.  It sets a new cap at the somewhat arbitrary limit
-> of 1024 signals, both because it’s what GLibc and MUSL support and
-> because many architectures pad sigset_t or ucontext_t in the kernel to
-> this cap.  This limit is not fixed and can be further expanded within
-> reason.
+Hmm, I'd expect that to be part of the attestation dance. I admit,
+though, I have only listened about the whole attestation bla from the
+sidelines so I'm unclear whether that's part of that protocol. I guess
+Tom and Brijesh should have a better idea here.
 
-Ahhhh!!
+> One way to achieve that would be to inject the guest's SSH private key
 
-Please let's not expand the number of signals supported if there is any
-alternative.  Signals only really make sense for supporting existing
-interfaces.  For new applications there is almost always something
-better.
+Well, is that "one way" or *the way*?
 
-In the last discussion of adding SIGINFO
-https://lore.kernel.org/lkml/20190625161153.29811-1-ar@cs.msu.ru/ the
-approach examined was to fix SIGPWR to be ignored by default and to
-define SIGINFO as SIGPWR.
+> using the proposed efi_secret mechanism.  This way the Guest Owner is
+> sure it is talking to the correct guest and not to some other VM that
+> was started by the untrusted cloud provider (say, with SEV disabled so
+> the cloud provider can steal its memory content).
 
-I dug through the previous conversations and there is a little debate
-about what makes sense for SIGPWR to do by default.  Alan Cox remembered
-SIGPWR was sent when the power was restored, so ignoring SIGPWR by
-default made sense.  Ted Tso pointed out a different scenario where it
-was reasonable for SIGPWR to be a terminating signal.
+Because we would need *some* way of verifying the owner is talking
+to the correct guest. And if so, this should be made part of the big
+picture of SEV guest attestation. Or is this part of that attestation
+dance?
 
-So far no one has actually found any applications that will regress if
-SIGPWR becomes ignored by default.  Furthermore on linux SIGPWR is only
-defined to be sent to init, and init ignores all signals by default so
-in practice SIGPWR is ignored by the only process that receives it
-currently.
+I guess I'm wondering where in the big picture this fits into?
 
-I am persuaded at least enough that I could see adding a patch to
-linux-next and them sending to Linus that could be reverted if anything
-broke.
+> Indeed this proposed efi_secret module is in use for enabling SEV
+> confidential containers using Kata containers [1], but there's nothing
+> specific in the current patch series about containers.  The patch series
+> just exposes the launch-injected SEV secrets to userspace as virtual files
+> (under securityfs).
+> 
+> [1] https://github.com/confidential-containers/attestation-agent/tree/main/src/kbc_modules/offline_sev_kbc
 
-Where I saw the last conversation falter was in making a persuasive
-case of why SIGINFO was interesting to add.  Given a world of ssh
-connections I expect a persuasive case can be made.  Especially if there
-are a handful of utilities where it is already implemented that just
-need to be built with SIGINFO defined.
+So one of the aspects for this is to use it in automated deployments.
 
->  - Add BSD SIGINFO (and VSTATUS) as a test.
+> It boils down to: the confidential guest needs to have access to a
+> secret which the untrusted host can't read, and which is essential for
+> the normal operation of the guest.  This secret can be a decryption key,
+> an SSH private key, an API key to a Key Management system, etc.  If a
+> malicious cloud provider tries to start that VM without a secret (or
+> with the wrong one), the actual workload that the guest is supposed to
+> run will not execute meaningfully.
+> 
+> The proposed patch series exposes the SEV injected secrets as virtual
+> files, which can later be used as decryption keys (as done in the kata
+> confidential containers use-case), or SSH private keys, or any other
+> possible implementation.
 
-If your actual point is not to implement SIGINFO and you really have
-another use case for expanding sigset_t please make it clear.
+Right, and is this going to be the proper way to authenticate SEV guests
+to their owners or is this just another technique for safely supplying
+secrets into the guest?
 
-Without seeing the persuasive case for more signals I have to say that
-adding more signals to the kernel sounds like a bad idea.
+I hope I'm making some sense here...
 
-Eric
+-- 
+Regards/Gruss,
+    Boris.
 
-
-
-
+SUSE Software Solutions Germany GmbH, GF: Ivo Totev, HRB 36809, AG Nürnberg
