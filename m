@@ -2,173 +2,233 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15964C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jan 2022 11:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB17C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jan 2022 15:21:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235465AbiAELng (ORCPT
+        id S241404AbiAEPV5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jan 2022 06:43:36 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:60236 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229622AbiAELnf (ORCPT
+        Wed, 5 Jan 2022 10:21:57 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46168 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241379AbiAEPV4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jan 2022 06:43:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641383014;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vZRqLCV1AQpi4/pbS4HKIi2vod3d/KjNFKlZbvvJOJw=;
-        b=X9U2cg87dTsRuLmSQfs5zeMaKUKRrGFLJbae8habWycEyQcbOu6GgkPtYR9gKoRwue1tNO
-        DoXfe9Vf0smS6/gTEDggm0YkIMRy9KnDiuqfTKoNp9qZP/K3cynn1YItdEowIljnHpQcI/
-        Ljz6X3giB/M3RhCpB4J0tBspnjFNr58=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-367-NqDNCruhNq694xslHe42Qg-1; Wed, 05 Jan 2022 06:43:31 -0500
-X-MC-Unique: NqDNCruhNq694xslHe42Qg-1
-Received: by mail-wr1-f71.google.com with SMTP id s23-20020adf9797000000b001a24674f0f7so12498254wrb.9
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Jan 2022 03:43:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=vZRqLCV1AQpi4/pbS4HKIi2vod3d/KjNFKlZbvvJOJw=;
-        b=lBiT61UlYk+pdsAItB2AYhpoKzwqBw49AzBJAdjml6dovgtLDJpnbbmlQ5GkumbM2H
-         eCpd5kJ938LQZFmkI+7FouMdUKrv61wfZ3ROlppGkExOSbhlHJxj4wT9Sp7Bdu6FyEL5
-         OyvmKvw5Wd1vhVLtId33CpAr9zzv2Wd6OSrv2QA1DkA0LJ4KG4HRPvOa34xGUv7PdNor
-         G9OD+dxXOBRInMcDRQy4j+VvpCXAz2AO7g/X5ZXHIcTSR2ak1QtysxwfyuXKFw0vE8uM
-         JkUS/IUre2Es6/FxrWkXweN35XpqJdVwC5lc7TAPmMTC3ZPZlIX6OG5LItWTtbsAEasy
-         +nHA==
-X-Gm-Message-State: AOAM530JZrucwDvWu4PNOSRZ1Q4Im+Go7U0y306ysEXRxDH+Qcwlg/ub
-        xXs9kULe6VBTPawlx1I5m5lkSpbWC/GCZ47bULgSVhvodOE785eaSXVbHgfWrbTEGDgbAQsgl6x
-        aIZQ0emsyenIBgdxt8dDgpuvRaz2hAIiOgO0V
-X-Received: by 2002:a05:6000:10c4:: with SMTP id b4mr45047999wrx.514.1641383010396;
-        Wed, 05 Jan 2022 03:43:30 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx0ND3sp1KAm9XvjE31Azjsac5utQcfs8uXXLrux4uumEKa2/x8xhMt+qfPbb1B2mJgzhIwuA==
-X-Received: by 2002:a05:6000:10c4:: with SMTP id b4mr45047983wrx.514.1641383010177;
-        Wed, 05 Jan 2022 03:43:30 -0800 (PST)
-Received: from work-vm (cpc109025-salf6-2-0-cust480.10-2.cable.virginm.net. [82.30.61.225])
-        by smtp.gmail.com with ESMTPSA id f8sm43265636wry.16.2022.01.05.03.43.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jan 2022 03:43:29 -0800 (PST)
-Date:   Wed, 5 Jan 2022 11:43:25 +0000
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Dov Murik <dovmurik@linux.ibm.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/5] Allow guest access to EFI confidential computing
- secret area
-Message-ID: <YdWEXRt7Ixm6/+Dq@work-vm>
-References: <20211129114251.3741721-1-dovmurik@linux.ibm.com>
- <YdNHgtuVoLofL4cW@zn.tnic>
- <0280e20e-8459-dd35-0b7d-8dbc1e4a274a@linux.ibm.com>
- <YdSRWmqdNY7jRcer@zn.tnic>
+        Wed, 5 Jan 2022 10:21:56 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 205FCUei028696;
+        Wed, 5 Jan 2022 15:21:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=IL2jSP9Vg3TpO3ICs4O5w7nfz0/LY4RrW+pXipkAW6k=;
+ b=Pv1zF576AyppYfoXZKSa+28m3bP25uRMud9Q5fgL1u3Tv9OjPReYMh0q96krXTV8AQk1
+ BJHNFuGi2hFffgUnT1LFdM2bVX3S4wSS9X16Bna58Fkwq7/6zWooCnATmqEwG+NB/eEh
+ mPnLJejGOuMecEu99GefZ7aVb7E+VoBaGEsSFa/Qi9zmfWdNQw8SKBRAfO6epiuho9Fr
+ JX3QXMgCvW4qJRaQDvq9qYon4rqWC7AZd599b+GevNeu9PS/HVMdkqJ+1ylYk7d+TRDp
+ CXQNTgJ5Jg3JmO9Rf7lAZoLn42CRPzB5TC6YFJBIwT16gzDUgTOEp/4Yuec8TEUjMzgq ww== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dckxt4b9n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Jan 2022 15:21:42 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 205FLg4E005222;
+        Wed, 5 Jan 2022 15:21:42 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dckxt4b93-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Jan 2022 15:21:41 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 205FHoRp016459;
+        Wed, 5 Jan 2022 15:21:40 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma02wdc.us.ibm.com with ESMTP id 3daekb0brt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Jan 2022 15:21:40 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 205FLdja30015872
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Jan 2022 15:21:39 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 692E7AC059;
+        Wed,  5 Jan 2022 15:21:39 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1ED7EAC068;
+        Wed,  5 Jan 2022 15:21:39 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  5 Jan 2022 15:21:39 +0000 (GMT)
+Message-ID: <be083959-b1ef-9de7-0ea6-71ab36596523@linux.ibm.com>
+Date:   Wed, 5 Jan 2022 10:21:38 -0500
 MIME-Version: 1.0
-In-Reply-To: <YdSRWmqdNY7jRcer@zn.tnic>
-User-Agent: Mutt/2.1.3 (2021-09-10)
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=dgilbert@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v8 16/19] ima: Enable re-auditing of modified files
+Content-Language: en-US
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
+ <20220104170416.1923685-17-stefanb@linux.vnet.ibm.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20220104170416.1923685-17-stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: F_Gdp9N4kKwEw1OpLBvo5xXZSEq7xmxR
+X-Proofpoint-ORIG-GUID: jlDsoTM9MXXwXsJFKLLPsK585uGTjnzQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-05_03,2022-01-04_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ mlxscore=0 bulkscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201050101
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Borislav Petkov (bp@suse.de) wrote:
-> On Tue, Jan 04, 2022 at 09:02:03AM +0200, Dov Murik wrote:
-> > If the Guest Owner chooses to inject secrets via scp, it needs
-> > to be sure it is scp-ing to the correct VM - the one that has SEV
-> > enabled and was measured at launch.
-> 
-> Hmm, I'd expect that to be part of the attestation dance. I admit,
-> though, I have only listened about the whole attestation bla from the
-> sidelines so I'm unclear whether that's part of that protocol. I guess
-> Tom and Brijesh should have a better idea here.
 
-There's more than one type of dance; this partially varies
-depending on the system (SEV/TDX etc) and also depends on how you depend
-to boot your VM (separate kernel or VM disk).   Also it's important to
-note that when the dance happens varies - in SEV and SEV-ES this happens
-before the guest executes any code.
-So at the end of the dance, the guest owner hands over that secret - but
-only then does the geust start booting; that secret has to go somewhere
-to be used by something later.
-For example, something might pull out that key and use it to decrypt a
-disk that then has other secrets on it (e.g. your ssh key).
+On 1/4/22 12:04, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
+>
+> Walk the list of ns_status associated with an iint if the file has
+> changed and reset the IMA_AUDITED flag, which is part of the
+> IMA_DONE_MASK. This causes a new audit message to be emitted when the
+> file is again accessed on either the host or in an IMA namespace.
+>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>   security/integrity/ima/ima_main.c | 33 ++++++++++++++++++++++++++++++-
+>   1 file changed, 32 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 99dc984b49c9..bc3ab08f39c6 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -153,6 +153,35 @@ static void ima_rdwr_violation_check(struct ima_namespace *ns,
+>   				  "invalid_pcr", "open_writers");
+>   }
+>   
+> +#ifdef CONFIG_IMA_NS
+> +
+> +static void mask_iint_ns_status_flags(struct integrity_iint_cache *iint,
+> +				      unsigned long mask)
+> +{
+> +	struct ns_status *status;
+> +	unsigned long flags;
+> +
+> +	read_lock(&iint->ns_list_lock);
+> +	list_for_each_entry(status, &iint->ns_list, ns_next) {
+> +		flags = iint_flags(iint, status) & mask;
+> +		set_iint_flags(iint, status, flags);
+> +	}
+> +	read_unlock(&iint->ns_list_lock);
+> +}
+> +
+> +#else
+> +
+> +static void mask_iint_ns_status_flags(struct integrity_iint_cache *iint,
+> +				      unsigned long mask)
+> +{
+> +	unsigned long flags;
+> +
+> +	flags = iint_flags(iint, NULL) & mask;
+> +	set_iint_flags(iint, NULL, flags);
+> +}
+> +
+> +#endif
+> +
 
-Dave
+The above two cases are due to this here:
 
-> > One way to achieve that would be to inject the guest's SSH private key
-> 
-> Well, is that "one way" or *the way*?
-> 
-> > using the proposed efi_secret mechanism.  This way the Guest Owner is
-> > sure it is talking to the correct guest and not to some other VM that
-> > was started by the untrusted cloud provider (say, with SEV disabled so
-> > the cloud provider can steal its memory content).
-> 
-> Because we would need *some* way of verifying the owner is talking
-> to the correct guest. And if so, this should be made part of the big
-> picture of SEV guest attestation. Or is this part of that attestation
-> dance?
-> 
-> I guess I'm wondering where in the big picture this fits into?
-> 
-> > Indeed this proposed efi_secret module is in use for enabling SEV
-> > confidential containers using Kata containers [1], but there's nothing
-> > specific in the current patch series about containers.  The patch series
-> > just exposes the launch-injected SEV secrets to userspace as virtual files
-> > (under securityfs).
-> > 
-> > [1] https://github.com/confidential-containers/attestation-agent/tree/main/src/kbc_modules/offline_sev_kbc
-> 
-> So one of the aspects for this is to use it in automated deployments.
-> 
-> > It boils down to: the confidential guest needs to have access to a
-> > secret which the untrusted host can't read, and which is essential for
-> > the normal operation of the guest.  This secret can be a decryption key,
-> > an SSH private key, an API key to a Key Management system, etc.  If a
-> > malicious cloud provider tries to start that VM without a secret (or
-> > with the wrong one), the actual workload that the guest is supposed to
-> > run will not execute meaningfully.
-> > 
-> > The proposed patch series exposes the SEV injected secrets as virtual
-> > files, which can later be used as decryption keys (as done in the kata
-> > confidential containers use-case), or SSH private keys, or any other
-> > possible implementation.
-> 
-> Right, and is this going to be the proper way to authenticate SEV guests
-> to their owners or is this just another technique for safely supplying
-> secrets into the guest?
-> 
-> I hope I'm making some sense here...
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> SUSE Software Solutions Germany GmbH, GF: Ivo Totev, HRB 36809, AG N�rnberg
-> 
--- 
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 547425c20e11..201a9d46d6e1 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -138,6 +138,10 @@ struct integrity_iint_cache {
+  	enum integrity_status ima_creds_status:4;
+  	enum integrity_status evm_status:4;
+  	struct ima_digest_data *ima_hash;
++#ifdef CONFIG_IMA_NS
++	rwlock_t ns_list_lock;
++	struct list_head ns_list;
++#endif
+  };
 
+Ideally namespaced and non-namespaced code cases would share the code and to be able to share it the above #ifdef CONFIG_IMA_NS  in integrity.hshouldn't be there but we would have the lock and list in IMA namespacing and non-namespacing case. The above two code cases shown above are just the beginning and as more variables are moved from the iint into the ns_status these types of 'two cases of code' would show up in more places. So I think we should prevent this already now.
+
+To be able to share the code we need an ns_status on a list in the non-namespacing case as well. In the non-namespacing case it would always be a single ns_status on the list. What is worth a decision is how to get the ns_status on the list. One idea would be to conditionally embed it into the integrity_iint_cache like this:
+
+/* integrity data associated with an inode */
+struct integrity_iint_cache {
+         struct rb_node rb_node; /* rooted in integrity_iint_tree */
+         struct mutex mutex;     /* protects: version, flags, digest */
+         struct inode *inode;    /* back pointer to inode in question */
+         u64 version;            /* track inode changes */
+         unsigned long flags;
+         unsigned long atomic_flags;
+         enum integrity_status ima_file_status:4;
+         enum integrity_status ima_mmap_status:4;
+         enum integrity_status ima_bprm_status:4;
+         enum integrity_status ima_read_status:4;
+         enum integrity_status ima_creds_status:4;
+         enum integrity_status evm_status:4;
+         struct ima_digest_data *ima_hash;
+         rwlock_t ns_list_lock;
+         struct list_head ns_list;
+#ifndef CONFIG_IMA_NS
+	struct ns_status status;
+#endif
+};
+
+This would prevent a 2nd cache just for allocation of ns_status in the 
+non-namespacing case and getting the  embedded ns_status onto the list 
+would also be like this:
+
+     INIT_LIST_HEAD(&iint->ns_list);
+
+#ifndef CONFIG_IMA_NS
+
+     INIT_LIST_HEAD(&iint->status.ns_next);
+
+     list_add_tail(&iint->status.ns_next, &iint->ns_list);
+
+#endif
+
+The other option is to allocated the ns_status via a minimal 
+implementation of ima_ns_status.c for the non-namespaced case using 
+kmalloc's from a cache for ns_status structures.
+
+
+Also, the new 'rwlock_t ns_list_lock' in the iint would really only be 
+necessary for locking in the namespacing case. However, to be able to 
+share the code we would need to keep this lock around for the 
+non-namespacing case as well so that we can call read_lock() in both 
+cases. An option would be to introduce a macro for the locking that is a 
+no-op in the non-namespacing case and does the actual locking in the 
+namespacing case. I am not sure what would be better. I would prefer to 
+explicitly see the read_lock()...
+
+
+
+>   static void ima_check_last_writer(struct integrity_iint_cache *iint,
+>   				  struct inode *inode, struct file *file)
+>   {
+> @@ -169,8 +198,10 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+>   		if (!IS_I_VERSION(inode) ||
+>   		    !inode_eq_iversion(inode, iint->version) ||
+>   		    (iint->flags & IMA_NEW_FILE)) {
+> -			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+> +			mask_iint_ns_status_flags(iint,
+> +					~(IMA_DONE_MASK | IMA_NEW_FILE));
+>   			iint->measured_pcrs = 0;
+> +
+>   			if (update)
+>   				ima_update_xattr(iint, file);
+>   		}
