@@ -2,103 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A66A0C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jan 2022 10:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D7EC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jan 2022 10:18:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235165AbiAEKOk (ORCPT
+        id S239352AbiAEKS3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jan 2022 05:14:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40534 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234106AbiAEKOj (ORCPT
+        Wed, 5 Jan 2022 05:18:29 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:45592 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235301AbiAEKS1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jan 2022 05:14:39 -0500
-X-Greylist: delayed 12369 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Jan 2022 02:14:39 PST
-Received: from cavan.codon.org.uk (cavan.codon.org.uk [IPv6:2a00:1098:84:22e::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D97C061761;
-        Wed,  5 Jan 2022 02:14:38 -0800 (PST)
-Received: by cavan.codon.org.uk (Postfix, from userid 1000)
-        id BB17A4250A; Wed,  5 Jan 2022 10:14:37 +0000 (GMT)
-Date:   Wed, 5 Jan 2022 10:14:37 +0000
-From:   Matthew Garrett <mjg59@srcf.ucam.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org
-Subject: Re: [PATCH V40 12/29] x86: Lock down IO port access when the kernel
- is locked down
-Message-ID: <20220105101437.GA32516@srcf.ucam.org>
-References: <20190820001805.241928-1-matthewgarrett@google.com>
- <20190820001805.241928-13-matthewgarrett@google.com>
- <CAAd53p6d2CsZcwaX0ZtjmOmQv1Dru4qmM-uRxtHJi0k5PnFMFQ@mail.gmail.com>
- <20220105064827.GA30988@srcf.ucam.org>
- <CAAd53p5A9ajyP=8edXW20MB1eLRAF3SsmXfdnkA2isBJD2Bd+w@mail.gmail.com>
- <20220105072010.GA31134@srcf.ucam.org>
- <CAAd53p6VcAo0MVMWerTag42cWFE2ifzdQ=AFmGd9a=2gFjgv5A@mail.gmail.com>
+        Wed, 5 Jan 2022 05:18:27 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1AFB1615C4;
+        Wed,  5 Jan 2022 10:18:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D77DC36AEB;
+        Wed,  5 Jan 2022 10:18:18 +0000 (UTC)
+Date:   Wed, 5 Jan 2022 11:18:15 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [PATCH v8 01/19] securityfs: Extend securityfs with namespacing
+ support
+Message-ID: <20220105101815.ldsm4s5yx7pmuiil@wittgenstein>
+References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
+ <20220104170416.1923685-2-stefanb@linux.vnet.ibm.com>
+ <YdUXU3XIzhxFUfVB@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAAd53p6VcAo0MVMWerTag42cWFE2ifzdQ=AFmGd9a=2gFjgv5A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YdUXU3XIzhxFUfVB@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 05, 2022 at 06:05:26PM +0800, Kai-Heng Feng wrote:
-> On Wed, Jan 5, 2022 at 3:20 PM Matthew Garrett <mjg59@srcf.ucam.org> wrote:
-> >
-> > On Wed, Jan 05, 2022 at 02:57:57PM +0800, Kai-Heng Feng wrote:
-> >
-> > > The affected system from the customer has SecureBoot enabled (and
-> > > hence lockdown), and the kernel upgrade surprisingly broke ioperm()
-> > > usage.
-> >
-> > Which kernel was being used that was signed but didn't implement
-> > lockdown? That sounds, uh, bad.
+On Wed, Jan 05, 2022 at 03:58:11AM +0000, Al Viro wrote:
+> On Tue, Jan 04, 2022 at 12:03:58PM -0500, Stefan Berger wrote:
+> > From: Stefan Berger <stefanb@linux.ibm.com>
+> > 
+> > To prepare for virtualization of SecurityFS, use simple_pin_fs and
+> > simpe_release_fs only when init_user_ns is active.
+> > 
+> > Extend 'securityfs' for support of IMA namespacing so that each
+> > IMA (user) namespace can have its own front-end for showing the currently
+> > active policy, the measurement list, number of violations and so on.
+> > 
+> > Enable multiple instances of securityfs by keying each instance with a
+> > pointer to the user namespace it belongs to.
+> > 
+> > Drop the additional dentry reference to enable simple cleanup of dentries
+> > upon umount. Now the dentries do not need to be explicitly freed anymore
+> > but we can just rely on d_genocide() and the dcache shrinker to do all
+> > the required work.
 > 
-> It was upgraded from older distro release. Older kernels don't have lockdown.
-
-But have a signed bootloader? Which releases?
-
-> > There's two main choices:
-> >
-> > 1) Disable secure boot on the system in question - if there's a need to
-> > run userland that can do arbitrary port IO then secure boot isn't
-> > providing any meaningful security benefit in any case.
+> Looks brittle...  What are the new rules for securityfs_remove()?  Is it
+> still paired with securityfs_create_...()?  When is removal done?  On
+> securityfs instance shutdown?  What about the underlying data structures, BTW?
+> When can they be freed?
 > 
-> How so?
-> Other security features are still incredible valuable, we don't want
-> to toss them out just because someone has to use ioperm().
+> That kind of commit message is asking for trouble down the road; please,
+> document the rules properly.
 
-Because having the ability to do port io allows you to tamper with the 
-running kernel and disable all the other security boundaries, making 
-them pointless. Many PCI devices have a port IO side channel into MMIO 
-BARs for use in early boot, so if an attacker can fill that BAR as they 
-wish and then modify the BAR to map it into the kernel address space 
-(and fix up the bridges appropriately), or if the port IO interface can 
-be used to trigger DMA, the outcomes are pretty bad. The point of 
-lockdown is to disable every plausible interface for userland (even uid 
-0) to have access to any interfaces that would let them insert modified 
-code into ring 0 - port IO is definitely one of those interfaces. An 
-attacker could just take a kernel that allows ioperm(), add an initramfs 
-containing their payload, boot, hotpatch the kernel to disable lockdown, 
-and then kexec into their backdoored payload.
+Yeah, it's not explaining it in detail. I've asked for that as well. My
+explanations below are what I expressed it should look like in prior
+reviews. I haven't reviewed this version yet so this as I would expect
+it to go.
 
-> >
-> > 2) Implement a kernel driver that abstracts the hardware access away
-> > from userland, and ensures that all the accesses are performed in a safe
-> > way.
-> >
-> > Doing port IO from userland is almost always a terrible idea - it
-> > usually involves indexed accesses (you write an address to one port and
-> > then write or read data from another), and if two processes are trying
-> > to do this simultaneously (either because SMP or because one process
-> > gets preempted after writing the address but before accessing the data
-> > register), and in that case you can end up with accesses to the wrong
-> > register as a result. You really want this sort of thing to be mediated
-> > by the kernel, both from a safety perspective and to ensure appropriate
-> > synchronisation.
+For the initial securityfs, i.e. the one mounted in the host userns
+mount nothing changes.
+The rules for securityfs_remove() are as before and it is still paired
+with securityfs_create(). Specifically, a file created via
+securityfs_create_dentry() in the initial securityfs mount still needs
+to be removed by a call to securityfs_remove().
+Creating a new dentry in the initial securityfs mount still pins the
+filesytem like it always did. Consequently, the initial securityfs
+mount is not destroyed on umount/shutdown as long as at least one user
+of it still has dentries that it hasn't removed with a call to
+securityfs_remove().
+
+This specific part of the commit message you responded to is not
+giving enough details, I think:
+
+> > Drop the additional dentry reference to enable simple cleanup of dentries
+> > upon umount. Now the dentries do not need to be explicitly freed anymore
+> > but we can just rely on d_genocide() and the dcache shrinker to do all
+> > the required work.
+
+The "additional dentry reference" mentioned only relates to an afaict
+unnecessary dget() in securityfs_create_dentry() which I pointed out
+as part of earlier reviews. But the phrasing implies that there's a
+behavioral change for the initial securityfs instance based on the
+removal of this additional dget() when there really isn't.
+
+After securityfs_create_dentry() has created a new dentry via
+lookup_one_len() and eventually called d_instantiate() it currently
+takes an additional reference on the newly created dentry via dget().
+This additional reference is then paired with an additional dput() in
+securityfs_remove(). I have not yet seen a reason why this is
+necessary maybe you can help there.
+
+For example, contrast this with debugfs which has the same underlying
+logic as securityfs, i.e. any created dentry pins the whole filesystem
+via simple_pin_fs() until the dentry is released and simple_unpin_fs()
+is called. It uses a similar pairing as securityfs: where securityfs
+has the securityfs_create_dentry() and securityfs_remove() pairing,
+debugfs has the __debugfs_create_file() and debugfs_remove() pairing.
+But debugfs doesn't take an additional reference on the just created
+dentry in __debugfs_create_file() which would need to be put in
+debugfs_remove().
+
+So if we contrast the creation routines of securityfs and debugfs directly
+condensed to just the dentry references:
+
+securityfs       |   debugfs
+---------------- | ------------------
+                 |
+lookup_one_len() |   lookup_one_len()
+d_instantiate()  |   d_instantiate() 
+dget()           |
+
+And I have not understood why securityfs would need that additional
+dget(). Not just intrinsically but also when contrasted with debugfs. So
+that additional dget() is removed as part of this patch.
+
+But the explanation in the commit message isn't ideal as it implies
+the removal of the additional dget() would have any impact on the
+pinning logic for securityfs when it does not.
+
+But the pinning logic doesn't make sense outside of the initial
+namespace which can never go away and there are security modules that
+have files or settings for the whole system that never go away and will
+always keep the filesystem around.
+
+But for unprivileged/userns containers that mount their own securityfs
+instance we want the securityfs instance cleaned up when it is
+unmounted. There is no need to duplicate the pinning logic or make the
+global securityfs instance display different information based on the
+userns. Both options would be really messy and hacky.
+
+Instead we can simply give each userns it's own securityfs instance
+similar to how each ipc ns has its own mqueue instance and all entries
+in there are cleaned up on umount or when the whole container is
+shutdown. After the container is shutdown all of the security module
+settings for the container go away with it anyway. So for that we don't
+want any filesystem pinning done in securityfs_create_dentry(). And we
+also really don't want the additional dget() that is currently taken in
+securityfs_create_dentry() as it would pointlessly require us to dput()
+during superblock shutdown afaict. None of this however should cause any
+behavioral changes for the initial securityfs instance.
+
 > 
-> Agree, let me start a discussion with them.
+> Incidentally, what happens if you open a file, pass it to somebody in a
+> different userns and try to shut the opener's userns down?
 
-Sounds good.
+I'm not exactly sure what you mean by "shutting down" and whether that's
+a generic question or specific to this patch. I assume that you just
+mean what happens when the last task for a userns exits and the userns
+isn't pinned by e.g. a bind-mount of it to somewhere.
+
+If you're just asking about the generic case then the opener's creds are
+pinned by ->f_cred including the caller's userns at open-time. So it
+will be released once that file has been closed. 
+
+If you're asking about what happens to the userns the
+securityfs/tmpfs/mqueue/devpts etc. instance was mounted in it will be
+pinned by the superblock which in turn is pinned by the open file.
+
+Does that answer your question or did you have something else in mind?
