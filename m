@@ -2,233 +2,147 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB17C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jan 2022 15:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 709EFC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Jan 2022 17:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241404AbiAEPV5 (ORCPT
+        id S242589AbiAERyk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Jan 2022 10:21:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46168 "EHLO
+        Wed, 5 Jan 2022 12:54:40 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17576 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241379AbiAEPV4 (ORCPT
+        by vger.kernel.org with ESMTP id S242575AbiAERye (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Jan 2022 10:21:56 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 205FCUei028696;
-        Wed, 5 Jan 2022 15:21:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=IL2jSP9Vg3TpO3ICs4O5w7nfz0/LY4RrW+pXipkAW6k=;
- b=Pv1zF576AyppYfoXZKSa+28m3bP25uRMud9Q5fgL1u3Tv9OjPReYMh0q96krXTV8AQk1
- BJHNFuGi2hFffgUnT1LFdM2bVX3S4wSS9X16Bna58Fkwq7/6zWooCnATmqEwG+NB/eEh
- mPnLJejGOuMecEu99GefZ7aVb7E+VoBaGEsSFa/Qi9zmfWdNQw8SKBRAfO6epiuho9Fr
- JX3QXMgCvW4qJRaQDvq9qYon4rqWC7AZd599b+GevNeu9PS/HVMdkqJ+1ylYk7d+TRDp
- CXQNTgJ5Jg3JmO9Rf7lAZoLn42CRPzB5TC6YFJBIwT16gzDUgTOEp/4Yuec8TEUjMzgq ww== 
+        Wed, 5 Jan 2022 12:54:34 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 205Gdfbm001184;
+        Wed, 5 Jan 2022 17:54:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=a/hNyN174JDvdNNm/i87MV7ShBYIpTBhS4It78lqvIc=;
+ b=jo0L6m6CansbM71w+v8yXyYkAISYzTwyp0KGFDgmxp1iC/bki9crOoIB8A2FHsxVLGFO
+ UM7KOqfw9PS+hbN+Wr9I0+7KVW1dIqZUOWTZwECXBDRy+eFyJy7VAXE5KI8t6ruAer1X
+ PPXh2xly903qxSA2vPEmNjYI8YsK1cAlWsIT3EXtWzyqxVyGa1jBoK+E/02iXdRgOwYa
+ aJzZz+Phbj41iJjzPLG9tKcJj4KGYJD+qebagZvqNzcnOWNhdM+XvcjYOvBrMKhxIm0Z
+ c8NjywiCz8N6WhbCj9Bq85M6kB3yEcgjfBhnKYoYdy4XdQWnHo0c+QG4N6jM6/Edeycd 0g== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dckxt4b9n-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dcq0s3stx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Jan 2022 15:21:42 +0000
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 205FLg4E005222;
-        Wed, 5 Jan 2022 15:21:42 GMT
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dckxt4b93-1
+        Wed, 05 Jan 2022 17:54:29 +0000
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 205GAqv3009846;
+        Wed, 5 Jan 2022 17:54:29 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dcq0s3st8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Jan 2022 15:21:41 +0000
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 205FHoRp016459;
-        Wed, 5 Jan 2022 15:21:40 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma02wdc.us.ibm.com with ESMTP id 3daekb0brt-1
+        Wed, 05 Jan 2022 17:54:28 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 205Hm5x6021359;
+        Wed, 5 Jan 2022 17:54:26 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 3dae7k3wqk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Jan 2022 15:21:40 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 205FLdja30015872
+        Wed, 05 Jan 2022 17:54:26 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 205HsNVW27984216
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Jan 2022 15:21:39 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 692E7AC059;
-        Wed,  5 Jan 2022 15:21:39 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1ED7EAC068;
-        Wed,  5 Jan 2022 15:21:39 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Jan 2022 15:21:39 +0000 (GMT)
-Message-ID: <be083959-b1ef-9de7-0ea6-71ab36596523@linux.ibm.com>
-Date:   Wed, 5 Jan 2022 10:21:38 -0500
+        Wed, 5 Jan 2022 17:54:23 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 055ED4204D;
+        Wed,  5 Jan 2022 17:54:23 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8981D4204C;
+        Wed,  5 Jan 2022 17:54:20 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.129.18])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  5 Jan 2022 17:54:20 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
+        seth@forshee.me, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v7 0/3] integrity: support including firmware ".platform" keys at build time 
+Date:   Wed,  5 Jan 2022 12:54:07 -0500
+Message-Id: <20220105175410.554444-1-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v8 16/19] ima: Enable re-auditing of modified files
-Content-Language: en-US
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
- <20220104170416.1923685-17-stefanb@linux.vnet.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20220104170416.1923685-17-stefanb@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: F_Gdp9N4kKwEw1OpLBvo5xXZSEq7xmxR
-X-Proofpoint-ORIG-GUID: jlDsoTM9MXXwXsJFKLLPsK585uGTjnzQ
+X-Proofpoint-GUID: Q1MknRTnjF1ZnyS4KjnINjuq5udcdStZ
+X-Proofpoint-ORIG-GUID: XXkfOg9bfQ9nJOj3tCk0Qnj2l7w0DOYV
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-05_03,2022-01-04_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
- mlxscore=0 bulkscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2201050101
+ definitions=2022-01-05_05,2022-01-04_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201050116
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Some firmware support secure boot by embedding static keys to verify the
+Linux kernel during boot. However, these firmware do not expose an
+interface for the kernel to load firmware keys onto the ".platform"
+keyring, preventing the kernel from verifying the kexec kernel image
+signature.
 
-On 1/4/22 12:04, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
->
-> Walk the list of ns_status associated with an iint if the file has
-> changed and reset the IMA_AUDITED flag, which is part of the
-> IMA_DONE_MASK. This causes a new audit message to be emitted when the
-> file is again accessed on either the host or in an IMA namespace.
->
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->   security/integrity/ima/ima_main.c | 33 ++++++++++++++++++++++++++++++-
->   1 file changed, 32 insertions(+), 1 deletion(-)
->
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 99dc984b49c9..bc3ab08f39c6 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -153,6 +153,35 @@ static void ima_rdwr_violation_check(struct ima_namespace *ns,
->   				  "invalid_pcr", "open_writers");
->   }
->   
-> +#ifdef CONFIG_IMA_NS
-> +
-> +static void mask_iint_ns_status_flags(struct integrity_iint_cache *iint,
-> +				      unsigned long mask)
-> +{
-> +	struct ns_status *status;
-> +	unsigned long flags;
-> +
-> +	read_lock(&iint->ns_list_lock);
-> +	list_for_each_entry(status, &iint->ns_list, ns_next) {
-> +		flags = iint_flags(iint, status) & mask;
-> +		set_iint_flags(iint, status, flags);
-> +	}
-> +	read_unlock(&iint->ns_list_lock);
-> +}
-> +
-> +#else
-> +
-> +static void mask_iint_ns_status_flags(struct integrity_iint_cache *iint,
-> +				      unsigned long mask)
-> +{
-> +	unsigned long flags;
-> +
-> +	flags = iint_flags(iint, NULL) & mask;
-> +	set_iint_flags(iint, NULL, flags);
-> +}
-> +
-> +#endif
-> +
+This patchset exports load_certificate_list() and defines a new function
+load_builtin_platform_cert() to load compiled in certificates onto the
+".platform" keyring.
 
-The above two cases are due to this here:
+Note: It seems last time my patches didn't go through mailing list. My
+apologies to those who are receiving it twice.
 
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 547425c20e11..201a9d46d6e1 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -138,6 +138,10 @@ struct integrity_iint_cache {
-  	enum integrity_status ima_creds_status:4;
-  	enum integrity_status evm_status:4;
-  	struct ima_digest_data *ima_hash;
-+#ifdef CONFIG_IMA_NS
-+	rwlock_t ns_list_lock;
-+	struct list_head ns_list;
-+#endif
-  };
+Changelog:
 
-Ideally namespaced and non-namespaced code cases would share the code and to be able to share it the above #ifdef CONFIG_IMA_NS  in integrity.hshouldn't be there but we would have the lock and list in IMA namespacing and non-namespacing case. The above two code cases shown above are just the beginning and as more variables are moved from the iint into the ns_status these types of 'two cases of code' would show up in more places. So I think we should prevent this already now.
+v7:
+* Incldues Jarkko's feedback on patch description for Patch 1 and 3.
 
-To be able to share the code we need an ns_status on a list in the non-namespacing case as well. In the non-namespacing case it would always be a single ns_status on the list. What is worth a decision is how to get the ns_status on the list. One idea would be to conditionally embed it into the integrity_iint_cache like this:
+v6:
+* Includes Jarkko's feedback:
+ * Split Patch 2 into two.
+ * Update Patch description.
 
-/* integrity data associated with an inode */
-struct integrity_iint_cache {
-         struct rb_node rb_node; /* rooted in integrity_iint_tree */
-         struct mutex mutex;     /* protects: version, flags, digest */
-         struct inode *inode;    /* back pointer to inode in question */
-         u64 version;            /* track inode changes */
-         unsigned long flags;
-         unsigned long atomic_flags;
-         enum integrity_status ima_file_status:4;
-         enum integrity_status ima_mmap_status:4;
-         enum integrity_status ima_bprm_status:4;
-         enum integrity_status ima_read_status:4;
-         enum integrity_status ima_creds_status:4;
-         enum integrity_status evm_status:4;
-         struct ima_digest_data *ima_hash;
-         rwlock_t ns_list_lock;
-         struct list_head ns_list;
-#ifndef CONFIG_IMA_NS
-	struct ns_status status;
-#endif
-};
+v5:
+* Renamed load_builtin_platform_cert() to load_platform_certificate_list()
+and config INTEGRITY_PLATFORM_BUILTIN_KEYS to INTEGRITY_PLATFORM_KEYS, as
+suggested by Mimi Zohar.
 
-This would prevent a 2nd cache just for allocation of ns_status in the 
-non-namespacing case and getting the  embedded ns_status onto the list 
-would also be like this:
+v4:
+* Split into two patches as per Mimi Zohar and Dimitri John Ledkov
+recommendation.
 
-     INIT_LIST_HEAD(&iint->ns_list);
+v3:
+* Included Jarkko's feedback
+ ** updated patch description to include approach.
+ ** removed extern for function declaration in the .h file.
+* Included load_certificate_list() within #ifdef CONFIG_KEYS condition.
 
-#ifndef CONFIG_IMA_NS
+v2:
+* Fixed the error reported by kernel test robot
+* Updated patch description based on Jarkko's feedback.
 
-     INIT_LIST_HEAD(&iint->status.ns_next);
+Nayna Jain (3):
+  certs: export load_certificate_list() to be used outside certs/
+  integrity: make integrity_keyring_from_id() non-static
+  integrity: support including firmware ".platform" keys at build time
 
-     list_add_tail(&iint->status.ns_next, &iint->ns_list);
+ certs/Makefile                                |  5 ++--
+ certs/blacklist.c                             |  1 -
+ certs/common.c                                |  2 +-
+ certs/common.h                                |  9 -------
+ certs/system_keyring.c                        |  1 -
+ include/keys/system_keyring.h                 |  6 +++++
+ security/integrity/Kconfig                    | 10 +++++++
+ security/integrity/Makefile                   | 17 +++++++++++-
+ security/integrity/digsig.c                   |  2 +-
+ security/integrity/integrity.h                |  6 +++++
+ .../integrity/platform_certs/platform_cert.S  | 23 ++++++++++++++++
+ .../platform_certs/platform_keyring.c         | 26 +++++++++++++++++++
+ 12 files changed, 92 insertions(+), 16 deletions(-)
+ delete mode 100644 certs/common.h
+ create mode 100644 security/integrity/platform_certs/platform_cert.S
 
-#endif
-
-The other option is to allocated the ns_status via a minimal 
-implementation of ima_ns_status.c for the non-namespaced case using 
-kmalloc's from a cache for ns_status structures.
-
-
-Also, the new 'rwlock_t ns_list_lock' in the iint would really only be 
-necessary for locking in the namespacing case. However, to be able to 
-share the code we would need to keep this lock around for the 
-non-namespacing case as well so that we can call read_lock() in both 
-cases. An option would be to introduce a macro for the locking that is a 
-no-op in the non-namespacing case and does the actual locking in the 
-namespacing case. I am not sure what would be better. I would prefer to 
-explicitly see the read_lock()...
-
-
-
->   static void ima_check_last_writer(struct integrity_iint_cache *iint,
->   				  struct inode *inode, struct file *file)
->   {
-> @@ -169,8 +198,10 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
->   		if (!IS_I_VERSION(inode) ||
->   		    !inode_eq_iversion(inode, iint->version) ||
->   		    (iint->flags & IMA_NEW_FILE)) {
-> -			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
-> +			mask_iint_ns_status_flags(iint,
-> +					~(IMA_DONE_MASK | IMA_NEW_FILE));
->   			iint->measured_pcrs = 0;
-> +
->   			if (update)
->   				ima_update_xattr(iint, file);
->   		}
+-- 
+2.27.0
