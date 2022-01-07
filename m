@@ -2,150 +2,121 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4182C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jan 2022 19:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA648C4321E
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jan 2022 19:30:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbiAGTQU (ORCPT
+        id S232454AbiAGTat (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Jan 2022 14:16:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53526 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230430AbiAGTQT (ORCPT
+        Fri, 7 Jan 2022 14:30:49 -0500
+Received: from mx.cs.msu.ru ([188.44.42.42]:53104 "EHLO mail.cs.msu.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232106AbiAGTar (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Jan 2022 14:16:19 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECF44C061574
-        for <linux-security-module@vger.kernel.org>; Fri,  7 Jan 2022 11:16:18 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id j11so19010393lfg.3
-        for <linux-security-module@vger.kernel.org>; Fri, 07 Jan 2022 11:16:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=UBa8TIub3c8pRJx3V/U7Z+AnL0F11KM1pHQYfYCQSfE=;
-        b=KrbM0oijNYC/s0QrkLzFOE4pJ7VfLV2sz3ZRQE4BmZLvBBiYqz8BLiPARQR6ypW7cC
-         6LkELtaavqygIW+B1d4TlVGnWfoy+RFpt6Q7FXgF2C8XuPkXqXIiOV5HAKHDDnx6tzfu
-         LXVkI3V/mrFHfRuJsnvzyDwJDWoFFvquCfvRd3kiBzhxY6vqs6soJkppLxjW0ZbWegZh
-         GexGcqkRdPZ8ERdcu6VbK6E+kKAeg5oLNZZ6MW+y1Bz5caWPGLLUzGiXrhQa96tn6IBu
-         EAQDTyr4xELOqYbB/Dud+Car+0NPN2JyCHWjfYncMgHPplFRCdrSSpOpg1JRJhA/QN40
-         RXPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UBa8TIub3c8pRJx3V/U7Z+AnL0F11KM1pHQYfYCQSfE=;
-        b=BGbselbfEb0z6sa37/bkMCl2ixzI8HEPyP1qzIaTHAWgsZMXQAj7mKiJcbgeoc6LCJ
-         i+gOluSDq6S901JooY6b920jsXRf7JHCVNqBop8qi3R6czKBVQmXWjlPIOG22q2xVNuD
-         t1lX3wSh7vmmgX0xku65zZviFib1yIYPXbMv3AXSqg7l67/raT7+IbZ3RRA775MrWQ0P
-         NfkvKeaIKlZ14/m9eM+hg3yR4NxiLJQoylyOfMsnXDrMb/zAA5B1vxPYeJ4U3g/RtrJa
-         MZZ5ej/5ivPcJdrrGez6dJAu2XkI1UBpFVa3L2rHL5A9f9CBcNAN4Z6MUVWfBJFsEmCV
-         Zlzg==
-X-Gm-Message-State: AOAM532zImSJwqsVVihVZAyiN9W2acWsS+Y5ANBq5Web4zGky21uSp5v
-        qQ3Nqfho379JLOzbUG3z9nOZmy5eIbCQrEFwQGxj0g==
-X-Google-Smtp-Source: ABdhPJwc9hFf6RV7zJN6Wxk7n3MNRt1wyKE1/d66jX9gd/5RqFCaxpNL4bWnd1Ly12Sdc+RlpTZsyMeHdFr707d9p7U=
-X-Received: by 2002:a05:6512:2828:: with SMTP id cf40mr56909749lfb.644.1641582977032;
- Fri, 07 Jan 2022 11:16:17 -0800 (PST)
+        Fri, 7 Jan 2022 14:30:47 -0500
+X-Greylist: delayed 515 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jan 2022 14:30:44 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cs.msu.ru;
+        s=dkim; h=Subject:In-Reply-To:Content-Type:MIME-Version:References:Message-ID
+        :Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=CAj6ZvCGsPU1I8LtRSp3RhetGGO18H0jd7c6GnJn/AI=; b=Tmtwzq882fuqOFkgczsh/hVTJV
+        vjYXVLuJSb3ebjGHUX/IMLewO/j7T7pru2BtNUWx1U0M9+uf4naJNbstc4a4hV627q9Fmvp2M8WVB
+        rrPobMbnO55k1E282B+ZDvv2xnqKt+6vi2dm/N58n2PoB9yvml12ZZi653qVVPbFvBrQ1N3Cb1Mlt
+        VpFJqmRvAKdp7QhJGXuWQmopkT9Zg4uypDmWsHhYSHIs2H59UUqr6Mb685+Z5ze6ULlPQQej9nGSV
+        Up77CfcM/pPZTa0PvLewaq5PkmdXAK939R648+o8vCCb1GgM/jYykm3sn1Pe3d2AL16FSeIumeX9/
+        Rgr2mlbw==;
+Received: from [37.204.119.143] (port=58124 helo=cello)
+        by mail.cs.msu.ru with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.94.2 (FreeBSD))
+        (envelope-from <ar@cs.msu.ru>)
+        id 1n5uvJ-00092m-Js; Fri, 07 Jan 2022 22:29:15 +0300
+Date:   Fri, 7 Jan 2022 22:29:12 +0300
+From:   Arseny Maslennikov <ar@cs.msu.ru>
+To:     Walt Drummond <walt@drummond.us>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, aacraid@microsemi.com,
+        viro@zeniv.linux.org.uk, anna.schumaker@netapp.com, arnd@arndb.de,
+        bsegall@google.com, bp@alien8.de, chuck.lever@oracle.com,
+        bristot@redhat.com, dave.hansen@linux.intel.com,
+        dwmw2@infradead.org, dietmar.eggemann@arm.com, dinguyen@kernel.org,
+        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
+        idryomov@gmail.com, mingo@redhat.com, yzaikin@google.com,
+        ink@jurassic.park.msu.ru, jejb@linux.ibm.com, jmorris@namei.org,
+        bfields@fieldses.org, jlayton@kernel.org, jirislaby@kernel.org,
+        john.johansen@canonical.com, juri.lelli@redhat.com,
+        keescook@chromium.org, mcgrof@kernel.org,
+        martin.petersen@oracle.com, mattst88@gmail.com, mgorman@suse.de,
+        oleg@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
+        rth@twiddle.net, richard@nod.at, serge@hallyn.com,
+        rostedt@goodmis.org, tglx@linutronix.de,
+        trond.myklebust@hammerspace.com, vincent.guittot@linaro.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org
+Message-ID: <YdiUiHAhLyfgpvVY@cello>
+References: <20220103181956.983342-1-walt@drummond.us>
+ <87iluzidod.fsf@email.froward.int.ebiederm.org>
+ <YdSzjPbVDVGKT4km@mit.edu>
+ <87pmp79mxl.fsf@email.froward.int.ebiederm.org>
+ <YdTI16ZxFFNco7rH@mit.edu>
+ <CADCN6nzT-Dw-AabtwWrfVRDd5HzMS3EOy8WkeomicJF07nQyoA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20211129114251.3741721-1-dovmurik@linux.ibm.com>
- <YdNHgtuVoLofL4cW@zn.tnic> <0280e20e-8459-dd35-0b7d-8dbc1e4a274a@linux.ibm.com>
- <YdSRWmqdNY7jRcer@zn.tnic> <YdWEXRt7Ixm6/+Dq@work-vm> <YdXq9t75aYLJfb69@zn.tnic>
- <YdX6aAwy0txT9Dk7@work-vm> <YdgrDRCJOOg4k1Za@zn.tnic>
-In-Reply-To: <YdgrDRCJOOg4k1Za@zn.tnic>
-From:   Peter Gonda <pgonda@google.com>
-Date:   Fri, 7 Jan 2022 12:16:05 -0700
-Message-ID: <CAMkAt6qCHPzUT=COb_HQ51rRKwtaCC3Zxgc6k6ivB_dZUKx5Hw@mail.gmail.com>
-Subject: Re: [PATCH v6 0/5] Allow guest access to EFI confidential computing
- secret area
-To:     Borislav Petkov <bp@suse.de>
-Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Dov Murik <dovmurik@linux.ibm.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jM/2AY6iSqMbsk1G"
+Content-Disposition: inline
+In-Reply-To: <CADCN6nzT-Dw-AabtwWrfVRDd5HzMS3EOy8WkeomicJF07nQyoA@mail.gmail.com>
+OpenPGP: url=http://grep.cs.msu.ru/~ar/pgp-key.asc
+X-SA-Exim-Connect-IP: 37.204.119.143
+X-SA-Exim-Mail-From: ar@cs.msu.ru
+Subject: Re: [RFC PATCH 0/8] signals: Support more than 64 signals
+X-SA-Exim-Version: 4.2.1
+X-SA-Exim-Scanned: No (on mail.cs.msu.ru); Unknown failure
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 7, 2022 at 4:59 AM Borislav Petkov <bp@suse.de> wrote:
->
-> On Wed, Jan 05, 2022 at 08:07:04PM +0000, Dr. David Alan Gilbert wrote:
-> > I thought I saw something in their patch series where they also had a
-> > secret that got passed down from EFI?
->
-> Probably. I've seen so many TDX patchsets so that I'm completely
-> confused what is what.
->
-> > As I remember they had it with an ioctl and something; but it felt to
-> > me if it would be great if it was shared.
->
-> I guess we could try to share
->
-> https://lore.kernel.org/r/20211210154332.11526-28-brijesh.singh@amd.com
->
-> for SNP and TDX.
->
-> > I'd love to hear from those other cloud vendors; I've not been able to
-> > find any detail on how their SEV(-ES) systems actually work.
->
-> Same here.
->
-> > However, this aims to be just a comms mechanism to pass that secret;
-> > so it's pretty low down in the stack and is there for them to use -
-> > hopefully it's general enough.
->
-> Exactly!
->
-> > (An interesting question is what exactly gets passed in this key and
-> > what it means).
-> >
-> > All the contentious stuff I've seen seems to be further up the stack - =
-like
-> > who does the attestation and where they get the secrets and how they
-> > know what a valid measurement looks like.
->
-> It would be much much better if all the parties involved would sit down
-> and decide on a common scheme so that implementation can be shared but
-> getting everybody to agree is likely hard...
 
-I saw a request for other cloud provider input here. A little
-background for our SEV VMs in GCE we rely on our vTPM for attestation,
-we do this because of SEV security properties quoting from AMD being
-to protect guests from a benign but vulnerable hypervisor. So a
-benign/compliant hypervisor's vTPM wouldn't lie to the guest. So we
-added a few bits in the PCRs to allow users to see their SEV status in
-vTPM quotes.
+--jM/2AY6iSqMbsk1G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It would be very interesting to offer an attestation solution that
-doesn't rely on our virtual TPM. But after reading through this cover
-letter and the linked OVMF patches I am confused what's the high level
-flow you are working towards? Are you loading in some OVMF using
-LAUNCH_UPDATE_DATA, getting the measurement with LAUNCH_MEASURE, then
-sending that to the customer who can then craft a "secret" (maybe say
-SSH key) for injection with LAUNCH_SECRET? Thats sounds good but there
-are a lot details left unattested there, how do you know you will boot
-from the image loaded with the PSP into a known state? Do you have
-some documentation I could read through to try and understand a little
-more and apologies if I missed it.
+On Tue, Jan 04, 2022 at 02:31:44PM -0800, Walt Drummond wrote:
+> The only standard tools that support SIGINFO are sleep, dd and ping,
+> (and kill, for obvious reasons) so it's not like there's a vast hole
+> in the tooling or something, nor is there a large legacy software base
+> just waiting for SIGINFO to appear.   So while I very much enjoyed
+> figuring out how to make SIGINFO work ...
 
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> SUSE Software Solutions Germany GmbH, GF: Ivo Totev, HRB 36809, AG N=C3=
-=BCrnberg
->
+As far as I recall, GNU make on *BSD does support SIGINFO (Not a
+standard tool, but obviously an established one).
+
+The developers of strace have expressed interest in SIGINFO support
+to print tracer status messages (unfortunately, not on a public list).
+Computational software can use this instead of stderr progress spam, if
+run in an interactive fashion on a terminal, as it frequently is. There
+is a user base, it's just not very vocal on kernel lists. :)
+
+--jM/2AY6iSqMbsk1G
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE56JD3UKTLEu/ddrm9dQjyAYL01AFAmHYlIMACgkQ9dQjyAYL
+01A2JA/+L9JwmjJHTVt97zLB/gp/798jHIH5xpSIqAGns8OfFkzQ95dxlpb2U9vw
+QnNRixTQzfe+GISVL0FKMOQnAodV/FiSCGQU3ebudcPQXtrGtYHUT8Ijz9WL8+pR
+LEbZvDDW4JT2N8sGVcsiAtSER9kHRUpdNBPCdIxURmQf0Fgjj16cYV/cr3j8NQpw
+uXKAulKoHIWjD84jc1douEnwo6Eij7QA7nZ1N4PLesZ6cdPxLpKYMR7bWbf9r5Fd
+B6C8jKZKl+eETWJx7ECQ/z2BBeUNw1bwUK8F0MgF+Kb01V29ouGaB2eUP4JhBH1b
+zBhEM+N1dYjc3gzDDTJHURS0lm9Pzcg1Dj4nRYVEYbddU3wNd/kYPQIk+BmWoUH8
+h6xtMYCT3k+hL6Y59LVXra23PpktJljTFtMI8DXYmuJS+yy+dV7g1rn4Ui9FmF7B
+UmI4khTwZV2TQ1C0LsSuzwkBm71S27ziqmKVTci0hmzEFalls/Mr2rAP7dSwK4FE
+3kjQxOPKuiSgwV2+Odw4M6JQKChplAVOy6dzr8QIq3ULzaMoZ4LxX4JhvqvaK/0w
+vqRxoJ/OmC/pbHdVM/h7OnsS0t67UnlO8zJwuOAn03S7mpo67HZ/xKHCsJctF4Ca
+cwRnCVEeiYv1kjA2YEbjg9uohTtnfysNsoVA+rE7TNEqeWb4r1c=
+=ueZJ
+-----END PGP SIGNATURE-----
+
+--jM/2AY6iSqMbsk1G--
