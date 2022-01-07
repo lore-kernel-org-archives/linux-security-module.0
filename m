@@ -2,129 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5754C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jan 2022 11:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D708C43217
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Jan 2022 12:09:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232237AbiAGL7F (ORCPT
+        id S238149AbiAGMJF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Jan 2022 06:59:05 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:42522 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238118AbiAGL7E (ORCPT
+        Fri, 7 Jan 2022 07:09:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41142 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231532AbiAGMJF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Jan 2022 06:59:04 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 5280E2113B;
-        Fri,  7 Jan 2022 11:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1641556743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZViy4ha+GjCcmI2PF81BweyGx62I6IF+pFFopJC3jJs=;
-        b=oi9wEuzAhRVZkEW8F/3BAYMe10ZGDWGvvlGZex5LcOM3C/0LXwqg9lLMc0FDR4E2YVIY9U
-        3hEaYh4j44STfUXp2Vr6O6tk7F0eAGv1gmrBUMWZ/4BQmkjV9DESlQotQyjs13thwZ7L78
-        wpF1m2PfIOj2j45xWcbmWGOjLXz2zS0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1641556743;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZViy4ha+GjCcmI2PF81BweyGx62I6IF+pFFopJC3jJs=;
-        b=aVXmdDPISblXMUjDHSNZygTWSUqec5goc3MEtwkn4Sy6Fx8BgMCQN3Uym4SdP6p+1yLDAI
-        mGDYrj5O05/qEhDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3115A13350;
-        Fri,  7 Jan 2022 11:59:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id gZuQCwcr2GEtMQAAMHmgww
-        (envelope-from <bp@suse.de>); Fri, 07 Jan 2022 11:59:03 +0000
-Date:   Fri, 7 Jan 2022 12:59:09 +0100
-From:   Borislav Petkov <bp@suse.de>
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     Dov Murik <dovmurik@linux.ibm.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/5] Allow guest access to EFI confidential computing
- secret area
-Message-ID: <YdgrDRCJOOg4k1Za@zn.tnic>
-References: <20211129114251.3741721-1-dovmurik@linux.ibm.com>
- <YdNHgtuVoLofL4cW@zn.tnic>
- <0280e20e-8459-dd35-0b7d-8dbc1e4a274a@linux.ibm.com>
- <YdSRWmqdNY7jRcer@zn.tnic>
- <YdWEXRt7Ixm6/+Dq@work-vm>
- <YdXq9t75aYLJfb69@zn.tnic>
- <YdX6aAwy0txT9Dk7@work-vm>
+        Fri, 7 Jan 2022 07:09:05 -0500
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fa8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103D7C061212
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Jan 2022 04:09:04 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JVhpP4dy5zMwpPR;
+        Fri,  7 Jan 2022 13:09:01 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4JVhpM0bdNzlhSMW;
+        Fri,  7 Jan 2022 13:08:58 +0100 (CET)
+Message-ID: <86c5010e-a926-023a-8915-d6605cfc4f0a@digikod.net>
+Date:   Fri, 7 Jan 2022 13:14:30 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: 
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andreas Rammhold <andreas@rammhold.de>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20210712170313.884724-1-mic@digikod.net>
+ <7e8d27da-b5d4-e42c-af01-5c03a7f36a6b@digikod.net> <YcGVZitNa23PCSFV@iki.fi>
+ <5030a9ff-a1d1-a9bd-902a-77c3d1d87446@digikod.net> <Ydc/E3S2vmtDOnpw@iki.fi>
+ <YddADJJNLDlQAYRW@iki.fi>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v8 0/5] Enable root to update the blacklist keyring
+In-Reply-To: <YddADJJNLDlQAYRW@iki.fi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <YdX6aAwy0txT9Dk7@work-vm>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 05, 2022 at 08:07:04PM +0000, Dr. David Alan Gilbert wrote:
-> I thought I saw something in their patch series where they also had a
-> secret that got passed down from EFI?
 
-Probably. I've seen so many TDX patchsets so that I'm completely
-confused what is what.
-
-> As I remember they had it with an ioctl and something; but it felt to
-> me if it would be great if it was shared.
-
-I guess we could try to share
-
-https://lore.kernel.org/r/20211210154332.11526-28-brijesh.singh@amd.com
-
-for SNP and TDX.
-
-> I'd love to hear from those other cloud vendors; I've not been able to
-> find any detail on how their SEV(-ES) systems actually work.
-
-Same here.
-
-> However, this aims to be just a comms mechanism to pass that secret;
-> so it's pretty low down in the stack and is there for them to use -
-> hopefully it's general enough.
-
-Exactly!
-
-> (An interesting question is what exactly gets passed in this key and
-> what it means).
+On 06/01/2022 20:16, Jarkko Sakkinen wrote:
+> On Thu, Jan 06, 2022 at 09:12:22PM +0200, Jarkko Sakkinen wrote:
+>> On Tue, Jan 04, 2022 at 04:56:36PM +0100, Mickaël Salaün wrote:
+>>>
+>>> On 21/12/2021 09:50, Jarkko Sakkinen wrote:
+>>>> On Mon, Dec 13, 2021 at 04:30:29PM +0100, Mickaël Salaün wrote:
+>>>>> Hi Jarkko,
+>>>>>
+>>>>> Since everyone seems OK with this and had plenty of time to complain, could
+>>>>> you please take this patch series in your tree? It still applies on
+>>>>> v5.16-rc5 and it is really important to us. Please let me know if you need
+>>>>> something more.
+>>>>>
+>>>>> Regards,
+>>>>>    Mickaël
+>>>>
+>>>> I'm off-work up until end of the year, i.e. I will address only important
+>>>> bug fixes and v5.16 up until that.
+>>>>
+>>>> If any of the patches is yet missing my ack, feel free to
+>>>>
+>>>> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>>
+>>> Thanks Jarkko. Can you please take it into your tree?
+>>
+>> I can yes, as I need to anyway do a revised PR for v5.17, as one commit
+>> in my first trial had a truncated fixes tag.
 > 
-> All the contentious stuff I've seen seems to be further up the stack - like
-> who does the attestation and where they get the secrets and how they
-> know what a valid measurement looks like.
+> Please check:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+> 
+> /Jarkko
 
-It would be much much better if all the parties involved would sit down
-and decide on a common scheme so that implementation can be shared but
-getting everybody to agree is likely hard...
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Software Solutions Germany GmbH, GF: Ivo Totev, HRB 36809, AG Nürnberg
+Great, thanks!
