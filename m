@@ -2,64 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B93C433EF
-	for <linux-security-module@archiver.kernel.org>; Sat,  8 Jan 2022 13:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F076CC433EF
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Jan 2022 16:25:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbiAHNzt (ORCPT
+        id S232173AbiAHQZV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 8 Jan 2022 08:55:49 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:39266 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbiAHNzs (ORCPT
+        Sat, 8 Jan 2022 11:25:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48882 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229553AbiAHQZU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 8 Jan 2022 08:55:48 -0500
+        Sat, 8 Jan 2022 11:25:20 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E235C06173F;
+        Sat,  8 Jan 2022 08:25:20 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 474DD60F55;
-        Sat,  8 Jan 2022 13:55:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30F25C36AE3;
-        Sat,  8 Jan 2022 13:55:47 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 58FCBB80259;
+        Sat,  8 Jan 2022 16:25:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93351C36AE3;
+        Sat,  8 Jan 2022 16:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641650147;
-        bh=msNyWHXoiiEE+2BjivK23GaMaPIdW4ieSoU+FWgzt8E=;
+        s=k20201202; t=1641659118;
+        bh=C2VKpp7NNq9PTCZgyOANayncg/RnDrFND2NQX7+3jXQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IjsLciz4L5mFWFYGeWBQm5esy01sXRubcDtG7THTzN4HmIJ5Bnt+P4haZI0QFxzXy
-         HWiRN9j9nuw7PCanJYU/8m7ZQbBfhuIIqHQPNYpH7bLfrb4zFJxIqd4rD0gAMkfRlM
-         Y8sh+QlQZEHeUW+hNPti0XlW2eZoZU4sk1zrfCqwp+rx5/uds9/M8+nQD7jZqE9eUd
-         eYxSDOnhh3Q9e+WNFJ5W7/hYprvMPdMjKwO3g1EAzaMnhwm0zpHeZ0IHi5ma5PrnOQ
-         FxiC4+X3IeXrAqytnr8qhePwAx7Z+AZB408HS36A+ryml0GqwCdqMWUHi+LgPBAjFo
-         JirglWMCppsCw==
-Date:   Sat, 8 Jan 2022 15:55:39 +0200
+        b=nFpWeLErycJzwsyQrAW/LcCbybR22/KTbydhLNsLr0RdAjX1siuEuk1WkCVEr6lcn
+         e3UOderd5PbbUcgGdnxnM5MKYi5EfcRJ8e3QBP6HUMflToHj00aTkJSYWE8Y1Fu8PG
+         Md3e86tuHTK4AK1kRLmEfTudNXy04gzonMJhVAR+k5OqCcaqWlFNM/fTdRwkpQQPCB
+         9gbV54PQ9ht2fpc0woPTgqMTBWRxlgZ+bIiEZcfwSKc9BmZ8QA+ZJD48Mfg/RZZ2GI
+         3m43dbnwB+EHim5dn5qsGZlc0Zws5lrj8a4ron7/YLez9KZCTUO5Sjfq7H6lOfQAVZ
+         6+Hvu+MzUwvDw==
+Date:   Sat, 8 Jan 2022 18:25:09 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Nayna Jain <nayna@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        dhowells@redhat.com, zohar@linux.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
-        seth@forshee.me, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v7 1/3] certs: export load_certificate_list() to be used
- outside certs/
-Message-ID: <YdmX2/BabFk2bNAv@iki.fi>
-References: <20220105175410.554444-1-nayna@linux.ibm.com>
- <20220105175410.554444-2-nayna@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     dhowells@redhat.com, dwmw2@infradead.org, ardb@kernel.org,
+        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
+        zohar@linux.ibm.com, keescook@chromium.org,
+        torvalds@linux-foundation.org, weiyongjun1@huawei.com,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
+        konrad.wilk@oracle.com
+Subject: Re: [PATCH v9 1/8] integrity: Fix warning about missing prototypes
+Message-ID: <Ydm65Uruy4u9SWeO@iki.fi>
+References: <20220105235012.2497118-1-eric.snowberg@oracle.com>
+ <20220105235012.2497118-2-eric.snowberg@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220105175410.554444-2-nayna@linux.ibm.com>
+In-Reply-To: <20220105235012.2497118-2-eric.snowberg@oracle.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 05, 2022 at 12:54:08PM -0500, Nayna Jain wrote:
-> load_certificate_list() parses certificates embedded in the kernel
-> image to load them onto the keyring.
+On Wed, Jan 05, 2022 at 06:50:05PM -0500, Eric Snowberg wrote:
+> make W=1 generates the following warning in keyring_handler.c
 > 
-> Commit "2565ca7f5ec1 (certs: Move load_system_certificate_list to a common
-> function)" made load_certificate_list() a common function in the certs/
-> directory. Now, export load_certificate_list() outside certs/ to be used
-> by load_platform_certificate_list() which is added later in the patchset.
+> security/integrity/platform_certs/keyring_handler.c:71:30: warning: no previous prototype for get_handler_for_db [-Wmissing-prototypes]
+>  __init efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type)
+>                               ^~~~~~~~~~~~~~~~~~
+> security/integrity/platform_certs/keyring_handler.c:82:30: warning: no previous prototype for get_handler_for_dbx [-Wmissing-prototypes]
+>  __init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type)
+>                               ^~~~~~~~~~~~~~~~~~~
+> Add the missing prototypes by including keyring_handler.h.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+> v7: Initial version
+> v8: Code unmodified from v7 added Mimi's Reviewed-by
+> v9: Unmodified from v8
+> ---
+>  security/integrity/platform_certs/keyring_handler.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/integrity/platform_certs/keyring_handler.c b/security/integrity/platform_certs/keyring_handler.c
+> index 5604bd57c990..e9791be98fd9 100644
+> --- a/security/integrity/platform_certs/keyring_handler.c
+> +++ b/security/integrity/platform_certs/keyring_handler.c
+> @@ -9,6 +9,7 @@
+>  #include <keys/asymmetric-type.h>
+>  #include <keys/system_keyring.h>
+>  #include "../integrity.h"
+> +#include "keyring_handler.h"
+>  
+>  static efi_guid_t efi_cert_x509_guid __initdata = EFI_CERT_X509_GUID;
+>  static efi_guid_t efi_cert_x509_sha256_guid __initdata =
+> -- 
+> 2.18.4
+> 
 
-Also, please describe the specific use it will be used. Patchset is not
-a valid cross-reference in this context.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-/Jarkko
+BR, Jarkko
