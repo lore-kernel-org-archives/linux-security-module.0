@@ -2,125 +2,185 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9D1C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jan 2022 16:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C526BC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Jan 2022 16:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237114AbiAJQMz (ORCPT
+        id S237405AbiAJQ10 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jan 2022 11:12:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34658 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S237115AbiAJQMy (ORCPT
+        Mon, 10 Jan 2022 11:27:26 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:53928 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237392AbiAJQ1Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jan 2022 11:12:54 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20AEU6Mm011396;
-        Mon, 10 Jan 2022 16:12:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=X72bm89DSt7v+PGfkGU/R92DHl3PW+kziiCZAIZUcx4=;
- b=DS18P9QPrzyJW4bLKEDclH6Pn2aGZsqm2Lz2r+u6ckDeXf0g71c9koZY8R+7EKUv6Skx
- rJ5kc5qzj8MkvxIQqkfZn2Nuo7b6xAiB4HqDE03v+z9bdbsKKnCNtHelZci59foHzX83
- ArKTnV2JCnsqZcFIr3ReZz8GUvvIN+aAnf6mLSXZJ0jueS9u/zXGOpQoJ9M9nSjb4LLP
- eo+bfjlv0A0tYtz1awPyha7WFf+KQ9EopEI9AcwKuNy203tAEY73jxklBSfLagP6jGQ1
- Or9R7xD17igbP0sze9Am3GV2lN9UMAz+v3sRxNZP3saY/ti3HXdzY/O++vm0d6Psg804 7A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dfm9gx6eh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Jan 2022 16:12:48 +0000
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20AGCmhZ010558;
-        Mon, 10 Jan 2022 16:12:48 GMT
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dfm9gx6e8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Jan 2022 16:12:48 +0000
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20AGBxIw008665;
-        Mon, 10 Jan 2022 16:12:47 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma04wdc.us.ibm.com with ESMTP id 3df289r8m3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Jan 2022 16:12:47 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20AGCkqR36569536
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jan 2022 16:12:46 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E239DB2077;
-        Mon, 10 Jan 2022 16:12:45 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 162F9B2067;
-        Mon, 10 Jan 2022 16:12:43 +0000 (GMT)
-Received: from [9.211.85.241] (unknown [9.211.85.241])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Jan 2022 16:12:42 +0000 (GMT)
-Message-ID: <5b00bcbe-9881-b879-2474-33c52315a7a9@linux.vnet.ibm.com>
-Date:   Mon, 10 Jan 2022 11:12:41 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v7 1/3] certs: export load_certificate_list() to be used
- outside certs/
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        dhowells@redhat.com, zohar@linux.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
-        seth@forshee.me, kernel test robot <lkp@intel.com>
-References: <20220105175410.554444-1-nayna@linux.ibm.com>
- <20220105175410.554444-2-nayna@linux.ibm.com> <YdmXlUcsa+xRcwSN@iki.fi>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <YdmXlUcsa+xRcwSN@iki.fi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: GW4ck36GhcRDvv2hy__-X2VSbPf_exk3
-X-Proofpoint-GUID: jg9HPzLIclPxZaGKauZ977T9ccjt23qF
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 10 Jan 2022 11:27:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1641832044;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jeIheefqGaZ2GeSClHVA0Xt4+ifFFQupgVzVvNBmh9M=;
+        b=aV7i3PBTYwCfMwDHmHgWLe97q++ihR8hkVVLWEMoDPLedplk4tClq07q3kjUo3WQSLieYw
+        WCEhm7fxqhmPBoKzfXtw9cRVtzqD7hreW3ryeEDm9T1qgMVy/OHlKxxnZq6QkMHZTXL55k
+        ooGk3gjjiQCuyrieSkPnasTVnUSXNis=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-34-MMiefn3wMSKzoRj0acaU_Q-1; Mon, 10 Jan 2022 11:27:21 -0500
+X-MC-Unique: MMiefn3wMSKzoRj0acaU_Q-1
+Received: by mail-wm1-f71.google.com with SMTP id m17-20020a05600c3b1100b0034922b9c177so808121wms.6
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jan 2022 08:27:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=jeIheefqGaZ2GeSClHVA0Xt4+ifFFQupgVzVvNBmh9M=;
+        b=rUgAE2FhRlufGReoA6DO9WaolEwY+An1JfemKIb+owwa0Z34sObmHHHncD54WDJuOH
+         tynN9azfIMRPq3Lr/L25oIiks+vv8vng+8I9shc6uwCALaQl7p/e+3DDhgexCIxf0DKr
+         4b1UQ2Xjrk7RAM0rOicEkurDOlbEzrZVX85WN2FoORXGcaRGkex+CEFYIH1VPAWJyO6o
+         JX+Gd2zTm9m0IWii68xLpd6PesxhbpwC+ML2X5//pfYZoe61aGfyZkeCuTydG7yRC8pn
+         QS0q4HMr98qSIOX7yLNKGE3CxD/8XEAL2HR2uzCLeEWgTRRyhbGaeyjh3FEXHApyhSSp
+         piyA==
+X-Gm-Message-State: AOAM533JB56uqK9XAU1ybyabvhK75xFCHLRZLJ5csmGSQTJVr6/CQ7Zu
+        PwsewG7ueseu3gpfX09+cYW2jePvdaSWdbHqjv9GxmPwfXcfM/Qucg216LkZH/DDsmj4QHTUWmz
+        AwDzBQVLrP028AkyedYrEra/HdJy0GDZhPEMO
+X-Received: by 2002:a05:600c:1c22:: with SMTP id j34mr3870373wms.116.1641832040376;
+        Mon, 10 Jan 2022 08:27:20 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw78/dFkceXP7vi+FCTgn09bLS0ejoLHTG16lQIhQ5MhHYjaxHo78dnCGmFqnQo+pPk89TDmg==
+X-Received: by 2002:a05:600c:1c22:: with SMTP id j34mr3870348wms.116.1641832040150;
+        Mon, 10 Jan 2022 08:27:20 -0800 (PST)
+Received: from work-vm (cpc109025-salf6-2-0-cust480.10-2.cable.virginm.net. [82.30.61.225])
+        by smtp.gmail.com with ESMTPSA id e13sm7183050wmq.10.2022.01.10.08.27.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jan 2022 08:27:19 -0800 (PST)
+Date:   Mon, 10 Jan 2022 16:27:17 +0000
+From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+To:     Peter Gonda <pgonda@google.com>
+Cc:     Borislav Petkov <bp@suse.de>, Dov Murik <dovmurik@linux.ibm.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 0/5] Allow guest access to EFI confidential computing
+ secret area
+Message-ID: <YdxeZWmQxbfa+Fa2@work-vm>
+References: <20211129114251.3741721-1-dovmurik@linux.ibm.com>
+ <YdNHgtuVoLofL4cW@zn.tnic>
+ <0280e20e-8459-dd35-0b7d-8dbc1e4a274a@linux.ibm.com>
+ <YdSRWmqdNY7jRcer@zn.tnic>
+ <YdWEXRt7Ixm6/+Dq@work-vm>
+ <YdXq9t75aYLJfb69@zn.tnic>
+ <YdX6aAwy0txT9Dk7@work-vm>
+ <YdgrDRCJOOg4k1Za@zn.tnic>
+ <CAMkAt6qCHPzUT=COb_HQ51rRKwtaCC3Zxgc6k6ivB_dZUKx5Hw@mail.gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-10_07,2022-01-10_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 malwarescore=0 bulkscore=0 spamscore=0
- mlxscore=0 priorityscore=1501 phishscore=0 suspectscore=0 adultscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2201100113
+In-Reply-To: <CAMkAt6qCHPzUT=COb_HQ51rRKwtaCC3Zxgc6k6ivB_dZUKx5Hw@mail.gmail.com>
+User-Agent: Mutt/2.1.3 (2021-09-10)
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=dgilbert@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+* Peter Gonda (pgonda@google.com) wrote:
+> On Fri, Jan 7, 2022 at 4:59 AM Borislav Petkov <bp@suse.de> wrote:
+> >
+> > On Wed, Jan 05, 2022 at 08:07:04PM +0000, Dr. David Alan Gilbert wrote:
+> > > I thought I saw something in their patch series where they also had a
+> > > secret that got passed down from EFI?
+> >
+> > Probably. I've seen so many TDX patchsets so that I'm completely
+> > confused what is what.
+> >
+> > > As I remember they had it with an ioctl and something; but it felt to
+> > > me if it would be great if it was shared.
+> >
+> > I guess we could try to share
+> >
+> > https://lore.kernel.org/r/20211210154332.11526-28-brijesh.singh@amd.com
+> >
+> > for SNP and TDX.
+> >
+> > > I'd love to hear from those other cloud vendors; I've not been able to
+> > > find any detail on how their SEV(-ES) systems actually work.
+> >
+> > Same here.
+> >
+> > > However, this aims to be just a comms mechanism to pass that secret;
+> > > so it's pretty low down in the stack and is there for them to use -
+> > > hopefully it's general enough.
+> >
+> > Exactly!
+> >
+> > > (An interesting question is what exactly gets passed in this key and
+> > > what it means).
+> > >
+> > > All the contentious stuff I've seen seems to be further up the stack - like
+> > > who does the attestation and where they get the secrets and how they
+> > > know what a valid measurement looks like.
+> >
+> > It would be much much better if all the parties involved would sit down
+> > and decide on a common scheme so that implementation can be shared but
+> > getting everybody to agree is likely hard...
+> 
+> I saw a request for other cloud provider input here.
 
-On 1/8/22 08:54, Jarkko Sakkinen wrote:
-> On Wed, Jan 05, 2022 at 12:54:08PM -0500, Nayna Jain wrote:
->> load_certificate_list() parses certificates embedded in the kernel
->> image to load them onto the keyring.
->>
->> Commit "2565ca7f5ec1 (certs: Move load_system_certificate_list to a common
->> function)" made load_certificate_list() a common function in the certs/
->> directory. Now, export load_certificate_list() outside certs/ to be used
->> by load_platform_certificate_list() which is added later in the patchset.
->>
->> Reported-by: kernel test robot <lkp@intel.com> (auto build test ERROR)
->> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> This lacking fixes tag, if it is a bug, or "reported-by" needs to be
-> completely removed.
+Thanks for the reply!
 
-When I posted my first version for this patch set, kernel test robot 
-reported the build error - 
-https://lore.kernel.org/linux-integrity/202109110507.ucpEmrwz-lkp@intel.com/
+> A little
+> background for our SEV VMs in GCE we rely on our vTPM for attestation,
+> we do this because of SEV security properties quoting from AMD being
+> to protect guests from a benign but vulnerable hypervisor. So a
+> benign/compliant hypervisor's vTPM wouldn't lie to the guest. So we
+> added a few bits in the PCRs to allow users to see their SEV status in
+> vTPM quotes.
 
-The Reported-by tag is because of this statement in the reported error - 
-" If you fix the issue, kindly add following tag as appropriate 
-Reported-by: kernel test robot <lkp@intel.com>"
+OK, so we're trying to protect from a malicious hypervisor - we don't
+trust anything on the host (other than the CPU, and it's got to be
+signing the attestation);  we don't think there's a way to do that with
+a vTPM on plain SEV/SEV-ES
 
-Do you still think that the tag is not required ? If so, I am fine to 
-remove it.
+> It would be very interesting to offer an attestation solution that
+> doesn't rely on our virtual TPM. But after reading through this cover
+> letter and the linked OVMF patches I am confused what's the high level
+> flow you are working towards? Are you loading in some OVMF using
+> LAUNCH_UPDATE_DATA, getting the measurement with LAUNCH_MEASURE, then
+> sending that to the customer who can then craft a "secret" (maybe say
+> SSH key) for injection with LAUNCH_SECRET? Thats sounds good but there
+> are a lot details left unattested there, how do you know you will boot
+> from the image loaded with the PSP into a known state? Do you have
+> some documentation I could read through to try and understand a little
+> more and apologies if I missed it.
 
-Thanks & Regards,
+I'll defer to Dov's reply on that.
 
-      - Nayna
+Dave
+
+> >
+> > --
+> > Regards/Gruss,
+> >     Boris.
+> >
+> > SUSE Software Solutions Germany GmbH, GF: Ivo Totev, HRB 36809, AG N�rnberg
+> >
+> 
+-- 
+Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
 
