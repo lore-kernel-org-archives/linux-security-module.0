@@ -2,75 +2,52 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71CEC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jan 2022 02:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE2BC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jan 2022 07:48:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244363AbiAKC0h (ORCPT
+        id S1348655AbiAKHsj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Jan 2022 21:26:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244334AbiAKC0h (ORCPT
+        Tue, 11 Jan 2022 02:48:39 -0500
+Received: from mail.BETTERBIZ.PL ([45.86.209.138]:42768 "EHLO
+        mail.betterbiz.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232589AbiAKHsj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Jan 2022 21:26:37 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FF56C06173F;
-        Mon, 10 Jan 2022 18:26:37 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E1EB1614AD;
-        Tue, 11 Jan 2022 02:26:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82B3C36AE9;
-        Tue, 11 Jan 2022 02:26:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641867996;
-        bh=RoS5hZ6L8a7Wi1YOqt08vug9u+dcIkraLKLNW7lPZyc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hGXMcP2jIxMqnKzLok7ha4kWfvc5Rn2CklJr5NMTvSnju9j2IVpr0s3UY9kmjx/Wj
-         igkhJsD2G2a9H2i9Txe0DxBx1E3hY8Xy+nqWaGErttm1KA60a+jqtHynRQskQFvHOb
-         4B75DYifrZMFgiUPw3KIcPU00DD6v7W4tC7LTDYEDNREsH6CFf59B0lTswyE+/5Pb1
-         5bVIexCXR45V+8RLk7HYMJej339BOxU7FDcWUi99cvbm6PfbFFsFi2Lb5M1AQsg5Vh
-         m7lP3sgoVgKujmGN5JbsFhrSImk6vTXjM3UltGLh3R4LRILqL3LGnOI8DQuXl3nQ8w
-         xOepiqJCnLvDQ==
-Date:   Tue, 11 Jan 2022 04:26:25 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
-        dwmw2@infradead.org, ardb@kernel.org, jmorris@namei.org,
-        serge@hallyn.com, nayna@linux.ibm.com, keescook@chromium.org,
-        torvalds@linux-foundation.org, weiyongjun1@huawei.com,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
-        konrad.wilk@oracle.com
-Subject: Re: [PATCH v9 8/8] integrity: Only use machine keyring when
- uefi_check_trust_mok_keys is true
-Message-ID: <Ydzq0d+TzMmtohsV@iki.fi>
-References: <20220105235012.2497118-1-eric.snowberg@oracle.com>
- <20220105235012.2497118-9-eric.snowberg@oracle.com>
- <YdoQbKD/jJompy6I@iki.fi>
- <2aa9e4b290424c869afe983ed63b5a0c4d12df36.camel@linux.ibm.com>
+        Tue, 11 Jan 2022 02:48:39 -0500
+Received: by mail.betterbiz.pl (Postfix, from userid 1001)
+        id DAC2C82D4A; Tue, 11 Jan 2022 02:45:58 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=betterbiz.pl; s=mail;
+        t=1641887318; bh=07NAgW1e0WiNB9zqagiM2BnwZfWBCpNa2E4+ccxBPgw=;
+        h=Date:From:To:Subject:From;
+        b=FkT4Utc4IMUpE7shbQNhDmc9OHerYIHhmfzHFnkdFR8gYJVnWXKfAIg6DPWx2mjDR
+         xKebQuqpdxVRYIuJ92MmFRuJ1ZW6jBGOQqBsbNNCFNH3IgAFbKyGuXZ10EbaqHIFs7
+         lFjiWuLp13XcawOIHyCAXccp46p/SHnBnoeUVtRaHlWWbp7gESQiZ6gR9aBu5PlSyh
+         4gxXt/Ju+xjd4FCK3Im1p+dZmx8cKMBgQrQi+GsCmbthIjPfxW89AYhNbuXEKvC16h
+         2g5tY2/h6TOSTrVWtPh9/7aVp8bQ9F7DhHpCe7yd3L4xceUlVQQnNQ1kllAkgNCDvh
+         wdPSa9FXmR0mw==
+Received: by mail.betterbiz.pl for <linux-security-module@vger.kernel.org>; Tue, 11 Jan 2022 07:45:52 GMT
+Message-ID: <20220111024500-0.1.o.zln.0.jiea1ubhao@betterbiz.pl>
+Date:   Tue, 11 Jan 2022 07:45:52 GMT
+From:   "Jakub Daroch" <jakub.daroch@betterbiz.pl>
+To:     <linux-security-module@vger.kernel.org>
+Subject: Wycena paneli fotowoltaicznych
+X-Mailer: mail.betterbiz.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2aa9e4b290424c869afe983ed63b5a0c4d12df36.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jan 08, 2022 at 08:47:21PM -0500, Mimi Zohar wrote:
-> On Sun, 2022-01-09 at 00:30 +0200, Jarkko Sakkinen wrote:
-> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > 
-> > Mimi, have you tested these patches already?
-> 
-> Sorry, not yet this version this of the patch set.  Planning to test
-> shortly.
-> 
-> Mimi
-> 
+Dzie=C5=84 dobry,
 
-Yeah, it is otherwise good IMHO. It's too late for v5.17 tho, so there is
-no rush. We will get this to v5.18.
+dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
+irm=C4=85.
 
-/Jarkko
+=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
+ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+
+Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
+ropozycji?
+
+
+Pozdrawiam,
+Jakub Daroch
