@@ -2,221 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DD8C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jan 2022 14:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 915B4C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Jan 2022 18:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241227AbiAKOMh (ORCPT
+        id S1344736AbiAKSTP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Jan 2022 09:12:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52722 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230295AbiAKOMg (ORCPT
+        Tue, 11 Jan 2022 13:19:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10116 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1344629AbiAKSTL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Jan 2022 09:12:36 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19E0C06173F;
-        Tue, 11 Jan 2022 06:12:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3195C614C5;
-        Tue, 11 Jan 2022 14:12:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44306C36AEB;
-        Tue, 11 Jan 2022 14:12:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641910355;
-        bh=39gsf/zi5FwfVpRQ7qXWhjiEz5h+LSXUb6QfZmEYPWY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nXtYONf8inAFnV/Pgm0SkIEhw+f4XV2MIqoNW66nD1n4hBbyIFSYyTXy9CTX73yTR
-         85qowFyGhmfiGST8+1cBJP0/CoFu0Ssex1g6P91e01r/mNnObkUOGj8S8EtmkxPt3l
-         zQHGG0qY5MFUxrWVVJwx+31DVD0NOiDINuoISJwahn44npaxO2nhq6ElGBqN9jAWpr
-         yvvKQjGM3StP9sejuUdgIJObRri4pwG+pvDmu6t+z1Jf21tG3ytb2fxTMihr/cPQUk
-         cukE5xlYUf7k7IZhPGgFOzwkwCE1FNqgRMqlILcgP/3M1LTfO7fCWreKfdgtoVPmld
-         7myFHqjQME1aQ==
-Date:   Tue, 11 Jan 2022 15:12:27 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, serge@hallyn.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [PATCH v8 01/19] securityfs: Extend securityfs with namespacing
- support
-Message-ID: <20220111141227.27upfpzhqwyob3ev@wittgenstein>
-References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
- <20220104170416.1923685-2-stefanb@linux.vnet.ibm.com>
- <YdUXU3XIzhxFUfVB@zeniv-ca.linux.org.uk>
- <20220105101815.ldsm4s5yx7pmuiil@wittgenstein>
- <d11458798496f2aed2fb31a7bb077f5938174083.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d11458798496f2aed2fb31a7bb077f5938174083.camel@linux.ibm.com>
+        Tue, 11 Jan 2022 13:19:11 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20BHdmUx000777;
+        Tue, 11 Jan 2022 18:16:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=f23pSkAQkmTfG63MYPw5lvGkPGpCHSGtCMNQ0RMPVVw=;
+ b=N+it7FobbBF3xJcmaNg2iZZ98mYKy6HWCX+u8RfBEw1GG7keGo90reSd69lYwS0WJHuK
+ loz4psJdgKhiSFY8/6YeQOlTmpq7hYJlDVeifMzDYezPJPhxG5wTCZg1h4KGL0W+CUvH
+ c+UIkBqMgIYHYPUZYVW1trpsRaf7PaE0eTGT4P0IBT7HHnnqjz5kkwIR/uqV46WkryRz
+ cUyagGQPvwlIj327i35I3wXvbkp2ZR1gt3ZaL4JqBJJrq4/uF/yi5kJSNfJK0qTAnVFT
+ 9zb4jLQHby+Y6QDkWZZD0FoVcOtQ0N5k1bXjLNC0QD3GrSOmCj2l2jE65WRU72kBofS6 zA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dhbp7e0pn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jan 2022 18:16:45 +0000
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20BIDEJU016077;
+        Tue, 11 Jan 2022 18:16:44 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dhbp7e0nf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jan 2022 18:16:44 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20BIFZZY006044;
+        Tue, 11 Jan 2022 18:16:41 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 3df2892wsv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jan 2022 18:16:41 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20BIGdvP45875706
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Jan 2022 18:16:39 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4395611C050;
+        Tue, 11 Jan 2022 18:16:39 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C56911C05B;
+        Tue, 11 Jan 2022 18:16:37 +0000 (GMT)
+Received: from sig-9-65-94-95.ibm.com (unknown [9.65.94.95])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 11 Jan 2022 18:16:36 +0000 (GMT)
+Message-ID: <a384fcf8bdd9ff79456e9669fc61ab50ec4e1c55.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 2/8] integrity: Introduce a Linux keyring called
+ machine
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "James.Bottomley@hansenpartnership.com" 
+        <James.Bottomley@HansenPartnership.com>,
+        "pjones@redhat.com" <pjones@redhat.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>
+Date:   Tue, 11 Jan 2022 13:16:36 -0500
+In-Reply-To: <100B070F-7EB4-4BF7-B2B9-E5AE78D3066A@oracle.com>
+References: <20220105235012.2497118-1-eric.snowberg@oracle.com>
+         <20220105235012.2497118-3-eric.snowberg@oracle.com>
+         <883da244c04fcb07add9984859a09d7b1827880a.camel@linux.ibm.com>
+         <100B070F-7EB4-4BF7-B2B9-E5AE78D3066A@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: GtMCw9gU-05vUSKvCgnmnFZN-mUkf-aF
+X-Proofpoint-ORIG-GUID: zoiRmxjG6RJRitTOPoRW8Bc1iQ31vQ07
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-11_04,2022-01-11_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 clxscore=1015 impostorscore=0 priorityscore=1501
+ mlxscore=0 adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2110150000 definitions=main-2201110098
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 11, 2022 at 07:16:26AM -0500, Mimi Zohar wrote:
-> On Wed, 2022-01-05 at 11:18 +0100, Christian Brauner wrote:
-> > On Wed, Jan 05, 2022 at 03:58:11AM +0000, Al Viro wrote:
-> > > On Tue, Jan 04, 2022 at 12:03:58PM -0500, Stefan Berger wrote:
-> > > > From: Stefan Berger <stefanb@linux.ibm.com> 
+On Mon, 2022-01-10 at 23:25 +0000, Eric Snowberg wrote:
+> > Jarkko, my concern is that once this version of the patch set is
+> > upstreamed, would limiting which keys may be loaded onto the .machine
+> > keyring be considered a regression?
 > 
-> > > > Drop the additional dentry reference to enable simple cleanup of dentries
-> > > > upon umount. Now the dentries do not need to be explicitly freed anymore
-> > > > but we can just rely on d_genocide() and the dcache shrinker to do all
-> > > > the required work.
-> > 
-> > The "additional dentry reference" mentioned only relates to an afaict
-> > unnecessary dget() in securityfs_create_dentry() which I pointed out
-> > as part of earlier reviews. But the phrasing implies that there's a
-> > behavioral change for the initial securityfs instance based on the
-> > removal of this additional dget() when there really isn't.
-> > 
-> > After securityfs_create_dentry() has created a new dentry via
-> > lookup_one_len() and eventually called d_instantiate() it currently
-> > takes an additional reference on the newly created dentry via dget().
-> > This additional reference is then paired with an additional dput() in
-> > securityfs_remove(). I have not yet seen a reason why this is
-> > necessary maybe you can help there.
-> > 
-> > For example, contrast this with debugfs which has the same underlying
-> > logic as securityfs, i.e. any created dentry pins the whole filesystem
-> > via simple_pin_fs() until the dentry is released and simple_unpin_fs()
-> > is called. It uses a similar pairing as securityfs: where securityfs
-> > has the securityfs_create_dentry() and securityfs_remove() pairing,
-> > debugfs has the __debugfs_create_file() and debugfs_remove() pairing.
-> > But debugfs doesn't take an additional reference on the just created
-> > dentry in __debugfs_create_file() which would need to be put in
-> > debugfs_remove().
-> > 
-> > So if we contrast the creation routines of securityfs and debugfs directly
-> > condensed to just the dentry references:
-> > 
-> > securityfs       |   debugfs
-> > ---------------- | ------------------
-> >                  |
-> > lookup_one_len() |   lookup_one_len()
-> > d_instantiate()  |   d_instantiate() 
-> > dget()           |
-> > 
-> > And I have not understood why securityfs would need that additional
-> > dget(). Not just intrinsically but also when contrasted with debugfs. So
-> > that additional dget() is removed as part of this patch.
 > 
-> Assuming it isn't needed, could removing it be a separate patch and
-> upstreamed independently of either the securityfs or IMA namespacing
-> changes?
+> Currently certificates built into the kernel do not have a CA restriction on them.  
+> IMA will trust anything in this keyring even if the CA bit is not set.  While it would 
+> be advisable for a kernel to be built with a CA, nothing currently enforces it. 
+> 
+> My thinking for the dropped CA restriction patches was to introduce a new Kconfig.  
+> This Kconfig would do the CA enforcement on the machine keyring.  However if the 
+> Kconfig option was not set for enforcement, it would work as it does in this series, 
+> plus it would allow IMA to work with non-CA keys.  This would be done by removing 
+> the restriction placed in this patch. Let me know your thoughts on whether this would 
+> be an appropriate solution.  I believe this would get around what you are identifying as 
+> a possible regression.
 
-Yeah, if the security tree wants to take it. So sm like:
+True the problem currently exists with the builtin keys, but there's a
+major difference between trusting the builtin keys and those being
+loading via MOK.  This is an integrity gap that needs to be closed and
+shouldn't be expanded to keys on the .machine keyring.
 
-From 478e96d1da24960e50897e6752f410b3d0833570 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 11 Jan 2022 14:04:11 +0100
-Subject: [PATCH] securityfs: rework dentry creation
+"plus it would allow IMA to work with non-CA keys" is unacceptable.
 
-When securityfs creates a new file or directory via
-securityfs_create_dentry() it will take an additional reference on the
-newly created dentry after it has attached the new inode to the new
-dentry and added it to the hashqueues.
-If we contrast this with debugfs which has the same underlying logic as
-securityfs. It uses a similar pairing as securityfs. Where securityfs
-has the securityfs_create_dentry() and securityfs_remove() pairing,
-debugfs has the __debugfs_create_file() and debugfs_remove() pairing.
-
-In contrast to securityfs, debugfs doesn't take an additional reference
-on the newly created dentry in __debugfs_create_file() which would need
-to be put in debugfs_remove().
-
-The additional dget() isn't a problem per se. In the current
-implementation of securityfs each created dentry pins the filesystem via
-until it is removed. Since it is virtually guaranteed that there is at
-least one user of securityfs that has created dentries the initial
-securityfs mount cannot go away until all dentries have been removed.
-
-Since most of the users of the initial securityfs mount don't go away
-until the system is shutdown the initial securityfs won't go away when
-unmounted. Instead a mount will usually surface the same superblock as
-before. The additional dget() doesn't matter in this scenario since it
-is required that all dentries have been cleaned up by the respective
-users before the superblock can be destroyed, i.e. superblock shutdown
-is tied to the lifetime of the associated dentries.
-
-However, in order to support ima namespaces we need to extend securityfs
-to support being mounted outside of the initial user namespace. For
-namespaced users the pinning logic doesn't make sense. Whereas in the
-initial namespace the securityfs instance and the associated data
-structures of its users can't go away for reason explained earlier users
-of non-initial securityfs instances do go away when the last users of
-the namespace are gone.
-
-So for those users we neither want to duplicate the pinning logic nor
-make the global securityfs instance display different information based
-on the namespace. Both options would be really messy and hacky.
-
-Instead we will simply give each namespace its own securityfs instance
-similar to how each ipc namespace has its own mqueue instance and all
-entries in there are cleaned up on umount or when the last user of the
-associated namespace is gone.
-
-This means that the superblock's lifetime isn't tied to the dentries.
-Instead the last umount, without any fds kept open, will trigger a clean
-shutdown. But now the additional dget() gets in the way. Instead of
-being able to rely on the generic superblock shutdown logic we would
-need to drop the additional dentry reference during superblock shutdown
-for all associated users. That would force the use of a generic
-coordination mechanism for current and future users of securityfs which
-is unnecessary. Simply remove the additional dget() in
-securityfs_dentry_create().
-
-In securityfs_remove() we will call dget() to take an additional
-reference on the dentry about to be removed. After simple_unlink() or
-simple_rmdir() have dropped the dentry refcount we can call d_delete()
-which will either turn the dentry into negative dentry if our earlier
-dget() is the only reference to the dentry, i.e. it has no other users,
-or remove it from the hashqueues in case there are additional users.
-
-All of these changes should not have any effect on the userspace
-semantics of the initial securityfs mount.
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- security/inode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/security/inode.c b/security/inode.c
-index 6c326939750d..13e6780c4444 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -159,7 +159,6 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 		inode->i_fop = fops;
- 	}
- 	d_instantiate(dentry, inode);
--	dget(dentry);
- 	inode_unlock(dir);
- 	return dentry;
- 
-@@ -302,10 +301,12 @@ void securityfs_remove(struct dentry *dentry)
- 	dir = d_inode(dentry->d_parent);
- 	inode_lock(dir);
- 	if (simple_positive(dentry)) {
-+		dget(dentry);
- 		if (d_is_dir(dentry))
- 			simple_rmdir(dir, dentry);
- 		else
- 			simple_unlink(dir, dentry);
-+		d_delete(dentry);
- 		dput(dentry);
- 	}
- 	inode_unlock(dir);
--- 
-2.32.0
+Mimi
 
