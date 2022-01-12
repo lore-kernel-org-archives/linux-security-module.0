@@ -2,98 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EE9C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jan 2022 08:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813C1C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Jan 2022 08:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351357AbiALIEE (ORCPT
+        id S1351739AbiALIrK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Jan 2022 03:04:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43792 "EHLO
+        Wed, 12 Jan 2022 03:47:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237577AbiALIEE (ORCPT
+        with ESMTP id S1351737AbiALIrH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Jan 2022 03:04:04 -0500
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41930C06173F;
-        Wed, 12 Jan 2022 00:04:04 -0800 (PST)
-Received: by mail-qk1-x734.google.com with SMTP id w27so1644203qkj.7;
-        Wed, 12 Jan 2022 00:04:04 -0800 (PST)
+        Wed, 12 Jan 2022 03:47:07 -0500
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E71C06173F;
+        Wed, 12 Jan 2022 00:47:07 -0800 (PST)
+Received: by mail-ot1-x332.google.com with SMTP id w19-20020a056830061300b0058f1dd48932so1740035oti.11;
+        Wed, 12 Jan 2022 00:47:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iKcG1xCQXSx894OSDj80kVGbsOH6ABlaWdg6vUCjwJk=;
-        b=kqn7X5Ji/e/zT9xWmm9QJOB1LnmJbjjxqOYjtbdYBCD9/MQXPBYOP6QSu62TKiJWzf
-         bO/cBGKpwuIbEeIfc2VwaTe2+5SUj2qcZYFBAtd+239RoP7NP3jxvYyvZPrBX6L3/laP
-         cYie+OUvvMqc5zzlkSEAxfcELLFfqSSSyaDowKvl1kneNTLOJS1iKT52H+kSHEfBiRXW
-         9KUbAbuG4Rdmm/b4MgkctU5ZFjIdXdRLrMiDFIjCAnPxSSlC+aNJuX53JIIruwwREI9b
-         UoN9GAvq6C8Wi7Pnf8FnND414FlZQcPpJH0KDCH8u5mZ3YU/McAvzHIK7+J3iK1FXtxN
-         YWcQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=s9uju5lktsl2BkeSmx7+Ucw5N0WQwmtf63EDu0Y/kqo=;
+        b=njpeRzdd707CcSA9IsThlEC7roEZp7FrGsogWyW2y9Ok8bMD2iuN733qt7/QDI0DMr
+         r+hVn9iTuE/eRvtVzYVR7x6xYj3YCxHVZI/oEw5feGVKCH8xTwsReVC2VzvTTRlVhW8+
+         F1Q8BuWvTPpOo5IiRf3O2yfNPUmHBkiFnqWGgPwaGojpVVyCgNvu/X+eCYjFE5z3WQDo
+         HfaUW8f+PzhQFzopdUyp5MjNWsPWP0FnByeJ8KQTcZhprfdJcGwqeoHgMCu0rA3kD9Ag
+         VKkOw6XKUbQ8jayOC47toLh2MfiInEHOa7jTMN6vXmgPcchHcsQwtGgWzUk1sMtGeNhN
+         hzoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iKcG1xCQXSx894OSDj80kVGbsOH6ABlaWdg6vUCjwJk=;
-        b=AnacGRgbpy7lQoTysWmMokb3DFLNwnKAGYK6/uG/Ins0ORtulAql05Y+tPovj4lZaQ
-         2/tyW3Pf7wEnDp0eTG2E1l2KtuGo/KlUx4IXySz8dnH9J3JSDJGGe/IGk/LaGwa3LCgM
-         JLlmDc3sguzrB+MrILm485/bd9NPcs2szukwoqG8jwppFiCw2jyvtFVXnIfW6q1fh4BC
-         HqnDskh39znivF6/L+Fl8IpEtEyWhwfIh746DHfyzepn8Qrumu8wQB3zia9IzePdymnp
-         Xa6gyD0ArKORaf04mAIdrnvsw158gsK247W/+vH4dVhURwSbJOH0kQxs/hPAr3cT2Pt6
-         otmg==
-X-Gm-Message-State: AOAM531/7wXJ4C7CHq4IYU3sSFTszN5y1x9bwhtWP+1XFLv8ucVyKFYL
-        PIYbk7zK0i7R24QTDMEAOCCBnpzRxUg=
-X-Google-Smtp-Source: ABdhPJxxzbyNZ5BIA7SVfdszmBXrUWRaPv4dmZklaaS2eyEU6TXF1C/L1EZdYcWWxfhsWDP8YMj/fw==
-X-Received: by 2002:a05:620a:2104:: with SMTP id l4mr5618261qkl.659.1641974643499;
-        Wed, 12 Jan 2022 00:04:03 -0800 (PST)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id o10sm8698271qtx.33.2022.01.12.00.04.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jan 2022 00:04:03 -0800 (PST)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     john.johansen@canonical.com
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>, CGEL ZTE <cgel.zte@gmail.com>
-Subject: [PATCH] security/apparmor: remove redundant ret variable
-Date:   Wed, 12 Jan 2022 08:03:56 +0000
-Message-Id: <20220112080356.666999-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=s9uju5lktsl2BkeSmx7+Ucw5N0WQwmtf63EDu0Y/kqo=;
+        b=iUQi89sLGbRaBesBVNB4vlvoxP9PYpfppi88tabh/sPE/bN+lQMMu4+VrNEqApOy+4
+         M/9ys/JRH7c1UjsRgBt70AcX44G9E0mYWsiV95W9ximhXstoBahvBBgY0lbH8C/vd9cx
+         krPhHM7Huoc9uQ/MvdSPreh+IYfomAypYwKFcpJ28FhY8Z95daVR8nyXQCRiXXMvnUjt
+         AKQ5ZoGIu3jBUCG4Egc+BQS1BAI1rSHWF6lbitfcz1RNQUKrKj+Vsccec3ydbMxZyGpw
+         djuMoSFxrTl6VokFX9IbL30T8tID2FZ/sVdCvNzlQS6ONDMsj1Wm8EouixpJINaSpjes
+         z1Lg==
+X-Gm-Message-State: AOAM533BmDjBIdDLLW+ugIH1Sts/ktMSydNKBXSrIeGjfrUHI6KOQ2LP
+        rPMrdXsOA1yh271HrDZVJ9GQUuICahJXWtN/bvHqbEB6
+X-Google-Smtp-Source: ABdhPJynnDNRHIEDntsC5XjuiwZCFNN+RWK5Wp/x6GpTKDHklJAXFCGgujYR1FRxcQADeQd2BjHO7RIxf/V6x4KlXPE=
+X-Received: by 2002:a9d:37a2:: with SMTP id x31mr1420675otb.51.1641977226796;
+ Wed, 12 Jan 2022 00:47:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211124214418.GA1094@raspberrypi>
+In-Reply-To: <20211124214418.GA1094@raspberrypi>
+From:   Austin Kim <austinkernel.kim@gmail.com>
+Date:   Wed, 12 Jan 2022 17:46:56 +0900
+Message-ID: <CAOoBcBWHi+UJENsfNzG2NMAjBj0RjsKSWNDaQ+++F-uL0ubAYQ@mail.gmail.com>
+Subject: Re: [PATCH] ima: Fix trivial typos in the comments
+To:     Austin Kim <austindh.kim@gmail.com>
+Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+Hi,
 
-Return value from nf_register_net_hooks() directly instead
-of taking this in another redundant variable.
+Would you take a look at this patch?
+It won't take long.
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
-Signed-off-by: CGEL ZTE <cgel.zte@gmail.com>
----
- security/apparmor/lsm.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+BR,
+Austin Kim
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index ce7d96627810..f3deeb8b712e 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1799,11 +1799,8 @@ static const struct nf_hook_ops apparmor_nf_ops[] = {
- 
- static int __net_init apparmor_nf_register(struct net *net)
- {
--	int ret;
--
--	ret = nf_register_net_hooks(net, apparmor_nf_ops,
-+	return nf_register_net_hooks(net, apparmor_nf_ops,
- 				    ARRAY_SIZE(apparmor_nf_ops));
--	return ret;
- }
- 
- static void __net_exit apparmor_nf_unregister(struct net *net)
--- 
-2.25.1
-
+2021=EB=85=84 11=EC=9B=94 26=EC=9D=BC (=EA=B8=88) =EC=98=A4=EC=A0=84 11:34,=
+ Austin Kim <austindh.kim@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> There are a few minor typos in the comments. Fix these.
+>
+> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+> ---
+>  security/integrity/ima/ima_api.c          | 2 +-
+>  security/integrity/ima/ima_main.c         | 2 +-
+>  security/integrity/ima/ima_policy.c       | 2 +-
+>  security/integrity/ima/ima_template_lib.c | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/im=
+a_api.c
+> index a64fb0130b01..5b220a2fe573 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -238,7 +238,7 @@ int ima_collect_measurement(struct integrity_iint_cac=
+he *iint,
+>                 goto out;
+>
+>         /*
+> -        * Dectecting file change is based on i_version. On filesystems
+> +        * Detecting file change is based on i_version. On filesystems
+>          * which do not support i_version, support is limited to an initi=
+al
+>          * measurement/appraisal/audit.
+>          */
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
+ma_main.c
+> index 8c6e4514d494..8ed6da428328 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -764,7 +764,7 @@ int ima_post_read_file(struct file *file, void *buf, =
+loff_t size,
+>   *           call to ima_post_load_data().
+>   *
+>   * Callers of this LSM hook can not measure, appraise, or audit the
+> - * data provided by userspace.  Enforce policy rules requring a file
+> + * data provided by userspace.  Enforce policy rules requiring a file
+>   * signature (eg. kexec'ed kernel image).
+>   *
+>   * For permission return 0, otherwise return -EACCES.
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
+/ima_policy.c
+> index 320ca80aacab..ad7e19208a69 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -429,7 +429,7 @@ static int ima_lsm_update_rule(struct ima_rule_entry =
+*entry)
+>         /*
+>          * ima_lsm_copy_rule() shallow copied all references, except for =
+the
+>          * LSM references, from entry to nentry so we only want to free t=
+he LSM
+> -        * references and the entry itself. All other memory refrences wi=
+ll now
+> +        * references and the entry itself. All other memory references w=
+ill now
+>          * be owned by nentry.
+>          */
+>         ima_lsm_free_rule(entry);
+> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integri=
+ty/ima/ima_template_lib.c
+> index ca017cae73eb..5a5d462ab36d 100644
+> --- a/security/integrity/ima/ima_template_lib.c
+> +++ b/security/integrity/ima/ima_template_lib.c
+> @@ -272,7 +272,7 @@ static int ima_eventdigest_init_common(const u8 *dige=
+st, u32 digestsize,
+>          * digest formats:
+>          *  - DATA_FMT_DIGEST: digest
+>          *  - DATA_FMT_DIGEST_WITH_ALGO: [<hash algo>] + ':' + '\0' + dig=
+est,
+> -        *    where <hash algo> is provided if the hash algoritm is not
+> +        *    where <hash algo> is provided if the hash algorithm is not
+>          *    SHA1 or MD5
+>          */
+>         u8 buffer[CRYPTO_MAX_ALG_NAME + 2 + IMA_MAX_DIGEST_SIZE] =3D { 0 =
+};
+> --
+> 2.20.1
+>
