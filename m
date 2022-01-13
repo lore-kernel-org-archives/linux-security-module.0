@@ -2,210 +2,189 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4358DC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jan 2022 19:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D375C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jan 2022 20:27:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237872AbiAMTPJ (ORCPT
+        id S233270AbiAMU1Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jan 2022 14:15:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237867AbiAMTPJ (ORCPT
+        Thu, 13 Jan 2022 15:27:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34390 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232562AbiAMU1Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jan 2022 14:15:09 -0500
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5CD4C06173E
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Jan 2022 11:15:08 -0800 (PST)
-Received: by mail-yb1-xb31.google.com with SMTP id n68so17858857ybg.6
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Jan 2022 11:15:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GVYSUu20fMOdiGRn7f6JqxyfmVJYbeAQv2k55Rek8IA=;
-        b=i4N+zcrxJI5IlUCydDEGKOLyq1oVQS8InviCUer6f2qxjU6HwJpbH1eoRKqAK6STKc
-         +N2IUpl0PPzdg7cQ0lTD2sVu0rI4z5yTzcDorx7oxbyycvCrtJnubR3raLJFiID7Qrwf
-         aDujqWMwWjYurP0KqpH9ZMF3JuWPi3LARLSAVgP+pCHfyg3Qls1FRiatXALKlXehmvzs
-         NTH+Qu8+YQRuefGPj6IRpjBPVc63Ykx7PZr1Vhk3kVruNXuONQEGBTeCZFH0p3tim0J/
-         qk9TJnxW8pH89Jrye1KyEb3izGhtFL3At8h11qx3vffYIMJ8w28KtFwzCbbDN7XRMyCW
-         7x3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GVYSUu20fMOdiGRn7f6JqxyfmVJYbeAQv2k55Rek8IA=;
-        b=0sZDiYW6qPH569YYVPE9dnNoZJ2iIZBOhFrhQExId0w3Mf3Qtxg6P+GUgck1pStleo
-         t/8TGaQ6X3uNN4ZsFRk5+f+XcPkSPg932rfrVvGtGveF5H54jNMfGAuOtUKXqRCZxSPY
-         y/Tg1oADdYHdEl1t6vpIOjJ2DvqcLD085iltNt4QQs9728wo52o0nldl4zpVG5xAt9um
-         kJLKEUN0uZVc+GzHlKWoa8lelmSqgnzuVpk7IbX3HXzfmpX8CYmknvLiTkmvjXhy0NR9
-         flZb+Y7HvB00GHWbuOL9IsRiyPTP2ANJEBOSqIUDo0jR/lG1lm3OFzM4PiCGyTQgH//W
-         irKw==
-X-Gm-Message-State: AOAM530Vm0zyl5yY04bH3hlJsFypxR7UDyFJsLjo/o99vEbvpLc+7Ph9
-        8m1+GLlAioKVGjwmLX9ZmiJfTz9IvQb3ZC2PqBcw9w==
-X-Google-Smtp-Source: ABdhPJyPOMr1xdw7iwbEux0nRFkPhA1UTaclCHyAsyS6Syz6ZnLSWBsqENWPbopwRk93ULnejL1irxLHIh7HaW5EBsg=
-X-Received: by 2002:a25:2786:: with SMTP id n128mr7832276ybn.491.1642101307705;
- Thu, 13 Jan 2022 11:15:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20211229215330.4134835-1-yaelt@google.com> <CAFA6WYPuPHgcnzt6j+Q-EA2Dos6vBDukrjpheo5srLVXFrifEg@mail.gmail.com>
- <5a38824152eeee0fc9ba0a4fd2308bb6e0970059.camel@linux.ibm.com>
- <CAFA6WYOJt3=YMTt_QQSq6Z-MK42hwWspgSpasw2fuPtVFcP3uA@mail.gmail.com>
- <CAKoutNvW1c7MkTaFwyrD7MjUVXvTtcBOGFULMittJ5vzjMN0mg@mail.gmail.com>
- <CAFA6WYPQRagZF8-grn_LC8_SAaxBzh=cSgHhFAQQOYK+L2KuBQ@mail.gmail.com>
- <CAKoutNtuY0+L29d6xzn6BgEKBytFsBHZ_kgkCOJZuicb_uNPHg@mail.gmail.com> <CAFA6WYPxogLMk1EDqvM_mwgCmU1s_yDwYFPjq6wurnQGhG=-_w@mail.gmail.com>
-In-Reply-To: <CAFA6WYPxogLMk1EDqvM_mwgCmU1s_yDwYFPjq6wurnQGhG=-_w@mail.gmail.com>
-From:   Yael Tiomkin <yaelt@google.com>
-Date:   Thu, 13 Jan 2022 14:14:56 -0500
-Message-ID: <CAKoutNtj8nxvGyZu=m1_7+rGck9dm76E=O93333Yfb5En+8HNQ@mail.gmail.com>
-Subject: Re: [PATCH v4] KEYS: encrypted: Instantiate key with user-provided
- decrypted data
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        jejb@linux.ibm.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        corbet@lwn.net, dhowells@redhat.com, jmorris@namei.org,
-        serge@hallyn.com, keyrings@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 13 Jan 2022 15:27:24 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20DJpwAY020538;
+        Thu, 13 Jan 2022 20:27:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=5dWrKAUhgUEBU9SwdPioCU6ft6T7G3y3e0+T9mnYyP4=;
+ b=kIZD/WrhvFL2mOL5QB+2Gk4ZlteCvveJNNd1Bdn006MMNqJ2Lz/YnQuSg2xq/zEbAY6D
+ jxx+QEKdPh3czAER6Elc6kzbIpIPRiwEJ1bM0FyTQ2ybsVhrkJhWiV1SVtnupwJxxUrm
+ 10noQgkdbLnAvMaljzPdBHfS68CcvsOnMDvZTEqcSFxtzRjQ6TcH3oRxIgLB4BNu87aZ
+ V22Q5usZrteX5LYZD8muQNoe/J742Lb//SDaykT1pXwn1TGTV5BAlh0YfdJryEF8QcTG
+ irCbT/xyJb3/qukxeIydHMF7aEBOQ0SBj4vKeE17IfLt4udAryMm6uDTdPOTUdKo4w4/ 5Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3djtm2rt5c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 20:27:01 +0000
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20DJqQpo022200;
+        Thu, 13 Jan 2022 20:27:00 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3djtm2rt4h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 20:27:00 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20DK8Rqs012516;
+        Thu, 13 Jan 2022 20:26:58 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03ams.nl.ibm.com with ESMTP id 3df28a85q1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 20:26:57 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20DKQs4h23920942
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jan 2022 20:26:54 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D737F42068;
+        Thu, 13 Jan 2022 20:26:53 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9EDC54204D;
+        Thu, 13 Jan 2022 20:26:51 +0000 (GMT)
+Received: from sig-9-65-68-109.ibm.com (unknown [9.65.68.109])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Jan 2022 20:26:51 +0000 (GMT)
+Message-ID: <150cb51f95c3fe54e94edc5b96b2e15edb3bf399.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 03/19] ima: Move policy related variables into
+ ima_namespace
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date:   Thu, 13 Jan 2022 15:26:51 -0500
+In-Reply-To: <20220104170416.1923685-4-stefanb@linux.vnet.ibm.com>
+References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
+         <20220104170416.1923685-4-stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 180RLcFUDhkcHwTM1IEWXECOOOMN0Osl
+X-Proofpoint-ORIG-GUID: Fkrfi4gnFQS76AmMXASepKeK8fahk7XZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-13_09,2022-01-13_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ spamscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 adultscore=0
+ mlxlogscore=999 lowpriorityscore=0 suspectscore=0 impostorscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201130126
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 7, 2022 at 8:32 AM Sumit Garg <sumit.garg@linaro.org> wrote:
->
-> On Fri, 7 Jan 2022 at 18:23, Yael Tiomkin <yaelt@google.com> wrote:
-> >
-> > Hi Sumit,
-> >
-> > On Fri, Jan 7, 2022 at 12:15 AM Sumit Garg <sumit.garg@linaro.org> wrote:
-> > >
-> > > Hi Yael,
-> > >
-> > > On Thu, 6 Jan 2022 at 01:48, Yael Tiomkin <yaelt@google.com> wrote:
-> > > >
-> > > > Hi Sumit,
-> > > >
-> > > > On Mon, Jan 3, 2022 at 1:51 AM Sumit Garg <sumit.garg@linaro.org> wrote:
-> > > > >
-> > > > > Hi Mimi,
-> > > > >
-> > > > > Apologies for the delayed reply as I was on leave for a long new year weekend.
-> > > > >
-> > > > > On Thu, 30 Dec 2021 at 18:59, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > > > >
-> > > > > > Hi Sumit,
-> > > > > >
-> > > > > > On Thu, 2021-12-30 at 15:37 +0530, Sumit Garg wrote:
-> > > > > > > + Jan, Ahmad
-> > > > > > >
-> > > > > > > On Thu, 30 Dec 2021 at 03:24, Yael Tiomkin <yaelt@google.com> wrote:
-> > > > > > > >
-> > > > > > > > The encrypted.c class supports instantiation of encrypted keys with
-> > > > > > > > either an already-encrypted key material, or by generating new key
-> > > > > > > > material based on random numbers. This patch defines a new datablob
-> > > > > > > > format: [<format>] <master-key name> <decrypted data length>
-> > > > > > > > <decrypted data> that allows to instantiate encrypted keys using
-> > > > > > > > user-provided decrypted data, and therefore allows to perform key
-> > > > > > > > encryption from userspace. The decrypted key material will be
-> > > > > > > > inaccessible from userspace.
-> > > > > > >
-> > > > > > > This type of user-space key import feature has already been discussed
-> > > > > > > at large in the context of trusted keys here [1]. So what makes it
-> > > > > > > special in case of encrypted keys such that it isn't a "UNSAFE_IMPORT"
-> > > > > > > or "DEBUGGING_IMPORT" or "DEVELOPMENT_IMPORT", ...?
-> > > > > > >
-> > > > > > > [1] https://lore.kernel.org/linux-integrity/74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de/
-> > > > > > >
-> > > > > > > -Sumit
-> > > > > > >
-> > > > > > > >
-> > > > > > > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > > > > > Signed-off-by: Yael Tiomkin <yaelt@google.com>
-> > > > > >
-> > > > > > There is a difference between trusted and encrypted keys.
-> > > > >
-> > > > > Yeah I understand the implementation differences.
-> > > > >
-> > > > > >  So in
-> > > > > > addition to pointing to the rather long discussion thread, please
-> > > > > > summarize the conclusion and, assuming you agree, include why in once
-> > > > > > case it was acceptable and in the other it wasn't to provide userspace
-> > > > > > key data.
-> > > > >
-> > > > > My major concern with importing user-space key data in *plain* format
-> > > > > is that if import is *not* done in a safe (manufacturing or
-> > > > > production) environment then the plain key data is susceptible to
-> > > > > user-space compromises when the device is in the field.
-> > > >
-> > > > I agree this can happen. Key distribution in any scenario needs to be
-> > > > secure and this could also potentially be an issue if the key is first
-> > > > encrypted and then imported.
-> > >
-> > > Currently its not the case with encrypted keys. These are random keys
-> > > generated within the kernel and encrypted with master key within the
-> > > kernel and then exposed to user-space as encrypted blob only.
-> >
-> >
-> > There are two different ways to create encrypted keys. One is to have
-> > them generated within the kernel using random numbers, and the other
-> > is by importing them in their encrypted form from user-space.
-> > I was referring to the latter in my previous statement.
-> >
->
-> So, from a key distribution security point of view, encrypted key
-> user-space import is **not equal to** plain key user-space import.
-> That's why we need to have a separate compile time option as every
-> device may come with its own threat model and may choose to enable or
-> disable this user-space plain key import feature.
->
-> -Sumit
->
-> > >
-> > > > We can make sure the documentation
-> > > > highlights the safety requirement.
-> > > >
-> > >
-> > > IMO, you should enable this feature as a compile time option. The help
-> > > text for that config option should highlight the use-case along with a
-> > > safety warning.
-> > >
-> > > -Sumit
-> > >
-> > > > >
-> > > > > And it sounds like we are diverting from basic definition [1] of encrypted keys:
-> > > > >
-> > > > > "Trusted and Encrypted Keys are two new key types added to the
-> > > > > existing kernel key ring service. Both of these new types are variable
-> > > > > length symmetric keys, and in both cases all keys are created in the
-> > > > > kernel, and **user space sees, stores, and loads** only encrypted
-> > > > > blobs."
-> > > > >
-> > > > > Also, as Jarrko mentioned earlier the use-case is still not clear to
-> > > > > me as well. Isn't user logon keys an alternative option for
-> > > > > non-readable user-space keys?
-> > > >
-> > > > The goal in this change is to allow key encryption from userspace,
-> > > > using user-provided decrypted data. This cannot be achieved in logon
-> > > > keys, which as you mentioned, are simply non-readable user type keys.
-> > > >
-> > > >
-> > > > >
-> > > > > [1] https://www.kernel.org/doc/html/v4.13/security/keys/trusted-encrypted.html
-> > > > >
-> > > > > -Sumit
-> > > > >
-> > > > > >
-> > > > > > thanks,
-> > > > > >
-> > > > > > Mimi
-> > > > > >
-> > > >
-> > > > Yael
+Hi Stefan,
 
-Hi Sumit,
-The encrypted-keys module is already controlled by the
-CONFIG_ENCRYPTED_KEYS option, which I think might give sufficient
-granularity to control the behavior. Do you still think a feature
-dedicated option is needed?
+On Tue, 2022-01-04 at 12:04 -0500, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> Move variables related to the IMA policy into the ima_namespace. This way
+> the IMA policy of an IMA namespace can be set and displayed using a
+> front-end like SecurityFS.
+> 
+> Implement ima_ns_from_file() to get the IMA namespace via the user
+> namespace of the SecurityFS superblock that a file belongs to.
+> 
+> To get the current ima_namespace use get_current_ns() when a function
+> that is related to a policy rule is called. In other cases where functions
+> are called due file attribute modifications, use init_ima_ns, since these
+> functions are related to IMA appraisal and changes to file attributes are
+> only relevant to the init_ima_ns until IMA namespaces also support IMA
+> appraisal. In ima_file_free() use init_ima_ns since in this case flags
+> related to file measurements may be affected, which is not supported in
+> IMA namespaces, yet.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 
-Yael
+Please split this patch into "ima: pass through ima namespace", or some
+other name,  and "ima: Move policy related variables into
+ima_namespace".  The other option is to combine the "pass through ima
+namespace" with the 2nd patch, like Christian's example.
+
+> ---
+>  security/integrity/ima/ima.h                 |  49 ++++---
+>  security/integrity/ima/ima_api.c             |   8 +-
+>  security/integrity/ima/ima_appraise.c        |  28 ++--
+>  security/integrity/ima/ima_asymmetric_keys.c |   4 +-
+>  security/integrity/ima/ima_fs.c              |  16 ++-
+>  security/integrity/ima/ima_init.c            |   8 +-
+>  security/integrity/ima/ima_init_ima_ns.c     |   6 +
+>  security/integrity/ima/ima_main.c            |  83 +++++++----
+>  security/integrity/ima/ima_policy.c          | 142 ++++++++++---------
+>  security/integrity/ima/ima_queue_keys.c      |  11 +-
+>  10 files changed, 213 insertions(+), 142 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index c4af3275f015..0b3dc9425076 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -20,6 +20,7 @@
+>  #include <linux/hash.h>
+>  #include <linux/tpm.h>
+>  #include <linux/audit.h>
+> +#include <linux/user_namespace.h>
+>  #include <crypto/hash_info.h>
+>  
+>  #include "../integrity.h"
+> @@ -43,9 +44,6 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8, TPM_PCR10 = 10 };
+>  
+>  #define NR_BANKS(chip) ((chip != NULL) ? chip->nr_allocated_banks : 0)
+>  
+> -/* current content of the policy */
+> -extern int ima_policy_flag;
+> -
+>  /* bitset of digests algorithms allowed in the setxattr hook */
+>  extern atomic_t ima_setxattr_allowed_hash_algorithms;
+>  
+> @@ -120,6 +118,14 @@ struct ima_kexec_hdr {
+>  };
+>  
+>  struct ima_namespace {
+> +	struct list_head ima_default_rules;
+> +	/* ns's policy rules */
+
+Thank you for adding comments.  Why is the ima_default_rules not
+considered "ns's policy rules"?   Will this come later or is it limited
+to init_ima_ns?
+
+> +	struct list_head ima_policy_rules;
+> +	struct list_head ima_temp_rules;
+> +	/* Pointer to ns's current policy */
+> +	struct list_head __rcu *ima_rules;
+
+Since "Pointer to ns's current policy" only refers to ima_rules, append
+it to the variable definition.
+
+> +	/* current content of the policy */
+> +	int ima_policy_flag;
+
+Similarly here append the comment to the variable definition.
+
+>  } __randomize_layout;
+>  extern struct ima_namespace init_ima_ns;
+
+thanks,
+
+Mimi
+
+
