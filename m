@@ -2,118 +2,157 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A61DBC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Jan 2022 20:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34926C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jan 2022 00:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233234AbiAMU2o (ORCPT
+        id S238455AbiANAjN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jan 2022 15:28:44 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232027AbiAMU2o (ORCPT
+        Thu, 13 Jan 2022 19:39:13 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:41346 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233782AbiANAjN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jan 2022 15:28:44 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20DJqR61013831;
-        Thu, 13 Jan 2022 20:28:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=vU55w08HP4Jjmt31o+34tXqsjlmZRQiUsSn3bKom+tw=;
- b=ZU+YmFTdcyIlKsu9HMwfGWeUeoxmeZ5+iOoHshji+3a7WxWVTIEGA9js9fkD/PV/vt65
- kGFA0ePZkxZ1evWjBmNdEKt8xRpOMFNq019DXSpJezLAbcakbajtx8UmHVJ48UVk6+5D
- UqA7DvgwrLCq9Ejv3yQxQpzYZIWCGGXS8shj7H2VG6YQ0sp4YJkE1U2hysGrt1KiXHkO
- LQaCGtpDfxmtbSxUqhQqG7zmcLqrsPPF1/EgJHoDdPAi9u5ydTY3nzhVVGkyZtFDy9fM
- 48zy5rv4qbLjlvK8EU8ZDEMicUga1ky+H0yykOPXc9/DoFAnmqhkou3EZafhLQExKu2n rQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3djtme0v9k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Jan 2022 20:28:30 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20DJrk2T016467;
-        Thu, 13 Jan 2022 20:28:30 GMT
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3djtme0v8v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Jan 2022 20:28:30 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20DKRO7F031747;
-        Thu, 13 Jan 2022 20:28:27 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma03fra.de.ibm.com with ESMTP id 3df289wy8k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Jan 2022 20:28:26 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20DKSMm826476950
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Jan 2022 20:28:22 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 90A244C07A;
-        Thu, 13 Jan 2022 20:28:22 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A510A4C070;
-        Thu, 13 Jan 2022 20:28:19 +0000 (GMT)
-Received: from sig-9-65-68-109.ibm.com (unknown [9.65.68.109])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Jan 2022 20:28:19 +0000 (GMT)
-Message-ID: <e3fdefb5517193326b963847ac5e893531fb3dbd.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 08/19] ima: Use mac_admin_ns_capable() to check
- corresponding capability
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Denis Semakin <denis.semakin@huawei.com>
-Date:   Thu, 13 Jan 2022 15:28:19 -0500
-In-Reply-To: <20220104170416.1923685-9-stefanb@linux.vnet.ibm.com>
-References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
-         <20220104170416.1923685-9-stefanb@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: AnVEkgGNtHt4VoRqMAqXG1KEjd-iPvkU
-X-Proofpoint-ORIG-GUID: BiOUPvfoFXEEsJ47wcDmu32scz97lIUK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-13_09,2022-01-13_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2201130126
+        Thu, 13 Jan 2022 19:39:13 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id EC79C69C; Thu, 13 Jan 2022 18:39:10 -0600 (CST)
+Date:   Thu, 13 Jan 2022 18:39:10 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Francis Laniel <flaniel@linux.microsoft.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 1/2] capability: Add cap_strings.
+Message-ID: <20220114003910.GA19319@mail.hallyn.com>
+References: <20211227205500.214777-1-flaniel@linux.microsoft.com>
+ <20211227205500.214777-2-flaniel@linux.microsoft.com>
+ <289c4134-1ac4-48fc-58ec-cab0bcb63268@schaufler-ca.com>
+ <18436829.ogB85pbuhf@machine>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <18436829.ogB85pbuhf@machine>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Stefan, Denis,
-
-mac_admin_ns_capable() is being introduced in this patch.  Either
-rename the "Subject" line as "ima: replace capable() call with
-ns_capable()" or "ima: define mac_admin_ns_capable() as a wrapper for
-ns_capable()".
-
-On Tue, 2022-01-04 at 12:04 -0500, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
+On Tue, Dec 28, 2021 at 02:27:56PM +0100, Francis Laniel wrote:
+> Hi.
 > 
-> Use mac_admin_ns_capable() to check corresponding capability to allow
-> read/write IMA policy without CAP_SYS_ADMIN but with CAP_MAC_ADMIN.
-
-Updatethe patch description accordingly.
-
 > 
-> Signed-off-by: Denis Semakin <denis.semakin@huawei.com>
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Le lundi 27 décembre 2021, 23:26:29 CET Casey Schaufler a écrit :
+> > On 12/27/2021 12:54 PM, Francis Laniel wrote:
+> > > This array contains the capability names for the given capabilitiy.
+> > > For example, index CAP_BPF contains "CAP_BPF".
+> > > 
+> > > Signed-off-by: Francis Laniel <flaniel@linux.microsoft.com>
+> > > ---
+> > > 
+> > >   include/uapi/linux/capability.h |  1 +
+> > >   kernel/capability.c             | 45 +++++++++++++++++++++++++++++++++
+> > >   2 files changed, 46 insertions(+)
+> > > 
+> > > diff --git a/include/uapi/linux/capability.h
+> > > b/include/uapi/linux/capability.h index 463d1ba2232a..9646654d5111 100644
+> > > --- a/include/uapi/linux/capability.h
+> > > +++ b/include/uapi/linux/capability.h
+> > > @@ -428,5 +428,6 @@ struct vfs_ns_cap_data {
+> > > 
+> > >   #define CAP_TO_INDEX(x)     ((x) >> 5)        /* 1 << 5 == bits in __u32
+> > >   */
+> > >   #define CAP_TO_MASK(x)      (1 << ((x) & 31)) /* mask for indexed __u32
+> > >   */
+> > > 
+> > > +extern const char *cap_strings[];
+> > > 
+> > >   #endif /* _UAPI_LINUX_CAPABILITY_H */
+> > > 
+> > > diff --git a/kernel/capability.c b/kernel/capability.c
+> > > index 46a361dde042..5a2e71dcd87b 100644
+> > > --- a/kernel/capability.c
+> > > +++ b/kernel/capability.c
+> > > @@ -15,6 +15,7 @@
+> > > 
+> > >   #include <linux/mm.h>
+> > >   #include <linux/export.h>
+> > >   #include <linux/security.h>
+> > > 
+> > > +#include <linux/stringify.h>
+> > > 
+> > >   #include <linux/syscalls.h>
+> > >   #include <linux/pid_namespace.h>
+> > >   #include <linux/user_namespace.h>
+> > > 
+> > > @@ -27,6 +28,50 @@
+> > > 
+> > >   const kernel_cap_t __cap_empty_set = CAP_EMPTY_SET;
+> > >   EXPORT_SYMBOL(__cap_empty_set);
+> > > 
+> > > +const char *cap_strings[] = {
+> > > +	[CAP_CHOWN] = __stringify_1(CAP_CHOWN),
+> > 
+> > I may just be old and slow, but why is this better than
+> > 
+> > 	[CAP_CHOWN] = "CAP_CHOWN",
+> 
+> Good catch, thank you for it, I just replaced the __stringify_1() by quotes.
+> I thought of using __stringify_() because at first I thought of adding a new 
+> macro which would both define a new capability as well as adding to this array.
 
-thanks,
+I think you are saying you have a new version of the patch where you do
+what Casey suggests, but I don't see it.  Have you sent an updated patch,
+or am I misunderstanding?
 
-Mimi
-
+> But I think it is better to with this simple way rather than doing complicated 
+> stuff.
+> 
+> > > +	[CAP_DAC_OVERRIDE] = __stringify_1(CAP_DAC_OVERRIDE),
+> > > +	[CAP_DAC_READ_SEARCH] = __stringify_1(CAP_DAC_READ_SEARCH),
+> > > +	[CAP_FOWNER] = __stringify_1(CAP_FOWNER),
+> > > +	[CAP_FSETID] = __stringify_1(CAP_FSETID),
+> > > +	[CAP_KILL] = __stringify_1(CAP_KILL),
+> > > +	[CAP_SETGID] = __stringify_1(CAP_SETGID),
+> > > +	[CAP_SETUID] = __stringify_1(CAP_SETUID),
+> > > +	[CAP_SETPCAP] = __stringify_1(CAP_SETPCAP),
+> > > +	[CAP_LINUX_IMMUTABLE] = __stringify_1(CAP_LINUX_IMMUTABLE),
+> > > +	[CAP_NET_BIND_SERVICE] = __stringify_1(CAP_NET_BIND_SERVICE),
+> > > +	[CAP_NET_BROADCAST] = __stringify_1(CAP_NET_BROADCAST),
+> > > +	[CAP_NET_ADMIN] = __stringify_1(CAP_NET_ADMIN),
+> > > +	[CAP_NET_RAW] = __stringify_1(CAP_NET_RAW),
+> > > +	[CAP_IPC_LOCK] = __stringify_1(CAP_IPC_LOCK),
+> > > +	[CAP_IPC_OWNER] = __stringify_1(CAP_IPC_OWNER),
+> > > +	[CAP_SYS_MODULE] = __stringify_1(CAP_SYS_MODULE),
+> > > +	[CAP_SYS_RAWIO] = __stringify_1(CAP_SYS_RAWIO),
+> > > +	[CAP_SYS_CHROOT] = __stringify_1(CAP_SYS_CHROOT),
+> > > +	[CAP_SYS_PTRACE] = __stringify_1(CAP_SYS_PTRACE),
+> > > +	[CAP_SYS_PACCT] = __stringify_1(CAP_SYS_PACCT),
+> > > +	[CAP_SYS_ADMIN] = __stringify_1(CAP_SYS_ADMIN),
+> > > +	[CAP_SYS_BOOT] = __stringify_1(CAP_SYS_BOOT),
+> > > +	[CAP_SYS_NICE] = __stringify_1(CAP_SYS_NICE),
+> > > +	[CAP_SYS_RESOURCE] = __stringify_1(CAP_SYS_RESOURCE),
+> > > +	[CAP_SYS_TIME] = __stringify_1(CAP_SYS_TIME),
+> > > +	[CAP_SYS_TTY_CONFIG] = __stringify_1(CAP_SYS_TTY_CONFIG),
+> > > +	[CAP_MKNOD] = __stringify_1(CAP_MKNOD),
+> > > +	[CAP_LEASE] = __stringify_1(CAP_LEASE),
+> > > +	[CAP_AUDIT_WRITE] = __stringify_1(CAP_AUDIT_WRITE),
+> > > +	[CAP_AUDIT_CONTROL] = __stringify_1(CAP_AUDIT_CONTROL),
+> > > +	[CAP_SETFCAP] = __stringify_1(CAP_SETFCAP),
+> > > +	[CAP_MAC_OVERRIDE] = __stringify_1(CAP_MAC_OVERRIDE),
+> > > +	[CAP_MAC_ADMIN] = __stringify_1(CAP_MAC_ADMIN),
+> > > +	[CAP_SYSLOG] = __stringify_1(CAP_SYSLOG),
+> > > +	[CAP_WAKE_ALARM] = __stringify_1(CAP_WAKE_ALARM),
+> > > +	[CAP_BLOCK_SUSPEND] = __stringify_1(CAP_BLOCK_SUSPEND),
+> > > +	[CAP_AUDIT_READ] = __stringify_1(CAP_AUDIT_READ),
+> > > +	[CAP_PERFMON] = __stringify_1(CAP_PERFMON),
+> > > +	[CAP_BPF] = __stringify_1(CAP_BPF),
+> > > +	[CAP_CHECKPOINT_RESTORE] = __stringify_1(CAP_CHECKPOINT_RESTORE),
+> > > +};
+> > > +
+> > > 
+> > >   int file_caps_enabled = 1;
+> > >   
+> > >   static int __init file_caps_disable(char *str)
+> 
+> 
+> 
