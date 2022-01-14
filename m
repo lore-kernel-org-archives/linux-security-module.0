@@ -2,91 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF21DC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jan 2022 04:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BCCC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jan 2022 10:48:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233236AbiANEbi (ORCPT
+        id S240443AbiANKsL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jan 2022 23:31:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55742 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231585AbiANEbh (ORCPT
+        Fri, 14 Jan 2022 05:48:11 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:35270 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234097AbiANKsK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jan 2022 23:31:37 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81251C061574;
-        Thu, 13 Jan 2022 20:31:37 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id h1so12231392pls.11;
-        Thu, 13 Jan 2022 20:31:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Y3Vea8plG7NdygEVdJpagO9aiMQvkxxFcDl4y17hVgM=;
-        b=YWDavPGlHlCkZioKRp2U+66aqRlsrunjaGL4gKYFEtafhyIo/iQudiCKytDDQ8K9rY
-         r5i+EfhJl+fCKTQn+rXsUKqLBkhxBpdEPawyOhAv4oWMbrejPSFGUoPXO+4CXP9m5NHy
-         FbiUypYUmRMscR5MTK4b1T3CwUiPaV4q/w4cMxId61VDDwp5HzJHJS08j8ns8vxhSpL7
-         PKLiFwlD9uEQ0gYciGNs/qjstn1Qyf0YwZCNcbK31fLg0MVPpUjiIUsq2iDF2zm5H3PN
-         CgoSAQ5YOMkDdFu7tAQr3V4KkwnYH6TalT2WimukYB4zVEmCWdYVXxLtrDXqjWtyzzlg
-         +zkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Y3Vea8plG7NdygEVdJpagO9aiMQvkxxFcDl4y17hVgM=;
-        b=CfFekbcw1nSpRY/0iUSM9D2W82vpd46Zg0t573d9QvxoM6L+J/HN1PJQgQqbr2Gaye
-         cKW9NTAjg8Q8O4lhBbX/0sF/EUFeJdOFeTdwckxTmEAid5D8WdVhdXNpmLCxEjgJP8F+
-         Kv8ks4hmXt4xTjNs50TTwY+i/hiuH+3aGLvd4bB3j+XLO+mi52Fy17s9hCfZz35ofcLw
-         iXDaBebaQ1ZugecbKp5KbDeQgDM2mzJYriXKFp5uSAMd877kOQZfEaqbd0PfijeDUYVo
-         yAhy8dTUufd+sNPTHh136m65KPexJoqUx36Qcg1WKUQcwtdY/TlVaVtIzGRTFKzTA+YQ
-         GvhA==
-X-Gm-Message-State: AOAM530ppnXgkC70KutvqM1vGbQb2dUSs3d2EhEvOebdaHpq4BzSeZNc
-        akwwd7D+XhCLK20u0qMfM/jZHf38UdfgZNvn1Zkm7A13IDry/g==
-X-Google-Smtp-Source: ABdhPJyJlqSq579IOa444NxezIZu364d2xx7ujWPNs4VT85tSXATFc06+6N4r0b0i61MGpILYb+/3O7BZrS2iFnxxVY=
-X-Received: by 2002:a17:90a:7e8a:: with SMTP id j10mr8582758pjl.13.1642134697015;
- Thu, 13 Jan 2022 20:31:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20211124214418.GA1094@raspberrypi> <CAOoBcBWHi+UJENsfNzG2NMAjBj0RjsKSWNDaQ+++F-uL0ubAYQ@mail.gmail.com>
- <f227bd950c3b7c060b4b581f5604fe4d9103e942.camel@linux.ibm.com>
-In-Reply-To: <f227bd950c3b7c060b4b581f5604fe4d9103e942.camel@linux.ibm.com>
-From:   Austin Kim <austindh.kim@gmail.com>
-Date:   Fri, 14 Jan 2022 13:31:25 +0900
-Message-ID: <CADLLry5kph-7RUE0FYYR87625mvBCOYJR93JWTZ7KWKUS-8FKA@mail.gmail.com>
-Subject: Re: [PATCH] ima: Fix trivial typos in the comments
+        Fri, 14 Jan 2022 05:48:10 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7622F61ECB;
+        Fri, 14 Jan 2022 10:48:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60AB1C36AE5;
+        Fri, 14 Jan 2022 10:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642157289;
+        bh=TApa6JrayTLVCShvMuJzFjYmVGlMvgGx/wT7OwEzGls=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=po7LDfN8U5dWLgfhZO/uqFoiBLi/SZUZB02/hDfocTG45yGuGfYFJ2Cd620vVZC/3
+         SA+pNqakjTsKCtIXiXzI7EtPHoooOf+8KQf/2KyYslpDWsV8ZrXbD4fupwOd0T9hju
+         jR6sQ0Iq90qjegK/d6STXhI3XjBtnz4GofurAeJJt59R+w6s3+YnmwDEHj4K1WlUXU
+         Plw0XW2IaucPT21QyV3Owzu8PgK08O06Uo08wt7Pj9EBqvVtj2LfxPwKsV9e/Ixf0M
+         sqXYXm6Z5RvLZ1x5WrvTPSpWOhYj2yBG6Y23nRCYXwIGfS24mvozoRTkdu/9KpVGR2
+         THeUCwvT69cbw==
+Date:   Fri, 14 Jan 2022 11:48:02 +0100
+From:   Christian Brauner <brauner@kernel.org>
 To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Austin Kim <austinkernel.kim@gmail.com>, dmitry.kasatkin@gmail.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v8 03/19] ima: Move policy related variables into
+ ima_namespace
+Message-ID: <20220114104802.sap3rwuhtkui5ytr@wittgenstein>
+References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
+ <20220104170416.1923685-4-stefanb@linux.vnet.ibm.com>
+ <150cb51f95c3fe54e94edc5b96b2e15edb3bf399.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <150cb51f95c3fe54e94edc5b96b2e15edb3bf399.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-2022=EB=85=84 1=EC=9B=94 14=EC=9D=BC (=EA=B8=88) =EC=98=A4=EC=A0=84 10:51, =
-Mimi Zohar <zohar@linux.ibm.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Hi Austin,
->
-> On Wed, 2022-01-12 at 17:46 +0900, Austin Kim wrote:
->
-> > >
-> > > There are a few minor typos in the comments. Fix these.
-> > >
-> > > Signed-off-by: Austin Kim <austindh.kim@gmail.com>
->
-> It would be really nice if checkpatch.pl would catch spelling mistakes
-> before the patch was upstreamed.
+On Thu, Jan 13, 2022 at 03:26:51PM -0500, Mimi Zohar wrote:
+> Hi Stefan,
+> 
+> On Tue, 2022-01-04 at 12:04 -0500, Stefan Berger wrote:
+> > From: Stefan Berger <stefanb@linux.ibm.com>
+> > 
+> > Move variables related to the IMA policy into the ima_namespace. This way
+> > the IMA policy of an IMA namespace can be set and displayed using a
+> > front-end like SecurityFS.
+> > 
+> > Implement ima_ns_from_file() to get the IMA namespace via the user
+> > namespace of the SecurityFS superblock that a file belongs to.
+> > 
+> > To get the current ima_namespace use get_current_ns() when a function
+> > that is related to a policy rule is called. In other cases where functions
+> > are called due file attribute modifications, use init_ima_ns, since these
+> > functions are related to IMA appraisal and changes to file attributes are
+> > only relevant to the init_ima_ns until IMA namespaces also support IMA
+> > appraisal. In ima_file_free() use init_ima_ns since in this case flags
+> > related to file measurements may be affected, which is not supported in
+> > IMA namespaces, yet.
+> > 
+> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> Please split this patch into "ima: pass through ima namespace", or some
+> other name,  and "ima: Move policy related variables into
+> ima_namespace".  The other option is to combine the "pass through ima
+> namespace" with the 2nd patch, like Christian's example.
 
-Thanks for feedback.
-Let me make sure to upstream patch after executing
-'./scripts/checkpatch.pl --strict' command.
+I was just about to comment something similar on 02/19.
 
-BR,
-Austin Kim
-
->
-> thanks,
->
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->
+I would also not introduce get_current_ns(). It's simply more honest and
+if &init_ima_ns is used everywhere until multiple namespaces can
+actually exists.
