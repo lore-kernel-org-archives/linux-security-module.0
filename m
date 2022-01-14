@@ -2,56 +2,79 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BAFC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jan 2022 02:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB40C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jan 2022 04:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236051AbiANCNi (ORCPT
+        id S239157AbiANEYq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jan 2022 21:13:38 -0500
-Received: from relay.a.hostedemail.com ([64.99.140.24]:43260 "EHLO
-        relay.hostedemail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229881AbiANCNh (ORCPT
+        Thu, 13 Jan 2022 23:24:46 -0500
+Received: from out162-62-57-87.mail.qq.com ([162.62.57.87]:53815 "EHLO
+        out162-62-57-87.mail.qq.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239155AbiANEYq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jan 2022 21:13:37 -0500
-X-Greylist: delayed 511 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Jan 2022 21:13:37 EST
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay12.hostedemail.com (Postfix) with ESMTP id C389012153F;
-        Fri, 14 Jan 2022 02:05:04 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf05.hostedemail.com (Postfix) with ESMTPA id BF61F20018;
-        Fri, 14 Jan 2022 02:04:42 +0000 (UTC)
-Message-ID: <d9478a99032ea7182e0cd30ea822c1993ac2cd68.camel@perches.com>
-Subject: Re: [PATCH] ima: Fix trivial typos in the comments
-From:   Joe Perches <joe@perches.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Austin Kim <austinkernel.kim@gmail.com>,
-        Austin Kim <austindh.kim@gmail.com>
-Cc:     dmitry.kasatkin@gmail.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Thu, 13 Jan 2022 18:05:02 -0800
-In-Reply-To: <f227bd950c3b7c060b4b581f5604fe4d9103e942.camel@linux.ibm.com>
-References: <20211124214418.GA1094@raspberrypi>
-         <CAOoBcBWHi+UJENsfNzG2NMAjBj0RjsKSWNDaQ+++F-uL0ubAYQ@mail.gmail.com>
-         <f227bd950c3b7c060b4b581f5604fe4d9103e942.camel@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1ubuntu2 
+        Thu, 13 Jan 2022 23:24:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1642134280;
+        bh=Urrkg6gwwF34U0YTNyiFQ168PUplzRETtVsXA1AEVUY=;
+        h=From:To:Cc:Subject:Date;
+        b=PSopq1s2afJg2RbousGGyHogPPAl475J4/LyUu8/mVURJm09TWFbrQJP+PRCbSUNy
+         d5nF/Hu0ADZmILxrW0bJCgdSXglJyIn2uxhdLjaPMynrDN6OWdBHZUL44DkvklRoLL
+         ECGivSrLjoNyJUhjZWmb2DCpLbUYuE0WNTzeaF6A=
+Received: from localhost.localdomain ([218.197.153.188])
+        by newxmesmtplogicsvrszc7.qq.com (NewEsmtp) with SMTP
+        id 624AE4DF; Fri, 14 Jan 2022 12:24:36 +0800
+X-QQ-mid: xmsmtpt1642134276thc8y7i40
+Message-ID: <tencent_A49992D0BF00081EB37A6E21070E45563806@qq.com>
+X-QQ-XMAILINFO: MdDuF0zFTqpBTE1h0UcV7El2iSZ4hsOsUyhv1NB7KJLEDYXIncMeLXrV79mQAV
+         Cv9Ur2fKKv30U5O8R3Qh787ksB8YCZAounoOQuHXspH5OkgK7FginIIqRxRR5EPRh4q5mc7oLFgG
+         4F9SiAuU7iZe2H7CZcxa3h3naAO1m42DxbMOrm1fOTMaI/jComTJejrViXSVuv6bJvcQUERcbGtl
+         K/v+LyXB+svOnxTLue1bYkuhyL5yfmQ0Qb0KU4RgL1bHIeFeu+dx673sYyoQm7pXY9BZSUDHVOTI
+         ly/vtMl/aPthF62lZK0kcLMfMNjxSfRInMsOV8iNdM7Zs9ItIcNz9xFOWSP05qt+dtQl6U8sGiOt
+         iYU2SDNxVTCI/Gsurn//HjV3KPH31cgv/Db0DadH23xYNqmznYaK7JtNe7irJP9e7BmkpshU74bH
+         s8Bxywjut3dVO6Jc314bZwswwFXWt9b46/IaAxEbn9iyajzwEGvyU3RsfjFjiTO7SkXkJU2JjiLB
+         ExpnExs4HlnzfbeA8JHUJM8R86Q/vdJYJLf3eh8GumWHFsPJOj68jmVKcxQTxoTdj7fj1q1XNusE
+         MxXBbr9gZPZNhAjSECFaNjry6wMGbwGYl8hLGZGbLvsHqROArV5l0RTzas/ebdTjbDnjKC8DV0Ca
+         ++Q/EmtLsXFHUjG9W1GnQJTa0h8m4UWrk4oKERNk6XUIFfWs1LKVl07FSiItgfGIpYx2iqeykCVH
+         k+JPUvJrClgNh8+5Y/6wk/5aGHIpNXowlFYmwzC5OYWBeU5xP5MGXWt8qgfEETKc/KxEVvGnOE3c
+         iYAILGS4Pl22PNAEMa9PgtXH4lV2vkZhqjFSa8rBEwV7VaQRnXNLU7PrZQeWw4HsoMcREmwynpXn
+         b6q0dbp5VupVFos6RHWozjBFJJnlYcOWaVEgG+v5A3xYKSCB3qbhw=
+From:   xkernel.wang@foxmail.com
+To:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Xiaoke Wang <xkernel.wang@foxmail.com>
+Subject: [PATCHv2] integrity: check the return value of audit_log_start()
+Date:   Fri, 14 Jan 2022 12:23:44 +0800
+X-OQ-MSGID: <20220114042344.1693-1-xkernel.wang@foxmail.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 1ka4usra3boszhqifi6t18qjx54qrequ
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: BF61F20018
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18qWtYOF/yky0uCpE6wZO8pf7wOz2bvaw4=
-X-HE-Tag: 1642125882-296102
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-01-13 at 20:51 -0500, Mimi Zohar wrote:
-> On Wed, 2022-01-12 at 17:46 +0900, Austin Kim wrote:
-> > > There are a few minor typos in the comments. Fix these.
-> It would be really nice if checkpatch.pl would catch spelling mistakes
-> before the patch was upstreamed.
+From: Xiaoke Wang <xkernel.wang@foxmail.com>
 
-Try ./scripts/checkpatch.pl --strict
+audit_log_start() returns audit_buffer pointer on success or NULL on
+error, so it is better to check the return value of it.
 
+Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
+---
+Changelogs: simplify the patch. 
+Note: Take the suggestion from Paul Moore.
+ security/integrity/integrity_audit.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
+index 2922005..0ec5e4c 100644
+--- a/security/integrity/integrity_audit.c
++++ b/security/integrity/integrity_audit.c
+@@ -45,6 +45,8 @@ void integrity_audit_message(int audit_msgno, struct inode *inode,
+ 		return;
+ 
+ 	ab = audit_log_start(audit_context(), GFP_KERNEL, audit_msgno);
++	if (!ab)
++		return;
+ 	audit_log_format(ab, "pid=%d uid=%u auid=%u ses=%u",
+ 			 task_pid_nr(current),
+ 			 from_kuid(&init_user_ns, current_uid()),
+-- 
