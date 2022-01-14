@@ -2,157 +2,161 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34926C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jan 2022 00:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C840AC433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jan 2022 01:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238455AbiANAjN (ORCPT
+        id S238653AbiANBWT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Jan 2022 19:39:13 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:41346 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233782AbiANAjN (ORCPT
+        Thu, 13 Jan 2022 20:22:19 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:30277 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238619AbiANBWS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Jan 2022 19:39:13 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id EC79C69C; Thu, 13 Jan 2022 18:39:10 -0600 (CST)
-Date:   Thu, 13 Jan 2022 18:39:10 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Francis Laniel <flaniel@linux.microsoft.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 1/2] capability: Add cap_strings.
-Message-ID: <20220114003910.GA19319@mail.hallyn.com>
-References: <20211227205500.214777-1-flaniel@linux.microsoft.com>
- <20211227205500.214777-2-flaniel@linux.microsoft.com>
- <289c4134-1ac4-48fc-58ec-cab0bcb63268@schaufler-ca.com>
- <18436829.ogB85pbuhf@machine>
+        Thu, 13 Jan 2022 20:22:18 -0500
+Received: from dggeme762-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JZk676NnZzbjtp;
+        Fri, 14 Jan 2022 09:21:35 +0800 (CST)
+Received: from [10.67.110.176] (10.67.110.176) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.20; Fri, 14 Jan 2022 09:22:16 +0800
+Subject: Re: Flush the hold queue fall into an infinite loop.
+To:     Paul Moore <paul@paul-moore.com>
+CC:     <linux-audit@redhat.com>, Xiujianfeng <xiujianfeng@huawei.com>,
+        wangweiyang <wangweiyang2@huawei.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <96f4f1cb-0e7d-6682-ce33-f7f1314cba83@huawei.com>
+ <8b487a19-d121-5fee-eda5-0aee9340f453@huawei.com>
+ <CAHC9VhTGTmNzFURkAPm2LW3qL+ijBi=UmXqZBwEWeusC46+8yg@mail.gmail.com>
+From:   cuigaosheng <cuigaosheng1@huawei.com>
+Message-ID: <c0f9b9b3-69a3-1b31-5115-51dd580e00ca@huawei.com>
+Date:   Fri, 14 Jan 2022 09:22:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAHC9VhTGTmNzFURkAPm2LW3qL+ijBi=UmXqZBwEWeusC46+8yg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <18436829.ogB85pbuhf@machine>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.67.110.176]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 28, 2021 at 02:27:56PM +0100, Francis Laniel wrote:
-> Hi.
-> 
-> 
-> Le lundi 27 d�cembre 2021, 23:26:29 CET Casey Schaufler a �crit :
-> > On 12/27/2021 12:54 PM, Francis Laniel wrote:
-> > > This array contains the capability names for the given capabilitiy.
-> > > For example, index CAP_BPF contains "CAP_BPF".
-> > > 
-> > > Signed-off-by: Francis Laniel <flaniel@linux.microsoft.com>
-> > > ---
-> > > 
-> > >   include/uapi/linux/capability.h |  1 +
-> > >   kernel/capability.c             | 45 +++++++++++++++++++++++++++++++++
-> > >   2 files changed, 46 insertions(+)
-> > > 
-> > > diff --git a/include/uapi/linux/capability.h
-> > > b/include/uapi/linux/capability.h index 463d1ba2232a..9646654d5111 100644
-> > > --- a/include/uapi/linux/capability.h
-> > > +++ b/include/uapi/linux/capability.h
-> > > @@ -428,5 +428,6 @@ struct vfs_ns_cap_data {
-> > > 
-> > >   #define CAP_TO_INDEX(x)     ((x) >> 5)        /* 1 << 5 == bits in __u32
-> > >   */
-> > >   #define CAP_TO_MASK(x)      (1 << ((x) & 31)) /* mask for indexed __u32
-> > >   */
-> > > 
-> > > +extern const char *cap_strings[];
-> > > 
-> > >   #endif /* _UAPI_LINUX_CAPABILITY_H */
-> > > 
-> > > diff --git a/kernel/capability.c b/kernel/capability.c
-> > > index 46a361dde042..5a2e71dcd87b 100644
-> > > --- a/kernel/capability.c
-> > > +++ b/kernel/capability.c
-> > > @@ -15,6 +15,7 @@
-> > > 
-> > >   #include <linux/mm.h>
-> > >   #include <linux/export.h>
-> > >   #include <linux/security.h>
-> > > 
-> > > +#include <linux/stringify.h>
-> > > 
-> > >   #include <linux/syscalls.h>
-> > >   #include <linux/pid_namespace.h>
-> > >   #include <linux/user_namespace.h>
-> > > 
-> > > @@ -27,6 +28,50 @@
-> > > 
-> > >   const kernel_cap_t __cap_empty_set = CAP_EMPTY_SET;
-> > >   EXPORT_SYMBOL(__cap_empty_set);
-> > > 
-> > > +const char *cap_strings[] = {
-> > > +	[CAP_CHOWN] = __stringify_1(CAP_CHOWN),
-> > 
-> > I may just be old and slow, but why is this better than
-> > 
-> > 	[CAP_CHOWN] = "CAP_CHOWN",
-> 
-> Good catch, thank you for it, I just replaced the __stringify_1() by quotes.
-> I thought of using __stringify_() because at first I thought of adding a new 
-> macro which would both define a new capability as well as adding to this array.
+I want to stop droping the logs into audit_hold_queue when the auditd is abnormal.it
+seems that this modification goes against the design intent of audit_hold_queue. its
+effect is similar to removing the audit_hold_queue.
 
-I think you are saying you have a new version of the patch where you do
-what Casey suggests, but I don't see it.  Have you sent an updated patch,
-or am I misunderstanding?
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 2a38cbaf3ddb..a8091b1a6587 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -748,6 +748,7 @@ static int kauditd_send_queue(struct sock *sk, u32 
+portid,
+                                         (*err_hook)(skb);
+                                 if (rc == -EAGAIN)
+                                         rc = 0;
++                               audit_default = AUDIT_OFF;
+                                 /* continue to drain the queue */
+                                 continue;
+                         } else
+@@ -755,6 +756,7 @@ static int kauditd_send_queue(struct sock *sk, u32 
+portid,
+                 } else {
+                         /* skb sent - drop the extra reference and 
+continue */
+                         consume_skb(skb);
++                       audit_default = audit_enabled;
+                         failed = 0;
+                 }
+         }
 
-> But I think it is better to with this simple way rather than doing complicated 
-> stuff.
-> 
-> > > +	[CAP_DAC_OVERRIDE] = __stringify_1(CAP_DAC_OVERRIDE),
-> > > +	[CAP_DAC_READ_SEARCH] = __stringify_1(CAP_DAC_READ_SEARCH),
-> > > +	[CAP_FOWNER] = __stringify_1(CAP_FOWNER),
-> > > +	[CAP_FSETID] = __stringify_1(CAP_FSETID),
-> > > +	[CAP_KILL] = __stringify_1(CAP_KILL),
-> > > +	[CAP_SETGID] = __stringify_1(CAP_SETGID),
-> > > +	[CAP_SETUID] = __stringify_1(CAP_SETUID),
-> > > +	[CAP_SETPCAP] = __stringify_1(CAP_SETPCAP),
-> > > +	[CAP_LINUX_IMMUTABLE] = __stringify_1(CAP_LINUX_IMMUTABLE),
-> > > +	[CAP_NET_BIND_SERVICE] = __stringify_1(CAP_NET_BIND_SERVICE),
-> > > +	[CAP_NET_BROADCAST] = __stringify_1(CAP_NET_BROADCAST),
-> > > +	[CAP_NET_ADMIN] = __stringify_1(CAP_NET_ADMIN),
-> > > +	[CAP_NET_RAW] = __stringify_1(CAP_NET_RAW),
-> > > +	[CAP_IPC_LOCK] = __stringify_1(CAP_IPC_LOCK),
-> > > +	[CAP_IPC_OWNER] = __stringify_1(CAP_IPC_OWNER),
-> > > +	[CAP_SYS_MODULE] = __stringify_1(CAP_SYS_MODULE),
-> > > +	[CAP_SYS_RAWIO] = __stringify_1(CAP_SYS_RAWIO),
-> > > +	[CAP_SYS_CHROOT] = __stringify_1(CAP_SYS_CHROOT),
-> > > +	[CAP_SYS_PTRACE] = __stringify_1(CAP_SYS_PTRACE),
-> > > +	[CAP_SYS_PACCT] = __stringify_1(CAP_SYS_PACCT),
-> > > +	[CAP_SYS_ADMIN] = __stringify_1(CAP_SYS_ADMIN),
-> > > +	[CAP_SYS_BOOT] = __stringify_1(CAP_SYS_BOOT),
-> > > +	[CAP_SYS_NICE] = __stringify_1(CAP_SYS_NICE),
-> > > +	[CAP_SYS_RESOURCE] = __stringify_1(CAP_SYS_RESOURCE),
-> > > +	[CAP_SYS_TIME] = __stringify_1(CAP_SYS_TIME),
-> > > +	[CAP_SYS_TTY_CONFIG] = __stringify_1(CAP_SYS_TTY_CONFIG),
-> > > +	[CAP_MKNOD] = __stringify_1(CAP_MKNOD),
-> > > +	[CAP_LEASE] = __stringify_1(CAP_LEASE),
-> > > +	[CAP_AUDIT_WRITE] = __stringify_1(CAP_AUDIT_WRITE),
-> > > +	[CAP_AUDIT_CONTROL] = __stringify_1(CAP_AUDIT_CONTROL),
-> > > +	[CAP_SETFCAP] = __stringify_1(CAP_SETFCAP),
-> > > +	[CAP_MAC_OVERRIDE] = __stringify_1(CAP_MAC_OVERRIDE),
-> > > +	[CAP_MAC_ADMIN] = __stringify_1(CAP_MAC_ADMIN),
-> > > +	[CAP_SYSLOG] = __stringify_1(CAP_SYSLOG),
-> > > +	[CAP_WAKE_ALARM] = __stringify_1(CAP_WAKE_ALARM),
-> > > +	[CAP_BLOCK_SUSPEND] = __stringify_1(CAP_BLOCK_SUSPEND),
-> > > +	[CAP_AUDIT_READ] = __stringify_1(CAP_AUDIT_READ),
-> > > +	[CAP_PERFMON] = __stringify_1(CAP_PERFMON),
-> > > +	[CAP_BPF] = __stringify_1(CAP_BPF),
-> > > +	[CAP_CHECKPOINT_RESTORE] = __stringify_1(CAP_CHECKPOINT_RESTORE),
-> > > +};
-> > > +
-> > > 
-> > >   int file_caps_enabled = 1;
-> > >   
-> > >   static int __init file_caps_disable(char *str)
-> 
-> 
-> 
+在 2022/1/13 23:22, Paul Moore 写道:
+> On Thu, Jan 13, 2022 at 6:57 AM cuigaosheng <cuigaosheng1@huawei.com> wrote:
+>> When we add "audit=1" to the cmdline, kauditd will take up 100%
+>> cpu resource.As follows:
+>>
+>> configurations:
+>> auditctl -b 64
+>> auditctl --backlog_wait_time 60000
+>> auditctl -r 0
+>> auditctl -w /root/aaa  -p wrx
+>> shell scripts：
+>> #!/bin/bash
+>> i=0
+>> while [ $i -le 66 ]
+>> do
+>>     touch /root/aaa
+>>     let i++
+>> done
+>> mandatory conditions:
+>>
+>> add "audit=1" to the cmdline, and kill -19 pid_number(for /sbin/auditd).
+>>
+>>   As long as we keep the audit_hold_queue non-empty, flush the hold queue will fall into
+>>   an infinite loop.
+>>
+>> 713 static int kauditd_send_queue(struct sock *sk, u32 portid,
+>>   714                               struct sk_buff_head *queue,
+>>   715                               unsigned int retry_limit,
+>>   716                               void (*skb_hook)(struct sk_buff *skb),
+>>   717                               void (*err_hook)(struct sk_buff *skb))
+>>   718 {
+>>   719         int rc = 0;
+>>   720         struct sk_buff *skb;
+>>   721         unsigned int failed = 0;
+>>   722
+>>   723         /* NOTE: kauditd_thread takes care of all our locking, we just use
+>>   724          *       the netlink info passed to us (e.g. sk and portid) */
+>>   725
+>>   726         while ((skb = skb_dequeue(queue))) {
+>>   727                 /* call the skb_hook for each skb we touch */
+>>   728                 if (skb_hook)
+>>   729                         (*skb_hook)(skb);
+>>   730
+>>   731                 /* can we send to anyone via unicast? */
+>>   732                 if (!sk) {
+>>   733                         if (err_hook)
+>>   734                                 (*err_hook)(skb);
+>>   735                         continue;
+>>   736                 }
+>>   737
+>>   738 retry:
+>>   739                 /* grab an extra skb reference in case of error */
+>>   740                 skb_get(skb);
+>>   741                 rc = netlink_unicast(sk, skb, portid, 0);
+>>   742                 if (rc < 0) {
+>>   743                         /* send failed - try a few times unless fatal error */
+>>   744                         if (++failed >= retry_limit ||
+>>   745                             rc == -ECONNREFUSED || rc == -EPERM) {
+>>   746                                 sk = NULL;
+>>   747                                 if (err_hook)
+>>   748                                         (*err_hook)(skb);
+>>   749                                 if (rc == -EAGAIN)
+>>   750                                         rc = 0;
+>>   751                                 /* continue to drain the queue */
+>>   752                                 continue;
+>>   753                         } else
+>>   754                                 goto retry;
+>>   755                 } else {
+>>   756                         /* skb sent - drop the extra reference and continue */
+>>   757                         consume_skb(skb);
+>>   758                         failed = 0;
+>>   759                 }
+>>   760         }
+>>   761
+>>   762         return (rc >= 0 ? 0 : rc);
+>>   763 }
+>>
+>> When kauditd attempt to flush the hold queue, the queue parameter is &audit_hold_queue,
+>> and if netlink_unicast(line 741 ) return -EAGAIN, sk will be NULL(line 746), so err_hook(kauditd_rehold_skb)
+>> will be call. Then continue, skb_dequeue(line 726) and err_hook(kauditd_rehold_skb,line 733) will
+>> fall into an infinite loop.
+>> I don't really understand the value of audit_hold_queue, can we remove it, or stop droping the logs
+>> into kauditd_rehold_skb when the auditd is abnormal?
+> Thanks Gaosheng for the bug report, I'm able to reproduce this and I'm
+> looking into it now.  I'll report back when I have a better idea of
+> the problem and a potential fix.
+>
