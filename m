@@ -2,95 +2,210 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC37C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jan 2022 22:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B0AC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Jan 2022 22:35:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbiANWNR (ORCPT
+        id S230474AbiANWfc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Jan 2022 17:13:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44084 "EHLO
+        Fri, 14 Jan 2022 17:35:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230314AbiANWNP (ORCPT
+        with ESMTP id S230092AbiANWfc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Jan 2022 17:13:15 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44245C061574
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Jan 2022 14:13:15 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id 30so39039812edv.3
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Jan 2022 14:13:15 -0800 (PST)
+        Fri, 14 Jan 2022 17:35:32 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 556B9C061574
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Jan 2022 14:35:31 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id o6so39159277edc.4
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Jan 2022 14:35:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=akNBIPEkQByIFfu1P2peeZN+JzE2WGUVrx0nJKmv+Ig=;
-        b=GSAsqvuvZ11joKI+dRdRJOuuVW/GJ5oZzAyrppAVppJB8/otiBguI1w2lk9hHNXqnI
-         Ah2KYY6LjOawBgQgGE7+KdjMHlAl54JHjYq3LkyXXdtAFjOKz1mvf6BzmmkH3bJ3ITRx
-         BoAPd/vlyz23S4tdpthx6JmSXvk85dXhFPneTR68UnNNct00yEIDFQ7BKo5JeCGAFsTf
-         kSfwAWc+cdnWmPAUKROQqfPdMslbpdSaLjacJqBTP+eYHZGM1v0OM3x0Yxp48pMigh0+
-         RFP+MRBcL7tHV7qoZI8yQcfPZtmOb4cFGQM7UPaDISXkdWalKSpU0eAVdplz/50FrSXS
-         esDQ==
+         :cc:content-transfer-encoding;
+        bh=SkNpdM6eZXXVcJVQ11NWOZFwVrMmc4tVgm0vVCXMsxQ=;
+        b=EYsmK1W8Io0FJyX9tdKZBPvMidx0Rkrh04CvcIo2kLwyFF6JDItVeLXuGEtyu4Zuec
+         W21Rgff1lgsJIBTNEDBFbLEd5u2867bSZ7hAAqKs3JUSFvW5OfdsEv+GPhxWEyFzNrIe
+         eobV42h4uRes/TAbr/mtTfylKWSQNQ6EBRnp0awgChmLa6s2tx5NpqjT5Rr/NFOzBLOC
+         1WMqyVeDPSHRFmjcvZ+rcx1+if45EqfkR1dPCYs35Vt1j7dLCKuTV+m3IupIROtr92Su
+         1YnJEOyGqePtgtLu6jH6D5HfvKq+StEczp1R9TUyUJykUZVksZb5Cv8aSELRnvnPQS/j
+         6X/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=akNBIPEkQByIFfu1P2peeZN+JzE2WGUVrx0nJKmv+Ig=;
-        b=h447XV5YTycUMIhJoq+Ggjb5WyuQMk8XEZcgBb2gJ24KG1CsqhR6dOC9Scj4ggGP+M
-         F3XYBcmGYE/1L0sU4fr3kOVJxuas1yKJuiIz82tp6QBKWAF/BcBrI4MLJy708LjMpdD/
-         +pJibScAFK8/QqmQ2qlWb+ghqXyimsRq7GWXO7H4sfAuhW1+9/iKiP4LD9zWoKcw0wwH
-         cxkUnHI8wjXgwF+CwjM5eHzSAKIRq5pJbIlExbAZbDKfiRtLvBIYRTQ+xw8a5wO6YcIW
-         vdfDb1aBjOjaNMAch/DcNIPKylkZ/hlrIO20lCONYskm7p2ogqX8qwCB+/5PeaMKe3Pw
-         kFPQ==
-X-Gm-Message-State: AOAM531x9Jj6KVYFlNG///fmr8Kb24AAdzc35QCaDBgGtPwOX3ENt3IF
-        IRDsY5kHUupRwR1CFFGBGd1ksXiPweHi0C3cRtdR
-X-Google-Smtp-Source: ABdhPJycdiADIHXzwCC4XbXDGCbSn1ShsYMkBqzWdZbiKVObYX6mlneZ3AzzwH9MsKG0FKNcfDxCMHxteeDPm3BK6vw=
-X-Received: by 2002:a05:6402:3551:: with SMTP id f17mr10816345edd.331.1642198393740;
- Fri, 14 Jan 2022 14:13:13 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SkNpdM6eZXXVcJVQ11NWOZFwVrMmc4tVgm0vVCXMsxQ=;
+        b=AeuMan9nL9rkj9P/iX4tJYD96ilxvF8WB8LB0HL59cPF0sdXcedy/e0zyrFengnXYi
+         ptpHK4adn57RgO2GxXM9bTk0l3KOnjo1jEii93vSE/uYylwxWIi0nJ+bAzuwaxViLNp9
+         O9Iz3WsW4BC/Q+NfZ9XGI5vh2Z8dSDfgx4KzUNilxDOmvTKO1BkV5jtbVJ5CgceacWb7
+         GsIlS2l9Z8SZ0kcB3DyhFvVKhbgSvshIQsQduvxMENY+zSUlPUEILXDWdeNlGakx6hrR
+         qyyttFw4NBTvtD26jMKWcliQ/oMWVsBDOnqXrJLoTEeoN0kTgL2AhOO75tqzaOewhCe3
+         p2PA==
+X-Gm-Message-State: AOAM532KOHzI4NNnUy0uA6XzcjbpFTkJz3FBkHM9z8adJGMbvY6jLmEs
+        N+NDTnSCoaT7IPbbrBsCRUMqqot8fMwetLs3UdQg+mCRJg==
+X-Google-Smtp-Source: ABdhPJzPoytqdXbJteXXJAmYxB6IAgK+i9VGw6/4V0dSsyNdXqdE2nhD8yJFIVugl0Eb/KHOU9I0xJdwmdkxqZWszC4=
+X-Received: by 2002:a05:6402:1003:: with SMTP id c3mr10879904edu.405.1642199729820;
+ Fri, 14 Jan 2022 14:35:29 -0800 (PST)
 MIME-Version: 1.0
-References: <tencent_A49992D0BF00081EB37A6E21070E45563806@qq.com>
-In-Reply-To: <tencent_A49992D0BF00081EB37A6E21070E45563806@qq.com>
+References: <96f4f1cb-0e7d-6682-ce33-f7f1314cba83@huawei.com>
+ <8b487a19-d121-5fee-eda5-0aee9340f453@huawei.com> <CAHC9VhTGTmNzFURkAPm2LW3qL+ijBi=UmXqZBwEWeusC46+8yg@mail.gmail.com>
+ <c0f9b9b3-69a3-1b31-5115-51dd580e00ca@huawei.com>
+In-Reply-To: <c0f9b9b3-69a3-1b31-5115-51dd580e00ca@huawei.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 14 Jan 2022 17:13:02 -0500
-Message-ID: <CAHC9VhQDEG7hOwAzTCkaiO7r7sgaV2B08BVV6V3XMVLZztcS+g@mail.gmail.com>
-Subject: Re: [PATCHv2] integrity: check the return value of audit_log_start()
-To:     xkernel.wang@foxmail.com
-Cc:     jmorris@namei.org, serge@hallyn.com,
+Date:   Fri, 14 Jan 2022 17:35:18 -0500
+Message-ID: <CAHC9VhQgX070pOXZk_PUsaWGZpPdqVpEZvfYBsE2dnRYrbWsTw@mail.gmail.com>
+Subject: Re: Flush the hold queue fall into an infinite loop.
+To:     cuigaosheng <cuigaosheng1@huawei.com>
+Cc:     linux-audit@redhat.com, Xiujianfeng <xiujianfeng@huawei.com>,
+        wangweiyang <wangweiyang2@huawei.com>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 13, 2022 at 11:24 PM <xkernel.wang@foxmail.com> wrote:
+On Thu, Jan 13, 2022 at 8:22 PM cuigaosheng <cuigaosheng1@huawei.com> wrote=
+:
 >
-> From: Xiaoke Wang <xkernel.wang@foxmail.com>
+> I want to stop droping the logs into audit_hold_queue when the auditd is =
+abnormal.it
+> seems that this modification goes against the design intent of audit_hold=
+_queue. its
+> effect is similar to removing the audit_hold_queue.
 >
-> audit_log_start() returns audit_buffer pointer on success or NULL on
-> error, so it is better to check the return value of it.
->
-> Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 2a38cbaf3ddb..a8091b1a6587 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -748,6 +748,7 @@ static int kauditd_send_queue(struct sock *sk, u32
+> portid,
+>                                          (*err_hook)(skb);
+>                                  if (rc =3D=3D -EAGAIN)
+>                                          rc =3D 0;
+> +                               audit_default =3D AUDIT_OFF;
+>                                  /* continue to drain the queue */
+>                                  continue;
+>                          } else
+> @@ -755,6 +756,7 @@ static int kauditd_send_queue(struct sock *sk, u32
+> portid,
+>                  } else {
+>                          /* skb sent - drop the extra reference and
+> continue */
+>                          consume_skb(skb);
+> +                       audit_default =3D audit_enabled;
+>                          failed =3D 0;
+>                  }
+>          }
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+We can't toggle the audit_default setting like this, that isn't
+acceptable upstream.  I believe I have a fix, but I need to finish the
+testing before I can post it for further review.
 
-> ---
-> Changelogs: simplify the patch.
-> Note: Take the suggestion from Paul Moore.
->  security/integrity/integrity_audit.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
-> index 2922005..0ec5e4c 100644
-> --- a/security/integrity/integrity_audit.c
-> +++ b/security/integrity/integrity_audit.c
-> @@ -45,6 +45,8 @@ void integrity_audit_message(int audit_msgno, struct inode *inode,
->                 return;
->
->         ab = audit_log_start(audit_context(), GFP_KERNEL, audit_msgno);
-> +       if (!ab)
-> +               return;
->         audit_log_format(ab, "pid=%d uid=%u auid=%u ses=%u",
->                          task_pid_nr(current),
->                          from_kuid(&init_user_ns, current_uid()),
-> --
+> =E5=9C=A8 2022/1/13 23:22, Paul Moore =E5=86=99=E9=81=93:
+> > On Thu, Jan 13, 2022 at 6:57 AM cuigaosheng <cuigaosheng1@huawei.com> w=
+rote:
+> >> When we add "audit=3D1" to the cmdline, kauditd will take up 100%
+> >> cpu resource.As follows:
+> >>
+> >> configurations:
+> >> auditctl -b 64
+> >> auditctl --backlog_wait_time 60000
+> >> auditctl -r 0
+> >> auditctl -w /root/aaa  -p wrx
+> >> shell scripts=EF=BC=9A
+> >> #!/bin/bash
+> >> i=3D0
+> >> while [ $i -le 66 ]
+> >> do
+> >>     touch /root/aaa
+> >>     let i++
+> >> done
+> >> mandatory conditions:
+> >>
+> >> add "audit=3D1" to the cmdline, and kill -19 pid_number(for /sbin/audi=
+td).
+> >>
+> >>   As long as we keep the audit_hold_queue non-empty, flush the hold qu=
+eue will fall into
+> >>   an infinite loop.
+> >>
+> >> 713 static int kauditd_send_queue(struct sock *sk, u32 portid,
+> >>   714                               struct sk_buff_head *queue,
+> >>   715                               unsigned int retry_limit,
+> >>   716                               void (*skb_hook)(struct sk_buff *s=
+kb),
+> >>   717                               void (*err_hook)(struct sk_buff *s=
+kb))
+> >>   718 {
+> >>   719         int rc =3D 0;
+> >>   720         struct sk_buff *skb;
+> >>   721         unsigned int failed =3D 0;
+> >>   722
+> >>   723         /* NOTE: kauditd_thread takes care of all our locking, w=
+e just use
+> >>   724          *       the netlink info passed to us (e.g. sk and port=
+id) */
+> >>   725
+> >>   726         while ((skb =3D skb_dequeue(queue))) {
+> >>   727                 /* call the skb_hook for each skb we touch */
+> >>   728                 if (skb_hook)
+> >>   729                         (*skb_hook)(skb);
+> >>   730
+> >>   731                 /* can we send to anyone via unicast? */
+> >>   732                 if (!sk) {
+> >>   733                         if (err_hook)
+> >>   734                                 (*err_hook)(skb);
+> >>   735                         continue;
+> >>   736                 }
+> >>   737
+> >>   738 retry:
+> >>   739                 /* grab an extra skb reference in case of error =
+*/
+> >>   740                 skb_get(skb);
+> >>   741                 rc =3D netlink_unicast(sk, skb, portid, 0);
+> >>   742                 if (rc < 0) {
+> >>   743                         /* send failed - try a few times unless =
+fatal error */
+> >>   744                         if (++failed >=3D retry_limit ||
+> >>   745                             rc =3D=3D -ECONNREFUSED || rc =3D=3D=
+ -EPERM) {
+> >>   746                                 sk =3D NULL;
+> >>   747                                 if (err_hook)
+> >>   748                                         (*err_hook)(skb);
+> >>   749                                 if (rc =3D=3D -EAGAIN)
+> >>   750                                         rc =3D 0;
+> >>   751                                 /* continue to drain the queue *=
+/
+> >>   752                                 continue;
+> >>   753                         } else
+> >>   754                                 goto retry;
+> >>   755                 } else {
+> >>   756                         /* skb sent - drop the extra reference a=
+nd continue */
+> >>   757                         consume_skb(skb);
+> >>   758                         failed =3D 0;
+> >>   759                 }
+> >>   760         }
+> >>   761
+> >>   762         return (rc >=3D 0 ? 0 : rc);
+> >>   763 }
+> >>
+> >> When kauditd attempt to flush the hold queue, the queue parameter is &=
+audit_hold_queue,
+> >> and if netlink_unicast(line 741 ) return -EAGAIN, sk will be NULL(line=
+ 746), so err_hook(kauditd_rehold_skb)
+> >> will be call. Then continue, skb_dequeue(line 726) and err_hook(kaudit=
+d_rehold_skb,line 733) will
+> >> fall into an infinite loop.
+> >> I don't really understand the value of audit_hold_queue, can we remove=
+ it, or stop droping the logs
+> >> into kauditd_rehold_skb when the auditd is abnormal?
+> > Thanks Gaosheng for the bug report, I'm able to reproduce this and I'm
+> > looking into it now.  I'll report back when I have a better idea of
+> > the problem and a potential fix.
+> >
 
--- 
+
+
+--=20
 paul moore
 www.paul-moore.com
