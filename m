@@ -2,81 +2,73 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF19BC433F5
-	for <linux-security-module@archiver.kernel.org>; Sat, 15 Jan 2022 01:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F91C433FE
+	for <linux-security-module@archiver.kernel.org>; Sat, 15 Jan 2022 02:10:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230009AbiAOBPF (ORCPT
+        id S232142AbiAOCKQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Jan 2022 20:15:05 -0500
-Received: from out162-62-57-87.mail.qq.com ([162.62.57.87]:43993 "EHLO
-        out162-62-57-87.mail.qq.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229775AbiAOBPE (ORCPT
+        Fri, 14 Jan 2022 21:10:16 -0500
+Received: from relay032.a.hostedemail.com ([64.99.140.32]:42970 "EHLO
+        relay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231258AbiAOCKQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Jan 2022 20:15:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1642209301;
-        bh=YNp/yvFhsx77bB3jyjujX9DWqCR9bbA1zfZ2FCw+jcg=;
-        h=From:To:Cc:Subject:Date;
-        b=Rrxdimic9PTTYFsvGOdZ080n/7GJRIAl0/FlKm3G90QAeiexThCBlh3rSeNanI+3m
-         QRNbA6sXEdE7tjqO4UMrDcAQNbxoJTYq6ym95WKtzkUq70W7xtjVJwXPQg8q8Bcr6Z
-         oN+vFmfONFcRQw401efhNGvIBRcfPEFMWQ7b4Qw4=
-Received: from localhost.localdomain ([218.197.153.188])
-        by newxmesmtplogicsvrsza9.qq.com (NewEsmtp) with SMTP
-        id 2E800642; Sat, 15 Jan 2022 09:11:40 +0800
-X-QQ-mid: xmsmtpt1642209100t1cufa6nb
-Message-ID: <tencent_46E8FF37413C984772AD382429DAC2719409@qq.com>
-X-QQ-XMAILINFO: MxUBm8splV+pt5nDB6L0MjDMuGjDdD35LsIelK25JsJDfx0j4TvaYukC+2hLfR
-         lic28361A6ZtdQfi0EGqCVjse8JL2ATl7AmlhZhXqoLIbu3TPKZJSMPugGMu39QQ5BYeKLZt75fo
-         lxZoFYdH6k84WQFuCwhdFDIuCntoIuWdPK9thCwaBaS8951YHRQoXu4wZPq/DLw92e2mDzOISb6Q
-         yTcExWgUrtTIZySiNsSktwB3U2eGC6HEhFlWkJ1fAz3mb5RWl22z6ppTR7hRl1tG+BQJq2QigQIW
-         GxMDRT9hDnONgXQ1vQhuJ1IRwI3eX4EzBr3lKUEnR7gz14WKRcDmOCL1nzyM+Bh79VetYA6lfb8T
-         gHvHd86FR4QpnhkqHgmqx5a7Mof06pnzlbdB91AWN9J6BQxBLPr5mWtGpYm9tIQMlOWuHvC6J+A5
-         5OwgwD8+AThjrKUcsrdiO6tgZQFv9BuIvQD1/EMcH4fzciTVjsHJ/g2cdDrk+/fDNWSWLiaKgJOn
-         psM0RYxf3gQoW0SPcJ2C8JIF7XYlBQuVrp9M8WFcocnDue3IppdekhIp/37YIMTPqaox/aNZevtU
-         aIkR4p4EgWHkh0/WdBLSVHxAZs9+Ium9Gc+zxxvFHnxwmA5JTyrXaUpZbqqgyPBL13HmBKKP5ssS
-         cy6dJa/4k/w1Xd9n7Nht2stcAO/CqhvTQrG2FjEnlOmRDO5hZxXX7zepBaULbLBKdsWrJRUyt/KI
-         Ygbfi61TPwVbil7cq/L4otiZOo05Fa7YMOedB5ikvq6lQFZJA3r8Qmm/YbWVqLtj5Y+pg7vCC/ul
-         o/dxxGTH0z2Ln3Qvln0tj1cdeEK/fG835TPn/onpn9J5Io3K8pf9/rqBtn6iWtEa0QLDBWToEobv
-         XZoMzgO+BiWuEismfUIQDfRApGlSl6/nQui4PMLob3pBMfBbcww9k=
-From:   xkernel.wang@foxmail.com
-To:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Xiaoke Wang <xkernel.wang@foxmail.com>
-Subject: [PATCH v3] integrity: check the return value of audit_log_start()
-Date:   Sat, 15 Jan 2022 09:11:11 +0800
-X-OQ-MSGID: <20220115011111.1900-1-xkernel.wang@foxmail.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+        Fri, 14 Jan 2022 21:10:16 -0500
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay01.hostedemail.com (Postfix) with ESMTP id 2A93C61E65;
+        Sat, 15 Jan 2022 02:10:14 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf09.hostedemail.com (Postfix) with ESMTPA id E9B4F2002F;
+        Sat, 15 Jan 2022 02:10:11 +0000 (UTC)
+Message-ID: <6598b080d13e4f08d92899857927200a83f1ddfe.camel@perches.com>
+Subject: Re: [PATCH] ima: Fix trivial typos in the comments
+From:   Joe Perches <joe@perches.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Austin Kim <austinkernel.kim@gmail.com>,
+        Austin Kim <austindh.kim@gmail.com>
+Cc:     dmitry.kasatkin@gmail.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 14 Jan 2022 18:10:11 -0800
+In-Reply-To: <dd5b09c0985f47fe164df06f8f2f387c0332c5ec.camel@linux.ibm.com>
+References: <20211124214418.GA1094@raspberrypi>
+         <CAOoBcBWHi+UJENsfNzG2NMAjBj0RjsKSWNDaQ+++F-uL0ubAYQ@mail.gmail.com>
+         <f227bd950c3b7c060b4b581f5604fe4d9103e942.camel@linux.ibm.com>
+         <d9478a99032ea7182e0cd30ea822c1993ac2cd68.camel@perches.com>
+         <dd5b09c0985f47fe164df06f8f2f387c0332c5ec.camel@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4-1ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: qsz9h8yuyxrfaeutnwbir3kdp9hcn1zp
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: E9B4F2002F
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/Sm6NybTT0UK2QqZowJVcSIsHPQLBvWEc=
+X-HE-Tag: 1642212611-419469
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Xiaoke Wang <xkernel.wang@foxmail.com>
+On Fri, 2022-01-14 at 08:27 -0500, Mimi Zohar wrote:
+> Hi Joe,
+> 
+> On Thu, 2022-01-13 at 18:05 -0800, Joe Perches wrote:
+> > On Thu, 2022-01-13 at 20:51 -0500, Mimi Zohar wrote:
+> > > On Wed, 2022-01-12 at 17:46 +0900, Austin Kim wrote:
+> > > > > There are a few minor typos in the comments. Fix these.
+> > > It would be really nice if checkpatch.pl would catch spelling mistakes
+> > > before the patch was upstreamed.
+> > 
+> > Try ./scripts/checkpatch.pl --strict
+> 
+> "--strict" didn't find the typos in comments, but "--codespell" did. 
+> Nice!
 
-audit_log_start() returns audit_buffer pointer on success or NULL on
-error, so it is better to check the return value of it.
+Right, but it does depend on the particular typo.
 
-Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
-Reviewed-by: Paul Moore <paul@paul-moore.com>
----
-Changelogs:
-V2 -> V3: add the Reviewed-by tag.
-V1 -> V2: simplify the patch. 
- security/integrity/integrity_audit.c | 2 ++
- 1 file changed, 2 insertions(+)
+checkpatch always uses the scripts/spelling.txt dictionary.
 
-diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
-index 2922005..0ec5e4c 100644
---- a/security/integrity/integrity_audit.c
-+++ b/security/integrity/integrity_audit.c
-@@ -45,6 +45,8 @@ void integrity_audit_message(int audit_msgno, struct inode *inode,
- 		return;
- 
- 	ab = audit_log_start(audit_context(), GFP_KERNEL, audit_msgno);
-+	if (!ab)
-+		return;
- 	audit_log_format(ab, "pid=%d uid=%u auid=%u ses=%u",
- 			 task_pid_nr(current),
- 			 from_kuid(&init_user_ns, current_uid()),
--- 
+codespell isn't always installed on machines and has to be
+enabled with that --codespell option.
+
+Anyway, glad it works for you.
+
+
