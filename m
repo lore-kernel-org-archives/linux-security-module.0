@@ -2,176 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FDBC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jan 2022 14:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D3BC433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Jan 2022 22:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231727AbiAQOOq (ORCPT
+        id S238464AbiAQW60 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Jan 2022 09:14:46 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:54380 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237674AbiAQOOh (ORCPT
+        Mon, 17 Jan 2022 17:58:26 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61168 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238447AbiAQW60 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Jan 2022 09:14:37 -0500
-Received: from machine.localnet (lfbn-lyo-1-1484-111.w86-207.abo.wanadoo.fr [86.207.51.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2DFD920B9132;
-        Mon, 17 Jan 2022 06:14:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2DFD920B9132
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1642428877;
-        bh=Emgmu+8u0DDH5mFqspHHwYip5IpMYUB4sTtK8ZbStjM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LULG2NOFbk/IITyOKLBCkOZodQ293b5Qv7mfEtjKRJnLFstxRM/Gsrojjb0t+rZ9B
-         758KURSJMiJUDKDo8gK0/YuHz6ek/SOotQbX+HDYoy+f/pJTGmy81zZC5z9wOzyB+z
-         +aYvXF85INpBYaYKr/y56/J2V6lxnj4792NlFREQ=
-From:   Francis Laniel <flaniel@linux.microsoft.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 1/2] capability: Add cap_strings.
-Date:   Mon, 17 Jan 2022 15:14:34 +0100
-Message-ID: <2966845.Fhcn9zfbF5@machine>
-In-Reply-To: <20220114003910.GA19319@mail.hallyn.com>
-References: <20211227205500.214777-1-flaniel@linux.microsoft.com> <18436829.ogB85pbuhf@machine> <20220114003910.GA19319@mail.hallyn.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+        Mon, 17 Jan 2022 17:58:26 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20HJvtnh005273;
+        Mon, 17 Jan 2022 22:58:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=YKf3QRk6cGL2oEcXu+jYQKo1iAyahjY9WnnEujEJQ8k=;
+ b=fb9n2/fjQ4AmyQa76lhi1DbjJ8PxL4IkfJg2dus8nxFXIHtn0RWCg018rRgCWNS1GGTI
+ u5ECiGqHO/Mxd6OeZSA4Jxrd0/W4ICJzAliytx6ECsy/lcsy9sRPEFlua8fkDaeOzkVR
+ RBDHzMp0wMcp/DQoU7BT5hHTdvQEmNLXNc/6fqT0AwYDVcMi793eJPnR3RSg5A0yS9yi
+ 8qX9X+tu+JYG2BQiavtFK4oZfyAX886LlKO30AccRipLwKrrfbANwf7mip3Pr8/ktVQk
+ WktgWcI6xd9CzoMQ32L9BohU3MYj156t5hGaQvOJZzpqjbpkG3yD12KHXJltHU5WTobI yQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dnf2yu79v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jan 2022 22:58:15 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20HMwF27027711;
+        Mon, 17 Jan 2022 22:58:15 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dnf2yu79d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jan 2022 22:58:15 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20HMvNd4014276;
+        Mon, 17 Jan 2022 22:58:13 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma06ams.nl.ibm.com with ESMTP id 3dknhj7gtv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jan 2022 22:58:13 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20HMwBiw34668866
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jan 2022 22:58:11 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A95DAE045;
+        Mon, 17 Jan 2022 22:58:11 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3B4E3AE056;
+        Mon, 17 Jan 2022 22:58:10 +0000 (GMT)
+Received: from sig-9-65-85-218.ibm.com (unknown [9.65.85.218])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jan 2022 22:58:10 +0000 (GMT)
+Message-ID: <e6f00d74a9d5b4e05e2229984bb56f02e7523c0f.camel@linux.ibm.com>
+Subject: Re: [PATCH] integrity: check the return value of audit_log_start()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Paul Moore <paul@paul-moore.com>, xkernel.wang@foxmail.com
+Cc:     jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 17 Jan 2022 17:58:09 -0500
+In-Reply-To: <CAHC9VhT018QQmjYdh1ftOYrMC9ZxMqKtkBU2dceF=PLg2j6rvQ@mail.gmail.com>
+References: <tencent_425C87AB28D1FF53823C3047E48A71FC520A@qq.com>
+         <CAHC9VhT018QQmjYdh1ftOYrMC9ZxMqKtkBU2dceF=PLg2j6rvQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: TxVUrw4pSeNJs-RrjNxxQekpyiT6UVh6
+X-Proofpoint-ORIG-GUID: pG8ETyjHOD3fxW-fgubya-VMhiBHIfy0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-17_07,2022-01-14_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=997 suspectscore=0
+ adultscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201170140
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi.
+On Wed, 2022-01-12 at 12:23 -0500, Paul Moore wrote:
+> On Tue, Dec 14, 2021 at 12:39 AM <xkernel.wang@foxmail.com> wrote:
+> >
+> > From: Xiaoke Wang <xkernel.wang@foxmail.com>
+> >
+> > audit_log_start() returns audit_buffer pointer on success or NULL on
+> > error, so it is better to check the return value of it to prevent
+> > potential memory access error.
+> >
+> > Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
+> > ---
+> >  security/integrity/integrity_audit.c | 38 +++++++++++++++-------------
+> >  1 file changed, 20 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
+> > index 2922005..62785d5 100644
+> > --- a/security/integrity/integrity_audit.c
+> > +++ b/security/integrity/integrity_audit.c
+> > @@ -45,23 +45,25 @@ void integrity_audit_message(int audit_msgno, struct inode *inode,
+> >                 return;
+> >
+> >         ab = audit_log_start(audit_context(), GFP_KERNEL, audit_msgno);
+> 
+> As this is IMA code, it's largely up to Mimi about what she would
+> prefer, but I think a much simpler patch would be to just return early
+> if ab == NULL, for example:
+> 
+>   ab = audit_log_start( .... , audit_msgno);
+>   if (!ab)
+>     return;
 
+Thanks, Paul.  Neither the linux-integrity mailing list nor I were
+Cc'ed on this.  Looks like the IMA & EVM records in MAINTAINERS should
+be updated to include the security/integrity directory.
 
-Le vendredi 14 janvier 2022, 01:39:10 CET Serge E. Hallyn a =E9crit :
-> On Tue, Dec 28, 2021 at 02:27:56PM +0100, Francis Laniel wrote:
-> > Hi.
-> >=20
-> > Le lundi 27 d=E9cembre 2021, 23:26:29 CET Casey Schaufler a =E9crit :
-> > > On 12/27/2021 12:54 PM, Francis Laniel wrote:
-> > > > This array contains the capability names for the given capabilitiy.
-> > > > For example, index CAP_BPF contains "CAP_BPF".
-> > > >=20
-> > > > Signed-off-by: Francis Laniel <flaniel@linux.microsoft.com>
-> > > > ---
-> > > >=20
-> > > >   include/uapi/linux/capability.h |  1 +
-> > > >   kernel/capability.c             | 45
-> > > >   +++++++++++++++++++++++++++++++++
-> > > >   2 files changed, 46 insertions(+)
-> > > >=20
-> > > > diff --git a/include/uapi/linux/capability.h
-> > > > b/include/uapi/linux/capability.h index 463d1ba2232a..9646654d5111
-> > > > 100644
-> > > > --- a/include/uapi/linux/capability.h
-> > > > +++ b/include/uapi/linux/capability.h
-> > > > @@ -428,5 +428,6 @@ struct vfs_ns_cap_data {
-> > > >=20
-> > > >   #define CAP_TO_INDEX(x)     ((x) >> 5)        /* 1 << 5 =3D=3D bi=
-ts in
-> > > >   __u32
-> > > >   */
-> > > >   #define CAP_TO_MASK(x)      (1 << ((x) & 31)) /* mask for indexed
-> > > >   __u32
-> > > >   */
-> > > >=20
-> > > > +extern const char *cap_strings[];
-> > > >=20
-> > > >   #endif /* _UAPI_LINUX_CAPABILITY_H */
-> > > >=20
-> > > > diff --git a/kernel/capability.c b/kernel/capability.c
-> > > > index 46a361dde042..5a2e71dcd87b 100644
-> > > > --- a/kernel/capability.c
-> > > > +++ b/kernel/capability.c
-> > > > @@ -15,6 +15,7 @@
-> > > >=20
-> > > >   #include <linux/mm.h>
-> > > >   #include <linux/export.h>
-> > > >   #include <linux/security.h>
-> > > >=20
-> > > > +#include <linux/stringify.h>
-> > > >=20
-> > > >   #include <linux/syscalls.h>
-> > > >   #include <linux/pid_namespace.h>
-> > > >   #include <linux/user_namespace.h>
-> > > >=20
-> > > > @@ -27,6 +28,50 @@
-> > > >=20
-> > > >   const kernel_cap_t __cap_empty_set =3D CAP_EMPTY_SET;
-> > > >   EXPORT_SYMBOL(__cap_empty_set);
-> > > >=20
-> > > > +const char *cap_strings[] =3D {
-> > > > +	[CAP_CHOWN] =3D __stringify_1(CAP_CHOWN),
-> > >=20
-> > > I may just be old and slow, but why is this better than
-> > >=20
-> > > 	[CAP_CHOWN] =3D "CAP_CHOWN",
-> >=20
-> > Good catch, thank you for it, I just replaced the __stringify_1() by
-> > quotes. I thought of using __stringify_() because at first I thought of
-> > adding a new macro which would both define a new capability as well as
-> > adding to this array.
-> I think you are saying you have a new version of the patch where you do
-> what Casey suggests, but I don't see it.  Have you sent an updated patch,
-> or am I misunderstanding?
+thanks,
 
-Sorry, I forgot to send it as we were thinking on the right place to put th=
-e=20
-sysfs with Casey.
-I normally have send it two minutes ago.
-
-> > But I think it is better to with this simple way rather than doing
-> > complicated stuff.
-> >=20
-> > > > +	[CAP_DAC_OVERRIDE] =3D __stringify_1(CAP_DAC_OVERRIDE),
-> > > > +	[CAP_DAC_READ_SEARCH] =3D __stringify_1(CAP_DAC_READ_SEARCH),
-> > > > +	[CAP_FOWNER] =3D __stringify_1(CAP_FOWNER),
-> > > > +	[CAP_FSETID] =3D __stringify_1(CAP_FSETID),
-> > > > +	[CAP_KILL] =3D __stringify_1(CAP_KILL),
-> > > > +	[CAP_SETGID] =3D __stringify_1(CAP_SETGID),
-> > > > +	[CAP_SETUID] =3D __stringify_1(CAP_SETUID),
-> > > > +	[CAP_SETPCAP] =3D __stringify_1(CAP_SETPCAP),
-> > > > +	[CAP_LINUX_IMMUTABLE] =3D __stringify_1(CAP_LINUX_IMMUTABLE),
-> > > > +	[CAP_NET_BIND_SERVICE] =3D __stringify_1(CAP_NET_BIND_SERVICE),
-> > > > +	[CAP_NET_BROADCAST] =3D __stringify_1(CAP_NET_BROADCAST),
-> > > > +	[CAP_NET_ADMIN] =3D __stringify_1(CAP_NET_ADMIN),
-> > > > +	[CAP_NET_RAW] =3D __stringify_1(CAP_NET_RAW),
-> > > > +	[CAP_IPC_LOCK] =3D __stringify_1(CAP_IPC_LOCK),
-> > > > +	[CAP_IPC_OWNER] =3D __stringify_1(CAP_IPC_OWNER),
-> > > > +	[CAP_SYS_MODULE] =3D __stringify_1(CAP_SYS_MODULE),
-> > > > +	[CAP_SYS_RAWIO] =3D __stringify_1(CAP_SYS_RAWIO),
-> > > > +	[CAP_SYS_CHROOT] =3D __stringify_1(CAP_SYS_CHROOT),
-> > > > +	[CAP_SYS_PTRACE] =3D __stringify_1(CAP_SYS_PTRACE),
-> > > > +	[CAP_SYS_PACCT] =3D __stringify_1(CAP_SYS_PACCT),
-> > > > +	[CAP_SYS_ADMIN] =3D __stringify_1(CAP_SYS_ADMIN),
-> > > > +	[CAP_SYS_BOOT] =3D __stringify_1(CAP_SYS_BOOT),
-> > > > +	[CAP_SYS_NICE] =3D __stringify_1(CAP_SYS_NICE),
-> > > > +	[CAP_SYS_RESOURCE] =3D __stringify_1(CAP_SYS_RESOURCE),
-> > > > +	[CAP_SYS_TIME] =3D __stringify_1(CAP_SYS_TIME),
-> > > > +	[CAP_SYS_TTY_CONFIG] =3D __stringify_1(CAP_SYS_TTY_CONFIG),
-> > > > +	[CAP_MKNOD] =3D __stringify_1(CAP_MKNOD),
-> > > > +	[CAP_LEASE] =3D __stringify_1(CAP_LEASE),
-> > > > +	[CAP_AUDIT_WRITE] =3D __stringify_1(CAP_AUDIT_WRITE),
-> > > > +	[CAP_AUDIT_CONTROL] =3D __stringify_1(CAP_AUDIT_CONTROL),
-> > > > +	[CAP_SETFCAP] =3D __stringify_1(CAP_SETFCAP),
-> > > > +	[CAP_MAC_OVERRIDE] =3D __stringify_1(CAP_MAC_OVERRIDE),
-> > > > +	[CAP_MAC_ADMIN] =3D __stringify_1(CAP_MAC_ADMIN),
-> > > > +	[CAP_SYSLOG] =3D __stringify_1(CAP_SYSLOG),
-> > > > +	[CAP_WAKE_ALARM] =3D __stringify_1(CAP_WAKE_ALARM),
-> > > > +	[CAP_BLOCK_SUSPEND] =3D __stringify_1(CAP_BLOCK_SUSPEND),
-> > > > +	[CAP_AUDIT_READ] =3D __stringify_1(CAP_AUDIT_READ),
-> > > > +	[CAP_PERFMON] =3D __stringify_1(CAP_PERFMON),
-> > > > +	[CAP_BPF] =3D __stringify_1(CAP_BPF),
-> > > > +	[CAP_CHECKPOINT_RESTORE] =3D=20
-__stringify_1(CAP_CHECKPOINT_RESTORE),
-> > > > +};
-> > > > +
-> > > >=20
-> > > >   int file_caps_enabled =3D 1;
-> > > >  =20
-> > > >   static int __init file_caps_disable(char *str)
-
-
-
+Mimi
 
