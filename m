@@ -2,30 +2,30 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BE8C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 11:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C44B8C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 11:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240990AbiARLcL (ORCPT
+        id S241033AbiARLcQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jan 2022 06:32:11 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35896 "EHLO
+        Tue, 18 Jan 2022 06:32:16 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35956 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240722AbiARLbp (ORCPT
+        with ESMTP id S240841AbiARLcC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jan 2022 06:31:45 -0500
+        Tue, 18 Jan 2022 06:32:02 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: usama.anjum)
-        with ESMTPSA id 00AAA1F43EC4
+        with ESMTPSA id 97BD11F43EC9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1642505503;
-        bh=c6ARDNQMLSW4/+Jdr9UKAZU1s8LQbK0RFS42X6aonwI=;
+        s=mail; t=1642505521;
+        bh=F9NkFS9pnDMRN1So8liCLv2iKRad2nzOipo3RDNWrNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DYwPaVjIAAS+Kv60H7XU5+U0eu8tiWzYWlVpEUgumfIcWlmJ3B7H++AO8uBO4fZxZ
-         KlK9PEzqMm5QuGShVub8sw/L14AS/Vz3QS+2U4+W41vpq1oanHbZLnzdEeYuVhezej
-         CG5u7SKJWfx3bCYvaeT9vE3YgFt0QT/tznC9j0n5bXwzG5ifcNpd6eGlO30oKNApsf
-         DNAYzq9s49328zD0hCbUmthRcYWWKmWJNmLpMnZ0Q2/8E9xL2q6tTXBNULux8nB8+9
-         4SCkV4mR+h1LXha+GwEfOYbmewWnYodc1rh+BDH3PwCzbfVrMDtUBbU0mvBiKubV4H
-         d3xgU00DpLG8g==
+        b=XmusjG85edJRDNtqNh9O2PTz/ooSlJtSdZvp0jquX75g5Cp+TvgvYV0FZ+aWapkhF
+         nXRtsLWlkrXha0Xom2u3BRRz/zxqgcssEdv1IFg1s1Qc0cp00akYgFeZZkS8VlQb5h
+         8rFEcA3W1Kfaj7dnIfb7dZ72VQFHrlRwiw2nTJ3wNn02HBIQYQClNLip0yz/esO6Ji
+         hOLG3f08ioJLuo0K+lqB9S2ct6RJGEu3icZGC2Ux2AA3BPYDGmcapO25XNkiUZrdte
+         Jt4Voln00ttdD2Z7rSnnaFh3ZlYVUiFH6h5mh23Mf6v1qHE5YPAGOi4P09/dPvOfsw
+         3+FB/RiNmJ9Sg==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -51,9 +51,9 @@ To:     Shuah Khan <shuah@kernel.org>,
         linux-mm@kvack.org (open list:MEMORY MANAGEMENT)
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH 07/10] selftests: net: Add the uapi headers include variable
-Date:   Tue, 18 Jan 2022 16:29:06 +0500
-Message-Id: <20220118112909.1885705-8-usama.anjum@collabora.com>
+Subject: [PATCH 09/10] selftests: vm: Add the uapi headers include variable
+Date:   Tue, 18 Jan 2022 16:29:08 +0500
+Message-Id: <20220118112909.1885705-10-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220118112909.1885705-1-usama.anjum@collabora.com>
 References: <20220118112909.1885705-1-usama.anjum@collabora.com>
@@ -68,22 +68,22 @@ KHDR_INCLUDES to correctly reach the headers.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- tools/testing/selftests/net/Makefile | 2 +-
+ tools/testing/selftests/vm/Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index 9897fa9ab953..22759591fc79 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for net selftests
+diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
+index 7d100a7dc462..8dc428c8a3b0 100644
+--- a/tools/testing/selftests/vm/Makefile
++++ b/tools/testing/selftests/vm/Makefile
+@@ -23,7 +23,7 @@ MACHINE ?= $(shell echo $(uname_M) | sed -e 's/aarch64.*/arm64/' -e 's/ppc64.*/p
+ # LDLIBS.
+ MAKEFLAGS += --no-builtin-rules
  
- CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g
--CFLAGS += -I../../../../usr/include/
-+CFLAGS += $(KHDR_INCLUDES)
- 
- TEST_PROGS := run_netsocktests run_afpackettests test_bpf.sh netdevice.sh \
- 	      rtnetlink.sh xfrm_policy.sh test_blackhole_dev.sh
+-CFLAGS = -Wall -I ../../../../usr/include $(EXTRA_CFLAGS)
++CFLAGS = -Wall $(EXTRA_CFLAGS) $(KHDR_INCLUDES)
+ LDLIBS = -lrt -lpthread
+ TEST_GEN_FILES = compaction_test
+ TEST_GEN_FILES += gup_test
 -- 
 2.30.2
 
