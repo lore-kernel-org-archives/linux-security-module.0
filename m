@@ -2,30 +2,33 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B41BC433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 11:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 582ECC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 11:32:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240553AbiARLcX (ORCPT
+        id S241008AbiARLc2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jan 2022 06:32:23 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35926 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238183AbiARLby (ORCPT
+        Tue, 18 Jan 2022 06:32:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240975AbiARLcK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jan 2022 06:31:54 -0500
+        Tue, 18 Jan 2022 06:32:10 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F46BC061753;
+        Tue, 18 Jan 2022 03:32:10 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: usama.anjum)
-        with ESMTPSA id 311A41F43EC7
+        with ESMTPSA id C6A711F43ECC
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1642505512;
-        bh=j2O8LnNgJ6OKkizZGg+d3m4SsHwhUYOUVwABCSHGGkE=;
+        s=mail; t=1642505529;
+        bh=ZgAzpMGfSGdCPLE/fHhKIS82NhtSqBUPZr7WBPwkwXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BSrrDQ9XgSxkBN+e/R1kQvEzYgYdnpmph/vwRkROcAFvLEyL/vETunfoI0pRI4KXa
-         sytamsT3T59HnEdC2rMwvYUGxX6p3MGqGHZwlbrytDoCHKPr/re21UNqfCMG/nKsIN
-         yj3HA124c04FoItqlpV7KiBGdxs7MpJHMPBeFurHnl8nSHLSTg8vlGYImuIQ/pbY+t
-         GC9cSW1RAhQ5TEw92mRXm//8qg2EoAvjmjeeaedQ+dOBPTi+5SFMPCBAeTjb5OonHr
-         LkklzKgKg8OvQB7skIJldlBXd/IMFtVlBaiGs08FTwOeqT7ZqndRxHTQL8nI8PuNhn
-         xc35KbB8FpqQg==
+        b=Nx7JWdnsWkWk4grE31vvXpfCXjD8o1vsdwy0POm/s1KLrNoeRG1+DUE2oajaFDksE
+         YzadKDKOZi3qe1WBwuczTjfvKccLBARXGJAwasHXtyF9UpiCC85q2oa5Ss1697xmGJ
+         3Wxf3mO2riFUnVuBWnuf3yAkPKkfWSbDxk95cI68f3bVuonhtAsYBWBab2s1FWXs9r
+         CXijweMt91uQIgihdL4CTkPE2z6sIJQ559xU62dh+RofzTFBMAMy9LWj8AmtlW3T5U
+         UC6S3dV6zkyvblf5Nf9oc7RGTxDVpPFdf/ikPDX4fcvu4VGQtk5J7EZLDZcyeH2IRE
+         QMWeGlcXUFUSg==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -51,41 +54,56 @@ To:     Shuah Khan <shuah@kernel.org>,
         linux-mm@kvack.org (open list:MEMORY MANAGEMENT)
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH 08/10] selftests: mptcp: Add the uapi headers include variable
-Date:   Tue, 18 Jan 2022 16:29:07 +0500
-Message-Id: <20220118112909.1885705-9-usama.anjum@collabora.com>
+Subject: [PATCH 10/10] selftests: vm: remove dependecy from internal kernel macros
+Date:   Tue, 18 Jan 2022 16:29:09 +0500
+Message-Id: <20220118112909.1885705-11-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220118112909.1885705-1-usama.anjum@collabora.com>
 References: <20220118112909.1885705-1-usama.anjum@collabora.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Out of tree build of this test fails if relative path of the output
-directory is specified. Remove the un-needed include paths and use
-KHDR_INCLUDES to correctly reach the headers.
+The defination of swap() is used from kernel's internal header when this
+test is built in source tree. The build fails when this test is built
+out of source tree as defination of swap() isn't found. Selftests
+shouldn't depend on kernel's internal header files. They can only depend
+on uapi header files. Add the defination of swap() to fix the build
+error:
 
+	gcc -Wall  -I/linux_mainline2/build/usr/include -no-pie    userfaultfd.c -lrt -lpthread -o /linux_mainline2/build/kselftest/vm/userfaultfd
+	userfaultfd.c: In function ‘userfaultfd_stress’:
+	userfaultfd.c:1530:3: warning: implicit declaration of function ‘swap’; did you mean ‘swab’? [-Wimplicit-function-declaration]
+	 1530 |   swap(area_src, area_dst);
+	      |   ^~~~
+	      |   swab
+	/usr/bin/ld: /tmp/cclUUH7V.o: in function `userfaultfd_stress':
+	userfaultfd.c:(.text+0x4d64): undefined reference to `swap'
+	/usr/bin/ld: userfaultfd.c:(.text+0x4d82): undefined reference to `swap'
+	collect2: error: ld returned 1 exit status
+
+Fixes: 2c769ed7137a ("tools/testing/selftests/vm/userfaultfd.c: use swap() to make code cleaner")
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- tools/testing/selftests/net/mptcp/Makefile | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ tools/testing/selftests/vm/userfaultfd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/testing/selftests/net/mptcp/Makefile b/tools/testing/selftests/net/mptcp/Makefile
-index 0356c4501c99..fed6866d3b73 100644
---- a/tools/testing/selftests/net/mptcp/Makefile
-+++ b/tools/testing/selftests/net/mptcp/Makefile
-@@ -1,9 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+index d3fd24f9fae8..d2480ab93037 100644
+--- a/tools/testing/selftests/vm/userfaultfd.c
++++ b/tools/testing/selftests/vm/userfaultfd.c
+@@ -119,6 +119,9 @@ struct uffd_stats {
+ 				 ~(unsigned long)(sizeof(unsigned long long) \
+ 						  -  1)))
  
--top_srcdir = ../../../../..
- KSFT_KHDR_INSTALL := 1
- 
--CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g  -I$(top_srcdir)/usr/include
-+CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g $(KHDR_INCLUDES)
- 
- TEST_PROGS := mptcp_connect.sh pm_netlink.sh mptcp_join.sh diag.sh \
- 	      simult_flows.sh mptcp_sockopt.sh
++#define swap(a, b) \
++	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
++
+ const char *examples =
+     "# Run anonymous memory test on 100MiB region with 99999 bounces:\n"
+     "./userfaultfd anon 100 99999\n\n"
 -- 
 2.30.2
 
