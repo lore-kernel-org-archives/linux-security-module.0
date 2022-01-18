@@ -2,282 +2,416 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A65C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 16:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD90C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 17:54:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243225AbiARQcv (ORCPT
+        id S1347736AbiARRyX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jan 2022 11:32:51 -0500
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:63706 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233718AbiARQcu (ORCPT
+        Tue, 18 Jan 2022 12:54:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55872 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1347631AbiARRyT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jan 2022 11:32:50 -0500
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20IF4TF4016680;
-        Tue, 18 Jan 2022 16:32:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=DTmzZITat96hZ0Pu1rJkxFsc2J2LzCZAZSEvlBNo8EI=;
- b=k1Qw/BbNRLKlL2NNU9ZBGH9Tx6w8HB7ANDi5t5vekpg6p+h7FjBxO7XgJpR1t563ijQ0
- OFqpJS1UW58w8D5+irJdMaITwYy3aWMttI2Z50ir07jU0i1nkHJMi+ebQOCkC6d/5Rwv
- 20tgZA+kBmYvKXU0QFbjHrCVh3kDVVoFmCZU4Rcqh5byn3kJLu4buihXRODAiN35PHwj
- +MjENukZr3lr3r4TbhiWnozlV5tVVSXQRTeD25AauVcWco4uAJR2Kw2O5tzzdgqALV0+
- kDiCC56s2+GqiHnTZYGZrazsidmNgq8YgIphl83qm57Pg0BgXc0G4XCpwOsSuyF7JbzQ Dw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3dnc51aan1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Jan 2022 16:32:14 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20IGUdYu048998;
-        Tue, 18 Jan 2022 16:32:13 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
-        by aserp3020.oracle.com with ESMTP id 3dkp34ebq9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Jan 2022 16:32:12 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YWgMXBL1GkIiDSzFBNlmObAw2GOcFZC6HXw7ifhLJjgqCtYvRuGRyozWLVFEKtzsfn7KqKvgCa7nS+RhWzuVlWUWrrY99SlXfZKdW2F1BRch7Dx+qHb4KwYbDlwZMS3yse61HciHq9AwE+rabUosjiBUV3btTkDMjwf+3w8gWUmITSFjmDFAWe8gJILXDIPmjES/34T11/DMuXFYLO04apIgETmlnlAtqFVS8WcIrkpwrWc9jw7R/D0ftMrAu7+m9tWdLpkrJZ7kUoZ+blEZyllnQ4ydHM3mHlNtMRICOmos7n1jK5hmx+AyEabaRbRCtYOGbrrIrLsijeXDKnrJ8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DTmzZITat96hZ0Pu1rJkxFsc2J2LzCZAZSEvlBNo8EI=;
- b=ktZ+5uUlC8AMiTgWhdC50/5bmkLoSnNiFrE/sMk8W3UzqaYuK1OXKAgqoLQDgvDL0Vytw4lKPGZFPOhiepKzFrW+niqBfP03sWkBsNnWwbkPhT5GG/0t55yKX0EY8YnTNBSjNxOJPPt/bmGz7jvk7bNu9ZoMf5OYGoq6mf5QM2YwE2W83JrejTWWmdbT2t6BvejC/IYUWmfWWjymBDDdmlm8IlZOOEQGXLhJTnqK+202OaO17k9yaU75d0pFNCGq/+J63apPNHG7ysXrbj1ghi/v9yGD6CYTmRm2TIlpIP7R0zEckJSFcME9sR9/MvrTDFpe2AZ6VaDDQyHiOBVDEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DTmzZITat96hZ0Pu1rJkxFsc2J2LzCZAZSEvlBNo8EI=;
- b=Gs8PNqVTBQO0fMfZy42aVUodLNlIzIunt4opjMwdm4DK5Hv9t2DX9ew/aa1gFGDkyk+euci0E85Q1wHF6YuJUuDuO6jZn+t9pYWXNWEpDIlW8pRkX1ELYZtMnPeGC+ErvQNunRcJbUx45sv8RRDnR9UcTd10Am547J7WMWcGxao=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by PH7PR10MB5772.namprd10.prod.outlook.com (2603:10b6:510:125::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.12; Tue, 18 Jan
- 2022 16:32:10 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::cc63:ba5d:5d87:579a]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::cc63:ba5d:5d87:579a%4]) with mapi id 15.20.4888.014; Tue, 18 Jan 2022
- 16:32:10 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-CC:     Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "pjones@redhat.com" <pjones@redhat.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>
-Subject: Re: [PATCH v9 2/8] integrity: Introduce a Linux keyring called
- machine
-Thread-Topic: [PATCH v9 2/8] integrity: Introduce a Linux keyring called
- machine
-Thread-Index: AQHYAo8H0Sj261FHG0itWWPoxYX3jKxbQpAAgAGq5wCAATwoAIAANR6AgAA/vYCAATVGgIAEjROAgAAhwgCAAACZAIAAAE2AgACAhoCAASEtgIAC55SA
-Date:   Tue, 18 Jan 2022 16:32:10 +0000
-Message-ID: <34864BBD-BB02-4736-BC27-FD4C1BB90B20@oracle.com>
-References: <100B070F-7EB4-4BF7-B2B9-E5AE78D3066A@oracle.com>
- <a384fcf8bdd9ff79456e9669fc61ab50ec4e1c55.camel@linux.ibm.com>
- <F1F41DB2-171A-4A6F-9AE7-E03C4D3B7DD0@oracle.com>
- <eece68eba2beceeb410748c1f9f32162793d2057.camel@linux.ibm.com>
- <2d681148b6ea57241f6a7c518dd331068a5f47b0.camel@linux.ibm.com>
- <YeMAURSR8/fRjBHD@iki.fi> <153F495F-EAF9-4C11-A476-293CC3B78F0A@oracle.com>
- <YeMdIrMXbSq7BgzY@iki.fi> <YeMdY+FLM32tmRMz@iki.fi>
- <f8598ca4e51e0b98aa98a1386c6f40bd04acdf15.camel@linux.ibm.com>
- <YeR7x9fMuvW/dvRA@iki.fi>
-In-Reply-To: <YeR7x9fMuvW/dvRA@iki.fi>
-Accept-Language: en-US
+        Tue, 18 Jan 2022 12:54:19 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20IGS4Rl002620;
+        Tue, 18 Jan 2022 17:54:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=y3efBJ6aT6fI6z4I5om7afk68D/bkad5TF9TKGyQmGw=;
+ b=djNwvVVBlpJDEZXKYi0bEo9L8CUwhaY8Oqy2Rj/C1ALDzzV70l8vpg0shiEc3vGjh5q5
+ pzoNqnnuKYfzIZjtz9mFoagJ7tvsAZ17LvExIbi4OZlGSjiKfQlBOFunF6yFtiMZ9XbP
+ XvD1GUiIDutqlqfX4ktm+5QgDZvIUxB6ajqeTkinYy4Iy+FF5fXozcJpPUsYkuaH1S39
+ UCSUGQxV8Djr+iZ7G9GgSuIQPfY9QiwOAQqSWYFbLETVpfgrWq4VCNlyEdOkT7vTPlRN
+ MQKHdmBcFNxQc39m2dkjEmVhq5fjnCgB3YiuuSnijLjLFho5EWke3NNCh4YLEXfWpFUm LA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dp13hsvyu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jan 2022 17:54:00 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20IHoFEX010362;
+        Tue, 18 Jan 2022 17:54:00 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dp13hsvyd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jan 2022 17:54:00 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20IHlsX8025593;
+        Tue, 18 Jan 2022 17:53:59 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma01wdc.us.ibm.com with ESMTP id 3dknwapvwk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jan 2022 17:53:59 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20IHrwU533292696
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jan 2022 17:53:58 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF1516E05E;
+        Tue, 18 Jan 2022 17:53:57 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C1AA6E058;
+        Tue, 18 Jan 2022 17:53:55 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 18 Jan 2022 17:53:54 +0000 (GMT)
+Message-ID: <15ae2c20-ae1f-0341-95d5-3168cdf899a5@linux.ibm.com>
+Date:   Tue, 18 Jan 2022 12:53:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v8 19/19] ima: Enable IMA namespaces
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3608.120.23.2.7)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5ae901e0-dc8e-4ddf-b32b-08d9daa01366
-x-ms-traffictypediagnostic: PH7PR10MB5772:EE_
-x-microsoft-antispam-prvs: <PH7PR10MB577244E0B4F637D02CBE7A0987589@PH7PR10MB5772.namprd10.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Kw336a5TtN8yIs0yVBkzuxFj6+4Voj7+Yi8VK7JuMtN0dewgdkSt73u/gx4h3C4L3ZXD82HFqKAaoddiJ9Tdu0kWROdMMnAWpsLRdxIRDnyw3riUhMZezdwJ1+7t9lpluxsryD6xxD5vaak9LpCudlNUM4n1UmJEPrb0pne1fUPjAJSqQDM92p3yDTlIAMrjoU26exValqFk19COKoNVV6Z+Bzcsy7S3PAaBDDNg31eZTCe82SkJLAiJJly3y1KSzO3UeBlgt76ofhQDUYpLcPaT6jvfw4/3ua5MJ2E7u6SFNL7i3xZlyXu9uI0rDKNIlpk0RBnx/YPFyR5jFR9Da+HuUM+4Hc4DPYAosPlRTA1/j7zzinGcn3JKIw7J0j3wgWD3h5Siovn82gHKzcE9+eW3GhS7gexYyysRpyVGqYjKQnfkKNISxg3FpzXW41ATB4FcLL0Hmk+JJBepHmXKuFr5gd0xJoHxhutsAvKw8uLqQXuAUor5MV3D5ZNJy5tDjfme2gg3SZ4SBJX4xp4e4+h8mLlcyhiIKUSwhuvp+MUYuFCcbrLA4EL7OERGz4KXd/Z0oklYRwoObyc57b7DFBhlXenbzaTpEZdlatahQt2FLqjp+Hte64hEDhUZKEQKK5Ucnb4ocbaacvTRpW1HLPgAFowwhGo0H4+va05fG8FB0aYm8iKwok+eFZnXO2fqNtKSnBHu4CwCM8B9kNYN3uk5EXzsIdavixiKLwLt7Ds=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(54906003)(508600001)(8676002)(6506007)(26005)(71200400001)(186003)(76116006)(66946007)(6916009)(66556008)(64756008)(6486002)(66476007)(6512007)(38070700005)(38100700002)(83380400001)(44832011)(53546011)(5660300002)(86362001)(8936002)(7416002)(2616005)(107886003)(316002)(2906002)(122000001)(66446008)(4326008)(36756003)(33656002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RGlwcDdmVzNwclJsRmFvNkh1ZkdXcFFmZmJ6SlRRa1V4QTZKVEdRNGpGRzJX?=
- =?utf-8?B?TUFHUFVKa01WK1dJU2pyejJIOWhqRytMMEJXM2F0dCtIaXFIRmpUU3ROS3U4?=
- =?utf-8?B?ZlJTUUJXMktaaXhwYmYrOGgyS1lsVlF1R2xrVWMrQUFLcVBhZWVwZndkdGwy?=
- =?utf-8?B?U3JROVlzbWxCM0NmeGNpMkVwYlVGYlBwaXZPeVE3Q0NUTVZCc2g3YnY4UTlw?=
- =?utf-8?B?d2V0aW1hbXZNeDk4ZHQ1WXptS25PeitRVkZxODhKQlVyK1BMUnBmMmxwTFFh?=
- =?utf-8?B?Y084ZUhGWVJISkduVS9XOUZYZjR4cE8yOVprKzYzVkY1eXJyemdlcWV5aUZZ?=
- =?utf-8?B?UTBKQWlMaVVUWUxDQ3JENnhSb0dFV1BSblBIZ3NIYmJ5SnNqTDRtem5Nb3hX?=
- =?utf-8?B?VEdOQXVMbTU2bUxtWEpPbzN6WjQ5dG1WQyt1dkhCRFNseTlkQ2JPTmp4QkVr?=
- =?utf-8?B?dHFXZFFEYVViY1BEcUdBRTJHWFdac042a2E4Um1KaVVqb3h0MGxGSGF5SXhX?=
- =?utf-8?B?Qm9iaGpxSzcrWnphZTJsL0owdy9McUljWExrcnJqYkpWSWpFbVFqZjVWaEZv?=
- =?utf-8?B?aWZmVkpTN29ZanRxN25WSHRqL0hUQWVGeEJ5L3VWMXlwYS9BclIvenJ0SGRB?=
- =?utf-8?B?RW1LNXAyeS9vaG9mVnJIbWM3ZFg5OXJHdUlrWmMwS1dPU3grYldIcnNVZ3FX?=
- =?utf-8?B?ZEIwTFZHOVZYT3FTK3JoVHludTNobFZvbnh5eExzN1NOSzRVMGxnZ3NvaUJP?=
- =?utf-8?B?RVdkekhkOWpmUThmcm9abXRvOHlhOVlLKzQ5L2lUejhpMm9lY3JzRDNzQndx?=
- =?utf-8?B?UW9KM200bjRHMG5QNmR6amJaNzlOYlVsR21XdUNuSWx1Y25Vd0N4eWxzUThK?=
- =?utf-8?B?eDhBQmV4RjltNzJVdExlQkc5V1FQMzBUMUdxYVNVTmJ0a0FZTCtBcyswZTls?=
- =?utf-8?B?eksxTVFNYTVoaDNySXBmU05raDYvdE1JVFdFeUcwMjJxaStQbzNROXNWZG02?=
- =?utf-8?B?ZkZTSHJQVjc0clhoRXRvRUFGV3dzTWN6S0ZKbit4SzQ1L3JzQ21FMlQ5YmFw?=
- =?utf-8?B?M0szUXUyVEprbWtSRWR1MkwzdDBldWhONTZiNnVRL3BzZ3VTN014SlhHNDlX?=
- =?utf-8?B?UVdaYlhmMzg5YVVjLzlEQjBjVUVnTVNRVHIwUWJwYnpqZjZiOURIekFiSVRa?=
- =?utf-8?B?cmc2L2IwSDZxdkRNQ1RmWmJxaGwzcHlQYmtYclE2cVVoRC9aS29UbFliQmJY?=
- =?utf-8?B?NXBXSUtJejRJRWFWbHV4a1RJem9oTzZDZnVEelVQVGV5dkRwNVVWOGFyYUUz?=
- =?utf-8?B?UGU0Tk5OTnZKekVsMDNyU3Zsb1VLcnNtQjgxYmswbFRqUXFCZXRJWEtjVWNP?=
- =?utf-8?B?blJjcGJVYXVnK3dVSHFJSUFTOXVjbmNaUVh6cXhaRjdDL21WMm1hSFdKbkNl?=
- =?utf-8?B?NG5WQ0lCNHhRWGoyODZuWHk5d1V4TkpMeDc1OS9leVNITVoxWUp6VWxvWGJ4?=
- =?utf-8?B?R0wwQ1NZalVBZEtHUlhzeCtTQ0gvTVE4dVhheFpDU3RPUGFpWFhIQ0JNVWtn?=
- =?utf-8?B?U20xUXhoUHNEZnprRHBsWHZmSjlIMHZZam9nRGZqeUhIRk4vLzdJUDZUM3Fk?=
- =?utf-8?B?TFNaZjZoUVE0R3dlaFJrUWpqOHRZWmJLaTFRNjJBdFhnZEFnREJjalNCdVNu?=
- =?utf-8?B?NUJzS2NDbHpBN2xObll1aTJUQ09JVW1GU2hJSnI2WHZKbkZwbUh4QnVoMlpk?=
- =?utf-8?B?NE1QcnRkVm8zcTg1UUwxcS8xbEZsSjJkemhFMlFlTVF0QmIyZFhIUElVSENi?=
- =?utf-8?B?THhIdmQvc3hUQWoyenhlZXRDcTZYa2hnZ243NmtZdWFPKzdRSkE1TWRDcjQx?=
- =?utf-8?B?cHB1cm1JdVVHREwvYjlxdUFpaVozbVBYYVRHT002Yk9LNHU4RzI3bTAwVmhW?=
- =?utf-8?B?ak5icHdDUEthVnVGNlJhQ1Q0b2JtazdxMlFHM29OWWpUMHAvcU0vVlh6U2Nx?=
- =?utf-8?B?RnJsUGpqK1VZd1dyRE9zQUhKTmhPQndMNFNSRVZMYzYxYytVVGtoT2JDZ05o?=
- =?utf-8?B?RGdTQnZTMURFQlVLUWY0dzVnYzB4VFFkUExOb25NNmhpd2ZWYit2L0UxcjNq?=
- =?utf-8?B?R0F1WHRMbXgxNjlqM2F3alBQMkZtMWQ1VE9jRk41ekxjMGx1NTdiNFJwV00y?=
- =?utf-8?B?cG9DYU5taUpkTDZqdFR2bGdRTjZJVTA4NEVFUmkrbnR1dXlNamFTVWN0cTJL?=
- =?utf-8?Q?ARkzy1T216S6EUw4CbVzMCX1AV0LLWBWLB4qz6DQLQ=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1AA428F381B4344BA71A2CB2DB36990E@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+To:     Christian Brauner <brauner@kernel.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
+ <20220104170416.1923685-20-stefanb@linux.vnet.ibm.com>
+ <20220114120547.jrasikjcaahareue@wittgenstein>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20220114120547.jrasikjcaahareue@wittgenstein>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: WoKmuWAJVfbWo5bSfKsP711Xate2ghkI
+X-Proofpoint-ORIG-GUID: 28fp6P9H9SXB8sfL7HXkXeSsy1O7F1dI
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ae901e0-dc8e-4ddf-b32b-08d9daa01366
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jan 2022 16:32:10.3662
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xgCpoIOlyO1q1dsMyrZQ31hegASM53ZXxstJFKN6JRkXgM86sd6rWKvhu/FRapRjmjmmxcmuqay6Q0gmVNVdwjUqIGdAzHWGqjYOH9ZidMc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5772
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10230 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 malwarescore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2201180101
-X-Proofpoint-GUID: 7NBrrOb35yl3HU3nhhKkuUeqzckLA8_o
-X-Proofpoint-ORIG-GUID: 7NBrrOb35yl3HU3nhhKkuUeqzckLA8_o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-18_05,2022-01-18_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ phishscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501
+ impostorscore=0 bulkscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201180105
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-DQoNCj4gT24gSmFuIDE2LCAyMDIyLCBhdCAxOjEwIFBNLCBKYXJra28gU2Fra2luZW4gPGphcmtr
-b0BrZXJuZWwub3JnPiB3cm90ZToNCj4gDQo+IE9uIFNhdCwgSmFuIDE1LCAyMDIyIGF0IDA5OjU1
-OjQ3UE0gLTA1MDAsIE1pbWkgWm9oYXIgd3JvdGU6DQo+PiBPbiBTYXQsIDIwMjItMDEtMTUgYXQg
-MjE6MTUgKzAyMDAsIEphcmtrbyBTYWtraW5lbiB3cm90ZToNCj4+PiBPbiBTYXQsIEphbiAxNSwg
-MjAyMiBhdCAwOToxNDo0NVBNICswMjAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6DQo+Pj4+IE9u
-IFNhdCwgSmFuIDE1LCAyMDIyIGF0IDA3OjEyOjM1UE0gKzAwMDAsIEVyaWMgU25vd2Jlcmcgd3Jv
-dGU6DQo+Pj4+PiANCj4+Pj4+IA0KPj4+Pj4+IE9uIEphbiAxNSwgMjAyMiwgYXQgMTA6MTEgQU0s
-IEphcmtrbyBTYWtraW5lbiA8amFya2tvQGtlcm5lbC5vcmc+IHdyb3RlOg0KPj4+Pj4+IA0KPj4+
-Pj4+IE9uIFdlZCwgSmFuIDEyLCAyMDIyIGF0IDAyOjQxOjQ3UE0gLTA1MDAsIE1pbWkgWm9oYXIg
-d3JvdGU6DQo+Pj4+Pj4+IE9uIFR1ZSwgMjAyMi0wMS0xMSBhdCAyMDoxNCAtMDUwMCwgTWltaSBa
-b2hhciB3cm90ZToNCj4+Pj4+Pj4+IE9uIFR1ZSwgMjAyMi0wMS0xMSBhdCAyMToyNiArMDAwMCwg
-RXJpYyBTbm93YmVyZyB3cm90ZToNCj4+Pj4+Pj4+PiANCj4+Pj4+Pj4+Pj4gT24gSmFuIDExLCAy
-MDIyLCBhdCAxMToxNiBBTSwgTWltaSBab2hhciA8em9oYXJAbGludXguaWJtLmNvbT4gd3JvdGU6
-DQo+Pj4+Pj4+Pj4+IA0KPj4+Pj4+Pj4+PiBPbiBNb24sIDIwMjItMDEtMTAgYXQgMjM6MjUgKzAw
-MDAsIEVyaWMgU25vd2Jlcmcgd3JvdGU6DQo+Pj4+Pj4+Pj4+Pj4gSmFya2tvLCBteSBjb25jZXJu
-IGlzIHRoYXQgb25jZSB0aGlzIHZlcnNpb24gb2YgdGhlIHBhdGNoIHNldCBpcw0KPj4+Pj4+Pj4+
-Pj4+IHVwc3RyZWFtZWQsIHdvdWxkIGxpbWl0aW5nIHdoaWNoIGtleXMgbWF5IGJlIGxvYWRlZCBv
-bnRvIHRoZSAubWFjaGluZQ0KPj4+Pj4+Pj4+Pj4+IGtleXJpbmcgYmUgY29uc2lkZXJlZCBhIHJl
-Z3Jlc3Npb24/DQo+Pj4+Pj4+Pj4+PiANCj4+Pj4+Pj4+Pj4+IA0KPj4+Pj4+Pj4+Pj4gQ3VycmVu
-dGx5IGNlcnRpZmljYXRlcyBidWlsdCBpbnRvIHRoZSBrZXJuZWwgZG8gbm90IGhhdmUgYSBDQSBy
-ZXN0cmljdGlvbiBvbiB0aGVtLiAgDQo+Pj4+Pj4+Pj4+PiBJTUEgd2lsbCB0cnVzdCBhbnl0aGlu
-ZyBpbiB0aGlzIGtleXJpbmcgZXZlbiBpZiB0aGUgQ0EgYml0IGlzIG5vdCBzZXQuICBXaGlsZSBp
-dCB3b3VsZCANCj4+Pj4+Pj4+Pj4+IGJlIGFkdmlzYWJsZSBmb3IgYSBrZXJuZWwgdG8gYmUgYnVp
-bHQgd2l0aCBhIENBLCBub3RoaW5nIGN1cnJlbnRseSBlbmZvcmNlcyBpdC4gDQo+Pj4+Pj4+Pj4+
-PiANCj4+Pj4+Pj4+Pj4+IE15IHRoaW5raW5nIGZvciB0aGUgZHJvcHBlZCBDQSByZXN0cmljdGlv
-biBwYXRjaGVzIHdhcyB0byBpbnRyb2R1Y2UgYSBuZXcgS2NvbmZpZy4gIA0KPj4+Pj4+Pj4+Pj4g
-VGhpcyBLY29uZmlnIHdvdWxkIGRvIHRoZSBDQSBlbmZvcmNlbWVudCBvbiB0aGUgbWFjaGluZSBr
-ZXlyaW5nLiAgSG93ZXZlciBpZiB0aGUgDQo+Pj4+Pj4+Pj4+PiBLY29uZmlnIG9wdGlvbiB3YXMg
-bm90IHNldCBmb3IgZW5mb3JjZW1lbnQsIGl0IHdvdWxkIHdvcmsgYXMgaXQgZG9lcyBpbiB0aGlz
-IHNlcmllcywgDQo+Pj4+Pj4+Pj4+PiBwbHVzIGl0IHdvdWxkIGFsbG93IElNQSB0byB3b3JrIHdp
-dGggbm9uLUNBIGtleXMuICBUaGlzIHdvdWxkIGJlIGRvbmUgYnkgcmVtb3ZpbmcgDQo+Pj4+Pj4+
-Pj4+PiB0aGUgcmVzdHJpY3Rpb24gcGxhY2VkIGluIHRoaXMgcGF0Y2guIExldCBtZSBrbm93IHlv
-dXIgdGhvdWdodHMgb24gd2hldGhlciB0aGlzIHdvdWxkIA0KPj4+Pj4+Pj4+Pj4gYmUgYW4gYXBw
-cm9wcmlhdGUgc29sdXRpb24uICBJIGJlbGlldmUgdGhpcyB3b3VsZCBnZXQgYXJvdW5kIHdoYXQg
-eW91IGFyZSBpZGVudGlmeWluZyBhcyANCj4+Pj4+Pj4+Pj4+IGEgcG9zc2libGUgcmVncmVzc2lv
-bi4NCj4+Pj4+Pj4+Pj4gDQo+Pj4+Pj4+Pj4+IFRydWUgdGhlIHByb2JsZW0gY3VycmVudGx5IGV4
-aXN0cyB3aXRoIHRoZSBidWlsdGluIGtleXMsIGJ1dCB0aGVyZSdzIGENCj4+Pj4+Pj4+Pj4gbWFq
-b3IgZGlmZmVyZW5jZSBiZXR3ZWVuIHRydXN0aW5nIHRoZSBidWlsdGluIGtleXMgYW5kIHRob3Nl
-IGJlaW5nDQo+Pj4+Pj4+Pj4+IGxvYWRpbmcgdmlhIE1PSy4gIFRoaXMgaXMgYW4gaW50ZWdyaXR5
-IGdhcCB0aGF0IG5lZWRzIHRvIGJlIGNsb3NlZCBhbmQNCj4+Pj4+Pj4+Pj4gc2hvdWxkbid0IGJl
-IGV4cGFuZGVkIHRvIGtleXMgb24gdGhlIC5tYWNoaW5lIGtleXJpbmcuDQo+Pj4+Pj4+Pj4+IA0K
-Pj4+Pj4+Pj4+PiAicGx1cyBpdCB3b3VsZCBhbGxvdyBJTUEgdG8gd29yayB3aXRoIG5vbi1DQSBr
-ZXlzIiBpcyB1bmFjY2VwdGFibGUuDQo+Pj4+Pj4+Pj4gDQo+Pj4+Pj4+Pj4gT2ssIEnigJlsbCBs
-ZWF2ZSB0aGF0IHBhcnQgb3V0LiAgQ291bGQgeW91IGNsYXJpZnkgdGhlIHdvcmRpbmcgSSBzaG91
-bGQgaW5jbHVkZSBpbiB0aGUgZnV0dXJlIA0KPj4+Pj4+Pj4+IGNvdmVyIGxldHRlciwgd2hpY2gg
-YWRkcyBJTUEgc3VwcG9ydCwgb24gd2h5IGl0IGlzIHVuYWNjZXB0YWJsZSBmb3IgdGhlIGVuZC11
-c2VyIHRvDQo+Pj4+Pj4+Pj4gbWFrZSB0aGlzIGRlY2lzaW9uPw0KPj4+Pj4+Pj4gDQo+Pj4+Pj4+
-PiBUaGUgS2NvbmZpZyBJTUFfS0VZUklOR1NfUEVSTUlUX1NJR05FRF9CWV9CVUlMVElOX09SX1NF
-Q09OREFSWQ0KPj4+Pj4+Pj4gImhlbHAiIGlzIHZlcnkgY2xlYXI6DQo+Pj4+Pj4+IA0KPj4+Pj4+
-PiBbUmVwb3N0aW5nIHRoZSB0ZXh0IGR1ZSB0byBlbWFpbCBmb3JtYXR0aW5nIGlzc3Vlcy5dDQo+
-Pj4+Pj4+IA0KPj4+Pj4+PiBoZWxwDQo+Pj4+Pj4+IEtleXMgbWF5IGJlIGFkZGVkIHRvIHRoZSBJ
-TUEgb3IgSU1BIGJsYWNrbGlzdCBrZXlyaW5ncywgaWYgdGhlDQo+Pj4+Pj4+IGtleSBpcyB2YWxp
-ZGx5IHNpZ25lZCBieSBhIENBIGNlcnQgaW4gdGhlIHN5c3RlbSBidWlsdC1pbiBvcg0KPj4+Pj4+
-PiBzZWNvbmRhcnkgdHJ1c3RlZCBrZXlyaW5ncy4NCj4+Pj4+Pj4gDQo+Pj4+Pj4+IEludGVybWVk
-aWF0ZSBrZXlzIGJldHdlZW4gdGhvc2UgdGhlIGtlcm5lbCBoYXMgY29tcGlsZWQgaW4gYW5kIHRo
-ZSANCj4+Pj4+Pj4gSU1BIGtleXMgdG8gYmUgYWRkZWQgbWF5IGJlIGFkZGVkIHRvIHRoZSBzeXN0
-ZW0gc2Vjb25kYXJ5IGtleXJpbmcsDQo+Pj4+Pj4+IHByb3ZpZGVkIHRoZXkgYXJlIHZhbGlkbHkg
-c2lnbmVkIGJ5IGEga2V5IGFscmVhZHkgcmVzaWRlbnQgaW4gdGhlDQo+Pj4+Pj4+IGJ1aWx0LWlu
-IG9yIHNlY29uZGFyeSB0cnVzdGVkIGtleXJpbmdzLg0KPj4+Pj4+PiANCj4+Pj4+Pj4gDQo+Pj4+
-Pj4+IFRoZSBmaXJzdCBwYXJhZ3JhcGggcmVxdWlyZXMgInZhbGlkbHkgc2lnbmVkIGJ5IGEgQ0Eg
-Y2VydCBpbiB0aGUgc3lzdGVtDQo+Pj4+Pj4+IGJ1aWx0LWluIG9yIHNlY29uZGFyeSB0cnVzdGVk
-IGtleXJpbmdzIiBmb3Iga2V5cyB0byBiZSBsb2FkZWQgb250byB0aGUNCj4+Pj4+Pj4gSU1BIGtl
-eXJpbmcuICBUaGlzIEtjb25maWcgaXMgbGltaXRlZCB0byBqdXN0IHRoZSBidWlsdGluIGFuZCBz
-ZWNvbmRhcnkNCj4+Pj4+Pj4ga2V5cmluZ3MuICBDaGFuZ2luZyB0aGlzIHNpbGVudGx5IHRvIGlu
-Y2x1ZGUgdGhlICIubWFjaGluZSIga2V5cmluZw0KPj4+Pj4+PiBpbnRyb2R1Y2VzIGludGVncml0
-eSByaXNrcyB0aGF0IHByZXZpb3VzbHkgZGlkIG5vdCBleGlzdC4gIEEgbmV3IElNQQ0KPj4+Pj4+
-PiBLY29uZmlnIG5lZWRzIHRvIGJlIGRlZmluZWQgdG8gYWxsb3cgYWxsIHRocmVlIGtleXJpbmdz
-IC0gYnVpbHRpbiwNCj4+Pj4+Pj4gbWFjaGluZSwgYW5kIHNlY29uZGFyeS4NCj4+Pj4+Pj4gDQo+
-Pj4+Pj4+IFRoZSBzZWNvbmQgcGFyYWdyYXBoIGltcGxpZXMgdGhhdCBvbmx5IENBIGFuZCBpbnRl
-cm1lZGlhdGUgQ0Ega2V5cyBhcmUNCj4+Pj4+Pj4gb24gc2Vjb25kYXJ5IGtleXJpbmcsIG9yIGFz
-IGluIG91ciBjYXNlIHRoZSAiLm1hY2hpbmUiIGtleXJpbmcgbGlua2VkDQo+Pj4+Pj4+IHRvIHRo
-ZSBzZWNvbmRhcnkga2V5cmluZy4NCj4+Pj4+Pj4gDQo+Pj4+Pj4+IE1pbWkNCj4+Pj4+Pj4gDQo+
-Pj4+Pj4gSSBoYXZlIGFsc28gbm93IHRlc3QgZW52aXJvbm1lbnQgZm9yIHRoaXMgcGF0Y2ggc2V0
-IGJ1dCBpZiB0aGVyZSBhcmUNCj4+Pj4+PiBhbnkgcG9zc2libGUgY2hhbmdlcywgSSdtIHdhaXRp
-bmcgZm9yIGEgbmV3IHZlcnNpb24sIGFzIGl0IGlzIGFueXdheQ0KPj4+Pj4+IGZvciA1LjE4IGN5
-Y2xlIGVhcmxpZXN0Lg0KPj4+Pj4gDQo+Pj4+PiBPdGhlciB0aGFuIHRoZSB0d28gc2VudGVuY2Ug
-Y2hhbmdlcywgSSBoYXZlIG5vdCBzZWVuIGFueXRoaW5nIGlkZW50aWZpZWQgDQo+Pj4+PiBjb2Rl
-IHdpc2UgcmVxdWlyaW5nIGEgY2hhbmdlLiAgSWYgeW914oCZZCBsaWtlIG1lIHRvIHJlc3BpbiBh
-IHYxMCB3aXRoIHRoZSBzZW50ZW5jZSANCj4+Pj4+IGNoYW5nZXMgbGV0IG1lIGtub3cuICBPciBp
-ZiB5b3Ugd2FudCB0byByZW1vdmUgdGhlIGltYSByZWZlcmVuY2UsIHRoYXQgd29ya3MgDQo+Pj4+
-PiB0b28uICBKdXN0IGxldCBtZSBrbm93IGhvdyB5b3Ugd2FudCB0byBoYW5kbGUgdGhpcy4gIFRo
-YW5rcy4NCj4+Pj4gDQo+Pj4+IEknbSBiYXNpY2FsbHkgd2FpdGluZyBhbHNvIE1pbWkgdG8gdGVz
-dCB0aGlzIGFzIEkgZG8gbm90IGhhdmUgSU1BIHRlc3QNCj4+Pj4gZW52aXJvbm1lbnQuDQo+Pj4+
-IA0KPj4+PiBGcm9tIG15IHNpZGU6DQo+Pj4+IA0KPj4+PiBUZXN0ZWQtYnk6IEphcmtrbyBTYWtr
-aW5lbiA8amFya2tvQGtlcm5lbC5vcmc+DQo+Pj4gDQo+Pj4gSSBjYW4gcGljayB0aGUgd2hvbGUg
-dGhpbmcgYXQgdGhlIHRpbWUgd2hlbiBJIGdldCBncmVlbiBsaWdodC4NCj4+IA0KPj4gVGhlIE1P
-SyBrZXlzIGFyZSBub3QgbG9hZGVkIG9udG8gdGhlIC5tYWNoaW5lIGtleXJpbmcgaWYNCj4+IENP
-TkZJR19JTUFfS0VZUklOR1NfUEVSTUlUX1NJR05FRF9CWV9CVUlMVElOX09SX1NFQ09OREFSWSBp
-cyBlbmFibGVkLiANCj4+IEZyb20gYW4gSU1BIHBlcnNwZWN0aXZlIG5vdGhpbmcgaGFzIGNoYW5n
-ZWQuDQo+PiANCj4+IEFmdGVyIHRoZSBJTUEgcmVmZXJlbmNlcyBpbiB0aGUgcGF0Y2ggZGVzY3Jp
-cHRpb25zIGFyZSByZW1vdmVkLCBmZWVsDQo+PiBmcmVlIHRvIGFkZCBUZXN0ZWQtYnk6IE1pbWkg
-Wm9oYXIgPHpvaGFyQGxpbnV4LmlibS5jb20+IG9uIHBhdGNoZXMgMSAtDQo+PiA1Lg0KPj4gDQo+
-PiB0aGFua3MsDQo+PiANCj4+IE1pbWkNCj4gDQo+IEVyaWMsIGZvciBtZSBpdCB3b3VsZCBiZSBh
-dCBsZWFzdCBhIGNvbnZlbmllbmNlLCBhbmQgb3ZlcmFsbHkgaXQgd291bGQNCj4gbWFrZSBzdXJl
-IHRoYXQgSSBwaWNrIHRoZSByaWdodCB0aGluZyBpZiB5b3Ugd291bGQgZml4IHRoZSB0eXBvcyAo
-YW5kDQo+IHlvdSBjYW4gYWRkIGFsbCB0aGUgdGVzdGVkLWJ5IHRhZ3Mgb2YgY291cnNlIGFzIG5v
-IGZ1bmN0aW9uYWwgY2hhbmdlcykuDQo+IA0KPiBUaGVyZSdzIGJlZW4gdGltZXMgd2hlbiBJJ3Zl
-IG1hbnVhbGx5ICJqdXN0IGZpeGVkIHR5cG9zIiwgYW5kIGZhaWxlZCBpbiBhDQo+IHdheSBvciBh
-bm90aGVyIGJlY2F1c2Ugb2YgaHVtYW4gZXJyb3IuIEp1c3Qgd2FudCB0byBtYWtlIHN1cmUgdGhh
-dCB3ZQ0KPiBoYXZlIGV4YWN0bHkgdGhlIHJpZ2h0IGNvbnRlbnQgYXBwbGllZCwgSSBob3BlIHlv
-dSB1bmRlcnN0YW5kIG15IHBvaW50DQo+IG9mIHZpZXcuIEFuZCB3ZSBhcmUgZWFybHkgZm9yIHRo
-ZSA1LjE4IHJlbGVhc2UgY3ljbGUgYW55d2F5Lg0KDQpObyBwcm9ibGVtLCBJ4oCZbGwgcHV0IHRv
-Z2V0aGVyIGEgdjEwIHdpdGggdGhlIGNoYW5nZXMuICBUaGFua3MgZm9yIHlvdXIgcmV2aWV3Lg0K
-DQo=
+
+On 1/14/22 07:05, Christian Brauner wrote:
+> On Tue, Jan 04, 2022 at 12:04:16PM -0500, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Introduce the IMA_NS in Kconfig for IMA namespace enablement.
+>>
+>> Enable the lazy initialization of an IMA namespace when a user mounts
+>> SecurityFS. Now a user_namespace will get a pointer to an ima_namespace
+>> and therefore add an implementation of get_current_ns() that returns this
+>> pointer.
+>>
+>> get_current_ns() may now return a NULL pointer for as long as the IMA
+>> namespace hasn't been created, yet. Therefore, return early from those
+>> functions that may now get a NULL pointer from this call. The NULL
+>> pointer can typically be treated similar to not having an IMA policy set
+>> and simply return early from a function.
+>>
+>> Implement ima_ns_from_file() for SecurityFS-related files where we can
+>> now get the IMA namespace via the user namespace pointer associated
+>> with the superblock of the SecurityFS filesystem instance. Since
+>> the functions using ima_ns_from_file() will only be called after an
+>> ima_namesapce has been allocated they will never get a NULL pointer
+>> for the ima_namespace.
+>>
+>> Switch access to userns->ima_ns to use acquire/release semantics to ensure
+>> that a newly created ima_namespace structure is fully visible upon access.
+>>
+>> Replace usage of current_user_ns() with ima_ns_from_user_ns() that
+>> implements a method to derive the user_namespace from the given
+>> ima_namespace. It leads to the same result.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> ---
+>>   include/linux/ima.h                 |  9 ++++++-
+>>   init/Kconfig                        | 13 ++++++++++
+>>   kernel/user_namespace.c             |  2 ++
+>>   security/integrity/ima/ima.h        | 35 ++++++++++++++++++++++-----
+>>   security/integrity/ima/ima_fs.c     | 37 ++++++++++++++++++++++-------
+>>   security/integrity/ima/ima_main.c   | 29 ++++++++++++++++------
+>>   security/integrity/ima/ima_ns.c     |  3 ++-
+>>   security/integrity/ima/ima_policy.c | 13 +++++-----
+>>   8 files changed, 112 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/include/linux/ima.h b/include/linux/ima.h
+>> index 5354e83d1694..7b9713b290ae 100644
+>> --- a/include/linux/ima.h
+>> +++ b/include/linux/ima.h
+>> @@ -11,6 +11,7 @@
+>>   #include <linux/fs.h>
+>>   #include <linux/security.h>
+>>   #include <linux/kexec.h>
+>> +#include <linux/user_namespace.h>
+>>   #include <crypto/hash_info.h>
+>>   struct linux_binprm;
+>>   
+>> @@ -71,7 +72,13 @@ static inline const char * const *arch_get_ima_policy(void)
+>>   static inline struct user_namespace
+>>   *ima_ns_to_user_ns(struct ima_namespace *ns)
+>>   {
+>> -	return current_user_ns();
+>> +	struct user_namespace *user_ns;
+>> +
+>> +	user_ns = current_user_ns();
+>> +#ifdef CONFIG_IMA_NS
+>> +	WARN_ON(user_ns->ima_ns != ns);
+>> +#endif
+>> +	return user_ns;
+>>   }
+>>   
+>>   #else
+>> diff --git a/init/Kconfig b/init/Kconfig
+>> index 4b7bac10c72d..e27155e0ddba 100644
+>> --- a/init/Kconfig
+>> +++ b/init/Kconfig
+>> @@ -1247,6 +1247,19 @@ config NET_NS
+>>   	  Allow user space to create what appear to be multiple instances
+>>   	  of the network stack.
+>>   
+>> +config IMA_NS
+>> +	bool "IMA namespace"
+>> +	depends on USER_NS
+>> +	depends on IMA
+>> +	default n
+>> +	help
+>> +	  Allow the creation of an IMA namespace for each user namespace.
+>> +	  Namespaced IMA enables having IMA features work separately
+>> +	  in each IMA namespace.
+>> +	  Currently, only the audit status flags are stored in the namespace,
+>> +	  which allows the same file to be audited each time it is accessed
+>> +	  in a new namespace.
+>> +
+>>   endif # NAMESPACES
+>>   
+>>   config CHECKPOINT_RESTORE
+>> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+>> index 6b2e3ca7ee99..653f8fa83b69 100644
+>> --- a/kernel/user_namespace.c
+>> +++ b/kernel/user_namespace.c
+>> @@ -20,6 +20,7 @@
+>>   #include <linux/fs_struct.h>
+>>   #include <linux/bsearch.h>
+>>   #include <linux/sort.h>
+>> +#include <linux/ima.h>
+>>   
+>>   static struct kmem_cache *user_ns_cachep __read_mostly;
+>>   static DEFINE_MUTEX(userns_state_mutex);
+>> @@ -196,6 +197,7 @@ static void free_user_ns(struct work_struct *work)
+>>   			kfree(ns->projid_map.forward);
+>>   			kfree(ns->projid_map.reverse);
+>>   		}
+>> +		free_ima_ns(ns);
+>>   		retire_userns_sysctls(ns);
+>>   		key_free_user_ns(ns);
+>>   		ns_free_inum(&ns->ns);
+>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>> index 344c8c4bd030..d993655ec796 100644
+>> --- a/security/integrity/ima/ima.h
+>> +++ b/security/integrity/ima/ima.h
+>> @@ -509,21 +509,20 @@ struct user_namespace *ima_user_ns_from_file(const struct file *filp)
+>>   	return file_inode(filp)->i_sb->s_user_ns;
+>>   }
+>>   
+>> +#ifdef CONFIG_IMA_NS
+>> +
+>>   static inline struct ima_namespace
+>>   *ima_ns_from_user_ns(struct user_namespace *user_ns)
+>>   {
+>> -	if (user_ns == &init_user_ns)
+>> -		return &init_ima_ns;
+>> -	return NULL;
+>> +	/* Pairs with smp_store_releases() in create_ima_ns(). */
+>> +	return smp_load_acquire(&user_ns->ima_ns);
+>>   }
+>>   
+>>   static inline struct ima_namespace *get_current_ns(void)
+>>   {
+>> -	return &init_ima_ns;
+>> +	return ima_ns_from_user_ns(current_user_ns());
+>>   }
+>>   
+>> -#ifdef CONFIG_IMA_NS
+>> -
+>>   struct ima_namespace *create_ima_ns(struct user_namespace *user_ns);
+>>   
+>>   struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
+>> @@ -532,6 +531,11 @@ struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
+>>   
+>>   void ima_free_ns_status_tree(struct ima_namespace *ns);
+>>   
+>> +static inline struct ima_namespace *ima_ns_from_file(const struct file *filp)
+>> +{
+>> +	return ima_user_ns_from_file(filp)->ima_ns;
+>> +}
+>> +
+>>   #define IMA_NS_STATUS_ACTIONS   IMA_AUDIT
+>>   #define IMA_NS_STATUS_FLAGS     IMA_AUDITED
+>>   
+>> @@ -542,6 +546,20 @@ unsigned long set_iint_flags(struct integrity_iint_cache *iint,
+>>   
+>>   #else
+>>   
+>> +static inline struct ima_namespace
+>> +*ima_ns_from_user_ns(struct user_namespace *user_ns)
+>> +{
+>> +	if (user_ns == &init_user_ns)
+>> +		return &init_ima_ns;
+>> +	return NULL;
+>> +}
+>> +
+>> +
+>> +static inline struct ima_namespace *get_current_ns(void)
+>> +{
+>> +	return &init_ima_ns;
+>> +}
+>> +
+>>   static inline struct ima_namespace *
+>>   create_ima_ns(struct user_namespace *user_ns)
+>>   {
+>> @@ -572,6 +590,11 @@ static inline unsigned long set_iint_flags(struct integrity_iint_cache *iint,
+>>   	return flags;
+>>   }
+>>   
+>> +static inline struct ima_namespace *ima_ns_from_file(const struct file *filp)
+>> +{
+>> +	return &init_ima_ns;
+>> +}
+>> +
+>>   #endif /* CONFIG_IMA_NS */
+>>   
+>>   #endif /* __LINUX_IMA_H */
+>> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+>> index 468508f6a7e8..ee3af81d1c3e 100644
+>> --- a/security/integrity/ima/ima_fs.c
+>> +++ b/security/integrity/ima/ima_fs.c
+>> @@ -49,7 +49,7 @@ static ssize_t ima_show_htable_violations(struct file *filp,
+>>   					  char __user *buf,
+>>   					  size_t count, loff_t *ppos)
+>>   {
+>> -	struct ima_namespace *ns = &init_ima_ns;
+>> +	struct ima_namespace *ns = ima_ns_from_file(filp);
+>>   
+>>   	return ima_show_htable_value(buf, count, ppos,
+>>   				     &ns->ima_htable.violations);
+>> @@ -64,7 +64,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
+>>   					   char __user *buf,
+>>   					   size_t count, loff_t *ppos)
+>>   {
+>> -	struct ima_namespace *ns = &init_ima_ns;
+>> +	struct ima_namespace *ns = ima_ns_from_file(filp);
+>>   
+>>   	return ima_show_htable_value(buf, count, ppos, &ns->ima_htable.len);
+>>   }
+>> @@ -77,7 +77,7 @@ static const struct file_operations ima_measurements_count_ops = {
+>>   /* returns pointer to hlist_node */
+>>   static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+>>   {
+>> -	struct ima_namespace *ns = &init_ima_ns;
+>> +	struct ima_namespace *ns = ima_ns_from_file(m->file);
+>>   	loff_t l = *pos;
+>>   	struct ima_queue_entry *qe;
+>>   
+>> @@ -95,7 +95,7 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+>>   
+>>   static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
+>>   {
+>> -	struct ima_namespace *ns = &init_ima_ns;
+>> +	struct ima_namespace *ns = ima_ns_from_file(m->file);
+>>   	struct ima_queue_entry *qe = v;
+>>   
+>>   	/* lock protects when reading beyond last element
+>> @@ -317,7 +317,7 @@ static ssize_t ima_read_policy(struct ima_namespace *ns, char *path)
+>>   static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+>>   				size_t datalen, loff_t *ppos)
+>>   {
+>> -	struct ima_namespace *ns = &init_ima_ns;
+>> +	struct ima_namespace *ns = ima_ns_from_file(file);
+>>   	char *data;
+>>   	ssize_t result;
+>>   
+>> @@ -379,7 +379,7 @@ static const struct seq_operations ima_policy_seqops = {
+>>   static int ima_open_policy(struct inode *inode, struct file *filp)
+>>   {
+>>   	struct user_namespace *user_ns = ima_user_ns_from_file(filp);
+>> -	struct ima_namespace *ns = &init_ima_ns;
+>> +	struct ima_namespace *ns = ima_ns_from_file(filp);
+>>   
+>>   	if (!(filp->f_flags & O_WRONLY)) {
+>>   #ifndef	CONFIG_IMA_READ_POLICY
+>> @@ -406,7 +406,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
+>>    */
+>>   static int ima_release_policy(struct inode *inode, struct file *file)
+>>   {
+>> -	struct ima_namespace *ns = &init_ima_ns;
+>> +	struct ima_namespace *ns = ima_ns_from_file(file);
+>>   	const char *cause = ns->valid_policy ? "completed" : "failed";
+>>   
+>>   	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
+>> @@ -459,12 +459,29 @@ int ima_fs_ns_init(struct user_namespace *user_ns, struct dentry *root)
+>>   	struct dentry *ascii_runtime_measurements = NULL;
+>>   	struct dentry *runtime_measurements_count = NULL;
+>>   	struct dentry *violations = NULL;
+>> +	bool created_ns = false;
+>> +
+>> +	/*
+>> +	 * While multiple superblocks can exist they are keyed by userns in
+>> +	 * s_fs_info for securityfs. The first time a userns mounts a
+>> +	 * securityfs instance we lazily allocate the ima_namespace for the
+>> +	 * userns since that's the only way a userns can meaningfully use ima.
+>> +	 * The vfs ensures we're the only one to call fill_super() and hence
+>> +	 * ima_fs_ns_init(), so we don't need any memory barriers here, i.e.
+>> +	 * user_ns->ima_ns can't change while we're in here.
+>> +	 */
+>> +	if (!ns) {
+>> +		ns = create_ima_ns(user_ns);
+>> +		if (IS_ERR(ns))
+>> +			return PTR_ERR(ns);
+>> +		created_ns = true;
+>> +	}
+> Since create_ima_ns() initializes user_ns->ima_ns via
+> smp_store_release() the patch currently implies that concurrent access
+> to user_ns->ima_ns are safe once create_ima_ns() returns.
+>
+> Specifically, it entails that no caller will access entries in the ima
+> namespace that will only be filled in past this point. Afaict, this only
+> relates to the ns->policy_dentry which can't be accessed until
+> securityfs is finished.
+>
+> Nonetheless, I would recommend that you change create_ima_ns() to not
+> initialize user_ns->ima_ns and instead defer this until everything in
+> the namespace is setup. So maybe move the smp_store_release() to the end
+> of ima_fs_ns_init(). If ns->policy_dentry wouldn't be stashed in ima_ns
+> it wouldn't matter but since it is I would not publish ima_ns before
+> this is set. Sm like (uncompiled, untested):
+>
+> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+> index ee3af81d1c3e..64ca47671d31 100644
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@ -531,6 +531,8 @@ int ima_fs_ns_init(struct user_namespace *user_ns, struct dentry *root)
+>                          goto out;
+>          }
+>
+> +       if (!user_ns->ima_ns)
+> +               smp_store_release(&user_ns->ima_ns, ns);
+>          return 0;
+>   out:
+>          securityfs_remove(ns->policy_dentry);
+>
+> As a side-effect this will let you get rid of the bool created_ns and
+> thereby simplify the codeflow.
+
+Fixed. Thanks.
+
+
+>
+> (Note, that obviously means that the changes I mentioned earlier in
+> https://lore.kernel.org/containers/20220114114321.7prnt72ukvch4wxa@wittgenstein
+> can't be made.)
