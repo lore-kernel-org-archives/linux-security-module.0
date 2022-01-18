@@ -2,33 +2,30 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19758C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 11:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BE8C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 11:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240889AbiARLcD (ORCPT
+        id S240990AbiARLcL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jan 2022 06:32:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43748 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240107AbiARLbl (ORCPT
+        Tue, 18 Jan 2022 06:32:11 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35896 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240722AbiARLbp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jan 2022 06:31:41 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44085C06174E;
-        Tue, 18 Jan 2022 03:31:26 -0800 (PST)
+        Tue, 18 Jan 2022 06:31:45 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: usama.anjum)
-        with ESMTPSA id E8C341F43EBE
+        with ESMTPSA id 00AAA1F43EC4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1642505485;
-        bh=JhpCsybLmT57CKBzdEYbEYfBTmlpwJ2taSfigXWMgdM=;
+        s=mail; t=1642505503;
+        bh=c6ARDNQMLSW4/+Jdr9UKAZU1s8LQbK0RFS42X6aonwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IKMPtZooC5RNGM8no7wd4TPQzJOAGg8P1rSLdb3XxWAB0M579B20iFwWjd75fNoOP
-         RgqW1Ng28T6lXniFr99oCcKCoLncT+26K0vt/slJlaja/RCDgQAoOmoXeRehH0rzb0
-         fFznJ1qtbioFbt5sovD4Njq0G4aL6CFFyBEd8LihVqYCwC0yvHV6w0VrVA19+Kbh0m
-         qOU1knAfZo6MvQpEsJbNcyslHVrsjcJIUkJbvEJ/N4Wc+IXoo7ImoAo6BgvYOqn15g
-         BbaFm9kuAUS+/DnNeYF47GwRW6t3mH28ps48hB4bmlB8wVaqi9diFiH2Sdn/F1/SAm
-         OrVeTzWOBLeOw==
+        b=DYwPaVjIAAS+Kv60H7XU5+U0eu8tiWzYWlVpEUgumfIcWlmJ3B7H++AO8uBO4fZxZ
+         KlK9PEzqMm5QuGShVub8sw/L14AS/Vz3QS+2U4+W41vpq1oanHbZLnzdEeYuVhezej
+         CG5u7SKJWfx3bCYvaeT9vE3YgFt0QT/tznC9j0n5bXwzG5ifcNpd6eGlO30oKNApsf
+         DNAYzq9s49328zD0hCbUmthRcYWWKmWJNmLpMnZ0Q2/8E9xL2q6tTXBNULux8nB8+9
+         4SCkV4mR+h1LXha+GwEfOYbmewWnYodc1rh+BDH3PwCzbfVrMDtUBbU0mvBiKubV4H
+         d3xgU00DpLG8g==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -54,9 +51,9 @@ To:     Shuah Khan <shuah@kernel.org>,
         linux-mm@kvack.org (open list:MEMORY MANAGEMENT)
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH 05/10] selftests: kvm: Add the uapi headers include variable
-Date:   Tue, 18 Jan 2022 16:29:04 +0500
-Message-Id: <20220118112909.1885705-6-usama.anjum@collabora.com>
+Subject: [PATCH 07/10] selftests: net: Add the uapi headers include variable
+Date:   Tue, 18 Jan 2022 16:29:06 +0500
+Message-Id: <20220118112909.1885705-8-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220118112909.1885705-1-usama.anjum@collabora.com>
 References: <20220118112909.1885705-1-usama.anjum@collabora.com>
@@ -71,40 +68,22 @@ KHDR_INCLUDES to correctly reach the headers.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- tools/testing/selftests/kvm/Makefile | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ tools/testing/selftests/net/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index ee8cf2149824..ce9c8857e14c 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -136,8 +136,6 @@ TEST_GEN_PROGS_riscv += kvm_binary_stats_test
- TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
- LIBKVM += $(LIBKVM_$(UNAME_M))
+diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
+index 9897fa9ab953..22759591fc79 100644
+--- a/tools/testing/selftests/net/Makefile
++++ b/tools/testing/selftests/net/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for net selftests
  
--INSTALL_HDR_PATH = $(top_srcdir)/usr
--LINUX_HDR_PATH = $(INSTALL_HDR_PATH)/include/
- LINUX_TOOL_INCLUDE = $(top_srcdir)/tools/include
- ifeq ($(ARCH),x86_64)
- LINUX_TOOL_ARCH_INCLUDE = $(top_srcdir)/tools/arch/x86/include
-@@ -146,7 +144,7 @@ LINUX_TOOL_ARCH_INCLUDE = $(top_srcdir)/tools/arch/$(ARCH)/include
- endif
- CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
- 	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
--	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
-+	-I$(LINUX_TOOL_ARCH_INCLUDE) $(KHDR_INCLUDES) -Iinclude \
- 	-I$(<D) -Iinclude/$(UNAME_M) -I.. $(EXTRA_CFLAGS)
+ CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g
+-CFLAGS += -I../../../../usr/include/
++CFLAGS += $(KHDR_INCLUDES)
  
- no-pie-option := $(call try-run, echo 'int main() { return 0; }' | \
-@@ -185,7 +183,7 @@ x := $(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
- all: $(STATIC_LIBS)
- $(TEST_GEN_PROGS): $(STATIC_LIBS)
- 
--cscope: include_paths = $(LINUX_TOOL_INCLUDE) $(LINUX_HDR_PATH) include lib ..
-+cscope: include_paths = $(LINUX_TOOL_INCLUDE) include lib ..
- cscope:
- 	$(RM) cscope.*
- 	(find $(include_paths) -name '*.h' \
+ TEST_PROGS := run_netsocktests run_afpackettests test_bpf.sh netdevice.sh \
+ 	      rtnetlink.sh xfrm_policy.sh test_blackhole_dev.sh
 -- 
 2.30.2
 
