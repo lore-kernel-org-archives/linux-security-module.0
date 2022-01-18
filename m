@@ -2,33 +2,30 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5855C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 11:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B6CC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 11:31:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240169AbiARLbl (ORCPT
+        id S240583AbiARLby (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jan 2022 06:31:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43648 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240170AbiARLbR (ORCPT
+        Tue, 18 Jan 2022 06:31:54 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35870 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240630AbiARLbg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jan 2022 06:31:17 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72EE3C06173E;
-        Tue, 18 Jan 2022 03:31:17 -0800 (PST)
+        Tue, 18 Jan 2022 06:31:36 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: usama.anjum)
-        with ESMTPSA id E89C61F43EAC
+        with ESMTPSA id C6F5A1F43EC0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1642505476;
-        bh=quQqOgE+qpfCtHHrJtyaS3otvFZ8NW4tc4U/r/42qw8=;
+        s=mail; t=1642505494;
+        bh=f/au3CsQPO/GIa/zBleGlWIysQfk59tmnzMqq6fix88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cfpbNJrycuQvPqZSVP14/FBD+H5Oeq9sTIqpJKcjivtiq5qAXkGgvOIaZkSiwbvC3
-         bTKk2fd5FlzjHRxfb3QKhqEMTJYhvlCzCzd1ec46dG3OP2xU3OmmeKJWvKuMr/QR12
-         LJSt2GHQMm/OIfftguSj9DAm7AGsiDq7B7fzqmyaY1Xnb6dpl9rvP5Tx0ZHWV64JBX
-         g5KcB0mFJn4gieDsWGa3CJC1rLjghrYyW8q/VSFBwvXJswK+2GgNiLynZJ6MYhC5m4
-         RX4gwuslnAjCwpcQoz18UZwJqIBeACn01DSidYQWk86MLtNJZlmDRr1dPV27Dg/VjG
-         Tud39RsoOXw8g==
+        b=EoT+wn7pIb/F+auwrxvGpdTzbp0SSH2JL8xkak1SS8HMmCuYsT+Am7cIkV5Msc4Q/
+         U+u+NcYne87dY5LS9UYjqmQyaUxhANeFXA/yPruEpAebNQK+vG2A0Kly+8HsA8R50b
+         BR606G/NT9v0oZ8Ox7bpmRMBgvHxLU6uO3Obgs8N+tgB5F0HkzR5aXujTAaZIlqLop
+         tawMy3Yb/ojfzAe21P0fmQda0wV59wgLQX68h0tPMGSlJ4oLh1HBJN7UFHMwW0snTb
+         tkRKBRzN2qwb/MjfmqbSDme+oUImqsFukIY6lIayF0/iSaNrzP0sZ3PFr4xsfY+HDQ
+         XQlLxY9KjF6gg==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -54,9 +51,9 @@ To:     Shuah Khan <shuah@kernel.org>,
         linux-mm@kvack.org (open list:MEMORY MANAGEMENT)
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH 04/10] selftests: futex: Add the uapi headers include variable
-Date:   Tue, 18 Jan 2022 16:29:03 +0500
-Message-Id: <20220118112909.1885705-5-usama.anjum@collabora.com>
+Subject: [PATCH 06/10] selftests: landlock: Add the uapi headers include variable
+Date:   Tue, 18 Jan 2022 16:29:05 +0500
+Message-Id: <20220118112909.1885705-7-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220118112909.1885705-1-usama.anjum@collabora.com>
 References: <20220118112909.1885705-1-usama.anjum@collabora.com>
@@ -66,30 +63,42 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 Out of tree build of this test fails if relative path of the output
-directory is specified. KBUILD_OUTPUT also doesn't point to the correct
-directory when relative path is used. Thus out of tree builds fail.
-Remove the un-needed include paths and use KHDR_INCLUDES to correctly
-reach the headers.
+directory is specified. Remove the un-needed include paths and use
+KHDR_INCLUDES to correctly reach the headers.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- tools/testing/selftests/futex/functional/Makefile | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ tools/testing/selftests/landlock/Makefile | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index 5cc38de9d8ea..7ff1e764407b 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -1,7 +1,6 @@
+diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
+index a99596ca9882..44c724b38a37 100644
+--- a/tools/testing/selftests/landlock/Makefile
++++ b/tools/testing/selftests/landlock/Makefile
+@@ -1,6 +1,6 @@
  # SPDX-License-Identifier: GPL-2.0
--INCLUDES := -I../include -I../../ -I../../../../../usr/include/ \
--	-I$(KBUILD_OUTPUT)/kselftest/usr/include
--CFLAGS := $(CFLAGS) -g -O2 -Wall -D_GNU_SOURCE -pthread $(INCLUDES)
-+INCLUDES := -I../include -I../../
-+CFLAGS := $(CFLAGS) -g -O2 -Wall -D_GNU_SOURCE -pthread $(INCLUDES) $(KHDR_INCLUDES)
- LDLIBS := -lpthread -lrt
  
- HEADERS := \
+-CFLAGS += -Wall -O2
++CFLAGS += -Wall -O2 $(KHDR_INCLUDES)
+ 
+ src_test := $(wildcard *_test.c)
+ 
+@@ -12,13 +12,8 @@ KSFT_KHDR_INSTALL := 1
+ OVERRIDE_TARGETS := 1
+ include ../lib.mk
+ 
+-khdr_dir = $(top_srcdir)/usr/include
+-
+-$(khdr_dir)/linux/landlock.h: khdr
+-	@:
+-
+ $(OUTPUT)/true: true.c
+ 	$(LINK.c) $< $(LDLIBS) -o $@ -static
+ 
+-$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
+-	$(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
++$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
++	$(LINK.c) $< $(LDLIBS) -o $@ -lcap
 -- 
 2.30.2
 
