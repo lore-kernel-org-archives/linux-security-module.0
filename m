@@ -2,105 +2,149 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAB1C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 15:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC112C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 16:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346031AbiARPCJ (ORCPT
+        id S238792AbiARQbz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jan 2022 10:02:09 -0500
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com ([66.163.187.152]:38060
-        "EHLO sonic316-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345839AbiARPBS (ORCPT
+        Tue, 18 Jan 2022 11:31:55 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30050 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233718AbiARQby (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jan 2022 10:01:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1642518077; bh=26QAYvXgTAOsFn5g4e72n3EfJG/SMYDXUglW4TkoQwU=; h=Date:Subject:To:References:From:Cc:In-Reply-To:From:Subject:Reply-To; b=HmaF6+ZaIchgVDqenml6XUQRjytM6+br3BoQLMxrkMnDUi8bmM5pCLMx5xlNOesc5Ahdi2nxrLvaUbtzsZqd5UK4QYxqQC1ytGKAgvqK3FV0iFgKtIU41J/hIb7zKh5zLc1b4rOnEpPrbM2qcPimG0fciUbSNWEcYcOnn77MT+1y6LBmmSDcPaNSxRAsHAgJpdQZVBL5/T5F3wRj3EE504Q/lUBYtRqF5Pr1n7vn7WZtiu+tbjBJuaCXk3TY57l4FemsIIF/E1zZdWsYU6faoBYmr8qkyyDdlOjA6hJ1pp5FLv6XZOgRMBqQOHT7cjgpgRV5WeFC7k+sb0IxEM8+Fg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1642518077; bh=IERN5+3XpLmVvgnQOSHlCGGdF/tIUUL7BOP+LH5EGjC=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=HbvTE7chEOy+1gM0Z9fSXau7IkK1ujRaHE1XOEfCgI5In1SuzMvOrPHvdx/k/eUjYn/nBo3aXYKFR3r4vuMTA1vCBZALriTjY4CMHoaVD7zFKScky3Z9AcOwr6gGLEtsnaikdL6l+KIup0GIawC+fKj+QcNv7Dt7BkdtCz9nBGN6cmDMu/cOXEfd+qpWMlv90Q1CrVpZaE2cWhjZohQonAKDJpoZkPk6N5ZShxFTIWXbO96uIwkp7FS/4PgfLZWVjO+YdfJfqbR7UGgKNoF6y7mgpVhl4AEQh/RDlmIqlYJa99vbBUl/XOgmVurgrBbZ4ABsj7CkftWIPoE5EV6p2g==
-X-YMail-OSG: 8CJTPYMVM1lWWONqC0tN5a.U3gsNVR3xWOo66xew5iaS8RacW3uIivGVhCaT_FM
- ob3eUVHUdAsdny1GF0rl1p4qJXOesl5yX761exIUVnh2R9VnObp.MVMs_UwARnaZ59jBJiJ_PKbk
- VLcVZUnHu0fclrAFq.U59ekRRmYy7UW.1tps28661nR0KhyTrwyMxhKBCf_gH.Ut4HiluuNPoFqx
- QMoJeFUmT_F2lDXBcuIQjNHBu0NXc_MwMO9iZiJqs1Iua7uTQnsZpdiqZ.7OuuC23fAKBNnGbhpC
- JD5qSmjU45Q7ilATCe7qV9lmj.GbVwAiEn6IANSSMmDMxD_WUytvDFnsn16b1GQED4Der4.RIYVu
- 1fGyILyAXSbgXciMw.cj0tj7Rt0aPkC.HiE4Grvo8JJVA4jap68qbbp2mlpNr1WCE21rDTKl7aKJ
- dy8.DhNRFf73aAKZ0UWQzfh6r4_y6pNmnQA0U_wIIqln1WIHjU1LuL0GmJDBHlt4mhBxa7o42r0T
- A5q7MXcwYSqPzlDmIQXgcV4gWK8Iu4lX.ZAaHOs78O37RfCq_YNrTXD8._3Azku4PRUiBazQXtQB
- hKCrbtkbwzYxyxHnCiqcL.VVZeIElwKh0yC9nVGdpD4ip8OwTPp5EYFa5wDCf4LzpMsA1efQWrPe
- in4tlOEwVaXbQSBNjtNSecYg2NjHT3QeDZGV9HEJm94EONt1qh4rnAvX.H6bUUxDMY05RTblqgE2
- mcpbbU03zn50f56WaF9F8jD9ykYM0xEbM6pVYQJ.bz5DBtJemiKhM4pavKJXT2WE14zHN0pN3v9n
- 9_j8iHZmRCh7Mj.bfr3UGKufjUwH9TvpeOPTeHolmgj.70Hlt3xr0SmJN5MQGON5wYCroqz5vITv
- nFj86LEToHTXLwmIAr0XvXQjRN4xd7hG_SDN5a.kEpHIiocSyVOc7Hff3rHfq9B_fNwwBnvQc81v
- uMDz1ZPaxucapTra5xc3StrBBWwXkrE381N8Ip_cjPfYlN5l9NLzqYiv3XCmDmudjFynqarhIk1C
- cO9QAquvKpVtfZve1BWvQN6y48pMRbrcLr.OZyCzedcMR4KOCHEe2n0MKcLaZlZQRKlf7_eAn_2P
- HwZ4wKM79erpY5rbNSE5li9U6LzKmkhem2_cJauENPYJWwPfY_y7z_eUf_QPmp9xB40fujoAH3_7
- .Rv.eWPK0oRQ3Qeh3KI89BPly1wRfodG5jYbWf72TDIhKgOC0IeONMOLlUsdXHcnTe6a1Df78WOl
- hxAsoDU_873Fcfwya_aYKuvikEpTk1xOwX7QgxDKrJrFOtQzviqgJULEDEt.1PHdxWVxrSNviwRJ
- E3_cc.OrTwac2ee73LmMM053IQPxeoM5zq5sWPFRs1n97s4IRFVjERHGTxexw1H7HY3661l9JXr3
- ETSCSfKzuHXklmyWC3DmMae00PIakihKyeYuCMbeg8ZymmniFUOSBNb45xfWxk_k3xspsV1wR0vM
- WcYCpw2gv4AJLnM5LjYBY5UJ0iqtWS17J3WGkuVwQDo2DiWuXqBNozhXjcDOedPqD.FMpz0fmt3_
- IlZ8Ab3H1fhIeLeuL_QXI8W2Ng5rKSOEV0LLDhZN6NudR1GnWPfOEzRY4w8ZxMogyPq1OdpZk4eC
- spYEti.L410oz033WZfyfvLU4OAErki7gRnIcLNhOxzWox_8frVkFQfapdt2hlUniZFk30qIEs6f
- xVV9aUDzMmu27v6.blQuH.yVWxZOmwKGKSBfWSWhx75dBGEFTjwUVJCp1wThQH6oRY2GoIhY4Zgb
- 8c_Qt8KDyWOqq8L1QckIo2SdA6wUeupN9GkpW9t16uxph0h4Yy7SlD4xTs6y6zJjXmNDtdMHitwq
- kHIo6xjER7ydj6QIsh.5ZYyAj0jWmyEzw.3T090QM3rbIOCywVuHWgRr_qojE3tmCp9qhzTI4Sp6
- nxIsGTvWN5es.sG9KRJe7.JKl99znDeISYdX7mvXqO6w1ipTnQJGTg1ma4xxNs8w93uS72u2WpzT
- VQB3pxXqHJEy_R4QXWbUvqZOv7URbdZNS2unpGSgZXICdBUPJ5MDBRH5iaBCeTN.O9PExv9Ebu8T
- GO4TZtGMQvMllFSAZmkZU_rsYJ.pIpXrspCsIgR.2Gwh9JdZ12en3I4YQLdwfAyaIB6gG6XBY_8U
- _gv2uKkFA5YrMzqJslcbo5EGez.cBHP3B8zscN3y4J_wVU7rQwEiU6SnXYakPvSAiBsfC6IhEGCh
- 4Q6m3
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 18 Jan 2022 15:01:17 +0000
-Received: by kubenode513.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID ff7cc82b505993e5481c4f01cbf9d160;
-          Tue, 18 Jan 2022 15:01:16 +0000 (UTC)
-Message-ID: <bceace8d-b5ad-11a5-c1aa-9b156bb092b3@schaufler-ca.com>
-Date:   Tue, 18 Jan 2022 07:01:15 -0800
+        Tue, 18 Jan 2022 11:31:54 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20IExPY9026569;
+        Tue, 18 Jan 2022 16:31:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=gwtBNDrjoRUjgdImL2lUJU8rSD1D9vwLIi3HT5QdUQw=;
+ b=hNApWxNnWcHtPBWqgnPX9WkAEBaK1ydzmh8rlRn0KHpWGkkgorDX1r78srNXUyO7vF9j
+ hVOYGB8aTqGmFd3ndympaUP8xMAXPF85cdYFVRmaeq7Q/K4gDbsPnFSNfXB3YvfnnYEk
+ 4sruIkRFy+qrGg6xl7/SFk6a9D6u7DA4/Km2FqZL1BPAgn7ibbpfnygKMA7UCQ6GxYH5
+ knb07xYxvQdD1mWC79zgf9KBX7JHB9lV+2cpva0CR0XNvL/sLCkC//GqoDfdvTe6p02v
+ R12KDBPNv/XbCWid1qAJ9SYcNT6UfqHNCKgPquh5ygepDOLXKt+Tx2eW3h5+zINavqCk ug== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dnydgaq5s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jan 2022 16:31:34 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20IGQwM3005255;
+        Tue, 18 Jan 2022 16:31:34 GMT
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dnydgaq5g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jan 2022 16:31:34 +0000
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20IGDYb9005520;
+        Tue, 18 Jan 2022 16:31:33 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma01dal.us.ibm.com with ESMTP id 3dknwbjgy9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jan 2022 16:31:33 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20IGVTw633882384
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jan 2022 16:31:29 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C559AAC073;
+        Tue, 18 Jan 2022 16:31:29 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5F510AC068;
+        Tue, 18 Jan 2022 16:31:29 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 18 Jan 2022 16:31:29 +0000 (GMT)
+Message-ID: <971dc802-42b2-9f04-f143-89f9ae26f0fe@linux.ibm.com>
+Date:   Tue, 18 Jan 2022 11:31:29 -0500
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: Why is there an alignment from cred->security?
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v8 18/19] ima: Show owning user namespace's uid and gid
+ when displaying policy
 Content-Language: en-US
-To:     Denis Obrezkov <denisobrezkov@gmail.com>,
-        linux-security-module@vger.kernel.org
-References: <720c8d15-8951-3f47-60b8-7d2d8649ce6a@gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <720c8d15-8951-3f47-60b8-7d2d8649ce6a@gmail.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
+ <20220104170416.1923685-19-stefanb@linux.vnet.ibm.com>
+ <20220114134527.bk5ijfrqwt334ypr@wittgenstein>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20220114134527.bk5ijfrqwt334ypr@wittgenstein>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.19594 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: y_QP-K8FJAh6YkJT1ap-2b-M7beQ2bbN
+X-Proofpoint-GUID: T_nExa_IjIW3VGgu4p_5nbPEnLYQRT_0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-18_04,2022-01-18_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
+ phishscore=0 clxscore=1011 spamscore=0 impostorscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201180101
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/18/2022 3:33 AM, Denis Obrezkov wrote:
-> I am digging through the SMACK code. There are the lines:
->
-> static inline struct task_smack *smack_cred(const struct cred *cred)
-> {
->          return cred->security + smack_blob_sizes.lbs_cred;
-> }
->
-> and smack_blob_sizes are defined as:
->
-> struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
->          .lbs_cred = sizeof(struct task_smack),
->          .lbs_file = sizeof(struct smack_known *),
->          .lbs_inode = sizeof(struct inode_smack),
->          .lbs_ipc = sizeof(struct smack_known *),
->          .lbs_msg_msg = sizeof(struct smack_known *),
-> };
->
-> So, basically, to get a struct we take the size of the struct as an
-> offset for cred->security, right? I can't understand why. So, we have
-> the following memory layout:
->
-> |_________(zeroes)__________|_____task_smack content____|
-> ^                           ^                           ^
-> cred->security     cred->security +              cred->security +
->                   sizeof(struct task_smack)   2*sizeof(struct task_smack)
->
-> Do I misunderstand something?
 
-There may be more than one security module that uses the credential
-security blob. The lbs_cred value will be 0 if only Smack is using
-the credential blob. If another security module is also using the
-blob that value will reflect where in the blob the Smack data resides.
-See security/security.c for the details.
+On 1/14/22 08:45, Christian Brauner wrote:
+> On Tue, Jan 04, 2022 at 12:04:15PM -0500, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Show the uid and gid values of the owning user namespace when displaying
+>> the IMA policy rather than the kernel uid and gid values. Now the same uid
+>> and gid values are shown in the policy as those that were used when the
+>> policy was set.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> ---
+>>   security/integrity/ima/ima_policy.c | 19 +++++++++++++------
+>>   1 file changed, 13 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index 15c68dc5da9e..b7dbc687b6ff 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -1997,6 +1997,7 @@ static void ima_policy_show_appraise_algos(struct seq_file *m,
+>>   
+>>   int ima_policy_show(struct seq_file *m, void *v)
+>>   {
+>> +	struct user_namespace *user_ns = ima_user_ns_from_file(m->file);
+> Hm, so when looking at the policy entries via seq_file's .show method
+> and displaying the {g,u}id values of the rules we don't want the values
+> resolved according to the user namespace the securityfs instances was
+> mounted in. That would be misleading for callers that are in an
+> ancestor userns (which we allow in .permission).
+>
+> So we want to make sure that we see the values as the opener of the file
+> would see them. This is similar to e.g. looking at a task's ids through
+> /proc/<pid>/status. So this should be seq_user_ns(m) instead of
+> ima_user_ns_from_file().
+>>   	struct ima_rule_entry *entry = v;
+>>   	int i;
+>>   	char tbuf[64] = {0,};
+>> @@ -2074,7 +2075,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+>>   	}
+>>   
+>>   	if (entry->flags & IMA_UID) {
+>> -		snprintf(tbuf, sizeof(tbuf), "%d", __kuid_val(entry->uid));
+>> +		snprintf(tbuf, sizeof(tbuf),
+>> +			 "%d", from_kuid(user_ns, entry->uid));
+> This should be from_k{g,u}id_munged().
+
+Thanks, fixed.
+
+When I run a runc container as uid=1000 I see uid = 0 when inside the 
+container and when entering its mount namespace from root account via 
+nsenter it shows 'uid = 1000' while before it was showing 'uid = 0'.
 
