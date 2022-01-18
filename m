@@ -2,195 +2,164 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B7BC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 20:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E4EC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Jan 2022 21:47:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349378AbiARUyx (ORCPT
+        id S1349572AbiARVrh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Jan 2022 15:54:53 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64372 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1349303AbiARUyv (ORCPT
+        Tue, 18 Jan 2022 16:47:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45450 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349605AbiARVrb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Jan 2022 15:54:51 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20IJwNhw013236;
-        Tue, 18 Jan 2022 20:54:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=734nfVnOwRu6dWh8c+qYOHCANsoregrlTAXWyjjBMts=;
- b=Ka9UJaZf9VerU9+SX/a6VvOsR5hYXMYGDSL72+TPrXQb98c7jnuslVBNhffPAcc7CWnY
- YT55O85NjLY3kf516uPZTbmBDJZGDZw9cG2ONHQpucOTcd4DSEvnVMXy7dWskANH1BSQ
- pQPM555rEN85u0IeEtt7jQLZ2WqzuutJQbtik84Csd99RlNqVxlY3iI+oddcUJQUaaIL
- +nRHcROn7A3ALLicLlew9NRtPm2hU9VFKy59Gl6zETEJaJ3//vHhnUoFRiLfjSgpV9O/
- VwANHvQG5wL/HsTQPOKn+RCJBU0DD+rP2MBcfICOSbDPHK+jYk+u6+50XkGsi9FYFLU5 xw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dp4658yqa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jan 2022 20:54:38 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20IKXIBD005348;
-        Tue, 18 Jan 2022 20:54:38 GMT
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dp4658yq0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jan 2022 20:54:37 +0000
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20IKq0JB016351;
-        Tue, 18 Jan 2022 20:54:36 GMT
-Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma05wdc.us.ibm.com with ESMTP id 3dknwat1h0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jan 2022 20:54:36 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20IKsXNB37683462
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Jan 2022 20:54:33 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 679E5B2067;
-        Tue, 18 Jan 2022 20:54:33 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D712EB2071;
-        Tue, 18 Jan 2022 20:54:32 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Jan 2022 20:54:32 +0000 (GMT)
-Message-ID: <9aff31bc-2c62-3707-2678-2c14d7c5c2d6@linux.ibm.com>
-Date:   Tue, 18 Jan 2022 15:54:32 -0500
+        Tue, 18 Jan 2022 16:47:31 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3012C061746
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jan 2022 13:47:30 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id p12so1471372edq.9
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jan 2022 13:47:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tessares-net.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=FGas2wsR5I0Xu3XQ1U1PiZH1Bz7IfFmMtPMkpY3JwQs=;
+        b=bHC3qhzpOqwOWsCGU8nz/CY903WoUbR/4FZT4/aIJcI4EqWCgfGUrf3LyKcJeKtLid
+         Q8RY17Vn3luA9tgNnrXNKQFlw1gTVaeL+PBN1xq/WedQbqeHj4IYNfcQ+ostX61hSqb8
+         i341vsk8ERHVLt84Xex8CLe20cZFCrOnf0vqZoZWK1xnkT1M8YZ+pQey2uqK+z0+hBOs
+         rRHHHenkdNM0tjVouFF3BUCoeAEg+bHm2RsZSeceRSslAUA3KSqyKxg8XkzsgUkJiKrY
+         IxBrPVT4JI2nNFNuDKE/p3m5JSnu+WYkT9hnvaffodmZtg4QKzpeI5dLaKZRP3wnOa7n
+         Sdjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=FGas2wsR5I0Xu3XQ1U1PiZH1Bz7IfFmMtPMkpY3JwQs=;
+        b=4qtQ3JyPcSrwfcEALT5DC9GnQz629XpXsp2m7nDLWGOeXvTUXOVx45HQOvpPwtOCSm
+         +T822biRTLBb2K+fkrcqtN4ryR8t5SGXYkOi37fSW7/2kGjkpAflyPdGHGFFYd17+QDH
+         YuGJ+d+sO+wv88klLu6caOLWvxf8yw8/9iUwvIaB/sk24VuX3x5G74pZRC+ecCSnwm4f
+         gyTByzYqJvqtb3GafMG3202osyD3NpO6ylSIXG5FAzZH1VRMML5Q/vAAS0smW+sf6/AY
+         rL0UcgVTsQZWYmk+5m/tihIoJfOK1CJxESZJ0z/ht0/tACq36UxHGKs7WYNhSTHv389e
+         Yxrg==
+X-Gm-Message-State: AOAM530XFQtdPmjMavKF7QbCpu8P7uCwDMwtRphfJx5lPNOxDjIuoNl1
+        Jt5hyl7vlaFw4TQ21Nes3z0R+cVGMBD+BavQ
+X-Google-Smtp-Source: ABdhPJwWbFrKUS/lRJJq/8VFObiKd0n2aVmGnF5RHGd9FSxMEaM8KRD5ae783HnEDAP9fF1ApDdMLQ==
+X-Received: by 2002:a17:907:6d03:: with SMTP id sa3mr22717797ejc.200.1642542449232;
+        Tue, 18 Jan 2022 13:47:29 -0800 (PST)
+Received: from ?IPV6:2a02:578:8593:1200:27ca:2fb0:c5af:41e? ([2a02:578:8593:1200:27ca:2fb0:c5af:41e])
+        by smtp.gmail.com with ESMTPSA id l25sm346996edc.20.2022.01.18.13.47.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jan 2022 13:47:28 -0800 (PST)
+Message-ID: <4d60a170-53d7-3f9f-fa48-34d6c4020346@tessares.net>
+Date:   Tue, 18 Jan 2022 22:47:27 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v8 07/19] ima: Move dentry into ima_namespace and others
- onto stack
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
- <20220104170416.1923685-8-stefanb@linux.vnet.ibm.com>
- <a7c5ac94b4c4d87b407353f74ff87bc0b13542a4.camel@linux.ibm.com>
- <d53a66a2-17e2-54b3-f115-efd7c58080a7@linux.ibm.com>
- <fbdade37017dd836881c5ecd98fae7313de5b5bb.camel@linux.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <fbdade37017dd836881c5ecd98fae7313de5b5bb.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Po9JQj3MCZ-OcFuHcpphQHbKMjY2MB2S
-X-Proofpoint-ORIG-GUID: 4fDXEBT7cnQ7BXg8lVBdiyHtXu09NM6S
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-18_05,2022-01-18_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- suspectscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999
- spamscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2201180120
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 08/10] selftests: mptcp: Add the uapi headers include
+ variable
+Content-Language: en-GB
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        chiminghao <chi.minghao@zte.com.cn>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL VIRTUAL MACHINE (KVM)" <kvm@vger.kernel.org>,
+        "open list:LANDLOCK SECURITY MODULE" 
+        <linux-security-module@vger.kernel.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        "open list:NETWORKING [MPTCP]" <mptcp@lists.linux.dev>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
+Cc:     kernel@collabora.com
+References: <20220118112909.1885705-1-usama.anjum@collabora.com>
+ <20220118112909.1885705-9-usama.anjum@collabora.com>
+From:   Matthieu Baerts <matthieu.baerts@tessares.net>
+In-Reply-To: <20220118112909.1885705-9-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi Muhammad,
 
-On 1/18/22 15:42, Mimi Zohar wrote:
-> On Tue, 2022-01-18 at 15:12 -0500, Stefan Berger wrote:
->> On 1/13/22 15:28, Mimi Zohar wrote:
->>> Hi Stefan,
->>>
->>> Nobody refers to the IMA securityfs files as dentries.  The Subject
->>> line is suppose to provide a hint about the patch.  How about changing
->>> the "Subject" line to "ima: Move IMA securityfs files into
->>> ima_namespaces or onto stack".
->>>
->>> On Tue, 2022-01-04 at 12:04 -0500, Stefan Berger wrote:
->>>> From: Stefan Berger <stefanb@linux.ibm.com>
->>>>
->>>> Move the policy file dentry into the ima_namespace for reuse by
->>>> virtualized SecurityFS and for being able to remove it from
->>>> the filesystem. Move the other dentries onto the stack.
->>> Missing is an explanation why the other IMA securityfs files can be on
->>> the stack.  Maybe start out by saying that the ns_ima_init securityfs
->>> files are never deleted.  Then transition into the IMA namespaced
->>> securityfs files and how they will be deleted.
->> How about this:
->>
->> ima: Move IMA securityfs files into ima_namespace or onto stack
->>
->> Move the IMA policy file's dentry into the ima_namespace for reuse by
->> virtualized securityfs and for being able to remove the file from the
->> filesystem using securityfs_remove().
-> How about "Move the IMA securityfs policy file ..."
->
->> Move the other files' dentries onto the stack since they are not needed
-> How about "Move the other IMA securityfs files ..."
->
->> outside the function where they are created in. Also, their cleanup is
->> automatically handled by the filesystem upon umount of a virtualized
->> secruityfs instance, so they don't need to be explicitly freed anymore.
->>
->> When moving the dentry 'ima_policy' into ima_namespace rename it to
->> 'policy_dentry' to clarify its datatype and avoid a name clash with
->> 'int ima_policy' from ima_policy.c.
-> To prevent namespace pollution, static variables need to be prefixed
-> (e.g. "ima_").  This is not a concern with variables inside the
-> ima_namespace structure.  Why not just rename the variable "policy".
+On 18/01/2022 12:29, Muhammad Usama Anjum wrote:
+> Out of tree build of this test fails if relative path of the output
+> directory is specified. Remove the un-needed include paths and use
+> KHDR_INCLUDES to correctly reach the headers.
 
-'policy' is so generic. It can be the internal representation of the policy.
+Thank you for looking at that!
 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  tools/testing/selftests/net/mptcp/Makefile | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/net/mptcp/Makefile b/tools/testing/selftests/net/mptcp/Makefile
+> index 0356c4501c99..fed6866d3b73 100644
+> --- a/tools/testing/selftests/net/mptcp/Makefile
+> +++ b/tools/testing/selftests/net/mptcp/Makefile
+> @@ -1,9 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  
+> -top_srcdir = ../../../../..
 
->
-> Refer to the section on "Naming" in Documentation/process/coding-
-> style.rst.
+Removing this line breaks our CI validating MPTCP selftests. That's
+because this "top_srcdir" variable is needed in the "lib.mk" file which
+is included at the end of this Makefile.
 
-Hm, it cannot also be the point to work around the naming just to avoid 
-it and come up with ambiguous names...
+But that's maybe a misuse from our side. Indeed to avoid compiling
+binaries and more from the VM, our CI does that as a preparation job
+before starting the VM and run MPTCP selftests:
 
-'policy_dentry' explains much better what it is but following this style 
-guide that is then "Hungarian" notation, which is 'asinine.'
+  $ make O=(...) INSTALL_HDR_PATH=(...)/kselftest/usr headers_install
+  $ make O=(...) -C tools/testing/selftests/net/mptcp
 
-What about 'policy_file'?
+From the VM, we re-use the same source directory and we can start
+individual tests without having to compile anything else:
 
-    Stefan
+  $ cd tools/testing/selftests/net/mptcp
+  $ ./mptcp_connect.sh
 
->
-> thanks,
->
-> Mimi
->
->>
->>
->>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->>>> ---
->>>>    security/integrity/ima/ima.h    |  2 ++
->>>>    security/integrity/ima/ima_fs.c | 32 ++++++++++++++++++--------------
->>>>    2 files changed, 20 insertions(+), 14 deletions(-)
->>>>
->>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->>>> index 82b3f6a98320..224b09617c52 100644
->>>> --- a/security/integrity/ima/ima.h
->>>> +++ b/security/integrity/ima/ima.h
->>>> @@ -140,6 +140,8 @@ struct ima_namespace {
->>>>    	struct mutex ima_write_mutex;
->>>>    	unsigned long ima_fs_flags;
->>>>    	int valid_policy;
->>>> +
->>>> +	struct dentry *policy_dentry;
->>> None of the other securityfs files are renamed.  Why is "ima_policy"
->>> being renamed to "policy_dentry"?  If there is a need, it should be
->>> documented in the patch description.
->>>
->>> thanks,
->>>
->>> Mimi
->>>
->>>>    } __randomize_layout;
->>>>    extern struct ima_namespace init_ima_ns;
->>>>
->
+We want to do that because some scripts are launched multiple times with
+different parameters.
+
+With your modifications, we can drop the headers_install instruction but
+we need to pass new parameters to the last 'make' command:
+
+  $ make O=(...) top_srcdir=../../../../.. \
+                 KHDR_INCLUDES=-I(...)/usr/include \
+         -C tools/testing/selftests/net/mptcp
+
+Or is there a better way to do that?
+Can we leave the definition of "top_srcdir" like it was or did we miss
+something else?
+
+>  KSFT_KHDR_INSTALL := 1
+>  
+> -CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g  -I$(top_srcdir)/usr/include
+> +CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g $(KHDR_INCLUDES)
+>  
+>  TEST_PROGS := mptcp_connect.sh pm_netlink.sh mptcp_join.sh diag.sh \
+>  	      simult_flows.sh mptcp_sockopt.sh
+
+Note: I see there is a very long recipients list. If my issue is not
+directly due to your modifications, we can probably continue the
+discussion with a restricted audience.
+
+Cheers,
+Matt
+-- 
+Tessares | Belgium | Hybrid Access Solutions
+www.tessares.net
