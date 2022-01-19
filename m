@@ -2,206 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB27CC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jan 2022 09:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B12AEC4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jan 2022 10:15:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351848AbiASJq0 (ORCPT
+        id S1353501AbiASKPw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jan 2022 04:46:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36462 "EHLO
+        Wed, 19 Jan 2022 05:15:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346503AbiASJqY (ORCPT
+        with ESMTP id S1353474AbiASKPw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jan 2022 04:46:24 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DACBCC061574;
-        Wed, 19 Jan 2022 01:46:23 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A2357B81907;
-        Wed, 19 Jan 2022 09:46:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BAE7C004E1;
-        Wed, 19 Jan 2022 09:46:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642585581;
-        bh=+qQOh1PurSXvzxoWo6Z89b7E5FjgIwjP+Cb6PNVs2EU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CAGRGfQoAcOgl/Mq4niJaTi8+9CD/hjHAaly1vihDB6OnII6oVI23i2bxHkEtN9we
-         vhT91/iZV9ltw/vLMjlU08EyHnfRL+CG/dOJf4qTGMQZf4kXwipfQL0g63v4drTsig
-         nlV91Uno3swlWGVxSfX4bF8PyffofyATNJx/UVpoFfjxtVqmtMPzJdhvtnJaek00hS
-         dbYUIF+z/22uAQz8+vsv8krkyhu8dMibTJoWRUWRaw5UY06tOf/RG/ueU3oLILu8X4
-         DP6jwyjtHsa5upVb/EzddT7vQGm0s04oVVe4bIDveB7p3O2N4canBoxMjYxYMOb4zz
-         mqEmBu52oofkA==
-Date:   Wed, 19 Jan 2022 10:46:13 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-Subject: Re: [PATCH v8 19/19] ima: Enable IMA namespaces
-Message-ID: <20220119094613.cxxxmz5qbuehd7c3@wittgenstein>
-References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
- <20220104170416.1923685-20-stefanb@linux.vnet.ibm.com>
- <20220114144515.vbler7ae3jqebhec@wittgenstein>
- <8f7e0bcc-cd7c-723d-c544-300b5e8f3873@linux.ibm.com>
+        Wed, 19 Jan 2022 05:15:52 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2C97C061574;
+        Wed, 19 Jan 2022 02:15:51 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: usama.anjum)
+        with ESMTPSA id 7FB081F44427
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1642587349;
+        bh=XYDVAxDFFZ3GjKZiYyLIQ7Ax/B1PlxHAo12P/LTWddY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QyNw3SnikBjxgmXldT58LDxt+66FxBTgRH/NFcT508gIl9Mo/FfR5aLJfGlutBmBh
+         TiNACBRkmu1H+lpBMOChjSwlTXNzv/uov/IfDI5sCYV25iGqHYmXS9lE0rlQhLCnit
+         KhRu728rGpQQTLF3vwYnT6k0kEOKnqaJC/O/C/ovuzrJf1x43QWkD4ZCVC9EG5h/83
+         NGwXJjN/JtVN2u5Nvk/bBOIG80m3VM1PqMNzh56eDaoqadx2Jz1MrAjgesDzGW/T8Z
+         wsGhO5dStqXKya0txfhufgUBcLmMBHnY1S1x0HOjI32Q/LEYyh5wGcxijiG8ugVVtl
+         SFNIHZFa3tYcQ==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        chiminghao <chi.minghao@zte.com.cn>,
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list),
+        kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE (KVM)),
+        linux-security-module@vger.kernel.org (open list:LANDLOCK SECURITY
+        MODULE), netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
+        mptcp@lists.linux.dev (open list:NETWORKING [MPTCP]),
+        linux-mm@kvack.org (open list:MEMORY MANAGEMENT)
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH V2 00/10] selftests: Fix separate output directory builds
+Date:   Wed, 19 Jan 2022 15:15:21 +0500
+Message-Id: <20220119101531.2850400-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8f7e0bcc-cd7c-723d-c544-300b5e8f3873@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 18, 2022 at 01:09:12PM -0500, Stefan Berger wrote:
-> 
-> On 1/14/22 09:45, Christian Brauner wrote:
-> > On Tue, Jan 04, 2022 at 12:04:16PM -0500, Stefan Berger wrote:
-> > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > 
-> > > Introduce the IMA_NS in Kconfig for IMA namespace enablement.
-> > > 
-> > > Enable the lazy initialization of an IMA namespace when a user mounts
-> > > SecurityFS. Now a user_namespace will get a pointer to an ima_namespace
-> > > and therefore add an implementation of get_current_ns() that returns this
-> > > pointer.
-> > > 
-> > > get_current_ns() may now return a NULL pointer for as long as the IMA
-> > > namespace hasn't been created, yet. Therefore, return early from those
-> > > functions that may now get a NULL pointer from this call. The NULL
-> > > pointer can typically be treated similar to not having an IMA policy set
-> > > and simply return early from a function.
-> > > 
-> > > Implement ima_ns_from_file() for SecurityFS-related files where we can
-> > > now get the IMA namespace via the user namespace pointer associated
-> > > with the superblock of the SecurityFS filesystem instance. Since
-> > > the functions using ima_ns_from_file() will only be called after an
-> > > ima_namesapce has been allocated they will never get a NULL pointer
-> > > for the ima_namespace.
-> > > 
-> > > Switch access to userns->ima_ns to use acquire/release semantics to ensure
-> > > that a newly created ima_namespace structure is fully visible upon access.
-> > > 
-> > > Replace usage of current_user_ns() with ima_ns_from_user_ns() that
-> > > implements a method to derive the user_namespace from the given
-> > > ima_namespace. It leads to the same result.
-> > > 
-> > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > ---
-> [...]
-> > > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > > index b7dbc687b6ff..5a9b511ebbae 100644
-> > > --- a/security/integrity/ima/ima_policy.c
-> > > +++ b/security/integrity/ima/ima_policy.c
-> > > @@ -1333,6 +1333,7 @@ static unsigned int ima_parse_appraise_algos(char *arg)
-> > >   static int ima_parse_rule(struct ima_namespace *ns,
-> > >   			  char *rule, struct ima_rule_entry *entry)
-> > >   {
-> > > +	struct user_namespace *user_ns = ima_ns_to_user_ns(ns);
-> > So I think ima_policy_write() and therefore ima_parse_rule() can
-> > legitimately be reached at least from an ancestor userns but also from a
-> > completely unrelated userns via securityfs. Sorry, I didn't see this
-> > earlier. Think of the following two scenarios:
-> > 
-> > * userns1: unshare -U --map-root --mount
-> > -----------------------------------------
-> >     mount -t securityfs securityfs /userns1_securityfs
-> >     fd_in_userns1 = open("/userns1_securityfs/ima_file, O_RDWR);
-> > 
-> >     /* I _think_ that sending of fds here should work but I haven't
-> >      * bothered to recheck the scm code as I need to do some driving in a
-> >      * little bit so I'm running out of time...
-> >      */
-> >     send_fd_scm_rights(fd_in_userns1, task_in_userns2);
-> > 
-> > * userns2: unshare -U --map-root --mount
-> > -----------------------------------------
-> >     fd_from_userns1 = receive_fd_scm_rights();
-> >     write_policy(fd_from_userns1, "my fancy policy");
-> 
-> Passing an fd around like this presumably indicates that you intend to let
-> the recipient read/write to it.
+Build of several selftests fail if separate output directory is
+specified by the following methods:
+1) make -C tools/testing/selftests O=<build_dir>
+2) export KBUILD_OUTPUT="build_dir"; make -C tools/testing/selftests
 
-Yes.
+Build fails because of several reasons:
+1) The kernel headers aren't found.
+2) The path of output objects is wrong and hence unaccessible.
 
-> 
-> 
-> > It also means that if you inherit an fd from a more privileged imans
-> > instance you can write to it:
-> 
-> Now in this example we have to assume that root is making a mistake passing
-> the file descriptor around?
-> 
-> # ls -l /sys/kernel/security/ima/
-> total 0
-> -r--r-----. 1 root root 0 Jan 18 12:48 ascii_runtime_measurements
-> -r--r-----. 1 root root 0 Jan 18 12:48 binary_runtime_measurements
-> -rw-------. 1 root root 0 Jan 18 12:48 policy
-> -r--r-----. 1 root root 0 Jan 18 12:48 runtime_measurements_count
-> -r--r-----. 1 root root 0 Jan 18 12:48 violations
-> 
-> > 
-> > * initial_userns:
-> 
-> 
-> So that's the host, right? And this is a 2nd independent example from the
-> first.
+These problems can be solved by:
+1) Including the correct path of uapi header files
+2) By setting the BUILD variable correctly inside Makefile
 
-Yes, these are just two examples to give a more complete idea of the
-semantics by specifying two cases and how ima would behave.
+Following different build scenarios have been tested after making these
+changes to verify that nothing gets broken with these changes:
+make -C tools/testing/selftests
+make -C tools/testing/selftests/futex
+make -C tools/testing/selftests/kvm
+make -C tools/testing/selftests/landlock
+make -C tools/testing/selftests/net
+make -C tools/testing/selftests/net/mptcp
+make -C tools/testing/selftests/vm
+make -C tools/testing/selftests O=build
+make -C tools/testing/selftests o=/opt/build
+export KBUILD_OUTPUT="/opt/build"; make -C tools/testing/selftests
+export KBUILD_OUTPUT="build"; make -C tools/testing/selftests
+cd <any_dir>; make -C <src_path>/tools/testing/selftests
+cd <any_dir>; make -C <src_path>/tools/testing/selftests O=build
 
-> 
-> > ------------------
-> 
-> >     mount -t securityfs securityfs /initial_securityfs
-> > 
-> >     fd_in_initial_securityfs = open("/initial_securityfs/ima_file, O_RDWR);
-> > 
-> >     pid = fork():
-> >     if (pid == 0) {
-> > 	unshare(CLONE_NEWUSER);
-> > 	/* write idmapping for yourself */
-> > 
-> > 	write_policy(fd_in_initial_securityfs, "my fancy policy");
-> >     }
-> > 
-> > would allow an unprivileged caller to alter the host's ima policy (as
-> > you can see the example requires cooperation).
-> 
-> Sorry, not currently following. Root is the only one being able to open that
-> IMA files on the host, right? Is this a mistake here where root passed the
+---
+Changes in V2:
+        Revert the excessive cleanup which was breaking the individual
+test build.
 
-Yes.
+Muhammad Usama Anjum (10):
+  selftests: set the BUILD variable to absolute path
+  selftests: Add and export a kernel uapi headers path
+  selftests: Correct the headers install path
+  selftests: futex: Add the uapi headers include variable
+  selftests: kvm: Add the uapi headers include variable
+  selftests: landlock: Add the uapi headers include variable
+  selftests: net: Add the uapi headers include variable
+  selftests: mptcp: Add the uapi headers include variable
+  selftests: vm: Add the uapi headers include variable
+  selftests: vm: remove dependecy from internal kernel macros
 
-> fd onto the child and that child is not trusted to mess with the fd
-> including passing it on further?
+ tools/testing/selftests/Makefile              | 32 +++++++++++++------
+ .../selftests/futex/functional/Makefile       |  5 ++-
+ tools/testing/selftests/kvm/Makefile          |  2 +-
+ tools/testing/selftests/landlock/Makefile     |  2 +-
+ tools/testing/selftests/net/Makefile          |  2 +-
+ tools/testing/selftests/net/mptcp/Makefile    |  2 +-
+ tools/testing/selftests/vm/Makefile           |  2 +-
+ tools/testing/selftests/vm/userfaultfd.c      |  3 ++
+ 8 files changed, 32 insertions(+), 18 deletions(-)
 
-This is just an example what the current semantics mean in practice.
-The above code snippet is neither good nor bad by itself as that depends
-on context:
+-- 
+2.30.2
 
-1) Let's say for whatever reason you would like to let unprivileged
-   containers add policy rules (sorry in case I'm using the wrong ima
-   vernacular) for themselves to the initial ima namespace during
-   startup. That can be a rather valid and important use-case. Then this
-   code snipped above where root opens a policy fd in the host
-   securityfs instance and then let's the container access it across
-   fork() + post namespace creation is "good" as it will allow the
-   container to write the rules during setup while e.g. letting the
-   container manager process (the code prior to fork) continue doing
-   other stuff.
-
-2) If you only want to ever allow container manager on the host write
-   rules for the container in the initial ima ns but never the container
-   setup process itself then the above code is "bad". The policy fd
-   should've been closed before the fork() and definitely be opened
-   o-cloexec.
-
-The examples really were just trying to make obvious what the semantics
-are that you're buying.
