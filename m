@@ -2,108 +2,116 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9751EC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jan 2022 22:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A62DC433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jan 2022 22:35:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357534AbiASWZJ convert rfc822-to-8bit (ORCPT
+        id S230088AbiASWf3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jan 2022 17:25:09 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:26778 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1357536AbiASWZF (ORCPT
+        Wed, 19 Jan 2022 17:35:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43216 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244726AbiASWf3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jan 2022 17:25:05 -0500
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-3-gc2FjgmsNLmz-uRweWCGWA-1; Wed, 19 Jan 2022 22:25:02 +0000
-X-MC-Unique: gc2FjgmsNLmz-uRweWCGWA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.28; Wed, 19 Jan 2022 22:25:00 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.028; Wed, 19 Jan 2022 22:25:00 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Andy Shevchenko' <andy.shevchenko@gmail.com>
-CC:     'Steven Rostedt' <rostedt@goodmis.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        =?iso-8859-1?Q?Christian_K=F6nig?= <christian.koenig@amd.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Emma Anholt <emma@anholt.net>, Eryk Brol <eryk.brol@amd.com>,
-        Francis Laniel <laniel_francis@privacyrequired.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Harry Wentland <harry.wentland@amd.com>,
-        "Jakub Kicinski" <kuba@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Leo Li <sunpeng.li@amd.com>,
-        Mikita Lipski <mikita.lipski@amd.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        "Raju Rangoju" <rajur@chelsio.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Vishal Kulkarni <vishal@chelsio.com>
-Subject: RE: [PATCH 1/3] lib/string_helpers: Consolidate yesno()
- implementation
-Thread-Topic: [PATCH 1/3] lib/string_helpers: Consolidate yesno()
- implementation
-Thread-Index: AQHYDUVmV8sHy8JfXU2yTPkp1VbmK6xqitzAgAAAVLCAAC4ygIAAMm1Q
-Date:   Wed, 19 Jan 2022 22:25:00 +0000
-Message-ID: <2978e422e33f48f0bd07d937cdab13a5@AcuMS.aculab.com>
-References: <20220119072450.2890107-1-lucas.demarchi@intel.com>
- <20220119072450.2890107-2-lucas.demarchi@intel.com>
- <CAHp75Vf5QOD_UtDK8VbxNApEBuJvzUic0NkzDNmRo3Q7Ud+=qw@mail.gmail.com>
- <20220119100102.61f9bfde@gandalf.local.home>
- <06420a70f4434c2b8590cc89cad0dd6a@AcuMS.aculab.com>
- <9c26ca9bf75d494ea966059d9bcbc2b5@AcuMS.aculab.com>
- <YehlEe1prbwhxZEv@smile.fi.intel.com>
-In-Reply-To: <YehlEe1prbwhxZEv@smile.fi.intel.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 19 Jan 2022 17:35:29 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB2CC06173F
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jan 2022 14:35:28 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id z22so19970614edd.12
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Jan 2022 14:35:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tessares-net.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=O2Z9yctDCU3gTCdFxkuOTOOVaEio5IQFlKJF8LaggTg=;
+        b=mmd9J8gXsSomU9UUNBvOuBXVlSzYbQO+nfTxl/OBRbHYFV4RvXKpHULSlKe3BzkhZs
+         6tnMwcMq5t47+WNrTTdvtUf0JBg67Wg0aCNi0CJ8xmjiX4vXLa4IlrmJmPXilREu3Yui
+         sp2/n7hwAxPyaFgHFq/KT7AU5Jw//TYUZKz/mzHMmN4UbT81SY0CQggRmIEk+Kt7SCKl
+         1gcC5o5GXI7K0Gl30ohuE4FaUyf+Tk6L3fF+zoki/vDtHdBawJSTEcBCjU73AxFTJpPC
+         L08WNim15+swmDr/BBQguYjDZ5tzZUIY6Y3wQds1cDMm36GA6ezOwNtkI5hA+nPvzBX0
+         aSCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=O2Z9yctDCU3gTCdFxkuOTOOVaEio5IQFlKJF8LaggTg=;
+        b=Zi8T+zziKK9QBa+5aqRFlmJgVkhdHZREltl8W1tbOtt0zjuUlAzhmLKnnG6KfIag+i
+         1LRrp1aJsJTbr0OIfrchH/aZRymHQgvO65RcFqOXDGpWDOAjjEq/FzuOpNj1vUUZYK/P
+         gJa/+jLWOLxoM2TWE8rCJmrlEx4KqFNKalR4OvphsxWyxN+6XyADoLrLiOVSew0OJwe+
+         3n37lgO+MADVA72ntlQOWNs75/NFu/3giOkfyoCmDlK8bgYreEkGfV9Cw58DZCdT1YCA
+         ccHYxLLJtuuRtE0ZfABF96dpHVUuYK1E2BRGkZFD1ILBlxkGUnPSNRoZu8ecT7pIui/i
+         bqIA==
+X-Gm-Message-State: AOAM532likE98cYp++VLeAuybKV8g5lAHC2Syqb/F404lAUH1XUjJayL
+        rNRXcYgdlGoZs1eSykntj7812Q==
+X-Google-Smtp-Source: ABdhPJy1AOJWUgAkG9M0ApWVefQgFqlCHwuj5r6BLJ3Us7HRCzcOtwDzV/+W0LhRJLALaHoMOwEgMA==
+X-Received: by 2002:a17:907:60d5:: with SMTP id hv21mr26331732ejc.456.1642631726887;
+        Wed, 19 Jan 2022 14:35:26 -0800 (PST)
+Received: from ?IPV6:2a02:578:8593:1200:f030:6649:6eec:111? ([2a02:578:8593:1200:f030:6649:6eec:111])
+        by smtp.gmail.com with ESMTPSA id o14sm403138edr.6.2022.01.19.14.35.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jan 2022 14:35:26 -0800 (PST)
+Message-ID: <853cf6e0-7890-90ef-b98d-d78bee0aba9e@tessares.net>
+Date:   Wed, 19 Jan 2022 23:35:24 +0100
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH V2 08/10] selftests: mptcp: Add the uapi headers include
+ variable
+Content-Language: en-GB
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        chiminghao <chi.minghao@zte.com.cn>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL VIRTUAL MACHINE (KVM)" <kvm@vger.kernel.org>,
+        "open list:LANDLOCK SECURITY MODULE" 
+        <linux-security-module@vger.kernel.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        "open list:NETWORKING [MPTCP]" <mptcp@lists.linux.dev>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
+Cc:     kernel@collabora.com
+References: <20220119101531.2850400-1-usama.anjum@collabora.com>
+ <20220119101531.2850400-9-usama.anjum@collabora.com>
+From:   Matthieu Baerts <matthieu.baerts@tessares.net>
+In-Reply-To: <20220119101531.2850400-9-usama.anjum@collabora.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> > except '"no\0\0yes" + v * 4' works a bit better.
+Hi Muhammad,
+
+On 19/01/2022 11:15, Muhammad Usama Anjum wrote:
+> Out of tree build of this test fails if relative path of the output
+> directory is specified. Add the KHDR_INCLUDES to correctly reach the
+> headers.
 > 
-> Is it a C code obfuscation contest?
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+> Changes in V2:
+>         Revert the excessive cleanup which was breaking the individual
+> test build.
 
-That would be:
-	return &(v * 3)["no\0yes"];
+Thank you for the v2, it looks safer that way and it no longer breaks
+our CI!
 
-:-)
+Reviewed-by: Matthieu Baerts <matthieu.baerts@tessares.net>
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Cheers,
+Matt
+-- 
+Tessares | Belgium | Hybrid Access Solutions
+www.tessares.net
