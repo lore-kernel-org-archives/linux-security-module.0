@@ -2,39 +2,36 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41973C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jan 2022 15:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285B0C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jan 2022 15:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355388AbiASPBK (ORCPT
+        id S1344861AbiASPGn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jan 2022 10:01:10 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:46164 "EHLO
+        Wed, 19 Jan 2022 10:06:43 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:49320 "EHLO
         ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349566AbiASPBK (ORCPT
+        with ESMTP id S235115AbiASPGn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jan 2022 10:01:10 -0500
+        Wed, 19 Jan 2022 10:06:43 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C6765B81A06;
-        Wed, 19 Jan 2022 15:01:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC12DC004E1;
-        Wed, 19 Jan 2022 15:01:03 +0000 (UTC)
-Date:   Wed, 19 Jan 2022 10:01:02 -0500
+        by ams.source.kernel.org (Postfix) with ESMTPS id D64CCB80E09;
+        Wed, 19 Jan 2022 15:06:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04AE5C004E1;
+        Wed, 19 Jan 2022 15:06:36 +0000 (UTC)
+Date:   Wed, 19 Jan 2022 10:06:35 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc:     Lucas De Marchi <lucas.demarchi@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-security-module@vger.kernel.org,
+        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
         Alex Deucher <alexander.deucher@amd.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Ben Skeggs <bskeggs@redhat.com>,
         Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
         Chris Wilson <chris@chris-wilson.co.uk>,
@@ -57,16 +54,15 @@ Cc:     Lucas De Marchi <lucas.demarchi@intel.com>,
         Raju Rangoju <rajur@chelsio.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Vishal Kulkarni <vishal@chelsio.com>
 Subject: Re: [PATCH 1/3] lib/string_helpers: Consolidate yesno()
  implementation
-Message-ID: <20220119100102.61f9bfde@gandalf.local.home>
-In-Reply-To: <CAHp75Vf5QOD_UtDK8VbxNApEBuJvzUic0NkzDNmRo3Q7Ud+=qw@mail.gmail.com>
+Message-ID: <20220119100635.6c45372b@gandalf.local.home>
+In-Reply-To: <YefXg03hXtrdUj6y@paasikivi.fi.intel.com>
 References: <20220119072450.2890107-1-lucas.demarchi@intel.com>
         <20220119072450.2890107-2-lucas.demarchi@intel.com>
-        <CAHp75Vf5QOD_UtDK8VbxNApEBuJvzUic0NkzDNmRo3Q7Ud+=qw@mail.gmail.com>
+        <YefXg03hXtrdUj6y@paasikivi.fi.intel.com>
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -74,26 +70,40 @@ Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 19 Jan 2022 11:15:08 +0200
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Wed, 19 Jan 2022 11:18:59 +0200
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-> > +static inline const char *yesno(bool v) { return v ? "yes" : "no"; }  
+> On Tue, Jan 18, 2022 at 11:24:48PM -0800, Lucas De Marchi wrote:
+> > @@ -1354,8 +1345,7 @@ static bool tomoyo_print_condition(struct tomoyo_io_buffer *head,
+> >  	case 3:
+> >  		if (cond->grant_log != TOMOYO_GRANTLOG_AUTO)
+> >  			tomoyo_io_printf(head, " grant_log=%s",
+> > -					 tomoyo_yesno(cond->grant_log ==
+> > -						      TOMOYO_GRANTLOG_YES));
+> > +					 yesno(cond->grant_log == TOMOYO_GRANTLOG_YES));  
 > 
-> 
-> 
-> Perhaps keep it on 4 lines? Yes, yes/no is short, but if we add others
-> (enable/disable) it will not be possible to keep on one line. And hence
-> style will be broken among similar functions.
+> This would be better split on two lines.
 
-Agreed. Functions should always be of the normal format:
+Really? Yuck!
 
-type func(params)
-{
-	body;
-}
+I thought the "max line size" guideline was going to grow to a 100, but I
+still see it as 80. But anyway...
 
-Unless it is a stub function.
+	cond->grant_log ==
+	TOMOYO_GRANTLOG_YES
 
-type func(params) { return 0; }
+is not readable at all. Not compared to
+
+	cond->grant_log == TOMOYO_GRANTLOG_YES
+
+I say keep it one line!
+
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
 -- Steve
+
+> 
+> Then,
+> 
+> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
