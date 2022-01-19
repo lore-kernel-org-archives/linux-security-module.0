@@ -2,153 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DC1C43217
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jan 2022 08:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14305C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Jan 2022 09:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347642AbiASIWj (ORCPT
+        id S1352965AbiASJTO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jan 2022 03:22:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45110 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238265AbiASIWi (ORCPT
+        Wed, 19 Jan 2022 04:19:14 -0500
+Received: from mga12.intel.com ([192.55.52.136]:61815 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1352693AbiASJTL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jan 2022 03:22:38 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD8EC061574;
-        Wed, 19 Jan 2022 00:22:38 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: usama.anjum)
-        with ESMTPSA id 3E8C21F44337
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1642580556;
-        bh=QAiGrnVKHtXCjw/54yKAb5LW6GftwIG4hgUhexVMISE=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=JohVKnqdhrmr88zSpbdIWeVwW3aFTlZUvzKGmFDgndI5DqkPMsRlz8Z96jPFtiiX0
-         /VEFcHN1Eot2dnhZuuSiUQllmiUfT5+mkD2gM9mGlWWnt1S2TWLtumObED/Mhq+GZC
-         drcqHoTPrLauJseDOSsl5GxyC9Z+5+eERpBMq8Bd8JUkW0mJtwjMu3/2RgHxvwIEq7
-         pRFVMWddEY5sgUzcHQEEhqNbl+1xFwhtiaRVInPGfFIsYEl9C64wAmYfBTtq3Y70q4
-         J4Nie9+0qLfZyJTtQbBjtMgMjJgl+Nejt2uzZGLnRgV9etJ+3P7+6JzE2pyXUQcM67
-         8uQ3p0Sofitbg==
-Message-ID: <ccae1b7a-4888-ca86-9610-89fd4f3d714d@collabora.com>
-Date:   Wed, 19 Jan 2022 13:22:26 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Cc:     usama.anjum@collabora.com, kernel@collabora.com
-Subject: Re: [PATCH 08/10] selftests: mptcp: Add the uapi headers include
- variable
-Content-Language: en-US
-To:     Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Wed, 19 Jan 2022 04:19:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1642583951; x=1674119951;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Zf7maaT407OcqJiMSYXoEAzMcLY861f8NYGTlKtPnGA=;
+  b=YkalItov6WCXDDbUVKKK5aiMjxJxH7VjKeBum4WvbO6/eIILTB8TVBJw
+   jRCxXXVexNuFXe7vS7MNJ6i/X4Yr+VXupmXNUNrECWFoZIzkBepGSqWw4
+   yra6STdVm4jTib3jLzsdVfV7+Lrqx9pj3CQ8cR5EmMeagU4MlmkKoHH85
+   5cqCu828qtI5h+4xugHrJy1z8tTYl4NE8N1FgJNRRB2GpXvaucEd6IDMH
+   xoEjc5zSBaX34fbfXHRQmOWwjcQ/gvsOwidLRd5fdoDcVqTwyPqi1fw9Z
+   FnwI4Ke+m92A92TKLrLxpYChlXf3f9lyFUIz6G/FF/LoqsfAt2B3teJxK
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10231"; a="225001669"
+X-IronPort-AV: E=Sophos;i="5.88,299,1635231600"; 
+   d="scan'208";a="225001669"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2022 01:19:11 -0800
+X-IronPort-AV: E=Sophos;i="5.88,299,1635231600"; 
+   d="scan'208";a="622447667"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2022 01:19:01 -0800
+Received: from paasikivi.fi.intel.com (localhost [127.0.0.1])
+        by paasikivi.fi.intel.com (Postfix) with SMTP id CEBE0203C8;
+        Wed, 19 Jan 2022 11:18:59 +0200 (EET)
+Date:   Wed, 19 Jan 2022 11:18:59 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Lucas De Marchi <lucas.demarchi@intel.com>
+Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-security-module@vger.kernel.org,
+        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
+        Alex Deucher <alexander.deucher@amd.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        chiminghao <chi.minghao@zte.com.cn>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL VIRTUAL MACHINE (KVM)" <kvm@vger.kernel.org>,
-        "open list:LANDLOCK SECURITY MODULE" 
-        <linux-security-module@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        "open list:NETWORKING [MPTCP]" <mptcp@lists.linux.dev>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
-References: <20220118112909.1885705-1-usama.anjum@collabora.com>
- <20220118112909.1885705-9-usama.anjum@collabora.com>
- <4d60a170-53d7-3f9f-fa48-34d6c4020346@tessares.net>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <4d60a170-53d7-3f9f-fa48-34d6c4020346@tessares.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Emma Anholt <emma@anholt.net>, Eryk Brol <eryk.brol@amd.com>,
+        Francis Laniel <laniel_francis@privacyrequired.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Leo Li <sunpeng.li@amd.com>,
+        Mikita Lipski <mikita.lipski@amd.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        Raju Rangoju <rajur@chelsio.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vishal Kulkarni <vishal@chelsio.com>
+Subject: Re: [PATCH 1/3] lib/string_helpers: Consolidate yesno()
+ implementation
+Message-ID: <YefXg03hXtrdUj6y@paasikivi.fi.intel.com>
+References: <20220119072450.2890107-1-lucas.demarchi@intel.com>
+ <20220119072450.2890107-2-lucas.demarchi@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220119072450.2890107-2-lucas.demarchi@intel.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Matthieu,
+Hi Lucas,
 
-Thank you for putting details below.
+On Tue, Jan 18, 2022 at 11:24:48PM -0800, Lucas De Marchi wrote:
+> @@ -1354,8 +1345,7 @@ static bool tomoyo_print_condition(struct tomoyo_io_buffer *head,
+>  	case 3:
+>  		if (cond->grant_log != TOMOYO_GRANTLOG_AUTO)
+>  			tomoyo_io_printf(head, " grant_log=%s",
+> -					 tomoyo_yesno(cond->grant_log ==
+> -						      TOMOYO_GRANTLOG_YES));
+> +					 yesno(cond->grant_log == TOMOYO_GRANTLOG_YES));
 
-On 1/19/22 2:47 AM, Matthieu Baerts wrote:
-> Hi Muhammad,
-> 
-> On 18/01/2022 12:29, Muhammad Usama Anjum wrote:
->> Out of tree build of this test fails if relative path of the output
->> directory is specified. Remove the un-needed include paths and use
->> KHDR_INCLUDES to correctly reach the headers.
-> 
-> Thank you for looking at that!
-> 
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>  tools/testing/selftests/net/mptcp/Makefile | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/tools/testing/selftests/net/mptcp/Makefile b/tools/testing/selftests/net/mptcp/Makefile
->> index 0356c4501c99..fed6866d3b73 100644
->> --- a/tools/testing/selftests/net/mptcp/Makefile
->> +++ b/tools/testing/selftests/net/mptcp/Makefile
->> @@ -1,9 +1,8 @@
->>  # SPDX-License-Identifier: GPL-2.0
->>  
->> -top_srcdir = ../../../../..
-> 
-> Removing this line breaks our CI validating MPTCP selftests. That's
-> because this "top_srcdir" variable is needed in the "lib.mk" file which
-> is included at the end of this Makefile.
-> 
-> But that's maybe a misuse from our side. Indeed to avoid compiling
-> binaries and more from the VM, our CI does that as a preparation job
-> before starting the VM and run MPTCP selftests:
-> 
->   $ make O=(...) INSTALL_HDR_PATH=(...)/kselftest/usr headers_install
->   $ make O=(...) -C tools/testing/selftests/net/mptcp
-> 
-> From the VM, we re-use the same source directory and we can start
-> individual tests without having to compile anything else:
-> 
->   $ cd tools/testing/selftests/net/mptcp
->   $ ./mptcp_connect.sh
-> 
-> We want to do that because some scripts are launched multiple times with
-> different parameters.
-> 
-> With your modifications, we can drop the headers_install instruction but
-> we need to pass new parameters to the last 'make' command:
-> 
->   $ make O=(...) top_srcdir=../../../../.. \
->                  KHDR_INCLUDES=-I(...)/usr/include \
->          -C tools/testing/selftests/net/mptcp
-> 
-> Or is there a better way to do that?
-> Can we leave the definition of "top_srcdir" like it was or did we miss
-> something else?
-> 
-It seems like I've missed this use cases where people can build only one
-individual test. It is not my intention to break individual test builds.
-I shouldn't be fixing one thing while breaking something else. I'll
-update these patches such that individual tests are also build-able. For
-this to happen, I'll just add $(KHDR_INCLUDES) to the build flags while
-leaving everything else intact. I'll send a V2.
+This would be better split on two lines.
 
->>  KSFT_KHDR_INSTALL := 1
->>  
->> -CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g  -I$(top_srcdir)/usr/include
->> +CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g $(KHDR_INCLUDES)
->>  
->>  TEST_PROGS := mptcp_connect.sh pm_netlink.sh mptcp_join.sh diag.sh \
->>  	      simult_flows.sh mptcp_sockopt.sh
-> 
-> Note: I see there is a very long recipients list. If my issue is not
-> directly due to your modifications, we can probably continue the
-> discussion with a restricted audience.
-> 
-> Cheers,
-> Matt
+Then,
+
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+-- 
+Sakari Ailus
