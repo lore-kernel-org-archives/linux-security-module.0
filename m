@@ -2,172 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABAFC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jan 2022 01:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8373C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jan 2022 08:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344568AbiATBVF (ORCPT
+        id S1359307AbiATIiO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Jan 2022 20:21:05 -0500
-Received: from mail-dm6nam12on2046.outbound.protection.outlook.com ([40.107.243.46]:51216
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1344114AbiATBVE (ORCPT
+        Thu, 20 Jan 2022 03:38:14 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:56146 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1359292AbiATIiM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Jan 2022 20:21:04 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gVxsCbgjoz/d2OYBB3oD9tXHRB4xzvKRA2EGJm5s2AqxMKRlttJ7hu4sMAM4CwGQy/YJ66MO3l5UGiAaU1azUi6SRG1uL6jH2szMdS/AXiiuhL90K4U+yPA+eapoHak5XNl0f0rYBl11kk+zmNnp4Kx0tI0VrCs9I4bUtxDUdexppmLJEFHUFxL4cN4xFn4T9Ma+qqX2BnOIIOMgfG0EBF2qDtzYUaj1DD7yKgiI4uIpuokOCTt/ohEtHPVp0/8hFqGGyayG4f7rE2ZrFNgcVqb1GrNOjcGqisa18x7qR18YF9LhwawDOi16vSm+m/KCe01D6SDFuM4I7DBxgLWLtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pbTqnzyO0Rs/2I3ICXZzgTul8NQ7Zu4IhThSIY2uumw=;
- b=avsaPq1cWdDULJgIMs6SQTq8piMyz49il0WE+G1XuyQ3XCbD7xkewaJj6lnTvFwJIoz2Eocap2U1YmumnRXnOy5dGE21zHHY44WRL6Jff48e7Cxfx96M4lezHa3VgbVtrMqQeaBJ3Gq6J2u6s3f4WVNV8oQhTmF+q7TVnzxyXl/dJ/OOPfY6b47l0PGuBLovhgOgMcLKoSjmYA3eKTrDpKHx9KAUB1uP6oJTM9sBNVZ5FPbPxK8Ra1zvKQLE6ovM7gZLG9kmOb8lOH5uA8jQD8Jp1jSXXfN30hLfZNGMNaUkhmMa/xWjxi+tZEeyJviGAu7yY5QnCwLnbIg4Br0vWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pbTqnzyO0Rs/2I3ICXZzgTul8NQ7Zu4IhThSIY2uumw=;
- b=Q3mUl/kI4J18hsoF7daDmT/VDTMh9x4Bx1VZqqgPiidMTgWVIxt6Hhn9JaXYtBSvLhABmK8HykHM67RCyo8+7As1P5a9o2B8v5afIvK5Z/zA7YSoEoXGxH22YfvA2nUmmsZbRJgB/2fVQllXO5SnVzTPY3JQvR+Y/wu5IVtXYM8Bt3u7fhsWUQskNTLnWGWBDr6GkEqPsc0twnKl5hiPzK+YV7hPCXi6mYAd9fVqehb93v62PyqM8KRCFXWJ5pYUrVPYt6qNpA88tSN1YOz3IalLJfK+ujZnAPu1YL3jmaR30J35O4iSkFMoaVUQopIGejzIL4DjRApKcgKkgOSQwg==
-Received: from BN6PR1201CA0023.namprd12.prod.outlook.com
- (2603:10b6:405:4c::33) by MN2PR12MB3293.namprd12.prod.outlook.com
- (2603:10b6:208:106::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.11; Thu, 20 Jan
- 2022 01:21:02 +0000
-Received: from BN8NAM11FT056.eop-nam11.prod.protection.outlook.com
- (2603:10b6:405:4c:cafe::34) by BN6PR1201CA0023.outlook.office365.com
- (2603:10b6:405:4c::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.7 via Frontend
- Transport; Thu, 20 Jan 2022 01:21:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- BN8NAM11FT056.mail.protection.outlook.com (10.13.177.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4909.7 via Frontend Transport; Thu, 20 Jan 2022 01:21:01 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 20 Jan
- 2022 01:20:59 +0000
-Received: from nvdebian.localnet (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.9; Wed, 19 Jan 2022
- 17:20:54 -0800
-From:   Alistair Popple <apopple@nvidia.com>
-To:     Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        =?ISO-8859-1?Q?Andr=E9?= Almeida <andrealmeid@collabora.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Thu, 20 Jan 2022 03:38:12 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 1F79E1F391;
+        Thu, 20 Jan 2022 08:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1642667889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=S1149P6IJdsdpbMcrXZq6Mc6WqPqJoBvK3pMWsa4MN8=;
+        b=mgVK2GKX4z682928eNQNmcKH4PlzeX6XpPLxSucJKp6GDejDBl9xGnHm3EQ7m1HB7u4s0x
+        HmV98Y94Jgx4BP2N49y70kzTAsfC49uladYoyY9u+lMOkRTYf7K7VjPT83DyGrKubQrpNL
+        4X9INnLQQrZk7xUamCgzquBLJDcbk7E=
+Received: from suse.cz (unknown [10.100.224.162])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 1E602A3B81;
+        Thu, 20 Jan 2022 08:38:04 +0000 (UTC)
+Date:   Thu, 20 Jan 2022 09:38:04 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Lucas De Marchi <lucas.demarchi@intel.com>,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-security-module@vger.kernel.org,
+        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
+        Alex Deucher <alexander.deucher@amd.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        chiminghao <chi.minghao@zte.com.cn>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL VIRTUAL MACHINE (KVM)" <kvm@vger.kernel.org>,
-        "open list:LANDLOCK SECURITY MODULE" 
-        <linux-security-module@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        "open list:NETWORKING [MPTCP]" <mptcp@lists.linux.dev>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>
-CC:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        <kernel@collabora.com>
-Subject: Re: [PATCH V2 10/10] selftests: vm: remove dependecy from internal kernel macros
-Date:   Thu, 20 Jan 2022 12:20:51 +1100
-Message-ID: <8257315.FuKUqIaFJu@nvdebian>
-In-Reply-To: <20220119101531.2850400-11-usama.anjum@collabora.com>
-References: <20220119101531.2850400-1-usama.anjum@collabora.com> <20220119101531.2850400-11-usama.anjum@collabora.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Emma Anholt <emma@anholt.net>, Eryk Brol <eryk.brol@amd.com>,
+        Francis Laniel <laniel_francis@privacyrequired.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Leo Li <sunpeng.li@amd.com>,
+        Mikita Lipski <mikita.lipski@amd.com>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        Raju Rangoju <rajur@chelsio.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vishal Kulkarni <vishal@chelsio.com>
+Subject: Re: [PATCH 0/3] lib/string_helpers: Add a few string helpers
+Message-ID: <YekfbKMjOP9ecc5v@alley>
+References: <20220119072450.2890107-1-lucas.demarchi@intel.com>
+ <YegPiR7LU8aVisMf@alley>
+ <87tudzbykz.fsf@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b17aa941-ef21-4860-0aff-08d9dbb31f39
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3293:EE_
-X-Microsoft-Antispam-PRVS: <MN2PR12MB3293C2F6B58D94B62743A2F7DF5A9@MN2PR12MB3293.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XoloNfPO5dWRVcuYsdezIKOxguVvwQwJ3mnJbjdmM54tfwa2P+pknSiRta6S2el+LCKYQKpLGHeHpXM41t42cpCJHEnqtk+OL307MkjQRGrGuftbcwGoEEq/H01kQ3T205DiDxTRFU44GEmbED3fwMDWr7dK7c1O3SFAHRbQxmFZOB8O/X9S8VGfurs6lp74yJ+bGFlYqfW7EN+F4b+8ePszIzzkdygt7wBYij5ZqCmaCUPOCdyhoaxyq9VODtYKQTxzAj3db/gWSjlQp81WA/1BHmaEvN8qER/xiD6KA5eRgIVOIPMVcqm7j5QJGOyLI2/o4ZemA2rJ7Cktl4hdnMm1ER6NZaJwAgrXb3HCSj5J5EmzrPiU9D8aLdUNN0k06kKUhHDjnbZgNHlrCIUNEz0RQZGqK5rEuFgeolirEx/qEtVWRiPZom8CWgeHFj+qGfv3xSRs/g/2EUpoLIt7jgwbWtUMBUJzse37177aBJAS7NUXE96uQD0xPA+UKHA20lqdDUjVgUBPr4ZgpudvWXvCU+cEcBAfqiWcKKoilRtjQwKq/zyoFwASTC1Z/Pt/WlZYPrdNcDfvBb+EFlnZ9VhcdRr+Jn77kiHBOwgK1HVsSQiDV81JrB+nVEh5o+95pQYCVfDNFGBl4FFhWCykenzkAL1BqTLjZfpgrR9W21xZe85YvEBAnij84St0tn67dXqGioarYgfNUUYsRJ2JfFqWj8Re6rHagD0sTjEZ3JxM62cW868hbI7L3cPo2MvCtfFyF5OQLP7glC4OaochIYED57rnuvOR0ZZKjWsuLQEGYa57Bvh+lgbKbddbWcPi
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(40470700002)(36840700001)(46966006)(426003)(83380400001)(36860700001)(316002)(2906002)(8676002)(16526019)(82310400004)(86362001)(47076005)(81166007)(508600001)(40460700001)(9576002)(921005)(8936002)(6666004)(7416002)(356005)(9686003)(186003)(110136005)(70206006)(5660300002)(4326008)(26005)(54906003)(33716001)(336012)(70586007)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2022 01:21:01.7221
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b17aa941-ef21-4860-0aff-08d9dbb31f39
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT056.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3293
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tudzbykz.fsf@intel.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Reviewed-by: Alistair Popple <apopple@nvidia.com>
+On Wed 2022-01-19 16:16:12, Jani Nikula wrote:
+> On Wed, 19 Jan 2022, Petr Mladek <pmladek@suse.com> wrote:
+> > On Tue 2022-01-18 23:24:47, Lucas De Marchi wrote:
+> >> d. This doesn't bring onoff() helper as there are some places in the
+> >>    kernel with onoff as variable - another name is probably needed for
+> >>    this function in order not to shadow the variable, or those variables
+> >>    could be renamed.  Or if people wanting  <someprefix>
+> >>    try to find a short one
+> >
+> > I would call it str_on_off().
+> >
+> > And I would actually suggest to use the same style also for
+> > the other helpers.
+> >
+> > The "str_" prefix would make it clear that it is something with
+> > string. There are other <prefix>_on_off() that affect some
+> > functionality, e.g. mute_led_on_off(), e1000_vlan_filter_on_off().
+> >
+> > The dash '_' would significantly help to parse the name. yesno() and
+> > onoff() are nicely short and kind of acceptable. But "enabledisable()"
+> > is a puzzle.
+> >
+> > IMHO, str_yes_no(), str_on_off(), str_enable_disable() are a good
+> > compromise.
+> >
+> > The main motivation should be code readability. You write the
+> > code once. But many people will read it many times. Open coding
+> > is sometimes better than misleading macro names.
+> >
+> > That said, I do not want to block this patchset. If others like
+> > it... ;-)
+> 
+> I don't mind the names either way. Adding the prefix and dashes is
+> helpful in that it's possible to add the functions first and convert
+> users at leisure, though with a bunch of churn, while using names that
+> collide with existing ones requires the changes to happen in one go.
 
-On Wednesday, 19 January 2022 9:15:31 PM AEDT Muhammad Usama Anjum wrote:
-> The defination of swap() is used from kernel's internal header when this
-> test is built in source tree. The build fails when this test is built
-> out of source tree as defination of swap() isn't found. Selftests
-> shouldn't depend on kernel's internal header files. They can only depend
-> on uapi header files. Add the defination of swap() to fix the build
-> error:
->=20
-> 	gcc -Wall  -I/linux_mainline2/build/usr/include -no-pie    userfaultfd.c=
- -lrt -lpthread -o /linux_mainline2/build/kselftest/vm/userfaultfd
-> 	userfaultfd.c: In function =E2=80=98userfaultfd_stress=E2=80=99:
-> 	userfaultfd.c:1530:3: warning: implicit declaration of function =E2=80=
-=98swap=E2=80=99; did you mean =E2=80=98swab=E2=80=99? [-Wimplicit-function=
-=2Ddeclaration]
-> 	 1530 |   swap(area_src, area_dst);
-> 	      |   ^~~~
-> 	      |   swab
-> 	/usr/bin/ld: /tmp/cclUUH7V.o: in function `userfaultfd_stress':
-> 	userfaultfd.c:(.text+0x4d64): undefined reference to `swap'
-> 	/usr/bin/ld: userfaultfd.c:(.text+0x4d82): undefined reference to `swap'
-> 	collect2: error: ld returned 1 exit status
->=20
-> Fixes: 2c769ed7137a ("tools/testing/selftests/vm/userfaultfd.c: use swap(=
-) to make code cleaner")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  tools/testing/selftests/vm/userfaultfd.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/sel=
-ftests/vm/userfaultfd.c
-> index d3fd24f9fae8..d2480ab93037 100644
-> --- a/tools/testing/selftests/vm/userfaultfd.c
-> +++ b/tools/testing/selftests/vm/userfaultfd.c
-> @@ -119,6 +119,9 @@ struct uffd_stats {
->  				 ~(unsigned long)(sizeof(unsigned long long) \
->  						  -  1)))
-> =20
-> +#define swap(a, b) \
-> +	do { typeof(a) __tmp =3D (a); (a) =3D (b); (b) =3D __tmp; } while (0)
-> +
->  const char *examples =3D
->      "# Run anonymous memory test on 100MiB region with 99999 bounces:\n"
->      "./userfaultfd anon 100 99999\n\n"
->=20
+It is also possible to support both notations at the beginning.
+And convert the existing users in the 2nd step.
+
+> What I do mind is grinding this series to a halt once again. I sent a
+> handful of versions of this three years ago, with inconclusive
+> bikeshedding back and forth, eventually threw my hands up in disgust,
+> and walked away.
+
+Yeah, and I am sorry for bikeshedding. Honestly, I do not know what is
+better. This is why I do not want to block this series when others
+like this.
+
+My main motivation is to point out that:
+
+    enabledisable(enable)
+
+might be, for some people, more eye bleeding than
+
+    enable ? "enable" : "disable"
 
 
+The problem is not that visible with yesno() and onoff(). But as you said,
+onoff() confliscts with variable names. And enabledisable() sucks.
+As a result, there is a non-trivial risk of two mass changes:
+
+now:
+
+- contition ? "yes" : "no"
++ yesno(condition)
+
+a few moths later:
+
+- yesno(condition)
++ str_yes_no(condition)
 
 
+Best Regards,
+Petr
