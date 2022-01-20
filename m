@@ -2,41 +2,36 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF660C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jan 2022 09:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1B9C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Jan 2022 10:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240975AbiATJMv (ORCPT
+        id S1376373AbiATKpj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Jan 2022 04:12:51 -0500
-Received: from mga11.intel.com ([192.55.52.93]:41324 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237469AbiATJMu (ORCPT
+        Thu, 20 Jan 2022 05:45:39 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:55526 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231222AbiATKpj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Jan 2022 04:12:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1642669970; x=1674205970;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=O6+9vsSDVilrh7UjW1BQCXvdPjMTCzf/nC38lgkfjeM=;
-  b=AHA02wk5ouwuy6W2HYrPYzS3lrrL/+qHOg0CYICTR4e+NnGDFVlrPQJY
-   gUj38EYBjNh8qH1E352SLmi7aiETla3w5jUoSe+DLdc6dwhtORh48OxAB
-   wwXh0qh8dDeN8ZpYxipzfTpLjwedgt6UZTGuVuF0tPJWiTOD8Hb6lBqYz
-   TUbCocR9flrnZDvAlhu8UmnmUBvlBMKQk8+wBnGcT+5/+LbCwKTmYYJFo
-   5Zdbc2SDIn7jtDAU5Mcfjj2Ul9fOOFojNnFmVlLIhBT6wLzbLvZBezAhi
-   o0Krv3L9xYhq5xaiCt5g4CTKMsIURyXAl01a6ZaGbJ/PxuOdz23nu1+ji
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10232"; a="242871050"
-X-IronPort-AV: E=Sophos;i="5.88,302,1635231600"; 
-   d="scan'208";a="242871050"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2022 01:12:43 -0800
-X-IronPort-AV: E=Sophos;i="5.88,302,1635231600"; 
-   d="scan'208";a="532691996"
-Received: from davidfsc-mobl3.ger.corp.intel.com (HELO localhost) ([10.252.52.140])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2022 01:12:32 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>
+        Thu, 20 Jan 2022 05:45:39 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 971CA1F394;
+        Thu, 20 Jan 2022 10:45:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1642675537; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lNXsCxk1kmLzWZ3KuMXgc2QP7yNDhqQLgFtjl4LsFGg=;
+        b=s80Eh1CewTbGXaANSfdmhOC8yS7mIDv9FCt/I0hzu7cf9Pu9Si7tpC0AUMlifM6MhpyvNI
+        EdQykNw0T5LfW9CMRgRZQ36TExFEeiyITs3AE72J+aELbU1yWnXuKDUzDzoC1F8NJaMUMu
+        9y1MB7bqBlsK9YohaVnVWyOxwl7Ul6w=
+Received: from suse.cz (unknown [10.100.224.162])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 65535A3B81;
+        Thu, 20 Jan 2022 10:45:30 +0000 (UTC)
+Date:   Thu, 20 Jan 2022 11:45:36 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
 Cc:     Lucas De Marchi <lucas.demarchi@intel.com>,
         linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
@@ -47,7 +42,7 @@ Cc:     Lucas De Marchi <lucas.demarchi@intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Ben Skeggs <bskeggs@redhat.com>,
-        Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Chris Wilson <chris@chris-wilson.co.uk>,
         Daniel Vetter <daniel@ffwll.ch>,
         David Airlie <airlied@linux.ie>,
@@ -71,102 +66,37 @@ Cc:     Lucas De Marchi <lucas.demarchi@intel.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Vishal Kulkarni <vishal@chelsio.com>
 Subject: Re: [PATCH 0/3] lib/string_helpers: Add a few string helpers
-In-Reply-To: <YekfbKMjOP9ecc5v@alley>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Message-ID: <Yek9UEHpS16/9ajt@alley>
 References: <20220119072450.2890107-1-lucas.demarchi@intel.com>
- <YegPiR7LU8aVisMf@alley> <87tudzbykz.fsf@intel.com>
+ <YegPiR7LU8aVisMf@alley>
+ <87tudzbykz.fsf@intel.com>
  <YekfbKMjOP9ecc5v@alley>
-Date:   Thu, 20 Jan 2022 11:12:27 +0200
-Message-ID: <8735libwjo.fsf@intel.com>
+ <8735libwjo.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8735libwjo.fsf@intel.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 20 Jan 2022, Petr Mladek <pmladek@suse.com> wrote:
-> On Wed 2022-01-19 16:16:12, Jani Nikula wrote:
->> On Wed, 19 Jan 2022, Petr Mladek <pmladek@suse.com> wrote:
->> > On Tue 2022-01-18 23:24:47, Lucas De Marchi wrote:
->> >> d. This doesn't bring onoff() helper as there are some places in the
->> >>    kernel with onoff as variable - another name is probably needed for
->> >>    this function in order not to shadow the variable, or those variables
->> >>    could be renamed.  Or if people wanting  <someprefix>
->> >>    try to find a short one
->> >
->> > I would call it str_on_off().
->> >
->> > And I would actually suggest to use the same style also for
->> > the other helpers.
->> >
->> > The "str_" prefix would make it clear that it is something with
->> > string. There are other <prefix>_on_off() that affect some
->> > functionality, e.g. mute_led_on_off(), e1000_vlan_filter_on_off().
->> >
->> > The dash '_' would significantly help to parse the name. yesno() and
->> > onoff() are nicely short and kind of acceptable. But "enabledisable()"
->> > is a puzzle.
->> >
->> > IMHO, str_yes_no(), str_on_off(), str_enable_disable() are a good
->> > compromise.
->> >
->> > The main motivation should be code readability. You write the
->> > code once. But many people will read it many times. Open coding
->> > is sometimes better than misleading macro names.
->> >
->> > That said, I do not want to block this patchset. If others like
->> > it... ;-)
->> 
->> I don't mind the names either way. Adding the prefix and dashes is
->> helpful in that it's possible to add the functions first and convert
->> users at leisure, though with a bunch of churn, while using names that
->> collide with existing ones requires the changes to happen in one go.
->
-> It is also possible to support both notations at the beginning.
-> And convert the existing users in the 2nd step.
->
->> What I do mind is grinding this series to a halt once again. I sent a
->> handful of versions of this three years ago, with inconclusive
->> bikeshedding back and forth, eventually threw my hands up in disgust,
->> and walked away.
->
-> Yeah, and I am sorry for bikeshedding. Honestly, I do not know what is
-> better. This is why I do not want to block this series when others
-> like this.
->
-> My main motivation is to point out that:
->
->     enabledisable(enable)
->
-> might be, for some people, more eye bleeding than
->
->     enable ? "enable" : "disable"
->
->
-> The problem is not that visible with yesno() and onoff(). But as you said,
-> onoff() confliscts with variable names. And enabledisable() sucks.
-> As a result, there is a non-trivial risk of two mass changes:
+On Thu 2022-01-20 11:12:27, Jani Nikula wrote:
+> On Thu, 20 Jan 2022, Petr Mladek <pmladek@suse.com> wrote:
+> > The problem is not that visible with yesno() and onoff(). But as you said,
+> > onoff() confliscts with variable names. And enabledisable() sucks.
+> > As a result, there is a non-trivial risk of two mass changes:
+> 
+> My point is, in the past three years we could have churned through more
+> than two mass renames just fine, if needed, *if* we had just managed to
+> merge something for a start!
 
-My point is, in the past three years we could have churned through more
-than two mass renames just fine, if needed, *if* we had just managed to
-merge something for a start!
+Huh, this sound alarming.
 
-BR,
-Jani.
+Cosmetic changes just complicate history. They make "git blame" useless.
+They also complicate backports. I know that it is not problem for
+mainline. But there are supported stable branches, ...
 
->
-> now:
->
-> - contition ? "yes" : "no"
-> + yesno(condition)
->
-> a few moths later:
->
-> - yesno(condition)
-> + str_yes_no(condition)
->
->
-> Best Regards,
-> Petr
+There should be a good reason for such changes. They should not be
+done light-heartedly.
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Best Regards,
+Petr
