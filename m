@@ -2,97 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7C2C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jan 2022 01:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1502C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Jan 2022 08:58:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232473AbiAUBiM (ORCPT
+        id S1379611AbiAUI6k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Jan 2022 20:38:12 -0500
-Received: from relay036.a.hostedemail.com ([64.99.140.36]:2248 "EHLO
-        relay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233355AbiAUBiM (ORCPT
+        Fri, 21 Jan 2022 03:58:40 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:49218 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234205AbiAUI6i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Jan 2022 20:38:12 -0500
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay06.hostedemail.com (Postfix) with ESMTP id DAEDB22DB5;
-        Fri, 21 Jan 2022 01:38:07 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf06.hostedemail.com (Postfix) with ESMTPA id 3264F20010;
-        Fri, 21 Jan 2022 01:37:54 +0000 (UTC)
-Message-ID: <5da3e02454c8c9ff3335c7199f3ae48af2864981.camel@perches.com>
-Subject: Re: [PATCH 1/3] lib/string_helpers: Consolidate yesno()
- implementation
-From:   Joe Perches <joe@perches.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-security-module@vger.kernel.org,
-        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Emma Anholt <emma@anholt.net>, Eryk Brol <eryk.brol@amd.com>,
-        Francis Laniel <laniel_francis@privacyrequired.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Leo Li <sunpeng.li@amd.com>,
-        Mikita Lipski <mikita.lipski@amd.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        Raju Rangoju <rajur@chelsio.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Vishal Kulkarni <vishal@chelsio.com>
-Date:   Thu, 20 Jan 2022 17:37:53 -0800
-In-Reply-To: <20220119160017.65bd1fa5@gandalf.local.home>
-References: <20220119072450.2890107-1-lucas.demarchi@intel.com>
-         <20220119072450.2890107-2-lucas.demarchi@intel.com>
-         <YefXg03hXtrdUj6y@paasikivi.fi.intel.com>
-         <20220119100635.6c45372b@gandalf.local.home>
-         <YehllDq7wC3M2PQZ@smile.fi.intel.com>
-         <20220119160017.65bd1fa5@gandalf.local.home>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1ubuntu2 
+        Fri, 21 Jan 2022 03:58:38 -0500
+Received: from machine.localnet (lfbn-lyo-1-1484-111.w86-207.abo.wanadoo.fr [86.207.51.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 722ED20B6C61;
+        Fri, 21 Jan 2022 00:58:37 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 722ED20B6C61
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1642755518;
+        bh=WbOLIRm6CwlXPDaoqOPOSwuwUAxz//nxPmXnsK4U1t8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gBJfkgTtdT4cMk6aQoitHvxKSumu/p36mNUFvRFM/x9k1Wm3sIjKyVXch78WUKdDP
+         Ip87j6Z2hgmYjkb7+X6UlXaIPib9/WxhqCNnaAZ0+W+NoZqm425ukfSXntNDOtT0kY
+         JipKhMdFGx9EBRSmOFya9QncgjLb0TnOBmHjYS6c=
+From:   Francis Laniel <flaniel@linux.microsoft.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [RFC PATCH v3 2/2] security/inode.c: Add capabilities file.
+Date:   Fri, 21 Jan 2022 09:58:34 +0100
+Message-ID: <7787651.jkfHb4QSSr@machine>
+In-Reply-To: <20220120180116.167702-3-flaniel@linux.microsoft.com>
+References: <20220120180116.167702-1-flaniel@linux.microsoft.com> <20220120180116.167702-3-flaniel@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 7rtkhruhzyxmaz9kz4md8szkb6csicqt
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 3264F20010
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+2KBCQ3/oG0QJHNmpFhxNu1Bw+ZDwRWLg=
-X-HE-Tag: 1642729074-280175
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-01-19 at 16:00 -0500, Steven Rostedt wrote:
-> On Wed, 19 Jan 2022 21:25:08 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > > I say keep it one line!
-> > > 
-> > > Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
-> > 
-> > I believe Sakari strongly follows the 80 rule, which means...
-> 
-> Checkpatch says "100" I think we need to simply update the docs (the
-> documentation always lags the code ;-)
+Hi.
 
-checkpatch doesn't say anything normally, it's a stupid script.
-It just mindlessly bleats a message when a line exceeds 100 chars...
+Le jeudi 20 janvier 2022, 19:01:16 CET Francis Laniel a =E9crit :
+> This new read-only file prints the capabilities values with their names:
+> cat /sys/kernel/security/capabilities
+> 0       CAP_CHOWN
+> 1       CAP_DAC_OVERRIDE
+> ...
+> 40      CAP_CHECKPOINT_RESTORE
+>=20
+> Signed-off-by: Francis Laniel <flaniel@linux.microsoft.com>
+> ---
+>  security/inode.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>=20
+> diff --git a/security/inode.c b/security/inode.c
+> index 6c326939750d..cef78b497bab 100644
+> --- a/security/inode.c
+> +++ b/security/inode.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/security.h>
+>  #include <linux/lsm_hooks.h>
+>  #include <linux/magic.h>
+> +#include <linux/capability.h>
+>=20
+>  static struct vfsmount *mount;
+>  static int mount_count;
+> @@ -328,6 +329,19 @@ static const struct file_operations lsm_ops =3D {
+>  };
+>  #endif
+>=20
+> +static struct dentry *capabilities_dentry;
+> +static ssize_t capabilities_read(struct file *unused, char __user *buf,
+> +				 size_t count, loff_t *ppos)
+> +{
+> +	return simple_read_from_buffer(buf, count, ppos, cap_string,
+> +				       strlen(cap_string));
+> +}
+> +
+> +static const struct file_operations capabilities_ops =3D {
+> +	.read =3D capabilities_read,
+> +	.llseek =3D generic_file_llseek,
+> +};
+> +
+>  static int __init securityfs_init(void)
+>  {
+>  	int retval;
+> @@ -345,6 +359,8 @@ static int __init securityfs_init(void)
+>  	lsm_dentry =3D securityfs_create_file("lsm", 0444, NULL, NULL,
+>  						&lsm_ops);
+>  #endif
+> +	capabilities_dentry =3D securityfs("capabilities", 0444, NULL, NULL,
+> +					 capabilities_ops);
 
-Just fyi: I think it's nicer on a single line too.
+Sorry, I sent the old version of the patch and did not fixup this...
+Kernel robot kindly show me this error.
+I swear the output in the cover letter was done on the compiled kernel with=
+in=20
+a VM.
+
+I will send a v4 correcting this but I will wait to get some reviews on v3 =
+to=20
+not send to not generate too much traffic here.
+
+>  	return 0;
+>  }
+>  core_initcall(securityfs_init);
+
+Best regards.
 
 
