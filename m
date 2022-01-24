@@ -2,110 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C09AFC433EF
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Jan 2022 19:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D8FC433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Jan 2022 08:02:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239980AbiAWT6v (ORCPT
+        id S236126AbiAXICV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Jan 2022 14:58:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43086 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239911AbiAWT6v (ORCPT
+        Mon, 24 Jan 2022 03:02:21 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4441 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235469AbiAXICV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Jan 2022 14:58:51 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6DEEC06173B
-        for <linux-security-module@vger.kernel.org>; Sun, 23 Jan 2022 11:58:50 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id a13so9850680wrh.9
-        for <linux-security-module@vger.kernel.org>; Sun, 23 Jan 2022 11:58:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=TUWl6dmQTNvBjvx6XYIqGZFahJGyLZ/ZYOAILo4w7V8=;
-        b=YZb9Y+grOTJWkIlxH8l9Mb4GnP3dkJW8gYhC226DVzC/rcZnQR1hhZ7Qti8nWDIYzE
-         BfD6hZSq9hUupyYFwYkxBCN9v+M/LFpJCEVCm4ACmaFa/JYtHvl20Y9qhDF6uARwfden
-         kzGJUnzces2q7lrmXA5bucTuPyMQzbeSY3lJGuoOlNUFhd3/II2i7I2Mo+NyCq4bRfF/
-         nVshbKOynQi+RkkpoQRwMQiE978OTqQNS+cmv3JYpuP3Gg9CN/o3+Ncm4UjauOBRw4bR
-         SJM6TgZetGmfkPFS+qpqhiaSX5XcGvfLMSImcxRKew3aiOn4KA/DtTMEaL2fvfdbYI33
-         4chw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=TUWl6dmQTNvBjvx6XYIqGZFahJGyLZ/ZYOAILo4w7V8=;
-        b=jBwjpCEP1GWBiSFyEPQgPXKnxHqZFXOetfpxSkaRO5obJiSkOv12P5VPsedOnr/8J/
-         GcX6mD/oEaDsFBlstU3Kb5wP2a0s/lI5mAMl938Poi7m9x06FKC0MeNNWO8xsvn/gzMo
-         pPw63orLO93b/eQFwj5AO0M3kqhB6g6yxexrC4k2wotWOShB7KPDoJC1GcDPodq/CMTt
-         ESyaZFDePeAOJYyRKmmmaqocg2HJphFsaeNVo28/znYQOntH522BScp8xY5b0CvANM96
-         j3DaXGiVu7Yzc1zbrn11bVswGTeLlBIVC+5NR7BBzJaT2xuAA7cEuwGLDPEFATOhAXf1
-         TkaQ==
-X-Gm-Message-State: AOAM531rUGHULI4XB3Q991Z0bTMjgbpd7QlIMhOOSlD7/RSDrPBUrX29
-        rtBGidT/XAjpu26AhgPeQGDzBSE2Isw=
-X-Google-Smtp-Source: ABdhPJwEtScGmfjopeLQe9saKsybwxvQ1TwDVPZb2KzPvFaGlKI9ER6XhpZCL6R3wmMni8sD9NprDg==
-X-Received: by 2002:a5d:644a:: with SMTP id d10mr11429398wrw.295.1642967929123;
-        Sun, 23 Jan 2022 11:58:49 -0800 (PST)
-Received: from [192.168.1.164] (i577BC8ED.versanet.de. [87.123.200.237])
-        by smtp.gmail.com with ESMTPSA id i2sm2556035wmq.23.2022.01.23.11.58.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jan 2022 11:58:48 -0800 (PST)
-Message-ID: <882d62bb-1cc2-0019-cc8c-cdacea31e8d3@gmail.com>
-Date:   Sun, 23 Jan 2022 20:58:48 +0100
+        Mon, 24 Jan 2022 03:02:21 -0500
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Jj2S05Kw7z67vQb;
+        Mon, 24 Jan 2022 15:58:56 +0800 (CST)
+Received: from mscphispre00059.huawei.com (10.123.71.64) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.21; Mon, 24 Jan 2022 09:02:17 +0100
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+To:     <mic@digikod.net>
+CC:     <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>
+Subject: [RFC PATCH 0/2] landlock network implementation cover letter
+Date:   Mon, 24 Jan 2022 16:02:13 +0800
+Message-ID: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: Custom LSM: getting a null pointer dereference when trying to
- access a task security blob
-Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org
-References: <c4cbfdb3-f904-b587-d407-268650e6565d@gmail.com>
- <028166ec-0921-977e-8990-4134b5920cad@schaufler-ca.com>
-From:   Denis Obrezkov <denisobrezkov@gmail.com>
-In-Reply-To: <028166ec-0921-977e-8990-4134b5920cad@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.123.71.64]
+X-ClientProxiedBy: mscpeml100002.china.huawei.com (7.188.26.75) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi, all!
 
-> 
-> There's nowhere near enough information here to identify what's
-> going wrong here. Is the KeyLock code otherwise a copy of Smack?
-> Have you registered KeyLock correctly with the infrastructure?
-> 
-Yes, right now the only difference is that I don't have a single
-repository for all labels. For each task/inode I store only a pointer to
-a head of a list of its own labels. I want to store pointers in
-creds->security and inode->i_security. So, basically each subject will
-have its own repository of (its) labels.
-Right now, I have only one security context which is defined in my .c file:
-struct keylock_known keylock_known_system = {
-        .label          = "system\n",
-        .kl_mask        = 7,
-};
+This is a new bunch of RFC patches related to Landlock LSM network confinement.
+Here are previous discussions:
+1. https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
+2. https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
 
-First tasks receive the pointer to this structure and I can see that the
-pointer value for them is non-zero. But later I can see that other tasks
-in keylock_inode_alloc_security have zero pointers,
-I have two hypotheses. First is that my keylock_known_system is not
-visible to other tasks (though it is initialized in a global scope of my
-.c file). Second is that I didn't implement some crucial hooks and a new
-task is created without a label. I have implemented those hooks:
+As in previous RFCs, 2 hooks are supported:
+  - hook_socket_bind()
+  - hook_socket_connect()
 
+Selftest are provided in tools/testing/selftests/landlock/network_test.c;
+Implementation was tested in QEMU invironment with 5.13 kernel version:
+ 1. base_test - passed all tests
+ 2. fs_test - passed 44/46 tests. 2 tests related to overlayfs failed.
+    Probably, I have wrong config options for overlayfs.
+ 3. network_test - passed all tests.
+    Please give your suggestions about test cover in network_test.c
 
-static struct security_hook_list keylock_hooks[] __lsm_ro_after_init = {
-        LSM_HOOK_INIT(inode_alloc_security, keylock_inode_alloc_security),
-        LSM_HOOK_INIT(inode_init_security, keylock_inode_init_security),
-        LSM_HOOK_INIT(task_to_inode, keylock_task_to_inode),
-        LSM_HOOK_INIT(cred_transfer, keylock_cred_transfer),
-        LSM_HOOK_INIT(cred_alloc_blank, keylock_cred_alloc_blank),
+Implementation related issues
+=============================
 
-};
+1. Access masks array refactored into 1D one and changed
+to 32 bits. Filesystem masks occupy 16 lower bits and network
+masks reside in 16 upper bits.
 
+      struct landlock_ruleset {
+            ...
+            ...
+            u32 access_masks[];
+      }
 
-And I initialized my KeyLock LSM in a way similar to that of SMACK.
+2. Refactor API functions in ruleset.c:
+    1. Add (void *)object argument.
+    2. Add u16 rule_type argument.
+
+  - In filesystem case the "object" is defined by underlying inode.
+  In network case the "object" is defined by a port. There is
+  a union containing either a struct landlock_object pointer or a
+  raw data (here a u16 port):
+    union {
+        struct landlock_object *ptr;
+        uintptr_t data;
+    } object;
+
+  - Everytime when a rule is inserted it's needed to provide a rule type:
+
+    landlock_insert_rule(ruleset, (void *)object, access, rule_type)
+      1. A rule_type could be or LANDLOCK_RULE_NET_SERVICE or
+      LANDLOCK_RULE_PATH_BENEATH;
+      2. (void *) object - is either landlock_object *ptr or port value;
+
+3. Use two rb_trees in ruleset structure:
+    1. root_inode - for filesystem objects (inodes).
+    2. root_net_port - for network port objects.
+
+Konstantin Meskhidze (2):
+  landlock: TCP network hooks implementation
+  landlock: selftests for bind and connect hooks
+
+ include/uapi/linux/landlock.h                 |  52 +++
+ security/landlock/Makefile                    |   2 +-
+ security/landlock/fs.c                        |  12 +-
+ security/landlock/limits.h                    |   6 +
+ security/landlock/net.c                       | 175 +++++++++
+ security/landlock/net.h                       |  21 ++
+ security/landlock/ruleset.c                   | 167 ++++++---
+ security/landlock/ruleset.h                   |  40 +-
+ security/landlock/setup.c                     |   3 +
+ security/landlock/syscalls.c                  | 142 ++++---
+ .../testing/selftests/landlock/network_test.c | 346 ++++++++++++++++++
+ 11 files changed, 860 insertions(+), 106 deletions(-)
+ create mode 100644 security/landlock/net.c
+ create mode 100644 security/landlock/net.h
+ create mode 100644 tools/testing/selftests/landlock/network_test.c
 
 --
-Regards, Denis Obrezkov
+2.25.1
+
