@@ -2,91 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D908C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 19:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 102B9C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 19:50:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230295AbiAYTlm (ORCPT
+        id S231131AbiAYTuu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jan 2022 14:41:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53484 "EHLO
+        Tue, 25 Jan 2022 14:50:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230323AbiAYTlX (ORCPT
+        with ESMTP id S230435AbiAYTuq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jan 2022 14:41:23 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22BAEC06173B
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 11:41:23 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id o12so32994562eju.13
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 11:41:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vUuc5Cuk4CcGyRt9vUxKg1xmJYyfALSVQcZpRcTgc/o=;
-        b=n5zmYAcu5BRy/RslYVij/YtWHYBFXhbyjVK/z+ltADF/rKsfqX05m+Z8DXdR9Jv0Qg
-         wLfhBSTv3szp4/htZNlhEQkOcCOt/VKLl7jhF2WVtaFWkV1q6vmOZ7yseOMwfe5eikqc
-         g+ILjQHsJOhC5T5SBTBtMBidlMju672lCxKW3oTLGS2l5ZGOj/OpiKicl/hqRDAbSHZc
-         9a4LHrleVhQ1RbeSvj5LsUtem57Uq996D9nX6LapPEfH7e2AtRYQKKDRrE9HagxUVGY5
-         SzZkZLxOdI+hUdTdVE9cz559+MS15mT52C8tIYjsGMa5Ab1RhL5feeQUF+uJ37t9q2zp
-         OTmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vUuc5Cuk4CcGyRt9vUxKg1xmJYyfALSVQcZpRcTgc/o=;
-        b=5tf1f4ory2Z+ujEAps0Uu83ToqJb2Aw3nUpRguGlhCr4zI47WHq3boIHQ8UgJLwoYm
-         kEkBJRfAzrqkqxsN7W+mDp0h56EAg58PpQmmYNBXEQSsYaRcjIwOnL7twllv1aw2D4vs
-         M3BVlkpr5kVYZKnL3ZlF95dTST5rZtWwTLr9afGI8RqXlsMjlbsVuMIsoZreop2rCjhi
-         F8dvWu/U3fnav7RzGNDrmcAQ0TK9jIOLlapRwPJqj8m+OdCIs6dIyaNhZqon0B7p8oj+
-         /lam6joZrXNgXKqoQkWQUO5zLusZ/Qted4e9VO19I10Fox8jBsKEsF/Hp8Wh2Qs+LQnD
-         ucdw==
-X-Gm-Message-State: AOAM532hreOObZkelobT+bnf6GHGmc5tCDitr+x6SYakSvMSVPJJ/EhA
-        KW+dqfAWXdwwZ6yckUTLpt6gG2CE4SNOlFuuU+sx
-X-Google-Smtp-Source: ABdhPJxcnmD/6sm65UfWN61wLlYtO0aQst7ytT/b8YLeHTUx5itncRnmoVHeB1qBnaazZQaWShuYhglJDGa42hMl1v0=
-X-Received: by 2002:a17:907:1b0d:: with SMTP id mp13mr17172871ejc.29.1643139681609;
- Tue, 25 Jan 2022 11:41:21 -0800 (PST)
-MIME-Version: 1.0
-References: <CAM2jsSiHK_++SggmRyRbCxZ58hywxeZsJJMJHpQfbAz-5AfJ0g@mail.gmail.com>
- <CAHC9VhR1efuTR_zLLhmOyS4EHT1oHgA1d_StooKXmFf9WGODyA@mail.gmail.com>
- <a77ca75bfb69f527272291b4e6556fc46c37f9df.camel@kernel.org>
- <20220125111350.t2jgmqdvshgr7doi@wittgenstein> <d5490a7c87b8c435b3c7bdb8d2c8edef2c2a576a.camel@kernel.org>
- <20220125121213.ontt4fide32phuzl@wittgenstein> <ab92b28e953601785467cdf8ca67dd5b0ef55105.camel@kernel.org>
- <20220125124920.6dulmlczttifovxy@wittgenstein>
-In-Reply-To: <20220125124920.6dulmlczttifovxy@wittgenstein>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 25 Jan 2022 14:41:10 -0500
-Message-ID: <CAHC9VhTsJGMvaf=SDp=4vyRoqYVLHsjYYq8pgkzUZ_tFGXKxSw@mail.gmail.com>
-Subject: Re: "kernel NULL pointer dereference" crash when attempting a write
-To:     Christian Brauner <brauner@kernel.org>,
+        Tue, 25 Jan 2022 14:50:46 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE82C061744;
+        Tue, 25 Jan 2022 11:50:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=XnOpHOntQOg5wjymzDOHXiPanYFDFvY26sbX++O0fnA=; b=VELGeg2hS4JKT8txctMPaShzdT
+        ZaTFITxIlYbm2Uj12Qxez0OYx7e1MYq2UoZXodMrCxvGeygRgn7gKfoteE1diO3iyBZJ8KUdAXnkd
+        eVAkqTeoOFrGj3sLsiX9+iWSotgN5NABPqUvVZLsX7KpOqjNgZ/+r6lfu3muAyMmARu6UsZ4kKGJk
+        IUwfX9k2+58not7Pl+Jj6UBm1ZuLWYel2TbXXc/qQqvVDrr1tJEXuVK2i/LQlI0eoA+KQtMZLL+rc
+        82XvPYvLKUvHncE/yTFMR8MgTBVyT8p5PPrgBmYj2GxjTIvZFopD3jmNjkMNdUZk2hHBKLycT/68x
+        dZlX6Vag==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nCRpw-009QFo-M3; Tue, 25 Jan 2022 19:50:40 +0000
+Date:   Tue, 25 Jan 2022 11:50:40 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Michal Suchanek <msuchanek@suse.de>,
+        Heiko Carstens <hca@linux.ibm.com>
+Cc:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        Philipp Rudo <prudo@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Frank van der Linden <fllinden@amazon.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
         linux-security-module@vger.kernel.org
-Cc:     Jeff Layton <jlayton@kernel.org>, Stephen Muth <smuth4@gmail.com>,
-        Vivek Goyal <vgoyal@redhat.com>, ceph-devel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v4 1/6] s390/kexec_file: Don't opencode appended
+ signature check.
+Message-ID: <YfBUkIlvQc0U0ylo@bombadil.infradead.org>
+References: <cover.1641822505.git.msuchanek@suse.de>
+ <940cd6a0e88793060cdf5ddb7880c03564b38bdd.1641822505.git.msuchanek@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <940cd6a0e88793060cdf5ddb7880c03564b38bdd.1641822505.git.msuchanek@suse.de>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 25, 2022 at 7:49 AM Christian Brauner <brauner@kernel.org> wrote:
-> (Btw, it is very odd that the bug in security_fs_context_parse_param()
-> still isn't fixed in master. Neither the generic lsm fix:
-> https://lore.kernel.org/lkml/018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com/
-> nor the fix for selinux:
-> https://lore.kernel.org/lkml/20211012103243.xumzerhvhklqrovj@wittgenstein/
-> seem to have gone anywhere? That's another NULL-deref, see:
-> https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943)
+On Mon, Jan 10, 2022 at 02:49:53PM +0100, Michal Suchanek wrote:
+> Module verification already implements appeded signature check.
+> 
+> Reuse it for kexec_file.
+> 
+> The kexec_file implementation uses EKEYREJECTED error in some cases when
+> there is no key and the common implementation uses ENOPKG or EBADMSG
+> instead.
+> 
+> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> Acked-by: Heiko Carstens <hca@linux.ibm.com>
+> ---
+> v3: Philipp Rudo <prudo@redhat.com>: Update the commit with note about
+> change of return value
+> ---
+>  arch/s390/kernel/machine_kexec_file.c | 22 +++++-----------------
+>  1 file changed, 5 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
+> index 8f43575a4dd3..c944d71316c7 100644
+> --- a/arch/s390/kernel/machine_kexec_file.c
+> +++ b/arch/s390/kernel/machine_kexec_file.c
+> @@ -31,6 +31,7 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
+>  	const unsigned long marker_len = sizeof(MODULE_SIG_STRING) - 1;
+>  	struct module_signature *ms;
+>  	unsigned long sig_len;
+> +	int ret;
+>  
+>  	/* Skip signature verification when not secure IPLed. */
+>  	if (!ipl_secure_flag)
+> @@ -45,25 +46,12 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
+>  	kernel_len -= marker_len;
+>  
+>  	ms = (void *)kernel + kernel_len - sizeof(*ms);
+> -	kernel_len -= sizeof(*ms);
+> +	ret = mod_check_sig(ms, kernel_len, "kexec");
+> +	if (ret)
+> +		return ret;
+>  
+>  	sig_len = be32_to_cpu(ms->sig_len);
+> -	if (sig_len >= kernel_len)
+> -		return -EKEYREJECTED;
 
-Adding the LSM list to the To: line for this snippet to bring these
-patches back to front of people's minds.
+There is a small minor fix here, where by using mod_check_sig() now
+decreased the kernel_len by the sizeof(*ms). It is minor though.
 
-I suspect the issue is that these patches fall into the general LSM
-"security/*.c" bin and as a result don't trigger the individual LSMs
-"okay, I'll merge this behavior".  Normally I would expect this to get
-picked up by James' LSM tree but sometimes the lines get blurry.
+> -	kernel_len -= sig_len;
+> -
+> -	if (ms->id_type != PKEY_ID_PKCS7)
+> -		return -EKEYREJECTED;
 
-As James is my boss now I talk to him a fair amount, I'll ping him
-about these patches to try and get some action on them during this -rc
-cycle.  I'll also go review/tag them as well.
+More importantly is the return value used here changes but given the
+Ack by Heiko I suspect this if fine and does not break old userspace,
+the only change here is the possible error value returned by the
+kexec_file_load() system call.
 
--- 
-paul moore
-paul-moore.com
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+
+   Luis
