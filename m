@@ -2,109 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD91C43217
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 20:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00A5C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 22:18:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232059AbiAYUa4 (ORCPT
+        id S233646AbiAYWSP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jan 2022 15:30:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36808 "EHLO
+        Tue, 25 Jan 2022 17:18:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232049AbiAYUaz (ORCPT
+        with ESMTP id S233643AbiAYWSP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jan 2022 15:30:55 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73569C06173B;
-        Tue, 25 Jan 2022 12:30:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eAYuA3IYpDa6asQzwjsBPd1aG38lL6DwpQeaWb0KZyc=; b=u7umuGcoWurUr5OPmMAUZ3xGOO
-        YZiX6q/jpumt1aXHBk0BRLa5mmm9kCWWQpjv+D+DNgzXt/hAZ/1V8K68SoeXS2I4ruU9h1fnzRxL7
-        Q+v8WVLR5gsp86yCkzDQtJhNLAl0+mfJakpZ69hu4fKdKAkmEtvCPvmiRSlDnANtsDQT6pz4hjSzR
-        xMbM9JQTQYMOR+ZtpeyzckbV9oBqTDIZOAdvoQRotKUuqC5AMSg6f3IBy3cCqcPm6s/ntnHh2qrQf
-        Qn7DZFJJ/KLQ2aRQ9i+Rk7qAATcNDR2Tc7uzY7jX7MYwF/4xCi5ms7LWHkr//RCN1H/PeV/jKv5KR
-        lb1i4Ksw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nCSSq-009VdS-1L; Tue, 25 Jan 2022 20:30:52 +0000
-Date:   Tue, 25 Jan 2022 12:30:52 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Michal Suchanek <msuchanek@suse.de>,
-        David Howells <dhowells@redhat.com>,
-        Aaron Tomlin <atomlin@redhat.com>
-Cc:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        Philipp Rudo <prudo@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
-        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Frank van der Linden <fllinden@amazon.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] KEXEC_SIG with appended signature
-Message-ID: <YfBd/EDGUx9UIHcb@bombadil.infradead.org>
-References: <cover.1641900831.git.msuchanek@suse.de>
+        Tue, 25 Jan 2022 17:18:15 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A901FC061744
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 14:18:14 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id ah7so33797010ejc.4
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 14:18:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wFxRjQblzuQxMmeuxhqTt69j7JKM+h2YKSCx/fgMhRQ=;
+        b=yy0IFEhuQcD3FvuWwa8wDXGhtUxNSAx66MnZHZbzCNhecpc5I8xOnUPy1+QODPd3Hk
+         pcTAwgfPh2h9MgMpZPC2DpBrI7X0acnAeLs2rnetyF6+0SkWFrSNvygFTwvkpDvcNm6w
+         21Wc/8rlhh71ko/itJqW2AGvK8cYvL7s/7UifnG29xGSNFI8rxsnZErm+P4nfT0PHO3Q
+         xfIYOMB9zGBcqAWfPG2b4c1aYctpkjeSZql1+H1YKXBPDirfysT2c7s0i6cmXbdTvnxE
+         fQ5/90JxAP1yz9/PVgd7b/Scqb4i2/a2o4YiJx43MejbjngUUsh10KSvyozYmqv4tpxg
+         IBbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wFxRjQblzuQxMmeuxhqTt69j7JKM+h2YKSCx/fgMhRQ=;
+        b=c4726DMR1IH+h3s6s93rFid0i4SLZ3yEFXLw/dGcuR9AhDSSRETsA+BEAdctko/fvh
+         a9XSP5r5KygZfhE3eHKOOzzDwfBuS2b9K6GfOWS4fvpWi2LuQahuzsy4v4VayOUGPgDc
+         igK932TUNQCFagtN43+OA6NBv7/22KnAjU8IjAXIf6JyRjFOdi8k0RgdTcqMpwhGW2Th
+         XQezxtHqbmDgOdYEiFkWfxlOPpSgxFZFnfUVAzFQtb/hbacKyyAUUHFlbcQoSJo0wVkK
+         DVRNAAJnGNjRsrY+D0K3wweCLPXcb4sEUgF1RYJ1yTEDvuzlFGUz0WdGLRBrKC3g9Wrw
+         uW1A==
+X-Gm-Message-State: AOAM532VHIbJVLN3/3q+2o+1vruqPHE1FA7pF8X/0hZRdfpowGjSQd36
+        zjinZ/izMjU/8DuJvHzuzbxHalkEZPTt+tQeIfHp
+X-Google-Smtp-Source: ABdhPJwrpIOZzAr+bseCxchlMSHEMYAimpBHm2qxGfEpHUACZ+FAiH4QA8BYe2CAjY20qlmr+ZzZ3BXkhD4a14WIxdo=
+X-Received: by 2002:a17:907:968d:: with SMTP id hd13mr8727837ejc.12.1643149093133;
+ Tue, 25 Jan 2022 14:18:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1641900831.git.msuchanek@suse.de>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
+ <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein>
+ <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
+In-Reply-To: <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 25 Jan 2022 17:18:02 -0500
+Message-ID: <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com>
+Subject: Re: [PATCH] LSM: general protection fault in legacy_parse_param
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 11, 2022 at 12:37:42PM +0100, Michal Suchanek wrote:
-> Hello,
-> 
-> This is a refresh of the KEXEC_SIG series.
-> 
-> This adds KEXEC_SIG support on powerpc and deduplicates the code dealing
-> with appended signatures in the kernel.
-> 
-> powerpc supports IMA_KEXEC but that's an exception rather than the norm.
-> On the other hand, KEXEC_SIG is portable across platforms.
-> 
-> For distributions to have uniform security features across platforms one
-> option should be used on all platforms.
-> 
-> Thanks
-> 
-> Michal
-> 
-> Previous revision: https://lore.kernel.org/linuxppc-dev/cover.1637862358.git.msuchanek@suse.de/
-> Patched kernel tree: https://github.com/hramrach/kernel/tree/kexec_sig
-> 
-> Michal Suchanek (6):
->   s390/kexec_file: Don't opencode appended signature check.
->   powerpc/kexec_file: Add KEXEC_SIG support.
->   kexec_file: Don't opencode appended signature verification.
->   module: strip the signature marker in the verification function.
->   module: Use key_being_used_for for log messages in
->     verify_appended_signature
->   module: Move duplicate mod_check_sig users code to mod_parse_sig
+On Tue, Oct 12, 2021 at 10:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 10/12/2021 3:32 AM, Christian Brauner wrote:
+> > On Mon, Oct 11, 2021 at 03:40:22PM -0700, Casey Schaufler wrote:
+> >> The usual LSM hook "bail on fail" scheme doesn't work for cases where
+> >> a security module may return an error code indicating that it does not
+> >> recognize an input.  In this particular case Smack sees a mount option
+> >> that it recognizes, and returns 0. A call to a BPF hook follows, which
+> >> returns -ENOPARAM, which confuses the caller because Smack has processed
+> >> its data.
+> >>
+> >> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> > Thanks!
+> > Note, I think that we still have the SELinux issue we discussed in the
+> > other thread:
+> >
+> >       rc = selinux_add_opt(opt, param->string, &fc->security);
+> >       if (!rc) {
+> >               param->string = NULL;
+> >               rc = 1;
+> >       }
+> >
+> > SELinux returns 1 not the expected 0. Not sure if that got fixed or is
+> > queued-up for -next. In any case, this here seems correct independent of
+> > that:
+>
+> The aforementioned SELinux change depends on this patch. As the SELinux
+> code is today it blocks the problem seen with Smack, but introduces a
+> different issue. It prevents the BPF hook from being called.
+>
+> So the question becomes whether the SELinux change should be included
+> here, or done separately. Without the security_fs_context_parse_param()
+> change the selinux_fs_context_parse_param() change results in messy
+> failures for SELinux mounts.
 
-What tree should this go through? I'd prefer if over through modules
-tree as it can give a chance for Aaron Tomlin to work with this for his
-code refactoring of kernel/module*.c to kernel/module/
+FWIW, this patch looks good to me, so:
 
-  Luis
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+... and with respect to the SELinux hook implementation returning 1 on
+success, I don't have a good answer and looking through my inbox I see
+David Howells hasn't responded either.  I see nothing in the original
+commit explaining why, so I'm going to say let's just change it to
+zero and be done with it; the good news is that if we do it now we've
+got almost a full cycle in linux-next to see what falls apart.  As far
+as the question of one vs two patches, it might be good to put both
+changes into a single patch just so that folks who do backports don't
+accidentally skip one and create a bad kernel build.  Casey, did you
+want to respin this patch or would you prefer me to submit another
+version?
+
+> > Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> >
+> >>  security/security.c | 14 +++++++++++++-
+> >>  1 file changed, 13 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/security/security.c b/security/security.c
+> >> index 09533cbb7221..3cf0faaf1c5b 100644
+> >> --- a/security/security.c
+> >> +++ b/security/security.c
+> >> @@ -885,7 +885,19 @@ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
+> >>
+> >>  int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> >>  {
+> >> -    return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
+> >> +    struct security_hook_list *hp;
+> >> +    int trc;
+> >> +    int rc = -ENOPARAM;
+> >> +
+> >> +    hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
+> >> +                         list) {
+> >> +            trc = hp->hook.fs_context_parse_param(fc, param);
+> >> +            if (trc == 0)
+> >> +                    rc = 0;
+> >> +            else if (trc != -ENOPARAM)
+> >> +                    return trc;
+> >> +    }
+> >> +    return rc;
+> >>  }
+
+-- 
+paul-moore.com
