@@ -2,126 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A41C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 14:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA016C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 14:37:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1578865AbiAYOV1 (ORCPT
+        id S1388297AbiAYOhF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jan 2022 09:21:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35054 "EHLO
+        Tue, 25 Jan 2022 09:37:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1578287AbiAYORt (ORCPT
+        with ESMTP id S1389067AbiAYOd2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jan 2022 09:17:49 -0500
-Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50A71C061753
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 06:17:49 -0800 (PST)
-Received: by mail-vk1-xa2a.google.com with SMTP id m131so12442472vkm.7
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 06:17:49 -0800 (PST)
+        Tue, 25 Jan 2022 09:33:28 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35396C06173B;
+        Tue, 25 Jan 2022 06:33:27 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id c24so61217072edy.4;
+        Tue, 25 Jan 2022 06:33:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K9qNYEguOKx8AbCzHGgE3pgKrH/csc5za8weZ+n8ZZg=;
-        b=LS7D4KNsPJm+YayCIFnCNcWjxylNoNw76n+xa/aqD7ItWtHSu1WRHB9yIn8y3TUNPA
-         dEYVHfrxQ7mzWI0eYoamdm7KWjxJQS2JrVak6Mwqcel5fZ3CS4x2AAXnjjZsRrP212CQ
-         WApKf2bqXjzUdlba0CtSBhB0NgDGnChhkJMIwEif33CGe3FYZX2uK+2loylJPwHFCAfI
-         +cFAVegIQ6WWXh9I5v2nwTzMdOv2f+9BrYEqmF8QMi3MFBFrYE6+TgzYs+dzxVVllnab
-         /owNzn5URyT6TyiaPMPf64C6dLSPcz5PHCZlTKW9NjL/eIF5QYSfDCOyD1nY0nthq9eR
-         kx5w==
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bLGRSDBqt3CI9o30EqMaKBgi/Og7jvCpHq0R8ShXmFM=;
+        b=Mn4PK6g/oizWyfQ/FlsNpx8KUGy4lvZNH4Q44yveFyG6XwfO4vkxu5X4ytfU6J68Jp
+         t/Ep8y+dU+4NrFLJMNh5dhoE3ITMKtr8o4VcdBESKAXHbnpqb0CjYOyMH+JgwlHcFxUg
+         SdYu2BojdjheT8JGAjkEWzq6FCuwKY1y7yWHJguJTGz1GcYRHYZkH++kWEoZ0Pvrl0EM
+         TNidQED+LEGzAweI2o8TceH5KTyp97FCGQZyfp44hk6hrSdAJIzr1V/CxQJtFyfq8bnP
+         oy9Avv4wKRXUE6cJtJrAk60hQGmhsPB+EiNE1/cwxu7YTSuMAE9EwA6e/ZhT9IOo9xYz
+         OTkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K9qNYEguOKx8AbCzHGgE3pgKrH/csc5za8weZ+n8ZZg=;
-        b=aX11piz4WM2YE+Vfu71Y4wi+zL2zpiJO4s8OwIcOK+bJV5EQrTxa9PAo+1l5J6EDJ7
-         g3KFx9N2KYINA8a5rXdu1bUABPZ3xdj3mCztJtlxfjWs4PmtGJ7C4hW/NI607M8Bp3MZ
-         4OPdIW2DJjOmtOWAOGxnBX7ZX0jivm/D/Z4+DFL0bMFMeAUFzeTNYkp4yT+UoS7cbagN
-         YKijTmAOqQcou3Xt+MbzCyXG0KwqMUJFw7tghy3j3WO4hhptXMHAEfnQE7E8JuMBUaiE
-         hGQXHcA5UfATA/NPT74El03lj+MdwfKVch2goRYVibajuL/voVbGlhOcmpmDve0YJTAY
-         Eufg==
-X-Gm-Message-State: AOAM531TtVl4dXNHWOIWQFEciLXfHN7zaswOa5F1k9HcIti1O3lDZPu5
-        X47ww0tHFWdL/T1LQ0cqdfArlUiSFRk=
-X-Google-Smtp-Source: ABdhPJwd4vQzRiZPlfRcB9F6nSjkjR2Urw6y4gJVWLlaTtUREoNLBxPVu46HBxY57Qm4APYd6PdXeA==
-X-Received: by 2002:a1f:784d:: with SMTP id t74mr4666699vkc.22.1643120268355;
-        Tue, 25 Jan 2022 06:17:48 -0800 (PST)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id 187sm1902599vsi.12.2022.01.25.06.17.46
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jan 2022 06:17:47 -0800 (PST)
-Received: by mail-ua1-f50.google.com with SMTP id l1so35758198uap.8
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 06:17:46 -0800 (PST)
-X-Received: by 2002:a67:d389:: with SMTP id b9mr4563384vsj.79.1643120266518;
- Tue, 25 Jan 2022 06:17:46 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bLGRSDBqt3CI9o30EqMaKBgi/Og7jvCpHq0R8ShXmFM=;
+        b=mCeSOG42rHLmdlqIFonaAw/LVJGsOJVJUGUbEoi371kQt8tCnpbqWBr0OpDAKA4Km5
+         dTA3UUB+E5L4U7TwbRa6PCrHk18+wk4wGViYQGu4UWuNGjPKu/iV4bRXwETkP9ipzuzp
+         UZs9rshkgoL7hex1gUJxxXwEBoqCYE0wrxUW38zKMXlNfg5hgNechwPMdkNzyeBPJAoG
+         Kjz3tuXf1b6cMmddrvbOLy23gDWDQAaE0UMtpGyPyMYBCt97phaflruOQPyT9wX+lCVr
+         N2ToCYS+QDfij6hQjuqNC8S3+jcNiwH2DPvSjd1SFtT7u/DtaBjttx0L8ViiF6E3Xext
+         yAaA==
+X-Gm-Message-State: AOAM531Y2srWANeW/QtBz/6X4vAk9SGw5PYNolzTI9C8TD6fL/mvCi2a
+        z5hf6nSINNTSbn2yLE4ZIo9oGMAYj4dDkg==
+X-Google-Smtp-Source: ABdhPJw2WjOewfY30kV7zrgPQ4uGjfJlfejcSiIazlBcEOdPGrjUrMOyvy+xfpRlBK6bRy0afqR1Uw==
+X-Received: by 2002:a17:906:7306:: with SMTP id di6mr16139066ejc.93.1643121205668;
+        Tue, 25 Jan 2022 06:33:25 -0800 (PST)
+Received: from debianHome.localdomain (dynamic-077-010-144-044.77.10.pool.telefonica.de. [77.10.144.44])
+        by smtp.gmail.com with ESMTPSA id gz12sm6291530ejc.124.2022.01.25.06.33.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jan 2022 06:33:25 -0800 (PST)
+From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
+To:     selinux@vger.kernel.org, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] mm: create security context for memfd_secret inodes
+Date:   Tue, 25 Jan 2022 15:33:04 +0100
+Message-Id: <20220125143304.34628-1-cgzones@googlemail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com> <20220124080215.265538-2-konstantin.meskhidze@huawei.com>
-In-Reply-To: <20220124080215.265538-2-konstantin.meskhidze@huawei.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Tue, 25 Jan 2022 09:17:10 -0500
-X-Gmail-Original-Message-ID: <CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com>
-Message-ID: <CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] landlock: TCP network hooks implementation
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     mic@digikod.net, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter@vger.kernel.org,
-        yusongping@huawei.com, artem.kuzin@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 24, 2022 at 3:02 AM Konstantin Meskhidze
-<konstantin.meskhidze@huawei.com> wrote:
->
-> Support of socket_bind() and socket_connect() hooks.
-> Current prototype can restrict binding and connecting of TCP
-> types of sockets. Its just basic idea how Landlock could support
-> network confinement.
->
-> Changes:
-> 1. Access masks array refactored into 1D one and changed
-> to 32 bits. Filesystem masks occupy 16 lower bits and network
-> masks reside in 16 upper bits.
-> 2. Refactor API functions in ruleset.c:
->     1. Add void *object argument.
->     2. Add u16 rule_type argument.
-> 3. Use two rb_trees in ruleset structure:
->     1. root_inode - for filesystem objects
->     2. root_net_port - for network port objects
->
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Create a security context for the inodes created by memfd_secret(2) via
+the LSM hook inode_init_security_anon to allow a fine grained control.
+As secret memory areas can affect hibernation and have a global shared
+limit access control might be desirable.
 
-> +static int hook_socket_connect(struct socket *sock, struct sockaddr *address, int addrlen)
-> +{
-> +       short socket_type;
-> +       struct sockaddr_in *sockaddr;
-> +       u16 port;
-> +       const struct landlock_ruleset *const dom = landlock_get_current_domain();
-> +
-> +       /* Check if the hook is AF_INET* socket's action */
-> +       if ((address->sa_family != AF_INET) && (address->sa_family != AF_INET6))
-> +               return 0;
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+An alternative way of checking memfd_secret(2) is to create a new LSM
+hook and e.g. for SELinux check via a new process class permission.
+---
+ mm/secretmem.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Should this be a check on the socket family (sock->ops->family)
-instead of the address family?
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index 22b310adb53d..b61cd2f661bc 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -164,11 +164,20 @@ static struct file *secretmem_file_create(unsigned long flags)
+ {
+ 	struct file *file = ERR_PTR(-ENOMEM);
+ 	struct inode *inode;
++	const char *anon_name = "[secretmem]";
++	const struct qstr qname = QSTR_INIT(anon_name, strlen(anon_name));
++	int err;
+ 
+ 	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
+ 	if (IS_ERR(inode))
+ 		return ERR_CAST(inode);
+ 
++	err = security_inode_init_security_anon(inode, &qname, NULL);
++	if (err) {
++		file = ERR_PTR(err);
++		goto err_free_inode;
++	}
++
+ 	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
+ 				 O_RDWR, &secretmem_fops);
+ 	if (IS_ERR(file))
+-- 
+2.34.1
 
-It is valid to pass an address with AF_UNSPEC to a PF_INET(6) socket.
-And there are legitimate reasons to want to deny this. Such as passing
-a connection to a unprivileged process and disallow it from disconnect
-and opening a different new connection.
-
-> +
-> +       socket_type = sock->type;
-> +       /* Check if it's a TCP socket */
-> +       if (socket_type != SOCK_STREAM)
-> +               return 0;
-> +
-> +       if (!dom)
-> +               return 0;
-> +
-> +       /* Get port value in host byte order */
-> +       sockaddr = (struct sockaddr_in *)address;
-> +       port = ntohs(sockaddr->sin_port);
-> +
-> +       return check_socket_access(dom, port, LANDLOCK_ACCESS_NET_CONNECT_TCP);
-> +}
