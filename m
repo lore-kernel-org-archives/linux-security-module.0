@@ -2,60 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C27C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 09:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A41C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 14:21:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1457110AbiAYJ07 (ORCPT
+        id S1578865AbiAYOV1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jan 2022 04:26:59 -0500
-Received: from mail.trueanalyze24.com ([149.154.157.156]:37498 "EHLO
-        mail.trueanalyze24.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1457316AbiAYJO6 (ORCPT
+        Tue, 25 Jan 2022 09:21:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35054 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1578287AbiAYORt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jan 2022 04:14:58 -0500
-Received: by mail.trueanalyze24.com (Postfix, from userid 1001)
-        id 8740541005; Tue, 25 Jan 2022 09:58:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trueanalyze24.com;
-        s=mail; t=1643102097;
-        bh=EGenFkmmv/iHCwB4AbTzX8IXCMu1xRW+9eep7HJGZMM=;
-        h=Date:From:To:Subject:From;
-        b=JhwkXisfmsEFIhOPhWuYz1Th5DUF6WdS1qEyllA0zgPhNgfKWoO/vwQ4bJN1QJJBz
-         hxREobpHW8iuRU5RMhAu0jfG9eaan5kVB/Wi3aiw1WRv5w4YH1vncuRXER2jFADvD6
-         BMMVJkQccY1wYKmZjRq+xgzCfEflWRcjMpvTLONNiE1rWkWzFX8RRnNeml/Hhq+R87
-         1N6ZMvyultygKGkYPhaR2CfAMDbd3MMPyIj7OOT+4jyLCA2gvb7Pswi89d2InbEedv
-         Ib4Nwu2A6vt+QAXbVzXPE4lPmuyRoQFdyRTmlxViZQYh3u2B60ZL3UevXNbjuej4Je
-         KV2DxAi8Bu0xg==
-Received: by mail.trueanalyze24.com for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 08:57:25 GMT
-Message-ID: <20220125084505-0.1.1b.e8ai.0.vsc101nb39@trueanalyze24.com>
-Date:   Tue, 25 Jan 2022 08:57:25 GMT
-From:   "Mateusz Talaga" <mateusz.talaga@trueanalyze24.com>
-To:     <linux-security-module@vger.kernel.org>
-Subject: Prezentacja
-X-Mailer: mail.trueanalyze24.com
+        Tue, 25 Jan 2022 09:17:49 -0500
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50A71C061753
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 06:17:49 -0800 (PST)
+Received: by mail-vk1-xa2a.google.com with SMTP id m131so12442472vkm.7
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 06:17:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K9qNYEguOKx8AbCzHGgE3pgKrH/csc5za8weZ+n8ZZg=;
+        b=LS7D4KNsPJm+YayCIFnCNcWjxylNoNw76n+xa/aqD7ItWtHSu1WRHB9yIn8y3TUNPA
+         dEYVHfrxQ7mzWI0eYoamdm7KWjxJQS2JrVak6Mwqcel5fZ3CS4x2AAXnjjZsRrP212CQ
+         WApKf2bqXjzUdlba0CtSBhB0NgDGnChhkJMIwEif33CGe3FYZX2uK+2loylJPwHFCAfI
+         +cFAVegIQ6WWXh9I5v2nwTzMdOv2f+9BrYEqmF8QMi3MFBFrYE6+TgzYs+dzxVVllnab
+         /owNzn5URyT6TyiaPMPf64C6dLSPcz5PHCZlTKW9NjL/eIF5QYSfDCOyD1nY0nthq9eR
+         kx5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K9qNYEguOKx8AbCzHGgE3pgKrH/csc5za8weZ+n8ZZg=;
+        b=aX11piz4WM2YE+Vfu71Y4wi+zL2zpiJO4s8OwIcOK+bJV5EQrTxa9PAo+1l5J6EDJ7
+         g3KFx9N2KYINA8a5rXdu1bUABPZ3xdj3mCztJtlxfjWs4PmtGJ7C4hW/NI607M8Bp3MZ
+         4OPdIW2DJjOmtOWAOGxnBX7ZX0jivm/D/Z4+DFL0bMFMeAUFzeTNYkp4yT+UoS7cbagN
+         YKijTmAOqQcou3Xt+MbzCyXG0KwqMUJFw7tghy3j3WO4hhptXMHAEfnQE7E8JuMBUaiE
+         hGQXHcA5UfATA/NPT74El03lj+MdwfKVch2goRYVibajuL/voVbGlhOcmpmDve0YJTAY
+         Eufg==
+X-Gm-Message-State: AOAM531TtVl4dXNHWOIWQFEciLXfHN7zaswOa5F1k9HcIti1O3lDZPu5
+        X47ww0tHFWdL/T1LQ0cqdfArlUiSFRk=
+X-Google-Smtp-Source: ABdhPJwd4vQzRiZPlfRcB9F6nSjkjR2Urw6y4gJVWLlaTtUREoNLBxPVu46HBxY57Qm4APYd6PdXeA==
+X-Received: by 2002:a1f:784d:: with SMTP id t74mr4666699vkc.22.1643120268355;
+        Tue, 25 Jan 2022 06:17:48 -0800 (PST)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id 187sm1902599vsi.12.2022.01.25.06.17.46
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jan 2022 06:17:47 -0800 (PST)
+Received: by mail-ua1-f50.google.com with SMTP id l1so35758198uap.8
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 06:17:46 -0800 (PST)
+X-Received: by 2002:a67:d389:: with SMTP id b9mr4563384vsj.79.1643120266518;
+ Tue, 25 Jan 2022 06:17:46 -0800 (PST)
 MIME-Version: 1.0
+References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com> <20220124080215.265538-2-konstantin.meskhidze@huawei.com>
+In-Reply-To: <20220124080215.265538-2-konstantin.meskhidze@huawei.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Tue, 25 Jan 2022 09:17:10 -0500
+X-Gmail-Original-Message-ID: <CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com>
+Message-ID: <CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] landlock: TCP network hooks implementation
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     mic@digikod.net, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter@vger.kernel.org,
+        yusongping@huawei.com, artem.kuzin@huawei.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry!
+On Mon, Jan 24, 2022 at 3:02 AM Konstantin Meskhidze
+<konstantin.meskhidze@huawei.com> wrote:
+>
+> Support of socket_bind() and socket_connect() hooks.
+> Current prototype can restrict binding and connecting of TCP
+> types of sockets. Its just basic idea how Landlock could support
+> network confinement.
+>
+> Changes:
+> 1. Access masks array refactored into 1D one and changed
+> to 32 bits. Filesystem masks occupy 16 lower bits and network
+> masks reside in 16 upper bits.
+> 2. Refactor API functions in ruleset.c:
+>     1. Add void *object argument.
+>     2. Add u16 rule_type argument.
+> 3. Use two rb_trees in ruleset structure:
+>     1. root_inode - for filesystem objects
+>     2. root_net_port - for network port objects
+>
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 
-Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
-=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
-zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
+> +static int hook_socket_connect(struct socket *sock, struct sockaddr *address, int addrlen)
+> +{
+> +       short socket_type;
+> +       struct sockaddr_in *sockaddr;
+> +       u16 port;
+> +       const struct landlock_ruleset *const dom = landlock_get_current_domain();
+> +
+> +       /* Check if the hook is AF_INET* socket's action */
+> +       if ((address->sa_family != AF_INET) && (address->sa_family != AF_INET6))
+> +               return 0;
 
-Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
-=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
-dostaw.
+Should this be a check on the socket family (sock->ops->family)
+instead of the address family?
 
-Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
-nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
- co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
+It is valid to pass an address with AF_UNSPEC to a PF_INET(6) socket.
+And there are legitimate reasons to want to deny this. Such as passing
+a connection to a unprivileged process and disallow it from disconnect
+and opening a different new connection.
 
-Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
-=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
-zania w Pa=C5=84stwa firmie.
-
-
-Z powa=C5=BCaniem,
-Mateusz Talaga
+> +
+> +       socket_type = sock->type;
+> +       /* Check if it's a TCP socket */
+> +       if (socket_type != SOCK_STREAM)
+> +               return 0;
+> +
+> +       if (!dom)
+> +               return 0;
+> +
+> +       /* Get port value in host byte order */
+> +       sockaddr = (struct sockaddr_in *)address;
+> +       port = ntohs(sockaddr->sin_port);
+> +
+> +       return check_socket_access(dom, port, LANDLOCK_ACCESS_NET_CONNECT_TCP);
+> +}
