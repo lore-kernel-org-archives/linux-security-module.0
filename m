@@ -2,56 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 473DCC4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3B6C4167D
 	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 22:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234253AbiAYWrk (ORCPT
+        id S234247AbiAYWrk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Tue, 25 Jan 2022 17:47:40 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18554 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S234225AbiAYWr3 (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43398 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234205AbiAYWr1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jan 2022 17:47:29 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20PLGeI3031514;
-        Tue, 25 Jan 2022 22:47:01 GMT
+        Tue, 25 Jan 2022 17:47:27 -0500
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20PLfgMb031686;
+        Tue, 25 Jan 2022 22:47:04 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=ADg8slEUxx1nyVrfNPf7q4g1mltMrxp4uCFeeo4DNRs=;
- b=EO9WqZp6A2pdhIEyLbiiGhORYOJ7hvd2z9M0/3FbnEGvV7zrNn7ctfwo6lBI+8i0IHnU
- D2xpkCMfnq7KeQ7CPNxMS4Gu8fMPGsFKynmq/TZZ65O/CUhUlVElAkrn0E0GeMkQ6rX8
- 4H+/bI0n9wBD6x51SUDkJLGJmGhBL2xyc7ivmN4qmog5kOln3CYQlELTqJKzJSMiilf9
- N7z/zpoNEINBTBLE6YyfXnA+I57Nq79G7olQlNUXsa0rWBiFdgi5kDv5Lk94w5qbAT2Q
- 42lJ87a9Q2kMdGx9p4cIiuEjbLAMcm8rnLQomTXrTUeQ6giJTFLfRutcNGgs8/HIeORh zA== 
+ bh=uITBW42IUuMk1nOtRjPFqgtTB/+zDZIMPjuNWrUHhXo=;
+ b=J/zBUnZy1JCYRU886ua5fwgLOg6c0j0YgsWd01mzDK0R2XW8wkUCp6jKT641jTL3h3u9
+ kDOcE5Q/eKswc1uh7yCh8wkfP8a0Tu4jxzM8MhI0wHL5MJjyaYa3ZzTb2mE0aiG8tA9D
+ ApUMHL5dNIhGDDJDyq5mup1M0uNZta3HTRr98XYczyUT6Xg9+C9yuIAA9+0YR5lhjWV+
+ um8E3jm7hTDNTjMTZYcuXvvbbbdc+cPOr6l0FeD2TMr/25fecf5Hnkx8TYYn8h5+UGkc
+ TMMOtWFEiuTmC79keVZvWOdyVjO+pqXdtq+/6bcUZ12jcRFyyEFd6D1plSaYHpjQJqm5 gQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dtryvsftu-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dtsbch54f-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jan 2022 22:47:01 +0000
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20PMgMCl011573;
-        Tue, 25 Jan 2022 22:47:00 GMT
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dtryvsftq-1
+        Tue, 25 Jan 2022 22:47:04 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20PMVdZ4032206;
+        Tue, 25 Jan 2022 22:47:03 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dtsbch53x-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jan 2022 22:47:00 +0000
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20PMhSdR005118;
-        Tue, 25 Jan 2022 22:47:00 GMT
+        Tue, 25 Jan 2022 22:47:03 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20PMhqFK025192;
+        Tue, 25 Jan 2022 22:47:02 GMT
 Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma04wdc.us.ibm.com with ESMTP id 3dr9jaq50h-1
+        by ppma02wdc.us.ibm.com with ESMTP id 3dr9ja7356-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jan 2022 22:47:00 +0000
+        Tue, 25 Jan 2022 22:47:02 +0000
 Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20PMkwVN39256494
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20PMkxS232571836
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jan 2022 22:46:58 GMT
+        Tue, 25 Jan 2022 22:46:59 GMT
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 261BCAC066;
+        by IMSVA (Postfix) with ESMTP id D9C59AC059;
         Tue, 25 Jan 2022 22:46:58 +0000 (GMT)
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 13524AC067;
+        by IMSVA (Postfix) with ESMTP id BBDB6AC068;
         Tue, 25 Jan 2022 22:46:58 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
@@ -66,103 +66,188 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com,
         puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
         linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Denis Semakin <denis.semakin@huawei.com>
-Subject: [PATCH v9 12/23] ima: Define mac_admin_ns_capable() as a wrapper for ns_capable()
-Date:   Tue, 25 Jan 2022 17:46:34 -0500
-Message-Id: <20220125224645.79319-13-stefanb@linux.vnet.ibm.com>
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v9 17/23] ima: Add functions for creating and freeing of an ima_namespace
+Date:   Tue, 25 Jan 2022 17:46:39 -0500
+Message-Id: <20220125224645.79319-18-stefanb@linux.vnet.ibm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
 References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PT1s5Lw4AZsJILgU7IuyW3lVtLfcIr4S
-X-Proofpoint-ORIG-GUID: wrTfO28z6fwkhfY98-nG2CheCI6twWvm
+X-Proofpoint-GUID: jhP1ID4ZZOoIJ4aqT77bMcFYxpYGf5Vv
+X-Proofpoint-ORIG-GUID: BWgcqPuSKFis9qy0Eda-pPFanpxoN72V
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-25_05,2022-01-25_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxlogscore=999 suspectscore=0 mlxscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
- definitions=main-2201250135
+ definitions=2022-01-25_06,2022-01-25_02,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 spamscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0
+ mlxscore=0 phishscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2201250135
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 From: Stefan Berger <stefanb@linux.ibm.com>
 
-Define mac_admin_ns_capable() as a wrapper for the combined ns_capable()
-checks on CAP_MAC_ADMIN and CAP_SYS_ADMIN in a user namespace. Return
-true on the check if either capability or both are available.
+Implement create_ima_ns() to create an empty ima_namespace. Defer its
+initialization to a later point outside this function. Implement
+free_ima_ns() to free it.
 
-Use mac_admin_ns_capable() in place of capable(SYS_ADMIN). This will allow
-an IMA namespace to read the policy with only CAP_MAC_ADMIN, which has
-less privileges than CAP_SYS_ADMIN.
-
-Signed-off-by: Denis Semakin <denis.semakin@huawei.com>
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- include/linux/capability.h      | 6 ++++++
- security/integrity/ima/ima.h    | 6 ++++++
- security/integrity/ima/ima_fs.c | 5 ++++-
- 3 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/capability.h b/include/linux/capability.h
-index 65efb74c3585..991579178f32 100644
---- a/include/linux/capability.h
-+++ b/include/linux/capability.h
-@@ -270,6 +270,12 @@ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
- 		ns_capable(ns, CAP_SYS_ADMIN);
+---
+v9:
+ - Set user_ns->ims_ns = NULL in free_ima_ns()
+ - Refactored create_ima_ns() to defer initialization
+ - Removed pr_debug functions
+---
+ include/linux/ima.h                      | 13 ++++++
+ security/integrity/ima/Makefile          |  1 +
+ security/integrity/ima/ima.h             | 15 +++++++
+ security/integrity/ima/ima_init_ima_ns.c |  2 +-
+ security/integrity/ima/ima_ns.c          | 53 ++++++++++++++++++++++++
+ 5 files changed, 83 insertions(+), 1 deletion(-)
+ create mode 100644 security/integrity/ima/ima_ns.c
+
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 0cf2a80c8b35..964a08702573 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -220,4 +220,17 @@ static inline bool ima_appraise_signature(enum kernel_read_file_id func)
+ 	return false;
  }
- 
-+static inline bool mac_admin_ns_capable(struct user_namespace *ns)
+ #endif /* CONFIG_IMA_APPRAISE && CONFIG_INTEGRITY_TRUSTED_KEYRING */
++
++#ifdef CONFIG_IMA_NS
++
++void free_ima_ns(struct user_namespace *ns);
++
++#else
++
++static inline void free_ima_ns(struct user_namespace *user_ns)
 +{
-+	return ns_capable(ns, CAP_MAC_ADMIN) ||
-+		ns_capable(ns, CAP_SYS_ADMIN);
 +}
 +
- /* audit system wants to get cap info from files as well */
- int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
- 			   const struct dentry *dentry,
++#endif /* CONFIG_IMA_NS */
++
+ #endif /* _LINUX_IMA_H */
+diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+index f8a5e5f3975d..b86a35fbed60 100644
+--- a/security/integrity/ima/Makefile
++++ b/security/integrity/ima/Makefile
+@@ -14,6 +14,7 @@ ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+ ima-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+ ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+ ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
++ima-$(CONFIG_IMA_NS) += ima_ns.o
+ 
+ ifeq ($(CONFIG_EFI),y)
+ ima-$(CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT) += ima_efi.o
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index fb6bd054d899..0057b1fd6c18 100644
+index 8c757223d549..751e936a6311 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -487,4 +487,10 @@ static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
- #define	POLICY_FILE_FLAGS	S_IWUSR
- #endif /* CONFIG_IMA_READ_POLICY */
+@@ -167,6 +167,7 @@ extern bool ima_canonical_fmt;
+ int ima_init(void);
+ int ima_fs_init(void);
+ int ima_ns_init(void);
++int ima_init_namespace(struct ima_namespace *ns);
+ int ima_add_template_entry(struct ima_namespace *ns,
+ 			   struct ima_template_entry *entry, int violation,
+ 			   const char *op, struct inode *inode,
+@@ -502,4 +503,18 @@ static inline struct ima_namespace
+ 	return NULL;
+ }
  
-+static inline
-+struct user_namespace *ima_user_ns_from_file(const struct file *filp)
++#ifdef CONFIG_IMA_NS
++
++struct ima_namespace *create_ima_ns(void);
++
++#else
++
++static inline struct ima_namespace *create_ima_ns(void)
 +{
-+	return file_inode(filp)->i_sb->s_user_ns;
++	WARN(1, "Cannot create an IMA namespace\n");
++	return ERR_PTR(-EFAULT);
 +}
 +
++#endif /* CONFIG_IMA_NS */
++
  #endif /* __LINUX_IMA_H */
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 3afb7a74d2cf..9162f06d182f 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -377,6 +377,9 @@ static const struct seq_operations ima_policy_seqops = {
-  */
- static int ima_open_policy(struct inode *inode, struct file *filp)
- {
-+#ifdef CONFIG_IMA_READ_POLICY
-+	struct user_namespace *user_ns = ima_user_ns_from_file(filp);
-+#endif
- 	struct ima_namespace *ns = &init_ima_ns;
+diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
+index 1cba545ae477..166dab4a3126 100644
+--- a/security/integrity/ima/ima_init_ima_ns.c
++++ b/security/integrity/ima/ima_init_ima_ns.c
+@@ -8,7 +8,7 @@
  
- 	if (!(filp->f_flags & O_WRONLY)) {
-@@ -385,7 +388,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
- #else
- 		if ((filp->f_flags & O_ACCMODE) != O_RDONLY)
- 			return -EACCES;
--		if (!capable(CAP_SYS_ADMIN))
-+		if (!mac_admin_ns_capable(user_ns))
- 			return -EPERM;
- 		return seq_open(filp, &ima_policy_seqops);
- #endif
+ #include "ima.h"
+ 
+-static int ima_init_namespace(struct ima_namespace *ns)
++int ima_init_namespace(struct ima_namespace *ns)
+ {
+ 	int rc;
+ 
+diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
+new file mode 100644
+index 000000000000..b3b81a1e313e
+--- /dev/null
++++ b/security/integrity/ima/ima_ns.c
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2016-2021 IBM Corporation
++ * Author:
++ *  Yuqiong Sun <suny@us.ibm.com>
++ *  Stefan Berger <stefanb@linux.vnet.ibm.com>
++ */
++
++#include <linux/ima.h>
++
++#include "ima.h"
++
++static struct kmem_cache *imans_cachep;
++
++struct ima_namespace *create_ima_ns(void)
++{
++	struct ima_namespace *ns;
++
++	ns = kmem_cache_zalloc(imans_cachep, GFP_KERNEL);
++	if (!ns)
++		return ERR_PTR(-ENOMEM);
++
++	return ns;
++}
++
++/* destroy_ima_ns() must only be called after ima_init_namespace() was called */
++static void destroy_ima_ns(struct ima_namespace *ns)
++{
++	unregister_blocking_lsm_notifier(&ns->ima_lsm_policy_notifier);
++	kfree(ns->arch_policy_entry);
++	ima_free_policy_rules(ns);
++}
++
++void free_ima_ns(struct user_namespace *user_ns)
++{
++	struct ima_namespace *ns = user_ns->ima_ns;
++
++	if (!ns || WARN_ON(ns == &init_ima_ns))
++		return;
++
++	destroy_ima_ns(ns);
++
++	kmem_cache_free(imans_cachep, ns);
++
++	user_ns->ima_ns = NULL;
++}
++
++static int __init imans_cache_init(void)
++{
++	imans_cachep = KMEM_CACHE(ima_namespace, SLAB_PANIC);
++	return 0;
++}
++subsys_initcall(imans_cache_init)
 -- 
 2.31.1
 
