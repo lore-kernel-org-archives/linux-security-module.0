@@ -2,153 +2,303 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00A5C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 22:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3C6C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Jan 2022 22:47:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233646AbiAYWSP (ORCPT
+        id S234128AbiAYWrc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Jan 2022 17:18:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233643AbiAYWSP (ORCPT
+        Tue, 25 Jan 2022 17:47:32 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62964 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234203AbiAYWr0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Jan 2022 17:18:15 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A901FC061744
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 14:18:14 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id ah7so33797010ejc.4
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Jan 2022 14:18:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wFxRjQblzuQxMmeuxhqTt69j7JKM+h2YKSCx/fgMhRQ=;
-        b=yy0IFEhuQcD3FvuWwa8wDXGhtUxNSAx66MnZHZbzCNhecpc5I8xOnUPy1+QODPd3Hk
-         pcTAwgfPh2h9MgMpZPC2DpBrI7X0acnAeLs2rnetyF6+0SkWFrSNvygFTwvkpDvcNm6w
-         21Wc/8rlhh71ko/itJqW2AGvK8cYvL7s/7UifnG29xGSNFI8rxsnZErm+P4nfT0PHO3Q
-         xfIYOMB9zGBcqAWfPG2b4c1aYctpkjeSZql1+H1YKXBPDirfysT2c7s0i6cmXbdTvnxE
-         fQ5/90JxAP1yz9/PVgd7b/Scqb4i2/a2o4YiJx43MejbjngUUsh10KSvyozYmqv4tpxg
-         IBbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wFxRjQblzuQxMmeuxhqTt69j7JKM+h2YKSCx/fgMhRQ=;
-        b=c4726DMR1IH+h3s6s93rFid0i4SLZ3yEFXLw/dGcuR9AhDSSRETsA+BEAdctko/fvh
-         a9XSP5r5KygZfhE3eHKOOzzDwfBuS2b9K6GfOWS4fvpWi2LuQahuzsy4v4VayOUGPgDc
-         igK932TUNQCFagtN43+OA6NBv7/22KnAjU8IjAXIf6JyRjFOdi8k0RgdTcqMpwhGW2Th
-         XQezxtHqbmDgOdYEiFkWfxlOPpSgxFZFnfUVAzFQtb/hbacKyyAUUHFlbcQoSJo0wVkK
-         DVRNAAJnGNjRsrY+D0K3wweCLPXcb4sEUgF1RYJ1yTEDvuzlFGUz0WdGLRBrKC3g9Wrw
-         uW1A==
-X-Gm-Message-State: AOAM532VHIbJVLN3/3q+2o+1vruqPHE1FA7pF8X/0hZRdfpowGjSQd36
-        zjinZ/izMjU/8DuJvHzuzbxHalkEZPTt+tQeIfHp
-X-Google-Smtp-Source: ABdhPJwrpIOZzAr+bseCxchlMSHEMYAimpBHm2qxGfEpHUACZ+FAiH4QA8BYe2CAjY20qlmr+ZzZ3BXkhD4a14WIxdo=
-X-Received: by 2002:a17:907:968d:: with SMTP id hd13mr8727837ejc.12.1643149093133;
- Tue, 25 Jan 2022 14:18:13 -0800 (PST)
+        Tue, 25 Jan 2022 17:47:26 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20PMfiYg010964;
+        Tue, 25 Jan 2022 22:47:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=SFcFD/EvTQUoNcYyKVdfg6JmVIDdzQPCJOH1FaaGd5g=;
+ b=p4Yf+StFEY8xsu172qvPCKqPPx3DTnpJYE410WsrLrNOVCqzJke/19Xp+WFWobP6IhBV
+ ab1xr1+60gqMY49IGFRCY1K/RY/6THPyhPUuK/TVT3oAzEu7Tr/9uABXauvNlnforeky
+ K4AwI5C/nRTdb+HN38ECoaZbMSFreAy5RybIOWqEZ99Ko9LzVCnyd2gnGX7L/hXN39bM
+ 1gR4SmwT28q4FvW2jawswMv+j8KABou0hWsu5f7qz6okDr2AMipR405qLUCPvrU7NByn
+ ln3QCR6kJZAew8HybXlBq8Xt4HDM3JaZlZ/kTJBNNcduvb2Z+lazzUuQg2nWkVqcLHbb 9w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dtt7ng2g7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Jan 2022 22:47:03 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20PMgSiM012126;
+        Tue, 25 Jan 2022 22:47:03 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dtt7ng2ft-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Jan 2022 22:47:03 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20PMhnL7006726;
+        Tue, 25 Jan 2022 22:47:02 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma03dal.us.ibm.com with ESMTP id 3dr9jb6e5x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Jan 2022 22:47:01 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20PMkwv732768428
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jan 2022 22:46:58 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96778AC062;
+        Tue, 25 Jan 2022 22:46:58 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7927DAC05E;
+        Tue, 25 Jan 2022 22:46:58 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Jan 2022 22:46:58 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v9 15/23] ima: Implement hierarchical processing of file accesses
+Date:   Tue, 25 Jan 2022 17:46:37 -0500
+Message-Id: <20220125224645.79319-16-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
+References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
-References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
- <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein>
- <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
-In-Reply-To: <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 25 Jan 2022 17:18:02 -0500
-Message-ID: <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com>
-Subject: Re: [PATCH] LSM: general protection fault in legacy_parse_param
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Brauner <christian@brauner.io>,
-        James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: HCdg-vNidBEYyHILyHmR7rwAN1zlubVr
+X-Proofpoint-ORIG-GUID: 9ga8XOLzV59JZDzjNC1xxYo1NmfJBHx2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-25_06,2022-01-25_02,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ phishscore=0 impostorscore=0 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxscore=0 spamscore=0 clxscore=1015 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2201250135
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 12, 2021 at 10:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 10/12/2021 3:32 AM, Christian Brauner wrote:
-> > On Mon, Oct 11, 2021 at 03:40:22PM -0700, Casey Schaufler wrote:
-> >> The usual LSM hook "bail on fail" scheme doesn't work for cases where
-> >> a security module may return an error code indicating that it does not
-> >> recognize an input.  In this particular case Smack sees a mount option
-> >> that it recognizes, and returns 0. A call to a BPF hook follows, which
-> >> returns -ENOPARAM, which confuses the caller because Smack has processed
-> >> its data.
-> >>
-> >> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
-> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> ---
-> > Thanks!
-> > Note, I think that we still have the SELinux issue we discussed in the
-> > other thread:
-> >
-> >       rc = selinux_add_opt(opt, param->string, &fc->security);
-> >       if (!rc) {
-> >               param->string = NULL;
-> >               rc = 1;
-> >       }
-> >
-> > SELinux returns 1 not the expected 0. Not sure if that got fixed or is
-> > queued-up for -next. In any case, this here seems correct independent of
-> > that:
->
-> The aforementioned SELinux change depends on this patch. As the SELinux
-> code is today it blocks the problem seen with Smack, but introduces a
-> different issue. It prevents the BPF hook from being called.
->
-> So the question becomes whether the SELinux change should be included
-> here, or done separately. Without the security_fs_context_parse_param()
-> change the selinux_fs_context_parse_param() change results in messy
-> failures for SELinux mounts.
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-FWIW, this patch looks good to me, so:
+Implement hierarchical processing of file accesses in IMA namespaces by
+walking the list of user namespaces towards the root. This way file
+accesses can be audited in an IMA namespace and also be evaluated against
+the IMA policies of parent IMA namespaces.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Pass the user_namespace into process_measurement since we will be walking
+the hierarchy of user_namespaces towards the init_user_ns and we can easily
+derive the ima_namespace from the user_namespace.
 
-... and with respect to the SELinux hook implementation returning 1 on
-success, I don't have a good answer and looking through my inbox I see
-David Howells hasn't responded either.  I see nothing in the original
-commit explaining why, so I'm going to say let's just change it to
-zero and be done with it; the good news is that if we do it now we've
-got almost a full cycle in linux-next to see what falls apart.  As far
-as the question of one vs two patches, it might be good to put both
-changes into a single patch just so that folks who do backports don't
-accidentally skip one and create a bad kernel build.  Casey, did you
-want to respin this patch or would you prefer me to submit another
-version?
+__process_measurement() returns either 0 or -EACCES. For hierarchical
+processing remember the -EACCES returned by this function but continue
+to the parent user namespace. At the end either return 0 or -EACCES
+if an error occurred in one of the IMA namespaces.
 
-> > Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> >
-> >>  security/security.c | 14 +++++++++++++-
-> >>  1 file changed, 13 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/security/security.c b/security/security.c
-> >> index 09533cbb7221..3cf0faaf1c5b 100644
-> >> --- a/security/security.c
-> >> +++ b/security/security.c
-> >> @@ -885,7 +885,19 @@ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
-> >>
-> >>  int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
-> >>  {
-> >> -    return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
-> >> +    struct security_hook_list *hp;
-> >> +    int trc;
-> >> +    int rc = -ENOPARAM;
-> >> +
-> >> +    hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
-> >> +                         list) {
-> >> +            trc = hp->hook.fs_context_parse_param(fc, param);
-> >> +            if (trc == 0)
-> >> +                    rc = 0;
-> >> +            else if (trc != -ENOPARAM)
-> >> +                    return trc;
-> >> +    }
-> >> +    return rc;
-> >>  }
+Currently the ima_ns pointer of the user_namespace is always NULL except
+at the init_user_ns, so test ima_ns for NULL pointer and skip the call to
+__process_measurement() if it is NULL. Once IMA namespacing is fully
+enabled, the pointer may still be NULL due to late initialization of the
+IMA namespace.
 
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+
+---
+
+v9:
+  - Switch callers to pass user_namespace rather than ima_namespace with
+    potential NULL pointer
+  - Add default case to switch statement and warn if this happens
+  - Implement ima_ns_from_user_ns() in this patch now
+---
+ security/integrity/ima/ima.h      |  8 ++++
+ security/integrity/ima/ima_main.c | 75 +++++++++++++++++++++++--------
+ 2 files changed, 64 insertions(+), 19 deletions(-)
+
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 0057b1fd6c18..aea8fb8d2854 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -493,4 +493,12 @@ struct user_namespace *ima_user_ns_from_file(const struct file *filp)
+ 	return file_inode(filp)->i_sb->s_user_ns;
+ }
+ 
++static inline struct ima_namespace
++*ima_ns_from_user_ns(struct user_namespace *user_ns)
++{
++	if (user_ns == &init_user_ns)
++		return &init_ima_ns;
++	return NULL;
++}
++
+ #endif /* __LINUX_IMA_H */
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index ae0e9b14554a..3385221ca1d5 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -196,10 +196,10 @@ void ima_file_free(struct file *file)
+ 	ima_check_last_writer(iint, inode, file);
+ }
+ 
+-static int process_measurement(struct ima_namespace *ns,
+-			       struct file *file, const struct cred *cred,
+-			       u32 secid, char *buf, loff_t size, int mask,
+-			       enum ima_hooks func)
++static int __process_measurement(struct ima_namespace *ns,
++				 struct file *file, const struct cred *cred,
++				 u32 secid, char *buf, loff_t size, int mask,
++				 enum ima_hooks func)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	struct integrity_iint_cache *iint = NULL;
+@@ -391,6 +391,41 @@ static int process_measurement(struct ima_namespace *ns,
+ 	return 0;
+ }
+ 
++static int process_measurement(struct user_namespace *user_ns,
++			       struct file *file, const struct cred *cred,
++			       u32 secid, char *buf, loff_t size, int mask,
++			       enum ima_hooks func)
++{
++	struct ima_namespace *ns;
++	int ret = 0;
++
++	while (user_ns) {
++		ns = ima_ns_from_user_ns(user_ns);
++		if (ns) {
++			int rc;
++
++			rc = __process_measurement(ns, file, cred, secid, buf,
++						   size, mask, func);
++			switch (rc) {
++			case 0:
++				break;
++			case -EACCES:
++				/* return this error at the end but continue */
++				ret = -EACCES;
++				break;
++			default:
++				/* should not happen */
++				ret = -EACCES;
++				WARN_ON_ONCE(true);
++			}
++		}
++
++		user_ns = user_ns->parent;
++	};
++
++	return ret;
++}
++
+ /**
+  * ima_file_mmap - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured (May be NULL)
+@@ -404,13 +439,14 @@ static int process_measurement(struct ima_namespace *ns,
+  */
+ int ima_file_mmap(struct file *file, unsigned long prot)
+ {
+-	struct ima_namespace *ns = &init_ima_ns;
++	struct user_namespace *user_ns = current_user_ns();
+ 	u32 secid;
+ 
+ 	if (file && (prot & PROT_EXEC)) {
+ 		security_task_getsecid_subj(current, &secid);
+-		return process_measurement(ns, file, current_cred(), secid,
+-					   NULL, 0, MAY_EXEC, MMAP_CHECK);
++		return process_measurement(user_ns, file, current_cred(),
++					   secid, NULL, 0, MAY_EXEC,
++					   MMAP_CHECK);
+ 	}
+ 
+ 	return 0;
+@@ -485,19 +521,19 @@ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+  */
+ int ima_bprm_check(struct linux_binprm *bprm)
+ {
+-	struct ima_namespace *ns = &init_ima_ns;
++	struct user_namespace *user_ns = current_user_ns();
+ 	int ret;
+ 	u32 secid;
+ 
+ 	security_task_getsecid_subj(current, &secid);
+-	ret = process_measurement(ns, bprm->file, current_cred(), secid, NULL,
+-				  0, MAY_EXEC, BPRM_CHECK);
++	ret = process_measurement(user_ns, bprm->file, current_cred(), secid,
++				  NULL, 0, MAY_EXEC, BPRM_CHECK);
+ 	if (ret)
+ 		return ret;
+ 
+ 	security_cred_getsecid(bprm->cred, &secid);
+-	return process_measurement(ns, bprm->file, bprm->cred, secid, NULL, 0,
+-				   MAY_EXEC, CREDS_CHECK);
++	return process_measurement(user_ns, bprm->file, bprm->cred, secid,
++				   NULL, 0, MAY_EXEC, CREDS_CHECK);
+ }
+ 
+ /**
+@@ -512,11 +548,12 @@ int ima_bprm_check(struct linux_binprm *bprm)
+  */
+ int ima_file_check(struct file *file, int mask)
+ {
+-	struct ima_namespace *ns = &init_ima_ns;
++	struct user_namespace *user_ns = current_user_ns();
+ 	u32 secid;
+ 
+ 	security_task_getsecid_subj(current, &secid);
+-	return process_measurement(ns, file, current_cred(), secid, NULL, 0,
++	return process_measurement(user_ns, file, current_cred(), secid,
++				   NULL, 0,
+ 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+ 					   MAY_APPEND), FILE_CHECK);
+ }
+@@ -698,7 +735,7 @@ void ima_post_path_mknod(struct user_namespace *mnt_userns,
+ int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
+ 		  bool contents)
+ {
+-	struct ima_namespace *ns = &init_ima_ns;
++	struct user_namespace *user_ns = current_user_ns();
+ 	enum ima_hooks func;
+ 	u32 secid;
+ 
+@@ -721,7 +758,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
+ 	/* Read entire file for all partial reads. */
+ 	func = read_idmap[read_id] ?: FILE_CHECK;
+ 	security_task_getsecid_subj(current, &secid);
+-	return process_measurement(ns, file, current_cred(), secid, NULL,
++	return process_measurement(user_ns, file, current_cred(), secid, NULL,
+ 				   0, MAY_READ, func);
+ }
+ 
+@@ -749,7 +786,7 @@ const int read_idmap[READING_MAX_ID] = {
+ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 		       enum kernel_read_file_id read_id)
+ {
+-	struct ima_namespace *ns = &init_ima_ns;
++	struct user_namespace *user_ns = current_user_ns();
+ 	enum ima_hooks func;
+ 	u32 secid;
+ 
+@@ -766,8 +803,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 
+ 	func = read_idmap[read_id] ?: FILE_CHECK;
+ 	security_task_getsecid_subj(current, &secid);
+-	return process_measurement(ns, file, current_cred(), secid, buf, size,
+-				   MAY_READ, func);
++	return process_measurement(user_ns, file, current_cred(), secid,
++				   buf, size, MAY_READ, func);
+ }
+ 
+ /**
 -- 
-paul-moore.com
+2.31.1
+
