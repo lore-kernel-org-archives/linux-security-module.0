@@ -2,50 +2,50 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0756EC2BA4C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CD2C63684
 	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 09:39:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239228AbiAZJja (ORCPT
+        id S231722AbiAZJjc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jan 2022 04:39:30 -0500
+        Wed, 26 Jan 2022 04:39:32 -0500
 Received: from mga05.intel.com ([192.55.52.43]:9277 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239217AbiAZJja (ORCPT
+        id S239232AbiAZJjb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jan 2022 04:39:30 -0500
+        Wed, 26 Jan 2022 04:39:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643189970; x=1674725970;
+  t=1643189971; x=1674725971;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=07WBSgMRDpJKqoyYch5hDAXQZYzth7c5ZCJjIGOcNFw=;
-  b=azB3zvlRcNIUQ/XfmIITIq7BIvMDBmiwpaeZGw4eJ3YUZQolqsNyc3F2
-   y/+rvu9VHlZ3C16k4SK9TlWhzkfRnT6Wqp0MtdKUs9VEhx43CJnMMZww5
-   0+gN5HqeLJep2BbnT3Tf+bBDuatSwTGj0BmMISf/UAXvsekBF+q761xDG
-   nGa7CpK9r/yDK8odq+hn7fwMJAkWN5BfTB6EH3Gcw29noL0QiTaZMraug
-   1oQKGZ6yIIZ+WnjsTxLYEuRWiWtdTV6Al4MsL/b6u3m/QI2Ul54qqznK6
-   isOiRa3XhHTVa3b3V5dlN2o27k6JHFaGHj1+0GSWudxutCG6DVWSeTNiQ
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10238"; a="332869372"
+  bh=Foskk6EIn6vq8IGC7rE4PDZ1eD4o1JqWcBZ5wmWBMJ4=;
+  b=U0fKa03ING2qon1GHxUOuCi30HPZzNSURdEwNzqV+bCpcSkH0O6wjxIE
+   ThOFL2LMz0bUL0P3Nc6wKoS3OmclW131sscruRxbY2Cmv84H7eq2pJIOD
+   fzwS2eZZ2Vbs/qdq8oSiS63aG6NKnJChJjrCsgM7n6bOMCLy2KHXWn0hu
+   CQLztj/CCiA7v5HjoMMR7BVO0ZXcsOAIZMK3zH3fZX/aIBdRMorJNjZm8
+   rWBn72EgwI1aFgtFZKujAgylSwGGw13jdYghlohFZ6GU372o5rAs6k1L3
+   X3/dHNwqbUVWaDUmpEYIoK+fzXKWL/Ng2Dse5tCK+Kqdcoz9qH2aotOjR
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10238"; a="332869379"
 X-IronPort-AV: E=Sophos;i="5.88,317,1635231600"; 
-   d="scan'208";a="332869372"
+   d="scan'208";a="332869379"
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2022 01:39:29 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2022 01:39:30 -0800
 X-IronPort-AV: E=Sophos;i="5.88,317,1635231600"; 
-   d="scan'208";a="477433079"
+   d="scan'208";a="477433088"
 Received: from lucas-s2600cw.jf.intel.com ([10.165.21.202])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2022 01:39:29 -0800
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2022 01:39:30 -0800
 From:   Lucas De Marchi <lucas.demarchi@intel.com>
 To:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-security-module@vger.kernel.org,
         nouveau@lists.freedesktop.org, netdev@vger.kernel.org
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         Jani Nikula <jani.nikula@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
         Alex Deucher <alexander.deucher@amd.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Ben Skeggs <bskeggs@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Chris Wilson <chris@chris-wilson.co.uk>,
@@ -70,73 +70,176 @@ Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Vishal Kulkarni <vishal@chelsio.com>
-Subject: [PATCH v2 01/11] lib/string_helpers: Consolidate string helpers implementation
-Date:   Wed, 26 Jan 2022 01:39:41 -0800
-Message-Id: <20220126093951.1470898-2-lucas.demarchi@intel.com>
+Subject: [PATCH v2 04/11] drm/i915: Use str_enable_disable()
+Date:   Wed, 26 Jan 2022 01:39:44 -0800
+Message-Id: <20220126093951.1470898-5-lucas.demarchi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220126093951.1470898-1-lucas.demarchi@intel.com>
 References: <20220126093951.1470898-1-lucas.demarchi@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There are a few implementations of string helpers in the tree like yesno()
-that just returns "yes" or "no" depending on a boolean argument. Those
-are helpful to output strings to the user or log.
-
-In order to consolidate them, prefix all of them str_ prefix to make it
-clear what they are about and avoid symbol clashes.
-Taking the commoon `val ? "yes" : "no"` implementation,  quite a few
-users of open coded yesno() could later be converted to the new
-function:
-
-$ git grep '?\s*"yes"\s*' | wc -l
-286
-$ git grep '?\s*"no"\s*' | wc -l
-20
-
-The inlined function should keep the const strings local to each
-compilation unit, the same way it's now, thus not changing the current
-behavior.
+Remove the local enabledisable() implementation and adopt the
+str_enable_disable() from linux/string_helpers.h.
 
 Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Jani Nikula <jani.nikula@intel.com>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 ---
- include/linux/string_helpers.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/gpu/drm/i915/display/intel_ddi.c           | 4 +++-
+ drivers/gpu/drm/i915/display/intel_display_power.c | 4 +++-
+ drivers/gpu/drm/i915/display/intel_dp.c            | 8 ++++----
+ drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c          | 3 ++-
+ drivers/gpu/drm/i915/gt/uc/intel_guc_rc.c          | 4 +++-
+ drivers/gpu/drm/i915/i915_utils.h                  | 5 -----
+ 6 files changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.h
-index 7a22921c9db7..4d72258d42fd 100644
---- a/include/linux/string_helpers.h
-+++ b/include/linux/string_helpers.h
-@@ -106,4 +106,24 @@ void kfree_strarray(char **array, size_t n);
+diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
+index 2f20abc5122d..4b35a8597632 100644
+--- a/drivers/gpu/drm/i915/display/intel_ddi.c
++++ b/drivers/gpu/drm/i915/display/intel_ddi.c
+@@ -25,6 +25,8 @@
+  *
+  */
  
- char **devm_kasprintf_strarray(struct device *dev, const char *prefix, size_t n);
++#include <linux/string_helpers.h>
++
+ #include <drm/drm_privacy_screen_consumer.h>
+ #include <drm/drm_scdc_helper.h>
  
-+static inline const char *str_yes_no(bool v)
-+{
-+	return v ? "yes" : "no";
-+}
+@@ -2152,7 +2154,7 @@ static void intel_dp_sink_set_msa_timing_par_ignore_state(struct intel_dp *intel
+ 			       enable ? DP_MSA_TIMING_PAR_IGNORE_EN : 0) <= 0)
+ 		drm_dbg_kms(&i915->drm,
+ 			    "Failed to %s MSA_TIMING_PAR_IGNORE in the sink\n",
+-			    enabledisable(enable));
++			    str_enable_disable(enable));
+ }
+ 
+ static void intel_dp_sink_set_fec_ready(struct intel_dp *intel_dp,
+diff --git a/drivers/gpu/drm/i915/display/intel_display_power.c b/drivers/gpu/drm/i915/display/intel_display_power.c
+index 369317805d24..1f77cb9edddf 100644
+--- a/drivers/gpu/drm/i915/display/intel_display_power.c
++++ b/drivers/gpu/drm/i915/display/intel_display_power.c
+@@ -3,6 +3,8 @@
+  * Copyright © 2019 Intel Corporation
+  */
+ 
++#include <linux/string_helpers.h>
 +
-+static inline const char *str_on_off(bool v)
-+{
-+	return v ? "on" : "off";
-+}
+ #include "i915_drv.h"
+ #include "i915_irq.h"
+ #include "intel_cdclk.h"
+@@ -5302,7 +5304,7 @@ static void gen9_dbuf_slice_set(struct drm_i915_private *dev_priv,
+ 	state = intel_de_read(dev_priv, reg) & DBUF_POWER_STATE;
+ 	drm_WARN(&dev_priv->drm, enable != state,
+ 		 "DBuf slice %d power %s timeout!\n",
+-		 slice, enabledisable(enable));
++		 slice, str_enable_disable(enable));
+ }
+ 
+ void gen9_dbuf_slices_update(struct drm_i915_private *dev_priv,
+diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+index 62c1535d696d..933fc316ea53 100644
+--- a/drivers/gpu/drm/i915/display/intel_dp.c
++++ b/drivers/gpu/drm/i915/display/intel_dp.c
+@@ -1987,7 +1987,7 @@ void intel_dp_sink_set_decompression_state(struct intel_dp *intel_dp,
+ 	if (ret < 0)
+ 		drm_dbg_kms(&i915->drm,
+ 			    "Failed to %s sink decompression state\n",
+-			    enabledisable(enable));
++			    str_enable_disable(enable));
+ }
+ 
+ static void
+@@ -2463,7 +2463,7 @@ void intel_dp_configure_protocol_converter(struct intel_dp *intel_dp,
+ 	if (drm_dp_dpcd_writeb(&intel_dp->aux,
+ 			       DP_PROTOCOL_CONVERTER_CONTROL_0, tmp) != 1)
+ 		drm_dbg_kms(&i915->drm, "Failed to %s protocol converter HDMI mode\n",
+-			    enabledisable(intel_dp->has_hdmi_sink));
++			    str_enable_disable(intel_dp->has_hdmi_sink));
+ 
+ 	tmp = crtc_state->output_format == INTEL_OUTPUT_FORMAT_YCBCR444 &&
+ 		intel_dp->dfp.ycbcr_444_to_420 ? DP_CONVERSION_TO_YCBCR420_ENABLE : 0;
+@@ -2472,7 +2472,7 @@ void intel_dp_configure_protocol_converter(struct intel_dp *intel_dp,
+ 			       DP_PROTOCOL_CONVERTER_CONTROL_1, tmp) != 1)
+ 		drm_dbg_kms(&i915->drm,
+ 			    "Failed to %s protocol converter YCbCr 4:2:0 conversion mode\n",
+-			    enabledisable(intel_dp->dfp.ycbcr_444_to_420));
++			    str_enable_disable(intel_dp->dfp.ycbcr_444_to_420));
+ 
+ 	tmp = 0;
+ 	if (intel_dp->dfp.rgb_to_ycbcr) {
+@@ -2510,7 +2510,7 @@ void intel_dp_configure_protocol_converter(struct intel_dp *intel_dp,
+ 	if (drm_dp_pcon_convert_rgb_to_ycbcr(&intel_dp->aux, tmp) < 0)
+ 		drm_dbg_kms(&i915->drm,
+ 			   "Failed to %s protocol converter RGB->YCbCr conversion mode\n",
+-			   enabledisable(tmp));
++			   str_enable_disable(tmp));
+ }
+ 
+ 
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c
+index de89d40abd38..31c3c3bceb95 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c
+@@ -6,6 +6,7 @@
+ #include <linux/circ_buf.h>
+ #include <linux/ktime.h>
+ #include <linux/time64.h>
++#include <linux/string_helpers.h>
+ #include <linux/timekeeping.h>
+ 
+ #include "i915_drv.h"
+@@ -170,7 +171,7 @@ static int ct_control_enable(struct intel_guc_ct *ct, bool enable)
+ 				     GUC_CTB_CONTROL_ENABLE : GUC_CTB_CONTROL_DISABLE);
+ 	if (unlikely(err))
+ 		CT_PROBE_ERROR(ct, "Failed to control/%s CTB (%pe)\n",
+-			       enabledisable(enable), ERR_PTR(err));
++			       str_enable_disable(enable), ERR_PTR(err));
+ 
+ 	return err;
+ }
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_rc.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_rc.c
+index fc805d466d99..f8fc90ea71e7 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_guc_rc.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_rc.c
+@@ -3,6 +3,8 @@
+  * Copyright © 2021 Intel Corporation
+  */
+ 
++#include <linux/string_helpers.h>
 +
-+static inline const char *str_enable_disable(bool v)
-+{
-+	return v ? "enable" : "disable";
-+}
-+
-+static inline const char *str_enabled_disabled(bool v)
-+{
-+	return v ? "enabled" : "disabled";
-+}
-+
- #endif
+ #include "intel_guc_rc.h"
+ #include "gt/intel_gt.h"
+ #include "i915_drv.h"
+@@ -59,7 +61,7 @@ static int __guc_rc_control(struct intel_guc *guc, bool enable)
+ 	ret = guc_action_control_gucrc(guc, enable);
+ 	if (ret) {
+ 		drm_err(drm, "Failed to %s GuC RC (%pe)\n",
+-			enabledisable(enable), ERR_PTR(ret));
++			str_enable_disable(enable), ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/i915/i915_utils.h b/drivers/gpu/drm/i915/i915_utils.h
+index c62b64012369..06aac2be49ee 100644
+--- a/drivers/gpu/drm/i915/i915_utils.h
++++ b/drivers/gpu/drm/i915/i915_utils.h
+@@ -404,11 +404,6 @@ static inline const char *onoff(bool v)
+ 	return v ? "on" : "off";
+ }
+ 
+-static inline const char *enabledisable(bool v)
+-{
+-	return v ? "enable" : "disable";
+-}
+-
+ static inline const char *enableddisabled(bool v)
+ {
+ 	return v ? "enabled" : "disabled";
 -- 
 2.34.1
 
