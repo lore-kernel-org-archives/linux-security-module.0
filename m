@@ -2,104 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B86D4C63684
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 09:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D0BC2BA4C
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 10:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232148AbiAZJlo (ORCPT
+        id S235776AbiAZKN3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jan 2022 04:41:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46532 "EHLO
+        Wed, 26 Jan 2022 05:13:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239427AbiAZJlb (ORCPT
+        with ESMTP id S239718AbiAZKN2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jan 2022 04:41:31 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD841C061757;
-        Wed, 26 Jan 2022 01:40:50 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6C6FB61298;
-        Wed, 26 Jan 2022 09:40:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 505F4C340E3;
-        Wed, 26 Jan 2022 09:40:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643190049;
-        bh=4RofhmTZ+8k/nyDn6l0Cd7Ymlr906kzNpitjPOoG3RU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KNO4oT/J+dboOWZ78qUwkpLivm11cGo/G/+reuEfj8EkGrSqFwh5fbSFccUP7x5dr
-         a2MKOiHw4LAkXHijsK0IWNPRgGQv+OirukyIqJX85OCHmaVAiTP9vN3U0plquDpObb
-         HFUqXfgpZuI8k/cjrv8U3ohGEG5hWFXLxum6UCVXDKzBbSCT7hOadq3CJXpDMfSCl0
-         AKuvfZBivwci7aPtDNVlrgvtFLjxAWxZ0XCfwSmHfw8ysHn102vvEgF50pc6heViv5
-         hKi7lm2natgIpvYZlGqAyzQlsIonZbCzVRNAF72XOW3O8QNd/pnJQUNN7wGus7I5LJ
-         n0a32KUFA90LQ==
-Date:   Wed, 26 Jan 2022 10:40:42 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v9 10/23] ima: Move IMA securityfs files into
- ima_namespace or onto stack
-Message-ID: <20220126094042.l6jqu5swwsyhlt7v@wittgenstein>
-References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
- <20220125224645.79319-11-stefanb@linux.vnet.ibm.com>
+        Wed, 26 Jan 2022 05:13:28 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46738C06161C;
+        Wed, 26 Jan 2022 02:13:28 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id m11so68147256edi.13;
+        Wed, 26 Jan 2022 02:13:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7of4j6tXJsQTj96IqMsKqWsSKbGVqn3ZKiSJTHPl75E=;
+        b=QHZGNvAuvGw7dVgE+zNRdndvuugGnChjIbsMvjjz/ITotAgWGyNwZuN48EXCo8az5D
+         RWQMdAopz5nv/RRobC4VoRcuLtfo/RrKWSAUysAnG5W/5/9h/OvMXETCBuAkEbn4m9Vh
+         ZRKNjulT52tFSx8jl00TJVZCKzHeKwvhagWm2XuDHHRI67mQUHyXyGjJwC3tgnpudBHK
+         CUPg3gPeW91RE8SwaJcaX/cvKSHU6keIf7UPLJbzDiBXtJyAMK7gupAvOKDHHEKJh+F3
+         9WpCas3I2OiV7CjbJWwV6SnsGTJS7yhn6+3ULU7z0WtzzLGHTl8R51wyt+Vu1KuStZpj
+         M64Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7of4j6tXJsQTj96IqMsKqWsSKbGVqn3ZKiSJTHPl75E=;
+        b=q1t0IviRPdFarPCBKA6U2xj6mBJiT6/hkdmgmCzxQKFsawbX/M0vG0rjTq5HD+I2W+
+         ia3c+IpAySABXPFubpGx+oRXKZ7oJwu8t6nDNNeUl2SQDUN3SPVS4hQ0sRJDeENsoMN3
+         K0iLU32WBYSU0CJ3rkrUFFZ+F5QD1OOAtn7cFdtRHUxQ4dhYJfWVJIn6i6av178vpWxo
+         yfzchJEsO8ykrCFMF37LTtfFY8NVyVjicfBZ18oAniEwf7hoASBlG6jYtzK22Liqa6Yk
+         nv0BCb+by6r3zrD5QCEBRxXl9G+IqIuOghodF32XToMubmldX5p41Q85KouMbdHaUKkU
+         yeyA==
+X-Gm-Message-State: AOAM531yvUun8sq+fjOqHIVTWroyMwgHzkm38qVeJCJ0zbcAnyVUARI4
+        AiZR8LwIuRlYeFrdPq2J9HQOwRkm/RTSDHbhaNI=
+X-Google-Smtp-Source: ABdhPJynLKvQGv/H0FG+uuXI+OlMGiphzh5iPLeSuydUEWE4P8tlRcmMs/osAZq4tj+XuWR5dY63TLHMcK+DIJhiiao=
+X-Received: by 2002:a05:6402:35d5:: with SMTP id z21mr17032960edc.29.1643192006805;
+ Wed, 26 Jan 2022 02:13:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220125224645.79319-11-stefanb@linux.vnet.ibm.com>
+References: <20220126093951.1470898-1-lucas.demarchi@intel.com> <20220126093951.1470898-10-lucas.demarchi@intel.com>
+In-Reply-To: <20220126093951.1470898-10-lucas.demarchi@intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 26 Jan 2022 12:12:50 +0200
+Message-ID: <CAHp75Vd+TmShx==d_JHZUu0Q-9X7CmZEOFdKnSrcRKs81Gxn3g@mail.gmail.com>
+Subject: Re: [PATCH v2 09/11] drm: Convert open-coded yes/no strings to yesno()
+To:     Lucas De Marchi <lucas.demarchi@intel.com>
+Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-security-module@vger.kernel.org,
+        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        "David S. Miller" <davem@davemloft.net>,
+        Emma Anholt <emma@anholt.net>,
+        Francis Laniel <laniel_francis@privacyrequired.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Leo Li <sunpeng.li@amd.com>, Petr Mladek <pmladek@suse.com>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        Raju Rangoju <rajur@chelsio.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vishal Kulkarni <vishal@chelsio.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 25, 2022 at 05:46:32PM -0500, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> Only the securityfs IMA policy file is ever removed based on Kconfig
-> options. For this reason, move the IMA securityfs policy file variable
-> 'ima_policy' into the ima_namespace.
-> 
-> Move the other IMA securityfs files onto the stack since they are not
-> needed outside the function where they are created in. Also, their cleanup
-> is automatically handled by the filesystem upon umount of a virtualized
-> securityfs instance, so they don't need to be explicitly freed.
+On Wed, Jan 26, 2022 at 11:39 AM Lucas De Marchi
+<lucas.demarchi@intel.com> wrote:
+>
+> linux/string_helpers.h provides a helper to return "yes"/"no" strings.
+> Replace the open coded versions with str_yes_no(). The places were
+> identified with the following semantic patch:
+>
+>         @@
+>         expression b;
+>         @@
+>
+>         - b ? "yes" : "no"
+>         + str_yes_no(b)
+>
+> Then the includes were added, so we include-what-we-use, and parenthesis
+> adjusted in drivers/gpu/drm/v3d/v3d_debugfs.c. After the conversion we
+> still see the same binary sizes:
+>
+>    text    data     bss     dec     hex filename
+>   51149    3295     212   54656    d580 virtio/virtio-gpu.ko.old
+>   51149    3295     212   54656    d580 virtio/virtio-gpu.ko
+> 1441491   60340     800 1502631  16eda7 radeon/radeon.ko.old
+> 1441491   60340     800 1502631  16eda7 radeon/radeon.ko
+> 6125369  328538   34000 6487907  62ff63 amd/amdgpu/amdgpu.ko.old
+> 6125369  328538   34000 6487907  62ff63 amd/amdgpu/amdgpu.ko
+>  411986   10490    6176  428652   68a6c drm.ko.old
+>  411986   10490    6176  428652   68a6c drm.ko
+>   98129    1636     264  100029   186bd dp/drm_dp_helper.ko.old
+>   98129    1636     264  100029   186bd dp/drm_dp_helper.ko
+> 1973432  109640    2352 2085424  1fd230 nouveau/nouveau.ko.old
+> 1973432  109640    2352 2085424  1fd230 nouveau/nouveau.ko
 
-I'd reverse the explantion in the commit and mention the securityfs
-change that makes this move possible which is patch 3 in this version of
-the series ("securityfs: rework dentry creation"); something like:
+This probably won't change for modules, but if you compile in the
+linker may try to optimize it. Would be nice to see the old-new for
+`make allyesconfig` or equivalent.
 
-	Earlier we simplified how dentry creation and deletion is manged in
-	securityfs. This allows us to move IMA securityfs files from global
-	variables directly into ima_fs_ns_init() itself. We can now rely on
-	those dentries to be cleaned up when the securityfs instance is cleaned
-	when the last reference to it is dropped.
-	
-	Things are slightly different for the initial ima namespace. In contrast
-	to non-initial ima namespaces it has pinning logic binding the lifetime
-	of the securityfs superblock to created dentries. We need to keep this
-	behavior to not regress userspace. Since ima never removes most of the
-	securityfs files the initial securityfs instance stays pinned. This also
-	means even for the initial ima namespace we don't need to keep
-	references to these dentries anywhere.
-	
-	The ima_policy file is the exception since ima can end up removing it if
-	a non-default policy is written at some point.
+...
 
-Last sentence should be checked for sensibility by ima folks.
+>         seq_printf(m, "\tDP branch device present: %s\n",
+> -                  branch_device ? "yes" : "no");
+> +                  str_yes_no(branch_device));
 
-> 
-> In the failure cleanup path clean up the ima_policy dentry before
-> cleaning up the directories.
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> ---
+Can it be now on one line? Same Q for all similar cases in the entire series.
 
-Moving into imans looks good,
-Acked-by: Christian Brauner <brauner@kernel.org>
+-- 
+With Best Regards,
+Andy Shevchenko
