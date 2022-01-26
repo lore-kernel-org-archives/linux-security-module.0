@@ -2,155 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB407C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 22:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA05C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 22:37:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230042AbiAZWYb (ORCPT
+        id S229714AbiAZWhy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jan 2022 17:24:31 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59550 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229637AbiAZWYa (ORCPT
+        Wed, 26 Jan 2022 17:37:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229698AbiAZWhy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jan 2022 17:24:30 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20QMOIcH001282;
-        Wed, 26 Jan 2022 22:24:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=AqLDb7oC344gTow/uDRwc6F7y7gWhyphzkM/OBMcx78=;
- b=QItk+nQx3lsn47mp5QDUGPPgTj16HMGTOJxl5QFsKiqGR7/NY6W0q1dxYEtOGLC58pUo
- Nv36Z9++oO99zdCXDmnyheypEm0UwZKuXj/bXDteuzg5StZsCDkvE6OVV8s33opS7pgx
- owkfkbFP+DJq7pVEByxEDtVi94grNotiqI1O9FU3SGhDvKpceiWOGtReG1fkCvYU3gzk
- LuRttgap2jicYG31hd1NGstyxnG8+8JcxNE0qEn/HjQQ2x2hch9GnopsWmcC8kJ14DGN
- 9xTFh58nSwIDE5dqm5no7ppBWPo7HLYV1p7T70KIkKMbD/Xq3AdRhQ6UiIY/QtcIV8RK ag== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3duet70bge-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jan 2022 22:24:18 +0000
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20QMNnLN031399;
-        Wed, 26 Jan 2022 22:24:00 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3duet70bfq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jan 2022 22:24:00 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20QMDAK3007199;
-        Wed, 26 Jan 2022 22:23:59 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma02dal.us.ibm.com with ESMTP id 3dt1xakmts-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jan 2022 22:23:59 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20QMNqrX29819320
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jan 2022 22:23:52 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 38F646A047;
-        Wed, 26 Jan 2022 22:23:52 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B81D16A04F;
-        Wed, 26 Jan 2022 22:23:49 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 26 Jan 2022 22:23:49 +0000 (GMT)
-Message-ID: <9ca21852-17ee-fc99-4764-300cd5199810@linux.ibm.com>
-Date:   Wed, 26 Jan 2022 17:23:49 -0500
+        Wed, 26 Jan 2022 17:37:54 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C245CC061749
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jan 2022 14:37:53 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id p15so1632492ejc.7
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jan 2022 14:37:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V1aVCQX9KOZPo5u/xsRU/PTSxGn2oEoP0AX8hOOQy5k=;
+        b=PUexGqcIVlaj1EtFvEn2PSWA9vQAteWtUkZ+SBG5roU+D7QWy3SizXM4RLxmiJb4y+
+         21mBOEtVAyRn8nb9C4lDXvde8VLxHnfQnZ0on+zhj929ODZS2xaTEugtb5I1SNZ79be5
+         8ljRT/rUToeF+GpC+L/8IqXWiHtkcWEEh7ol95oLbGIk8WMtqlVeVFrWEPfAAQoHE/IB
+         e5NMOscmd8hztmFpDP6mVt5uWMfQqlmUDFVvZqpggisNdFMHs9yBDlmWWnPV9jU76suv
+         Ls0/JoEwllWu9cP+w1FEEyV5Qg/PPmKNA4Y/O8pIlMtBA3LqRX9kVPQhN0mOQmqi42If
+         Ss8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V1aVCQX9KOZPo5u/xsRU/PTSxGn2oEoP0AX8hOOQy5k=;
+        b=sFx5NgFA8WdCzX2BE9pKj9G2F1Z+DLqqt3J4up+UIdA2AP/F9XyFmbCiIGoqIjA7JQ
+         RLCHp7+R+x+8q+4l8IWEggvptqgUco2etkVfhjm22BoRX/KpPEYZRGJNH2/D42a5aXZ8
+         Ozh8PkTYfmzXim2c/76oujU8ypQCO196908zEQgVbiB6+/6kG0Hv6B5tXtu6xTRXruna
+         2OSuX/cLOxQm+5kUokVMQ/oMFvBTedTeVZD0KpYNJmz3a/KXjBOIaEVZPiFZm3AdfGg5
+         jeK5zjGee5ytLHQooIbiYqzUh1hnsMuvGaNeaba1uc5e0HYwIbfeHamqpRTjK3agpDUv
+         i0KA==
+X-Gm-Message-State: AOAM530XR3POlVKvCdi8F01BZvtwGECc79xyrpoFh/Be+eSOVNSuWz16
+        EQJqKGp9NJ36G6gO9GUyQXAQgPYPOKo8xpLTpoBQ
+X-Google-Smtp-Source: ABdhPJz7JLCXZXW6bWn+3igBvUCPp+jJroJkHIyDQb/GW3U8GVaEAHFqw3UaonR9mBekrO2084/k8MAzQj1Z8rint7Y=
+X-Received: by 2002:a17:906:2ed0:: with SMTP id s16mr676611eji.327.1643236672195;
+ Wed, 26 Jan 2022 14:37:52 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v9 08/23] ima: Move measurement list related variables
- into ima_namespace
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
- <20220125224645.79319-9-stefanb@linux.vnet.ibm.com>
- <20220126092159.4rgclr5s3jli7aqy@wittgenstein>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20220126092159.4rgclr5s3jli7aqy@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 6d07J6qR1P1xp3FrOFIPPdlzD9hXsE1y
-X-Proofpoint-ORIG-GUID: JdVJZpC1BlMcH50MZWAEpLy_SOIE4NbH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-26_08,2022-01-26_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
- mlxscore=0 spamscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
- definitions=main-2201260128
+References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
+ <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein>
+ <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com> <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com>
+ <20220126072442.he4fjegfqnh72kzp@wittgenstein>
+In-Reply-To: <20220126072442.he4fjegfqnh72kzp@wittgenstein>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 26 Jan 2022 17:37:41 -0500
+Message-ID: <CAHC9VhRyAxbJKBLXbW-Zj9voC2TMs3ee6jkcbS8gnNo3E0=WDg@mail.gmail.com>
+Subject: Re: [PATCH] LSM: general protection fault in legacy_parse_param
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Jan 26, 2022 at 2:24 AM Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Tue, Jan 25, 2022 at 05:18:02PM -0500, Paul Moore wrote:
+> > On Tue, Oct 12, 2021 at 10:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > On 10/12/2021 3:32 AM, Christian Brauner wrote:
+> > > > On Mon, Oct 11, 2021 at 03:40:22PM -0700, Casey Schaufler wrote:
+> > > >> The usual LSM hook "bail on fail" scheme doesn't work for cases where
+> > > >> a security module may return an error code indicating that it does not
+> > > >> recognize an input.  In this particular case Smack sees a mount option
+> > > >> that it recognizes, and returns 0. A call to a BPF hook follows, which
+> > > >> returns -ENOPARAM, which confuses the caller because Smack has processed
+> > > >> its data.
+> > > >>
+> > > >> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> > > >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > >> ---
+> > > > Thanks!
+> > > > Note, I think that we still have the SELinux issue we discussed in the
+> > > > other thread:
+> > > >
+> > > >       rc = selinux_add_opt(opt, param->string, &fc->security);
+> > > >       if (!rc) {
+> > > >               param->string = NULL;
+> > > >               rc = 1;
+> > > >       }
+> > > >
+> > > > SELinux returns 1 not the expected 0. Not sure if that got fixed or is
+> > > > queued-up for -next. In any case, this here seems correct independent of
+> > > > that:
+> > >
+> > > The aforementioned SELinux change depends on this patch. As the SELinux
+> > > code is today it blocks the problem seen with Smack, but introduces a
+> > > different issue. It prevents the BPF hook from being called.
+> > >
+> > > So the question becomes whether the SELinux change should be included
+> > > here, or done separately. Without the security_fs_context_parse_param()
+> > > change the selinux_fs_context_parse_param() change results in messy
+> > > failures for SELinux mounts.
+> >
+> > FWIW, this patch looks good to me, so:
+> >
+> > Acked-by: Paul Moore <paul@paul-moore.com>
+> >
+> > ... and with respect to the SELinux hook implementation returning 1 on
+> > success, I don't have a good answer and looking through my inbox I see
+> > David Howells hasn't responded either.  I see nothing in the original
+> > commit explaining why, so I'm going to say let's just change it to
+> > zero and be done with it; the good news is that if we do it now we've
+>
+>
+> It was originally supposed to return 1 but then this got changed but - a
+> classic - the documentation wasn't.
 
-On 1/26/22 04:21, Christian Brauner wrote:
-> On Tue, Jan 25, 2022 at 05:46:30PM -0500, Stefan Berger wrote:
->> From: Stefan Berger <stefanb@linux.ibm.com>
->>
->> Move measurement list related variables into the ima_namespace. This way
->> a front-end like securityfs can show the measurement list inside an IMA
->> namespace.
->>
->> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->> ---
->>   security/integrity/ima/ima.h             |  5 +++--
->>   security/integrity/ima/ima_fs.c          |  6 ++++--
->>   security/integrity/ima/ima_init_ima_ns.c |  5 +++++
->>   security/integrity/ima/ima_kexec.c       | 12 ++++++-----
->>   security/integrity/ima/ima_queue.c       | 27 +++++++++++-------------
->>   5 files changed, 31 insertions(+), 24 deletions(-)
->>
->> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->> index 340a59174670..45706836a77b 100644
->> --- a/security/integrity/ima/ima.h
->> +++ b/security/integrity/ima/ima.h
->> @@ -106,7 +106,6 @@ struct ima_queue_entry {
->>   	struct list_head later;		/* place in ima_measurements list */
->>   	struct ima_template_entry *entry;
->>   };
->> -extern struct list_head ima_measurements;	/* list of all measurements */
->>   
->>   /* Some details preceding the binary serialized measurement list */
->>   struct ima_kexec_hdr {
->> @@ -136,6 +135,8 @@ struct ima_namespace {
->>   	struct ima_rule_entry *arch_policy_entry;
->>   
->>   	struct ima_h_table ima_htable;
->> +	struct list_head ima_measurements;	/* list of all measurements */
->> +	unsigned long binary_runtime_size;	/* used by init_ima_ns */
->>   } __randomize_layout;
-> Moving this into struct imans seems sane to me but I'm not going to ack
-> it because I don't have enough knowledge to guarantee that this code
-> will only run for init_ima_ns. I'll leave that to Mimi.
+I'm shocked! :)
 
-The code modifying binary_runtime_size may do this for all IMA 
-namespaces but the resulting value of binary_runtime_size may only 
-matter in init_ima_ns (not 100% sure, but Mimi seems to say so). Moving 
-it into ima_namespace rather than special-casing the code keeps the code 
-readable.
+Thanks Christian.
 
-There are also some case in the code that may do something like this:
-
-if (ns == &init_ima_ns)
-
-     foo = xyz;
-
-Those will go away when foo is moved into the namespace and then it 
-becomes ns->foo = xyz, which is much saner for readability but 
-unavoidable for some variables at this stage.
-
-
+-- 
+paul-moore.com
