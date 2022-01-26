@@ -2,141 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB206C2BA4C
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 08:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6981CC63682
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 08:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238128AbiAZIGM (ORCPT
+        id S238475AbiAZIan (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jan 2022 03:06:12 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:4516 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbiAZIGL (ORCPT
+        Wed, 26 Jan 2022 03:30:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58530 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230223AbiAZIam (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jan 2022 03:06:11 -0500
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JkGRP68zHz67wqg;
-        Wed, 26 Jan 2022 16:02:41 +0800 (CST)
-Received: from [10.122.132.241] (10.122.132.241) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.21; Wed, 26 Jan 2022 09:06:08 +0100
-Message-ID: <0934a27a-d167-87ea-97d2-b3ac952832ff@huawei.com>
-Date:   Wed, 26 Jan 2022 11:05:53 +0300
+        Wed, 26 Jan 2022 03:30:42 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6F8C06161C;
+        Wed, 26 Jan 2022 00:30:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A485CB81C13;
+        Wed, 26 Jan 2022 08:30:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC646C340E3;
+        Wed, 26 Jan 2022 08:30:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643185839;
+        bh=qKazU28NFPi1JaZnJrqSAMht8qRDH0NxIN7MLjkqLqE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NPWQNvgAyMwwqb0Ni1Ase2Q9wL5sOBkJ+9hRMUWNP3bxm9BiQH7CnQIH2dxzcSszN
+         g0z5UOqsQQDEHg50yZDClr4pXnj/GNXR4sQkqc1tREwWE+grwOvcOGo/DMfpoxEDsp
+         VKpKpqBBhYB9gjcZPAaSENV7OstEIHozmvf+wLJ7/Onnl5TTPbSUZySgr2m5k79+Pu
+         22xVzNSkGljlVJmdTmRbF643FrqBvft1U/9Vrt5BA6irynPpNr/lVoesnWMviLvNVe
+         XNIuhb/liA9PytK1+dOMbcXmolTxksY2cnbwfrBCtyG3H2jlShcOg+beYjCWrOUJm7
+         VMWP2wMUmUvVw==
+Date:   Wed, 26 Jan 2022 09:30:30 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v9 01/23] ima: Remove ima_policy file before directory
+Message-ID: <20220126083030.theijkt7v3w3fwm5@wittgenstein>
+References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
+ <20220125224645.79319-2-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [RFC PATCH 1/2] landlock: TCP network hooks implementation
-Content-Language: ru
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-CC:     <mic@digikod.net>, <linux-security-module@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <netfilter@vger.kernel.org>,
-        <yusongping@huawei.com>, <artem.kuzin@huawei.com>
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
- <20220124080215.265538-2-konstantin.meskhidze@huawei.com>
- <CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com>
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml753-chm.china.huawei.com (10.201.108.203) To
- fraeml704-chm.china.huawei.com (10.206.15.53)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220125224645.79319-2-stefanb@linux.vnet.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-1/25/2022 5:17 PM, Willem de Bruijn пишет:
-> On Mon, Jan 24, 2022 at 3:02 AM Konstantin Meskhidze
-> <konstantin.meskhidze@huawei.com> wrote:
->>
->> Support of socket_bind() and socket_connect() hooks.
->> Current prototype can restrict binding and connecting of TCP
->> types of sockets. Its just basic idea how Landlock could support
->> network confinement.
->>
->> Changes:
->> 1. Access masks array refactored into 1D one and changed
->> to 32 bits. Filesystem masks occupy 16 lower bits and network
->> masks reside in 16 upper bits.
->> 2. Refactor API functions in ruleset.c:
->>      1. Add void *object argument.
->>      2. Add u16 rule_type argument.
->> 3. Use two rb_trees in ruleset structure:
->>      1. root_inode - for filesystem objects
->>      2. root_net_port - for network port objects
->>
->> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+On Tue, Jan 25, 2022 at 05:46:23PM -0500, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
 > 
->> +static int hook_socket_connect(struct socket *sock, struct sockaddr *address, int addrlen)
->> +{
->> +       short socket_type;
->> +       struct sockaddr_in *sockaddr;
->> +       u16 port;
->> +       const struct landlock_ruleset *const dom = landlock_get_current_domain();
->> +
->> +       /* Check if the hook is AF_INET* socket's action */
->> +       if ((address->sa_family != AF_INET) && (address->sa_family != AF_INET6))
->> +               return 0;
+> The removal of ima_dir currently fails since ima_policy still exists, so
+> remove the ima_policy file before removing the directory.
 > 
-> Should this be a check on the socket family (sock->ops->family)
-> instead of the address family?
+> Fixes: 4af4662fa4a9 ("integrity: IMA policy")
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
 
-Actually connect() function checks address family:
-
-int __inet_stream_connect(... ,struct sockaddr *uaddr ,...) {
-...
-	if (uaddr) {
-		if (addr_len < sizeof(uaddr->sa_family))
-		return -EINVAL;
-
-		if (uaddr->sa_family == AF_UNSPEC) {
-			err = sk->sk_prot->disconnect(sk, flags);
-			sock->state = err ? SS_DISCONNECTING : 	
-			SS_UNCONNECTED;
-		goto out;
-		}
-	}
-
-...
-}
-
-> 
-> It is valid to pass an address with AF_UNSPEC to a PF_INET(6) socket.
-> And there are legitimate reasons to want to deny this. Such as passing
-> a connection to a unprivileged process and disallow it from disconnect
-> and opening a different new connection.
-
-As far as I know using AF_UNSPEC to unconnect takes effect on 
-UDP(DATAGRAM) sockets.
-To unconnect a UDP socket, we call connect but set the family member of 
-the socket address structure (sin_family for IPv4 or sin6_family for 
-IPv6) to AF_UNSPEC. It is the process of calling connect on an already 
-connected UDP socket that causes the socket to become unconnected.
-
-This RFC patch just supports TCP connections. I need to check the logic
-if AF_UNSPEC provided in connenct() function for TCP(STREAM) sockets.
-Does it disconnect already established TCP connection?
-
-Thank you for noticing about this issue. Need to think through how
-to manage it with Landlock network restrictions for both TCP and UDP
-sockets.
-
-> 
->> +
->> +       socket_type = sock->type;
->> +       /* Check if it's a TCP socket */
->> +       if (socket_type != SOCK_STREAM)
->> +               return 0;
->> +
->> +       if (!dom)
->> +               return 0;
->> +
->> +       /* Get port value in host byte order */
->> +       sockaddr = (struct sockaddr_in *)address;
->> +       port = ntohs(sockaddr->sin_port);
->> +
->> +       return check_socket_access(dom, port, LANDLOCK_ACCESS_NET_CONNECT_TCP);
->> +}
-> .
+Looks good,
+Acked-by: Christian Brauner <brauner@kernel.org>
