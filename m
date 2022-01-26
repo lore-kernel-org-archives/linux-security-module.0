@@ -2,131 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA05C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 22:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CD4C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 23:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbiAZWhy (ORCPT
+        id S232655AbiAZXBn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jan 2022 17:37:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
+        Wed, 26 Jan 2022 18:01:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbiAZWhy (ORCPT
+        with ESMTP id S232596AbiAZXBn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jan 2022 17:37:54 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C245CC061749
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jan 2022 14:37:53 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id p15so1632492ejc.7
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jan 2022 14:37:53 -0800 (PST)
+        Wed, 26 Jan 2022 18:01:43 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBCEEC061747
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jan 2022 15:01:42 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id r10so1234874edt.1
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Jan 2022 15:01:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V1aVCQX9KOZPo5u/xsRU/PTSxGn2oEoP0AX8hOOQy5k=;
-        b=PUexGqcIVlaj1EtFvEn2PSWA9vQAteWtUkZ+SBG5roU+D7QWy3SizXM4RLxmiJb4y+
-         21mBOEtVAyRn8nb9C4lDXvde8VLxHnfQnZ0on+zhj929ODZS2xaTEugtb5I1SNZ79be5
-         8ljRT/rUToeF+GpC+L/8IqXWiHtkcWEEh7ol95oLbGIk8WMtqlVeVFrWEPfAAQoHE/IB
-         e5NMOscmd8hztmFpDP6mVt5uWMfQqlmUDFVvZqpggisNdFMHs9yBDlmWWnPV9jU76suv
-         Ls0/JoEwllWu9cP+w1FEEyV5Qg/PPmKNA4Y/O8pIlMtBA3LqRX9kVPQhN0mOQmqi42If
-         Ss8A==
+         :cc:content-transfer-encoding;
+        bh=hrY2ypU0UcUzpuu0HvUTLlqvcOyvCuZ5uizVCmG3Y+w=;
+        b=156HEm9ggPBMtKmoA1cSwYVY8LRaPIaePKKm5brqfy6Hg5Vd33JEYnRffn1YfXbjBu
+         5PQzcEDO2OOp7L+L6hE8FjtNF0o+9euUc80AUFcW7DsXEZuOsgyf7fn/a2Kr+k81kO0h
+         X501ZPQTRFaCNdwavx84Jv8iUjqaVQfhEI96RUn7DENBN30GVn6NnsRFBOyAAWk+KYXC
+         An/BnQdJQbQlNc/xdYqaDO28aQ4WChARmRIfQZMcgbols5NU8GKsDcgem0fX8YQor+1n
+         97Aa0aEfyAwAgVtcZFHN/yWwZmevAJrOHiD7oktGU3yyrHiCHwAI8/hupVG/wMRZqQ9d
+         uTZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V1aVCQX9KOZPo5u/xsRU/PTSxGn2oEoP0AX8hOOQy5k=;
-        b=sFx5NgFA8WdCzX2BE9pKj9G2F1Z+DLqqt3J4up+UIdA2AP/F9XyFmbCiIGoqIjA7JQ
-         RLCHp7+R+x+8q+4l8IWEggvptqgUco2etkVfhjm22BoRX/KpPEYZRGJNH2/D42a5aXZ8
-         Ozh8PkTYfmzXim2c/76oujU8ypQCO196908zEQgVbiB6+/6kG0Hv6B5tXtu6xTRXruna
-         2OSuX/cLOxQm+5kUokVMQ/oMFvBTedTeVZD0KpYNJmz3a/KXjBOIaEVZPiFZm3AdfGg5
-         jeK5zjGee5ytLHQooIbiYqzUh1hnsMuvGaNeaba1uc5e0HYwIbfeHamqpRTjK3agpDUv
-         i0KA==
-X-Gm-Message-State: AOAM530XR3POlVKvCdi8F01BZvtwGECc79xyrpoFh/Be+eSOVNSuWz16
-        EQJqKGp9NJ36G6gO9GUyQXAQgPYPOKo8xpLTpoBQ
-X-Google-Smtp-Source: ABdhPJz7JLCXZXW6bWn+3igBvUCPp+jJroJkHIyDQb/GW3U8GVaEAHFqw3UaonR9mBekrO2084/k8MAzQj1Z8rint7Y=
-X-Received: by 2002:a17:906:2ed0:: with SMTP id s16mr676611eji.327.1643236672195;
- Wed, 26 Jan 2022 14:37:52 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hrY2ypU0UcUzpuu0HvUTLlqvcOyvCuZ5uizVCmG3Y+w=;
+        b=U4aWeA6tjyuCkUL7dUR1eSDCU3vS2NBBi+YGi8ajlopZWeQJtLxNrYJU/8Fn/EDl1V
+         bb4l7qo7EHSH8r2oSLQGOLe0+ZfeHPmjw9/4glrZEotbuxM0/xWbzmyVX+/S9fV9qc+U
+         YBCtlIFstJf2D2ZBUZUO6GNKgYN68ei5hhl+SNy/+ILWPZdxfgjMWMXzTEjY82WOQWOv
+         FWdFSQGzd57cgBrK6/QDjq8kA3TIdUpZxEotbr9hUaXw0dvyKpqbHpp0SLrpVFuGpI59
+         UDlSvqBbZegXZCMaSscAvb24CVH+98szmaLTNhf/nxZqW0uE0r/aIfT2an/wiODHgNVJ
+         vBvg==
+X-Gm-Message-State: AOAM530AEt6jAvQjrUhupv+DN3IdyK2ozciBp5QIhk0/vmL/+/0N7Gaj
+        vIif7zS49Xp6oxMbMV7g5+9JeVM+zSj1aiuNLFm1
+X-Google-Smtp-Source: ABdhPJxIKOsEIfJTFhstoFnygEcu2edsCxb/edCGSMTyG99GpPkZvv/0HQ9atKeEH1Dbj6XG8KgRPxB252BRD34Xfs0=
+X-Received: by 2002:a50:ef16:: with SMTP id m22mr1130661eds.340.1643238101310;
+ Wed, 26 Jan 2022 15:01:41 -0800 (PST)
 MIME-Version: 1.0
-References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
- <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein>
- <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com> <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com>
- <20220126072442.he4fjegfqnh72kzp@wittgenstein>
-In-Reply-To: <20220126072442.he4fjegfqnh72kzp@wittgenstein>
+References: <20220125143304.34628-1-cgzones@googlemail.com>
+In-Reply-To: <20220125143304.34628-1-cgzones@googlemail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 26 Jan 2022 17:37:41 -0500
-Message-ID: <CAHC9VhRyAxbJKBLXbW-Zj9voC2TMs3ee6jkcbS8gnNo3E0=WDg@mail.gmail.com>
-Subject: Re: [PATCH] LSM: general protection fault in legacy_parse_param
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Brauner <christian@brauner.io>,
-        James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        selinux@vger.kernel.org
+Date:   Wed, 26 Jan 2022 18:01:30 -0500
+Message-ID: <CAHC9VhSdGeZ9x-0Hvk9mE=YMXbpk-tC5Ek+uGFGq5U+51qjChw@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: create security context for memfd_secret inodes
+To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Cc:     selinux@vger.kernel.org, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 26, 2022 at 2:24 AM Christian Brauner <brauner@kernel.org> wrote:
+On Tue, Jan 25, 2022 at 9:33 AM Christian G=C3=B6ttsche
+<cgzones@googlemail.com> wrote:
 >
-> On Tue, Jan 25, 2022 at 05:18:02PM -0500, Paul Moore wrote:
-> > On Tue, Oct 12, 2021 at 10:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > On 10/12/2021 3:32 AM, Christian Brauner wrote:
-> > > > On Mon, Oct 11, 2021 at 03:40:22PM -0700, Casey Schaufler wrote:
-> > > >> The usual LSM hook "bail on fail" scheme doesn't work for cases where
-> > > >> a security module may return an error code indicating that it does not
-> > > >> recognize an input.  In this particular case Smack sees a mount option
-> > > >> that it recognizes, and returns 0. A call to a BPF hook follows, which
-> > > >> returns -ENOPARAM, which confuses the caller because Smack has processed
-> > > >> its data.
-> > > >>
-> > > >> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
-> > > >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > >> ---
-> > > > Thanks!
-> > > > Note, I think that we still have the SELinux issue we discussed in the
-> > > > other thread:
-> > > >
-> > > >       rc = selinux_add_opt(opt, param->string, &fc->security);
-> > > >       if (!rc) {
-> > > >               param->string = NULL;
-> > > >               rc = 1;
-> > > >       }
-> > > >
-> > > > SELinux returns 1 not the expected 0. Not sure if that got fixed or is
-> > > > queued-up for -next. In any case, this here seems correct independent of
-> > > > that:
-> > >
-> > > The aforementioned SELinux change depends on this patch. As the SELinux
-> > > code is today it blocks the problem seen with Smack, but introduces a
-> > > different issue. It prevents the BPF hook from being called.
-> > >
-> > > So the question becomes whether the SELinux change should be included
-> > > here, or done separately. Without the security_fs_context_parse_param()
-> > > change the selinux_fs_context_parse_param() change results in messy
-> > > failures for SELinux mounts.
-> >
-> > FWIW, this patch looks good to me, so:
-> >
-> > Acked-by: Paul Moore <paul@paul-moore.com>
-> >
-> > ... and with respect to the SELinux hook implementation returning 1 on
-> > success, I don't have a good answer and looking through my inbox I see
-> > David Howells hasn't responded either.  I see nothing in the original
-> > commit explaining why, so I'm going to say let's just change it to
-> > zero and be done with it; the good news is that if we do it now we've
+> Create a security context for the inodes created by memfd_secret(2) via
+> the LSM hook inode_init_security_anon to allow a fine grained control.
+> As secret memory areas can affect hibernation and have a global shared
+> limit access control might be desirable.
 >
+> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> ---
+> An alternative way of checking memfd_secret(2) is to create a new LSM
+> hook and e.g. for SELinux check via a new process class permission.
+> ---
+>  mm/secretmem.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+
+This seems reasonable to me, and I like the idea of labeling the anon
+inode as opposed to creating a new set of LSM hooks.  If we want to
+apply access control policy to the memfd_secret() fds we are going to
+need to attach some sort of LSM state to the inode, we might as well
+use the mechanism we already have instead of inventing another one.
+
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 22b310adb53d..b61cd2f661bc 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -164,11 +164,20 @@ static struct file *secretmem_file_create(unsigned =
+long flags)
+>  {
+>         struct file *file =3D ERR_PTR(-ENOMEM);
+>         struct inode *inode;
+> +       const char *anon_name =3D "[secretmem]";
+> +       const struct qstr qname =3D QSTR_INIT(anon_name, strlen(anon_name=
+));
+> +       int err;
 >
-> It was originally supposed to return 1 but then this got changed but - a
-> classic - the documentation wasn't.
+>         inode =3D alloc_anon_inode(secretmem_mnt->mnt_sb);
+>         if (IS_ERR(inode))
+>                 return ERR_CAST(inode);
+>
+> +       err =3D security_inode_init_security_anon(inode, &qname, NULL);
+> +       if (err) {
+> +               file =3D ERR_PTR(err);
+> +               goto err_free_inode;
+> +       }
+> +
+>         file =3D alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
+>                                  O_RDWR, &secretmem_fops);
+>         if (IS_ERR(file))
+> --
+> 2.34.1
 
-I'm shocked! :)
-
-Thanks Christian.
-
--- 
+--=20
 paul-moore.com
