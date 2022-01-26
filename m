@@ -2,221 +2,215 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 521E8C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 23:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DA4C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 23:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232396AbiAZXMn (ORCPT
+        id S233443AbiAZXNs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jan 2022 18:12:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39550 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232494AbiAZXMj (ORCPT
+        Wed, 26 Jan 2022 18:13:48 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41714 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233439AbiAZXNr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jan 2022 18:12:39 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20599C061748
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jan 2022 15:12:39 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id j23so1236260edp.5
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Jan 2022 15:12:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=skxNWSw4qMDs36v/OC+NXFbUqe9KBpL8K2ambS/Ai7o=;
-        b=VFSBrg6hQe2y2/NXUMR8+uK4YZ40V5HHbzwmGe2Az89s+d01D4NAYmUWoZmnFFRgeU
-         K6RGqgr9Fuu4BIYy3bQ0yAdhZqNiBH1wafXxCQP+e1/NL9EMa7NCosuZif/AjWJ0VBnd
-         p8qceKEyUJ7j8MWZtta6QsrXq/m9g7IkR8h3mI4QqYYr68Am75ojEH6o+yTwPTJ8S5HN
-         A47FI7iDSKrE+tHyr7HDTT8mlaTD8hLkdIa8P0Pc3cXd6sg/F8AxZCjidl/cNQyhCOfg
-         ARKjxucVwPkQlWNmeA+fhyYe/FJEJ6qxL/8yKrjwPiVOx8XEpFgE88JBigHJ620a/NZn
-         pHjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=skxNWSw4qMDs36v/OC+NXFbUqe9KBpL8K2ambS/Ai7o=;
-        b=IJ5xzUdP/8efynUiMwL0uvWrxInhSRnLFtnvruKqJKRt4F07XzEedEuv/l4/mQL758
-         m60HEM72IsJhqNzh/EZl4Su/mJMKEyqiK6y6NZSzqORnImDNQfbAQMTJgVh6jDF4/icg
-         xFJDb9DfCHZpLcD26JuOPXh0DVfVgTMhwDjIrphmDRCdtvZarAP4RvJUpPXOdC9apYlh
-         vVygv2jhI8DVgGgF9EcHSBAaCW3plsnGLONuMLI3KlsCB8mrgS3jd4gprp5D9MfIgKNY
-         EAw/e6kBaeZMDZDeEE1kQsjIAiuGt7J11AK6hVJ8z6GIUNffkVoirMl/ypmDrkfItMQc
-         cqOA==
-X-Gm-Message-State: AOAM530Zhh2NfOEWYqYhHomm9jamdNlXOTbSNjSazVyn5n6pD5TSDJCT
-        FgkQHWuloPejLVno+6bytxweGMRQdyG5GfoYc6Mt
-X-Google-Smtp-Source: ABdhPJzS1eFcTV1+fJaYoQiwUEgiDGhUoNK/qqLzKGMFBUSrmTfiIoPwNwzlq8Tha3ylFkCsqIoWDL80c5Y/P0A7eg8=
-X-Received: by 2002:a05:6402:270f:: with SMTP id y15mr1093080edd.409.1643238757607;
- Wed, 26 Jan 2022 15:12:37 -0800 (PST)
+        Wed, 26 Jan 2022 18:13:47 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20QMnD79032141;
+        Wed, 26 Jan 2022 23:13:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=zvxSVDuUSN9c67gKeo+7qdK1xgI5l1LCOGcWxzPJOrA=;
+ b=F1wXgn7SsKrigV97hjLB/OJBP1Lgm+MDpQ4FcBWXd1KcuhnQgZ4z3J0Rein9mVeDz2Hj
+ 7CQqp8b9ZnLSEDypG77bvwY7cBllVvSm2FCNtq7qb7q1B2b2Ht0V37YxLqfyORmVoLB6
+ aN42c87lFFnluylqDjR5T1vaAfUUc+XpjXsi8/0k4oJWhkXxvhlTtl57nNijTXyKhjJ6
+ lHzk4LmOKagInmpGj1G17iC1tlER6WBZNEwMgb4I391qXlN2FCYkL5dGbZEOelPO20pX
+ sHbcoDPSEAIs7eGO2/4Ig8vUZr7WDMixzCX1+fWYl2S/K++EqTQjjfhqN5aROC/h4FcM Rg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dufb80geh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Jan 2022 23:13:22 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20QNBPXE010054;
+        Wed, 26 Jan 2022 23:13:21 GMT
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dufb80gea-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Jan 2022 23:13:21 +0000
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20QNC9Rh007993;
+        Wed, 26 Jan 2022 23:13:20 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma01dal.us.ibm.com with ESMTP id 3dr9jc26g5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Jan 2022 23:13:20 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20QNDHRj15532428
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Jan 2022 23:13:17 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A4A40C6055;
+        Wed, 26 Jan 2022 23:13:17 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 79019C605D;
+        Wed, 26 Jan 2022 23:13:16 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 26 Jan 2022 23:13:16 +0000 (GMT)
+Message-ID: <e1a8540c-0f53-d469-f10b-4098a3b9c9e0@linux.ibm.com>
+Date:   Wed, 26 Jan 2022 18:13:15 -0500
 MIME-Version: 1.0
-References: <YfGwggaTu8imJ0uc@redhat.com>
-In-Reply-To: <YfGwggaTu8imJ0uc@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 26 Jan 2022 18:12:26 -0500
-Message-ID: <CAHC9VhSd9PMyN9K3EWGjd=nkSeRtEpEZ6Kg9v4LzgWr9gpeWOA@mail.gmail.com>
-Subject: Re: [PATCH] security, lsm: dentry_init_security() Handle multi LSM registration
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, ceph-devel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Stephen Muth <smuth4@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v9 22/23] ima: Show owning user namespace's uid and gid
+ when displaying policy
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
+ <20220125224645.79319-23-stefanb@linux.vnet.ibm.com>
+ <20220126144326.ci646xkm7mjsqwci@wittgenstein>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20220126144326.ci646xkm7mjsqwci@wittgenstein>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: JSvjeTjvBRvl9ZF5RqZyKVPXK25sLyWG
+X-Proofpoint-ORIG-GUID: NmduSLxIcbmCfufW77-Gxcbl1eJOrh8X
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-26_09,2022-01-26_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 suspectscore=0 phishscore=0 mlxscore=0 spamscore=0
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2201110000 definitions=main-2201260131
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 26, 2022 at 3:35 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> A ceph user has reported that ceph is crashing with kernel NULL pointer
-> dereference. Following is the backtrace.
->
-> /proc/version: Linux version 5.16.2-arch1-1 (linux@archlinux) (gcc (GCC)
-> 11.1.0, GNU ld (GNU Binutils) 2.36.1) #1 SMP PREEMPT Thu, 20 Jan 2022
-> 16:18:29 +0000
-> distro / arch: Arch Linux / x86_64
-> SELinux is not enabled
-> ceph cluster version: 16.2.7 (dd0603118f56ab514f133c8d2e3adfc983942503)
->
-> relevant dmesg output:
-> [   30.947129] BUG: kernel NULL pointer dereference, address:
-> 0000000000000000
-> [   30.947206] #PF: supervisor read access in kernel mode
-> [   30.947258] #PF: error_code(0x0000) - not-present page
-> [   30.947310] PGD 0 P4D 0
-> [   30.947342] Oops: 0000 [#1] PREEMPT SMP PTI
-> [   30.947388] CPU: 5 PID: 778 Comm: touch Not tainted 5.16.2-arch1-1 #1
-> 86fbf2c313cc37a553d65deb81d98e9dcc2a3659
-> [   30.947486] Hardware name: Gigabyte Technology Co., Ltd. B365M
-> DS3H/B365M DS3H, BIOS F5 08/13/2019
-> [   30.947569] RIP: 0010:strlen+0x0/0x20
-> [   30.947616] Code: b6 07 38 d0 74 16 48 83 c7 01 84 c0 74 05 48 39 f7 75
-> ec 31 c0 31 d2 89 d6 89 d7 c3 48 89 f8 31 d2 89 d6 89 d7 c3 0
-> f 1f 40 00 <80> 3f 00 74 12 48 89 f8 48 83 c0 01 80 38 00 75 f7 48 29 f8 31
-> ff
-> [   30.947782] RSP: 0018:ffffa4ed80ffbbb8 EFLAGS: 00010246
-> [   30.947836] RAX: 0000000000000000 RBX: ffffa4ed80ffbc60 RCX:
-> 0000000000000000
-> [   30.947904] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
-> 0000000000000000
-> [   30.947971] RBP: ffff94b0d15c0ae0 R08: 0000000000000000 R09:
-> 0000000000000000
-> [   30.948040] R10: 0000000000000000 R11: 0000000000000000 R12:
-> 0000000000000000
-> [   30.948106] R13: 0000000000000001 R14: ffffa4ed80ffbc60 R15:
-> 0000000000000000
-> [   30.948174] FS:  00007fc7520f0740(0000) GS:ffff94b7ced40000(0000)
-> knlGS:0000000000000000
-> [   30.948252] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   30.948308] CR2: 0000000000000000 CR3: 0000000104a40001 CR4:
-> 00000000003706e0
-> [   30.948376] Call Trace:
-> [   30.948404]  <TASK>
-> [   30.948431]  ceph_security_init_secctx+0x7b/0x240 [ceph
-> 49f9c4b9bf5be8760f19f1747e26da33920bce4b]
-> [   30.948582]  ceph_atomic_open+0x51e/0x8a0 [ceph
-> 49f9c4b9bf5be8760f19f1747e26da33920bce4b]
-> [   30.948708]  ? get_cached_acl+0x4d/0xa0
-> [   30.948759]  path_openat+0x60d/0x1030
-> [   30.948809]  do_filp_open+0xa5/0x150
-> [   30.948859]  do_sys_openat2+0xc4/0x190
-> [   30.948904]  __x64_sys_openat+0x53/0xa0
-> [   30.948948]  do_syscall_64+0x5c/0x90
-> [   30.948989]  ? exc_page_fault+0x72/0x180
-> [   30.949034]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [   30.949091] RIP: 0033:0x7fc7521e25bb
-> [   30.950849] Code: 25 00 00 41 00 3d 00 00 41 00 74 4b 64 8b 04 25 18 00
-> 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 0
-> 0 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28 64 48 2b 14
-> 25
->
-> Core of the problem is that ceph checks for return code from
-> security_dentry_init_security() and if return code is 0, it assumes
-> everything is fine and continues to call strlen(name), which crashes.
->
-> Typically SELinux LSM returns 0 and sets name to "security.selinux" and
-> it is not a problem. Or if selinux is not compiled in or disabled, it
-> returns -EOPNOTSUP and ceph deals with it.
->
-> But somehow in this configuration, 0 is being returned and "name" is
-> not being initialized and that's creating the problem.
->
-> Our suspicion is that BPF LSM is registering a hook for
-> dentry_init_security() and returns hook default of 0.
->
-> LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,...)
->
-> I have not been able to reproduce it just by doing CONFIG_BPF_LSM=y.
-> Stephen has tested the patch though and confirms it solves the problem
-> for him.
->
-> dentry_init_security() is written in such a way that it expects only one
-> LSM to register the hook. Atleast that's the expectation with current code.
->
-> If another LSM returns a hook and returns default, it will simply return
-> 0 as of now and that will break ceph.
->
-> Hence, suggestion is that change semantics of this hook a bit. If there
-> are no LSMs or no LSM is taking ownership and initializing security context,
-> then return -EOPNOTSUP. Also allow at max one LSM to initialize security
-> context. This hook can't deal with multiple LSMs trying to init security
-> context. This patch implements this new behavior.
->
-> Reported-by: Stephen Muth <smuth4@gmail.com>
-> Tested-by: Stephen Muth <smuth4@gmail.com>
-> Suggested-by: Casey Schaufler <casey@schaufler-ca.com>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: <stable@vger.kernel.org> # 5.16.0
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  include/linux/lsm_hook_defs.h |    2 +-
->  security/security.c           |   15 +++++++++++++--
->  2 files changed, 14 insertions(+), 3 deletions(-)
 
-Thanks for putting this patch together Vivek.
+On 1/26/22 09:43, Christian Brauner wrote:
+> On Tue, Jan 25, 2022 at 05:46:44PM -0500, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Show the uid and gid values relative to the user namespace that is
+>> currently active. The effect of this changes is that when one displays
+>> the policy from the user namespace that originally set the policy,
+>> the same uid and gid values are shown in the policy as those that were
+>> used when the policy was set.
+> "Make sure that the uid and gid values associated with the relevant
+> ima policy are resolved in the user namespace of the opener of the
+> policy file."
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+I updated the text now to:
 
-> Index: redhat-linux/include/linux/lsm_hook_defs.h
-> ===================================================================
-> --- redhat-linux.orig/include/linux/lsm_hook_defs.h     2022-01-24 14:56:14.338030140 -0500
-> +++ redhat-linux/include/linux/lsm_hook_defs.h  2022-01-25 18:48:46.917496696 -0500
-> @@ -80,7 +80,7 @@ LSM_HOOK(int, 0, sb_clone_mnt_opts, cons
->          unsigned long *set_kern_flags)
->  LSM_HOOK(int, 0, move_mount, const struct path *from_path,
->          const struct path *to_path)
-> -LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,
-> +LSM_HOOK(int, -EOPNOTSUPP, dentry_init_security, struct dentry *dentry,
->          int mode, const struct qstr *name, const char **xattr_name,
->          void **ctx, u32 *ctxlen)
->  LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
-> Index: redhat-linux/security/security.c
-> ===================================================================
-> --- redhat-linux.orig/security/security.c       2022-01-25 18:46:59.166496696 -0500
-> +++ redhat-linux/security/security.c    2022-01-26 14:31:43.454568468 -0500
-> @@ -1048,8 +1048,19 @@ int security_dentry_init_security(struct
->                                   const char **xattr_name, void **ctx,
->                                   u32 *ctxlen)
->  {
-> -       return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
-> -                               name, xattr_name, ctx, ctxlen);
-> +       struct security_hook_list *hp;
-> +       int rc;
-> +
-> +       /*
-> +        * Only one module will provide a security context.
-> +        */
-> +       hlist_for_each_entry(hp, &security_hook_heads.dentry_init_security, list) {
-> +               rc = hp->hook.dentry_init_security(dentry, mode, name,
-> +                                                  xattr_name, ctx, ctxlen);
-> +               if (rc != LSM_RET_DEFAULT(dentry_init_security))
-> +                       return rc;
-> +       }
-> +       return LSM_RET_DEFAULT(dentry_init_security);
->  }
->  EXPORT_SYMBOL(security_dentry_init_security);
+Make sure that the uid and gid values associated with the relevant IMA
 
--- 
-paul-moore.com
+policy are resolved in the user namespace of the opener of the policy
+
+file. The effect of this changes is that when one displays the policy
+from the user namespace that originally set the policy, the same uid
+and gid values are shown in the policy as those that were used when the
+policy was set.
+
+>
+> is more correct. Also note, that by virtue of enforcing that securityfs
+> files can only ever be opened if the opener's userns is the same or an
+> ancestor of the userns the securityfs instance is mounted in we are
+> guaranteed that the uid and gid can be resolved. That's another way of
+> saying technically *_munged() isn't necessary but it is more correct
+> since we're crossing the user-kernel boundary.
+>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> ---
+>> v9:
+>>    - use seq_user_ns and from_k{g,u}id_munged()
+>> ---
+>>   security/integrity/ima/ima_policy.c | 19 +++++++++++++------
+>>   1 file changed, 13 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index 47f2d1b5d156..151f418036ee 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -2002,6 +2002,7 @@ static void ima_policy_show_appraise_algos(struct seq_file *m,
+>>   
+>>   int ima_policy_show(struct seq_file *m, void *v)
+>>   {
+>> +	struct user_namespace *user_ns = seq_user_ns(m);
+>>   	struct ima_rule_entry *entry = v;
+>>   	int i;
+>>   	char tbuf[64] = {0,};
+>> @@ -2087,7 +2088,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+>>   	}
+>>   
+>>   	if (entry->flags & IMA_UID) {
+>> -		snprintf(tbuf, sizeof(tbuf), "%d", __kuid_val(entry->uid));
+>> +		snprintf(tbuf, sizeof(tbuf),
+>> +			 "%d", from_kuid_munged(user_ns, entry->uid));
+>>   		if (entry->uid_op == &uid_gt)
+>>   			seq_printf(m, pt(Opt_uid_gt), tbuf);
+>>   		else if (entry->uid_op == &uid_lt)
+>> @@ -2098,7 +2100,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+>>   	}
+>>   
+>>   	if (entry->flags & IMA_EUID) {
+>> -		snprintf(tbuf, sizeof(tbuf), "%d", __kuid_val(entry->uid));
+>> +		snprintf(tbuf, sizeof(tbuf),
+>> +			 "%d", from_kuid_munged(user_ns, entry->uid));
+>>   		if (entry->uid_op == &uid_gt)
+>>   			seq_printf(m, pt(Opt_euid_gt), tbuf);
+>>   		else if (entry->uid_op == &uid_lt)
+>> @@ -2109,7 +2112,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+>>   	}
+>>   
+>>   	if (entry->flags & IMA_GID) {
+>> -		snprintf(tbuf, sizeof(tbuf), "%d", __kgid_val(entry->gid));
+>> +		snprintf(tbuf, sizeof(tbuf),
+>> +			 "%d", from_kgid_munged(user_ns, entry->gid));
+>>   		if (entry->gid_op == &gid_gt)
+>>   			seq_printf(m, pt(Opt_gid_gt), tbuf);
+>>   		else if (entry->gid_op == &gid_lt)
+>> @@ -2120,7 +2124,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+>>   	}
+>>   
+>>   	if (entry->flags & IMA_EGID) {
+>> -		snprintf(tbuf, sizeof(tbuf), "%d", __kgid_val(entry->gid));
+>> +		snprintf(tbuf, sizeof(tbuf),
+>> +			 "%d", from_kgid_munged(user_ns, entry->gid));
+>>   		if (entry->gid_op == &gid_gt)
+>>   			seq_printf(m, pt(Opt_egid_gt), tbuf);
+>>   		else if (entry->gid_op == &gid_lt)
+>> @@ -2131,7 +2136,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+>>   	}
+>>   
+>>   	if (entry->flags & IMA_FOWNER) {
+>> -		snprintf(tbuf, sizeof(tbuf), "%d", __kuid_val(entry->fowner));
+>> +		snprintf(tbuf, sizeof(tbuf),
+>> +			 "%d", from_kuid_munged(user_ns, entry->fowner));
+>>   		if (entry->fowner_op == &uid_gt)
+>>   			seq_printf(m, pt(Opt_fowner_gt), tbuf);
+>>   		else if (entry->fowner_op == &uid_lt)
+>> @@ -2142,7 +2148,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+>>   	}
+>>   
+>>   	if (entry->flags & IMA_FGROUP) {
+>> -		snprintf(tbuf, sizeof(tbuf), "%d", __kgid_val(entry->fgroup));
+>> +		snprintf(tbuf, sizeof(tbuf),
+>> +			 "%d", from_kgid_munged(user_ns, entry->fgroup));
+>>   		if (entry->fgroup_op == &gid_gt)
+>>   			seq_printf(m, pt(Opt_fgroup_gt), tbuf);
+>>   		else if (entry->fgroup_op == &gid_lt)
+>> -- 
+>> 2.31.1
+>>
+>>
