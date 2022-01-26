@@ -2,129 +2,179 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04062C2BA4C
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 17:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC344C63686
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 18:42:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243811AbiAZRgz (ORCPT
+        id S232544AbiAZSmR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jan 2022 12:36:55 -0500
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com ([66.163.189.89]:38891
-        "EHLO sonic306-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243717AbiAZRgy (ORCPT
+        Wed, 26 Jan 2022 13:42:17 -0500
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:23036 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229478AbiAZSmR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jan 2022 12:36:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1643218614; bh=X3Oha3albcBP2pYJoWrVNpGhwSbSqHt4dS8vkH2UO0Y=; h=Date:Subject:To:References:From:Cc:In-Reply-To:From:Subject:Reply-To; b=soQvJibuO1OVpJyUkqPe0TQG+WGxPkFFtEMlTYtGk+gVTUHuf5PTKf+IXD6tDcyo5frQCF93g9ThXirxiRv27fx1SVD1zuxqXLdJvUjFtl32Uj5qTwdgPbQ6x8AFJk2neA481E7f/38pEloj4nWVaMo8dv4RYbMmUIudMXkLxg2zo3j461xpw5hzbs1ORRx5t8gU4jB81I91QavYcqqmcBBS3iVU18qmQRzeFWAMpGAQSk9WqdnM2D59tAirHtlsi82RJZO2MH6s72NwL11uF/4TjlQ4XM4VzeYVMS6VfyvpRgAV2/TrpUtNAkH7er70SCE3ENMwF84oNXCQmBdm/w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1643218614; bh=c4QESCFRt7eKrtA9u14IdCxfh4210PwNRC+ojHW59xP=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=tb/ocP2szAzw8wE4OKZqbJwMzQsgKJXujwPX7kNChLebNn/VpsqJVa+vt8N4ZKxsaP20HWKtg37dIXUobIfZoG/uGRuLv/+87XcghKKw2gatipYhYcS8i1k44qFhp7MpWxZvdiaf2UiFX7s9z4P+J10M0t6j+aZ87iSj9fDZQyk2Pn3EWzF8Nfb9H6lcGDHSm7L8ZtIZ/r/NZG4SRN6Bbq5s5nDmXWVClYNfOcv4jioaIO7p0dqraQH4+1oIqf2UdUOJ1bftnneVqs0UuuV8TyFenTTBWlpJShdNppDZjSbOu0pGMykntfURCtPu5phfQRTT2gn5HulAkOwD+5DRZQ==
-X-YMail-OSG: SrB7SsQVM1kIjz0MskmPf1sVjxl78Z43muMqwFU3RzV8WBcC62Ioud5gwcyKldl
- KCbnD.7PRN6Y1akutKeVRLp2sYjwRggeeEUZf1weNF2NQdpvaeVEA_.nmHTe79udiECAV6eta4Li
- zeJhs.DNV8kLbT67AfbwA2rUUsw5_nX6bDBE2Om3Cixw6sPKNaCZsyHCWY0efxMEzVTwJpcrrwLW
- Ot88NerwS7Fg8KlrhyL_cHi6Vm0PzZsrI0i0BFziw1OMaWezjQMcGWC0v9NR4r4CYBaQYWUscP2K
- s5drM7shhmxay4YRoU0OEjR.8D6R9Y8v9HDkzg3gWy6q9_zozJL3kMZcZPre6KQSTLJNjPMp0Uhj
- .VOVmzXZMrunhJqBMvERTFQUHYLv1sfc0r.iceJ7O6kV55iTYLmQUBYq7h_0koI28ogoTdyPBqBD
- yX5AZkOhHwMqmk30D6jhV1evCCffbXdsLUeJ4cWdQ4y6ye858l2IygErVAIZMZIevt3ptN95AZAN
- i..3SRQRYYXjYTFZSn2IxOZIoXLrByfcD_cPuUoJ9LSG0gUPNl8uXorfuJO2Rk4.6JS..CWwV0zl
- bH08bu28JPK79a6JfyvUCLZpkzw8YcGE4A6BBT2jXJf6NDzQRGx39mWvfXNqzz_NgO7yVpIglc.p
- xIF4k83TSDwrp7eCKn.af2MVR53pz47OGOy2vYmuISlagO8nwK50DSRNgZLx7SWpdsuvxTP1TsdR
- NIpkOToRzH5f6p0adfKBzFxrlJHwPry9Wryscy.1q91.ObXshMDO3_s8q.ZgrzWFZ4h2nTGXjWeq
- qqlyYkSwOUvE_4BsdIRvPbaZkKGEo9KCnB94SZ.jU84VVmn2BEZXhG5LCI5l5ZEQsyLjqmTsRDU6
- AqQF1A3HzQL5XMOIC.RqsKIFzSbLlXxEVLpULRd11YmY64iQN9RzVkiSgmUfjxc6_euvTNZF6Zc.
- 2fXgkkfw48FQ6cvnoiFUUk30gLjh26Gi0amHlMMuX3VNf5vqXIRUsL9eOcHX0awpk3kN3EFtcw5d
- UkLCHWYyTgqNEBguInlHv8Bdty.dyaLKVTnX1tept2Txbr8.CWtUM0WFWeb1xMj2VP9lu31l0yvC
- zIJrhOtLzZfs1g0RsJ.HheJuK6SrzqtCEeyIYGd7JYn0.uLh.C0aU9yGMnFfrCSN3VZUf5tQynuf
- L33vFv4h_lTnZQSd9bZOfECbSMNMbjTW6JlcldNIVcYaO64nClIti2g1asqgpuurKqUZI3M5IBAB
- DDzQZku7woJsESxPzXSE7BuRytBOcZuFJdY1YLEKFPOMgiELsATDIsjK.gUFp1OtK1RTxNNKV5Vs
- HVWEyvgXU908R3fSzu78wDRhe0LyrcQkydXsk7FKBwLpby7IkOJTdarV_930MSiNuqadHw3c1ZlM
- xI5zr_2tAuISoTrkF74qGJavXq5MYexw1oV9VFrS8vIs6q_ZjriEI5qpp2djU2_Md9bzh5jJsvy4
- RKtw_TlMT0QaA_WRZ1EoJZ2oMLDJ90ktHGqXNfwV2HhgVJRjZ4UNWgzTKA7vnakvWts0j02bErXL
- 7E7l1H9rmmgj4ECIQoYD_1EoTGpbZ8TougWb53yrWURfJYGwyNliUKKsoqWbhdXQIgo3Ltus8qC8
- 2fBRSti93dBHB13tr1ffO2ZQ4Lgwh4wGGYDLxEbvjvzmeNO4MCHxm6cX8sEK.SmLQBeHz.33k_nW
- mLZVFYbIkyFPa72isGRHXHRIY1SjD4C_k9y4_JmH9BYZQvP7tqksvisdq.b_RFaGkbSCWMM.OWnh
- _DFJCAGc1RIRDZciw5f1kxJH5BWKxYXgdXT4xhdDavzCE3WGlzgU85dFCkEJJOUQOFZqJPuNOZHz
- 3Vvzl0EQJzAW0RGXJ4ytJJaQYdDERNv2sq0q0_z1lI7Xp_9wQPd2fkUhbEZzTRhgbD72I9q4f1Ej
- OBs977X39AxPVeNDVDsmqIRUN_KQoKSDQu2MDzBes7j7Vr7IFIu8zkdba0HdXEHZK65o6moyfjUy
- V1DUEnhEov3zN_XJ.1S.6Hael8hQoAOV3XIueIrtP50YL3Gs8BuM02Tk8Mi0Q1hjVX32VlRCuhru
- 8bKLBMc3MX1mgwSQME4RbMXPZ..ZI.blNmQ3TtCjV.ZmInReyRV87BZ3snyU3qQwQwouEqKTp_kU
- 743myLvfO3XDq4F5wOMc7KKeZL_o6gtkJ.IJHypY2KyWXKBqIkQzfeZKRt99.EL5fJT95svj4DHt
- CZZx8OgQeSK355xoX_Unh
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 26 Jan 2022 17:36:54 +0000
-Received: by kubenode525.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 5ae23319dcf69f05dead9935fcced5bd;
-          Wed, 26 Jan 2022 17:36:50 +0000 (UTC)
-Message-ID: <80224b36-52ac-e43b-f26d-a160e2887e7f@schaufler-ca.com>
-Date:   Wed, 26 Jan 2022 09:36:49 -0800
+        Wed, 26 Jan 2022 13:42:17 -0500
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20QIfNxY002958;
+        Wed, 26 Jan 2022 18:42:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : content-transfer-encoding : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=V26pdmaJFpOu6REntK2SAL/N82/O1GrGJMt9xkdv5DA=;
+ b=khYHf5bR6wOov+KNHtz/eQ+G03i7rQpa9l9VPlivw2L0QFJhg6ip94hj+x0dptoqKrz1
+ Af+d5b9bKgsiO2hCr0fxqxwr2XlOzt4bpdqYSV0+jPJ4rhFvhU7wUAjXjapOAeUnjbFE
+ d0t+/miyj+hWj3z9ef9q6ftGP8ONh/CkyAeyeZJU2XoZniaoGjf8Ea7JeiSMpUwCp9yq
+ EyAfwcK6VDbBjShGZUKy17E1jvLH0m+Lc0UDGUIvbLbxG5T2WKgqZ6E2LnHZsGg5X8y2
+ vi4gkrPu2lJRgYilULUbQ0WptZrNTyQz6dbNnCuxEkywLoX1Hs0vDoNC7zUDak0l1EEE OQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3dswh9q9mf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Jan 2022 18:42:06 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20QIQola104631;
+        Wed, 26 Jan 2022 18:42:05 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
+        by aserp3020.oracle.com with ESMTP id 3dtax8xy4h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Jan 2022 18:42:05 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k2VifCezt7X5EwuEyEgNuQcQXCPtnc2XF2aUPqjkPLEHca3Kvj0zp63zD65JcCDUhQoB5X6fBddVouVah9k+zHxD+jd/q67/kbe1F65wQM2WvqQZdB4Z9V8X8pd+pi8GnTyC7WDViAKDZh9n9pv9tCW4eRpnLef8rU1sh0R+vKnOlp3WXM3Gh+cSR7/stzZuU3EHlFY3GpUmTESrpFRkCramw9jqNNuLuzhXScjZcXczNPpXoiIJWCSc+cXN5oqPlesBrGLeObxtLPbzVck1HUsgzN/Sk/nBdXi7CX0d1k/pqGL8nTbThpAikBzJ4kEpszEbP6VxYP87HunS/pA9zQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V26pdmaJFpOu6REntK2SAL/N82/O1GrGJMt9xkdv5DA=;
+ b=oLryhKShiIk5wl9po8yjeYKTSARQhgbpbrSh/ImqqJ3yVzixeWpGecPZdg/9fBQ6yVDbKLiZhtRs+VZFge3PnPbQ4QsN5paBSMlqHx2EwYiAu6pKFWaQffMF0EUtFCNLaFZbx32kr/2u/tgcMdrf2fCRQzZ9jlbAN3O2e5BNuKz15MH5n6AEzzYqhPfzsMYbKExcYDdb6pztxaHB7jVIB0wqd1b+zsQHdQINqXbQr0zo+ragGUxR0tOBUJy7yaHipl12DBf5LWNEjtq022bO2GxXPGjGgk1xr39WgFDAIAgms8mdKuVHCrnQdHvXSDJ+ysDaI5Y2L+XWkTs+KRO8AA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V26pdmaJFpOu6REntK2SAL/N82/O1GrGJMt9xkdv5DA=;
+ b=cTv2RP6nkeeu8DGU1PBSFx5G0uK57fFysLBRYZSbpRicbg0JRtC+p7HVl+dVpEBP25y5THRvYAN7DRVjq1CJJT4+pXplzEjOPz8dTU/nzszWsR9bcW/34w9s9rb6EpVa+5eVCOvGkYC+M9GscdCHB6QGkZOxSIgvhaCoSMdic90=
+Received: from SA2PR10MB4665.namprd10.prod.outlook.com (2603:10b6:806:fb::17)
+ by BN6PR10MB1474.namprd10.prod.outlook.com (2603:10b6:404:45::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15; Wed, 26 Jan
+ 2022 18:42:03 +0000
+Received: from SA2PR10MB4665.namprd10.prod.outlook.com
+ ([fe80::5c:9564:93b9:5654]) by SA2PR10MB4665.namprd10.prod.outlook.com
+ ([fe80::5c:9564:93b9:5654%5]) with mapi id 15.20.4909.019; Wed, 26 Jan 2022
+ 18:42:02 +0000
+From:   Dave Kleikamp <dave.kleikamp@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Sumit Garg <sumit.garg@linaro.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] KEYS: trusted: Avoid calling null function trusted_key_exit
+Date:   Wed, 26 Jan 2022 12:41:55 -0600
+Message-Id: <20220126184155.220814-1-dave.kleikamp@oracle.com>
+X-Mailer: git-send-email 2.35.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SN4PR0401CA0007.namprd04.prod.outlook.com
+ (2603:10b6:803:21::17) To SA2PR10MB4665.namprd10.prod.outlook.com
+ (2603:10b6:806:fb::17)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: Custom LSM: getting a null pointer dereference when trying to
- access a task security blob
-Content-Language: en-US
-To:     Denis Obrezkov <denisobrezkov@gmail.com>,
-        linux-security-module@vger.kernel.org
-References: <c4cbfdb3-f904-b587-d407-268650e6565d@gmail.com>
- <028166ec-0921-977e-8990-4134b5920cad@schaufler-ca.com>
- <882d62bb-1cc2-0019-cc8c-cdacea31e8d3@gmail.com>
- <15530231-a608-8299-7dd1-a8b0155e5e29@gmail.com>
- <82883631-9eb1-2660-afe3-e7308ef1ed45@schaufler-ca.com>
- <9db2a56a-2663-41bf-caf3-5fef2ef7c577@gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <9db2a56a-2663-41bf-caf3-5fef2ef7c577@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.19615 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b650bedb-73ab-41dc-78ae-08d9e0fb8b0c
+X-MS-TrafficTypeDiagnostic: BN6PR10MB1474:EE_
+X-Microsoft-Antispam-PRVS: <BN6PR10MB1474DF2E0E3125B232D32E7687209@BN6PR10MB1474.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:758;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: EfKNys9UDW5cxEgH+c+LSOKfhMXZcK+HXvnZCkZ2tRo0PKKEnE1s0DWeLdelv2jN6zkvy60nU5nMM4oKIg94e6K2v19SYgMVx2szKK3nHJorTU3NKCZaeKMolX0qx8IIOGLqruJBpXSH4fi3+9eCmczhQjRudBf9H6rMSsZxvcFqQpZLF9qVYPGGQzJphakf6lHIQUatLR6HDs6H+tVMSJ8+Ufv2Dv6YrGeGNOTKw1vsurN+PqKmgz0DCnVAKtowaO3HtGiCO6wC96MkvybnVZTfk2pB1jpoWgg4xURNXtTEtpZ2GNVHqAKyM8b8VWootx3qTLtZU1cXfIuc4zWcCjvIjdTgnHzdI199k13kVCSDAM8hpgIBHhXPCoBRkMuWYnQ0D8yA1VYQpEMTp/T4Z1B0rTfBZpZU7Im5wL4d5aB9j7c8oYnqOEe9xv73jIs20mwsDy5JpJEWCy002BCXH93GYY5D2CO2W3QnBqbtYQPBRwj7epoxtdgUYvId/jcZQgxgyGzfyqpNCWgYUDfDkOFF1IqfRRTkkZkNGdycbivmWNm+ZeKGUIT6K2r3FU00IoZ5+6QCkULD0O8fFyZt+s859pCusQKaW4fmXHYqqMoxfLXVbLI65jltLnSZy6Gj0yJiiDLEedb1tElPmU1GNvQXxvEuIHTNocJwhMW6t0T2YaFMWGQi64q1DCt9tWnG4I9VhhksvTjoxh0Prp2Yag==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA2PR10MB4665.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(7416002)(5660300002)(44832011)(4326008)(52116002)(6916009)(508600001)(54906003)(6666004)(6512007)(316002)(6506007)(8676002)(83380400001)(38350700002)(2906002)(66556008)(26005)(186003)(1076003)(2616005)(8936002)(66946007)(66476007)(6486002)(36756003)(86362001)(38100700002)(20210929001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5PKAGwIpnDARXfEu/yS14R87vJnC5jI3Info2Gp+EMJ9XR9I5uqm5jPioKOj?=
+ =?us-ascii?Q?NOArOtuVkxfp66ii+T4bq6iDUj2jh676oAx3d4O5dAQJmUwnTfTcbsHpQ07s?=
+ =?us-ascii?Q?JCIEdPobnpdCEtpCUX4SMegJb7WWmkuG/8OqjJ5R/q7dNsJWmPNn6MFDzcbZ?=
+ =?us-ascii?Q?JRw8J16t6P0CPFZYLG5o5IwhZ23rKgTrAkBW2eYheY1JXGu6n7zEHn2mzjmI?=
+ =?us-ascii?Q?7vB0IZvEYoVKylTtsUy951ZvFRgO91APf02flcEbieX5JCh+qC6DmeE2Hk9y?=
+ =?us-ascii?Q?nv9sWxs8jAOUX+yIH6x7TbNI4swoZOHDYLWm/PoeHqf5bVLPw4h/LhpYzeDk?=
+ =?us-ascii?Q?wV+qoBygipFaSl5O37tbUumfp9CSndFMsafHBcL86iQZwpnBBSnhEF4ov9EV?=
+ =?us-ascii?Q?cJeYjYfkXg/OLKocTVhfNrnIOGwdiYQD5FKgmS4DE7Lqi76IzTbJiHB4ljpb?=
+ =?us-ascii?Q?28ft4D+nzt8pnfeCvq8rIjmT7Trqf2NKAJPKpElJ4MRyrkwBZcgFAcviCDky?=
+ =?us-ascii?Q?s2hwTBGf0zWJpE3kUAzurNGu0IyqcRQaZw+hNQ9kdJ3eDrdOOA2JSp0U7kiJ?=
+ =?us-ascii?Q?qzArz5Hb53Wev9FMPCSfk55UoFUyk7pPxeVx2NnWV4mBub4WcWLRnBTymBWx?=
+ =?us-ascii?Q?XWeTt5/mxCLwkKiLQ1mxew49JSJMIKFv/SIksnDPISNntO3+8R0Tlzd75MbQ?=
+ =?us-ascii?Q?rQZozk/NCx1+GsxnMoDywMmosBl9xVfcNYj4N/RZCf7A5iDtwS9sXXpzwcDb?=
+ =?us-ascii?Q?E8YTh26Tmed4+uiFcqu0HWcezA+0BErN2y2+mlyI0pQqCWwFuc0/2pnTkmuS?=
+ =?us-ascii?Q?+9eFGY+pNUUbSoCcmMxrEmO4MCyxQGjwPbC+jYuU2+aCfrmJCwciMwq/YR/G?=
+ =?us-ascii?Q?qLreF2bYYNt/fQykkVdPwatI/FwoGoZmGsrm1gF1ZZRuNsI9u5WHeX0pxvhj?=
+ =?us-ascii?Q?TcOndnXPu4l4IMUnoy4Ohu5A9Y7dj6jyXJgUefmERr+9t+AspzTH0rW+4IDY?=
+ =?us-ascii?Q?f9myaV8LWz8DzPW98N1TRG6YlrGeAoW3xSoXzthQuEQaT3kK+PX5gQP8PZZR?=
+ =?us-ascii?Q?y22zSnWoBbowt8pSh4nuR9keQ6X8MrofgLRTBwxwdqEbalMSdAoZgf8/zV75?=
+ =?us-ascii?Q?HZEPxN2/C5o6a2vVvFrWeIzKnATlsSo+kMz0NjfN+AWqb6oWAtcrxlZTqJUg?=
+ =?us-ascii?Q?4eOg/roQxfAmiYt2PoBgduuhLEvW+rundSNcDVndsRyfDuwVUzxXFeVwlbmP?=
+ =?us-ascii?Q?hL0HjRStudca5Z+NqhiXJ6S1OYNioX/81rPmBuEs4ikxIV0ZvSKY3UnTs2ef?=
+ =?us-ascii?Q?4dLo8+WIqRlHFMG+A0B2JOSeRWiacNW2CZNQBtpbAof5cb6ekuZ1KWq7VBdl?=
+ =?us-ascii?Q?KR5Lw400oG3tmKfk69fIPrB8hd+fqziOXyAqe48TyJF5k428HLYTKlJekJbR?=
+ =?us-ascii?Q?V2o2nd5YyuZXPAypmv+EpHiCGE3jypY1wLzQbybmDvnnOUjwgU8BfXeC4rXK?=
+ =?us-ascii?Q?DHYJo1pyxLpo4AVn3ldq1JlXeHqBEJzstA/c3ecQF7KanHBazt1ptRUtX6JX?=
+ =?us-ascii?Q?AXmOU2LNkyj5jNqRiO8p/cswWYdfvH1PMq24S7I78RGa4wngbjyE0llJ76qZ?=
+ =?us-ascii?Q?XgC9NOXXlDPNXEUPWHDfO0fisrDcEUyuN4YUpwD5HRlSP8cShgHsTb3RewZ6?=
+ =?us-ascii?Q?ifFltw=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b650bedb-73ab-41dc-78ae-08d9e0fb8b0c
+X-MS-Exchange-CrossTenant-AuthSource: SA2PR10MB4665.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2022 18:42:02.7335
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YubJ6jnMD/0ihNjUadwlhxGT+2Pm8g5MybF151RBbgqCZJFU09lyqxTqFhj/7t9DlroM6FXUGjzCBx4/LG2O/JpU6JQ6zASym56FJFmWUbA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR10MB1474
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10239 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 mlxscore=0
+ phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
+ definitions=main-2201260112
+X-Proofpoint-ORIG-GUID: low1Ae3vaR5lbdRn8mQ-CuySEK2zgA8l
+X-Proofpoint-GUID: low1Ae3vaR5lbdRn8mQ-CuySEK2zgA8l
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/24/2022 1:51 PM, Denis Obrezkov wrote:
->> I'm curious about the value provided by KeyLock.
->>
-> disclaimer: it's mostly for educational purposes, a part of my phd studies.
->
-> The main idea behind KeyLock is to be intuitive for an end-user. So, a
-> user should be able to attach "lock" labels to files (objects). A file
-> security context might look like: "label1(rw), label2(wx)"
-> Also, a user should be able to attach "key" labels to tasks (subjects).
-> So, the context of a task might look: "label5(r), label2(xt)"
->
-> A subject will have access to an object if it has all the keys for all
-> the locks:
->         Task (subj)     |     File (obj)         | Access provided
-> -----------------------------------------------------------------------
->   lbl1(rw),lbl2(rx)     |    lbl1(rwx),lbl2(rwx) |  yes: r
->   lbl1(rw),lbl2(rwx)    |    lbl1(wx),lbl2(r)    |  no (see masks)
->   lbl1(rwx),lbl3(rwx)   |    lbl1(rwx),lbl2(rwx) |  no (no 'lbl2' key)
->
-> As you can see, actions like r, w, x are also accounted. So, firstly, in
-> order to provide access we should:
-> 1. check that all "locks" have corresponding "keys"
-> 2. logically summarize all permissions for each "key-lock" pair:
-> from the first example above
-> lbl1(rw) + lbl1(rwx) -> rw
-> lbl2(rx) + lbl2(rwx) -> rx
-> rw + rx -> r
->
-> So, with that system we can get rig of a rules file. Also, there is a
-> chance that it would be easier to use for non-IT people.
+If one loads and unloads the trusted module, trusted_key_exit can be
+NULL. Call it through static_call_cond() to avoid a kernel trap.
 
-You may want to have a closer look at AppArmor before you go too much
-further. One of the most significant usage issues with Smack and SELinux
-is the curious relationship between filesystem objects and pathnames.
-Your approach looks interesting as far as it goes, but to be useful
-you might want to address the age old problem of what happens when
-/etc/passwd is modified by copy+replace.
+Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
 
-> P.S. I know that it is possible to do similar things in SMACK, but for
-> educational purposes I decided to implement it in kernel code.
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Cc: James Bottomley <jejb@linux.ibm.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: stable@vger.kernel.org
+---
+ security/keys/trusted-keys/trusted_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Smack and SELinux are designed to enforce policy on all objects.
-There could well be a place for a system that has a different
-approach.
-
-> P.P.S. I tried to do it using SELinux and its policy languages but it
-> was too complicated for me.
-
-Yes, the granularity gremlins got hold of SELinux in about 2005 and
-have never looked back. There are people who write policy, and who
-say it's not hard, but all I can think is that their minds work differently
-from mine. That, or they're just smarter than I.
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index d5c891d8d353..8c14e04e2112 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -351,7 +351,7 @@ static int __init init_trusted(void)
+ 
+ static void __exit cleanup_trusted(void)
+ {
+-	static_call(trusted_key_exit)();
++	static_call_cond(trusted_key_exit)();
+ }
+ 
+ late_initcall(init_trusted);
+-- 
+2.35.0
 
