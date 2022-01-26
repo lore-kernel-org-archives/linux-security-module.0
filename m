@@ -2,148 +2,129 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EF3C28CF5
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 16:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04062C2BA4C
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 17:36:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243312AbiAZQw5 (ORCPT
+        id S243811AbiAZRgz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jan 2022 11:52:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17024 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236507AbiAZQwz (ORCPT
+        Wed, 26 Jan 2022 12:36:55 -0500
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com ([66.163.189.89]:38891
+        "EHLO sonic306-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243717AbiAZRgy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Jan 2022 11:52:55 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20QGNe1v006702;
-        Wed, 26 Jan 2022 16:52:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=7u2u3rFW02ZkxIyF7TLdzwITK6HH45z2mzepZDeo0sY=;
- b=gJjZyGiz/GKR33cQFKdbUYttJ/6Tr5/qWFGyb8j2QKN7v8YvBZ0kgVlswJL368WOsbc/
- XWixuNmLi4C65mfkyX3npj/IMuUG3HZrmX25xd0WzapsszZccZ7wHHzb5jKI0UvF9jhI
- PnOAxoJYTj/jASpuvwPopAWtfDLU4nKmXIg2NQjYkUhqWZq3WyfCU5tL9S0Crlq+yFc6
- rfRSLou1CuWF2/ol//ybm0lfqiz9nfn7nkZ+W3Z9zMuNERJMloT4PYpqZc20PJeT04T2
- wPqHnct2Wwl3S2VByPaez/2hNe3v73ZTBdETEywrJrN9YeLtRjZR1hfmsT59yrWytRyZ jw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3du8qy2cv3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jan 2022 16:52:40 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20QGPGuQ011482;
-        Wed, 26 Jan 2022 16:52:39 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3du8qy2cuj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jan 2022 16:52:39 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20QGi0T4031038;
-        Wed, 26 Jan 2022 16:52:38 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma01wdc.us.ibm.com with ESMTP id 3dr9jax4aq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jan 2022 16:52:38 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20QGqap425100614
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jan 2022 16:52:36 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9A8D0AC064;
-        Wed, 26 Jan 2022 16:52:36 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 32602AC062;
-        Wed, 26 Jan 2022 16:52:35 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 26 Jan 2022 16:52:35 +0000 (GMT)
-Message-ID: <d41434d2-150a-1e4e-8b40-73fe5c834e97@linux.ibm.com>
-Date:   Wed, 26 Jan 2022 11:52:35 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v9 00/23] ima: Namespace IMA with audit support in IMA-ns
-Content-Language: en-US
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bMuTzmAyMNb2kEiMQJ5fEoCjDKWarK1-
-X-Proofpoint-GUID: fphgyMOFc0ysuv6xAGaW4ohp4P7qTLgz
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Wed, 26 Jan 2022 12:36:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1643218614; bh=X3Oha3albcBP2pYJoWrVNpGhwSbSqHt4dS8vkH2UO0Y=; h=Date:Subject:To:References:From:Cc:In-Reply-To:From:Subject:Reply-To; b=soQvJibuO1OVpJyUkqPe0TQG+WGxPkFFtEMlTYtGk+gVTUHuf5PTKf+IXD6tDcyo5frQCF93g9ThXirxiRv27fx1SVD1zuxqXLdJvUjFtl32Uj5qTwdgPbQ6x8AFJk2neA481E7f/38pEloj4nWVaMo8dv4RYbMmUIudMXkLxg2zo3j461xpw5hzbs1ORRx5t8gU4jB81I91QavYcqqmcBBS3iVU18qmQRzeFWAMpGAQSk9WqdnM2D59tAirHtlsi82RJZO2MH6s72NwL11uF/4TjlQ4XM4VzeYVMS6VfyvpRgAV2/TrpUtNAkH7er70SCE3ENMwF84oNXCQmBdm/w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1643218614; bh=c4QESCFRt7eKrtA9u14IdCxfh4210PwNRC+ojHW59xP=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=tb/ocP2szAzw8wE4OKZqbJwMzQsgKJXujwPX7kNChLebNn/VpsqJVa+vt8N4ZKxsaP20HWKtg37dIXUobIfZoG/uGRuLv/+87XcghKKw2gatipYhYcS8i1k44qFhp7MpWxZvdiaf2UiFX7s9z4P+J10M0t6j+aZ87iSj9fDZQyk2Pn3EWzF8Nfb9H6lcGDHSm7L8ZtIZ/r/NZG4SRN6Bbq5s5nDmXWVClYNfOcv4jioaIO7p0dqraQH4+1oIqf2UdUOJ1bftnneVqs0UuuV8TyFenTTBWlpJShdNppDZjSbOu0pGMykntfURCtPu5phfQRTT2gn5HulAkOwD+5DRZQ==
+X-YMail-OSG: SrB7SsQVM1kIjz0MskmPf1sVjxl78Z43muMqwFU3RzV8WBcC62Ioud5gwcyKldl
+ KCbnD.7PRN6Y1akutKeVRLp2sYjwRggeeEUZf1weNF2NQdpvaeVEA_.nmHTe79udiECAV6eta4Li
+ zeJhs.DNV8kLbT67AfbwA2rUUsw5_nX6bDBE2Om3Cixw6sPKNaCZsyHCWY0efxMEzVTwJpcrrwLW
+ Ot88NerwS7Fg8KlrhyL_cHi6Vm0PzZsrI0i0BFziw1OMaWezjQMcGWC0v9NR4r4CYBaQYWUscP2K
+ s5drM7shhmxay4YRoU0OEjR.8D6R9Y8v9HDkzg3gWy6q9_zozJL3kMZcZPre6KQSTLJNjPMp0Uhj
+ .VOVmzXZMrunhJqBMvERTFQUHYLv1sfc0r.iceJ7O6kV55iTYLmQUBYq7h_0koI28ogoTdyPBqBD
+ yX5AZkOhHwMqmk30D6jhV1evCCffbXdsLUeJ4cWdQ4y6ye858l2IygErVAIZMZIevt3ptN95AZAN
+ i..3SRQRYYXjYTFZSn2IxOZIoXLrByfcD_cPuUoJ9LSG0gUPNl8uXorfuJO2Rk4.6JS..CWwV0zl
+ bH08bu28JPK79a6JfyvUCLZpkzw8YcGE4A6BBT2jXJf6NDzQRGx39mWvfXNqzz_NgO7yVpIglc.p
+ xIF4k83TSDwrp7eCKn.af2MVR53pz47OGOy2vYmuISlagO8nwK50DSRNgZLx7SWpdsuvxTP1TsdR
+ NIpkOToRzH5f6p0adfKBzFxrlJHwPry9Wryscy.1q91.ObXshMDO3_s8q.ZgrzWFZ4h2nTGXjWeq
+ qqlyYkSwOUvE_4BsdIRvPbaZkKGEo9KCnB94SZ.jU84VVmn2BEZXhG5LCI5l5ZEQsyLjqmTsRDU6
+ AqQF1A3HzQL5XMOIC.RqsKIFzSbLlXxEVLpULRd11YmY64iQN9RzVkiSgmUfjxc6_euvTNZF6Zc.
+ 2fXgkkfw48FQ6cvnoiFUUk30gLjh26Gi0amHlMMuX3VNf5vqXIRUsL9eOcHX0awpk3kN3EFtcw5d
+ UkLCHWYyTgqNEBguInlHv8Bdty.dyaLKVTnX1tept2Txbr8.CWtUM0WFWeb1xMj2VP9lu31l0yvC
+ zIJrhOtLzZfs1g0RsJ.HheJuK6SrzqtCEeyIYGd7JYn0.uLh.C0aU9yGMnFfrCSN3VZUf5tQynuf
+ L33vFv4h_lTnZQSd9bZOfECbSMNMbjTW6JlcldNIVcYaO64nClIti2g1asqgpuurKqUZI3M5IBAB
+ DDzQZku7woJsESxPzXSE7BuRytBOcZuFJdY1YLEKFPOMgiELsATDIsjK.gUFp1OtK1RTxNNKV5Vs
+ HVWEyvgXU908R3fSzu78wDRhe0LyrcQkydXsk7FKBwLpby7IkOJTdarV_930MSiNuqadHw3c1ZlM
+ xI5zr_2tAuISoTrkF74qGJavXq5MYexw1oV9VFrS8vIs6q_ZjriEI5qpp2djU2_Md9bzh5jJsvy4
+ RKtw_TlMT0QaA_WRZ1EoJZ2oMLDJ90ktHGqXNfwV2HhgVJRjZ4UNWgzTKA7vnakvWts0j02bErXL
+ 7E7l1H9rmmgj4ECIQoYD_1EoTGpbZ8TougWb53yrWURfJYGwyNliUKKsoqWbhdXQIgo3Ltus8qC8
+ 2fBRSti93dBHB13tr1ffO2ZQ4Lgwh4wGGYDLxEbvjvzmeNO4MCHxm6cX8sEK.SmLQBeHz.33k_nW
+ mLZVFYbIkyFPa72isGRHXHRIY1SjD4C_k9y4_JmH9BYZQvP7tqksvisdq.b_RFaGkbSCWMM.OWnh
+ _DFJCAGc1RIRDZciw5f1kxJH5BWKxYXgdXT4xhdDavzCE3WGlzgU85dFCkEJJOUQOFZqJPuNOZHz
+ 3Vvzl0EQJzAW0RGXJ4ytJJaQYdDERNv2sq0q0_z1lI7Xp_9wQPd2fkUhbEZzTRhgbD72I9q4f1Ej
+ OBs977X39AxPVeNDVDsmqIRUN_KQoKSDQu2MDzBes7j7Vr7IFIu8zkdba0HdXEHZK65o6moyfjUy
+ V1DUEnhEov3zN_XJ.1S.6Hael8hQoAOV3XIueIrtP50YL3Gs8BuM02Tk8Mi0Q1hjVX32VlRCuhru
+ 8bKLBMc3MX1mgwSQME4RbMXPZ..ZI.blNmQ3TtCjV.ZmInReyRV87BZ3snyU3qQwQwouEqKTp_kU
+ 743myLvfO3XDq4F5wOMc7KKeZL_o6gtkJ.IJHypY2KyWXKBqIkQzfeZKRt99.EL5fJT95svj4DHt
+ CZZx8OgQeSK355xoX_Unh
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 26 Jan 2022 17:36:54 +0000
+Received: by kubenode525.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 5ae23319dcf69f05dead9935fcced5bd;
+          Wed, 26 Jan 2022 17:36:50 +0000 (UTC)
+Message-ID: <80224b36-52ac-e43b-f26d-a160e2887e7f@schaufler-ca.com>
+Date:   Wed, 26 Jan 2022 09:36:49 -0800
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-26_05,2022-01-26_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 clxscore=1015 malwarescore=0 spamscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2201260101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: Custom LSM: getting a null pointer dereference when trying to
+ access a task security blob
+Content-Language: en-US
+To:     Denis Obrezkov <denisobrezkov@gmail.com>,
+        linux-security-module@vger.kernel.org
+References: <c4cbfdb3-f904-b587-d407-268650e6565d@gmail.com>
+ <028166ec-0921-977e-8990-4134b5920cad@schaufler-ca.com>
+ <882d62bb-1cc2-0019-cc8c-cdacea31e8d3@gmail.com>
+ <15530231-a608-8299-7dd1-a8b0155e5e29@gmail.com>
+ <82883631-9eb1-2660-afe3-e7308ef1ed45@schaufler-ca.com>
+ <9db2a56a-2663-41bf-caf3-5fef2ef7c577@gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <9db2a56a-2663-41bf-caf3-5fef2ef7c577@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.19615 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 1/25/22 17:46, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
+On 1/24/2022 1:51 PM, Denis Obrezkov wrote:
+>> I'm curious about the value provided by KeyLock.
+>>
+> disclaimer: it's mostly for educational purposes, a part of my phd studies.
 >
-> The goal of this series of patches is to start with the namespacing of
-> IMA and support auditing within an IMA namespace (IMA-ns) as the first
-> step.
-[...]
+> The main idea behind KeyLock is to be intuitive for an end-user. So, a
+> user should be able to attach "lock" labels to files (objects). A file
+> security context might look like: "label1(rw), label2(wx)"
+> Also, a user should be able to attach "key" labels to tasks (subjects).
+> So, the context of a task might look: "label5(r), label2(xt)"
 >
+> A subject will have access to an object if it has all the keys for all
+> the locks:
+>         Task (subj)     |     File (obj)         | Access provided
+> -----------------------------------------------------------------------
+>   lbl1(rw),lbl2(rx)     |    lbl1(rwx),lbl2(rwx) |  yes: r
+>   lbl1(rw),lbl2(rwx)    |    lbl1(wx),lbl2(r)    |  no (see masks)
+>   lbl1(rwx),lbl3(rwx)   |    lbl1(rwx),lbl2(rwx) |  no (no 'lbl2' key)
 >
-> My tree with these patches is here:
+> As you can see, actions like r, w, x are also accounted. So, firstly, in
+> order to provide access we should:
+> 1. check that all "locks" have corresponding "keys"
+> 2. logically summarize all permissions for each "key-lock" pair:
+> from the first example above
+> lbl1(rw) + lbl1(rwx) -> rw
+> lbl2(rx) + lbl2(rwx) -> rx
+> rw + rx -> r
 >
-> git fetch https://github.com/stefanberger/linux-ima-namespaces v5.16+imans.v9.posted
+> So, with that system we can get rig of a rules file. Also, there is a
+> chance that it would be easier to use for non-IT people.
 
-Thanks a lot for the first round of Ack's, Christian. I haven't looked 
-through all the comments, yet, though.
+You may want to have a closer look at AppArmor before you go too much
+further. One of the most significant usage issues with Smack and SELinux
+is the curious relationship between filesystem objects and pathnames.
+Your approach looks interesting as far as it goes, but to be useful
+you might want to address the age old problem of what happens when
+/etc/passwd is modified by copy+replace.
 
-If one pulls this branch one will see that there's a directory STAGE3. 
-This is where I have been storing patches that explore how deep the can 
-is that we are opening here. So yeah, it's pretty deep... In my latest 
-branch I now have 40 patches beyond what we have here that add IMA 
--measurement support, inheritance of hash algo and IMA template from 
-parent to child, and IMA-appraisal to the IMA namespaces but it doesn't 
-tackle yet all of the issues. At some point it pulls in integrity and 
-EVM for namespacing as well... All 'dimensions of this problem' look 
-good but the patches there are not as clean as we have them here right 
-now. So considering the depth of the problem this may take a while...
+> P.S. I know that it is possible to do similar things in SMACK, but for
+> educational purposes I decided to implement it in kernel code.
 
-I also have a test suite just for IMA namespacing that tests IMA-audit 
-in IMA-ns and these upcoming aspects and try to test a lot of things 
-with running many namespace in parallel to test the locking. I run 
-certain tests with up to 1920 namespaces concurrently and so far it's 
-been good, especially with the lock groups from v9 18/23. So don't shake 
-that tree there too hard.
+Smack and SELinux are designed to enforce policy on all objects.
+There could well be a place for a system that has a different
+approach.
 
-https://github.com/stefanberger/ima-namespaces-tests
+> P.P.S. I tried to do it using SELinux and its policy languages but it
+> was too complicated for me.
 
-The test suite should be able to skip any tests for which there's no 
-support in Linux. So with this series applied the audit related tests 
-should all work.
-
-You can check out the test suite but you may need to move along with my 
-Linux patch branches as I update the test suite. The problem is of 
-course that design changes in Linux patches affect the test suite. So 
-this may cause hiccups. And I have been using forced-updates to solve 
-this issue... The tests have been working on Fedora 34 x86 and ppc64. 
-The unshare tool on Ubuntu 20.04 seems to be too old to run certain 
-tests correctly.
-
-Cheers!
-
-    Stefan
-
+Yes, the granularity gremlins got hold of SELinux in about 2005 and
+have never looked back. There are people who write policy, and who
+say it's not hard, but all I can think is that their minds work differently
+from mine. That, or they're just smarter than I.
 
