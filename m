@@ -2,15 +2,15 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC79C63684
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 09:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73291C28CF5
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Jan 2022 09:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239385AbiAZJjw (ORCPT
+        id S239407AbiAZJjz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Jan 2022 04:39:52 -0500
-Received: from mga11.intel.com ([192.55.52.93]:26594 "EHLO mga11.intel.com"
+        Wed, 26 Jan 2022 04:39:55 -0500
+Received: from mga11.intel.com ([192.55.52.93]:26605 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239250AbiAZJjj (ORCPT
+        id S239281AbiAZJjj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 26 Jan 2022 04:39:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -18,21 +18,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1643189979; x=1674725979;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=uSjb9jgi2kMH0L+z03QNcdQ/wneGQJQTtAxcISB5aeM=;
-  b=DqaF8dyXl4X+bARyr0yHI/LYp+iPeaSa7p9WqCRn2hslpTiXOZ6CPm0d
-   AMUs0Zoh/pI2su2Xw7wiQLiK+6yyLaYujluYUEGNtEd2M0s/V7Q3kNZyt
-   c3miJZxCVN6AaQ3/PkzFbcfB3VibTgLLwybTWOw9m8NSyrMpNVC6uS4Iw
-   sRzoE/AakgaLI/kJE7o+8NsylxweV0tVvj9w69uLR6cwhC93GrIl4lhDy
-   1fX5X3yZLJpygkYVg7HUT1G9mtRlHHgPTi/LoCuAjcmO8y3GmeNTHIfSF
-   XlgQbpGrCZnEtOU5+74DW+QFwsGraUJsCLIuxRdVbIq6gXxkyMLmYFg0o
+  bh=KcRtycUl4lDfGh110lR4XASfjxvG1FP1xhGR1aDDOAA=;
+  b=dzDcJHul1ERWMAXInc7mCYqO/OtfydXH71bwwKDrKgFXTdbbYq/BS0uQ
+   5MXU9Yo5tC88ibxVWKmi1Zy8W8/phJNOZE+s0IRS285Nan+qPhSpG1/gu
+   9CpMoO2vwRFgSsKwxZfRNGSzk+B8yo21ZkynCy5xMSqb48ikcbSoECMPh
+   YNhhCHyQ1uhNKWK9GpQmPLj8RgE+df1vG2I7yNMkvv0LkKHCMURFD8EQH
+   +5XotoVOvLynbFlVx1I/w6SpYg/H8d4igv9ggoDH9xH9azfqKCEvl/D83
+   4HfGY28KI1yPN6gReSzUJUHjW07g7/r2todelJgghBEIpOo2aVAgEt/By
    Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10238"; a="244114635"
+X-IronPort-AV: E=McAfee;i="6200,9189,10238"; a="244114638"
 X-IronPort-AV: E=Sophos;i="5.88,317,1635231600"; 
-   d="scan'208";a="244114635"
+   d="scan'208";a="244114638"
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
   by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2022 01:39:31 -0800
 X-IronPort-AV: E=Sophos;i="5.88,317,1635231600"; 
-   d="scan'208";a="477433103"
+   d="scan'208";a="477433109"
 Received: from lucas-s2600cw.jf.intel.com ([10.165.21.202])
   by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2022 01:39:30 -0800
 From:   Lucas De Marchi <lucas.demarchi@intel.com>
@@ -40,7 +40,8 @@ To:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-security-module@vger.kernel.org,
         nouveau@lists.freedesktop.org, netdev@vger.kernel.org
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
@@ -64,13 +65,12 @@ Cc:     Alex Deucher <alexander.deucher@amd.com>,
         Raju Rangoju <rajur@chelsio.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Vishal Kulkarni <vishal@chelsio.com>
-Subject: [PATCH v2 08/11] drm/gem: Sort includes alphabetically
-Date:   Wed, 26 Jan 2022 01:39:48 -0800
-Message-Id: <20220126093951.1470898-9-lucas.demarchi@intel.com>
+Subject: [PATCH v2 10/11] tomoyo: Use str_yes_no()
+Date:   Wed, 26 Jan 2022 01:39:50 -0800
+Message-Id: <20220126093951.1470898-11-lucas.demarchi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220126093951.1470898-1-lucas.demarchi@intel.com>
 References: <20220126093951.1470898-1-lucas.demarchi@intel.com>
@@ -79,49 +79,93 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Sort includes alphabetically so it's easier to add/remove includes and
-know when that is needed.
+Remove the local yesno() implementation and adopt the str_yes_no() from
+linux/string_helpers.h.
 
 Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- drivers/gpu/drm/drm_gem.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ security/tomoyo/audit.c  |  2 +-
+ security/tomoyo/common.c | 19 +++++--------------
+ security/tomoyo/common.h |  1 -
+ 3 files changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 4dcdec6487bb..21631c22b374 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -25,20 +25,20 @@
+diff --git a/security/tomoyo/audit.c b/security/tomoyo/audit.c
+index d79bf07e16be..023bedd9dfa3 100644
+--- a/security/tomoyo/audit.c
++++ b/security/tomoyo/audit.c
+@@ -166,7 +166,7 @@ static char *tomoyo_print_header(struct tomoyo_request_info *r)
+ 		       "#%04u/%02u/%02u %02u:%02u:%02u# profile=%u mode=%s granted=%s (global-pid=%u) task={ pid=%u ppid=%u uid=%u gid=%u euid=%u egid=%u suid=%u sgid=%u fsuid=%u fsgid=%u }",
+ 		       stamp.year, stamp.month, stamp.day, stamp.hour,
+ 		       stamp.min, stamp.sec, r->profile, tomoyo_mode[r->mode],
+-		       tomoyo_yesno(r->granted), gpid, tomoyo_sys_getpid(),
++		       str_yes_no(r->granted), gpid, tomoyo_sys_getpid(),
+ 		       tomoyo_sys_getppid(),
+ 		       from_kuid(&init_user_ns, current_uid()),
+ 		       from_kgid(&init_user_ns, current_gid()),
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index 5c64927bf2b3..ff17abc96e5c 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -8,6 +8,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/slab.h>
+ #include <linux/security.h>
++#include <linux/string_helpers.h>
+ #include "common.h"
+ 
+ /* String table for operation mode. */
+@@ -174,16 +175,6 @@ static bool tomoyo_manage_by_non_root;
+ 
+ /* Utility functions. */
+ 
+-/**
+- * tomoyo_yesno - Return "yes" or "no".
+- *
+- * @value: Bool value.
+- */
+-const char *tomoyo_yesno(const unsigned int value)
+-{
+-	return value ? "yes" : "no";
+-}
+-
+ /**
+  * tomoyo_addprintf - strncat()-like-snprintf().
   *
-  */
+@@ -730,8 +721,8 @@ static void tomoyo_print_config(struct tomoyo_io_buffer *head, const u8 config)
+ {
+ 	tomoyo_io_printf(head, "={ mode=%s grant_log=%s reject_log=%s }\n",
+ 			 tomoyo_mode[config & 3],
+-			 tomoyo_yesno(config & TOMOYO_CONFIG_WANT_GRANT_LOG),
+-			 tomoyo_yesno(config & TOMOYO_CONFIG_WANT_REJECT_LOG));
++			 str_yes_no(config & TOMOYO_CONFIG_WANT_GRANT_LOG),
++			 str_yes_no(config & TOMOYO_CONFIG_WANT_REJECT_LOG));
+ }
  
--#include <linux/types.h>
--#include <linux/slab.h>
--#include <linux/mm.h>
--#include <linux/uaccess.h>
--#include <linux/fs.h>
-+#include <linux/dma-buf-map.h>
-+#include <linux/dma-buf.h>
- #include <linux/file.h>
--#include <linux/module.h>
-+#include <linux/fs.h>
-+#include <linux/mem_encrypt.h>
-+#include <linux/mm.h>
- #include <linux/mman.h>
-+#include <linux/module.h>
- #include <linux/pagemap.h>
--#include <linux/shmem_fs.h>
--#include <linux/dma-buf.h>
--#include <linux/dma-buf-map.h>
--#include <linux/mem_encrypt.h>
- #include <linux/pagevec.h>
-+#include <linux/shmem_fs.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+#include <linux/uaccess.h>
- 
- #include <drm/drm.h>
- #include <drm/drm_device.h>
+ /**
+@@ -1354,8 +1345,8 @@ static bool tomoyo_print_condition(struct tomoyo_io_buffer *head,
+ 	case 3:
+ 		if (cond->grant_log != TOMOYO_GRANTLOG_AUTO)
+ 			tomoyo_io_printf(head, " grant_log=%s",
+-					 tomoyo_yesno(cond->grant_log ==
+-						      TOMOYO_GRANTLOG_YES));
++					 str_yes_no(cond->grant_log ==
++						    TOMOYO_GRANTLOG_YES));
+ 		tomoyo_set_lf(head);
+ 		return true;
+ 	}
+diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
+index 85246b9df7ca..ca285f362705 100644
+--- a/security/tomoyo/common.h
++++ b/security/tomoyo/common.h
+@@ -959,7 +959,6 @@ char *tomoyo_read_token(struct tomoyo_acl_param *param);
+ char *tomoyo_realpath_from_path(const struct path *path);
+ char *tomoyo_realpath_nofollow(const char *pathname);
+ const char *tomoyo_get_exe(void);
+-const char *tomoyo_yesno(const unsigned int value);
+ const struct tomoyo_path_info *tomoyo_compare_name_union
+ (const struct tomoyo_path_info *name, const struct tomoyo_name_union *ptr);
+ const struct tomoyo_path_info *tomoyo_get_domainname
 -- 
 2.34.1
 
