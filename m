@@ -2,140 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D71C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jan 2022 17:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BD3C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jan 2022 17:56:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244262AbiA0RCv (ORCPT
+        id S245278AbiA0R4j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jan 2022 12:02:51 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44760 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244285AbiA0RCr (ORCPT
+        Thu, 27 Jan 2022 12:56:39 -0500
+Received: from namei.org ([65.99.196.166]:52994 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244907AbiA0Rz7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jan 2022 12:02:47 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20RGZuc3002115;
-        Thu, 27 Jan 2022 17:02:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=XR99+5C2bK2xEEVFSEV7u/LqNan1tohHz6Q54+3Jkvo=;
- b=k1IxiR1urKzVi3tQ/55VeoyT7b25Ya2Pmf/NW5tcQEuPawIXYJfVBVXFWONQbfeZul6J
- +LZwdjMCU63TVs2EJQQW3hg5u4gYZszLjsSpY9DHi4O2ZrpkYCkvDbGS6kWFZAccrVcP
- 8Y10Xkjkb7s2yooDAC07A3JOeZDDPEcxxY4537JYKUgYKKG0AdMcGLjYH0gehmGV6I5g
- D78fR53Rm8/9TpD4n2vcLSEzYkelzY2DBrOm51APFkrZlYJ+Efo1oWM+g/mb5n/HCTLZ
- ZdcrR3uRmDmqA78XINaqcSQjv0hiACkG7jsM+IrvKWH3DzIkZGZazhoM0snLMzthgmnT sA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3duxqcgwdt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jan 2022 17:02:32 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20RGgcoe030726;
-        Thu, 27 Jan 2022 17:02:30 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3duxqcgwd7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jan 2022 17:02:30 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20RGrCK8004479;
-        Thu, 27 Jan 2022 17:02:29 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma02dal.us.ibm.com with ESMTP id 3dt1xbamvj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jan 2022 17:02:29 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20RH2RSS34406772
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jan 2022 17:02:27 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 34D19B206A;
-        Thu, 27 Jan 2022 17:02:27 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A07DB205F;
-        Thu, 27 Jan 2022 17:02:25 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Jan 2022 17:02:25 +0000 (GMT)
-Message-ID: <af944c80-aaa0-357d-eac3-f902c196fa0b@linux.ibm.com>
-Date:   Thu, 27 Jan 2022 12:02:25 -0500
+        Thu, 27 Jan 2022 12:55:59 -0500
+X-Greylist: delayed 551 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Jan 2022 12:55:58 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id 600C71BC;
+        Thu, 27 Jan 2022 17:33:29 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.namei.org 600C71BC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=namei.org; s=2;
+        t=1643304809; bh=AGzt62snnTX+RhaQRcauWWHyp7x7hKo4JgECX14Qns0=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=OG0fZTdVPXr4s6bgq6Xx/7z/4tXB6PztAloBvarfSfkiTtlldoPyQcpvAuukv6ljv
+         FO16pBmarlXoFiA6tCsZCl0rJ/Py/sbxZxH7mcl08HhxtyGTH9xiUzEqtPc2+/mjps
+         rErYzBTGmXdVGf67tiaUOLeSoNUzY5/aCy0aS2So=
+Date:   Fri, 28 Jan 2022 04:33:29 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     Paul Moore <paul@paul-moore.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH v2] LSM: general protection fault in legacy_parse_param
+In-Reply-To: <a19e0338-5240-4a6d-aecf-145539aecbce@schaufler-ca.com>
+Message-ID: <3daaf037-2e67-e939-805f-57a61d67f7b8@namei.org>
+References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com> <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein> <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
+ <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com> <a19e0338-5240-4a6d-aecf-145539aecbce@schaufler-ca.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v9 10/23] ima: Move IMA securityfs files into
- ima_namespace or onto stack
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
- <20220125224645.79319-11-stefanb@linux.vnet.ibm.com>
- <20220126094042.l6jqu5swwsyhlt7v@wittgenstein>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20220126094042.l6jqu5swwsyhlt7v@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: AI1qMepFUSGt1tPFslU94FZspmk1-bpq
-X-Proofpoint-GUID: 5qIyij198JJAlJL5OQBDc-HXxbGc7jy3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-27_03,2022-01-27_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- mlxlogscore=999 adultscore=0 mlxscore=0 malwarescore=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2201270101
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, 27 Jan 2022, Casey Schaufler wrote:
 
-On 1/26/22 04:40, Christian Brauner wrote:
-> On Tue, Jan 25, 2022 at 05:46:32PM -0500, Stefan Berger wrote:
->> From: Stefan Berger <stefanb@linux.ibm.com>
->>
->> Only the securityfs IMA policy file is ever removed based on Kconfig
->> options. For this reason, move the IMA securityfs policy file variable
->> 'ima_policy' into the ima_namespace.
->>
->> Move the other IMA securityfs files onto the stack since they are not
->> needed outside the function where they are created in. Also, their cleanup
->> is automatically handled by the filesystem upon umount of a virtualized
->> securityfs instance, so they don't need to be explicitly freed.
-> I'd reverse the explantion in the commit and mention the securityfs
-> change that makes this move possible which is patch 3 in this version of
-> the series ("securityfs: rework dentry creation"); something like:
->
-> 	Earlier we simplified how dentry creation and deletion is manged in
-> 	securityfs. This allows us to move IMA securityfs files from global
-> 	variables directly into ima_fs_ns_init() itself. We can now rely on
-> 	those dentries to be cleaned up when the securityfs instance is cleaned
-> 	when the last reference to it is dropped.
-> 	
-> 	Things are slightly different for the initial ima namespace. In contrast
-> 	to non-initial ima namespaces it has pinning logic binding the lifetime
-> 	of the securityfs superblock to created dentries. We need to keep this
-> 	behavior to not regress userspace. Since ima never removes most of the
-> 	securityfs files the initial securityfs instance stays pinned. This also
-> 	means even for the initial ima namespace we don't need to keep
-> 	references to these dentries anywhere.
-> 	
-> 	The ima_policy file is the exception since ima can end up removing it if
-> 	a non-default policy is written at some point.
->
-> Last sentence should be checked for sensibility by ima folks.
+> The usual LSM hook "bail on fail" scheme doesn't work for cases where
+> a security module may return an error code indicating that it does not
+> recognize an input.  In this particular case Smack sees a mount option
+> that it recognizes, and returns 0. A call to a BPF hook follows, which
+> returns -ENOPARAM, which confuses the caller because Smack has processed
+> its data.
+> 
+> The SELinux hook incorrectly returns 1 on success. There was a time
+> when this was correct, however the current expectation is that it
+> return 0 on success. This is repaired.
+> 
+> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-I remove the if clause and took the other text as-is...
 
-Thanks.
+Acked-by: James Morris <jamorris@linux.microsoft.com>
 
-    Stefan
+> ---
+>  security/security.c      | 17 +++++++++++++++--
+>  security/selinux/hooks.c |  5 ++---
+>  2 files changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/security/security.c b/security/security.c
+> index 3d4eb474f35b..e649c8691be2 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -884,9 +884,22 @@ int security_fs_context_dup(struct fs_context *fc, struct
+> fs_context *src_fc)
+>  	return call_int_hook(fs_context_dup, 0, fc, src_fc);
+>  }
+>  
+> -int security_fs_context_parse_param(struct fs_context *fc, struct
+> fs_parameter *param)
+> +int security_fs_context_parse_param(struct fs_context *fc,
+> +				    struct fs_parameter *param)
+>  {
+> -	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
+> +	struct security_hook_list *hp;
+> +	int trc;
+> +	int rc = -ENOPARAM;
+> +
+> +	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
+> +			     list) {
+> +		trc = hp->hook.fs_context_parse_param(fc, param);
+> +		if (trc == 0)
+> +			rc = 0;
+> +		else if (trc != -ENOPARAM)
+> +			return trc;
+> +	}
+> +	return rc;
+>  }
+>  
+>  int security_sb_alloc(struct super_block *sb)
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 5b6895e4fc29..371f67a37f9a 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2860,10 +2860,9 @@ static int selinux_fs_context_parse_param(struct
+> fs_context *fc,
+>  		return opt;
+>  
+>  	rc = selinux_add_opt(opt, param->string, &fc->security);
+> -	if (!rc) {
+> +	if (!rc)
+>  		param->string = NULL;
+> -		rc = 1;
+> -	}
+> +
+>  	return rc;
+>  }
+>  
+> 
+> 
 
+-- 
+James Morris
+<jmorris@namei.org>
 
