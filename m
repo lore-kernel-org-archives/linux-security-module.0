@@ -2,128 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BD3C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jan 2022 17:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8165FC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Jan 2022 19:42:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245278AbiA0R4j (ORCPT
+        id S245558AbiA0Tmi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Jan 2022 12:56:39 -0500
-Received: from namei.org ([65.99.196.166]:52994 "EHLO mail.namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244907AbiA0Rz7 (ORCPT
+        Thu, 27 Jan 2022 14:42:38 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57358 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245263AbiA0Tmi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Jan 2022 12:55:59 -0500
-X-Greylist: delayed 551 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Jan 2022 12:55:58 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id 600C71BC;
-        Thu, 27 Jan 2022 17:33:29 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.namei.org 600C71BC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=namei.org; s=2;
-        t=1643304809; bh=AGzt62snnTX+RhaQRcauWWHyp7x7hKo4JgECX14Qns0=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=OG0fZTdVPXr4s6bgq6Xx/7z/4tXB6PztAloBvarfSfkiTtlldoPyQcpvAuukv6ljv
-         FO16pBmarlXoFiA6tCsZCl0rJ/Py/sbxZxH7mcl08HhxtyGTH9xiUzEqtPc2+/mjps
-         rErYzBTGmXdVGf67tiaUOLeSoNUzY5/aCy0aS2So=
-Date:   Fri, 28 Jan 2022 04:33:29 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-cc:     Paul Moore <paul@paul-moore.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH v2] LSM: general protection fault in legacy_parse_param
-In-Reply-To: <a19e0338-5240-4a6d-aecf-145539aecbce@schaufler-ca.com>
-Message-ID: <3daaf037-2e67-e939-805f-57a61d67f7b8@namei.org>
-References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com> <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com> <20211012103243.xumzerhvhklqrovj@wittgenstein> <d15f9647-f67e-2d61-d7bd-c364f4288287@schaufler-ca.com>
- <CAHC9VhT=dZbWzhst0hMLo0n7=UzWC5OYTMY=0x=LZ97HwG0UsA@mail.gmail.com> <a19e0338-5240-4a6d-aecf-145539aecbce@schaufler-ca.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 27 Jan 2022 14:42:38 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20RJcvYs004439;
+        Thu, 27 Jan 2022 19:42:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=pj1NKpQbH5pDAnBSZ6ZEh9QlXO/BiqZbqDY+xndFINQ=;
+ b=ArUxI9xaJnMkc1m/ctLCFYLNYmbLq3j2EEPW4mhMbS9IlLQbC5TY9UfNjI0rROw8oi2u
+ 7Nenc9Kw208aEa34ewjzCclSsBPFlk3fwTXjIHEbvEsw5Mf9A/IPg5Z2ojFaMI6CKW8L
+ kj/hAWY4b6vnUz2W72pUtbiUQOD1vwG3Rkl2QU69f4BVgaJRuSGnTogXzI6KA37+VfUD
+ 7aE7dUsxtatUu6TDk/yPMTijyr5M7lKvY4Qa3TxaNgrREIyycOlQLxpaTtt34tYfMd9e
+ rvwjXlhUBpdZccrCAub+uelWNFBE9pxymSVFE6ei+5HiJHp6SpFnmqHMZ7AUWN5lZ7D/ gQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dv1brrc7t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jan 2022 19:42:24 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20RJfDZQ012915;
+        Thu, 27 Jan 2022 19:42:23 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dv1brrc77-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jan 2022 19:42:23 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20RJc5TI000707;
+        Thu, 27 Jan 2022 19:42:21 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 3dr9j9uchp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jan 2022 19:42:21 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20RJgIqw44499358
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jan 2022 19:42:18 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E45C25205A;
+        Thu, 27 Jan 2022 19:42:17 +0000 (GMT)
+Received: from sig-9-65-89-165.ibm.com (unknown [9.65.89.165])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 5DB0C52050;
+        Thu, 27 Jan 2022 19:42:15 +0000 (GMT)
+Message-ID: <38a2c2b2d1829e9949bd984958e880e54ae7cf5c.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 06/23] ima: Move arch_policy_entry into ima_namespace
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date:   Thu, 27 Jan 2022 14:42:14 -0500
+In-Reply-To: <20220126091104.jbedxrewojcmvy3u@wittgenstein>
+References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
+         <20220125224645.79319-7-stefanb@linux.vnet.ibm.com>
+         <20220126091104.jbedxrewojcmvy3u@wittgenstein>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: EFrkMEN0Vw9pu_-7IXT2CP4xF-M23kgt
+X-Proofpoint-ORIG-GUID: 8-dUcX1JxUB9y2GW9MGQi7Rsn0s9ApOg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-27_03,2022-01-27_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 phishscore=0 bulkscore=0 adultscore=0 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 suspectscore=0 impostorscore=0
+ clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2201270112
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 27 Jan 2022, Casey Schaufler wrote:
-
-> The usual LSM hook "bail on fail" scheme doesn't work for cases where
-> a security module may return an error code indicating that it does not
-> recognize an input.  In this particular case Smack sees a mount option
-> that it recognizes, and returns 0. A call to a BPF hook follows, which
-> returns -ENOPARAM, which confuses the caller because Smack has processed
-> its data.
+On Wed, 2022-01-26 at 10:11 +0100, Christian Brauner wrote:
+> On Tue, Jan 25, 2022 at 05:46:28PM -0500, Stefan Berger wrote:
+> > From: Stefan Berger <stefanb@linux.ibm.com>
+> > 
+> > Move the arch_policy_entry pointer into ima_namespace.
+> > 
+> > When freeing the memory set the pointer to NULL.
+> > 
+> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > ---
 > 
-> The SELinux hook incorrectly returns 1 on success. There was a time
-> when this was correct, however the current expectation is that it
-> return 0 on success. This is repaired.
-> 
-> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Only relevant for the initial imans (for now) since it is derived from a
+> boot parameter. Maybe mention this in the commit message.
 
+Enabling architecture specific policy rules is based on
+CONFIG_IMA_ARCH_POLICY.  As the name implies, each architecture is free
+to define their own policy rules.  For example on x86, based on the
+secure boot mode both measurement and signature verification rules are
+defined for the kexec kernel image and kernel modules. Similarly on
+powerpc, different measurement and signature verification rules for the
+kexec kernel image and kernel modules are defined based on whether
+trusted boot, secure boot, or both are enabled [2].
 
-Acked-by: James Morris <jamorris@linux.microsoft.com>
+As neither kexec nor loading kernel modules are applicable, the
+architecture policy rules are limited to initial imans.
 
-> ---
->  security/security.c      | 17 +++++++++++++++--
->  security/selinux/hooks.c |  5 ++---
->  2 files changed, 17 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index 3d4eb474f35b..e649c8691be2 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -884,9 +884,22 @@ int security_fs_context_dup(struct fs_context *fc, struct
-> fs_context *src_fc)
->  	return call_int_hook(fs_context_dup, 0, fc, src_fc);
->  }
->  
-> -int security_fs_context_parse_param(struct fs_context *fc, struct
-> fs_parameter *param)
-> +int security_fs_context_parse_param(struct fs_context *fc,
-> +				    struct fs_parameter *param)
->  {
-> -	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
-> +	struct security_hook_list *hp;
-> +	int trc;
-> +	int rc = -ENOPARAM;
-> +
-> +	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
-> +			     list) {
-> +		trc = hp->hook.fs_context_parse_param(fc, param);
-> +		if (trc == 0)
-> +			rc = 0;
-> +		else if (trc != -ENOPARAM)
-> +			return trc;
-> +	}
-> +	return rc;
->  }
->  
->  int security_sb_alloc(struct super_block *sb)
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 5b6895e4fc29..371f67a37f9a 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2860,10 +2860,9 @@ static int selinux_fs_context_parse_param(struct
-> fs_context *fc,
->  		return opt;
->  
->  	rc = selinux_add_opt(opt, param->string, &fc->security);
-> -	if (!rc) {
-> +	if (!rc)
->  		param->string = NULL;
-> -		rc = 1;
-> -	}
-> +
->  	return rc;
->  }
->  
-> 
-> 
+[1] security/integrity/ima/ima_efi.c 
+[2] arch/powerpc/kernel/ima_arch.c
 
--- 
-James Morris
-<jmorris@namei.org>
+> 
+> Move into struct ima_namespace looks good,
+> Acked-by: Christian Brauner <brauner@kernel.org>
+
+Thanks, Christian.
+
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
