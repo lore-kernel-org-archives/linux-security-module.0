@@ -2,70 +2,98 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02881C433EF
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 Jan 2022 12:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12CEC433F5
+	for <linux-security-module@archiver.kernel.org>; Sat, 29 Jan 2022 23:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349659AbiA2Mvu (ORCPT
+        id S232515AbiA2X7x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 29 Jan 2022 07:51:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59828 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347857AbiA2Mvt (ORCPT
+        Sat, 29 Jan 2022 18:59:53 -0500
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:42654
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1353267AbiA2X7x (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 29 Jan 2022 07:51:49 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF2DC061714;
-        Sat, 29 Jan 2022 04:51:49 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 29 Jan 2022 18:59:53 -0500
+Received: from [192.168.192.153] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F295060BA0;
-        Sat, 29 Jan 2022 12:51:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 65F5DC340E5;
-        Sat, 29 Jan 2022 12:51:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643460708;
-        bh=8K2PUV+b/ZheJiq0fuRjAuScA4CRH1TI4jWAi+4Pb9Q=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=h6cc+36At3Q4JS0gBoF48deL8kW7BXHjgGuLLZw1D9Fkff6NWsxCwOhxIB3G9x0A6
-         lvUPmrHvpoCE1IBJmxhR7nUr7JP4SFqaIt9WGHimrZnvGtl+41iiObx6VgFQW2QTCX
-         hjfctSGrok/bUq9pK8V3l0ibubXxvnT0pNXW51uVcOZbBtTmf6JdjFDAwoCjZZZ1NK
-         YaczZy/vUITGlBA1LmoFOLIPN5laWe/YqcEETRrFtLSrGJaKctP7fZt9Xp4VlXEzQr
-         RgCDoE3bgsuNVT8aZQUR2oee5dMZC6FpzH2pwPl1qaQ4W7HzJaiPPIcQ0wHku0Zn+R
-         bY7nPhPwsVQVg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55DD2E5D07E;
-        Sat, 29 Jan 2022 12:51:48 +0000 (UTC)
-Subject: Re: [GIT PULL] security, lsm: dentry_init_security() Handle multi LSM
- registration
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <88413260-5f31-7fbf-7127-715051ca5ead@namei.org>
-References: <88413260-5f31-7fbf-7127-715051ca5ead@namei.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <88413260-5f31-7fbf-7127-715051ca5ead@namei.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git tags/fixes-v5.17-lsm-ceph-null
-X-PR-Tracked-Commit-Id: 7f5056b9e7b71149bf11073f00a57fa1ac2921a9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d1e7f0919ea84911e2ab965418cd502ba6a906e1
-Message-Id: <164346070834.2828.2030565672191430601.pr-tracker-bot@kernel.org>
-Date:   Sat, 29 Jan 2022 12:51:48 +0000
-To:     James Morris <jmorris@namei.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C6A9940E57;
+        Sat, 29 Jan 2022 23:59:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1643500784;
+        bh=MVZak3zbu1eAFTux4Sw6Mf40DF40XMJ5a+qfLFJumpc=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=uR9BM+uT9n5Xdcu07wH15WQfEAwRCnIzzlbxh8oIHnifLd3KxPbgHV2qWxT9gwFc6
+         6IkXyjJOgKAsxZyDUrlu5LnopTTIiiUFkGhXFcWS4N/qVtc41EXlyss9Z93KoJQ7BU
+         j/Yz3KzlBTstaJtEooG1QIglsv8xPvtXZLcj1icQKZxgyYN+SWkDHKaH+chSTJtz+o
+         EIHcxf65ml1E8FhQMEHOsikd6+u7/o8qy7fYnjRE+8DuE+l6QccO1dlsbutGUCJKJJ
+         kh6LOsT6amgfaA6FyVg8s74Yn/IvE7kaJwl2KE2x7BL3hvwzTR/DRrm9b0vtjruohu
+         eqZiMs2EKKRbw==
+Message-ID: <7441eef2-5d5d-8bfe-42bb-423d0d865a52@canonical.com>
+Date:   Sat, 29 Jan 2022 15:59:42 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH -next 1/3] apparmor: Fix match_mnt_path_str() and
+ match_mnt() kernel-doc comment
+Content-Language: en-US
+To:     Yang Li <yang.lee@linux.alibaba.com>, serge@hallyn.com
+Cc:     jmorris@namei.org, apparmor@lists.ubuntu.com,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
+        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+References: <20220129025101.38355-1-yang.lee@linux.alibaba.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20220129025101.38355-1-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Sat, 29 Jan 2022 05:57:37 +1100 (AEDT):
+On 1/28/22 18:50, Yang Li wrote:
+> Fix a spelling problem and change @mntpath to @path to remove warnings
+> found by running scripts/kernel-doc, which is caused by using 'make W=1'.
+> 
+> security/apparmor/mount.c:321: warning: Function parameter or member
+> 'devname' not described in 'match_mnt_path_str'
+> security/apparmor/mount.c:321: warning: Excess function parameter
+> 'devnme' description in 'match_mnt_path_str'
+> security/apparmor/mount.c:377: warning: Function parameter or member
+> 'path' not described in 'match_mnt'
+> security/apparmor/mount.c:377: warning: Excess function parameter
+> 'mntpath' description in 'match_mnt'
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git tags/fixes-v5.17-lsm-ceph-null
+I have pulled this into my tree
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d1e7f0919ea84911e2ab965418cd502ba6a906e1
+> ---
+>  security/apparmor/mount.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+> index 23aafe68d49a..5cc5de062fc8 100644
+> --- a/security/apparmor/mount.c
+> +++ b/security/apparmor/mount.c
+> @@ -304,7 +304,7 @@ static int path_flags(struct aa_profile *profile, const struct path *path)
+>   * @profile: the confining profile
+>   * @mntpath: for the mntpnt (NOT NULL)
+>   * @buffer: buffer to be used to lookup mntpath
+> - * @devnme: string for the devname/src_name (MAY BE NULL OR ERRPTR)
+> + * @devname: string for the devname/src_name (MAY BE NULL OR ERRPTR)
+>   * @type: string for the dev type (MAYBE NULL)
+>   * @flags: mount flags to match
+>   * @data: fs mount data (MAYBE NULL)
+> @@ -359,7 +359,7 @@ static int match_mnt_path_str(struct aa_profile *profile,
+>  /**
+>   * match_mnt - handle path matching for mount
+>   * @profile: the confining profile
+> - * @mntpath: for the mntpnt (NOT NULL)
+> + * @path: for the mntpnt (NOT NULL)
+>   * @buffer: buffer to be used to lookup mntpath
+>   * @devpath: path devname/src_name (MAYBE NULL)
+>   * @devbuffer: buffer to be used to lookup devname/src_name
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
