@@ -2,33 +2,31 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9672C4332F
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 Jan 2022 02:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 315FDC433EF
+	for <linux-security-module@archiver.kernel.org>; Sat, 29 Jan 2022 02:52:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352231AbiA2CvN (ORCPT
+        id S1352239AbiA2Cwf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Jan 2022 21:51:13 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:39185 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1352232AbiA2CvM (ORCPT
+        Fri, 28 Jan 2022 21:52:35 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:50665 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1352232AbiA2Cwe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Jan 2022 21:51:12 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0V35.FBu_1643424668;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0V35.FBu_1643424668)
+        Fri, 28 Jan 2022 21:52:34 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0V34UhTY_1643424751;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0V34UhTY_1643424751)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 29 Jan 2022 10:51:09 +0800
+          Sat, 29 Jan 2022 10:52:32 +0800
 From:   Yang Li <yang.lee@linux.alibaba.com>
 To:     serge@hallyn.com
 Cc:     jmorris@namei.org, john.johansen@canonical.com,
         apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
         Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH 3/3] apparmor: Fix some kernel-doc comments
-Date:   Sat, 29 Jan 2022 10:51:01 +0800
-Message-Id: <20220129025101.38355-3-yang.lee@linux.alibaba.com>
+Subject: [PATCH -next 3/3] apparmor: Fix some kernel-doc comments
+Date:   Sat, 29 Jan 2022 10:52:29 +0800
+Message-Id: <20220129025229.39663-1-yang.lee@linux.alibaba.com>
 X-Mailer: git-send-email 2.20.1.7.g153144c
-In-Reply-To: <20220129025101.38355-1-yang.lee@linux.alibaba.com>
-References: <20220129025101.38355-1-yang.lee@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
