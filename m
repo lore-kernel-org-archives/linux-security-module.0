@@ -2,105 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3315C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jan 2022 11:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B32C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jan 2022 17:13:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350021AbiAaLqi (ORCPT
+        id S1380773AbiAaRNv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jan 2022 06:46:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52158 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350979AbiAaLk2 (ORCPT
+        Mon, 31 Jan 2022 12:13:51 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4577 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1380775AbiAaRNt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jan 2022 06:40:28 -0500
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [IPv6:2001:1600:3:17::190d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DEE0C034630
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jan 2022 03:25:54 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JnQjX476KzMqHf0;
-        Mon, 31 Jan 2022 12:25:52 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4JnQjT5rHWzljTg9;
-        Mon, 31 Jan 2022 12:25:49 +0100 (CET)
-Message-ID: <e4707df2-ecc2-0471-87fc-c54e774fe315@digikod.net>
-Date:   Mon, 31 Jan 2022 12:33:51 +0100
+        Mon, 31 Jan 2022 12:13:49 -0500
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JnZQN2X6hz67lD0;
+        Tue,  1 Feb 2022 01:13:16 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Mon, 31 Jan 2022 18:13:46 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <guozihua@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH] ima: Allow template selection with ima_template[_fmt]= after ima_hash=
+Date:   Mon, 31 Jan 2022 18:11:39 +0100
+Message-ID: <20220131171139.3024883-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Andreas Rammhold <andreas@rammhold.de>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20210712170313.884724-1-mic@digikod.net>
- <7e8d27da-b5d4-e42c-af01-5c03a7f36a6b@digikod.net> <YcGVZitNa23PCSFV@iki.fi>
- <5030a9ff-a1d1-a9bd-902a-77c3d1d87446@digikod.net> <Ydc/E3S2vmtDOnpw@iki.fi>
- <YddADJJNLDlQAYRW@iki.fi> <86c5010e-a926-023a-8915-d6605cfc4f0a@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v8 0/5] Enable root to update the blacklist keyring
-In-Reply-To: <86c5010e-a926-023a-8915-d6605cfc4f0a@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.63.22]
+X-ClientProxiedBy: lhreml751-chm.china.huawei.com (10.201.108.201) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Commit c2426d2ad5027 ("ima: added support for new kernel cmdline parameter
+ima_template_fmt") introduced an additional check on the ima_template
+variable to avoid multiple template selection.
 
-On 07/01/2022 13:14, Mickaël Salaün wrote:
-> 
-> On 06/01/2022 20:16, Jarkko Sakkinen wrote:
->> On Thu, Jan 06, 2022 at 09:12:22PM +0200, Jarkko Sakkinen wrote:
->>> On Tue, Jan 04, 2022 at 04:56:36PM +0100, Mickaël Salaün wrote:
->>>>
->>>> On 21/12/2021 09:50, Jarkko Sakkinen wrote:
->>>>> On Mon, Dec 13, 2021 at 04:30:29PM +0100, Mickaël Salaün wrote:
->>>>>> Hi Jarkko,
->>>>>>
->>>>>> Since everyone seems OK with this and had plenty of time to 
->>>>>> complain, could
->>>>>> you please take this patch series in your tree? It still applies on
->>>>>> v5.16-rc5 and it is really important to us. Please let me know if 
->>>>>> you need
->>>>>> something more.
->>>>>>
->>>>>> Regards,
->>>>>>    Mickaël
->>>>>
->>>>> I'm off-work up until end of the year, i.e. I will address only 
->>>>> important
->>>>> bug fixes and v5.16 up until that.
->>>>>
->>>>> If any of the patches is yet missing my ack, feel free to
->>>>>
->>>>> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
->>>>
->>>> Thanks Jarkko. Can you please take it into your tree?
->>>
->>> I can yes, as I need to anyway do a revised PR for v5.17, as one commit
->>> in my first trial had a truncated fixes tag.
->>
->> Please check:
->>
->> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
->>
->> /Jarkko
-> 
-> Great, thanks!
+Unfortunately, ima_template could be also set by the setup function of the
+ima_hash= parameter, when it calls ima_template_desc_current(). This causes
+attempts to choose a new template with ima_template= or with
+ima_template_fmt=, after ima_hash=, to be ignored.
 
-Hi Jarkko,
+Achieve the goal of the commit mentioned with the new static variable
+template_setup_done, so that template selection requests after ima_hash=
+are not ignored.
 
-I noticed your commits 
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?id=3ec9c3a0531ac868422be3b12fc17310ed8c07dc 
-are no more referenced in your tree. Is there an issue?
+Finally, call ima_init_template_list(), if not already done, to initialize
+the list of templates before lookup_template_desc() is called.
 
-Regards,
-  Mickaël
+Cc: stable@vger.kernel.org
+Fixes: c2426d2ad5027 ("ima: added support for new kernel cmdline parameter ima_template_fmt")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_template.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 694560396be0..db1ad6d7a57f 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -29,6 +29,7 @@ static struct ima_template_desc builtin_templates[] = {
+ 
+ static LIST_HEAD(defined_templates);
+ static DEFINE_SPINLOCK(template_list);
++static int template_setup_done;
+ 
+ static const struct ima_template_field supported_fields[] = {
+ 	{.field_id = "d", .field_init = ima_eventdigest_init,
+@@ -101,10 +102,11 @@ static int __init ima_template_setup(char *str)
+ 	struct ima_template_desc *template_desc;
+ 	int template_len = strlen(str);
+ 
+-	if (ima_template)
++	if (template_setup_done)
+ 		return 1;
+ 
+-	ima_init_template_list();
++	if (!ima_template)
++		ima_init_template_list();
+ 
+ 	/*
+ 	 * Verify that a template with the supplied name exists.
+@@ -128,6 +130,7 @@ static int __init ima_template_setup(char *str)
+ 	}
+ 
+ 	ima_template = template_desc;
++	template_setup_done = 1;
+ 	return 1;
+ }
+ __setup("ima_template=", ima_template_setup);
+@@ -136,7 +139,7 @@ static int __init ima_template_fmt_setup(char *str)
+ {
+ 	int num_templates = ARRAY_SIZE(builtin_templates);
+ 
+-	if (ima_template)
++	if (template_setup_done)
+ 		return 1;
+ 
+ 	if (template_desc_init_fields(str, NULL, NULL) < 0) {
+@@ -147,6 +150,7 @@ static int __init ima_template_fmt_setup(char *str)
+ 
+ 	builtin_templates[num_templates - 1].fmt = str;
+ 	ima_template = builtin_templates + num_templates - 1;
++	template_setup_done = 1;
+ 
+ 	return 1;
+ }
+-- 
+2.32.0
+
