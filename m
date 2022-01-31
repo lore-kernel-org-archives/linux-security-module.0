@@ -2,120 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7403C433EF
-	for <linux-security-module@archiver.kernel.org>; Sun, 30 Jan 2022 00:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3315C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jan 2022 11:46:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353479AbiA3ADI (ORCPT
+        id S1350021AbiAaLqi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 29 Jan 2022 19:03:08 -0500
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:49772
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1353476AbiA3ADH (ORCPT
+        Mon, 31 Jan 2022 06:46:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52158 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350979AbiAaLk2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 29 Jan 2022 19:03:07 -0500
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 4647D3F07C;
-        Sun, 30 Jan 2022 00:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1643500986;
-        bh=7k+y7PJ3gcJlzXgorU2zNnjUpve3rlNlya9TVwYp4hk=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=jENINqRqw3pqbJmZcbRC9FDajyZ8MAcWWeoUZJOf8ZlWcSzM3o6dXNdkxgL53QmtH
-         1coGNJop/zo/HWBCHCN4IkbM6FKfz/YsdWp43KqLKDfVGH668cEREXFKO4WSABTrIn
-         vYvuL3w5QlTrVm38J5bX/v6yXvverFoBmfFcIscq/lTwhIpJJUcfT1PmFMmkiJz+ge
-         +BEipTyTjA2LrxJe23wa79vmXMHfCcqKi7BZlFay+/E5oJf6gZdw4gMCeNw6Iappzb
-         iqRkDOintBf2DiavnqexfcmXbjY/iWYq6rhpiQ4LH5W00yGE8j3/rbG+N3JV5YP3/6
-         wknNkY6kYzWRQ==
-Message-ID: <9836f3d4-186f-7a6e-448d-8e94be5f634f@canonical.com>
-Date:   Sat, 29 Jan 2022 16:03:03 -0800
+        Mon, 31 Jan 2022 06:40:28 -0500
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [IPv6:2001:1600:3:17::190d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DEE0C034630
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Jan 2022 03:25:54 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JnQjX476KzMqHf0;
+        Mon, 31 Jan 2022 12:25:52 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4JnQjT5rHWzljTg9;
+        Mon, 31 Jan 2022 12:25:49 +0100 (CET)
+Message-ID: <e4707df2-ecc2-0471-87fc-c54e774fe315@digikod.net>
+Date:   Mon, 31 Jan 2022 12:33:51 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH -next 3/3] apparmor: Fix some kernel-doc comments
+User-Agent: 
 Content-Language: en-US
-To:     Yang Li <yang.lee@linux.alibaba.com>, serge@hallyn.com
-Cc:     jmorris@namei.org, apparmor@lists.ubuntu.com,
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-References: <20220129025229.39663-1-yang.lee@linux.alibaba.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20220129025229.39663-1-yang.lee@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andreas Rammhold <andreas@rammhold.de>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20210712170313.884724-1-mic@digikod.net>
+ <7e8d27da-b5d4-e42c-af01-5c03a7f36a6b@digikod.net> <YcGVZitNa23PCSFV@iki.fi>
+ <5030a9ff-a1d1-a9bd-902a-77c3d1d87446@digikod.net> <Ydc/E3S2vmtDOnpw@iki.fi>
+ <YddADJJNLDlQAYRW@iki.fi> <86c5010e-a926-023a-8915-d6605cfc4f0a@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v8 0/5] Enable root to update the blacklist keyring
+In-Reply-To: <86c5010e-a926-023a-8915-d6605cfc4f0a@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/28/22 18:52, Yang Li wrote:
-> Don't use /** for non-kernel-doc comments and change function name
-> aa_mangle_name to mangle_name in kernel-doc comment to Remove some
-> warnings found by running scripts/kernel-doc, which is caused by
-> using 'make W=1'.
+
+On 07/01/2022 13:14, Mickaël Salaün wrote:
 > 
-> security/apparmor/apparmorfs.c:1503: warning: Cannot understand  *
->  on line 1503 - I thought it was a doc line
-> security/apparmor/apparmorfs.c:1530: warning: Cannot understand  *
->  on line 1530 - I thought it was a doc line
-> security/apparmor/apparmorfs.c:1892: warning: Cannot understand  *
->  on line 1892 - I thought it was a doc line
-> security/apparmor/apparmorfs.c:108: warning: expecting prototype for
-> aa_mangle_name(). Prototype was for mangle_name() instead
+> On 06/01/2022 20:16, Jarkko Sakkinen wrote:
+>> On Thu, Jan 06, 2022 at 09:12:22PM +0200, Jarkko Sakkinen wrote:
+>>> On Tue, Jan 04, 2022 at 04:56:36PM +0100, Mickaël Salaün wrote:
+>>>>
+>>>> On 21/12/2021 09:50, Jarkko Sakkinen wrote:
+>>>>> On Mon, Dec 13, 2021 at 04:30:29PM +0100, Mickaël Salaün wrote:
+>>>>>> Hi Jarkko,
+>>>>>>
+>>>>>> Since everyone seems OK with this and had plenty of time to 
+>>>>>> complain, could
+>>>>>> you please take this patch series in your tree? It still applies on
+>>>>>> v5.16-rc5 and it is really important to us. Please let me know if 
+>>>>>> you need
+>>>>>> something more.
+>>>>>>
+>>>>>> Regards,
+>>>>>>    Mickaël
+>>>>>
+>>>>> I'm off-work up until end of the year, i.e. I will address only 
+>>>>> important
+>>>>> bug fixes and v5.16 up until that.
+>>>>>
+>>>>> If any of the patches is yet missing my ack, feel free to
+>>>>>
+>>>>> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>>>
+>>>> Thanks Jarkko. Can you please take it into your tree?
+>>>
+>>> I can yes, as I need to anyway do a revised PR for v5.17, as one commit
+>>> in my first trial had a truncated fixes tag.
+>>
+>> Please check:
+>>
+>> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+>>
+>> /Jarkko
 > 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> Great, thanks!
 
-just for completeness (this is a dup of [PATCH 3/3] apparmor: Fix some kernel-doc comments)
+Hi Jarkko,
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+I noticed your commits 
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?id=3ec9c3a0531ac868422be3b12fc17310ed8c07dc 
+are no more referenced in your tree. Is there an issue?
 
-I have pulled this into my tree
-
-> ---
->  security/apparmor/apparmorfs.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 15efe4076fc4..4d7df859542d 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -98,7 +98,7 @@ static struct rawdata_f_data *rawdata_f_data_alloc(size_t size)
->  #endif
->  
->  /**
-> - * aa_mangle_name - mangle a profile name to std profile layout form
-> + * mangle_name - mangle a profile name to std profile layout form
->   * @name: profile name to mangle  (NOT NULL)
->   * @target: buffer to store mangled name, same length as @name (MAYBE NULL)
->   *
-> @@ -1499,7 +1499,7 @@ int __aa_fs_create_rawdata(struct aa_ns *ns, struct aa_loaddata *rawdata)
->  
->  /** fns to setup dynamic per profile/namespace files **/
->  
-> -/**
-> +/*
->   *
->   * Requires: @profile->ns->lock held
->   */
-> @@ -1526,7 +1526,7 @@ void __aafs_profile_rmdir(struct aa_profile *profile)
->  	}
->  }
->  
-> -/**
-> +/*
->   *
->   * Requires: @old->ns->lock held
->   */
-> @@ -1888,7 +1888,7 @@ static void __aa_fs_list_remove_rawdata(struct aa_ns *ns)
->  		__aa_fs_remove_rawdata(ent);
->  }
->  
-> -/**
-> +/*
->   *
->   * Requires: @ns->lock held
->   */
-
+Regards,
+  Mickaël
