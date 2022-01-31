@@ -2,107 +2,121 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E065C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jan 2022 19:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E5F1C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jan 2022 22:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240446AbiAaTU0 (ORCPT
+        id S231602AbiAaW3H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jan 2022 14:20:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31468 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235454AbiAaTU0 (ORCPT
+        Mon, 31 Jan 2022 17:29:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56674 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230136AbiAaW3H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jan 2022 14:20:26 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20VHcgTC016494;
-        Mon, 31 Jan 2022 19:20:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=aDTwYpmcoZyK+955pUPN/Okv23O0tyd1fhGzfHXBoHw=;
- b=ULr8gzad6YLNEVXV69QxgoHQNB1lapemssaqADHK52oVygqkLEFfIwamFYZF4WSxlcjw
- pFg2pf6DY6DYnepECEazRKm50afEzdlYmtbUJrsONHM6yxuoI2HIJQgQ1wWrunNsoKYz
- qRZJaV22AqsE+6C0O34D0UGA28FaBg5/Uav17QGRtgN/A678+ViBCuDUITFDPAfYp6GG
- it/buhoJPymOA81ozwJM8yNkfpwOj8k5YxpDnyz4+1dWRmtePc2TMM/pRgDNN0jgdvUC
- HCBJUbDZmgcte3JQnrdpP7/l856leKiQCYRjh4GKNpvVWrUR2x0D0zduLBME+LueAVnv EQ== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dx98uh5qp-1
+        Mon, 31 Jan 2022 17:29:07 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20VKbvEr009980;
+        Mon, 31 Jan 2022 22:28:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=4eXcaHmhWTiu+7oqk4vWOVXF3/bem6IjIMLlTy7RVY8=;
+ b=AoE+6hEBLHLmVHF3YKz/jH5VHmUpO3XjUjk3rPkQ9nfP7PcMpNfnFpCHTniEhLRPT4vZ
+ 8JSNw16Ld3w5w90LzLbS7Pu9wPJpD+GEYKsEd1Zd0wMBj8BPsefxu0HW5l6FUxmpYBqC
+ SSkurLuFaTmMHDwU2Hf+qgoMxiPncnsvrUM+1N71Lw6SdhQalf2g1TrunPFClkOmvC2F
+ Mdxf3hRivGpTs0bL6rkxVK39yFETpOZZxCYeqIKJjE9MRoIpGfRbXP5OmW2DGC6V9bOt
+ aZLRzFx/liTatG0tvVrEHw+CnZlCY12Aq7gZ1C7TgyENyRabemz7piKRofifua6N5Y1J /w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dxpm0ad4w-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Jan 2022 19:20:20 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20VJ8PH3010151;
-        Mon, 31 Jan 2022 19:20:18 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04ams.nl.ibm.com with ESMTP id 3dvw79eg5x-1
+        Mon, 31 Jan 2022 22:28:46 +0000
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20VMPH6P032240;
+        Mon, 31 Jan 2022 22:28:46 GMT
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dxpm0ad4n-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Jan 2022 19:20:18 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20VJATKU49217880
+        Mon, 31 Jan 2022 22:28:46 +0000
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20VMCMCt025889;
+        Mon, 31 Jan 2022 22:28:45 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma05wdc.us.ibm.com with ESMTP id 3dvw7ad1t8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Jan 2022 22:28:45 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20VMSi0I35651866
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 31 Jan 2022 19:10:29 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2429D11C05B;
-        Mon, 31 Jan 2022 19:20:16 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4C91A11C058;
-        Mon, 31 Jan 2022 19:20:15 +0000 (GMT)
-Received: from sig-9-65-69-222.ibm.com (unknown [9.65.69.222])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 31 Jan 2022 19:20:15 +0000 (GMT)
-Message-ID: <09c63b7bfb7e58702f7dcfc71a2e79b866ad9e7d.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Allow template selection with ima_template[_fmt]=
- after ima_hash=
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, guozihua@huawei.com,
-        stable@vger.kernel.org
-Date:   Mon, 31 Jan 2022 14:20:14 -0500
-In-Reply-To: <20220131171139.3024883-1-roberto.sassu@huawei.com>
-References: <20220131171139.3024883-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 31 Jan 2022 22:28:45 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DCB9E2806A;
+        Mon, 31 Jan 2022 22:28:44 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7B7B328067;
+        Mon, 31 Jan 2022 22:28:44 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 31 Jan 2022 22:28:44 +0000 (GMT)
+Message-ID: <d31e8276-9303-fff8-427f-afc859131202@linux.ibm.com>
+Date:   Mon, 31 Jan 2022 17:28:44 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v9 04/23] securityfs: Extend securityfs with namespacing
+ support
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Christian Brauner <brauner@kernel.org>
+References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
+ <20220125224645.79319-5-stefanb@linux.vnet.ibm.com>
+ <dc60e85030ac6423fb2af7361d9e47b01f8c63f7.camel@linux.ibm.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <dc60e85030ac6423fb2af7361d9e47b01f8c63f7.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: CHQAydc0mmQnMNRBhdQQRiFTKY874JrU
-X-Proofpoint-GUID: CHQAydc0mmQnMNRBhdQQRiFTKY874JrU
+X-Proofpoint-ORIG-GUID: nFq2x2eitfspJ_HLSCAsg1WGApgokuHr
+X-Proofpoint-GUID: RsegNeuOqmQo1kOzNJWLj4jWZrjohNyU
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2022-01-31_07,2022-01-31_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- phishscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
- adultscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0 spamscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ lowpriorityscore=0 clxscore=1015 mlxscore=0 suspectscore=0 malwarescore=0
+ bulkscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0 spamscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
- definitions=main-2201310124
+ definitions=main-2201310139
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2022-01-31 at 18:11 +0100, Roberto Sassu wrote:
-> Commit c2426d2ad5027 ("ima: added support for new kernel cmdline parameter
-> ima_template_fmt") introduced an additional check on the ima_template
-> variable to avoid multiple template selection.
-> 
-> Unfortunately, ima_template could be also set by the setup function of the
-> ima_hash= parameter, when it calls ima_template_desc_current(). This causes
-> attempts to choose a new template with ima_template= or with
-> ima_template_fmt=, after ima_hash=, to be ignored.
-> 
-> Achieve the goal of the commit mentioned with the new static variable
-> template_setup_done, so that template selection requests after ima_hash=
-> are not ignored.
-> 
-> Finally, call ima_init_template_list(), if not already done, to initialize
-> the list of templates before lookup_template_desc() is called.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: c2426d2ad5027 ("ima: added support for new kernel cmdline parameter ima_template_fmt")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Thanks, Roberto.
+On 1/27/22 11:53, Mimi Zohar wrote:
+> On Tue, 2022-01-25 at 17:46 -0500, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Enable multiple instances of securityfs by keying each instance with a
+>> pointer to the user namespace it belongs to.
+>>
+>> Since we do not need the pinning of the filesystem for the virtualization
+>> case, limit the usage of simple_pin_fs() and simpe_release_fs() to the
+>> case when the init_user_ns is active. This simplifies the cleanup for the
+>> virtualization case where usage of securityfs_remove() to free dentries
+>> is not needed anymore.
+> Could you add a sentence here explaining why securityfs_remove() isn't
+> needed in the virtualization case?
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+At this point the reason is that simple_pin_fs() is not used for the 
+virtualization case.
 
-Mimi
+Maybe it should say: ... to free dentries is *therefore* not needed anymore.
 
+    Stefan
