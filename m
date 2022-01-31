@@ -2,199 +2,193 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F303C43219
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jan 2022 17:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B259C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Jan 2022 18:57:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380799AbiAaRPb (ORCPT
+        id S1358290AbiAaS5X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Jan 2022 12:15:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46934 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380823AbiAaRPJ (ORCPT
+        Mon, 31 Jan 2022 13:57:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30676 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1358218AbiAaS5W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Jan 2022 12:15:09 -0500
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BE52C06173D
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jan 2022 09:14:44 -0800 (PST)
-Received: by mail-vs1-xe2c.google.com with SMTP id t20so12712794vsq.12
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jan 2022 09:14:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=k7+ievx6/3tS1o/ihNl/pcxCjBV2WOb0gBrhbAqg+l4=;
-        b=N+o6Ve/SZZFEiuQnFtGXv0LawHh9waSUNgdpveZZS/KMyRW+IAUAVcOzaJx9mVzu6M
-         92+Y3eg1ddIy7k1tGnAaO2vZpCZMVVusT8HqJvYx6WnfOA9MmFEy1GIiqz5Mhu8NypwY
-         y2pd+wRKv1TaKURQxojpdKVaHoptgSEKLCUUdYT+BWDA3dzb4/kOYXe+HCACuLghaEWI
-         xKWlZy4AilwPqUjKxNj7b6TAvWeTxKuY3zAoftO7LhHoo7gIXrsGQ9qcSGqhHkdfWn7q
-         CDWFLLjZwLRbizLFIrIHSCTZ7pNVQJlUQ58IsdL5U3JRQ2wlJghSRfcyN8Wx/qWQ4l2y
-         /IbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=k7+ievx6/3tS1o/ihNl/pcxCjBV2WOb0gBrhbAqg+l4=;
-        b=hSzJxmgSMVttPfFy4YBb6Gy83p0W0kGpDKFjB3ZuTrJqawSqQ0PxfbHHuZusHmqYHt
-         d+PhImrV1/fxCsDePXgHdPoQglobH36SIwWOWNU7wcA9Hua1mW1wVTaYSMQ9zC+3Jfe1
-         Idc3gC1765nimlNvXxVPiFP6dadODNXkwbKRbPT8DdPZ07Gi5xHDdaxRINt1yj7g9qGX
-         ijF1zVYBMNH2x2yfWmsyBgokk5dV1ibwS12UXTRQ4dWDmBw3Hxww3OOtHTYPD4nvBMq/
-         t+VQawu4LEyeuse7RDOuUX1UufSYS4+RnXamGRqzgsVj5RaZyWMZWq+lwXDpoK5ifIQW
-         p8Rg==
-X-Gm-Message-State: AOAM532CY0D2Co86swGtEFIxXTP4JieGZ8iFS/S2BRZVF2AMlXZRgVlk
-        v7QiHVV+P1jAv22o+xb/Nyzh6c3+NeE=
-X-Google-Smtp-Source: ABdhPJxlpfgYo2hHH6BUPQbPheEpfRLlQ+S3xPsFtgQn833wGRfMbXmsl96SlFg9EW3ng3vcU/fUHQ==
-X-Received: by 2002:a67:e0d9:: with SMTP id m25mr7890536vsl.51.1643649283520;
-        Mon, 31 Jan 2022 09:14:43 -0800 (PST)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id o22sm4471062uaw.2.2022.01.31.09.14.42
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jan 2022 09:14:42 -0800 (PST)
-Received: by mail-vk1-f182.google.com with SMTP id b77so8690200vka.11
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Jan 2022 09:14:42 -0800 (PST)
-X-Received: by 2002:a05:6122:a0b:: with SMTP id 11mr8578375vkn.10.1643649282252;
- Mon, 31 Jan 2022 09:14:42 -0800 (PST)
+        Mon, 31 Jan 2022 13:57:22 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20VHW8wf018646;
+        Mon, 31 Jan 2022 18:56:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=OoBmDdOiqugOKX+t2tC8Z6K0AKa0cLylyvApIRSkk5I=;
+ b=n4RqKA6nlmWnmrghvMD2CRaKMSvPCuChxumTowm2RPuW47np/HcETsr/QQ+cx7Gjnawj
+ tG6geMo8+UCl80Bp8/YoPxt4F1ydV8yOz2eOqbpqmxuTSfX5ALHbBrRWID9xZ2n9j1nb
+ E3j11pGu3R3nt7JyNpzQFWcQT0OMpeOc6p3MrBaWOwA4Dyk2jCy5e3o682EQnmt4G1qI
+ 0H3lbUcHzRZkZ+XCq2PnB3/2QBnVwRP26aPxZFHaxmtJhZPYgYIgYZTpB/o6ikQRbFu7
+ +dNrfPSIIHRVM5cprlFemWd0Zci3e+RHJI0G+lTcfJaiiU2uU+DBpIo5Ud1aaU5mtIib 8g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dxm8khyam-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Jan 2022 18:56:55 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20VIpdpv018370;
+        Mon, 31 Jan 2022 18:56:54 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dxm8khya9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Jan 2022 18:56:54 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20VIqJrA019182;
+        Mon, 31 Jan 2022 18:56:53 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma02wdc.us.ibm.com with ESMTP id 3dvw7a9k3w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Jan 2022 18:56:53 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20VIuoDJ31850960
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 31 Jan 2022 18:56:50 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AAF92124070;
+        Mon, 31 Jan 2022 18:56:50 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 67E35124055;
+        Mon, 31 Jan 2022 18:56:48 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 31 Jan 2022 18:56:48 +0000 (GMT)
+Message-ID: <83d32ac3-6633-3ccc-1377-91caaf709445@linux.ibm.com>
+Date:   Mon, 31 Jan 2022 13:56:48 -0500
 MIME-Version: 1.0
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
- <20220124080215.265538-2-konstantin.meskhidze@huawei.com> <CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com>
- <0934a27a-d167-87ea-97d2-b3ac952832ff@huawei.com> <CA+FuTSc8ZAeaHWVYf-zmn6i5QLJysYGJppAEfb7tRbtho7_DKA@mail.gmail.com>
- <d84ed5b3-837a-811a-6947-e857ceba3f83@huawei.com>
-In-Reply-To: <d84ed5b3-837a-811a-6947-e857ceba3f83@huawei.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Mon, 31 Jan 2022 12:14:05 -0500
-X-Gmail-Original-Message-ID: <CA+FuTSeVhLdeXokyG4x__HGJyNOwsSicLOb4NKJA-gNp59S5uA@mail.gmail.com>
-Message-ID: <CA+FuTSeVhLdeXokyG4x__HGJyNOwsSicLOb4NKJA-gNp59S5uA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] landlock: TCP network hooks implementation
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        mic@digikod.net, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter@vger.kernel.org,
-        yusongping@huawei.com, artem.kuzin@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v9 16/23] ima: Implement ima_free_policy_rules() for
+ freeing of an ima_namespace
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
+ <20220125224645.79319-17-stefanb@linux.vnet.ibm.com>
+ <258c7c5e1aebfc9376560549794d43e744654713.camel@linux.ibm.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <258c7c5e1aebfc9376560549794d43e744654713.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ZplDHnseCm730yNs_Y20Zp5bXUuJIEF_
+X-Proofpoint-ORIG-GUID: LXRGMp9mqGG5FubM1xYAo-EY0g0LYkV7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-31_07,2022-01-31_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ malwarescore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxscore=0 clxscore=1015 mlxlogscore=999 bulkscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2201310120
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 28, 2022 at 10:12 PM Konstantin Meskhidze
-<konstantin.meskhidze@huawei.com> wrote:
->
->
->
-> 1/26/2022 5:15 PM, Willem de Bruijn =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Wed, Jan 26, 2022 at 3:06 AM Konstantin Meskhidze
-> > <konstantin.meskhidze@huawei.com> wrote:
-> >>
-> >>
-> >>
-> >> 1/25/2022 5:17 PM, Willem de Bruijn =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>> On Mon, Jan 24, 2022 at 3:02 AM Konstantin Meskhidze
-> >>> <konstantin.meskhidze@huawei.com> wrote:
-> >>>>
-> >>>> Support of socket_bind() and socket_connect() hooks.
-> >>>> Current prototype can restrict binding and connecting of TCP
-> >>>> types of sockets. Its just basic idea how Landlock could support
-> >>>> network confinement.
-> >>>>
-> >>>> Changes:
-> >>>> 1. Access masks array refactored into 1D one and changed
-> >>>> to 32 bits. Filesystem masks occupy 16 lower bits and network
-> >>>> masks reside in 16 upper bits.
-> >>>> 2. Refactor API functions in ruleset.c:
-> >>>>       1. Add void *object argument.
-> >>>>       2. Add u16 rule_type argument.
-> >>>> 3. Use two rb_trees in ruleset structure:
-> >>>>       1. root_inode - for filesystem objects
-> >>>>       2. root_net_port - for network port objects
-> >>>>
-> >>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com=
->
-> >>>
-> >>>> +static int hook_socket_connect(struct socket *sock, struct sockaddr=
- *address, int addrlen)
-> >>>> +{
-> >>>> +       short socket_type;
-> >>>> +       struct sockaddr_in *sockaddr;
-> >>>> +       u16 port;
-> >>>> +       const struct landlock_ruleset *const dom =3D landlock_get_cu=
-rrent_domain();
-> >>>> +
-> >>>> +       /* Check if the hook is AF_INET* socket's action */
-> >>>> +       if ((address->sa_family !=3D AF_INET) && (address->sa_family=
- !=3D AF_INET6))
-> >>>> +               return 0;
-> >>>
-> >>> Should this be a check on the socket family (sock->ops->family)
-> >>> instead of the address family?
-> >>
-> >> Actually connect() function checks address family:
-> >>
-> >> int __inet_stream_connect(... ,struct sockaddr *uaddr ,...) {
-> >> ...
-> >>          if (uaddr) {
-> >>                  if (addr_len < sizeof(uaddr->sa_family))
-> >>                  return -EINVAL;
-> >>
-> >>                  if (uaddr->sa_family =3D=3D AF_UNSPEC) {
-> >>                          err =3D sk->sk_prot->disconnect(sk, flags);
-> >>                          sock->state =3D err ? SS_DISCONNECTING :
-> >>                          SS_UNCONNECTED;
-> >>                  goto out;
-> >>                  }
-> >>          }
-> >>
-> >> ...
-> >> }
-> >
-> > Right. My question is: is the intent of this feature to be limited to
-> > sockets of type AF_INET(6) or to addresses?
-> >
-> > I would think the first. Then you also want to catch operations on
-> > such sockets that may pass a different address family. AF_UNSPEC is
-> > the known offender that will effect a state change on AF_INET(6)
-> > sockets.
->
->   The intent is to restrict INET sockets to bind/connect to some ports.
->   You can apply some number of Landlock rules with port defenition:
->         1. Rule 1 allows to connect to sockets with port X.
->         2. Rule 2 forbids to connect to socket with port Y.
->         3. Rule 3 forbids to bind a socket to address with port Z.
->
->         and so on...
-> >
-> >>>
-> >>> It is valid to pass an address with AF_UNSPEC to a PF_INET(6) socket.
-> >>> And there are legitimate reasons to want to deny this. Such as passin=
-g
-> >>> a connection to a unprivileged process and disallow it from disconnec=
-t
-> >>> and opening a different new connection.
-> >>
-> >> As far as I know using AF_UNSPEC to unconnect takes effect on
-> >> UDP(DATAGRAM) sockets.
-> >> To unconnect a UDP socket, we call connect but set the family member o=
-f
-> >> the socket address structure (sin_family for IPv4 or sin6_family for
-> >> IPv6) to AF_UNSPEC. It is the process of calling connect on an already
-> >> connected UDP socket that causes the socket to become unconnected.
-> >>
-> >> This RFC patch just supports TCP connections. I need to check the logi=
-c
-> >> if AF_UNSPEC provided in connenct() function for TCP(STREAM) sockets.
-> >> Does it disconnect already established TCP connection?
-> >>
-> >> Thank you for noticing about this issue. Need to think through how
-> >> to manage it with Landlock network restrictions for both TCP and UDP
-> >> sockets.
-> >
-> > AF_UNSPEC also disconnects TCP.
->
-> So its possible to call connect() with AF_UNSPEC and make a socket
-> unconnected. If you want to establish another connection to a socket
-> with port Y, and if there is a landlock rule has applied to a process
-> (or container) which restricts to connect to a socket with port Y, it
-> will be banned.
-> Thats the basic logic.
 
-Understood, and that works fine for connect. It would be good to also
-ensure that a now-bound socket cannot call listen. Possibly for
-follow-on work.
+On 1/28/22 09:02, Mimi Zohar wrote:
+> Hi Stefan,
+>
+> On Tue, 2022-01-25 at 17:46 -0500, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Implement ima_free_policy_rules() that is needed when an ima_namespace
+>> is freed.
+>>
+>> Only reset temp_ima_appraise when using init_ima_ns.
+> Instead of having to walk the policy rules to know if there are any
+> "appraise" rules, the ima_appraise flag is set.  For now, only reset
+> temp_ima_appraise flag on failed policy rule updates for init_ima_ns.
+
+
+Ok, I am taking this whole text.
+
+
+>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> ---
+>>   v9:
+>>    - Only reset temp_ima_appraise when using init_ima_ns.
+>> ---
+>>   security/integrity/ima/ima.h        |  1 +
+>>   security/integrity/ima/ima_policy.c | 20 +++++++++++++++++++-
+>>   2 files changed, 20 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>> index aea8fb8d2854..8c757223d549 100644
+>> --- a/security/integrity/ima/ima.h
+>> +++ b/security/integrity/ima/ima.h
+>> @@ -329,6 +329,7 @@ void ima_update_policy_flags(struct ima_namespace *ns);
+>>   ssize_t ima_parse_add_rule(struct ima_namespace *ns, char *rule);
+>>   void ima_delete_rules(struct ima_namespace *ns);
+>>   int ima_check_policy(struct ima_namespace *ns);
+>> +void ima_free_policy_rules(struct ima_namespace *ns);
+>>   void *ima_policy_start(struct seq_file *m, loff_t *pos);
+>>   void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos);
+>>   void ima_policy_stop(struct seq_file *m, void *v);
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index e8140e73d80b..47f2d1b5d156 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -1880,13 +1880,31 @@ void ima_delete_rules(struct ima_namespace *ns)
+>>   {
+>>   	struct ima_rule_entry *entry, *tmp;
+>>   
+>> -	temp_ima_appraise = 0;
+>> +	if (ns == &init_ima_ns)
+>> +		temp_ima_appraise = 0;
+>> +
+>>   	list_for_each_entry_safe(entry, tmp, &ns->ima_temp_rules, list) {
+>>   		list_del(&entry->list);
+>>   		ima_free_rule(entry);
+>>   	}
+>>   }
+>>   
+>> +/**
+>> + * ima_free_policy_rules - free all policy rules
+>> + * @ns: IMA namespace that has the policy
+>> + */
+>> +void ima_free_policy_rules(struct ima_namespace *ns)
+>> +{
+>> +	struct ima_rule_entry *entry, *tmp;
+>> +
+>> +	ima_delete_rules(ns);
+> When the IMA policy is being extended, new rules are temporarily added
+> to the ima_temp_rules list.  If the entire set of rules being added are
+> valid, they're appended to the tail.
+>
+> There shouldn't be any rules on the ima_temp_rules list unless the
+> policy is currently being extended.  Is that possible at this point?
+
+Actually, no. Nothing can be left. I am removing this call.
+
+I wonder whether to split this patch into into two patches?
+
+
+>
+>> +
+>> +	list_for_each_entry_safe(entry, tmp, &ns->ima_policy_rules, list) {
+>> +		list_del(&entry->list);
+>> +		ima_free_rule(entry);
+>> +	}
+>> +}
+>> +
+>>   #define __ima_hook_stringify(func, str)	(#func),
+>>   
+>>   const char *const func_tokens[] = {
+> thanks,
+>
+> Mimi
+>
