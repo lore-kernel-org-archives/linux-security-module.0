@@ -2,144 +2,179 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE1EC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Feb 2022 17:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4F5C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Feb 2022 18:07:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233945AbiBARxS (ORCPT
+        id S241776AbiBASHs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Feb 2022 12:53:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230439AbiBARxS (ORCPT
+        Tue, 1 Feb 2022 13:07:48 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26127 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241738AbiBASHs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Feb 2022 12:53:18 -0500
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48ECCC061714
-        for <linux-security-module@vger.kernel.org>; Tue,  1 Feb 2022 09:53:18 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JpCG46NvFzMqCNQ;
-        Tue,  1 Feb 2022 18:53:16 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4JpCG439FbzlhMBQ;
-        Tue,  1 Feb 2022 18:53:16 +0100 (CET)
-Message-ID: <85450679-51fd-e5ae-b994-74bda3041739@digikod.net>
-Date:   Tue, 1 Feb 2022 18:53:18 +0100
+        Tue, 1 Feb 2022 13:07:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643738867;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WbBlRRySTSYfyiFCmjcFdtwLEhU3rffLIxhLq8iPqzY=;
+        b=MlpqS1EeJMgJoJ14qRud4UFhYD9AzMqmSy2oIr2NkoldqO/4q2tRkvzPvOol4OWTXE5Sqg
+        HRa3RuuFRhGVLVbTRSA3Y8ALJHZ+9qqN1i3Hus0fCIwnF79bwaYVmz219Z3we1k1IqznqE
+        Dp+IXQN4O68ICHXQ0iJkxl/fNVWeJYQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-592-ya41p0QCOlmKBRJEEYrGHg-1; Tue, 01 Feb 2022 13:07:46 -0500
+X-MC-Unique: ya41p0QCOlmKBRJEEYrGHg-1
+Received: by mail-wm1-f72.google.com with SMTP id c7-20020a1c3507000000b0034a0dfc86aaso2036838wma.6
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Feb 2022 10:07:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WbBlRRySTSYfyiFCmjcFdtwLEhU3rffLIxhLq8iPqzY=;
+        b=zvUTCGrZ9G6Nwzu5J9O1Tp45eYSzgnTh0Sa5jGiQ6yeTomfxII58XbD6WZ97D/ZqEq
+         I6w2pqEiAOFC7nfnIg5ahBTRR9nxmVkSSfhTlbdMMDcZJnuURwSaoZzWu0vi7H7vsWi2
+         XvYqCL3VbWFPP0gdVATodRCa8r7exHQPXOWdXhBPEbHvOQOaJqfuR5BTotiSBA7vNISF
+         9dpxRlCOjzRkTXjMLMIFyuNxyPzICB47sZCPVk2cw7lIm3kg5H1yasb5S7iS0yE5qkN6
+         r06U0y0m0W94DkjKVBjuSeu9k2cSXTlx/ncnxDQlSdLcsXet4SSDMoRgxcTnUhHqt52Q
+         HSHQ==
+X-Gm-Message-State: AOAM533gir9squxPfG7ETS2muY1PxH1mRKdeWF/VHTQ2ABIk7P4XOUKd
+        SovgQ+Ma5qYs6bq7sX/GRM+d9SXxBdadUMb9mKb/rz0IZ+ynXh4xbyaaIO/zIiPLx0dr2SHdFmK
+        /SJQoL7+cUKRLh4QtIBshiVbpZn22Hrt6vOzo
+X-Received: by 2002:adf:ef05:: with SMTP id e5mr2411051wro.413.1643738865328;
+        Tue, 01 Feb 2022 10:07:45 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwEMGb5gkaJl9q84gkPJPKSY0nbPh9TUR5tTp3lEGzAv+bm64PK8deuOj2kLWisFBBgOydY2Q==
+X-Received: by 2002:adf:ef05:: with SMTP id e5mr2411018wro.413.1643738864991;
+        Tue, 01 Feb 2022 10:07:44 -0800 (PST)
+Received: from work-vm (cpc109025-salf6-2-0-cust480.10-2.cable.virginm.net. [82.30.61.225])
+        by smtp.gmail.com with ESMTPSA id o14sm17659694wry.104.2022.02.01.10.07.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Feb 2022 10:07:44 -0800 (PST)
+Date:   Tue, 1 Feb 2022 18:07:41 +0000
+From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+To:     James Bottomley <jejb@linux.ibm.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Dov Murik <dovmurik@linux.ibm.com>, linux-efi@vger.kernel.org,
+        Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>,
+        dougmill@linux.vnet.ibm.com, gcwilson@linux.ibm.com,
+        gjoyce@ibm.com, linuxppc-dev@lists.ozlabs.org, mjg59@srcf.ucam.org,
+        mpe@ellerman.id.au, dja@axtens.net
+Subject: Re: [PATCH v7 0/5] Allow guest access to EFI confidential computing
+ secret area
+Message-ID: <Yfl27cDpAUYy59ss@work-vm>
+References: <20220201124413.1093099-1-dovmurik@linux.ibm.com>
+ <Yfk6vEuZFtgtA+G+@kroah.com>
+ <37779659ca96ac9c1f11bcc0ac0665895c795b54.camel@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH 0/2] landlock network implementation cover letter
-In-Reply-To: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <37779659ca96ac9c1f11bcc0ac0665895c795b54.camel@linux.ibm.com>
+User-Agent: Mutt/2.1.5 (2021-12-30)
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=dgilbert@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 24/01/2022 09:02, Konstantin Meskhidze wrote:
-> Hi, all!
+* James Bottomley (jejb@linux.ibm.com) wrote:
+> [cc's added]
+> On Tue, 2022-02-01 at 14:50 +0100, Greg KH wrote:
+> > On Tue, Feb 01, 2022 at 12:44:08PM +0000, Dov Murik wrote:
+> [...]
+> > > # ls -la /sys/kernel/security/coco/efi_secret
+> > > total 0
+> > > drwxr-xr-x 2 root root 0 Jun 28 11:55 .
+> > > drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
+> > > -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-
+> > > 06879ce3da0b
+> > > -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-
+> > > d3a0b54312c6
+> > > -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-
+> > > ff17f78864d2
+> > 
+> > Please see my comments on the powerpc version of this type of thing:
+> > 	
+> > https://lore.kernel.org/r/20220122005637.28199-1-nayna@linux.ibm.com
 > 
-> This is a new bunch of RFC patches related to Landlock LSM network confinement.
-> Here are previous discussions:
-> 1. https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
-> 2. https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+> If you want a debate, actually cc'ing the people on the other thread
+> would have been a good start ...
 > 
-> As in previous RFCs, 2 hooks are supported:
->    - hook_socket_bind()
->    - hook_socket_connect()
+> For those added, this patch series is at:
 > 
-> Selftest are provided in tools/testing/selftests/landlock/network_test.c;
-> Implementation was tested in QEMU invironment with 5.13 kernel version:
-
-Again, you need to base your work on the latest kernel version.
-
-
->   1. base_test - passed all tests
->   2. fs_test - passed 44/46 tests. 2 tests related to overlayfs failed.
->      Probably, I have wrong config options for overlayfs.
-
-The minimal required configuration is listed in the "config" file. You 
-need to update it for the network tests as well. You missed the 
-ptrace_test. To test everything you can run:
-fakeroot make -C tools/testing/selftests TARGETS=landlock gen_tar
-and then extract 
-tools/testing/selftests/kselftest_install/kselftest-packages/kselftest.tar.gz 
-and execute run_kselftest.sh on your VM.
-
-
->   3. network_test - passed all tests.
->      Please give your suggestions about test cover in network_test.c
+> https://lore.kernel.org/all/20220201124413.1093099-1-dovmurik@linux.ibm.com/
 > 
-> Implementation related issues
-> =============================
+> > You all need to work together to come up with a unified place for
+> > this and stop making it platform-specific.
+> 
+> I'm not entirely sure of that.  If you look at the differences between
+> EFI variables and the COCO proposal: the former has an update API
+> which, in the case of signed variables, is rather complex and a UC16
+> content requirement.  The latter is binary data with read only/delete. 
+> Plus each variable in EFI is described by a GUID, so having a directory
+> of random guids, some of which behave like COCO secrets and some of
+> which are EFI variables is going to be incredibly confusing (and also
+> break all our current listing tools which seems somewhat undesirable).
+> 
+> So we could end up with 
+> 
+> <common path prefix>/efivar
+> <common path prefix>/coco
+> 
+> To achieve the separation, but I really don't see what this buys us. 
+> Both filesystems would likely end up with different backends because of
+> the semantic differences and we can easily start now in different
+> places (effectively we've already done this for efi variables) and
+> unify later if that is the chosen direction, so it doesn't look like a
+> blocker.
+> 
+> > Until then, we can't take this.
+> 
+> I don't believe anyone was asking you to take it.
 
-It is more a changelog than issues. ;)
+I have some sympathy in wanting some unification; (I'm not sure that
+list of comparison even includes the TDX world).
+But I'm not sure if they're the same thing - these are strictly
+constants, they're not changable.
 
+But it is a messy list of differences - especially things like the
+UTF-16 stuff
+I guess the PowerVM key naming contains nul and / can be ignored
+- if anyone is silly enough to create keys with those names then they
+can not access them; so at least that would solve that problem.
 
-> 
-> 1. Access masks array refactored into 1D one and changed
-> to 32 bits. Filesystem masks occupy 16 lower bits and network
-> masks reside in 16 upper bits.
-> 
->        struct landlock_ruleset {
->              ...
->              ...
->              u32 access_masks[];
->        }
-> 
-> 2. Refactor API functions in ruleset.c:
->      1. Add (void *)object argument.
->      2. Add u16 rule_type argument.
-> 
->    - In filesystem case the "object" is defined by underlying inode.
->    In network case the "object" is defined by a port. There is
->    a union containing either a struct landlock_object pointer or a
->    raw data (here a u16 port):
->      union {
->          struct landlock_object *ptr;
->          uintptr_t data;
->      } object;
-> 
->    - Everytime when a rule is inserted it's needed to provide a rule type:
-> 
->      landlock_insert_rule(ruleset, (void *)object, access, rule_type)
->        1. A rule_type could be or LANDLOCK_RULE_NET_SERVICE or
->        LANDLOCK_RULE_PATH_BENEATH;
->        2. (void *) object - is either landlock_object *ptr or port value;
-> 
-> 3. Use two rb_trees in ruleset structure:
->      1. root_inode - for filesystem objects (inodes).
->      2. root_net_port - for network port objects.
+I don't really understand the talk of 32bit attributes in either the
+uEFI or PowerVM key store case.
 
-Thanks for these explanations!
+Is that GOOGLE_SMI stuff already there? If so I guess there's not much
+we can do  - but it's a shame that there's the directory per variable.
+
+Dave
 
 
+
+> James
 > 
-> Konstantin Meskhidze (2):
->    landlock: TCP network hooks implementation
->    landlock: selftests for bind and connect hooks
 > 
->   include/uapi/linux/landlock.h                 |  52 +++
->   security/landlock/Makefile                    |   2 +-
->   security/landlock/fs.c                        |  12 +-
->   security/landlock/limits.h                    |   6 +
->   security/landlock/net.c                       | 175 +++++++++
->   security/landlock/net.h                       |  21 ++
->   security/landlock/ruleset.c                   | 167 ++++++---
->   security/landlock/ruleset.h                   |  40 +-
->   security/landlock/setup.c                     |   3 +
->   security/landlock/syscalls.c                  | 142 ++++---
->   .../testing/selftests/landlock/network_test.c | 346 ++++++++++++++++++
->   11 files changed, 860 insertions(+), 106 deletions(-)
->   create mode 100644 security/landlock/net.c
->   create mode 100644 security/landlock/net.h
->   create mode 100644 tools/testing/selftests/landlock/network_test.c
-> 
-> --
-> 2.25.1
-> 
+-- 
+Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+
