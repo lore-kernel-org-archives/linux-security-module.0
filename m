@@ -2,122 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1111C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Feb 2022 20:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B448AC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Feb 2022 20:44:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242645AbiBAUjH (ORCPT
+        id S236937AbiBAUoG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Feb 2022 15:39:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30018 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S240598AbiBAUiS (ORCPT
+        Tue, 1 Feb 2022 15:44:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56494 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234504AbiBAUoG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Feb 2022 15:38:18 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 211Js69b031070;
-        Tue, 1 Feb 2022 20:37:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=Z61o7XFNtLtEoY0IRwR7hf+c1pRZ1yg1bG/PraBIWHc=;
- b=W3hf6tz3UQY8BjnY/rm0RslrZvTs5LTGewmv2Uj1Y5MBtWBL9EMXUNem817w5Coirq/S
- Uzbs2qHRg1HvGk261zHG+D27k4j+HeGmbj9fwk5Rh/rLhAJCv/jwtQ8pLdh/lYtw8G9J
- zI5cd8Zkit+Syu25iBSPjv1+QkwRKJ3CoMfS4lgk7AiUe8usZ0N5xL/Q/tBn4xsEJ0mj
- hL5Jlge/+SvHJRvKKFPbc81VrD2O98G8wLcR7MTkpuz2jSi5L8K1vtgQaGZQLB1jHsWR
- 3+jkhFwmpweK3MhfY4pCBbh0DH6aD3whAcDmvKV3yN2HdcbSkc3WRBzUJC5FEGuP1bQU KQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dybe58pvy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Feb 2022 20:37:52 +0000
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 211KLph7024770;
-        Tue, 1 Feb 2022 20:37:51 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dybe58pvt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Feb 2022 20:37:51 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 211KWMRd028009;
-        Tue, 1 Feb 2022 20:37:50 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma03dal.us.ibm.com with ESMTP id 3dy0swgmm0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Feb 2022 20:37:50 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 211KbnAS14746100
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 1 Feb 2022 20:37:49 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56886B205F;
-        Tue,  1 Feb 2022 20:37:49 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A789B206B;
-        Tue,  1 Feb 2022 20:37:49 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Feb 2022 20:37:49 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v10 02/27] ima: Do not print policy rule with inactive LSM labels
-Date:   Tue,  1 Feb 2022 15:37:10 -0500
-Message-Id: <20220201203735.164593-3-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220201203735.164593-1-stefanb@linux.ibm.com>
-References: <20220201203735.164593-1-stefanb@linux.ibm.com>
+        Tue, 1 Feb 2022 15:44:06 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF54AC061714
+        for <linux-security-module@vger.kernel.org>; Tue,  1 Feb 2022 12:44:05 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id x23so36481519lfc.0
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Feb 2022 12:44:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=MBY7qkYIeruS403jGWxLc8qBC8crAwDSc2ArZKdF7cE=;
+        b=ZJHXF/mgc129bb1roGPt/eKGwGbEkT5OsLglTS5x6YCuJup5X9jZri0gm8aQ9lQkoO
+         ikSdDBpN8mxtjkuNUjoHIbnM+dP+JAlKKakx4saSYgVp80Wn3c3f3pMf9SjXwukSVYBA
+         FIdGw3jim5kLN2xm2rKc0Tz9qrKTb1U4Ai5G3eD1CE9u3/L9VVJUvOp09RgNgxS6mvL8
+         o3kcz23cxg11Qfn1k4RtDrpUd8UHZ938DmlwstTh+4zCI93s/Cvn0BavZW/BtoBR9TgS
+         MTss5X8mU9XGvbf8jNDGbw9XX/hZomaPmjd1JOkdCUUpWn+jHyxTR6fHZ+MMDxU3nP8P
+         PJ9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=MBY7qkYIeruS403jGWxLc8qBC8crAwDSc2ArZKdF7cE=;
+        b=qKmYav48OHsTcHbMD7ry0UXO2DDB8mVCeo7yXUQ41HYrHSyh4AkYk8Y/ew6tfmrd5k
+         JdInOiuPFACto1bhzV4M4uoJsO0xywp3OSAGUWVZ0uP/XuvmmqffVqA7Js12HOI6JcuR
+         YDh/hIB47YSwriNnRk3xkf/u3jbePEUYCqG6AXIztAcYbl3vww5ZApnP9EYAVIt16Tav
+         MhuoIyC7N1JjWE5QH9xzcgj8inqtjGG8CGUvU3MMhK3pGdYYMzVPvMFXgGs3EIdDF5nd
+         eyux8mCb1KwpKs5mV9wxz/8jl5VEpT8sF3KfpHJyXQyP6T0eU4ZprLi7ssRQPm35+/Pa
+         FqxQ==
+X-Gm-Message-State: AOAM532FsdCyn8MFCYaE2xS5ZIw4DwbWnfmRpBuKSmee3YMr2y25G2Te
+        y8Cku5pLBYCnIufgqQRtHf19grsNLOw=
+X-Google-Smtp-Source: ABdhPJx13ynyknwQHDAVWhWQTICmHAxB4SHtRAUaxuaacyxxY23sxQH3g8EaVIJMBHvcFm61vWbTVQ==
+X-Received: by 2002:ac2:51db:: with SMTP id u27mr21325820lfm.442.1643748244046;
+        Tue, 01 Feb 2022 12:44:04 -0800 (PST)
+Received: from [192.168.0.150] (0855025014.static.corbina.ru. [89.179.245.198])
+        by smtp.gmail.com with ESMTPSA id t9sm2735483lfp.27.2022.02.01.12.44.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Feb 2022 12:44:03 -0800 (PST)
+Message-ID: <ef710eed-b136-8e52-75dc-a68733c2d6dc@gmail.com>
+Date:   Tue, 1 Feb 2022 23:44:05 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: WrZdQUFmuUGFFjnwdNXFBN21dRdeGRZo
-X-Proofpoint-ORIG-GUID: WIxt4MwYIU1MqaZQa24XpHhQskfp8ZFp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-01_09,2022-02-01_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- mlxscore=0 adultscore=0 spamscore=0 bulkscore=0 phishscore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202010114
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: [PATCH] lsm: Remove stale info about sb_copy_data and
+ sb_parse_opts_str
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <b81ca774-d45d-6b85-fb74-ffa72223b35a@gmail.com>
+ <7164db8a-bf9e-b4e1-0b24-a1d03489f16a@schaufler-ca.com>
+From:   Igor Zhbanov <izh1979@gmail.com>
+In-Reply-To: <7164db8a-bf9e-b4e1-0b24-a1d03489f16a@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Before printing a policy rule scan for inactive LSM labels in the policy
-rule. Inactive LSM labels are identified by args_p != NULL and
-rule == NULL.
+Remove info about deleted LSM hooks from include/linux/lsm_hooks.h.
 
-Fixes: b16942455193 ("ima: use the lsm policy update notifier")
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Signed-off-by: Igor Zhbanov <izh1979@gmail.com>
 ---
- security/integrity/ima/ima_policy.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/linux/lsm_hooks.h | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 320ca80aacab..2a1f6418b10a 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1967,6 +1967,14 @@ int ima_policy_show(struct seq_file *m, void *v)
- 
- 	rcu_read_lock();
- 
-+	/* Do not print rules with inactive LSM labels */
-+	for (i = 0; i < MAX_LSM_RULES; i++) {
-+		if (entry->lsm[i].args_p && !entry->lsm[i].rule) {
-+			rcu_read_unlock();
-+			return 0;
-+		}
-+	}
-+
- 	if (entry->action & MEASURE)
- 		seq_puts(m, pt(Opt_measure));
- 	if (entry->action & DONT_MEASURE)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 3bf5c658bc44..1f777e3c2ad3 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -136,15 +136,6 @@
+  *	@flags contains the mount flags.
+  *	@data contains the filesystem-specific data.
+  *	Return 0 if permission is granted.
+- * @sb_copy_data:
+- *	Allow mount option data to be copied prior to parsing by the filesystem,
+- *	so that the security module can extract security-specific mount
+- *	options cleanly (a filesystem may modify the data e.g. with strsep()).
+- *	This also allows the original mount data to be stripped of security-
+- *	specific options to avoid having to make filesystems aware of them.
+- *	@orig the original mount data copied from userspace.
+- *	@copy copied data which will be passed to the security module.
+- *	Returns 0 if the copy was successful.
+  * @sb_mnt_opts_compat:
+  *	Determine if the new mount options in @mnt_opts are allowed given
+  *	the existing mounted filesystem at @sb.
+@@ -180,10 +171,6 @@
+  *	Copy all security options from a given superblock to another
+  *	@oldsb old superblock which contain information to clone
+  *	@newsb new superblock which needs filled in
+- * @sb_parse_opts_str:
+- *	Parse a string of security data filling in the opts structure
+- *	@options string containing all mount options known by the LSM
+- *	@opts binary data structure usable by the LSM
+  * @move_mount:
+  *	Check permission before a mount is moved.
+  *	@from_path indicates the mount that is going to be moved.
 -- 
 2.31.1
+
 
