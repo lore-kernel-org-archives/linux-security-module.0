@@ -2,26 +2,38 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9D1C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Feb 2022 04:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 034DEC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Feb 2022 06:53:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243847AbiBBEB7 (ORCPT
+        id S245045AbiBBGxJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Feb 2022 23:01:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41796 "EHLO
+        Wed, 2 Feb 2022 01:53:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232069AbiBBEB7 (ORCPT
+        with ESMTP id S244739AbiBBGwh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Feb 2022 23:01:59 -0500
-Received: from cavan.codon.org.uk (irc.codon.org.uk [IPv6:2a00:1098:84:22e::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C9BAC061714;
-        Tue,  1 Feb 2022 20:01:59 -0800 (PST)
-Received: by cavan.codon.org.uk (Postfix, from userid 1000)
-        id 394B740A4A; Wed,  2 Feb 2022 04:01:57 +0000 (GMT)
-Date:   Wed, 2 Feb 2022 04:01:57 +0000
-From:   Matthew Garrett <mjg59@srcf.ucam.org>
-To:     James Bottomley <jejb@linux.ibm.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Wed, 2 Feb 2022 01:52:37 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2BB9C061758;
+        Tue,  1 Feb 2022 22:10:05 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7898B6172A;
+        Wed,  2 Feb 2022 06:10:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2098FC004E1;
+        Wed,  2 Feb 2022 06:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1643782204;
+        bh=o9OIrNJyZoJDYTVkKluL49dvJyVfEvgp3uWhpxsqSmQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ld+tSCVMYvFZDbuSb+SfbwOFsGI+9nN9mO4Xs6IEK+rExQGRHD3EcKPX+8kNRKwX/
+         7WqbwZzDUrH4ElEfoNwbTPZO6+2veEg1IygbQyrLDAq7iaDX3oLWPzMoMfer+TBUyn
+         jOjhBdeAk6RyCCnKbDyYnrMNwmdV4EOuYY4dJyos=
+Date:   Wed, 2 Feb 2022 07:10:02 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Matthew Garrett <mjg59@srcf.ucam.org>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
         Dov Murik <dovmurik@linux.ibm.com>, linux-efi@vger.kernel.org,
         Borislav Petkov <bp@suse.de>,
         Ashish Kalra <ashish.kalra@amd.com>,
@@ -47,27 +59,36 @@ Cc:     Greg KH <gregkh@linuxfoundation.org>,
         dja@axtens.net
 Subject: Re: [PATCH v7 0/5] Allow guest access to EFI confidential computing
  secret area
-Message-ID: <20220202040157.GA8019@srcf.ucam.org>
+Message-ID: <YfogOurPZb7+Yelo@kroah.com>
 References: <20220201124413.1093099-1-dovmurik@linux.ibm.com>
  <Yfk6vEuZFtgtA+G+@kroah.com>
  <37779659ca96ac9c1f11bcc0ac0665895c795b54.camel@linux.ibm.com>
+ <20220202040157.GA8019@srcf.ucam.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <37779659ca96ac9c1f11bcc0ac0665895c795b54.camel@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20220202040157.GA8019@srcf.ucam.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 01, 2022 at 09:24:50AM -0500, James Bottomley wrote:
-> On Tue, 2022-02-01 at 14:50 +0100, Greg KH wrote:
-> > You all need to work together to come up with a unified place for
-> > this and stop making it platform-specific.
+On Wed, Feb 02, 2022 at 04:01:57AM +0000, Matthew Garrett wrote:
+> On Tue, Feb 01, 2022 at 09:24:50AM -0500, James Bottomley wrote:
+> > On Tue, 2022-02-01 at 14:50 +0100, Greg KH wrote:
+> > > You all need to work together to come up with a unified place for
+> > > this and stop making it platform-specific.
+> 
+> We're talking about things that have massively different semantics.
 
-We're talking about things that have massively different semantics. How 
-do we expose that without an unwieldy API that has to try to be a 
-superset of everything implemented, which then has to be extended when 
-yet another implementation shows up with another behavioural quirk? EFI 
-variables already need extremely careful handling to avoid rm -rf /sys 
-bricking the system - should we impose that on everything, or should we 
-allow the underlying implementation to leak through in some ways?
+I see lots of different platforms trying to provide access to their
+"secure" firmware data to userspace in different ways.  That feels to me
+like they are the same thing that userspace would care about in a
+unified way.
+
+Unless we expeect userspace tools to have to be platform-specific for
+all of this?  That does not seem wise.
+
+what am I missing here?
+
+thanks,
+
+greg k-h
