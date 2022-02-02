@@ -2,134 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906C3C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Feb 2022 14:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916E3C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Feb 2022 14:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344989AbiBBObk (ORCPT
+        id S231754AbiBBOks (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Feb 2022 09:31:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35024 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344795AbiBBObk (ORCPT
+        Wed, 2 Feb 2022 09:40:48 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23792 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229610AbiBBOks (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Feb 2022 09:31:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643812299;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MyaJSjL0Dz4PWQLKWTTGsW9XoK3E6CFP4+bGWUvW21Q=;
-        b=BljXGuv+HB2tCEZiXn3Tuyghocf7fD7Ayw0F+aU0mlWKiNbN29Zr3nfnVHQtQzfVEpprYa
-        +ZxB3y4eG3T74FeF1vdbR7KVdOPnRMXi0WL9WliLGrkLLwPgTtzE+OP0thBHB9UjbcSfHB
-        h8uBHMqfybuMX3d+1CNC3dxSPB0lEOQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-466-zZTGoK3OOuqJAf2vIECu4Q-1; Wed, 02 Feb 2022 09:31:36 -0500
-X-MC-Unique: zZTGoK3OOuqJAf2vIECu4Q-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3BA44801B26;
-        Wed,  2 Feb 2022 14:31:32 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.39.193.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BAB1E57F2D;
-        Wed,  2 Feb 2022 14:31:31 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 69AE51800397; Wed,  2 Feb 2022 15:31:28 +0100 (CET)
-Date:   Wed, 2 Feb 2022 15:31:28 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/5] efi: Load efi_secret module if EFI secret area is
- populated
-Message-ID: <20220202143128.jgadmr7tzetlobt7@sirius.home.kraxel.org>
-References: <20220201124413.1093099-1-dovmurik@linux.ibm.com>
- <20220201124413.1093099-5-dovmurik@linux.ibm.com>
- <20220202084723.ushasiekb3cxami4@sirius.home.kraxel.org>
- <c7604c39-d6ca-f3b9-b1d8-fd0362216717@linux.ibm.com>
+        Wed, 2 Feb 2022 09:40:48 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 212DG11f005462;
+        Wed, 2 Feb 2022 14:40:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=DUGDWX63x6O+39JA4R1LBbVb62x/U2i5zOFyqPQjOwE=;
+ b=UE9Y//A78Q9jq0ozoDvZqOXQCvQTbsKcaq8GsBDxRweFOxae8Z9tp6RKRBsw8U0vXBSA
+ d622vghh9ps7fvAHQIc5X+GYblJ/kxr24hueCCV7R8VjqbQgcc4wLWInMKaz1WqgURhD
+ 9JKG439h+76pWpk3qTr99v09tWuO5ENpqaIkZgyIrZDMWAcE2mxlAvL0JEtoPcYaShXM
+ OG32Y89TqghhvbkcuDR7f2OAFZX65q4m4HmWjj7+5HpwRWLELtRVPkOnx5/wHfWu54IH
+ Re6uHC4Eay1hs1awMqF01x5JcbJoDeTUrfCmy+eqWl856FzwnC7PUcTPFLvJKMWKxeeW CA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dytphsw0u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Feb 2022 14:40:28 +0000
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 212ESCMx012770;
+        Wed, 2 Feb 2022 14:40:27 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dytphsw0a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Feb 2022 14:40:27 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 212EYfIk019819;
+        Wed, 2 Feb 2022 14:40:26 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma02dal.us.ibm.com with ESMTP id 3dvw7bg38f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Feb 2022 14:40:26 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 212EeOmA22086062
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Feb 2022 14:40:24 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9BEBB112067;
+        Wed,  2 Feb 2022 14:40:24 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 50041112063;
+        Wed,  2 Feb 2022 14:40:24 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  2 Feb 2022 14:40:24 +0000 (GMT)
+Message-ID: <3f053d38-00f7-b495-4ea2-3c61fa120284@linux.ibm.com>
+Date:   Wed, 2 Feb 2022 09:40:24 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7604c39-d6ca-f3b9-b1d8-fd0362216717@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v10 00/27] ima: Namespace IMA with audit support in IMA-ns
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+References: <20220201203735.164593-1-stefanb@linux.ibm.com>
+ <20220202141329.k5jcsbutpmzv53c3@wittgenstein>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20220202141329.k5jcsbutpmzv53c3@wittgenstein>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: BzeEa8Kdz_ZobbH7vXxScznarHbVxZVJ
+X-Proofpoint-ORIG-GUID: HVqE4jbdEx_gjqR2H1hicnOM3fnnlVIF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-02_07,2022-02-01_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ mlxlogscore=999 lowpriorityscore=0 impostorscore=0 priorityscore=1501
+ malwarescore=0 phishscore=0 bulkscore=0 adultscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202020080
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 02, 2022 at 01:08:43PM +0200, Dov Murik wrote:
-> 
-> 
-> On 02/02/2022 10:47, Gerd Hoffmann wrote:
-> > On Tue, Feb 01, 2022 at 12:44:12PM +0000, Dov Murik wrote:
-> >> If the efi_secret module is built, register a late_initcall in the EFI
-> >> driver which checks whether the EFI secret area is available and
-> >> populated, and then requests to load the efi_secret module.
-> > 
-> >> +	area = memremap(efi.coco_secret, sizeof(*area), MEMREMAP_WB);
-> >> +	if (!area) {
-> >> +		pr_err("Failed to map confidential computing secret area descriptor\n");
-> >> +		return -ENOMEM;
-> >> +	}
-> >> +	if (!area->base_pa || area->size < sizeof(*header_guid))
-> >> +		goto unmap_desc;
-> >> +
-> >> +	header_guid = (void __force *)ioremap_encrypted(area->base_pa, sizeof(*header_guid));
-> >> +	if (!header_guid) {
-> >> +		pr_err("Failed to map secret area\n");
-> >> +		ret = -ENOMEM;
-> >> +		goto unmap_desc;
-> >> +	}
-> >> +	if (efi_guidcmp(*header_guid, EFI_SECRET_TABLE_HEADER_GUID))
-> >> +		goto unmap_encrypted;
-> > 
-> > Why these sanity checks are here and not in the efi_secret module?
-> 
-> The same checks indeed appear in the efi_secret module (see in patch 3:
-> efi_secret_map_area() and the beginning of efi_secret_securityfs_setup()).
-> 
-> However, in the efi_secret module, the checks are noisy, because they
-> expect the secret area to be populated.  For example:
-> 
-> +	if (efi.coco_secret == EFI_INVALID_TABLE_ADDR) {
-> +		pr_err("Secret area address is not available\n");
-> +		return -EINVAL;
-> +	}
 
-Note I explicitly excluded that check ;)
+On 2/2/22 09:13, Christian Brauner wrote:
+> On Tue, Feb 01, 2022 at 03:37:08PM -0500, Stefan Berger wrote:
+>>
+>> v10:
+>>   - Added A-b's; addressed issues from v9
+>>   - Added 2 patches to support freeing of iint after namespace deletion
+>>   - Added patch to return error code from securityfs functions
+>>   - Added patch to limit number of policy rules in IMA-ns to 1024
+> I'm going to go take a lighter touch with this round of reviews.
+> First, because I have February off. :)
+> Second, because I think that someone who is more familiar with IMA and
+> its requirements should take another look to provide input and ask more
+> questions. Last time I spoke to Serge he did want to give this a longer
+> look and maybe also has additional questions.
 
-Checking whenever efi.coco_secret looks valid and only try load
-efi_secret if that is the case (and otherwise stay silent) makes
-perfect sense.  The other checks should be dropped IMHO.
+The one problem I am seeing is that we probably cannot support auditing 
+in IMA namespaces since every user can now create an IMA namespace. 
+Unless auditing was namespaced, the way it is now gives too much control 
+to the user to flood the host audit log. So, we may need to head towards 
+support for IMA measurements in the IMA namespace right away and not 
+support audit rules but also possibly eliminate other actions that are 
+being audited by IMA to not occur while an IMA namespace is active, such 
+as when policy rules are being set etc. Not supporting auditing in 
+IMA-ns affects only few of the patches in this series. We need most of 
+them for a basis of IMA measurements but to get to IMA measurements 
+along with support for inheritance and configuration of hash algorithm 
+and log template etc. to use in the IMA namespace and set it in its 
+configuration 'stage' (before activation), we will need at least 25 more 
+patches on top of what have here now... so this series will then be 
+around 50 patches.
 
-> Another approach could be to just try to load the module anyway, and
-> the module will fail (silently? noisily?) if there's no designated
-> secret area or it's not populated.  I feel that will be harder to
-> understand what's going on.
-
-I think the module should fail noisily.  See above for autoload.  In
-case the module is loaded (either manually by the admin, or because
-efi.coco_secret != EFI_INVALID_TABLE_ADDR) and it can't actually load
-the secrets we want know why ...
-
-take care,
-  Gerd
+    Stefan
 
