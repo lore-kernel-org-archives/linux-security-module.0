@@ -2,121 +2,167 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9D1C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Feb 2022 11:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F16C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Feb 2022 14:13:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343872AbiBBLT4 (ORCPT
+        id S1344816AbiBBONi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Feb 2022 06:19:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:16524 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230163AbiBBLTx (ORCPT
+        Wed, 2 Feb 2022 09:13:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38120 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233774AbiBBONh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Feb 2022 06:19:53 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 212ABdTh027686;
-        Wed, 2 Feb 2022 11:19:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=zF/VgXaD0gD4JIuHivKshypM2GKtvRpbCMzF+nA0xMk=;
- b=QaTHVJyqB9EDfOT69F3TI4nEhR0BgLm+uK6/sNzaBCiHWz98gUrgRVnnKXzenVdsvgV3
- By3JlvJmFnUT6vrNtkzt6nHALgxT3e+wshMp+pYAf702SQDuV3lh2zNg9aNY8JvzltHl
- 7epTlSuqxrwD0dSWto50dT1d0f+X1OiB5Nujr8KtQDBnYk3j1ePT4hnzDLMMWmbGF4NM
- BX1j3l9x3aCgqn7fXrdn2mX79MwvW9sTHWHQb9EYYSqaPF2iVAl5NDhi0E4z0Lx6dhFg
- 2tWMFaqooSEBvfCFm/G3tFafjUcGh3pMGRnD7HARb0IeEgGlkOgy8KMvA/66Ez3tUu41 uA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dyr0093xs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Feb 2022 11:19:42 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 212BHL4h021836;
-        Wed, 2 Feb 2022 11:19:41 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dyr0093wx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Feb 2022 11:19:41 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 212B9DE5003307;
-        Wed, 2 Feb 2022 11:19:38 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma03wdc.us.ibm.com with ESMTP id 3dvw7b3et2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Feb 2022 11:19:38 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 212BJbCr12386666
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Feb 2022 11:19:37 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6E78C28058;
-        Wed,  2 Feb 2022 11:19:37 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7CEDD2806F;
-        Wed,  2 Feb 2022 11:19:32 +0000 (GMT)
-Received: from [9.65.240.79] (unknown [9.65.240.79])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  2 Feb 2022 11:19:32 +0000 (GMT)
-Message-ID: <c70032f6-d0c8-640a-a3d5-5e5214a3d3ac@linux.ibm.com>
-Date:   Wed, 2 Feb 2022 13:19:31 +0200
+        Wed, 2 Feb 2022 09:13:37 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B2EC061714;
+        Wed,  2 Feb 2022 06:13:37 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 56CC96187D;
+        Wed,  2 Feb 2022 14:13:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19754C340ED;
+        Wed,  2 Feb 2022 14:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643811216;
+        bh=CVz6X3byuWMkZSr5srBVeCEK4RTVy53e99LhmWCQdYY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Lj8q7kfBofqO8GGn86wA2xIE+YR9ur17SRyhKD1jqMs79MZBNZ3HcWgvBIeb/lYxR
+         EOKfimVGQke3TZSfrbJmHO/u5piHUfhKQ2vqbFuHDdQnHcIxIB+2GF8dwgDr/nZG06
+         eKn1I34IjSqIGASIo9Y7QQ7BXcF2OQUmNIkuyFmcAh1DcpIcUguurfR0eT9kT8LiB1
+         T2fAvZvkyBeaULOPrIzZlJ8nE0egJpW5lZTHEfULOZ3BpmbXBVZDgNRwENuIdOQwE+
+         gyUqlcfN9sew9Uwy0uN54LI8e/sZaqzJ+Ax5OsrltcF2/rSYphJeJ0FW99EnDCv40Q
+         kXrl+5WBSlzQA==
+Date:   Wed, 2 Feb 2022 15:13:29 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Stefan Berger <stefanb@linux.ibm.com>, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+Subject: Re: [PATCH v10 00/27] ima: Namespace IMA with audit support in IMA-ns
+Message-ID: <20220202141329.k5jcsbutpmzv53c3@wittgenstein>
+References: <20220201203735.164593-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH v7 5/5] docs: security: Add coco/efi_secret documentation
-Content-Language: en-US
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>
-References: <20220201124413.1093099-1-dovmurik@linux.ibm.com>
- <20220201124413.1093099-6-dovmurik@linux.ibm.com>
- <20220202084909.ancetiuel6xysh2q@sirius.home.kraxel.org>
-From:   Dov Murik <dovmurik@linux.ibm.com>
-In-Reply-To: <20220202084909.ancetiuel6xysh2q@sirius.home.kraxel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ST5cUzy63YRTS4VkIaJvFDoBEbRvtZce
-X-Proofpoint-GUID: onZARKGVxlRgdw35Yjbmc9mdxc6REZJX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-02_05,2022-02-01_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- mlxscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 phishscore=0 bulkscore=0 mlxlogscore=987 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202020059
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220201203735.164593-1-stefanb@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 02/02/2022 10:49, Gerd Hoffmann wrote:
-> On Tue, Feb 01, 2022 at 12:44:13PM +0000, Dov Murik wrote:
->> Add documentation for the efi_secret module which allows access
->> to Confidential Computing injected secrets.
+On Tue, Feb 01, 2022 at 03:37:08PM -0500, Stefan Berger wrote:
+> The goal of this series of patches is to start with the namespacing of
+> IMA and support auditing within an IMA namespace (IMA-ns) as the first
+> step.
 > 
-> Looks good, but might need updates when the paths change.
+> In this series the IMA namespace is piggy backing on the user namespace
+> and therefore an IMA namespace is created when a user namespace is
+> created, although this is done late when SecurityFS is mounted inside
+> a user namespace. The advantage of piggy backing on the user namespace
+> is that the user namespace can provide the keys infrastructure that IMA
+> appraisal support will need later on.
 > 
-> Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
+> We chose the goal of supporting auditing within an IMA namespace since it
+> requires the least changes to IMA. Following this series, auditing within
+> an IMA namespace can be activated by a user running the following lines
+> that rely on a statically linked busybox to be installed on the host for
+> execution within the minimal container environment:
 > 
+> mkdir -p rootfs/{bin,mnt,proc}
+> cp /sbin/busybox rootfs/bin
+> cp /sbin/busybox rootfs/bin/busybox2
+> echo >> rootfs/bin/busybox2
+> PATH=/bin unshare --user --map-root-user --mount-proc --pid --fork \
+>   --root rootfs busybox sh -c \
+>  "busybox mount -t securityfs /mnt /mnt; \
+>   busybox echo 1 > /mnt/ima/active; \
+>   busybox echo 'audit func=BPRM_CHECK mask=MAY_EXEC' > /mnt/ima/policy; \
+>   busybox2 cat /mnt/ima/policy"
+> 
+> [busybox2 is used to demonstrate 2 audit messages; see below]
+> 
+> Following the audit log on the host the last line cat'ing the IMA policy
+> inside the namespace would have been audited. Unfortunately the auditing
+> line is not distinguishable from one stemming from actions on the host.
+> The hope here is that Richard Brigg's container id support for auditing
+> would help resolve the problem.
+> 
+> In the above the writing of '1' to the 'active' file is used to activate
+> the IMA namespace. Future extensions to IMA namespaces will make use of
+> the configuration stage after the mounting of securityfs and before the
+> activation to for example choose the measurement log template.
+> 
+> The following lines added to a suitable IMA policy on the host would
+> cause the execution of the commands inside the container (by uid 1000)
+> to be measured and audited as well on the host, thus leading to two
+> auditing messages for the 'busybox2 cat' above and log entries in IMA's
+> system log.
+> 
+> echo -e "measure func=BPRM_CHECK mask=MAY_EXEC uid=1000\n" \
+>         "audit func=BPRM_CHECK mask=MAY_EXEC uid=1000\n" \
+>     > /sys/kernel/security/ima/policy
+> 
+> The goal of supporting measurement and auditing by the host, of actions
+> occurring within IMA namespaces, is that users, particularly root,
+> should not be able to evade the host's IMA policy just by spawning
+> new IMA namespaces, running programs there, and discarding the namespaces
+> again. This is achieved through 'hierarchical processing' of file
+> accesses that are evaluated against the policy of the namespace where
+> the action occurred and against all namespaces' and their policies leading
+> back to the root IMA namespace (init_ima_ns).
+> 
+> The patch series adds support for a virtualized SecurityFS with a few
+> new API calls that are used by IMA namespacing. Only the data relevant
+> to the IMA namespace are shown. The files and directories of other
+> security subsystems (TPM, evm, Tomoyo, safesetid) are not showing
+> up when secruityfs is mounted inside a user namespace.
+> 
+> Much of the code leading up to the virtualization of SecurityFS deals
+> with moving IMA's variables from various files into the IMA namespace
+> structure called 'ima_namespace'. When it comes to determining the
+> current IMA namespace I took the approach to get the current IMA
+> namespace (get_current_ns()) on the top level and pass the pointer all
+> the way down to those functions that now need access to the ima_namespace
+> to get to their variables. This later on comes in handy once hierarchical
+> processing is implemented in this series where we walk the list of
+> namespaces backwards and again need to pass the pointer into functions.
+> 
+> This patch also introduces usage of CAP_MAC_ADMIN to allow access to the
+> IMA policy via reduced capabilities. We would again later on use this
+> capability to allow users to set file extended attributes for IMA
+> appraisal support.
+> 
+> My tree with these patches is here:
+> 
+> git fetch https://github.com/stefanberger/linux-ima-namespaces v5.16+imans.v10.posted
+> 
+> Regards,
+>    Stefan
+> 
+> Links to previous postings:
+> v1: https://lore.kernel.org/linux-integrity/20211130160654.1418231-1-stefanb@linux.ibm.com/T/#t
+> v2: https://lore.kernel.org/linux-integrity/20211203023118.1447229-1-stefanb@linux.ibm.com/T/#t
+> v3: https://lore.kernel.org/linux-integrity/6240b686-89cf-2e31-1c1b-ebdcf1e972c1@linux.ibm.com/T/#t
+> v4: https://lore.kernel.org/linux-integrity/20211207202127.1508689-1-stefanb@linux.ibm.com/T/#t
+> v5: https://lore.kernel.org/linux-integrity/20211208221818.1519628-1-stefanb@linux.ibm.com/T/#t
+> v6: https://lore.kernel.org/linux-integrity/20211210194736.1538863-1-stefanb@linux.ibm.com/T/#t
+> v7: https://lore.kernel.org/linux-integrity/20211217100659.2iah5prshavjk6v6@wittgenstein/T/#t
+> v8: https://lore.kernel.org/all/20220104170416.1923685-1-stefanb@linux.vnet.ibm.com/#r
+> v9: https://lore.kernel.org/linux-integrity/?t=20220131234353
+> 
+> v10:
+>  - Added A-b's; addressed issues from v9
+>  - Added 2 patches to support freeing of iint after namespace deletion
+>  - Added patch to return error code from securityfs functions
+>  - Added patch to limit number of policy rules in IMA-ns to 1024
 
-Thanks for reviewing the series.
-
--Dov
+I'm going to go take a lighter touch with this round of reviews.
+First, because I have February off. :)
+Second, because I think that someone who is more familiar with IMA and
+its requirements should take another look to provide input and ask more
+questions. Last time I spoke to Serge he did want to give this a longer
+look and maybe also has additional questions.
