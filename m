@@ -2,112 +2,146 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A74C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Feb 2022 06:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC44C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Feb 2022 10:49:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238627AbiBCGQ3 (ORCPT
+        id S244311AbiBCKtc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Feb 2022 01:16:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49726 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238473AbiBCGQ1 (ORCPT
+        Thu, 3 Feb 2022 05:49:32 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:40092 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230016AbiBCKtb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Feb 2022 01:16:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1643868987;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Thu, 3 Feb 2022 05:49:31 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 831C61F399;
+        Thu,  3 Feb 2022 10:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1643885369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=qol4FKjmV5kyybqxOmO1rEWopOD7vMCwFa3iVh2RSaE=;
-        b=Q5DRFrhL5P+bHqGr/LRWNHVLgyKebiG4rEC8nHLrNfpsYmgubLfUQpi2HKbnDKh4oCzTII
-        d7qjW6gFR0r3hF7RnYAtrx8+KAUBqpp+n/TVtjiR9aJ1ABNcAJ3e01WIj7o7sA4s6ZK/gv
-        Ngn9iKgO8b7EcupGaCjl5C/j9eIzAdo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-118-DUscOsTDNXewyeL3p7AHiw-1; Thu, 03 Feb 2022 01:16:21 -0500
-X-MC-Unique: DUscOsTDNXewyeL3p7AHiw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=a6gXtaxF4sUpqNbpvqW3e+eeQ67Q3V181j1MpX5xCXw=;
+        b=HaY3A8a7CHu+p6SkQfzXFxoRVgaixyso1zTY8l10onfr+4M1WM6Keh9Ypvjdw1ey18+Cq8
+        Pz48XGKgBpP8Ki2zWHuhHY1Gy46s/PE0MAZ4LbmxhJWmPuIQIKdMYbozDUo4+Q7MCpXRpB
+        UgCTlfrM191QhW6/Am1jz3JKp4une/4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1643885369;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=a6gXtaxF4sUpqNbpvqW3e+eeQ67Q3V181j1MpX5xCXw=;
+        b=4EJKGBft4bAsvWMXkRCyg9VCRvMq2sAKI0INSYlhae42A7n/QFT0juKBfObRurO+3478Iw
+        wdlekzqTUvDT8pBQ==
+Received: from kunlun.suse.cz (unknown [10.100.128.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 85FCA1091DA1;
-        Thu,  3 Feb 2022 06:16:18 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.39.193.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 355884BC40;
-        Thu,  3 Feb 2022 06:16:17 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 5CE6C1800605; Thu,  3 Feb 2022 07:16:15 +0100 (CET)
-Date:   Thu, 3 Feb 2022 07:16:15 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
+        by relay2.suse.de (Postfix) with ESMTPS id 7AACFA3B85;
+        Thu,  3 Feb 2022 10:49:27 +0000 (UTC)
+Date:   Thu, 3 Feb 2022 11:49:26 +0100
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org, Philipp Rudo <prudo@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Frank van der Linden <fllinden@amazon.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/5] efi: Load efi_secret module if EFI secret area is
- populated
-Message-ID: <20220203061615.wwembqmmpmg77iyj@sirius.home.kraxel.org>
-References: <20220201124413.1093099-1-dovmurik@linux.ibm.com>
- <20220201124413.1093099-5-dovmurik@linux.ibm.com>
- <20220202084723.ushasiekb3cxami4@sirius.home.kraxel.org>
- <c7604c39-d6ca-f3b9-b1d8-fd0362216717@linux.ibm.com>
- <20220202143128.jgadmr7tzetlobt7@sirius.home.kraxel.org>
- <cb548aa2-1ac3-46e7-91e4-f57a4fd63754@linux.ibm.com>
+        Sven Schnelle <svens@linux.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5 3/6] kexec_file: Don't opencode appended signature
+ verification.
+Message-ID: <20220203104926.GA3113@kunlun.suse.cz>
+References: <cover.1641900831.git.msuchanek@suse.de>
+ <7834eb187ef67cd88fc67f10e831130e3717d776.1641900831.git.msuchanek@suse.de>
+ <YfBafIXgnLzf0QMb@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cb548aa2-1ac3-46e7-91e4-f57a4fd63754@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <YfBafIXgnLzf0QMb@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  Hi,
+Hello,
 
-> > I think the module should fail noisily.  See above for autoload.  In
-> > case the module is loaded (either manually by the admin, or because
-> > efi.coco_secret != EFI_INVALID_TABLE_ADDR) and it can't actually load
-> > the secrets we want know why ...
+thanks for the review.
+
+On Tue, Jan 25, 2022 at 12:15:56PM -0800, Luis Chamberlain wrote:
+> On Tue, Jan 11, 2022 at 12:37:45PM +0100, Michal Suchanek wrote:
+> > diff --git a/include/linux/verification.h b/include/linux/verification.h
+> > index a655923335ae..32db9287a7b0 100644
+> > --- a/include/linux/verification.h
+> > +++ b/include/linux/verification.h
+> > @@ -60,5 +60,8 @@ extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
+> >  				   enum key_being_used_for usage);
+> >  #endif
+> >  
+> > +int verify_appended_signature(const void *data, unsigned long *len,
+> > +			      struct key *trusted_keys, const char *what);
+> > +
 > 
-> Note that the AmdSev build of OVMF always publishes
-> LINUX_EFI_COCO_SECRET_TABLE_GUID in the EFI table.  Even when
-> LAUNCH_SECRET was not executed.  In such cases the secret area will be
-> empty.
+> Looks very non-module specific.
 
-Hmm, ok.  Why?  I assume the secret area is filled by the host and ovmf
-doesn't even look at it?
+Which it is now that the same signature format is used for kernels.
 
-> If we keep only the 'efi.coco_secret != EFI_INVALID_TABLE_ADDR' check,
-> we'll get errors from efi_secret for every VM launch that doesn't
-> undergo LAUNCH_SECRET.  I don't think that's good.
+> 
+> > diff --git a/kernel/module_signing.c b/kernel/module_signing.c
+> > index 8723ae70ea1f..30149969f21f 100644
+> > --- a/kernel/module_signing.c
+> > +++ b/kernel/module_signing.c
+> > @@ -14,32 +14,38 @@
+> >  #include <crypto/public_key.h>
+> >  #include "module-internal.h"
+> >  
+> > -/*
+> > - * Verify the signature on a module.
+> > +/**
+> > + * verify_appended_signature - Verify the signature on a module with the
+> > + * signature marker stripped.
+> > + * @data: The data to be verified
+> > + * @len: Size of @data.
+> > + * @trusted_keys: Keyring to use for verification
+> > + * @what: Informational string for log messages
+> >   */
+> > -int mod_verify_sig(const void *mod, struct load_info *info)
+> > +int verify_appended_signature(const void *data, unsigned long *len,
+> > +			      struct key *trusted_keys, const char *what)
+> >  {
+> > -	struct module_signature ms;
+> > -	size_t sig_len, modlen = info->len;
+> > +	struct module_signature *ms;
+> 
+> There goes the abstraction, so why not make this clear where we re-use
+> the struct module_signature for various things and call it as it is,
+> verify_mod_appended_signature() or some such?
 
-Well, if that is a common case the module could either print nothing or
-log KERN_INFO level instead of KERN_ERROR.
+It sounds like the abstraction is actually improved by callers no longer
+dealing with struct module_signature when verifying signature on a
+kernel. That is the structure is misnamed but it is now hidden behind
+an abstraction.
 
-> If we *do* want to check that the area starts with
-> EFI_SECRET_TABLE_HEADER_GUID (like I think we should), we need all the
-> checks before that, like checking that the area is big enough, and that
-> all the memremap()s succeed -- before actually comparing the
-> header_guid.  The checks are basically prerequisites for calling
-> efi_guidcmp() safely.
+Or am I missing something?
 
-It is still not fully clear to me why you want do that check twice.
+Thanks
 
-take care,
-  Gerd
-
+Michal
