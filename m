@@ -2,90 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0225AC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Feb 2022 03:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A74C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Feb 2022 06:16:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347590AbiBCDSG (ORCPT
+        id S238627AbiBCGQ3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Feb 2022 22:18:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237974AbiBCDSG (ORCPT
+        Thu, 3 Feb 2022 01:16:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49726 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238473AbiBCGQ1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Feb 2022 22:18:06 -0500
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEAF9C06173D
-        for <linux-security-module@vger.kernel.org>; Wed,  2 Feb 2022 19:18:05 -0800 (PST)
-Received: by mail-pf1-x434.google.com with SMTP id u130so1072729pfc.2
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Feb 2022 19:18:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4QtPGJsJdjtleT4SCvDltRv0MUxS6HLkC+/jHaWkak0=;
-        b=JGtI0UZ6Ck0rSbexL4Ad25l0q5f+gKaACzYjSkD65cN3hv2n7lC8GRTPAt3pmfHCyb
-         Wf9YGN1zv874GvRTML77HPoG8fJ5LM0e8i2CXvMNyXiPrydyVDfkVz0S+AVM/LzWWTLX
-         o4bOgZ8bo/WHDcNzDyY5pA/pQtGAfaasgfirU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4QtPGJsJdjtleT4SCvDltRv0MUxS6HLkC+/jHaWkak0=;
-        b=UKQHAKKihCt5WjswXkBHTA/9hSe+zHUi50UIyOr26BxV3PLVUxsQYPD2RCjBXnFh2S
-         DVkNlfH3ZOi45+U9nFPiE64Cfj7frjnGNh1mG5XD/X/tBnnnkQcUo5+gi7HGD2b5eVeY
-         aZRlBubmYBe4JstXypCR8icnhrESxomSP6yHYkPjCdN00NgTwvnFLQbT4Ld9QQfFReA1
-         MbQ7r/kG3F4GwYo7G4PGOoyqrdKBRf5IznHTEEf7Bw+xCG1bK2gY8LFiYvrTpA9x1b87
-         bLKj3uJgCr9vTk+/xaOmzUhoL9fEswSJwJ/QJINWyxBoap/+d1kXaHPATnhJgBrIGDCQ
-         szxA==
-X-Gm-Message-State: AOAM531RoWyQrvbz+BbMvI5U7jOnfv/hqW6oo5M6/nPHp+LcYqMSgDbO
-        Qqjl5OWCoNWnSXwBlWh3BM3TMQ==
-X-Google-Smtp-Source: ABdhPJw6xMNyvSowwi3MnsmqNRcX44gydSmfXvKKmKbpkqwqzSvA7MVZmoUU5NQNycnkiWAt/5IKCQ==
-X-Received: by 2002:a65:6d89:: with SMTP id bc9mr26747916pgb.260.1643858285384;
-        Wed, 02 Feb 2022 19:18:05 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k15sm27170877pff.39.2022.02.02.19.18.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Feb 2022 19:18:05 -0800 (PST)
-Date:   Wed, 2 Feb 2022 19:18:04 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Miguel Ojeda <ojeda@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        George Burgess IV <gbiv@google.com>, llvm@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 4/4 v5] fortify: Add Clang support
-Message-ID: <202202021916.9606A43C88@keescook>
-References: <20220202003033.704951-1-keescook@chromium.org>
- <20220202003033.704951-5-keescook@chromium.org>
- <CAKwvOd=icTwyFb39U3OO5i_2YNJMiCMteeNTrVe-Q0tcmmnBJQ@mail.gmail.com>
+        Thu, 3 Feb 2022 01:16:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643868987;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qol4FKjmV5kyybqxOmO1rEWopOD7vMCwFa3iVh2RSaE=;
+        b=Q5DRFrhL5P+bHqGr/LRWNHVLgyKebiG4rEC8nHLrNfpsYmgubLfUQpi2HKbnDKh4oCzTII
+        d7qjW6gFR0r3hF7RnYAtrx8+KAUBqpp+n/TVtjiR9aJ1ABNcAJ3e01WIj7o7sA4s6ZK/gv
+        Ngn9iKgO8b7EcupGaCjl5C/j9eIzAdo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-118-DUscOsTDNXewyeL3p7AHiw-1; Thu, 03 Feb 2022 01:16:21 -0500
+X-MC-Unique: DUscOsTDNXewyeL3p7AHiw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 85FCA1091DA1;
+        Thu,  3 Feb 2022 06:16:18 +0000 (UTC)
+Received: from sirius.home.kraxel.org (unknown [10.39.193.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 355884BC40;
+        Thu,  3 Feb 2022 06:16:17 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 5CE6C1800605; Thu,  3 Feb 2022 07:16:15 +0100 (CET)
+Date:   Thu, 3 Feb 2022 07:16:15 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Dov Murik <dovmurik@linux.ibm.com>
+Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 4/5] efi: Load efi_secret module if EFI secret area is
+ populated
+Message-ID: <20220203061615.wwembqmmpmg77iyj@sirius.home.kraxel.org>
+References: <20220201124413.1093099-1-dovmurik@linux.ibm.com>
+ <20220201124413.1093099-5-dovmurik@linux.ibm.com>
+ <20220202084723.ushasiekb3cxami4@sirius.home.kraxel.org>
+ <c7604c39-d6ca-f3b9-b1d8-fd0362216717@linux.ibm.com>
+ <20220202143128.jgadmr7tzetlobt7@sirius.home.kraxel.org>
+ <cb548aa2-1ac3-46e7-91e4-f57a4fd63754@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOd=icTwyFb39U3OO5i_2YNJMiCMteeNTrVe-Q0tcmmnBJQ@mail.gmail.com>
+In-Reply-To: <cb548aa2-1ac3-46e7-91e4-f57a4fd63754@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 02, 2022 at 01:27:11PM -0800, Nick Desaulniers wrote:
-> On Tue, Feb 1, 2022 at 4:30 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > +#define BOS    const __pass_object_size(1)
-> > +#define BOS0   const __pass_object_size(0)
+  Hi,
+
+> > I think the module should fail noisily.  See above for autoload.  In
+> > case the module is loaded (either manually by the admin, or because
+> > efi.coco_secret != EFI_INVALID_TABLE_ADDR) and it can't actually load
+> > the secrets we want know why ...
 > 
-> A dumb bikeshed, but would you mind naming these BOS1 and BOS0, and
-> perhaps consider adding a comment or pointer or link to something that
-> describes why we use the two different modes?  I recognize that the
-> code already uses the two different modes already without comments,
-> but this might be a nice place to point folks like myself to so that
-> in a month or so when I forget what the difference is between modes
-> (again), we have a shorter trail of breadcrumbs.
+> Note that the AmdSev build of OVMF always publishes
+> LINUX_EFI_COCO_SECRET_TABLE_GUID in the EFI table.  Even when
+> LAUNCH_SECRET was not executed.  In such cases the secret area will be
+> empty.
 
-Sure, I can do that. My expectation was to entirely eliminate mode 0
-usage in the future.
+Hmm, ok.  Why?  I assume the secret area is filled by the host and ovmf
+doesn't even look at it?
 
-Though now that things are so close, I'll just do some builds with the
-last few users switched over. But maybe memcmp() was a pain? I'll go
-check...
+> If we keep only the 'efi.coco_secret != EFI_INVALID_TABLE_ADDR' check,
+> we'll get errors from efi_secret for every VM launch that doesn't
+> undergo LAUNCH_SECRET.  I don't think that's good.
 
--- 
-Kees Cook
+Well, if that is a common case the module could either print nothing or
+log KERN_INFO level instead of KERN_ERROR.
+
+> If we *do* want to check that the area starts with
+> EFI_SECRET_TABLE_HEADER_GUID (like I think we should), we need all the
+> checks before that, like checking that the area is big enough, and that
+> all the memremap()s succeed -- before actually comparing the
+> header_guid.  The checks are basically prerequisites for calling
+> efi_guidcmp() safely.
+
+It is still not fully clear to me why you want do that check twice.
+
+take care,
+  Gerd
+
