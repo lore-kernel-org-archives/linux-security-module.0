@@ -2,146 +2,176 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC44C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Feb 2022 10:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A84C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Feb 2022 11:04:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244311AbiBCKtc (ORCPT
+        id S241323AbiBCLEo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Feb 2022 05:49:32 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:40092 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230016AbiBCKtb (ORCPT
+        Thu, 3 Feb 2022 06:04:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3328 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236576AbiBCLEn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Feb 2022 05:49:31 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 831C61F399;
-        Thu,  3 Feb 2022 10:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1643885369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a6gXtaxF4sUpqNbpvqW3e+eeQ67Q3V181j1MpX5xCXw=;
-        b=HaY3A8a7CHu+p6SkQfzXFxoRVgaixyso1zTY8l10onfr+4M1WM6Keh9Ypvjdw1ey18+Cq8
-        Pz48XGKgBpP8Ki2zWHuhHY1Gy46s/PE0MAZ4LbmxhJWmPuIQIKdMYbozDUo4+Q7MCpXRpB
-        UgCTlfrM191QhW6/Am1jz3JKp4une/4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1643885369;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a6gXtaxF4sUpqNbpvqW3e+eeQ67Q3V181j1MpX5xCXw=;
-        b=4EJKGBft4bAsvWMXkRCyg9VCRvMq2sAKI0INSYlhae42A7n/QFT0juKBfObRurO+3478Iw
-        wdlekzqTUvDT8pBQ==
-Received: from kunlun.suse.cz (unknown [10.100.128.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 7AACFA3B85;
-        Thu,  3 Feb 2022 10:49:27 +0000 (UTC)
-Date:   Thu, 3 Feb 2022 11:49:26 +0100
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, Philipp Rudo <prudo@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
-        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Frank van der Linden <fllinden@amazon.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Thu, 3 Feb 2022 06:04:43 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 213AiCOh013287;
+        Thu, 3 Feb 2022 11:04:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=BbPHxKoric5q4pnCkk+2NcaC2f0C46PrlPGRhayIQPg=;
+ b=KoDbaFth/X6OZ5d1Od2Sn02UXI2/UzesyMFpSqv9p0lpmV+zpWmJgkgTeNhAlCkoG1fC
+ 4w513HClOPgv8JWawuq0Lo9LcS2eNaJ6B0KRII/o4zhMIG0jvV34w/q1u1o89HwtkCfY
+ e4bSE1VIE7Asa+mD/82+1Gu13GtC/3J3nf8z+PVtGiwH1/Q61jH4QGwjTxGxlrHGVZvQ
+ jB3VWBFGhoQBKUVcgMKkCAbAOYijN3W3LmO2+7H9l3ER9PuqHACy8PyU/KRJOrrmSkxs
+ gw5qJ947D4SWl4sF80qhu8hD4ck8AT5zHPoFc1ZEMq8mg2khPSDSdftInS2uxI3w4yVC sg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dyvexmuvw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Feb 2022 11:04:13 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 2139qoGJ032495;
+        Thu, 3 Feb 2022 11:04:13 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3dyvexmuvf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Feb 2022 11:04:13 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 213B2i0L000440;
+        Thu, 3 Feb 2022 11:04:12 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma02dal.us.ibm.com with ESMTP id 3dvw7c7nfx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Feb 2022 11:04:12 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 213B456W32965110
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 3 Feb 2022 11:04:05 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 371EF28064;
+        Thu,  3 Feb 2022 11:04:05 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05AB928060;
+        Thu,  3 Feb 2022 11:03:59 +0000 (GMT)
+Received: from [9.65.240.79] (unknown [9.65.240.79])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  3 Feb 2022 11:03:59 +0000 (GMT)
+Message-ID: <815ba487-a6c1-0daa-aead-a7f3a52df2a1@linux.ibm.com>
+Date:   Thu, 3 Feb 2022 13:03:58 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH v7 4/5] efi: Load efi_secret module if EFI secret area is
+ populated
+Content-Language: en-US
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v5 3/6] kexec_file: Don't opencode appended signature
- verification.
-Message-ID: <20220203104926.GA3113@kunlun.suse.cz>
-References: <cover.1641900831.git.msuchanek@suse.de>
- <7834eb187ef67cd88fc67f10e831130e3717d776.1641900831.git.msuchanek@suse.de>
- <YfBafIXgnLzf0QMb@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YfBafIXgnLzf0QMb@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>
+References: <20220201124413.1093099-1-dovmurik@linux.ibm.com>
+ <20220201124413.1093099-5-dovmurik@linux.ibm.com>
+ <20220202084723.ushasiekb3cxami4@sirius.home.kraxel.org>
+ <c7604c39-d6ca-f3b9-b1d8-fd0362216717@linux.ibm.com>
+ <20220202143128.jgadmr7tzetlobt7@sirius.home.kraxel.org>
+ <cb548aa2-1ac3-46e7-91e4-f57a4fd63754@linux.ibm.com>
+ <20220203061615.wwembqmmpmg77iyj@sirius.home.kraxel.org>
+From:   Dov Murik <dovmurik@linux.ibm.com>
+In-Reply-To: <20220203061615.wwembqmmpmg77iyj@sirius.home.kraxel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: trqepfqvgRVlBjWR4INAX6e7ekuRrq62
+X-Proofpoint-GUID: 4inEO94yDJbCDJmeSB782KtEUjr6ZfJ4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-03_03,2022-02-03_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 impostorscore=0 phishscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 priorityscore=1501 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202030070
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
 
-thanks for the review.
 
-On Tue, Jan 25, 2022 at 12:15:56PM -0800, Luis Chamberlain wrote:
-> On Tue, Jan 11, 2022 at 12:37:45PM +0100, Michal Suchanek wrote:
-> > diff --git a/include/linux/verification.h b/include/linux/verification.h
-> > index a655923335ae..32db9287a7b0 100644
-> > --- a/include/linux/verification.h
-> > +++ b/include/linux/verification.h
-> > @@ -60,5 +60,8 @@ extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
-> >  				   enum key_being_used_for usage);
-> >  #endif
-> >  
-> > +int verify_appended_signature(const void *data, unsigned long *len,
-> > +			      struct key *trusted_keys, const char *what);
-> > +
+On 03/02/2022 8:16, Gerd Hoffmann wrote:
+>   Hi,
 > 
-> Looks very non-module specific.
-
-Which it is now that the same signature format is used for kernels.
-
+>>> I think the module should fail noisily.  See above for autoload.  In
+>>> case the module is loaded (either manually by the admin, or because
+>>> efi.coco_secret != EFI_INVALID_TABLE_ADDR) and it can't actually load
+>>> the secrets we want know why ...
+>>
+>> Note that the AmdSev build of OVMF always publishes
+>> LINUX_EFI_COCO_SECRET_TABLE_GUID in the EFI table.  Even when
+>> LAUNCH_SECRET was not executed.  In such cases the secret area will be
+>> empty.
 > 
-> > diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-> > index 8723ae70ea1f..30149969f21f 100644
-> > --- a/kernel/module_signing.c
-> > +++ b/kernel/module_signing.c
-> > @@ -14,32 +14,38 @@
-> >  #include <crypto/public_key.h>
-> >  #include "module-internal.h"
-> >  
-> > -/*
-> > - * Verify the signature on a module.
-> > +/**
-> > + * verify_appended_signature - Verify the signature on a module with the
-> > + * signature marker stripped.
-> > + * @data: The data to be verified
-> > + * @len: Size of @data.
-> > + * @trusted_keys: Keyring to use for verification
-> > + * @what: Informational string for log messages
-> >   */
-> > -int mod_verify_sig(const void *mod, struct load_info *info)
-> > +int verify_appended_signature(const void *data, unsigned long *len,
-> > +			      struct key *trusted_keys, const char *what)
-> >  {
-> > -	struct module_signature ms;
-> > -	size_t sig_len, modlen = info->len;
-> > +	struct module_signature *ms;
+> Hmm, ok.  Why?  I assume the secret area is filled by the host and ovmf
+> doesn't even look at it?
 > 
-> There goes the abstraction, so why not make this clear where we re-use
-> the struct module_signature for various things and call it as it is,
-> verify_mod_appended_signature() or some such?
 
-It sounds like the abstraction is actually improved by callers no longer
-dealing with struct module_signature when verifying signature on a
-kernel. That is the structure is misnamed but it is now hidden behind
-an abstraction.
+Exactly.  OVMF just reserves this area, and puts its address+size in the
+EFI config table.  It doesn't care about its format and usage.
 
-Or am I missing something?
+There are currently two "users" for the actual data in this memory area:
 
-Thanks
+1. grub's efisecret module (which reads the disk passphrase from an
+entry in the secret area)
+2. linux's efi_secret module (which we're discussing here)
 
-Michal
+
+
+>> If we keep only the 'efi.coco_secret != EFI_INVALID_TABLE_ADDR' check,
+>> we'll get errors from efi_secret for every VM launch that doesn't
+>> undergo LAUNCH_SECRET.  I don't think that's good.
+> 
+> Well, if that is a common case the module could either print nothing or
+> log KERN_INFO level instead of KERN_ERROR.
+> 
+
+What if the user doesn't inject a secret and doesn't include the
+efi_secret module at all in the initrd?  request_module("efi_secret")
+will fail.
+
+I can ignore the error code of request_module("efi_secret") but that
+feels bad.
+
+
+
+>> If we *do* want to check that the area starts with
+>> EFI_SECRET_TABLE_HEADER_GUID (like I think we should), we need all the
+>> checks before that, like checking that the area is big enough, and that
+>> all the memremap()s succeed -- before actually comparing the
+>> header_guid.  The checks are basically prerequisites for calling
+>> efi_guidcmp() safely.
+> 
+> It is still not fully clear to me why you want do that check twice.
+> 
+
+I want to load the module only if secrets were injected by the Guest
+Owner.
+
+Again, I'm open to ideas on how to de-duplicate these early checks, if
+that's important.
+
+
+-Dov
