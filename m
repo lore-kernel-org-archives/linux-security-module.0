@@ -2,121 +2,73 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B13C433EF
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Feb 2022 06:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9E8C433EF
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Feb 2022 21:15:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345160AbiBEGEb (ORCPT
+        id S1381435AbiBEVPw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Feb 2022 01:04:31 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:39068 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344783AbiBEGEa (ORCPT
+        Sat, 5 Feb 2022 16:15:52 -0500
+Received: from [194.99.46.237] ([194.99.46.237]:49130 "EHLO
+        slot0.bluewaterleisure.com" rhost-flags-FAIL-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S230287AbiBEVPw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Feb 2022 01:04:30 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 136E47E4; Fri,  4 Feb 2022 23:58:27 -0600 (CST)
-Date:   Fri, 4 Feb 2022 23:58:27 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Denis Semakin <denis.semakin@huawei.com>
-Subject: Re: [PATCH v10 12/27] ima: Define mac_admin_ns_capable() as a
- wrapper for ns_capable()
-Message-ID: <20220205055826.GA15072@mail.hallyn.com>
-References: <20220201203735.164593-1-stefanb@linux.ibm.com>
- <20220201203735.164593-13-stefanb@linux.ibm.com>
+        Sat, 5 Feb 2022 16:15:52 -0500
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=bluewaterleisure.com;
+ h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding; i=ker.mon@bluewaterleisure.com;
+ bh=Y1qpvJs7fKoaWqHeN6WXDnIRRD8=;
+ b=gVJr+G26HG8EgQlWZwLZflZNllqlV77KeLTiU8N5/I4XAluPIKW1jxDIefSpzd39exH8++jupT0z
+   raDVRaIlIJpzwmwSehHto5Yk9d6Th3krYVOGVS22vjfbv2a1d9XkL/DNhvqKsYWf2HZpZyncO93D
+   PnRG2p3LwZOKBzFuS8puJ07AX+e0vLzP5WNmVkQ35cD+1cAGJm/ncj8vxNdaie3e9umcWcKQ+bq3
+   b55bQxYrMcbT87x60VmXcJBftp6mYAZ/FVMqp1OvL9hIstec3O36BQ2ucpKlOt35isPsGC7hKXnM
+   dcAm16IrGNrq0+x/vx7u81OUpsPp8sEilmXjVw==
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=bluewaterleisure.com;
+ b=LS3oqrKIBpUUJ7rbuqCDH08HQsDT0Ak+0VPLVDOsBJ4D+Rl+/QKHiM1b/rwJk2jdKqyD2jm5sjHd
+   K+zVe40EpIGTIJYycitjbSw2QaEtw4cMnvFT6FRpO/fSb+F8GW/H/O5peaugSXvfOU0+0K17u4JX
+   nPxYlQ0GOJdLjNWkn6E49WVko7fQpHeb+b2gx78eDBL2vHkbsHqTa3B0EyCf982HNDnHjtRh4bIO
+   LaVUygIeiRU1BH5ySVpWPartRsExrsu06zHwso91zSd4lrx9QQb35Rmadt1J9/+TB/hHZaSleeZn
+   rpwLZNyzTfYXrKUkH5WlGNzqRKjNFMb8//oT9Q==;
+Reply-To: tomander231@gmail.com
+From:   "Barrister Mustafa" <ker.mon@bluewaterleisure.com>
+To:     linux-security-module@vger.kernel.org
+Subject: Aufmerksamkeit:
+Date:   5 Feb 2022 22:04:25 +0100
+Message-ID: <20220205220425.6962C8B8FC96F654@bluewaterleisure.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220201203735.164593-13-stefanb@linux.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 01, 2022 at 03:37:20PM -0500, Stefan Berger wrote:
-> Define mac_admin_ns_capable() as a wrapper for the combined ns_capable()
-> checks on CAP_MAC_ADMIN and CAP_SYS_ADMIN in a user namespace. Return
-> true on the check if either capability or both are available.
-> 
-> Use mac_admin_ns_capable() in place of capable(SYS_ADMIN). This will allow
-> an IMA namespace to read the policy with only CAP_MAC_ADMIN, which has
-> less privileges than CAP_SYS_ADMIN.
-> 
-> Signed-off-by: Denis Semakin <denis.semakin@huawei.com>
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  include/linux/capability.h      | 6 ++++++
->  security/integrity/ima/ima.h    | 6 ++++++
->  security/integrity/ima/ima_fs.c | 5 ++++-
->  3 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index 65efb74c3585..991579178f32 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -270,6 +270,12 @@ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
->  		ns_capable(ns, CAP_SYS_ADMIN);
->  }
->  
-> +static inline bool mac_admin_ns_capable(struct user_namespace *ns)
-> +{
-> +	return ns_capable(ns, CAP_MAC_ADMIN) ||
-> +		ns_capable(ns, CAP_SYS_ADMIN);
+Lieb linux-security-module,
 
-Do you care about audit warnings?  If the task has CAP_SYS_ADMIN but
-not CAP_MAC_ADMIN, is it desirable that selinux_capable() will audit the
-CAP_MAC_ADMIN failure?
+Ich bin Barrister Mustafa Ayvaz, hoffe, diese E-Mail findet Sie=20
+gut. Ich bin Anwalt des verstorbenen Herrn Robert, der aufgrund=20
+des Coronavirus sein Leben verlor, kontaktierte er w=C3=A4hrend seiner=20
+Gesch=C3=A4ftsreise in China. Ich kontaktiere Sie, um mit mir=20
+zusammenzuarbeiten, um die =C3=9Cberweisung eines Fonds von vier=20
+Millionen vierhundertzwanzigtausend Dollar zu sichern, verlie=C3=9F=20
+er.
 
-> +}
-> +
->  /* audit system wants to get cap info from files as well */
->  int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
->  			   const struct dentry *dentry,
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index fb6bd054d899..0057b1fd6c18 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -487,4 +487,10 @@ static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
->  #define	POLICY_FILE_FLAGS	S_IWUSR
->  #endif /* CONFIG_IMA_READ_POLICY */
->  
-> +static inline
-> +struct user_namespace *ima_user_ns_from_file(const struct file *filp)
-> +{
-> +	return file_inode(filp)->i_sb->s_user_ns;
-> +}
-> +
->  #endif /* __LINUX_IMA_H */
-> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-> index 89d3113ceda1..c41aa61b7393 100644
-> --- a/security/integrity/ima/ima_fs.c
-> +++ b/security/integrity/ima/ima_fs.c
-> @@ -377,6 +377,9 @@ static const struct seq_operations ima_policy_seqops = {
->   */
->  static int ima_open_policy(struct inode *inode, struct file *filp)
->  {
-> +#ifdef CONFIG_IMA_READ_POLICY
-> +	struct user_namespace *user_ns = ima_user_ns_from_file(filp);
-> +#endif
->  	struct ima_namespace *ns = &init_ima_ns;
->  
->  	if (!(filp->f_flags & O_WRONLY)) {
-> @@ -385,7 +388,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
->  #else
->  		if ((filp->f_flags & O_ACCMODE) != O_RDONLY)
->  			return -EACCES;
-> -		if (!capable(CAP_SYS_ADMIN))
-> +		if (!mac_admin_ns_capable(user_ns))
->  			return -EPERM;
->  		return seq_open(filp, &ima_policy_seqops);
->  #endif
-> -- 
-> 2.31.1
+Ich habe nach dem n=C3=A4chsten Angeh=C3=B6rigen meines verstorbenen Kunden=
+=20
+gesucht, ohne Erfolg, da ich seinen aktuellen Wohnsitz und seine=20
+Kontaktdaten nicht habe. Als ich suchte, stie=C3=9F ich auf Ihr Profil=20
+mit dem gleichen Nachnamen und am selben Ort mit den N=C3=A4chsten=20
+Angeh=C3=B6rigen. Ich beschloss, dich zu kontaktieren und dich als=20
+Bonafide Next Of Kin zu benutzen.
+
+Ich bitte Sie um Ihre Zustimmung, Sie als Next Of Kin meines=20
+verstorbenen Kunden zu pr=C3=A4sentieren, da Sie beide den gleichen=20
+Nachnamen tragen. Die Gelder werden dann an Sie als Beg=C3=BCnstigten=20
+in Ihrem Land =C3=BCberwiesen und im Verh=C3=A4ltnis 60:40 geteilt, das=20
+sind 60% f=C3=BCr mich und 40% f=C3=BCr Sie. F=C3=BCr weitere Details=20
+kontaktieren Sie mich bitte sofort f=C3=BCr weitere Informationen =C3=BCber=
+=20
+diese meine E-Mail. 
+
+Danach sende ich Ihnen die Details, wie die Transaktion beginnen=20
+wird
+
+Gr=C3=BC=C3=9Fe
+Mustafa Ayvaz
