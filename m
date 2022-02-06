@@ -2,47 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EE2C433EF
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Feb 2022 10:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE87C4332F
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Feb 2022 10:37:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233434AbiBFKcD (ORCPT
+        id S233468AbiBFKhN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 6 Feb 2022 05:32:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
+        Sun, 6 Feb 2022 05:37:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230415AbiBFKcD (ORCPT
+        with ESMTP id S230415AbiBFKhM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 6 Feb 2022 05:32:03 -0500
-X-Greylist: delayed 394 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 06 Feb 2022 02:32:00 PST
-Received: from users006.phy.heteml.jp (users006.phy.heteml.jp [157.7.44.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C99C06173B
-        for <linux-security-module@vger.kernel.org>; Sun,  6 Feb 2022 02:32:00 -0800 (PST)
-Received: by users006.phy.heteml.jp (Postfix, from userid 444)
-        id A60EA8806F4; Sun,  6 Feb 2022 19:25:24 +0900 (JST)
-To:     linux-security-module@vger.kernel.org
-Subject: =?UTF-8?B?5a6H5Zyf44K744Oz44K/44O844Ob44OG44OrICI2dDhoNnQ5NyI=?=
-X-PHP-Originating-Script: 8368:PHPMailer.php
-Date:   Sun, 6 Feb 2022 10:25:24 +0000
-From:   =?UTF-8?B?5a6H5Zyf44K744Oz44K/44O844Ob44OG44Or?= 
-        <info@uto-centerhotel.com>
-Reply-To: info@uto-centerhotel.com
-Message-ID: <tQZcvdwZId5EOULJDnZnWEc9r5gLZc68cTSPqhg@uto-centerhotel.com>
-X-Mailer: PHPMailer 6.5.3 (https://github.com/PHPMailer/PHPMailer)
+        Sun, 6 Feb 2022 05:37:12 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68FF6C061A73
+        for <linux-security-module@vger.kernel.org>; Sun,  6 Feb 2022 02:37:12 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1nGeuc-0002la-07; Sun, 06 Feb 2022 11:36:54 +0100
+Message-ID: <a45010a4-2b86-aa22-d7bd-3c4839356cf1@pengutronix.de>
+Date:   Sun, 6 Feb 2022 11:36:48 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Subject: Re: [PATCH] KEYS: trusted: fix crash when TPM/TEE are built as module
+To:     Tong Zhang <ztong0001@gmail.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andreas Rammhold <andreas@rammhold.de>
+References: <20220204200342.48665-1-ztong0001@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20220204200342.48665-1-ztong0001@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-お問い合わせありがとうございました。
-内容を確認後1営業日以内にご連絡差し上げます。
-お急ぎの場合は、お電話でも承っております。
+Hello Tong,
 
-TEL.0964-23-1211
+On 04.02.22 21:03, Tong Zhang wrote:
+> when TCG_TPM and TEE are built as module, trusted_key_sources will be an
+> empty array, loading it won't do what it is supposed to do and unloading
+> it will cause kernel crash.
+
+Jarkko reported picking up an equivalent fix two months ago:
+https://lkml.kernel.org/keyrings/YadRAWbl2aiapf8l@iki.fi/
+
+But it seems to have never made it to Linus.
+
+Cheers,
+Ahmad
+
+> 
+> To reproduce:
+> $ modprobe trusted
+> $ modprobe -r trusted
+> 
+> [  173.749423] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+> [  173.755268] Backtrace:
+> [  173.755378]  cleanup_trusted [trusted] from sys_delete_module+0x15c/0x22c
+> [  173.755589]  sys_delete_module from ret_fast_syscall+0x0/0x1c
+> 
+> To fix this issue, we also need to check CONFIG_TCG_TPM_MODULE and
+> CONFIG_TEE_MODULE.
+> 
+> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+> Signed-off-by: Tong Zhang <ztong0001@gmail.com>
+> ---
+>  security/keys/trusted-keys/trusted_core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+> index d5c891d8d353..b3a3b2f2d4a4 100644
+> --- a/security/keys/trusted-keys/trusted_core.c
+> +++ b/security/keys/trusted-keys/trusted_core.c
+> @@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
+>  MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
+>  
+>  static const struct trusted_key_source trusted_key_sources[] = {
+> -#if defined(CONFIG_TCG_TPM)
+> +#if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+>  	{ "tpm", &trusted_key_tpm_ops },
+>  #endif
+> -#if defined(CONFIG_TEE)
+> +#if defined(CONFIG_TEE) || defined(CONFIG_TEE_MODULE)
+>  	{ "tee", &trusted_key_tee_ops },
+>  #endif
+>  };
 
 
-差出人: ❤️ Sally is interested in your profile! Click Here: http://inx.lv/6e4u?jpv ❤️ <linux-security-module@vger.kernel.org>
-題名: 6t8h6t97
-
-メッセージ本文:a5p5zvv
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
