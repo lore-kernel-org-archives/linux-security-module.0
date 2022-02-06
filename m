@@ -2,80 +2,47 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E0EC433F5
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Feb 2022 08:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EE2C433EF
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Feb 2022 10:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbiBFIDL (ORCPT
+        id S233434AbiBFKcD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 6 Feb 2022 03:03:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36122 "EHLO
+        Sun, 6 Feb 2022 05:32:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230342AbiBFH5j (ORCPT
+        with ESMTP id S230415AbiBFKcD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 6 Feb 2022 02:57:39 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A56CC06173B
-        for <linux-security-module@vger.kernel.org>; Sat,  5 Feb 2022 23:57:38 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id bx31so15183936ljb.0
-        for <linux-security-module@vger.kernel.org>; Sat, 05 Feb 2022 23:57:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:content-transfer-encoding;
-        bh=rXdUI7og1j2yAdA0JspQf7wirmwD/uaHgVNhJfxJE5Y=;
-        b=pCY+Ays5EULZNpKWcXEfSWWj4XTiLgEZ8BXJEPg9CQ8rG++4ExxS2vnx8rFUEWWs5r
-         fkuy6g4SKn7VgEsGW/FJYNHCuoLufiEhXbzgxlZe0VR0NzgiHR7Xe0YpRp9xQWQzCzPx
-         mj0kyvM7cKHvzgtr38sE9jnY4jg2QlKEE4Q1bQ1numb578kAXkO39NiIS+fUvctnpwrN
-         B6ht8K5CkE5m7YhXdqbz6iK4l7UsG3b5Io/K3n7GDn/IsBQUldekaM9U3Z1U4YOiUV74
-         77qaXH87a01AhkNzYJETmrrPq8aKTNtspqAz2y5KNL0Cftw0tO3zYpZF5kkjWXA4eKPE
-         4xfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:content-transfer-encoding;
-        bh=rXdUI7og1j2yAdA0JspQf7wirmwD/uaHgVNhJfxJE5Y=;
-        b=i8tkQsFjaDuPyC+mo8/RGu4np/w/Wh/fvj7WzW402jsPbFYsBSDz/J1HLlwOYr1XcH
-         q+F0b/B8VLkZGIu6eVnmooWyCnRBN26ba2qevTCmr97mBh/WqLpB8b0SglFOHf0NtEUn
-         dpZ2xzIC2oEqryZo1ghhNvonwEYy5x27b054qQA8XRPYtonJEyPi8UzjrFrm/FIqCaOY
-         sLjpQB2YFksjnkeW1RUJHwx7FkzHdjLuXUD3PssxUfv2H0TKbThNNH6qb5jCvxJ0As9i
-         BjbnjXm1Jy8qFmZQyLU0Uo0zllwaAnw2t2bQS6mltPq46GS26axifqenL+KdY9q9T0mR
-         bSFA==
-X-Gm-Message-State: AOAM5328q6v5AHH+BiTAxXs2LJl+NnRrAEyFiMGKaAmkPNawssG79MEo
-        xp8/3GPQU772GHl+hvrI7cAuAtEvJHU=
-X-Google-Smtp-Source: ABdhPJy21GAs7EeOxR1l2OsI/w+0+DHmsXVoBTIiyOHE7KUDSDhlM0CxLv4pwCdJigq4XxepMBAHug==
-X-Received: by 2002:a05:651c:1249:: with SMTP id h9mr5075529ljh.127.1644134256252;
-        Sat, 05 Feb 2022 23:57:36 -0800 (PST)
-Received: from [10.20.3.220] ([188.35.189.39])
-        by smtp.gmail.com with ESMTPSA id f9sm1087289ljm.15.2022.02.05.23.57.35
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Feb 2022 23:57:35 -0800 (PST)
-Message-ID: <2d6d1d14-8653-3a02-911d-eadb96fed640@gmail.com>
-Date:   Sun, 6 Feb 2022 10:57:43 +0300
+        Sun, 6 Feb 2022 05:32:03 -0500
+X-Greylist: delayed 394 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 06 Feb 2022 02:32:00 PST
+Received: from users006.phy.heteml.jp (users006.phy.heteml.jp [157.7.44.144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C99C06173B
+        for <linux-security-module@vger.kernel.org>; Sun,  6 Feb 2022 02:32:00 -0800 (PST)
+Received: by users006.phy.heteml.jp (Postfix, from userid 444)
+        id A60EA8806F4; Sun,  6 Feb 2022 19:25:24 +0900 (JST)
+To:     linux-security-module@vger.kernel.org
+Subject: =?UTF-8?B?5a6H5Zyf44K744Oz44K/44O844Ob44OG44OrICI2dDhoNnQ5NyI=?=
+X-PHP-Originating-Script: 8368:PHPMailer.php
+Date:   Sun, 6 Feb 2022 10:25:24 +0000
+From:   =?UTF-8?B?5a6H5Zyf44K744Oz44K/44O844Ob44OG44Or?= 
+        <info@uto-centerhotel.com>
+Reply-To: info@uto-centerhotel.com
+Message-ID: <tQZcvdwZId5EOULJDnZnWEc9r5gLZc68cTSPqhg@uto-centerhotel.com>
+X-Mailer: PHPMailer 6.5.3 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Content-Language: en-US
-To:     linux-security-module <linux-security-module@vger.kernel.org>
-From:   Igor Zhbanov <izh1979@gmail.com>
-Subject: TOMOYO can't be enabled with other major LSM
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+お問い合わせありがとうございました。
+内容を確認後1営業日以内にご連絡差し上げます。
+お急ぎの場合は、お電話でも承っております。
 
-According to commit a5e2fe7ede1268d2f80fe49ca1f717d0e3750995, TOMOYO
-could be able to work together with other major LSM:
-    TOMOYO: Update LSM flags to no longer be exclusive
-    With blob sharing in place, TOMOYO is no longer an exclusive LSM,
-    so it can operate separately now. Mark it as such.
+TEL.0964-23-1211
 
-However, current security/Kconfig doesn't allow to select TOMOYO and
-some other major LSM because of using exclusive "choice" of one of them.
 
-I suppose, if TOMOYO is ready to work alongside with other major LSM,
-we need adjust security/Kconfig accordingly.
+差出人: ❤️ Sally is interested in your profile! Click Here: http://inx.lv/6e4u?jpv ❤️ <linux-security-module@vger.kernel.org>
+題名: 6t8h6t97
 
-Thank you.
+メッセージ本文:a5p5zvv
+
