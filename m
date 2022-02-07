@@ -2,203 +2,179 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D978C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Feb 2022 16:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40CDC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Feb 2022 17:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241373AbiBGQaE (ORCPT
+        id S233573AbiBGRuT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Feb 2022 11:30:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55536 "EHLO
+        Mon, 7 Feb 2022 12:50:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1388545AbiBGQRw (ORCPT
+        with ESMTP id S1384405AbiBGRkn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Feb 2022 11:17:52 -0500
-Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19DDC0401CF
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Feb 2022 08:17:51 -0800 (PST)
-Received: by mail-vs1-xe2d.google.com with SMTP id a19so176401vsi.2
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Feb 2022 08:17:51 -0800 (PST)
+        Mon, 7 Feb 2022 12:40:43 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFE79C0401D9;
+        Mon,  7 Feb 2022 09:40:41 -0800 (PST)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 217FZLAS020213;
+        Mon, 7 Feb 2022 17:40:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=NJxRHke/qyTl8W+YVEW0q2tvx5NXp9Qs8uL8SnGhFSQ=;
+ b=CwzEKf/ZJ8BKv0inuYMRR/I4/QZrWRdhhg+TzswI44X1Pzamdd6W0rruXjHaoF9g+C0c
+ FlMbQ5DJZabqLYoq1JUdmyA9YQ8s2cV2vezWmvG/X1dN10YSUbn7Pxl0imGvXW6Of6kx
+ u8B7KIrmHhJXB+z65tsfKIXMWDsD/inVbPrXtUuPa5Kmif/89Kllrom2BqmO4ST/k4KI
+ 7b8lAvY/yFegLcScDOFJSCMG2lO93xEUUxL1syDgTpVGe1Hp8b77VmOWv/MweqCMmJPU
+ wRvOQl0c8/meqK4/xB5uGvVf26et2PGwAf7ySQnVGsyWDf1RiTcDRs2QrrlkZkzeMiJj 0g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3e366wrcat-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Feb 2022 17:40:27 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 217Ha1oX108372;
+        Mon, 7 Feb 2022 17:40:26 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2175.outbound.protection.outlook.com [104.47.59.175])
+        by aserp3030.oracle.com with ESMTP id 3e1f9dqusr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Feb 2022 17:40:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JnylckqN0A/Dq8t7x6r3C1yskZkWejEFz/cswGES/GqVzpXNuyXu6upeV1e9+rT5jnoBZf/VWEi/wB/wXdSNd11E77ygKG/z5yruqyZ2zJjiAlxWS1lBoL3RFVSv07pzeFBYpj4GXKYzpu1rnZLT5boj2i/oy3GtZ5Bo64zXglwIbsfl66Y1Sc5GEOxYzJnwd1EPy+m1nc5AxUHHRY9c1Socwj5PAeAHc84liCuWchmKLRjl/PYY1zXfMOW1Q7nFZR4a8laMIjzNsfvxTPyavHD7au/wf5yuSfBEWxLliLj8YG+UK+yEvBF3yCaA7ocIyzcFmjLlYiS/uwr8d6ZFPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NJxRHke/qyTl8W+YVEW0q2tvx5NXp9Qs8uL8SnGhFSQ=;
+ b=jZmcFGt5CB8y4RyqdyxwfzvqgCNLCoKhT2XuTHI2T4X3IWkyEGZg9bgZru/cnrZV7/qrA7P/jo/+Byv/xZ1TT6/OYQNya75jfI+lK4wzqYi2141O9Ti8V98Hl7haSfLHgoPH1434YV79xBmO+aeogauPDnhaOviyPthYEx7dqMQqfpWJWcmI/3Kkq3ATi73eKA6uYd9XC63uZqqnmnnQuq7WAWoba70Lac3YKywGrip5BmmQWWOEAMIv3OF9YnaflL/Mm0oX4xszObxvZL6oairG9vALJUV+g9kMlNtDIKcIcM6VpLtgk+7P7gbsHD89ZrGTVZuyvzyO1YKM4iKAXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Gw/4UW15eYzSdi+TxSzYDRCdQSLS3TL9tdscCSdyYxg=;
-        b=InXVv1jEZyzsy5z7eBG0uEfkymyD+xApXVpYh2qTWDc4lE+xqmJZ9QWZ4+UoK7Ii1s
-         uoNEovvqySCIDsLm+OG4eWryIzbsCGkRVNqhr0/4iIstT4vsLOFtHFLYukv+kK3eVBs7
-         chVNMKIbOiU9O57WWrbsitI4a7ccgHFvPrhPulfHmDSyVZzmZM8yYeMuRMYMPYRXUwQB
-         egv/iqGX8AhyWnq+x5SPFiW7E8gT29om3mtDOrWofXM0Iwuds2J5FcaEhjvmLe+ZUaLR
-         cshrxapm87uGiOSw34GBJN26WykSBTlGfw+Sf17dTTRRpGvXN5kCtlyYDGSGQRtM+FTI
-         2Ziw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Gw/4UW15eYzSdi+TxSzYDRCdQSLS3TL9tdscCSdyYxg=;
-        b=E4MbhlWjvbSlG4h00nX54ftTMwB9/K+Mlw15SOClejVMGUut3HICgd5K8RmE2s8rh5
-         MEttiP8QgV9E7znLA1wh0cvQCnSG6u3DZBvjfrIpJ5K9fmP2dwlYCQkvWlsihjQjrpvt
-         8Fr6yYTjmvIjKsF7EE8rYbIYM6xkxi1AkNOS8UDKnTvX20d8nNbCYhXhTmA2Yab7btE3
-         wUBZbRxdhxw2FsrzcZKkxojDaB16NNN2Bar96Z+Hp5aBBLDUV4YyOsKeWBwxPKUtN2Zm
-         pDcEga1kJ+nGnxGlxR0ju5fUpVUWwNOeEchMDV+4faKvswl2DnL688Kh8yT32THEEMpH
-         tTRg==
-X-Gm-Message-State: AOAM5315TLdNDOKJ6Vvm8Hb8jVux7iWJ0MMKjDB3vL9k/YlXaT/qo7If
-        D2DQcytRUZSNS2Jq4sysWRInNFQULns=
-X-Google-Smtp-Source: ABdhPJyV7fU3HOz12OQ5hhVRGQg49qreBoUwPyRFFtNsnrlErL86X5baSqMZkIxRhGXLOgh15dNyCA==
-X-Received: by 2002:a05:6102:a4c:: with SMTP id i12mr128567vss.11.1644250670934;
-        Mon, 07 Feb 2022 08:17:50 -0800 (PST)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id j63sm267913vkj.24.2022.02.07.08.17.50
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Feb 2022 08:17:50 -0800 (PST)
-Received: by mail-vs1-f53.google.com with SMTP id f6so177606vsa.5
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Feb 2022 08:17:50 -0800 (PST)
-X-Received: by 2002:a05:6102:354f:: with SMTP id e15mr69589vss.74.1644250670162;
- Mon, 07 Feb 2022 08:17:50 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NJxRHke/qyTl8W+YVEW0q2tvx5NXp9Qs8uL8SnGhFSQ=;
+ b=SkzkEizUKev3aTT8dfKGDim/pZG3AEFcjvtClpjbEq5GSOy0nbpSEUyfAQFMX5aOW/iBuzprxbiODjpDT412A8j3/MkoG+rk4wSdABflftAi/rSi1WNgzffP2aC3k9YOT2uLeu4gjxInjWdDkN+Gj/lkHaioRh6DvrnN1pU3Fco=
+Received: from SA2PR10MB4665.namprd10.prod.outlook.com (2603:10b6:806:fb::17)
+ by DS7PR10MB4880.namprd10.prod.outlook.com (2603:10b6:5:3ac::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12; Mon, 7 Feb
+ 2022 17:40:25 +0000
+Received: from SA2PR10MB4665.namprd10.prod.outlook.com
+ ([fe80::5c:9564:93b9:5654]) by SA2PR10MB4665.namprd10.prod.outlook.com
+ ([fe80::5c:9564:93b9:5654%8]) with mapi id 15.20.4951.019; Mon, 7 Feb 2022
+ 17:40:25 +0000
+Message-ID: <cda221fd-6481-598f-03ba-29d0b79af8b7@oracle.com>
+Date:   Mon, 7 Feb 2022 11:40:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH] KEYS: trusted: Avoid calling null function
+ trusted_key_exit
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org
+References: <20220126184155.220814-1-dave.kleikamp@oracle.com>
+ <YfGtVk/HQjgl1zSS@iki.fi>
+From:   Dave Kleikamp <dave.kleikamp@oracle.com>
+In-Reply-To: <YfGtVk/HQjgl1zSS@iki.fi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0053.namprd13.prod.outlook.com
+ (2603:10b6:806:22::28) To SA2PR10MB4665.namprd10.prod.outlook.com
+ (2603:10b6:806:fb::17)
 MIME-Version: 1.0
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
- <20220124080215.265538-2-konstantin.meskhidze@huawei.com> <CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com>
- <0934a27a-d167-87ea-97d2-b3ac952832ff@huawei.com> <CA+FuTSc8ZAeaHWVYf-zmn6i5QLJysYGJppAEfb7tRbtho7_DKA@mail.gmail.com>
- <d84ed5b3-837a-811a-6947-e857ceba3f83@huawei.com> <CA+FuTSeVhLdeXokyG4x__HGJyNOwsSicLOb4NKJA-gNp59S5uA@mail.gmail.com>
- <0d33f7cd-6846-5e7e-62b9-fbd0b28ecea9@digikod.net> <91885a8f-b787-62ff-1abb-700641f7c2cb@huawei.com>
- <CA+FuTScaoby-=xRKf_Dz3koSYHqrMN0cauCg4jMmy_nDxwPADA@mail.gmail.com>
-In-Reply-To: <CA+FuTScaoby-=xRKf_Dz3koSYHqrMN0cauCg4jMmy_nDxwPADA@mail.gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Mon, 7 Feb 2022 11:17:13 -0500
-X-Gmail-Original-Message-ID: <CA+FuTSc6BfWKu1taQr7wPoQ4VJg3Au1PH-rbTa71-srLzARL-A@mail.gmail.com>
-Message-ID: <CA+FuTSc6BfWKu1taQr7wPoQ4VJg3Au1PH-rbTa71-srLzARL-A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] landlock: TCP network hooks implementation
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7f7e8401-ee1a-4d30-51ad-08d9ea60ec45
+X-MS-TrafficTypeDiagnostic: DS7PR10MB4880:EE_
+X-Microsoft-Antispam-PRVS: <DS7PR10MB4880615E290081632527D726872C9@DS7PR10MB4880.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Wgyi20aEEauz1GUvCkMRLIsmIf/pM3V3yiTxtRyHpZDz3RAV8U+b+DqjHoaAWytYPSwYQ02Knu9+xyBxQorS3q4YRTE/WwJ+2TxXG1+2QHoqLuxtCvjq7WP3hCeL2U64skdcIOo8cmYcJKKwJqgW1BVc3f2L6yC4W6NOf48kbViQWUSgtD/K7mSLvkNFxlM4b/i6HewP5bm7oDHMsiId0lGXDC4QbmJVfRrcKRaxvDHgW/TeubazvjfxNUdao8MBu37I/5w5X7vs+gaelrFooeP+xNXLGzBDZ5p3n4E0emw+iIBrUpeFfGZRKfPBq30+xIRJKkwf3fibExxAlchseLmkfD0iOCUUo9MOo2M3tCtWqsh92/g4Hic0ci+lrxjeQh3/9S/nW8BU35aF7v7pERr/nBpchLSOK95CRL+UGJDG4Y5jWh3jYm11d6zbJriXnhMTLoxcnRynE32AwFIgwg44gt7BxaAPBruAuu37DTYrGPdd7XOlWkQxPPMnwta8jfJfDVOCtw8Zw0lwWEI9QwEgN494jKZ3W5MgdzN9zrZG+whBEGReWNYqw+a+VD09L6UGUBvfHgPV6dv812fzfC7+iAdwQEHaRgOnQkBD5YnoYYE+UiFFJaQmfAVg9hXOg/bFrPsp7oi//Rw8yHGRQosaUejQHnZDfGxF7gm8YCikTYlqchYiBZ9tSqNKJAObq80Wj7V2YxZlINfsc76QI2z8JsnU/bRCc2mUv0rzd24=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA2PR10MB4665.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(6486002)(6512007)(6506007)(508600001)(4744005)(7416002)(5660300002)(44832011)(2906002)(316002)(6916009)(54906003)(8676002)(4326008)(66476007)(66946007)(8936002)(66556008)(31686004)(38100700002)(31696002)(36756003)(86362001)(2616005)(26005)(186003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S0tCV3JoNUlLakthU0kzZE14cnJrTU43WnV0RGhEZ0NPdEM4dTE3RkxBeVpm?=
+ =?utf-8?B?OWIzdWxLRktzRW5wbkNBNE02cUFHUzdYbThCZUNOVnI4L1h1b0tsTGhmTmtK?=
+ =?utf-8?B?enpYNUk5QlJsUmdmeFdYSDMrOVdZUHFLTzBMVEZCaWVEQTdWZ09iWnJxY2x3?=
+ =?utf-8?B?dnVKUXNGd3VOZlkzaytUd3BNc0lGNVNLUTRzbko0elZ3RDluaXVIMDQyK3JD?=
+ =?utf-8?B?MnUwQ2xkeTI1SEJCMGVqNnU2L1BUa3lYR25NT2JGWC9vYWFFV1NGdlF6MlN1?=
+ =?utf-8?B?dndCMzl3dW4ybmJwVmFmSjV3NmlzSklNK3IxRFhiTU81VGJSWVc1TndpUEhV?=
+ =?utf-8?B?ejQzN2NJbnBINFF6M3pZYkFoZ2dJMEJIbG1XdVhKdS9Ob3ljeGhXT3Z4cWZF?=
+ =?utf-8?B?S3k4NmNQay9BK2RzUS9SOUd4eU9xdzJTNnpuTGI3cThhd1kvemk4UHZSRnE2?=
+ =?utf-8?B?Z01lU29nWkxRYjFFc3A2RzM2WGtQZkxVR0xINWJBS1dMNW0wbDQ5RmVENmVv?=
+ =?utf-8?B?VUJhQzlPaUZ3Vk83SmYvYlpHZ1llcG1ML3B5ZmNyckZ6dmZ2NTRjTnZKTVQ5?=
+ =?utf-8?B?YlUrYTJBOHpjbW8wRE9ZMjU2SXBVSmVONFc3VW95NDlNVGxmRmxUWTA3d3h5?=
+ =?utf-8?B?RE5lT3l6L1BsOUVlNURQWjgyN2swWnZTbTVMZWswajhUMzNqb1JJS2YyR3d2?=
+ =?utf-8?B?dmYrUm1leWhoZnBRazNmVFU4cWswZXBtZUxXV2p3NjN1NXRJWkdRNHduUDBG?=
+ =?utf-8?B?aTNKaGVUR2FEUnJ2K04xSnhQT1ZJSXBFWDdEdXBSUlJjZ3crMCtOWTUvdWMz?=
+ =?utf-8?B?Q3lWQ2t0UGhZZ2JIQjkzcEtoa3pkWXRrdmpKU2ZTRzg1b2wzSWszaUpPdHNm?=
+ =?utf-8?B?YkFWU3lqTGs5Y3g3STZLU2d2RTVNV2EyYzk0c1l0OXNJQ1JvUloreERBV3hX?=
+ =?utf-8?B?UWlRYWVPZmRVY3dqMlNKNkZFa3JYcjJ0aVhJRnhBT1BtcittNlplSUxJM3dR?=
+ =?utf-8?B?Zkljdy9JOVQ5N2podXJBWWI0cXhGYTVxQTRZMTZhYnhrQk5OVFBYaFAxRWVn?=
+ =?utf-8?B?RUFiSjllbFE2cGM2L2k4blhkd0taaVhxZjhFNm9PbXBvWTRScjZQdTZMR05X?=
+ =?utf-8?B?WXVmOHFmMHdUK2NaQWtxNmtDUkcwa3JGdE5ZWFlsY1FCd3hGS1dCc0xCWEpC?=
+ =?utf-8?B?M3ByMWIvZHhPYS9qNHJ2a0o4aVM5VHg5UWxEMEtOTEZxbVdRVG96ZkM5WHVt?=
+ =?utf-8?B?Tmh2YmplZmtmR0sySGZzbFBWemZ4ME5GdkxlUmVsSGlIKzJyTVowUE4zQ0hw?=
+ =?utf-8?B?UmhEcDE2aG5aMkhYakFCZTdKTjN6YTE4eG9JQkJwaFRFRm44bnJldzVocjMw?=
+ =?utf-8?B?UGZtQnUzUHdySGQrODliUXIwWWlLVE5xTXF1WlY0MFRQbEVUbGpwdTNkNUZF?=
+ =?utf-8?B?SmpmNisxb0pXQlRlWjZqUEFETjBVQUsydHhyb00za2NEZmRpc2VveUNpT0t1?=
+ =?utf-8?B?MjZRT2M0VnBMYWRHUmdPVldpQWo1WmdyNzZPVjUzSkNjQ2lJQzRpTEdGRVFX?=
+ =?utf-8?B?bnVyMXNQTndTREkwOWh6b3NLVEQ3S21panZYeXdNbFpCZVNBcHI1VHA3MjhY?=
+ =?utf-8?B?enZPckNEVFdqQ0U0cUNlK2k2d0ozLzdwTXRxY0dtdS9YY0lDQks0WklXUVRU?=
+ =?utf-8?B?NkdNR1B4aXZLMiszT2t0ay9wUXdvTWdmcTU3a2xpTzFPb3FDNGc2SWZCRFo1?=
+ =?utf-8?B?ODYra3U1L29mR2FzSllUWVdROEZPUWRHVHFKdmhFVGhOa21FMTh6MlVRR1l4?=
+ =?utf-8?B?SExVK3M2YklZUHdQTlZvRXNEdXBFdllLT0hOdGVkV1pyYkRWZTMrUWRpc0hR?=
+ =?utf-8?B?dGhsaE56RStVbHJNUTRNUm93emlMTnNyc2t0ZXlBMmpXNTNHQWYwQ2JzZnNa?=
+ =?utf-8?B?cWJZMDk0c2RjZ0NqN00wSUFxSzNEcExRUytkVncxWEhXOExqTGhoV29RSnc5?=
+ =?utf-8?B?cndyRytIRjZjWkE0U2dUVWxOeUNxRVpXMU1aQnNOVGpUM2o2ZW5LU1E1eG5X?=
+ =?utf-8?B?QXkzMFdpa3FmVERla01wUk1sbEVBT0R2OSszNDFwMkZ3b01Jc0N1STQ4MVhp?=
+ =?utf-8?B?bmVrcng5RnQ5SUkyTlVYM1JsMkkwNlRzNktlNVAzdlN3cXFIWFJBWXBnY3Fj?=
+ =?utf-8?B?eGdmWEFKYVNiMjRudnIyMHdsWXR1TUsrQjl3N2wvcDRQL2xXMVdSYkUwS1d4?=
+ =?utf-8?B?V1pMcHR4bFRJSkM3Snl6cXZGV2lnPT0=?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f7e8401-ee1a-4d30-51ad-08d9ea60ec45
+X-MS-Exchange-CrossTenant-AuthSource: SA2PR10MB4665.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2022 17:40:25.2767
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AqjFOOilUc6yJ5TGQvrSLoeB/yZBqMt3CBMs6+w6o0xdsIVKIYcZN88s1apQCw/anm4Z3VJJKAiG5WX4/zdj02XMUvJt53nyzoHwrueHDHE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB4880
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10251 signatures=673430
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 adultscore=0
+ mlxlogscore=999 suspectscore=0 mlxscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
+ definitions=main-2202070109
+X-Proofpoint-GUID: CIqGmtd4dp8OEfo7Q7ZJUgnRPTgKMDHh
+X-Proofpoint-ORIG-GUID: CIqGmtd4dp8OEfo7Q7ZJUgnRPTgKMDHh
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> >   If bind() function has already been restricted so the following
-> > listen() function is automatically banned. I agree with Micka=D1=91l ab=
-out
-> > the usecase here. Why do we need new-bound socket with restricted liste=
-ning?
->
-> The intended use-case is for a privileged process to open a connection
-> (i.e., bound and connected socket) and pass that to a restricted
-> process. The intent is for that process to only be allowed to
-> communicate over this pre-established channel.
->
-> In practice, it is able to disconnect (while staying bound) and
-> elevate its privileges to that of a listening server:
->
-> static void child_process(int fd)
-> {
->         struct sockaddr addr =3D { .sa_family =3D AF_UNSPEC };
->         int client_fd;
->
->         if (listen(fd, 1) =3D=3D 0)
->                 error(1, 0, "listen succeeded while connected");
->
->         if (connect(fd, &addr, sizeof(addr)))
->                 error(1, errno, "disconnect");
->
->         if (listen(fd, 1))
->                 error(1, errno, "listen");
->
->         client_fd =3D accept(fd, NULL, NULL);
->         if (client_fd =3D=3D -1)
->                 error(1, errno, "accept");
->
->         if (close(client_fd))
->                 error(1, errno, "close client");
-> }
->
-> int main(int argc, char **argv)
-> {
->         struct sockaddr_in6 addr =3D { 0 };
->         pid_t pid;
->         int fd;
->
->         fd =3D socket(PF_INET6, SOCK_STREAM, 0);
->         if (fd =3D=3D -1)
->                 error(1, errno, "socket");
->
->         addr.sin6_family =3D AF_INET6;
->         addr.sin6_addr =3D in6addr_loopback;
->
->         addr.sin6_port =3D htons(8001);
->         if (bind(fd, (void *)&addr, sizeof(addr)))
->                 error(1, errno, "bind");
->
->         addr.sin6_port =3D htons(8000);
->         if (connect(fd, (void *)&addr, sizeof(addr)))
->                 error(1, errno, "connect");
->
->         pid =3D fork();
->         if (pid =3D=3D -1)
->                 error(1, errno, "fork");
->
->         if (pid)
->                 wait(NULL);
->         else
->                 child_process(fd);
->
->         if (close(fd))
->                 error(1, errno, "close");
->
->         return 0;
-> }
->
-> It's fine to not address this case in this patch series directly, of
-> course. But we should be aware of the AF_UNSPEC loophole.
+On 1/26/22 2:21PM, Jarkko Sakkinen wrote:
+> On Wed, Jan 26, 2022 at 12:41:55PM -0600, Dave Kleikamp wrote:
+>> If one loads and unloads the trusted module, trusted_key_exit can be
+>> NULL. Call it through static_call_cond() to avoid a kernel trap.
+>>
+>> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+>>
+>> Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+> 
+> Please re-send with cc stable and the empty line removed and I'll pick it.
 
-I did just notice that with autobind (i.e., without the explicit call
-to bind), the socket gets a different local port after listen. So
-internally a bind call may be made, which may or may not be correctly
-handled by the current landlock implementation already:
+I re-sent a v2, but haven't seen any response from you.
 
-+static void show_local_port(int fd)
-+{
-+       char addr_str[INET6_ADDRSTRLEN];
-+       struct sockaddr_in6 addr =3D { 0 };
-+       socklen_t alen;
-+
-+       alen =3D sizeof(addr);
-+       if (getsockname(fd, (void *)&addr, &alen))
-+               error(1, errno, "getsockname");
-+
-+       if (addr.sin6_family !=3D AF_INET6)
-+               error(1, 0, "getsockname: family");
-+
-+       if (!inet_ntop(AF_INET6, &addr.sin6_addr, addr_str, sizeof(addr_str=
-)))
-+               error(1, errno, "inet_ntop");
-+       fprintf(stderr, "server: %s:%hu\n", addr_str, ntohs(addr.sin6_port)=
-);
-+
-+}
-+
-@@ -23,6 +42,8 @@ static void child_process(int fd)
-        if (connect(fd, &addr, sizeof(addr)))
-                error(1, errno, "disconnect");
+I can send it again, or feel free to clean up those lines yourself.
 
-+       show_local_port(fd);
-+
-        if (listen(fd, 1))
-                error(1, errno, "listen");
+Thanks,
+Shaggy
 
-+       show_local_port(fd);
-+
-
-@@ -47,10 +68,6 @@ int main(int argc, char **argv)
-        addr.sin6_family =3D AF_INET6;
-        addr.sin6_addr =3D in6addr_loopback;
-
--       addr.sin6_port =3D htons(8001);
--       if (bind(fd, (void *)&addr, sizeof(addr)))
--               error(1, errno, "bind");
--
-        addr.sin6_port =3D htons(8000);
-        if (connect(fd, (void *)&addr, sizeof(addr)))
-                error(1, errno, "connect");
+> 
+> BR, Jarkko
