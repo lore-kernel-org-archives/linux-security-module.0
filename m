@@ -2,325 +2,297 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FDFC433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Feb 2022 14:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977DDC433EF
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Feb 2022 16:16:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236504AbiBGOlC (ORCPT
+        id S232422AbiBGQPT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Feb 2022 09:41:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33900 "EHLO
+        Mon, 7 Feb 2022 11:15:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383556AbiBGOQw (ORCPT
+        with ESMTP id S1386515AbiBGQBP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Feb 2022 09:16:52 -0500
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [IPv6:2001:1600:3:17::42ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E97F8C0401C4
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Feb 2022 06:16:50 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Jsp9W3RBFzMqFhp;
-        Mon,  7 Feb 2022 15:16:47 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Jsp9W0TVszljsTJ;
-        Mon,  7 Feb 2022 15:16:47 +0100 (CET)
-Message-ID: <10999c72-93eb-4db2-e536-a92187545bdb@digikod.net>
-Date:   Mon, 7 Feb 2022 15:17:27 +0100
+        Mon, 7 Feb 2022 11:01:15 -0500
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8820DC0401DA
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Feb 2022 08:01:13 -0800 (PST)
+Received: by mail-ua1-x92e.google.com with SMTP id 103so9896946uag.4
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Feb 2022 08:01:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7K869A6tEFT6j5avj9Nj8LDlCMczRFWKyU/2tyGK1kg=;
+        b=bfJhPXpMHTfixkAHAc2h5hRg2WTUb0AFw8vVXRv/GLK9oMUvLT+lc8CgeaBk72GAhU
+         gOBvl8PP58+eaq4V1EH5KAF5/X1bvUH3FPUWoXsw1EsoXJZmnI5Ct44M6u7wZrWsCelT
+         a+hwnLXRW+nhzhwhhsNSIQSfNC4uTN1btW7hyxDLJOOl/2nNG8mp2kL8io6UdpmKDhAw
+         W9V4geLA4PP3GpUfggHxQEft1snCW6I29Yrxm9JVZ+inRGMs76eDKx23jOWUXchoMTlR
+         az2v0eGoJATSj+ujSbpG/hyprtRJ5cYzx9I9QpraghdP4D0mP1b3ox5F4MPxcLjMD8EI
+         AfcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7K869A6tEFT6j5avj9Nj8LDlCMczRFWKyU/2tyGK1kg=;
+        b=oAYgDFJCS+cnNq/i65GP2WAtARBMT6zl0b95Nu+XKNMxQGNC8r4KLar88gj04M7LmP
+         FwBWSGVy4f5SGSpmr03vAMwyThqx7hCrA1MRUL0ZCT2sa9qQk2C+ebvuAR1KlILfPbkQ
+         sRtCq+XP2wadXquoks/3bfVXs/uV8dgvw2CkLkq/ToUp8F2i7xFFnK4GYZWUQoj27Brv
+         Y7bmSfVR1HrOFPIATCcTyVy4X2mTCaAwj1HxgyViDBCTPM3jVaZaAVgPFxot596qmicz
+         /QgdkPdV8nAO57z907GWDB58xpUr+cVZHYiAkHlGv37BJZsmqIYIPPYULvqNQulQNllh
+         aMvQ==
+X-Gm-Message-State: AOAM530sYLWVL0z7TEr5/rMLrqm4cvvmUkU5mwiG2JYi47ZQcPNJrodi
+        YMIHTkBTYpYfM2B0GcqsYdmj58ZZ1lc=
+X-Google-Smtp-Source: ABdhPJwfm4zBRVnHG4cq4Je/rcmN522hAgBU5pIjI3IrYo8G+bQB0sfBykjEaQDTOhGZNMOy4nGDvg==
+X-Received: by 2002:ab0:6145:: with SMTP id w5mr106530uan.102.1644249672504;
+        Mon, 07 Feb 2022 08:01:12 -0800 (PST)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id j6sm2473239uae.4.2022.02.07.08.01.11
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Feb 2022 08:01:12 -0800 (PST)
+Received: by mail-vk1-f179.google.com with SMTP id z15so8061305vkp.13
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Feb 2022 08:01:11 -0800 (PST)
+X-Received: by 2002:a05:6122:130e:: with SMTP id e14mr149451vkp.26.1644249671186;
+ Mon, 07 Feb 2022 08:01:11 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
+References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
+ <20220124080215.265538-2-konstantin.meskhidze@huawei.com> <CA+FuTSf4EjgjBCCOiu-PHJcTMia41UkTh8QJ0+qdxL_J8445EA@mail.gmail.com>
+ <0934a27a-d167-87ea-97d2-b3ac952832ff@huawei.com> <CA+FuTSc8ZAeaHWVYf-zmn6i5QLJysYGJppAEfb7tRbtho7_DKA@mail.gmail.com>
+ <d84ed5b3-837a-811a-6947-e857ceba3f83@huawei.com> <CA+FuTSeVhLdeXokyG4x__HGJyNOwsSicLOb4NKJA-gNp59S5uA@mail.gmail.com>
+ <0d33f7cd-6846-5e7e-62b9-fbd0b28ecea9@digikod.net> <91885a8f-b787-62ff-1abb-700641f7c2cb@huawei.com>
+In-Reply-To: <91885a8f-b787-62ff-1abb-700641f7c2cb@huawei.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Mon, 7 Feb 2022 11:00:34 -0500
+X-Gmail-Original-Message-ID: <CA+FuTScaoby-=xRKf_Dz3koSYHqrMN0cauCg4jMmy_nDxwPADA@mail.gmail.com>
+Message-ID: <CA+FuTScaoby-=xRKf_Dz3koSYHqrMN0cauCg4jMmy_nDxwPADA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] landlock: TCP network hooks implementation
 To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
         netfilter@vger.kernel.org, yusongping@huawei.com,
         artem.kuzin@huawei.com
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
- <20220124080215.265538-2-konstantin.meskhidze@huawei.com>
- <ed2bd420-a22b-2912-1ff5-f48ab352d8e7@digikod.net>
- <5cd5b983-32a5-97ec-0835-f0c96d86e805@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH 1/2] landlock: TCP network hooks implementation
-In-Reply-To: <5cd5b983-32a5-97ec-0835-f0c96d86e805@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Feb 7, 2022 at 12:51 AM Konstantin Meskhidze
+<konstantin.meskhidze@huawei.com> wrote:
+>
+>
+>
+> 2/1/2022 3:33 PM, Micka=C3=ABl Sala=C3=BCn =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
+:
+> >
+> > On 31/01/2022 18:14, Willem de Bruijn wrote:
+> >> On Fri, Jan 28, 2022 at 10:12 PM Konstantin Meskhidze
+> >> <konstantin.meskhidze@huawei.com> wrote:
+> >>>
+> >>>
+> >>>
+> >>> 1/26/2022 5:15 PM, Willem de Bruijn =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>>> On Wed, Jan 26, 2022 at 3:06 AM Konstantin Meskhidze
+> >>>> <konstantin.meskhidze@huawei.com> wrote:
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>> 1/25/2022 5:17 PM, Willem de Bruijn =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>>>>> On Mon, Jan 24, 2022 at 3:02 AM Konstantin Meskhidze
+> >>>>>> <konstantin.meskhidze@huawei.com> wrote:
+> >>>>>>>
+> >>>>>>> Support of socket_bind() and socket_connect() hooks.
+> >>>>>>> Current prototype can restrict binding and connecting of TCP
+> >>>>>>> types of sockets. Its just basic idea how Landlock could support
+> >>>>>>> network confinement.
+> >>>>>>>
+> >>>>>>> Changes:
+> >>>>>>> 1. Access masks array refactored into 1D one and changed
+> >>>>>>> to 32 bits. Filesystem masks occupy 16 lower bits and network
+> >>>>>>> masks reside in 16 upper bits.
+> >>>>>>> 2. Refactor API functions in ruleset.c:
+> >>>>>>>        1. Add void *object argument.
+> >>>>>>>        2. Add u16 rule_type argument.
+> >>>>>>> 3. Use two rb_trees in ruleset structure:
+> >>>>>>>        1. root_inode - for filesystem objects
+> >>>>>>>        2. root_net_port - for network port objects
+> >>>>>>>
+> >>>>>>> Signed-off-by: Konstantin Meskhidze
+> >>>>>>> <konstantin.meskhidze@huawei.com>
+> >>>>>>
+> >>>>>>> +static int hook_socket_connect(struct socket *sock, struct
+> >>>>>>> sockaddr *address, int addrlen)
+> >>>>>>> +{
+> >>>>>>> +       short socket_type;
+> >>>>>>> +       struct sockaddr_in *sockaddr;
+> >>>>>>> +       u16 port;
+> >>>>>>> +       const struct landlock_ruleset *const dom =3D
+> >>>>>>> landlock_get_current_domain();
+> >>>>>>> +
+> >>>>>>> +       /* Check if the hook is AF_INET* socket's action */
+> >>>>>>> +       if ((address->sa_family !=3D AF_INET) &&
+> >>>>>>> (address->sa_family !=3D AF_INET6))
+> >>>>>>> +               return 0;
+> >>>>>>
+> >>>>>> Should this be a check on the socket family (sock->ops->family)
+> >>>>>> instead of the address family?
+> >>>>>
+> >>>>> Actually connect() function checks address family:
+> >>>>>
+> >>>>> int __inet_stream_connect(... ,struct sockaddr *uaddr ,...) {
+> >>>>> ...
+> >>>>>           if (uaddr) {
+> >>>>>                   if (addr_len < sizeof(uaddr->sa_family))
+> >>>>>                   return -EINVAL;
+> >>>>>
+> >>>>>                   if (uaddr->sa_family =3D=3D AF_UNSPEC) {
+> >>>>>                           err =3D sk->sk_prot->disconnect(sk, flags=
+);
+> >>>>>                           sock->state =3D err ? SS_DISCONNECTING :
+> >>>>>                           SS_UNCONNECTED;
+> >>>>>                   goto out;
+> >>>>>                   }
+> >>>>>           }
+> >>>>>
+> >>>>> ...
+> >>>>> }
+> >>>>
+> >>>> Right. My question is: is the intent of this feature to be limited t=
+o
+> >>>> sockets of type AF_INET(6) or to addresses?
+> >>>>
+> >>>> I would think the first. Then you also want to catch operations on
+> >>>> such sockets that may pass a different address family. AF_UNSPEC is
+> >>>> the known offender that will effect a state change on AF_INET(6)
+> >>>> sockets.
+> >>>
+> >>>    The intent is to restrict INET sockets to bind/connect to some por=
+ts.
+> >>>    You can apply some number of Landlock rules with port defenition:
+> >>>          1. Rule 1 allows to connect to sockets with port X.
+> >>>          2. Rule 2 forbids to connect to socket with port Y.
+> >>>          3. Rule 3 forbids to bind a socket to address with port Z.
+> >>>
+> >>>          and so on...
+> >>>>
+> >>>>>>
+> >>>>>> It is valid to pass an address with AF_UNSPEC to a PF_INET(6) sock=
+et.
+> >>>>>> And there are legitimate reasons to want to deny this. Such as
+> >>>>>> passing
+> >>>>>> a connection to a unprivileged process and disallow it from
+> >>>>>> disconnect
+> >>>>>> and opening a different new connection.
+> >>>>>
+> >>>>> As far as I know using AF_UNSPEC to unconnect takes effect on
+> >>>>> UDP(DATAGRAM) sockets.
+> >>>>> To unconnect a UDP socket, we call connect but set the family
+> >>>>> member of
+> >>>>> the socket address structure (sin_family for IPv4 or sin6_family fo=
+r
+> >>>>> IPv6) to AF_UNSPEC. It is the process of calling connect on an alre=
+ady
+> >>>>> connected UDP socket that causes the socket to become unconnected.
+> >>>>>
+> >>>>> This RFC patch just supports TCP connections. I need to check the
+> >>>>> logic
+> >>>>> if AF_UNSPEC provided in connenct() function for TCP(STREAM) socket=
+s.
+> >>>>> Does it disconnect already established TCP connection?
+> >>>>>
+> >>>>> Thank you for noticing about this issue. Need to think through how
+> >>>>> to manage it with Landlock network restrictions for both TCP and UD=
+P
+> >>>>> sockets.
+> >>>>
+> >>>> AF_UNSPEC also disconnects TCP.
+> >>>
+> >>> So its possible to call connect() with AF_UNSPEC and make a socket
+> >>> unconnected. If you want to establish another connection to a socket
+> >>> with port Y, and if there is a landlock rule has applied to a process
+> >>> (or container) which restricts to connect to a socket with port Y, it
+> >>> will be banned.
+> >>> Thats the basic logic.
+> >>
+> >> Understood, and that works fine for connect. It would be good to also
+> >> ensure that a now-bound socket cannot call listen. Possibly for
+> >> follow-on work.
+> >
+> > Are you thinking about a new access right for listen? What would be the
+> > use case vs. the bind access right?
+> > .
+>
+>   If bind() function has already been restricted so the following
+> listen() function is automatically banned. I agree with Micka=D1=91l abou=
+t
+> the usecase here. Why do we need new-bound socket with restricted listeni=
+ng?
 
-On 07/02/2022 14:09, Konstantin Meskhidze wrote:
-> 
-> 
-> 2/1/2022 3:13 PM, Mickaël Salaün пишет:
->>
->> On 24/01/2022 09:02, Konstantin Meskhidze wrote:
->>> Support of socket_bind() and socket_connect() hooks.
->>> Current prototype can restrict binding and connecting of TCP
->>> types of sockets. Its just basic idea how Landlock could support
->>> network confinement.
->>>
->>> Changes:
->>> 1. Access masks array refactored into 1D one and changed
->>> to 32 bits. Filesystem masks occupy 16 lower bits and network
->>> masks reside in 16 upper bits.
->>> 2. Refactor API functions in ruleset.c:
->>>      1. Add void *object argument.
->>>      2. Add u16 rule_type argument.
->>> 3. Use two rb_trees in ruleset structure:
->>>      1. root_inode - for filesystem objects
->>>      2. root_net_port - for network port objects
->>
->> It's good to add a changelog, but they must not be in commit messages 
->> that get copied by git am. Please use "---" to separate this 
->> additionnal info (but not the Signed-off-by). Please also include a 
->> version in the email subjects (this one should have been "[RFC PATCH 
->> v3 1/2] landlock: …"), e.g. using git format-patch --reroll-count=X .
->>
->> Please follow these rules: 
->> https://www.kernel.org/doc/html/latest/process/submitting-patches.html
->> You can take some inspiration from this patch series: 
->> https://lore.kernel.org/lkml/20210422154123.13086-1-mic@digikod.net/
-> 
->   Ok. I will add patch vervison in next patch. So it will be "[RFC PATCH
->   v4 ../..] landlock: ..."
->   But the previous patches remain with no version, correct?
+The intended use-case is for a privileged process to open a connection
+(i.e., bound and connected socket) and pass that to a restricted
+process. The intent is for that process to only be allowed to
+communicate over this pre-established channel.
 
-Right, you can't change the subject of already sent emails. ;)
+In practice, it is able to disconnect (while staying bound) and
+elevate its privileges to that of a listening server:
 
-[...]
+static void child_process(int fd)
+{
+        struct sockaddr addr =3D { .sa_family =3D AF_UNSPEC };
+        int client_fd;
 
->>> diff --git a/security/landlock/net.c b/security/landlock/net.c
->>> new file mode 100644
->>> index 000000000000..0b5323d254a7
->>> --- /dev/null
->>> +++ b/security/landlock/net.c
->>> @@ -0,0 +1,175 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Landlock LSM - Filesystem management and hooks
->>> + *
->>> + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
->>> + * Copyright © 2018-2020 ANSSI
->>> + */
->>> +
->>> +#include <linux/socket.h>
->>> +#include <linux/net.h>
->>> +#include <linux/in.h>
->>
->> Why is linux/in.h required?
->>
->    Struct sockaddr_in is described in this header.
->    A pointer to struct sockaddr_in is used in hook_socket_connect()
->    and hook_socket_bind() to get socket's family and port values.
+        if (listen(fd, 1) =3D=3D 0)
+                error(1, 0, "listen succeeded while connected");
 
-OK, good point.
+        if (connect(fd, &addr, sizeof(addr)))
+                error(1, errno, "disconnect");
 
-[...]
+        if (listen(fd, 1))
+                error(1, errno, "listen");
 
->>> +        return 0;
->>> +
->>> +    socket_type = sock->type;
->>> +    /* Check if it's a TCP socket */
->>> +    if (socket_type != SOCK_STREAM)
->>> +        return 0;
->>> +
->>> +    if (!dom)
->>> +        return 0;
->>
->> This must be at the top of *each* hook to make it clear that they 
->> don't impact non-landlocked processes.
->>
->    They don't impact. It does not matter what to check first socket
->    family/type or landlocked process.
+        client_fd =3D accept(fd, NULL, NULL);
+        if (client_fd =3D=3D -1)
+                error(1, errno, "accept");
 
-It doesn't change the semantic but it changes the reviewing which is 
-easier with common and consistent sequential checks (and could avoid 
-future mistakes). This rule is followed by all Landlock hooks.
+        if (close(client_fd))
+                error(1, errno, "close client");
+}
 
-[...]
+int main(int argc, char **argv)
+{
+        struct sockaddr_in6 addr =3D { 0 };
+        pid_t pid;
+        int fd;
 
->>> @@ -67,10 +76,11 @@ static void build_check_rule(void)
->>>   }
->>>   static struct landlock_rule *create_rule(
->>> -        struct landlock_object *const object,
->>> +        void *const object,
->>
->> Instead of shoehorning two different types into one (and then loosing 
->> the typing), you should rename object to object_ptr and add a new 
->> object_data argument. Only one of these should be set according to the 
->> rule_type. However, if there is no special action performed on one of 
->> these type (e.g. landlock_get_object), only one uintptr_t argument 
->> should be enough.
->>
->   Do you mean using 2 object arguments in create_rule():
-> 
->      1. create_rule( object_ptr = landlock_object , object_data = 0,
->                                 ...,  fs_rule_type);
->          2. create_rule( object_ptr = NULL , object_data = port, .... ,
->                           net_rule_type);
+        fd =3D socket(PF_INET6, SOCK_STREAM, 0);
+        if (fd =3D=3D -1)
+                error(1, errno, "socket");
 
-Yes, and you can add a WARN_ON_ONCE() in these function to check that 
-only one argument is set (but object_data could be 0 in each case). The 
-landlock_get_object() function should only require an object_data though.
+        addr.sin6_family =3D AF_INET6;
+        addr.sin6_addr =3D in6addr_loopback;
 
-[...]
+        addr.sin6_port =3D htons(8001);
+        if (bind(fd, (void *)&addr, sizeof(addr)))
+                error(1, errno, "bind");
 
->>> @@ -142,26 +159,36 @@ static void build_check_ruleset(void)
->>>    * access rights.
->>>    */
->>>   static int insert_rule(struct landlock_ruleset *const ruleset,
->>> -        struct landlock_object *const object,
->>> -        const struct landlock_layer (*const layers)[],
->>> -        size_t num_layers)
->>> +        void *const obj, const struct landlock_layer (*const layers)[],
->>
->> same here
->       Do you mean using 2 object arguments in insert_rule():
-> 
->      1. insert_rule( object_ptr = landlock_object , object_data = 0,
->                                 ...,  fs_rule_type);
->          2. insert_rule( object_ptr = NULL , object_data = port, .... ,
->                           net_rule_type);
+        addr.sin6_port =3D htons(8000);
+        if (connect(fd, (void *)&addr, sizeof(addr)))
+                error(1, errno, "connect");
 
-Yes
+        pid =3D fork();
+        if (pid =3D=3D -1)
+                error(1, errno, "fork");
 
-[...]
+        if (pid)
+                wait(NULL);
+        else
+                child_process(fd);
 
->>> @@ -336,9 +399,11 @@ static int inherit_ruleset(struct 
->>> landlock_ruleset *const parent,
->>>           err = -EINVAL;
->>>           goto out_unlock;
->>>       }
->>> -    /* Copies the parent layer stack and leaves a space for the new 
->>> layer. */
->>> -    memcpy(child->fs_access_masks, parent->fs_access_masks,
->>> -            flex_array_size(parent, fs_access_masks, 
->>> parent->num_layers));
->>> +    /* Copies the parent layer stack and leaves a space for the new 
->>> layer.
->>
->> ditto
->        Do you mean comments style here?
+        if (close(fd))
+                error(1, errno, "close");
 
-Yes
+        return 0;
+}
 
-[...]
-
->>> @@ -317,47 +331,91 @@ SYSCALL_DEFINE4(landlock_add_rule,
->>>       if (flags)
->>>           return -EINVAL;
->>> -    if (rule_type != LANDLOCK_RULE_PATH_BENEATH)
->>> +    if ((rule_type != LANDLOCK_RULE_PATH_BENEATH) &&
->>> +        (rule_type != LANDLOCK_RULE_NET_SERVICE))
->>
->> Please replace with a switch/case.
-> 
->    Ok. I got it.
->>
->>
->>>           return -EINVAL;
->>> -    /* Copies raw user space buffer, only one type for now. */
->>> -    res = copy_from_user(&path_beneath_attr, rule_attr,
->>> -            sizeof(path_beneath_attr));
->>> -    if (res)
->>> -        return -EFAULT;
->>> -
->>> -    /* Gets and checks the ruleset. */
->>> -    ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
->>> -    if (IS_ERR(ruleset))
->>> -        return PTR_ERR(ruleset);
->>> -
->>> -    /*
->>> -     * Informs about useless rule: empty allowed_access (i.e. deny 
->>> rules)
->>> -     * are ignored in path walks.
->>> -     */
->>> -    if (!path_beneath_attr.allowed_access) {
->>> -        err = -ENOMSG;
->>> -        goto out_put_ruleset;
->>> -    }
->>> -    /*
->>> -     * Checks that allowed_access matches the @ruleset constraints
->>> -     * (ruleset->fs_access_masks[0] is automatically upgraded to 
->>> 64-bits).
->>> -     */
->>> -    if ((path_beneath_attr.allowed_access | 
->>> ruleset->fs_access_masks[0]) !=
->>> -            ruleset->fs_access_masks[0]) {
->>> -        err = -EINVAL;
->>> -        goto out_put_ruleset;
->>> +    switch (rule_type) {
->>> +    case LANDLOCK_RULE_PATH_BENEATH:
->>> +        /* Copies raw user space buffer, for fs rule type. */
->>> +        res = copy_from_user(&path_beneath_attr, rule_attr,
->>> +                    sizeof(path_beneath_attr));
->>> +        if (res)
->>> +            return -EFAULT;
->>> +        break;
->>> +
->>> +    case LANDLOCK_RULE_NET_SERVICE:
->>> +        /* Copies raw user space buffer, for net rule type. */
->>> +        res = copy_from_user(&net_service_attr, rule_attr,
->>> +                sizeof(net_service_attr));
->>> +        if (res)
->>> +            return -EFAULT;
->>> +        break;
->>>       }
->>> -    /* Gets and checks the new rule. */
->>> -    err = get_path_from_fd(path_beneath_attr.parent_fd, &path);
->>> -    if (err)
->>> -        goto out_put_ruleset;
->>> +    if (rule_type == LANDLOCK_RULE_PATH_BENEATH) {
->>> +        /* Gets and checks the ruleset. */
->>> +        ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
->>> +        if (IS_ERR(ruleset))
->>> +            return PTR_ERR(ruleset);
->>> +
->>> +        /*
->>> +         * Informs about useless rule: empty allowed_access (i.e. 
->>> deny rules)
->>> +         * are ignored in path walks.
->>> +         */
->>> +        if (!path_beneath_attr.allowed_access) {
->>> +            err = -ENOMSG;
->>> +            goto out_put_ruleset;
->>> +        }
->>> +        /*
->>> +         * Checks that allowed_access matches the @ruleset constraints
->>> +         * (ruleset->access_masks[0] is automatically upgraded to 
->>> 64-bits).
->>> +         */
->>> +        if ((path_beneath_attr.allowed_access | 
->>> ruleset->access_masks[0]) !=
->>> +                            ruleset->access_masks[0]) {
->>> +            err = -EINVAL;
->>> +            goto out_put_ruleset;
->>> +        }
->>> +
->>> +        /* Gets and checks the new rule. */
->>> +        err = get_path_from_fd(path_beneath_attr.parent_fd, &path);
->>> +        if (err)
->>> +            goto out_put_ruleset;
->>> +
->>> +        /* Imports the new rule. */
->>> +        err = landlock_append_fs_rule(ruleset, &path,
->>> +                path_beneath_attr.allowed_access);
->>> +        path_put(&path);
->>> +    }
->>> -    /* Imports the new rule. */
->>> -    err = landlock_append_fs_rule(ruleset, &path,
->>> -            path_beneath_attr.allowed_access);
->>> -    path_put(&path);
->>> +    if (rule_type == LANDLOCK_RULE_NET_SERVICE) {
->>> +        /* Gets and checks the ruleset. */
->>> +        ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
->>
->> You need to factor out more code.
-> 
->    Sorry. I did not get you here. Please could you explain more detailed?
-
-Instead of duplicating similar function calls (e.g. get_ruleset_from_fd) 
-or operations, try to use one switch statement where you put the checks 
-that are different (you can move the 
-copy_from_user(&path_beneath_attr...) call). It may be a good idea to 
-split this function into 3: one handling each rule_attr, which enables 
-to not mix different attr types in the same function. A standalone patch 
-should be refactoring the code to add and use a new function 
-add_rule_path_beneath(ruleset, rule_attr) (only need the "landlock_" 
-prefix for exported functions).
+It's fine to not address this case in this patch series directly, of
+course. But we should be aware of the AF_UNSPEC loophole.
