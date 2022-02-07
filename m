@@ -2,175 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A43CC433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Feb 2022 13:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19731C4321E
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Feb 2022 13:32:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240811AbiBGN37 (ORCPT
+        id S241737AbiBGNbQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Feb 2022 08:29:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55702 "EHLO
+        Mon, 7 Feb 2022 08:31:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378827AbiBGNSw (ORCPT
+        with ESMTP id S1442696AbiBGMtj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Feb 2022 08:18:52 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D82DC0401C1;
-        Mon,  7 Feb 2022 05:18:51 -0800 (PST)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Jsmsr6fdHz689YM;
-        Mon,  7 Feb 2022 21:18:08 +0800 (CST)
-Received: from [10.122.132.241] (10.122.132.241) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.21; Mon, 7 Feb 2022 14:18:48 +0100
-Message-ID: <51967ba5-519a-8af2-76ce-eafa8c1dea33@huawei.com>
-Date:   Mon, 7 Feb 2022 16:18:47 +0300
+        Mon, 7 Feb 2022 07:49:39 -0500
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35A21C03FEFC
+        for <linux-security-module@vger.kernel.org>; Mon,  7 Feb 2022 04:49:16 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JsmDS0wS1zMprtX;
+        Mon,  7 Feb 2022 13:49:12 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4JsmDR4wcMzlhSMP;
+        Mon,  7 Feb 2022 13:49:11 +0100 (CET)
+Message-ID: <ae0fcafa-3e8d-d6f2-26a8-ae74dda8371c@digikod.net>
+Date:   Mon, 7 Feb 2022 13:49:51 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [RFC PATCH 0/2] landlock network implementation cover letter
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
 References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
- <85450679-51fd-e5ae-b994-74bda3041739@digikod.net>
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <85450679-51fd-e5ae-b994-74bda3041739@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <20220124080215.265538-3-konstantin.meskhidze@huawei.com>
+ <4d54e3a9-8a26-d393-3c81-b01389f76f09@digikod.net>
+ <ae5ca74d-ce5f-51e8-31c1-d02744ec92f8@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [RFC PATCH 2/2] landlock: selftests for bind and connect hooks
+In-Reply-To: <ae5ca74d-ce5f-51e8-31c1-d02744ec92f8@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
- fraeml704-chm.china.huawei.com (10.206.15.53)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
+On 07/02/2022 08:11, Konstantin Meskhidze wrote:
+> 
+> 
+> 2/1/2022 9:31 PM, Mickaël Salaün пишет:
+>>
+>> On 24/01/2022 09:02, Konstantin Meskhidze wrote:
+>>> Support 4 tests for bind and connect networks actions:
+>>
+>> Good to see such tests!
+>>
+>>
+>>> 1. bind() a socket with no landlock restrictions.
+>>> 2. bind() sockets with landllock restrictions.
 
-2/1/2022 8:53 PM, Mickaël Salaün пишет:
-> 
-> On 24/01/2022 09:02, Konstantin Meskhidze wrote:
->> Hi, all!
->>
->> This is a new bunch of RFC patches related to Landlock LSM network 
->> confinement.
->> Here are previous discussions:
->> 1. 
->> https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/ 
->>
->> 2. 
->> https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/ 
->>
->>
->> As in previous RFCs, 2 hooks are supported:
->>    - hook_socket_bind()
->>    - hook_socket_connect()
->>
->> Selftest are provided in tools/testing/selftests/landlock/network_test.c;
->> Implementation was tested in QEMU invironment with 5.13 kernel version:
-> 
-> Again, you need to base your work on the latest kernel version.
-> 
-   Is it because there are new Landlock features in a latest kernel
-   version?
-   I thought 5.13 kernel version and the latest one have the same
-   Landlock functionality and there will not be rebasing problems in
-   future. But anyway I will base the work on the latest kernel.
-   Which kernel version do you work on now?
+[...]
 
+>>> + */
+>>> +
+>>> +#define _GNU_SOURCE
+>>> +#include <errno.h>
+>>> +#include <fcntl.h>
+>>> +#include <linux/landlock.h>
+>>> +#include <string.h>
+>>> +#include <sys/prctl.h>
+>>> +#include <sys/socket.h>
+>>> +#include <sys/types.h>
+>>> +#include <netinet/in.h>
+>>> +#include <arpa/inet.h>
+>>
+>> To make it determinisitic (and ease patching/diff/merging), you should 
+>> sort all the included files (in tests and in the kernel code).
 > 
->>   1. base_test - passed all tests
->>   2. fs_test - passed 44/46 tests. 2 tests related to overlayfs failed.
->>      Probably, I have wrong config options for overlayfs.
-> 
-> The minimal required configuration is listed in the "config" file. You 
-> need to update it for the network tests as well. You missed the 
-> ptrace_test. To test everything you can run:
-> fakeroot make -C tools/testing/selftests TARGETS=landlock gen_tar
-> and then extract 
-> tools/testing/selftests/kselftest_install/kselftest-packages/kselftest.tar.gz 
-> and execute run_kselftest.sh on your VM.
+>    Sorry. Did not get your point here. Could you explain in a bit more
+>    details please.
 
-   Thank you. I missed config file in landlock selftests.
-   I will launch all landlock tests.
-> 
-> 
->>   3. network_test - passed all tests.
->>      Please give your suggestions about test cover in network_test.c
->>
->> Implementation related issues
->> =============================
-> 
-> It is more a changelog than issues. ;)
+It will be easier to sort all the #include lines with the "sort -u" command.
 
-   Ok. Thanks. I will add a changelog into the next patches.
-> 
-> 
->>
->> 1. Access masks array refactored into 1D one and changed
->> to 32 bits. Filesystem masks occupy 16 lower bits and network
->> masks reside in 16 upper bits.
->>
->>        struct landlock_ruleset {
->>              ...
->>              ...
->>              u32 access_masks[];
->>        }
->>
->> 2. Refactor API functions in ruleset.c:
->>      1. Add (void *)object argument.
->>      2. Add u16 rule_type argument.
->>
->>    - In filesystem case the "object" is defined by underlying inode.
->>    In network case the "object" is defined by a port. There is
->>    a union containing either a struct landlock_object pointer or a
->>    raw data (here a u16 port):
->>      union {
->>          struct landlock_object *ptr;
->>          uintptr_t data;
->>      } object;
->>
->>    - Everytime when a rule is inserted it's needed to provide a rule 
->> type:
->>
->>      landlock_insert_rule(ruleset, (void *)object, access, rule_type)
->>        1. A rule_type could be or LANDLOCK_RULE_NET_SERVICE or
->>        LANDLOCK_RULE_PATH_BENEATH;
->>        2. (void *) object - is either landlock_object *ptr or port value;
->>
->> 3. Use two rb_trees in ruleset structure:
->>      1. root_inode - for filesystem objects (inodes).
->>      2. root_net_port - for network port objects.
-> 
-> Thanks for these explanations!
+[...]
 
-   Thanks for the review!!!
+>>> +    /* Create a socket 3 */
+>>> +    sockfd_3 = socket(AF_INET, SOCK_STREAM, 0);
+>>> +    ASSERT_LE(0, sockfd_3);
+>>> +    /* Allow reuse of local addresses */
+>>> +    ASSERT_EQ(0, setsockopt(sockfd_3, SOL_SOCKET, SO_REUSEADDR, 
+>>> &one, sizeof(one)));
+>>> +
+>>> +    /* Set socket 3 address parameters */
+>>> +    addr_3.sin_family = AF_INET;
+>>> +    addr_3.sin_port = htons(SOCK_PORT_3);
+>>> +    addr_3.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>>> +    memset(&(addr_3.sin_zero), '\0', 8);
+>>> +    /* Bind the socket 3 to IP address */
+>>> +    ASSERT_EQ(0, bind(sockfd_3, (struct sockaddr *)&addr_3, 
+>>> sizeof(addr_3)));
+>>
+>> Why is it allowed to bind to SOCK_PORT_3 whereas net_service_3 forbids 
+>> it?
 > 
+>    It's allowed cause net_service_3 has empty access field.
 > 
->>
->> Konstantin Meskhidze (2):
->>    landlock: TCP network hooks implementation
->>    landlock: selftests for bind and connect hooks
->>
->>   include/uapi/linux/landlock.h                 |  52 +++
->>   security/landlock/Makefile                    |   2 +-
->>   security/landlock/fs.c                        |  12 +-
->>   security/landlock/limits.h                    |   6 +
->>   security/landlock/net.c                       | 175 +++++++++
->>   security/landlock/net.h                       |  21 ++
->>   security/landlock/ruleset.c                   | 167 ++++++---
->>   security/landlock/ruleset.h                   |  40 +-
->>   security/landlock/setup.c                     |   3 +
->>   security/landlock/syscalls.c                  | 142 ++++---
->>   .../testing/selftests/landlock/network_test.c | 346 ++++++++++++++++++
->>   11 files changed, 860 insertions(+), 106 deletions(-)
->>   create mode 100644 security/landlock/net.c
->>   create mode 100644 security/landlock/net.h
->>   create mode 100644 tools/testing/selftests/landlock/network_test.c
->>
->> -- 
->> 2.25.1
->>
-> .
+>     /* Empty allowed_access (i.e. deny rules) are ignored in network
+>      *  actions for SOCK_PORT_3 socket "object"
+>      */
+>      ASSERT_EQ(-1, landlock_add_rule(ruleset_fd,
+>                                      LANDLOCK_RULE_NET_SERVICE,
+>                                      &net_service_3, 0));
+>      ASSERT_EQ(ENOMSG, errno);
+> 
+>    Applying this rule returns ENOMSG errno:
+> 
+>    /* Informs about useless rule: empty allowed_access (i.e. deny rules)
+>     * are ignored in network actions
+>     */
+>          if (!net_service_attr.allowed_access) {
+>              err = -ENOMSG;
+>              goto out_put_ruleset;
+>          }
+>    This means binding socket 3 is not restricted.
+>    For path_beneath_attr.allowed_access = 0 there is the same logic.
+
+I missed the ENOMSG check; the third rule has nothing to do with it. 
+However, because the ruleset handles bind and connect actions, they must 
+be denied by default. There is no rule allowing binding to SOCK_PORT_3. 
+Why is it allowed?
+
+You can test with another SOCK_PORT_4, not covered by any rule. As for 
+SOCK_PORT_3, it must be forbidden to bind on it.
