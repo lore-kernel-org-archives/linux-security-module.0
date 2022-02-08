@@ -2,134 +2,156 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9336C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Feb 2022 01:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAFCC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Feb 2022 03:01:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238340AbiBHBFO (ORCPT
+        id S1345777AbiBHDBl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:05:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37858 "EHLO
+        Mon, 7 Feb 2022 22:01:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240354AbiBGXM6 (ORCPT
+        with ESMTP id S1345723AbiBHDBk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Feb 2022 18:12:58 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD312C061355;
-        Mon,  7 Feb 2022 15:12:56 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id m6so44643795ybc.9;
-        Mon, 07 Feb 2022 15:12:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wQq+mHaX2NTw8edQ1piWfzulWZiGotWvejNP1a/WHXA=;
-        b=isfraitWhRGlMJU5yWGEFJjAgZ2h8hn2M0bv6WDAuftAolDZK9XA10xhcXKRl6rb94
-         Lu2YTxxxUFK9r4kVpKXZcDqHbNFXAq3M/NQtxWAxWU6Qfs3DCND/pp7uwO7sJosdY4ny
-         /9vBtqBd05H+DhwRfXZGfcCiFZKw95XpV45hry9I+TFnZSlDf6+IgPsn8XlxTLfWDuYP
-         xQ6LomxeYhe7kxPG7n0kLTv4KpJezzWcSd6u3OOBzs77fI1XZcFw61F5Ta2gwFw6PQS4
-         1xG1sL4x+soscQSUxGAPhLyCvhMH//JPqNEnuYqW3eCPFBtjrTbD/yJ/9Qn0kZU5YYtp
-         0JnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wQq+mHaX2NTw8edQ1piWfzulWZiGotWvejNP1a/WHXA=;
-        b=0Yt7C4eCX+dvddQORyOJi1Neojd8RbYgSbtVGciWbrO6eD3QbQ0t/XHwYSYX893GbW
-         JsYuwVrd5jlsG0HJPmBmJnqhQz6ukzbRxoHZ+MFBqo4C5TLmfm4JN02VbHJ7ad/KuLGD
-         TILz1rPjUQHXxUMKwHNdwjdEfroEdeNr0l3E1wKRSI96a+Rh+LiTpvqxE8fJ4A0tcFWK
-         K9iddeRkz4cvCFoHkBtMNcTgYZLvW29/l53276EUnELV91XxDiK5rtdc54N7udwWXQts
-         IE0CrPXQfsclvtaK8xgPor61zBTcQAiiCaYqVvgvB10h/Bh5vdd9FcZgaXEgTcvJO23I
-         9rAQ==
-X-Gm-Message-State: AOAM531Boi6YKFpXk83oLe5cIbDDWoGOW77f5lX41T/aKuevK4rF7zGl
-        kDz7Qdoww8Whbf88ry2pzIlQenEfbjkqKjXcNEBbnGS3i9kEE+vJ
-X-Google-Smtp-Source: ABdhPJzVIXzrcgHdMz3A3fRll57H1Ml4LaWjCW0LwWcIaltsCm6YZYIZwy7v3kDRz8E1y6o8uyz5xHiPiu0JAPcWoqE=
-X-Received: by 2002:a05:6902:4c2:: with SMTP id v2mr2126067ybs.429.1644275575771;
- Mon, 07 Feb 2022 15:12:55 -0800 (PST)
+        Mon, 7 Feb 2022 22:01:40 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55146C06109E;
+        Mon,  7 Feb 2022 19:01:39 -0800 (PST)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Jt73K1BW9z67klM;
+        Tue,  8 Feb 2022 10:57:33 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.21; Tue, 8 Feb 2022 04:01:35 +0100
+Message-ID: <9a77fc40-4463-4344-34d0-184d427d32cf@huawei.com>
+Date:   Tue, 8 Feb 2022 06:01:34 +0300
 MIME-Version: 1.0
-References: <20220204200342.48665-1-ztong0001@gmail.com> <a45010a4-2b86-aa22-d7bd-3c4839356cf1@pengutronix.de>
-In-Reply-To: <a45010a4-2b86-aa22-d7bd-3c4839356cf1@pengutronix.de>
-From:   Tong Zhang <ztong0001@gmail.com>
-Date:   Mon, 7 Feb 2022 15:12:45 -0800
-Message-ID: <CAA5qM4BtyFZJfwSjCfoAzMf5jZQNbi6jziPjOm+Z1_c98VEVYg@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: fix crash when TPM/TEE are built as module
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Andreas Rammhold <andreas@rammhold.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [RFC PATCH 2/2] landlock: selftests for bind and connect hooks
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>
+References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
+ <20220124080215.265538-3-konstantin.meskhidze@huawei.com>
+ <4d54e3a9-8a26-d393-3c81-b01389f76f09@digikod.net>
+ <ae5ca74d-ce5f-51e8-31c1-d02744ec92f8@huawei.com>
+ <ae0fcafa-3e8d-d6f2-26a8-ae74dda8371c@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <ae0fcafa-3e8d-d6f2-26a8-ae74dda8371c@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Feb 6, 2022 at 2:36 AM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
->
-> Hello Tong,
->
-> On 04.02.22 21:03, Tong Zhang wrote:
-> > when TCG_TPM and TEE are built as module, trusted_key_sources will be an
-> > empty array, loading it won't do what it is supposed to do and unloading
-> > it will cause kernel crash.
->
-> Jarkko reported picking up an equivalent fix two months ago:
-> https://lkml.kernel.org/keyrings/YadRAWbl2aiapf8l@iki.fi/
->
-> But it seems to have never made it to Linus.
->
-> Cheers,
-> Ahmad
->
-> >
-> > To reproduce:
-> > $ modprobe trusted
-> > $ modprobe -r trusted
-> >
-> > [  173.749423] Unable to handle kernel NULL pointer dereference at virtual address 00000000
-> > [  173.755268] Backtrace:
-> > [  173.755378]  cleanup_trusted [trusted] from sys_delete_module+0x15c/0x22c
-> > [  173.755589]  sys_delete_module from ret_fast_syscall+0x0/0x1c
-> >
-> > To fix this issue, we also need to check CONFIG_TCG_TPM_MODULE and
-> > CONFIG_TEE_MODULE.
-> >
-> > Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
-> > Signed-off-by: Tong Zhang <ztong0001@gmail.com>
-> > ---
-> >  security/keys/trusted-keys/trusted_core.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-> > index d5c891d8d353..b3a3b2f2d4a4 100644
-> > --- a/security/keys/trusted-keys/trusted_core.c
-> > +++ b/security/keys/trusted-keys/trusted_core.c
-> > @@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
-> >  MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
-> >
-> >  static const struct trusted_key_source trusted_key_sources[] = {
-> > -#if defined(CONFIG_TCG_TPM)
-> > +#if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
-> >       { "tpm", &trusted_key_tpm_ops },
-> >  #endif
-> > -#if defined(CONFIG_TEE)
-> > +#if defined(CONFIG_TEE) || defined(CONFIG_TEE_MODULE)
-> >       { "tee", &trusted_key_tee_ops },
-> >  #endif
-> >  };
->
->
-> --
-> Pengutronix e.K.                           |                             |
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
-Hi Ahmad,
-Thanks for letting me know.
-That fix looks good to me.
-- Tong
+
+2/7/2022 3:49 PM, Mickaël Salaün пишет:
+> 
+> On 07/02/2022 08:11, Konstantin Meskhidze wrote:
+>>
+>>
+>> 2/1/2022 9:31 PM, Mickaël Salaün пишет:
+>>>
+>>> On 24/01/2022 09:02, Konstantin Meskhidze wrote:
+>>>> Support 4 tests for bind and connect networks actions:
+>>>
+>>> Good to see such tests!
+>>>
+>>>
+>>>> 1. bind() a socket with no landlock restrictions.
+>>>> 2. bind() sockets with landllock restrictions.
+> 
+> [...]
+> 
+>>>> + */
+>>>> +
+>>>> +#define _GNU_SOURCE
+>>>> +#include <errno.h>
+>>>> +#include <fcntl.h>
+>>>> +#include <linux/landlock.h>
+>>>> +#include <string.h>
+>>>> +#include <sys/prctl.h>
+>>>> +#include <sys/socket.h>
+>>>> +#include <sys/types.h>
+>>>> +#include <netinet/in.h>
+>>>> +#include <arpa/inet.h>
+>>>
+>>> To make it determinisitic (and ease patching/diff/merging), you 
+>>> should sort all the included files (in tests and in the kernel code).
+>>
+>>    Sorry. Did not get your point here. Could you explain in a bit more
+>>    details please.
+> 
+> It will be easier to sort all the #include lines with the "sort -u" 
+> command.
+
+   Ok. I got it. Thanks.
+> 
+> [...]
+> 
+>>>> +    /* Create a socket 3 */
+>>>> +    sockfd_3 = socket(AF_INET, SOCK_STREAM, 0);
+>>>> +    ASSERT_LE(0, sockfd_3);
+>>>> +    /* Allow reuse of local addresses */
+>>>> +    ASSERT_EQ(0, setsockopt(sockfd_3, SOL_SOCKET, SO_REUSEADDR, 
+>>>> &one, sizeof(one)));
+>>>> +
+>>>> +    /* Set socket 3 address parameters */
+>>>> +    addr_3.sin_family = AF_INET;
+>>>> +    addr_3.sin_port = htons(SOCK_PORT_3);
+>>>> +    addr_3.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>>>> +    memset(&(addr_3.sin_zero), '\0', 8);
+>>>> +    /* Bind the socket 3 to IP address */
+>>>> +    ASSERT_EQ(0, bind(sockfd_3, (struct sockaddr *)&addr_3, 
+>>>> sizeof(addr_3)));
+>>>
+>>> Why is it allowed to bind to SOCK_PORT_3 whereas net_service_3 
+>>> forbids it?
+>>
+>>    It's allowed cause net_service_3 has empty access field.
+>>
+>>     /* Empty allowed_access (i.e. deny rules) are ignored in network
+>>      *  actions for SOCK_PORT_3 socket "object"
+>>      */
+>>      ASSERT_EQ(-1, landlock_add_rule(ruleset_fd,
+>>                                      LANDLOCK_RULE_NET_SERVICE,
+>>                                      &net_service_3, 0));
+>>      ASSERT_EQ(ENOMSG, errno);
+>>
+>>    Applying this rule returns ENOMSG errno:
+>>
+>>    /* Informs about useless rule: empty allowed_access (i.e. deny rules)
+>>     * are ignored in network actions
+>>     */
+>>          if (!net_service_attr.allowed_access) {
+>>              err = -ENOMSG;
+>>              goto out_put_ruleset;
+>>          }
+>>    This means binding socket 3 is not restricted.
+>>    For path_beneath_attr.allowed_access = 0 there is the same logic.
+> 
+> I missed the ENOMSG check; the third rule has nothing to do with it. 
+> However, because the ruleset handles bind and connect actions, they must 
+> be denied by default. There is no rule allowing binding to SOCK_PORT_3. 
+> Why is it allowed?
+> 
+> You can test with another SOCK_PORT_4, not covered by any rule. As for 
+> SOCK_PORT_3, it must be forbidden to bind on it.
+
+   Apllying the third rule (net_service_3.access is empty) returns ENOMSG
+   error. That means a process hasn't been restricted by the third rule,
+   cause during search  process in network rb_tree the process won't find
+   the third rule, so binding to SOCK_PORT_3 is allowed.
+
+   Maybe there is a misunderstanding here. You mean that if there is just
+   only one network rule for a particular port has been applied to a
+   process, other ports' networks actions are automatically restricted
+   until they will be added into landlock newtwork rb_tree?
+> .
