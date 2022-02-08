@@ -2,136 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F682C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Feb 2022 08:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 587F4C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Feb 2022 09:28:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237310AbiBHIxZ (ORCPT
+        id S1354159AbiBHJ2f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Feb 2022 03:53:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46478 "EHLO
+        Tue, 8 Feb 2022 04:28:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231657AbiBHIxY (ORCPT
+        with ESMTP id S237653AbiBHJ2e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Feb 2022 03:53:24 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70ED3C03FEC0;
-        Tue,  8 Feb 2022 00:53:23 -0800 (PST)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JtGwh4xFCzbkKJ;
-        Tue,  8 Feb 2022 16:52:20 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Tue, 8 Feb 2022 16:53:20 +0800
-Message-ID: <e852660c-17fa-cd75-e361-45dd77b8884d@huawei.com>
-Date:   Tue, 8 Feb 2022 16:53:20 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Content-Language: en-US
+        Tue, 8 Feb 2022 04:28:34 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E643CC03FEC0;
+        Tue,  8 Feb 2022 01:28:32 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 81C35614C4;
+        Tue,  8 Feb 2022 09:28:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AAC7C004E1;
+        Tue,  8 Feb 2022 09:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644312511;
+        bh=xg6lF3WqgMKyMC4n+ayD5APVx6cp2PqDNjyejBcqeJY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uqOPs70ARuits274PJBtl8AYteGVMbp1Q+Rcn46o0mE+MQ1hmG2FguFczvPl5d7/i
+         /TESayuhRAd1GIqhCiJIn2nkiZ70wMp3Vk/JkRr6hERDIyhpjuljH1MyzZft6uUzxO
+         7lNnEwWQ+3W+ZRKUaVcLlArJSQl9DxA/W4hL0eNF/lQcXLL1JxrI0nHDVTXgR6kiVK
+         et5vFWP7sG3fEO1CRvAc4tHHnFmC0FpppfFWZTTVfPOxoLOef/cw+AyUlZPItgecUL
+         GlTPzZXiL1HwAYzRQGbON1NkCwL7sVvjBXbbwVop09qk0OdM/7RV+hRA+bkYki8ZQ9
+         JMbC9rhwzp1zQ==
+Date:   Tue, 8 Feb 2022 10:28:56 +0100
+From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Mimi Zohar <zohar@linux.ibm.com>
-CC:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        wangweiyang <wangweiyang2@huawei.com>,
-        "xiujianfeng@huawei.com" <xiujianfeng@huawei.com>
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-Subject: Problem with commit ccf11dbaa07b ("evm: Fix memleak in init_desc")
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Cc:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
+        dwmw2@infradead.org, ardb@kernel.org, jmorris@namei.org,
+        serge@hallyn.com, nayna@linux.ibm.com, keescook@chromium.org,
+        torvalds@linux-foundation.org, weiyongjun1@huawei.com,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
+        konrad.wilk@oracle.com
+Subject: Re: [PATCH v10 0/8] Enroll kernel keys thru MOK
+Message-ID: <YgI32LAFgGSW6ugh@iki.fi>
+References: <20220126025834.255493-1-eric.snowberg@oracle.com>
+ <YfFP6OHqBVNWKL2C@iki.fi>
+ <YfFTf6vIpNMIrwH0@iki.fi>
+ <78d2c13ad60b5f845cb841d257d1b41290f575c6.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78d2c13ad60b5f845cb841d257d1b41290f575c6.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mimi,
+On Wed, Jan 26, 2022 at 05:06:09PM -0500, Mimi Zohar wrote:
+> Hi Jarkko,
+> 
+> > > Thank you. I'll pick these soon. Is there any objections?
+> 
+> No objections.
+> > 
+> > Mimi brought up that we need a MAINTAINERS update for this and also
+> > .platform.
+> > 
+> > We have these:
+> > 
+> > - KEYS/KEYRINGS
+> > - CERTIFICATE HANDLING
+> > 
+> > I would put them under KEYRINGS for now and would not consider further
+> > subdivision for the moment.
+> 
+> IMA has dependencies on the platform_certs/ and now on the new .machine
+> keyring.  Just adding "F: security/integrity/platform_certs/" to the
+> KEYS/KEYRINGS record, ignores that dependency.  The discussion wouldn't
+> even be on the linux-integrity mailing list.
+> 
+> Existing requirement:
+> - The keys on the .platform keyring are limited to verifying the kexec
+> image.
+> 
+> New requirements based on Eric Snowbergs' patch set:
+> - When IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY is enabled,
+> the MOK keys will not be loaded directly onto the .machine keyring or
+> indirectly onto the .secondary_trusted_keys keyring.
+> 
+> - Only when a new IMA Kconfig explicitly allows the keys on the
+> .machine keyrings, will the CA keys stored in MOK be loaded onto the
+> .machine keyring.
+> 
+> Unfortunately I don't think there is any choice, but to define a new
+> MAINTAINERS entry.  Perhaps something along the lines of:
+> 
+> KEYS/KEYRINGS_INTEGRITY
+> M:     Jarkko Sakkinen <jarkko@kernel.org>
+> M:     Mimi Zohar <zohar@linux.ibm.com>
+> L:      keyrings@vger.kernel.org
+> L:      linux-integrity@vger.kernel.org
+> F:      security/integrity/platform_certs
 
-I found an issue with commit ccf11dbaa07b ("evm: Fix memleak in init_desc").
+WFM. BTW, the patches are now in my tree:
 
-This commit tries to free variable "tmp_tfm" if something went wrong 
-after the "alloc" label in function init_desc, which would potentially 
-cause a user-after-free issue
+git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
 
-The codes are as follows:
+I can add any tags requested. I'll mirror this at some point to linux-next.
 
-   1 static struct shash_desc *init_desc(char type, uint8_t hash_algo)
-   2 {
-   3 	long rc;
-   4 	const char *algo;
-   5 	struct crypto_shash **tfm, *tmp_tfm = NULL;
-   6 	struct shash_desc *desc;
-   7
-   8 	if (type == EVM_XATTR_HMAC) {
-   9 		if (!(evm_initialized & EVM_INIT_HMAC)) {
-  10 			pr_err_once("HMAC key is not set\n");
-  11 			return ERR_PTR(-ENOKEY);
-  12 		}
-  13 		tfm = &hmac_tfm;
-  14 		algo = evm_hmac;
-  15 	} else {
-  16 		if (hash_algo >= HASH_ALGO__LAST)
-  17 			return ERR_PTR(-EINVAL);
-  18
-  19 		tfm = &evm_tfm[hash_algo];
-  20 		algo = hash_algo_name[hash_algo];
-  21 	}
-  22
-  23 	if (*tfm)
-  24 		goto alloc;
-  25 	mutex_lock(&mutex);
-  26 	if (*tfm)
-  27 		goto unlock;
-  28
-  29 	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-  30 	if (IS_ERR(tmp_tfm)) {
-  31 		pr_err("Can not allocate %s (reason: %ld)\n", algo,
-  32 		       PTR_ERR(tmp_tfm));
-  33 		mutex_unlock(&mutex);
-  34 		return ERR_CAST(tmp_tfm);
-  35 	}
-  36 	if (type == EVM_XATTR_HMAC) {
-  37 		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
-  38 		if (rc) {
-  39 			crypto_free_shash(tmp_tfm);
-  40 			⋅mutex_unlock(&mutex);
-  41 			return ERR_PTR(rc);
-  42 		}
-  43 	}
-  44 	*tfm = tmp_tfm;
-  45 unlock:
-  46 	mutex_unlock(&mutex);
-  47 alloc:
-  48 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
-  49 			GFP_KERNEL);
-  50 	if (!desc) {
-  51 		crypto_free_shash(tmp_tfm);
-  52 		return ERR_PTR(-ENOMEM);
-  53 	}
-  54
-  55 	desc->tfm = *tfm;
-  56
-  57 	rc = crypto_shash_init(desc);
-  58 	if (rc) {
-  59 		crypto_free_shash(tmp_tfm);
-  60 		kfree(desc);
-  61 		return ERR_PTR(rc);
-  62 	}
-  63 	return desc;
-  64 }
-
-As we can see, variable *tfm points to one of the two global variable 
-hmac_tfm or evm_tfm[hash_algo]. tmp_tfm is used as an intermediate 
-variable for initializing these global variables. Freeing tmp_tfm after 
-line 44 would invalidate these global variables and potentially cause a 
-user-after-free issue.
-
-I think this commit should be reverted.
-
-Reference: commit 843385694721 ("evm: Fix a small race in init_desc()")
-
--- 
-Best
-GUO Zihua
+/Jarkko
