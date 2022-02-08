@@ -2,180 +2,152 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F2EC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Feb 2022 15:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F729C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Feb 2022 15:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351673AbiBHPUu (ORCPT
+        id S233500AbiBHP0w (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Feb 2022 10:20:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37034 "EHLO
+        Tue, 8 Feb 2022 10:26:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379944AbiBHPUq (ORCPT
+        with ESMTP id S231667AbiBHP0v (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Feb 2022 10:20:46 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5792C061577;
-        Tue,  8 Feb 2022 07:20:45 -0800 (PST)
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 218FDEPR021819;
-        Tue, 8 Feb 2022 15:20:37 GMT
+        Tue, 8 Feb 2022 10:26:51 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D900C061576;
+        Tue,  8 Feb 2022 07:26:51 -0800 (PST)
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 218FFDsa022286;
+        Tue, 8 Feb 2022 15:26:26 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=IeuOn+Gq1Tqn7HoNRMECPZnN53gB+9RPcD7aXMPa5fM=;
- b=n25ZNEH/0+rftuyR+5pjomOyjjdiFzJLn0VTDWRMmAIW3pWgV4oacKSWmN8nk6IV2dJQ
- bsZLSlSFgCqbe9QdcwsIvoCYslRMveliygmTRIekYfW2a/n9x/gSrcIT3CLbMHz59nIr
- hmjpU0T/CqWD1epQbEHM9NIea7RPABbL2wNO6I5fPtxM9vkU6NSevQeZERiHSdJw9r1B
- gVZoZw1FAslznKfh/OB7U5W4pkVQcQ4FSdAEiVlvi8xQrCpSHUs6ialHnQstyF4ZOtIz
- a+WKpV3nvGG64GqYwoa/sjNojPJaiI4xN3s8fMFPTGtod+8LOWnfZNixFB5o6X95LRHi VQ== 
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3e3tyc08tv-1
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=DeLDo9Re16ajpsw4sNAcqICogJBryuA+YZ39ylPMRn0=;
+ b=VvjICS5ticvsYnz9yVG/BOMIHCYAl1tmOUv8uakWXcjPFUpfEnlARkzFYKS5lXr//KEL
+ Za3XMflitZJQfhGAIs/g0VmAYd8+rgU8OxsV+QRJWtlATthYmxK5lxWYbfaZFYLaNmTm
+ 0kqm3+tDLmBqP0uaXagDwzIz9NMOOI7CzNIPbtBd+8Uv4k+Jx/fl0UBBRW3lcRauvwk/
+ NnXUFXzW3aPDNmKp2Iq22WGC7NJ1WYhwUaN8+lVeOQ2dvx79vyDX2e9Ja6hhjDo1SYvL
+ LcjUsDKM+R9b2HdFOd28vpla7X5GWzygW+a0IQ4YotTbS9stgi4q25H6NrB3yWlMpEYb Yw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3e3fm4y2xc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Feb 2022 15:20:36 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 218FEdpN004247;
-        Tue, 8 Feb 2022 15:20:34 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 3e1gv9f509-1
+        Tue, 08 Feb 2022 15:26:26 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 218FFDjU022318;
+        Tue, 8 Feb 2022 15:26:25 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3e3fm4y2wd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Feb 2022 15:20:34 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 218FKWiw45613402
+        Tue, 08 Feb 2022 15:26:25 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 218FIwtP012832;
+        Tue, 8 Feb 2022 15:26:23 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma04ams.nl.ibm.com with ESMTP id 3e1gv976n2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Feb 2022 15:26:23 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 218FQLC446399848
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 8 Feb 2022 15:20:32 GMT
+        Tue, 8 Feb 2022 15:26:21 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 09C9842049;
-        Tue,  8 Feb 2022 15:20:32 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 525D74204B;
+        Tue,  8 Feb 2022 15:26:21 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C8CF42047;
-        Tue,  8 Feb 2022 15:20:31 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id CE35442042;
+        Tue,  8 Feb 2022 15:26:18 +0000 (GMT)
 Received: from sig-9-65-88-92.ibm.com (unknown [9.65.88.92])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  8 Feb 2022 15:20:30 +0000 (GMT)
-Message-ID: <ec4348e54b39811b727a29f3c23972eab616dcd3.camel@linux.ibm.com>
-Subject: Re: Problem with commit ccf11dbaa07b ("evm: Fix memleak in
- init_desc")
+        Tue,  8 Feb 2022 15:26:18 +0000 (GMT)
+Message-ID: <00a106d904e6e495293af78cad78a353987da438.camel@linux.ibm.com>
+Subject: Re: MAINTAINERS update suggestion (subject change)
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Guozihua (Scott)" <guozihua@huawei.com>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        wangweiyang <wangweiyang2@huawei.com>,
-        "xiujianfeng@huawei.com" <xiujianfeng@huawei.com>
-Date:   Tue, 08 Feb 2022 10:20:30 -0500
-In-Reply-To: <e852660c-17fa-cd75-e361-45dd77b8884d@huawei.com>
-References: <e852660c-17fa-cd75-e361-45dd77b8884d@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
+        dwmw2@infradead.org, ardb@kernel.org, jmorris@namei.org,
+        serge@hallyn.com, nayna@linux.ibm.com, keescook@chromium.org,
+        torvalds@linux-foundation.org, weiyongjun1@huawei.com,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
+        konrad.wilk@oracle.com
+Date:   Tue, 08 Feb 2022 10:26:18 -0500
+In-Reply-To: <YgI32LAFgGSW6ugh@iki.fi>
+References: <20220126025834.255493-1-eric.snowberg@oracle.com>
+         <YfFP6OHqBVNWKL2C@iki.fi> <YfFTf6vIpNMIrwH0@iki.fi>
+         <78d2c13ad60b5f845cb841d257d1b41290f575c6.camel@linux.ibm.com>
+         <YgI32LAFgGSW6ugh@iki.fi>
+Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: J5lJ4acfhYYVdM7WnrLzsbUBv-EUg8g8
-X-Proofpoint-ORIG-GUID: J5lJ4acfhYYVdM7WnrLzsbUBv-EUg8g8
+X-Proofpoint-ORIG-GUID: avYcCmWJ9SVCG6WQIpXEyRzC05jER9Eo
+X-Proofpoint-GUID: qGU9TewXdQhykhXGaqWmyXgGhhpfn5GL
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2022-02-08_05,2022-02-07_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- priorityscore=1501 adultscore=0 impostorscore=0 mlxscore=0 phishscore=0
- spamscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
- definitions=main-2202080090
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ mlxlogscore=999 clxscore=1011 adultscore=0 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202080090
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-02-08 at 16:53 +0800, Guozihua (Scott) wrote:
-> Hi Mimi,
-> 
-> I found an issue with commit ccf11dbaa07b ("evm: Fix memleak in init_desc").
-> 
-> This commit tries to free variable "tmp_tfm" if something went wrong 
-> after the "alloc" label in function init_desc, which would potentially 
-> cause a user-after-free issue
-> 
-> The codes are as follows:
-> 
->    1 static struct shash_desc *init_desc(char type, uint8_t hash_algo)
->    2 {
->    3 	long rc;
->    4 	const char *algo;
->    5 	struct crypto_shash **tfm, *tmp_tfm = NULL;
->    6 	struct shash_desc *desc;
->    7
->    8 	if (type == EVM_XATTR_HMAC) {
->    9 		if (!(evm_initialized & EVM_INIT_HMAC)) {
->   10 			pr_err_once("HMAC key is not set\n");
->   11 			return ERR_PTR(-ENOKEY);
->   12 		}
->   13 		tfm = &hmac_tfm;
->   14 		algo = evm_hmac;
->   15 	} else {
->   16 		if (hash_algo >= HASH_ALGO__LAST)
->   17 			return ERR_PTR(-EINVAL);
->   18
->   19 		tfm = &evm_tfm[hash_algo];
->   20 		algo = hash_algo_name[hash_algo];
->   21 	}
->   22
->   23 	if (*tfm)
->   24 		goto alloc;
->   25 	mutex_lock(&mutex);
->   26 	if (*tfm)
->   27 		goto unlock;
->   28
->   29 	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
->   30 	if (IS_ERR(tmp_tfm)) {
->   31 		pr_err("Can not allocate %s (reason: %ld)\n", algo,
->   32 		       PTR_ERR(tmp_tfm));
->   33 		mutex_unlock(&mutex);
->   34 		return ERR_CAST(tmp_tfm);
->   35 	}
->   36 	if (type == EVM_XATTR_HMAC) {
->   37 		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
->   38 		if (rc) {
->   39 			crypto_free_shash(tmp_tfm);
->   40 			⋅mutex_unlock(&mutex);
->   41 			return ERR_PTR(rc);
->   42 		}
->   43 	}
->   44 	*tfm = tmp_tfm;
->   45 unlock:
->   46 	mutex_unlock(&mutex);
->   47 alloc:
->   48 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
->   49 			GFP_KERNEL);
->   50 	if (!desc) {
->   51 		crypto_free_shash(tmp_tfm);
->   52 		return ERR_PTR(-ENOMEM);
->   53 	}
->   54
->   55 	desc->tfm = *tfm;
->   56
->   57 	rc = crypto_shash_init(desc);
->   58 	if (rc) {
->   59 		crypto_free_shash(tmp_tfm);
->   60 		kfree(desc);
->   61 		return ERR_PTR(rc);
->   62 	}
->   63 	return desc;
->   64 }
-> 
-> As we can see, variable *tfm points to one of the two global variable 
-> hmac_tfm or evm_tfm[hash_algo]. tmp_tfm is used as an intermediate 
-> variable for initializing these global variables. Freeing tmp_tfm after 
-> line 44 would invalidate these global variables and potentially cause a 
-> user-after-free issue.
-> 
-> I think this commit should be reverted.
-> 
-> Reference: commit 843385694721 ("evm: Fix a small race in init_desc()")
+(Updated subject line)
 
-Why this one, as opposed to commit ccf11dbaa07b ("evm: Fix memleak in
-init_desc")? 
+On Tue, 2022-02-08 at 10:28 +0100, Jarkko Sakkinen wrote:
+> On Wed, Jan 26, 2022 at 05:06:09PM -0500, Mimi Zohar wrote:
+
+> > > Mimi brought up that we need a MAINTAINERS update for this and also
+> > > .platform.
+> > > 
+> > > We have these:
+> > > 
+> > > - KEYS/KEYRINGS
+> > > - CERTIFICATE HANDLING
+> > > 
+> > > I would put them under KEYRINGS for now and would not consider further
+> > > subdivision for the moment.
+> > 
+> > IMA has dependencies on the platform_certs/ and now on the new .machine
+> > keyring.  Just adding "F: security/integrity/platform_certs/" to the
+> > KEYS/KEYRINGS record, ignores that dependency.  The discussion wouldn't
+> > even be on the linux-integrity mailing list.
+> > 
+> > Existing requirement:
+> > - The keys on the .platform keyring are limited to verifying the kexec
+> > image.
+> > 
+> > New requirements based on Eric Snowbergs' patch set:
+> > - When IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY is enabled,
+> > the MOK keys will not be loaded directly onto the .machine keyring or
+> > indirectly onto the .secondary_trusted_keys keyring.
+> > 
+> > - Only when a new IMA Kconfig explicitly allows the keys on the
+> > .machine keyrings, will the CA keys stored in MOK be loaded onto the
+> > .machine keyring.
+> > 
+> > Unfortunately I don't think there is any choice, but to define a new
+> > MAINTAINERS entry.  Perhaps something along the lines of:
+> > 
+> > KEYS/KEYRINGS_INTEGRITY
+> > M:     Jarkko Sakkinen <jarkko@kernel.org>
+> > M:     Mimi Zohar <zohar@linux.ibm.com>
+> > L:      keyrings@vger.kernel.org
+> > L:      linux-integrity@vger.kernel.org
+> > F:      security/integrity/platform_certs
+> 
+> WFM. BTW, the patches are now in my tree:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+> 
+> I can add any tags requested. I'll mirror this at some point to linux-next.
+
+Thanks,  Jarkko.
 
 -- 
-thanks,
-
 Mimi
-
 
