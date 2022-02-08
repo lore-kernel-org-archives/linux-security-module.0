@@ -2,359 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D00C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Feb 2022 07:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F682C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Feb 2022 08:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235021AbiBHH4J (ORCPT
+        id S237310AbiBHIxZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Feb 2022 02:56:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41486 "EHLO
+        Tue, 8 Feb 2022 03:53:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231454AbiBHH4I (ORCPT
+        with ESMTP id S231657AbiBHIxY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Feb 2022 02:56:08 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19CD9C0401F1;
-        Mon,  7 Feb 2022 23:56:05 -0800 (PST)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JtFZz6gbhz68Bkm;
-        Tue,  8 Feb 2022 15:51:55 +0800 (CST)
-Received: from [10.122.132.241] (10.122.132.241) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.21; Tue, 8 Feb 2022 08:55:59 +0100
-Message-ID: <cc023cc4-043b-c67e-1e6e-acf1eb18d155@huawei.com>
-Date:   Tue, 8 Feb 2022 10:55:57 +0300
+        Tue, 8 Feb 2022 03:53:24 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70ED3C03FEC0;
+        Tue,  8 Feb 2022 00:53:23 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JtGwh4xFCzbkKJ;
+        Tue,  8 Feb 2022 16:52:20 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Tue, 8 Feb 2022 16:53:20 +0800
+Message-ID: <e852660c-17fa-cd75-e361-45dd77b8884d@huawei.com>
+Date:   Tue, 8 Feb 2022 16:53:20 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [RFC PATCH 1/2] landlock: TCP network hooks implementation
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
- <20220124080215.265538-2-konstantin.meskhidze@huawei.com>
- <ed2bd420-a22b-2912-1ff5-f48ab352d8e7@digikod.net>
- <5cd5b983-32a5-97ec-0835-f0c96d86e805@huawei.com>
- <10999c72-93eb-4db2-e536-a92187545bdb@digikod.net>
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <10999c72-93eb-4db2-e536-a92187545bdb@digikod.net>
+ Thunderbird/91.4.0
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>
+CC:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        wangweiyang <wangweiyang2@huawei.com>,
+        "xiujianfeng@huawei.com" <xiujianfeng@huawei.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+Subject: Problem with commit ccf11dbaa07b ("evm: Fix memleak in init_desc")
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
- fraeml704-chm.china.huawei.com (10.206.15.53)
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi Mimi,
 
+I found an issue with commit ccf11dbaa07b ("evm: Fix memleak in init_desc").
 
-2/7/2022 5:17 PM, Mickaël Salaün пишет:
-> 
-> On 07/02/2022 14:09, Konstantin Meskhidze wrote:
->>
->>
->> 2/1/2022 3:13 PM, Mickaël Salaün пишет:
->>>
->>> On 24/01/2022 09:02, Konstantin Meskhidze wrote:
->>>> Support of socket_bind() and socket_connect() hooks.
->>>> Current prototype can restrict binding and connecting of TCP
->>>> types of sockets. Its just basic idea how Landlock could support
->>>> network confinement.
->>>>
->>>> Changes:
->>>> 1. Access masks array refactored into 1D one and changed
->>>> to 32 bits. Filesystem masks occupy 16 lower bits and network
->>>> masks reside in 16 upper bits.
->>>> 2. Refactor API functions in ruleset.c:
->>>>      1. Add void *object argument.
->>>>      2. Add u16 rule_type argument.
->>>> 3. Use two rb_trees in ruleset structure:
->>>>      1. root_inode - for filesystem objects
->>>>      2. root_net_port - for network port objects
->>>
->>> It's good to add a changelog, but they must not be in commit messages 
->>> that get copied by git am. Please use "---" to separate this 
->>> additionnal info (but not the Signed-off-by). Please also include a 
->>> version in the email subjects (this one should have been "[RFC PATCH 
->>> v3 1/2] landlock: …"), e.g. using git format-patch --reroll-count=X .
->>>
->>> Please follow these rules: 
->>> https://www.kernel.org/doc/html/latest/process/submitting-patches.html
->>> You can take some inspiration from this patch series: 
->>> https://lore.kernel.org/lkml/20210422154123.13086-1-mic@digikod.net/
->>
->>   Ok. I will add patch vervison in next patch. So it will be "[RFC PATCH
->>   v4 ../..] landlock: ..."
->>   But the previous patches remain with no version, correct?
-> 
-> Right, you can't change the subject of already sent emails. ;)
+This commit tries to free variable "tmp_tfm" if something went wrong 
+after the "alloc" label in function init_desc, which would potentially 
+cause a user-after-free issue
 
-   Ok. But I can add previous patches like:
-    v1: 
-https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com
-    v2: 
-https://lore.kernel.org/netdev/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
-    v3: ....
+The codes are as follows:
 
-  right ?
-> 
-> [...]
-> 
->>>> diff --git a/security/landlock/net.c b/security/landlock/net.c
->>>> new file mode 100644
->>>> index 000000000000..0b5323d254a7
->>>> --- /dev/null
->>>> +++ b/security/landlock/net.c
->>>> @@ -0,0 +1,175 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-only
->>>> +/*
->>>> + * Landlock LSM - Filesystem management and hooks
->>>> + *
->>>> + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
->>>> + * Copyright © 2018-2020 ANSSI
->>>> + */
->>>> +
->>>> +#include <linux/socket.h>
->>>> +#include <linux/net.h>
->>>> +#include <linux/in.h>
->>>
->>> Why is linux/in.h required?
->>>
->>    Struct sockaddr_in is described in this header.
->>    A pointer to struct sockaddr_in is used in hook_socket_connect()
->>    and hook_socket_bind() to get socket's family and port values.
-> 
-> OK, good point.
-> 
-> [...]
-> 
->>>> +        return 0;
->>>> +
->>>> +    socket_type = sock->type;
->>>> +    /* Check if it's a TCP socket */
->>>> +    if (socket_type != SOCK_STREAM)
->>>> +        return 0;
->>>> +
->>>> +    if (!dom)
->>>> +        return 0;
->>>
->>> This must be at the top of *each* hook to make it clear that they 
->>> don't impact non-landlocked processes.
->>>
->>    They don't impact. It does not matter what to check first socket
->>    family/type or landlocked process.
-> 
-> It doesn't change the semantic but it changes the reviewing which is 
-> easier with common and consistent sequential checks (and could avoid 
-> future mistakes). This rule is followed by all Landlock hooks.
+   1 static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+   2 {
+   3 	long rc;
+   4 	const char *algo;
+   5 	struct crypto_shash **tfm, *tmp_tfm = NULL;
+   6 	struct shash_desc *desc;
+   7
+   8 	if (type == EVM_XATTR_HMAC) {
+   9 		if (!(evm_initialized & EVM_INIT_HMAC)) {
+  10 			pr_err_once("HMAC key is not set\n");
+  11 			return ERR_PTR(-ENOKEY);
+  12 		}
+  13 		tfm = &hmac_tfm;
+  14 		algo = evm_hmac;
+  15 	} else {
+  16 		if (hash_algo >= HASH_ALGO__LAST)
+  17 			return ERR_PTR(-EINVAL);
+  18
+  19 		tfm = &evm_tfm[hash_algo];
+  20 		algo = hash_algo_name[hash_algo];
+  21 	}
+  22
+  23 	if (*tfm)
+  24 		goto alloc;
+  25 	mutex_lock(&mutex);
+  26 	if (*tfm)
+  27 		goto unlock;
+  28
+  29 	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
+  30 	if (IS_ERR(tmp_tfm)) {
+  31 		pr_err("Can not allocate %s (reason: %ld)\n", algo,
+  32 		       PTR_ERR(tmp_tfm));
+  33 		mutex_unlock(&mutex);
+  34 		return ERR_CAST(tmp_tfm);
+  35 	}
+  36 	if (type == EVM_XATTR_HMAC) {
+  37 		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
+  38 		if (rc) {
+  39 			crypto_free_shash(tmp_tfm);
+  40 			⋅mutex_unlock(&mutex);
+  41 			return ERR_PTR(rc);
+  42 		}
+  43 	}
+  44 	*tfm = tmp_tfm;
+  45 unlock:
+  46 	mutex_unlock(&mutex);
+  47 alloc:
+  48 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+  49 			GFP_KERNEL);
+  50 	if (!desc) {
+  51 		crypto_free_shash(tmp_tfm);
+  52 		return ERR_PTR(-ENOMEM);
+  53 	}
+  54
+  55 	desc->tfm = *tfm;
+  56
+  57 	rc = crypto_shash_init(desc);
+  58 	if (rc) {
+  59 		crypto_free_shash(tmp_tfm);
+  60 		kfree(desc);
+  61 		return ERR_PTR(rc);
+  62 	}
+  63 	return desc;
+  64 }
 
-   Ok.
-> 
-> [...]
-> 
->>>> @@ -67,10 +76,11 @@ static void build_check_rule(void)
->>>>   }
->>>>   static struct landlock_rule *create_rule(
->>>> -        struct landlock_object *const object,
->>>> +        void *const object,
->>>
->>> Instead of shoehorning two different types into one (and then loosing 
->>> the typing), you should rename object to object_ptr and add a new 
->>> object_data argument. Only one of these should be set according to 
->>> the rule_type. However, if there is no special action performed on 
->>> one of these type (e.g. landlock_get_object), only one uintptr_t 
->>> argument should be enough.
->>>
->>   Do you mean using 2 object arguments in create_rule():
->>
->>      1. create_rule( object_ptr = landlock_object , object_data = 0,
->>                                 ...,  fs_rule_type);
->>          2. create_rule( object_ptr = NULL , object_data = port, .... ,
->>                           net_rule_type);
-> 
-> Yes, and you can add a WARN_ON_ONCE() in these function to check that 
-> only one argument is set (but object_data could be 0 in each case). The 
-> landlock_get_object() function should only require an object_data though.
-> 
-   Sorry. As you said in previous comment in landlock_get_object, only
-   one  uintptr_t argument should be enough. But, I did not get: "The
-   landlock_get_object() function should only require an object_data
-   though".
-   uintptr_t is the only argument in landlock_get_object?
+As we can see, variable *tfm points to one of the two global variable 
+hmac_tfm or evm_tfm[hash_algo]. tmp_tfm is used as an intermediate 
+variable for initializing these global variables. Freeing tmp_tfm after 
+line 44 would invalidate these global variables and potentially cause a 
+user-after-free issue.
 
-> [...]
-> 
->>>> @@ -142,26 +159,36 @@ static void build_check_ruleset(void)
->>>>    * access rights.
->>>>    */
->>>>   static int insert_rule(struct landlock_ruleset *const ruleset,
->>>> -        struct landlock_object *const object,
->>>> -        const struct landlock_layer (*const layers)[],
->>>> -        size_t num_layers)
->>>> +        void *const obj, const struct landlock_layer (*const 
->>>> layers)[],
->>>
->>> same here
->>       Do you mean using 2 object arguments in insert_rule():
->>
->>      1. insert_rule( object_ptr = landlock_object , object_data = 0,
->>                                 ...,  fs_rule_type);
->>          2. insert_rule( object_ptr = NULL , object_data = port, .... ,
->>                           net_rule_type);
-> 
-> Yes
-> 
-> [...]
-> 
->>>> @@ -336,9 +399,11 @@ static int inherit_ruleset(struct 
->>>> landlock_ruleset *const parent,
->>>>           err = -EINVAL;
->>>>           goto out_unlock;
->>>>       }
->>>> -    /* Copies the parent layer stack and leaves a space for the new 
->>>> layer. */
->>>> -    memcpy(child->fs_access_masks, parent->fs_access_masks,
->>>> -            flex_array_size(parent, fs_access_masks, 
->>>> parent->num_layers));
->>>> +    /* Copies the parent layer stack and leaves a space for the new 
->>>> layer.
->>>
->>> ditto
->>        Do you mean comments style here?
-> 
-> Yes
-> 
-> [...]
-> 
->>>> @@ -317,47 +331,91 @@ SYSCALL_DEFINE4(landlock_add_rule,
->>>>       if (flags)
->>>>           return -EINVAL;
->>>> -    if (rule_type != LANDLOCK_RULE_PATH_BENEATH)
->>>> +    if ((rule_type != LANDLOCK_RULE_PATH_BENEATH) &&
->>>> +        (rule_type != LANDLOCK_RULE_NET_SERVICE))
->>>
->>> Please replace with a switch/case.
->>
->>    Ok. I got it.
->>>
->>>
->>>>           return -EINVAL;
->>>> -    /* Copies raw user space buffer, only one type for now. */
->>>> -    res = copy_from_user(&path_beneath_attr, rule_attr,
->>>> -            sizeof(path_beneath_attr));
->>>> -    if (res)
->>>> -        return -EFAULT;
->>>> -
->>>> -    /* Gets and checks the ruleset. */
->>>> -    ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
->>>> -    if (IS_ERR(ruleset))
->>>> -        return PTR_ERR(ruleset);
->>>> -
->>>> -    /*
->>>> -     * Informs about useless rule: empty allowed_access (i.e. deny 
->>>> rules)
->>>> -     * are ignored in path walks.
->>>> -     */
->>>> -    if (!path_beneath_attr.allowed_access) {
->>>> -        err = -ENOMSG;
->>>> -        goto out_put_ruleset;
->>>> -    }
->>>> -    /*
->>>> -     * Checks that allowed_access matches the @ruleset constraints
->>>> -     * (ruleset->fs_access_masks[0] is automatically upgraded to 
->>>> 64-bits).
->>>> -     */
->>>> -    if ((path_beneath_attr.allowed_access | 
->>>> ruleset->fs_access_masks[0]) !=
->>>> -            ruleset->fs_access_masks[0]) {
->>>> -        err = -EINVAL;
->>>> -        goto out_put_ruleset;
->>>> +    switch (rule_type) {
->>>> +    case LANDLOCK_RULE_PATH_BENEATH:
->>>> +        /* Copies raw user space buffer, for fs rule type. */
->>>> +        res = copy_from_user(&path_beneath_attr, rule_attr,
->>>> +                    sizeof(path_beneath_attr));
->>>> +        if (res)
->>>> +            return -EFAULT;
->>>> +        break;
->>>> +
->>>> +    case LANDLOCK_RULE_NET_SERVICE:
->>>> +        /* Copies raw user space buffer, for net rule type. */
->>>> +        res = copy_from_user(&net_service_attr, rule_attr,
->>>> +                sizeof(net_service_attr));
->>>> +        if (res)
->>>> +            return -EFAULT;
->>>> +        break;
->>>>       }
->>>> -    /* Gets and checks the new rule. */
->>>> -    err = get_path_from_fd(path_beneath_attr.parent_fd, &path);
->>>> -    if (err)
->>>> -        goto out_put_ruleset;
->>>> +    if (rule_type == LANDLOCK_RULE_PATH_BENEATH) {
->>>> +        /* Gets and checks the ruleset. */
->>>> +        ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
->>>> +        if (IS_ERR(ruleset))
->>>> +            return PTR_ERR(ruleset);
->>>> +
->>>> +        /*
->>>> +         * Informs about useless rule: empty allowed_access (i.e. 
->>>> deny rules)
->>>> +         * are ignored in path walks.
->>>> +         */
->>>> +        if (!path_beneath_attr.allowed_access) {
->>>> +            err = -ENOMSG;
->>>> +            goto out_put_ruleset;
->>>> +        }
->>>> +        /*
->>>> +         * Checks that allowed_access matches the @ruleset constraints
->>>> +         * (ruleset->access_masks[0] is automatically upgraded to 
->>>> 64-bits).
->>>> +         */
->>>> +        if ((path_beneath_attr.allowed_access | 
->>>> ruleset->access_masks[0]) !=
->>>> +                            ruleset->access_masks[0]) {
->>>> +            err = -EINVAL;
->>>> +            goto out_put_ruleset;
->>>> +        }
->>>> +
->>>> +        /* Gets and checks the new rule. */
->>>> +        err = get_path_from_fd(path_beneath_attr.parent_fd, &path);
->>>> +        if (err)
->>>> +            goto out_put_ruleset;
->>>> +
->>>> +        /* Imports the new rule. */
->>>> +        err = landlock_append_fs_rule(ruleset, &path,
->>>> +                path_beneath_attr.allowed_access);
->>>> +        path_put(&path);
->>>> +    }
->>>> -    /* Imports the new rule. */
->>>> -    err = landlock_append_fs_rule(ruleset, &path,
->>>> -            path_beneath_attr.allowed_access);
->>>> -    path_put(&path);
->>>> +    if (rule_type == LANDLOCK_RULE_NET_SERVICE) {
->>>> +        /* Gets and checks the ruleset. */
->>>> +        ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
->>>
->>> You need to factor out more code.
->>
->>    Sorry. I did not get you here. Please could you explain more detailed?
-> 
-> Instead of duplicating similar function calls (e.g. get_ruleset_from_fd) 
-> or operations, try to use one switch statement where you put the checks 
-> that are different (you can move the 
-> copy_from_user(&path_beneath_attr...) call). It may be a good idea to 
-> split this function into 3: one handling each rule_attr, which enables 
-> to not mix different attr types in the same function. A standalone patch 
-> should be refactoring the code to add and use a new function 
-> add_rule_path_beneath(ruleset, rule_attr) (only need the "landlock_" 
-> prefix for exported functions).
+I think this commit should be reverted.
 
-   Sorry again. Still don't get the point. What function do you suggetst
-   to split in 3? Can you please give detailed template of these
-   functions and the logic?
+Reference: commit 843385694721 ("evm: Fix a small race in init_desc()")
 
-> .
+-- 
+Best
+GUO Zihua
