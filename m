@@ -2,143 +2,99 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F85BC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Feb 2022 03:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE63C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Feb 2022 05:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235669AbiBIDIY (ORCPT
+        id S229874AbiBIFQs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Feb 2022 22:08:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59184 "EHLO
+        Wed, 9 Feb 2022 00:16:48 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:42376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235988AbiBIDFJ (ORCPT
+        with ESMTP id S1377857AbiBIEn3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Feb 2022 22:05:09 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8F29C03E944;
-        Tue,  8 Feb 2022 19:04:02 -0800 (PST)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Jtl3Z0bt8z682M0;
-        Wed,  9 Feb 2022 10:59:54 +0800 (CST)
-Received: from [10.122.132.241] (10.122.132.241) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.21; Wed, 9 Feb 2022 04:03:59 +0100
-Message-ID: <2aae376f-14df-2c69-204a-0de8e4b0dd74@huawei.com>
-Date:   Wed, 9 Feb 2022 06:03:58 +0300
+        Tue, 8 Feb 2022 23:43:29 -0500
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E4CEC061577;
+        Tue,  8 Feb 2022 20:43:27 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JtnLt20kgz4xcp;
+        Wed,  9 Feb 2022 15:43:17 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1644381801;
+        bh=h1IrtofJGjl9dOe2iPaZfbAAnbqY/viWBgGDEdVXQKk=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=X4BI56kfUn4imVm/I1LyMZe7f9s76Evbv0Pjn7HGfFFK68KUGaoCPH04q/DPmVU9g
+         wR4AbQ/owkq/8kQKt0JOU1uOB+WagWSG+QKJIV7XEnJTJKHhDsign/9EnXKGREu9LK
+         sVbaWMzAYonS1AI1YnbRd/ekzycbGZFh2GxEaCv7HdATX0qxEWn6/9yo6zI5z+ThBf
+         qQNmyglbl+FwhdR/8QyKUyZtPKN+6fK5Fi+e9xdsGsINyiETC8A4Vxoz9lcnCcyeuM
+         lrxTnV9IQhCQyG7h2V2xQJmSWs+HKYmIU+sBC2hGE8wYyYkl6AWMsv2I0fSlvW1rKx
+         y/TGj1iyy/dTg==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Michal Suchanek <msuchanek@suse.de>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org
+Cc:     Michal Suchanek <msuchanek@suse.de>, kexec@lists.infradead.org,
+        Philipp Rudo <prudo@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Frank van der Linden <fllinden@amazon.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5 2/6] powerpc/kexec_file: Add KEXEC_SIG support.
+In-Reply-To: <d95f7c6865bcad5ee37dcbec240e79aa742f5e1d.1641900831.git.msuchanek@suse.de>
+References: <cover.1641900831.git.msuchanek@suse.de>
+ <d95f7c6865bcad5ee37dcbec240e79aa742f5e1d.1641900831.git.msuchanek@suse.de>
+Date:   Wed, 09 Feb 2022 15:43:17 +1100
+Message-ID: <87sfsslkey.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [RFC PATCH 2/2] landlock: selftests for bind and connect hooks
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
- <20220124080215.265538-3-konstantin.meskhidze@huawei.com>
- <4d54e3a9-8a26-d393-3c81-b01389f76f09@digikod.net>
- <ae5ca74d-ce5f-51e8-31c1-d02744ec92f8@huawei.com>
- <ae0fcafa-3e8d-d6f2-26a8-ae74dda8371c@digikod.net>
- <9a77fc40-4463-4344-34d0-184d427d32cf@huawei.com>
- <d09ac689-b1bf-86fa-4da5-3a0ade7fd552@digikod.net>
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <d09ac689-b1bf-86fa-4da5-3a0ade7fd552@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
- fraeml704-chm.china.huawei.com (10.206.15.53)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Michal Suchanek <msuchanek@suse.de> writes:
+> Copy the code from s390x
+>
+> Both powerpc and s390x use appended signature format (as opposed to EFI
+> based patforms using PE format).
+>
+> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> ---
+> v3: - Philipp Rudo <prudo@redhat.com>: Update the comit message with
+>       explanation why the s390 code is usable on powerpc.
+>     - Include correct header for mod_check_sig
+>     - Nayna <nayna@linux.vnet.ibm.com>: Mention additional IMA features
+>       in kconfig text
+> ---
+>  arch/powerpc/Kconfig        | 16 ++++++++++++++++
+>  arch/powerpc/kexec/elf_64.c | 36 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 52 insertions(+)
 
+I haven't tested this on powerpc, but assuming you have Michal this
+looks OK to me.
 
-2/8/2022 3:17 PM, Mickaël Salaün пишет:
-> 
-> On 08/02/2022 04:01, Konstantin Meskhidze wrote:
->>
->>
->> 2/7/2022 3:49 PM, Mickaël Salaün пишет:
-> 
->>> [...]
->>>
->>>>>> +    /* Create a socket 3 */
->>>>>> +    sockfd_3 = socket(AF_INET, SOCK_STREAM, 0);
->>>>>> +    ASSERT_LE(0, sockfd_3);
->>>>>> +    /* Allow reuse of local addresses */
->>>>>> +    ASSERT_EQ(0, setsockopt(sockfd_3, SOL_SOCKET, SO_REUSEADDR, 
->>>>>> &one, sizeof(one)));
->>>>>> +
->>>>>> +    /* Set socket 3 address parameters */
->>>>>> +    addr_3.sin_family = AF_INET;
->>>>>> +    addr_3.sin_port = htons(SOCK_PORT_3);
->>>>>> +    addr_3.sin_addr.s_addr = inet_addr(IP_ADDRESS);
->>>>>> +    memset(&(addr_3.sin_zero), '\0', 8);
->>>>>> +    /* Bind the socket 3 to IP address */
->>>>>> +    ASSERT_EQ(0, bind(sockfd_3, (struct sockaddr *)&addr_3, 
->>>>>> sizeof(addr_3)));
->>>>>
->>>>> Why is it allowed to bind to SOCK_PORT_3 whereas net_service_3 
->>>>> forbids it?
->>>>
->>>>    It's allowed cause net_service_3 has empty access field.
->>>>
->>>>     /* Empty allowed_access (i.e. deny rules) are ignored in network
->>>>      *  actions for SOCK_PORT_3 socket "object"
->>>>      */
->>>>      ASSERT_EQ(-1, landlock_add_rule(ruleset_fd,
->>>>                                      LANDLOCK_RULE_NET_SERVICE,
->>>>                                      &net_service_3, 0));
->>>>      ASSERT_EQ(ENOMSG, errno);
->>>>
->>>>    Applying this rule returns ENOMSG errno:
->>>>
->>>>    /* Informs about useless rule: empty allowed_access (i.e. deny 
->>>> rules)
->>>>     * are ignored in network actions
->>>>     */
->>>>          if (!net_service_attr.allowed_access) {
->>>>              err = -ENOMSG;
->>>>              goto out_put_ruleset;
->>>>          }
->>>>    This means binding socket 3 is not restricted.
->>>>    For path_beneath_attr.allowed_access = 0 there is the same logic.
->>>
->>> I missed the ENOMSG check; the third rule has nothing to do with it. 
->>> However, because the ruleset handles bind and connect actions, they 
->>> must be denied by default. There is no rule allowing binding to 
->>> SOCK_PORT_3. Why is it allowed?
->>>
->>> You can test with another SOCK_PORT_4, not covered by any rule. As 
->>> for SOCK_PORT_3, it must be forbidden to bind on it.
->>
->>    Apllying the third rule (net_service_3.access is empty) returns ENOMSG
->>    error. That means a process hasn't been restricted by the third rule,
->>    cause during search  process in network rb_tree the process won't find
->>    the third rule, so binding to SOCK_PORT_3 is allowed.
-> 
-> Landlock is designed to deny every access rights that are handled (by a 
-> ruleset) by default. All rules added to a ruleset are exceptions to 
-> allow a subset of the handled access rights on a specific object/port.
-> 
-> With the current networking code, a sandboxed process can still bind or 
-> connect to any port except, in this test, partially for two ports. This 
-> approach doesn't help to isolate a process from the network.
-   I got it. Thanks.
-> 
->>
->>    Maybe there is a misunderstanding here. You mean that if there is just
->>    only one network rule for a particular port has been applied to a
->>    process, other ports' networks actions are automatically restricted
->>    until they will be added into landlock newtwork rb_tree?
-> 
-> Right! That is how it should be.
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 
-   So it possible to check network rb_tree for emptiness before
-   every rule search caused by bind/connect hooks.
-   Am I corrent that if there is a proccess with Landlcok restrictions
-   applied for the filesystem, but landlock networtk rb_tree is empty
-   that means the proccess is not isolated from the network? I suppose it
-   would be an additional test case.
-> .
+cheers
