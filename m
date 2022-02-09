@@ -2,240 +2,152 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3312EC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Feb 2022 00:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E26C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Feb 2022 02:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238832AbiBIA0T (ORCPT
+        id S1344307AbiBIClG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Feb 2022 19:26:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36654 "EHLO
+        Tue, 8 Feb 2022 21:41:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237906AbiBIA0T (ORCPT
+        with ESMTP id S239658AbiBIBmP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Feb 2022 19:26:19 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26669C061576;
-        Tue,  8 Feb 2022 16:26:18 -0800 (PST)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 218MLA19005311;
-        Wed, 9 Feb 2022 00:25:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=ZPFpO/s5Ar3lz1CQqNzWAhq5HebnCKhs9fdwrCFRj6s=;
- b=hERzfYX3x/vYEkbd/ZyZEqXst6fgk+SVLVesTOCIVEqpmZWEoSEcdqfXomlJh4B+xPS8
- Vzb0bOHE0SBboQVZKTqTASzVors0Vt8v5CfUlosnaSJvoWvTJSl4t+uZojOxKjGWoxRT
- of8RINXA2/rPj2lSar2yrGVEdry4/zssMABuduj8INl1Yxxoy7095qYfonNriO6lKfz7
- vRXYtG1cpVmnkfl72gA0/5mbjKMVCLo5Ps7KoEBMsW0bXAl410yxqhms9HWaQplEO69m
- QnbOogPtww0qN6SerGrt4sti7B8Gdv1fNeTXrGOtoG4GuYj+fD7RI2K8BL9FZcP1oKsA Xg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3e4182j4x9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Feb 2022 00:25:38 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 2190PbTV002111;
-        Wed, 9 Feb 2022 00:25:37 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3e4182j4ww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Feb 2022 00:25:36 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2190Nh8E026794;
-        Wed, 9 Feb 2022 00:25:35 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma03wdc.us.ibm.com with ESMTP id 3e1gvb7dfy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Feb 2022 00:25:35 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2190PXUA35258666
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 9 Feb 2022 00:25:33 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6CB0BC605B;
-        Wed,  9 Feb 2022 00:25:33 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AB8CAC6059;
-        Wed,  9 Feb 2022 00:25:31 +0000 (GMT)
-Received: from [9.211.92.120] (unknown [9.211.92.120])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Feb 2022 00:25:31 +0000 (GMT)
-Message-ID: <e0309177-123a-18b5-a5c1-3a9266a22de0@linux.vnet.ibm.com>
-Date:   Tue, 8 Feb 2022 19:25:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v7 0/5] Allow guest access to EFI confidential computing
- secret area
-Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Dov Murik <dovmurik@linux.ibm.com>,
-        Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>, dougmill@linux.vnet.ibm.com,
-        gcwilson@linux.ibm.com, gjoyce@ibm.com,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Daniel Axtens <dja@axtens.net>
-References: <20220201124413.1093099-1-dovmurik@linux.ibm.com>
- <Yfk6vEuZFtgtA+G+@kroah.com>
- <37779659ca96ac9c1f11bcc0ac0665895c795b54.camel@linux.ibm.com>
- <20220202040157.GA8019@srcf.ucam.org> <YfogOurPZb7+Yelo@kroah.com>
- <20220202065443.GA9249@srcf.ucam.org> <YfotMyQiQ66xfCOQ@kroah.com>
- <20220202071023.GA9489@srcf.ucam.org>
- <CAMj1kXFTyc9KnMsnvs+mt80DbJL8VGKKcQ0J=4NrGYGSAG8sRw@mail.gmail.com>
- <20220202080401.GA9861@srcf.ucam.org> <Yfo/5gYgb9Sv24YB@kroah.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <Yfo/5gYgb9Sv24YB@kroah.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: b4UEhf1SnClyxzzgBwDvJSRo4uONgLbd
-X-Proofpoint-GUID: QuzRJnKjQvfnEB4nqGFOkDHaX8mQ0no9
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Tue, 8 Feb 2022 20:42:15 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1ACFC06157B;
+        Tue,  8 Feb 2022 17:42:11 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JtjJ51574z9sWd;
+        Wed,  9 Feb 2022 09:40:37 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Wed, 9 Feb 2022 09:42:08 +0800
+Message-ID: <248bf5e4-f171-0f18-90ec-f4be886cb35e@huawei.com>
+Date:   Wed, 9 Feb 2022 09:42:08 +0800
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-08_07,2022-02-07_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- malwarescore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
- clxscore=1015 impostorscore=0 bulkscore=0 spamscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202080136
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: Problem with commit ccf11dbaa07b ("evm: Fix memleak in
+ init_desc")
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>
+CC:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        wangweiyang <wangweiyang2@huawei.com>,
+        "xiujianfeng@huawei.com" <xiujianfeng@huawei.com>
+References: <e852660c-17fa-cd75-e361-45dd77b8884d@huawei.com>
+ <ec4348e54b39811b727a29f3c23972eab616dcd3.camel@linux.ibm.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+In-Reply-To: <ec4348e54b39811b727a29f3c23972eab616dcd3.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 2/2/22 03:25, Greg KH wrote:
-> On Wed, Feb 02, 2022 at 08:04:01AM +0000, Matthew Garrett wrote:
->> On Wed, Feb 02, 2022 at 08:22:03AM +0100, Ard Biesheuvel wrote:
->>> On Wed, 2 Feb 2022 at 08:10, Matthew Garrett <mjg59@srcf.ucam.org> wrote:
->>>> Which other examples are you thinking of? I think this conversation may
->>>> have accidentally become conflated with a different prior one and now
->>>> we're talking at cross purposes.
->>> This came up a while ago during review of one of the earlier revisions
->>> of this patch set.
->>>
->>> https://lore.kernel.org/linux-efi/YRZuIIVIzMfgjtEl@google.com/
->>>
->>> which describes another two variations on the theme, for pKVM guests
->>> as well as Android bare metal.
->> Oh, I see! That makes much more sense - sorry, I wasn't Cc:ed on that,
->> so thought this was related to the efivars/Power secure boot. My
->> apologies, sorry for the noise. In that case, given the apparent
->> agreement between the patch owners that a consistent interface would
->> work for them, I think I agree with Greg that we should strive for that.
->> Given the described behaviour of the Google implementation, it feels
->> like the semantics in this implementation would be sufficient for them
->> as well, but having confirmation of that would be helpful.
+On 2022/2/8 23:20, Mimi Zohar wrote:
+> On Tue, 2022-02-08 at 16:53 +0800, Guozihua (Scott) wrote:
+>> Hi Mimi,
 >>
->> On the other hand, I also agree that a new filesystem for this is
->> overkill. I did that for efivarfs and I think the primary lesson from
->> that is that people who aren't familiar with the vfs shouldn't be
->> writing filesystems. Securityfs seems entirely reasonable, and it's
->> consistent with other cases where we expose firmware-provided data
->> that's security relevant.
+>> I found an issue with commit ccf11dbaa07b ("evm: Fix memleak in init_desc").
 >>
->> The only thing I personally struggle with here is whether "coco" is the
->> best name for it, and whether there are reasonable use cases that
->> wouldn't be directly related to confidential computing (eg, if the
->> firmware on a bare-metal platform had a mechanism for exposing secrets
->> to the OS based on some specific platform security state, it would seem
->> reasonable to expose it via this mechanism but it may not be what we'd
->> normally think of as Confidential Computing).
+>> This commit tries to free variable "tmp_tfm" if something went wrong
+>> after the "alloc" label in function init_desc, which would potentially
+>> cause a user-after-free issue
 >>
->> But I'd also say that while we only have one implementation currently
->> sending patches, it's fine for the code to live in that implementation
->> and then be abstracted out once we have another.
-> Well right now the Android code looks the cleanest and should be about
-> ready to be merged into my tree.
->
-> But I can almost guarantee that that interface is not what anyone else
-> wants to use, so if you think somehow that everyone else is going to
-> want to deal with a char device node and a simple mmap, with a DT
-> description of the thing, hey, I'm all for it :)
->
-> Seriously, people need to come up with something sane or this is going
-> to be a total mess.
->
+>> The codes are as follows:
+>>
+>>     1 static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+>>     2 {
+>>     3 	long rc;
+>>     4 	const char *algo;
+>>     5 	struct crypto_shash **tfm, *tmp_tfm = NULL;
+>>     6 	struct shash_desc *desc;
+>>     7
+>>     8 	if (type == EVM_XATTR_HMAC) {
+>>     9 		if (!(evm_initialized & EVM_INIT_HMAC)) {
+>>    10 			pr_err_once("HMAC key is not set\n");
+>>    11 			return ERR_PTR(-ENOKEY);
+>>    12 		}
+>>    13 		tfm = &hmac_tfm;
+>>    14 		algo = evm_hmac;
+>>    15 	} else {
+>>    16 		if (hash_algo >= HASH_ALGO__LAST)
+>>    17 			return ERR_PTR(-EINVAL);
+>>    18
+>>    19 		tfm = &evm_tfm[hash_algo];
+>>    20 		algo = hash_algo_name[hash_algo];
+>>    21 	}
+>>    22
+>>    23 	if (*tfm)
+>>    24 		goto alloc;
+>>    25 	mutex_lock(&mutex);
+>>    26 	if (*tfm)
+>>    27 		goto unlock;
+>>    28
+>>    29 	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
+>>    30 	if (IS_ERR(tmp_tfm)) {
+>>    31 		pr_err("Can not allocate %s (reason: %ld)\n", algo,
+>>    32 		       PTR_ERR(tmp_tfm));
+>>    33 		mutex_unlock(&mutex);
+>>    34 		return ERR_CAST(tmp_tfm);
+>>    35 	}
+>>    36 	if (type == EVM_XATTR_HMAC) {
+>>    37 		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
+>>    38 		if (rc) {
+>>    39 			crypto_free_shash(tmp_tfm);
+>>    40 			⋅mutex_unlock(&mutex);
+>>    41 			return ERR_PTR(rc);
+>>    42 		}
+>>    43 	}
+>>    44 	*tfm = tmp_tfm;
+>>    45 unlock:
+>>    46 	mutex_unlock(&mutex);
+>>    47 alloc:
+>>    48 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+>>    49 			GFP_KERNEL);
+>>    50 	if (!desc) {
+>>    51 		crypto_free_shash(tmp_tfm);
+>>    52 		return ERR_PTR(-ENOMEM);
+>>    53 	}
+>>    54
+>>    55 	desc->tfm = *tfm;
+>>    56
+>>    57 	rc = crypto_shash_init(desc);
+>>    58 	if (rc) {
+>>    59 		crypto_free_shash(tmp_tfm);
+>>    60 		kfree(desc);
+>>    61 		return ERR_PTR(rc);
+>>    62 	}
+>>    63 	return desc;
+>>    64 }
+>>
+>> As we can see, variable *tfm points to one of the two global variable
+>> hmac_tfm or evm_tfm[hash_algo]. tmp_tfm is used as an intermediate
+>> variable for initializing these global variables. Freeing tmp_tfm after
+>> line 44 would invalidate these global variables and potentially cause a
+>> user-after-free issue.
+>>
+>> I think this commit should be reverted.
+>>
+>> Reference: commit 843385694721 ("evm: Fix a small race in init_desc()")
+> 
+> Why this one, as opposed to commit ccf11dbaa07b ("evm: Fix memleak in
+> init_desc")?
+> 
 
-Thanks for adding us to this discussion. I think somehow my last post 
-got html content and didn't make to mailing list, so am posting it 
-again. Sorry to those who are receiving it twice.
+Hi Mimi,
 
-If I have understood the discussion right, the key idea discussed here 
-is to unify multiple different interfaces(this one, and [1]) exposing 
-secrets for confidential computing usecase via securityfs.
+I mean commit ccf11dbaa07b ("evm: Fix memleak in init_desc") should be 
+reverted. commit 843385694721 ("evm: Fix a small race in init_desc()") 
+is just for reference.
 
-And the suggestion is to see if the proposed pseries interface [2] can 
-unify with the coco interface.
-
-At high level, pseries interface is reading/writing/adding/deleting 
-variables using the sysfs interface, but the underlying semantics and 
-actual usecases are quite different.
-
-The variables exposed via pseries proposed interface are:
-
-* Variables owned by firmware as read-only.
-* Variables owned by bootloader as read-only.
-* Variables owned by OS and get updated as signed updates. These support 
-both read/write.
-* Variables owned by OS and get directly updated(unsigned) eg config 
-information or some boot variables. These support both read/write.
-
-It can be extended to support variables which contain secrets like 
-symmetric keys, are owned by OS and stored in platform keystore.
-
-Naming convention wise also, there are differences like pseries 
-variables do not use GUIDs.
-
-The initial patchset discusses secure boot usecase, but it would be 
-extended for other usecases as well.
-
-First, I feel the purpose itself is different here. If we still 
-continue, I fear if we will get into similar situation as Matthew 
-mentioned in context of efivars -
-
-"the patches to add support for
-manipulating the Power secure boot keys originally attempted to make it
-look like efivars, but the underlying firmware semantics are
-sufficiently different that even exposing the same kernel interface
-wouldn't be a sufficient abstraction and userland would still need to
-behave differently. Exposing an interface that looks consistent but
-isn't is arguably worse for userland than exposing explicitly distinct
-interfaces."
-
-With that, I believe the scope of pseries interface is different and 
-much broader than being discussed here. So, I wonder if it would be 
-better to still keep pseries interface separate from this and have its 
-own platform specific interface.
-
-I would be happy to hear the ideas.
-
-[1] https://lore.kernel.org/linux-efi/YRZuIIVIzMfgjtEl@google.com/
-
-[2] https://lore.kernel.org/all/20220122005637.28199-1-nayna@linux.ibm.com/
-
-Thanks & Regards,
-
-      - Nayna
-
+-- 
+Best
+GUO Zihua
