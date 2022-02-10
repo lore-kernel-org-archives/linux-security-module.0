@@ -2,136 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 783BDC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Feb 2022 10:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BABCC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Feb 2022 12:02:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240244AbiBJKxh (ORCPT
+        id S241319AbiBJMCr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Feb 2022 05:53:37 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:32840 "EHLO
+        Thu, 10 Feb 2022 07:02:47 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233542AbiBJKxh (ORCPT
+        with ESMTP id S240666AbiBJMCp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Feb 2022 05:53:37 -0500
-Received: from IND01-MA1-obe.outbound.protection.outlook.com (mail-ma1ind01olkn0170.outbound.protection.outlook.com [104.47.100.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 410ED190;
-        Thu, 10 Feb 2022 02:53:38 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AxuiZb9oB0yIPOf8AKh1gpaB7Vk2Q0jSyKyy/snwbfdU6wBhKFvwzobHVav+Tt5Va5harJAN6kRQTOTmOJQoUKtxOreCVV0ZOnxYtx9+0AFOI50nTS8EYDeIdTIU1WFZAOI+juKU2kAEl1WBQD9yNuwpImM1CYieReA3a5hkCKIsApueYCKRKxk+5JAIrzRKTcgfxaMpV0dVY0Qpa9CZybR89d3Rde0Za+8vCooqQMYRjrmfaYZVc/MscZbZfNTjzsXHROsA8efIDCqVgKxdZx2Ttp5x+f18RcrkCVB4IwMmAUSE1I6K9mxuiKXl19bH+3w2TfQ3XW+dB7bxPFXwVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UdPU5n90kBz6rNCDQOarVwI+VpqDMmnHaxK7mL3bNIs=;
- b=DNMoDYlwH9oIQL2XmRwaOWI8vjT4JF4I+p2WTTbF8DoEHQeutDgyfLtdCSUgKl0ujquraShJPMZIL/fQL2KSMj4J1EZ5QCw5k88ccmRaEV4dyUHHCaBGHBsRNTI+X4105prFuMw4z+rUnwmqStKta8c5C55n9+B6Ka9SRUNm9d8Bl9TcKVnHkPxrow38MoUXob2Ai6LOSGIKhH7lhU8gdtVWysn6kCoi6poUuKdm3N14Iml844mifM8mMrib0Sk6v2zq2obzLhiIknfAcAq8p0iylEUe9Lwbg7TFl4HtHtwkOXcddePPP510sEPQUI/FSexWEElz4slxXmgcRo5kBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UdPU5n90kBz6rNCDQOarVwI+VpqDMmnHaxK7mL3bNIs=;
- b=paT4wm1Q8XkhldEuRrYnhi8ajwPB/4tQgg9RP/zGiJPC885yNRocrDTl8+3cfly8gRkyCXiDiMLiKLnnOwHguqef4g0WGr+iNoB95jKYltWYsA12zhqySNUU9OGScKxDuZjbPEcFCaSoUXlaACAt5J1WS5G21qvWo5geueW5SCLBjaGhUU5kf4iBHT6R6ww/loSUldqVX+QWGzoX26pO/uGpbcWxRB4P+Jeomw6kxXB/e7RdDpEPGGSbFnSC5oem1Tq5uHT0jmRJRrwbvXhIfAuWScGUgkJyBe/2R2bqgiqhV46kFjaKGyguJn70diKNGGoEC5yez4hVmnMTDq7QyQ==
-Received: from PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:1b::13)
- by PN2PR01MB4714.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:e::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12; Thu, 10 Feb
- 2022 10:53:27 +0000
-Received: from PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::d19b:7cd1:3760:b055]) by PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::d19b:7cd1:3760:b055%9]) with mapi id 15.20.4975.011; Thu, 10 Feb 2022
- 10:53:27 +0000
-From:   Aditya Garg <gargaditya08@live.com>
-To:     Ard Biesheuvel <ardb@kernel.org>
-CC:     David Laight <David.Laight@aculab.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        "joeyli.kernel@gmail.com" <joeyli.kernel@gmail.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "jlee@suse.com" <jlee@suse.com>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "mic@digikod.net" <mic@digikod.net>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        Orlando Chamberlain <redecorating@protonmail.com>,
-        Aun-Ali Zaidi <admin@kodeit.net>
-Subject: Re: [PATCH v2] efi: Do not import certificates from UEFI Secure Boot
- for T2 Macs
-Thread-Topic: [PATCH v2] efi: Do not import certificates from UEFI Secure Boot
- for T2 Macs
-Thread-Index: AQHYHmtA7l9yrHRekkSNjXfJLtGDQKyMmlyAgAABqIA=
-Date:   Thu, 10 Feb 2022 10:53:27 +0000
-Message-ID: <F6FFC34F-4ACC-424E-85C2-FA482609815E@live.com>
-References: <9D0C961D-9999-4C41-A44B-22FEAF0DAB7F@live.com>
- <755cffe1dfaf43ea87cfeea124160fe0@AcuMS.aculab.com>
- <B6D697AB-2AC5-4925-8300-26BBB4AC3D99@live.com>
- <20103919-A276-4CA6-B1AD-6E45DB58500B@live.com>
- <CAMj1kXFCibuLxbv2VxVsS0mWJ=6Lv8Q8sNq2GfPQDJ9qi5XB8w@mail.gmail.com>
-In-Reply-To: <CAMj1kXFCibuLxbv2VxVsS0mWJ=6Lv8Q8sNq2GfPQDJ9qi5XB8w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [L2xrRFA2O/fP1eX7goCudnylWXLwdh7e3AU6ehaUbHNOIWmtnEJei3/ks1mR3z++]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: caf58f83-d8ac-4f23-b305-08d9ec8391a7
-x-ms-traffictypediagnostic: PN2PR01MB4714:EE_
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2QodOMR6Jsu1xrPPJefAijccH0MftdnsqhUGApa0f5FHscuM+aop+z++TaRSTwf+hhLZ6nFNHUWtQiqj/tzB1mOyeCXCDmlj6wfUfa52sKZq513/7hWkbqE8Cx3QhUyAgyXywdAZIgi7jX2N5hM6ix47Qhv6WNqXRkTk4TPXOcxpNiS+IlV7B7wlLARk7032H0ae8bZm7k9uxuAuKGf/v6GDOGxkSVu/DXjPt2nlo1KxLFae9oEDTksKlpVt7ancujL12I0vP6+qgKM6ytFSjEtUZQAHnlo5P+q40l+EFHNp2GCprh4Mf+FpDOpJKNOkmh6OxWj9p6r1XHv0fJPDq9l98Gqza3yOV0A8MvhmYHpN6aOLSmtpnL0avAV/7DH5mfuNv8tcnxPrjsj3x7f+yrN5ZvY5nHc81uC2FWd9YFwlOOyyifRQ+ihhyvoZJmR64ZdxkwCPORrCKECBThbR2a+5h0I09QO1bJV8+rN/N/pr1XwtF/60SY3T3wAQ0RthNOavNHlFwLl0IWAHXdRMplgZaM13SPQFcVoj+qmk09HBW8watY3avNLhEe8BKBv+4QTdFdt8KstNH0RrpnWPJA==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?K3RlV0U2M2RtdlBBM2dZS1JaQS9QOXFFRVlwNVg0WHg0dHp0Mm03UUFKOEN1?=
- =?utf-8?B?WC81YmNaTGdpaTE1eG80SWtWYjZiTUh6ZnBsV1ZwUDh4RjBQV3pPaWZ6ZVpL?=
- =?utf-8?B?dXFaaEw4bkZ1N2pSWmxDenZPOCtiT09BVmFueEtzRzZoQkt1Q0VXR2Y0K0pl?=
- =?utf-8?B?bzFKeHpzOUNQN3Zuc2RENjZaMFdtTHgrY1Vyak92QVozbWwwVnplN01KNVBo?=
- =?utf-8?B?WUplTmxqR2tEY0xtRDM3Z1Arc1dYQ0ZQY0NxUWlZZXVMWlV5NVp5MkY3Ym1D?=
- =?utf-8?B?aGFGdDg1R2dhUDlQQ3AxcXJreHMyYWxvNWQvSmcvQjhyTmNQMEdUNSthVkgy?=
- =?utf-8?B?YnhjL0NIeW1EaXQzaXlrRUJlRVc1aHRZYjU4UExLNVVQeHQybFEwVGVuVlhH?=
- =?utf-8?B?Q3Ztb0I5TVJDUVFsWnJnT2hoeVF0am9La2FVL1BuRXR4aVJsS1pMSXJRQVp5?=
- =?utf-8?B?bXJkNG5JYldqb1JDU20xdStFQkwzQnkraFIvdk9kTE45b0dWUGxxVlh6Wlgz?=
- =?utf-8?B?Vm5lZUhiTVRpSDVEa2tJbmxJQm9xUUZteXA3Z3BPYjhoZTBDd3hSV0swZWFu?=
- =?utf-8?B?M3NJSGc4QTRNYm9RS3lvbzZsdmo0dElyMkViZElUa2Rod2U2YUg3dkloSFFZ?=
- =?utf-8?B?aUlHWjJydUxZODFZZnNFQkF2ZndyNjA5eE0wZzNRT29xSVpSdWFhYjB1ejJh?=
- =?utf-8?B?TFFjbTMzOWJPd2Q4cE9KSGoxNjk1Y1Y0STRWaFZWb2VZVUNjTFRxSG9pTlA4?=
- =?utf-8?B?eVNiU2VZd0RjSFo2WjZvRU41WVJXZjcyNVd4akxsZURycHFaY0VBNFJJWXlN?=
- =?utf-8?B?R2wwM0VsZnhVRlZnRFNuSlI2bzZDV3NkQy84Z2dMcE9aRnY3N3NJc3MySzBL?=
- =?utf-8?B?NCtQdzBkcFhwM3VJZTZBUFBJeTdYOExzNnRUS0M4eVRDa3BKeTJDUTE2ZTly?=
- =?utf-8?B?bWo3UC9rVUxsdWlqQ0NaMG1jV0dtcURnaTNUR2w5UitycjIyc0NsS3ZnQk9R?=
- =?utf-8?B?Wm5kYnNHam9ETVNZcEwvY3RaQzkxS1R2c0RtNVg1Q20yeXpQcHkweEY2WkJI?=
- =?utf-8?B?anJjSExXSGxxd2JjTVU3REpvM2hhUjJad2ZEZTcxak9xYmZrZ2p1UVJLSnZU?=
- =?utf-8?B?NFRzWWdMRnc5TldVZ2dZd1A5MjFHTmxER3I4azNYYWgxTGZXSXh5L0dhVWVi?=
- =?utf-8?B?VXFmTzBpclA3SWJGa2kyNXZsVTlSdmlKbjIvT1VuOTJyT1VWMXRrNG9JNTFC?=
- =?utf-8?B?eHlWSkRmM095Z0N3M0hOSkphdlR2YU5DZVpUc2ZpcGllY1IyNFZpeEtFaHd6?=
- =?utf-8?B?SXlIV21iVXd2cFFCZE14TlZUU010eWk2ZllESk1kU3RyeUhNdElSK3RoNUdJ?=
- =?utf-8?B?NzNoR0FmNFRBQVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A9294B01946586428B7DC25C889E2F52@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-42ed3.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: caf58f83-d8ac-4f23-b305-08d9ec8391a7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2022 10:53:27.7411
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PR01MB4714
+        Thu, 10 Feb 2022 07:02:45 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2853C104;
+        Thu, 10 Feb 2022 04:02:47 -0800 (PST)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21AB51Lm031916;
+        Thu, 10 Feb 2022 12:02:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=q3YJcjJUG1wHBDqkR7Coy4veQg6CzEtsNhvRR50bmig=;
+ b=KWcmWNzxWR4SYNjAh+BEpyDk6idBa+OCf/NRDrAu4kxdemHuPbUCik+RPgeWRBGSdjaF
+ kkXXq4XIw9gFPrt2qsQtv/z3GpqHtItkVNDI4M8/PJjaM+/bI7Lq67Du8VfUEMuUs3FY
+ MSbX4QBtv8/wTUWzgvXadAHEpuLW7AmS2649GXR2Xbgqsd1ESMxy2lnFGQqQrJRX7OuA
+ Lg/WySla/gnVjoZy8G/49xj5UMl/fucW6kCVu3zeqdt+gf0MF+3vuJC7G7IZZPPQyHmZ
+ xoQBkFwghzxaSWxSL/UgRli8TDj3xAB/ZxCZIdzvrCEK/M7Hzqrl12EmZK8U6ata7pwI Mg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3e4cb7cjy8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Feb 2022 12:02:15 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21ABsP7C002670;
+        Thu, 10 Feb 2022 12:02:14 GMT
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3e4cb7cjxb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Feb 2022 12:02:14 +0000
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21ABg9hR009295;
+        Thu, 10 Feb 2022 12:02:12 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma02fra.de.ibm.com with ESMTP id 3e1gv9wm6s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Feb 2022 12:02:12 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21AC284S45941184
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Feb 2022 12:02:08 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D17D55205F;
+        Thu, 10 Feb 2022 12:02:08 +0000 (GMT)
+Received: from sig-9-65-78-200.ibm.com (unknown [9.65.78.200])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 09BB85204E;
+        Thu, 10 Feb 2022 12:02:05 +0000 (GMT)
+Message-ID: <13f0f8280512f9e109cbf26cbcb6e285e29996cf.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 01/27] ima: Remove ima_policy file before directory
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Christian Brauner <brauner@kernel.org>
+Date:   Thu, 10 Feb 2022 07:02:05 -0500
+In-Reply-To: <20220201203735.164593-2-stefanb@linux.ibm.com>
+References: <20220201203735.164593-1-stefanb@linux.ibm.com>
+         <20220201203735.164593-2-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 9s6bGFEg1dfWjAZ_eFgX_fYczrZwjECH
+X-Proofpoint-GUID: aoq5XRVwyo8q9SVkKrRJhGPPylEhq32L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-10_05,2022-02-09_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 mlxlogscore=950 phishscore=0 impostorscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202100066
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-DQo+IA0KPiBOQUsuIEFzIE1hdHRoZXcgcG9pbnRlZCBvdXQsIG90aGVyIHJlYWRzIG9mIHRoZSBz
-YW1lIHZhcmlhYmxlcyBtYXkNCj4gc3RpbGwgdHJpZ2dlciB0aGUgc2FtZSBpc3N1ZS4NCj4gDQoN
-Ck9oay4gSSBqdXN0IHNlbnQgYSB2MiBpbiBvcmRlciB0byBmaXggdGhlIGlzc3VlIHBvaW50IG91
-dCBieSBEYXZpZC4gV2UgY2FuIGdvIGFoZWFkIHdpdGggTWF0dGhld+KAmXMgcG9pbnQgb2Ygdmll
-dywgd2hpY2ggbWFrZXMgc2Vuc2UsIGluIGZ1cnRoZXIgdmVyc2lvbnMu
+Hi Stefan,
+
+On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote:
+> The removal of ima_dir currently fails since ima_policy still exists, so
+> remove the ima_policy file before removing the directory.
+> 
+> Fixes: 4af4662fa4a9 ("integrity: IMA policy")
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Acked-by: Christian Brauner <brauner@kernel.org>
+
+Thanks, Stefan.  I've started picking off the bug fixes and upstreaming
+them.  Both this patch and 2/27 are now in Linus' tree and should be in
+-rc4.
+
+-- 
+Mimi
+
