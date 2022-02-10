@@ -2,155 +2,149 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F2DC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Feb 2022 10:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E99C43219
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Feb 2022 10:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239462AbiBJKPu (ORCPT
+        id S239202AbiBJKnx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Feb 2022 05:15:50 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36620 "EHLO
+        Thu, 10 Feb 2022 05:43:53 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239458AbiBJKPu (ORCPT
+        with ESMTP id S231878AbiBJKnw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Feb 2022 05:15:50 -0500
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09308CF4
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Feb 2022 02:15:49 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JvXh33ZsdzMppR7;
-        Thu, 10 Feb 2022 11:15:47 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4JvXh26xQzzlhSMC;
-        Thu, 10 Feb 2022 11:15:46 +0100 (CET)
-Message-ID: <dc58d69f-57f2-897d-8b6a-1243817a4104@digikod.net>
-Date:   Thu, 10 Feb 2022 11:16:36 +0100
-MIME-Version: 1.0
-User-Agent: 
+        Thu, 10 Feb 2022 05:43:52 -0500
+Received: from IND01-MA1-obe.outbound.protection.outlook.com (mail-ma1ind01olkn0186.outbound.protection.outlook.com [104.47.100.186])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338B8FEB;
+        Thu, 10 Feb 2022 02:43:53 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZCf3k0EczFPQGQOIk2tSXA2wRAjGW4UM3mwPQ7PyZcMWoEn8mtsTm0KhUgd79la2vu61yyJx3L0Bg9MJ+0bqo9EQ7ff5AaAK1AmzUGcIo3ABW/WsQ5jQIqpHZZ7K295bBY+OEZ5XPpdqUhP08ifo2pjSRA5PaRsFoz8o2h5K0qaz0sRqkGFNNLPuOwEAAy+JI5+Xuus6rUV3/RMqnGjzjJPq8hAh7WQiLdepAF4yq1Lkm+fjJ1z4CAWn3jAJ4m9FiAP37jcYafdKpCLpJ6JnbTQx5jyf4RUckSQNNfSVR/NDnKZ2tal2VqtB//T61bQh3lfWTZIPnVwAT9t2GZOhYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HR8hxoWG6eBDQ9MJIiQ3cZ1oOZNudIGuurwTPAjeH0I=;
+ b=HJ2YJEv8ntwhuDwk06toGLZMkKpCRrppnDsBxfNy1/O1/xOdwTJKtPXwS/QMXfnMPdijgML4Tj+HymKTBtTQmqJDqromuWsY4MDLoju0qFQk8hNDkg94sPOG1WW/Ct0SouWB1hZjATjnzKniefFBPOS/k7R1Yosale7vJlfnrt4LdferqdbmJ27HP84cVyt/q6iSTkViXI4AAOyXyIhSD0O/aty2IMl/FKPGIDu5JKhJaM8LUfSOMKxa62/dP2ZX7YwppV6rqrKEPMZqJ0kXsV7gYIxd9szBxNMl9gabWv9Az9l9QEfP44dIAoKNpTPj6WAhuS0PiB4/IY0jnwGBRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HR8hxoWG6eBDQ9MJIiQ3cZ1oOZNudIGuurwTPAjeH0I=;
+ b=C6KN3/6BijjIbfHS4Q5C8Zm6b2hIgSwQgY3ncslvg4nPHriFAg3U015QNp3UoVjTLu9f+3zn/2mfsnNpkNeRdUNY5lf+dDgyYGK9GEbmfsfK8UHflyhzf0EO3kePzCcb9lyPOW1AbwJjGIN5icvlMnQ2sPD0sBdqBHtXmAzHS4a2Lu/j1ffUCa+Zd+6ZQbfwxnu94hicHmQhgLciK3RrwGT6w8KFzj/QUemjN7Q8sQxUmhjxLzhsFT80QfD8N+HQgwrI1W7CuiBa6t6vQLkWf4F3cBS5AXGd7WJa8XocKk1+Y1wzUvLhcYO4bXK7CobDG6FHXUs657j8DVhO+TIHbQ==
+Received: from PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:1b::13)
+ by BM1PR01MB3298.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00:70::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.11; Thu, 10 Feb
+ 2022 10:43:44 +0000
+Received: from PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::d19b:7cd1:3760:b055]) by PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::d19b:7cd1:3760:b055%9]) with mapi id 15.20.4975.011; Thu, 10 Feb 2022
+ 10:43:44 +0000
+From:   Aditya Garg <gargaditya08@live.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+CC:     Ard Biesheuvel <ardb@kernel.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        "joeyli.kernel@gmail.com" <joeyli.kernel@gmail.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "jlee@suse.com" <jlee@suse.com>,
+        "James.Bottomley@hansenpartnership.com" 
+        <James.Bottomley@HansenPartnership.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "mic@digikod.net" <mic@digikod.net>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Orlando Chamberlain <redecorating@protonmail.com>,
+        Aun-Ali Zaidi <admin@kodeit.net>
+Subject: Re: [PATCH] efi: Do not import certificates from UEFI Secure Boot for
+ T2 Macs
+Thread-Topic: [PATCH] efi: Do not import certificates from UEFI Secure Boot
+ for T2 Macs
+Thread-Index: AQHYHcE4ht34Z1CESEaNjR8+yzmieayLWtAAgAE/0QA=
+Date:   Thu, 10 Feb 2022 10:43:44 +0000
+Message-ID: <B6D697AB-2AC5-4925-8300-26BBB4AC3D99@live.com>
+References: <9D0C961D-9999-4C41-A44B-22FEAF0DAB7F@live.com>
+ <755cffe1dfaf43ea87cfeea124160fe0@AcuMS.aculab.com>
+In-Reply-To: <755cffe1dfaf43ea87cfeea124160fe0@AcuMS.aculab.com>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
- <20220124080215.265538-3-konstantin.meskhidze@huawei.com>
- <4d54e3a9-8a26-d393-3c81-b01389f76f09@digikod.net>
- <ae5ca74d-ce5f-51e8-31c1-d02744ec92f8@huawei.com>
- <ae0fcafa-3e8d-d6f2-26a8-ae74dda8371c@digikod.net>
- <9a77fc40-4463-4344-34d0-184d427d32cf@huawei.com>
- <d09ac689-b1bf-86fa-4da5-3a0ade7fd552@digikod.net>
- <2aae376f-14df-2c69-204a-0de8e4b0dd74@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH 2/2] landlock: selftests for bind and connect hooks
-In-Reply-To: <2aae376f-14df-2c69-204a-0de8e4b0dd74@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [EHYs5ayktjdiWoZONP0WJE9JKe1ig2ZFrhy41ShdUdUpH35cTMITbC/u66e8IGyz]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a307a348-c60a-41d1-e26a-08d9ec823627
+x-ms-traffictypediagnostic: BM1PR01MB3298:EE_
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: HN2sar2Y7qWgAe5oFnM/yIKqxl38zoZGhSu7Ey+MVPdDDzovMbMx1kcK2Ewdb7789MmHeSyAMoeSWrtcBwiz2yEn6wv4FvZ8wnVRHXbFGXAGiFWjpGCSmloJnTWcInnCTm165Wud3380br+nhXbvV/UYSc+Zi77rThfF+TBTO4NTpsMLzdLUxMkv9wxeumQohx53Hymp31D87Y3169uZZldRmaUtzIFpBVky6ULRr35/MKfTNCENBlqTmR97pnSbXWyCUbQEX8y10girle+Z+1kJBmm91ki3icdLN6Dk+4KqxTYpBh5BPFpfGqb+aHP4nrrSz7//T7snhypIjaPZ1JlLoj6bfM1vrff4Wbu2ByrBzIUzP4hGkJMvNZrO+XgnB6+yPi2NyJrVhLtqm2yF6e5S1v/IlkmrRzby7OQu/pX7mVdbHu5rl6E5FlbEMsvCy8QoZ/taxLDN9KPf2IpYcyh+VqNpHnq66lydRIFLMYHLHXpMS1/pgqfED6dKv7y0onA2QzsqyeWdU1enRIg+SAdxlGWfhKTTZ1PwuaJaM6om8EjqP6PAZdY449RhRt1CvcarvcDlEkI1X7ixZtpeBQ==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OVN6cVVhN3d1MWRsUllMWER6cTg4UnhIZE44RVZIakRHQThvSVhqdllReHpS?=
+ =?utf-8?B?WVhnYldTeHBLWFpwUXIwRTQ0bVppbDNUazdWRWpXVE91QnlsRklQTWtRd2tu?=
+ =?utf-8?B?WTNLblRYaENlNzVEL2FIV0lBZW9YTDNNRk5kWXZuRmR2MFlwVTZyM1FZWEds?=
+ =?utf-8?B?NVA4dTJHVmNGZHpDK3RFemx2Qk9kbmt2MEhDWVZXR0xSV0dxUWo0ZngvRUxP?=
+ =?utf-8?B?azVOZzJqa2tWeXZ1aEpNZzZOc205bWhEdW1MS0pxUXRkYnRFMWh2WnN0QkE2?=
+ =?utf-8?B?elE5R1RtUzdkWW9DZ1diMnZRNUk5V21EVGxtWHJ4c2dSNUs1TEF6MXdsdkZ5?=
+ =?utf-8?B?Zlp3VGgyWkdvYVl0cm5aLzF5dlNLUHFWNTJDZSsrR0lGSkVBUFpSTDNqVnZE?=
+ =?utf-8?B?eGZEWDVRcEx3bTRER1VQUGlhVWMzTG11Nk9pTys0Yk16MjQwMG5pVkJtWDhp?=
+ =?utf-8?B?d0NId3VQMWNlQnFRRUtIS01KT1lrMjdzRXJGWnd0T0grNTRPTk91RXIrRDdr?=
+ =?utf-8?B?aTZldFRDVCtJUDJRaDh2K29vVWJNdTJTYjdEdkVnTy9wWTUwaVp0R1Y0cWJZ?=
+ =?utf-8?B?dStXd3pXS0hXNVBZdGF1KzFjWTlyREtPOEp5ZEV4ZzlrVjMyZVlhdEdoUkJJ?=
+ =?utf-8?B?UTBtbnYraDM3aUxNa3NDNVF6aHQrOHRLdXdpeTBEY3RyR2NxdkpCZGpBTHE3?=
+ =?utf-8?B?YlF0SzB0RVNhdWNMN0VQaEQ3Q2RaYmtuUTh6VmFFWW9aYU1DNlZzazhoMTFQ?=
+ =?utf-8?B?VlpXTmNOM0drcWkyQnAxZWdVMU01UU9QYUpjbllScmNmdm5oQkVRaFhUMjdS?=
+ =?utf-8?B?TTVqYXRlaEV6NHdTZ3ExejF4RDdobW5BcCtJSXVva204N3pwMkx3Z3pJZEJF?=
+ =?utf-8?B?eld6N3hiSHdweENxSEJQU2dMTFZNZEdVUElZbjIyZEc0dzFCT0tMWHRQajVs?=
+ =?utf-8?B?WGkxK1VRdWdUdTlyUC9RK1IvWWlnTUVGeldGbHpXTUhReURmaUJsRmNZTm93?=
+ =?utf-8?B?cC9ndkpNdUk2SG1JVjgvOWdWeThHQTdBQ1Z5ZUlOUy81WW85SjNVVlBXWGdz?=
+ =?utf-8?B?Q1dUd25tRml4ZWh3OW5wSVB3eExGMktTZjhOSjRYa1BrSWEwS0NSelhzR29U?=
+ =?utf-8?B?U2VJbnNGa016SVFMODIzRGJsc3daQlBGdE8xM3ZWWHpKdkt4UTBtRlFNdGpa?=
+ =?utf-8?B?QS93dXVlVTRBMEQ1UHdCY0hZWU9LMkpHZVdjRmlTMkZDaEMxQWRyNUdVTGQ4?=
+ =?utf-8?B?Mi9mY1AxVW5oOEJTL3QvbmtpU3pLbkphOXNXT0VEb3ZNSW5nQitzYk9kaldw?=
+ =?utf-8?B?cTZQWVh3Q3oyM0ltMzJ1M1lXRkhvSkJpajBQNlk4NEVCang3UmQ2RGVORXA1?=
+ =?utf-8?B?U1VQa1V4SmxQcUE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7463FDAD6DA416498676CCE48BE39EDE@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-42ed3.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: a307a348-c60a-41d1-e26a-08d9ec823627
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2022 10:43:44.7341
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BM1PR01MB3298
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 09/02/2022 04:03, Konstantin Meskhidze wrote:
-> 
-> 
-> 2/8/2022 3:17 PM, Mickaël Salaün пишет:
->>
->> On 08/02/2022 04:01, Konstantin Meskhidze wrote:
->>>
->>>
->>> 2/7/2022 3:49 PM, Mickaël Salaün пишет:
->>
->>>> [...]
->>>>
->>>>>>> +    /* Create a socket 3 */
->>>>>>> +    sockfd_3 = socket(AF_INET, SOCK_STREAM, 0);
->>>>>>> +    ASSERT_LE(0, sockfd_3);
->>>>>>> +    /* Allow reuse of local addresses */
->>>>>>> +    ASSERT_EQ(0, setsockopt(sockfd_3, SOL_SOCKET, SO_REUSEADDR, 
->>>>>>> &one, sizeof(one)));
->>>>>>> +
->>>>>>> +    /* Set socket 3 address parameters */
->>>>>>> +    addr_3.sin_family = AF_INET;
->>>>>>> +    addr_3.sin_port = htons(SOCK_PORT_3);
->>>>>>> +    addr_3.sin_addr.s_addr = inet_addr(IP_ADDRESS);
->>>>>>> +    memset(&(addr_3.sin_zero), '\0', 8);
->>>>>>> +    /* Bind the socket 3 to IP address */
->>>>>>> +    ASSERT_EQ(0, bind(sockfd_3, (struct sockaddr *)&addr_3, 
->>>>>>> sizeof(addr_3)));
->>>>>>
->>>>>> Why is it allowed to bind to SOCK_PORT_3 whereas net_service_3 
->>>>>> forbids it?
->>>>>
->>>>>    It's allowed cause net_service_3 has empty access field.
->>>>>
->>>>>     /* Empty allowed_access (i.e. deny rules) are ignored in network
->>>>>      *  actions for SOCK_PORT_3 socket "object"
->>>>>      */
->>>>>      ASSERT_EQ(-1, landlock_add_rule(ruleset_fd,
->>>>>                                      LANDLOCK_RULE_NET_SERVICE,
->>>>>                                      &net_service_3, 0));
->>>>>      ASSERT_EQ(ENOMSG, errno);
->>>>>
->>>>>    Applying this rule returns ENOMSG errno:
->>>>>
->>>>>    /* Informs about useless rule: empty allowed_access (i.e. deny 
->>>>> rules)
->>>>>     * are ignored in network actions
->>>>>     */
->>>>>          if (!net_service_attr.allowed_access) {
->>>>>              err = -ENOMSG;
->>>>>              goto out_put_ruleset;
->>>>>          }
->>>>>    This means binding socket 3 is not restricted.
->>>>>    For path_beneath_attr.allowed_access = 0 there is the same logic.
->>>>
->>>> I missed the ENOMSG check; the third rule has nothing to do with it. 
->>>> However, because the ruleset handles bind and connect actions, they 
->>>> must be denied by default. There is no rule allowing binding to 
->>>> SOCK_PORT_3. Why is it allowed?
->>>>
->>>> You can test with another SOCK_PORT_4, not covered by any rule. As 
->>>> for SOCK_PORT_3, it must be forbidden to bind on it.
->>>
->>>    Apllying the third rule (net_service_3.access is empty) returns 
->>> ENOMSG
->>>    error. That means a process hasn't been restricted by the third rule,
->>>    cause during search  process in network rb_tree the process won't 
->>> find
->>>    the third rule, so binding to SOCK_PORT_3 is allowed.
->>
->> Landlock is designed to deny every access rights that are handled (by 
->> a ruleset) by default. All rules added to a ruleset are exceptions to 
->> allow a subset of the handled access rights on a specific object/port.
->>
->> With the current networking code, a sandboxed process can still bind 
->> or connect to any port except, in this test, partially for two ports. 
->> This approach doesn't help to isolate a process from the network.
->    I got it. Thanks.
->>
->>>
->>>    Maybe there is a misunderstanding here. You mean that if there is 
->>> just
->>>    only one network rule for a particular port has been applied to a
->>>    process, other ports' networks actions are automatically restricted
->>>    until they will be added into landlock newtwork rb_tree?
->>
->> Right! That is how it should be.
-> 
->    So it possible to check network rb_tree for emptiness before
->    every rule search caused by bind/connect hooks.
-
-I'm not sure to understand but the rbtree macros should do the job.
-
-
->    Am I corrent that if there is a proccess with Landlcok restrictions
->    applied for the filesystem, but landlock networtk rb_tree is empty
->    that means the proccess is not isolated from the network? I suppose it
->    would be an additional test case.
-
-If the ruleset/domain doesn't handle network actions, Landlock just 
-ignores network access request (i.e. allow them). A Landlock domain 
-denies handled network actions by default, but allows those that are 
-identified as such in the rbtree. Some network actions can be denied 
-whatever the network rbtree is empty or not. Please take a look at how 
-the filesystem actions are allowed.
-
-It is indeed a legitimate test case.
+DQoNCj4gT24gMDktRmViLTIwMjIsIGF0IDk6MDkgUE0sIERhdmlkIExhaWdodCA8RGF2aWQuTGFp
+Z2h0QEFDVUxBQi5DT00+IHdyb3RlOg0KPiANCj4gRnJvbTogQWRpdHlhIEdhcmcNCj4+IFNlbnQ6
+IDA5IEZlYnJ1YXJ5IDIwMjIgMTQ6MjgNCj4+IA0KPj4gT24gVDIgTWFjcywgdGhlIHNlY3VyZSBi
+b290IGlzIGhhbmRsZWQgYnkgdGhlIFQyIENoaXAuIElmIGVuYWJsZWQsIG9ubHkNCj4+IG1hY09T
+IGFuZCBXaW5kb3dzIGFyZSBhbGxvd2VkIHRvIGJvb3Qgb24gdGhlc2UgbWFjaGluZXMuIFRodXMg
+d2UgbmVlZCB0bw0KPj4gZGlzYWJsZSBzZWN1cmUgYm9vdCBmb3IgTGludXguIElmIHdlIGJvb3Qg
+aW50byBMaW51eCBhZnRlciBkaXNhYmxpbmcNCj4+IHNlY3VyZSBib290LCBpZiBDT05GSUdfTE9B
+RF9VRUZJX0tFWVMgaXMgZW5hYmxlZCwgRUZJIFJ1bnRpbWUgc2VydmljZXMNCj4+IGZhaWwgdG8g
+c3RhcnQsIHdpdGggdGhlIGZvbGxvd2luZyBsb2dzIGluIGRtZXNnDQo+PiANCj4gLi4NCj4+ICtz
+dGF0aWMgY29uc3Qgc3RydWN0IGRtaV9zeXN0ZW1faWQgdWVmaV9hcHBsZV9pZ25vcmVbXSA9IHsN
+Cj4+ICsJew0KPj4gKwkJIC5tYXRjaGVzID0gew0KPj4gKwkJCURNSV9NQVRDSChETUlfQk9BUkRf
+VkVORE9SLCAiQXBwbGUgSW5jLiIpLA0KPj4gKwkJCURNSV9NQVRDSChETUlfUFJPRFVDVF9OQU1F
+LCAiTWFjQm9va1BybzE1LDEiKSwNCj4+ICsJCX0sDQo+IA0KPiBJIHRoaW5rIEknZCB1c2U6DQo+
+ICNkZWZpbmUgeHh4KHZlbmRvciwgcHJvZHVjdCkgXA0KPiAJCSAubWF0Y2hlcyA9IHsNCj4gCQkJ
+RE1JX01BVENIKERNSV9CT0FSRF9WRU5ET1IsIHZlbmRvciksIFwNCj4gCQkJRE1JX01BVENIKERN
+SV9QUk9EVUNUX05BTUUsIHByb2R1Y3QpLCBcDQo+IAkJfQ0KPiBzb21ld2hlcmUgd2l0aCBhIHN1
+aXRhYmxlIG5hbWUgKGJpa2VzaGVkIGJsdWUpIHRvIHJlZHVjZQ0KPiB0aGUgY29kZSBzaXplIG9m
+IHRoaXMgdGFibGUuDQo+IA0KQWxyaWdodCwgSeKAmWxsIHNlbmQgYSB2MiB3aXRoIHRoaXMgYWRk
+cmVzc2VkLg0KPiAJRGF2aWQNCj4gDQo+IC0NCj4gUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
+LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQo+
+IFJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo+IA0KDQo=
