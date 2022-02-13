@@ -2,142 +2,114 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 752D4C433FE
-	for <linux-security-module@archiver.kernel.org>; Sat, 12 Feb 2022 21:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5DCC433FE
+	for <linux-security-module@archiver.kernel.org>; Sun, 13 Feb 2022 07:47:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229461AbiBLV6z (ORCPT
+        id S234238AbiBMHrW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 12 Feb 2022 16:58:55 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60800 "EHLO
+        Sun, 13 Feb 2022 02:47:22 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbiBLV6z (ORCPT
+        with ESMTP id S229555AbiBMHrV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 12 Feb 2022 16:58:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A2052606FA
-        for <linux-security-module@vger.kernel.org>; Sat, 12 Feb 2022 13:58:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1644703129;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=A2Cw52X1+qOYmJurqYnkoU4CLJrh/MQPlo1UwPWCQTo=;
-        b=TO+9Cixk23Sdl7wQ7tExEfX9AxzDe0xoXngqNsPyLEU5XBw7LIe7QT5xawej6yPIeHY8Fh
-        avotCFkw0IO2isZIiB4e/yKTJYviETBDSA8T5NgrwTXowc+zBIt/lEXLztBE42ZGrQ7H4m
-        XhxiQ7E9H1GQZgRmnp3DCjaHo1iQvEk=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-373-CA-ekpvZNcmOXGxpm7IqEw-1; Sat, 12 Feb 2022 16:58:46 -0500
-X-MC-Unique: CA-ekpvZNcmOXGxpm7IqEw-1
-Received: by mail-yb1-f199.google.com with SMTP id a12-20020a056902056c00b0061dc0f2a94aso26225094ybt.6
-        for <linux-security-module@vger.kernel.org>; Sat, 12 Feb 2022 13:58:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A2Cw52X1+qOYmJurqYnkoU4CLJrh/MQPlo1UwPWCQTo=;
-        b=0NiewYZVkXH6eeB4zlUIEj5jF9nYEQFXrgBKmjjvJacxUrj7qEIk/C2125iO+3Uk/1
-         pYeNyu5kxKF3octKjiJf4QBIrBPoZjP/wntyt4VaFqPeiiHl5PjnmNaWRhIxTbXVnvMg
-         +5gDmCzHBL+Cm78ONuPzl4tWQOQldjTUGHrkd0OIULkOEmaVRfj4WU5ikAkAWMTXw4Aw
-         R6FNODwa9/rWbm5pkHXCGOhFeAjxqHq/rwpFjtpAL9U4vWwCR1eUwO5teL/embv7zwGh
-         /3PxtCBWwX970BW+LPZ2+RJbPS/EaTvLUlE0ZHe9uA1npgeMv7Umf4lsxRwK69ao9FrW
-         28UA==
-X-Gm-Message-State: AOAM531cW0CgH4hx6YPadphuH97zAnMisr+vo12wOnM6+fxxdJsbpzJn
-        QH26y+GdBJqALTjT3APcLnntEj6p67iyfC0q+5JsgpPxZ8j/6KFUy4gm+d7IBxeGptFXPAUejqS
-        x6g3W+krd+KZyfxiw8Rh2hO9vxy/i+9y/A5Wvw9P1tD0UjHXCz1t/
-X-Received: by 2002:a81:998c:: with SMTP id q134mr7867245ywg.29.1644703126225;
-        Sat, 12 Feb 2022 13:58:46 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJz6xKJ8Vy5jYdaFIUhwSOxKWkmQhlN9SOfJe/I8QaKuzargWJNwN+xx//QgsOW0nGlZiW3kBq7cjVdtfMAHuco=
-X-Received: by 2002:a81:998c:: with SMTP id q134mr7867239ywg.29.1644703126022;
- Sat, 12 Feb 2022 13:58:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20220212175922.665442-1-omosnace@redhat.com>
-In-Reply-To: <20220212175922.665442-1-omosnace@redhat.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Sat, 12 Feb 2022 22:58:34 +0100
-Message-ID: <CAFqZXNtuZ8C5sSJDktTSWiPJbPxTK7ES21NJYVvFC9N4toehew@mail.gmail.com>
-Subject: Re: [PATCH net v3 0/2] security: fixups for the security hooks in sctp
-To:     network dev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     Xin Long <lucien.xin@gmail.com>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
-        Linux Security Module list 
+        Sun, 13 Feb 2022 02:47:21 -0500
+X-Greylist: delayed 468 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 12 Feb 2022 23:47:15 PST
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [IPv6:2a01:37:3000::53df:4ef0:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 361756267;
+        Sat, 12 Feb 2022 23:47:14 -0800 (PST)
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 5CA532800B3D2;
+        Sun, 13 Feb 2022 08:39:24 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 3FDC22DEC2D; Sun, 13 Feb 2022 08:39:24 +0100 (CET)
+Date:   Sun, 13 Feb 2022 08:39:24 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Aditya Garg <gargaditya08@live.com>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        "joeyli.kernel@gmail.com" <joeyli.kernel@gmail.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "jlee@suse.com" <jlee@suse.com>,
+        "James.Bottomley@hansenpartnership.com" 
+        <James.Bottomley@HansenPartnership.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "mic@digikod.net" <mic@digikod.net>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Orlando Chamberlain <redecorating@protonmail.com>,
+        Aun-Ali Zaidi <admin@kodeit.net>
+Subject: Re: [PATCH v3] efi: Do not import certificates from UEFI Secure Boot
+ for T2 Macs
+Message-ID: <20220213073924.GA7648@wunner.de>
+References: <9D0C961D-9999-4C41-A44B-22FEAF0DAB7F@live.com>
+ <755cffe1dfaf43ea87cfeea124160fe0@AcuMS.aculab.com>
+ <B6D697AB-2AC5-4925-8300-26BBB4AC3D99@live.com>
+ <20103919-A276-4CA6-B1AD-6E45DB58500B@live.com>
+ <7038A8ED-AC52-4966-836B-7B346713AEE9@live.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7038A8ED-AC52-4966-836B-7B346713AEE9@live.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Feb 12, 2022 at 6:59 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> This is a third round of patches to fix the SCTP-SELinux interaction
-> w.r.t. client-side peeloff. The patches are a modified version of Xin
-> Long's patches posted previously, of which only a part was merged (the
-> rest was merged for a while, but was later reverted):
-> https://lore.kernel.org/selinux/cover.1635854268.git.lucien.xin@gmail.com/T/
->
-> In gist, these patches replace the call to
-> security_inet_conn_established() in SCTP with a new hook
-> security_sctp_assoc_established() and implement the new hook in SELinux
-> so that the client-side association labels are set correctly (which
-> matters in case the association eventually gets peeled off into a
-> separate socket).
->
-> Note that other LSMs than SELinux don't implement the SCTP hooks nor
-> inet_conn_established, so they shouldn't be affected by any of these
-> changes.
->
-> These patches were tested by selinux-testsuite [1] with an additional
-> patch [2] and by lksctp-tools func_tests [3].
->
-> Changes since v2:
-> - patches 1 and 2 dropped as they are already in mainline (not reverted)
-> - in patch 3, the return value of security_sctp_assoc_established() is
->   changed to int, the call is moved earlier in the function, and if the
->   hook returns an error value, the packet will now be discarded,
->   aborting the association
-> - patch 4 has been changed a lot - please see the patch description for
->   details on how the hook is now implemented and why
->
-> [1] https://github.com/SELinuxProject/selinux-testsuite/
-> [2] https://patchwork.kernel.org/project/selinux/patch/20211021144543.740762-1-omosnace@redhat.com/
+On Thu, Feb 10, 2022 at 10:47:25AM +0000, Aditya Garg wrote:
+> +/* Apple Macs with T2 Security chip don't support these UEFI variables.
+> + * The T2 chip manages the Secure Boot and does not allow Linux to boot
+> + * if it is turned on. If turned off, an attempt to get certificates
+> + * causes a crash, so we simply return 0 for them in each function.
+> + */
+> +
+> +static const struct dmi_system_id uefi_skip_cert[] = {
+> +
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,2") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,3") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,4") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,2") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,3") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,4") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,2") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir9,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacMini8,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacPro7,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,2") },
+> +	{ }
+> +};
 
-Actually, that patch no longer applies to the current master. Please
-refer to this rebased version instead:
-https://patchwork.kernel.org/project/selinux/patch/20220212213454.689886-1-omosnace@redhat.com/
+The T2 is represented by a PCI device with ID 106B:1802.  I think it
+would be more elegant to sense presence of that device instead of
+hardcoding a long dmi list, i.e.:
 
-> [3] https://github.com/sctp/lksctp-tools/tree/master/src/func_tests
->
-> Ondrej Mosnacek (2):
->   security: add sctp_assoc_established hook
->   security: implement sctp_assoc_established hook in selinux
->
->  Documentation/security/SCTP.rst | 22 ++++----
->  include/linux/lsm_hook_defs.h   |  2 +
->  include/linux/lsm_hooks.h       |  5 ++
->  include/linux/security.h        |  8 +++
->  net/sctp/sm_statefuns.c         |  8 +--
->  security/security.c             |  7 +++
->  security/selinux/hooks.c        | 90 ++++++++++++++++++++++++---------
->  7 files changed, 103 insertions(+), 39 deletions(-)
->
-> --
-> 2.34.1
->
+static bool apple_t2_present(void)
+{
+	struct pci_dev *pdev;
 
--- 
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+	if (!x86_apple_machine)
+		return false;
 
+	pdev = pci_get_device(PCI_VENDOR_ID_APPLE, 0x1802, NULL);
+	if (pdev) {
+		pci_put_dev(pdev);
+		return true;
+	}
+
+	return false;
+}
