@@ -2,138 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B36C43217
-	for <linux-security-module@archiver.kernel.org>; Sun, 13 Feb 2022 20:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802BEC433EF
+	for <linux-security-module@archiver.kernel.org>; Sun, 13 Feb 2022 21:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238210AbiBMU3A (ORCPT
+        id S235428AbiBMVco (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 13 Feb 2022 15:29:00 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49452 "EHLO
+        Sun, 13 Feb 2022 16:32:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbiBMU3A (ORCPT
+        with ESMTP id S230393AbiBMVcn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 13 Feb 2022 15:29:00 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9E16532F5;
-        Sun, 13 Feb 2022 12:28:52 -0800 (PST)
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21DGvpxc003989;
-        Sun, 13 Feb 2022 20:28:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=1MtMvhERKW/mR9bZC4UCu+4spnnvFWcYpq73GFrmb5w=;
- b=dRFeD2md5I9OM0pxrHE4+MlIe8UzD1Cbgog+67ZTsta2DkSbdn+j1ow8jP0TwwfNWu0i
- lfz/cyigVO0RWbbM74k4ZnJjfVZ+xHf/9xvQAymLGFh8n3gtX6CCk8/H+ZaK42I2kH5W
- sjM883Bhqvlozf4yIvwmq+fNMgy6jjOSFYstlgAyDBvMrdSOoWW3xXy/kKA7C3QwAqgR
- 2j2m5HtEbUO0CK+Bhe8SJu5le/MnaxAVj858dG4Ssq6e4kTlhY1G3edx/TN/ez/7iorO
- WkGHhcL3udaHCIz8XVAIQ3cKG6OMY/6f7Hl8t7dxbEHgYut/Y23lo/kSNFpu39JpRLwE Pw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3e75ygamtx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 13 Feb 2022 20:28:09 +0000
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21DKIEUO013580;
-        Sun, 13 Feb 2022 20:28:08 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3e75ygamt1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 13 Feb 2022 20:28:08 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21DKDajt011006;
-        Sun, 13 Feb 2022 20:28:05 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 3e645j7uy1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 13 Feb 2022 20:28:05 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21DKRxw546989822
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 13 Feb 2022 20:27:59 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BE016A4054;
-        Sun, 13 Feb 2022 20:27:59 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 80025A405C;
-        Sun, 13 Feb 2022 20:27:55 +0000 (GMT)
-Received: from sig-9-65-82-84.ibm.com (unknown [9.65.82.84])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 13 Feb 2022 20:27:55 +0000 (GMT)
-Message-ID: <c769b62e02e48e2eb2d50de9db90773f5f0acb5f.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 0/6] KEXEC_SIG with appended signature
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Michal Suchanek <msuchanek@suse.de>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     kexec@lists.infradead.org, Philipp Rudo <prudo@redhat.com>,
-        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
-        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Frank van der Linden <fllinden@amazon.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Nageswara R Sastry <rnsastry@linux.ibm.com>
-Date:   Sun, 13 Feb 2022 15:27:54 -0500
-In-Reply-To: <cover.1641900831.git.msuchanek@suse.de>
-References: <cover.1641900831.git.msuchanek@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: h81vCzl0B_meTK0rXxaElr6QGEtQZSml
-X-Proofpoint-ORIG-GUID: ksDJJzpLGmh8Tui6cxfUTt-rjqhEgdf4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-13_08,2022-02-11_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- mlxscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202130137
+        Sun, 13 Feb 2022 16:32:43 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 34E7854187
+        for <linux-security-module@vger.kernel.org>; Sun, 13 Feb 2022 13:32:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1644787956;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/I6i6PhENZxx4r+JP2+zfrQVFZUTWDwnQ0+wWoj72BQ=;
+        b=Dm0myDofvP/0Qw+jcCiX/MSHSoGGE7hLupea/dTBDU6iYlAtuZh3fD6fwFfoVCcrdevIWq
+        TMeMAFt/PHdMjzthSuyKX9Oo50JxNPWInFjr5N+7r6ibeWNL92n9Yy4/oSck+uP3a7LevP
+        a8aGbMyJaHKIBNGxPds7teD8w33x2LQ=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-605-AwEalUhBMCuOPUr3BdyqDg-1; Sun, 13 Feb 2022 16:32:35 -0500
+X-MC-Unique: AwEalUhBMCuOPUr3BdyqDg-1
+Received: by mail-oi1-f200.google.com with SMTP id s65-20020aca5e44000000b002d38b599a28so3153282oib.10
+        for <linux-security-module@vger.kernel.org>; Sun, 13 Feb 2022 13:32:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/I6i6PhENZxx4r+JP2+zfrQVFZUTWDwnQ0+wWoj72BQ=;
+        b=cTsnYqpPpT17IvLCgjW0gTiBZL9F2tAw63Nb9Eb5YzPVq7DJVbGdC7PAVaSpyaHKWZ
+         LHPQyWwfg3/Q+BmVJnQ8ez8WhH53P/lWoTD4kwiZ9FlBFLCcV2pPCCOBI/rIIbxEXrSf
+         gAF/rUYSo2LHceRJfmQLKvyQ2qhigeDi59VIl9pMW0qKVGJRJhI0ItIYxIUcwS0qR1zc
+         AQNWHsKqJ/m4wfEPVbon2BVNiHuUJp9oG9HFpVwjM+boUEI3ZMkPJruq+NYdlc4N8Iqg
+         kjaMXzV2ikh+vIcnfzYQz9py/C0zrKjAG24DuNyN5GrdN1bv5HQqEX7gkFyyJmhWNAJU
+         rdZA==
+X-Gm-Message-State: AOAM531C4vA6QR1jhaATwsifRaV5ylaxKelg+qBVLNsN1pytUFjc4bRC
+        BloQeCcTPAIn6ou0pjP95/dRuPhKtH8hSF2F7tipHSGRrpdJ0GQHek1wAZxXMwV0vv3KTkUVo1m
+        cWCDyaxcz/FZ4XELZGzayFzEddw5WQ9WAjsWE
+X-Received: by 2002:a05:6870:9513:: with SMTP id u19mr3117034oal.306.1644787954641;
+        Sun, 13 Feb 2022 13:32:34 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwf8m3PM0Q+IByx9JRSjUHD8ba4ddxKwsH+XNREuYDXRmRjodxeXKoo+nFYHjXqi6suXy/d4w==
+X-Received: by 2002:a05:6870:9513:: with SMTP id u19mr3117030oal.306.1644787954514;
+        Sun, 13 Feb 2022 13:32:34 -0800 (PST)
+Received: from localhost.localdomain.com (024-205-208-113.res.spectrum.com. [24.205.208.113])
+        by smtp.gmail.com with ESMTPSA id q4sm11650306otk.39.2022.02.13.13.32.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Feb 2022 13:32:34 -0800 (PST)
+From:   trix@redhat.com
+To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
+        nathan@kernel.org, ndesaulniers@google.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        Tom Rix <trix@redhat.com>
+Subject: [PATCH] apparmor: fix aa_label_asxprint return check
+Date:   Sun, 13 Feb 2022 13:32:28 -0800
+Message-Id: <20220213213228.2806682-1-trix@redhat.com>
+X-Mailer: git-send-email 2.26.3
+MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=trix@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[Cc'ing  Nageswara R Sastry]
+From: Tom Rix <trix@redhat.com>
 
-Hi Michal,
+Clang static analysis reports this issue
+label.c:1802:3: warning: 2nd function call argument
+  is an uninitialized value
+  pr_info("%s", str);
+  ^~~~~~~~~~~~~~~~~~
 
-On Tue, 2022-01-11 at 12:37 +0100, Michal Suchanek wrote:
-> Hello,
-> 
-> This is a refresh of the KEXEC_SIG series.
-> 
-> This adds KEXEC_SIG support on powerpc and deduplicates the code dealing
-> with appended signatures in the kernel.
+str is set from a successful call to aa_label_asxprint(&str, ...)
+On failure a negative value is returned, not a -1.  So change
+the check.
 
-tools/testing/selftests/kexec/test_kexec_file_load.sh probably needs to
-be updated to reflect the new Kconfig support.
+Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
+Signed-off-by: Tom Rix <trix@redhat.com>
+---
+ security/apparmor/label.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-FYI, commit 65e38e32a959 ("selftests/kexec: Enable secureboot tests for
-PowerPC") recently was upstreamed.
-
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index 9eb9a9237926..a658b67c784c 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -1744,7 +1744,7 @@ void aa_label_xaudit(struct audit_buffer *ab, struct aa_ns *ns,
+ 	if (!use_label_hname(ns, label, flags) ||
+ 	    display_mode(ns, label, flags)) {
+ 		len  = aa_label_asxprint(&name, ns, label, flags, gfp);
+-		if (len == -1) {
++		if (len < 0) {
+ 			AA_DEBUG("label print error");
+ 			return;
+ 		}
+@@ -1772,7 +1772,7 @@ void aa_label_seq_xprint(struct seq_file *f, struct aa_ns *ns,
+ 		int len;
+ 
+ 		len = aa_label_asxprint(&str, ns, label, flags, gfp);
+-		if (len == -1) {
++		if (len < 0) {
+ 			AA_DEBUG("label print error");
+ 			return;
+ 		}
+@@ -1795,7 +1795,7 @@ void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
+ 		int len;
+ 
+ 		len = aa_label_asxprint(&str, ns, label, flags, gfp);
+-		if (len == -1) {
++		if (len < 0) {
+ 			AA_DEBUG("label print error");
+ 			return;
+ 		}
 -- 
-thanks,
-
-Mimi
+2.26.3
 
