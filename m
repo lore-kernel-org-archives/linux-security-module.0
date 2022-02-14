@@ -2,142 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 346A7C43217
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Feb 2022 03:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7451AC433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Feb 2022 03:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235215AbiBNDBH (ORCPT
+        id S239893AbiBNDuL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 13 Feb 2022 22:01:07 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43712 "EHLO
+        Sun, 13 Feb 2022 22:50:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbiBNDBG (ORCPT
+        with ESMTP id S229928AbiBNDuK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 13 Feb 2022 22:01:06 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 727AF50B17;
-        Sun, 13 Feb 2022 19:00:59 -0800 (PST)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21E0vod3020461;
-        Mon, 14 Feb 2022 03:00:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=r2BbXLjMEKqcO4K44sN1Gmq3mSVYuMaEX6htwmCbwKQ=;
- b=FzKxvrVo46Ic+1oTo5O0LSnJjNmNU0anGwK+OMeJ1iEzzkPFa+YW0QOE8SClW4lEUJSp
- POSCD6HCPICxpVYs1j5UZ4B3eGBoGzqilCIK2iOUze42ldsF1TR08AVWt9qCPj4eXO94
- FxoTEnZlI9/tcJDHIVawFxBXtm7wai8rsnl4uW8V3t4df3o2OMbr0gGsdRbLP1tmPbm0
- 9lbZ7xkx4ATcPsrdIdrZ7k4j77VcFHpQ7B0/alMJbSva87yapUruIQnGQlDBmYLA+9Rw
- 2zn78xgEg6InGWPeSSbBTqCLlLnZrPwai+kzoJizV6Dzn6Lw0/1x/TF/OHV2aqM+WtqJ kg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3e7d0j9q6j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Feb 2022 03:00:12 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21E2wX4s031336;
-        Mon, 14 Feb 2022 03:00:11 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3e7d0j9q5f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Feb 2022 03:00:11 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21E2vhO9001974;
-        Mon, 14 Feb 2022 03:00:09 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma06ams.nl.ibm.com with ESMTP id 3e645j8y3j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Feb 2022 03:00:09 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21E302P326870176
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Feb 2022 03:00:03 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D167AAE055;
-        Mon, 14 Feb 2022 03:00:02 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 598F6AE045;
-        Mon, 14 Feb 2022 02:59:58 +0000 (GMT)
-Received: from sig-9-65-82-84.ibm.com (unknown [9.65.82.84])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 14 Feb 2022 02:59:58 +0000 (GMT)
-Message-ID: <cff97dbe262919ff709a5ad2c4af6a702cc72a95.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 2/6] powerpc/kexec_file: Add KEXEC_SIG support.
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Michal Suchanek <msuchanek@suse.de>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     kexec@lists.infradead.org, Philipp Rudo <prudo@redhat.com>,
-        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
-        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Frank van der Linden <fllinden@amazon.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>,
-        linux-security-module@vger.kernel.org
-Date:   Sun, 13 Feb 2022 21:59:57 -0500
-In-Reply-To: <d95f7c6865bcad5ee37dcbec240e79aa742f5e1d.1641900831.git.msuchanek@suse.de>
-References: <cover.1641900831.git.msuchanek@suse.de>
-         <d95f7c6865bcad5ee37dcbec240e79aa742f5e1d.1641900831.git.msuchanek@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
+        Sun, 13 Feb 2022 22:50:10 -0500
+X-Greylist: delayed 572 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 13 Feb 2022 19:50:03 PST
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A6956212;
+        Sun, 13 Feb 2022 19:50:03 -0800 (PST)
+Received: from [192.168.192.153] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 6C8E13FCCC;
+        Mon, 14 Feb 2022 03:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1644810027;
+        bh=6JLxTZevHMlYVeby6Lh6UMpeElkbmngwOfI8fZ79xvs=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=vbNM+WcB0HwKMysA+G3Flz3Xwz9BisL3jgsF+SgUnRpMhPqpcy1L6cQEjdSIKiXb2
+         bpmU7iCYAzm+H5DaTXTgbi4K2ql2nKoWeX8YcCEsctpwtW0COIvPdEPvkqFWxBMupb
+         8j2VSnMdN4leF6TM/dpkGSmq8LlBUth3R9YPRdmd+pSlbR7zLQzwsut/+wgAdTz77j
+         +TM9bK7Xs8Tb8m41ljhuihvpucpKV6U9gEg3ADBgWX/AhVww6UK2bn4VMwVQJ3t771
+         HkQQk+PnG1e4HLzoOgf6TWrXi1zjsu7tzbU+qlqrluaj5P8BIELViE2RN4YIqO+zZe
+         WeHJHsAjq9f0Q==
+Message-ID: <f42b0010-3a7b-e781-5b7e-ac975c36c102@canonical.com>
+Date:   Sun, 13 Feb 2022 19:40:18 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] apparmor: fix aa_label_asxprint return check
+Content-Language: en-US
+To:     trix@redhat.com, jmorris@namei.org, serge@hallyn.com,
+        nathan@kernel.org, ndesaulniers@google.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20220213213228.2806682-1-trix@redhat.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20220213213228.2806682-1-trix@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 4jFqhY0qCIvizxCmPiEO2fRRpmUYxZuY
-X-Proofpoint-GUID: dsEowZUA2zzhFinigDUJkPWd12uW6-s2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-14_01,2022-02-11_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=946
- adultscore=0 spamscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202140016
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Michal,
+On 2/13/22 13:32, trix@redhat.com wrote:
+> From: Tom Rix <trix@redhat.com>
+> 
+> Clang static analysis reports this issue
+> label.c:1802:3: warning: 2nd function call argument
+>   is an uninitialized value
+>   pr_info("%s", str);
+>   ^~~~~~~~~~~~~~~~~~
+> 
+> str is set from a successful call to aa_label_asxprint(&str, ...)
+> On failure a negative value is returned, not a -1.  So change
+> the check.
+> 
+> Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
+> Signed-off-by: Tom Rix <trix@redhat.com>
 
-On Tue, 2022-01-11 at 12:37 +0100, Michal Suchanek wrote:
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index dea74d7717c0..1cde9b6c5987 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -560,6 +560,22 @@ config KEXEC_FILE
->  config ARCH_HAS_KEXEC_PURGATORY
->         def_bool KEXEC_FILE
+Acked-by: John Johansen <john.johansen@canonical.com>
+
+thanks I have pulled this into my tree
+
+> ---
+>  security/apparmor/label.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+> index 9eb9a9237926..a658b67c784c 100644
+> --- a/security/apparmor/label.c
+> +++ b/security/apparmor/label.c
+> @@ -1744,7 +1744,7 @@ void aa_label_xaudit(struct audit_buffer *ab, struct aa_ns *ns,
+>  	if (!use_label_hname(ns, label, flags) ||
+>  	    display_mode(ns, label, flags)) {
+>  		len  = aa_label_asxprint(&name, ns, label, flags, gfp);
+> -		if (len == -1) {
+> +		if (len < 0) {
+>  			AA_DEBUG("label print error");
+>  			return;
+>  		}
+> @@ -1772,7 +1772,7 @@ void aa_label_seq_xprint(struct seq_file *f, struct aa_ns *ns,
+>  		int len;
 >  
-> +config KEXEC_SIG
-> +       bool "Verify kernel signature during kexec_file_load() syscall"
-> +       depends on KEXEC_FILE && MODULE_SIG_FORMAT
-> +       help
-> +         This option makes kernel signature verification mandatory for
-> +         the kexec_file_load() syscall.
-
-When KEXEC_SIG is enabled on other architectures, IMA does not define a
-kexec 'appraise' policy rule.  Refer to the policy rules in
-security/ima/ima_efi.c.  Similarly the kexec 'appraise' policy rule in
-arch/powerpc/kernel/ima_policy.c should not be defined.
-
--- 
-thanks,
-
-Mimi
+>  		len = aa_label_asxprint(&str, ns, label, flags, gfp);
+> -		if (len == -1) {
+> +		if (len < 0) {
+>  			AA_DEBUG("label print error");
+>  			return;
+>  		}
+> @@ -1795,7 +1795,7 @@ void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
+>  		int len;
+>  
+>  		len = aa_label_asxprint(&str, ns, label, flags, gfp);
+> -		if (len == -1) {
+> +		if (len < 0) {
+>  			AA_DEBUG("label print error");
+>  			return;
+>  		}
 
