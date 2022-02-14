@@ -2,111 +2,62 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7451AC433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Feb 2022 03:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9757C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Feb 2022 09:10:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239893AbiBNDuL (ORCPT
+        id S242665AbiBNJKq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 13 Feb 2022 22:50:11 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36358 "EHLO
+        Mon, 14 Feb 2022 04:10:46 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229928AbiBNDuK (ORCPT
+        with ESMTP id S231482AbiBNJKo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 13 Feb 2022 22:50:10 -0500
-X-Greylist: delayed 572 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 13 Feb 2022 19:50:03 PST
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A6956212;
-        Sun, 13 Feb 2022 19:50:03 -0800 (PST)
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 6C8E13FCCC;
-        Mon, 14 Feb 2022 03:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644810027;
-        bh=6JLxTZevHMlYVeby6Lh6UMpeElkbmngwOfI8fZ79xvs=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=vbNM+WcB0HwKMysA+G3Flz3Xwz9BisL3jgsF+SgUnRpMhPqpcy1L6cQEjdSIKiXb2
-         bpmU7iCYAzm+H5DaTXTgbi4K2ql2nKoWeX8YcCEsctpwtW0COIvPdEPvkqFWxBMupb
-         8j2VSnMdN4leF6TM/dpkGSmq8LlBUth3R9YPRdmd+pSlbR7zLQzwsut/+wgAdTz77j
-         +TM9bK7Xs8Tb8m41ljhuihvpucpKV6U9gEg3ADBgWX/AhVww6UK2bn4VMwVQJ3t771
-         HkQQk+PnG1e4HLzoOgf6TWrXi1zjsu7tzbU+qlqrluaj5P8BIELViE2RN4YIqO+zZe
-         WeHJHsAjq9f0Q==
-Message-ID: <f42b0010-3a7b-e781-5b7e-ac975c36c102@canonical.com>
-Date:   Sun, 13 Feb 2022 19:40:18 -0800
+        Mon, 14 Feb 2022 04:10:44 -0500
+X-Greylist: delayed 599 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 14 Feb 2022 01:10:36 PST
+Received: from mail.ruletown.pl (mail.ruletown.pl [192.71.213.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCC075FF3A
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Feb 2022 01:10:36 -0800 (PST)
+Received: by mail.ruletown.pl (Postfix, from userid 1001)
+        id C3E5F40B8B; Mon, 14 Feb 2022 09:50:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ruletown.pl; s=mail;
+        t=1644828649; bh=VNuNg2MzRkdVVfp4kSZZW7SxoKEFGotk5GCW4ktyH/8=;
+        h=Date:From:To:Subject:From;
+        b=WYA2nY6wzLOUqxdQZuBojFsm7+yK/PYGMGQXkpBqBGCfR40CoOKGezF2wTemERn+4
+         iTs0aicPLpcSiFKahQtAD4/BX0QKz3DDNj8ISL6DCgeegFrLiSvVNK9K1KENqr7oUP
+         6SqUSt9TS78JbCpjw/18droMlGEAR6LwVpA2a4TaF0i6Jm5RHvdBifwjkYF3LoP3tR
+         +RJ/WGzKWejJ7TBAgWOcMukZE5S15pMy0fr+8IRtqL9N/tYUsuEn1YJTNO3erj4R8w
+         TkW1vm75vj9nT+TUxj7iAUahQUd29Kt4pW2M26mhbiOMbXUfLn8e7ghX0F4b4suoXE
+         ZbDIUPtWqZj8g==
+Received: by mail.ruletown.pl for <linux-security-module@vger.kernel.org>; Mon, 14 Feb 2022 08:50:47 GMT
+Message-ID: <20220214084500-0.1.v.20az.0.urtbpd09z1@ruletown.pl>
+Date:   Mon, 14 Feb 2022 08:50:47 GMT
+From:   "Filip Ostrowski" <filip.ostrowski@ruletown.pl>
+To:     <linux-security-module@vger.kernel.org>
+Subject: W sprawie samochodu
+X-Mailer: mail.ruletown.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] apparmor: fix aa_label_asxprint return check
-Content-Language: en-US
-To:     trix@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        nathan@kernel.org, ndesaulniers@google.com
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20220213213228.2806682-1-trix@redhat.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20220213213228.2806682-1-trix@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/13/22 13:32, trix@redhat.com wrote:
-> From: Tom Rix <trix@redhat.com>
-> 
-> Clang static analysis reports this issue
-> label.c:1802:3: warning: 2nd function call argument
->   is an uninitialized value
->   pr_info("%s", str);
->   ^~~~~~~~~~~~~~~~~~
-> 
-> str is set from a successful call to aa_label_asxprint(&str, ...)
-> On failure a negative value is returned, not a -1.  So change
-> the check.
-> 
-> Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
-> Signed-off-by: Tom Rix <trix@redhat.com>
+Dzie=C5=84 dobry,
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
+, je=C5=9Bli chodzi o system monitoringu GPS.
 
-thanks I have pulled this into my tree
+Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
+e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
+a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
 
-> ---
->  security/apparmor/label.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-> index 9eb9a9237926..a658b67c784c 100644
-> --- a/security/apparmor/label.c
-> +++ b/security/apparmor/label.c
-> @@ -1744,7 +1744,7 @@ void aa_label_xaudit(struct audit_buffer *ab, struct aa_ns *ns,
->  	if (!use_label_hname(ns, label, flags) ||
->  	    display_mode(ns, label, flags)) {
->  		len  = aa_label_asxprint(&name, ns, label, flags, gfp);
-> -		if (len == -1) {
-> +		if (len < 0) {
->  			AA_DEBUG("label print error");
->  			return;
->  		}
-> @@ -1772,7 +1772,7 @@ void aa_label_seq_xprint(struct seq_file *f, struct aa_ns *ns,
->  		int len;
->  
->  		len = aa_label_asxprint(&str, ns, label, flags, gfp);
-> -		if (len == -1) {
-> +		if (len < 0) {
->  			AA_DEBUG("label print error");
->  			return;
->  		}
-> @@ -1795,7 +1795,7 @@ void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
->  		int len;
->  
->  		len = aa_label_asxprint(&str, ns, label, flags, gfp);
-> -		if (len == -1) {
-> +		if (len < 0) {
->  			AA_DEBUG("label print error");
->  			return;
->  		}
+Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
+dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
+szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
+mne znaczenie.
 
+Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
+b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
+
+
+Pozdrawiam,
+Filip Ostrowski
