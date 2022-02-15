@@ -2,126 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE5AC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Feb 2022 09:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEF0C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Feb 2022 11:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236004AbiBOJmk (ORCPT
+        id S237020AbiBOLRc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Feb 2022 04:42:40 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38316 "EHLO
+        Tue, 15 Feb 2022 06:17:32 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbiBOJmj (ORCPT
+        with ESMTP id S234215AbiBOLRb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Feb 2022 04:42:39 -0500
-X-Greylist: delayed 68 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Feb 2022 01:42:27 PST
-Received: from re-prd-fep-044.btinternet.com (mailomta25-re.btinternet.com [213.120.69.118])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F6D2C678;
-        Tue, 15 Feb 2022 01:42:27 -0800 (PST)
-Received: from re-prd-rgout-001.btmx-prd.synchronoss.net ([10.2.54.4])
-          by re-prd-fep-047.btinternet.com with ESMTP
-          id <20220215094117.GTWD23513.re-prd-fep-047.btinternet.com@re-prd-rgout-001.btmx-prd.synchronoss.net>;
-          Tue, 15 Feb 2022 09:41:17 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1644918077; 
-        bh=01Reov67Ak1ygfT60tyjXg/E5IFhGxMI7kxwA5g4ZyM=;
-        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:MIME-Version;
-        b=onHcTnnrW4WCnKRqdkxuBRd07GbPtsX66B+GrLDMfQwWsohnkqMBz2DkaAIDBQzieWhz1toiEEuRGc7RmAHkp7Jd3TFlsSNPTS1dkdW91mvZ5+MsIgUzMElKeLyyQo1rgtB7eI/vvfQkQRjp9DEQHZNG2TfS2/y4NulukhnJHaT9FLZ+UOoT3WFuIsOTjX8Uf3OqpTEeuIW+EE4ZLYrRZ1eEC4Bb0W1nxIXVOAx7t80QUTfvvLkaLUC9HrRMVCOqldclPmbEccqvfHSCXSTRgbXOCyh3hlMZFbxjb99A6TpDGIQhX05CpdWTqBYa74nZ27GsKvaUoYybDewHHu6gjQ==
-Authentication-Results: btinternet.com;
-    auth=pass (LOGIN) smtp.auth=richard_c_haines@btinternet.com;
-    bimi=skipped
-X-SNCR-Rigid: 613A8CC314A977E6
-X-Originating-IP: [81.154.227.201]
-X-OWM-Source-IP: 81.154.227.201 (GB)
-X-OWM-Env-Sender: richard_c_haines@btinternet.com
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedvvddrjeeggddtiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuggftrfgrthhtvghrnhepueeitdegtdegvdffjeetfeeffedvgedvteetffeuueekueejkeevkefgfefffedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecukfhppeekuddrudehgedrvddvjedrvddtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhephhgvlhhopegludelvddrudeikedruddrudelkegnpdhinhgvthepkedurdduheegrddvvdejrddvtddupdhmrghilhhfrhhomheprhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgt
-        thhpsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtihgvnhdrgihinhesghhmrghilhdrtghomhdprhgtphhtthhopehmrghrtggvlhhordhlvghithhnvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhhohhrmhgrnhesthhugigurhhivhgvrhdrtghomhdprhgtphhtthhopehomhhoshhnrggtvgesrhgvughhrghtrdgtohhmpdhrtghpthhtohepphgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthhopehsvghlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhihrghsvghvihgthhesghhmrghilhdrtghomh
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-X-SNCR-hdrdom: btinternet.com
-Received: from [192.168.1.198] (81.154.227.201) by re-prd-rgout-001.btmx-prd.synchronoss.net (5.8.716.04) (authenticated as richard_c_haines@btinternet.com)
-        id 613A8CC314A977E6; Tue, 15 Feb 2022 09:41:17 +0000
-Message-ID: <cddf0d41fdc23b594780012df367ad8bdd9dc135.camel@btinternet.com>
-Subject: Re: [PATCH net v3 0/2] security: fixups for the security hooks in
- sctp
-From:   Richard Haines <richard_c_haines@btinternet.com>
-To:     Ondrej Mosnacek <omosnace@redhat.com>, netdev@vger.kernel.org,
-        davem@davemloft.net, kuba@kernel.org, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>
-Cc:     Xin Long <lucien.xin@gmail.com>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        linux-sctp@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 15 Feb 2022 09:41:17 +0000
-In-Reply-To: <20220212175922.665442-1-omosnace@redhat.com>
-References: <20220212175922.665442-1-omosnace@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 15 Feb 2022 06:17:31 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7F4107D07;
+        Tue, 15 Feb 2022 03:17:22 -0800 (PST)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21FAT8TJ002362;
+        Tue, 15 Feb 2022 11:16:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=7/+NZcf/3caTHbY6f91RIKORInAbuuiacwvRzcQa77o=;
+ b=ryn961nZHZ/3ntt4lHSqczxQc9UIibHxqjWBW/pTXlsHCZM9/Kbck6MZ5t2tumfea9Xv
+ NfHpy+NI9Ok42Gqar8cRPEwr0hGbHVtA5sfjBiD5YUqopeoAKLZGURj+6pREj3ulHRxq
+ GLPGytK+QWB/Cs7C+5olxpRu2BLJaObC08XUfFBCXPuqYKKrR6d+pfZhZhoolsyc6bQb
+ cnqIC1oYW6+4I9fBB0CgojD/zICPg4IPPqcgrurR23f7DzIgJoca8/D4YyTerzL6NNPc
+ Lw7yKgtdtSP2ZbdDl1YUpw2dqQ9bErCDcZv5AkQCwCh2QZspGFOQfSNCUePlctnF8DgF 4Q== 
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3e8afcs53w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Feb 2022 11:16:59 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21FBDZjX030692;
+        Tue, 15 Feb 2022 11:16:57 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06fra.de.ibm.com with ESMTP id 3e645jn7h8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 15 Feb 2022 11:16:57 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21FB6X0q47317352
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Feb 2022 11:06:33 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 74AC2A4051;
+        Tue, 15 Feb 2022 11:16:54 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AAAA3A405D;
+        Tue, 15 Feb 2022 11:16:52 +0000 (GMT)
+Received: from sig-9-65-71-246.ibm.com (unknown [9.65.71.246])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 15 Feb 2022 11:16:52 +0000 (GMT)
+Message-ID: <a769e5b91b573691ba1c76545b2b62d1b7b48e4c.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Calculate digest in ima_inode_hash() if not
+ available
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        Florent Revest <revest@chromium.org>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 15 Feb 2022 06:16:52 -0500
+In-Reply-To: <311b5d0b3b824c548a4032a76a408944@huawei.com>
+References: <20220211104828.4061334-1-roberto.sassu@huawei.com>
+         <537635732d9cbcc42bcf7be5ed932d284b03d39f.camel@linux.ibm.com>
+         <cc6bcb7742dc432ba990ee38b5909496@huawei.com>
+         <36f85113f181f78eda3576823bd92be3f9cd1802.camel@linux.ibm.com>
+         <311b5d0b3b824c548a4032a76a408944@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: rwMMYNIQidnzCGaL7FZviIusmsaDwFSF
+X-Proofpoint-ORIG-GUID: rwMMYNIQidnzCGaL7FZviIusmsaDwFSF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-15_04,2022-02-14_04,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 malwarescore=0 clxscore=1015
+ mlxscore=0 suspectscore=0 mlxlogscore=999 impostorscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2201110000 definitions=main-2202150063
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 2022-02-12 at 18:59 +0100, Ondrej Mosnacek wrote:
-> This is a third round of patches to fix the SCTP-SELinux interaction
-> w.r.t. client-side peeloff. The patches are a modified version of Xin
-> Long's patches posted previously, of which only a part was merged
-> (the
-> rest was merged for a while, but was later reverted):
-> https://lore.kernel.org/selinux/cover.1635854268.git.lucien.xin@gmail.com/T/
+On Tue, 2022-02-15 at 08:00 +0000, Roberto Sassu wrote:
+> > >
+> > > I found that just checking that iint->ima_hash is not NULL is not enough
+> > > (ima_inode_hash() might still return the old digest after a file write).
+> > > Should I replace that check with !(iint->flags & IMA_COLLECTED)?
+> > > Or should I do only for ima_file_hash() and recalculate the digest
+> > > if necessary?
+> > 
+> > Updating the file hash after each write would really impact IMA
+> > performance.  If you really want to detect any file change, no matter
+> > how frequently it occurs, your best bet would be to track i_generation
+> > and i_version.  Stefan is already adding "i_generation" for IMA
+> > namespacing.
 > 
-> In gist, these patches replace the call to
-> security_inet_conn_established() in SCTP with a new hook
-> security_sctp_assoc_established() and implement the new hook in
-> SELinux
-> so that the client-side association labels are set correctly (which
-> matters in case the association eventually gets peeled off into a
-> separate socket).
-> 
-> Note that other LSMs than SELinux don't implement the SCTP hooks nor
-> inet_conn_established, so they shouldn't be affected by any of these
-> changes.
-> 
-> These patches were tested by selinux-testsuite [1] with an additional
-> patch [2] and by lksctp-tools func_tests [3].
-> 
-> Changes since v2:
-> - patches 1 and 2 dropped as they are already in mainline (not
-> reverted)
-> - in patch 3, the return value of security_sctp_assoc_established()
-> is
->   changed to int, the call is moved earlier in the function, and if
-> the
->   hook returns an error value, the packet will now be discarded,
->   aborting the association
-> - patch 4 has been changed a lot - please see the patch description
-> for
->   details on how the hook is now implemented and why
-> 
-> [1] https://github.com/SELinuxProject/selinux-testsuite/
-> [2]
-> https://patchwork.kernel.org/project/selinux/patch/20211021144543.740762-1-omosnace@redhat.com/
-> [3] https://github.com/sctp/lksctp-tools/tree/master/src/func_tests
-> 
-> Ondrej Mosnacek (2):
->   security: add sctp_assoc_established hook
->   security: implement sctp_assoc_established hook in selinux
-> 
->  Documentation/security/SCTP.rst | 22 ++++----
->  include/linux/lsm_hook_defs.h   |  2 +
->  include/linux/lsm_hooks.h       |  5 ++
->  include/linux/security.h        |  8 +++
->  net/sctp/sm_statefuns.c         |  8 +--
->  security/security.c             |  7 +++
->  security/selinux/hooks.c        | 90 ++++++++++++++++++++++++-------
-> --
->  7 files changed, 103 insertions(+), 39 deletions(-)
-> 
+> I just wanted the ability to get a fresh digest after a file opened
+> for writing is closed. Since in my use case I would not use an IMA
+> policy, that would not be a problem.
 
-Built this patchset on kernel 5.17-rc4 with no problems.
-Tested using [PATCH testsuite v3] tests/sctp: add client peeloff tests
+As I recall, the __fput() delay was to prevent locking ordering issues
+- inode, iint.
 
-Tested-by: Richard Haines <richard_c_haines@btinternet.com>
+-- 
+thanks,
 
+Mimi
 
