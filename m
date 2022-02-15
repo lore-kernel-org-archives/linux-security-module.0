@@ -2,117 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEE8C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Feb 2022 19:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA21DC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Feb 2022 20:03:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243791AbiBOTkq (ORCPT
+        id S243956AbiBOUD3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Feb 2022 14:40:46 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45060 "EHLO
+        Tue, 15 Feb 2022 15:03:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243788AbiBOTkh (ORCPT
+        with ESMTP id S243942AbiBOUD0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Feb 2022 14:40:37 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 926A2DEC8;
-        Tue, 15 Feb 2022 11:40:21 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 2966E212BF;
-        Tue, 15 Feb 2022 19:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1644954020; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=68fQOLkRItMmWbD/0T7ms41beY9KItQEQd86yglltcA=;
-        b=aKlJB4z2LkeDmU9Wa0mMaGs6IIOIRehwJLlbsagMlfiCcxE4Vmg8XMaKdc69NsJMOTP0kQ
-        6m3gUONyR41Y1JsLuaRlHdm5T0T5CgDHBD4NKdU5H0EGbKgFCfdFIyPtAQQ9PdZVpMEtkw
-        yrYtZluMYfIUqDwYid34Yoy17UJjae0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1644954020;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=68fQOLkRItMmWbD/0T7ms41beY9KItQEQd86yglltcA=;
-        b=zA2og9PY6JLNwNbmuaeKtddqBDmkioJbLp4aWfNO14CRENxwEHInpG/XdjAayhh6IrPC7d
-        aDUWFnUPxNtd9/AA==
-Received: from kitsune.suse.cz (kitsune.suse.cz [10.100.12.127])
-        by relay2.suse.de (Postfix) with ESMTP id E3D36A3B88;
-        Tue, 15 Feb 2022 19:40:19 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Philipp Rudo <prudo@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Alexander Egorenkov <egorenar@linux.ibm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Dave Young <dyoung@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Kairui Song <kasong@redhat.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-modules@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        stable@kernel.org
-Subject: [PATCH 4/4] module, KEYS: Make use of platform keyring for signature verification
-Date:   Tue, 15 Feb 2022 20:39:41 +0100
-Message-Id: <840433bc93a58d6dfc4d96c34c0c3b158a0e669d.1644953683.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1644953683.git.msuchanek@suse.de>
-References: <cover.1644953683.git.msuchanek@suse.de>
+        Tue, 15 Feb 2022 15:03:26 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648ED74DF9
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Feb 2022 12:03:04 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id w3so132095edu.8
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Feb 2022 12:03:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=56tbQJVv90RABsQ0i0ptzrDmdvS83ZrjWE0KJ5/Juw8=;
+        b=sFifZ3ibKjhu/WnpE7XgZp/C2bXZ7ift+MmeAVSa1hznUw6Wm07gSdft5d2fUe2Vn2
+         RjiRCYgEeTYyWMTxD06Z5LMTyKQZ5RluV4mRPZ8hVkTVElWuISequYHNfnVgs1JVpq+h
+         xxaHe/Iv+2TTmvgqWPO0LZnQEBReR69V0AMuYUHxpEJAkG1St+MhQIgNHgZL37cOQaFq
+         LwC5kUW7OHpEbm/5XIti6ajkRvwQWpQC5DoqvzT+ZOX325bSVD1WtjOMcq8+I+dZAQAv
+         QXaY6x7vFTvffge/EC02QtULgmF6djGu6x5pF2BUtiqlB5PHHwiNmQmkGDrJbIl2VAHu
+         4iAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=56tbQJVv90RABsQ0i0ptzrDmdvS83ZrjWE0KJ5/Juw8=;
+        b=TZ0X8QR9x9XUY9esfCmm33fR7jmdp9TD+/B2RPzghUjCxcdq8NIz/DsTjflQx9dMhX
+         blIKy7y4SUfsSnGlRKnrDR3FFD/11Bq6YVBCG4PT3of28yvMGH2tgrg8eLrCJ/pN/1JU
+         JZtImd26aKfOaW5cvLKRRySkOtIV46tEHaYIFVepew0dT69it6VOgrOyBc9MlvZ9v5lS
+         K4Bzn6/fks66W+vuFPdrnl3MqzGdqXohbQpSI4L6JjqI19ktn4jdUG3HXfkpzrY9B4rt
+         bixNd3C3cFWBl/QyfZNFkJ463A7LzRBdV5Y7x16Bs1mg2QKW7YCjqW2v1DxLXF7DHErQ
+         3OQw==
+X-Gm-Message-State: AOAM531avNpy0CzIC8EOJo2KrsY2Uvk7JWNHEnCLddc83yq8+qSq54W+
+        /ZC81WEqj2cQyq01OOABHSnBBte3FxTx/qshP3wk
+X-Google-Smtp-Source: ABdhPJwSh+Lbt7VtTxO+bjCuU4YBvFJI07pOtqxY+X5Ac/RcvpsJaiEfY8EBo10iskp6ziZLHDs9nkyLfRPbTaESgFg=
+X-Received: by 2002:a05:6402:35ca:: with SMTP id z10mr606628edc.43.1644955382916;
+ Tue, 15 Feb 2022 12:03:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <20220212175922.665442-1-omosnace@redhat.com> <20220212175922.665442-3-omosnace@redhat.com>
+ <CAHC9VhT90617FoqQJBCrDQ8gceVVA6a1h74h6T4ZOwNk6RVB3g@mail.gmail.com>
+ <20220214165436.1f6a9987@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+ <CAFSqH7zC-4Ti_mzK4ZrpCVtNVCxD8h729MezG2avJLGJ2JrMTg@mail.gmail.com> <CADvbK_e+TUuWhBQz1NPPS2aE59tzPKXPfUogrZ526hvm6OvY9Q@mail.gmail.com>
+In-Reply-To: <CADvbK_e+TUuWhBQz1NPPS2aE59tzPKXPfUogrZ526hvm6OvY9Q@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 15 Feb 2022 15:02:51 -0500
+Message-ID: <CAHC9VhSHxk0MUR1krpmbot6iG-vqH48sRgKOnJQ0LsFTs6Jvqg@mail.gmail.com>
+Subject: Re: [PATCH net v3 2/2] security: implement sctp_assoc_established
+ hook in selinux
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        SElinux list <selinux@vger.kernel.org>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "open list:SCTP PROTOCOL" <linux-sctp@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Prashanth Prahlad <pprahlad@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Commit 278311e417be ("kexec, KEYS: Make use of platform keyring for signature verify")
-adds support for use of platform keyring in kexec verification but
-support for modules is missing.
+On Mon, Feb 14, 2022 at 11:13 PM Xin Long <lucien.xin@gmail.com> wrote:
+> Looks okay to me.
+>
+> The difference from the old one is that: with
+> selinux_sctp_process_new_assoc() called in
+> selinux_sctp_assoc_established(), the client sksec->peer_sid is using
+> the first asoc's peer_secid, instead of the latest asoc's peer_secid.
+> And not sure if it will cause any problems when doing the extra check
+> sksec->peer_sid != asoc->peer_secid for the latest asoc and *returns
+> err*. But I don't know about selinux, I guess there must be a reason
+> from selinux side.
 
-Add support for verification of modules with keys from platform keyring
-as well.
+Generally speaking we don't want to change any SELinux socket labels
+once it has been created.  While the peer_sid is a bit different,
+changing it after userspace has access to the socket could be
+problematic.  In the case where the peer_sid differs between the two
+we have a permission check which allows policy to control this
+behavior which seems like the best option at this point.
 
-Fixes: 219a3e8676f3 ("integrity, KEYS: add a reference to platform keyring")
-Cc: linux-modules@vger.kernel.org
-Cc: keyrings@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: stable@kernel.org
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- kernel/module_signing.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+> I will ACK on patch 0/2.
 
-diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-index 8723ae70ea1f..5e1624294874 100644
---- a/kernel/module_signing.c
-+++ b/kernel/module_signing.c
-@@ -38,8 +38,14 @@ int mod_verify_sig(const void *mod, struct load_info *info)
- 	modlen -= sig_len + sizeof(ms);
- 	info->len = modlen;
- 
--	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
--				      VERIFY_USE_SECONDARY_KEYRING,
--				      VERIFYING_MODULE_SIGNATURE,
--				      NULL, NULL);
-+	ret = verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-+				     VERIFY_USE_SECONDARY_KEYRING,
-+				     VERIFYING_MODULE_SIGNATURE,
-+				     NULL, NULL);
-+	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING))
-+		ret = verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-+					     VERIFY_USE_PLATFORM_KEYRING,
-+					     VERIFYING_MODULE_SIGNATURE,
-+					     NULL, NULL);
-+	return ret;
- }
+Thanks, I'm going to go ahead and merge these two patches into
+selinux/next right now.
+
 -- 
-2.31.1
-
+paul-moore.com
