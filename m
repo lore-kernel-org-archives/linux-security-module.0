@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D308CC4167D
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Feb 2022 12:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5E5C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Feb 2022 12:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237823AbiBOMmK (ORCPT
+        id S237850AbiBOMm3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Feb 2022 07:42:10 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50176 "EHLO
+        Tue, 15 Feb 2022 07:42:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237771AbiBOMlw (ORCPT
+        with ESMTP id S237807AbiBOMmI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Feb 2022 07:41:52 -0500
+        Tue, 15 Feb 2022 07:42:08 -0500
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0474C1400B;
-        Tue, 15 Feb 2022 04:41:41 -0800 (PST)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Jyggf2L8zz6803S;
-        Tue, 15 Feb 2022 20:41:18 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E300140D1;
+        Tue, 15 Feb 2022 04:41:43 -0800 (PST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Jygg61fqbz67y8P;
+        Tue, 15 Feb 2022 20:40:50 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Tue, 15 Feb 2022 13:41:39 +0100
+ 15.1.2308.21; Tue, 15 Feb 2022 13:41:41 +0100
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <shuah@kernel.org>, <ast@kernel.org>,
         <daniel@iogearbox.net>, <andrii@kernel.org>, <kpsingh@kernel.org>,
@@ -32,9 +32,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-kselftest@vger.kernel.org>, <netdev@vger.kernel.org>,
         <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 2/6] ima: Always return a file measurement in ima_file_hash()
-Date:   Tue, 15 Feb 2022 13:40:38 +0100
-Message-ID: <20220215124042.186506-3-roberto.sassu@huawei.com>
+Subject: [PATCH v2 4/6] selftests/bpf: Add test for bpf_ima_file_hash()
+Date:   Tue, 15 Feb 2022 13:40:40 +0100
+Message-ID: <20220215124042.186506-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220215124042.186506-1-roberto.sassu@huawei.com>
 References: <20220215124042.186506-1-roberto.sassu@huawei.com>
@@ -48,112 +48,101 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-__ima_inode_hash() checks if a digest has been already calculated by
-looking for the integrity_iint_cache structure associated to the passed
-inode.
-
-Users of ima_file_hash() (e.g. eBPF) might be interested in obtaining the
-information without having to setup an IMA policy so that the digest is
-always available at the time they call this function.
-
-Call ima_collect_measurement() in __ima_inode_hash(), if the file
-descriptor is available (passed by ima_file_hash()), and store the file
-measurement in a temporary integrity_iint_cache structure.
-
-This change does not cause memory usage increase, due to using the
-temporary integrity_iint_cache structure, and due to freeing the
-ima_digest_data structure inside integrity_iint_cache before exiting from
-__ima_inode_hash().
-
-For compatibility reasons, the behavior of ima_inode_hash() remains
-unchanged.
+Modify the existing IMA test to call bpf_ima_file_hash() and update the
+expected result accordingly.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_main.c | 36 +++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 11 deletions(-)
+ .../selftests/bpf/prog_tests/test_ima.c       | 29 ++++++++++++++++---
+ tools/testing/selftests/bpf/progs/ima.c       | 10 +++++--
+ 2 files changed, 33 insertions(+), 6 deletions(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 946ba8a12eab..3562a212a5ba 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -520,15 +520,27 @@ int ima_file_check(struct file *file, int mask)
- }
- EXPORT_SYMBOL_GPL(ima_file_check);
+diff --git a/tools/testing/selftests/bpf/prog_tests/test_ima.c b/tools/testing/selftests/bpf/prog_tests/test_ima.c
+index 97d8a6f84f4a..62bf0e830453 100644
+--- a/tools/testing/selftests/bpf/prog_tests/test_ima.c
++++ b/tools/testing/selftests/bpf/prog_tests/test_ima.c
+@@ -13,9 +13,10 @@
  
--static int __ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
-+static int __ima_inode_hash(struct inode *inode, struct file *file, char *buf,
-+			    size_t buf_size)
+ #include "ima.skel.h"
+ 
+-static int run_measured_process(const char *measured_dir, u32 *monitored_pid)
++static int run_measured_process(const char *measured_dir, u32 *monitored_pid,
++				bool *use_ima_file_hash)
  {
--	struct integrity_iint_cache *iint;
--	int hash_algo;
-+	struct integrity_iint_cache *iint = NULL, tmp_iint;
-+	int rc, hash_algo;
+-	int child_pid, child_status;
++	int err, child_pid, child_status;
  
--	if (!ima_policy_flag)
--		return -EOPNOTSUPP;
-+	if (ima_policy_flag)
-+		iint = integrity_iint_find(inode);
-+
-+	if (!iint && file) {
-+		memset(&tmp_iint, 0, sizeof(tmp_iint));
-+		tmp_iint.inode = inode;
-+
-+		rc = ima_collect_measurement(&tmp_iint, file, NULL, 0,
-+					     ima_hash_algo, NULL);
-+		if (rc < 0)
-+			return -EOPNOTSUPP;
-+
-+		iint = &tmp_iint;
+ 	child_pid = fork();
+ 	if (child_pid == 0) {
+@@ -24,6 +25,21 @@ static int run_measured_process(const char *measured_dir, u32 *monitored_pid)
+ 		       NULL);
+ 		exit(errno);
+ 
++	} else if (child_pid > 0) {
++		waitpid(child_pid, &child_status, 0);
++		err = WEXITSTATUS(child_status);
++		if (err)
++			return err;
 +	}
- 
--	iint = integrity_iint_find(inode);
- 	if (!iint)
- 		return -EOPNOTSUPP;
- 
-@@ -552,12 +564,14 @@ static int __ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
- 	hash_algo = iint->ima_hash->algo;
- 	mutex_unlock(&iint->mutex);
- 
-+	if (iint == &tmp_iint)
-+		kfree(iint->ima_hash);
 +
- 	return hash_algo;
- }
++	child_pid = fork();
++	if (child_pid == 0) {
++		*monitored_pid = getpid();
++		*use_ima_file_hash = true;
++		execlp("./ima_setup.sh", "./ima_setup.sh", "run", measured_dir,
++		       NULL);
++		exit(errno);
++
+ 	} else if (child_pid > 0) {
+ 		waitpid(child_pid, &child_status, 0);
+ 		return WEXITSTATUS(child_status);
+@@ -72,12 +88,17 @@ void test_test_ima(void)
+ 	if (CHECK(err, "failed to run command", "%s, errno = %d\n", cmd, errno))
+ 		goto close_clean;
  
- /**
-- * ima_file_hash - return the stored measurement if a file has been hashed and
-- * is in the iint cache.
-+ * ima_file_hash - return a measurement of the file
-  * @file: pointer to the file
-  * @buf: buffer in which to store the hash
-  * @buf_size: length of the buffer
-@@ -570,7 +584,7 @@ static int __ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
-  * The file hash returned is based on the entire file, including the appended
-  * signature.
-  *
-- * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
-+ * If the measurement cannot be performed, return -EOPNOTSUPP.
-  * If the parameters are incorrect, return -EINVAL.
-  */
- int ima_file_hash(struct file *file, char *buf, size_t buf_size)
-@@ -578,7 +592,7 @@ int ima_file_hash(struct file *file, char *buf, size_t buf_size)
- 	if (!file)
- 		return -EINVAL;
+-	err = run_measured_process(measured_dir, &skel->bss->monitored_pid);
++	err = run_measured_process(measured_dir, &skel->bss->monitored_pid,
++				   &skel->bss->use_ima_file_hash);
+ 	if (CHECK(err, "run_measured_process", "err = %d\n", err))
+ 		goto close_clean;
  
--	return __ima_inode_hash(file_inode(file), buf, buf_size);
-+	return __ima_inode_hash(file_inode(file), file, buf, buf_size);
- }
- EXPORT_SYMBOL_GPL(ima_file_hash);
+ 	err = ring_buffer__consume(ringbuf);
+-	ASSERT_EQ(err, 1, "num_samples_or_err");
++	/*
++	 * 1 sample with use_ima_file_hash = false
++	 * 2 samples with use_ima_file_hash = true (./ima_setup.sh, /bin/true)
++	 */
++	ASSERT_EQ(err, 3, "num_samples_or_err");
+ 	ASSERT_NEQ(ima_hash_from_bpf, 0, "ima_hash");
  
-@@ -605,7 +619,7 @@ int ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
- 	if (!inode)
- 		return -EINVAL;
+ close_clean:
+diff --git a/tools/testing/selftests/bpf/progs/ima.c b/tools/testing/selftests/bpf/progs/ima.c
+index 96060ff4ffc6..9bb63f96cfc0 100644
+--- a/tools/testing/selftests/bpf/progs/ima.c
++++ b/tools/testing/selftests/bpf/progs/ima.c
+@@ -18,6 +18,8 @@ struct {
  
--	return __ima_inode_hash(inode, buf, buf_size);
-+	return __ima_inode_hash(inode, NULL, buf, buf_size);
- }
- EXPORT_SYMBOL_GPL(ima_inode_hash);
+ char _license[] SEC("license") = "GPL";
+ 
++bool use_ima_file_hash;
++
+ SEC("lsm.s/bprm_committed_creds")
+ void BPF_PROG(ima, struct linux_binprm *bprm)
+ {
+@@ -28,8 +30,12 @@ void BPF_PROG(ima, struct linux_binprm *bprm)
+ 
+ 	pid = bpf_get_current_pid_tgid() >> 32;
+ 	if (pid == monitored_pid) {
+-		ret = bpf_ima_inode_hash(bprm->file->f_inode, &ima_hash,
+-					 sizeof(ima_hash));
++		if (!use_ima_file_hash)
++			ret = bpf_ima_inode_hash(bprm->file->f_inode, &ima_hash,
++						 sizeof(ima_hash));
++		else
++			ret = bpf_ima_file_hash(bprm->file, &ima_hash,
++						sizeof(ima_hash));
+ 		if (ret < 0 || ima_hash == 0)
+ 			return;
  
 -- 
 2.32.0
