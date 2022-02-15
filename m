@@ -2,406 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F042C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Feb 2022 14:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D977EC4321E
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Feb 2022 15:47:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238584AbiBOOUS (ORCPT
+        id S241332AbiBOPr1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Feb 2022 09:20:18 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48728 "EHLO
+        Tue, 15 Feb 2022 10:47:27 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:59824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238578AbiBOOUR (ORCPT
+        with ESMTP id S241242AbiBOPrR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Feb 2022 09:20:17 -0500
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D3EEC8F81
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Feb 2022 06:20:06 -0800 (PST)
-Received: by mail-yb1-xb4a.google.com with SMTP id b64-20020a256743000000b0061e169a5f19so40532256ybc.11
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Feb 2022 06:20:06 -0800 (PST)
+        Tue, 15 Feb 2022 10:47:17 -0500
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41893CC537
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Feb 2022 07:46:09 -0800 (PST)
+Received: by mail-il1-x134.google.com with SMTP id f13so15114961ilq.5
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Feb 2022 07:46:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:message-id:mime-version:subject:from:to:cc
-         :content-transfer-encoding;
-        bh=GUpyRZejn9Pwp27JxxD0pUffrRYlyMDKoKZilOQs1zg=;
-        b=ZT3OQfsZ54iVJEPKmgnr6hFCGXDZyAiFXDqjcgogSLta37V38o2S575RNzSUmFaYlQ
-         sBcNLxR0aousgBT7pc3TimkUjD7hG0UxRA+ol/5xFlFPc9A44J2+cwpB5isbrElaADWg
-         ByLLlcew3BUlw28GvalAoynFSY691tLCRPhJS44fdgw/GgNgksCzfvnRLd8hgCBNXyYj
-         QRziQIOlDb0mwfus4ltBYK1+uIRCUMDizFQqNkHeRs4I6MIkMvRGLgfai//StkfUZCGN
-         HrHjzFKmZFXD6mgE909pV+QiuO0WbjAuUvyoYKTF+F7vsye5L4YSOXSbWfYBWSQJcjbm
-         wHrw==
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zQs21yv2f+We8y2ER6IR8G/EJEy1JELXcGjZReUP8ME=;
+        b=UjT5GW/IvoqiKyKL8/Wl5k3GSDeoRbZKenU7cV9xB29VZJr/+VmO7z3nPvExTJ6cb3
+         RYCsVfzRFtabEK+bcZGvIIJey/nm/15EfDpaXq8hFFeX91x+S8HmLkfsRdIzXahDn7IY
+         qUm4N4kSN4imaKgCjD323SsyZiAU1WhgCWiD8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=GUpyRZejn9Pwp27JxxD0pUffrRYlyMDKoKZilOQs1zg=;
-        b=nb2+uKxsu/f75a5o3/vi1n0n4cdRwhJCj5mssMq6iL8cq+U9oqvoT3pJLlqJw3H5zv
-         h7lA1IVZFQXTmAO7idDtNxDtrNpHJuxuoREVw7ZERcQlGYx1a6ANN8uiDhRztEsNjxZ/
-         Q1/ZEmKeh6PL1YSLaNFvZn4I9Qn+3yrEGQoBtVv7vCMSlZDW94Z9Jpz8ntulxexv7HI6
-         1ZCWOOsex13MjvZ6vLWHNgjhzGW953d/cVCmDFe3WwnK8Vl8yvTqffYMEQuZt2+63YKX
-         ycKoptHQkgg+94DLPxkUp+3NrmN6A2c8mYB/CsVeoxSwrNIYWSZ/tUIvLPemc+KlH72Y
-         6SjQ==
-X-Gm-Message-State: AOAM531xM9Frt3PcUKC6U8ualwm7jEmyLF6Tvi28xHnmcw+lSej6RXLS
-        uvXLDk/MOzyLAv4V2010pc/TmfnNVA==
-X-Google-Smtp-Source: ABdhPJzcCCkgAq2s1mmwNW6OZq/24SwP0p0I0cyzx87weaxppuFpiwOk92W7HltKnDkACdBa+pjsXQVyQQ==
-X-Received: from yaelt.nyc.corp.google.com ([2620:0:1003:415:4733:5913:aeb8:dca6])
- (user=yaelt job=sendgmr) by 2002:a81:4417:: with SMTP id r23mr3907750ywa.443.1644934805301;
- Tue, 15 Feb 2022 06:20:05 -0800 (PST)
-Date:   Tue, 15 Feb 2022 09:19:53 -0500
-Message-Id: <20220215141953.1557009-1-yaelt@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.35.1.265.g69c8d7142f-goog
-Subject: [PATCH v5] KEYS: encrypted: Instantiate key with user-provided
- decrypted data
-From:   Yael Tzur <yaelt@google.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
-        corbet@lwn.net, dhowells@redhat.com, jmorris@namei.org,
-        serge@hallyn.com, keyrings@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Yael Tzur <yaelt@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        bh=zQs21yv2f+We8y2ER6IR8G/EJEy1JELXcGjZReUP8ME=;
+        b=mOCKnIViwEZXD+XZwasXOGXX1Hd7AkayFqS7DdDkw2I8IgPsoQmdkJn68hxy+Sadnc
+         Rz0/C970UEOt9rQCJLUzkZxspiwY3nWsBevhmQoWOpZ5MRJVF4OXFmX+CLRazuLX5Z/m
+         fQyLUsnckicmpJmUCsmjz0acbXZx+EFWwBlRi1llN34aslmDcH6mi5gmb0KTl+kD1nDc
+         p7vJmB8l4j5h9HRjE7JRKFO2G9W+oePRdvzch/N1D9jDa4tzgT4SpI9T8Hm7DsRJUBT8
+         iRAQlxKOaL97c5vPo5TU63FylcrRiO2FPqHa35rNlDFQNkVSlct/9u3ytDRr6VMgZK1j
+         7jeQ==
+X-Gm-Message-State: AOAM5320IuKtKT4NDUL2MuDgBBipeHyRaaVew+Fqm57S85UELBYAz4F9
+        l9TjJlvIEJvln38At1mdaL0rZciInR7PAw==
+X-Google-Smtp-Source: ABdhPJwzLkAFx8rhlhLaDU9FF8txtiwWC2frhOjc/xUT8iwtOAyMUlXov0SQjOW9BE8EqiULkIY4IQ==
+X-Received: by 2002:a92:db0e:: with SMTP id b14mr2943259iln.153.1644939968545;
+        Tue, 15 Feb 2022 07:46:08 -0800 (PST)
+Received: from [192.168.1.128] ([71.205.29.0])
+        by smtp.gmail.com with ESMTPSA id 12sm13323337ilx.20.2022.02.15.07.46.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Feb 2022 07:46:08 -0800 (PST)
+Subject: Re: [PATCH v2 1/6] ima: Fix documentation-related warnings in
+ ima_main.c
+To:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
+        shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, kpsingh@kernel.org, revest@chromium.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20220215124042.186506-1-roberto.sassu@huawei.com>
+ <20220215124042.186506-2-roberto.sassu@huawei.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <759a70de-a06b-592c-de4a-f7c74fbe4619@linuxfoundation.org>
+Date:   Tue, 15 Feb 2022 08:46:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <20220215124042.186506-2-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-For availability and performance reasons master keys often need to be
-released outside of a Key Management Service (KMS) to clients. It
-would be beneficial to provide a mechanism where the
-wrapping/unwrapping of data encryption keys (DEKs) is not dependent
-on a remote call at runtime yet security is not (or only minimally)
-compromised. Master keys could be securely stored in the Kernel and
-be used to wrap/unwrap keys from Userspace.
+On 2/15/22 5:40 AM, Roberto Sassu wrote:
+> Fix some warnings in ima_main.c, displayed with W=n make argument.
+> 
 
-The encrypted.c class supports instantiation of encrypted keys with
-either an already-encrypted key material, or by generating new key
-material based on random numbers. This patch defines a new datablob
-format: [<format>] <master-key name> <decrypted data length>
-<decrypted data> that allows to inject and encrypt user-provided
-decrypted data. The decrypted data must be hex-ascii encoded.
+Thank you for fixing these. Doc builds are full of them and few less
+is welcome.
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Yael Tzur <yaelt@google.com>
----
+Adding the warns or summary of them to change log will be good.
 
-Notes:
-    v -> v2: fixed compilation error.
-   =20
-    v2 -> v3: modified documentation.
-   =20
-    v3 -> v4: modified commit message.
-   =20
-    v4 -> v5: added config option to enable feature, and modified input val=
-idation.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>   security/integrity/ima/ima_main.c | 11 ++++++-----
+>   1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 8c6e4514d494..946ba8a12eab 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -418,6 +418,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+>   
+>   /**
+>    * ima_file_mprotect - based on policy, limit mprotect change
+> + * @vma: vm_area_struct protection is set to
+>    * @prot: contains the protection that will be applied by the kernel.
+>    *
 
- .../security/keys/trusted-encrypted.rst       | 25 +++++--
- security/keys/Kconfig                         | 19 +++--
- security/keys/encrypted-keys/encrypted.c      | 72 ++++++++++++++-----
- 3 files changed, 87 insertions(+), 29 deletions(-)
 
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentat=
-ion/security/keys/trusted-encrypted.rst
-index 80d5a5af62a1..f614dad7de12 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -107,12 +107,13 @@ Encrypted Keys
- --------------
-=20
- Encrypted keys do not depend on a trust source, and are faster, as they us=
-e AES
--for encryption/decryption. New keys are created from kernel-generated rand=
-om
--numbers, and are encrypted/decrypted using a specified =E2=80=98master=E2=
-=80=99 key. The
--=E2=80=98master=E2=80=99 key can either be a trusted-key or user-key type.=
- The main disadvantage
--of encrypted keys is that if they are not rooted in a trusted key, they ar=
-e only
--as secure as the user key encrypting them. The master user key should ther=
-efore
--be loaded in as secure a way as possible, preferably early in boot.
-+for encryption/decryption. New keys are created either from kernel-generat=
-ed
-+random numbers or user-provided decrypted data, and are encrypted/decrypte=
-d
-+using a specified =E2=80=98master=E2=80=99 key. The =E2=80=98master=E2=80=
-=99 key can either be a trusted-key or
-+user-key type. The main disadvantage of encrypted keys is that if they are=
- not
-+rooted in a trusted key, they are only as secure as the user key encryptin=
-g
-+them. The master user key should therefore be loaded in as secure a way as
-+possible, preferably early in boot.
-=20
-=20
- Usage
-@@ -199,6 +200,8 @@ Usage::
-=20
-     keyctl add encrypted name "new [format] key-type:master-key-name keyle=
-n"
-         ring
-+    keyctl add encrypted name "new [format] key-type:master-key-name keyle=
-n
-+        decrypted-data" ring
-     keyctl add encrypted name "load hex_blob" ring
-     keyctl update keyid "update key-type:master-key-name"
-=20
-@@ -303,6 +306,16 @@ Load an encrypted key "evm" from saved blob::
-     82dbbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564=
-e0
-     24717c64 5972dcb82ab2dde83376d82b2e3c09ffc
-=20
-+Instantiate an encrypted key "evm" using user-provided decrypted data::
-+
-+    $ keyctl add encrypted evm "new default user:kmk 32 `cat evm_decrypted=
-_data.blob`" @u
-+    794890253
-+
-+    $ keyctl print 794890253
-+    default user:kmk 32 2375725ad57798846a9bbd240de8906f006e66c03af53b1b38=
-2d
-+    bbc55be2a44616e4959430436dc4f2a7a9659aa60bb4652aeb2120f149ed197c564e02=
-47
-+    17c64 5972dcb82ab2dde83376d82b2e3c09ffc
-+
- Other uses for trusted and encrypted keys, such as for disk and file encry=
-ption
- are anticipated.  In particular the new format 'ecryptfs' has been defined
- in order to use encrypted keys to mount an eCryptfs filesystem.  More deta=
-ils
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 969122c7b92f..0e30b361e1c1 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -98,10 +98,21 @@ config ENCRYPTED_KEYS
- 	select CRYPTO_RNG
- 	help
- 	  This option provides support for create/encrypting/decrypting keys
--	  in the kernel.  Encrypted keys are kernel generated random numbers,
--	  which are encrypted/decrypted with a 'master' symmetric key. The
--	  'master' key can be either a trusted-key or user-key type.
--	  Userspace only ever sees/stores encrypted blobs.
-+	  in the kernel.  Encrypted keys are instantiated using kernel
-+	  generated random numbers or provided decrypted data, and are
-+	  encrypted/decrypted with a 'master' symmetric key. The 'master'
-+	  key can be either a trusted-key or user-key type. Only encrypted
-+	  blobs are ever output to Userspace.
-+
-+	  If you are unsure as to whether this is required, answer N.
-+
-+config USER_DECRYPTED_DATA
-+	bool "Allow encrypted keys with user decrypted data"
-+	depends on ENCRYPTED_KEYS
-+	help
-+	  This option provides support for instantiating encrypted keys using
-+	  user-provided decrypted data.  The decrypted data must be hex-ascii
-+	  encoded.
-=20
- 	  If you are unsure as to whether this is required, answer N.
-=20
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encry=
-pted-keys/encrypted.c
-index 87432b35d771..ebfb8129fb92 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -78,6 +78,11 @@ static const match_table_t key_tokens =3D {
- 	{Opt_err, NULL}
- };
-=20
-+static bool user_decrypted_data =3D IS_ENABLED(CONFIG_USER_DECRYPTED_DATA)=
-;
-+module_param(user_decrypted_data, bool, 0);
-+MODULE_PARM_DESC(user_decrypted_data,
-+	"Allow instantiation of encrypted keys using provided decrypted data");
-+
- static int aes_get_sizes(void)
- {
- 	struct crypto_skcipher *tfm;
-@@ -158,7 +163,7 @@ static int valid_master_desc(const char *new_desc, cons=
-t char *orig_desc)
-  * datablob_parse - parse the keyctl data
-  *
-  * datablob format:
-- * new [<format>] <master-key name> <decrypted data length>
-+ * new [<format>] <master-key name> <decrypted data length> [<decrypted da=
-ta>]
-  * load [<format>] <master-key name> <decrypted data length>
-  *     <encrypted iv + data>
-  * update <new-master-key name>
-@@ -170,7 +175,7 @@ static int valid_master_desc(const char *new_desc, cons=
-t char *orig_desc)
-  */
- static int datablob_parse(char *datablob, const char **format,
- 			  char **master_desc, char **decrypted_datalen,
--			  char **hex_encoded_iv)
-+			  char **hex_encoded_iv, char **decrypted_data)
- {
- 	substring_t args[MAX_OPT_ARGS];
- 	int ret =3D -EINVAL;
-@@ -231,6 +236,7 @@ static int datablob_parse(char *datablob, const char **=
-format,
- 				"when called from .update method\n", keyword);
- 			break;
- 		}
-+		*decrypted_data =3D strsep(&datablob, " \t");
- 		ret =3D 0;
- 		break;
- 	case Opt_load:
-@@ -595,7 +601,8 @@ static int derived_key_decrypt(struct encrypted_key_pay=
-load *epayload,
- static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
- 							 const char *format,
- 							 const char *master_desc,
--							 const char *datalen)
-+							 const char *datalen,
-+							 const char *decrypted_data)
- {
- 	struct encrypted_key_payload *epayload =3D NULL;
- 	unsigned short datablob_len;
-@@ -604,6 +611,7 @@ static struct encrypted_key_payload *encrypted_key_allo=
-c(struct key *key,
- 	unsigned int encrypted_datalen;
- 	unsigned int format_len;
- 	long dlen;
-+	int i;
- 	int ret;
-=20
- 	ret =3D kstrtol(datalen, 10, &dlen);
-@@ -613,6 +620,24 @@ static struct encrypted_key_payload *encrypted_key_all=
-oc(struct key *key,
- 	format_len =3D (!format) ? strlen(key_format_default) : strlen(format);
- 	decrypted_datalen =3D dlen;
- 	payload_datalen =3D decrypted_datalen;
-+
-+	if (decrypted_data) {
-+		if (!user_decrypted_data) {
-+			pr_err("encrypted key: instantiation of keys using provided decrypted d=
-ata is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
-+			return ERR_PTR(-EINVAL);
-+		}
-+		if (strlen(decrypted_data) !=3D decrypted_datalen) {
-+			pr_err("encrypted key: decrypted data provided does not match decrypted=
- data length provided\n");
-+			return ERR_PTR(-EINVAL);
-+		}
-+		for (i =3D 0; i < strlen(decrypted_data); i++) {
-+			if (!isxdigit(decrypted_data[i])) {
-+				pr_err("encrypted key: decrypted data provided must contain only hexad=
-ecimal characters\n");
-+				return ERR_PTR(-EINVAL);
-+			}
-+		}
-+	}
-+
- 	if (format) {
- 		if (!strcmp(format, key_format_ecryptfs)) {
- 			if (dlen !=3D ECRYPTFS_MAX_KEY_BYTES) {
-@@ -740,13 +766,14 @@ static void __ekey_init(struct encrypted_key_payload =
-*epayload,
- /*
-  * encrypted_init - initialize an encrypted key
-  *
-- * For a new key, use a random number for both the iv and data
-- * itself.  For an old key, decrypt the hex encoded data.
-+ * For a new key, use either a random number or user-provided decrypted da=
-ta in
-+ * case it is provided. A random number is used for the iv in both cases. =
-For
-+ * an old key, decrypt the hex encoded data.
-  */
- static int encrypted_init(struct encrypted_key_payload *epayload,
- 			  const char *key_desc, const char *format,
- 			  const char *master_desc, const char *datalen,
--			  const char *hex_encoded_iv)
-+			  const char *hex_encoded_iv, const char *decrypted_data)
- {
- 	int ret =3D 0;
-=20
-@@ -760,21 +787,26 @@ static int encrypted_init(struct encrypted_key_payloa=
-d *epayload,
- 	}
-=20
- 	__ekey_init(epayload, format, master_desc, datalen);
--	if (!hex_encoded_iv) {
--		get_random_bytes(epayload->iv, ivsize);
--
--		get_random_bytes(epayload->decrypted_data,
--				 epayload->decrypted_datalen);
--	} else
-+	if (hex_encoded_iv) {
- 		ret =3D encrypted_key_decrypt(epayload, format, hex_encoded_iv);
-+	} else if (decrypted_data) {
-+		get_random_bytes(epayload->iv, ivsize);
-+		memcpy(epayload->decrypted_data, decrypted_data,
-+				   epayload->decrypted_datalen);
-+	} else {
-+		get_random_bytes(epayload->iv, ivsize);
-+		get_random_bytes(epayload->decrypted_data, epayload->decrypted_datalen);
-+	}
- 	return ret;
- }
-=20
- /*
-  * encrypted_instantiate - instantiate an encrypted key
-  *
-- * Decrypt an existing encrypted datablob or create a new encrypted key
-- * based on a kernel random number.
-+ * Instantiates the key:
-+ * - by decrypting an existing encrypted datablob, or
-+ * - by creating a new encrypted key based on a kernel random number, or
-+ * - using provided decrypted data.
-  *
-  * On success, return 0. Otherwise return errno.
-  */
-@@ -787,6 +819,7 @@ static int encrypted_instantiate(struct key *key,
- 	char *master_desc =3D NULL;
- 	char *decrypted_datalen =3D NULL;
- 	char *hex_encoded_iv =3D NULL;
-+	char *decrypted_data =3D NULL;
- 	size_t datalen =3D prep->datalen;
- 	int ret;
-=20
-@@ -799,18 +832,18 @@ static int encrypted_instantiate(struct key *key,
- 	datablob[datalen] =3D 0;
- 	memcpy(datablob, prep->data, datalen);
- 	ret =3D datablob_parse(datablob, &format, &master_desc,
--			     &decrypted_datalen, &hex_encoded_iv);
-+			     &decrypted_datalen, &hex_encoded_iv, &decrypted_data);
- 	if (ret < 0)
- 		goto out;
-=20
- 	epayload =3D encrypted_key_alloc(key, format, master_desc,
--				       decrypted_datalen);
-+				       decrypted_datalen, decrypted_data);
- 	if (IS_ERR(epayload)) {
- 		ret =3D PTR_ERR(epayload);
- 		goto out;
- 	}
- 	ret =3D encrypted_init(epayload, key->description, format, master_desc,
--			     decrypted_datalen, hex_encoded_iv);
-+			     decrypted_datalen, hex_encoded_iv, decrypted_data);
- 	if (ret < 0) {
- 		kfree_sensitive(epayload);
- 		goto out;
-@@ -860,7 +893,7 @@ static int encrypted_update(struct key *key, struct key=
-_preparsed_payload *prep)
-=20
- 	buf[datalen] =3D 0;
- 	memcpy(buf, prep->data, datalen);
--	ret =3D datablob_parse(buf, &format, &new_master_desc, NULL, NULL);
-+	ret =3D datablob_parse(buf, &format, &new_master_desc, NULL, NULL, NULL);
- 	if (ret < 0)
- 		goto out;
-=20
-@@ -869,7 +902,7 @@ static int encrypted_update(struct key *key, struct key=
-_preparsed_payload *prep)
- 		goto out;
-=20
- 	new_epayload =3D encrypted_key_alloc(key, epayload->format,
--					   new_master_desc, epayload->datalen);
-+					   new_master_desc, epayload->datalen, NULL);
- 	if (IS_ERR(new_epayload)) {
- 		ret =3D PTR_ERR(new_epayload);
- 		goto out;
---=20
-2.35.1.265.g69c8d7142f-goog
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
 
+thanks,
+-- Shuah
