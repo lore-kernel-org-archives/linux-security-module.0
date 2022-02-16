@@ -2,131 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E419EC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Feb 2022 20:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FBDC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Feb 2022 20:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230522AbiBPU0k (ORCPT
+        id S232792AbiBPUr5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Feb 2022 15:26:40 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57490 "EHLO
+        Wed, 16 Feb 2022 15:47:57 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:32822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230412AbiBPU0j (ORCPT
+        with ESMTP id S232761AbiBPUr4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Feb 2022 15:26:39 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2045E1C118;
-        Wed, 16 Feb 2022 12:26:26 -0800 (PST)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21GK5tPo021259;
-        Wed, 16 Feb 2022 20:25:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=9k42IwgOqf27OH2lhjxNLaW55lHPjTwx+15DDVudLkE=;
- b=DGI0Kcn1jXyjlOOitPKOK2fyPdQ0eaaPAwhqP1fZYA6Zur+DWrTUi7bYR70LqAta35qy
- jFtWuXzbQYYxugsvRTvfHmhcU8ESx1AtAQ0WEDD69tG9DInho+wBRW/E0J7DysQ38Oav
- PrECtgIZrbQvSgUO5KK9hPo8652N9i/ypxDJvt1y1A1U78geeFy7bLiqj9UX9Kn/rQ9M
- hN0hzVrrfKNo/WIFTB135X6ToPSknsnm8joRoC+d+SJtd2tz0MOvoMPNbuN/w6dsNVm7
- O3Cd1lcvwtaEMaY12Uh0ua/r/PlC6EpoqDPhxiTIfp2cKrBDYoeijliHTRmHSeFY9j59 qw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3e953hcjac-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Feb 2022 20:25:54 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21GJjqmG001727;
-        Wed, 16 Feb 2022 20:25:54 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3e953hcja3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Feb 2022 20:25:54 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21GK3suW015734;
-        Wed, 16 Feb 2022 20:25:53 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma04dal.us.ibm.com with ESMTP id 3e64hcwaav-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Feb 2022 20:25:52 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21GKPpVx31195646
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Feb 2022 20:25:51 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1BEC96A05D;
-        Wed, 16 Feb 2022 20:25:51 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8120B6A061;
-        Wed, 16 Feb 2022 20:25:49 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 16 Feb 2022 20:25:49 +0000 (GMT)
-Message-ID: <6b81ba48-af34-71ef-8ee7-9526e7f3b073@linux.ibm.com>
-Date:   Wed, 16 Feb 2022 15:25:49 -0500
+        Wed, 16 Feb 2022 15:47:56 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A44C3304
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Feb 2022 12:47:40 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id vz16so2134707ejb.0
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Feb 2022 12:47:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SvjEChs8oB4bFzrOdFEF4f6WDD2x5bbX154HINupHHc=;
+        b=6nnmVyblMn2NYTB8bThctxxAF936b0o+WhtLScsHxJQuuXlYCi3NTu30mpelQPplVu
+         CBSl9E3VRbHopbQZ2Op0mSStO0330dQD6jbQira4Fj3bhvFkLRuF4qZSn091dYycbvgD
+         BTzNibxjh3gholQIqZMgecsv8IXPdQ7ZbyqTQ6/I1KfDe+7H5tVa50V2BivDOfGHosMo
+         Lwiptp4PaFzk32tbRgMJqGjplV0WX+ZUXFnQWIfeR+U7lxPDFHtGRYtqcVwHk7vaYuM9
+         OpP621kUbODvE5gYIvDMm8m5/plJVzvT3nOdFfpCq7jm+yAKjGnfA69T071bZC79zbMi
+         OhTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SvjEChs8oB4bFzrOdFEF4f6WDD2x5bbX154HINupHHc=;
+        b=CoXG6lrESugdpXT3IBmKavKpSQBPp8nqvi6jBRY5BzwbMemmNI4ieGZH50tUHGXcy6
+         zaiwY6poutpaRffgvMEH3y05H55hF7HullAQrkgoawpYHpjiGU6fiagXDOreGXVrwnNs
+         2+YZVNoE16gUa/A37sKsKdd1k7tR4HAP4JoQX8xDnN/WGk/oiVdZnSCeq8s3brOzYrJO
+         UrJ6LxMDNOlanfF92eD3zsl3GzcyTIaeW9ZJ5TNvqGdWom8HDIFhXLVFrC4wHNfceFTg
+         lLiI2hY7OVDHEwdC34wBDmMiaAbLoiFnoY25m4Rr4OsLDM0yvGbw5RY6DzBI08vWzhIM
+         LlCQ==
+X-Gm-Message-State: AOAM53251Qbbywhsesmt6GcAnjDtC7QvcQbBnqE79IoLSVwP5hJZzqk7
+        XOpmxbNRt+n9U12kZtuVTvJYUz9T+03Z1LmBqgzD
+X-Google-Smtp-Source: ABdhPJw53KebzyYKq4ObwOesZ4Xgi2GpfK9U8pkjMwJBatkW6N2qbSYIpHMcaLrLTDdnKqk7zMd+NIcxv2Z+H1Dik8w=
+X-Received: by 2002:a17:906:4443:b0:6cf:6a7d:5f9b with SMTP id
+ i3-20020a170906444300b006cf6a7d5f9bmr3759463ejp.12.1645044458734; Wed, 16 Feb
+ 2022 12:47:38 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v10 05/27] ima: Define ima_namespace struct and start
- moving variables into it
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Christian Brauner <brauner@kernel.org>
-References: <20220201203735.164593-1-stefanb@linux.ibm.com>
- <20220201203735.164593-6-stefanb@linux.ibm.com>
- <429010298df589687e1d1a09bac21e302d642c7e.camel@linux.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <429010298df589687e1d1a09bac21e302d642c7e.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: CeYeWgaRohWnrZpTWAqDZucUOPHvj9BU
-X-Proofpoint-GUID: dtlht7H06heJv2V1YB2nYVuH8U8Pmr9H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-16_09,2022-02-16_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- impostorscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202160112
+References: <CAHC9VhR3ZbcNM8awhJs9_NXmdUXHO4XoH8s2d3MjhMXwkgbh=Q@mail.gmail.com>
+ <20220216125206.20975-1-igor.baranov@huawei.com>
+In-Reply-To: <20220216125206.20975-1-igor.baranov@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 16 Feb 2022 15:47:27 -0500
+Message-ID: <CAHC9VhTDu1GDxJwFg5gAMWhuMKUWEU5eXuTr_6eG=tGwiGsMTw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] SELinux-namespaces
+To:     Igor Baranov <igor.baranov@huawei.com>
+Cc:     hw.likun@huawei.com, jamorris@linux.microsoft.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        stephen.smalley.work@gmail.com, xiujianfeng@huawei.com,
+        alexander.kozhevnikov@huawei.com, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 2/16/22 09:41, Mimi Zohar wrote:
-> On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote:
->> Define the ima_namespace structure and the ima_namespace variable
->> init_ima_ns for the host's IMA namespace. Implement basic functions for
->> namespacing support.
-> Implement the basic functions - ima_ns_init()  and ima_init_namespace()
-> - for namespacing support.
+On Wed, Feb 16, 2022 at 7:52 AM Igor Baranov <igor.baranov@huawei.com> wrote:
 >
->> Move variables related to the IMA policy into the ima_namespace. This way
->> the IMA policy of an IMA namespace can be set and displayed using a
->> front-end like securityfs.
->> Implement ima_ns_from_file() to get the IMA namespace via the user
->> namespace of the securityfs superblock that a file belongs to.
-> Currently, ima_ns_from_file() doesn't exist in this patch.
-Ah, left-over from previous version. Remove.
->
->> To get the current ima_namespace use &init_ima_ns when a function
->> that is related to a policy rule is called.
-> In preparation for IMA namespacing, update the existing functions to
-> pass the ima_namespace struct.  For now, ...
->
->>
->> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->> Acked-by: Christian Brauner <brauner@kernel.org>
-> After addressing the one inline comment,
-Done.
-> 	Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Hi all!
+> Our team at Huawei decided to revive the work on SELinux namespaces.
+> We took https://github.com/stephensmalley/selinux-kernel/tree/working-selinuxns
+> as a basis with some patches from selinuxns-xattr.
 
-Thanks.
+Hello!
 
+For reference there is a *slightly* more recent forward port of those
+patches in the main SELinux repo under the working-selinuxns branch.
+I haven't forward ported those patches since v5.10-rc1 as there are
+some rather significant technical hurdles around persistent object
+labeling which I don't believe have been adequately resolved yet.  The
+prefixed/namespaces xattr approach that you mention above may work for
+a limited number of namespaces, but I worry there is a scalability
+issue that needs to be resolved; we can't simply keep adding xattrs to
+inodes.
 
+ * https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+
+Also, are there rest of your patches online anywhere?  Patch 1/1 isn't
+very interesting on its own.
+
+-- 
+paul-moore.com
