@@ -2,96 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8738FC43217
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Feb 2022 12:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A33CC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Feb 2022 14:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233551AbiBPMxj (ORCPT
+        id S235156AbiBPOmK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Feb 2022 07:53:39 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49982 "EHLO
+        Wed, 16 Feb 2022 09:42:10 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233701AbiBPMx1 (ORCPT
+        with ESMTP id S235167AbiBPOmJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Feb 2022 07:53:27 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7066B2221A3;
-        Wed, 16 Feb 2022 04:52:29 -0800 (PST)
-Received: from fraeml715-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JzHsZ05Ybz682G3;
-        Wed, 16 Feb 2022 20:52:02 +0800 (CST)
-Received: from lhreml725-chm.china.huawei.com (10.201.108.76) by
- fraeml715-chm.china.huawei.com (10.206.15.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 16 Feb 2022 13:52:26 +0100
-Received: from centos7.huawei.com (10.122.133.3) by
- lhreml725-chm.china.huawei.com (10.201.108.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 16 Feb 2022 12:52:25 +0000
-From:   Igor Baranov <igor.baranov@huawei.com>
-To:     <paul@paul-moore.com>
-CC:     <hw.likun@huawei.com>, <jamorris@linux.microsoft.com>,
-        <linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>,
-        <stephen.smalley.work@gmail.com>, <xiujianfeng@huawei.com>,
-        <alexander.kozhevnikov@huawei.com>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>, Igor Baranov <igor.baranov@huawei.com>
-Subject: [RFC PATCH 0/1] SELinux-namespaces
-Date:   Wed, 16 Feb 2022 15:52:05 +0300
-Message-ID: <20220216125206.20975-1-igor.baranov@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHC9VhR3ZbcNM8awhJs9_NXmdUXHO4XoH8s2d3MjhMXwkgbh=Q@mail.gmail.com>
-References: <CAHC9VhR3ZbcNM8awhJs9_NXmdUXHO4XoH8s2d3MjhMXwkgbh=Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.122.133.3]
-X-ClientProxiedBy: mscpeml100001.china.huawei.com (7.188.26.227) To
- lhreml725-chm.china.huawei.com (10.201.108.76)
-X-CFilter-Loop: Reflected
+        Wed, 16 Feb 2022 09:42:09 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CDB9398A;
+        Wed, 16 Feb 2022 06:41:57 -0800 (PST)
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21GDleSf026894;
+        Wed, 16 Feb 2022 14:41:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=mpSbBTuH3Pq4KwaOYwK3fy0IQ81NFE67dctx3j1gzk4=;
+ b=OOixuYnVJc0eoCdQ4/yWbdUqR6tjj4M2mnL6+OirV/Vu3LTHgt+wi1vMb73V6vpGUdop
+ aZ5G4MdxvDS6mAZ/kIV448ok3048aBAv7xGBejKZOCRA9EUQiH8tZEGBVJnZh6XLw8op
+ Vu4hMAmFnRQspU3TOsTg+z+w1QcVuJQ3N1TZhBw0hOUl6IqKaRVoqTwYLgSL3q3+lvkc
+ kvCLZJ2CpDQczlxTE7tFF05hIJ72LABhiIIz4b68n64CKfIhPwKweklRgGi8W8sknEWh
+ ptFs0n/0bB/nU8laofL/5LecETcP5S2cnOMZBAnvFMpns/Bn2y8mfEcORNwXyCq+MyV7 EQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3e92fdsb72-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Feb 2022 14:41:35 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21GE5gWY014712;
+        Wed, 16 Feb 2022 14:41:35 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3e92fdsb6j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Feb 2022 14:41:35 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21GESjeF006778;
+        Wed, 16 Feb 2022 14:41:33 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06ams.nl.ibm.com with ESMTP id 3e645k1vtd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Feb 2022 14:41:33 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21GEV6Ou45482326
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Feb 2022 14:31:06 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A4E711C05E;
+        Wed, 16 Feb 2022 14:41:30 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 010F211C050;
+        Wed, 16 Feb 2022 14:41:28 +0000 (GMT)
+Received: from sig-9-65-92-254.ibm.com (unknown [9.65.92.254])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 16 Feb 2022 14:41:27 +0000 (GMT)
+Message-ID: <91c18b07657bb5c68700a66cc16bde27d6ec6aea.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 07/27] ima: Move ima_htable into ima_namespace
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Christian Brauner <brauner@kernel.org>
+Date:   Wed, 16 Feb 2022 09:41:27 -0500
+In-Reply-To: <20220201203735.164593-8-stefanb@linux.ibm.com>
+References: <20220201203735.164593-1-stefanb@linux.ibm.com>
+         <20220201203735.164593-8-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: w6oG2Eh7b30jJqnDFp3xV9PwulqdUsOm
+X-Proofpoint-ORIG-GUID: D96mfGzO08ta1EKvQsV1NYDkexKSy39w
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-16_07,2022-02-16_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0 adultscore=0
+ clxscore=1015 lowpriorityscore=0 mlxlogscore=999 suspectscore=0
+ malwarescore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2201110000 definitions=main-2202160082
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi all!
-Our team at Huawei decided to revive the work on SELinux namespaces.
-We took https://github.com/stephensmalley/selinux-kernel/tree/working-selinuxns
-as a basis with some patches from selinuxns-xattr.
-We reworked them significantly, fixing and adding functionality.
-As a result we managed to run a CentOS Docker container with SELinux in enforcing mode!
+On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote:
+> Move ima_htable into ima_namespace. This way a front-end like
+> securityfs can show the number of violations of an IMA namespace.
 
-We would like to start our discussion with the smallest, but most basic
-change: we gave each namespace a unique identifier.
-It is assigned to a namespace from the global counter
-that is incremented each time you create it.
+^can show the number of measurement records and number of violations
 
-All the objects which in the original patchset kept a pointer to their
-namespace now store its identifier. It's needed only to determine whether
-an object belongs to our (in the current context) namespace or not.
-The aim of this change is to reduce the height of the Babel tower of pointers,
-because in the original patch there was such a mess and such bugs,
-that we decided to cut this Gordian knot, removing some pointers altogether.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Acked-by: Christian Brauner <brauner@kernel.org>
 
-This is a very small part of our changes, but we see the point of discussing
-more when we come to this.
-
-Particularly because there are alternative approaches,
-such as Casey Schaufler's suggestion, which is mentioned
-in http://namei.org/presentations/selinux_namespacing_lca2018.pdf
-"How to deal with secids (32-bit IDs) which are passed to core kernel and
-cached there - Make them global" which seems quite promising for us too.
-In the case of this approach, it is not necessary to store the namespace ID
-in objects, because it can be deduced from sid. But a detailed study of
-this area reveals some painful challenges. For example: fragmentation of
-the global sid space when loading/unloading different policies. And the
-depth of the rabbit hole is not obvious from current positions. This is a
-separate big topic.
-
-Igor Baranov (1):
-  Replace state pointer with namespace id
-
- security/selinux/hooks.c            | 29 ++++++++++++++++++++++++-----
- security/selinux/include/objsec.h   |  4 +++-
- security/selinux/include/security.h |  2 ++
- 3 files changed, 29 insertions(+), 6 deletions(-)
-
--- 
-2.34.1
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
