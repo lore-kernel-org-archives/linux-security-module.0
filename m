@@ -2,137 +2,150 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69750C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Feb 2022 21:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1FBC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Feb 2022 13:33:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234149AbiBPVTx (ORCPT
+        id S240921AbiBQNdO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Feb 2022 16:19:53 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45604 "EHLO
+        Thu, 17 Feb 2022 08:33:14 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbiBPVTv (ORCPT
+        with ESMTP id S240953AbiBQNdO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Feb 2022 16:19:51 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B418622496F;
-        Wed, 16 Feb 2022 13:19:38 -0800 (PST)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21GL8WJ2032687;
-        Wed, 16 Feb 2022 21:19:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=U8SNXnoO2x+3jqNdtP8FT7c218Mnv5NRJH1QCjrm+MM=;
- b=bg5Mqq1fDy3Xulmua3Am4/Hj10arF8Q5A+HuUzwou18kBw58FADxXHoqKgWOBn936i++
- sbkN/iW5EgVZCdpTAdR6+lCNWv59y/orhDIg6zpvuZta7nzCvLP5eAXEUUlnxun+mEbn
- ietG1goSA6hJK3i5G6m2zsDacozzyoD9frhttm+Vs8UEOdpC+yDyjFoNVspJJf8vxF0e
- m+9ydXfvjR8ZDsM30b4vWWq0KthlkxV8wPiTNrPe3V0olyHPROX9FhZaE25sol5hM143
- 7vCGVw4x1c6RxlXGlwm3YivlpLYDxltI/oMNizoq5nDoOrRXZ5pqPU1Vt5uDlknyNAMz ng== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3e97qc1naj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Feb 2022 21:19:24 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21GLHrk0006808;
-        Wed, 16 Feb 2022 21:19:23 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3e97qc1na9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Feb 2022 21:19:23 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21GLHuoT024449;
-        Wed, 16 Feb 2022 21:19:22 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma04dal.us.ibm.com with ESMTP id 3e64hcxb57-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Feb 2022 21:19:22 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21GLJLm035914166
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Feb 2022 21:19:21 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3ECA2BE056;
-        Wed, 16 Feb 2022 21:19:21 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ABF57BE058;
-        Wed, 16 Feb 2022 21:19:19 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 16 Feb 2022 21:19:19 +0000 (GMT)
-Message-ID: <c1a32f5d-c15d-8127-6254-69946f751bdb@linux.ibm.com>
-Date:   Wed, 16 Feb 2022 16:19:19 -0500
+        Thu, 17 Feb 2022 08:33:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 363D21F3F3D
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Feb 2022 05:32:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645104778;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R+uKxN/uQ3UdKZRYgJ9V9aHz1upM2XpQ82bT5M0IFbI=;
+        b=gGnqVU2yYB6qu+9Y1ne+Lwo9n10yDlILg0hZMNwN3iLa49JU2KpR+WKE9alE8SLoyIP1fi
+        DnuACwKZeFyl03C+oyFV5lkYiIVBJt/kswjMrM2JBhgxZEMTygoOeqpA/uQOi8EwRbDQoP
+        8/ZrwMLdm1Nytfh/0ctYcboXRKq41lQ=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-296-7rq1cdsiNzOL6mkegbRe3w-1; Thu, 17 Feb 2022 08:32:57 -0500
+X-MC-Unique: 7rq1cdsiNzOL6mkegbRe3w-1
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-2d6914a097cso11434577b3.10
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Feb 2022 05:32:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R+uKxN/uQ3UdKZRYgJ9V9aHz1upM2XpQ82bT5M0IFbI=;
+        b=18aAlu30aHRxDbsp+SApKUB0k58oyceSzWdVh8p1KJ9CyyFWadL6RUlGPqizACx79E
+         SWELc6E0oNPOixjxW7dXK0TIXlZ8Rs0SdIYqpHYbUEE8cbNwQBaMrdjrvWHOy0hT6keS
+         k3ChA9sXLLePJS2uwa5bYfWauPwPGGK7i+jdxz90/UFFXBnFRGeHwMKNG77mhrcPtPso
+         IZ3KGz0kblMTujknC58HB99pVHrjNeFAwBoMw4pYTslgAPhYxdxRCm9BpBHwzlKIa6W3
+         NxfEjF5UtWTEu/gsd+7lB+1iEnYZkSrhHa4xzkXStfuMitiXwmkQNORu5R59uvo5ZFwa
+         WFRA==
+X-Gm-Message-State: AOAM5336YfQ6ATfUHAtq9cUHL369wagemMBuTdRmING+uaw+aS6LiwlN
+        sI8I0s+WNylnTXgeSi/Yll0laqNn8jwKDDajE12P4HWb/fC/B4iPAQ8KWgh+FNFZ+ibB+8pfTb5
+        u3aqy7lHemrBCH1vSwf9wczSsmVZiacKn4I65SxeJz673iVvBTj79
+X-Received: by 2002:a81:52cd:0:b0:2d6:93e0:f1b2 with SMTP id g196-20020a8152cd000000b002d693e0f1b2mr2533105ywb.245.1645104776598;
+        Thu, 17 Feb 2022 05:32:56 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxFefMUXhH6RLwk9ZmWiTLxleS0FIicYntXWMfUeWl3fFq0Bq5LTKQkneJWoctpaIWmiEqJxFMmMbodYIp8NzE=
+X-Received: by 2002:a81:52cd:0:b0:2d6:93e0:f1b2 with SMTP id
+ g196-20020a8152cd000000b002d693e0f1b2mr2533075ywb.245.1645104776330; Thu, 17
+ Feb 2022 05:32:56 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v10 06/27] ima: Move arch_policy_entry into ima_namespace
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Christian Brauner <brauner@kernel.org>
-References: <20220201203735.164593-1-stefanb@linux.ibm.com>
- <20220201203735.164593-7-stefanb@linux.ibm.com>
- <bf435ffa5d176213acabb8c576c159d2cbd4d395.camel@linux.ibm.com>
- <c350ccf1-f968-8b01-2f0d-015cabf39781@linux.ibm.com>
- <c4170de11d64d5927a8e2a2e0f7e8a6e69c6a558.camel@linux.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <c4170de11d64d5927a8e2a2e0f7e8a6e69c6a558.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: a0JLbt8rZLx9dHrRWrfokUbIihXboZeN
-X-Proofpoint-GUID: ErNdkiqOb-tu9Gv7m0Ilrnm1jO72ttaU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-16_10,2022-02-16_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 adultscore=0 bulkscore=0 clxscore=1015 phishscore=0
- mlxscore=0 impostorscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202160114
+References: <20220212175922.665442-1-omosnace@redhat.com> <20220212175922.665442-3-omosnace@redhat.com>
+ <CAHC9VhT90617FoqQJBCrDQ8gceVVA6a1h74h6T4ZOwNk6RVB3g@mail.gmail.com>
+In-Reply-To: <CAHC9VhT90617FoqQJBCrDQ8gceVVA6a1h74h6T4ZOwNk6RVB3g@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Thu, 17 Feb 2022 14:32:44 +0100
+Message-ID: <CAFqZXNtRgYbZnL25aiDDXzq2ukujiipgJ32CfhfvROAQDHVgLA@mail.gmail.com>
+Subject: Re: [PATCH net v3 2/2] security: implement sctp_assoc_established
+ hook in selinux
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     network dev <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Xin Long <lucien.xin@gmail.com>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Prashanth Prahlad <pprahlad@redhat.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Feb 14, 2022 at 11:14 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Sat, Feb 12, 2022 at 12:59 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >
+> > Do this by extracting the peer labeling per-association logic from
+> > selinux_sctp_assoc_request() into a new helper
+> > selinux_sctp_process_new_assoc() and use this helper in both
+> > selinux_sctp_assoc_request() and selinux_sctp_assoc_established(). This
+> > ensures that the peer labeling behavior as documented in
+> > Documentation/security/SCTP.rst is applied both on the client and server
+> > side:
+> > """
+> > An SCTP socket will only have one peer label assigned to it. This will be
+> > assigned during the establishment of the first association. Any further
+> > associations on this socket will have their packet peer label compared to
+> > the sockets peer label, and only if they are different will the
+> > ``association`` permission be validated. This is validated by checking the
+> > socket peer sid against the received packets peer sid to determine whether
+> > the association should be allowed or denied.
+> > """
+> >
+> > At the same time, it also ensures that the peer label of the association
+> > is set to the correct value, such that if it is peeled off into a new
+> > socket, the socket's peer label  will then be set to the association's
+> > peer label, same as it already works on the server side.
+> >
+> > While selinux_inet_conn_established() (which we are replacing by
+> > selinux_sctp_assoc_established() for SCTP) only deals with assigning a
+> > peer label to the connection (socket), in case of SCTP we need to also
+> > copy the (local) socket label to the association, so that
+> > selinux_sctp_sk_clone() can then pick it up for the new socket in case
+> > of SCTP peeloff.
+> >
+> > Careful readers will notice that the selinux_sctp_process_new_assoc()
+> > helper also includes the "IPv4 packet received over an IPv6 socket"
+> > check, even though it hadn't been in selinux_sctp_assoc_request()
+> > before. While such check is not necessary in
+> > selinux_inet_conn_request() (because struct request_sock's family field
+> > is already set according to the skb's family), here it is needed, as we
+> > don't have request_sock and we take the initial family from the socket.
+> > In selinux_sctp_assoc_established() it is similarly needed as well (and
+> > also selinux_inet_conn_established() already has it).
+> >
+> > Fixes: 72e89f50084c ("security: Add support for SCTP security hooks")
+> > Reported-by: Prashanth Prahlad <pprahlad@redhat.com>
+> > Based-on-patch-by: Xin Long <lucien.xin@gmail.com>
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > ---
+> >  security/selinux/hooks.c | 90 +++++++++++++++++++++++++++++-----------
+> >  1 file changed, 66 insertions(+), 24 deletions(-)
+>
+> This patch, and patch 1/2, look good to me; I'm assuming this resolves
+> all of the known SELinux/SCTP problems identified before the new year?
 
-On 2/16/22 15:56, Mimi Zohar wrote:
-> On Wed, 2022-02-16 at 15:48 -0500, Stefan Berger wrote:
->> On 2/16/22 11:39, Mimi Zohar wrote:
->>> On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote
->>>
->>> Let's update the patch description providing a bit more background
->>> info:
->>>
->>> The archictecture specific policy rules, currently defined for EFI and
->>> powerpc, require the kexec kernel image and kernel modules to be
->>> validly signed and measured, based on the system's secure boot and/or
->>> trusted boot mode and the IMA_ARCH_POLICY Kconfig option being enabled.
->>>
->>>> Move the arch_policy_entry pointer into ima_namespace.
->>> Perhaps include something about namespaces being allowed or not allowed
->>> to kexec a new kernel or load kernel modules.
->> Namespaces are not allowed to kexec but special-casing the init_ima_ns
->> in the code to handle namespaces differently makes it much harder to
->> read the code. I would avoid special-casing init_ima_ns as much as
->> possible and therefore I have moved the arch_policy_entry into the
->> ima_namespace.
-> Please include this in the patch description, but re-write the last
-> line in the 3rd person, like:
->
-> To avoid special-casing init_ima_ns, as much as possible, move the
-> arch_policy_entry into the ima_namespace.
+No, not really. There is still the inconsistency that peeloff sockets
+go through the socket_[post_]create hooks and then the label computed
+is overwritten by the sctp_sk_clone hook. But it's a different issue
+unrelated to this one. I'm still in the process of cooking up the
+patches and figuring out the consequences (other LSMs would be
+affected by the change, too, so it is tricky...).
 
-I took the paragraph on the background as well as this sentence.
+--
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-
->
-> thanks,
->
-> Mimi
->
->
