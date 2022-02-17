@@ -2,135 +2,121 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A66B4C43217
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Feb 2022 17:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A92C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Feb 2022 19:58:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243724AbiBQRaY (ORCPT
+        id S245582AbiBQT6g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Feb 2022 12:30:24 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34386 "EHLO
+        Thu, 17 Feb 2022 14:58:36 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232550AbiBQRaV (ORCPT
+        with ESMTP id S229803AbiBQT6f (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Feb 2022 12:30:21 -0500
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54ECD272D8F;
-        Thu, 17 Feb 2022 09:30:06 -0800 (PST)
-Received: by mail-pf1-x429.google.com with SMTP id y11so251228pfa.6;
-        Thu, 17 Feb 2022 09:30:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=S0mP+gQItL0EexL5aPknfQRXrpjtE7gE4U7C9cJtgV0=;
-        b=Kz/FLUFB0NDlTmKj99fKKrcnTQeB/fx9Uqw/jTCu6dHipjcBAFoLfekUWSdzw4Hlui
-         CIfb35ZI/EwZc2w1inhb02y4CQmXICjByqCDQ2BPY44irZEmjAnMtl3PWbfi8VQoVeYW
-         NNLg6pvOxgWyAJbwxhYDOXyVikHxZj++z4AslfVm9w/r1swFlA72K1beNxhQd9MxeUNr
-         qWTks3mHfsqk3XVu625gH7iVX2+ueUNpqoR1jinzv9zi69TqHYBbrfdNz8EMwaF8wl/v
-         3xupzVGdpvX0kikiXxrfSgYXS5obqL3a9/UCQF33LpHpSfZ7Ev78EK2brmSlLMVF6mz6
-         ZOww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=S0mP+gQItL0EexL5aPknfQRXrpjtE7gE4U7C9cJtgV0=;
-        b=fayBswHwBkUvy+Ywk9aRXWjUYyq7veoLKX4xn6vIJ72gin5bkdLumm0HOMrovzG0R+
-         qCr9Lkqk/Py6VzoylKX9+uS9AYr+9Y024cZ49DxSTqW47ga8EdaFdC1FR/JhUMifMzok
-         2Huk5tb3ruOjS8REWvSo/wxX3BZlHBSi/7HQ8zYWNaGi8qS9ymxHgJtJWoIvnhyKzozJ
-         GNZxHkUx0mX28YiDG9ILfcEIsKOsCA8p7lIypg7s7tjw0UkF5gd/eLdvqLbrn0bzqrpi
-         tPnN73oyrhRElV3Xzz6ov27LZ9viGzyyH5JwozP8BT3CfvftomlBvTHryZeRK+5MBza+
-         QvQQ==
-X-Gm-Message-State: AOAM533TA2fklPpHkv8SlpBiEeZf8F0wj/y8V8x1wnvqNFwAaJb0bKqM
-        8qT7bDbFGZB/tE1IDTu0utsyfRVTNsZ8sr1LWP4=
-X-Google-Smtp-Source: ABdhPJyN1tP+rIxNtkLNTBcv8VhNYwdGPrE+6Ix9rpxGp0PA6bghC6wpL1IbAlkx+BCS5PTp2fOUYtendkuCPisvovw=
-X-Received: by 2002:a63:f711:0:b0:373:585d:2fd4 with SMTP id
- x17-20020a63f711000000b00373585d2fd4mr3184332pgh.287.1645119005789; Thu, 17
- Feb 2022 09:30:05 -0800 (PST)
+        Thu, 17 Feb 2022 14:58:35 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7086D289A4;
+        Thu, 17 Feb 2022 11:58:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2C62CB821B4;
+        Thu, 17 Feb 2022 19:58:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FA72C340E8;
+        Thu, 17 Feb 2022 19:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645127897;
+        bh=tIS1dG2zy1RRVA9bGHHwQ8vHAQt589WIAKZ0K8nnK9w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GQ2o3jDKhjfTmO1B8QNxXTbawirq/JvPaNVCKbG/1MmnLnvEBGkZjQtv5qcwXDefX
+         EDxAs9yAq3rt4vjzibnccRr1nTecBADIjqqzN2dx8XGeILA3w/ELpZ73JPWVjI9HOy
+         f3Y5Ia3wBxh1DZGlzT9SzGERZVvTb2m3nru6INvtl5lBO1lyT+fgI6yqr6edmpmYRE
+         Yjvj4SVfJKwTKt1WSjyuYSE8u+dq3+bGbwK8u0eMv+1bou9m4Z2g1oVNof6xiWHf9c
+         nxQGVullUol7/LIVSinq9JecwyEPmgZkJ7M2MkFCVTb54T/R8/cwopRLJOMNXn9uCU
+         u8OgfNrE8rzIA==
+Date:   Thu, 17 Feb 2022 20:58:52 +0100
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andreas Rammhold <andreas@rammhold.de>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v8 0/5] Enable root to update the blacklist keyring
+Message-ID: <Yg6o/ARtOIwuBFsW@iki.fi>
+References: <20210712170313.884724-1-mic@digikod.net>
+ <7e8d27da-b5d4-e42c-af01-5c03a7f36a6b@digikod.net>
+ <YcGVZitNa23PCSFV@iki.fi>
+ <5030a9ff-a1d1-a9bd-902a-77c3d1d87446@digikod.net>
+ <Ydc/E3S2vmtDOnpw@iki.fi>
+ <YddADJJNLDlQAYRW@iki.fi>
+ <86c5010e-a926-023a-8915-d6605cfc4f0a@digikod.net>
+ <e4707df2-ecc2-0471-87fc-c54e774fe315@digikod.net>
 MIME-Version: 1.0
-References: <20220217145003.78982-1-cgzones@googlemail.com>
-In-Reply-To: <20220217145003.78982-1-cgzones@googlemail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Thu, 17 Feb 2022 09:29:54 -0800
-Message-ID: <CAADnVQJKkrWosMo3S1Ua15_on0S5FWYqUgETi6gqccVOibvEAg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] capability: use new capable_or functionality
-To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc:     selinux@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Serge Hallyn <serge@hallyn.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Zhen Lei <thunder.leizhen@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Pavel Skripkin <paskripkin@gmail.com>,
-        Du Cheng <ducheng2@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexey Gladkov <legion@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Rolf Eike Beer <eb@emlix.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Colin Cross <ccross@google.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Xiaofeng Cao <cxfcosmos@gmail.com>,
-        Nikolay Aleksandrov <nikolay@nvidia.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ziyang Xuan <william.xuanziyang@huawei.com>,
-        Alexander Aring <aahringo@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Alistair Delva <adelva@google.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-media@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e4707df2-ecc2-0471-87fc-c54e774fe315@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 17, 2022 at 6:50 AM Christian G=C3=B6ttsche
-<cgzones@googlemail.com> wrote:
->
-> Use the new added capable_or macro in appropriate cases, where a task
-> is required to have any of two capabilities.
->
-> Reorder CAP_SYS_ADMIN last.
->
-> TODO: split into subsystem patches.
+On Mon, Jan 31, 2022 at 12:33:51PM +0100, Mickaël Salaün wrote:
+> 
+> On 07/01/2022 13:14, Mickaël Salaün wrote:
+> > 
+> > On 06/01/2022 20:16, Jarkko Sakkinen wrote:
+> > > On Thu, Jan 06, 2022 at 09:12:22PM +0200, Jarkko Sakkinen wrote:
+> > > > On Tue, Jan 04, 2022 at 04:56:36PM +0100, Mickaël Salaün wrote:
+> > > > > 
+> > > > > On 21/12/2021 09:50, Jarkko Sakkinen wrote:
+> > > > > > On Mon, Dec 13, 2021 at 04:30:29PM +0100, Mickaël Salaün wrote:
+> > > > > > > Hi Jarkko,
+> > > > > > > 
+> > > > > > > Since everyone seems OK with this and had plenty of
+> > > > > > > time to complain, could
+> > > > > > > you please take this patch series in your tree? It still applies on
+> > > > > > > v5.16-rc5 and it is really important to us. Please
+> > > > > > > let me know if you need
+> > > > > > > something more.
+> > > > > > > 
+> > > > > > > Regards,
+> > > > > > >    Mickaël
+> > > > > > 
+> > > > > > I'm off-work up until end of the year, i.e. I will
+> > > > > > address only important
+> > > > > > bug fixes and v5.16 up until that.
+> > > > > > 
+> > > > > > If any of the patches is yet missing my ack, feel free to
+> > > > > > 
+> > > > > > Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > > 
+> > > > > Thanks Jarkko. Can you please take it into your tree?
+> > > > 
+> > > > I can yes, as I need to anyway do a revised PR for v5.17, as one commit
+> > > > in my first trial had a truncated fixes tag.
+> > > 
+> > > Please check:
+> > > 
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+> > > 
+> > > /Jarkko
+> > 
+> > Great, thanks!
+> 
+> Hi Jarkko,
+> 
+> I noticed your commits https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?id=3ec9c3a0531ac868422be3b12fc17310ed8c07dc
+> are no more referenced in your tree. Is there an issue?
 
-Yes. Please.
+This must be some sort of mistake I've made. I'll re-apply the patches.
+Sorry about this.
 
-The bpf side picked the existing order because we were aware
-of that selinux issue.
-Looks like there is no good order that works for all.
-So the new helper makes a lot of sense.
-
-> Fixes: 94c4b4fd25e6 ("block: Check ADMIN before NICE for IOPRIO_CLASS_RT"=
-)
+BR, Jarkko
