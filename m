@@ -2,118 +2,107 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A192C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Feb 2022 21:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56B7C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Feb 2022 22:27:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236101AbiBQVem (ORCPT
+        id S1343858AbiBQW1l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Feb 2022 16:34:42 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57978 "EHLO
+        Thu, 17 Feb 2022 17:27:41 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231585AbiBQVem (ORCPT
+        with ESMTP id S1343856AbiBQW1l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Feb 2022 16:34:42 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C872111109A;
-        Thu, 17 Feb 2022 13:34:26 -0800 (PST)
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21HLCpqB029719;
-        Thu, 17 Feb 2022 21:33:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=1IknNosHkgrIItd4+fz82yY/ZudLplMKSRIl8wwtLPw=;
- b=pQQCjtZw5ATEiWRyDBMN/rgTp0SQvwwErpt1jC31LpWcXQ5vCFmBf8A+DlTJDKd7UkDc
- OMivn8AKW2kHSegw09cJVZIqllQDHdiQksEcU3kbpn1lrFD+i0z9KMQ3B6woq+V70gyS
- gViVQhsUsRkNhxxdiUy/LuPmp3qm45NdH2bB+ARfzjQ0AEdwxNs93oHRFq2x9apzv+qf
- iFCiPsFaU83KqHQGAdCMc6G7NQne5cF5ro52vbCf3iDTlpLbU788WQyWX7V53kgVgyed
- TyTwRxyAiUZx3boiEU8L9rOkFFGWJ6P0KJwPTSEyCEguEmNGZhMAJkIZbxyMSCj4MsGR gA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3e9w6chfva-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Feb 2022 21:33:06 +0000
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21HLRFsa024521;
-        Thu, 17 Feb 2022 21:33:05 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3e9w6chfun-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Feb 2022 21:33:05 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21HLDgYZ010027;
-        Thu, 17 Feb 2022 21:33:03 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma06fra.de.ibm.com with ESMTP id 3e645kbguk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Feb 2022 21:33:03 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21HLX0cF37749028
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Feb 2022 21:33:00 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E83ADA405F;
-        Thu, 17 Feb 2022 21:32:59 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A8213A4054;
-        Thu, 17 Feb 2022 21:32:57 +0000 (GMT)
-Received: from sig-9-65-72-122.ibm.com (unknown [9.65.72.122])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 17 Feb 2022 21:32:57 +0000 (GMT)
-Message-ID: <d2528ee025956683574775ed9f1bb37665cdfb47.camel@linux.ibm.com>
-Subject: Re: [PATCH v10 13/27] ima: Only accept AUDIT rules for
- non-init_ima_ns namespaces for now
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Christian Brauner <brauner@kernel.org>
-Date:   Thu, 17 Feb 2022 16:32:52 -0500
-In-Reply-To: <20220201203735.164593-14-stefanb@linux.ibm.com>
-References: <20220201203735.164593-1-stefanb@linux.ibm.com>
-         <20220201203735.164593-14-stefanb@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: zWXwygVsiLw7IdaxqGaPgAy1c5bNdkYl
-X-Proofpoint-ORIG-GUID: UGRkoEBLXim_aJhJGwR-23yVWmY0xS0B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-17_08,2022-02-17_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=999 spamscore=0 priorityscore=1501 mlxscore=0
- adultscore=0 suspectscore=0 malwarescore=0 phishscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202170102
+        Thu, 17 Feb 2022 17:27:41 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6D655BFD
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Feb 2022 14:27:25 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id a23so10593397eju.3
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Feb 2022 14:27:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=dOUplOtF52+4ptESkYuYLuLN7/aJDzskLaG/dPuOL2E=;
+        b=tyz6Qp+Fmi/7yVep0CvJKOEK/6J0acEN9GmzNqyRKbK2knKpyhT6G8l7dWebO8IaQa
+         wWiUBQHDDMnNcsTE7k9Kmqgd0ZRqDJABDaRdOMtNv2hFZN3pWjR4cy+nb7VVDnXMvo/s
+         sGkXQPMvKPeLKWiiMp4kTMxJna2RVn0i+n6aO+Y4WSlVusRULfUu5hoDMLCPNdwZJn/I
+         xyxrkN3LMx1/nFu9AlLAStJTfB4+DkmhnJ8mRpcM3+dYj51+DBYdayzCGH/Wed4E+DPF
+         PSAFM708zXP+Z8+3Tiz27TYsLXl2QzpFPJQLsXbp28sL0+A48U+dye2W0LGFtX7pcDsW
+         eE3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dOUplOtF52+4ptESkYuYLuLN7/aJDzskLaG/dPuOL2E=;
+        b=A5qe0onZLMIuHa9ZZ/A0r3coA7p53TNQCDofqOEVaaryfwG/7iF6GHEfaWuy0SCjUa
+         HEBH7rP3hSdvablvDwO1XrDFNejFx/EJMGol5a2Jbxntp8CiKzJzblWdltlF6VpTRDFS
+         p3P5R8uZoQvGl9AgXqyN5tnWvlEsubPwBmnxYY5QBToY4NIlUvrdE24fBl4BhnkzY545
+         yTbNY/53u6X16dDbjoU/JFzzrqpJmWS8mvwvW5JmtmFDbyzdjtMNPpcqLBTFu9SqN5WI
+         CLdOq7q26cCWJR6MnjSnUxbKwHj37uD9O8RcwEzvWujGkXwNOh5Fo0e7IVdCczjcDt18
+         X/iw==
+X-Gm-Message-State: AOAM532BI9lGUQubFiNzdyk1y/genbVAhCpajAIYfhd5CV0Gt8sNet3r
+        2+p37xnGWtzQvwQP5kr2PrFs5mM89mqXrKailEyx
+X-Google-Smtp-Source: ABdhPJw7EpGj8PRHM7AeikiX1WV4vhxdoltD+BcJxw6RJiTtevXzBj3yHDvAaHmjFd00igt1PmgSjgfwYHjlgW5puGE=
+X-Received: by 2002:a17:907:216f:b0:6ce:d85f:35cf with SMTP id
+ rl15-20020a170907216f00b006ced85f35cfmr3988130ejb.517.1645136843907; Thu, 17
+ Feb 2022 14:27:23 -0800 (PST)
+MIME-Version: 1.0
+References: <20220217141858.71281-1-cgzones@googlemail.com>
+In-Reply-To: <20220217141858.71281-1-cgzones@googlemail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 17 Feb 2022 17:27:12 -0500
+Message-ID: <CAHC9VhRGtkiOMHvjPaM170FJu3kiVZq30n389_2Gg=QgOV=fUA@mail.gmail.com>
+Subject: Re: [PATCH] security: declare member holding string literal const
+To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Cc:     selinux@vger.kernel.org, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>,
+        Todd Kjos <tkjos@google.com>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote:
+On Thu, Feb 17, 2022 at 9:19 AM Christian G=C3=B6ttsche
+<cgzones@googlemail.com> wrote:
+>
+> The struct security_hook_list member lsm is assigned in
+> security_add_hooks() with string literals passed from the individual
+> security modules.  Declare the function parameter and the struct member
+> const to signal their immutability.
+>
+> Reported by Clang [-Wwrite-strings]:
+>
+>     security/selinux/hooks.c:7388:63: error: passing 'const char [8]' to =
+parameter of type 'char *' discards qualifiers [-Werror,-Wincompatible-poin=
+ter-types-discards-qualifiers]
+>             security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), =
+selinux);
+>                                                                          =
+^~~~~~~~~
+>     ./include/linux/lsm_hooks.h:1629:11: note: passing argument to parame=
+ter 'lsm' here
+>                                     char *lsm);
+>                                           ^
+>
+> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> ---
+>  include/linux/lsm_hooks.h | 4 ++--
+>  security/security.c       | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
-> Only accept AUDIT rules for non-init_ima_ns namespaces rejecting all rules
-> that require support for measuring, appraisal, and hashing.
+Thanks Christian.
 
-It's probably obvious, but adding the words "for now" somewhere in the
-above line makes it clear this is temporary.
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> Acked-by: Christian Brauner <brauner@kernel.org>
-
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
--- 
-thanks,
-
-Mimi
-
-
-
+--=20
+paul-moore.com
