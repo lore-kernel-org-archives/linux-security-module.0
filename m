@@ -2,172 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 346E0C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Feb 2022 14:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D831C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Feb 2022 14:44:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241730AbiBQOfY (ORCPT
+        id S242024AbiBQOov (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Feb 2022 09:35:24 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43240 "EHLO
+        Thu, 17 Feb 2022 09:44:51 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231740AbiBQOfX (ORCPT
+        with ESMTP id S242017AbiBQOou (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Feb 2022 09:35:23 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7262FCC52F;
-        Thu, 17 Feb 2022 06:35:08 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id p15so7737569ejc.7;
-        Thu, 17 Feb 2022 06:35:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DHA2XuS0dgOq5n/U8wIiuJf10qw0oyQxE7M7cjtKX8s=;
-        b=BJzwn2QblOP2oo5yOQxiMMGcbxrnaeXECDpWnwfqAeX9Yze90RojvT+50kJJ3vPRsL
-         4vp7EnwIQx0+Gv66KVLp4aykvbiGk9/M08E4XgOVWj/E/gl7hF5/VDLvg3XHAZvp/Xxq
-         M2CKDXsXYGBhzEUoN+eEOAFu7UAz7em/4Ql0QvQ6VH55LOm0xEWY51F1wQiOYZtReV2j
-         7kea3qBf+PkhoVH/TAuzpnZL4PWCIWpeWaL18DLW0RkJ7dls6wwZUy1aW19Ul0fRloKE
-         2FZZ20ZYfsLPxWyYPMWxuCT7KUjUL11FUz48hCokHkE384/hpVwa+k/fnoeVg0r4owSh
-         3EGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DHA2XuS0dgOq5n/U8wIiuJf10qw0oyQxE7M7cjtKX8s=;
-        b=V2CwXpIeVsPXbl748c9GhL7wk3vnt2tMB10tz/cCuTxfWwuwfW1ZCtPnL1Nm9lMFCd
-         Gf0Hp7jwos0qtzmz8UN2qoCf5wIWlRvjF9IEhcr7/6qTWIAM9ErcOdrUXCVcELlmp6Ip
-         9yNEWjGYrusfXZEUGzGASsjWmoGPSSkplWCRZPuUfIsgNW0qUrWGWOZHWUWUTlCFN0Ee
-         qzci+X5OLBCfcIgyk7hwX5vxfG9O2bB60s5Ez1qyxO9eEAKfuZ8XnMwrAk/uWNRqwrp5
-         qKS5WmGnKXPzeFCiZyl1p+r3jZnOgLuZnUk5zfY/rydqzlumTdgTQTxaKVKPxK+I20tN
-         KhLg==
-X-Gm-Message-State: AOAM531sXYsMA3WVVZI6JTpfNVU3gMsQJhClGwDIx4TO+IbLGrWdGGOO
-        WIg9+lRBMnyoUY7OC/S3MrRE6kdpLZrt8w==
-X-Google-Smtp-Source: ABdhPJykPmzzIXwvoaaXr4wvTel9Iifi6+mdij3zzeWVxFBGU0mTRrXxWWGZx7feRQbnPWhiFvbOgQ==
-X-Received: by 2002:a17:906:414e:b0:6b9:7068:1983 with SMTP id l14-20020a170906414e00b006b970681983mr2609254ejk.752.1645108506934;
-        Thu, 17 Feb 2022 06:35:06 -0800 (PST)
-Received: from debianHome.localdomain (dynamic-077-001-066-240.77.1.pool.telefonica.de. [77.1.66.240])
-        by smtp.gmail.com with ESMTPSA id e17sm1260065ejl.68.2022.02.17.06.35.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Feb 2022 06:35:06 -0800 (PST)
-From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-To:     selinux@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH] selinux: log anon inode class name
-Date:   Thu, 17 Feb 2022 15:34:55 +0100
-Message-Id: <20220217143457.75229-1-cgzones@googlemail.com>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 17 Feb 2022 09:44:50 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C8A021D09A;
+        Thu, 17 Feb 2022 06:44:36 -0800 (PST)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21HEdom6018081;
+        Thu, 17 Feb 2022 14:44:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=spMY1+f5fzaepG3IJUmW+zDHj/gJnfmPPnGFIgIiXsU=;
+ b=fi7jlNKXVPhmSjf6OqwffLzNHGvgqY7Hrx1kckDn2tONEp7A6FWR7I1SQU6sdtFwEmQU
+ NilIRGopIoR5X2zQb/5O/Hgr2Q5sd6K4RAiP3BEeZ7uzBTXYHqsImJRYw5TSc6vXxeDv
+ A9hkaQ069E5XjYjsw9M9n8I0p1mAn0yT5U+kaGSRzlbQZMB2asPt2SBMPx5POjDvqdEd
+ TIdzvip9RLLYOaAh4yrOjJuVv/3t3n2Mvup5THoXlEV2lLc08ooiWlmpDTn1082blwqV
+ 82xlpQsUtoeYiho80Z8aVygFwdnHCK8eITdikR8fceGftOGYxajznaHGCg6meUKbRVOW DA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3e9q3ma170-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Feb 2022 14:44:18 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21HEfKqe025294;
+        Thu, 17 Feb 2022 14:44:17 GMT
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3e9q3ma167-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Feb 2022 14:44:17 +0000
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21HEXpFX028151;
+        Thu, 17 Feb 2022 14:44:15 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04fra.de.ibm.com with ESMTP id 3e64hah6hm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Feb 2022 14:44:15 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21HEXkR949807794
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Feb 2022 14:33:46 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE5C6A4060;
+        Thu, 17 Feb 2022 14:44:11 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 64CFFA4054;
+        Thu, 17 Feb 2022 14:44:09 +0000 (GMT)
+Received: from sig-9-65-66-221.ibm.com (unknown [9.65.66.221])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 17 Feb 2022 14:44:09 +0000 (GMT)
+Message-ID: <ee5b683e3d52b5aa9d5e7e0895d5d80c108c225c.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 09/27] ima: Move some IMA policy and filesystem
+ related variables into ima_namespace
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Christian Brauner <brauner@kernel.org>
+Date:   Thu, 17 Feb 2022 09:44:08 -0500
+In-Reply-To: <20220201203735.164593-10-stefanb@linux.ibm.com>
+References: <20220201203735.164593-1-stefanb@linux.ibm.com>
+         <20220201203735.164593-10-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 32RtK33s3oHJjgIoU6A-VViWq2h7QBOH
+X-Proofpoint-ORIG-GUID: PH3FBFc87FnJIVlNd-xDURjIEiw_IVVK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-17_05,2022-02-17_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1015 impostorscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 spamscore=0 adultscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202170066
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Log the anonymous inode class name in the security hook
-inode_init_security_anon.  This name is the key for name based type
-transitions on the anon_inode security class on creation.  Example:
+On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote:
+> Move the variables ima_write_mutex, ima_fs_flag, and valid_policy, which
+> are related to updating the IMA policy, into the ima_namespace. This way
+> each IMA namespace can set these variables independently in its instance
+> of securityfs.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Acked-by: Christian Brauner <brauner@kernel.org>
 
-    type=AVC msg=audit(02/16/22 22:02:50.585:216) : avc:  granted  { create } for  pid=2136 comm=mariadbd anonclass="[io_uring]" dev="anon_inodefs" ino=6871 scontext=system_u:system_r:mysqld_t:s0 tcontext=system_u:system_r:mysqld_iouring_t:s0 tclass=anon_inode
+Thanks,
 
-Add a new LSM audit data type holding the inode and the class name.
-
-Also warn if the security hook gets called with no name set; currently
-the only caller fs/anon_inodes.c:anon_inode_make_secure_inode() passes
-one.
-
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
- include/linux/lsm_audit.h |  5 +++++
- security/lsm_audit.c      | 21 +++++++++++++++++++++
- security/selinux/hooks.c  |  7 +++++--
- 3 files changed, 31 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-index 17d02eda9538..8135a88d6d82 100644
---- a/include/linux/lsm_audit.h
-+++ b/include/linux/lsm_audit.h
-@@ -76,6 +76,7 @@ struct common_audit_data {
- #define LSM_AUDIT_DATA_IBENDPORT 14
- #define LSM_AUDIT_DATA_LOCKDOWN 15
- #define LSM_AUDIT_DATA_NOTIFICATION 16
-+#define LSM_AUDIT_DATA_ANONINODE	17
- 	union 	{
- 		struct path path;
- 		struct dentry *dentry;
-@@ -96,6 +97,10 @@ struct common_audit_data {
- 		struct lsm_ibpkey_audit *ibpkey;
- 		struct lsm_ibendport_audit *ibendport;
- 		int reason;
-+		struct {
-+			struct inode *inode;
-+			const char *anonclass;
-+		} anoninode_struct;
- 	} u;
- 	/* this union contains LSM specific data */
- 	union {
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 1897cbf6fc69..5545fed35539 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -433,6 +433,27 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 		audit_log_format(ab, " lockdown_reason=\"%s\"",
- 				 lockdown_reasons[a->u.reason]);
- 		break;
-+	case LSM_AUDIT_DATA_ANONINODE: {
-+		struct dentry *dentry;
-+		struct inode *inode;
-+
-+		rcu_read_lock();
-+		inode = a->u.anoninode_struct.inode;
-+		dentry = d_find_alias_rcu(inode);
-+		if (dentry) {
-+			audit_log_format(ab, " name=");
-+			spin_lock(&dentry->d_lock);
-+			audit_log_untrustedstring(ab, dentry->d_name.name);
-+			spin_unlock(&dentry->d_lock);
-+		}
-+		audit_log_format(ab, " anonclass=");
-+		audit_log_untrustedstring(ab, a->u.anoninode_struct.anonclass);
-+		audit_log_format(ab, " dev=");
-+		audit_log_untrustedstring(ab, inode->i_sb->s_id);
-+		audit_log_format(ab, " ino=%lu", inode->i_ino);
-+		rcu_read_unlock();
-+		break;
-+	}
- 	} /* switch (a->type) */
- }
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index dafabb4dcc64..19c831d94d9b 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2932,6 +2932,8 @@ static int selinux_inode_init_security_anon(struct inode *inode,
- 	if (unlikely(!selinux_initialized(&selinux_state)))
- 		return 0;
- 
-+	WARN_ON(!name);
-+
- 	isec = selinux_inode(inode);
- 
- 	/*
-@@ -2965,8 +2967,9 @@ static int selinux_inode_init_security_anon(struct inode *inode,
- 	 * allowed to actually create this type of anonymous inode.
- 	 */
- 
--	ad.type = LSM_AUDIT_DATA_INODE;
--	ad.u.inode = inode;
-+	ad.type = LSM_AUDIT_DATA_ANONINODE;
-+	ad.u.anoninode_struct.inode = inode;
-+	ad.u.anoninode_struct.anonclass = name ? (const char *)name->name : "unknown(null)";
- 
- 	return avc_has_perm(&selinux_state,
- 			    tsec->sid,
--- 
-2.35.1
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
