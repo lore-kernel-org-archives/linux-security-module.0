@@ -2,191 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CA4C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Feb 2022 20:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45553C433EF
+	for <linux-security-module@archiver.kernel.org>; Sat, 19 Feb 2022 11:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238882AbiBRUJA (ORCPT
+        id S239927AbiBSLmV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Feb 2022 15:09:00 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56504 "EHLO
+        Sat, 19 Feb 2022 06:42:21 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238576AbiBRUI7 (ORCPT
+        with ESMTP id S232300AbiBSLmV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Feb 2022 15:08:59 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C1BC24B2A3;
-        Fri, 18 Feb 2022 12:08:39 -0800 (PST)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21IK8DAX001416;
-        Fri, 18 Feb 2022 20:08:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=8WtNdrz4XvVj3I7dCRdDhnQLA9IgoRhPdH7j9n1eVRI=;
- b=J6HT/HzgyOpMoVTreAAeIfag1EGdjiPgFS8PR8sM+UalIc1CpGkdKlTR4d+EgrLJnGgp
- cXXGqUlOPMfUXfNYVG68dAM+0rsLlsmvuhFtX4a7I/2haPs4+M2+/bTo3DFOvx1qvRB4
- VogJHsqQW9xpWkyRhZGFmZ42vRqfxV+c4rJC1UcE3R6nzC0vCi40zPVeFtprcEbW0KWQ
- aY7UajSrf5y1G77ieduZWOCIMYci7Y7eE2IYf1uFISY3P7BWrrrKlLqYoFLTl+pUW/XZ
- UvmmW7LS6SZhn7D0YhEH08W0Almzt5oDCzZ+6PY7QRM03xdlcndCkkJ81w61Nm9+3dz5 PA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3eaj2505es-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Feb 2022 20:08:21 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21IK8Lgl002212;
-        Fri, 18 Feb 2022 20:08:21 GMT
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3eaj2505ck-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Feb 2022 20:08:21 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21IK2ZV8017792;
-        Fri, 18 Feb 2022 20:04:27 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma03fra.de.ibm.com with ESMTP id 3e64hasjd0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Feb 2022 20:04:26 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21IK4Lvm43844020
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Feb 2022 20:04:21 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1BA06A405B;
-        Fri, 18 Feb 2022 20:04:21 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5F75A4054;
-        Fri, 18 Feb 2022 20:04:18 +0000 (GMT)
-Received: from sig-9-65-86-101.ibm.com (unknown [9.65.86.101])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Feb 2022 20:04:18 +0000 (GMT)
-Message-ID: <15ff4fc5b4386e588c4314ad9712b7044c0bb8f8.camel@linux.ibm.com>
-Subject: Re: [PATCH v10 16/27] ima: Implement ima_free_policy_rules() for
- freeing of an ima_namespace
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-Date:   Fri, 18 Feb 2022 15:04:18 -0500
-In-Reply-To: <55c0c300-3fe4-f610-0b78-adc5593a70a0@linux.ibm.com>
-References: <20220201203735.164593-1-stefanb@linux.ibm.com>
-         <20220201203735.164593-17-stefanb@linux.ibm.com>
-         <ce1fbc8baf5359b698bf4420e602cc3a5a2a1f44.camel@linux.ibm.com>
-         <55c0c300-3fe4-f610-0b78-adc5593a70a0@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: hDxCtjCREBgQSbGtvqlRR1EAgOitfuid
-X-Proofpoint-GUID: 138CzvqWyVFF4yLwO7JbbyZGW1JDnJIO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-18_09,2022-02-18_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- phishscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 adultscore=0
- spamscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202180119
+        Sat, 19 Feb 2022 06:42:21 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92AAB32078;
+        Sat, 19 Feb 2022 03:42:01 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4650CB8013C;
+        Sat, 19 Feb 2022 11:42:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28D30C340EB;
+        Sat, 19 Feb 2022 11:41:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645270919;
+        bh=42N0kSNDN/I0l7uNeWq1bWt0szwT7gCbE5fdpr8yCWs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O3O2Mbkpy5TFqAygEu87Dvm9J87aB8FAFvYPSkE9DLHzRQlZXkAlWApSkQQZaFgEB
+         L7jszgblHHH1L7JJkforHcFZ1JF0KCGZZifWtslRWx0DiUcBvShfihcgZI4qViffbd
+         lFcKrpPkZ4X6Tv3yILibtkxjXDNyudmM44Q0NRt40XQFBugcE3Zk8Wx8flsPYcquN9
+         btlLaJmoCSDzGgbHEnOj4/SZJVMq5rGGoc7oKv2UtbLINzm3E2uYd0qHeD5NPhMdoL
+         n4gyWmC6Wk1UZMXw3VAsPWZ7eZIWvFMLnLllPTyk+FcpqyUZA8plxckNOLRlTnifdr
+         3XFtUZubEZoYg==
+Date:   Sat, 19 Feb 2022 12:42:30 +0100
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andreas Rammhold <andreas@rammhold.de>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v8 0/5] Enable root to update the blacklist keyring
+Message-ID: <YhDXpq8YDhxg0RLW@iki.fi>
+References: <20210712170313.884724-1-mic@digikod.net>
+ <7e8d27da-b5d4-e42c-af01-5c03a7f36a6b@digikod.net>
+ <YcGVZitNa23PCSFV@iki.fi>
+ <5030a9ff-a1d1-a9bd-902a-77c3d1d87446@digikod.net>
+ <Ydc/E3S2vmtDOnpw@iki.fi>
+ <YddADJJNLDlQAYRW@iki.fi>
+ <86c5010e-a926-023a-8915-d6605cfc4f0a@digikod.net>
+ <e4707df2-ecc2-0471-87fc-c54e774fe315@digikod.net>
+ <Yg6o/ARtOIwuBFsW@iki.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Yg6o/ARtOIwuBFsW@iki.fi>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2022-02-18 at 14:38 -0500, Stefan Berger wrote:
-> On 2/18/22 12:09, Mimi Zohar wrote:
-> > On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote:
-> >> Implement ima_free_policy_rules() that is needed when an ima_namespace
-> >> is freed.
-
-ima_free_policy_rules() isn't free all the rules, just the custom
-policy rules.  I would update the patch description as:
-
-Implement ima_free_policy_rules() to free the custom policy rules, when
-...
-
-Otherwise,
-
-Reviewd-by: Mimi Zohar <zohar@linux.ibm.com>
-
-> >>
-> >> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> >>
-> >> ---
-> >> v10:
-> >>    - Not calling ima_delete_rules() anymore
-> >>    - Move access check from ima_delete_rules into very last patch
-> >>
-> >>   v9:
-> >>    - Only reset temp_ima_appraise when using init_ima_ns.
-> >> ---
-> >>   security/integrity/ima/ima.h        |  1 +
-> >>   security/integrity/ima/ima_policy.c | 14 ++++++++++++++
-> >>   2 files changed, 15 insertions(+)
-> >>
-> >> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> >> index aea8fb8d2854..8c757223d549 100644
-> >> --- a/security/integrity/ima/ima.h
-> >> +++ b/security/integrity/ima/ima.h
-> >> @@ -329,6 +329,7 @@ void ima_update_policy_flags(struct ima_namespace *ns);
-> >>   ssize_t ima_parse_add_rule(struct ima_namespace *ns, char *rule);
-> >>   void ima_delete_rules(struct ima_namespace *ns);
-> >>   int ima_check_policy(struct ima_namespace *ns);
-> >> +void ima_free_policy_rules(struct ima_namespace *ns);
-> >>   void *ima_policy_start(struct seq_file *m, loff_t *pos);
-> >>   void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos);
-> >>   void ima_policy_stop(struct seq_file *m, void *v);
-> >> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> >> index 2dcc5a8c585a..fe3dce8fb939 100644
-> >> --- a/security/integrity/ima/ima_policy.c
-> >> +++ b/security/integrity/ima/ima_policy.c
-> >> @@ -1889,6 +1889,20 @@ void ima_delete_rules(struct ima_namespace *ns)
-> >>   	}
-> >>   }
-> >>   
-> >> +/**
-> >> + * ima_free_policy_rules - free all policy rules
-> >> + * @ns: IMA namespace that has the policy
-> >> + */
-> >> +void ima_free_policy_rules(struct ima_namespace *ns)
-> >> +{
-> >> +	struct ima_rule_entry *entry, *tmp;
-> >> +
-> >> +	list_for_each_entry_safe(entry, tmp, &ns->ima_policy_rules, list) {
-> >> +		list_del(&entry->list);
-> >> +		ima_free_rule(entry);
-> >> +	}
-> >> +}
-> >> +
-> > The first time a policy is loaded, the policy rules pivot
-> > from ima_default_rules to the custom rules.  When this happens, the
-> > architecture specific policy rules are freed.  Here too, if a custom
-> > policy isn't already loaded, the architecture specific rules stored as
-> > an array need to be freed.  Refer to the comment in
-> > ima_update_policy().
+On Thu, Feb 17, 2022 at 08:58:57PM +0100, Jarkko Sakkinen wrote:
+> On Mon, Jan 31, 2022 at 12:33:51PM +0100, Mickaël Salaün wrote:
+> > 
+> > On 07/01/2022 13:14, Mickaël Salaün wrote:
+> > > 
+> > > On 06/01/2022 20:16, Jarkko Sakkinen wrote:
+> > > > On Thu, Jan 06, 2022 at 09:12:22PM +0200, Jarkko Sakkinen wrote:
+> > > > > On Tue, Jan 04, 2022 at 04:56:36PM +0100, Mickaël Salaün wrote:
+> > > > > > 
+> > > > > > On 21/12/2021 09:50, Jarkko Sakkinen wrote:
+> > > > > > > On Mon, Dec 13, 2021 at 04:30:29PM +0100, Mickaël Salaün wrote:
+> > > > > > > > Hi Jarkko,
+> > > > > > > > 
+> > > > > > > > Since everyone seems OK with this and had plenty of
+> > > > > > > > time to complain, could
+> > > > > > > > you please take this patch series in your tree? It still applies on
+> > > > > > > > v5.16-rc5 and it is really important to us. Please
+> > > > > > > > let me know if you need
+> > > > > > > > something more.
+> > > > > > > > 
+> > > > > > > > Regards,
+> > > > > > > >    Mickaël
+> > > > > > > 
+> > > > > > > I'm off-work up until end of the year, i.e. I will
+> > > > > > > address only important
+> > > > > > > bug fixes and v5.16 up until that.
+> > > > > > > 
+> > > > > > > If any of the patches is yet missing my ack, feel free to
+> > > > > > > 
+> > > > > > > Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > > > 
+> > > > > > Thanks Jarkko. Can you please take it into your tree?
+> > > > > 
+> > > > > I can yes, as I need to anyway do a revised PR for v5.17, as one commit
+> > > > > in my first trial had a truncated fixes tag.
+> > > > 
+> > > > Please check:
+> > > > 
+> > > > git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+> > > > 
+> > > > /Jarkko
+> > > 
+> > > Great, thanks!
+> > 
+> > Hi Jarkko,
+> > 
+> > I noticed your commits https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?id=3ec9c3a0531ac868422be3b12fc17310ed8c07dc
+> > are no more referenced in your tree. Is there an issue?
 > 
-> Right. So here's how it's done (before arch_policy_entry was moved into 
-> ima_namespace).
-> 
->          /*
->           * IMA architecture specific policy rules are specified
->           * as strings and converted to an array of ima_entry_rules
->           * on boot.  After loading a custom policy, free the
->           * architecture specific rules stored as an array.
->           */
->          kfree(arch_policy_entry);
-> 
-> 
-> So, I now added kfree(ns->arch_policy_entry).
+> This must be some sort of mistake I've made. I'll re-apply the patches.
+> Sorry about this.
 
-Yes, that is fine.
+OK now the patches are in and will be included to the next PR. I fixed
+merge conflicts caused by 5cca36069d4c ("certs: refactor file cleaning")
+in "certs: Check that builtin blacklist hashes are valid" so please
+sanity check that it is good.
 
--- 
-thanks,
-
-Mimi
-
+BR, Jarkko
