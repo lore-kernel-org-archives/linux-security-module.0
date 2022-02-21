@@ -2,80 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A093C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Feb 2022 01:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133F7C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Feb 2022 05:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245537AbiBUB5C (ORCPT
+        id S239888AbiBUFMF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 20 Feb 2022 20:57:02 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38662 "EHLO
+        Mon, 21 Feb 2022 00:12:05 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245530AbiBUB5B (ORCPT
+        with ESMTP id S238149AbiBUFMD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 20 Feb 2022 20:57:01 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5744F100C;
-        Sun, 20 Feb 2022 17:56:39 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E71F261003;
-        Mon, 21 Feb 2022 01:56:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBDE7C340E8;
-        Mon, 21 Feb 2022 01:56:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645408598;
-        bh=yq/OsN2UPgPqkLWDnB90Fn+UbNTw+6x3zjF9s9FDhHc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gC1VEDneoqZafgZU9gPv/kjrpPE2aYhKDXHjRda0CzsDlYrlPKRz/afdK5Wfvp4Hp
-         5/VYBmczFIQ9ec5pgbcLkhNT699e4rqY75++9l+EOHp0eaQFECBA0IbIKbRafiEZwN
-         A9lTUjj7PRL3x6py6peO6hiigXCVLbz5KFl1s14NOs+ZqNp6oYAzAsKq0j0awIjPnR
-         cKEn1X88kEp+v6zixbbTdrkjAxGDo/ZkPJRotBc85wPMn5EtM6wlTXN/4trJRhQXML
-         elIy55vz3FZa2YbWYi2SHZROEU2dZ0wnLlRm7TBI/Wb4ZH+X8xm4LQWeIPbgwrwBLd
-         H9jlp9Ijkcx2A==
-Date:   Mon, 21 Feb 2022 02:57:16 +0100
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] KEYS: trusted: Avoid calling null function
- trusted_key_exit
-Message-ID: <YhLxfHcCccNUAiIl@kernel.org>
-References: <20220126184155.220814-1-dave.kleikamp@oracle.com>
- <YfGtVk/HQjgl1zSS@iki.fi>
- <cda221fd-6481-598f-03ba-29d0b79af8b7@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cda221fd-6481-598f-03ba-29d0b79af8b7@oracle.com>
+        Mon, 21 Feb 2022 00:12:03 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FC08F6B;
+        Sun, 20 Feb 2022 21:11:41 -0800 (PST)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21L1kmvN001742;
+        Mon, 21 Feb 2022 05:11:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=rqbJNB7ceD4txv7qnU3G/TJ1EzAn3nFOxrgn4mCRPGc=;
+ b=ZqwdyjD94OdR8BgAYlFWq1eSxIuXO0wASenp63pRUgQKIe/bckIvYUUIkNXfZwLZqHwH
+ fgaQsEkELMpVcTFxMDc7FJo1h3WbTmNiXlJdtlIjW68Ex5yHi4480v54y1IOXOR8Y1eG
+ 9QxJSu3uZ2ZxP75bKASIJWNhYhVADOcprhvz5yCgASEhrjRVV4qgcDcDAaLEpkyVf+BS
+ 0MSaG0C6JJBmNwzi5+8FSaZW690YZ+EqSwuxA2fgzH3MkHxHqA65AbozV+/q+KkC7x3k
+ 8A8rCE+gDU4EHjiQk3H0XeMosF6u9hwBvFhRavGRnk/lqY6+gkvgxNpHLtPdCkwVJcu0 9g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ec1cg2y9r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Feb 2022 05:11:30 +0000
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21L50gMA021650;
+        Mon, 21 Feb 2022 05:11:29 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ec1cg2y96-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Feb 2022 05:11:29 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21L58iRd022268;
+        Mon, 21 Feb 2022 05:11:27 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06ams.nl.ibm.com with ESMTP id 3eaqthqk1g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Feb 2022 05:11:26 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21L5BOUh46137842
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 21 Feb 2022 05:11:24 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 73635A4060;
+        Mon, 21 Feb 2022 05:11:24 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2C69A4068;
+        Mon, 21 Feb 2022 05:11:22 +0000 (GMT)
+Received: from sig-9-65-90-122.ibm.com (unknown [9.65.90.122])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 21 Feb 2022 05:11:22 +0000 (GMT)
+Message-ID: <0aa47dfaada88f1cbd2162784f8b77f43566f626.camel@linux.ibm.com>
+Subject: Re: [PATCH v5] KEYS: encrypted: Instantiate key with user-provided
+ decrypted data
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Yael Tzur <yaelt@google.com>, linux-integrity@vger.kernel.org
+Cc:     jejb@linux.ibm.com, jarkko@kernel.org, corbet@lwn.net,
+        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
+        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date:   Mon, 21 Feb 2022 00:11:22 -0500
+In-Reply-To: <20220215141953.1557009-1-yaelt@google.com>
+References: <20220215141953.1557009-1-yaelt@google.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: quEvIySwxJvuMedB1D2tQxa0Xugn-c18
+X-Proofpoint-ORIG-GUID: WSVVINvjQg7GWnsAM8VKvAxTPwoqnsM8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-21_01,2022-02-18_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ malwarescore=0 spamscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
+ definitions=main-2202210031
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 07, 2022 at 11:40:23AM -0600, Dave Kleikamp wrote:
-> On 1/26/22 2:21PM, Jarkko Sakkinen wrote:
-> > On Wed, Jan 26, 2022 at 12:41:55PM -0600, Dave Kleikamp wrote:
-> > > If one loads and unloads the trusted module, trusted_key_exit can be
-> > > NULL. Call it through static_call_cond() to avoid a kernel trap.
-> > > 
-> > > Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
-> > > 
-> > > Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-> > 
-> > Please re-send with cc stable and the empty line removed and I'll pick it.
+On Tue, 2022-02-15 at 09:19 -0500, Yael Tzur wrote:
+> For availability and performance reasons master keys often need to be
+> released outside of a Key Management Service (KMS) to clients. It
+> would be beneficial to provide a mechanism where the
+> wrapping/unwrapping of data encryption keys (DEKs) is not dependent
+> on a remote call at runtime yet security is not (or only minimally)
+> compromised. Master keys could be securely stored in the Kernel and
+> be used to wrap/unwrap keys from Userspace.
 > 
-> I re-sent a v2, but haven't seen any response from you.
+> The encrypted.c class supports instantiation of encrypted keys with
+> either an already-encrypted key material, or by generating new key
+> material based on random numbers. This patch defines a new datablob
+> format: [<format>] <master-key name> <decrypted data length>
+> <decrypted data> that allows to inject and encrypt user-provided
+> decrypted data. The decrypted data must be hex-ascii encoded.
 > 
-> I can send it again, or feel free to clean up those lines yourself.
-> 
-> Thanks,
-> Shaggy
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Yael Tzur <yaelt@google.com>
 
-I've applied the patch. Thank you, and apologies for the latency.
+Thanks,  Yael.
 
-BR, Jarkko
+This patch is now queued in the #next-integrity-testing branch.
+
+-- 
+thanks,
+
+Mimi
+
