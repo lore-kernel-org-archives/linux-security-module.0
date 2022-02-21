@@ -2,26 +2,26 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0BDC433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Feb 2022 21:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E95F8C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Feb 2022 21:15:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234402AbiBUVPt (ORCPT
+        id S234352AbiBUVQP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Feb 2022 16:15:49 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41094 "EHLO
+        Mon, 21 Feb 2022 16:16:15 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234348AbiBUVPn (ORCPT
+        with ESMTP id S234358AbiBUVPo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Feb 2022 16:15:43 -0500
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7760C24093
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Feb 2022 13:15:15 -0800 (PST)
+        Mon, 21 Feb 2022 16:15:44 -0500
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2577223BED
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Feb 2022 13:15:17 -0800 (PST)
 Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K2Znt0nkfzMqK3X;
-        Mon, 21 Feb 2022 22:15:14 +0100 (CET)
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K2Znv6PCHzMqJwT;
+        Mon, 21 Feb 2022 22:15:15 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4K2Zns65J9zljTgK;
-        Mon, 21 Feb 2022 22:15:13 +0100 (CET)
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4K2Znv4XcCzljTg3;
+        Mon, 21 Feb 2022 22:15:15 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>
@@ -35,9 +35,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v1 05/11] landlock: Move filesystem helpers and add a new one
-Date:   Mon, 21 Feb 2022 22:25:16 +0100
-Message-Id: <20220221212522.320243-6-mic@digikod.net>
+Subject: [PATCH v1 08/11] samples/landlock: Add support for file reparenting
+Date:   Mon, 21 Feb 2022 22:25:19 +0100
+Message-Id: <20220221212522.320243-9-mic@digikod.net>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220221212522.320243-1-mic@digikod.net>
 References: <20220221212522.320243-1-mic@digikod.net>
@@ -49,145 +49,88 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Move the SB_NOUSER and IS_PRIVATE dentry check to a standalone
-is_nouser_or_private() helper.  This will be useful for a following
-commit.
-
-Move get_mode_access() and maybe_remove() to make them usable by new
-code provided by a following commit.
+Add LANDLOCK_ACCESS_FS_REFER to the "roughly write" access rights and
+leverage the Landlock ABI version to only try to enforce it if it is
+supported by the running kernel.
 
 Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20220221212522.320243-6-mic@digikod.net
+Link: https://lore.kernel.org/r/20220221212522.320243-9-mic@digikod.net
 ---
- security/landlock/fs.c | 87 ++++++++++++++++++++++--------------------
- 1 file changed, 46 insertions(+), 41 deletions(-)
+ samples/landlock/sandboxer.c | 37 +++++++++++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 9662f9fb3cd0..3886f9ad1a60 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -257,6 +257,18 @@ static inline bool unmask_layers(const struct landlock_rule *const rule,
- 	return false;
- }
- 
-+static inline bool is_nouser_or_private(const struct dentry *dentry)
-+{
-+	/*
-+	 * Allows access to pseudo filesystems that will never be mountable
-+	 * (e.g. sockfs, pipefs), but can still be reachable through
-+	 * /proc/<pid>/fd/<file-descriptor> .
-+	 */
-+	return (dentry->d_sb->s_flags & SB_NOUSER) ||
-+			(d_is_positive(dentry) &&
-+			 unlikely(IS_PRIVATE(d_backing_inode(dentry))));
-+}
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index 7a15910d2171..8509543fcbbb 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -153,16 +153,21 @@ static int populate_ruleset(
+ 	LANDLOCK_ACCESS_FS_MAKE_SOCK | \
+ 	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
+ 	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
+-	LANDLOCK_ACCESS_FS_MAKE_SYM)
++	LANDLOCK_ACCESS_FS_MAKE_SYM | \
++	LANDLOCK_ACCESS_FS_REFER)
 +
- static int check_access_path(const struct landlock_ruleset *const domain,
- 		const struct path *const path,
- 		const access_mask_t access_request)
-@@ -270,14 +282,7 @@ static int check_access_path(const struct landlock_ruleset *const domain,
- 		return 0;
- 	if (WARN_ON_ONCE(!domain || !path))
- 		return 0;
--	/*
--	 * Allows access to pseudo filesystems that will never be mountable
--	 * (e.g. sockfs, pipefs), but can still be reachable through
--	 * /proc/<pid>/fd/<file-descriptor> .
--	 */
--	if ((path->dentry->d_sb->s_flags & SB_NOUSER) ||
--			(d_is_positive(path->dentry) &&
--			 unlikely(IS_PRIVATE(d_backing_inode(path->dentry)))))
-+	if (is_nouser_or_private(path->dentry))
- 		return 0;
- 	if (WARN_ON_ONCE(domain->num_layers < 1))
- 		return -EACCES;
-@@ -356,6 +361,39 @@ static inline int current_check_access_path(const struct path *const path,
- 	return check_access_path(dom, path, access_request);
- }
++#define ACCESS_ABI_2 ( \
++	LANDLOCK_ACCESS_FS_REFER)
  
-+static inline access_mask_t get_mode_access(const umode_t mode)
-+{
-+	switch (mode & S_IFMT) {
-+	case S_IFLNK:
-+		return LANDLOCK_ACCESS_FS_MAKE_SYM;
-+	case 0:
-+		/* A zero mode translates to S_IFREG. */
-+	case S_IFREG:
-+		return LANDLOCK_ACCESS_FS_MAKE_REG;
-+	case S_IFDIR:
-+		return LANDLOCK_ACCESS_FS_MAKE_DIR;
-+	case S_IFCHR:
-+		return LANDLOCK_ACCESS_FS_MAKE_CHAR;
-+	case S_IFBLK:
-+		return LANDLOCK_ACCESS_FS_MAKE_BLOCK;
-+	case S_IFIFO:
-+		return LANDLOCK_ACCESS_FS_MAKE_FIFO;
-+	case S_IFSOCK:
-+		return LANDLOCK_ACCESS_FS_MAKE_SOCK;
-+	default:
-+		WARN_ON_ONCE(1);
-+		return 0;
+ int main(const int argc, char *const argv[], char *const *const envp)
+ {
+ 	const char *cmd_path;
+ 	char *const *cmd_argv;
+-	int ruleset_fd;
++	int ruleset_fd, abi;
++	__u64 access_fs_ro = ACCESS_FS_ROUGHLY_READ,
++	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
+ 	struct landlock_ruleset_attr ruleset_attr = {
+-		.handled_access_fs = ACCESS_FS_ROUGHLY_READ |
+-			ACCESS_FS_ROUGHLY_WRITE,
++		.handled_access_fs = access_fs_rw,
+ 	};
+ 
+ 	if (argc < 2) {
+@@ -183,11 +188,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 		return 1;
+ 	}
+ 
+-	ruleset_fd = landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+-	if (ruleset_fd < 0) {
++	abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
++	if (abi < 0) {
+ 		const int err = errno;
+ 
+-		perror("Failed to create a ruleset");
++		perror("Failed to check Landlock compatibility");
+ 		switch (err) {
+ 		case ENOSYS:
+ 			fprintf(stderr, "Hint: Landlock is not supported by the current kernel. "
+@@ -205,12 +210,22 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 		}
+ 		return 1;
+ 	}
+-	if (populate_ruleset(ENV_FS_RO_NAME, ruleset_fd,
+-				ACCESS_FS_ROUGHLY_READ)) {
++	/* Best-effort security. */
++	if (abi < 2) {
++		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
++		access_fs_ro &= ~ACCESS_ABI_2;
++		access_fs_rw &= ~ACCESS_ABI_2;
 +	}
-+}
 +
-+static inline access_mask_t maybe_remove(const struct dentry *const dentry)
-+{
-+	if (d_is_negative(dentry))
-+		return 0;
-+	return d_is_dir(dentry) ? LANDLOCK_ACCESS_FS_REMOVE_DIR :
-+		LANDLOCK_ACCESS_FS_REMOVE_FILE;
-+}
-+
- /* Inode hooks */
- 
- static void hook_inode_free_security(struct inode *const inode)
-@@ -549,31 +587,6 @@ static int hook_sb_pivotroot(const struct path *const old_path,
- 
- /* Path hooks */
- 
--static inline access_mask_t get_mode_access(const umode_t mode)
--{
--	switch (mode & S_IFMT) {
--	case S_IFLNK:
--		return LANDLOCK_ACCESS_FS_MAKE_SYM;
--	case 0:
--		/* A zero mode translates to S_IFREG. */
--	case S_IFREG:
--		return LANDLOCK_ACCESS_FS_MAKE_REG;
--	case S_IFDIR:
--		return LANDLOCK_ACCESS_FS_MAKE_DIR;
--	case S_IFCHR:
--		return LANDLOCK_ACCESS_FS_MAKE_CHAR;
--	case S_IFBLK:
--		return LANDLOCK_ACCESS_FS_MAKE_BLOCK;
--	case S_IFIFO:
--		return LANDLOCK_ACCESS_FS_MAKE_FIFO;
--	case S_IFSOCK:
--		return LANDLOCK_ACCESS_FS_MAKE_SOCK;
--	default:
--		WARN_ON_ONCE(1);
--		return 0;
--	}
--}
--
- /*
-  * Creating multiple links or renaming may lead to privilege escalations if not
-  * handled properly.  Indeed, we must be sure that the source doesn't gain more
-@@ -601,14 +614,6 @@ static int hook_path_link(struct dentry *const old_dentry,
- 			get_mode_access(d_backing_inode(old_dentry)->i_mode));
- }
- 
--static inline access_mask_t maybe_remove(const struct dentry *const dentry)
--{
--	if (d_is_negative(dentry))
--		return 0;
--	return d_is_dir(dentry) ? LANDLOCK_ACCESS_FS_REMOVE_DIR :
--		LANDLOCK_ACCESS_FS_REMOVE_FILE;
--}
--
- static int hook_path_rename(const struct path *const old_dir,
- 		struct dentry *const old_dentry,
- 		const struct path *const new_dir,
++	ruleset_fd = landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
++	if (ruleset_fd < 0) {
++		perror("Failed to create a ruleset");
++		return 1;
++	}
++	if (populate_ruleset(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
+ 		goto err_close_ruleset;
+ 	}
+-	if (populate_ruleset(ENV_FS_RW_NAME, ruleset_fd,
+-				ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE)) {
++	if (populate_ruleset(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
+ 		goto err_close_ruleset;
+ 	}
+ 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
 -- 
 2.35.1
 
