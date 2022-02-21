@@ -2,173 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF5AC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Feb 2022 13:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5E3C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Feb 2022 15:43:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245412AbiBUNei (ORCPT
+        id S1348013AbiBUPns (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Feb 2022 08:34:38 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49244 "EHLO
+        Mon, 21 Feb 2022 10:43:48 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359139AbiBUNea (ORCPT
+        with ESMTP id S1379401AbiBUPnr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Feb 2022 08:34:30 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D5E2220EE;
-        Mon, 21 Feb 2022 05:34:04 -0800 (PST)
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21LD9Fck015805;
-        Mon, 21 Feb 2022 13:33:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=OBmPzCDj/H2f/L1YMi7Wukhw+jIUkf8pjUePNO4iA6k=;
- b=f33WKmOyvDuAAvRYbAD2+OiczjKSScTlMCbHi6mC3wq6ecRP3vXAHsh0GYjl8xjfQrhe
- O1tWAq5g4HLKaB8+lTrfccVKTgvYlQol/3+HzDmvM2pjHoULG3uLc+o2v1qaF5+fJ7iU
- +FM755oUmOk2TAJh3/hPwv9Y8vOYD615kYE/XWAU3PQrRMNTny/Yt+fswIU+HyH2tnjz
- MHp8eNXNrwVMUCo561vtNUc3CKh8WAXvieOXkTit/PhAP+TbGEpIUPAwfFI4xSKAoqen
- RwINGV8eYjStknAGI77SS18K3pWXb7lPSkmMv1j0QPprGj/VX0a2Vo1SjxxyUA6+fMew +w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ec5q0gb97-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Feb 2022 13:33:59 +0000
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21LCrBMi019070;
-        Mon, 21 Feb 2022 13:33:59 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ec5q0gb8w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Feb 2022 13:33:58 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21LDWtWq012841;
-        Mon, 21 Feb 2022 13:33:58 GMT
-Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
-        by ppma03dal.us.ibm.com with ESMTP id 3ear6aea0a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Feb 2022 13:33:57 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21LDXu3Q17891718
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Feb 2022 13:33:56 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A27B13605E;
-        Mon, 21 Feb 2022 13:33:56 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 65418136068;
-        Mon, 21 Feb 2022 13:33:55 +0000 (GMT)
-Received: from [9.211.59.13] (unknown [9.211.59.13])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 21 Feb 2022 13:33:55 +0000 (GMT)
-Message-ID: <0a87bb3b-574c-6e8e-2f8f-49e42d71ab8c@linux.vnet.ibm.com>
-Date:   Mon, 21 Feb 2022 08:33:55 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v8 0/3] integrity: support including firmware ".platform"
- keys at build time
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        dhowells@redhat.com, zohar@linux.ibm.com,
+        Mon, 21 Feb 2022 10:43:47 -0500
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A412253C
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Feb 2022 07:43:20 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K2RQv034TzMptrY;
+        Mon, 21 Feb 2022 16:43:19 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4K2RQt5MDgzlhMBw;
+        Mon, 21 Feb 2022 16:43:18 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Shuah Khan <shuah@kernel.org>, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
-        seth@forshee.me, Nayna Jain <nayna@linux.ibm.com>
-References: <20220111183647.977037-1-nayna@linux.ibm.com>
- <YhLIhJF0aWZt+8op@iki.fi>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <YhLIhJF0aWZt+8op@iki.fi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
+Subject: [PATCH v1 2/7] landlock: Fix landlock_add_rule(2) signature
+Date:   Mon, 21 Feb 2022 16:53:06 +0100
+Message-Id: <20220221155311.166278-3-mic@digikod.net>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220221155311.166278-1-mic@digikod.net>
+References: <20220221155311.166278-1-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: poqCIJwnj1fzXspijlfmjWakY7HPsrzX
-X-Proofpoint-GUID: dkbMQ8Nn6WyO0fh_-go_lbCTQ01aY0bX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-21_07,2022-02-21_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- malwarescore=0 adultscore=0 phishscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202210078
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-On 2/20/22 18:02, Jarkko Sakkinen wrote:
-> On Tue, Jan 11, 2022 at 01:36:44PM -0500, Nayna Jain wrote:
->> Some firmware support secure boot by embedding static keys to verify the
->> Linux kernel during boot. However, these firmware do not expose an
->> interface for the kernel to load firmware keys onto the ".platform"
->> keyring, preventing the kernel from verifying the kexec kernel image
->> signature.
->>
->> This patchset exports load_certificate_list() and defines a new function
->> load_builtin_platform_cert() to load compiled in certificates onto the
->> ".platform" keyring.
->>
->> Changelog:
->>
->> v8:
->> * Includes Jarkko's feedback on patch description and removed Reported-by
->> for Patch 1.
->>
->> v7:
->> * Incldues Jarkko's feedback on patch description for Patch 1 and 3.
->>
->> v6:
->> * Includes Jarkko's feedback:
->>   * Split Patch 2 into two.
->>   * Update Patch description.
->>
->> v5:
->> * Renamed load_builtin_platform_cert() to load_platform_certificate_list()
->> and config INTEGRITY_PLATFORM_BUILTIN_KEYS to INTEGRITY_PLATFORM_KEYS, as
->> suggested by Mimi Zohar.
->>
->> v4:
->> * Split into two patches as per Mimi Zohar and Dimitri John Ledkov
->> recommendation.
->>
->> v3:
->> * Included Jarkko's feedback
->>   ** updated patch description to include approach.
->>   ** removed extern for function declaration in the .h file.
->> * Included load_certificate_list() within #ifdef CONFIG_KEYS condition.
->>
->> v2:
->> * Fixed the error reported by kernel test robot
->> * Updated patch description based on Jarkko's feedback.
->>
->> Nayna Jain (3):
->>    certs: export load_certificate_list() to be used outside certs/
->>    integrity: make integrity_keyring_from_id() non-static
->>    integrity: support including firmware ".platform" keys at build time
->>
->>   certs/Makefile                                |  5 ++--
->>   certs/blacklist.c                             |  1 -
->>   certs/common.c                                |  2 +-
->>   certs/common.h                                |  9 -------
->>   certs/system_keyring.c                        |  1 -
->>   include/keys/system_keyring.h                 |  6 +++++
->>   security/integrity/Kconfig                    | 10 +++++++
->>   security/integrity/Makefile                   | 17 +++++++++++-
->>   security/integrity/digsig.c                   |  2 +-
->>   security/integrity/integrity.h                |  6 +++++
->>   .../integrity/platform_certs/platform_cert.S  | 23 ++++++++++++++++
->>   .../platform_certs/platform_keyring.c         | 26 +++++++++++++++++++
->>   12 files changed, 92 insertions(+), 16 deletions(-)
->>   delete mode 100644 certs/common.h
->>   create mode 100644 security/integrity/platform_certs/platform_cert.S
->>
->> -- 
->> 2.27.0
-> To sort out tree conflicts: what if I pick these patches? They look fine
-> to me now. I can try to fix the possible merge conflicts and you can check
-> them before I make a PR.
+Replace the enum landlock_rule_type with an int in the syscall signature
+of landlock_add_rule to avoid an implementation-defined size.  In
+practice an enum type is like an int (at least with GCC and clang), but
+compilers may accept options (e.g. -fshort-enums) that would have an
+impact on that [1].  This change is mostly a cosmetic fix according to
+the current kernel compilers and used options.
 
-Sounds good. Thanks !!
+Link: https://lore.kernel.org/r/8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com/ [1]
+Reported-by: Alejandro Colomar <alx.manpages@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Link: https://lore.kernel.org/r/20220221155311.166278-3-mic@digikod.net
+---
+ include/linux/syscalls.h     | 3 +--
+ security/landlock/syscalls.c | 7 ++++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Thanks & Regards,
-
-      - Nayna
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 819c0cb00b6d..a5956f91caf2 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -71,7 +71,6 @@ struct clone_args;
+ struct open_how;
+ struct mount_attr;
+ struct landlock_ruleset_attr;
+-enum landlock_rule_type;
+ 
+ #include <linux/types.h>
+ #include <linux/aio_abi.h>
+@@ -1053,7 +1052,7 @@ asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
+ asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
+ asmlinkage long sys_landlock_create_ruleset(const struct landlock_ruleset_attr __user *attr,
+ 		size_t size, __u32 flags);
+-asmlinkage long sys_landlock_add_rule(int ruleset_fd, enum landlock_rule_type rule_type,
++asmlinkage long sys_landlock_add_rule(int ruleset_fd, int rule_type,
+ 		const void __user *rule_attr, __u32 flags);
+ asmlinkage long sys_landlock_restrict_self(int ruleset_fd, __u32 flags);
+ asmlinkage long sys_memfd_secret(unsigned int flags);
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index fd4b24022a06..3b40fc5d0216 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -277,8 +277,9 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
+  *
+  * @ruleset_fd: File descriptor tied to the ruleset that should be extended
+  *		with the new rule.
+- * @rule_type: Identify the structure type pointed to by @rule_attr (only
+- *             LANDLOCK_RULE_PATH_BENEATH for now).
++ * @rule_type: Identify the structure type pointed to by @rule_attr as defined
++ *             by enum landlock_rule_type (only LANDLOCK_RULE_PATH_BENEATH for
++ *             now).
+  * @rule_attr: Pointer to a rule (only of type &struct
+  *             landlock_path_beneath_attr for now).
+  * @flags: Must be 0.
+@@ -301,7 +302,7 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
+  * - EFAULT: @rule_attr inconsistency.
+  */
+ SYSCALL_DEFINE4(landlock_add_rule,
+-		const int, ruleset_fd, const enum landlock_rule_type, rule_type,
++		const int, ruleset_fd, const int, rule_type,
+ 		const void __user *const, rule_attr, const __u32, flags)
+ {
+ 	struct landlock_path_beneath_attr path_beneath_attr;
+-- 
+2.35.1
 
