@@ -2,251 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C9FC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Feb 2022 20:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81888C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Feb 2022 21:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235456AbiBVUA3 (ORCPT
+        id S234398AbiBVVpv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Feb 2022 15:00:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39436 "EHLO
+        Tue, 22 Feb 2022 16:45:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235399AbiBVUAS (ORCPT
+        with ESMTP id S232274AbiBVVpv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Feb 2022 15:00:18 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37839EAC71
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Feb 2022 11:59:26 -0800 (PST)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1nMbJF-00050V-2q; Tue, 22 Feb 2022 20:58:53 +0100
-Received: from afa by dude.hi.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <afa@pengutronix.de>)
-        id 1nMbJC-009hyN-CR; Tue, 22 Feb 2022 20:58:50 +0100
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     kernel@pengutronix.de, Sumit Garg <sumit.garg@linaro.org>,
-        David Gstir <david@sigma-star.at>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Tue, 22 Feb 2022 16:45:51 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1774C3C21;
+        Tue, 22 Feb 2022 13:45:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=X/fCeEGE5dLzxBEqkKnk5/DMs8wiBbMxj32CoUOVL6k=; b=Ue4PuIli6voMrbrIqsbqv19UOh
+        qUzMtx4H9Djv4Qxv7kQQ7fnQxc31zKKxr1Hfo6fhmb6pSoFCjNSe/8UHclsc8sXtvkxJ/k3DcibGa
+        9gycXO+qC3spzY1F7TQbgk0kyuvaTVJXn1AGWNQAfzUGR6i4DnnRubz3OK8GW0Su5VTfESPZBgC4Y
+        9QAFdpudH9V57ZFBgJuU80d0Exgj9aerhAPv9xHZRdanekEAPea3FBWe/q4t5b0wKHFgGGHvQQmmw
+        AeE196bt7qOAvdY+rMwyQSXPjMPY/45CRi7SUxhsZK0O1TWAv/yrFU2JK6fI/29LNxAuUHVat4G63
+        QlDVLnyg==;
+Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nMcyF-00BhQy-Jc; Tue, 22 Feb 2022 21:45:19 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-security-module@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Igor Zhbanov <i.zhbanov@omprussia.ru>,
+        Mimi Zohar <zohar@us.ibm.com>, linux-integrity@vger.kernel.org,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v5 2/5] KEYS: trusted: allow users to use kernel RNG for key material
-Date:   Tue, 22 Feb 2022 20:58:16 +0100
-Message-Id: <20220222195819.2313913-3-a.fatoum@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220222195819.2313913-1-a.fatoum@pengutronix.de>
-References: <20220222195819.2313913-1-a.fatoum@pengutronix.de>
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH] EVM: fix the evm= __setup handler return value
+Date:   Tue, 22 Feb 2022 13:45:18 -0800
+Message-Id: <20220222214518.9316-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: afa@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The two existing trusted key sources don't make use of the kernel RNG,
-but instead let the hardware doing the sealing/unsealing also
-generate the random key material. However, users may want to place
-less trust into the quality of the trust source's random number
-generator and instead use the kernel entropy pool, which can be
-seeded from multiple entropy sources.
+__setup() handlers should return 1 if the parameter is handled.
+Returning 0 causes the entire string to be added to init's
+environment strings (limited to 32 strings), unnecessarily polluting it.
 
-Make this possible by adding a new trusted.kernel_rng parameter,
-that will force use of the kernel RNG. In its absence, it's up
-to the trust source to decide, which random numbers to use,
-maintaining the existing behavior.
+Using the documented string "evm=fix" causes an Unknown parameter message:
+  Unknown kernel command line parameters
+  "BOOT_IMAGE=/boot/bzImage-517rc5 evm=fix", will be passed to user space.
 
-Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
-Acked-by: Sumit Garg <sumit.garg@linaro.org>
-Reviewed-by: David Gstir <david@sigma-star.at>
-Reviewed-by: Pankaj Gupta <pankaj.gupta@nxp.com>
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
-To: James Bottomley <jejb@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-To: Mimi Zohar <zohar@linux.ibm.com>
-To: David Howells <dhowells@redhat.com>
+and that string is added to init's environment string space:
+  Run /sbin/init as init process
+    with arguments:
+     /sbin/init
+    with environment:
+     HOME=/
+     TERM=linux
+     BOOT_IMAGE=/boot/bzImage-517rc5
+     evm=fix
+
+With this change, using "evm=fix" acts as expected and an invalid
+option ("evm=evm") causes a warning to be printed:
+  evm: invalid "evm" mode
+but init's environment is not polluted with this string, as expected.
+
+Fixes: 7102ebcd65c1 ("evm: permit only valid security.evm xattrs to be updated")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: Igor Zhbanov <i.zhbanov@omprussia.ru>
+Link: lore.kernel.org/r/64644a2f-4a20-bab3-1e15-3b2cdd0defe3@omprussia.ru
+Cc: Mimi Zohar <zohar@us.ibm.com>
+Cc: linux-integrity@vger.kernel.org
 Cc: James Morris <jmorris@namei.org>
 Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: "Horia Geantă" <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Jan Luebbe <j.luebbe@pengutronix.de>
-Cc: Eric Biggers <ebiggers@kernel.org>
-Cc: David Gstir <david@sigma-star.at>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Franck LENORMAND <franck.lenormand@nxp.com>
-Cc: Sumit Garg <sumit.garg@linaro.org>
-Cc: Tim Harvey <tharvey@gateworks.com>
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: keyrings@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
 ---
- .../admin-guide/kernel-parameters.txt         | 10 ++++++
- .../security/keys/trusted-encrypted.rst       | 20 ++++++-----
- security/keys/trusted-keys/trusted_core.c     | 35 ++++++++++++++++++-
- 3 files changed, 56 insertions(+), 9 deletions(-)
+ security/integrity/evm/evm_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f5a27f067db9..844c883ca9d8 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5880,6 +5880,16 @@
- 			first trust source as a backend which is initialized
- 			successfully during iteration.
+--- lnx-517-rc5.orig/security/integrity/evm/evm_main.c
++++ lnx-517-rc5/security/integrity/evm/evm_main.c
+@@ -86,7 +86,7 @@ static int __init evm_set_fixmode(char *
+ 	else
+ 		pr_err("invalid \"%s\" mode", str);
  
-+	trusted.rng=	[KEYS]
-+			Format: <string>
-+			The RNG used to generate key material for trusted keys.
-+			Can be one of:
-+			- "kernel"
-+			- the same value as trusted.source: "tpm" or "tee"
-+			- "default"
-+			If not specified, "default" is used. In this case,
-+			the RNG's choice is left to each individual trust source.
-+
- 	tsc=		Disable clocksource stability checks for TSC.
- 			Format: <string>
- 			[x86] reliable: mark tsc clocksource as reliable, this
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index 80d5a5af62a1..99cf34d7c025 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -87,22 +87,26 @@ Key Generation
- Trusted Keys
- ------------
+-	return 0;
++	return 1;
+ }
+ __setup("evm=", evm_set_fixmode);
  
--New keys are created from random numbers generated in the trust source. They
--are encrypted/decrypted using a child key in the storage key hierarchy.
--Encryption and decryption of the child key must be protected by a strong
--access control policy within the trust source.
-+New keys are created from random numbers. They are encrypted/decrypted using
-+a child key in the storage key hierarchy. Encryption and decryption of the
-+child key must be protected by a strong access control policy within the
-+trust source. The random number generator in use differs according to the
-+selected trust source:
- 
--  *  TPM (hardware device) based RNG
-+  *  TPM: hardware device based RNG
- 
--     Strength of random numbers may vary from one device manufacturer to
--     another.
-+     Keys are generated within the TPM. Strength of random numbers may vary
-+     from one device manufacturer to another.
- 
--  *  TEE (OP-TEE based on Arm TrustZone) based RNG
-+  *  TEE: OP-TEE based on Arm TrustZone based RNG
- 
-      RNG is customizable as per platform needs. It can either be direct output
-      from platform specific hardware RNG or a software based Fortuna CSPRNG
-      which can be seeded via multiple entropy sources.
- 
-+Users may override this by specifying ``trusted.rng=kernel`` on the kernel
-+command-line to override the used RNG with the kernel's random number pool.
-+
- Encrypted Keys
- --------------
- 
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index 7cdbd16aed30..9235fb7d0ec9 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -16,12 +16,17 @@
- #include <linux/key-type.h>
- #include <linux/module.h>
- #include <linux/parser.h>
-+#include <linux/random.h>
- #include <linux/rcupdate.h>
- #include <linux/slab.h>
- #include <linux/static_call.h>
- #include <linux/string.h>
- #include <linux/uaccess.h>
- 
-+static char *trusted_rng = "default";
-+module_param_named(rng, trusted_rng, charp, 0);
-+MODULE_PARM_DESC(rng, "Select trusted key RNG");
-+
- static char *trusted_key_source;
- module_param_named(source, trusted_key_source, charp, 0);
- MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
-@@ -312,8 +317,14 @@ struct key_type key_type_trusted = {
- };
- EXPORT_SYMBOL_GPL(key_type_trusted);
- 
-+static int kernel_get_random(unsigned char *key, size_t key_len)
-+{
-+	return get_random_bytes_wait(key, key_len) ?: key_len;
-+}
-+
- static int __init init_trusted(void)
- {
-+	int (*get_random)(unsigned char *key, size_t key_len);
- 	int i, ret = 0;
- 
- 	for (i = 0; i < ARRAY_SIZE(trusted_key_sources); i++) {
-@@ -322,6 +333,28 @@ static int __init init_trusted(void)
- 			    strlen(trusted_key_sources[i].name)))
- 			continue;
- 
-+		/*
-+		 * We always support trusted.rng="kernel" and "default" as
-+		 * well as trusted.rng=$trusted.source if the trust source
-+		 * defines its own get_random callback.
-+		 */
-+		get_random = trusted_key_sources[i].ops->get_random;
-+		if (trusted_rng && strcmp(trusted_rng, "default")) {
-+			if (!strcmp(trusted_rng, "kernel")) {
-+				get_random = kernel_get_random;
-+			} else if (strcmp(trusted_rng, trusted_key_sources[i].name) ||
-+				   !get_random) {
-+				pr_warn("Unsupported RNG. Supported: kernel");
-+				if (get_random)
-+					pr_cont(", %s", trusted_key_sources[i].name);
-+				pr_cont(", default\n");
-+				return -EINVAL;
-+			}
-+		}
-+
-+		if (!get_random)
-+			get_random = kernel_get_random;
-+
- 		static_call_update(trusted_key_init,
- 				   trusted_key_sources[i].ops->init);
- 		static_call_update(trusted_key_seal,
-@@ -329,7 +362,7 @@ static int __init init_trusted(void)
- 		static_call_update(trusted_key_unseal,
- 				   trusted_key_sources[i].ops->unseal);
- 		static_call_update(trusted_key_get_random,
--				   trusted_key_sources[i].ops->get_random);
-+				   get_random);
- 		static_call_update(trusted_key_exit,
- 				   trusted_key_sources[i].ops->exit);
- 		migratable = trusted_key_sources[i].ops->migratable;
--- 
-2.30.2
-
