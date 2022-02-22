@@ -2,253 +2,332 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C50C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Feb 2022 21:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5F3C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Feb 2022 03:16:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234393AbiBUVQb (ORCPT
+        id S233737AbiBVDRU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Feb 2022 16:16:31 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41206 "EHLO
+        Mon, 21 Feb 2022 22:17:20 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234398AbiBUVPs (ORCPT
+        with ESMTP id S233394AbiBVDRU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Feb 2022 16:15:48 -0500
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1777523BE7
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Feb 2022 13:15:17 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K2Znw3YmjzMqKMQ;
-        Mon, 21 Feb 2022 22:15:16 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4K2Znw1SQtzljTgR;
-        Mon, 21 Feb 2022 22:15:16 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>,
+        Mon, 21 Feb 2022 22:17:20 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B95F73;
+        Mon, 21 Feb 2022 19:16:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645499815; x=1677035815;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Pb8e2G+GuH8BcVicwGHPqL0koQdXd5XV3os9pLa+pGY=;
+  b=c2J1p921pyeZq7W1ZJcTPPdvvyKMSa1NBjCgoO/728S7T9A76GxNiSZH
+   dSmurQNemHmoxUmDkbh0VPlw6WuV/e20MWlcCyE1EHJNkYKdjhtAKlv/R
+   9VZI5jU6ObyWkgXJyMRnHcAR2Gf74t0v1Bd7PPvsnqh67PQb0KnjBo9dM
+   2r7LGic3ntMO+Ze0mCRchlQ7IJonr5QxckhrXNFZ9TX6B/sqNxkoIx5gi
+   RnBZYR/UfEtvAgH/EDLLfMivN+rD/eDA5pQ7iIzy24WiALrBlXXOAr1Da
+   c+ROSkndjQRRfSJ3p9k5TVlmpZUh+EQE9uI6C65CdJokAyY6cS+GZQl3A
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10265"; a="249181597"
+X-IronPort-AV: E=Sophos;i="5.88,387,1635231600"; 
+   d="scan'208";a="249181597"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2022 19:16:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,387,1635231600"; 
+   d="scan'208";a="683361065"
+Received: from lkp-server01.sh.intel.com (HELO da3212ac2f54) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Feb 2022 19:16:49 -0800
+Received: from kbuild by da3212ac2f54 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nMLfV-0002Gw-5s; Tue, 22 Feb 2022 03:16:49 +0000
+Date:   Tue, 22 Feb 2022 11:16:32 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Jann Horn <jannh@google.com>,
         Kees Cook <keescook@chromium.org>,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         Paul Moore <paul@paul-moore.com>,
-        Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v1 09/11] landlock: Document LANDLOCK_ACCESS_FS_REFER and ABI versioning
-Date:   Mon, 21 Feb 2022 22:25:20 +0100
-Message-Id: <20220221212522.320243-10-mic@digikod.net>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220221212522.320243-1-mic@digikod.net>
-References: <20220221212522.320243-1-mic@digikod.net>
+        Shuah Khan <skhan@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 06/11] landlock: Add support for file reparenting with
+ LANDLOCK_ACCESS_FS_REFER
+Message-ID: <202202221149.qLO9DEqo-lkp@intel.com>
+References: <20220221212522.320243-7-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220221212522.320243-7-mic@digikod.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+Hi "Micka�l,
 
-Add LANDLOCK_ACCESS_FS_REFER in the example and properly check to only
-use it if the current kernel support it thanks to the Landlock ABI
-version.
+I love your patch! Yet something to improve:
 
-Move the file renaming and linking limitation to a new "Previous
-limitations" section.
+[auto build test ERROR on cfb92440ee71adcc2105b0890bb01ac3cddb8507]
 
-Improve documentation about the backward and forward compatibility,
-including the rational for ruleset's handled_access_fs.
+url:    https://github.com/0day-ci/linux/commits/Micka-l-Sala-n/Landlock-file-linking-and-renaming-support/20220222-051842
+base:   cfb92440ee71adcc2105b0890bb01ac3cddb8507
+config: hexagon-randconfig-r002-20220221 (https://download.01.org/0day-ci/archive/20220222/202202221149.qLO9DEqo-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project d271fc04d5b97b12e6b797c6067d3c96a8d7470e)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/c68b879f54d6262963d435a18cedbc238b7faeaf
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Micka-l-Sala-n/Landlock-file-linking-and-renaming-support/20220222-051842
+        git checkout c68b879f54d6262963d435a18cedbc238b7faeaf
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash
 
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20220221212522.320243-10-mic@digikod.net
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+>> security/landlock/fs.c:463:2: error: call to __compiletime_assert_228 declared with 'error' attribute: BUILD_BUG_ON failed: !layer_masks_dst_parent
+           BUILD_BUG_ON(!layer_masks_dst_parent);
+           ^
+   include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+           BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+           ^
+   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+   #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                       ^
+   include/linux/compiler_types.h:346:2: note: expanded from macro 'compiletime_assert'
+           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+           ^
+   include/linux/compiler_types.h:334:2: note: expanded from macro '_compiletime_assert'
+           __compiletime_assert(condition, msg, prefix, suffix)
+           ^
+   include/linux/compiler_types.h:327:4: note: expanded from macro '__compiletime_assert'
+                           prefix ## suffix();                             \
+                           ^
+   <scratch space>:170:1: note: expanded from here
+   __compiletime_assert_228
+   ^
+>> security/landlock/fs.c:670:2: error: call to __compiletime_assert_229 declared with 'error' attribute: BUILD_BUG_ON failed: !layer_masks_dom
+           BUILD_BUG_ON(!layer_masks_dom);
+           ^
+   include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+           BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+           ^
+   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+   #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                       ^
+   include/linux/compiler_types.h:346:2: note: expanded from macro 'compiletime_assert'
+           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+           ^
+   include/linux/compiler_types.h:334:2: note: expanded from macro '_compiletime_assert'
+           __compiletime_assert(condition, msg, prefix, suffix)
+           ^
+   include/linux/compiler_types.h:327:4: note: expanded from macro '__compiletime_assert'
+                           prefix ## suffix();                             \
+                           ^
+   <scratch space>:174:1: note: expanded from here
+   __compiletime_assert_229
+   ^
+   2 errors generated.
+
+
+vim +/error +463 security/landlock/fs.c
+
+   401	
+   402	/**
+   403	 * check_access_path_dual - Check a source and a destination accesses
+   404	 *
+   405	 * @domain: Domain to check against.
+   406	 * @path: File hierarchy to walk through.
+   407	 * @child_is_directory: Must be set to true if the (original) leaf is a
+   408	 *     directory, false otherwise.
+   409	 * @access_request_dst_parent: Accesses to check, once @layer_masks_dst_parent
+   410	 *     is equal to @layer_masks_src_parent (if any).
+   411	 * @layer_masks_dst_parent: Pointer to a matrix of layer masks per access
+   412	 *     masks, identifying the layers that forbid a specific access.  Bits from
+   413	 *     this matrix can be unset according to the @path walk.  An empty matrix
+   414	 *     means that @domain allows all possible Landlock accesses (i.e. not only
+   415	 *     those identified by @access_request_dst_parent).  This matrix can
+   416	 *     initially refer to domain layer masks and, when the accesses for the
+   417	 *     destination and source are the same, to request layer masks.
+   418	 * @access_request_src_parent: Similar to @access_request_dst_parent but for an
+   419	 *     initial source path request.  Only taken into account if
+   420	 *     @layer_masks_src_parent is not NULL.
+   421	 * @layer_masks_src_parent: Similar to @layer_masks_dst_parent but for an
+   422	 *     initial source path walk.  This can be NULL if only dealing with a
+   423	 *     destination access request (i.e. not a rename nor a link action).
+   424	 * @layer_masks_child: Similar to @layer_masks_src_parent but only for the
+   425	 *     linked or renamed inode (without hierarchy).  This is only used if
+   426	 *     @layer_masks_src_parent is not NULL.
+   427	 *
+   428	 * This helper first checks that the destination has a superset of restrictions
+   429	 * compared to the source (if any) for a common path.  It then checks that the
+   430	 * collected accesses and the remaining ones are enough to allow the request.
+   431	 *
+   432	 * Returns:
+   433	 * - 0 if the access request is granted;
+   434	 * - -EACCES if it is denied because of access right other than
+   435	 *   LANDLOCK_ACCESS_FS_REFER;
+   436	 * - -EXDEV if the renaming or linking would be a privileged escalation
+   437	 *   (according to each layered policies), or if LANDLOCK_ACCESS_FS_REFER is
+   438	 *   not allowed by the source or the destination.
+   439	 */
+   440	static int check_access_path_dual(const struct landlock_ruleset *const domain,
+   441			const struct path *const path,
+   442			bool child_is_directory,
+   443			const access_mask_t access_request_dst_parent,
+   444			layer_mask_t (*const
+   445				layer_masks_dst_parent)[LANDLOCK_NUM_ACCESS_FS],
+   446			const access_mask_t access_request_src_parent,
+   447			layer_mask_t (*layer_masks_src_parent)[LANDLOCK_NUM_ACCESS_FS],
+   448			layer_mask_t (*layer_masks_child)[LANDLOCK_NUM_ACCESS_FS])
+   449	{
+   450		bool allowed_dst_parent = false, allowed_src_parent = false, is_dom_check;
+   451		struct path walker_path;
+   452		access_mask_t access_masked_dst_parent, access_masked_src_parent;
+   453	
+   454		if (!access_request_dst_parent && !access_request_src_parent)
+   455			return 0;
+   456		if (WARN_ON_ONCE(!domain || !path))
+   457			return 0;
+   458		if (is_nouser_or_private(path->dentry))
+   459			return 0;
+   460		if (WARN_ON_ONCE(domain->num_layers < 1))
+   461			return -EACCES;
+   462	
+ > 463		BUILD_BUG_ON(!layer_masks_dst_parent);
+   464		if (layer_masks_src_parent) {
+   465			if (WARN_ON_ONCE(!layer_masks_child))
+   466				return -EACCES;
+   467			access_masked_dst_parent = access_masked_src_parent =
+   468				get_handled_accesses(domain);
+   469			is_dom_check = true;
+   470		} else {
+   471			if (WARN_ON_ONCE(layer_masks_child))
+   472				return -EACCES;
+   473			access_masked_dst_parent = access_request_dst_parent;
+   474			access_masked_src_parent = access_request_src_parent;
+   475			is_dom_check = false;
+   476		}
+   477	
+   478		walker_path = *path;
+   479		path_get(&walker_path);
+   480		/*
+   481		 * We need to walk through all the hierarchy to not miss any relevant
+   482		 * restriction.
+   483		 */
+   484		while (true) {
+   485			struct dentry *parent_dentry;
+   486			const struct landlock_rule *rule;
+   487	
+   488			/*
+   489			 * If at least all accesses allowed on the destination are
+   490			 * already allowed on the source, respectively if there is at
+   491			 * least as much as restrictions on the destination than on the
+   492			 * source, then we can safely refer files from the source to
+   493			 * the destination without risking a privilege escalation.
+   494			 * This is crucial for standalone multilayered security
+   495			 * policies.  Furthermore, this helps avoid policy writers to
+   496			 * shoot themselves in the foot.
+   497			 */
+   498			if (is_dom_check && is_superset(child_is_directory,
+   499						layer_masks_dst_parent,
+   500						layer_masks_src_parent,
+   501						layer_masks_child)) {
+   502				allowed_dst_parent =
+   503					scope_to_request(access_request_dst_parent,
+   504							layer_masks_dst_parent);
+   505				allowed_src_parent =
+   506					scope_to_request(access_request_src_parent,
+   507							layer_masks_src_parent);
+   508	
+   509				/* Stops when all accesses are granted. */
+   510				if (allowed_dst_parent && allowed_src_parent)
+   511					break;
+   512	
+   513				/*
+   514				 * Downgrades checks from domain handled accesses to
+   515				 * requested accesses.
+   516				 */
+   517				is_dom_check = false;
+   518				access_masked_dst_parent = access_request_dst_parent;
+   519				access_masked_src_parent = access_request_src_parent;
+   520			}
+   521	
+   522			rule = find_rule(domain, walker_path.dentry);
+   523			allowed_dst_parent = unmask_layers(rule, access_masked_dst_parent,
+   524					layer_masks_dst_parent);
+   525			allowed_src_parent = unmask_layers(rule, access_masked_src_parent,
+   526					layer_masks_src_parent);
+   527	
+   528			/* Stops when a rule from each layer grants access. */
+   529			if (allowed_dst_parent && allowed_src_parent)
+   530				break;
+   531	
+   532	jump_up:
+   533			if (walker_path.dentry == walker_path.mnt->mnt_root) {
+   534				if (follow_up(&walker_path)) {
+   535					/* Ignores hidden mount points. */
+   536					goto jump_up;
+   537				} else {
+   538					/*
+   539					 * Stops at the real root.  Denies access
+   540					 * because not all layers have granted access.
+   541					 */
+   542					allowed_dst_parent = false;
+   543					break;
+   544				}
+   545			}
+   546			if (unlikely(IS_ROOT(walker_path.dentry))) {
+   547				/*
+   548				 * Stops at disconnected root directories.  Only allows
+   549				 * access to internal filesystems (e.g. nsfs, which is
+   550				 * reachable through /proc/<pid>/ns/<namespace>).
+   551				 */
+   552				allowed_dst_parent = !!(walker_path.mnt->mnt_flags &
+   553						MNT_INTERNAL);
+   554				break;
+   555			}
+   556			parent_dentry = dget_parent(walker_path.dentry);
+   557			dput(walker_path.dentry);
+   558			walker_path.dentry = parent_dentry;
+   559		}
+   560		path_put(&walker_path);
+   561	
+   562		if (allowed_dst_parent && allowed_src_parent)
+   563			return 0;
+   564	
+   565		/*
+   566		 * Unfortunately, we cannot prioritize EACCES over EXDEV for all
+   567		 * RENAME_EXCHANGE cases because it depends on the source and
+   568		 * destination order.  This could be changed with a new
+   569		 * security_path_rename hook implementation.
+   570		 */
+   571		if (likely(is_eacces(layer_masks_dst_parent, access_request_dst_parent)
+   572					|| is_eacces(layer_masks_src_parent,
+   573						access_request_src_parent)))
+   574			return -EACCES;
+   575	
+   576		/*
+   577		 * Gracefully forbids reparenting if the destination directory
+   578		 * hierarchy is not a superset of restrictions of the source directory
+   579		 * hierarchy, or if LANDLOCK_ACCESS_FS_REFER is not allowed by the
+   580		 * source or the destination.
+   581		 */
+   582		return -EXDEV;
+   583	}
+   584	
+
 ---
- Documentation/userspace-api/landlock.rst | 124 +++++++++++++++++++----
- 1 file changed, 104 insertions(+), 20 deletions(-)
-
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index f35552ff19ba..97db09d36a5c 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: March 2021
-+:Date: February 2022
- 
- The goal of Landlock is to enable to restrict ambient rights (e.g. global
- filesystem access) for a set of processes.  Because Landlock is a stackable
-@@ -29,14 +29,15 @@ the thread enforcing it, and its future children.
- Defining and enforcing a security policy
- ----------------------------------------
- 
--We first need to create the ruleset that will contain our rules.  For this
-+We first need to define the ruleset that will contain our rules.  For this
- example, the ruleset will contain rules that only allow read actions, but write
- actions will be denied.  The ruleset then needs to handle both of these kind of
--actions.
-+actions.  This is required for backward and forward compatibility (i.e. the
-+kernel and user space may not know each other's supported restrictions), hence
-+the need to be explicit about the denied-by-default access rights.
- 
- .. code-block:: c
- 
--    int ruleset_fd;
-     struct landlock_ruleset_attr ruleset_attr = {
-         .handled_access_fs =
-             LANDLOCK_ACCESS_FS_EXECUTE |
-@@ -51,9 +52,34 @@ actions.
-             LANDLOCK_ACCESS_FS_MAKE_SOCK |
-             LANDLOCK_ACCESS_FS_MAKE_FIFO |
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
--            LANDLOCK_ACCESS_FS_MAKE_SYM,
-+            LANDLOCK_ACCESS_FS_MAKE_SYM |
-+            LANDLOCK_ACCESS_FS_REFER,
-     };
- 
-+Because we may not know on which kernel version an application will be
-+executed, it is safer to follow a best-effort security approach.  Indeed, we
-+should try to protect users as much as possible whatever the kernel they are
-+using.  To avoid binary enforcement (i.e. either all security features or
-+none), we can leverage a dedicated Landlock command to get the current version
-+of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-+remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
-+starting with the second version of the ABI.
-+
-+.. code-block:: c
-+
-+    int abi;
-+
-+    abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-+    if (abi < 2) {
-+        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-+    }
-+
-+This enables to create an inclusive ruleset that will contain our rules.
-+
-+.. code-block:: c
-+
-+    int ruleset_fd;
-+
-     ruleset_fd = landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-     if (ruleset_fd < 0) {
-         perror("Failed to create a ruleset");
-@@ -92,6 +118,11 @@ descriptor.
-         return 1;
-     }
- 
-+It may also be required to create rules following the same logic as explained
-+for the ruleset creation, by filtering access rights according to the Landlock
-+ABI version.  In this example, this is not required because
-+`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
-+
- We now have a ruleset with one rule allowing read access to ``/usr`` while
- denying all other handled accesses for the filesystem.  The next step is to
- restrict the current thread from gaining more privileges (e.g. thanks to a SUID
-@@ -192,6 +223,56 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
- process, a sandboxed process should have a subset of the target process rules,
- which means the tracee must be in a sub-domain of the tracer.
- 
-+Compatibility
-+=============
-+
-+Backward and forward compatibility
-+----------------------------------
-+
-+Landlock is designed to be compatible with past and future versions of the
-+kernel.  This is achieved thanks to the system call attributes and the
-+associated bitflags, particularly the ruleset's `handled_access_fs`.  Making
-+handled access right explicit enables the kernel and user space to have a clear
-+contract with each other.  This is required to make sure sandboxing will not
-+get stricter with a system update, which could break applications.
-+
-+Developers can subscribe to the `Landlock mailing list
-+<https://subspace.kernel.org/lists.linux.dev.html>`_ to knowingly update and
-+test their applications with the latest available features.  In the interest of
-+users, and because they may use different kernel versions, it is strongly
-+encouraged to follow a best-effort security approach by checking the Landlock
-+ABI version at runtime and only enforcing the supported features.
-+
-+Landlock ABI versions
-+---------------------
-+
-+The Landlock ABI version can be read with the sys_landlock_create_ruleset()
-+system call:
-+
-+.. code-block:: c
-+
-+    int abi;
-+
-+    abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-+    if (abi < 0) {
-+        switch (errno) {
-+        case ENOSYS:
-+            printf("Landlock is not supported by the current kernel.\n");
-+            break;
-+        case EOPNOTSUPP:
-+            printf("Landlock is currently disabled.\n");
-+            break;
-+        }
-+        return 0;
-+    }
-+    if (abi >= 2) {
-+        printf("Landlock supports LANDLOCK_ACCESS_FS_REFER.\n");
-+    }
-+
-+The following kernel interfaces are implicitly supported by the first ABI
-+version.  Features only supported from a specific version are explicitly marked
-+as such.
-+
- Kernel interface
- ================
- 
-@@ -228,21 +309,6 @@ Enforcing a ruleset
- Current limitations
- ===================
- 
--File renaming and linking
---------------------------
--
--Because Landlock targets unprivileged access controls, it is needed to properly
--handle composition of rules.  Such property also implies rules nesting.
--Properly handling multiple layers of ruleset, each one of them able to restrict
--access to files, also implies to inherit the ruleset restrictions from a parent
--to its hierarchy.  Because files are identified and restricted by their
--hierarchy, moving or linking a file from one directory to another implies to
--propagate the hierarchy constraints.  To protect against privilege escalations
--through renaming or linking, and for the sake of simplicity, Landlock currently
--limits linking and renaming to the same directory.  Future Landlock evolutions
--will enable more flexibility for renaming and linking, with dedicated ruleset
--flags.
--
- Filesystem topology modification
- --------------------------------
- 
-@@ -281,6 +347,24 @@ Memory usage
- Kernel memory allocated to create rulesets is accounted and can be restricted
- by the Documentation/admin-guide/cgroup-v1/memory.rst.
- 
-+Previous limitations
-+====================
-+
-+File renaming and linking (ABI 1)
-+---------------------------------
-+
-+Because Landlock targets unprivileged access controls, it is needed to properly
-+handle composition of rules.  Such property also implies rules nesting.
-+Properly handling multiple layers of ruleset, each one of them able to restrict
-+access to files, also implies to inherit the ruleset restrictions from a parent
-+to its hierarchy.  Because files are identified and restricted by their
-+hierarchy, moving or linking a file from one directory to another implies to
-+propagate the hierarchy constraints.  To protect against privilege escalations
-+through renaming or linking, and for the sake of simplicity, Landlock previously
-+limited linking and renaming to the same directory.  Starting with the Landlock
-+ABI version 2, it is now possible to securely control renaming and linking
-+thanks to the new `LANDLOCK_ACCESS_FS_REFER` access right.
-+
- Questions and answers
- =====================
- 
--- 
-2.35.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
