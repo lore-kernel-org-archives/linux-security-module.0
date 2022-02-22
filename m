@@ -2,43 +2,44 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81888C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Feb 2022 21:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9852C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Feb 2022 21:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234398AbiBVVpv (ORCPT
+        id S235835AbiBVVqD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Feb 2022 16:45:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40660 "EHLO
+        Tue, 22 Feb 2022 16:46:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232274AbiBVVpv (ORCPT
+        with ESMTP id S235858AbiBVVqD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Feb 2022 16:45:51 -0500
+        Tue, 22 Feb 2022 16:46:03 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1774C3C21;
-        Tue, 22 Feb 2022 13:45:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE952139136
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Feb 2022 13:45:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
         Content-ID:Content-Description:In-Reply-To:References;
-        bh=X/fCeEGE5dLzxBEqkKnk5/DMs8wiBbMxj32CoUOVL6k=; b=Ue4PuIli6voMrbrIqsbqv19UOh
-        qUzMtx4H9Djv4Qxv7kQQ7fnQxc31zKKxr1Hfo6fhmb6pSoFCjNSe/8UHclsc8sXtvkxJ/k3DcibGa
-        9gycXO+qC3spzY1F7TQbgk0kyuvaTVJXn1AGWNQAfzUGR6i4DnnRubz3OK8GW0Su5VTfESPZBgC4Y
-        9QAFdpudH9V57ZFBgJuU80d0Exgj9aerhAPv9xHZRdanekEAPea3FBWe/q4t5b0wKHFgGGHvQQmmw
-        AeE196bt7qOAvdY+rMwyQSXPjMPY/45CRi7SUxhsZK0O1TWAv/yrFU2JK6fI/29LNxAuUHVat4G63
-        QlDVLnyg==;
+        bh=GF9f4DjgwOy9P1QnRIKuLCYNmEVSx5c0MWJ4s4ZyhSk=; b=dh8/O+piCrAuj+S3QA2v9iDdlX
+        J0c8GOLm2W8Lh+vquyTl9PmqlGoM2Ngqx1SYnAIe680HV3/nc7mRB57sm1opF0Ri4RBRSvdeOeIUQ
+        Y1r6gjRTeTGLWUd6vXKLMraEcc2XUKFN2Ru3NX6Y4Nh7OinsYwhRBNw+tZk1Nx/Py8Ey7KfvOuMPW
+        0ZotSrWYs2NCdmTPoVPWlvj4TsQkvkZXXnM3oOOW/uv2QcNTeJHT4fUwJOciR9GLjmB8qLJWMQ2FI
+        sz411wiahbLOl5FgT85jB9t8TgZzwF7Nacp/PFNqKbP55xp6JnW0y9+iedHVpIc3OvhGvma4LE7dG
+        HUF+KQjw==;
 Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nMcyF-00BhQy-Jc; Tue, 22 Feb 2022 21:45:19 +0000
+        id 1nMcyT-00BhRT-QR; Tue, 22 Feb 2022 21:45:33 +0000
 From:   Randy Dunlap <rdunlap@infradead.org>
 To:     linux-security-module@vger.kernel.org
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Igor Zhbanov <i.zhbanov@omprussia.ru>,
-        Mimi Zohar <zohar@us.ibm.com>, linux-integrity@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH] EVM: fix the evm= __setup handler return value
-Date:   Tue, 22 Feb 2022 13:45:18 -0800
-Message-Id: <20220222214518.9316-1-rdunlap@infradead.org>
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        tomoyo-dev-en@lists.osdn.me, "Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH] TOMOYO: fix __setup handlers return values
+Date:   Tue, 22 Feb 2022 13:45:33 -0800
+Message-Id: <20220222214533.10135-1-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -49,11 +50,13 @@ __setup() handlers should return 1 if the parameter is handled.
 Returning 0 causes the entire string to be added to init's
 environment strings (limited to 32 strings), unnecessarily polluting it.
 
-Using the documented string "evm=fix" causes an Unknown parameter message:
+Using the documented strings "TOMOYO_loader=string1" and
+"TOMOYO_trigger=string2" causes an Unknown parameter message:
   Unknown kernel command line parameters
-  "BOOT_IMAGE=/boot/bzImage-517rc5 evm=fix", will be passed to user space.
+    "BOOT_IMAGE=/boot/bzImage-517rc5 TOMOYO_loader=string1 \
+     TOMOYO_trigger=string2", will be passed to user space.
 
-and that string is added to init's environment string space:
+and these strings are added to init's environment string space:
   Run /sbin/init as init process
     with arguments:
      /sbin/init
@@ -61,33 +64,42 @@ and that string is added to init's environment string space:
      HOME=/
      TERM=linux
      BOOT_IMAGE=/boot/bzImage-517rc5
-     evm=fix
+     TOMOYO_loader=string1
+     TOMOYO_trigger=string2
 
-With this change, using "evm=fix" acts as expected and an invalid
-option ("evm=evm") causes a warning to be printed:
-  evm: invalid "evm" mode
-but init's environment is not polluted with this string, as expected.
+With this change, these __setup handlers act as expected,
+and init's environment is not polluted with these strings.
 
-Fixes: 7102ebcd65c1 ("evm: permit only valid security.evm xattrs to be updated")
+Fixes: 0e4ae0e0dec63 ("TOMOYO: Make several options configurable.")
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 Reported-by: Igor Zhbanov <i.zhbanov@omprussia.ru>
 Link: lore.kernel.org/r/64644a2f-4a20-bab3-1e15-3b2cdd0defe3@omprussia.ru
-Cc: Mimi Zohar <zohar@us.ibm.com>
-Cc: linux-integrity@vger.kernel.org
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Cc: James Morris <jmorris@namei.org>
+Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+Cc: tomoyo-dev-en@lists.osdn.me
 Cc: "Serge E. Hallyn" <serge@hallyn.com>
 ---
- security/integrity/evm/evm_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/tomoyo/load_policy.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- lnx-517-rc5.orig/security/integrity/evm/evm_main.c
-+++ lnx-517-rc5/security/integrity/evm/evm_main.c
-@@ -86,7 +86,7 @@ static int __init evm_set_fixmode(char *
- 	else
- 		pr_err("invalid \"%s\" mode", str);
- 
+--- lnx-517-rc5.orig/security/tomoyo/load_policy.c
++++ lnx-517-rc5/security/tomoyo/load_policy.c
+@@ -24,7 +24,7 @@ static const char *tomoyo_loader;
+ static int __init tomoyo_loader_setup(char *str)
+ {
+ 	tomoyo_loader = str;
 -	return 0;
 +	return 1;
  }
- __setup("evm=", evm_set_fixmode);
  
+ __setup("TOMOYO_loader=", tomoyo_loader_setup);
+@@ -64,7 +64,7 @@ static const char *tomoyo_trigger;
+ static int __init tomoyo_trigger_setup(char *str)
+ {
+ 	tomoyo_trigger = str;
+-	return 0;
++	return 1;
+ }
+ 
+ __setup("TOMOYO_trigger=", tomoyo_trigger_setup);
