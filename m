@@ -2,251 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F090CC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Feb 2022 17:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A13DBC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Feb 2022 19:59:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231901AbiBVRoC (ORCPT
+        id S235374AbiBVT7q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Feb 2022 12:44:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54280 "EHLO
+        Tue, 22 Feb 2022 14:59:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234446AbiBVRoB (ORCPT
+        with ESMTP id S235364AbiBVT7o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Feb 2022 12:44:01 -0500
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF42169201
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Feb 2022 09:43:34 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K36375WxtzMqBYM;
-        Tue, 22 Feb 2022 18:43:31 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4K363613G9zlhSML;
-        Tue, 22 Feb 2022 18:43:29 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Florent Revest <revest@chromium.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [RFC PATCH v1] LSM: Remove double path_rename hook calls for RENAME_EXCHANGE
-Date:   Tue, 22 Feb 2022 18:53:32 +0100
-Message-Id: <20220222175332.384545-1-mic@digikod.net>
-X-Mailer: git-send-email 2.35.1
+        Tue, 22 Feb 2022 14:59:44 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ECE5E98F4
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Feb 2022 11:59:18 -0800 (PST)
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1nMbJF-00050W-2Y; Tue, 22 Feb 2022 20:58:53 +0100
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <afa@pengutronix.de>)
+        id 1nMbJC-009hyS-Dw; Tue, 22 Feb 2022 20:58:50 +0100
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     kernel@pengutronix.de, Sumit Garg <sumit.garg@linaro.org>,
+        David Gstir <david@sigma-star.at>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Pankaj Gupta <pankaj.gupta@nxp.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v5 3/5] KEYS: trusted: allow trust sources to use kernel RNG for key material
+Date:   Tue, 22 Feb 2022 20:58:17 +0100
+Message-Id: <20220222195819.2313913-4-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220222195819.2313913-1-a.fatoum@pengutronix.de>
+References: <20220222195819.2313913-1-a.fatoum@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+The two existing trusted key sources don't make use of the kernel RNG,
+but instead let the hardware that does the sealing/unsealing also
+generate the random key material. While a previous change offers users
+the choice to use the kernel RNG instead for both, new trust sources
+may want to unconditionally use the kernel RNG for generating key
+material, like it's done elsewhere in the kernel.
 
-In order to be able to identify a file exchange with renameat2(2) and
-RENAME_EXCHANGE, which will be useful for Landlock [1], propagate the
-rename flags to LSMs.  This may also improve performance because of the
-switch from two set of LSM hook calls to only one, and because LSMs
-using this hook may optimize the double check (e.g. only one lock,
-reduce the number of path walks).
+This is especially prudent for hardware that has proven-in-production
+HWRNG drivers implemented, as otherwise code would have to be duplicated
+only to arrive at a possibly worse result.
 
-AppArmor, Landlock and Tomoyo are updated to leverage this change.  This
-should not change the current behavior (same check order), except
-(different level of) speed boosts.
+Make this possible by turning struct trusted_key_ops::get_random
+into an optional member. If a driver leaves it NULL, kernel RNG
+will be used instead.
 
-[1] https://lore.kernel.org/r/20220221212522.320243-1-mic@digikod.net
-
-Cc: James Morris <jmorris@namei.org>
-Cc: John Johansen <john.johansen@canonical.com>
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20220222175332.384545-1-mic@digikod.net
+Acked-by: Sumit Garg <sumit.garg@linaro.org>
+Reviewed-by: David Gstir <david@sigma-star.at>
+Tested-By: Tim Harvey <tharvey@gateworks.com>
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- include/linux/lsm_hook_defs.h |  2 +-
- include/linux/lsm_hooks.h     |  1 +
- security/apparmor/lsm.c       | 30 +++++++++++++++++++++++++-----
- security/landlock/fs.c        | 12 ++++++++++--
- security/security.c           |  9 +--------
- security/tomoyo/tomoyo.c      | 11 ++++++++++-
- 6 files changed, 48 insertions(+), 17 deletions(-)
+To: James Bottomley <jejb@linux.ibm.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+To: Mimi Zohar <zohar@linux.ibm.com>
+To: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: "Horia Geantă" <horia.geanta@nxp.com>
+Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Jan Luebbe <j.luebbe@pengutronix.de>
+Cc: David Gstir <david@sigma-star.at>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Franck LENORMAND <franck.lenormand@nxp.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Cc: Tim Harvey <tharvey@gateworks.com>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: keyrings@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+---
+ include/keys/trusted-type.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 819ec92dc2a8..d8b49c9c3a8a 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -100,7 +100,7 @@ LSM_HOOK(int, 0, path_link, struct dentry *old_dentry,
- 	 const struct path *new_dir, struct dentry *new_dentry)
- LSM_HOOK(int, 0, path_rename, const struct path *old_dir,
- 	 struct dentry *old_dentry, const struct path *new_dir,
--	 struct dentry *new_dentry)
-+	 struct dentry *new_dentry, unsigned int flags)
- LSM_HOOK(int, 0, path_chmod, const struct path *path, umode_t mode)
- LSM_HOOK(int, 0, path_chown, const struct path *path, kuid_t uid, kgid_t gid)
- LSM_HOOK(int, 0, path_chroot, const struct path *path)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 3bf5c658bc44..32cd2a7fe9fc 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -358,6 +358,7 @@
-  *	@old_dentry contains the dentry structure of the old link.
-  *	@new_dir contains the path structure for parent of the new link.
-  *	@new_dentry contains the dentry structure of the new link.
-+ *	@flags may contain rename options such as RENAME_EXCHANGE.
-  *	Return 0 if permission is granted.
-  * @path_chmod:
-  *	Check for permission to change a mode of the file @path. The new
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 4f0eecb67dde..900bc540656a 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -354,13 +354,16 @@ static int apparmor_path_link(struct dentry *old_dentry, const struct path *new_
- }
+diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+index d89fa2579ac0..4eb64548a74f 100644
+--- a/include/keys/trusted-type.h
++++ b/include/keys/trusted-type.h
+@@ -64,7 +64,7 @@ struct trusted_key_ops {
+ 	/* Unseal a key. */
+ 	int (*unseal)(struct trusted_key_payload *p, char *datablob);
  
- static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_dentry,
--				const struct path *new_dir, struct dentry *new_dentry)
-+				const struct path *new_dir, struct dentry *new_dentry,
-+				const unsigned int flags)
- {
- 	struct aa_label *label;
- 	int error = 0;
+-	/* Get a randomized key. */
++	/* Optional: Get a randomized key. */
+ 	int (*get_random)(unsigned char *key, size_t key_len);
  
- 	if (!path_mediated_fs(old_dentry))
- 		return 0;
-+	if ((flags & RENAME_EXCHANGE) && !path_mediated_fs(new_dentry))
-+		return 0;
- 
- 	label = begin_current_label_crit_section();
- 	if (!unconfined(label)) {
-@@ -374,10 +377,27 @@ static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_d
- 			d_backing_inode(old_dentry)->i_mode
- 		};
- 
--		error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
--				     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
--				     AA_MAY_SETATTR | AA_MAY_DELETE,
--				     &cond);
-+		if (flags & RENAME_EXCHANGE) {
-+			struct path_cond cond_exchange = {
-+				i_uid_into_mnt(mnt_userns, d_backing_inode(new_dentry)),
-+				d_backing_inode(new_dentry)->i_mode
-+			};
-+
-+			error = aa_path_perm(OP_RENAME_SRC, label, &new_path, 0,
-+					     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
-+					     AA_MAY_SETATTR | AA_MAY_DELETE,
-+					     &cond_exchange);
-+			if (!error)
-+				error = aa_path_perm(OP_RENAME_DEST, label, &old_path,
-+						     0, MAY_WRITE | AA_MAY_SETATTR |
-+						     AA_MAY_CREATE, &cond_exchange);
-+		}
-+
-+		if (!error)
-+			error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
-+					     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
-+					     AA_MAY_SETATTR | AA_MAY_DELETE,
-+					     &cond);
- 		if (!error)
- 			error = aa_path_perm(OP_RENAME_DEST, label, &new_path,
- 					     0, MAY_WRITE | AA_MAY_SETATTR |
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 97b8e421f617..7e57fca6e814 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -574,10 +574,12 @@ static inline u32 maybe_remove(const struct dentry *const dentry)
- static int hook_path_rename(const struct path *const old_dir,
- 		struct dentry *const old_dentry,
- 		const struct path *const new_dir,
--		struct dentry *const new_dentry)
-+		struct dentry *const new_dentry,
-+		const unsigned int flags)
- {
- 	const struct landlock_ruleset *const dom =
- 		landlock_get_current_domain();
-+	u32 exchange_access = 0;
- 
- 	if (!dom)
- 		return 0;
-@@ -585,11 +587,17 @@ static int hook_path_rename(const struct path *const old_dir,
- 	if (old_dir->dentry != new_dir->dentry)
- 		/* Gracefully forbids reparenting. */
- 		return -EXDEV;
-+	if (flags & RENAME_EXCHANGE) {
-+		if (unlikely(d_is_negative(new_dentry)))
-+			return -ENOENT;
-+		exchange_access =
-+			get_mode_access(d_backing_inode(new_dentry)->i_mode);
-+	}
- 	if (unlikely(d_is_negative(old_dentry)))
- 		return -ENOENT;
- 	/* RENAME_EXCHANGE is handled because directories are the same. */
- 	return check_access_path(dom, old_dir, maybe_remove(old_dentry) |
--			maybe_remove(new_dentry) |
-+			maybe_remove(new_dentry) | exchange_access |
- 			get_mode_access(d_backing_inode(old_dentry)->i_mode));
- }
- 
-diff --git a/security/security.c b/security/security.c
-index 22261d79f333..8634da4cfd46 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1184,15 +1184,8 @@ int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
- 		     (d_is_positive(new_dentry) && IS_PRIVATE(d_backing_inode(new_dentry)))))
- 		return 0;
- 
--	if (flags & RENAME_EXCHANGE) {
--		int err = call_int_hook(path_rename, 0, new_dir, new_dentry,
--					old_dir, old_dentry);
--		if (err)
--			return err;
--	}
--
- 	return call_int_hook(path_rename, 0, old_dir, old_dentry, new_dir,
--				new_dentry);
-+				new_dentry, flags);
- }
- EXPORT_SYMBOL(security_path_rename);
- 
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index b6a31901f289..71e82d855ebf 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -264,17 +264,26 @@ static int tomoyo_path_link(struct dentry *old_dentry, const struct path *new_di
-  * @old_dentry: Pointer to "struct dentry".
-  * @new_parent: Pointer to "struct path".
-  * @new_dentry: Pointer to "struct dentry".
-+ * @flags: Rename options.
-  *
-  * Returns 0 on success, negative value otherwise.
-  */
- static int tomoyo_path_rename(const struct path *old_parent,
- 			      struct dentry *old_dentry,
- 			      const struct path *new_parent,
--			      struct dentry *new_dentry)
-+			      struct dentry *new_dentry,
-+			      const unsigned int flags)
- {
- 	struct path path1 = { .mnt = old_parent->mnt, .dentry = old_dentry };
- 	struct path path2 = { .mnt = new_parent->mnt, .dentry = new_dentry };
- 
-+	if (flags & RENAME_EXCHANGE) {
-+		const int err = tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path2,
-+				&path1);
-+
-+		if (err)
-+			return err;
-+	}
- 	return tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path1, &path2);
- }
- 
-
-base-commit: cfb92440ee71adcc2105b0890bb01ac3cddb8507
+ 	/* Exit key interface. */
 -- 
-2.35.1
+2.30.2
 
