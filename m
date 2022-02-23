@@ -2,92 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DADC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Feb 2022 21:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69138C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Feb 2022 22:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242470AbiBWVWY (ORCPT
+        id S243931AbiBWWbh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Feb 2022 16:22:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
+        Wed, 23 Feb 2022 17:31:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242601AbiBWVVO (ORCPT
+        with ESMTP id S243960AbiBWWbe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Feb 2022 16:21:14 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 292DA4ECE2
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Feb 2022 13:20:46 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id a23so132571eju.3
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Feb 2022 13:20:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=xd4LvKHiHUPDGiBy1ONlwJ4pI3s5n346dQjnITOJk1o=;
-        b=xQ22s0WGk0cnWEzyu3Z0C+NhgsaXR6XN49m3BG6ZFy21Efz/z+w4imfrJnwBggOiO2
-         PyELXYJuw3AA250SLygrE6xT6eVoy7hGoOps/fgk2wX9KqJ3iWD4hk6dGYoYHcCvmeRm
-         VUpdodaKNaU7/eixnrz3eFulGgB/68GL1vOe+GioKdVHQqXK95bzNNpfLi+zETgXdnBb
-         i7pk0QBtXRb20UR8uFTPqdg0GN8WP1+i0R93XhvdLuk2OX147jl19mBGx+OjstIrzmz+
-         jIuV4sXFOyKaiM4JnOqkjLhY5Ze7ivxVM1AZ4VS+gBAjbyBR0jL7PpgdkiVKgrrGOPiA
-         2BQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=xd4LvKHiHUPDGiBy1ONlwJ4pI3s5n346dQjnITOJk1o=;
-        b=tAZHX9rQiOrlOT9skPCQU11YHtxpoZDuI8hsGS6KFzu9zPLjcaAr5PCi7pxWm8oTt2
-         IdvOrTxJ08lHpTmhT3dBvniqjm4Idx6XcZjcUJf47eoJzVWahXwS7IT9/izZVzi3f281
-         W8SQYuIgHzhp5YbCxn/wEcuBajvdvc3BRsK/WJXBdAEPMr0U/0UAjOm64qpWB6PPTV+j
-         cQlVl64z37aZnYIBuN4Wz38vYVNjfF3Ro5HBkzCSutO8WVs6DWp+7qaCm37QwzRwghJ8
-         xiNgMv98EBie+wA+6TLQwPblGxWFs1ocefoEUvWlTlpM4NJMXoml/gLRmQlQfHlOF1Rn
-         3x4w==
-X-Gm-Message-State: AOAM533PNjwlAaOXMmYPFE0WtTR+BqgfcOgrWjDkYp2dCVtq2BysZYzG
-        HhlK5ZLAq0+UJ/eayvDpX696agTr6hbWt0ToqM8m
-X-Google-Smtp-Source: ABdhPJw/xI5NIoA2cvzfMoAwTJwB8wjkmPHDZGo0B0KxKeO/CG7lV35mThYgzY446LXM569kA0nuWPqJCsPpNpPFuCg=
-X-Received: by 2002:a17:906:c318:b0:6cf:d118:59d8 with SMTP id
- s24-20020a170906c31800b006cfd11859d8mr1194550ejz.112.1645651244646; Wed, 23
- Feb 2022 13:20:44 -0800 (PST)
+        Wed, 23 Feb 2022 17:31:34 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE52C4DF79;
+        Wed, 23 Feb 2022 14:31:02 -0800 (PST)
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21NK72Hu011610;
+        Wed, 23 Feb 2022 22:30:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=JXMEhzdQEShEpeIOkqJCin6BAf5GSfTvsNdcahqU9Ss=;
+ b=bzAZ9m0j5orOakeXKqsoGMA/+eXd7+GQOIgGwX11xsS1KnGpdgg13GIMOMv+bpJOStxq
+ C48WwNGVSHhSvVBROfJIUeUecvu2JByX6Nt9sr6ACLDpWt/sXBmbmGk1zFFD5ITPyc0u
+ euMR7tAzaRWOxdS7f5sF5yNMZTpHXHihIOU+Us48hBe/6e65DvFos76xXEXhQXTai/kT
+ obsLKJ1mIxiBvYsGY8N8LfW+DTtk/2M89IKfBRIKsse22spFyFD5JgynLskjHFeH7otM
+ JzaYh/38NEAdk7svBWuoPECzGi5gdwffIBUS7DXkbYkf3CFUvL6s/t4P4emQfPdh9mzz 6A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3eds7967tn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Feb 2022 22:30:46 +0000
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21NMLse7025567;
+        Wed, 23 Feb 2022 22:30:45 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3eds7967tf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Feb 2022 22:30:45 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21NME6j6023396;
+        Wed, 23 Feb 2022 22:30:44 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma02wdc.us.ibm.com with ESMTP id 3ear6asxjs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Feb 2022 22:30:44 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21NMUecb19726704
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Feb 2022 22:30:40 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5919C124058;
+        Wed, 23 Feb 2022 22:30:40 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E92CE12405B;
+        Wed, 23 Feb 2022 22:30:39 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 23 Feb 2022 22:30:39 +0000 (GMT)
+Message-ID: <0a3d75a9-bc04-cf72-6719-4c3b4c8cc880@linux.ibm.com>
+Date:   Wed, 23 Feb 2022 17:30:39 -0500
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 23 Feb 2022 16:20:33 -0500
-Message-ID: <CAHC9VhQHW1UOfu5wDOnNHwTK7FF4SyTx1OCBd9o6izB+69H9EQ@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v5.17 (#2)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v10 24/27] ima: Introduce securityfs file to activate an
+ IMA namespace
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+References: <20220201203735.164593-1-stefanb@linux.ibm.com>
+ <20220201203735.164593-25-stefanb@linux.ibm.com>
+ <9a720bf5928151a0cbc7994ee498a1c3ca779c56.camel@linux.ibm.com>
+ <9262a630-1f3e-0f58-110d-abfebe8274af@linux.ibm.com>
+ <6e5d6ab590f18e6ee57c9e6e4bb805c8c223259a.camel@linux.ibm.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <6e5d6ab590f18e6ee57c9e6e4bb805c8c223259a.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Jz_K_F6DBIFGNEzXPbewR9hh8532VTOI
+X-Proofpoint-ORIG-GUID: ae640DadsXixPh9BRUEsxYaWUsaMT0Id
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-02-23_09,2022-02-23_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 impostorscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202230124
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Linus,
 
-A second small SELinux fix for v5.17-rcX which addresses an incorrect
-mutex_is_locked() check; the commit description provides more detail
-if desired.  Please merge for the next -rcX release, thanks.
+On 2/23/22 12:12, Mimi Zohar wrote:
+> On Wed, 2022-02-23 at 12:08 -0500, Stefan Berger wrote:
+>> On 2/23/22 08:54, Mimi Zohar wrote:
+>>> On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote:
+>>>
+>>>>    int ima_fs_ns_init(struct user_namespace *user_ns, struct dentry *root)
+>>>>    {
+>>>>    	struct ima_namespace *ns = ima_ns_from_user_ns(user_ns);
+>>>> @@ -531,6 +596,12 @@ int ima_fs_ns_init(struct user_namespace *user_ns, struct dentry *root)
+>>>>    		}
+>>>>    	}
+>>>>    
+>>>> +	if (ns != &init_ima_ns) {
+>>>> +		ret = ima_fs_add_ns_files(ima_dir);
+>>>> +		if (ret)
+>>>> +			goto out;
+>>>> +	}
+>>>> +
+>>> In all other cases, the securityfs files are directly created in
+>>> ima_fs_ns_init().   What is different about "active" that a new
+>>> function is defined?
+>>
+>> It was meant as a function to create namespace-specific files, if more
+>> were to come along.  I can move the code from ima_fs_add_ns_files() into
+>> this function if you want.
+> Perhaps defer defining a new function until that happens.
 
--Paul
+I moved the code out of this function into ima_fs_ns_init() now.
 
---
-The following changes since commit 186edf7e368c40d06cf727a1ad14698ea67b74ad:
 
- selinux: fix double free of cond_list on error paths
-   (2022-02-02 11:02:10 -0500)
 
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20220223
-
-for you to fetch changes up to ce2fc710c9d2b25afc710f49bb2065b4439a62bc:
-
- selinux: fix misuse of mutex_is_locked() (2022-02-22 18:02:58 -0500)
-
-----------------------------------------------------------------
-selinux/stable-5.17 PR 20220223
-
-----------------------------------------------------------------
-Ondrej Mosnacek (1):
-     selinux: fix misuse of mutex_is_locked()
-
-security/selinux/ima.c | 4 ++--
-1 file changed, 2 insertions(+), 2 deletions(-)
-
--- 
-paul-moore.com
