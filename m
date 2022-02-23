@@ -2,355 +2,150 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A143BC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Feb 2022 09:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C4AC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Feb 2022 11:46:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239310AbiBWJt1 (ORCPT
+        id S233410AbiBWLqn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Feb 2022 04:49:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43144 "EHLO
+        Wed, 23 Feb 2022 06:46:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236273AbiBWJt1 (ORCPT
+        with ESMTP id S229492AbiBWLqk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Feb 2022 04:49:27 -0500
-Received: from smtpbg156.qq.com (smtpbg156.qq.com [15.184.82.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC5F886E18
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Feb 2022 01:48:56 -0800 (PST)
-X-QQ-mid: bizesmtp81t1645609725tgacnsug
-Received: from localhost.localdomain (unknown [58.240.82.166])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Wed, 23 Feb 2022 17:48:38 +0800 (CST)
-X-QQ-SSF: 01400000002000B0F000B00C0000000
-X-QQ-FEAT: Ut0pB98mtT/Q74JFXA2I0gDDRkD1CRAorAGPSvE5lod+8gsyxhEWXh+uNX4C9
-        ORgYrqohjTAp+dCE3NBe96O/4h/raydPtsVJ06qEtYk5drgYr+1FaKnL/syIydFfTKmslpA
-        qWdVTZwnFhHBTEUddFxAGPDdGHzfANgV6i+5C4Snr9BFYM5ZM+nW+5OvcqZ5cSF13zNYCuP
-        TQLrLsZM6XGBUqBU7gFGAUkka28pV4OotIIFd2D8zSm8bkwlDKbj0iFx1tWXuC7YOcqxhDb
-        hglTKU6WL9pdf2AnzjlQEASRd4m2g3h8PM59uj30z+65+JWpDXH8u0MM5Vgp7aJdcKGIZWc
-        b8n427Je/MXL2Cu5Fbyl+2nEsSguQ==
-X-QQ-GoodBg: 2
-From:   Meng Tang <tangmeng@uniontech.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
-Cc:     guoren@kernel.org, nickhu@andestech.com, green.hu@gmail.com,
-        deanbo422@gmail.com, ebiggers@kernel.org, tytso@mit.edu,
-        wad@chromium.org, john.johansen@canonical.com, jmorris@namei.org,
-        serge@hallyn.com, linux-csky@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Meng Tang <tangmeng@uniontech.com>
-Subject: [PATCH] fs/proc: Optimize arrays defined by struct ctl_path
-Date:   Wed, 23 Feb 2022 17:48:37 +0800
-Message-Id: <20220223094837.20337-1-tangmeng@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign1
-X-QQ-Bgrelay: 1
+        Wed, 23 Feb 2022 06:46:40 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B37298F67;
+        Wed, 23 Feb 2022 03:46:13 -0800 (PST)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21NAgfXi002921;
+        Wed, 23 Feb 2022 11:45:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=mflh59XXUGLuQUJiyd5xbLSaDlOcJaruC9siPCIGWjE=;
+ b=Inloe1OmkL9iUmLnKQSuRR1ou//thR9oMz1wvUh74UoLnTjZ6OCakXJlvCm7USBcMKXH
+ 5jpt9RNrRW1VRsqY42FhwnE49orK5iovmo/Yl82F2DIkZZl/68lxhNkNLvLhNTKLdU7G
+ Yb7wGtkZJchucSrvi1k/ami/9VGod5R35Cd1mL3Iv7XhC2Ge4gcxv7E+Ko9uolyqa8id
+ dFxo45uATJwjkTDWVhFvJTGc1bvLBR90CJrs9ZozgRkOACwQU1/2Kjk19A69navEejTU
+ 8XNs3X3GDilUEgzEWk5ZiL2Z0PJfwrhC+EOwc3Y8wR4yNDcJLh92u4I1IYbZz2g5DUPR 6Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3edkdqs4rx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Feb 2022 11:45:53 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21NBf7WL026979;
+        Wed, 23 Feb 2022 11:45:52 GMT
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3edkdqs4rb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Feb 2022 11:45:52 +0000
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21NBbpnX000317;
+        Wed, 23 Feb 2022 11:45:50 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma05fra.de.ibm.com with ESMTP id 3ear69fxpw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Feb 2022 11:45:50 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21NBjk5o50790904
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Feb 2022 11:45:46 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CCD864204C;
+        Wed, 23 Feb 2022 11:45:46 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7328B42049;
+        Wed, 23 Feb 2022 11:45:44 +0000 (GMT)
+Received: from sig-9-65-80-154.ibm.com (unknown [9.65.80.154])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 23 Feb 2022 11:45:44 +0000 (GMT)
+Message-ID: <edc472a977f40dc254d3cf9c8be5f3a5147f26ad.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 23/27] ima: Setup securityfs for IMA namespace
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Christian Brauner <brauner@kernel.org>
+Date:   Wed, 23 Feb 2022 06:45:43 -0500
+In-Reply-To: <20220201203735.164593-24-stefanb@linux.ibm.com>
+References: <20220201203735.164593-1-stefanb@linux.ibm.com>
+         <20220201203735.164593-24-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _I-iTB139F16lISvYRV-S9UF49_RYgqP
+X-Proofpoint-GUID: 1_gzps_LXdPzqss6EOQborTJl4X_nsVu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-02-23_03,2022-02-23_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ mlxlogscore=999 priorityscore=1501 clxscore=1015 spamscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
+ definitions=main-2202230064
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Previously, arrays defined by struct ctl_path is terminated
-with an empty one. For example, when we actually only register
-one ctl_path, we've gone from 8 bytes to 16 bytes.
+On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote:
+> Setup securityfs with symlinks, directories, and files for IMA
+> namespacing support. The same directory structure that IMA uses on the
+> host is also created for the namespacing case.
+> 
+> The securityfs file and directory ownerships cannot be set when the
+> IMA namespace is initialized. Therefore, delay the setup of the file
+> system to a later point when securityfs is in securityfs_fill_super.
+> 
+> Introduce a variable ima_policy_removed in ima_namespace that is used to
+> remember whether the policy file has previously been removed and thus
+> should not be created again in case of unmounting and again mounting
+> securityfs inside an IMA namespace.
 
-So, I use ARRAY_SIZE() as a boundary condition to optimize it.
+When the ability of extending the custom IMA policy was added, support
+for displaying  the policy was added.  (Refer to the IMA_READ_POLICY
+Kconfig.)  This patch set adds support for a user, true root in the
+namespace, to be able to write a custom policy.   If the
+IMA_READ_POLICY is not enabled, then nobody, including host root, will
+be able to view it.
 
-Signed-off-by: Meng Tang <tangmeng@uniontech.com>
----
- arch/csky/abiv1/alignment.c |  8 ++++----
- arch/nds32/mm/alignment.c   |  8 ++++----
- fs/proc/proc_sysctl.c       | 12 +++++++-----
- fs/verity/signature.c       |  7 ++++---
- include/linux/sysctl.h      |  6 +++---
- kernel/pid_namespace.c      |  5 +++--
- kernel/seccomp.c            |  7 ++++---
- security/apparmor/lsm.c     |  7 ++++---
- security/loadpin/loadpin.c  |  7 ++++---
- security/yama/yama_lsm.c    |  6 +++---
- 10 files changed, 40 insertions(+), 33 deletions(-)
+Instead of continuing to support not being able to read the IMA policy,
+updating the IMA_READ_POLICY Kconfig for the IMA_NS case to require it
+seems preferable.
 
-diff --git a/arch/csky/abiv1/alignment.c b/arch/csky/abiv1/alignment.c
-index 2df115d0e210..f2fe6a4d2388 100644
---- a/arch/csky/abiv1/alignment.c
-+++ b/arch/csky/abiv1/alignment.c
-@@ -340,14 +340,14 @@ static struct ctl_table sysctl_table[2] = {
- 	{}
- };
- 
--static struct ctl_path sysctl_path[2] = {
--	{.procname = "csky"},
--	{}
-+static struct ctl_path sysctl_path[1] = {
-+	{.procname = "csky"}
- };
-+#define SYSCTL_PATH_SIZE ARRAY_SIZE(sysctl_path)
- 
- static int __init csky_alignment_init(void)
- {
--	register_sysctl_paths(sysctl_path, sysctl_table);
-+	register_sysctl_paths(sysctl_path, sysctl_table, SYSCTL_PATH_SIZE);
- 	return 0;
- }
- 
-diff --git a/arch/nds32/mm/alignment.c b/arch/nds32/mm/alignment.c
-index 1eb7ded6992b..ee073f6b5822 100644
---- a/arch/nds32/mm/alignment.c
-+++ b/arch/nds32/mm/alignment.c
-@@ -560,17 +560,17 @@ static struct ctl_table nds32_sysctl_table[2] = {
- 	{}
- };
- 
--static struct ctl_path nds32_path[2] = {
--	{.procname = "nds32"},
--	{}
-+static struct ctl_path nds32_path[1] = {
-+	{.procname = "nds32"}
- };
-+#define NDS32_PATH_SIZE ARRAY_SIZE(nds32_path)
- 
- /*
-  * Initialize nds32 alignment-correction interface
-  */
- static int __init nds32_sysctl_init(void)
- {
--	register_sysctl_paths(nds32_path, nds32_sysctl_table);
-+	register_sysctl_paths(nds32_path, nds32_sysctl_table, NDS32_PATH_SIZE);
- 	return 0;
- }
- 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 7d9cfc730bd4..d6f6d9d5d3f8 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -1552,20 +1552,21 @@ static int register_leaf_sysctl_tables(const char *path, char *pos,
-  */
- struct ctl_table_header *__register_sysctl_paths(
- 	struct ctl_table_set *set,
--	const struct ctl_path *path, struct ctl_table *table)
-+	const struct ctl_path *path, struct ctl_table *table, int table_size)
- {
- 	struct ctl_table *ctl_table_arg = table;
- 	int nr_subheaders = count_subheaders(table);
- 	struct ctl_table_header *header = NULL, **subheaders, **subheader;
- 	const struct ctl_path *component;
- 	char *new_path, *pos;
-+	int i;
- 
- 	pos = new_path = kmalloc(PATH_MAX, GFP_KERNEL);
- 	if (!new_path)
- 		return NULL;
- 
- 	pos[0] = '\0';
--	for (component = path; component->procname; component++) {
-+	for (component = path, i = 0; component->procname && i < table_size; component++, i++) {
- 		pos = append_path(new_path, pos, component->procname);
- 		if (!pos)
- 			goto out;
-@@ -1622,10 +1623,11 @@ struct ctl_table_header *__register_sysctl_paths(
-  * See __register_sysctl_paths for more details.
-  */
- struct ctl_table_header *register_sysctl_paths(const struct ctl_path *path,
--						struct ctl_table *table)
-+						struct ctl_table *table,
-+						int table_size)
- {
- 	return __register_sysctl_paths(&sysctl_table_root.default_set,
--					path, table);
-+					path, table, table_size);
- }
- EXPORT_SYMBOL(register_sysctl_paths);
- 
-@@ -1642,7 +1644,7 @@ struct ctl_table_header *register_sysctl_table(struct ctl_table *table)
- {
- 	static const struct ctl_path null_path[] = { {} };
- 
--	return register_sysctl_paths(null_path, table);
-+	return register_sysctl_paths(null_path, table, ARRAY_SIZE(null_path));
- }
- EXPORT_SYMBOL(register_sysctl_table);
- 
-diff --git a/fs/verity/signature.c b/fs/verity/signature.c
-index 143a530a8008..e04be57da6ab 100644
---- a/fs/verity/signature.c
-+++ b/fs/verity/signature.c
-@@ -92,9 +92,9 @@ static struct ctl_table_header *fsverity_sysctl_header;
- 
- static const struct ctl_path fsverity_sysctl_path[] = {
- 	{ .procname = "fs", },
--	{ .procname = "verity", },
--	{ }
-+	{ .procname = "verity", }
- };
-+#define FSVERITY_SYSCTL_PATH_SIZE ARRAY_SIZE(fsverity_sysctl_path)
- 
- static struct ctl_table fsverity_sysctl_table[] = {
- 	{
-@@ -112,7 +112,8 @@ static struct ctl_table fsverity_sysctl_table[] = {
- static int __init fsverity_sysctl_init(void)
- {
- 	fsverity_sysctl_header = register_sysctl_paths(fsverity_sysctl_path,
--						       fsverity_sysctl_table);
-+						       fsverity_sysctl_table,
-+						       FSVERITY_SYSCTL_PATH_SIZE);
- 	if (!fsverity_sysctl_header) {
- 		pr_err("sysctl registration failed!\n");
- 		return -ENOMEM;
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 6353d6db69b2..781874ed9179 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -220,11 +220,11 @@ struct ctl_table_header *__register_sysctl_table(
- 	const char *path, struct ctl_table *table);
- struct ctl_table_header *__register_sysctl_paths(
- 	struct ctl_table_set *set,
--	const struct ctl_path *path, struct ctl_table *table);
-+	const struct ctl_path *path, struct ctl_table *table, int table_size);
- struct ctl_table_header *register_sysctl(const char *path, struct ctl_table *table);
- struct ctl_table_header *register_sysctl_table(struct ctl_table * table);
- struct ctl_table_header *register_sysctl_paths(const struct ctl_path *path,
--						struct ctl_table *table);
-+						struct ctl_table *table, int table_size);
- 
- void unregister_sysctl_table(struct ctl_table_header * table);
- 
-@@ -271,7 +271,7 @@ static inline struct ctl_table_header *register_sysctl_mount_point(const char *p
- }
- 
- static inline struct ctl_table_header *register_sysctl_paths(
--			const struct ctl_path *path, struct ctl_table *table)
-+			const struct ctl_path *path, struct ctl_table *table, int table_size)
- {
- 	return NULL;
- }
-diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-index a46a3723bc66..18a1a3bb37a0 100644
---- a/kernel/pid_namespace.c
-+++ b/kernel/pid_namespace.c
-@@ -294,7 +294,8 @@ static struct ctl_table pid_ns_ctl_table[] = {
- 	},
- 	{ }
- };
--static struct ctl_path kern_path[] = { { .procname = "kernel", }, { } };
-+static struct ctl_path kern_path[] = { { .procname = "kernel", } };
-+#define KERN_PATH_SIZE ARRAY_SIZE(kern_path)
- #endif	/* CONFIG_CHECKPOINT_RESTORE */
- 
- int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
-@@ -453,7 +454,7 @@ static __init int pid_namespaces_init(void)
- 	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACCOUNT);
- 
- #ifdef CONFIG_CHECKPOINT_RESTORE
--	register_sysctl_paths(kern_path, pid_ns_ctl_table);
-+	register_sysctl_paths(kern_path, pid_ns_ctl_table, KERN_PATH_SIZE);
- #endif
- 	return 0;
- }
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index db10e73d06e0..d4759cdb0335 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -2333,9 +2333,9 @@ static int seccomp_actions_logged_handler(struct ctl_table *ro_table, int write,
- 
- static struct ctl_path seccomp_sysctl_path[] = {
- 	{ .procname = "kernel", },
--	{ .procname = "seccomp", },
--	{ }
-+	{ .procname = "seccomp", }
- };
-+#define SECCOMP_SYSCTL_PATH_SIZE ARRAY_SIZE(seccomp_sysctl_path)
- 
- static struct ctl_table seccomp_sysctl_table[] = {
- 	{
-@@ -2357,7 +2357,8 @@ static int __init seccomp_sysctl_init(void)
- {
- 	struct ctl_table_header *hdr;
- 
--	hdr = register_sysctl_paths(seccomp_sysctl_path, seccomp_sysctl_table);
-+	hdr = register_sysctl_paths(seccomp_sysctl_path, seccomp_sysctl_table,
-+				    SECCOMP_SYSCTL_PATH_SIZE);
- 	if (!hdr)
- 		pr_warn("sysctl registration failed\n");
- 	else
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 4f0eecb67dde..09a0461db6b1 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1729,9 +1729,9 @@ static int apparmor_dointvec(struct ctl_table *table, int write,
- }
- 
- static struct ctl_path apparmor_sysctl_path[] = {
--	{ .procname = "kernel", },
--	{ }
-+	{ .procname = "kernel", }
- };
-+#define APPARMOR_SYSCTL_PATH_SIZE ARRAY_SIZE(apparmor_sysctl_path)
- 
- static struct ctl_table apparmor_sysctl_table[] = {
- 	{
-@@ -1747,7 +1747,8 @@ static struct ctl_table apparmor_sysctl_table[] = {
- static int __init apparmor_init_sysctl(void)
- {
- 	return register_sysctl_paths(apparmor_sysctl_path,
--				     apparmor_sysctl_table) ? 0 : -ENOMEM;
-+				     apparmor_sysctl_table,
-+				     APPARMOR_SYSCTL_PATH_SIZE) ? 0 : -ENOMEM;
- }
- #else
- static inline int apparmor_init_sysctl(void)
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index b12f7d986b1e..45e0b8952a1d 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -48,9 +48,9 @@ static DEFINE_SPINLOCK(pinned_root_spinlock);
- 
- static struct ctl_path loadpin_sysctl_path[] = {
- 	{ .procname = "kernel", },
--	{ .procname = "loadpin", },
--	{ }
-+	{ .procname = "loadpin", }
- };
-+#define LOADPIN_SYSCTL_PATH_SIZE ARRAY_SIZE(loadpin_sysctl_path)
- 
- static struct ctl_table loadpin_sysctl_table[] = {
- 	{
-@@ -91,7 +91,8 @@ static void check_pinning_enforcement(struct super_block *mnt_sb)
- 
- 	if (!ro) {
- 		if (!register_sysctl_paths(loadpin_sysctl_path,
--					   loadpin_sysctl_table))
-+					   loadpin_sysctl_table,
-+					   LOADPIN_SYSCTL_PATH_SIZE))
- 			pr_notice("sysctl registration failed!\n");
- 		else
- 			pr_info("enforcement can be disabled.\n");
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index 06e226166aab..c4472d17b46d 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -449,9 +449,9 @@ static int max_scope = YAMA_SCOPE_NO_ATTACH;
- 
- static struct ctl_path yama_sysctl_path[] = {
- 	{ .procname = "kernel", },
--	{ .procname = "yama", },
--	{ }
-+	{ .procname = "yama", }
- };
-+#define YAMA_SYSCTL_PATH_SIZE ARRAY_SIZE(yama_sysctl_path)
- 
- static struct ctl_table yama_sysctl_table[] = {
- 	{
-@@ -467,7 +467,7 @@ static struct ctl_table yama_sysctl_table[] = {
- };
- static void __init yama_init_sysctl(void)
- {
--	if (!register_sysctl_paths(yama_sysctl_path, yama_sysctl_table))
-+	if (!register_sysctl_paths(yama_sysctl_path, yama_sysctl_table, YAMA_SYSCTL_PATH_SIZE))
- 		panic("Yama: sysctl registration failed.\n");
- }
- #else
--- 
-2.20.1
+> This filesystem can now be mounted as follows:
+> 
+> mount -t securityfs /sys/kernel/security/ /sys/kernel/security/
+> 
+> The following directories, symlinks, and files are available
+> when IMA namespacing is enabled, otherwise it will be empty:
+> 
+> $ ls -l sys/kernel/security/
+> total 0
+> lr--r--r--. 1 root root 0 Dec  2 00:18 ima -> integrity/ima
+> drwxr-xr-x. 3 root root 0 Dec  2 00:18 integrity
+> 
+> $ ls -l sys/kernel/security/ima/
+> total 0
+> -r--r-----. 1 root root 0 Dec  2 00:18 ascii_runtime_measurements
+> -r--r-----. 1 root root 0 Dec  2 00:18 binary_runtime_measurements
+> -rw-------. 1 root root 0 Dec  2 00:18 policy
+> -r--r-----. 1 root root 0 Dec  2 00:18 runtime_measurements_count
+> -r--r-----. 1 root root 0 Dec  2 00:18 violations
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Acked-by: Christian Brauner <brauner@kernel.org>
 
+Otherwise,
 
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
