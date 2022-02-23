@@ -2,115 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED42C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Feb 2022 21:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DADC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Feb 2022 21:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242141AbiBWVHa (ORCPT
+        id S242470AbiBWVWY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Feb 2022 16:07:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44878 "EHLO
+        Wed, 23 Feb 2022 16:22:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242144AbiBWVH0 (ORCPT
+        with ESMTP id S242601AbiBWVVO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Feb 2022 16:07:26 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C60646B;
-        Wed, 23 Feb 2022 13:06:58 -0800 (PST)
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21NJgVTQ024276;
-        Wed, 23 Feb 2022 21:06:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=Z7Xd9jxc9tzGFCJShmB8n/yyZ4MnF/i2KsEAp1969D4=;
- b=WQmBLRdxQl2wocCSEnoEFmfjLVRLBFQaILGIVp8M5qnIiHBYao/CHaCT4IHGDL5yrZi9
- JcLzy2oCUDMba+oEEJ5qjl3eBsJhbRgKlExE68t0l0VuFVex5eWcH3J6ViBcC4W29NLS
- VKgsfOSBESJlROG/g6kku+OfwVE0jM4KOl5+mImHyA2x3MjGOG33tLJvE9sq8AJmDNOz
- qzYbM0hIKFXSmZxWzbLMuywbWzMSSn9F3Sbf/FMIS5YfKsWxzh7GMcDM832hcWhaAJhL
- pysGjJNXw4RdIoD+7yigWAUfpPu8GDtl9A4En5DdDOq/gbAjKoRqH/Dd9Uv6WLzb/Unw 4w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3eduas9pwn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Feb 2022 21:06:45 +0000
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21NKunFH006384;
-        Wed, 23 Feb 2022 21:06:44 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3eduas9pw6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Feb 2022 21:06:44 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21NKwWhu009053;
-        Wed, 23 Feb 2022 21:06:43 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma02dal.us.ibm.com with ESMTP id 3ear6b97e0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Feb 2022 21:06:43 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21NL6fs434341208
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Feb 2022 21:06:42 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E349ABE05B;
-        Wed, 23 Feb 2022 21:06:41 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8DB4ABE051;
-        Wed, 23 Feb 2022 21:06:39 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Feb 2022 21:06:39 +0000 (GMT)
-Message-ID: <57237fc5-cb48-3286-4148-76a6b3c8efd3@linux.ibm.com>
-Date:   Wed, 23 Feb 2022 16:06:39 -0500
+        Wed, 23 Feb 2022 16:21:14 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 292DA4ECE2
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Feb 2022 13:20:46 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id a23so132571eju.3
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Feb 2022 13:20:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=xd4LvKHiHUPDGiBy1ONlwJ4pI3s5n346dQjnITOJk1o=;
+        b=xQ22s0WGk0cnWEzyu3Z0C+NhgsaXR6XN49m3BG6ZFy21Efz/z+w4imfrJnwBggOiO2
+         PyELXYJuw3AA250SLygrE6xT6eVoy7hGoOps/fgk2wX9KqJ3iWD4hk6dGYoYHcCvmeRm
+         VUpdodaKNaU7/eixnrz3eFulGgB/68GL1vOe+GioKdVHQqXK95bzNNpfLi+zETgXdnBb
+         i7pk0QBtXRb20UR8uFTPqdg0GN8WP1+i0R93XhvdLuk2OX147jl19mBGx+OjstIrzmz+
+         jIuV4sXFOyKaiM4JnOqkjLhY5Ze7ivxVM1AZ4VS+gBAjbyBR0jL7PpgdkiVKgrrGOPiA
+         2BQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=xd4LvKHiHUPDGiBy1ONlwJ4pI3s5n346dQjnITOJk1o=;
+        b=tAZHX9rQiOrlOT9skPCQU11YHtxpoZDuI8hsGS6KFzu9zPLjcaAr5PCi7pxWm8oTt2
+         IdvOrTxJ08lHpTmhT3dBvniqjm4Idx6XcZjcUJf47eoJzVWahXwS7IT9/izZVzi3f281
+         W8SQYuIgHzhp5YbCxn/wEcuBajvdvc3BRsK/WJXBdAEPMr0U/0UAjOm64qpWB6PPTV+j
+         cQlVl64z37aZnYIBuN4Wz38vYVNjfF3Ro5HBkzCSutO8WVs6DWp+7qaCm37QwzRwghJ8
+         xiNgMv98EBie+wA+6TLQwPblGxWFs1ocefoEUvWlTlpM4NJMXoml/gLRmQlQfHlOF1Rn
+         3x4w==
+X-Gm-Message-State: AOAM533PNjwlAaOXMmYPFE0WtTR+BqgfcOgrWjDkYp2dCVtq2BysZYzG
+        HhlK5ZLAq0+UJ/eayvDpX696agTr6hbWt0ToqM8m
+X-Google-Smtp-Source: ABdhPJw/xI5NIoA2cvzfMoAwTJwB8wjkmPHDZGo0B0KxKeO/CG7lV35mThYgzY446LXM569kA0nuWPqJCsPpNpPFuCg=
+X-Received: by 2002:a17:906:c318:b0:6cf:d118:59d8 with SMTP id
+ s24-20020a170906c31800b006cfd11859d8mr1194550ejz.112.1645651244646; Wed, 23
+ Feb 2022 13:20:44 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v10 26/27] ima: Limit number of policy rules in
- non-init_ima_ns
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-References: <20220201203735.164593-1-stefanb@linux.ibm.com>
- <20220201203735.164593-27-stefanb@linux.ibm.com>
- <5e4a862917785972281bbcb483404da01b71e801.camel@linux.ibm.com>
- <479f09e7-0d39-0281-45ef-5cce4861d24d@linux.ibm.com>
- <8a4f9cb6cab5ba04eb61e346d0fca16efa4c6703.camel@linux.ibm.com>
- <46156a90-d6a6-a0cc-247a-3ceb29f1cf75@linux.ibm.com>
- <9efd4502617e39280ca47a91d395eae154a328a4.camel@linux.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <9efd4502617e39280ca47a91d395eae154a328a4.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 8q4kvvc2ICLujWCGC5_SaD7jVWdBRhTq
-X-Proofpoint-ORIG-GUID: JkqNZB9-b71SXYRTDrYQyhcjAPD4FIoO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-02-23_09,2022-02-23_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- phishscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 priorityscore=1501
- spamscore=0 impostorscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
- definitions=main-2202230119
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 23 Feb 2022 16:20:33 -0500
+Message-ID: <CAHC9VhQHW1UOfu5wDOnNHwTK7FF4SyTx1OCBd9o6izB+69H9EQ@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v5.17 (#2)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Linus,
 
-On 2/23/22 15:59, Mimi Zohar wrote:
-> On Wed, 2022-02-23 at 15:45 -0500, Stefan Berger wrote:
->
->> avoid huge kernel memory consumption in the case that a cgroup limit for
->> memory was not set up.
-> Ok, that is the motivation for the this patch.
->
-Any user can create several user namespaces and with that several IMA 
-namespaces and now we want to limit the number of rules inside an IMA 
-namespace to limit the amount of kernel memory the policy rules are 
-consuming. It isn't necessarily  related to cgroups but a hard limit on 
-the number of rules to avoid wasted of memory.
+A second small SELinux fix for v5.17-rcX which addresses an incorrect
+mutex_is_locked() check; the commit description provides more detail
+if desired.  Please merge for the next -rcX release, thanks.
+
+-Paul
+
+--
+The following changes since commit 186edf7e368c40d06cf727a1ad14698ea67b74ad:
+
+ selinux: fix double free of cond_list on error paths
+   (2022-02-02 11:02:10 -0500)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20220223
+
+for you to fetch changes up to ce2fc710c9d2b25afc710f49bb2065b4439a62bc:
+
+ selinux: fix misuse of mutex_is_locked() (2022-02-22 18:02:58 -0500)
+
+----------------------------------------------------------------
+selinux/stable-5.17 PR 20220223
+
+----------------------------------------------------------------
+Ondrej Mosnacek (1):
+     selinux: fix misuse of mutex_is_locked()
+
+security/selinux/ima.c | 4 ++--
+1 file changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+paul-moore.com
