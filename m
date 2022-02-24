@@ -2,192 +2,107 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2817FC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Feb 2022 13:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B78E6C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Feb 2022 14:15:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234246AbiBXNdQ (ORCPT
+        id S230353AbiBXOQO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Feb 2022 08:33:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49512 "EHLO
+        Thu, 24 Feb 2022 09:16:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235022AbiBXNdP (ORCPT
+        with ESMTP id S235373AbiBXOQO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Feb 2022 08:33:15 -0500
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B023D1EC
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Feb 2022 05:32:44 -0800 (PST)
-X-QQ-mid: bizesmtp70t1645709553teogwjqm
-Received: from localhost.localdomain (unknown [58.240.82.166])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Thu, 24 Feb 2022 21:32:30 +0800 (CST)
-X-QQ-SSF: 01400000002000B0F000B00A0000000
-X-QQ-FEAT: ZKIyA7viXp0gWhLqDVbbfYxfkb1rGrN8gS7cOdtlS7mVfvwrf5J+8/rKYvFC7
-        C/XTCCvT/2Awyd/hxgYSSFTj/R5yQIMkL3l1RyA43TAJIF2tJMBNBuUdhQ599kCIe5m1noz
-        kUjxq2b8nrQ7DkWyQWIlT0qleP7kc1r1cSYDdHen1miSf+NvaRlggGCd+Kcj76Wi4JNQtXE
-        OD/CMdjoN465+2nybrK3U+NRd+oCxrEJ8AOka9iCl2ZQYRGFZRMHM7wA0RMv7GMYk3VEpUj
-        i9W801lL0B/6+bXVsryCWraTiCKfhuVS2lzwWA2vH+BEFDlPRc3JQSZMmpH6IP7isO/tisW
-        RW+2H+fxRLm+R8eBUnHpkjKNUUEekqKxxkEN684X+7BXf5WGJcBmalzqaVaXw==
-X-QQ-GoodBg: 2
-From:   Meng Tang <tangmeng@uniontech.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
-Cc:     guoren@kernel.org, nickhu@andestech.com, green.hu@gmail.com,
-        deanbo422@gmail.com, ebiggers@kernel.org, tytso@mit.edu,
-        wad@chromium.org, john.johansen@canonical.com, jmorris@namei.org,
-        serge@hallyn.com, linux-csky@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Meng Tang <tangmeng@uniontech.com>
-Subject: [PATCH v3 2/2] fs/proc: Optimize arrays defined by struct ctl_path
-Date:   Thu, 24 Feb 2022 21:32:17 +0800
-Message-Id: <20220224133217.1755-2-tangmeng@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220224133217.1755-1-tangmeng@uniontech.com>
-References: <20220224133217.1755-1-tangmeng@uniontech.com>
+        Thu, 24 Feb 2022 09:16:14 -0500
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE516294FF5
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Feb 2022 06:15:42 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K4FLN1yDQzMqKMX;
+        Thu, 24 Feb 2022 15:15:40 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4K4FLM689RzlhMBm;
+        Thu, 24 Feb 2022 15:15:39 +0100 (CET)
+Message-ID: <ffedc3d8-a193-b8d1-ddf2-9bd4824f4942@digikod.net>
+Date:   Thu, 24 Feb 2022 15:15:41 +0100
 MIME-Version: 1.0
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com
+References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
+ <20220124080215.265538-3-konstantin.meskhidze@huawei.com>
+ <4d54e3a9-8a26-d393-3c81-b01389f76f09@digikod.net>
+ <a95b208c-5377-cf5c-0b4d-ce6b4e4b1b05@huawei.com>
+ <b29b2049-a61b-31a0-c4b5-fc0e55ad7bf1@digikod.net>
+ <7a538eb0-00e6-7b15-8409-a09165f72049@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [RFC PATCH 2/2] landlock: selftests for bind and connect hooks
+In-Reply-To: <7a538eb0-00e6-7b15-8409-a09165f72049@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign6
-X-QQ-Bgrelay: 1
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Previously, arrays defined by struct ctl_path is terminated
-with an empty one. When we actually only register one ctl_path,
-we've gone from 8 bytes to 16 bytes.
 
-The optimization has been implemented in the previous patch,
-here to remove unnecessary terminate ctl_path with an empty one.
+On 24/02/2022 13:03, Konstantin Meskhidze wrote:
+> 
+> 
+> 2/24/2022 12:55 PM, Mickaël Salaün пишет:
+>>
+>> On 24/02/2022 04:18, Konstantin Meskhidze wrote:
+>>>
+>>>
+>>> 2/1/2022 9:31 PM, Mickaël Salaün пишет:
+>>>>
+>>>> On 24/01/2022 09:02, Konstantin Meskhidze wrote:
+>>>>> Support 4 tests for bind and connect networks actions:
+>>>>
+>>>> Good to see such tests!
+>>>>
+>>>>
+>>>>> 1. bind() a socket with no landlock restrictions.
+>>>>> 2. bind() sockets with landllock restrictions.
+>>>>
+>>>> You can leverage the FIXTURE_VARIANT helpers to factor out this kind 
+>>>> of tests (see ptrace_test.c).
+>>>>
+>>>>
+>>>>> 3. connect() a socket to listening one with no landlock restricitons.
+>>>>> 4. connect() sockets with landlock restrictions.
+>>>>
+>>>> Same here, you can factor out code. I guess you could create helpers 
+>>>> for client and server parts.
+>>>>
+>>>> We also need to test with IPv4, IPv6 and the AF_UNSPEC tricks.
+>>>>
+>>>> Please provide the kernel test coverage and explain why the 
+>>>> uncovered code cannot be covered: 
+>>>> https://www.kernel.org/doc/html/latest/dev-tools/gcov.html
+>>>
+>>>   Hi Mickaёl!
+>>>   Could you please provide the example of your test coverage build
+>>>   process? Cause as I undersatand there is no need to get coverage data
+>>>   for the entire kernel, just for landlock files.
+>>
+>> You just need to follow the documentation:
+>> - start the VM with the kernel appropriately configured for coverage;
+>> - run all the Landlock tests;
+>> - gather the coverage and shutdown the VM;
+>> - use lcov and genhtml to create the web pages;
+>> - look at the coverage for security/landlock/
 
-Signed-off-by: Meng Tang <tangmeng@uniontech.com>
----
- arch/csky/abiv1/alignment.c | 5 ++---
- arch/nds32/mm/alignment.c   | 5 ++---
- fs/verity/signature.c       | 3 +--
- kernel/pid_namespace.c      | 2 +-
- kernel/seccomp.c            | 3 +--
- security/apparmor/lsm.c     | 3 +--
- security/loadpin/loadpin.c  | 3 +--
- security/yama/yama_lsm.c    | 3 +--
- 8 files changed, 10 insertions(+), 17 deletions(-)
+It would be interesting to know the coverage for security/landlock/ 
+before and after your changes, and also specifically for 
+security/landlock.net.c
 
-diff --git a/arch/csky/abiv1/alignment.c b/arch/csky/abiv1/alignment.c
-index 2df115d0e210..5c2936b29d29 100644
---- a/arch/csky/abiv1/alignment.c
-+++ b/arch/csky/abiv1/alignment.c
-@@ -340,9 +340,8 @@ static struct ctl_table sysctl_table[2] = {
- 	{}
- };
- 
--static struct ctl_path sysctl_path[2] = {
--	{.procname = "csky"},
--	{}
-+static struct ctl_path sysctl_path[1] = {
-+	{.procname = "csky"}
- };
- 
- static int __init csky_alignment_init(void)
-diff --git a/arch/nds32/mm/alignment.c b/arch/nds32/mm/alignment.c
-index 1eb7ded6992b..5e79c01b91d6 100644
---- a/arch/nds32/mm/alignment.c
-+++ b/arch/nds32/mm/alignment.c
-@@ -560,9 +560,8 @@ static struct ctl_table nds32_sysctl_table[2] = {
- 	{}
- };
- 
--static struct ctl_path nds32_path[2] = {
--	{.procname = "nds32"},
--	{}
-+static struct ctl_path nds32_path[1] = {
-+	{.procname = "nds32"}
- };
- 
- /*
-diff --git a/fs/verity/signature.c b/fs/verity/signature.c
-index 143a530a8008..6cdad230c438 100644
---- a/fs/verity/signature.c
-+++ b/fs/verity/signature.c
-@@ -92,8 +92,7 @@ static struct ctl_table_header *fsverity_sysctl_header;
- 
- static const struct ctl_path fsverity_sysctl_path[] = {
- 	{ .procname = "fs", },
--	{ .procname = "verity", },
--	{ }
-+	{ .procname = "verity", }
- };
- 
- static struct ctl_table fsverity_sysctl_table[] = {
-diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-index a46a3723bc66..f4f6db65bf81 100644
---- a/kernel/pid_namespace.c
-+++ b/kernel/pid_namespace.c
-@@ -294,7 +294,7 @@ static struct ctl_table pid_ns_ctl_table[] = {
- 	},
- 	{ }
- };
--static struct ctl_path kern_path[] = { { .procname = "kernel", }, { } };
-+static struct ctl_path kern_path[] = { { .procname = "kernel", } };
- #endif	/* CONFIG_CHECKPOINT_RESTORE */
- 
- int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index db10e73d06e0..03f88d0b79f1 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -2333,8 +2333,7 @@ static int seccomp_actions_logged_handler(struct ctl_table *ro_table, int write,
- 
- static struct ctl_path seccomp_sysctl_path[] = {
- 	{ .procname = "kernel", },
--	{ .procname = "seccomp", },
--	{ }
-+	{ .procname = "seccomp", }
- };
- 
- static struct ctl_table seccomp_sysctl_table[] = {
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 4f0eecb67dde..e35c3b29742d 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1729,8 +1729,7 @@ static int apparmor_dointvec(struct ctl_table *table, int write,
- }
- 
- static struct ctl_path apparmor_sysctl_path[] = {
--	{ .procname = "kernel", },
--	{ }
-+	{ .procname = "kernel", }
- };
- 
- static struct ctl_table apparmor_sysctl_table[] = {
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index b12f7d986b1e..0471b177d2e1 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -48,8 +48,7 @@ static DEFINE_SPINLOCK(pinned_root_spinlock);
- 
- static struct ctl_path loadpin_sysctl_path[] = {
- 	{ .procname = "kernel", },
--	{ .procname = "loadpin", },
--	{ }
-+	{ .procname = "loadpin", }
- };
- 
- static struct ctl_table loadpin_sysctl_table[] = {
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index 06e226166aab..b42b61e801b1 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -449,8 +449,7 @@ static int max_scope = YAMA_SCOPE_NO_ATTACH;
- 
- static struct ctl_path yama_sysctl_path[] = {
- 	{ .procname = "kernel", },
--	{ .procname = "yama", },
--	{ }
-+	{ .procname = "yama", }
- };
- 
- static struct ctl_table yama_sysctl_table[] = {
--- 
-2.20.1
+>>
+>     Thank you so much!
+> 
+>     One more questuoin - Is it possible to run Landlock tests in QEMU and
+>     and gather coverage info or I need to change kernel for the whole VM?
 
-
-
+You need to gather the coverage info on the same system that ran the 
+tests, so with the same kernel supporting both Landlock and gcov. You 
+can then generate the web pages elsewhere.
