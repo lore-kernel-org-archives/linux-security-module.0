@@ -2,107 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B78E6C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Feb 2022 14:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8055C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Feb 2022 14:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230353AbiBXOQO (ORCPT
+        id S231826AbiBXOVB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Feb 2022 09:16:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54986 "EHLO
+        Thu, 24 Feb 2022 09:21:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235373AbiBXOQO (ORCPT
+        with ESMTP id S229756AbiBXOVB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Feb 2022 09:16:14 -0500
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE516294FF5
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Feb 2022 06:15:42 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K4FLN1yDQzMqKMX;
-        Thu, 24 Feb 2022 15:15:40 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4K4FLM689RzlhMBm;
-        Thu, 24 Feb 2022 15:15:39 +0100 (CET)
-Message-ID: <ffedc3d8-a193-b8d1-ddf2-9bd4824f4942@digikod.net>
-Date:   Thu, 24 Feb 2022 15:15:41 +0100
+        Thu, 24 Feb 2022 09:21:01 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE04294FFF;
+        Thu, 24 Feb 2022 06:20:31 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 71E791F44C;
+        Thu, 24 Feb 2022 14:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1645712430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JBxbP4mnt4PQT7En4CTQ+ZSao55n9SOd/y/IHHDxShQ=;
+        b=dzKhQAuzzFjSdVY2KXefIhWND0BqHCS5hHFd+QD0vYdJzJi6NEOYbeUqDuEVvC9LXuGeeC
+        lByQkyo+sgIepE5w036yP0cmxejRSKzHwsujs3KyqjASejp/EdKq56Lf6qaHkMslDCSJkC
+        optx+FRHCxeIRTnKxMk0w3TxEogBZpQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1645712430;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JBxbP4mnt4PQT7En4CTQ+ZSao55n9SOd/y/IHHDxShQ=;
+        b=w9m02HCZyuzQDwgPJ/k7jUYIkxUch/Z6WSYRQR6jOeOugcQ8MSUc638b3TRF7iWT0ib27X
+        AqQUJPAO2wapNlDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E7CE313AE7;
+        Thu, 24 Feb 2022 14:20:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id mzqZNi2UF2I6PgAAMHmgww
+        (envelope-from <pvorel@suse.cz>); Thu, 24 Feb 2022 14:20:29 +0000
+From:   Petr Vorel <pvorel@suse.cz>
+To:     zohar@linux.ibm.com
+Cc:     dvyukov@google.com, ebiggers@kernel.org, jmorris@namei.org,
+        keescook@chromium.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com
+Subject: Re: [PATCH 2/2] integrity: double check iint_cache was initialized
+Date:   Thu, 24 Feb 2022 15:20:25 +0100
+Message-Id: <20220224142025.2587-1-pvorel@suse.cz>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20210322154207.6802-2-zohar@linux.ibm.com>
+References: <20210322154207.6802-2-zohar@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com
-References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
- <20220124080215.265538-3-konstantin.meskhidze@huawei.com>
- <4d54e3a9-8a26-d393-3c81-b01389f76f09@digikod.net>
- <a95b208c-5377-cf5c-0b4d-ce6b4e4b1b05@huawei.com>
- <b29b2049-a61b-31a0-c4b5-fc0e55ad7bf1@digikod.net>
- <7a538eb0-00e6-7b15-8409-a09165f72049@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH 2/2] landlock: selftests for bind and connect hooks
-In-Reply-To: <7a538eb0-00e6-7b15-8409-a09165f72049@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi Mimi, Tetsuo, Kees, all,
 
-On 24/02/2022 13:03, Konstantin Meskhidze wrote:
-> 
-> 
-> 2/24/2022 12:55 PM, Mickaël Salaün пишет:
->>
->> On 24/02/2022 04:18, Konstantin Meskhidze wrote:
->>>
->>>
->>> 2/1/2022 9:31 PM, Mickaël Salaün пишет:
->>>>
->>>> On 24/01/2022 09:02, Konstantin Meskhidze wrote:
->>>>> Support 4 tests for bind and connect networks actions:
->>>>
->>>> Good to see such tests!
->>>>
->>>>
->>>>> 1. bind() a socket with no landlock restrictions.
->>>>> 2. bind() sockets with landllock restrictions.
->>>>
->>>> You can leverage the FIXTURE_VARIANT helpers to factor out this kind 
->>>> of tests (see ptrace_test.c).
->>>>
->>>>
->>>>> 3. connect() a socket to listening one with no landlock restricitons.
->>>>> 4. connect() sockets with landlock restrictions.
->>>>
->>>> Same here, you can factor out code. I guess you could create helpers 
->>>> for client and server parts.
->>>>
->>>> We also need to test with IPv4, IPv6 and the AF_UNSPEC tricks.
->>>>
->>>> Please provide the kernel test coverage and explain why the 
->>>> uncovered code cannot be covered: 
->>>> https://www.kernel.org/doc/html/latest/dev-tools/gcov.html
->>>
->>>   Hi Mickaёl!
->>>   Could you please provide the example of your test coverage build
->>>   process? Cause as I undersatand there is no need to get coverage data
->>>   for the entire kernel, just for landlock files.
->>
->> You just need to follow the documentation:
->> - start the VM with the kernel appropriately configured for coverage;
->> - run all the Landlock tests;
->> - gather the coverage and shutdown the VM;
->> - use lcov and genhtml to create the web pages;
->> - look at the coverage for security/landlock/
+FYI this commit merged as 92063f3ca73a ("integrity: double check iint_cache was initialized")
+is the reason for openSUSE distro installer going back from lsm= to deprecated
+security= when filling default grub parameters because security=apparmor or
+security=selinux does not break boot when used with ima_policy=tcb, unlike
+using lsm.
 
-It would be interesting to know the coverage for security/landlock/ 
-before and after your changes, and also specifically for 
-security/landlock.net.c
+@Kees, @Mimi sure, people who use ima_policy=tcb will just remove lsm parameter
+or add "integrity" to it but I wonder whether there could be "integrity"
+automatic inclusion when using ima_policy=tcb. Although the point of lsm= (and
+CONFIG_LSM) is to have *ordered* list of enabled LSMs and it wouldn't be clear
+on which place.
 
->>
->     Thank you so much!
-> 
->     One more questuoin - Is it possible to run Landlock tests in QEMU and
->     and gather coverage info or I need to change kernel for the whole VM?
-
-You need to gather the coverage info on the same system that ran the 
-tests, so with the same kernel supporting both Landlock and gcov. You 
-can then generate the web pages elsewhere.
+Kind regards,
+Petr
