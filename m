@@ -2,260 +2,525 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFB5C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Feb 2022 02:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3422CC433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Feb 2022 03:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbiBXCub (ORCPT
+        id S229476AbiBXDTK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Feb 2022 21:50:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51510 "EHLO
+        Wed, 23 Feb 2022 22:19:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230077AbiBXCu2 (ORCPT
+        with ESMTP id S229437AbiBXDTK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Feb 2022 21:50:28 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF621617C6;
-        Wed, 23 Feb 2022 18:49:59 -0800 (PST)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21O26TUf010992;
-        Thu, 24 Feb 2022 02:49:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : from : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=dads7bigzh8rgmkKbClE/fFJDdBZaum7h9ZXlhRvrTA=;
- b=X7gXkXNiVExnrSvltn3ex5dcd5vXHwKHs5BMyna0T7atucztk/TIG+1vIfXexoQVcmox
- 70jIICAEl0c8F554TD+uYN5U/X7lpzZFuWG8bz7ne7i0XKtMUtjzj9Gt8oaAIZ9pS3LY
- JWAKWglGE5xdQREg7FT6JpO/rCMKPHkjsNtuCNGuZyBtfO2nRbB29W01p5KJFqWPIzWc
- GWpUNuwQhQhIjimLGe1xPUgMVBq+KAfdYWx9tKdH1ai9hoOvSL2fFMcUX0kkLmYyj6Fe
- AMLI21BOCPyzbIRx6FKW32U3GwAEP5rlkGFyr8EhUI9//wx5vodznec31DrzqHyk3G/n Ow== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3eds79achw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Feb 2022 02:49:40 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21O2ne3S026714;
-        Thu, 24 Feb 2022 02:49:40 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3eds79achm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Feb 2022 02:49:40 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21O2gDrM008123;
-        Thu, 24 Feb 2022 02:49:39 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma04dal.us.ibm.com with ESMTP id 3ear6bnr2w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Feb 2022 02:49:39 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21O2nbnk34341130
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Feb 2022 02:49:37 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 995076E04E;
-        Thu, 24 Feb 2022 02:49:37 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1193A6E052;
-        Thu, 24 Feb 2022 02:49:36 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 24 Feb 2022 02:49:35 +0000 (GMT)
-Message-ID: <b7b0c6bf-225f-dbb8-7a80-4bc9f3e78a53@linux.ibm.com>
-Date:   Wed, 23 Feb 2022 21:49:35 -0500
+        Wed, 23 Feb 2022 22:19:10 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C356D19E0BB;
+        Wed, 23 Feb 2022 19:18:38 -0800 (PST)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4K3yl02zr2z67Dqh;
+        Thu, 24 Feb 2022 11:17:32 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.21; Thu, 24 Feb 2022 04:18:35 +0100
+Message-ID: <a95b208c-5377-cf5c-0b4d-ce6b4e4b1b05@huawei.com>
+Date:   Thu, 24 Feb 2022 06:18:34 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v10 18/27] integrity/ima: Define ns_status for storing
- namespaced iint data
-Content-Language: en-US
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-References: <20220201203735.164593-1-stefanb@linux.ibm.com>
- <20220201203735.164593-19-stefanb@linux.ibm.com>
- <d94928dcb87550b7d5cfe277eed8a195ad9c877c.camel@linux.ibm.com>
- <92e1fc33-b97f-b99e-4f28-1d05a07c2f2f@linux.ibm.com>
-In-Reply-To: <92e1fc33-b97f-b99e-4f28-1d05a07c2f2f@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [RFC PATCH 2/2] landlock: selftests for bind and connect hooks
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>
+References: <20220124080215.265538-1-konstantin.meskhidze@huawei.com>
+ <20220124080215.265538-3-konstantin.meskhidze@huawei.com>
+ <4d54e3a9-8a26-d393-3c81-b01389f76f09@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <4d54e3a9-8a26-d393-3c81-b01389f76f09@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: UR9qk-NbuyQI3AxJQcM-NnwgyEHoDaz7
-X-Proofpoint-ORIG-GUID: ljIjGxntQauxmMt5SlPxHobLWUkPBPgf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-02-23_09,2022-02-23_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 suspectscore=0 malwarescore=0 phishscore=0 adultscore=0
- bulkscore=0 impostorscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202240011
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 2/23/22 21:21, Stefan Berger wrote:
->
-> On 2/23/22 11:12, Mimi Zohar wrote:
->> On Tue, 2022-02-01 at 15:37 -0500, Stefan Berger wrote:
->>> From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
->>>
->>> Add an rbtree to the IMA namespace structure that stores a namespaced
->>> version of iint->flags in ns_status struct. Similar to the
->>> integrity_iint_cache, both the iint and ns_status are looked up 
->>> using the
->>> inode pointer value. The lookup, allocate, and insertion code is also
->>> similar.
->>>
->>> In subsequent patches we will have to find all ns_status entries an 
->>> iint
->>> is being used in and reset flags there. To do this, connect a list of
->>> ns_status to the integrity_iint_cache and provide a reader-writer
->>> lock in the integrity_iint_cache to lock access to the list.
->>>
->>> To simplify the code in the non-namespaces case embed an ns_status in
->>> the integrity_iint_cache and have it linked into the iint's 
->>> ns_status list
->>> when calling ima_get_ns_status().
->>>
->>> When getting an ns_status first try to find it in the RB tree. Here 
->>> we can
->>> run into the situation that an ns_status found in the RB tree has a
->>> different iint associated with it for the same inode. In this case 
->>> we need
->>> to delete the ns_status structure and get a new one.
->>>
->>> There are two cases for freeing:
->>> - when the iint is freed (inode deletion): Walk the list of ns_status
->>>    entries and disconnect each ns_status from the list; take the
->>>    writer lock to protect access to the list; also, take the item 
->>> off the
->>>    per-namespace rbtree
->>>
->>> - when the ima_namepace is freed: While walking the rbtree, remove the
->>>    ns_status from the list while also holding the iint's writer lock;
->>>    to be able to grab the lock we have to have a pointer to the iint on
->>>    the ns_status structure.
->>>
->>> To avoid an ns_status to be freed by the two cases concurrently, 
->>> prevent
->>> these two cases to run concurrently. Therefore, groups of threads
->>> deleting either inodes or ima_namespaces are allowed to run 
->>> concurrently
->>> but no two threads may run and one delete an inode and the other an
->>> ima_namespace.
->> The locking involved here is really complex.  I'm sure you thought
->> about it a lot, but isn't there a better alternative?
->
-> I am afraid this is a difficult question and a short and concise 
-> answer is not possible...
->
-> The complexity of the locking is driven by concurrency and the data 
-> structures that are involved. The data structures (existing global 
-> iint rbtree, ns_status structure, and per namespace rbtree for 
-> ns_status) and how they are organized and connected (via linked lists) 
-> are a consequence of the fact that we need to be able to handle files 
-> shared between IMA namespaces (and the host) so that re-auditing, 
-> re-measuring and re-appraisal of files after file modifications or 
-> modifications of the security.ima xattr (by any namespaces) can be 
-> done efficiently. Furthermore, it helps to efficiently remove all the 
-> status information that an IMA namespace has kept for files it 
-> audited/measured/appraised. The goal was to make this as scalable as 
-> possible by having each namespace get out of the way of other 
-> namespaces by preventing them from locking each other out too much. 
-> The single biggest problem are files shared between IMA namespaces.
->
-> The best argument for the design I can come up with is the 'Big O 
-> notation' describing the time complexity of operations.
->
->
-> The existing global iint rbtree maintains IMA status information for 
-> each inode. Lookup and insertion of data into the gloab iint rbtree  
-> is O(log(n)), thus optimal.
->
-> To accommodate re-auditing/re-measurement/re-appraisal, which is 
-> driven by resetting status flags, I connected a list of ns_status 
-> structures, in which each namespace maintains its status information 
-> for each inode, to the iint maintained in that global rbtree. The 
-> resetting of status flags is fast because traversing the list after a 
-> lookup in the tree is O(n). Lookup + resetting the flags therefore is 
-> O(log(n) + n). If the list didn't exist we would have to search all 
-> IMA namespaces for the inode to be able to reset the flags, resulting 
-> in O(n * log(n)) time complexity, which is of course much worse. So, 
-> the list of ns_status linked to an iint has a good reason: better time 
-> complexity to traverse the list and reset status flags. Beside  that 
-> it also supports fast handling of deletion of files where the iint has 
-> to be delete from the global rbtree and the ns_status list it holds 
-> must also be deleted (each ns_status also needs to be delete from a 
-> per IMA-namespace rbtree then)
->
->
-> There's also a per-IMA namespace rbtree for each inode that serves two 
-> purposes:
->
-> a) Fast lookup of ns_status (O(log(n)) for an IMA namespace; at least 
-> to insert an ns_status into this tree we need not write-lock the iint 
-> tree but the initial iint creation required the write-locking of the 
-> iint tree
->
-> b) Maintaining a collection of inodes that the namespace has 
-> audited/measured/appraised for efficient deletion upon IMA namespace 
-> teardown: We can traverse this tree in O(n) time and determine which 
-> iints have no more namespace users and delete them from the iint tree.
->
->
-> Now the dilemma with this is that an ns_status structure is connected 
-> to a list hanging off the iint and on top of this it is part of an 
-> rbtree. And this is where the 'group locking' is coming from. What we 
-> need to prevent is that an ns_status is deleted from its iint list 
-> (when a file is deleted) while it is also deleted from the per-IMA 
-> namespace rbtree (when the namespace is deleted). Both must not be 
-> done concurrently. What is possible is that a group of threads may 
-> tear down namespaces and the other group may act on file deletion, but 
-> threads from both groups must not run concurrently.
->
->
-> Now we can at least look at two alternatives for the per-IMA namespace 
-> rbtree.
->
-> 1) One alternative is to use a list instead of an rbtree. We would 
-> loose the fast lookup via the per IMA namespace tree and get O(n) 
-> lookup times but quick insertion into the list [O(1)]. We still would 
-> have the collection of inodes. And we would still have the dilemma 
-> that an ns_status would be connected to two lists, thus requiring the 
-> group locking. I don't think using a list instead of an rbtree is a 
-> solution.
->
-> 2) We could try to get rid of the per-IMA namespace rbtree altogether 
-> and just use the global iint rbtree that exists today with a list of 
-> ns_status connected to its iints. If we do this we would loose the 
-> knowledge of which inodes a namespace has an ns_status structure for. 
-> The only way we would find this is by traversing the global iint tree 
-> (O(n)) and follow each iint list (O(m)) to see whether we find an 
-> ns_status holding information about the iint. The time complexity for 
-> this would be O(n*m) but much less than O(n^2). A downside would also 
-> be that we would have to keep a lock on the global iint rbtree while 
-> traversing it, thus locking out those that want to add inodes to the 
-> tree. On the upside it would allow us to get rid of the group locking. 
-> Lookup of an ns_status in the global iint tree would be O(n) + O(m) 
-> and insertion would be O(n) + O(1).
->
->
-> Certainly, the alternative is 2) with its own trade-offs. My guess is 
-> some sort of yielding could probably also be helpful there then to 
-> avoid blocking higher priority operations than deleting of a namespace.
 
+2/1/2022 9:31 PM, Mickaël Salaün пишет:
+> 
+> On 24/01/2022 09:02, Konstantin Meskhidze wrote:
+>> Support 4 tests for bind and connect networks actions:
+> 
+> Good to see such tests!
+> 
+> 
+>> 1. bind() a socket with no landlock restrictions.
+>> 2. bind() sockets with landllock restrictions.
+> 
+> You can leverage the FIXTURE_VARIANT helpers to factor out this kind of 
+> tests (see ptrace_test.c).
+> 
+> 
+>> 3. connect() a socket to listening one with no landlock restricitons.
+>> 4. connect() sockets with landlock restrictions.
+> 
+> Same here, you can factor out code. I guess you could create helpers for 
+> client and server parts.
+> 
+> We also need to test with IPv4, IPv6 and the AF_UNSPEC tricks.
+> 
+> Please provide the kernel test coverage and explain why the uncovered 
+> code cannot be covered: 
+> https://www.kernel.org/doc/html/latest/dev-tools/gcov.html
 
-I forgot to mention: It makes a difference if one has to walk the global 
-iint tree to find the few ns_status for the namespace among possibly 
-thousands of entries in that tree than having a per-IMA namespace rbtree 
-that has these few ns_status right there. So walking the iint tree is 
-more like O(N) versus O(n) walking the per-IMA namespace rbtree.
-
-
+  Hi Mickaёl!
+  Could you please provide the example of your test coverage build
+  process? Cause as I undersatand there is no need to get coverage data
+  for the entire kernel, just for landlock files.
+> 
+> You'll probably see that there are a multiple parts of the kernel that 
+> are not covered. For instance, it is important to test different 
+> combinations of layered network rules (see layout1/ruleset_overlap, 
+> layer_rule_unions, non_overlapping_accesses, 
+> interleaved_masked_accesses… in fs_test.c). Tests in fs_test.c are more 
+> complex because handling file system rules is more complex, but you can 
+> get some inspiration in it, especially the edge cases.
+> 
+> We also need to test invalid user space supplied data (see layout1/inval 
+> test in fs_test.c).
+> 
+> 
+>>
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> ---
+>>   .../testing/selftests/landlock/network_test.c | 346 ++++++++++++++++++
+>>   1 file changed, 346 insertions(+)
+>>   create mode 100644 tools/testing/selftests/landlock/network_test.c
+>>
+>> diff --git a/tools/testing/selftests/landlock/network_test.c 
+>> b/tools/testing/selftests/landlock/network_test.c
+>> new file mode 100644
+>> index 000000000000..9dfe37a2fb20
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/landlock/network_test.c
+>> @@ -0,0 +1,346 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Landlock tests - Common user space base
+>> + *
+>> + * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
+>> + * Copyright © 2019-2020 ANSSI
+> 
+> You need to update this header with an appropriate description and the 
+> copyright holder (your employer).
+> 
+> 
+>> + */
+>> +
+>> +#define _GNU_SOURCE
+>> +#include <errno.h>
+>> +#include <fcntl.h>
+>> +#include <linux/landlock.h>
+>> +#include <string.h>
+>> +#include <sys/prctl.h>
+>> +#include <sys/socket.h>
+>> +#include <sys/types.h>
+>> +#include <netinet/in.h>
+>> +#include <arpa/inet.h>
+> 
+> To make it determinisitic (and ease patching/diff/merging), you should 
+> sort all the included files (in tests and in the kernel code).
+> 
+> 
+>> +
+>> +#include "common.h"
+>> +
+>> +#define SOCK_PORT_1 3470
+>> +#define SOCK_PORT_2 3480
+>> +#define SOCK_PORT_3 3490
+> 
+> To avoid port collision and create a clean and stable test environement 
+> (to avoid flaky tests), you should create a network namespace with 
+> FIXTURE_SETUP, test with TEST_F_FORK (to not polute the parent process, 
+> and which works with test variants), and use the set_cap and clear_cap 
+> helpers (see fs_test.c).
+> 
+> 
+>> +
+>> +#define IP_ADDRESS "127.0.0.1"
+>> +
+>> +/* Number pending connections queue tobe hold */
+>> +#define BACKLOG 10
+>> +
+>> +TEST(socket_bind_no_restrictions) {
+>> +
+>> +    int sockfd;
+>> +    struct sockaddr_in addr;
+>> +    const int one = 1;
+>> +
+>> +    /* Create a socket */
+>> +    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+>> +    ASSERT_LE(0, sockfd);
+>> +    /* Allow reuse of local addresses */
+>> +    ASSERT_EQ(0, setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &one, 
+>> sizeof(one)));
+> 
+> With a dedicated namespace, SO_REUSEADDR should not be required.
+> 
+> 
+>> +
+>> +    /* Set socket address parameters */
+>> +    addr.sin_family = AF_INET;
+>> +    addr.sin_port = htons(SOCK_PORT_1);
+>> +    addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>> +    memset(&(addr.sin_zero), '\0', 8);
+>> +
+>> +    /* Bind the socket to IP address */
+>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&addr, sizeof(addr)));
+>> +}
+>> +
+>> +TEST(sockets_bind_with_restrictions) {
+>> +
+>> +    int sockfd_1, sockfd_2, sockfd_3;
+>> +    struct sockaddr_in addr_1, addr_2, addr_3;
+>> +    const int one = 1;
+>> +
+>> +    struct landlock_ruleset_attr ruleset_attr = {
+>> +        .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +    };
+>> +    struct landlock_net_service_attr net_service_1 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +        .port = SOCK_PORT_1,
+>> +    };
+>> +    struct landlock_net_service_attr net_service_2 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +        .port = SOCK_PORT_2,
+>> +    };
+>> +    struct landlock_net_service_attr net_service_3 = {
+>> +        .allowed_access = 0,
+>> +        .port = SOCK_PORT_3,
+>> +    };
+> 
+> Good to have these three different rules!
+> 
+> 
+>> +
+>> +    const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+>> +            sizeof(ruleset_attr), 0);
+>> +    ASSERT_LE(0, ruleset_fd);
+>> +
+>> +    /* Allow connect and bind operations to the SOCK_PORT_1 socket 
+>> "object" */
+> 
+> You can omit "object" but use full sentences at the third person 
+> (because it explains what do the next lines).
+> 
+> 
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_1, 0));
+>> +    /* Allow connect and deny bind operations to the SOCK_PORT_2 
+>> socket "object" */
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_2, 0));
+>> +    /* Empty allowed_access (i.e. deny rules) are ignored in network 
+>> actions
+>> +     * for SOCK_PORT_3 socket "object"
+>> +     */
+>> +    ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_3, 0));
+>> +    ASSERT_EQ(ENOMSG, errno);
+>> +
+>> +    /* Enforces the ruleset. */
+>> +    ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
+>> +    ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0));
+>> +    ASSERT_EQ(0, close(ruleset_fd));
+>> +
+>> +    /* Create a socket 1 */
+>> +    sockfd_1 = socket(AF_INET, SOCK_STREAM, 0);
+> 
+> Please create all FD with SOCK_CLOEXEC and also close them when not 
+> needed. This could also reduce the number of FD.
+> 
+> 
+>> +    ASSERT_LE(0, sockfd_1);
+>> +    /* Allow reuse of local addresses */
+>> +    ASSERT_EQ(0, setsockopt(sockfd_1, SOL_SOCKET, SO_REUSEADDR, &one, 
+>> sizeof(one)));
+>> +
+>> +    /* Set socket 1 address parameters */
+>> +    addr_1.sin_family = AF_INET;
+>> +    addr_1.sin_port = htons(SOCK_PORT_1);
+>> +    addr_1.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>> +    memset(&(addr_1.sin_zero), '\0', 8);
+>> +    /* Bind the socket 1 to IP address */
+>> +    ASSERT_EQ(0, bind(sockfd_1, (struct sockaddr  *)&addr_1, 
+>> sizeof(addr_1)));
+>> +
+>> +    /* Create a socket 2 */
+>> +    sockfd_2 = socket(AF_INET, SOCK_STREAM, 0);
+>> +    ASSERT_LE(0, sockfd_2);
+>> +    /* Allow reuse of local addresses */
+>> +    ASSERT_EQ(0, setsockopt(sockfd_2, SOL_SOCKET, SO_REUSEADDR, &one, 
+>> sizeof(one)));
+>> +
+>> +    /* Set socket 2 address parameters */
+>> +    addr_2.sin_family = AF_INET;
+>> +    addr_2.sin_port = htons(SOCK_PORT_2);
+>> +    addr_2.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>> +    memset(&(addr_2.sin_zero), '\0', 8);
+> 
+> These part could be factored out with helpers or/and test variants.
+> 
+> 
+>> +    /* Bind the socket 2 to IP address */
+>> +    ASSERT_EQ(-1, bind(sockfd_2, (struct sockaddr *)&addr_2, 
+>> sizeof(addr_2)));
+>> +    ASSERT_EQ(EACCES, errno);
+>> +
+>> +    /* Create a socket 3 */
+>> +    sockfd_3 = socket(AF_INET, SOCK_STREAM, 0);
+>> +    ASSERT_LE(0, sockfd_3);
+>> +    /* Allow reuse of local addresses */
+>> +    ASSERT_EQ(0, setsockopt(sockfd_3, SOL_SOCKET, SO_REUSEADDR, &one, 
+>> sizeof(one)));
+>> +
+>> +    /* Set socket 3 address parameters */
+>> +    addr_3.sin_family = AF_INET;
+>> +    addr_3.sin_port = htons(SOCK_PORT_3);
+>> +    addr_3.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>> +    memset(&(addr_3.sin_zero), '\0', 8);
+>> +    /* Bind the socket 3 to IP address */
+>> +    ASSERT_EQ(0, bind(sockfd_3, (struct sockaddr *)&addr_3, 
+>> sizeof(addr_3)));
+> 
+> Why is it allowed to bind to SOCK_PORT_3 whereas net_service_3 forbids it?
+> 
+> 
+>> +}
+>> +
+>> +TEST(socket_connect_no_restrictions) {
+>> +
+>> +    int sockfd, new_fd;
+>> +    struct sockaddr_in addr;
+>> +    pid_t child;
+>> +    int status;
+>> +    const int one = 1;
+>> +
+>> +    /* Create a server socket */
+>> +    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+>> +    ASSERT_LE(0, sockfd);
+>> +    /* Allow reuse of local addresses */
+>> +    ASSERT_EQ(0, setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &one, 
+>> sizeof(one)));
+>> +
+>> +    /* Set socket address parameters */
+>> +    addr.sin_family = AF_INET;
+>> +    addr.sin_port = htons(SOCK_PORT_1);
+>> +    addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>> +    memset(&(addr.sin_zero), '\0', 8);
+>> +
+>> +    /* Bind the socket to IP address */
+>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&addr, sizeof(addr)));
+>> +
+>> +    /* Make listening socket */
+>> +    ASSERT_EQ(0, listen(sockfd, BACKLOG));
+>> +
+>> +    child = fork();
+>> +    ASSERT_LE(0, child);
+>> +    if (child == 0) {
+>> +        int child_sockfd;
+>> +        struct sockaddr_in connect_addr;
+>> +
+>> +        /* Close listening socket for the child */
+>> +        ASSERT_EQ(0, close(sockfd));
+>> +        /* Create a stream client socket */
+>> +        child_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+>> +        ASSERT_LE(0, child_sockfd);
+>> +
+>> +        /* Set server's socket address parameters*/
+>> +        connect_addr.sin_family = AF_INET;
+>> +        connect_addr.sin_port = htons(SOCK_PORT_1);
+>> +        connect_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+>> +        memset(&(connect_addr.sin_zero), '\0', 8);
+>> +
+>> +        /* Make connection to the listening socket */
+>> +        ASSERT_EQ(0, connect(child_sockfd, (struct sockaddr 
+>> *)&connect_addr,
+>> +                       sizeof(struct sockaddr)));
+>> +        _exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
+>> +        return;
+>> +    }
+>> +    /* Accept connection from the child */
+>> +    new_fd = accept(sockfd, NULL, 0);
+>> +    ASSERT_LE(0, new_fd);
+>> +
+>> +    /* Close connection */
+>> +    ASSERT_EQ(0, close(new_fd));
+>> +
+>> +    ASSERT_EQ(child, waitpid(child, &status, 0));
+>> +    ASSERT_EQ(1, WIFEXITED(status));
+>> +    ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+>> +}
+>> +
+>> +TEST(sockets_connect_with_restrictions) {
+>> +
+>> +    int new_fd;
+>> +    int sockfd_1, sockfd_2;
+>> +    struct sockaddr_in addr_1, addr_2;
+>> +    pid_t child_1, child_2;
+>> +    int status;
+>> +    const int one = 1;
+>> +
+>> +    struct landlock_ruleset_attr ruleset_attr = {
+>> +        .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +    };
+>> +    struct landlock_net_service_attr net_service_1 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +        .port = SOCK_PORT_1,
+>> +    };
+>> +    struct landlock_net_service_attr net_service_2 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+>> +        .port = SOCK_PORT_2,
+>> +    };
+>> +
+>> +    const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+>> +            sizeof(ruleset_attr), 0);
+>> +    ASSERT_LE(0, ruleset_fd);
+>> +
+>> +    /* Allow connect and bind operations to the SOCK_PORT_1 socket 
+>> "object" */
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_1, 0));
+>> +    /* Allow connect and deny bind operations to the SOCK_PORT_2 
+>> socket "object" */
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_2, 0));
+>> +
+>> +    /* Enforces the ruleset. */
+>> +    ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
+>> +    ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0));
+>> +    ASSERT_EQ(0, close(ruleset_fd));
+>> +
+>> +    /* Create a server socket 1 */
+>> +    sockfd_1 = socket(AF_INET, SOCK_STREAM, 0);
+>> +    ASSERT_LE(0, sockfd_1);
+>> +    /* Allow reuse of local addresses */
+>> +    ASSERT_EQ(0, setsockopt(sockfd_1, SOL_SOCKET, SO_REUSEADDR, &one, 
+>> sizeof(one)));
+>> +
+>> +    /* Set socket 1 address parameters */
+>> +    addr_1.sin_family = AF_INET;
+>> +    addr_1.sin_port = htons(SOCK_PORT_1);
+>> +    addr_1.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>> +    memset(&(addr_1.sin_zero), '\0', 8);
+>> +
+>> +    /* Bind the socket 1 to IP address */
+>> +    ASSERT_EQ(0, bind(sockfd_1, (struct sockaddr *)&addr_1, 
+>> sizeof(addr_1)));
+>> +
+>> +    /* Make listening socket 1 */
+>> +    ASSERT_EQ(0, listen(sockfd_1, BACKLOG));
+>> +
+>> +    child_1 = fork();
+>> +    ASSERT_LE(0, child_1);
+>> +    if (child_1 == 0) {
+>> +        int child_sockfd;
+>> +        struct sockaddr_in connect_addr;
+>> +
+>> +        /* Close listening socket for the child */
+>> +        ASSERT_EQ(0, close(sockfd_1));
+>> +        /* Create a stream client socket */
+>> +        child_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+>> +        ASSERT_LE(0, child_sockfd);
+>> +
+>> +        /* Set server's socket 1 address parameters*/
+>> +        connect_addr.sin_family = AF_INET;
+>> +        connect_addr.sin_port = htons(SOCK_PORT_1);
+>> +        connect_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+>> +        memset(&(connect_addr.sin_zero), '\0', 8);
+>> +
+>> +        /* Make connection to the listening socket 1 */
+>> +        ASSERT_EQ(0, connect(child_sockfd, (struct sockaddr 
+>> *)&connect_addr,
+>> +                       sizeof(struct sockaddr)));
+>> +        _exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
+>> +        return;
+>> +    }
+>> +    /* Accept connection from the child 1 */
+>> +    new_fd = accept(sockfd_1, NULL, 0);
+>> +    ASSERT_LE(0, new_fd);
+>> +
+>> +    /* Close connection */
+>> +    ASSERT_EQ(0, close(new_fd));
+>> +
+>> +    ASSERT_EQ(child_1, waitpid(child_1, &status, 0));
+>> +    ASSERT_EQ(1, WIFEXITED(status));
+>> +    ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+>> +
+>> +    /* Create a server socket 2 */
+>> +    sockfd_2 = socket(AF_INET, SOCK_STREAM, 0);
+>> +    ASSERT_LE(0, sockfd_2);
+>> +    /* Allow reuse of local addresses */
+>> +    ASSERT_EQ(0, setsockopt(sockfd_2, SOL_SOCKET, SO_REUSEADDR, &one, 
+>> sizeof(one)));
+>> +
+>> +    /* Set socket 2 address parameters */
+>> +    addr_2.sin_family = AF_INET;
+>> +    addr_2.sin_port = htons(SOCK_PORT_2);
+>> +    addr_2.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+>> +    memset(&(addr_2.sin_zero), '\0', 8);
+>> +
+>> +    /* Bind the socket 2 to IP address */
+>> +    ASSERT_EQ(0, bind(sockfd_2, (struct sockaddr *)&addr_2, 
+>> sizeof(addr_2)));
+>> +
+>> +    /* Make listening socket 2 */
+>> +    ASSERT_EQ(0, listen(sockfd_2, BACKLOG));
+>> +
+>> +    child_2 = fork();
+>> +    ASSERT_LE(0, child_2);
+>> +    if (child_2 == 0) {
+>> +        int child_sockfd;
+>> +        struct sockaddr_in connect_addr;
+>> +
+>> +        /* Close listening socket for the child */
+>> +        ASSERT_EQ(0, close(sockfd_2));
+>> +        /* Create a stream client socket */
+>> +        child_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+>> +        ASSERT_LE(0, child_sockfd);
+>> +
+>> +        /* Set server's socket address parameters*/
+>> +        connect_addr.sin_family = AF_INET;
+>> +        connect_addr.sin_port = htons(SOCK_PORT_2);
+>> +        connect_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+>> +        memset(&(connect_addr.sin_zero), '\0', 8);
+>> +
+>> +        /* Make connection to the listening socket */
+>> +        ASSERT_EQ(-1, connect(child_sockfd, (struct sockaddr 
+>> *)&connect_addr,
+>> +                       sizeof(struct sockaddr)));
+>> +        ASSERT_EQ(EACCES, errno);
+>> +        _exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
+>> +        return;
+>> +    }
+>> +
+>> +    ASSERT_EQ(child_2, waitpid(child_2, &status, 0));
+>> +    ASSERT_EQ(1, WIFEXITED(status));
+>> +    ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+>> +}
+>> +
+>> +TEST_HARNESS_MAIN
+> .
