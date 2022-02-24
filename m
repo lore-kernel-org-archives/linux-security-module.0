@@ -2,105 +2,201 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC26C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Feb 2022 17:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB87C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Feb 2022 18:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232182AbiBXRnI (ORCPT
+        id S232671AbiBXSUl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Feb 2022 12:43:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52990 "EHLO
+        Thu, 24 Feb 2022 13:20:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232171AbiBXRnI (ORCPT
+        with ESMTP id S232583AbiBXSUk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Feb 2022 12:43:08 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5D42177E6;
-        Thu, 24 Feb 2022 09:42:37 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 305E11F37C;
-        Thu, 24 Feb 2022 17:42:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1645724556;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oHRcXNAyVVLBmzjtITjvYsLkaLmEBNuckTKDj2JF/sQ=;
-        b=qjReW5R4Uw6x5aNoKjevXfGCZdphemqRh+9z7KgeK3+PdYeNitd3JjyDgtrF3cOvwLPNcB
-        l2aZuvycJ72O/Pz5lP05+t5WE7B0FcDV6FDiGRlVv7YF6pFhEy3P9EPo4H5EXxqMYtNvv7
-        p9XPBICZw3U8HzfYz2NYBH77pGILyI8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1645724556;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oHRcXNAyVVLBmzjtITjvYsLkaLmEBNuckTKDj2JF/sQ=;
-        b=bP3zwb+almDjPEBWW1T5UZXt9hS5kwf0Isr6ycFHkERR7tAq0C/x9r4nhTzdINjCy5ksIS
-        gO2TXUQiUS1GncAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BCD7713B15;
-        Thu, 24 Feb 2022 17:42:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id EjarK4vDF2J4GwAAMHmgww
-        (envelope-from <pvorel@suse.cz>); Thu, 24 Feb 2022 17:42:35 +0000
-Date:   Thu, 24 Feb 2022 18:42:29 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     zohar@linux.ibm.com, dvyukov@google.com, ebiggers@kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-Subject: Re: [PATCH 2/2] integrity: double check iint_cache was initialized
-Message-ID: <YhfDhYQYZTU0clAf@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20210322154207.6802-2-zohar@linux.ibm.com>
- <20220224142025.2587-1-pvorel@suse.cz>
- <418628ea-f524-05a1-8bfc-a688fa2d625d@schaufler-ca.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <418628ea-f524-05a1-8bfc-a688fa2d625d@schaufler-ca.com>
+        Thu, 24 Feb 2022 13:20:40 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D892556CF
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Feb 2022 10:20:10 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id e129-20020a25d387000000b006245d830ca6so577241ybf.13
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Feb 2022 10:20:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Kr3msHxcEEuMu9ueVhf1C+yPycv5P/dhrWgKPHzNZeU=;
+        b=fPfQHUeXB8dFNhcE0pSs43bdxCMaS/5S9/DzhMcZXeydaAkCzPRYjyJPHchp7jv7Fl
+         YcI6FCU2KPWMX0IIyPh1fLisosge1/9iqrTFR4l3gwQI7GOxBAm65qyTsWZdNkjOK/NE
+         k4jN0vbm5oQiFlMVAdO2u8bXj4BrV70nE30yhUXw+c2oICHiL9Bcbrbx9AJSeWZ1qVOx
+         O0RxVsAvhoJ96n6AihRhyP/iKtz9DskulRg3Xx3PELkjLDNWIoeUowiVk8EiM0w4TMMA
+         qq+Tzg42a1SC40LYdWFOJm2uDwMGriG9HWn5UcdO7D//xszsaVryahaBE1Q/mOIF7Jnw
+         cvTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Kr3msHxcEEuMu9ueVhf1C+yPycv5P/dhrWgKPHzNZeU=;
+        b=gDgqk/s6E0KWjT/TFoqw8Dkf6hwSSevhYONB6snhuqxroiGi6G5HClVjMYpmpVGoi4
+         Gdi9rpUgc0rU1S8FUEn2cNiuuTjYnAI0D5+MHrp9mta1Xsqz1MB0B8gUjdW1YyyFsSXx
+         Qei1X1G1w+2Rl+Zwic/7Fq6MBMffQN2+JkvT4CmiA3WZ8Q5YG2fSWqmYpbZj7pIFFOs3
+         xUCekE0BrVjNM6qmjDquR2hcHKI2M/2jA7+J4MxOskI6H6VBB/7RX1WdphudNwXA4EDc
+         r/4iqBl+6lju1CX1lRI4mX12sa1z/95nKW7eq5c291I9ok4NndZWzhvX6nuuPbUsBkzC
+         7SSQ==
+X-Gm-Message-State: AOAM533VvQc1VGIAcWcBbwP6uxx+Odxj69IlgMHNcT13dpjTynTynSwL
+        wjqwgmb+FeHREZq/iKCJBeXe+QFLg65qN5i4PWOc
+X-Google-Smtp-Source: ABdhPJykrFAu6LDou6qQ+GvUENavEY0K5NwYoXaucR3RWYojp3M1TWx2uHE2Wm2gvvSBpVRlJMazTjkK9Vnl7gjXfQT4
+X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:5d35:89ab:52c:6dea])
+ (user=axelrasmussen job=sendgmr) by 2002:a25:8887:0:b0:622:77:ecad with SMTP
+ id d7-20020a258887000000b006220077ecadmr3666746ybl.30.1645726809505; Thu, 24
+ Feb 2022 10:20:09 -0800 (PST)
+Date:   Thu, 24 Feb 2022 10:19:53 -0800
+Message-Id: <20220224181953.1030665-1-axelrasmussen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.35.1.574.g5d30c73bfb-goog
+Subject: [PATCH] userfaultfd, capability: introduce CAP_USERFAULTFD
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Peter Xu <peterx@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Serge Hallyn <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jeremy Kerr <jk@codeconstruct.com.au>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Axel Rasmussen <axelrasmussen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+Historically, it has been shown that intercepting kernel faults with
+userfaultfd (thereby forcing the kernel to wait for an arbitrary amount
+of time) can be exploited, or at least can make some kinds of exploits
+easier. So, in 37cd0575b8 "userfaultfd: add UFFD_USER_MODE_ONLY" we
+changed things so, in order for kernel faults to be handled by
+userfaultfd, either the process needs CAP_SYS_PTRACE, or this sysctl
+must be configured so that any unprivileged user can do it.
 
-> On 2/24/2022 6:20 AM, Petr Vorel wrote:
-> > Hi Mimi, Tetsuo, Kees, all,
+In a typical implementation of a hypervisor with live migration (take
+QEMU/KVM as one such example), we do indeed need to be able to handle
+kernel faults. But, both options above are less than ideal:
 
-> > FYI this commit merged as 92063f3ca73a ("integrity: double check iint_cache was initialized")
-> > is the reason for openSUSE distro installer going back from lsm= to deprecated
-> > security= when filling default grub parameters because security=apparmor or
-> > security=selinux does not break boot when used with ima_policy=tcb, unlike
-> > using lsm.
+- Toggling the sysctl increases attack surface by allowing any
+  unprivileged user to do it.
 
-> OK, color me confused. Integrity isn't an LSM. It doesn't
-> call security_add_hooks().
-Really: "Initially I also questioned making "integrity" an LSM.  Perhaps it's
-time to reconsider." [1]
+- Granting the live migration process CAP_SYS_PTRACE gives it this
+  ability, but *also* the ability to "observe and control the
+  execution of another process [...], and examine and change [its]
+  memory and registers" (from ptrace(2)). This isn't something we need
+  or want to be able to do, so granting this permission violates the
+  "principle of least privilege".
 
-> > @Kees, @Mimi sure, people who use ima_policy=tcb will just remove lsm parameter
-> > or add "integrity" to it but I wonder whether there could be "integrity"
-> > automatic inclusion when using ima_policy=tcb. Although the point of lsm= (and
-> > CONFIG_LSM) is to have *ordered* list of enabled LSMs and it wouldn't be clear
-> > on which place.
+This is all a long winded way to say: we want a more fine-grained way to
+grant access to userfaultfd, without granting other additional
+permissions at the same time.
 
-> Why would adding integrity to the lsm= make sense? It's not an LSM.
+So, add CAP_USERFAULTFD, for this specific case.
 
-> Sorry, but something is wrong here.
-np. I explained that: try to boot with "ima_policy=tcb lsm=" or "ima_policy=tcb
-lsm=whatever" (whatever != integrity).
+Setup a helper which accepts either CAP_USERFAULTFD, or for backward
+compatibility reasons (existing userspaces may depend on the old way of
+doing things), CAP_SYS_PTRACE.
 
-Also have look at commit 92063f3ca73a ("integrity: double check iint_cache was
-initialized") which explain why it's needed.
+One special case is UFFD_FEATURE_EVENT_FORK: this is left requiring only
+CAP_SYS_PTRACE, since it is specifically about manipulating the memory
+of another (child) process, it sems like a better fit the way it is. To
+my knowledge, this isn't a feature required by typical live migration
+implementations, so this doesn't obviate the above.
 
-Kind regards,
-Petr
+Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+---
+ fs/userfaultfd.c                    | 6 +++---
+ include/linux/capability.h          | 5 +++++
+ include/uapi/linux/capability.h     | 7 ++++++-
+ security/selinux/include/classmap.h | 4 ++--
+ 4 files changed, 16 insertions(+), 6 deletions(-)
 
-[1] https://lore.kernel.org/linux-integrity/3ed2004413e0ac07c7bd6f10294d6b6fac6fdbf3.camel@linux.ibm.com/
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index e26b10132d47..1ec0d9b49a70 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -411,7 +411,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	    ctx->flags & UFFD_USER_MODE_ONLY) {
+ 		printk_once(KERN_WARNING "uffd: Set unprivileged_userfaultfd "
+ 			"sysctl knob to 1 if kernel faults must be handled "
+-			"without obtaining CAP_SYS_PTRACE capability\n");
++			"without obtaining CAP_USERFAULTFD capability\n");
+ 		goto out;
+ 	}
+ 
+@@ -2068,10 +2068,10 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+ 
+ 	if (!sysctl_unprivileged_userfaultfd &&
+ 	    (flags & UFFD_USER_MODE_ONLY) == 0 &&
+-	    !capable(CAP_SYS_PTRACE)) {
++	    !userfaultfd_capable()) {
+ 		printk_once(KERN_WARNING "uffd: Set unprivileged_userfaultfd "
+ 			"sysctl knob to 1 if kernel faults must be handled "
+-			"without obtaining CAP_SYS_PTRACE capability\n");
++			"without obtaining CAP_USERFAULTFD capability\n");
+ 		return -EPERM;
+ 	}
+ 
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index 65efb74c3585..f1e7b3506432 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -270,6 +270,11 @@ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
+ 		ns_capable(ns, CAP_SYS_ADMIN);
+ }
+ 
++static inline bool userfaultfd_capable(void)
++{
++	return capable(CAP_USERFAULTFD) || capable(CAP_SYS_PTRACE);
++}
++
+ /* audit system wants to get cap info from files as well */
+ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
+ 			   const struct dentry *dentry,
+diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+index 463d1ba2232a..83a5d8601508 100644
+--- a/include/uapi/linux/capability.h
++++ b/include/uapi/linux/capability.h
+@@ -231,6 +231,7 @@ struct vfs_ns_cap_data {
+ #define CAP_SYS_CHROOT       18
+ 
+ /* Allow ptrace() of any process */
++/* Allow everything under CAP_USERFAULTFD for backward compatibility */
+ 
+ #define CAP_SYS_PTRACE       19
+ 
+@@ -417,7 +418,11 @@ struct vfs_ns_cap_data {
+ 
+ #define CAP_CHECKPOINT_RESTORE	40
+ 
+-#define CAP_LAST_CAP         CAP_CHECKPOINT_RESTORE
++/* Allow intercepting kernel faults with userfaultfd */
++
++#define CAP_USERFAULTFD		41
++
++#define CAP_LAST_CAP         CAP_USERFAULTFD
+ 
+ #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
+ 
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 35aac62a662e..98e37b220159 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -28,9 +28,9 @@
+ 
+ #define COMMON_CAP2_PERMS  "mac_override", "mac_admin", "syslog", \
+ 		"wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf", \
+-		"checkpoint_restore"
++		"checkpoint_restore", "userfaultfd"
+ 
+-#if CAP_LAST_CAP > CAP_CHECKPOINT_RESTORE
++#if CAP_LAST_CAP > CAP_USERFAULTFD
+ #error New capability defined, please update COMMON_CAP2_PERMS.
+ #endif
+ 
+-- 
+2.35.1.574.g5d30c73bfb-goog
+
