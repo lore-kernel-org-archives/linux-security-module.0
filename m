@@ -2,241 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD940C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Feb 2022 22:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6D4C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Feb 2022 00:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235223AbiBXWIT (ORCPT
+        id S235989AbiBYAXT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Feb 2022 17:08:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51870 "EHLO
+        Thu, 24 Feb 2022 19:23:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235206AbiBXWIT (ORCPT
+        with ESMTP id S231464AbiBYAXS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Feb 2022 17:08:19 -0500
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34EDA1B84FE
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Feb 2022 14:07:48 -0800 (PST)
-Received: by mail-il1-x12f.google.com with SMTP id v5so2865207ilm.9
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Feb 2022 14:07:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y9LemQ7UibOKv7TygsAJ1fNv/umOOO5ENly/vIRlt/k=;
-        b=qI7/MYEtXIjkXk/BlL6OEtG1iBeaBndACQNElTTZ4D5/YVxj7hBSQepyKPaVO++1j1
-         tAiRpdpSnZV5chVbxRSwWT9d7iyt75Ckq2r3bFuWxa58q6rQCu0jBgRQjaAyI3FRErwO
-         4g2mo9CBiAScNu8MOryoQkyac3JJ8fs58MzPgAO25LCrstR6w4tK3duf/wXUQb2HOQMK
-         Bn0m8l8hskFMNnqxWzQ848XQ1Zy3ZXEFmXVhjtnvxxyelXxsYZPDzBC5sTxvB/HWKsmf
-         CX6wzvaxBz0pa5ORMJaR3HtfqE4ZICEP53zsEK4EFPh4mGXDsQzQfaNC71Lkf/QltSOA
-         BhZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y9LemQ7UibOKv7TygsAJ1fNv/umOOO5ENly/vIRlt/k=;
-        b=QcxNMasvoPN1+Hcb9i96bEywRIA++cC1pjddAS1/22Dhlo/3fd28DtW2A4nv35IceA
-         KOts5w78nAph4CxhVZOTD7xf4nCa7xupNjk5u7GeQ3k4kVP6uhEA6MWwXLcnPCBQzSkb
-         jG62TMEqeuDjgeUC9WHLScTN2p7IHeZmWO6cThKDSlJzB42YUa2dRe3XL14h75GL74Hf
-         dO7kCndwMNGgsLZz5inUvhjADoBxHIZ5icOqfwb0+qsWkWs/yYelKlJE46e99DJqJQfL
-         P1Qdvv1rpVINm2uvRjxrQVhxINJkGn+TUpEk1t8/mEAwqHiAJpbFqx1y9JNS8GLmEJoc
-         wFzQ==
-X-Gm-Message-State: AOAM530KD4CSCUi5O88OiQ1H6pQy0dcyi3OD8HCkZSoXDbf2hVESwQvm
-        s3ZH4aIl6nNPDwNJiC546D46Ioedz1Zc9rfz1mdV5g==
-X-Google-Smtp-Source: ABdhPJw/OUuE/4M4UCVUuipkXoZFfcmS2v6/NEodYV8mnLmpm4XNWqpIbhHzUrSrS2ufX/mhmMw/EP2b+/MRm9SNGlo=
-X-Received: by 2002:a05:6e02:1584:b0:2b9:7a3d:8937 with SMTP id
- m4-20020a056e02158400b002b97a3d8937mr3987461ilu.192.1645740467186; Thu, 24
- Feb 2022 14:07:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20220224181953.1030665-1-axelrasmussen@google.com> <fd265bb6-d9be-c8a3-50a9-4e3bf048c0ef@schaufler-ca.com>
-In-Reply-To: <fd265bb6-d9be-c8a3-50a9-4e3bf048c0ef@schaufler-ca.com>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Thu, 24 Feb 2022 14:07:11 -0800
-Message-ID: <CAJHvVcgbCL7+4bBZ_5biLKfjmz_DKNBV8H6NxcLcFrw9Fbu7mw@mail.gmail.com>
-Subject: Re: [PATCH] userfaultfd, capability: introduce CAP_USERFAULTFD
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Peter Xu <peterx@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Serge Hallyn <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jeremy Kerr <jk@codeconstruct.com.au>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Suren Baghdasaryan <surenb@google.com>,
-        Lokesh Gidra <lokeshgidra@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 24 Feb 2022 19:23:18 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1854181E7C;
+        Thu, 24 Feb 2022 16:22:47 -0800 (PST)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21P040um005357;
+        Fri, 25 Feb 2022 00:22:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=e37v2GGU0I/ORobayoE//gNcdIQqEbFUPLKvwzSTUcs=;
+ b=ToxcDVZYs1RBgdqKn5XErLBdgZhyajrqeHlttLi1QTukmwFv1MsDb0lpPVfkE4ZYF8sK
+ ojf0DildiscwC+C1fKnzJwIr883uSI9eEJYGKn2lgFzHBAZ8RtkTphXhgAXVSK39R15p
+ 231cr3R9pBcPeV0cSxrkxBE6BG94busD2VXLNDNiIvrkxxAXAeUO3GVsAlRxyMsjjljf
+ DV08QllHvVuOxDtRpd/NGIc/HM2wWvKORczqfVgGSOKWYFjFlRY84tiGO4zNEe8Vrr8d
+ q/M+DW47yTvSkK9ZYw8gXs/xbnGOvQXs4EE7jiEKMQ/JVDtGzjOEFk75zFbEnv6LTSU0 Ow== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3edwkex1gt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 25 Feb 2022 00:22:24 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21P0C64p032409;
+        Fri, 25 Feb 2022 00:22:21 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04ams.nl.ibm.com with ESMTP id 3ear69n2vx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 25 Feb 2022 00:22:21 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21P0MJrp54854090
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 25 Feb 2022 00:22:19 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 34C2452050;
+        Fri, 25 Feb 2022 00:22:19 +0000 (GMT)
+Received: from sig-9-65-86-89.ibm.com (unknown [9.65.86.89])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9D81B5204E;
+        Fri, 25 Feb 2022 00:22:17 +0000 (GMT)
+Message-ID: <408a96085814b2578486b2859e63ff906f5e5876.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 0/6] bpf-lsm: Extend interoperability with IMA
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, shuah@kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kpsingh@kernel.org, revest@chromium.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 24 Feb 2022 19:22:17 -0500
+In-Reply-To: <20220215124042.186506-1-roberto.sassu@huawei.com>
+References: <20220215124042.186506-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: hA114obf-THotzvqlZ7wCVGc3u1_A-VZ
+X-Proofpoint-ORIG-GUID: hA114obf-THotzvqlZ7wCVGc3u1_A-VZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-02-24_06,2022-02-24_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 mlxlogscore=821 priorityscore=1501 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2202240131
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 24, 2022 at 11:13 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 2/24/2022 10:19 AM, Axel Rasmussen wrote:
-> > Historically, it has been shown that intercepting kernel faults with
-> > userfaultfd (thereby forcing the kernel to wait for an arbitrary amount
-> > of time) can be exploited, or at least can make some kinds of exploits
-> > easier. So, in 37cd0575b8 "userfaultfd: add UFFD_USER_MODE_ONLY" we
-> > changed things so, in order for kernel faults to be handled by
-> > userfaultfd, either the process needs CAP_SYS_PTRACE, or this sysctl
-> > must be configured so that any unprivileged user can do it.
-> >
-> > In a typical implementation of a hypervisor with live migration (take
-> > QEMU/KVM as one such example), we do indeed need to be able to handle
-> > kernel faults. But, both options above are less than ideal:
-> >
-> > - Toggling the sysctl increases attack surface by allowing any
-> >    unprivileged user to do it.
-> >
-> > - Granting the live migration process CAP_SYS_PTRACE gives it this
-> >    ability, but *also* the ability to "observe and control the
-> >    execution of another process [...], and examine and change [its]
-> >    memory and registers" (from ptrace(2)). This isn't something we need
-> >    or want to be able to do, so granting this permission violates the
-> >    "principle of least privilege".
-> >
-> > This is all a long winded way to say: we want a more fine-grained way to
-> > grant access to userfaultfd, without granting other additional
-> > permissions at the same time.
-> >
-> > So, add CAP_USERFAULTFD, for this specific case.
->
-> TL;DR - No. We don't add new capabilities for a single use.
->
-> You have a program that is already using a reasonably restrictive
-> capability (compared to CAP_SYS_ADMIN, for example) and which I
-> assume you have implemented appropriately for the level of privilege
-> used. If you can demonstrate that this CAP_USERFAULTD has applicability
-> beyond your specific implementation (and the name would imply otherwise)
-> it could be worth considering, but as it is, no.
+Hi Roberto,
 
-Thanks for taking the time to look at this Casey!
+On Tue, 2022-02-15 at 13:40 +0100, Roberto Sassu wrote:
+> Extend the interoperability with IMA, to give wider flexibility for the
+> implementation of integrity-focused LSMs based on eBPF.
 
-I'm not exactly clear, would you want more evidence of userspace use
-cases besides just mine? Besides Google's VM implementation: Peter and
-Andrea expressed interest in this to me a while back for use with
-QEMU/KVM-based VMs [*], and I suspect Android folks would also use
-this if it were merged (+Suren and Lokesh to CC).
+I've previously requested adding eBPF module measurements and signature
+verification support in IMA.  There seemed to be some interest, but
+nothing has been posted.
 
-Or, do you just mean that userfaultfd is too narrow a feature to
-warrant a capability? When writing this I was encouraged by CAP_BPF
-and CAP_CHECKPOINT_RESTORE, they seemed to me to be somewhat similar
-in terms of scope (specific to a single kernel feature).
+thanks,
 
+Mimi
 
-
-[*] Although, we talked about fine grained permissions in general, not
-necessarily a capability based approach. An alternative we talked
-about was to add a userfaultfd device node like /dev/userfaultfd. The
-idea being, access to it could be controlled using normal filesystem
-permissions (chmod/chown), and userfaultfds created that way (as
-opposed to the userfaultfd() syscall) would be able to intercept
-kernel faults, regardless of CAP_SYS_PTRACE. My gut feeling was that
-this was significantly more complicated than the patch I'm proposing
-here.
-
->
-> >
-> > Setup a helper which accepts either CAP_USERFAULTFD, or for backward
-> > compatibility reasons (existing userspaces may depend on the old way of
-> > doing things), CAP_SYS_PTRACE.
-> >
-> > One special case is UFFD_FEATURE_EVENT_FORK: this is left requiring only
-> > CAP_SYS_PTRACE, since it is specifically about manipulating the memory
-> > of another (child) process, it sems like a better fit the way it is. To
-> > my knowledge, this isn't a feature required by typical live migration
-> > implementations, so this doesn't obviate the above.
-> >
-> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> > ---
-> >   fs/userfaultfd.c                    | 6 +++---
-> >   include/linux/capability.h          | 5 +++++
-> >   include/uapi/linux/capability.h     | 7 ++++++-
-> >   security/selinux/include/classmap.h | 4 ++--
-> >   4 files changed, 16 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > index e26b10132d47..1ec0d9b49a70 100644
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -411,7 +411,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
-> >           ctx->flags & UFFD_USER_MODE_ONLY) {
-> >               printk_once(KERN_WARNING "uffd: Set unprivileged_userfaultfd "
-> >                       "sysctl knob to 1 if kernel faults must be handled "
-> > -                     "without obtaining CAP_SYS_PTRACE capability\n");
-> > +                     "without obtaining CAP_USERFAULTFD capability\n");
-> >               goto out;
-> >       }
-> >
-> > @@ -2068,10 +2068,10 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
-> >
-> >       if (!sysctl_unprivileged_userfaultfd &&
-> >           (flags & UFFD_USER_MODE_ONLY) == 0 &&
-> > -         !capable(CAP_SYS_PTRACE)) {
-> > +         !userfaultfd_capable()) {
-> >               printk_once(KERN_WARNING "uffd: Set unprivileged_userfaultfd "
-> >                       "sysctl knob to 1 if kernel faults must be handled "
-> > -                     "without obtaining CAP_SYS_PTRACE capability\n");
-> > +                     "without obtaining CAP_USERFAULTFD capability\n");
-> >               return -EPERM;
-> >       }
-> >
-> > diff --git a/include/linux/capability.h b/include/linux/capability.h
-> > index 65efb74c3585..f1e7b3506432 100644
-> > --- a/include/linux/capability.h
-> > +++ b/include/linux/capability.h
-> > @@ -270,6 +270,11 @@ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
-> >               ns_capable(ns, CAP_SYS_ADMIN);
-> >   }
-> >
-> > +static inline bool userfaultfd_capable(void)
-> > +{
-> > +     return capable(CAP_USERFAULTFD) || capable(CAP_SYS_PTRACE);
-> > +}
-> > +
-> >   /* audit system wants to get cap info from files as well */
-> >   int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
-> >                          const struct dentry *dentry,
-> > diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-> > index 463d1ba2232a..83a5d8601508 100644
-> > --- a/include/uapi/linux/capability.h
-> > +++ b/include/uapi/linux/capability.h
-> > @@ -231,6 +231,7 @@ struct vfs_ns_cap_data {
-> >   #define CAP_SYS_CHROOT       18
-> >
-> >   /* Allow ptrace() of any process */
-> > +/* Allow everything under CAP_USERFAULTFD for backward compatibility */
-> >
-> >   #define CAP_SYS_PTRACE       19
-> >
-> > @@ -417,7 +418,11 @@ struct vfs_ns_cap_data {
-> >
-> >   #define CAP_CHECKPOINT_RESTORE      40
-> >
-> > -#define CAP_LAST_CAP         CAP_CHECKPOINT_RESTORE
-> > +/* Allow intercepting kernel faults with userfaultfd */
-> > +
-> > +#define CAP_USERFAULTFD              41
-> > +
-> > +#define CAP_LAST_CAP         CAP_USERFAULTFD
-> >
-> >   #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
-> >
-> > diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> > index 35aac62a662e..98e37b220159 100644
-> > --- a/security/selinux/include/classmap.h
-> > +++ b/security/selinux/include/classmap.h
-> > @@ -28,9 +28,9 @@
-> >
-> >   #define COMMON_CAP2_PERMS  "mac_override", "mac_admin", "syslog", \
-> >               "wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf", \
-> > -             "checkpoint_restore"
-> > +             "checkpoint_restore", "userfaultfd"
-> >
-> > -#if CAP_LAST_CAP > CAP_CHECKPOINT_RESTORE
-> > +#if CAP_LAST_CAP > CAP_USERFAULTFD
-> >   #error New capability defined, please update COMMON_CAP2_PERMS.
-> >   #endif
-> >
