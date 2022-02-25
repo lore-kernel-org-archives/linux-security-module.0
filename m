@@ -2,112 +2,157 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A4AC433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Feb 2022 19:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A35EC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Feb 2022 20:10:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235597AbiBYT7S (ORCPT
+        id S235913AbiBYUL0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Feb 2022 14:59:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33462 "EHLO
+        Fri, 25 Feb 2022 15:11:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231598AbiBYT7S (ORCPT
+        with ESMTP id S230048AbiBYULZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Feb 2022 14:59:18 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E649C2E65;
-        Fri, 25 Feb 2022 11:58:45 -0800 (PST)
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21PJmq3f027536;
-        Fri, 25 Feb 2022 19:58:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=Fnh9r9wKr7jIMlya5SaxcWb+2Shq91enWO70V3Nm2NE=;
- b=EC99Fb0H7umBiPtpMCr0tJsHXkcHGdi1ZsDHkbDkfyO5t8LmlkSja9ooYBKp4NF/gUcs
- ZPFJ6rhpvsxyGm2Vk6AhHwEVwToo1Z7Hbj9uAEn4YVWTPDBZlbKNen2hYIdcvgeUKwnd
- bW8dgWV1QLXF5N+a4KgrTOf2sDPYZqUbWCYcXgKEQnawHp4u5+p4DiMeFZQ3zdauhnc9
- AJ7NDRugp8ImPOPs0hZ3/rpneWCPpBoDlf8n+E56qLi/B8o29FFDUnYF7RUJkPw/LsqD
- 3hNTFoESYEFPYxUge2cQpMOF0xyabE5j4BkJmA6rXVuIr7GFbALDBEFTuDj4Vv110ldX xg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ef5km852y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 25 Feb 2022 19:58:29 +0000
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21PJsQJO025577;
-        Fri, 25 Feb 2022 19:58:29 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ef5km851v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 25 Feb 2022 19:58:28 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21PJl28N021266;
-        Fri, 25 Feb 2022 19:58:26 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 3ear69trk0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 25 Feb 2022 19:58:26 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21PJwOWG25493906
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Feb 2022 19:58:24 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 23EE211C05C;
-        Fri, 25 Feb 2022 19:58:24 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CF9F011C050;
-        Fri, 25 Feb 2022 19:58:22 +0000 (GMT)
-Received: from sig-9-65-82-248.ibm.com (unknown [9.65.82.248])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Feb 2022 19:58:22 +0000 (GMT)
-Message-ID: <c4842493db13fd6f05eda54c1ef4c94e9d687850.camel@linux.ibm.com>
-Subject: Re: [PATCH 2/2] integrity: double check iint_cache was initialized
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Petr Vorel <pvorel@suse.cz>
-Cc:     dvyukov@google.com, ebiggers@kernel.org, jmorris@namei.org,
-        keescook@chromium.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-Date:   Fri, 25 Feb 2022 14:58:21 -0500
-In-Reply-To: <9405bcfc-78bd-8e7f-41d4-b919221f73e4@schaufler-ca.com>
-References: <20210322154207.6802-2-zohar@linux.ibm.com>
-         <20220224142025.2587-1-pvorel@suse.cz>
-         <418628ea-f524-05a1-8bfc-a688fa2d625d@schaufler-ca.com>
-         <YhfDhYQYZTU0clAf@pevik>
-         <9405bcfc-78bd-8e7f-41d4-b919221f73e4@schaufler-ca.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
+        Fri, 25 Feb 2022 15:11:25 -0500
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C9D1F7645
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Feb 2022 12:10:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1645819852; bh=VIMmQ6tBpfxtmjNLfB/k1a6q+FlhwJdkIqKV0mLyzwQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=iFAIDNTmCTfscIXyQBAO+aKL1i2OcQPuEXDrBgTV3ZTHzGTBlYd7C8ApC+0ZIgHKKFG4UR3zRhBWX6FZ31/YK9So7tIwPRLWDqXCMniAt9f3Ez3sz4zQEiyQqo/ldX1lMMsCARfvcQAFilBq+37dvEclblNgzaq23sgKqNeboH2WCR56TD+xa/57Pv3KbjMZCQlA6xsHNNmDx9ZEo/OZiHA3DvbIbO3gHSFxl6BQwUkbWsCCNm4owpP2v7HL2bgMQgoIfzqKFRSwMaufhrXglU0bxr2wkCF3yRWPdWMMjoTVSrmn7DuJHghfDXW/DSBkDMXRsHPBJvoPju1AyrxgjQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1645819852; bh=diQgyBR/CYKA+Ksh2/YVW5B2g0dAQJwI+qcY3IQuPob=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Ox9+rDq1pxImRbraV8q2sUa8Vmlq/x9XXjYFfJw1lEsI6B78NdRfU5hgU5xGcn3RmtIKXzvLxCe96JTKNNZDbWP/qgotzcRBl8FtIIrMhbf6poX7tCzHrGdL850SGQOZ0BzK5OtIwTBDKvEJDHUKT8y78T7J8oCMPmBwlndM85g0A3IAFNLVbQU1cKBDMB0CqMDn023OenPQL/NMVPWkDyL6dAKT+sBVfZFaG/H0b2ZURAKfoVdD1H3JS8wz+a575n/GsP/O5rjbHfYoZ8pOC36uvej147KjUgVoISt7sWSCprJVDVtClIbtcW/i6eVBwsh4+wKhNMVOyx6Nt3xLdA==
+X-YMail-OSG: euJU0F0VM1mz1DsfXdaPFvqbywOX.luUM86NE_CSmXkFbbzqz6hgGPrYquSLfIb
+ B76mmdA_aK65KCx1nLHQ.N4NZlo0bzjfrDur8.CFlaVH.W3Z1Jp1Izh.uyGHBZGE1QHX5JPhJWTG
+ btzhU38nu0gUDh3RUbcLybI5idjbKn0iO3tb.6PX5WLovFcNGZKTpixAlC4b7ufT8cZxHUvZw2Y0
+ l7wOG60a3uBow1MVv7GI20WOn2OYwQOSbGxjuhwd1Rv5wzXUcZIuSHhadVj23ayuSdHhqFMGFm4n
+ kvKcz0gxJ2kiLsjfCmRUMaUU3RlNu8VDUgk6kvb.JSxaaEFyvKfGZ9BpwiTg2COslOlL4EvhlRsV
+ kNMc86NAFhmy5Fd7IbMqo7uTldol3R.HP1dH3LxRFZs2LCPwmjJNkFKcQr23AgICBK_GolZyImoB
+ RMckctXd9uN0kNA1U8d4FGP4zJS_KYh_4GnkTYf4LJ1GUVkbV7FCblfaSqfvtqpOQo.SZ7KqPYDx
+ 60xn2GUQ9KCexlR.CYjZexxQQAlHZIfUBPVbVgj04zL7p3wxbV1Jkl2ZRhJoo6l7o2apR4G4rHzF
+ uCAYDE.JnOcqZn.mDsddOb8uiMDgsLsFdi7qTX6W.UABUXgDYhrG9SOuYPaWH3p.8NhgGB1wwsro
+ Dk6obZ8G6YwV_tCZSAevNo4yR67YFC4KOGigC_Cm_lPT_xClmnMcIiPlML4AC1NDfEPMW5N9lt4X
+ g7cTNNZcOA43TQG6s17XA1lwfOeVA7XyRvFo_hcSt6XSFVSrBwf6SppuYGf9axvOJiniDw6zSPbq
+ 2XgKX6_XwOuMuVONLhf7opDgCQ_icpGs.Q1lrFzG0LICZesbEMoHa4LbWV.Z2lhgIXhB9nLyBrp5
+ tOMAg_jZvZorFRe4_W5HGcDHIX0orIMoWBo6v1QkUbS2Jb3nV4yA8RGoGL1MfjgkwqRnXB0PhdD.
+ 8cP59BsN8PfJnIMjQrGokXdHV9LA5JIPBAXPnYVOEyQzncgFqMEp.t.zEqotxqm5nwMrFIh2X9ID
+ GLs9j7Dk3hGz8e.r6O8hPq5iNkQFt00zLLbzWpNV7RLVXeC0uqyNWgECl0Co45OLbOh2h54Nqeay
+ 6O63AqQO4lIbcWM17BZBNnR3VcgF1plFJH8RRC3qlt1.ODqFlM.XPNKZABuZqZuadsXEKe2d1iqH
+ gveNp3JsigwwuNvCh_1r4RHMI8ZEV6eifdc1V0iI28o4tJIgg5oq.rqppwuc3.uZnmg5g4qfne.S
+ FvLmabF7SYzvhVvNUYG1GGbC4TuQo9YxYPYpkddF.e6Qejr4zIs0qt8XQP2_5u729y42pLbY6xRE
+ t6HtvUnYoq_izTRwz5XbroHdim0Qeiz0CWwHA8ZpVrJPR2hvagHEv5KnACEu2MI06jSM7uikvHND
+ WF.e9GgzcN2h7X3Imv3qCzyFY7GC3jXCC5RNto9uSby6bjyIOwl9t2399UtuVb1XZxut3yhO9kQE
+ j67SE8ljTiczZtAdqEfU66o6AiLuuTO9UBGgiLVAr3RhNqltkURfUioAXQ8I2_FyUbR7Vb7KJGYR
+ I2QrER9kWlMfWyHbBcuU3jKBoQKczA2DlPn3gjaOPhvx4kHNORNViXi4bX9LYwGioVxduY1f3xrm
+ z1AxPDRCxDTa27FVVPYkjPrRX9gkz4wO0l5SIsqZ_WJGLw0nt4Yt23ooPwBmbjJ3icrcENRbY1rU
+ EQ2.9_PWza780UURQpAtrI8YAIUi61GF_z9C5Kk7VLeQy4Qtq499cxeFpNbQUVJvJOXFyOZy7Pbw
+ 8cbrHC4hKu0LPgb5P10_gixcTq1WV7_nRHavrsTBzLlLwgmdfHkownTfXpXk94fUmGagM7JhhQxN
+ XRBRXqbKF56Srug9e7zdyYkzuhQY2Mk6.iJa0YTARd9SgOAcsRtaQdWVeT_vjx_D4B1_niPjQFwK
+ TD9Za2Gd.eMKAAoja6fp4LdCPuxgTTl6bWaPxFW_L0lNkMGPPlZZlqwL4DkqlrVzrbtvz24iqfdN
+ dqsOAjoE7aHvODif54RqUHX0O2b11qE5jKmqp.l0a40tlWjZStNUVLPrxp4eDCquZleNrzi9dScJ
+ 3vVN0Yword6f2B2g_YO0qct5IQem63.4eZLg7bbU1XQ2VRtFCb.D9QNXGvO3qqEskloPIv7MSlct
+ OL3.__wQ3utUndBgh054.VviIDhi.N.UZ_szdW4ZilJnqjmgu4U1kGwAIsAc1I8EFGrqINKdoTba
+ 6V8Vl2maqJbSUzhCMTAk4cyg-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Fri, 25 Feb 2022 20:10:52 +0000
+Received: by kubenode514.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 9e2dac2759d13d17e1e1ac39d4c0a7a5;
+          Fri, 25 Feb 2022 20:10:50 +0000 (UTC)
+Message-ID: <686276b9-4530-2045-6bd8-170e5943abe4@schaufler-ca.com>
+Date:   Fri, 25 Feb 2022 12:10:46 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH] userfaultfd, capability: introduce CAP_USERFAULTFD
+Content-Language: en-US
+To:     Axel Rasmussen <axelrasmussen@google.com>,
+        Peter Xu <peterx@redhat.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Serge Hallyn <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jeremy Kerr <jk@codeconstruct.com.au>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Suren Baghdasaryan <surenb@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20220224181953.1030665-1-axelrasmussen@google.com>
+ <fd265bb6-d9be-c8a3-50a9-4e3bf048c0ef@schaufler-ca.com>
+ <CAJHvVcgbCL7+4bBZ_5biLKfjmz_DKNBV8H6NxcLcFrw9Fbu7mw@mail.gmail.com>
+ <0f74f1e4-6374-0e00-c5cb-04eba37e4ee3@schaufler-ca.com>
+ <YhhF0jEeytTO32yt@xz-m1.local>
+ <CAJHvVciO1GUbmL+Rxi-psGT8V=LyTfGT-Hyigtaebx1Xf+z6fw@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAJHvVciO1GUbmL+Rxi-psGT8V=LyTfGT-Hyigtaebx1Xf+z6fw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: QUwHIFcl234phOjcAJAkr-IY8AONcEC_
-X-Proofpoint-GUID: HTleStUxReyXIHTLLvv8ZHNGxFIE4g6J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-02-25_10,2022-02-25_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 mlxlogscore=909 impostorscore=0 bulkscore=0
- phishscore=0 mlxscore=0 adultscore=0 suspectscore=0 clxscore=1015
- spamscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2201110000 definitions=main-2202250110
+X-Mailer: WebService/1.1.19797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Petr, Casey,
+On 2/25/2022 10:17 AM, Axel Rasmussen wrote:
+> Thanks for the detailed explanation Casey!
+>
+> On Thu, Feb 24, 2022 at 6:58 PM Peter Xu <peterx@redhat.com> wrote:
+>> On Thu, Feb 24, 2022 at 04:39:44PM -0800, Casey Schaufler wrote:
+>>> What I'd want to see is multiple users where the use of CAP_USERFAULTD
+>>> is independent of the use of CAP_SYS_PTRACE. That is, the programs would
+>>> never require CAP_SYS_PTRACE. There should be demonstrated real value.
+>>> Not just that a compromised program with CAP_SYS_PTRACE can do bad things,
+>>> but that the programs with CAP_USERFAULTDD are somehow susceptible to
+>>> being exploited to doing those bad things. Hypothetical users are just
+>>> that, and often don't materialize.
+>> I kind of have the same question indeed..
+>>
+>> The use case we're talking about is VM migration, and the in-question
+>> subject is literally the migration process or thread.  Isn't that a trusted
+>> piece of software already?
+>>
+>> Then the question is why the extra capability (in CAP_PTRACE but not in
+>> CAP_UFFD) could bring much risk to the system.  Axel, did I miss something
+>> important?
+> For me it's just a matter of giving the live migration process as
+> little power as I can while still letting it do its job.
 
-On Thu, 2022-02-24 at 10:51 -0800, Casey Schaufler wrote:
-> On 2/24/2022 9:42 AM, Petr Vorel wrote:
+That's understood. But live migration is a bit of a special case,
+and as mentioned above, is trusted to do an oodle of important stuff
+correctly.
 
-> It was always my expectation, which appears to have been poorly
-> communicated, that "making integrity an LSM" meant using the LSM
-> hook infrastructure. Just adding "integrity" to lsm= doesn't make
-> it an LSM to my mind.
+> Live migration is somewhat trusted, and certainly if it can mess with
+> the memory contents of its own VM, that's no concern. But there are
+> other processes or threads running alongside it to manage other parts
+> of the VM, like attached virtual disks. Also it's probably running on
+> a server which also hosts other VMs, and I think it's a common design
+> to have them all run as the same user (although, they may be running
+> in other containers).
 
-Agreed.  The actual commit that introduced the change was 3d6e5f6dcf65
-("LSM: Convert security_initcall() into DEFINE_LSM()").
+That seems unwise. I am often surprised how we're eager to add
+new security features to make up for the unwillingness of people
+to use the existing ones.
 
--- 
-thanks,
+> So, it seems unfortunate to me that the live migration process can
+> just ptrace() any of these other things running alongside it.
 
-Mimi
+I get that. On the other hand, most of the systems you'll run
+live migration on are going to have full-up root processes,
+possibly even userfaultd (in spite of instructions not to do so).
 
+> Casey is right that we can restrict what it can do with e.g. SELinux
+> or seccomp-ebpf or whatever else. But it seems to me a more fragile
+> design to give the permissions and then restrict them, vs. just never
+> giving those permissions in the first place.
+
+If we lived in a universe with a root-less reality I'd agree.
+
+> In any case though, it sounds like folks are more amenable to the
+> device node approach. Honestly, I got that impression from Andrea as
+> well when we first talked about this some months ago. So, I can pursue
+> that approach instead.
+
+I think that's more realistic.
+
+>
+>> Thanks,
+>> --
+>> Peter Xu
+>>
