@@ -2,142 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D7BC433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Feb 2022 19:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A4AC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Feb 2022 19:58:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234265AbiBYTML (ORCPT
+        id S235597AbiBYT7S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Feb 2022 14:12:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35342 "EHLO
+        Fri, 25 Feb 2022 14:59:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234172AbiBYTMI (ORCPT
+        with ESMTP id S231598AbiBYT7S (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Feb 2022 14:12:08 -0500
+        Fri, 25 Feb 2022 14:59:18 -0500
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEA0220B16E;
-        Fri, 25 Feb 2022 11:11:35 -0800 (PST)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21PIAvE7022087;
-        Fri, 25 Feb 2022 19:11:12 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E649C2E65;
+        Fri, 25 Feb 2022 11:58:45 -0800 (PST)
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21PJmq3f027536;
+        Fri, 25 Feb 2022 19:58:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=CpqI9s94/ZaBQwuEXHNCmNODLi1kbCVr7kYFsCziWCs=;
- b=jvURaCa0RFihWulzf3+hXVcQl/gRARpmLKmYnmnfGbqUwJ4Vg6GNCtmfKRDcNMbuMVmG
- LGwymcHYjxQqUxSFa1D193Pk2hfiHj3PbL4qHsqEH7Xzeb0Y0+FBYYc4R0q76O4KVIAX
- MidpcpZSB/bjBLBFJCOhtRRpTdedOAmRL5lUebDQmFVh5Z1UyvlzS1jERcu0jJsNU+6W
- AcMq+EKSmCFwKQRrOc8uZ1n8a4UOWuid2AmVy2hckzFSTUNSlvhdBRKaHOmJiP+In2sn
- E6eyNvwRi3r39tvJZOdZmnYKcEuuuQuwDiJWHWVRbk4FEldVjCYeXbiLLaL+Jrxpcfut wg== 
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3eeyc09nv7-1
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=Fnh9r9wKr7jIMlya5SaxcWb+2Shq91enWO70V3Nm2NE=;
+ b=EC99Fb0H7umBiPtpMCr0tJsHXkcHGdi1ZsDHkbDkfyO5t8LmlkSja9ooYBKp4NF/gUcs
+ ZPFJ6rhpvsxyGm2Vk6AhHwEVwToo1Z7Hbj9uAEn4YVWTPDBZlbKNen2hYIdcvgeUKwnd
+ bW8dgWV1QLXF5N+a4KgrTOf2sDPYZqUbWCYcXgKEQnawHp4u5+p4DiMeFZQ3zdauhnc9
+ AJ7NDRugp8ImPOPs0hZ3/rpneWCPpBoDlf8n+E56qLi/B8o29FFDUnYF7RUJkPw/LsqD
+ 3hNTFoESYEFPYxUge2cQpMOF0xyabE5j4BkJmA6rXVuIr7GFbALDBEFTuDj4Vv110ldX xg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ef5km852y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 25 Feb 2022 19:11:11 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21PJ8rjl017157;
-        Fri, 25 Feb 2022 19:11:09 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma03fra.de.ibm.com with ESMTP id 3ear69r2q3-1
+        Fri, 25 Feb 2022 19:58:29 +0000
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 21PJsQJO025577;
+        Fri, 25 Feb 2022 19:58:29 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ef5km851v-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 25 Feb 2022 19:11:09 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21PJB6bI37224894
+        Fri, 25 Feb 2022 19:58:28 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21PJl28N021266;
+        Fri, 25 Feb 2022 19:58:26 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 3ear69trk0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 25 Feb 2022 19:58:26 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21PJwOWG25493906
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Feb 2022 19:11:06 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CF8E44C050;
-        Fri, 25 Feb 2022 19:11:06 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2270D4C04E;
-        Fri, 25 Feb 2022 19:11:05 +0000 (GMT)
+        Fri, 25 Feb 2022 19:58:24 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 23EE211C05C;
+        Fri, 25 Feb 2022 19:58:24 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF9F011C050;
+        Fri, 25 Feb 2022 19:58:22 +0000 (GMT)
 Received: from sig-9-65-82-248.ibm.com (unknown [9.65.82.248])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Feb 2022 19:11:05 +0000 (GMT)
-Message-ID: <223d9eedc03f68cfa4f1624c4673e844e29da7d5.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 0/6] bpf-lsm: Extend interoperability with IMA
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 25 Feb 2022 19:58:22 +0000 (GMT)
+Message-ID: <c4842493db13fd6f05eda54c1ef4c94e9d687850.camel@linux.ibm.com>
+Subject: Re: [PATCH 2/2] integrity: double check iint_cache was initialized
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "revest@chromium.org" <revest@chromium.org>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Fri, 25 Feb 2022 14:11:04 -0500
-In-Reply-To: <5117c79227ce4b9d97e193fd8fb59ba2@huawei.com>
-References: <20220215124042.186506-1-roberto.sassu@huawei.com>
-         <408a96085814b2578486b2859e63ff906f5e5876.camel@linux.ibm.com>
-         <5117c79227ce4b9d97e193fd8fb59ba2@huawei.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Petr Vorel <pvorel@suse.cz>
+Cc:     dvyukov@google.com, ebiggers@kernel.org, jmorris@namei.org,
+        keescook@chromium.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com
+Date:   Fri, 25 Feb 2022 14:58:21 -0500
+In-Reply-To: <9405bcfc-78bd-8e7f-41d4-b919221f73e4@schaufler-ca.com>
+References: <20210322154207.6802-2-zohar@linux.ibm.com>
+         <20220224142025.2587-1-pvorel@suse.cz>
+         <418628ea-f524-05a1-8bfc-a688fa2d625d@schaufler-ca.com>
+         <YhfDhYQYZTU0clAf@pevik>
+         <9405bcfc-78bd-8e7f-41d4-b919221f73e4@schaufler-ca.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: m8Gn1OTAgrRrKytse14FiMc1nHsNS195
-X-Proofpoint-GUID: m8Gn1OTAgrRrKytse14FiMc1nHsNS195
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: QUwHIFcl234phOjcAJAkr-IY8AONcEC_
+X-Proofpoint-GUID: HTleStUxReyXIHTLLvv8ZHNGxFIE4g6J
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
  definitions=2022-02-25_10,2022-02-25_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 bulkscore=0 phishscore=0 suspectscore=0 priorityscore=1501
- impostorscore=0 clxscore=1011 mlxlogscore=999 spamscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202250109
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 mlxlogscore=909 impostorscore=0 bulkscore=0
+ phishscore=0 mlxscore=0 adultscore=0 suspectscore=0 clxscore=1015
+ spamscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2201110000 definitions=main-2202250110
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2022-02-25 at 08:41 +0000, Roberto Sassu wrote:
-> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > Sent: Friday, February 25, 2022 1:22 AM
-> > Hi Roberto,
-> > 
-> > On Tue, 2022-02-15 at 13:40 +0100, Roberto Sassu wrote:
-> > > Extend the interoperability with IMA, to give wider flexibility for the
-> > > implementation of integrity-focused LSMs based on eBPF.
-> > 
-> > I've previously requested adding eBPF module measurements and signature
-> > verification support in IMA.  There seemed to be some interest, but
-> > nothing has been posted.
-> 
-> Hi Mimi
-> 
-> for my use case, DIGLIM eBPF, IMA integrity verification is
-> needed until the binary carrying the eBPF program is executed
-> as the init process. I've been thinking to use an appended
-> signature to overcome the limitation of lack of xattrs in the
-> initial ram disk.
+Hi Petr, Casey,
 
-I would still like to see xattrs supported in the initial ram disk. 
-Assuming you're still interested in pursuing it, someone would need to
-review and upstream it.  Greg?
+On Thu, 2022-02-24 at 10:51 -0800, Casey Schaufler wrote:
+> On 2/24/2022 9:42 AM, Petr Vorel wrote:
 
-> 
-> At that point, the LSM is attached and it can enforce an
-> execution policy, allowing or denying execution and mmap
-> of files depending on the digest lists (reference values) read
-> by the user space side.
-> 
-> After the LSM is attached, IMA's job would be just to calculate
-> the file digests (currently, I'm using an audit policy to ensure
-> that the digest is available when the eBPF program calls
-> bpf_ima_inode_hash()).
-> 
-> The main benefit of this patch set is that the audit policy
-> would not be required and digests are calculated only when
-> requested by the eBPF program.
+> It was always my expectation, which appears to have been poorly
+> communicated, that "making integrity an LSM" meant using the LSM
+> hook infrastructure. Just adding "integrity" to lsm= doesn't make
+> it an LSM to my mind.
 
-Roberto, there's an existing eBPF integrity gap that needs to be
-closed, perhaps not for your usecase, but in general.  Is that
-something you can look into?
+Agreed.  The actual commit that introduced the change was 3d6e5f6dcf65
+("LSM: Convert security_initcall() into DEFINE_LSM()").
 
+-- 
 thanks,
 
 Mimi
