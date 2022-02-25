@@ -2,57 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9929C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Feb 2022 07:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F22C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Feb 2022 08:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231604AbiBYHyx (ORCPT
+        id S238581AbiBYImD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Feb 2022 02:54:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43194 "EHLO
+        Fri, 25 Feb 2022 03:42:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238318AbiBYHyw (ORCPT
+        with ESMTP id S232557AbiBYImC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Feb 2022 02:54:52 -0500
-X-Greylist: delayed 515 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 24 Feb 2022 23:54:20 PST
-Received: from mail.powerangels.com.pl (mail.powerangels.com.pl [45.86.209.159])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B10E61B3A79
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Feb 2022 23:54:20 -0800 (PST)
-Received: by mail.powerangels.com.pl (Postfix, from userid 1001)
-        id 58A2882C34; Fri, 25 Feb 2022 02:45:26 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=powerangels.com.pl;
-        s=mail; t=1645775145;
-        bh=07NAgW1e0WiNB9zqagiM2BnwZfWBCpNa2E4+ccxBPgw=;
-        h=Date:From:To:Subject:From;
-        b=PO1bJI3DEwKSUzFda8XtuJ86MERJvpFxjq/R73qxzREWWSo/ca7mHZB1BuhU0Vgn2
-         0G7x4xrlevdQMb1W0R6cRsLQ+qlM9rYdgqUUDnBte72UOvf7ue3Sl1q/eRW5vzAf9A
-         yK2PTZadbyscOOjP2pqSQETxYLKzf03RXcYSumDB3aoAYOtFP73L66Ipa8jOi0UhTW
-         7RplWK245f3VCihZZxymuzSLZvP26/j+LJvUiuYZbGMFo/HlbNlovH5uKKCm73BB2C
-         tKY8klfWXiJ1MPW389Q6rDrQVmJHEupwVZAbUvMWUkB5Z50yJsefSktW22xLjmf5Ub
-         m8NSypj1qpPmQ==
-Received: by mail.powerangels.com.pl for <linux-security-module@vger.kernel.org>; Fri, 25 Feb 2022 07:45:21 GMT
-Message-ID: <20220225024500-0.1.j.207c.0.8kk7k3opem@powerangels.com.pl>
-Date:   Fri, 25 Feb 2022 07:45:21 GMT
-From:   "Jakub Daroch" <jakub.daroch@powerangels.com.pl>
-To:     <linux-security-module@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.powerangels.com.pl
+        Fri, 25 Feb 2022 03:42:02 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B7E253145;
+        Fri, 25 Feb 2022 00:41:27 -0800 (PST)
+Received: from fraeml709-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4K4jsD5X8Kz67yxx;
+        Fri, 25 Feb 2022 16:40:32 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml709-chm.china.huawei.com (10.206.15.37) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Fri, 25 Feb 2022 09:41:25 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.021;
+ Fri, 25 Feb 2022 09:41:25 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "revest@chromium.org" <revest@chromium.org>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 0/6] bpf-lsm: Extend interoperability with IMA
+Thread-Topic: [PATCH v2 0/6] bpf-lsm: Extend interoperability with IMA
+Thread-Index: AQHYImlgJM6Z1962JUm5hvc+dgM0dqyjZeaAgACU/jA=
+Date:   Fri, 25 Feb 2022 08:41:25 +0000
+Message-ID: <5117c79227ce4b9d97e193fd8fb59ba2@huawei.com>
+References: <20220215124042.186506-1-roberto.sassu@huawei.com>
+ <408a96085814b2578486b2859e63ff906f5e5876.camel@linux.ibm.com>
+In-Reply-To: <408a96085814b2578486b2859e63ff906f5e5876.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.204.63.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> Sent: Friday, February 25, 2022 1:22 AM
+> Hi Roberto,
+> 
+> On Tue, 2022-02-15 at 13:40 +0100, Roberto Sassu wrote:
+> > Extend the interoperability with IMA, to give wider flexibility for the
+> > implementation of integrity-focused LSMs based on eBPF.
+> 
+> I've previously requested adding eBPF module measurements and signature
+> verification support in IMA.  There seemed to be some interest, but
+> nothing has been posted.
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+Hi Mimi
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+for my use case, DIGLIM eBPF, IMA integrity verification is
+needed until the binary carrying the eBPF program is executed
+as the init process. I've been thinking to use an appended
+signature to overcome the limitation of lack of xattrs in the
+initial ram disk.
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
+At that point, the LSM is attached and it can enforce an
+execution policy, allowing or denying execution and mmap
+of files depending on the digest lists (reference values) read
+by the user space side.
 
+After the LSM is attached, IMA's job would be just to calculate
+the file digests (currently, I'm using an audit policy to ensure
+that the digest is available when the eBPF program calls
+bpf_ima_inode_hash()).
 
-Pozdrawiam,
-Jakub Daroch
+The main benefit of this patch set is that the audit policy
+would not be required and digests are calculated only when
+requested by the eBPF program.
+
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Zhong Ronghua
