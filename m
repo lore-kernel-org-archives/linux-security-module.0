@@ -2,161 +2,164 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83132C433FE
-	for <linux-security-module@archiver.kernel.org>; Sat, 26 Feb 2022 20:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28550C433F5
+	for <linux-security-module@archiver.kernel.org>; Sat, 26 Feb 2022 21:27:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbiBZU6R (ORCPT
+        id S229724AbiBZV1f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 26 Feb 2022 15:58:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45354 "EHLO
+        Sat, 26 Feb 2022 16:27:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbiBZU6R (ORCPT
+        with ESMTP id S229726AbiBZV13 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 26 Feb 2022 15:58:17 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 572BC45062;
-        Sat, 26 Feb 2022 12:57:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=KLo/tabVubutfy1mGMWoSKgTckAkWT3y7wjIivTyetY=; b=A8kLm3samn7S1snqeLcd31/QDr
-        htS71j2p+Achh5GNVvqC4mVxn5KBxXEo+X7KV7trwMIKoNUCZUu6/uzOE9ryJfPs2+OsC8Zg7b2ma
-        2id97rmFDAkNKTfGXfNoOE7t1S4J+7ET9wc9uLzAL82TMB/d6XIRrPOPupeISgvLZa4VCYAURb5ux
-        1GGOk6M1H1RbU6D3jp1d/k1CvuKtAzy1cK3SZGAwtm3dHVXXkrpjbzgHg2DeqbrSCMPgoLzGPodZp
-        CVVAaOGWBTO3JHARiPgotlv2N34uIIJYOf0yyoXllsdGZ8Ws2LKkDfYtcgPZ3SmL1ewVbyViag9sv
-        EKmW0bSQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nO47w-008XO3-0Z; Sat, 26 Feb 2022 20:57:16 +0000
-Date:   Sat, 26 Feb 2022 12:57:15 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Meng Tang <tangmeng@uniontech.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     keescook@chromium.org, yzaikin@google.com, guoren@kernel.org,
-        nickhu@andestech.com, green.hu@gmail.com, deanbo422@gmail.com,
-        ebiggers@kernel.org, tytso@mit.edu, wad@chromium.org,
-        john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
-        linux-csky@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] fs/proc: Optimize arrays defined by struct
- ctl_path
-Message-ID: <YhqUK6B1m2tdpOPI@bombadil.infradead.org>
-References: <20220224133217.1755-1-tangmeng@uniontech.com>
+        Sat, 26 Feb 2022 16:27:29 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5309C271474;
+        Sat, 26 Feb 2022 13:26:53 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id o62-20020a1ca541000000b00380e3cc26b7so3802518wme.0;
+        Sat, 26 Feb 2022 13:26:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=TyrNgSDfo+1HFIj3kDakMkkgmqGllazNd2qDuPTwQZo=;
+        b=JHkgen1brpV4/9y45tcSWvczIjOgQ2zM3BreLzjdq75kuvLq7cY7aLWtCf1vMmYLtO
+         is/K7zoVzAXdWmdj1n5M3WZn93zhKAuCpOiCMqFfVNwqPWs7sAB8lmGVUgKyAxGoIJqt
+         GfLi4+hbI3MvATKfj1i/q3cmD2ryj0qWkfEYpMFfbDA3KKSm1Yhstl7/w/HMW132NP+e
+         MQzmvqD05GtpUlaO13b2u5tSWIz+W5utTnZn3+jYFSbtZHssFy4JiMPdtEdaETpbY77O
+         ys4EJ7XM3yl/ncKP89Yz5/+V5ZX+c1syo42Udj5/e4g0Xn3FDKXpaeXqoEdWNLmtKDZ8
+         8fvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=TyrNgSDfo+1HFIj3kDakMkkgmqGllazNd2qDuPTwQZo=;
+        b=CcuvV/hZ4ZEov+pF4dQ8IAFQrm2WjCQXH6ZvECA4uMGSdffAjxkr7nQm1NF2xlJV7v
+         0c04fQ7NtacHjoEnprnjFrc2OlWMqAfHOXPrm4ZlTfhmvscyCPRAGwV4gRkjtQRdNaNy
+         PFuJNzyajNUneApktNFJMaVyjv/5yE39Fr4XSTT0KIQ7L0a0nMh19yPmlpAp4RNPj4Yv
+         tWYJ1wdfrdtdMhPScrVVUsodNwDXXs3O/1kPfvPKncCVoa0IiiofmlfF2G4pPTEIc9cG
+         32rKYYNiivAnlLJz1VdlJrG65goWHJbRe+Tx4XaiUx12jFmy9tMjA+tSNX686R3e3Ebr
+         ZZQA==
+X-Gm-Message-State: AOAM531dPni9DrsYAc2qNA/wz+uhbM057PRPghOw5kIxlMFLtZT0PDlq
+        U4EoFN9oCqwUPlSLu9WrZUh0nylL70XwXdxh
+X-Google-Smtp-Source: ABdhPJwy3XONgbZN4q8BHplRawf8sSEJs3LQ347lcI5tm9T3b21rmk9OimmOVRdkhypkRB4nblntdw==
+X-Received: by 2002:a05:600c:2146:b0:380:d7df:137c with SMTP id v6-20020a05600c214600b00380d7df137cmr7974476wml.140.1645910811793;
+        Sat, 26 Feb 2022 13:26:51 -0800 (PST)
+Received: from [192.168.0.149] ([170.253.36.171])
+        by smtp.gmail.com with ESMTPSA id ay23-20020a5d6f17000000b001ea79f73fbcsm5740733wrb.25.2022.02.26.13.26.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Feb 2022 13:26:51 -0800 (PST)
+Message-ID: <ae52c028-05c7-c22e-fc47-d97ee4a2f6c7@gmail.com>
+Date:   Sat, 26 Feb 2022 22:26:49 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220224133217.1755-1-tangmeng@uniontech.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v1 2/7] landlock: Fix landlock_add_rule(2) signature
+Content-Language: en-US
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Shuah Khan <shuah@kernel.org>, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20220221155311.166278-1-mic@digikod.net>
+ <20220221155311.166278-3-mic@digikod.net>
+From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+In-Reply-To: <20220221155311.166278-3-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Please include Eric and Willy (Willy because he suggested this)
-on future iterations.
+Hi Mickaël,
 
-On Thu, Feb 24, 2022 at 09:32:16PM +0800, Meng Tang wrote:
-> Previously, arrays defined by struct ctl_path is terminated
-
-Not previousy, as it is today.
-
-> with an empty one. When we actually only register one ctl_path,
-> we've gone from 8 bytes to 16 bytes.
-
-This doesn't real well, can you elaborate that this implies we
-are adding an extra 8 bytes by requiring the termination of a
-path to be empty? You can even quantify the effect of this by
-building a allyesconfig kernel, measuring the size before and
-then after your patches to see how many bytes are saved and
-reflecting that on your commit log.
-
-Another thing your commit log should mention is that while this
-minor optimization might not be so critical before, as we start
-moving sysctls out from kernel/sysctl.c to their own files we
-are often then also bloating the kernel slightly when doing this.
-This work prevents that.
-
-> So, I use ARRAY_SIZE() as a boundary condition to optimize it.
+On 21/2/22 16:53, Mickaël Salaün wrote:
+> From: Mickaël Salaün <mic@linux.microsoft.com>
 > 
-> Since the original __register_sysctl_paths is only used in
-> fs/proc/proc_sysctl.c, in order to not change the usage of
-> register_sysctl_paths, delete __register_sysctl_paths from
-> include/linux/sysctl.h, change it to __register_sysctl_paths_init
-> in fs/proc/proc_sysctl.c, and modify it with static.
-> The register_sysctl_paths becomes __register_sysctl_paths,
-> and the macro definition is used in include/linux/sysctl.h
-> to expand register_sysctl_paths(path, table) to
-> __register_sysctl_paths(path, ARRAY_SIZE(path), table).
+> Replace the enum landlock_rule_type with an int in the syscall signature
+> of landlock_add_rule to avoid an implementation-defined size.  In
+> practice an enum type is like an int (at least with GCC and clang), but
+> compilers may accept options (e.g. -fshort-enums) that would have an
+> impact on that [1].  This change is mostly a cosmetic fix according to
+> the current kernel compilers and used options.
 
+There are two proposals for C2x that might bring C++ syntax to C for 
+enums, i.e., being able to specify the underlying type of an enum.
 
-Please split this up into a 2 patches, one which moves
-__register_sysctl_paths() to fs/proc/proc_sysctl.c and
-make it static. Doing this separately will make the other
-work easier to review.
+See:
+<http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2904.htm>
+<http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2908.htm>
 
-Then your second patch can use do the other stuff.
+Since the current kernel is safe from that enum problem, it may be 
+better to wait and see what the standard decides to do with enum.  I 
+guess they'll add this feature sooner or later.
 
-Add:
+Regards,
+Alex
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-
-> Signed-off-by: Meng Tang <tangmeng@uniontech.com>
+> 
+> Link: https://lore.kernel.org/r/8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com/ [1]
+> Reported-by: Alejandro Colomar <alx.manpages@gmail.com>
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> Link: https://lore.kernel.org/r/20220221155311.166278-3-mic@digikod.net
 > ---
->  fs/proc/proc_sysctl.c  | 22 +++++++++++++---------
->  include/linux/sysctl.h |  9 ++++-----
->  2 files changed, 17 insertions(+), 14 deletions(-)
+>   include/linux/syscalls.h     | 3 +--
+>   security/landlock/syscalls.c | 7 ++++---
+>   2 files changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 9ecd5c87e8dd..721a8bec63d6 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -1589,9 +1589,10 @@ static int register_leaf_sysctl_tables(const char *path, char *pos,
->  }
->  
->  /**
-> - * __register_sysctl_paths - register a sysctl table hierarchy
-> + * __register_sysctl_paths_init - register a sysctl table hierarchy
->   * @set: Sysctl tree to register on
->   * @path: The path to the directory the sysctl table is in.
-> + * @ctl_path_num: The numbers(ARRAY_SIZE(path)) of ctl_path
->   * @table: the top-level table structure
->   *
->   * Register a sysctl table hierarchy. @table should be a filled in ctl_table
-> @@ -1599,22 +1600,23 @@ static int register_leaf_sysctl_tables(const char *path, char *pos,
->   *
->   * See __register_sysctl_table for more details.
->   */
-> -struct ctl_table_header *__register_sysctl_paths(
-> +static struct ctl_table_header *__register_sysctl_paths_init(
->  	struct ctl_table_set *set,
-> -	const struct ctl_path *path, struct ctl_table *table)
-> +	const struct ctl_path *path, int ctl_path_num, struct ctl_table *table)
->  {
->  	struct ctl_table *ctl_table_arg = table;
->  	int nr_subheaders = count_subheaders(table);
->  	struct ctl_table_header *header = NULL, **subheaders, **subheader;
->  	const struct ctl_path *component;
->  	char *new_path, *pos;
-> +	int i;
->  
->  	pos = new_path = kmalloc(PATH_MAX, GFP_KERNEL);
->  	if (!new_path)
->  		return NULL;
->  
->  	pos[0] = '\0';
-> -	for (component = path; component->procname; component++) {
-> +	for (component = path, i = 0; component->procname && i < ctl_path_num; component++, i++) {
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 819c0cb00b6d..a5956f91caf2 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -71,7 +71,6 @@ struct clone_args;
+>   struct open_how;
+>   struct mount_attr;
+>   struct landlock_ruleset_attr;
+> -enum landlock_rule_type;
+>   
+>   #include <linux/types.h>
+>   #include <linux/aio_abi.h>
+> @@ -1053,7 +1052,7 @@ asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
+>   asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
+>   asmlinkage long sys_landlock_create_ruleset(const struct landlock_ruleset_attr __user *attr,
+>   		size_t size, __u32 flags);
+> -asmlinkage long sys_landlock_add_rule(int ruleset_fd, enum landlock_rule_type rule_type,
+> +asmlinkage long sys_landlock_add_rule(int ruleset_fd, int rule_type,
+>   		const void __user *rule_attr, __u32 flags);
+>   asmlinkage long sys_landlock_restrict_self(int ruleset_fd, __u32 flags);
+>   asmlinkage long sys_memfd_secret(unsigned int flags);
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index fd4b24022a06..3b40fc5d0216 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -277,8 +277,9 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
+>    *
+>    * @ruleset_fd: File descriptor tied to the ruleset that should be extended
+>    *		with the new rule.
+> - * @rule_type: Identify the structure type pointed to by @rule_attr (only
+> - *             LANDLOCK_RULE_PATH_BENEATH for now).
+> + * @rule_type: Identify the structure type pointed to by @rule_attr as defined
+> + *             by enum landlock_rule_type (only LANDLOCK_RULE_PATH_BENEATH for
+> + *             now).
+>    * @rule_attr: Pointer to a rule (only of type &struct
+>    *             landlock_path_beneath_attr for now).
+>    * @flags: Must be 0.
+> @@ -301,7 +302,7 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
+>    * - EFAULT: @rule_attr inconsistency.
+>    */
+>   SYSCALL_DEFINE4(landlock_add_rule,
+> -		const int, ruleset_fd, const enum landlock_rule_type, rule_type,
+> +		const int, ruleset_fd, const int, rule_type,
+>   		const void __user *const, rule_attr, const __u32, flags)
+>   {
+>   	struct landlock_path_beneath_attr path_beneath_attr;
 
-I'd refer if the bounds check is done first, so i < ctl_path_num before
-the component->procname check.
-
->  		pos = append_path(new_path, pos, component->procname);
->  		if (!pos)
->  			goto out;
-> @@ -1663,20 +1665,22 @@ struct ctl_table_header *__register_sysctl_paths(
->  /**
->   * register_sysctl_paths - register a sysctl table hierarchy
-
-You are changing the routine name below but not here.
-
-  Luis
