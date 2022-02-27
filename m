@@ -2,164 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28550C433F5
-	for <linux-security-module@archiver.kernel.org>; Sat, 26 Feb 2022 21:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC575C4332F
+	for <linux-security-module@archiver.kernel.org>; Sun, 27 Feb 2022 17:47:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbiBZV1f (ORCPT
+        id S229940AbiB0Rrx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 26 Feb 2022 16:27:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55592 "EHLO
+        Sun, 27 Feb 2022 12:47:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229726AbiBZV13 (ORCPT
+        with ESMTP id S229932AbiB0Rrw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 26 Feb 2022 16:27:29 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5309C271474;
-        Sat, 26 Feb 2022 13:26:53 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id o62-20020a1ca541000000b00380e3cc26b7so3802518wme.0;
-        Sat, 26 Feb 2022 13:26:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=TyrNgSDfo+1HFIj3kDakMkkgmqGllazNd2qDuPTwQZo=;
-        b=JHkgen1brpV4/9y45tcSWvczIjOgQ2zM3BreLzjdq75kuvLq7cY7aLWtCf1vMmYLtO
-         is/K7zoVzAXdWmdj1n5M3WZn93zhKAuCpOiCMqFfVNwqPWs7sAB8lmGVUgKyAxGoIJqt
-         GfLi4+hbI3MvATKfj1i/q3cmD2ryj0qWkfEYpMFfbDA3KKSm1Yhstl7/w/HMW132NP+e
-         MQzmvqD05GtpUlaO13b2u5tSWIz+W5utTnZn3+jYFSbtZHssFy4JiMPdtEdaETpbY77O
-         ys4EJ7XM3yl/ncKP89Yz5/+V5ZX+c1syo42Udj5/e4g0Xn3FDKXpaeXqoEdWNLmtKDZ8
-         8fvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=TyrNgSDfo+1HFIj3kDakMkkgmqGllazNd2qDuPTwQZo=;
-        b=CcuvV/hZ4ZEov+pF4dQ8IAFQrm2WjCQXH6ZvECA4uMGSdffAjxkr7nQm1NF2xlJV7v
-         0c04fQ7NtacHjoEnprnjFrc2OlWMqAfHOXPrm4ZlTfhmvscyCPRAGwV4gRkjtQRdNaNy
-         PFuJNzyajNUneApktNFJMaVyjv/5yE39Fr4XSTT0KIQ7L0a0nMh19yPmlpAp4RNPj4Yv
-         tWYJ1wdfrdtdMhPScrVVUsodNwDXXs3O/1kPfvPKncCVoa0IiiofmlfF2G4pPTEIc9cG
-         32rKYYNiivAnlLJz1VdlJrG65goWHJbRe+Tx4XaiUx12jFmy9tMjA+tSNX686R3e3Ebr
-         ZZQA==
-X-Gm-Message-State: AOAM531dPni9DrsYAc2qNA/wz+uhbM057PRPghOw5kIxlMFLtZT0PDlq
-        U4EoFN9oCqwUPlSLu9WrZUh0nylL70XwXdxh
-X-Google-Smtp-Source: ABdhPJwy3XONgbZN4q8BHplRawf8sSEJs3LQ347lcI5tm9T3b21rmk9OimmOVRdkhypkRB4nblntdw==
-X-Received: by 2002:a05:600c:2146:b0:380:d7df:137c with SMTP id v6-20020a05600c214600b00380d7df137cmr7974476wml.140.1645910811793;
-        Sat, 26 Feb 2022 13:26:51 -0800 (PST)
-Received: from [192.168.0.149] ([170.253.36.171])
-        by smtp.gmail.com with ESMTPSA id ay23-20020a5d6f17000000b001ea79f73fbcsm5740733wrb.25.2022.02.26.13.26.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Feb 2022 13:26:51 -0800 (PST)
-Message-ID: <ae52c028-05c7-c22e-fc47-d97ee4a2f6c7@gmail.com>
-Date:   Sat, 26 Feb 2022 22:26:49 +0100
+        Sun, 27 Feb 2022 12:47:52 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACF1D192B8;
+        Sun, 27 Feb 2022 09:47:15 -0800 (PST)
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21RFhvWH024416;
+        Sun, 27 Feb 2022 17:46:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=1QT+MIO5sQ0+JqoR5oSJ3DCQEEiRdGdRmp8VLGdPWfY=;
+ b=TXdyGagn3Hf+0Sh+VqIUC5zyVVR6UFq80qAi/s4LALIjFggi5sMFOqzMYL94MPrUgQlr
+ 6uBPZXhdOEI1/A9z+raQTshHas3+aFpHrZspt621RTAAGadagwavc69TQKeNrN7dDLnY
+ 3qfclnz64nk69u8hVnHNvz4mAZsRHAylUhunkb0DNdee/xhuIwTFexSd9xZ++NvoYcHm
+ l2es5TZJHzvxfdIuvUpKqilRWIPAbo5V2emias6B44l4MU2cvjgy/rKLbsn7SPb0yRdW
+ wJAKIEApKK+3xzmkBTZqhKbY1/qPFGfH9ZgtezTp28Mz2YTZWPJfRFK9YGeM9ZkMiqcr zg== 
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3egc6u9ffy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 27 Feb 2022 17:46:55 +0000
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 21RHgqKh008397;
+        Sun, 27 Feb 2022 17:46:53 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma01fra.de.ibm.com with ESMTP id 3efbu8vr5q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 27 Feb 2022 17:46:53 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 21RHkpUP45220184
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 27 Feb 2022 17:46:51 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E491811C05B;
+        Sun, 27 Feb 2022 17:46:50 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DA03411C050;
+        Sun, 27 Feb 2022 17:46:48 +0000 (GMT)
+Received: from sig-9-65-89-64.ibm.com (unknown [9.65.89.64])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 27 Feb 2022 17:46:48 +0000 (GMT)
+Message-ID: <8b140d740ccb813a3fabacd928a5dc3499f145db.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 0/6] bpf-lsm: Extend interoperability with IMA
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "revest@chromium.org" <revest@chromium.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Sun, 27 Feb 2022 12:46:48 -0500
+In-Reply-To: <YhnfzipoU1NbkjQQ@kroah.com>
+References: <20220215124042.186506-1-roberto.sassu@huawei.com>
+         <408a96085814b2578486b2859e63ff906f5e5876.camel@linux.ibm.com>
+         <5117c79227ce4b9d97e193fd8fb59ba2@huawei.com>
+         <223d9eedc03f68cfa4f1624c4673e844e29da7d5.camel@linux.ibm.com>
+         <YhnfzipoU1NbkjQQ@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: E-5Jt3XnaWTAon6wvc8bbVIw6kQEakXm
+X-Proofpoint-GUID: E-5Jt3XnaWTAon6wvc8bbVIw6kQEakXm
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v1 2/7] landlock: Fix landlock_add_rule(2) signature
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Shuah Khan <shuah@kernel.org>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20220221155311.166278-1-mic@digikod.net>
- <20220221155311.166278-3-mic@digikod.net>
-From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-In-Reply-To: <20220221155311.166278-3-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-02-27_07,2022-02-26_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
+ definitions=main-2202270122
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mickaël,
-
-On 21/2/22 16:53, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
+On Sat, 2022-02-26 at 09:07 +0100, Greg Kroah-Hartman wrote:
+> On Fri, Feb 25, 2022 at 02:11:04PM -0500, Mimi Zohar wrote:
+> > On Fri, 2022-02-25 at 08:41 +0000, Roberto Sassu wrote:
+> > > > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > > > Sent: Friday, February 25, 2022 1:22 AM
+> > > > Hi Roberto,
+> > > > 
+> > > > On Tue, 2022-02-15 at 13:40 +0100, Roberto Sassu wrote:
+> > > > > Extend the interoperability with IMA, to give wider flexibility for the
+> > > > > implementation of integrity-focused LSMs based on eBPF.
+> > > > 
+> > > > I've previously requested adding eBPF module measurements and signature
+> > > > verification support in IMA.  There seemed to be some interest, but
+> > > > nothing has been posted.
+> > > 
+> > > Hi Mimi
+> > > 
+> > > for my use case, DIGLIM eBPF, IMA integrity verification is
+> > > needed until the binary carrying the eBPF program is executed
+> > > as the init process. I've been thinking to use an appended
+> > > signature to overcome the limitation of lack of xattrs in the
+> > > initial ram disk.
+> > 
+> > I would still like to see xattrs supported in the initial ram disk. 
+> > Assuming you're still interested in pursuing it, someone would need to
+> > review and upstream it.  Greg?
 > 
-> Replace the enum landlock_rule_type with an int in the syscall signature
-> of landlock_add_rule to avoid an implementation-defined size.  In
-> practice an enum type is like an int (at least with GCC and clang), but
-> compilers may accept options (e.g. -fshort-enums) that would have an
-> impact on that [1].  This change is mostly a cosmetic fix according to
-> the current kernel compilers and used options.
-
-There are two proposals for C2x that might bring C++ syntax to C for 
-enums, i.e., being able to specify the underlying type of an enum.
-
-See:
-<http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2904.htm>
-<http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2908.htm>
-
-Since the current kernel is safe from that enum problem, it may be 
-better to wait and see what the standard decides to do with enum.  I 
-guess they'll add this feature sooner or later.
-
-Regards,
-Alex
-
+> Me?  How about the filesystem maintainers and developers?  :)
 > 
-> Link: https://lore.kernel.org/r/8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com/ [1]
-> Reported-by: Alejandro Colomar <alx.manpages@gmail.com>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20220221155311.166278-3-mic@digikod.net
-> ---
->   include/linux/syscalls.h     | 3 +--
->   security/landlock/syscalls.c | 7 ++++---
->   2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 819c0cb00b6d..a5956f91caf2 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -71,7 +71,6 @@ struct clone_args;
->   struct open_how;
->   struct mount_attr;
->   struct landlock_ruleset_attr;
-> -enum landlock_rule_type;
->   
->   #include <linux/types.h>
->   #include <linux/aio_abi.h>
-> @@ -1053,7 +1052,7 @@ asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
->   asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
->   asmlinkage long sys_landlock_create_ruleset(const struct landlock_ruleset_attr __user *attr,
->   		size_t size, __u32 flags);
-> -asmlinkage long sys_landlock_add_rule(int ruleset_fd, enum landlock_rule_type rule_type,
-> +asmlinkage long sys_landlock_add_rule(int ruleset_fd, int rule_type,
->   		const void __user *rule_attr, __u32 flags);
->   asmlinkage long sys_landlock_restrict_self(int ruleset_fd, __u32 flags);
->   asmlinkage long sys_memfd_secret(unsigned int flags);
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index fd4b24022a06..3b40fc5d0216 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -277,8 +277,9 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
->    *
->    * @ruleset_fd: File descriptor tied to the ruleset that should be extended
->    *		with the new rule.
-> - * @rule_type: Identify the structure type pointed to by @rule_attr (only
-> - *             LANDLOCK_RULE_PATH_BENEATH for now).
-> + * @rule_type: Identify the structure type pointed to by @rule_attr as defined
-> + *             by enum landlock_rule_type (only LANDLOCK_RULE_PATH_BENEATH for
-> + *             now).
->    * @rule_attr: Pointer to a rule (only of type &struct
->    *             landlock_path_beneath_attr for now).
->    * @flags: Must be 0.
-> @@ -301,7 +302,7 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
->    * - EFAULT: @rule_attr inconsistency.
->    */
->   SYSCALL_DEFINE4(landlock_add_rule,
-> -		const int, ruleset_fd, const enum landlock_rule_type, rule_type,
-> +		const int, ruleset_fd, const int, rule_type,
->   		const void __user *const, rule_attr, const __u32, flags)
->   {
->   	struct landlock_path_beneath_attr path_beneath_attr;
+> There's a reason we never added xattrs support to ram disks, but I can't
+> remember why...
+
+CPIO 'newc' format doesn't support xattrs.
+
+thanks,
+
+Mimi
 
