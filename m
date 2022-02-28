@@ -2,119 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A92C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Feb 2022 13:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA81BC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Feb 2022 13:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235146AbiB1NQq (ORCPT
+        id S234616AbiB1NpO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Feb 2022 08:16:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42126 "EHLO
+        Mon, 28 Feb 2022 08:45:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235145AbiB1NQc (ORCPT
+        with ESMTP id S231336AbiB1NpM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Feb 2022 08:16:32 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 192327462B;
-        Mon, 28 Feb 2022 05:15:53 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 28 Feb 2022 08:45:12 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1059041988;
+        Mon, 28 Feb 2022 05:44:33 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BD26FB810BF;
-        Mon, 28 Feb 2022 13:15:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58204C340FA;
-        Mon, 28 Feb 2022 13:15:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646054150;
-        bh=XC7q336p+3yz9SXS9ZVHG+qns5z7lvEURk+VZZRcFRw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=cbQVeAU4fSucwMwELJ2chTApjPOmF9JV0Bq5ZQ+SLVOeuzaOEKn8OCD86frbDeTUk
-         178U9AVLlTn39ViS32nJUTew0lzqS0jEupKT5cWc6LEotoNepUDqIRFs1QMgCAZqwx
-         lSVS7McGv8T6ZJozZAKgUq3qSTypblHzo+rQT6jKX2qMjcv7/BzzwzRNf/ehHJsFwy
-         TrYWKm3uuTvPQeKUbg0ZQ9XNnfYzV08QCcZMEqRtap0GeIWlSA8b2rEJ86yhe++kUc
-         iwE1ZQoB7T4QjP+wBxCAa7/jzm60j0NngX0Od+S4/ZGoOHVCr+6Ed/e/QbPitjMKnv
-         8eVyCwaim79Rg==
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-2d68d519a33so107434077b3.7;
-        Mon, 28 Feb 2022 05:15:50 -0800 (PST)
-X-Gm-Message-State: AOAM531Hz/vKOguZ3KM81OEHHNGQfvICmmqjzQbCACzOungT0pRcZfW8
-        km1JLL7OFBA1r76Dk1nwMJUnnr7VwlW1hz3WFc8=
-X-Google-Smtp-Source: ABdhPJzcscw84x/z6KkT11IgEGwYFMOpSyj0Psgek7g+cza2KTS9W2gr/p1yvNnykksnbs2/Yvgyve+4H8UgCXvYcdU=
-X-Received: by 2002:a81:7d04:0:b0:2d0:d0e2:126f with SMTP id
- y4-20020a817d04000000b002d0d0e2126fmr19559172ywc.485.1646054149209; Mon, 28
- Feb 2022 05:15:49 -0800 (PST)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 830BE1F899;
+        Mon, 28 Feb 2022 13:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1646055872;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=S71zosWP0qbc18ePiTgFDhbq1Yuo06MT71tp5Uj+ZSI=;
+        b=HKttq5PL6FFWYPNiyBYQw2eN+tuG84zd2ERBQhKnMPTa6r0JG54oqy4yRZ6Bg6IrpW06Ug
+        fgCgIePKVgdSz5XyaLu9J2TQhrkQqVAam9Zf+QfHPsMPd/21WYt5wIHIhgtVSDRbh9kSWU
+        H0ss4eUwxk6fgUP25HfTtU6xRyeskCg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1646055872;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=S71zosWP0qbc18ePiTgFDhbq1Yuo06MT71tp5Uj+ZSI=;
+        b=RaQpsLoyWuJO9TZFCeG+kbUosmvLSIDB+MessTX5ffBvbR+rgiCW5W2szdOS13PtdwnE/4
+        nJDojKLZ4JyETuAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1977813ADA;
+        Mon, 28 Feb 2022 13:44:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 4Fp5A8DRHGIFSwAAMHmgww
+        (envelope-from <pvorel@suse.cz>); Mon, 28 Feb 2022 13:44:32 +0000
+Date:   Mon, 28 Feb 2022 14:44:30 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, dvyukov@google.com,
+        ebiggers@kernel.org, jmorris@namei.org, keescook@chromium.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com
+Subject: Re: [PATCH 2/2] integrity: double check iint_cache was initialized
+Message-ID: <YhzRvhsOPxrKHzq9@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20210322154207.6802-2-zohar@linux.ibm.com>
+ <20220224142025.2587-1-pvorel@suse.cz>
+ <418628ea-f524-05a1-8bfc-a688fa2d625d@schaufler-ca.com>
+ <YhfDhYQYZTU0clAf@pevik>
+ <9405bcfc-78bd-8e7f-41d4-b919221f73e4@schaufler-ca.com>
+ <c4842493db13fd6f05eda54c1ef4c94e9d687850.camel@linux.ibm.com>
 MIME-Version: 1.0
-References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
- <20220228114254.1099945-4-dovmurik@linux.ibm.com> <CAMj1kXFybkGtxH2U6oAi_Qeqe-i_kH-hZjUZKY3-UzPHUg55vg@mail.gmail.com>
- <f3de6cd9-9f58-7db3-e367-a6a5a5d826e2@linux.ibm.com>
-In-Reply-To: <f3de6cd9-9f58-7db3-e367-a6a5a5d826e2@linux.ibm.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Mon, 28 Feb 2022 14:15:38 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEKh-Ve3iPDnNTxi10=hcARN4ntpyQOrmb=B+4DpC24vQ@mail.gmail.com>
-Message-ID: <CAMj1kXEKh-Ve3iPDnNTxi10=hcARN4ntpyQOrmb=B+4DpC24vQ@mail.gmail.com>
-Subject: Re: [PATCH v8 3/4] efi: Load efi_secret module if EFI secret area is populated
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c4842493db13fd6f05eda54c1ef4c94e9d687850.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 28 Feb 2022 at 14:07, Dov Murik <dovmurik@linux.ibm.com> wrote:
->
->
->
-> On 28/02/2022 14:49, Ard Biesheuvel wrote:
-> > On Mon, 28 Feb 2022 at 12:43, Dov Murik <dovmurik@linux.ibm.com> wrote:
-> >>
-> >> If the efi_secret module is built, register a late_initcall in the EFI
-> >> driver which checks whether the EFI secret area is available and
-> >> populated, and then requests to load the efi_secret module.
-> >>
-> >> This will cause the <securityfs>/secrets/coco directory to appear in
-> >> guests into which secrets were injected; in other cases, the module is
-> >> not loaded.
-> >>
-> >> Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
-> >> Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
-> >
-> > It would be better to simply expose a platform device and associated
-> > driver, instead of hooking into the module machinery directly.
-> >
-> > We already do something similar for the EFI rtc and the efivars
-> > subsystem, using platform_device_register_simple()
-> >
->
-> Thanks Ard, I'll look into this.
->
-> I hope the mechanism you suggest allows me to perform complex check to
-> see if the device is really there (in this case: check for an efi
-> variable, map memory as encrypted, verify it starts with a specific GUID
-> -- everything before request_module() in the code below).
->
+Hi Mimi, all,
 
-There is the device part and the driver part. Some of this belongs in
-the core code that registers the platform device, and some of it
-belongs in the driver. At this point, it probably does not matter that
-much which side does what, as the platform driver simply probes and
-can perform whatever check it needs, as long as it can back out
-gracefully (although I understand that, in this particular case, there
-are reasons why the driver may decide to wipe the secret)
+> Hi Petr, Casey,
+
+> On Thu, 2022-02-24 at 10:51 -0800, Casey Schaufler wrote:
+> > On 2/24/2022 9:42 AM, Petr Vorel wrote:
+
+> > It was always my expectation, which appears to have been poorly
+> > communicated, that "making integrity an LSM" meant using the LSM
+> > hook infrastructure. Just adding "integrity" to lsm= doesn't make
+> > it an LSM to my mind.
+
+> Agreed.  The actual commit that introduced the change was 3d6e5f6dcf65
+> ("LSM: Convert security_initcall() into DEFINE_LSM()").
+I wonder whether we can improve things now.
+
+Kind regards,
+Petr
