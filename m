@@ -2,155 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F36A6C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Feb 2022 07:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBCEC433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Feb 2022 09:07:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233788AbiB1IAJ (ORCPT
+        id S232871AbiB1JIT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Feb 2022 03:00:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35096 "EHLO
+        Mon, 28 Feb 2022 04:08:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230406AbiB1IAG (ORCPT
+        with ESMTP id S231265AbiB1JIS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Feb 2022 03:00:06 -0500
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854F34F479
-        for <linux-security-module@vger.kernel.org>; Sun, 27 Feb 2022 23:59:26 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K6XpN2CGLzMq0qN;
-        Mon, 28 Feb 2022 08:59:24 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4K6XpL1ZyHzljTgK;
-        Mon, 28 Feb 2022 08:59:22 +0100 (CET)
-Message-ID: <274f63e6-ed9a-e49f-8779-6e4980f51b33@digikod.net>
-Date:   Mon, 28 Feb 2022 08:59:39 +0100
-MIME-Version: 1.0
-User-Agent: 
+        Mon, 28 Feb 2022 04:08:18 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33559BC13;
+        Mon, 28 Feb 2022 01:07:35 -0800 (PST)
+Received: from fraeml712-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4K6ZHg1qLBz67NYn;
+        Mon, 28 Feb 2022 17:06:23 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml712-chm.china.huawei.com (10.206.15.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Mon, 28 Feb 2022 10:07:33 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.021;
+ Mon, 28 Feb 2022 10:07:33 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "revest@chromium.org" <revest@chromium.org>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 0/6] bpf-lsm: Extend interoperability with IMA
+Thread-Topic: [PATCH v2 0/6] bpf-lsm: Extend interoperability with IMA
+Thread-Index: AQHYImlgJM6Z1962JUm5hvc+dgM0dqyjZeaAgACU/jCAAKZjAIAEHfiw
+Date:   Mon, 28 Feb 2022 09:07:33 +0000
+Message-ID: <8eeb74eea6564e3c819a2caca58b714a@huawei.com>
+References: <20220215124042.186506-1-roberto.sassu@huawei.com>
+         <408a96085814b2578486b2859e63ff906f5e5876.camel@linux.ibm.com>
+         <5117c79227ce4b9d97e193fd8fb59ba2@huawei.com>
+ <223d9eedc03f68cfa4f1624c4673e844e29da7d5.camel@linux.ibm.com>
+In-Reply-To: <223d9eedc03f68cfa4f1624c4673e844e29da7d5.camel@linux.ibm.com>
+Accept-Language: en-US
 Content-Language: en-US
-To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Shuah Khan <shuah@kernel.org>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20220221155311.166278-1-mic@digikod.net>
- <20220221155311.166278-3-mic@digikod.net>
- <ae52c028-05c7-c22e-fc47-d97ee4a2f6c7@gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v1 2/7] landlock: Fix landlock_add_rule(2) signature
-In-Reply-To: <ae52c028-05c7-c22e-fc47-d97ee4a2f6c7@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.204.63.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> Sent: Friday, February 25, 2022 8:11 PM
+> On Fri, 2022-02-25 at 08:41 +0000, Roberto Sassu wrote:
+> > > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > > Sent: Friday, February 25, 2022 1:22 AM
+> > > Hi Roberto,
+> > >
+> > > On Tue, 2022-02-15 at 13:40 +0100, Roberto Sassu wrote:
+> > > > Extend the interoperability with IMA, to give wider flexibility for the
+> > > > implementation of integrity-focused LSMs based on eBPF.
+> > >
+> > > I've previously requested adding eBPF module measurements and signature
+> > > verification support in IMA.  There seemed to be some interest, but
+> > > nothing has been posted.
+> >
+> > Hi Mimi
+> >
+> > for my use case, DIGLIM eBPF, IMA integrity verification is
+> > needed until the binary carrying the eBPF program is executed
+> > as the init process. I've been thinking to use an appended
+> > signature to overcome the limitation of lack of xattrs in the
+> > initial ram disk.
+> 
+> I would still like to see xattrs supported in the initial ram disk.
+> Assuming you're still interested in pursuing it, someone would need to
+> review and upstream it.  Greg?
 
-On 26/02/2022 22:26, Alejandro Colomar (man-pages) wrote:
-> Hi Mickaël,
-> 
-> On 21/2/22 16:53, Mickaël Salaün wrote:
->> From: Mickaël Salaün <mic@linux.microsoft.com>
->>
->> Replace the enum landlock_rule_type with an int in the syscall signature
->> of landlock_add_rule to avoid an implementation-defined size.  In
->> practice an enum type is like an int (at least with GCC and clang), but
->> compilers may accept options (e.g. -fshort-enums) that would have an
->> impact on that [1].  This change is mostly a cosmetic fix according to
->> the current kernel compilers and used options.
-> 
-> There are two proposals for C2x that might bring C++ syntax to C for 
-> enums, i.e., being able to specify the underlying type of an enum.
-> 
-> See:
-> <http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2904.htm>
-> <http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2908.htm>
-> 
-> Since the current kernel is safe from that enum problem, it may be 
-> better to wait and see what the standard decides to do with enum.  I 
-> guess they'll add this feature sooner or later.
+I could revise this work. However, since appended signatures
+would work too, I would propose to extend this appraisal
+mode to executables, if it is fine for you.
 
-Ok, interesting, I'll remove this patch then. I'd be curious to know 
-when this will impact Linux though.
+> > At that point, the LSM is attached and it can enforce an
+> > execution policy, allowing or denying execution and mmap
+> > of files depending on the digest lists (reference values) read
+> > by the user space side.
+> >
+> > After the LSM is attached, IMA's job would be just to calculate
+> > the file digests (currently, I'm using an audit policy to ensure
+> > that the digest is available when the eBPF program calls
+> > bpf_ima_inode_hash()).
+> >
+> > The main benefit of this patch set is that the audit policy
+> > would not be required and digests are calculated only when
+> > requested by the eBPF program.
+> 
+> Roberto, there's an existing eBPF integrity gap that needs to be
+> closed, perhaps not for your usecase, but in general.  Is that
+> something you can look into?
 
-Thanks!
+It could be possible I look into it.
 
-> 
-> Regards,
-> Alex
-> 
->>
->> Link: 
->> https://lore.kernel.org/r/8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com/ 
->> [1]
->> Reported-by: Alejandro Colomar <alx.manpages@gmail.com>
->> Cc: Nathan Chancellor <nathan@kernel.org>
->> Cc: Nick Desaulniers <ndesaulniers@google.com>
->> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->> Link: https://lore.kernel.org/r/20220221155311.166278-3-mic@digikod.net
->> ---
->>   include/linux/syscalls.h     | 3 +--
->>   security/landlock/syscalls.c | 7 ++++---
->>   2 files changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
->> index 819c0cb00b6d..a5956f91caf2 100644
->> --- a/include/linux/syscalls.h
->> +++ b/include/linux/syscalls.h
->> @@ -71,7 +71,6 @@ struct clone_args;
->>   struct open_how;
->>   struct mount_attr;
->>   struct landlock_ruleset_attr;
->> -enum landlock_rule_type;
->>   #include <linux/types.h>
->>   #include <linux/aio_abi.h>
->> @@ -1053,7 +1052,7 @@ asmlinkage long sys_pidfd_send_signal(int pidfd, 
->> int sig,
->>   asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
->>   asmlinkage long sys_landlock_create_ruleset(const struct 
->> landlock_ruleset_attr __user *attr,
->>           size_t size, __u32 flags);
->> -asmlinkage long sys_landlock_add_rule(int ruleset_fd, enum 
->> landlock_rule_type rule_type,
->> +asmlinkage long sys_landlock_add_rule(int ruleset_fd, int rule_type,
->>           const void __user *rule_attr, __u32 flags);
->>   asmlinkage long sys_landlock_restrict_self(int ruleset_fd, __u32 
->> flags);
->>   asmlinkage long sys_memfd_secret(unsigned int flags);
->> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
->> index fd4b24022a06..3b40fc5d0216 100644
->> --- a/security/landlock/syscalls.c
->> +++ b/security/landlock/syscalls.c
->> @@ -277,8 +277,9 @@ static int get_path_from_fd(const s32 fd, struct 
->> path *const path)
->>    *
->>    * @ruleset_fd: File descriptor tied to the ruleset that should be 
->> extended
->>    *        with the new rule.
->> - * @rule_type: Identify the structure type pointed to by @rule_attr 
->> (only
->> - *             LANDLOCK_RULE_PATH_BENEATH for now).
->> + * @rule_type: Identify the structure type pointed to by @rule_attr 
->> as defined
->> + *             by enum landlock_rule_type (only 
->> LANDLOCK_RULE_PATH_BENEATH for
->> + *             now).
->>    * @rule_attr: Pointer to a rule (only of type &struct
->>    *             landlock_path_beneath_attr for now).
->>    * @flags: Must be 0.
->> @@ -301,7 +302,7 @@ static int get_path_from_fd(const s32 fd, struct 
->> path *const path)
->>    * - EFAULT: @rule_attr inconsistency.
->>    */
->>   SYSCALL_DEFINE4(landlock_add_rule,
->> -        const int, ruleset_fd, const enum landlock_rule_type, rule_type,
->> +        const int, ruleset_fd, const int, rule_type,
->>           const void __user *const, rule_attr, const __u32, flags)
->>   {
->>       struct landlock_path_beneath_attr path_beneath_attr;
-> 
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Zhong Ronghua
