@@ -2,263 +2,192 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6812C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Feb 2022 12:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88038C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Feb 2022 12:49:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236192AbiB1MOk (ORCPT
+        id S232576AbiB1MuN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Feb 2022 07:14:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52050 "EHLO
+        Mon, 28 Feb 2022 07:50:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231341AbiB1MOj (ORCPT
+        with ESMTP id S231563AbiB1MuM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Feb 2022 07:14:39 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42ED126110;
-        Mon, 28 Feb 2022 04:14:01 -0800 (PST)
+        Mon, 28 Feb 2022 07:50:12 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0863D54FAD;
+        Mon, 28 Feb 2022 04:49:34 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D0A246111F;
-        Mon, 28 Feb 2022 12:14:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20BECC340F0;
-        Mon, 28 Feb 2022 12:13:59 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 39CA2B81120;
+        Mon, 28 Feb 2022 12:49:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F7CC340EE;
+        Mon, 28 Feb 2022 12:49:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646050440;
-        bh=Km/ETwktcu0d0SJMnDCeHyQj69xN1Lz9uFFUMONXypA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=n1v5K07n8jOhxyq57xn7BQrEorbQ8yrMw4Ug0tI2DGAYQcMUtfIPciRT+HTKaJmkf
-         dkKdBiPqKImphpI6YQxHf+cNb9TuS10OItQ/rTK8pj4W3/0KiXw9O9uIF9ywMDcM0c
-         m9bEv7m68SSFVeCSQgAn+5MP0xwENwl1Ly2urKNly6PEGvK920nBreaupHLk/kw7wO
-         VaNiktvdcmMnISxVHTTvnrtnYRP5TxzoUgc/xT33OTxlBiWD1vVxaWfaJ0R7vrjZ1k
-         IvqHjKyO77AOORScaclklg9AN4faCvi26+53xWVbku2UCd9TbwZOEVL/n/je90ezi0
-         wJAxsphQpIXCw==
-Message-ID: <79b912b5e9e16f446753270f7b9463fee95ebac7.camel@kernel.org>
-Subject: Re: [PATCH v5 4/5] crypto: caam - add in-kernel interface for blob
- generator
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Horia =?UTF-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, kernel@pengutronix.de,
-        David Gstir <david@sigma-star.at>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        Richard Weinberger <richard@nod.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Mon, 28 Feb 2022 13:14:41 +0100
-In-Reply-To: <a8cb99e0-fe01-2234-9839-fea28ca09f6d@pengutronix.de>
-References: <20220222195819.2313913-1-a.fatoum@pengutronix.de>
-         <20220222195819.2313913-5-a.fatoum@pengutronix.de>
-         <YhZVmBy3/nWbqf+/@iki.fi>
-         <a8cb99e0-fe01-2234-9839-fea28ca09f6d@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.42.4 
+        s=k20201202; t=1646052570;
+        bh=YNCjDWYFLy8kk5Lc6yfDNb4ICpsaXUgkOhGfWYb2mkg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Gc2oLdRhB79LqW2fWFa177bVCgVNvknFSspQ4Nx5BBRQEOH9JGJYOzWeIdtF4QlFa
+         Vm6UwbbeLBmvY6Iq2ESWhfaFgokcE1digjq997sEXhVM8APqrUEJvlJLp74Pvk2mC9
+         yRNCBOSSjomfbtGeQKNyOnmqvTLha8I0x+wfPOqaqZ59Vjpa9evMvPCHvgY/DxynWG
+         py3f1VJxEJwBxXBGz72y7KAMH2QQlJ7pCSCLQBPOevRDSXsr0bSWZpICpprumq0DyN
+         qc9B98cda5m7nLqFZBXESQTvAejiVjGQ+uQ2nokVTcxtk4fkfKfF16U43qXoqK6Aoo
+         G+FEWlvZxX7Vw==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-2d07c4a0d06so106264137b3.13;
+        Mon, 28 Feb 2022 04:49:30 -0800 (PST)
+X-Gm-Message-State: AOAM530pRLkjn3F9zF8Me5GJnEZPnwIjsZ6crvXmh3vjAHvygJcnU8iL
+        l6ZX4Ahb4Tu+jgrAPxZUXCe13I7yS1aoIahGOEY=
+X-Google-Smtp-Source: ABdhPJwXH3KFl4x5Rc0RFSsToohrsPYhCK8XUjA94rh6d7jiY3THMitYZZ/tsMG+hNHW5uuID/0rygMJxULOVjBiqpw=
+X-Received: by 2002:a81:854:0:b0:2db:255b:dd6 with SMTP id 81-20020a810854000000b002db255b0dd6mr13412601ywi.140.1646052569778;
+ Mon, 28 Feb 2022 04:49:29 -0800 (PST)
 MIME-Version: 1.0
+References: <20220228114254.1099945-1-dovmurik@linux.ibm.com> <20220228114254.1099945-4-dovmurik@linux.ibm.com>
+In-Reply-To: <20220228114254.1099945-4-dovmurik@linux.ibm.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Mon, 28 Feb 2022 13:49:19 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFybkGtxH2U6oAi_Qeqe-i_kH-hZjUZKY3-UzPHUg55vg@mail.gmail.com>
+Message-ID: <CAMj1kXFybkGtxH2U6oAi_Qeqe-i_kH-hZjUZKY3-UzPHUg55vg@mail.gmail.com>
+Subject: Re: [PATCH v8 3/4] efi: Load efi_secret module if EFI secret area is populated
+To:     Dov Murik <dovmurik@linux.ibm.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-02-23 at 17:20 +0100, Ahmad Fatoum wrote:
-> On 23.02.22 16:41, Jarkko Sakkinen wrote:
-> > On Tue, Feb 22, 2022 at 08:58:18PM +0100, Ahmad Fatoum wrote:
-> > > The NXP Cryptographic Acceleration and Assurance Module (CAAM)
-> > > can be used to protect user-defined data across system reboot:
-> > >=20
-> > > =C2=A0 - When the system is fused and boots into secure state, the ma=
-ster
-> > > =C2=A0=C2=A0=C2=A0 key is a unique never-disclosed device-specific ke=
-y
-> > > =C2=A0 - random key is encrypted by key derived from master key
-> > > =C2=A0 - data is encrypted using the random key
-> > > =C2=A0 - encrypted data and its encrypted random key are stored along=
-side
-> > > =C2=A0 - This blob can now be safely stored in non-volatile memory
-> > >=20
-> > > On next power-on:
-> > > =C2=A0 - blob is loaded into CAAM
-> > > =C2=A0 - CAAM writes decrypted data either into memory or key registe=
-r
-> > >=20
-> > > Add functions to realize encrypting and decrypting into memory alongs=
-ide
-> > > the CAAM driver.
-> > >=20
-> > > They will be used in a later commit as a source for the trusted key
-> > > seal/unseal mechanism.
-> > >=20
-> > > Reviewed-by: David Gstir <david@sigma-star.at>
-> > > Reviewed-by: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > > Tested-By: Tim Harvey <tharvey@gateworks.com>
-> > > Tested-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> > > Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> > > Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-> > > ---
-> > > To: "Horia Geant=C4=83" <horia.geanta@nxp.com>
-> > > To: Aymen Sghaier <aymen.sghaier@nxp.com>
-> > > To: Herbert Xu <herbert@gondor.apana.org.au>
-> > > To: "David S. Miller" <davem@davemloft.net>
-> > > Cc: James Bottomley <jejb@linux.ibm.com>
-> > > Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> > > Cc: Mimi Zohar <zohar@linux.ibm.com>
-> > > Cc: David Howells <dhowells@redhat.com>
-> > > Cc: James Morris <jmorris@namei.org>
-> > > Cc: Eric Biggers <ebiggers@kernel.org>
-> > > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > > Cc: Jan Luebbe <j.luebbe@pengutronix.de>
-> > > Cc: David Gstir <david@sigma-star.at>
-> > > Cc: Richard Weinberger <richard@nod.at>
-> > > Cc: Franck LENORMAND <franck.lenormand@nxp.com>
-> > > Cc: Sumit Garg <sumit.garg@linaro.org>
-> > > Cc: Tim Harvey <tharvey@gateworks.com>
-> > > Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> > > Cc: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > > Cc: linux-integrity@vger.kernel.org
-> > > Cc: keyrings@vger.kernel.org
-> > > Cc: linux-crypto@vger.kernel.org
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Cc: linux-security-module@vger.kernel.org
-> > > ---
-> > > =C2=A0drivers/crypto/caam/Kconfig=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +
-> > > =C2=A0drivers/crypto/caam/Makefile=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> > > =C2=A0drivers/crypto/caam/blob_gen.c | 230 ++++++++++++++++++++++++++=
-+++++++
-> > > =C2=A0include/soc/fsl/caam-blob.h=C2=A0=C2=A0=C2=A0 |=C2=A0 56 ++++++=
-++
-> > > =C2=A04 files changed, 290 insertions(+)
-> > > =C2=A0create mode 100644 drivers/crypto/caam/blob_gen.c
-> > > =C2=A0create mode 100644 include/soc/fsl/caam-blob.h
-> > >=20
-> > > diff --git a/drivers/crypto/caam/Kconfig b/drivers/crypto/caam/Kconfi=
-g
-> > > index 84ea7cba5ee5..ea9f8b1ae981 100644
-> > > --- a/drivers/crypto/caam/Kconfig
-> > > +++ b/drivers/crypto/caam/Kconfig
-> > > @@ -151,6 +151,9 @@ config CRYPTO_DEV_FSL_CAAM_RNG_API
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Selecting this=
- will register the SEC4 hardware rng to
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the hw_random =
-API for supplying the kernel entropy pool.
-> > > =C2=A0
-> > > +config CRYPTO_DEV_FSL_CAAM_BLOB_GEN
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool
-> > > +
-> > > =C2=A0endif # CRYPTO_DEV_FSL_CAAM_JR
-> > > =C2=A0
-> > > =C2=A0endif # CRYPTO_DEV_FSL_CAAM
-> > > diff --git a/drivers/crypto/caam/Makefile b/drivers/crypto/caam/Makef=
-ile
-> > > index 3570286eb9ce..25f7ae5a4642 100644
-> > > --- a/drivers/crypto/caam/Makefile
-> > > +++ b/drivers/crypto/caam/Makefile
-> > > @@ -21,6 +21,7 @@ caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI)=
- +=3D caamalg_qi.o
-> > > =C2=A0caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_AHASH_API) +=3D caamhash.o
-> > > =C2=A0caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_RNG_API) +=3D caamrng.o
-> > > =C2=A0caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_PKC_API) +=3D caampkc.o pk=
-c_desc.o
-> > > +caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_BLOB_GEN) +=3D blob_gen.o
-> > > =C2=A0
-> > > =C2=A0caam-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI) +=3D qi.o
-> > > =C2=A0ifneq ($(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI),)
-> > > diff --git a/drivers/crypto/caam/blob_gen.c b/drivers/crypto/caam/blo=
-b_gen.c
-> > > new file mode 100644
-> > > index 000000000000..513d3f90e438
-> > > --- /dev/null
-> > > +++ b/drivers/crypto/caam/blob_gen.c
-> > > @@ -0,0 +1,230 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * Copyright (C) 2015 Pengutronix, Steffen Trumtrar <kernel@pengutro=
-nix.de>
-> > > + * Copyright (C) 2021 Pengutronix, Ahmad Fatoum <kernel@pengutronix.=
-de>
-> > > + */
-> > > +
-> > > +#include <linux/device.h>
-> > > +#include <soc/fsl/caam-blob.h>
-> > > +
-> > > +#include "compat.h"
-> > > +#include "desc_constr.h"
-> > > +#include "desc.h"
-> > > +#include "error.h"
-> > > +#include "intern.h"
-> > > +#include "jr.h"
-> > > +#include "regs.h"
-> > > +
-> > > +struct caam_blob_priv {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct device jrdev;
-> > > +};
-> > > +
-> > > +struct caam_blob_job_result {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int err;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct completion completi=
-on;
-> > > +};
-> > > +
-> > > +static void caam_blob_job_done(struct device *dev, u32 *desc, u32 er=
-r, void *context)
-> > > +{
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct caam_blob_job_resul=
-t *res =3D context;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ecode =3D 0;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_dbg(dev, "%s %d: err 0=
-x%x\n", __func__, __LINE__, err);
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (err)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0ecode =3D caam_jr_strstatus(dev, err);
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0res->err =3D ecode;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Upon completion, desc p=
-oints to a buffer containing a CAAM job
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * descriptor which encaps=
-ulates data into an externally-storable
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * blob.
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0complete(&res->completion)=
-;
-> > > +}
-> > > +
-> > > +static u32 *caam_blob_alloc_desc(size_t keymod_len)
-> > > +{
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0size_t len;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* header + (key mod immed=
-iate) + 2x pointers + op */
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0len =3D 4 + (4 + ALIGN(key=
-mod_len, 4)) + 2*(4 + 4 + CAAM_PTR_SZ_MAX) + 4;
-> >=20
-> > Nit: the amount of magic numbers is overwhelming here. I neither unders=
-tand
-> > the statement nor how that comment should help me to understand it.
->=20
-> header=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 =3D=C2=A0 4
-> (key mod immediate) =3D (4 + ALIGN(keymod_len, 4))
-> 2x pointer=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D=C2=
-=A0 2 * (4 + 4 + CAAM_PTR_SZ_MAX)
-> op=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D=C2=A0 4
+On Mon, 28 Feb 2022 at 12:43, Dov Murik <dovmurik@linux.ibm.com> wrote:
+>
+> If the efi_secret module is built, register a late_initcall in the EFI
+> driver which checks whether the EFI secret area is available and
+> populated, and then requests to load the efi_secret module.
+>
+> This will cause the <securityfs>/secrets/coco directory to appear in
+> guests into which secrets were injected; in other cases, the module is
+> not loaded.
+>
+> Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
+> Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
 
-Please create a struct with the associated fields instead and then
-it is just sizeof that.
+It would be better to simply expose a platform device and associated
+driver, instead of hooking into the module machinery directly.
 
-BR, Jarkko
+We already do something similar for the EFI rtc and the efivars
+subsystem, using platform_device_register_simple()
+
+
+> ---
+>  drivers/firmware/efi/Makefile        |  1 +
+>  drivers/firmware/efi/coco.c          | 58 ++++++++++++++++++++
+>  drivers/virt/coco/efi_secret/Kconfig |  3 +
+>  3 files changed, 62 insertions(+)
+>
+> diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
+> index c02ff25dd477..49c4a8c0bfc4 100644
+> --- a/drivers/firmware/efi/Makefile
+> +++ b/drivers/firmware/efi/Makefile
+> @@ -32,6 +32,7 @@ obj-$(CONFIG_APPLE_PROPERTIES)                += apple-properties.o
+>  obj-$(CONFIG_EFI_RCI2_TABLE)           += rci2-table.o
+>  obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)    += embedded-firmware.o
+>  obj-$(CONFIG_LOAD_UEFI_KEYS)           += mokvar-table.o
+> +obj-$(CONFIG_EFI_COCO_SECRET)          += coco.o
+>
+>  fake_map-y                             += fake_mem.o
+>  fake_map-$(CONFIG_X86)                 += x86_fake_mem.o
+> diff --git a/drivers/firmware/efi/coco.c b/drivers/firmware/efi/coco.c
+> new file mode 100644
+> index 000000000000..f8efd240ab05
+> --- /dev/null
+> +++ b/drivers/firmware/efi/coco.c
+> @@ -0,0 +1,58 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Confidential computing (coco) secret area handling
+> + *
+> + * Copyright (C) 2021 IBM Corporation
+> + * Author: Dov Murik <dovmurik@linux.ibm.com>
+> + */
+> +
+> +#define pr_fmt(fmt) "efi: " fmt
+> +
+> +#include <linux/efi.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/kmod.h>
+> +
+> +#ifdef CONFIG_EFI_SECRET_MODULE
+> +
+> +/*
+> + * Load the efi_secret module if the EFI secret area is populated
+> + */
+> +static int __init load_efi_secret_module(void)
+> +{
+> +       struct linux_efi_coco_secret_area *area;
+> +       efi_guid_t *header_guid;
+> +       int ret = 0;
+> +
+> +       if (efi.coco_secret == EFI_INVALID_TABLE_ADDR)
+> +               return 0;
+> +
+> +       area = memremap(efi.coco_secret, sizeof(*area), MEMREMAP_WB);
+> +       if (!area) {
+> +               pr_err("Failed to map confidential computing secret area descriptor\n");
+> +               return -ENOMEM;
+> +       }
+> +       if (!area->base_pa || area->size < sizeof(*header_guid))
+> +               goto unmap_desc;
+> +
+> +       header_guid = (void __force *)ioremap_encrypted(area->base_pa, sizeof(*header_guid));
+> +       if (!header_guid) {
+> +               pr_err("Failed to map secret area\n");
+> +               ret = -ENOMEM;
+> +               goto unmap_desc;
+> +       }
+> +       if (efi_guidcmp(*header_guid, EFI_SECRET_TABLE_HEADER_GUID))
+> +               goto unmap_encrypted;
+> +
+> +       ret = request_module("efi_secret");
+> +
+> +unmap_encrypted:
+> +       iounmap((void __iomem *)header_guid);
+> +
+> +unmap_desc:
+> +       memunmap(area);
+> +       return ret;
+> +}
+> +late_initcall(load_efi_secret_module);
+> +
+> +#endif
+> diff --git a/drivers/virt/coco/efi_secret/Kconfig b/drivers/virt/coco/efi_secret/Kconfig
+> index 4404d198f3b2..dc8da2921e36 100644
+> --- a/drivers/virt/coco/efi_secret/Kconfig
+> +++ b/drivers/virt/coco/efi_secret/Kconfig
+> @@ -14,3 +14,6 @@ config EFI_SECRET
+>
+>           To compile this driver as a module, choose M here.
+>           The module will be called efi_secret.
+> +
+> +         The module is loaded automatically by the EFI driver if the EFI
+> +         secret area is populated.
+> --
+> 2.25.1
+>
