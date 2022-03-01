@@ -2,98 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6915C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Mar 2022 12:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFBDC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Mar 2022 12:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234670AbiCAMIR (ORCPT
+        id S234710AbiCAMZZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Mar 2022 07:08:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53042 "EHLO
+        Tue, 1 Mar 2022 07:25:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233206AbiCAMIR (ORCPT
+        with ESMTP id S231262AbiCAMZY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Mar 2022 07:08:17 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D892E1BE9D;
-        Tue,  1 Mar 2022 04:07:35 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id u1so20136234wrg.11;
-        Tue, 01 Mar 2022 04:07:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hSCwK5xS8mlQDgYKMAx0VBG8XXlCG6EJdzqrXuBG+YQ=;
-        b=PpIqQKZ/2cNpIDY6gBqHhJnRr265H0PDVQynomcMHlTr8MsfRqVJqI2q7fFxPqx+jk
-         yD9E3CnSgSUgB6+WYe5d4PMZG/SZhYkwSFAV5ZDa81V+sMuo2PS4m130jA0ho6Cn163k
-         F87UvbKWCHi9DDRimZOlxMQopfOeMis2dq/2HLkqxgVJR2vCIUnL2tFk9D840vMpT2XN
-         yi7h/zb7UkrNeoGmxhGCdptDY7X452KHD6msiDrQ7e85MnA67pRcgpd3V2LtW6WDlhK5
-         zxlpPZ81ImFOlWyrh2WMVKGXfupAmMfgICFs9YVG6ZSpIk7gkA+yVFVMokP1P0GB4dat
-         YzyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hSCwK5xS8mlQDgYKMAx0VBG8XXlCG6EJdzqrXuBG+YQ=;
-        b=2vnozjfBVkKY9BNCJw39bidc0BL8ogLlIuxZggYpvuK1RekxIRuk9ZqoXF/6l7hH+k
-         vIzXXcZqsUqkOMGvJTm7Dhp2xqBLR0WbhroumGvQRbQBFK8IefXcO9f0JcKgrUJZ7M0y
-         /8RLm7Gekf4iL70QuXl9SmPJDtn/yO4mi583V1soxhW84h3JbHsyrLjlpk3WV9gvVZ3A
-         HuHhjAhlhm8bPU6Fbg6BYHlsqCDUR5ekDJ5JDyyOHFb/PKoTZhVUh4fznlQwO/wZfxCq
-         vHwrcQFrM4RJyuC+McpHGZdRr0pllmT+Tf7bbj4WheqfGexNqAYw0BMmizCi6NHJ9w0y
-         DpLg==
-X-Gm-Message-State: AOAM531nDWp07cmp+Ou5NLf3vK4zvYxfO/eDx0afwzMS6sVfy5EDaIbQ
-        9apl6EFcfRRtGUdqgmCdSfs=
-X-Google-Smtp-Source: ABdhPJy5w8b76F7DObiS0Zj5X/X3oN+Cn8tf+9SnqcR5dCpBJywM51JSJ2UGavHd5lzX1XYQiGhoSQ==
-X-Received: by 2002:a05:6000:114b:b0:1ed:c1d5:95a8 with SMTP id d11-20020a056000114b00b001edc1d595a8mr18938705wrx.539.1646136454271;
-        Tue, 01 Mar 2022 04:07:34 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id i15-20020a05600011cf00b001edc2966dd4sm13256718wrx.47.2022.03.01.04.07.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Mar 2022 04:07:33 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Tue, 1 Mar 2022 07:25:24 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0DCCE8BF6E
+        for <linux-security-module@vger.kernel.org>; Tue,  1 Mar 2022 04:24:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646137483;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=px8h7rOi4DLdnxTseE4yd2HQ+w2dXi8TPIQasAQ9aI0=;
+        b=ESrvIedA58evAsYKPzb7OtNhZqptK6S5oXnChuW5BTGxFufV3U9pAo1JOD36TsVD2Sh1Uv
+        URM08tpiFVHIkYbkAWsVR5/seHJ6fCm8Rs01dikOtLh81GeMOQPXTJH3UgNUw1aVfyAqb7
+        RozHKZCCN2jN/bd1Q78wlJnaQal/uy0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-665-YRBarv4rOMm5-u5ymqgweQ-1; Tue, 01 Mar 2022 07:24:37 -0500
+X-MC-Unique: YRBarv4rOMm5-u5ymqgweQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 851865200;
+        Tue,  1 Mar 2022 12:24:34 +0000 (UTC)
+Received: from sirius.home.kraxel.org (unknown [10.39.195.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8EC8C84945;
+        Tue,  1 Mar 2022 12:24:33 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id B993D180039D; Tue,  1 Mar 2022 13:24:31 +0100 (CET)
+Date:   Tue, 1 Mar 2022 13:24:31 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Dov Murik <dovmurik@linux.ibm.com>
+Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH] ima: remove redundant initialization of pointer 'file'.
-Date:   Tue,  1 Mar 2022 12:07:32 +0000
-Message-Id: <20220301120732.670168-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 2/4] virt: Add efi_secret module to expose
+ confidential computing secrets
+Message-ID: <20220301122431.xcsuneftshiibvst@sirius.home.kraxel.org>
+References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
+ <20220228114254.1099945-3-dovmurik@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220228114254.1099945-3-dovmurik@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pointer 'file' is being initialized with a value that is never read,
-it is being re-assigned the same value later on closer to where it is
-being first used. The initialization is redundant and can be removed.
+On Mon, Feb 28, 2022 at 11:42:52AM +0000, Dov Murik wrote:
+> The new efi_secret module exposes the confidential computing (coco)
+> EFI secret area via securityfs interface.
+> 
+> When the module is loaded (and securityfs is mounted, typically under
+> /sys/kernel/security), a "secrets/coco" directory is created in
+> securityfs.  In it, a file is created for each secret entry.  The name
+> of each such file is the GUID of the secret entry, and its content is
+> the secret data.
+> 
+> This allows applications running in a confidential computing setting to
+> read secrets provided by the guest owner via a secure secret injection
+> mechanism (such as AMD SEV's LAUNCH_SECRET command).
+> 
+> Removing (unlinking) files in the "secrets/coco" directory will zero out
+> the secret in memory, and remove the filesystem entry.  If the module is
+> removed and loaded again, that secret will not appear in the filesystem.
+> 
+> Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
 
-Cleans up clang scan build warning:
-security/integrity/ima/ima_main.c:434:15: warning: Value stored to 'file'
-during its initialization is never read [deadcode.DeadStores]
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- security/integrity/ima/ima_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c6412dec3810..41b91a0bc8dc 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -431,7 +431,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
- int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
- {
- 	struct ima_template_desc *template = NULL;
--	struct file *file = vma->vm_file;
-+	struct file *file;
- 	char filename[NAME_MAX];
- 	char *pathbuf = NULL;
- 	const char *pathname = NULL;
--- 
-2.34.1
+Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
 
