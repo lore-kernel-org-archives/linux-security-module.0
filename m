@@ -2,130 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED36AC433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Feb 2022 21:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9493CC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Mar 2022 01:09:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231215AbiB1WA3 (ORCPT
+        id S230323AbiCABKJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Feb 2022 17:00:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60942 "EHLO
+        Mon, 28 Feb 2022 20:10:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230291AbiB1WA1 (ORCPT
+        with ESMTP id S230164AbiCABKG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Feb 2022 17:00:27 -0500
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD3E2C116
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Feb 2022 13:59:46 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K6vS06NrPzMprMT;
-        Mon, 28 Feb 2022 22:59:44 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4K6vRy3MsRzlhNts;
-        Mon, 28 Feb 2022 22:59:42 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v1] fs: Fix inconsistent f_mode
-Date:   Mon, 28 Feb 2022 22:59:35 +0100
-Message-Id: <20220228215935.748017-1-mic@digikod.net>
-X-Mailer: git-send-email 2.35.1
+        Mon, 28 Feb 2022 20:10:06 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37EA6A180
+        for <linux-security-module@vger.kernel.org>; Mon, 28 Feb 2022 17:09:22 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id s14so20047401edw.0
+        for <linux-security-module@vger.kernel.org>; Mon, 28 Feb 2022 17:09:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XQU+v0ncJKQsq8KVJD+e40cIco7m2GBd4rHARca/WR4=;
+        b=0jmzKwCWF4tyUOMYPO79E8fZ5IPNMaa8ViRAkdhJVQ+rpvYnB807H9RFMUbcIp7BZU
+         gZHQ1rDBx3PK62BLmbBlNNAT3jyzYaL4Q2y1jktn63TwPT5ab7vdpiN4MQeP1MOCyfW/
+         1hrpDZVGloDoRW/S3YgB7ZGNi+EX7JpeqF+27/Xd6NI08vCg4fnWr5/UMmQ3YP+rWN2q
+         yIGHsrbeKMCBBBgIhh1S5ZwIKqOb+wr4/4iLEbQ7SulNvHeNpE2lVCx7J+vfXvAVBYuU
+         4/QobemQ3yboRwLVKSLl98uQ/+1XfxEHp6My70akJWohmiB80lkECn8ozqFNVuNZKksq
+         Vmzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XQU+v0ncJKQsq8KVJD+e40cIco7m2GBd4rHARca/WR4=;
+        b=4s7knMd/7q6JVir17h925688VHuqaTSzSPQmg56szpdR1eT8hz6kVUCi9knnRhY9l/
+         OIc0QVs04pSVz05nCH36FngSi9QeW2V6rSIlXWJQpvrMw8cthkDUv5FlWBM6G80mq9jS
+         d8tuOw8v4wSOyUZCPQzesuO/4ZU3/h0a2GjKYIYUxzxNFAX/1Mnfwj4Yu1HobaebxyxC
+         Kb8YWG4k3naBjL0przIqsltkbeOpP3JYsqf33cy+GPa8Ku3vvuTcYC3Bmp485DnOKc5G
+         lbekfQSYW3p4Mlsf9V8TkncwMCzCov5cgWJTGFjp4d9EF1Mxok5vfSfX4qN+dlR3QKh6
+         T1Xg==
+X-Gm-Message-State: AOAM53299rUPYhUa0oReoi3L6hSBrKhqKi4AbnFZ8mxZJmEKHUKxdLHR
+        NuyFp0hhyyIVq5ROSwxGwGD83Mb7IPR+Ly1BRSUa
+X-Google-Smtp-Source: ABdhPJyMYQib71KmGDawe2Sa6f6s4SJDfyMQRJedtkVd+Ib0jlueXrtB/26onK1/CMnUCdwxIX5WHVCU4U1exe/oGNQ=
+X-Received: by 2002:a05:6402:1e8e:b0:412:cfd8:4d12 with SMTP id
+ f14-20020a0564021e8e00b00412cfd84d12mr21942842edf.343.1646096960582; Mon, 28
+ Feb 2022 17:09:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20211117015806.2192263-1-dvander@google.com> <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
+ <Yao51m9EXszPsxNN@redhat.com> <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
+ <YapjNRrjpDu2a5qQ@redhat.com>
+In-Reply-To: <YapjNRrjpDu2a5qQ@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 28 Feb 2022 20:09:09 -0500
+Message-ID: <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+To:     Vivek Goyal <vgoyal@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        David Anderson <dvander@google.com>
+Cc:     Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
+        paulmoore@microsoft.com, Luca.Boccassi@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+I wanted to try and bring this thread back from the dead (?) as I
+believe the use-case is still valid and worth supporting.  Some more
+brief comments below ...
 
-While transitionning to ACC_MODE() with commit 5300990c0370 ("Sanitize
-f_flags helpers") and then fixing it with commit 6d125529c6cb ("Fix
-ACC_MODE() for real"), we lost an open flags consistency check.  Opening
-a file with O_WRONLY | O_RDWR leads to an f_flags containing MAY_READ |
-MAY_WRITE (thanks to the ACC_MODE() helper) and an empty f_mode.
-Indeed, the OPEN_FMODE() helper transforms 3 (an incorrect value) to 0.
+On Fri, Dec 3, 2021 at 1:34 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> I am not sure. In the early version of patches I think argument was
+> that do not switch to mounter's creds and use caller's creds on
+> underlying filesystem as well. And each caller will be privileged
+> enough to be able to perform the operation.
 
-Fortunately, vfs_read() and vfs_write() both check for FMODE_READ, or
-respectively FMODE_WRITE, and return an EBADF error if it is absent.
-Before commit 5300990c0370 ("Sanitize f_flags helpers"), opening a file
-with O_WRONLY | O_RDWR returned an EINVAL error.  Let's restore this safe
-behavior.
+The basic idea is that we can now build Linux systems with enough
+access control granularity such that a given process can have the
+necessary privileges to mount a filesystem, but not necessarily access
+all of the data on the filesystem, while other processes, with
+different access rights, are allowed to read and write data on the
+mounted filesystem.  Granted, this is a bit different from how things
+are usually done, but in my opinion it's a valid and interesting use
+case in that it allows us to remove unneeded access rights from
+historically very privileged system startup services/scripts: the
+service that runs to mount my homedir shouldn't be allowed to access
+my files just to mount the directory.
 
-To make it consistent with ACC_MODE(), this patch also changes
-OPEN_FMODE() to return FMODE_READ | FMODE_WRITE for O_WRONLY | O_RDWR.
-This may help protect from potential spurious issues.
+Unfortunately, this idea falls apart when we attempt to use overlayfs
+due to the clever/usual way it caches the mounting processes
+credentials and uses that in place of the current process' credentials
+when accessing certain parts of the underlying filesystems.  The
+current overlayfs implementation assumes that the mounter will always
+be more privileged than the processes accessing the filesystem, it
+would be nice if we could build a mechanism that didn't have this
+assumption baked into the implementation.
 
-This issue could result in inconsistencies with AppArmor, Landlock and
-SELinux, but the VFS checks would still forbid read and write accesses.
-Tomoyo uses the ACC_MODE() transformation which is correct, and Smack
-doesn't check the file mode.  Filesystems using OPEN_FMODE() should also
-be protected by the VFS checks.
+This patchset may not have been The Answer, but surely there is
+something we can do to support this use-case.
 
-Fixes: 5300990c0370 ("Sanitize f_flags helpers")
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Darrick J. Wong <djwong@kernel.org>
-Cc: Eric Paris <eparis@parisplace.org>
-Cc: John Johansen <john.johansen@canonical.com>
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Steve French <sfrench@samba.org>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20220228215935.748017-1-mic@digikod.net
----
- fs/file_table.c    | 3 +++
- include/linux/fs.h | 5 +++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+> Our take was that how is this model better because in current model
+> only mounter needs to be privileged while in this new model each
+> caller will have to be privileged. But Android guys seemed to be ok
+> with that. So has this assumption changed since early days. If callers
+> are privileged, then vfs_getxattr() on underlying filesystem for
+> overaly internal xattrs should succeed and there is no need for this
+> change.
+>
+> I suspect patches have evolved since then and callers are not as
+> privileged as we expect them to and that's why we are bypassing this
+> check on all overlayfs internal trusted xattrs? This definitely requires
+> much close scrutiny. My initial reaction is that this sounds very scary.
+>
+> In general I would think overlayfs should not bypass the check on
+> underlying fs. Either checks should be done in mounter's context or
+> caller's context (depending on override_creds=on/off).
+>
+> Thanks
+> Vivek
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 7d2e692b66a9..b936f69525d0 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -135,6 +135,9 @@ static struct file *__alloc_file(int flags, const struct cred *cred)
- 	struct file *f;
- 	int error;
- 
-+	if ((flags & O_ACCMODE) == O_ACCMODE)
-+		return ERR_PTR(-EINVAL);
-+
- 	f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
- 	if (unlikely(!f))
- 		return ERR_PTR(-ENOMEM);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e2d892b201b0..83bc5aaf1c41 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3527,8 +3527,9 @@ int __init list_bdev_fs_names(char *buf, size_t size);
- #define __FMODE_NONOTIFY	((__force int) FMODE_NONOTIFY)
- 
- #define ACC_MODE(x) ("\004\002\006\006"[(x)&O_ACCMODE])
--#define OPEN_FMODE(flag) ((__force fmode_t)(((flag + 1) & O_ACCMODE) | \
--					    (flag & __FMODE_NONOTIFY)))
-+#define OPEN_FMODE(flag) ((__force fmode_t)( \
-+			(((flag + 1) & O_ACCMODE) ?: O_ACCMODE) | \
-+			(flag & __FMODE_NONOTIFY)))
- 
- static inline bool is_sxid(umode_t mode)
- {
-
-base-commit: 7e57714cd0ad2d5bb90e50b5096a0e671dec1ef3
 -- 
-2.35.1
-
+paul-moore.com
