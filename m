@@ -2,154 +2,98 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF249C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Mar 2022 10:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6915C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Mar 2022 12:07:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231880AbiCAKP6 (ORCPT
+        id S234670AbiCAMIR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Mar 2022 05:15:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46422 "EHLO
+        Tue, 1 Mar 2022 07:08:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231689AbiCAKP5 (ORCPT
+        with ESMTP id S233206AbiCAMIR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Mar 2022 05:15:57 -0500
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4415B8D68E
-        for <linux-security-module@vger.kernel.org>; Tue,  1 Mar 2022 02:15:16 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4K7Cmd6DjQzMq5kH;
-        Tue,  1 Mar 2022 11:15:13 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4K7CmZ5H8YzljTgL;
-        Tue,  1 Mar 2022 11:15:10 +0100 (CET)
-Message-ID: <f6b63133-d555-a77c-0847-de15a9302283@digikod.net>
-Date:   Tue, 1 Mar 2022 11:15:09 +0100
-MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
+        Tue, 1 Mar 2022 07:08:17 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D892E1BE9D;
+        Tue,  1 Mar 2022 04:07:35 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id u1so20136234wrg.11;
+        Tue, 01 Mar 2022 04:07:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hSCwK5xS8mlQDgYKMAx0VBG8XXlCG6EJdzqrXuBG+YQ=;
+        b=PpIqQKZ/2cNpIDY6gBqHhJnRr265H0PDVQynomcMHlTr8MsfRqVJqI2q7fFxPqx+jk
+         yD9E3CnSgSUgB6+WYe5d4PMZG/SZhYkwSFAV5ZDa81V+sMuo2PS4m130jA0ho6Cn163k
+         F87UvbKWCHi9DDRimZOlxMQopfOeMis2dq/2HLkqxgVJR2vCIUnL2tFk9D840vMpT2XN
+         yi7h/zb7UkrNeoGmxhGCdptDY7X452KHD6msiDrQ7e85MnA67pRcgpd3V2LtW6WDlhK5
+         zxlpPZ81ImFOlWyrh2WMVKGXfupAmMfgICFs9YVG6ZSpIk7gkA+yVFVMokP1P0GB4dat
+         YzyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hSCwK5xS8mlQDgYKMAx0VBG8XXlCG6EJdzqrXuBG+YQ=;
+        b=2vnozjfBVkKY9BNCJw39bidc0BL8ogLlIuxZggYpvuK1RekxIRuk9ZqoXF/6l7hH+k
+         vIzXXcZqsUqkOMGvJTm7Dhp2xqBLR0WbhroumGvQRbQBFK8IefXcO9f0JcKgrUJZ7M0y
+         /8RLm7Gekf4iL70QuXl9SmPJDtn/yO4mi583V1soxhW84h3JbHsyrLjlpk3WV9gvVZ3A
+         HuHhjAhlhm8bPU6Fbg6BYHlsqCDUR5ekDJ5JDyyOHFb/PKoTZhVUh4fznlQwO/wZfxCq
+         vHwrcQFrM4RJyuC+McpHGZdRr0pllmT+Tf7bbj4WheqfGexNqAYw0BMmizCi6NHJ9w0y
+         DpLg==
+X-Gm-Message-State: AOAM531nDWp07cmp+Ou5NLf3vK4zvYxfO/eDx0afwzMS6sVfy5EDaIbQ
+        9apl6EFcfRRtGUdqgmCdSfs=
+X-Google-Smtp-Source: ABdhPJy5w8b76F7DObiS0Zj5X/X3oN+Cn8tf+9SnqcR5dCpBJywM51JSJ2UGavHd5lzX1XYQiGhoSQ==
+X-Received: by 2002:a05:6000:114b:b0:1ed:c1d5:95a8 with SMTP id d11-20020a056000114b00b001edc1d595a8mr18938705wrx.539.1646136454271;
+        Tue, 01 Mar 2022 04:07:34 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id i15-20020a05600011cf00b001edc2966dd4sm13256718wrx.47.2022.03.01.04.07.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Mar 2022 04:07:33 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20220228215935.748017-1-mic@digikod.net>
- <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v1] fs: Fix inconsistent f_mode
-In-Reply-To: <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH] ima: remove redundant initialization of pointer 'file'.
+Date:   Tue,  1 Mar 2022 12:07:32 +0000
+Message-Id: <20220301120732.670168-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+The pointer 'file' is being initialized with a value that is never read,
+it is being re-assigned the same value later on closer to where it is
+being first used. The initialization is redundant and can be removed.
 
-On 01/03/2022 10:22, Christian Brauner wrote:
-> On Mon, Feb 28, 2022 at 10:59:35PM +0100, Mickaël Salaün wrote:
->> From: Mickaël Salaün <mic@linux.microsoft.com>
->>
->> While transitionning to ACC_MODE() with commit 5300990c0370 ("Sanitize
->> f_flags helpers") and then fixing it with commit 6d125529c6cb ("Fix
->> ACC_MODE() for real"), we lost an open flags consistency check.  Opening
->> a file with O_WRONLY | O_RDWR leads to an f_flags containing MAY_READ |
->> MAY_WRITE (thanks to the ACC_MODE() helper) and an empty f_mode.
->> Indeed, the OPEN_FMODE() helper transforms 3 (an incorrect value) to 0.
->>
->> Fortunately, vfs_read() and vfs_write() both check for FMODE_READ, or
->> respectively FMODE_WRITE, and return an EBADF error if it is absent.
->> Before commit 5300990c0370 ("Sanitize f_flags helpers"), opening a file
->> with O_WRONLY | O_RDWR returned an EINVAL error.  Let's restore this safe
->> behavior.
-> 
-> That specific part seems a bit risky at first glance. Given that the
-> patch referenced is from 2009 this means we've been allowing O_WRONLY |
-> O_RDWR to succeed for almost 13 years now.
+Cleans up clang scan build warning:
+security/integrity/ima/ima_main.c:434:15: warning: Value stored to 'file'
+during its initialization is never read [deadcode.DeadStores]
 
-Yeah, it's an old bug, but we should keep in mind that a file descriptor 
-created with such flags cannot be used to read nor write. However, 
-unfortunately, it can be used for things like ioctl, fstat, chdir… I 
-don't know if there is any user of this trick.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ security/integrity/ima/ima_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Either way, there is an inconsistency between those using ACC_MODE() and 
-those using OPEN_FMODE(). If we decide to take a side for the behavior 
-of one or the other, without denying to create such FD, it could also 
-break security policies. We have to choose what to potentially break…
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index c6412dec3810..41b91a0bc8dc 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -431,7 +431,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+ {
+ 	struct ima_template_desc *template = NULL;
+-	struct file *file = vma->vm_file;
++	struct file *file;
+ 	char filename[NAME_MAX];
+ 	char *pathbuf = NULL;
+ 	const char *pathname = NULL;
+-- 
+2.34.1
 
-
-> 
->>
->> To make it consistent with ACC_MODE(), this patch also changes
->> OPEN_FMODE() to return FMODE_READ | FMODE_WRITE for O_WRONLY | O_RDWR.
->> This may help protect from potential spurious issues.
->>
->> This issue could result in inconsistencies with AppArmor, Landlock and
->> SELinux, but the VFS checks would still forbid read and write accesses.
->> Tomoyo uses the ACC_MODE() transformation which is correct, and Smack
->> doesn't check the file mode.  Filesystems using OPEN_FMODE() should also
->> be protected by the VFS checks.
->>
->> Fixes: 5300990c0370 ("Sanitize f_flags helpers")
->> Cc: Al Viro <viro@zeniv.linux.org.uk>
->> Cc: Casey Schaufler <casey@schaufler-ca.com>
->> Cc: Darrick J. Wong <djwong@kernel.org>
->> Cc: Eric Paris <eparis@parisplace.org>
->> Cc: John Johansen <john.johansen@canonical.com>
->> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
->> Cc: Miklos Szeredi <miklos@szeredi.hu>
->> Cc: Paul Moore <paul@paul-moore.com>
->> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
->> Cc: Steve French <sfrench@samba.org>
->> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->> Link: https://lore.kernel.org/r/20220228215935.748017-1-mic@digikod.net
->> ---
->>   fs/file_table.c    | 3 +++
->>   include/linux/fs.h | 5 +++--
->>   2 files changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/file_table.c b/fs/file_table.c
->> index 7d2e692b66a9..b936f69525d0 100644
->> --- a/fs/file_table.c
->> +++ b/fs/file_table.c
->> @@ -135,6 +135,9 @@ static struct file *__alloc_file(int flags, const struct cred *cred)
->>   	struct file *f;
->>   	int error;
->>   
->> +	if ((flags & O_ACCMODE) == O_ACCMODE)
->> +		return ERR_PTR(-EINVAL);
->> +
->>   	f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
->>   	if (unlikely(!f))
->>   		return ERR_PTR(-ENOMEM);
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index e2d892b201b0..83bc5aaf1c41 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -3527,8 +3527,9 @@ int __init list_bdev_fs_names(char *buf, size_t size);
->>   #define __FMODE_NONOTIFY	((__force int) FMODE_NONOTIFY)
->>   
->>   #define ACC_MODE(x) ("\004\002\006\006"[(x)&O_ACCMODE])
->> -#define OPEN_FMODE(flag) ((__force fmode_t)(((flag + 1) & O_ACCMODE) | \
->> -					    (flag & __FMODE_NONOTIFY)))
->> +#define OPEN_FMODE(flag) ((__force fmode_t)( \
->> +			(((flag + 1) & O_ACCMODE) ?: O_ACCMODE) | \
->> +			(flag & __FMODE_NONOTIFY)))
->>   
->>   static inline bool is_sxid(umode_t mode)
->>   {
->>
->> base-commit: 7e57714cd0ad2d5bb90e50b5096a0e671dec1ef3
->> -- 
->> 2.35.1
->>
