@@ -2,100 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFBDC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Mar 2022 12:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA327C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Mar 2022 15:10:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234710AbiCAMZZ (ORCPT
+        id S232651AbiCAPLE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Mar 2022 07:25:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
+        Tue, 1 Mar 2022 10:11:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231262AbiCAMZY (ORCPT
+        with ESMTP id S235569AbiCAPK7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Mar 2022 07:25:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0DCCE8BF6E
-        for <linux-security-module@vger.kernel.org>; Tue,  1 Mar 2022 04:24:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646137483;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=px8h7rOi4DLdnxTseE4yd2HQ+w2dXi8TPIQasAQ9aI0=;
-        b=ESrvIedA58evAsYKPzb7OtNhZqptK6S5oXnChuW5BTGxFufV3U9pAo1JOD36TsVD2Sh1Uv
-        URM08tpiFVHIkYbkAWsVR5/seHJ6fCm8Rs01dikOtLh81GeMOQPXTJH3UgNUw1aVfyAqb7
-        RozHKZCCN2jN/bd1Q78wlJnaQal/uy0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-665-YRBarv4rOMm5-u5ymqgweQ-1; Tue, 01 Mar 2022 07:24:37 -0500
-X-MC-Unique: YRBarv4rOMm5-u5ymqgweQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 851865200;
-        Tue,  1 Mar 2022 12:24:34 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.39.195.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8EC8C84945;
-        Tue,  1 Mar 2022 12:24:33 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id B993D180039D; Tue,  1 Mar 2022 13:24:31 +0100 (CET)
-Date:   Tue, 1 Mar 2022 13:24:31 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/4] virt: Add efi_secret module to expose
- confidential computing secrets
-Message-ID: <20220301122431.xcsuneftshiibvst@sirius.home.kraxel.org>
-References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
- <20220228114254.1099945-3-dovmurik@linux.ibm.com>
+        Tue, 1 Mar 2022 10:10:59 -0500
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D10F8F9A3
+        for <linux-security-module@vger.kernel.org>; Tue,  1 Mar 2022 07:10:16 -0800 (PST)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id B50C6166E; Tue,  1 Mar 2022 09:10:14 -0600 (CST)
+Date:   Tue, 1 Mar 2022 09:10:14 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        john.haxby@oracle.com
+Subject: Re: [PATCH RESEND] xfs: don't generate selinux audit messages for
+ capability testing
+Message-ID: <20220301151014.GA17144@mail.hallyn.com>
+References: <20220301025052.GF117732@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220228114254.1099945-3-dovmurik@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20220301025052.GF117732@magnolia>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 28, 2022 at 11:42:52AM +0000, Dov Murik wrote:
-> The new efi_secret module exposes the confidential computing (coco)
-> EFI secret area via securityfs interface.
+On Mon, Feb 28, 2022 at 06:50:52PM -0800, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 > 
-> When the module is loaded (and securityfs is mounted, typically under
-> /sys/kernel/security), a "secrets/coco" directory is created in
-> securityfs.  In it, a file is created for each secret entry.  The name
-> of each such file is the GUID of the secret entry, and its content is
-> the secret data.
+> There are a few places where we test the current process' capability set
+> to decide if we're going to be more or less generous with resource
+> acquisition for a system call.  If the process doesn't have the
+> capability, we can continue the call, albeit in a degraded mode.
 > 
-> This allows applications running in a confidential computing setting to
-> read secrets provided by the guest owner via a secure secret injection
-> mechanism (such as AMD SEV's LAUNCH_SECRET command).
+> These are /not/ the actual security decisions, so it's not proper to use
+> capable(), which (in certain selinux setups) causes audit messages to
+> get logged.  Switch them to has_capability_noaudit.
 > 
-> Removing (unlinking) files in the "secrets/coco" directory will zero out
-> the secret in memory, and remove the filesystem entry.  If the module is
-> removed and loaded again, that secret will not appear in the filesystem.
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> Cc: Dave Chinner <david@fromorbit.com>
+> ---
+>  fs/xfs/xfs_fsmap.c  |    4 ++--
+>  fs/xfs/xfs_ioctl.c  |    2 +-
+>  fs/xfs/xfs_iops.c   |    2 +-
+>  kernel/capability.c |    1 +
+>  4 files changed, 5 insertions(+), 4 deletions(-)
 > 
-> Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
+> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+> index 48287caad28b..10e1cb71439e 100644
+> --- a/fs/xfs/xfs_fsmap.c
+> +++ b/fs/xfs/xfs_fsmap.c
+> @@ -864,8 +864,8 @@ xfs_getfsmap(
+>  	    !xfs_getfsmap_is_valid_device(mp, &head->fmh_keys[1]))
+>  		return -EINVAL;
+>  
+> -	use_rmap = capable(CAP_SYS_ADMIN) &&
+> -		   xfs_has_rmapbt(mp);
+> +	use_rmap = xfs_has_rmapbt(mp) &&
 
-Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
+Hm, I'm failing to find where xfs_has_rmapbt() is defined.  I just
+wanted to make sure it doesn't have any side effects that you'd want
+to avoid in the no-capability case.  (Seems very unlikely that it
+would, given the name)
 
+> +		   has_capability_noaudit(current, CAP_SYS_ADMIN);
+>  	head->fmh_entries = 0;
+>  
+>  	/* Set up our device handlers. */
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index 2515fe8299e1..83481005317a 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -1189,7 +1189,7 @@ xfs_ioctl_setattr_get_trans(
+>  		goto out_error;
+>  
+>  	error = xfs_trans_alloc_ichange(ip, NULL, NULL, pdqp,
+> -			capable(CAP_FOWNER), &tp);
+> +			has_capability_noaudit(current, CAP_FOWNER), &tp);
+>  	if (error)
+>  		goto out_error;
+>  
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index b79b3846e71b..a65217f787cf 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -723,7 +723,7 @@ xfs_setattr_nonsize(
+>  	}
+>  
+>  	error = xfs_trans_alloc_ichange(ip, udqp, gdqp, NULL,
+> -			capable(CAP_FOWNER), &tp);
+> +			has_capability_noaudit(current, CAP_FOWNER), &tp);
+>  	if (error)
+>  		goto out_dqrele;
+>  
+> diff --git a/kernel/capability.c b/kernel/capability.c
+> index 46a361dde042..765194f5d678 100644
+> --- a/kernel/capability.c
+> +++ b/kernel/capability.c
+> @@ -360,6 +360,7 @@ bool has_capability_noaudit(struct task_struct *t, int cap)
+>  {
+>  	return has_ns_capability_noaudit(t, &init_user_ns, cap);
+>  }
+> +EXPORT_SYMBOL(has_capability_noaudit);
+>  
+>  static bool ns_capable_common(struct user_namespace *ns,
+>  			      int cap,
