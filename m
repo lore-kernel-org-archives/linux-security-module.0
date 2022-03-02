@@ -2,168 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4C5C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Mar 2022 11:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4D9C43217
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Mar 2022 11:15:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241182AbiCBLCI (ORCPT
+        id S241472AbiCBLQB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Mar 2022 06:02:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48550 "EHLO
+        Wed, 2 Mar 2022 06:16:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241169AbiCBLCG (ORCPT
+        with ESMTP id S241323AbiCBLPw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Mar 2022 06:02:06 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9929A6E8CC
-        for <linux-security-module@vger.kernel.org>; Wed,  2 Mar 2022 03:01:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646218882;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5NL90XATKKIX97C6VYVucVBu43shampcQFg2cfhQPbI=;
-        b=gMN9txtT4FPqbONYHN5kYQSw/hgoeLEb1m1+323USGPI6haYuyhEBksmBQjnLQmaqSXEbP
-        Ngv3uhzzylYkR044GClXTWmDWL4llcLqTnVRD85QPlJMnKOvCRpNhLyezJMY1rYFnplo+X
-        EM83FWnYMnhdePPUu4/JBTDYxuWWyG0=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-379-jf459M2EOQKvqBKBhDTxwg-1; Wed, 02 Mar 2022 06:01:21 -0500
-X-MC-Unique: jf459M2EOQKvqBKBhDTxwg-1
-Received: by mail-yb1-f200.google.com with SMTP id z15-20020a25bb0f000000b00613388c7d99so1096790ybg.8
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Mar 2022 03:01:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5NL90XATKKIX97C6VYVucVBu43shampcQFg2cfhQPbI=;
-        b=Vq+43pcZlsmf7aui3bXfcRVYZfTwtdGS/qTFxvq5awp9IBlhGX0YHupuYnGn3iX+b9
-         EEJIkyfxAgBU4ohtD8/A3mDRk6O0MlX1bnpEJ8cK3OldEuC6H5opFxbs6plMyp0zrziu
-         4G65nm2W3FWbrhocF4K7DLNHa5HIvsjeijh9Z6r0m+b7zIU8LOm5zKnm0I5kJbZSt+rZ
-         wX2UablgRPEYy5bPFmobHFrec8BycHQUsFLqBDHFaDwovY0LC/subX8x5wAujKFPeuK4
-         uHCLG5QNuNIiN+XOCdLqB/yRAy6Pi5ZYGE/0eI+RGJx7S/Us9rO+MtOAPpFk4kEy4+BF
-         BrZQ==
-X-Gm-Message-State: AOAM531S+gIoTtboCWSko2YT40gT1VVb6ygHQ60Fdy6ip4LE9IiLSmc/
-        SUdbSngDaqMkIF5j51tKwptqY+m8DgCF/WKrLScvf8N5HW8ogYXKXEHt+qsXmloHh0oU/7hn8KU
-        NeB8AHBvQVIw2HOcI7ttnDdHrqh4rZ8k3ARrDM5HRc6fgrGKaV1RH
-X-Received: by 2002:a5b:247:0:b0:624:4d24:94ee with SMTP id g7-20020a5b0247000000b006244d2494eemr28789731ybp.197.1646218881078;
-        Wed, 02 Mar 2022 03:01:21 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy7ZbJdJ3VdDsL0VpbGEgMbJsVW9RlhUr/FGHk5e6AUbSgJCJi4pT5cbcixtFEVKgVekZiufimv5mHqHzT0ZO0=
-X-Received: by 2002:a5b:247:0:b0:624:4d24:94ee with SMTP id
- g7-20020a5b0247000000b006244d2494eemr28789709ybp.197.1646218880870; Wed, 02
- Mar 2022 03:01:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20220301025052.GF117732@magnolia>
-In-Reply-To: <20220301025052.GF117732@magnolia>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Wed, 2 Mar 2022 12:01:09 +0100
-Message-ID: <CAFqZXNt3YqFTAq51D3TpV813hgtK8M47_VwGCoxigC25wpYmEg@mail.gmail.com>
-Subject: Re: [PATCH RESEND] xfs: don't generate selinux audit messages for
- capability testing
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Security Module list 
+        Wed, 2 Mar 2022 06:15:52 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 028DA606FB;
+        Wed,  2 Mar 2022 03:14:34 -0800 (PST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4K7s1J3Kcnz67Kvs;
+        Wed,  2 Mar 2022 19:13:24 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Wed, 2 Mar 2022 12:14:31 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <shuah@kernel.org>, <ast@kernel.org>,
+        <daniel@iogearbox.net>, <andrii@kernel.org>, <yhs@fb.com>,
+        <kpsingh@kernel.org>, <revest@chromium.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>, john.haxby@oracle.com
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        <linux-kselftest@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Subject: [PATCH v3 1/9] ima: Fix documentation-related warnings in ima_main.c
+Date:   Wed, 2 Mar 2022 12:13:56 +0100
+Message-ID: <20220302111404.193900-2-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220302111404.193900-1-roberto.sassu@huawei.com>
+References: <20220302111404.193900-1-roberto.sassu@huawei.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.63.22]
+X-ClientProxiedBy: lhreml751-chm.china.huawei.com (10.201.108.201) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 1, 2022 at 3:51 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
->
-> There are a few places where we test the current process' capability set
-> to decide if we're going to be more or less generous with resource
-> acquisition for a system call.  If the process doesn't have the
-> capability, we can continue the call, albeit in a degraded mode.
->
-> These are /not/ the actual security decisions, so it's not proper to use
-> capable(), which (in certain selinux setups) causes audit messages to
-> get logged.  Switch them to has_capability_noaudit.
->
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> Cc: Dave Chinner <david@fromorbit.com>
-> ---
->  fs/xfs/xfs_fsmap.c  |    4 ++--
->  fs/xfs/xfs_ioctl.c  |    2 +-
->  fs/xfs/xfs_iops.c   |    2 +-
->  kernel/capability.c |    1 +
->  4 files changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
-> index 48287caad28b..10e1cb71439e 100644
-> --- a/fs/xfs/xfs_fsmap.c
-> +++ b/fs/xfs/xfs_fsmap.c
-> @@ -864,8 +864,8 @@ xfs_getfsmap(
->             !xfs_getfsmap_is_valid_device(mp, &head->fmh_keys[1]))
->                 return -EINVAL;
->
-> -       use_rmap = capable(CAP_SYS_ADMIN) &&
-> -                  xfs_has_rmapbt(mp);
-> +       use_rmap = xfs_has_rmapbt(mp) &&
-> +                  has_capability_noaudit(current, CAP_SYS_ADMIN);
->         head->fmh_entries = 0;
->
->         /* Set up our device handlers. */
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 2515fe8299e1..83481005317a 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1189,7 +1189,7 @@ xfs_ioctl_setattr_get_trans(
->                 goto out_error;
->
->         error = xfs_trans_alloc_ichange(ip, NULL, NULL, pdqp,
-> -                       capable(CAP_FOWNER), &tp);
-> +                       has_capability_noaudit(current, CAP_FOWNER), &tp);
->         if (error)
->                 goto out_error;
->
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index b79b3846e71b..a65217f787cf 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -723,7 +723,7 @@ xfs_setattr_nonsize(
->         }
->
->         error = xfs_trans_alloc_ichange(ip, udqp, gdqp, NULL,
-> -                       capable(CAP_FOWNER), &tp);
-> +                       has_capability_noaudit(current, CAP_FOWNER), &tp);
->         if (error)
->                 goto out_dqrele;
->
-> diff --git a/kernel/capability.c b/kernel/capability.c
-> index 46a361dde042..765194f5d678 100644
-> --- a/kernel/capability.c
-> +++ b/kernel/capability.c
-> @@ -360,6 +360,7 @@ bool has_capability_noaudit(struct task_struct *t, int cap)
->  {
->         return has_ns_capability_noaudit(t, &init_user_ns, cap);
->  }
-> +EXPORT_SYMBOL(has_capability_noaudit);
->
->  static bool ns_capable_common(struct user_namespace *ns,
->                               int cap,
->
+Fix the following warnings in ima_main.c, displayed with W=n make argument:
 
-Thank you for respinning the patch[1]! And sorry that I couldn't find
-the time to do that :/
+security/integrity/ima/ima_main.c:432: warning: Function parameter or
+                          member 'vma' not described in 'ima_file_mprotect'
+security/integrity/ima/ima_main.c:636: warning: Function parameter or
+                  member 'inode' not described in 'ima_post_create_tmpfile'
+security/integrity/ima/ima_main.c:636: warning: Excess function parameter
+                            'file' description in 'ima_post_create_tmpfile'
+security/integrity/ima/ima_main.c:843: warning: Function parameter or
+                     member 'load_id' not described in 'ima_post_load_data'
+security/integrity/ima/ima_main.c:843: warning: Excess function parameter
+                                   'id' description in 'ima_post_load_data'
 
-Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+Also, fix some style issues in the description of ima_post_create_tmpfile()
+and ima_post_path_mknod().
 
-(Yes, we should still clean up and document the capability functions,
-but if no one has the energy, let's at least do the minimal fix.)
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_main.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-[1] Link for reference:
-https://lore.kernel.org/linux-xfs/20210316173226.2220046-1-omosnace@redhat.com/T/
-
---
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 8c6e4514d494..946ba8a12eab 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -418,6 +418,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+ 
+ /**
+  * ima_file_mprotect - based on policy, limit mprotect change
++ * @vma: vm_area_struct protection is set to
+  * @prot: contains the protection that will be applied by the kernel.
+  *
+  * Files can be mmap'ed read/write and later changed to execute to circumvent
+@@ -610,8 +611,8 @@ EXPORT_SYMBOL_GPL(ima_inode_hash);
+ 
+ /**
+  * ima_post_create_tmpfile - mark newly created tmpfile as new
+- * @mnt_userns:	user namespace of the mount the inode was found from
+- * @file : newly created tmpfile
++ * @mnt_userns: user namespace of the mount the inode was found from
++ * @inode: inode of the newly created tmpfile
+  *
+  * No measuring, appraising or auditing of newly created tmpfiles is needed.
+  * Skip calling process_measurement(), but indicate which newly, created
+@@ -643,7 +644,7 @@ void ima_post_create_tmpfile(struct user_namespace *mnt_userns,
+ 
+ /**
+  * ima_post_path_mknod - mark as a new inode
+- * @mnt_userns:	user namespace of the mount the inode was found from
++ * @mnt_userns: user namespace of the mount the inode was found from
+  * @dentry: newly created dentry
+  *
+  * Mark files created via the mknodat syscall as new, so that the
+@@ -814,8 +815,8 @@ int ima_load_data(enum kernel_load_data_id id, bool contents)
+  * ima_post_load_data - appraise decision based on policy
+  * @buf: pointer to in memory file contents
+  * @size: size of in memory file contents
+- * @id: kernel load data caller identifier
+- * @description: @id-specific description of contents
++ * @load_id: kernel load data caller identifier
++ * @description: @load_id-specific description of contents
+  *
+  * Measure/appraise/audit in memory buffer based on policy.  Policy rules
+  * are written in terms of a policy identifier.
+-- 
+2.32.0
 
