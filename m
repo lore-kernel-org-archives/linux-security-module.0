@@ -2,119 +2,81 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B267EC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 19:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A4FC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 22:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235824AbiCCTOn (ORCPT
+        id S236812AbiCCW2X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Mar 2022 14:14:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54602 "EHLO
+        Thu, 3 Mar 2022 17:28:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231142AbiCCTOn (ORCPT
+        with ESMTP id S236841AbiCCW2V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Mar 2022 14:14:43 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C268E15695C;
-        Thu,  3 Mar 2022 11:13:53 -0800 (PST)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 223I7lah022075;
-        Thu, 3 Mar 2022 19:13:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=qmrt+/Jkb8gDsrGOIzxJnNKsZAsWE6WMeHS3jtGFsOw=;
- b=DiSJgUgqV7yXSBLAk+0HzVrG7I4/t/D2mCttumHpFScW6oS0jrkN3NDg3d9cyNoePadv
- 54tzw9Vlm+QqZwcrckbjN9EDRMh5eSnRSobU2uYLLdkCe32o88YAkgtyrUdjQTa73kZV
- wzN0th04iOw9EqF7PaAEeCuFZz22nu+Cfe8BRkLUuM7yjg0+kmaZqZt89qF1l+Clg+yh
- 67Q7bpkJ7pQb9O5WF/ce/ne9l1X1OxHW/MALb9hgxpfEx2IttLwc5vqfR7S/tdJ4vvh4
- +6BS/QKQZu/dyQ1NKXSscwI9/JR5NVxOd3fcRX8xKmwEwaQQxZFehTlR7VyW1gwM0ZCB rQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ek0nm4asy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Mar 2022 19:13:32 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 223IdA7Z019088;
-        Thu, 3 Mar 2022 19:13:32 GMT
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ek0nm4ase-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Mar 2022 19:13:31 +0000
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 223J8wax004102;
-        Thu, 3 Mar 2022 19:13:29 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma02fra.de.ibm.com with ESMTP id 3efbu9h0wq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Mar 2022 19:13:29 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 223JDRHq41877958
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 3 Mar 2022 19:13:27 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4232A42049;
-        Thu,  3 Mar 2022 19:13:27 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BD84B42047;
-        Thu,  3 Mar 2022 19:13:24 +0000 (GMT)
-Received: from sig-9-65-93-208.ibm.com (unknown [9.65.93.208])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  3 Mar 2022 19:13:24 +0000 (GMT)
-Message-ID: <b6bf8463c1b370a5b5c9987ae1312fd930d36785.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>, shuah@kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        yhs@fb.com, revest@chromium.org, gregkh@linuxfoundation.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florent Revest <revest@google.com>,
-        Kees Cook <keescook@chromium.org>
-Date:   Thu, 03 Mar 2022 14:13:24 -0500
-In-Reply-To: <CACYkzJ5RNDV582yt1xCZ8AQUW6v_o0Dtoc_XAQN1GXnoOmze6Q@mail.gmail.com>
-References: <20220302111404.193900-1-roberto.sassu@huawei.com>
-         <20220302222056.73dzw5lnapvfurxg@ast-mbp.dhcp.thefacebook.com>
-         <fe1d17e7e7d4b5e4cdeb9f96f5771ded23b7c8f0.camel@linux.ibm.com>
-         <CACYkzJ4fmJ4XtC6gx6k_Gjq0n5vjSJyq=L--H-Eho072HJoywA@mail.gmail.com>
-         <04d878d4b2441bb8a579a4191d8edc936c5a794a.camel@linux.ibm.com>
-         <CACYkzJ5RNDV582yt1xCZ8AQUW6v_o0Dtoc_XAQN1GXnoOmze6Q@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: FANeqy5G1wiM_J_SJU3GjaSTTFkeGmlg
-X-Proofpoint-GUID: Ur-wuaMT2dDIoAnuan4VD-noqUb6Frs_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-03_09,2022-02-26_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 bulkscore=0 mlxlogscore=995 clxscore=1015 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2203030086
+        Thu, 3 Mar 2022 17:28:21 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB683FD1E
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Mar 2022 14:27:34 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id y2so3818667edc.2
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Mar 2022 14:27:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oKHXsyB04tyrJoKYD+RLcWyJjpgay072O5wpIWtKaKA=;
+        b=J1fz7M71dKOpgDo/StLM97I0vmRTW7N5Hrz1DXlgrELKtffMid03VfmO03Xzka4KLN
+         GwypvtaVKYwog4l2KSWvnjxc2Xj7Ts6Q58UP0vgELxuvgFmxHcDjAgWE/NeQkWp0YjCc
+         HkeVx3ndWVcDRnTJIFVeX16Ot+tTQ6HNu+vHH2/QMp+n6U8H9zfHZEnFezZ31A+xaUum
+         1f4gW/NS+6ocPSJBqY7Tz9BTxmWIs4o5aQiRdtnGVs4ltLsvctuovaQxFIhO/4fjYhyO
+         EmiFBvT7+m41p45AUzn0xL0QfaYDos5G5FCbalRV8cQOIypFO4vvopekgYZGmACIr0Mp
+         odBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oKHXsyB04tyrJoKYD+RLcWyJjpgay072O5wpIWtKaKA=;
+        b=W46BfQ/pgEbexYneOcQqY2Ms9JVKGc5Acel8RJ+QUpx6ndt9vGBkF+oUxqeFCNycHc
+         uL5BXWiMLnlPubAkmqOTcbJOYGXwMXtJvrF+KpW03xU7c83NpEsvjuc9R49lB0YCnVr+
+         ylTlybrAwE5PodqaTbITeBXbatRW+PbimQdeO7+QP/H7lipIvTrk2bRzpSbcFG4r7+uB
+         5VLJIfG+NlyDyMx5jIhzM7kpys4IVBf2TqZKw9so/J6ge223bTOCFGXueIvstJGPXXeS
+         1bDh0ldyIPphDEcLiCAK4pOjmxbfX90xvR+JfovikIAkQE2Z5kRTVFpUydYcsEwGZPro
+         P0OQ==
+X-Gm-Message-State: AOAM533K8V245jk5lH0ZGEKJ0emnPctKbGaEGo1DIqATmfJ7d95ZgJiI
+        Am12t/S0gWhiJTfpHBljfPgJetli4JoL+euMTvuW
+X-Google-Smtp-Source: ABdhPJx+2FAptwXLjRrLT4R1TUzNt8nfeE3yEvFAt8uEvg5KRUpu7Sf81EPLXtm8CbNiuakfJdr87xEHHjj0U53GUJg=
+X-Received: by 2002:a50:fb02:0:b0:40f:bd67:205f with SMTP id
+ d2-20020a50fb02000000b0040fbd67205fmr36237709edq.409.1646346453376; Thu, 03
+ Mar 2022 14:27:33 -0800 (PST)
+MIME-Version: 1.0
+References: <20220202235323.23929-1-casey@schaufler-ca.com>
+ <20220202235323.23929-25-casey@schaufler-ca.com> <2f32ffa3-7165-f989-b162-4aab162b5027@schaufler-ca.com>
+In-Reply-To: <2f32ffa3-7165-f989-b162-4aab162b5027@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 3 Mar 2022 17:27:22 -0500
+Message-ID: <CAHC9VhSzaDJX0cxtorH0AvqUzSKsr0BSbhfGtHEJjFKDRWc7oQ@mail.gmail.com>
+Subject: Re: [PATCH v32 24/28] Audit: Add framework for auxiliary records
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-03-03 at 19:14 +0100, KP Singh wrote:
-> 
-> Even Robert's use case is to implement IMA policies in BPF this is still
-> fundamentally different from IMA doing integrity measurement for BPF
-> and blocking this patch-set on the latter does not seem rational and
-> I don't see how implementing integrity for BPF would avoid your
-> concerns.
+On Wed, Mar 2, 2022 at 5:32 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 2/2/2022 3:53 PM, Casey Schaufler wrote:
+> > Add a list for auxiliary record data to the audit_buffer structure.
+> > Add the audit_stamp information to the audit_buffer as there's no
+> > guarantee that there will be an audit_context containing the stamp
+> > associated with the event. At audit_log_end() time create auxiliary
+> > records (none are currently defined) as have been added to the list.
+> >
+> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>
+> I'm really hoping for either Acks or feedback on this approach.
 
-eBPF modules are an entire class of files currently not being measured,
-audited, or appraised.  This is an integrity gap that needs to be
-closed.  The purpose would be to at least measure and verify the
-integrity of the eBPF module that is going to be used in lieu of
-traditional IMA.
+The only callers that make use of this functionality in this patchset
+is in kernel/audit*.c in patches 25/28 and 26/28, yes?
 
 -- 
-thanks,
-
-Mimi
-
+paul-moore.com
