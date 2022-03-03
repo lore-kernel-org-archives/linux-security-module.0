@@ -2,138 +2,167 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A49C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 15:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BE7C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 16:05:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234131AbiCCPfu (ORCPT
+        id S231770AbiCCQGe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Mar 2022 10:35:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38786 "EHLO
+        Thu, 3 Mar 2022 11:06:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229790AbiCCPft (ORCPT
+        with ESMTP id S229716AbiCCQGd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Mar 2022 10:35:49 -0500
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57BA314346A;
-        Thu,  3 Mar 2022 07:35:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1646321703; x=1677857703;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
-  b=F2VhXvWbC6GyW/hCoFYY7gZlv1/b1CilvGxLDR80ymrMMw6P1IUxJvEe
-   NYtUuJq+tUDKCVw+OL/blts414c0dSAH8UgQp7Y3tapiR9lMesnNshUPW
-   c00FfzdUNdDZyPvo0NHGxjNyFj6o25zUrAMhDZcV5Dhhd+TnOxNEcQ/5n
-   1XbCw1g2L+iAvzoxCLLrtUU6VlJVcJA7STkuO8RXudrSaYgmWDXgg+4Wz
-   NLw4bm0fqpj865pTbTE8Y7WScqJVx5qHqjRFqfT1Cg7XB2QRz3WtkB8Tu
-   e1XC6NFf5gKEuQmrNE2Kc/NTIC99Y835/p9X2FtThWIT1vrPqX+NbneUB
-   g==;
-X-IronPort-AV: E=Sophos;i="5.90,151,1643644800"; 
-   d="scan'208";a="194399567"
-Received: from mail-bn8nam11lp2176.outbound.protection.outlook.com (HELO NAM11-BN8-obe.outbound.protection.outlook.com) ([104.47.58.176])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Mar 2022 23:35:02 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DDZsr0aeZiSzW3SQBfOSZb7FIxrpD+EmEQZlL+M0R3rdc2jQX0IwlwJ4c9u0swct5fiLT7zkvZyx+oDTlntMwqkv4VQmxdFubmeekuxn8ke5mps4Xhl9GAIzQr6+9gKqKKbEK41epEkDCmJ/seULxWb0zapz+EJ0pWRblyLRX/i8B9/CwvhNjarxO26jyawLFS9cvfnq2zB3Pct61KJX9L5vh4z9ZF+zGCzJ414tIVfmHE0gG6h+F8PkH0J3cad0NLQTV7CfRTcL1OfwMAkGqgxQSzDJP1YNjorO2cGdLAe1fjK0JU2tCdUuFXE74ikw60Ni6B0bm10O5N9NIMyGDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
- b=mxWjVAOPbktTPuZ55wueUjrWBLIzJKkrhBuD7+CRRu8ilco7pZJwTCD5VBOHsQZ4a7GC/55i5SESFPH803UVRbTehfF6nj2qDWU8Z2joRKsfL3ZJMPNxcqOWqDB4LHwclz52vGysgnLoVsez7oBkyKr/Li/FK+CyITYH17zH18vaTqlrXZDSd6AGMDhnV1NPNpInhKBKt20WHR+uwQZChBAr2WICqkhCcQArhVpX+PD3/uoMDveePa9/3RfAQtntP51tbS2CxkCfrIeat9rWgptyALTa754nyYsqojP7lcMIQcFNoRlTltlTfLoJfI/ZvJ4oHaio85osX7Ln0bXFSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
- b=VUW+9OpfPNccYubRdJaxDWPCWco+rj7xGgCfo00zjxn5i32XRnVcvwBMyFV8WWmHLCPakBZw0I7GgrdYHInZWxyZNZM1VF81pWFwSiE2V3bxeD3ENmn7pNkrJEv9XRWZCZUYVNCIaK8BwUaGY3Zw8+IlfPcnV1glKQ0xIPtJmeE=
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
- by BYAPR04MB5031.namprd04.prod.outlook.com (2603:10b6:a03:41::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.24; Thu, 3 Mar
- 2022 15:35:01 +0000
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::e8b1:ea93:ffce:60f6]) by PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::e8b1:ea93:ffce:60f6%4]) with mapi id 15.20.5038.014; Thu, 3 Mar 2022
- 15:35:01 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-CC:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 5/5] loadpin: stop using bdevname
-Thread-Topic: [PATCH 5/5] loadpin: stop using bdevname
-Thread-Index: AQHYLvK6NVPy64Eup0+y/tCbfkm9Cg==
-Date:   Thu, 3 Mar 2022 15:35:00 +0000
-Message-ID: <PH0PR04MB74160783BD9A583B6C64C3D59B049@PH0PR04MB7416.namprd04.prod.outlook.com>
-References: <20220303113223.326220-1-hch@lst.de>
- <20220303113223.326220-6-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 89cdff9c-19f6-4cc6-4422-08d9fd2b617d
-x-ms-traffictypediagnostic: BYAPR04MB5031:EE_
-x-microsoft-antispam-prvs: <BYAPR04MB503112C6160B858B3F41DD1B9B049@BYAPR04MB5031.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: c7aSxmFwjRhbQWqRyZViRsWPqbbk091snvzi905tVUgG4pIU3gI1iR2s45vUktvkqDj2WiGXtet/AVH5/gVW7apRz6olqlWC2D2bulZ/0pT0n2M2RmuZ9Nv9/uOrgx6x0o4puY/uXCDO9v9qiWn54bfJS+TFyLK797mfGYM7uAwngxw8Iul7GcG50wsss4MmC3QDLCTYMj2J3ez8y1am3owpjL9wP/n2WEPwEoy0GI1RLQ1KawE/ooqN7xtHjFwpwbg6Dxbowf/8D1QjlFQ21wQdAWVz1T65+7vLVMjjXgLje8IeNfJPx2pw5tlkG5NO05OqRbVy+uKopGqgp5xRwb7ucE0rE1O0kyEeQEmr9pk2tbJfF4m53+pFIeiWzwcc7idVr73mZOtw2+9wpFbBEbeNbn8Q+FONUs11aH/vErpFPViQw0P4VY4F5dvGqkCL3JwktDAKq5QZsi3GUlesrewJ1hTnSAAn0Uu3ejofmrbsvQCf74ojTz5/bXFEVaaakXtxmWdXhtjskMMcLPBNdAJq8Krr+oKKFD4MYM019cexAkd5IR/LQDOwxOgco+4LsVd83HmNN80+ejxpSghvPA8QiQC0Y/djYkgDSRVZYK9Go2ykiu/bRUYob+T9Ci5g2DGX781Ne4FQRZEA5QNN3AukaTGUMG2RshWJtqty+TW72EdqcOrqp1up1ucDhWkbs62+BWdAJVIvOXZzCiTLag==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(66556008)(66946007)(33656002)(6506007)(558084003)(54906003)(71200400001)(8676002)(76116006)(4326008)(66476007)(316002)(64756008)(66446008)(508600001)(19618925003)(110136005)(2906002)(8936002)(55016003)(91956017)(52536014)(5660300002)(4270600006)(26005)(186003)(86362001)(9686003)(38100700002)(38070700005)(82960400001)(122000001)(7696005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?qwBK+Fpi0/gUXOeWPF6+26HaKuN5yhawRjdjub0+nXAOI/5XZDwrCYbcRSHM?=
- =?us-ascii?Q?kOVwhoNlpdjr5sWgHVIqdBfv3kJrK1RdcOY0mEQtsp6una1YabLnw/vA4VU+?=
- =?us-ascii?Q?pZPcztipXuMHsYmM/IjhUmc45RrccPC+TUdw6H6jdyQhLoj0EgyZdixfuxus?=
- =?us-ascii?Q?VDi98Tq4gJ8W/SgYl7011HN8KQ/2/hQhH8ZbiASemcaIb5eUQb3b3t0kSxD4?=
- =?us-ascii?Q?jTzbxz5gCy+K6fwObNmKdOBwo5PO9lR7wavhSj+C5XTdvz3L3eqno82EUTCD?=
- =?us-ascii?Q?YShI/J9tt5Wob9ayVt2TiB9teNen8vU26uZfnKXrO6Qg2yLNLLw8V1lyF7dd?=
- =?us-ascii?Q?36ouNY58g7n/JlA+83zvxVtT6+wx8u9JZ6/uKukDc9Rcg5dkf6c5v2zTQnST?=
- =?us-ascii?Q?5BBjlalj1jBv1jqSbdMvCKY7/FyaXbc1DVe2zU5cGLWd4I8L3Xhfta0ZrvGz?=
- =?us-ascii?Q?YSTMHL2mAqLmBfYfbFWnTm8FBDQP0lWcS2IF+pUyE0hZ3nPUerWUdx4jMETQ?=
- =?us-ascii?Q?khTTGVRBDdcUiXuhvqRicAkaHbtNJBfCRuXI0VBcBDS4MetV3Lyb9NDaSP/c?=
- =?us-ascii?Q?azkXmvX8KZeUydjE2rPttkKJowGwc0uQWc1RQ5/5JSgpDdI2W7w/0VmI+B0I?=
- =?us-ascii?Q?91mjwrMyB7AKh7gxa5um+BErD4fs3HURre+fLAD7XBGL5LOBIN2qKEQhg/Sa?=
- =?us-ascii?Q?bsXDvbHXGPC0QoO6bk104/6Dtmpi6EO/qx6v3o+Wc3d5g43i3z9HlBpKCuA1?=
- =?us-ascii?Q?kMZsIBKAmhG8e6JLpGZ6FRJYCxVIjPX+kCs9Y6W6uTfktnTOZLbq71GZNETa?=
- =?us-ascii?Q?t/fOlTygrCD/q6FR1KmQrvUYUyZQZgn/3kXcBNKYbOTyBEUYupEtWECxDr7h?=
- =?us-ascii?Q?ywP59TZp2tI0IIk3SWR7ClTUJFC5P3H/b73E4nWhD8ZzatqvfW1nCGcKG8Z4?=
- =?us-ascii?Q?PwGMehYg3Er7nKMwxLMUGHDw5RFGYZRGF/CLgU4XTryHN0RB7tOwubr+4GvB?=
- =?us-ascii?Q?S+rAoU571ZlyQrvdsgVXHcGTB+Vs3nowZvHlWfatc2QpztrjdnWEZkfB2OUh?=
- =?us-ascii?Q?GB9a4OqUDMfiYZRH4WyS+UfgMYsMetFtsJ7wCclGLNg54nOa/9K9kKTTEIiX?=
- =?us-ascii?Q?QZMrhvZglGRFCCsIxG2l/k1Q+Y31n/fqOC37qSNothn5V4wTCorPoL9ZKpvZ?=
- =?us-ascii?Q?NX751gATHuqZP+2Bi6HhIO/bL2H3BekEwg5bkPS9IuWUAHh9qg3oteDn45Nj?=
- =?us-ascii?Q?zXoraJAH3RhnKALjHX2x1Vl4uRxtJYy9to8CVJl0xABIUWktOrAASuONFCUH?=
- =?us-ascii?Q?0o5oz3DPpcA4/f7P6fuYODFBO0m9B87hfxOqYviPVZxlkWutDr1fH6d3/FVM?=
- =?us-ascii?Q?tQJW/UYPSg2jWmT77W9NUmcqzlGuQHxADqpVCdqOcLGWcdBROWeEh/4U4xXQ?=
- =?us-ascii?Q?cNqPDsYqw6b+pbKZ9wmHeUoZUD81dr5ChEFQYL6VaqKJSAfPscghlSlkMosg?=
- =?us-ascii?Q?Bt7Kd177oYAvIIGbEsQbyL/zEzfu+2P6yJvETiqHf37FBkYuY2RmJ6PtlHnP?=
- =?us-ascii?Q?iLP6bJSInMs/KwNNtsko0vX5KG9hPPGd5NM2s6ejMcnFM+HftHPsUBnbUY78?=
- =?us-ascii?Q?bjgBZ1tyEXpeCFkVDQFIywJJ9Gw3OWcWLccBijwkCqJXE15oXRPvGsXpKd/L?=
- =?us-ascii?Q?ZxyVLxO6o/YD4YUU/OdUXSPEveE=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89cdff9c-19f6-4cc6-4422-08d9fd2b617d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2022 15:35:00.9562
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: agZFhi87kS61SdQh408ybxxqIPOfVSzTj7BXe1/9pL9V7gaekDmLp2bNz6NIwPeJ7KrqMycPzDTuIRTlnubuRY+WhUeohI8SnsPYf4wP39s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5031
+        Thu, 3 Mar 2022 11:06:33 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF46B197B78;
+        Thu,  3 Mar 2022 08:05:47 -0800 (PST)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 223ETY12023455;
+        Thu, 3 Mar 2022 16:05:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=JyGLvJtca4oI/c0VcaMaTHyxDXa4LvL3NsttX8xHR1M=;
+ b=f9VS9+7g/t7GgV5y7NYDqFBEmnO7g3bhgzVB0BUj/ArARZZX79oFqCZ5vqo7x3yMDXog
+ IsL0KI/WMn2gsrpvmohM9+y3+TzfLUtYgiwW/s89dVBvLhglNr36DolWvFTALYxYrU7w
+ MkJOoVLOuJ1YTJ3LEj3GKB/zqO8t/J35AELqlV37HVp+4Vhwy+fqxG8pOZ1x3+0RVhV2
+ 0WGhpSHRFORhouSv1QqdSV+YbMqtCo+d7WmeHt2jIlderroBA3klLEctCWnFrwBjs8vW
+ 6iwe0liRvOVoF9v7+MgnSd1KZW6RDAMc7nKPkURLMM/d//ABaC5pGGawnH8M4FHrAgJt aw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ejvpqp1d6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Mar 2022 16:05:26 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 223FSQoG004079;
+        Thu, 3 Mar 2022 16:05:25 GMT
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ejvpqp1c6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Mar 2022 16:05:25 +0000
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 223FwuY2022532;
+        Thu, 3 Mar 2022 16:05:23 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma03fra.de.ibm.com with ESMTP id 3efbu9gkdk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Mar 2022 16:05:23 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 223G5L3Y17170900
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 3 Mar 2022 16:05:21 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DDCB54C050;
+        Thu,  3 Mar 2022 16:05:20 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B78B4C04E;
+        Thu,  3 Mar 2022 16:05:18 +0000 (GMT)
+Received: from sig-9-65-93-208.ibm.com (unknown [9.65.93.208])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  3 Mar 2022 16:05:18 +0000 (GMT)
+Message-ID: <fe1d17e7e7d4b5e4cdeb9f96f5771ded23b7c8f0.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, yhs@fb.com, kpsingh@kernel.org,
+        revest@chromium.org, gregkh@linuxfoundation.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Florent Revest <revest@google.com>,
+        Kees Cook <keescook@chromium.org>
+Date:   Thu, 03 Mar 2022 11:05:17 -0500
+In-Reply-To: <20220302222056.73dzw5lnapvfurxg@ast-mbp.dhcp.thefacebook.com>
+References: <20220302111404.193900-1-roberto.sassu@huawei.com>
+         <20220302222056.73dzw5lnapvfurxg@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: eIohtXZucs1n3aEyoz5AwK6mq862RsUS
+X-Proofpoint-GUID: QbhBxfo4xscyYeR3aAmt90U-TdI6weWf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-03_07,2022-02-26_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ mlxscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 adultscore=0
+ clxscore=1011 mlxlogscore=999 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2203030078
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Looks good,=0A=
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
+[Cc'ing Florent, Kees]
+
+Hi Alexei,
+
+On Wed, 2022-03-02 at 14:20 -0800, Alexei Starovoitov wrote:
+> On Wed, Mar 02, 2022 at 12:13:55PM +0100, Roberto Sassu wrote:
+> > Extend the interoperability with IMA, to give wider flexibility for the
+> > implementation of integrity-focused LSMs based on eBPF.
+> > 
+> > Patch 1 fixes some style issues.
+> > 
+> > Patches 2-6 give the ability to eBPF-based LSMs to take advantage of the
+> > measurement capability of IMA without needing to setup a policy in IMA
+> > (those LSMs might implement the policy capability themselves).
+> > 
+> > Patches 7-9 allow eBPF-based LSMs to evaluate files read by the kernel.
+> > 
+> > Changelog
+> > 
+> > v2:
+> > - Add better description to patch 1 (suggested by Shuah)
+> > - Recalculate digest if it is not fresh (when IMA_COLLECTED flag not set)
+> > - Move declaration of bpf_ima_file_hash() at the end (suggested by
+> >   Yonghong)
+> > - Add tests to check if the digest has been recalculated
+> > - Add deny test for bpf_kernel_read_file()
+> > - Add description to tests
+> > 
+> > v1:
+> > - Modify ima_file_hash() only and allow the usage of the function with the
+> >   modified behavior by eBPF-based LSMs through the new function
+> >   bpf_ima_file_hash() (suggested by Mimi)
+> > - Make bpf_lsm_kernel_read_file() sleepable so that bpf_ima_inode_hash()
+> >   and bpf_ima_file_hash() can be called inside the implementation of
+> >   eBPF-based LSMs for this hook
+> > 
+> > Roberto Sassu (9):
+> >   ima: Fix documentation-related warnings in ima_main.c
+> >   ima: Always return a file measurement in ima_file_hash()
+> >   bpf-lsm: Introduce new helper bpf_ima_file_hash()
+> >   selftests/bpf: Move sample generation code to ima_test_common()
+> >   selftests/bpf: Add test for bpf_ima_file_hash()
+> >   selftests/bpf: Check if the digest is refreshed after a file write
+> >   bpf-lsm: Make bpf_lsm_kernel_read_file() as sleepable
+> >   selftests/bpf: Add test for bpf_lsm_kernel_read_file()
+> >   selftests/bpf: Check that bpf_kernel_read_file() denies reading IMA
+> >     policy
+> 
+> We have to land this set through bpf-next.
+> Please get the Acks for patches 1 and 2, so we can proceed.
+
+Each year in the LSS integrity status update talk, I've mentioned the
+eBPF integrity gaps.  I finally reached out to KP, Florent Revest, Kees
+and others, letting them know that I'm concerned about the eBPF module
+integrity gaps.  True there is a difference between signing the eBPF
+source modules versus the eBPF generated output, but IMA could at least
+verify the integrity of the source eBPF modules making sure they are
+measured, the module hash audited, and are properly signed.
+
+Before expanding the ima_file_hash() or ima_inode_hash() usage, I'd
+appreciate someone adding the IMA support to measure, appraise, and
+audit eBPF modules.  I realize that closing the eBPF integrity gaps is
+orthogonal to this patch set, but this patch set is not only extending
+the ima_file_hash()/ima_inode_hash() usage, but will be used to
+circumvent IMA.  As per usual, IMA is policy based, allowing those
+interested in eBPF module integrity to define IMA policy rules.
+
+thanks,
+
+Mimi
+
