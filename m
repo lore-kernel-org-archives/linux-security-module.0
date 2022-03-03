@@ -2,147 +2,77 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F56C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Mar 2022 23:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00EE8C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 08:21:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229796AbiCBX6x (ORCPT
+        id S231295AbiCCIWg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Mar 2022 18:58:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43072 "EHLO
+        Thu, 3 Mar 2022 03:22:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbiCBX6w (ORCPT
+        with ESMTP id S230344AbiCCIWf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Mar 2022 18:58:52 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5828B22B1E;
-        Wed,  2 Mar 2022 15:58:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646265488; x=1677801488;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8rc56ekTbeKFOC2iDvS+DEuqovVns3lGZWNghGxdVAg=;
-  b=K58o9uRBYY7duBV0u+jYh31vDxU+I046W1LQUrR72tM9GTIg55EGKIRG
-   g9wQ2sLIJuqgOc81lnueCv9qK19KJc8sOFu9ghsR5Tp7du2meoSoMp1xG
-   GNMeddsVdCF4m6tadQwrK7PK2CwqLG8Q8ba8gFD50p0mT3OilmwXz5Pt9
-   yXdA43Y1HxmVSZjisWpOzaMNHfElUX97sysjhbL70AIboLqILB69W1zRK
-   vEpthpy0DDyD5pwGKVkHh4+fR9APIHQ3cpFSn80xMyRvWTgDmRVKGvzch
-   gLiOX0P8160SYjU3at5j/zDuPFMeCBIqvaAh7BuMhL+BZdk2YnT6oDpxI
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10274"; a="251101580"
-X-IronPort-AV: E=Sophos;i="5.90,150,1643702400"; 
-   d="scan'208";a="251101580"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2022 15:12:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,150,1643702400"; 
-   d="scan'208";a="630572209"
-Received: from lkp-server02.sh.intel.com (HELO e9605edfa585) ([10.239.97.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 02 Mar 2022 15:11:59 -0800
-Received: from kbuild by e9605edfa585 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nPY8U-00023G-Fz; Wed, 02 Mar 2022 23:11:58 +0000
-Date:   Thu, 3 Mar 2022 07:11:15 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, zohar@linux.ibm.com,
-        serge@hallyn.com, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v11 26/27] ima: Restrict informational audit messages to
- init_ima_ns
-Message-ID: <202203030748.dQ8i3hT2-lkp@intel.com>
-References: <20220302134703.1273041-27-stefanb@linux.ibm.com>
+        Thu, 3 Mar 2022 03:22:35 -0500
+X-Greylist: delayed 379 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 03 Mar 2022 00:21:50 PST
+Received: from mxout01.lancloud.ru (mxout01.lancloud.ru [45.84.86.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7536917187F
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Mar 2022 00:21:50 -0800 (PST)
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout01.lancloud.ru 3106A20D5C35
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+From:   Denis Glazkov <d.glazkov@omp.ru>
+CC:     Denis Glazkov <d.glazkov@omp.ru>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Mehmet Kayaalp" <mkayaalp@linux.vnet.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: [PATCH] KEYS: fix memory leak when reading certificate fails
+Thread-Topic: [PATCH] KEYS: fix memory leak when reading certificate fails
+Thread-Index: AQHYLtbXK3D575r57ECuz2QMV/HRKg==
+Date:   Thu, 3 Mar 2022 08:15:28 +0000
+Message-ID: <20220303081428.12979-1-d.glazkov@omp.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [192.168.11.133]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220302134703.1273041-27-stefanb@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Stefan,
+In the `read_file` function of `insert-sys-cert.c` script, if
+the data is read incorrectly, the memory allocated for the `buf`
+array is not freed.
 
-Thank you for the patch! Yet something to improve:
-
-[auto build test ERROR on linus/master]
-[also build test ERROR on v5.17-rc6]
-[cannot apply to zohar-integrity/next-integrity linux/master jmorris-security/next-testing next-20220302]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/0day-ci/linux/commits/Stefan-Berger/ima-Namespace-IMA-with-audit-support-in-IMA-ns/20220302-215707
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git fb184c4af9b9f4563e7a126219389986a71d5b5b
-config: arm64-randconfig-r006-20220302 (https://download.01.org/0day-ci/archive/20220303/202203030748.dQ8i3hT2-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project d271fc04d5b97b12e6b797c6067d3c96a8d7470e)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm64 cross compiling tool for clang build
-        # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/0day-ci/linux/commit/781d4b92eee902d5ebcac657814703974f8e8b28
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Stefan-Berger/ima-Namespace-IMA-with-audit-support-in-IMA-ns/20220302-215707
-        git checkout 781d4b92eee902d5ebcac657814703974f8e8b28
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> security/integrity/ima/ima_main.c:200:32: error: too many arguments to function call, expected 2, have 3
-                                   ima_update_xattr(ns, iint, file);
-                                   ~~~~~~~~~~~~~~~~           ^~~~
-   security/integrity/ima/ima.h:413:20: note: 'ima_update_xattr' declared here
-   static inline void ima_update_xattr(struct integrity_iint_cache *iint,
-                      ^
-   1 error generated.
-
-
-vim +200 security/integrity/ima/ima_main.c
-
-   176	
-   177	static void ima_check_last_writer(struct ima_namespace *ns,
-   178					  struct integrity_iint_cache *iint,
-   179					  struct inode *inode, struct file *file)
-   180	{
-   181		fmode_t mode = file->f_mode;
-   182		bool update;
-   183	
-   184		if (!(mode & FMODE_WRITE))
-   185			return;
-   186	
-   187		mutex_lock(&iint->mutex);
-   188		if (atomic_read(&inode->i_writecount) == 1) {
-   189			update = test_and_clear_bit(IMA_UPDATE_XATTR,
-   190						    &iint->atomic_flags);
-   191			if (!IS_I_VERSION(inode) ||
-   192			    !inode_eq_iversion(inode, iint->version) ||
-   193			    (iint->flags & IMA_NEW_FILE)) {
-   194				mask_iint_ns_status_flags
-   195						(iint,
-   196						 ~(IMA_DONE_MASK | IMA_NEW_FILE));
-   197				iint->measured_pcrs = 0;
-   198	
-   199				if (update)
- > 200					ima_update_xattr(ns, iint, file);
-   201			}
-   202		}
-   203		mutex_unlock(&iint->mutex);
-   204	}
-   205	
-
+Fixes: c4c361059585 ("KEYS: Reserve an extra certificate symbol for inserting without recompiling")
+Signed-off-by: Denis Glazkov <d.glazkov@omp.ru>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ scripts/insert-sys-cert.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/insert-sys-cert.c b/scripts/insert-sys-cert.c
+index 8902836c2342..b98a0b12f16f 100644
+--- a/scripts/insert-sys-cert.c
++++ b/scripts/insert-sys-cert.c
+@@ -251,6 +251,7 @@ static char *read_file(char *file_name, int *size)
+ 	if (read(fd, buf, *size) != *size) {
+ 		perror("File read failed");
+ 		close(fd);
++		free(buf);
+ 		return NULL;
+ 	}
+ 	close(fd);
+-- 
+2.25.1
