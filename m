@@ -2,77 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00EE8C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 08:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F5DC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 10:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231295AbiCCIWg convert rfc822-to-8bit (ORCPT
+        id S232106AbiCCKIs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Mar 2022 03:22:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57876 "EHLO
+        Thu, 3 Mar 2022 05:08:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230344AbiCCIWf (ORCPT
+        with ESMTP id S229833AbiCCKIr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Mar 2022 03:22:35 -0500
-X-Greylist: delayed 379 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 03 Mar 2022 00:21:50 PST
-Received: from mxout01.lancloud.ru (mxout01.lancloud.ru [45.84.86.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7536917187F
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Mar 2022 00:21:50 -0800 (PST)
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout01.lancloud.ru 3106A20D5C35
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-From:   Denis Glazkov <d.glazkov@omp.ru>
-CC:     Denis Glazkov <d.glazkov@omp.ru>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Mehmet Kayaalp" <mkayaalp@linux.vnet.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        Thu, 3 Mar 2022 05:08:47 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9A9516EAB3;
+        Thu,  3 Mar 2022 02:08:01 -0800 (PST)
+Received: from fraeml711-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4K8RTz6Vc5z67Wgc;
+        Thu,  3 Mar 2022 18:06:47 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml711-chm.china.huawei.com (10.206.15.60) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Thu, 3 Mar 2022 11:07:59 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.021;
+ Thu, 3 Mar 2022 11:07:59 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>, "yhs@fb.com" <yhs@fb.com>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "revest@chromium.org" <revest@chromium.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: [PATCH] KEYS: fix memory leak when reading certificate fails
-Thread-Topic: [PATCH] KEYS: fix memory leak when reading certificate fails
-Thread-Index: AQHYLtbXK3D575r57ECuz2QMV/HRKg==
-Date:   Thu, 3 Mar 2022 08:15:28 +0000
-Message-ID: <20220303081428.12979-1-d.glazkov@omp.ru>
-Accept-Language: ru-RU, en-US
+        <linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
+Thread-Topic: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
+Thread-Index: AQHYLiawVJiGIoJTAUWtCyWVLc4li6ysmoEAgADV/tA=
+Date:   Thu, 3 Mar 2022 10:07:59 +0000
+Message-ID: <c9ef19a0203e4e9eb9416fa84d034db0@huawei.com>
+References: <20220302111404.193900-1-roberto.sassu@huawei.com>
+ <20220302222056.73dzw5lnapvfurxg@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20220302222056.73dzw5lnapvfurxg@ast-mbp.dhcp.thefacebook.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [192.168.11.133]
-Content-Type: text/plain; charset="iso-8859-1"
+x-originating-ip: [10.204.63.33]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-To:     unlisted-recipients:; (no To-header on input)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In the `read_file` function of `insert-sys-cert.c` script, if
-the data is read incorrectly, the memory allocated for the `buf`
-array is not freed.
+> From: Alexei Starovoitov [mailto:alexei.starovoitov@gmail.com]
+> Sent: Wednesday, March 2, 2022 11:21 PM
+> On Wed, Mar 02, 2022 at 12:13:55PM +0100, Roberto Sassu wrote:
+> > Extend the interoperability with IMA, to give wider flexibility for the
+> > implementation of integrity-focused LSMs based on eBPF.
+> >
+> > Patch 1 fixes some style issues.
+> >
+> > Patches 2-6 give the ability to eBPF-based LSMs to take advantage of the
+> > measurement capability of IMA without needing to setup a policy in IMA
+> > (those LSMs might implement the policy capability themselves).
+> >
+> > Patches 7-9 allow eBPF-based LSMs to evaluate files read by the kernel.
+> >
+> > Changelog
+> >
+> > v2:
+> > - Add better description to patch 1 (suggested by Shuah)
+> > - Recalculate digest if it is not fresh (when IMA_COLLECTED flag not set)
+> > - Move declaration of bpf_ima_file_hash() at the end (suggested by
+> >   Yonghong)
+> > - Add tests to check if the digest has been recalculated
+> > - Add deny test for bpf_kernel_read_file()
+> > - Add description to tests
+> >
+> > v1:
+> > - Modify ima_file_hash() only and allow the usage of the function with the
+> >   modified behavior by eBPF-based LSMs through the new function
+> >   bpf_ima_file_hash() (suggested by Mimi)
+> > - Make bpf_lsm_kernel_read_file() sleepable so that bpf_ima_inode_hash()
+> >   and bpf_ima_file_hash() can be called inside the implementation of
+> >   eBPF-based LSMs for this hook
+> >
+> > Roberto Sassu (9):
+> >   ima: Fix documentation-related warnings in ima_main.c
+> >   ima: Always return a file measurement in ima_file_hash()
+> >   bpf-lsm: Introduce new helper bpf_ima_file_hash()
+> >   selftests/bpf: Move sample generation code to ima_test_common()
+> >   selftests/bpf: Add test for bpf_ima_file_hash()
+> >   selftests/bpf: Check if the digest is refreshed after a file write
+> >   bpf-lsm: Make bpf_lsm_kernel_read_file() as sleepable
+> >   selftests/bpf: Add test for bpf_lsm_kernel_read_file()
+> >   selftests/bpf: Check that bpf_kernel_read_file() denies reading IMA
+> >     policy
+> 
+> We have to land this set through bpf-next.
+> Please get the Acks for patches 1 and 2, so we can proceed.
 
-Fixes: c4c361059585 ("KEYS: Reserve an extra certificate symbol for inserting without recompiling")
-Signed-off-by: Denis Glazkov <d.glazkov@omp.ru>
----
- scripts/insert-sys-cert.c | 1 +
- 1 file changed, 1 insertion(+)
+Ok. Mimi, do you have time to have a look at those patches?
 
-diff --git a/scripts/insert-sys-cert.c b/scripts/insert-sys-cert.c
-index 8902836c2342..b98a0b12f16f 100644
---- a/scripts/insert-sys-cert.c
-+++ b/scripts/insert-sys-cert.c
-@@ -251,6 +251,7 @@ static char *read_file(char *file_name, int *size)
- 	if (read(fd, buf, *size) != *size) {
- 		perror("File read failed");
- 		close(fd);
-+		free(buf);
- 		return NULL;
- 	}
- 	close(fd);
--- 
-2.25.1
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Zhong Ronghua
