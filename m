@@ -2,83 +2,74 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF66C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 17:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FB1C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 17:29:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235341AbiCCR2O (ORCPT
+        id S235356AbiCCRaJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Mar 2022 12:28:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38414 "EHLO
+        Thu, 3 Mar 2022 12:30:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235335AbiCCR2O (ORCPT
+        with ESMTP id S231726AbiCCRaJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Mar 2022 12:28:14 -0500
-X-Greylist: delayed 384 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 03 Mar 2022 09:27:26 PST
-Received: from sandeen.net (sandeen.net [63.231.237.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BA39C28F;
-        Thu,  3 Mar 2022 09:27:26 -0800 (PST)
-Received: from [10.0.0.147] (liberator.sandeen.net [10.0.0.147])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 8E1E7323C1F;
-        Thu,  3 Mar 2022 11:19:58 -0600 (CST)
-Message-ID: <e97b6ef6-dc48-c49b-a98e-6d404dc79a59@sandeen.net>
-Date:   Thu, 3 Mar 2022 11:21:00 -0600
+        Thu, 3 Mar 2022 12:30:09 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C81C8FA1
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Mar 2022 09:29:23 -0800 (PST)
+Received: by mail-pl1-x636.google.com with SMTP id i1so5180895plr.2
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Mar 2022 09:29:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=DcEbjshQgySqBtgjSy1+OKZZY+Sd4vwdSaGKmyFWkJc=;
+        b=WXwaDnsb8HID0Spn/or2l4ztUrO48fYiMPvuk7fTqUXl/yka5P7ohbzzf9cV2hAAcT
+         r1Ypw8qIhmRcd2a+FB8l7hWmXj40wnAXgYQM4XpXpshGuHGMeX3DeqDW/6p7225yy49n
+         oLrlZSGoTL9KMnG5YbYVn3+WnRo/G43JH3rp4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DcEbjshQgySqBtgjSy1+OKZZY+Sd4vwdSaGKmyFWkJc=;
+        b=mk83gEGYmlEc5CtDec4ERn+UWG84D+bgN3/x/eJwrskdZFxp3aIN8Ftdr+GtPYgnBf
+         kgiFqPWkE0ZL8SAH1QrrvpdXDmh9wS1uC9gUkLHvqDPCFW8R6vDUsXWYGCgDPBvhVVue
+         AAhV80V99kjPUG8GIb9SPXx/VWGBpyONRhOezRHCMGObbLdaLIqxocsm7DFQ0+QmMnng
+         ws/hZPu8xYUhXg+XpsVJKrTmNJT4v/yPxbyzYwp6cm4Ix9il+7dYEZ+ClpnFVX1WB5mh
+         lt7kJk+plGzTEENSXHGl/LbEJyR/VyeBvv/z6RqtJTCwmylT9f1hJuC2USpvc40/nwOM
+         4myg==
+X-Gm-Message-State: AOAM531HGpx5v3MZBuCPvApqHxmDE/1hB7tQzoz7I686p6m90fXtNG/R
+        RHtF1EMJIY/vKHRDfFOwBBn2HOGFi8CLbw==
+X-Google-Smtp-Source: ABdhPJxqUAgcm+o53nFPmMt3Xzp/nP5eJagrImosmirB4O8e0hyGXPiQ0MlWzoISBvak+MEryFoZ3A==
+X-Received: by 2002:a17:902:cf05:b0:14d:5249:3b1f with SMTP id i5-20020a170902cf0500b0014d52493b1fmr37147754plg.135.1646328563239;
+        Thu, 03 Mar 2022 09:29:23 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l17-20020a056a0016d100b004c34686e322sm3292114pfc.182.2022.03.03.09.29.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Mar 2022 09:29:22 -0800 (PST)
+Date:   Thu, 3 Mar 2022 09:29:22 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 5/5] loadpin: stop using bdevname
+Message-ID: <202203030929.BF0DE2B4@keescook>
+References: <20220303113223.326220-1-hch@lst.de>
+ <20220303113223.326220-6-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.6.1
-Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        john.haxby@oracle.com
-References: <20220301025052.GF117732@magnolia>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Subject: Re: [PATCH RESEND] xfs: don't generate selinux audit messages for
- capability testing
-In-Reply-To: <20220301025052.GF117732@magnolia>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220303113223.326220-6-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/28/22 8:50 PM, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
+On Thu, Mar 03, 2022 at 02:32:23PM +0300, Christoph Hellwig wrote:
+> Use the %pg format specifier to save on stack consuption and code size.
 > 
-> There are a few places where we test the current process' capability set
-> to decide if we're going to be more or less generous with resource
-> acquisition for a system call.  If the process doesn't have the
-> capability, we can continue the call, albeit in a degraded mode.
-> 
-> These are /not/ the actual security decisions, so it's not proper to use
-> capable(), which (in certain selinux setups) causes audit messages to
-> get logged.  Switch them to has_capability_noaudit.
-> 
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> Cc: Dave Chinner <david@fromorbit.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Thanks Darrick. This looks technically correct to me as well.
+Acked-by: Kees Cook <keescook@chromium.org>
 
-You might want to add a:
-
-Fixes: 7317a03df703f ("xfs: refactor inode ownership change transaction/inode/quota allocation idiom")
-
-because I /think/ that's the commit that moved the capable() checks out
-from under quota tests, and made the problem more visible.
-
-And maybe:
-
-Fixes: ea9a46e1c4925 ("xfs: only return detailed fsmap info if the caller has CAP_SYS_ADMIN")
-
-as well?
-
-It's not strictly fixing the former; AFAICT the problem existed when quota was
-enabled already, so I'll leave all that to your discretion.
-
-Reviewed-by: Eric Sandeen <sandeen@redhat.com>
-
-Thanks,
--Eric
+-- 
+Kees Cook
