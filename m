@@ -2,120 +2,57 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F5DC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 10:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5631EC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Mar 2022 11:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232106AbiCCKIs convert rfc822-to-8bit (ORCPT
+        id S233052AbiCCLf0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Mar 2022 05:08:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55482 "EHLO
+        Thu, 3 Mar 2022 06:35:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229833AbiCCKIr (ORCPT
+        with ESMTP id S232984AbiCCLez (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Mar 2022 05:08:47 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9A9516EAB3;
-        Thu,  3 Mar 2022 02:08:01 -0800 (PST)
-Received: from fraeml711-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4K8RTz6Vc5z67Wgc;
-        Thu,  3 Mar 2022 18:06:47 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml711-chm.china.huawei.com (10.206.15.60) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Thu, 3 Mar 2022 11:07:59 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.021;
- Thu, 3 Mar 2022 11:07:59 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>, "yhs@fb.com" <yhs@fb.com>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "revest@chromium.org" <revest@chromium.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
-Thread-Topic: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
-Thread-Index: AQHYLiawVJiGIoJTAUWtCyWVLc4li6ysmoEAgADV/tA=
-Date:   Thu, 3 Mar 2022 10:07:59 +0000
-Message-ID: <c9ef19a0203e4e9eb9416fa84d034db0@huawei.com>
-References: <20220302111404.193900-1-roberto.sassu@huawei.com>
- <20220302222056.73dzw5lnapvfurxg@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20220302222056.73dzw5lnapvfurxg@ast-mbp.dhcp.thefacebook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.204.63.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 3 Mar 2022 06:34:55 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B3574B418;
+        Thu,  3 Mar 2022 03:32:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=bJa9qgtYYfiIC+/F69WRpdhiIshV0iFeP9NQD2r57nU=; b=pJ9yeyYaX6spyaSzNdz4ZWz/+3
+        4vvJ1ua3dKNn0a/+vA8kygqoFt4BP7vNGJl5ZhGy7RGnTuVV1EYGDFzSs3k7jnOzixxeHnRvToRgz
+        uSx5cTsaz+uvUl73IBetWqRvMbYEqHU/eKTaVjVL7VsC1UFLU97UlraqBCZzLfWCwxdxXHBu1xicV
+        DgYVmcuPbL3D7OIwQlzRn+wvHPymiw72yyPwi4XapikvmeHj43cFEs/PyK6nGzdiUM2G2OtsvjrBT
+        rPzWBCrPTqAEUJxW+upFLV4V+3G0pV1YPlDe1onNub1l9cgl/1MeOt9mOMgnVk/hA4PiHIyRT3pCG
+        a3VvQQvw==;
+Received: from [91.93.38.115] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nPjh6-006Dd0-7h; Thu, 03 Mar 2022 11:32:29 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Kees Cook <keescook@chromium.org>, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-security-module@vger.kernel.org
+Subject: a few trivial bdevname() removals
+Date:   Thu,  3 Mar 2022 14:32:18 +0300
+Message-Id: <20220303113223.326220-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Alexei Starovoitov [mailto:alexei.starovoitov@gmail.com]
-> Sent: Wednesday, March 2, 2022 11:21 PM
-> On Wed, Mar 02, 2022 at 12:13:55PM +0100, Roberto Sassu wrote:
-> > Extend the interoperability with IMA, to give wider flexibility for the
-> > implementation of integrity-focused LSMs based on eBPF.
-> >
-> > Patch 1 fixes some style issues.
-> >
-> > Patches 2-6 give the ability to eBPF-based LSMs to take advantage of the
-> > measurement capability of IMA without needing to setup a policy in IMA
-> > (those LSMs might implement the policy capability themselves).
-> >
-> > Patches 7-9 allow eBPF-based LSMs to evaluate files read by the kernel.
-> >
-> > Changelog
-> >
-> > v2:
-> > - Add better description to patch 1 (suggested by Shuah)
-> > - Recalculate digest if it is not fresh (when IMA_COLLECTED flag not set)
-> > - Move declaration of bpf_ima_file_hash() at the end (suggested by
-> >   Yonghong)
-> > - Add tests to check if the digest has been recalculated
-> > - Add deny test for bpf_kernel_read_file()
-> > - Add description to tests
-> >
-> > v1:
-> > - Modify ima_file_hash() only and allow the usage of the function with the
-> >   modified behavior by eBPF-based LSMs through the new function
-> >   bpf_ima_file_hash() (suggested by Mimi)
-> > - Make bpf_lsm_kernel_read_file() sleepable so that bpf_ima_inode_hash()
-> >   and bpf_ima_file_hash() can be called inside the implementation of
-> >   eBPF-based LSMs for this hook
-> >
-> > Roberto Sassu (9):
-> >   ima: Fix documentation-related warnings in ima_main.c
-> >   ima: Always return a file measurement in ima_file_hash()
-> >   bpf-lsm: Introduce new helper bpf_ima_file_hash()
-> >   selftests/bpf: Move sample generation code to ima_test_common()
-> >   selftests/bpf: Add test for bpf_ima_file_hash()
-> >   selftests/bpf: Check if the digest is refreshed after a file write
-> >   bpf-lsm: Make bpf_lsm_kernel_read_file() as sleepable
-> >   selftests/bpf: Add test for bpf_lsm_kernel_read_file()
-> >   selftests/bpf: Check that bpf_kernel_read_file() denies reading IMA
-> >     policy
-> 
-> We have to land this set through bpf-next.
-> Please get the Acks for patches 1 and 2, so we can proceed.
+Hi Jens,
 
-Ok. Mimi, do you have time to have a look at those patches?
+this series contains a few trivial conversion from bdevname to the %pg
+format specifier.
 
-Thanks
-
-Roberto
-
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Zhong Ronghua
+Diffstat:
+ block/bdev.c                  |    8 +++-----
+ block/blk-lib.c               |    6 ++----
+ drivers/block/drbd/drbd_req.c |    6 ++----
+ drivers/block/pktcdvd.c       |   10 +++-------
+ security/loadpin/loadpin.c    |    5 +----
+ 5 files changed, 11 insertions(+), 24 deletions(-)
