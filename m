@@ -2,125 +2,159 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85902C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Mar 2022 14:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB63DC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Mar 2022 15:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233357AbiCDOog (ORCPT
+        id S233809AbiCDPLn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Mar 2022 09:44:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48880 "EHLO
+        Fri, 4 Mar 2022 10:11:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239925AbiCDOof (ORCPT
+        with ESMTP id S230207AbiCDPLm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Mar 2022 09:44:35 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 783F11BD071
-        for <linux-security-module@vger.kernel.org>; Fri,  4 Mar 2022 06:43:47 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id qx21so17896373ejb.13
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Mar 2022 06:43:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9EdPYiVYFEGT7WXfdTQ+DM8Rd0Oojjp9HvMnxorUW0w=;
-        b=2j4G/eCC5cV6nb3yTMvSO4aNKmommilMbdTyKZIgLCh6pbC0rCz0DMiqWj6OV3ivwN
-         yFepQ49oQyQm0bvgi0cqP5Ipc7SrYCUGLYXQjM91bSqh2D1AX5tAE6Buc5MMQLjzqBVV
-         sQ0hHlSbXynWvtz3J6lkHx2XbwAHOBT5nfATFDiPjxeb6nvrP4uURtDtR03NCEh7ayHW
-         F6x65vtBMZWhuzj1JiuJS5pKPOuA7iU3/OAkiwoLOmlU3Q/jPcjs1VLp/eOMHxIhWyQC
-         47jSjsq7S2TrP6pxOJGMEGDuz9/FizoFlMz0PvFNDhJeyGBejzD71WEoLr4LkyDgAm0m
-         BYtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9EdPYiVYFEGT7WXfdTQ+DM8Rd0Oojjp9HvMnxorUW0w=;
-        b=K47in6M4okaBOdRnNyHX5y9OD4Qxw1D38wcNWYgX85xuaYhawzfAmKzABlMO+sfOcG
-         qjKHaBwi0nerjU4AniK/GRJWcX6zoA6RrRiA5acJ1OOHp9vGvLn1fHQpQsBxWVIMRMm6
-         cuTZpK5YGSAHAKm0LFSCE+dgOytggG3T01qlsXbQ2VDFjd26Ww1AgE3iOMA/SlleS2o6
-         s9SE5qREz9fbX37V1M0iETacZnVJndgttAGhWBATdz9vKVaEFehAdy4DGraoUUVY1YnH
-         MQNdmL5yRNQmlq5ut7YFhyuhjF9RaHxybF2FhDlFkLhomN29aXb7+CHFHqrHD7jqaYOO
-         BGqQ==
-X-Gm-Message-State: AOAM530ZZLTHZLy1tK1hEz2/QpksRAJe+cQb9r3p76hrxCdsmlhjvTE+
-        AO6uzPxxmFfJ5klDauiBFP5ETXURAvN8l9ZuPaoK
-X-Google-Smtp-Source: ABdhPJwYUPmHIXmuKyRCCCuUwU1LnQ4xS2DnqMVUc3W2/V05vUsnDQ9LEnCVCgEeQJeBjV1s2lpXWERkfieRwSRzXkc=
-X-Received: by 2002:a17:907:da6:b0:6da:8f3f:d563 with SMTP id
- go38-20020a1709070da600b006da8f3fd563mr6651337ejc.112.1646405025870; Fri, 04
- Mar 2022 06:43:45 -0800 (PST)
+        Fri, 4 Mar 2022 10:11:42 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AF621C2332;
+        Fri,  4 Mar 2022 07:10:54 -0800 (PST)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 224DB0Yc014910;
+        Fri, 4 Mar 2022 15:10:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=ciIHhFJaJb75Cjc8NGM6MB6m0nC4s4N+phinFfx7gNs=;
+ b=Y4GJXTOEJbiMndgkGKppBHTJsKK6kNydc/YWhoePimLI64mHX01DQe62DUDOgOR3HNwm
+ q+UTro61PJ+jzpgPJ7VXYFVlmoWsY9rrf8fvdJZOtc4YYyAdix8BUijQ1OYjxUBPrPyU
+ 3gLCsRtCzJouLWyftqwFVHtiW+4nya2ZvZiljvNp69HpdAIRC5D71uAaardgLtM3UdLc
+ 3WTkAWVoh+HBOxwF5JP7MM6NRQYSoIDl14O2b+ermDKaRwCxEaD5lTBwDjxDls0Pisqz
+ HEzVmvefs2bVd5Sf/vY6nxQXX3g5E0N8coBUGgZPdgOhpj/H68z5ZvpTTZ1yq7TJ2BuK 0A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ekdcq9cxv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Mar 2022 15:10:22 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 224EIUkY013229;
+        Fri, 4 Mar 2022 15:10:21 GMT
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ekdcq9cxj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Mar 2022 15:10:21 +0000
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 224F3L9e022567;
+        Fri, 4 Mar 2022 15:10:21 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma05wdc.us.ibm.com with ESMTP id 3ek4k9ngwa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Mar 2022 15:10:21 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 224FAIHo12911226
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 4 Mar 2022 15:10:18 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 67BD8112061;
+        Fri,  4 Mar 2022 15:10:18 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 43B19112065;
+        Fri,  4 Mar 2022 15:10:18 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  4 Mar 2022 15:10:18 +0000 (GMT)
+Message-ID: <b6e9eb1e-846c-c98e-ad16-c651b5e1dad7@linux.ibm.com>
+Date:   Fri, 4 Mar 2022 10:10:17 -0500
 MIME-Version: 1.0
-References: <20220202235323.23929-1-casey@schaufler-ca.com>
- <20220202235323.23929-25-casey@schaufler-ca.com> <CAHC9VhS6An9L7LavYTP57QXdOugQf62NCjDmS4kQq3wk+yemcg@mail.gmail.com>
- <0bbd2d61-415f-08f2-251e-2dd6b8991d6a@schaufler-ca.com>
-In-Reply-To: <0bbd2d61-415f-08f2-251e-2dd6b8991d6a@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 4 Mar 2022 09:43:34 -0500
-Message-ID: <CAHC9VhQEJOu_G16eSfMipbMyU-fQZW6bnm2OdstmKHLdgm9Nsg@mail.gmail.com>
-Subject: Re: [PATCH v32 24/28] Audit: Add framework for auxiliary records
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 2/4] X.509: Parse Basic Constraints for CA
+Content-Language: en-US
+To:     Eric Snowberg <eric.snowberg@oracle.com>, zohar@linux.ibm.com,
+        jarkko@kernel.org, dhowells@redhat.com, dwmw2@infradead.org
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
+        mic@linux.microsoft.com, konrad.wilk@oracle.com,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20220301173651.3435350-1-eric.snowberg@oracle.com>
+ <20220301173651.3435350-3-eric.snowberg@oracle.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20220301173651.3435350-3-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: -IV59bcrT_bnon1M2ufEuXGdsyL4J80o
+X-Proofpoint-GUID: jIXztiokg71__8i1rfcjmST00a2jpD05
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-04_06,2022-03-04_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203040081
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 3, 2022 at 9:13 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 3/3/2022 3:36 PM, Paul Moore wrote:
-> > Adding a new aux record would involve calling some private audit
-> > function (no one outside of the audit subsystem should need access)
-> > that would allocate a new skb similar to what we do in
-> > audit_buffer_alloc() and add it to the end of the sk_buff_head list
-> > via skb_queue_tail() and resetting audit_buffer::skb to point to the
-> > newly allocated skb.
+
+On 3/1/22 12:36, Eric Snowberg wrote:
+> Parse the X.509 Basic Constraints.  The basic constraints extension
+> identifies whether the subject of the certificate is a CA.
 >
-> Good naming may be tricky as we need to indicate that a new buffer is
-> being allocated for an attached aux record and that the buffer to which
-> it's being attached is going to temporarily be in a curious state.
-> audit_buffer_add_aux() seems wordy, but it's what I'll start with lacking
-> a better suggestion.
+> BasicConstraints ::= SEQUENCE {
+>          cA                      BOOLEAN DEFAULT FALSE,
+>          pathLenConstraint       INTEGER (0..MAX) OPTIONAL }
+>
+> If the CA is true, store it in a new public_key field call key_is_ca.
+> This will be used in a follow on patch that requires knowing if the
+> public key is a CA.
+>
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> ---
+>   crypto/asymmetric_keys/x509_cert_parser.c | 9 +++++++++
+>   include/crypto/public_key.h               | 1 +
+>   2 files changed, 10 insertions(+)
+>
+> diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+> index 2899ed80bb18..38c907f4ce27 100644
+> --- a/crypto/asymmetric_keys/x509_cert_parser.c
+> +++ b/crypto/asymmetric_keys/x509_cert_parser.c
+> @@ -583,6 +583,15 @@ int x509_process_extension(void *context, size_t hdrlen,
+>   		return 0;
+>   	}
+>   
+> +	if (ctx->last_oid == OID_basicConstraints) {
 
-I agree that it will leave the audit_buffer in an odd state, at least
-with the current definition of the audit_buffer.  However, this is
-mitigated by the restriction that the only callers should be within
-the audit subsystem.  Here is some quick pseudo-code mockup of what
-I'm thinking:
+Don't you have to check whether you can access v[0] and v[1]?
 
-/* on success, ab->skb will point to the new aux record */
-static int audit_buffer_aux_new(struct audit_buffer *ab, int type)
-{
-  WARN_ON(ab->skb != skb_peek(&ab->skb_list));
+if (vlen < 3)
 
-  ab->skb = nlmsg_new(AUDIT_BUFSIZ, ab->gfp_mask);
-  if (!ab->skb)
-    goto err;
-  if (!nlmsg_put(ab->skb, 0, 0, type, 0, 0))
-    goto err;
-  skb_queue_tail(&ab->skb_list);
-  return 0;
+     return -EBADMSG;
 
-err:
-  kfree_skb(&ab->skb);
-  ab->skb = skb_peek(&ab->skb_list);
-  return -ENOMEM;
-}
+or should it even be
 
-/* restores the "main" record into ab->skb */
-static void audit_buffer_aux_end(struct audit_buffer *ab)
-{
-  ab->skb = skb_peek(&ab->skb_list);
-}
+if (vlen != 3)
 
-/* free the current aux record and reset ab->skb to the "main" */
-static void audit_buffer_aux_cancel(struct audit_buffer *ab)
-{
-  if (ab->skb != skb_peek_tail(&ab->skb_list)) {
-    BUG();
-    return;
-  }
-  ab->skb = skb_peek(&ab->skb_list);
-  kfree_skb(skb_dequeue_tail(&ab->skb_list));
-}
+      return -EBADMSG;
 
--- 
-paul-moore.com
+
+> +		if (v[0] != (ASN1_CONS_BIT | ASN1_SEQ))
+> +			return -EBADMSG;
+> +		if (v[1] != vlen - 2)
+> +			return -EBADMSG;
+> +		if (v[1] != 0 && v[2] == ASN1_BOOL && v[3] == 1)
+> +			ctx->cert->pub->key_is_ca = true;
+> +	}
+> +
+>   	return 0;
+>   }
+>   
+> diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+> index 6d61695e1cde..0521241764b7 100644
+> --- a/include/crypto/public_key.h
+> +++ b/include/crypto/public_key.h
+> @@ -26,6 +26,7 @@ struct public_key {
+>   	void *params;
+>   	u32 paramlen;
+>   	bool key_is_private;
+> +	bool key_is_ca;
+>   	const char *id_type;
+>   	const char *pkey_algo;
+>   };
