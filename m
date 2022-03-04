@@ -2,900 +2,1283 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4007C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Mar 2022 19:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49049C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Mar 2022 20:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbiCDTPH (ORCPT
+        id S230118AbiCDUCK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Mar 2022 14:15:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50712 "EHLO
+        Fri, 4 Mar 2022 15:02:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbiCDTPD (ORCPT
+        with ESMTP id S229938AbiCDUBv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Mar 2022 14:15:03 -0500
-Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 037551EDA08
-        for <linux-security-module@vger.kernel.org>; Fri,  4 Mar 2022 11:14:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646421248; bh=ZzAkbJEgcCl/wlvhYhWz1o5OOjhPur/+vXH4B7YIX8k=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=IxfEmW1UO0wqgcatdjdhdBZi1eNRMvcV3YJn4xf8sPAX10PCgSdzZHI4oToHhtU8Sk1+EHkTdAkMnML+hqFf5eKMozFiTLIZ1GzK5ul5x+ij85AsBuh0ijM0IdPj7lkpCh1lGRWPvPkZJ6B5bp1g26SGSsZT4gTryC5Y7F1HB6gZA0SLCS52Qzpo7xoq02tC6XPZnAVoAUnfMrOgBE3V2Z7c8U2b0b8qllUvslMp6xgzDqKHTAiwg1XNNk3DGtHG1/n7lBPN4+BbbDuk1tWRQs8PmRJVLJMZSLOUg+1bdXqY693uRW+ZRmK172PoFT7MS02wOGY6IhRyQQKqy/rUgA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646421248; bh=IxcbM8anrb8CxsjVPQr1+oyTq9Blb7EOeyIdSaXCal9=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=R9OqqfxeLV6Bbiw8wm38xk83JMVH+BwH7Vc4uQI0WLLJ0iaxmwv624CoHNQ0oRYUBgk0WdD0ErNOEzt/FrjK/yDBa4Y75ckr492f6a24FLFe9orG09h1eh5lT0FRNN3BxMUbhsZXSgN2Se28WoIcILKzAH6LjX3VArS7NSraNt8rDQRrVkZ8qkfhwd+/OPScgVuNs25O/KdF/yswTLzM/k/IQndyr90UNti5yJlXTdydA3FTI2w6kGQlL5tPGCqPLfFy8a9vVdpQH8uycbvp2J4PNjcC9It99C9YcZeNtX9MgOhdM73tB0xHuGZcj2dGkxgeL8OKM+tJhVLS4FjxkA==
-X-YMail-OSG: cI7xli0VM1liIcdv9QILAq_ayt9hBVP_xatOp3mi_yt9t_imGXfryz_oKHbrJF0
- A8pCxVNNCSrN9WlcffNIK8nnqevSoc15QJ_9bbe3mWGJXMzB5EW1ye_iaXjKepr6t7dbvO.yGd7z
- dMKEpOPpP6LeMjjqQfKtzH5EYWuFZhovsD2nnToPFfwDP5toXnBX0WeKjcM7nN3ssU4JU9wTqxPB
- EfITzHImBlZ_7iAafU4pMpGOVvzEf6PK4Y_g4R.52XT.WiPKSDURqRK37yeC_AljrEKFDsxw3k0K
- y6t1tTRlIZJajMDnuJBKVHOTCZZbG5CADYzT9tM.SDuYUS6yQzfA1R2EV3b_Tct4q_EijRpKcC.Z
- jsaRz1JRLHXK7QTdLfzCKWy7ZRgTA4D1Gi2vwKWRvQgks8.i9kKTA8OlXNIZ_lhVrMbiCqO4lkyB
- VHSAYgxeX_AFJbtyf6fp7mnOzoLpUBvJ9rpiNZmaO8cSpbwrcTvZpsrE6Zv17TXC2AoKiBMSwQ8g
- fi1ZcMYW1OmteSFFBKzxedC7sqsCpdrUW0AiAakgCzJsCHBuVtaYrSopU8gnjxB743Vt257i2.E6
- HB5qRsBud4xSc_KrxMwpQ8vbmql0ol7ALPHF4aWUzoZ.z2HwumYCMfmyG7ymBTvxuox5GheldIm_
- JlzN.36Y0A8rA3ewl0HTfcX9W1PsqP63Msocsbz9qOJL63Y2XXSCTC.zIK.Iv1lY7vagXxRcaLn4
- 0XoKQaZ4btJWKxnVM4dSqR8jlXbFw5N_Av0DMjiddpz0SJI2p7Z8mn23zS3NkfIuiFW7Z9KRcPtF
- f4mtgPhutzOWhg37G1pxysJxcXjbmk6kn1VuhFtvi5BBNktiUBjZQpT3qB0EHqywWv1LVcczu7W9
- E5KprFEZsWz.dcZeGx2dz8LhYquQL4frDrhSNWGciUC_pchcylfxP_CxnoeiLvwIjEqj7EjcTf3u
- NAQPn4oIv1Hbda7UlYqZpkrr81kPHouv1KDPXOSqnVlSLFxZiP_jaNHkEXo0q7BhnyfahIRabEP4
- 9jXtCq53nziADtHpJLpixoozoNMFe0ymQGFSACzLHKbX7DGJVGQ5YgocaWmtG3sARmN1rK6sdqc7
- fBdnNMsDGnWLQBv.hINkP4tTI9u.tFVY92KgSTrgNkjNS3GAs2q1nw2R69wj42XJ.M7e1lb3iJ9e
- DxBUB7azGeX4PmqhK5jcu7EMaCcnBTjU8tXhdG.XQ3gA5klF1FP4PeFnTYSj6FRGMKXjxpHZsQfp
- S4q87QKyoaBxN5zUfW6I2ji_xco2YSOP968D28RBfD8ZEkd7TFR2KPkq8YCg71sjqqXqfrFdstO1
- tmu27QJLkAUraZNr5B1bY2AkdR_HxdGJabJGyKCwJorYdQNOFHkvB.tiCeNsXjoHaAkInjTuLDhQ
- 6X99YHv4kZBvptRIa1xSX9vPKsY.RY716pyyWRSWFBk3jx8q9Fcf4kGvGNwrDyxOWuz80LHkc.W8
- CcFQltL4f3x8GCr5U9XqYumkw03D4APL4vsMufDVin7bauRzBR5XKesu4IM4vHqcsf_WeFajSPTq
- _rYtE.TYoTot_pOg9UBDoo6pVbC7CZxDe3eOy4v9fFotEBmxmki6plh1v.wXeQVY3fiv.VbwCfCI
- DKHeje1SzjF6C6h5v6_DX5.toY5m72b74fHlXQ3R63jswhUh9Hvftuaji4csrTRFXZ.7eqUHuDmw
- BjOLxwMe876fvznH29IrTbiO1JoKFPCFQrO_49DGj58oHCGXy2CczI4Icr5slqn0SwYaCNBc4RTq
- 8rYxYbPG2lgOr23vJaD3KbNv2FMemMpSmTIvt6YGVKEt1WBNAjI89G68UChS0uWXsEd99uSy1twG
- 2.sR4Gt2oeY4D7a3nL2sEURTslU20wUN2g_ShsNTI668I.ngYGqgWLvh1Too5YhLiN51OJgQlCkg
- hEClX31yBkN5LRyRmC9JfTWNTff.HkU3AVhXKk86Aitg6yTmsPdn7bDlWrpsSF9UR12buiUuh3y7
- 1cHNUDwm_h9WSMFqK3X2N7ZKzJFahXThWf9N4tDzC98DkCLHsH484PwaK5Uzx_an0KvCZVbBCM3I
- 6tgi2j2p1ZniRqdRVKV0ZqzQim1lvb_qQiaxOu0QDU2kG3izUksBChAUuMRuWrF42kyRzaMBVnR0
- 94AzCqios7dTVBWN8oL3qwl4tefzjmUhLbXNvXj2rO.cS4Mz0z3..cADJaz_y9QS9FJk8xvGfQFg
- lVSgfQAuscMe2RYftHEnDkNHmIbU-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Fri, 4 Mar 2022 19:14:08 +0000
-Received: by kubenode527.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 6349d18b7d068fc7f89c0919771ca5a0;
-          Fri, 04 Mar 2022 19:14:06 +0000 (UTC)
-Message-ID: <273f4a9c-f96a-e051-5f5e-82310a15e234@schaufler-ca.com>
-Date:   Fri, 4 Mar 2022 11:14:05 -0800
+        Fri, 4 Mar 2022 15:01:51 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86F646B2E;
+        Fri,  4 Mar 2022 11:56:47 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 28485619E9;
+        Fri,  4 Mar 2022 19:40:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD61C340F2;
+        Fri,  4 Mar 2022 19:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646422835;
+        bh=V/xUq6M73q3LYeXdiBMMn5MzBXJndu+kKCtwjOz8f4Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aaCIDPgtTe2RvJyPhQfgm4Tv9rWkGWFHVbh++r5lPmlgva3JxqYPpM/qzayLA8x9i
+         g6E1r/R5qXc5VoPbS/yGk9rO15SwdqkeE/es1t/O3MTLv17ionMqKgOcEOvy8yYqNW
+         RTO146a2xZeopQ2ZlXMhP8hxLuJbasHcw49zMtBxNubFlQ+2pwu1pEfOPlkuNUCt90
+         +kcJ6ZkVECucCt+UlTi3aCnUok9LIzXpXm9o+gjtkkQJQldbFEbcdRsCzHCB53ayPD
+         STG1oV8YriDui/QIE8jOSx10fZOyf0SKY/whPGE6pkTHXgyqUvr6wuhD46+cmqGA4+
+         9MGlIFWCtUYiQ==
+Date:   Fri, 4 Mar 2022 11:40:33 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Denis Kenzior <denkenz@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: Re: [PATCH] KEYS: remove support for asym_tpm keys
+Message-ID: <YiJrMWY5rX3WDTTo@sol.localdomain>
+References: <20220128195655.45342-1-ebiggers@kernel.org>
+ <Ygv/V4e1JHyTNEsT@iki.fi>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v32 03/28] LSM: Add the lsmblob data structure.
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov,
-        linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20220202235323.23929-1-casey@schaufler-ca.com>
- <20220202235323.23929-4-casey@schaufler-ca.com>
- <ecbe78fa-a032-e01d-2134-0dba8176ffba@digikod.net>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <ecbe78fa-a032-e01d-2134-0dba8176ffba@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.19797 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ygv/V4e1JHyTNEsT@iki.fi>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/4/2022 2:48 AM, Mickaël Salaün wrote:
->
-> On 03/02/2022 00:52, Casey Schaufler wrote:
->> When more than one security module is exporting data to
->> audit and networking sub-systems a single 32 bit integer
->> is no longer sufficient to represent the data. Add a
->> structure to be used instead.
->>
->> The lsmblob structure is currently an array of
->> u32 "secids". There is an entry for each of the
->> security modules built into the system that would
->> use secids if active. The system assigns the module
->> a "slot" when it registers hooks. If modules are
->> compiled in but not registered there will be unused
->> slots.
->>
->> A new lsm_id structure, which contains the name
->> of the LSM and its slot number, is created. There
->> is an instance for each LSM, which assigns the name
->> and passes it to the infrastructure to set the slot.
->>
->> The audit rules data is expanded to use an array of
->> security module data rather than a single instance.
->> A new structure audit_lsm_rules is defined to avoid the
->> confusion which commonly accompanies the use of
->> void ** parameters.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->
-> Reviewed-by: Mickaël Salaün <mic@linux.microsoft.com>
->
->
-> Minor fixes:
+On Tue, Feb 15, 2022 at 08:30:31PM +0100, Jarkko Sakkinen wrote:
+> On Fri, Jan 28, 2022 at 11:56:55AM -0800, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > asym_tpm keys are tied to TPM v1.2, which uses outdated crypto and has
+> > been deprecated in favor of TPM v2.0 for over 7 years.  A very quick
+> > look at this code also immediately found some memory safety bugs
+> > (https://lore.kernel.org/r/20220113235440.90439-2-ebiggers@kernel.org).
+> > Note that this code is reachable by unprivileged users.
+> > 
+> > According to Jarkko (one of the keyrings subsystem maintainers), this
+> > code has no practical use cases, and he isn't willing to maintain it
+> > (https://lore.kernel.org/r/YfFZPbKkgYJGWu1Q@iki.fi).
+> > 
+> > Therefore, let's remove it.
+> > 
+> > Note that this feature didn't have any documentation or tests, so we
+> > don't need to worry about removing those.
+> > 
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: Denis Kenzior <denkenz@gmail.com>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> > Cc: Marcel Holtmann <marcel@holtmann.org>
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >  crypto/asymmetric_keys/Kconfig      |  21 -
+> >  crypto/asymmetric_keys/Makefile     |  12 -
+> >  crypto/asymmetric_keys/asym_tpm.c   | 957 ----------------------------
+> >  crypto/asymmetric_keys/tpm.asn1     |   5 -
+> >  crypto/asymmetric_keys/tpm_parser.c | 102 ---
+> >  include/crypto/asym_tpm_subtype.h   |  19 -
+> >  6 files changed, 1116 deletions(-)
+> >  delete mode 100644 crypto/asymmetric_keys/asym_tpm.c
+> >  delete mode 100644 crypto/asymmetric_keys/tpm.asn1
+> >  delete mode 100644 crypto/asymmetric_keys/tpm_parser.c
+> >  delete mode 100644 include/crypto/asym_tpm_subtype.h
+> > 
+> > diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+> > index 1f1f004dc7577..460bc5d0a828c 100644
+> > --- a/crypto/asymmetric_keys/Kconfig
+> > +++ b/crypto/asymmetric_keys/Kconfig
+> > @@ -22,18 +22,6 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+> >  	  appropriate hash algorithms (such as SHA-1) must be available.
+> >  	  ENOPKG will be reported if the requisite algorithm is unavailable.
+> >  
+> > -config ASYMMETRIC_TPM_KEY_SUBTYPE
+> > -	tristate "Asymmetric TPM backed private key subtype"
+> > -	depends on TCG_TPM
+> > -	depends on TRUSTED_KEYS
+> > -	select CRYPTO_HMAC
+> > -	select CRYPTO_SHA1
+> > -	select CRYPTO_HASH_INFO
+> > -	help
+> > -	  This option provides support for TPM backed private key type handling.
+> > -	  Operations such as sign, verify, encrypt, decrypt are performed by
+> > -	  the TPM after the private key is loaded.
+> > -
+> >  config X509_CERTIFICATE_PARSER
+> >  	tristate "X.509 certificate parser"
+> >  	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+> > @@ -54,15 +42,6 @@ config PKCS8_PRIVATE_KEY_PARSER
+> >  	  private key data and provides the ability to instantiate a crypto key
+> >  	  from that data.
+> >  
+> > -config TPM_KEY_PARSER
+> > -	tristate "TPM private key parser"
+> > -	depends on ASYMMETRIC_TPM_KEY_SUBTYPE
+> > -	select ASN1
+> > -	help
+> > -	  This option provides support for parsing TPM format blobs for
+> > -	  private key data and provides the ability to instantiate a crypto key
+> > -	  from that data.
+> > -
+> >  config PKCS7_MESSAGE_PARSER
+> >  	tristate "PKCS#7 message parser"
+> >  	depends on X509_CERTIFICATE_PARSER
+> > diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+> > index 28b91adba2aed..c38424f55b08d 100644
+> > --- a/crypto/asymmetric_keys/Makefile
+> > +++ b/crypto/asymmetric_keys/Makefile
+> > @@ -11,7 +11,6 @@ asymmetric_keys-y := \
+> >  	signature.o
+> >  
+> >  obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) += public_key.o
+> > -obj-$(CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE) += asym_tpm.o
+> >  
+> >  #
+> >  # X.509 Certificate handling
+> > @@ -75,14 +74,3 @@ verify_signed_pefile-y := \
+> >  
+> >  $(obj)/mscode_parser.o: $(obj)/mscode.asn1.h $(obj)/mscode.asn1.h
+> >  $(obj)/mscode.asn1.o: $(obj)/mscode.asn1.c $(obj)/mscode.asn1.h
+> > -
+> > -#
+> > -# TPM private key parsing
+> > -#
+> > -obj-$(CONFIG_TPM_KEY_PARSER) += tpm_key_parser.o
+> > -tpm_key_parser-y := \
+> > -	tpm.asn1.o \
+> > -	tpm_parser.o
+> > -
+> > -$(obj)/tpm_parser.o: $(obj)/tpm.asn1.h
+> > -$(obj)/tpm.asn1.o: $(obj)/tpm.asn1.c $(obj)/tpm.asn1.h
+> > diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
+> > deleted file mode 100644
+> > index 0959613560b9e..0000000000000
+> > --- a/crypto/asymmetric_keys/asym_tpm.c
+> > +++ /dev/null
+> > @@ -1,957 +0,0 @@
+> > -// SPDX-License-Identifier: GPL-2.0
+> > -#define pr_fmt(fmt) "ASYM-TPM: "fmt
+> > -#include <linux/slab.h>
+> > -#include <linux/module.h>
+> > -#include <linux/export.h>
+> > -#include <linux/kernel.h>
+> > -#include <linux/seq_file.h>
+> > -#include <linux/scatterlist.h>
+> > -#include <linux/tpm.h>
+> > -#include <linux/tpm_command.h>
+> > -#include <crypto/akcipher.h>
+> > -#include <crypto/hash.h>
+> > -#include <crypto/sha1.h>
+> > -#include <asm/unaligned.h>
+> > -#include <keys/asymmetric-subtype.h>
+> > -#include <keys/trusted_tpm.h>
+> > -#include <crypto/asym_tpm_subtype.h>
+> > -#include <crypto/public_key.h>
+> > -
+> > -#define TPM_ORD_FLUSHSPECIFIC	186
+> > -#define TPM_ORD_LOADKEY2	65
+> > -#define TPM_ORD_UNBIND		30
+> > -#define TPM_ORD_SIGN		60
+> > -
+> > -#define TPM_RT_KEY                      0x00000001
+> > -
+> > -/*
+> > - * Load a TPM key from the blob provided by userspace
+> > - */
+> > -static int tpm_loadkey2(struct tpm_buf *tb,
+> > -			uint32_t keyhandle, unsigned char *keyauth,
+> > -			const unsigned char *keyblob, int keybloblen,
+> > -			uint32_t *newhandle)
+> > -{
+> > -	unsigned char nonceodd[TPM_NONCE_SIZE];
+> > -	unsigned char enonce[TPM_NONCE_SIZE];
+> > -	unsigned char authdata[SHA1_DIGEST_SIZE];
+> > -	uint32_t authhandle = 0;
+> > -	unsigned char cont = 0;
+> > -	uint32_t ordinal;
+> > -	int ret;
+> > -
+> > -	ordinal = htonl(TPM_ORD_LOADKEY2);
+> > -
+> > -	/* session for loading the key */
+> > -	ret = oiap(tb, &authhandle, enonce);
+> > -	if (ret < 0) {
+> > -		pr_info("oiap failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	/* generate odd nonce */
+> > -	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
+> > -	if (ret < 0) {
+> > -		pr_info("tpm_get_random failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	/* calculate authorization HMAC value */
+> > -	ret = TSS_authhmac(authdata, keyauth, SHA1_DIGEST_SIZE, enonce,
+> > -			   nonceodd, cont, sizeof(uint32_t), &ordinal,
+> > -			   keybloblen, keyblob, 0, 0);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -
+> > -	/* build the request buffer */
+> > -	tpm_buf_reset(tb, TPM_TAG_RQU_AUTH1_COMMAND, TPM_ORD_LOADKEY2);
+> > -	tpm_buf_append_u32(tb, keyhandle);
+> > -	tpm_buf_append(tb, keyblob, keybloblen);
+> > -	tpm_buf_append_u32(tb, authhandle);
+> > -	tpm_buf_append(tb, nonceodd, TPM_NONCE_SIZE);
+> > -	tpm_buf_append_u8(tb, cont);
+> > -	tpm_buf_append(tb, authdata, SHA1_DIGEST_SIZE);
+> > -
+> > -	ret = trusted_tpm_send(tb->data, MAX_BUF_SIZE);
+> > -	if (ret < 0) {
+> > -		pr_info("authhmac failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	ret = TSS_checkhmac1(tb->data, ordinal, nonceodd, keyauth,
+> > -			     SHA1_DIGEST_SIZE, 0, 0);
+> > -	if (ret < 0) {
+> > -		pr_info("TSS_checkhmac1 failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	*newhandle = LOAD32(tb->data, TPM_DATA_OFFSET);
+> > -	return 0;
+> > -}
+> > -
+> > -/*
+> > - * Execute the FlushSpecific TPM command
+> > - */
+> > -static int tpm_flushspecific(struct tpm_buf *tb, uint32_t handle)
+> > -{
+> > -	tpm_buf_reset(tb, TPM_TAG_RQU_COMMAND, TPM_ORD_FLUSHSPECIFIC);
+> > -	tpm_buf_append_u32(tb, handle);
+> > -	tpm_buf_append_u32(tb, TPM_RT_KEY);
+> > -
+> > -	return trusted_tpm_send(tb->data, MAX_BUF_SIZE);
+> > -}
+> > -
+> > -/*
+> > - * Decrypt a blob provided by userspace using a specific key handle.
+> > - * The handle is a well known handle or previously loaded by e.g. LoadKey2
+> > - */
+> > -static int tpm_unbind(struct tpm_buf *tb,
+> > -			uint32_t keyhandle, unsigned char *keyauth,
+> > -			const unsigned char *blob, uint32_t bloblen,
+> > -			void *out, uint32_t outlen)
+> > -{
+> > -	unsigned char nonceodd[TPM_NONCE_SIZE];
+> > -	unsigned char enonce[TPM_NONCE_SIZE];
+> > -	unsigned char authdata[SHA1_DIGEST_SIZE];
+> > -	uint32_t authhandle = 0;
+> > -	unsigned char cont = 0;
+> > -	uint32_t ordinal;
+> > -	uint32_t datalen;
+> > -	int ret;
+> > -
+> > -	ordinal = htonl(TPM_ORD_UNBIND);
+> > -	datalen = htonl(bloblen);
+> > -
+> > -	/* session for loading the key */
+> > -	ret = oiap(tb, &authhandle, enonce);
+> > -	if (ret < 0) {
+> > -		pr_info("oiap failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	/* generate odd nonce */
+> > -	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
+> > -	if (ret < 0) {
+> > -		pr_info("tpm_get_random failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	/* calculate authorization HMAC value */
+> > -	ret = TSS_authhmac(authdata, keyauth, SHA1_DIGEST_SIZE, enonce,
+> > -			   nonceodd, cont, sizeof(uint32_t), &ordinal,
+> > -			   sizeof(uint32_t), &datalen,
+> > -			   bloblen, blob, 0, 0);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -
+> > -	/* build the request buffer */
+> > -	tpm_buf_reset(tb, TPM_TAG_RQU_AUTH1_COMMAND, TPM_ORD_UNBIND);
+> > -	tpm_buf_append_u32(tb, keyhandle);
+> > -	tpm_buf_append_u32(tb, bloblen);
+> > -	tpm_buf_append(tb, blob, bloblen);
+> > -	tpm_buf_append_u32(tb, authhandle);
+> > -	tpm_buf_append(tb, nonceodd, TPM_NONCE_SIZE);
+> > -	tpm_buf_append_u8(tb, cont);
+> > -	tpm_buf_append(tb, authdata, SHA1_DIGEST_SIZE);
+> > -
+> > -	ret = trusted_tpm_send(tb->data, MAX_BUF_SIZE);
+> > -	if (ret < 0) {
+> > -		pr_info("authhmac failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	datalen = LOAD32(tb->data, TPM_DATA_OFFSET);
+> > -
+> > -	ret = TSS_checkhmac1(tb->data, ordinal, nonceodd,
+> > -			     keyauth, SHA1_DIGEST_SIZE,
+> > -			     sizeof(uint32_t), TPM_DATA_OFFSET,
+> > -			     datalen, TPM_DATA_OFFSET + sizeof(uint32_t),
+> > -			     0, 0);
+> > -	if (ret < 0) {
+> > -		pr_info("TSS_checkhmac1 failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	memcpy(out, tb->data + TPM_DATA_OFFSET + sizeof(uint32_t),
+> > -	       min(outlen, datalen));
+> > -
+> > -	return datalen;
+> > -}
+> > -
+> > -/*
+> > - * Sign a blob provided by userspace (that has had the hash function applied)
+> > - * using a specific key handle.  The handle is assumed to have been previously
+> > - * loaded by e.g. LoadKey2.
+> > - *
+> > - * Note that the key signature scheme of the used key should be set to
+> > - * TPM_SS_RSASSAPKCS1v15_DER.  This allows the hashed input to be of any size
+> > - * up to key_length_in_bytes - 11 and not be limited to size 20 like the
+> > - * TPM_SS_RSASSAPKCS1v15_SHA1 signature scheme.
+> > - */
+> > -static int tpm_sign(struct tpm_buf *tb,
+> > -		    uint32_t keyhandle, unsigned char *keyauth,
+> > -		    const unsigned char *blob, uint32_t bloblen,
+> > -		    void *out, uint32_t outlen)
+> > -{
+> > -	unsigned char nonceodd[TPM_NONCE_SIZE];
+> > -	unsigned char enonce[TPM_NONCE_SIZE];
+> > -	unsigned char authdata[SHA1_DIGEST_SIZE];
+> > -	uint32_t authhandle = 0;
+> > -	unsigned char cont = 0;
+> > -	uint32_t ordinal;
+> > -	uint32_t datalen;
+> > -	int ret;
+> > -
+> > -	ordinal = htonl(TPM_ORD_SIGN);
+> > -	datalen = htonl(bloblen);
+> > -
+> > -	/* session for loading the key */
+> > -	ret = oiap(tb, &authhandle, enonce);
+> > -	if (ret < 0) {
+> > -		pr_info("oiap failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	/* generate odd nonce */
+> > -	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
+> > -	if (ret < 0) {
+> > -		pr_info("tpm_get_random failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	/* calculate authorization HMAC value */
+> > -	ret = TSS_authhmac(authdata, keyauth, SHA1_DIGEST_SIZE, enonce,
+> > -			   nonceodd, cont, sizeof(uint32_t), &ordinal,
+> > -			   sizeof(uint32_t), &datalen,
+> > -			   bloblen, blob, 0, 0);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -
+> > -	/* build the request buffer */
+> > -	tpm_buf_reset(tb, TPM_TAG_RQU_AUTH1_COMMAND, TPM_ORD_SIGN);
+> > -	tpm_buf_append_u32(tb, keyhandle);
+> > -	tpm_buf_append_u32(tb, bloblen);
+> > -	tpm_buf_append(tb, blob, bloblen);
+> > -	tpm_buf_append_u32(tb, authhandle);
+> > -	tpm_buf_append(tb, nonceodd, TPM_NONCE_SIZE);
+> > -	tpm_buf_append_u8(tb, cont);
+> > -	tpm_buf_append(tb, authdata, SHA1_DIGEST_SIZE);
+> > -
+> > -	ret = trusted_tpm_send(tb->data, MAX_BUF_SIZE);
+> > -	if (ret < 0) {
+> > -		pr_info("authhmac failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	datalen = LOAD32(tb->data, TPM_DATA_OFFSET);
+> > -
+> > -	ret = TSS_checkhmac1(tb->data, ordinal, nonceodd,
+> > -			     keyauth, SHA1_DIGEST_SIZE,
+> > -			     sizeof(uint32_t), TPM_DATA_OFFSET,
+> > -			     datalen, TPM_DATA_OFFSET + sizeof(uint32_t),
+> > -			     0, 0);
+> > -	if (ret < 0) {
+> > -		pr_info("TSS_checkhmac1 failed (%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> > -	memcpy(out, tb->data + TPM_DATA_OFFSET + sizeof(uint32_t),
+> > -	       min(datalen, outlen));
+> > -
+> > -	return datalen;
+> > -}
+> > -
+> > -/* Room to fit two u32 zeros for algo id and parameters length. */
+> > -#define SETKEY_PARAMS_SIZE (sizeof(u32) * 2)
+> > -
+> > -/*
+> > - * Maximum buffer size for the BER/DER encoded public key.  The public key
+> > - * is of the form SEQUENCE { INTEGER n, INTEGER e } where n is a maximum 2048
+> > - * bit key and e is usually 65537
+> > - * The encoding overhead is:
+> > - * - max 4 bytes for SEQUENCE
+> > - *   - max 4 bytes for INTEGER n type/length
+> > - *     - 257 bytes of n
+> > - *   - max 2 bytes for INTEGER e type/length
+> > - *     - 3 bytes of e
+> > - * - 4+4 of zeros for set_pub_key parameters (SETKEY_PARAMS_SIZE)
+> > - */
+> > -#define PUB_KEY_BUF_SIZE (4 + 4 + 257 + 2 + 3 + SETKEY_PARAMS_SIZE)
+> > -
+> > -/*
+> > - * Provide a part of a description of the key for /proc/keys.
+> > - */
+> > -static void asym_tpm_describe(const struct key *asymmetric_key,
+> > -			      struct seq_file *m)
+> > -{
+> > -	struct tpm_key *tk = asymmetric_key->payload.data[asym_crypto];
+> > -
+> > -	if (!tk)
+> > -		return;
+> > -
+> > -	seq_printf(m, "TPM1.2/Blob");
+> > -}
+> > -
+> > -static void asym_tpm_destroy(void *payload0, void *payload3)
+> > -{
+> > -	struct tpm_key *tk = payload0;
+> > -
+> > -	if (!tk)
+> > -		return;
+> > -
+> > -	kfree(tk->blob);
+> > -	tk->blob_len = 0;
+> > -
+> > -	kfree(tk);
+> > -}
+> > -
+> > -/* How many bytes will it take to encode the length */
+> > -static inline uint32_t definite_length(uint32_t len)
+> > -{
+> > -	if (len <= 127)
+> > -		return 1;
+> > -	if (len <= 255)
+> > -		return 2;
+> > -	return 3;
+> > -}
+> > -
+> > -static inline uint8_t *encode_tag_length(uint8_t *buf, uint8_t tag,
+> > -					 uint32_t len)
+> > -{
+> > -	*buf++ = tag;
+> > -
+> > -	if (len <= 127) {
+> > -		buf[0] = len;
+> > -		return buf + 1;
+> > -	}
+> > -
+> > -	if (len <= 255) {
+> > -		buf[0] = 0x81;
+> > -		buf[1] = len;
+> > -		return buf + 2;
+> > -	}
+> > -
+> > -	buf[0] = 0x82;
+> > -	put_unaligned_be16(len, buf + 1);
+> > -	return buf + 3;
+> > -}
+> > -
+> > -static uint32_t derive_pub_key(const void *pub_key, uint32_t len, uint8_t *buf)
+> > -{
+> > -	uint8_t *cur = buf;
+> > -	uint32_t n_len = definite_length(len) + 1 + len + 1;
+> > -	uint32_t e_len = definite_length(3) + 1 + 3;
+> > -	uint8_t e[3] = { 0x01, 0x00, 0x01 };
+> > -
+> > -	/* SEQUENCE */
+> > -	cur = encode_tag_length(cur, 0x30, n_len + e_len);
+> > -	/* INTEGER n */
+> > -	cur = encode_tag_length(cur, 0x02, len + 1);
+> > -	cur[0] = 0x00;
+> > -	memcpy(cur + 1, pub_key, len);
+> > -	cur += len + 1;
+> > -	cur = encode_tag_length(cur, 0x02, sizeof(e));
+> > -	memcpy(cur, e, sizeof(e));
+> > -	cur += sizeof(e);
+> > -	/* Zero parameters to satisfy set_pub_key ABI. */
+> > -	memzero_explicit(cur, SETKEY_PARAMS_SIZE);
+> > -
+> > -	return cur - buf;
+> > -}
+> > -
+> > -/*
+> > - * Determine the crypto algorithm name.
+> > - */
+> > -static int determine_akcipher(const char *encoding, const char *hash_algo,
+> > -			      char alg_name[CRYPTO_MAX_ALG_NAME])
+> > -{
+> > -	if (strcmp(encoding, "pkcs1") == 0) {
+> > -		if (!hash_algo) {
+> > -			strcpy(alg_name, "pkcs1pad(rsa)");
+> > -			return 0;
+> > -		}
+> > -
+> > -		if (snprintf(alg_name, CRYPTO_MAX_ALG_NAME, "pkcs1pad(rsa,%s)",
+> > -			     hash_algo) >= CRYPTO_MAX_ALG_NAME)
+> > -			return -EINVAL;
+> > -
+> > -		return 0;
+> > -	}
+> > -
+> > -	if (strcmp(encoding, "raw") == 0) {
+> > -		strcpy(alg_name, "rsa");
+> > -		return 0;
+> > -	}
+> > -
+> > -	return -ENOPKG;
+> > -}
+> > -
+> > -/*
+> > - * Query information about a key.
+> > - */
+> > -static int tpm_key_query(const struct kernel_pkey_params *params,
+> > -			 struct kernel_pkey_query *info)
+> > -{
+> > -	struct tpm_key *tk = params->key->payload.data[asym_crypto];
+> > -	int ret;
+> > -	char alg_name[CRYPTO_MAX_ALG_NAME];
+> > -	struct crypto_akcipher *tfm;
+> > -	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
+> > -	uint32_t der_pub_key_len;
+> > -	int len;
+> > -
+> > -	/* TPM only works on private keys, public keys still done in software */
+> > -	ret = determine_akcipher(params->encoding, params->hash_algo, alg_name);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -
+> > -	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
+> > -	if (IS_ERR(tfm))
+> > -		return PTR_ERR(tfm);
+> > -
+> > -	der_pub_key_len = derive_pub_key(tk->pub_key, tk->pub_key_len,
+> > -					 der_pub_key);
+> > -
+> > -	ret = crypto_akcipher_set_pub_key(tfm, der_pub_key, der_pub_key_len);
+> > -	if (ret < 0)
+> > -		goto error_free_tfm;
+> > -
+> > -	len = crypto_akcipher_maxsize(tfm);
+> > -
+> > -	info->key_size = tk->key_len;
+> > -	info->max_data_size = tk->key_len / 8;
+> > -	info->max_sig_size = len;
+> > -	info->max_enc_size = len;
+> > -	info->max_dec_size = tk->key_len / 8;
+> > -
+> > -	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
+> > -			      KEYCTL_SUPPORTS_DECRYPT |
+> > -			      KEYCTL_SUPPORTS_VERIFY |
+> > -			      KEYCTL_SUPPORTS_SIGN;
+> > -
+> > -	ret = 0;
+> > -error_free_tfm:
+> > -	crypto_free_akcipher(tfm);
+> > -	pr_devel("<==%s() = %d\n", __func__, ret);
+> > -	return ret;
+> > -}
+> > -
+> > -/*
+> > - * Encryption operation is performed with the public key.  Hence it is done
+> > - * in software
+> > - */
+> > -static int tpm_key_encrypt(struct tpm_key *tk,
+> > -			   struct kernel_pkey_params *params,
+> > -			   const void *in, void *out)
+> > -{
+> > -	char alg_name[CRYPTO_MAX_ALG_NAME];
+> > -	struct crypto_akcipher *tfm;
+> > -	struct akcipher_request *req;
+> > -	struct crypto_wait cwait;
+> > -	struct scatterlist in_sg, out_sg;
+> > -	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
+> > -	uint32_t der_pub_key_len;
+> > -	int ret;
+> > -
+> > -	pr_devel("==>%s()\n", __func__);
+> > -
+> > -	ret = determine_akcipher(params->encoding, params->hash_algo, alg_name);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -
+> > -	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
+> > -	if (IS_ERR(tfm))
+> > -		return PTR_ERR(tfm);
+> > -
+> > -	der_pub_key_len = derive_pub_key(tk->pub_key, tk->pub_key_len,
+> > -					 der_pub_key);
+> > -
+> > -	ret = crypto_akcipher_set_pub_key(tfm, der_pub_key, der_pub_key_len);
+> > -	if (ret < 0)
+> > -		goto error_free_tfm;
+> > -
+> > -	ret = -ENOMEM;
+> > -	req = akcipher_request_alloc(tfm, GFP_KERNEL);
+> > -	if (!req)
+> > -		goto error_free_tfm;
+> > -
+> > -	sg_init_one(&in_sg, in, params->in_len);
+> > -	sg_init_one(&out_sg, out, params->out_len);
+> > -	akcipher_request_set_crypt(req, &in_sg, &out_sg, params->in_len,
+> > -				   params->out_len);
+> > -	crypto_init_wait(&cwait);
+> > -	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
+> > -				      CRYPTO_TFM_REQ_MAY_SLEEP,
+> > -				      crypto_req_done, &cwait);
+> > -
+> > -	ret = crypto_akcipher_encrypt(req);
+> > -	ret = crypto_wait_req(ret, &cwait);
+> > -
+> > -	if (ret == 0)
+> > -		ret = req->dst_len;
+> > -
+> > -	akcipher_request_free(req);
+> > -error_free_tfm:
+> > -	crypto_free_akcipher(tfm);
+> > -	pr_devel("<==%s() = %d\n", __func__, ret);
+> > -	return ret;
+> > -}
+> > -
+> > -/*
+> > - * Decryption operation is performed with the private key in the TPM.
+> > - */
+> > -static int tpm_key_decrypt(struct tpm_key *tk,
+> > -			   struct kernel_pkey_params *params,
+> > -			   const void *in, void *out)
+> > -{
+> > -	struct tpm_buf tb;
+> > -	uint32_t keyhandle;
+> > -	uint8_t srkauth[SHA1_DIGEST_SIZE];
+> > -	uint8_t keyauth[SHA1_DIGEST_SIZE];
+> > -	int r;
+> > -
+> > -	pr_devel("==>%s()\n", __func__);
+> > -
+> > -	if (params->hash_algo)
+> > -		return -ENOPKG;
+> > -
+> > -	if (strcmp(params->encoding, "pkcs1"))
+> > -		return -ENOPKG;
+> > -
+> > -	r = tpm_buf_init(&tb, 0, 0);
+> > -	if (r)
+> > -		return r;
+> > -
+> > -	/* TODO: Handle a non-all zero SRK authorization */
+> > -	memset(srkauth, 0, sizeof(srkauth));
+> > -
+> > -	r = tpm_loadkey2(&tb, SRKHANDLE, srkauth,
+> > -				tk->blob, tk->blob_len, &keyhandle);
+> > -	if (r < 0) {
+> > -		pr_devel("loadkey2 failed (%d)\n", r);
+> > -		goto error;
+> > -	}
+> > -
+> > -	/* TODO: Handle a non-all zero key authorization */
+> > -	memset(keyauth, 0, sizeof(keyauth));
+> > -
+> > -	r = tpm_unbind(&tb, keyhandle, keyauth,
+> > -		       in, params->in_len, out, params->out_len);
+> > -	if (r < 0)
+> > -		pr_devel("tpm_unbind failed (%d)\n", r);
+> > -
+> > -	if (tpm_flushspecific(&tb, keyhandle) < 0)
+> > -		pr_devel("flushspecific failed (%d)\n", r);
+> > -
+> > -error:
+> > -	tpm_buf_destroy(&tb);
+> > -	pr_devel("<==%s() = %d\n", __func__, r);
+> > -	return r;
+> > -}
+> > -
+> > -/*
+> > - * Hash algorithm OIDs plus ASN.1 DER wrappings [RFC4880 sec 5.2.2].
+> > - */
+> > -static const u8 digest_info_md5[] = {
+> > -	0x30, 0x20, 0x30, 0x0c, 0x06, 0x08,
+> > -	0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x02, 0x05, /* OID */
+> > -	0x05, 0x00, 0x04, 0x10
+> > -};
+> > -
+> > -static const u8 digest_info_sha1[] = {
+> > -	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
+> > -	0x2b, 0x0e, 0x03, 0x02, 0x1a,
+> > -	0x05, 0x00, 0x04, 0x14
+> > -};
+> > -
+> > -static const u8 digest_info_rmd160[] = {
+> > -	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
+> > -	0x2b, 0x24, 0x03, 0x02, 0x01,
+> > -	0x05, 0x00, 0x04, 0x14
+> > -};
+> > -
+> > -static const u8 digest_info_sha224[] = {
+> > -	0x30, 0x2d, 0x30, 0x0d, 0x06, 0x09,
+> > -	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04,
+> > -	0x05, 0x00, 0x04, 0x1c
+> > -};
+> > -
+> > -static const u8 digest_info_sha256[] = {
+> > -	0x30, 0x31, 0x30, 0x0d, 0x06, 0x09,
+> > -	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01,
+> > -	0x05, 0x00, 0x04, 0x20
+> > -};
+> > -
+> > -static const u8 digest_info_sha384[] = {
+> > -	0x30, 0x41, 0x30, 0x0d, 0x06, 0x09,
+> > -	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02,
+> > -	0x05, 0x00, 0x04, 0x30
+> > -};
+> > -
+> > -static const u8 digest_info_sha512[] = {
+> > -	0x30, 0x51, 0x30, 0x0d, 0x06, 0x09,
+> > -	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03,
+> > -	0x05, 0x00, 0x04, 0x40
+> > -};
+> > -
+> > -static const struct asn1_template {
+> > -	const char	*name;
+> > -	const u8	*data;
+> > -	size_t		size;
+> > -} asn1_templates[] = {
+> > -#define _(X) { #X, digest_info_##X, sizeof(digest_info_##X) }
+> > -	_(md5),
+> > -	_(sha1),
+> > -	_(rmd160),
+> > -	_(sha256),
+> > -	_(sha384),
+> > -	_(sha512),
+> > -	_(sha224),
+> > -	{ NULL }
+> > -#undef _
+> > -};
+> > -
+> > -static const struct asn1_template *lookup_asn1(const char *name)
+> > -{
+> > -	const struct asn1_template *p;
+> > -
+> > -	for (p = asn1_templates; p->name; p++)
+> > -		if (strcmp(name, p->name) == 0)
+> > -			return p;
+> > -	return NULL;
+> > -}
+> > -
+> > -/*
+> > - * Sign operation is performed with the private key in the TPM.
+> > - */
+> > -static int tpm_key_sign(struct tpm_key *tk,
+> > -			struct kernel_pkey_params *params,
+> > -			const void *in, void *out)
+> > -{
+> > -	struct tpm_buf tb;
+> > -	uint32_t keyhandle;
+> > -	uint8_t srkauth[SHA1_DIGEST_SIZE];
+> > -	uint8_t keyauth[SHA1_DIGEST_SIZE];
+> > -	void *asn1_wrapped = NULL;
+> > -	uint32_t in_len = params->in_len;
+> > -	int r;
+> > -
+> > -	pr_devel("==>%s()\n", __func__);
+> > -
+> > -	if (strcmp(params->encoding, "pkcs1"))
+> > -		return -ENOPKG;
+> > -
+> > -	if (params->hash_algo) {
+> > -		const struct asn1_template *asn1 =
+> > -						lookup_asn1(params->hash_algo);
+> > -
+> > -		if (!asn1)
+> > -			return -ENOPKG;
+> > -
+> > -		/* request enough space for the ASN.1 template + input hash */
+> > -		asn1_wrapped = kzalloc(in_len + asn1->size, GFP_KERNEL);
+> > -		if (!asn1_wrapped)
+> > -			return -ENOMEM;
+> > -
+> > -		/* Copy ASN.1 template, then the input */
+> > -		memcpy(asn1_wrapped, asn1->data, asn1->size);
+> > -		memcpy(asn1_wrapped + asn1->size, in, in_len);
+> > -
+> > -		in = asn1_wrapped;
+> > -		in_len += asn1->size;
+> > -	}
+> > -
+> > -	if (in_len > tk->key_len / 8 - 11) {
+> > -		r = -EOVERFLOW;
+> > -		goto error_free_asn1_wrapped;
+> > -	}
+> > -
+> > -	r = tpm_buf_init(&tb, 0, 0);
+> > -	if (r)
+> > -		goto error_free_asn1_wrapped;
+> > -
+> > -	/* TODO: Handle a non-all zero SRK authorization */
+> > -	memset(srkauth, 0, sizeof(srkauth));
+> > -
+> > -	r = tpm_loadkey2(&tb, SRKHANDLE, srkauth,
+> > -			 tk->blob, tk->blob_len, &keyhandle);
+> > -	if (r < 0) {
+> > -		pr_devel("loadkey2 failed (%d)\n", r);
+> > -		goto error_free_tb;
+> > -	}
+> > -
+> > -	/* TODO: Handle a non-all zero key authorization */
+> > -	memset(keyauth, 0, sizeof(keyauth));
+> > -
+> > -	r = tpm_sign(&tb, keyhandle, keyauth, in, in_len, out, params->out_len);
+> > -	if (r < 0)
+> > -		pr_devel("tpm_sign failed (%d)\n", r);
+> > -
+> > -	if (tpm_flushspecific(&tb, keyhandle) < 0)
+> > -		pr_devel("flushspecific failed (%d)\n", r);
+> > -
+> > -error_free_tb:
+> > -	tpm_buf_destroy(&tb);
+> > -error_free_asn1_wrapped:
+> > -	kfree(asn1_wrapped);
+> > -	pr_devel("<==%s() = %d\n", __func__, r);
+> > -	return r;
+> > -}
+> > -
+> > -/*
+> > - * Do encryption, decryption and signing ops.
+> > - */
+> > -static int tpm_key_eds_op(struct kernel_pkey_params *params,
+> > -			  const void *in, void *out)
+> > -{
+> > -	struct tpm_key *tk = params->key->payload.data[asym_crypto];
+> > -	int ret = -EOPNOTSUPP;
+> > -
+> > -	/* Perform the encryption calculation. */
+> > -	switch (params->op) {
+> > -	case kernel_pkey_encrypt:
+> > -		ret = tpm_key_encrypt(tk, params, in, out);
+> > -		break;
+> > -	case kernel_pkey_decrypt:
+> > -		ret = tpm_key_decrypt(tk, params, in, out);
+> > -		break;
+> > -	case kernel_pkey_sign:
+> > -		ret = tpm_key_sign(tk, params, in, out);
+> > -		break;
+> > -	default:
+> > -		BUG();
+> > -	}
+> > -
+> > -	return ret;
+> > -}
+> > -
+> > -/*
+> > - * Verify a signature using a public key.
+> > - */
+> > -static int tpm_key_verify_signature(const struct key *key,
+> > -				    const struct public_key_signature *sig)
+> > -{
+> > -	const struct tpm_key *tk = key->payload.data[asym_crypto];
+> > -	struct crypto_wait cwait;
+> > -	struct crypto_akcipher *tfm;
+> > -	struct akcipher_request *req;
+> > -	struct scatterlist src_sg[2];
+> > -	char alg_name[CRYPTO_MAX_ALG_NAME];
+> > -	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
+> > -	uint32_t der_pub_key_len;
+> > -	int ret;
+> > -
+> > -	pr_devel("==>%s()\n", __func__);
+> > -
+> > -	BUG_ON(!tk);
+> > -	BUG_ON(!sig);
+> > -	BUG_ON(!sig->s);
+> > -
+> > -	if (!sig->digest)
+> > -		return -ENOPKG;
+> > -
+> > -	ret = determine_akcipher(sig->encoding, sig->hash_algo, alg_name);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -
+> > -	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
+> > -	if (IS_ERR(tfm))
+> > -		return PTR_ERR(tfm);
+> > -
+> > -	der_pub_key_len = derive_pub_key(tk->pub_key, tk->pub_key_len,
+> > -					 der_pub_key);
+> > -
+> > -	ret = crypto_akcipher_set_pub_key(tfm, der_pub_key, der_pub_key_len);
+> > -	if (ret < 0)
+> > -		goto error_free_tfm;
+> > -
+> > -	ret = -ENOMEM;
+> > -	req = akcipher_request_alloc(tfm, GFP_KERNEL);
+> > -	if (!req)
+> > -		goto error_free_tfm;
+> > -
+> > -	sg_init_table(src_sg, 2);
+> > -	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+> > -	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+> > -	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
+> > -				   sig->digest_size);
+> > -	crypto_init_wait(&cwait);
+> > -	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
+> > -				      CRYPTO_TFM_REQ_MAY_SLEEP,
+> > -				      crypto_req_done, &cwait);
+> > -	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
+> > -
+> > -	akcipher_request_free(req);
+> > -error_free_tfm:
+> > -	crypto_free_akcipher(tfm);
+> > -	pr_devel("<==%s() = %d\n", __func__, ret);
+> > -	if (WARN_ON_ONCE(ret > 0))
+> > -		ret = -EINVAL;
+> > -	return ret;
+> > -}
+> > -
+> > -/*
+> > - * Parse enough information out of TPM_KEY structure:
+> > - * TPM_STRUCT_VER -> 4 bytes
+> > - * TPM_KEY_USAGE -> 2 bytes
+> > - * TPM_KEY_FLAGS -> 4 bytes
+> > - * TPM_AUTH_DATA_USAGE -> 1 byte
+> > - * TPM_KEY_PARMS -> variable
+> > - * UINT32 PCRInfoSize -> 4 bytes
+> > - * BYTE* -> PCRInfoSize bytes
+> > - * TPM_STORE_PUBKEY
+> > - * UINT32 encDataSize;
+> > - * BYTE* -> encDataSize;
+> > - *
+> > - * TPM_KEY_PARMS:
+> > - * TPM_ALGORITHM_ID -> 4 bytes
+> > - * TPM_ENC_SCHEME -> 2 bytes
+> > - * TPM_SIG_SCHEME -> 2 bytes
+> > - * UINT32 parmSize -> 4 bytes
+> > - * BYTE* -> variable
+> > - */
+> > -static int extract_key_parameters(struct tpm_key *tk)
+> > -{
+> > -	const void *cur = tk->blob;
+> > -	uint32_t len = tk->blob_len;
+> > -	const void *pub_key;
+> > -	uint32_t sz;
+> > -	uint32_t key_len;
+> > -
+> > -	if (len < 11)
+> > -		return -EBADMSG;
+> > -
+> > -	/* Ensure this is a legacy key */
+> > -	if (get_unaligned_be16(cur + 4) != 0x0015)
+> > -		return -EBADMSG;
+> > -
+> > -	/* Skip to TPM_KEY_PARMS */
+> > -	cur += 11;
+> > -	len -= 11;
+> > -
+> > -	if (len < 12)
+> > -		return -EBADMSG;
+> > -
+> > -	/* Make sure this is an RSA key */
+> > -	if (get_unaligned_be32(cur) != 0x00000001)
+> > -		return -EBADMSG;
+> > -
+> > -	/* Make sure this is TPM_ES_RSAESPKCSv15 encoding scheme */
+> > -	if (get_unaligned_be16(cur + 4) != 0x0002)
+> > -		return -EBADMSG;
+> > -
+> > -	/* Make sure this is TPM_SS_RSASSAPKCS1v15_DER signature scheme */
+> > -	if (get_unaligned_be16(cur + 6) != 0x0003)
+> > -		return -EBADMSG;
+> > -
+> > -	sz = get_unaligned_be32(cur + 8);
+> > -	if (len < sz + 12)
+> > -		return -EBADMSG;
+> > -
+> > -	/* Move to TPM_RSA_KEY_PARMS */
+> > -	len -= 12;
+> > -	cur += 12;
+> > -
+> > -	/* Grab the RSA key length */
+> > -	key_len = get_unaligned_be32(cur);
+> > -
+> > -	switch (key_len) {
+> > -	case 512:
+> > -	case 1024:
+> > -	case 1536:
+> > -	case 2048:
+> > -		break;
+> > -	default:
+> > -		return -EINVAL;
+> > -	}
+> > -
+> > -	/* Move just past TPM_KEY_PARMS */
+> > -	cur += sz;
+> > -	len -= sz;
+> > -
+> > -	if (len < 4)
+> > -		return -EBADMSG;
+> > -
+> > -	sz = get_unaligned_be32(cur);
+> > -	if (len < 4 + sz)
+> > -		return -EBADMSG;
+> > -
+> > -	/* Move to TPM_STORE_PUBKEY */
+> > -	cur += 4 + sz;
+> > -	len -= 4 + sz;
+> > -
+> > -	/* Grab the size of the public key, it should jive with the key size */
+> > -	sz = get_unaligned_be32(cur);
+> > -	if (sz > 256)
+> > -		return -EINVAL;
+> > -
+> > -	pub_key = cur + 4;
+> > -
+> > -	tk->key_len = key_len;
+> > -	tk->pub_key = pub_key;
+> > -	tk->pub_key_len = sz;
+> > -
+> > -	return 0;
+> > -}
+> > -
+> > -/* Given the blob, parse it and load it into the TPM */
+> > -struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len)
+> > -{
+> > -	int r;
+> > -	struct tpm_key *tk;
+> > -
+> > -	r = tpm_is_tpm2(NULL);
+> > -	if (r < 0)
+> > -		goto error;
+> > -
+> > -	/* We don't support TPM2 yet */
+> > -	if (r > 0) {
+> > -		r = -ENODEV;
+> > -		goto error;
+> > -	}
+> > -
+> > -	r = -ENOMEM;
+> > -	tk = kzalloc(sizeof(struct tpm_key), GFP_KERNEL);
+> > -	if (!tk)
+> > -		goto error;
+> > -
+> > -	tk->blob = kmemdup(blob, blob_len, GFP_KERNEL);
+> > -	if (!tk->blob)
+> > -		goto error_memdup;
+> > -
+> > -	tk->blob_len = blob_len;
+> > -
+> > -	r = extract_key_parameters(tk);
+> > -	if (r < 0)
+> > -		goto error_extract;
+> > -
+> > -	return tk;
+> > -
+> > -error_extract:
+> > -	kfree(tk->blob);
+> > -	tk->blob_len = 0;
+> > -error_memdup:
+> > -	kfree(tk);
+> > -error:
+> > -	return ERR_PTR(r);
+> > -}
+> > -EXPORT_SYMBOL_GPL(tpm_key_create);
+> > -
+> > -/*
+> > - * TPM-based asymmetric key subtype
+> > - */
+> > -struct asymmetric_key_subtype asym_tpm_subtype = {
+> > -	.owner			= THIS_MODULE,
+> > -	.name			= "asym_tpm",
+> > -	.name_len		= sizeof("asym_tpm") - 1,
+> > -	.describe		= asym_tpm_describe,
+> > -	.destroy		= asym_tpm_destroy,
+> > -	.query			= tpm_key_query,
+> > -	.eds_op			= tpm_key_eds_op,
+> > -	.verify_signature	= tpm_key_verify_signature,
+> > -};
+> > -EXPORT_SYMBOL_GPL(asym_tpm_subtype);
+> > -
+> > -MODULE_DESCRIPTION("TPM based asymmetric key subtype");
+> > -MODULE_AUTHOR("Intel Corporation");
+> > -MODULE_LICENSE("GPL v2");
+> > diff --git a/crypto/asymmetric_keys/tpm.asn1 b/crypto/asymmetric_keys/tpm.asn1
+> > deleted file mode 100644
+> > index d7f194232f30a..0000000000000
+> > --- a/crypto/asymmetric_keys/tpm.asn1
+> > +++ /dev/null
+> > @@ -1,5 +0,0 @@
+> > ---
+> > --- Unencryted TPM Blob.  For details of the format, see:
+> > --- http://david.woodhou.se/draft-woodhouse-cert-best-practice.html#I-D.mavrogiannopoulos-tpmuri
+> > ---
+> > -PrivateKeyInfo ::= OCTET STRING ({ tpm_note_key })
+> > diff --git a/crypto/asymmetric_keys/tpm_parser.c b/crypto/asymmetric_keys/tpm_parser.c
+> > deleted file mode 100644
+> > index 96405d8dcd98d..0000000000000
+> > --- a/crypto/asymmetric_keys/tpm_parser.c
+> > +++ /dev/null
+> > @@ -1,102 +0,0 @@
+> > -// SPDX-License-Identifier: GPL-2.0
+> > -#define pr_fmt(fmt) "TPM-PARSER: "fmt
+> > -#include <linux/module.h>
+> > -#include <linux/kernel.h>
+> > -#include <linux/export.h>
+> > -#include <linux/slab.h>
+> > -#include <linux/err.h>
+> > -#include <keys/asymmetric-subtype.h>
+> > -#include <keys/asymmetric-parser.h>
+> > -#include <crypto/asym_tpm_subtype.h>
+> > -#include "tpm.asn1.h"
+> > -
+> > -struct tpm_parse_context {
+> > -	const void	*blob;
+> > -	u32		blob_len;
+> > -};
+> > -
+> > -/*
+> > - * Note the key data of the ASN.1 blob.
+> > - */
+> > -int tpm_note_key(void *context, size_t hdrlen,
+> > -		   unsigned char tag,
+> > -		   const void *value, size_t vlen)
+> > -{
+> > -	struct tpm_parse_context *ctx = context;
+> > -
+> > -	ctx->blob = value;
+> > -	ctx->blob_len = vlen;
+> > -
+> > -	return 0;
+> > -}
+> > -
+> > -/*
+> > - * Parse a TPM-encrypted private key blob.
+> > - */
+> > -static struct tpm_key *tpm_parse(const void *data, size_t datalen)
+> > -{
+> > -	struct tpm_parse_context ctx;
+> > -	long ret;
+> > -
+> > -	memset(&ctx, 0, sizeof(ctx));
+> > -
+> > -	/* Attempt to decode the private key */
+> > -	ret = asn1_ber_decoder(&tpm_decoder, &ctx, data, datalen);
+> > -	if (ret < 0)
+> > -		goto error;
+> > -
+> > -	return tpm_key_create(ctx.blob, ctx.blob_len);
+> > -
+> > -error:
+> > -	return ERR_PTR(ret);
+> > -}
+> > -/*
+> > - * Attempt to parse a data blob for a key as a TPM private key blob.
+> > - */
+> > -static int tpm_key_preparse(struct key_preparsed_payload *prep)
+> > -{
+> > -	struct tpm_key *tk;
+> > -
+> > -	/*
+> > -	 * TPM 1.2 keys are max 2048 bits long, so assume the blob is no
+> > -	 * more than 4x that
+> > -	 */
+> > -	if (prep->datalen > 256 * 4)
+> > -		return -EMSGSIZE;
+> > -
+> > -	tk = tpm_parse(prep->data, prep->datalen);
+> > -
+> > -	if (IS_ERR(tk))
+> > -		return PTR_ERR(tk);
+> > -
+> > -	/* We're pinning the module by being linked against it */
+> > -	__module_get(asym_tpm_subtype.owner);
+> > -	prep->payload.data[asym_subtype] = &asym_tpm_subtype;
+> > -	prep->payload.data[asym_key_ids] = NULL;
+> > -	prep->payload.data[asym_crypto] = tk;
+> > -	prep->payload.data[asym_auth] = NULL;
+> > -	prep->quotalen = 100;
+> > -	return 0;
+> > -}
+> > -
+> > -static struct asymmetric_key_parser tpm_key_parser = {
+> > -	.owner	= THIS_MODULE,
+> > -	.name	= "tpm_parser",
+> > -	.parse	= tpm_key_preparse,
+> > -};
+> > -
+> > -static int __init tpm_key_init(void)
+> > -{
+> > -	return register_asymmetric_key_parser(&tpm_key_parser);
+> > -}
+> > -
+> > -static void __exit tpm_key_exit(void)
+> > -{
+> > -	unregister_asymmetric_key_parser(&tpm_key_parser);
+> > -}
+> > -
+> > -module_init(tpm_key_init);
+> > -module_exit(tpm_key_exit);
+> > -
+> > -MODULE_DESCRIPTION("TPM private key-blob parser");
+> > -MODULE_LICENSE("GPL v2");
+> > diff --git a/include/crypto/asym_tpm_subtype.h b/include/crypto/asym_tpm_subtype.h
+> > deleted file mode 100644
+> > index 48198c36d6b9b..0000000000000
+> > --- a/include/crypto/asym_tpm_subtype.h
+> > +++ /dev/null
+> > @@ -1,19 +0,0 @@
+> > -// SPDX-License-Identifier: GPL-2.0
+> > -#ifndef _LINUX_ASYM_TPM_SUBTYPE_H
+> > -#define _LINUX_ASYM_TPM_SUBTYPE_H
+> > -
+> > -#include <linux/keyctl.h>
+> > -
+> > -struct tpm_key {
+> > -	void *blob;
+> > -	u32 blob_len;
+> > -	uint16_t key_len; /* Size in bits of the key */
+> > -	const void *pub_key; /* pointer inside blob to the public key bytes */
+> > -	uint16_t pub_key_len; /* length of the public key */
+> > -};
+> > -
+> > -struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len);
+> > -
+> > -extern struct asymmetric_key_subtype asym_tpm_subtype;
+> > -
+> > -#endif /* _LINUX_ASYM_TPM_SUBTYPE_H */
+> > -- 
+> > 2.35.0
+> > 
+> 
+> I'm now getting back to track with kernel. Job transition is the reason for
+> this misserable latency.
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> This needs some acks from other people before I can apply the patch but I
+> strongly support it.
 
-Thank you. I will incorporate these changes.
+No one has spoken up and said that they care about this feature.  And everyone
+who was involved in adding this feature is Cc'ed.  Naturally, if no one cares
+about this feature anymore, a response is not guaranteed.  So I'm not sure what
+you're waiting for, exactly.
 
->
->
->> ---
->>   include/linux/audit.h        | 10 ++++-
->>   include/linux/lsm_hooks.h    | 12 +++++-
->>   include/linux/security.h     | 74 +++++++++++++++++++++++++++++---
->>   kernel/auditfilter.c         | 23 +++++-----
->>   kernel/auditsc.c             | 17 +++-----
->>   security/apparmor/lsm.c      |  7 ++-
->>   security/bpf/hooks.c         | 12 +++++-
->>   security/commoncap.c         |  7 ++-
->>   security/landlock/cred.c     |  2 +-
->>   security/landlock/fs.c       |  2 +-
->>   security/landlock/ptrace.c   |  2 +-
->>   security/landlock/setup.c    |  5 +++
->>   security/landlock/setup.h    |  1 +
->>   security/loadpin/loadpin.c   |  8 +++-
->>   security/lockdown/lockdown.c |  7 ++-
->>   security/safesetid/lsm.c     |  8 +++-
->>   security/security.c          | 82 ++++++++++++++++++++++++++++++------
->>   security/selinux/hooks.c     |  8 +++-
->>   security/smack/smack_lsm.c   |  7 ++-
->>   security/tomoyo/tomoyo.c     |  8 +++-
->>   security/yama/yama_lsm.c     |  7 ++-
->>   21 files changed, 253 insertions(+), 56 deletions(-)
->>
->> diff --git a/include/linux/audit.h b/include/linux/audit.h
->> index d06134ac6245..14849d5f84b4 100644
->> --- a/include/linux/audit.h
->> +++ b/include/linux/audit.h
->> @@ -11,6 +11,7 @@
->>     #include <linux/sched.h>
->>   #include <linux/ptrace.h>
->> +#include <linux/security.h>
->>   #include <linux/audit_arch.h>
->>   #include <uapi/linux/audit.h>
->>   #include <uapi/linux/netfilter/nf_tables.h>
->> @@ -59,6 +60,10 @@ struct audit_krule {
->>   /* Flag to indicate legacy AUDIT_LOGINUID unset usage */
->>   #define AUDIT_LOGINUID_LEGACY        0x1
->>   +struct audit_lsm_rules {
->> +    void    *rule[LSMBLOB_ENTRIES];
->> +};
->> +
->>   struct audit_field {
->>       u32                type;
->>       union {
->> @@ -66,8 +71,9 @@ struct audit_field {
->>           kuid_t            uid;
->>           kgid_t            gid;
->>           struct {
->> -            char        *lsm_str;
->> -            void        *lsm_rule;
->> +            bool            lsm_isset;
->> +            char            *lsm_str;
->> +            struct audit_lsm_rules    lsm_rules;
->>           };
->>       };
->>       u32                op;
->> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->> index 129d99c6f9ed..2c2d0ef59a41 100644
->> --- a/include/linux/lsm_hooks.h
->> +++ b/include/linux/lsm_hooks.h
->> @@ -1582,6 +1582,14 @@ struct security_hook_heads {
->>       #undef LSM_HOOK
->>   } __randomize_layout;
->>   +/*
->> + * Information that identifies a security module.
->> + */
->> +struct lsm_id {
->> +    const char    *lsm;    /* Name of the LSM */
->> +    int        slot;    /* Slot in lsmblob if one is allocated */
->> +};
->> +
->>   /*
->>    * Security module hook list structure.
->>    * For use with generic list macros for common operations.
->> @@ -1590,7 +1598,7 @@ struct security_hook_list {
->>       struct hlist_node        list;
->>       struct hlist_head        *head;
->>       union security_list_options    hook;
->> -    char                *lsm;
->> +    struct lsm_id            *lsmid;
->>   } __randomize_layout;
->>     /*
->> @@ -1626,7 +1634,7 @@ extern struct security_hook_heads security_hook_heads;
->>   extern char *lsm_names;
->>     extern void security_add_hooks(struct security_hook_list *hooks, int count,
->> -                char *lsm);
->> +                   struct lsm_id *lsmid);
->>     #define LSM_FLAG_LEGACY_MAJOR    BIT(0)
->>   #define LSM_FLAG_EXCLUSIVE    BIT(1)
->> diff --git a/include/linux/security.h b/include/linux/security.h
->> index 33e0f2e659df..1a7e5bf36a82 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -39,6 +39,7 @@ struct kernel_siginfo;
->>   struct sembuf;
->>   struct kern_ipc_perm;
->>   struct audit_context;
->> +struct audit_lsm_rules;
->>   struct super_block;
->>   struct inode;
->>   struct dentry;
->> @@ -134,6 +135,65 @@ enum lockdown_reason {
->>     extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
->>   +/*
->> + * Data exported by the security modules
->> + *
->> + * Any LSM that provides secid or secctx based hooks must be included.
->> + */
->> +#define LSMBLOB_ENTRIES ( \
->> +    (IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
->> +    (IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) + \
->> +    (IS_ENABLED(CONFIG_SECURITY_APPARMOR) ? 1 : 0) + \
->> +    (IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0))
->> +
->> +struct lsmblob {
->> +    u32     secid[LSMBLOB_ENTRIES];
->> +};
->> +
->> +#define LSMBLOB_INVALID        -1    /* Not a valid LSM slot number */
->> +#define LSMBLOB_NEEDED        -2    /* Slot requested on initialization */
->> +#define LSMBLOB_NOT_NEEDED    -3    /* Slot not requested */
->> +
->> +/**
->> + * lsmblob_init - initialize an lsmblob structure
->> + * @blob: Pointer to the data to initialize
->> + * @secid: The initial secid value
->> + *
->> + * Set all secid for all modules to the specified value.
->> + */
->> +static inline void lsmblob_init(struct lsmblob *blob, u32 secid)
->> +{
->> +    int i;
->> +
->> +    for (i = 0; i < LSMBLOB_ENTRIES; i++)
->> +        blob->secid[i] = secid;
->> +}
->> +
->> +/**
->> + * lsmblob_is_set - report if there is an value in the lsmblob
->
-> *a* value
->
->
->> + * @blob: Pointer to the exported LSM data
->> + *
->> + * Returns true if there is a secid set, false otherwise
->> + */
->> +static inline bool lsmblob_is_set(struct lsmblob *blob)
->> +{
->> +    struct lsmblob empty = {};
->
-> const struct lsmblob empty = {};
->
->> +
->> +    return !!memcmp(blob, &empty, sizeof(*blob));
->> +}
->> +
->> +/**
->> + * lsmblob_equal - report if the two lsmblob's are equal
->> + * @bloba: Pointer to one LSM data
->> + * @blobb: Pointer to the other LSM data
->> + *
->> + * Returns true if all entries in the two are equal, false otherwise
->> + */
->> +static inline bool lsmblob_equal(struct lsmblob *bloba, struct lsmblob *blobb)
->
-> const struct lsmblob *bloba, const struct lsmblob *blobb
->
->
->> +{
->> +    return !memcmp(bloba, blobb, sizeof(*bloba));
->> +}
->> +
->>   /* These functions are in security/commoncap.c */
->>   extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
->>                  int cap, unsigned int opts);
->> @@ -1879,15 +1939,17 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
->>     #ifdef CONFIG_AUDIT
->>   #ifdef CONFIG_SECURITY
->> -int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
->> +int security_audit_rule_init(u32 field, u32 op, char *rulestr,
->> +                 struct audit_lsm_rules *lsmrules);
->>   int security_audit_rule_known(struct audit_krule *krule);
->> -int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
->> -void security_audit_rule_free(void *lsmrule);
->> +int security_audit_rule_match(u32 secid, u32 field, u32 op,
->> +                  struct audit_lsm_rules *lsmrules);
->> +void security_audit_rule_free(struct audit_lsm_rules *lsmrules);
->>     #else
->>     static inline int security_audit_rule_init(u32 field, u32 op, char *rulestr,
->> -                       void **lsmrule)
->> +                       struct audit_lsm_rules *lsmrules)
->>   {
->>       return 0;
->>   }
->> @@ -1898,12 +1960,12 @@ static inline int security_audit_rule_known(struct audit_krule *krule)
->>   }
->>     static inline int security_audit_rule_match(u32 secid, u32 field, u32 op,
->> -                        void *lsmrule)
->> +                        struct audit_lsm_rules *lsmrules)
->>   {
->>       return 0;
->>   }
->>   -static inline void security_audit_rule_free(void *lsmrule)
->> +static inline void security_audit_rule_free(struct audit_lsm_rules *lsmrules)
->>   { }
->>     #endif /* CONFIG_SECURITY */
->> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
->> index 42d99896e7a6..de75bd6ad866 100644
->> --- a/kernel/auditfilter.c
->> +++ b/kernel/auditfilter.c
->> @@ -76,7 +76,7 @@ static void audit_free_lsm_field(struct audit_field *f)
->>       case AUDIT_OBJ_LEV_LOW:
->>       case AUDIT_OBJ_LEV_HIGH:
->>           kfree(f->lsm_str);
->> -        security_audit_rule_free(f->lsm_rule);
->> +        security_audit_rule_free(&f->lsm_rules);
->>       }
->>   }
->>   @@ -529,7 +529,7 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
->>               entry->rule.buflen += f_val;
->>               f->lsm_str = str;
->>               err = security_audit_rule_init(f->type, f->op, str,
->> -                               (void **)&f->lsm_rule);
->> +                               &f->lsm_rules);
->>               /* Keep currently invalid fields around in case they
->>                * become valid after a policy reload. */
->>               if (err == -EINVAL) {
->> @@ -782,7 +782,7 @@ static int audit_compare_rule(struct audit_krule *a, struct audit_krule *b)
->>       return 0;
->>   }
->>   -/* Duplicate LSM field information.  The lsm_rule is opaque, so must be
->> +/* Duplicate LSM field information.  The lsm_rules is opaque, so must be
->>    * re-initialized. */
->>   static inline int audit_dupe_lsm_field(struct audit_field *df,
->>                          struct audit_field *sf)
->> @@ -796,9 +796,9 @@ static inline int audit_dupe_lsm_field(struct audit_field *df,
->>           return -ENOMEM;
->>       df->lsm_str = lsm_str;
->>   -    /* our own (refreshed) copy of lsm_rule */
->> +    /* our own (refreshed) copy of lsm_rules */
->>       ret = security_audit_rule_init(df->type, df->op, df->lsm_str,
->> -                       (void **)&df->lsm_rule);
->> +                       &df->lsm_rules);
->>       /* Keep currently invalid fields around in case they
->>        * become valid after a policy reload. */
->>       if (ret == -EINVAL) {
->> @@ -850,7 +850,7 @@ struct audit_entry *audit_dupe_rule(struct audit_krule *old)
->>       new->tree = old->tree;
->>       memcpy(new->fields, old->fields, sizeof(struct audit_field) * fcount);
->>   -    /* deep copy this information, updating the lsm_rule fields, because
->> +    /* deep copy this information, updating the lsm_rules fields, because
->>        * the originals will all be freed when the old rule is freed. */
->>       for (i = 0; i < fcount; i++) {
->>           switch (new->fields[i].type) {
->> @@ -1367,10 +1367,11 @@ int audit_filter(int msgtype, unsigned int listtype)
->>               case AUDIT_SUBJ_TYPE:
->>               case AUDIT_SUBJ_SEN:
->>               case AUDIT_SUBJ_CLR:
->> -                if (f->lsm_rule) {
->> +                if (f->lsm_str) {
->>                       security_current_getsecid_subj(&sid);
->>                       result = security_audit_rule_match(sid,
->> -                           f->type, f->op, f->lsm_rule);
->> +                           f->type, f->op,
->> +                           &f->lsm_rules);
->>                   }
->>                   break;
->>               case AUDIT_EXE:
->> @@ -1397,7 +1398,7 @@ int audit_filter(int msgtype, unsigned int listtype)
->>       return ret;
->>   }
->>   -static int update_lsm_rule(struct audit_krule *r)
->> +static int update_lsm_rules(struct audit_krule *r)
->>   {
->>       struct audit_entry *entry = container_of(r, struct audit_entry, rule);
->>       struct audit_entry *nentry;
->> @@ -1429,7 +1430,7 @@ static int update_lsm_rule(struct audit_krule *r)
->>       return err;
->>   }
->>   -/* This function will re-initialize the lsm_rule field of all applicable rules.
->> +/* This function will re-initialize the lsm_rules field of all applicable rules.
->>    * It will traverse the filter lists serarching for rules that contain LSM
->>    * specific filter fields.  When such a rule is found, it is copied, the
->>    * LSM field is re-initialized, and the old rule is replaced with the
->> @@ -1444,7 +1445,7 @@ int audit_update_lsm_rules(void)
->>         for (i = 0; i < AUDIT_NR_FILTERS; i++) {
->>           list_for_each_entry_safe(r, n, &audit_rules_list[i], list) {
->> -            int res = update_lsm_rule(r);
->> +            int res = update_lsm_rules(r);
->>               if (!err)
->>                   err = res;
->>           }
->> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
->> index fce5d43a933f..f1c26a322f9d 100644
->> --- a/kernel/auditsc.c
->> +++ b/kernel/auditsc.c
->> @@ -664,7 +664,7 @@ static int audit_filter_rules(struct task_struct *tsk,
->>                  match for now to avoid losing information that
->>                  may be wanted.   An error message will also be
->>                  logged upon error */
->> -            if (f->lsm_rule) {
->> +            if (f->lsm_str) {
->>                   if (need_sid) {
->>                       /* @tsk should always be equal to
->>                        * @current with the exception of
->> @@ -679,8 +679,7 @@ static int audit_filter_rules(struct task_struct *tsk,
->>                       need_sid = 0;
->>                   }
->>                   result = security_audit_rule_match(sid, f->type,
->> -                                   f->op,
->> -                                   f->lsm_rule);
->> +                            f->op, &f->lsm_rules);
->>               }
->>               break;
->>           case AUDIT_OBJ_USER:
->> @@ -690,21 +689,19 @@ static int audit_filter_rules(struct task_struct *tsk,
->>           case AUDIT_OBJ_LEV_HIGH:
->>               /* The above note for AUDIT_SUBJ_USER...AUDIT_SUBJ_CLR
->>                  also applies here */
->> -            if (f->lsm_rule) {
->> +            if (f->lsm_str) {
->>                   /* Find files that match */
->>                   if (name) {
->>                       result = security_audit_rule_match(
->>                                   name->osid,
->>                                   f->type,
->>                                   f->op,
->> -                                f->lsm_rule);
->> +                                &f->lsm_rules);
->>                   } else if (ctx) {
->>                       list_for_each_entry(n, &ctx->names_list, list) {
->>                           if (security_audit_rule_match(
->> -                                n->osid,
->> -                                f->type,
->> -                                f->op,
->> -                                f->lsm_rule)) {
->> +                            n->osid, f->type, f->op,
->> +                            &f->lsm_rules)) {
->>                               ++result;
->>                               break;
->>                           }
->> @@ -715,7 +712,7 @@ static int audit_filter_rules(struct task_struct *tsk,
->>                       break;
->>                   if (security_audit_rule_match(ctx->ipc.osid,
->>                                     f->type, f->op,
->> -                                  f->lsm_rule))
->> +                                  &f->lsm_rules))
->>                       ++result;
->>               }
->>               break;
->> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->> index be8976c407f4..1e53fea61335 100644
->> --- a/security/apparmor/lsm.c
->> +++ b/security/apparmor/lsm.c
->> @@ -1168,6 +1168,11 @@ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
->>       .lbs_sock = sizeof(struct aa_sk_ctx),
->>   };
->>   +static struct lsm_id apparmor_lsmid __lsm_ro_after_init = {
->> +    .lsm  = "apparmor",
->> +    .slot = LSMBLOB_NEEDED
->> +};
->> +
->>   static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
->>       LSM_HOOK_INIT(ptrace_access_check, apparmor_ptrace_access_check),
->>       LSM_HOOK_INIT(ptrace_traceme, apparmor_ptrace_traceme),
->> @@ -1853,7 +1858,7 @@ static int __init apparmor_init(void)
->>           goto buffers_out;
->>       }
->>       security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
->> -                "apparmor");
->> +                &apparmor_lsmid);
->>         /* Report that AppArmor successfully initialized */
->>       apparmor_initialized = 1;
->> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
->> index e5971fa74fd7..7a58fe9ab8c4 100644
->> --- a/security/bpf/hooks.c
->> +++ b/security/bpf/hooks.c
->> @@ -15,9 +15,19 @@ static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
->>       LSM_HOOK_INIT(task_free, bpf_task_storage_free),
->>   };
->>   +/*
->> + * slot has to be LSMBLOB_NEEDED because some of the hooks
->> + * supplied by this module require a slot.
->> + */
->> +struct lsm_id bpf_lsmid __lsm_ro_after_init = {
->> +    .lsm = "bpf",
->> +    .slot = LSMBLOB_NEEDED
->> +};
->> +
->>   static int __init bpf_lsm_init(void)
->>   {
->> -    security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks), "bpf");
->> +    security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks),
->> +               &bpf_lsmid);
->>       pr_info("LSM support for eBPF active\n");
->>       return 0;
->>   }
->> diff --git a/security/commoncap.c b/security/commoncap.c
->> index 5fc8986c3c77..c94ec46e07ac 100644
->> --- a/security/commoncap.c
->> +++ b/security/commoncap.c
->> @@ -1446,6 +1446,11 @@ int cap_mmap_file(struct file *file, unsigned long reqprot,
->>     #ifdef CONFIG_SECURITY
->>   +static struct lsm_id capability_lsmid __lsm_ro_after_init = {
->> +    .lsm  = "capability",
->> +    .slot = LSMBLOB_NOT_NEEDED
->> +};
->> +
->>   static struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
->>       LSM_HOOK_INIT(capable, cap_capable),
->>       LSM_HOOK_INIT(settime, cap_settime),
->> @@ -1470,7 +1475,7 @@ static struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
->>   static int __init capability_init(void)
->>   {
->>       security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
->> -                "capability");
->> +               &capability_lsmid);
->>       return 0;
->>   }
->>   diff --git a/security/landlock/cred.c b/security/landlock/cred.c
->> index 6725af24c684..56b121d65436 100644
->> --- a/security/landlock/cred.c
->> +++ b/security/landlock/cred.c
->> @@ -42,5 +42,5 @@ static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
->>   __init void landlock_add_cred_hooks(void)
->>   {
->>       security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
->> -            LANDLOCK_NAME);
->> +            &landlock_lsmid);
->>   }
->> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
->> index 97b8e421f617..319e90e9290c 100644
->> --- a/security/landlock/fs.c
->> +++ b/security/landlock/fs.c
->> @@ -688,5 +688,5 @@ static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
->>   __init void landlock_add_fs_hooks(void)
->>   {
->>       security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
->> -            LANDLOCK_NAME);
->> +            &landlock_lsmid);
->>   }
->> diff --git a/security/landlock/ptrace.c b/security/landlock/ptrace.c
->> index f55b82446de2..54ccf55a077a 100644
->> --- a/security/landlock/ptrace.c
->> +++ b/security/landlock/ptrace.c
->> @@ -116,5 +116,5 @@ static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
->>   __init void landlock_add_ptrace_hooks(void)
->>   {
->>       security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
->> -            LANDLOCK_NAME);
->> +            &landlock_lsmid);
->>   }
->> diff --git a/security/landlock/setup.c b/security/landlock/setup.c
->> index f8e8e980454c..759e00b9436c 100644
->> --- a/security/landlock/setup.c
->> +++ b/security/landlock/setup.c
->> @@ -23,6 +23,11 @@ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
->>       .lbs_superblock = sizeof(struct landlock_superblock_security),
->>   };
->>   +struct lsm_id landlock_lsmid __lsm_ro_after_init = {
->> +    .lsm = LANDLOCK_NAME,
->> +    .slot = LSMBLOB_NOT_NEEDED,
->> +};
->> +
->>   static int __init landlock_init(void)
->>   {
->>       landlock_add_cred_hooks();
->> diff --git a/security/landlock/setup.h b/security/landlock/setup.h
->> index 1daffab1ab4b..38bce5b172dc 100644
->> --- a/security/landlock/setup.h
->> +++ b/security/landlock/setup.h
->> @@ -14,5 +14,6 @@
->>   extern bool landlock_initialized;
->>     extern struct lsm_blob_sizes landlock_blob_sizes;
->> +extern struct lsm_id landlock_lsmid;
->>     #endif /* _SECURITY_LANDLOCK_SETUP_H */
->> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
->> index b12f7d986b1e..b569f3bc170b 100644
->> --- a/security/loadpin/loadpin.c
->> +++ b/security/loadpin/loadpin.c
->> @@ -192,6 +192,11 @@ static int loadpin_load_data(enum kernel_load_data_id id, bool contents)
->>       return loadpin_read_file(NULL, (enum kernel_read_file_id) id, contents);
->>   }
->>   +static struct lsm_id loadpin_lsmid __lsm_ro_after_init = {
->> +    .lsm  = "loadpin",
->> +    .slot = LSMBLOB_NOT_NEEDED
->> +};
->> +
->>   static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
->>       LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
->>       LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
->> @@ -239,7 +244,8 @@ static int __init loadpin_init(void)
->>       pr_info("ready to pin (currently %senforcing)\n",
->>           enforce ? "" : "not ");
->>       parse_exclude();
->> -    security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
->> +    security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks),
->> +               &loadpin_lsmid);
->>       return 0;
->>   }
->>   diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
->> index 87cbdc64d272..4e24ea3f7b7e 100644
->> --- a/security/lockdown/lockdown.c
->> +++ b/security/lockdown/lockdown.c
->> @@ -75,6 +75,11 @@ static struct security_hook_list lockdown_hooks[] __lsm_ro_after_init = {
->>       LSM_HOOK_INIT(locked_down, lockdown_is_locked_down),
->>   };
->>   +static struct lsm_id lockdown_lsmid __lsm_ro_after_init = {
->> +    .lsm = "lockdown",
->> +    .slot = LSMBLOB_NOT_NEEDED
->> +};
->> +
->>   static int __init lockdown_lsm_init(void)
->>   {
->>   #if defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_INTEGRITY)
->> @@ -83,7 +88,7 @@ static int __init lockdown_lsm_init(void)
->>       lock_kernel_down("Kernel configuration", LOCKDOWN_CONFIDENTIALITY_MAX);
->>   #endif
->>       security_add_hooks(lockdown_hooks, ARRAY_SIZE(lockdown_hooks),
->> -               "lockdown");
->> +               &lockdown_lsmid);
->>       return 0;
->>   }
->>   diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
->> index 963f4ad9cb66..0c368950dc14 100644
->> --- a/security/safesetid/lsm.c
->> +++ b/security/safesetid/lsm.c
->> @@ -241,6 +241,11 @@ static int safesetid_task_fix_setgid(struct cred *new,
->>       return -EACCES;
->>   }
->>   +static struct lsm_id safesetid_lsmid __lsm_ro_after_init = {
->> +    .lsm  = "safesetid",
->> +    .slot = LSMBLOB_NOT_NEEDED
->> +};
->> +
->>   static struct security_hook_list safesetid_security_hooks[] = {
->>       LSM_HOOK_INIT(task_fix_setuid, safesetid_task_fix_setuid),
->>       LSM_HOOK_INIT(task_fix_setgid, safesetid_task_fix_setgid),
->> @@ -250,7 +255,8 @@ static struct security_hook_list safesetid_security_hooks[] = {
->>   static int __init safesetid_security_init(void)
->>   {
->>       security_add_hooks(safesetid_security_hooks,
->> -               ARRAY_SIZE(safesetid_security_hooks), "safesetid");
->> +               ARRAY_SIZE(safesetid_security_hooks),
->> +               &safesetid_lsmid);
->>         /* Report that SafeSetID successfully initialized */
->>       safesetid_initialized = 1;
->> diff --git a/security/security.c b/security/security.c
->> index f2d4b20613c8..2bf21c726ba0 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -345,6 +345,7 @@ static void __init ordered_lsm_init(void)
->>       init_debug("sock blob size       = %d\n", blob_sizes.lbs_sock);
->>       init_debug("superblock blob size = %d\n", blob_sizes.lbs_superblock);
->>       init_debug("task blob size       = %d\n", blob_sizes.lbs_task);
->> +    init_debug("lsmblob size         = %zu\n", sizeof(struct lsmblob));
->>         /*
->>        * Create any kmem_caches needed for blobs
->> @@ -472,21 +473,38 @@ static int lsm_append(const char *new, char **result)
->>       return 0;
->>   }
->>   +/*
->> + * Current index to use while initializing the lsmblob secid list.
->> + */
->> +static int lsm_slot __lsm_ro_after_init;
->> +
->>   /**
->>    * security_add_hooks - Add a modules hooks to the hook lists.
->>    * @hooks: the hooks to add
->>    * @count: the number of hooks to add
->> - * @lsm: the name of the security module
->> + * @lsmid: the identification information for the security module
->>    *
->>    * Each LSM has to register its hooks with the infrastructure.
->> + * If the LSM is using hooks that export secids allocate a slot
->> + * for it in the lsmblob.
->>    */
->>   void __init security_add_hooks(struct security_hook_list *hooks, int count,
->> -                char *lsm)
->> +                   struct lsm_id *lsmid)
->>   {
->>       int i;
->>   +    WARN_ON(!lsmid->slot || !lsmid->lsm);
->> +
->> +    if (lsmid->slot == LSMBLOB_NEEDED) {
->> +        if (lsm_slot >= LSMBLOB_ENTRIES)
->> +            panic("%s Too many LSMs registered.\n", __func__);
->> +        lsmid->slot = lsm_slot++;
->> +        init_debug("%s assigned lsmblob slot %d\n", lsmid->lsm,
->> +               lsmid->slot);
->> +    }
->> +
->>       for (i = 0; i < count; i++) {
->> -        hooks[i].lsm = lsm;
->> +        hooks[i].lsmid = lsmid;
->>           hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
->>       }
->>   @@ -495,7 +513,7 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
->>        * and fix this up afterwards.
->>        */
->>       if (slab_is_available()) {
->> -        if (lsm_append(lsm, &lsm_names) < 0)
->> +        if (lsm_append(lsmid->lsm, &lsm_names) < 0)
->>               panic("%s - Cannot get early memory.\n", __func__);
->>       }
->>   }
->> @@ -2075,7 +2093,7 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
->>       struct security_hook_list *hp;
->>         hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
->> -        if (lsm != NULL && strcmp(lsm, hp->lsm))
->> +        if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
->>               continue;
->>           return hp->hook.getprocattr(p, name, value);
->>       }
->> @@ -2088,7 +2106,7 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
->>       struct security_hook_list *hp;
->>         hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
->> -        if (lsm != NULL && strcmp(lsm, hp->lsm))
->> +        if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
->>               continue;
->>           return hp->hook.setprocattr(name, value, size);
->>       }
->> @@ -2579,9 +2597,27 @@ int security_key_getsecurity(struct key *key, char **_buffer)
->>     #ifdef CONFIG_AUDIT
->>   -int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
->> +int security_audit_rule_init(u32 field, u32 op, char *rulestr,
->> +                 struct audit_lsm_rules *lsmrules)
->>   {
->> -    return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
->> +    struct security_hook_list *hp;
->> +    bool one_is_good = false;
->> +    int rc = 0;
->> +    int trc;
->> +
->> +    hlist_for_each_entry(hp, &security_hook_heads.audit_rule_init, list) {
->> +        if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
->> +            continue;
->> +        trc = hp->hook.audit_rule_init(field, op, rulestr,
->> + &lsmrules->rule[hp->lsmid->slot]);
->> +        if (trc == 0)
->> +            one_is_good = true;
->> +        else
->> +            rc = trc;
->> +    }
->> +    if (one_is_good)
->> +        return 0;
->> +    return rc;
->>   }
->>     int security_audit_rule_known(struct audit_krule *krule)
->> @@ -2589,14 +2625,36 @@ int security_audit_rule_known(struct audit_krule *krule)
->>       return call_int_hook(audit_rule_known, 0, krule);
->>   }
->>   -void security_audit_rule_free(void *lsmrule)
->> +void security_audit_rule_free(struct audit_lsm_rules *lsmrules)
->>   {
->> -    call_void_hook(audit_rule_free, lsmrule);
->> +    struct security_hook_list *hp;
->> +
->> +    hlist_for_each_entry(hp, &security_hook_heads.audit_rule_free, list) {
->> +        if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
->> +            continue;
->> +        if (lsmrules->rule[hp->lsmid->slot] == NULL)
->> +            continue;
->> + hp->hook.audit_rule_free(lsmrules->rule[hp->lsmid->slot]);
->> +    }
->>   }
->>   -int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
->> +int security_audit_rule_match(u32 secid, u32 field, u32 op,
->> +                  struct audit_lsm_rules *lsmrules)
->>   {
->> -    return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
->> +    struct security_hook_list *hp;
->> +    int rc;
->> +
->> +    hlist_for_each_entry(hp, &security_hook_heads.audit_rule_match, list) {
->> +        if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
->> +            continue;
->> +        if (lsmrules->rule[hp->lsmid->slot] == NULL)
->> +            continue;
->> +        rc = hp->hook.audit_rule_match(secid, field, op,
->> + &lsmrules->rule[hp->lsmid->slot]);
->> +        if (rc)
->> +            return rc;
->> +    }
->> +    return 0;
->>   }
->>   #endif /* CONFIG_AUDIT */
->>   diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index dffde40d367e..d67bcd1aeaf5 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -7009,6 +7009,11 @@ static int selinux_uring_sqpoll(void)
->>   }
->>   #endif /* CONFIG_IO_URING */
->>   +static struct lsm_id selinux_lsmid __lsm_ro_after_init = {
->> +    .lsm  = "selinux",
->> +    .slot = LSMBLOB_NEEDED
->> +};
->> +
->>   /*
->>    * IMPORTANT NOTE: When adding new hooks, please be careful to keep this order:
->>    * 1. any hooks that don't belong to (2.) or (3.) below,
->> @@ -7324,7 +7329,8 @@ static __init int selinux_init(void)
->>         hashtab_cache_init();
->>   -    security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux");
->> +    security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks),
->> +               &selinux_lsmid);
->>         if (avc_add_callback(selinux_netcache_avc_callback, AVC_CALLBACK_RESET))
->>           panic("SELinux: Unable to register AVC netcache callback\n");
->> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
->> index d58b50006e79..ff832d47479f 100644
->> --- a/security/smack/smack_lsm.c
->> +++ b/security/smack/smack_lsm.c
->> @@ -4744,6 +4744,11 @@ struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
->>       .lbs_superblock = sizeof(struct superblock_smack),
->>   };
->>   +static struct lsm_id smack_lsmid __lsm_ro_after_init = {
->> +    .lsm  = "smack",
->> +    .slot = LSMBLOB_NEEDED
->> +};
->> +
->>   static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
->>       LSM_HOOK_INIT(ptrace_access_check, smack_ptrace_access_check),
->>       LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
->> @@ -4947,7 +4952,7 @@ static __init int smack_init(void)
->>       /*
->>        * Register with LSM
->>        */
->> -    security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
->> +    security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), &smack_lsmid);
->>       smack_enabled = 1;
->>         pr_info("Smack:  Initializing.\n");
->> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
->> index b6a31901f289..e8f6bb9782c1 100644
->> --- a/security/tomoyo/tomoyo.c
->> +++ b/security/tomoyo/tomoyo.c
->> @@ -521,6 +521,11 @@ static void tomoyo_task_free(struct task_struct *task)
->>       }
->>   }
->>   +static struct lsm_id tomoyo_lsmid __lsm_ro_after_init = {
->> +    .lsm  = "tomoyo",
->> +    .slot = LSMBLOB_NOT_NEEDED
->> +};
->> +
->>   /*
->>    * tomoyo_security_ops is a "struct security_operations" which is used for
->>    * registering TOMOYO.
->> @@ -573,7 +578,8 @@ static int __init tomoyo_init(void)
->>       struct tomoyo_task *s = tomoyo_task(current);
->>         /* register ourselves with the security framework */
->> -    security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
->> +    security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks),
->> +               &tomoyo_lsmid);
->>       pr_info("TOMOYO Linux initialized\n");
->>       s->domain_info = &tomoyo_kernel_domain;
->>       atomic_inc(&tomoyo_kernel_domain.users);
->> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
->> index 06e226166aab..a9639ea541f7 100644
->> --- a/security/yama/yama_lsm.c
->> +++ b/security/yama/yama_lsm.c
->> @@ -421,6 +421,11 @@ static int yama_ptrace_traceme(struct task_struct *parent)
->>       return rc;
->>   }
->>   +static struct lsm_id yama_lsmid __lsm_ro_after_init = {
->> +    .lsm  = "yama",
->> +    .slot = LSMBLOB_NOT_NEEDED
->> +};
->> +
->>   static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
->>       LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
->>       LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
->> @@ -477,7 +482,7 @@ static inline void yama_init_sysctl(void) { }
->>   static int __init yama_init(void)
->>   {
->>       pr_info("Yama: becoming mindful.\n");
->> -    security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama");
->> +    security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), &yama_lsmid);
->>       yama_init_sysctl();
->>       return 0;
->>   }
+- Eric
