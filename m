@@ -2,164 +2,301 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E059C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Mar 2022 20:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3809BC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Mar 2022 22:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240782AbiCGUqU (ORCPT
+        id S234197AbiCGWEV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Mar 2022 15:46:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55498 "EHLO
+        Mon, 7 Mar 2022 17:04:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240590AbiCGUqU (ORCPT
+        with ESMTP id S231446AbiCGWEU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Mar 2022 15:46:20 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EA8B8879C;
-        Mon,  7 Mar 2022 12:45:23 -0800 (PST)
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 227J1sPw013154;
-        Mon, 7 Mar 2022 20:45:00 GMT
+        Mon, 7 Mar 2022 17:04:20 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452F72A26E;
+        Mon,  7 Mar 2022 14:03:24 -0800 (PST)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 227LC0eu036096;
+        Mon, 7 Mar 2022 22:03:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  content-transfer-encoding : mime-version; s=pp1;
- bh=OvvbqIC3KMF+Mdr3mDTTZDBVVM+/GzPwzpmF1cYD4sY=;
- b=Jegmh+1SVZdcNidD3Xt766p2MsxjDSwzcuZzJFrRhk7h/fbVz/TKBgta9cCkxwEd97Zy
- fwl+tX0dxGbNBrk7qngU9eTTfGdK+4Kiw/UOYVNheBWZDgGJ7WkysC/wT48pTJ09TB9m
- +l66O67/9qeic1/+mJJOy1NvtuFRXlTK0NIC55tKNNHz5yfp6mFXjkNsKz0Rp/FvQoxM
- YLPwUbUNPxUxexxDIh1N0O7qefRqzmDehULXbmJ8cHtbBBwFAgLA3IwC5NsSElB1hHpL
- ynfJDH2fcC/9j+eM2pZSseXmeR0RzR++XybjQLGUse/qz3NlNH2nHLgAKSiOA+v/cRIp XA== 
+ bh=iSdDxu0rIrQZqrEb7igOW8YGAEjyGBdzN9TORebHOxY=;
+ b=KykxXpoS157tYvAGIkXjAtGiiHdJaKQepHUjfLEDrm0syS9nJtr6TpijqjjMLZ1ES2p/
+ 39z0Q5UVQd2xLkVfsFQ7AVOKR0e2ZTESU5zTwE1Qxbj6Mkl7fy0V/8n+jCrT9J1x14Cx
+ sQRopMmJDDnve6tlpTHNOB9TUIa8xYxLgE01E3ovBKWIEbWiPw9ts/r6bzMKyDO1lfjC
+ j1h+uTRK0rCFPfQgUvKzdytUM8Ebhmbh7dzVfPw8TLFYbhu9hVJbc+S+9enbV8NwDiwF
+ /cdz+xcgoRLpV0h0iTUuNJzDcJOgi/hX/vNNnxqpqxRP0GwSAkri1KkZxz9Vj9rAHz9j wg== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3enq44tk6g-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ensrj0r6v-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Mar 2022 20:45:00 +0000
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 227KXcpp019002;
-        Mon, 7 Mar 2022 20:44:59 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3enq44tk63-1
+        Mon, 07 Mar 2022 22:03:18 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 227M1Cvq025476;
+        Mon, 7 Mar 2022 22:03:17 GMT
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ensrj0r6a-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Mar 2022 20:44:59 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 227Khscl002401;
-        Mon, 7 Mar 2022 20:44:57 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma03ams.nl.ibm.com with ESMTP id 3ekyg8wj1e-1
+        Mon, 07 Mar 2022 22:03:17 +0000
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 227LwVjo015161;
+        Mon, 7 Mar 2022 22:03:15 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma01fra.de.ibm.com with ESMTP id 3ekyg8cv5x-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Mar 2022 20:44:57 +0000
+        Mon, 07 Mar 2022 22:03:15 +0000
 Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 227Kis2n42991942
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 227M3Ckw56426836
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 7 Mar 2022 20:44:55 GMT
+        Mon, 7 Mar 2022 22:03:12 GMT
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C789CA4059;
-        Mon,  7 Mar 2022 20:44:54 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id EBD82A4051;
+        Mon,  7 Mar 2022 22:03:11 +0000 (GMT)
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E7ADAA4051;
-        Mon,  7 Mar 2022 20:44:51 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 7493BA4059;
+        Mon,  7 Mar 2022 22:03:10 +0000 (GMT)
 Received: from sig-9-65-67-225.ibm.com (unknown [9.65.67.225])
         by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  7 Mar 2022 20:44:51 +0000 (GMT)
-Message-ID: <6d8ebebd5f3518f4bc7e68d2b04be5f2bf5a2d08.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
+        Mon,  7 Mar 2022 22:03:10 +0000 (GMT)
+Message-ID: <42243a19b5882ddff9d20b37d1566553b745a717.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 3/3] integrity: support including firmware
+ ".platform" keys at build time
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Florent Revest <revest@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Florent Revest <revest@google.com>,
-        Kees Cook <keescook@chromium.org>
-Date:   Mon, 07 Mar 2022 15:44:51 -0500
-In-Reply-To: <CACYkzJ65D2OZKrEbrCS32+FsQ3BVzs1zQcRQSLnaNQHYTjZFBA@mail.gmail.com>
-References: <20220302111404.193900-1-roberto.sassu@huawei.com>
-         <20220302222056.73dzw5lnapvfurxg@ast-mbp.dhcp.thefacebook.com>
-         <fe1d17e7e7d4b5e4cdeb9f96f5771ded23b7c8f0.camel@linux.ibm.com>
-         <CACYkzJ4fmJ4XtC6gx6k_Gjq0n5vjSJyq=L--H-Eho072HJoywA@mail.gmail.com>
-         <04d878d4b2441bb8a579a4191d8edc936c5a794a.camel@linux.ibm.com>
-         <CACYkzJ5RNDV582yt1xCZ8AQUW6v_o0Dtoc_XAQN1GXnoOmze6Q@mail.gmail.com>
-         <b6bf8463c1b370a5b5c9987ae1312fd930d36785.camel@linux.ibm.com>
-         <CAADnVQKfh3Z1DXJ3PEjFheQWEDFOKQjuyx+pkvqe6MXEmo7YHQ@mail.gmail.com>
-         <40db9f74fd3c9c7b660e3a203c5a6eda08736d5b.camel@linux.ibm.com>
-         <CACYkzJ65D2OZKrEbrCS32+FsQ3BVzs1zQcRQSLnaNQHYTjZFBA@mail.gmail.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        dhowells@redhat.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
+        seth@forshee.me, rnsastry@linux.ibm.com,
+        Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 07 Mar 2022 17:03:09 -0500
+In-Reply-To: <YiX/NHETfqLT8ZAz@iki.fi>
+References: <20220306205100.651878-1-nayna@linux.ibm.com>
+         <20220306205100.651878-4-nayna@linux.ibm.com> <YiX/NHETfqLT8ZAz@iki.fi>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rDF9aAWglsWGovclxFWDSC9yIdvasWWf
-X-Proofpoint-ORIG-GUID: p_yzEHuWyVcE4cN6DfhUcZ1PzrDc1BOK
+X-Proofpoint-GUID: K9jvcnVzT7s9EW-sYNxd3RW10skz4y-_
+X-Proofpoint-ORIG-GUID: UbFojMx8fY8CJXLvdAmj3leWRUCTKFct
 Content-Transfer-Encoding: 7bit
 X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-07_11,2022-03-04_01,2022-02-23_01
+ definitions=2022-03-07_12,2022-03-04_01,2022-02-23_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- bulkscore=0 clxscore=1015 malwarescore=0 impostorscore=0 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203070109
+ malwarescore=0 bulkscore=0 adultscore=0 clxscore=1011 impostorscore=0
+ spamscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203070114
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2022-03-07 at 14:17 +0100, KP Singh wrote:
-> On Mon, Mar 7, 2022 at 3:57 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Thu, 2022-03-03 at 14:39 -0800, Alexei Starovoitov wrote:
-> >
-> > > . There is no such thing as "eBPF modules". There are BPF programs.
-> > > They cannot be signed the same way as kernel modules.
-> > > We've been working on providing a way to sign them for more
-> > > than a year now. That work is still ongoing.
-> > >
-> > > . IMA cannot be used for integrity check of BPF programs for the same
-> > > reasons why kernel module like signing cannot be used.
-> >
-> > I assume the issue isn't where the signature is stored (e.g. appended,
-> > xattr), but of calculating the hash.  Where is the discussion taking
-> 
-> This has the relevant background: https://lwn.net/Articles/853489/
+[Cc'ing  Masahiro Yamada]
 
-Thanks, Jon!
+On Mon, 2022-03-07 at 14:48 +0200, Jarkko Sakkinen wrote:
+> On Sun, Mar 06, 2022 at 03:51:00PM -0500, Nayna Jain wrote:
+> > Allow firmware keys to be embedded in the Linux kernel and loaded onto
+> > the ".platform" keyring on boot.
+> > 
+> > The firmware keys can be specified in a file as a list of PEM encoded
+> > certificates using new config INTEGRITY_PLATFORM_KEYS. The certificates
+> > are embedded in the image by converting the PEM-formatted certificates
+> > into DER(binary) and generating
+> > security/integrity/platform_certs/platform_certificate_list file at
+> > build time. On boot, the embedded certs from the image are loaded onto
+> > the ".platform" keyring at late_initcall(), ensuring the platform keyring
+> > exists before loading the keys.
+> > 
+> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> > ---
+> >  security/integrity/Kconfig                    | 10 ++++++++
+> >  security/integrity/Makefile                   | 15 +++++++++++-
+> >  security/integrity/integrity.h                |  3 +++
+> >  .../integrity/platform_certs/platform_cert.S  | 23 +++++++++++++++++++
+> >  .../platform_certs/platform_keyring.c         | 23 +++++++++++++++++++
+> >  5 files changed, 73 insertions(+), 1 deletion(-)
+> >  create mode 100644 security/integrity/platform_certs/platform_cert.S
+> > 
+> > diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+> > index 599429f99f99..77b2c22c0e1b 100644
+> > --- a/security/integrity/Kconfig
+> > +++ b/security/integrity/Kconfig
+> > @@ -62,6 +62,16 @@ config INTEGRITY_PLATFORM_KEYRING
+> >           provided by the platform for verifying the kexec'ed kerned image
+> >           and, possibly, the initramfs signature.
+> >  
+> > +config INTEGRITY_PLATFORM_KEYS
+> > +        string "Builtin X.509 keys for .platform keyring"
+> > +        depends on KEYS
+> > +        depends on ASYMMETRIC_KEY_TYPE
+> > +        depends on INTEGRITY_PLATFORM_KEYRING
+> > +        help
+> > +          If set, this option should be the filename of a PEM-formatted file
+> > +          containing X.509 certificates to be loaded onto the ".platform"
+> > +          keyring.
+> > +
+> >  config INTEGRITY_MACHINE_KEYRING
+> >  	bool "Provide a keyring to which Machine Owner Keys may be added"
+> >  	depends on SECONDARY_TRUSTED_KEYRING
+> > diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+> > index d0ffe37dc1d6..65bd93301a3a 100644
+> > --- a/security/integrity/Makefile
+> > +++ b/security/integrity/Makefile
+> > @@ -3,13 +3,17 @@
+> >  # Makefile for caching inode integrity data (iint)
+> >  #
+> >  
+> > +quiet_cmd_extract_certs  = CERT  $@
+> > +      cmd_extract_certs  = certs/extract-cert $(2) $@
+> > +
+> >  obj-$(CONFIG_INTEGRITY) += integrity.o
+> >  
+> >  integrity-y := iint.o
+> >  integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
+> >  integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+> >  integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+> > -integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
+> > +integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
+> > +						  platform_certs/platform_cert.o
+> >  integrity-$(CONFIG_INTEGRITY_MACHINE_KEYRING) += platform_certs/machine_keyring.o
+> >  integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+> >  				      platform_certs/load_uefi.o \
+> > @@ -20,3 +24,12 @@ integrity-$(CONFIG_LOAD_PPC_KEYS) += platform_certs/efi_parser.o \
+> >                                       platform_certs/keyring_handler.o
+> >  obj-$(CONFIG_IMA)			+= ima/
+> >  obj-$(CONFIG_EVM)			+= evm/
+> > +
+> > +$(obj)/platform_certs/platform_cert.o: $(obj)/platform_certs/platform_certificate_list
+> > +
+> > +targets += platform_certificate_list
+> > +
+> > +$(obj)/platform_certs/platform_certificate_list: $(CONFIG_INTEGRITY_PLATFORM_KEYS) certs/extract-cert FORCE
+> > +	$(call if_changed,extract_certs,$(if $(CONFIG_INTEGRITY_PLATFORM_KEYS),$<,""))
+> > +
+> > +clean-files := platform_certs/platform_certificate_list
+> > diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> > index 76e9a9515f99..219da29fecf7 100644
+> > --- a/security/integrity/integrity.h
+> > +++ b/security/integrity/integrity.h
+> > @@ -282,6 +282,9 @@ integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
+> >  #endif
+> >  
+> >  #ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> > +extern __initconst const u8 platform_certificate_list[];
+> > +extern __initconst const unsigned long platform_certificate_list_size;
+> > +
+> >  void __init add_to_platform_keyring(const char *source, const void *data,
+> >  				    size_t len);
+> >  #else
+> > diff --git a/security/integrity/platform_certs/platform_cert.S b/security/integrity/platform_certs/platform_cert.S
+> > new file mode 100644
+> > index 000000000000..20bccce5dc5a
+> > --- /dev/null
+> > +++ b/security/integrity/platform_certs/platform_cert.S
+> > @@ -0,0 +1,23 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#include <linux/export.h>
+> > +#include <linux/init.h>
+> > +
+> > +	__INITRODATA
+> > +
+> > +	.align 8
+> > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> > +	.globl platform_certificate_list
+> > +platform_certificate_list:
+> > +__cert_list_start:
+> > +	.incbin "security/integrity/platform_certs/platform_certificate_list"
+> > +__cert_list_end:
+> > +#endif
+> > +
+> > +	.align 8
+> > +	.globl platform_certificate_list_size
+> > +platform_certificate_list_size:
+> > +#ifdef CONFIG_64BIT
+> > +	.quad __cert_list_end - __cert_list_start
+> > +#else
+> > +	.long __cert_list_end - __cert_list_start
+> > +#endif
+> > diff --git a/security/integrity/platform_certs/platform_keyring.c b/security/integrity/platform_certs/platform_keyring.c
+> > index bcafd7387729..c2368912fd1b 100644
+> > --- a/security/integrity/platform_certs/platform_keyring.c
+> > +++ b/security/integrity/platform_certs/platform_keyring.c
+> > @@ -12,6 +12,7 @@
+> >  #include <linux/cred.h>
+> >  #include <linux/err.h>
+> >  #include <linux/slab.h>
+> > +#include <keys/system_keyring.h>
+> >  #include "../integrity.h"
+> >  
+> >  /**
+> > @@ -37,6 +38,28 @@ void __init add_to_platform_keyring(const char *source, const void *data,
+> >  		pr_info("Error adding keys to platform keyring %s\n", source);
+> >  }
+> >  
+> > +static __init int load_platform_certificate_list(void)
+> > +{
+> > +	const u8 *p;
+> > +	unsigned long size;
+> > +	int rc;
+> > +	struct key *keyring;
+> > +
+> > +	p = platform_certificate_list;
+> > +	size = platform_certificate_list_size;
+> > +
+> > +	keyring = integrity_keyring_from_id(INTEGRITY_KEYRING_PLATFORM);
+> > +	if (IS_ERR(keyring))
+> > +		return PTR_ERR(keyring);
+> > +
+> > +	rc = load_certificate_list(p, size, keyring);
+> > +	if (rc)
+> > +		pr_info("Error adding keys to platform keyring %d\n", rc);
+> > +
+> > +	return rc;
+> > +}
+> > +late_initcall(load_platform_certificate_list);
+> > +
+> >  /*
+> >   * Create the trusted keyrings.
+> >   */
+> > -- 
+> > 2.27.0
+> > 
+> 
+> There's zero tested-by's for this, i.e. cannot be applied before someone
+> has tested this. Mimi, do not mean to be rude, but I don't frankly
+> understand why you ask to pick a patch set that is *untested*.
+> So I generated a self-signed certificate:
+> 
+> openssl req -x509 -out localhost.crt -keyout localhost.key \
+>   -newkey rsa:2048 -nodes -sha256 \
+>   -subj '/CN=localhost' -extensions EXT -config <( \
+>    printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+> 
+> (by courtesy of letsencrypt: https://letsencrypt.org/docs/certificates-for-localhost/)
+> 
+> openssl x509 -in localhost.crt -out localhost.pem -outform PEM
+> 
+> And starting with tinyconfig I added minimal options to enable this
+> feature. The config is attached.
+> 
+> The end result is:
+> 
+> make[2]: *** No rule to make target 'certs/extract-cert', needed by 'security/integrity/platform_certs/platform_certificate_list'.  Stop.
+> make[1]: *** [scripts/Makefile.build:550: security/integrity] Error 2
+> make: *** [Makefile:1831: security] Error 2
 
-> 
-> We had some more discussions in one of our BSC meeting:
-> 
-> https://github.com/ebpf-io/bsc/blob/master/minutes.md
-> 
-> and we expect the discussions to continue over conferences this year
->  (e.g. LSF/MM/BPF, Linux Plumbers). As I mentioned on another thread
-> we don't have to wait for conferences and we can discuss this in the BPF
-> office hours. Please feel free to add an agenda at:
-> 
-> https://docs.google.com/spreadsheets/d/1LfrDXZ9-fdhvPEp_LHkxAMYyxxpwBXjywWa0AejEveU/edit#gid=0
-> 
-> (best is to give some notice so that interested folks can join).
+I've reviewed and tested this patch set each time it was posted last
+fall/winter.  Recent changes were limited to the cover letter and patch
+description.  Only recently was "extract_cert" moved to the certs/
+directory and not built automatically.  The commit message says the
+move was because it wasn't being used outside the certs directory. 
+Refer to commit 340a02535ee7 ("certs: move scripts/extract-cert to
+certs/").
 
-Right, but probably a good idea to understand the issues at least at a
-high level, before a meeting.
-
-> 
-> > place?   Are there any summaries of what has been discussed?
-> >
-> > FYI, IMA isn't limited to measuring files.  Support was added for
-> > buffer measurements (e.g kexec boot command line, certificates) and
-> > measuring kernel critical data (e.g. SELinux in memory policy & state,
-> > device mapper).
-> 
-> Nice. I need to look at how this is implemented.
-
-ima_measure_critical_data() is of kernel state info, so signature
-verification is currently not needed or supported, only measurement.
+Masahiro Yamada would you be ok with reverting the move?
 
 thanks,
 
