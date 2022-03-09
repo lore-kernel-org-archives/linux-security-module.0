@@ -2,115 +2,201 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58DF6C4332F
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Mar 2022 16:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 307C4C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Mar 2022 17:15:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236429AbiCIRAK convert rfc822-to-8bit (ORCPT
+        id S236555AbiCIRQH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Mar 2022 12:00:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40936 "EHLO
+        Wed, 9 Mar 2022 12:16:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236354AbiCIRAD (ORCPT
+        with ESMTP id S236008AbiCIRPp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Mar 2022 12:00:03 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E4D1AF8ED;
-        Wed,  9 Mar 2022 08:47:10 -0800 (PST)
-Received: from fraeml708-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KDJ2m3HZyz67wwW;
-        Thu, 10 Mar 2022 00:45:04 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml708-chm.china.huawei.com (10.206.15.36) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 9 Mar 2022 17:46:27 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.021;
- Wed, 9 Mar 2022 17:46:27 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>
-CC:     "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Wed, 9 Mar 2022 12:15:45 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 003B62669;
+        Wed,  9 Mar 2022 09:13:20 -0800 (PST)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 229FZ7pX031743;
+        Wed, 9 Mar 2022 17:12:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=ERfmtCrOveRkJbrZVDECIm+95CvkUGw5l6XDtNMGZR8=;
+ b=ThJK20YhdsNzKWFDPul1yUDK52WlcmG5oJEo57z4jL0jXnfwFSef+NDvviUVJ+nGJPDu
+ Wh+tJ6i3iV8dr+ckCtzlYfw/fIEQ6L7/nQeQhwJAoSfmEy8nX/ytVYQL8RHXj5XJsbPH
+ hLZEL1k/tfEI42Zpkx15jmu+a5D51G5wSKRvZnlVmI5M6cunOqkgVuf1zxIKVmUtyTVS
+ FBbiOVrA/PXnHx3uzeQiTf/UJIpRVWwm8MPvxnlkyisOxHqIH7MDML9esX3lqumy8E58
+ bu5ZwgTiSA6N3ZHTVGMCml2VepXdReQkYXFpsNAzPSq/kdp/03t0ZTREDc7laW4TTA9P cQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep1077340-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Mar 2022 17:12:49 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 229Gv4Ne001953;
+        Wed, 9 Mar 2022 17:12:48 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep107733j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Mar 2022 17:12:48 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 229HChND022064;
+        Wed, 9 Mar 2022 17:12:47 GMT
+Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
+        by ppma03dal.us.ibm.com with ESMTP id 3emy8hanpx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Mar 2022 17:12:47 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 229HCjJe22610408
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 9 Mar 2022 17:12:45 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A2940BE05F;
+        Wed,  9 Mar 2022 17:12:45 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E8C4DBE058;
+        Wed,  9 Mar 2022 17:12:42 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Mar 2022 17:12:42 +0000 (GMT)
+Message-ID: <930d970d-0120-d3f0-939a-b5ef3b596318@linux.ibm.com>
+Date:   Wed, 9 Mar 2022 12:12:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 3/4] KEYS: CA link restriction
+Content-Language: en-US
+To:     Eric Snowberg <eric.snowberg@oracle.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
+        "mic@linux.microsoft.com" <mic@linux.microsoft.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>
-Subject: [LSF/MM/BPF TOPIC] DIGLIM eBPF
-Thread-Topic: [LSF/MM/BPF TOPIC] DIGLIM eBPF
-Thread-Index: AdgzyU0J69ucohptSrqMF06VRSG1Dw==
-Date:   Wed, 9 Mar 2022 16:46:27 +0000
-Message-ID: <4d6932e96d774227b42721d9f645ba51@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.204.63.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+References: <20220301173651.3435350-1-eric.snowberg@oracle.com>
+ <20220301173651.3435350-4-eric.snowberg@oracle.com>
+ <47f3654e-892d-a35a-e77c-70ada1ebcf43@linux.ibm.com>
+ <2415444C-AD8F-4F03-8B1C-C0770F83ADAE@oracle.com>
+ <e2dd58cd6074ae692256333b43b5ecde70bcdbdd.camel@linux.ibm.com>
+ <67456A73-8B72-4DB6-8E23-7C603661A0A4@oracle.com>
+ <22860730-d615-5683-6af0-05b6f4f3e71d@linux.ibm.com>
+ <e10f2161aaa69a9d301b3a16a37cbab266318aee.camel@linux.ibm.com>
+ <068F32E0-B202-4B20-9DE7-57373EF71BFE@oracle.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <068F32E0-B202-4B20-9DE7-57373EF71BFE@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: rqnPdFEcO6soykUtSB6sY7xeZNaeIZxc
+X-Proofpoint-GUID: F7UnrJsWqoGVmzw3lmyFlc0pK--_0eBm
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-09_07,2022-03-09_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0
+ clxscore=1015 spamscore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2203090096
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dear PC
 
-I would like to propose a topic for the upcoming LSF/MM/BPF
-summit in May:
 
-DIGLIM eBPF: secure boot at application level with minimal changes to distros
+On 3/8/22 13:02, Eric Snowberg wrote:
+> 
+> 
+>> On Mar 8, 2022, at 5:45 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>
+>> On Mon, 2022-03-07 at 21:31 -0500, Stefan Berger wrote:
+>>>
+>>> On 3/7/22 18:38, Eric Snowberg wrote:
+>>>>
+>>>>
+>>>>> On Mar 7, 2022, at 4:01 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>>>>
+>>>>> On Mon, 2022-03-07 at 18:06 +0000, Eric Snowberg wrote:
+>>>>>>
+>>>>>>>> diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/restrict.c
+>>>>>>>> index 6b1ac5f5896a..49bb2ea7f609 100644
+>>>>>>>> --- a/crypto/asymmetric_keys/restrict.c
+>>>>>>>> +++ b/crypto/asymmetric_keys/restrict.c
+>>>>>>>> @@ -108,6 +108,49 @@ int restrict_link_by_signature(struct key *dest_keyring,
+>>>>>>>> 	return ret;
+>>>>>>>> }
+>>>>>>>> +/**
+>>>>>>>> + * restrict_link_by_ca - Restrict additions to a ring of CA keys
+>>>>>>>> + * @dest_keyring: Keyring being linked to.
+>>>>>>>> + * @type: The type of key being added.
+>>>>>>>> + * @payload: The payload of the new key.
+>>>>>>>> + * @trust_keyring: Unused.
+>>>>>>>> + *
+>>>>>>>> + * Check if the new certificate is a CA. If it is a CA, then mark the new
+>>>>>>>> + * certificate as being ok to link.
+>>>>>>>
+>>>>>>> CA = root CA here, right?
+>>>>>>
+>>>>>> Yes, I’ll update the comment
+>>>>>
+>>>>> Updating the comment is not enough.  There's an existing function named
+>>>>> "x509_check_for_self_signed()" which determines whether the certificate
+>>>>> is self-signed.
+>>>>
+>>>> Originally I tried using that function.  However when the restrict link code is called,
+>>>> all the necessary x509 information is no longer available.   The code in
+>>>> restrict_link_by_ca is basically doing the equivalent to x509_check_for_self_signed.
+>>>> After verifying the cert has the CA flag set, the call to public_key_verify_signature
+>>>> validates the cert is self signed.
+>>>>
+>>> Isn't x509_cert_parse() being called as part of parsing the certificate?
+>>> If so, it seems to check for a self-signed certificate every time. You
+>>> could add something like the following to x509_check_for_self_signed(cert):
+>>> pub->x509_self_signed = cert->self_signed = true;
+>>>
+>>> This could then reduce the function in 3/4 to something like:
+>>>
+>>> return payload->data[asym_crypto]->x509_self_signed;
+> 
+> When I was studying the restriction code, before writing this patch, it looked like
+> it was written from the standpoint to be as generic as possible.  All code contained
+> within it works on either a public_key_signature or a public_key.  I had assumed it
+> was written this way to be used with different asymmetrical key types now and in
+> the future. I called the public_key_verify_signature function instead of interrogating
+> the x509 payload to keep in line with what I thought was the original design. Let me
+> know if I should be carrying x509 code in here to make the change above.
 
-The recent addition in the kernel of the bpf LSM made it
-much easier to propose new LSMs targeting a specific
-use case, without requiring modification of existing LSMs
-in the security subsystem.
+It does not seem right if there were two functions trying to determine 
+whether an x509 cert is self-signed. The existing is invoked as part of 
+loading a key onto the machine keyring from what I can see. It has 
+access to more data about the cert and therefore can do stronger tests, 
+yours doesn't have access to the data. So I guess I would remember in a 
+boolean in the public key structure that the x509 cert it comes from was 
+self signed following the existing test. Key in your function may be 
+that that payload->data[] array is guaranteed to be from the x509 cert 
+as set in x509_key_preparse().
 
-Integrity Measurement Architecture (IMA) and Extended
-Verification Module (EVM) have become the de-facto
-standard choice for providing kernel-based integrity
-services.
+https://elixir.bootlin.com/linux/v5.17-rc7/source/crypto/asymmetric_keys/x509_public_key.c#L236
 
-However, while IMA and EVM operate at file granularity,
-requiring each file to be signed to pass appraisal, Digest
-Lists Integrity Module (DIGLIM) takes a different approach.
-It builds a pool of reference values for file/metadata digests
-and grants access to a file if the calculated digest is found
-in the pool.
+    StefanIt does not seem right if there were two functions trying to 
+determine whether an x509 cert is self-signed. The existing is invoked 
+as part of loading a key onto the machine keyring from what I can see. 
+It has access to more data about the cert and therefore can do stronger 
+tests, yours doesn't have access to the data. So I guess I would 
+remember in a boolean in the public key structure that the x509 cert it 
+comes from was self signed following the existing test. Key in your 
+function may be that that payload->data[] array is guaranteed to be from 
+the x509 cert as set in x509_key_preparse().
 
-The main advantage of this approach is that it is not
-constrained by a specific data format, as the pool can
-be built from any data format, as long as the corresponding
-parser is supported. DIGLIM can take reference values
-from unmodified Linux distributions to make its security
-decisions.
+https://elixir.bootlin.com/linux/v5.17-rc7/source/crypto/asymmetric_keys/x509_public_key.c#L236
 
-An alternative of supporting the new approach in IMA,
-which would be still possible, has been to rewrite DIGLIM
-as an eBPF program, to operate in a similar way as IMA
-does.
-
-Although it has yet to be seen if the performance of the
-eBPF implementation matches the one aiming to be
-integrated in the kernel, at least from the functionality
-point of view, eBPF proved to be more than sufficient
-and even better than the kernel counterpart.
-
-Since the data structures and the primitives to manage
-the pool of reference values are already implemented by
-eBPF (e.g. hash map), DIGLIM had only to declare and
-use those data structures from the relevant LSM hooks.
-
-The developed eBPF program [1] of ~250 LOC is capable
-of verifying the code executed in the unmodified
-Fedora 36 [2] and openSUSE Tumbleweed [3] up to the
-GNOME desktop (yet, without any verification of the
-data source, or the eBPF program itself, to be done as
-future work).
-
-Thanks
-
-Roberto
-
-[1] https://github.com/robertosassu/diglim-ebpf/blob/master/ebpf/diglim_kern.c
-[2] https://copr.fedorainfracloud.org/coprs/robertosassu/DIGLIM-eBPF/repo/fedora-36/robertosassu-DIGLIM-eBPF-fedora-36.repo
-[3] https://download.opensuse.org/repositories/home:/roberto.sassu:/branches:/openSUSE:/Factory/openSUSE_Tumbleweed/
-
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Zhong Ronghua
+    Stefan
