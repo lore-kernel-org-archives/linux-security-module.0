@@ -2,70 +2,68 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC391C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Mar 2022 23:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B97E2C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Mar 2022 23:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345034AbiCJX51 (ORCPT
+        id S1344607AbiCJX5b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Mar 2022 18:57:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47198 "EHLO
+        Thu, 10 Mar 2022 18:57:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345013AbiCJX50 (ORCPT
+        with ESMTP id S1345013AbiCJX52 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Mar 2022 18:57:26 -0500
-Received: from sonic308-16.consmr.mail.ne1.yahoo.com (sonic308-16.consmr.mail.ne1.yahoo.com [66.163.187.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A21BC19E087
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Mar 2022 15:56:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646956582; bh=OPmcc6RxdekExVViioUe9rMhP6xIsP6mDCh0RBi/+Qs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=ZTnoooEHvtGmaJR7s/T+fN33dVCzNFRinpgZQm/9pcbRNcnuHadKYzueRV/i34vLqYracBfmq0STVDuu7NbMnp1qtxCQjGsAXHbgl1eGNHAZtc6Q+xvjBzEKbYoEC4IyMae/3IuamsTyuV6Wuv0BU1dMjU6kAocXTw4x17iG8JCrPdxHI5hcf3TO5//W7ugb0vI8Oszmx9hM1e4jNmq1aboTLaQ2f2aR4hvqcoNwQos46TAHlArob9Xu+DgLXGFhcxP4edY6ms6h7oye0wjD4N4TtVmH72nnpd8XlOSZphiUM75l3zxZg5Wotri+EgzAZcpGBvGLFfviZ25FwAwMVg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646956582; bh=zx/ZlmAdyeukqeKIc6uLlAB8jfa4F95BXi3gni6qPlE=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=tM9mBldcIsd8uiEKWgEJwjbeCzCqahOAFu1B9n078pf2zHkBXVwdCVtSO0mMzjauhsDv7296KMSTMcKNT/vHAJcxcfIfRX57c+5x8s2+jHlG/xKuEEVIY89LWahawoi2CySziXy+PN1A+7v1PwHgvSx5Eym4zFFt9YQGGRXZFgftx2cqELKXLgFoAzfZdZTT70V2zBzkddZUa8G2+UqKJnuilp7iMhHzivzY7u/pIfcm9knWV4mcHofuMV0Jp/4YRo0PAJo18lLThhVl9PX9WNu7aHmlY6l21YwqWK3OLLvmfHgc+ySXMCgakx4xea4HIPqCrO5n2sb4k2r9RPLwEw==
-X-YMail-OSG: 4Pso2ZwVM1n058ndWUGBbvG5hshml4p6ImW0hUEPPCXOgjXGkQAeoUL7a3LjEvy
- 3l9ouau01XTLocS3f5mGXpY5ewEeWD4.3oXm8QHmMq.PCOFlBl6v2VamBez0mpS7KhnnX0mNystM
- DRkEmJ5DHKJm2pCN3O_dRkC4bwZWRFSmKzFNb7g7gcWIuOhHx9EGtjfTULeydh2RFju46yKJXq_9
- 1z22sptcePMem.8O8U5Kzj5XHox8mbs1_FIgV8PvbXaJrWmPkSmTMGmMxTBdMdbA0CA0Uxp8AGcJ
- HOogIWwWS2MRO93FqqCc5dquRHoLoMbAhFPKT9X.y_ympk78pOmkai7wPui7gjwyGvOmrLe024KJ
- 3._gjEEoks9ORysMmoPm.Z1rYHQlKOPBl5WLv0Z79bX74rF0xUUDGGQ.9RNEQBRLaiV8dxkG6KLO
- feZPh.G6u9Wle33cfNXTspa_M8iKMwVp79M5HIgmWqcOlgsouQf6lC1xqWYu3ybk91psWHD2AzY7
- nsmssZjk7.mIDnQW3AnJ7eqA.GY.v7D.XDXCkbedJRnDTkoLE6AiTNWHLAkYjMd5gi1rtYcqlc9x
- VdanH.8oqj4k9fT6Z4RixDg5_HVuVR56ZKCSazCN5FamElKsq456FUEyL2deB41321Pan4wspciC
- JqNLrOENre6m44CDM.w2BodA_eoCP6bqOe_5ST6ynd4I0bsoWPc8.9nJxNXAuDjVyy49cR4wObJc
- RmVWGd2ooZXmpsZBvuK9IqVN6.t3m7QR7kZZbpfJvWkGfk8byUWRCVuX2CbuID_Fyhm9sp6x3bMG
- 1WNSZUm88dD0hU7wMWTcz6nG_D8o.RBiTsGM2Jlgi8hartfAIRRxvWQPpFgKdc7nT2wgMiSFvPKt
- _tzuTYazV9yhmCfEqnCpYeBuVJ0dU76OVKw4O3cND2TMSxqCcvGLHqhV2MMYEW5FeTv3D.zxWjkz
- Nyrcp1y5JYYdBO746DAkqNjEma2b.TTfKOcXMoGgNlpEMUbkoeaDLeH4aS1OM.k3awtmk0d.4ihA
- b28i0289Xf8xSZknjnp6H2DvzvH6_4_oe2BBC4WNk6DOqQ4jXi07X35PLSqy4ZFCbLgrYi3DZmcG
- jc9NWMOuKJrkc9wKJwrhhHQbPhWZVY_XesX4oG4uL3EdLct_MGSKcR7T8tnkloreb9Md6DIdism_
- a3XD.xeOkroc03MzVK_g1ItYVdtv7Cg33VmkaRfO8LW9Hgxqm5vbZmPZqne9iaEoDpxcj0IB1zTm
- OXwa0Jxi3wrzMJEvBtwGjdOAwhoAf3ZVSgp8io3S61vaGuGh.Y.a2TBbsEJfvwgChxME_YXXGl7H
- nAFw6t96T0q4bBCmM6ChyuANs91erBz5uvFTMQRXUda5oPp9.W7kEhs8mmf.cQixO2iVjFwEDjxM
- ff8Pi7n8Y27luMM46exVjWoAr4c.Ohh9y30jmsxd.qXgOQHkGinIkJIcSNrh9EOkUG37EnJX4.Xe
- 1KBxAXrx_V5i7n67hxj5FoGoOD_Jjj34AnHVlFBh9GcE5n413gl8a2YrRQU.kwfEAVrz562XOMX7
- vQlRzJppywD4TmUK9DI.C_b43pczRGtrYQYOAIZ8Wd1OZvmrrr5k7GfGZ8HNiPKUjW7RWJUsqkkA
- 5ZEqa1FvNONGSMBzEkyWROM3N4pLW7oiNFzDHywTV7O0XzOKMz8AgPkjrifDw4hS9TQQAyOYVey6
- jUAeCuvnhQ9H2brgLkFvL1tV4NzVegz_gFEGT.c9q0.kUEBO9uj6BpqQR03KMbVqQzdHMH8x0mKa
- T2nUFgezyXlhCk1aDs7u8A7Pq5p7m.9FENu7ZiHqdaelfw2PWrHnd6MWQToWhJfYgAlXgcK1qWdq
- 1VFxw.RUPAeyERhRqSQ.6eSULo.otfRZqO.iN3q90WuRo5M92SBkaRN8jj7RikYnCZN0IEZFH5ki
- zhwbAw1728EgVagmz8N4qT5_kYrlBtQ9a50hkNWn8tKvmly50..ShIcyuCFtb6xJUBFUEM78CIP2
- xtUuI3n12Cteu07uz0y8zRyg8ghsf_NE2tBh5LVxB7wmyv7hFMoyqaRlZwXqH2m3iJtDSQo6W8kG
- A4KTmnL_Gu8BhYNHmDgCuFU9aZNMmBGw9KuO5HTcJ3DlMVNSYL.mUy9RGCZY14i5.0Q7_Pj50YMZ
- BIP4yuTozlfMPKgopb525jWqIvszq95h4gTtrk3jcdLwl8u2tkDzJEbzbUSOc._Ewen8HK9a0kKc
- dsEVfPMPByUOvWF9g5lYvJn7m653wU2LEARFe8t3M0.3qkWRsr9vvs2E6A4U3NvG9nrrzYDSEY3l
- QqRu3lW9CypkR2WOflLOuOzJDh.5gEB4C4jq3WiFLURmurBn.z0eB3iJ5
+        Thu, 10 Mar 2022 18:57:28 -0500
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A83519E738
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Mar 2022 15:56:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646956585; bh=H/2k79voQ0fOdYkvuAiOfOHnDBkNBUmiw2X8r7f2tmM=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=loQZCca05tIQkjzt70YXDBkJhkPjaGueh/2TWU10Mik1YJYLRPTFpIqaPOBsWWlbNTsmVSLDMNOAAhB4FX0n2Ylx9E51H/pDt0gOmVvlb9OM69LztGG6x7MiAx/zg8zxZpuMjP5Shyxg0KqGYKeRdl4s5PFuOW3zO1SwcCuy/sydjCn+qe3CIIhD5bkioioOtoz1avXLnifJqipUcLCuVtt46Yzm6DbXZuKjsKHT91BrbfljcJO9URINyThaviJ81ee7lsKSZj6ESBH9pFPQxAHA00xr16auY6TOrCAHK2l+nE5/3BsbM+CLIJYWAh5aJjGOZcAPkE4JyZ5rHhGj0g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646956585; bh=Hf6lYf5hX9iLiDPKZ8yd6aGPwAzl1BrsRYbF4zZmdaN=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=JIVZH8XE7EyFlw8JYkaB/ZdIL3/URtwgaJgiLgoGOlbRE/mBSev6kLCZ7wyKqpp5FljHjDwYPmzsVtHxaGzsQRhy/LwgXYTmByNB43em0W7tUVApCz7Fbl+PlWCob2sveH0q3WOaKW/t0TfIlJUxStGZWKZ+R3FtwGhNcdqaoFsxaiWCPDnJN711MXoXA2HYX+3ZEwna87hvwUZtmtrbLNQGS/v8CxF5fa2VEbZWMfKIvfMfdf2xCZ9G5ic2H4siIPWxgdJUGEpJ3PQ+tMl6lGRhjYh756AJhHNwdcip7YKecxUzMModn+neHGTbRdUOe8Vwj8faz7Hm+225m+FiQA==
+X-YMail-OSG: zOlMbuwVM1l8XSQlN3OQN8O30YzMJmthOinLtLSzFVQ5L7z8UNQYKdzGmUR22y5
+ uBeAwINUWGDkjy2ZakTDPVQA7h22wXeXx.9m3risJfVeB56_QnjDCdzMGi5uj_hi7EfwVWHzDT.b
+ HmnE1w0Kph0LzrD8TU4zhEMFo4kDNYcjV2AWAJLMYET8UqMevYFA5_LbAsUKUrSWN32oU51ipSqX
+ pzjEz.KwhNGz3LQkOOeZUrvpXA7erxkRb0lhqwbDbnYw0pJ6x4Tfdql.f2xg1noBASCchcqMcuP3
+ jPWygOLdJ9HXmd1Ky_K7m9g3vsC_zzt13Wcjc_0k2Kd7XDSzryfHXV1irhXa0YLwm2t0ZCjzVLq7
+ WrE8CtgqqSNaxfe4NXufTE1Nk4JYvZ4Rro1O0VY7TnqNGB_x6btHzhS2uw8FsqqyezzWiSd4TfFO
+ jRrsnPxLcQc9_.twapESs2wOoioZ88EdDCkN3Q0yJDCl1fDWSV5ys9PGZzL55qjbYAgqxl3fHiFG
+ jVGfNdchJYPc0dSZDK79oYgoWWaqTqLhwphdFlpkhkJUpM.fy6bolEXFSYwCBJU4uixg1RlAX77j
+ gZV_AfEFxlnRniiWYOIwETPOrxv1x3vzeA2B.Mh_m3MLRJDs9kZEZ2JSTsA1G_eeuT9r_NPyZ3PR
+ YouNoYfAeCRzsGZRM8H5o7Kf.BZwYK6CEmdaztsefxxHpcpAYv6iHuNuSoEzLqd1DSBLAzxYEa4N
+ risgmBOU4MtkfeAGb0LWrzcILaE0knsAzcwH.SmbTByoulWVZLZfgph29quYJLBi5p8LDVNz1OXG
+ 8QqpioKnB9O88YStE8.ViIrIKEo9EUI19gT39l2mEKL8IeJ6pywOopn0Wrc7ENUMvXrWRfslX6Su
+ 1z_iNTJOlzorpPZ.npw.7w1LX75G3_.HFrP940t9UBhkc7hqBXJbug6pCI0PqSa7bCIR_ZrSZYxt
+ fj1ljK8VwINLmk3t9vJ1p5OeSG507Cn1jyjALAp16vXQju2fI6zB6nSYRr_2E8l.DRx7i8lDC2M8
+ .DE4AHhQEBWjfCHSkEiHLjFV76SEleywXvyy2ao_EIO9yj5uip7svBrt3ye1gis7MBYUlt0gaM.7
+ Ew6KPFQ1_s_4UPBnxiXWDmKtIhs6eQlLTXcYzmV0DkTYr4xg2CbNOOXCtACI1Rwbl79TccmTEb95
+ g5wFka_3bLGLJZA5R.MOX7xmft46TP0W4KEV6Zc8COGWkWMlxn45pVI.r4uZUufgJEgbYphvv8HC
+ sUsQWyzV1Afezpwg658nHU.6MSRL_z7HC0O5V8MRZERNByFjSYz6iKU.A7XQOZk7Z7M2NNOwzRuI
+ ACkLzuuU4fQ3OpdAcCj2Qhw3P3jNwn46nbDZdURQubLWGYiTiYalRt.9AfOJgZxGOniMQreeUdg4
+ tBzKvGyZ6ZbKLHqLYk3uK2oeuUirRDIWkVNG.cr6_cKaAPQS5gw9wTEdruqwMKFbVk9tPzvJQ8OT
+ b9JRTUUiICK9vnXmXkS8gZiPJ4AXLssaNaNHKfTeso8ovLAbJA7YOKt3gJserokaNzU4b1qoFkXI
+ w_zccRswe7bjGttTe.cs9VMuqOfEKc14ci97qup0v0peAOGM9CC.aL_CEDlqwHDklAuFcMFrkUge
+ LM2v61N.yfzpaqA8znQAIWY79r6cadlhyBIcXbGZx5at7bp2h13OEo8vFvnP9hE0mMddI5cZQTBQ
+ J2TzqXz0.jrxei65ZeHA0q_4HLEjbtD40.xAtJpg2oBohiCe_ghEON5h90...YmV3BlEiP8Y2gxM
+ 4Btz07EBVm.Rx33z_NioCHxkIs.CCRdPHPZMA.k9Ry28bHQvTgnVLZBnnXch.AlSb0s967DiQKlX
+ zgNLEJKrYVY3AhJ6ajm7tttpbjHd0tx6GxlnTiz6qwEVaLuIYMoqHl0Vh_7YosunFdSzb54yttgx
+ V4aWZc.F9_tr7saWDrHMAdB7JHVN90oQv9yq1P7Y7.uJ5WwK3qURabKbvXdvDg6Il0XR9Kdxwuqs
+ 0MIeFqPhRf4raFYiE4ld3RwELN4GiAHj8xdw_fsX7mp6g3DymRYvfVUq73NJWX90SeZvudAlkOyM
+ XWfiGPfhOCaSySifpRuZ5gVcczWj_IVxTaOWVBLjHSWGAy5szSFwOkKK_fCeKKSKF_78Kk5sfPwO
+ yvyB3.vmXPi9qaqm36xyITkeCgr2ujJL7l1epTgUnzOqJXL3.76nD5Vy_lWS6i4iGU1qMUCeiDdt
+ iNdfdkVLJgwVfcHh_2xK53JnhN0AcoHKeSYUK7SnUFb7KwhSqyZJpLgaR9_LKe9CRtz54hmI6GjB
+ yYw8R3FU8VxNVCRuOEkJq9Sw8y4_gkQ--
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Mar 2022 23:56:22 +0000
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Mar 2022 23:56:25 +0000
 Received: by kubenode537.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 85c60a74110af086a1e93bbc48c45823;
-          Thu, 10 Mar 2022 23:56:20 +0000 (UTC)
+          Thu, 10 Mar 2022 23:56:22 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
         keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
-Subject: [PATCH v33 18/29] LSM: security_secid_to_secctx in netlink netfilter
-Date:   Thu, 10 Mar 2022 15:46:21 -0800
-Message-Id: <20220310234632.16194-19-casey@schaufler-ca.com>
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v33 20/29] binder: Pass LSM identifier for confirmation
+Date:   Thu, 10 Mar 2022 15:46:23 -0800
+Message-Id: <20220310234632.16194-21-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220310234632.16194-1-casey@schaufler-ca.com>
 References: <20220310234632.16194-1-casey@schaufler-ca.com>
@@ -74,123 +72,69 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Change netlink netfilter interfaces to use lsmcontext
-pointers, and remove scaffolding.
+Send an identifier for the security module interface_lsm
+along with the security context. This allows the receiver
+to verify that the receiver and the sender agree on which
+security module's context is being used. If they don't
+agree the message is rejected.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Acked-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: netdev@vger.kernel.org
-Cc: netfilter-devel@vger.kernel.org
 ---
- net/netfilter/nfnetlink_queue.c | 37 +++++++++++++--------------------
- 1 file changed, 14 insertions(+), 23 deletions(-)
+ drivers/android/binder.c          | 21 +++++++++++++++++++++
+ drivers/android/binder_internal.h |  1 +
+ 2 files changed, 22 insertions(+)
 
-diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-index 625cd787ffc1..2aff40578045 100644
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -301,15 +301,13 @@ static int nfqnl_put_sk_uidgid(struct sk_buff *skb, struct sock *sk)
- 	return -1;
- }
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index b0b0c132a247..259f5e38e6ba 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -3024,6 +3024,7 @@ static void binder_transaction(struct binder_proc *proc,
+ 				    ALIGN(extra_buffers_size, sizeof(void *)) -
+ 				    ALIGN(lsmctx.len, sizeof(u64));
  
--static u32 nfqnl_get_sk_secctx(struct sk_buff *skb, char **secdata)
-+static void nfqnl_get_sk_secctx(struct sk_buff *skb, struct lsmcontext *context)
- {
--	u32 seclen = 0;
- #if IS_ENABLED(CONFIG_NETWORK_SECMARK)
- 	struct lsmblob blob;
--	struct lsmcontext context = { };
++		t->security_interface = lsm_task_ilsm(current);
+ 		t->security_ctx = (uintptr_t)t->buffer->user_data + buf_offset;
+ 		err = binder_alloc_copy_to_buffer(&target_proc->alloc,
+ 						  t->buffer, buf_offset,
+@@ -4453,6 +4454,26 @@ static int binder_thread_read(struct binder_proc *proc,
  
- 	if (!skb || !sk_fullsock(skb->sk))
--		return 0;
-+		return;
- 
- 	read_lock_bh(&skb->sk->sk_callback_lock);
- 
-@@ -318,14 +316,12 @@ static u32 nfqnl_get_sk_secctx(struct sk_buff *skb, char **secdata)
- 		 * blob. security_secid_to_secctx() will know which security
- 		 * module to use to create the secctx.  */
- 		lsmblob_init(&blob, skb->secmark);
--		security_secid_to_secctx(&blob, &context);
--		*secdata = context.context;
-+		security_secid_to_secctx(&blob, context);
- 	}
- 
- 	read_unlock_bh(&skb->sk->sk_callback_lock);
--	seclen = context.len;
- #endif
--	return seclen;
-+	return;
- }
- 
- static u32 nfqnl_get_bridge_size(struct nf_queue_entry *entry)
-@@ -397,12 +393,10 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	struct net_device *indev;
- 	struct net_device *outdev;
- 	struct nf_conn *ct = NULL;
-+	struct lsmcontext context = { };
- 	enum ip_conntrack_info ctinfo = 0;
- 	const struct nfnl_ct_hook *nfnl_ct;
- 	bool csum_verify;
--	struct lsmcontext scaff; /* scaffolding */
--	char *secdata = NULL;
--	u32 seclen = 0;
- 
- 	size = nlmsg_total_size(sizeof(struct nfgenmsg))
- 		+ nla_total_size(sizeof(struct nfqnl_msg_packet_hdr))
-@@ -470,9 +464,9 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	}
- 
- 	if ((queue->flags & NFQA_CFG_F_SECCTX) && entskb->sk) {
--		seclen = nfqnl_get_sk_secctx(entskb, &secdata);
--		if (seclen)
--			size += nla_total_size(seclen);
-+		nfqnl_get_sk_secctx(entskb, &context);
-+		if (context.len)
-+			size += nla_total_size(context.len);
- 	}
- 
- 	skb = alloc_skb(size, GFP_ATOMIC);
-@@ -603,7 +597,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	    nfqnl_put_sk_uidgid(skb, entskb->sk) < 0)
- 		goto nla_put_failure;
- 
--	if (seclen && nla_put(skb, NFQA_SECCTX, seclen, secdata))
-+	if (context.len &&
-+	    nla_put(skb, NFQA_SECCTX, context.len, context.context))
- 		goto nla_put_failure;
- 
- 	if (ct && nfnl_ct->build(skb, ct, ctinfo, NFQA_CT, NFQA_CT_INFO) < 0)
-@@ -631,10 +626,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	}
- 
- 	nlh->nlmsg_len = skb->len;
--	if (seclen) {
--		lsmcontext_init(&scaff, secdata, seclen, 0);
--		security_release_secctx(&scaff);
--	}
-+	if (context.len)
-+		security_release_secctx(&context);
- 	return skb;
- 
- nla_put_failure:
-@@ -642,10 +635,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	kfree_skb(skb);
- 	net_err_ratelimited("nf_queue: error creating packet message\n");
- nlmsg_failure:
--	if (seclen) {
--		lsmcontext_init(&scaff, secdata, seclen, 0);
--		security_release_secctx(&scaff);
--	}
-+	if (context.len)
-+		security_release_secctx(&context);
- 	return NULL;
- }
- 
+ 		tr.secctx = t->security_ctx;
+ 		if (t->security_ctx) {
++			int to_ilsm = lsm_task_ilsm(current);
++			int from_ilsm = t->security_interface;
++
++			if (to_ilsm == LSMBLOB_INVALID)
++				to_ilsm = 0;
++			if (from_ilsm == LSMBLOB_INVALID)
++				from_ilsm = 0;
++			/*
++			 * The sender provided a security context from
++			 * a different security module than the one this
++			 * process wants to report if these don't match.
++			 */
++			if (from_ilsm != to_ilsm) {
++				if (t_from)
++					binder_thread_dec_tmpref(t_from);
++
++				binder_cleanup_transaction(t, "security context mismatch",
++							   BR_FAILED_REPLY);
++				return -EINVAL;
++			}
+ 			cmd = BR_TRANSACTION_SEC_CTX;
+ 			trsize = sizeof(tr);
+ 		}
+diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
+index d6b6b8cb7346..e3a0718ce17c 100644
+--- a/drivers/android/binder_internal.h
++++ b/drivers/android/binder_internal.h
+@@ -545,6 +545,7 @@ struct binder_transaction {
+ 	long    saved_priority;
+ 	kuid_t  sender_euid;
+ 	struct list_head fd_fixups;
++	int	security_interface;
+ 	binder_uintptr_t security_ctx;
+ 	/**
+ 	 * @lock:  protects @from, @to_proc, and @to_thread
 -- 
 2.31.1
 
