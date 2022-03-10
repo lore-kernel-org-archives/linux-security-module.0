@@ -2,69 +2,67 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6555FC4321E
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Mar 2022 23:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 797B5C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Mar 2022 23:58:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345042AbiCJX5d (ORCPT
+        id S1344477AbiCJX7F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Mar 2022 18:57:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47278 "EHLO
+        Thu, 10 Mar 2022 18:59:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345048AbiCJX5a (ORCPT
+        with ESMTP id S243323AbiCJX7E (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Mar 2022 18:57:30 -0500
-Received: from sonic306-28.consmr.mail.ne1.yahoo.com (sonic306-28.consmr.mail.ne1.yahoo.com [66.163.189.90])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 191E819E08A
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Mar 2022 15:56:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646956585; bh=qvgUu0vofJzjZUietoxZexLdMa3YX3sit8IIoQiY16Q=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=fJesSw2NvuK/u2CVRWeSEtg0gnuD9hlWdmO1RSAa3mboTqxs4+7A5VoKSP4YmeCTaXz2KX2MjFx/eLoGlVwsU0bJwu5otCZ8P4IFcejIiCo7ohFvt1F32S3n8mP9ZsCm1kDvWGQPIm/8VpPlX1YlaMwkGn7HhVF2pvHCPj8OFWKYiT+vma7OyaMdhoyCwukJUx3X39HR8f71iOnM2nccpcOLeVYoW5Zs/gVq99klak4k3DCdU6KKkk5+MDkbViFrXe49zXqABE38bOmuL0iMNp16ss7rr9AlZMufeLjIgMuMBfKVXgx0g5LSoUwdGVDPIFhZMIqG9QO8a5zMHg/TfA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646956585; bh=yFf3b9IqG8Ba8MxiHhxpchyvdD5BNwrCHLNJCXGc/Ox=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=hatLxFrb/YVg13ga03/Km+RWVm9MgWIuqwd1yJ5RSidVWsXXNMiMsSU/6jTvyifnde24i0vXq0DcCxwVl6slsvRmwcY/eSMsdmRBvxiAKwIrzJsQtmnEeAadscqSKT2dnyPufwa0QWHr6l3W727TubaZky2h7f5tC8dxup0+vtrksfRPOVqRzLB7EFSy6kbBN0K1qJfd0Jd1t/vYJ/G8O7rC32d2iUpXC2Mstxa/1zuLUaeMjM+sTPWxK8f+wcfCIordrsC/yFo4H7GDIbSqPYJ9PR13/HpbRLrTI23jN1fEKiDrEZ4cBxIgC0y4c0HfM3vhjvt6GdA+BQKUVxh/jA==
-X-YMail-OSG: sYpUKNcVM1kw8KufndDHcu_vaTh40nxMtKu0_Lo5uZ9jk5dJpnm9zZKKSb8YWPE
- zP4rkvog1F_.kW64UcNs.zyVUChOdHZqyH3ERJWWGdQUGfT3pD7MQu8B7UdbEoGiNmK4EzBgglAl
- 3tMrmZlCxv.Zyo1PI4Ko0aHRRjkeQDZpAeNMa0U7sz_hlJXFQtykexCN2._0gE8WciVD27GQ4sFf
- hyBlL8.YmapaqEmd1oWwbvE2Qli6sjRXb7Z4gIUITO2aRuheP70bT6zTuZ01pIeIk8SunBoZE9Md
- R8Vfrr19_no_sIvAgwqpURgeO9u3.sj.wTGXhPbmEIuZIitqQ1oUW6L5LO0Qs47Go9e9d3ffN9KA
- ZgtM_JA_C_4A73M8TZPB0avfQ2oyoEVkP4SsTWysznASwv0pvsEL35Q3Zd_9O2dLgwcxTWWjpDy2
- 4.48dHiVVa0NO2E59WD2jQ0H4PGYeZYwgbB0VQLIsb4yfMdUYHRn3I9MUGh2O81Hdl1YGXa_9gtp
- 6qo6c95LeSedMQtg23uG.e9isfmUNazBuoifbKNX8oeMyRhyeS4owcox2eRnSTheF..AlAn7SGvA
- LmVbizWmZ9wQXaeGBgqdYkvyod0MWcM7WbVHrtyj_SzMvsO4ZX.MNJ4T293XKFAM83ylB4JB6Trl
- 6M8Ark6RgVV1Shz8GK29WbTQgiMz5mtkqe3JjqtzB10ewXm9ywcXdNk28Rzf_KBKoyHeGKppCpAd
- 8ux5wUpNDf2i_jiHfrtYCHn_LoGG9MgG63d0LFLTF1qSOHuzEMbB7gX60MFdr8ymvr8MA3phUsX2
- HpcdR7y71ThVuPJBPOLgoKxZwVAHwz8IMt5q_lJH7wj5pUw83LqbuNx0siGJT56JxOKuLL1.l2Kj
- HOvLlPY6CsRxzGKPsVNJ.fKWZxVRk0HcAV__dk4OZ.Zh_2kCy9i32ZVUBaW0qjIs7kvhPjlrcSzN
- bllDjOBEKnPNvnrzp0zEM86VyfRld4c8_22k54fXUznPpz4y69nHvVBSGbmTs_AXwPbtxQvx1iM3
- .lWA5JjdcfiA0PhvcIjRRi6NWPdA3Xma6sWQaXEitNh1sv.F59MEwvEl0OpVgR5o.pus7ItJi6W7
- axLJVdHEl3aXUNtn6d947RS.6mM42VDoriRCUegFwiMfXI9nTBItw2gAPfaXyxk5CEY5nU7bd.hT
- F4g5DlSwfUN1WuRUcCkbt0TOZwn7KXZfzrJsYVaiq713hvDHKJSNc6DPq1fj30OCut2K.fChtPdw
- .etKk0q1Mo89RJYfpuQ3kBKg757sRbe_UTLugmulQOFw9Liu6mac.cn4anS3R8ttq73oKMhH0neo
- 3wQJGyIHTesQjRVB62NcqQg3X6r6r3vDBEQzVg.JL2NZ1Bb1fp_WGSO2rrvtSS.HE.Mzcgsp6QXX
- jGTwShRhRmbujxpvdXOTRs3FQ4L5Q36R7xgnSsR0WhWgCiYoo1qU31T4xbkPjjaMxF61NMWLH69Q
- SDVEVH76aptFrKXT5Nfsm_CTzgS7QblOk2g9SPNEEeidmXi5Xx5STojzVbfvlXiJc2_hWeG1I2GA
- tJQmZmKdw3MEJmL16DH8L_tkuUqY3J2Pd50lCrXFM4laLY4WHU9f9Cbt2WbgNYTZIiY56yXsY.zp
- M0nZbqkTLwwp4j3mjaYn3Sqml_hfPfffFqRGwwnTcqO2HyqI0s325dsIzf05BYM35pjtME1Gr_XW
- 9_GLbumdM6D_cfZ4g0Dm7FAUL2L2N3A_27MA4DnacS2GwcoVZU0wdYY.ad_W4ZfNXphpUjM72QcT
- lHmA._o_VDSayGvHcvJML_kQg2kDdLEuTtzouAhmT0VcJx0R.0.iGkDJAUDOEsh10F.lHdKFBbI1
- 13jnF6.vndGcFnphKzztFBOGR5_.0_JlraLeV8K4BTfx4UwfHCnBdZWmUR9weIdBt.drXQQBN3_9
- hBzzzsDD1RFVZJOEpyWVvEm7.a6z8BXx5H7X9dlxa3xA63XdKNMBsjFzn6y0tgGj8xDm4QJ7AnFX
- aZ7WZAoeNY56TgUJtGjV.KoeA08b0.YJ1C4QlLOu_OW8s3byRvJ27_6hF0sT3mJ_1Ymnx6ueBJgo
- 8kHHJ1NQobyN._d5v9Hv3pgl2x_6xpkcwcB2T1Iwt5LJLnqaUE6NmBaZ7c8weMHRFQZWk2InUPfF
- fP.7P3cct2DAHPyCMmqpjTucF1CFFISzlQSa3mJV5ViZ5EuL9ZnjcmFu0Dz8XprGHKzyqpyaSG1y
- KUO03waQ3Qt5cXtH9i1yWwJNBZTvXYp1Ap_ChNrONCl4AlIMuJfgQ6y9E8XR8KzafT07_YsZl3rA
- hKET.3EqxAgjZ6OBh_ZShRwMmHEdueG0-
+        Thu, 10 Mar 2022 18:59:04 -0500
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6602EA76FC
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Mar 2022 15:58:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646956680; bh=i2dn2sGdFwxB+wuWuFr8AlZTakbfKjayCTv+Mnj6KNs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=lZq0ZtJBkGu/AJh9WN5pJ8F13cI9ZvnJOBznZqnlcT5N8n+WwuH3QVAU51kS0NYnja31suPsOmEXTLl6yGxW46LUTe9wORSrJWT3HipBE7D4jPym8zGzQrRdhWWEs4Ba9dgS1qJMh5+vj15VMd9w0qbdZs4oXCe7WQdlBY7RCNaUix8u/NqVqX2LSZDacroVhUQsvKrIiEDJC7FSL5XlZEAoGcOP6gPOpLo/VMC86tM082/ZJ+0aNyLot0gA7uYjY5u5pMnyasiiQq+f9xvI0mfyM6bRd0y5N7bL7oo8+bStwukqc4sdieOO19ZxY2e1zibcQvugw4AcoBsEnPfqWA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1646956680; bh=b1eGRnX91MNiXzR4Birec9dBdUmhp+1YaLukTViqSzb=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=bC2K7KsWUDQacYCTQqPGY5Db2TgzLidhTmH205cqqyM66VUq+DkJ5XegZZPophmRHzeNpS2BvUH8ARv0Er00jBWHcWi+ZXlyz6GzHDLyGjTb/Af1q98uVxq7n/2l5EflZUUWyt86xCOalI5IfM6vB5W54JvwdOJ/svafHt0nayrv5BEh4k4ab68Lt3qStZSs0RIO4PdBHLlfjcXPdwx5DWP5Jia4VWkJvJoM5s38YSi5hL2ALpHXEf0ZvZL/9IHliJaJYjwh/476FqBusnbxcEH6TWw3g27TGM+gz5L4TH+2xWHDtGqb+EdeMI9rKlkHZHAUS2OLbgHtXAscsrrD/w==
+X-YMail-OSG: 2TECTt4VM1kxK.jYRCSkwN1m51bw9jx3sG5E7_2bSnyHGysdclGYyLI3U8ZHq0R
+ M1kUYotMDa_dP65mJ9YZVNxK8NSHH7vbOU_dqbenKFeMTHtUxe8ow0grGZuM8IDviPfpLN4Vj5ox
+ 3RIoFyEb90qxxnButcmd98fjAAwTnwKokb_FCgLTn7DOWZIiQsiomp_UT.C6DfvmtAlPX0RKPlZA
+ amrgBhPl4H4xge026pUZs5jeJTTs.U80jDMGGtCZYCsQXCYVnT64uDyIgKXi9HSt7ZkXgjmfYQ7f
+ QPZ9qDC78kgkbVHLYVAbzy4cr3mxkMmYj4C1UNFeED_Z5Toacyzqe9z1biIWUw6a08kIF30_7LqP
+ UNZ2u_pYY6FedHx9L.vh.oSOM4zKd8E_uwr3_GJrVJvKWDbgpblh92JAM3mfsizrFj6mAqQlkpRo
+ HIitzlguonJvWlAidfEPv8TL8Gca2mQSua6myhxc2rQVGQpVy_uqmwZ3c362g6IN3i_HdXOYZoFL
+ 0eHtyRPqQXZqVKOktXUlkfpLiZIA6ZJOyUPn9MxWeB6gTBmF.cvQZX6De.Tp7bFUOrZOS_xTTri0
+ HjFq7HRsayTcnw6MpycejH5sEUvJBXpFuGwAFuHw.7AuE_889I_bOhYp.z8oozhY9sh.DJgxmRpi
+ 6EfYTYApWzikQkgKbERVCh471_Ruduw2V.WgV84KJrix408nBfvERLhZWL.fUBRvaWp0d6iubnKr
+ 7oX_72kMWEpeh_YPOqSaNFps4HyDN7QhEPnCCOASLJcJmlSLj_UX_z7WMA6CEvqdqmtVZu4YnTp3
+ _fI1pqbJ7vs.E32ljcKr4_kPAlRmI_PVw8quqnIoOT0kNo8mcGyJhmdGIWc.hWb6xNaXG0lH3nBQ
+ 6F9jOCzC0XQCb.bKnCPrROdp_7XwwQ7g.fFtmbYlGSMKqp9empldFHOeAatgDpU_MA4liU64FJj6
+ 8pPGk6kv93lWSbHKq9z4PluaUDmRkyv873LXcvfqb8or0_JeDnfJeHLQ3ARZvkkO2dWhDeqV8SRK
+ wxgmFGRBYsq3liX8lPT.krnx71suBhJsFmXajSs6.dAA.J0GoCGR873BfcgklnfMoXL5lItrUPbh
+ 1U6.N5MqSIvEFlMPS7JXun.8lHS3zmsZRjh6oXb.5pfGxbhx6gz1f8wWMpyIxxeM9B.JWqEXs6Z9
+ 8rGikEEH4AHVX7pr49CGOlvob5O0Onzs42A58kzW_aiIsHaJGDM477iqv3hFm7UtY_6zJhCalFbx
+ NRVV.lAO5hMmXeoSxHT7dU.2R_HAHhr.Inmz5aqpYKTdPKb0_EtKk2Od8lrZGPZMTruQYtEUZ5z7
+ 3RxSf35fv__u8TTRm6Y6s4ro80.nPXT.b27rbgJ0UJDXI_EsXFFZ881r0GS8DqfX8JTb4adJ5o3b
+ vzACO9KHesrwG4L4my.c3aC90MEOnLhu.a1dGUwNu6AXU.apfwWxlM651Ni0794DiZOQWp7oGjsJ
+ pjanz8L5N3pEbxymnf8S.Rs8DCQURYsY_3OYIh0hdMlkCPov1kQdlP.mtlIeJckIIyRtJa5ibKGY
+ iL2E5JLO9rUbH7H_0rDCGMn9C52N5xGGL8Bc0LCJOzFlWEgwBQRMmnH39cQSkLcROzURchAgiydI
+ SsCu6lIgwXON7sgf5HEF6XPWnPH4c4b2irM.IKdRmODJymk.n4TlH9qTCCiF7oE0tCItOjZ32D4X
+ yXxnTrqbQMpMhEI2eVVTlZc3bGO2TpF35PmViIMQtm7HJU5GEGA7Oe4DneyHI1XjMBTpx8L8a4Fr
+ V..Lgt_REZb0_IrpN92dMQbVZLeSQr5pdMgsSirwDEoCSzuECimDre2oQKiuT__n4To.qP4kPngP
+ Voo5Y_y4wuRA97jVDkDj5GtMdN7Y.B3AENC3_qIAoDOcosAgR.v6JX6Cd0RuEcJjdtZoUEbOitXV
+ c5uNRLQCv8477ABHH7fF5I3GA7NcQODL24hZJBefxkJ8qXO6MzXRiu5HXCp65BNM.w0Lyo8_bXK9
+ TMkODMRl3xLQvoyjE8.jRsK3nLjhEhib5yDROnk5ejbTlXiiolLuEW33p6inf_N3Lc1onYs.bqAx
+ jN.JHoQkNH4dxMh4hDcaBfeaAxuWTX9bGionPf_ytSrtWgQAi6Hq.iGyllkwKPZ2Mol.nSz.eQ29
+ vC40OLzd8eoK7fInxLqJE.jsP3.NehitqLFfILKcaTyt3RWO028YAc_07zpYvOfS_2QWjQbPT0aQ
+ x8MABeuKiErx5LxqyJ9u46.JdqQQB0EhDiuJ3l7t.0GItBrRStCo-
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Mar 2022 23:56:25 +0000
-Received: by kubenode537.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 85c60a74110af086a1e93bbc48c45823;
-          Thu, 10 Mar 2022 23:56:21 +0000 (UTC)
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Mar 2022 23:58:00 +0000
+Received: by kubenode526.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 075078af6eda9fc0a8c4174c138d83b1;
+          Thu, 10 Mar 2022 23:57:56 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
         keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH v33 19/29] NET: Store LSM netlabel data in a lsmblob
-Date:   Thu, 10 Mar 2022 15:46:22 -0800
-Message-Id: <20220310234632.16194-20-casey@schaufler-ca.com>
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v33 21/29] LSM: Extend security_secid_to_secctx to include module selection
+Date:   Thu, 10 Mar 2022 15:46:24 -0800
+Message-Id: <20220310234632.16194-22-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220310234632.16194-1-casey@schaufler-ca.com>
 References: <20220310234632.16194-1-casey@schaufler-ca.com>
@@ -73,571 +71,302 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Netlabel uses LSM interfaces requiring an lsmblob and
-the internal storage is used to pass information between
-these interfaces, so change the internal data from a secid
-to a lsmblob. Update the netlabel interfaces and their
-callers to accommodate the change. This requires that the
-modules using netlabel use the lsm_id.slot to access the
-correct secid when using netlabel.
+Add a parameter to security_secid_to_secctx() to identify
+which of the security modules that may be active should
+provide the security context. If the parameter is greater
+than or equal to zero, the security module associated with
+that LSM "slot" is used. If the value is LSMBLOB_DISPLAY
+the "interface lsm" is used. If the value is LSMBLOB_FIRST
+the first security module providing a hook is used.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: netdev@vger.kernel.org
 ---
- include/net/netlabel.h              |  8 +--
- net/ipv4/cipso_ipv4.c               | 26 ++++++----
- net/netlabel/netlabel_kapi.c        |  6 +--
- net/netlabel/netlabel_unlabeled.c   | 79 +++++++++--------------------
- net/netlabel/netlabel_unlabeled.h   |  2 +-
- security/selinux/hooks.c            |  2 +-
- security/selinux/include/security.h |  1 +
- security/selinux/netlabel.c         |  2 +-
- security/selinux/ss/services.c      |  4 +-
- security/smack/smack.h              |  1 +
- security/smack/smack_access.c       |  2 +-
- security/smack/smack_lsm.c          | 11 ++--
- security/smack/smackfs.c            | 10 ++--
- 13 files changed, 68 insertions(+), 86 deletions(-)
+ drivers/android/binder.c                |  2 +-
+ include/linux/security.h                |  7 +++++--
+ include/net/scm.h                       |  2 +-
+ kernel/audit.c                          |  4 ++--
+ kernel/auditsc.c                        |  7 ++++---
+ net/ipv4/ip_sockglue.c                  |  2 +-
+ net/netfilter/nf_conntrack_netlink.c    |  4 ++--
+ net/netfilter/nf_conntrack_standalone.c |  2 +-
+ net/netfilter/nfnetlink_queue.c         |  2 +-
+ net/netlabel/netlabel_unlabeled.c       | 11 +++++++----
+ net/netlabel/netlabel_user.c            |  2 +-
+ security/security.c                     | 20 ++++++++++++++++++--
+ 12 files changed, 44 insertions(+), 21 deletions(-)
 
-diff --git a/include/net/netlabel.h b/include/net/netlabel.h
-index 43ae50337685..73fc25b4042b 100644
---- a/include/net/netlabel.h
-+++ b/include/net/netlabel.h
-@@ -166,7 +166,7 @@ struct netlbl_lsm_catmap {
-  * @attr.mls: MLS sensitivity label
-  * @attr.mls.cat: MLS category bitmap
-  * @attr.mls.lvl: MLS sensitivity level
-- * @attr.secid: LSM specific secid token
-+ * @attr.lsmblob: LSM specific data
-  *
-  * Description:
-  * This structure is used to pass security attributes between NetLabel and the
-@@ -201,7 +201,7 @@ struct netlbl_lsm_secattr {
- 			struct netlbl_lsm_catmap *cat;
- 			u32 lvl;
- 		} mls;
--		u32 secid;
-+		struct lsmblob lsmblob;
- 	} attr;
- };
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 259f5e38e6ba..d59c4ebf7e22 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -2983,7 +2983,7 @@ static void binder_transaction(struct binder_proc *proc,
+ 		size_t added_size;
  
-@@ -415,7 +415,7 @@ int netlbl_cfg_unlbl_static_add(struct net *net,
- 				const void *addr,
- 				const void *mask,
- 				u16 family,
--				u32 secid,
-+				struct lsmblob *lsmblob,
- 				struct netlbl_audit *audit_info);
- int netlbl_cfg_unlbl_static_del(struct net *net,
- 				const char *dev_name,
-@@ -523,7 +523,7 @@ static inline int netlbl_cfg_unlbl_static_add(struct net *net,
- 					      const void *addr,
- 					      const void *mask,
- 					      u16 family,
--					      u32 secid,
-+					      struct lsmblob *lsmblob,
- 					      struct netlbl_audit *audit_info)
- {
- 	return -ENOSYS;
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index 62d5f99760aa..bb9c900da6b0 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -106,15 +106,17 @@ int cipso_v4_rbm_strictvalid = 1;
- /* Base length of the local tag (non-standard tag).
-  *  Tag definition (may change between kernel versions)
-  *
-- * 0          8          16         24         32
-- * +----------+----------+----------+----------+
-- * | 10000000 | 00000110 | 32-bit secid value  |
-- * +----------+----------+----------+----------+
-- * | in (host byte order)|
-- * +----------+----------+
-- *
-+ * 0          8          16                    16 + sizeof(struct lsmblob)
-+ * +----------+----------+---------------------+
-+ * | 10000000 | 00000110 | LSM blob data       |
-+ * +----------+----------+---------------------+
-+ *
-+ * All secid and flag fields are in host byte order.
-+ * The lsmblob structure size varies depending on which
-+ * Linux security modules are built in the kernel.
-+ * The data is opaque.
-  */
--#define CIPSO_V4_TAG_LOC_BLEN         6
-+#define CIPSO_V4_TAG_LOC_BLEN         (2 + sizeof(struct lsmblob))
- 
- /*
-  * Helper Functions
-@@ -1460,7 +1462,11 @@ static int cipso_v4_gentag_loc(const struct cipso_v4_doi *doi_def,
- 
- 	buffer[0] = CIPSO_V4_TAG_LOCAL;
- 	buffer[1] = CIPSO_V4_TAG_LOC_BLEN;
--	*(u32 *)&buffer[2] = secattr->attr.secid;
-+	/* Ensure that there is sufficient space in the CIPSO header
-+	 * for the LSM data. */
-+	BUILD_BUG_ON(CIPSO_V4_TAG_LOC_BLEN > CIPSO_V4_OPT_LEN_MAX);
-+	memcpy(&buffer[2], &secattr->attr.lsmblob,
-+	       sizeof(secattr->attr.lsmblob));
- 
- 	return CIPSO_V4_TAG_LOC_BLEN;
- }
-@@ -1480,7 +1486,7 @@ static int cipso_v4_parsetag_loc(const struct cipso_v4_doi *doi_def,
- 				 const unsigned char *tag,
- 				 struct netlbl_lsm_secattr *secattr)
- {
--	secattr->attr.secid = *(u32 *)&tag[2];
-+	memcpy(&secattr->attr.lsmblob, &tag[2], sizeof(secattr->attr.lsmblob));
- 	secattr->flags |= NETLBL_SECATTR_SECID;
- 
- 	return 0;
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index beb0e573266d..158bab993e32 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -196,7 +196,7 @@ int netlbl_cfg_unlbl_map_add(const char *domain,
-  * @addr: IP address in network byte order (struct in[6]_addr)
-  * @mask: address mask in network byte order (struct in[6]_addr)
-  * @family: address family
-- * @secid: LSM secid value for the entry
-+ * @lsmblob: LSM data value for the entry
-  * @audit_info: NetLabel audit information
-  *
-  * Description:
-@@ -210,7 +210,7 @@ int netlbl_cfg_unlbl_static_add(struct net *net,
- 				const void *addr,
- 				const void *mask,
- 				u16 family,
--				u32 secid,
-+				struct lsmblob *lsmblob,
- 				struct netlbl_audit *audit_info)
- {
- 	u32 addr_len;
-@@ -230,7 +230,7 @@ int netlbl_cfg_unlbl_static_add(struct net *net,
- 
- 	return netlbl_unlhsh_add(net,
- 				 dev_name, addr, mask, addr_len,
--				 secid, audit_info);
-+				 lsmblob, audit_info);
- }
+ 		security_cred_getsecid(proc->cred, &blob);
+-		ret = security_secid_to_secctx(&blob, &lsmctx);
++		ret = security_secid_to_secctx(&blob, &lsmctx, LSMBLOB_DISPLAY);
+ 		if (ret) {
+ 			return_error = BR_FAILED_REPLY;
+ 			return_error_param = ret;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 65db769a8584..6dbdfd12fd79 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -184,6 +184,8 @@ struct lsmblob {
+ #define LSMBLOB_INVALID		-1	/* Not a valid LSM slot number */
+ #define LSMBLOB_NEEDED		-2	/* Slot requested on initialization */
+ #define LSMBLOB_NOT_NEEDED	-3	/* Slot not requested */
++#define LSMBLOB_DISPLAY		-4	/* Use the "interface_lsm" slot */
++#define LSMBLOB_FIRST		-5	/* Use the first slot */
  
  /**
+  * lsmblob_init - initialize a lsmblob structure
+@@ -597,7 +599,8 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
+ 			 size_t size);
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+ int security_ismaclabel(const char *name);
+-int security_secid_to_secctx(struct lsmblob *blob, struct lsmcontext *cp);
++int security_secid_to_secctx(struct lsmblob *blob, struct lsmcontext *cp,
++			     int ilsm);
+ int security_secctx_to_secid(const char *secdata, u32 seclen,
+ 			     struct lsmblob *blob);
+ void security_release_secctx(struct lsmcontext *cp);
+@@ -1451,7 +1454,7 @@ static inline int security_ismaclabel(const char *name)
+ }
+ 
+ static inline int security_secid_to_secctx(struct lsmblob *blob,
+-					   struct lsmcontext *cp)
++					   struct lsmcontext *cp, int ilsm)
+ {
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/include/net/scm.h b/include/net/scm.h
+index b77a52f93389..f4d567d4885e 100644
+--- a/include/net/scm.h
++++ b/include/net/scm.h
+@@ -101,7 +101,7 @@ static inline void scm_passec(struct socket *sock, struct msghdr *msg, struct sc
+ 		 * and the infrastructure will know which it is.
+ 		 */
+ 		lsmblob_init(&lb, scm->secid);
+-		err = security_secid_to_secctx(&lb, &context);
++		err = security_secid_to_secctx(&lb, &context, LSMBLOB_DISPLAY);
+ 
+ 		if (!err) {
+ 			put_cmsg(msg, SOL_SOCKET, SCM_SECURITY, context.len,
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 03824cca058c..0fad7317cb09 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -1440,7 +1440,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+ 
+ 		if (lsmblob_is_set(&audit_sig_lsm)) {
+ 			err = security_secid_to_secctx(&audit_sig_lsm,
+-						       &context);
++						       &context, LSMBLOB_FIRST);
+ 			if (err)
+ 				return err;
+ 		}
+@@ -2152,7 +2152,7 @@ int audit_log_task_context(struct audit_buffer *ab)
+ 	if (!lsmblob_is_set(&blob))
+ 		return 0;
+ 
+-	error = security_secid_to_secctx(&blob, &context);
++	error = security_secid_to_secctx(&blob, &context, LSMBLOB_FIRST);
+ 
+ 	if (error) {
+ 		if (error != -EINVAL)
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 7858da40a767..e091d03f9184 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -1132,7 +1132,7 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+ 			 from_kuid(&init_user_ns, auid),
+ 			 from_kuid(&init_user_ns, uid), sessionid);
+ 	if (lsmblob_is_set(blob)) {
+-		if (security_secid_to_secctx(blob, &lsmctx)) {
++		if (security_secid_to_secctx(blob, &lsmctx, LSMBLOB_FIRST)) {
+ 			audit_log_format(ab, " obj=(none)");
+ 			rc = 1;
+ 		} else {
+@@ -1378,7 +1378,8 @@ static void show_special(struct audit_context *context, int *call_panic)
+ 			struct lsmblob blob;
+ 
+ 			lsmblob_init(&blob, osid);
+-			if (security_secid_to_secctx(&blob, &lsmcxt)) {
++			if (security_secid_to_secctx(&blob, &lsmcxt,
++						     LSMBLOB_FIRST)) {
+ 				audit_log_format(ab, " osid=%u", osid);
+ 				*call_panic = 1;
+ 			} else {
+@@ -1541,7 +1542,7 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
+ 		struct lsmcontext lsmctx;
+ 
+ 		lsmblob_init(&blob, n->osid);
+-		if (security_secid_to_secctx(&blob, &lsmctx)) {
++		if (security_secid_to_secctx(&blob, &lsmctx, LSMBLOB_FIRST)) {
+ 			audit_log_format(ab, " osid=%u", n->osid);
+ 			if (call_panic)
+ 				*call_panic = 2;
+diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
+index ad5be7707bca..9b5c44dec1e9 100644
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -140,7 +140,7 @@ static void ip_cmsg_recv_security(struct msghdr *msg, struct sk_buff *skb)
+ 		return;
+ 
+ 	lsmblob_init(&lb, secid);
+-	err = security_secid_to_secctx(&lb, &context);
++	err = security_secid_to_secctx(&lb, &context, LSMBLOB_DISPLAY);
+ 	if (err)
+ 		return;
+ 
+diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
+index 9626e2b0ef12..e919c35f85fd 100644
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -347,7 +347,7 @@ static int ctnetlink_dump_secctx(struct sk_buff *skb, const struct nf_conn *ct)
+ 	 * security_secid_to_secctx() will know which security module
+ 	 * to use to create the secctx.  */
+ 	lsmblob_init(&blob, ct->secmark);
+-	ret = security_secid_to_secctx(&blob, &context);
++	ret = security_secid_to_secctx(&blob, &context, LSMBLOB_DISPLAY);
+ 	if (ret)
+ 		return 0;
+ 
+@@ -657,7 +657,7 @@ static inline int ctnetlink_secctx_size(const struct nf_conn *ct)
+ 	int len;
+ 	struct lsmblob blob;
+ 
+-	len = security_secid_to_secctx(&blob, NULL);
++	len = security_secid_to_secctx(&blob, NULL, LSMBLOB_DISPLAY);
+ 	if (len <= 0)
+ 		return 0;
+ 
+diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
+index 36338660df3c..cb4b8b636f6a 100644
+--- a/net/netfilter/nf_conntrack_standalone.c
++++ b/net/netfilter/nf_conntrack_standalone.c
+@@ -180,7 +180,7 @@ static void ct_show_secctx(struct seq_file *s, const struct nf_conn *ct)
+ 	struct lsmcontext context;
+ 
+ 	lsmblob_init(&blob, ct->secmark);
+-	ret = security_secid_to_secctx(&blob, &context);
++	ret = security_secid_to_secctx(&blob, &context, LSMBLOB_DISPLAY);
+ 	if (ret)
+ 		return;
+ 
+diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
+index 2aff40578045..6babdf5fce18 100644
+--- a/net/netfilter/nfnetlink_queue.c
++++ b/net/netfilter/nfnetlink_queue.c
+@@ -316,7 +316,7 @@ static void nfqnl_get_sk_secctx(struct sk_buff *skb, struct lsmcontext *context)
+ 		 * blob. security_secid_to_secctx() will know which security
+ 		 * module to use to create the secctx.  */
+ 		lsmblob_init(&blob, skb->secmark);
+-		security_secid_to_secctx(&blob, context);
++		security_secid_to_secctx(&blob, context, LSMBLOB_DISPLAY);
+ 	}
+ 
+ 	read_unlock_bh(&skb->sk->sk_callback_lock);
 diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index 46706889a6f7..3aab71ba3841 100644
+index 3aab71ba3841..b53cf90bb6f4 100644
 --- a/net/netlabel/netlabel_unlabeled.c
 +++ b/net/netlabel/netlabel_unlabeled.c
-@@ -66,7 +66,7 @@ struct netlbl_unlhsh_tbl {
- #define netlbl_unlhsh_addr4_entry(iter) \
- 	container_of(iter, struct netlbl_unlhsh_addr4, list)
- struct netlbl_unlhsh_addr4 {
--	u32 secid;
-+	struct lsmblob lsmblob;
- 
- 	struct netlbl_af4list list;
- 	struct rcu_head rcu;
-@@ -74,7 +74,7 @@ struct netlbl_unlhsh_addr4 {
- #define netlbl_unlhsh_addr6_entry(iter) \
- 	container_of(iter, struct netlbl_unlhsh_addr6, list)
- struct netlbl_unlhsh_addr6 {
--	u32 secid;
-+	struct lsmblob lsmblob;
- 
- 	struct netlbl_af6list list;
- 	struct rcu_head rcu;
-@@ -220,7 +220,7 @@ static struct netlbl_unlhsh_iface *netlbl_unlhsh_search_iface(int ifindex)
-  * @iface: the associated interface entry
-  * @addr: IPv4 address in network byte order
-  * @mask: IPv4 address mask in network byte order
-- * @secid: LSM secid value for entry
-+ * @lsmblob: LSM data value for entry
-  *
-  * Description:
-  * Add a new address entry into the unlabeled connection hash table using the
-@@ -231,7 +231,7 @@ static struct netlbl_unlhsh_iface *netlbl_unlhsh_search_iface(int ifindex)
- static int netlbl_unlhsh_add_addr4(struct netlbl_unlhsh_iface *iface,
- 				   const struct in_addr *addr,
- 				   const struct in_addr *mask,
--				   u32 secid)
-+				   struct lsmblob *lsmblob)
- {
- 	int ret_val;
- 	struct netlbl_unlhsh_addr4 *entry;
-@@ -243,7 +243,7 @@ static int netlbl_unlhsh_add_addr4(struct netlbl_unlhsh_iface *iface,
- 	entry->list.addr = addr->s_addr & mask->s_addr;
- 	entry->list.mask = mask->s_addr;
- 	entry->list.valid = 1;
--	entry->secid = secid;
-+	entry->lsmblob = *lsmblob;
- 
- 	spin_lock(&netlbl_unlhsh_lock);
- 	ret_val = netlbl_af4list_add(&entry->list, &iface->addr4_list);
-@@ -260,7 +260,7 @@ static int netlbl_unlhsh_add_addr4(struct netlbl_unlhsh_iface *iface,
-  * @iface: the associated interface entry
-  * @addr: IPv6 address in network byte order
-  * @mask: IPv6 address mask in network byte order
-- * @secid: LSM secid value for entry
-+ * @lsmblob: LSM data value for entry
-  *
-  * Description:
-  * Add a new address entry into the unlabeled connection hash table using the
-@@ -271,7 +271,7 @@ static int netlbl_unlhsh_add_addr4(struct netlbl_unlhsh_iface *iface,
- static int netlbl_unlhsh_add_addr6(struct netlbl_unlhsh_iface *iface,
- 				   const struct in6_addr *addr,
- 				   const struct in6_addr *mask,
--				   u32 secid)
-+				   struct lsmblob *lsmblob)
- {
- 	int ret_val;
- 	struct netlbl_unlhsh_addr6 *entry;
-@@ -287,7 +287,7 @@ static int netlbl_unlhsh_add_addr6(struct netlbl_unlhsh_iface *iface,
- 	entry->list.addr.s6_addr32[3] &= mask->s6_addr32[3];
- 	entry->list.mask = *mask;
- 	entry->list.valid = 1;
--	entry->secid = secid;
-+	entry->lsmblob = *lsmblob;
- 
- 	spin_lock(&netlbl_unlhsh_lock);
- 	ret_val = netlbl_af6list_add(&entry->list, &iface->addr6_list);
-@@ -366,7 +366,7 @@ int netlbl_unlhsh_add(struct net *net,
- 		      const void *addr,
- 		      const void *mask,
- 		      u32 addr_len,
--		      u32 secid,
-+		      struct lsmblob *lsmblob,
- 		      struct netlbl_audit *audit_info)
- {
- 	int ret_val;
-@@ -375,7 +375,6 @@ int netlbl_unlhsh_add(struct net *net,
- 	struct netlbl_unlhsh_iface *iface;
- 	struct audit_buffer *audit_buf = NULL;
- 	struct lsmcontext context;
--	struct lsmblob blob;
- 
- 	if (addr_len != sizeof(struct in_addr) &&
- 	    addr_len != sizeof(struct in6_addr))
-@@ -408,7 +407,7 @@ int netlbl_unlhsh_add(struct net *net,
- 		const struct in_addr *addr4 = addr;
- 		const struct in_addr *mask4 = mask;
- 
--		ret_val = netlbl_unlhsh_add_addr4(iface, addr4, mask4, secid);
-+		ret_val = netlbl_unlhsh_add_addr4(iface, addr4, mask4, lsmblob);
- 		if (audit_buf != NULL)
- 			netlbl_af4list_audit_addr(audit_buf, 1,
- 						  dev_name,
-@@ -421,7 +420,7 @@ int netlbl_unlhsh_add(struct net *net,
- 		const struct in6_addr *addr6 = addr;
- 		const struct in6_addr *mask6 = mask;
- 
--		ret_val = netlbl_unlhsh_add_addr6(iface, addr6, mask6, secid);
-+		ret_val = netlbl_unlhsh_add_addr6(iface, addr6, mask6, lsmblob);
- 		if (audit_buf != NULL)
- 			netlbl_af6list_audit_addr(audit_buf, 1,
- 						  dev_name,
-@@ -438,11 +437,7 @@ int netlbl_unlhsh_add(struct net *net,
+@@ -437,7 +437,8 @@ int netlbl_unlhsh_add(struct net *net,
  unlhsh_add_return:
  	rcu_read_unlock();
  	if (audit_buf != NULL) {
--		/* lsmblob_init() puts secid into all of the secids in blob.
--		 * security_secid_to_secctx() will know which security module
--		 * to use to create the secctx.  */
--		lsmblob_init(&blob, secid);
--		if (security_secid_to_secctx(&blob, &context) == 0) {
-+		if (security_secid_to_secctx(lsmblob, &context) == 0) {
+-		if (security_secid_to_secctx(lsmblob, &context) == 0) {
++		if (security_secid_to_secctx(lsmblob, &context,
++					     LSMBLOB_FIRST) == 0) {
  			audit_log_format(audit_buf, " sec_obj=%s",
  					 context.context);
  			security_release_secctx(&context);
-@@ -477,7 +472,6 @@ static int netlbl_unlhsh_remove_addr4(struct net *net,
- 	struct audit_buffer *audit_buf;
- 	struct net_device *dev;
- 	struct lsmcontext context;
--	struct lsmblob blob;
- 
- 	spin_lock(&netlbl_unlhsh_lock);
- 	list_entry = netlbl_af4list_remove(addr->s_addr, mask->s_addr,
-@@ -496,13 +490,8 @@ static int netlbl_unlhsh_remove_addr4(struct net *net,
- 					  (dev != NULL ? dev->name : NULL),
+@@ -491,7 +492,8 @@ static int netlbl_unlhsh_remove_addr4(struct net *net,
  					  addr->s_addr, mask->s_addr);
  		dev_put(dev);
--		/* lsmblob_init() puts entry->secid into all of the secids
--		 * in blob. security_secid_to_secctx() will know which
--		 * security module to use to create the secctx.  */
--		if (entry != NULL)
--			lsmblob_init(&blob, entry->secid);
  		if (entry != NULL &&
--		    security_secid_to_secctx(&blob, &context) == 0) {
-+		    security_secid_to_secctx(&entry->lsmblob, &context) == 0) {
+-		    security_secid_to_secctx(&entry->lsmblob, &context) == 0) {
++		    security_secid_to_secctx(&entry->lsmblob, &context,
++					     LSMBLOB_FIRST) == 0) {
  			audit_log_format(audit_buf, " sec_obj=%s",
  					 context.context);
  			security_release_secctx(&context);
-@@ -543,7 +532,6 @@ static int netlbl_unlhsh_remove_addr6(struct net *net,
- 	struct audit_buffer *audit_buf;
- 	struct net_device *dev;
- 	struct lsmcontext context;
--	struct lsmblob blob;
- 
- 	spin_lock(&netlbl_unlhsh_lock);
- 	list_entry = netlbl_af6list_remove(addr, mask, &iface->addr6_list);
-@@ -561,13 +549,8 @@ static int netlbl_unlhsh_remove_addr6(struct net *net,
- 					  (dev != NULL ? dev->name : NULL),
+@@ -550,7 +552,8 @@ static int netlbl_unlhsh_remove_addr6(struct net *net,
  					  addr, mask);
  		dev_put(dev);
--		/* lsmblob_init() puts entry->secid into all of the secids
--		 * in blob. security_secid_to_secctx() will know which
--		 * security module to use to create the secctx.  */
--		if (entry != NULL)
--			lsmblob_init(&blob, entry->secid);
  		if (entry != NULL &&
--		    security_secid_to_secctx(&blob, &context) == 0) {
-+		    security_secid_to_secctx(&entry->lsmblob, &context) == 0) {
+-		    security_secid_to_secctx(&entry->lsmblob, &context) == 0) {
++		    security_secid_to_secctx(&entry->lsmblob, &context,
++					     LSMBLOB_FIRST) == 0) {
  			audit_log_format(audit_buf, " sec_obj=%s",
  					 context.context);
  			security_release_secctx(&context);
-@@ -921,14 +904,8 @@ static int netlbl_unlabel_staticadd(struct sk_buff *skb,
- 	if (ret_val != 0)
- 		return ret_val;
- 
--	/* netlbl_unlhsh_add will be changed to pass a struct lsmblob *
--	 * instead of a u32 later in this patch set. security_secctx_to_secid()
--	 * will only be setting one entry in the lsmblob struct, so it is
--	 * safe to use lsmblob_value() to get that one value. */
--
--	return netlbl_unlhsh_add(&init_net,
--				 dev_name, addr, mask, addr_len,
--				 lsmblob_value(&blob), &audit_info);
-+	return netlbl_unlhsh_add(&init_net, dev_name, addr, mask, addr_len,
-+				 &blob, &audit_info);
- }
- 
- /**
-@@ -975,11 +952,8 @@ static int netlbl_unlabel_staticadddef(struct sk_buff *skb,
- 	if (ret_val != 0)
- 		return ret_val;
- 
--	/* security_secctx_to_secid() will only put one secid into the lsmblob
--	 * so it's safe to use lsmblob_value() to get the secid. */
--	return netlbl_unlhsh_add(&init_net,
--				 NULL, addr, mask, addr_len,
--				 lsmblob_value(&blob), &audit_info);
-+	return netlbl_unlhsh_add(&init_net, NULL, addr, mask, addr_len, &blob,
-+				 &audit_info);
- }
- 
- /**
-@@ -1091,8 +1065,7 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
- 	struct net_device *dev;
- 	struct lsmcontext context;
- 	void *data;
--	u32 secid;
--	struct lsmblob blob;
-+	struct lsmblob *lsmb;
- 
- 	data = genlmsg_put(cb_arg->skb, NETLINK_CB(cb_arg->nl_cb->skb).portid,
- 			   cb_arg->seq, &netlbl_unlabel_gnl_family,
-@@ -1130,7 +1103,7 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
- 		if (ret_val != 0)
- 			goto list_cb_failure;
- 
--		secid = addr4->secid;
-+		lsmb = (struct lsmblob *)&addr4->lsmblob;
- 	} else {
- 		ret_val = nla_put_in6_addr(cb_arg->skb,
- 					   NLBL_UNLABEL_A_IPV6ADDR,
-@@ -1144,14 +1117,10 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
- 		if (ret_val != 0)
- 			goto list_cb_failure;
- 
--		secid = addr6->secid;
-+		lsmb = (struct lsmblob *)&addr6->lsmblob;
+@@ -1120,7 +1123,7 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
+ 		lsmb = (struct lsmblob *)&addr6->lsmblob;
  	}
  
--	/* lsmblob_init() secid into all of the secids in blob.
--	 * security_secid_to_secctx() will know which security module
--	 * to use to create the secctx.  */
--	lsmblob_init(&blob, secid);
--	ret_val = security_secid_to_secctx(&blob, &context);
-+	ret_val = security_secid_to_secctx(lsmb, &context);
+-	ret_val = security_secid_to_secctx(lsmb, &context);
++	ret_val = security_secid_to_secctx(lsmb, &context, LSMBLOB_FIRST);
  	if (ret_val != 0)
  		goto list_cb_failure;
  	ret_val = nla_put(cb_arg->skb,
-@@ -1510,7 +1479,7 @@ int netlbl_unlabel_getattr(const struct sk_buff *skb,
- 					      &iface->addr4_list);
- 		if (addr4 == NULL)
- 			goto unlabel_getattr_nolabel;
--		secattr->attr.secid = netlbl_unlhsh_addr4_entry(addr4)->secid;
-+		secattr->attr.lsmblob = netlbl_unlhsh_addr4_entry(addr4)->lsmblob;
- 		break;
+diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
+index 951ba0639d20..1941877fd16f 100644
+--- a/net/netlabel/netlabel_user.c
++++ b/net/netlabel/netlabel_user.c
+@@ -100,7 +100,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
+ 
+ 	lsmblob_init(&blob, audit_info->secid);
+ 	if (audit_info->secid != 0 &&
+-	    security_secid_to_secctx(&blob, &context) == 0) {
++	    security_secid_to_secctx(&blob, &context, LSMBLOB_FIRST) == 0) {
+ 		audit_log_format(audit_buf, " subj=%s", context.context);
+ 		security_release_secctx(&context);
  	}
- #if IS_ENABLED(CONFIG_IPV6)
-@@ -1523,7 +1492,7 @@ int netlbl_unlabel_getattr(const struct sk_buff *skb,
- 					      &iface->addr6_list);
- 		if (addr6 == NULL)
- 			goto unlabel_getattr_nolabel;
--		secattr->attr.secid = netlbl_unlhsh_addr6_entry(addr6)->secid;
-+		secattr->attr.lsmblob = netlbl_unlhsh_addr6_entry(addr6)->lsmblob;
- 		break;
- 	}
- #endif /* IPv6 */
-diff --git a/net/netlabel/netlabel_unlabeled.h b/net/netlabel/netlabel_unlabeled.h
-index 058e3a285d56..168920780994 100644
---- a/net/netlabel/netlabel_unlabeled.h
-+++ b/net/netlabel/netlabel_unlabeled.h
-@@ -211,7 +211,7 @@ int netlbl_unlhsh_add(struct net *net,
- 		      const void *addr,
- 		      const void *mask,
- 		      u32 addr_len,
--		      u32 secid,
-+		      struct lsmblob *lsmblob,
- 		      struct netlbl_audit *audit_info);
- int netlbl_unlhsh_remove(struct net *net,
- 			 const char *dev_name,
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 3469ffe195e6..7b9cb4d263c0 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7020,7 +7020,7 @@ static int selinux_uring_sqpoll(void)
- }
- #endif /* CONFIG_IO_URING */
- 
--static struct lsm_id selinux_lsmid __lsm_ro_after_init = {
-+struct lsm_id selinux_lsmid __lsm_ro_after_init = {
- 	.lsm  = "selinux",
- 	.slot = LSMBLOB_NEEDED
- };
-diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-index ac0ece01305a..9f856f2cd277 100644
---- a/security/selinux/include/security.h
-+++ b/security/selinux/include/security.h
-@@ -73,6 +73,7 @@
- struct netlbl_lsm_secattr;
- 
- extern int selinux_enabled_boot;
-+extern struct lsm_id selinux_lsmid;
- 
- /*
-  * type_datum properties
-diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
-index 800ab4b4239e..0b8f99703462 100644
---- a/security/selinux/netlabel.c
-+++ b/security/selinux/netlabel.c
-@@ -109,7 +109,7 @@ static struct netlbl_lsm_secattr *selinux_netlbl_sock_getattr(
- 		return NULL;
- 
- 	if ((secattr->flags & NETLBL_SECATTR_SECID) &&
--	    (secattr->attr.secid == sid))
-+	    (secattr->attr.lsmblob.secid[selinux_lsmid.slot] == sid))
- 		return secattr;
- 
- 	return NULL;
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index 8e92af7dd284..23a45c9dcf04 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -3899,7 +3899,7 @@ int security_netlbl_secattr_to_sid(struct selinux_state *state,
- 	if (secattr->flags & NETLBL_SECATTR_CACHE)
- 		*sid = *(u32 *)secattr->cache->data;
- 	else if (secattr->flags & NETLBL_SECATTR_SECID)
--		*sid = secattr->attr.secid;
-+		*sid = secattr->attr.lsmblob.secid[selinux_lsmid.slot];
- 	else if (secattr->flags & NETLBL_SECATTR_MLS_LVL) {
- 		rc = -EIDRM;
- 		ctx = sidtab_search(sidtab, SECINITSID_NETMSG);
-@@ -3977,7 +3977,7 @@ int security_netlbl_sid_to_secattr(struct selinux_state *state,
- 	if (secattr->domain == NULL)
- 		goto out;
- 
--	secattr->attr.secid = sid;
-+	secattr->attr.lsmblob.secid[selinux_lsmid.slot] = sid;
- 	secattr->flags |= NETLBL_SECATTR_DOMAIN_CPY | NETLBL_SECATTR_SECID;
- 	mls_export_netlbl_lvl(policydb, ctx, secattr);
- 	rc = mls_export_netlbl_cat(policydb, ctx, secattr);
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index ef9d0b7b1954..ac79313ea95d 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -303,6 +303,7 @@ int smack_populate_secattr(struct smack_known *skp);
-  * Shared data.
+diff --git a/security/security.c b/security/security.c
+index c9459c4754f3..b694eca9d4f1 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2334,20 +2334,36 @@ EXPORT_SYMBOL(security_ismaclabel);
+  * security_secid_to_secctx - convert secid to secctx
+  * @blob: set of secids
+  * @cp: lsm context into which result is put
++ * @ilsm: which security module to report
+  *
+  * Translate secid information into a secctx string.
+  * Return a negative value on error.
+  * If cp is NULL return the length of the string.
+  * Otherwise, return 0.
   */
- extern int smack_enabled __initdata;
-+extern struct lsm_id smack_lsmid;
- extern int smack_cipso_direct;
- extern int smack_cipso_mapped;
- extern struct smack_known *smack_net_ambient;
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index d2186e2757be..c6dcafe18912 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -524,7 +524,7 @@ int smack_populate_secattr(struct smack_known *skp)
+-int security_secid_to_secctx(struct lsmblob *blob, struct lsmcontext *cp)
++int security_secid_to_secctx(struct lsmblob *blob, struct lsmcontext *cp,
++			     int ilsm)
  {
- 	int slen;
+ 	struct security_hook_list *hp;
+-	int ilsm = lsm_task_ilsm(current);
  
--	skp->smk_netlabel.attr.secid = skp->smk_secid;
-+	skp->smk_netlabel.attr.lsmblob.secid[smack_lsmid.slot] = skp->smk_secid;
- 	skp->smk_netlabel.domain = skp->smk_known;
- 	skp->smk_netlabel.cache = netlbl_secattr_cache_alloc(GFP_ATOMIC);
- 	if (skp->smk_netlabel.cache != NULL) {
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 3c1cf65cac87..46d81f638a2b 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3728,11 +3728,12 @@ static struct smack_known *smack_from_secattr(struct netlbl_lsm_secattr *sap,
- 	if ((sap->flags & NETLBL_SECATTR_CACHE) != 0)
- 		return (struct smack_known *)sap->cache->data;
+ 	if (cp)
+ 		memset(cp, 0, sizeof(*cp));
  
 +	/*
-+	 * Looks like a fallback, which gives us a secid.
++	 * ilsm either is the slot number use for formatting
++	 * or an instruction on which relative slot to use.
 +	 */
- 	if ((sap->flags & NETLBL_SECATTR_SECID) != 0)
--		/*
--		 * Looks like a fallback, which gives us a secid.
--		 */
--		return smack_from_secid(sap->attr.secid);
-+		return smack_from_secid(
-+				sap->attr.lsmblob.secid[smack_lsmid.slot]);
- 
- 	if ((sap->flags & NETLBL_SECATTR_MLS_LVL) != 0) {
- 		/*
-@@ -4751,7 +4752,7 @@ struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
- 	.lbs_superblock = sizeof(struct superblock_smack),
- };
- 
--static struct lsm_id smack_lsmid __lsm_ro_after_init = {
-+struct lsm_id smack_lsmid __lsm_ro_after_init = {
- 	.lsm  = "smack",
- 	.slot = LSMBLOB_NEEDED
- };
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 658eab05599e..13c2fa728054 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -1143,6 +1143,7 @@ static void smk_net4addr_insert(struct smk_net4addr *new)
- static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
- 				size_t count, loff_t *ppos)
- {
-+	struct lsmblob lsmblob;
- 	struct smk_net4addr *snp;
- 	struct sockaddr_in newname;
- 	char *smack;
-@@ -1274,10 +1275,13 @@ static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
- 	 * this host so that incoming packets get labeled.
- 	 * but only if we didn't get the special CIPSO option
- 	 */
--	if (rc == 0 && skp != NULL)
-+	if (rc == 0 && skp != NULL) {
-+		lsmblob_init(&lsmblob, 0);
-+		lsmblob.secid[smack_lsmid.slot] = snp->smk_label->smk_secid;
- 		rc = netlbl_cfg_unlbl_static_add(&init_net, NULL,
--			&snp->smk_host, &snp->smk_mask, PF_INET,
--			snp->smk_label->smk_secid, &audit_info);
-+			&snp->smk_host, &snp->smk_mask, PF_INET, &lsmblob,
-+			&audit_info);
++	if (ilsm == LSMBLOB_DISPLAY)
++		ilsm = lsm_task_ilsm(current);
++	else if (ilsm == LSMBLOB_FIRST)
++		ilsm = LSMBLOB_INVALID;
++	else if (ilsm < 0) {
++		WARN_ONCE(true, "LSM: %s unknown interface LSM\n", __func__);
++		ilsm = LSMBLOB_INVALID;
++	} else if (ilsm >= lsm_slot) {
++		WARN_ONCE(true, "LSM: %s invalid interface LSM\n", __func__);
++		ilsm = LSMBLOB_INVALID;
 +	}
- 
- 	if (rc == 0)
- 		rc = count;
+ 	hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx, list) {
+ 		if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
+ 			continue;
 -- 
 2.31.1
 
