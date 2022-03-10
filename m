@@ -2,116 +2,167 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F159CC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Mar 2022 00:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8AC8C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Mar 2022 21:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238345AbiCJAhc (ORCPT
+        id S1343653AbiCJVq0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Mar 2022 19:37:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45630 "EHLO
+        Thu, 10 Mar 2022 16:46:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233863AbiCJAhc (ORCPT
+        with ESMTP id S234231AbiCJVqZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Mar 2022 19:37:32 -0500
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 269B61052A2;
-        Wed,  9 Mar 2022 16:36:32 -0800 (PST)
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 0F6043F12B;
-        Thu, 10 Mar 2022 00:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646872582;
-        bh=aGcEVKAOrTGJDxPnhMFB8dBVhKHNAxc+BYirL6/tWsM=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=BYcRRKMHEhVvCIE5GQndE0fWH8AB88n1S+NB+OFT5mhAdCfel9WaZnM7MMLoMwdJQ
-         B2oh8wyzyiPADr5/tlD9kTKjsC+csb1cGCRZGjsAMms3Hx0NsCb9M+b0Mr2o0rMP1Y
-         Zay8WaezyhcUvaucSu1O5f0KOzdBDM4lUG7wyEJfOmAi/n6j+lCUGSCNjzy8MMmu/9
-         SIfbic208WqVNTTRroZTJWwC4ZhfR6ZxY7RqdjIq/h6hqENjBzNTi5ttL2W4R7uNtV
-         jSNaMsl9THVP1b6TK8KjBKMVLKrSbxV3OYaQ92a6MyWXj7zV1ctF8K2s4EhOObdF7C
-         XrboieAjFlQRw==
-Message-ID: <8d520529-4d3e-4874-f359-0ead9207cead@canonical.com>
-Date:   Wed, 9 Mar 2022 16:36:04 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v1] fs: Fix inconsistent f_mode
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        James Morris <jmorris@namei.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thu, 10 Mar 2022 16:46:25 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DAA2159289;
+        Thu, 10 Mar 2022 13:45:23 -0800 (PST)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22AKVSq8030636;
+        Thu, 10 Mar 2022 21:45:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=AYdo1AQd1DukO1ZWiOzG32Xmaay+ti40BRN5Doqxxx8=;
+ b=ghF9dOArRhBc9solvCGhR+w/sJ3T7GAAJHjuMkEMu5IeCej0HTrmrmnED0ZMHQ3zl9or
+ CBIQvrHwl1DjWli2xg26NP5zFYzxBTQKiyhZF8dmt+inQGT8cYqQ/9sIJIxnHokkJx1B
+ WZcfgTYp/EPau3NNRGhK8adBsQSQq0itrithIT6o2i//eB8HI0qHcvH6gctU872czGCA
+ hsp1WPyUHos5iEOuskE7NUjojTzdesZKjeOhf8F186wL77srRJzGcSXxnqfWl1VNy1Zw
+ DEbGKHwYpqTWNVJDoMRoBRMosOs/mtCyW4InAE4jhZVBQCMQ9jgc01AP4OfTTSZUgjT1 LA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3epwxfkayc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Mar 2022 21:45:18 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22ALEiqm025309;
+        Thu, 10 Mar 2022 21:45:18 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3epwxfkaxt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Mar 2022 21:45:17 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22ALi3gu006200;
+        Thu, 10 Mar 2022 21:45:16 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04ams.nl.ibm.com with ESMTP id 3enqgnr658-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Mar 2022 21:45:16 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22ALjDSx54854010
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Mar 2022 21:45:13 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EBD53A4040;
+        Thu, 10 Mar 2022 21:45:12 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4EFCA404D;
+        Thu, 10 Mar 2022 21:45:09 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.53.50])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 10 Mar 2022 21:45:09 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
         linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20220228215935.748017-1-mic@digikod.net>
- <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
- <f6b63133-d555-a77c-0847-de15a9302283@digikod.net>
- <CAHC9VhQd3rL-13k0u39Krkdjp2_dtPfgEPxr=kawWUM9FjjOsw@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <CAHC9VhQd3rL-13k0u39Krkdjp2_dtPfgEPxr=kawWUM9FjjOsw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
+        seth@forshee.me, rnsastry@linux.ibm.com,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v11 0/4] integrity: support including firmware ".platform" keys at build time 
+Date:   Thu, 10 Mar 2022 16:44:46 -0500
+Message-Id: <20220310214450.676505-1-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DTJNzB91RNcxH9fF-9zWCHvF_D0PKpQo
+X-Proofpoint-ORIG-GUID: BCVqt7ZZFljSIHWFVcIUlmRB0L0WHxJ8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-10_09,2022-03-09_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 impostorscore=0 phishscore=0 adultscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203100107
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/9/22 13:31, Paul Moore wrote:
-> On Tue, Mar 1, 2022 at 5:15 AM Mickaël Salaün <mic@digikod.net> wrote:
->> On 01/03/2022 10:22, Christian Brauner wrote:
->>> On Mon, Feb 28, 2022 at 10:59:35PM +0100, Mickaël Salaün wrote:
->>>> From: Mickaël Salaün <mic@linux.microsoft.com>
->>>>
->>>> While transitionning to ACC_MODE() with commit 5300990c0370 ("Sanitize
->>>> f_flags helpers") and then fixing it with commit 6d125529c6cb ("Fix
->>>> ACC_MODE() for real"), we lost an open flags consistency check.  Opening
->>>> a file with O_WRONLY | O_RDWR leads to an f_flags containing MAY_READ |
->>>> MAY_WRITE (thanks to the ACC_MODE() helper) and an empty f_mode.
->>>> Indeed, the OPEN_FMODE() helper transforms 3 (an incorrect value) to 0.
->>>>
->>>> Fortunately, vfs_read() and vfs_write() both check for FMODE_READ, or
->>>> respectively FMODE_WRITE, and return an EBADF error if it is absent.
->>>> Before commit 5300990c0370 ("Sanitize f_flags helpers"), opening a file
->>>> with O_WRONLY | O_RDWR returned an EINVAL error.  Let's restore this safe
->>>> behavior.
->>>
->>> That specific part seems a bit risky at first glance. Given that the
->>> patch referenced is from 2009 this means we've been allowing O_WRONLY |
->>> O_RDWR to succeed for almost 13 years now.
->>
->> Yeah, it's an old bug, but we should keep in mind that a file descriptor
->> created with such flags cannot be used to read nor write. However,
->> unfortunately, it can be used for things like ioctl, fstat, chdir… I
->> don't know if there is any user of this trick.
->>
->> Either way, there is an inconsistency between those using ACC_MODE() and
->> those using OPEN_FMODE(). If we decide to take a side for the behavior
->> of one or the other, without denying to create such FD, it could also
->> break security policies. We have to choose what to potentially break…
-> 
-> I'm not really liking the idea that the empty/0 f_mode field leads to
-> SELinux doing an ioctl access check as opposed to the expected
-> read|write check.  Yes, other parts of the code catch the problem, but
-> this is bad from a SELinux perspective.  Looking quickly at the other
-> LSMs, it would appear that other LSMs are affected as well.
-> 
-> If we're not going to fix file::f_mode, the LSMs probably need to
-> consider using file::f_flags directly in conjunction with a correct
-> OPEN_FMODE() macro (or better yet a small inline function that isn't
-> as ugly).
-> 
-yeah, I have to agree
+Some firmware support secure boot by embedding static keys to verify the
+Linux kernel during boot. However, these firmware do not expose an
+interface for the kernel to load firmware keys onto the ".platform"
+keyring, preventing the kernel from verifying the kexec kernel image
+signature.
 
+This patchset exports load_certificate_list() and defines a new function
+load_builtin_platform_cert() to load compiled in certificates onto the
+".platform" keyring.
+
+Changelog:
+v11:
+* Added a new patch to conditionally build extract-cert if
+PLATFORM_KEYRING is enabled.
+
+v10:
+* Fixed the externs warning for Patch 3.
+
+v9:
+* Rebased on Jarkko's repo - 
+git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+
+v8:
+* Includes Jarkko's feedback on patch description and removed Reported-by
+for Patch 1.
+
+v7:
+* Incldues Jarkko's feedback on patch description for Patch 1 and 3.
+
+v6:
+* Includes Jarkko's feedback:
+ * Split Patch 2 into two.
+ * Update Patch description.
+
+v5:
+* Renamed load_builtin_platform_cert() to load_platform_certificate_list()
+and config INTEGRITY_PLATFORM_BUILTIN_KEYS to INTEGRITY_PLATFORM_KEYS, as
+suggested by Mimi Zohar.
+
+v4:
+* Split into two patches as per Mimi Zohar and Dimitri John Ledkov
+recommendation.
+
+v3:
+* Included Jarkko's feedback
+ ** updated patch description to include approach.
+ ** removed extern for function declaration in the .h file.
+* Included load_certificate_list() within #ifdef CONFIG_KEYS condition.
+
+v2:
+* Fixed the error reported by kernel test robot
+* Updated patch description based on Jarkko's feedback.
+
+Nayna Jain (4):
+  certs: export load_certificate_list() to be used outside certs/
+  integrity: make integrity_keyring_from_id() non-static
+  certs: conditionally build extract-cert if platform keyring is enabled
+  integrity: support including firmware ".platform" keys at build time
+
+ certs/Makefile                                |  9 ++++++--
+ certs/blacklist.c                             |  1 -
+ certs/common.c                                |  2 +-
+ certs/common.h                                |  9 --------
+ certs/system_keyring.c                        |  1 -
+ include/keys/system_keyring.h                 |  6 +++++
+ security/integrity/Kconfig                    | 10 ++++++++
+ security/integrity/Makefile                   | 15 +++++++++++-
+ security/integrity/digsig.c                   |  2 +-
+ security/integrity/integrity.h                |  9 ++++++++
+ .../integrity/platform_certs/platform_cert.S  | 23 +++++++++++++++++++
+ .../platform_certs/platform_keyring.c         | 23 +++++++++++++++++++
+ 12 files changed, 94 insertions(+), 16 deletions(-)
+ delete mode 100644 certs/common.h
+ create mode 100644 security/integrity/platform_certs/platform_cert.S
+
+
+base-commit: fb5abce6b2bb5cb3d628aaa63fa821da8c4600f9
+-- 
+2.27.0
