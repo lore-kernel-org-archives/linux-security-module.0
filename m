@@ -2,198 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F96C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 18:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39846C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 18:53:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350982AbiCKStJ (ORCPT
+        id S1351000AbiCKSyU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Mar 2022 13:49:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41230 "EHLO
+        Fri, 11 Mar 2022 13:54:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350979AbiCKStI (ORCPT
+        with ESMTP id S1347145AbiCKSyU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Mar 2022 13:49:08 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E6D281895
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 10:48:04 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id p15so20984946ejc.7
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 10:48:04 -0800 (PST)
+        Fri, 11 Mar 2022 13:54:20 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A9B4161E
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 10:53:16 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id m12so11963902edc.12
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 10:53:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kf7TOgS7D3Yd0UtSvuZyI1f288zh+DR/XNn+gdcU/e0=;
-        b=XSlS5JP4NOqYU9yEkHISgTvjtxTXflOBHHRlhW6BrF3xKXdrwC1bqvq4RtQkamVzah
-         MlGxtryBa0BwRj3i4tFyPsei6FHGOlx78c823zEb/N6JN1I9Xzc6H50lijaG76ou72LA
-         0m8P7kS6pXUBMAh7tCfYKA39ubF51TnC2Ytr9UfCys5U6IvuuUv+kIH7txETMjSENATr
-         u5AAKXS2mVtA5MnSaN8fwc+YQfNm/wMBjW4HEUr+IIkOCmh9Zcp9OdYNPUO7nF/zRxjA
-         RRQ6U+uhqtgdLkDmuZdeV7MhSicc5az09LIRGObm3zTZWulkunqQUbtv/5QGbQ+dU8oM
-         8ANg==
+        bh=mhiJoyGK6i48A+CV44wvGM/sNOc2SA/ZHL0e71y9Ouw=;
+        b=oxd6LAQKWQ5hKfBrALwTaY5UPGW3xSf9z0WFCbd/U2Y6H0HdsW/os1CmTDYsESly0w
+         tqUHS7uXcBfX3xvTcS15ysDWNektRriLFjwr2sFQrEkwYcoMX8VEWNHfqqXCDF3yJGQv
+         NydGiZKzqXKRAx3KfjS9uNw11cYYRQcS/FX2RoEVSsCkVCHpb3WSXmZ63bSDR5fQfyUL
+         epYrOqC8w1p7y2RIEPMp8bx2BMtBa3Q61oUyL1IgQd6FtXH1elLFXVm9PyDdAGEDEe3z
+         A/aZlLmcTeMQ4MaY52V9j7G8gOX5WZdDofYqd8HZfnGW0lzoThKe4Y+F5geLdfpjodDv
+         7Jrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kf7TOgS7D3Yd0UtSvuZyI1f288zh+DR/XNn+gdcU/e0=;
-        b=E6hs2Rfeyq9B7HEVokefFEbJJSUQx6zNWfyL94t2Di3VRwLU6JDx40UMJUxQc7ofwM
-         m6tvbO3AeKScS4Yk5M0HceXi/jxiuse4ZNzybE2rJFb4awR66gFv5QyegCladhBPYL5j
-         OhweIpTxeQ1xx0CfT5fh+jjku7BUgvyIrpxn6D3vyMGyuTrV+vb6zcuIkY0Grt1qRvod
-         wL6suB3sBPQHylfoApcCLGau7wDEEYxg1RH3mxpoZiRbcZWZzd/OykKa6/hEKZqn2rYc
-         9HhWs1t50wFDTQUyxxTgiEjE6QnOWJAeo0u+9Xj9FBnwIPHZ0i6Bijtx3fJvj03AviY2
-         EvHA==
-X-Gm-Message-State: AOAM531Fth6OyJ5l9VcGJjEm7948q/tUajgFudtULz6BFGBHJn/0g30q
-        +bPH4hFdeKkHzwauYW85Y/KUI4BQzb/ix68TlfxG
-X-Google-Smtp-Source: ABdhPJz4r5C9q5aApxVwetcw+DRO04FhjfuFweRhE4YCYNDr38bRHM9Y7Kd06Xnvg+SydBi9uXF6UMJThJnev06sF7k=
-X-Received: by 2002:a17:907:3f86:b0:6db:b745:f761 with SMTP id
- hr6-20020a1709073f8600b006dbb745f761mr548786ejc.610.1647024482439; Fri, 11
- Mar 2022 10:48:02 -0800 (PST)
+        bh=mhiJoyGK6i48A+CV44wvGM/sNOc2SA/ZHL0e71y9Ouw=;
+        b=wTaKEkf+QYurvtGNrNCLd3GFzeKfeJQAxAIsGkIkEK52kIykEhBCqdLVjS/R3wbo12
+         h/gOHH/MoT5w4aDS0yRBeFCFFq/bAihKAIue9XhV/XE8YE5UEFNqfvy21t21AJDxDFXG
+         e9bn371favBc9hGDA5aO3kM8eAPw7c6Uucmpq2Jqxui5zRFR2IIg24m+5kyZw+bdYXCQ
+         tnpcVWPH3KlstlSB+WyjHAW47RMgg/2je9s+y+IzER46FKxyQ8BsGT3TZozrwseRt8jj
+         tkYnaRNtyn3Yzfr1FSkPB96PNX4/z4Z0ItYsUM2N+zWNn+8ztM0JjfxFIN5V/KbcQDZf
+         tcxw==
+X-Gm-Message-State: AOAM532amckMS9bin+PPgiW79rmFeExUwC+3xjTgr0cvretqMF6AzrvK
+        NC87D6Fm52pgwYiFWdVBG4TL8abZhe49ndL9QOgY
+X-Google-Smtp-Source: ABdhPJwxFS6emBP91ghOo78Xcf38HmQKuJ92uGWWAskNZTBSdMpqT2NKwaEKOmMFF9dvmety1PBkMMF2unwneHLaEzA=
+X-Received: by 2002:a05:6402:42d4:b0:412:c26b:789 with SMTP id
+ i20-20020a05640242d400b00412c26b0789mr10168594edc.232.1647024794826; Fri, 11
+ Mar 2022 10:53:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20220308152105.309618-1-joshi.k@samsung.com> <CGME20220308152658epcas5p3929bd1fcf75edc505fec71901158d1b5@epcas5p3.samsung.com>
- <20220308152105.309618-4-joshi.k@samsung.com> <YiqrE4K5TWeB7aLd@bombadil.infradead.org>
- <e3bfd028-ece7-d969-f47c-1181b17ac919@kernel.dk> <YiuC1fhEiRdo5bPd@bombadil.infradead.org>
-In-Reply-To: <YiuC1fhEiRdo5bPd@bombadil.infradead.org>
+References: <20220308152105.309618-1-joshi.k@samsung.com> <CGME20220308152702epcas5p1eb1880e024ac8b9531c85a82f31a4e78@epcas5p1.samsung.com>
+ <20220308152105.309618-6-joshi.k@samsung.com> <YiuNZ7+KUjLtuYkr@bombadil.infradead.org>
+In-Reply-To: <YiuNZ7+KUjLtuYkr@bombadil.infradead.org>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Mar 2022 13:47:51 -0500
-Message-ID: <CAHC9VhSNMH8XAKa43kCR8fZj-B1ucCd3R6WXOo3B4z80Bw2Kkw@mail.gmail.com>
-Subject: Re: [PATCH 03/17] io_uring: add infra and support for IORING_OP_URING_CMD
-To:     Luis Chamberlain <mcgrof@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, jmorris@namei.org,
-        serge@hallyn.com, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, hch@lst.de,
+Date:   Fri, 11 Mar 2022 13:53:03 -0500
+Message-ID: <CAHC9VhTnpO6LyaYWDTjJAy_ztGw+qqf-YS0W7S-djyZVnydVHg@mail.gmail.com>
+Subject: Re: [PATCH 05/17] nvme: wire-up support for async-passthru on char-device.
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        linux-security-module@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
         kbusch@kernel.org, asml.silence@gmail.com,
         io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, sbates@raithlin.com,
         logang@deltatee.com, pankydev8@gmail.com, javier@javigon.com,
-        a.manzanares@samsung.com, joshiiitr@gmail.com,
-        anuj20.g@samsung.com, selinux@vger.kernel.org
+        a.manzanares@samsung.com, joshiiitr@gmail.com, anuj20.g@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 11, 2022 at 12:11 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> On Thu, Mar 10, 2022 at 07:43:04PM -0700, Jens Axboe wrote:
-> > On 3/10/22 6:51 PM, Luis Chamberlain wrote:
-> > > On Tue, Mar 08, 2022 at 08:50:51PM +0530, Kanchan Joshi wrote:
-> > >> From: Jens Axboe <axboe@kernel.dk>
-> > >>
-> > >> This is a file private kind of request. io_uring doesn't know what's
-> > >> in this command type, it's for the file_operations->async_cmd()
-> > >> handler to deal with.
-> > >>
-> > >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > >> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> > >> ---
-> > >
-> > > <-- snip -->
-> > >
-> > >> +static int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
-> > >> +{
-> > >> +  struct file *file = req->file;
-> > >> +  int ret;
-> > >> +  struct io_uring_cmd *ioucmd = &req->uring_cmd;
-> > >> +
-> > >> +  ioucmd->flags |= issue_flags;
-> > >> +  ret = file->f_op->async_cmd(ioucmd);
-> > >
-> > > I think we're going to have to add a security_file_async_cmd() check
-> > > before this call here. Because otherwise we're enabling to, for
-> > > example, bypass security_file_ioctl() for example using the new
-> > > iouring-cmd interface.
-> > >
-> > > Or is this already thought out with the existing security_uring_*() stuff?
+On Fri, Mar 11, 2022 at 12:56 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Tue, Mar 08, 2022 at 08:50:53PM +0530, Kanchan Joshi wrote:
+> > diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+> > index 5c9cd9695519..1df270b47af5 100644
+> > --- a/drivers/nvme/host/ioctl.c
+> > +++ b/drivers/nvme/host/ioctl.c
+> > @@ -369,6 +469,33 @@ long nvme_ns_chr_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> >       return __nvme_ioctl(ns, cmd, (void __user *)arg);
+> >  }
 > >
-> > Unless the request sets .audit_skip, it'll be included already in terms
-> > of logging.
+> > +static int nvme_ns_async_ioctl(struct nvme_ns *ns, struct io_uring_cmd *ioucmd)
+> > +{
+> > +     int ret;
+> > +
+> > +     BUILD_BUG_ON(sizeof(struct nvme_uring_cmd_pdu) > sizeof(ioucmd->pdu));
+> > +
+> > +     switch (ioucmd->cmd_op) {
+> > +     case NVME_IOCTL_IO64_CMD:
+> > +             ret = nvme_user_cmd64(ns->ctrl, ns, NULL, ioucmd);
+> > +             break;
+> > +     default:
+> > +             ret = -ENOTTY;
+> > +     }
+> > +
+> > +     if (ret >= 0)
+> > +             ret = -EIOCBQUEUED;
+> > +     return ret;
+> > +}
 >
-> Neat.
+> And here I think we'll need something like this:
 
-[NOTE: added the audit and SELinux lists to the To/CC line]
+If we can promise that we will have a LSM hook for all of the
+file_operations::async_cmd implementations that are security relevant
+we could skip the LSM passthrough hook at the io_uring layer.  It
+would potentially make life easier in that we don't have to worry
+about putting the passthrough op in the right context, but risks
+missing a LSM hook control point (it will happen at some point and
+*boom* CVE).
 
-Neat, but I think we will need to augment things to support this new
-passthrough mechanism.
-
-The issue is that folks who look at audit logs need to be able to
-piece together what happened on the system using just what they have
-in the logs themselves.  As things currently stand with this patchset,
-the only bit of information they would have to go on would be
-"uring_op=<IORING_OP_URING_CMD>" which isn't very informative :)
-
-You'll see a similar issue in the newly proposed LSM hook below, we
-need to be able to record information about not only the passthrough
-command, e.g. io_uring_cmd::cmd_op, but also the underlying
-device/handler so that we can put the passthrough command in the right
-context (as far as I can tell io_uring_cmd::cmd_op is specific to the
-device).  We might be able to leverage file_operations::owner::name
-for this, e.g. "uring_passthru_dev=nvme
-uring_passthru_op=<NVME_IOCTL_IO64_CMD>".
-
-> > But I'd prefer not to lodge this in with ioctls, unless
-> > we're going to be doing actual ioctls.
+> diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+> index ddb7e5864be6..83529adf130d 100644
+> --- a/drivers/nvme/host/ioctl.c
+> +++ b/drivers/nvme/host/ioctl.c
+> @@ -5,6 +5,7 @@
+>   */
+>  #include <linux/ptrace.h>      /* for force_successful_syscall_return */
+>  #include <linux/nvme_ioctl.h>
+> +#include <linux/security.h>
+>  #include "nvme.h"
 >
-> Oh sure, I have been an advocate to ensure folks don't conflate async_cmd
-> with ioctl. However it *can* enable subsystems to enable ioctl
-> passthrough, but each of those subsystems need to vet for this on their
-> own terms. I'd hate to see / hear some LSM surprises later.
-
-Same :)  Thanks for bringing this up with us while the patches are
-still in-progress/under-review, I think it makes for a much more
-pleasant experience for everyone.
-
-> > But definitely something to keep in mind and make sure that we're under
-> > the right umbrella in terms of auditing and security.
+>  /*
+> @@ -524,6 +525,11 @@ static int nvme_ns_async_ioctl(struct nvme_ns *ns, struct io_uring_cmd *ioucmd)
 >
-> Paul, how about something like this for starters (and probably should
-> be squashed into this series so its not a separate commit) ?
+>         BUILD_BUG_ON(sizeof(struct nvme_uring_cmd_pdu) > sizeof(ioucmd->pdu));
 >
-> From f3ddbe822374cc1c7002bd795c1ae486d370cbd1 Mon Sep 17 00:00:00 2001
-> From: Luis Chamberlain <mcgrof@kernel.org>
-> Date: Fri, 11 Mar 2022 08:55:50 -0800
-> Subject: [PATCH] lsm,io_uring: add LSM hooks to for the new async_cmd file op
->
-> io-uring is extending the struct file_operations to allow a new
-> command which each subsystem can use to enable command passthrough.
-> Add an LSM specific for the command passthrough which enables LSMs
-> to inspect the command details.
->
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  fs/io_uring.c                 | 5 +++++
->  include/linux/lsm_hook_defs.h | 1 +
->  include/linux/lsm_hooks.h     | 3 +++
->  include/linux/security.h      | 5 +++++
->  security/security.c           | 4 ++++
->  5 files changed, 18 insertions(+)
->
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 3f6eacc98e31..1c4e6b2cb61a 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -4190,6 +4190,11 @@ static int io_uring_cmd_prep(struct io_kiocb *req,
->         struct io_ring_ctx *ctx = req->ctx;
->         struct io_uring_cmd *ioucmd = &req->uring_cmd;
->         u32 ucmd_flags = READ_ONCE(sqe->uring_cmd_flags);
-> +       int ret;
-> +
-> +       ret = security_uring_async_cmd(ioucmd);
+> +       ret = security_file_ioctl(ioucmd->file, ioucmd->cmd_op,
+> +                                 (unsigned long) ioucmd->cmd);
 > +       if (ret)
 > +               return ret;
-
-As a quick aside, for the LSM/audit folks the lore link for the full
-patchset is here:
-https://lore.kernel.org/io-uring/CA+1E3rJ17F0Rz5UKUnW-LPkWDfPHXG5aeq-ocgNxHfGrxYtAuw@mail.gmail.com/T/#m605e2fb7caf33e8880683fe6b57ade4093ed0643
-
-Similar to what was discussed above with respect to auditing, I think
-we need to do some extra work here to make it easier for a LSM to put
-the IO request in the proper context.  We have io_uring_cmd::cmd_op
-via the @ioucmd parameter, which is good, but we need to be able to
-associate that with a driver to make sense of it.  In the case of
-audit we could simply use the module name string, which is probably
-ideal as we would want a string anyway, but LSMs will likely want
-something more machine friendly.  That isn't to say we couldn't do a
-strcmp() on the module name string, but for something that aims to
-push performance as much as possible, doing a strcmp() on each
-operation seems a little less than optimal ;)
+> +
+>         switch (ioucmd->cmd_op) {
+>         case NVME_IOCTL_IO64_CMD:
+>                 ret = nvme_user_cmd64(ns->ctrl, ns, NULL, ioucmd);
 
 -- 
 paul-moore.com
