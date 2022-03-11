@@ -2,119 +2,152 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA35C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 22:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8BDC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 22:46:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229514AbiCKWrO (ORCPT
+        id S229654AbiCKWr7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Mar 2022 17:47:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49508 "EHLO
+        Fri, 11 Mar 2022 17:47:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbiCKWqr (ORCPT
+        with ESMTP id S229573AbiCKWrv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Mar 2022 17:46:47 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2452DBB9D;
-        Fri, 11 Mar 2022 14:37:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xrkMsT6XPANqLk5GgYC5BUODbPJFQSrD5uKd2h8hjI0=; b=o8WKllppkLb2BIVSD+J4aLbTwv
-        5gndsfeuUbWil76bV48Bod+g3Z5FKYD8Md3X7HpaRu39sq8Skg1QymZXtK9BLncxzpiY8UgM0li1s
-        pZuv9prfNIM9TegktC/YEVt7l2Dq/yttoxdX1XntcxnmNy4Ma6fIZGadRlHp0LKSrkFN9IHVbPn4s
-        XOH7C5FhCMqu3TWY8rAEv3sOJeOAzuriUSFCH4jr0drJrWuHh7OZ0LlDhnnqLiT+E9TKvSwvE+8X+
-        As5LQIFAdh+nBqeoIYFKxkFyYJnfd+jOdq1kzigY6IFY58pyMCjlzEsXtsU7HvOTMkxDqGcxf1F5c
-        WMD02f6g==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nSmOw-000GrH-B8; Fri, 11 Mar 2022 21:02:18 +0000
-Date:   Fri, 11 Mar 2022 13:02:18 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        linux-security-module@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-        kbusch@kernel.org, asml.silence@gmail.com,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, pankydev8@gmail.com, javier@javigon.com,
-        a.manzanares@samsung.com, joshiiitr@gmail.com, anuj20.g@samsung.com
-Subject: Re: [PATCH 05/17] nvme: wire-up support for async-passthru on
- char-device.
-Message-ID: <Yiu42rLif7FSwrjP@bombadil.infradead.org>
-References: <20220308152105.309618-1-joshi.k@samsung.com>
- <CGME20220308152702epcas5p1eb1880e024ac8b9531c85a82f31a4e78@epcas5p1.samsung.com>
- <20220308152105.309618-6-joshi.k@samsung.com>
- <YiuNZ7+KUjLtuYkr@bombadil.infradead.org>
- <CAHC9VhTnpO6LyaYWDTjJAy_ztGw+qqf-YS0W7S-djyZVnydVHg@mail.gmail.com>
+        Fri, 11 Mar 2022 17:47:51 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE02C2B7515
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 14:22:40 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id bt26so17483210lfb.3
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 14:22:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=BQM5s6KARQo6xsMTrgtyjfqQgxp9yGfc0ghCKKcQtf8=;
+        b=rW/V0Cqhy9qbkUdJ08Dw1HwcmmSatPyby1AlVx9WHUmj9YQZXnZI6RRhui0BKniegl
+         Bp4L5KkXUZfWD6SlN1Mvrh1Lvk3p0ITMLPhbZQCXgqS7Yq+2PZ6lA8nNYPL0qHRDFzT6
+         5FrpxfTqET6rhn/cJiLvzXJ0XafMN+n1STTLYYqei2QcB891AuBOiL0LtdufoxoieDmv
+         VhrwqolLTex1i3JOkNgCh/2wmS9XMMwGcMlZYG7X2l49KbEfZ6DjIIfZw62E5a+gVdTv
+         OwHdtrKmna54ohmVYQnBKcHjgaGCKQFMWyxt7uCVl4q0dm/OyD+28lS8CyPG2PRdOSWf
+         /nrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BQM5s6KARQo6xsMTrgtyjfqQgxp9yGfc0ghCKKcQtf8=;
+        b=KvOe1NKbIlrPkZGuEcxv9BNtz2molxbqAgCcIcsx/3XsBMnZSmrQDK+vcDVQd0QYIs
+         J3fmcbPPdx/HGsf0eKdy5QTIdkNs4/B6JDqgwu/jfp71mdBWIgTS+mTQdYsPYqsADniL
+         47S4rLZqnxLbzKXl4rMBz9ypAyxMdwUE8HQQUB8gIG6RxqqKgARCasN1425MZld+k0pJ
+         uVuK1y6a5c+Tt0dXDowICRO4tG3+XMREprqvaoU3BT/fT+xAhOVPaJnl15L3xCnVLlPa
+         MTjApxhTlSmm4Mav7fdUMbnILj3NqzYiqiKyRnCqeqFjG3tRCnmP/BX0bsU5qAxZin18
+         vQJg==
+X-Gm-Message-State: AOAM531qJZRaOKNvBiR/4Es7zDAJaNtH+6NAULeSufBP5f5UBS8RSsvX
+        RoX4r6kgQEB2n3A1A5J/+V29/1BN15rZA/qcnb1G1eziDw==
+X-Google-Smtp-Source: ABdhPJyYYX7Wm53Pi2h5di1/gf7hL0sQSYVXL0VPvZQ90klkGVBoawKXG5YHabI6/+DnOGW87KYt9/tNYbHqYtRdtZw=
+X-Received: by 2002:a05:6402:d2:b0:413:2e50:d6fd with SMTP id
+ i18-20020a05640200d200b004132e50d6fdmr10938615edu.171.1647036912117; Fri, 11
+ Mar 2022 14:15:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTnpO6LyaYWDTjJAy_ztGw+qqf-YS0W7S-djyZVnydVHg@mail.gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <20220228215935.748017-1-mic@digikod.net> <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
+ <f6b63133-d555-a77c-0847-de15a9302283@digikod.net> <CAHC9VhQd3rL-13k0u39Krkdjp2_dtPfgEPxr=kawWUM9FjjOsw@mail.gmail.com>
+ <8d520529-4d3e-4874-f359-0ead9207cead@canonical.com>
+In-Reply-To: <8d520529-4d3e-4874-f359-0ead9207cead@canonical.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 11 Mar 2022 17:15:01 -0500
+Message-ID: <CAHC9VhRrjqe1AdZYtjpzLJyBF6FTeQ4EcEwsOd2YMimA5_tzEA@mail.gmail.com>
+Subject: Re: [PATCH v1] fs: Fix inconsistent f_mode
+To:     John Johansen <john.johansen@canonical.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>,
+        selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 11, 2022 at 01:53:03PM -0500, Paul Moore wrote:
-> On Fri, Mar 11, 2022 at 12:56 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+On Wed, Mar 9, 2022 at 7:36 PM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 3/9/22 13:31, Paul Moore wrote:
+> > On Tue, Mar 1, 2022 at 5:15 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.ne=
+t> wrote:
+> >> On 01/03/2022 10:22, Christian Brauner wrote:
+> >>> On Mon, Feb 28, 2022 at 10:59:35PM +0100, Micka=C3=ABl Sala=C3=BCn wr=
+ote:
+> >>>> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+> >>>>
+> >>>> While transitionning to ACC_MODE() with commit 5300990c0370 ("Saniti=
+ze
+> >>>> f_flags helpers") and then fixing it with commit 6d125529c6cb ("Fix
+> >>>> ACC_MODE() for real"), we lost an open flags consistency check.  Ope=
+ning
+> >>>> a file with O_WRONLY | O_RDWR leads to an f_flags containing MAY_REA=
+D |
+> >>>> MAY_WRITE (thanks to the ACC_MODE() helper) and an empty f_mode.
+> >>>> Indeed, the OPEN_FMODE() helper transforms 3 (an incorrect value) to=
+ 0.
+> >>>>
+> >>>> Fortunately, vfs_read() and vfs_write() both check for FMODE_READ, o=
+r
+> >>>> respectively FMODE_WRITE, and return an EBADF error if it is absent.
+> >>>> Before commit 5300990c0370 ("Sanitize f_flags helpers"), opening a f=
+ile
+> >>>> with O_WRONLY | O_RDWR returned an EINVAL error.  Let's restore this=
+ safe
+> >>>> behavior.
+> >>>
+> >>> That specific part seems a bit risky at first glance. Given that the
+> >>> patch referenced is from 2009 this means we've been allowing O_WRONLY=
+ |
+> >>> O_RDWR to succeed for almost 13 years now.
+> >>
+> >> Yeah, it's an old bug, but we should keep in mind that a file descript=
+or
+> >> created with such flags cannot be used to read nor write. However,
+> >> unfortunately, it can be used for things like ioctl, fstat, chdir=E2=
+=80=A6 I
+> >> don't know if there is any user of this trick.
+> >>
+> >> Either way, there is an inconsistency between those using ACC_MODE() a=
+nd
+> >> those using OPEN_FMODE(). If we decide to take a side for the behavior
+> >> of one or the other, without denying to create such FD, it could also
+> >> break security policies. We have to choose what to potentially break=
+=E2=80=A6
 > >
-> > On Tue, Mar 08, 2022 at 08:50:53PM +0530, Kanchan Joshi wrote:
-> > > diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-> > > index 5c9cd9695519..1df270b47af5 100644
-> > > --- a/drivers/nvme/host/ioctl.c
-> > > +++ b/drivers/nvme/host/ioctl.c
-> > > @@ -369,6 +469,33 @@ long nvme_ns_chr_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> > >       return __nvme_ioctl(ns, cmd, (void __user *)arg);
-> > >  }
-> > >
-> > > +static int nvme_ns_async_ioctl(struct nvme_ns *ns, struct io_uring_cmd *ioucmd)
-> > > +{
-> > > +     int ret;
-> > > +
-> > > +     BUILD_BUG_ON(sizeof(struct nvme_uring_cmd_pdu) > sizeof(ioucmd->pdu));
-> > > +
-> > > +     switch (ioucmd->cmd_op) {
-> > > +     case NVME_IOCTL_IO64_CMD:
-> > > +             ret = nvme_user_cmd64(ns->ctrl, ns, NULL, ioucmd);
-> > > +             break;
-> > > +     default:
-> > > +             ret = -ENOTTY;
-> > > +     }
-> > > +
-> > > +     if (ret >= 0)
-> > > +             ret = -EIOCBQUEUED;
-> > > +     return ret;
-> > > +}
+> > I'm not really liking the idea that the empty/0 f_mode field leads to
+> > SELinux doing an ioctl access check as opposed to the expected
+> > read|write check.  Yes, other parts of the code catch the problem, but
+> > this is bad from a SELinux perspective.  Looking quickly at the other
+> > LSMs, it would appear that other LSMs are affected as well.
 > >
-> > And here I think we'll need something like this:
-> 
-> If we can promise that we will have a LSM hook for all of the
-> file_operations::async_cmd implementations that are security relevant
-> we could skip the LSM passthrough hook at the io_uring layer.
+> > If we're not going to fix file::f_mode, the LSMs probably need to
+> > consider using file::f_flags directly in conjunction with a correct
+> > OPEN_FMODE() macro (or better yet a small inline function that isn't
+> > as ugly).
+> >
+> yeah, I have to agree
 
-There is no way to ensure this unless perhaps we cake that into
-the API somehow... Or have a registration system for setting the
-respctive file ops / LSM.
+The silence on this has been deafening :/  No thoughts on fixing, or
+not fixing OPEN_FMODE(), Al?
 
-> It
-> would potentially make life easier in that we don't have to worry
-> about putting the passthrough op in the right context, but risks
-> missing a LSM hook control point (it will happen at some point and
-> *boom* CVE).
+At this point I have to assume OPEN_FMODE() isn't changing so I'm
+going to go ahead with moving SELinux over to file::f_flags.  Once
+I've got something working I'll CC the LSM list on the patches in case
+the other LSMs want to do something similar.  Full disclosure, that
+might not happen until early-to-mid next week due to the weekend, new
+kernel expected on Sunday, etc.
 
-Precicely my concern. So we either open code this and ask folks
-to do this or I think we do a registration and require both ops
-and the the LSM hook at registration.
-
-I think this should be enough information to get Kanchan rolling
-on the LSM side.
-
-  Luis
+--=20
+paul-moore.com
