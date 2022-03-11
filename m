@@ -2,151 +2,170 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD15C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 04:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B112CC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 04:42:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244001AbiCKELL (ORCPT
+        id S1346394AbiCKEnB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Mar 2022 23:11:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42650 "EHLO
+        Thu, 10 Mar 2022 23:43:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231511AbiCKELK (ORCPT
+        with ESMTP id S1346433AbiCKEnA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Mar 2022 23:11:10 -0500
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37C26986FF;
-        Thu, 10 Mar 2022 20:10:08 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id n7so8157799oif.5;
-        Thu, 10 Mar 2022 20:10:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9QeKB4cZIGNALzfAGtAHD8EFO6aEieNDe1cqjoQ6gsM=;
-        b=W9vUjPbowBxn+x7F9t0T9ph91PQtdPdrKRG92teEt6N37XUEPsuq7+Semk0Sq7eBL6
-         dcYQ9Tv22KHCDJpJTZArvmF8RQJMWhrnNFrlH0Z9uAj420D8GZTtOsl5n/GtRwmZJ8IA
-         76XZx0gnVjqsOEJfE51RvM5322G6zPl57koGYA+BKcBlE7vuRS9sF5hcoMo88FJDRAK5
-         +kwRe4M+oG+gEgYFREXYAIe783yanNbzuJWyEOA9cbY052rFHSqbNMsxjUA23QLzXa3/
-         qwh29b/LmPrDFBeRC3n+EEkGfabc7nyxk2erQfzTI/vhMLMU2KsmYvLjrtBhha2kRRP/
-         ijHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9QeKB4cZIGNALzfAGtAHD8EFO6aEieNDe1cqjoQ6gsM=;
-        b=NZW/LNPYvMyDD0iILIXVPwu3OT8GGJdCO4UJtixsPhNlztP4E6LlKBS9jgeqz3M2AM
-         tCweRqyvOVRbGq27iZiMFyj6xf9hBTs5S8ENRkCBDVeR/VMIqtbUWgyS4EBOl+dxKQyv
-         oXJoU/QrLAbMqXsBh7gJf5UONGHNHOuGO/1Remqi/V4Zvxp7xxViNvgu3GjM8sVDaVUU
-         PtWGGdBIa8dDl+hhhKskXt3wLUTunnprJFb2+bPoGJoEASC0r2yOWUklCuMwXl180Aa2
-         mAVzGzGSy3L9MNl1Qu+Xsy9+pIZUtR0RVos1mXFaURus2XzrenovKsHDXTNTGwlDlI5i
-         xZbA==
-X-Gm-Message-State: AOAM533+F5d23lhlFDMU4ZheXcb+Qdzb8jLj9KFs0TNCPnm0zsEmPZP0
-        +npyH6o6yAYkawv1QWEMDsCi5w59RZb1LbvWl9z6yTm6sBQ=
-X-Google-Smtp-Source: ABdhPJx+9DTvJp/p1u4f9zeF1IL/TTETZ9pXW0fHuKtmLByfNy/fessGS5yeAZyPOoS/6x3jVT2neAlc+D3agDdooSw=
-X-Received: by 2002:a05:6808:23c1:b0:2da:30fd:34d9 with SMTP id
- bq1-20020a05680823c100b002da30fd34d9mr8741863oib.203.1646971807529; Thu, 10
- Mar 2022 20:10:07 -0800 (PST)
+        Thu, 10 Mar 2022 23:43:00 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E26B1A907A;
+        Thu, 10 Mar 2022 20:41:58 -0800 (PST)
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22B4SD8w006855;
+        Fri, 11 Mar 2022 04:41:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=1La54FmIqIbZzewnmTDVKyzNOZ4KlniNQIRdC9L4pTw=;
+ b=ln9zUlB5Wx3D72w9Io3Vz0b95Ndvlcy2bkSkNk4KCAWNaKf70X6DIESiLXiUIwwcDZGQ
+ voY6D9bZECOTWwDqPRnFplW7WKABKaJB5MXbUzrEObjfUW34lNBeLC2Cvod+L6qJ9gSk
+ rIXxS4PWXF8s+nh2meHcxH5qPrMZg6jQrdYcyXRgYUUlTFQr3XMMd8VpK2ScZNr81CN7
+ 1UDSgonAkJpgU23JT+uGwX/NybTkPyKyJEbO/mlJ3JwGqVeIi0p6g2cjRat+0SGjzF+x
+ kh0oxjwS/3H8e5nel77XZk2Vlmw3jRcvmiajSlkPxbgPow+fuc4Vh5+LFSg7gVYuCjQS 1Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3eqrrdq2fs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 04:41:53 +0000
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22B4aSbj004503;
+        Fri, 11 Mar 2022 04:41:53 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3eqrrdq2fc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 04:41:52 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22B4blDr022254;
+        Fri, 11 Mar 2022 04:41:51 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma06ams.nl.ibm.com with ESMTP id 3eqqf08pss-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 04:41:51 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22B4fl5Y36897178
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Mar 2022 04:41:47 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF1CCAE04D;
+        Fri, 11 Mar 2022 04:41:47 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 312B5AE045;
+        Fri, 11 Mar 2022 04:41:45 +0000 (GMT)
+Received: from [9.43.5.3] (unknown [9.43.5.3])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 11 Mar 2022 04:41:44 +0000 (GMT)
+Message-ID: <4afae87c-2986-6b0e-07be-954dd4937afd@linux.ibm.com>
+Date:   Fri, 11 Mar 2022 10:11:43 +0530
 MIME-Version: 1.0
-References: <20211117015806.2192263-1-dvander@google.com> <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
- <Yao51m9EXszPsxNN@redhat.com> <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
- <YapjNRrjpDu2a5qQ@redhat.com> <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
- <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
- <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com> <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 11 Mar 2022 06:09:56 +0200
-Message-ID: <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
-Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Anderson <dvander@google.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
-        paulmoore@microsoft.com, luca.boccassi@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.6.2
+Subject: Re: [PATCH v11 0/4] integrity: support including firmware ".platform"
+ keys at build time
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
+        seth@forshee.me, Masahiro Yamada <masahiroy@kernel.org>
+References: <20220310214450.676505-1-nayna@linux.ibm.com>
+From:   Nageswara Sastry <rnsastry@linux.ibm.com>
+In-Reply-To: <20220310214450.676505-1-nayna@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: xINTBg14ZqSpZh-yay9uoKnMPzWX3n5y
+X-Proofpoint-GUID: xseay6-Ax7BOXKVK0qR6OTHXLoou4EEd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-10_09,2022-03-09_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 impostorscore=0
+ phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203110020
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 11, 2022 at 12:11 AM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Wed, Mar 9, 2022 at 4:13 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Tue, Mar 1, 2022 at 12:05 AM David Anderson <dvander@google.com> wro=
-te:
-> > > On Mon, Feb 28, 2022 at 5:09 PM Paul Moore <paul@paul-moore.com> wrot=
-e:
->
-> ...
->
-> > >> This patchset may not have been The Answer, but surely there is
-> > >> something we can do to support this use-case.
-> > >
-> > > Yup exactly, and we still need patches 3 & 4 to deal with this. My cu=
-rrent plan is to try and rework our sepolicy (we have some ideas on how it =
-could be made compatible with how overlayfs works). If that doesn't pan out=
- we'll revisit these patches and think harder about how to deal with the co=
-herency issues.
-> >
-> > Can you elaborate a bit more on the coherency issues?  Is this the dir
-> > cache issue that is alluded to in the patchset?  Anything else that
-> > has come up on review?
-> >
-> > Before I start looking at the dir cache in any detail, did you have
-> > any thoughts on how to resolve the problems that have arisen?
->
-> David, Vivek, Amir, Miklos, or anyone for that matter, can you please
-> go into more detail on the cache issues?  I *think* I may have found a
-> potential solution for an issue that could arise when the credential
-> override is not in place, but I'm not certain it's the only issue :)
->
 
-Hi Paul,
 
-In this thread I claimed that the authors of the patches did not present
-a security model for overlayfs, such as the one currently in overlayfs.rst.
-If we had a model we could have debated its correctness and review its
-implementation.
+On 11/03/22 3:14 am, Nayna Jain wrote:
+> Some firmware support secure boot by embedding static keys to verify the
+> Linux kernel during boot. However, these firmware do not expose an
+> interface for the kernel to load firmware keys onto the ".platform"
+> keyring, preventing the kernel from verifying the kexec kernel image
+> signature.
+> 
+> This patchset exports load_certificate_list() and defines a new function
+> load_builtin_platform_cert() to load compiled in certificates onto the
+> ".platform" keyring.
+> 
+> Changelog:
+> v11:
+> * Added a new patch to conditionally build extract-cert if
+> PLATFORM_KEYRING is enabled.
+> 
 
-As a proof that there is no solid model, I gave an *example* regarding
-the overlay readdir cache.
+Tested the following four patches with and with out setting 
+CONFIG_INTEGRITY_PLATFORM_KEYS
 
-When listing a merged dir, meaning, a directory containing entries from
-several overlay layers, ovl_permission() is called to check user's permissi=
-on,
-but ovl_permission() does not currently check permissions to read all layer=
-s,
-because that is not the current overlayfs model.
+Tested-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
 
-Overlayfs has a readdir cache, so without override_cred, a user with high
-credentials can populate the readdir cache and then a user will fewer
-credentials, not enough to access the lower layers, but enough to access
-the upper most layer, will pass ovl_permission() check and be allowed to
-read from readdir cache.
 
-This specific problem can be solved in several ways - disable readdir
-cache with override_cred=3Doff, check all layers in ovl_permission().
-That's not my point. My point is that I provided a proof that the current
-model of override_cred=3Doff is flawed and it is up to the authors of the
-patch to fix the model and provide the analysis of overlayfs code to
-prove the model's correctness.
+1. With set CONFIG_INTEGRITY_PLATFORM_KEYS
 
-The core of the matter is there is no easy way to "merge" the permissions
-from all layers into a single permission blob that could be checked once.
+# grep pem .config
+CONFIG_INTEGRITY_PLATFORM_KEYS="certs/kernel.pem"
+CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
+CONFIG_SYSTEM_TRUSTED_KEYS="certs/rhel.pem"
 
-Maybe the example I gave is the only flaw in the model, maybe not
-I am not sure. I will be happy to help you in review of a model and the
-solution that you may have found.
+# grep 
+"CONFIG_INTEGRITY_PLATFORM_KEYS\|INTEGRITY_PLATFORM_KEYRING\|SYSTEM_REVOCATION_LIST" 
+.config
+CONFIG_INTEGRITY_PLATFORM_KEYRING=y
+CONFIG_INTEGRITY_PLATFORM_KEYS="certs/kernel.pem"
+# CONFIG_SYSTEM_REVOCATION_LIST is not set
 
-Thanks,
-Amir.
+# cat /proc/keys | grep platform
+0e60c88d I------     1 perm 1f0b0000     0     0 keyring   .platform: 1
+
+# keyctl show %keyring:.platform
+Keyring
+  241223821 ---lswrv      0     0  keyring: .platform
+  308815460 ---lswrv      0     0   \_ asymmetric: IBM Corporation: 
+Guest Secure Boot Imprint Kernel Signing Key: 
+a0cf9069c30875320cb10a77325d4fa7012f8d12
+
+
+2. With out set CONFIG_INTEGRITY_PLATFORM_KEYS
+
+# grep pem .config
+CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
+CONFIG_SYSTEM_TRUSTED_KEYS="certs/rhel.pem"
+
+# grep 
+"CONFIG_INTEGRITY_PLATFORM_KEYS\|INTEGRITY_PLATFORM_KEYRING\|SYSTEM_REVOCATION_LIST" 
+.config
+CONFIG_INTEGRITY_PLATFORM_KEYRING=y
+CONFIG_INTEGRITY_PLATFORM_KEYS=""
+# CONFIG_SYSTEM_REVOCATION_LIST is not set
+
+# cat /proc/keys | grep platform
+12a5f301 I------     1 perm 1f0b0000     0     0 keyring   .platform: empty
+
+# keyctl show %keyring:.platform
+Keyring
+  312865537 ---lswrv      0     0  keyring: .platform
+
+
+> 
+> 
+> base-commit: fb5abce6b2bb5cb3d628aaa63fa821da8c4600f9
+
+-- 
+Thanks and Regards
+R.Nageswara Sastry
