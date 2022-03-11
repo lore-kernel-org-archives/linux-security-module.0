@@ -2,100 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3662C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 03:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD15C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 04:10:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237718AbiCKDVQ (ORCPT
+        id S244001AbiCKELL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Mar 2022 22:21:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51848 "EHLO
+        Thu, 10 Mar 2022 23:11:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230400AbiCKDVP (ORCPT
+        with ESMTP id S231511AbiCKELK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Mar 2022 22:21:15 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE0061A7D92;
-        Thu, 10 Mar 2022 19:20:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 89D17610A2;
-        Fri, 11 Mar 2022 03:20:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DBE5AC340EF;
-        Fri, 11 Mar 2022 03:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646968812;
-        bh=VsGSHD7E4OpMLRoeX2QE+gkBvx0t0j1p1Ol0/Z7+yS0=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=luK9NBPoQgXMbyWFT8nnbcOtbyvjfOpUXfoOyFuWrpBiEM/r/ufilfCNcmQ3oVX/N
-         x6EmdIwPtaD6MCifUK+Hc8W3j4ClYF0ea+osOGypIv+l54kemQJm3teGPCbJrg/K+D
-         PMfBAcbK1yHAMxvAjhMlIAtNyo5vkumxWmasEyVMW/j1VhX1tIcNLPBnZg1kJ9YboQ
-         vOVi5oPXv6Wd0LhliEjJ+UFFRokUEInZd6Fh9pxft3HJKZU+TLVmYVV8hauMZn3vMA
-         fC+cLp4bWjNI6uMmh0gGsKjYyzPxK5wEkV8O8OOQ0rWS5p7UO6vRDIsdb3yCy6RiOs
-         VhEo/gLcl723g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BE6D9EAC095;
-        Fri, 11 Mar 2022 03:20:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 10 Mar 2022 23:11:10 -0500
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37C26986FF;
+        Thu, 10 Mar 2022 20:10:08 -0800 (PST)
+Received: by mail-oi1-x234.google.com with SMTP id n7so8157799oif.5;
+        Thu, 10 Mar 2022 20:10:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9QeKB4cZIGNALzfAGtAHD8EFO6aEieNDe1cqjoQ6gsM=;
+        b=W9vUjPbowBxn+x7F9t0T9ph91PQtdPdrKRG92teEt6N37XUEPsuq7+Semk0Sq7eBL6
+         dcYQ9Tv22KHCDJpJTZArvmF8RQJMWhrnNFrlH0Z9uAj420D8GZTtOsl5n/GtRwmZJ8IA
+         76XZx0gnVjqsOEJfE51RvM5322G6zPl57koGYA+BKcBlE7vuRS9sF5hcoMo88FJDRAK5
+         +kwRe4M+oG+gEgYFREXYAIe783yanNbzuJWyEOA9cbY052rFHSqbNMsxjUA23QLzXa3/
+         qwh29b/LmPrDFBeRC3n+EEkGfabc7nyxk2erQfzTI/vhMLMU2KsmYvLjrtBhha2kRRP/
+         ijHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9QeKB4cZIGNALzfAGtAHD8EFO6aEieNDe1cqjoQ6gsM=;
+        b=NZW/LNPYvMyDD0iILIXVPwu3OT8GGJdCO4UJtixsPhNlztP4E6LlKBS9jgeqz3M2AM
+         tCweRqyvOVRbGq27iZiMFyj6xf9hBTs5S8ENRkCBDVeR/VMIqtbUWgyS4EBOl+dxKQyv
+         oXJoU/QrLAbMqXsBh7gJf5UONGHNHOuGO/1Remqi/V4Zvxp7xxViNvgu3GjM8sVDaVUU
+         PtWGGdBIa8dDl+hhhKskXt3wLUTunnprJFb2+bPoGJoEASC0r2yOWUklCuMwXl180Aa2
+         mAVzGzGSy3L9MNl1Qu+Xsy9+pIZUtR0RVos1mXFaURus2XzrenovKsHDXTNTGwlDlI5i
+         xZbA==
+X-Gm-Message-State: AOAM533+F5d23lhlFDMU4ZheXcb+Qdzb8jLj9KFs0TNCPnm0zsEmPZP0
+        +npyH6o6yAYkawv1QWEMDsCi5w59RZb1LbvWl9z6yTm6sBQ=
+X-Google-Smtp-Source: ABdhPJx+9DTvJp/p1u4f9zeF1IL/TTETZ9pXW0fHuKtmLByfNy/fessGS5yeAZyPOoS/6x3jVT2neAlc+D3agDdooSw=
+X-Received: by 2002:a05:6808:23c1:b0:2da:30fd:34d9 with SMTP id
+ bq1-20020a05680823c100b002da30fd34d9mr8741863oib.203.1646971807529; Thu, 10
+ Mar 2022 20:10:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164696881277.12219.12423811667872228529.git-patchwork-notify@kernel.org>
-Date:   Fri, 11 Mar 2022 03:20:12 +0000
-References: <20220302111404.193900-1-roberto.sassu@huawei.com>
-In-Reply-To: <20220302111404.193900-1-roberto.sassu@huawei.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, shuah@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, yhs@fb.com,
-        kpsingh@kernel.org, revest@chromium.org,
-        gregkh@linuxfoundation.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211117015806.2192263-1-dvander@google.com> <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
+ <Yao51m9EXszPsxNN@redhat.com> <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
+ <YapjNRrjpDu2a5qQ@redhat.com> <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
+ <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
+ <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com> <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 11 Mar 2022 06:09:56 +0200
+Message-ID: <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Anderson <dvander@google.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
+        paulmoore@microsoft.com, luca.boccassi@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
+On Fri, Mar 11, 2022 at 12:11 AM Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Wed, Mar 9, 2022 at 4:13 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Tue, Mar 1, 2022 at 12:05 AM David Anderson <dvander@google.com> wro=
+te:
+> > > On Mon, Feb 28, 2022 at 5:09 PM Paul Moore <paul@paul-moore.com> wrot=
+e:
+>
+> ...
+>
+> > >> This patchset may not have been The Answer, but surely there is
+> > >> something we can do to support this use-case.
+> > >
+> > > Yup exactly, and we still need patches 3 & 4 to deal with this. My cu=
+rrent plan is to try and rework our sepolicy (we have some ideas on how it =
+could be made compatible with how overlayfs works). If that doesn't pan out=
+ we'll revisit these patches and think harder about how to deal with the co=
+herency issues.
+> >
+> > Can you elaborate a bit more on the coherency issues?  Is this the dir
+> > cache issue that is alluded to in the patchset?  Anything else that
+> > has come up on review?
+> >
+> > Before I start looking at the dir cache in any detail, did you have
+> > any thoughts on how to resolve the problems that have arisen?
+>
+> David, Vivek, Amir, Miklos, or anyone for that matter, can you please
+> go into more detail on the cache issues?  I *think* I may have found a
+> potential solution for an issue that could arise when the credential
+> override is not in place, but I'm not certain it's the only issue :)
+>
 
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+Hi Paul,
 
-On Wed, 2 Mar 2022 12:13:55 +0100 you wrote:
-> Extend the interoperability with IMA, to give wider flexibility for the
-> implementation of integrity-focused LSMs based on eBPF.
-> 
-> Patch 1 fixes some style issues.
-> 
-> Patches 2-6 give the ability to eBPF-based LSMs to take advantage of the
-> measurement capability of IMA without needing to setup a policy in IMA
-> (those LSMs might implement the policy capability themselves).
-> 
-> [...]
+In this thread I claimed that the authors of the patches did not present
+a security model for overlayfs, such as the one currently in overlayfs.rst.
+If we had a model we could have debated its correctness and review its
+implementation.
 
-Here is the summary with links:
-  - [v3,1/9] ima: Fix documentation-related warnings in ima_main.c
-    https://git.kernel.org/bpf/bpf-next/c/bae60eefb95c
-  - [v3,2/9] ima: Always return a file measurement in ima_file_hash()
-    https://git.kernel.org/bpf/bpf-next/c/280fe8367b0d
-  - [v3,3/9] bpf-lsm: Introduce new helper bpf_ima_file_hash()
-    https://git.kernel.org/bpf/bpf-next/c/174b16946e39
-  - [v3,4/9] selftests/bpf: Move sample generation code to ima_test_common()
-    https://git.kernel.org/bpf/bpf-next/c/2746de3c53d6
-  - [v3,5/9] selftests/bpf: Add test for bpf_ima_file_hash()
-    https://git.kernel.org/bpf/bpf-next/c/27a77d0d460c
-  - [v3,6/9] selftests/bpf: Check if the digest is refreshed after a file write
-    https://git.kernel.org/bpf/bpf-next/c/91e8fa254dbd
-  - [v3,7/9] bpf-lsm: Make bpf_lsm_kernel_read_file() as sleepable
-    https://git.kernel.org/bpf/bpf-next/c/df6b3039fa11
-  - [v3,8/9] selftests/bpf: Add test for bpf_lsm_kernel_read_file()
-    https://git.kernel.org/bpf/bpf-next/c/e6dcf7bbf37c
-  - [v3,9/9] selftests/bpf: Check that bpf_kernel_read_file() denies reading IMA policy
-    https://git.kernel.org/bpf/bpf-next/c/7bae42b68d7f
+As a proof that there is no solid model, I gave an *example* regarding
+the overlay readdir cache.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+When listing a merged dir, meaning, a directory containing entries from
+several overlay layers, ovl_permission() is called to check user's permissi=
+on,
+but ovl_permission() does not currently check permissions to read all layer=
+s,
+because that is not the current overlayfs model.
 
+Overlayfs has a readdir cache, so without override_cred, a user with high
+credentials can populate the readdir cache and then a user will fewer
+credentials, not enough to access the lower layers, but enough to access
+the upper most layer, will pass ovl_permission() check and be allowed to
+read from readdir cache.
 
+This specific problem can be solved in several ways - disable readdir
+cache with override_cred=3Doff, check all layers in ovl_permission().
+That's not my point. My point is that I provided a proof that the current
+model of override_cred=3Doff is flawed and it is up to the authors of the
+patch to fix the model and provide the analysis of overlayfs code to
+prove the model's correctness.
+
+The core of the matter is there is no easy way to "merge" the permissions
+from all layers into a single permission blob that could be checked once.
+
+Maybe the example I gave is the only flaw in the model, maybe not
+I am not sure. I will be happy to help you in review of a model and the
+solution that you may have found.
+
+Thanks,
+Amir.
