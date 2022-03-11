@@ -2,200 +2,141 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E49C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 20:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2C6C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 22:45:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbiCKU7A (ORCPT
+        id S229709AbiCKWqs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Mar 2022 15:59:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49540 "EHLO
+        Fri, 11 Mar 2022 17:46:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229655AbiCKU67 (ORCPT
+        with ESMTP id S229711AbiCKWq0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Mar 2022 15:58:59 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC7E1768DA;
-        Fri, 11 Mar 2022 12:57:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eMQHTaULL4DYk//ji2yCOo0Dmn4myt1H30g/N/roRy4=; b=U25RVHWnNCFaEL1Ln9Wozt7+d/
-        RPI294B2un79E/20bRCIiRF3U/75J7nPDqT4DChC9XZjkFNCVd6SGczeyUeujIRTcu8dQZ037uPWv
-        tk+IZh+PuVUXBSRUnSJuVjPBz0XIq36vSvBWc76uudEQFl4scHaSLSpQWcj9yz/e0PviNG6foGn51
-        E3O2r2awjzz8oZuXsWh57vC2YEc1HyhBWwsS9AjHZusQRRRtmg+hvJOwhdI7yC7j4ZUlgUEXaRICV
-        1npV3y2xRwmUIEuwql7kxZZx32u5bi5e+uYVk0xLhlhcfp60dZlXww9OdIT4se4D55aq1WGOeJkPd
-        q9k75Fyg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nSmKV-000GNc-65; Fri, 11 Mar 2022 20:57:43 +0000
-Date:   Fri, 11 Mar 2022 12:57:43 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        Kanchan Joshi <joshi.k@samsung.com>, jmorris@namei.org,
-        serge@hallyn.com, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, hch@lst.de,
-        kbusch@kernel.org, asml.silence@gmail.com,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, pankydev8@gmail.com, javier@javigon.com,
-        a.manzanares@samsung.com, joshiiitr@gmail.com,
-        anuj20.g@samsung.com, selinux@vger.kernel.org
-Subject: Re: [PATCH 03/17] io_uring: add infra and support for
- IORING_OP_URING_CMD
-Message-ID: <Yiu3x/Fxt/b5rNWB@bombadil.infradead.org>
-References: <20220308152105.309618-1-joshi.k@samsung.com>
- <CGME20220308152658epcas5p3929bd1fcf75edc505fec71901158d1b5@epcas5p3.samsung.com>
- <20220308152105.309618-4-joshi.k@samsung.com>
- <YiqrE4K5TWeB7aLd@bombadil.infradead.org>
- <e3bfd028-ece7-d969-f47c-1181b17ac919@kernel.dk>
- <YiuC1fhEiRdo5bPd@bombadil.infradead.org>
- <CAHC9VhSNMH8XAKa43kCR8fZj-B1ucCd3R6WXOo3B4z80Bw2Kkw@mail.gmail.com>
+        Fri, 11 Mar 2022 17:46:26 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869082E86F6;
+        Fri, 11 Mar 2022 14:37:18 -0800 (PST)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22BJgiEv026670;
+        Fri, 11 Mar 2022 21:03:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=c4oKa8YHconhNmykPPJwtaqGobzI4xAAjjShykA4Yy4=;
+ b=P4fMWLfPd6F+D1ws06rfxwKmj76Hh5u47Nmtjykkn7GbNk4rKldp0Wtb/BoInpxFw7dE
+ TB9Cjmxd2a4ncFxSbAblt/yP5iPYXemyo3zBNSg34WgCbJO2cK0XZWDx8/AWgDse4vw5
+ O0eZ1t1WTHP+QGAKfTQw5So2uX5dQYo40OuWgbNUebN7idHJf+CKIBVjYdlEZrhru9r/
+ V5eHTGXnYQ3W99RzAgPX5dI8RT88dtg18iaMUYZKsRRfn2lW9z3N4l44eDyZFOaPvgiV
+ FGAf9Hc8pwNXI8fz77iEYdRYL2YG77/p9/WbNeAvjJfC6UtBfSfAmoQ8B8I0D4SokxRP xQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3eqtfgpa6v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 21:03:20 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22BKpO7I020866;
+        Fri, 11 Mar 2022 21:03:19 GMT
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3eqtfgpa6f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 21:03:19 +0000
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22BL3Gua024566;
+        Fri, 11 Mar 2022 21:03:18 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma01dal.us.ibm.com with ESMTP id 3emgamjwy0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 21:03:18 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22BL3Gxx38994426
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Mar 2022 21:03:16 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB2B328059;
+        Fri, 11 Mar 2022 21:03:16 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 89C2B2805A;
+        Fri, 11 Mar 2022 21:03:13 +0000 (GMT)
+Received: from [9.211.110.168] (unknown [9.211.110.168])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 11 Mar 2022 21:03:13 +0000 (GMT)
+Message-ID: <f92ec4d8-47c0-ece5-3c52-caeb8265881c@linux.vnet.ibm.com>
+Date:   Fri, 11 Mar 2022 16:03:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v11 0/4] integrity: support including firmware ".platform"
+ keys at build time
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Nageswara Sastry <rnsastry@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
+        seth@forshee.me, Masahiro Yamada <masahiroy@kernel.org>
+References: <20220310214450.676505-1-nayna@linux.ibm.com>
+ <4afae87c-2986-6b0e-07be-954dd4937afd@linux.ibm.com>
+ <f78d11fefd13bd17748e36621acee9c2f27a77f6.camel@kernel.org>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+In-Reply-To: <f78d11fefd13bd17748e36621acee9c2f27a77f6.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Heow9UKywaWt9NTO6YuP7NDv5g_6SmDY
+X-Proofpoint-GUID: e7V-kq4jBh8gRnlsxn6EdPMwfBVMWcS8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSNMH8XAKa43kCR8fZj-B1ucCd3R6WXOo3B4z80Bw2Kkw@mail.gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-11_08,2022-03-11_02,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ bulkscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 clxscore=1011 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203110103
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 11, 2022 at 01:47:51PM -0500, Paul Moore wrote:
-> On Fri, Mar 11, 2022 at 12:11 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > On Thu, Mar 10, 2022 at 07:43:04PM -0700, Jens Axboe wrote:
-> > > On 3/10/22 6:51 PM, Luis Chamberlain wrote:
-> > > > On Tue, Mar 08, 2022 at 08:50:51PM +0530, Kanchan Joshi wrote:
-> > > >> From: Jens Axboe <axboe@kernel.dk>
-> > > >>
-> > > >> This is a file private kind of request. io_uring doesn't know what's
-> > > >> in this command type, it's for the file_operations->async_cmd()
-> > > >> handler to deal with.
-> > > >>
-> > > >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > > >> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> > > >> ---
-> > > >
-> > > > <-- snip -->
-> > > >
-> > > >> +static int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
-> > > >> +{
-> > > >> +  struct file *file = req->file;
-> > > >> +  int ret;
-> > > >> +  struct io_uring_cmd *ioucmd = &req->uring_cmd;
-> > > >> +
-> > > >> +  ioucmd->flags |= issue_flags;
-> > > >> +  ret = file->f_op->async_cmd(ioucmd);
-> > > >
-> > > > I think we're going to have to add a security_file_async_cmd() check
-> > > > before this call here. Because otherwise we're enabling to, for
-> > > > example, bypass security_file_ioctl() for example using the new
-> > > > iouring-cmd interface.
-> > > >
-> > > > Or is this already thought out with the existing security_uring_*() stuff?
-> > >
-> > > Unless the request sets .audit_skip, it'll be included already in terms
-> > > of logging.
-> >
-> > Neat.
-> 
-> [NOTE: added the audit and SELinux lists to the To/CC line]
-> 
-> Neat, but I think we will need to augment things to support this new
-> passthrough mechanism.
 
-That's what my spidey instincts told me.
+On 3/11/22 11:42, Jarkko Sakkinen wrote:
+> On Fri, 2022-03-11 at 10:11 +0530, Nageswara Sastry wrote:
+>>
+>> On 11/03/22 3:14 am, Nayna Jain wrote:
+>>> Some firmware support secure boot by embedding static keys to verify the
+>>> Linux kernel during boot. However, these firmware do not expose an
+>>> interface for the kernel to load firmware keys onto the ".platform"
+>>> keyring, preventing the kernel from verifying the kexec kernel image
+>>> signature.
+>>>
+>>> This patchset exports load_certificate_list() and defines a new function
+>>> load_builtin_platform_cert() to load compiled in certificates onto the
+>>> ".platform" keyring.
+>>>
+>>> Changelog:
+>>> v11:
+>>> * Added a new patch to conditionally build extract-cert if
+>>> PLATFORM_KEYRING is enabled.
+>>>
+>> Tested the following four patches with and with out setting
+>> CONFIG_INTEGRITY_PLATFORM_KEYS
+>>
+>> Tested-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
+> OK, I added it:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
 
-> The issue is that folks who look at audit logs need to be able to
-> piece together what happened on the system using just what they have
-> in the logs themselves.  As things currently stand with this patchset,
-> the only bit of information they would have to go on would be
-> "uring_op=<IORING_OP_URING_CMD>" which isn't very informative :)
-> 
-> You'll see a similar issue in the newly proposed LSM hook below, we
-> need to be able to record information about not only the passthrough
-> command, e.g. io_uring_cmd::cmd_op, but also the underlying
-> device/handler so that we can put the passthrough command in the right
-> context (as far as I can tell io_uring_cmd::cmd_op is specific to the
-> device).  We might be able to leverage file_operations::owner::name
-> for this, e.g. "uring_passthru_dev=nvme
-> uring_passthru_op=<NVME_IOCTL_IO64_CMD>".
+Thanks Jarkko. Masahiro Yamada would prefer to revert the original 
+commit 340a02535ee785c64c62a9c45706597a0139e972 i.e. move extract-cert 
+back to the scripts/ directory.
 
-OK...
+I am just posting v12 which includes Masahiro feedback. Nageswara has 
+already tested v12 version as well.
 
-> > > But I'd prefer not to lodge this in with ioctls, unless
-> > > we're going to be doing actual ioctls.
-> >
-> > Oh sure, I have been an advocate to ensure folks don't conflate async_cmd
-> > with ioctl. However it *can* enable subsystems to enable ioctl
-> > passthrough, but each of those subsystems need to vet for this on their
-> > own terms. I'd hate to see / hear some LSM surprises later.
-> 
-> Same :)  Thanks for bringing this up with us while the patches are
-> still in-progress/under-review, I think it makes for a much more
-> pleasant experience for everyone.
+I am fine either way 1.) Adding v11 and then separately handling of 
+reverting of the commit or 2.) Adding v12 version which includes the 
+revert. I leave the decision on you as to which one to upstream.
 
-Sure thing.
+Thanks & Regards,
 
-> > > But definitely something to keep in mind and make sure that we're under
-> > > the right umbrella in terms of auditing and security.
-> >
-> > Paul, how about something like this for starters (and probably should
-> > be squashed into this series so its not a separate commit) ?
-> >
-> > From f3ddbe822374cc1c7002bd795c1ae486d370cbd1 Mon Sep 17 00:00:00 2001
-> > From: Luis Chamberlain <mcgrof@kernel.org>
-> > Date: Fri, 11 Mar 2022 08:55:50 -0800
-> > Subject: [PATCH] lsm,io_uring: add LSM hooks to for the new async_cmd file op
-> >
-> > io-uring is extending the struct file_operations to allow a new
-> > command which each subsystem can use to enable command passthrough.
-> > Add an LSM specific for the command passthrough which enables LSMs
-> > to inspect the command details.
-> >
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > ---
-> >  fs/io_uring.c                 | 5 +++++
-> >  include/linux/lsm_hook_defs.h | 1 +
-> >  include/linux/lsm_hooks.h     | 3 +++
-> >  include/linux/security.h      | 5 +++++
-> >  security/security.c           | 4 ++++
-> >  5 files changed, 18 insertions(+)
-> >
-> > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> > index 3f6eacc98e31..1c4e6b2cb61a 100644
-> > --- a/fs/io_uring.c
-> > +++ b/fs/io_uring.c
-> > @@ -4190,6 +4190,11 @@ static int io_uring_cmd_prep(struct io_kiocb *req,
-> >         struct io_ring_ctx *ctx = req->ctx;
-> >         struct io_uring_cmd *ioucmd = &req->uring_cmd;
-> >         u32 ucmd_flags = READ_ONCE(sqe->uring_cmd_flags);
-> > +       int ret;
-> > +
-> > +       ret = security_uring_async_cmd(ioucmd);
-> > +       if (ret)
-> > +               return ret;
-> 
-> As a quick aside, for the LSM/audit folks the lore link for the full
-> patchset is here:
-> https://lore.kernel.org/io-uring/CA+1E3rJ17F0Rz5UKUnW-LPkWDfPHXG5aeq-ocgNxHfGrxYtAuw@mail.gmail.com/T/#m605e2fb7caf33e8880683fe6b57ade4093ed0643
-> 
-> Similar to what was discussed above with respect to auditing, I think
-> we need to do some extra work here to make it easier for a LSM to put
-> the IO request in the proper context.  We have io_uring_cmd::cmd_op
-> via the @ioucmd parameter, which is good, but we need to be able to
-> associate that with a driver to make sense of it.
+     - Nayna
 
-It may not always be a driver, it can be built-in stuff.
-
-> In the case of
-> audit we could simply use the module name string, which is probably
-> ideal as we would want a string anyway, but LSMs will likely want
-> something more machine friendly.  That isn't to say we couldn't do a
-> strcmp() on the module name string, but for something that aims to
-> push performance as much as possible, doing a strcmp() on each
-> operation seems a little less than optimal ;)
-
-Yes this is a super hot path...
-
-  Luis
