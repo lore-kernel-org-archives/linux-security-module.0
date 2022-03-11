@@ -2,143 +2,251 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39846C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 18:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FEEC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 20:23:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351000AbiCKSyU (ORCPT
+        id S1348588AbiCKUY5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Mar 2022 13:54:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52902 "EHLO
+        Fri, 11 Mar 2022 15:24:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347145AbiCKSyU (ORCPT
+        with ESMTP id S232243AbiCKUYz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Mar 2022 13:54:20 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A9B4161E
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 10:53:16 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id m12so11963902edc.12
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 10:53:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mhiJoyGK6i48A+CV44wvGM/sNOc2SA/ZHL0e71y9Ouw=;
-        b=oxd6LAQKWQ5hKfBrALwTaY5UPGW3xSf9z0WFCbd/U2Y6H0HdsW/os1CmTDYsESly0w
-         tqUHS7uXcBfX3xvTcS15ysDWNektRriLFjwr2sFQrEkwYcoMX8VEWNHfqqXCDF3yJGQv
-         NydGiZKzqXKRAx3KfjS9uNw11cYYRQcS/FX2RoEVSsCkVCHpb3WSXmZ63bSDR5fQfyUL
-         epYrOqC8w1p7y2RIEPMp8bx2BMtBa3Q61oUyL1IgQd6FtXH1elLFXVm9PyDdAGEDEe3z
-         A/aZlLmcTeMQ4MaY52V9j7G8gOX5WZdDofYqd8HZfnGW0lzoThKe4Y+F5geLdfpjodDv
-         7Jrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mhiJoyGK6i48A+CV44wvGM/sNOc2SA/ZHL0e71y9Ouw=;
-        b=wTaKEkf+QYurvtGNrNCLd3GFzeKfeJQAxAIsGkIkEK52kIykEhBCqdLVjS/R3wbo12
-         h/gOHH/MoT5w4aDS0yRBeFCFFq/bAihKAIue9XhV/XE8YE5UEFNqfvy21t21AJDxDFXG
-         e9bn371favBc9hGDA5aO3kM8eAPw7c6Uucmpq2Jqxui5zRFR2IIg24m+5kyZw+bdYXCQ
-         tnpcVWPH3KlstlSB+WyjHAW47RMgg/2je9s+y+IzER46FKxyQ8BsGT3TZozrwseRt8jj
-         tkYnaRNtyn3Yzfr1FSkPB96PNX4/z4Z0ItYsUM2N+zWNn+8ztM0JjfxFIN5V/KbcQDZf
-         tcxw==
-X-Gm-Message-State: AOAM532amckMS9bin+PPgiW79rmFeExUwC+3xjTgr0cvretqMF6AzrvK
-        NC87D6Fm52pgwYiFWdVBG4TL8abZhe49ndL9QOgY
-X-Google-Smtp-Source: ABdhPJwxFS6emBP91ghOo78Xcf38HmQKuJ92uGWWAskNZTBSdMpqT2NKwaEKOmMFF9dvmety1PBkMMF2unwneHLaEzA=
-X-Received: by 2002:a05:6402:42d4:b0:412:c26b:789 with SMTP id
- i20-20020a05640242d400b00412c26b0789mr10168594edc.232.1647024794826; Fri, 11
- Mar 2022 10:53:14 -0800 (PST)
+        Fri, 11 Mar 2022 15:24:55 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B5F11A36;
+        Fri, 11 Mar 2022 12:23:51 -0800 (PST)
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22BHghgN000923;
+        Fri, 11 Mar 2022 20:23:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=AyXNS39yU1EcgMGCsQvRsOD8XqEc/1rGH95ot+5PjPE=;
+ b=myfLrs9qjzuMcNpFGVXJHBBK0E8+OU/IjZxQBT3bn94eUm3kkd2qNJWvo0sdLIZmTVSc
+ rBVjC0cyThxY9ntaXoQKIc8kvnxYdocngmJJv2s3aABblPgrBIJxOvs7FaZcVc9NfOc5
+ v0HT1moJUC7sNEJimp6r593uWrKh+4W2rhcYnabNfb9G3g6M07nU68xKcbAKyN61c5YN
+ d8Kj5DWJEVUIAsyb3obT/Bjak7SGoWOTlamOjjVHQ2X0tlUyKyocYHilrpNm/NnJ77zr
+ Zb9HzR9b0qmA/NnAN36CWNNrkhQJAc4YR4g6sQxyWqbMQpvwK5z8MvNQsEgYC1pYV8xp mw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3eqm1bcwj9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 20:23:18 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22BJtQL2022797;
+        Fri, 11 Mar 2022 20:23:18 GMT
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3eqm1bcwj5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 20:23:17 +0000
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22BKDFXj023364;
+        Fri, 11 Mar 2022 20:23:17 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma05wdc.us.ibm.com with ESMTP id 3enk8xxr47-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 20:23:17 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22BKNG4V12452132
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Mar 2022 20:23:16 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8AFBBAE063;
+        Fri, 11 Mar 2022 20:23:16 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25632AE062;
+        Fri, 11 Mar 2022 20:23:16 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 11 Mar 2022 20:23:16 +0000 (GMT)
+Message-ID: <e3a64c96-18b7-f940-8da5-ced3786c33b8@linux.ibm.com>
+Date:   Fri, 11 Mar 2022 15:23:15 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 3/4] KEYS: CA link restriction
+Content-Language: en-US
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
+        "mic@linux.microsoft.com" <mic@linux.microsoft.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+References: <20220301173651.3435350-1-eric.snowberg@oracle.com>
+ <20220301173651.3435350-4-eric.snowberg@oracle.com>
+ <47f3654e-892d-a35a-e77c-70ada1ebcf43@linux.ibm.com>
+ <2415444C-AD8F-4F03-8B1C-C0770F83ADAE@oracle.com>
+ <e2dd58cd6074ae692256333b43b5ecde70bcdbdd.camel@linux.ibm.com>
+ <67456A73-8B72-4DB6-8E23-7C603661A0A4@oracle.com>
+ <22860730-d615-5683-6af0-05b6f4f3e71d@linux.ibm.com>
+ <e10f2161aaa69a9d301b3a16a37cbab266318aee.camel@linux.ibm.com>
+ <068F32E0-B202-4B20-9DE7-57373EF71BFE@oracle.com>
+ <930d970d-0120-d3f0-939a-b5ef3b596318@linux.ibm.com>
+ <B9A8F5BD-5FDE-4501-9C0A-865579C45627@oracle.com>
+ <9ea53711-73ab-d242-9eb6-87497c8dc7ac@linux.ibm.com>
+ <00B288C0-5011-4706-B393-481910489FFE@oracle.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <00B288C0-5011-4706-B393-481910489FFE@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pnoT_woZEe1qFIBaWL9nLD77VZRvGoyj
+X-Proofpoint-GUID: N6a2Ur742MLOICzwktSu9oyFHPqEJL_E
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-References: <20220308152105.309618-1-joshi.k@samsung.com> <CGME20220308152702epcas5p1eb1880e024ac8b9531c85a82f31a4e78@epcas5p1.samsung.com>
- <20220308152105.309618-6-joshi.k@samsung.com> <YiuNZ7+KUjLtuYkr@bombadil.infradead.org>
-In-Reply-To: <YiuNZ7+KUjLtuYkr@bombadil.infradead.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Mar 2022 13:53:03 -0500
-Message-ID: <CAHC9VhTnpO6LyaYWDTjJAy_ztGw+qqf-YS0W7S-djyZVnydVHg@mail.gmail.com>
-Subject: Re: [PATCH 05/17] nvme: wire-up support for async-passthru on char-device.
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        linux-security-module@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-        kbusch@kernel.org, asml.silence@gmail.com,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, pankydev8@gmail.com, javier@javigon.com,
-        a.manzanares@samsung.com, joshiiitr@gmail.com, anuj20.g@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-11_08,2022-03-11_02,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 impostorscore=0 priorityscore=1501
+ adultscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ phishscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2202240000 definitions=main-2203110101
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 11, 2022 at 12:56 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Tue, Mar 08, 2022 at 08:50:53PM +0530, Kanchan Joshi wrote:
-> > diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-> > index 5c9cd9695519..1df270b47af5 100644
-> > --- a/drivers/nvme/host/ioctl.c
-> > +++ b/drivers/nvme/host/ioctl.c
-> > @@ -369,6 +469,33 @@ long nvme_ns_chr_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> >       return __nvme_ioctl(ns, cmd, (void __user *)arg);
-> >  }
-> >
-> > +static int nvme_ns_async_ioctl(struct nvme_ns *ns, struct io_uring_cmd *ioucmd)
-> > +{
-> > +     int ret;
-> > +
-> > +     BUILD_BUG_ON(sizeof(struct nvme_uring_cmd_pdu) > sizeof(ioucmd->pdu));
-> > +
-> > +     switch (ioucmd->cmd_op) {
-> > +     case NVME_IOCTL_IO64_CMD:
-> > +             ret = nvme_user_cmd64(ns->ctrl, ns, NULL, ioucmd);
-> > +             break;
-> > +     default:
-> > +             ret = -ENOTTY;
-> > +     }
-> > +
-> > +     if (ret >= 0)
-> > +             ret = -EIOCBQUEUED;
-> > +     return ret;
-> > +}
->
-> And here I think we'll need something like this:
 
-If we can promise that we will have a LSM hook for all of the
-file_operations::async_cmd implementations that are security relevant
-we could skip the LSM passthrough hook at the io_uring layer.  It
-would potentially make life easier in that we don't have to worry
-about putting the passthrough op in the right context, but risks
-missing a LSM hook control point (it will happen at some point and
-*boom* CVE).
 
-> diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-> index ddb7e5864be6..83529adf130d 100644
-> --- a/drivers/nvme/host/ioctl.c
-> +++ b/drivers/nvme/host/ioctl.c
-> @@ -5,6 +5,7 @@
->   */
->  #include <linux/ptrace.h>      /* for force_successful_syscall_return */
->  #include <linux/nvme_ioctl.h>
-> +#include <linux/security.h>
->  #include "nvme.h"
->
->  /*
-> @@ -524,6 +525,11 @@ static int nvme_ns_async_ioctl(struct nvme_ns *ns, struct io_uring_cmd *ioucmd)
->
->         BUILD_BUG_ON(sizeof(struct nvme_uring_cmd_pdu) > sizeof(ioucmd->pdu));
->
-> +       ret = security_file_ioctl(ioucmd->file, ioucmd->cmd_op,
-> +                                 (unsigned long) ioucmd->cmd);
-> +       if (ret)
-> +               return ret;
-> +
->         switch (ioucmd->cmd_op) {
->         case NVME_IOCTL_IO64_CMD:
->                 ret = nvme_user_cmd64(ns->ctrl, ns, NULL, ioucmd);
+On 3/11/22 13:44, Eric Snowberg wrote:
+> 
+> 
+>> On Mar 9, 2022, at 12:02 PM, Stefan Berger <stefanb@linux.ibm.com> wrote:
+>>
+>>
+>>
+>> On 3/9/22 13:13, Eric Snowberg wrote:
+>>>> On Mar 9, 2022, at 10:12 AM, Stefan Berger <stefanb@linux.ibm.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 3/8/22 13:02, Eric Snowberg wrote:
+>>>>>> On Mar 8, 2022, at 5:45 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>>>>>
+>>>>>> On Mon, 2022-03-07 at 21:31 -0500, Stefan Berger wrote:
+>>>>>>>
+>>>>>>> On 3/7/22 18:38, Eric Snowberg wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> On Mar 7, 2022, at 4:01 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>>>>>>>>
+>>>>>>>>> On Mon, 2022-03-07 at 18:06 +0000, Eric Snowberg wrote:
+>>>>>>>>>>
+>>>>>>>>>>>> diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/restrict.c
+>>>>>>>>>>>> index 6b1ac5f5896a..49bb2ea7f609 100644
+>>>>>>>>>>>> --- a/crypto/asymmetric_keys/restrict.c
+>>>>>>>>>>>> +++ b/crypto/asymmetric_keys/restrict.c
+>>>>>>>>>>>> @@ -108,6 +108,49 @@ int restrict_link_by_signature(struct key *dest_keyring,
+>>>>>>>>>>>> 	return ret;
+>>>>>>>>>>>> }
+>>>>>>>>>>>> +/**
+>>>>>>>>>>>> + * restrict_link_by_ca - Restrict additions to a ring of CA keys
+>>>>>>>>>>>> + * @dest_keyring: Keyring being linked to.
+>>>>>>>>>>>> + * @type: The type of key being added.
+>>>>>>>>>>>> + * @payload: The payload of the new key.
+>>>>>>>>>>>> + * @trust_keyring: Unused.
+>>>>>>>>>>>> + *
+>>>>>>>>>>>> + * Check if the new certificate is a CA. If it is a CA, then mark the new
+>>>>>>>>>>>> + * certificate as being ok to link.
+>>>>>>>>>>>
+>>>>>>>>>>> CA = root CA here, right?
+>>>>>>>>>>
+>>>>>>>>>> Yes, I’ll update the comment
+>>>>>>>>>
+>>>>>>>>> Updating the comment is not enough.  There's an existing function named
+>>>>>>>>> "x509_check_for_self_signed()" which determines whether the certificate
+>>>>>>>>> is self-signed.
+>>>>>>>>
+>>>>>>>> Originally I tried using that function.  However when the restrict link code is called,
+>>>>>>>> all the necessary x509 information is no longer available.   The code in
+>>>>>>>> restrict_link_by_ca is basically doing the equivalent to x509_check_for_self_signed.
+>>>>>>>> After verifying the cert has the CA flag set, the call to public_key_verify_signature
+>>>>>>>> validates the cert is self signed.
+>>>>>>>>
+>>>>>>> Isn't x509_cert_parse() being called as part of parsing the certificate?
+>>>>>>> If so, it seems to check for a self-signed certificate every time. You
+>>>>>>> could add something like the following to x509_check_for_self_signed(cert):
+>>>>>>> pub->x509_self_signed = cert->self_signed = true;
+>>>>>>>
+>>>>>>> This could then reduce the function in 3/4 to something like:
+>>>>>>>
+>>>>>>> return payload->data[asym_crypto]->x509_self_signed;
+>>>>> When I was studying the restriction code, before writing this patch, it looked like
+>>>>> it was written from the standpoint to be as generic as possible.  All code contained
+>>>>> within it works on either a public_key_signature or a public_key.  I had assumed it
+>>>>> was written this way to be used with different asymmetrical key types now and in
+>>>>> the future. I called the public_key_verify_signature function instead of interrogating
+>>>>> the x509 payload to keep in line with what I thought was the original design. Let me
+>>>>> know if I should be carrying x509 code in here to make the change above.
+>>>>
+>>>> It does not seem right if there were two functions trying to determine whether an x509 cert is self-signed. The existing is invoked as part of loading a key onto the machine keyring from what I can see. It has access to more data about the cert and therefore can do stronger tests, yours doesn't have access to the data. So I guess I would remember in a boolean in the public key structure that the x509 cert it comes from was self signed following the existing test. Key in your function may be that that payload->data[] array is guaranteed to be from the x509 cert as set in x509_key_preparse().
+>>>>
+>>>> https://elixir.bootlin.com/linux/v5.17-rc7/source/crypto/asymmetric_keys/x509_public_key.c#L236
+>>> I could add another bool to the public key structure to designate if the key was self signed,
+>>> but this seems to go against what the kernel document states. "Asymmetric / Public-key
+>>> Cryptography Key Type” [1] states:
+>>> "The “asymmetric” key type is designed to be a container for the keys used in public-key
+>>> cryptography, without imposing any particular restrictions on the form or mechanism of
+>>> the cryptography or form of the key.
+>>> The asymmetric key is given a subtype that defines what sort of data is associated with
+>>> the key and provides operations to describe and destroy it. However, no requirement is
+>>> made that the key data actually be stored in the key."
+>>> Now every public key type would need to fill in the information on whether the key is self
+>>> signed or not.  Instead of going through the public_key_verify_signature function currently
+>>> used in this patch.
+>>
+>> Every public key extracted from a x509 certificate would have to set this field to true if the public key originates from a self-signed x509 cert. Is this different from this code here where now every public key would have to set the key_is_ca field?
+> 
+> The information to determine if the key is a CA can not be derived without help from
+> the specific key type.  Up to this point, no one has needed it.
+> 
+>>
+>> +		if (v[1] != 0 && v[2] == ASN1_BOOL && v[3] == 1)
+>> +			ctx->cert->pub->key_is_ca = true;
+>>
+>> The extension I would have suggested looked similar:
+>>
+>> cert->pub->x509_self_sign = cert->self_signed = true
+>>
+>> [ to be put here: https://elixir.bootlin.com/linux/v5.17-rc7/source/crypto/asymmetric_keys/x509_public_key.c#L147 ]
+> 
+> The information to determine if a key is self signed can be derived without help
+> from the specific key type.  This can be achieved without modification to a generic
+> public header file.  Adding a field to the public header would need to either be
+> x509 specific or generic for all key types.  Adding a x509 specific field seems to
+> go against the goal outlined in the kernel documentation.  Adding a generic
+> self_signed field impacts all key types, now each needs to be modified to fill in
+> the new field.
+> 
 
--- 
-paul-moore.com
+If we now called the generic field cert_self_signed we could let it 
+indicate whether the certificate the key was extracted from was 
+self-self signed. The next question then is how many different types of 
+certificates does the key subsystem support besides x509 so we know 
+where to set this field if necessary? I don't know of any other...  x509 
+seems to be the only type of certificate associated with struct public_key.
+What seems to be the case is that pkcs7 also runs the x509 cert parser 
+to extract an x509 certificate, thus the flag will be set down this call 
+path as well.
+
+https://elixir.bootlin.com/linux/latest/source/crypto/asymmetric_keys/pkcs7_parser.c#L408
+
+Further, the public_key struct is only used in a few places and only in 
+the crypto/asymmetric_keys directory filled in. Its usage in pkcs8 seems 
+not relevant for certs, so leaving cert_self_signed there uninitialized 
+seems just right. The code in public_key.c seems to not deal with 
+certificates. So what's left is the x509_cert_parser.c and the function 
+x509_cert_parse() allocates it and then calls 
+x509_check_for_self_signed(cert), which can set the flag.
+
+It looks to me giving it a generic name and only ever setting it to true 
+iin x509_check_for_self_sign(cert) should work.
