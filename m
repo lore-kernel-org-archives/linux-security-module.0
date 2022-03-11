@@ -2,152 +2,241 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8BDC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 22:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACBAC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 22:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229654AbiCKWr7 (ORCPT
+        id S229687AbiCKWsO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Mar 2022 17:47:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49456 "EHLO
+        Fri, 11 Mar 2022 17:48:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbiCKWrv (ORCPT
+        with ESMTP id S229580AbiCKWsA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Mar 2022 17:47:51 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE02C2B7515
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 14:22:40 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id bt26so17483210lfb.3
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 14:22:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=BQM5s6KARQo6xsMTrgtyjfqQgxp9yGfc0ghCKKcQtf8=;
-        b=rW/V0Cqhy9qbkUdJ08Dw1HwcmmSatPyby1AlVx9WHUmj9YQZXnZI6RRhui0BKniegl
-         Bp4L5KkXUZfWD6SlN1Mvrh1Lvk3p0ITMLPhbZQCXgqS7Yq+2PZ6lA8nNYPL0qHRDFzT6
-         5FrpxfTqET6rhn/cJiLvzXJ0XafMN+n1STTLYYqei2QcB891AuBOiL0LtdufoxoieDmv
-         VhrwqolLTex1i3JOkNgCh/2wmS9XMMwGcMlZYG7X2l49KbEfZ6DjIIfZw62E5a+gVdTv
-         OwHdtrKmna54ohmVYQnBKcHjgaGCKQFMWyxt7uCVl4q0dm/OyD+28lS8CyPG2PRdOSWf
-         /nrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=BQM5s6KARQo6xsMTrgtyjfqQgxp9yGfc0ghCKKcQtf8=;
-        b=KvOe1NKbIlrPkZGuEcxv9BNtz2molxbqAgCcIcsx/3XsBMnZSmrQDK+vcDVQd0QYIs
-         J3fmcbPPdx/HGsf0eKdy5QTIdkNs4/B6JDqgwu/jfp71mdBWIgTS+mTQdYsPYqsADniL
-         47S4rLZqnxLbzKXl4rMBz9ypAyxMdwUE8HQQUB8gIG6RxqqKgARCasN1425MZld+k0pJ
-         uVuK1y6a5c+Tt0dXDowICRO4tG3+XMREprqvaoU3BT/fT+xAhOVPaJnl15L3xCnVLlPa
-         MTjApxhTlSmm4Mav7fdUMbnILj3NqzYiqiKyRnCqeqFjG3tRCnmP/BX0bsU5qAxZin18
-         vQJg==
-X-Gm-Message-State: AOAM531qJZRaOKNvBiR/4Es7zDAJaNtH+6NAULeSufBP5f5UBS8RSsvX
-        RoX4r6kgQEB2n3A1A5J/+V29/1BN15rZA/qcnb1G1eziDw==
-X-Google-Smtp-Source: ABdhPJyYYX7Wm53Pi2h5di1/gf7hL0sQSYVXL0VPvZQ90klkGVBoawKXG5YHabI6/+DnOGW87KYt9/tNYbHqYtRdtZw=
-X-Received: by 2002:a05:6402:d2:b0:413:2e50:d6fd with SMTP id
- i18-20020a05640200d200b004132e50d6fdmr10938615edu.171.1647036912117; Fri, 11
- Mar 2022 14:15:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20220228215935.748017-1-mic@digikod.net> <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
- <f6b63133-d555-a77c-0847-de15a9302283@digikod.net> <CAHC9VhQd3rL-13k0u39Krkdjp2_dtPfgEPxr=kawWUM9FjjOsw@mail.gmail.com>
- <8d520529-4d3e-4874-f359-0ead9207cead@canonical.com>
-In-Reply-To: <8d520529-4d3e-4874-f359-0ead9207cead@canonical.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Mar 2022 17:15:01 -0500
-Message-ID: <CAHC9VhRrjqe1AdZYtjpzLJyBF6FTeQ4EcEwsOd2YMimA5_tzEA@mail.gmail.com>
-Subject: Re: [PATCH v1] fs: Fix inconsistent f_mode
-To:     John Johansen <john.johansen@canonical.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        James Morris <jmorris@namei.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 11 Mar 2022 17:48:00 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79535B8238;
+        Fri, 11 Mar 2022 14:35:50 -0800 (PST)
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22BKcMu3014752;
+        Fri, 11 Mar 2022 21:04:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=B3pdfYyWo0OhCVTNyH6THmXanl+fxg8Ys7u7zsO5kBI=;
+ b=ABM9IjlJPRLAHgeKHmWkyEmOiWGcsYcaEwQKCm2VSvD8ie6Joow82pkkUdLXBYZBnHVA
+ qyyg7LUEbM2uXfOjXax8T/ZmwJ525C/p7hd1JHBBE9gdrqUSd0I16L2nkc/XQrkMXzLc
+ v4qIVnb9hhre6oaIzz7mzYHqbg7v5rBIk9+zpu2ny+yryZ2oXF1eIBUsQtQM/d2jPzRf
+ ScYVzDURsHruLFGA+HTU8u0v+bEavW2aYV0Kx6/htFlE05Bm4lwysigNBAmEoMmT3FSh
+ MNp49FZyQoAChnyltZCvTV90dtFvlI5XD7+++9aBRQNaqHTNAg1wwuiZVCEzunK8+P5j 2Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3eqrre7gms-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 21:04:10 +0000
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22BKpVgJ005143;
+        Fri, 11 Mar 2022 21:04:10 GMT
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3eqrre7gmc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 21:04:09 +0000
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22BL3Vxd011402;
+        Fri, 11 Mar 2022 21:04:08 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04fra.de.ibm.com with ESMTP id 3ep8c3y13g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 21:04:07 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22BL44NA17105370
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Mar 2022 21:04:04 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 794CE4C044;
+        Fri, 11 Mar 2022 21:04:04 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA4424C04A;
+        Fri, 11 Mar 2022 21:04:00 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.110.168])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 11 Mar 2022 21:04:00 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
         linux-security-module@vger.kernel.org,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>,
-        selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
+        seth@forshee.me, rnsastry@linux.ibm.com, masahiroy@kernel.org,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v12 3/4] Revert "certs: move scripts/extract-cert to certs/"
+Date:   Fri, 11 Mar 2022 16:03:43 -0500
+Message-Id: <20220311210344.102396-4-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220311210344.102396-1-nayna@linux.ibm.com>
+References: <20220311210344.102396-1-nayna@linux.ibm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _q_TZ-tT8swzcoq0TjhDlkqVAnv9rVcB
+X-Proofpoint-GUID: hgIUDV40yWuKk1lrLc0BTMgepHsIWZzI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-11_09,2022-03-11_02,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 impostorscore=0
+ phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203110103
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 9, 2022 at 7:36 PM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 3/9/22 13:31, Paul Moore wrote:
-> > On Tue, Mar 1, 2022 at 5:15 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.ne=
-t> wrote:
-> >> On 01/03/2022 10:22, Christian Brauner wrote:
-> >>> On Mon, Feb 28, 2022 at 10:59:35PM +0100, Micka=C3=ABl Sala=C3=BCn wr=
-ote:
-> >>>> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> >>>>
-> >>>> While transitionning to ACC_MODE() with commit 5300990c0370 ("Saniti=
-ze
-> >>>> f_flags helpers") and then fixing it with commit 6d125529c6cb ("Fix
-> >>>> ACC_MODE() for real"), we lost an open flags consistency check.  Ope=
-ning
-> >>>> a file with O_WRONLY | O_RDWR leads to an f_flags containing MAY_REA=
-D |
-> >>>> MAY_WRITE (thanks to the ACC_MODE() helper) and an empty f_mode.
-> >>>> Indeed, the OPEN_FMODE() helper transforms 3 (an incorrect value) to=
- 0.
-> >>>>
-> >>>> Fortunately, vfs_read() and vfs_write() both check for FMODE_READ, o=
-r
-> >>>> respectively FMODE_WRITE, and return an EBADF error if it is absent.
-> >>>> Before commit 5300990c0370 ("Sanitize f_flags helpers"), opening a f=
-ile
-> >>>> with O_WRONLY | O_RDWR returned an EINVAL error.  Let's restore this=
- safe
-> >>>> behavior.
-> >>>
-> >>> That specific part seems a bit risky at first glance. Given that the
-> >>> patch referenced is from 2009 this means we've been allowing O_WRONLY=
- |
-> >>> O_RDWR to succeed for almost 13 years now.
-> >>
-> >> Yeah, it's an old bug, but we should keep in mind that a file descript=
-or
-> >> created with such flags cannot be used to read nor write. However,
-> >> unfortunately, it can be used for things like ioctl, fstat, chdir=E2=
-=80=A6 I
-> >> don't know if there is any user of this trick.
-> >>
-> >> Either way, there is an inconsistency between those using ACC_MODE() a=
-nd
-> >> those using OPEN_FMODE(). If we decide to take a side for the behavior
-> >> of one or the other, without denying to create such FD, it could also
-> >> break security policies. We have to choose what to potentially break=
-=E2=80=A6
-> >
-> > I'm not really liking the idea that the empty/0 f_mode field leads to
-> > SELinux doing an ioctl access check as opposed to the expected
-> > read|write check.  Yes, other parts of the code catch the problem, but
-> > this is bad from a SELinux perspective.  Looking quickly at the other
-> > LSMs, it would appear that other LSMs are affected as well.
-> >
-> > If we're not going to fix file::f_mode, the LSMs probably need to
-> > consider using file::f_flags directly in conjunction with a correct
-> > OPEN_FMODE() macro (or better yet a small inline function that isn't
-> > as ugly).
-> >
-> yeah, I have to agree
+This reverts commit 340a02535ee785c64c62a9c45706597a0139e972.
 
-The silence on this has been deafening :/  No thoughts on fixing, or
-not fixing OPEN_FMODE(), Al?
+extract-cert is used outside certs/ by INTEGRITY_PLATFORM_KEYRING.
 
-At this point I have to assume OPEN_FMODE() isn't changing so I'm
-going to go ahead with moving SELinux over to file::f_flags.  Once
-I've got something working I'll CC the LSM list on the patches in case
-the other LSMs want to do something similar.  Full disclosure, that
-might not happen until early-to-mid next week due to the weekend, new
-kernel expected on Sunday, etc.
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+---
+ MAINTAINERS                       |  1 +
+ certs/.gitignore                  |  1 -
+ certs/Makefile                    | 13 ++++---------
+ scripts/.gitignore                |  1 +
+ scripts/Makefile                  | 11 +++++++++--
+ {certs => scripts}/extract-cert.c |  2 +-
+ scripts/remove-stale-files        |  2 --
+ 7 files changed, 16 insertions(+), 15 deletions(-)
+ rename {certs => scripts}/extract-cert.c (98%)
 
---=20
-paul-moore.com
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 05fd080b82f3..cf4cd22ca3a0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4471,6 +4471,7 @@ L:	keyrings@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/admin-guide/module-signing.rst
+ F:	certs/
++F:	scripts/extract-cert.c
+ F:	scripts/sign-file.c
+ 
+ CFAG12864B LCD DRIVER
+diff --git a/certs/.gitignore b/certs/.gitignore
+index 9e42fe3e02f5..8c3763f80be3 100644
+--- a/certs/.gitignore
++++ b/certs/.gitignore
+@@ -1,4 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-/extract-cert
+ /x509_certificate_list
+ /x509_revocation_list
+diff --git a/certs/Makefile b/certs/Makefile
+index b92b6ff339d5..a4a6f6a78904 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -14,11 +14,11 @@ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_nohashes.o
+ endif
+ 
+ quiet_cmd_extract_certs  = CERT    $@
+-      cmd_extract_certs  = $(obj)/extract-cert $(2) $@
++      cmd_extract_certs  = scripts/extract-cert $(2) $@
+ 
+ $(obj)/system_certificates.o: $(obj)/x509_certificate_list
+ 
+-$(obj)/x509_certificate_list: $(CONFIG_SYSTEM_TRUSTED_KEYS) $(obj)/extract-cert FORCE
++$(obj)/x509_certificate_list: $(CONFIG_SYSTEM_TRUSTED_KEYS) scripts/extract-cert FORCE
+ 	$(call if_changed,extract_certs,$(if $(CONFIG_SYSTEM_TRUSTED_KEYS),$<,""))
+ 
+ targets += x509_certificate_list
+@@ -75,7 +75,7 @@ endif
+ 
+ $(obj)/system_certificates.o: $(obj)/signing_key.x509
+ 
+-$(obj)/signing_key.x509: $(X509_DEP) $(obj)/extract-cert FORCE
++$(obj)/signing_key.x509: $(X509_DEP) scripts/extract-cert FORCE
+ 	$(call if_changed,extract_certs,$(if $(CONFIG_MODULE_SIG_KEY),$(if $(X509_DEP),$<,$(CONFIG_MODULE_SIG_KEY)),""))
+ endif # CONFIG_MODULE_SIG
+ 
+@@ -83,12 +83,7 @@ targets += signing_key.x509
+ 
+ $(obj)/revocation_certificates.o: $(obj)/x509_revocation_list
+ 
+-$(obj)/x509_revocation_list: $(CONFIG_SYSTEM_REVOCATION_KEYS) $(obj)/extract-cert FORCE
++$(obj)/x509_revocation_list: $(CONFIG_SYSTEM_REVOCATION_KEYS) scripts/extract-cert FORCE
+ 	$(call if_changed,extract_certs,$(if $(CONFIG_SYSTEM_REVOCATION_KEYS),$<,""))
+ 
+ targets += x509_revocation_list
+-
+-hostprogs := extract-cert
+-
+-HOSTCFLAGS_extract-cert.o = $(shell pkg-config --cflags libcrypto 2> /dev/null)
+-HOSTLDLIBS_extract-cert = $(shell pkg-config --libs libcrypto 2> /dev/null || echo -lcrypto)
+diff --git a/scripts/.gitignore b/scripts/.gitignore
+index eed308bef604..e83c620ef52c 100644
+--- a/scripts/.gitignore
++++ b/scripts/.gitignore
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ /asn1_compiler
+ /bin2c
++/extract-cert
+ /insert-sys-cert
+ /kallsyms
+ /module.lds
+diff --git a/scripts/Makefile b/scripts/Makefile
+index ce5aa9030b74..cedc1f0e21d8 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -3,19 +3,26 @@
+ # scripts contains sources for various helper programs used throughout
+ # the kernel for the build process.
+ 
++CRYPTO_LIBS = $(shell pkg-config --libs libcrypto 2> /dev/null || echo -lcrypto)
++CRYPTO_CFLAGS = $(shell pkg-config --cflags libcrypto 2> /dev/null)
++
+ hostprogs-always-$(CONFIG_BUILD_BIN2C)			+= bin2c
+ hostprogs-always-$(CONFIG_KALLSYMS)			+= kallsyms
+ hostprogs-always-$(BUILD_C_RECORDMCOUNT)		+= recordmcount
+ hostprogs-always-$(CONFIG_BUILDTIME_TABLE_SORT)		+= sorttable
+ hostprogs-always-$(CONFIG_ASN1)				+= asn1_compiler
+ hostprogs-always-$(CONFIG_MODULE_SIG_FORMAT)		+= sign-file
++hostprogs-always-$(CONFIG_SYSTEM_TRUSTED_KEYRING)	+= extract-cert
+ hostprogs-always-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE)	+= insert-sys-cert
++hostprogs-always-$(CONFIG_SYSTEM_REVOCATION_LIST)	+= extract-cert
+ 
+ HOSTCFLAGS_sorttable.o = -I$(srctree)/tools/include
+ HOSTLDLIBS_sorttable = -lpthread
+ HOSTCFLAGS_asn1_compiler.o = -I$(srctree)/include
+-HOSTCFLAGS_sign-file.o = $(shell pkg-config --cflags libcrypto 2> /dev/null)
+-HOSTLDLIBS_sign-file = $(shell pkg-config --libs libcrypto 2> /dev/null || echo -lcrypto)
++HOSTCFLAGS_sign-file.o = $(CRYPTO_CFLAGS)
++HOSTLDLIBS_sign-file = $(CRYPTO_LIBS)
++HOSTCFLAGS_extract-cert.o = $(CRYPTO_CFLAGS)
++HOSTLDLIBS_extract-cert = $(CRYPTO_LIBS)
+ 
+ ifdef CONFIG_UNWINDER_ORC
+ ifeq ($(ARCH),x86_64)
+diff --git a/certs/extract-cert.c b/scripts/extract-cert.c
+similarity index 98%
+rename from certs/extract-cert.c
+rename to scripts/extract-cert.c
+index f7ef7862f207..3bc48c726c41 100644
+--- a/certs/extract-cert.c
++++ b/scripts/extract-cert.c
+@@ -29,7 +29,7 @@ static __attribute__((noreturn))
+ void format(void)
+ {
+ 	fprintf(stderr,
+-		"Usage: extract-cert <source> <dest>\n");
++		"Usage: scripts/extract-cert <source> <dest>\n");
+ 	exit(2);
+ }
+ 
+diff --git a/scripts/remove-stale-files b/scripts/remove-stale-files
+index 7adab4618035..80430b8fb617 100755
+--- a/scripts/remove-stale-files
++++ b/scripts/remove-stale-files
+@@ -39,5 +39,3 @@ if [ -n "${building_out_of_srctree}" ]; then
+ 		rm -f arch/parisc/boot/compressed/${f}
+ 	done
+ fi
+-
+-rm -f scripts/extract-cert
+-- 
+2.34.1
+
