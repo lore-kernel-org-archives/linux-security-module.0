@@ -2,121 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAD4C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 02:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3662C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 03:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345704AbiCKCoP (ORCPT
+        id S237718AbiCKDVQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Mar 2022 21:44:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53352 "EHLO
+        Thu, 10 Mar 2022 22:21:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345698AbiCKCoO (ORCPT
+        with ESMTP id S230400AbiCKDVP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Mar 2022 21:44:14 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A1AF32BC
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Mar 2022 18:43:11 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id e3so6819820pjm.5
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Mar 2022 18:43:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=qM/UV7FHcZxY+IHV+9o1h4m2AAXBVlhwLsCWQjNFw6I=;
-        b=ydMQnwYy5mk0UrEDpFa+OzSqWyno7VdmtQZ4bfjscLiVtXeeYVJVHVu+Mb0h4Vw71X
-         E68oqQvdJ3eJnjrN7LMFdsbQp+X/kQR+b5pTXoHqtJJ0G3cy9tx5mAW3nACCkJbRvM4v
-         EdCOHa+OmJlmb8Pwo1s8JJQOmxxHn7wWh8kDfOtJYSFSqRGDndPW0eep+1xcaLzpklDl
-         OWKyTEVLemVTMmWChdzBievwdhqW8ewCBeTaTyeCznVALCNKda8tXPHMFl633q7NQsRH
-         jPSdf4WiEE6bUCFmPOXjx6QaQhT9JsVH2qu17vIbBtAFWu8LN8fSWPVolwDwwFOvyurF
-         WkjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=qM/UV7FHcZxY+IHV+9o1h4m2AAXBVlhwLsCWQjNFw6I=;
-        b=17Byi8bSkc/shqET6qnfU8EKsn3pXDxcUQ12VoSeQPHFNoH+xoFdsMDDPA8wv9Caxi
-         tccc2cz+LKM5x4MlFcdqQXOqNtdBwIjpySzjR//dbyB2YNtR9m7bxWk8gBpVBeRGggvw
-         IQGPmTtl6zINSCRQOoSKPrkOlJ/CAB4z6fwp1zbKf/A5tJZbnUai/wVGHU/AuRrPnszX
-         WipNKjyGT+GP/Gy4KLxUnSYC0G9zQcYiSfkMZaYVyOrPnmKGn9ZBXNNNYHf7KJ4xawU4
-         s9PZmvx++RQ8FesWa2WtLPtaW/9nHlpeVujXt1+uWQy1oIFiKuAzR5Y5DOOiY+Qpx7RW
-         DRrg==
-X-Gm-Message-State: AOAM5301vZOjAhNe5Ybqwh3uO+v/ZnoGkPcdD1ofLVIvdkFOs7e3cSL7
-        QB/nBSOQv128FEfBYN4r4me+yg==
-X-Google-Smtp-Source: ABdhPJxncp1/88IEQE5teKvz0gCS+nBv5XeRvmq3TMQgymIIQ+EEz1/9y6h1o6JnJMOSOqyGfVWtBw==
-X-Received: by 2002:a17:902:c215:b0:14f:f1c2:9fe3 with SMTP id 21-20020a170902c21500b0014ff1c29fe3mr8274323pll.145.1646966590724;
-        Thu, 10 Mar 2022 18:43:10 -0800 (PST)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d16-20020a17090ad99000b001bcbc4247a0sm7161458pjv.57.2022.03.10.18.43.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Mar 2022 18:43:10 -0800 (PST)
-Message-ID: <e3bfd028-ece7-d969-f47c-1181b17ac919@kernel.dk>
-Date:   Thu, 10 Mar 2022 19:43:04 -0700
+        Thu, 10 Mar 2022 22:21:15 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE0061A7D92;
+        Thu, 10 Mar 2022 19:20:13 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 89D17610A2;
+        Fri, 11 Mar 2022 03:20:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DBE5AC340EF;
+        Fri, 11 Mar 2022 03:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646968812;
+        bh=VsGSHD7E4OpMLRoeX2QE+gkBvx0t0j1p1Ol0/Z7+yS0=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=luK9NBPoQgXMbyWFT8nnbcOtbyvjfOpUXfoOyFuWrpBiEM/r/ufilfCNcmQ3oVX/N
+         x6EmdIwPtaD6MCifUK+Hc8W3j4ClYF0ea+osOGypIv+l54kemQJm3teGPCbJrg/K+D
+         PMfBAcbK1yHAMxvAjhMlIAtNyo5vkumxWmasEyVMW/j1VhX1tIcNLPBnZg1kJ9YboQ
+         vOVi5oPXv6Wd0LhliEjJ+UFFRokUEInZd6Fh9pxft3HJKZU+TLVmYVV8hauMZn3vMA
+         fC+cLp4bWjNI6uMmh0gGsKjYyzPxK5wEkV8O8OOQ0rWS5p7UO6vRDIsdb3yCy6RiOs
+         VhEo/gLcl723g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BE6D9EAC095;
+        Fri, 11 Mar 2022 03:20:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH 03/17] io_uring: add infra and support for
- IORING_OP_URING_CMD
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kanchan Joshi <joshi.k@samsung.com>, jmorris@namei.org,
-        serge@hallyn.com, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     hch@lst.de, kbusch@kernel.org, asml.silence@gmail.com,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, sbates@raithlin.com,
-        logang@deltatee.com, pankydev8@gmail.com, javier@javigon.com,
-        a.manzanares@samsung.com, joshiiitr@gmail.com, anuj20.g@samsung.com
-References: <20220308152105.309618-1-joshi.k@samsung.com>
- <CGME20220308152658epcas5p3929bd1fcf75edc505fec71901158d1b5@epcas5p3.samsung.com>
- <20220308152105.309618-4-joshi.k@samsung.com>
- <YiqrE4K5TWeB7aLd@bombadil.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YiqrE4K5TWeB7aLd@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164696881277.12219.12423811667872228529.git-patchwork-notify@kernel.org>
+Date:   Fri, 11 Mar 2022 03:20:12 +0000
+References: <20220302111404.193900-1-roberto.sassu@huawei.com>
+In-Reply-To: <20220302111404.193900-1-roberto.sassu@huawei.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, shuah@kernel.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, yhs@fb.com,
+        kpsingh@kernel.org, revest@chromium.org,
+        gregkh@linuxfoundation.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/10/22 6:51 PM, Luis Chamberlain wrote:
-> On Tue, Mar 08, 2022 at 08:50:51PM +0530, Kanchan Joshi wrote:
->> From: Jens Axboe <axboe@kernel.dk>
->>
->> This is a file private kind of request. io_uring doesn't know what's
->> in this command type, it's for the file_operations->async_cmd()
->> handler to deal with.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
->> ---
-> 
-> <-- snip -->
-> 
->> +static int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
->> +{
->> +	struct file *file = req->file;
->> +	int ret;
->> +	struct io_uring_cmd *ioucmd = &req->uring_cmd;
->> +
->> +	ioucmd->flags |= issue_flags;
->> +	ret = file->f_op->async_cmd(ioucmd);
-> 
-> I think we're going to have to add a security_file_async_cmd() check
-> before this call here. Because otherwise we're enabling to, for
-> example, bypass security_file_ioctl() for example using the new
-> iouring-cmd interface.
-> 
-> Or is this already thought out with the existing security_uring_*() stuff?
+Hello:
 
-Unless the request sets .audit_skip, it'll be included already in terms
-of logging. But I'd prefer not to lodge this in with ioctls, unless
-we're going to be doing actual ioctls.
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-But definitely something to keep in mind and make sure that we're under
-the right umbrella in terms of auditing and security.
+On Wed, 2 Mar 2022 12:13:55 +0100 you wrote:
+> Extend the interoperability with IMA, to give wider flexibility for the
+> implementation of integrity-focused LSMs based on eBPF.
+> 
+> Patch 1 fixes some style issues.
+> 
+> Patches 2-6 give the ability to eBPF-based LSMs to take advantage of the
+> measurement capability of IMA without needing to setup a policy in IMA
+> (those LSMs might implement the policy capability themselves).
+> 
+> [...]
 
+Here is the summary with links:
+  - [v3,1/9] ima: Fix documentation-related warnings in ima_main.c
+    https://git.kernel.org/bpf/bpf-next/c/bae60eefb95c
+  - [v3,2/9] ima: Always return a file measurement in ima_file_hash()
+    https://git.kernel.org/bpf/bpf-next/c/280fe8367b0d
+  - [v3,3/9] bpf-lsm: Introduce new helper bpf_ima_file_hash()
+    https://git.kernel.org/bpf/bpf-next/c/174b16946e39
+  - [v3,4/9] selftests/bpf: Move sample generation code to ima_test_common()
+    https://git.kernel.org/bpf/bpf-next/c/2746de3c53d6
+  - [v3,5/9] selftests/bpf: Add test for bpf_ima_file_hash()
+    https://git.kernel.org/bpf/bpf-next/c/27a77d0d460c
+  - [v3,6/9] selftests/bpf: Check if the digest is refreshed after a file write
+    https://git.kernel.org/bpf/bpf-next/c/91e8fa254dbd
+  - [v3,7/9] bpf-lsm: Make bpf_lsm_kernel_read_file() as sleepable
+    https://git.kernel.org/bpf/bpf-next/c/df6b3039fa11
+  - [v3,8/9] selftests/bpf: Add test for bpf_lsm_kernel_read_file()
+    https://git.kernel.org/bpf/bpf-next/c/e6dcf7bbf37c
+  - [v3,9/9] selftests/bpf: Check that bpf_kernel_read_file() denies reading IMA policy
+    https://git.kernel.org/bpf/bpf-next/c/7bae42b68d7f
+
+You are awesome, thank you!
 -- 
-Jens Axboe
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
