@@ -2,182 +2,198 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE114C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 10:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03913C43217
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Mar 2022 14:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343913AbiCKKt5 (ORCPT
+        id S238102AbiCKOCo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Mar 2022 05:49:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50038 "EHLO
+        Fri, 11 Mar 2022 09:02:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238713AbiCKKt4 (ORCPT
+        with ESMTP id S1349034AbiCKOCo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Mar 2022 05:49:56 -0500
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F412182BC0;
-        Fri, 11 Mar 2022 02:48:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646995732; x=1678531732;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3q2RXnw3ENJ9hR2e3HJcmwGSdFSeyoDplqjI07wWEkE=;
-  b=EQY7RCxwaQog7FcOOxbg8aZEv8+Yt39ockNWxTPGLdZ5VNeREVHu/jz/
-   6Mr/ZDdOKTw/a5Afxa0IgUr4CJMh0DQ5JysUz7ME9DgMGk1rJ/U2XMVsq
-   uMTCKudBNhtuV+8jjDQqbPFCy2xMQOa8bAcfGNoY/RUtjAb4GMaqiG4/C
-   Sz/GY7UYIyKy/8zg2pQV4DG876iFOzcxtrcSS68Jb/cQraaTlyDuu5Awg
-   c9huEYq3U+JwfW7x3W6nhQvfIeGPGWFaOgl3WJUw7I1t6XlCie/EWH4tR
-   /aRgq9OE8L/Q9bW3r0JuK32yS4wGKlwyr4LwYvpkwjmGVOLvZ+VEBjR+/
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10282"; a="237723039"
-X-IronPort-AV: E=Sophos;i="5.90,173,1643702400"; 
-   d="scan'208";a="237723039"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2022 02:48:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,173,1643702400"; 
-   d="scan'208";a="579251273"
-Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
-  by orsmga001.jf.intel.com with ESMTP; 11 Mar 2022 02:48:49 -0800
-Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nScpE-0006Gx-A9; Fri, 11 Mar 2022 10:48:48 +0000
-Date:   Fri, 11 Mar 2022 18:48:36 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, casey@schaufler-ca.com,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v33 01/29] integrity: disassociate ima_filter_rule from
- security_audit_rule
-Message-ID: <202203111810.oPf2VNfH-lkp@intel.com>
-References: <20220310234632.16194-2-casey@schaufler-ca.com>
+        Fri, 11 Mar 2022 09:02:44 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 83DFB1C57D9
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Mar 2022 06:01:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647007299;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=I+nWv4ywDxtdW2kAMKWAd/9h8AiRGVEXkvqyetpKnWc=;
+        b=dWQFvdLKw//Dc84MFg9J4h3vnUbZ87VC6gRC0/Y90m7Kk90HSYH1+yxZdInEGp19iCvG0z
+        5Cnvw7Erx3fmuKMtQnGObTJSSavMcnjZV5cG5CY13eo6mTQktzWQBDgjAvZnR7c7SWG/Mv
+        ed6n7kd7Q2CDqa2pAqwdFXllfVmyhM8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-669-sly5me0lPe6uMFhCLHqmOA-1; Fri, 11 Mar 2022 09:01:36 -0500
+X-MC-Unique: sly5me0lPe6uMFhCLHqmOA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C64741854E21;
+        Fri, 11 Mar 2022 14:01:31 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.16.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 06A257AD1B;
+        Fri, 11 Mar 2022 14:01:30 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 58049223A46; Fri, 11 Mar 2022 09:01:30 -0500 (EST)
+Date:   Fri, 11 Mar 2022 09:01:30 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Anderson <dvander@google.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
+        paulmoore@microsoft.com, luca.boccassi@microsoft.com
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr
+ fix
+Message-ID: <YitWOqzIRjnP1lok@redhat.com>
+References: <20211117015806.2192263-1-dvander@google.com>
+ <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
+ <Yao51m9EXszPsxNN@redhat.com>
+ <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
+ <YapjNRrjpDu2a5qQ@redhat.com>
+ <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
+ <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
+ <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com>
+ <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
+ <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220310234632.16194-2-casey@schaufler-ca.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+On Fri, Mar 11, 2022 at 06:09:56AM +0200, Amir Goldstein wrote:
+> On Fri, Mar 11, 2022 at 12:11 AM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Wed, Mar 9, 2022 at 4:13 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Tue, Mar 1, 2022 at 12:05 AM David Anderson <dvander@google.com> wrote:
+> > > > On Mon, Feb 28, 2022 at 5:09 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > ...
+> >
+> > > >> This patchset may not have been The Answer, but surely there is
+> > > >> something we can do to support this use-case.
+> > > >
+> > > > Yup exactly, and we still need patches 3 & 4 to deal with this. My current plan is to try and rework our sepolicy (we have some ideas on how it could be made compatible with how overlayfs works). If that doesn't pan out we'll revisit these patches and think harder about how to deal with the coherency issues.
+> > >
+> > > Can you elaborate a bit more on the coherency issues?  Is this the dir
+> > > cache issue that is alluded to in the patchset?  Anything else that
+> > > has come up on review?
+> > >
+> > > Before I start looking at the dir cache in any detail, did you have
+> > > any thoughts on how to resolve the problems that have arisen?
+> >
+> > David, Vivek, Amir, Miklos, or anyone for that matter, can you please
+> > go into more detail on the cache issues?  I *think* I may have found a
+> > potential solution for an issue that could arise when the credential
+> > override is not in place, but I'm not certain it's the only issue :)
+> >
+> 
+> Hi Paul,
+> 
+> In this thread I claimed that the authors of the patches did not present
+> a security model for overlayfs, such as the one currently in overlayfs.rst.
+> If we had a model we could have debated its correctness and review its
+> implementation.
 
-I love your patch! Yet something to improve:
+Agreed. After going through the patch set, I was wondering what's the
+overall security model and how to visualize that.
 
-[auto build test ERROR on pcmoore-audit/next]
-[also build test ERROR on pcmoore-selinux/next linus/master jmorris-security/next-testing v5.17-rc7 next-20220310]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+So probably there needs to be a documentation patch which explains
+what's the new security model and how does it work.
 
-url:    https://github.com/0day-ci/linux/commits/Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20220311-084644
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git next
-config: arc-buildonly-randconfig-r006-20220310 (https://download.01.org/0day-ci/archive/20220311/202203111810.oPf2VNfH-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/2796a69611ebb559eacf03666a3ae2fbd48e0c12
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20220311-084644
-        git checkout 2796a69611ebb559eacf03666a3ae2fbd48e0c12
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arc SHELL=/bin/bash
+Also think both in terms of DAC and MAC. (Instead of just focussing too
+hard on SELinux).
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+My understanding is that in current model, some of the overlayfs
+operations require priviliges. So mounter is supposed to be priviliged
+and does the operation on underlying layers.
 
-All errors (new ones prefixed by >>):
+Now in this new model, there will be two levels of check. Both overlay
+level and underlying layer checks will happen in the context of task
+which is doing the operation. So first of all, all tasks will need
+to have enough priviliges to be able to perform various operations
+on lower layer. 
 
-   security/integrity/ima/ima_policy.c: In function 'ima_lsm_free_rule':
->> security/integrity/ima/ima_policy.c:360:17: error: implicit declaration of function 'ima_filter_rule_free'; did you mean 'ima_file_free'? [-Werror=implicit-function-declaration]
-     360 |                 ima_filter_rule_free(entry->lsm[i].rule);
-         |                 ^~~~~~~~~~~~~~~~~~~~
-         |                 ima_file_free
-   security/integrity/ima/ima_policy.c: In function 'ima_lsm_copy_rule':
->> security/integrity/ima/ima_policy.c:409:17: error: implicit declaration of function 'ima_filter_rule_init' [-Werror=implicit-function-declaration]
-     409 |                 ima_filter_rule_init(nentry->lsm[i].type, Audit_equal,
-         |                 ^~~~~~~~~~~~~~~~~~~~
-   security/integrity/ima/ima_policy.c: In function 'ima_match_rules':
->> security/integrity/ima/ima_policy.c:625:30: error: implicit declaration of function 'ima_filter_rule_match' [-Werror=implicit-function-declaration]
-     625 |                         rc = ima_filter_rule_match(osid, rule->lsm[i].type,
-         |                              ^~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+If we do checks at both the levels in with the creds of calling task,
+I guess that probably is fine. (But will require a closer code inspection
+to make sure there is no privilege escalation both for mounter as well
+calling task).
 
+> 
+> As a proof that there is no solid model, I gave an *example* regarding
+> the overlay readdir cache.
+> 
+> When listing a merged dir, meaning, a directory containing entries from
+> several overlay layers, ovl_permission() is called to check user's permission,
+> but ovl_permission() does not currently check permissions to read all layers,
+> because that is not the current overlayfs model.
+> 
+> Overlayfs has a readdir cache, so without override_cred, a user with high
+> credentials can populate the readdir cache and then a user will fewer
+> credentials, not enough to access the lower layers, but enough to access
+> the upper most layer, will pass ovl_permission() check and be allowed to
+> read from readdir cache.
 
-vim +360 security/integrity/ima/ima_policy.c
+I am not very familiar with dir caching code. When I read through the
+overlayfs.rst, it gave the impression that caching is per "struct file".
 
-176377d97d6a3f Tyler Hicks      2020-08-11  354  
-b169424551930a Janne Karhunen   2019-06-14  355  static void ima_lsm_free_rule(struct ima_rule_entry *entry)
-b169424551930a Janne Karhunen   2019-06-14  356  {
-b169424551930a Janne Karhunen   2019-06-14  357  	int i;
-b169424551930a Janne Karhunen   2019-06-14  358  
-b169424551930a Janne Karhunen   2019-06-14  359  	for (i = 0; i < MAX_LSM_RULES; i++) {
-b8867eedcf76ca Tyler Hicks      2020-07-10 @360  		ima_filter_rule_free(entry->lsm[i].rule);
-b169424551930a Janne Karhunen   2019-06-14  361  		kfree(entry->lsm[i].args_p);
-b169424551930a Janne Karhunen   2019-06-14  362  	}
-465aee77aae857 Tyler Hicks      2020-07-09  363  }
-465aee77aae857 Tyler Hicks      2020-07-09  364  
-465aee77aae857 Tyler Hicks      2020-07-09  365  static void ima_free_rule(struct ima_rule_entry *entry)
-465aee77aae857 Tyler Hicks      2020-07-09  366  {
-465aee77aae857 Tyler Hicks      2020-07-09  367  	if (!entry)
-465aee77aae857 Tyler Hicks      2020-07-09  368  		return;
-465aee77aae857 Tyler Hicks      2020-07-09  369  
-465aee77aae857 Tyler Hicks      2020-07-09  370  	/*
-465aee77aae857 Tyler Hicks      2020-07-09  371  	 * entry->template->fields may be allocated in ima_parse_rule() but that
-465aee77aae857 Tyler Hicks      2020-07-09  372  	 * reference is owned by the corresponding ima_template_desc element in
-465aee77aae857 Tyler Hicks      2020-07-09  373  	 * the defined_templates list and cannot be freed here
-465aee77aae857 Tyler Hicks      2020-07-09  374  	 */
-465aee77aae857 Tyler Hicks      2020-07-09  375  	kfree(entry->fsname);
-176377d97d6a3f Tyler Hicks      2020-08-11  376  	ima_free_rule_opt_list(entry->keyrings);
-465aee77aae857 Tyler Hicks      2020-07-09  377  	ima_lsm_free_rule(entry);
-b169424551930a Janne Karhunen   2019-06-14  378  	kfree(entry);
-b169424551930a Janne Karhunen   2019-06-14  379  }
-b169424551930a Janne Karhunen   2019-06-14  380  
-b169424551930a Janne Karhunen   2019-06-14  381  static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
-b169424551930a Janne Karhunen   2019-06-14  382  {
-b169424551930a Janne Karhunen   2019-06-14  383  	struct ima_rule_entry *nentry;
-483ec26eed42bf Janne Karhunen   2020-01-15  384  	int i;
-b169424551930a Janne Karhunen   2019-06-14  385  
-b169424551930a Janne Karhunen   2019-06-14  386  	/*
-b169424551930a Janne Karhunen   2019-06-14  387  	 * Immutable elements are copied over as pointers and data; only
-b169424551930a Janne Karhunen   2019-06-14  388  	 * lsm rules can change
-b169424551930a Janne Karhunen   2019-06-14  389  	 */
-f60c826d031817 Alex Dewar       2020-09-09  390  	nentry = kmemdup(entry, sizeof(*nentry), GFP_KERNEL);
-f60c826d031817 Alex Dewar       2020-09-09  391  	if (!nentry)
-f60c826d031817 Alex Dewar       2020-09-09  392  		return NULL;
-f60c826d031817 Alex Dewar       2020-09-09  393  
-c593642c8be046 Pankaj Bharadiya 2019-12-09  394  	memset(nentry->lsm, 0, sizeof_field(struct ima_rule_entry, lsm));
-b169424551930a Janne Karhunen   2019-06-14  395  
-b169424551930a Janne Karhunen   2019-06-14  396  	for (i = 0; i < MAX_LSM_RULES; i++) {
-483ec26eed42bf Janne Karhunen   2020-01-15  397  		if (!entry->lsm[i].args_p)
-b169424551930a Janne Karhunen   2019-06-14  398  			continue;
-b169424551930a Janne Karhunen   2019-06-14  399  
-b169424551930a Janne Karhunen   2019-06-14  400  		nentry->lsm[i].type = entry->lsm[i].type;
-39e5993d0d452b Tyler Hicks      2020-07-09  401  		nentry->lsm[i].args_p = entry->lsm[i].args_p;
-39e5993d0d452b Tyler Hicks      2020-07-09  402  		/*
-39e5993d0d452b Tyler Hicks      2020-07-09  403  		 * Remove the reference from entry so that the associated
-39e5993d0d452b Tyler Hicks      2020-07-09  404  		 * memory will not be freed during a later call to
-39e5993d0d452b Tyler Hicks      2020-07-09  405  		 * ima_lsm_free_rule(entry).
-39e5993d0d452b Tyler Hicks      2020-07-09  406  		 */
-39e5993d0d452b Tyler Hicks      2020-07-09  407  		entry->lsm[i].args_p = NULL;
-b169424551930a Janne Karhunen   2019-06-14  408  
-b8867eedcf76ca Tyler Hicks      2020-07-10 @409  		ima_filter_rule_init(nentry->lsm[i].type, Audit_equal,
-b169424551930a Janne Karhunen   2019-06-14  410  				     nentry->lsm[i].args_p,
-b169424551930a Janne Karhunen   2019-06-14  411  				     &nentry->lsm[i].rule);
-483ec26eed42bf Janne Karhunen   2020-01-15  412  		if (!nentry->lsm[i].rule)
-483ec26eed42bf Janne Karhunen   2020-01-15  413  			pr_warn("rule for LSM \'%s\' is undefined\n",
-aa0c0227d33171 Tyler Hicks      2020-07-09  414  				nentry->lsm[i].args_p);
-b169424551930a Janne Karhunen   2019-06-14  415  	}
-b169424551930a Janne Karhunen   2019-06-14  416  	return nentry;
-b169424551930a Janne Karhunen   2019-06-14  417  }
-b169424551930a Janne Karhunen   2019-06-14  418  
+"This merged name list is cached in the
+'struct file' and so remains as long as the file is kept open."
 
----
-0-DAY CI Kernel Test Service
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+And I was wondering if that's the case, then one user should not be able
+to access the cache built by another priviliged user (until and unless
+privileged user passed fd).
+
+But looks like we build this cache and store in ovl inode and that's
+why this issue of cache built by higher privileged process will be
+accessible to lower privileged process.
+
+With current model this is not an issue because "mounter" is providing
+those privileges to unprivileged process. So while unprivileged process
+can't do "readdir" on an underlying lower dir, it might still be able
+to do that through an overlay mount. But if we don't switch to mounter's
+creds, then we probably can't rely on this dir caching. Agreed that
+disabling dir caching seems simplest solution if we were to do
+override_creds=off.
+
+Thanks
+Vivek
+
+> 
+> This specific problem can be solved in several ways - disable readdir
+> cache with override_cred=off, check all layers in ovl_permission().
+> That's not my point. My point is that I provided a proof that the current
+> model of override_cred=off is flawed and it is up to the authors of the
+> patch to fix the model and provide the analysis of overlayfs code to
+> prove the model's correctness.
+> 
+> The core of the matter is there is no easy way to "merge" the permissions
+> from all layers into a single permission blob that could be checked once.
+> 
+> Maybe the example I gave is the only flaw in the model, maybe not
+> I am not sure. I will be happy to help you in review of a model and the
+> solution that you may have found.
+> 
+> Thanks,
+> Amir.
+> 
+
