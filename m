@@ -2,229 +2,139 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B03FC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Mar 2022 17:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBD0C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Mar 2022 23:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238431AbiCORtL (ORCPT
+        id S1352607AbiCOXtD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Mar 2022 13:49:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41558 "EHLO
+        Tue, 15 Mar 2022 19:49:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350711AbiCORtK (ORCPT
+        with ESMTP id S235842AbiCOXtC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Mar 2022 13:49:10 -0400
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F0BE0DC
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Mar 2022 10:47:54 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KJ18S40CszMqF1r;
-        Tue, 15 Mar 2022 18:47:52 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KJ18R6lG0zlhSMB;
-        Tue, 15 Mar 2022 18:47:51 +0100 (CET)
-Message-ID: <a28c8bec-3671-2613-9107-2b911305c274@digikod.net>
-Date:   Tue, 15 Mar 2022 18:48:24 +0100
+        Tue, 15 Mar 2022 19:49:02 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCBC7116D
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Mar 2022 16:47:48 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id qx21so797468ejb.13
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Mar 2022 16:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rytjyPZ9RNxi/avIuivSs6xI7PnvqvUQtVccmZitEKI=;
+        b=gAazJfXI5UKMUFXIaLVmR4ut6nyHRO1MbFHm2xIVfKwZjvF9UpO93tabuvO5mNS4cq
+         GekKVQ+O/gYxc//atQNwW86Fl6+OHtxy1l3hP1VfXU425AoJ7WbzCPl1pEewLwo4VSc4
+         I1iXvR6ObDSmwwjCvdhvq3dorv/rcAqR5aWuraEVlNxDnO3zZ0sgoz2p+7GXgYZ2p6tg
+         GZjyKJpZYfErbiMJx/9y6xZ56/GhuLRpGfIeTo4PgPXd7OQsdKSfo4whGJzD5P+tS4oJ
+         lMYaFxmBznvGAs6E5Tqk9XtKXF7N1r+XUtmIfvKgQy6jMvRckCQxvSATJUiNu8CXSRpT
+         MJUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rytjyPZ9RNxi/avIuivSs6xI7PnvqvUQtVccmZitEKI=;
+        b=WvPNnckEHk4YCvKVyHo/MLGy8M01whqic7BhRiaJ+caMAzrG0VorzFtSfIRyTIw1Wd
+         9u22uvlToolo1Qi6BlO5eZCCueMmdRDXjeqDhgA/58zQHLoCyL8gyNlIjcsWQJIeYeUH
+         g6q+qikmAsJQKkN3SQ5bVxX/SIQ1/yLedWrbrOekFmcHQy4A8KNyk1FToyKcXNrv089e
+         IPfz1nfrXqUJtE4GbpJKi/+S26wGeeKjxD/jgze1E+9eDGebimzpdZmeS58PD37+crjo
+         b9PLCZ43sd4PVlE+udwwSLV+T5/MdB+fbSFuNwzkF8SLWFp+ACxyR7WnuuiYYQnuD3lD
+         g27g==
+X-Gm-Message-State: AOAM532Wcb5sFPDXV57on1HEYOx0i3nn0EaQrrUs+tn8FRHVNOAEg52c
+        nodNqSPsowhZtQ9TyqE6IQzNZ1yWlkd/p4MKPJ0Z
+X-Google-Smtp-Source: ABdhPJzQyi5HuX+wXvfaijMiHF1MOswzJSHw7vqFltYTNxOMEDQ5dBxEcxUIifpqaIwrQ2yGc8SzMlAwcA4wIGxQyfM=
+X-Received: by 2002:a17:907:1b09:b0:6d8:faa8:4a06 with SMTP id
+ mp9-20020a1709071b0900b006d8faa84a06mr24602944ejc.701.1647388067190; Tue, 15
+ Mar 2022 16:47:47 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <20220309134459.6448-3-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH v4 02/15] landlock: filesystem access mask helpers
-In-Reply-To: <20220309134459.6448-3-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220310234632.16194-1-casey@schaufler-ca.com> <20220310234632.16194-26-casey@schaufler-ca.com>
+In-Reply-To: <20220310234632.16194-26-casey@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 15 Mar 2022 19:47:36 -0400
+Message-ID: <CAHC9VhTkXaJ6nsJU9hf9KO22bGSpyr8EeBQKef-f6jhy_6OEkA@mail.gmail.com>
+Subject: Re: [PATCH v33 25/29] Audit: Allow multiple records in an audit_buffer
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch should be squashed with the previous one. They both refactor 
-FS access masks in a complementary way.
-
-On 09/03/2022 14:44, Konstantin Meskhidze wrote:
-> This patch adds filesystem helper functions
-> to set and get filesystem mask. Also the modification
-> adds a helper structure landlock_access_mask to
-> support managing multiple access mask.
-> 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+On Thu, Mar 10, 2022 at 6:59 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> Replace the single skb pointer in an audit_buffer with
+> a list of skb pointers. Add the audit_stamp information
+> to the audit_buffer as there's no guarantee that there
+> will be an audit_context containing the stamp associated
+> with the event. At audit_log_end() time create auxiliary
+> records (none are currently defined) as have been added
+> to the list.
+>
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
-> 
-> Changes since v3:
-> * Split commit.
-> * Add get_mask, set_mask helpers for filesystem.
-> * Add new struct landlock_access_mask.
-> 
-> ---
->   security/landlock/fs.c       |  4 ++--
->   security/landlock/ruleset.c  | 20 +++++++++++++++++---
->   security/landlock/ruleset.h  | 19 ++++++++++++++++++-
->   security/landlock/syscalls.c |  9 ++++++---
->   4 files changed, 43 insertions(+), 9 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index d727bdab7840..97f5c455f5a7 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -163,7 +163,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
->   		return -EINVAL;
-> 
->   	/* Transforms relative access rights to absolute ones. */
-> -	access_rights |= LANDLOCK_MASK_ACCESS_FS & ~ruleset->access_masks[0];
-> +	access_rights |= LANDLOCK_MASK_ACCESS_FS & ~landlock_get_fs_access_mask(ruleset, 0);
->   	object = get_inode_object(d_backing_inode(path->dentry));
->   	if (IS_ERR(object))
->   		return PTR_ERR(object);
-> @@ -252,7 +252,7 @@ static int check_access_path(const struct landlock_ruleset *const domain,
->   	/* Saves all layers handling a subset of requested accesses. */
->   	layer_mask = 0;
->   	for (i = 0; i < domain->num_layers; i++) {
-> -		if (domain->access_masks[i] & access_request)
-> +		if (landlock_get_fs_access_mask(domain, i) & access_request)
->   			layer_mask |= BIT_ULL(i);
->   	}
->   	/* An access request not handled by the domain is allowed. */
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index 78341a0538de..a6212b752549 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -44,16 +44,30 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
->   	return new_ruleset;
->   }
-> 
-> -struct landlock_ruleset *landlock_create_ruleset(const u32 access_mask)
-> +/* A helper function to set a filesystem mask */
-> +void landlock_set_fs_access_mask(struct landlock_ruleset *ruleset,
+>  kernel/audit.c | 53 +++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 35 insertions(+), 18 deletions(-)
+>
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index f012c3786264..4713e66a12af 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -197,8 +197,10 @@ static struct audit_ctl_mutex {
+>   * to place it on a transmit queue.  Multiple audit_buffers can be in
+>   * use simultaneously. */
+>  struct audit_buffer {
+> -       struct sk_buff       *skb;      /* formatted skb ready to send */
+> +       struct sk_buff       *skb;      /* the skb for audit_log functions */
+> +       struct sk_buff_head  skb_list;  /* formatted skbs, ready to send */
+>         struct audit_context *ctx;      /* NULL or associated context */
+> +       struct audit_stamp   stamp;     /* audit stamp for these records */
+>         gfp_t                gfp_mask;
+>  };
+>
+> @@ -1744,7 +1746,6 @@ static void audit_buffer_free(struct audit_buffer *ab)
+>         if (!ab)
+>                 return;
+>
+> -       kfree_skb(ab->skb);
 
-struct landlock_ruleset *const ruleset
+I like the safety in knowing that audit_buffer_free() would free the
+ab->skb memory, I'm not sure I want to get rid of that.  With the
+understanding that ab->skb is always going to be present somewhere in
+ab->skb_list, any reason not to do something like this?
 
-Please use const as much as possible even in function arguments: e.g. 
-access_masks_set, mask_level…
+  while ((skb = skb_dequeue(&ab->skb_list)))
+    kfree_skb(skb);
 
-> +				 const struct landlock_access_mask *access_mask_set,
+>         kmem_cache_free(audit_buffer_cache, ab);
+>  }
+>
+> @@ -1760,11 +1761,15 @@ static struct audit_buffer *audit_buffer_alloc(struct audit_context *ctx,
+>         ab->skb = nlmsg_new(AUDIT_BUFSIZ, gfp_mask);
+>         if (!ab->skb)
+>                 goto err;
+> -       if (!nlmsg_put(ab->skb, 0, 0, type, 0, 0))
+> +       if (!nlmsg_put(ab->skb, 0, 0, type, 0, 0)) {
+> +               kfree_skb(ab->skb);
+>                 goto err;
+> +       }
 
-nit: no need for "_set" suffix.
+Assuming we restore the audit_buffer_free() functionality as mentioned
+above, if we move the ab->skb_list init and enqueue calls before we
+attempt the nlmsg_put() we can drop the kfree_skb() call and just use
+the existing audit_buffer_free() call at the err target.
 
-Why do you need a struct landlock_access_mask and not just u16 (which 
-will probably become a subset of access_mask_t, see [1])? 
-landlock_create_ruleset() could just take two masks as argument instead.
 
-[1] https://lore.kernel.org/all/20220221212522.320243-2-mic@digikod.net/
+>         ab->ctx = ctx;
+>         ab->gfp_mask = gfp_mask;
+> +       skb_queue_head_init(&ab->skb_list);
+> +       skb_queue_tail(&ab->skb_list, ab->skb);
+>
+>         return ab;
+>
 
-> +				 u16 mask_level)
-> +{
-> +	ruleset->access_masks[mask_level] = access_mask_set->fs;
-> +}
-> +
-> +/* A helper function to get a filesystem mask */
-> +u32 landlock_get_fs_access_mask(const struct landlock_ruleset *ruleset, u16 mask_level)
-> +{
-> +	return ruleset->access_masks[mask_level];
-> +}
-
-You can move these two helpers to ruleset.h and make them static inline.
-
-> +
-> +struct landlock_ruleset *landlock_create_ruleset(const struct landlock_access_mask *access_mask_set)
->   {
->   	struct landlock_ruleset *new_ruleset;
-> 
->   	/* Informs about useless ruleset. */
-> -	if (!access_mask)
-> +	if (!access_mask_set->fs)
->   		return ERR_PTR(-ENOMSG);
->   	new_ruleset = create_ruleset(1);
->   	if (!IS_ERR(new_ruleset))
-> -		new_ruleset->access_masks[0] = access_mask;
-> +		landlock_set_fs_access_mask(new_ruleset, access_mask_set, 0);
->   	return new_ruleset;
->   }
-> 
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index 32d90ce72428..bc87e5f787f7 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -16,6 +16,16 @@
-> 
->   #include "object.h"
-> 
-> +/**
-> + * struct landlock_access_mask - A helper structure to handle different mask types
-> + */
-> +struct landlock_access_mask {
-> +	/**
-> +	 * @fs: Filesystem access mask.
-> +	 */
-> +	u16 fs;
-> +};
-
-Removing this struct would simplify the code.
-
-> +
->   /**
->    * struct landlock_layer - Access rights for a given layer
->    */
-> @@ -140,7 +150,8 @@ struct landlock_ruleset {
->   	};
->   };
-> 
-> -struct landlock_ruleset *landlock_create_ruleset(const u32 access_mask);
-> +struct landlock_ruleset *landlock_create_ruleset(const struct landlock_access_mask
-> +									*access_mask_set);
-> 
->   void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
->   void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
-> @@ -162,4 +173,10 @@ static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
->   		refcount_inc(&ruleset->usage);
->   }
-> 
-> +void landlock_set_fs_access_mask(struct landlock_ruleset *ruleset,
-> +				 const struct landlock_access_mask *access_mask_set,
-> +				 u16 mask_level);
-> +
-> +u32 landlock_get_fs_access_mask(const struct landlock_ruleset *ruleset, u16 mask_level);
-> +
->   #endif /* _SECURITY_LANDLOCK_RULESET_H */
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index f1d86311df7e..5931b666321d 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -159,6 +159,7 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
->   {
->   	struct landlock_ruleset_attr ruleset_attr;
->   	struct landlock_ruleset *ruleset;
-> +	struct landlock_access_mask access_mask_set = {.fs = 0};
->   	int err, ruleset_fd;
-> 
->   	/* Build-time checks. */
-> @@ -185,9 +186,10 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
->   	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=
->   			LANDLOCK_MASK_ACCESS_FS)
->   		return -EINVAL;
-> +	access_mask_set.fs = ruleset_attr.handled_access_fs;
-> 
->   	/* Checks arguments and transforms to kernel struct. */
-> -	ruleset = landlock_create_ruleset(ruleset_attr.handled_access_fs);
-> +	ruleset = landlock_create_ruleset(&access_mask_set);
->   	if (IS_ERR(ruleset))
->   		return PTR_ERR(ruleset);
-> 
-> @@ -343,8 +345,9 @@ SYSCALL_DEFINE4(landlock_add_rule,
->   	 * Checks that allowed_access matches the @ruleset constraints
->   	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
->   	 */
-> -	if ((path_beneath_attr.allowed_access | ruleset->access_masks[0]) !=
-> -			ruleset->access_masks[0]) {
-> +
-> +	if ((path_beneath_attr.allowed_access | landlock_get_fs_access_mask(ruleset, 0)) !=
-> +						landlock_get_fs_access_mask(ruleset, 0)) {
->   		err = -EINVAL;
->   		goto out_put_ruleset;
->   	}
-> --
-> 2.25.1
-> 
+--
+paul-moore.com
