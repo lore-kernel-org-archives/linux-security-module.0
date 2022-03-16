@@ -2,73 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D07D7C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Mar 2022 00:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C32D8C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Mar 2022 01:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344879AbiCPAkj (ORCPT
+        id S1350949AbiCPBJx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Mar 2022 20:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48256 "EHLO
+        Tue, 15 Mar 2022 21:09:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231308AbiCPAki (ORCPT
+        with ESMTP id S236125AbiCPBJx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Mar 2022 20:40:38 -0400
-Received: from out30-45.freemail.mail.aliyun.com (out30-45.freemail.mail.aliyun.com [115.124.30.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD6EE5DA51;
-        Tue, 15 Mar 2022 17:39:24 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0V7JkLTl_1647391161;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0V7JkLTl_1647391161)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 16 Mar 2022 08:39:22 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] capability: Add parameter description in kernel-doc comment
-Date:   Wed, 16 Mar 2022 08:39:20 +0800
-Message-Id: <20220316003920.108121-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        Tue, 15 Mar 2022 21:09:53 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80DD14B874
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Mar 2022 18:08:37 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id yy13so1167660ejb.2
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Mar 2022 18:08:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c4yJTBFrYxfC9d71JFIt7TJ1Pyac9aie49haagZLT7M=;
+        b=3gDlKTc4TJ5D37yFflHfb3SjMMeRE6vABJRAxukK3Wbi9sS86YcFxRL/T+d7J0y+rW
+         kgf5CLNBMiGVhrblLVvXHsM4xVl8lKjQ2Aaxod5fquAk3Sw6F5Xo77feHzQfr6DzN6fA
+         Vto75EWTlMCvkOmoXymTVFMduLDSYEg98V1xl56vheSaEh2N20EZF95fEFA50i+rkirG
+         19QNzBGD43yNleI5RahGLzuq54uKlRleHuHvG+1HDnXxei/ukuUKiWad494s+nR+G27I
+         W3YSuzYNlf9Fr/gmNE+2DIP+I77g+dLK7bxpi8JFVbA6sfDc+0B7vwsGv9t5bllW1hFH
+         K8vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c4yJTBFrYxfC9d71JFIt7TJ1Pyac9aie49haagZLT7M=;
+        b=SNxhw/2a0nOhsgO944FuctbfexAUwV6lm7HIFERFpXhmbBNVJmeGWVf6jIx5Bi8fgh
+         VZpd3/gycwmG2YE0txeMQ6daDd6PGbjTT0x1qMv4c8PxxjTnlmnggpjnxcjNr9ViF57j
+         3f+3hvG9K3SKJDxuGeAGOeZsEgEfo9FFTpvr1YmYoVnz5M/s/Yx70Z/eEQn8Boiln6Y/
+         fGyU/zogzd3A87o3AYp7pEo/H3QtnY14nmE3NVysNk+tBW8rxWkfzhKxtkffKcVo/uOf
+         fWy0RV5F9cn5iKScPD5BDF4gUHKgws2EVGtf6hnRo0mEbScrzcPIh6OGYrJHzfjIVmxQ
+         GK8w==
+X-Gm-Message-State: AOAM533EQcVHNURSDEt2sByUneMgchusNG89OEJiFTi+54QO4sbZXZxC
+        mlDW+7wUXwe79CX5I0JnHtiqpIxegMFiM2rwkcMA
+X-Google-Smtp-Source: ABdhPJz+3ez8xrnU+3o745dhyZ/+LfaOfJ4CIyYsCJwxt1BoOAITZMIZnjbEyIlJbjF9qDPVb/2j1V8hj1Wa86guV90=
+X-Received: by 2002:a17:907:9803:b0:6db:ab21:738e with SMTP id
+ ji3-20020a170907980300b006dbab21738emr17937334ejc.112.1647392915955; Tue, 15
+ Mar 2022 18:08:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220310234632.16194-1-casey@schaufler-ca.com>
+ <20220310234632.16194-28-casey@schaufler-ca.com> <CAHC9VhQWv+04hETu3keU7Ev2nLn5MARW2R_p5hKVp3OfhD185A@mail.gmail.com>
+ <987800d2-797c-e780-60f5-0e499081572f@schaufler-ca.com>
+In-Reply-To: <987800d2-797c-e780-60f5-0e499081572f@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 15 Mar 2022 21:08:24 -0400
+Message-ID: <CAHC9VhSYYy2_cTqZuDrVdoCboMeaUPy0a-1ArRpAhiMYr58r3g@mail.gmail.com>
+Subject: Re: [PATCH v33 27/29] Audit: Add record for multiple object security contexts
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add the description of @mnt_userns in privileged_wrt_inode_uidgid()
-and capable_wrt_inode_uidgid() kernel-doc comment to remove warnings
-found by running scripts/kernel-doc, which is caused by using 'make W=1'.
+On Tue, Mar 15, 2022 at 8:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 3/15/2022 4:47 PM, Paul Moore wrote:
+> > On Thu, Mar 10, 2022 at 7:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
+> >> An example of the MAC_OBJ_CONTEXTS (1421) record is:
+> >>
+> >>      type=MAC_OBJ_CONTEXTS[1421]
+> >>      msg=audit(1601152467.009:1050):
+> >>      obj_selinux=unconfined_u:object_r:user_home_t:s0
+> >>
+> >> When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
+> >> the "obj=" field in other records in the event will be "obj=?".
+> >> An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
+> >> multiple security modules that may make access decisions based
+> >> on an object security context.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>   include/linux/audit.h      |  5 +++
+> >>   include/uapi/linux/audit.h |  1 +
+> >>   kernel/audit.c             | 47 +++++++++++++++++++++++
+> >>   kernel/auditsc.c           | 79 ++++++++++++--------------------------
+> >>   4 files changed, 77 insertions(+), 55 deletions(-)
 
-kernel/capability.c:491: warning: Function parameter or member
-'mnt_userns' not described in 'privileged_wrt_inode_uidgid'
-kernel/capability.c:507: warning: Function parameter or member
-'mnt_userns' not described in 'capable_wrt_inode_uidgid'
+...
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- kernel/capability.c | 2 ++
- 1 file changed, 2 insertions(+)
+> >> @@ -1373,18 +1362,10 @@ static void show_special(struct audit_context *context, int *call_panic)
+> >>                                   from_kgid(&init_user_ns, context->ipc.gid),
+> >>                                   context->ipc.mode);
+> >>                  if (osid) {
+> >> -                       struct lsmcontext lsmcxt;
+> >>                          struct lsmblob blob;
+> >>
+> >>                          lsmblob_init(&blob, osid);
+> >> -                       if (security_secid_to_secctx(&blob, &lsmcxt,
+> >> -                                                    LSMBLOB_FIRST)) {
+> >> -                               audit_log_format(ab, " osid=%u", osid);
+> >> -                               *call_panic = 1;
+> >> -                       } else {
+> >> -                               audit_log_format(ab, " obj=%s", lsmcxt.context);
+> >> -                               security_release_secctx(&lsmcxt);
+> >> -                       }
+> >> +                       audit_log_object_context(ab, &blob);
+> > While we lose the "osid=X" in case of failure, the secid/SID is a
+> > private kernel value meaning it was always of questionable value.
+>
+> I could come up with a change to audit_log_object_context() that
+> would put out an osid= in the single security module case. I would
+> prefer not to if that would be acceptable.
 
-diff --git a/kernel/capability.c b/kernel/capability.c
-index 765194f5d678..ab401d17574d 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -481,6 +481,7 @@ EXPORT_SYMBOL(file_ns_capable);
- /**
-  * privileged_wrt_inode_uidgid - Do capabilities in the namespace work over the inode?
-  * @ns: The user namespace in question
-+ * @mnt_userns: The user namespace of the capability to use
-  * @inode: The inode in question
-  *
-  * Return true if the inode uid and gid are within the namespace.
-@@ -495,6 +496,7 @@ bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
- 
- /**
-  * capable_wrt_inode_uidgid - Check nsown_capable and uid and gid mapped
-+ * @mnt_userns: The user namespace of the capability to use
-  * @inode: The inode in question
-  * @cap: The capability in question
-  *
+What I think you have right now is fine.  I thought others might point
+out the field differences so I was trying to say that the existing
+code really isn't very useful in case of error, there is no practical
+way for someone in userspace to do anything meaningful with an
+osid/secid/SID value as they are transient kernel-private values.
+
+My apologies for the confusion.
+
 -- 
-2.20.1.7.g153144c
-
+paul-moore.com
