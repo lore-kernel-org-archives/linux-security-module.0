@@ -2,126 +2,445 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32D8C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Mar 2022 01:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE37CC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Mar 2022 08:26:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350949AbiCPBJx (ORCPT
+        id S1354609AbiCPI2J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Mar 2022 21:09:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
+        Wed, 16 Mar 2022 04:28:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236125AbiCPBJx (ORCPT
+        with ESMTP id S1354560AbiCPI14 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Mar 2022 21:09:53 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80DD14B874
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Mar 2022 18:08:37 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id yy13so1167660ejb.2
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Mar 2022 18:08:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c4yJTBFrYxfC9d71JFIt7TJ1Pyac9aie49haagZLT7M=;
-        b=3gDlKTc4TJ5D37yFflHfb3SjMMeRE6vABJRAxukK3Wbi9sS86YcFxRL/T+d7J0y+rW
-         kgf5CLNBMiGVhrblLVvXHsM4xVl8lKjQ2Aaxod5fquAk3Sw6F5Xo77feHzQfr6DzN6fA
-         Vto75EWTlMCvkOmoXymTVFMduLDSYEg98V1xl56vheSaEh2N20EZF95fEFA50i+rkirG
-         19QNzBGD43yNleI5RahGLzuq54uKlRleHuHvG+1HDnXxei/ukuUKiWad494s+nR+G27I
-         W3YSuzYNlf9Fr/gmNE+2DIP+I77g+dLK7bxpi8JFVbA6sfDc+0B7vwsGv9t5bllW1hFH
-         K8vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c4yJTBFrYxfC9d71JFIt7TJ1Pyac9aie49haagZLT7M=;
-        b=SNxhw/2a0nOhsgO944FuctbfexAUwV6lm7HIFERFpXhmbBNVJmeGWVf6jIx5Bi8fgh
-         VZpd3/gycwmG2YE0txeMQ6daDd6PGbjTT0x1qMv4c8PxxjTnlmnggpjnxcjNr9ViF57j
-         3f+3hvG9K3SKJDxuGeAGOeZsEgEfo9FFTpvr1YmYoVnz5M/s/Yx70Z/eEQn8Boiln6Y/
-         fGyU/zogzd3A87o3AYp7pEo/H3QtnY14nmE3NVysNk+tBW8rxWkfzhKxtkffKcVo/uOf
-         fWy0RV5F9cn5iKScPD5BDF4gUHKgws2EVGtf6hnRo0mEbScrzcPIh6OGYrJHzfjIVmxQ
-         GK8w==
-X-Gm-Message-State: AOAM533EQcVHNURSDEt2sByUneMgchusNG89OEJiFTi+54QO4sbZXZxC
-        mlDW+7wUXwe79CX5I0JnHtiqpIxegMFiM2rwkcMA
-X-Google-Smtp-Source: ABdhPJz+3ez8xrnU+3o745dhyZ/+LfaOfJ4CIyYsCJwxt1BoOAITZMIZnjbEyIlJbjF9qDPVb/2j1V8hj1Wa86guV90=
-X-Received: by 2002:a17:907:9803:b0:6db:ab21:738e with SMTP id
- ji3-20020a170907980300b006dbab21738emr17937334ejc.112.1647392915955; Tue, 15
- Mar 2022 18:08:35 -0700 (PDT)
+        Wed, 16 Mar 2022 04:27:56 -0400
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CB063BCF
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 01:26:40 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KJNfQ3CMhzMpy9H;
+        Wed, 16 Mar 2022 09:26:38 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KJNfP5bDKzlhSML;
+        Wed, 16 Mar 2022 09:26:37 +0100 (CET)
+Message-ID: <bc44f11f-0eaa-a5f6-c5dc-1d36570f1be1@digikod.net>
+Date:   Wed, 16 Mar 2022 09:27:15 +0100
 MIME-Version: 1.0
-References: <20220310234632.16194-1-casey@schaufler-ca.com>
- <20220310234632.16194-28-casey@schaufler-ca.com> <CAHC9VhQWv+04hETu3keU7Ev2nLn5MARW2R_p5hKVp3OfhD185A@mail.gmail.com>
- <987800d2-797c-e780-60f5-0e499081572f@schaufler-ca.com>
-In-Reply-To: <987800d2-797c-e780-60f5-0e499081572f@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 15 Mar 2022 21:08:24 -0400
-Message-ID: <CAHC9VhSYYy2_cTqZuDrVdoCboMeaUPy0a-1ArRpAhiMYr58r3g@mail.gmail.com>
-Subject: Re: [PATCH v33 27/29] Audit: Add record for multiple object security contexts
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-4-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [RFC PATCH v4 03/15] landlock: landlock_find/insert_rule
+ refactoring
+In-Reply-To: <20220309134459.6448-4-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 15, 2022 at 8:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 3/15/2022 4:47 PM, Paul Moore wrote:
-> > On Thu, Mar 10, 2022 at 7:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
-> >> An example of the MAC_OBJ_CONTEXTS (1421) record is:
-> >>
-> >>      type=MAC_OBJ_CONTEXTS[1421]
-> >>      msg=audit(1601152467.009:1050):
-> >>      obj_selinux=unconfined_u:object_r:user_home_t:s0
-> >>
-> >> When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
-> >> the "obj=" field in other records in the event will be "obj=?".
-> >> An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
-> >> multiple security modules that may make access decisions based
-> >> on an object security context.
-> >>
-> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> ---
-> >>   include/linux/audit.h      |  5 +++
-> >>   include/uapi/linux/audit.h |  1 +
-> >>   kernel/audit.c             | 47 +++++++++++++++++++++++
-> >>   kernel/auditsc.c           | 79 ++++++++++++--------------------------
-> >>   4 files changed, 77 insertions(+), 55 deletions(-)
 
-...
+On 09/03/2022 14:44, Konstantin Meskhidze wrote:
+> A new object union added to support a socket port
+> rule type. To support it landlock_insert_rule() and
+> landlock_find_rule() were refactored. Now adding
+> or searching a rule in a ruleset depends on a
+> rule_type argument provided in refactored
+> functions mentioned above.
+> 
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
+> 
+> Changes since v3:
+> * Split commit.
+> * Refactoring landlock_insert_rule and landlock_find_rule functions.
+> * Rename new_ruleset->root_inode.
+> 
+> ---
+>   security/landlock/fs.c      |   5 +-
+>   security/landlock/ruleset.c | 108 +++++++++++++++++++++++++-----------
+>   security/landlock/ruleset.h |  26 +++++----
+>   3 files changed, 94 insertions(+), 45 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 97f5c455f5a7..1497948d754f 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -168,7 +168,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>   	if (IS_ERR(object))
+>   		return PTR_ERR(object);
+>   	mutex_lock(&ruleset->lock);
+> -	err = landlock_insert_rule(ruleset, object, access_rights);
+> +	err = landlock_insert_rule(ruleset, object, 0, access_rights, LANDLOCK_RULE_PATH_BENEATH);
 
-> >> @@ -1373,18 +1362,10 @@ static void show_special(struct audit_context *context, int *call_panic)
-> >>                                   from_kgid(&init_user_ns, context->ipc.gid),
-> >>                                   context->ipc.mode);
-> >>                  if (osid) {
-> >> -                       struct lsmcontext lsmcxt;
-> >>                          struct lsmblob blob;
-> >>
-> >>                          lsmblob_init(&blob, osid);
-> >> -                       if (security_secid_to_secctx(&blob, &lsmcxt,
-> >> -                                                    LSMBLOB_FIRST)) {
-> >> -                               audit_log_format(ab, " osid=%u", osid);
-> >> -                               *call_panic = 1;
-> >> -                       } else {
-> >> -                               audit_log_format(ab, " obj=%s", lsmcxt.context);
-> >> -                               security_release_secctx(&lsmcxt);
-> >> -                       }
-> >> +                       audit_log_object_context(ab, &blob);
-> > While we lose the "osid=X" in case of failure, the secid/SID is a
-> > private kernel value meaning it was always of questionable value.
->
-> I could come up with a change to audit_log_object_context() that
-> would put out an osid= in the single security module case. I would
-> prefer not to if that would be acceptable.
+For consistency, please use 80 columns everywhere.
 
-What I think you have right now is fine.  I thought others might point
-out the field differences so I was trying to say that the existing
-code really isn't very useful in case of error, there is no practical
-way for someone in userspace to do anything meaningful with an
-osid/secid/SID value as they are transient kernel-private values.
+>   	mutex_unlock(&ruleset->lock);
+>   	/*
+>   	 * No need to check for an error because landlock_insert_rule()
+> @@ -195,7 +195,8 @@ static inline u64 unmask_layers(
+>   	inode = d_backing_inode(path->dentry);
+>   	rcu_read_lock();
+>   	rule = landlock_find_rule(domain,
+> -			rcu_dereference(landlock_inode(inode)->object));
+> +			(uintptr_t)rcu_dereference(landlock_inode(inode)->object),
+> +			LANDLOCK_RULE_PATH_BENEATH);
+>   	rcu_read_unlock();
+>   	if (!rule)
+>   		return layer_mask;
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index a6212b752549..971685c48641 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -34,7 +34,7 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>   		return ERR_PTR(-ENOMEM);
+>   	refcount_set(&new_ruleset->usage, 1);
+>   	mutex_init(&new_ruleset->lock);
+> -	new_ruleset->root = RB_ROOT;
+> +	new_ruleset->root_inode = RB_ROOT;
+>   	new_ruleset->num_layers = num_layers;
+>   	/*
+>   	 * hierarchy = NULL
+> @@ -81,10 +81,12 @@ static void build_check_rule(void)
+>   }
+> 
+>   static struct landlock_rule *create_rule(
+> -		struct landlock_object *const object,
+> +		struct landlock_object *const object_ptr,
+> +		const uintptr_t object_data,
+>   		const struct landlock_layer (*const layers)[],
+>   		const u32 num_layers,
+> -		const struct landlock_layer *const new_layer)
+> +		const struct landlock_layer *const new_layer,
+> +		const u16 rule_type)
+>   {
+>   	struct landlock_rule *new_rule;
+>   	u32 new_num_layers;
+> @@ -103,8 +105,16 @@ static struct landlock_rule *create_rule(
+>   	if (!new_rule)
+>   		return ERR_PTR(-ENOMEM);
+>   	RB_CLEAR_NODE(&new_rule->node);
+> -	landlock_get_object(object);
+> -	new_rule->object = object;
+> +
+> +	switch (rule_type) {
+> +	case LANDLOCK_RULE_PATH_BENEATH:
+> +		landlock_get_object(object_ptr);
+> +		new_rule->object.ptr = object_ptr;
+> +		break;
+> +	default:
+> +		return ERR_PTR(-EINVAL);
 
-My apologies for the confusion.
+This would lead to memory leak. You should at least add a 
+WARN_ON_ONCE(1) here, but a proper solution would be to remove the use 
+of rule_type and only rely on object_ptr and object_data values. You can 
+also add a WARN_ON_ONCE(object_ptr && object_data).
 
--- 
-paul-moore.com
+
+> +	}
+> +
+>   	new_rule->num_layers = new_num_layers;
+>   	/* Copies the original layer stack. */
+>   	memcpy(new_rule->layers, layers,
+> @@ -120,7 +130,7 @@ static void free_rule(struct landlock_rule *const rule)
+>   	might_sleep();
+>   	if (!rule)
+>   		return;
+> -	landlock_put_object(rule->object);
+> +	landlock_put_object(rule->object.ptr);
+>   	kfree(rule);
+>   }
+> 
+> @@ -156,26 +166,38 @@ static void build_check_ruleset(void)
+>    * access rights.
+>    */
+>   static int insert_rule(struct landlock_ruleset *const ruleset,
+> -		struct landlock_object *const object,
+> +		struct landlock_object *const object_ptr,
+> +		const uintptr_t object_data,
+>   		const struct landlock_layer (*const layers)[],
+> -		size_t num_layers)
+> +		size_t num_layers, u16 rule_type)
+>   {
+>   	struct rb_node **walker_node;
+>   	struct rb_node *parent_node = NULL;
+>   	struct landlock_rule *new_rule;
+> +	uintptr_t object;
+> +	struct rb_root *root;
+> 
+>   	might_sleep();
+>   	lockdep_assert_held(&ruleset->lock);
+> -	if (WARN_ON_ONCE(!object || !layers))
+> -		return -ENOENT;
+
+You can leave this code here.
+
+> -	walker_node = &(ruleset->root.rb_node);
+> +	/* Choose rb_tree structure depending on a rule type */
+> +	switch (rule_type) {
+> +	case LANDLOCK_RULE_PATH_BENEATH:
+> +		if (WARN_ON_ONCE(!object_ptr || !layers))
+> +			return -ENOENT;
+> +		object = (uintptr_t)object_ptr;
+> +		root = &ruleset->root_inode;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +	walker_node = &root->rb_node;
+>   	while (*walker_node) {
+>   		struct landlock_rule *const this = rb_entry(*walker_node,
+>   				struct landlock_rule, node);
+> 
+> -		if (this->object != object) {
+> +		if (this->object.data != object) {
+>   			parent_node = *walker_node;
+> -			if (this->object < object)
+> +			if (this->object.data < object)
+>   				walker_node = &((*walker_node)->rb_right);
+>   			else
+>   				walker_node = &((*walker_node)->rb_left);
+> @@ -207,11 +229,15 @@ static int insert_rule(struct landlock_ruleset *const ruleset,
+>   		 * Intersects access rights when it is a merge between a
+>   		 * ruleset and a domain.
+>   		 */
+> -		new_rule = create_rule(object, &this->layers, this->num_layers,
+> -				&(*layers)[0]);
+> +		switch (rule_type) {
+> +		case LANDLOCK_RULE_PATH_BENEATH:
+
+Same here and for the following code, you should replace such 
+switch/case with an if (object_ptr).
+
+
+> +			new_rule = create_rule(object_ptr, 0, &this->layers, this->num_layers,
+> +					       &(*layers)[0], rule_type);
+> +			break;
+> +		}
+>   		if (IS_ERR(new_rule))
+>   			return PTR_ERR(new_rule);
+> -		rb_replace_node(&this->node, &new_rule->node, &ruleset->root);
+> +		rb_replace_node(&this->node, &new_rule->node, &ruleset->root_inode);
+
+Use the root variable here. Same for the following code and patches.
+
+
+>   		free_rule(this);
+>   		return 0;
+>   	}
+> @@ -220,11 +246,15 @@ static int insert_rule(struct landlock_ruleset *const ruleset,
+>   	build_check_ruleset();
+>   	if (ruleset->num_rules >= LANDLOCK_MAX_NUM_RULES)
+>   		return -E2BIG;
+> -	new_rule = create_rule(object, layers, num_layers, NULL);
+> +	switch (rule_type) {
+> +	case LANDLOCK_RULE_PATH_BENEATH:
+> +		new_rule = create_rule(object_ptr, 0, layers, num_layers, NULL, rule_type);
+> +		break;
+> +	}
+>   	if (IS_ERR(new_rule))
+>   		return PTR_ERR(new_rule);
+>   	rb_link_node(&new_rule->node, parent_node, walker_node);
+> -	rb_insert_color(&new_rule->node, &ruleset->root);
+> +	rb_insert_color(&new_rule->node, &ruleset->root_inode);
+>   	ruleset->num_rules++;
+>   	return 0;
+>   }
+> @@ -242,7 +272,9 @@ static void build_check_layer(void)
+> 
+>   /* @ruleset must be locked by the caller. */
+>   int landlock_insert_rule(struct landlock_ruleset *const ruleset,
+> -		struct landlock_object *const object, const u32 access)
+> +		struct landlock_object *const object_ptr,
+> +		const uintptr_t object_data,
+> +		const u32 access, const u16 rule_type)
+>   {
+>   	struct landlock_layer layers[] = {{
+>   		.access = access,
+> @@ -251,7 +283,8 @@ int landlock_insert_rule(struct landlock_ruleset *const ruleset,
+>   	}};
+> 
+>   	build_check_layer();
+> -	return insert_rule(ruleset, object, &layers, ARRAY_SIZE(layers));
+> +	return insert_rule(ruleset, object_ptr, object_data, &layers,
+> +			   ARRAY_SIZE(layers), rule_type);
+>   }
+> 
+>   static inline void get_hierarchy(struct landlock_hierarchy *const hierarchy)
+> @@ -297,7 +330,7 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+> 
+>   	/* Merges the @src tree. */
+>   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
+> -			&src->root, node) {
+> +			&src->root_inode, node) {
+>   		struct landlock_layer layers[] = {{
+>   			.level = dst->num_layers,
+>   		}};
+> @@ -311,8 +344,8 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+>   			goto out_unlock;
+>   		}
+>   		layers[0].access = walker_rule->layers[0].access;
+> -		err = insert_rule(dst, walker_rule->object, &layers,
+> -				ARRAY_SIZE(layers));
+> +		err = insert_rule(dst, walker_rule->object.ptr, 0, &layers,
+> +				ARRAY_SIZE(layers), LANDLOCK_RULE_PATH_BENEATH);
+>   		if (err)
+>   			goto out_unlock;
+>   	}
+> @@ -323,6 +356,8 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+>   	return err;
+>   }
+> 
+> +
+> +
+
+Useless lines.
+
+
+>   static int inherit_ruleset(struct landlock_ruleset *const parent,
+>   		struct landlock_ruleset *const child)
+>   {
+> @@ -339,9 +374,10 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
+> 
+>   	/* Copies the @parent tree. */
+>   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
+> -			&parent->root, node) {
+> -		err = insert_rule(child, walker_rule->object,
+> -				&walker_rule->layers, walker_rule->num_layers);
+> +			&parent->root_inode, node) {
+> +		err = insert_rule(child, walker_rule->object.ptr, 0,
+> +				&walker_rule->layers, walker_rule->num_layers,
+> +				LANDLOCK_RULE_PATH_BENEATH);
+>   		if (err)
+>   			goto out_unlock;
+>   	}
+> @@ -372,7 +408,7 @@ static void free_ruleset(struct landlock_ruleset *const ruleset)
+>   	struct landlock_rule *freeme, *next;
+> 
+>   	might_sleep();
+> -	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root,
+> +	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root_inode,
+>   			node)
+>   		free_rule(freeme);
+>   	put_hierarchy(ruleset->hierarchy);
+> @@ -465,20 +501,28 @@ struct landlock_ruleset *landlock_merge_ruleset(
+>    */
+>   const struct landlock_rule *landlock_find_rule(
+>   		const struct landlock_ruleset *const ruleset,
+> -		const struct landlock_object *const object)
+> +		const uintptr_t object_data, const u16 rule_type)
+>   {
+>   	const struct rb_node *node;
+> 
+> -	if (!object)
+> +	if (!object_data)
+
+object_data can be 0. You need to add a test with such value.
+
+We need to be sure that this change cannot affect the current FS code.
+
+
+>   		return NULL;
+> -	node = ruleset->root.rb_node;
+> +
+> +	switch (rule_type) {
+> +	case LANDLOCK_RULE_PATH_BENEATH:
+> +		node = ruleset->root_inode.rb_node;
+> +		break;
+> +	default:
+> +		return ERR_PTR(-EINVAL);
+
+This is a bug. There is no check for such value. You need to check and 
+update all call sites to catch such errors. Same for all new use of 
+ERR_PTR().
+
+
+> +	}
+> +
+>   	while (node) {
+>   		struct landlock_rule *this = rb_entry(node,
+>   				struct landlock_rule, node);
+> 
+> -		if (this->object == object)
+> +		if (this->object.data == object_data)
+>   			return this;
+> -		if (this->object < object)
+> +		if (this->object.data < object_data)
+>   			node = node->rb_right;
+>   		else
+>   			node = node->rb_left;
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index bc87e5f787f7..088b8d95f653 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -50,15 +50,17 @@ struct landlock_rule {
+>   	 */
+>   	struct rb_node node;
+>   	/**
+> -	 * @object: Pointer to identify a kernel object (e.g. an inode).  This
+> -	 * is used as a key for this ruleset element.  This pointer is set once
+> -	 * and never modified.  It always points to an allocated object because
+> -	 * each rule increments the refcount of its object.
+> -	 */
+> -	struct landlock_object *object;
+> -	/**
+> -	 * @num_layers: Number of entries in @layers.
+> +	 * @object: A union to identify either a kernel object (e.g. an inode) or
+> +	 * a socket port object.
+
+…or a raw data value (e.g. a network socket port).
+
+
+> This is used as a key for this ruleset element.
+> +	 * This pointer is set once and never modified. It always points to an
+
+s/This pointer/@object.ptr/
+
+
+> +	 * allocated object because each rule increments the refcount of its
+> +	 * object (for inodes);
+>   	 */
+> +	 union {
+> +		struct landlock_object *ptr;
+> +		uintptr_t data;
+> +	 } object;
+> +
+>   	u32 num_layers;
+>   	/**
+>   	 * @layers: Stack of layers, from the latest to the newest, implemented
+> @@ -95,7 +97,7 @@ struct landlock_ruleset {
+>   	 * nodes.  Once a ruleset is tied to a process (i.e. as a domain), this
+>   	 * tree is immutable until @usage reaches zero.
+>   	 */
+> -	struct rb_root root;
+> +	struct rb_root root_inode;
+>   	/**
+>   	 * @hierarchy: Enables hierarchy identification even when a parent
+>   	 * domain vanishes.  This is needed for the ptrace protection.
+> @@ -157,7 +159,9 @@ void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
+>   void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
+> 
+>   int landlock_insert_rule(struct landlock_ruleset *const ruleset,
+> -		struct landlock_object *const object, const u32 access);
+> +			 struct landlock_object *const object_ptr,
+> +			 const uintptr_t object_data,
+> +			 const u32 access, const u16 rule_type);
+> 
+>   struct landlock_ruleset *landlock_merge_ruleset(
+>   		struct landlock_ruleset *const parent,
+> @@ -165,7 +169,7 @@ struct landlock_ruleset *landlock_merge_ruleset(
+> 
+>   const struct landlock_rule *landlock_find_rule(
+>   		const struct landlock_ruleset *const ruleset,
+> -		const struct landlock_object *const object);
+> +		const uintptr_t object_data, const u16 rule_type);
+> 
+>   static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
+>   {
+> --
+> 2.25.1
+> 
