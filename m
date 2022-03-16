@@ -2,445 +2,244 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE37CC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Mar 2022 08:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86992C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Mar 2022 16:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354609AbiCPI2J (ORCPT
+        id S1357512AbiCPQpY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Mar 2022 04:28:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52986 "EHLO
+        Wed, 16 Mar 2022 12:45:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354560AbiCPI14 (ORCPT
+        with ESMTP id S1357477AbiCPQpT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Mar 2022 04:27:56 -0400
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CB063BCF
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 01:26:40 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KJNfQ3CMhzMpy9H;
-        Wed, 16 Mar 2022 09:26:38 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KJNfP5bDKzlhSML;
-        Wed, 16 Mar 2022 09:26:37 +0100 (CET)
-Message-ID: <bc44f11f-0eaa-a5f6-c5dc-1d36570f1be1@digikod.net>
-Date:   Wed, 16 Mar 2022 09:27:15 +0100
+        Wed, 16 Mar 2022 12:45:19 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76F2929C86
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 09:44:04 -0700 (PDT)
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1nUWkM-0003gT-6s; Wed, 16 Mar 2022 17:43:38 +0100
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <afa@pengutronix.de>)
+        id 1nUWkJ-007DX5-Tf; Wed, 16 Mar 2022 17:43:35 +0100
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     kernel@pengutronix.de, Andreas Rammhold <andreas@rammhold.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH v6 1/4] KEYS: trusted: allow use of TEE as backend without TCG_TPM support
+Date:   Wed, 16 Mar 2022 17:43:32 +0100
+Message-Id: <20220316164335.1720255-2-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220316164335.1720255-1-a.fatoum@pengutronix.de>
+References: <20220316164335.1720255-1-a.fatoum@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <20220309134459.6448-4-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH v4 03/15] landlock: landlock_find/insert_rule
- refactoring
-In-Reply-To: <20220309134459.6448-4-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+With recent rework, trusted keys are no longer limited to TPM as trust
+source. The Kconfig symbol is unchanged however leading to a few issues:
 
-On 09/03/2022 14:44, Konstantin Meskhidze wrote:
-> A new object union added to support a socket port
-> rule type. To support it landlock_insert_rule() and
-> landlock_find_rule() were refactored. Now adding
-> or searching a rule in a ruleset depends on a
-> rule_type argument provided in refactored
-> functions mentioned above.
-> 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
-> 
-> Changes since v3:
-> * Split commit.
-> * Refactoring landlock_insert_rule and landlock_find_rule functions.
-> * Rename new_ruleset->root_inode.
-> 
-> ---
->   security/landlock/fs.c      |   5 +-
->   security/landlock/ruleset.c | 108 +++++++++++++++++++++++++-----------
->   security/landlock/ruleset.h |  26 +++++----
->   3 files changed, 94 insertions(+), 45 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 97f5c455f5a7..1497948d754f 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -168,7 +168,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
->   	if (IS_ERR(object))
->   		return PTR_ERR(object);
->   	mutex_lock(&ruleset->lock);
-> -	err = landlock_insert_rule(ruleset, object, access_rights);
-> +	err = landlock_insert_rule(ruleset, object, 0, access_rights, LANDLOCK_RULE_PATH_BENEATH);
+  - TCG_TPM is required, even if only TEE is to be used
+  - Enabling TCG_TPM, but excluding it from available trusted sources
+    is not possible
+  - TEE=m && TRUSTED_KEYS=y will lead to TEE support being silently
+    dropped, which is not the best user experience
 
-For consistency, please use 80 columns everywhere.
+Remedy these issues by introducing two new boolean Kconfig symbols:
+TRUSTED_KEYS_TPM and TRUSTED_KEYS_TEE with the appropriate
+dependencies.
 
->   	mutex_unlock(&ruleset->lock);
->   	/*
->   	 * No need to check for an error because landlock_insert_rule()
-> @@ -195,7 +195,8 @@ static inline u64 unmask_layers(
->   	inode = d_backing_inode(path->dentry);
->   	rcu_read_lock();
->   	rule = landlock_find_rule(domain,
-> -			rcu_dereference(landlock_inode(inode)->object));
-> +			(uintptr_t)rcu_dereference(landlock_inode(inode)->object),
-> +			LANDLOCK_RULE_PATH_BENEATH);
->   	rcu_read_unlock();
->   	if (!rule)
->   		return layer_mask;
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index a6212b752549..971685c48641 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -34,7 +34,7 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
->   		return ERR_PTR(-ENOMEM);
->   	refcount_set(&new_ruleset->usage, 1);
->   	mutex_init(&new_ruleset->lock);
-> -	new_ruleset->root = RB_ROOT;
-> +	new_ruleset->root_inode = RB_ROOT;
->   	new_ruleset->num_layers = num_layers;
->   	/*
->   	 * hierarchy = NULL
-> @@ -81,10 +81,12 @@ static void build_check_rule(void)
->   }
-> 
->   static struct landlock_rule *create_rule(
-> -		struct landlock_object *const object,
-> +		struct landlock_object *const object_ptr,
-> +		const uintptr_t object_data,
->   		const struct landlock_layer (*const layers)[],
->   		const u32 num_layers,
-> -		const struct landlock_layer *const new_layer)
-> +		const struct landlock_layer *const new_layer,
-> +		const u16 rule_type)
->   {
->   	struct landlock_rule *new_rule;
->   	u32 new_num_layers;
-> @@ -103,8 +105,16 @@ static struct landlock_rule *create_rule(
->   	if (!new_rule)
->   		return ERR_PTR(-ENOMEM);
->   	RB_CLEAR_NODE(&new_rule->node);
-> -	landlock_get_object(object);
-> -	new_rule->object = object;
-> +
-> +	switch (rule_type) {
-> +	case LANDLOCK_RULE_PATH_BENEATH:
-> +		landlock_get_object(object_ptr);
-> +		new_rule->object.ptr = object_ptr;
-> +		break;
-> +	default:
-> +		return ERR_PTR(-EINVAL);
+Any new code depending on the TPM trusted key backend in particular
+or symbols exported by it will now need to explicitly state that it
 
-This would lead to memory leak. You should at least add a 
-WARN_ON_ONCE(1) here, but a proper solution would be to remove the use 
-of rule_type and only rely on object_ptr and object_data values. You can 
-also add a WARN_ON_ONCE(object_ptr && object_data).
+  depends on TRUSTED_KEYS && TRUSTED_KEYS_TPM
 
+The latter to ensure the dependency is built and the former to ensure
+it's reachable for module builds. There are no such users yet.
 
-> +	}
-> +
->   	new_rule->num_layers = new_num_layers;
->   	/* Copies the original layer stack. */
->   	memcpy(new_rule->layers, layers,
-> @@ -120,7 +130,7 @@ static void free_rule(struct landlock_rule *const rule)
->   	might_sleep();
->   	if (!rule)
->   		return;
-> -	landlock_put_object(rule->object);
-> +	landlock_put_object(rule->object.ptr);
->   	kfree(rule);
->   }
-> 
-> @@ -156,26 +166,38 @@ static void build_check_ruleset(void)
->    * access rights.
->    */
->   static int insert_rule(struct landlock_ruleset *const ruleset,
-> -		struct landlock_object *const object,
-> +		struct landlock_object *const object_ptr,
-> +		const uintptr_t object_data,
->   		const struct landlock_layer (*const layers)[],
-> -		size_t num_layers)
-> +		size_t num_layers, u16 rule_type)
->   {
->   	struct rb_node **walker_node;
->   	struct rb_node *parent_node = NULL;
->   	struct landlock_rule *new_rule;
-> +	uintptr_t object;
-> +	struct rb_root *root;
-> 
->   	might_sleep();
->   	lockdep_assert_held(&ruleset->lock);
-> -	if (WARN_ON_ONCE(!object || !layers))
-> -		return -ENOENT;
+Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Tested-By: Andreas Rammhold <andreas@rammhold.de>
+Tested-By: Tim Harvey <tharvey@gateworks.com>
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+v5 -> v6:
+  - Rebased on asym_tpm removal
+v4 -> v5:
+  - collected Jarkko's Reviewed-by
+v3 -> v4:
+  - rebased on top of Andreas' regression fix and pulled it back
+    into series
+v2 -> v3:
+  - factored this patch out as a fix for backporting
+v1 -> v2:
+  - Move rest of TPM-related selects from TRUSTED_KEYS to
+    TRUSTED_KEYS_TPM (Sumit)
+  - Remove left-over line in Makefile (Sumit)
+  - added Fixes: tag
+  - adjust commit message to reference the regression reported
+    by Andreas
+  - have ASYMMETRIC_TPM_KEY_SUBTYPE depend on TRUSTED_KEYS_TPM,
+    because it references global symbols that are exported
+    by the trusted key TPM backend.
 
-You can leave this code here.
+[1]: https://lore.kernel.org/linux-integrity/f8285eb0135ba30c9d846cf9dd395d1f5f8b1efc.1624364386.git-series.a.fatoum@pengutronix.de/
+[2]: https://lore.kernel.org/linux-integrity/20210719091335.vwfebcpkf4pag3wm@wrt/T/#t
 
-> -	walker_node = &(ruleset->root.rb_node);
-> +	/* Choose rb_tree structure depending on a rule type */
-> +	switch (rule_type) {
-> +	case LANDLOCK_RULE_PATH_BENEATH:
-> +		if (WARN_ON_ONCE(!object_ptr || !layers))
-> +			return -ENOENT;
-> +		object = (uintptr_t)object_ptr;
-> +		root = &ruleset->root_inode;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	walker_node = &root->rb_node;
->   	while (*walker_node) {
->   		struct landlock_rule *const this = rb_entry(*walker_node,
->   				struct landlock_rule, node);
-> 
-> -		if (this->object != object) {
-> +		if (this->object.data != object) {
->   			parent_node = *walker_node;
-> -			if (this->object < object)
-> +			if (this->object.data < object)
->   				walker_node = &((*walker_node)->rb_right);
->   			else
->   				walker_node = &((*walker_node)->rb_left);
-> @@ -207,11 +229,15 @@ static int insert_rule(struct landlock_ruleset *const ruleset,
->   		 * Intersects access rights when it is a merge between a
->   		 * ruleset and a domain.
->   		 */
-> -		new_rule = create_rule(object, &this->layers, this->num_layers,
-> -				&(*layers)[0]);
-> +		switch (rule_type) {
-> +		case LANDLOCK_RULE_PATH_BENEATH:
+To: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Morris <jmorris@namei.org>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+To: James Bottomley <jejb@linux.ibm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+To: Sumit Garg <sumit.garg@linaro.org>
+To: David Howells <dhowells@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: David Gstir <david@sigma-star.at>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: keyrings@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+---
+ security/keys/Kconfig                     | 18 ++++++--------
+ security/keys/trusted-keys/Kconfig        | 29 +++++++++++++++++++++++
+ security/keys/trusted-keys/Makefile       |  8 +++----
+ security/keys/trusted-keys/trusted_core.c |  4 ++--
+ 4 files changed, 42 insertions(+), 17 deletions(-)
+ create mode 100644 security/keys/trusted-keys/Kconfig
 
-Same here and for the following code, you should replace such 
-switch/case with an if (object_ptr).
+diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+index 969122c7b92f..826cd0904f9a 100644
+--- a/security/keys/Kconfig
++++ b/security/keys/Kconfig
+@@ -70,23 +70,19 @@ config BIG_KEYS
+ 
+ config TRUSTED_KEYS
+ 	tristate "TRUSTED KEYS"
+-	depends on KEYS && TCG_TPM
+-	select CRYPTO
+-	select CRYPTO_HMAC
+-	select CRYPTO_SHA1
+-	select CRYPTO_HASH_INFO
+-	select ASN1_ENCODER
+-	select OID_REGISTRY
+-	select ASN1
++	depends on KEYS
+ 	help
+ 	  This option provides support for creating, sealing, and unsealing
+ 	  keys in the kernel. Trusted keys are random number symmetric keys,
+-	  generated and RSA-sealed by the TPM. The TPM only unseals the keys,
+-	  if the boot PCRs and other criteria match.  Userspace will only ever
+-	  see encrypted blobs.
++	  generated and sealed by a trust source selected at kernel boot-time.
++	  Userspace will only ever see encrypted blobs.
+ 
+ 	  If you are unsure as to whether this is required, answer N.
+ 
++if TRUSTED_KEYS
++source "security/keys/trusted-keys/Kconfig"
++endif
++
+ config ENCRYPTED_KEYS
+ 	tristate "ENCRYPTED KEYS"
+ 	depends on KEYS
+diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
+new file mode 100644
+index 000000000000..fc4abd581abb
+--- /dev/null
++++ b/security/keys/trusted-keys/Kconfig
+@@ -0,0 +1,29 @@
++config TRUSTED_KEYS_TPM
++	bool "TPM-based trusted keys"
++	depends on TCG_TPM >= TRUSTED_KEYS
++	default y
++	select CRYPTO
++	select CRYPTO_HMAC
++	select CRYPTO_SHA1
++	select CRYPTO_HASH_INFO
++	select ASN1_ENCODER
++	select OID_REGISTRY
++	select ASN1
++	help
++	  Enable use of the Trusted Platform Module (TPM) as trusted key
++	  backend. Trusted keys are random number symmetric keys,
++	  which will be generated and RSA-sealed by the TPM.
++	  The TPM only unseals the keys, if the boot PCRs and other
++	  criteria match.
++
++config TRUSTED_KEYS_TEE
++	bool "TEE-based trusted keys"
++	depends on TEE >= TRUSTED_KEYS
++	default y
++	help
++	  Enable use of the Trusted Execution Environment (TEE) as trusted
++	  key backend.
++
++if !TRUSTED_KEYS_TPM && !TRUSTED_KEYS_TEE
++comment "No trust source selected!"
++endif
+diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
+index feb8b6c3cc79..2e2371eae4d5 100644
+--- a/security/keys/trusted-keys/Makefile
++++ b/security/keys/trusted-keys/Makefile
+@@ -5,10 +5,10 @@
+ 
+ obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
+ trusted-y += trusted_core.o
+-trusted-y += trusted_tpm1.o
++trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm1.o
+ 
+ $(obj)/trusted_tpm2.o: $(obj)/tpm2key.asn1.h
+-trusted-y += trusted_tpm2.o
+-trusted-y += tpm2key.asn1.o
++trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm2.o
++trusted-$(CONFIG_TRUSTED_KEYS_TPM) += tpm2key.asn1.o
+ 
+-trusted-$(CONFIG_TEE) += trusted_tee.o
++trusted-$(CONFIG_TRUSTED_KEYS_TEE) += trusted_tee.o
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index 9b9d3ef79cbe..7cdbd16aed30 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
+ MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
+ 
+ static const struct trusted_key_source trusted_key_sources[] = {
+-#if IS_REACHABLE(CONFIG_TCG_TPM)
++#if defined(CONFIG_TRUSTED_KEYS_TPM)
+ 	{ "tpm", &trusted_key_tpm_ops },
+ #endif
+-#if IS_REACHABLE(CONFIG_TEE)
++#if defined(CONFIG_TRUSTED_KEYS_TEE)
+ 	{ "tee", &trusted_key_tee_ops },
+ #endif
+ };
+-- 
+2.30.2
 
-
-> +			new_rule = create_rule(object_ptr, 0, &this->layers, this->num_layers,
-> +					       &(*layers)[0], rule_type);
-> +			break;
-> +		}
->   		if (IS_ERR(new_rule))
->   			return PTR_ERR(new_rule);
-> -		rb_replace_node(&this->node, &new_rule->node, &ruleset->root);
-> +		rb_replace_node(&this->node, &new_rule->node, &ruleset->root_inode);
-
-Use the root variable here. Same for the following code and patches.
-
-
->   		free_rule(this);
->   		return 0;
->   	}
-> @@ -220,11 +246,15 @@ static int insert_rule(struct landlock_ruleset *const ruleset,
->   	build_check_ruleset();
->   	if (ruleset->num_rules >= LANDLOCK_MAX_NUM_RULES)
->   		return -E2BIG;
-> -	new_rule = create_rule(object, layers, num_layers, NULL);
-> +	switch (rule_type) {
-> +	case LANDLOCK_RULE_PATH_BENEATH:
-> +		new_rule = create_rule(object_ptr, 0, layers, num_layers, NULL, rule_type);
-> +		break;
-> +	}
->   	if (IS_ERR(new_rule))
->   		return PTR_ERR(new_rule);
->   	rb_link_node(&new_rule->node, parent_node, walker_node);
-> -	rb_insert_color(&new_rule->node, &ruleset->root);
-> +	rb_insert_color(&new_rule->node, &ruleset->root_inode);
->   	ruleset->num_rules++;
->   	return 0;
->   }
-> @@ -242,7 +272,9 @@ static void build_check_layer(void)
-> 
->   /* @ruleset must be locked by the caller. */
->   int landlock_insert_rule(struct landlock_ruleset *const ruleset,
-> -		struct landlock_object *const object, const u32 access)
-> +		struct landlock_object *const object_ptr,
-> +		const uintptr_t object_data,
-> +		const u32 access, const u16 rule_type)
->   {
->   	struct landlock_layer layers[] = {{
->   		.access = access,
-> @@ -251,7 +283,8 @@ int landlock_insert_rule(struct landlock_ruleset *const ruleset,
->   	}};
-> 
->   	build_check_layer();
-> -	return insert_rule(ruleset, object, &layers, ARRAY_SIZE(layers));
-> +	return insert_rule(ruleset, object_ptr, object_data, &layers,
-> +			   ARRAY_SIZE(layers), rule_type);
->   }
-> 
->   static inline void get_hierarchy(struct landlock_hierarchy *const hierarchy)
-> @@ -297,7 +330,7 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
-> 
->   	/* Merges the @src tree. */
->   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
-> -			&src->root, node) {
-> +			&src->root_inode, node) {
->   		struct landlock_layer layers[] = {{
->   			.level = dst->num_layers,
->   		}};
-> @@ -311,8 +344,8 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
->   			goto out_unlock;
->   		}
->   		layers[0].access = walker_rule->layers[0].access;
-> -		err = insert_rule(dst, walker_rule->object, &layers,
-> -				ARRAY_SIZE(layers));
-> +		err = insert_rule(dst, walker_rule->object.ptr, 0, &layers,
-> +				ARRAY_SIZE(layers), LANDLOCK_RULE_PATH_BENEATH);
->   		if (err)
->   			goto out_unlock;
->   	}
-> @@ -323,6 +356,8 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
->   	return err;
->   }
-> 
-> +
-> +
-
-Useless lines.
-
-
->   static int inherit_ruleset(struct landlock_ruleset *const parent,
->   		struct landlock_ruleset *const child)
->   {
-> @@ -339,9 +374,10 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
-> 
->   	/* Copies the @parent tree. */
->   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
-> -			&parent->root, node) {
-> -		err = insert_rule(child, walker_rule->object,
-> -				&walker_rule->layers, walker_rule->num_layers);
-> +			&parent->root_inode, node) {
-> +		err = insert_rule(child, walker_rule->object.ptr, 0,
-> +				&walker_rule->layers, walker_rule->num_layers,
-> +				LANDLOCK_RULE_PATH_BENEATH);
->   		if (err)
->   			goto out_unlock;
->   	}
-> @@ -372,7 +408,7 @@ static void free_ruleset(struct landlock_ruleset *const ruleset)
->   	struct landlock_rule *freeme, *next;
-> 
->   	might_sleep();
-> -	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root,
-> +	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root_inode,
->   			node)
->   		free_rule(freeme);
->   	put_hierarchy(ruleset->hierarchy);
-> @@ -465,20 +501,28 @@ struct landlock_ruleset *landlock_merge_ruleset(
->    */
->   const struct landlock_rule *landlock_find_rule(
->   		const struct landlock_ruleset *const ruleset,
-> -		const struct landlock_object *const object)
-> +		const uintptr_t object_data, const u16 rule_type)
->   {
->   	const struct rb_node *node;
-> 
-> -	if (!object)
-> +	if (!object_data)
-
-object_data can be 0. You need to add a test with such value.
-
-We need to be sure that this change cannot affect the current FS code.
-
-
->   		return NULL;
-> -	node = ruleset->root.rb_node;
-> +
-> +	switch (rule_type) {
-> +	case LANDLOCK_RULE_PATH_BENEATH:
-> +		node = ruleset->root_inode.rb_node;
-> +		break;
-> +	default:
-> +		return ERR_PTR(-EINVAL);
-
-This is a bug. There is no check for such value. You need to check and 
-update all call sites to catch such errors. Same for all new use of 
-ERR_PTR().
-
-
-> +	}
-> +
->   	while (node) {
->   		struct landlock_rule *this = rb_entry(node,
->   				struct landlock_rule, node);
-> 
-> -		if (this->object == object)
-> +		if (this->object.data == object_data)
->   			return this;
-> -		if (this->object < object)
-> +		if (this->object.data < object_data)
->   			node = node->rb_right;
->   		else
->   			node = node->rb_left;
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index bc87e5f787f7..088b8d95f653 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -50,15 +50,17 @@ struct landlock_rule {
->   	 */
->   	struct rb_node node;
->   	/**
-> -	 * @object: Pointer to identify a kernel object (e.g. an inode).  This
-> -	 * is used as a key for this ruleset element.  This pointer is set once
-> -	 * and never modified.  It always points to an allocated object because
-> -	 * each rule increments the refcount of its object.
-> -	 */
-> -	struct landlock_object *object;
-> -	/**
-> -	 * @num_layers: Number of entries in @layers.
-> +	 * @object: A union to identify either a kernel object (e.g. an inode) or
-> +	 * a socket port object.
-
-…or a raw data value (e.g. a network socket port).
-
-
-> This is used as a key for this ruleset element.
-> +	 * This pointer is set once and never modified. It always points to an
-
-s/This pointer/@object.ptr/
-
-
-> +	 * allocated object because each rule increments the refcount of its
-> +	 * object (for inodes);
->   	 */
-> +	 union {
-> +		struct landlock_object *ptr;
-> +		uintptr_t data;
-> +	 } object;
-> +
->   	u32 num_layers;
->   	/**
->   	 * @layers: Stack of layers, from the latest to the newest, implemented
-> @@ -95,7 +97,7 @@ struct landlock_ruleset {
->   	 * nodes.  Once a ruleset is tied to a process (i.e. as a domain), this
->   	 * tree is immutable until @usage reaches zero.
->   	 */
-> -	struct rb_root root;
-> +	struct rb_root root_inode;
->   	/**
->   	 * @hierarchy: Enables hierarchy identification even when a parent
->   	 * domain vanishes.  This is needed for the ptrace protection.
-> @@ -157,7 +159,9 @@ void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
->   void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
-> 
->   int landlock_insert_rule(struct landlock_ruleset *const ruleset,
-> -		struct landlock_object *const object, const u32 access);
-> +			 struct landlock_object *const object_ptr,
-> +			 const uintptr_t object_data,
-> +			 const u32 access, const u16 rule_type);
-> 
->   struct landlock_ruleset *landlock_merge_ruleset(
->   		struct landlock_ruleset *const parent,
-> @@ -165,7 +169,7 @@ struct landlock_ruleset *landlock_merge_ruleset(
-> 
->   const struct landlock_rule *landlock_find_rule(
->   		const struct landlock_ruleset *const ruleset,
-> -		const struct landlock_object *const object);
-> +		const uintptr_t object_data, const u16 rule_type);
-> 
->   static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
->   {
-> --
-> 2.25.1
-> 
