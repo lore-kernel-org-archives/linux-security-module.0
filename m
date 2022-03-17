@@ -2,114 +2,76 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5955C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Mar 2022 16:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE3DC433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 01:03:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357645AbiCPQqg (ORCPT
+        id S240809AbiCQBEw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Mar 2022 12:46:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56948 "EHLO
+        Wed, 16 Mar 2022 21:04:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357010AbiCPQqd (ORCPT
+        with ESMTP id S233097AbiCQBEv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Mar 2022 12:46:33 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E570031525
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 09:44:33 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1nUWkq-0003wy-K2; Wed, 16 Mar 2022 17:44:08 +0100
-Message-ID: <fc13e731-a419-cad6-02f3-44fb25bee6a1@pengutronix.de>
-Date:   Wed, 16 Mar 2022 17:44:08 +0100
+        Wed, 16 Mar 2022 21:04:51 -0400
+Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA3D1BEBA;
+        Wed, 16 Mar 2022 18:03:34 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0V7OxGLH_1647479011;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0V7OxGLH_1647479011)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 17 Mar 2022 09:03:32 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     john.johansen@canonical.com
+Cc:     jmorris@namei.org, serge@hallyn.com, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] apparmor: Fix some kernel-doc comments
+Date:   Thu, 17 Mar 2022 09:03:30 +0800
+Message-Id: <20220317010330.82929-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v5 4/5] crypto: caam - add in-kernel interface for blob
- generator
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, kernel@pengutronix.de,
-        David Gstir <david@sigma-star.at>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        Richard Weinberger <richard@nod.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20220222195819.2313913-1-a.fatoum@pengutronix.de>
- <20220222195819.2313913-5-a.fatoum@pengutronix.de> <YhZVmBy3/nWbqf+/@iki.fi>
- <a8cb99e0-fe01-2234-9839-fea28ca09f6d@pengutronix.de>
- <79b912b5e9e16f446753270f7b9463fee95ebac7.camel@kernel.org>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <79b912b5e9e16f446753270f7b9463fee95ebac7.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Jarkko,
+Remove some warnings found by running scripts/kernel-doc,
+which is caused by using 'make W=1'.
 
-On 28.02.22 13:14, Jarkko Sakkinen wrote:
-> On Wed, 2022-02-23 at 17:20 +0100, Ahmad Fatoum wrote:
->> On 23.02.22 16:41, Jarkko Sakkinen wrote:
->>> On Tue, Feb 22, 2022 at 08:58:18PM +0100, Ahmad Fatoum wrote:
->>>> +       /* header + (key mod immediate) + 2x pointers + op */
->>>> +       len = 4 + (4 + ALIGN(keymod_len, 4)) + 2*(4 + 4 + CAAM_PTR_SZ_MAX) + 4;
->>>
->>> Nit: the amount of magic numbers is overwhelming here. I neither understand
->>> the statement nor how that comment should help me to understand it.
->>
->> header              =  4
->> (key mod immediate) = (4 + ALIGN(keymod_len, 4))
->> 2x pointer          =  2 * (4 + 4 + CAAM_PTR_SZ_MAX)
->> op                  =  4
-> 
-> Please create a struct with the associated fields instead and then
-> it is just sizeof that.
+security/apparmor/domain.c:137: warning: Function parameter or member
+'state' not described in 'label_compound_match'
+security/apparmor/domain.c:137: warning: Excess function parameter
+'start' description in 'label_compound_match'
+security/apparmor/domain.c:1294: warning: Excess function parameter
+'onexec' description in 'aa_change_profile'
 
-The CAAM descriptor construction code writes the current length
-to the first word and then macros are used to append fields to
-the descriptor while incrementing the length. The key modifier
-is in the middle of the descriptor, so this isn't representable
-as a C struct without using VLAs, which are banned in the kernel.
-Even if it worked, it's arguably not good style to define a struct
-just to compute the size and then cast it to a u32 * to use the
-same macros all other CAAM code uses.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ security/apparmor/domain.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-
-I thought this over a bit and figured that we don't really need to
-compute the length dynamically as it's at most 44 or 52 bytes
-(depending on DMA address width) anyway, so we can just use a fixed
-value. I still keep the addition, because I believe there is a value
-in seeing how we arrive at the 44 or 52 bytes instead of just hardcoding
-it.
-
-Just sent out v6 with these changes. Let me know what you think.
-
-Cheers,
-Ahmad
-
-
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index a29e69d2c300..d71023f5c9c4 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -119,7 +119,7 @@ static inline unsigned int match_component(struct aa_profile *profile,
+  * @profile: profile to find perms for
+  * @label: label to check access permissions for
+  * @stack: whether this is a stacking request
+- * @start: state to start match in
++ * @state: state to start match in
+  * @subns: whether to do permission checks on components in a subns
+  * @request: permissions to request
+  * @perms: perms struct to set
+@@ -1279,7 +1279,6 @@ static int change_profile_perms_wrapper(const char *op, const char *name,
+ /**
+  * aa_change_profile - perform a one-way profile transition
+  * @fqname: name of profile may include namespace (NOT NULL)
+- * @onexec: whether this transition is to take place immediately or at exec
+  * @flags: flags affecting change behavior
+  *
+  * Change to new profile @name.  Unlike with hats, there is no way
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.20.1.7.g153144c
+
