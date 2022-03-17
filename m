@@ -2,57 +2,58 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C79C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 01:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA58DC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 01:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356017AbiCQB3A (ORCPT
+        id S1358310AbiCQB3J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Mar 2022 21:29:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41084 "EHLO
+        Wed, 16 Mar 2022 21:29:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358313AbiCQB2x (ORCPT
+        with ESMTP id S1358403AbiCQB26 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Mar 2022 21:28:53 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 862281EC45
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:27:07 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id w25so4787192edi.11
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:27:07 -0700 (PDT)
+        Wed, 16 Mar 2022 21:28:58 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 392D31F631
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:27:29 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id y22so4842576eds.2
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:27:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=IwLQkBh4p0/MlSYiHpWT3LVO0kaAxEAmEy894o/lBAk=;
-        b=QdGLAG/PyeyxYlxilJap5GzmvukNm9ZyaNle+oQe0mlud/4tIh33bGgDrnbfokq8TF
-         F9vCY5oAoVAw27hbBDaVi10giHe9AaBACGopJfFZEWxXZ+JV5uCfLUV+/ThB1ed7KCQL
-         BtJ6KCb32sqFuKw4m38aGiOIG0cIFsZfscm+r+ln3NZbj3+lJ8HF/Lr/aHFretDA3iCo
-         SbKdB/Wvso3rIipXfznYMJXlw0iee767ymYRJOQJPJ9RmCtJp3KU9hazCS33LSbJzppD
-         0qpNvkPu8cAWp2XTC4m9y1SkYzQnGBm4ifo+EGKF58wtYT0q+BmjeKr/VDTu4EPe+M8x
-         HuvQ==
+        bh=LlTH+G09rcVN0vQqtM5Msv7WROSZnwcaeBZzTdA/4gI=;
+        b=Gta4TIZXLILirF7gfnrO7YgWEjB3SLjF0xn5PYqWfkcU3f2rCNOTAwttJ5RaOUYcEN
+         IL/KnKuzVML6tmQ5vNx6Ap7s9sIoztvAx0gKaohJj92FgLpdit9Te1NW94nXasoZy5Fb
+         Qt84EU51en3oFiIXYSC+LJ7o492gVsRWdYkYBopUBjvX5GKfniK5s/L+OJvs3ryFORot
+         iXYxbSOi+POCJUOGGgHqeR5CFkYkdDqODzhAKpdLp8MIIOb7aRdnaFMMtsVtHoWABfka
+         4LyicoGjRjJle5hDeV8yCwzQtUfAGLoC+FEpsveRZo15DyCtpJqy1/TCHChSDv3/XpNE
+         /R/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IwLQkBh4p0/MlSYiHpWT3LVO0kaAxEAmEy894o/lBAk=;
-        b=kOeB9tz8bit2Z0+NG4EL6IameeYCck/R8MUeNoUQXlwYH1GY65ueWLHLIqF6qigl6U
-         mgAkeMxyP2RtaIgTEGIUDQPYldL/fFRAZXZ09RV7bf9h7bo4pjT8jHubAxxOBVCuftVX
-         OGm737ZaNl8vqk1Qgkan+F8RjznsfmxkG1lGp9/FuNX3TfczL/WocpMAoUy5sfECRN70
-         1hdALSbzsJMuQQqsVxOw82chSGSDtNeBjUtMj9czjBLekqV2M6XE2ORNV6jFVIHbcheK
-         65Hmu+Ll9H1vcH1WobdkkSifedoRNuXrLH3zSba+OLkk0quLJAj9wToxmLeTDNkuIGm0
-         4ghQ==
-X-Gm-Message-State: AOAM533vzcPROt/jdxgNLEybmtN9Fv7mxTvR5pqZUw+shSdOU2rhAIk9
-        XKw+nhDYE0/RVUu3N8XC5P36sLaupRXw1ZfX8w6S
-X-Google-Smtp-Source: ABdhPJwngiMDrHlrSoWnA729RQinXoUDLUX6Mk3PvLSB5d+1UKewSWcwwlpQVbmesK3RoQZPw/mnWOtGWK0iz+LG5iM=
-X-Received: by 2002:a05:6402:2552:b0:416:a745:9626 with SMTP id
- l18-20020a056402255200b00416a7459626mr2022463edb.405.1647480426068; Wed, 16
- Mar 2022 18:27:06 -0700 (PDT)
+        bh=LlTH+G09rcVN0vQqtM5Msv7WROSZnwcaeBZzTdA/4gI=;
+        b=ZRS99DsYTMFx0v1Ml2B9jFxp9sacK14mx51AkKiq8iqiVISnshAk55sDpTrFmQWAy1
+         XIfRcc7FHxT0vPvtLnlZdjqYhM1oictOUuWNQphD0Y9YukCQG+Z+LXo7uu00TFrzL9Sw
+         h0e5rC0QVc+GJrGUKEJl7nUz7g+DeXnrC02mvk0iNYxJsN/jrXE1epBp/4flCFqnSY8T
+         Ecn4RUns2bSl7EleoW0f2aNDeAkBR72/XHmGh5A/CT/Is3jbsXktAfuVdtHhVic0t5IX
+         A+rQyhBs/xmrHo6vNQK3bktHNcqnfti1WNa70bwHBLA4lW9MUxzbKp7ETQ5LcJuZ0e9q
+         Lpbw==
+X-Gm-Message-State: AOAM531hdxO2+oILvpXG9WcGEwehLAz4NJuc4750qNEwffpUtjsSUmjg
+        sQTSQvMDGNoIpYWPCATOiDyfvamBH9D9dBPOapMt
+X-Google-Smtp-Source: ABdhPJyQf6Sx+VLp9Inh3suxXELVVTMqKA2vmRoPnOq/6Us7RHLzOl0j0BC6mxnVRiSybuRb3t6MQT+Nyca7bV1qfBA=
+X-Received: by 2002:a05:6402:27ca:b0:418:93fe:da71 with SMTP id
+ c10-20020a05640227ca00b0041893feda71mr1941793ede.409.1647480447687; Wed, 16
+ Mar 2022 18:27:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-9-mic@digikod.net>
-In-Reply-To: <20220221212522.320243-9-mic@digikod.net>
+References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-12-mic@digikod.net>
+In-Reply-To: <20220221212522.320243-12-mic@digikod.net>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 16 Mar 2022 21:26:55 -0400
-Message-ID: <CAHC9VhRwOfCN3BWVguiM7smVg7Rs9SrQsBZP-wwtFQ-b=gidUQ@mail.gmail.com>
-Subject: Re: [PATCH v1 08/11] samples/landlock: Add support for file reparenting
+Date:   Wed, 16 Mar 2022 21:27:16 -0400
+Message-ID: <CAHC9VhQM99=OVFBcpO72QM-9NSk5dBXy3_jVrwmG304ugjzSdQ@mail.gmail.com>
+Subject: Re: [PATCH v1 11/11] landlock: Add design choices documentation for
+ filesystem access rights
 To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -74,18 +75,13 @@ wrote:
 >
 > From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
 >
-> Add LANDLOCK_ACCESS_FS_REFER to the "roughly write" access rights and
-> leverage the Landlock ABI version to only try to enforce it if it is
-> supported by the running kernel.
->
 > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20220221212522.320243-9-mic@digikod.net
+> Link: https://lore.kernel.org/r/20220221212522.320243-12-mic@digikod.net
 > ---
->  samples/landlock/sandboxer.c | 37 +++++++++++++++++++++++++-----------
->  1 file changed, 26 insertions(+), 11 deletions(-)
+>  Documentation/security/landlock.rst | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
 
 Reviewed-by: Paul Moore <paul@paul-moore.com>
-
 
 --
 paul-moore.com
