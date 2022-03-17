@@ -2,57 +2,57 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B1C4C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 01:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09365C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 01:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358328AbiCQB2S (ORCPT
+        id S1358307AbiCQB2g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Mar 2022 21:28:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39752 "EHLO
+        Wed, 16 Mar 2022 21:28:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358361AbiCQB2A (ORCPT
+        with ESMTP id S1358316AbiCQB2S (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Mar 2022 21:28:00 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 330B21DA7C
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:26:44 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id yy13so7757057ejb.2
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:26:44 -0700 (PDT)
+        Wed, 16 Mar 2022 21:28:18 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C971E3F2
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:27:01 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id y22so4841896eds.2
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:27:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=ZR/DEFbOpOOseNzxrxorA6yZUP/TbtoQM/q0IPLkfmI=;
-        b=Vu8cOWSSdPTLVcRWohewxdmLRQxVqX5G7SUHDcA67mA7+SrWHr8ow4ThRm5LEstvWw
-         IEgjSEd40DMQ1+IuUFwzBi31HKFwIIugnArAA56pUoL/lCwAoWOIeQdo6+GfgQuQGcJF
-         zUeNw3fttzU1sW03isEVvfnjfCJy6OTQ0xLKtSqR3SfSl7cvQGyMXzT4fc1DtcxKRKAk
-         wnunvG9W4fBvoDor3vM9sCzsDHsVnD/Mp4meKn1Dwcpa0epLxP7p5elp53ZFcjAMOHKQ
-         06WgrKjRIumAzcq80kxuCUU5aCuCa2wOzrqSREeWqIbzVytfZAQ3MqCGsc2b1I5woAMq
-         pYmQ==
+        bh=QAkNyjcPXo50xRXiBUT4G4BKOrlhYx68SMmwnSYQIUg=;
+        b=Dop/+ShLFtKuMTYbs0avRrPNmZRZ40QC2SmtXTlmz04dxVtPNxDxhRGFudiOqvIwm6
+         R3gAzzL0hkk0N5TzLd1ljQC4uUPJHK0nhv+zbOKgZIDgVx1kXaef9XYL9QPla1N9G731
+         ocDTST9XL0pebpbiSYt/1dDgRysC5RztIUJWh+0aXxxqJIPABloKVAYzFybdFrwrTyjz
+         vGEJYN2L/NG4r7tyUsZZ6112tryS+UvP24z2ZtXWM47bVUCKeDJVPwnuPxaFn6bEfoz6
+         SvNE6k19AGlgA/W62HboNA6G6DKj8snf1OE+8tuklUDC+vd3zXNP/t2r0piTSJb7MR18
+         c+Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZR/DEFbOpOOseNzxrxorA6yZUP/TbtoQM/q0IPLkfmI=;
-        b=Ajs4IDy96WcSYd5zqRdl328FrwcNfpBtE3Esm3wNcJgGIC11mUFvDgtOh9CnUldIko
-         HXHGDU30gRUFs6ue2ejfukwqZJ3Rhv7U6GJUaouK82V6yW8PswR+VkAX8vssamDomMx5
-         9H4y5XHE7qyE2dCdOKa7Gtls3ITG1kE1k32L9Dsn4Tl5qQmexywbJ2mck0uzVnLSw1+X
-         BW+bETuvteTOak7c3oqn0tnb+5PuRZU3/fnHm9HyKjTIkCezYsdYvscCr/luYUGw8DFU
-         Bcnbd0K1PzmPEe9PqhSyxPOWI/kql1duuBFn4jBt2CSBbbZDBRNH0c72YcFbyPNjDeLF
-         gm0A==
-X-Gm-Message-State: AOAM530SxJZFywivzzavFxnSP2GIwtyEA6veqbNjVnFIoekLZ+GF+FkW
-        LdXbVMitSIGFj5FETU/ZDTMCKx9TTutNSK7uVtrk
-X-Google-Smtp-Source: ABdhPJxvlfdxiQVIVkvN+TVLMxt53sFBlWvNw3SKNONngtxOqYyCYTtz57lOjM+6whOanqUeaNe1D0+4YA97GtEkBVY=
-X-Received: by 2002:a17:907:1b09:b0:6d8:faa8:4a06 with SMTP id
- mp9-20020a1709071b0900b006d8faa84a06mr2152723ejc.701.1647480402665; Wed, 16
- Mar 2022 18:26:42 -0700 (PDT)
+        bh=QAkNyjcPXo50xRXiBUT4G4BKOrlhYx68SMmwnSYQIUg=;
+        b=P00rpg6LTeyW2TwMYWNZcdJwogvivCnxaFpYQDy2cfZ5aYVHhG2hZdyNeX3/Sm9Wh3
+         8HfRwwpaEMCHURAF6qYQSkeEiM5ekVp0zbuxk/l9+R3CTanAR0UCWs9bEKagwHV+xRZW
+         xPl2C7RqTFXjXrgISpekMyl0ZEQMq19OQ598eJagTBETrJP57vH83yv/dwwEelPdU/cw
+         mwKIyhLMSJN9J6KOHpAlIFtJyqS1FQKM8ypcp4VGDL/BjKmyVRmf1uu0pq2mQ1Zn3c0Y
+         0Wc1y5cDEp4ii5biX6DsrVosBQr9jxy9rzDAljSMJIf+0IBHsqUQW8rXWOfTvvvuo1GI
+         Cghg==
+X-Gm-Message-State: AOAM533kY1ax5HudixHJNNh8aXZ2NP5AEKj+JrffyBWtb60vJw8Lcbus
+        337o/5L1aqw3G8bzfXks8TGdtcqq5+s/IPEYrhMp
+X-Google-Smtp-Source: ABdhPJwvcSOYeRU2KF1gD7ArNsblZMaIVYldliadYwwMoupQSk1zheXGCuBymGxEsIlS1e5x/4T0yCrEKAfYQiikRZk=
+X-Received: by 2002:a05:6402:d2:b0:413:2e50:d6fd with SMTP id
+ i18-20020a05640200d200b004132e50d6fdmr1997123edu.171.1647480419862; Wed, 16
+ Mar 2022 18:26:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-5-mic@digikod.net>
-In-Reply-To: <20220221212522.320243-5-mic@digikod.net>
+References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-7-mic@digikod.net>
+In-Reply-To: <20220221212522.320243-7-mic@digikod.net>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 16 Mar 2022 21:26:31 -0400
-Message-ID: <CAHC9VhT7+Xm+GCg5BqYQgauKOwRxsxfS5WCj+-HW2w6VpaF=6g@mail.gmail.com>
-Subject: Re: [PATCH v1 04/11] landlock: Fix same-layer rule unions
+Date:   Wed, 16 Mar 2022 21:26:48 -0400
+Message-ID: <CAHC9VhSFXN39EuVG5aVK0jtgCOmzM2FSCoVa2Xrs=oJQ4AkWMQ@mail.gmail.com>
+Subject: Re: [PATCH v1 06/11] landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER
 To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -74,212 +74,425 @@ wrote:
 >
 > From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
 >
-> The original behavior was to check if the full set of requested accesses
-> was allowed by at least a rule of every relevant layer.  This didn't
-> take into account requests for multiple accesses and same-layer rules
-> allowing the union of these accesses in a complementary way.  As a
-> result, multiple accesses requested on a file hierarchy matching rules
-> that, together, allowed these accesses, but without a unique rule
-> allowing all of them, was illegitimately denied.  This case should be
-> rare in practice and it can only be triggered by the path_rename or
-> file_open hook implementations.
+> Add a new LANDLOCK_ACCESS_FS_REFER access right to enable policy writers
+> to allow sandboxed processes to link and rename files from and to a
+> specific set of file hierarchies.  This access right should be composed
+> with LANDLOCK_ACCESS_FS_MAKE_* for the destination of a link or rename,
+> and with LANDLOCK_ACCESS_FS_REMOVE_* for a source of a rename.  This
+> lift a Landlock limitation that always denied changing the parent of an
+> inode.
 >
-> For instance, if, for the same layer, a rule allows execution
-> beneath /a/b and another rule allows read beneath /a, requesting access
-> to read and execute at the same time for /a/b should be allowed for this
-> layer.
+> Renaming or linking to the same directory is still always allowed,
+> whatever LANDLOCK_ACCESS_FS_REFER is used or not, because it is not
+> considered a threat to user data.
 >
-> This was an inconsistency because the union of same-layer rule accesses
-> was already allowed if requested once at a time anyway.
+> However, creating multiple links or renaming to a different parent
+> directory may lead to privilege escalations if not handled properly.
+> Indeed, we must be sure that the source doesn't gain more privileges by
+> being accessible from the destination.  This is handled by making sure
+> that the source hierarchy (including the referenced file or directory
+> itself) restricts at least as much the destination hierarchy.  If it is
+> not the case, an EXDEV error is returned, making it potentially possible
+> for user space to copy the file hierarchy instead of moving or linking
+> it.
 >
-> This fix changes the way allowed accesses are gathered over a path walk.
-> To take into account all these rule accesses, we store in a matrix all
-> layer granting the set of requested accesses, according to the handled
-> accesses.  To avoid heap allocation, we use an array on the stack which
-> is 2*13 bytes.  A following commit bringing the LANDLOCK_ACCESS_FS_REFER
-> access right will increase this size to reach 84 bytes (2*14*3) in case
-> of link or rename actions.
+> Instead of creating different access rights for the source and the
+> destination, we choose to make it simple and consistent for users.
+> Indeed, considering the previous constraint, it would be weird to
+> require such destination access right to be also granted to the source
+> (to make it a superset).
 >
-> Add a new layout1.layer_rule_unions test to check that accesses from
-> different rules pertaining to the same layer are ORed in a file
-> hierarchy.  Also test that it is not the case for rules from different
-> layers.
+> See the provided documentation for additional details.
+>
+> New tests are provided with a following commit.
 >
 > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20220221212522.320243-5-mic@digikod.net
+> Link: https://lore.kernel.org/r/20220221212522.320243-7-mic@digikod.net
 > ---
->  security/landlock/fs.c                     |  77 ++++++++++-----
->  security/landlock/ruleset.h                |   2 +
->  tools/testing/selftests/landlock/fs_test.c | 107 +++++++++++++++++++++
->  3 files changed, 160 insertions(+), 26 deletions(-)
->
+>  include/uapi/linux/landlock.h                |  27 +-
+>  security/landlock/fs.c                       | 550 ++++++++++++++++---
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/syscalls.c                 |   2 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |   3 +-
+>  6 files changed, 516 insertions(+), 70 deletions(-)
+
+...
+
 > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 0bcb27f2360a..9662f9fb3cd0 100644
+> index 3886f9ad1a60..c7c7ce4e7cd5 100644
 > --- a/security/landlock/fs.c
 > +++ b/security/landlock/fs.c
-> @@ -204,45 +204,66 @@ static inline const struct landlock_rule *find_rule=
-(
->         return rule;
+> @@ -4,6 +4,7 @@
+>   *
+>   * Copyright =C2=A9 2016-2020 Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+>   * Copyright =C2=A9 2018-2020 ANSSI
+> + * Copyright =C2=A9 2021-2022 Microsoft Corporation
+>   */
+>
+>  #include <linux/atomic.h>
+> @@ -269,16 +270,188 @@ static inline bool is_nouser_or_private(const stru=
+ct dentry *dentry)
+>                          unlikely(IS_PRIVATE(d_backing_inode(dentry))));
 >  }
 >
-> -static inline layer_mask_t unmask_layers(
-> -               const struct landlock_rule *const rule,
-> -               const access_mask_t access_request, layer_mask_t layer_ma=
-sk)
-> +/*
-> + * @layer_masks is read and may be updated according to the access reque=
-st and
-> + * the matching rule.
-> + *
-> + * Returns true if the request is allowed (i.e. relevant layer masks for=
- the
-> + * request are empty).
-> + */
-> +static inline bool unmask_layers(const struct landlock_rule *const rule,
+> -static int check_access_path(const struct landlock_ruleset *const domain=
+,
+> -               const struct path *const path,
+> +static inline access_mask_t get_handled_accesses(
+> +               const struct landlock_ruleset *const domain)
+> +{
+> +       access_mask_t access_dom =3D 0;
+> +       unsigned long access_bit;
+
+Would it be better to declare @access_bit as an access_mask_t type?
+You're not using any macros like for_each_set_bit() in this function
+so I believe it should be safe.
+
+> +       for (access_bit =3D 0; access_bit < LANDLOCK_NUM_ACCESS_FS;
+> +                       access_bit++) {
+> +               size_t layer_level;
+
+Considering the number of layers has dropped down to 16, it seems like
+a normal unsigned int might be big enough for @layer_level :)
+
+> +               for (layer_level =3D 0; layer_level < domain->num_layers;
+> +                               layer_level++) {
+> +                       if (domain->fs_access_masks[layer_level] &
+> +                                       BIT_ULL(access_bit)) {
+> +                               access_dom |=3D BIT_ULL(access_bit);
+> +                               break;
+> +                       }
+> +               }
+> +       }
+> +       return access_dom;
+> +}
+> +
+> +static inline access_mask_t init_layer_masks(
+> +               const struct landlock_ruleset *const domain,
 > +               const access_mask_t access_request,
 > +               layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]=
 )
->  {
->         size_t layer_level;
->
-> +       if (!access_request || !layer_masks)
-> +               return true;
->         if (!rule)
-> -               return layer_mask;
-> +               return false;
->
->         /*
->          * An access is granted if, for each policy layer, at least one r=
-ule
-> -        * encountered on the pathwalk grants the requested accesses,
-> -        * regardless of their position in the layer stack.  We must then=
- check
-> +        * encountered on the pathwalk grants the requested access,
-> +        * regardless of its position in the layer stack.  We must then c=
-heck
->          * the remaining layers for each inode, from the first added laye=
-r to
-> -        * the last one.
-> +        * the last one.  When there is multiple requested accesses, for =
-each
-> +        * policy layer, the full set of requested accesses may not be gr=
-anted
-> +        * by only one rule, but by the union (binary OR) of multiple rul=
-es.
-> +        * E.g. /a/b <execute> + /a <read> =3D /a/b <execute + read>
->          */
->         for (layer_level =3D 0; layer_level < rule->num_layers; layer_lev=
-el++) {
->                 const struct landlock_layer *const layer =3D
->                         &rule->layers[layer_level];
->                 const layer_mask_t layer_bit =3D BIT_ULL(layer->level - 1=
-);
-> +               const unsigned long access_req =3D access_request;
-> +               unsigned long access_bit;
-> +               bool is_empty;
->
-> -               /* Checks that the layer grants access to the full reques=
-t. */
-> -               if ((layer->access & access_request) =3D=3D access_reques=
-t) {
-> -                       layer_mask &=3D ~layer_bit;
-> -
-> -                       if (layer_mask =3D=3D 0)
-> -                               return layer_mask;
-> +               /*
-> +                * Records in @layer_masks which layer grants access to e=
-ach
-> +                * requested access.
-> +                */
-> +               is_empty =3D true;
-> +               for_each_set_bit(access_bit, &access_req,
-> +                               ARRAY_SIZE(*layer_masks)) {
-> +                       if (layer->access & BIT_ULL(access_bit))
-> +                               (*layer_masks)[access_bit] &=3D ~layer_bi=
-t;
-> +                       is_empty =3D is_empty && !(*layer_masks)[access_b=
-it];
-
-From what I can see the only reason not to return immediately once
-@is_empty is true is the need to update @layer_masks.  However, the
-only caller that I can see (up to patch 4/11) is check_access_path()
-which thanks to this patch no longer needs to reference @layer_masks
-after the call to unmask_layers() returns true.  Assuming that to be
-the case, is there a reason we can't return immediately after finding
-@is_empty true, or am I missing something?
-
-
->                 }
-> +               if (is_empty)
-> +                       return true;
->         }
-> -       return layer_mask;
-> +       return false;
->  }
->
->  static int check_access_path(const struct landlock_ruleset *const domain=
-,
->                 const struct path *const path,
->                 const access_mask_t access_request)
->  {
-> -       bool allowed =3D false;
-> +       layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
-> +       bool allowed =3D false, has_access =3D false;
->         struct path walker_path;
-> -       layer_mask_t layer_mask;
->         size_t i;
->
->         if (!access_request)
-> @@ -262,13 +283,20 @@ static int check_access_path(const struct landlock_=
-ruleset *const domain,
->                 return -EACCES;
->
->         /* Saves all layers handling a subset of requested accesses. */
-> -       layer_mask =3D 0;
->         for (i =3D 0; i < domain->num_layers; i++) {
-> -               if (domain->fs_access_masks[i] & access_request)
-> -                       layer_mask |=3D BIT_ULL(i);
+> +{
+> +       access_mask_t handled_accesses =3D 0;
+> +       size_t layer_level;
+> +
+> +       memset(layer_masks, 0, sizeof(*layer_masks));
+> +       if (WARN_ON_ONCE(!access_request))
+> +               return 0;
+> +
+> +       /* Saves all handled accesses per layer. */
+> +       for (layer_level =3D 0; layer_level < domain->num_layers;
+> +                       layer_level++) {
 > +               const unsigned long access_req =3D access_request;
 > +               unsigned long access_bit;
 > +
 > +               for_each_set_bit(access_bit, &access_req,
-> +                               ARRAY_SIZE(layer_masks)) {
-> +                       if (domain->fs_access_masks[i] & BIT_ULL(access_b=
-it)) {
-> +                               layer_masks[access_bit] |=3D BIT_ULL(i);
-> +                               has_access =3D true;
+> +                               ARRAY_SIZE(*layer_masks)) {
+> +                       if (domain->fs_access_masks[layer_level] &
+> +                                       BIT_ULL(access_bit)) {
+> +                               (*layer_masks)[access_bit] |=3D
+> +                                       BIT_ULL(layer_level);
+> +                               handled_accesses |=3D BIT_ULL(access_bit)=
+;
 > +                       }
 > +               }
->         }
->         /* An access request not handled by the domain is allowed. */
-> -       if (layer_mask =3D=3D 0)
-> +       if (!has_access)
+> +       }
+> +       return handled_accesses;
+> +}
+> +
+> +/*
+> + * Check that a destination file hierarchy has more restrictions than a =
+source
+> + * file hierarchy.  This is only used for link and rename actions.
+> + */
+> +static inline bool is_superset(bool child_is_directory,
+> +               const layer_mask_t (*const
+> +                       layer_masks_dst_parent)[LANDLOCK_NUM_ACCESS_FS],
+> +               const layer_mask_t (*const
+> +                       layer_masks_src_parent)[LANDLOCK_NUM_ACCESS_FS],
+> +               const layer_mask_t (*const
+> +                       layer_masks_child)[LANDLOCK_NUM_ACCESS_FS])
+> +{
+> +       unsigned long access_bit;
+> +
+> +       for (access_bit =3D 0; access_bit < ARRAY_SIZE(*layer_masks_dst_p=
+arent);
+> +                       access_bit++) {
+> +               /* Ignores accesses that only make sense for directories.=
+ */
+> +               if (!child_is_directory && !(BIT_ULL(access_bit) & ACCESS=
+_FILE))
+> +                       continue;
+> +
+> +               /*
+> +                * Checks if the destination restrictions are a superset =
+of the
+> +                * source ones (i.e. inherited access rights without chil=
+d
+> +                * exceptions).
+> +                */
+> +               if ((((*layer_masks_src_parent)[access_bit] & (*layer_mas=
+ks_child)[access_bit]) |
+> +                                       (*layer_masks_dst_parent)[access_=
+bit]) !=3D
+> +                               (*layer_masks_dst_parent)[access_bit])
+> +                       return false;
+> +       }
+> +       return true;
+> +}
+> +
+> +/*
+> + * Removes @layer_masks accesses that are not requested.
+> + *
+> + * Returns true if the request is allowed, false otherwise.
+> + */
+> +static inline bool scope_to_request(const access_mask_t access_request,
+> +               layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]=
+)
+> +{
+> +       const unsigned long access_req =3D access_request;
+> +       unsigned long access_bit;
+> +
+> +       if (WARN_ON_ONCE(!layer_masks))
+> +               return true;
+> +
+> +       for_each_clear_bit(access_bit, &access_req, ARRAY_SIZE(*layer_mas=
+ks))
+> +               (*layer_masks)[access_bit] =3D 0;
+> +       return !memchr_inv(layer_masks, 0, sizeof(*layer_masks));
+> +}
+> +
+> +/*
+> + * Returns true if there is at least one access right different than
+> + * LANDLOCK_ACCESS_FS_REFER.
+> + */
+> +static inline bool is_eacces(
+> +               const layer_mask_t (*const
+> +                       layer_masks)[LANDLOCK_NUM_ACCESS_FS],
+>                 const access_mask_t access_request)
+>  {
+
+Granted, I don't have as deep of an understanding of Landlock as you
+do, but the function name "is_eacces" seems a little odd given the
+nature of the function.  Perhaps "is_fsrefer"?
+
+> -       layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
+> -       bool allowed =3D false, has_access =3D false;
+> +       unsigned long access_bit;
+> +       /* LANDLOCK_ACCESS_FS_REFER alone must return -EXDEV. */
+> +       const unsigned long access_check =3D access_request &
+> +               ~LANDLOCK_ACCESS_FS_REFER;
+> +
+> +       if (!layer_masks)
+> +               return false;
+> +
+> +       for_each_set_bit(access_bit, &access_check, ARRAY_SIZE(*layer_mas=
+ks)) {
+> +               if ((*layer_masks)[access_bit])
+> +                       return true;
+> +       }
+
+Is calling for_each_set_bit() overkill here?  @access_check should
+only ever have at most one bit set (LANDLOCK_ACCESS_FS_REFER), yes?
+
+> +       return false;
+> +}
+> +
+> +/**
+> + * check_access_path_dual - Check a source and a destination accesses
+> + *
+> + * @domain: Domain to check against.
+> + * @path: File hierarchy to walk through.
+> + * @child_is_directory: Must be set to true if the (original) leaf is a
+> + *     directory, false otherwise.
+> + * @access_request_dst_parent: Accesses to check, once @layer_masks_dst_=
+parent
+> + *     is equal to @layer_masks_src_parent (if any).
+> + * @layer_masks_dst_parent: Pointer to a matrix of layer masks per acces=
+s
+> + *     masks, identifying the layers that forbid a specific access.  Bit=
+s from
+> + *     this matrix can be unset according to the @path walk.  An empty m=
+atrix
+> + *     means that @domain allows all possible Landlock accesses (i.e. no=
+t only
+> + *     those identified by @access_request_dst_parent).  This matrix can
+> + *     initially refer to domain layer masks and, when the accesses for =
+the
+> + *     destination and source are the same, to request layer masks.
+> + * @access_request_src_parent: Similar to @access_request_dst_parent but=
+ for an
+> + *     initial source path request.  Only taken into account if
+> + *     @layer_masks_src_parent is not NULL.
+> + * @layer_masks_src_parent: Similar to @layer_masks_dst_parent but for a=
+n
+> + *     initial source path walk.  This can be NULL if only dealing with =
+a
+> + *     destination access request (i.e. not a rename nor a link action).
+> + * @layer_masks_child: Similar to @layer_masks_src_parent but only for t=
+he
+> + *     linked or renamed inode (without hierarchy).  This is only used i=
+f
+> + *     @layer_masks_src_parent is not NULL.
+> + *
+> + * This helper first checks that the destination has a superset of restr=
+ictions
+> + * compared to the source (if any) for a common path.  It then checks th=
+at the
+> + * collected accesses and the remaining ones are enough to allow the req=
+uest.
+> + *
+> + * Returns:
+> + * - 0 if the access request is granted;
+> + * - -EACCES if it is denied because of access right other than
+> + *   LANDLOCK_ACCESS_FS_REFER;
+> + * - -EXDEV if the renaming or linking would be a privileged escalation
+> + *   (according to each layered policies), or if LANDLOCK_ACCESS_FS_REFE=
+R is
+> + *   not allowed by the source or the destination.
+> + */
+> +static int check_access_path_dual(const struct landlock_ruleset *const d=
+omain,
+> +               const struct path *const path,
+> +               bool child_is_directory,
+> +               const access_mask_t access_request_dst_parent,
+> +               layer_mask_t (*const
+> +                       layer_masks_dst_parent)[LANDLOCK_NUM_ACCESS_FS],
+> +               const access_mask_t access_request_src_parent,
+> +               layer_mask_t (*layer_masks_src_parent)[LANDLOCK_NUM_ACCES=
+S_FS],
+> +               layer_mask_t (*layer_masks_child)[LANDLOCK_NUM_ACCESS_FS]=
+)
+> +{
+> +       bool allowed_dst_parent =3D false, allowed_src_parent =3D false, =
+is_dom_check;
+>         struct path walker_path;
+> -       size_t i;
+> +       access_mask_t access_masked_dst_parent, access_masked_src_parent;
+>
+> -       if (!access_request)
+> +       if (!access_request_dst_parent && !access_request_src_parent)
 >                 return 0;
+>         if (WARN_ON_ONCE(!domain || !path))
+>                 return 0;
+> @@ -287,22 +460,20 @@ static int check_access_path(const struct landlock_=
+ruleset *const domain,
+>         if (WARN_ON_ONCE(domain->num_layers < 1))
+>                 return -EACCES;
+>
+> -       /* Saves all layers handling a subset of requested accesses. */
+> -       for (i =3D 0; i < domain->num_layers; i++) {
+> -               const unsigned long access_req =3D access_request;
+> -               unsigned long access_bit;
+> -
+> -               for_each_set_bit(access_bit, &access_req,
+> -                               ARRAY_SIZE(layer_masks)) {
+> -                       if (domain->fs_access_masks[i] & BIT_ULL(access_b=
+it)) {
+> -                               layer_masks[access_bit] |=3D BIT_ULL(i);
+> -                               has_access =3D true;
+> -                       }
+> -               }
+> +       BUILD_BUG_ON(!layer_masks_dst_parent);
+
+I know the kbuild robot already flagged this, but checking function
+parameters with BUILD_BUG_ON() does seem a bit ... unusual :)
+
+> +       if (layer_masks_src_parent) {
+> +               if (WARN_ON_ONCE(!layer_masks_child))
+> +                       return -EACCES;
+> +               access_masked_dst_parent =3D access_masked_src_parent =3D
+> +                       get_handled_accesses(domain);
+> +               is_dom_check =3D true;
+> +       } else {
+> +               if (WARN_ON_ONCE(layer_masks_child))
+> +                       return -EACCES;
+> +               access_masked_dst_parent =3D access_request_dst_parent;
+> +               access_masked_src_parent =3D access_request_src_parent;
+> +               is_dom_check =3D false;
+>         }
+> -       /* An access request not handled by the domain is allowed. */
+> -       if (!has_access)
+> -               return 0;
 >
 >         walker_path =3D *path;
-> @@ -280,14 +308,11 @@ static int check_access_path(const struct landlock_=
+>         path_get(&walker_path);
+> @@ -312,11 +483,50 @@ static int check_access_path(const struct landlock_=
 ruleset *const domain,
+>          */
 >         while (true) {
 >                 struct dentry *parent_dentry;
+> +               const struct landlock_rule *rule;
+> +
+> +               /*
+> +                * If at least all accesses allowed on the destination ar=
+e
+> +                * already allowed on the source, respectively if there i=
+s at
+> +                * least as much as restrictions on the destination than =
+on the
+> +                * source, then we can safely refer files from the source=
+ to
+> +                * the destination without risking a privilege escalation=
+.
+> +                * This is crucial for standalone multilayered security
+> +                * policies.  Furthermore, this helps avoid policy writer=
+s to
+> +                * shoot themselves in the foot.
+> +                */
+> +               if (is_dom_check && is_superset(child_is_directory,
+> +                                       layer_masks_dst_parent,
+> +                                       layer_masks_src_parent,
+> +                                       layer_masks_child)) {
+> +                       allowed_dst_parent =3D
+> +                               scope_to_request(access_request_dst_paren=
+t,
+> +                                               layer_masks_dst_parent);
+> +                       allowed_src_parent =3D
+> +                               scope_to_request(access_request_src_paren=
+t,
+> +                                               layer_masks_src_parent);
+> +
+> +                       /* Stops when all accesses are granted. */
+> +                       if (allowed_dst_parent && allowed_src_parent)
+> +                               break;
+> +
+> +                       /*
+> +                        * Downgrades checks from domain handled accesses=
+ to
+> +                        * requested accesses.
+> +                        */
+> +                       is_dom_check =3D false;
+> +                       access_masked_dst_parent =3D access_request_dst_p=
+arent;
+> +                       access_masked_src_parent =3D access_request_src_p=
+arent;
+> +               }
+> +
+> +               rule =3D find_rule(domain, walker_path.dentry);
+> +               allowed_dst_parent =3D unmask_layers(rule, access_masked_=
+dst_parent,
+> +                               layer_masks_dst_parent);
+> +               allowed_src_parent =3D unmask_layers(rule, access_masked_=
+src_parent,
+> +                               layer_masks_src_parent);
 >
-> -               layer_mask =3D unmask_layers(find_rule(domain,
-> -                                       walker_path.dentry), access_reque=
-st,
-> -                               layer_mask);
-> -               if (layer_mask =3D=3D 0) {
-> +               allowed =3D unmask_layers(find_rule(domain, walker_path.d=
+> -               allowed =3D unmask_layers(find_rule(domain, walker_path.d=
 entry),
-> +                               access_request, &layer_masks);
-> +               if (allowed)
->                         /* Stops when a rule from each layer grants acces=
+> -                               access_request, &layer_masks);
+> -               if (allowed)
+> -                       /* Stops when a rule from each layer grants acces=
 s. */
-> -                       allowed =3D true;
+> +               /* Stops when a rule from each layer grants access. */
+> +               if (allowed_dst_parent && allowed_src_parent)
 >                         break;
-> -               }
->
->  jump_up:
->                 if (walker_path.dentry =3D=3D walker_path.mnt->mnt_root) =
-{
+
+If "(allowed_dst_parent && allowed_src_parent)" is true, you break out
+of the while loop only to do a path_put(), check the two booleans once
+more, and then return zero, yes?  Why not just do the path_put() and
+return zero here?
+
 
 --
 paul-moore.com
