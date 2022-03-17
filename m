@@ -2,59 +2,58 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CABEC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 21:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DA3C4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 21:34:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbiCQVdX (ORCPT
+        id S230313AbiCQVfn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Mar 2022 17:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50544 "EHLO
+        Thu, 17 Mar 2022 17:35:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230284AbiCQVdW (ORCPT
+        with ESMTP id S230302AbiCQVfm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Mar 2022 17:33:22 -0400
+        Thu, 17 Mar 2022 17:35:42 -0400
 Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF2961A8C34
-        for <linux-security-module@vger.kernel.org>; Thu, 17 Mar 2022 14:32:03 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id bi12so13442703ejb.3
-        for <linux-security-module@vger.kernel.org>; Thu, 17 Mar 2022 14:32:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661CD182D9C
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Mar 2022 14:34:24 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a8so13413707ejc.8
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Mar 2022 14:34:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=qd/QzJroXqS76+vpGYR32s8ZS/L6ajxFmNzuyLr4spE=;
-        b=SNT6l8pmb5pFsrqYmvLpPI/3ZKsi7wR83fXrEqcnFeeUXRxfmvozk6F5QOLZ9vy/Tp
-         cOzpMNpimxIruZ//9FwUlZsqOJzHXIf7cwW6zjMBpkeSF1Xka5Z93J9Iwr3TtbUaKyjq
-         VEKw02nl5xUI/Za71AOlfDMXN0H7h5ks7WdgPujnp5PYpjnwbzzKceAR/tEjDzFEI54z
-         TNNTjkqLSR9Z9VJ8DY+sxaI4o6Ut567U3VMk6VHL9/yyYG9RU3J/8nbVjQ6/lLH9Qrm4
-         4RkkcKOUE2DNa8gjLL0V6ONfKewve0+38rxi4+tCpIE2vD41h+HyA6yHSsflfKRbnkFK
-         vsqA==
+        bh=jPzUmEIpYwvREG9Qiji3p50V1VPIn2Vf1DD+hqSFBdM=;
+        b=huZ0JPBjL1YpVYiLfjYIe6c0iQgRtRTQfUcrZJD0boOl60Uyju93dGqWGAOfI+kQrl
+         JgbKRMsJL2TsWUpKVHZbadiUUP4slD0dFDn4D0BlgQJZerXiSevIWThTiq6+MxBdBStA
+         isvXOCoqmHhct4sXt8JbS+qCbxAa7a5xs0E+9BEWETz2kQsy6sJVBB383EaRijbeLiRv
+         xzf55aayFuN22IBEf2yxyvJ7Lrbdi+GVuITIi+ECjku6nk6qi+GmhkFx/4PXo+lHo3hi
+         nRTPDmQGOf/ywUgzSwgYCWr24hQ5LpPUdg7FHK7nwovsuC6/+pqbjF1UR2QBwj5eymuV
+         63ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=qd/QzJroXqS76+vpGYR32s8ZS/L6ajxFmNzuyLr4spE=;
-        b=VS3IIO863eB1U1R+qGNAw+/xtEPd088OzJsRqoo5mIpWX1FQ9LqHRYQ7N77moGRfan
-         ECOixAIPrP/dF+SsOxjsMMlSGYRKDqGaeiqmk9vAH7DaoIUdqbTV7uIZp8JwuoY66vfr
-         DL17aywXLIYlF4nuDq2xvAhlMsugePtYoy2hNht8aCueTbyM6GW5wCiXgVFBZP1Ihuyv
-         SFGAQp++dFqJxZyA6TaHrORPvTZKE52rECeOZ3sZHBeGtROWEfmn94NXBk/uzDYfFFh0
-         50h5OgvN+eETQHLXJFS89cqYdcvM6Qx3BBRWB4KZQvmFFtQ1FCj9hJf5udbrndJqVq8E
-         Y1sQ==
-X-Gm-Message-State: AOAM532eAZTVQip+v3iqy8pYtr5NtlHfOsxwKH42Dn1KaQJ18hFVF2au
-        JOQHnNm8rIL6tHtPqZW5+EfTDc3NyW8Q/b6GxYqy
-X-Google-Smtp-Source: ABdhPJxKiPHpnNQuOXjMk22qXkfCq7IIUqiUBCrX2aFtCf5Iu8Dj8BXOZ5EU1cEya3DvG41VZWdOzUEB7Yp0ZudJb2I=
-X-Received: by 2002:a17:907:7202:b0:6df:83a9:67d2 with SMTP id
- dr2-20020a170907720200b006df83a967d2mr6248163ejc.327.1647552722265; Thu, 17
- Mar 2022 14:32:02 -0700 (PDT)
+        bh=jPzUmEIpYwvREG9Qiji3p50V1VPIn2Vf1DD+hqSFBdM=;
+        b=554UXU99wD+oZwjTpTucoZXnr1IQ5O5N6ua2OE1FmxluESYEBOt9BjD2/wYjgRF03u
+         j5Ky+R5nprdi5yYIP13l+uyg9Kh5wiulLHdcWuKpmdIN7hRhHFAOYECzqgpS57uTmXTK
+         V+tJnLZ/x9uug6/vmLywTmDJKUXrCzjkUbWsKLNkrwjb1UDwZXBOYOSfBLPLOZSihB4B
+         MsFbViAH5OEIk6gzxfX+gbNh148qtyWM3EM54ReMJfJ/gIaPqafJKXhaNGdY3ylpuXjr
+         b3Y5djbZwF00JoqxQ7T1/uSeQvaG0eyjuA07EfXt05SDI3NLH9b6FL0UpocM1gdI44aQ
+         v/oQ==
+X-Gm-Message-State: AOAM531yhN0GIOrNdicI/a8+VNmiGmIn4tfd8O1E3z7XwpcZquY1DU73
+        LKT11gAN2fdwwYJUeuRrFjZLIWH3OtQmBX2Iw+iG
+X-Google-Smtp-Source: ABdhPJx2XXFfIBn+bpe2QRXQAwg2t49X4tgF1vp9H2ONzdGUmOB9/BUC1ed+OCpABEXPZOVQtjZgIMGHoVRAUh1H5Aw=
+X-Received: by 2002:a17:907:3f86:b0:6db:b745:f761 with SMTP id
+ hr6-20020a1709073f8600b006dbb745f761mr6082295ejc.610.1647552862768; Thu, 17
+ Mar 2022 14:34:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-2-mic@digikod.net>
- <CAHC9VhQEEKGgCn7fYgUt-_WhXc-vrKq9TVm=cfwJUyWaUgY2Vw@mail.gmail.com> <ed8467f2-dcd0-bc2f-8e98-1d9129fb2c30@digikod.net>
-In-Reply-To: <ed8467f2-dcd0-bc2f-8e98-1d9129fb2c30@digikod.net>
+References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-5-mic@digikod.net>
+ <CAHC9VhT7+Xm+GCg5BqYQgauKOwRxsxfS5WCj+-HW2w6VpaF=6g@mail.gmail.com> <d2ee2504-4daa-18d8-a9c2-083f488984ba@digikod.net>
+In-Reply-To: <d2ee2504-4daa-18d8-a9c2-083f488984ba@digikod.net>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 17 Mar 2022 17:31:51 -0400
-Message-ID: <CAHC9VhRhYbxyBK39uRRpXF9o-Yf-yMwWRvsE15wJnZr3-dexMA@mail.gmail.com>
-Subject: Re: [PATCH v1 01/11] landlock: Define access_mask_t to enforce a
- consistent access mask size
+Date:   Thu, 17 Mar 2022 17:34:11 -0400
+Message-ID: <CAHC9VhT8j5=U2U8NbOiUNcq+K2NXeNHAM=0vrP4kf9Xj8-tTTA@mail.gmail.com>
+Subject: Re: [PATCH v1 04/11] landlock: Fix same-layer rule unions
 To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -71,7 +70,7 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 17, 2022 at 4:35 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+On Thu, Mar 17, 2022 at 6:40 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
 wrote:
 > On 17/03/2022 02:26, Paul Moore wrote:
 > > On Mon, Feb 21, 2022 at 4:15 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
@@ -79,74 +78,161 @@ et> wrote:
 > >>
 > >> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
 > >>
-> >> Create and use the access_mask_t typedef to enforce a consistent acces=
-s
-> >> mask size and uniformly use a 16-bits type.  This will helps transitio=
-n
-> >> to a 32-bits value one day.
+> >> The original behavior was to check if the full set of requested access=
+es
+> >> was allowed by at least a rule of every relevant layer.  This didn't
+> >> take into account requests for multiple accesses and same-layer rules
+> >> allowing the union of these accesses in a complementary way.  As a
+> >> result, multiple accesses requested on a file hierarchy matching rules
+> >> that, together, allowed these accesses, but without a unique rule
+> >> allowing all of them, was illegitimately denied.  This case should be
+> >> rare in practice and it can only be triggered by the path_rename or
+> >> file_open hook implementations.
 > >>
-> >> Add a build check to make sure all (filesystem) access rights fit in.
-> >> This will be extended with a following commit.
+> >> For instance, if, for the same layer, a rule allows execution
+> >> beneath /a/b and another rule allows read beneath /a, requesting acces=
+s
+> >> to read and execute at the same time for /a/b should be allowed for th=
+is
+> >> layer.
+> >>
+> >> This was an inconsistency because the union of same-layer rule accesse=
+s
+> >> was already allowed if requested once at a time anyway.
+> >>
+> >> This fix changes the way allowed accesses are gathered over a path wal=
+k.
+> >> To take into account all these rule accesses, we store in a matrix all
+> >> layer granting the set of requested accesses, according to the handled
+> >> accesses.  To avoid heap allocation, we use an array on the stack whic=
+h
+> >> is 2*13 bytes.  A following commit bringing the LANDLOCK_ACCESS_FS_REF=
+ER
+> >> access right will increase this size to reach 84 bytes (2*14*3) in cas=
+e
+> >> of link or rename actions.
+> >>
+> >> Add a new layout1.layer_rule_unions test to check that accesses from
+> >> different rules pertaining to the same layer are ORed in a file
+> >> hierarchy.  Also test that it is not the case for rules from different
+> >> layers.
 > >>
 > >> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> >> Link: https://lore.kernel.org/r/20220221212522.320243-2-mic@digikod.ne=
+> >> Link: https://lore.kernel.org/r/20220221212522.320243-5-mic@digikod.ne=
 t
 > >> ---
-> >>   security/landlock/fs.c      | 19 ++++++++++---------
-> >>   security/landlock/fs.h      |  2 +-
-> >>   security/landlock/limits.h  |  2 ++
-> >>   security/landlock/ruleset.c |  6 ++++--
-> >>   security/landlock/ruleset.h | 17 +++++++++++++----
-> >>   5 files changed, 30 insertions(+), 16 deletions(-)
-
-...
-
-> >> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> >> index 2a0a1095ee27..458d1de32ed5 100644
-> >> --- a/security/landlock/limits.h
-> >> +++ b/security/landlock/limits.h
-> >> @@ -9,6 +9,7 @@
-> >>   #ifndef _SECURITY_LANDLOCK_LIMITS_H
-> >>   #define _SECURITY_LANDLOCK_LIMITS_H
+> >>   security/landlock/fs.c                     |  77 ++++++++++-----
+> >>   security/landlock/ruleset.h                |   2 +
+> >>   tools/testing/selftests/landlock/fs_test.c | 107 +++++++++++++++++++=
+++
+> >>   3 files changed, 160 insertions(+), 26 deletions(-)
 > >>
-> >> +#include <linux/bitops.h>
-> >>   #include <linux/limits.h>
-> >>   #include <uapi/linux/landlock.h>
+> >> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> >> index 0bcb27f2360a..9662f9fb3cd0 100644
+> >> --- a/security/landlock/fs.c
+> >> +++ b/security/landlock/fs.c
+> >> @@ -204,45 +204,66 @@ static inline const struct landlock_rule *find_r=
+ule(
+> >>          return rule;
+> >>   }
 > >>
-> >> @@ -17,5 +18,6 @@
+> >> -static inline layer_mask_t unmask_layers(
+> >> -               const struct landlock_rule *const rule,
+> >> -               const access_mask_t access_request, layer_mask_t layer=
+_mask)
+> >> +/*
+> >> + * @layer_masks is read and may be updated according to the access re=
+quest and
+> >> + * the matching rule.
+> >> + *
+> >> + * Returns true if the request is allowed (i.e. relevant layer masks =
+for the
+> >> + * request are empty).
+> >> + */
+> >> +static inline bool unmask_layers(const struct landlock_rule *const ru=
+le,
+> >> +               const access_mask_t access_request,
+> >> +               layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_=
+FS])
+> >>   {
+> >>          size_t layer_level;
 > >>
-> >>   #define LANDLOCK_LAST_ACCESS_FS                LANDLOCK_ACCESS_FS_MA=
-KE_SYM
-> >>   #define LANDLOCK_MASK_ACCESS_FS                ((LANDLOCK_LAST_ACCES=
-S_FS << 1) - 1)
-> >> +#define LANDLOCK_NUM_ACCESS_FS         __const_hweight64(LANDLOCK_MAS=
-K_ACCESS_FS)
+> >> +       if (!access_request || !layer_masks)
+> >> +               return true;
+> >>          if (!rule)
+> >> -               return layer_mask;
+> >> +               return false;
+> >>
+> >>          /*
+> >>           * An access is granted if, for each policy layer, at least o=
+ne rule
+> >> -        * encountered on the pathwalk grants the requested accesses,
+> >> -        * regardless of their position in the layer stack.  We must t=
+hen check
+> >> +        * encountered on the pathwalk grants the requested access,
+> >> +        * regardless of its position in the layer stack.  We must the=
+n check
+> >>           * the remaining layers for each inode, from the first added =
+layer to
+> >> -        * the last one.
+> >> +        * the last one.  When there is multiple requested accesses, f=
+or each
+> >> +        * policy layer, the full set of requested accesses may not be=
+ granted
+> >> +        * by only one rule, but by the union (binary OR) of multiple =
+rules.
+> >> +        * E.g. /a/b <execute> + /a <read> =3D /a/b <execute + read>
+> >>           */
+> >>          for (layer_level =3D 0; layer_level < rule->num_layers; layer=
+_level++) {
+> >>                  const struct landlock_layer *const layer =3D
+> >>                          &rule->layers[layer_level];
+> >>                  const layer_mask_t layer_bit =3D BIT_ULL(layer->level=
+ - 1);
+> >> +               const unsigned long access_req =3D access_request;
+> >> +               unsigned long access_bit;
+> >> +               bool is_empty;
+> >>
+> >> -               /* Checks that the layer grants access to the full req=
+uest. */
+> >> -               if ((layer->access & access_request) =3D=3D access_req=
+uest) {
+> >> -                       layer_mask &=3D ~layer_bit;
+> >> -
+> >> -                       if (layer_mask =3D=3D 0)
+> >> -                               return layer_mask;
+> >> +               /*
+> >> +                * Records in @layer_masks which layer grants access t=
+o each
+> >> +                * requested access.
+> >> +                */
+> >> +               is_empty =3D true;
+> >> +               for_each_set_bit(access_bit, &access_req,
+> >> +                               ARRAY_SIZE(*layer_masks)) {
+> >> +                       if (layer->access & BIT_ULL(access_bit))
+> >> +                               (*layer_masks)[access_bit] &=3D ~layer=
+_bit;
+> >> +                       is_empty =3D is_empty && !(*layer_masks)[acces=
+s_bit];
 > >
-> > The line above, and the static_assert() in ruleset.h are clever.  I'll
-> > admit I didn't even know the hweightX() macros existed until looking
-> > at this code :)
-> >
-> > However, the LANDLOCK_NUM_ACCESS_FS is never really going to be used
-> > outside the static_assert() in ruleset.h is it?  I wonder if it would
-> > be better to skip the extra macro and rewrite the static_assert like
-> > this:
-> >
-> > static_assert(BITS_PER_TYPE(access_mask_t) >=3D
-> > __const_hweight64(LANDLOCK_MASK_ACCESS_FS));
-> >
-> > If not, I might suggest changing LANDLOCK_NUM_ACCESS_FS to
-> > LANDLOCK_BITS_ACCESS_FS or something similar.
+> >>From what I can see the only reason not to return immediately once
+> > @is_empty is true is the need to update @layer_masks.  However, the
+> > only caller that I can see (up to patch 4/11) is check_access_path()
+> > which thanks to this patch no longer needs to reference @layer_masks
+> > after the call to unmask_layers() returns true.  Assuming that to be
+> > the case, is there a reason we can't return immediately after finding
+> > @is_empty true, or am I missing something?
 >
-> I declared LANDLOCK_NUM_ACCESS_FS in this patch to be able to have the
-> static_assert() here and ease the review, but LANDLOCK_NUM_ACCESS_FS is
-> really used in patch 6/11 to define an array size:
-> get_handled_acceses(), init_layer_masks(), is_superset(),
-> check_access_path_dual()=E2=80=A6
+> Because @is_empty is initialized to true, and because each access
+> right/bit must be checked by this loop, we cannot return earlier than
+> the following if statement. Not returning in this loop also makes this
+> helper safer (for potential future use) because @layer_mask will never
+> be partially updated, which could lead to an inconsistent state.
+> Moreover finishing this bits check loop makes the code simpler and have
+> a negligible performance impact.
 
-I wrote my comments as I was working my way through the patchset and
-didn't think to go back and check this when I hit patch 6/11 :)
-
-Looks good to me, sorry for the noise.
+My apologies, I must have spaced-out a bit and read the 'is_empty =3D
+true;' initializer as 'is_empty =3D false;'.
 
 Reviewed-by: Paul Moore <paul@paul-moore.com>
 
