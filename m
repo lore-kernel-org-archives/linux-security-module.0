@@ -2,57 +2,57 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8AAC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 01:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDB6C43219
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 01:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358298AbiCQB2Q (ORCPT
+        id S1358301AbiCQB2T (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Mar 2022 21:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39586 "EHLO
+        Wed, 16 Mar 2022 21:28:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358307AbiCQB1u (ORCPT
+        with ESMTP id S1358396AbiCQB2H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Mar 2022 21:27:50 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC59A1E3F2
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:26:34 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a8so7712220ejc.8
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:26:34 -0700 (PDT)
+        Wed, 16 Mar 2022 21:28:07 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1781DA79
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:26:52 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id yy13so7757378ejb.2
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Mar 2022 18:26:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=pg72bDDMXKgIFi4/3pJ510z+c/iucl3unZbSLqSuVPE=;
-        b=D1BJhdsQ8C0/EXJsr5prdMYV5Iy4RSwkDYjHmUKFnj2CZKCBGkzkAXu4Rs7DIr/+Z4
-         ZfSM/kuOa35PMdjptMxhHqP2t3+VNoupShB1xXjFBk2DzX2cUzoIjI7XT6JJODM/tYIf
-         8lA6KtoFMhwT3j+PcPePSF9MOQeW3WwSzzks8E+NX55uvktEGS5MWcESDp9pUYBUVPsq
-         6pa2CviNGYWuBVueLigdwYK4kL52uaysCvcWIbWphWhVeFY8OjFosN0Iy/flCQqmQP8U
-         IrSh3kH82dc44rF5DEX70LabAkVZhbxhKhFez87gath/Ru7xG+g8/aKc+mC+hshrjnPh
-         iZxw==
+        bh=k7yicPIk+Z77xC2Jk5lIM3J4ayt0t0RngElOD1HAw4g=;
+        b=rmXwQK3hU5r16A4VKdmhW6Ak9o21AzTO5x3KUBlzHD2dFxLANWlDhla7+jMAxwl0b9
+         cofCUQwTGiGS4hT6hi1VscFkJLbgg4CqKsQrEg7/rZN7W02rsqGCSMHyJxMEwVIr/Ehw
+         y14GzqGaagHLq1eJCLHdZ60DQ7v4R9y+0bDIaysTFHHjUndXiD/B7oeRv2OgYnIRFWPZ
+         yfpSwTYQAsnSC8etUqZVoh3HPLOD8nn2ytExpf6pNYp5+I29p9STNaGDjE66uusbvmAi
+         PfnocbZdpwVzDrDrNfHcB7EYLkTmAZJkHP2NpgZixULGY9vivSs9MNC+IqMz3kjkbBio
+         ws7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pg72bDDMXKgIFi4/3pJ510z+c/iucl3unZbSLqSuVPE=;
-        b=AgOx4c1mfmk+FSrKXXJ1JKYc5ECHY8KpKOc9YJs97eqH7QH1xcAYebm8UpKTnTirCM
-         Z0iv+oIYQEx5ZV34xHdoFjSLwf4ULDNTtWlzyL0CsZQ7f4bqxCmwP+yG5VR8KIlzf3Q2
-         pC6d+RUa/Rw3yPKJQ6BM6JKx2589uJKp0EaQ9e9okvYVs1cIFV5fgXI72+1snhLkaRdt
-         qK2PSDfYcztF7doXlPogD7XpwKMCi5NLedodmstddI/brkCcGgAR/m2LSsh/rOAKEpGL
-         eJcBcgbbrADAJ60PPP94Yu5TsJyB1SqinG7dZNuCMogN+OiAbkz7mqjNvHQI4M0bZCPc
-         fYog==
-X-Gm-Message-State: AOAM530FSGSFYCryIk+ZZCSzqr4hsrDboGMr0bZEht5EAO3q6oF+KlVz
-        vj2NptsgaahafYuHEEOS3BulbyewOmzDj+6e4NLJ/UIZOQ==
-X-Google-Smtp-Source: ABdhPJzpu6lp6njiy52N0zdfBqZGt9nd46eib4HOnCsGmHdwyVJiXgdilrP0Ia8kUmKFsYygmbE/G+cWMPcsCXk/jHw=
-X-Received: by 2002:a17:906:4443:b0:6cf:6a7d:5f9b with SMTP id
- i3-20020a170906444300b006cf6a7d5f9bmr2251417ejp.12.1647480393427; Wed, 16 Mar
- 2022 18:26:33 -0700 (PDT)
+        bh=k7yicPIk+Z77xC2Jk5lIM3J4ayt0t0RngElOD1HAw4g=;
+        b=Hj2Ql5+unefYvqW9iacCVU8Kzmhs5VkCmPSZ2DEBoUZJC9nmpEKgnS9DiIqVkhRW7o
+         yA/ZhXpC9jMOMrgwl89OYULchybfN5FkHVqU62lbKTWzclwDPVygZdfWYs1q/c/lz+3E
+         IVdLVtrOFFm6S8CB+nSHDGEeFB17ev8WVFJy4ZZ3LL/C5QBrfb+rO2C6haJZEKF73/oU
+         /9AkKmXtqzDYjVP2GFJ3W1kH0yH0X8dDWlM6YFo/mPILb4ZNttI6jct3bSg3IPS7gdwa
+         MP7cFHCjOhp4ZTEYtpPk6TNpMGxaFRiyDauPTUnDiDcZGIIcYZhq2eDa57d+GWpQWJFp
+         ptMQ==
+X-Gm-Message-State: AOAM533azsJ2kqKeDRqLxSX72K+Jp+1DTf1jwXENDrUwSe/++5u+dFW9
+        CZj3QNZ/It2EHRs/5MSzxCLsbcDT+nyypd9Naxa4
+X-Google-Smtp-Source: ABdhPJwRKa3vBL+HOFo2rnyMrLxHJvet528O/eIh737dM8Fqorv1ZTHburtLRJbVy4qlwVdRb99NwNuZ6JLOHDLf8rY=
+X-Received: by 2002:a17:907:7202:b0:6df:83a9:67d2 with SMTP id
+ dr2-20020a170907720200b006df83a967d2mr2189662ejc.327.1647480410692; Wed, 16
+ Mar 2022 18:26:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-4-mic@digikod.net>
-In-Reply-To: <20220221212522.320243-4-mic@digikod.net>
+References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-6-mic@digikod.net>
+In-Reply-To: <20220221212522.320243-6-mic@digikod.net>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 16 Mar 2022 21:26:22 -0400
-Message-ID: <CAHC9VhTF4j+z-kp5apB2MYK0zk9q4RNu2ou9yWm7jBNk7BG1=Q@mail.gmail.com>
-Subject: Re: [PATCH v1 03/11] landlock: Create find_rule() from unmask_layers()
+Date:   Wed, 16 Mar 2022 21:26:39 -0400
+Message-ID: <CAHC9VhQM33jnJYMz+z1YoNt9=nNceW=TutuGO=x+SSpHW7PMyg@mail.gmail.com>
+Subject: Re: [PATCH v1 05/11] landlock: Move filesystem helpers and add a new one
 To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -74,16 +74,54 @@ wrote:
 >
 > From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
 >
-> This refactoring will be useful in a following commit.
+> Move the SB_NOUSER and IS_PRIVATE dentry check to a standalone
+> is_nouser_or_private() helper.  This will be useful for a following
+> commit.
+>
+> Move get_mode_access() and maybe_remove() to make them usable by new
+> code provided by a following commit.
 >
 > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20220221212522.320243-4-mic@digikod.net
+> Link: https://lore.kernel.org/r/20220221212522.320243-6-mic@digikod.net
 > ---
->  security/landlock/fs.c | 39 +++++++++++++++++++++++++++------------
->  1 file changed, 27 insertions(+), 12 deletions(-)
+>  security/landlock/fs.c | 87 ++++++++++++++++++++++--------------------
+>  1 file changed, 46 insertions(+), 41 deletions(-)
+
+One nit-picky comment below, otherwise it looks fine to me.
 
 Reviewed-by: Paul Moore <paul@paul-moore.com>
 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 9662f9fb3cd0..3886f9ad1a60 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -257,6 +257,18 @@ static inline bool unmask_layers(const struct landlo=
+ck_rule *const rule,
+>         return false;
+>  }
+>
+> +static inline bool is_nouser_or_private(const struct dentry *dentry)
+> +{
+> +       /*
+> +        * Allows access to pseudo filesystems that will never be mountab=
+le
+> +        * (e.g. sockfs, pipefs), but can still be reachable through
+> +        * /proc/<pid>/fd/<file-descriptor> .
+> +        */
+
+I might suggest moving this explanation up to a function header comment blo=
+ck.
+
+
+> +       return (dentry->d_sb->s_flags & SB_NOUSER) ||
+> +                       (d_is_positive(dentry) &&
+> +                        unlikely(IS_PRIVATE(d_backing_inode(dentry))));
+> +}
+> +
+>  static int check_access_path(const struct landlock_ruleset *const domain=
+,
+>                 const struct path *const path,
+>                 const access_mask_t access_request)
 
 --
 paul-moore.com
