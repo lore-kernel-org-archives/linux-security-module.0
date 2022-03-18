@@ -2,101 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D56CC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Mar 2022 06:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F96C433F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Mar 2022 08:43:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232692AbiCRGSo (ORCPT
+        id S233811AbiCRIpD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Mar 2022 02:18:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35174 "EHLO
+        Fri, 18 Mar 2022 04:45:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231149AbiCRGSn (ORCPT
+        with ESMTP id S233870AbiCRIpC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Mar 2022 02:18:43 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A3522B3D4A;
-        Thu, 17 Mar 2022 23:17:25 -0700 (PDT)
-Received: from canpemm500010.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4KKYhK2HN1zcbCv;
-        Fri, 18 Mar 2022 14:17:21 +0800 (CST)
-Received: from localhost.localdomain (10.175.104.82) by
- canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Fri, 18 Mar 2022 14:17:22 +0800
-From:   Wang Yufen <wangyufen@huawei.com>
-To:     <paul@paul-moore.com>, <davem@davemloft.net>, <kuba@kernel.org>,
-        <pabeni@redhat.com>
-CC:     <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] netlabel: fix out-of-bounds memory accesses
-Date:   Fri, 18 Mar 2022 14:35:08 +0800
-Message-ID: <20220318063508.1348148-1-wangyufen@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 18 Mar 2022 04:45:02 -0400
+X-Greylist: delayed 343 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 18 Mar 2022 01:43:40 PDT
+Received: from mail.postform.pl (mail.postform.pl [195.231.64.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC3F7F28
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Mar 2022 01:43:39 -0700 (PDT)
+Received: by mail.postform.pl (Postfix, from userid 1001)
+        id 88104AAEA4; Fri, 18 Mar 2022 08:37:55 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=postform.pl; s=mail;
+        t=1647592709; bh=Cp7iEcBs6UYsUZoqwaSKv66JiG6VJnuY7Lx3D9vYwU4=;
+        h=Date:From:To:Subject:From;
+        b=Zz0fbZMKRD5G1NtfhJE7MB5vrOOR+PNP43wUKNIxLKwUjEJ/hH5iiaqFDAmjI5+uo
+         qADPQ/K3UQo39R4yYyCDz/ng4XhVrm29usRg4kkA+gFgs8jscKLH1AjJi+6cZ4kHZP
+         Fq3nkf15V0Je5T8Hx2PnNDiczN9ev1VKFyYxCrxCaIyG76lDcc+BekWB84in6gRjI/
+         xgW+IMFKlICowyyXL5PKbJpcxIklXljHgQrV5GHz5Q31JINi7/uz4Dws5/9U9oK3YU
+         a+tFT9tqEPKe0+/rvxk3PIbYVEVeEx401aD9J225lNLnTg94mRTi9f2dCg92kSkYYr
+         M9F2Em6Aod2ww==
+Received: by mail.postform.pl for <linux-security-module@vger.kernel.org>; Fri, 18 Mar 2022 08:36:44 GMT
+Message-ID: <20220318074502-0.1.1i.jo6o.0.cpg6gg91fj@postform.pl>
+Date:   Fri, 18 Mar 2022 08:36:44 GMT
+From:   "Norbert Karecki" <norbert.karecki@postform.pl>
+To:     <linux-security-module@vger.kernel.org>
+Subject: Wycena paneli fotowoltaicznych
+X-Mailer: mail.postform.pl
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.82]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- canpemm500010.china.huawei.com (7.192.105.118)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In calipso_map_cat_ntoh(), in the for loop, if the return value of
-netlbl_bitmap_walk() is equal to (net_clen_bits - 1), when 
-netlbl_bitmap_walk() is called next time, out-of-bounds memory accesses
-of bitmap[byte_offset] occurs.
+Dzie=C5=84 dobry,
 
-The bug was found during fuzzing. The following is the fuzzing report
- BUG: KASAN: slab-out-of-bounds in netlbl_bitmap_walk+0x3c/0xd0
- Read of size 1 at addr ffffff8107bf6f70 by task err_OH/252
- 
- CPU: 7 PID: 252 Comm: err_OH Not tainted 5.17.0-rc7+ #17
- Hardware name: linux,dummy-virt (DT)
- Call trace:
-  dump_backtrace+0x21c/0x230
-  show_stack+0x1c/0x60
-  dump_stack_lvl+0x64/0x7c
-  print_address_description.constprop.0+0x70/0x2d0
-  __kasan_report+0x158/0x16c
-  kasan_report+0x74/0x120
-  __asan_load1+0x80/0xa0
-  netlbl_bitmap_walk+0x3c/0xd0
-  calipso_opt_getattr+0x1a8/0x230
-  calipso_sock_getattr+0x218/0x340
-  calipso_sock_getattr+0x44/0x60
-  netlbl_sock_getattr+0x44/0x80
-  selinux_netlbl_socket_setsockopt+0x138/0x170
-  selinux_socket_setsockopt+0x4c/0x60
-  security_socket_setsockopt+0x4c/0x90
-  __sys_setsockopt+0xbc/0x2b0
-  __arm64_sys_setsockopt+0x6c/0x84
-  invoke_syscall+0x64/0x190
-  el0_svc_common.constprop.0+0x88/0x200
-  do_el0_svc+0x88/0xa0
-  el0_svc+0x128/0x1b0
-  el0t_64_sync_handler+0x9c/0x120
-  el0t_64_sync+0x16c/0x170
+dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
+irm=C4=85.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wang Yufen <wangyufen@huawei.com>
----
- net/netlabel/netlabel_kapi.c | 2 ++
- 1 file changed, 2 insertions(+)
+=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
+ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
 
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index beb0e573266d..54c083003947 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -885,6 +885,8 @@ int netlbl_bitmap_walk(const unsigned char *bitmap, u32 bitmap_len,
- 	unsigned char bitmask;
- 	unsigned char byte;
- 
-+	if (offset >= bitmap_len)
-+		return -1;
- 	byte_offset = offset / 8;
- 	byte = bitmap[byte_offset];
- 	bit_spot = offset;
--- 
-2.25.1
+Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
+ropozycji?
 
+
+Pozdrawiam
+Norbert Karecki
