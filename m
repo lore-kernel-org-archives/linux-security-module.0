@@ -2,305 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC2CC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Mar 2022 21:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D56CC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Mar 2022 06:17:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbiCQVn4 (ORCPT
+        id S232692AbiCRGSo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Mar 2022 17:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53984 "EHLO
+        Fri, 18 Mar 2022 02:18:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230352AbiCQVn4 (ORCPT
+        with ESMTP id S231149AbiCRGSn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Mar 2022 17:43:56 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84A8529A577
-        for <linux-security-module@vger.kernel.org>; Thu, 17 Mar 2022 14:42:37 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id bg10so13453267ejb.4
-        for <linux-security-module@vger.kernel.org>; Thu, 17 Mar 2022 14:42:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=uuFVFoh8GxFpq3rhyzg4kf8sSyYu+xyDqDIjlxGEeGg=;
-        b=t4QY5EIr0aGlcdAPnW3ysLpDdR9Dl3cxWbqg4WcV0rS4+OK1puD+9Wb+lN7yWCgGVq
-         hzEazIwWLo+k5hTXgUf/mCvhicL1iX5e9nCFgcjpzVHpWK6QKviDyoUztVg9iTko3rGA
-         nRjqfqTgCmiQ4HpTtqwmuf+loueg/O6y7/LJo+lIXe3mCmHDtAaiytdHx5waFJ/OZujW
-         XKvddkOyhoD+q2DnbSJjS7rBZRp6s0aGnzCLoP0CgfCC0KBefG/t2vnrDpMn2hwVgKHk
-         A8wP+iKCZmVIZeevqmjaUXQmkNW0HQ3/pEA8rJ/ooymQLBH+OxgwaKCB8q9OqrRlSiLE
-         aTPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uuFVFoh8GxFpq3rhyzg4kf8sSyYu+xyDqDIjlxGEeGg=;
-        b=Ran1k9mt0xFcjxdy2ZQrtn4Ix9ceoDE1+jil1oOkDKwW6Zv6bIpD+qtjrt9TEKEtPe
-         aZ+yoF3aNXwHjH0GZcSPFk8VPJ9udnvbbhUx0j8ywJ08EKfYNpKOHat2UnRe2stm5fMT
-         VHykvC3gwHxnId7u4irG7LoocAiskJUIbyFXToioe+RAa59POdiCvMgseqIqlRqwAw7V
-         3IUdaiVlByilTo6lLxVPFVHa6quTtioDHnPqMehYDLm9lIw0wuYDD2P8lM+6ByIOwv8+
-         iRNtzeS5rTcKOogVMKVutT7K4rCRfxPgzO3CDZ3sQhN7msrrBT1t9ekNtUMvvl9SgMkM
-         BtSw==
-X-Gm-Message-State: AOAM530V3cJkOEZLs0WEAm2YGnX3s/86KBPTLfLZx6DawP7LWxcwraxK
-        y6Js1a0nRZxpzWOFPrvcUlAcmJNEViIOGDEQSIZK
-X-Google-Smtp-Source: ABdhPJz9YlV9YgOkXqaW5rcm0fT31+PVN0jEaABhbGaxK+MPb1fkLl9VV1uW9vwqU4w+HzgXvXbyXSSD60F/3pX52fQ=
-X-Received: by 2002:a17:907:1b09:b0:6d8:faa8:4a06 with SMTP id
- mp9-20020a1709071b0900b006d8faa84a06mr6264040ejc.701.1647553355924; Thu, 17
- Mar 2022 14:42:35 -0700 (PDT)
+        Fri, 18 Mar 2022 02:18:43 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A3522B3D4A;
+        Thu, 17 Mar 2022 23:17:25 -0700 (PDT)
+Received: from canpemm500010.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4KKYhK2HN1zcbCv;
+        Fri, 18 Mar 2022 14:17:21 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.82) by
+ canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Fri, 18 Mar 2022 14:17:22 +0800
+From:   Wang Yufen <wangyufen@huawei.com>
+To:     <paul@paul-moore.com>, <davem@davemloft.net>, <kuba@kernel.org>,
+        <pabeni@redhat.com>
+CC:     <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next] netlabel: fix out-of-bounds memory accesses
+Date:   Fri, 18 Mar 2022 14:35:08 +0800
+Message-ID: <20220318063508.1348148-1-wangyufen@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-7-mic@digikod.net>
- <CAHC9VhSFXN39EuVG5aVK0jtgCOmzM2FSCoVa2Xrs=oJQ4AkWMQ@mail.gmail.com> <588e0fec-6a45-db81-e411-ae488b29e533@digikod.net>
-In-Reply-To: <588e0fec-6a45-db81-e411-ae488b29e533@digikod.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 17 Mar 2022 17:42:24 -0400
-Message-ID: <CAHC9VhTY06mOTD3LqTzhTsqt-VBJwezFyX8hwpJTz0VMC8KK7Q@mail.gmail.com>
-Subject: Re: [PATCH v1 06/11] landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.82]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ canpemm500010.china.huawei.com (7.192.105.118)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 17, 2022 at 8:03 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
-> On 17/03/2022 02:26, Paul Moore wrote:
-> > On Mon, Feb 21, 2022 at 4:15 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
-et> wrote:
-> >>
-> >> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> >>
-> >> Add a new LANDLOCK_ACCESS_FS_REFER access right to enable policy write=
-rs
-> >> to allow sandboxed processes to link and rename files from and to a
-> >> specific set of file hierarchies.  This access right should be compose=
-d
-> >> with LANDLOCK_ACCESS_FS_MAKE_* for the destination of a link or rename=
-,
-> >> and with LANDLOCK_ACCESS_FS_REMOVE_* for a source of a rename.  This
-> >> lift a Landlock limitation that always denied changing the parent of a=
-n
-> >> inode.
-> >>
-> >> Renaming or linking to the same directory is still always allowed,
-> >> whatever LANDLOCK_ACCESS_FS_REFER is used or not, because it is not
-> >> considered a threat to user data.
-> >>
-> >> However, creating multiple links or renaming to a different parent
-> >> directory may lead to privilege escalations if not handled properly.
-> >> Indeed, we must be sure that the source doesn't gain more privileges b=
-y
-> >> being accessible from the destination.  This is handled by making sure
-> >> that the source hierarchy (including the referenced file or directory
-> >> itself) restricts at least as much the destination hierarchy.  If it i=
-s
-> >> not the case, an EXDEV error is returned, making it potentially possib=
-le
-> >> for user space to copy the file hierarchy instead of moving or linking
-> >> it.
-> >>
-> >> Instead of creating different access rights for the source and the
-> >> destination, we choose to make it simple and consistent for users.
-> >> Indeed, considering the previous constraint, it would be weird to
-> >> require such destination access right to be also granted to the source
-> >> (to make it a superset).
-> >>
-> >> See the provided documentation for additional details.
-> >>
-> >> New tests are provided with a following commit.
-> >>
-> >> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> >> Link: https://lore.kernel.org/r/20220221212522.320243-7-mic@digikod.ne=
-t
-> >> ---
-> >>   include/uapi/linux/landlock.h                |  27 +-
-> >>   security/landlock/fs.c                       | 550 ++++++++++++++++-=
---
-> >>   security/landlock/limits.h                   |   2 +-
-> >>   security/landlock/syscalls.c                 |   2 +-
-> >>   tools/testing/selftests/landlock/base_test.c |   2 +-
-> >>   tools/testing/selftests/landlock/fs_test.c   |   3 +-
-> >>   6 files changed, 516 insertions(+), 70 deletions(-)
+In calipso_map_cat_ntoh(), in the for loop, if the return value of
+netlbl_bitmap_walk() is equal to (net_clen_bits - 1), when 
+netlbl_bitmap_walk() is called next time, out-of-bounds memory accesses
+of bitmap[byte_offset] occurs.
 
-...
+The bug was found during fuzzing. The following is the fuzzing report
+ BUG: KASAN: slab-out-of-bounds in netlbl_bitmap_walk+0x3c/0xd0
+ Read of size 1 at addr ffffff8107bf6f70 by task err_OH/252
+ 
+ CPU: 7 PID: 252 Comm: err_OH Not tainted 5.17.0-rc7+ #17
+ Hardware name: linux,dummy-virt (DT)
+ Call trace:
+  dump_backtrace+0x21c/0x230
+  show_stack+0x1c/0x60
+  dump_stack_lvl+0x64/0x7c
+  print_address_description.constprop.0+0x70/0x2d0
+  __kasan_report+0x158/0x16c
+  kasan_report+0x74/0x120
+  __asan_load1+0x80/0xa0
+  netlbl_bitmap_walk+0x3c/0xd0
+  calipso_opt_getattr+0x1a8/0x230
+  calipso_sock_getattr+0x218/0x340
+  calipso_sock_getattr+0x44/0x60
+  netlbl_sock_getattr+0x44/0x80
+  selinux_netlbl_socket_setsockopt+0x138/0x170
+  selinux_socket_setsockopt+0x4c/0x60
+  security_socket_setsockopt+0x4c/0x90
+  __sys_setsockopt+0xbc/0x2b0
+  __arm64_sys_setsockopt+0x6c/0x84
+  invoke_syscall+0x64/0x190
+  el0_svc_common.constprop.0+0x88/0x200
+  do_el0_svc+0x88/0xa0
+  el0_svc+0x128/0x1b0
+  el0t_64_sync_handler+0x9c/0x120
+  el0t_64_sync+0x16c/0x170
 
-> >> +/*
-> >> + * Returns true if there is at least one access right different than
-> >> + * LANDLOCK_ACCESS_FS_REFER.
-> >> + */
-> >> +static inline bool is_eacces(
-> >> +               const layer_mask_t (*const
-> >> +                       layer_masks)[LANDLOCK_NUM_ACCESS_FS],
-> >>                  const access_mask_t access_request)
-> >>   {
-> >
-> > Granted, I don't have as deep of an understanding of Landlock as you
-> > do, but the function name "is_eacces" seems a little odd given the
-> > nature of the function.  Perhaps "is_fsrefer"?
->
-> Hmm, this helper does multiple things which are necessary to know if we
-> need to return -EACCES or -EXDEV. Renaming it to is_fsrefer() would
-> require to inverse the logic and use boolean negations in the callers
-> (because of ordering). Renaming to something like without_fs_refer()
-> would not be completely correct because we also check if there is no
-> layer_masks, which indicated that it doesn't contain an access right
-> that should return -EACCES. This helper is named as such because the
-> underlying semantic is to check for such error code, which is a tricky.
-> I can rename it co contains_eacces() or something, but a longer name
-> would require to cut the caller lines to fit 80 columns. :|
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wang Yufen <wangyufen@huawei.com>
+---
+ net/netlabel/netlabel_kapi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-You know the Landlock code better than I do, if you like
-"is_eacces()", then leave it as it is.
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index beb0e573266d..54c083003947 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -885,6 +885,8 @@ int netlbl_bitmap_walk(const unsigned char *bitmap, u32 bitmap_len,
+ 	unsigned char bitmask;
+ 	unsigned char byte;
+ 
++	if (offset >= bitmap_len)
++		return -1;
+ 	byte_offset = offset / 8;
+ 	byte = bitmap[byte_offset];
+ 	bit_spot = offset;
+-- 
+2.25.1
 
-> >> -       layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
-> >> -       bool allowed =3D false, has_access =3D false;
-> >> +       unsigned long access_bit;
-> >> +       /* LANDLOCK_ACCESS_FS_REFER alone must return -EXDEV. */
-> >> +       const unsigned long access_check =3D access_request &
-> >> +               ~LANDLOCK_ACCESS_FS_REFER;
-> >> +
-> >> +       if (!layer_masks)
-> >> +               return false;
-> >> +
-> >> +       for_each_set_bit(access_bit, &access_check, ARRAY_SIZE(*layer_=
-masks)) {
-> >> +               if ((*layer_masks)[access_bit])
-> >> +                       return true;
-> >> +       }
-> >
-> > Is calling for_each_set_bit() overkill here?  @access_check should
-> > only ever have at most one bit set (LANDLOCK_ACCESS_FS_REFER), yes?
->
-> No, it is the contrary ...
-
-Gotcha.  Thanks for the clarification, I must have missed that when I
-was looking at it last night.
-
-> >> @@ -287,22 +460,20 @@ static int check_access_path(const struct landlo=
-ck_ruleset *const domain,
-> >>          if (WARN_ON_ONCE(domain->num_layers < 1))
-> >>                  return -EACCES;
-> >>
-> >> -       /* Saves all layers handling a subset of requested accesses. *=
-/
-> >> -       for (i =3D 0; i < domain->num_layers; i++) {
-> >> -               const unsigned long access_req =3D access_request;
-> >> -               unsigned long access_bit;
-> >> -
-> >> -               for_each_set_bit(access_bit, &access_req,
-> >> -                               ARRAY_SIZE(layer_masks)) {
-> >> -                       if (domain->fs_access_masks[i] & BIT_ULL(acces=
-s_bit)) {
-> >> -                               layer_masks[access_bit] |=3D BIT_ULL(i=
-);
-> >> -                               has_access =3D true;
-> >> -                       }
-> >> -               }
-> >> +       BUILD_BUG_ON(!layer_masks_dst_parent);
-> >
-> > I know the kbuild robot already flagged this, but checking function
-> > parameters with BUILD_BUG_ON() does seem a bit ... unusual :)
->
-> Yeah, I like such guarantee but it may not work without __always_inline.
-> I moved this check in the previous WARN_ON_ONCE().
-
-That sounds good to me.
-
-> >> @@ -312,11 +483,50 @@ static int check_access_path(const struct landlo=
-ck_ruleset *const domain,
-> >>           */
-> >>          while (true) {
-> >>                  struct dentry *parent_dentry;
-> >> +               const struct landlock_rule *rule;
-> >> +
-> >> +               /*
-> >> +                * If at least all accesses allowed on the destination=
- are
-> >> +                * already allowed on the source, respectively if ther=
-e is at
-> >> +                * least as much as restrictions on the destination th=
-an on the
-> >> +                * source, then we can safely refer files from the sou=
-rce to
-> >> +                * the destination without risking a privilege escalat=
-ion.
-> >> +                * This is crucial for standalone multilayered securit=
-y
-> >> +                * policies.  Furthermore, this helps avoid policy wri=
-ters to
-> >> +                * shoot themselves in the foot.
-> >> +                */
-> >> +               if (is_dom_check && is_superset(child_is_directory,
-> >> +                                       layer_masks_dst_parent,
-> >> +                                       layer_masks_src_parent,
-> >> +                                       layer_masks_child)) {
-> >> +                       allowed_dst_parent =3D
-> >> +                               scope_to_request(access_request_dst_pa=
-rent,
-> >> +                                               layer_masks_dst_parent=
-);
-> >> +                       allowed_src_parent =3D
-> >> +                               scope_to_request(access_request_src_pa=
-rent,
-> >> +                                               layer_masks_src_parent=
-);
-> >> +
-> >> +                       /* Stops when all accesses are granted. */
-> >> +                       if (allowed_dst_parent && allowed_src_parent)
-> >> +                               break;
-> >> +
-> >> +                       /*
-> >> +                        * Downgrades checks from domain handled acces=
-ses to
-> >> +                        * requested accesses.
-> >> +                        */
-> >> +                       is_dom_check =3D false;
-> >> +                       access_masked_dst_parent =3D access_request_ds=
-t_parent;
-> >> +                       access_masked_src_parent =3D access_request_sr=
-c_parent;
-> >> +               }
-> >> +
-> >> +               rule =3D find_rule(domain, walker_path.dentry);
-> >> +               allowed_dst_parent =3D unmask_layers(rule, access_mask=
-ed_dst_parent,
-> >> +                               layer_masks_dst_parent);
-> >> +               allowed_src_parent =3D unmask_layers(rule, access_mask=
-ed_src_parent,
-> >> +                               layer_masks_src_parent);
-> >>
-> >> -               allowed =3D unmask_layers(find_rule(domain, walker_pat=
-h.dentry),
-> >> -                               access_request, &layer_masks);
-> >> -               if (allowed)
-> >> -                       /* Stops when a rule from each layer grants ac=
-cess. */
-> >> +               /* Stops when a rule from each layer grants access. */
-> >> +               if (allowed_dst_parent && allowed_src_parent)
-> >>                          break;
-> >
-> > If "(allowed_dst_parent && allowed_src_parent)" is true, you break out
-> > of the while loop only to do a path_put(), check the two booleans once
-> > more, and then return zero, yes?  Why not just do the path_put() and
-> > return zero here?
->
-> Correct, that would work, but I prefer not to duplicate the logic of
-> granting access if it doesn't make the code more complex, which I think
-> is not the case here, and I'm reluctant to duplicate path_get/put()
-> calls. This loop break is a small optimization to avoid walking the path
-> one more step, and writing it this way looks cleaner and less
-> error-prone from my point of view.
-
-I'm a big fan of maintainable code, and since you are the maintainer,
-if you prefer this approach I say stick with what you have :)
-
---=20
-paul-moore.com
