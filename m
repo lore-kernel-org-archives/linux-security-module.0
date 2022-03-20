@@ -2,126 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADE4C433F5
-	for <linux-security-module@archiver.kernel.org>; Sun, 20 Mar 2022 21:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B55C433EF
+	for <linux-security-module@archiver.kernel.org>; Sun, 20 Mar 2022 23:34:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343805AbiCTV4r (ORCPT
+        id S1343795AbiCTXfi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 20 Mar 2022 17:56:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34040 "EHLO
+        Sun, 20 Mar 2022 19:35:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343770AbiCTV4p (ORCPT
+        with ESMTP id S1343810AbiCTXfh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 20 Mar 2022 17:56:45 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2AC369C1
-        for <linux-security-module@vger.kernel.org>; Sun, 20 Mar 2022 14:55:15 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id qx21so26434798ejb.13
-        for <linux-security-module@vger.kernel.org>; Sun, 20 Mar 2022 14:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hLKx8CAJntsK0yBMQmBZFOxm4LBOx6McrSplLJdiGGU=;
-        b=mt8PQVn28lw9ZHmv9OluD/+rddZETi2CpFWyYRqwb8NOFOEKEPefD2ZeOSIqiomg+U
-         42GPEuyszn5IR7qcqzUSgYnLuzC4lypVbf1Rp1HWkSaE94p5exbSQZHDPV8lEQ5/cwoc
-         uf+h0LihV/ns0Ho0ApGkeA/oPr417gvK/KGfPxBYQQpMDQgFnqnRjUd3oQj24HEiqqoF
-         fev9lCRq3YFc6EnxRHEVmOzFvxUvosjPhrykYOEaSX3L8Qh3Awd0cg+rydCMCX5jyKvL
-         SJmXvjkqMFD/ev084ruGBMZTJdfCaSO+sIpIk89gcc85G2l8rs+78eDerkDLe5DyAnwk
-         Eciw==
+        Sun, 20 Mar 2022 19:35:37 -0400
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1D618D6A7
+        for <linux-security-module@vger.kernel.org>; Sun, 20 Mar 2022 16:34:13 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id x6-20020a923006000000b002bea39c3974so6572264ile.12
+        for <linux-security-module@vger.kernel.org>; Sun, 20 Mar 2022 16:34:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hLKx8CAJntsK0yBMQmBZFOxm4LBOx6McrSplLJdiGGU=;
-        b=oQ9u1JfedZMFLC5WTUxGs5mInZlzq2P8UoulxzNzLuuw/Xr1r3DplcBZEAOKflLvgU
-         wll02bQqG9Dkv4nLc8UbadRheDNEYqbRzbZ0A7rtxjJFldlH9vOfbmvi2Ac/9fVsvd+3
-         Xtgk8mYF0yQwcjSrxtZJIyCJS/FQHOTzRq/JfdkumeiGGrzFyEHFZyidAtYfzUphHbXy
-         g9KKhffxyOg5UBiDo5YC8YGkkultedKDd6yr9rAja8ZMTkO6V9JX4gbyvFpl3IyiI/Xd
-         BxIsTGZzh+Qcb4MQkxT0ccROlXZQhH0XGQ21TtF76JoIk0Nk6D+9q296Syyhg/0Rab5v
-         fSiQ==
-X-Gm-Message-State: AOAM530osigs2IoN1VuqaCM+L5IfdqDNtah/thmYjh/+WDSqaOVqSuwR
-        GO95fk3FCzlmZQZzlzgyXLwOUO5tG7cD4NR/Ztkj
-X-Google-Smtp-Source: ABdhPJzWwblOJWMtONe7CR9um3g6A8nTZL8q/qL8GvVJTw4AHssVaTYZmSsnltemJdLy060xvql+tgQpRva1eqsC0MM=
-X-Received: by 2002:a17:907:1b09:b0:6d8:faa8:4a06 with SMTP id
- mp9-20020a1709071b0900b006d8faa84a06mr17885084ejc.701.1647813313849; Sun, 20
- Mar 2022 14:55:13 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=qN8EZrK1zqj9TBgeCNo+T4ll4VaGvoLHaMPomao8fYo=;
+        b=U2gOl7WwH+ZrdsOxgH5MlopdQq4CCMBASOrlioLiJpniQPWPaxcmMWXKKRnUL1n54f
+         2Tk0sEDZtm8asIQwZx+UA7uBpeRdB5mA2FuNO1eUcMi3B9RAAPuSKsSftKzD3w1e0hSn
+         0i8onh3OGe6OXYcVRlkF1VtuFqelD7HxqKUa8sTwddxLivi1uZDlamy2zs4f59f50Ye/
+         OOXHaByIXuXTJdx4ZagMqxlAu0biR4Y/yDo+pEQnfGS1337QbcVg8o7gNbDCWewPablf
+         zRk3FgMml9JgcvqjeMwhyFeHHw7z+/KrGXmVjGZUkVVZM8ul+Jg7lRIGJFDIzqwe6iWt
+         GoxQ==
+X-Gm-Message-State: AOAM5317MOiC5Ba0fra4qv2V4L6TWm1vRHhydwwj8ijj/freKOa/u8iW
+        ao5gbGtVU9D0DLozGYV1wiabiBja/hTBS4GJxSMXoz/aCZ8I
+X-Google-Smtp-Source: ABdhPJx6dWZ0E2X4HAuXYLHIG295UGzXoP0sdKG/sso8cNgW2fDjJaSS+TE1T4Mvo6HYe+Xx+ND/ZNlvmt65aXRB8gm1s2+RBzx6
 MIME-Version: 1.0
-References: <20220318063508.1348148-1-wangyufen@huawei.com>
-In-Reply-To: <20220318063508.1348148-1-wangyufen@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 20 Mar 2022 17:55:02 -0400
-Message-ID: <CAHC9VhSTWOEr-OQiJKgz+Xt1R3OzsfToWLxDcGjiKbb8U0hJpg@mail.gmail.com>
-Subject: Re: [PATCH net-next] netlabel: fix out-of-bounds memory accesses
-To:     Wang Yufen <wangyufen@huawei.com>
-Cc:     davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-        netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1be4:b0:2c7:898a:3b93 with SMTP id
+ y4-20020a056e021be400b002c7898a3b93mr8498537ilv.24.1647819253103; Sun, 20 Mar
+ 2022 16:34:13 -0700 (PDT)
+Date:   Sun, 20 Mar 2022 16:34:13 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003c424505daaed1b7@google.com>
+Subject: [syzbot] memory leak in keyctl_watch_key
+From:   syzbot <syzbot+6e2de48f06cdb2884bfc@syzkaller.appspotmail.com>
+To:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 18, 2022 at 2:17 AM Wang Yufen <wangyufen@huawei.com> wrote:
->
-> In calipso_map_cat_ntoh(), in the for loop, if the return value of
-> netlbl_bitmap_walk() is equal to (net_clen_bits - 1), when
-> netlbl_bitmap_walk() is called next time, out-of-bounds memory accesses
-> of bitmap[byte_offset] occurs.
->
-> The bug was found during fuzzing. The following is the fuzzing report
->  BUG: KASAN: slab-out-of-bounds in netlbl_bitmap_walk+0x3c/0xd0
->  Read of size 1 at addr ffffff8107bf6f70 by task err_OH/252
->
->  CPU: 7 PID: 252 Comm: err_OH Not tainted 5.17.0-rc7+ #17
->  Hardware name: linux,dummy-virt (DT)
->  Call trace:
->   dump_backtrace+0x21c/0x230
->   show_stack+0x1c/0x60
->   dump_stack_lvl+0x64/0x7c
->   print_address_description.constprop.0+0x70/0x2d0
->   __kasan_report+0x158/0x16c
->   kasan_report+0x74/0x120
->   __asan_load1+0x80/0xa0
->   netlbl_bitmap_walk+0x3c/0xd0
->   calipso_opt_getattr+0x1a8/0x230
->   calipso_sock_getattr+0x218/0x340
->   calipso_sock_getattr+0x44/0x60
->   netlbl_sock_getattr+0x44/0x80
->   selinux_netlbl_socket_setsockopt+0x138/0x170
->   selinux_socket_setsockopt+0x4c/0x60
->   security_socket_setsockopt+0x4c/0x90
->   __sys_setsockopt+0xbc/0x2b0
->   __arm64_sys_setsockopt+0x6c/0x84
->   invoke_syscall+0x64/0x190
->   el0_svc_common.constprop.0+0x88/0x200
->   do_el0_svc+0x88/0xa0
->   el0_svc+0x128/0x1b0
->   el0t_64_sync_handler+0x9c/0x120
->   el0t_64_sync+0x16c/0x170
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-> ---
->  net/netlabel/netlabel_kapi.c | 2 ++
->  1 file changed, 2 insertions(+)
+Hello,
 
-Looks good to me, thanks for catching this and submitting a fix.
+syzbot found the following issue on:
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+HEAD commit:    56e337f2cf13 Revert "gpio: Revert regression in sysfs-gpio..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b65f8d700000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6c80259f3b3fdf91
+dashboard link: https://syzkaller.appspot.com/bug?extid=6e2de48f06cdb2884bfc
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1786c3b5700000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171ca6b1700000
 
-> diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-> index beb0e573266d..54c083003947 100644
-> --- a/net/netlabel/netlabel_kapi.c
-> +++ b/net/netlabel/netlabel_kapi.c
-> @@ -885,6 +885,8 @@ int netlbl_bitmap_walk(const unsigned char *bitmap, u32 bitmap_len,
->         unsigned char bitmask;
->         unsigned char byte;
->
-> +       if (offset >= bitmap_len)
-> +               return -1;
->         byte_offset = offset / 8;
->         byte = bitmap[byte_offset];
->         bit_spot = offset;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6e2de48f06cdb2884bfc@syzkaller.appspotmail.com
 
--- 
-paul-moore.com
+Warning: Permanently added '10.128.10.13' (ECDSA) to the list of known hosts.
+executing program
+executing program
+BUG: memory leak
+unreferenced object 0xffff88810ce4a200 (size 96):
+  comm "syz-executor352", pid 3605, jiffies 4294947473 (age 13.720s)
+  hex dump (first 32 bytes):
+    e0 82 48 0d 81 88 ff ff 00 00 00 00 00 00 00 00  ..H.............
+    80 a2 e4 0c 81 88 ff ff 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff8214e6cc>] kmalloc include/linux/slab.h:581 [inline]
+    [<ffffffff8214e6cc>] kzalloc include/linux/slab.h:714 [inline]
+    [<ffffffff8214e6cc>] keyctl_watch_key+0xec/0x2e0 security/keys/keyctl.c:1800
+    [<ffffffff8214ec84>] __do_sys_keyctl+0x3c4/0x490 security/keys/keyctl.c:2016
+    [<ffffffff84493a25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff84493a25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
