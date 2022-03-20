@@ -2,109 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E913C433F5
-	for <linux-security-module@archiver.kernel.org>; Sun, 20 Mar 2022 21:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADE4C433F5
+	for <linux-security-module@archiver.kernel.org>; Sun, 20 Mar 2022 21:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343742AbiCTVbp (ORCPT
+        id S1343805AbiCTV4r (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 20 Mar 2022 17:31:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57194 "EHLO
+        Sun, 20 Mar 2022 17:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236574AbiCTVbp (ORCPT
+        with ESMTP id S1343770AbiCTV4p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 20 Mar 2022 17:31:45 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30B233819D;
-        Sun, 20 Mar 2022 14:30:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CEF69B80EFA;
-        Sun, 20 Mar 2022 21:30:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996A3C340E9;
-        Sun, 20 Mar 2022 21:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647811818;
-        bh=tTXsRvXcOgBE9bkryBEz2qKjZqFOG8apagVn9U/uti0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p3XF6opLAITbuzC6qPWYfipEKm/uQr/7rBFwWLFBwnrqPVlc4t1suLbbQU3nDKoQz
-         Vt/UhFCvJs8KCgIq+j9X68rMLv48PO5LS8XUDHxEPCRFoK/q3pqFpKnCmRdzv1TwSY
-         rgFf3mCujGbriNThhNRY/4yE8Obdxg4MBzEEQHbzFJ366yxzohQnnQqbhFzxziYfFN
-         5jle4eIxmZtag+2HXRCLHQ7D/4b9u1p8Jck87YEYb+cunlYAn1R2HCKkCUN/ftVyLL
-         k/gAnAma91++7ccEszyF0PvfCuinT1joWPi7wpyoJf+7xQHOUWeBucleeQyAfhlW7F
-         W178jPJ4zAWRg==
-Date:   Sun, 20 Mar 2022 23:31:19 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Nayna <nayna@linux.vnet.ibm.com>
-Cc:     Nageswara Sastry <rnsastry@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        dhowells@redhat.com, zohar@linux.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
-        seth@forshee.me, Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v11 0/4] integrity: support including firmware
- ".platform" keys at build time
-Message-ID: <YjedJxNNv8KifAKd@kernel.org>
-References: <20220310214450.676505-1-nayna@linux.ibm.com>
- <4afae87c-2986-6b0e-07be-954dd4937afd@linux.ibm.com>
- <f78d11fefd13bd17748e36621acee9c2f27a77f6.camel@kernel.org>
- <f92ec4d8-47c0-ece5-3c52-caeb8265881c@linux.vnet.ibm.com>
- <YjLlYTs+2ep80zoK@iki.fi>
- <57d7034a-fb5c-444e-a709-4f993459688e@linux.vnet.ibm.com>
+        Sun, 20 Mar 2022 17:56:45 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2AC369C1
+        for <linux-security-module@vger.kernel.org>; Sun, 20 Mar 2022 14:55:15 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id qx21so26434798ejb.13
+        for <linux-security-module@vger.kernel.org>; Sun, 20 Mar 2022 14:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hLKx8CAJntsK0yBMQmBZFOxm4LBOx6McrSplLJdiGGU=;
+        b=mt8PQVn28lw9ZHmv9OluD/+rddZETi2CpFWyYRqwb8NOFOEKEPefD2ZeOSIqiomg+U
+         42GPEuyszn5IR7qcqzUSgYnLuzC4lypVbf1Rp1HWkSaE94p5exbSQZHDPV8lEQ5/cwoc
+         uf+h0LihV/ns0Ho0ApGkeA/oPr417gvK/KGfPxBYQQpMDQgFnqnRjUd3oQj24HEiqqoF
+         fev9lCRq3YFc6EnxRHEVmOzFvxUvosjPhrykYOEaSX3L8Qh3Awd0cg+rydCMCX5jyKvL
+         SJmXvjkqMFD/ev084ruGBMZTJdfCaSO+sIpIk89gcc85G2l8rs+78eDerkDLe5DyAnwk
+         Eciw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hLKx8CAJntsK0yBMQmBZFOxm4LBOx6McrSplLJdiGGU=;
+        b=oQ9u1JfedZMFLC5WTUxGs5mInZlzq2P8UoulxzNzLuuw/Xr1r3DplcBZEAOKflLvgU
+         wll02bQqG9Dkv4nLc8UbadRheDNEYqbRzbZ0A7rtxjJFldlH9vOfbmvi2Ac/9fVsvd+3
+         Xtgk8mYF0yQwcjSrxtZJIyCJS/FQHOTzRq/JfdkumeiGGrzFyEHFZyidAtYfzUphHbXy
+         g9KKhffxyOg5UBiDo5YC8YGkkultedKDd6yr9rAja8ZMTkO6V9JX4gbyvFpl3IyiI/Xd
+         BxIsTGZzh+Qcb4MQkxT0ccROlXZQhH0XGQ21TtF76JoIk0Nk6D+9q296Syyhg/0Rab5v
+         fSiQ==
+X-Gm-Message-State: AOAM530osigs2IoN1VuqaCM+L5IfdqDNtah/thmYjh/+WDSqaOVqSuwR
+        GO95fk3FCzlmZQZzlzgyXLwOUO5tG7cD4NR/Ztkj
+X-Google-Smtp-Source: ABdhPJzWwblOJWMtONe7CR9um3g6A8nTZL8q/qL8GvVJTw4AHssVaTYZmSsnltemJdLy060xvql+tgQpRva1eqsC0MM=
+X-Received: by 2002:a17:907:1b09:b0:6d8:faa8:4a06 with SMTP id
+ mp9-20020a1709071b0900b006d8faa84a06mr17885084ejc.701.1647813313849; Sun, 20
+ Mar 2022 14:55:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <57d7034a-fb5c-444e-a709-4f993459688e@linux.vnet.ibm.com>
+References: <20220318063508.1348148-1-wangyufen@huawei.com>
+In-Reply-To: <20220318063508.1348148-1-wangyufen@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 20 Mar 2022 17:55:02 -0400
+Message-ID: <CAHC9VhSTWOEr-OQiJKgz+Xt1R3OzsfToWLxDcGjiKbb8U0hJpg@mail.gmail.com>
+Subject: Re: [PATCH net-next] netlabel: fix out-of-bounds memory accesses
+To:     Wang Yufen <wangyufen@huawei.com>
+Cc:     davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 18, 2022 at 05:25:07PM -0400, Nayna wrote:
-> 
-> On 3/17/22 03:38, Jarkko Sakkinen wrote:
-> > On Fri, Mar 11, 2022 at 04:03:12PM -0500, Nayna wrote:
-> > > On 3/11/22 11:42, Jarkko Sakkinen wrote:
-> > > > ".platform" keyring.
-> > > > > > Changelog:
-> > > > > > v11:
-> > > > > > * Added a new patch to conditionally build extract-cert if
-> > > > > > PLATFORM_KEYRING is enabled.
-> > > > > > 
-> > > > > Tested the following four patches with and with out setting
-> > > > > CONFIG_INTEGRITY_PLATFORM_KEYS
-> > > > > 
-> > > > > Tested-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-> > > > OK, I added it:
-> > > > 
-> > > > git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
-> > > Thanks Jarkko. Masahiro Yamada would prefer to revert the original commit
-> > > 340a02535ee785c64c62a9c45706597a0139e972 i.e. move extract-cert back to the
-> > > scripts/ directory.
-> > > 
-> > > I am just posting v12 which includes Masahiro feedback. Nageswara has
-> > > already tested v12 version as well.
-> > > 
-> > > I am fine either way 1.) Adding v11 and then separately handling of
-> > > reverting of the commit or 2.) Adding v12 version which includes the revert.
-> > > I leave the decision on you as to which one to upstream.
-> > > 
-> > > Thanks & Regards,
-> > > 
-> > >      - Nayna
-> > > 
-> > I already sent PR for v5.18. Too many late changes to include this, which
-> > means that v12 is the way to go.
-> 
-> Assuming v12 looks good, could you please queue it now ?
-> 
-> Thanks & Regards,
-> 
->     - Nayna
-> 
+On Fri, Mar 18, 2022 at 2:17 AM Wang Yufen <wangyufen@huawei.com> wrote:
+>
+> In calipso_map_cat_ntoh(), in the for loop, if the return value of
+> netlbl_bitmap_walk() is equal to (net_clen_bits - 1), when
+> netlbl_bitmap_walk() is called next time, out-of-bounds memory accesses
+> of bitmap[byte_offset] occurs.
+>
+> The bug was found during fuzzing. The following is the fuzzing report
+>  BUG: KASAN: slab-out-of-bounds in netlbl_bitmap_walk+0x3c/0xd0
+>  Read of size 1 at addr ffffff8107bf6f70 by task err_OH/252
+>
+>  CPU: 7 PID: 252 Comm: err_OH Not tainted 5.17.0-rc7+ #17
+>  Hardware name: linux,dummy-virt (DT)
+>  Call trace:
+>   dump_backtrace+0x21c/0x230
+>   show_stack+0x1c/0x60
+>   dump_stack_lvl+0x64/0x7c
+>   print_address_description.constprop.0+0x70/0x2d0
+>   __kasan_report+0x158/0x16c
+>   kasan_report+0x74/0x120
+>   __asan_load1+0x80/0xa0
+>   netlbl_bitmap_walk+0x3c/0xd0
+>   calipso_opt_getattr+0x1a8/0x230
+>   calipso_sock_getattr+0x218/0x340
+>   calipso_sock_getattr+0x44/0x60
+>   netlbl_sock_getattr+0x44/0x80
+>   selinux_netlbl_socket_setsockopt+0x138/0x170
+>   selinux_socket_setsockopt+0x4c/0x60
+>   security_socket_setsockopt+0x4c/0x90
+>   __sys_setsockopt+0xbc/0x2b0
+>   __arm64_sys_setsockopt+0x6c/0x84
+>   invoke_syscall+0x64/0x190
+>   el0_svc_common.constprop.0+0x88/0x200
+>   do_el0_svc+0x88/0xa0
+>   el0_svc+0x128/0x1b0
+>   el0t_64_sync_handler+0x9c/0x120
+>   el0t_64_sync+0x16c/0x170
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wang Yufen <wangyufen@huawei.com>
+> ---
+>  net/netlabel/netlabel_kapi.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Unfortunately, I've already sent my v5.18 PR over a week ago. I can put it
-to my queue but I think it is lacking some of the tested by tags, doesn't
-it?
+Looks good to me, thanks for catching this and submitting a fix.
 
-BR, Jarkko
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+> index beb0e573266d..54c083003947 100644
+> --- a/net/netlabel/netlabel_kapi.c
+> +++ b/net/netlabel/netlabel_kapi.c
+> @@ -885,6 +885,8 @@ int netlbl_bitmap_walk(const unsigned char *bitmap, u32 bitmap_len,
+>         unsigned char bitmask;
+>         unsigned char byte;
+>
+> +       if (offset >= bitmap_len)
+> +               return -1;
+>         byte_offset = offset / 8;
+>         byte = bitmap[byte_offset];
+>         bit_spot = offset;
+
+-- 
+paul-moore.com
