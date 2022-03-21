@@ -2,95 +2,115 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B55C433EF
-	for <linux-security-module@archiver.kernel.org>; Sun, 20 Mar 2022 23:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554A2C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 07:48:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343795AbiCTXfi (ORCPT
+        id S1345025AbiCUHtq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 20 Mar 2022 19:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43030 "EHLO
+        Mon, 21 Mar 2022 03:49:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343810AbiCTXfh (ORCPT
+        with ESMTP id S1344050AbiCUHtl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 20 Mar 2022 19:35:37 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1D618D6A7
-        for <linux-security-module@vger.kernel.org>; Sun, 20 Mar 2022 16:34:13 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id x6-20020a923006000000b002bea39c3974so6572264ile.12
-        for <linux-security-module@vger.kernel.org>; Sun, 20 Mar 2022 16:34:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=qN8EZrK1zqj9TBgeCNo+T4ll4VaGvoLHaMPomao8fYo=;
-        b=U2gOl7WwH+ZrdsOxgH5MlopdQq4CCMBASOrlioLiJpniQPWPaxcmMWXKKRnUL1n54f
-         2Tk0sEDZtm8asIQwZx+UA7uBpeRdB5mA2FuNO1eUcMi3B9RAAPuSKsSftKzD3w1e0hSn
-         0i8onh3OGe6OXYcVRlkF1VtuFqelD7HxqKUa8sTwddxLivi1uZDlamy2zs4f59f50Ye/
-         OOXHaByIXuXTJdx4ZagMqxlAu0biR4Y/yDo+pEQnfGS1337QbcVg8o7gNbDCWewPablf
-         zRk3FgMml9JgcvqjeMwhyFeHHw7z+/KrGXmVjGZUkVVZM8ul+Jg7lRIGJFDIzqwe6iWt
-         GoxQ==
-X-Gm-Message-State: AOAM5317MOiC5Ba0fra4qv2V4L6TWm1vRHhydwwj8ijj/freKOa/u8iW
-        ao5gbGtVU9D0DLozGYV1wiabiBja/hTBS4GJxSMXoz/aCZ8I
-X-Google-Smtp-Source: ABdhPJx6dWZ0E2X4HAuXYLHIG295UGzXoP0sdKG/sso8cNgW2fDjJaSS+TE1T4Mvo6HYe+Xx+ND/ZNlvmt65aXRB8gm1s2+RBzx6
+        Mon, 21 Mar 2022 03:49:41 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE7DD7F;
+        Mon, 21 Mar 2022 00:48:15 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4KMRYh3Djqz1GBxf;
+        Mon, 21 Mar 2022 15:48:08 +0800 (CST)
+Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
+ (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Mon, 21 Mar
+ 2022 15:48:13 +0800
+From:   GUO Zihua <guozihua@huawei.com>
+To:     <linux-integrity@vger.kernel.org>
+CC:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <roberto.sassu@huawei.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xiujianfeng@huawei.com>,
+        <wangweiyang2@huawei.com>
+Subject: [PATCH] ima: remove template "ima" as the compiled default
+Date:   Mon, 21 Mar 2022 15:47:37 +0800
+Message-ID: <20220321074737.138002-1-guozihua@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1be4:b0:2c7:898a:3b93 with SMTP id
- y4-20020a056e021be400b002c7898a3b93mr8498537ilv.24.1647819253103; Sun, 20 Mar
- 2022 16:34:13 -0700 (PDT)
-Date:   Sun, 20 Mar 2022 16:34:13 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003c424505daaed1b7@google.com>
-Subject: [syzbot] memory leak in keyctl_watch_key
-From:   syzbot <syzbot+6e2de48f06cdb2884bfc@syzkaller.appspotmail.com>
-To:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.175.31]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Template "ima" is a legacy template which limits the hash algorithm to
+either sha1 or md5. None of them should be considered "strong" these
+days. Besides, allowing template "ima" as the compiled default would
+also cause the following issue: the cmdline option "ima_hash=" must be
+behind "ima_template=", otherwise "ima_hash=" might be rejected.
 
-syzbot found the following issue on:
+The root cause of this issue is that during the processing of ima_hash,
+we would try to check whether the hash algorithm is compatible with the
+template. If the template is not set at the moment we do the check, we
+check the algorithm against the compiled default template. If the
+complied default template is "ima", then we reject any hash algorithm
+other than sha1 and md5.
 
-HEAD commit:    56e337f2cf13 Revert "gpio: Revert regression in sysfs-gpio..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b65f8d700000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6c80259f3b3fdf91
-dashboard link: https://syzkaller.appspot.com/bug?extid=6e2de48f06cdb2884bfc
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1786c3b5700000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171ca6b1700000
+For example, if the compiled default template is "ima", and the default
+algorithm is sha1 (which is the current default). In the cmdline, we put
+in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
+that ima starts with ima-ng as the template and sha256 as the hash
+algorithm. However, during the processing of "ima_hash=",
+"ima_template=" has not been processed yet, and hash_setup would check
+the configured hash algorithm against the compiled default: ima, and
+reject sha256. So at the end, the hash algorithm that is actually used
+will be sha1.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6e2de48f06cdb2884bfc@syzkaller.appspotmail.com
+With template "ima" removed from the compiled default, we ensure that the
+default tempalte would at least be "ima-ng" which allows for basically
+any hash algorithm.
 
-Warning: Permanently added '10.128.10.13' (ECDSA) to the list of known hosts.
-executing program
-executing program
-BUG: memory leak
-unreferenced object 0xffff88810ce4a200 (size 96):
-  comm "syz-executor352", pid 3605, jiffies 4294947473 (age 13.720s)
-  hex dump (first 32 bytes):
-    e0 82 48 0d 81 88 ff ff 00 00 00 00 00 00 00 00  ..H.............
-    80 a2 e4 0c 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff8214e6cc>] kmalloc include/linux/slab.h:581 [inline]
-    [<ffffffff8214e6cc>] kzalloc include/linux/slab.h:714 [inline]
-    [<ffffffff8214e6cc>] keyctl_watch_key+0xec/0x2e0 security/keys/keyctl.c:1800
-    [<ffffffff8214ec84>] __do_sys_keyctl+0x3c4/0x490 security/keys/keyctl.c:2016
-    [<ffffffff84493a25>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-    [<ffffffff84493a25>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-    [<ffffffff84600068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+This change would not break the algorithm compatibility checking for
+IMA.
 
-
-
+Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
+Signed-off-by: GUO Zihua <guozihua@huawei.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ security/integrity/ima/Kconfig | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index f3a9cc201c8c..9513df2ac19e 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -65,14 +65,11 @@ choice
+ 	help
+ 	  Select the default IMA measurement template.
+ 
+-	  The original 'ima' measurement list template contains a
+-	  hash, defined as 20 bytes, and a null terminated pathname,
+-	  limited to 255 characters.  The 'ima-ng' measurement list
+-	  template permits both larger hash digests and longer
+-	  pathnames.
+-
+-	config IMA_TEMPLATE
+-		bool "ima"
++	  The 'ima-ng' measurement list template permits various hash
++	  digests and long pathnames. The compiled default template
++	  can be overwritten using the kernel command line
++	  'ima_template=' option.
++
+ 	config IMA_NG_TEMPLATE
+ 		bool "ima-ng (default)"
+ 	config IMA_SIG_TEMPLATE
+@@ -82,7 +79,6 @@ endchoice
+ config IMA_DEFAULT_TEMPLATE
+ 	string
+ 	depends on IMA
+-	default "ima" if IMA_TEMPLATE
+ 	default "ima-ng" if IMA_NG_TEMPLATE
+ 	default "ima-sig" if IMA_SIG_TEMPLATE
+ 
+-- 
+2.17.1
+
