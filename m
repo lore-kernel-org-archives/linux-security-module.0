@@ -2,68 +2,68 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEAEC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 11:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD38C43219
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 11:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346826AbiCULnC (ORCPT
+        id S1346865AbiCULxO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Mar 2022 07:43:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42592 "EHLO
+        Mon, 21 Mar 2022 07:53:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346819AbiCULm7 (ORCPT
+        with ESMTP id S1346869AbiCULwk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Mar 2022 07:42:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 21693D7613
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 04:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647862893;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5IFZqINZubaQIrhPbpcFTVJX7mnUBlxWKhJ9rwfoSHA=;
-        b=T2K+CsA5vVaZB3Z3N5QsvMaXEtOaZset7GLV1d6K5Lzm9U5glGysE6wMFTYH0JKx3yZTxS
-        tQcstE6q4QQG+vYzIimYHxq5XDAsdv4UpGZW+aPKgYNkzKYm+21D5iDKwzz3VjbCmQ58sw
-        04ZZYt1f07FjPPuhdqeSmmxi/gbxvBU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-589-exaZVa4bOLCgv7JyROiQHQ-1; Mon, 21 Mar 2022 07:41:30 -0400
-X-MC-Unique: exaZVa4bOLCgv7JyROiQHQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 847DD802809;
-        Mon, 21 Mar 2022 11:41:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5028B40C1247;
-        Mon, 21 Mar 2022 11:41:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <0000000000003c424505daaed1b7@google.com>
-References: <0000000000003c424505daaed1b7@google.com>
-To:     syzbot <syzbot+6e2de48f06cdb2884bfc@syzkaller.appspotmail.com>
-Cc:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
+        Mon, 21 Mar 2022 07:52:40 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E6531567BD
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 04:51:10 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id z10-20020a056602080a00b00645b9fdc630so10297113iow.5
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 04:51:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=83x05As+hpEzsvG90JcF+MmesN/BPt2Ioqkif/dNrHk=;
+        b=OPp+fAA5xLhvS/shk05Wsl+qSahGtKAwGC2RE8fG7dzKm87oBHumZkRykvoGoDG4fi
+         gm+3OkLzM6B6IX8UgbNCQLCxDMJyXC3UTmiaQBGFwI2MSi/LFI/t6ACrdO7d8dwKwXTV
+         d3hhqV4MS9MB1osjctCuZ1RFnb20Oqv0FOdqCxcu+jP1v8jIh35IREcs6wjlld0STg/u
+         lEcHiUYvCPiDFbd9OtRUkmCNkHx0ez1ZWPLmc+v+hCc9ApUMbrtAv/ZuuRVaQOgSkO/R
+         lV5S7J5DsgUtLa30VjoO8WcO1j+aLq9nl+M+nKYAH9YiXnch7/iDDBXE5DF7Um6G2KpE
+         8+qA==
+X-Gm-Message-State: AOAM530juBFk/fSzftzgHOREO7PrimtIC/jN5S6RVQQcIwGFMIR4GYda
+        YvEp8CvhUhsK6KtO7XZcQt/vn9eKXl6U6WuSMQxy/DtVuZFN
+X-Google-Smtp-Source: ABdhPJx14oK7C0sSXYkXvGjnk1LhI7Nd7dI8dHsjz4cUx21fQNuejsWZo8ywfyvHHwBn1WhJ1G6ZfQQvui4PEZ82btWAzDlAb8dg
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:3816:b0:31a:60:22c9 with SMTP id
+ i22-20020a056638381600b0031a006022c9mr9837348jav.146.1647863469476; Mon, 21
+ Mar 2022 04:51:09 -0700 (PDT)
+Date:   Mon, 21 Mar 2022 04:51:09 -0700
+In-Reply-To: <1019067.1647862887@warthog.procyon.org.uk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bc8eaf05dab91c63@google.com>
+Subject: Re: [syzbot] memory leak in keyctl_watch_key
+From:   syzbot <syzbot+6e2de48f06cdb2884bfc@syzkaller.appspotmail.com>
+To:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
         keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, serge@hallyn.com,
         syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] memory leak in keyctl_watch_key
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1019066.1647862887.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 21 Mar 2022 11:41:27 +0000
-Message-ID: <1019067.1647862887@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-free_watch() is missing a kfree() to actually free the watch.
+Hello,
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs=
-.git c82efd1dfb229d6aa7e08d57d1c41f034d97b1eb
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-and-tested-by: syzbot+6e2de48f06cdb2884bfc@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         c82efd1d watch_queue: Actually free the watch
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7683c993c23430bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=6e2de48f06cdb2884bfc
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
