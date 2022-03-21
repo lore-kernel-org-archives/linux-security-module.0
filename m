@@ -2,72 +2,99 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCD2C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 18:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66653C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 20:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351973AbiCUSGK (ORCPT
+        id S1348511AbiCUUVj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Mar 2022 14:06:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59136 "EHLO
+        Mon, 21 Mar 2022 16:21:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238960AbiCUSGJ (ORCPT
+        with ESMTP id S1352774AbiCUUVi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Mar 2022 14:06:09 -0400
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ae])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 822AE583B5
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 11:04:43 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KMjF56JnLzMprhJ;
-        Mon, 21 Mar 2022 19:04:41 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KMjF25xRSzljsT5;
-        Mon, 21 Mar 2022 19:04:38 +0100 (CET)
-Message-ID: <cfa15768-ebf4-d198-fb1b-5a6ab47caedb@digikod.net>
-Date:   Mon, 21 Mar 2022 19:05:42 +0100
+        Mon, 21 Mar 2022 16:21:38 -0400
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC185A090;
+        Mon, 21 Mar 2022 13:20:12 -0700 (PDT)
+Received: from [192.168.192.153] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 9DC7C3F675;
+        Mon, 21 Mar 2022 20:20:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1647894009;
+        bh=uamzDTJ4eJ/ciPYegLGLh1LwOQ1s4XFLg66bcANk+sw=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=PhIGq27tIR6YGTpy+wnDQh8CRjPzA5RjWXdayxXMhy9VMK/vpwY2lrozuck/Q0BGn
+         2yNfzkrnwblJGs4nRobrc6x/F1mcqSShK2KsSINwDHalwonqRl1KBYfR/79XCmtIUZ
+         9TaqHNCZy9x0rba3HHAdQtIv/xnIs3/jmTaTaePPl3/8fhxYte7Of7yWFujkaPGFSY
+         owDvM8DqO9XrRHYH7zI+Ji44jGokH9O8pFnPIsw+8Vb4WkzEhyCapetCAnoJlRKANZ
+         kPdxmH8wylIKPTu0S2a5dPc6fNFg+xVQjcL9f9ipykTZbnSca5Tbm3u2UHPnUKJoXy
+         SK0i5xVgkTLog==
+Message-ID: <a6ce3c77-bb90-f074-e3a5-eb16c7b6ea8b@canonical.com>
+Date:   Mon, 21 Mar 2022 13:20:07 -0700
 MIME-Version: 1.0
-User-Agent: 
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH -next] apparmor: Fix some kernel-doc comments
 Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Heimes <christian@python.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20220321161557.495388-1-mic@digikod.net>
- <Yji3/ejSErupJZtO@bombadil.infradead.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-In-Reply-To: <Yji3/ejSErupJZtO@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     Yang Li <yang.lee@linux.alibaba.com>
+Cc:     jmorris@namei.org, serge@hallyn.com, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+References: <20220317010330.82929-1-yang.lee@linux.alibaba.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20220317010330.82929-1-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 21/03/2022 18:38, Luis Chamberlain wrote:
-> On Mon, Mar 21, 2022 at 05:15:57PM +0100, Mickaël Salaün wrote:
->> Since I heard no objection, please consider to pull this code for
->> v5.18-rc1 .  These five patches have been successfully tested in the
->> latest linux-next releases for several weeks.
+On 3/16/22 18:03, Yang Li wrote:
+> Remove some warnings found by running scripts/kernel-doc,
+> which is caused by using 'make W=1'.
 > 
->>   kernel/sysctl.c                                    |   9 +
+> security/apparmor/domain.c:137: warning: Function parameter or member
+> 'state' not described in 'label_compound_match'
+> security/apparmor/domain.c:137: warning: Excess function parameter
+> 'start' description in 'label_compound_match'
+> security/apparmor/domain.c:1294: warning: Excess function parameter
+> 'onexec' description in 'aa_change_profile'
 > 
-> Please don't add more sysctls there. We're slowly trying to move
-> all these to their respective places so this does not become a larger
-> kitchen sink mess.
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 
-It is not a new sysctl but proc_dointvec_minmax_sysadmin(). This helper 
-is shared between printk and fs subsystems.
+Acked-by: John Johansen <john.johansen@canonical.com>
+
+I have pulled this into my tree
+
+
+> ---
+>  security/apparmor/domain.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index a29e69d2c300..d71023f5c9c4 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -119,7 +119,7 @@ static inline unsigned int match_component(struct aa_profile *profile,
+>   * @profile: profile to find perms for
+>   * @label: label to check access permissions for
+>   * @stack: whether this is a stacking request
+> - * @start: state to start match in
+> + * @state: state to start match in
+>   * @subns: whether to do permission checks on components in a subns
+>   * @request: permissions to request
+>   * @perms: perms struct to set
+> @@ -1279,7 +1279,6 @@ static int change_profile_perms_wrapper(const char *op, const char *name,
+>  /**
+>   * aa_change_profile - perform a one-way profile transition
+>   * @fqname: name of profile may include namespace (NOT NULL)
+> - * @onexec: whether this transition is to take place immediately or at exec
+>   * @flags: flags affecting change behavior
+>   *
+>   * Change to new profile @name.  Unlike with hats, there is no way
+
