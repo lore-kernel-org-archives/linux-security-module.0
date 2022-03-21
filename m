@@ -2,99 +2,185 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66653C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 20:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55475C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 22:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348511AbiCUUVj (ORCPT
+        id S229939AbiCUWtF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Mar 2022 16:21:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59042 "EHLO
+        Mon, 21 Mar 2022 18:49:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352774AbiCUUVi (ORCPT
+        with ESMTP id S229511AbiCUWss (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Mar 2022 16:21:38 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC185A090;
-        Mon, 21 Mar 2022 13:20:12 -0700 (PDT)
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 9DC7C3F675;
-        Mon, 21 Mar 2022 20:20:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1647894009;
-        bh=uamzDTJ4eJ/ciPYegLGLh1LwOQ1s4XFLg66bcANk+sw=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=PhIGq27tIR6YGTpy+wnDQh8CRjPzA5RjWXdayxXMhy9VMK/vpwY2lrozuck/Q0BGn
-         2yNfzkrnwblJGs4nRobrc6x/F1mcqSShK2KsSINwDHalwonqRl1KBYfR/79XCmtIUZ
-         9TaqHNCZy9x0rba3HHAdQtIv/xnIs3/jmTaTaePPl3/8fhxYte7Of7yWFujkaPGFSY
-         owDvM8DqO9XrRHYH7zI+Ji44jGokH9O8pFnPIsw+8Vb4WkzEhyCapetCAnoJlRKANZ
-         kPdxmH8wylIKPTu0S2a5dPc6fNFg+xVQjcL9f9ipykTZbnSca5Tbm3u2UHPnUKJoXy
-         SK0i5xVgkTLog==
-Message-ID: <a6ce3c77-bb90-f074-e3a5-eb16c7b6ea8b@canonical.com>
-Date:   Mon, 21 Mar 2022 13:20:07 -0700
+        Mon, 21 Mar 2022 18:48:48 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC1054F93
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 15:44:57 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id p15so16225996lfk.8
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 15:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=9C6i1V5W4MCeD/1gLMcJ+GxUdwOY2A6vsDcUchCpRHU=;
+        b=h21Ke7djN8csNxDP0N2xUzZGpjd3brsfArHEu7cU+flfuHfn3v0Qyr+wOLxIHDFCH6
+         AKO2Nkn2l++CSvp7bh98y0Ew0PaOUHaaN5+JBd8Mzrt+OtVqUz3Joomtfskoj7Z2WCz5
+         TblZNEJThXjP3MnSTLuZ6knslhebdT0Ex1hEjlt5CJD/ickAO0dJxanf///Nv9q/hapJ
+         BjBOIHWNXDn7OYSUsCggoG/uy9Yoyj0t1EleEP+48trZdChMtuA7CYKld/xSsKnB4bo0
+         GH1CCYnG52Smn9ykPcCZFiplkUvwDPciyMQ5HZ1noQmiqo93cNtUqf+6dlijUv1KpJN4
+         78Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=9C6i1V5W4MCeD/1gLMcJ+GxUdwOY2A6vsDcUchCpRHU=;
+        b=ImEwacEYTHmv/C4P8RRPaX+/WY3ltQMk4QQv/a5CmpRiIIN8MeAFUqxqampsROFQS2
+         ms78h10P9dijxtod32xIYLzItJ90rvnbsn4ZfyEcjvgo5wvbP0I6zLbpWK3Pv5qOvjj5
+         YGPSlq3lCSVh9U+gcG7AIHCSkyTyIEvxS7IxODI1iJsLVC+MkS2JUTUX1hiiCOVijpHm
+         zfo4/3l3OD0h34F98DFDP9VZgzwvsPYaXSP45+ek5g6xWXOWTPns72m2NmKb049dMl7i
+         AEETK8CH/d1IBcv/aOxXVZWuqF8PFJuVDiXPV8qHcj0Zaeo7ZrO9DpkM+i0+EmTkwOYA
+         dUww==
+X-Gm-Message-State: AOAM532aKtKJlfzN4aJIbjQg9C8Jvjo4Cutw53pOYuzpTsqrPFDIB2Yw
+        STrXCsfxP3AaPaGGLyc5GLhV86uA5RBry7ElHcNy50e6vj9F
+X-Google-Smtp-Source: ABdhPJyiMez9ZfWnO8QSTwIMXiv9ZaXQhOY7r3oIbxQAI+nwTkPaLLqfCwO6rIX4TQN62sPtD15z8P7mdGRwCRoEAig=
+X-Received: by 2002:a17:907:1b09:b0:6d8:faa8:4a06 with SMTP id
+ mp9-20020a1709071b0900b006d8faa84a06mr22563111ejc.701.1647900842214; Mon, 21
+ Mar 2022 15:14:02 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH -next] apparmor: Fix some kernel-doc comments
-Content-Language: en-US
-To:     Yang Li <yang.lee@linux.alibaba.com>
-Cc:     jmorris@namei.org, serge@hallyn.com, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-References: <20220317010330.82929-1-yang.lee@linux.alibaba.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20220317010330.82929-1-yang.lee@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 21 Mar 2022 18:13:51 -0400
+Message-ID: <CAHC9VhTA1O4J_dS9T_U-Vrmi-7JeHTM6fEOfS8JJBfvoNgDrfg@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches for v5.18
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/16/22 18:03, Yang Li wrote:
-> Remove some warnings found by running scripts/kernel-doc,
-> which is caused by using 'make W=1'.
-> 
-> security/apparmor/domain.c:137: warning: Function parameter or member
-> 'state' not described in 'label_compound_match'
-> security/apparmor/domain.c:137: warning: Excess function parameter
-> 'start' description in 'label_compound_match'
-> security/apparmor/domain.c:1294: warning: Excess function parameter
-> 'onexec' description in 'aa_change_profile'
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+Linus,
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+We've got a number of SELinux patches queued up for v5.18, the
+highlights are below:
 
-I have pulled this into my tree
+- Fixup the security_fs_context_parse_param() LSM hook so it executes
+all of the LSM hook implementations unless a serious error occurs.  We
+also correct the SELinux hook implementation so that it returns zero
+on success.
 
+- In addition to a few SELinux mount option parsing fixes, we
+simplified the parsing by moving it earlier in the process.  The logic
+was that it was unlikely an admin/user would use the new mount API and
+not have the policy loaded before passing the SELinux options.
 
-> ---
->  security/apparmor/domain.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index a29e69d2c300..d71023f5c9c4 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -119,7 +119,7 @@ static inline unsigned int match_component(struct aa_profile *profile,
->   * @profile: profile to find perms for
->   * @label: label to check access permissions for
->   * @stack: whether this is a stacking request
-> - * @start: state to start match in
-> + * @state: state to start match in
->   * @subns: whether to do permission checks on components in a subns
->   * @request: permissions to request
->   * @perms: perms struct to set
-> @@ -1279,7 +1279,6 @@ static int change_profile_perms_wrapper(const char *op, const char *name,
->  /**
->   * aa_change_profile - perform a one-way profile transition
->   * @fqname: name of profile may include namespace (NOT NULL)
-> - * @onexec: whether this transition is to take place immediately or at exec
->   * @flags: flags affecting change behavior
->   *
->   * Change to new profile @name.  Unlike with hats, there is no way
+- Properly fixed the LSM/SELinux/SCTP hooks with the addition of the
+security_sctp_assoc_established() hook.  This work was done in
+conjunction with the netdev folks and should complete the move of the
+SCTP labeling from the endpoints to the associations.
 
+- Fixed a variety of sparse warnings caused by changes in the "__rcu"
+markings of some core kernel structures.
+
+- Ensure we access the superblock's LSM security blob using the
+stacking-safe accessors.
+
+- Added the ability for the kernel to always allow FIOCLEX and
+FIONCLEX if the "ioctl_skip_cloexec" policy capability is specified.
+
+- Various constifications improvements, type casting improvements,
+additional return value checks, and dead code/parameter removal.
+
+- Documentation fixes.
+
+Please merge.
+-Paul
+
+--
+The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07=
+:
+
+ Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
+
+are available in the Git repository at:
+
+ https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20220321
+
+for you to fetch changes up to cdbec3ede0b8cb318c36f5cc945b9360329cbd25:
+
+ selinux: shorten the policy capability enum names
+   (2022-03-02 11:37:03 -0500)
+
+----------------------------------------------------------------
+selinux/stable-5.18 PR 20220321
+
+----------------------------------------------------------------
+Casey Schaufler (1):
+     LSM: general protection fault in legacy_parse_param
+
+Christian G=C3=B6ttsche (11):
+     selinux: check return value of sel_make_avc_files
+     selinux: declare path parameters of _genfs_sid const
+     selinux: declare name parameter of hash_eval const
+     selinux: enclose macro arguments in parenthesis
+     selinux: drop cast to same type
+     selinux: drop unused parameter of avtab_insert_node
+     selinux: do not discard const qualifier in cast
+     selinux: simplify cred_init_security
+     selinux: drop unused macro
+     selinux: drop return statement at end of void functions
+     selinux: use correct type for context length
+
+GONG, Ruiqi (1):
+     selinux: access superblock_security_struct in LSM blob way
+
+Ondrej Mosnacek (3):
+     selinux: parse contexts for mount options early
+     security: add sctp_assoc_established hook
+     security: implement sctp_assoc_established hook in selinux
+
+Paul Moore (3):
+     selinux: fix a type cast problem in cred_init_security()
+     selinux: various sparse fixes
+     selinux: shorten the policy capability enum names
+
+Richard Haines (1):
+     selinux: allow FIOCLEX and FIONCLEX with policy capability
+
+Scott Mayhew (2):
+     selinux: Fix selinux_sb_mnt_opts_compat()
+     selinux: try to use preparsed sid before calling parse_sid()
+
+Wan Jiabing (1):
+     docs: fix 'make htmldocs' warning in SCTP.rst
+
+Documentation/security/SCTP.rst            |  26 ++-
+include/linux/lsm_hook_defs.h              |   2 +
+include/linux/lsm_hooks.h                  |   5 +
+include/linux/security.h                   |   8 +
+net/sctp/sm_statefuns.c                    |   8 +-
+security/security.c                        |  24 ++-
+security/selinux/hooks.c                   | 299 ++++++++++++++------------=
+---
+security/selinux/ibpkey.c                  |   2 +-
+security/selinux/ima.c                     |   4 +-
+security/selinux/include/policycap.h       |  21 +-
+security/selinux/include/policycap_names.h |   5 +-
+security/selinux/include/security.h        |  31 +--
+security/selinux/netnode.c                 |   9 +-
+security/selinux/netport.c                 |   2 +-
+security/selinux/selinuxfs.c               |   4 +-
+security/selinux/ss/avtab.c                |   6 +-
+security/selinux/ss/conditional.c          |   2 -
+security/selinux/ss/ebitmap.c              |   1 -
+security/selinux/ss/ebitmap.h              |   6 +-
+security/selinux/ss/mls.c                  |   1 -
+security/selinux/ss/policydb.c             |   4 +-
+security/selinux/ss/services.c             |  10 +-
+security/selinux/ss/sidtab.c               |   4 +-
+security/selinux/xfrm.c                    |   2 +-
+24 files changed, 255 insertions(+), 231 deletions(-)
+
+--=20
+paul-moore.com
