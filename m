@@ -2,80 +2,68 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31029C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 11:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEAEC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 11:41:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346656AbiCULLj (ORCPT
+        id S1346826AbiCULnC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Mar 2022 07:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48748 "EHLO
+        Mon, 21 Mar 2022 07:43:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346630AbiCULLi (ORCPT
+        with ESMTP id S1346819AbiCULm7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Mar 2022 07:11:38 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB362393C9;
-        Mon, 21 Mar 2022 04:10:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 21 Mar 2022 07:42:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 21693D7613
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 04:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647862893;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5IFZqINZubaQIrhPbpcFTVJX7mnUBlxWKhJ9rwfoSHA=;
+        b=T2K+CsA5vVaZB3Z3N5QsvMaXEtOaZset7GLV1d6K5Lzm9U5glGysE6wMFTYH0JKx3yZTxS
+        tQcstE6q4QQG+vYzIimYHxq5XDAsdv4UpGZW+aPKgYNkzKYm+21D5iDKwzz3VjbCmQ58sw
+        04ZZYt1f07FjPPuhdqeSmmxi/gbxvBU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-589-exaZVa4bOLCgv7JyROiQHQ-1; Mon, 21 Mar 2022 07:41:30 -0400
+X-MC-Unique: exaZVa4bOLCgv7JyROiQHQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 946ADB81259;
-        Mon, 21 Mar 2022 11:10:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4D5ADC340F5;
-        Mon, 21 Mar 2022 11:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647861010;
-        bh=Q66QSD+oXVd4pgUkFcd3/42N83l4FkWMoGBDNJ743lo=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=CERtJwVzZYSVZwivluxuMHPIx6aE+4rthrzsn2cocXgVi0gts6Pdq2fNs/YNHnmLh
-         ffJel/Qkdfg+lAsGI/bdJFI2NIgQNBItdQRAmCZw2JiJJ9gkOybfA7pSkdwqw5F8C9
-         Oh9cDVl+ZgHSx1WrUyUTzv4A36Oxbs+dPEQOUOOT3ZeVAZmKAZJQHugjYSuL0g5/XZ
-         /TSr0Zx3xVErrsW7x/cntASOfosRfCIYfeKjqCGrn/xESYacrrYr3Fztbi7qw227y9
-         AORn6qgE5NUQv2nIwQYdrTztvVDXt4emEQfRaBc9VB8SeuJ+Frg+yWDAC/ai2lNXWI
-         vYDDBbu/fjT/Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 30D5DF0383F;
-        Mon, 21 Mar 2022 11:10:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 847DD802809;
+        Mon, 21 Mar 2022 11:41:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5028B40C1247;
+        Mon, 21 Mar 2022 11:41:28 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <0000000000003c424505daaed1b7@google.com>
+References: <0000000000003c424505daaed1b7@google.com>
+To:     syzbot <syzbot+6e2de48f06cdb2884bfc@syzkaller.appspotmail.com>
+Cc:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] memory leak in keyctl_watch_key
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] netlabel: fix out-of-bounds memory accesses
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164786101019.12168.17918424530007349763.git-patchwork-notify@kernel.org>
-Date:   Mon, 21 Mar 2022 11:10:10 +0000
-References: <20220318063508.1348148-1-wangyufen@huawei.com>
-In-Reply-To: <20220318063508.1348148-1-wangyufen@huawei.com>
-To:     Wang Yufen <wangyufen@huawei.com>
-Cc:     paul@paul-moore.com, davem@davemloft.net, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1019066.1647862887.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 21 Mar 2022 11:41:27 +0000
+Message-ID: <1019067.1647862887@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
+free_watch() is missing a kfree() to actually free the watch.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Fri, 18 Mar 2022 14:35:08 +0800 you wrote:
-> In calipso_map_cat_ntoh(), in the for loop, if the return value of
-> netlbl_bitmap_walk() is equal to (net_clen_bits - 1), when
-> netlbl_bitmap_walk() is called next time, out-of-bounds memory accesses
-> of bitmap[byte_offset] occurs.
-> 
-> The bug was found during fuzzing. The following is the fuzzing report
->  BUG: KASAN: slab-out-of-bounds in netlbl_bitmap_walk+0x3c/0xd0
->  Read of size 1 at addr ffffff8107bf6f70 by task err_OH/252
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] netlabel: fix out-of-bounds memory accesses
-    https://git.kernel.org/netdev/net-next/c/f22881de730e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs=
+.git c82efd1dfb229d6aa7e08d57d1c41f034d97b1eb
 
