@@ -2,185 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55475C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 22:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F68AC433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 23:33:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbiCUWtF (ORCPT
+        id S232802AbiCUXel (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Mar 2022 18:49:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52594 "EHLO
+        Mon, 21 Mar 2022 19:34:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbiCUWss (ORCPT
+        with ESMTP id S232834AbiCUXeh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Mar 2022 18:48:48 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC1054F93
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 15:44:57 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id p15so16225996lfk.8
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 15:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=9C6i1V5W4MCeD/1gLMcJ+GxUdwOY2A6vsDcUchCpRHU=;
-        b=h21Ke7djN8csNxDP0N2xUzZGpjd3brsfArHEu7cU+flfuHfn3v0Qyr+wOLxIHDFCH6
-         AKO2Nkn2l++CSvp7bh98y0Ew0PaOUHaaN5+JBd8Mzrt+OtVqUz3Joomtfskoj7Z2WCz5
-         TblZNEJThXjP3MnSTLuZ6knslhebdT0Ex1hEjlt5CJD/ickAO0dJxanf///Nv9q/hapJ
-         BjBOIHWNXDn7OYSUsCggoG/uy9Yoyj0t1EleEP+48trZdChMtuA7CYKld/xSsKnB4bo0
-         GH1CCYnG52Smn9ykPcCZFiplkUvwDPciyMQ5HZ1noQmiqo93cNtUqf+6dlijUv1KpJN4
-         78Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=9C6i1V5W4MCeD/1gLMcJ+GxUdwOY2A6vsDcUchCpRHU=;
-        b=ImEwacEYTHmv/C4P8RRPaX+/WY3ltQMk4QQv/a5CmpRiIIN8MeAFUqxqampsROFQS2
-         ms78h10P9dijxtod32xIYLzItJ90rvnbsn4ZfyEcjvgo5wvbP0I6zLbpWK3Pv5qOvjj5
-         YGPSlq3lCSVh9U+gcG7AIHCSkyTyIEvxS7IxODI1iJsLVC+MkS2JUTUX1hiiCOVijpHm
-         zfo4/3l3OD0h34F98DFDP9VZgzwvsPYaXSP45+ek5g6xWXOWTPns72m2NmKb049dMl7i
-         AEETK8CH/d1IBcv/aOxXVZWuqF8PFJuVDiXPV8qHcj0Zaeo7ZrO9DpkM+i0+EmTkwOYA
-         dUww==
-X-Gm-Message-State: AOAM532aKtKJlfzN4aJIbjQg9C8Jvjo4Cutw53pOYuzpTsqrPFDIB2Yw
-        STrXCsfxP3AaPaGGLyc5GLhV86uA5RBry7ElHcNy50e6vj9F
-X-Google-Smtp-Source: ABdhPJyiMez9ZfWnO8QSTwIMXiv9ZaXQhOY7r3oIbxQAI+nwTkPaLLqfCwO6rIX4TQN62sPtD15z8P7mdGRwCRoEAig=
-X-Received: by 2002:a17:907:1b09:b0:6d8:faa8:4a06 with SMTP id
- mp9-20020a1709071b0900b006d8faa84a06mr22563111ejc.701.1647900842214; Mon, 21
- Mar 2022 15:14:02 -0700 (PDT)
+        Mon, 21 Mar 2022 19:34:37 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2EBD5577D;
+        Mon, 21 Mar 2022 16:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=8INTyMSFBrX1EJ+aoDBL+ySWd7+IvZDAvs379S+ikME=; b=aLSfJs7R8GRGCLwR+bJOKO7Nb6
+        F1TSYPL+zA2r9J2yLcffA10yBBQtSQ/upF+xpW42/Dj7ELLUpNckJZOD4TZWcRsKE7ArM0todtkWu
+        7GCW7VJkm2+VgQH5SZbXxNVxSGyOZd3dwOveQS8LL/a5lRRXqqrJEhemc7yua2+Ob3AgEu5U1kala
+        7QuJPq1NQSEj6dSqpnDmPU/KScnYham+fku06RDaxWBwE4Uvrzd0QDr7TC6VIkRj95pD6brp+J+EC
+        2wLcn5Z61YHDkP+7h+1FC+b2BpEQzKaZxZZvxTNF2OizXmjcw2UzGny/zBNsa81dIucRheCCYASEn
+        8j2FNP6Q==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nWRW7-009QAL-Q6; Mon, 21 Mar 2022 23:32:51 +0000
+Date:   Mon, 21 Mar 2022 16:32:51 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+Message-ID: <YjkLI4D+ek9shkqL@bombadil.infradead.org>
+References: <20220321161557.495388-1-mic@digikod.net>
+ <Yji3/ejSErupJZtO@bombadil.infradead.org>
+ <cfa15768-ebf4-d198-fb1b-5a6ab47caedb@digikod.net>
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 21 Mar 2022 18:13:51 -0400
-Message-ID: <CAHC9VhTA1O4J_dS9T_U-Vrmi-7JeHTM6fEOfS8JJBfvoNgDrfg@mail.gmail.com>
-Subject: [GIT PULL] SELinux patches for v5.18
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cfa15768-ebf4-d198-fb1b-5a6ab47caedb@digikod.net>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Linus,
+On Mon, Mar 21, 2022 at 07:05:42PM +0100, Mickaël Salaün wrote:
+> 
+> On 21/03/2022 18:38, Luis Chamberlain wrote:
+> > On Mon, Mar 21, 2022 at 05:15:57PM +0100, Mickaël Salaün wrote:
+> > > Since I heard no objection, please consider to pull this code for
+> > > v5.18-rc1 .  These five patches have been successfully tested in the
+> > > latest linux-next releases for several weeks.
+> > 
+> > >   kernel/sysctl.c                                    |   9 +
+> > 
+> > Please don't add more sysctls there. We're slowly trying to move
+> > all these to their respective places so this does not become a larger
+> > kitchen sink mess.
+> 
+> It is not a new sysctl but proc_dointvec_minmax_sysadmin(). This helper is
+> shared between printk and fs subsystems.
 
-We've got a number of SELinux patches queued up for v5.18, the
-highlights are below:
+That should be good then, thanks!
 
-- Fixup the security_fs_context_parse_param() LSM hook so it executes
-all of the LSM hook implementations unless a serious error occurs.  We
-also correct the SELinux hook implementation so that it returns zero
-on success.
-
-- In addition to a few SELinux mount option parsing fixes, we
-simplified the parsing by moving it earlier in the process.  The logic
-was that it was unlikely an admin/user would use the new mount API and
-not have the policy loaded before passing the SELinux options.
-
-- Properly fixed the LSM/SELinux/SCTP hooks with the addition of the
-security_sctp_assoc_established() hook.  This work was done in
-conjunction with the netdev folks and should complete the move of the
-SCTP labeling from the endpoints to the associations.
-
-- Fixed a variety of sparse warnings caused by changes in the "__rcu"
-markings of some core kernel structures.
-
-- Ensure we access the superblock's LSM security blob using the
-stacking-safe accessors.
-
-- Added the ability for the kernel to always allow FIOCLEX and
-FIONCLEX if the "ioctl_skip_cloexec" policy capability is specified.
-
-- Various constifications improvements, type casting improvements,
-additional return value checks, and dead code/parameter removal.
-
-- Documentation fixes.
-
-Please merge.
--Paul
-
---
-The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07=
-:
-
- Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
-
-are available in the Git repository at:
-
- https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20220321
-
-for you to fetch changes up to cdbec3ede0b8cb318c36f5cc945b9360329cbd25:
-
- selinux: shorten the policy capability enum names
-   (2022-03-02 11:37:03 -0500)
-
-----------------------------------------------------------------
-selinux/stable-5.18 PR 20220321
-
-----------------------------------------------------------------
-Casey Schaufler (1):
-     LSM: general protection fault in legacy_parse_param
-
-Christian G=C3=B6ttsche (11):
-     selinux: check return value of sel_make_avc_files
-     selinux: declare path parameters of _genfs_sid const
-     selinux: declare name parameter of hash_eval const
-     selinux: enclose macro arguments in parenthesis
-     selinux: drop cast to same type
-     selinux: drop unused parameter of avtab_insert_node
-     selinux: do not discard const qualifier in cast
-     selinux: simplify cred_init_security
-     selinux: drop unused macro
-     selinux: drop return statement at end of void functions
-     selinux: use correct type for context length
-
-GONG, Ruiqi (1):
-     selinux: access superblock_security_struct in LSM blob way
-
-Ondrej Mosnacek (3):
-     selinux: parse contexts for mount options early
-     security: add sctp_assoc_established hook
-     security: implement sctp_assoc_established hook in selinux
-
-Paul Moore (3):
-     selinux: fix a type cast problem in cred_init_security()
-     selinux: various sparse fixes
-     selinux: shorten the policy capability enum names
-
-Richard Haines (1):
-     selinux: allow FIOCLEX and FIONCLEX with policy capability
-
-Scott Mayhew (2):
-     selinux: Fix selinux_sb_mnt_opts_compat()
-     selinux: try to use preparsed sid before calling parse_sid()
-
-Wan Jiabing (1):
-     docs: fix 'make htmldocs' warning in SCTP.rst
-
-Documentation/security/SCTP.rst            |  26 ++-
-include/linux/lsm_hook_defs.h              |   2 +
-include/linux/lsm_hooks.h                  |   5 +
-include/linux/security.h                   |   8 +
-net/sctp/sm_statefuns.c                    |   8 +-
-security/security.c                        |  24 ++-
-security/selinux/hooks.c                   | 299 ++++++++++++++------------=
----
-security/selinux/ibpkey.c                  |   2 +-
-security/selinux/ima.c                     |   4 +-
-security/selinux/include/policycap.h       |  21 +-
-security/selinux/include/policycap_names.h |   5 +-
-security/selinux/include/security.h        |  31 +--
-security/selinux/netnode.c                 |   9 +-
-security/selinux/netport.c                 |   2 +-
-security/selinux/selinuxfs.c               |   4 +-
-security/selinux/ss/avtab.c                |   6 +-
-security/selinux/ss/conditional.c          |   2 -
-security/selinux/ss/ebitmap.c              |   1 -
-security/selinux/ss/ebitmap.h              |   6 +-
-security/selinux/ss/mls.c                  |   1 -
-security/selinux/ss/policydb.c             |   4 +-
-security/selinux/ss/services.c             |  10 +-
-security/selinux/ss/sidtab.c               |   4 +-
-security/selinux/xfrm.c                    |   2 +-
-24 files changed, 255 insertions(+), 231 deletions(-)
-
---=20
-paul-moore.com
+  Luis
