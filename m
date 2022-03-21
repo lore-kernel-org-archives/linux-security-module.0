@@ -2,180 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 024BCC433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 16:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 555BBC433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 16:35:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242088AbiCUQQd (ORCPT
+        id S1344578AbiCUQgf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Mar 2022 12:16:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60510 "EHLO
+        Mon, 21 Mar 2022 12:36:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350888AbiCUQQb (ORCPT
+        with ESMTP id S243719AbiCUQge (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Mar 2022 12:16:31 -0400
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E6328E2E
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 09:15:03 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KMfpY1xlxzMptNy;
-        Mon, 21 Mar 2022 17:15:01 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KMfpV5pNCzlhRVJ;
-        Mon, 21 Mar 2022 17:14:58 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Heimes <christian@python.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-Date:   Mon, 21 Mar 2022 17:15:57 +0100
-Message-Id: <20220321161557.495388-1-mic@digikod.net>
+        Mon, 21 Mar 2022 12:36:34 -0400
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2441432ED6
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Mar 2022 09:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1647880507; bh=vJPepEl0zqrXUFx266WI0WDEhUIpWwDNqvBodY4bDvo=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=dywuA94DmdpwVbeksnNjCSCVDoCA/OYp8PP2CzndcyhEmBBHkhj5XUXQTQ77GwoQVMxsOHwVo6is2NEljoHGx7bM4FnWqJUdMMppapD4ymgo4J/yZVydqL4DXiYmR8WbJVJMbMkL4GuB/dIKYnQN1UhL1+Rkd/Ss64cVDG4Lu5WgB6pj4ys6yvfp3cELEGm4ja8Vp58c8HiAGm9TMvS/O1PB20I2QKrOt1EQflK/H+8Oe/Y+Felztkrtzak/MgKWeKmnNwQU4p5Nb8K5qjVA46/1qP46fYKNuDaaPKi1tQfzzJEiGlmWbShNs3rgWkia6sLrDThAzNqT6uWyYQhHyA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1647880507; bh=esLTU+d/0kpFfBCGLE097jy6JeFjv+af4y9e94COAh/=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=WILfKBzAIbLI2xqEgUgs6SkswYONHMI38+lFDeHYHoRmdmvYZGRL5a16HMy/pKGYU7CIyzTUdPW3q2hcRzrRFE/XH+W+lb8J5HyZu1eWbVLHOT2M1wfQolLSm7FbqyJyQmhPpOjWyZtGthBFYcq7e2WJQLt2rrBJUYhzC98u9bHcjf5+sA91IGqGtjPgEAm2joDSa0m5jwIX0HDUsXdPaKbYQTl2QCbzZXF6yK4UuFyF23ck9Qi+yN9KlqRU+qHhSP3fMG0FgHNrc8lNQKlxi04GwNZbrfcjTafCKLnyXpHQNBfpfAg9v8Kq5yskmY5VPs7a/nOG0T733RMdAtcHOg==
+X-YMail-OSG: JZbLgjwVM1ktQnL5.kK5LtqANuiT2MKngRATnS9OgmCqougGrMhdbICKS_3Yg11
+ J9nW5H.NoGQq6pNyFtLuP3fIBDr.xdI4QgfJrx89qnzm6JTjjjuDhMNbkyOC3Hj5WloicmKr262L
+ Qiwp0ZtJhA0AUW9ouJgUBpo_uxjZrldCCxL7fZsuAmiKqsML7fbw338bRjIbzQZD0DM9OuNKi2Cw
+ m1jqCVXfXvomyUdn7TuDQWbt8Z815hUbCilHCEOpHk73XlCvEMYZ.6HqfPYcHYOhCiQOjbxfk0S1
+ 7njoJPhfoWrWXHFvGzD2Usax1gFr1IV5kgSTUaxnKjV9wbFJg5.EEHh3JqocgiSaAw.smNiLiyoG
+ 0cKmes7sDcKO5XvqDI3sQbS4xpKiXY3y0otl4yLy9UKO0hz1bo8VKVicjCt2rYGbx.tRWtobXp4h
+ tX2NOwALloI4DSOqwAphqPwecMQ83Nl1cI2hdGeSozCs81hBAmiPqGU.uxs6aKg8hGV5OwBshrQ2
+ 65eqksNzQX5JcTE0Gy90cz5Kry7veU7QO33PGfKSkd6SEoEDcbEOvBfDjigpf.4wkX_muJiEFhE_
+ fmQ6u6azDGfhJtmCmho9IBOBnR2iQT4jmLdDEzo.UYiiuG6wYTIen.KBLeS.34Iwn8hXNjb1GgNA
+ 6ko9rZtoWoV_EY2n8BzLEi8I8nGroKdLVhhQE0LVgb82M2.1_3oXrPNDGxMsI4chiCY7M_9qJB3P
+ ePL7piHZYzS.D6hzfCbzoHbaZaatyFP2LY.8ekSN3uFufQW8ksFssj2IhSQuWUCLDrNxBZ1kK80s
+ f3ZY5NOvToZm1qyGUW3HtHCZR1zSKajRwzN1wp4lyYiEuCluW276TJin4hjyOWDvlwJvCVjXJqwk
+ OBT5z_V1kCu9B2MrfUfdEFcMhg6de14Yrbu7dYGL461A6LO4nsjJK7aoeN8hQEcXZjhm0mEG4itw
+ e4lsPglpr8UyVer0TWmrIuFKPJodzF8MKUqqEfJioGgeWl22S8BlHzndIYyjhFCLpHACpG.VctTJ
+ TWtsVZ9MS1P7v1NRkJL1eGtbSONiiuQDJs2ko7JHaKKmmEYVVRx_ZjI492dmmLG.2Rp3W6ZVZbda
+ lJShbkhBteI0spJlB4UaxcDAmRhaHoI06UUmC_qgyrFjd39fd1ICf9G1BscsPH211.0B_aBymS07
+ uQJ6G1KZCvYVUTw.wpPcltzqAcw8oIyPHWcZrKhpt7glPQvChtfCyGOU9BoT1BFvZh2yJ7XNO_qg
+ 4.YGU0eywWbmXLYUpOhP5myuZJbUzUZUZqMdxmJKTHzJiiVmOiPLVBlq0tzag3L7ENAFZNxCgM.A
+ ndk_gdzJ1LRLtRCuBhkxD4JqfabGe0l.BkxPYtu.ec2SRHjwSjUkR4fBAHHAki4QPJSFTBE8erh5
+ YZrwxtjBwdySn.IPmGJPmaCOOi.ltQ8bq0fVbS0XccbHU1qVSbrn3IWrtNFkWW5NPHF7CmZbHh5V
+ XfIvuIutewYQbXX65kvLAOahF7iLdG.yGo3LnXuzJCJAVh6Ui5yHTjQjuQqmmQj3M9jVf5aHN92s
+ UXP2LHnPacLd9Uto9XxjoRMdnjk80S2YkWf2YmXkr8Fg2Mub5fWXv2IUdkgx9jl9AiMW.rGnIEGa
+ _xhFPYYKaaMesOXGDDI78prYir2Jue3R32T6CKCpgGczz5mp7vJP.JTgPb82K3IPDcC9JU59ElbJ
+ gexSMKlgU_agalcAR2rYZY3ue0PhQECkap5zd_qtyVytHAhLGB4muCLE6M.37yvFcnddct80rjHS
+ Z.XwoehLPJ6O1bc_zf4wgWZ.4Ga9RK4AbbsYYhqZkk6r7jPFzi0LI862DJbN5lHCWXuUh6qB8lCd
+ RLmA.NLRDbqC2MucC6Mq1IqjCFl7SUtubi7NChExO9_JjQavRjOyUQmpPEhKrVIiJYtRxHweuM.k
+ DuvKzoLrfyZce8CcE.Fsf9t6tvKz3IyJ5Ib0GmgepLwj0x83epbHhpEi6Nq8JBBeW11n1w0V8OrW
+ q9tf_pWVvvBWHFBKslxSIh_dErSht6giVlHuOCa.nVEGNELB21XIXGpk3.uIRNw8PnaEXuBWUXYZ
+ vpOTMJnQlhCt2nniYZEKevefRFVFLsBokHIXyD1lO.zFNYj3Y6cRcwwp2brc0IATMyIvDaeEYvmD
+ F7tg3Dri77ivvTKZOD7ojw.oAqOKSLAFCRXrIDzQHRe8QifQcmnfpvt.b61AefBA2NTvyLz4GUgZ
+ wA27YgeG.Zd0QPx0BCT1jiMEYVne0o1rObG6CwjvkUJi6RTtV35UcYV.KEahHjnalgunQnIiiG8Q
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Mon, 21 Mar 2022 16:35:07 +0000
+Received: by kubenode522.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID d57b9854834ae6071659616f4d6eb4ff;
+          Mon, 21 Mar 2022 16:35:01 +0000 (UTC)
+Message-ID: <bf678bae-821c-02ab-042a-004c03d9c334@schaufler-ca.com>
+Date:   Mon, 21 Mar 2022 09:34:59 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Content-Language: en-US
+To:     torvalds@linux-foundation.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for v5.18
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+References: <bf678bae-821c-02ab-042a-004c03d9c334.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.19894 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+Hello Linus,
 
-This patch series adds a new syscall named trusted_for.  It enables user
-space to ask the kernel: is this file descriptor's content trusted to be
-used for this purpose?  The set of usage currently only contains
-execution, but other may follow (e.g. configuration, sensitive data).
-If the kernel identifies the file descriptor as trustworthy for this
-usage, user space should then take this information into account.  The
-"execution" usage means that the content of the file descriptor is
-trusted according to the system policy to be executed by user space,
-which means that it interprets the content or (try to) maps it as
-executable memory.
+Here is the Smack pull request for v5.18.
 
-A simple system-wide security policy can be set by the system
-administrator through a sysctl configuration consistent with the mount
-points or the file access rights.  The documentation explains the
-prerequisites.
+There is a single change to repair an incorrect use of
+ntohs() in IPv6 audit code. It's very minor and went unnoticed
+until lkp found it. It's been in next and passes all tests.
+Thank you.
 
-It is important to note that this can only enable to extend access
-control managed by the kernel.  Hence it enables current access control
-mechanism to be extended and become a superset of what they can
-currently control.  Indeed, the security policy could also be delegated
-to an LSM, either a MAC system or an integrity system.  For instance,
-this is required to close a major IMA measurement/appraisal interpreter
-integrity gap by bringing the ability to check the use of scripts.
-Other uses are expected as well.
+The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
 
-For further details, please see the latest cover letter:
-https://lore.kernel.org/r/20220104155024.48023-1-mic@digikod.net
-
-Commit dae71698b6c5 ("printk: Move back proc_dointvec_minmax_sysadmin()
-to sysctl.c") was recently added due to the sysctl refactoring.
-
-Commit e674341a90b9 ("selftests/interpreter: fix separate directory
-build") will fix some test build cases as explained here:
-https://lore.kernel.org/r/20220119101531.2850400-1-usama.anjum@collabora.com
-Merging this commit without the new KHDR_INCLUDES is not an issue.
-The upcoming kselftest pull request is ready:
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=next
-
-This patch series has been open for review for more than three years and
-got a lot of feedbacks (and bikeshedding) which were all considered.
-Since I heard no objection, please consider to pull this code for
-v5.18-rc1 .  These five patches have been successfully tested in the
-latest linux-next releases for several weeks.
-
-Regards,
- Mickaël
-
---
-The following changes since commit dcb85f85fa6f142aae1fe86f399d4503d49f2b60:
-
-  gcc-plugins/stackleak: Use noinstr in favor of notrace (2022-02-03 17:02:21 -0800)
+  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/trusted-for-v18
+  https://github.com/cschaufler/smack-next tags/Smack-for-5.18
 
-for you to fetch changes up to e674341a90b95c3458d684ae25e6891afc3e03ad:
+for you to fetch changes up to a5cd1ab7ab679d252a6d2f483eee7d45ebf2040c:
 
-  selftests/interpreter: fix separate directory build (2022-03-04 10:56:25 +0100)
-
-----------------------------------------------------------------
-Add the trusted_for system call (v18)
-
-The final goal of this patch series is to enable the kernel to be a
-global policy manager by entrusting processes with access control at
-their level.  To reach this goal, two complementary parts are required:
-* user space needs to be able to know if it can trust some file
-  descriptor content for a specific usage;
-* and the kernel needs to make available some part of the policy
-  configured by the system administrator.
-
-In a nutshell, this is a required building block to control script
-execution.
-
-For further details see the latest cover letter:
-https://lore.kernel.org/r/20220104155024.48023-1-mic@digikod.net
+  Fix incorrect type in assignment of ipv6 port for audit (2022-02-28 15:45:32 -0800)
 
 ----------------------------------------------------------------
-Mickaël Salaün (4):
-      printk: Move back proc_dointvec_minmax_sysadmin() to sysctl.c
-      fs: Add trusted_for(2) syscall implementation and related sysctl
-      arch: Wire up trusted_for(2)
-      selftest/interpreter: Add tests for trusted_for(2) policies
+Smack updates for 5.18
+    Fix incorrect type in assignment of ipv6 port for audit
 
-Muhammad Usama Anjum (1):
-      selftests/interpreter: fix separate directory build
+----------------------------------------------------------------
+Casey Schaufler (1):
+      Fix incorrect type in assignment of ipv6 port for audit
 
- Documentation/admin-guide/sysctl/fs.rst            |  50 +++
- arch/alpha/kernel/syscalls/syscall.tbl             |   1 +
- arch/arm/tools/syscall.tbl                         |   1 +
- arch/arm64/include/asm/unistd.h                    |   2 +-
- arch/arm64/include/asm/unistd32.h                  |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl              |   1 +
- arch/m68k/kernel/syscalls/syscall.tbl              |   1 +
- arch/microblaze/kernel/syscalls/syscall.tbl        |   1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl          |   1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl          |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl          |   1 +
- arch/parisc/kernel/syscalls/syscall.tbl            |   1 +
- arch/powerpc/kernel/syscalls/syscall.tbl           |   1 +
- arch/s390/kernel/syscalls/syscall.tbl              |   1 +
- arch/sh/kernel/syscalls/syscall.tbl                |   1 +
- arch/sparc/kernel/syscalls/syscall.tbl             |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl             |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl            |   1 +
- fs/open.c                                          | 133 ++++++++
- fs/proc/proc_sysctl.c                              |   2 +-
- include/linux/syscalls.h                           |   1 +
- include/linux/sysctl.h                             |   3 +
- include/uapi/asm-generic/unistd.h                  |   5 +-
- include/uapi/linux/trusted-for.h                   |  18 +
- kernel/printk/sysctl.c                             |   9 -
- kernel/sysctl.c                                    |   9 +
- tools/testing/selftests/Makefile                   |   1 +
- tools/testing/selftests/interpreter/.gitignore     |   2 +
- tools/testing/selftests/interpreter/Makefile       |  21 ++
- tools/testing/selftests/interpreter/config         |   1 +
- .../selftests/interpreter/trust_policy_test.c      | 362 +++++++++++++++++++++
- 32 files changed, 625 insertions(+), 12 deletions(-)
- create mode 100644 include/uapi/linux/trusted-for.h
- create mode 100644 tools/testing/selftests/interpreter/.gitignore
- create mode 100644 tools/testing/selftests/interpreter/Makefile
- create mode 100644 tools/testing/selftests/interpreter/config
- create mode 100644 tools/testing/selftests/interpreter/trust_policy_test.c
+ security/smack/smack_lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
