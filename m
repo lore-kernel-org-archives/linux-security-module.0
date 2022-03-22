@@ -2,154 +2,81 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AE2C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Mar 2022 13:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D5D5C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Mar 2022 17:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233792AbiCVNZT (ORCPT
+        id S239637AbiCVRjJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Mar 2022 09:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50364 "EHLO
+        Tue, 22 Mar 2022 13:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235487AbiCVNZS (ORCPT
+        with ESMTP id S239623AbiCVRjI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Mar 2022 09:25:18 -0400
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 074B285BEA
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Mar 2022 06:23:50 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KNByX54ljzMq0qg;
-        Tue, 22 Mar 2022 14:23:48 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KNByX0fZMzlhMSK;
-        Tue, 22 Mar 2022 14:23:47 +0100 (CET)
-Message-ID: <90a20548-39f6-6e84-efb1-8ef3ad992255@digikod.net>
-Date:   Tue, 22 Mar 2022 14:24:54 +0100
+        Tue, 22 Mar 2022 13:39:08 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC5050E25;
+        Tue, 22 Mar 2022 10:37:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zVXKwBc1JcWHQCoSSK+DrgoMAyqc1wIUN0g4y2t1xXU=; b=FM6OAmOQAamX1rwFcjPZhLhkv9
+        JPdM78sMnPU3Wfz+ph/B/NHi/dGZHoK9a0D0YtFwhbsUGKlOfhH8jxv6JplGJ/Mwt5+6Xu8B5INLs
+        onq5r4RHi2ml+v43GbK13NcQFTHwMt3kxwRpmflaKyZiSRTMKwhTp42Z548wataFM4GJ6GSAhoTeR
+        JK5piU/Zv+uxpzp/ktuxAC4dBhfCgMSjW0rCTzKZQXI09zkC3GOw7hgzC7Zt+lkpsSDAiH+r0Asoe
+        3ruJuIvYxVv2Q7JXV8Cbu/guJ88QGP74ZN18VGCD2+OVQ+FU7lzz2JRIKUUFUQTXDQXKUIxIRrjJo
+        FfKsuj4w==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nWiRi-00BkYT-6u; Tue, 22 Mar 2022 17:37:26 +0000
+Date:   Tue, 22 Mar 2022 10:37:26 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Philipp Rudo <prudo@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Alexander Egorenkov <egorenar@linux.ibm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Dave Young <dyoung@redhat.com>,
+        Kairui Song <kasong@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-modules@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        stable@kernel.org, Eric Snowberg <eric.snowberg@oracle.com>
+Subject: Re: [PATCH 4/4] module, KEYS: Make use of platform keyring for
+ signature verification
+Message-ID: <YjoJVnTuaw/3l7Xp@bombadil.infradead.org>
+References: <cover.1644953683.git.msuchanek@suse.de>
+ <840433bc93a58d6dfc4d96c34c0c3b158a0e669d.1644953683.git.msuchanek@suse.de>
+ <3e39412657a4b0839bcf38544d591959e89877b8.camel@linux.ibm.com>
+ <20220215204730.GQ3113@kunlun.suse.cz>
+ <c3f6f6c8a9db34cc1cdc1000f9272c2b36445e15.camel@linux.ibm.com>
+ <20220216105645.GS3113@kunlun.suse.cz>
+ <edb305079c28e49021166423af0378f8d218f269.camel@linux.ibm.com>
+ <20220216120911.GT3113@kunlun.suse.cz>
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        willemdebruijn.kernel@gmail.com
-Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <20220309134459.6448-4-konstantin.meskhidze@huawei.com>
- <bc44f11f-0eaa-a5f6-c5dc-1d36570f1be1@digikod.net>
- <6535183b-5fad-e3a9-1350-d22122205be6@huawei.com>
- <92d498f0-c598-7413-6b7c-d19c5aec6cab@digikod.net>
- <cb30248d-a8ae-c366-2c9f-2ab0fe44cc9a@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH v4 03/15] landlock: landlock_find/insert_rule
- refactoring
-In-Reply-To: <cb30248d-a8ae-c366-2c9f-2ab0fe44cc9a@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220216120911.GT3113@kunlun.suse.cz>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 22/03/2022 13:33, Konstantin Meskhidze wrote:
-> 
-> 
-> 3/18/2022 9:33 PM, Mickaël Salaün пишет:
->>
->> On 17/03/2022 15:29, Konstantin Meskhidze wrote:
->>>
->>>
->>> 3/16/2022 11:27 AM, Mickaël Salaün пишет:
->>>>
->>>> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
->>>>> A new object union added to support a socket port
->>>>> rule type. To support it landlock_insert_rule() and
->>>>> landlock_find_rule() were refactored. Now adding
->>>>> or searching a rule in a ruleset depends on a
->>>>> rule_type argument provided in refactored
->>>>> functions mentioned above.
->>>>>
->>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>>> ---
+How's this series going? Did you and Mimi sort things out? Either way,
+just wanted to let you kow you can base your changes on modules-testing
+[0] if you want to resubmit for v5.19 (v5.18 will be too late already).
+Once testing is done what is on modules-testing will go to modules-next
+for testing for v5.19. There are no changes planned for v5.18 other than
+fixes and so far there are none.
 
-[...]
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=modules-testing
 
->>>>> @@ -156,26 +166,38 @@ static void build_check_ruleset(void)
->>>>>    * access rights.
->>>>>    */
->>>>>   static int insert_rule(struct landlock_ruleset *const ruleset,
->>>>> -        struct landlock_object *const object,
->>>>> +        struct landlock_object *const object_ptr,
->>>>> +        const uintptr_t object_data,
->>
->> Can you move rule_type here for this function and similar ones? It 
->> makes sense to group object-related arguments.
-> 
->   Just to group them together, not putting rule_type in the end?
-
-Yes
-
-[...]
-
->>>>> @@ -465,20 +501,28 @@ struct landlock_ruleset *landlock_merge_ruleset(
->>>>>    */
->>>>>   const struct landlock_rule *landlock_find_rule(
->>>>>           const struct landlock_ruleset *const ruleset,
->>>>> -        const struct landlock_object *const object)
->>>>> +        const uintptr_t object_data, const u16 rule_type)
->>>>>   {
->>>>>       const struct rb_node *node;
->>>>>
->>>>> -    if (!object)
->>>>> +    if (!object_data)
->>>>
->>>> object_data can be 0. You need to add a test with such value.
->>>>
->>>> We need to be sure that this change cannot affect the current FS code.
->>>
->>>   I got it. I will refactor it.
->>
->> Well, 0 means a port 0, which might not be correct, but this check 
->> should not be performed by landlock_merge_ruleset().
->>
->   Do you mean landlock_find_rule()?? Cause this check is not
->   performed in landlock_merge_ruleset().
-
-Yes, I was thinking about landlock_find_rule(). If you run your tests 
-with the patch I proposed, you'll see that one of these tests will fail 
-(when port equal 0). When creating a new network rule, 
-add_rule_net_service() should check if the port value is valid. However, 
-the above `if (!object_data)` is not correct anymore.
-
-The remaining question is: should we need to accept 0 as a valid TCP 
-port? Can it be used? How does the kernel handle it?
-
-> 
->>
->>>>
->>>>
->>>>>           return NULL;
->>>>> -    node = ruleset->root.rb_node;
->>>>> +
->>>>> +    switch (rule_type) {
->>>>> +    case LANDLOCK_RULE_PATH_BENEATH:
->>>>> +        node = ruleset->root_inode.rb_node;
->>>>> +        break;
->>>>> +    default:
->>>>> +        return ERR_PTR(-EINVAL);
->>>>
->>>> This is a bug. There is no check for such value. You need to check 
->>>> and update all call sites to catch such errors. Same for all new use 
->>>> of ERR_PTR().
->>>
->>> Sorry, I did not get your point.
->>> Do you mean I should check the correctness of rule_type in above 
->>> function which calls landlock_find_rule() ??? Why can't I add such 
->>> check here?
->>
->> landlock_find_rule() only returns NULL or a valid pointer, not an error.
-> 
->    What about incorrect rule_type?? Return NULL? Or final rule_checl 
-> must be in upper function?
-
-This case should never happen anyway. You should return NULL and call 
-WARN_ON_ONCE(1) just before. The same kind of WARN_ON_ONCE(1) call 
-should be part of all switch/cases of rule_type (except the two valid 
-values of course).
+  Luis
