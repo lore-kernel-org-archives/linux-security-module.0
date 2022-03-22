@@ -2,84 +2,69 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F68AC433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Mar 2022 23:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 629A4C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Mar 2022 03:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232802AbiCUXel (ORCPT
+        id S236265AbiCVD6A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Mar 2022 19:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
+        Mon, 21 Mar 2022 23:58:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232834AbiCUXeh (ORCPT
+        with ESMTP id S236256AbiCVD57 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Mar 2022 19:34:37 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2EBD5577D;
-        Mon, 21 Mar 2022 16:33:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-        bh=8INTyMSFBrX1EJ+aoDBL+ySWd7+IvZDAvs379S+ikME=; b=aLSfJs7R8GRGCLwR+bJOKO7Nb6
-        F1TSYPL+zA2r9J2yLcffA10yBBQtSQ/upF+xpW42/Dj7ELLUpNckJZOD4TZWcRsKE7ArM0todtkWu
-        7GCW7VJkm2+VgQH5SZbXxNVxSGyOZd3dwOveQS8LL/a5lRRXqqrJEhemc7yua2+Ob3AgEu5U1kala
-        7QuJPq1NQSEj6dSqpnDmPU/KScnYham+fku06RDaxWBwE4Uvrzd0QDr7TC6VIkRj95pD6brp+J+EC
-        2wLcn5Z61YHDkP+7h+1FC+b2BpEQzKaZxZZvxTNF2OizXmjcw2UzGny/zBNsa81dIucRheCCYASEn
-        8j2FNP6Q==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nWRW7-009QAL-Q6; Mon, 21 Mar 2022 23:32:51 +0000
-Date:   Mon, 21 Mar 2022 16:32:51 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Heimes <christian@python.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-Message-ID: <YjkLI4D+ek9shkqL@bombadil.infradead.org>
-References: <20220321161557.495388-1-mic@digikod.net>
- <Yji3/ejSErupJZtO@bombadil.infradead.org>
- <cfa15768-ebf4-d198-fb1b-5a6ab47caedb@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cfa15768-ebf4-d198-fb1b-5a6ab47caedb@digikod.net>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+        Mon, 21 Mar 2022 23:57:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 015091F63B;
+        Mon, 21 Mar 2022 20:56:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C16961295;
+        Tue, 22 Mar 2022 03:56:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 01B63C340EC;
+        Tue, 22 Mar 2022 03:56:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647921392;
+        bh=KOpf2xpUGrjxWkL3lDijrUPJH4Qdd2P/xpeLYVwQEaY=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=RY2FkVvgezRSIiZefIQRe7ZtplHzOCkOGqLHn8c9AIoUQuHVfLpf9RTd/te3upTt0
+         P2ova9hcKXfoQn5nXNKR5hDJVcyxLpknodbq1Jrgdny0BjPAqXSqv3tGGXe44sJ9yD
+         1Vmf3Ek318DVj5u4c5AuVp5eK4BQ4AdGBOE6oZ4d9ta9AsOp92RocjodZaXq2q+KpK
+         67f7U5ECBbLr+7UG03DRS6hij6uLnM++5oc2OH8AXMqpkjcs1i54H8bgLkaXX0TJli
+         7QAWGbvtpkfkhqlDbcu472cwZQGqu1nPSN99+FkdEy+6ElBWhaAvFwii+tMY+u9bKk
+         rOvxl79d+1twg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E23D7E6D402;
+        Tue, 22 Mar 2022 03:56:31 +0000 (UTC)
+Subject: Re: [GIT PULL] Smack patches for v5.18
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <bf678bae-821c-02ab-042a-004c03d9c334@schaufler-ca.com>
+References: <bf678bae-821c-02ab-042a-004c03d9c334.ref@schaufler-ca.com> <bf678bae-821c-02ab-042a-004c03d9c334@schaufler-ca.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <bf678bae-821c-02ab-042a-004c03d9c334@schaufler-ca.com>
+X-PR-Tracked-Remote: https://github.com/cschaufler/smack-next tags/Smack-for-5.18
+X-PR-Tracked-Commit-Id: a5cd1ab7ab679d252a6d2f483eee7d45ebf2040c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2c5a5358feff2c1e035a67a9b352c4358e669e5b
+Message-Id: <164792139192.6005.14812990568103025130.pr-tracker-bot@kernel.org>
+Date:   Tue, 22 Mar 2022 03:56:31 +0000
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     torvalds@linux-foundation.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 21, 2022 at 07:05:42PM +0100, Mickaël Salaün wrote:
-> 
-> On 21/03/2022 18:38, Luis Chamberlain wrote:
-> > On Mon, Mar 21, 2022 at 05:15:57PM +0100, Mickaël Salaün wrote:
-> > > Since I heard no objection, please consider to pull this code for
-> > > v5.18-rc1 .  These five patches have been successfully tested in the
-> > > latest linux-next releases for several weeks.
-> > 
-> > >   kernel/sysctl.c                                    |   9 +
-> > 
-> > Please don't add more sysctls there. We're slowly trying to move
-> > all these to their respective places so this does not become a larger
-> > kitchen sink mess.
-> 
-> It is not a new sysctl but proc_dointvec_minmax_sysadmin(). This helper is
-> shared between printk and fs subsystems.
+The pull request you sent on Mon, 21 Mar 2022 09:34:59 -0700:
 
-That should be good then, thanks!
+> https://github.com/cschaufler/smack-next tags/Smack-for-5.18
 
-  Luis
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2c5a5358feff2c1e035a67a9b352c4358e669e5b
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
