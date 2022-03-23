@@ -2,266 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFF2C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 22:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFCBC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 22:39:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241322AbiCWWii (ORCPT
+        id S1345278AbiCWWlN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Mar 2022 18:38:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33390 "EHLO
+        Wed, 23 Mar 2022 18:41:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237642AbiCWWih (ORCPT
+        with ESMTP id S1345052AbiCWWlM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Mar 2022 18:38:37 -0400
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2338A527F9
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Mar 2022 15:37:02 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KP3BM6YjjzMqDnc;
-        Wed, 23 Mar 2022 23:36:59 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KP3BK20BnzljsT7;
-        Wed, 23 Mar 2022 23:36:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1648075019;
-        bh=vAVFB2iElKMHpm9vUwd0asRHZ/fvZqt8PLW/qDoEF2Q=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=IR2znwVGk7TQsZP5s8rMWohjhz07WIgG5PbfUHcD0y13+jwU4vQ6QSwajL7KjVTXN
-         O/AJqs2FYG1+EnGfmBdl06XF8ihX36IrOn8nVKlqR9M2HV9DyP4zozueCl7/+PfXIL
-         nNMjKHcD/iBL6kx2MIeZ1+d4L3M16t63RYfOzsyE=
-Message-ID: <56ae0002-09ed-55ae-d033-0212fe78002c@digikod.net>
-Date:   Wed, 23 Mar 2022 23:36:58 +0100
+        Wed, 23 Mar 2022 18:41:12 -0400
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C612725C65
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Mar 2022 15:39:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1648075181; bh=mC20+7TfRW6SdSbJR6fvSbCljYYikadz3XaqubTXWoY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PH0HRAXD67YIpmWyafy9rFOEVuYUyIq8X//OYb2DMN04faT0PnlF3KwpR8mZXy8AclhocXmwgKUmE0fKsCNQND35nq3Rf/CjFpMOI9RiVsI6NaO2C1BSauVCjct/N9mKpvjLvQ1n8N3oa9amr3PsOwn8N95yB8Bp0xb1mSMBl5RDnNlVuQ1+QVfmxH2FSKT/lt8OGQEM7IazaB/OGzj9ppAt4KAlbILYebbQjvXclM0mBb3snFQZEjJI7L/yO47jjcXT6BJ9hEQ/SUd/8rQAN7xtSmCv3dZ0Jrx9nsEtqa0eeK6bkJji0f2JEM8xOt5ecpiwr4ofvs7vzX0d7wMeew==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1648075181; bh=bT1BWLYh3huKi4ud4dqj1HI4/AEBVypxzPWNmAT4ids=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZX5EYmTz68twxKEGZE7p0+9qxsYKa8pv/0rYZljKAo0VuVCxZVHxXIIppkGgBxoh41+t7gaxd8DTZq36Ivcd6f425SQ/ZDgIvAtkCJ081k2m8bENMBgy9Tj17oKC+28OwT2sEPkyvhb7o2X4IyLxxeFzCRJHsVqU3Di3sjCfhkVjSnpuP4kf2Z/RDiJ+8AHAgbo6SGpjFfHUw/fKSZ2mDUF2LbNrPUE4PYE2J3PHAue9HC/bU6gnReLkdFuVTJTd/RstSw3ajf7vdtqVFBoz+9OJyNWEqAwqd5NLs6xs/P6UOsv6L7Kt2igZOQroFaSo48xvwbYjLihRCr5nGI4dCg==
+X-YMail-OSG: aRtVYpIVM1mcjJ.GzVEao9yrcefHqRuQJJQV5bnHobGLoSqFv6ixDYNnp33Q6J4
+ O6wcg61HZXxIrKh241.ARyjgYLW_BZomXhC_fm69liIfuCNgSw1o1DlDZDY7ckpx4EL1YHxQfvba
+ 0XRp42brli2U0GaB2fAuhRvaIEGc1VInOFbQXm6NVyrDr6AsNnv1YZUaJcMK_dDnXLWQ3lwx_zLh
+ kwHtfz3K0ji6zY3n20TtVlEgs9BPwHwRM6wS4gfQ16biZ8avXe9Z6rhr59OQ.dXNmjPKCsFWD.Xi
+ xhZ9lj0t2MzC2sZB960gp84Q.akfi8hGua17Puz6ioV27GvZbXvaUbqJ80CpaFrhwxfKGTKShRKB
+ jSvZprgBol6j4dempnAM2iKgA98CJvkldDBA6GM0T5okKvqNkTL45.KGOusVUbAJR1nkNWSAobXl
+ GK6njZuBvUQcTuyTE63ga6cgEzelkb.gVOjHxmjh7aLI5Y5uAHySk2tBI.SimdyqdtKnkNDHgy3g
+ XBTfuOSLVRbA0mniu2TlzejhAo_YsTPpkIqs6OOGwKGZwCxkKC3efipTNYgCrVbCDds08_RLsx.i
+ HqWkUWiBno3pFuuCvAxuwHG5HMyyBpjmkqBaLrlbHRIM9ihEWg6rucQb_XakkuNR1VRq9llMJnlL
+ anUyC23w4vtzTnFSAJVS31w.ninIpS2VLKFW.9U_SqdJgV7WqAZ9BbfujN.wfmVk.clQGLEEZK9B
+ B3hsv2XXwZA72U9x212vkvZbWUz5eRoTBjHKpzvfwm7.jVv58VrKa824ICtGIpGalaW_iwitcJ9C
+ XdWEvoIy4PI8QvXmoVFdYh7BerDemLMoprEWs9JC75iv2NSsQyDn1gC0efsIE.ZgtNjtEgCf87B8
+ qpQwHdp7Rnw3G.eKNXMo.1794KwjoguOezCkXY33IsCtMJamdFZFYUH6cWoNTOWxFMjiza_9N4r9
+ MPBzhKSL1iKNxchhGSBQ7FXEgoc4CSuWTB..nECTIVAwKpx4wgF5MhFfcqCu5F7lOduRO.wChuVY
+ KZ4RDENm5T0HkVudv0ofQCzLXXa4b4WIItpY84auduRcTOUQldAugaU7JURuuwLSOxNDAeru9QYm
+ orTqQ5aYYgHAjF0VVnoCOh1H5wemxTzAFTYEA0.YbIP6IEpjX3N82nHoq_QJyjbFM6rNM6gVD.Lc
+ 05rtS0IjAhJ3IL2JctbsQhsT4qf.1kS6rFh3YbYrzeRoW6wSbpdGe2aTDXsxkI5i8luyKENR5eD0
+ MgQIgqKOhuRh_74U1l5symqEYNVNZRJsbaAHWgvUdsARiEGVk39ZYj5Yz2LqGKagf3imPz8FNipo
+ j1.kQdU1T93ztMARo6H96TeOsUts6G45x34qxbur5GCIGse5zliFl.Bo.h.94kEn2szypcE7k8WB
+ babF_qk5q2fgFbEJQpj26vKusCE0iSbvM8HdyliVqBtoUZLDcpnLqjR.Fbs37aQQyZhrJLVpqKdC
+ c1yBpLKXir_SN9vh6zidi20ngxIPufZS0n9GZcLb0aXhwxEcbPaIGz36n6iTQvMmQcQCgylqBId8
+ _8vUW_OJDPfaIW1JpKMhdjuNxUZSClHaNH1n9_TfnEq8kkwaonY.SOpS6V8.KC4nrQUReic3006X
+ Oc6FQQToxZvB4hn2tC_iZZm2.ByWF.dbItfjhfc9RqJG7B_lg2PVIcCvGkzBrVkIjLTqctqKg6pR
+ JvzEMQ1t.m4BUonAq1uR1Vf6qRld8z6WENRqKHdFLlGp57Mmt7XakLMM3LgcufyPcEQjxyG_9q3y
+ PndMF6uMxlPt6_ajanYVkD4Jh6S.XF8FhIyaK8gZMMP3tV8BnnjYhHoBqFAn1VEIp0.FwvcSbuDc
+ zJMg8.gbg3p3ElWDAUfWNnvXu5B0IGpzJwwVDcrzuJn_pJMi4wCbfQDSrESMdgjwuyH3jpDkRDHR
+ QK0tdrrLc1a392lJoneXeGEZQdBFHg_gt1DLzrnANQmHfFDBTCx_lRXG.Fy6iRnQAn5n4cmZyUx.
+ Kd0OxdwrE_3gdqYKVQTpY_EcdJa7lcgNdZMmXUgzNWCqhqr7._zek7BabXejjTbmGs40OhGyGn6U
+ hTZdhxuOtqtMFIbgNE2aDeR.MOzJmW2bCRXe4dobJB4Pmyl9PFnI9VQkfFUjbKbxaR25QJTopStF
+ UzJ6lWFMHacHE9ZMU9s.Vfg43Fms27uHaroreo1N6ZqYxSI21ja7YG8cs0krHtQleUSMsYf6nIWF
+ 1XTsNFEA5wF9PVf.tcuFoUttjcCRyUPwjWVQ0P.nOmRmDet7TprAe7XkZHdY2u3XDhyL.rP_USiC
+ YpfERr0INimq_.KnTrTs-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 23 Mar 2022 22:39:41 +0000
+Received: by hermes--canary-production-bf1-665cdb9985-6p9bt (VZM Hermes SMTP Server) with ESMTPA ID 39a8b820c79283304b7db448c9a80e45;
+          Wed, 23 Mar 2022 22:39:39 +0000 (UTC)
+Message-ID: <d0894565-9783-b398-0faf-60bfb96837ce@schaufler-ca.com>
+Date:   Wed, 23 Mar 2022 15:39:36 -0700
 MIME-Version: 1.0
-User-Agent: 
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [RFC PATCH] getvalues(2) prototype
 Content-Language: en-US
-To:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Brendan Jackman <jackmanb@chromium.org>,
-        Florent Revest <revest@chromium.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20220222175332.384545-1-mic@digikod.net>
- <b71454bb-d084-bfd6-7cd3-aa6bfdaaab00@digikod.net>
- <4611f869-9a88-12d0-861c-7efcfa15bcba@canonical.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH v1] LSM: Remove double path_rename hook calls for
- RENAME_EXCHANGE
-In-Reply-To: <4611f869-9a88-12d0-861c-7efcfa15bcba@canonical.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20220322192712.709170-1-mszeredi@redhat.com>
+ <20220323114215.pfrxy2b6vsvqig6a@wittgenstein>
+ <CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA0DT66GFH2ZanspA@mail.gmail.com>
+ <d3333dbe-b4b7-8eb9-4a50-8526d95b5394@schaufler-ca.com>
+ <CAJfpegvwTmaw0bp70-nYQAvs8T=wYyxnDEoA=rOvX8HDZnxCTg@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAJfpegvwTmaw0bp70-nYQAvs8T=wYyxnDEoA=rOvX8HDZnxCTg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.19987 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks Tetsuo and John. I'll include this patch in the rename/link 
-Landlock series to fix the remaining issue: 
-https://lore.kernel.org/r/20220221212522.320243-1-mic@digikod.net
+On 3/23/2022 7:00 AM, Miklos Szeredi wrote:
+> On Wed, 23 Mar 2022 at 14:51, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+>> You also need a way to get a list off what attributes are available
+>> and/or a way to get all available attributes. Applications and especially
+>> libraries shouldn't have to guess what information is relevant. If the
+>> attributes change depending on the filesystem and/or LSM involved, and
+>> they do, how can a general purpose library function know what data to
+>> ask for?
+> Oh, yes.  Even the current prototype does that:
+>
+> # ~/getvalues / ""
+> [] = "mnt" "mntns" "xattr" "data" (len=21)
+> # ~/getvalues / "mnt"
+> [mnt] = "id" "parentid" "root" "mountpoint" "options" "shared"
+> "master" "propagate_from" "unbindable" (len=76)
+> # ~/getvalues / "mntns"
+> [mntns] = "21" "22" "24" "25" "23" "26" "27" "28" "29" "30" "31" "32" (len=36)
+>   ~/getvalues / "mntns:21"
+> [mntns:21] = "id" "parentid" "root" "mountpoint" "options" "shared"
+> "master" "propagate_from" "unbindable" (len=76)
 
+That requires multiple calls and hierarchy tracking by the caller.
+Not to mention that in this case the caller needs to understand
+how mount namespaces are being used. I don't see that you've made
+anything cleaner. You have discarded the type checking provided
+by the "classic" APIs. Elsewhere in this thread the claims of
+improved performance have been questioned, but I can't say boo
+about that. Is this interface targeted for languages other than C
+for which the paradigm might provide (more?) value?
 
-On 23/03/2022 18:38, John Johansen wrote:
-> Looks good to me. Of course now I am going to have to create a follow-up
-> patch to optimize the apparmor mediation.
-> 
-> Acked-by: John Johansen <john.johansen@canonical.com>
-> 
-> On 3/23/22 01:40, Mickaël Salaün wrote:
->> Any comment? John, Tetsuo, does it look OK for AppArmor and Tomoyo?
->>
->> On 22/02/2022 18:53, Mickaël Salaün wrote:
->>> From: Mickaël Salaün <mic@linux.microsoft.com>
->>>
->>> In order to be able to identify a file exchange with renameat2(2) and
->>> RENAME_EXCHANGE, which will be useful for Landlock [1], propagate the
->>> rename flags to LSMs.  This may also improve performance because of the
->>> switch from two set of LSM hook calls to only one, and because LSMs
->>> using this hook may optimize the double check (e.g. only one lock,
->>> reduce the number of path walks).
->>>
->>> AppArmor, Landlock and Tomoyo are updated to leverage this change.  This
->>> should not change the current behavior (same check order), except
->>> (different level of) speed boosts.
->>>
->>> [1] https://lore.kernel.org/r/20220221212522.320243-1-mic@digikod.net
->>>
->>> Cc: James Morris <jmorris@namei.org>
->>> Cc: John Johansen <john.johansen@canonical.com>
->>> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
->>> Cc: Serge E. Hallyn <serge@hallyn.com>
->>> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->>> Link: https://lore.kernel.org/r/20220222175332.384545-1-mic@digikod.net
->>> ---
->>>    include/linux/lsm_hook_defs.h |  2 +-
->>>    include/linux/lsm_hooks.h     |  1 +
->>>    security/apparmor/lsm.c       | 30 +++++++++++++++++++++++++-----
->>>    security/landlock/fs.c        | 12 ++++++++++--
->>>    security/security.c           |  9 +--------
->>>    security/tomoyo/tomoyo.c      | 11 ++++++++++-
->>>    6 files changed, 48 insertions(+), 17 deletions(-)
->>>
->>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->>> index 819ec92dc2a8..d8b49c9c3a8a 100644
->>> --- a/include/linux/lsm_hook_defs.h
->>> +++ b/include/linux/lsm_hook_defs.h
->>> @@ -100,7 +100,7 @@ LSM_HOOK(int, 0, path_link, struct dentry *old_dentry,
->>>         const struct path *new_dir, struct dentry *new_dentry)
->>>    LSM_HOOK(int, 0, path_rename, const struct path *old_dir,
->>>         struct dentry *old_dentry, const struct path *new_dir,
->>> -     struct dentry *new_dentry)
->>> +     struct dentry *new_dentry, unsigned int flags)
->>>    LSM_HOOK(int, 0, path_chmod, const struct path *path, umode_t mode)
->>>    LSM_HOOK(int, 0, path_chown, const struct path *path, kuid_t uid, kgid_t gid)
->>>    LSM_HOOK(int, 0, path_chroot, const struct path *path)
->>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>> index 3bf5c658bc44..32cd2a7fe9fc 100644
->>> --- a/include/linux/lsm_hooks.h
->>> +++ b/include/linux/lsm_hooks.h
->>> @@ -358,6 +358,7 @@
->>>     *    @old_dentry contains the dentry structure of the old link.
->>>     *    @new_dir contains the path structure for parent of the new link.
->>>     *    @new_dentry contains the dentry structure of the new link.
->>> + *    @flags may contain rename options such as RENAME_EXCHANGE.
->>>     *    Return 0 if permission is granted.
->>>     * @path_chmod:
->>>     *    Check for permission to change a mode of the file @path. The new
->>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->>> index 4f0eecb67dde..900bc540656a 100644
->>> --- a/security/apparmor/lsm.c
->>> +++ b/security/apparmor/lsm.c
->>> @@ -354,13 +354,16 @@ static int apparmor_path_link(struct dentry *old_dentry, const struct path *new_
->>>    }
->>>      static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_dentry,
->>> -                const struct path *new_dir, struct dentry *new_dentry)
->>> +                const struct path *new_dir, struct dentry *new_dentry,
->>> +                const unsigned int flags)
->>>    {
->>>        struct aa_label *label;
->>>        int error = 0;
->>>          if (!path_mediated_fs(old_dentry))
->>>            return 0;
->>> +    if ((flags & RENAME_EXCHANGE) && !path_mediated_fs(new_dentry))
->>> +        return 0;
->>>          label = begin_current_label_crit_section();
->>>        if (!unconfined(label)) {
->>> @@ -374,10 +377,27 @@ static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_d
->>>                d_backing_inode(old_dentry)->i_mode
->>>            };
->>>    -        error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
->>> -                     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
->>> -                     AA_MAY_SETATTR | AA_MAY_DELETE,
->>> -                     &cond);
->>> +        if (flags & RENAME_EXCHANGE) {
->>> +            struct path_cond cond_exchange = {
->>> +                i_uid_into_mnt(mnt_userns, d_backing_inode(new_dentry)),
->>> +                d_backing_inode(new_dentry)->i_mode
->>> +            };
->>> +
->>> +            error = aa_path_perm(OP_RENAME_SRC, label, &new_path, 0,
->>> +                         MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
->>> +                         AA_MAY_SETATTR | AA_MAY_DELETE,
->>> +                         &cond_exchange);
->>> +            if (!error)
->>> +                error = aa_path_perm(OP_RENAME_DEST, label, &old_path,
->>> +                             0, MAY_WRITE | AA_MAY_SETATTR |
->>> +                             AA_MAY_CREATE, &cond_exchange);
->>> +        }
->>> +
->>> +        if (!error)
->>> +            error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
->>> +                         MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
->>> +                         AA_MAY_SETATTR | AA_MAY_DELETE,
->>> +                         &cond);
->>>            if (!error)
->>>                error = aa_path_perm(OP_RENAME_DEST, label, &new_path,
->>>                             0, MAY_WRITE | AA_MAY_SETATTR |
->>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
->>> index 97b8e421f617..7e57fca6e814 100644
->>> --- a/security/landlock/fs.c
->>> +++ b/security/landlock/fs.c
->>> @@ -574,10 +574,12 @@ static inline u32 maybe_remove(const struct dentry *const dentry)
->>>    static int hook_path_rename(const struct path *const old_dir,
->>>            struct dentry *const old_dentry,
->>>            const struct path *const new_dir,
->>> -        struct dentry *const new_dentry)
->>> +        struct dentry *const new_dentry,
->>> +        const unsigned int flags)
->>>    {
->>>        const struct landlock_ruleset *const dom =
->>>            landlock_get_current_domain();
->>> +    u32 exchange_access = 0;
->>>          if (!dom)
->>>            return 0;
->>> @@ -585,11 +587,17 @@ static int hook_path_rename(const struct path *const old_dir,
->>>        if (old_dir->dentry != new_dir->dentry)
->>>            /* Gracefully forbids reparenting. */
->>>            return -EXDEV;
->>> +    if (flags & RENAME_EXCHANGE) {
->>> +        if (unlikely(d_is_negative(new_dentry)))
->>> +            return -ENOENT;
->>> +        exchange_access =
->>> +            get_mode_access(d_backing_inode(new_dentry)->i_mode);
->>> +    }
->>>        if (unlikely(d_is_negative(old_dentry)))
->>>            return -ENOENT;
->>>        /* RENAME_EXCHANGE is handled because directories are the same. */
->>>        return check_access_path(dom, old_dir, maybe_remove(old_dentry) |
->>> -            maybe_remove(new_dentry) |
->>> +            maybe_remove(new_dentry) | exchange_access |
->>>                get_mode_access(d_backing_inode(old_dentry)->i_mode));
->>>    }
->>>    diff --git a/security/security.c b/security/security.c
->>> index 22261d79f333..8634da4cfd46 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -1184,15 +1184,8 @@ int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
->>>                 (d_is_positive(new_dentry) && IS_PRIVATE(d_backing_inode(new_dentry)))))
->>>            return 0;
->>>    -    if (flags & RENAME_EXCHANGE) {
->>> -        int err = call_int_hook(path_rename, 0, new_dir, new_dentry,
->>> -                    old_dir, old_dentry);
->>> -        if (err)
->>> -            return err;
->>> -    }
->>> -
->>>        return call_int_hook(path_rename, 0, old_dir, old_dentry, new_dir,
->>> -                new_dentry);
->>> +                new_dentry, flags);
->>>    }
->>>    EXPORT_SYMBOL(security_path_rename);
->>>    diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
->>> index b6a31901f289..71e82d855ebf 100644
->>> --- a/security/tomoyo/tomoyo.c
->>> +++ b/security/tomoyo/tomoyo.c
->>> @@ -264,17 +264,26 @@ static int tomoyo_path_link(struct dentry *old_dentry, const struct path *new_di
->>>     * @old_dentry: Pointer to "struct dentry".
->>>     * @new_parent: Pointer to "struct path".
->>>     * @new_dentry: Pointer to "struct dentry".
->>> + * @flags: Rename options.
->>>     *
->>>     * Returns 0 on success, negative value otherwise.
->>>     */
->>>    static int tomoyo_path_rename(const struct path *old_parent,
->>>                      struct dentry *old_dentry,
->>>                      const struct path *new_parent,
->>> -                  struct dentry *new_dentry)
->>> +                  struct dentry *new_dentry,
->>> +                  const unsigned int flags)
->>>    {
->>>        struct path path1 = { .mnt = old_parent->mnt, .dentry = old_dentry };
->>>        struct path path2 = { .mnt = new_parent->mnt, .dentry = new_dentry };
->>>    +    if (flags & RENAME_EXCHANGE) {
->>> +        const int err = tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path2,
->>> +                &path1);
->>> +
->>> +        if (err)
->>> +            return err;
->>> +    }
->>>        return tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path1, &path2);
->>>    }
->>>   
->>> base-commit: cfb92440ee71adcc2105b0890bb01ac3cddb8507
-> 
+>
+> I didn't implement enumeration for "data" and "xattr" but that is
+> certainly possible and not even difficult to do.
+>
+> Thanks,
+> Miklos
