@@ -2,265 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7122C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 17:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73510C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 19:30:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245628AbiCWRki (ORCPT
+        id S1344274AbiCWTba (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Mar 2022 13:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33530 "EHLO
+        Wed, 23 Mar 2022 15:31:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240424AbiCWRkh (ORCPT
+        with ESMTP id S1344271AbiCWTba (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Mar 2022 13:40:37 -0400
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EBBD3BFAF;
-        Wed, 23 Mar 2022 10:39:07 -0700 (PDT)
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id AB1673F654;
-        Wed, 23 Mar 2022 17:39:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1648057145;
-        bh=/xxdnln8qcQWPGrDY0A5H6Ina2OBHHERwqt2Er5Fi8Y=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=nGA7yWIa5qTehyqQ+c+zXVo8eppHqy+2yhcpflcuUXyzl+pMaggzLLYAWfUzwI6cd
-         ikQrpBKpA8fk92m6AmmkHMBNn1VTvvYYvagPMB4M7Qov/V4lLAUKc9A+zHJWdVCvNg
-         SB+tpX9a1q3NZPKt+H8ylWLbzPYwyYkUC+8N2pBg27BeB5gBdx7zNDictsRdZwTI5w
-         NHDoD0ElNSe1PLMMZ4l5Gf8bJvIBdxApeRZ99TpkD0qulsnvJtqQwgKcw/H4EblYSz
-         SnvsDKVBG199IgJJS55z7oj32CQTyIAiXakel++2rNo6Bpgmk1e+C0tyA5px+TaPrS
-         N0+nebevz/j4A==
-Message-ID: <4611f869-9a88-12d0-861c-7efcfa15bcba@canonical.com>
-Date:   Wed, 23 Mar 2022 10:38:52 -0700
+        Wed, 23 Mar 2022 15:31:30 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C0A89CC4;
+        Wed, 23 Mar 2022 12:29:59 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id D23745EE6; Wed, 23 Mar 2022 15:29:58 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org D23745EE6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1648063798;
+        bh=JqlmM1NJloLOZMtErdOCWTM4BMqIYjuNg8gf8rNh+10=;
+        h=Date:To:Cc:Subject:References:In-Reply-To:From:From;
+        b=XiuE3MK+ad95PtbIPK3tcNgV2ZFIBA/1OobGjqdSpjWTURZVlzhQ5UzmFAB6l+BQv
+         9sSK1ci0gHcdFjVQyOjO454C6k6EgKsR255d2OBlzQ7IlOE7bA++zZNjOUhN49/hV5
+         nbRqZ/PRFcmEYls4Zyh9I3nNlgSifXY4XSoujKec=
+Date:   Wed, 23 Mar 2022 15:29:58 -0400
+To:     Bernd Schubert <bschubert@ddn.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Dharmendra Singh <dsingh@ddn.com>
+Subject: Re: [RFC PATCH] getvalues(2) prototype
+Message-ID: <20220323192958.GA18275@fieldses.org>
+References: <20220322192712.709170-1-mszeredi@redhat.com>
+ <YjrJWf+XMnWVd6K0@kroah.com>
+ <d0e2573a-7736-bb3e-9f6a-5fa25e6d31a2@ddn.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [RFC PATCH v1] LSM: Remove double path_rename hook calls for
- RENAME_EXCHANGE
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Brendan Jackman <jackmanb@chromium.org>,
-        Florent Revest <revest@chromium.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20220222175332.384545-1-mic@digikod.net>
- <b71454bb-d084-bfd6-7cd3-aa6bfdaaab00@digikod.net>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <b71454bb-d084-bfd6-7cd3-aa6bfdaaab00@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0e2573a-7736-bb3e-9f6a-5fa25e6d31a2@ddn.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Looks good to me. Of course now I am going to have to create a follow-up
-patch to optimize the apparmor mediation.
-
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-On 3/23/22 01:40, Mickaël Salaün wrote:
-> Any comment? John, Tetsuo, does it look OK for AppArmor and Tomoyo?
+On Wed, Mar 23, 2022 at 11:26:11AM +0100, Bernd Schubert wrote:
+> Add in network file systems. Demonstrating that this is useful
+> locally and with micro benchmarks - yeah, helps a bit to make it
+> locally faster. But the real case is when thousands of clients are
+> handled by a few network servers. Even reducing wire latency for a
+> single client would make a difference here.
 > 
-> On 22/02/2022 18:53, Mickaël Salaün wrote:
->> From: Mickaël Salaün <mic@linux.microsoft.com>
->>
->> In order to be able to identify a file exchange with renameat2(2) and
->> RENAME_EXCHANGE, which will be useful for Landlock [1], propagate the
->> rename flags to LSMs.  This may also improve performance because of the
->> switch from two set of LSM hook calls to only one, and because LSMs
->> using this hook may optimize the double check (e.g. only one lock,
->> reduce the number of path walks).
->>
->> AppArmor, Landlock and Tomoyo are updated to leverage this change.  This
->> should not change the current behavior (same check order), except
->> (different level of) speed boosts.
->>
->> [1] https://lore.kernel.org/r/20220221212522.320243-1-mic@digikod.net
->>
->> Cc: James Morris <jmorris@namei.org>
->> Cc: John Johansen <john.johansen@canonical.com>
->> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
->> Cc: Serge E. Hallyn <serge@hallyn.com>
->> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->> Link: https://lore.kernel.org/r/20220222175332.384545-1-mic@digikod.net
->> ---
->>   include/linux/lsm_hook_defs.h |  2 +-
->>   include/linux/lsm_hooks.h     |  1 +
->>   security/apparmor/lsm.c       | 30 +++++++++++++++++++++++++-----
->>   security/landlock/fs.c        | 12 ++++++++++--
->>   security/security.c           |  9 +--------
->>   security/tomoyo/tomoyo.c      | 11 ++++++++++-
->>   6 files changed, 48 insertions(+), 17 deletions(-)
->>
->> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->> index 819ec92dc2a8..d8b49c9c3a8a 100644
->> --- a/include/linux/lsm_hook_defs.h
->> +++ b/include/linux/lsm_hook_defs.h
->> @@ -100,7 +100,7 @@ LSM_HOOK(int, 0, path_link, struct dentry *old_dentry,
->>        const struct path *new_dir, struct dentry *new_dentry)
->>   LSM_HOOK(int, 0, path_rename, const struct path *old_dir,
->>        struct dentry *old_dentry, const struct path *new_dir,
->> -     struct dentry *new_dentry)
->> +     struct dentry *new_dentry, unsigned int flags)
->>   LSM_HOOK(int, 0, path_chmod, const struct path *path, umode_t mode)
->>   LSM_HOOK(int, 0, path_chown, const struct path *path, kuid_t uid, kgid_t gid)
->>   LSM_HOOK(int, 0, path_chroot, const struct path *path)
->> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->> index 3bf5c658bc44..32cd2a7fe9fc 100644
->> --- a/include/linux/lsm_hooks.h
->> +++ b/include/linux/lsm_hooks.h
->> @@ -358,6 +358,7 @@
->>    *    @old_dentry contains the dentry structure of the old link.
->>    *    @new_dir contains the path structure for parent of the new link.
->>    *    @new_dentry contains the dentry structure of the new link.
->> + *    @flags may contain rename options such as RENAME_EXCHANGE.
->>    *    Return 0 if permission is granted.
->>    * @path_chmod:
->>    *    Check for permission to change a mode of the file @path. The new
->> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->> index 4f0eecb67dde..900bc540656a 100644
->> --- a/security/apparmor/lsm.c
->> +++ b/security/apparmor/lsm.c
->> @@ -354,13 +354,16 @@ static int apparmor_path_link(struct dentry *old_dentry, const struct path *new_
->>   }
->>     static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_dentry,
->> -                const struct path *new_dir, struct dentry *new_dentry)
->> +                const struct path *new_dir, struct dentry *new_dentry,
->> +                const unsigned int flags)
->>   {
->>       struct aa_label *label;
->>       int error = 0;
->>         if (!path_mediated_fs(old_dentry))
->>           return 0;
->> +    if ((flags & RENAME_EXCHANGE) && !path_mediated_fs(new_dentry))
->> +        return 0;
->>         label = begin_current_label_crit_section();
->>       if (!unconfined(label)) {
->> @@ -374,10 +377,27 @@ static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_d
->>               d_backing_inode(old_dentry)->i_mode
->>           };
->>   -        error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
->> -                     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
->> -                     AA_MAY_SETATTR | AA_MAY_DELETE,
->> -                     &cond);
->> +        if (flags & RENAME_EXCHANGE) {
->> +            struct path_cond cond_exchange = {
->> +                i_uid_into_mnt(mnt_userns, d_backing_inode(new_dentry)),
->> +                d_backing_inode(new_dentry)->i_mode
->> +            };
->> +
->> +            error = aa_path_perm(OP_RENAME_SRC, label, &new_path, 0,
->> +                         MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
->> +                         AA_MAY_SETATTR | AA_MAY_DELETE,
->> +                         &cond_exchange);
->> +            if (!error)
->> +                error = aa_path_perm(OP_RENAME_DEST, label, &old_path,
->> +                             0, MAY_WRITE | AA_MAY_SETATTR |
->> +                             AA_MAY_CREATE, &cond_exchange);
->> +        }
->> +
->> +        if (!error)
->> +            error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
->> +                         MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
->> +                         AA_MAY_SETATTR | AA_MAY_DELETE,
->> +                         &cond);
->>           if (!error)
->>               error = aa_path_perm(OP_RENAME_DEST, label, &new_path,
->>                            0, MAY_WRITE | AA_MAY_SETATTR |
->> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
->> index 97b8e421f617..7e57fca6e814 100644
->> --- a/security/landlock/fs.c
->> +++ b/security/landlock/fs.c
->> @@ -574,10 +574,12 @@ static inline u32 maybe_remove(const struct dentry *const dentry)
->>   static int hook_path_rename(const struct path *const old_dir,
->>           struct dentry *const old_dentry,
->>           const struct path *const new_dir,
->> -        struct dentry *const new_dentry)
->> +        struct dentry *const new_dentry,
->> +        const unsigned int flags)
->>   {
->>       const struct landlock_ruleset *const dom =
->>           landlock_get_current_domain();
->> +    u32 exchange_access = 0;
->>         if (!dom)
->>           return 0;
->> @@ -585,11 +587,17 @@ static int hook_path_rename(const struct path *const old_dir,
->>       if (old_dir->dentry != new_dir->dentry)
->>           /* Gracefully forbids reparenting. */
->>           return -EXDEV;
->> +    if (flags & RENAME_EXCHANGE) {
->> +        if (unlikely(d_is_negative(new_dentry)))
->> +            return -ENOENT;
->> +        exchange_access =
->> +            get_mode_access(d_backing_inode(new_dentry)->i_mode);
->> +    }
->>       if (unlikely(d_is_negative(old_dentry)))
->>           return -ENOENT;
->>       /* RENAME_EXCHANGE is handled because directories are the same. */
->>       return check_access_path(dom, old_dir, maybe_remove(old_dentry) |
->> -            maybe_remove(new_dentry) |
->> +            maybe_remove(new_dentry) | exchange_access |
->>               get_mode_access(d_backing_inode(old_dentry)->i_mode));
->>   }
->>   diff --git a/security/security.c b/security/security.c
->> index 22261d79f333..8634da4cfd46 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -1184,15 +1184,8 @@ int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
->>                (d_is_positive(new_dentry) && IS_PRIVATE(d_backing_inode(new_dentry)))))
->>           return 0;
->>   -    if (flags & RENAME_EXCHANGE) {
->> -        int err = call_int_hook(path_rename, 0, new_dir, new_dentry,
->> -                    old_dir, old_dentry);
->> -        if (err)
->> -            return err;
->> -    }
->> -
->>       return call_int_hook(path_rename, 0, old_dir, old_dentry, new_dir,
->> -                new_dentry);
->> +                new_dentry, flags);
->>   }
->>   EXPORT_SYMBOL(security_path_rename);
->>   diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
->> index b6a31901f289..71e82d855ebf 100644
->> --- a/security/tomoyo/tomoyo.c
->> +++ b/security/tomoyo/tomoyo.c
->> @@ -264,17 +264,26 @@ static int tomoyo_path_link(struct dentry *old_dentry, const struct path *new_di
->>    * @old_dentry: Pointer to "struct dentry".
->>    * @new_parent: Pointer to "struct path".
->>    * @new_dentry: Pointer to "struct dentry".
->> + * @flags: Rename options.
->>    *
->>    * Returns 0 on success, negative value otherwise.
->>    */
->>   static int tomoyo_path_rename(const struct path *old_parent,
->>                     struct dentry *old_dentry,
->>                     const struct path *new_parent,
->> -                  struct dentry *new_dentry)
->> +                  struct dentry *new_dentry,
->> +                  const unsigned int flags)
->>   {
->>       struct path path1 = { .mnt = old_parent->mnt, .dentry = old_dentry };
->>       struct path path2 = { .mnt = new_parent->mnt, .dentry = new_dentry };
->>   +    if (flags & RENAME_EXCHANGE) {
->> +        const int err = tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path2,
->> +                &path1);
->> +
->> +        if (err)
->> +            return err;
->> +    }
->>       return tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path1, &path2);
->>   }
->>  
->> base-commit: cfb92440ee71adcc2105b0890bb01ac3cddb8507
+> There is a bit of chicken-egg problem - it is a bit of work to add
+> to file systems like NFS (or others that are not the kernel), but
+> the work won't be made there before there is no syscall for it. To
+> demonstrate it on NFS one also needs a an official protocol change
+> first.
 
+I wouldn't assume that.  NFSv4 already supports compound rpc operations,
+so you can do OPEN+READ+CLOSE in a single round trip.  The client's
+never done that, but there are pynfs tests that can testify to the fact
+that our server supports it.
+
+It's not something anyone's used much outside of artificial tests, so
+there may well turn out be issues, but the protocol's definitely
+sufficient to prototype this at least.
+
+I'm not volunteering, but it doesn't seem too difficult in theory if
+someone's interested.
+
+--b.
+
+> And then applications also need to support that new syscall
+> first.
+> I had a hard time explaining weather physicist back in 2009 that it
+> is not a good idea to have millions of 512B files on  Lustre. With
+> recent AI workload this gets even worse.
+> 
+> This is the same issue in fact with the fuse patches we are creating
+> (https://lwn.net/Articles/888877/). Miklos asked for benchmark
+> numbers - we can only demonstrate slight effects locally, but out
+> goal is in fact to reduce network latencies and server load.
+> 
+> - Bernd
