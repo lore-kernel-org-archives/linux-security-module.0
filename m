@@ -2,98 +2,232 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C44C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 15:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CE5C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 16:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245118AbiCWPZT (ORCPT
+        id S234052AbiCWQcM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Mar 2022 11:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44944 "EHLO
+        Wed, 23 Mar 2022 12:32:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245101AbiCWPZS (ORCPT
+        with ESMTP id S230519AbiCWQcK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Mar 2022 11:25:18 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D838A5FF17
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Mar 2022 08:23:47 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id o10so3572513ejd.1
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Mar 2022 08:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mlS/fdRq6hH9/s3MjXNnayc2lVeeN15N6DspmLurFGc=;
-        b=jNl4Povv1P5H6dTnpwFVsSxe3b46c3nud3i9Aj/69tJIIyEVuLAlkNlWc+scUTvntB
-         uXj4WCJwCKQDrvi5WHHpsfydkbN38SdEHthpMbgM0jdgl/C1GDFTt3UhWR/6Kfa1J9Am
-         rlyx19X9S2SwlH7Uq3aWcksl9m15lSuh6UoLQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mlS/fdRq6hH9/s3MjXNnayc2lVeeN15N6DspmLurFGc=;
-        b=PftKBAvgikhNUX8BbCwamceGHHcv0NGCsuRtyMzsbTUrbcWAU3zd0xB085QRUUzZ6F
-         gHSHu+oq3i/zyEsfK1nvnW+h9ad9vCDm/LtuvM4/qeKksKaOf/2qrkxP+pvbRdKTElEU
-         FNtMrq3+LhxNZowdloRILhFCk0oyaET0aflZ3xbLQbAaJuxCLRrjI/6zOvOE8GnT1Tdv
-         2iGHchFtdqdy/AMZYCqSKUgOMIVK64q9b4fCkX8FGS78xxKmtUpJxeiF645DKw6KBBpr
-         I1RwBFx7fj31eHxNzp6Lh1KmknqdrZmwg1pm6v5Q0MdSr+G2Vc8c1bN62zuwUSY+GmMD
-         88GA==
-X-Gm-Message-State: AOAM533iKoH8HHQxbHvgEIfmiDxh+fBIPNpR6VAggiQ7Mg4IrqVxEvYf
-        wEKatM4PusFOPG9QjppRLpVzh1rDDkAXbEB1u7iHyQ==
-X-Google-Smtp-Source: ABdhPJynCIbGxWaH8VNgO7K5SrWmTQgikKoqtYUaFhM+Y0JZe0+LMfjLZkQj57fx03puzkf/rf2QsmRsUGBWm5AVktQ=
-X-Received: by 2002:a17:906:c259:b0:6ce:a165:cd0d with SMTP id
- bl25-20020a170906c25900b006cea165cd0dmr546068ejb.270.1648049026221; Wed, 23
- Mar 2022 08:23:46 -0700 (PDT)
+        Wed, 23 Mar 2022 12:32:10 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 894C2694BB;
+        Wed, 23 Mar 2022 09:30:39 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KNv2K24S7z67Ywb;
+        Thu, 24 Mar 2022 00:29:29 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Wed, 23 Mar 2022 17:30:35 +0100
+Message-ID: <b367c8c6-adfc-9ec1-a898-f9aa13815ca5@huawei.com>
+Date:   Wed, 23 Mar 2022 19:30:31 +0300
 MIME-Version: 1.0
-References: <20220322192712.709170-1-mszeredi@redhat.com> <20220323114215.pfrxy2b6vsvqig6a@wittgenstein>
- <CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA0DT66GFH2ZanspA@mail.gmail.com> <Yjsiv2XesJRzoeTW@kroah.com>
-In-Reply-To: <Yjsiv2XesJRzoeTW@kroah.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 23 Mar 2022 16:23:34 +0100
-Message-ID: <CAJfpegsBmed6dchjgVeQ-OPGYBiU+2GPgsoJegjuPTrcLs6-8g@mail.gmail.com>
-Subject: Re: [RFC PATCH] getvalues(2) prototype
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [RFC PATCH v4 00/15] Landlock LSM
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <c9333349-5e05-de95-85da-f6a0cd836162@digikod.net>
+ <29244d4d-70cc-9c4f-6d0f-e3ce3beb2623@huawei.com>
+ <ef128eed-65a3-1617-d630-275f3cfa8220@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <ef128eed-65a3-1617-d630-275f3cfa8220@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 23 Mar 2022 at 14:38, Greg KH <gregkh@linuxfoundation.org> wrote:
 
-> This has been proposed in the past a few times.  Most recently by the
-> KVM developers, which tried to create a "generic" api, but ended up just
-> making something to work for KVM as they got tired of people ignoring
-> their more intrusive patch sets.  See virt/kvm/binary_stats.c for what
-> they ended up with, and perhaps you can just use that same type of
-> interface here as well?
 
-So this looks like a fixed set of statistics where each one has a
-descriptor (a name, size, offset, flags, ...) that tells about the
-piece of data to be exported.  The stats are kept up to date in kernel
-memory and copied to userspace on read.  The copy can be selective,
-since the read can specify the offset and size of data it would like
-to retrieve.
+3/17/2022 8:26 PM, Mickaël Salaün пишет:
+> 
+> On 17/03/2022 14:01, Konstantin Meskhidze wrote:
+>>
+>>
+>> 3/15/2022 8:02 PM, Mickaël Salaün пишет:
+>>> Hi Konstantin,
+>>>
+>>> This series looks good! Thanks for the split in multiple patches.
+>>>
+>>   Thanks. I follow your recommendations.
+>>>
+>>> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
+>>>> Hi,
+>>>> This is a new V4 bunch of RFC patches related to Landlock LSM 
+>>>> network confinement.
+>>>> It brings deep refactirong and commit splitting of previous version V3.
+>>>> Also added additional selftests.
+>>>>
+>>>> This patch series can be applied on top of v5.17-rc3.
+>>>>
+>>>> All test were run in QEMU evironment and compiled with
+>>>>   -static flag.
+>>>>   1. network_test: 9/9 tests passed.
+>>>
+>>> I get a kernel warning running the network tests.
+>>
+>>    What kind of warning? Can you provide it please?
+> 
+> You really need to get a setup that gives you such kernel warning. When 
+> running network_test you should get:
+> WARNING: CPU: 3 PID: 742 at security/landlock/ruleset.c:218 
+> insert_rule+0x220/0x270
+> 
+> Before sending new patches, please make sure you're able to catch such 
+> issues.
+> 
+> 
+>>>
+>>>>   2. base_test: 8/8 tests passed.
+>>>>   3. fs_test: 46/46 tests passed.
+>>>>   4. ptrace_test: 4/8 tests passed.
+>>>
+>>> Does your test machine use Yama? That would explain the 4/8. You can 
+>>> disable it with the appropriate sysctl.
+> 
+> Can you answer this question?
+> 
+> 
+>>>
+>>>>
+>>>> Tests were also launched for Landlock version without
+>>>> v4 patch:
+>>>>   1. base_test: 8/8 tests passed.
+>>>>   2. fs_test: 46/46 tests passed.
+>>>>   3. ptrace_test: 4/8 tests passed.
+>>>>
+>>>> Could not provide test coverage cause had problems with tests
+>>>> on VM (no -static flag the tests compiling, no v4 patch applied):
+>>>
+    Hi, Mickaёl!
+    I tried to get base test coverage without v4 patch applied.
 
-The interface is self descriptive and selective, but its structure is
-fixed for a specific object type, there's no way this could be
-extended to look up things like extended attributes.  Maybe that's not
-a problem, but the lack of a hierarchical namespace could turn out to
-be a major drawback.
+    1. Kernel configuration :
+	- CONFIG_DEBUG_FS=y
+	- CONFIG_GCOV_KERNEL=y
+	- CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
+    2. Added GCOV_PROFILE := y in security/landlock/Makefile
+    3. Compiled kernel  and rebooted VM with the new one.
+    4. Run landlock selftests as root user:
+	$ cd tools/testing/selftests/landlock
+	$ ./base_test
+	$ ./fs_test
+	$ ./ptrace_test
+    5. Copied GCOV data to some folder :
+       $ cp -r 
+/sys/kernel/debug/gcov/<source-dir>/linux/security/landlock/ /gcov-before
+       $ cd /gcov-before
+       $ lcov -c -d ./landlock -o lcov.info && genhtml -o html lcov.info
 
-I think people underestimate the usefulness of hierarchical
-namespaces, even though we use them extensively in lots of well
-established interfaces.
+I got the next result:
+" Capturing coverage data from ./landlock
+Found gcov version: 9.4.0
+Using intermediate gcov format
+Scanning ./landlock for .gcda files ...
+Found 7 data files in ./landlock
+Processing landlock/setup.gcda
+/home/kmeskhidze/work/src/gcov_before/landlock/setup.gcda:cannot open 
+data file, assuming not executed
+Processing landlock/object.gcda
+/home/kmeskhidze/work/src/gcov_before/landlock/object.gcda:cannot open 
+data file, assuming not executed
+Processing landlock/cred.gcda
+/home/kmeskhidze/work/src/gcov_before/landlock/cred.gcda:cannot open 
+data file, assuming not executed
+Processing landlock/ruleset.gcda
+/home/kmeskhidze/work/src/gcov_before/landlock/ruleset.gcda:cannot open 
+data file, assuming not executed
+Processing landlock/syscalls.gcda
+/home/kmeskhidze/work/src/gcov_before/landlock/syscalls.gcda:cannot open 
+data file, assuming not executed
+Processing landlock/fs.gcda
+/home/kmeskhidze/work/src/gcov_before/landlock/fs.gcda:cannot open data 
+file, assuming not executed
+Processing landlock/ptrace.gcda
+/home/kmeskhidze/work/src/gcov_before/landlock/ptrace.gcda:cannot open 
+data file, assuming not executed
+Finished .info-file creation
+Reading data file lcov.info
+Found 38 entries.
+Found common filename prefix "/home/kmeskhidze/work/src/linux_5.13_landlock"
+Writing .css and .png files.
+Generating output.
+Processing file arch/x86/include/asm/atomic64_64.h
+Processing file arch/x86/include/asm/bitops.h
+Processing file arch/x86/include/asm/atomic.h
+Processing file arch/x86/include/asm/current.h
+Processing file include/asm-generic/getorder.h
+Processing file include/asm-generic/bitops/instrumented-non-atomic.h
+Processing file include/linux/fs.h
+Processing file include/linux/refcount.h
+Processing file include/linux/kernel.h
+Processing file include/linux/list.h
+Processing file include/linux/sched.h
+Processing file include/linux/overflow.h
+Processing file include/linux/dcache.h
+Processing file include/linux/spinlock.h
+Processing file include/linux/file.h
+Processing file include/linux/rcupdate.h
+Processing file include/linux/err.h
+Processing file include/linux/workqueue.h
+Processing file include/linux/fortify-string.h
+Processing file include/linux/slab.h
+Processing file include/linux/instrumented.h
+Processing file include/linux/uaccess.h
+Processing file include/linux/thread_info.h
+Processing file include/linux/rbtree.h
+Processing file include/linux/log2.h
+Processing file include/linux/atomic/atomic-instrumented.h
+Processing file include/linux/atomic/atomic-long.h
+Processing file security/landlock/fs.c
+Processing file security/landlock/ruleset.h
+Processing file security/landlock/ruleset.c
+Processing file security/landlock/ptrace.c
+Processing file security/landlock/object.h
+Processing file security/landlock/syscalls.c
+Processing file security/landlock/setup.c
+Processing file security/landlock/cred.c
+Processing file security/landlock/object.c
+Processing file security/landlock/fs.h
+Processing file security/landlock/cred.h
+Writing directory view page.
+Overall coverage rate:
+   lines......: 0.0% (0 of 937 lines)
+   functions..: 0.0% (0 of 67 functions) "
 
-Thanks,
-Miklos
+Looks like .gcda files were not executed.
+Maybe I did miss something. Any thoughts?
+
+>>> You can build statically-linked tests with:
+>>> make -C tools/testing/selftests/landlock CFLAGS=-static
+>>
+>>   Ok. I will try. Thanks.
+>>>
+>>>> 1. base_test: 7/8 tests passed.
+>>>>   Error:
+>>>>   # Starting 8 tests from 1 test cases.
+>>>>   #  RUN           global.inconsistent_attr ...
+>>>>   # base_test.c:51:inconsistent_attr:Expected ENOMSG (42) == errno (22)
+>>>
+>>> This looks like a bug in the syscall argument checks.
+>>
+>>    This bug I just get when don't use -static option. With -static 
+>> base test passes 8/8.
+> 
+> Weird, I'd like to know what is the cause of this issue. What disto and 
+> version do you use as host and guest VM? Do you have some warning when 
+> compiling?
+> .
