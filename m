@@ -2,254 +2,179 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD53C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 08:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEF3C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 08:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233100AbiCWIlB (ORCPT
+        id S231790AbiCWInK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Mar 2022 04:41:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36556 "EHLO
+        Wed, 23 Mar 2022 04:43:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232921AbiCWIlA (ORCPT
+        with ESMTP id S229760AbiCWInJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Mar 2022 04:41:00 -0400
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E03520F40
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Mar 2022 01:39:29 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KNhbz56g6zMqCHm;
-        Wed, 23 Mar 2022 09:39:27 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KNhbx4PhbzljsV2;
-        Wed, 23 Mar 2022 09:39:25 +0100 (CET)
-Message-ID: <b71454bb-d084-bfd6-7cd3-aa6bfdaaab00@digikod.net>
-Date:   Wed, 23 Mar 2022 09:40:35 +0100
+        Wed, 23 Mar 2022 04:43:09 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7BB641615;
+        Wed, 23 Mar 2022 01:41:39 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KNhbw01RBz6H6mB;
+        Wed, 23 Mar 2022 16:39:24 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Wed, 23 Mar 2022 09:41:36 +0100
+Message-ID: <212ac1b3-b78b-4030-1f3d-f5cd1001bb7d@huawei.com>
+Date:   Wed, 23 Mar 2022 11:41:32 +0300
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Brendan Jackman <jackmanb@chromium.org>,
-        Florent Revest <revest@chromium.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20220222175332.384545-1-mic@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH v1] LSM: Remove double path_rename hook calls for
- RENAME_EXCHANGE
-In-Reply-To: <20220222175332.384545-1-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [RFC PATCH v4 03/15] landlock: landlock_find/insert_rule
+ refactoring
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <willemdebruijn.kernel@gmail.com>
+CC:     <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-4-konstantin.meskhidze@huawei.com>
+ <bc44f11f-0eaa-a5f6-c5dc-1d36570f1be1@digikod.net>
+ <6535183b-5fad-e3a9-1350-d22122205be6@huawei.com>
+ <92d498f0-c598-7413-6b7c-d19c5aec6cab@digikod.net>
+ <cb30248d-a8ae-c366-2c9f-2ab0fe44cc9a@huawei.com>
+ <90a20548-39f6-6e84-efb1-8ef3ad992255@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <90a20548-39f6-6e84-efb1-8ef3ad992255@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Any comment? John, Tetsuo, does it look OK for AppArmor and Tomoyo?
 
-On 22/02/2022 18:53, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
+
+3/22/2022 4:24 PM, Mickaël Salaün пишет:
 > 
-> In order to be able to identify a file exchange with renameat2(2) and
-> RENAME_EXCHANGE, which will be useful for Landlock [1], propagate the
-> rename flags to LSMs.  This may also improve performance because of the
-> switch from two set of LSM hook calls to only one, and because LSMs
-> using this hook may optimize the double check (e.g. only one lock,
-> reduce the number of path walks).
+> On 22/03/2022 13:33, Konstantin Meskhidze wrote:
+>>
+>>
+>> 3/18/2022 9:33 PM, Mickaël Salaün пишет:
+>>>
+>>> On 17/03/2022 15:29, Konstantin Meskhidze wrote:
+>>>>
+>>>>
+>>>> 3/16/2022 11:27 AM, Mickaël Salaün пишет:
+>>>>>
+>>>>> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
+>>>>>> A new object union added to support a socket port
+>>>>>> rule type. To support it landlock_insert_rule() and
+>>>>>> landlock_find_rule() were refactored. Now adding
+>>>>>> or searching a rule in a ruleset depends on a
+>>>>>> rule_type argument provided in refactored
+>>>>>> functions mentioned above.
+>>>>>>
+>>>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>>>>> ---
 > 
-> AppArmor, Landlock and Tomoyo are updated to leverage this change.  This
-> should not change the current behavior (same check order), except
-> (different level of) speed boosts.
+> [...]
 > 
-> [1] https://lore.kernel.org/r/20220221212522.320243-1-mic@digikod.net
+>>>>>> @@ -156,26 +166,38 @@ static void build_check_ruleset(void)
+>>>>>>    * access rights.
+>>>>>>    */
+>>>>>>   static int insert_rule(struct landlock_ruleset *const ruleset,
+>>>>>> -        struct landlock_object *const object,
+>>>>>> +        struct landlock_object *const object_ptr,
+>>>>>> +        const uintptr_t object_data,
+>>>
+>>> Can you move rule_type here for this function and similar ones? It 
+>>> makes sense to group object-related arguments.
+>>
+>>   Just to group them together, not putting rule_type in the end?
 > 
-> Cc: James Morris <jmorris@namei.org>
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20220222175332.384545-1-mic@digikod.net
-> ---
->   include/linux/lsm_hook_defs.h |  2 +-
->   include/linux/lsm_hooks.h     |  1 +
->   security/apparmor/lsm.c       | 30 +++++++++++++++++++++++++-----
->   security/landlock/fs.c        | 12 ++++++++++--
->   security/security.c           |  9 +--------
->   security/tomoyo/tomoyo.c      | 11 ++++++++++-
->   6 files changed, 48 insertions(+), 17 deletions(-)
+> Yes
+
+   Ok. Got it.
 > 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 819ec92dc2a8..d8b49c9c3a8a 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -100,7 +100,7 @@ LSM_HOOK(int, 0, path_link, struct dentry *old_dentry,
->   	 const struct path *new_dir, struct dentry *new_dentry)
->   LSM_HOOK(int, 0, path_rename, const struct path *old_dir,
->   	 struct dentry *old_dentry, const struct path *new_dir,
-> -	 struct dentry *new_dentry)
-> +	 struct dentry *new_dentry, unsigned int flags)
->   LSM_HOOK(int, 0, path_chmod, const struct path *path, umode_t mode)
->   LSM_HOOK(int, 0, path_chown, const struct path *path, kuid_t uid, kgid_t gid)
->   LSM_HOOK(int, 0, path_chroot, const struct path *path)
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 3bf5c658bc44..32cd2a7fe9fc 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -358,6 +358,7 @@
->    *	@old_dentry contains the dentry structure of the old link.
->    *	@new_dir contains the path structure for parent of the new link.
->    *	@new_dentry contains the dentry structure of the new link.
-> + *	@flags may contain rename options such as RENAME_EXCHANGE.
->    *	Return 0 if permission is granted.
->    * @path_chmod:
->    *	Check for permission to change a mode of the file @path. The new
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 4f0eecb67dde..900bc540656a 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -354,13 +354,16 @@ static int apparmor_path_link(struct dentry *old_dentry, const struct path *new_
->   }
->   
->   static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_dentry,
-> -				const struct path *new_dir, struct dentry *new_dentry)
-> +				const struct path *new_dir, struct dentry *new_dentry,
-> +				const unsigned int flags)
->   {
->   	struct aa_label *label;
->   	int error = 0;
->   
->   	if (!path_mediated_fs(old_dentry))
->   		return 0;
-> +	if ((flags & RENAME_EXCHANGE) && !path_mediated_fs(new_dentry))
-> +		return 0;
->   
->   	label = begin_current_label_crit_section();
->   	if (!unconfined(label)) {
-> @@ -374,10 +377,27 @@ static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_d
->   			d_backing_inode(old_dentry)->i_mode
->   		};
->   
-> -		error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
-> -				     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
-> -				     AA_MAY_SETATTR | AA_MAY_DELETE,
-> -				     &cond);
-> +		if (flags & RENAME_EXCHANGE) {
-> +			struct path_cond cond_exchange = {
-> +				i_uid_into_mnt(mnt_userns, d_backing_inode(new_dentry)),
-> +				d_backing_inode(new_dentry)->i_mode
-> +			};
-> +
-> +			error = aa_path_perm(OP_RENAME_SRC, label, &new_path, 0,
-> +					     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
-> +					     AA_MAY_SETATTR | AA_MAY_DELETE,
-> +					     &cond_exchange);
-> +			if (!error)
-> +				error = aa_path_perm(OP_RENAME_DEST, label, &old_path,
-> +						     0, MAY_WRITE | AA_MAY_SETATTR |
-> +						     AA_MAY_CREATE, &cond_exchange);
-> +		}
-> +
-> +		if (!error)
-> +			error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
-> +					     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
-> +					     AA_MAY_SETATTR | AA_MAY_DELETE,
-> +					     &cond);
->   		if (!error)
->   			error = aa_path_perm(OP_RENAME_DEST, label, &new_path,
->   					     0, MAY_WRITE | AA_MAY_SETATTR |
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 97b8e421f617..7e57fca6e814 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -574,10 +574,12 @@ static inline u32 maybe_remove(const struct dentry *const dentry)
->   static int hook_path_rename(const struct path *const old_dir,
->   		struct dentry *const old_dentry,
->   		const struct path *const new_dir,
-> -		struct dentry *const new_dentry)
-> +		struct dentry *const new_dentry,
-> +		const unsigned int flags)
->   {
->   	const struct landlock_ruleset *const dom =
->   		landlock_get_current_domain();
-> +	u32 exchange_access = 0;
->   
->   	if (!dom)
->   		return 0;
-> @@ -585,11 +587,17 @@ static int hook_path_rename(const struct path *const old_dir,
->   	if (old_dir->dentry != new_dir->dentry)
->   		/* Gracefully forbids reparenting. */
->   		return -EXDEV;
-> +	if (flags & RENAME_EXCHANGE) {
-> +		if (unlikely(d_is_negative(new_dentry)))
-> +			return -ENOENT;
-> +		exchange_access =
-> +			get_mode_access(d_backing_inode(new_dentry)->i_mode);
-> +	}
->   	if (unlikely(d_is_negative(old_dentry)))
->   		return -ENOENT;
->   	/* RENAME_EXCHANGE is handled because directories are the same. */
->   	return check_access_path(dom, old_dir, maybe_remove(old_dentry) |
-> -			maybe_remove(new_dentry) |
-> +			maybe_remove(new_dentry) | exchange_access |
->   			get_mode_access(d_backing_inode(old_dentry)->i_mode));
->   }
->   
-> diff --git a/security/security.c b/security/security.c
-> index 22261d79f333..8634da4cfd46 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1184,15 +1184,8 @@ int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
->   		     (d_is_positive(new_dentry) && IS_PRIVATE(d_backing_inode(new_dentry)))))
->   		return 0;
->   
-> -	if (flags & RENAME_EXCHANGE) {
-> -		int err = call_int_hook(path_rename, 0, new_dir, new_dentry,
-> -					old_dir, old_dentry);
-> -		if (err)
-> -			return err;
-> -	}
-> -
->   	return call_int_hook(path_rename, 0, old_dir, old_dentry, new_dir,
-> -				new_dentry);
-> +				new_dentry, flags);
->   }
->   EXPORT_SYMBOL(security_path_rename);
->   
-> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> index b6a31901f289..71e82d855ebf 100644
-> --- a/security/tomoyo/tomoyo.c
-> +++ b/security/tomoyo/tomoyo.c
-> @@ -264,17 +264,26 @@ static int tomoyo_path_link(struct dentry *old_dentry, const struct path *new_di
->    * @old_dentry: Pointer to "struct dentry".
->    * @new_parent: Pointer to "struct path".
->    * @new_dentry: Pointer to "struct dentry".
-> + * @flags: Rename options.
->    *
->    * Returns 0 on success, negative value otherwise.
->    */
->   static int tomoyo_path_rename(const struct path *old_parent,
->   			      struct dentry *old_dentry,
->   			      const struct path *new_parent,
-> -			      struct dentry *new_dentry)
-> +			      struct dentry *new_dentry,
-> +			      const unsigned int flags)
->   {
->   	struct path path1 = { .mnt = old_parent->mnt, .dentry = old_dentry };
->   	struct path path2 = { .mnt = new_parent->mnt, .dentry = new_dentry };
->   
-> +	if (flags & RENAME_EXCHANGE) {
-> +		const int err = tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path2,
-> +				&path1);
-> +
-> +		if (err)
-> +			return err;
-> +	}
->   	return tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path1, &path2);
->   }
->   
+> [...]
 > 
-> base-commit: cfb92440ee71adcc2105b0890bb01ac3cddb8507
+>>>>>> @@ -465,20 +501,28 @@ struct landlock_ruleset 
+>>>>>> *landlock_merge_ruleset(
+>>>>>>    */
+>>>>>>   const struct landlock_rule *landlock_find_rule(
+>>>>>>           const struct landlock_ruleset *const ruleset,
+>>>>>> -        const struct landlock_object *const object)
+>>>>>> +        const uintptr_t object_data, const u16 rule_type)
+>>>>>>   {
+>>>>>>       const struct rb_node *node;
+>>>>>>
+>>>>>> -    if (!object)
+>>>>>> +    if (!object_data)
+>>>>>
+>>>>> object_data can be 0. You need to add a test with such value.
+>>>>>
+>>>>> We need to be sure that this change cannot affect the current FS code.
+>>>>
+>>>>   I got it. I will refactor it.
+>>>
+>>> Well, 0 means a port 0, which might not be correct, but this check 
+>>> should not be performed by landlock_merge_ruleset().
+>>>
+>>   Do you mean landlock_find_rule()?? Cause this check is not
+>>   performed in landlock_merge_ruleset().
+> 
+> Yes, I was thinking about landlock_find_rule(). If you run your tests 
+> with the patch I proposed, you'll see that one of these tests will fail 
+> (when port equal 0). When creating a new network rule, 
+> add_rule_net_service() should check if the port value is valid. However, 
+> the above `if (!object_data)` is not correct anymore.
+> 
+> The remaining question is: should we need to accept 0 as a valid TCP 
+> port? Can it be used? How does the kernel handle it?
+
+  I agree that must be a check for port 0 in add_rule_net_service(), 
+cause unlike most port numbers, port 0 is a reserved port in TCP/IP 
+networking, meaning that it should not be used in TCP or UDP messages.
+Also network traffic sent across the internet to hosts listening on port 
+0 might be generated from network attackers or accidentally by 
+applications programmed incorrectly.
+Source: https://www.lifewire.com/port-0-in-tcp-and-udp-818145
+
+> 
+>>
+>>>
+>>>>>
+>>>>>
+>>>>>>           return NULL;
+>>>>>> -    node = ruleset->root.rb_node;
+>>>>>> +
+>>>>>> +    switch (rule_type) {
+>>>>>> +    case LANDLOCK_RULE_PATH_BENEATH:
+>>>>>> +        node = ruleset->root_inode.rb_node;
+>>>>>> +        break;
+>>>>>> +    default:
+>>>>>> +        return ERR_PTR(-EINVAL);
+>>>>>
+>>>>> This is a bug. There is no check for such value. You need to check 
+>>>>> and update all call sites to catch such errors. Same for all new 
+>>>>> use of ERR_PTR().
+>>>>
+>>>> Sorry, I did not get your point.
+>>>> Do you mean I should check the correctness of rule_type in above 
+>>>> function which calls landlock_find_rule() ??? Why can't I add such 
+>>>> check here?
+>>>
+>>> landlock_find_rule() only returns NULL or a valid pointer, not an error.
+>>
+>>    What about incorrect rule_type?? Return NULL? Or final rule_checl 
+>> must be in upper function?
+> 
+> This case should never happen anyway. You should return NULL and call 
+> WARN_ON_ONCE(1) just before. The same kind of WARN_ON_ONCE(1) call 
+> should be part of all switch/cases of rule_type (except the two valid 
+> values of course).
+
+  Ok. I got it. Thanks.
+> .
