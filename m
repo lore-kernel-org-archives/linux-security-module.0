@@ -2,232 +2,265 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CE5C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 16:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7122C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Mar 2022 17:39:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234052AbiCWQcM (ORCPT
+        id S245628AbiCWRki (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Mar 2022 12:32:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51810 "EHLO
+        Wed, 23 Mar 2022 13:40:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230519AbiCWQcK (ORCPT
+        with ESMTP id S240424AbiCWRkh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Mar 2022 12:32:10 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 894C2694BB;
-        Wed, 23 Mar 2022 09:30:39 -0700 (PDT)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KNv2K24S7z67Ywb;
-        Thu, 24 Mar 2022 00:29:29 +0800 (CST)
-Received: from [10.122.132.241] (10.122.132.241) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Wed, 23 Mar 2022 17:30:35 +0100
-Message-ID: <b367c8c6-adfc-9ec1-a898-f9aa13815ca5@huawei.com>
-Date:   Wed, 23 Mar 2022 19:30:31 +0300
+        Wed, 23 Mar 2022 13:40:37 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EBBD3BFAF;
+        Wed, 23 Mar 2022 10:39:07 -0700 (PDT)
+Received: from [192.168.192.153] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id AB1673F654;
+        Wed, 23 Mar 2022 17:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1648057145;
+        bh=/xxdnln8qcQWPGrDY0A5H6Ina2OBHHERwqt2Er5Fi8Y=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=nGA7yWIa5qTehyqQ+c+zXVo8eppHqy+2yhcpflcuUXyzl+pMaggzLLYAWfUzwI6cd
+         ikQrpBKpA8fk92m6AmmkHMBNn1VTvvYYvagPMB4M7Qov/V4lLAUKc9A+zHJWdVCvNg
+         SB+tpX9a1q3NZPKt+H8ylWLbzPYwyYkUC+8N2pBg27BeB5gBdx7zNDictsRdZwTI5w
+         NHDoD0ElNSe1PLMMZ4l5Gf8bJvIBdxApeRZ99TpkD0qulsnvJtqQwgKcw/H4EblYSz
+         SnvsDKVBG199IgJJS55z7oj32CQTyIAiXakel++2rNo6Bpgmk1e+C0tyA5px+TaPrS
+         N0+nebevz/j4A==
+Message-ID: <4611f869-9a88-12d0-861c-7efcfa15bcba@canonical.com>
+Date:   Wed, 23 Mar 2022 10:38:52 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [RFC PATCH v4 00/15] Landlock LSM
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <c9333349-5e05-de95-85da-f6a0cd836162@digikod.net>
- <29244d4d-70cc-9c4f-6d0f-e3ce3beb2623@huawei.com>
- <ef128eed-65a3-1617-d630-275f3cfa8220@digikod.net>
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <ef128eed-65a3-1617-d630-275f3cfa8220@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [RFC PATCH v1] LSM: Remove double path_rename hook calls for
+ RENAME_EXCHANGE
+Content-Language: en-US
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Brendan Jackman <jackmanb@chromium.org>,
+        Florent Revest <revest@chromium.org>,
+        KP Singh <kpsingh@kernel.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20220222175332.384545-1-mic@digikod.net>
+ <b71454bb-d084-bfd6-7cd3-aa6bfdaaab00@digikod.net>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <b71454bb-d084-bfd6-7cd3-aa6bfdaaab00@digikod.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
- fraeml704-chm.china.huawei.com (10.206.15.53)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Looks good to me. Of course now I am going to have to create a follow-up
+patch to optimize the apparmor mediation.
 
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-3/17/2022 8:26 PM, Mickaël Salaün пишет:
+On 3/23/22 01:40, Mickaël Salaün wrote:
+> Any comment? John, Tetsuo, does it look OK for AppArmor and Tomoyo?
 > 
-> On 17/03/2022 14:01, Konstantin Meskhidze wrote:
+> On 22/02/2022 18:53, Mickaël Salaün wrote:
+>> From: Mickaël Salaün <mic@linux.microsoft.com>
 >>
+>> In order to be able to identify a file exchange with renameat2(2) and
+>> RENAME_EXCHANGE, which will be useful for Landlock [1], propagate the
+>> rename flags to LSMs.  This may also improve performance because of the
+>> switch from two set of LSM hook calls to only one, and because LSMs
+>> using this hook may optimize the double check (e.g. only one lock,
+>> reduce the number of path walks).
 >>
->> 3/15/2022 8:02 PM, Mickaël Salaün пишет:
->>> Hi Konstantin,
->>>
->>> This series looks good! Thanks for the split in multiple patches.
->>>
->>   Thanks. I follow your recommendations.
->>>
->>> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
->>>> Hi,
->>>> This is a new V4 bunch of RFC patches related to Landlock LSM 
->>>> network confinement.
->>>> It brings deep refactirong and commit splitting of previous version V3.
->>>> Also added additional selftests.
->>>>
->>>> This patch series can be applied on top of v5.17-rc3.
->>>>
->>>> All test were run in QEMU evironment and compiled with
->>>>   -static flag.
->>>>   1. network_test: 9/9 tests passed.
->>>
->>> I get a kernel warning running the network tests.
+>> AppArmor, Landlock and Tomoyo are updated to leverage this change.  This
+>> should not change the current behavior (same check order), except
+>> (different level of) speed boosts.
 >>
->>    What kind of warning? Can you provide it please?
-> 
-> You really need to get a setup that gives you such kernel warning. When 
-> running network_test you should get:
-> WARNING: CPU: 3 PID: 742 at security/landlock/ruleset.c:218 
-> insert_rule+0x220/0x270
-> 
-> Before sending new patches, please make sure you're able to catch such 
-> issues.
-> 
-> 
->>>
->>>>   2. base_test: 8/8 tests passed.
->>>>   3. fs_test: 46/46 tests passed.
->>>>   4. ptrace_test: 4/8 tests passed.
->>>
->>> Does your test machine use Yama? That would explain the 4/8. You can 
->>> disable it with the appropriate sysctl.
-> 
-> Can you answer this question?
-> 
-> 
->>>
->>>>
->>>> Tests were also launched for Landlock version without
->>>> v4 patch:
->>>>   1. base_test: 8/8 tests passed.
->>>>   2. fs_test: 46/46 tests passed.
->>>>   3. ptrace_test: 4/8 tests passed.
->>>>
->>>> Could not provide test coverage cause had problems with tests
->>>> on VM (no -static flag the tests compiling, no v4 patch applied):
->>>
-    Hi, Mickaёl!
-    I tried to get base test coverage without v4 patch applied.
-
-    1. Kernel configuration :
-	- CONFIG_DEBUG_FS=y
-	- CONFIG_GCOV_KERNEL=y
-	- CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
-    2. Added GCOV_PROFILE := y in security/landlock/Makefile
-    3. Compiled kernel  and rebooted VM with the new one.
-    4. Run landlock selftests as root user:
-	$ cd tools/testing/selftests/landlock
-	$ ./base_test
-	$ ./fs_test
-	$ ./ptrace_test
-    5. Copied GCOV data to some folder :
-       $ cp -r 
-/sys/kernel/debug/gcov/<source-dir>/linux/security/landlock/ /gcov-before
-       $ cd /gcov-before
-       $ lcov -c -d ./landlock -o lcov.info && genhtml -o html lcov.info
-
-I got the next result:
-" Capturing coverage data from ./landlock
-Found gcov version: 9.4.0
-Using intermediate gcov format
-Scanning ./landlock for .gcda files ...
-Found 7 data files in ./landlock
-Processing landlock/setup.gcda
-/home/kmeskhidze/work/src/gcov_before/landlock/setup.gcda:cannot open 
-data file, assuming not executed
-Processing landlock/object.gcda
-/home/kmeskhidze/work/src/gcov_before/landlock/object.gcda:cannot open 
-data file, assuming not executed
-Processing landlock/cred.gcda
-/home/kmeskhidze/work/src/gcov_before/landlock/cred.gcda:cannot open 
-data file, assuming not executed
-Processing landlock/ruleset.gcda
-/home/kmeskhidze/work/src/gcov_before/landlock/ruleset.gcda:cannot open 
-data file, assuming not executed
-Processing landlock/syscalls.gcda
-/home/kmeskhidze/work/src/gcov_before/landlock/syscalls.gcda:cannot open 
-data file, assuming not executed
-Processing landlock/fs.gcda
-/home/kmeskhidze/work/src/gcov_before/landlock/fs.gcda:cannot open data 
-file, assuming not executed
-Processing landlock/ptrace.gcda
-/home/kmeskhidze/work/src/gcov_before/landlock/ptrace.gcda:cannot open 
-data file, assuming not executed
-Finished .info-file creation
-Reading data file lcov.info
-Found 38 entries.
-Found common filename prefix "/home/kmeskhidze/work/src/linux_5.13_landlock"
-Writing .css and .png files.
-Generating output.
-Processing file arch/x86/include/asm/atomic64_64.h
-Processing file arch/x86/include/asm/bitops.h
-Processing file arch/x86/include/asm/atomic.h
-Processing file arch/x86/include/asm/current.h
-Processing file include/asm-generic/getorder.h
-Processing file include/asm-generic/bitops/instrumented-non-atomic.h
-Processing file include/linux/fs.h
-Processing file include/linux/refcount.h
-Processing file include/linux/kernel.h
-Processing file include/linux/list.h
-Processing file include/linux/sched.h
-Processing file include/linux/overflow.h
-Processing file include/linux/dcache.h
-Processing file include/linux/spinlock.h
-Processing file include/linux/file.h
-Processing file include/linux/rcupdate.h
-Processing file include/linux/err.h
-Processing file include/linux/workqueue.h
-Processing file include/linux/fortify-string.h
-Processing file include/linux/slab.h
-Processing file include/linux/instrumented.h
-Processing file include/linux/uaccess.h
-Processing file include/linux/thread_info.h
-Processing file include/linux/rbtree.h
-Processing file include/linux/log2.h
-Processing file include/linux/atomic/atomic-instrumented.h
-Processing file include/linux/atomic/atomic-long.h
-Processing file security/landlock/fs.c
-Processing file security/landlock/ruleset.h
-Processing file security/landlock/ruleset.c
-Processing file security/landlock/ptrace.c
-Processing file security/landlock/object.h
-Processing file security/landlock/syscalls.c
-Processing file security/landlock/setup.c
-Processing file security/landlock/cred.c
-Processing file security/landlock/object.c
-Processing file security/landlock/fs.h
-Processing file security/landlock/cred.h
-Writing directory view page.
-Overall coverage rate:
-   lines......: 0.0% (0 of 937 lines)
-   functions..: 0.0% (0 of 67 functions) "
-
-Looks like .gcda files were not executed.
-Maybe I did miss something. Any thoughts?
-
->>> You can build statically-linked tests with:
->>> make -C tools/testing/selftests/landlock CFLAGS=-static
+>> [1] https://lore.kernel.org/r/20220221212522.320243-1-mic@digikod.net
 >>
->>   Ok. I will try. Thanks.
->>>
->>>> 1. base_test: 7/8 tests passed.
->>>>   Error:
->>>>   # Starting 8 tests from 1 test cases.
->>>>   #  RUN           global.inconsistent_attr ...
->>>>   # base_test.c:51:inconsistent_attr:Expected ENOMSG (42) == errno (22)
->>>
->>> This looks like a bug in the syscall argument checks.
+>> Cc: James Morris <jmorris@namei.org>
+>> Cc: John Johansen <john.johansen@canonical.com>
+>> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+>> Cc: Serge E. Hallyn <serge@hallyn.com>
+>> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+>> Link: https://lore.kernel.org/r/20220222175332.384545-1-mic@digikod.net
+>> ---
+>>   include/linux/lsm_hook_defs.h |  2 +-
+>>   include/linux/lsm_hooks.h     |  1 +
+>>   security/apparmor/lsm.c       | 30 +++++++++++++++++++++++++-----
+>>   security/landlock/fs.c        | 12 ++++++++++--
+>>   security/security.c           |  9 +--------
+>>   security/tomoyo/tomoyo.c      | 11 ++++++++++-
+>>   6 files changed, 48 insertions(+), 17 deletions(-)
 >>
->>    This bug I just get when don't use -static option. With -static 
->> base test passes 8/8.
-> 
-> Weird, I'd like to know what is the cause of this issue. What disto and 
-> version do you use as host and guest VM? Do you have some warning when 
-> compiling?
-> .
+>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+>> index 819ec92dc2a8..d8b49c9c3a8a 100644
+>> --- a/include/linux/lsm_hook_defs.h
+>> +++ b/include/linux/lsm_hook_defs.h
+>> @@ -100,7 +100,7 @@ LSM_HOOK(int, 0, path_link, struct dentry *old_dentry,
+>>        const struct path *new_dir, struct dentry *new_dentry)
+>>   LSM_HOOK(int, 0, path_rename, const struct path *old_dir,
+>>        struct dentry *old_dentry, const struct path *new_dir,
+>> -     struct dentry *new_dentry)
+>> +     struct dentry *new_dentry, unsigned int flags)
+>>   LSM_HOOK(int, 0, path_chmod, const struct path *path, umode_t mode)
+>>   LSM_HOOK(int, 0, path_chown, const struct path *path, kuid_t uid, kgid_t gid)
+>>   LSM_HOOK(int, 0, path_chroot, const struct path *path)
+>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>> index 3bf5c658bc44..32cd2a7fe9fc 100644
+>> --- a/include/linux/lsm_hooks.h
+>> +++ b/include/linux/lsm_hooks.h
+>> @@ -358,6 +358,7 @@
+>>    *    @old_dentry contains the dentry structure of the old link.
+>>    *    @new_dir contains the path structure for parent of the new link.
+>>    *    @new_dentry contains the dentry structure of the new link.
+>> + *    @flags may contain rename options such as RENAME_EXCHANGE.
+>>    *    Return 0 if permission is granted.
+>>    * @path_chmod:
+>>    *    Check for permission to change a mode of the file @path. The new
+>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+>> index 4f0eecb67dde..900bc540656a 100644
+>> --- a/security/apparmor/lsm.c
+>> +++ b/security/apparmor/lsm.c
+>> @@ -354,13 +354,16 @@ static int apparmor_path_link(struct dentry *old_dentry, const struct path *new_
+>>   }
+>>     static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_dentry,
+>> -                const struct path *new_dir, struct dentry *new_dentry)
+>> +                const struct path *new_dir, struct dentry *new_dentry,
+>> +                const unsigned int flags)
+>>   {
+>>       struct aa_label *label;
+>>       int error = 0;
+>>         if (!path_mediated_fs(old_dentry))
+>>           return 0;
+>> +    if ((flags & RENAME_EXCHANGE) && !path_mediated_fs(new_dentry))
+>> +        return 0;
+>>         label = begin_current_label_crit_section();
+>>       if (!unconfined(label)) {
+>> @@ -374,10 +377,27 @@ static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_d
+>>               d_backing_inode(old_dentry)->i_mode
+>>           };
+>>   -        error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
+>> -                     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
+>> -                     AA_MAY_SETATTR | AA_MAY_DELETE,
+>> -                     &cond);
+>> +        if (flags & RENAME_EXCHANGE) {
+>> +            struct path_cond cond_exchange = {
+>> +                i_uid_into_mnt(mnt_userns, d_backing_inode(new_dentry)),
+>> +                d_backing_inode(new_dentry)->i_mode
+>> +            };
+>> +
+>> +            error = aa_path_perm(OP_RENAME_SRC, label, &new_path, 0,
+>> +                         MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
+>> +                         AA_MAY_SETATTR | AA_MAY_DELETE,
+>> +                         &cond_exchange);
+>> +            if (!error)
+>> +                error = aa_path_perm(OP_RENAME_DEST, label, &old_path,
+>> +                             0, MAY_WRITE | AA_MAY_SETATTR |
+>> +                             AA_MAY_CREATE, &cond_exchange);
+>> +        }
+>> +
+>> +        if (!error)
+>> +            error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
+>> +                         MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
+>> +                         AA_MAY_SETATTR | AA_MAY_DELETE,
+>> +                         &cond);
+>>           if (!error)
+>>               error = aa_path_perm(OP_RENAME_DEST, label, &new_path,
+>>                            0, MAY_WRITE | AA_MAY_SETATTR |
+>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+>> index 97b8e421f617..7e57fca6e814 100644
+>> --- a/security/landlock/fs.c
+>> +++ b/security/landlock/fs.c
+>> @@ -574,10 +574,12 @@ static inline u32 maybe_remove(const struct dentry *const dentry)
+>>   static int hook_path_rename(const struct path *const old_dir,
+>>           struct dentry *const old_dentry,
+>>           const struct path *const new_dir,
+>> -        struct dentry *const new_dentry)
+>> +        struct dentry *const new_dentry,
+>> +        const unsigned int flags)
+>>   {
+>>       const struct landlock_ruleset *const dom =
+>>           landlock_get_current_domain();
+>> +    u32 exchange_access = 0;
+>>         if (!dom)
+>>           return 0;
+>> @@ -585,11 +587,17 @@ static int hook_path_rename(const struct path *const old_dir,
+>>       if (old_dir->dentry != new_dir->dentry)
+>>           /* Gracefully forbids reparenting. */
+>>           return -EXDEV;
+>> +    if (flags & RENAME_EXCHANGE) {
+>> +        if (unlikely(d_is_negative(new_dentry)))
+>> +            return -ENOENT;
+>> +        exchange_access =
+>> +            get_mode_access(d_backing_inode(new_dentry)->i_mode);
+>> +    }
+>>       if (unlikely(d_is_negative(old_dentry)))
+>>           return -ENOENT;
+>>       /* RENAME_EXCHANGE is handled because directories are the same. */
+>>       return check_access_path(dom, old_dir, maybe_remove(old_dentry) |
+>> -            maybe_remove(new_dentry) |
+>> +            maybe_remove(new_dentry) | exchange_access |
+>>               get_mode_access(d_backing_inode(old_dentry)->i_mode));
+>>   }
+>>   diff --git a/security/security.c b/security/security.c
+>> index 22261d79f333..8634da4cfd46 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -1184,15 +1184,8 @@ int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
+>>                (d_is_positive(new_dentry) && IS_PRIVATE(d_backing_inode(new_dentry)))))
+>>           return 0;
+>>   -    if (flags & RENAME_EXCHANGE) {
+>> -        int err = call_int_hook(path_rename, 0, new_dir, new_dentry,
+>> -                    old_dir, old_dentry);
+>> -        if (err)
+>> -            return err;
+>> -    }
+>> -
+>>       return call_int_hook(path_rename, 0, old_dir, old_dentry, new_dir,
+>> -                new_dentry);
+>> +                new_dentry, flags);
+>>   }
+>>   EXPORT_SYMBOL(security_path_rename);
+>>   diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+>> index b6a31901f289..71e82d855ebf 100644
+>> --- a/security/tomoyo/tomoyo.c
+>> +++ b/security/tomoyo/tomoyo.c
+>> @@ -264,17 +264,26 @@ static int tomoyo_path_link(struct dentry *old_dentry, const struct path *new_di
+>>    * @old_dentry: Pointer to "struct dentry".
+>>    * @new_parent: Pointer to "struct path".
+>>    * @new_dentry: Pointer to "struct dentry".
+>> + * @flags: Rename options.
+>>    *
+>>    * Returns 0 on success, negative value otherwise.
+>>    */
+>>   static int tomoyo_path_rename(const struct path *old_parent,
+>>                     struct dentry *old_dentry,
+>>                     const struct path *new_parent,
+>> -                  struct dentry *new_dentry)
+>> +                  struct dentry *new_dentry,
+>> +                  const unsigned int flags)
+>>   {
+>>       struct path path1 = { .mnt = old_parent->mnt, .dentry = old_dentry };
+>>       struct path path2 = { .mnt = new_parent->mnt, .dentry = new_dentry };
+>>   +    if (flags & RENAME_EXCHANGE) {
+>> +        const int err = tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path2,
+>> +                &path1);
+>> +
+>> +        if (err)
+>> +            return err;
+>> +    }
+>>       return tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path1, &path2);
+>>   }
+>>  
+>> base-commit: cfb92440ee71adcc2105b0890bb01ac3cddb8507
+
