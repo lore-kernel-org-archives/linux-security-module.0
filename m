@@ -2,128 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E59C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 01:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3224C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 06:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347143AbiCXBV6 (ORCPT
+        id S238015AbiCXGfw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Mar 2022 21:21:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52412 "EHLO
+        Thu, 24 Mar 2022 02:35:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230416AbiCXBV5 (ORCPT
+        with ESMTP id S229528AbiCXGfv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Mar 2022 21:21:57 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4622C92873;
-        Wed, 23 Mar 2022 18:20:25 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KP6mS2V7lzCr3L;
-        Thu, 24 Mar 2022 09:18:16 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Thu, 24 Mar 2022 09:20:23 +0800
-Message-ID: <7831693e-f923-043e-6097-17052eb83f7e@huawei.com>
-Date:   Thu, 24 Mar 2022 09:20:12 +0800
+        Thu, 24 Mar 2022 02:35:51 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88E3A972D7;
+        Wed, 23 Mar 2022 23:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=QV0KhUQHKl4aXmBQYHNqlykHIpFUuOHUwDc5QgUPTYY=; b=yEk52TU+FpRR4o0qmJ21Ds/FEZ
+        AZQs4fuEk/yEesqWBuwkid/mzwJEoyEnLvnkrS5O7t7vVch33QcJixa4IfyVPgpgIli/+pI1pBVhA
+        eE+wS5VrBmv+t8ywPDmv4sSD40c8wOuT+eeysEG/DPDghdMgZwwT5szUb2xbtOHsMhLkA8s2KKY8W
+        R/cQb9fH1FIqWa0KeLz9hoUKoVzd9yB3aXjV9u4ouSXURUe38J/fRHLUbmRgkFABxZKFEZGw4dhFs
+        6E3rjY2JCkQaJ97/3pAx9ezs8YexGQC7uJuJfalkrRii/5LXSX33sxp2+tjjDSqW5G9Fyg/E94zyH
+        szJFQHhw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nXH2v-00Fqwq-E6; Thu, 24 Mar 2022 06:34:09 +0000
+Date:   Wed, 23 Mar 2022 23:34:09 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getvalues(2) prototype
+Message-ID: <YjwQ4dLH7BWOqZqr@infradead.org>
+References: <20220322192712.709170-1-mszeredi@redhat.com>
+ <20220323114215.pfrxy2b6vsvqig6a@wittgenstein>
+ <CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA0DT66GFH2ZanspA@mail.gmail.com>
+ <YjudB7XARLlRtBiR@mit.edu>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] ima: remove template "ima" as the compiled default
-Content-Language: en-US
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-To:     <linux-integrity@vger.kernel.org>
-CC:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <roberto.sassu@huawei.com>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xiujianfeng@huawei.com>,
-        <wangweiyang2@huawei.com>
-References: <20220321074737.138002-1-guozihua@huawei.com>
-In-Reply-To: <20220321074737.138002-1-guozihua@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YjudB7XARLlRtBiR@mit.edu>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022/3/21 15:47, GUO Zihua wrote:
-> Template "ima" is a legacy template which limits the hash algorithm to
-> either sha1 or md5. None of them should be considered "strong" these
-> days. Besides, allowing template "ima" as the compiled default would
-> also cause the following issue: the cmdline option "ima_hash=" must be
-> behind "ima_template=", otherwise "ima_hash=" might be rejected.
-> 
-> The root cause of this issue is that during the processing of ima_hash,
-> we would try to check whether the hash algorithm is compatible with the
-> template. If the template is not set at the moment we do the check, we
-> check the algorithm against the compiled default template. If the
-> complied default template is "ima", then we reject any hash algorithm
-> other than sha1 and md5.
-> 
-> For example, if the compiled default template is "ima", and the default
-> algorithm is sha1 (which is the current default). In the cmdline, we put
-> in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
-> that ima starts with ima-ng as the template and sha256 as the hash
-> algorithm. However, during the processing of "ima_hash=",
-> "ima_template=" has not been processed yet, and hash_setup would check
-> the configured hash algorithm against the compiled default: ima, and
-> reject sha256. So at the end, the hash algorithm that is actually used
-> will be sha1.
-> 
-> With template "ima" removed from the compiled default, we ensure that the
-> default tempalte would at least be "ima-ng" which allows for basically
-> any hash algorithm.
-> 
-> This change would not break the algorithm compatibility checking for
-> IMA.
-> 
-> Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
-> Signed-off-by: GUO Zihua <guozihua@huawei.com>
-> ---
->   security/integrity/ima/Kconfig | 14 +++++---------
->   1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index f3a9cc201c8c..9513df2ac19e 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -65,14 +65,11 @@ choice
->   	help
->   	  Select the default IMA measurement template.
->   
-> -	  The original 'ima' measurement list template contains a
-> -	  hash, defined as 20 bytes, and a null terminated pathname,
-> -	  limited to 255 characters.  The 'ima-ng' measurement list
-> -	  template permits both larger hash digests and longer
-> -	  pathnames.
-> -
-> -	config IMA_TEMPLATE
-> -		bool "ima"
-> +	  The 'ima-ng' measurement list template permits various hash
-> +	  digests and long pathnames. The compiled default template
-> +	  can be overwritten using the kernel command line
-> +	  'ima_template=' option.
-> +
->   	config IMA_NG_TEMPLATE
->   		bool "ima-ng (default)"
->   	config IMA_SIG_TEMPLATE
-> @@ -82,7 +79,6 @@ endchoice
->   config IMA_DEFAULT_TEMPLATE
->   	string
->   	depends on IMA
-> -	default "ima" if IMA_TEMPLATE
->   	default "ima-ng" if IMA_NG_TEMPLATE
->   	default "ima-sig" if IMA_SIG_TEMPLATE
->   
+On Wed, Mar 23, 2022 at 06:19:51PM -0400, Theodore Ts'o wrote:
+> I'm still a bit puzzled about the reason for getvalues(2) beyond,
+> "reduce the number of system calls".  Is this a performance argument?
+> If so, have you benchmarked lsof using this new interface?
 
-Hi all,
+Yeah.  Even if open + read + close is a bnottle neck for fuse or
+network file systems I think a io_uring op for just that is a much
+better choice instead of this crazy multi-value operation.
 
-Any thought on this patch?
-
-Thanks!
-
--- 
-Best
-GUO Zihua
+And even on that I need to be sold first.
