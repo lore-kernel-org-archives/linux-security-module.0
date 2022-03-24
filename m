@@ -2,137 +2,150 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB218C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 16:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C503BC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 20:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242140AbiCXQex (ORCPT
+        id S1353432AbiCXUdH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Mar 2022 12:34:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40490 "EHLO
+        Thu, 24 Mar 2022 16:33:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243623AbiCXQev (ORCPT
+        with ESMTP id S1353411AbiCXUc5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Mar 2022 12:34:51 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDFC66394;
-        Thu, 24 Mar 2022 09:33:18 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A80BC210DE;
-        Thu, 24 Mar 2022 16:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1648139596; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Dbhz+ybJt4D/7rvN1XiATlgmvR6Aewf7ESgiyrrZ7Yw=;
-        b=kyFS+QmrdikOIAyu85pf34IM7NTSPRzvhyEohUDKptM40CJb4HZV8vkaUKwC+5GBuuI/u4
-        BdbnHKjZVlx5+V/WOQNlec7FfLgJ26UMTE3LgMRaFVxvrnKgAAKEdWcZGpeBa9B94HPCx2
-        gDLj/FR61nkJYUBKAuMTVPVZCXUiohU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1648139596;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Dbhz+ybJt4D/7rvN1XiATlgmvR6Aewf7ESgiyrrZ7Yw=;
-        b=7/mvJ+Xgdou9td6wINIMvnPyezFvoELByPAGONf6IWHYhUjJRbtWHeIEI77pdLj6NAF/dw
-        8r/NnEt3LcHFjhBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9897C132E9;
-        Thu, 24 Mar 2022 16:33:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id O6czJUydPGI2QwAAMHmgww
-        (envelope-from <bp@suse.de>); Thu, 24 Mar 2022 16:33:16 +0000
-Date:   Thu, 24 Mar 2022 17:33:12 +0100
-From:   Borislav Petkov <bp@suse.de>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/4] Allow guest access to EFI confidential computing
- secret area
-Message-ID: <YjydSNnG6EJ1KWx0@zn.tnic>
-References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
+        Thu, 24 Mar 2022 16:32:57 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8DD2FB6E70;
+        Thu, 24 Mar 2022 13:31:23 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2ABDA533EAB;
+        Fri, 25 Mar 2022 07:31:18 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nXU72-009RUP-Ov; Fri, 25 Mar 2022 07:31:16 +1100
+Date:   Fri, 25 Mar 2022 07:31:16 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getvalues(2) prototype
+Message-ID: <20220324203116.GJ1609613@dread.disaster.area>
+References: <20220322192712.709170-1-mszeredi@redhat.com>
+ <20220323225843.GI1609613@dread.disaster.area>
+ <CAJfpegv6PmZ_RXipBs9UEjv_WfEUtTDE1uNZq+9fBkCzWPvXkw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
+In-Reply-To: <CAJfpegv6PmZ_RXipBs9UEjv_WfEUtTDE1uNZq+9fBkCzWPvXkw@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=623cd519
+        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=7-415B0cAAAA:8 a=GumQ9EM2AAAA:8
+        a=PLAR8crxhtdwIOoicKgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 28, 2022 at 11:42:50AM +0000, Dov Murik wrote:
-> Confidential computing (coco) hardware such as AMD SEV (Secure Encrypted
-> Virtualization) allows guest owners to inject secrets into the VMs
-> memory without the host/hypervisor being able to read them.  In SEV,
-> secret injection is performed early in the VM launch process, before the
-> guest starts running.
+On Thu, Mar 24, 2022 at 09:57:26AM +0100, Miklos Szeredi wrote:
+> On Wed, 23 Mar 2022 at 23:58, Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Tue, Mar 22, 2022 at 08:27:12PM +0100, Miklos Szeredi wrote:
 > 
-> OVMF already reserves designated area for secret injection (in its
-> AmdSev package; see edk2 commit 01726b6d23d4 "OvmfPkg/AmdSev: Expose the
-> Sev Secret area using a configuration table" [1]), but the secrets were
-> not available in the guest kernel.
+> > > - Interfaces for getting various attributes and statistics are fragmented.
+> > >   For files we have basic stat, statx, extended attributes, file attributes
+> > >   (for which there are two overlapping ioctl interfaces).  For mounts and
+> > >   superblocks we have stat*fs as well as /proc/$PID/{mountinfo,mountstats}.
+> > >   The latter also has the problem on not allowing queries on a specific
+> > >   mount.
+> >
+> > https://xkcd.com/927/
 > 
-> The patch series keeps the address of the EFI-provided memory for
-> injected secrets, and exposes the secrets to userspace via securityfs
-> using a new efi_secret kernel module.  The module is autoloaded (by the
-> EFI driver) if the secret area is populated.
+> Haha!
+> 
+> > I've said in the past when discussing things like statx() that maybe
+> > everything should be addressable via the xattr namespace and
+> > set/queried via xattr names regardless of how the filesystem stores
+> > the data. The VFS/filesystem simply translates the name to the
+> > storage location of the information. It might be held in xattrs, but
+> > it could just be a flag bit in an inode field.
+> 
+> Right, that would definitely make sense for inode attributes.
+> 
+> What about other objects' attributes, statistics?   Remember this
+> started out as a way to replace /proc/self/mountinfo with something
+> that can query individual mount.
 
-Right, so this thing.
+For individual mount info, why do we even need to query something in
+/proc? I mean, every open file in the mount has access to the mount
+and the underlying superblock, so why not just make the query
+namespace accessable from any open fd on that mount?
 
-Tom and I were talking about SEV* guest debugging today and I believe
-there might be another use case for this: SEV-ES guests cannot find out
-from an attestation report - like SNP guests can - whether they're being
-debugged or not so it would be very helpful if the fact that a -ES guest
-is being debugged, could be supplied through such a secrets blob.
+e.g. /proc/self/mountinfo tells you where the mounts are, then you
+can just open(O_PATH) the mount point you want the info from and
+retrieve the relevant xattrs from that fd. The information itself
+does not need to be in /proc, nor only accessible from /proc, nor be
+limited to proc infrastructure, nor be constrained by proc's
+arbitrary "one value per file" presentation....
 
-Because then, when I'm singlestepping the guest with gdb over the
-gdbstub, the guest could determine based on those guest-owner previously
-injected secrets whether it should allow debugging or not.
+Indeed, we don't have to centralise all the information in one place
+- all we need is to have a well defined, consistent method for
+indexing that information and all the shenanigans for accessing
+common stuff can be wrapped up in a common userspace library
+(similar to how iterating the mount table is generic C library
+functionality).
 
-And this is where your set comes in.
+> > > mnt                    - list of mount parameters
+> > > mnt:mountpoint         - the mountpoint of the mount of $ORIGIN
+> > > mntns                  - list of mount ID's reachable from the current root
+> > > mntns:21:parentid      - parent ID of the mount with ID of 21
+> > > xattr:security.selinux - the security.selinux extended attribute
+> > > data:foo/bar           - the data contained in file $ORIGIN/foo/bar
+> >
+> > How are these different from just declaring new xattr namespaces for
+> > these things. e.g. open any file and list the xattrs in the
+> > xattr:mount.mnt namespace to get the list of mount parameters for
+> > that mount.
+> 
+> Okay.
+> 
+> > Why do we need a new "xattr in everything but name" interface when
+> > we could just extend the one we've already got and formalise a new,
+> > cleaner version of xattr batch APIs that have been around for 20-odd
+> > years already?
+> 
+> Seems to make sense. But...will listxattr list everyting recursively?
+> I guess that won't work, better just list traditional xattrs,
+> otherwise we'll likely get regressions,
 
-However, I'm wondering if - instead of defining your own secrets structs
-etc - you could use the SNP confidential computing blob machinery the
-SNP set is adding. In particular:
+*nod*
 
-https://lore.kernel.org/all/20220307213356.2797205-30-brijesh.singh@amd.com/
+> and anyway the point of a
+> hierarchical namespace is to be able to list nodes on each level.  We
+> can use getxattr() for this purpose, just like getvalues() does in the
+> above example.
 
-And you're adding another GUID but maybe you could simply use the SNP
-thing called EFI_CC_BLOB_GUID and mimick that layout.
+Yup, and like Casey suggests, you could implement a generic
+getvalues()-like user library on top of it so users don't even need
+to know where and how the values are located or retrieved.
 
-That should unify things more. And then guest kernel code could query
-the blob also for debugging policy and so on.
+The other advantage of an xattr interface is that is also provides a
+symmetrical API for -changing- values. No need for some special
+configfs or configfd thingy for setting parameters - just change the
+value of the parameter or mount option with a simple setxattr call.
+That retains the simplicity of proc and sysfs attributes in that you
+can change them just by writing a new value to the file....
 
-Thoughts, opinions?
+Cheers,
 
+Dave.
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Software Solutions Germany GmbH, GF: Ivo Totev, HRB 36809, AG Nürnberg
+Dave Chinner
+david@fromorbit.com
