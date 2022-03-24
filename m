@@ -2,173 +2,137 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1259C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 16:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB218C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 16:33:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243605AbiCXQVa (ORCPT
+        id S242140AbiCXQex (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Mar 2022 12:21:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39578 "EHLO
+        Thu, 24 Mar 2022 12:34:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243598AbiCXQV2 (ORCPT
+        with ESMTP id S243623AbiCXQev (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Mar 2022 12:21:28 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8589D5A0AC;
-        Thu, 24 Mar 2022 09:19:55 -0700 (PDT)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KPVk743BQz67xJk;
-        Fri, 25 Mar 2022 00:17:35 +0800 (CST)
-Received: from [10.122.132.241] (10.122.132.241) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Thu, 24 Mar 2022 17:19:52 +0100
-Message-ID: <9830cb55-d5c1-8ef7-349b-a0af247ad7b7@huawei.com>
-Date:   Thu, 24 Mar 2022 19:19:50 +0300
+        Thu, 24 Mar 2022 12:34:51 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDFC66394;
+        Thu, 24 Mar 2022 09:33:18 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id A80BC210DE;
+        Thu, 24 Mar 2022 16:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1648139596; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Dbhz+ybJt4D/7rvN1XiATlgmvR6Aewf7ESgiyrrZ7Yw=;
+        b=kyFS+QmrdikOIAyu85pf34IM7NTSPRzvhyEohUDKptM40CJb4HZV8vkaUKwC+5GBuuI/u4
+        BdbnHKjZVlx5+V/WOQNlec7FfLgJ26UMTE3LgMRaFVxvrnKgAAKEdWcZGpeBa9B94HPCx2
+        gDLj/FR61nkJYUBKAuMTVPVZCXUiohU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1648139596;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Dbhz+ybJt4D/7rvN1XiATlgmvR6Aewf7ESgiyrrZ7Yw=;
+        b=7/mvJ+Xgdou9td6wINIMvnPyezFvoELByPAGONf6IWHYhUjJRbtWHeIEI77pdLj6NAF/dw
+        8r/NnEt3LcHFjhBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9897C132E9;
+        Thu, 24 Mar 2022 16:33:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id O6czJUydPGI2QwAAMHmgww
+        (envelope-from <bp@suse.de>); Thu, 24 Mar 2022 16:33:16 +0000
+Date:   Thu, 24 Mar 2022 17:33:12 +0100
+From:   Borislav Petkov <bp@suse.de>
+To:     Dov Murik <dovmurik@linux.ibm.com>
+Cc:     linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 0/4] Allow guest access to EFI confidential computing
+ secret area
+Message-ID: <YjydSNnG6EJ1KWx0@zn.tnic>
+References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [RFC PATCH v4 00/15] Landlock LSM
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <c9333349-5e05-de95-85da-f6a0cd836162@digikod.net>
- <29244d4d-70cc-9c4f-6d0f-e3ce3beb2623@huawei.com>
- <ef128eed-65a3-1617-d630-275f3cfa8220@digikod.net>
- <b367c8c6-adfc-9ec1-a898-f9aa13815ca5@huawei.com>
- <59923702-3a1f-e018-c9b4-7a53f97b1791@digikod.net>
- <621efd5b-6f01-e616-8bb3-e8f0d31402a9@huawei.com>
- <3a33baf2-3de7-fecd-29d3-715500e3631f@digikod.net>
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <3a33baf2-3de7-fecd-29d3-715500e3631f@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
- fraeml704-chm.china.huawei.com (10.206.15.53)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Feb 28, 2022 at 11:42:50AM +0000, Dov Murik wrote:
+> Confidential computing (coco) hardware such as AMD SEV (Secure Encrypted
+> Virtualization) allows guest owners to inject secrets into the VMs
+> memory without the host/hypervisor being able to read them.  In SEV,
+> secret injection is performed early in the VM launch process, before the
+> guest starts running.
+> 
+> OVMF already reserves designated area for secret injection (in its
+> AmdSev package; see edk2 commit 01726b6d23d4 "OvmfPkg/AmdSev: Expose the
+> Sev Secret area using a configuration table" [1]), but the secrets were
+> not available in the guest kernel.
+> 
+> The patch series keeps the address of the EFI-provided memory for
+> injected secrets, and exposes the secrets to userspace via securityfs
+> using a new efi_secret kernel module.  The module is autoloaded (by the
+> EFI driver) if the secret area is populated.
 
+Right, so this thing.
 
-3/24/2022 6:30 PM, Mickaël Salaün пишет:
-> 
-> 
-> On 24/03/2022 14:34, Konstantin Meskhidze wrote:
->>
->>
->> 3/24/2022 3:27 PM, Mickaël Salaün пишет:
->>>
->>> On 23/03/2022 17:30, Konstantin Meskhidze wrote:
->>>>
->>>>
->>>> 3/17/2022 8:26 PM, Mickaël Salaün пишет:
->>>>>
->>>>> On 17/03/2022 14:01, Konstantin Meskhidze wrote:
->>>>>>
->>>>>>
->>>>>> 3/15/2022 8:02 PM, Mickaël Salaün пишет:
->>>>>>> Hi Konstantin,
->>>>>>>
->>>>>>> This series looks good! Thanks for the split in multiple patches.
->>>>>>>
->>>>>>   Thanks. I follow your recommendations.
->>>>>>>
->>>>>>> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
->>>>>>>> Hi,
->>>>>>>> This is a new V4 bunch of RFC patches related to Landlock LSM 
->>>>>>>> network confinement.
->>>>>>>> It brings deep refactirong and commit splitting of previous 
->>>>>>>> version V3.
->>>>>>>> Also added additional selftests.
->>>>>>>>
->>>>>>>> This patch series can be applied on top of v5.17-rc3.
->>>>>>>>
->>>>>>>> All test were run in QEMU evironment and compiled with
->>>>>>>>   -static flag.
->>>>>>>>   1. network_test: 9/9 tests passed.
->>>>>>>
->>>>>>> I get a kernel warning running the network tests.
->>>>>>
->>>>>>    What kind of warning? Can you provide it please?
->>>>>
->>>>> You really need to get a setup that gives you such kernel warning. 
->>>>> When running network_test you should get:
->>>>> WARNING: CPU: 3 PID: 742 at security/landlock/ruleset.c:218 
->>>>> insert_rule+0x220/0x270
->>>>>
->>>>> Before sending new patches, please make sure you're able to catch 
->>>>> such issues.
->>>>>
->>>>>
->>>>>>>
->>>>>>>>   2. base_test: 8/8 tests passed.
->>>>>>>>   3. fs_test: 46/46 tests passed.
->>>>>>>>   4. ptrace_test: 4/8 tests passed.
->>>>>>>
->>>>>>> Does your test machine use Yama? That would explain the 4/8. You 
->>>>>>> can disable it with the appropriate sysctl.
->>>>>
->>>>> Can you answer this question?
->>>>>
->>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Tests were also launched for Landlock version without
->>>>>>>> v4 patch:
->>>>>>>>   1. base_test: 8/8 tests passed.
->>>>>>>>   2. fs_test: 46/46 tests passed.
->>>>>>>>   3. ptrace_test: 4/8 tests passed.
->>>>>>>>
->>>>>>>> Could not provide test coverage cause had problems with tests
->>>>>>>> on VM (no -static flag the tests compiling, no v4 patch applied):
->>>>>>>
->>>>     Hi, Mickaёl!
->>>>     I tried to get base test coverage without v4 patch applied.
->>>>
->>>>     1. Kernel configuration :
->>>>      - CONFIG_DEBUG_FS=y
->>>>      - CONFIG_GCOV_KERNEL=y
->>>>      - CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
->>>>     2. Added GCOV_PROFILE := y in security/landlock/Makefile
->>>
->>> I think this is useless because of 
->>> CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y. I don't add GCOV_PROFILE anyway.
->>>
->>>
->>>>     3. Compiled kernel  and rebooted VM with the new one.
->>>>     4. Run landlock selftests as root user:
->>>>      $ cd tools/testing/selftests/landlock
->>>>      $ ./base_test
->>>>      $ ./fs_test
->>>>      $ ./ptrace_test
->>>>     5. Copied GCOV data to some folder :
->>>>        $ cp -r 
->>>> /sys/kernel/debug/gcov/<source-dir>/linux/security/landlock/ 
->>>> /gcov-before
->>>>        $ cd /gcov-before
->>>>        $ lcov -c -d ./landlock -o lcov.info && genhtml -o html 
->>>> lcov.info
->>>
->>> I do this step on my host but that should work as long as you have 
->>> the kernel sources in the same directory. I guess this is not the 
->>> case. I think you also need GCC >= 4.8 .
->>>    I found the reason why .gcda files were not executed :
->>        "lcov -c -d ./landlock -o lcov.info && genhtml -o html 
->> lcov.info" was run not under ROOT user.
->>    Running lcov by ROOT one solved the issue. I will provide network test
->>    coverage in RFC patch V5.
->>    Thanks for help anyway.
-> 
-> I run lcov as a normal user with kernel source access.
-> 
-> I'll review the other patches soon. But for the next series, please 
-> don't reuse "Landlock LSM" as a cover letter subject, something like 
-> "Network support for Landlock" would fit better. ;)
-> .
-   No problem. Thanks.
+Tom and I were talking about SEV* guest debugging today and I believe
+there might be another use case for this: SEV-ES guests cannot find out
+from an attestation report - like SNP guests can - whether they're being
+debugged or not so it would be very helpful if the fact that a -ES guest
+is being debugged, could be supplied through such a secrets blob.
+
+Because then, when I'm singlestepping the guest with gdb over the
+gdbstub, the guest could determine based on those guest-owner previously
+injected secrets whether it should allow debugging or not.
+
+And this is where your set comes in.
+
+However, I'm wondering if - instead of defining your own secrets structs
+etc - you could use the SNP confidential computing blob machinery the
+SNP set is adding. In particular:
+
+https://lore.kernel.org/all/20220307213356.2797205-30-brijesh.singh@amd.com/
+
+And you're adding another GUID but maybe you could simply use the SNP
+thing called EFI_CC_BLOB_GUID and mimick that layout.
+
+That should unify things more. And then guest kernel code could query
+the blob also for debugging policy and so on.
+
+Thoughts, opinions?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Ivo Totev, HRB 36809, AG Nürnberg
