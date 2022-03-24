@@ -2,138 +2,227 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FF2C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 10:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FCAC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 12:27:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349534AbiCXKg2 (ORCPT
+        id S1350141AbiCXM2i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Mar 2022 06:36:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46728 "EHLO
+        Thu, 24 Mar 2022 08:28:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234052AbiCXKg1 (ORCPT
+        with ESMTP id S1350142AbiCXM2g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Mar 2022 06:36:27 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7698A6D955;
-        Thu, 24 Mar 2022 03:34:55 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id x8-20020a9d6288000000b005b22c373759so2977128otk.8;
-        Thu, 24 Mar 2022 03:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rkUOtyTHE/TYF3m2vqOCfIm2T9ySzNIzBEKj/tfGQiA=;
-        b=IjGlTehpEGtuYtSpr81vczsx73SdQa/f7uvnLaVxETKjnKAUSvlzJEnv/BiHQMRZ0n
-         n1F96baOYoQNOFo6YmOcPq5nw7v9sq/bnT5xIbTzA9OQEbLdSwjwbyyRmsDVCHYhltLi
-         wU20EnegAcKOUheWyZAYk1p5OLZUnY5K4ULqL0NOPNWMj+2Vya3W3Rn1sM8GOxohMzSY
-         tuvbYMaq5Ix/137uTdxfusAwDk6ztd+fmdbN058ynV/JjWBbKdtxm/vxZ05qNQZZUJoP
-         PYHH91cMRp289yd4itig77E6QdTlxk2F6wKIyXGDVhnf0XMpxWaNtafX5LuSKlSbErcp
-         G2kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rkUOtyTHE/TYF3m2vqOCfIm2T9ySzNIzBEKj/tfGQiA=;
-        b=VX7urL+W/0zctLzsvd1MB6FycMQLnaLsfnU2rGQpPx5Qu9rcygJi1TOKsRVb82RMxs
-         /j09rG7+Bs95g5fMexQv65g85cXAvRfhq2oau85+r6yhDvUqTtQiCXT5Ga0Wd/uskBV9
-         GyX+cqdQZ73joz+7I+iR1BCRjFAQJwVF+BFOsU0skQi3LqWEEdsZULjd35V8OUU/7zoz
-         x/i7oewEFEmvy/E037XvJp12orNOyI+OHtI06RlTl75X6LM6m+yhB3HUFXuNa3XiiDrP
-         rw7FwXlxZAp3/HlHGDp9w00fPbwcKLhYXhv0aBIgfMeuKFln7CmkPVEKfFODgUfxCfp8
-         GvCg==
-X-Gm-Message-State: AOAM5332W9GixEZVa/KSqWK6mRiMUMxmnu43THK4BQwQPJX17vgZLR5K
-        Eau2chewcM+Ie0xN8NLY2pjPKHaV4op8+I8e7yeKxqJMP/Y=
-X-Google-Smtp-Source: ABdhPJy7l9oWwPJ6OBUoAM36bkcS3M/p+SgBdY21YnbhlrHpkdnSvtMHV60SdyXuXWDEemHIwn3a/agyAEnhEiMyBKI=
-X-Received: by 2002:a9d:5cc8:0:b0:5b2:35ae:7ad6 with SMTP id
- r8-20020a9d5cc8000000b005b235ae7ad6mr1700616oti.275.1648118094832; Thu, 24
- Mar 2022 03:34:54 -0700 (PDT)
+        Thu, 24 Mar 2022 08:28:36 -0400
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6603A94DD
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Mar 2022 05:27:03 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KPPc53yx2zMprrp;
+        Thu, 24 Mar 2022 13:27:01 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KPPc45TPLzljsV8;
+        Thu, 24 Mar 2022 13:27:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1648124821;
+        bh=GambdRT0rOro/c6TI0baCIcy5+p9FbWf/97/D77xtcA=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=0UbF5hpdebGMkuMHESTmaUE4rLQEBSbrVj6h2+reQhBvtsOpCLJ+L8i46pXasy+Wm
+         c5tINrKXq/J5drLBhf2bqbi11D5lF3tYqMxn/sTYa+02kDu189qcT97zZoF5q6S8CS
+         W+oG4xBhh0/4i9ZnveFUfkxVTZZ5l8Ufc4OixqLc=
+Message-ID: <59923702-3a1f-e018-c9b4-7a53f97b1791@digikod.net>
+Date:   Thu, 24 Mar 2022 13:27:04 +0100
 MIME-Version: 1.0
-References: <20220322192712.709170-1-mszeredi@redhat.com> <20220323225843.GI1609613@dread.disaster.area>
- <CAJfpegv6PmZ_RXipBs9UEjv_WfEUtTDE1uNZq+9fBkCzWPvXkw@mail.gmail.com>
-In-Reply-To: <CAJfpegv6PmZ_RXipBs9UEjv_WfEUtTDE1uNZq+9fBkCzWPvXkw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 24 Mar 2022 12:34:43 +0200
-Message-ID: <CAOQ4uxhbm2mtTp8PmgEq5KmwTe0n6MRRGhShXM=Ot6Bz87HXjA@mail.gmail.com>
-Subject: Re: [RFC PATCH] getvalues(2) prototype
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <c9333349-5e05-de95-85da-f6a0cd836162@digikod.net>
+ <29244d4d-70cc-9c4f-6d0f-e3ce3beb2623@huawei.com>
+ <ef128eed-65a3-1617-d630-275f3cfa8220@digikod.net>
+ <b367c8c6-adfc-9ec1-a898-f9aa13815ca5@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [RFC PATCH v4 00/15] Landlock LSM
+In-Reply-To: <b367c8c6-adfc-9ec1-a898-f9aa13815ca5@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> > I've said in the past when discussing things like statx() that maybe
-> > everything should be addressable via the xattr namespace and
-> > set/queried via xattr names regardless of how the filesystem stores
-> > the data. The VFS/filesystem simply translates the name to the
-> > storage location of the information. It might be held in xattrs, but
-> > it could just be a flag bit in an inode field.
->
-> Right, that would definitely make sense for inode attributes.
 
-Why limit to inode attributes?
-The argument of getxattr()/fgetxattr() is exactly the same as
-the argument for statfs()fstatfs() and the latter returns the attributes
-of the sb and the mnt (i.e. calculate_f_flags()).
+On 23/03/2022 17:30, Konstantin Meskhidze wrote:
+> 
+> 
+> 3/17/2022 8:26 PM, Mickaël Salaün пишет:
+>>
+>> On 17/03/2022 14:01, Konstantin Meskhidze wrote:
+>>>
+>>>
+>>> 3/15/2022 8:02 PM, Mickaël Salaün пишет:
+>>>> Hi Konstantin,
+>>>>
+>>>> This series looks good! Thanks for the split in multiple patches.
+>>>>
+>>>   Thanks. I follow your recommendations.
+>>>>
+>>>> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
+>>>>> Hi,
+>>>>> This is a new V4 bunch of RFC patches related to Landlock LSM 
+>>>>> network confinement.
+>>>>> It brings deep refactirong and commit splitting of previous version 
+>>>>> V3.
+>>>>> Also added additional selftests.
+>>>>>
+>>>>> This patch series can be applied on top of v5.17-rc3.
+>>>>>
+>>>>> All test were run in QEMU evironment and compiled with
+>>>>>   -static flag.
+>>>>>   1. network_test: 9/9 tests passed.
+>>>>
+>>>> I get a kernel warning running the network tests.
+>>>
+>>>    What kind of warning? Can you provide it please?
+>>
+>> You really need to get a setup that gives you such kernel warning. 
+>> When running network_test you should get:
+>> WARNING: CPU: 3 PID: 742 at security/landlock/ruleset.c:218 
+>> insert_rule+0x220/0x270
+>>
+>> Before sending new patches, please make sure you're able to catch such 
+>> issues.
+>>
+>>
+>>>>
+>>>>>   2. base_test: 8/8 tests passed.
+>>>>>   3. fs_test: 46/46 tests passed.
+>>>>>   4. ptrace_test: 4/8 tests passed.
+>>>>
+>>>> Does your test machine use Yama? That would explain the 4/8. You can 
+>>>> disable it with the appropriate sysctl.
+>>
+>> Can you answer this question?
+>>
+>>
+>>>>
+>>>>>
+>>>>> Tests were also launched for Landlock version without
+>>>>> v4 patch:
+>>>>>   1. base_test: 8/8 tests passed.
+>>>>>   2. fs_test: 46/46 tests passed.
+>>>>>   3. ptrace_test: 4/8 tests passed.
+>>>>>
+>>>>> Could not provide test coverage cause had problems with tests
+>>>>> on VM (no -static flag the tests compiling, no v4 patch applied):
+>>>>
+>     Hi, Mickaёl!
+>     I tried to get base test coverage without v4 patch applied.
+> 
+>     1. Kernel configuration :
+>      - CONFIG_DEBUG_FS=y
+>      - CONFIG_GCOV_KERNEL=y
+>      - CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
+>     2. Added GCOV_PROFILE := y in security/landlock/Makefile
 
-I don't see a problem with querying attributes of a mount/sb the same
-way as long as the namespace is clear about what is the object that
-is being queried (e.g. getxattr(path, "fsinfo.sbiostats.rchar",...).
+I think this is useless because of CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y. I 
+don't add GCOV_PROFILE anyway.
 
->
-> What about other objects' attributes, statistics?   Remember this
-> started out as a way to replace /proc/self/mountinfo with something
-> that can query individual mount.
->
-> > > mnt                    - list of mount parameters
-> > > mnt:mountpoint         - the mountpoint of the mount of $ORIGIN
-> > > mntns                  - list of mount ID's reachable from the current root
-> > > mntns:21:parentid      - parent ID of the mount with ID of 21
-> > > xattr:security.selinux - the security.selinux extended attribute
-> > > data:foo/bar           - the data contained in file $ORIGIN/foo/bar
-> >
-> > How are these different from just declaring new xattr namespaces for
-> > these things. e.g. open any file and list the xattrs in the
-> > xattr:mount.mnt namespace to get the list of mount parameters for
-> > that mount.
->
-> Okay.
->
-> > Why do we need a new "xattr in everything but name" interface when
-> > we could just extend the one we've already got and formalise a new,
-> > cleaner version of xattr batch APIs that have been around for 20-odd
-> > years already?
->
-> Seems to make sense. But...will listxattr list everyting recursively?
-> I guess that won't work, better just list traditional xattrs,
-> otherwise we'll likely get regressions, and anyway the point of a
-> hierarchical namespace is to be able to list nodes on each level.  We
-> can use getxattr() for this purpose, just like getvalues() does in the
-> above example.
->
 
-FYI, there are already precedents for "virtual" xattrs, see the user.smb3.*
-family in fs/cifs/xattr.c for example.
+>     3. Compiled kernel  and rebooted VM with the new one.
+>     4. Run landlock selftests as root user:
+>      $ cd tools/testing/selftests/landlock
+>      $ ./base_test
+>      $ ./fs_test
+>      $ ./ptrace_test
+>     5. Copied GCOV data to some folder :
+>        $ cp -r 
+> /sys/kernel/debug/gcov/<source-dir>/linux/security/landlock/ /gcov-before
+>        $ cd /gcov-before
+>        $ lcov -c -d ./landlock -o lcov.info && genhtml -o html lcov.info
 
-Those cifs "virtual" (or "remote") xattrs are not listed by listxattr, even
-though they ARE properties of the file which are very relevant for backup.
+I do this step on my host but that should work as long as you have the 
+kernel sources in the same directory. I guess this is not the case. I 
+think you also need GCC >= 4.8 .
 
-Currently, they use the user.* namespace, but the values could be
-also exposed via a more generic fsinfo.* namespace that is dedicated
-to these sort of things and then, as you suggest, getxattr(path, "fsinfo",...)
-can list "smb3" for cifs.
-
-I like where this is going :)
-
-Thanks,
-Amir.
+> 
+> I got the next result:
+> " Capturing coverage data from ./landlock
+> Found gcov version: 9.4.0
+> Using intermediate gcov format
+> Scanning ./landlock for .gcda files ...
+> Found 7 data files in ./landlock
+> Processing landlock/setup.gcda
+> /home/kmeskhidze/work/src/gcov_before/landlock/setup.gcda:cannot open 
+> data file, assuming not executed
+> Processing landlock/object.gcda
+> /home/kmeskhidze/work/src/gcov_before/landlock/object.gcda:cannot open 
+> data file, assuming not executed
+> Processing landlock/cred.gcda
+> /home/kmeskhidze/work/src/gcov_before/landlock/cred.gcda:cannot open 
+> data file, assuming not executed
+> Processing landlock/ruleset.gcda
+> /home/kmeskhidze/work/src/gcov_before/landlock/ruleset.gcda:cannot open 
+> data file, assuming not executed
+> Processing landlock/syscalls.gcda
+> /home/kmeskhidze/work/src/gcov_before/landlock/syscalls.gcda:cannot open 
+> data file, assuming not executed
+> Processing landlock/fs.gcda
+> /home/kmeskhidze/work/src/gcov_before/landlock/fs.gcda:cannot open data 
+> file, assuming not executed
+> Processing landlock/ptrace.gcda
+> /home/kmeskhidze/work/src/gcov_before/landlock/ptrace.gcda:cannot open 
+> data file, assuming not executed
+> Finished .info-file creation
+> Reading data file lcov.info
+> Found 38 entries.
+> Found common filename prefix 
+> "/home/kmeskhidze/work/src/linux_5.13_landlock"
+> Writing .css and .png files.
+> Generating output.
+> Processing file arch/x86/include/asm/atomic64_64.h
+> Processing file arch/x86/include/asm/bitops.h
+> Processing file arch/x86/include/asm/atomic.h
+> Processing file arch/x86/include/asm/current.h
+> Processing file include/asm-generic/getorder.h
+> Processing file include/asm-generic/bitops/instrumented-non-atomic.h
+> Processing file include/linux/fs.h
+> Processing file include/linux/refcount.h
+> Processing file include/linux/kernel.h
+> Processing file include/linux/list.h
+> Processing file include/linux/sched.h
+> Processing file include/linux/overflow.h
+> Processing file include/linux/dcache.h
+> Processing file include/linux/spinlock.h
+> Processing file include/linux/file.h
+> Processing file include/linux/rcupdate.h
+> Processing file include/linux/err.h
+> Processing file include/linux/workqueue.h
+> Processing file include/linux/fortify-string.h
+> Processing file include/linux/slab.h
+> Processing file include/linux/instrumented.h
+> Processing file include/linux/uaccess.h
+> Processing file include/linux/thread_info.h
+> Processing file include/linux/rbtree.h
+> Processing file include/linux/log2.h
+> Processing file include/linux/atomic/atomic-instrumented.h
+> Processing file include/linux/atomic/atomic-long.h
+> Processing file security/landlock/fs.c
+> Processing file security/landlock/ruleset.h
+> Processing file security/landlock/ruleset.c
+> Processing file security/landlock/ptrace.c
+> Processing file security/landlock/object.h
+> Processing file security/landlock/syscalls.c
+> Processing file security/landlock/setup.c
+> Processing file security/landlock/cred.c
+> Processing file security/landlock/object.c
+> Processing file security/landlock/fs.h
+> Processing file security/landlock/cred.h
+> Writing directory view page.
+> Overall coverage rate:
+>    lines......: 0.0% (0 of 937 lines)
+>    functions..: 0.0% (0 of 67 functions) "
+> 
+> Looks like .gcda files were not executed.
+> Maybe I did miss something. Any thoughts?
