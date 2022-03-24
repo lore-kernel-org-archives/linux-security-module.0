@@ -2,117 +2,94 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E487C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 10:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AD4C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Mar 2022 10:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238000AbiCXKLw (ORCPT
+        id S1349518AbiCXKdv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Mar 2022 06:11:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45462 "EHLO
+        Thu, 24 Mar 2022 06:33:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236564AbiCXKLw (ORCPT
+        with ESMTP id S1349625AbiCXKdH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Mar 2022 06:11:52 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCC5F9F6FB
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Mar 2022 03:10:19 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1nXKQ1-0008Dj-FI; Thu, 24 Mar 2022 11:10:13 +0100
-Message-ID: <ae941471-43c0-1aea-2567-89eed98a61a6@pengutronix.de>
-Date:   Thu, 24 Mar 2022 11:10:07 +0100
+        Thu, 24 Mar 2022 06:33:07 -0400
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F38849E9CC
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Mar 2022 03:31:32 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KPM2p55BhzMqNND;
+        Thu, 24 Mar 2022 11:31:30 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KPM2m27YJzljsTY;
+        Thu, 24 Mar 2022 11:31:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1648117890;
+        bh=07InghFBQQsMZIwhzNxbiMPO0RvgGZQgEQaSuD90ZRQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=wLPLtVakEdY3ntCVFa9PR0CP5WrSV7xM8w1zvacrOnr9A2aY8r+oZton40dAdqJjg
+         ZSEJFmOmQTFYG9qt6Eg4a0KEcBChePGf7b0iCeCkzVrkLSpwSfCz7k0h/zYT5BHrBn
+         stZ01j3MOm4b19vDHne2l6nYVK085p2lLPCxdBmA=
+Message-ID: <f8f5ef29-4446-8f19-08a3-b9e080855405@digikod.net>
+Date:   Thu, 24 Mar 2022 11:31:32 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [EXT] [PATCH v6 3/4] crypto: caam - add in-kernel interface for
- blob generator
+User-Agent: 
+Subject: Re: [PATCH v1 06/11] landlock: Add support for file reparenting with
+ LANDLOCK_ACCESS_FS_REFER
 Content-Language: en-US
-To:     Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        David Gstir <david@sigma-star.at>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        Richard Weinberger <richard@nod.at>,
-        "tharvey@gateworks.com" <tharvey@gateworks.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <20220316164335.1720255-1-a.fatoum@pengutronix.de>
- <20220316164335.1720255-4-a.fatoum@pengutronix.de>
- <DU2PR04MB8630BDFC29AA31074C623A7B95199@DU2PR04MB8630.eurprd04.prod.outlook.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <DU2PR04MB8630BDFC29AA31074C623A7B95199@DU2PR04MB8630.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20220221212522.320243-1-mic@digikod.net>
+ <20220221212522.320243-7-mic@digikod.net>
+ <CAHC9VhSFXN39EuVG5aVK0jtgCOmzM2FSCoVa2Xrs=oJQ4AkWMQ@mail.gmail.com>
+ <588e0fec-6a45-db81-e411-ae488b29e533@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <588e0fec-6a45-db81-e411-ae488b29e533@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Pankaj,
 
-On 24.03.22 10:55, Pankaj Gupta wrote:
-> Hi Ahmad,
+On 17/03/2022 13:04, Mickaël Salaün wrote:
 > 
-> Please find the comments in-line.
+> On 17/03/2022 02:26, Paul Moore wrote:
 
-Thanks for you review.
+[...]
 
-> Suggest to continue to use two separate descriptor-creation-function for 'encap' and 'decap'.
-> This will help these API(s) to be maintained easily going forward. 
-
-We can still split them up in future once there is a real need.
-But currently they are exactly the same, except for input/output length,
-so I think it's correct to not introduce duplication unless needed.
-
->>   - use append_seq_(in|out)_ptr_intlen for both encap/decap as a result
-
-Case in point. The intlen omission was because the two functions are largely
-identical and I only fixed up one of them. This is prone to repeat when
-we go back to have identical code with minor differences.
-
-> In continuation to the previous comment, there is another suggestion:
+>>> @@ -269,16 +270,188 @@ static inline bool is_nouser_or_private(const 
+>>> struct dentry *dentry)
+>>>                           
+>>> unlikely(IS_PRIVATE(d_backing_inode(dentry))));
+>>>   }
+>>>
+>>> -static int check_access_path(const struct landlock_ruleset *const 
+>>> domain,
+>>> -               const struct path *const path,
+>>> +static inline access_mask_t get_handled_accesses(
+>>> +               const struct landlock_ruleset *const domain)
+>>> +{
+>>> +       access_mask_t access_dom = 0;
+>>> +       unsigned long access_bit;
+>>
+>> Would it be better to declare @access_bit as an access_mask_t type?
+>> You're not using any macros like for_each_set_bit() in this function
+>> so I believe it should be safe.
 > 
-> Either: 
-> struct keyblob_info {
->         void *key;
->         size_t key_len;
-> 
->         void *blob;
->         size_t blob_len;
-> 
->         size_t key_mod_len;
->         const void *key_mod;
-> };
+> Right, I'll change that.
 
-I can do that.
-
-Whats your opinion on the desc size computation? Comment the macro or add
-the static inline helper?
-
-Cheers,
-Ahmad
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Well, thinking about it again, access_bit is not an access mask but an 
+index in such mask. access_mask_t gives enough space for such index but 
+it is definitely not the right semantic. The best type should be size_t, 
+but I prefer to stick to unsigned long (used for size_t anyway) for 
+consistency with the other access_bit variable types. There is no need 
+to use for_each_set_bit() here now but that could change, and I prefer 
+to do my best to prevent future issues. ;)
+Anyway, I guess the compiler can optimize such code.
