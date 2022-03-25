@@ -2,120 +2,228 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E098C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Mar 2022 19:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D108C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Mar 2022 19:47:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231421AbiCYTo1 (ORCPT
+        id S231635AbiCYTt1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Mar 2022 15:44:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42376 "EHLO
+        Fri, 25 Mar 2022 15:49:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231474AbiCYTnk (ORCPT
+        with ESMTP id S231657AbiCYTtK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Mar 2022 15:43:40 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24FB9147537
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Mar 2022 12:14:40 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id bu29so15040237lfb.0
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Mar 2022 12:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8Ahgn5YhupKleRSjVO6dYdyUyW4I3o3ogwWA6kSn9nQ=;
-        b=QPyPgps8QuodjsWDPXqvtMcTFVfWZsR0aqQQoSdRP7TaUmnhJ/tGC7gy0+oYuAFy4G
-         I35vO7sHK49kml7c6c+lxUraXYenfryl7ARNrJyFeUcJlg4t2/7Igiv31HYM9zEQNhwN
-         YQwW2KkWZXK6NhNQ525LLg7PM/nZgzdlIt+Y0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8Ahgn5YhupKleRSjVO6dYdyUyW4I3o3ogwWA6kSn9nQ=;
-        b=LL3TYkrNnAaDZC4n0gbVNvE1abDyXxMhM09OQ3S5lyw/IFJqnmOn2zHH0f95P4RbQm
-         xf3SMlOzUKSVPCGDOXSAsJm/GWO6afLUMugln0f2z7YXLTfZDeJjku6dh+o2vToFdc5g
-         WOT0uEUGFZ8e5R5mOilfy1zsU0zXHTfg5FkBlu2oWEKQtKxuB+mM7YwkOtU0f+m87h2X
-         R3ewKAe/J13oUe3GrlYTFIaiMBNCDFH3L2/Ea7gnQeUeoCwGdTNYIhny8m57R+wK/BgC
-         W6abDvm25x/GYpNgs1i9jbU7bpKaUjV3/roD1/bB+8o9a0xnLcSMpFxtQ8fReZwbMIyW
-         cAtw==
-X-Gm-Message-State: AOAM533qQrZdkPxnQO/f8SeciizgKJ7UYtH0mB09Fj4PWkeOnvtutxSB
-        gSfekHI452z/q68P6Bh9j9zow5XAxy4raCF5gD8=
-X-Google-Smtp-Source: ABdhPJw/p5xhK6LtaEiQ1DptnI20tn/5jCkJSuY2GZ2UGSfTRKb+M1rvRiiSRBxIuFDQLF3TjX+Zlw==
-X-Received: by 2002:a2e:3517:0:b0:247:f48a:7c35 with SMTP id z23-20020a2e3517000000b00247f48a7c35mr8852172ljz.217.1648233633276;
-        Fri, 25 Mar 2022 11:40:33 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id r9-20020ac25f89000000b0044a1008c5d7sm787306lfe.234.2022.03.25.11.40.32
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Mar 2022 11:40:33 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id s25so11433639lji.5
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Mar 2022 11:40:32 -0700 (PDT)
-X-Received: by 2002:a2e:9904:0:b0:247:ec95:fdee with SMTP id
- v4-20020a2e9904000000b00247ec95fdeemr9410106lji.291.1648233631835; Fri, 25
- Mar 2022 11:40:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220322192712.709170-1-mszeredi@redhat.com> <20220323114215.pfrxy2b6vsvqig6a@wittgenstein>
- <CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA0DT66GFH2ZanspA@mail.gmail.com>
- <YjudB7XARLlRtBiR@mit.edu> <CAJfpegtiRx6jRFUuPeXDxwJpBhYn0ekKkwYbGowUehGZkqVmAw@mail.gmail.com>
- <20220325084646.7g6oto2ce3vou54x@ws.net.home>
-In-Reply-To: <20220325084646.7g6oto2ce3vou54x@ws.net.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 25 Mar 2022 11:40:15 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wibqjNiLgnsL2LcTDKqnKyQ17rhHJv-qkHY1w93LJuXjA@mail.gmail.com>
-Message-ID: <CAHk-=wibqjNiLgnsL2LcTDKqnKyQ17rhHJv-qkHY1w93LJuXjA@mail.gmail.com>
-Subject: Re: [RFC PATCH] getvalues(2) prototype
-To:     Karel Zak <kzak@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
+        Fri, 25 Mar 2022 15:49:10 -0400
+Received: from mxout03.lancloud.ru (mxout03.lancloud.ru [45.84.86.113])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A33E92296DA;
+        Fri, 25 Mar 2022 12:33:01 -0700 (PDT)
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru 3F1DA20A097D
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+From:   Denis Glazkov <d.glazkov@omp.ru>
+CC:     Denis Glazkov <d.glazkov@omp.ru>,
         David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: [PATCH v2] KEYS: Improve error handling in the script
+Thread-Topic: [PATCH v2] KEYS: Improve error handling in the script
+Thread-Index: AQHYQHRhOXnmlwunc06tlBqeYDNOag==
+Date:   Fri, 25 Mar 2022 18:16:01 +0000
+Message-ID: <20220325181550.278067-1-d.glazkov@omp.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [192.168.11.212]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 25, 2022 at 1:46 AM Karel Zak <kzak@redhat.com> wrote:
->
-> I can imagine something like getvalues(2) in lsblk (based on /sys) or
-> in lsfd (based on /proc; lsof replacement).
+Using the `exit` function for error handling entails
+a number of problems:
 
-I really would be very hesitant to add new interfaces for completely
-specialty purposes.
+- not a closed file;
+- unreleased memory allocated for the certificate;
+- non-deleted mapping to vmlinux file.
 
-As others have mentioned, this has been tried for much more
-fundamental reasons (that whole "open-and-read" thing), and it hasn't
-been an obvious improvement.
+This patch fixes the listed issues.
 
-It *could* possibly be an improvement if it would allow us to take
-advantage of special server-side operations in a networked filesystem
-(ie like the whole "copy_file_range" kinds of interfaces that allow
-server-side things) where you need to transfer less data, or need
-fewer back-and-forth operations.
+Signed-off-by: Denis Glazkov <d.glazkov@omp.ru>
 
-And even that is clearly questionable, with some of those network file
-interfaces basically not having been used in real world situations in
-the past, so..
+---
+Changes in version 2:
+- refactored error handling, instead of fixing a single `read_file` function;
+- changed the patch subject.
 
-(Also, with "copy_file_range" we not only had others actively doing
-it, but the wins were "several orders of manitude", so even if it was
-fairly rare, it was _so_ big that it was worth doing anyway).
+Version 1 was there:
+- https://lore.kernel.org/all/20220303081428.12979-1-d.glazkov@omp.ru/
 
-With the "open-and-read" thing, the wins aren't that enormous.
+ scripts/insert-sys-cert.c | 51 +++++++++++++++++++++++++--------------
+ 1 file changed, 33 insertions(+), 18 deletions(-)
 
-And getvalues() isn't even that. It's literally a speciality interface
-for a very special thing. Yes, I'm sure it avoids several system
-calls. Yes, I'm sure it avoids parsing strings etc. But I really don't
-think this is something we want to do unless people can show enormous
-and real-world examples of where it makes such a huge difference that
-we absolutely have to do it.
-
-             Linus
+diff --git a/scripts/insert-sys-cert.c b/scripts/insert-sys-cert.c
+index 8902836c2342..8046682188f3 100644
+--- a/scripts/insert-sys-cert.c
++++ b/scripts/insert-sys-cert.c
+@@ -101,7 +101,7 @@ static void get_symbol_from_map(Elf_Ehdr *hdr, FILE *f, char *name,
+ 	s->offset = 0;
+ 	if (fseek(f, 0, SEEK_SET) != 0) {
+ 		perror("File seek failed");
+-		exit(EXIT_FAILURE);
++		return;
+ 	}
+ 	while (fgets(l, LINE_SIZE, f)) {
+ 		p = strchr(l, '\n');
+@@ -251,6 +251,7 @@ static char *read_file(char *file_name, int *size)
+ 	if (read(fd, buf, *size) != *size) {
+ 		perror("File read failed");
+ 		close(fd);
++		free(buf);
+ 		return NULL;
+ 	}
+ 	close(fd);
+@@ -277,14 +278,15 @@ int main(int argc, char **argv)
+ 	char *cert_file = NULL;
+ 	int vmlinux_size;
+ 	int cert_size;
+-	Elf_Ehdr *hdr;
+-	char *cert;
+-	FILE *system_map;
++	Elf_Ehdr *hdr = NULL;
++	char *cert = NULL;
++	FILE *system_map = NULL;
+ 	unsigned long *lsize;
+ 	int *used;
+ 	int opt;
+ 	Elf_Shdr *symtab = NULL;
+ 	struct sym cert_sym, lsize_sym, used_sym;
++	int ret = EXIT_FAILURE;
+ 
+ 	while ((opt = getopt(argc, argv, "b:c:s:")) != -1) {
+ 		switch (opt) {
+@@ -304,20 +306,20 @@ int main(int argc, char **argv)
+ 
+ 	if (!vmlinux_file || !cert_file) {
+ 		print_usage(argv[0]);
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 	}
+ 
+ 	cert = read_file(cert_file, &cert_size);
+ 	if (!cert)
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 
+ 	hdr = map_file(vmlinux_file, &vmlinux_size);
+ 	if (!hdr)
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 
+ 	if (vmlinux_size < sizeof(*hdr)) {
+ 		err("Invalid ELF file.\n");
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 	}
+ 
+ 	if ((hdr->e_ident[EI_MAG0] != ELFMAG0) ||
+@@ -325,22 +327,22 @@ int main(int argc, char **argv)
+ 	    (hdr->e_ident[EI_MAG2] != ELFMAG2) ||
+ 	    (hdr->e_ident[EI_MAG3] != ELFMAG3)) {
+ 		err("Invalid ELF magic.\n");
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 	}
+ 
+ 	if (hdr->e_ident[EI_CLASS] != CURRENT_ELFCLASS) {
+ 		err("ELF class mismatch.\n");
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 	}
+ 
+ 	if (hdr->e_ident[EI_DATA] != endianness()) {
+ 		err("ELF endian mismatch.\n");
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 	}
+ 
+ 	if (hdr->e_shoff > vmlinux_size) {
+ 		err("Could not find section header.\n");
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 	}
+ 
+ 	symtab = get_symbol_table(hdr);
+@@ -349,13 +351,13 @@ int main(int argc, char **argv)
+ 		if (!system_map_file) {
+ 			err("Please provide a System.map file.\n");
+ 			print_usage(argv[0]);
+-			exit(EXIT_FAILURE);
++			goto finish;
+ 		}
+ 
+ 		system_map = fopen(system_map_file, "r");
+ 		if (!system_map) {
+ 			perror(system_map_file);
+-			exit(EXIT_FAILURE);
++			goto finish;
+ 		}
+ 		get_symbol_from_map(hdr, system_map, CERT_SYM, &cert_sym);
+ 		get_symbol_from_map(hdr, system_map, USED_SYM, &used_sym);
+@@ -371,7 +373,7 @@ int main(int argc, char **argv)
+ 	}
+ 
+ 	if (!cert_sym.offset || !lsize_sym.offset || !used_sym.offset)
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 
+ 	print_sym(hdr, &cert_sym);
+ 	print_sym(hdr, &used_sym);
+@@ -382,14 +384,16 @@ int main(int argc, char **argv)
+ 
+ 	if (cert_sym.size < cert_size) {
+ 		err("Certificate is larger than the reserved area!\n");
+-		exit(EXIT_FAILURE);
++		goto finish;
+ 	}
+ 
++	ret = EXIT_SUCCESS;
++
+ 	/* If the existing cert is the same, don't overwrite */
+ 	if (cert_size == *used &&
+ 	    strncmp(cert_sym.content, cert, cert_size) == 0) {
+ 		warn("Certificate was already inserted.\n");
+-		exit(EXIT_SUCCESS);
++		goto finish;
+ 	}
+ 
+ 	if (*used > 0)
+@@ -406,5 +410,16 @@ int main(int argc, char **argv)
+ 						cert_sym.address);
+ 	info("Used %d bytes out of %d bytes reserved.\n", *used,
+ 						 cert_sym.size);
+-	exit(EXIT_SUCCESS);
++
++finish:
++	if (cert != NULL)
++		free(cert);
++
++	if (hdr != NULL)
++		munmap(hdr, vmlinux_size);
++
++	if (system_map != NULL)
++		fclose(system_map);
++
++	return ret;
+ }
+-- 
+2.25.1
