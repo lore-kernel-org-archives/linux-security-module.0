@@ -2,228 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D108C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Mar 2022 19:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB24C43217
+	for <linux-security-module@archiver.kernel.org>; Sat, 26 Mar 2022 04:19:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231635AbiCYTt1 convert rfc822-to-8bit (ORCPT
+        id S231156AbiCZEVQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Mar 2022 15:49:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35432 "EHLO
+        Sat, 26 Mar 2022 00:21:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231657AbiCYTtK (ORCPT
+        with ESMTP id S229686AbiCZEVP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Mar 2022 15:49:10 -0400
-Received: from mxout03.lancloud.ru (mxout03.lancloud.ru [45.84.86.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A33E92296DA;
-        Fri, 25 Mar 2022 12:33:01 -0700 (PDT)
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru 3F1DA20A097D
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-From:   Denis Glazkov <d.glazkov@omp.ru>
-CC:     Denis Glazkov <d.glazkov@omp.ru>,
+        Sat, 26 Mar 2022 00:21:15 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2197723F3F9;
+        Fri, 25 Mar 2022 21:19:38 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 22Q4JAos018812
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 26 Mar 2022 00:19:11 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id D60DD15C0038; Sat, 26 Mar 2022 00:19:10 -0400 (EDT)
+Date:   Sat, 26 Mar 2022 00:19:10 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Karel Zak <kzak@redhat.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
         David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: [PATCH v2] KEYS: Improve error handling in the script
-Thread-Topic: [PATCH v2] KEYS: Improve error handling in the script
-Thread-Index: AQHYQHRhOXnmlwunc06tlBqeYDNOag==
-Date:   Fri, 25 Mar 2022 18:16:01 +0000
-Message-ID: <20220325181550.278067-1-d.glazkov@omp.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [192.168.11.212]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getvalues(2) prototype
+Message-ID: <Yj6UPi6SDc7wMtCA@mit.edu>
+References: <20220322192712.709170-1-mszeredi@redhat.com>
+ <20220323114215.pfrxy2b6vsvqig6a@wittgenstein>
+ <CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA0DT66GFH2ZanspA@mail.gmail.com>
+ <YjudB7XARLlRtBiR@mit.edu>
+ <CAJfpegtiRx6jRFUuPeXDxwJpBhYn0ekKkwYbGowUehGZkqVmAw@mail.gmail.com>
+ <20220325084646.7g6oto2ce3vou54x@ws.net.home>
+ <Yj2DPRusMAzV/N5U@kroah.com>
+ <20220325092553.rncxqrjslv6e4c7v@ws.net.home>
 MIME-Version: 1.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220325092553.rncxqrjslv6e4c7v@ws.net.home>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Using the `exit` function for error handling entails
-a number of problems:
+On Fri, Mar 25, 2022 at 10:25:53AM +0100, Karel Zak wrote:
+> 
+> Right, the speed of ps(1) or lsof(1) is not important. IMHO the current
+> discussion about getvalues() goes in wrong direction :-)
+> 
+> I guess the primary motivation is not to replace open+read+close, but
+> provide to userspace something usable to get information from mount
+> table, because the current /proc/#/mountinfo and notification by
+> poll() is horrible.
 
-- not a closed file;
-- unreleased memory allocated for the certificate;
-- non-deleted mapping to vmlinux file.
+I think that's because the getvalues(2) prototype *only* optimizes
+away open+read+close, and doesn't do a *thing* with respect to
+/proc/<pid>/mountinfo.
 
-This patch fixes the listed issues.
+> Don't forget that the previous attempt was fsinfo() from David Howells
+> (unfortunately, it was too complex and rejected by Linus).
 
-Signed-off-by: Denis Glazkov <d.glazkov@omp.ru>
+fsinfo() tried to do a lot more than solving the /proc/<pid>/mountinfo
+problem; perhaps that was the cause of the complexity.
 
----
-Changes in version 2:
-- refactored error handling, instead of fixing a single `read_file` function;
-- changed the patch subject.
+Ignoring the notification problem (which I suspect we could solve with
+an extension of fsnotify), if the goal is to find a cleaner way to
+fetch information about a process's mount namespace and the mounts in
+that namespace, why not trying to export that information via sysfs?
+Information about devices are just as complex, after all.
 
-Version 1 was there:
-- https://lore.kernel.org/all/20220303081428.12979-1-d.glazkov@omp.ru/
+We could make mount namespaces to be their own first class object, so
+there would be an entry in /proc/<pid> which returns the mount
+namespace id used by a particular process.  Similarly, let each
+mounted file system be its own first class object.  Information about
+each mount namespace would be in /sys/mnt_ns, and information about
+each mounted file system would be in /sys/superblock.  Then in
+/sys/mnt_ns there would be a directory for each (superblock,
+mountpoint) pair.
 
- scripts/insert-sys-cert.c | 51 +++++++++++++++++++++++++--------------
- 1 file changed, 33 insertions(+), 18 deletions(-)
+Given how quickly programs like lsof can open tens of thousands of
+small files, and typically there are't that many mounted file systems
+in a particular mount namespace, performance really shouldn't be a
+problem.
 
-diff --git a/scripts/insert-sys-cert.c b/scripts/insert-sys-cert.c
-index 8902836c2342..8046682188f3 100644
---- a/scripts/insert-sys-cert.c
-+++ b/scripts/insert-sys-cert.c
-@@ -101,7 +101,7 @@ static void get_symbol_from_map(Elf_Ehdr *hdr, FILE *f, char *name,
- 	s->offset = 0;
- 	if (fseek(f, 0, SEEK_SET) != 0) {
- 		perror("File seek failed");
--		exit(EXIT_FAILURE);
-+		return;
- 	}
- 	while (fgets(l, LINE_SIZE, f)) {
- 		p = strchr(l, '\n');
-@@ -251,6 +251,7 @@ static char *read_file(char *file_name, int *size)
- 	if (read(fd, buf, *size) != *size) {
- 		perror("File read failed");
- 		close(fd);
-+		free(buf);
- 		return NULL;
- 	}
- 	close(fd);
-@@ -277,14 +278,15 @@ int main(int argc, char **argv)
- 	char *cert_file = NULL;
- 	int vmlinux_size;
- 	int cert_size;
--	Elf_Ehdr *hdr;
--	char *cert;
--	FILE *system_map;
-+	Elf_Ehdr *hdr = NULL;
-+	char *cert = NULL;
-+	FILE *system_map = NULL;
- 	unsigned long *lsize;
- 	int *used;
- 	int opt;
- 	Elf_Shdr *symtab = NULL;
- 	struct sym cert_sym, lsize_sym, used_sym;
-+	int ret = EXIT_FAILURE;
- 
- 	while ((opt = getopt(argc, argv, "b:c:s:")) != -1) {
- 		switch (opt) {
-@@ -304,20 +306,20 @@ int main(int argc, char **argv)
- 
- 	if (!vmlinux_file || !cert_file) {
- 		print_usage(argv[0]);
--		exit(EXIT_FAILURE);
-+		goto finish;
- 	}
- 
- 	cert = read_file(cert_file, &cert_size);
- 	if (!cert)
--		exit(EXIT_FAILURE);
-+		goto finish;
- 
- 	hdr = map_file(vmlinux_file, &vmlinux_size);
- 	if (!hdr)
--		exit(EXIT_FAILURE);
-+		goto finish;
- 
- 	if (vmlinux_size < sizeof(*hdr)) {
- 		err("Invalid ELF file.\n");
--		exit(EXIT_FAILURE);
-+		goto finish;
- 	}
- 
- 	if ((hdr->e_ident[EI_MAG0] != ELFMAG0) ||
-@@ -325,22 +327,22 @@ int main(int argc, char **argv)
- 	    (hdr->e_ident[EI_MAG2] != ELFMAG2) ||
- 	    (hdr->e_ident[EI_MAG3] != ELFMAG3)) {
- 		err("Invalid ELF magic.\n");
--		exit(EXIT_FAILURE);
-+		goto finish;
- 	}
- 
- 	if (hdr->e_ident[EI_CLASS] != CURRENT_ELFCLASS) {
- 		err("ELF class mismatch.\n");
--		exit(EXIT_FAILURE);
-+		goto finish;
- 	}
- 
- 	if (hdr->e_ident[EI_DATA] != endianness()) {
- 		err("ELF endian mismatch.\n");
--		exit(EXIT_FAILURE);
-+		goto finish;
- 	}
- 
- 	if (hdr->e_shoff > vmlinux_size) {
- 		err("Could not find section header.\n");
--		exit(EXIT_FAILURE);
-+		goto finish;
- 	}
- 
- 	symtab = get_symbol_table(hdr);
-@@ -349,13 +351,13 @@ int main(int argc, char **argv)
- 		if (!system_map_file) {
- 			err("Please provide a System.map file.\n");
- 			print_usage(argv[0]);
--			exit(EXIT_FAILURE);
-+			goto finish;
- 		}
- 
- 		system_map = fopen(system_map_file, "r");
- 		if (!system_map) {
- 			perror(system_map_file);
--			exit(EXIT_FAILURE);
-+			goto finish;
- 		}
- 		get_symbol_from_map(hdr, system_map, CERT_SYM, &cert_sym);
- 		get_symbol_from_map(hdr, system_map, USED_SYM, &used_sym);
-@@ -371,7 +373,7 @@ int main(int argc, char **argv)
- 	}
- 
- 	if (!cert_sym.offset || !lsize_sym.offset || !used_sym.offset)
--		exit(EXIT_FAILURE);
-+		goto finish;
- 
- 	print_sym(hdr, &cert_sym);
- 	print_sym(hdr, &used_sym);
-@@ -382,14 +384,16 @@ int main(int argc, char **argv)
- 
- 	if (cert_sym.size < cert_size) {
- 		err("Certificate is larger than the reserved area!\n");
--		exit(EXIT_FAILURE);
-+		goto finish;
- 	}
- 
-+	ret = EXIT_SUCCESS;
-+
- 	/* If the existing cert is the same, don't overwrite */
- 	if (cert_size == *used &&
- 	    strncmp(cert_sym.content, cert, cert_size) == 0) {
- 		warn("Certificate was already inserted.\n");
--		exit(EXIT_SUCCESS);
-+		goto finish;
- 	}
- 
- 	if (*used > 0)
-@@ -406,5 +410,16 @@ int main(int argc, char **argv)
- 						cert_sym.address);
- 	info("Used %d bytes out of %d bytes reserved.\n", *used,
- 						 cert_sym.size);
--	exit(EXIT_SUCCESS);
-+
-+finish:
-+	if (cert != NULL)
-+		free(cert);
-+
-+	if (hdr != NULL)
-+		munmap(hdr, vmlinux_size);
-+
-+	if (system_map != NULL)
-+		fclose(system_map);
-+
-+	return ret;
- }
--- 
-2.25.1
+If it works well enough for other kernel objects that are accessed via
+sysfs, and fsinfo() is way to complex, why don't we try a pattern
+which has worked and is "native" to Linux?
+
+					- Ted
+
