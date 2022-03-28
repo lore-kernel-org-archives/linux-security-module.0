@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1B2C35280
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 17:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC28C4707E
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 17:54:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245062AbiC1R4a (ORCPT
+        id S245068AbiC1R4b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Mar 2022 13:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42316 "EHLO
+        Mon, 28 Mar 2022 13:56:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244903AbiC1R4I (ORCPT
+        with ESMTP id S244929AbiC1R4U (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Mar 2022 13:56:08 -0400
+        Mon, 28 Mar 2022 13:56:20 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC8BE2251A;
-        Mon, 28 Mar 2022 10:53:45 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0d44bNNz67Lnh;
-        Tue, 29 Mar 2022 01:51:52 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79B7823BCC;
+        Mon, 28 Mar 2022 10:53:48 -0700 (PDT)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0cN3jGnz67w73;
+        Tue, 29 Mar 2022 01:51:16 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 28 Mar 2022 19:53:41 +0200
+ 15.1.2375.24; Mon, 28 Mar 2022 19:53:45 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <corbet@lwn.net>, <viro@zeniv.linux.org.uk>, <ast@kernel.org>,
         <daniel@iogearbox.net>, <andrii@kernel.org>, <kpsingh@kernel.org>,
@@ -37,9 +37,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 10/18] bpf-preload: Generate bpf_preload_ops
-Date:   Mon, 28 Mar 2022 19:50:25 +0200
-Message-ID: <20220328175033.2437312-11-roberto.sassu@huawei.com>
+Subject: [PATCH 13/18] bpf-preload: Move pinned links and maps to a dedicated directory in bpffs
+Date:   Mon, 28 Mar 2022 19:50:28 +0200
+Message-ID: <20220328175033.2437312-14-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220328175033.2437312-1-roberto.sassu@huawei.com>
 References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
@@ -53,79 +53,75 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Generate a bpf_preload_ops structure, to specify the kernel module and the
-preload method.
+With support for preloading multiple eBPF programs, any map, link or prog
+will appear in the bpf filesystem. To identify which eBPF program a pinned
+object belongs to, create a subdir for each eBPF program preloaded and
+place the pinned object in the new subdir.
+
+Keep the pinned objects of iterators_bpf in the root directory of bpffs,
+for compatibility reasons.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- kernel/bpf/preload/bpf_preload_kern.c          |  5 -----
- kernel/bpf/preload/iterators/iterators.lskel.h |  5 +++++
- tools/bpf/bpftool/gen.c                        | 13 +++++++++++++
- 3 files changed, 18 insertions(+), 5 deletions(-)
+ kernel/bpf/inode.c | 35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/preload/bpf_preload_kern.c b/kernel/bpf/preload/bpf_preload_kern.c
-index 35e9abd1a668..3839af367200 100644
---- a/kernel/bpf/preload/bpf_preload_kern.c
-+++ b/kernel/bpf/preload/bpf_preload_kern.c
-@@ -5,11 +5,6 @@
- #include <linux/bpf_preload.h>
- #include "iterators/iterators.lskel.h"
- 
--static struct bpf_preload_ops ops = {
--	.preload = preload,
--	.owner = THIS_MODULE,
--};
--
- static int __init load(void)
- {
- 	int err;
-diff --git a/kernel/bpf/preload/iterators/iterators.lskel.h b/kernel/bpf/preload/iterators/iterators.lskel.h
-index 6faf3708be01..7595fc283a65 100644
---- a/kernel/bpf/preload/iterators/iterators.lskel.h
-+++ b/kernel/bpf/preload/iterators/iterators.lskel.h
-@@ -474,6 +474,11 @@ static int preload(struct dentry *parent)
- 	return err;
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index 440ea517cc29..619cdef0ba54 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -740,9 +740,30 @@ static bool bpf_preload_list_mod_get(void)
+ 	return ret;
  }
  
-+static struct bpf_preload_ops ops = {
-+	.preload = preload,
-+	.owner = THIS_MODULE,
-+};
-+
- static int load_skel(void)
- {
- 	int err;
-diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-index 28b1fe718248..5593cbee1846 100644
---- a/tools/bpf/bpftool/gen.c
-+++ b/tools/bpf/bpftool/gen.c
-@@ -841,6 +841,18 @@ static void codegen_preload(struct bpf_object *obj, const char *obj_name)
- 		");
- }
- 
-+static void codegen_preload_ops(void)
++static struct dentry *create_subdir(struct dentry *parent, const char *name)
 +{
-+	codegen("\
-+		\n\
-+		\n\
-+		static struct bpf_preload_ops ops = {			    \n\
-+			.preload = preload,				    \n\
-+			.owner = THIS_MODULE,				    \n\
-+		};							    \n\
-+		");
++	struct dentry *dentry;
++	int err;
++
++	inode_lock(parent->d_inode);
++	dentry = lookup_one_len(name, parent, strlen(name));
++	if (IS_ERR(dentry))
++		goto out;
++
++	err = vfs_mkdir(&init_user_ns, parent->d_inode, dentry, 0755);
++	if (err) {
++		dput(dentry);
++		dentry = ERR_PTR(err);
++	}
++out:
++	inode_unlock(parent->d_inode);
++	return dentry;
 +}
 +
- static void codegen_preload_load(struct bpf_object *obj, const char *obj_name)
+ static int bpf_preload_list(struct dentry *parent)
  {
- 	struct bpf_program *prog;
-@@ -1076,6 +1088,7 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 		codegen_preload_vars(obj, obj_name);
- 		codegen_preload_free(obj, obj_name);
- 		codegen_preload(obj, obj_name);
-+		codegen_preload_ops();
- 		codegen_preload_load(obj, obj_name);
- 	}
+ 	struct bpf_preload_ops_item *cur;
++	struct dentry *cur_parent;
+ 	int err;
  
+ 	if (bpf_preload_ops) {
+@@ -755,7 +776,19 @@ static int bpf_preload_list(struct dentry *parent)
+ 		if (!cur->ops)
+ 			continue;
+ 
+-		err = cur->ops->preload(parent);
++		cur_parent = parent;
++
++		if (strcmp(cur->obj_name, "bpf_preload")) {
++			cur_parent = create_subdir(parent, cur->obj_name);
++			if (IS_ERR(cur_parent))
++				cur_parent = parent;
++		}
++
++		err = cur->ops->preload(cur_parent);
++
++		if (cur_parent != parent)
++			dput(cur_parent);
++
+ 		if (err)
+ 			return err;
+ 	}
 -- 
 2.32.0
 
