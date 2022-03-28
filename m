@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C00C43217
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 17:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1118FC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 17:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244867AbiC1RzC (ORCPT
+        id S244874AbiC1RzD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Mar 2022 13:55:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37068 "EHLO
+        Mon, 28 Mar 2022 13:55:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244855AbiC1Ryj (ORCPT
+        with ESMTP id S244836AbiC1Ryj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Mon, 28 Mar 2022 13:54:39 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E37A5657B9;
-        Mon, 28 Mar 2022 10:52:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C6E65796;
+        Mon, 28 Mar 2022 10:52:29 -0700 (PDT)
 Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0Zw6Tljz67mcQ;
-        Tue, 29 Mar 2022 01:50:00 +0800 (CST)
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0bd1xkWz67PnL;
+        Tue, 29 Mar 2022 01:50:37 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 28 Mar 2022 19:52:29 +0200
+ 15.1.2375.24; Mon, 28 Mar 2022 19:52:26 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <corbet@lwn.net>, <viro@zeniv.linux.org.uk>, <ast@kernel.org>,
         <daniel@iogearbox.net>, <andrii@kernel.org>, <kpsingh@kernel.org>,
@@ -37,9 +37,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 09/18] bpf-preload: Generate code to pin non-internal maps
-Date:   Mon, 28 Mar 2022 19:50:24 +0200
-Message-ID: <20220328175033.2437312-10-roberto.sassu@huawei.com>
+Subject: [PATCH 06/18] bpf-preload: Generate free_objs_and_skel()
+Date:   Mon, 28 Mar 2022 19:50:21 +0200
+Message-ID: <20220328175033.2437312-7-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220328175033.2437312-1-roberto.sassu@huawei.com>
 References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
@@ -53,186 +53,120 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Take the non-internal maps from the skeleton, and generate the code for
-each of them (static variable declaration, additional code in
-free_objs_and_skel(), preload() and load_skel()).
+Generate free_objs_and_skel() (renamed from free_links_and_skel()) to
+decrease the reference count of pinned objects, and to destroy the
+skeleton.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- tools/bpf/bpftool/gen.c | 97 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
+ kernel/bpf/preload/bpf_preload_kern.c         | 13 ++-------
+ .../bpf/preload/iterators/iterators.lskel.h   | 10 +++++++
+ tools/bpf/bpftool/gen.c                       | 28 +++++++++++++++++++
+ 3 files changed, 40 insertions(+), 11 deletions(-)
 
+diff --git a/kernel/bpf/preload/bpf_preload_kern.c b/kernel/bpf/preload/bpf_preload_kern.c
+index 485589e03bd2..8b49beb2b2d6 100644
+--- a/kernel/bpf/preload/bpf_preload_kern.c
++++ b/kernel/bpf/preload/bpf_preload_kern.c
+@@ -5,15 +5,6 @@
+ #include <linux/bpf_preload.h>
+ #include "iterators/iterators.lskel.h"
+ 
+-static void free_links_and_skel(void)
+-{
+-	if (!IS_ERR_OR_NULL(dump_bpf_map_link))
+-		bpf_link_put(dump_bpf_map_link);
+-	if (!IS_ERR_OR_NULL(dump_bpf_prog_link))
+-		bpf_link_put(dump_bpf_prog_link);
+-	iterators_bpf__destroy(skel);
+-}
+-
+ static int preload(struct dentry *parent)
+ {
+ 	int err;
+@@ -75,7 +66,7 @@ static int load_skel(void)
+ 	skel->links.dump_bpf_prog_fd = 0;
+ 	return 0;
+ out:
+-	free_links_and_skel();
++	free_objs_and_skel();
+ 	return err;
+ }
+ 
+@@ -93,7 +84,7 @@ static int __init load(void)
+ static void __exit fini(void)
+ {
+ 	bpf_preload_ops = NULL;
+-	free_links_and_skel();
++	free_objs_and_skel();
+ }
+ late_initcall(load);
+ module_exit(fini);
+diff --git a/kernel/bpf/preload/iterators/iterators.lskel.h b/kernel/bpf/preload/iterators/iterators.lskel.h
+index 9794acdfacf9..4afd983ad40e 100644
+--- a/kernel/bpf/preload/iterators/iterators.lskel.h
++++ b/kernel/bpf/preload/iterators/iterators.lskel.h
+@@ -438,4 +438,14 @@ static struct bpf_link *dump_bpf_map_link;
+ static struct bpf_link *dump_bpf_prog_link;
+ static struct iterators_bpf *skel;
+ 
++static void free_objs_and_skel(void)
++{
++	if (!IS_ERR_OR_NULL(dump_bpf_map_link))
++		bpf_link_put(dump_bpf_map_link);
++	if (!IS_ERR_OR_NULL(dump_bpf_prog_link))
++		bpf_link_put(dump_bpf_prog_link);
++
++	iterators_bpf__destroy(skel);
++}
++
+ #endif /* __ITERATORS_BPF_SKEL_H__ */
 diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-index ad948f1c90b5..28b1fe718248 100644
+index c62c4c65b631..e167aa092b7f 100644
 --- a/tools/bpf/bpftool/gen.c
 +++ b/tools/bpf/bpftool/gen.c
-@@ -655,6 +655,8 @@ static void codegen_destroy(struct bpf_object *obj, const char *obj_name)
- static void codegen_preload_vars(struct bpf_object *obj, const char *obj_name)
+@@ -674,6 +674,33 @@ static void codegen_preload_vars(struct bpf_object *obj, const char *obj_name)
+ 		", obj_name);
+ }
+ 
++static void codegen_preload_free(struct bpf_object *obj, const char *obj_name)
++{
++	struct bpf_program *prog;
++
++	codegen("\
++		\n\
++		\n\
++		static void free_objs_and_skel(void)			    \n\
++		{							    \n\
++		");
++
++	bpf_object__for_each_program(prog, obj) {
++		codegen("\
++			\n\
++				if (!IS_ERR_OR_NULL(%1$s_link))		    \n\
++					bpf_link_put(%1$s_link);	    \n\
++			", bpf_program__name(prog));
++	}
++
++	codegen("\
++		\n\
++		\n\
++			%s__destroy(skel);				    \n\
++		}							    \n\
++		", obj_name);
++}
++
+ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *header_guard)
  {
- 	struct bpf_program *prog;
-+	struct bpf_map *map;
-+	char ident[256];
+ 	DECLARE_LIBBPF_OPTS(gen_loader_opts, opts);
+@@ -824,6 +851,7 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
  
- 	codegen("\
- 		\n\
-@@ -668,6 +670,19 @@ static void codegen_preload_vars(struct bpf_object *obj, const char *obj_name)
- 			", bpf_program__name(prog));
+ 	if (gen_preload_methods) {
+ 		codegen_preload_vars(obj, obj_name);
++		codegen_preload_free(obj, obj_name);
  	}
  
-+	bpf_object__for_each_map(map, obj) {
-+		if (!get_map_ident(map, ident, sizeof(ident)))
-+			continue;
-+
-+		if (bpf_map__is_internal(map))
-+			continue;
-+
-+		codegen("\
-+			\n\
-+			static struct bpf_map *%s_map;			    \n\
-+			", ident);
-+	}
-+
  	codegen("\
- 		\n\
- 		static struct %s *skel;					    \n\
-@@ -677,6 +692,8 @@ static void codegen_preload_vars(struct bpf_object *obj, const char *obj_name)
- static void codegen_preload_free(struct bpf_object *obj, const char *obj_name)
- {
- 	struct bpf_program *prog;
-+	struct bpf_map *map;
-+	char ident[256];
- 
- 	codegen("\
- 		\n\
-@@ -693,6 +710,20 @@ static void codegen_preload_free(struct bpf_object *obj, const char *obj_name)
- 			", bpf_program__name(prog));
- 	}
- 
-+	bpf_object__for_each_map(map, obj) {
-+		if (!get_map_ident(map, ident, sizeof(ident)))
-+			continue;
-+
-+		if (bpf_map__is_internal(map))
-+			continue;
-+
-+		codegen("\
-+			\n\
-+				if (!IS_ERR_OR_NULL(%1$s_map))		    \n\
-+					bpf_map_put(%1$s_map);		    \n\
-+			", ident);
-+	}
-+
- 	codegen("\
- 		\n\
- 		\n\
-@@ -705,6 +736,8 @@ static void codegen_preload(struct bpf_object *obj, const char *obj_name)
- {
- 	struct bpf_program *prog;
- 	const char *link_name;
-+	struct bpf_map *map;
-+	char ident[256];
- 
- 	codegen("\
- 		\n\
-@@ -722,6 +755,19 @@ static void codegen_preload(struct bpf_object *obj, const char *obj_name)
- 			", bpf_program__name(prog));
- 	}
- 
-+	bpf_object__for_each_map(map, obj) {
-+		if (!get_map_ident(map, ident, sizeof(ident)))
-+			continue;
-+
-+		if (bpf_map__is_internal(map))
-+			continue;
-+
-+		codegen("\
-+			\n\
-+				bpf_map_inc(%s_map);			    \n\
-+			", ident);
-+	}
-+
- 	bpf_object__for_each_program(prog, obj) {
- 		link_name = bpf_program__name(prog);
- 		/* These need to be hardcoded for compatibility reasons. */
-@@ -743,6 +789,24 @@ static void codegen_preload(struct bpf_object *obj, const char *obj_name)
- 			", link_name, bpf_program__name(prog));
- 	}
- 
-+	bpf_object__for_each_map(map, obj) {
-+		if (!get_map_ident(map, ident, sizeof(ident)))
-+			continue;
-+
-+		if (bpf_map__is_internal(map))
-+			continue;
-+
-+		codegen("\
-+			\n\
-+			\n\
-+				err = bpf_obj_do_pin_kernel(parent, \"%1$s\",	\n\
-+							    %1$s_map,		\n\
-+							    BPF_TYPE_MAP);	\n\
-+				if (err)					\n\
-+					goto undo;				\n\
-+			", ident);
-+	}
-+
- 	codegen("\
- 		\n\
- 		\n\
-@@ -757,6 +821,19 @@ static void codegen_preload(struct bpf_object *obj, const char *obj_name)
- 			", bpf_program__name(prog));
- 	}
- 
-+	bpf_object__for_each_map(map, obj) {
-+		if (!get_map_ident(map, ident, sizeof(ident)))
-+			continue;
-+
-+		if (bpf_map__is_internal(map))
-+			continue;
-+
-+		codegen("\
-+			\n\
-+				bpf_map_put(%s_map);			    \n\
-+			", ident);
-+	}
-+
- 	codegen("\
- 		\n\
- 			return err;					    \n\
-@@ -767,6 +844,8 @@ static void codegen_preload(struct bpf_object *obj, const char *obj_name)
- static void codegen_preload_load(struct bpf_object *obj, const char *obj_name)
- {
- 	struct bpf_program *prog;
-+	struct bpf_map *map;
-+	char ident[256];
- 
- 	codegen("\
- 		\n\
-@@ -800,6 +879,24 @@ static void codegen_preload_load(struct bpf_object *obj, const char *obj_name)
- 			", bpf_program__name(prog));
- 	}
- 
-+	bpf_object__for_each_map(map, obj) {
-+		if (!get_map_ident(map, ident, sizeof(ident)))
-+			continue;
-+
-+		if (bpf_map__is_internal(map))
-+			continue;
-+
-+		codegen("\
-+			\n\
-+			\n\
-+				%1$s_map = bpf_map_get(skel->maps.%1$s.map_fd);			\n\
-+				if (IS_ERR(%1$s_map)) {						\n\
-+					err = PTR_ERR(%1$s_map);				\n\
-+					goto out;						\n\
-+				}								\n\
-+			", ident);
-+	}
-+
- 	codegen("\
- 		\n\
- 		\n\
 -- 
 2.32.0
 
