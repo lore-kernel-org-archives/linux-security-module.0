@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CE1C46467
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 17:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1B2C35280
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 17:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245052AbiC1R4a (ORCPT
+        id S245062AbiC1R4a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Mon, 28 Mar 2022 13:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39058 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244923AbiC1R4U (ORCPT
+        with ESMTP id S244903AbiC1R4I (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Mar 2022 13:56:20 -0400
+        Mon, 28 Mar 2022 13:56:08 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B44F24582;
-        Mon, 28 Mar 2022 10:53:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC8BE2251A;
+        Mon, 28 Mar 2022 10:53:45 -0700 (PDT)
 Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0cP5LvYz67Q7R;
-        Tue, 29 Mar 2022 01:51:17 +0800 (CST)
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0d44bNNz67Lnh;
+        Tue, 29 Mar 2022 01:51:52 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 28 Mar 2022 19:53:46 +0200
+ 15.1.2375.24; Mon, 28 Mar 2022 19:53:41 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <corbet@lwn.net>, <viro@zeniv.linux.org.uk>, <ast@kernel.org>,
         <daniel@iogearbox.net>, <andrii@kernel.org>, <kpsingh@kernel.org>,
@@ -37,9 +37,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 14/18] bpf-preload: Switch to new preload registration method
-Date:   Mon, 28 Mar 2022 19:50:29 +0200
-Message-ID: <20220328175033.2437312-15-roberto.sassu@huawei.com>
+Subject: [PATCH 10/18] bpf-preload: Generate bpf_preload_ops
+Date:   Mon, 28 Mar 2022 19:50:25 +0200
+Message-ID: <20220328175033.2437312-11-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220328175033.2437312-1-roberto.sassu@huawei.com>
 References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
@@ -53,235 +53,79 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Modify the automatic generator of the light skeleton by adding three calls
-to bpf_preload_set_ops() for registering and unregistering a preload
-method, two in load_skel() (set and unset if there is an error) and one in
-free_objs_and_skel().
-
-Regenerate the light skeleton of the already preloaded eBPF program
-iterators_bpf, which will now use the new registration method, and directly
-call load_skel() and free_objs_and_skel() in the init and fini module
-entrypoints.
-
-Finally, allow users to specify a customized list of eBPF programs to
-preload with the CONFIG_BPF_PRELOAD_LIST option in the kernel
-configuration, at build time, or with new kernel option bpf_preload_list=,
-at run-time.
-
-By default, set CONFIG_BPF_PRELOAD_LIST to 'bpf_preload', so that the
-current preloading behavior is kept unchanged.
+Generate a bpf_preload_ops structure, to specify the kernel module and the
+preload method.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- .../admin-guide/kernel-parameters.txt         |  8 ++++++
- kernel/bpf/inode.c                            | 16 ++++++++++--
- kernel/bpf/preload/Kconfig                    | 25 +++++++++++++------
- kernel/bpf/preload/bpf_preload_kern.c         | 20 ++-------------
- .../bpf/preload/iterators/iterators.lskel.h   |  9 +++++--
- tools/bpf/bpftool/gen.c                       | 15 ++++++++---
- 6 files changed, 60 insertions(+), 33 deletions(-)
+ kernel/bpf/preload/bpf_preload_kern.c          |  5 -----
+ kernel/bpf/preload/iterators/iterators.lskel.h |  5 +++++
+ tools/bpf/bpftool/gen.c                        | 13 +++++++++++++
+ 3 files changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9927564db88e..732d83764e6e 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -482,6 +482,14 @@
- 	bgrt_disable	[ACPI][X86]
- 			Disable BGRT to avoid flickering OEM logo.
- 
-+	bpf_preload_list= [BPF]
-+			Specify a list of eBPF programs to preload.
-+			Format: obj_name1,obj_name2,...
-+			Default: bpf_preload
-+
-+			Specify the list of eBPF programs to preload when the
-+			bpf filesystem is mounted.
-+
- 	bttv.card=	[HW,V4L] bttv (bt848 + bt878 based grabber cards)
- 	bttv.radio=	Most important insmod options are available as
- 			kernel args too.
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index 619cdef0ba54..c1941c65ce95 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -22,7 +22,14 @@
- #include <linux/bpf_trace.h>
- #include <linux/bpf_preload.h>
- 
--static char *bpf_preload_list_str;
-+static char *bpf_preload_list_str = CONFIG_BPF_PRELOAD_LIST;
-+
-+static int __init bpf_preload_list_setup(char *str)
-+{
-+	bpf_preload_list_str = str;
-+	return 1;
-+}
-+__setup("bpf_preload_list=", bpf_preload_list_setup);
- 
- static void *bpf_any_get(void *raw, enum bpf_type type)
- {
-@@ -732,7 +739,12 @@ static bool bpf_preload_list_mod_get(void)
- 	struct bpf_preload_ops_item *cur;
- 	bool ret = false;
- 
--	ret |= bpf_preload_mod_get("bpf_preload", &bpf_preload_ops);
-+	/*
-+	 * Keep the legacy registration method, but do not attempt to load
-+	 * bpf_preload.ko, as it switched to the new registration method.
-+	 */
-+	if (bpf_preload_ops)
-+		ret |= bpf_preload_mod_get("bpf_preload", &bpf_preload_ops);
- 
- 	list_for_each_entry(cur, &preload_list, list)
- 		ret |= bpf_preload_mod_get(cur->obj_name, &cur->ops);
-diff --git a/kernel/bpf/preload/Kconfig b/kernel/bpf/preload/Kconfig
-index c9d45c9d6918..f878e537b0ff 100644
---- a/kernel/bpf/preload/Kconfig
-+++ b/kernel/bpf/preload/Kconfig
-@@ -4,7 +4,7 @@ config USERMODE_DRIVER
- 	default n
- 
- menuconfig BPF_PRELOAD
--	bool "Preload BPF file system with kernel specific program and map iterators"
-+	bool "Preload eBPF programs"
- 	depends on BPF
- 	depends on BPF_SYSCALL
- 	# The dependency on !COMPILE_TEST prevents it from being enabled
-@@ -12,15 +12,26 @@ menuconfig BPF_PRELOAD
- 	depends on !COMPILE_TEST
- 	select USERMODE_DRIVER
- 	help
--	  This builds kernel module with several embedded BPF programs that are
--	  pinned into BPF FS mount point as human readable files that are
--	  useful in debugging and introspection of BPF programs and maps.
-+	  This enables preloading eBPF programs chosen from the kernel
-+	  configuration or from the kernel option bpf_preload_list=.
- 
- if BPF_PRELOAD
- config BPF_PRELOAD_UMD
--	tristate "bpf_preload kernel module"
-+	tristate "Preload BPF file system with kernel specific program and map iterators"
- 	default m
- 	help
--	  This builds bpf_preload kernel module with embedded BPF programs for
--	  introspection in bpffs.
-+	  This builds bpf_preload kernel module with several embedded BPF
-+	  programs that are pinned into BPF FS mount point as human readable
-+	  files that are useful in debugging and introspection of BPF programs
-+	  and maps.
-+
-+config BPF_PRELOAD_LIST
-+	string "Ordered list of eBPF programs to preload"
-+	default "bpf_preload"
-+	help
-+	  A comma-separated list of eBPF programs to preload. Any eBPF program
-+	  left off this list will be ignored. This can be controlled at boot
-+	  with the "bpf_preload_list=" parameter.
-+
-+	  If unsure, leave this as the default.
- endif
 diff --git a/kernel/bpf/preload/bpf_preload_kern.c b/kernel/bpf/preload/bpf_preload_kern.c
-index 3839af367200..c6d97872225b 100644
+index 35e9abd1a668..3839af367200 100644
 --- a/kernel/bpf/preload/bpf_preload_kern.c
 +++ b/kernel/bpf/preload/bpf_preload_kern.c
-@@ -5,22 +5,6 @@
+@@ -5,11 +5,6 @@
  #include <linux/bpf_preload.h>
  #include "iterators/iterators.lskel.h"
  
--static int __init load(void)
--{
--	int err;
+-static struct bpf_preload_ops ops = {
+-	.preload = preload,
+-	.owner = THIS_MODULE,
+-};
 -
--	err = load_skel();
--	if (err)
--		return err;
--	bpf_preload_ops = &ops;
--	return err;
--}
--
--static void __exit fini(void)
--{
--	bpf_preload_ops = NULL;
--	free_objs_and_skel();
--}
--late_initcall(load);
--module_exit(fini);
-+late_initcall(load_skel);
-+module_exit(free_objs_and_skel);
- MODULE_LICENSE("GPL");
+ static int __init load(void)
+ {
+ 	int err;
 diff --git a/kernel/bpf/preload/iterators/iterators.lskel.h b/kernel/bpf/preload/iterators/iterators.lskel.h
-index 7595fc283a65..5e999564cc7a 100644
+index 6faf3708be01..7595fc283a65 100644
 --- a/kernel/bpf/preload/iterators/iterators.lskel.h
 +++ b/kernel/bpf/preload/iterators/iterators.lskel.h
-@@ -440,6 +440,8 @@ static struct iterators_bpf *skel;
+@@ -474,6 +474,11 @@ static int preload(struct dentry *parent)
+ 	return err;
+ }
  
- static void free_objs_and_skel(void)
- {
-+	bpf_preload_set_ops("bpf_preload", THIS_MODULE, NULL);
++static struct bpf_preload_ops ops = {
++	.preload = preload,
++	.owner = THIS_MODULE,
++};
 +
- 	if (!IS_ERR_OR_NULL(dump_bpf_map_link))
- 		bpf_link_put(dump_bpf_map_link);
- 	if (!IS_ERR_OR_NULL(dump_bpf_prog_link))
-@@ -481,11 +483,14 @@ static struct bpf_preload_ops ops = {
- 
  static int load_skel(void)
  {
--	int err;
-+	int err = -ENOMEM;
-+
-+	if (!bpf_preload_set_ops("bpf_preload", THIS_MODULE, &ops))
-+		return 0;
- 
- 	skel = iterators_bpf__open();
- 	if (!skel)
--		return -ENOMEM;
-+		goto out;
- 
- 	err = iterators_bpf__load(skel);
- 	if (err)
+ 	int err;
 diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-index 5593cbee1846..af939183f57a 100644
+index 28b1fe718248..5593cbee1846 100644
 --- a/tools/bpf/bpftool/gen.c
 +++ b/tools/bpf/bpftool/gen.c
-@@ -700,7 +700,10 @@ static void codegen_preload_free(struct bpf_object *obj, const char *obj_name)
- 		\n\
- 		static void free_objs_and_skel(void)			    \n\
- 		{							    \n\
--		");
-+			bpf_preload_set_ops(\"%s\", THIS_MODULE, NULL);     \n\
-+		\n\
-+		", !strcmp(obj_name, "iterators_bpf") ?
-+		   "bpf_preload" : obj_name);
+@@ -841,6 +841,18 @@ static void codegen_preload(struct bpf_object *obj, const char *obj_name)
+ 		");
+ }
  
- 	bpf_object__for_each_program(prog, obj) {
- 		codegen("\
-@@ -864,11 +867,14 @@ static void codegen_preload_load(struct bpf_object *obj, const char *obj_name)
- 		\n\
- 		static int load_skel(void)				    \n\
- 		{							    \n\
--			int err;					    \n\
-+			int err = -ENOMEM;				    \n\
++static void codegen_preload_ops(void)
++{
++	codegen("\
 +		\n\
-+			if (!bpf_preload_set_ops(\"%2$s\", THIS_MODULE, &ops))	\n\
-+				return 0;				    \n\
- 		\n\
- 			skel = %1$s__open();				    \n\
- 			if (!skel)					    \n\
--				return -ENOMEM;				    \n\
-+				goto out;				    \n\
- 		\n\
- 			err = %1$s__load(skel);				    \n\
- 			if (err)					    \n\
-@@ -877,7 +883,8 @@ static void codegen_preload_load(struct bpf_object *obj, const char *obj_name)
- 			err = %1$s__attach(skel);			    \n\
- 			if (err)					    \n\
- 				goto out;				    \n\
--		", obj_name);
-+		", obj_name, !strcmp(obj_name, "iterators_bpf") ?
-+			     "bpf_preload" : obj_name);
++		\n\
++		static struct bpf_preload_ops ops = {			    \n\
++			.preload = preload,				    \n\
++			.owner = THIS_MODULE,				    \n\
++		};							    \n\
++		");
++}
++
+ static void codegen_preload_load(struct bpf_object *obj, const char *obj_name)
+ {
+ 	struct bpf_program *prog;
+@@ -1076,6 +1088,7 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
+ 		codegen_preload_vars(obj, obj_name);
+ 		codegen_preload_free(obj, obj_name);
+ 		codegen_preload(obj, obj_name);
++		codegen_preload_ops();
+ 		codegen_preload_load(obj, obj_name);
+ 	}
  
- 	bpf_object__for_each_program(prog, obj) {
- 		codegen("\
 -- 
 2.32.0
 
