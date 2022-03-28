@@ -2,49 +2,49 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC63C35280
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 11:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B431FC433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 11:23:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240986AbiC1LYl (ORCPT
+        id S240964AbiC1LZf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Mar 2022 07:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54528 "EHLO
+        Mon, 28 Mar 2022 07:25:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241740AbiC1LYK (ORCPT
+        with ESMTP id S241138AbiC1LZN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Mar 2022 07:24:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF74A56206;
-        Mon, 28 Mar 2022 04:22:05 -0700 (PDT)
+        Mon, 28 Mar 2022 07:25:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E176B29C;
+        Mon, 28 Mar 2022 04:23:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4EA6661195;
-        Mon, 28 Mar 2022 11:22:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C58DDC340ED;
-        Mon, 28 Mar 2022 11:22:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 791AF6114A;
+        Mon, 28 Mar 2022 11:23:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 254BAC340EC;
+        Mon, 28 Mar 2022 11:23:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648466524;
-        bh=8rzxR8C9aV5joxDkLw1fv1HzRyps0zkC5tErCCANSjw=;
+        s=k20201202; t=1648466598;
+        bh=OBxEfYhzCvPlaf1L8GH5GI+UgRcsxLFcLA/QQnqss/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bhGrzlie6Uduay4CJW18Nq2+7TdB52RfNQPQwlgcNuXgyWceRn6Bf74PA57ADzI5O
-         cA3bNzxhuAbXZHSrNg5dQEtRTCNwyhREVObGrgKCZ00eLPkXstkoDbPI+iy8g7sy+1
-         pWCMorBGaDtkV2w5xnx70bJw91qeP4Mgp+Frpn2qBT9ZS2iluknQfEBSw1JvXTv4Dv
-         eOUR7yNCZlH4S2qJ9PgLvNYU7b3PcVXQFuYCiNLgk0WzXovsIJHXb6H9jI5Vlx29uF
-         Ye3qG6BXDQvu5h5FTK/smG4CcoiVX49N5Qx8hgNpu4XBpAZyoz/T3fHuBsno3nTKWy
-         LP/XLL9BfaQug==
+        b=AQ7NK0AJHUkVQ/+OeEY2N98qd86Vt5wPVBFx6SlujQXQjFT/pFsFPCuCuJKkADxb0
+         jUfCMJ8M8IZGFrpVIvueSU0CztB2RXGSA6dsDzuLndAi/LnChXCtqxSNjuZbMSde3E
+         AuUot5RF1Rc1JPiCGX8IgpTnmGUsXtuptH0XSMPQkEqWPC8KgaNlSRGkSGku3iBt5l
+         bRGSXxTLgr5O4hBrSbBAARp7UhmI2y6Yba2HfAqpIGd7t0ZdvzGb1yOh650QrdY5KK
+         oUMp1zX8Qw8ODN1sd0sDpCSuRGiPbtyO9rq18AkouuE9ToOdvQxW9qY2g21qnVM38N
+         wX8E5NnjRh6DQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         kernel test robot <lkp@intel.com>,
         Sasha Levin <sashal@kernel.org>, jmorris@namei.org,
         serge@hallyn.com, linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 15/29] Fix incorrect type in assignment of ipv6 port for audit
-Date:   Mon, 28 Mar 2022 07:21:17 -0400
-Message-Id: <20220328112132.1555683-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 09/21] Fix incorrect type in assignment of ipv6 port for audit
+Date:   Mon, 28 Mar 2022 07:22:42 -0400
+Message-Id: <20220328112254.1556286-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220328112132.1555683-1-sashal@kernel.org>
-References: <20220328112132.1555683-1-sashal@kernel.org>
+In-Reply-To: <20220328112254.1556286-1-sashal@kernel.org>
+References: <20220328112254.1556286-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -67,10 +67,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 21a0e7c3b8de..3f3f56f6be4d 100644
+index 5c90b9fa4d40..b36b8668f1f4 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -2505,7 +2505,7 @@ static int smk_ipv6_check(struct smack_known *subject,
+@@ -2506,7 +2506,7 @@ static int smk_ipv6_check(struct smack_known *subject,
  #ifdef CONFIG_AUDIT
  	smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
  	ad.a.u.net->family = PF_INET6;
