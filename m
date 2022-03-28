@@ -2,37 +2,37 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F5DC433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 11:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01252C43219
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 11:23:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240589AbiC1LUS (ORCPT
+        id S240968AbiC1LYk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Mar 2022 07:20:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54146 "EHLO
+        Mon, 28 Mar 2022 07:24:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240564AbiC1LUR (ORCPT
+        with ESMTP id S241163AbiC1LXU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Mar 2022 07:20:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA82755492;
-        Mon, 28 Mar 2022 04:18:32 -0700 (PDT)
+        Mon, 28 Mar 2022 07:23:20 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A195A55BF2;
+        Mon, 28 Mar 2022 04:20:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4469861143;
-        Mon, 28 Mar 2022 11:18:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 468B2C340EC;
-        Mon, 28 Mar 2022 11:18:30 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1DA0AB80E01;
+        Mon, 28 Mar 2022 11:20:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87243C340EC;
+        Mon, 28 Mar 2022 11:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648466311;
-        bh=sIfC8IzjPnQADnfqoYQogVIEnZP7501njURyn9RBSZM=;
+        s=k20201202; t=1648466414;
+        bh=0W2ORTtK48q70ycAulC0xB7KmNVK84oomaBhMqHvMFU=;
         h=From:To:Cc:Subject:Date:From;
-        b=qj44PraXASpeVudm/5dcVcBjh6TnOEwIAhEInA+lTXrWM7UmvsQBif3WMAJqVhbwS
-         VIhnYmtOLxRTl90KRp/lK4keNrJbHQdxpC2aK0pgFsV+TU/1LczEssYOcja5BewOJT
-         vWzNqj5uHya5veEftr+kwd+mZkHQ/Lk/YT+MMY6zXiDikMHfc7Eqi/A7EYy5LBwXKk
-         k27aYPsTqfj3fFahBMhL2w3IZ4VtxRPEZR4BEyVY40bQ8ggwYwM1SfrTDhiZ5o0xTQ
-         f0R1FMDZOU2nJX6df5X96WjNyu+lDqoL9VzWheh6iUAuTrS3aNbwbIx9EVQN7x/4C3
-         ukNBHR6ViMqoQ==
+        b=I/q3GHjOxXbkvIggu4Lfq+v8UtwJmnIx7QS0yXTA/y3uzVYQiiPyEZOvmDla8reqU
+         A36XD7pmd1zLqrbe7PnsoTKrF8RustUPepAnikxIbKtGtca97Zstp+xYrFqq6caWcY
+         SGfMpqLZGx/xW6Sy/yzl4VuIFZ6fqqCsjUU9SpAHQXBdOrnpWgto09ZnRMifjkJn9r
+         x35QWOv/xdHCBXK5bhbpztWhASIp2/tSHBSMk3N0grxorAlGZte85WI/+22wyWHI2Y
+         KyKP9Xsz/PXcXvogoIVmjRsKhqMXh+54dHcmoB+E+i6Up2AkP3rYSZxPcbgBLo3rL/
+         EnlNhmIbqMq4g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
@@ -43,9 +43,9 @@ Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         serge@hallyn.com, stephen.smalley.work@gmail.com,
         eparis@parisplace.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.17 01/43] LSM: general protection fault in legacy_parse_param
-Date:   Mon, 28 Mar 2022 07:17:45 -0400
-Message-Id: <20220328111828.1554086-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.16 01/35] LSM: general protection fault in legacy_parse_param
+Date:   Mon, 28 Mar 2022 07:19:37 -0400
+Message-Id: <20220328112011.1555169-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 X-stable: review
@@ -80,7 +80,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 17 insertions(+), 5 deletions(-)
 
 diff --git a/security/security.c b/security/security.c
-index 22261d79f333..f101a53a63ed 100644
+index 64abdfb20bc2..8a1b26be08dd 100644
 --- a/security/security.c
 +++ b/security/security.c
 @@ -884,9 +884,22 @@ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
@@ -109,10 +109,10 @@ index 22261d79f333..f101a53a63ed 100644
  
  int security_sb_alloc(struct super_block *sb)
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 5b6895e4fc29..371f67a37f9a 100644
+index 49b4f59db35e..d582479dfd62 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -2860,10 +2860,9 @@ static int selinux_fs_context_parse_param(struct fs_context *fc,
+@@ -2909,10 +2909,9 @@ static int selinux_fs_context_parse_param(struct fs_context *fc,
  		return opt;
  
  	rc = selinux_add_opt(opt, param->string, &fc->security);
