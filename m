@@ -2,51 +2,49 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01252C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B198EC43217
 	for <linux-security-module@archiver.kernel.org>; Mon, 28 Mar 2022 11:23:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240968AbiC1LYk (ORCPT
+        id S240943AbiC1LYh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Mar 2022 07:24:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60190 "EHLO
+        Mon, 28 Mar 2022 07:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241163AbiC1LXU (ORCPT
+        with ESMTP id S240818AbiC1LVg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Mar 2022 07:23:20 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A195A55BF2;
-        Mon, 28 Mar 2022 04:20:17 -0700 (PDT)
+        Mon, 28 Mar 2022 07:21:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF4245575B;
+        Mon, 28 Mar 2022 04:19:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1DA0AB80E01;
-        Mon, 28 Mar 2022 11:20:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87243C340EC;
-        Mon, 28 Mar 2022 11:20:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4EFF061164;
+        Mon, 28 Mar 2022 11:19:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E09EBC34110;
+        Mon, 28 Mar 2022 11:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648466414;
-        bh=0W2ORTtK48q70ycAulC0xB7KmNVK84oomaBhMqHvMFU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=I/q3GHjOxXbkvIggu4Lfq+v8UtwJmnIx7QS0yXTA/y3uzVYQiiPyEZOvmDla8reqU
-         A36XD7pmd1zLqrbe7PnsoTKrF8RustUPepAnikxIbKtGtca97Zstp+xYrFqq6caWcY
-         SGfMpqLZGx/xW6Sy/yzl4VuIFZ6fqqCsjUU9SpAHQXBdOrnpWgto09ZnRMifjkJn9r
-         x35QWOv/xdHCBXK5bhbpztWhASIp2/tSHBSMk3N0grxorAlGZte85WI/+22wyWHI2Y
-         KyKP9Xsz/PXcXvogoIVmjRsKhqMXh+54dHcmoB+E+i6Up2AkP3rYSZxPcbgBLo3rL/
-         EnlNhmIbqMq4g==
+        s=k20201202; t=1648466357;
+        bh=GH4tvnJqzHy/GV+ENS19CUUuBijp1Yt8XgYpVSEgxSo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YhEyUxx6/eZYneXifGASS95wFsFcV4gnCYP8uMcSJ8EuGL9DVWrsqGodP5Rx0lwfr
+         D/ZrK63uKH87OOj7/6lfUBnO3Ezb0ID/qkc4jrIqUVHXy7bP3rt4AWEjzbxMFxGfsP
+         C1blN9P9WfLlQSw+rR0kbgk41ukO9+4jHSPkHqwMAK0i1j+PTvETG8vjroYzeqFL38
+         hSMy45IMy2WVL/uzqFjCzb6KydLwRez7z5c39+om3iHpJDh7t3RcL8LoNllsfyTT1L
+         QeI5QLzfVwyfyGdlSM7Gig8r5yXVlMha0APWQAqvtXZKK20WHaTvPhT/ldWkfuSGs0
+         651Cb3On7Kesg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com,
-        James Morris <jamorris@linux.microsoft.com>,
-        Paul Moore <paul@paul-moore.com>,
+        kernel test robot <lkp@intel.com>,
         Sasha Levin <sashal@kernel.org>, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.16 01/35] LSM: general protection fault in legacy_parse_param
-Date:   Mon, 28 Mar 2022 07:19:37 -0400
-Message-Id: <20220328112011.1555169-1-sashal@kernel.org>
+        serge@hallyn.com, linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.17 24/43] Fix incorrect type in assignment of ipv6 port for audit
+Date:   Mon, 28 Mar 2022 07:18:08 -0400
+Message-Id: <20220328111828.1554086-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220328111828.1554086-1-sashal@kernel.org>
+References: <20220328111828.1554086-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -56,75 +54,31 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Casey Schaufler <casey@schaufler-ca.com>
 
-[ Upstream commit ecff30575b5ad0eda149aadad247b7f75411fd47 ]
+[ Upstream commit a5cd1ab7ab679d252a6d2f483eee7d45ebf2040c ]
 
-The usual LSM hook "bail on fail" scheme doesn't work for cases where
-a security module may return an error code indicating that it does not
-recognize an input.  In this particular case Smack sees a mount option
-that it recognizes, and returns 0. A call to a BPF hook follows, which
-returns -ENOPARAM, which confuses the caller because Smack has processed
-its data.
+Remove inappropriate use of ntohs() and assign the
+port value directly.
 
-The SELinux hook incorrectly returns 1 on success. There was a time
-when this was correct, however the current expectation is that it
-return 0 on success. This is repaired.
-
-Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: James Morris <jamorris@linux.microsoft.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/security.c      | 17 +++++++++++++++--
- security/selinux/hooks.c |  5 ++---
- 2 files changed, 17 insertions(+), 5 deletions(-)
+ security/smack/smack_lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/security.c b/security/security.c
-index 64abdfb20bc2..8a1b26be08dd 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -884,9 +884,22 @@ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
- 	return call_int_hook(fs_context_dup, 0, fc, src_fc);
- }
- 
--int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+int security_fs_context_parse_param(struct fs_context *fc,
-+				    struct fs_parameter *param)
- {
--	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
-+	struct security_hook_list *hp;
-+	int trc;
-+	int rc = -ENOPARAM;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
-+			     list) {
-+		trc = hp->hook.fs_context_parse_param(fc, param);
-+		if (trc == 0)
-+			rc = 0;
-+		else if (trc != -ENOPARAM)
-+			return trc;
-+	}
-+	return rc;
- }
- 
- int security_sb_alloc(struct super_block *sb)
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 49b4f59db35e..d582479dfd62 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2909,10 +2909,9 @@ static int selinux_fs_context_parse_param(struct fs_context *fc,
- 		return opt;
- 
- 	rc = selinux_add_opt(opt, param->string, &fc->security);
--	if (!rc) {
-+	if (!rc)
- 		param->string = NULL;
--		rc = 1;
--	}
-+
- 	return rc;
- }
- 
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 14b279cc75c9..6207762dbdb1 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2510,7 +2510,7 @@ static int smk_ipv6_check(struct smack_known *subject,
+ #ifdef CONFIG_AUDIT
+ 	smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+ 	ad.a.u.net->family = PF_INET6;
+-	ad.a.u.net->dport = ntohs(address->sin6_port);
++	ad.a.u.net->dport = address->sin6_port;
+ 	if (act == SMK_RECEIVING)
+ 		ad.a.u.net->v6info.saddr = address->sin6_addr;
+ 	else
 -- 
 2.34.1
 
