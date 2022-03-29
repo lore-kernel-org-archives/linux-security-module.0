@@ -2,33 +2,33 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857ABC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 12:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D9CC43217
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 12:51:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236809AbiC2MxM (ORCPT
+        id S236845AbiC2MxO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Mar 2022 08:53:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35758 "EHLO
+        Tue, 29 Mar 2022 08:53:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237167AbiC2MxA (ORCPT
+        with ESMTP id S237155AbiC2Mw7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Mar 2022 08:53:00 -0400
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C778911C34
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Mar 2022 05:51:02 -0700 (PDT)
+        Tue, 29 Mar 2022 08:52:59 -0400
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBDE1E0F3
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Mar 2022 05:51:00 -0700 (PDT)
 Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KSTvT4R2wzMpqn6;
-        Tue, 29 Mar 2022 14:51:01 +0200 (CEST)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KSTvR4lCRzMprp1;
+        Tue, 29 Mar 2022 14:50:59 +0200 (CEST)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KSTvT2cKczlhMBy;
-        Tue, 29 Mar 2022 14:51:01 +0200 (CEST)
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KSTvR2glxzlhMCK;
+        Tue, 29 Mar 2022 14:50:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1648558261;
-        bh=WnfPpQmWAAzIHJDB9oGoL2aI5wnbEGO8XYf1VIXPCkk=;
+        s=20191114; t=1648558259;
+        bh=cGKkI5dIAlnDd39MT7GxV5PbbTi1yoIW7hnT3vZmRfY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V2wEcZ4qpC3UvBVmxslejauEnYFEBb23jRgeFzDz9J6bt4wX1b+OikqmVINcdKWFS
-         uIS7k35B7oLqU6PqMTVZEmVIJMm5MNqnsvxe6aDq9dFolC46H0RyUitepACRN6F1Wc
-         hmUkisZeYuPrB4EZ26mb6E6rFxCmUuDC9INfSmWU=
+        b=LX4efo/pLMuI6/U7ALHvLtfakZ2dPNyJF6F36JolZPTYGTB83Az99kayzwM2HZR2I
+         VTazgEvGj4bR0mczQ6b+I8028BdNcRzblhsHk8DAN6dOZESAxNSIxtWUyAui7N58A6
+         hvTytlS+qnukZlFELNwBd0ZS9yoA/ykcigr+Z8NM=
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>
@@ -45,9 +45,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v2 05/12] landlock: Move filesystem helpers and add a new one
-Date:   Tue, 29 Mar 2022 14:51:10 +0200
-Message-Id: <20220329125117.1393824-6-mic@digikod.net>
+Subject: [PATCH v2 02/12] landlock: Reduce the maximum number of layers to 16
+Date:   Tue, 29 Mar 2022 14:51:07 +0200
+Message-Id: <20220329125117.1393824-3-mic@digikod.net>
 In-Reply-To: <20220329125117.1393824-1-mic@digikod.net>
 References: <20220329125117.1393824-1-mic@digikod.net>
 MIME-Version: 1.0
@@ -58,152 +58,134 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Move the SB_NOUSER and IS_PRIVATE dentry check to a standalone
-is_nouser_or_private() helper.  This will be useful for a following
-commit.
+The maximum number of nested Landlock domains is currently 64.  Because
+of the following fix and to help reduce the stack size, let's reduce it
+to 16.  This seems large enough for a lot of use cases (e.g. sandboxed
+init service, spawning a sandboxed SSH service, in nested sandboxed
+containers).  Reducing the number of nested domains may also help to
+discover misuse of Landlock (e.g. creating a domain per rule).
 
-Move get_mode_access() and maybe_remove() to make them usable by new
-code provided by a following commit.
+Add and use a dedicated layer_mask_t typedef to fit with the number of
+layers.  This might be useful when changing it and to keep it consistent
+with the maximum number of layers.
 
 Reviewed-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20220329125117.1393824-6-mic@digikod.net
+Link: https://lore.kernel.org/r/20220329125117.1393824-3-mic@digikod.net
 ---
 
 Changes since v1:
-* Move is_nouser_or_private() explanation up to a function header
-  comment block as suggested by Paul Moore.
 * Add Reviewed-by: Paul Moore.
+* Update documentation to reflect this change.
 ---
- security/landlock/fs.c | 87 ++++++++++++++++++++++--------------------
- 1 file changed, 46 insertions(+), 41 deletions(-)
+ Documentation/userspace-api/landlock.rst   |  4 ++--
+ security/landlock/fs.c                     | 13 +++++--------
+ security/landlock/limits.h                 |  2 +-
+ security/landlock/ruleset.h                |  4 ++++
+ tools/testing/selftests/landlock/fs_test.c |  2 +-
+ 5 files changed, 13 insertions(+), 12 deletions(-)
 
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+index f35552ff19ba..b68e7a51009f 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -267,8 +267,8 @@ restrict such paths with dedicated ruleset flags.
+ Ruleset layers
+ --------------
+ 
+-There is a limit of 64 layers of stacked rulesets.  This can be an issue for a
+-task willing to enforce a new ruleset in complement to its 64 inherited
++There is a limit of 16 layers of stacked rulesets.  This can be an issue for a
++task willing to enforce a new ruleset in complement to its 16 inherited
+ rulesets.  Once this limit is reached, sys_landlock_restrict_self() returns
+ E2BIG.  It is then strongly suggested to carefully build rulesets once in the
+ life of a thread, especially for applications able to launch other applications
 diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 461751c01726..57dc3fb0c557 100644
+index 9de2a460a762..4048e3c04d75 100644
 --- a/security/landlock/fs.c
 +++ b/security/landlock/fs.c
-@@ -257,6 +257,18 @@ static inline bool unmask_layers(const struct landlock_rule *const rule,
- 	return false;
- }
+@@ -180,10 +180,10 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
  
-+/*
-+ * Allows access to pseudo filesystems that will never be mountable (e.g.
-+ * sockfs, pipefs), but can still be reachable through
-+ * /proc/<pid>/fd/<file-descriptor>
-+ */
-+static inline bool is_nouser_or_private(const struct dentry *dentry)
-+{
-+	return (dentry->d_sb->s_flags & SB_NOUSER) ||
-+			(d_is_positive(dentry) &&
-+			 unlikely(IS_PRIVATE(d_backing_inode(dentry))));
-+}
-+
- static int check_access_path(const struct landlock_ruleset *const domain,
+ /* Access-control management */
+ 
+-static inline u64 unmask_layers(
++static inline layer_mask_t unmask_layers(
+ 		const struct landlock_ruleset *const domain,
  		const struct path *const path,
- 		const access_mask_t access_request)
-@@ -270,14 +282,7 @@ static int check_access_path(const struct landlock_ruleset *const domain,
+-		const access_mask_t access_request, u64 layer_mask)
++		const access_mask_t access_request, layer_mask_t layer_mask)
+ {
+ 	const struct landlock_rule *rule;
+ 	const struct inode *inode;
+@@ -209,11 +209,11 @@ static inline u64 unmask_layers(
+ 	 */
+ 	for (i = 0; i < rule->num_layers; i++) {
+ 		const struct landlock_layer *const layer = &rule->layers[i];
+-		const u64 layer_level = BIT_ULL(layer->level - 1);
++		const layer_mask_t layer_bit = BIT_ULL(layer->level - 1);
+ 
+ 		/* Checks that the layer grants access to the full request. */
+ 		if ((layer->access & access_request) == access_request) {
+-			layer_mask &= ~layer_level;
++			layer_mask &= ~layer_bit;
+ 
+ 			if (layer_mask == 0)
+ 				return layer_mask;
+@@ -228,12 +228,9 @@ static int check_access_path(const struct landlock_ruleset *const domain,
+ {
+ 	bool allowed = false;
+ 	struct path walker_path;
+-	u64 layer_mask;
++	layer_mask_t layer_mask;
+ 	size_t i;
+ 
+-	/* Make sure all layers can be checked. */
+-	BUILD_BUG_ON(BITS_PER_TYPE(layer_mask) < LANDLOCK_MAX_NUM_LAYERS);
+-
+ 	if (!access_request)
  		return 0;
  	if (WARN_ON_ONCE(!domain || !path))
- 		return 0;
--	/*
--	 * Allows access to pseudo filesystems that will never be mountable
--	 * (e.g. sockfs, pipefs), but can still be reachable through
--	 * /proc/<pid>/fd/<file-descriptor> .
--	 */
--	if ((path->dentry->d_sb->s_flags & SB_NOUSER) ||
--			(d_is_positive(path->dentry) &&
--			 unlikely(IS_PRIVATE(d_backing_inode(path->dentry)))))
-+	if (is_nouser_or_private(path->dentry))
- 		return 0;
- 	if (WARN_ON_ONCE(domain->num_layers < 1))
- 		return -EACCES;
-@@ -356,6 +361,39 @@ static inline int current_check_access_path(const struct path *const path,
- 	return check_access_path(dom, path, access_request);
- }
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 458d1de32ed5..126d1ec04d34 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -13,7 +13,7 @@
+ #include <linux/limits.h>
+ #include <uapi/linux/landlock.h>
  
-+static inline access_mask_t get_mode_access(const umode_t mode)
-+{
-+	switch (mode & S_IFMT) {
-+	case S_IFLNK:
-+		return LANDLOCK_ACCESS_FS_MAKE_SYM;
-+	case 0:
-+		/* A zero mode translates to S_IFREG. */
-+	case S_IFREG:
-+		return LANDLOCK_ACCESS_FS_MAKE_REG;
-+	case S_IFDIR:
-+		return LANDLOCK_ACCESS_FS_MAKE_DIR;
-+	case S_IFCHR:
-+		return LANDLOCK_ACCESS_FS_MAKE_CHAR;
-+	case S_IFBLK:
-+		return LANDLOCK_ACCESS_FS_MAKE_BLOCK;
-+	case S_IFIFO:
-+		return LANDLOCK_ACCESS_FS_MAKE_FIFO;
-+	case S_IFSOCK:
-+		return LANDLOCK_ACCESS_FS_MAKE_SOCK;
-+	default:
-+		WARN_ON_ONCE(1);
-+		return 0;
-+	}
-+}
+-#define LANDLOCK_MAX_NUM_LAYERS		64
++#define LANDLOCK_MAX_NUM_LAYERS		16
+ #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+ 
+ #define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_MAKE_SYM
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 7e7cac68e443..0128c56ee7ff 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -23,6 +23,10 @@ typedef u16 access_mask_t;
+ /* Makes sure all filesystem access rights can be stored. */
+ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+ 
++typedef u16 layer_mask_t;
++/* Makes sure all layers can be checked. */
++static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
 +
-+static inline access_mask_t maybe_remove(const struct dentry *const dentry)
-+{
-+	if (d_is_negative(dentry))
-+		return 0;
-+	return d_is_dir(dentry) ? LANDLOCK_ACCESS_FS_REMOVE_DIR :
-+		LANDLOCK_ACCESS_FS_REMOVE_FILE;
-+}
-+
- /* Inode hooks */
+ /**
+  * struct landlock_layer - Access rights for a given layer
+  */
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 10c9a1e4ebd9..99838cac970b 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -1080,7 +1080,7 @@ TEST_F_FORK(layout1, max_layers)
+ 	const int ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
  
- static void hook_inode_free_security(struct inode *const inode)
-@@ -549,31 +587,6 @@ static int hook_sb_pivotroot(const struct path *const old_path,
+ 	ASSERT_LE(0, ruleset_fd);
+-	for (i = 0; i < 64; i++)
++	for (i = 0; i < 16; i++)
+ 		enforce_ruleset(_metadata, ruleset_fd);
  
- /* Path hooks */
- 
--static inline access_mask_t get_mode_access(const umode_t mode)
--{
--	switch (mode & S_IFMT) {
--	case S_IFLNK:
--		return LANDLOCK_ACCESS_FS_MAKE_SYM;
--	case 0:
--		/* A zero mode translates to S_IFREG. */
--	case S_IFREG:
--		return LANDLOCK_ACCESS_FS_MAKE_REG;
--	case S_IFDIR:
--		return LANDLOCK_ACCESS_FS_MAKE_DIR;
--	case S_IFCHR:
--		return LANDLOCK_ACCESS_FS_MAKE_CHAR;
--	case S_IFBLK:
--		return LANDLOCK_ACCESS_FS_MAKE_BLOCK;
--	case S_IFIFO:
--		return LANDLOCK_ACCESS_FS_MAKE_FIFO;
--	case S_IFSOCK:
--		return LANDLOCK_ACCESS_FS_MAKE_SOCK;
--	default:
--		WARN_ON_ONCE(1);
--		return 0;
--	}
--}
--
- /*
-  * Creating multiple links or renaming may lead to privilege escalations if not
-  * handled properly.  Indeed, we must be sure that the source doesn't gain more
-@@ -601,14 +614,6 @@ static int hook_path_link(struct dentry *const old_dentry,
- 			get_mode_access(d_backing_inode(old_dentry)->i_mode));
- }
- 
--static inline access_mask_t maybe_remove(const struct dentry *const dentry)
--{
--	if (d_is_negative(dentry))
--		return 0;
--	return d_is_dir(dentry) ? LANDLOCK_ACCESS_FS_REMOVE_DIR :
--		LANDLOCK_ACCESS_FS_REMOVE_FILE;
--}
--
- static int hook_path_rename(const struct path *const old_dir,
- 		struct dentry *const old_dentry,
- 		const struct path *const new_dir,
+ 	for (i = 0; i < 2; i++) {
 -- 
 2.35.1
 
