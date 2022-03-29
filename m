@@ -2,143 +2,220 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB1AC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 20:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E799C43219
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 23:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229991AbiC2Ua6 (ORCPT
+        id S241342AbiC2Xxn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Mar 2022 16:30:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44464 "EHLO
+        Tue, 29 Mar 2022 19:53:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbiC2Ua5 (ORCPT
+        with ESMTP id S241256AbiC2Xx0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Mar 2022 16:30:57 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 717A231229;
-        Tue, 29 Mar 2022 13:29:13 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22TJbjs6012612;
-        Tue, 29 Mar 2022 20:28:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=RtpygqGfs5OGAozMDI4lFQBuJtECTlK2JppjdTXC0OA=;
- b=I+pOmgGjBWbPwZeizBHesRHCf59i53k6k8vZsXCPCxTL/HDkrj531domu2XntGZgsWSD
- 6XOflbHVyz1hxjehHurWqozr9g9A5Wo71Qd4FKPeSNs+BUKv7bjQxtV6o2sG7vW7dTfA
- jeBLFYcVepjmV6EGAQUDLguEFqzkK52mmtMk/bIB4nGOk6S367+7UdIVNjN+sOglT9iN
- gm3U/LCUaOEv+KIVlnkbI0KUzof+av4cO5n/pgwhYOYoi/rkwvsk3s4A++rcGbRLmXkF
- nwdpYXIyeyw3r0VNHptJlP23GCUkGBxxZJtwwtupz1YnUCTWitVK8fmo9UyTDRDx+mhG hQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3f409rvvu4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Mar 2022 20:28:55 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22TKQMxt025808;
-        Tue, 29 Mar 2022 20:28:54 GMT
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3f409rvvtn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Mar 2022 20:28:54 +0000
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22TKNNmQ000755;
-        Tue, 29 Mar 2022 20:28:53 GMT
-Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma01dal.us.ibm.com with ESMTP id 3f1tf9vsb5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Mar 2022 20:28:53 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22TKSqYt56885704
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Mar 2022 20:28:52 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B6B1112061;
-        Tue, 29 Mar 2022 20:28:52 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15A61112063;
-        Tue, 29 Mar 2022 20:28:48 +0000 (GMT)
-Received: from [9.160.79.229] (unknown [9.160.79.229])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 29 Mar 2022 20:28:47 +0000 (GMT)
-Message-ID: <7696ba46-91c7-7119-bd68-b3521459cf37@linux.ibm.com>
-Date:   Tue, 29 Mar 2022 23:28:45 +0300
+        Tue, 29 Mar 2022 19:53:26 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DE9A214043;
+        Tue, 29 Mar 2022 16:51:34 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id h63so22937976iof.12;
+        Tue, 29 Mar 2022 16:51:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=74O0cY+bOP3wHBSafmTjrdQXSiGpOdiTWDZVtBoQYXc=;
+        b=WvcbotgBYKiLC714YGuezgXnN5lhQOgSKqIhHWIcs9SJ/TjZ4qDiqztKVhq/c/fbb7
+         CRtEocnpbz+n+n5R4BSUrwuS9w0k9zSF+7f5EXq/mk6amSJaPcWyoRv3RhXelFYfeMxL
+         6E82rTdvv4aC+vwPLUB3zQkanX7p8PkgSR49eK6jlxnnT+JBe4fF1F6F4YILiHIQ1Dfo
+         YThyrVAbT2ezC4Vir9buU/Cc4wEcqylttF1i8ZPdMSV2rVOD8XZluQqt4Tq9JsLSMwr6
+         /TK8qSeBHIm8gGPHU96piNQ1TWROyWk1JGmJNBYf3RhsSgpygDw04QQq8iXLcNuXa1/n
+         SfbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=74O0cY+bOP3wHBSafmTjrdQXSiGpOdiTWDZVtBoQYXc=;
+        b=ctgEN0VYGSzWUpZBYk8xpBz6+KGrgfPifmjeplkjaCFzdX2NfL+WOxoyR7DElhQp6t
+         ni3I/f4t9C9ano7pv5ChiXce3E2dWA7CHUfVpGyi7ylC+oIMICN9kgAH9/iqfXCBOOyK
+         Jn2P6XdiCrsRfn9bTZea3nmO0v4skSPvJUfisFJxEnSMYCCAG+atOnYfjUqvLDCXNCS/
+         +/9Axpp4ZfP+nf3rR7ZJ+f/il0BYa42udAvsMWAhApcOTN7+6lPEBtM+kFq1hXa/YKX3
+         o3A0H5peqs7ZL/+pU8WpyfhHoLczTtsM3ZdJBI3Xzf+qv4j/eu8+n+tp6vL8azJZ8Lxx
+         Tz2A==
+X-Gm-Message-State: AOAM530qBxKDak1eHcileEbi12ctd84yA5YCmTNwdiWKhDZk79RN7KrA
+        ghXP3oWGJ9B8GRkZqpaOtozm88jlkya0+paPhVM=
+X-Google-Smtp-Source: ABdhPJwS9Fg+z09Kw/RcFYy3K93hJ67At+Bq0ikjVOdBE5T/1iZTAgYq3sbL/9qW5x19tnSgSohTJSUxFCaVijVlhWg=
+X-Received: by 2002:a05:6638:148e:b0:321:6b54:d966 with SMTP id
+ j14-20020a056638148e00b003216b54d966mr17338496jak.103.1648597893376; Tue, 29
+ Mar 2022 16:51:33 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v8 0/4] Allow guest access to EFI confidential computing
- secret area
-Content-Language: en-US
-To:     Borislav Petkov <bp@suse.de>
-Cc:     linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>
-References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
- <YjydSNnG6EJ1KWx0@zn.tnic>
- <f2fb7553-0313-6393-c93c-2bb6619086dc@linux.ibm.com>
- <YkNQNzNa02Sndu+q@zn.tnic>
-From:   Dov Murik <dovmurik@linux.ibm.com>
-In-Reply-To: <YkNQNzNa02Sndu+q@zn.tnic>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: faAw94u_RZeNLLhUORJVBKERuDDuG3NZ
-X-Proofpoint-ORIG-GUID: 5pIjdB5JlrxwcElAbLVLY6fDYwE_hTUS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-29_08,2022-03-29_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- adultscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
- impostorscore=0 suspectscore=0 spamscore=0 phishscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203290109
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+In-Reply-To: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 29 Mar 2022 16:51:22 -0700
+Message-ID: <CAEf4BzZNs-DYzQcE5LPxNzXDa+9A7QFszw99fnd2=cq9SuWsLg@mail.gmail.com>
+Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF programs
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        KP Singh <kpsingh@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Networking <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Mar 28, 2022 at 10:51 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>
+> eBPF already allows programs to be preloaded and kept running without
+> intervention from user space. There is a dedicated kernel module called
+> bpf_preload, which contains the light skeleton of the iterators_bpf eBPF
+> program. If this module is enabled in the kernel configuration, its loading
+> will be triggered when the bpf filesystem is mounted (unless the module is
+> built-in), and the links of iterators_bpf are pinned in that filesystem
+> (they will appear as the progs.debug and maps.debug files).
+>
+> However, the current mechanism, if used to preload an LSM, would not offer
+> the same security guarantees of LSMs integrated in the security subsystem.
+> Also, it is not generic enough to be used for preloading arbitrary eBPF
+> programs, unless the bpf_preload code is heavily modified.
+>
+> More specifically, the security problems are:
+> - any program can be pinned to the bpf filesystem without limitations
+>   (unless a MAC mechanism enforces some restrictions);
+> - programs being executed can be terminated at any time by deleting the
+>   pinned objects or unmounting the bpf filesystem.
+>
+> The usability problems are:
+> - only a fixed amount of links can be pinned;
+> - only links can be pinned, other object types are not supported;
+> - code to pin objects has to be written manually;
+> - preloading multiple eBPF programs is not practical, bpf_preload has to be
+>   modified to include additional light skeletons.
+>
+> Solve the security problems by mounting the bpf filesystem from the kernel,
+> by preloading authenticated kernel modules (e.g. with module.sig_enforce)
+> and by pinning objects to that filesystem. This particular filesystem
+> instance guarantees that desired eBPF programs run until the very end of
+> the kernel lifecycle, since even root cannot interfere with it.
+>
+> Solve the usability problems by generalizing the pinning function, to
+> handle not only links but also maps and progs. Also increment the object
+> reference count and call the pinning function directly from the preload
+> method (currently in the bpf_preload kernel module) rather than from the
+> bpf filesystem code itself, so that a generic eBPF program can do those
+> operations depending on its objects (this also avoids the limitation of the
+> fixed-size array for storing the objects to pin).
+>
+> Then, simplify the process of pinning objects defined by a generic eBPF
+> program by automatically generating the required methods in the light
+> skeleton. Also, generate a separate kernel module for each eBPF program to
+> preload, so that existing ones don't have to be modified. Finally, support
+> preloading multiple eBPF programs by allowing users to specify a list from
+> the kernel configuration, at build time, or with the new kernel option
+> bpf_preload_list=, at run-time.
+>
+> To summarize, this patch set makes it possible to plug in out-of-tree LSMs
+> matching the security guarantees of their counterpart in the security
+> subsystem, without having to modify the kernel itself. The same benefits
+> are extended to other eBPF program types.
+>
+> Only one remaining problem is how to support auto-attaching eBPF programs
+> with LSM type. It will be solved with a separate patch set.
+>
+> Patches 1-2 export some definitions, to build out-of-tree kernel modules
+> with eBPF programs to preload. Patches 3-4 allow eBPF programs to pin
+> objects by themselves. Patches 5-10 automatically generate the methods for
+> preloading in the light skeleton. Patches 11-14 make it possible to preload
+> multiple eBPF programs. Patch 15 automatically generates the kernel module
+> for preloading an eBPF program, patch 16 does a kernel mount of the bpf
+> filesystem, and finally patches 17-18 test the functionality introduced.
+>
+
+This approach of moving tons of pretty generic code into codegen of
+lskel seems suboptimal. Why so much code has to be codegenerated?
+Especially that tiny module code?
+
+Can you please elaborate on why it can't be done in a way that doesn't
+require such extensive light skeleton codegen changes?
 
 
-On 29/03/2022 21:30, Borislav Petkov wrote:
+> Roberto Sassu (18):
+>   bpf: Export bpf_link_inc()
+>   bpf-preload: Move bpf_preload.h to include/linux
+>   bpf-preload: Generalize object pinning from the kernel
+>   bpf-preload: Export and call bpf_obj_do_pin_kernel()
+>   bpf-preload: Generate static variables
+>   bpf-preload: Generate free_objs_and_skel()
+>   bpf-preload: Generate preload()
+>   bpf-preload: Generate load_skel()
+>   bpf-preload: Generate code to pin non-internal maps
+>   bpf-preload: Generate bpf_preload_ops
+>   bpf-preload: Store multiple bpf_preload_ops structures in a linked
+>     list
+>   bpf-preload: Implement new registration method for preloading eBPF
+>     programs
+>   bpf-preload: Move pinned links and maps to a dedicated directory in
+>     bpffs
+>   bpf-preload: Switch to new preload registration method
+>   bpf-preload: Generate code of kernel module to preload
+>   bpf-preload: Do kernel mount to ensure that pinned objects don't
+>     disappear
+>   bpf-preload/selftests: Add test for automatic generation of preload
+>     methods
+>   bpf-preload/selftests: Preload a test eBPF program and check pinned
+>     objects
 
-> 
-> So now that I think of it, it would be even nicer if the fact whether
-> guest debugging is allowed, were available to the guest *very early*
-> during boot. Because I think the most important cases where you'd want
-> to singlestep a SEV* guest with the qemu gdbstub is early guest kernel
-> boot code. So it would be cool if we'd have access to the debugging
-> setting that early.
-> 
-> Lemme have a look at your patches in detail to get an idea what's
-> happening there.
-
-Is efi_config_parse_tables() early enough?  That's where we learn for
-the first time that the firmware has a launch-secrets area that we can
-look at.
-
-We can add there (say, next to the call to efi_tpm_eventlog_init()) a
-code to:
-
-1. map the secret area (ioremap_encrypted())
-2. parse the table, look for the "sev debug enabled" GUID.
-3. set the value of the kernel variable that we can later use anywhere.
+please use proper prefixes: bpf (for kernel-side changes), libbpf,
+bpftool, selftests/bpf, etc
 
 
-Of course Ard might know about a better mechanism or place to do that.
-
-
--Dov
+>
+>  .../admin-guide/kernel-parameters.txt         |   8 +
+>  fs/namespace.c                                |   1 +
+>  include/linux/bpf.h                           |   5 +
+>  include/linux/bpf_preload.h                   |  37 ++
+>  init/main.c                                   |   2 +
+>  kernel/bpf/inode.c                            | 295 +++++++++--
+>  kernel/bpf/preload/Kconfig                    |  25 +-
+>  kernel/bpf/preload/bpf_preload.h              |  16 -
+>  kernel/bpf/preload/bpf_preload_kern.c         |  85 +---
+>  kernel/bpf/preload/iterators/Makefile         |   9 +-
+>  .../bpf/preload/iterators/iterators.lskel.h   | 466 +++++++++++-------
+>  kernel/bpf/syscall.c                          |   1 +
+>  .../bpf/bpftool/Documentation/bpftool-gen.rst |  13 +
+>  tools/bpf/bpftool/bash-completion/bpftool     |   6 +-
+>  tools/bpf/bpftool/gen.c                       | 331 +++++++++++++
+>  tools/bpf/bpftool/main.c                      |   7 +-
+>  tools/bpf/bpftool/main.h                      |   1 +
+>  tools/testing/selftests/bpf/Makefile          |  32 +-
+>  .../bpf/bpf_testmod_preload/.gitignore        |   7 +
+>  .../bpf/bpf_testmod_preload/Makefile          |  20 +
+>  .../gen_preload_methods.expected.diff         |  97 ++++
+>  .../bpf/prog_tests/test_gen_preload_methods.c |  27 +
+>  .../bpf/prog_tests/test_preload_methods.c     |  69 +++
+>  .../selftests/bpf/progs/gen_preload_methods.c |  23 +
+>  24 files changed, 1246 insertions(+), 337 deletions(-)
+>  create mode 100644 include/linux/bpf_preload.h
+>  delete mode 100644 kernel/bpf/preload/bpf_preload.h
+>  create mode 100644 tools/testing/selftests/bpf/bpf_testmod_preload/.gitignore
+>  create mode 100644 tools/testing/selftests/bpf/bpf_testmod_preload/Makefile
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/gen_preload_methods.expected.diff
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_gen_preload_methods.c
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_preload_methods.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/gen_preload_methods.c
+>
+> --
+> 2.32.0
+>
