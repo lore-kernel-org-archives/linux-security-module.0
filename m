@@ -2,269 +2,206 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3A8C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 12:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D152C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 12:57:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236844AbiC2Mx1 (ORCPT
+        id S234829AbiC2M6t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Mar 2022 08:53:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35432 "EHLO
+        Tue, 29 Mar 2022 08:58:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237180AbiC2MxA (ORCPT
+        with ESMTP id S237047AbiC2M6A (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Mar 2022 08:53:00 -0400
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D3B15A09
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Mar 2022 05:51:04 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KSTvV64p7zMq17p;
-        Tue, 29 Mar 2022 14:51:02 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KSTvV04V8zlhMCD;
-        Tue, 29 Mar 2022 14:51:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1648558262;
-        bh=nD9Oyi8gxV+B05hDwh7Il4DQJP6sBS/TgNM+vfS7Y1w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SJz9xJy1mTLZyhh5q/Y0cuFvDpXd7N543mBzSV/zqGkBIQSe1gFMy43TM+axrlVuF
-         KCAVW8tlavOpYHUxkCM7Vi0M6RVUOAWQfG3WHgSG2SY/nJ7l5S4WX7NLCKSuIuJIBb
-         3fkXylEC7knef6XSARV4m8NmaXoKcuy75sP0MmDQ=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v2 06/12] LSM: Remove double path_rename hook calls for RENAME_EXCHANGE
-Date:   Tue, 29 Mar 2022 14:51:11 +0200
-Message-Id: <20220329125117.1393824-7-mic@digikod.net>
-In-Reply-To: <20220329125117.1393824-1-mic@digikod.net>
-References: <20220329125117.1393824-1-mic@digikod.net>
-MIME-Version: 1.0
+        Tue, 29 Mar 2022 08:58:00 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204B85FE8;
+        Tue, 29 Mar 2022 05:56:16 -0700 (PDT)
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22TAuZXs003538;
+        Tue, 29 Mar 2022 12:55:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=K8srbVD97aBzbFKQRRvFsxZKalyJdMdPYve7feegeqo=;
+ b=gED/f7sP3QkJCr3Ag5xybc5apnsX3GY9yyAp3GUrsKtPekBnVghBcQeZqM7lsL+aypyY
+ KCDCSjs/7teRCQdas8JNKZPywykPzXxMHkx99Jnsp5j68tzKGdXe/lMCBMkvOZGgmlPd
+ omP0zaNP18eVEitO2uxuL8QltArnteXltkhEeuvEI4Jz7Wo+hNk2DNFw6kjOswv/QAoV
+ tsc0CSEKIRhzhs8vRYdsCtBeq92Aq+JvCm1Pym8W185sVISTLFpEQJoBIHh4j3yhjFN3
+ gm4uUlnJ3WRRY++iQb+skqwmUapajANRP5B8fkwTw5/X/bX2XLHu9Lf3eyym0zlWpxKb sQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3f40t82hjp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Mar 2022 12:55:48 +0000
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22TBeHcF005691;
+        Tue, 29 Mar 2022 12:55:47 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3f40t82hj5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Mar 2022 12:55:47 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22TCrTcR025140;
+        Tue, 29 Mar 2022 12:55:46 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma04dal.us.ibm.com with ESMTP id 3f1tf9snbt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Mar 2022 12:55:46 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22TCtj6S26739196
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Mar 2022 12:55:45 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4D2A6112067;
+        Tue, 29 Mar 2022 12:55:45 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DDA13112063;
+        Tue, 29 Mar 2022 12:55:40 +0000 (GMT)
+Received: from [9.160.79.229] (unknown [9.160.79.229])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 29 Mar 2022 12:55:40 +0000 (GMT)
+Message-ID: <f2fb7553-0313-6393-c93c-2bb6619086dc@linux.ibm.com>
+Date:   Tue, 29 Mar 2022 15:55:38 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v8 0/4] Allow guest access to EFI confidential computing
+ secret area
+Content-Language: en-US
+To:     Borislav Petkov <bp@suse.de>
+Cc:     linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>
+References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
+ <YjydSNnG6EJ1KWx0@zn.tnic>
+From:   Dov Murik <dovmurik@linux.ibm.com>
+In-Reply-To: <YjydSNnG6EJ1KWx0@zn.tnic>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Yr3QtwC9c6b71TvjRjZOXB9MPeM1WEI4
+X-Proofpoint-GUID: hXEZmmRtRw7JWMAZA1Jxsy53t_CFW_xT
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-29_04,2022-03-29_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1011 impostorscore=0 phishscore=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2203290076
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+Hello Boris,
 
-In order to be able to identify a file exchange with renameat2(2) and
-RENAME_EXCHANGE, which will be useful for Landlock [1], propagate the
-rename flags to LSMs.  This may also improve performance because of the
-switch from two set of LSM hook calls to only one, and because LSMs
-using this hook may optimize the double check (e.g. only one lock,
-reduce the number of path walks).
+On 24/03/2022 18:33, Borislav Petkov wrote:
+> On Mon, Feb 28, 2022 at 11:42:50AM +0000, Dov Murik wrote:
+>> Confidential computing (coco) hardware such as AMD SEV (Secure Encrypted
+>> Virtualization) allows guest owners to inject secrets into the VMs
+>> memory without the host/hypervisor being able to read them.  In SEV,
+>> secret injection is performed early in the VM launch process, before the
+>> guest starts running.
+>>
+>> OVMF already reserves designated area for secret injection (in its
+>> AmdSev package; see edk2 commit 01726b6d23d4 "OvmfPkg/AmdSev: Expose the
+>> Sev Secret area using a configuration table" [1]), but the secrets were
+>> not available in the guest kernel.
+>>
+>> The patch series keeps the address of the EFI-provided memory for
+>> injected secrets, and exposes the secrets to userspace via securityfs
+>> using a new efi_secret kernel module.  The module is autoloaded (by the
+>> EFI driver) if the secret area is populated.
+> 
+> Right, so this thing.
+> 
+> Tom and I were talking about SEV* guest debugging today and I believe
+> there might be another use case for this: SEV-ES guests cannot find out
+> from an attestation report - like SNP guests can - whether they're being
+> debugged or not so it would be very helpful if the fact that a -ES guest
+> is being debugged, could be supplied through such a secrets blob.
+> 
+> Because then, when I'm singlestepping the guest with gdb over the
+> gdbstub, the guest could determine based on those guest-owner previously
+> injected secrets whether it should allow debugging or not.
+> 
 
-AppArmor, Landlock and Tomoyo are updated to leverage this change.  This
-should not change the current behavior (same check order), except
-(different level of) speed boosts.
+Let's see if I understand this correctly:
 
-[1] https://lore.kernel.org/r/20220221212522.320243-1-mic@digikod.net
+You want the guest to know if the its own SEV VM policy allows
+debugging.  And that flag has to be trusted -- so passed from the Guest
+Owner in a secure channel (otherwise the host could set it to
+ALLOW_DEBUGGING even though the Guest Owner didn't approve that).
 
-Cc: James Morris <jmorris@namei.org>
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
-Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20220329125117.1393824-7-mic@digikod.net
----
 
-Changes since v1:
-* Import patch from
-  https://lore.kernel.org/r/20220222175332.384545-1-mic@digikod.net
-* Add Acked-by: Tetsuo Handa.
-* Add Acked-by: John Johansen.
----
- include/linux/lsm_hook_defs.h |  2 +-
- include/linux/lsm_hooks.h     |  1 +
- security/apparmor/lsm.c       | 30 +++++++++++++++++++++++++-----
- security/landlock/fs.c        | 12 ++++++++++--
- security/security.c           |  9 +--------
- security/tomoyo/tomoyo.c      | 11 ++++++++++-
- 6 files changed, 48 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 819ec92dc2a8..d8b49c9c3a8a 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -100,7 +100,7 @@ LSM_HOOK(int, 0, path_link, struct dentry *old_dentry,
- 	 const struct path *new_dir, struct dentry *new_dentry)
- LSM_HOOK(int, 0, path_rename, const struct path *old_dir,
- 	 struct dentry *old_dentry, const struct path *new_dir,
--	 struct dentry *new_dentry)
-+	 struct dentry *new_dentry, unsigned int flags)
- LSM_HOOK(int, 0, path_chmod, const struct path *path, umode_t mode)
- LSM_HOOK(int, 0, path_chown, const struct path *path, kuid_t uid, kgid_t gid)
- LSM_HOOK(int, 0, path_chroot, const struct path *path)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 3bf5c658bc44..32cd2a7fe9fc 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -358,6 +358,7 @@
-  *	@old_dentry contains the dentry structure of the old link.
-  *	@new_dir contains the path structure for parent of the new link.
-  *	@new_dentry contains the dentry structure of the new link.
-+ *	@flags may contain rename options such as RENAME_EXCHANGE.
-  *	Return 0 if permission is granted.
-  * @path_chmod:
-  *	Check for permission to change a mode of the file @path. The new
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 4f0eecb67dde..900bc540656a 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -354,13 +354,16 @@ static int apparmor_path_link(struct dentry *old_dentry, const struct path *new_
- }
- 
- static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_dentry,
--				const struct path *new_dir, struct dentry *new_dentry)
-+				const struct path *new_dir, struct dentry *new_dentry,
-+				const unsigned int flags)
- {
- 	struct aa_label *label;
- 	int error = 0;
- 
- 	if (!path_mediated_fs(old_dentry))
- 		return 0;
-+	if ((flags & RENAME_EXCHANGE) && !path_mediated_fs(new_dentry))
-+		return 0;
- 
- 	label = begin_current_label_crit_section();
- 	if (!unconfined(label)) {
-@@ -374,10 +377,27 @@ static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_d
- 			d_backing_inode(old_dentry)->i_mode
- 		};
- 
--		error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
--				     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
--				     AA_MAY_SETATTR | AA_MAY_DELETE,
--				     &cond);
-+		if (flags & RENAME_EXCHANGE) {
-+			struct path_cond cond_exchange = {
-+				i_uid_into_mnt(mnt_userns, d_backing_inode(new_dentry)),
-+				d_backing_inode(new_dentry)->i_mode
-+			};
-+
-+			error = aa_path_perm(OP_RENAME_SRC, label, &new_path, 0,
-+					     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
-+					     AA_MAY_SETATTR | AA_MAY_DELETE,
-+					     &cond_exchange);
-+			if (!error)
-+				error = aa_path_perm(OP_RENAME_DEST, label, &old_path,
-+						     0, MAY_WRITE | AA_MAY_SETATTR |
-+						     AA_MAY_CREATE, &cond_exchange);
-+		}
-+
-+		if (!error)
-+			error = aa_path_perm(OP_RENAME_SRC, label, &old_path, 0,
-+					     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
-+					     AA_MAY_SETATTR | AA_MAY_DELETE,
-+					     &cond);
- 		if (!error)
- 			error = aa_path_perm(OP_RENAME_DEST, label, &new_path,
- 					     0, MAY_WRITE | AA_MAY_SETATTR |
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 57dc3fb0c557..4422789814ed 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -617,10 +617,12 @@ static int hook_path_link(struct dentry *const old_dentry,
- static int hook_path_rename(const struct path *const old_dir,
- 		struct dentry *const old_dentry,
- 		const struct path *const new_dir,
--		struct dentry *const new_dentry)
-+		struct dentry *const new_dentry,
-+		const unsigned int flags)
- {
- 	const struct landlock_ruleset *const dom =
- 		landlock_get_current_domain();
-+	u32 exchange_access = 0;
- 
- 	if (!dom)
- 		return 0;
-@@ -628,11 +630,17 @@ static int hook_path_rename(const struct path *const old_dir,
- 	if (old_dir->dentry != new_dir->dentry)
- 		/* Gracefully forbids reparenting. */
- 		return -EXDEV;
-+	if (flags & RENAME_EXCHANGE) {
-+		if (unlikely(d_is_negative(new_dentry)))
-+			return -ENOENT;
-+		exchange_access =
-+			get_mode_access(d_backing_inode(new_dentry)->i_mode);
-+	}
- 	if (unlikely(d_is_negative(old_dentry)))
- 		return -ENOENT;
- 	/* RENAME_EXCHANGE is handled because directories are the same. */
- 	return check_access_path(dom, old_dir, maybe_remove(old_dentry) |
--			maybe_remove(new_dentry) |
-+			maybe_remove(new_dentry) | exchange_access |
- 			get_mode_access(d_backing_inode(old_dentry)->i_mode));
- }
- 
-diff --git a/security/security.c b/security/security.c
-index 22261d79f333..8634da4cfd46 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1184,15 +1184,8 @@ int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
- 		     (d_is_positive(new_dentry) && IS_PRIVATE(d_backing_inode(new_dentry)))))
- 		return 0;
- 
--	if (flags & RENAME_EXCHANGE) {
--		int err = call_int_hook(path_rename, 0, new_dir, new_dentry,
--					old_dir, old_dentry);
--		if (err)
--			return err;
--	}
--
- 	return call_int_hook(path_rename, 0, old_dir, old_dentry, new_dir,
--				new_dentry);
-+				new_dentry, flags);
- }
- EXPORT_SYMBOL(security_path_rename);
- 
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index b6a31901f289..71e82d855ebf 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -264,17 +264,26 @@ static int tomoyo_path_link(struct dentry *old_dentry, const struct path *new_di
-  * @old_dentry: Pointer to "struct dentry".
-  * @new_parent: Pointer to "struct path".
-  * @new_dentry: Pointer to "struct dentry".
-+ * @flags: Rename options.
-  *
-  * Returns 0 on success, negative value otherwise.
-  */
- static int tomoyo_path_rename(const struct path *old_parent,
- 			      struct dentry *old_dentry,
- 			      const struct path *new_parent,
--			      struct dentry *new_dentry)
-+			      struct dentry *new_dentry,
-+			      const unsigned int flags)
- {
- 	struct path path1 = { .mnt = old_parent->mnt, .dentry = old_dentry };
- 	struct path path2 = { .mnt = new_parent->mnt, .dentry = new_dentry };
- 
-+	if (flags & RENAME_EXCHANGE) {
-+		const int err = tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path2,
-+				&path1);
-+
-+		if (err)
-+			return err;
-+	}
- 	return tomoyo_path2_perm(TOMOYO_TYPE_RENAME, &path1, &path2);
- }
- 
--- 
-2.35.1
+> And this is where your set comes in.
+> 
+> However, I'm wondering if - instead of defining your own secrets structs
+> etc - you could use the SNP confidential computing blob machinery the
+> SNP set is adding. In particular:
+> 
+> https://lore.kernel.org/all/20220307213356.2797205-30-brijesh.singh@amd.com/
+> 
+> And you're adding another GUID but maybe you could simply use the SNP
+> thing called EFI_CC_BLOB_GUID and mimick that layout.
+> 
+> That should unify things more. And then guest kernel code could query
+> the blob also for debugging policy and so on.
+>
 
+Maybe you could do that, but that will unify things that are not the
+same, so I think it is the wrong approach here.
+
+The SNP secrets are secrets generated by the AMD-SP and allow the guest
+to communicate with the PSP.  There are exactly 4 of them (if I remember
+correctly) and they are only AES-256-GCM keys (if I remember correctly).
+
+On the other hand, the SEV launch secrets (which this series is about)
+are secrets populated by the Guest Owner and are intended for the proper
+operation of the applications in the guest (example use cases: luks
+passphrase, secret API keys, file decryption keys, encrypted container
+images keys, ...).
+
+The SEV launch secrets area can also be read by grub [1], for example,
+to fetch a luks passphrase from there (instead of from keyboard).
+That's why its structure is generic.
+
+[1] https://lists.gnu.org/archive/html/grub-devel/2022-02/msg00066.html
+
+
+> Thoughts, opinions?
+> 
+
+I think Guest Owner can add a 1-byte predefined secret to the SEV secret
+table, let's say an entry with GUID 2b91a212-b0e1-4816-b021-1e9991ddb6af
+and value "\x01" to indicate debugging is allowed.
+
+With the efi_secrets module, a 1-byte file called
+/sys/kernel/security/secrets/coco/2b91a212-b0e1-4816-b021-1e9991ddb6af
+will appear with "\x01" in its content.
+
+This can indicate to the guest that debugging was permitted by the Guest
+Owner.
+
+If you want this unified in the kernel, maybe we can look for this entry
+and set the relevant kernel variable.
+
+-Dov
