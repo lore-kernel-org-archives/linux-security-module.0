@@ -2,123 +2,156 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 348D0C43217
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 04:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BA4C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 12:51:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231940AbiC2EKq (ORCPT
+        id S236803AbiC2MxH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Mar 2022 00:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38800 "EHLO
+        Tue, 29 Mar 2022 08:53:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231919AbiC2EKn (ORCPT
+        with ESMTP id S237147AbiC2Mw7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Mar 2022 00:10:43 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825141DA4A;
-        Mon, 28 Mar 2022 21:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648526940; x=1680062940;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=II+YlVdtYYb+Q/uCpREGOhsf8Od4153BKeY2Dz+3nsc=;
-  b=MAshLrMYSKt/K6fiqPK3zP/azTgXW9UNShqvleeRW7kb1o6jM5wtgQXS
-   Ch2eqc37Zm8o1y8WWKNKL+udLBPCLsYcCxbKfL/2ZSOkZ1k1UYlqJTHMx
-   oeWdgTJak1cXc5Vs/RyEZcphYPkWR0WS8q0hLRb0iinDNSZV25252KtS9
-   47dakaw/QhSueFdwgrR9vXXY69u8aYwQEjZHSDNrx3QS9zvMbJNKHom+2
-   ksDD+EPSx6L8uJY+fBw0fDkXaGZIXbYHmHifiU0bgy85D/ylH3EV0MBk/
-   QacIY1D/DbGeOwcLYQJpf+J1SiUjBlqf5YvAG0cJsBe8AcGFp49kYVgAE
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10300"; a="284051281"
-X-IronPort-AV: E=Sophos;i="5.90,219,1643702400"; 
-   d="scan'208";a="284051281"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2022 21:09:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,219,1643702400"; 
-   d="scan'208";a="585427795"
-Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
-  by orsmga001.jf.intel.com with ESMTP; 28 Mar 2022 21:08:54 -0700
-Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nZ3A6-0002d5-7k; Tue, 29 Mar 2022 04:08:54 +0000
-Date:   Tue, 29 Mar 2022 12:08:22 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, corbet@lwn.net,
-        viro@zeniv.linux.org.uk, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, kpsingh@kernel.org, shuah@kernel.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        zohar@linux.ibm.com
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        Tue, 29 Mar 2022 08:52:59 -0400
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D1DB840
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Mar 2022 05:51:00 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KSTvQ1PW2zMq12m;
+        Tue, 29 Mar 2022 14:50:58 +0200 (CEST)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KSTvN48RFzlhRV5;
+        Tue, 29 Mar 2022 14:50:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1648558258;
+        bh=30DsOpvra0kSW59WSQV7y+gbtpJ+JQgeFCNzw4XWLXI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Z5sh+qFGfjJpuUF5qsB5XzdkskXrGFLBI3Q6fzWTYyXKD+nhwaqOvB5HiegtH2D8w
+         RDfu3m4SO160S/f0OOmoS0kbP7OyZw1GI2Yln5ATMN6k/srgFbRZS28BKKaAoVH+/Z
+         qIUNkVv8mSRMXPNMny64kCBix40BpgleK56Jib+M=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH 16/18] bpf-preload: Do kernel mount to ensure that pinned
- objects don't disappear
-Message-ID: <202203291256.TUOyKEtD-lkp@intel.com>
-References: <20220328175033.2437312-17-roberto.sassu@huawei.com>
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v2 00/12] Landlock: file linking and renaming support
+Date:   Tue, 29 Mar 2022 14:51:05 +0200
+Message-Id: <20220329125117.1393824-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220328175033.2437312-17-roberto.sassu@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+Hi,
 
-Thank you for the patch! Yet something to improve:
+This second patch series includes a path_rename hook update:
+https://lore.kernel.org/r/20220222175332.384545-1-mic@digikod.net
+This enables to return consistent errors (EXDEV or EACCES) in case of
+file renaming with RENAME_EXCHANGE.  This led to a some refactoring of
+check_access_path_dual(), no_more_access() and
+current_check_refer_path() to make them more generic and properly handle
+access requests indifferently for a source or a destination path.  I
+also added 5 new test suites to cover new edge cases.
 
-[auto build test ERROR on bpf-next/master]
-[also build test ERROR on linus/master next-20220328]
-[cannot apply to bpf/master v5.17]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Problem
+=======
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Roberto-Sassu/bpf-Secure-and-authenticated-preloading-of-eBPF-programs/20220329-015829
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-config: hexagon-randconfig-r041-20220328 (https://download.01.org/0day-ci/archive/20220329/202203291256.TUOyKEtD-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 0f6d9501cf49ce02937099350d08f20c4af86f3d)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/eddbb1ec1e92ba00c4acc9f123769265e17e8e40
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Roberto-Sassu/bpf-Secure-and-authenticated-preloading-of-eBPF-programs/20220329-015829
-        git checkout eddbb1ec1e92ba00c4acc9f123769265e17e8e40
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash
+One of the most annoying limitations of Landlock is that sandboxed
+processes can only link and rename files to the same directory (i.e.
+file reparenting is always denied).  Indeed, because of the unprivileged
+nature of Landlock, file hierarchy are identified thanks to ephemeral
+inode tagging, which may cause arbitrary renaming and linking to change
+the security policy in an unexpected way.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+Solution
+========
 
-All errors (new ones prefixed by >>):
+This patch series brings a new access right, LANDLOCK_ACCESS_FS_REFER,
+which enables to allow safe file linking and renaming.  In a nutshell,
+Landlock checks that the inherited access rights of a moved or renamed
+file cannot increase but only reduce.  Eleven new test suits cover file
+renaming and linking, which brings coverage for security/landlock/ from
+93.5% of lines to 94.6%.
 
-   kernel/bpf/inode.c:25:37: error: use of undeclared identifier 'CONFIG_BPF_PRELOAD_LIST'
-   static char *bpf_preload_list_str = CONFIG_BPF_PRELOAD_LIST;
-                                       ^
->> kernel/bpf/inode.c:1026:13: error: redefinition of 'mount_bpffs'
-   void __init mount_bpffs(void)
-               ^
-   include/linux/bpf.h:1146:27: note: previous definition is here
-   static inline void __init mount_bpffs(void)
-                             ^
-   2 errors generated.
+The documentation and the tutorial is extended with this new access
+right, along with more explanations about backward and forward
+compatibility, good practices, and a bit about the current access
+rights rational.
+
+While developing this new feature, I also found an issue with the
+current implementation of Landlock.  In some (rare) cases, sandboxed
+processes may be more restricted than intended.  Indeed, because of the
+current way to check file hierarchy access rights, composition of rules
+may be incomplete when requesting multiple accesses at the same time.
+This is fixed with a dedicated patch involving some refactoring.  A new
+test suite checks relevant new edge cases.
+
+As a side effect, and to limit the increased use of the stack, I reduced
+the number of Landlock nested domains from 64 to 16.  I think this
+should be more than enough for legitimate use cases, but feel free to
+challenge this decision with real and legitimate use cases.
+
+This patch series was developed with some complementary new tests sent
+in a standalone patch series:
+https://lore.kernel.org/r/20220221155311.166278-1-mic@digikod.net
+
+Additionally, a new dedicated syzkaller test has been developed to cover
+new paths.
+
+Previous version:
+https://lore.kernel.org/r/20220221212522.320243-1-mic@digikod.net
+
+Regards,
+
+Mickaël Salaün (12):
+  landlock: Define access_mask_t to enforce a consistent access mask
+    size
+  landlock: Reduce the maximum number of layers to 16
+  landlock: Create find_rule() from unmask_layers()
+  landlock: Fix same-layer rule unions
+  landlock: Move filesystem helpers and add a new one
+  LSM: Remove double path_rename hook calls for RENAME_EXCHANGE
+  landlock: Add support for file reparenting with
+    LANDLOCK_ACCESS_FS_REFER
+  selftest/landlock: Add 11 new test suites dedicated to file
+    reparenting
+  samples/landlock: Add support for file reparenting
+  landlock: Document LANDLOCK_ACCESS_FS_REFER and ABI versioning
+  landlock: Document good practices about filesystem policies
+  landlock: Add design choices documentation for filesystem access
+    rights
+
+ Documentation/security/landlock.rst          |   17 +-
+ Documentation/userspace-api/landlock.rst     |  149 ++-
+ include/linux/lsm_hook_defs.h                |    2 +-
+ include/linux/lsm_hooks.h                    |    1 +
+ include/uapi/linux/landlock.h                |   27 +-
+ samples/landlock/sandboxer.c                 |   37 +-
+ security/apparmor/lsm.c                      |   30 +-
+ security/landlock/fs.c                       |  776 ++++++++++---
+ security/landlock/fs.h                       |    2 +-
+ security/landlock/limits.h                   |    6 +-
+ security/landlock/ruleset.c                  |    6 +-
+ security/landlock/ruleset.h                  |   23 +-
+ security/landlock/syscalls.c                 |    2 +-
+ security/security.c                          |    9 +-
+ security/tomoyo/tomoyo.c                     |   11 +-
+ tools/testing/selftests/landlock/base_test.c |    2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 1038 ++++++++++++++++--
+ 17 files changed, 1857 insertions(+), 281 deletions(-)
 
 
-vim +/mount_bpffs +1026 kernel/bpf/inode.c
-
-  1025	
-> 1026	void __init mount_bpffs(void)
-
+base-commit: 59db887d13b3a4df2713c2a866fa2767e0dea569
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.35.1
+
