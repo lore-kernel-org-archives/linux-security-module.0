@@ -2,33 +2,33 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF64C43219
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 12:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2149C4332F
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 12:51:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236789AbiC2MxL (ORCPT
+        id S235508AbiC2MxJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Mar 2022 08:53:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35752 "EHLO
+        Tue, 29 Mar 2022 08:53:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237157AbiC2Mw7 (ORCPT
+        with ESMTP id S237153AbiC2Mw7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 29 Mar 2022 08:52:59 -0400
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E4C11155
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Mar 2022 05:51:01 -0700 (PDT)
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B458FE0A1
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Mar 2022 05:51:00 -0700 (PDT)
 Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KSTvS2GXJzMq0vs;
-        Tue, 29 Mar 2022 14:51:00 +0200 (CEST)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KSTvQ73NDzMq176;
+        Tue, 29 Mar 2022 14:50:58 +0200 (CEST)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KSTvS0TrszlhMCC;
-        Tue, 29 Mar 2022 14:51:00 +0200 (CEST)
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KSTvQ4FQnzlhMCC;
+        Tue, 29 Mar 2022 14:50:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1648558260;
-        bh=Z7Dv4Wuaux19f4A4TfPGhRhJCwQox2If8Ghi9nfOU5U=;
+        s=20191114; t=1648558258;
+        bh=V0QiE06mm1XiML32F73M5RFbgacxnLfvqx49xLlyRWs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BPgLnbzLEtVqYdu82o/LrMMKpglq4vbp4cDMZDbbpGTCK/qXfX+hN979Kzg7RSemC
-         mqTCwSSjVy9B0hddHLSPClVb4zdiAHu2ZeynsROXlVX83Lag+EgkmPC4VbYgKCKYR1
-         qOY4Q9SBuD0W92d9w8ftcJ+q+ScciBbdNzmxz/RA=
+        b=zQ2QS3Rw86KnXSGeZJiq3E+ECvNzLyShIQA+Dxhx/8ckKJtg8j1CHD5IpNJ8Tny1D
+         05QDPxTz0//QwWO4nEA9ZuXOdzyF+pPE3ERFqvPAk9le2Giw8eAPzbDsLv1Y8OFY7/
+         QhAxi28qupbY5W3snsFmc2dQRI3ezLlSMLImma4U=
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>
@@ -45,9 +45,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v2 03/12] landlock: Create find_rule() from unmask_layers()
-Date:   Tue, 29 Mar 2022 14:51:08 +0200
-Message-Id: <20220329125117.1393824-4-mic@digikod.net>
+Subject: [PATCH v2 01/12] landlock: Define access_mask_t to enforce a consistent access mask size
+Date:   Tue, 29 Mar 2022 14:51:06 +0200
+Message-Id: <20220329125117.1393824-2-mic@digikod.net>
 In-Reply-To: <20220329125117.1393824-1-mic@digikod.net>
 References: <20220329125117.1393824-1-mic@digikod.net>
 MIME-Version: 1.0
@@ -58,92 +58,214 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Mickaël Salaün <mic@linux.microsoft.com>
 
-This refactoring will be useful in a following commit.
+Create and use the access_mask_t typedef to enforce a consistent access
+mask size and uniformly use a 16-bits type.  This will helps transition
+to a 32-bits value one day.
+
+Add a build check to make sure all (filesystem) access rights fit in.
+This will be extended with a following commit.
 
 Reviewed-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20220329125117.1393824-4-mic@digikod.net
+Link: https://lore.kernel.org/r/20220329125117.1393824-2-mic@digikod.net
 ---
 
 Changes since v1:
 * Add Reviewed-by: Paul Moore.
 ---
- security/landlock/fs.c | 39 +++++++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ security/landlock/fs.c      | 19 ++++++++++---------
+ security/landlock/fs.h      |  2 +-
+ security/landlock/limits.h  |  2 ++
+ security/landlock/ruleset.c |  6 ++++--
+ security/landlock/ruleset.h | 17 +++++++++++++----
+ 5 files changed, 30 insertions(+), 16 deletions(-)
 
 diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 4048e3c04d75..0bcb27f2360a 100644
+index 97b8e421f617..9de2a460a762 100644
 --- a/security/landlock/fs.c
 +++ b/security/landlock/fs.c
-@@ -180,23 +180,36 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+@@ -150,7 +150,7 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+  * @path: Should have been checked by get_path_from_fd().
+  */
+ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+-		const struct path *const path, u32 access_rights)
++		const struct path *const path, access_mask_t access_rights)
+ {
+ 	int err;
+ 	struct landlock_object *object;
+@@ -182,8 +182,8 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
  
- /* Access-control management */
- 
--static inline layer_mask_t unmask_layers(
-+/*
-+ * The lifetime of the returned rule is tied to @domain.
-+ *
-+ * Returns NULL if no rule is found or if @dentry is negative.
-+ */
-+static inline const struct landlock_rule *find_rule(
+ static inline u64 unmask_layers(
  		const struct landlock_ruleset *const domain,
--		const struct path *const path,
--		const access_mask_t access_request, layer_mask_t layer_mask)
-+		const struct dentry *const dentry)
+-		const struct path *const path, const u32 access_request,
+-		u64 layer_mask)
++		const struct path *const path,
++		const access_mask_t access_request, u64 layer_mask)
  {
  	const struct landlock_rule *rule;
  	const struct inode *inode;
--	size_t i;
+@@ -223,7 +223,8 @@ static inline u64 unmask_layers(
+ }
  
--	if (d_is_negative(path->dentry))
--		/* Ignore nonexistent leafs. */
--		return layer_mask;
--	inode = d_backing_inode(path->dentry);
-+	/* Ignores nonexistent leafs. */
-+	if (d_is_negative(dentry))
-+		return NULL;
-+
-+	inode = d_backing_inode(dentry);
- 	rcu_read_lock();
- 	rule = landlock_find_rule(domain,
- 			rcu_dereference(landlock_inode(inode)->object));
- 	rcu_read_unlock();
-+	return rule;
-+}
-+
-+static inline layer_mask_t unmask_layers(
-+		const struct landlock_rule *const rule,
-+		const access_mask_t access_request, layer_mask_t layer_mask)
-+{
-+	size_t layer_level;
-+
- 	if (!rule)
- 		return layer_mask;
+ static int check_access_path(const struct landlock_ruleset *const domain,
+-		const struct path *const path, u32 access_request)
++		const struct path *const path,
++		const access_mask_t access_request)
+ {
+ 	bool allowed = false;
+ 	struct path walker_path;
+@@ -308,7 +309,7 @@ static int check_access_path(const struct landlock_ruleset *const domain,
+ }
  
-@@ -207,8 +220,9 @@ static inline layer_mask_t unmask_layers(
- 	 * the remaining layers for each inode, from the first added layer to
- 	 * the last one.
+ static inline int current_check_access_path(const struct path *const path,
+-		const u32 access_request)
++		const access_mask_t access_request)
+ {
+ 	const struct landlock_ruleset *const dom =
+ 		landlock_get_current_domain();
+@@ -511,7 +512,7 @@ static int hook_sb_pivotroot(const struct path *const old_path,
+ 
+ /* Path hooks */
+ 
+-static inline u32 get_mode_access(const umode_t mode)
++static inline access_mask_t get_mode_access(const umode_t mode)
+ {
+ 	switch (mode & S_IFMT) {
+ 	case S_IFLNK:
+@@ -563,7 +564,7 @@ static int hook_path_link(struct dentry *const old_dentry,
+ 			get_mode_access(d_backing_inode(old_dentry)->i_mode));
+ }
+ 
+-static inline u32 maybe_remove(const struct dentry *const dentry)
++static inline access_mask_t maybe_remove(const struct dentry *const dentry)
+ {
+ 	if (d_is_negative(dentry))
+ 		return 0;
+@@ -631,9 +632,9 @@ static int hook_path_rmdir(const struct path *const dir,
+ 
+ /* File hooks */
+ 
+-static inline u32 get_file_access(const struct file *const file)
++static inline access_mask_t get_file_access(const struct file *const file)
+ {
+-	u32 access = 0;
++	access_mask_t access = 0;
+ 
+ 	if (file->f_mode & FMODE_READ) {
+ 		/* A directory can only be opened in read mode. */
+diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+index 187284b421c9..74be312aad96 100644
+--- a/security/landlock/fs.h
++++ b/security/landlock/fs.h
+@@ -65,6 +65,6 @@ static inline struct landlock_superblock_security *landlock_superblock(
+ __init void landlock_add_fs_hooks(void);
+ 
+ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+-		const struct path *const path, u32 access_hierarchy);
++		const struct path *const path, access_mask_t access_hierarchy);
+ 
+ #endif /* _SECURITY_LANDLOCK_FS_H */
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 2a0a1095ee27..458d1de32ed5 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -9,6 +9,7 @@
+ #ifndef _SECURITY_LANDLOCK_LIMITS_H
+ #define _SECURITY_LANDLOCK_LIMITS_H
+ 
++#include <linux/bitops.h>
+ #include <linux/limits.h>
+ #include <uapi/linux/landlock.h>
+ 
+@@ -17,5 +18,6 @@
+ 
+ #define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_MAKE_SYM
+ #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
++#define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+ 
+ #endif /* _SECURITY_LANDLOCK_LIMITS_H */
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index ec72b9262bf3..4e7aa8024fff 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -44,7 +44,8 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+ 	return new_ruleset;
+ }
+ 
+-struct landlock_ruleset *landlock_create_ruleset(const u32 fs_access_mask)
++struct landlock_ruleset *landlock_create_ruleset(
++		const access_mask_t fs_access_mask)
+ {
+ 	struct landlock_ruleset *new_ruleset;
+ 
+@@ -228,7 +229,8 @@ static void build_check_layer(void)
+ 
+ /* @ruleset must be locked by the caller. */
+ int landlock_insert_rule(struct landlock_ruleset *const ruleset,
+-		struct landlock_object *const object, const u32 access)
++		struct landlock_object *const object,
++		const access_mask_t access)
+ {
+ 	struct landlock_layer layers[] = {{
+ 		.access = access,
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 2d3ed7ec5a0a..7e7cac68e443 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -9,13 +9,20 @@
+ #ifndef _SECURITY_LANDLOCK_RULESET_H
+ #define _SECURITY_LANDLOCK_RULESET_H
+ 
++#include <linux/bitops.h>
++#include <linux/build_bug.h>
+ #include <linux/mutex.h>
+ #include <linux/rbtree.h>
+ #include <linux/refcount.h>
+ #include <linux/workqueue.h>
+ 
++#include "limits.h"
+ #include "object.h"
+ 
++typedef u16 access_mask_t;
++/* Makes sure all filesystem access rights can be stored. */
++static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
++
+ /**
+  * struct landlock_layer - Access rights for a given layer
+  */
+@@ -28,7 +35,7 @@ struct landlock_layer {
+ 	 * @access: Bitfield of allowed actions on the kernel object.  They are
+ 	 * relative to the object type (e.g. %LANDLOCK_ACTION_FS_READ).
  	 */
--	for (i = 0; i < rule->num_layers; i++) {
--		const struct landlock_layer *const layer = &rule->layers[i];
-+	for (layer_level = 0; layer_level < rule->num_layers; layer_level++) {
-+		const struct landlock_layer *const layer =
-+			&rule->layers[layer_level];
- 		const layer_mask_t layer_bit = BIT_ULL(layer->level - 1);
+-	u16 access;
++	access_mask_t access;
+ };
  
- 		/* Checks that the layer grants access to the full request. */
-@@ -266,8 +280,9 @@ static int check_access_path(const struct landlock_ruleset *const domain,
- 	while (true) {
- 		struct dentry *parent_dentry;
+ /**
+@@ -135,18 +142,20 @@ struct landlock_ruleset {
+ 			 * layers are set once and never changed for the
+ 			 * lifetime of the ruleset.
+ 			 */
+-			u16 fs_access_masks[];
++			access_mask_t fs_access_masks[];
+ 		};
+ 	};
+ };
  
--		layer_mask = unmask_layers(domain, &walker_path,
--				access_request, layer_mask);
-+		layer_mask = unmask_layers(find_rule(domain,
-+					walker_path.dentry), access_request,
-+				layer_mask);
- 		if (layer_mask == 0) {
- 			/* Stops when a rule from each layer grants access. */
- 			allowed = true;
+-struct landlock_ruleset *landlock_create_ruleset(const u32 fs_access_mask);
++struct landlock_ruleset *landlock_create_ruleset(
++		const access_mask_t fs_access_mask);
+ 
+ void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
+ void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
+ 
+ int landlock_insert_rule(struct landlock_ruleset *const ruleset,
+-		struct landlock_object *const object, const u32 access);
++		struct landlock_object *const object,
++		const access_mask_t access);
+ 
+ struct landlock_ruleset *landlock_merge_ruleset(
+ 		struct landlock_ruleset *const parent,
 -- 
 2.35.1
 
