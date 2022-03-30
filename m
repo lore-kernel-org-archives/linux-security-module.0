@@ -2,124 +2,83 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E29BC43219
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Mar 2022 15:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C34C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Mar 2022 15:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348009AbiC3POs (ORCPT
+        id S241652AbiC3PjJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Mar 2022 11:14:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52184 "EHLO
+        Wed, 30 Mar 2022 11:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346432AbiC3POo (ORCPT
+        with ESMTP id S237960AbiC3PjI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Mar 2022 11:14:44 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEEDA10663B;
-        Wed, 30 Mar 2022 08:12:58 -0700 (PDT)
-Received: from fraeml711-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KT8z54Vvqz67yhs;
-        Wed, 30 Mar 2022 23:11:29 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml711-chm.china.huawei.com (10.206.15.60) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 30 Mar 2022 17:12:57 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
- Wed, 30 Mar 2022 17:12:57 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-CC:     Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        KP Singh <kpsingh@kernel.org>, "Shuah Khan" <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Linux Doc Mailing List" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Wed, 30 Mar 2022 11:39:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C113856749
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Mar 2022 08:37:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1648654641;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hHrmC24Jo3CTM6YvkvlpfQVskDBFgAZarL5vBmkT/1w=;
+        b=SYP3eyImNIYqbg6XXldrmQyR6yuwTG7KBolUgASrMZicPIX4lGaiDl3sMIgq8UC0d3q2DW
+        gqWgRV2gfRBpXQDMWZbBjvSf2+dupE9f6yYzyg2ytuBxcyYnVLjRE/H8SPr8hsctlpn+Oz
+        vqiB45MF/gnMk0Wz7kMCb3bB0zfTY0s=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-53-RRlkUzyIPVKePa_Ax9wclg-1; Wed, 30 Mar 2022 11:37:17 -0400
+X-MC-Unique: RRlkUzyIPVKePa_Ax9wclg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9F8241C0514D;
+        Wed, 30 Mar 2022 15:37:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EABD7C202C6;
+        Wed, 30 Mar 2022 15:37:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20220303125627.93930-1-d.glazkov@omp.ru>
+References: <20220303125627.93930-1-d.glazkov@omp.ru> <20220303081428.12979-1-d.glazkov@omp.ru>
+To:     Denis Glazkov <d.glazkov@omp.ru>
+Cc:     dhowells@redhat.com, "jarkko@kernel.org" <jarkko@kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 05/18] bpf-preload: Generate static variables
-Thread-Topic: [PATCH 05/18] bpf-preload: Generate static variables
-Thread-Index: AQHYQsyWLcVpB05sakWRWVPVfsSzdqzW6LQAgACiZ4CAAH9p4A==
-Date:   Wed, 30 Mar 2022 15:12:57 +0000
-Message-ID: <af5e27aeef544581804b578032fc1b4e@huawei.com>
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
- <20220328175033.2437312-6-roberto.sassu@huawei.com>
- <CAEf4BzY9d0pUP2TFkOY41dbjyYrsr5S+sNCpynPtg_9XZHFb-Q@mail.gmail.com> 
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.81.211.106]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        "mkayaalp@linux.vnet.ibm.com" <mkayaalp@linux.vnet.ibm.com>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2] KEYS: fix memory leaks when reading certificate
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2996112.1648654634.1@warthog.procyon.org.uk>
+Date:   Wed, 30 Mar 2022 16:37:14 +0100
+Message-ID: <2996113.1648654634@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBSb2JlcnRvIFNhc3N1DQo+IFNlbnQ6IFdlZG5lc2RheSwgTWFyY2ggMzAsIDIwMjIg
-OTo0NSBBTQ0KPiA+IEZyb206IEFuZHJpaSBOYWtyeWlrbyBbbWFpbHRvOmFuZHJpaS5uYWtyeWlr
-b0BnbWFpbC5jb21dDQo+ID4gU2VudDogV2VkbmVzZGF5LCBNYXJjaCAzMCwgMjAyMiAxOjUyIEFN
-DQo+ID4gT24gTW9uLCBNYXIgMjgsIDIwMjIgYXQgMTA6NTIgQU0gUm9iZXJ0byBTYXNzdQ0KPiA+
-IDxyb2JlcnRvLnNhc3N1QGh1YXdlaS5jb20+IHdyb3RlOg0KPiA+ID4NCj4gPiA+IFRoZSBmaXJz
-dCBwYXJ0IG9mIHRoZSBwcmVsb2FkIGNvZGUgZ2VuZXJhdGlvbiBjb25zaXN0cyBpbiBnZW5lcmF0
-aW5nIHRoZQ0KPiA+ID4gc3RhdGljIHZhcmlhYmxlcyB0byBiZSB1c2VkIGJ5IHRoZSBjb2RlIGl0
-c2VsZjogdGhlIGxpbmtzIGFuZCBtYXBzIHRvIGJlDQo+ID4gPiBwaW5uZWQsIGFuZCB0aGUgc2tl
-bGV0b24uIEdlbmVyYXRpb24gb2YgdGhlIHByZWxvYWQgdmFyaWFibGVzIGFuZA0KPiA+IG1ldGhv
-ZHMNCj4gPiA+IGlzIGVuYWJsZWQgd2l0aCB0aGUgb3B0aW9uIC1QIGFkZGVkIHRvICdicGZ0b29s
-IGdlbiBza2VsZXRvbicuDQo+ID4gPg0KPiA+ID4gVGhlIGV4aXN0aW5nIHZhcmlhYmxlcyBtYXBz
-X2xpbmsgYW5kIHByb2dzX2xpbmtzIGluIGJwZl9wcmVsb2FkX2tlcm4uYw0KPiA+IGhhdmUNCj4g
-PiA+IGJlZW4gcmVuYW1lZCByZXNwZWN0aXZlbHkgdG8gZHVtcF9icGZfbWFwX2xpbmsgYW5kDQo+
-ID4gZHVtcF9icGZfcHJvZ19saW5rLCB0bw0KPiA+ID4gbWF0Y2ggdGhlIG5hbWUgb2YgdGhlIHZh
-cmlhYmxlcyBpbiB0aGUgbWFpbiBzdHJ1Y3R1cmUgb2YgdGhlIGxpZ2h0DQo+ID4gPiBza2VsZXRv
-bi4NCj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNh
-c3N1QGh1YXdlaS5jb20+DQo+ID4gPiAtLS0NCj4gPiA+ICBrZXJuZWwvYnBmL3ByZWxvYWQvYnBm
-X3ByZWxvYWRfa2Vybi5jICAgICAgICAgfCAgMzUgKy0NCj4gPiA+ICBrZXJuZWwvYnBmL3ByZWxv
-YWQvaXRlcmF0b3JzL01ha2VmaWxlICAgICAgICAgfCAgIDIgKy0NCj4gPiA+ICAuLi4vYnBmL3By
-ZWxvYWQvaXRlcmF0b3JzL2l0ZXJhdG9ycy5sc2tlbC5oICAgfCAzNzggKysrKysrKysrLS0tLS0t
-LS0tDQo+ID4gPiAgLi4uL2JwZi9icGZ0b29sL0RvY3VtZW50YXRpb24vYnBmdG9vbC1nZW4ucnN0
-IHwgICA1ICsNCj4gPiA+ICB0b29scy9icGYvYnBmdG9vbC9iYXNoLWNvbXBsZXRpb24vYnBmdG9v
-bCAgICAgfCAgIDIgKy0NCj4gPiA+ICB0b29scy9icGYvYnBmdG9vbC9nZW4uYyAgICAgICAgICAg
-ICAgICAgICAgICAgfCAgMjcgKysNCj4gPiA+ICB0b29scy9icGYvYnBmdG9vbC9tYWluLmMgICAg
-ICAgICAgICAgICAgICAgICAgfCAgIDcgKy0NCj4gPiA+ICB0b29scy9icGYvYnBmdG9vbC9tYWlu
-LmggICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKw0KPiA+ID4gIDggZmlsZXMgY2hhbmdlZCwg
-MjU0IGluc2VydGlvbnMoKyksIDIwMyBkZWxldGlvbnMoLSkNCj4gPiA+DQo+ID4NCj4gPiBbLi4u
-XQ0KPiA+DQo+ID4gPiArX19hdHRyaWJ1dGVfXygodW51c2VkKSkgc3RhdGljIHZvaWQNCj4gPiA+
-ICtpdGVyYXRvcnNfYnBmX19hc3NlcnQoc3RydWN0IGl0ZXJhdG9yc19icGYgKnMpDQo+ID4gPiAr
-ew0KPiA+ID4gKyNpZmRlZiBfX2NwbHVzcGx1cw0KPiA+ID4gKyNkZWZpbmUgX1N0YXRpY19hc3Nl
-cnQgc3RhdGljX2Fzc2VydA0KPiA+ID4gKyNlbmRpZg0KPiA+ID4gKyNpZmRlZiBfX2NwbHVzcGx1
-cw0KPiA+ID4gKyN1bmRlZiBfU3RhdGljX2Fzc2VydA0KPiA+ID4gKyNlbmRpZg0KPiA+ID4gK30N
-Cj4gPiA+ICsNCj4gPiA+ICtzdGF0aWMgc3RydWN0IGJwZl9saW5rICpkdW1wX2JwZl9tYXBfbGlu
-azsNCj4gPiA+ICtzdGF0aWMgc3RydWN0IGJwZl9saW5rICpkdW1wX2JwZl9wcm9nX2xpbms7DQo+
-ID4gPiArc3RhdGljIHN0cnVjdCBpdGVyYXRvcnNfYnBmICpza2VsOw0KPiA+DQo+ID4gSSBkb24n
-dCB1bmRlcnN0YW5kIHdoYXQgaXMgdGhpcyBhbmQgd2hhdCBmb3I/IFlvdSBhcmUgbWFraW5nIGFu
-DQo+ID4gYXNzdW1wdGlvbiB0aGF0IGxpZ2h0IHNrZWxldG9uIGNhbiBiZSBpbnN0YW50aWF0ZWQg
-anVzdCBvbmNlLCB3aHk/IEFuZA0KPiA+IGFkZGluZyBleHRyYSBicGZ0b29sIG9wdGlvbiB0byBs
-aWdodCBza2VsZXRvbiBjb2RlZ2VuIGp1c3QgdG8gc2F2ZSBhDQo+ID4gYml0IG9mIHR5cGluZyBh
-dCB0aGUgcGxhY2Ugd2hlcmUgbGlnaHQgc2tlbGV0b24gaXMgYWN0dWFsbHkNCj4gPiBpbnN0YW50
-aWF0ZWQgYW5kIHVzZWQgZG9lc24ndCBzZWVtcyBsaWtlIGEgcmlnaHQgYXBwcm9hY2guDQo+IA0K
-PiBUcnVlLCBpdGVyYXRvcl9icGYgaXMgc2ltcGxlLiBXcml0aW5nIHRoZSBwcmVsb2FkaW5nIGNv
-ZGUNCj4gZm9yIGl0IGlzIHNpbXBsZS4gQnV0LCB3aGF0IGlmIHlvdSB3YW50ZWQgdG8gcHJlbG9h
-ZCBhbiBMU00NCj4gd2l0aCAxMCBob29rcyBvciBtb3JlPw0KPiANCj4gT2ssIHJlZ2FyZGluZyB3
-aGVyZSB0aGUgcHJlbG9hZGluZyBjb2RlIHNob3VsZCBiZSwgSSB3aWxsDQo+IHRyeSB0byBtb3Zl
-IHRoZSBnZW5lcmF0ZWQgY29kZSB0byB0aGUga2VybmVsIG1vZHVsZSBpbnN0ZWFkDQo+IG9mIHRo
-ZSBsaWdodCBza2VsZXRvbi4NCg0KRG9uZS4gSSBtb3ZlZCBldmVyeXRoaW5nIGZyb20gdGhlIGxp
-Z2h0IHNrZWxldG9uIHRvIHRoZSBrZXJuZWwNCm1vZHVsZS4gVGhlIGNoYW5nZXMgbm93IGFyZSBh
-bHNvIHdlbGwgc2VwYXJhdGVkLCBhbmQNCnJlZ2VuZXJhdGlvbiBvZiB0aGUga2VybmVsIG1vZHVs
-ZSBvY2N1cnMgb25seSBhZnRlciBhbGwgdGhlDQpnZW5lcmF0aW9uIGNvZGUgaXMgYWRkZWQgdG8g
-YnBmdG9vbC4NCg0KSSBwdXNoZWQgYSBuZXcgYnJhbmNoOg0KDQpodHRwczovL2dpdGh1Yi5jb20v
-cm9iZXJ0b3Nhc3N1L2xpbnV4L2NvbW1pdHMvYnBmLXByZWxvYWQtdjItZGV2ZWwtdjINCg0KUm9i
-ZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0K
-TWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIFpob25nIFJvbmdodWENCg==
+Denis Glazkov <d.glazkov@omp.ru> wrote:
+
+> The `exit()` function usage produce possible memory leaks. This
+> patch removes the use of the `exit()` function and adds memory
+> free in case of a negative scenarios.
+
+?
+
+Barring a kernel bug, there should be no memory leaks from exit().  _exit() is
+the ultimate process cleanup tool.  Calling free() won't necessarily return
+the memory allocated by malloc() to the kernel.
+
+Unless you have a good reason to actually tear down everything, just print a
+message and call exit on error in little helpers like this.
+
+David
+
