@@ -2,130 +2,152 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEBAC4321E
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Mar 2022 23:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 645FDC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Mar 2022 06:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241303AbiC2Xxy (ORCPT
+        id S243203AbiC3GOR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Mar 2022 19:53:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45282 "EHLO
+        Wed, 30 Mar 2022 02:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241278AbiC2Xxk (ORCPT
+        with ESMTP id S241944AbiC3GOP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Mar 2022 19:53:40 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 908DD220313;
-        Tue, 29 Mar 2022 16:51:44 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id 9so19791432iou.5;
-        Tue, 29 Mar 2022 16:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RDogiJksgjzBWpwHPtzcTuV6/G2WximRelWOGofFAwA=;
-        b=eE9f8EWWk2jX0JwQUKtnzgRnYi2N0AvWuh6ToR3VtYtAx9khkdxlw7CLNFueZZ06Fw
-         chf2vahBcCfJ9ZH0fsDoguL9rhNY6DywAtKvL9L8/mA9DksssSdIG/c4/Dctl3QfUNl2
-         VBa2XOM1p4dCRF+peXurjcOqOZ93XNZMmiXDaUGkG2nC94q6ppM3k9Z0W2mnHl2EgOdh
-         /eTdjPoEguFRuIJiq67YBKc1oIN7XJnYo1J8OJwRMaO/Z8IrqAHxAjfV9KegXGfRoBqU
-         GRaq1Xbb6J7KLMqTWqjAKhiAhDWpX2GxM95KbLx8RT0RozT4+ho3+VIxYmK6S2YXVU+N
-         MChA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RDogiJksgjzBWpwHPtzcTuV6/G2WximRelWOGofFAwA=;
-        b=70NGCoUIFoUyAkrRgEQH9bU0N+6fIMXDk3RaioiYmSl2US3+5n5flND1LDtCWgakSo
-         H06/RCgmdb67kwUx0KYNWdq3ULb2NttTkMkRQctUHifs8iUGu8ZUYZ7ScHjbOXw4VAPP
-         ynWENuRY55uIvHH77RA9eJ+vea0dvCv9YTGsVX3zAm931Wxqy+MwpL6HvAjBbrKOh9Y9
-         Ea5VfmmZagXAE+wruPrZ87dquvAJy5iBXSCm5LCDqSmFCck8oj1PWYDbPGlcmD1FZRMH
-         OBNRoZNcJnaazBj0GPe7VrkvnOryhTO6A+cYiiZrDDaSl/lFloZQ1Kkg8Jsm4Cv29G25
-         Hg/w==
-X-Gm-Message-State: AOAM5333+pKUgrMkKtIuW/0OxmvRxsQIgnmVLEzxSuZ4Un7iTcMPx65R
-        aaW7WfWN3OJ9jrjQOrW6yCcaRBzV2Oevc3eYozs=
-X-Google-Smtp-Source: ABdhPJyeOFDxVD5tZQV3SlV4JtXzW4tlmY2Yr1iyvweyD/ph7Dk90xBFCNcaXZEuGWOqIT4nYr/YPbiOeF0msD+cjC0=
-X-Received: by 2002:a05:6638:3395:b0:323:8a00:7151 with SMTP id
- h21-20020a056638339500b003238a007151mr2661460jav.93.1648597903968; Tue, 29
- Mar 2022 16:51:43 -0700 (PDT)
+        Wed, 30 Mar 2022 02:14:15 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2E42344C7;
+        Tue, 29 Mar 2022 23:12:30 -0700 (PDT)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22U4uadu035415;
+        Wed, 30 Mar 2022 06:12:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=2p+VfMA5uwCNYrlHBOCjlIzvMpTMcxZ4c82raGuzbWE=;
+ b=COYcBlOBPQtNJt9mJEpxPIghjADJKZ7w4oYjykadGnc86iKz2McfzFzmrWy9brCAbJkb
+ 0VJjhwEBRF4QYni4Z2TM7KTF/BVxCOf6MNRhkXfIRdfOaN2AicyIFzkYvEvBl1glOirs
+ FTJvLf7aVnfv2AnaDi+PNtOHBNstDA+nk8bg2qLb+WQS1A45RM3UkmeND4VYYlOl13rr
+ GTtensacYaGi5N16kMe6Rv+TQyvhRilcVuCqZmE0zlQqOCRckMGnJsrfzJaey4CBJgcR
+ cLJrLdsJpg26PptyUNuoyNOgyMQsmx8/UrbBzWim+AMKvoqKt5bulqHDImE66X5oS3TL Bw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3f40c8x594-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Mar 2022 06:12:02 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22U65l7I007664;
+        Wed, 30 Mar 2022 06:12:01 GMT
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3f40c8x58v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Mar 2022 06:12:01 +0000
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22U69LdH032360;
+        Wed, 30 Mar 2022 06:12:00 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma05wdc.us.ibm.com with ESMTP id 3f1tfa31mh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Mar 2022 06:12:00 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22U6Bxf022741458
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Mar 2022 06:11:59 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D5220112062;
+        Wed, 30 Mar 2022 06:11:59 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 703DE112067;
+        Wed, 30 Mar 2022 06:11:55 +0000 (GMT)
+Received: from [9.160.79.229] (unknown [9.160.79.229])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 30 Mar 2022 06:11:55 +0000 (GMT)
+Message-ID: <247080bd-fef5-c892-7753-f9b7cf650166@linux.ibm.com>
+Date:   Wed, 30 Mar 2022 09:11:54 +0300
 MIME-Version: 1.0
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com> <20220328175033.2437312-6-roberto.sassu@huawei.com>
-In-Reply-To: <20220328175033.2437312-6-roberto.sassu@huawei.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 29 Mar 2022 16:51:32 -0700
-Message-ID: <CAEf4BzY9d0pUP2TFkOY41dbjyYrsr5S+sNCpynPtg_9XZHFb-Q@mail.gmail.com>
-Subject: Re: [PATCH 05/18] bpf-preload: Generate static variables
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        KP Singh <kpsingh@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Networking <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v8 0/4] Allow guest access to EFI confidential computing
+ secret area
+Content-Language: en-US
+To:     Borislav Petkov <bp@suse.de>
+Cc:     linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>
+References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
+ <YjydSNnG6EJ1KWx0@zn.tnic>
+ <f2fb7553-0313-6393-c93c-2bb6619086dc@linux.ibm.com>
+ <YkNQNzNa02Sndu+q@zn.tnic>
+ <7696ba46-91c7-7119-bd68-b3521459cf37@linux.ibm.com>
+From:   Dov Murik <dovmurik@linux.ibm.com>
+In-Reply-To: <7696ba46-91c7-7119-bd68-b3521459cf37@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: hwm7FFhPyN3fkPL7ktrNEzWHOT8Cvb0b
+X-Proofpoint-GUID: YrtY1ADfDzcA_fuzCXaHOyAuxmCX6GwG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-30_02,2022-03-29_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2203300028
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 28, 2022 at 10:52 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
->
-> The first part of the preload code generation consists in generating the
-> static variables to be used by the code itself: the links and maps to be
-> pinned, and the skeleton. Generation of the preload variables and methods
-> is enabled with the option -P added to 'bpftool gen skeleton'.
->
-> The existing variables maps_link and progs_links in bpf_preload_kern.c have
-> been renamed respectively to dump_bpf_map_link and dump_bpf_prog_link, to
-> match the name of the variables in the main structure of the light
-> skeleton.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  kernel/bpf/preload/bpf_preload_kern.c         |  35 +-
->  kernel/bpf/preload/iterators/Makefile         |   2 +-
->  .../bpf/preload/iterators/iterators.lskel.h   | 378 +++++++++---------
->  .../bpf/bpftool/Documentation/bpftool-gen.rst |   5 +
->  tools/bpf/bpftool/bash-completion/bpftool     |   2 +-
->  tools/bpf/bpftool/gen.c                       |  27 ++
->  tools/bpf/bpftool/main.c                      |   7 +-
->  tools/bpf/bpftool/main.h                      |   1 +
->  8 files changed, 254 insertions(+), 203 deletions(-)
->
 
-[...]
 
-> +__attribute__((unused)) static void
-> +iterators_bpf__assert(struct iterators_bpf *s)
-> +{
-> +#ifdef __cplusplus
-> +#define _Static_assert static_assert
-> +#endif
-> +#ifdef __cplusplus
-> +#undef _Static_assert
-> +#endif
-> +}
-> +
-> +static struct bpf_link *dump_bpf_map_link;
-> +static struct bpf_link *dump_bpf_prog_link;
-> +static struct iterators_bpf *skel;
+On 29/03/2022 23:28, Dov Murik wrote:
+> 
+> 
+> On 29/03/2022 21:30, Borislav Petkov wrote:
+> 
+>>
+>> So now that I think of it, it would be even nicer if the fact whether
+>> guest debugging is allowed, were available to the guest *very early*
+>> during boot. Because I think the most important cases where you'd want
+>> to singlestep a SEV* guest with the qemu gdbstub is early guest kernel
+>> boot code. So it would be cool if we'd have access to the debugging
+>> setting that early.
+>>
+>> Lemme have a look at your patches in detail to get an idea what's
+>> happening there.
+> 
 
-I don't understand what is this and what for? You are making an
-assumption that light skeleton can be instantiated just once, why? And
-adding extra bpftool option to light skeleton codegen just to save a
-bit of typing at the place where light skeleton is actually
-instantiated and used doesn't seems like a right approach.
+After a night's sleep I figured out that an SEV guest cannot tell if a
+value it's reading was (a) encrypted by the host using
+KVM_SEV_LAUNCH_UPDATE_DATA, or (b) added using secret injection using
+KVM_SEV_LAUNCH_SECRET.
 
-Further, even if this is the way to go, please split out bpftool
-changes from kernel changes. There is nothing requiring them to be
-coupled together.
+The only difference is that if the host is using
+KVM_SEV_LAUNCH_UPDATE_DATA, then it changes the measurement.  But maybe
+for debugging scenarios we (= Guest Owner) don't care about the
+measurement being correct.
 
-[...]
+If that's the case, we don't need a secure channel and secret injection.
+You can use a simple "sev=debug" (or whatever) in the kernel
+command-line to indicate your needs.
+
+
+Did I miss something?
+
+
+-Dov
+
