@@ -2,126 +2,116 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFCAC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Mar 2022 09:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83883C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Mar 2022 17:34:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233711AbiCaJVR (ORCPT
+        id S231419AbiCaRgR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Mar 2022 05:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33608 "EHLO
+        Thu, 31 Mar 2022 13:36:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231474AbiCaJVR (ORCPT
+        with ESMTP id S231389AbiCaRgR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Mar 2022 05:21:17 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A95F1C3D;
-        Thu, 31 Mar 2022 02:19:29 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 62ACD1FD05;
-        Thu, 31 Mar 2022 09:19:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1648718368; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FVX7m8PokvejVbBT0wLGG/0fZjizACNdSaleDzg4mLk=;
-        b=ei/Fg2tHarGnz8vJ7LMsRcqmb1ymtDqtC7cpjuqou8aiuSePhoVQGesh7C1c6/GHS7BhN0
-        aPRyDcT8CEUEquymJMPawOmtWBZPXITHFp/G2mOotI8QY0+mYwHNb7eIdGjI4fZWDJV5s0
-        l3srqBu4LAWrNCvljhyakT2xet4OFMM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1648718368;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FVX7m8PokvejVbBT0wLGG/0fZjizACNdSaleDzg4mLk=;
-        b=X2DWzkLocSFsEb28/cz5K8Wg9TzmTAXV0qX6aEgyDZJ+/+XZVK21/3KCewo4TMnxWBwmP0
-        Y5MU7MxMpF77vBBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 51D33132DC;
-        Thu, 31 Mar 2022 09:19:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ChPuEyByRWK9NgAAMHmgww
-        (envelope-from <bp@suse.de>); Thu, 31 Mar 2022 09:19:28 +0000
-Date:   Thu, 31 Mar 2022 11:19:28 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
+        Thu, 31 Mar 2022 13:36:17 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113C460CC9;
+        Thu, 31 Mar 2022 10:34:29 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id o16so737584ljp.4;
+        Thu, 31 Mar 2022 10:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tYr4+A2I2sUXVhAjEZBjGiVViPde2R3/QXl/MeRC92k=;
+        b=nFEALaQDRJK+KYEsH461dOhzve4fxNfkmMgo2fIBhtDhWjGq0/3pAHjjbmI72dHdKd
+         E57CD6qP4N+xshQ6kiTp0V++2vdUEE6yPY+Lwfte6OlmKHuxAP0q4xR8onHZKKbRjnyP
+         1X4KLDGOxDAYU8dswNf3x1cXwqYWocH9gPc1Hvgl1js90EDGvkt97oi23edz7BpbetBc
+         sBWMo38844VINbgHx5UjWdVta1PoZujZiteBXWSTNYc/+tZW4hFV21oX9M56nu4AhLrX
+         ZrAsBxU+N+9XQcFK+nJ8pFa0AIAxNdNlpljSex+gsfl34KTktL8AqKESMI4eXWvY9WEv
+         /vdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tYr4+A2I2sUXVhAjEZBjGiVViPde2R3/QXl/MeRC92k=;
+        b=urf3vcc8Ad+Mky+G1N4IF2msOYIup0M7R6SNKl668Jl1fp9PmlJqmApcw52JpQfoSm
+         JwCQc4sJFvNjpLKZ72DCx/1Nu4Rkh7yXySJJkwLf415lx+GGBcANjEfecRxROlFflBdc
+         fuOfs6RMTSfL93TZ4CYS9ggfxIybGtnMoOPWq4KDV1pAG3jNNVnkUl3xxQ0RHmLGzsd+
+         aXuGMdjm3ac+1tYq0ixMpNm8R3HJ7paXTlbEDBTC69/hAVSVuW/ahlsaBz9FH7/pTy9i
+         uzWWBIffFtniOMBd8NKnmIkTsq0THotYhdSff4/KOwmfjlL5INf7ijOiOiuGApelX1PX
+         70Bg==
+X-Gm-Message-State: AOAM533z8cvoxfwywriNtVV6O7SskMMNtyAnkgEiFgWG+6bvGF0Oh+wA
+        13eeoJrvHuOCNOPTSrDdzgc=
+X-Google-Smtp-Source: ABdhPJzWR7AdVufxiLU93gc6byk6FCl+NoBdPVzob1NRulTJGAMUnxBz1CXzXgQEFQo/gHGjPZU+cg==
+X-Received: by 2002:a2e:9003:0:b0:24a:c3a5:849c with SMTP id h3-20020a2e9003000000b0024ac3a5849cmr11159595ljg.68.1648748061620;
+        Thu, 31 Mar 2022 10:34:21 -0700 (PDT)
+Received: from morzel-asus.lan (static-91-225-135-18.devs.futuro.pl. [91.225.135.18])
+        by smtp.gmail.com with ESMTPSA id bd10-20020a05651c168a00b00247fe29d83csm2746992ljb.73.2022.03.31.10.34.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Mar 2022 10:34:21 -0700 (PDT)
+From:   Michal Orzel <michalorzel.eng@gmail.com>
+To:     John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/4] Allow guest access to EFI confidential computing
- secret area
-Message-ID: <YkVyIE8H4Ivb6J2l@zn.tnic>
-References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
- <YjydSNnG6EJ1KWx0@zn.tnic>
- <f2fb7553-0313-6393-c93c-2bb6619086dc@linux.ibm.com>
- <YkNQNzNa02Sndu+q@zn.tnic>
- <7696ba46-91c7-7119-bd68-b3521459cf37@linux.ibm.com>
- <247080bd-fef5-c892-7753-f9b7cf650166@linux.ibm.com>
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Michal Orzel <michalorzel.eng@gmail.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: [PATCH 1/5] apparmor: Remove redundant assignments
+Date:   Thu, 31 Mar 2022 19:33:54 +0200
+Message-Id: <20220331173358.40939-1-michalorzel.eng@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <247080bd-fef5-c892-7753-f9b7cf650166@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 30, 2022 at 09:11:54AM +0300, Dov Murik wrote:
-> If that's the case, we don't need a secure channel and secret injection.
-> You can use a simple "sev=debug" (or whatever) in the kernel
-> command-line to indicate your needs.
+Get rid of redundant assignments which end up in values not being
+read either because they are overwritten or the function ends.
 
-Yeah, that would work for a normal SEV guest.
+Reported by clang-tidy [deadcode.DeadStores]
 
-However, if it is an -ES guest, you need to somehow tell it as the guest
-owner: "hey you're being debugged and that's fine."
+Signed-off-by: Michal Orzel <michalorzel.eng@gmail.com>
+---
+ security/apparmor/domain.c | 3 +--
+ security/apparmor/label.c  | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-Because if you want to singlestep the thing, you're going to land in
-the #VC handler and destroy registers so you want to save them first if
-you're being debugged and then shovel them out to the host somehow. And
-that's another question but first things first.
-
-And "if you're being debugged" needs to be somehow told the guest
-through a secure channel so that the HV doesn't go and simply enable
-debugging by booting with "sev=debug" and bypass it all.
-
-And SNP has access to the policy in the attestation report, says Tom, so
-that's possible there.
-
-So we need a way to add the debugging aspect to the measurement and be
-able to recreate that measurement quickly so that a simple debugging
-session of a kernel in a guest can work pretty much the same with a SEV*
-guest.
-
-I'm still digging the details tho...
-
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index a29e69d2c300..77724acd9d8a 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -627,7 +627,6 @@ static struct aa_label *profile_transition(struct aa_profile *profile,
+ {
+ 	struct aa_label *new = NULL;
+ 	const char *info = NULL, *name = NULL, *target = NULL;
+-	unsigned int state = profile->file.start;
+ 	struct aa_perms perms = {};
+ 	bool nonewprivs = false;
+ 	int error = 0;
+@@ -661,7 +660,7 @@ static struct aa_label *profile_transition(struct aa_profile *profile,
+ 	}
+ 
+ 	/* find exec permissions for name */
+-	state = aa_str_perms(profile->file.dfa, state, name, cond, &perms);
++	aa_str_perms(profile->file.dfa, profile->file.start, name, cond, &perms);
+ 	if (perms.allow & MAY_EXEC) {
+ 		/* exec permission determine how to transition */
+ 		new = x_to_label(profile, bprm, name, perms.xindex, &target,
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index 0b0265da1926..ce9ae9b6b303 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -807,7 +807,7 @@ bool aa_label_replace(struct aa_label *old, struct aa_label *new)
+ 		struct aa_labelset *ls = labels_set(old);
+ 
+ 		write_lock_irqsave(&ls->lock, flags);
+-		res = __label_remove(old, new);
++		__label_remove(old, new);
+ 		if (labels_ns(old) != labels_ns(new)) {
+ 			write_unlock_irqrestore(&ls->lock, flags);
+ 			ls = labels_set(new);
 -- 
-Regards/Gruss,
-    Boris.
+2.25.1
 
-SUSE Software Solutions Germany GmbH, GF: Ivo Totev, HRB 36809, AG Nürnberg
