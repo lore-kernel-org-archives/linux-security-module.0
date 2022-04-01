@@ -2,264 +2,211 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C447C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Apr 2022 16:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDDEC43217
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Apr 2022 23:55:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236548AbiDAQ4F (ORCPT
+        id S1351137AbiDAX5g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Apr 2022 12:56:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45538 "EHLO
+        Fri, 1 Apr 2022 19:57:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349955AbiDAQze (ORCPT
+        with ESMTP id S233669AbiDAX5e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Apr 2022 12:55:34 -0400
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [IPv6:2001:1600:4:17::8faa])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 250C049F80;
-        Fri,  1 Apr 2022 09:52:50 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KVR743lNMzMptNX;
-        Fri,  1 Apr 2022 18:52:48 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KVR7372mVzlhRV1;
-        Fri,  1 Apr 2022 18:52:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1648831968;
-        bh=4mWNn2ZfPJI13XAqwdzuRcIOvkzyqPDODO+txhiCeSw=;
-        h=Date:From:To:Cc:References:Subject:In-Reply-To:From;
-        b=zJyFvupXFdiGpyEmv24F6WNk5HUwzsaRSGNBK3bQoRVSZPjMi6FX0Frp8cJ4Huzkx
-         U663fBXqX2pJMVYSfwJPtILjiC7uxwsBq8A4dhsh+O7NHCsGwSLIIg43x0QtXaKvzJ
-         KQTpwk7THHx8Oi4/hubS/ZZvkYafXvBuAls1kiKk=
-Message-ID: <d3340ed0-fe61-3f00-d7ba-44ece235a319@digikod.net>
-Date:   Fri, 1 Apr 2022 18:52:53 +0200
+        Fri, 1 Apr 2022 19:57:34 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D03C506F8;
+        Fri,  1 Apr 2022 16:55:43 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id bc27so3514007pgb.4;
+        Fri, 01 Apr 2022 16:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ITDDF7wJMqoC4D+CMFddkLEBVT+cz8yxZasDs7bEqHU=;
+        b=lKGmW1uWP9QHlp4AUB8qvKmffBMuUV67+V/VNWVRF6rOOYUbY+74bGyNvz0/RaZGm0
+         /6a1CNZPKF9XX8ufK2skUi/JsjqwRe6QpfBWIMc4Hugbu/pi7xgtDj+QZhrsm47b6P7e
+         MOqTKbiXouVj0rKUrNmMDVRTSskLt1rtHCZgGPxPtO+6WMOtlhB0VeWkxpTII8BpF4Ar
+         ZZYmaNBpe+zxwun2L8jgoYeVVLVEgsbprrzeDw5z0zV8K8N7UqRI1RkpiMq9kECPUC5M
+         X+EyGGzgnmy6ExUyqWapnwBhOaROd4ahOlRCHdELR9gEp0stA9O6L/EGZyJY8XyOLX00
+         1z1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ITDDF7wJMqoC4D+CMFddkLEBVT+cz8yxZasDs7bEqHU=;
+        b=t6m6Wa6ns29KkvIODqEKUi3IJIvq8yJQJ1SAO2CFxrrY4nh34zbp6GZ4VK4yjgitHq
+         gRAbHWUGQ5Tlg7Ff3YhoNSeozgVLUpNs2UqU/M1eenvR+Vf4lLzF5yuyGSUw/YfyUfDm
+         6UxHo3iOwjb1BeZteRXbgchtmbiJFivGh7vleyZtHLjCllFldnlz5khDkoJRhcpIeJ4A
+         4jSUBJsAu6s4ZEndjLA4gjkcf/5FPn9RK61rK6fDnB0b7Eo7smymT/00hW2PCFIMX2QK
+         HyczYje+Hr05tfZEAjlZR8hcNJzolTyyQcC7NTMR2w9JDykMq26Q3eBcgI1r4/6Y8cvO
+         rAkw==
+X-Gm-Message-State: AOAM530tOaF4jSnxTrm7cwfBoa3r+dgUK9RFrtnBdLvGtr0lIn+WwneT
+        2pbiMjQ0EgtwBIRGVS2lfGE=
+X-Google-Smtp-Source: ABdhPJw5mHEx3OXRCJwg5BH/o7y2KBgiA/EPycjlEwRTxtui+XCnm3ENGoJTUYt+IJX/yfQbKijNJA==
+X-Received: by 2002:a62:84d3:0:b0:4fa:72e2:1c64 with SMTP id k202-20020a6284d3000000b004fa72e21c64mr47407413pfd.29.1648857342449;
+        Fri, 01 Apr 2022 16:55:42 -0700 (PDT)
+Received: from MBP-98dd607d3435.dhcp.thefacebook.com ([2620:10d:c090:400::5:fb6e])
+        by smtp.gmail.com with ESMTPSA id j7-20020a056a00130700b004b9f7cd94a4sm4230615pfu.56.2022.04.01.16.55.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Apr 2022 16:55:41 -0700 (PDT)
+Date:   Fri, 1 Apr 2022 16:55:37 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
+ programs
+Message-ID: <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+ <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <b9f5995f96da447c851f7c9db8232a9b@huawei.com>
 MIME-Version: 1.0
-User-Agent: 
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <20220309134459.6448-11-konstantin.meskhidze@huawei.com>
-Content-Language: en-US
-Subject: Re: [RFC PATCH v4 10/15] seltest/landlock: add tests for bind() hooks
-In-Reply-To: <20220309134459.6448-11-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9f5995f96da447c851f7c9db8232a9b@huawei.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-You need to update tools/testing/selftests/landlock/config to enable 
-CONFIG_NET and CONFIG_INET.
-
-
-On 09/03/2022 14:44, Konstantin Meskhidze wrote:
-> Adds two selftests for bind socket action.
-> The one is with no landlock restrictions:
->      - bind_no_restrictions;
-> The second one is with mixed landlock rules:
->      - bind_with_restrictions;
-
-Some typos (that propagated to all selftest patches):
-
-selftest/landlock: Add tests for bind hook
-
-Add two tests for bind socket actions:
-- bind_no_restrictions
-- bind_with_restrictions
-
-
-
+On Thu, Mar 31, 2022 at 08:25:22AM +0000, Roberto Sassu wrote:
+> > From: Alexei Starovoitov [mailto:alexei.starovoitov@gmail.com]
+> > Sent: Thursday, March 31, 2022 4:27 AM
+> > On Mon, Mar 28, 2022 at 07:50:15PM +0200, Roberto Sassu wrote:
+> > > eBPF already allows programs to be preloaded and kept running without
+> > > intervention from user space. There is a dedicated kernel module called
+> > > bpf_preload, which contains the light skeleton of the iterators_bpf eBPF
+> > > program. If this module is enabled in the kernel configuration, its loading
+> > > will be triggered when the bpf filesystem is mounted (unless the module is
+> > > built-in), and the links of iterators_bpf are pinned in that filesystem
+> > > (they will appear as the progs.debug and maps.debug files).
+> > >
+> > > However, the current mechanism, if used to preload an LSM, would not
+> > offer
+> > > the same security guarantees of LSMs integrated in the security
+> > subsystem.
+> > > Also, it is not generic enough to be used for preloading arbitrary eBPF
+> > > programs, unless the bpf_preload code is heavily modified.
+> > >
+> > > More specifically, the security problems are:
+> > > - any program can be pinned to the bpf filesystem without limitations
+> > >   (unless a MAC mechanism enforces some restrictions);
+> > > - programs being executed can be terminated at any time by deleting the
+> > >   pinned objects or unmounting the bpf filesystem.
+> > 
+> > So many things to untangle here.
 > 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
+> Hi Alexei
 > 
-> Changes since v3:
-> * Split commit.
-> * Add helper create_socket.
-> * Add FIXTURE_SETUP.
+> thanks for taking the time to provide such detailed
+> explanation.
 > 
-> ---
->   .../testing/selftests/landlock/network_test.c | 153 ++++++++++++++++++
->   1 file changed, 153 insertions(+)
->   create mode 100644 tools/testing/selftests/landlock/network_test.c
+> > The above paragraphs are misleading and incorrect.
+> > The commit log sounds like there are security issues that this
+> > patch set is fixing.
+> > This is not true.
 > 
-> diff --git a/tools/testing/selftests/landlock/network_test.c b/tools/testing/selftests/landlock/network_test.c
-> new file mode 100644
-> index 000000000000..4c60f6d973a8
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/network_test.c
+> I reiterate the goal: enforce a mandatory policy with
+> an out-of-tree LSM (a kernel module is fine), with the
+> same guarantees of LSMs integrated in the security
+> subsystem.
 
-For consistency, please rename to net_test.c
+To make it 100% clear:
+Any in-kernel feature that benefits out-of-tree module will be rejected.
 
-> @@ -0,0 +1,153 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Landlock tests - Network
-> + *
-> + * Copyright (C) 2022 Huawei Tech. Co., Ltd.
-> + * Author: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> + *
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <arpa/inet.h>
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <linux/landlock.h>
-> +#include <netinet/in.h>
-> +#include <string.h>
-> +#include <sys/prctl.h>
-> +#include <sys/socket.h>
-> +#include <sys/types.h>
-> +
-> +#include "common.h"
-> +
-> +#define MAX_SOCKET_NUM 10
-> +
-> +#define SOCK_PORT_START 3470
-> +#define SOCK_PORT_ADD 10
-> +
-> +#define IP_ADDRESS "127.0.0.1"
-> +
-> +uint port[MAX_SOCKET_NUM];
-> +struct sockaddr_in addr[MAX_SOCKET_NUM];
-> +
-> +const int one = 1;
-> +
-> +/* Number pending connections queue to be hold */
-> +#define BACKLOG 10
-> +
-> +static int create_socket(struct __test_metadata *const _metadata)
-> +{
-> +
-> +		int sockfd;
-> +
-> +		sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
-> +		ASSERT_LE(0, sockfd);
-> +		/* Allows to reuse of local address */
-> +		ASSERT_EQ(0, setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)));
-
-Why is it required?
-
-> +
-> +		return sockfd;
-> +}
-> +
-> +static void enforce_ruleset(struct __test_metadata *const _metadata,
-> +		const int ruleset_fd)
-> +{
-> +	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-> +	ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0)) {
-> +		TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
-> +	}
-> +}
-> +
-> +FIXTURE(socket) { };
-
-You should pick another more meaningful name.
-
-> +
-> +FIXTURE_SETUP(socket)
-> +{
-> +	int i;
-> +	/* Creates socket addresses */
-> +	for (i = 0; i < MAX_SOCKET_NUM; i++) {
-> +		port[i] = SOCK_PORT_START + SOCK_PORT_ADD*i;
-> +		addr[i].sin_family = AF_INET;
-> +		addr[i].sin_port = htons(port[i]);
-> +		addr[i].sin_addr.s_addr = inet_addr(IP_ADDRESS);
-> +		memset(&(addr[i].sin_zero), '\0', 8);
-> +	}
-
-This is the right place to set up network namespace. It will make tests 
-non-flaky.
-
-> +}
-> +
-> +FIXTURE_TEARDOWN(socket)
-> +{ }
-> +
-> +TEST_F_FORK(socket, bind_no_restrictions) {
-> +
-> +	int sockfd;
-> +
-> +	sockfd = create_socket(_metadata);
-> +	ASSERT_LE(0, sockfd);
-> +
-> +	/* Binds a socket to port[0] */
-> +	ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&addr[0], sizeof(addr[0])));
-> +
-> +	ASSERT_EQ(0, close(sockfd));
-> +}
-> +
-> +TEST_F_FORK(socket, bind_with_restrictions) {
-> +
-> +	int sockfd_1, sockfd_2, sockfd_3;
-
-Do you really need to have 3 opened socket at the same time?
-
-> +
-> +	struct landlock_ruleset_attr ruleset_attr = {
-> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +	};
-> +	struct landlock_net_service_attr net_service_1 = {
-> +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
-> +				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +		.port = port[0],
-> +	};
-> +	struct landlock_net_service_attr net_service_2 = {
-> +		.allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +		.port = port[1],
-> +	};
-> +	struct landlock_net_service_attr net_service_3 = {
-> +		.allowed_access = 0,
-> +		.port = port[2],
-> +	};
-> +
-> +	const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-> +			sizeof(ruleset_attr), 0);
-> +	ASSERT_LE(0, ruleset_fd);
-> +
-> +	/* Allows connect and bind operations to the port[0] socket. */
-> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-> +				&net_service_1, 0));
-> +	/* Allows connect and deny bind operations to the port[1] socket. */
-> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-> +				&net_service_2, 0));
-> +	/* Empty allowed_access (i.e. deny rules) are ignored in network actions
-> +	 * for port[2] socket.
-> +	 */
-> +	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-> +				&net_service_3, 0));
-> +	ASSERT_EQ(ENOMSG, errno);
-> +
-> +	/* Enforces the ruleset. */
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +
-> +	sockfd_1 = create_socket(_metadata);
-> +	ASSERT_LE(0, sockfd_1);
-> +	/* Binds a socket to port[0] */
-> +	ASSERT_EQ(0, bind(sockfd_1, (struct sockaddr  *)&addr[0], sizeof(addr[0])));
-> +
-> +	/* Close bounded socket*/
-> +	ASSERT_EQ(0, close(sockfd_1));
-> +
-> +	sockfd_2 = create_socket(_metadata);
-> +	ASSERT_LE(0, sockfd_2);
-> +	/* Binds a socket to port[1] */
-> +	ASSERT_EQ(-1, bind(sockfd_2, (struct sockaddr *)&addr[1], sizeof(addr[1])));
-> +	ASSERT_EQ(EACCES, errno);
-> +
-> +	sockfd_3 = create_socket(_metadata);
-> +	ASSERT_LE(0, sockfd_3);
-> +	/* Binds a socket to port[2] */
-> +	ASSERT_EQ(-1, bind(sockfd_3, (struct sockaddr *)&addr[2], sizeof(addr[2])));
-> +	ASSERT_EQ(EACCES, errno);
-> +}
-> +TEST_HARNESS_MAIN
-> --
-> 2.25.1
+> The root user is not part of the TCB (i.e. is untrusted),
+> all the changes that user wants to make must be subject
+> of decision by the LSM enforcing the mandatory policy.
 > 
+> I thought about adding support for LSMs from kernel
+> modules via a new built-in LSM (called LoadLSM), but
 
+Such approach will be rejected. See above.
+
+> > I suspect there is huge confusion on what these two "progs.debug"
+> > and "maps.debug" files are in a bpffs instance.
+> > They are debug files to pretty pring loaded maps and progs for folks who
+> > like to use 'cat' to examine the state of the system instead of 'bpftool'.
+> > The root can remove these files from bpffs.
+> > 
+> > There is no reason for kernel module to pin its bpf progs.
+> > If you want to develop DIGLIM as a kernel module that uses light skeleton
+> > just do:
+> > #include <linux/init.h>
+> > #include <linux/module.h>
+> > #include "diglim.lskel.h"
+> > 
+> > static struct diglim_bpf *skel;
+> > 
+> > static int __init load(void)
+> > {
+> >         skel = diglim_bpf__open_and_load();
+> >         err = diglim_bpf__attach(skel);
+> > }
+> > /* detach skel in __fini */
+> > 
+> > It's really that short.
+> > 
+> > Then you will be able to
+> > - insmod diglim.ko -> will load and attach bpf progs.
+> > - rmmod diglim -> will detach them.
+> 
+> root can stop the LSM without consulting the security
+> policy. The goal of having root untrusted is not achieved.
+
+Out-of-tree module can do any hack.
+For example:
+1. don't do detach skel in __fini
+  rmmod will remove the module, but bpf progs will keep running.
+2. do module_get(THIS_MODULE) in __init
+  rmmod will return EBUSY
+  and have some out-of-band way of dropping mod refcnt.
+3. hack into sys_delete_module. if module_name==diglem return EBUSY.
+4. add proper LSM hook to delete_module
+
+> My point was that pinning progs seems to be the
+> recommended way of keeping them running. 
+
+Not quite. bpf_link refcnt is what keeps progs attached.
+bpffs is mainly used for:
+- to pass maps/links from one process to another
+when passing fd is not possible.
+- to solve the case of crashing user space.
+The user space agent will restart and will pick up where
+it's left by reading map, link, prog FDs from bpffs.
+- pinning bpf iterators that are later used to 'cat' such files.
+That is what bpf_preload is doing by creating two debug
+files "maps.debug" and "progs.debug".
+
+> Pinning
+> them to unreachable inodes intuitively looked the
+> way to go for achieving the stated goal. 
+
+We can consider inodes in bpffs that are not unlinkable by root
+in the future, but certainly not for this use case.
+
+> Or maybe I
+> should just increment the reference count of links
+> and don't decrement during an rmmod?
+
+I suggest to abandon out-of-tree goal.
+Only then we can help and continue this discussion.
