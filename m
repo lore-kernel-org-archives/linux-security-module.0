@@ -2,120 +2,235 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A61C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Apr 2022 15:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 388ADC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Apr 2022 16:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345184AbiDAPHm (ORCPT
+        id S1350054AbiDAQyo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Apr 2022 11:07:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42350 "EHLO
+        Fri, 1 Apr 2022 12:54:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349653AbiDAO5H (ORCPT
+        with ESMTP id S1350014AbiDAQyY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Apr 2022 10:57:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11AF15040E;
-        Fri,  1 Apr 2022 07:44:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D5EB60AD8;
-        Fri,  1 Apr 2022 14:44:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C81C34111;
-        Fri,  1 Apr 2022 14:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648824276;
-        bh=8gh+4Mhbk2luWoalZsJvkPybHUn5HxFJvrvm+ZoaMyE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ieWwYrO70pKY+GVO5kR07MJvhzp4AEhqWYyiKesyglHn7zrk0OPPmkIrWfkrrbnxe
-         OlGPW6aFZHdwXdA0v+X0UDNlMxoZkIdbEzW2Hn2Oiz9/TLehOm+efhNtu8idwopqWu
-         kiGFBfAVvo+CP6yFCptFOyC9X7Dhdu54aLKpY5M62BPsD/ZDkb2WhgBFas0XoVLt2B
-         lxWVGM6q6GlSk0EIU89q25qiVVJIZuqEL6HkUplVPUJctsTFCIv3B5hJsbf09q6cfR
-         4kAZOLiyKQapRQTAqrmTCtedXxN1xR8aLVPtIsTtvty1MtCdzkeeOT/En1Ym2Wiwkj
-         GgJPo1vaEGxOA==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wang Yufen <wangyufen@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Paul Moore <paul@paul-moore.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 62/65] netlabel: fix out-of-bounds memory accesses
-Date:   Fri,  1 Apr 2022 10:42:03 -0400
-Message-Id: <20220401144206.1953700-62-sashal@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220401144206.1953700-1-sashal@kernel.org>
-References: <20220401144206.1953700-1-sashal@kernel.org>
+        Fri, 1 Apr 2022 12:54:24 -0400
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D4ED2F4
+        for <linux-security-module@vger.kernel.org>; Fri,  1 Apr 2022 09:47:53 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KVR1M4r25zMqC0t;
+        Fri,  1 Apr 2022 18:47:51 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KVR1M0nlJzljsT9;
+        Fri,  1 Apr 2022 18:47:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1648831671;
+        bh=PccnItg5P2qEr5/Y24y841f+h1rYTKNIQVzDJ87oEuU=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=h9h/GYzRBgQc6j6p4Pmjs2hR/re8Esq4/BzcbOFlkSlz5MrAhpuVnG0uk8TSGSakW
+         OJZr961lXJlb3yzPSTcFSO49YaJ1KyP7Xz+cyf3coKfGdRqDs1c/OAKb+3cHgooJXi
+         8mxMaFvc5ojEMRSSLh1CYqWWgnl5NgASoWSKmPeA=
+Message-ID: <9fe2c504-627f-c5eb-b77f-db34d471116f@digikod.net>
+Date:   Fri, 1 Apr 2022 18:47:56 +0200
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-2-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [RFC PATCH v4 01/15] landlock: access mask renaming
+In-Reply-To: <20220309134459.6448-2-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Wang Yufen <wangyufen@huawei.com>
 
-[ Upstream commit f22881de730ebd472e15bcc2c0d1d46e36a87b9c ]
+On 09/03/2022 14:44, Konstantin Meskhidze wrote:
+> Currently Landlock supports filesystem
+> restrictions. To support network type rules,
+> this modification extends and renames
+> ruleset's access masks.
 
-In calipso_map_cat_ntoh(), in the for loop, if the return value of
-netlbl_bitmap_walk() is equal to (net_clen_bits - 1), when
-netlbl_bitmap_walk() is called next time, out-of-bounds memory accesses
-of bitmap[byte_offset] occurs.
+Please use 72 columns for all commit messages.
+With vim: set tw=72
 
-The bug was found during fuzzing. The following is the fuzzing report
- BUG: KASAN: slab-out-of-bounds in netlbl_bitmap_walk+0x3c/0xd0
- Read of size 1 at addr ffffff8107bf6f70 by task err_OH/252
+The code looks good but you'll have to rebase it on top of my 
+access_mask_t changes.
 
- CPU: 7 PID: 252 Comm: err_OH Not tainted 5.17.0-rc7+ #17
- Hardware name: linux,dummy-virt (DT)
- Call trace:
-  dump_backtrace+0x21c/0x230
-  show_stack+0x1c/0x60
-  dump_stack_lvl+0x64/0x7c
-  print_address_description.constprop.0+0x70/0x2d0
-  __kasan_report+0x158/0x16c
-  kasan_report+0x74/0x120
-  __asan_load1+0x80/0xa0
-  netlbl_bitmap_walk+0x3c/0xd0
-  calipso_opt_getattr+0x1a8/0x230
-  calipso_sock_getattr+0x218/0x340
-  calipso_sock_getattr+0x44/0x60
-  netlbl_sock_getattr+0x44/0x80
-  selinux_netlbl_socket_setsockopt+0x138/0x170
-  selinux_socket_setsockopt+0x4c/0x60
-  security_socket_setsockopt+0x4c/0x90
-  __sys_setsockopt+0xbc/0x2b0
-  __arm64_sys_setsockopt+0x6c/0x84
-  invoke_syscall+0x64/0x190
-  el0_svc_common.constprop.0+0x88/0x200
-  do_el0_svc+0x88/0xa0
-  el0_svc+0x128/0x1b0
-  el0t_64_sync_handler+0x9c/0x120
-  el0t_64_sync+0x16c/0x170
+Next time you can rebase your changes on my landlock-wip branch at 
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
+I'll update this branch regularly but it should not impact much your 
+changes.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/netlabel/netlabel_kapi.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 5e1239cef000..91b35b7c80d8 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -885,6 +885,8 @@ int netlbl_bitmap_walk(const unsigned char *bitmap, u32 bitmap_len,
- 	unsigned char bitmask;
- 	unsigned char byte;
- 
-+	if (offset >= bitmap_len)
-+		return -1;
- 	byte_offset = offset / 8;
- 	byte = bitmap[byte_offset];
- 	bit_spot = offset;
--- 
-2.34.1
+> 
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
+> 
+> Changes since v3:
+> * Split commit.
+> 
+> ---
+>   security/landlock/fs.c       |  4 ++--
+>   security/landlock/ruleset.c  | 18 +++++++++---------
+>   security/landlock/ruleset.h  |  8 ++++----
+>   security/landlock/syscalls.c |  6 +++---
+>   4 files changed, 18 insertions(+), 18 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 97b8e421f617..d727bdab7840 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -163,7 +163,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>   		return -EINVAL;
+> 
+>   	/* Transforms relative access rights to absolute ones. */
+> -	access_rights |= LANDLOCK_MASK_ACCESS_FS & ~ruleset->fs_access_masks[0];
+> +	access_rights |= LANDLOCK_MASK_ACCESS_FS & ~ruleset->access_masks[0];
+>   	object = get_inode_object(d_backing_inode(path->dentry));
+>   	if (IS_ERR(object))
+>   		return PTR_ERR(object);
+> @@ -252,7 +252,7 @@ static int check_access_path(const struct landlock_ruleset *const domain,
+>   	/* Saves all layers handling a subset of requested accesses. */
+>   	layer_mask = 0;
+>   	for (i = 0; i < domain->num_layers; i++) {
+> -		if (domain->fs_access_masks[i] & access_request)
+> +		if (domain->access_masks[i] & access_request)
+>   			layer_mask |= BIT_ULL(i);
+>   	}
+>   	/* An access request not handled by the domain is allowed. */
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index ec72b9262bf3..78341a0538de 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -28,7 +28,7 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>   {
+>   	struct landlock_ruleset *new_ruleset;
+> 
+> -	new_ruleset = kzalloc(struct_size(new_ruleset, fs_access_masks,
+> +	new_ruleset = kzalloc(struct_size(new_ruleset, access_masks,
+>   				num_layers), GFP_KERNEL_ACCOUNT);
+>   	if (!new_ruleset)
+>   		return ERR_PTR(-ENOMEM);
+> @@ -39,21 +39,21 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>   	/*
+>   	 * hierarchy = NULL
+>   	 * num_rules = 0
+> -	 * fs_access_masks[] = 0
+> +	 * access_masks[] = 0
+>   	 */
+>   	return new_ruleset;
+>   }
+> 
+> -struct landlock_ruleset *landlock_create_ruleset(const u32 fs_access_mask)
+> +struct landlock_ruleset *landlock_create_ruleset(const u32 access_mask)
+>   {
+>   	struct landlock_ruleset *new_ruleset;
+> 
+>   	/* Informs about useless ruleset. */
+> -	if (!fs_access_mask)
+> +	if (!access_mask)
+>   		return ERR_PTR(-ENOMSG);
+>   	new_ruleset = create_ruleset(1);
+>   	if (!IS_ERR(new_ruleset))
+> -		new_ruleset->fs_access_masks[0] = fs_access_mask;
+> +		new_ruleset->access_masks[0] = access_mask;
+>   	return new_ruleset;
+>   }
+> 
+> @@ -116,7 +116,7 @@ static void build_check_ruleset(void)
+>   		.num_rules = ~0,
+>   		.num_layers = ~0,
+>   	};
+> -	typeof(ruleset.fs_access_masks[0]) fs_access_mask = ~0;
+> +	typeof(ruleset.access_masks[0]) fs_access_mask = ~0;
+> 
+>   	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
+>   	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
+> @@ -279,7 +279,7 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+>   		err = -EINVAL;
+>   		goto out_unlock;
+>   	}
+> -	dst->fs_access_masks[dst->num_layers - 1] = src->fs_access_masks[0];
+> +	dst->access_masks[dst->num_layers - 1] = src->access_masks[0];
+> 
+>   	/* Merges the @src tree. */
+>   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
+> @@ -337,8 +337,8 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
+>   		goto out_unlock;
+>   	}
+>   	/* Copies the parent layer stack and leaves a space for the new layer. */
+> -	memcpy(child->fs_access_masks, parent->fs_access_masks,
+> -			flex_array_size(parent, fs_access_masks, parent->num_layers));
+> +	memcpy(child->access_masks, parent->access_masks,
+> +			flex_array_size(parent, access_masks, parent->num_layers));
+> 
+>   	if (WARN_ON_ONCE(!parent->hierarchy)) {
+>   		err = -EINVAL;
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index 2d3ed7ec5a0a..32d90ce72428 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -97,7 +97,7 @@ struct landlock_ruleset {
+>   		 * section.  This is only used by
+>   		 * landlock_put_ruleset_deferred() when @usage reaches zero.
+>   		 * The fields @lock, @usage, @num_rules, @num_layers and
+> -		 * @fs_access_masks are then unused.
+> +		 * @access_masks are then unused.
+>   		 */
+>   		struct work_struct work_free;
+>   		struct {
+> @@ -124,7 +124,7 @@ struct landlock_ruleset {
+>   			 */
+>   			u32 num_layers;
+>   			/**
+> -			 * @fs_access_masks: Contains the subset of filesystem
+> +			 * @access_masks: Contains the subset of filesystem
+>   			 * actions that are restricted by a ruleset.  A domain
+>   			 * saves all layers of merged rulesets in a stack
+>   			 * (FAM), starting from the first layer to the last
+> @@ -135,12 +135,12 @@ struct landlock_ruleset {
+>   			 * layers are set once and never changed for the
+>   			 * lifetime of the ruleset.
+>   			 */
+> -			u16 fs_access_masks[];
+> +			u32 access_masks[];
 
+Changing from u16 to u32 is not correct for this patch, but it would not 
+be visible with access_mask_t anyway.
+
+>   		};
+>   	};
+>   };
+> 
+> -struct landlock_ruleset *landlock_create_ruleset(const u32 fs_access_mask);
+> +struct landlock_ruleset *landlock_create_ruleset(const u32 access_mask);
+> 
+>   void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
+>   void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index 32396962f04d..f1d86311df7e 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -341,10 +341,10 @@ SYSCALL_DEFINE4(landlock_add_rule,
+>   	}
+>   	/*
+>   	 * Checks that allowed_access matches the @ruleset constraints
+> -	 * (ruleset->fs_access_masks[0] is automatically upgraded to 64-bits).
+> +	 * (ruleset->access_masks[0] is automatically upgraded to 64-bits).
+>   	 */
+> -	if ((path_beneath_attr.allowed_access | ruleset->fs_access_masks[0]) !=
+> -			ruleset->fs_access_masks[0]) {
+> +	if ((path_beneath_attr.allowed_access | ruleset->access_masks[0]) !=
+> +			ruleset->access_masks[0]) {
+>   		err = -EINVAL;
+>   		goto out_put_ruleset;
+>   	}
+> --
+> 2.25.1
+> 
