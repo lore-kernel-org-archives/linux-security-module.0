@@ -2,37 +2,37 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95315C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Apr 2022 15:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A61C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Apr 2022 15:05:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351267AbiDAPHk (ORCPT
+        id S1345184AbiDAPHm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Apr 2022 11:07:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52270 "EHLO
+        Fri, 1 Apr 2022 11:07:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350061AbiDAO6x (ORCPT
+        with ESMTP id S1349653AbiDAO5H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Apr 2022 10:58:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA04317F3ED;
-        Fri,  1 Apr 2022 07:46:04 -0700 (PDT)
+        Fri, 1 Apr 2022 10:57:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11AF15040E;
+        Fri,  1 Apr 2022 07:44:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 64B6B60A3C;
-        Fri,  1 Apr 2022 14:46:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F440C34112;
-        Fri,  1 Apr 2022 14:46:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D5EB60AD8;
+        Fri,  1 Apr 2022 14:44:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C81C34111;
+        Fri,  1 Apr 2022 14:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648824363;
+        s=k20201202; t=1648824276;
         bh=8gh+4Mhbk2luWoalZsJvkPybHUn5HxFJvrvm+ZoaMyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i3WSdn2uKmbffqlCgEQbrgFWX/F6mFC5070TQzyEtLY7MCiB0nM9eEg9uefsRKw/5
-         s6zeMzBZ+4u1ACLqQtrAmFZaUxKRodHH031tqVIK+tXxiIE2ysX2WA6ore0sPQAmpg
-         QpwOKChqgQJeYix1nBvXIXHNwVHS3P9MOvMv5DD0G7r8T59T5pKkrKoLt1By0qvKJQ
-         TqFweJe0XgjA0MT18zJQTxkQ5CnU5ZutHBBIUq3yt7WxXcO/zz8I8Fpg1ZXSfoSuLP
-         0VOHmSHlNVYrEODCxiuGJ2ABDsHrDPV9vXFG/cmUXpxhzUf0EYGvmn5EyMwJuDeV52
-         swKJDjJRW6V0Q==
+        b=ieWwYrO70pKY+GVO5kR07MJvhzp4AEhqWYyiKesyglHn7zrk0OPPmkIrWfkrrbnxe
+         OlGPW6aFZHdwXdA0v+X0UDNlMxoZkIdbEzW2Hn2Oiz9/TLehOm+efhNtu8idwopqWu
+         kiGFBfAVvo+CP6yFCptFOyC9X7Dhdu54aLKpY5M62BPsD/ZDkb2WhgBFas0XoVLt2B
+         lxWVGM6q6GlSk0EIU89q25qiVVJIZuqEL6HkUplVPUJctsTFCIv3B5hJsbf09q6cfR
+         4kAZOLiyKQapRQTAqrmTCtedXxN1xR8aLVPtIsTtvty1MtCdzkeeOT/En1Ym2Wiwkj
+         GgJPo1vaEGxOA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Wang Yufen <wangyufen@huawei.com>, Hulk Robot <hulkci@huawei.com>,
@@ -41,12 +41,12 @@ Cc:     Wang Yufen <wangyufen@huawei.com>, Hulk Robot <hulkci@huawei.com>,
         Sasha Levin <sashal@kernel.org>, kuba@kernel.org,
         pabeni@redhat.com, netdev@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 35/37] netlabel: fix out-of-bounds memory accesses
-Date:   Fri,  1 Apr 2022 10:44:44 -0400
-Message-Id: <20220401144446.1954694-35-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 62/65] netlabel: fix out-of-bounds memory accesses
+Date:   Fri,  1 Apr 2022 10:42:03 -0400
+Message-Id: <20220401144206.1953700-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220401144446.1954694-1-sashal@kernel.org>
-References: <20220401144446.1954694-1-sashal@kernel.org>
+In-Reply-To: <20220401144206.1953700-1-sashal@kernel.org>
+References: <20220401144206.1953700-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
