@@ -2,37 +2,37 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC07EC4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A44A0C433F5
 	for <linux-security-module@archiver.kernel.org>; Fri,  1 Apr 2022 15:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351010AbiDAPHh (ORCPT
+        id S1346583AbiDAPHf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Apr 2022 11:07:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55768 "EHLO
+        Fri, 1 Apr 2022 11:07:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352543AbiDAOub (ORCPT
+        with ESMTP id S1350269AbiDAOrW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Apr 2022 10:50:31 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C73E22B3331;
-        Fri,  1 Apr 2022 07:41:53 -0700 (PDT)
+        Fri, 1 Apr 2022 10:47:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C3ED2A1E8D;
+        Fri,  1 Apr 2022 07:37:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3DA34B82511;
-        Fri,  1 Apr 2022 14:41:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAFEDC3410F;
-        Fri,  1 Apr 2022 14:41:50 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E27EC60915;
+        Fri,  1 Apr 2022 14:37:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B057C34112;
+        Fri,  1 Apr 2022 14:37:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648824111;
+        s=k20201202; t=1648823847;
         bh=FuCO+U6N9ZCghCVd1CqTy9TOpm50qfLHeScE/HPLP+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y9nBDVEnIt2QPcIWHicP0P1dHaXTuZ5PAtn0IVzzxlt8/mKGKrYTauH7lQMan5eAZ
-         Bl3wpdDGY5t04PHJkN41EYvuRyAqGQ0n0wGMQl3LfGu7SkzoGPrfvOqUfPJePuvLNz
-         91SdDoMdZnWp/JQjhHMxWHgJzMdMawfMAayikX1SNum9H6NSnkCWa0cFKX6KNjJCP5
-         iwEIKjIChM1rkHtySCcpsoVl8bvydZEh6gUHBNZSEZuFI30rlJrClbcKWJrTVYBZXo
-         PSP97QEu1UcBaQxLl1eXAD/fJ/uX6S1GDKrXei6g7kvboqbju0wB6gSNLTmiQMY4Yg
-         o5To90B9Wm6lA==
+        b=lCpUII9F5fAFpa7XCdR5BTECFnYBXmAdZxzkcDc7yksgVMcS76gDLbnOqKbCuqQ6p
+         I8gqxM7hsrWwKtGrvngF0DvqydLO7tc+OSszXUL7gE4Vuz8MakjnC8S/bnbTBk54ZP
+         IiEcxhY+iRnaCQqyMEhyRM/gK3GtICuDxD+YKYXgwP3BUMiKHLnB5Ip/bfnlo4tMeb
+         WpHfc4KHlDNbeuSpC7PC8OX/Sm7QVG9xcb6lufFZrv+Rgzf2ZdR4KufRAyQOf5Dqdw
+         8bk7QbZL/eh7PTVH92unhb+w8q/ZTWcfmaQmQ2wrf0e/kHqjpZQueRbiAWIAqzLCgJ
+         ZLthi/RZRz3rw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Wang Yufen <wangyufen@huawei.com>, Hulk Robot <hulkci@huawei.com>,
@@ -41,12 +41,12 @@ Cc:     Wang Yufen <wangyufen@huawei.com>, Hulk Robot <hulkci@huawei.com>,
         Sasha Levin <sashal@kernel.org>, kuba@kernel.org,
         pabeni@redhat.com, netdev@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 93/98] netlabel: fix out-of-bounds memory accesses
-Date:   Fri,  1 Apr 2022 10:37:37 -0400
-Message-Id: <20220401143742.1952163-93-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.16 104/109] netlabel: fix out-of-bounds memory accesses
+Date:   Fri,  1 Apr 2022 10:32:51 -0400
+Message-Id: <20220401143256.1950537-104-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220401143742.1952163-1-sashal@kernel.org>
-References: <20220401143742.1952163-1-sashal@kernel.org>
+In-Reply-To: <20220401143256.1950537-1-sashal@kernel.org>
+References: <20220401143256.1950537-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
