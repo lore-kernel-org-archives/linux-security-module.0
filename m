@@ -2,168 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AD8C3526F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328DDC4167B
 	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 21:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379486AbiDDVaS (ORCPT
+        id S1382497AbiDDVaN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:30:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48922 "EHLO
+        Mon, 4 Apr 2022 17:30:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380523AbiDDUVJ (ORCPT
+        with ESMTP id S1380531AbiDDUYh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Apr 2022 16:21:09 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB53A17E19
-        for <linux-security-module@vger.kernel.org>; Mon,  4 Apr 2022 13:19:11 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id g20so12483169edw.6
-        for <linux-security-module@vger.kernel.org>; Mon, 04 Apr 2022 13:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+IOD94qLZON7z5cpIIeb+KlBMTXlMtRyTG6pq9z/7sE=;
-        b=1XznDSFaeBL43LgBjOmEUUMnMaSzLra1EE4nshzUAR1prsSMutPqf14uLfx3FS29gE
-         /zkI90HkCOuxsuRP2wKobkOzkJoRkH4aGE/Ck197Xe6RG0BH3GbKpttQc1ooL8Q9e3yg
-         +gLc3YjjJaB4aSDB5M+CDRi94nmWY2YeNvMhm2V4ldT2wRMrwG69n0hS4g+7W7GUAJQZ
-         2Ok60fbFu7wN2BdPXmcfCY2S+BwuORU9QSDwOHElcoDt1LiLztnLrMft5lJCLqwObQx+
-         7IPdIEx2J94GEZ64jxysK9JK7eKTu9bq9aEBOteC/fYv0ksWMBgJ+dj9RQveG/satKBv
-         RT5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+IOD94qLZON7z5cpIIeb+KlBMTXlMtRyTG6pq9z/7sE=;
-        b=UKHDtARWo9siM5gVA69VTNV65u6lHtxioKbNjXn36OpGChTKIAFwWBDAvwzHTNJUKK
-         fJcTadt04nIg5p6vGjn/Tu+td5Mr6zcdufSrVQhyPDvIs+ncfnNzza/OUp74Zgi5PFDM
-         uBU4Id4rHay61zLF0nYogrbzra4MbPdmCeNvOaUt2Dstz+3rPtlHripd+p8n5vAy/fID
-         UVzoQ/PcnrVrS2SQ4qlT2DTlQMZU0nVWbRwInNeiH2T797uOzEtQrQr0SDfmKrtGbLKs
-         rDRMeXe0REUvoExEt0bBVwMNzeX9TC2HA58vf9+QsuaIIZU5tLlH+7hHCSv0QQu6Mf9P
-         wnew==
-X-Gm-Message-State: AOAM532MA8NsL9rfUuKB7vLb9MzGn5w+DWJR/wAWp9nlijedEnwAGNme
-        4M3OecBkJRFJdVU+w6cAmFSewU08eIL8edTl4lN7
-X-Google-Smtp-Source: ABdhPJz7lr2QA4pAedBicmWoNNd3dV+nYeSKLZcGV0j1cS/xio7wu3dCf3exaEW4/+2Wf2hvpNbYqREZigKGexmGcxo=
-X-Received: by 2002:a05:6402:350d:b0:419:547f:134a with SMTP id
- b13-20020a056402350d00b00419547f134amr1969103edd.405.1649103550207; Mon, 04
- Apr 2022 13:19:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220217143457.75229-1-cgzones@googlemail.com> <20220308170928.58040-1-cgzones@googlemail.com>
-In-Reply-To: <20220308170928.58040-1-cgzones@googlemail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 4 Apr 2022 16:18:59 -0400
-Message-ID: <CAHC9VhSiqvCbKQHYTGAj3vqECNto6eNm0MyzLd92kcJnvZSw1A@mail.gmail.com>
-Subject: Re: [PATCH v2] selinux: log anon inode class name
-To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc:     selinux@vger.kernel.org, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 4 Apr 2022 16:24:37 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B4C36B60;
+        Mon,  4 Apr 2022 13:22:39 -0700 (PDT)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 234JAKmi006195;
+        Mon, 4 Apr 2022 20:22:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=sfw2RrUtmje6BGoULsQ9WojX8/18w10SSX3CBcUtUug=;
+ b=FHk85IwWXeICJJHsltU4Mnj2ucXrR/O+B4aqoKOECxHXgFB4U9JMQ4dpGh7SJdGcf3ac
+ xqTbwyiZvq+XKo+rDkje/qDdisV8/v1eMyn+/R/VVi1EXdsvrI8Ou25CaYsnygbitBV7
+ oPrbIXdJ1IOqN8d08u95JL1VbLKlrwnWfDw0D6toATNVjbgOQlJADJaxunRcrzcI34m9
+ J315msLcf+TGth0oLwvQI2Rpd/OHoZjppqWJ22b1G30xERvGVnewT27IM10YUTKBqI1T
+ 1730DRjfPxpIkSo38bFmP2cwOR3u4xqJKJMK+jLyJz4FlFWrsOuq1+QAtcpBzfCatZLY uw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3f6yupg9e1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 04 Apr 2022 20:22:26 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 234KMQXf027173;
+        Mon, 4 Apr 2022 20:22:26 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3f6yupg9dj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 04 Apr 2022 20:22:25 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 234KJ58o029900;
+        Mon, 4 Apr 2022 20:22:24 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma06ams.nl.ibm.com with ESMTP id 3f6drhm91e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 04 Apr 2022 20:22:23 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 234KMLIh50266436
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 4 Apr 2022 20:22:21 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E7E7A4053;
+        Mon,  4 Apr 2022 20:22:21 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7D2F2A4040;
+        Mon,  4 Apr 2022 20:22:20 +0000 (GMT)
+Received: from sig-9-65-92-200.ibm.com (unknown [9.65.92.200])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  4 Apr 2022 20:22:20 +0000 (GMT)
+Message-ID: <5c3565f5a46f5728873c9aedd634699ba171fe98.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: remove template "ima" as the compiled default
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     GUO Zihua <guozihua@huawei.com>, linux-integrity@vger.kernel.org
+Cc:     dmitry.kasatkin@gmail.com, roberto.sassu@huawei.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xiujianfeng@huawei.com,
+        wangweiyang2@huawei.com
+Date:   Mon, 04 Apr 2022 16:22:19 -0400
+In-Reply-To: <20220321074737.138002-1-guozihua@huawei.com>
+References: <20220321074737.138002-1-guozihua@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: pl8UE3lgklOhzRkfLPc-oB8xj5cwxfhv
+X-Proofpoint-ORIG-GUID: JwuNMqeC0dx2dXPMiAMUKqbUJwEakXWi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-04-04_09,2022-03-31_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ phishscore=0 adultscore=0 clxscore=1011 mlxlogscore=999 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 spamscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2204040111
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 8, 2022 at 12:09 PM Christian G=C3=B6ttsche
-<cgzones@googlemail.com> wrote:
->
-> Log the anonymous inode class name in the security hook
-> inode_init_security_anon.  This name is the key for name based type
-> transitions on the anon_inode security class on creation.  Example:
->
->     type=3DAVC msg=3Daudit(02/16/22 22:02:50.585:216) : avc:  granted \
->         { create } for  pid=3D2136 comm=3Dmariadbd anonclass=3D"[io_uring=
-]" \
->         scontext=3Dsystem_u:system_r:mysqld_t:s0 \
->         tcontext=3Dsystem_u:system_r:mysqld_iouring_t:s0 tclass=3Danon_in=
-ode
->
-> Add a new LSM audit data type holding the inode and the class name.
->
-> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
->
+Hi Guo,
+
+The Subject line above sounds like the default template is currently
+"ima", which it isn't.   Perhaps "ima: remove the IMA_TEMPLATE Kconfig
+option" is more accurate.
+
+On Mon, 2022-03-21 at 15:47 +0800, GUO Zihua wrote:
+> Template "ima" is a legacy template which limits the hash algorithm to
+> either sha1 or md5. None of them should be considered "strong" these
+> days. Besides, allowing template "ima" as the compiled default would
+> also cause the following issue: the cmdline option "ima_hash=" must be
+> behind "ima_template=", otherwise "ima_hash=" might be rejected.
+> 
+
+True "ima" is a legacy template, but the purpose of removing the
+IMA_TEMPLATE from the Kconfig is to address the remaining boot command
+line ordering issue not previously addressed.  This is reasonable
+because the "ima" template is limited to SHA1 and MD5.  If someone
+still needs to use the "ima" template, "ima_template=ima" could still
+be specified on the boot command line.
+
+> The root cause of this issue is that during the processing of ima_hash,
+> we would try to check whether the hash algorithm is compatible with the
+> template. If the template is not set at the moment we do the check, we
+> check the algorithm against the compiled default template. If the
+> complied default template is "ima", then we reject any hash algorithm
+> other than sha1 and md5.
+> 
+> For example, if the compiled default template is "ima", and the default
+> algorithm is sha1 (which is the current default). In the cmdline, we put
+> in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
+> that ima starts with ima-ng as the template and sha256 as the hash
+> algorithm. However, during the processing of "ima_hash=",
+> "ima_template=" has not been processed yet, and hash_setup would check
+> the configured hash algorithm against the compiled default: ima, and
+> reject sha256. So at the end, the hash algorithm that is actually used
+> will be sha1.
+> 
+> With template "ima" removed from the compiled default, we ensure that the
+> default tempalte would at least be "ima-ng" which allows for basically
+> any hash algorithm.
+> 
+> This change would not break the algorithm compatibility checking for
+> IMA.
+> 
+> Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
+> Signed-off-by: GUO Zihua <guozihua@huawei.com>
 > ---
-> v2:
->   - drop dev=3D and name=3D output for anonymous inodes, and hence simpli=
-fy
->     the common_audit_data union member.
->   - drop WARN_ON() on empty name passed to inode_init_security_anon hook
-> ---
->  include/linux/lsm_audit.h | 2 ++
->  security/lsm_audit.c      | 4 ++++
->  security/selinux/hooks.c  | 4 ++--
->  3 files changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-> index 17d02eda9538..97a8b21eb033 100644
-> --- a/include/linux/lsm_audit.h
-> +++ b/include/linux/lsm_audit.h
-> @@ -76,6 +76,7 @@ struct common_audit_data {
->  #define LSM_AUDIT_DATA_IBENDPORT 14
->  #define LSM_AUDIT_DATA_LOCKDOWN 15
->  #define LSM_AUDIT_DATA_NOTIFICATION 16
-> +#define LSM_AUDIT_DATA_ANONINODE       17
->         union   {
->                 struct path path;
->                 struct dentry *dentry;
-> @@ -96,6 +97,7 @@ struct common_audit_data {
->                 struct lsm_ibpkey_audit *ibpkey;
->                 struct lsm_ibendport_audit *ibendport;
->                 int reason;
-> +               const char *anonclass;
->         } u;
->         /* this union contains LSM specific data */
->         union {
-> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> index 1897cbf6fc69..981f6a4e4590 100644
-> --- a/security/lsm_audit.c
-> +++ b/security/lsm_audit.c
-> @@ -433,6 +433,10 @@ static void dump_common_audit_data(struct audit_buff=
-er *ab,
->                 audit_log_format(ab, " lockdown_reason=3D\"%s\"",
->                                  lockdown_reasons[a->u.reason]);
->                 break;
-> +       case LSM_AUDIT_DATA_ANONINODE:
-> +               audit_log_format(ab, " anonclass=3D");
-> +               audit_log_untrustedstring(ab, a->u.anonclass);
+>  security/integrity/ima/Kconfig | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
+> 
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index f3a9cc201c8c..9513df2ac19e 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -65,14 +65,11 @@ choice
+>  	help
+>  	  Select the default IMA measurement template.
+>  
+> -	  The original 'ima' measurement list template contains a
+> -	  hash, defined as 20 bytes, and a null terminated pathname,
+> -	  limited to 255 characters.  The 'ima-ng' measurement list
+> -	  template permits both larger hash digests and longer
+> -	  pathnames.
+> -
+> -	config IMA_TEMPLATE
+> -		bool "ima"
+> +	  The 'ima-ng' measurement list template permits various hash
+> +	  digests and long pathnames. The compiled default template
+> +	  can be overwritten using the kernel command line
+> +	  'ima_template=' option.
+> +
+>  	config IMA_NG_TEMPLATE
+>  		bool "ima-ng (default)"
+>  	config IMA_SIG_TEMPLATE
+> @@ -82,7 +79,6 @@ endchoice
+>  config IMA_DEFAULT_TEMPLATE
+>  	string
+>  	depends on IMA
+> -	default "ima" if IMA_TEMPLATE
+>  	default "ima-ng" if IMA_NG_TEMPLATE
+>  	default "ima-sig" if IMA_SIG_TEMPLATE
+>  
 
-My apologies, I didn't notice this in the previous patch ... I don't
-think we need to log this as an untrusted string as the string value
-is coming from the kernel, not userspace, so we could rewrite the
-above as the following:
+The IMA_TEMPLATE definition is removed, but leaves a few references to
+it.
+-- 
+thanks,
 
-  audit_log_format(ab, " anonclass=3D%s", a->u.anonclass);
+Mimi
 
-... if you are okay with that, I can make the change when I merge the
-patch or you can submit another revision, let me know which you would
-prefer.
 
-The rest of the patch looks good, thanks!
-
-> +               break;
->         } /* switch (a->type) */
->  }
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index b12e14b2797b..49c0abfd2f6a 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2965,8 +2965,8 @@ static int selinux_inode_init_security_anon(struct =
-inode *inode,
->          * allowed to actually create this type of anonymous inode.
->          */
->
-> -       ad.type =3D LSM_AUDIT_DATA_INODE;
-> -       ad.u.inode =3D inode;
-> +       ad.type =3D LSM_AUDIT_DATA_ANONINODE;
-> +       ad.u.anonclass =3D name ? (const char *)name->name : "?";
->
->         return avc_has_perm(&selinux_state,
->                             tsec->sid,
-> --
-> 2.35.1
-
---=20
-paul-moore.com
