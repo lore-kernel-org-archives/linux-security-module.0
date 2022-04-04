@@ -2,145 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE24EC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 23:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61AC5C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 23:32:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240384AbiDDXNa (ORCPT
+        id S229587AbiDDXeJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Apr 2022 19:13:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57918 "EHLO
+        Mon, 4 Apr 2022 19:34:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243817AbiDDXLn (ORCPT
+        with ESMTP id S231266AbiDDXeJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Apr 2022 19:11:43 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 162182CCBE;
-        Mon,  4 Apr 2022 15:49:21 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id n18so9354987plg.5;
-        Mon, 04 Apr 2022 15:49:21 -0700 (PDT)
+        Mon, 4 Apr 2022 19:34:09 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CAE2517D6
+        for <linux-security-module@vger.kernel.org>; Mon,  4 Apr 2022 16:32:10 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a6so12248044ejk.0
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Apr 2022 16:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DiZpMTn/EVNY/pnuPoizyqHMne6cPx1y5mye2ibx/ok=;
-        b=bgnp+RZ4/8nfeh0NMWErXmEtEshX86JerNFp8dq/RD44FxWiFAl972gOEJDqV++XyA
-         By4VZtAU4QVALrso+XOALjElN48YFB3TiZeU9RcQxb+9XSdszdEltEwvn9K8oecLmXTQ
-         TQQfzdCYgQyp4jsdjY5EwU/Uh3faCKJvnJbzu8VpGOGyjkhm+VjdOWOKNFg2CdC9WIHu
-         9qKlg3mhSFcqJlntThMyi4VG3ISf3oNk+2Ry4A/oRGT+IxjxU5e24QVPCkZiEspbB6Ae
-         CcLSJd1INuQNNkvMz1KILSOVf2EODqUP+szWpO3DLZgvPGzGiBVeiL6R9WCUXhOUmtMv
-         ed7Q==
+         :cc:content-transfer-encoding;
+        bh=jx5P7yX3O5pX2LqkyeQfqU0tlbRjJjmmZeKsgU5FQa8=;
+        b=X33eVsWc7Y7k1gT/g4zGwLZX8IMd0zDiGeq+SNK556d+FRB/nBPgAmF91Jc2ZewIkm
+         ZVSXfO5pzStwMUuGMJ8Wv3wH7WLkU4AEEqTy2TzSWZE+Lyew31d9KVPVL8zsXNSVCGzB
+         iZj8spgT2H19hxodlQ23EHu0IDi3xox/PKjik=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DiZpMTn/EVNY/pnuPoizyqHMne6cPx1y5mye2ibx/ok=;
-        b=nSCgURZ9JtxcJTR+gACePQ7grQ99Rs3SQJCalGLbJ+at5C/uDs3SiSxMp25l1hEy06
-         vLzTo/Y4/4+bIaiHf4ryPBEyur+gKx+PC6L1CE8BwZbRj1v33J5h6stAYgHNs1dQyC27
-         EEtaLda69g5EbVG5ZavTivO78JyH/thLvgSkEkgkS8KiWK07yg4GpV91nWfONClwId0q
-         9gakhqxUbknXKhWvStYfxRkG8VVJuWJl/HfEUAlN7dB0bXdiq4uehDEUDTQ9HW9oMQky
-         VTbYsyEOuNUHHJAhDmZoN2BXvagxwZnZel7ozHsvqg5F45QmItecDpsHPAcLpBw+DDDh
-         5Puw==
-X-Gm-Message-State: AOAM531MhNqDQmgeDTREiYYf8WTj6/maWDYT/GssIs2GpwqiBtA595Yi
-        lPvLCizoW27lrkeKoGvYVMEs47HZn3ALs1YRYD0=
-X-Google-Smtp-Source: ABdhPJw6yLez+Pola3pnCcu1X++dRI9Dtud1fwRlNqRru6KsE9kQoMKYHIIF+h1m/5FNxuqFspqfjNyXq2uiHfs7URQ=
-X-Received: by 2002:a17:902:ba83:b0:154:727e:5fc5 with SMTP id
- k3-20020a170902ba8300b00154727e5fc5mr475882pls.55.1649112560582; Mon, 04 Apr
- 2022 15:49:20 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jx5P7yX3O5pX2LqkyeQfqU0tlbRjJjmmZeKsgU5FQa8=;
+        b=qDLRThzRFgxrMhf4xIx3SrYUPxsKKUlYxmIF72Fp/AyjSHVD+e7LjGC+gUlSLh0tsS
+         Mb5XND0QCpPoqENlCeP2WooK4baW2WGhx5o9Lp2cArD+NU+MKD4ni7mTKP0hm87B5mco
+         Aj2Jq1eF4V9aBwwHnVU/RXzFAHKuQhjB65uwgLUY7xPD+vHY8ZGcpnBzHuDisNaG0jdF
+         4tmWa2YgsM7Qyt4sRBrk0V9VwLe6dAETkQjPzXn0Nz4HcmkDlQptadtiBD05Lcatjt7A
+         Z587yi2auxT8oBCT7NY9ti9yg9ykDpAqYcOzvrtu3SYwewQPtCH75h6Ah9ZhSDVKD/Ez
+         1xsQ==
+X-Gm-Message-State: AOAM533Mnpr/efJwzYCtLtcq4IVebXofe7LI2u6Vmti57NrLTTEtP8ox
+        j11C9Ugme0s9UAy/qmY8DJ2foxdkT+xbpL8cFww=
+X-Google-Smtp-Source: ABdhPJx87MxytfWBiZDyQdobR4fKLFvyGrPMs7nFu+1PEtq4FQ/IgD0BJjCflm61EVcwu//Y8S3SRg==
+X-Received: by 2002:a17:907:c06:b0:6e0:9149:8047 with SMTP id ga6-20020a1709070c0600b006e091498047mr589370ejc.765.1649115128662;
+        Mon, 04 Apr 2022 16:32:08 -0700 (PDT)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com. [209.85.221.48])
+        by smtp.gmail.com with ESMTPSA id do8-20020a170906c10800b006dfe4d1edc6sm4856120ejc.61.2022.04.04.16.32.08
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Apr 2022 16:32:08 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id d29so10751652wra.10
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Apr 2022 16:32:08 -0700 (PDT)
+X-Received: by 2002:a05:6512:2296:b0:44a:6aaf:b330 with SMTP id
+ f22-20020a056512229600b0044a6aafb330mr496667lfu.531.1649114820779; Mon, 04
+ Apr 2022 16:27:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
- <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
- <b9f5995f96da447c851f7c9db8232a9b@huawei.com> <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
- <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
- <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com> <c2e57f10b62940eba3cfcae996e20e3c@huawei.com>
-In-Reply-To: <c2e57f10b62940eba3cfcae996e20e3c@huawei.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Mon, 4 Apr 2022 15:49:09 -0700
-Message-ID: <CAADnVQJSso+GSXC-QmNmj0GBPZzxRCRfqAcQbqD-6y0CtMSopQ@mail.gmail.com>
-Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF programs
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Djalal Harouni <tixxdz@gmail.com>, KP Singh <kpsingh@kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20220321161557.495388-1-mic@digikod.net> <202204041130.F649632@keescook>
+ <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+ <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net> <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+ <202204041451.CC4F6BF@keescook>
+In-Reply-To: <202204041451.CC4F6BF@keescook>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 4 Apr 2022 16:26:44 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
+Message-ID: <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 4, 2022 at 10:21 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+On Mon, Apr 4, 2022 at 3:25 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> > From: Djalal Harouni [mailto:tixxdz@gmail.com]
-> > Sent: Monday, April 4, 2022 9:45 AM
-> > On Sun, Apr 3, 2022 at 5:42 PM KP Singh <kpsingh@kernel.org> wrote:
-> > >
-> > > On Sat, Apr 2, 2022 at 1:55 AM Alexei Starovoitov
-> > > <alexei.starovoitov@gmail.com> wrote:
-> > ...
-> > > >
-> > > > > Pinning
-> > > > > them to unreachable inodes intuitively looked the
-> > > > > way to go for achieving the stated goal.
-> > > >
-> > > > We can consider inodes in bpffs that are not unlinkable by root
-> > > > in the future, but certainly not for this use case.
-> > >
-> > > Can this not be already done by adding a BPF_LSM program to the
-> > > inode_unlink LSM hook?
-> > >
-> >
-> > Also, beside of the inode_unlink... and out of curiosity: making sysfs/bpffs/
-> > readonly after pinning, then using bpf LSM hooks
-> > sb_mount|remount|unmount...
-> > family combining bpf() LSM hook... isn't this enough to:
-> > 1. Restrict who can pin to bpffs without using a full MAC
-> > 2. Restrict who can delete or unmount bpf filesystem
-> >
-> > ?
->
-> I'm thinking to implement something like this.
->
-> First, I add a new program flag called
-> BPF_F_STOP_ONCONFIRM, which causes the ref count
-> of the link to increase twice at creation time. In this way,
-> user space cannot make the link disappear, unless a
-> confirmation is explicitly sent via the bpf() system call.
->
-> Another advantage is that other LSMs can decide
-> whether or not they allow a program with this flag
-> (in the bpf security hook).
->
-> This would work regardless of the method used to
-> load the eBPF program (user space or kernel space).
->
-> Second, I extend the bpf() system call with a new
-> subcommand, BPF_LINK_CONFIRM_STOP, which
-> decreases the ref count for the link of the programs
-> with the BPF_F_STOP_ONCONFIRM flag. I will also
-> introduce a new security hook (something like
-> security_link_confirm_stop), so that an LSM has the
-> opportunity to deny the stop (the bpf security hook
-> would not be sufficient to determine exactly for
-> which link the confirmation is given, an LSM should
-> be able to deny the stop for its own programs).
->
-> What do you think?
+> Maybe. I defer to Micka=C3=ABl here, but my instinct is to avoid creating=
+ an
+> API that can be accidentally misused. I'd like this to be fd-only based,
+> since that removes path name races. (e.g. trusted_for() required an fd.)
 
-Hack upon a hack? Makes no sense.
+Some people want pathnames. Think things like just the PATH thing just
+to find the right executable in the first place.
+
+For things like that, races don't matter, because you're just trying
+to find the right path to begin with.
+
+> I think this already exists as AT_EACCESS? It was added with
+> faccessat2() itself, if I'm reading the history correctly.
+
+Yeah, I noticed myself, I just hadn't looked (and I don't do enough
+user-space programming to be aware of if that way).
+
+> >     (a) "what about suid bits that user space cannot react to"
+>
+> What do you mean here? Do you mean setid bits on the file itself?
+
+Right.
+
+Maybe we don't care.
+
+Maybe we do.
+
+Is the user-space loader going to honor them? Is it going to ignore
+them? I don't know. And it actually interacts with things like
+'nosuid', which the kernel does know about, and user space has a hard
+time figuring out.
+
+So if the point is "give me an interface so that I can do the same
+thing a kernel execve() loader would do", then those sgid/suid bits
+actually may be exactly the kind of thing that user space wants the
+kernel to react to - should it ignore them, or should it do something
+special when it sees that they are set?
+
+I'm not saying that they *should* be something we care about. All I'm
+saying is that I want that *discussion* to happen.
+
+               Linus
