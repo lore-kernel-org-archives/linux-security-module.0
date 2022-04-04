@@ -2,142 +2,179 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E429BC4321E
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 21:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4F3C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 21:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382503AbiDDVaZ (ORCPT
+        id S239360AbiDDVyo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:30:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53572 "EHLO
+        Mon, 4 Apr 2022 17:54:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379986AbiDDSeS (ORCPT
+        with ESMTP id S1386483AbiDDViu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Apr 2022 14:34:18 -0400
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363992E0AC
-        for <linux-security-module@vger.kernel.org>; Mon,  4 Apr 2022 11:32:20 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KXKBV48wlzMpvVR;
-        Mon,  4 Apr 2022 20:32:18 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KXKBT6wMFzlhRVT;
-        Mon,  4 Apr 2022 20:32:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1649097138;
-        bh=YAOsStc2y5wOQ15cC5RQNCD4FLyM/10VhMrFzxISgno=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=dexQLDYr9HI4i84PBFN4kfFFHH7V/THIYIw9SnEIu6mK92PIi9YM/lsl1sSUAYaSN
-         +AGPbebQ3W/4GZ1fNlMaDLJyokXVrygARsFiZORaETOEStrGvOZtp5L+wU2GcHH38T
-         vL3xoFDW1zl5GSL4IQaEgqYDq1+2d6NX0LzFygco=
-Message-ID: <c2bc5ccf-8942-ab5e-c071-6f6c6e6b2d9d@digikod.net>
-Date:   Mon, 4 Apr 2022 20:32:42 +0200
+        Mon, 4 Apr 2022 17:38:50 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D62935DFC
+        for <linux-security-module@vger.kernel.org>; Mon,  4 Apr 2022 14:29:53 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id y32so4461948lfa.6
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Apr 2022 14:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1bAt6TBAHHEmy348lJLTOOvTLaiSv+TPTdYgy4I0MYg=;
+        b=E1NpQ4P1JCYLIm1H9ndx7S+bR3N92nar4xieVmugUkT6Cx5jg1i6+kdx6U9ToEInPx
+         DlMzWwsy0K1TW1TUuLGfn9IByiIXEgm4qoKAaF9cTvDdVu4Py81nrFtW2CvjxbTluuDS
+         cQcatiB/Kd2loHgbmaSShiD8lq4pMIa5yFk/Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1bAt6TBAHHEmy348lJLTOOvTLaiSv+TPTdYgy4I0MYg=;
+        b=lvXfO5IxJWCjbhPrhNIm2f7kzpM2TzRKW+QyvnQ+VazI4Orfv+Jmpr8dRwyKJ8lV/Q
+         wyXprfmYP23OpPHwsLRftZXo6Fb0Ad5ShWnOf1AGcSCzAEyllPEQghC99cWzOOf+D/dS
+         z2tScy71QOC2NqpdewcvBmQU8XJWElUTzjTCBc1hP0TQyQZIRvq4J3ubXYKAUj4S7U4K
+         z5gnRTEXzUVOLHwslbzcGx16ThY7TdPAaCw9hGbQBfFYNcSEhFm7BpKA7AziVw6HiWIl
+         0sky0BkX78que+UoSMdLH4nvOPw2rM3W+6M1lbt64yrj09/w/TPMwQYsUy7gVbUqd4jr
+         9YLw==
+X-Gm-Message-State: AOAM531G2+mrtdOCOcDXi83YrY5l4/xQWfTVIpCGXs3oeG2TeOVJ3rby
+        ICqaq4isbOm6QqUgRQ3LH6DJM6NES/+zrEI9zpM=
+X-Google-Smtp-Source: ABdhPJxiqSIwd1xOpuHXCcbZh94eZPgHkFwLT9tRdbs0nVZNUYBbaYvXODD41cgMcKOvqXI/uc4SOA==
+X-Received: by 2002:a05:6512:3b90:b0:450:829f:6047 with SMTP id g16-20020a0565123b9000b00450829f6047mr236986lfv.418.1649107717831;
+        Mon, 04 Apr 2022 14:28:37 -0700 (PDT)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id j3-20020a196e03000000b0044a6e47c27esm1267995lfc.48.2022.04.04.14.28.36
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Apr 2022 14:28:36 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id t25so19711772lfg.7
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Apr 2022 14:28:36 -0700 (PDT)
+X-Received: by 2002:ac2:4203:0:b0:448:8053:d402 with SMTP id
+ y3-20020ac24203000000b004488053d402mr195601lfh.687.1649107715765; Mon, 04 Apr
+ 2022 14:28:35 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <20220309134459.6448-11-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH v4 10/15] seltest/landlock: add tests for bind() hooks
-In-Reply-To: <20220309134459.6448-11-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220321161557.495388-1-mic@digikod.net> <202204041130.F649632@keescook>
+ <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com> <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
+In-Reply-To: <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 4 Apr 2022 14:28:19 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+Message-ID: <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Apr 4, 2022 at 1:29 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
+rote:
+>
+> This initial proposal was using a new faccessat2(2) flag:
+> AT_INTERPRETED, see
+> https://lore.kernel.org/all/20200908075956.1069018-2-mic@digikod.net/
+> What do you think about that? I'm happy to get back to this version if
+> everyone is OK with it.
 
-On 09/03/2022 14:44, Konstantin Meskhidze wrote:
-> Adds two selftests for bind socket action.
-> The one is with no landlock restrictions:
->      - bind_no_restrictions;
-> The second one is with mixed landlock rules:
->      - bind_with_restrictions;
-> 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
-> 
-> Changes since v3:
-> * Split commit.
-> * Add helper create_socket.
-> * Add FIXTURE_SETUP.
-> 
-> ---
->   .../testing/selftests/landlock/network_test.c | 153 ++++++++++++++++++
->   1 file changed, 153 insertions(+)
->   create mode 100644 tools/testing/selftests/landlock/network_test.c
-> 
-> diff --git a/tools/testing/selftests/landlock/network_test.c b/tools/testing/selftests/landlock/network_test.c
-> new file mode 100644
-> index 000000000000..4c60f6d973a8
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/network_test.c
+I'm certainly happi_er_ with that, but I find that particular patch
+odd for other reasons.
 
-[...]
+In no particular order:
 
-> +
-> +uint port[MAX_SOCKET_NUM];
-> +struct sockaddr_in addr[MAX_SOCKET_NUM];
+ - what's with the insane non-C syntax? Double parentheses have no
+actual meaning in C:
 
-You should not change global variables, it is a source of issue. Instead 
-use FIXTURE local variables accessible through self->X.
+     if ((flags & AT_INTERPRETED)) {
+         if ((mode & MAY_EXEC)) {
 
-> +
-> +const int one = 1;
+   so I don't understand why you'd use that strance thing.
 
-This doesn't need to be global.
+ - why is this an AT_INTERPRETED flag? I don't understand the name, I
+don't understand the semantics.
 
-[...]
+   Why would that flag have the same value as AT_SYMLINK_FOLLOW?
 
-> +
-> +static void enforce_ruleset(struct __test_metadata *const _metadata,
-> +		const int ruleset_fd)
-> +{
-> +	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-> +	ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0)) {
-> +		TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
-> +	}
-> +}
+   Why isn't this just a new _mode_ bit, which is what I feel is
+sensible? We only use three bits (with no bits set meaning
+"existence"), so we have *tons* of bits left in that namespace, and it
+would make much more sense to me to have
 
-You should move the same helper from fs_base.c to common.h (see caps 
-helpers) and reuse it here.
+        #define EXECVE_OK 8
 
+    which is the same as the "group exec" bit, so it actually makes
+some kind of sense too.
 
-> +
-> +FIXTURE(socket) { };
-> +
-> +FIXTURE_SETUP(socket)
-> +{
-> +	int i;
+ - related to that "I don't understand the semantics", the
+"documentation" for that thing doesn't make sense either:
 
-Please add a new line between declaration and actual code (everywhere).
+    +         The
+    +    main usage is for script
+    +    interpreters to enforce a policy
+    +    consistent with the kernel's one
+    +    (through sysctl configuration or LSM
+    +    policy).  */
 
-> +	/* Creates socket addresses */
-> +	for (i = 0; i < MAX_SOCKET_NUM; i++) {
+Now, what I *think* you mean is
 
-Use ARRAY_SIZE() instead of MAY_SOCKET_NUM.
+ (1) user-space executable loaders want to be able to test the *same*
+policy as the kernel does for execve()
 
+ (2) access(path, EXECVE_OK) will do the same permission checks as
+"execve()" would do for that path
 
-> +		port[i] = SOCK_PORT_START + SOCK_PORT_ADD*i;
+ (3) if you already have the fd open, use "faccess(fd, NULL,
+F_OK_TO_EXECUTE, AT_EMPTY_PATH)"
 
-Use self->port[i] and self->addr[i] instead.
+ (4) maybe we want to add a flag for the "euid vs real uid", and that
+would be in the "flags" field, since that changes the actual *lookup*
+semantics
 
-> +		addr[i].sin_family = AF_INET;
-> +		addr[i].sin_port = htons(port[i]);
-> +		addr[i].sin_addr.s_addr = inet_addr(IP_ADDRESS);
-> +		memset(&(addr[i].sin_zero), '\0', 8);
-> +	}
-> +}
+Note that that (4) is something that some normal user space has wanted
+in the past too (GNU libcs has a "eaccess()" thing for "effective uid
+access").
 
-[...]
+And yes, we still need to talk details:
 
-> +	/* Allows connect and deny bind operations to the port[1] socket. */
-> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-> +				&net_service_2, 0));
-> +	/* Empty allowed_access (i.e. deny rules) are ignored in network actions
+ - no backwards compatibility issues, because we've happily always
+checked 'mode' for being valid, so old kernels will always return
+-EINVAL.
 
-The kernel coding style says to start a multi-line comments with a "/*" 
-and a new line.
+ - POSIX namespace issues for EXECVE_OK means that the name probably
+needs some thinking (maybe we just need to call it __ACCESS_OK_EXECVE
+internally or something - the kernel actually doesn't even export the
+existing [FRWX]_OK values, because we "know" they map tho the usual
+"owner RWX" bits, with F being "no bit set")
+
+ - I really want the exact semantics very clearly defined. I think
+it's ok to say "exact same security check as for 'execve()'", but even
+then we need to have that discussion about
+
+    (a) "what about suid bits that user space cannot react to"
+    (b) that whole "effective vs real" discussion
+
+So to recap: I'm very much ok with some access() extension, but I
+think even that very much needs clarification, and the existing patch
+is just odd in many many ways.
+
+                  Linus
