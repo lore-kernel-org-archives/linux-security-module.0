@@ -2,181 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328DDC4167B
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 21:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B55B6C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 21:28:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382497AbiDDVaN (ORCPT
+        id S1380693AbiDDVaW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:30:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55334 "EHLO
+        Mon, 4 Apr 2022 17:30:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380531AbiDDUYh (ORCPT
+        with ESMTP id S1379526AbiDDRW7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Apr 2022 16:24:37 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B4C36B60;
-        Mon,  4 Apr 2022 13:22:39 -0700 (PDT)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 234JAKmi006195;
-        Mon, 4 Apr 2022 20:22:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=sfw2RrUtmje6BGoULsQ9WojX8/18w10SSX3CBcUtUug=;
- b=FHk85IwWXeICJJHsltU4Mnj2ucXrR/O+B4aqoKOECxHXgFB4U9JMQ4dpGh7SJdGcf3ac
- xqTbwyiZvq+XKo+rDkje/qDdisV8/v1eMyn+/R/VVi1EXdsvrI8Ou25CaYsnygbitBV7
- oPrbIXdJ1IOqN8d08u95JL1VbLKlrwnWfDw0D6toATNVjbgOQlJADJaxunRcrzcI34m9
- J315msLcf+TGth0oLwvQI2Rpd/OHoZjppqWJ22b1G30xERvGVnewT27IM10YUTKBqI1T
- 1730DRjfPxpIkSo38bFmP2cwOR3u4xqJKJMK+jLyJz4FlFWrsOuq1+QAtcpBzfCatZLY uw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3f6yupg9e1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Apr 2022 20:22:26 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 234KMQXf027173;
-        Mon, 4 Apr 2022 20:22:26 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3f6yupg9dj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Apr 2022 20:22:25 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 234KJ58o029900;
-        Mon, 4 Apr 2022 20:22:24 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma06ams.nl.ibm.com with ESMTP id 3f6drhm91e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Apr 2022 20:22:23 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 234KMLIh50266436
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 4 Apr 2022 20:22:21 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E7E7A4053;
-        Mon,  4 Apr 2022 20:22:21 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D2F2A4040;
-        Mon,  4 Apr 2022 20:22:20 +0000 (GMT)
-Received: from sig-9-65-92-200.ibm.com (unknown [9.65.92.200])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  4 Apr 2022 20:22:20 +0000 (GMT)
-Message-ID: <5c3565f5a46f5728873c9aedd634699ba171fe98.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: remove template "ima" as the compiled default
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     GUO Zihua <guozihua@huawei.com>, linux-integrity@vger.kernel.org
-Cc:     dmitry.kasatkin@gmail.com, roberto.sassu@huawei.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xiujianfeng@huawei.com,
-        wangweiyang2@huawei.com
-Date:   Mon, 04 Apr 2022 16:22:19 -0400
-In-Reply-To: <20220321074737.138002-1-guozihua@huawei.com>
-References: <20220321074737.138002-1-guozihua@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pl8UE3lgklOhzRkfLPc-oB8xj5cwxfhv
-X-Proofpoint-ORIG-GUID: JwuNMqeC0dx2dXPMiAMUKqbUJwEakXWi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-04-04_09,2022-03-31_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- phishscore=0 adultscore=0 clxscore=1011 mlxlogscore=999 lowpriorityscore=0
- impostorscore=0 suspectscore=0 priorityscore=1501 spamscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
- definitions=main-2204040111
+        Mon, 4 Apr 2022 13:22:59 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4081E3E9;
+        Mon,  4 Apr 2022 10:21:02 -0700 (PDT)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KXHYv3f92z67MtS;
+        Tue,  5 Apr 2022 01:18:59 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 4 Apr 2022 19:20:59 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
+ Mon, 4 Apr 2022 19:20:59 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Djalal Harouni <tixxdz@gmail.com>, KP Singh <kpsingh@kernel.org>
+CC:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
+ programs
+Thread-Topic: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
+ programs
+Thread-Index: AQHYQsxoL5kXhl8+JE6PJPNWV+NOTqzYppqAgABrSsCAAo7zgIAAEt0AgAOU8YCAALoz0A==
+Date:   Mon, 4 Apr 2022 17:20:59 +0000
+Message-ID: <c2e57f10b62940eba3cfcae996e20e3c@huawei.com>
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+ <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <b9f5995f96da447c851f7c9db8232a9b@huawei.com>
+ <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
+ <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
+In-Reply-To: <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.81.208.245]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Guo,
-
-The Subject line above sounds like the default template is currently
-"ima", which it isn't.   Perhaps "ima: remove the IMA_TEMPLATE Kconfig
-option" is more accurate.
-
-On Mon, 2022-03-21 at 15:47 +0800, GUO Zihua wrote:
-> Template "ima" is a legacy template which limits the hash algorithm to
-> either sha1 or md5. None of them should be considered "strong" these
-> days. Besides, allowing template "ima" as the compiled default would
-> also cause the following issue: the cmdline option "ima_hash=" must be
-> behind "ima_template=", otherwise "ima_hash=" might be rejected.
-> 
-
-True "ima" is a legacy template, but the purpose of removing the
-IMA_TEMPLATE from the Kconfig is to address the remaining boot command
-line ordering issue not previously addressed.  This is reasonable
-because the "ima" template is limited to SHA1 and MD5.  If someone
-still needs to use the "ima" template, "ima_template=ima" could still
-be specified on the boot command line.
-
-> The root cause of this issue is that during the processing of ima_hash,
-> we would try to check whether the hash algorithm is compatible with the
-> template. If the template is not set at the moment we do the check, we
-> check the algorithm against the compiled default template. If the
-> complied default template is "ima", then we reject any hash algorithm
-> other than sha1 and md5.
-> 
-> For example, if the compiled default template is "ima", and the default
-> algorithm is sha1 (which is the current default). In the cmdline, we put
-> in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
-> that ima starts with ima-ng as the template and sha256 as the hash
-> algorithm. However, during the processing of "ima_hash=",
-> "ima_template=" has not been processed yet, and hash_setup would check
-> the configured hash algorithm against the compiled default: ima, and
-> reject sha256. So at the end, the hash algorithm that is actually used
-> will be sha1.
-> 
-> With template "ima" removed from the compiled default, we ensure that the
-> default tempalte would at least be "ima-ng" which allows for basically
-> any hash algorithm.
-> 
-> This change would not break the algorithm compatibility checking for
-> IMA.
-> 
-> Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
-> Signed-off-by: GUO Zihua <guozihua@huawei.com>
-> ---
->  security/integrity/ima/Kconfig | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index f3a9cc201c8c..9513df2ac19e 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -65,14 +65,11 @@ choice
->  	help
->  	  Select the default IMA measurement template.
->  
-> -	  The original 'ima' measurement list template contains a
-> -	  hash, defined as 20 bytes, and a null terminated pathname,
-> -	  limited to 255 characters.  The 'ima-ng' measurement list
-> -	  template permits both larger hash digests and longer
-> -	  pathnames.
-> -
-> -	config IMA_TEMPLATE
-> -		bool "ima"
-> +	  The 'ima-ng' measurement list template permits various hash
-> +	  digests and long pathnames. The compiled default template
-> +	  can be overwritten using the kernel command line
-> +	  'ima_template=' option.
-> +
->  	config IMA_NG_TEMPLATE
->  		bool "ima-ng (default)"
->  	config IMA_SIG_TEMPLATE
-> @@ -82,7 +79,6 @@ endchoice
->  config IMA_DEFAULT_TEMPLATE
->  	string
->  	depends on IMA
-> -	default "ima" if IMA_TEMPLATE
->  	default "ima-ng" if IMA_NG_TEMPLATE
->  	default "ima-sig" if IMA_SIG_TEMPLATE
->  
-
-The IMA_TEMPLATE definition is removed, but leaves a few references to
-it.
--- 
-thanks,
-
-Mimi
-
-
+PiBGcm9tOiBEamFsYWwgSGFyb3VuaSBbbWFpbHRvOnRpeHhkekBnbWFpbC5jb21dDQo+IFNlbnQ6
+IE1vbmRheSwgQXByaWwgNCwgMjAyMiA5OjQ1IEFNDQo+IE9uIFN1biwgQXByIDMsIDIwMjIgYXQg
+NTo0MiBQTSBLUCBTaW5naCA8a3BzaW5naEBrZXJuZWwub3JnPiB3cm90ZToNCj4gPg0KPiA+IE9u
+IFNhdCwgQXByIDIsIDIwMjIgYXQgMTo1NSBBTSBBbGV4ZWkgU3Rhcm92b2l0b3YNCj4gPiA8YWxl
+eGVpLnN0YXJvdm9pdG92QGdtYWlsLmNvbT4gd3JvdGU6DQo+IC4uLg0KPiA+ID4NCj4gPiA+ID4g
+UGlubmluZw0KPiA+ID4gPiB0aGVtIHRvIHVucmVhY2hhYmxlIGlub2RlcyBpbnR1aXRpdmVseSBs
+b29rZWQgdGhlDQo+ID4gPiA+IHdheSB0byBnbyBmb3IgYWNoaWV2aW5nIHRoZSBzdGF0ZWQgZ29h
+bC4NCj4gPiA+DQo+ID4gPiBXZSBjYW4gY29uc2lkZXIgaW5vZGVzIGluIGJwZmZzIHRoYXQgYXJl
+IG5vdCB1bmxpbmthYmxlIGJ5IHJvb3QNCj4gPiA+IGluIHRoZSBmdXR1cmUsIGJ1dCBjZXJ0YWlu
+bHkgbm90IGZvciB0aGlzIHVzZSBjYXNlLg0KPiA+DQo+ID4gQ2FuIHRoaXMgbm90IGJlIGFscmVh
+ZHkgZG9uZSBieSBhZGRpbmcgYSBCUEZfTFNNIHByb2dyYW0gdG8gdGhlDQo+ID4gaW5vZGVfdW5s
+aW5rIExTTSBob29rPw0KPiA+DQo+IA0KPiBBbHNvLCBiZXNpZGUgb2YgdGhlIGlub2RlX3VubGlu
+ay4uLiBhbmQgb3V0IG9mIGN1cmlvc2l0eTogbWFraW5nIHN5c2ZzL2JwZmZzLw0KPiByZWFkb25s
+eSBhZnRlciBwaW5uaW5nLCB0aGVuIHVzaW5nIGJwZiBMU00gaG9va3MNCj4gc2JfbW91bnR8cmVt
+b3VudHx1bm1vdW50Li4uDQo+IGZhbWlseSBjb21iaW5pbmcgYnBmKCkgTFNNIGhvb2suLi4gaXNu
+J3QgdGhpcyBlbm91Z2ggdG86DQo+IDEuIFJlc3RyaWN0IHdobyBjYW4gcGluIHRvIGJwZmZzIHdp
+dGhvdXQgdXNpbmcgYSBmdWxsIE1BQw0KPiAyLiBSZXN0cmljdCB3aG8gY2FuIGRlbGV0ZSBvciB1
+bm1vdW50IGJwZiBmaWxlc3lzdGVtDQo+IA0KPiA/DQoNCkknbSB0aGlua2luZyB0byBpbXBsZW1l
+bnQgc29tZXRoaW5nIGxpa2UgdGhpcy4NCg0KRmlyc3QsIEkgYWRkIGEgbmV3IHByb2dyYW0gZmxh
+ZyBjYWxsZWQNCkJQRl9GX1NUT1BfT05DT05GSVJNLCB3aGljaCBjYXVzZXMgdGhlIHJlZiBjb3Vu
+dA0Kb2YgdGhlIGxpbmsgdG8gaW5jcmVhc2UgdHdpY2UgYXQgY3JlYXRpb24gdGltZS4gSW4gdGhp
+cyB3YXksDQp1c2VyIHNwYWNlIGNhbm5vdCBtYWtlIHRoZSBsaW5rIGRpc2FwcGVhciwgdW5sZXNz
+IGENCmNvbmZpcm1hdGlvbiBpcyBleHBsaWNpdGx5IHNlbnQgdmlhIHRoZSBicGYoKSBzeXN0ZW0g
+Y2FsbC4NCg0KQW5vdGhlciBhZHZhbnRhZ2UgaXMgdGhhdCBvdGhlciBMU01zIGNhbiBkZWNpZGUN
+CndoZXRoZXIgb3Igbm90IHRoZXkgYWxsb3cgYSBwcm9ncmFtIHdpdGggdGhpcyBmbGFnDQooaW4g
+dGhlIGJwZiBzZWN1cml0eSBob29rKS4NCg0KVGhpcyB3b3VsZCB3b3JrIHJlZ2FyZGxlc3Mgb2Yg
+dGhlIG1ldGhvZCB1c2VkIHRvDQpsb2FkIHRoZSBlQlBGIHByb2dyYW0gKHVzZXIgc3BhY2Ugb3Ig
+a2VybmVsIHNwYWNlKS4NCg0KU2Vjb25kLCBJIGV4dGVuZCB0aGUgYnBmKCkgc3lzdGVtIGNhbGwg
+d2l0aCBhIG5ldw0Kc3ViY29tbWFuZCwgQlBGX0xJTktfQ09ORklSTV9TVE9QLCB3aGljaA0KZGVj
+cmVhc2VzIHRoZSByZWYgY291bnQgZm9yIHRoZSBsaW5rIG9mIHRoZSBwcm9ncmFtcw0Kd2l0aCB0
+aGUgQlBGX0ZfU1RPUF9PTkNPTkZJUk0gZmxhZy4gSSB3aWxsIGFsc28NCmludHJvZHVjZSBhIG5l
+dyBzZWN1cml0eSBob29rIChzb21ldGhpbmcgbGlrZQ0Kc2VjdXJpdHlfbGlua19jb25maXJtX3N0
+b3ApLCBzbyB0aGF0IGFuIExTTSBoYXMgdGhlDQpvcHBvcnR1bml0eSB0byBkZW55IHRoZSBzdG9w
+ICh0aGUgYnBmIHNlY3VyaXR5IGhvb2sNCndvdWxkIG5vdCBiZSBzdWZmaWNpZW50IHRvIGRldGVy
+bWluZSBleGFjdGx5IGZvcg0Kd2hpY2ggbGluayB0aGUgY29uZmlybWF0aW9uIGlzIGdpdmVuLCBh
+biBMU00gc2hvdWxkDQpiZSBhYmxlIHRvIGRlbnkgdGhlIHN0b3AgZm9yIGl0cyBvd24gcHJvZ3Jh
+bXMpLg0KDQpXaGF0IGRvIHlvdSB0aGluaz8NCg0KVGhhbmtzDQoNClJvYmVydG8NCg0KSFVBV0VJ
+IFRFQ0hOT0xPR0lFUyBEdWVzc2VsZG9yZiBHbWJILCBIUkIgNTYwNjMNCk1hbmFnaW5nIERpcmVj
+dG9yOiBMaSBQZW5nLCBaaG9uZyBSb25naHVhDQo=
