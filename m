@@ -2,154 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C3D2C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 10:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 302F1C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 21:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356824AbiDDKRu (ORCPT
+        id S1382473AbiDDVaF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Apr 2022 06:17:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
+        Mon, 4 Apr 2022 17:30:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356787AbiDDKRs (ORCPT
+        with ESMTP id S1380057AbiDDSts (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Apr 2022 06:17:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 906BC2E6AF
-        for <linux-security-module@vger.kernel.org>; Mon,  4 Apr 2022 03:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649067351;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tkadsSkOjK69IKBzXKLPhJkIYMQazPSW8bFoteNrRDk=;
-        b=S7xfjBRu10TW8slfc87isXsdE+W2rU3mVGbdnt1TxgfPZaoU75pgICWi/wZl/pW3fZm+29
-        hropMfvxOwEDb1y2PTAit5MtsZblQa4THGc09Bk7h9FR2ZolSoq1V2gvPzrApYJet82cZA
-        e2mMLi6+xjyzYsBoUpLpUr6tQupM+jU=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-375-32Hs6i1oO9qe5EjtWKb1jg-1; Mon, 04 Apr 2022 06:15:50 -0400
-X-MC-Unique: 32Hs6i1oO9qe5EjtWKb1jg-1
-Received: by mail-yb1-f200.google.com with SMTP id e4-20020a056902034400b00633691534d5so7415912ybs.7
-        for <linux-security-module@vger.kernel.org>; Mon, 04 Apr 2022 03:15:50 -0700 (PDT)
+        Mon, 4 Apr 2022 14:49:48 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1D731232
+        for <linux-security-module@vger.kernel.org>; Mon,  4 Apr 2022 11:47:51 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id q68so2117540ljb.3
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Apr 2022 11:47:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=gE1myDBwoMMXv/sqmeeTtdtKANbFnGzqW1O8e9pC9SM=;
+        b=Yw1ZNqApekZ8AeL0PldgD9VjhOHOy85q4fAqhpYMwGIKsvyjwUgV3+tfYqgx/Hct6n
+         jD5U2/G9z45ZzVG+RK48MiJA/vGEl6/n1PrVgO3E4okVxoNB71vm3JXzkpG1pNnI8dPy
+         LprtMmSxkZJ8rgeVf8rwgvz2/P8kEtbmNFRow=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tkadsSkOjK69IKBzXKLPhJkIYMQazPSW8bFoteNrRDk=;
-        b=mX95yjLB80kZxHnNyEDiHUu8VccLW5LyR49DA58Yg1ZNEvTGxROpscHJJNR5qsUQmX
-         ZG6FD0aZj/r63/rKTGv0nW7KclkqQee4lQwaBIFvjB/H930oHwcEylKe3FnKzKro8+qX
-         njrbUk/gq3mxuiwMhrBQi5ft5Z/SuYs75eLsofwQbnoqbMkxGubojfGWPi+WRq2wSToY
-         yjLf+wtko3qCmZb3i3Vk7nou14/DbaQtB3i0VFkZL2n1qYsSDszWekg8I6rzxF4yGp24
-         CHxLqFz3ZmG5wXY8sbbX255RSulsJ6sPEIUcsMMhWY/8S2EC3sG9H81YmD+/8DclBTXn
-         oCeQ==
-X-Gm-Message-State: AOAM531r/11xyj2bt6oBT7z/EyJaOz5Qev5xEVBVO6Q6Jx2sWPQ5rfYX
-        Qq1Fi1wcaS7RDFQEeIFyAcVuMqdxmaQdriOxR2dQpCBys5396GOTl+cG1PBd0UsLRErFCE2J62U
-        esT9GjSeoYp8MBzJcgKaR3+x2P80c2ecvvIgiO24gMfU+qdTj1jCX
-X-Received: by 2002:a05:6902:1351:b0:63d:d3ae:da8d with SMTP id g17-20020a056902135100b0063dd3aeda8dmr3484098ybu.445.1649067350033;
-        Mon, 04 Apr 2022 03:15:50 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy/FA2nG9CkjljMIizKp+3/BvFXdYTIKnSCHt2T/Y90OrnODavbrP29hqG+N35/79K//FRULtfAcH3chse8oaE=
-X-Received: by 2002:a05:6902:1351:b0:63d:d3ae:da8d with SMTP id
- g17-20020a056902135100b0063dd3aeda8dmr3484083ybu.445.1649067349845; Mon, 04
- Apr 2022 03:15:49 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=gE1myDBwoMMXv/sqmeeTtdtKANbFnGzqW1O8e9pC9SM=;
+        b=C+I5fNpkN0M+RkvWNGYcF/FkQggtqYEI0MMDTfqAlm7mGUk5xU7HEa1Wkqe/jS4qkF
+         7tCKYw7XvBTkUVKNop0UAdHwgIRXtuqKe3uihiI/jerrNIaE39TFtMWmmOWcFng/yomw
+         TZVxE/pSJAX2XaXZhxQUHmxgO9tDTAianpJHnX8IidKJq7rBX/EKowHygtAPNxz/KG8N
+         qauloTCLbSWVTxp9RqWhDkXiP1KEdM9ae3oYCCvoPURPM0kHTn6Hx1dm9nwngf/4vmSK
+         QFoxQI5Tk1TUTS/c29+LOEIaQGdHuUsxiTXxfRrYPGIXnc2r25tTtVB8WqzEEdrk4JY8
+         K5uw==
+X-Gm-Message-State: AOAM533D3x76YlGiCiE4RxDrk5yEUxhx+oJciqgvMmNyB2FUm1gemA07
+        dXhHg64nnLq7tnwaPF6xZnDblQ0SW6uXeSgZ
+X-Google-Smtp-Source: ABdhPJw5KkIyF3R4J+NahNdbBLIEsrOrCMmHvaAyzsKgYUf2mzJTAK+E5q1alEBCNuB4ZZV83nyuiw==
+X-Received: by 2002:a2e:a903:0:b0:24a:f39a:88e9 with SMTP id j3-20020a2ea903000000b0024af39a88e9mr617464ljq.394.1649098068883;
+        Mon, 04 Apr 2022 11:47:48 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id t25-20020a2e9c59000000b0024af7b8fac2sm1118362ljj.6.2022.04.04.11.47.45
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Apr 2022 11:47:46 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id h11so14162799ljb.2
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Apr 2022 11:47:45 -0700 (PDT)
+X-Received: by 2002:a2e:a790:0:b0:249:906a:c6f1 with SMTP id
+ c16-20020a2ea790000000b00249906ac6f1mr638041ljf.164.1649098065631; Mon, 04
+ Apr 2022 11:47:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com>
-In-Reply-To: <a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 4 Apr 2022 12:15:38 +0200
-Message-ID: <CAFqZXNt=Ca+x7PaYgc1jXq-3cKxin-_=UNCSiyVHjbP7OYUKvA@mail.gmail.com>
-Subject: Re: [PATCH net] sctp: use the correct skb for security_sctp_assoc_request
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     network dev <netdev@vger.kernel.org>,
-        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+References: <20220321161557.495388-1-mic@digikod.net> <202204041130.F649632@keescook>
+In-Reply-To: <202204041130.F649632@keescook>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 4 Apr 2022 11:47:29 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+Message-ID: <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Adding LSM and SELinux lists to CC for awareness; the original patch
-is available at:
-https://lore.kernel.org/netdev/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/T/
-https://patchwork.kernel.org/project/netdevbpf/patch/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/
-
-On Mon, Apr 4, 2022 at 3:53 AM Xin Long <lucien.xin@gmail.com> wrote:
+On Mon, Apr 4, 2022 at 11:40 AM Kees Cook <keescook@chromium.org> wrote:
 >
-> Yi Chen reported an unexpected sctp connection abort, and it occurred when
-> COOKIE_ECHO is bundled with DATA Fragment by SCTP HW GSO. As the IP header
-> is included in chunk->head_skb instead of chunk->skb, it failed to check
-> IP header version in security_sctp_assoc_request().
->
-> According to Ondrej, SELinux only looks at IP header (address and IPsec
-> options) and XFRM state data, and these are all included in head_skb for
-> SCTP HW GSO packets. So fix it by using head_skb when calling
-> security_sctp_assoc_request() in processing COOKIE_ECHO.
+> It looks like this didn't get pulled for -rc1 even though it was sent
+> during the merge window and has been in -next for a while. It would be
+> really nice to get this landed since userspace can't make any forward
+> progress without the kernel support.
 
-The logic looks good to me, but I still have one unanswered concern.
-The head_skb member of struct sctp_chunk is defined inside a union:
+Honestly, I need a *lot* better reasoning for random new non-standard
+system calls than this had.
 
-struct sctp_chunk {
-        [...]
-        union {
-                /* In case of GSO packets, this will store the head one */
-                struct sk_buff *head_skb;
-                /* In case of auth enabled, this will point to the shkey */
-                struct sctp_shared_key *shkey;
-        };
-        [...]
-};
+And this kind of "completely random interface with no semantics except
+for random 'future flags'" I will not pull even *with* good reasoning.
 
-What guarantees that this chunk doesn't have "auth enabled" and the
-head_skb pointer isn't actually a non-NULL shkey pointer? Maybe it's
-obvious to a Linux SCTP expert, but at least for me as an outsider it
-isn't - that's usually a good hint that there should be a code comment
-explaining it.
+I already told Micka=C3=ABl in private that I wouldn't pull this.
 
->
-> Fixes: e215dab1c490 ("security: call security_sctp_assoc_request in sctp_sf_do_5_1D_ce")
-> Reported-by: Yi Chen <yiche@redhat.com>
-> Signed-off-by: Xin Long <lucien.xin@gmail.com>
-> ---
->  net/sctp/sm_statefuns.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
-> index 7f342bc12735..883f9b849ee5 100644
-> --- a/net/sctp/sm_statefuns.c
-> +++ b/net/sctp/sm_statefuns.c
-> @@ -781,7 +781,7 @@ enum sctp_disposition sctp_sf_do_5_1D_ce(struct net *net,
->                 }
->         }
->
-> -       if (security_sctp_assoc_request(new_asoc, chunk->skb)) {
-> +       if (security_sctp_assoc_request(new_asoc, chunk->head_skb ?: chunk->skb)) {
->                 sctp_association_free(new_asoc);
->                 return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
->         }
-> @@ -2262,7 +2262,7 @@ enum sctp_disposition sctp_sf_do_5_2_4_dupcook(
->         }
->
->         /* Update socket peer label if first association. */
-> -       if (security_sctp_assoc_request(new_asoc, chunk->skb)) {
-> +       if (security_sctp_assoc_request(new_asoc, chunk->head_skb ?: chunk->skb)) {
->                 sctp_association_free(new_asoc);
->                 return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
->         }
-> --
-> 2.31.1
->
+Honestly, we have a *horrible* history with non-standard system calls,
+and that's been true even for well-designed stuff that actually
+matters, that people asked for.
 
---
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+Something  like this, which adds one very special system call and
+where the whole thing is designed for "let's add something random
+later because we don't even know what we want" is right out.
 
+What the system call seems to actually *want* is basically a new flag
+to access() (and faccessat()). One that is very close to what X_OK
+already is.
+
+But that wasn't how it was sold.
+
+So no. No way will this ever get merged, and whoever came up with that
+disgusting "trusted_for()" (for WHAT? WHO TRUSTS? WHY?) should look
+themselves in the mirror.
+
+If you add a new X_OK variant to access(), maybe that could fly.
+
+                Linus
