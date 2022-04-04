@@ -2,113 +2,168 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7899C433EF
-	for <linux-security-module@archiver.kernel.org>; Sun,  3 Apr 2022 08:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FF5C4321E
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 00:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240730AbiDCIHi (ORCPT
+        id S1376801AbiDDAYp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 3 Apr 2022 04:07:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39832 "EHLO
+        Sun, 3 Apr 2022 20:24:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235720AbiDCIHh (ORCPT
+        with ESMTP id S235549AbiDDAYo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 3 Apr 2022 04:07:37 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1700637AB5;
-        Sun,  3 Apr 2022 01:05:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B3636B80AC3;
-        Sun,  3 Apr 2022 08:05:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1D52C340F3;
-        Sun,  3 Apr 2022 08:05:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648973141;
-        bh=opLcU29acddtyzVufVbpjteyPfDjI2D8KSG2MV5cu5E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=itvPRJ+VsbzbyFqRiaYrWg4A/np9jYWjHGsUZkd7IZ1bFsDvbIaqgV/6ZYJh09DHr
-         RKIIdttb6Zs3cS9BHYUy2REpwnJlaOxpK+QtNLTA7zgivUGx3B+tqpoBJHhyFBR/Bs
-         7AeWRX4HyXdLXoKhupHVFPTC+hwE0dX5ZSkslS2cMcgNjGhEdLBkFeEE98JxkNItIl
-         K/nDVyxJgiHVXljkdpOIvNi4OMcEbNiDOANdRcSRJmyzox/OKLDI+qHYvlDevKIaMc
-         PBU7FhdbZU6j7cONoag7C9SHZxjzY5A2G1bcvjSRTGanHnQsCFQtEoeSwtijirtzWK
-         ni6ogFRjzI0og==
-Date:   Sun, 3 Apr 2022 11:06:51 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Michal Orzel <michalorzel.eng@gmail.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 3/5] keys: Remove redundant assignments
-Message-ID: <YklVm5HRM789++rp@kernel.org>
-References: <20220331173358.40939-1-michalorzel.eng@gmail.com>
- <20220331173358.40939-3-michalorzel.eng@gmail.com>
+        Sun, 3 Apr 2022 20:24:44 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74471326CD;
+        Sun,  3 Apr 2022 17:22:49 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id b16so9495689ioz.3;
+        Sun, 03 Apr 2022 17:22:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aRWK0On/yQrY9JPjv44yF0LPcIjibwFg2byMQWbxmME=;
+        b=m7QLUo7hQJc1gPKTRFWKJMyYxQRJoEUmN6fETczH5jCn8d4R/oKkYo4UWK5g0IY8VI
+         p3ASRZ02UvqPNVj+uwGFqGiODMN6dX6xYvtxF/oHx0i35GLATYzqXnBFSkFxu9M+VwmT
+         xb3/PdwR/s2kmyLi8ZTlpA/KcTv06dxnrjjglAUHXQxajJSS8bnqhbz2FmR6/t8zypGb
+         rWAs86RwysW+2t2E+czeksUfo2S/bXGIkEc033ZcgZqbViqFeZFRNYHaiLflYRTwulO1
+         ZWtK+SF68AjzHfD8eqQz6vsUP5GICjDbkWh+xyUyzHSFtaNFAsqcM27Y0U6kks0IQu+2
+         Mq4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aRWK0On/yQrY9JPjv44yF0LPcIjibwFg2byMQWbxmME=;
+        b=DGsTerQtAAe5fUrlSs9IuAJKE6jVg3+ghoHO6OMHadRcCmznqDZHhizh7EFso/XVW6
+         QYBjZMIH17aXUlrGB9CzKzu4LeZJZY7aLSHaYUnqFEZBar+WjV5N/jH5fiHuaCzs0BR7
+         F4kWoJLShOdDSuozwB+47l6KrbPaFla7ODqRh5fzGneDUli2UU+2l8UCVjyDD7Vowxv4
+         JldHYDFTr6IuVO431P+CTnkzmBkY6fdwstZd3OUyGmZmf1insP4z1Tlr91CJsiSq9Yl4
+         3v4oCmHHFkIctSMwAt5HHFdx3CQDbxcqY6tbukN9KaxlRshn+9ovgSnDKA640i16F5Z3
+         GbcA==
+X-Gm-Message-State: AOAM532sidG7ISiK++nBHF/Wflqy0ZkuMZdHb6u1e6uA/Gskz1Wrc6L1
+        Z/V1R+vDftvP7wiFRNsJ7Z9O1Quw77GwWBPKGbs=
+X-Google-Smtp-Source: ABdhPJw3GVx6VRlTw8pIT6ieOqU7bki+fDz8/uu6pPoGbccqm8oEHB/k+fnnlta0vSZ4NcUV23zKg08MWe65dXoOuPU=
+X-Received: by 2002:a05:6638:2105:b0:323:68db:2e4e with SMTP id
+ n5-20020a056638210500b0032368db2e4emr11000299jaj.234.1649031768898; Sun, 03
+ Apr 2022 17:22:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220331173358.40939-3-michalorzel.eng@gmail.com>
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+ <20220328175033.2437312-6-roberto.sassu@huawei.com> <CAEf4BzY9d0pUP2TFkOY41dbjyYrsr5S+sNCpynPtg_9XZHFb-Q@mail.gmail.com>
+ <4621def6171f4ca5948a59a7e714d25f@huawei.com>
+In-Reply-To: <4621def6171f4ca5948a59a7e714d25f@huawei.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Sun, 3 Apr 2022 17:22:38 -0700
+Message-ID: <CAEf4BzZB=aLA23xysFBm50AKZ72p0PBDeL5j1d0mmNCGW2VKwA@mail.gmail.com>
+Subject: Re: [PATCH 05/18] bpf-preload: Generate static variables
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        KP Singh <kpsingh@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 31, 2022 at 07:33:56PM +0200, Michal Orzel wrote:
-> Get rid of redundant assignments which end up in values not being
-> read either because they are overwritten or the function ends.
-> 
-> Reported by clang-tidy [deadcode.DeadStores]
-> 
-> Signed-off-by: Michal Orzel <michalorzel.eng@gmail.com>
-> ---
->  security/keys/process_keys.c | 1 -
->  security/keys/request_key.c  | 6 ++----
->  2 files changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-> index b5d5333ab330..8bdd6410f79a 100644
-> --- a/security/keys/process_keys.c
-> +++ b/security/keys/process_keys.c
-> @@ -92,7 +92,6 @@ int look_up_user_keyrings(struct key **_user_keyring,
->  		return PTR_ERR(reg_keyring);
->  
->  	down_write(&user_ns->keyring_sem);
-> -	ret = 0;
->  
->  	/* Get the user keyring.  Note that there may be one in existence
->  	 * already as it may have been pinned by a session, but the user_struct
-> diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-> index 2da4404276f0..ad29023c9518 100644
-> --- a/security/keys/request_key.c
-> +++ b/security/keys/request_key.c
-> @@ -116,7 +116,7 @@ static int call_sbin_request_key(struct key *authkey, void *aux)
->  {
->  	static char const request_key[] = "/sbin/request-key";
->  	struct request_key_auth *rka = get_request_key_auth(authkey);
-> -	const struct cred *cred = current_cred();
-> +	const struct cred *cred;
->  	key_serial_t prkey, sskey;
->  	struct key *key = rka->target_key, *keyring, *session, *user_session;
->  	char *argv[9], *envp[3], uid_str[12], gid_str[12];
-> @@ -506,9 +506,7 @@ static struct key *construct_key_and_link(struct keyring_search_context *ctx,
->  			kdebug("cons failed");
->  			goto construction_failed;
->  		}
-> -	} else if (ret == -EINPROGRESS) {
-> -		ret = 0;
-> -	} else {
-> +	} else if (ret != -EINPROGRESS) {
->  		goto error_put_dest_keyring;
->  	}
->  
-> -- 
-> 2.25.1
-> 
+On Wed, Mar 30, 2022 at 12:44 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>
+> > From: Andrii Nakryiko [mailto:andrii.nakryiko@gmail.com]
+> > Sent: Wednesday, March 30, 2022 1:52 AM
+> > On Mon, Mar 28, 2022 at 10:52 AM Roberto Sassu
+> > <roberto.sassu@huawei.com> wrote:
+> > >
+> > > The first part of the preload code generation consists in generating the
+> > > static variables to be used by the code itself: the links and maps to be
+> > > pinned, and the skeleton. Generation of the preload variables and
+> > methods
+> > > is enabled with the option -P added to 'bpftool gen skeleton'.
+> > >
+> > > The existing variables maps_link and progs_links in bpf_preload_kern.c
+> > have
+> > > been renamed respectively to dump_bpf_map_link and
+> > dump_bpf_prog_link, to
+> > > match the name of the variables in the main structure of the light
+> > > skeleton.
+> > >
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  kernel/bpf/preload/bpf_preload_kern.c         |  35 +-
+> > >  kernel/bpf/preload/iterators/Makefile         |   2 +-
+> > >  .../bpf/preload/iterators/iterators.lskel.h   | 378 +++++++++---------
+> > >  .../bpf/bpftool/Documentation/bpftool-gen.rst |   5 +
+> > >  tools/bpf/bpftool/bash-completion/bpftool     |   2 +-
+> > >  tools/bpf/bpftool/gen.c                       |  27 ++
+> > >  tools/bpf/bpftool/main.c                      |   7 +-
+> > >  tools/bpf/bpftool/main.h                      |   1 +
+> > >  8 files changed, 254 insertions(+), 203 deletions(-)
+> > >
+> >
+> > [...]
+> >
+> > > +__attribute__((unused)) static void
+> > > +iterators_bpf__assert(struct iterators_bpf *s)
+> > > +{
+> > > +#ifdef __cplusplus
+> > > +#define _Static_assert static_assert
+> > > +#endif
+> > > +#ifdef __cplusplus
+> > > +#undef _Static_assert
+> > > +#endif
+> > > +}
+> > > +
+> > > +static struct bpf_link *dump_bpf_map_link;
+> > > +static struct bpf_link *dump_bpf_prog_link;
+> > > +static struct iterators_bpf *skel;
+> >
+> > I don't understand what is this and what for? You are making an
+> > assumption that light skeleton can be instantiated just once, why? And
+> > adding extra bpftool option to light skeleton codegen just to save a
+> > bit of typing at the place where light skeleton is actually
+> > instantiated and used doesn't seems like a right approach.
+>
+> True, iterator_bpf is simple. Writing the preloading code
+> for it is simple. But, what if you wanted to preload an LSM
+> with 10 hooks or more?
 
+I suppose you'd write a straightforward code to do pinning ten times
+for ten different programs to ten different paths. But with this you
+don't have to establish a random set of conventions that might not
+apply in all the situations to anyone that would try to use this
+feature.
 
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Worst case, light skeleton can be extended to provide a way to iterate
+all programs programmatically.
 
-David: can you pick this?
-
-BR, Jarkko
+>
+> Ok, regarding where the preloading code should be, I will
+> try to move the generated code to the kernel module instead
+> of the light skeleton.
+>
+> Thanks
+>
+> Roberto
+>
+> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+> Managing Director: Li Peng, Zhong Ronghua
+>
+> > Further, even if this is the way to go, please split out bpftool
+> > changes from kernel changes. There is nothing requiring them to be
+> > coupled together.
+> >
+> > [...]
