@@ -2,117 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B55B6C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 21:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E429BC4321E
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Apr 2022 21:28:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380693AbiDDVaW (ORCPT
+        id S1382503AbiDDVaZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:30:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41494 "EHLO
+        Mon, 4 Apr 2022 17:30:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379526AbiDDRW7 (ORCPT
+        with ESMTP id S1379986AbiDDSeS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Apr 2022 13:22:59 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4081E3E9;
-        Mon,  4 Apr 2022 10:21:02 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KXHYv3f92z67MtS;
-        Tue,  5 Apr 2022 01:18:59 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 4 Apr 2022 19:20:59 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
- Mon, 4 Apr 2022 19:20:59 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Djalal Harouni <tixxdz@gmail.com>, KP Singh <kpsingh@kernel.org>
-CC:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
- programs
-Thread-Topic: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
- programs
-Thread-Index: AQHYQsxoL5kXhl8+JE6PJPNWV+NOTqzYppqAgABrSsCAAo7zgIAAEt0AgAOU8YCAALoz0A==
-Date:   Mon, 4 Apr 2022 17:20:59 +0000
-Message-ID: <c2e57f10b62940eba3cfcae996e20e3c@huawei.com>
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
- <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
- <b9f5995f96da447c851f7c9db8232a9b@huawei.com>
- <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
- <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
- <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
-In-Reply-To: <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.81.208.245]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 4 Apr 2022 14:34:18 -0400
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363992E0AC
+        for <linux-security-module@vger.kernel.org>; Mon,  4 Apr 2022 11:32:20 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KXKBV48wlzMpvVR;
+        Mon,  4 Apr 2022 20:32:18 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KXKBT6wMFzlhRVT;
+        Mon,  4 Apr 2022 20:32:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1649097138;
+        bh=YAOsStc2y5wOQ15cC5RQNCD4FLyM/10VhMrFzxISgno=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=dexQLDYr9HI4i84PBFN4kfFFHH7V/THIYIw9SnEIu6mK92PIi9YM/lsl1sSUAYaSN
+         +AGPbebQ3W/4GZ1fNlMaDLJyokXVrygARsFiZORaETOEStrGvOZtp5L+wU2GcHH38T
+         vL3xoFDW1zl5GSL4IQaEgqYDq1+2d6NX0LzFygco=
+Message-ID: <c2bc5ccf-8942-ab5e-c071-6f6c6e6b2d9d@digikod.net>
+Date:   Mon, 4 Apr 2022 20:32:42 +0200
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-11-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [RFC PATCH v4 10/15] seltest/landlock: add tests for bind() hooks
+In-Reply-To: <20220309134459.6448-11-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBEamFsYWwgSGFyb3VuaSBbbWFpbHRvOnRpeHhkekBnbWFpbC5jb21dDQo+IFNlbnQ6
-IE1vbmRheSwgQXByaWwgNCwgMjAyMiA5OjQ1IEFNDQo+IE9uIFN1biwgQXByIDMsIDIwMjIgYXQg
-NTo0MiBQTSBLUCBTaW5naCA8a3BzaW5naEBrZXJuZWwub3JnPiB3cm90ZToNCj4gPg0KPiA+IE9u
-IFNhdCwgQXByIDIsIDIwMjIgYXQgMTo1NSBBTSBBbGV4ZWkgU3Rhcm92b2l0b3YNCj4gPiA8YWxl
-eGVpLnN0YXJvdm9pdG92QGdtYWlsLmNvbT4gd3JvdGU6DQo+IC4uLg0KPiA+ID4NCj4gPiA+ID4g
-UGlubmluZw0KPiA+ID4gPiB0aGVtIHRvIHVucmVhY2hhYmxlIGlub2RlcyBpbnR1aXRpdmVseSBs
-b29rZWQgdGhlDQo+ID4gPiA+IHdheSB0byBnbyBmb3IgYWNoaWV2aW5nIHRoZSBzdGF0ZWQgZ29h
-bC4NCj4gPiA+DQo+ID4gPiBXZSBjYW4gY29uc2lkZXIgaW5vZGVzIGluIGJwZmZzIHRoYXQgYXJl
-IG5vdCB1bmxpbmthYmxlIGJ5IHJvb3QNCj4gPiA+IGluIHRoZSBmdXR1cmUsIGJ1dCBjZXJ0YWlu
-bHkgbm90IGZvciB0aGlzIHVzZSBjYXNlLg0KPiA+DQo+ID4gQ2FuIHRoaXMgbm90IGJlIGFscmVh
-ZHkgZG9uZSBieSBhZGRpbmcgYSBCUEZfTFNNIHByb2dyYW0gdG8gdGhlDQo+ID4gaW5vZGVfdW5s
-aW5rIExTTSBob29rPw0KPiA+DQo+IA0KPiBBbHNvLCBiZXNpZGUgb2YgdGhlIGlub2RlX3VubGlu
-ay4uLiBhbmQgb3V0IG9mIGN1cmlvc2l0eTogbWFraW5nIHN5c2ZzL2JwZmZzLw0KPiByZWFkb25s
-eSBhZnRlciBwaW5uaW5nLCB0aGVuIHVzaW5nIGJwZiBMU00gaG9va3MNCj4gc2JfbW91bnR8cmVt
-b3VudHx1bm1vdW50Li4uDQo+IGZhbWlseSBjb21iaW5pbmcgYnBmKCkgTFNNIGhvb2suLi4gaXNu
-J3QgdGhpcyBlbm91Z2ggdG86DQo+IDEuIFJlc3RyaWN0IHdobyBjYW4gcGluIHRvIGJwZmZzIHdp
-dGhvdXQgdXNpbmcgYSBmdWxsIE1BQw0KPiAyLiBSZXN0cmljdCB3aG8gY2FuIGRlbGV0ZSBvciB1
-bm1vdW50IGJwZiBmaWxlc3lzdGVtDQo+IA0KPiA/DQoNCkknbSB0aGlua2luZyB0byBpbXBsZW1l
-bnQgc29tZXRoaW5nIGxpa2UgdGhpcy4NCg0KRmlyc3QsIEkgYWRkIGEgbmV3IHByb2dyYW0gZmxh
-ZyBjYWxsZWQNCkJQRl9GX1NUT1BfT05DT05GSVJNLCB3aGljaCBjYXVzZXMgdGhlIHJlZiBjb3Vu
-dA0Kb2YgdGhlIGxpbmsgdG8gaW5jcmVhc2UgdHdpY2UgYXQgY3JlYXRpb24gdGltZS4gSW4gdGhp
-cyB3YXksDQp1c2VyIHNwYWNlIGNhbm5vdCBtYWtlIHRoZSBsaW5rIGRpc2FwcGVhciwgdW5sZXNz
-IGENCmNvbmZpcm1hdGlvbiBpcyBleHBsaWNpdGx5IHNlbnQgdmlhIHRoZSBicGYoKSBzeXN0ZW0g
-Y2FsbC4NCg0KQW5vdGhlciBhZHZhbnRhZ2UgaXMgdGhhdCBvdGhlciBMU01zIGNhbiBkZWNpZGUN
-CndoZXRoZXIgb3Igbm90IHRoZXkgYWxsb3cgYSBwcm9ncmFtIHdpdGggdGhpcyBmbGFnDQooaW4g
-dGhlIGJwZiBzZWN1cml0eSBob29rKS4NCg0KVGhpcyB3b3VsZCB3b3JrIHJlZ2FyZGxlc3Mgb2Yg
-dGhlIG1ldGhvZCB1c2VkIHRvDQpsb2FkIHRoZSBlQlBGIHByb2dyYW0gKHVzZXIgc3BhY2Ugb3Ig
-a2VybmVsIHNwYWNlKS4NCg0KU2Vjb25kLCBJIGV4dGVuZCB0aGUgYnBmKCkgc3lzdGVtIGNhbGwg
-d2l0aCBhIG5ldw0Kc3ViY29tbWFuZCwgQlBGX0xJTktfQ09ORklSTV9TVE9QLCB3aGljaA0KZGVj
-cmVhc2VzIHRoZSByZWYgY291bnQgZm9yIHRoZSBsaW5rIG9mIHRoZSBwcm9ncmFtcw0Kd2l0aCB0
-aGUgQlBGX0ZfU1RPUF9PTkNPTkZJUk0gZmxhZy4gSSB3aWxsIGFsc28NCmludHJvZHVjZSBhIG5l
-dyBzZWN1cml0eSBob29rIChzb21ldGhpbmcgbGlrZQ0Kc2VjdXJpdHlfbGlua19jb25maXJtX3N0
-b3ApLCBzbyB0aGF0IGFuIExTTSBoYXMgdGhlDQpvcHBvcnR1bml0eSB0byBkZW55IHRoZSBzdG9w
-ICh0aGUgYnBmIHNlY3VyaXR5IGhvb2sNCndvdWxkIG5vdCBiZSBzdWZmaWNpZW50IHRvIGRldGVy
-bWluZSBleGFjdGx5IGZvcg0Kd2hpY2ggbGluayB0aGUgY29uZmlybWF0aW9uIGlzIGdpdmVuLCBh
-biBMU00gc2hvdWxkDQpiZSBhYmxlIHRvIGRlbnkgdGhlIHN0b3AgZm9yIGl0cyBvd24gcHJvZ3Jh
-bXMpLg0KDQpXaGF0IGRvIHlvdSB0aGluaz8NCg0KVGhhbmtzDQoNClJvYmVydG8NCg0KSFVBV0VJ
-IFRFQ0hOT0xPR0lFUyBEdWVzc2VsZG9yZiBHbWJILCBIUkIgNTYwNjMNCk1hbmFnaW5nIERpcmVj
-dG9yOiBMaSBQZW5nLCBaaG9uZyBSb25naHVhDQo=
+
+On 09/03/2022 14:44, Konstantin Meskhidze wrote:
+> Adds two selftests for bind socket action.
+> The one is with no landlock restrictions:
+>      - bind_no_restrictions;
+> The second one is with mixed landlock rules:
+>      - bind_with_restrictions;
+> 
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
+> 
+> Changes since v3:
+> * Split commit.
+> * Add helper create_socket.
+> * Add FIXTURE_SETUP.
+> 
+> ---
+>   .../testing/selftests/landlock/network_test.c | 153 ++++++++++++++++++
+>   1 file changed, 153 insertions(+)
+>   create mode 100644 tools/testing/selftests/landlock/network_test.c
+> 
+> diff --git a/tools/testing/selftests/landlock/network_test.c b/tools/testing/selftests/landlock/network_test.c
+> new file mode 100644
+> index 000000000000..4c60f6d973a8
+> --- /dev/null
+> +++ b/tools/testing/selftests/landlock/network_test.c
+
+[...]
+
+> +
+> +uint port[MAX_SOCKET_NUM];
+> +struct sockaddr_in addr[MAX_SOCKET_NUM];
+
+You should not change global variables, it is a source of issue. Instead 
+use FIXTURE local variables accessible through self->X.
+
+> +
+> +const int one = 1;
+
+This doesn't need to be global.
+
+[...]
+
+> +
+> +static void enforce_ruleset(struct __test_metadata *const _metadata,
+> +		const int ruleset_fd)
+> +{
+> +	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
+> +	ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0)) {
+> +		TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
+> +	}
+> +}
+
+You should move the same helper from fs_base.c to common.h (see caps 
+helpers) and reuse it here.
+
+
+> +
+> +FIXTURE(socket) { };
+> +
+> +FIXTURE_SETUP(socket)
+> +{
+> +	int i;
+
+Please add a new line between declaration and actual code (everywhere).
+
+> +	/* Creates socket addresses */
+> +	for (i = 0; i < MAX_SOCKET_NUM; i++) {
+
+Use ARRAY_SIZE() instead of MAY_SOCKET_NUM.
+
+
+> +		port[i] = SOCK_PORT_START + SOCK_PORT_ADD*i;
+
+Use self->port[i] and self->addr[i] instead.
+
+> +		addr[i].sin_family = AF_INET;
+> +		addr[i].sin_port = htons(port[i]);
+> +		addr[i].sin_addr.s_addr = inet_addr(IP_ADDRESS);
+> +		memset(&(addr[i].sin_zero), '\0', 8);
+> +	}
+> +}
+
+[...]
+
+> +	/* Allows connect and deny bind operations to the port[1] socket. */
+> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
+> +				&net_service_2, 0));
+> +	/* Empty allowed_access (i.e. deny rules) are ignored in network actions
+
+The kernel coding style says to start a multi-line comments with a "/*" 
+and a new line.
