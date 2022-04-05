@@ -2,43 +2,51 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF23DC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Apr 2022 07:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BA2C43217
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Apr 2022 07:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231986AbiDEHsj (ORCPT
+        id S232658AbiDEH4F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Apr 2022 03:48:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47086 "EHLO
+        Tue, 5 Apr 2022 03:56:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233544AbiDEHr4 (ORCPT
+        with ESMTP id S232608AbiDEHy6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Apr 2022 03:47:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE24F9233D;
-        Tue,  5 Apr 2022 00:45:17 -0700 (PDT)
+        Tue, 5 Apr 2022 03:54:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2573136140;
+        Tue,  5 Apr 2022 00:50:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 40AE9616BF;
-        Tue,  5 Apr 2022 07:45:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48EAFC340EE;
-        Tue,  5 Apr 2022 07:45:16 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D0B38B81BB9;
+        Tue,  5 Apr 2022 07:50:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164B6C341CA;
+        Tue,  5 Apr 2022 07:50:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1649144716;
-        bh=S9aXtfEKDGdBQZkVkd+a1yTaeGJtvtEgjUrZ0wayzj4=;
+        s=korg; t=1649145024;
+        bh=YQar6ezHZkPY8X6SYpKiX/qtDQj2Nb/lf+/JJVypKo8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zECrY2ubk9bbWD8Xelbj5t1VFMrP8BHD3mPnKv+fxCVbTfzAQdeFh5xMex2muf66+
-         G89v0ISDKlHgXBe5j6cBI9GWttYqO7juHxP6Ei0C626v4LGSutqJ82iZXwHeWzQLCf
-         T1EATTi1DFHdGNdzv6x+r7XIlPA3oFqv21s9MZXI=
+        b=JT3dA0rzIdO6OVmmodVtxoTLe+KnqOV/cDU9kxd4zi9pMJ1rspyFHgRl8DAZiGoIT
+         zyGLJYh3YTgDsmdv2g8liBb1BhqHxIKHBgjkD6xpnpp0yavHCzayGKZanCZYikydLP
+         Ay+XwAAFMC2pCgf8Wo3Eh2l5EFUbwIjIBxqyfJ9g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH 5.17 0138/1126] landlock: Use square brackets around "landlock-ruleset"
-Date:   Tue,  5 Apr 2022 09:14:45 +0200
-Message-Id: <20220405070411.629673184@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.17 0255/1126] KEYS: trusted: Avoid calling null function trusted_key_exit
+Date:   Tue,  5 Apr 2022 09:16:42 +0200
+Message-Id: <20220405070415.095208501@linuxfoundation.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220405070407.513532867@linuxfoundation.org>
 References: <20220405070407.513532867@linuxfoundation.org>
@@ -49,49 +57,47 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
 
-commit aea0b9f2486da8497f35c7114b764bf55e17c7ea upstream.
+[ Upstream commit c5d1ed846e15090bc90dfdaafc07eac066e070bb ]
 
-Make the name of the anon inode fd "[landlock-ruleset]" instead of
-"landlock-ruleset". This is minor but most anon inode fds already
-carry square brackets around their name:
+If one loads and unloads the trusted module, trusted_key_exit can be
+NULL. Call it through static_call_cond() to avoid a kernel trap.
 
-    [eventfd]
-    [eventpoll]
-    [fanotify]
-    [fscontext]
-    [io_uring]
-    [pidfd]
-    [signalfd]
-    [timerfd]
-    [userfaultfd]
-
-For the sake of consistency lets do the same for the landlock-ruleset anon
-inode fd that comes with landlock. We did the same in
-1cdc415f1083 ("uapi, fsopen: use square brackets around "fscontext" [ver #2]")
-for the new mount api.
-
+Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Cc: James Bottomley <jejb@linux.ibm.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/r/20211011133704.1704369-1-brauner@kernel.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/landlock/syscalls.c |    2 +-
+ security/keys/trusted-keys/trusted_core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -192,7 +192,7 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
- 		return PTR_ERR(ruleset);
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index 5b35f1b87644..9b9d3ef79cbe 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -351,7 +351,7 @@ static int __init init_trusted(void)
  
- 	/* Creates anonymous FD referring to the ruleset. */
--	ruleset_fd = anon_inode_getfd("landlock-ruleset", &ruleset_fops,
-+	ruleset_fd = anon_inode_getfd("[landlock-ruleset]", &ruleset_fops,
- 			ruleset, O_RDWR | O_CLOEXEC);
- 	if (ruleset_fd < 0)
- 		landlock_put_ruleset(ruleset);
+ static void __exit cleanup_trusted(void)
+ {
+-	static_call(trusted_key_exit)();
++	static_call_cond(trusted_key_exit)();
+ }
+ 
+ late_initcall(init_trusted);
+-- 
+2.34.1
+
 
 
