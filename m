@@ -2,63 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0A4C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Apr 2022 08:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D599AC35273
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Apr 2022 09:13:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233234AbiDEIFZ (ORCPT
+        id S239624AbiDEJPH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Apr 2022 04:05:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48164 "EHLO
+        Tue, 5 Apr 2022 05:15:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234107AbiDEH6A (ORCPT
+        with ESMTP id S244704AbiDEIwe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Apr 2022 03:58:00 -0400
-X-Greylist: delayed 484 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Apr 2022 00:51:57 PDT
-Received: from mail.bizcall.pl (mail.bizcall.pl [192.71.213.112])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCC5998F51
-        for <linux-security-module@vger.kernel.org>; Tue,  5 Apr 2022 00:51:56 -0700 (PDT)
-Received: by mail.bizcall.pl (Postfix, from userid 1001)
-        id 6555B415DF; Tue,  5 Apr 2022 09:43:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizcall.pl; s=mail;
-        t=1649144630; bh=L7rZPDqncV/PGNK3vBL4eFyhOA8rMHMu3jCfxnl4mEc=;
-        h=Date:From:To:Subject:From;
-        b=XB/Z8KVq3bH93OeXd0IlAX8fpC4a2AKeexh8k1eJ7cXtcZlWpinhc7eMO3+0v48az
-         54OLUdiFgkN4/RZ76likNy4J4cDviydQRRNycsGkpjzAm43S7DFzQFnGdkT+5qdZtc
-         HwQFSNVoWZP6Lva57PU9Yda95MtdtYgWE7bYHT9ZQalFbLlTiaOIlq8VTXi896u3h9
-         kCMrb8j8qy/RVjsGfjFFfH2R8qVpxBxn3iL92p79yxoqQAsCl4M2vQokk3M/uT92NT
-         eMdEY/MJ1VTmkeUyNVHijTPHKhHpKtZSUqYyhTp6UI8KTYzK1Fu/DDVgjGrsChpXqY
-         p20LPliPGiNSQ==
-Received: by mail.bizcall.pl for <linux-security-module@vger.kernel.org>; Tue,  5 Apr 2022 07:43:50 GMT
-Message-ID: <20220405084501-0.1.1v.5hrm.0.nofda71dlb@bizcall.pl>
-Date:   Tue,  5 Apr 2022 07:43:50 GMT
-From:   "Marek Onufrowicz" <marek.onufrowicz@bizcall.pl>
-To:     <linux-security-module@vger.kernel.org>
-Subject: Prezentacja
-X-Mailer: mail.bizcall.pl
+        Tue, 5 Apr 2022 04:52:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E7D18E24;
+        Tue,  5 Apr 2022 01:42:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B174B609D0;
+        Tue,  5 Apr 2022 08:42:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B576C385A1;
+        Tue,  5 Apr 2022 08:42:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1649148141;
+        bh=YQar6ezHZkPY8X6SYpKiX/qtDQj2Nb/lf+/JJVypKo8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ruQKorjoV32pU39DqmwNgMmTSWyTIew6GNyb5YXkNdhOMPzG+HkcfhR7LfiWR9dZE
+         iF34rM5Egm5c+mApDleQUXP7EM6wjRzcWuiMFZqyO+E7xJVMM5GGGsQtKNesRitkJV
+         4W0FnMbcA9b3jT+mOMhZk8D8D/YVtKQqXHeMSP6s=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.16 0248/1017] KEYS: trusted: Avoid calling null function trusted_key_exit
+Date:   Tue,  5 Apr 2022 09:19:21 +0200
+Message-Id: <20220405070401.621647117@linuxfoundation.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220405070354.155796697@linuxfoundation.org>
+References: <20220405070354.155796697@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry!
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
 
-Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
-=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
-zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
+[ Upstream commit c5d1ed846e15090bc90dfdaafc07eac066e070bb ]
 
-Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
-=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
-dostaw.
+If one loads and unloads the trusted module, trusted_key_exit can be
+NULL. Call it through static_call_cond() to avoid a kernel trap.
 
-Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
-nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
- co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
+Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Cc: James Bottomley <jejb@linux.ibm.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/keys/trusted-keys/trusted_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
-=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
-zania w Pa=C5=84stwa firmie.
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index 5b35f1b87644..9b9d3ef79cbe 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -351,7 +351,7 @@ static int __init init_trusted(void)
+ 
+ static void __exit cleanup_trusted(void)
+ {
+-	static_call(trusted_key_exit)();
++	static_call_cond(trusted_key_exit)();
+ }
+ 
+ late_initcall(init_trusted);
+-- 
+2.34.1
 
 
-Pozdrawiam,
-Marek Onufrowicz
+
