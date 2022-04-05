@@ -2,153 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16855C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Apr 2022 14:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7785C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234564AbiDEOmA (ORCPT
+        id S233234AbiDFCe5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Apr 2022 10:42:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49458 "EHLO
+        Tue, 5 Apr 2022 22:34:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381525AbiDEMya (ORCPT
+        with ESMTP id S1457651AbiDEQZb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Apr 2022 08:54:30 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C701ECEC;
-        Tue,  5 Apr 2022 04:58:36 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id d5so22747843lfj.9;
-        Tue, 05 Apr 2022 04:58:36 -0700 (PDT)
+        Tue, 5 Apr 2022 12:25:31 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC1B6412
+        for <linux-security-module@vger.kernel.org>; Tue,  5 Apr 2022 09:23:30 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id m3so24115917lfj.11
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Apr 2022 09:23:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kHEqj5M158n+dGH/l2poz1rrg1KKwE9IbzvYK9DFF6U=;
-        b=VoVtihAxFWewhd6ZlzhhBU39ctV48Q8C4dQJB6R/JTmzssVOUh5k1I5yDPQOAoA7vO
-         NxTh7DNeI5r/a5xP8vj98bA/UPIGYJ1xTbB9tRmoF/G+LtwRrhn/ytBOuFaT5knOifoz
-         DMgYASiCFphlLhS9HUtpEiv5kq5nbLKqAUGHUSscxGERDm9jK68tW0OUsI6GTct2LnEC
-         3dPzZuckfY9g+wyYOlgH/04UxxyI91UVyGWlk2LqtB+qRVxQALwE2kc+sys7jfggX1Jh
-         H/1fmf6grIF2KRC6rl2/2assPNDu9L02KhjMgH1aYEVEZ42UWAc7oNaBRBe5FvIprv8p
-         O3Cw==
+         :cc:content-transfer-encoding;
+        bh=FELPvFz/6oaJHsU4oc1kXTcQ26iC0/VrCF/XPlp17+4=;
+        b=XJkkA3b9tMj2Oywq65L1XLPGe9r4EWP4QonCvPcAvNQC7lH+KZKOjbWEjEmxm1w9l6
+         GTCCy3sUV5mOUios3pbc+w2xyA02qNafDjyGesSqpIRyz7QCRPbAT4MAOjeJ/i8sDPPr
+         JM8yRVTKDHALD8dV/vRION3fkiPh4VLXV0D9Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kHEqj5M158n+dGH/l2poz1rrg1KKwE9IbzvYK9DFF6U=;
-        b=fYFdrLDG3VBuuCsVn7lRHsmSNHIDFxCJZJYWlYbqq/Sj3WhnGL9QPNxWMaz70eegVK
-         2LI8uRdz2XYdv+u1MWSwyjUtrYdXbk3m/mxGTt/eMKO7WWoM6O58ckfEc0duKnh1xVSH
-         yhf/z64JBqIK2rDtTxBulmV5j5xODBQ03H7wqGSIgUJ4V++iRxujLYKeww7Omu0qqjhG
-         ekoLXwuqKkG3T6vwSYbXapArAR/fxMvfZ2Zgl++32dto6df1VVk55vQqeyC8us4qvOt4
-         pcXMwt0ntqWqfrdH0X8sGLD9WZdKAv+T0xEpyAEispGhrp1XqGSGKne8eINJzfmoFoDq
-         Z26A==
-X-Gm-Message-State: AOAM531W+pETYIJjM2Yy0af4w1hbMrBVKSys+YGEipTjR7aMXKX7tpP8
-        Fi1eni00cF+qv6+SSpHjbV1MFB+9REWP07H1sO8=
-X-Google-Smtp-Source: ABdhPJzHY2DzJ/dKMTTA6hLzbE+/2cS2FWiicU36xSAhh2CeuZ55sVJEEyj7egPZFO5r6QCyKTgaktYWG3fYXdcd9Rw=
-X-Received: by 2002:ac2:510f:0:b0:44a:5ccc:99fb with SMTP id
- q15-20020ac2510f000000b0044a5ccc99fbmr2399027lfb.38.1649159914944; Tue, 05
- Apr 2022 04:58:34 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FELPvFz/6oaJHsU4oc1kXTcQ26iC0/VrCF/XPlp17+4=;
+        b=2Z8dHehaNXt3o4+LQYotTpgECPusk66u33HIcEsCesa+V+ekOOfDYndCVnA/WGd8Lu
+         kgHM5KUJR/QXjgEpWmAZDSdMIrYC9f24IJUCBAbvL7l6pj0NIS7W+k4I/d01bE0eV2i6
+         JvPoxeXeAsObNNFn3CeMgKwdHPVYxwsZPQB6/ewLmBrL41HcuLs1xw3EwUcmu+y5xMvr
+         Grlvub3sTmfJPx8bzWCTjm6/pq/mFwhB/pcDlO25XVzfYzoMrPSpG70C5o+awaMznZRJ
+         qNFGjouFY12TKC17kJyaJeFWint5l8oYld0m8p7Ga2M5PhBTNeRW3e3i8Vh3LbJiMQcO
+         d57w==
+X-Gm-Message-State: AOAM530ZcLfh04Ssrccn++qYSb4NGs2U2D9P7PwZqGw4qdVwmB89LtrJ
+        Ef6qmI9PIRWMpH2YnsBXDp8VslghdAZxDafxivE=
+X-Google-Smtp-Source: ABdhPJxc3wz6LaJS0Oe5w4hoVBEoQzRWx/WqFkWOk1AiLZ2Dz8PUMZlOdXQss2RnbRH8jrRQp6eBMQ==
+X-Received: by 2002:a05:6512:2345:b0:44a:33e4:d68 with SMTP id p5-20020a056512234500b0044a33e40d68mr3064495lfu.480.1649175808329;
+        Tue, 05 Apr 2022 09:23:28 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id i14-20020a056512340e00b0044ade91cf51sm1440512lfr.267.2022.04.05.09.23.27
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Apr 2022 09:23:28 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id g24so17786958lja.7
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Apr 2022 09:23:27 -0700 (PDT)
+X-Received: by 2002:a2e:9794:0:b0:249:8488:7dbd with SMTP id
+ y20-20020a2e9794000000b0024984887dbdmr2641943lji.176.1649175481210; Tue, 05
+ Apr 2022 09:18:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com>
- <CAFqZXNt=Ca+x7PaYgc1jXq-3cKxin-_=UNCSiyVHjbP7OYUKvA@mail.gmail.com>
-In-Reply-To: <CAFqZXNt=Ca+x7PaYgc1jXq-3cKxin-_=UNCSiyVHjbP7OYUKvA@mail.gmail.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Tue, 5 Apr 2022 07:58:20 -0400
-Message-ID: <CADvbK_fTnWhnuxR7JkNYeoSB4a1nSX7O0jg4Mif6V_or-tOy3w@mail.gmail.com>
-Subject: Re: [PATCH net] sctp: use the correct skb for security_sctp_assoc_request
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     network dev <netdev@vger.kernel.org>,
-        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>
+References: <20220321161557.495388-1-mic@digikod.net> <202204041130.F649632@keescook>
+ <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+ <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net> <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+ <202204041451.CC4F6BF@keescook> <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
+ <7e8d9f8a-f119-6d1a-7861-0493dc513aa7@digikod.net>
+In-Reply-To: <7e8d9f8a-f119-6d1a-7861-0493dc513aa7@digikod.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 5 Apr 2022 09:17:44 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjPGNLyzeBMWdQu+kUdQLHQugznwY7CvWjmvNW47D5sog@mail.gmail.com>
+Message-ID: <CAHk-=wjPGNLyzeBMWdQu+kUdQLHQugznwY7CvWjmvNW47D5sog@mail.gmail.com>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 4, 2022 at 6:15 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+On Tue, Apr 5, 2022 at 9:08 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
+rote:
 >
-> Adding LSM and SELinux lists to CC for awareness; the original patch
-> is available at:
-> https://lore.kernel.org/netdev/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/T/
-> https://patchwork.kernel.org/project/netdevbpf/patch/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/
->
-> On Mon, Apr 4, 2022 at 3:53 AM Xin Long <lucien.xin@gmail.com> wrote:
-> >
-> > Yi Chen reported an unexpected sctp connection abort, and it occurred when
-> > COOKIE_ECHO is bundled with DATA Fragment by SCTP HW GSO. As the IP header
-> > is included in chunk->head_skb instead of chunk->skb, it failed to check
-> > IP header version in security_sctp_assoc_request().
-> >
-> > According to Ondrej, SELinux only looks at IP header (address and IPsec
-> > options) and XFRM state data, and these are all included in head_skb for
-> > SCTP HW GSO packets. So fix it by using head_skb when calling
-> > security_sctp_assoc_request() in processing COOKIE_ECHO.
->
-> The logic looks good to me, but I still have one unanswered concern.
-> The head_skb member of struct sctp_chunk is defined inside a union:
->
-> struct sctp_chunk {
->         [...]
->         union {
->                 /* In case of GSO packets, this will store the head one */
->                 struct sk_buff *head_skb;
->                 /* In case of auth enabled, this will point to the shkey */
->                 struct sctp_shared_key *shkey;
->         };
->         [...]
-> };
->
-> What guarantees that this chunk doesn't have "auth enabled" and the
-> head_skb pointer isn't actually a non-NULL shkey pointer? Maybe it's
-> obvious to a Linux SCTP expert, but at least for me as an outsider it
-> isn't - that's usually a good hint that there should be a code comment
-> explaining it.
-Hi Ondrej,
+> I think we don't. I think the only corner case that could be different
+> is for files that are executable, SUID and non-readable. In this case it
+> wouldn't matter because userspace could not read the file, which is
+> required for interpretation/execution. Anyway, S[GU]ID bits in scripts
+> are just ignored by execve and we want to follow the same semantic.
 
-shkey is for tx skbs only, while head_skb is for skbs on rx path.
+So I just want to bring up the possibility that somebody wants to just
+implement execve() in user space for some reason - not just "script
+interpreter".
 
-Thanks.
+It's *doable*.
 
->
-> >
-> > Fixes: e215dab1c490 ("security: call security_sctp_assoc_request in sctp_sf_do_5_1D_ce")
-> > Reported-by: Yi Chen <yiche@redhat.com>
-> > Signed-off-by: Xin Long <lucien.xin@gmail.com>
-> > ---
-> >  net/sctp/sm_statefuns.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
-> > index 7f342bc12735..883f9b849ee5 100644
-> > --- a/net/sctp/sm_statefuns.c
-> > +++ b/net/sctp/sm_statefuns.c
-> > @@ -781,7 +781,7 @@ enum sctp_disposition sctp_sf_do_5_1D_ce(struct net *net,
-> >                 }
-> >         }
-> >
-> > -       if (security_sctp_assoc_request(new_asoc, chunk->skb)) {
-> > +       if (security_sctp_assoc_request(new_asoc, chunk->head_skb ?: chunk->skb)) {
-> >                 sctp_association_free(new_asoc);
-> >                 return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
-> >         }
-> > @@ -2262,7 +2262,7 @@ enum sctp_disposition sctp_sf_do_5_2_4_dupcook(
-> >         }
-> >
-> >         /* Update socket peer label if first association. */
-> > -       if (security_sctp_assoc_request(new_asoc, chunk->skb)) {
-> > +       if (security_sctp_assoc_request(new_asoc, chunk->head_skb ?: chunk->skb)) {
-> >                 sctp_association_free(new_asoc);
-> >                 return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
-> >         }
-> > --
-> > 2.31.1
-> >
->
-> --
-> Ondrej Mosnacek
-> Software Engineer, Linux Security - SELinux kernel
-> Red Hat, Inc.
->
+Don't ask me if it's sane or useful, but people have done insane
+things before. Things like "emulate other operating systems in user
+space" etc
+
+Such a user can trivially see the suid/sgid bit on the file (just do
+fstat() on it), but wouldn't necessarily see if that file is then in a
+mount that is mounted nosuid.
+
+Now, I think the right thing to do is to just say "we don't support
+it", but I do think it should perhaps be mentioned somewhere
+explicitly.
+
+Particularly since I can well imagine that a security policy might
+have some "no, I don't allow suid exec" and return an actual error for
+it, and then the access() call would fail for that case.
+
+(Ok, so the security policies would look at the actual bprm data on a
+real exec, not the inode executable, so that's kind of made up and
+theoretical, but I just want this issue to be mentioned somewhere so
+that people are aware that the "it's the same basic file checking that
+execve does, but a _real_ execve might then have _other_ issues going
+on, including suid bits etc")
+
+               Linus
