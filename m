@@ -2,41 +2,41 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C693C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Apr 2022 02:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A84BC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Apr 2022 02:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442368AbiDFClD (ORCPT
+        id S1444119AbiDFClH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:41:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37194 "EHLO
+        Tue, 5 Apr 2022 22:41:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1457336AbiDEQDG (ORCPT
+        with ESMTP id S1457557AbiDEQKo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Apr 2022 12:03:06 -0400
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ae])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519171FCC2
-        for <linux-security-module@vger.kernel.org>; Tue,  5 Apr 2022 08:38:21 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KXsHG6sFqzMpxx0;
-        Tue,  5 Apr 2022 17:38:18 +0200 (CEST)
+        Tue, 5 Apr 2022 12:10:44 -0400
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B2796246
+        for <linux-security-module@vger.kernel.org>; Tue,  5 Apr 2022 09:08:40 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KXsyH363KzMqGSh;
+        Tue,  5 Apr 2022 18:08:39 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KXsHB10mbzlhNts;
-        Tue,  5 Apr 2022 17:38:13 +0200 (CEST)
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KXsyG1HnxzlhFgC;
+        Tue,  5 Apr 2022 18:08:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1649173098;
-        bh=CsXI63Mo7UO6r/uWwmX4gFbUZp/CXy5CRXKt0P6gt6c=;
+        s=20191114; t=1649174919;
+        bh=i3oU7NU7ziCxqF8LgADjo6sEcbpRcshVXFm2U/900+U=;
         h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=gmHoadq5c/jpwjvzRlDxdSe/QMSdIkQfuWdwnlle2JMgrxICKuYw2Otz5agkacD7Z
-         B3oSAGjmLbhr+bMhGpyxWhZRNmQP4WVnKkPPMB7gr9oFepQ8SCfZOo8micekUP/VgR
-         nsB09g6YQOZdXoGywDPjQHeZ/pGkYe4CO0FU08J8=
-Message-ID: <1eeae491-7f4f-2cbc-7dbb-04e926c78b89@digikod.net>
-Date:   Tue, 5 Apr 2022 17:38:39 +0200
+        b=05hjwZCfXtRlbuAPVKAqLxEozCUGiyJuKeR9DDy+LAIfvTjHN5Dda4CqaT6LR6AGj
+         0Y+D5L0C62XfZfPHEbOwNOtocUwvCHWgZiSizL41MxkNWkUODtKbPJGli0dLp5ZI0X
+         b0XiDi/o56PGQRzjdvJnsbHhsEcUIwMKSbhe4U14=
+Message-ID: <7e8d9f8a-f119-6d1a-7861-0493dc513aa7@digikod.net>
+Date:   Tue, 5 Apr 2022 18:09:03 +0200
 MIME-Version: 1.0
 User-Agent: 
 Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Christian Heimes <christian@python.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -55,118 +55,70 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-integrity <linux-integrity@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>
+        Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>
 References: <20220321161557.495388-1-mic@digikod.net>
  <202204041130.F649632@keescook>
  <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
  <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
  <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+ <202204041451.CC4F6BF@keescook>
+ <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
 Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-In-Reply-To: <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+In-Reply-To: <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 04/04/2022 23:28, Linus Torvalds wrote:
-> On Mon, Apr 4, 2022 at 1:29 PM Mickaël Salaün <mic@digikod.net> wrote:
+On 05/04/2022 01:26, Linus Torvalds wrote:
+> On Mon, Apr 4, 2022 at 3:25 PM Kees Cook <keescook@chromium.org> wrote:
+
+[...]
+
+> 
+>> I think this already exists as AT_EACCESS? It was added with
+>> faccessat2() itself, if I'm reading the history correctly.
+> 
+> Yeah, I noticed myself, I just hadn't looked (and I don't do enough
+> user-space programming to be aware of if that way).
+
+I think AT_EACCESS should be usable with the new EXECVE_OK too.
+
+
+> 
+>>>      (a) "what about suid bits that user space cannot react to"
 >>
->> This initial proposal was using a new faccessat2(2) flag:
->> AT_INTERPRETED, see
->> https://lore.kernel.org/all/20200908075956.1069018-2-mic@digikod.net/
->> What do you think about that? I'm happy to get back to this version if
->> everyone is OK with it.
+>> What do you mean here? Do you mean setid bits on the file itself?
 > 
-> I'm certainly happi_er_ with that, but I find that particular patch
-> odd for other reasons.
+> Right.
 > 
-> In no particular order:
-> 
->   - what's with the insane non-C syntax? Double parentheses have no
-> actual meaning in C:
-> 
->       if ((flags & AT_INTERPRETED)) {
->           if ((mode & MAY_EXEC)) {
-> 
->     so I don't understand why you'd use that strance thing.
+> Maybe we don't care.
 
-I guess it comes from a previous version that ANDed two booleans.
+I think we don't. I think the only corner case that could be different 
+is for files that are executable, SUID and non-readable. In this case it 
+wouldn't matter because userspace could not read the file, which is 
+required for interpretation/execution. Anyway, S[GU]ID bits in scripts 
+are just ignored by execve and we want to follow the same semantic.
 
 
 > 
->   - why is this an AT_INTERPRETED flag? I don't understand the name, I
-> don't understand the semantics.
-
-I wasn't sure it was a good idea to add another mode bit, so I ended up 
-using a flag to not break compatibility of other mode checks but extend 
-the semantic to interpreted scripts. But I agree that a new mode makes 
-sense.
-
-
+> Maybe we do.
 > 
->     Why would that flag have the same value as AT_SYMLINK_FOLLOW?
-
-It was a bug.
-
-
+> Is the user-space loader going to honor them? Is it going to ignore
+> them? I don't know. And it actually interacts with things like
+> 'nosuid', which the kernel does know about, and user space has a hard
+> time figuring out.
 > 
->     Why isn't this just a new _mode_ bit, which is what I feel is
-> sensible? We only use three bits (with no bits set meaning
-> "existence"), so we have *tons* of bits left in that namespace, and it
-> would make much more sense to me to have
+> So if the point is "give me an interface so that I can do the same
+> thing a kernel execve() loader would do", then those sgid/suid bits
+> actually may be exactly the kind of thing that user space wants the
+> kernel to react to - should it ignore them, or should it do something
+> special when it sees that they are set?
 > 
->          #define EXECVE_OK 8
+> I'm not saying that they *should* be something we care about. All I'm
+> saying is that I want that *discussion* to happen.
 > 
->      which is the same as the "group exec" bit, so it actually makes
-> some kind of sense too.
-
-Looks fine to me. The "EXECVE_" prefix is a bit weird but it will not be 
-defined in the kernel like X_OK and others anyway, and as you said, it 
-matches S_IXGRP.
-
-
-> 
->   - related to that "I don't understand the semantics", the
-> "documentation" for that thing doesn't make sense either:
-> 
->      +         The
->      +    main usage is for script
->      +    interpreters to enforce a policy
->      +    consistent with the kernel's one
->      +    (through sysctl configuration or LSM
->      +    policy).  */
-
-I'll synchronize the documentation with a next series.
-
-
-> 
-> Now, what I *think* you mean is
-See a following email in reply to Kees.
-[...]
-
-> 
-> And yes, we still need to talk details:
-> 
->   - no backwards compatibility issues, because we've happily always
-> checked 'mode' for being valid, so old kernels will always return
-> -EINVAL.
-> 
->   - POSIX namespace issues for EXECVE_OK means that the name probably
-> needs some thinking (maybe we just need to call it __ACCESS_OK_EXECVE
-> internally or something - the kernel actually doesn't even export the
-> existing [FRWX]_OK values, because we "know" they map tho the usual
-> "owner RWX" bits, with F being "no bit set")
-
-Right, I cannot find a better name for now.
-
-See a following email in reply to Kees.
-[...]
-
-> 
-> So to recap: I'm very much ok with some access() extension, but I
-> think even that very much needs clarification, and the existing patch
-> is just odd in many many ways.
-
-This v8 was kind of an early version, I'll update everything. Thanks!
+>                 Linus
