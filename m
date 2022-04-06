@@ -2,151 +2,214 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FDFC433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Apr 2022 16:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1BBC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Apr 2022 16:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238027AbiDFQlg (ORCPT
+        id S238094AbiDFQtx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Apr 2022 12:41:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36356 "EHLO
+        Wed, 6 Apr 2022 12:49:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238048AbiDFQlH (ORCPT
+        with ESMTP id S238054AbiDFQtj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Apr 2022 12:41:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 597C45F8D
-        for <linux-security-module@vger.kernel.org>; Wed,  6 Apr 2022 08:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649257484;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cyjimK819yPxnZHWaFtWitdwwu7f3wgO8V+dYrrbSSE=;
-        b=JTb2k2d0fV2KZGdYjmaivTpNuM0lBCoGfeW3XQue9i7OdqeIQPBjGl9180Loawfce8U4jH
-        LR7ZipkoH0ZQFoxiha58CL5GHz/DQKhfjPO3VmWg0hevOv3xKwBRJj68Exof7hk8jGRJ5S
-        CsfWYa0LP177N8vHDH35/0SoadPQCLs=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-9-SPECVVfAP7OuYh7IgaWyIg-1; Wed, 06 Apr 2022 11:04:43 -0400
-X-MC-Unique: SPECVVfAP7OuYh7IgaWyIg-1
-Received: by mail-yb1-f200.google.com with SMTP id x9-20020a5b0809000000b00631d9edfb96so1928774ybp.22
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Apr 2022 08:04:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cyjimK819yPxnZHWaFtWitdwwu7f3wgO8V+dYrrbSSE=;
-        b=nJZRUI1ZVgqeKbYzuRQipZJcUpU39nhglVV9XJQJBWRKFLo/+9Si9oZXRzOBTnzObP
-         fAnx9XMMyUuYBttjXuDA8+Fr055B1Y4W/HLbeRw2Y1iAYc9iVfGlfrwUgYUyrrL7PSWh
-         pxa5LKofAASPwfTgVmuGrKfFiaTde2HZG2DpLpPGZ3wtVAfV+snnoJNV/N3cP+AIKpKX
-         QVntIPGJkYVYPWhwBOO5gErSYek7uBWQNfetPVlRqZxrpjOgK7OsUlFJHJwuaNwvRkXG
-         IlLQAJBPX74guE8+XudA2ASbbPED7VaJmKybX5ScQo2yEZ5GqHZdO7Cic+2G6yyCt4pV
-         Gp7w==
-X-Gm-Message-State: AOAM5309OsCQezNaPsjuU/7rL02A6rF1Bp4EZSxGMxggn1XwdgDpuiqj
-        CFlE/bcEAZ31aR6becBzWmYIkQjlvXlJn0ljSw/l4exSLMLMvmgADtovT5NcALVdviHVKEtX5/V
-        H3hMAx7LGIwPzQTc+aotJCSxkJfS72VdKgDLZb3XWOxsLjkMECuP+
-X-Received: by 2002:a0d:e64d:0:b0:2e6:43f8:234f with SMTP id p74-20020a0de64d000000b002e643f8234fmr7381121ywe.12.1649257482295;
-        Wed, 06 Apr 2022 08:04:42 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwi57EDl8WItb74z/7L8utC2w7SXBqElEsa2UOoaaU9K5V0wWqTxRa9sp4i925j3fbv1x0UwNzKa+BI/yXXXcU=
-X-Received: by 2002:a0d:e64d:0:b0:2e6:43f8:234f with SMTP id
- p74-20020a0de64d000000b002e643f8234fmr7380669ywe.12.1649257477489; Wed, 06
- Apr 2022 08:04:37 -0700 (PDT)
+        Wed, 6 Apr 2022 12:49:39 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BFEE1E9622;
+        Wed,  6 Apr 2022 07:12:07 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KYRFv5ClGz67Nl1;
+        Wed,  6 Apr 2022 22:09:07 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Wed, 6 Apr 2022 16:12:04 +0200
+Message-ID: <2958392e-ba3e-453e-415b-c3869523ea25@huawei.com>
+Date:   Wed, 6 Apr 2022 17:12:00 +0300
 MIME-Version: 1.0
-References: <a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com>
- <CAFqZXNt=Ca+x7PaYgc1jXq-3cKxin-_=UNCSiyVHjbP7OYUKvA@mail.gmail.com>
- <CADvbK_fTnWhnuxR7JkNYeoSB4a1nSX7O0jg4Mif6V_or-tOy3w@mail.gmail.com>
- <CAFqZXNss=7DMb=75ZBDwL9HrrubkxJK=xu7-kqxX-Mw1FtRuuA@mail.gmail.com> <CADvbK_ciV+evm6JY=uVpsHn1W-Cevp+FRzaQtxJO-CpQ392htQ@mail.gmail.com>
-In-Reply-To: <CADvbK_ciV+evm6JY=uVpsHn1W-Cevp+FRzaQtxJO-CpQ392htQ@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Wed, 6 Apr 2022 17:04:25 +0200
-Message-ID: <CAFqZXNvk0i+WC8O=BhETCPYgaKm1zE29JQHfMety8CA7EKhDtg@mail.gmail.com>
-Subject: Re: [PATCH net] sctp: use the correct skb for security_sctp_assoc_request
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     network dev <netdev@vger.kernel.org>,
-        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [RFC PATCH v4 10/15] seltest/landlock: add tests for bind() hooks
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-11-konstantin.meskhidze@huawei.com>
+ <d3340ed0-fe61-3f00-d7ba-44ece235a319@digikod.net>
+ <491d6e96-4bfb-ed97-7eb8-fb18aa144d64@huawei.com>
+ <6f631d7c-a2e3-20b3-997e-6b533b748767@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <6f631d7c-a2e3-20b3-997e-6b533b748767@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml751-chm.china.huawei.com (10.201.108.201) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 6, 2022 at 4:21 PM Xin Long <lucien.xin@gmail.com> wrote:
-> On Wed, Apr 6, 2022 at 9:34 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >
-> > On Tue, Apr 5, 2022 at 1:58 PM Xin Long <lucien.xin@gmail.com> wrote:
-> > > On Mon, Apr 4, 2022 at 6:15 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > >
-> > > > Adding LSM and SELinux lists to CC for awareness; the original patch
-> > > > is available at:
-> > > > https://lore.kernel.org/netdev/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/T/
-> > > > https://patchwork.kernel.org/project/netdevbpf/patch/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/
-> > > >
-> > > > On Mon, Apr 4, 2022 at 3:53 AM Xin Long <lucien.xin@gmail.com> wrote:
-> > > > >
-> > > > > Yi Chen reported an unexpected sctp connection abort, and it occurred when
-> > > > > COOKIE_ECHO is bundled with DATA Fragment by SCTP HW GSO. As the IP header
-> > > > > is included in chunk->head_skb instead of chunk->skb, it failed to check
-> > > > > IP header version in security_sctp_assoc_request().
-> > > > >
-> > > > > According to Ondrej, SELinux only looks at IP header (address and IPsec
-> > > > > options) and XFRM state data, and these are all included in head_skb for
-> > > > > SCTP HW GSO packets. So fix it by using head_skb when calling
-> > > > > security_sctp_assoc_request() in processing COOKIE_ECHO.
-> > > >
-> > > > The logic looks good to me, but I still have one unanswered concern.
-> > > > The head_skb member of struct sctp_chunk is defined inside a union:
-> > > >
-> > > > struct sctp_chunk {
-> > > >         [...]
-> > > >         union {
-> > > >                 /* In case of GSO packets, this will store the head one */
-> > > >                 struct sk_buff *head_skb;
-> > > >                 /* In case of auth enabled, this will point to the shkey */
-> > > >                 struct sctp_shared_key *shkey;
-> > > >         };
-> > > >         [...]
-> > > > };
-> > > >
-> > > > What guarantees that this chunk doesn't have "auth enabled" and the
-> > > > head_skb pointer isn't actually a non-NULL shkey pointer? Maybe it's
-> > > > obvious to a Linux SCTP expert, but at least for me as an outsider it
-> > > > isn't - that's usually a good hint that there should be a code comment
-> > > > explaining it.
-> > > Hi Ondrej,
-> > >
-> > > shkey is for tx skbs only, while head_skb is for skbs on rx path.
-> >
-> > That makes sense, thanks. I would still be happier if this was
-> > documented, but the comment would best fit in the struct sctp_chunk
-> > definition and that wouldn't fit in this patch...
-> >
-> > Actually I have one more question - what about the
-> > security_sctp_assoc_established() call in sctp_sf_do_5_1E_ca()? Is
-> > COOKIE ACK guaranteed to be never bundled?
-> COOKIE ACK could also be bundled with DATA.
-> I didn't change it as it would not break SCTP.
-> (security_inet_conn_established() returns void)
-> But I don't mind changing it if you think it's necessary.
 
-security_inet_conn_established? Are you looking at an old version of
-the code, perhaps? In mainline, sctp_sf_do_5_1E_ca() now calls the new
-security_sctp_assoc_established() hook, which may return an error. But
-even if it didn't, I believe we want to make sure that an skb with
-valid inet headers and XFRM state is passed to the hooks as SELinux
-relies on these to correctly process the SCTP association.
 
--- 
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+4/4/2022 12:44 PM, Mickaël Salaün пишет:
+> 
+> On 04/04/2022 10:28, Konstantin Meskhidze wrote:
+>>
+>>
+>> 4/1/2022 7:52 PM, Mickaël Salaün пишет:
+> 
+> [...]
+> 
+>>>> +static int create_socket(struct __test_metadata *const _metadata)
+>>>> +{
+>>>> +
+>>>> +        int sockfd;
+>>>> +
+>>>> +        sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>>>> +        ASSERT_LE(0, sockfd);
+>>>> +        /* Allows to reuse of local address */
+>>>> +        ASSERT_EQ(0, setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, 
+>>>> &one, sizeof(one)));
+>>>
+>>> Why is it required?
+>>
+>>    Without SO_REUSEADDR there is an error that a socket's port is in use.
+> 
+> I'm sure there is, but why is this port reused? I think this means that 
+> there is an issue in the tests and that could hide potential issue with 
+> the tests (and then with the kernel code). Could you investigate and 
+> find the problem? This would make these tests reliable.
+   The next scenario is possible here:
+   "In order for a network connection to close, both ends have to send 
+FIN (final) packets, which indicate they will not send any additional 
+data, and both ends must ACK (acknowledge) each other's FIN packets. The 
+FIN packets are initiated by the application performing a close(), a 
+shutdown(), or an exit(). The ACKs are handled by the kernel after the 
+close() has completed. Because of this, it is possible for the process 
+to complete before the kernel has released the associated network 
+resource, and this port cannot be bound to another process until the 
+kernel has decided that it is done."
+https://hea-www.harvard.edu/~fine/Tech/addrinuse.html.
 
+So in this case we have busy port in network selfttest and one of the 
+solution is to set SO_REUSEADDR socket option, "which explicitly allows 
+a process to bind to a port which remains in TIME_WAIT (it still only 
+allows a single process to be bound to that port). This is the both the 
+simplest and the most effective option for reducing the "address already 
+in use" error".
+> 
+> Without removing the need to find this issue, the next series should use 
+> a network namespace per test, which will confine such issue from other 
+> tests and the host.
+
+   So there are 2 options here:
+	1. Using SO_REUSEADDR option
+	2. Using network namespace.
+
+I prefer the first option - "the simplest and the most effective one"
+
+> 
+> [...]
+> 
+>>>> +TEST_F_FORK(socket, bind_with_restrictions) {
+>>>> +
+>>>> +    int sockfd_1, sockfd_2, sockfd_3;
+>>>
+>>> Do you really need to have 3 opened socket at the same time?
+>>
+>>    I just wanted to "kill two birds with one stone" in this test.
+>>    It possible to split it in 3 tests and open just one socket in each 
+>> one.
+> 
+> I wanted to point out that these three variables could be replaced with 
+> only one (taking into account that successful opened socket are closed 
+> before the variable is reused).
+> 
+> It may not be obvious if we need to split a test into multiple. The 
+> rules I try to follow are:
+> - use a consistent Landlock rule setup, with potentially nested rules, 
+> to test specific edge cases;
+> - don't tamper the context of a test (e.g. with FS topology/layout 
+> modification or network used port) unless it is clearly documented and 
+> easy to spot, but be careful about the dependent tests;
+> - don't make tests too long unless it makes sense for a specific scenario.
+> 
+   Ok. I got your point here. Thanks.
+> 
+>>>
+>>>> +
+>>>> +    struct landlock_ruleset_attr ruleset_attr = {
+>>>> +        .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>>>> +                      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>>> +    };
+>>>> +    struct landlock_net_service_attr net_service_1 = {
+>>>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>>>> +                  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>>> +        .port = port[0],
+>>>> +    };
+>>>> +    struct landlock_net_service_attr net_service_2 = {
+>>>> +        .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>>> +        .port = port[1],
+>>>> +    };
+>>>> +    struct landlock_net_service_attr net_service_3 = {
+>>>> +        .allowed_access = 0,
+>>>> +        .port = port[2],
+>>>> +    };
+>>>> +
+>>>> +    const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+>>>> +            sizeof(ruleset_attr), 0);
+>>>> +    ASSERT_LE(0, ruleset_fd);
+>>>> +
+>>>> +    /* Allows connect and bind operations to the port[0] socket. */
+>>>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>>>> LANDLOCK_RULE_NET_SERVICE,
+>>>> +                &net_service_1, 0));
+>>>> +    /* Allows connect and deny bind operations to the port[1] 
+>>>> socket. */
+>>>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>>>> LANDLOCK_RULE_NET_SERVICE,
+>>>> +                &net_service_2, 0));
+>>>> +    /* Empty allowed_access (i.e. deny rules) are ignored in 
+>>>> network actions
+>>>> +     * for port[2] socket.
+>>>> +     */
+>>>> +    ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, 
+>>>> LANDLOCK_RULE_NET_SERVICE,
+>>>> +                &net_service_3, 0));
+>>>> +    ASSERT_EQ(ENOMSG, errno);
+>>>> +
+>>>> +    /* Enforces the ruleset. */
+>>>> +    enforce_ruleset(_metadata, ruleset_fd);
+>>>> +
+>>>> +    sockfd_1 = create_socket(_metadata);
+>>>> +    ASSERT_LE(0, sockfd_1);
+>>>> +    /* Binds a socket to port[0] */
+>>>> +    ASSERT_EQ(0, bind(sockfd_1, (struct sockaddr  *)&addr[0], 
+>>>> sizeof(addr[0])));
+>>>> +
+>>>> +    /* Close bounded socket*/
+>>>> +    ASSERT_EQ(0, close(sockfd_1));
+>>>> +
+>>>> +    sockfd_2 = create_socket(_metadata);
+>>>> +    ASSERT_LE(0, sockfd_2);
+>>>> +    /* Binds a socket to port[1] */
+>>>> +    ASSERT_EQ(-1, bind(sockfd_2, (struct sockaddr *)&addr[1], 
+>>>> sizeof(addr[1])));
+>>>> +    ASSERT_EQ(EACCES, errno);
+>>>> +
+>>>> +    sockfd_3 = create_socket(_metadata);
+>>>> +    ASSERT_LE(0, sockfd_3);
+>>>> +    /* Binds a socket to port[2] */
+>>>> +    ASSERT_EQ(-1, bind(sockfd_3, (struct sockaddr *)&addr[2], 
+>>>> sizeof(addr[2])));
+>>>> +    ASSERT_EQ(EACCES, errno);
+>>>> +}
+>>>> +TEST_HARNESS_MAIN
+>>>> -- 
+>>>> 2.25.1
+>>>>
+>>>
+>>> .
+> .
