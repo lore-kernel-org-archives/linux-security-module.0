@@ -2,161 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C97F1C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Apr 2022 16:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4129CC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Apr 2022 16:56:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238107AbiDFQyG (ORCPT
+        id S238489AbiDFQ6S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Apr 2022 12:54:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42108 "EHLO
+        Wed, 6 Apr 2022 12:58:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238247AbiDFQxw (ORCPT
+        with ESMTP id S238256AbiDFQ6M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Apr 2022 12:53:52 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B083CF48C;
-        Wed,  6 Apr 2022 07:17:53 -0700 (PDT)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KYRPw0hZMz67wqg;
-        Wed,  6 Apr 2022 22:16:04 +0800 (CST)
-Received: from [10.122.132.241] (10.122.132.241) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Wed, 6 Apr 2022 16:17:50 +0200
-Message-ID: <e1835aeb-8fe3-a8d7-9d36-69ce8e989291@huawei.com>
-Date:   Wed, 6 Apr 2022 17:17:47 +0300
+        Wed, 6 Apr 2022 12:58:12 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F88A2CCB34;
+        Wed,  6 Apr 2022 07:21:52 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id b17so4398954lfv.3;
+        Wed, 06 Apr 2022 07:21:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=REQTmVxpj4zme6o+oGdwOZm2l8eVhwiMS6w/mpasR1M=;
+        b=JceAsxPVaasjxVoPGWp3s6beeVzBC9VqwMgYprR20jmvB7cEGsvEaDwrmfc/vCj4fl
+         J1llof7zAbm9VLTTByQ+VOB0nYuGhj1TdIqDvGAdhbuk5uSWHhcwHrv1018HYJ50NAmW
+         FuahQ/GeJqcX8GAnHijNJ0TSMCWyNsmp+f3b26fpvACZaS1BGpHe2pNBME6hClTXdr12
+         k+MXXyE9am3kI0FsPVvnSPUcowVBqaP61/xj8BXK2q/QJ6QM4NTurWi19rJxdtuKvN+F
+         x7VaR9TUH9qVk5Jbxd90tKvhtezKI4ZgOA4yT+P3DHiMbH8Gkb+F8QtVGLljmMGtjUjY
+         OMLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=REQTmVxpj4zme6o+oGdwOZm2l8eVhwiMS6w/mpasR1M=;
+        b=cff9SUuAAPXZ+I1E3eE79NmAp0WhLTE6mww8ISRs/7+UYj/mA79liu/HQZpQF4us4t
+         jy7hmwC04KnKMiVawoHTAQ65jm0pS6W5VJc8pBLTSpvxShhPTEYrrGpomvidL435hccF
+         LPjdu18c2PEiA9ur3wliY8A7q4OXf/lxJOQNNoCzguHGtVGOlQHQ4elVuavW6wpbxOO3
+         rP1wSWQzIrI1O5I6rPPVEG6CcaRVAG2kMckaNDHb38wIaZFpFsTcCqhnHJfw7wWA8za0
+         LRe41JUVaD2XIhLVbAglaL2ppnecqXUHWTFpVt+uqzO7r5KPoQYOhrtl3rqqLY8x0sZd
+         QW2Q==
+X-Gm-Message-State: AOAM5335jBnPEXo4Rb/mgjvjEZeOkhMggdOWUfvQqAMyej0tLOr/QKQo
+        bAgUUnj13ZeFEVSNYl8ThDIgjzb7LZa0V9FlPnZTRI+eX1yaCw==
+X-Google-Smtp-Source: ABdhPJy1ozoISNTm+a3R+m01ItIb2+B5czqQun44KpVxUsyer8Q7afXnEOVGNrstlPLTjhhBLBzbVfstEQ5YhyuDIGw=
+X-Received: by 2002:ac2:4207:0:b0:442:bf8b:eee with SMTP id
+ y7-20020ac24207000000b00442bf8b0eeemr6235067lfh.536.1649254910239; Wed, 06
+ Apr 2022 07:21:50 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [RFC PATCH v4 10/15] seltest/landlock: add tests for bind() hooks
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <20220309134459.6448-11-konstantin.meskhidze@huawei.com>
- <c2bc5ccf-8942-ab5e-c071-6f6c6e6b2d9d@digikod.net>
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <c2bc5ccf-8942-ab5e-c071-6f6c6e6b2d9d@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml751-chm.china.huawei.com (10.201.108.201) To
- fraeml704-chm.china.huawei.com (10.206.15.53)
-X-CFilter-Loop: Reflected
+References: <a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com>
+ <CAFqZXNt=Ca+x7PaYgc1jXq-3cKxin-_=UNCSiyVHjbP7OYUKvA@mail.gmail.com>
+ <CADvbK_fTnWhnuxR7JkNYeoSB4a1nSX7O0jg4Mif6V_or-tOy3w@mail.gmail.com> <CAFqZXNss=7DMb=75ZBDwL9HrrubkxJK=xu7-kqxX-Mw1FtRuuA@mail.gmail.com>
+In-Reply-To: <CAFqZXNss=7DMb=75ZBDwL9HrrubkxJK=xu7-kqxX-Mw1FtRuuA@mail.gmail.com>
+From:   Xin Long <lucien.xin@gmail.com>
+Date:   Wed, 6 Apr 2022 10:21:37 -0400
+Message-ID: <CADvbK_ciV+evm6JY=uVpsHn1W-Cevp+FRzaQtxJO-CpQ392htQ@mail.gmail.com>
+Subject: Re: [PATCH net] sctp: use the correct skb for security_sctp_assoc_request
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     network dev <netdev@vger.kernel.org>,
+        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Apr 6, 2022 at 9:34 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> On Tue, Apr 5, 2022 at 1:58 PM Xin Long <lucien.xin@gmail.com> wrote:
+> > On Mon, Apr 4, 2022 at 6:15 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > >
+> > > Adding LSM and SELinux lists to CC for awareness; the original patch
+> > > is available at:
+> > > https://lore.kernel.org/netdev/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/T/
+> > > https://patchwork.kernel.org/project/netdevbpf/patch/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/
+> > >
+> > > On Mon, Apr 4, 2022 at 3:53 AM Xin Long <lucien.xin@gmail.com> wrote:
+> > > >
+> > > > Yi Chen reported an unexpected sctp connection abort, and it occurred when
+> > > > COOKIE_ECHO is bundled with DATA Fragment by SCTP HW GSO. As the IP header
+> > > > is included in chunk->head_skb instead of chunk->skb, it failed to check
+> > > > IP header version in security_sctp_assoc_request().
+> > > >
+> > > > According to Ondrej, SELinux only looks at IP header (address and IPsec
+> > > > options) and XFRM state data, and these are all included in head_skb for
+> > > > SCTP HW GSO packets. So fix it by using head_skb when calling
+> > > > security_sctp_assoc_request() in processing COOKIE_ECHO.
+> > >
+> > > The logic looks good to me, but I still have one unanswered concern.
+> > > The head_skb member of struct sctp_chunk is defined inside a union:
+> > >
+> > > struct sctp_chunk {
+> > >         [...]
+> > >         union {
+> > >                 /* In case of GSO packets, this will store the head one */
+> > >                 struct sk_buff *head_skb;
+> > >                 /* In case of auth enabled, this will point to the shkey */
+> > >                 struct sctp_shared_key *shkey;
+> > >         };
+> > >         [...]
+> > > };
+> > >
+> > > What guarantees that this chunk doesn't have "auth enabled" and the
+> > > head_skb pointer isn't actually a non-NULL shkey pointer? Maybe it's
+> > > obvious to a Linux SCTP expert, but at least for me as an outsider it
+> > > isn't - that's usually a good hint that there should be a code comment
+> > > explaining it.
+> > Hi Ondrej,
+> >
+> > shkey is for tx skbs only, while head_skb is for skbs on rx path.
+>
+> That makes sense, thanks. I would still be happier if this was
+> documented, but the comment would best fit in the struct sctp_chunk
+> definition and that wouldn't fit in this patch...
+>
+> Actually I have one more question - what about the
+> security_sctp_assoc_established() call in sctp_sf_do_5_1E_ca()? Is
+> COOKIE ACK guaranteed to be never bundled?
+COOKIE ACK could also be bundled with DATA.
+I didn't change it as it would not break SCTP.
+(security_inet_conn_established() returns void)
+But I don't mind changing it if you think it's necessary.
 
+Thanks.
 
-4/4/2022 9:32 PM, Mickaël Salaün пишет:
-> 
-> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
->> Adds two selftests for bind socket action.
->> The one is with no landlock restrictions:
->>      - bind_no_restrictions;
->> The second one is with mixed landlock rules:
->>      - bind_with_restrictions;
->>
->> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->> ---
->>
->> Changes since v3:
->> * Split commit.
->> * Add helper create_socket.
->> * Add FIXTURE_SETUP.
->>
->> ---
->>   .../testing/selftests/landlock/network_test.c | 153 ++++++++++++++++++
->>   1 file changed, 153 insertions(+)
->>   create mode 100644 tools/testing/selftests/landlock/network_test.c
->>
->> diff --git a/tools/testing/selftests/landlock/network_test.c 
->> b/tools/testing/selftests/landlock/network_test.c
->> new file mode 100644
->> index 000000000000..4c60f6d973a8
->> --- /dev/null
->> +++ b/tools/testing/selftests/landlock/network_test.c
-> 
-> [...]
-> 
->> +
->> +uint port[MAX_SOCKET_NUM];
->> +struct sockaddr_in addr[MAX_SOCKET_NUM];
-> 
-> You should not change global variables, it is a source of issue. Instead 
-> use FIXTURE local variables accessible through self->X.
-> 
-   Sorry. Did not get your point here.
->> +
->> +const int one = 1;
-> 
-> This doesn't need to be global.
-
-    Ok. Got it.
-> 
-> [...]
-> 
->> +
->> +static void enforce_ruleset(struct __test_metadata *const _metadata,
->> +        const int ruleset_fd)
->> +{
->> +    ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
->> +    ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0)) {
->> +        TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
->> +    }
->> +}
-> 
-> You should move the same helper from fs_base.c to common.h (see caps 
-> helpers) and reuse it here.
-> 
-   Ok. Thanks.
-> 
->> +
->> +FIXTURE(socket) { };
->> +
->> +FIXTURE_SETUP(socket)
->> +{
->> +    int i;
-> 
-> Please add a new line between declaration and actual code (everywhere).
-
-   Ok. Got it. Will be refactored.
-> 
->> +    /* Creates socket addresses */
->> +    for (i = 0; i < MAX_SOCKET_NUM; i++) {
-> 
-> Use ARRAY_SIZE() instead of MAY_SOCKET_NUM.
-> 
-   Ok. I got it.
-> 
->> +        port[i] = SOCK_PORT_START + SOCK_PORT_ADD*i;
-> 
-> Use self->port[i] and self->addr[i] instead.
-> 
-
-   Do you mean to add it in FIXTURE variables?
-
->> +        addr[i].sin_family = AF_INET;
->> +        addr[i].sin_port = htons(port[i]);
->> +        addr[i].sin_addr.s_addr = inet_addr(IP_ADDRESS);
->> +        memset(&(addr[i].sin_zero), '\0', 8);
->> +    }
->> +}
-> 
-> [...]
-> 
->> +    /* Allows connect and deny bind operations to the port[1] socket. */
->> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
->> LANDLOCK_RULE_NET_SERVICE,
->> +                &net_service_2, 0));
->> +    /* Empty allowed_access (i.e. deny rules) are ignored in network 
->> actions
-> 
-> The kernel coding style says to start a multi-line comments with a "/*" 
-> and a new line.
-
-   I missed it here. Thanks.
-> .
+>
+> --
+> Ondrej Mosnacek
+> Software Engineer, Linux Security - SELinux kernel
+> Red Hat, Inc.
+>
