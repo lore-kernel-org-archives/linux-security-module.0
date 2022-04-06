@@ -2,149 +2,184 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAF8C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Apr 2022 17:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B65EC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Apr 2022 17:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238719AbiDFRQd (ORCPT
+        id S239086AbiDFRfY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Apr 2022 13:16:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59638 "EHLO
+        Wed, 6 Apr 2022 13:35:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238769AbiDFRQ0 (ORCPT
+        with ESMTP id S239280AbiDFRes (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Apr 2022 13:16:26 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 513363CBE5E;
-        Wed,  6 Apr 2022 08:11:49 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id p10so4576664lfa.12;
-        Wed, 06 Apr 2022 08:11:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t9shGsUw2eY5d0NfFfgvuKkr7vH8rDlgXmHGXxXGSHo=;
-        b=B5pjk+WtMgzMcwBFokFRZw67hMjZqwn5cibcx0iEannw5JJtMcKiBnzLdvoP1YepmE
-         QqeBbw8oElL5K53i7aWmDYDxx3rhVL82Q6wddXFcr1qKZKp0+s+XCHdeMwNzxRK4Ew9F
-         9/ZJEk9oIVmoWnZZKKMtewVr6vGy9cFLWoyw9CKuXfy38W+fKebiKvBDzxNq8yKU18Ca
-         1i0/qfnXKz1kaIsJtbCQZ+5Yeoms11tBqk8KiDA5QTw/iAkGk8m4iVWYq0sDMC3vYpfh
-         zMykbNt6EOfhbu2nMIyxUF7YCcBI3+5oi4MR+hGyyoaHLX+5EXCgI8t05m2ygVUcFqgn
-         C4VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t9shGsUw2eY5d0NfFfgvuKkr7vH8rDlgXmHGXxXGSHo=;
-        b=ouIIaaIZXZVZazrPOvKhZG8L7VDJ6RKZioQBS/TrXUYfIEqc2DE5/3z+uBHp/17q7t
-         LXl5D7tqMR1La0f4arPX4BMNqI9hFqGA1QjHjND+LdmxSADMkw1ohVqrO655ZBZTJA9U
-         Bh+gzL9p6NM1sPRV2wSs6V3UQJjPUxkAey1Vtj9P14LkjL08ogXz4bHNmDpIwoyJKaoY
-         rZsWGnXcdQCf7CGWl7ZZ7dIxSGUSHBk0WTHTPvWGxoniddd8P7OXm6bLQxWdBZCnu9zb
-         FnTg6nylvjbPGtkx3VbiMHsEjeiE22kcARo7PUwKoACnOuJ2xWE/PSFgxuv8afUowevP
-         rmBA==
-X-Gm-Message-State: AOAM53255BafDmQTjK8/nZPKYL8u8BMFjhh3vmB7vAwMc5IevsIZBot0
-        JOr+E/liGEOTow+xd+J6T37E3RT1Cqajyoke478=
-X-Google-Smtp-Source: ABdhPJz4N1mouexc73ad7+tp6qPOfsUqgFpdjZKAK2n0DI9xH1ho3WVp6YTyj/W7rNbLrLlEuQ7XV3ZiDJkKkazLijA=
-X-Received: by 2002:a05:6512:c0e:b0:44a:b599:f778 with SMTP id
- z14-20020a0565120c0e00b0044ab599f778mr6203179lfu.643.1649257907357; Wed, 06
- Apr 2022 08:11:47 -0700 (PDT)
+        Wed, 6 Apr 2022 13:34:48 -0400
+Received: from de-smtp-delivery-102.mimecast.com (de-smtp-delivery-102.mimecast.com [194.104.111.102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3C3E28A036
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Apr 2022 08:41:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1649259696;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yRoNGebNpG+7JCeHgdPg8u/gYAPkrLtJXRhl4RgFQi8=;
+        b=m7GCAEuQxdMBbP+vb8o4ivnuMuxGUVSIamPaqUcZuBfNtsoirnZQLsAs/h5ZDwgbcpNyUA
+        BNIa4dCHDKjut5LcLw7Gr6Npf/T1MWTdeqRHfGYTRoAShThcGoqZKNf6B8SytTgulBQwL1
+        huhJnOP5jsOwucIJstRTJcM5fTyGGcU=
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com
+ (mail-db3eur04lp2050.outbound.protection.outlook.com [104.47.12.50]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ de-mta-26-2fhaSZ82PpGnIrYVATNk_g-1; Wed, 06 Apr 2022 17:41:32 +0200
+X-MC-Unique: 2fhaSZ82PpGnIrYVATNk_g-1
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jh9e6JZUNLR0L+uSMRENPiyiYmJywHQbyQabE8T+gCGx3DHy7XGZiLx6Bc2T0yaWhanyWN0ZCpcaS7suLL90AOFYPpc+9jty7PKwp+tftKYtXQ/ezlxoYpVBaOVTpnCDPYxrHYXAcIQrV0Lug5UDBwSFYjAjixRHAT3K4Hn8kmrBvLhD5QYXmEOGv1b7ZWBEWc3sXP/qMCEQcB5HXiSs2HqJJJDKip/gobcILx8D6buJ72PshllFG0jT7LQl0GbgcPL4u6jYpO+GaMdiWXwiwAVjrE9b2456oAjaBAqTKvALWaheGCslvZjXLQX3+OzF0IwJmgziosgj9DwR5VOWXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yRoNGebNpG+7JCeHgdPg8u/gYAPkrLtJXRhl4RgFQi8=;
+ b=IMU4NQRS9nBN0/RWr4DxhjpK0tos5Pwi3rA873BgcYbaSBSgMbwlv4A+aYnYiVDh6wr0FqEA2nW6cNrFiR/9e2izkgfsZ8HnQzRJmCZWSi1QzpURoRGCVYd1SEBsHOvPNfQHfq31b56S0JE644M7z0B8N/tnzh2aRFpcxq3GRgDpp2omdnXNjzstSNavl2iaaMjbTdhIFeW/J262uXwe7rJR1r0vW1XyjIcG+Z1gErxnCYbwgUtVw3fy2QT8yn7iZNvmrYAh3NSUYVYa4cbg/Tg7+YigoaXSz4sPxveqY22GZND3HulGARh4nxQFVBAZMuv5kaNS/XCR9MhRwfMVAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=suse.com;
+Received: from DB8PR04MB7097.eurprd04.prod.outlook.com (2603:10a6:10:12a::11)
+ by AM0PR04MB4243.eurprd04.prod.outlook.com (2603:10a6:208:66::29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Wed, 6 Apr
+ 2022 15:41:30 +0000
+Received: from DB8PR04MB7097.eurprd04.prod.outlook.com
+ ([fe80::8d7a:5d52:e592:9227]) by DB8PR04MB7097.eurprd04.prod.outlook.com
+ ([fe80::8d7a:5d52:e592:9227%9]) with mapi id 15.20.5123.031; Wed, 6 Apr 2022
+ 15:41:29 +0000
+Date:   Wed, 6 Apr 2022 23:41:16 +0800
+From:   joeyli <jlee@suse.com>
+To:     Michal Suchanek <msuchanek@suse.de>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Philipp Rudo <prudo@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Alexander Egorenkov <egorenar@linux.ibm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Dave Young <dyoung@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Kairui Song <kasong@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        stable@kernel.org
+Subject: Re: [PATCH 1/4] Fix arm64 kexec forbidding kernels signed with keys
+ in the secondary keyring to boot
+Message-ID: <20220406154056.GL11641@linux-l9pv.suse>
+References: <cover.1644953683.git.msuchanek@suse.de>
+ <83b3583f35c50c609739a8d857d14e8410293373.1644953683.git.msuchanek@suse.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <83b3583f35c50c609739a8d857d14e8410293373.1644953683.git.msuchanek@suse.de>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-ClientProxiedBy: HK2PR02CA0210.apcprd02.prod.outlook.com
+ (2603:1096:201:20::22) To DB8PR04MB7097.eurprd04.prod.outlook.com
+ (2603:10a6:10:12a::11)
 MIME-Version: 1.0
-References: <a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com>
- <CAFqZXNt=Ca+x7PaYgc1jXq-3cKxin-_=UNCSiyVHjbP7OYUKvA@mail.gmail.com>
- <CADvbK_fTnWhnuxR7JkNYeoSB4a1nSX7O0jg4Mif6V_or-tOy3w@mail.gmail.com>
- <CAFqZXNss=7DMb=75ZBDwL9HrrubkxJK=xu7-kqxX-Mw1FtRuuA@mail.gmail.com>
- <CADvbK_ciV+evm6JY=uVpsHn1W-Cevp+FRzaQtxJO-CpQ392htQ@mail.gmail.com> <CAFqZXNvk0i+WC8O=BhETCPYgaKm1zE29JQHfMety8CA7EKhDtg@mail.gmail.com>
-In-Reply-To: <CAFqZXNvk0i+WC8O=BhETCPYgaKm1zE29JQHfMety8CA7EKhDtg@mail.gmail.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Wed, 6 Apr 2022 11:11:34 -0400
-Message-ID: <CADvbK_drixdD3FBiVH+3V=wpN4QjrFZB+oWrGf-XjYKKGNJL0Q@mail.gmail.com>
-Subject: Re: [PATCH net] sctp: use the correct skb for security_sctp_assoc_request
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     network dev <netdev@vger.kernel.org>,
-        "linux-sctp @ vger . kernel . org" <linux-sctp@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e5afd4a4-6989-4fa3-2229-08da17e3eace
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4243:EE_
+X-Microsoft-Antispam-PRVS: <AM0PR04MB4243E197FAC4ECB1F14BA618A3E79@AM0PR04MB4243.eurprd04.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: BzVz3DttFi1aUoKgY/oMT/vkk6zmv1301xgdAsUoYN/diSD+D59HpIoF2jh2cU0EX4xDyiAlht1CGrtVCyj9ZiQV/dT0ZDU25p7cDTcp3O1aCQYvBvR/e/8C5XB3UDobpkAXUNMRFJ9n1b+bRjo5o+itCMqQHZNYhEMcjska6qsTmfxWZBSDq3CKgYHxspzLElJb+o0hn7MXOlabd5FRcBi+Zp4qc2mVXwfPKQkx/L4GzKEB1fIb6n7PaTlLrw+KGcKa/NPipMICaucDH4V428YkWK8BPP+l1+bDS5X65X/FNky2H+3sJziqOjC91GEoYqBA/sUcXRbZiTAP04ZtqHIHCdHozQoOFopvPbPe7MkyJEip9eXdP53Nih5NUJuMGEDA/cdZtn7x1ThW81pyc7gVP5zqCqccTlTq0AngnbQfN2/t0eoVEwPHtchC02wfT/nnE+c+hBuPn5h/iVUYhxRvuZ/genDAARhmO4Y/RIFPEbnOlDeJtKpYlb3qIE4cE5xRkAyfVyYVmXsO8ycBMBgbLEZh9HSgFne2ju/KJj8VncQFxF2FkYDyklSey+kEkHGyMOvH4dDe+ID6KDhJuXdONU9lts8vcc5NTQN/igbV3iZksGt/HOo4EfGJd/JN3m3y0uhdlEJTizpYPnzHp5c63qs9BDDuaLZDSvbmDin3Tc4IJKuEKrKMX4FhBcACYM6G/9285Hn33/1/15w0jQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB7097.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(7416002)(5660300002)(26005)(186003)(66946007)(4326008)(6486002)(38100700002)(1076003)(508600001)(8936002)(66476007)(8676002)(66556008)(83380400001)(86362001)(6512007)(33656002)(6506007)(9686003)(6666004)(2906002)(316002)(54906003)(36756003)(6916009)(43062005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wf985CF6ryCrnDXwjZqmB60ylTzJbxNXAZ+4I+FLnIaK5CmhUYxVLxPHJrWY?=
+ =?us-ascii?Q?GdgNhQOBfj9AbUSndc/A4O/rIYkMOej7EJFenZMRRB4DLiN/SsPaRFJhHdUD?=
+ =?us-ascii?Q?oEP2qSRaQINXl1nPr2cg/ZkGbcnhXAOgjGePkkYFZYlOKe0G6C71GytnwtX8?=
+ =?us-ascii?Q?6PgDnnDw3rRWe9MMLrFH1DQgOwYDeIwwKwlKahu+uTYpAdjeTmW2SnOOO2UP?=
+ =?us-ascii?Q?mmVeug9g+ScovVZK78pNl/r5e8GTzKss3QCtaSYVs+Id1rUW515bDs7FoVhD?=
+ =?us-ascii?Q?Vx/UIP6nFIAry4Mc1tn6aCf73BOX8EWiXrAMoOlC3Xc+M2q8WyqHAkUtNvd2?=
+ =?us-ascii?Q?Z1StpBPzGdjqbQTcHZbst1GnR0LqEj2kgODWTeWUqlv5iPBzqrv5pwVmurFW?=
+ =?us-ascii?Q?Wi9p1ywuHfpQgdVdcBeGzn++l9D3qz+ZvE9ytxMbwMswEKHwgywl2tlwW0qN?=
+ =?us-ascii?Q?HxuAA/fTVIGL/fltalm6r4IijDsKP7/E3SoP0wpjYFkhc5SUK8wh5U0TOK3Y?=
+ =?us-ascii?Q?lLuZB7uMwuUwbOl/eXpcWZoq8+BoJAd0LDY3dgeD027lwXNTnuEVyc10MhCM?=
+ =?us-ascii?Q?6GTcTTI7h0JC6UyAmsDceXiP2adHU/sDabzU3FyDfIgaP2p2qjCXehnvNIUF?=
+ =?us-ascii?Q?/FQw9nIwFUhpBtgPwjuIaytQ+K+S3/g6/BtS1Mz9A0OCMq5Q5CAI73HuhX+k?=
+ =?us-ascii?Q?PJvf3d9X1MrPWbEQOR/La5bqJ2pwKNxBWeZ6m3t86G3T+whvdRyeaBQTI9Zk?=
+ =?us-ascii?Q?/wREaM/C/PDptocp50RozvPKVji4L93rBhUb5pkRj0C++mjFcIF0H0Yrf79p?=
+ =?us-ascii?Q?vCv28EPvOxnsWsDVm4nbhpIdD7caucOmqshXbL10U9jdJxwSM5PgkR7jNY6Z?=
+ =?us-ascii?Q?E3bWAc4QiflPYMyjUEp9YvGPNb4qfoBZjeZbXUolHtQM99VRDQJY95wuwiwr?=
+ =?us-ascii?Q?FCUzaeOW78twmoaAgVZOkIRJhmasGn7lTabpTtCinpT1lJf5DhFAj6IH7X1L?=
+ =?us-ascii?Q?pvqNyGHLSKGJ4c02N+AfsItS8jGHCdnA33343DhsAN1mOGGB4E/WWAVCLAb3?=
+ =?us-ascii?Q?ZFcAAy2o/LSV3fle5nwcnmIUkEj74SiynSySo+rDKO6nU6Hc6peReR7E6ahP?=
+ =?us-ascii?Q?YcgxuQtAx35lGxw13FTUE9W4fS301jRn1/gnh9RIazaElS9ZRFLKjAvyZNfP?=
+ =?us-ascii?Q?YarE+2klvEtOqxIbQcChAiMkfb3WUonpuwkQx/YdTmKXPaS9UhjPb9NZm36E?=
+ =?us-ascii?Q?9lEv5EG4ego968aHQk7PbV7+hoXAiuSedVFCbQkfQC2al1KfzhNqEZjAyfm/?=
+ =?us-ascii?Q?o9gjoHYsHWgxS+fp4qqX6AWwXAVfydW7KVwzL/5LzhU4KKtEp6brJ52KD7H0?=
+ =?us-ascii?Q?k+PbsPKhwghpbRydAJaXiQMH+c13q7ogu03XKINgqPJRIUheqv70xbxhftL5?=
+ =?us-ascii?Q?Mtw36BKshG+/A8jcIMgy7rKkIns/DaGzxLcCD+FLpKzV4a87Bxqb7x4tf/qX?=
+ =?us-ascii?Q?9Oteyh7tpy79GlSVE9XOsr6/pB46cEAYATY2SNe9mZ5erpqrKVapYan+hQxJ?=
+ =?us-ascii?Q?uHIFWU8mT1MgguLaM1OIT7WPdSd4QGSXnIXIam4nJfxK3KzMpN9Rv8zjJ9BZ?=
+ =?us-ascii?Q?eqzjaWVrEJJ6evxTBUXB0sMNYpdujpEVqIU5HXeObURfhQ+uzHU4nGKtXw/5?=
+ =?us-ascii?Q?hjNZK7UTIWCJ6kg1By1CvT5VyqNNmImXWsZUT6tyLjvbAVEUqXsInj4MLW0F?=
+ =?us-ascii?Q?FTqlFGSFeQ=3D=3D?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5afd4a4-6989-4fa3-2229-08da17e3eace
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR04MB7097.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 15:41:29.8550
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fmKKKphQucC3nS9hVpqyEbuEJuCDNLGAuJfVmvlh4vf0O/g8U3Cxn65N9GkuK8F6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4243
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 6, 2022 at 11:04 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> On Wed, Apr 6, 2022 at 4:21 PM Xin Long <lucien.xin@gmail.com> wrote:
-> > On Wed, Apr 6, 2022 at 9:34 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > >
-> > > On Tue, Apr 5, 2022 at 1:58 PM Xin Long <lucien.xin@gmail.com> wrote:
-> > > > On Mon, Apr 4, 2022 at 6:15 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > > >
-> > > > > Adding LSM and SELinux lists to CC for awareness; the original patch
-> > > > > is available at:
-> > > > > https://lore.kernel.org/netdev/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/T/
-> > > > > https://patchwork.kernel.org/project/netdevbpf/patch/a77a584b3ce9761eb5dda5828192e1cab94571f0.1649037151.git.lucien.xin@gmail.com/
-> > > > >
-> > > > > On Mon, Apr 4, 2022 at 3:53 AM Xin Long <lucien.xin@gmail.com> wrote:
-> > > > > >
-> > > > > > Yi Chen reported an unexpected sctp connection abort, and it occurred when
-> > > > > > COOKIE_ECHO is bundled with DATA Fragment by SCTP HW GSO. As the IP header
-> > > > > > is included in chunk->head_skb instead of chunk->skb, it failed to check
-> > > > > > IP header version in security_sctp_assoc_request().
-> > > > > >
-> > > > > > According to Ondrej, SELinux only looks at IP header (address and IPsec
-> > > > > > options) and XFRM state data, and these are all included in head_skb for
-> > > > > > SCTP HW GSO packets. So fix it by using head_skb when calling
-> > > > > > security_sctp_assoc_request() in processing COOKIE_ECHO.
-> > > > >
-> > > > > The logic looks good to me, but I still have one unanswered concern.
-> > > > > The head_skb member of struct sctp_chunk is defined inside a union:
-> > > > >
-> > > > > struct sctp_chunk {
-> > > > >         [...]
-> > > > >         union {
-> > > > >                 /* In case of GSO packets, this will store the head one */
-> > > > >                 struct sk_buff *head_skb;
-> > > > >                 /* In case of auth enabled, this will point to the shkey */
-> > > > >                 struct sctp_shared_key *shkey;
-> > > > >         };
-> > > > >         [...]
-> > > > > };
-> > > > >
-> > > > > What guarantees that this chunk doesn't have "auth enabled" and the
-> > > > > head_skb pointer isn't actually a non-NULL shkey pointer? Maybe it's
-> > > > > obvious to a Linux SCTP expert, but at least for me as an outsider it
-> > > > > isn't - that's usually a good hint that there should be a code comment
-> > > > > explaining it.
-> > > > Hi Ondrej,
-> > > >
-> > > > shkey is for tx skbs only, while head_skb is for skbs on rx path.
-> > >
-> > > That makes sense, thanks. I would still be happier if this was
-> > > documented, but the comment would best fit in the struct sctp_chunk
-> > > definition and that wouldn't fit in this patch...
-> > >
-> > > Actually I have one more question - what about the
-> > > security_sctp_assoc_established() call in sctp_sf_do_5_1E_ca()? Is
-> > > COOKIE ACK guaranteed to be never bundled?
-> > COOKIE ACK could also be bundled with DATA.
-> > I didn't change it as it would not break SCTP.
-> > (security_inet_conn_established() returns void)
-> > But I don't mind changing it if you think it's necessary.
->
-> security_inet_conn_established? Are you looking at an old version of
-> the code, perhaps? In mainline, sctp_sf_do_5_1E_ca() now calls the new
-> security_sctp_assoc_established() hook, which may return an error. But
-> even if it didn't, I believe we want to make sure that an skb with
-> valid inet headers and XFRM state is passed to the hooks as SELinux
-> relies on these to correctly process the SCTP association.
-Sorry, I was looking at the old one.
-OK, I will post v2 with the fix in sctp_sf_do_5_1E_ca().
+On Tue, Feb 15, 2022 at 08:39:38PM +0100, Michal Suchanek wrote:
+> commit d3bfe84129f6 ("certs: Add a secondary system keyring that can be added to dynamically")
+> split of .system_keyring into .builtin_trusted_keys and
+> .secondary_trusted_keys broke kexec, thereby preventing kernels signed by
+> keys which are now in the secondary keyring from being kexec'd.
+> 
+> Fix this by passing VERIFY_USE_SECONDARY_KEYRING to
+> verify_pefile_signature().
+> 
+> Cherry-picked from
+> commit ea93102f3224 ("Fix kexec forbidding kernels signed with keys in the secondary keyring to boot")
+> 
+> Fixes: 732b7b93d849 ("arm64: kexec_file: add kernel signature verification support")
+> Cc: kexec@lists.infradead.org
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Cc: stable@kernel.org
+> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 
-Thanks for reviewing.
+Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
 
->
-> --
-> Ondrej Mosnacek
-> Software Engineer, Linux Security - SELinux kernel
-> Red Hat, Inc.
->
+> ---
+>  arch/arm64/kernel/kexec_image.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+> index 9ec34690e255..1fbf2ee7c005 100644
+> --- a/arch/arm64/kernel/kexec_image.c
+> +++ b/arch/arm64/kernel/kexec_image.c
+> @@ -133,7 +133,8 @@ static void *image_load(struct kimage *image,
+>  #ifdef CONFIG_KEXEC_IMAGE_VERIFY_SIG
+>  static int image_verify_sig(const char *kernel, unsigned long kernel_len)
+>  {
+> -	return verify_pefile_signature(kernel, kernel_len, NULL,
+> +	return verify_pefile_signature(kernel, kernel_len,
+> +				       VERIFY_USE_SECONDARY_KEYRING,
+>  				       VERIFYING_KEXEC_PE_SIGNATURE);
+>  }
+>  #endif
+> -- 
+> 2.31.1
+
