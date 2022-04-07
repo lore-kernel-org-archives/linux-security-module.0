@@ -2,122 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 945F1C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Apr 2022 01:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF9FC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Apr 2022 02:17:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233058AbiDGBHO (ORCPT
+        id S232845AbiDGCTQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Apr 2022 21:07:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38830 "EHLO
+        Wed, 6 Apr 2022 22:19:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbiDGBHK (ORCPT
+        with ESMTP id S231738AbiDGCTP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Apr 2022 21:07:10 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC23CBE1A;
-        Wed,  6 Apr 2022 18:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649293507; x=1680829507;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=myer2bVBJAzVTcO8FK/Itx5etIcCeXikEzZUTZdKYyQ=;
-  b=CRTGINvpegqE3Ct4eATioeXgEOoVjVJ/SiNTNo7WZNxYuIBo20K4WiLN
-   B3hN51N6MQrB51lHpSK3EnWDVlHQxCM+xHvN7bY2ezStPZkj92VOJjyK5
-   DKjQaWZFIRHMb+OCBrLkSLMuL4zAqpwYK69p5PxH7qHjfepzFy8nSuLgP
-   cR0rKvkNhTVmxTGl/Fsr1Qeuhoa+QNHN+YG+HwX7FDQoFLCmx4QVZyupD
-   AqtRwO+UBAjDsbzs5a9heCZ3HmbV+eG7PNeaxOViv73EJshe0yghbz+J4
-   DPf8+CW98RMXb+v6aF8cQmGBFJ7AXcYYTWuWnUsAyCPz+w1TOS4pOueG8
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10309"; a="243330976"
-X-IronPort-AV: E=Sophos;i="5.90,241,1643702400"; 
-   d="scan'208";a="243330976"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 18:05:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,241,1643702400"; 
-   d="scan'208";a="609119120"
-Received: from lkp-server02.sh.intel.com (HELO a44fdfb70b94) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Apr 2022 18:05:02 -0700
-Received: from kbuild by a44fdfb70b94 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1ncGa6-0004ur-5a;
-        Thu, 07 Apr 2022 01:05:02 +0000
-Date:   Thu, 7 Apr 2022 09:04:25 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
-        dwmw2@infradead.org, jarkko@kernel.org, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, roberto.sassu@huawei.com,
-        nramas@linux.microsoft.com, eric.snowberg@oracle.com,
-        pvorel@suse.cz, tiwai@suse.de, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 6/7] KEYS: X.509: Flag Intermediate CA certs as built in
-Message-ID: <202204070929.nFQNU3B8-lkp@intel.com>
-References: <20220406015337.4000739-7-eric.snowberg@oracle.com>
+        Wed, 6 Apr 2022 22:19:15 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4390610FAC8;
+        Wed,  6 Apr 2022 19:17:15 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.53])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4KYlK92FNDzBs5P;
+        Thu,  7 Apr 2022 10:13:01 +0800 (CST)
+Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
+ (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Thu, 7 Apr
+ 2022 10:17:12 +0800
+From:   GUO Zihua <guozihua@huawei.com>
+To:     <linux-integrity@vger.kernel.org>
+CC:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <roberto.sassu@huawei.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 1/1] ima: remove the IMA_TEMPLATE Kconfig option
+Date:   Thu, 7 Apr 2022 10:16:19 +0800
+Message-ID: <20220407021619.146410-2-guozihua@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220407021619.146410-1-guozihua@huawei.com>
+References: <20220407021619.146410-1-guozihua@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220406015337.4000739-7-eric.snowberg@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.67.175.31]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Eric,
+The original 'ima' measurement list template contains a hash, defined
+as 20 bytes, and a null terminated pathname, limited to 255
+characters.  Other measurement list templates permit both larger hashes
+and longer pathnames.  When the "ima" template is configured as the
+default, a new measurement list template (ima_template=) must be
+specified before specifying a larger hash algorithm (ima_hash=) on the
+boot command line.
 
-Thank you for the patch! Perhaps something to improve:
+To avoid this boot command line ordering issue, remove the legacy "ima"
+template configuration option, allowing it to still be specified on the
+boot command line.
 
-[auto build test WARNING on 3123109284176b1532874591f7c81f3837bbdc17]
+The root cause of this issue is that during the processing of ima_hash,
+we would try to check whether the hash algorithm is compatible with the
+template. If the template is not set at the moment we do the check, we
+check the algorithm against the configured default template. If the
+default template is "ima", then we reject any hash algorithm other than
+sha1 and md5.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Eric-Snowberg/Add-CA-enforcement-keyring-restrictions/20220407-003209
-base:   3123109284176b1532874591f7c81f3837bbdc17
-config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20220407/202204070929.nFQNU3B8-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.2.0-19) 11.2.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/b0858df3dd6d627f8fa75cc973f55516372a5c98
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Eric-Snowberg/Add-CA-enforcement-keyring-restrictions/20220407-003209
-        git checkout b0858df3dd6d627f8fa75cc973f55516372a5c98
-        # save the config file to linux build tree
-        mkdir build_dir
-        make W=1 O=build_dir ARCH=um SUBARCH=i386 SHELL=/bin/bash
+For example, if the compiled default template is "ima", and the default
+algorithm is sha1 (which is the current default). In the cmdline, we put
+in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
+that ima starts with ima-ng as the template and sha256 as the hash
+algorithm. However, during the processing of "ima_hash=",
+"ima_template=" has not been processed yet, and hash_setup would check
+the configured hash algorithm against the compiled default: ima, and
+reject sha256. So at the end, the hash algorithm that is actually used
+will be sha1.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+With template "ima" removed from the configured default, we ensure that
+the default tempalte would at least be "ima-ng" which allows for
+basically any hash algorithm.
 
-All warnings (new ones prefixed by >>):
+This change would not break the algorithm compatibility checks for IMA.
 
-   In file included from fs/file_table.c:28:
->> include/linux/ima.h:189:56: warning: 'union key_payload' declared inside parameter list will not be visible outside of this definition or declaration
-     189 |                                            const union key_payload *payload,
-         |                                                        ^~~~~~~~~~~
->> include/linux/ima.h:188:57: warning: 'struct key_type' declared inside parameter list will not be visible outside of this definition or declaration
-     188 |                                            const struct key_type *type,
-         |                                                         ^~~~~~~~
+Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
+Signed-off-by: GUO Zihua <guozihua@huawei.com>
+---
+ security/integrity/ima/Kconfig | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-
-vim +189 include/linux/ima.h
-
-   179	
-   180	#ifdef CONFIG_ASYMMETRIC_KEY_TYPE
-   181	#ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
-   182	#define ima_validate_builtin_rot restrict_link_by_rot_builtin_and_secondary_trusted
-   183	#else
-   184	#define ima_validate_builtin_rot restrict_link_by_rot_builtin_trusted
-   185	#endif
-   186	#else
-   187	static inline int ima_validate_builtin_rot(struct key *dest_keyring,
- > 188						   const struct key_type *type,
- > 189						   const union key_payload *payload,
-   190						   struct key *unused){
-   191		return -EPERM;
-   192	}
-   193	#endif
-   194	
-
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index f3a9cc201c8c..7249f16257c7 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -69,10 +69,9 @@ choice
+ 	  hash, defined as 20 bytes, and a null terminated pathname,
+ 	  limited to 255 characters.  The 'ima-ng' measurement list
+ 	  template permits both larger hash digests and longer
+-	  pathnames.
++	  pathnames. The configured default template can be replaced
++	  by specifying "ima_template=" on the boot command line.
+ 
+-	config IMA_TEMPLATE
+-		bool "ima"
+ 	config IMA_NG_TEMPLATE
+ 		bool "ima-ng (default)"
+ 	config IMA_SIG_TEMPLATE
+@@ -82,7 +81,6 @@ endchoice
+ config IMA_DEFAULT_TEMPLATE
+ 	string
+ 	depends on IMA
+-	default "ima" if IMA_TEMPLATE
+ 	default "ima-ng" if IMA_NG_TEMPLATE
+ 	default "ima-sig" if IMA_SIG_TEMPLATE
+ 
+@@ -102,19 +100,19 @@ choice
+ 
+ 	config IMA_DEFAULT_HASH_SHA256
+ 		bool "SHA256"
+-		depends on CRYPTO_SHA256=y && !IMA_TEMPLATE
++		depends on CRYPTO_SHA256=y
+ 
+ 	config IMA_DEFAULT_HASH_SHA512
+ 		bool "SHA512"
+-		depends on CRYPTO_SHA512=y && !IMA_TEMPLATE
++		depends on CRYPTO_SHA512=y
+ 
+ 	config IMA_DEFAULT_HASH_WP512
+ 		bool "WP512"
+-		depends on CRYPTO_WP512=y && !IMA_TEMPLATE
++		depends on CRYPTO_WP512=y
+ 
+ 	config IMA_DEFAULT_HASH_SM3
+ 		bool "SM3"
+-		depends on CRYPTO_SM3=y && !IMA_TEMPLATE
++		depends on CRYPTO_SM3=y
+ endchoice
+ 
+ config IMA_DEFAULT_HASH
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.17.1
+
