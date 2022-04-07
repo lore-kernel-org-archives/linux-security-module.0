@@ -2,173 +2,103 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FBCC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Apr 2022 02:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE068C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Apr 2022 10:37:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237450AbiDGCUJ (ORCPT
+        id S244452AbiDGKjR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Apr 2022 22:20:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58194 "EHLO
+        Thu, 7 Apr 2022 06:39:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236945AbiDGCUH (ORCPT
+        with ESMTP id S244944AbiDGKiK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Apr 2022 22:20:07 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB21830578;
-        Wed,  6 Apr 2022 19:18:08 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KYlNL0GsVzDqTS;
-        Thu,  7 Apr 2022 10:15:46 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Thu, 7 Apr 2022 10:18:05 +0800
-Message-ID: <2760cfec-6866-5a7b-99c6-1831aae26c58@huawei.com>
-Date:   Thu, 7 Apr 2022 10:18:05 +0800
+        Thu, 7 Apr 2022 06:38:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2114318FAFA
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Apr 2022 03:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649327769;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9tmb94Vnr/m1iiTombsEjR+CsqwafFX61UIDruzVV9I=;
+        b=Bl64EKsuTlIuV9mtVAm6THZSeXS3E+VHmplGkGRKGHsGxTr+J3KLU0HCozp7qDcU3XaZfh
+        NGYvz/vrfatqH9E8BC85yiX8zfnvXNwcT7lpAie6a+CobhYqBhGH3iaMCDLqQZ811ST7NF
+        geEM3RaEILEDYrZophJH3b5dHDFSTG8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-479-m1pDVn1JM7SgfIYbB3R6ug-1; Thu, 07 Apr 2022 06:36:06 -0400
+X-MC-Unique: m1pDVn1JM7SgfIYbB3R6ug-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 24CE11066680;
+        Thu,  7 Apr 2022 10:36:05 +0000 (UTC)
+Received: from sirius.home.kraxel.org (unknown [10.39.192.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 74C117B7C;
+        Thu,  7 Apr 2022 10:36:04 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 0721218000B3; Thu,  7 Apr 2022 12:36:03 +0200 (CEST)
+Date:   Thu, 7 Apr 2022 12:36:02 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Dov Murik <dovmurik@linux.ibm.com>
+Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 2/4] virt: Add efi_secret module to expose
+ confidential computing secrets
+Message-ID: <20220407103602.5hblcyz4zzocjgcw@sirius.home.kraxel.org>
+References: <20220331215607.3182232-1-dovmurik@linux.ibm.com>
+ <20220331215607.3182232-3-dovmurik@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2] ima: remove the IMA_TEMPLATE Kconfig option
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
-CC:     <dmitry.kasatkin@gmail.com>, <roberto.sassu@huawei.com>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20220406061624.173584-1-guozihua@huawei.com>
- <35c38676a8b464a0fb7e4842de5108e08cb53380.camel@linux.ibm.com>
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-In-Reply-To: <35c38676a8b464a0fb7e4842de5108e08cb53380.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220331215607.3182232-3-dovmurik@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022/4/6 20:08, Mimi Zohar wrote:
-> On Wed, 2022-04-06 at 14:16 +0800, GUO Zihua wrote:
->> It is discovered thatO allowing template "ima" as the compiled default
->> would cause the following issue: the boot command line option
->> "ima_hash=" must be behind "ima_template=", otherwise "ima_hash=" might
->> be rejected.
+On Thu, Mar 31, 2022 at 09:56:05PM +0000, Dov Murik wrote:
+> The new efi_secret module exposes the confidential computing (coco)
+> EFI secret area via securityfs interface.
 > 
-> The format of a proper patch description describes the current status,
-> provides a succinct problem description, followed by the solution.
+> When the module is loaded (and securityfs is mounted, typically under
+> /sys/kernel/security), a "secrets/coco" directory is created in
+> securityfs.  In it, a file is created for each secret entry.  The name
+> of each such file is the GUID of the secret entry, and its content is
+> the secret data.
 > 
-> The original 'ima' measurement list template contains a hash, defined
-> as 20 bytes, and a null terminated pathname, limited to 255
-> characters.  Other measurement list templates permit both larger hashes
-> and longer pathnames.  When the "ima" template is configured as the
-> default, a new measurement list template (ima_template=) must be
-> specified before specifying a larger hash algorithm (ima_hash=) on the
-> boot command line.
+> This allows applications running in a confidential computing setting to
+> read secrets provided by the guest owner via a secure secret injection
+> mechanism (such as AMD SEV's LAUNCH_SECRET command).
 > 
-> To avoid this boot command line ordering issue, remove the legacy "ima"
-> template configuration option, allowing it to still be specified on the
-> boot command line.
+> Removing (unlinking) files in the "secrets/coco" directory will zero out
+> the secret in memory, and remove the filesystem entry.  If the module is
+> removed and loaded again, that secret will not appear in the filesystem.
 > 
->>
->> The root cause of this issue is that during the processing of ima_hash,
->> we would try to check whether the hash algorithm is compatible with the
->> template. If the template is not set at the moment we do the check, we
->> check the algorithm against the compiled default template. If the
->> complied default template is "ima", then we reject any hash algorithm
->> other than sha1 and md5.
->>
->> For example, if the compiled default template is "ima", and the default
->> algorithm is sha1 (which is the current default). In the cmdline, we put
->> in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
->> that ima starts with ima-ng as the template and sha256 as the hash
->> algorithm. However, during the processing of "ima_hash=",
->> "ima_template=" has not been processed yet, and hash_setup would check
->> the configured hash algorithm against the compiled default: ima, and
->> reject sha256. So at the end, the hash algorithm that is actually used
->> will be sha1.
->>
->> With template "ima" removed from the compiled default, we ensure that
->> the default tempalte would at least be "ima-ng" which allows for
->> basically any hash algorithm. Users who needs to use "ima" template
->> could still do it by specifying "ima_template=ima" in boot command line.
->>
->> This change would not break the algorithm compatibility checking for
->> IMA.
->>
->> Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
->> Signed-off-by: GUO Zihua <guozihua@huawei.com>
->> ---
->>   security/integrity/ima/Kconfig | 22 +++++++++-------------
->>   1 file changed, 9 insertions(+), 13 deletions(-)
->>
->> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
->> index f3a9cc201c8c..f392cac7a7d1 100644
->> --- a/security/integrity/ima/Kconfig
->> +++ b/security/integrity/ima/Kconfig
->> @@ -65,14 +65,11 @@ choice
->>   	help
->>   	  Select the default IMA measurement template.
->>   
->> -	  The original 'ima' measurement list template contains a
->> -	  hash, defined as 20 bytes, and a null terminated pathname,
->> -	  limited to 255 characters.  The 'ima-ng' measurement list
->> -	  template permits both larger hash digests and longer
->> -	  pathnames.
->> -
->> -	config IMA_TEMPLATE
->> -		bool "ima"
->> +	  The 'ima-ng' measurement list template permits various hash
->> +	  digests and long pathnames. The compiled default template
->> +	  can be overwritten using the kernel command line
->> +	  'ima_template=' option.
->> +
-> 
-> Other than perhaps changing "contains" to "contained", there's no
-> reason for changing the text.  Adding an additional line is fine - The
-> configured default template can be replaced by specifying
-> "ima_template="  on the boot command line.
-> 
->>   	config IMA_NG_TEMPLATE
->>   		bool "ima-ng (default)"
->>   	config IMA_SIG_TEMPLATE
->> @@ -82,7 +79,6 @@ endchoice
->>   config IMA_DEFAULT_TEMPLATE
->>   	string
->>   	depends on IMA
->> -	default "ima" if IMA_TEMPLATE
->>   	default "ima-ng" if IMA_NG_TEMPLATE
->>   	default "ima-sig" if IMA_SIG_TEMPLATE
->>   
->> @@ -102,19 +98,19 @@ choice
->>   
->>   	config IMA_DEFAULT_HASH_SHA256
->>   		bool "SHA256"
->> -		depends on CRYPTO_SHA256=y && !IMA_TEMPLATE
->> +		depends on CRYPTO_SHA256=y
->>   
->>   	config IMA_DEFAULT_HASH_SHA512
->>   		bool "SHA512"
->> -		depends on CRYPTO_SHA512=y && !IMA_TEMPLATE
->> +		depends on CRYPTO_SHA512=y
->>   
->>   	config IMA_DEFAULT_HASH_WP512
->>   		bool "WP512"
->> -		depends on CRYPTO_WP512=y && !IMA_TEMPLATE
->> +		depends on CRYPTO_WP512=y
->>   
->>   	config IMA_DEFAULT_HASH_SM3
->>   		bool "SM3"
->> -		depends on CRYPTO_SM3=y && !IMA_TEMPLATE
->> +		depends on CRYPTO_SM3=y
->>   endchoice
->>   
->>   config IMA_DEFAULT_HASH
-> 
-> 
-> .
+> Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
 
-Thanks Mimi, will fix those.
+Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
 
--- 
-Best
-GUO Zihua
+take care,
+  Gerd
+
