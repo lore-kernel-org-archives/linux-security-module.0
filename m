@@ -2,95 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90101C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Apr 2022 10:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7D8C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Apr 2022 12:47:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244557AbiDGKkG (ORCPT
+        id S245392AbiDGMtG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Apr 2022 06:40:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52550 "EHLO
+        Thu, 7 Apr 2022 08:49:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244514AbiDGKjs (ORCPT
+        with ESMTP id S245389AbiDGMtF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Apr 2022 06:39:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C2EB31C2A01
-        for <linux-security-module@vger.kernel.org>; Thu,  7 Apr 2022 03:37:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649327863;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OiNxFjZsmsvUmZcyzfwdmxD4iCK54gZ12CfFIhQmEvM=;
-        b=gm+7N4XkHulQlXJO6XK7SYFmOY2VgMDUg0VMKZDqodcE+UwnZ4XnReWp5ugYemR7hW1hIt
-        UdtmtDONRR/oYrPBvayxhnt48JbYeMdY8AsZm7fsx9ClmVEea/2gG+ngoxWBF2SukzbEuw
-        IY8OsNH/1H7C2cQ8AoQU7zYSrnHob44=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-44-lxF3ruGvN4Cog91D9aXOqw-1; Thu, 07 Apr 2022 06:37:39 -0400
-X-MC-Unique: lxF3ruGvN4Cog91D9aXOqw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1DF38100BAA7;
-        Thu,  7 Apr 2022 10:37:27 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.39.192.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 170671121314;
-        Thu,  7 Apr 2022 10:37:20 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id C3BBB18000B3; Thu,  7 Apr 2022 12:37:17 +0200 (CEST)
-Date:   Thu, 7 Apr 2022 12:37:17 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 3/4] efi: Register efi_secret platform device if EFI
- secret area is declared
-Message-ID: <20220407103717.s2t72bzv2th6k6f2@sirius.home.kraxel.org>
-References: <20220331215607.3182232-1-dovmurik@linux.ibm.com>
- <20220331215607.3182232-4-dovmurik@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220331215607.3182232-4-dovmurik@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+        Thu, 7 Apr 2022 08:49:05 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C027E5A5;
+        Thu,  7 Apr 2022 05:47:04 -0700 (PDT)
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 237CflWE022118;
+        Thu, 7 Apr 2022 12:46:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=joPMwLoNAohCU3AInhV9r4dWEXIX77OEcC2bPJ3D/JA=;
+ b=Fy6NxTb8+yINWVsoR+bh25miUPx1JVy4af6mfANw7ooBFDrS+JZQzduOAgt9dPJhy3Dh
+ 2J82g1v1P8CAILGy/cvXio8Naa1cqhxZmjxBO8BPTLQQ0+mHBRXTIrJU86hSYBIzBblY
+ ygt/rXPuAk3sXkD8DNmlaDitfkNTGxAOHbQ6zYUjZrI9/Qy7PNWOpwEJjktKtY70RLVf
+ 9CrK6Z0E0khnpkAmhHHaxe+LonAuSrXv0bGvTh4UY++Nz2hvrg12NmmfA5w4PAljDUVn
+ wp4B8CT/b5h/hvvmelQZoTzXN3WJpgCPVo+6sAE/zm59CxwkfvWSKuvrst+Ig5FQsl5v HA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3f9w8vbk2g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Apr 2022 12:46:56 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 237Cis4A027687;
+        Thu, 7 Apr 2022 12:46:55 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3f9w8vbk1u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Apr 2022 12:46:55 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 237CXeMp030670;
+        Thu, 7 Apr 2022 12:46:53 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma04ams.nl.ibm.com with ESMTP id 3f6e491wc4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Apr 2022 12:46:53 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 237CkpAo40501718
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Apr 2022 12:46:51 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 48AF2A404D;
+        Thu,  7 Apr 2022 12:46:51 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 419C0A4040;
+        Thu,  7 Apr 2022 12:46:50 +0000 (GMT)
+Received: from sig-9-65-64-98.ibm.com (unknown [9.65.64.98])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Apr 2022 12:46:50 +0000 (GMT)
+Message-ID: <d4ac7695a9a2be9750c62218bb3c262d28367208.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 0/1] ima: fix boot command line issue
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     GUO Zihua <guozihua@huawei.com>, linux-integrity@vger.kernel.org
+Cc:     dmitry.kasatkin@gmail.com, roberto.sassu@huawei.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 07 Apr 2022 08:46:49 -0400
+In-Reply-To: <20220407021619.146410-1-guozihua@huawei.com>
+References: <20220407021619.146410-1-guozihua@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: CV9jpD3xNsFOsf6FNmwkpIpAOH_V783l
+X-Proofpoint-GUID: -oc9aErTMu2IKK7B6bMEvB-YP5AP_7Sk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-04-07_01,2022-04-07_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 impostorscore=0 mlxscore=0 clxscore=1015 phishscore=0
+ malwarescore=0 mlxlogscore=914 adultscore=0 suspectscore=0
+ lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2202240000 definitions=main-2204070063
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 31, 2022 at 09:56:06PM +0000, Dov Murik wrote:
-> During efi initialization, check if coco_secret is defined in the EFI
-> configuration table; in such case, register platform device
-> "efi_secret".  This allows udev to automatically load the efi_secret
-> module (platform driver), which in turn will populate the
-> <securityfs>/secrets/coco directory in guests into which secrets were
-> injected.
-> 
-> Note that a declared address of an EFI secret area doesn't mean that
-> secrets where indeed injected to that area; if the secret area is not
-> populated, the driver will not load (but the platform device will still
-> be registered).
-> 
-> Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
+On Thu, 2022-04-07 at 10:16 +0800, GUO Zihua wrote:
+> Change log:
+>   v3:
+>     Update commit message following Mimi's advice, update comments for
+>     config.
+>   v2:
+>     update commit message and subject following Mimi's advice. Remove
+>     references for CONFIG_IMA_TEMPLATE as well.
 
-Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
+For future referece, the change log can be added after the break line
+(---) in the patch itself.  No need for a cover letter for a single
+patch.
+
+thanks,
+
+Mimi
+
 
