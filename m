@@ -2,22 +2,22 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF9FC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Apr 2022 02:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2107EC43219
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Apr 2022 02:17:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232845AbiDGCTQ (ORCPT
+        id S234209AbiDGCTQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Wed, 6 Apr 2022 22:19:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54994 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231738AbiDGCTP (ORCPT
+        with ESMTP id S232749AbiDGCTP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 6 Apr 2022 22:19:15 -0400
 Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4390610FAC8;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F3210FAE2;
         Wed,  6 Apr 2022 19:17:15 -0700 (PDT)
 Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4KYlK92FNDzBs5P;
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4KYlK9203rzBs5M;
         Thu,  7 Apr 2022 10:13:01 +0800 (CST)
 Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
  (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
@@ -29,12 +29,10 @@ CC:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
         <roberto.sassu@huawei.com>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 1/1] ima: remove the IMA_TEMPLATE Kconfig option
-Date:   Thu, 7 Apr 2022 10:16:19 +0800
-Message-ID: <20220407021619.146410-2-guozihua@huawei.com>
+Subject: [PATCH v3 0/1] ima: fix boot command line issue
+Date:   Thu, 7 Apr 2022 10:16:18 +0800
+Message-ID: <20220407021619.146410-1-guozihua@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220407021619.146410-1-guozihua@huawei.com>
-References: <20220407021619.146410-1-guozihua@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.67.175.31]
@@ -44,96 +42,20 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The original 'ima' measurement list template contains a hash, defined
-as 20 bytes, and a null terminated pathname, limited to 255
-characters.  Other measurement list templates permit both larger hashes
-and longer pathnames.  When the "ima" template is configured as the
-default, a new measurement list template (ima_template=) must be
-specified before specifying a larger hash algorithm (ima_hash=) on the
-boot command line.
+Change log:
+  v3:
+    Update commit message following Mimi's advice, update comments for
+    config.
+  v2:
+    update commit message and subject following Mimi's advice. Remove
+    references for CONFIG_IMA_TEMPLATE as well.
 
-To avoid this boot command line ordering issue, remove the legacy "ima"
-template configuration option, allowing it to still be specified on the
-boot command line.
+GUO Zihua (1):
+  ima: remove the IMA_TEMPLATE Kconfig option
 
-The root cause of this issue is that during the processing of ima_hash,
-we would try to check whether the hash algorithm is compatible with the
-template. If the template is not set at the moment we do the check, we
-check the algorithm against the configured default template. If the
-default template is "ima", then we reject any hash algorithm other than
-sha1 and md5.
-
-For example, if the compiled default template is "ima", and the default
-algorithm is sha1 (which is the current default). In the cmdline, we put
-in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
-that ima starts with ima-ng as the template and sha256 as the hash
-algorithm. However, during the processing of "ima_hash=",
-"ima_template=" has not been processed yet, and hash_setup would check
-the configured hash algorithm against the compiled default: ima, and
-reject sha256. So at the end, the hash algorithm that is actually used
-will be sha1.
-
-With template "ima" removed from the configured default, we ensure that
-the default tempalte would at least be "ima-ng" which allows for
-basically any hash algorithm.
-
-This change would not break the algorithm compatibility checks for IMA.
-
-Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
-Signed-off-by: GUO Zihua <guozihua@huawei.com>
----
  security/integrity/ima/Kconfig | 14 ++++++--------
  1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index f3a9cc201c8c..7249f16257c7 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -69,10 +69,9 @@ choice
- 	  hash, defined as 20 bytes, and a null terminated pathname,
- 	  limited to 255 characters.  The 'ima-ng' measurement list
- 	  template permits both larger hash digests and longer
--	  pathnames.
-+	  pathnames. The configured default template can be replaced
-+	  by specifying "ima_template=" on the boot command line.
- 
--	config IMA_TEMPLATE
--		bool "ima"
- 	config IMA_NG_TEMPLATE
- 		bool "ima-ng (default)"
- 	config IMA_SIG_TEMPLATE
-@@ -82,7 +81,6 @@ endchoice
- config IMA_DEFAULT_TEMPLATE
- 	string
- 	depends on IMA
--	default "ima" if IMA_TEMPLATE
- 	default "ima-ng" if IMA_NG_TEMPLATE
- 	default "ima-sig" if IMA_SIG_TEMPLATE
- 
-@@ -102,19 +100,19 @@ choice
- 
- 	config IMA_DEFAULT_HASH_SHA256
- 		bool "SHA256"
--		depends on CRYPTO_SHA256=y && !IMA_TEMPLATE
-+		depends on CRYPTO_SHA256=y
- 
- 	config IMA_DEFAULT_HASH_SHA512
- 		bool "SHA512"
--		depends on CRYPTO_SHA512=y && !IMA_TEMPLATE
-+		depends on CRYPTO_SHA512=y
- 
- 	config IMA_DEFAULT_HASH_WP512
- 		bool "WP512"
--		depends on CRYPTO_WP512=y && !IMA_TEMPLATE
-+		depends on CRYPTO_WP512=y
- 
- 	config IMA_DEFAULT_HASH_SM3
- 		bool "SM3"
--		depends on CRYPTO_SM3=y && !IMA_TEMPLATE
-+		depends on CRYPTO_SM3=y
- endchoice
- 
- config IMA_DEFAULT_HASH
 -- 
 2.17.1
 
