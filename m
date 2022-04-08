@@ -2,162 +2,311 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B12F7C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Apr 2022 16:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 004FBC433F5
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Apr 2022 16:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235181AbiDHQJ3 (ORCPT
+        id S231491AbiDHQcR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Apr 2022 12:09:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42072 "EHLO
+        Fri, 8 Apr 2022 12:32:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230481AbiDHQJ2 (ORCPT
+        with ESMTP id S231444AbiDHQcR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Apr 2022 12:09:28 -0400
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B9532B9A25
-        for <linux-security-module@vger.kernel.org>; Fri,  8 Apr 2022 09:07:23 -0700 (PDT)
+        Fri, 8 Apr 2022 12:32:17 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B932E3105
+        for <linux-security-module@vger.kernel.org>; Fri,  8 Apr 2022 09:30:12 -0700 (PDT)
 Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KZjnN5NpVzMprng;
-        Fri,  8 Apr 2022 18:07:20 +0200 (CEST)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KZkHl0GsDzMqWGw;
+        Fri,  8 Apr 2022 18:30:11 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KZjnL3dFHzljsTT;
-        Fri,  8 Apr 2022 18:07:18 +0200 (CEST)
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KZkHk3gZLzljsTK;
+        Fri,  8 Apr 2022 18:30:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1649434040;
-        bh=AQy78gX0PZQtfm+zKT+FxKBJBDhXbQUWIRIFqRcVQBc=;
+        s=20191114; t=1649435411;
+        bh=4+d6wy3w5I981/VEAFSmrTx2Nn0Mu4dG8fguORjmyZg=;
         h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=e+d5CfPV6gj0QELwg4qD7JIkq1l+cpTVBSdDVTS2imF6k9O2TGR0K3YmwQv1yhQH7
-         NagJTnN1uKdyquvQHoBTjzavKN8LKjbvoNI7stUFcv9f9d3koltrg0vBcZB0azJAwM
-         3fFDHCJa5/bnc1X6hdpfeQC3AKvQ7BXhgsZq/AUs=
-Message-ID: <3a5495b8-5d69-e327-1dfc-7a99257269ae@digikod.net>
-Date:   Fri, 8 Apr 2022 18:07:17 +0200
+        b=CujV0ay6+bjIq7uMCpT058XsvsBVyjDaPeNBNMFgA45szhAK3vBDZiPeugbjNt/R3
+         z5tGUUrbL71FT9sovbOKvJCz+fRvi1XukBUvkh2+zttrU7JwUagMIbA+r+HRqKChBT
+         EgYlTOl+9cg1ICNv5BkciRgYSXt1TlD6GPqsPSIE=
+Message-ID: <06f9ca1f-6e92-9d71-4097-e43b2f77b937@digikod.net>
+Date:   Fri, 8 Apr 2022 18:30:09 +0200
 MIME-Version: 1.0
 User-Agent: 
 Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20220329125117.1393824-1-mic@digikod.net>
- <20220329125117.1393824-8-mic@digikod.net>
- <CAHC9VhQpZ12Chgd+xMibUxgvcPjTn9FMnCdMGYbLcWG3eTqDQg@mail.gmail.com>
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-9-konstantin.meskhidze@huawei.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v2 07/12] landlock: Add support for file reparenting with
- LANDLOCK_ACCESS_FS_REFER
-In-Reply-To: <CAHC9VhQpZ12Chgd+xMibUxgvcPjTn9FMnCdMGYbLcWG3eTqDQg@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 08/15] landlock: add support network rules
+In-Reply-To: <20220309134459.6448-9-konstantin.meskhidze@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 08/04/2022 03:42, Paul Moore wrote:
-> On Tue, Mar 29, 2022 at 8:51 AM Mickaël Salaün <mic@digikod.net> wrote:
->>
->> From: Mickaël Salaün <mic@linux.microsoft.com>
->>
->> Add a new LANDLOCK_ACCESS_FS_REFER access right to enable policy writers
->> to allow sandboxed processes to link and rename files from and to a
->> specific set of file hierarchies.  This access right should be composed
->> with LANDLOCK_ACCESS_FS_MAKE_* for the destination of a link or rename,
->> and with LANDLOCK_ACCESS_FS_REMOVE_* for a source of a rename.  This
->> lift a Landlock limitation that always denied changing the parent of an
->> inode.
->>
->> Renaming or linking to the same directory is still always allowed,
->> whatever LANDLOCK_ACCESS_FS_REFER is used or not, because it is not
->> considered a threat to user data.
->>
->> However, creating multiple links or renaming to a different parent
->> directory may lead to privilege escalations if not handled properly.
->> Indeed, we must be sure that the source doesn't gain more privileges by
->> being accessible from the destination.  This is handled by making sure
->> that the source hierarchy (including the referenced file or directory
->> itself) restricts at least as much the destination hierarchy.  If it is
->> not the case, an EXDEV error is returned, making it potentially possible
->> for user space to copy the file hierarchy instead of moving or linking
->> it.
->>
->> Instead of creating different access rights for the source and the
->> destination, we choose to make it simple and consistent for users.
->> Indeed, considering the previous constraint, it would be weird to
->> require such destination access right to be also granted to the source
->> (to make it a superset).  Moreover, RENAME_EXCHANGE would also add to
->> the confusion because of paths being both a source and a destination.
->>
->> See the provided documentation for additional details.
->>
->> New tests are provided with a following commit.
->>
->> Cc: Paul Moore <paul@paul-moore.com>
->> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->> Link: https://lore.kernel.org/r/20220329125117.1393824-8-mic@digikod.net
->> ---
->>
->> Changes since v1:
->> * Update current_check_access_path() to efficiently handle
->>    RENAME_EXCHANGE thanks to the updated LSM hook (see previous patch).
->>    Only one path walk is performed per rename arguments until their
->>    common mount point is reached.  Superset of access rights is correctly
->>    checked, including when exchanging a file with a directory.  This
->>    requires to store another matrix of layer masks.
->> * Reorder and rename check_access_path_dual() arguments in a more
->>    generic way: switch from src/dst to 1/2.  This makes it easier to
->>    understand the RENAME_EXCHANGE cases alongs with the others.  Update
->>    and improve check_access_path_dual() documentation accordingly.
->> * Clean up the check_access_path_dual() loop: set both allowed_parent*
->>    when reaching internal filesystems and remove a useless one.  This
->>    allows potential renames in internal filesystems (like for other
->>    operations).
->> * Move the function arguments checks from BUILD_BUG_ON() to
->>    WARN_ON_ONCE() to avoid clang build error.
->> * Rename is_superset() to no_more_access() and make it handle superset
->>    checks of source and destination for simple and exchange cases.
->> * Move the layer_masks_child* creation from current_check_refer_path()
->>    to check_access_path_dual(): this is simpler and less error-prone,
->>    especially with RENAME_EXCHANGE.
->> * Remove one optimization in current_check_refer_path() to make the code
->>    simpler, especially with the RENAME_EXCHANGE handling.
->> * Remove overzealous WARN_ON_ONCE() for !access_request check in
->>    init_layer_masks().
->> ---
->>   include/uapi/linux/landlock.h                |  27 +-
->>   security/landlock/fs.c                       | 607 ++++++++++++++++---
->>   security/landlock/limits.h                   |   2 +-
->>   security/landlock/syscalls.c                 |   2 +-
->>   tools/testing/selftests/landlock/base_test.c |   2 +-
->>   tools/testing/selftests/landlock/fs_test.c   |   3 +-
->>   6 files changed, 566 insertions(+), 77 deletions(-)
+On 09/03/2022 14:44, Konstantin Meskhidze wrote:
+> This modification adds network rules support
+> in internal landlock functions (presented in ruleset.c)
+> and landlock_create_ruleset syscall.
 > 
-> I'm still not going to claim that I'm a Landlock expert, but this
-> looks sane to me.
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
 > 
-> Reviewed-by: Paul Moore <paul@paul-moore.com>
+> Changes since v3:
+> * Split commit.
+> * Add network rule support for internal landlock functions.
+> * Add set_masks and get_masks for network.
+> * Add rb_root root_net_port.
+> 
+> ---
+>   security/landlock/fs.c       |  2 +-
+>   security/landlock/limits.h   |  6 +++
+>   security/landlock/ruleset.c  | 88 +++++++++++++++++++++++++++++++++---
+>   security/landlock/ruleset.h  | 14 +++++-
+>   security/landlock/syscalls.c | 10 +++-
+>   5 files changed, 109 insertions(+), 11 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 75ebdce5cd16..5cd339061cdb 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -231,7 +231,7 @@ static int check_access_path(const struct landlock_ruleset *const domain,
+> 
+>   			inode = d_backing_inode(walker_path.dentry);
+>   			object_ptr = landlock_inode(inode)->object;
+> -			layer_mask = landlock_unmask_layers(domain, object_ptr,
+> +			layer_mask = landlock_unmask_layers(domain, object_ptr, 0,
+>   							access_request, layer_mask,
+>   							LANDLOCK_RULE_PATH_BENEATH);
+>   			if (layer_mask == 0) {
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 2a0a1095ee27..fdbef85e4de0 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -18,4 +18,10 @@
+>   #define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_MAKE_SYM
+>   #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+> 
+> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_TCP
+> +#define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+> +#define LANDLOCK_MASK_SHIFT_NET		16
+> +
+> +#define LANDLOCK_RULE_TYPE_NUM		LANDLOCK_RULE_NET_SERVICE
+> +
+>   #endif /* _SECURITY_LANDLOCK_LIMITS_H */
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index 7179b10f3538..1cecca59a942 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -35,6 +35,7 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>   	refcount_set(&new_ruleset->usage, 1);
+>   	mutex_init(&new_ruleset->lock);
+>   	new_ruleset->root_inode = RB_ROOT;
+> +	new_ruleset->root_net_port = RB_ROOT;
+>   	new_ruleset->num_layers = num_layers;
+>   	/*
+>   	 * hierarchy = NULL
+> @@ -58,16 +59,32 @@ u32 landlock_get_fs_access_mask(const struct landlock_ruleset *ruleset, u16 mask
+>   	return ruleset->access_masks[mask_level];
+>   }
+> 
+> +/* A helper function to set a network mask */
+> +void landlock_set_net_access_mask(struct landlock_ruleset *ruleset,
+> +				  const struct landlock_access_mask *access_mask_set,
+> +				  u16 mask_level)
+> +{
+> +	ruleset->access_masks[mask_level] |= (access_mask_set->net << LANDLOCK_MASK_SHIFT_NET);
+> +}
+> +
+> +/* A helper function to get a network mask */
+> +u32 landlock_get_net_access_mask(const struct landlock_ruleset *ruleset, u16 mask_level)
+> +{
+> +	return (ruleset->access_masks[mask_level] >> LANDLOCK_MASK_SHIFT_NET);
+> +}
 
-Thanks Paul! I'll send a small update shortly, with some typo fixes, 
-some unlikely() calls, and rebased on the other Landlock patch series.
+Both these helpers should be "static inline" and moved in net.h
 
+
+> +
+>   struct landlock_ruleset *landlock_create_ruleset(const struct landlock_access_mask *access_mask_set)
+>   {
+>   	struct landlock_ruleset *new_ruleset;
 > 
->> +static inline access_mask_t init_layer_masks(
->> +               const struct landlock_ruleset *const domain,
->> +               const access_mask_t access_request,
->> +               layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
->> +{
->> +       access_mask_t handled_accesses = 0;
->> +       size_t layer_level;
->> +
->> +       memset(layer_masks, 0, sizeof(*layer_masks));
->> +       /* An empty access request can happen because of O_WRONLY | O_RDWR. */
+>   	/* Informs about useless ruleset. */
+> -	if (!access_mask_set->fs)
+> +	if (!access_mask_set->fs && !access_mask_set->net)
+>   		return ERR_PTR(-ENOMSG);
+>   	new_ruleset = create_ruleset(1);
+> -	if (!IS_ERR(new_ruleset))
+
+This is better:
+
+if (IS_ERR(new_ruleset))
+	return new_ruleset;
+if (access_mask_set->fs)
+...
+
+
+> +	if (!IS_ERR(new_ruleset) && access_mask_set->fs)
+>   		landlock_set_fs_access_mask(new_ruleset, access_mask_set, 0);
+> +	if (!IS_ERR(new_ruleset) && access_mask_set->net)
+> +		landlock_set_net_access_mask(new_ruleset, access_mask_set, 0);
+>   	return new_ruleset;
+>   }
 > 
->   ;)
+> @@ -111,6 +128,9 @@ static struct landlock_rule *create_rule(
+>   		landlock_get_object(object_ptr);
+>   		new_rule->object.ptr = object_ptr;
+>   		break;
+> +	case LANDLOCK_RULE_NET_SERVICE:
+> +		new_rule->object.data = object_data;
+> +		break;
+>   	default:
+>   		return ERR_PTR(-EINVAL);
+>   	}
+> @@ -145,10 +165,12 @@ static void build_check_ruleset(void)
+>   		.num_layers = ~0,
+>   	};
+>   	typeof(ruleset.access_masks[0]) fs_access_mask = ~0;
+> +	typeof(ruleset.access_masks[0]) net_access_mask = ~0;
 > 
+>   	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
+>   	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
+>   	BUILD_BUG_ON(fs_access_mask < LANDLOCK_MASK_ACCESS_FS);
+> +	BUILD_BUG_ON(net_access_mask < LANDLOCK_MASK_ACCESS_NET);
+>   }
+> 
+>   /**
+> @@ -191,6 +213,12 @@ static int insert_rule(struct landlock_ruleset *const ruleset,
+
+Already reviewed.
+
+[...]
+
+
+> @@ -319,6 +363,9 @@ static int tree_merge(struct landlock_ruleset *const src,
+>   	case LANDLOCK_RULE_PATH_BENEATH:
+>   		src_root = &src->root_inode;
+>   		break;
+> +	case LANDLOCK_RULE_NET_SERVICE:
+> +		src_root = &src->root_net_port;
+> +		break;
+>   	default:
+>   		return -EINVAL;
+>   	}
+> @@ -338,11 +385,14 @@ static int tree_merge(struct landlock_ruleset *const src,
+>   			return err;
+>   		}
+>   		layers[0].access = walker_rule->layers[0].access;
+> -
+
+nit: Please keep this empty line.
+
+
+>   		switch (rule_type) {
+>   		case LANDLOCK_RULE_PATH_BENEATH:
+>   			err = insert_rule(dst, walker_rule->object.ptr, 0, &layers,
+> -				ARRAY_SIZE(layers), rule_type);
+> +					ARRAY_SIZE(layers), rule_type);
+
+Please don't insert this kind of formatting in unrelated patches.
+
+
+> +			break;
+> +		case LANDLOCK_RULE_NET_SERVICE:
+> +			err = insert_rule(dst, NULL, walker_rule->object.data, &layers,
+> +					ARRAY_SIZE(layers), rule_type);
+>   			break;
+>   		}
+>   		if (err)
+> @@ -379,6 +429,10 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+>   	err = tree_merge(src, dst, LANDLOCK_RULE_PATH_BENEATH);
+>   	if (err)
+>   		goto out_unlock;
+> +	/* Merges the @src network tree. */
+> +	err = tree_merge(src, dst, LANDLOCK_RULE_NET_SERVICE);
+> +	if (err)
+> +		goto out_unlock;
+> 
+>   out_unlock:
+>   	mutex_unlock(&src->lock);
+> @@ -398,6 +452,9 @@ static int tree_copy(struct landlock_ruleset *const parent,
+>   	case LANDLOCK_RULE_PATH_BENEATH:
+>   		parent_root = &parent->root_inode;
+>   		break;
+> +	case LANDLOCK_RULE_NET_SERVICE:
+> +		parent_root = &parent->root_net_port;
+> +		break;
+>   	default:
+>   		return -EINVAL;
+>   	}
+> @@ -410,6 +467,11 @@ static int tree_copy(struct landlock_ruleset *const parent,
+>   				  &walker_rule->layers, walker_rule->num_layers,
+>   				  rule_type);
+>   			break;
+> +		case LANDLOCK_RULE_NET_SERVICE:
+> +			err = insert_rule(child, NULL, walker_rule->object.data,
+> +				  &walker_rule->layers, walker_rule->num_layers,
+> +				  rule_type);
+> +			break;
+>   		}
+>   		if (err)
+>   			return err;
+> @@ -432,6 +494,10 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
+> 
+>   	/* Copies the @parent inode tree. */
+>   	err = tree_copy(parent, child, LANDLOCK_RULE_PATH_BENEATH);
+> +	if (err)
+> +		goto out_unlock;
+> +	/* Copies the @parent inode tree. */
+> +	err = tree_copy(parent, child, LANDLOCK_RULE_NET_SERVICE);
+>   	if (err)
+>   		goto out_unlock;
+> 
+> @@ -464,6 +530,9 @@ static void free_ruleset(struct landlock_ruleset *const ruleset)
+>   	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root_inode,
+>   			node)
+>   		free_rule(freeme, LANDLOCK_RULE_PATH_BENEATH);
+> +	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root_net_port,
+> +			node)
+> +		free_rule(freeme, LANDLOCK_RULE_NET_SERVICE);
+>   	put_hierarchy(ruleset->hierarchy);
+>   	kfree(ruleset);
+>   }
+> @@ -565,6 +634,9 @@ const struct landlock_rule *landlock_find_rule(
+>   	case LANDLOCK_RULE_PATH_BENEATH:
+>   		node = ruleset->root_inode.rb_node;
+>   		break;
+> +	case LANDLOCK_RULE_NET_SERVICE:
+> +		node = ruleset->root_net_port.rb_node;
+> +		break;
+>   	default:
+>   		return ERR_PTR(-EINVAL);
+>   	}
+> @@ -586,8 +658,8 @@ const struct landlock_rule *landlock_find_rule(
+>   /* Access-control management */
+>   u64 landlock_unmask_layers(const struct landlock_ruleset *const domain,
+>   			   const struct landlock_object *object_ptr,
+> -			   const u32 access_request, u64 layer_mask,
+> -			   const u16 rule_type)
+> +			   const u16 port, const u32 access_request,
+> +			   u64 layer_mask, const u16 rule_type)
+>   {
+>   	const struct landlock_rule *rule;
+>   	size_t i;
+> @@ -600,6 +672,10 @@ u64 landlock_unmask_layers(const struct landlock_ruleset *const domain,
+>   			LANDLOCK_RULE_PATH_BENEATH);
+>   		rcu_read_unlock();
+>   		break;
+> +	case LANDLOCK_RULE_NET_SERVICE:
+> +		rule = landlock_find_rule(domain, (uintptr_t)port,
+
+Type casting should not be required.
+
+[...]
