@@ -2,159 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC7CC43217
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Apr 2022 16:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F04C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Apr 2022 17:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233470AbiDHQ6B (ORCPT
+        id S234699AbiDHRQS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Apr 2022 12:58:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54398 "EHLO
+        Fri, 8 Apr 2022 13:16:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238015AbiDHQ5o (ORCPT
+        with ESMTP id S231322AbiDHRQR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Apr 2022 12:57:44 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9051B131F7C;
-        Fri,  8 Apr 2022 09:55:40 -0700 (PDT)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 238FWIKs023792;
-        Fri, 8 Apr 2022 16:55:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=aSPw71N6YAus4Lw3a/KpDS8yxndXDFxZ+t1IHdY+Sj0=;
- b=Uhu5mebSQ5b4hz9zXKchMBiIQ1CFjvJeXj7tUVSdci+3FOELNm+KHeAHV7EAV8VEmKjq
- 95Kjt96bCn5uqLhlrUNZKPMruHeOlT2Kq0T0f0P57mK2Gwq6GBZWavWxRWpA/9dPahps
- SWi1UPV1W6aHTKwYxUHKqENBIuVI1n6oIc5hJ6rK+li2TTv1UqtXvKVEui8rsrHQGULu
- l/13p+7MN1nkBNUoHPUNl3eqguWPhFCXe7FsZOpgTuzV8ITyqASwWVhVLneFsMr9fixH
- nbK4MtxdPrzA/rqEkbeHY/q0iGa1//QNW/fFnle2QjhgPC0OgqEo8oGgG7epwH/iuS4b Tg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3faed35hpk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Apr 2022 16:55:18 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 238GAHFE030990;
-        Fri, 8 Apr 2022 16:55:17 GMT
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3faed35hnc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Apr 2022 16:55:17 +0000
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 238GrLlL022218;
-        Fri, 8 Apr 2022 16:55:14 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma05fra.de.ibm.com with ESMTP id 3f6e48t1me-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Apr 2022 16:55:14 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 238GtBiw54788360
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Apr 2022 16:55:12 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DD8765204F;
-        Fri,  8 Apr 2022 16:55:11 +0000 (GMT)
-Received: from sig-9-65-90-167.ibm.com (unknown [9.65.90.167])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1C5FB5204E;
-        Fri,  8 Apr 2022 16:55:09 +0000 (GMT)
-Message-ID: <b8965652274b49ba7c6f67cad6d42965cf984b42.camel@linux.ibm.com>
-Subject: Re: [PATCH 4/7] KEYS: Introduce a builtin root of trust key flag
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "pvorel@suse.cz" <pvorel@suse.cz>, "tiwai@suse.de" <tiwai@suse.de>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Date:   Fri, 08 Apr 2022 12:55:08 -0400
-In-Reply-To: <EF1544D5-54E8-4D47-82F8-F9337CA7AEA0@oracle.com>
-References: <20220406015337.4000739-1-eric.snowberg@oracle.com>
-         <20220406015337.4000739-5-eric.snowberg@oracle.com>
-         <4fbef0889d6f286c7fcd317db099b4857e1b2fa3.camel@linux.ibm.com>
-         <EF1544D5-54E8-4D47-82F8-F9337CA7AEA0@oracle.com>
+        Fri, 8 Apr 2022 13:16:17 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8516C3BBC8
+        for <linux-security-module@vger.kernel.org>; Fri,  8 Apr 2022 10:14:12 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id bq8so18558191ejb.10
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Apr 2022 10:14:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0o/SUj9l7QxccG0h5Jo/GmbooXfRNd11V119ZFnMckU=;
+        b=Bcop1hZHOgBQuDGa7QitchzS0rKGKo3Ujzo71w/Wg7uqUxCVHUVlo92yaoWsUMrhRj
+         ESWDeJ108bo2TC+NhPefjFOhaRDCLsElwntWQdZsiIRsMFV+a5N26gAoJHqQ0NaNmC5N
+         2j8VZstcNjF4gMMxOfs4qJxHsBKOOT+pM2XOXa5hn9gDbXYa/Q3BtQtEvlQ9AeoLxidO
+         GjZSsNlAk/Y9LFNVvuDWh0aLFlTNhOXx8qHdOtx7pxqnWiEY05W9UsL2en5nX+x3eScQ
+         Umlu4wdPONyvMdVp+Da+0cCRIW3ekitvW5oEav/ZqeLXGawpVHbb8fcdR5wvvBQ3NPeF
+         cMkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0o/SUj9l7QxccG0h5Jo/GmbooXfRNd11V119ZFnMckU=;
+        b=fVh1/82XQ506NE135ucyXj4dV6XHGX8JeEE4C4jgbuYxNsVcLs0RMKXVw/dTxfPGrP
+         xbeEXH0G8BNli5/OrDUBDNScQTW1a1Xqa30jTlGwfsbJWQ6immkCAx5LG8hw+XM4/yT4
+         8Fsdtf0lmIJg5+0TynA0r8mYfjLtAA9lu/+IyR8F1Z0ul1VissGnnPMZitnh0wKPB0SK
+         ZVdSIOqqsCFJxJlY4B0EnNrZv2Qw4YknRSB5WHHxkSgnUvUTig6xzeivso41oRHCkk9s
+         5GflMmaw9MA3UQJr5j9DSKIONK6netFh0Ty4n+d7KyQnbX5CInKBAnFDwsYhQ6G+122u
+         fp/w==
+X-Gm-Message-State: AOAM533a5kcJpAr4b4gN4z7Q/6VwqsEt5xsnZuRnYiIpgloHobRt7qW6
+        rcbwiajqoIld8J5QEtgkcpgrlyMJvOjhUoMNofSR
+X-Google-Smtp-Source: ABdhPJw4m50Heq+ZwCYADtd52nzp0qTl5o19w463Q1Ul92xNBNhrSzqy+I1ZLWln2A2dGR15BjDtzskUMutG3LrWeoU=
+X-Received: by 2002:a17:907:216f:b0:6ce:d85f:35cf with SMTP id
+ rl15-20020a170907216f00b006ced85f35cfmr20127403ejb.517.1649438050929; Fri, 08
+ Apr 2022 10:14:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220329125117.1393824-1-mic@digikod.net> <20220329125117.1393824-8-mic@digikod.net>
+ <CAHC9VhQpZ12Chgd+xMibUxgvcPjTn9FMnCdMGYbLcWG3eTqDQg@mail.gmail.com> <3a5495b8-5d69-e327-1dfc-7a99257269ae@digikod.net>
+In-Reply-To: <3a5495b8-5d69-e327-1dfc-7a99257269ae@digikod.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 8 Apr 2022 13:13:59 -0400
+Message-ID: <CAHC9VhS0bYe9wOxuXoC2mw_K2g=Fw=LXiV+A_Z1vH_KqH-TBFA@mail.gmail.com>
+Subject: Re: [PATCH v2 07/12] landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DE3iTPmeYYmrJJX-V895r7t5mc0mVyNW
-X-Proofpoint-ORIG-GUID: d-YckLjF4CLTuYTIwa4qO2vetHBeylLH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-04-08_05,2022-04-08_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- suspectscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0
- malwarescore=0 impostorscore=0 priorityscore=1501 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204080083
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2022-04-08 at 15:27 +0000, Eric Snowberg wrote:
-> 
-> > On Apr 8, 2022, at 8:40 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > On Tue, 2022-04-05 at 21:53 -0400, Eric Snowberg wrote:
-> >> 
-> >> The first type of key to use this is X.509.  When a X.509 certificate
-> >> is self signed, has the kernCertSign Key Usage set and contains the
-> >> CA bit set this new flag is set.
-> >> 
-> >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> >> 
-> >> diff --git a/include/linux/key.h b/include/linux/key.h
-> >> index 7febc4881363..97f6a1f86a27 100644
-> >> --- a/include/linux/key.h
-> >> +++ b/include/linux/key.h
-> >> @@ -230,6 +230,7 @@ struct key {
-> >> #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by root without permission */
-> >> #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
-> >> #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session keyring */
-> >> +#define KEY_FLAG_BUILTIN_ROT	10	/* set if key is a builtin Root of Trust key */
-> >> 
-> >> 	/* the key type and key description string
-> >> 	 * - the desc is used to match a key against search criteria
-> >> @@ -290,6 +291,7 @@ extern struct key *key_alloc(struct key_type *type,
-> >> #define KEY_ALLOC_BYPASS_RESTRICTION	0x0008	/* Override the check on restricted keyrings */
-> >> #define KEY_ALLOC_UID_KEYRING		0x0010	/* allocating a user or user session keyring */
-> >> #define KEY_ALLOC_SET_KEEP		0x0020	/* Set the KEEP flag on the key/keyring */
-> >> +#define KEY_ALLOC_BUILT_IN_ROT		0x0040  /* Add builtin root of trust key */
-> > 
-> > Since the concept of root of trust is not generic, but limited to
-> > specific keyrings, the root CA certificate signing keys on the
-> > "machine" keyring need to be identified.  Similar to the
-> > KEY_ALLOC_BUILT_IN/KEY_FLAG_BUILTIN, new flags
-> > KEY_ALLOC_MACHINE/KEY_FLAG_MACHINE should be defined instead.
-> 
-> I’m open to renaming these, however this name change seems confusing to me.  
-> This flag gets set when the X.509 certificate contains the three CA requirements 
-> identified above.  The remaining keys in the machine keyring can be used for 
-> anything else.
+On Fri, Apr 8, 2022 at 12:07 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+> On 08/04/2022 03:42, Paul Moore wrote:
+> > On Tue, Mar 29, 2022 at 8:51 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
+et> wrote:
+> >>
+> >> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+> >>
+> >> Add a new LANDLOCK_ACCESS_FS_REFER access right to enable policy write=
+rs
+> >> to allow sandboxed processes to link and rename files from and to a
+> >> specific set of file hierarchies.  This access right should be compose=
+d
+> >> with LANDLOCK_ACCESS_FS_MAKE_* for the destination of a link or rename=
+,
+> >> and with LANDLOCK_ACCESS_FS_REMOVE_* for a source of a rename.  This
+> >> lift a Landlock limitation that always denied changing the parent of a=
+n
+> >> inode.
+> >>
+> >> Renaming or linking to the same directory is still always allowed,
+> >> whatever LANDLOCK_ACCESS_FS_REFER is used or not, because it is not
+> >> considered a threat to user data.
+> >>
+> >> However, creating multiple links or renaming to a different parent
+> >> directory may lead to privilege escalations if not handled properly.
+> >> Indeed, we must be sure that the source doesn't gain more privileges b=
+y
+> >> being accessible from the destination.  This is handled by making sure
+> >> that the source hierarchy (including the referenced file or directory
+> >> itself) restricts at least as much the destination hierarchy.  If it i=
+s
+> >> not the case, an EXDEV error is returned, making it potentially possib=
+le
+> >> for user space to copy the file hierarchy instead of moving or linking
+> >> it.
+> >>
+> >> Instead of creating different access rights for the source and the
+> >> destination, we choose to make it simple and consistent for users.
+> >> Indeed, considering the previous constraint, it would be weird to
+> >> require such destination access right to be also granted to the source
+> >> (to make it a superset).  Moreover, RENAME_EXCHANGE would also add to
+> >> the confusion because of paths being both a source and a destination.
+> >>
+> >> See the provided documentation for additional details.
+> >>
+> >> New tests are provided with a following commit.
+> >>
+> >> Cc: Paul Moore <paul@paul-moore.com>
+> >> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+> >> Link: https://lore.kernel.org/r/20220329125117.1393824-8-mic@digikod.n=
+et
+> >> ---
+> >>
+> >> Changes since v1:
+> >> * Update current_check_access_path() to efficiently handle
+> >>    RENAME_EXCHANGE thanks to the updated LSM hook (see previous patch)=
+.
+> >>    Only one path walk is performed per rename arguments until their
+> >>    common mount point is reached.  Superset of access rights is correc=
+tly
+> >>    checked, including when exchanging a file with a directory.  This
+> >>    requires to store another matrix of layer masks.
+> >> * Reorder and rename check_access_path_dual() arguments in a more
+> >>    generic way: switch from src/dst to 1/2.  This makes it easier to
+> >>    understand the RENAME_EXCHANGE cases alongs with the others.  Updat=
+e
+> >>    and improve check_access_path_dual() documentation accordingly.
+> >> * Clean up the check_access_path_dual() loop: set both allowed_parent*
+> >>    when reaching internal filesystems and remove a useless one.  This
+> >>    allows potential renames in internal filesystems (like for other
+> >>    operations).
+> >> * Move the function arguments checks from BUILD_BUG_ON() to
+> >>    WARN_ON_ONCE() to avoid clang build error.
+> >> * Rename is_superset() to no_more_access() and make it handle superset
+> >>    checks of source and destination for simple and exchange cases.
+> >> * Move the layer_masks_child* creation from current_check_refer_path()
+> >>    to check_access_path_dual(): this is simpler and less error-prone,
+> >>    especially with RENAME_EXCHANGE.
+> >> * Remove one optimization in current_check_refer_path() to make the co=
+de
+> >>    simpler, especially with the RENAME_EXCHANGE handling.
+> >> * Remove overzealous WARN_ON_ONCE() for !access_request check in
+> >>    init_layer_masks().
+> >> ---
+> >>   include/uapi/linux/landlock.h                |  27 +-
+> >>   security/landlock/fs.c                       | 607 ++++++++++++++++-=
+--
+> >>   security/landlock/limits.h                   |   2 +-
+> >>   security/landlock/syscalls.c                 |   2 +-
+> >>   tools/testing/selftests/landlock/base_test.c |   2 +-
+> >>   tools/testing/selftests/landlock/fs_test.c   |   3 +-
+> >>   6 files changed, 566 insertions(+), 77 deletions(-)
+> >
+> > I'm still not going to claim that I'm a Landlock expert, but this
+> > looks sane to me.
+> >
+> > Reviewed-by: Paul Moore <paul@paul-moore.com>
+>
+> Thanks Paul! I'll send a small update shortly, with some typo fixes,
+> some unlikely() calls, and rebased on the other Landlock patch series.
 
-Renaming the flag to KEY_ALLOC_MACHINE/KEY_FLAG_MACHINE differentiates
-between the "builtin" keys from the "machine" keys.  The trust models
-are very different.
+Since it sounds like those are all pretty minor changes, feel free to
+preserve my 'Reviewed-by' on the respun patch.
 
-> Plus this flag can be set for keys loaded into the secondary trusted 
-> keyring (6th patch in the series).  When an intermediate CA gets loaded into the 
-> secondary, the flag is set as well.
-
-Please include a full explanation with the motivation in the patch
-description as to why support for intermediary CAs is required for the
-"end-user" use case.
-
-thanks,
-
-Mimi
-
+--=20
+paul-moore.com
