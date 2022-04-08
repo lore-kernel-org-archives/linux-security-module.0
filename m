@@ -2,133 +2,159 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB329C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Apr 2022 16:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC7CC43217
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Apr 2022 16:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbiDHQoC (ORCPT
+        id S233470AbiDHQ6B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Apr 2022 12:44:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57140 "EHLO
+        Fri, 8 Apr 2022 12:58:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230014AbiDHQoB (ORCPT
+        with ESMTP id S238015AbiDHQ5o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Apr 2022 12:44:01 -0400
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3088710E9
-        for <linux-security-module@vger.kernel.org>; Fri,  8 Apr 2022 09:41:55 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KZkYG2P0pzMprsG;
-        Fri,  8 Apr 2022 18:41:54 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KZkYF5TZDzlhSLv;
-        Fri,  8 Apr 2022 18:41:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1649436114;
-        bh=8xizND76wRObJpb8aCVKF4BbKb864GvEqQKNfgg74Ms=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=oiQ0KZUK0B445T/NDDrfFHEawqQAYLdl19DKK7nQbFoTUf5LqbrpRpM93R/SSojCS
-         DWDXm8L6r9Ads5FR+dHu27xrbNZBWKBDauJ5k00BRGCxojxcaZ56HmPqgyud0G1j+q
-         ECNKn4fUewzaeIdW++WotPYHnS1b1L9C+xqd07EM=
-Message-ID: <0b0ddf78-12fa-ab52-ba3a-c819ed9d2ccd@digikod.net>
-Date:   Fri, 8 Apr 2022 18:41:52 +0200
-MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <20220309134459.6448-11-konstantin.meskhidze@huawei.com>
- <d3340ed0-fe61-3f00-d7ba-44ece235a319@digikod.net>
- <491d6e96-4bfb-ed97-7eb8-fb18aa144d64@huawei.com>
- <6f631d7c-a2e3-20b3-997e-6b533b748767@digikod.net>
- <2958392e-ba3e-453e-415b-c3869523ea25@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [RFC PATCH v4 10/15] seltest/landlock: add tests for bind() hooks
-In-Reply-To: <2958392e-ba3e-453e-415b-c3869523ea25@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Fri, 8 Apr 2022 12:57:44 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9051B131F7C;
+        Fri,  8 Apr 2022 09:55:40 -0700 (PDT)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 238FWIKs023792;
+        Fri, 8 Apr 2022 16:55:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=aSPw71N6YAus4Lw3a/KpDS8yxndXDFxZ+t1IHdY+Sj0=;
+ b=Uhu5mebSQ5b4hz9zXKchMBiIQ1CFjvJeXj7tUVSdci+3FOELNm+KHeAHV7EAV8VEmKjq
+ 95Kjt96bCn5uqLhlrUNZKPMruHeOlT2Kq0T0f0P57mK2Gwq6GBZWavWxRWpA/9dPahps
+ SWi1UPV1W6aHTKwYxUHKqENBIuVI1n6oIc5hJ6rK+li2TTv1UqtXvKVEui8rsrHQGULu
+ l/13p+7MN1nkBNUoHPUNl3eqguWPhFCXe7FsZOpgTuzV8ITyqASwWVhVLneFsMr9fixH
+ nbK4MtxdPrzA/rqEkbeHY/q0iGa1//QNW/fFnle2QjhgPC0OgqEo8oGgG7epwH/iuS4b Tg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3faed35hpk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Apr 2022 16:55:18 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 238GAHFE030990;
+        Fri, 8 Apr 2022 16:55:17 GMT
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3faed35hnc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Apr 2022 16:55:17 +0000
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 238GrLlL022218;
+        Fri, 8 Apr 2022 16:55:14 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma05fra.de.ibm.com with ESMTP id 3f6e48t1me-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Apr 2022 16:55:14 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 238GtBiw54788360
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Apr 2022 16:55:12 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DD8765204F;
+        Fri,  8 Apr 2022 16:55:11 +0000 (GMT)
+Received: from sig-9-65-90-167.ibm.com (unknown [9.65.90.167])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1C5FB5204E;
+        Fri,  8 Apr 2022 16:55:09 +0000 (GMT)
+Message-ID: <b8965652274b49ba7c6f67cad6d42965cf984b42.camel@linux.ibm.com>
+Subject: Re: [PATCH 4/7] KEYS: Introduce a builtin root of trust key flag
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "pvorel@suse.cz" <pvorel@suse.cz>, "tiwai@suse.de" <tiwai@suse.de>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Date:   Fri, 08 Apr 2022 12:55:08 -0400
+In-Reply-To: <EF1544D5-54E8-4D47-82F8-F9337CA7AEA0@oracle.com>
+References: <20220406015337.4000739-1-eric.snowberg@oracle.com>
+         <20220406015337.4000739-5-eric.snowberg@oracle.com>
+         <4fbef0889d6f286c7fcd317db099b4857e1b2fa3.camel@linux.ibm.com>
+         <EF1544D5-54E8-4D47-82F8-F9337CA7AEA0@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DE3iTPmeYYmrJJX-V895r7t5mc0mVyNW
+X-Proofpoint-ORIG-GUID: d-YckLjF4CLTuYTIwa4qO2vetHBeylLH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-04-08_05,2022-04-08_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 priorityscore=1501 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2204080083
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 06/04/2022 16:12, Konstantin Meskhidze wrote:
+On Fri, 2022-04-08 at 15:27 +0000, Eric Snowberg wrote:
 > 
+> > On Apr 8, 2022, at 8:40 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > 
+> > On Tue, 2022-04-05 at 21:53 -0400, Eric Snowberg wrote:
+> >> 
+> >> The first type of key to use this is X.509.  When a X.509 certificate
+> >> is self signed, has the kernCertSign Key Usage set and contains the
+> >> CA bit set this new flag is set.
+> >> 
+> >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> >> 
+> >> diff --git a/include/linux/key.h b/include/linux/key.h
+> >> index 7febc4881363..97f6a1f86a27 100644
+> >> --- a/include/linux/key.h
+> >> +++ b/include/linux/key.h
+> >> @@ -230,6 +230,7 @@ struct key {
+> >> #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by root without permission */
+> >> #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
+> >> #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session keyring */
+> >> +#define KEY_FLAG_BUILTIN_ROT	10	/* set if key is a builtin Root of Trust key */
+> >> 
+> >> 	/* the key type and key description string
+> >> 	 * - the desc is used to match a key against search criteria
+> >> @@ -290,6 +291,7 @@ extern struct key *key_alloc(struct key_type *type,
+> >> #define KEY_ALLOC_BYPASS_RESTRICTION	0x0008	/* Override the check on restricted keyrings */
+> >> #define KEY_ALLOC_UID_KEYRING		0x0010	/* allocating a user or user session keyring */
+> >> #define KEY_ALLOC_SET_KEEP		0x0020	/* Set the KEEP flag on the key/keyring */
+> >> +#define KEY_ALLOC_BUILT_IN_ROT		0x0040  /* Add builtin root of trust key */
+> > 
+> > Since the concept of root of trust is not generic, but limited to
+> > specific keyrings, the root CA certificate signing keys on the
+> > "machine" keyring need to be identified.  Similar to the
+> > KEY_ALLOC_BUILT_IN/KEY_FLAG_BUILTIN, new flags
+> > KEY_ALLOC_MACHINE/KEY_FLAG_MACHINE should be defined instead.
 > 
-> 4/4/2022 12:44 PM, Mickaël Salaün пишет:
->>
->> On 04/04/2022 10:28, Konstantin Meskhidze wrote:
->>>
->>>
->>> 4/1/2022 7:52 PM, Mickaël Salaün пишет:
->>
->> [...]
->>
->>>>> +static int create_socket(struct __test_metadata *const _metadata)
->>>>> +{
->>>>> +
->>>>> +        int sockfd;
->>>>> +
->>>>> +        sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
->>>>> +        ASSERT_LE(0, sockfd);
->>>>> +        /* Allows to reuse of local address */
->>>>> +        ASSERT_EQ(0, setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, 
->>>>> &one, sizeof(one)));
->>>>
->>>> Why is it required?
->>>
->>>    Without SO_REUSEADDR there is an error that a socket's port is in 
->>> use.
->>
->> I'm sure there is, but why is this port reused? I think this means 
->> that there is an issue in the tests and that could hide potential 
->> issue with the tests (and then with the kernel code). Could you 
->> investigate and find the problem? This would make these tests reliable.
->    The next scenario is possible here:
->    "In order for a network connection to close, both ends have to send 
-> FIN (final) packets, which indicate they will not send any additional 
-> data, and both ends must ACK (acknowledge) each other's FIN packets. The 
-> FIN packets are initiated by the application performing a close(), a 
-> shutdown(), or an exit(). The ACKs are handled by the kernel after the 
-> close() has completed. Because of this, it is possible for the process 
-> to complete before the kernel has released the associated network 
-> resource, and this port cannot be bound to another process until the 
-> kernel has decided that it is done."
-> https://hea-www.harvard.edu/~fine/Tech/addrinuse.html.
-> 
-> So in this case we have busy port in network selfttest and one of the 
-> solution is to set SO_REUSEADDR socket option, "which explicitly allows 
-> a process to bind to a port which remains in TIME_WAIT (it still only 
-> allows a single process to be bound to that port). This is the both the 
-> simplest and the most effective option for reducing the "address already 
-> in use" error".
+> I’m open to renaming these, however this name change seems confusing to me.  
+> This flag gets set when the X.509 certificate contains the three CA requirements 
+> identified above.  The remaining keys in the machine keyring can be used for 
+> anything else.
 
-In know what this option does, but I'm wondering what do you need it for 
-these tests: which specific line requires it and why? Isn't it a side 
-effect of running partial tests? I'm worried that this hides some issues 
-in the tests that may make them flaky.
+Renaming the flag to KEY_ALLOC_MACHINE/KEY_FLAG_MACHINE differentiates
+between the "builtin" keys from the "machine" keys.  The trust models
+are very different.
 
+> Plus this flag can be set for keys loaded into the secondary trusted 
+> keyring (6th patch in the series).  When an intermediate CA gets loaded into the 
+> secondary, the flag is set as well.
 
->>
->> Without removing the need to find this issue, the next series should 
->> use a network namespace per test, which will confine such issue from 
->> other tests and the host.
-> 
->    So there are 2 options here:
->      1. Using SO_REUSEADDR option
->      2. Using network namespace.
-> 
-> I prefer the first option - "the simplest and the most effective one"
+Please include a full explanation with the motivation in the patch
+description as to why support for intermediary CAs is required for the
+"end-user" use case.
 
-If SO_REUSEADDR is really required (and justified), then it should be 
-used. Either it is required or not, we should use a dedicated network 
-namespace for each test anyway. This enables to not mess with the host 
-and not be impacted by it neither (e.g. if some process already use such 
-ports).
+thanks,
 
+Mimi
 
-> 
->>
->> [...]
