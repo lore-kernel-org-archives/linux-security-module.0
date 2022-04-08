@@ -2,57 +2,57 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D24BCC433F5
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Apr 2022 01:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B19F2C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Apr 2022 01:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233380AbiDHBWH (ORCPT
+        id S233519AbiDHBoR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Apr 2022 21:22:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40662 "EHLO
+        Thu, 7 Apr 2022 21:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233325AbiDHBWG (ORCPT
+        with ESMTP id S229600AbiDHBoQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Apr 2022 21:22:06 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5919414F139
-        for <linux-security-module@vger.kernel.org>; Thu,  7 Apr 2022 18:20:04 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a6so14427172ejk.0
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Apr 2022 18:20:04 -0700 (PDT)
+        Thu, 7 Apr 2022 21:44:16 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A8812F157
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Apr 2022 18:42:13 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id d7so8397283edn.11
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Apr 2022 18:42:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=CpBl2AGd626FECD+GIqEV6PBhceN/t8eGFzx+f7coUk=;
-        b=3cPiceV6hD/ZvOf4gFgz+/Zbbb1qxTfbkNm4XV6V5+xHRZD/OwWXS0rT8rsxbHD5AA
-         IXmkMGgR23uopQ7vhW5gxFcqnpbiYaxhY71cDh75hcRDbB3kJ98qpB6i+HBgSHyaFoAw
-         poQe6uB/Nk6A7T1dk7kws1/GpzkcuhWzby3KtcTalLTu92PLzXSIfw+wihYnHcDRomq3
-         XiVAzl5h9QxfyyG9nyGkjDICoKwRhiOjGRjpGaQPn70KJgqmpq99q4226V6jiemKN9kt
-         Tc+H08w49VdTo/MxPl0R+CwjOzZO2Y/ATnGJGomCoLfbdpSKA6lue/maVB9gdrRAnUCm
-         U7cg==
+        bh=xCv5DXX9ijy/PE+Fv/yKOblKDG06N2ROExnKPiddkiU=;
+        b=xHLU3VTS2ptDA+EsiDb9d9GAPmO0xeEyazs1bLbJ/QVB1T+jdO4hti7wvExaysx1NL
+         PoGR5EswnEEgQpsHXqcpfB85DFTiQZtd7CvTzp7uWaKp5nQCHJ3l8X9oAPUCtimQHu3B
+         AZGE59pcru7eafp+3nm5XPQEaX+9Xw03eyr1oylhuISY7jlV+ju4dh9i/JcZFQPOK3eL
+         eVH7g+HkVs0mEGJt9BKjzqCJwjMFrVDrG0/W8Ut9g0YWnbZRAbaBzHXIA9SRbV7DQX1l
+         irC4aEnS+ULqzznFCktV2CDAgS/sEUiWKedCnKSN5FBv5ztl4OmIUA07SK0fdLxONCZk
+         OjWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CpBl2AGd626FECD+GIqEV6PBhceN/t8eGFzx+f7coUk=;
-        b=R2UvAum5zsh1fYVI+KrBfLoUI5VR40HMm8SETb4AhJXIuQWth5uTjhf3rS+GIkwMFF
-         aWkJLSTmBxfLPJtjp004qo7b9QSsleN4ndZkBrh1R/1AnzGJAMrJIhxuarYfYqF0Xffs
-         WnRAaLHNT+ppbFnz6Fi0pwu58dhQxyIYfXtLoDu0Ka9da03Q3kkDARRrnnqxYs5odEca
-         DX0FBgwVcwJfKrkb31mKbS4YE3cDRioHnGl9TnveRm06kMx0ephCw+nnQNHkOXloYDhd
-         dINZuc1r8ne62z5vvShaUgr023eUZivJ4FOdBLiBfQ4mvIaQ1OkI99xVp9tGJaqC3GCB
-         h8Mw==
-X-Gm-Message-State: AOAM532FUhPR5c84xDgtoUrXQeSoZfuAS2JDHFwtx/mXhicVI3LKEqoX
-        y9oBnP7auQcZ3xqtj++Q/pjKMlGl+A7RSrPqZekG
-X-Google-Smtp-Source: ABdhPJwNkET74mR679RYTNFG2h05EKTSAGXbm9p/d1NNz5+zhishf2TSABELSlkCZxkK0XW+Qj9Ih8VcPHPiYGE0eec=
-X-Received: by 2002:a17:907:9803:b0:6db:ab21:738e with SMTP id
- ji3-20020a170907980300b006dbab21738emr15515948ejc.112.1649380802771; Thu, 07
- Apr 2022 18:20:02 -0700 (PDT)
+        bh=xCv5DXX9ijy/PE+Fv/yKOblKDG06N2ROExnKPiddkiU=;
+        b=ngEiU7ZPEF7gzKvW4dTEXc3W4u+sHqJQqxBwBghZ8PlIMBIEPpnXITuBwEoOONzcKZ
+         HXHhHIxMxvbjbKGFta0wANTpEyCekQkLkbV14O0oInUBIP5Gl8tMZAqZEXhq7+QZi3sl
+         UR+YnYmDk4T2TavUAyZ7c1anD5r2HeeYDrLIM2PYdeYgRO2T53qe7dcfXCJ0Bk3F6X57
+         AWjXEcpQlU2iM7CzTwQo7H8eSK+sND6aD3Wo0UvqUXjMAhPFRGE74DNmf1oBFjp5snFp
+         fRRY0PIIBB5U21+R6ypr49rN7PI8B0mvzZe+c9eTX97khLqkmzh8mFzB95O456MHqT8u
+         vkyg==
+X-Gm-Message-State: AOAM53333D9rzOSnqSlu/qAuKId5WOmj1ebgW45L2b+JQ+9v9p4gW8Fc
+        ijq6kRhP1fI3CkdW5S8UHjBNrCj/rMgYS3UbLAbc
+X-Google-Smtp-Source: ABdhPJxO+N6oGriDELXQ6Ik1rLFnHwovOpG6Sz/8grFw7AbhwJUqwHvTAcztCZnXDsMAvXbi8gwPJkt7rR9hql0VoiI=
+X-Received: by 2002:a05:6402:35c9:b0:41d:1447:5f9f with SMTP id
+ z9-20020a05640235c900b0041d14475f9fmr3711479edc.343.1649382132419; Thu, 07
+ Apr 2022 18:42:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220329125117.1393824-1-mic@digikod.net> <20220329125117.1393824-7-mic@digikod.net>
-In-Reply-To: <20220329125117.1393824-7-mic@digikod.net>
+References: <20220329125117.1393824-1-mic@digikod.net> <20220329125117.1393824-8-mic@digikod.net>
+In-Reply-To: <20220329125117.1393824-8-mic@digikod.net>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 7 Apr 2022 21:19:51 -0400
-Message-ID: <CAHC9VhQg0R5ddC_aLSAFyyf9OPs6wSyj3tqh1hwoN=RPpoDFuQ@mail.gmail.com>
-Subject: Re: [PATCH v2 06/12] LSM: Remove double path_rename hook calls for RENAME_EXCHANGE
+Date:   Thu, 7 Apr 2022 21:42:01 -0400
+Message-ID: <CAHC9VhQpZ12Chgd+xMibUxgvcPjTn9FMnCdMGYbLcWG3eTqDQg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/12] landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER
 To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -66,7 +66,6 @@ Cc:     James Morris <jmorris@namei.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
         =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -78,47 +77,98 @@ wrote:
 >
 > From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
 >
-> In order to be able to identify a file exchange with renameat2(2) and
-> RENAME_EXCHANGE, which will be useful for Landlock [1], propagate the
-> rename flags to LSMs.  This may also improve performance because of the
-> switch from two set of LSM hook calls to only one, and because LSMs
-> using this hook may optimize the double check (e.g. only one lock,
-> reduce the number of path walks).
+> Add a new LANDLOCK_ACCESS_FS_REFER access right to enable policy writers
+> to allow sandboxed processes to link and rename files from and to a
+> specific set of file hierarchies.  This access right should be composed
+> with LANDLOCK_ACCESS_FS_MAKE_* for the destination of a link or rename,
+> and with LANDLOCK_ACCESS_FS_REMOVE_* for a source of a rename.  This
+> lift a Landlock limitation that always denied changing the parent of an
+> inode.
 >
-> AppArmor, Landlock and Tomoyo are updated to leverage this change.  This
-> should not change the current behavior (same check order), except
-> (different level of) speed boosts.
+> Renaming or linking to the same directory is still always allowed,
+> whatever LANDLOCK_ACCESS_FS_REFER is used or not, because it is not
+> considered a threat to user data.
 >
-> [1] https://lore.kernel.org/r/20220221212522.320243-1-mic@digikod.net
+> However, creating multiple links or renaming to a different parent
+> directory may lead to privilege escalations if not handled properly.
+> Indeed, we must be sure that the source doesn't gain more privileges by
+> being accessible from the destination.  This is handled by making sure
+> that the source hierarchy (including the referenced file or directory
+> itself) restricts at least as much the destination hierarchy.  If it is
+> not the case, an EXDEV error is returned, making it potentially possible
+> for user space to copy the file hierarchy instead of moving or linking
+> it.
 >
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+> Instead of creating different access rights for the source and the
+> destination, we choose to make it simple and consistent for users.
+> Indeed, considering the previous constraint, it would be weird to
+> require such destination access right to be also granted to the source
+> (to make it a superset).  Moreover, RENAME_EXCHANGE would also add to
+> the confusion because of paths being both a source and a destination.
+>
+> See the provided documentation for additional details.
+>
+> New tests are provided with a following commit.
+>
 > Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Acked-by: John Johansen <john.johansen@canonical.com>
-> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20220329125117.1393824-7-mic@digikod.net
+> Link: https://lore.kernel.org/r/20220329125117.1393824-8-mic@digikod.net
 > ---
 >
 > Changes since v1:
-> * Import patch from
->   https://lore.kernel.org/r/20220222175332.384545-1-mic@digikod.net
-> * Add Acked-by: Tetsuo Handa.
-> * Add Acked-by: John Johansen.
+> * Update current_check_access_path() to efficiently handle
+>   RENAME_EXCHANGE thanks to the updated LSM hook (see previous patch).
+>   Only one path walk is performed per rename arguments until their
+>   common mount point is reached.  Superset of access rights is correctly
+>   checked, including when exchanging a file with a directory.  This
+>   requires to store another matrix of layer masks.
+> * Reorder and rename check_access_path_dual() arguments in a more
+>   generic way: switch from src/dst to 1/2.  This makes it easier to
+>   understand the RENAME_EXCHANGE cases alongs with the others.  Update
+>   and improve check_access_path_dual() documentation accordingly.
+> * Clean up the check_access_path_dual() loop: set both allowed_parent*
+>   when reaching internal filesystems and remove a useless one.  This
+>   allows potential renames in internal filesystems (like for other
+>   operations).
+> * Move the function arguments checks from BUILD_BUG_ON() to
+>   WARN_ON_ONCE() to avoid clang build error.
+> * Rename is_superset() to no_more_access() and make it handle superset
+>   checks of source and destination for simple and exchange cases.
+> * Move the layer_masks_child* creation from current_check_refer_path()
+>   to check_access_path_dual(): this is simpler and less error-prone,
+>   especially with RENAME_EXCHANGE.
+> * Remove one optimization in current_check_refer_path() to make the code
+>   simpler, especially with the RENAME_EXCHANGE handling.
+> * Remove overzealous WARN_ON_ONCE() for !access_request check in
+>   init_layer_masks().
 > ---
->  include/linux/lsm_hook_defs.h |  2 +-
->  include/linux/lsm_hooks.h     |  1 +
->  security/apparmor/lsm.c       | 30 +++++++++++++++++++++++++-----
->  security/landlock/fs.c        | 12 ++++++++++--
->  security/security.c           |  9 +--------
->  security/tomoyo/tomoyo.c      | 11 ++++++++++-
->  6 files changed, 48 insertions(+), 17 deletions(-)
+>  include/uapi/linux/landlock.h                |  27 +-
+>  security/landlock/fs.c                       | 607 ++++++++++++++++---
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/syscalls.c                 |   2 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |   3 +-
+>  6 files changed, 566 insertions(+), 77 deletions(-)
 
-Seems like a nice improvement to me, and while I'm not an AppArmor,
-Tomoyo, or Landlock expert the changes looked pretty straightforward.
+I'm still not going to claim that I'm a Landlock expert, but this
+looks sane to me.
 
 Reviewed-by: Paul Moore <paul@paul-moore.com>
+
+> +static inline access_mask_t init_layer_masks(
+> +               const struct landlock_ruleset *const domain,
+> +               const access_mask_t access_request,
+> +               layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]=
+)
+> +{
+> +       access_mask_t handled_accesses =3D 0;
+> +       size_t layer_level;
+> +
+> +       memset(layer_masks, 0, sizeof(*layer_masks));
+> +       /* An empty access request can happen because of O_WRONLY | O_RDW=
+R. */
+
+ ;)
 
 --=20
 paul-moore.com
