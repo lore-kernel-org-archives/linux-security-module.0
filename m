@@ -2,193 +2,344 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAE4C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Apr 2022 11:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1CFC433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Apr 2022 13:44:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345930AbiDKLLU (ORCPT
+        id S1346667AbiDKNrD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Apr 2022 07:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39868 "EHLO
+        Mon, 11 Apr 2022 09:47:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345897AbiDKLJI (ORCPT
+        with ESMTP id S1346679AbiDKNrB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Apr 2022 07:09:08 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E169A5FF9;
-        Mon, 11 Apr 2022 04:06:43 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 9F969215FC;
-        Mon, 11 Apr 2022 11:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649675202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=G8l3FS8YFsk/OqORAn3rxQjestKsacMckcsHSATHBZE=;
-        b=RpGdQP6AE8ApZkRf+wiTqgUy7XiIRUzzA242TdudFTdWxPJ1SJuJIXa+7c/j7bnwsyK0hs
-        c6CKFY+G8yjB4D/JTMIP9VO4kBSBhE9sdI+JAEW2RZxA/dlB/cg+HR9/I7N9u2iKfEQb/Y
-        O3NsJO7kukxFtJedjsk0nJDSJCccm8U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649675202;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=G8l3FS8YFsk/OqORAn3rxQjestKsacMckcsHSATHBZE=;
-        b=VuqUqLw4Phk6BXBhmJokHyII+BVnZFEpZ8ILrFTtCiBX7Vu4aNQiwDiCKwqxZGqzSqVXIV
-        aUszz5eFJFXmkwAw==
-Received: from kunlun.suse.cz (unknown [10.100.128.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id CD12AA3B82;
-        Mon, 11 Apr 2022 11:06:41 +0000 (UTC)
-Date:   Mon, 11 Apr 2022 13:06:40 +0200
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     dhowells@redhat.com, dwmw2@infradead.org, ardb@kernel.org,
-        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com,
-        nayna@linux.ibm.com, zohar@linux.ibm.com, keescook@chromium.org,
-        torvalds@linux-foundation.org, weiyongjun1@huawei.com,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
-        konrad.wilk@oracle.com
-Subject: Re: [PATCH v10 8/8] integrity: Only use machine keyring when
- uefi_check_trust_mok_keys is true
-Message-ID: <20220411110640.GC163591@kunlun.suse.cz>
-References: <20220126025834.255493-1-eric.snowberg@oracle.com>
- <20220126025834.255493-9-eric.snowberg@oracle.com>
+        Mon, 11 Apr 2022 09:47:01 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5503613F4C;
+        Mon, 11 Apr 2022 06:44:39 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KcVQp6tvhz67m0C;
+        Mon, 11 Apr 2022 21:42:26 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Mon, 11 Apr 2022 15:44:35 +0200
+Message-ID: <8e279be2-5092-ad34-2f8d-ca77ee5a10fd@huawei.com>
+Date:   Mon, 11 Apr 2022 16:44:35 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220126025834.255493-9-eric.snowberg@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [RFC PATCH v4 08/15] landlock: add support network rules
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-9-konstantin.meskhidze@huawei.com>
+ <06f9ca1f-6e92-9d71-4097-e43b2f77b937@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <06f9ca1f-6e92-9d71-4097-e43b2f77b937@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
 
-On Tue, Jan 25, 2022 at 09:58:34PM -0500, Eric Snowberg wrote:
-> With the introduction of uefi_check_trust_mok_keys, it signifies the end-
 
-What value does such flag have?
-
-The user is as much in control of the flag as the MOK keys.
-
-> user wants to trust the machine keyring as trusted keys.  If they have
-> chosen to trust the machine keyring, load the qualifying keys into it
-> during boot, then link it to the secondary keyring .  If the user has not
-> chosen to trust the machine keyring, it will be empty and not linked to
-> the secondary keyring.
-
-Why is importing the keys and using them linked together?
-
-If later we get, say, machine keyring on powerpc managed by secvarctl
-then it has its value to import the keyring and be able to list the
-content with the same tools on EFI and powerpc.
-
-It also makes sense to be able to configure the kernel to import the
-keys and not use them. I don't see any value in configuring that in
-shim, though. shim is both source of the key material and the flag so
-the flag is redundant, it does not exist on existing shim versions
-installed on user systems, and it's unlikely to exist on other
-plaltforms, either.
-
-Thanks
-
-Michal
-
+4/8/2022 7:30 PM, Mickaël Salaün пишет:
 > 
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
-> v4: Initial version
-> v5: Rename to machine keyring
-> v6: Unmodified from v5
-> v7: Made trust_mok static
-> v8: Unmodified from v7
-> v10: Added Jarkko's Reviewed-by
-> ---
->  security/integrity/digsig.c                      |  2 +-
->  security/integrity/integrity.h                   |  5 +++++
->  .../integrity/platform_certs/keyring_handler.c   |  2 +-
->  .../integrity/platform_certs/machine_keyring.c   | 16 ++++++++++++++++
->  4 files changed, 23 insertions(+), 2 deletions(-)
+> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
+>> This modification adds network rules support
+>> in internal landlock functions (presented in ruleset.c)
+>> and landlock_create_ruleset syscall.
+>>
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> ---
+>>
+>> Changes since v3:
+>> * Split commit.
+>> * Add network rule support for internal landlock functions.
+>> * Add set_masks and get_masks for network.
+>> * Add rb_root root_net_port.
+>>
+>> ---
+>>   security/landlock/fs.c       |  2 +-
+>>   security/landlock/limits.h   |  6 +++
+>>   security/landlock/ruleset.c  | 88 +++++++++++++++++++++++++++++++++---
+>>   security/landlock/ruleset.h  | 14 +++++-
+>>   security/landlock/syscalls.c | 10 +++-
+>>   5 files changed, 109 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+>> index 75ebdce5cd16..5cd339061cdb 100644
+>> --- a/security/landlock/fs.c
+>> +++ b/security/landlock/fs.c
+>> @@ -231,7 +231,7 @@ static int check_access_path(const struct 
+>> landlock_ruleset *const domain,
+>>
+>>               inode = d_backing_inode(walker_path.dentry);
+>>               object_ptr = landlock_inode(inode)->object;
+>> -            layer_mask = landlock_unmask_layers(domain, object_ptr,
+>> +            layer_mask = landlock_unmask_layers(domain, object_ptr, 0,
+>>                               access_request, layer_mask,
+>>                               LANDLOCK_RULE_PATH_BENEATH);
+>>               if (layer_mask == 0) {
+>> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+>> index 2a0a1095ee27..fdbef85e4de0 100644
+>> --- a/security/landlock/limits.h
+>> +++ b/security/landlock/limits.h
+>> @@ -18,4 +18,10 @@
+>>   #define LANDLOCK_LAST_ACCESS_FS        LANDLOCK_ACCESS_FS_MAKE_SYM
+>>   #define LANDLOCK_MASK_ACCESS_FS        ((LANDLOCK_LAST_ACCESS_FS << 
+>> 1) - 1)
+>>
+>> +#define LANDLOCK_LAST_ACCESS_NET    LANDLOCK_ACCESS_NET_CONNECT_TCP
+>> +#define LANDLOCK_MASK_ACCESS_NET    ((LANDLOCK_LAST_ACCESS_NET << 1) 
+>> - 1)
+>> +#define LANDLOCK_MASK_SHIFT_NET        16
+>> +
+>> +#define LANDLOCK_RULE_TYPE_NUM        LANDLOCK_RULE_NET_SERVICE
+>> +
+>>   #endif /* _SECURITY_LANDLOCK_LIMITS_H */
+>> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+>> index 7179b10f3538..1cecca59a942 100644
+>> --- a/security/landlock/ruleset.c
+>> +++ b/security/landlock/ruleset.c
+>> @@ -35,6 +35,7 @@ static struct landlock_ruleset *create_ruleset(const 
+>> u32 num_layers)
+>>       refcount_set(&new_ruleset->usage, 1);
+>>       mutex_init(&new_ruleset->lock);
+>>       new_ruleset->root_inode = RB_ROOT;
+>> +    new_ruleset->root_net_port = RB_ROOT;
+>>       new_ruleset->num_layers = num_layers;
+>>       /*
+>>        * hierarchy = NULL
+>> @@ -58,16 +59,32 @@ u32 landlock_get_fs_access_mask(const struct 
+>> landlock_ruleset *ruleset, u16 mask
+>>       return ruleset->access_masks[mask_level];
+>>   }
+>>
+>> +/* A helper function to set a network mask */
+>> +void landlock_set_net_access_mask(struct landlock_ruleset *ruleset,
+>> +                  const struct landlock_access_mask *access_mask_set,
+>> +                  u16 mask_level)
+>> +{
+>> +    ruleset->access_masks[mask_level] |= (access_mask_set->net << 
+>> LANDLOCK_MASK_SHIFT_NET);
+>> +}
+>> +
+>> +/* A helper function to get a network mask */
+>> +u32 landlock_get_net_access_mask(const struct landlock_ruleset 
+>> *ruleset, u16 mask_level)
+>> +{
+>> +    return (ruleset->access_masks[mask_level] >> 
+>> LANDLOCK_MASK_SHIFT_NET);
+>> +}
 > 
-> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-> index 7b719aa76188..c8c8a4a4e7a0 100644
-> --- a/security/integrity/digsig.c
-> +++ b/security/integrity/digsig.c
-> @@ -112,7 +112,7 @@ static int __init __integrity_init_keyring(const unsigned int id,
->  	} else {
->  		if (id == INTEGRITY_KEYRING_PLATFORM)
->  			set_platform_trusted_keys(keyring[id]);
-> -		if (id == INTEGRITY_KEYRING_MACHINE)
-> +		if (id == INTEGRITY_KEYRING_MACHINE && trust_moklist())
->  			set_machine_trusted_keys(keyring[id]);
->  		if (id == INTEGRITY_KEYRING_IMA)
->  			load_module_cert(keyring[id]);
-> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-> index 730771eececd..2e214c761158 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -287,9 +287,14 @@ static inline void __init add_to_platform_keyring(const char *source,
->  
->  #ifdef CONFIG_INTEGRITY_MACHINE_KEYRING
->  void __init add_to_machine_keyring(const char *source, const void *data, size_t len);
-> +bool __init trust_moklist(void);
->  #else
->  static inline void __init add_to_machine_keyring(const char *source,
->  						  const void *data, size_t len)
->  {
->  }
-> +static inline bool __init trust_moklist(void)
-> +{
-> +	return false;
-> +}
->  #endif
-> diff --git a/security/integrity/platform_certs/keyring_handler.c b/security/integrity/platform_certs/keyring_handler.c
-> index 4872850d081f..1db4d3b4356d 100644
-> --- a/security/integrity/platform_certs/keyring_handler.c
-> +++ b/security/integrity/platform_certs/keyring_handler.c
-> @@ -83,7 +83,7 @@ __init efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type)
->  __init efi_element_handler_t get_handler_for_mok(const efi_guid_t *sig_type)
->  {
->  	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0) {
-> -		if (IS_ENABLED(CONFIG_INTEGRITY_MACHINE_KEYRING))
-> +		if (IS_ENABLED(CONFIG_INTEGRITY_MACHINE_KEYRING) && trust_moklist())
->  			return add_to_machine_keyring;
->  		else
->  			return add_to_platform_keyring;
-> diff --git a/security/integrity/platform_certs/machine_keyring.c b/security/integrity/platform_certs/machine_keyring.c
-> index 09fd8f20c756..7aaed7950b6e 100644
-> --- a/security/integrity/platform_certs/machine_keyring.c
-> +++ b/security/integrity/platform_certs/machine_keyring.c
-> @@ -8,6 +8,8 @@
->  #include <linux/efi.h>
->  #include "../integrity.h"
->  
-> +static bool trust_mok;
-> +
->  static __init int machine_keyring_init(void)
->  {
->  	int rc;
-> @@ -59,3 +61,17 @@ static __init bool uefi_check_trust_mok_keys(void)
->  
->  	return false;
->  }
-> +
-> +bool __init trust_moklist(void)
-> +{
-> +	static bool initialized;
-> +
-> +	if (!initialized) {
-> +		initialized = true;
-> +
-> +		if (uefi_check_trust_mok_keys())
-> +			trust_mok = true;
-> +	}
-> +
-> +	return trust_mok;
-> +}
-> -- 
-> 2.18.4
+> Both these helpers should be "static inline" and moved in net.h
+
+   I got it. Ok.
 > 
+> 
+>> +
+>>   struct landlock_ruleset *landlock_create_ruleset(const struct 
+>> landlock_access_mask *access_mask_set)
+>>   {
+>>       struct landlock_ruleset *new_ruleset;
+>>
+>>       /* Informs about useless ruleset. */
+>> -    if (!access_mask_set->fs)
+>> +    if (!access_mask_set->fs && !access_mask_set->net)
+>>           return ERR_PTR(-ENOMSG);
+>>       new_ruleset = create_ruleset(1);
+>> -    if (!IS_ERR(new_ruleset))
+> 
+> This is better:
+> 
+> if (IS_ERR(new_ruleset))
+>      return new_ruleset;
+> if (access_mask_set->fs)
+> ...
+
+   I dont get this condition. Do you mean that we return new_ruleset
+anyway no matter what the masks's values are? So its possible to have 0 
+masks values, is't it?
+> 
+> 
+>> +    if (!IS_ERR(new_ruleset) && access_mask_set->fs)
+>>           landlock_set_fs_access_mask(new_ruleset, access_mask_set, 0);
+>> +    if (!IS_ERR(new_ruleset) && access_mask_set->net)
+>> +        landlock_set_net_access_mask(new_ruleset, access_mask_set, 0);
+>>       return new_ruleset;
+>>   }
+>>
+>> @@ -111,6 +128,9 @@ static struct landlock_rule *create_rule(
+>>           landlock_get_object(object_ptr);
+>>           new_rule->object.ptr = object_ptr;
+>>           break;
+>> +    case LANDLOCK_RULE_NET_SERVICE:
+>> +        new_rule->object.data = object_data;
+>> +        break;
+>>       default:
+>>           return ERR_PTR(-EINVAL);
+>>       }
+>> @@ -145,10 +165,12 @@ static void build_check_ruleset(void)
+>>           .num_layers = ~0,
+>>       };
+>>       typeof(ruleset.access_masks[0]) fs_access_mask = ~0;
+>> +    typeof(ruleset.access_masks[0]) net_access_mask = ~0;
+>>
+>>       BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
+>>       BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
+>>       BUILD_BUG_ON(fs_access_mask < LANDLOCK_MASK_ACCESS_FS);
+>> +    BUILD_BUG_ON(net_access_mask < LANDLOCK_MASK_ACCESS_NET);
+>>   }
+>>
+>>   /**
+>> @@ -191,6 +213,12 @@ static int insert_rule(struct landlock_ruleset 
+>> *const ruleset,
+> 
+> Already reviewed.
+> 
+> [...]
+> 
+> 
+>> @@ -319,6 +363,9 @@ static int tree_merge(struct landlock_ruleset 
+>> *const src,
+>>       case LANDLOCK_RULE_PATH_BENEATH:
+>>           src_root = &src->root_inode;
+>>           break;
+>> +    case LANDLOCK_RULE_NET_SERVICE:
+>> +        src_root = &src->root_net_port;
+>> +        break;
+>>       default:
+>>           return -EINVAL;
+>>       }
+>> @@ -338,11 +385,14 @@ static int tree_merge(struct landlock_ruleset 
+>> *const src,
+>>               return err;
+>>           }
+>>           layers[0].access = walker_rule->layers[0].access;
+>> -
+> 
+> nit: Please keep this empty line.
+> 
+> 
+>>           switch (rule_type) {
+>>           case LANDLOCK_RULE_PATH_BENEATH:
+>>               err = insert_rule(dst, walker_rule->object.ptr, 0, &layers,
+>> -                ARRAY_SIZE(layers), rule_type);
+>> +                    ARRAY_SIZE(layers), rule_type);
+> 
+> Please don't insert this kind of formatting in unrelated patches.
+> 
+> 
+>> +            break;
+>> +        case LANDLOCK_RULE_NET_SERVICE:
+>> +            err = insert_rule(dst, NULL, walker_rule->object.data, 
+>> &layers,
+>> +                    ARRAY_SIZE(layers), rule_type);
+>>               break;
+>>           }
+>>           if (err)
+>> @@ -379,6 +429,10 @@ static int merge_ruleset(struct landlock_ruleset 
+>> *const dst,
+>>       err = tree_merge(src, dst, LANDLOCK_RULE_PATH_BENEATH);
+>>       if (err)
+>>           goto out_unlock;
+>> +    /* Merges the @src network tree. */
+>> +    err = tree_merge(src, dst, LANDLOCK_RULE_NET_SERVICE);
+>> +    if (err)
+>> +        goto out_unlock;
+>>
+>>   out_unlock:
+>>       mutex_unlock(&src->lock);
+>> @@ -398,6 +452,9 @@ static int tree_copy(struct landlock_ruleset 
+>> *const parent,
+>>       case LANDLOCK_RULE_PATH_BENEATH:
+>>           parent_root = &parent->root_inode;
+>>           break;
+>> +    case LANDLOCK_RULE_NET_SERVICE:
+>> +        parent_root = &parent->root_net_port;
+>> +        break;
+>>       default:
+>>           return -EINVAL;
+>>       }
+>> @@ -410,6 +467,11 @@ static int tree_copy(struct landlock_ruleset 
+>> *const parent,
+>>                     &walker_rule->layers, walker_rule->num_layers,
+>>                     rule_type);
+>>               break;
+>> +        case LANDLOCK_RULE_NET_SERVICE:
+>> +            err = insert_rule(child, NULL, walker_rule->object.data,
+>> +                  &walker_rule->layers, walker_rule->num_layers,
+>> +                  rule_type);
+>> +            break;
+>>           }
+>>           if (err)
+>>               return err;
+>> @@ -432,6 +494,10 @@ static int inherit_ruleset(struct 
+>> landlock_ruleset *const parent,
+>>
+>>       /* Copies the @parent inode tree. */
+>>       err = tree_copy(parent, child, LANDLOCK_RULE_PATH_BENEATH);
+>> +    if (err)
+>> +        goto out_unlock;
+>> +    /* Copies the @parent inode tree. */
+>> +    err = tree_copy(parent, child, LANDLOCK_RULE_NET_SERVICE);
+>>       if (err)
+>>           goto out_unlock;
+>>
+>> @@ -464,6 +530,9 @@ static void free_ruleset(struct landlock_ruleset 
+>> *const ruleset)
+>>       rbtree_postorder_for_each_entry_safe(freeme, next, 
+>> &ruleset->root_inode,
+>>               node)
+>>           free_rule(freeme, LANDLOCK_RULE_PATH_BENEATH);
+>> +    rbtree_postorder_for_each_entry_safe(freeme, next, 
+>> &ruleset->root_net_port,
+>> +            node)
+>> +        free_rule(freeme, LANDLOCK_RULE_NET_SERVICE);
+>>       put_hierarchy(ruleset->hierarchy);
+>>       kfree(ruleset);
+>>   }
+>> @@ -565,6 +634,9 @@ const struct landlock_rule *landlock_find_rule(
+>>       case LANDLOCK_RULE_PATH_BENEATH:
+>>           node = ruleset->root_inode.rb_node;
+>>           break;
+>> +    case LANDLOCK_RULE_NET_SERVICE:
+>> +        node = ruleset->root_net_port.rb_node;
+>> +        break;
+>>       default:
+>>           return ERR_PTR(-EINVAL);
+>>       }
+>> @@ -586,8 +658,8 @@ const struct landlock_rule *landlock_find_rule(
+>>   /* Access-control management */
+>>   u64 landlock_unmask_layers(const struct landlock_ruleset *const domain,
+>>                  const struct landlock_object *object_ptr,
+>> -               const u32 access_request, u64 layer_mask,
+>> -               const u16 rule_type)
+>> +               const u16 port, const u32 access_request,
+>> +               u64 layer_mask, const u16 rule_type)
+>>   {
+>>       const struct landlock_rule *rule;
+>>       size_t i;
+>> @@ -600,6 +672,10 @@ u64 landlock_unmask_layers(const struct 
+>> landlock_ruleset *const domain,
+>>               LANDLOCK_RULE_PATH_BENEATH);
+>>           rcu_read_unlock();
+>>           break;
+>> +    case LANDLOCK_RULE_NET_SERVICE:
+>> +        rule = landlock_find_rule(domain, (uintptr_t)port,
+> 
+> Type casting should not be required.
+
+  Ok. I got it.
+> 
+> [...]
+> .
