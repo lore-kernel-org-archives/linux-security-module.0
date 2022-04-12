@@ -2,270 +2,89 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D611C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Apr 2022 11:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A80AC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Apr 2022 12:04:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344420AbiDLLYe (ORCPT
+        id S1351714AbiDLMGr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Apr 2022 07:24:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47052 "EHLO
+        Tue, 12 Apr 2022 08:06:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353326AbiDLLYX (ORCPT
+        with ESMTP id S1354604AbiDLMEl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Apr 2022 07:24:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055CA98F7C;
-        Tue, 12 Apr 2022 03:04:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 270DAB81BBA;
-        Tue, 12 Apr 2022 10:04:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5578C385B4;
-        Tue, 12 Apr 2022 10:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649757895;
-        bh=gtObvUz5qCRpJc0RtVC3K8eVrLVVSXdYSjCClwfhmfI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=krQz5LNrhl3gtajoIOtRaAdR5SMcegiZtBNAoyBjSIwKns16EQRV/S6pFZKrDJOh4
-         20RCXYRUKdvOSVD40coKkQ3XtR92eLwqFy7ofnMUAtofsmv4XOBQFABzJ1tRCPVfbN
-         IXpY8w1uWEiUzh8Kg5hkzT7ZR42N2smxPuyaHQwi24RZbXECtmVTLwc03Si/rN+r4v
-         dknW0PZQELntgEm/UdwEYaUMRBbcOEHvE64947n99dgIaGvKdCfceegfJUb5IlFI08
-         tLMHEoYghPah6rH28V1rrwDPy6G5QIf5HzpM5feMn0a9++s1lvEpYSajY1sWlpTAxY
-         KVz5gkEiKt+kw==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-ddfa38f1c1so20211742fac.11;
-        Tue, 12 Apr 2022 03:04:55 -0700 (PDT)
-X-Gm-Message-State: AOAM530yXNgtcj8TvlrcXTFy+SwMDSMipLUFeTfYktEq9QdS+Duoc46U
-        AQUfEiIFe1ORIURkHOsczqVTZXoeFUeC9b3AFGs=
-X-Google-Smtp-Source: ABdhPJzBfRdtpFhBmeTPriIQBUDch40V+DCtV0PMUEGK1A2oSvcsKj7EeDbH7DO7MJxob6lIbZTVRQxADuh3LcDNiDc=
-X-Received: by 2002:a05:6870:b027:b0:de:7fcd:fabf with SMTP id
- y39-20020a056870b02700b000de7fcdfabfmr1711844oae.126.1649757894728; Tue, 12
- Apr 2022 03:04:54 -0700 (PDT)
+        Tue, 12 Apr 2022 08:04:41 -0400
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fae])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8410656409
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Apr 2022 04:07:25 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Kd2xQ5bZGzMpvCG;
+        Tue, 12 Apr 2022 13:07:22 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Kd2xQ1jKlzljsTj;
+        Tue, 12 Apr 2022 13:07:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1649761642;
+        bh=hdT0n/yGB+udShZ9jh7ougx0uizMRtCIzzMECKwb6I0=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=Ov765teFETg9CKi7Sr2LidqlCCNWHCI3wIFdpxdr/yBg71su8fgyE2Aq42iMtlUle
+         poGNb4mgJNbdWVo5QPE5mi/0M4+nW2nYWB1TldCSY5vu3eIM2EoaP7HF+1N29RnJql
+         oEH7oGTMu7DbyGIdqbQRIRxXH21PCBUmhFMKZz44=
+Message-ID: <0e5afeaf-0569-d0b5-b701-0f611d103732@digikod.net>
+Date:   Tue, 12 Apr 2022 13:07:39 +0200
 MIME-Version: 1.0
-References: <20220331215607.3182232-1-dovmurik@linux.ibm.com> <48e087af-cc93-72f0-3907-9d1978530b87@linux.ibm.com>
-In-Reply-To: <48e087af-cc93-72f0-3907-9d1978530b87@linux.ibm.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Tue, 12 Apr 2022 12:04:43 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXG1rqLjQMZvnPZzvyg+qfR-zaDnXVrDNRYYqr0dU=oW7w@mail.gmail.com>
-Message-ID: <CAMj1kXG1rqLjQMZvnPZzvyg+qfR-zaDnXVrDNRYYqr0dU=oW7w@mail.gmail.com>
-Subject: Re: [PATCH v9 0/4] Allow guest access to EFI confidential computing
- secret area
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Scull <ascull@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        Daniele Buono <dbuono@linux.vnet.ibm.com>,
-        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        willemdebruijn.kernel@gmail.com
+Cc:     linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        artem.kuzin@huawei.com, anton.sirazetdinov@huawei.com
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-4-konstantin.meskhidze@huawei.com>
+ <bc44f11f-0eaa-a5f6-c5dc-1d36570f1be1@digikod.net>
+ <6535183b-5fad-e3a9-1350-d22122205be6@huawei.com>
+ <92d498f0-c598-7413-6b7c-d19c5aec6cab@digikod.net>
+ <cb30248d-a8ae-c366-2c9f-2ab0fe44cc9a@huawei.com>
+ <90a20548-39f6-6e84-efb1-8ef3ad992255@digikod.net>
+ <212ac1b3-b78b-4030-1f3d-f5cd1001bb7d@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [RFC PATCH v4 03/15] landlock: landlock_find/insert_rule
+ refactoring (TCP port 0)
+In-Reply-To: <212ac1b3-b78b-4030-1f3d-f5cd1001bb7d@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 12 Apr 2022 at 12:03, Dov Murik <dovmurik@linux.ibm.com> wrote:
->
->
->
-> On 01/04/2022 0:56, Dov Murik wrote:
-> > Confidential computing (coco) hardware such as AMD SEV (Secure Encrypted
-> > Virtualization) allows guest owners to inject secrets into the VMs
-> > memory without the host/hypervisor being able to read them.  In SEV,
-> > secret injection is performed early in the VM launch process, before the
-> > guest starts running.
-> >
-> > OVMF already reserves designated area for secret injection (in its
-> > AmdSev package; see edk2 commit 01726b6d23d4 "OvmfPkg/AmdSev: Expose the
-> > Sev Secret area using a configuration table" [1]), but the secrets were
-> > not available in the guest kernel.
-> >
-> > The patch series keeps the address of the EFI-provided memory for
-> > injected secrets, and exposes the secrets to userspace via securityfs
-> > using a new efi_secret kernel module.  The module is autoloaded (by the
-> > EFI driver) if the secret area is populated.
-> >
-> > The first patch in EFI keeps the address of the secret area as passed in
-> > the EFI configuration table.  The second patch introduces the new
-> > efi_secret module that exposes the content of the secret entries as
-> > securityfs files, and allows clearing out secrets with a file unlink
-> > interface.  The third patch auto-loads the efi_secret module during
-> > startup if the injected secrets area is populated.  The last patch
-> > documents the data flow of confidential computing secret injection.
-> >
-> > As a usage example, consider a guest performing computations on
-> > encrypted files.  The Guest Owner provides the decryption key (= secret)
-> > using the secret injection mechanism.  The guest application reads the
-> > secret from the efi_secret filesystem and proceeds to decrypt the files
-> > into memory and then performs the needed computations on the content.
-> >
-> > In this example, the host can't read the files from the disk image
-> > because they are encrypted.  Host can't read the decryption key because
-> > it is passed using the secret injection mechanism (= secure channel).
-> > Host can't read the decrypted content from memory because it's a
-> > confidential (memory-encrypted) guest.
-> >
-> > This has been tested with AMD SEV and SEV-ES guests, but the kernel side
-> > of handling the secret area has no SEV-specific dependencies, and
-> > therefore might be usable (perhaps with minor changes) for any
-> > confidential computing hardware that can publish the secret area via the
-> > standard EFI config table entry.
-> >
-> > To enable this functionality, set CONFIG_EFI_SECRET=m when building the
-> > guest kernel.
-> >
-> > Here is a simple example for usage of the efi_secret module in a guest
-> > to which an EFI secret area with 4 secrets was injected during launch:
-> >
-> > ...
-> > [    0.000000] efi: EFI v2.70 by EDK II
-> > [    0.000000] efi: CocoSecret=0x7f222680 SMBIOS=0x7f541000 ACPI=0x7f77e000 ACPI 2.0=0x7f77e014 MEMATTR=0x7ea16418
-> > ...
-> > [    1.127627] Run /init as init process
-> > Loading, please wait...
-> > Starting version 245.4-4ubuntu3.15
-> > ...
-> > [    0.763204] efi_secret efi_secret.0: Created 4 entries in securityfs secrets/coco
-> > ...
-> >
-> > # ls -la /sys/kernel/security/secrets/coco
-> > total 0
-> > drwxr-xr-x 2 root root 0 Jun 28 11:54 .
-> > drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
-> > -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
-> > -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
-> > -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
-> > -r--r----- 1 root root 0 Jun 28 11:54 e6f5a162-d67f-4750-a67c-5d065f2a9910
-> >
-> > # hd /sys/kernel/security/secrets/coco/e6f5a162-d67f-4750-a67c-5d065f2a9910
-> > 00000000  74 68 65 73 65 2d 61 72  65 2d 74 68 65 2d 6b 61  |these-are-the-ka|
-> > 00000010  74 61 2d 73 65 63 72 65  74 73 00 01 02 03 04 05  |ta-secrets......|
-> > 00000020  06 07                                             |..|
-> > 00000022
-> >
-> > # rm /sys/kernel/security/secrets/coco/e6f5a162-d67f-4750-a67c-5d065f2a9910
-> >
-> > # ls -la /sys/kernel/security/secrets/coco
-> > total 0
-> > drwxr-xr-x 2 root root 0 Jun 28 11:55 .
-> > drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
-> > -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
-> > -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
-> > -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
-> >
-> >
-> > [1] https://github.com/tianocore/edk2/commit/01726b6d23d4
-> >
-> >
-> > ---
-> >
-> > v9 changes:
-> > - Change the module into a platform driver (thanks Ard)
-> > - Remove special auto-loading code in efi; instead register a platform
-> >   device (udev will load the efi_secret module) (thanks Ard)
-> > - Change logging in the efi_secret module to dev_err() etc.
-> > - efi_secret: first check that the secret area header is valid; only then start
-> >   creating securityfs dirs.
-> >
-> > v8: https://lore.kernel.org/linux-coco/20220228114254.1099945-1-dovmurik@linux.ibm.com/
-> > v8 changes:
-> >  - Change path of filesystem to <securityfs>/secrets/coco and fix the
-> >    documentation accordingly (Thanks Gerd, Matthew)
-> >  - Remove patch 2/5 (of v7) because the latest OVMF release (edk2-stable202202)
-> >    already contains the fix to mark the launch secret page as EFI_RESERVED_TYPE.
-> >
-> > v7: https://lore.kernel.org/linux-coco/20220201124413.1093099-1-dovmurik@linux.ibm.com/
-> > v7 changes:
-> >  - Improve description of efi_secret module in Kconfig.
-> >  - Fix sparse warnings on pointer address space mismatch
-> >    (Reported-by: kernel test robot <lkp@intel.com>)
-> >
-> > v6: https://lore.kernel.org/linux-coco/20211129114251.3741721-1-dovmurik@linux.ibm.com/
-> > v6 changes:
-> >  - Autoload the efi_secret module if the secret area is populated
-> >    (thanks Greg KH).
-> >  - efi_secret: Depend on X86_64 because we use ioremap_encrypted() which
-> >    is only defined for this arch.
-> >  - efi_secret.c: Remove unneeded tableheader_guid local variable.
-> >  - Documentation fixes.
-> >
-> > v5: https://lore.kernel.org/linux-coco/20211118113359.642571-1-dovmurik@linux.ibm.com/
-> > v5 changes:
-> >  - Simplify EFI code: instead of copying the secret area, the firmware
-> >    marks the secret area as EFI_RESERVED_TYPE, and then the uefi_init()
-> >    code just keeps the pointer as it appears in the EFI configuration
-> >    table.  The use of reserved pages is similar to the AMD SEV-SNP
-> >    patches for handling SNP-Secrets and SNP-CPUID pages.
-> >  - In order to handle OVMF releases out there which mark the
-> >    confidential computing secrets page as EFI_BOOT_SERVICES_DATA, add
-> >    efi/libstub code that detects this and fixes the E820 map to reserve
-> >    this page.
-> >  - In the efi_secret module code, map the secrets page using
-> >    ioremap_encrypted (again, similar to the AMD SEV-SNP guest patches
-> >    for accessing SNP-Secrets and SNP-CPUID pages).
-> >  - Add documentation in Documentation/security/coco/efi_secret.
-> >
-> > v4: https://lore.kernel.org/linux-coco/20211020061408.3447533-1-dovmurik@linux.ibm.com/
-> > v4 changes:
-> >  - Guard all the new EFI and efi-stub code (patches 1+2) with #ifdef
-> >    CONFIG_EFI_COCO_SECRET (thanks Greg KH).  Selecting
-> >    CONFIG_EFI_SECRET=m (patch 3) will enable the EFI parts as well.
-> >  - Guard call to clflush_cache_range() with #ifdef CONFIG_X86
-> >    (Reported-by: kernel test robot <lkp@intel.com>)
-> >
-> > v3: https://lore.kernel.org/linux-coco/20211014130848.592611-1-dovmurik@linux.ibm.com/
-> > v3 changes:
-> >  - Rename the module to efi_secret
-> >  - Remove the exporting of clean_cache_range
-> >  - Use clflush_cache_range in wipe_memory
-> >  - Document function wipe_memory
-> >  - Initialize efi.coco_secret to EFI_INVALID_TABLE_ADDR to correctly detect
-> >    when there's no secret area published in the EFI configuration tables
-> >
-> > v2: https://lore.kernel.org/linux-coco/20211007061838.1381129-1-dovmurik@linux.ibm.com
-> > v2 changes:
-> >  - Export clean_cache_range()
-> >  - When deleteing a secret, call clean_cache_range() after explicit_memzero
-> >  - Add Documentation/ABI/testing/securityfs-coco-sev_secret
-> >
-> > v1: https://lore.kernel.org/linux-coco/20210809190157.279332-1-dovmurik@linux.ibm.com/
-> >
-> > RFC: https://lore.kernel.org/linux-coco/20210628183431.953934-1-dovmurik@linux.ibm.com/
-> >
-> >
-> >
-> > Dov Murik (4):
-> >   efi: Save location of EFI confidential computing area
-> >   virt: Add efi_secret module to expose confidential computing secrets
-> >   efi: Register efi_secret platform device if EFI secret area is
-> >     declared
-> >   docs: security: Add secrets/coco documentation
-> >
->
->
-> This series has Reviewed-by tags on all patches (though, as I mentioned,
-> there's a missing #ifdef in patch 3).
->
-> Ard, are you going to take this through the EFI tree?
->
-> Should I resend the series with the fix for patch 3?
->
 
-Yes, please send a final version with all tags in place etc, and I
-will queue it up.
+On 23/03/2022 09:41, Konstantin Meskhidze wrote:
+> 
+> 
+> 3/22/2022 4:24 PM, Mickaël Salaün пишет:
+>>
 
-Thanks,
-Ard.
+[...]
+>> The remaining question is: should we need to accept 0 as a valid TCP 
+>> port? Can it be used? How does the kernel handle it?
+> 
+>   I agree that must be a check for port 0 in add_rule_net_service(), 
+> cause unlike most port numbers, port 0 is a reserved port in TCP/IP 
+> networking, meaning that it should not be used in TCP or UDP messages.
+> Also network traffic sent across the internet to hosts listening on port 
+> 0 might be generated from network attackers or accidentally by 
+> applications programmed incorrectly.
+> Source: https://www.lifewire.com/port-0-in-tcp-and-udp-818145
+
+OK, so denying this port by default without a way to allow it should not 
+be an issue. I guess an -EINVAL error would make sense when trying to 
+allow this port. This should be documented in a comment (with a link to 
+the RFC/section) and a dedicated test should check that behavior.
+
+What is the behavior of firewalls (e.g. Netfiler) when trying to filter 
+port 0?
+
+This doesn't seem to be settle though: 
+https://www.austingroupbugs.net/view.php?id=1068
+
+Interesting article: 
+https://z3r0trust.medium.com/socket-programming-the-bizarre-tcp-ip-port-0-saga-fcfbc0e0a276
