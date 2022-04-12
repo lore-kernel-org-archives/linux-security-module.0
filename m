@@ -2,313 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F867C433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Apr 2022 12:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A00C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Apr 2022 13:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354774AbiDLM7c (ORCPT
+        id S1355433AbiDLNUE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Apr 2022 08:59:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58216 "EHLO
+        Tue, 12 Apr 2022 09:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355633AbiDLM60 (ORCPT
+        with ESMTP id S1357498AbiDLNTc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Apr 2022 08:58:26 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B36A75C86F;
-        Tue, 12 Apr 2022 05:33:05 -0700 (PDT)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23CBBxYi029884;
-        Tue, 12 Apr 2022 12:32:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=vyaBAvLraJ2tua5EQaq+mkfRTcOYDbXcnxO/FeOjC/k=;
- b=H5SUElumn5gMoOxYd2hW7du6gP4afvBGMDsyxb7nHOweHmItj1WDZJpbB4bH9n8rO8O0
- psNHTuvdd9hUgdPYp0dRQ7ORroZd3Jku+ELf+xKgG3Y9VLuFzMnJKTwCRbNHHnFs6Jz0
- EsFIZZEltkcrieTRMUBBJ+OW/2dsyS10g0SbEvIsAejgewm1l3hTTs+71uyN458dNK3N
- 9XnVp4LLT1Ug2yGdS5kuEB30SyiEBDFThP2v0y8VbeB6CgxdGDj8aOLbq2GSJoOdg2rc
- ccO52nlg/dt4FJp31E9EL6kdkXSvdfxh52gYOxNO2T+e1Hiqa2NBs2nr6ZRgbNteGXFi Fg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3fd8b5htcc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Apr 2022 12:32:46 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 23CCUC0O008163;
-        Tue, 12 Apr 2022 12:32:45 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3fd8b5htbj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Apr 2022 12:32:45 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23CCDnoX030588;
-        Tue, 12 Apr 2022 12:32:43 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma06ams.nl.ibm.com with ESMTP id 3fb1dj4w0m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Apr 2022 12:32:42 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23CCWeLQ40501638
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Apr 2022 12:32:40 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 920D75204E;
-        Tue, 12 Apr 2022 12:32:40 +0000 (GMT)
-Received: from sig-9-65-64-123.ibm.com (unknown [9.65.64.123])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 57E9852050;
-        Tue, 12 Apr 2022 12:32:37 +0000 (GMT)
-Message-ID: <f55551188f2a17a7a5da54ea4a38bfbae938a62f.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 RESEND] efi: Do not import certificates from UEFI
- Secure Boot for T2 Macs
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Aditya Garg <gargaditya08@live.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "kafai@fb.com" <kafai@fb.com>,
-        "songliubraving@fb.com" <songliubraving@fb.com>,
-        "yhs@fb.com" <yhs@fb.com>,
-        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        Orlando Chamberlain <redecorating@protonmail.com>,
-        "admin@kodeit.net" <admin@kodeit.net>
-Date:   Tue, 12 Apr 2022 08:32:36 -0400
-In-Reply-To: <652C3E9E-CB97-4C70-A961-74AF8AEF9E39@live.com>
-References: <652C3E9E-CB97-4C70-A961-74AF8AEF9E39@live.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: P0qJhkOPK2C5QZTvOJ6EMKg6-W1Da97M
-X-Proofpoint-GUID: CPrrncJGw3lrPoyPHwhMngG2z1YirLDY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-12_04,2022-04-12_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- bulkscore=0 spamscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1011 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204120059
+        Tue, 12 Apr 2022 09:19:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 581783DDCD;
+        Tue, 12 Apr 2022 06:08:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5F9DC619A9;
+        Tue, 12 Apr 2022 13:08:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD37EC385B1;
+        Tue, 12 Apr 2022 13:08:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649768917;
+        bh=YcaQr1zTfjSLiNUXAkZxfTTaYuHy1HUaeyyk2AqglB8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=n2OtpAQoq+qrG0TzI0l8iMD7eTq2ktrCDTJaTsthrBjJGpRfw0n36ACC43KhSFYu8
+         elNas01Yi2U5Rv8K+NDjzfQsCkpaDm77HkjCagq6lPDc9ljaAa3VRIq/wuZTG3SLBq
+         K7L/rzQhQeMNykf6ALNmVK9+I+bT0i9qH3heMPIZjOpkXxcDKPEL2igyK8nH1YkotE
+         k0pLawXRBkjoL5TAeKQDM3ZdZonfp7BASJv33whnsUke9OFr+MLeQ4nNX7LQ/6N3I+
+         eSObTl3WDbkHxia2LPOQrWj4htFdaDqp4WD21mFStupsAe913FSkyp8rOXmwGRZUFK
+         ITzadpcQeC75g==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-e2afb80550so8768559fac.1;
+        Tue, 12 Apr 2022 06:08:37 -0700 (PDT)
+X-Gm-Message-State: AOAM531KKDPijTrWIKlklNdnZfUCNfkm01fYmHXwMOFi60T7OBoNC79/
+        kU7SDWp/ZaMImrPabAl9PENdw7iX2Vs2Tcc5Vdo=
+X-Google-Smtp-Source: ABdhPJwsT60EZGzvKxLvuDXi5RTXFmmCpZlzEo7mi7tnDG3CFikUWPsyoP9BI1LgcHDyPOnKWDH0WJEtwRAPvF8XgIc=
+X-Received: by 2002:a05:6870:b027:b0:de:7fcd:fabf with SMTP id
+ y39-20020a056870b02700b000de7fcdfabfmr2016587oae.126.1649768916454; Tue, 12
+ Apr 2022 06:08:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220228114254.1099945-1-dovmurik@linux.ibm.com>
+ <20220228114254.1099945-4-dovmurik@linux.ibm.com> <CAMj1kXFybkGtxH2U6oAi_Qeqe-i_kH-hZjUZKY3-UzPHUg55vg@mail.gmail.com>
+ <f3de6cd9-9f58-7db3-e367-a6a5a5d826e2@linux.ibm.com> <CAMj1kXEKh-Ve3iPDnNTxi10=hcARN4ntpyQOrmb=B+4DpC24vQ@mail.gmail.com>
+ <38daffb6-a72a-87f4-d927-0b857b7b6833@linux.ibm.com>
+In-Reply-To: <38daffb6-a72a-87f4-d927-0b857b7b6833@linux.ibm.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Tue, 12 Apr 2022 15:08:25 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHfeS9WzHkOyM3JGfgVLK8GQ78KBArD19NxcCMn-SDPKg@mail.gmail.com>
+Message-ID: <CAMj1kXHfeS9WzHkOyM3JGfgVLK8GQ78KBArD19NxcCMn-SDPKg@mail.gmail.com>
+Subject: Re: [PATCH v8 3/4] efi: Load efi_secret module if EFI secret area is populated
+To:     Dov Murik <dovmurik@linux.ibm.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Scull <ascull@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        Daniele Buono <dbuono@linux.vnet.ibm.com>,
+        linux-coco@lists.linux.dev, linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 2022-04-10 at 10:49 +0000, Aditya Garg wrote:
-> From: Aditya Garg <gargaditya08@live.com>
-> 
-> On T2 Macs, the secure boot is handled by the T2 Chip. If enabled, only
-> macOS and Windows are allowed to boot on these machines. Thus we need to
-> disable secure boot for Linux.
+On Thu, 31 Mar 2022 at 11:05, Dov Murik <dovmurik@linux.ibm.com> wrote:
+>
+> Hello Ard,
+>
+> On 28/02/2022 15:15, Ard Biesheuvel wrote:
+> > On Mon, 28 Feb 2022 at 14:07, Dov Murik <dovmurik@linux.ibm.com> wrote:
+> >>
+> >>
+> >>
+> >> On 28/02/2022 14:49, Ard Biesheuvel wrote:
+> >>> On Mon, 28 Feb 2022 at 12:43, Dov Murik <dovmurik@linux.ibm.com> wrote:
+> >>>>
+> >>>> If the efi_secret module is built, register a late_initcall in the EFI
+> >>>> driver which checks whether the EFI secret area is available and
+> >>>> populated, and then requests to load the efi_secret module.
+> >>>>
+> >>>> This will cause the <securityfs>/secrets/coco directory to appear in
+> >>>> guests into which secrets were injected; in other cases, the module is
+> >>>> not loaded.
+> >>>>
+> >>>> Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
+> >>>> Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
+> >>>
+> >>> It would be better to simply expose a platform device and associated
+> >>> driver, instead of hooking into the module machinery directly.
+> >>>
+> >>> We already do something similar for the EFI rtc and the efivars
+> >>> subsystem, using platform_device_register_simple()
+> >>>
+> >>
+> >> Thanks Ard, I'll look into this.
+> >>
+> >> I hope the mechanism you suggest allows me to perform complex check to
+> >> see if the device is really there (in this case: check for an efi
+> >> variable, map memory as encrypted, verify it starts with a specific GUID
+> >> -- everything before request_module() in the code below).
+> >>
+> >
+> > There is the device part and the driver part. Some of this belongs in
+> > the core code that registers the platform device, and some of it
+> > belongs in the driver. At this point, it probably does not matter that
+> > much which side does what, as the platform driver simply probes and
+> > can perform whatever check it needs, as long as it can back out
+> > gracefully (although I understand that, in this particular case, there
+> > are reasons why the driver may decide to wipe the secret)
+>
+> I finally got to implement this, it seems like it makes the code simple.
+> Thanks for the advice.
+>
+> Just making sure I understand correctly: in this approach this we rely
+> on udev to load the efi_secret module (aliased as "platform:efi_secret")
+> and call its .probe() function?  If there's no udev, the module will not
+> be loaded automatically.  Did I understand that correctly?
+>
 
-The end result might be "disable secure boot for Linux", but that isn't
-what the code is actually doing.  As a result of not being able to read
-or load certificates, secure boot cannot be enabled.  Please be more
-precise.
+Apologies, I am swamped in email and only spotted this now.
 
-> If we boot into Linux after disabling
-> secure boot, if CONFIG_LOAD_UEFI_KEYS is enabled, EFI Runtime services
-> fail to start, with the following logs in dmesg
-> 
-> Call Trace:
->  <TASK>
->  page_fault_oops+0x4f/0x2c0
->  ? search_bpf_extables+0x6b/0x80
->  ? search_module_extables+0x50/0x80
->  ? search_exception_tables+0x5b/0x60
->  kernelmode_fixup_or_oops+0x9e/0x110
->  __bad_area_nosemaphore+0x155/0x190
->  bad_area_nosemaphore+0x16/0x20
->  do_kern_addr_fault+0x8c/0xa0
->  exc_page_fault+0xd8/0x180
->  asm_exc_page_fault+0x1e/0x30
-> (Removed some logs from here)
->  ? __efi_call+0x28/0x30
->  ? switch_mm+0x20/0x30
->  ? efi_call_rts+0x19a/0x8e0
->  ? process_one_work+0x222/0x3f0
->  ? worker_thread+0x4a/0x3d0
->  ? kthread+0x17a/0x1a0
->  ? process_one_work+0x3f0/0x3f0
->  ? set_kthread_struct+0x40/0x40
->  ? ret_from_fork+0x22/0x30
->  </TASK>
-> ---[ end trace 1f82023595a5927f ]---
-> efi: Froze efi_rts_wq and disabled EFI Runtime Services
-> integrity: Couldn't get size: 0x8000000000000015
-> integrity: MODSIGN: Couldn't get UEFI db list
-> efi: EFI Runtime Services are disabled!
-> integrity: Couldn't get size: 0x8000000000000015
-> integrity: Couldn't get UEFI dbx list
-> integrity: Couldn't get size: 0x8000000000000015
-> integrity: Couldn't get mokx list
-> integrity: Couldn't get size: 0x80000000
-> 
-> This patch prevents querying of these UEFI variables, since these Macs
-> seem to use a non-standard EFI hardware
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Aditya Garg <gargaditya08@live.com>
-> ---
-> v2 :- Reduce code size of the table.
-> V3 :- Close the brackets which were left open by mistake.
->  .../platform_certs/keyring_handler.h          |  8 ++++
->  security/integrity/platform_certs/load_uefi.c | 48 +++++++++++++++++++
->  2 files changed, 56 insertions(+)
-> 
-> diff --git a/security/integrity/platform_certs/keyring_handler.h b/security/integrity/platform_certs/keyring_handler.h
-> index 2462bfa08..cd06bd607 100644
-> --- a/security/integrity/platform_certs/keyring_handler.h
-> +++ b/security/integrity/platform_certs/keyring_handler.h
-> @@ -30,3 +30,11 @@ efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type);
->  efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type);
->  
->  #endif
-> +
-> +#ifndef UEFI_QUIRK_SKIP_CERT
-> +#define UEFI_QUIRK_SKIP_CERT(vendor, product) \
-> +		 .matches = { \
-> +			DMI_MATCH(DMI_BOARD_VENDOR, vendor), \
-> +			DMI_MATCH(DMI_PRODUCT_NAME, product), \
-> +		},
-> +#endif
-> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-> index 08b6d12f9..f246c8732 100644
-> --- a/security/integrity/platform_certs/load_uefi.c
-> +++ b/security/integrity/platform_certs/load_uefi.c
-> @@ -3,6 +3,7 @@
->  #include <linux/kernel.h>
->  #include <linux/sched.h>
->  #include <linux/cred.h>
-> +#include <linux/dmi.h>
->  #include <linux/err.h>
->  #include <linux/efi.h>
->  #include <linux/slab.h>
-> @@ -12,6 +13,32 @@
->  #include "../integrity.h"
->  #include "keyring_handler.h"
->  
-> +/* Apple Macs with T2 Security chip don't support these UEFI variables.
-
-Please refer to Documentation/process/coding-style.rst for the format
-of multi-line comments.
-
-> + * The T2 chip manages the Secure Boot and does not allow Linux to boot
-> + * if it is turned on. If turned off, an attempt to get certificates
-> + * causes a crash, so we simply return 0 for them in each function.
-> + */
-> +
-
-No need for a blank line here.
-
-> +static const struct dmi_system_id uefi_skip_cert[] = {
-> +
-No need for a blank here either.
-
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,1") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,2") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,3") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,4") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,1") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,2") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,3") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,4") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,1") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,2") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir9,1") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacMini8,1") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacPro7,1") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,1") },
-> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,2") },
-> +	{ }
-> +};
-> +
->  /*
->   * Look to see if a UEFI variable called MokIgnoreDB exists and return true if
->   * it does.
-> @@ -21,12 +48,18 @@
->   * is set, we should ignore the db variable also and the true return indicates
->   * this.
->   */
-> +
-Or here
-
->  static __init bool uefi_check_ignore_db(void)
->  {
->  	efi_status_t status;
->  	unsigned int db = 0;
->  	unsigned long size = sizeof(db);
->  	efi_guid_t guid = EFI_SHIM_LOCK_GUID;
-> +	const struct dmi_system_id *dmi_id;
-> +
-> +	dmi_id = dmi_first_match(uefi_skip_cert);
-> +	if (dmi_id)
-> +		return 0;
-
-The function returns a bool.  Return either "true" or "false".
-
->  
->  	status = efi.get_variable(L"MokIgnoreDB", &guid, NULL, &size, &db);
->  	return status == EFI_SUCCESS;
-> @@ -41,6 +74,11 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
->  	unsigned long lsize = 4;
->  	unsigned long tmpdb[4];
->  	void *db;
-> +	const struct dmi_system_id *dmi_id;
-> +
-> +	dmi_id = dmi_first_match(uefi_skip_cert);
-> +	if (dmi_id)
-> +		return 0;
-
-The return value here should be NULL.
-
->  
->  	*status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
->  	if (*status == EFI_NOT_FOUND)
-> @@ -85,6 +123,11 @@ static int __init load_moklist_certs(void)
->  	unsigned long moksize;
->  	efi_status_t status;
->  	int rc;
-> +	const struct dmi_system_id *dmi_id;
-> +
-> +	dmi_id = dmi_first_match(uefi_skip_cert);
-> +	if (dmi_id)
-> +		return 0;
->  
->  	/* First try to load certs from the EFI MOKvar config table.
->  	 * It's not an error if the MOKvar config table doesn't exist
-> @@ -138,6 +181,11 @@ static int __init load_uefi_certs(void)
->  	unsigned long dbsize = 0, dbxsize = 0, mokxsize = 0;
->  	efi_status_t status;
->  	int rc = 0;
-> +	const struct dmi_system_id *dmi_id;
-> +
-> +	dmi_id = dmi_first_match(uefi_skip_cert);
-> +	if (dmi_id)
-> +		return 0;
-
-uefi_check_ignore_db(), get_cert_list(), uefi_check_ignore_db(), and
-/load_moklist_certs() are all defined all static and are gated here by
-this dmi_first_match().  There's probably no need for any of the other
-calls to dmi_first_match().
-
-Like in all the other cases, there should be some sort of message.  At
-minimum, there should be a pr_info().
-
->  
->  	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE))
->  		return false;
-
-thanks,
-
-Mimi
-
+This looks good to me: is this what you implemented in the end?
