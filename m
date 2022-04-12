@@ -2,158 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64694C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Apr 2022 21:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEF7C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Apr 2022 10:12:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350054AbiDKVha (ORCPT
+        id S232712AbiDLKO7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Apr 2022 17:37:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55642 "EHLO
+        Tue, 12 Apr 2022 06:14:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240775AbiDKVh3 (ORCPT
+        with ESMTP id S1389767AbiDLJYI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Apr 2022 17:37:29 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 422CD32EC3;
-        Mon, 11 Apr 2022 14:35:13 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 933201F38D;
-        Mon, 11 Apr 2022 21:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649712911; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=r3uWqyQeh3AA+Cb46dnWvEZ3Eid4YgcxD15T0bs7OF0=;
-        b=x0Y0t9ignpUl5ppfhCGjNNVzR3W2LNG7TIA+jRNvkPwW6FTlHMpmEZLNyHfBvuN9wvLliT
-        vyRlXNTDtCCF8OPpwP/+cQ9Ww6cPwV0gOWqNSHFD84Rsti9dz5v3NpljGwbfNCxlDxCvJ8
-        FVKPDKp/Od3Pfp13LahQTCoMntoEjVk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649712911;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=r3uWqyQeh3AA+Cb46dnWvEZ3Eid4YgcxD15T0bs7OF0=;
-        b=Og1/lO74QMsxltiaEGnXBQ3qTUSdssihtPWBqe7B1xPnv5j2TtvEoklcTp41wddCYhku+J
-        u2AYR6PAxvbBUMAw==
-Received: from kunlun.suse.cz (unknown [10.100.128.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 93C70A3B83;
-        Mon, 11 Apr 2022 21:35:10 +0000 (UTC)
-Date:   Mon, 11 Apr 2022 23:35:09 +0200
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "pjones@redhat.com" <pjones@redhat.com>,
-        Konrad Wilk <konrad.wilk@oracle.com>
-Subject: Re: [PATCH v10 8/8] integrity: Only use machine keyring when
- uefi_check_trust_mok_keys is true
-Message-ID: <20220411213509.GG163591@kunlun.suse.cz>
-References: <20220126025834.255493-1-eric.snowberg@oracle.com>
- <20220126025834.255493-9-eric.snowberg@oracle.com>
- <20220411110640.GC163591@kunlun.suse.cz>
- <C970A5DB-0238-4B5A-9935-588DF9B1DDEF@oracle.com>
- <20220411172450.GD163591@kunlun.suse.cz>
- <54B1CDD9-F690-4F1F-9A9A-9412AAB21A72@oracle.com>
+        Tue, 12 Apr 2022 05:24:08 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2143956227;
+        Tue, 12 Apr 2022 01:38:37 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KczYz579yz67Zy6;
+        Tue, 12 Apr 2022 16:35:19 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Tue, 12 Apr 2022 10:38:34 +0200
+Message-ID: <5a229249-fd4a-76ee-ec94-5f29ca3a245c@huawei.com>
+Date:   Tue, 12 Apr 2022 11:38:33 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [RFC PATCH v4 08/15] landlock: add support network rules
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-9-konstantin.meskhidze@huawei.com>
+ <06f9ca1f-6e92-9d71-4097-e43b2f77b937@digikod.net>
+ <8e279be2-5092-ad34-2f8d-ca77ee5a10fd@huawei.com>
+ <6f9d82ed-081e-a6e4-5876-6af7db180ba1@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <6f9d82ed-081e-a6e4-5876-6af7db180ba1@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <54B1CDD9-F690-4F1F-9A9A-9412AAB21A72@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 11, 2022 at 08:34:55PM +0000, Eric Snowberg wrote:
+
+
+4/11/2022 7:20 PM, Mickaël Salaün пишет:
+> 
+> On 11/04/2022 15:44, Konstantin Meskhidze wrote:
+>>
+>>
+>> 4/8/2022 7:30 PM, Mickaël Salaün пишет:
+> 
+> [...]
 > 
 > 
-> > On Apr 11, 2022, at 11:24 AM, Michal Suchánek <msuchanek@suse.de> wrote:
-> > 
-> > On Mon, Apr 11, 2022 at 04:39:42PM +0000, Eric Snowberg wrote:
-> >> 
-> >> 
-> >>> On Apr 11, 2022, at 5:06 AM, Michal Suchánek <msuchanek@suse.de> wrote:
-> >>> 
-> >>> Hello,
-> >>> 
-> >>> On Tue, Jan 25, 2022 at 09:58:34PM -0500, Eric Snowberg wrote:
-> >>>> With the introduction of uefi_check_trust_mok_keys, it signifies the end-
-> >>> 
-> >>> What value does such flag have?
-> >>> 
-> >>> The user is as much in control of the flag as the MOK keys.
-> >> 
-> >> The flag allows the system owner (not root) the ability to determine 
-> >> if they want to load MOKList into the machine keyring.  Keys contained 
-> >> in the machine keyring are then linked to the secondary.  The flag is no 
-> >> different than the '—ignore-db' currently available in shim, which then 
-> >> gets propagated to Linux (uefi_check_ignore_db).  These flags can be 
-> >> set by the system owner, who can prove physical presence.  
-> > 
-> > Managing the MOK keys requires physical presence equally.
-> > 
-> > Moreover, these keys are trusted for running code at ring0, in fact the
-> > running kernel is expected to be signed by one of them, and can be
-> > signed by any of them.
-> > 
-> > Then what exact purpose does this extra flag serve?
-> > 
-> > If such compile-time flag exists in the kernel it cannot be overriden by
-> > the root once the kernel is signed, either.
-> > 
-> >>>> user wants to trust the machine keyring as trusted keys.  If they have
-> >>>> chosen to trust the machine keyring, load the qualifying keys into it
-> >>>> during boot, then link it to the secondary keyring .  If the user has not
-> >>>> chosen to trust the machine keyring, it will be empty and not linked to
-> >>>> the secondary keyring.
-> >>> 
-> >>> Why is importing the keys and using them linked together?
-> >>> 
-> >>> If later we get, say, machine keyring on powerpc managed by secvarctl
-> >>> then it has its value to import the keyring and be able to list the
-> >>> content with the same tools on EFI and powerpc.
-> >> 
-> >> The machine keyring is linked to the secondary keyring, exactly the same way 
-> >> the builtin is linked to it.  Linking this way should eliminate the need to change 
-> >> any user space tools to list the contents. 
-> > 
-> > That's answer to a completely different question, though.
-> > 
-> > You either import the keys and use them, or you don't use them and don't
-> > import them. The option to import and not use is not available.
+>>>>   struct landlock_ruleset *landlock_create_ruleset(const struct 
+>>>> landlock_access_mask *access_mask_set)
+>>>>   {
+>>>>       struct landlock_ruleset *new_ruleset;
+>>>>
+>>>>       /* Informs about useless ruleset. */
+>>>> -    if (!access_mask_set->fs)
+>>>> +    if (!access_mask_set->fs && !access_mask_set->net)
+>>>>           return ERR_PTR(-ENOMSG);
+>>>>       new_ruleset = create_ruleset(1);
+>>>> -    if (!IS_ERR(new_ruleset))
+>>>
+>>> This is better:
+>>>
+>>> if (IS_ERR(new_ruleset))
+>>>      return new_ruleset;
+>>> if (access_mask_set->fs)
+>>> ...
+>>
+>>    I dont get this condition. Do you mean that we return new_ruleset
+>> anyway no matter what the masks's values are? So its possible to have 
+>> 0 masks values, is't it?
 > 
-> Why import something into a keyring that can not be used?
+> No, the logic is correct but it would be simpler to exit as soon as 
+> there is a ruleset error, you don't need to duplicate 
+> "IS_ERR(new_ruleset) &&":
 > 
-> MOKList keys get imported into one of two keyrings, either the machine or the 
-> platform.  If uefi_check_trust_mok_keys returns false, the MOKList keys are 
-> loaded into the platform along with the UEFI SB DB keys.  If true, they are loaded 
-> into the machine keyring.
-
-Ooh, such quirky and convoluted design. Not sure how anyone is supposed
-to make any sense of this but hey, none of this can possibly change to
-not break something.
-
-Now I at least know.
-
-Thanks
-
-Michal
+> if (IS_ERR(new_ruleset))
+>      return new_ruleset;
+> if (access_mask_set->fs)
+>      landlock_set_fs_access_mask(new_ruleset, access_mask_set, 0);
+> if (access_mask_set->net)
+>      landlock_set_net_access_mask(new_ruleset, access_mask_set, 0);
+> return new_ruleset;
+> 
+   Ok. I got it. Thank you.
+> .
