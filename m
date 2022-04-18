@@ -2,389 +2,193 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B5CC433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Apr 2022 15:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D91C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Apr 2022 18:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345634AbiDRPs3 (ORCPT
+        id S1347298AbiDRSF0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Apr 2022 11:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33692 "EHLO
+        Mon, 18 Apr 2022 14:05:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345686AbiDRPrI (ORCPT
+        with ESMTP id S1347295AbiDRSFZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Apr 2022 11:47:08 -0400
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F26F5BD02
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Apr 2022 08:14:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1650294868; bh=zxytV29Ee/KqsOgddLCdzZjwv8OiqPiIqHzR85jUbE8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=Yhp8ZF1K/LGkZGuNPs0gcQ7UiwsDVfgFy2oCOFIoSARJl3t19R6wPje8yKzjwiLTHHl6ULkwDKlCyopQnei4Bo6nxvESKTNaElh+CNz541fLn/TgKsb4cuShfY9003wztr5OV0ZEzpV0vGiD+Edy6nfLbXhLQOsdSHfMdaPqbH019+BqModozeu9DphDkfEgLQvSU5BPftDr4PHLdpAewBYiTYhQQfHHpRKd/XImuS3c8LjMI1EsNOiSATrsoeQIsDQxGCPtwmgXNVWWMPAH5I9Z/kE5ZodKJ7HVn6lZJKO5z2QaxT9vzUcqpZZnS7wvjDmAsbBWBO82/mIY3+Jx/Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1650294868; bh=Vk4LPorpmdjOoNmR/xSMm9gdeauguAtz7W4fHMrO/vn=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=rbRlIFBGghlrJVs0TBJAGo19sYSAI5Mdh+Qz0Fm6UYwjzGvIWetO1X4P5J7W4dYy6Cq+GAJ+pXgb6mPwGUgKsGXLGIXeRoY5kmXd5+X55LGGNhScXlL4v2HwF39UOMQYmqcvJZMiHpbl0HVogIXZdA3qF3INzztw3gDnCsfxDJV81uIjgiR78DwTB6Nm2oyNGSGOETdQv6FqHWCWZt1VsZaCQ0mXryTgodELfurCsN8nRF6HIrRGUY8HB0NmRFaPq0mtqzVux+SQGGgD4+InuVvSY93bEqbVfdqZRYiKeZzWQEWjQBJPMKieDLjGSeOcNt7jme0Yi66GKJnqhOGgHg==
-X-YMail-OSG: NnLFzUcVM1nlTnEdG0edl6v83mjHge.vM7UhJeY5ofhOGQuCWzVz0ltul8rM6xq
- gD1he0CIlJ9ay6oB8StL1oivSSyPfykTJgrgVgRbc6PEdz2zLYCMjAgHxbDanHEQtaCGJZt9Ador
- SojpwAoXVkY8gMjlC8o4Zg_Q_aQK.W8tvnSyT97iRjBG_XInQvzO5ppNNNVgayLvdWUZacXAQYlP
- KGQOrIGqB_Oc_hK5mluyy0egX0EmO7aDfyJ9YLfX3QX1ydnhaoQLSRooTg1VUSBW9AlfZSoVysF.
- 9M3Hp4cAwBpU7_af9Kaui5fILTtmQA5yw2o_FezgTxEcKy4WAptXodgPZApdNqAYWmjy.x6Q9AaF
- 4LGMAsWaMn9bjfDdKrbc4kUzvI7EN.4X9I9NSJr6fdMxYVTlaiDzkIUHMB0t_.4g1QRFJTMjrOEw
- El7162tiOVrbFnrxyJ3BjzkFASJSL5E1yxQ9Q_NUbMXv.5gz8BwO1UY1NNtQ95.qJPuMz6Mdcab9
- TW3N3UdbMKuVkfr8yhZjtNmgr1n09m4aNu2qbktCT9QltZo6_6XDJbIBYS73srn0GOJK3XdQlADy
- hsc23r0zj6DnSjAcoXqWlMtNJPuHmadNqWmaYcO9_D5gClsIAKC6tlGpP.Q8TG.6sTytapWIjyZ1
- G_QjlvwHl2Qesxf1733sKS2uM3dpwYLZYdBt91PBitw8J89AAew24VA_USVFXXFv90Yp7pQ.sUoV
- rpP6gupVjW8eOfyI6RJjLREzfWJthX7vxaQtntwZkNPU9h0CnwuJKNCCzfbm_qvwfhSjAdow9yos
- m.7lLPXIfkp6GXRU4NxADITemyEB3juGaRXiXrPkbY5RvQsyPgldiJo1.qdhASiRfHuGRnM5BlY.
- 6Yw6LfbqKpC.DXMAuRDMn0Rr2ZF_swT8KQAcXtOV7Urc5mrWTKS42TaQCdFW8yYndzIxdfLHcPRg
- lk9uo6GIb9cvK4aGuwfywOSAR4AfzrJgBFMNJp06.Ef0zhSuXQOuwcWRv0gQQZ_19rbQBet5vKTz
- 2hUb2ceFSOf6cSgucSlkXUY0djHh.THllL30gSz79VzTlsLotBlUEasQT3wcutMaN13Ml_7rrsDi
- nLLQJnbR2rRGWcBBh9HgAaJneLE8sc7bF_yxrB9KBecTOocmozrxTbTSX3nOWKQKJKvY_HsqfEFj
- EJjwiNyseaK_VjTvoGepnN_gLiN7Vm4V.O0azYI.Ql2w8hnE8sFj5ANrZDVbC4Ol8eyFkJ5Mvb9G
- 3uyvZ9RdbLUQIqH4LUtxBPc29kQi5DpCvX1_eUB2uq0Ahm_ag994hSGY2yp1MmL.dVcpV_pYabYv
- ZKiQdE8qaErUyX7tORdk3iRa4bY2aAZPjB0nIeBZknFn4L2T_81s4uTgaLge.OvxEqkdimOfrpOJ
- UHUZY2N_Oj.gOhmHODrQn6jitkvu3MnvidDpe1a7vxFjEIIVo.m.VyDTIRjI5dLfPiEZgUqJeDVM
- VjyvkTtKK4s4UATfvDGa_iP67x3_EskWl5K1a95Q9G4QvWmu0sOs5pbO4h4bs2HVUQ4QbqzU48y7
- DTPw2p9XjsCIWu7vb5LpcVRqczF7KNKesg10S7REvlIrjqME7LszigYf42.Gk8v3tpx73J1KqLzS
- GiqvZB40RqP1VZnZllHV884xq4EMjtWAwX2WCUuupa.buVf4jiFOBFi7YEy1l29FM6Dr9N2ZNE3.
- Q9BOCxPfzrPzZHHac_wKvm2j_RNTpqzbDPHnUNvQ3CeJzAZMPI0lRz9o8Unt2QEKeCbH5qt2mkG8
- dLLgfnC9D87yQY7CwyEUswlbG1G9rvCUzN99T9Rm.7CZdIx.fwbyTku4KXwS_oE3RHn7L4vQhjV8
- ty8F8L5Ej.BKOTLXB48uYheS5w_d9vZhbngt1_fPHUV0GO6xz6_5T0vf8aZJqMSeEVEFnn8JwdUd
- .GcHLSexAOXxehFO8A8YnPMfvgPGxDjuPQehf2pBIq4FwavDHFZ1krruj92ITzs2ONs_4ibYxN70
- y37w74p35U0D93lxScwcvRJC6g2ICJZ.etycNav1sZkjUySs5BdNdgPbd9YI0L_pryOp9u0aA60t
- AcNZazdpBToMmwH83M4N.1Ahh9nyXF8Rne2TuHs75A8jKqZLZmVBo9uLDEVRaW76.gbvzsUSI.0t
- fj0peHfQjeppqgya2cWKHq7xg1RGv3rYWxOvl51nK3U3faZ9j4Mbqslj49BvK467S8NUaqWb1_Sg
- ZYJA04WfKE7qTxw0JqGQd8cKM8iblgFzCT675o5uMHhrj3nBTUDrr9Mwf2J1ILo5ZXaQCB_KvFY0
- YJ3hmAJZLjqySF3D9dLwP3sWk26ZdXBLTZHQvcjnfYQlSbX407ZqJEGJUnco-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Mon, 18 Apr 2022 15:14:28 +0000
-Received: by hermes--canary-production-bf1-5f49dbcd6-xjccz (VZM Hermes SMTP Server) with ESMTPA ID 311eab809775b4af02ae966c725fa26b;
-          Mon, 18 Apr 2022 15:14:26 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey.schaufler@intel.com, jmorris@namei.org,
+        Mon, 18 Apr 2022 14:05:25 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC5B03586A;
+        Mon, 18 Apr 2022 11:02:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1650304965; x=1681840965;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r2LvCWWhsD0xa0qyiMF8G3A6xlqv4L4gzs5uVZF3bYs=;
+  b=jYCiavUytSoUZ22zM/zF4djhx6XXS2v9wJiwG0ZmIuPM/DFzvTiBkUKd
+   cj/uRrX2uH3tczHd0aIvAhIGgVmXWBPtaKpcRSDr+TTj5miUo2OnUuAX1
+   5SJW+LBHJQ7QH+4HsvzI+fsEgHeoV0/4Hn4V502PajsoQhsfaLiybwdTJ
+   5+0Fn8j7K1XlU1dcosmIII2m/m2nESczU0ZIQfYNhc/E10Pcu5/IBQINj
+   DlW2IzifPho5RnAVtSavZ0FPcu5spFtQnd4EnS5swtqt/6eWPwhPOJVyP
+   j5fHtyh0f+ZFvsN0O8LAVXIJaaqVPplFyN+ZjawQiml6ufgHcNtAFUJ4U
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10321"; a="263753686"
+X-IronPort-AV: E=Sophos;i="5.90,270,1643702400"; 
+   d="scan'208";a="263753686"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2022 11:02:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,270,1643702400"; 
+   d="scan'208";a="860147611"
+Received: from lkp-server01.sh.intel.com (HELO 3abc53900bec) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 18 Apr 2022 11:02:41 -0700
+Received: from kbuild by 3abc53900bec with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1ngVhw-0004qg-FV;
+        Mon, 18 Apr 2022 18:02:40 +0000
+Date:   Tue, 19 Apr 2022 02:02:19 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH v35 28/29] LSM: Add /proc attr entry for full LSM context
-Date:   Mon, 18 Apr 2022 07:59:44 -0700
-Message-Id: <20220418145945.38797-29-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220418145945.38797-1-casey@schaufler-ca.com>
-References: <20220418145945.38797-1-casey@schaufler-ca.com>
+Cc:     kbuild-all@lists.01.org, casey@schaufler-ca.com,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v35 13/29] LSM: Use lsmblob in security_cred_getsecid
+Message-ID: <202204190104.VspbI376-lkp@intel.com>
+References: <20220418145945.38797-14-casey@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220418145945.38797-14-casey@schaufler-ca.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add an entry /proc/.../attr/context which displays the full
-process security "context" in compound format:
-        lsm1\0value\0lsm2\0value\0...
-This entry is not writable.
+Hi Casey,
 
-A security module may decide that its policy does not allow
-this information to be displayed. In this case none of the
-information will be displayed.
+I love your patch! Yet something to improve:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-api@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
----
- Documentation/security/lsm.rst       | 14 +++++
- fs/proc/base.c                       |  1 +
- include/linux/lsm_hooks.h            |  6 +++
- security/apparmor/include/procattr.h |  2 +-
- security/apparmor/lsm.c              |  8 ++-
- security/apparmor/procattr.c         | 22 ++++----
- security/security.c                  | 79 ++++++++++++++++++++++++++++
- security/selinux/hooks.c             |  2 +-
- security/smack/smack_lsm.c           |  2 +-
- 9 files changed, 121 insertions(+), 15 deletions(-)
+[auto build test ERROR on pcmoore-selinux/next]
+[also build test ERROR on linus/master v5.18-rc3 next-20220414]
+[cannot apply to pcmoore-audit/next jmorris-security/next-testing]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-diff --git a/Documentation/security/lsm.rst b/Documentation/security/lsm.rst
-index b77b4a540391..070225ae6ceb 100644
---- a/Documentation/security/lsm.rst
-+++ b/Documentation/security/lsm.rst
-@@ -143,3 +143,17 @@ separated list of the active security modules.
- The file ``/proc/pid/attr/interface_lsm`` contains the name of the security
- module for which the ``/proc/pid/attr/current`` interface will
- apply. This interface can be written to.
-+
-+The infrastructure does provide an interface for the special
-+case where multiple security modules provide a process context.
-+This is provided in compound context format.
-+
-+-  `lsm\0value\0lsm\0value\0`
-+
-+The `lsm` and `value` fields are NUL-terminated bytestrings.
-+Each field may contain whitespace or non-printable characters.
-+The NUL bytes are included in the size of a compound context.
-+The context ``Bell\0Secret\0Biba\0Loose\0`` has a size of 23.
-+
-+The file ``/proc/pid/attr/context`` provides the security
-+context of the identified process.
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index f2d15348bdff..f8aed4404e7e 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2828,6 +2828,7 @@ static const struct pid_entry attr_dir_stuff[] = {
- 	ATTR(NULL, "keycreate",		0666),
- 	ATTR(NULL, "sockcreate",	0666),
- 	ATTR(NULL, "interface_lsm",	0666),
-+	ATTR(NULL, "context",		0444),
- #ifdef CONFIG_SECURITY_SMACK
- 	DIR("smack",			0555,
- 	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index fd63ae215104..425538ebc606 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1401,6 +1401,12 @@
-  *	@pages contains the number of pages.
-  *	Return 0 if permission is granted.
-  *
-+ * @getprocattr:
-+ *	Provide the named process attribute for display in special files in
-+ *	the /proc/.../attr directory.  Attribute naming and the data displayed
-+ *	is at the discretion of the security modules.  The exception is the
-+ *	"context" attribute, which will contain the security context of the
-+ *	task as a nul terminated text string without trailing whitespace.
-  * @ismaclabel:
-  *	Check if the extended attribute specified by @name
-  *	represents a MAC label. Returns 1 if name is a MAC
-diff --git a/security/apparmor/include/procattr.h b/security/apparmor/include/procattr.h
-index 31689437e0e1..03dbfdb2f2c0 100644
---- a/security/apparmor/include/procattr.h
-+++ b/security/apparmor/include/procattr.h
-@@ -11,7 +11,7 @@
- #ifndef __AA_PROCATTR_H
- #define __AA_PROCATTR_H
- 
--int aa_getprocattr(struct aa_label *label, char **string);
-+int aa_getprocattr(struct aa_label *label, char **string, bool newline);
- int aa_setprocattr_changehat(char *args, size_t size, int flags);
- 
- #endif /* __AA_PROCATTR_H */
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 29181bc8c693..1ee58c1491ab 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -602,6 +602,7 @@ static int apparmor_getprocattr(struct task_struct *task, char *name,
- 	const struct cred *cred = get_task_cred(task);
- 	struct aa_task_ctx *ctx = task_ctx(current);
- 	struct aa_label *label = NULL;
-+	bool newline = true;
- 
- 	if (strcmp(name, "current") == 0)
- 		label = aa_get_newest_label(cred_label(cred));
-@@ -609,11 +610,14 @@ static int apparmor_getprocattr(struct task_struct *task, char *name,
- 		label = aa_get_newest_label(ctx->previous);
- 	else if (strcmp(name, "exec") == 0 && ctx->onexec)
- 		label = aa_get_newest_label(ctx->onexec);
--	else
-+	else if (strcmp(name, "context") == 0) {
-+		label = aa_get_newest_label(cred_label(cred));
-+		newline = false;
-+	} else
- 		error = -EINVAL;
- 
- 	if (label)
--		error = aa_getprocattr(label, value);
-+		error = aa_getprocattr(label, value, newline);
- 
- 	aa_put_label(label);
- 	put_cred(cred);
-diff --git a/security/apparmor/procattr.c b/security/apparmor/procattr.c
-index fde332e0ea7d..172550f67fc0 100644
---- a/security/apparmor/procattr.c
-+++ b/security/apparmor/procattr.c
-@@ -20,6 +20,7 @@
-  * aa_getprocattr - Return the profile information for @profile
-  * @profile: the profile to print profile info about  (NOT NULL)
-  * @string: Returns - string containing the profile info (NOT NULL)
-+ * @newline: Should a newline be added to @string.
-  *
-  * Requires: profile != NULL
-  *
-@@ -28,20 +29,21 @@
-  *
-  * Returns: size of string placed in @string else error code on failure
-  */
--int aa_getprocattr(struct aa_label *label, char **string)
-+int aa_getprocattr(struct aa_label *label, char **string, bool newline)
- {
- 	struct aa_ns *ns = labels_ns(label);
- 	struct aa_ns *current_ns = aa_get_current_ns();
-+	int flags = FLAG_VIEW_SUBNS | FLAG_HIDDEN_UNCONFINED;
- 	int len;
- 
- 	if (!aa_ns_visible(current_ns, ns, true)) {
- 		aa_put_ns(current_ns);
- 		return -EACCES;
- 	}
-+	if (newline)
-+		flags |= FLAG_SHOW_MODE;
- 
--	len = aa_label_snxprint(NULL, 0, current_ns, label,
--				FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
--				FLAG_HIDDEN_UNCONFINED);
-+	len = aa_label_snxprint(NULL, 0, current_ns, label, flags);
- 	AA_BUG(len < 0);
- 
- 	*string = kmalloc(len + 2, GFP_KERNEL);
-@@ -50,19 +52,19 @@ int aa_getprocattr(struct aa_label *label, char **string)
- 		return -ENOMEM;
- 	}
- 
--	len = aa_label_snxprint(*string, len + 2, current_ns, label,
--				FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
--				FLAG_HIDDEN_UNCONFINED);
-+	len = aa_label_snxprint(*string, len + 2, current_ns, label, flags);
- 	if (len < 0) {
- 		aa_put_ns(current_ns);
- 		return len;
- 	}
- 
--	(*string)[len] = '\n';
--	(*string)[len + 1] = 0;
-+	if (newline) {
-+		(*string)[len] = '\n';
-+		(*string)[++len] = 0;
-+	}
- 
- 	aa_put_ns(current_ns);
--	return len + 1;
-+	return len;
- }
- 
- /**
-diff --git a/security/security.c b/security/security.c
-index be6682768760..4c6d4171ded6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -802,6 +802,57 @@ static int lsm_superblock_alloc(struct super_block *sb)
- 	return 0;
- }
- 
-+/**
-+ * append_ctx - append a lsm/context pair to a compound context
-+ * @ctx: the existing compound context
-+ * @ctxlen: size of the old context, including terminating nul byte
-+ * @lsm: new lsm name, nul terminated
-+ * @new: new context, possibly nul terminated
-+ * @newlen: maximum size of @new
-+ *
-+ * replace @ctx with a new compound context, appending @newlsm and @new
-+ * to @ctx. On exit the new data replaces the old, which is freed.
-+ * @ctxlen is set to the new size, which includes a trailing nul byte.
-+ *
-+ * Returns 0 on success, -ENOMEM if no memory is available.
-+ */
-+static int append_ctx(char **ctx, int *ctxlen, const char *lsm, char *new,
-+		      int newlen)
-+{
-+	char *final;
-+	size_t llen;
-+	size_t nlen;
-+	size_t flen;
-+
-+	llen = strlen(lsm) + 1;
-+	/*
-+	 * A security module may or may not provide a trailing nul on
-+	 * when returning a security context. There is no definition
-+	 * of which it should be, and there are modules that do it
-+	 * each way.
-+	 */
-+	nlen = strnlen(new, newlen);
-+
-+	flen = *ctxlen + llen + nlen + 1;
-+	final = kzalloc(flen, GFP_KERNEL);
-+
-+	if (final == NULL)
-+		return -ENOMEM;
-+
-+	if (*ctxlen)
-+		memcpy(final, *ctx, *ctxlen);
-+
-+	memcpy(final + *ctxlen, lsm, llen);
-+	memcpy(final + *ctxlen + llen, new, nlen);
-+
-+	kfree(*ctx);
-+
-+	*ctx = final;
-+	*ctxlen = flen;
-+
-+	return 0;
-+}
-+
- /*
-  * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
-  * can be accessed with:
-@@ -2223,6 +2274,10 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
- 				char **value)
- {
- 	struct security_hook_list *hp;
-+	char *final = NULL;
-+	char *cp;
-+	int rc = 0;
-+	int finallen = 0;
- 	int ilsm = lsm_task_ilsm(current);
- 	int slot = 0;
- 
-@@ -2250,6 +2305,30 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
- 		return -ENOMEM;
- 	}
- 
-+	if (!strcmp(name, "context")) {
-+		hlist_for_each_entry(hp, &security_hook_heads.getprocattr,
-+				     list) {
-+			rc = hp->hook.getprocattr(p, "context", &cp);
-+			if (rc == -EINVAL)
-+				continue;
-+			if (rc < 0) {
-+				kfree(final);
-+				return rc;
-+			}
-+			rc = append_ctx(&final, &finallen, hp->lsmid->lsm,
-+					cp, rc);
-+			kfree(cp);
-+			if (rc < 0) {
-+				kfree(final);
-+				return rc;
-+			}
-+		}
-+		if (final == NULL)
-+			return -EINVAL;
-+		*value = final;
-+		return finallen;
-+	}
-+
- 	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
- 		if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
- 			continue;
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 653dd2e236f1..cd977493f734 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6346,7 +6346,7 @@ static int selinux_getprocattr(struct task_struct *p,
- 			goto bad;
- 	}
- 
--	if (!strcmp(name, "current"))
-+	if (!strcmp(name, "current") || !strcmp(name, "context"))
- 		sid = __tsec->sid;
- 	else if (!strcmp(name, "prev"))
- 		sid = __tsec->osid;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 2190c03ae3d0..9e442c4495bf 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3485,7 +3485,7 @@ static int smack_getprocattr(struct task_struct *p, char *name, char **value)
- 	char *cp;
- 	int slen;
- 
--	if (strcmp(name, "current") != 0)
-+	if (strcmp(name, "current") != 0 && strcmp(name, "context") != 0)
- 		return -EINVAL;
- 
- 	cp = kstrdup(skp->smk_known, GFP_KERNEL);
+url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20220419-000109
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+config: i386-tinyconfig (https://download.01.org/0day-ci/archive/20220419/202204190104.VspbI376-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.2.0-19) 11.2.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/2fa01492487f9135e9ea9e59924289cc23a66576
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20220419-000109
+        git checkout 2fa01492487f9135e9ea9e59924289cc23a66576
+        # save the config file to linux build tree
+        mkdir build_dir
+        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash kernel/sched/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/perf_event.h:61,
+                    from include/linux/trace_events.h:10,
+                    from include/trace/syscall.h:7,
+                    from include/linux/syscalls.h:88,
+                    from include/linux/syscalls_api.h:1,
+                    from kernel/sched/core.c:13:
+   include/linux/security.h: In function 'security_cred_getsecid':
+>> include/linux/security.h:1147:10: error: 'secid' undeclared (first use in this function)
+    1147 |         *secid = 0;
+         |          ^~~~~
+   include/linux/security.h:1147:10: note: each undeclared identifier is reported only once for each function it appears in
+   kernel/sched/core.c: At top level:
+   kernel/sched/core.c:5235:20: warning: no previous prototype for 'task_sched_runtime' [-Wmissing-prototypes]
+    5235 | unsigned long long task_sched_runtime(struct task_struct *p)
+         |                    ^~~~~~~~~~~~~~~~~~
+   kernel/sched/core.c:9420:13: warning: no previous prototype for 'sched_init_smp' [-Wmissing-prototypes]
+    9420 | void __init sched_init_smp(void)
+         |             ^~~~~~~~~~~~~~
+   kernel/sched/core.c:9448:13: warning: no previous prototype for 'sched_init' [-Wmissing-prototypes]
+    9448 | void __init sched_init(void)
+         |             ^~~~~~~~~~
+--
+   In file included from include/linux/perf_event.h:61,
+                    from include/linux/trace_events.h:10,
+                    from include/trace/syscall.h:7,
+                    from include/linux/syscalls.h:88,
+                    from include/linux/syscalls_api.h:1,
+                    from kernel/sched/sched.h:60,
+                    from kernel/sched/fair.c:53:
+   include/linux/security.h: In function 'security_cred_getsecid':
+>> include/linux/security.h:1147:10: error: 'secid' undeclared (first use in this function)
+    1147 |         *secid = 0;
+         |          ^~~~~
+   include/linux/security.h:1147:10: note: each undeclared identifier is reported only once for each function it appears in
+   kernel/sched/fair.c: At top level:
+   kernel/sched/fair.c:5530:6: warning: no previous prototype for 'init_cfs_bandwidth' [-Wmissing-prototypes]
+    5530 | void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b) {}
+         |      ^~~~~~~~~~~~~~~~~~
+   kernel/sched/fair.c:11757:6: warning: no previous prototype for 'free_fair_sched_group' [-Wmissing-prototypes]
+   11757 | void free_fair_sched_group(struct task_group *tg) { }
+         |      ^~~~~~~~~~~~~~~~~~~~~
+   kernel/sched/fair.c:11759:5: warning: no previous prototype for 'alloc_fair_sched_group' [-Wmissing-prototypes]
+   11759 | int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
+         |     ^~~~~~~~~~~~~~~~~~~~~~
+   kernel/sched/fair.c:11764:6: warning: no previous prototype for 'online_fair_sched_group' [-Wmissing-prototypes]
+   11764 | void online_fair_sched_group(struct task_group *tg) { }
+         |      ^~~~~~~~~~~~~~~~~~~~~~~
+   kernel/sched/fair.c:11766:6: warning: no previous prototype for 'unregister_fair_sched_group' [-Wmissing-prototypes]
+   11766 | void unregister_fair_sched_group(struct task_group *tg) { }
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+   In file included from include/linux/perf_event.h:61,
+                    from include/linux/trace_events.h:10,
+                    from include/trace/syscall.h:7,
+                    from include/linux/syscalls.h:88,
+                    from include/linux/syscalls_api.h:1,
+                    from kernel/sched/sched.h:60,
+                    from kernel/sched/build_policy.c:33:
+   include/linux/security.h: In function 'security_cred_getsecid':
+>> include/linux/security.h:1147:10: error: 'secid' undeclared (first use in this function)
+    1147 |         *secid = 0;
+         |          ^~~~~
+   include/linux/security.h:1147:10: note: each undeclared identifier is reported only once for each function it appears in
+   In file included from kernel/sched/build_policy.c:43:
+   kernel/sched/rt.c: At top level:
+   kernel/sched/rt.c:259:6: warning: no previous prototype for 'unregister_rt_sched_group' [-Wmissing-prototypes]
+     259 | void unregister_rt_sched_group(struct task_group *tg) { }
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/sched/rt.c:261:6: warning: no previous prototype for 'free_rt_sched_group' [-Wmissing-prototypes]
+     261 | void free_rt_sched_group(struct task_group *tg) { }
+         |      ^~~~~~~~~~~~~~~~~~~
+   kernel/sched/rt.c:263:5: warning: no previous prototype for 'alloc_rt_sched_group' [-Wmissing-prototypes]
+     263 | int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent)
+         |     ^~~~~~~~~~~~~~~~~~~~
+   kernel/sched/rt.c:666:6: warning: no previous prototype for 'sched_rt_bandwidth_account' [-Wmissing-prototypes]
+     666 | bool sched_rt_bandwidth_account(struct rt_rq *rt_rq)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+   In file included from kernel/sched/build_utility.c:39:
+   include/linux/security.h: In function 'security_cred_getsecid':
+>> include/linux/security.h:1147:10: error: 'secid' undeclared (first use in this function)
+    1147 |         *secid = 0;
+         |          ^~~~~
+   include/linux/security.h:1147:10: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +/secid +1147 include/linux/security.h
+
+ee18d64c1f6320 David Howells   2009-09-02  1143  
+2fa01492487f91 Casey Schaufler 2022-04-18  1144  static inline void security_cred_getsecid(const struct cred *c,
+2fa01492487f91 Casey Schaufler 2022-04-18  1145  					  struct lsmblob *blob)
+4d5b5539742d25 Todd Kjos       2021-10-12  1146  {
+4d5b5539742d25 Todd Kjos       2021-10-12 @1147  	*secid = 0;
+4d5b5539742d25 Todd Kjos       2021-10-12  1148  }
+4d5b5539742d25 Todd Kjos       2021-10-12  1149  
+
 -- 
-2.35.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
