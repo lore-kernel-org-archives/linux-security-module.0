@@ -2,193 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D91C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Apr 2022 18:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF83C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Apr 2022 21:16:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347298AbiDRSF0 (ORCPT
+        id S237371AbiDRVSr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Apr 2022 14:05:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52028 "EHLO
+        Mon, 18 Apr 2022 17:18:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347295AbiDRSFZ (ORCPT
+        with ESMTP id S240926AbiDRVSq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Apr 2022 14:05:25 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC5B03586A;
-        Mon, 18 Apr 2022 11:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650304965; x=1681840965;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r2LvCWWhsD0xa0qyiMF8G3A6xlqv4L4gzs5uVZF3bYs=;
-  b=jYCiavUytSoUZ22zM/zF4djhx6XXS2v9wJiwG0ZmIuPM/DFzvTiBkUKd
-   cj/uRrX2uH3tczHd0aIvAhIGgVmXWBPtaKpcRSDr+TTj5miUo2OnUuAX1
-   5SJW+LBHJQ7QH+4HsvzI+fsEgHeoV0/4Hn4V502PajsoQhsfaLiybwdTJ
-   5+0Fn8j7K1XlU1dcosmIII2m/m2nESczU0ZIQfYNhc/E10Pcu5/IBQINj
-   DlW2IzifPho5RnAVtSavZ0FPcu5spFtQnd4EnS5swtqt/6eWPwhPOJVyP
-   j5fHtyh0f+ZFvsN0O8LAVXIJaaqVPplFyN+ZjawQiml6ufgHcNtAFUJ4U
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10321"; a="263753686"
-X-IronPort-AV: E=Sophos;i="5.90,270,1643702400"; 
-   d="scan'208";a="263753686"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2022 11:02:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,270,1643702400"; 
-   d="scan'208";a="860147611"
-Received: from lkp-server01.sh.intel.com (HELO 3abc53900bec) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 18 Apr 2022 11:02:41 -0700
-Received: from kbuild by 3abc53900bec with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1ngVhw-0004qg-FV;
-        Mon, 18 Apr 2022 18:02:40 +0000
-Date:   Tue, 19 Apr 2022 02:02:19 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, casey@schaufler-ca.com,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v35 13/29] LSM: Use lsmblob in security_cred_getsecid
-Message-ID: <202204190104.VspbI376-lkp@intel.com>
-References: <20220418145945.38797-14-casey@schaufler-ca.com>
+        Mon, 18 Apr 2022 17:18:46 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85FD02CE1E
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Apr 2022 14:16:05 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id s137so21106315pgs.5
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Apr 2022 14:16:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/8XJRkQ+Ngj+SVndYkt5Kqwy78yKeKiW3fonsocHm3g=;
+        b=J1vTHu7C5Uh3f4LfAcKQPO/5Pz9IYhPGuzvmzDr/r76LDgWCFm6fpTDSrrFHEEVVIx
+         HoP+BhBTxIiOZ7XsJWw/ir1ytJ3YVKtGcIHkRd/zEskK37Gf+Vg1VyHaF6EzqMYxqYqD
+         bUrRL1EQr8iUt/oCRE7WlIxQqTZeCfihNOTrk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/8XJRkQ+Ngj+SVndYkt5Kqwy78yKeKiW3fonsocHm3g=;
+        b=JFOc8+gQq3VLVpi06GBSqgZwFeZQ+KpI0IP+aknVy5d23vunhkB01rjHiBbaxT8O2n
+         z7ermPh756YAnrZrt6wh9KikFADuBR2gZSdstudhBt+jWnzCfNzKjtcibCtdd8aKdhfB
+         BggeY3iCCcmnbNOdUqoJSOOHXQSfLOHmbzHZqR4vL2JWPprpGU1FbblpJOMD3xi0F9T8
+         qFAHEiRlU/4KkRltgn2eGh71DlUfpXo0fHaUGJlnFV+6KoWoZoqqoR8ZasIxkEhp9/+F
+         On9KJs5lPVo+rfFlMv5L5mX6QkbdKu6EAJ+bmkK5L0X/M8WsLwm2t9G03sEFahdlt7IZ
+         dRQQ==
+X-Gm-Message-State: AOAM5323ElknGXYMc6bC9sto7PLDPG4ks96Rn24HUa/Bdy6jMhgGd2Zf
+        VfpMtnayripP1rxh1ZQNo7F0kw==
+X-Google-Smtp-Source: ABdhPJy4XB+bbS97AAyRfwYXg0SHO4S5mnpEPALFnmvLrX6gjHaVLEhGa0FV74GcCXM0EQkzZfmXGg==
+X-Received: by 2002:a63:1543:0:b0:39d:9729:1992 with SMTP id 3-20020a631543000000b0039d97291992mr11756352pgv.155.1650316565036;
+        Mon, 18 Apr 2022 14:16:05 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:6b32:a0a5:ec32:c287])
+        by smtp.gmail.com with UTF8SMTPSA id y23-20020a056a00181700b0050839558f4bsm14438421pfa.40.2022.04.18.14.16.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Apr 2022 14:16:04 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>, dm-devel@redhat.com,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 0/3] LoadPin: Enable loading from trusted dm-verity devices
+Date:   Mon, 18 Apr 2022 14:15:56 -0700
+Message-Id: <20220418211559.3832724-1-mka@chromium.org>
+X-Mailer: git-send-email 2.36.0.rc0.470.gd361397f0d-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220418145945.38797-14-casey@schaufler-ca.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+As of now LoadPin restricts loading of kernel files to a single
+pinned filesystem, typically the rootfs. This works for many
+systems, however it can result in a bloated rootfs (and OTA
+updates) on platforms where multiple boards with different
+hardware configurations use the same rootfs image. Especially
+when 'optional' files are large it may be preferable to
+download/install them only when they are actually needed by a
+given board. Chrome OS uses Downloadable Content (DLC) [1] to
+deploy certain 'packages' at runtime. As an example a DLC
+package could contain firmware for a peripheral that is not
+present on all boards. DLCs use dm-verity [2] to verify the
+integrity of the DLC content.
 
-I love your patch! Yet something to improve:
+This series extends LoadPin to allow loading of kernel files
+from trusted dm-verity devices. It adds the concept of
+trusted verity devices to LoadPin. Userspace can use the
+new systl file 'loadpin/trusted_verity_root_digests' to
+provide LoadPin with a list of root digests from dm-verity
+devices that LoadPin should consider as trusted. When a
+kernel file is read LoadPin first checks (as usual) whether
+the file is located on the pinned root, if so the file can
+be loaded. Otherwise, if the verity extension is enabled,
+LoadPin determines whether the file is located on a verity
+backed device and whether the root digest of that device
+is in the list of trusted digests. The file can be loaded
+if the verity device has a trusted root digest.
 
-[auto build test ERROR on pcmoore-selinux/next]
-[also build test ERROR on linus/master v5.18-rc3 next-20220414]
-[cannot apply to pcmoore-audit/next jmorris-security/next-testing]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+The list of trusted root digests can only be written once
+(typically at boot time), to limit the possiblity of
+attackers setting up rogue verity devices and marking them
+as trusted.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20220419-000109
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-config: i386-tinyconfig (https://download.01.org/0day-ci/archive/20220419/202204190104.VspbI376-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.2.0-19) 11.2.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/2fa01492487f9135e9ea9e59924289cc23a66576
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20220419-000109
-        git checkout 2fa01492487f9135e9ea9e59924289cc23a66576
-        # save the config file to linux build tree
-        mkdir build_dir
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash kernel/sched/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/perf_event.h:61,
-                    from include/linux/trace_events.h:10,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:88,
-                    from include/linux/syscalls_api.h:1,
-                    from kernel/sched/core.c:13:
-   include/linux/security.h: In function 'security_cred_getsecid':
->> include/linux/security.h:1147:10: error: 'secid' undeclared (first use in this function)
-    1147 |         *secid = 0;
-         |          ^~~~~
-   include/linux/security.h:1147:10: note: each undeclared identifier is reported only once for each function it appears in
-   kernel/sched/core.c: At top level:
-   kernel/sched/core.c:5235:20: warning: no previous prototype for 'task_sched_runtime' [-Wmissing-prototypes]
-    5235 | unsigned long long task_sched_runtime(struct task_struct *p)
-         |                    ^~~~~~~~~~~~~~~~~~
-   kernel/sched/core.c:9420:13: warning: no previous prototype for 'sched_init_smp' [-Wmissing-prototypes]
-    9420 | void __init sched_init_smp(void)
-         |             ^~~~~~~~~~~~~~
-   kernel/sched/core.c:9448:13: warning: no previous prototype for 'sched_init' [-Wmissing-prototypes]
-    9448 | void __init sched_init(void)
-         |             ^~~~~~~~~~
---
-   In file included from include/linux/perf_event.h:61,
-                    from include/linux/trace_events.h:10,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:88,
-                    from include/linux/syscalls_api.h:1,
-                    from kernel/sched/sched.h:60,
-                    from kernel/sched/fair.c:53:
-   include/linux/security.h: In function 'security_cred_getsecid':
->> include/linux/security.h:1147:10: error: 'secid' undeclared (first use in this function)
-    1147 |         *secid = 0;
-         |          ^~~~~
-   include/linux/security.h:1147:10: note: each undeclared identifier is reported only once for each function it appears in
-   kernel/sched/fair.c: At top level:
-   kernel/sched/fair.c:5530:6: warning: no previous prototype for 'init_cfs_bandwidth' [-Wmissing-prototypes]
-    5530 | void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b) {}
-         |      ^~~~~~~~~~~~~~~~~~
-   kernel/sched/fair.c:11757:6: warning: no previous prototype for 'free_fair_sched_group' [-Wmissing-prototypes]
-   11757 | void free_fair_sched_group(struct task_group *tg) { }
-         |      ^~~~~~~~~~~~~~~~~~~~~
-   kernel/sched/fair.c:11759:5: warning: no previous prototype for 'alloc_fair_sched_group' [-Wmissing-prototypes]
-   11759 | int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
-         |     ^~~~~~~~~~~~~~~~~~~~~~
-   kernel/sched/fair.c:11764:6: warning: no previous prototype for 'online_fair_sched_group' [-Wmissing-prototypes]
-   11764 | void online_fair_sched_group(struct task_group *tg) { }
-         |      ^~~~~~~~~~~~~~~~~~~~~~~
-   kernel/sched/fair.c:11766:6: warning: no previous prototype for 'unregister_fair_sched_group' [-Wmissing-prototypes]
-   11766 | void unregister_fair_sched_group(struct task_group *tg) { }
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   In file included from include/linux/perf_event.h:61,
-                    from include/linux/trace_events.h:10,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:88,
-                    from include/linux/syscalls_api.h:1,
-                    from kernel/sched/sched.h:60,
-                    from kernel/sched/build_policy.c:33:
-   include/linux/security.h: In function 'security_cred_getsecid':
->> include/linux/security.h:1147:10: error: 'secid' undeclared (first use in this function)
-    1147 |         *secid = 0;
-         |          ^~~~~
-   include/linux/security.h:1147:10: note: each undeclared identifier is reported only once for each function it appears in
-   In file included from kernel/sched/build_policy.c:43:
-   kernel/sched/rt.c: At top level:
-   kernel/sched/rt.c:259:6: warning: no previous prototype for 'unregister_rt_sched_group' [-Wmissing-prototypes]
-     259 | void unregister_rt_sched_group(struct task_group *tg) { }
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~
-   kernel/sched/rt.c:261:6: warning: no previous prototype for 'free_rt_sched_group' [-Wmissing-prototypes]
-     261 | void free_rt_sched_group(struct task_group *tg) { }
-         |      ^~~~~~~~~~~~~~~~~~~
-   kernel/sched/rt.c:263:5: warning: no previous prototype for 'alloc_rt_sched_group' [-Wmissing-prototypes]
-     263 | int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent)
-         |     ^~~~~~~~~~~~~~~~~~~~
-   kernel/sched/rt.c:666:6: warning: no previous prototype for 'sched_rt_bandwidth_account' [-Wmissing-prototypes]
-     666 | bool sched_rt_bandwidth_account(struct rt_rq *rt_rq)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   In file included from kernel/sched/build_utility.c:39:
-   include/linux/security.h: In function 'security_cred_getsecid':
->> include/linux/security.h:1147:10: error: 'secid' undeclared (first use in this function)
-    1147 |         *secid = 0;
-         |          ^~~~~
-   include/linux/security.h:1147:10: note: each undeclared identifier is reported only once for each function it appears in
+[1] https://chromium.googlesource.com/chromiumos/platform2/+/HEAD/dlcservice/docs/developer.md
+[2] https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/verity.html
 
 
-vim +/secid +1147 include/linux/security.h
+Matthias Kaehlcke (3):
+  dm: Add verity helpers for LoadPin
+  LoadPin: Enable loading from trusted dm-verity devices
+  dm: verity-loadpin: Use CONFIG_SECURITY_LOADPIN_VERITY for conditional
+    compilation
 
-ee18d64c1f6320 David Howells   2009-09-02  1143  
-2fa01492487f91 Casey Schaufler 2022-04-18  1144  static inline void security_cred_getsecid(const struct cred *c,
-2fa01492487f91 Casey Schaufler 2022-04-18  1145  					  struct lsmblob *blob)
-4d5b5539742d25 Todd Kjos       2021-10-12  1146  {
-4d5b5539742d25 Todd Kjos       2021-10-12 @1147  	*secid = 0;
-4d5b5539742d25 Todd Kjos       2021-10-12  1148  }
-4d5b5539742d25 Todd Kjos       2021-10-12  1149  
+ drivers/md/Makefile               |   1 +
+ drivers/md/dm-verity-loadpin.c    |  80 ++++++++++++++
+ drivers/md/dm-verity-target.c     |  34 ++++++
+ drivers/md/dm-verity.h            |   4 +
+ include/linux/dm-verity-loadpin.h |  27 +++++
+ security/loadpin/Kconfig          |  11 ++
+ security/loadpin/loadpin.c        | 168 +++++++++++++++++++++++++++++-
+ 7 files changed, 324 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/md/dm-verity-loadpin.c
+ create mode 100644 include/linux/dm-verity-loadpin.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.36.0.rc0.470.gd361397f0d-goog
+
