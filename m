@@ -2,58 +2,58 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51001C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Apr 2022 15:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F89FC433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Apr 2022 15:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345681AbiDRPpd (ORCPT
+        id S1345711AbiDRPqK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Apr 2022 11:45:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54578 "EHLO
+        Mon, 18 Apr 2022 11:46:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345673AbiDRPpQ (ORCPT
+        with ESMTP id S1345549AbiDRPpq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Apr 2022 11:45:16 -0400
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E1E75A0A2
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Apr 2022 08:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1650294676; bh=lg5n6X0Jaleg5WGjAFDMbKg9/7qG3ZPbBsw/+a/HLSM=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=tEOakH+zMlsRALP9meJ8U+fh1z0rXralfznqLK5O/sheDsBsDk7o8csBeglxnRYaPNCFGufJV3nGMwvTl29xQ1SihR5oYCwu1rpuzYTosBV7eNM0rndR2iAIVYGVNRQXm7TtJd+4TnTGMinVXZEMzFlovOL+xWg9+9ubf6K7fqinYgBVLmL5ywB+ZUwsoGrJAujpixAgcRrL/xR5lf67i2odxDrrAk93EId9oLL78mMvr0/jE+w6xfKqVwxc8xD4d4DbRkinNb2Ef83f+1KZDvC28hSBc8bXrqTznT5Bc268VyGwWvP5JI7p9JltrcZQtdTmoXUuWmbGHZ3QBNjTqw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1650294676; bh=UQTGkqSw1gTKXDhE+cQjvs71seTzgbXdCXzT4aoUaUK=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=WMY6v4NYou1lBW4lpwA/pYRHCQG6k8SpMFWDJslfsXVSBXc/StG+y3EjiplmHW9MOUlU/X2jlWAdgvZ14MpkJ9SlruSNk4CIWc8KArrbAWgKlraq+BfXYjxjNSmhmRvkjHVfJYnzhjSvJXif37F1GkmQMFr68Gk3LXVpHlw3HVlEP9N1IO8FXsjTxBzKjm+nYQoYyKu4WRwtwzgBlQM95x0tOGDXg1R5yC0wRd0ZVicMtNa6RxiYOAmZ3b3mfzWaX0aZ+ejZdfVWIC+AZ+WAa7Sn2W8tfIwF53hbLEJoAChCVE2bxgn3ez2932E5maSbUws619Z+m3SGmxQWcg5qIQ==
-X-YMail-OSG: .yq_mnkVM1lS9ToOyxi19vg5qqDvk3d6izkKHadK8fjNAz2kHEZ.73UA63twJE6
- RE5Rv86FTTZ77DYKjRlrA0ny31feRyRUQMJ2rY.Hc11G1khegRn9Ua_sEl_zlCDBKyHZ_saOWfo5
- WbRJOu7eRvgbKE2Z_nbWCBAjG.JBu78NtEUMqZNYj1F0OE55nxUx6CfOXLVNgrgxNIqXSgpqzB1z
- h_EESQiADkfD8RUIBlkt4vt_CRz6mp8a4Wea88SWJyKf3B5fHaSEKqcQnRGtwYxU6FExGmHJuX1f
- kzQyoiEN122jOJzIcB21vyENyy6AW.8p5Pj7YxXdYyjdGqFZW4Mua5CsCn2izq3Pn52WEcgTyMUi
- ULFJgML9uC2AghbfeAQyL7zw_0XVfZYbiVHJtYcIJTXTOMZf2kAFj8DViQBbTcRBZ.SbEB_5mWTC
- G6uS8fK2rVzJVYaooYGghUYYNIxoAV.giOOl.DUu3mahJswbCCrxZgc3ri.VZAfgPunGVlOYtoyf
- 99pmDvXr3x1Zegn8fIr2LH5v7BYcvGoIT1FrAfrcX_AIAouNOueHVCYSxFvNEpkRbZzhDUA__KO1
- evhOHBBNxhZXNVBT1vYom6F_z.52UMidELHq8qALwZ_eOw0NMx6YlhKlHAydibv7RrHBlvAO8VEn
- fqJzxrwlKAS_qRcTps0UHW61Gu9s3Zd_IV67eEti2..Q9ZFAuv02plKlrZ.B3tpJhoMuKevhPPsq
- A2RgGIyN0QafT68SwiIHjdHqussTtt4djvTv8PC1NYvzr4DFVHPBB3E1XTLpsfIqS8mfD6puuZPi
- 4_L6og9XMNsYr62w8j.1lAjnTsI4WPNn7hNQlhqh1bzAY3WERnSTMl4fwYN8EDxD6TzLzH7DOz7t
- AdrVGEOP9C0VBiZwbvoSnm7K9ozpJzK1adPDUzHCpEGHV4zfwPTwzFAKXaV8Espr88_WLCBv7bfe
- T19BbU8JUs1o1_HaC7zze2Cn0BFDvLc7qKFA9GVJZiiMgslJ41cDBr4VJHl3vGnIxj6XENoGakV4
- myFRpZb50Es5m86UQrkby6or0Op.Z_9vBQB_JuZKZWo8ZQht4pUrWI9.7bkiy4XRBf6aoPK9cD6F
- Vxs978_meMZb_Q3ZH4qv3J6QpoZyID3n46Kjyhs3eNcG9y0Hmz5ucriu1Fd.y5TasoQa5oOrvKMJ
- xeGE3VqFUg1MLd9z4V_juGonalJ7D10r2yg8eElDpBHq.wE3QfLcFZF3aE10VhtexM4JuAm2JoSC
- ptPaO4cVBVx4uowTZxtJPMQd9t.mn8rwRcXC.d0DRUxAC416PY4pLG9ZBOqEH5kaO61Z2V1EeS4M
- QKPcUqBDiPCn83kuXGP7xgn1TCsBj1jo0blRfDuiffTDc7uvZoHHF08uEhe0pFtZp2LSGXCzyj6i
- At5SG5VaGE5FIB0Pbg7gBM.NjyST.8oo_F4PvCP2i6zDV.fmfjlbEZIrD7EcARNx9bocSKBI7BoH
- ie6aRWZCts_fnoKlZ.Xlg8sNVeEAMFdmLkOUiqLLzawGGXkXTmccOWnSnHkVyUM9VoP_6tG1.ZVG
- SgxmTX2oYOznOBLFoQZuoOjDmnEJgz893of6HCJ8V50pEZSBjak0ypJwFAADQfVtnRonmJd1UF_c
- mIc.ItdvrHWC0Cm0N9S.BQH2uHUKK2YlP.STJyAT1JEkhWVyCwLGcfLvXeHidxBkGZER5HGuOuwx
- .T8dj52sokdGoSK0UN8ImUb.9duRJmADMnNBKvi6oGQ3YIAte9QndnBQKy665fY0KSJAWZ9drcF7
- PVkFFW3dQKQrevcMBX1WmEavbeUvclxElc24SOJJ_MaB2XR9Duh.wsVFYBgFhsCBz2hmad9BIghL
- clVOdj5OifwRqpu7fZD5kUoDf0Gk58corMJBEkrmK6rD9h52ViW1Ns1JfTnI1jxNoo49YR23ne6u
- bOcZqWWipm0.AtIySkWk5mZ4BM8iM801sldv.Ks2lGZw5x63lr.CKSf0EFf8XsUcQW3ZCsXuTNfq
- RcTgDShKid2v7BmmG9p4Ri6rLX_upsib_SDii5t6rYjKkcsnySjfDioSm53dseX08w_U2BlxoG3k
- EYRkKm_SEe0VIwX7XfIY3z7juTAocM7MogcO.L96iN.PKJjXo9bgm8224.xaETTvJp28Hsyv6xV4
- uXUcyzo7TUoTa3W87rTlaaq4LfVdTOyUtb2Xe175L09vhZ7k1ctpdoFGd7mROpIv14myWt_UTTe4
- SNGo9qJKe8cLjU3NveBQxzSirefPmJw0fGqbTeKPHG.N4f5No9j95UsW2PDhAWvixd05E_nYYLsB
- hOEvh
+        Mon, 18 Apr 2022 11:45:46 -0400
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83CEB5A0AF
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Apr 2022 08:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1650294767; bh=kMLscTMxM/e+jgLbdd4pjlWQBT9hBPTadnVTTCq3dTA=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=i8tHt5fXSmbXoiXOTZOKiHASi/pNm4bTqx1Rqd+K7ElZ379SV6mvG/qeTeHmwVRECbd7JlGlToC/utfly3YGdsJtfr8ovnV1auUHHGOIu9ZuMLa1pKZLgJcgaE/aG/KwZqRgOa4VV38O1Pm0F74vWHsyTsb1X5vBJWQXep321JBO2YCwUC+Zcsk52vMD7iqyPGvmOC/hlyhdm26pImWqc5iyiTVe4iBlXAWlwjqX6cWl+O1itrMJyjJy16ftvaSIggtMuWHetW6RPigHRp3Wcs9vCt7IoMAu0hyp+Jk7VX4Dce3ULfs7MYYa7NIuVDCTKunjAWmtIwfNKejty1n69g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1650294767; bh=gHucft5FSsROnsYX433jHd9Ha4PMBW4b/VZJY4fJdFJ=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=WUskznrQAXHzyra/1lR7E3zUao2TMbsgb5+qiMXIS7jLsavjId2/l+XUUC9Nd8VuQ3xo+Pnhl1jNT5QBn4WuBC7m7o8r1f9jWaihngwndC+nVUXugA/p7egvmklnYUKAItUSJQiC76T5WSfYxcgiZKVidHwUTZhFPIQ83KyhYKwFjVCiAM0oPyAEfTq3ZYeN+UMhW+icHuDhhjhReP+mSL+lIRDhluc8c9Z0MPiFh1l7NgaOxAqUO8awLhFCJroL7zVqWdsCGb/84h8sJbvQ4F27JhlRI4T+2OEXXyxyGYQFuuH9z1am1cGZ7d4vJ4YwczfLVmWVqMiqsBXKGT8F4g==
+X-YMail-OSG: 8pXSGJAVM1njKlorQwrOCZKVoKcNDSOTew6QsUJcpN7glA.ILBQ51KXx8PIwsgn
+ uAl7wuztEnq2tE2qljeAfW1_ygDUMvv7JwZRPCmyHy6iC5d2E5FXfTfnbBCpVBNEF73DwszmxiXi
+ PJp9GWYXKrR6ECheFSU1GzsjN.yweKHi72aI.Md7LBbbJrGu0LjmPKIUnt9n5kDWPvEQnEhZSEi4
+ hIX5.FIlyYPPSC44g07eH0fm1UJKqvXOymyQIOica1VORAsVKTNthXuiDkLYV6k8aGb6mb5L3ykx
+ abpuE80_f7i.rc_vqMUigcsfxOvT.jBelAeUlw174VsCc4KQrKr8lzJOBHvlgbPkMkzL9VT6ZsSC
+ bho2ZB8vcFigJ0SZtdK8.b3LRqpFsnSGChxmy5vgehjy8.FXSEkjmbA9esOJGiTw9UzSfrBMe6QS
+ keY5KuK7H2Ntz9bWfL2W1_HwK6__udva3a6WPItjCH3J75B14ePyeychdCfwa5wWmPISg0hETAU0
+ BtaWz2X5nw7fvQJpflwWAFj1RGk_G.OKJ9lArYxVmMB3zdEBSkuZSybT.nkHh.YpRboiNWJBqjtm
+ s0vNTw41Y.Knh.Z0XAPByeliLf7CYOw5Ox6SJtrJCApIgkPKRY.JB7EVU0T3ldW11M722cLSejaG
+ 8fm3VhF5_RGlKNgLhekmUcfX17hxCZy9_E8JmXi_UGrpIos8HNxyJDOpYrdnTREu1m6YFjPK50TW
+ Xg.WCjyw6CQG.KIyAmwfmssPPzbbeX0pvDYmexhP0zrKTLkT5udkyVDuYQH2Q09UjO.Buu2Tk.Ba
+ JTirU7ig5GzvF92hmZnb36zvsVAfUOoJeibYjLI2VB0e1NrPHYVIukuYk_BO7nChs_1pQJktIsmE
+ lGZVFe95RFdypMDTR9EOYroaOrugKTXIJN8b3NInXfVgakZH2zdWdZDtkQfrtJLd1Gtv7NVDDdxM
+ cBx1bipw20ZA8Th98mDDaaYkB8YYeB6SR3f7NUS.8.2nfJt7TC4YZg9Jdq2i.ecBTQ.VO7qD5pL3
+ CUeQBSCMVqga3TE81YglpbAeW8MamZ7ZL74aYrkjGx4_x.pF2UmlsE5gRsB2J2f8QkSXpP6k4ZfL
+ bTuPd8amG1TCuGSVFoS5pNcf2NjKSo0SAorWoBhXj87XPCcr1jY0eNuZq.hx9rdKuZJghKcJgDL4
+ Mipu_uFyW.fnoXZfnjC846d4c.fjlRaOG11ZUHDUDWOfQxmbtcR.6jwaU75ULRr1wbZjOb2NWReO
+ N6czSli1iluF_YmKJGPbZgNCssXEg8UBR9txVj_QB_1qq5UJX2F3vLxB9WjGoq5y9whJ1tJfKAQI
+ 44iLwXXtXaDDRLWyyaFXfmcE.HDlH3bc2IqPFjBipILQCKZV.i.lDrRto20cJ1XpvKwK9hkXLYq5
+ AwA65MaKGxNoCFx9k6KRDABzNMO48mE0kbkdXVH38pMc2sWjjzeC1G4q1Xr1_Bf8_35AOGqud3Sr
+ HnRZ57em8ckTjylBrVbDVW6mjkkokRRoY2i_j8RJL9wpKV3.BsbvyvyTcS_MwOgwPP2EVVlPVS9p
+ 1dl7hsKKSN6bGAY6ca2ChK1D5wXWvH1zKOMWp2yPeoty_PGOLfDUbkreBz1DVfe50Li5qeRCFOFp
+ L2v9cqMV46aaiW8C_QqoN5bW0_4Ya3pBWALjRG._VNU9KeHhNlUr2PC32tPQsF0dT8Z0esE71Wr5
+ e_NSjZ8eGo1Hre9mCx2F2KZfGEaTf8ZmY3NhcPwf4q_wpciYFKDy0qNxq0pBRTV0yJ4hUS.yv6rV
+ h5rrTnvjz_E_YRY7HgiwWuIgT2nqlVN33Atof1BSHSS0k8K92E.KHjlGVb_7433fQy4BkXfiaht_
+ nfso9I0qQfdSVOM4tYUTAAKfuyySU3JIDrUnx66QM9AfwaQiAyY1sfbChEHvrNtVvfdr69yJ6Bsc
+ 3ShjtVFM0f3BVSuaUd9YltLN7eGocgal1elYu_IXRFWmoHkpBLTJ.rDt.4Cu.YvmkuQEIMxNX.ag
+ zd8eVhU4uFzLsGWXi6DboZ_Wr2.oKmxwn30gpK140zqpMNZ5mRlnYAKkgs6fUlg7vjWiPoTuQd7M
+ SPZ5f00Gudhoqi4lFsjZnZ39uKcDTILBPPlTRIORgtMFYYBuQkLSa6MCVWXMF70eO6EWJsNmjzOG
+ wKhDJNclnGu719F.icSlbwYHskKhbJXoR4i9clowTGvyCjXw0uSG5KjeGcRslPvLonXG9LfvuPog
+ 7YLR5NaiAMdkjT1ud0BzSTvQTFusMS1zMR8sd6vfXK_aH1UDKfH5llgmF5hrxhxy7Os0Q4b1tORo
+ KF2VLdq16tYAc6FE7uc4uPZNU7ljxUr7hy_MY.PHVm8LeaM.mpaJUT9jDrA--
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Mon, 18 Apr 2022 15:11:16 +0000
-Received: by hermes--canary-production-gq1-665697845d-2b87j (VZM Hermes SMTP Server) with ESMTPA ID 325f6f931fdc97e0cc6b332f80cb9e73;
-          Mon, 18 Apr 2022 15:11:11 +0000 (UTC)
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Mon, 18 Apr 2022 15:12:47 +0000
+Received: by hermes--canary-production-ne1-c7c4f6977-qcc8c (VZM Hermes SMTP Server) with ESMTPA ID ee952e2418b7fa05874502fbf35997b4;
+          Mon, 18 Apr 2022 15:12:46 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
@@ -61,9 +61,9 @@ Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
         keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
         stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v35 22/29] Audit: Keep multiple LSM data in audit_names
-Date:   Mon, 18 Apr 2022 07:59:38 -0700
-Message-Id: <20220418145945.38797-23-casey@schaufler-ca.com>
+Subject: [PATCH v35 24/29] LSM: Add a function to report multiple LSMs
+Date:   Mon, 18 Apr 2022 07:59:40 -0700
+Message-Id: <20220418145945.38797-25-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220418145945.38797-1-casey@schaufler-ca.com>
 References: <20220418145945.38797-1-casey@schaufler-ca.com>
@@ -72,93 +72,35 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Replace the osid field in the audit_names structure
-with a lsmblob structure. This accomodates the use
-of an lsmblob in security_audit_rule_match() and
-security_inode_getsecid().
+Add a new boolean function lsm_multiple_contexts() to
+identify when multiple security modules provide security
+context strings.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
 ---
- kernel/audit.h   |  2 +-
- kernel/auditsc.c | 22 ++++++++--------------
- 2 files changed, 9 insertions(+), 15 deletions(-)
+ include/linux/security.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/kernel/audit.h b/kernel/audit.h
-index 316fac62d5f7..4af63e7dde17 100644
---- a/kernel/audit.h
-+++ b/kernel/audit.h
-@@ -82,7 +82,7 @@ struct audit_names {
- 	kuid_t			uid;
- 	kgid_t			gid;
- 	dev_t			rdev;
--	u32			osid;
-+	struct lsmblob		lsmblob;
- 	struct audit_cap_data	fcap;
- 	unsigned int		fcap_ver;
- 	unsigned char		type;		/* record type */
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 231631f61550..6fe9f2525fc1 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -700,17 +700,16 @@ static int audit_filter_rules(struct task_struct *tsk,
- 					 * lsmblob, which happens later in
- 					 * this patch set.
- 					 */
--					lsmblob_init(&blob, name->osid);
- 					result = security_audit_rule_match(
--								&blob,
-+								&name->lsmblob,
- 								f->type,
- 								f->op,
- 								&f->lsm_rules);
- 				} else if (ctx) {
- 					list_for_each_entry(n, &ctx->names_list, list) {
--						lsmblob_init(&blob, n->osid);
- 						if (security_audit_rule_match(
--							&blob, f->type, f->op,
-+							&n->lsmblob,
-+							f->type, f->op,
- 							&f->lsm_rules)) {
- 							++result;
- 							break;
-@@ -1589,13 +1588,12 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
- 				 from_kgid(&init_user_ns, n->gid),
- 				 MAJOR(n->rdev),
- 				 MINOR(n->rdev));
--	if (n->osid != 0) {
--		struct lsmblob blob;
-+	if (lsmblob_is_set(&n->lsmblob)) {
- 		struct lsmcontext lsmctx;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 2150016492be..3fab84220f88 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -232,6 +232,15 @@ static inline bool lsmblob_equal(const struct lsmblob *bloba,
+ extern int lsm_name_to_slot(char *name);
+ extern const char *lsm_slot_to_name(int slot);
  
--		lsmblob_init(&blob, n->osid);
--		if (security_secid_to_secctx(&blob, &lsmctx, LSMBLOB_FIRST)) {
--			audit_log_format(ab, " osid=%u", n->osid);
-+		if (security_secid_to_secctx(&n->lsmblob, &lsmctx,
-+					     LSMBLOB_FIRST)) {
-+			audit_log_format(ab, " osid=?");
- 			if (call_panic)
- 				*call_panic = 2;
- 		} else {
-@@ -2297,17 +2295,13 @@ static void audit_copy_inode(struct audit_names *name,
- 			     const struct dentry *dentry,
- 			     struct inode *inode, unsigned int flags)
- {
--	struct lsmblob blob;
--
- 	name->ino   = inode->i_ino;
- 	name->dev   = inode->i_sb->s_dev;
- 	name->mode  = inode->i_mode;
- 	name->uid   = inode->i_uid;
- 	name->gid   = inode->i_gid;
- 	name->rdev  = inode->i_rdev;
--	security_inode_getsecid(inode, &blob);
--	/* scaffolding until osid is updated */
--	name->osid = lsmblob_first(&blob);
-+	security_inode_getsecid(inode, &name->lsmblob);
- 	if (flags & AUDIT_INODE_NOEVAL) {
- 		name->fcap_ver = -1;
- 		return;
++static inline bool lsm_multiple_contexts(void)
++{
++#ifdef CONFIG_SECURITY
++	return lsm_slot_to_name(1) != NULL;
++#else
++	return false;
++#endif
++}
++
+ /**
+  * lsmblob_value - find the first non-zero value in an lsmblob structure.
+  * @blob: Pointer to the data
 -- 
 2.35.1
 
