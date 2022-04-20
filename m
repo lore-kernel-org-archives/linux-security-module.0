@@ -2,107 +2,267 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D4DC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Apr 2022 10:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E5FC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Apr 2022 14:07:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346189AbiDTKcB (ORCPT
+        id S1379367AbiDTOKL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Apr 2022 06:32:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59472 "EHLO
+        Wed, 20 Apr 2022 10:10:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234821AbiDTKcA (ORCPT
+        with ESMTP id S1379363AbiDTOKJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Apr 2022 06:32:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 141383F887
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Apr 2022 03:29:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1650450554;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KIJu0PnDJV4/uO0UdPgu/58WGciQu1suUPJ1SFUvK60=;
-        b=G5i088Diuaz/Oj1WT128VTenOepL4bHwwY8o5EBnLJpBpO6qQnFEDGqmF0rUP5U2G5zoCI
-        zw6x9jAbE1DXzGdTUy9ZwNMp0M25r4bsSYA5uqNjQYFApmo9vfWXA0TnZNj9Lw/VSsnzzE
-        8EsOxGDsQi9h0r8sf8+TxrM+dDcxST0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-441-5Q0XG3XRM2uJXHWtLXv0tg-1; Wed, 20 Apr 2022 06:29:12 -0400
-X-MC-Unique: 5Q0XG3XRM2uJXHWtLXv0tg-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 83F2338149C1;
-        Wed, 20 Apr 2022 10:29:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E39654022C4;
-        Wed, 20 Apr 2022 10:29:08 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210312171232.2681989-4-mic@digikod.net>
-References: <20210312171232.2681989-4-mic@digikod.net> <20210312171232.2681989-1-mic@digikod.net>
-To:     =?us-ascii?Q?=3D=3FUTF-8=3Fq=3FMicka=3DC3=3DABl=3D20Sala=3DC3=3DBCn=3F?=
-         =?us-ascii?Q?=3D?= <mic@digikod.net>
-Cc:     dhowells@redhat.com, David Woodhouse <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        =?us-ascii?Q?=3D=3FUTF-8=3Fq=3FMicka=3DC3=3DABl?=
-         =?us-ascii?Q?=3D20Sala=3DC3=3DBCn=3F=3D?= 
-        <mic@linux.microsoft.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v7 3/5] certs: Make blacklist_vet_description() more strict
+        Wed, 20 Apr 2022 10:10:09 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A1543ED0;
+        Wed, 20 Apr 2022 07:07:14 -0700 (PDT)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23KCVH0K024554;
+        Wed, 20 Apr 2022 14:06:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=BfTEp153fWrGaCJepdQKZ+n0s+PGj2bnofihA+uJby0=;
+ b=aDjnKyMMGYGDna8FctEzNhKYArP/k+x3IFkg4953+h67FdvO9h5C6HWu7AhEaRkxO55X
+ TKA/hgvl4oi39XFGIAy4EUOfo9TOHvqSO2W+NFKeQ5MlSZcgcZ19b4EOPlqOOXOtCWKo
+ eKrSQGTV1dAPMdaXJqHllooptllcIGbvddNViZeJuYSnIBQ8PprNMPw16VwjZO53+GJG
+ pf/jSpybreTujvR8xgj2pyVLml0tcApbPzJVvE1gWN/TGjkL9nJmcj4/LVPtZj6lV519
+ TT5KLTeB2mY6QFfNyrHobcoEa/E8pFLm9pss3GfvDWqvwG02wkD/7g8s+3/BWzgMLDA2 HQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3fjff2wtme-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 20 Apr 2022 14:06:45 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 23KDurvd020313;
+        Wed, 20 Apr 2022 14:06:44 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3fjff2wtkx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 20 Apr 2022 14:06:44 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23KE31ro020617;
+        Wed, 20 Apr 2022 14:06:43 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma02dal.us.ibm.com with ESMTP id 3ffneabv4r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 20 Apr 2022 14:06:43 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23KE6gud21758450
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Apr 2022 14:06:42 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 24709AE060;
+        Wed, 20 Apr 2022 14:06:42 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05A41AE064;
+        Wed, 20 Apr 2022 14:06:42 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Apr 2022 14:06:41 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        jpenumak@redhat.com, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v12 09/26] ima: Move ima_lsm_policy_notifier into ima_namespace
+Date:   Wed, 20 Apr 2022 10:06:16 -0400
+Message-Id: <20220420140633.753772-10-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220420140633.753772-1-stefanb@linux.ibm.com>
+References: <20220420140633.753772-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 20 Apr 2022 11:29:08 +0100
-Message-ID: <648218.1650450548@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: muvPtEq-rclwyL0rmeUgUcEcZ7Y9azCh
+X-Proofpoint-ORIG-GUID: ZieNZtwF-YBrEl-ldIe-SNhpnVFFAPM2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-04-20_04,2022-04-20_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 clxscore=1015 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 phishscore=0 suspectscore=0 priorityscore=1501
+ mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2204200081
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
+Move the ima_lsm_policy_notifier into the ima_namespace. Each IMA
+namespace can now register its own LSM policy change notifier callback.
+The policy change notifier for the init_ima_ns still remains in init_ima()
+and therefore handle the registration of the callback for all other
+namespaces in init_ima_namespace().
 
-> +	/* The following algorithm only works if prefix lengths match. */
-> +	BUILD_BUG_ON(sizeof(tbs_prefix) !=3D sizeof(bin_prefix));
-> +	prefix_len =3D sizeof(tbs_prefix) - 1;
-> +	for (i =3D 0; *desc; desc++, i++) {
-> +		if (*desc =3D=3D ':') {
-> +			if (tbs_step =3D=3D prefix_len)
-> +				goto found_colon;
-> +			if (bin_step =3D=3D prefix_len)
-> +				goto found_colon;
-> +			return -EINVAL;
-> +		}
-> +		if (i >=3D prefix_len)
-> +			return -EINVAL;
-> +		if (*desc =3D=3D tbs_prefix[i])
-> +			tbs_step++;
-> +		if (*desc =3D=3D bin_prefix[i])
-> +			bin_step++;
-> +	}
+Rate-limit the kernel warning 'rule for LSM <label> is undefined` for
+IMA namespace to avoid flooding the kernel log with this type of message.
 
-I wonder if:
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-	static const char tbs_prefix[] =3D "tbs:";
-	static const char bin_prefix[] =3D "bin:";
+---
+v11:
+ - Renamed 'rc' to 'ret'
+ - Use pr_warn_ratelimited('rule for LSM...') for IMA namespaces
 
-	if (strncmp(desc, tbs_prefix, sizeof(tbs_prefix) - 1) =3D=3D 0 ||
-	    strncmp(desc, bin_prefix, sizeof(bin_prefix) - 1) =3D=3D 0)
-		goto found_colon;
+v10:
+ - Only call pr_warn('rule for LSM <label> is undefined`) for init_ima_ns
+---
+ security/integrity/ima/ima.h             |  2 ++
+ security/integrity/ima/ima_init_ima_ns.c | 14 +++++++++++++
+ security/integrity/ima/ima_main.c        |  6 +-----
+ security/integrity/ima/ima_policy.c      | 26 ++++++++++++++++--------
+ 4 files changed, 35 insertions(+), 13 deletions(-)
 
-might be better.
-
-David
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index b35c8504ef87..c68b5117d034 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -144,6 +144,8 @@ struct ima_namespace {
+ 	int valid_policy;
+ 
+ 	struct dentry *ima_policy;
++
++	struct notifier_block ima_lsm_policy_notifier;
+ } __randomize_layout;
+ extern struct ima_namespace init_ima_ns;
+ 
+diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
+index 425eed1c6838..c4fe8f3e9a73 100644
+--- a/security/integrity/ima/ima_init_ima_ns.c
++++ b/security/integrity/ima/ima_init_ima_ns.c
+@@ -10,6 +10,8 @@
+ 
+ static int ima_init_namespace(struct ima_namespace *ns)
+ {
++	int ret;
++
+ 	INIT_LIST_HEAD(&ns->ima_default_rules);
+ 	INIT_LIST_HEAD(&ns->ima_policy_rules);
+ 	INIT_LIST_HEAD(&ns->ima_temp_rules);
+@@ -30,6 +32,15 @@ static int ima_init_namespace(struct ima_namespace *ns)
+ 	ns->valid_policy = 1;
+ 	ns->ima_fs_flags = 0;
+ 
++	if (ns != &init_ima_ns) {
++		ns->ima_lsm_policy_notifier.notifier_call =
++						ima_lsm_policy_change;
++		ret = register_blocking_lsm_notifier
++						(&ns->ima_lsm_policy_notifier);
++		if (ret)
++			return ret;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -39,5 +50,8 @@ int __init ima_ns_init(void)
+ }
+ 
+ struct ima_namespace init_ima_ns = {
++	.ima_lsm_policy_notifier = {
++		.notifier_call = ima_lsm_policy_change,
++	},
+ };
+ EXPORT_SYMBOL(init_ima_ns);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 005f9e784e7b..d44faf1c065d 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -38,10 +38,6 @@ int ima_appraise;
+ int __ro_after_init ima_hash_algo = HASH_ALGO_SHA1;
+ static int hash_setup_done;
+ 
+-static struct notifier_block ima_lsm_policy_notifier = {
+-	.notifier_call = ima_lsm_policy_change,
+-};
+-
+ static int __init hash_setup(char *str)
+ {
+ 	struct ima_template_desc *template_desc = ima_template_desc_current();
+@@ -1089,7 +1085,7 @@ static int __init init_ima(void)
+ 	if (error)
+ 		return error;
+ 
+-	error = register_blocking_lsm_notifier(&ima_lsm_policy_notifier);
++	error = register_blocking_lsm_notifier(&ns->ima_lsm_policy_notifier);
+ 	if (error)
+ 		pr_warn("Couldn't register LSM notifier, error %d\n", error);
+ 
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 0a7c61ca3265..23c559c8fae9 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -368,7 +368,8 @@ static void ima_free_rule(struct ima_rule_entry *entry)
+ 	kfree(entry);
+ }
+ 
+-static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
++static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_namespace *ns,
++						struct ima_rule_entry *entry)
+ {
+ 	struct ima_rule_entry *nentry;
+ 	int i;
+@@ -399,18 +400,25 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 		ima_filter_rule_init(nentry->lsm[i].type, Audit_equal,
+ 				     nentry->lsm[i].args_p,
+ 				     &nentry->lsm[i].rule);
+-		if (!nentry->lsm[i].rule)
+-			pr_warn("rule for LSM \'%s\' is undefined\n",
+-				nentry->lsm[i].args_p);
++		if (!nentry->lsm[i].rule) {
++			if (ns == &init_ima_ns)
++				pr_warn("rule for LSM \'%s\' is undefined\n",
++					nentry->lsm[i].args_p);
++			else
++				pr_warn_ratelimited
++					("rule for LSM \'%s\' is undefined\n",
++					 nentry->lsm[i].args_p);
++		}
+ 	}
+ 	return nentry;
+ }
+ 
+-static int ima_lsm_update_rule(struct ima_rule_entry *entry)
++static int ima_lsm_update_rule(struct ima_namespace *ns,
++			       struct ima_rule_entry *entry)
+ {
+ 	struct ima_rule_entry *nentry;
+ 
+-	nentry = ima_lsm_copy_rule(entry);
++	nentry = ima_lsm_copy_rule(ns, entry);
+ 	if (!nentry)
+ 		return -ENOMEM;
+ 
+@@ -453,7 +461,7 @@ static void ima_lsm_update_rules(struct ima_namespace *ns)
+ 		if (!ima_rule_contains_lsm_cond(entry))
+ 			continue;
+ 
+-		result = ima_lsm_update_rule(entry);
++		result = ima_lsm_update_rule(ns, entry);
+ 		if (result) {
+ 			pr_err("lsm rule update error %d\n", result);
+ 			return;
+@@ -464,12 +472,14 @@ static void ima_lsm_update_rules(struct ima_namespace *ns)
+ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+ 			  void *lsm_data)
+ {
+-	struct ima_namespace *ns = &init_ima_ns;
++	struct ima_namespace *ns;
+ 
+ 	if (event != LSM_POLICY_CHANGE)
+ 		return NOTIFY_DONE;
+ 
++	ns = container_of(nb, struct ima_namespace, ima_lsm_policy_notifier);
+ 	ima_lsm_update_rules(ns);
++
+ 	return NOTIFY_OK;
+ }
+ 
+-- 
+2.34.1
 
