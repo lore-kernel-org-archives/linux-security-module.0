@@ -2,57 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F12EC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Apr 2022 08:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B9DC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Apr 2022 15:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243399AbiDUI0Q (ORCPT
+        id S1387164AbiDUPRD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Apr 2022 04:26:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
+        Thu, 21 Apr 2022 11:17:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230391AbiDUI0P (ORCPT
+        with ESMTP id S1355292AbiDUPRC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Apr 2022 04:26:15 -0400
-X-Greylist: delayed 2335 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 21 Apr 2022 01:23:26 PDT
-Received: from mail.rubyinfo.pl (mail.rubyinfo.pl [5.249.159.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B59326359
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Apr 2022 01:23:26 -0700 (PDT)
-Received: by mail.rubyinfo.pl (Postfix, from userid 1001)
-        id EC4DDA5AC4; Thu, 21 Apr 2022 08:44:00 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rubyinfo.pl; s=mail;
-        t=1650527071; bh=/9MpKlGUGEWWhiQdedVnMqaLo1WTRqCWHemvvbwCPnM=;
-        h=Date:From:To:Subject:From;
-        b=UBc5TB9szQZtZYj/iehJ41ehJZnxepa2P1ZrFB/Oh492pxXNC55MBixXaEfPlDqEh
-         obYWGyZLjdcr28Ne3hsRE8exlZYcT8viBqgI4jLuhoJ6fd3uGrCBvvFN0+xLWD76+d
-         Qn1s/XnEG0X9gHeTZF8GMcm8dIyBHn0MgeIrB1HsceUE5o4yZHm9KLenGLSYt2q876
-         /GnmEEnSHhZQWNCEKixvQ24sUub964Uo6P3W2nlbF6j9Ei4K9nT8I72lr6dAKdooaX
-         sXOUw2YKk9dQjYSI3bizH1Puy9Mm1qJX/Ih5dZbvKeBmquR3OmlIK0RBJILhiOLGaF
-         IpM8MjxKCqtyw==
-Received: by mail.rubyinfo.pl for <linux-security-module@vger.kernel.org>; Thu, 21 Apr 2022 07:43:33 GMT
-Message-ID: <20220421073001-0.1.4t.p8rj.0.k3m2hp0nes@rubyinfo.pl>
-Date:   Thu, 21 Apr 2022 07:43:33 GMT
-From:   =?UTF-8?Q? "Miko=C5=82aj_Rudzik" ?= <mikolaj.rudzik@rubyinfo.pl>
-To:     <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?Nap=C5=82yw_Klient=C3=B3w_ze_strony?=
-X-Mailer: mail.rubyinfo.pl
+        Thu, 21 Apr 2022 11:17:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05921433AA;
+        Thu, 21 Apr 2022 08:14:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9506661AC3;
+        Thu, 21 Apr 2022 15:14:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A99E1C385A5;
+        Thu, 21 Apr 2022 15:14:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650554052;
+        bh=I0zUItcOxFNNsLtXno+sh+nNc68LyirhSdAYTIDEIE4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dtfFZhaT2VSG7B3vpDVhu7DPaIcToxTO1AtvXVDAGmpgAmGXqG9futEtSoU1F0n6K
+         G/BN+b9TTS/Ei9x6W3lEDVMn5SKQTkrDyDapLXHGsTlaBxcLBROJTp0knNpj+KjeB6
+         LSqyFbhB4mNlZ3vLZCM8Re2ziShdCIQJmNJBV+/ajSjXCAnHAYyQCIupScTK9hGwBg
+         nE3qt0w/WH/64L0SHsy2jfnoQ7wS6TjwBj3BDBaMpI/KK8gvV5spcs7y1FPO5cfrnh
+         9ePR+JUJosdgR3tNrQwaIGUX/tpr6Mtd9ABj7ktTp1WPI7VVYXR2AKHQNf2Hby2qaJ
+         8cqWqzvjJTP3Q==
+Date:   Thu, 21 Apr 2022 18:12:56 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     =?us-ascii?B?PT9VVEYtOD9xP01pY2thPUMzPUFCbD0yMFNhbGE9QzM9QkNuPz0=?= 
+        <mic@digikod.net>, David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?us-ascii?B?PT9VVEYtOD9xP01pY2thPUMzPUFCbD0yMFNhbGE9QzM9QkNuPz0=?= 
+        <mic@linux.microsoft.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v7 3/5] certs: Make blacklist_vet_description() more
+ strict
+Message-ID: <YmF0eAh7dYmtLDVx@kernel.org>
+References: <20210312171232.2681989-4-mic@digikod.net>
+ <20210312171232.2681989-1-mic@digikod.net>
+ <648218.1650450548@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <648218.1650450548@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+On Wed, Apr 20, 2022 at 11:29:08AM +0100, David Howells wrote:
+> Mickaël Salaün <mic@digikod.net> wrote:
+> 
+> > +	/* The following algorithm only works if prefix lengths match. */
+> > +	BUILD_BUG_ON(sizeof(tbs_prefix) != sizeof(bin_prefix));
+> > +	prefix_len = sizeof(tbs_prefix) - 1;
+> > +	for (i = 0; *desc; desc++, i++) {
+> > +		if (*desc == ':') {
+> > +			if (tbs_step == prefix_len)
+> > +				goto found_colon;
+> > +			if (bin_step == prefix_len)
+> > +				goto found_colon;
+> > +			return -EINVAL;
+> > +		}
+> > +		if (i >= prefix_len)
+> > +			return -EINVAL;
+> > +		if (*desc == tbs_prefix[i])
+> > +			tbs_step++;
+> > +		if (*desc == bin_prefix[i])
+> > +			bin_step++;
+> > +	}
+> 
+> I wonder if:
+> 
+> 	static const char tbs_prefix[] = "tbs:";
+> 	static const char bin_prefix[] = "bin:";
+> 
+> 	if (strncmp(desc, tbs_prefix, sizeof(tbs_prefix) - 1) == 0 ||
+> 	    strncmp(desc, bin_prefix, sizeof(bin_prefix) - 1) == 0)
+> 		goto found_colon;
+> 
+> might be better.
+> 
+> David
 
-chcia=C5=82bym poinformowa=C4=87 Pa=C5=84stwa o mo=C5=BCliwo=C5=9Bci pozy=
-skania nowych zlece=C5=84 ze strony www.
+I think it'd be. 
 
-Widzimy zainteresowanie potencjalnych Klient=C3=B3w Pa=C5=84stwa firm=C4=85=
-, dlatego ch=C4=99tnie pomo=C5=BCemy Pa=C5=84stwu dotrze=C4=87 z ofert=C4=
-=85 do wi=C4=99kszego grona odbiorc=C3=B3w poprzez efektywne metody pozyc=
-jonowania strony w Google.
-
-Czy m=C3=B3g=C5=82bym liczy=C4=87 na kontakt zwrotny?
-
-
-Pozdrawiam serdecznie,
-Miko=C5=82aj Rudzik
+BR, Jarkko
