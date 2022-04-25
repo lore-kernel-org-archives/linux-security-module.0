@@ -2,193 +2,403 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A60DC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Apr 2022 14:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3FB4C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Apr 2022 16:30:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235562AbiDYOci (ORCPT
+        id S235257AbiDYQdO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Apr 2022 10:32:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42414 "EHLO
+        Mon, 25 Apr 2022 12:33:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236007AbiDYOc2 (ORCPT
+        with ESMTP id S238415AbiDYQdM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Apr 2022 10:32:28 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B72A34BB8;
-        Mon, 25 Apr 2022 07:29:23 -0700 (PDT)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Kn6lb1Wj2z686wt;
-        Mon, 25 Apr 2022 22:26:51 +0800 (CST)
-Received: from [10.122.132.241] (10.122.132.241) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Mon, 25 Apr 2022 16:29:19 +0200
-Message-ID: <3809fa82-8484-744b-a491-f8a5f7eda861@huawei.com>
-Date:   Mon, 25 Apr 2022 17:29:18 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [RFC PATCH v4 07/15] landlock: user space API network support
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
-References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
- <20220309134459.6448-8-konstantin.meskhidze@huawei.com>
- <d4724117-167d-00b0-1f10-749b35bffc2f@digikod.net>
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <d4724117-167d-00b0-1f10-749b35bffc2f@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml753-chm.china.huawei.com (10.201.108.203) To
- fraeml704-chm.china.huawei.com (10.206.15.53)
-X-CFilter-Loop: Reflected
+        Mon, 25 Apr 2022 12:33:12 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05BF313F07;
+        Mon, 25 Apr 2022 09:30:07 -0700 (PDT)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23PEhvwi009798;
+        Mon, 25 Apr 2022 16:29:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=r4qkiLwhya5oWZXoi5ouFooIYkto4KiJzfBMS5CvVYM=;
+ b=H3hq947eLC+CFFdD35aKY0hERPS+HEmVriGh1o8Cf8MuVy6P8ziyl9cksWwKUWzswkz4
+ FzGGj/O993TdLOuutE1C9j7WNJFvc/yPhmXj5NHRL5GglpjQs6pp/WMvM189cfc3ukoj
+ d98Nw16kYpRTNGiB2Wd+btFImlPExKvcXoTd8rFpq4azXYsdYrlOva6Zpy1OkWaeLnvy
+ 6U+TCrkS+KM7Q0KT4uWGoREo1pXp97QhFC5sD3b74h8Z3P+AbM5L9J2FqmUhRWqa5aYJ
+ e1ZR7KwXrn8rvV6otwQvCNCVThVNkD8XeYz5wT2bTQzgbPmWHDPtyT/mGmjxf/MewGb+ bA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fnwng2mgn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 25 Apr 2022 16:29:39 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 23PFKJPY014482;
+        Mon, 25 Apr 2022 16:29:39 GMT
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fnwng2mg1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 25 Apr 2022 16:29:39 +0000
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23PGIeo1016077;
+        Mon, 25 Apr 2022 16:29:37 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma04fra.de.ibm.com with ESMTP id 3fm938t6dc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 25 Apr 2022 16:29:37 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23PGTYFu45810120
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Apr 2022 16:29:34 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9E8E42041;
+        Mon, 25 Apr 2022 16:29:34 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EBF644203F;
+        Mon, 25 Apr 2022 16:29:32 +0000 (GMT)
+Received: from sig-9-65-74-143.ibm.com (unknown [9.65.74.143])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Apr 2022 16:29:32 +0000 (GMT)
+Message-ID: <12108732c287a85a417927de37cb027cefae6e06.camel@linux.ibm.com>
+Subject: Re: [PATCH] Carry forward IMA measurement log on kexec on x86_64
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jonathan McDowell <noodles@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Date:   Mon, 25 Apr 2022 12:29:17 -0400
+In-Reply-To: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
+References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 4FwVakIQWg86GLLMMxT-Ze_t5LsdqQFz
+X-Proofpoint-ORIG-GUID: 9JPt9lCb21sjsaUK0mdH3MYBGlCHKxiw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-04-25_08,2022-04-25_02,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
+ spamscore=0 phishscore=0 priorityscore=1501 clxscore=1011 mlxscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2204250068
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi Jonathan,
+
+On Fri, 2022-04-22 at 13:50 +0000, Jonathan McDowell wrote:
+> On kexec file load Integrity Measurement Architecture (IMA) subsystem
+> may verify the IMA signature of the kernel and initramfs, and measure
+> it. The command line parameters passed to the kernel in the kexec call
+> may also be measured by IMA. A remote attestation service can verify
+> a TPM quote based on the TPM event log, the IMA measurement list, and
+> the TPM PCR data. This can be achieved only if the IMA measurement log
+> is carried over from the current kernel to the next kernel across
+> the kexec call.
+> 
+> powerpc and ARM64 both achieve this using device tree with a
+> "linux,ima-kexec-buffer" node. x86 platforms generally don't make use of
+> device tree, so the IMA infrastructure is extended to allow non device
+> tree platforms to provide a log buffer. x86 then passes the IMA buffer
+> to the new kernel via the setup_data mechanism.
+> 
+> Signed-off-by: Jonathan McDowell <noodles@fb.com>
+
+FYI, after applying, building, and booting a kernel with this patch,
+"kexec -s -l /boot/vmlinuz-5.18.0-rc4+ --reuse-cmdline --
+initrd=/boot/initramfs-5.18.0-rc4+.img" properly loads the kernel, but
+"kexec -s -e" fails to reboot, at least on a test laptop even with only
+the "boot_aggregate" measurement record.
+
+Without enabling CONFIG_IMA_KEXEC, kexec boots properly.
+
+thanks,
+
+Mimi
+
+> ---
+>  arch/x86/Kconfig                      |  1 +
+>  arch/x86/include/uapi/asm/bootparam.h |  9 ++++
+>  arch/x86/kernel/e820.c                |  6 +--
+>  arch/x86/kernel/kexec-bzimage64.c     | 37 ++++++++++++++++-
+>  arch/x86/kernel/setup.c               | 26 ++++++++++++
+>  include/linux/ima.h                   |  1 +
+>  security/integrity/ima/ima_kexec.c    | 59 ++++++++++++++++++++++++++-
+>  7 files changed, 134 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index b0142e01002e..bde4959d9bdc 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2017,6 +2017,7 @@ config KEXEC_FILE
+>  	bool "kexec file based system call"
+>  	select KEXEC_CORE
+>  	select BUILD_BIN2C
+> +	select HAVE_IMA_KEXEC if IMA
+>  	depends on X86_64
+>  	depends on CRYPTO=y
+>  	depends on CRYPTO_SHA256=y
+> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+> index b25d3f82c2f3..2f7b138a9388 100644
+> --- a/arch/x86/include/uapi/asm/bootparam.h
+> +++ b/arch/x86/include/uapi/asm/bootparam.h
+> @@ -10,6 +10,7 @@
+>  #define SETUP_EFI			4
+>  #define SETUP_APPLE_PROPERTIES		5
+>  #define SETUP_JAILHOUSE			6
+> +#define SETUP_IMA			7
+>  
+>  #define SETUP_INDIRECT			(1<<31)
+>  
+> @@ -171,6 +172,14 @@ struct jailhouse_setup_data {
+>  	} __attribute__((packed)) v2;
+>  } __attribute__((packed));
+>  
+> +/*
+> + * IMA buffer setup data information from the previous kernel during kexec
+> + */
+> +struct ima_setup_data {
+> +	__u64 addr;
+> +	__u64 size;
+> +} __attribute__((packed));
+> +
+>  /* The so-called "zeropage" */
+>  struct boot_params {
+>  	struct screen_info screen_info;			/* 0x000 */
+> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> index f267205f2d5a..9dac24680ff8 100644
+> --- a/arch/x86/kernel/e820.c
+> +++ b/arch/x86/kernel/e820.c
+> @@ -1017,10 +1017,10 @@ void __init e820__reserve_setup_data(void)
+>  		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+>  
+>  		/*
+> -		 * SETUP_EFI is supplied by kexec and does not need to be
+> -		 * reserved.
+> +		 * SETUP_EFI and SETUP_IMA are supplied by kexec and do not need
+> +		 * to be reserved.
+>  		 */
+> -		if (data->type != SETUP_EFI)
+> +		if (data->type != SETUP_EFI && data->type != SETUP_IMA)
+>  			e820__range_update_kexec(pa_data,
+>  						 sizeof(*data) + data->len,
+>  						 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+> index 170d0fd68b1f..07625da33075 100644
+> --- a/arch/x86/kernel/kexec-bzimage64.c
+> +++ b/arch/x86/kernel/kexec-bzimage64.c
+> @@ -186,6 +186,32 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+>  }
+>  #endif /* CONFIG_EFI */
+>  
+> +#ifdef CONFIG_IMA_KEXEC
+> +static void
+> +setup_ima_state(const struct kimage *image, struct boot_params *params,
+> +		unsigned long params_load_addr,
+> +		unsigned int ima_setup_data_offset)
+> +{
+> +	struct setup_data *sd = (void *)params + ima_setup_data_offset;
+> +	struct ima_setup_data *ima = (void *)sd + sizeof(struct setup_data);
+> +	unsigned long setup_data_phys;
+> +
+> +	if (!image->ima_buffer_size)
+> +		return;
+> +
+> +	sd->type = SETUP_IMA;
+> +	sd->len = sizeof(*ima);
+> +
+> +	ima->addr = image->ima_buffer_addr;
+> +	ima->size = image->ima_buffer_size;
+> +
+> +	/* Add setup data */
+> +	setup_data_phys = params_load_addr + ima_setup_data_offset;
+> +	sd->next = params->hdr.setup_data;
+> +	params->hdr.setup_data = setup_data_phys;
+> +}
+> +#endif /* CONFIG_IMA_KEXEC */
+> +
+>  static int
+>  setup_boot_parameters(struct kimage *image, struct boot_params *params,
+>  		      unsigned long params_load_addr,
+> @@ -247,6 +273,13 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+>  	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+>  			efi_setup_data_offset);
+>  #endif
+> +
+> +#ifdef CONFIG_IMA_KEXEC
+> +	/* Setup IMA log buffer state */
+> +	setup_ima_state(image, params, params_load_addr,
+> +			efi_setup_data_offset + ALIGN(efi_map_sz, 16) + sizeof(struct setup_data));
+> +#endif
+> +
+>  	/* Setup EDD info */
+>  	memcpy(params->eddbuf, boot_params.eddbuf,
+>  				EDDMAXNR * sizeof(struct edd_info));
+> @@ -401,7 +434,9 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+>  	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
+>  	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
+>  				sizeof(struct setup_data) +
+> -				sizeof(struct efi_setup_data);
+> +				sizeof(struct efi_setup_data) +
+> +				sizeof(struct setup_data) +
+> +				sizeof(struct ima_setup_data);
+>  
+>  	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
+>  	if (!params)
+> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> index c95b9ac5a457..8b0e7725f918 100644
+> --- a/arch/x86/kernel/setup.c
+> +++ b/arch/x86/kernel/setup.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/dma-map-ops.h>
+>  #include <linux/dmi.h>
+>  #include <linux/efi.h>
+> +#include <linux/ima.h>
+>  #include <linux/init_ohci1394_dma.h>
+>  #include <linux/initrd.h>
+>  #include <linux/iscsi_ibft.h>
+> @@ -335,6 +336,28 @@ static void __init reserve_initrd(void)
+>  }
+>  #endif /* CONFIG_BLK_DEV_INITRD */
+>  
+> +#ifdef CONFIG_IMA_KEXEC
+> +static void __init add_early_ima_buffer(u64 phys_addr)
+> +{
+> +	struct ima_setup_data *data;
+> +
+> +	data = early_memremap(phys_addr + sizeof(struct setup_data),
+> +			      sizeof(*data));
+> +	if (!data) {
+> +		pr_warn("setup: failed to memremap ima_setup_data entry\n");
+> +		return;
+> +	}
+> +	memblock_reserve(data->addr, data->size);
+> +	ima_set_kexec_buffer(data->addr, data->size);
+> +	early_memunmap(data, sizeof(*data));
+> +}
+> +#else
+> +static void __init add_early_ima_buffer(u64 phys_addr)
+> +{
+> +	pr_warn("Passed IMA kexec data, but CONFIG_IMA_KEXEC not set. Ignoring.\n");
+> +}
+> +#endif
+> +
+>  static void __init parse_setup_data(void)
+>  {
+>  	struct setup_data *data;
+> @@ -360,6 +383,9 @@ static void __init parse_setup_data(void)
+>  		case SETUP_EFI:
+>  			parse_efi_setup(pa_data, data_len);
+>  			break;
+> +		case SETUP_IMA:
+> +			add_early_ima_buffer(pa_data);
+> +			break;
+>  		default:
+>  			break;
+>  		}
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 426b1744215e..f58aed7acad4 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -48,6 +48,7 @@ static inline void ima_appraise_parse_cmdline(void) {}
+>  
+>  #ifdef CONFIG_IMA_KEXEC
+>  extern void ima_add_kexec_buffer(struct kimage *image);
+> +extern void ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size);
+>  #endif
+>  
+>  #else
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index 13753136f03f..419c50cfe6b9 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/seq_file.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/kexec.h>
+> +#include <linux/memblock.h>
+>  #include <linux/of.h>
+>  #include <linux/ima.h>
+>  #include "ima.h"
+> @@ -134,10 +135,66 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  }
+>  #endif /* IMA_KEXEC */
+>  
+> +#ifndef CONFIG_OF
+> +static phys_addr_t ima_early_kexec_buffer_phys;
+> +static size_t ima_early_kexec_buffer_size;
+> +
+> +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
+> +{
+> +	if (size == 0)
+> +		return;
+> +
+> +	ima_early_kexec_buffer_phys = phys_addr;
+> +	ima_early_kexec_buffer_size = size;
+> +}
+> +
+> +int __init ima_free_kexec_buffer(void)
+> +{
+> +	int rc;
+> +
+> +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
+> +		return -ENOTSUPP;
+> +
+> +	if (ima_early_kexec_buffer_size == 0)
+> +		return -ENOENT;
+> +
+> +	rc = memblock_phys_free(ima_early_kexec_buffer_phys,
+> +				ima_early_kexec_buffer_size);
+> +	if (rc)
+> +		return rc;
+> +
+> +	ima_early_kexec_buffer_phys = 0;
+> +	ima_early_kexec_buffer_size = 0;
+> +
+> +	return 0;
+> +}
+> +
+> +int __init ima_get_kexec_buffer(void **addr, size_t *size)
+> +{
+> +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
+> +		return -ENOTSUPP;
+> +
+> +	if (ima_early_kexec_buffer_size == 0)
+> +		return -ENOENT;
+> +
+> +	*addr = __va(ima_early_kexec_buffer_phys);
+> +	*size = ima_early_kexec_buffer_size;
+> +
+> +	return 0;
+> +}
+> +
+> +#else
+> +
+> +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
+> +{
+> +	pr_warn("CONFIG_OF enabled, ignoring call to set buffer details.\n");
+> +}
+> +#endif /* CONFIG_OF */
+> +
+>  /*
+>   * Restore the measurement list from the previous kernel.
+>   */
+> -void ima_load_kexec_buffer(void)
+> +void __init ima_load_kexec_buffer(void)
+>  {
+>  	void *kexec_buffer = NULL;
+>  	size_t kexec_buffer_size = 0;
 
 
-4/12/2022 2:21 PM, Mickaël Salaün пишет:
-> 
-> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
->> User space API was refactored to support
->> network actions. New network access flags,
->> network rule and network attributes were
->> added.
->>
->> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->> ---
->>
->> Changes since v3:
->> * Split commit.
->> * Refactoring User API for network rule type.
->>
->> ---
->>   include/uapi/linux/landlock.h | 48 +++++++++++++++++++++++++++++++++++
->>   security/landlock/syscalls.c  |  5 ++--
->>   2 files changed, 51 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/uapi/linux/landlock.h 
->> b/include/uapi/linux/landlock.h
->> index b3d952067f59..4fc6c793fdf4 100644
->> --- a/include/uapi/linux/landlock.h
->> +++ b/include/uapi/linux/landlock.h
->> @@ -25,6 +25,13 @@ struct landlock_ruleset_attr {
->>        * compatibility reasons.
->>        */
->>       __u64 handled_access_fs;
->> +
->> +    /**
->> +     * @handled_access_net: Bitmask of actions (cf. `Network flags`_)
->> +     * that is handled by this ruleset and should then be forbidden 
->> if no
->> +     * rule explicitly allow them.
->> +     */
->> +    __u64 handled_access_net;
->>   };
->>
->>   /*
->> @@ -46,6 +53,11 @@ enum landlock_rule_type {
->>        * landlock_path_beneath_attr .
->>        */
->>       LANDLOCK_RULE_PATH_BENEATH = 1,
->> +    /**
->> +     * @LANDLOCK_RULE_NET_SERVICE: Type of a &struct
->> +     * landlock_net_service_attr .
->> +     */
->> +    LANDLOCK_RULE_NET_SERVICE = 2,
->>   };
->>
->>   /**
->> @@ -70,6 +82,24 @@ struct landlock_path_beneath_attr {
->>        */
->>   } __attribute__((packed));
->>
->> +/**
->> + * struct landlock_net_service_attr - TCP subnet definition
->> + *
->> + * Argument of sys_landlock_add_rule().
->> + */
->> +struct landlock_net_service_attr {
->> +    /**
->> +     * @allowed_access: Bitmask of allowed access network for services
->> +     * (cf. `Network flags`_).
->> +     */
->> +    __u64 allowed_access;
->> +    /**
->> +     * @port: Network port
->> +     */
->> +    __u16 port;
->> +
->> +} __attribute__((packed));
->> +
->>   /**
->>    * DOC: fs_access
->>    *
->> @@ -134,4 +164,22 @@ struct landlock_path_beneath_attr {
->>   #define LANDLOCK_ACCESS_FS_MAKE_BLOCK            (1ULL << 11)
->>   #define LANDLOCK_ACCESS_FS_MAKE_SYM            (1ULL << 12)
->>
->> +/**
->> + * DOC: net_access
->> + *
->> + * Network flags
->> + * ~~~~~~~~~~~~~~~~
->> + *
->> + * These flags enable to restrict a sandboxed process to a set of 
->> network
->> + * actions.
->> + *
->> + * TCP sockets with allowed actions:
->> + *
->> + * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a local port.
->> + * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
->> + *   a remote port.
->> + */
->> +#define LANDLOCK_ACCESS_NET_BIND_TCP            (1ULL << 0)
->> +#define LANDLOCK_ACCESS_NET_CONNECT_TCP            (1ULL << 1)
->> +
->>   #endif /* _UAPI_LINUX_LANDLOCK_H */
->> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
->> index 8c0f6165fe3a..fcbce83d64ef 100644
->> --- a/security/landlock/syscalls.c
->> +++ b/security/landlock/syscalls.c
->> @@ -81,8 +81,9 @@ static void build_check_abi(void)
->>        * struct size.
->>        */
->>       ruleset_size = sizeof(ruleset_attr.handled_access_fs);
->> +    ruleset_size += sizeof(ruleset_attr.handled_access_net);
->>       BUILD_BUG_ON(sizeof(ruleset_attr) != ruleset_size);
->> -    BUILD_BUG_ON(sizeof(ruleset_attr) != 8);
->> +    BUILD_BUG_ON(sizeof(ruleset_attr) != 16);
->>
->>       path_beneath_size = sizeof(path_beneath_attr.allowed_access);
->>       path_beneath_size += sizeof(path_beneath_attr.parent_fd);
->> @@ -184,7 +185,7 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
->>
->>       /* Checks content (and 32-bits cast). */
->>       if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=
->> -            LANDLOCK_MASK_ACCESS_FS)
->> +             LANDLOCK_MASK_ACCESS_FS)
-> 
-> Don't add cosmetic changes. FYI, I'm relying on the way Vim does line 
-> cuts, which is mostly tabs. Please try to do the same.
-> 
-   Ok. I'm using VsCode as an editor. It also could be set up to 
-different code styles.
-> 
->>           return -EINVAL;
->>       access_mask_set.fs = ruleset_attr.handled_access_fs;
->>
->> -- 
->> 2.25.1
->>
-> 
-> You need to also update Documentation/userspace-api/landlock.rst 
-> accordingly. You can check you changes by building the HTML doc.
-
-   OK. I got it. Thnaks for the comment.
-> .
