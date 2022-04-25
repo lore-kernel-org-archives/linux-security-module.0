@@ -2,199 +2,230 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20677C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Apr 2022 22:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7F2C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Apr 2022 23:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235882AbiDYW01 (ORCPT
+        id S238024AbiDYXfI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Apr 2022 18:26:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59014 "EHLO
+        Mon, 25 Apr 2022 19:35:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231767AbiDYWZv (ORCPT
+        with ESMTP id S237992AbiDYXfE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Apr 2022 18:25:51 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA2A7A9A7;
-        Mon, 25 Apr 2022 15:21:49 -0700 (PDT)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23PJat6R022547;
-        Mon, 25 Apr 2022 22:21:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : content-transfer-encoding : content-type :
- mime-version; s=corp-2021-07-09;
- bh=/VugjAkkwakedsnbxxxfoh52iUiJK7Gbd9Zf81j3sNk=;
- b=KkBH2bpZc/6jvIx9/juUqUhPkIIVJh9gthmtQ7dNyaXVKh/VYMOYE8v9+bhtj9ASaK2Z
- MVPrMLLFi9g8UeFmtu471/PIJLvxjlALqcxxk6nVqCJBxYaMGrIhixjrBXz8/m/BnMC/
- WyxPi+u6UD7ZjduQBA9ABz58E8RMBVSD/jkYg2kmVlCranVTqLyYihzMVRrBOIcy6dBT
- xLKOu2lLmK4mR9yVmAMDP4Vjyse0XddJ0k10xXEm0XFzEjQ8cNzIt2cxBhbktJ4obZYu
- XWBuJlz1033XPGxS5kLhII6X10Me8DXwIwgnmVOM+Z3AkbyhYyps1XKcZ8STlHPcAeTQ Tg== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3fmb0yvcv8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Apr 2022 22:21:34 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23PMAP50009898;
-        Mon, 25 Apr 2022 22:21:33 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2047.outbound.protection.outlook.com [104.47.66.47])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fm7w2c8bx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Apr 2022 22:21:33 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WLIWEPobBeqLutUK7gGFAZ/UfENqIuZRy6J0FAXSwlghqME/a1wp2WtuqUKkhTmMICYRSTdhGF/M+xVxCwynODOI6zRXrRed2fET3Q3xlzk3vwTtp8SbIfkD0pWgesSR7K5vC4Us+IOHbqO5kvZeK3QhC1USCH0pONfwkv+7Hdhc8mV5trbW9t7DqjgW+2zqcF6o7lXK4NnQWjCOGErkOpGwuSDk8Ulnm3j2/s8i7bXwmS2XMifvEC+BOrxU9jJpB3PpBPYo38/79RDR5tdowF0AnjBuRbTIwedagiFt37ubo1Ez1vXe7R/qXOanC4kwCVcad3ZiNEHhPak3YTbGGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/VugjAkkwakedsnbxxxfoh52iUiJK7Gbd9Zf81j3sNk=;
- b=XO0KHubWOz6VgQpYvflgOkkkKucIRYH41Nx17Bw+OH1DmuYT4W3bYYDANuie5RsEVuP3igYkMkISUIyrM9lyXcL7DaqOeWYbswnUXgzNRJCYaoTOwOKA3JrxKRHTzsd6mG+ItIEkZ9+nQBXOCJnhV1u6F1B/VieuXYQ9sahjR7p88qmPaEkkwGAIzX70rt7vgeimgLr0asUSnHBdcp6kED9ifqLlnvTkR0Or4v7JgZoxlUekNrDRRQP13idSaf+cND8HB7KIgS1n9zbXmi4ayWWHk7ryEKfZcem/fUQ2kiEQggcY5zkehvIIi8miWRxD27Xdu3t6fJY/rrfTXUhGSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/VugjAkkwakedsnbxxxfoh52iUiJK7Gbd9Zf81j3sNk=;
- b=BLoVO8nQZ/2tARu6xb3/yq6CxN2ksz92LlEv9clo0dueAO7IDLV63+BenVGM3H8YIuqEj/9gF8gbNcmy5BY8gCcBwMYH0RESkUbU/a/v7YD9QZf+WXpxg8+ADYywni2GSczier4yh8niJurqP5pRqI/jxAXGZ3iwfOduauB6Ruc=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by DM6PR10MB3228.namprd10.prod.outlook.com (2603:10b6:5:1a7::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15; Mon, 25 Apr
- 2022 22:21:31 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::7ded:5b3:a28f:2e55]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::7ded:5b3:a28f:2e55%5]) with mapi id 15.20.5186.021; Mon, 25 Apr 2022
- 22:21:31 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     zohar@linux.ibm.com
-Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        eric.snowberg@oracle.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] integrity: Allow ima_appraise bootparam to be set when SB is enabled
-Date:   Mon, 25 Apr 2022 18:21:20 -0400
-Message-Id: <20220425222120.1998888-1-eric.snowberg@oracle.com>
-X-Mailer: git-send-email 2.27.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY3PR04CA0016.namprd04.prod.outlook.com
- (2603:10b6:a03:217::21) To CH2PR10MB4150.namprd10.prod.outlook.com
- (2603:10b6:610:ac::13)
+        Mon, 25 Apr 2022 19:35:04 -0400
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44836B09D;
+        Mon, 25 Apr 2022 16:31:58 -0700 (PDT)
+Received: from [192.168.192.153] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EEEA43F62C;
+        Mon, 25 Apr 2022 23:31:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1650929516;
+        bh=vZU9o7P+73HXfEhvvq52ZBBcLXvcmL+Dku5ZH6YO5v4=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=Bb0Eu9bHYUOxTsOAi++SC3zSpmtRONaYTljhwonzE4z4H+k7RcJMkJUo071KC2tio
+         uk1YG7Ode6JilYWL19phnH2xEuni1spfSqpGXifuzSNl7MO9hTlkTTcqtifpUIrKYg
+         iVzLa91TH4tc2W3p/pV1WMg36jcWxKJA19hi1hWBKGFPnW0kpASvnoHkV+riKK0lpv
+         0twngsOVqLTaESp5KmbjfTZouvr5ZAj8m924UOyIOpEigZ0IeGLxEZmEOoAB5sq32e
+         /rE21Mkb5aj2MceGKoyWCdjz+DL3jJzKYFJqdw0pQZlS2/qBd2a0Jo5rGj4D/9FMPc
+         vh6a657qgYuPw==
+Message-ID: <a1702622-5980-1eb4-1cf8-b6fc6cd98b25@canonical.com>
+Date:   Mon, 25 Apr 2022 16:31:44 -0700
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e2974f27-cf64-46e9-8f7f-08da2709f25a
-X-MS-TrafficTypeDiagnostic: DM6PR10MB3228:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR10MB322877EAF40C936A046ED5B587F89@DM6PR10MB3228.namprd10.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: T0wv1I4iyHxCPxsqosnvZlIkc6OO9JBNei6Catt3wYwENwngVGnac+tju8C27j32UL0zU5xnvj101QIdIuTHnu8Jc7NULwSb2mQXPpb5/ZAiCfXj3BPdCF5yiycWASp9EZPuhg2f0dJuglOYbLoEkscMCyq9Yy+VFDZy77ll3onIAsodyungyB5fz9ekeutb8KhzPhx+0QnbUDXDmo468q9P97X3BSz8N6H1337vbkH5EiHJK8TGouUJlTOMOjDyV86YjoyES6xpBT0jwf64E26xLgyArcfohcUueuRehCFeW9jhfjcyybnUzKGRB1iS/LC1yfZ2ut1NpFm6k8FT2s7Jb23pvoJB1Z5ZJzLjsLE9GQdC//HkLAnKu4a4UYacVgYdSOu9nuO97Jco/J/5RG+JmjeFM+OrwP9ie+cmrE/1at0PBfPXnAilBykAUrcGn84gFH2BtA/UqQknkBQD4zVepQxVnumYrRKrPK6+dpYuv/lWgd1vt/KSQX4TzmAYGzIWMr/EUcN46V8ZI2J5hrSvPUi6u2qQgMGPrfWLoAyrJj2eHmUcEkrPCulH2WnDpk0JtyV1IOu6WzGOeWjrvnz+VM7ixgqRtB77Q5BuQSZWLTSwcRHOYi3BjM6IrHzWacxWV9bngX1d/fUf+NJA0AdUCotH7AftXcFHQ7z6/xoaoBNGhYWBV3WIMvpKFSkFDhayE3kbwUCNMltWY6869A==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(186003)(1076003)(38100700002)(83380400001)(38350700002)(86362001)(508600001)(8936002)(36756003)(5660300002)(44832011)(2906002)(6506007)(52116002)(26005)(66476007)(2616005)(4326008)(6916009)(6512007)(8676002)(66946007)(66556008)(316002)(6666004)(6486002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JDVKU9h8KEqM4dH2+Q2+Rj+3vub40E5xaI5mPcTfnv5dHOoIsxKGHrsgjmuL?=
- =?us-ascii?Q?X3KOgm1QmGCl7S/tX0kuApv3Ae5GFVtM4jGmOKn4Aix0hFkgsy29lrniarws?=
- =?us-ascii?Q?04bJUPK9y4MGJ+8G45da4FZBP/C1dUXCi31EGmjHsCSAoR1zbkgBBIO6EzRc?=
- =?us-ascii?Q?C0uB4vuWZIKZokjG6FuqoLEu7QCN+WJhhR9Lp6/9TAbewnEmuunrr4vdQe7y?=
- =?us-ascii?Q?Y1xMBp+IdaFF9+j267bpMyQPSTK5gk+D0qtPKqaav8svgXw5PQgliwmK84Th?=
- =?us-ascii?Q?/G42CdpdhiE+oaiZHGcwi/wUHw9A0cludntArW+me9BowMxr7VsER6Xh5Bd/?=
- =?us-ascii?Q?T7Y7TLoWmYiT53fOMGqPFH16WmCH9tIaQ04OxvlrFm7pEXTs48fVmY8krIrg?=
- =?us-ascii?Q?U+V4kOBkBeVLGeoz8GHvXAqdXxohuba6MZ0rd4qvAdJfzDjpEpN/1DzTnnut?=
- =?us-ascii?Q?USme0pLjLHx8tz27PH1a5Jjavl95+pk9oM33lnQyMuHTT+uAz4shPXEcazzj?=
- =?us-ascii?Q?aX/Frsy07TGu8yx96NQceKNZj6WX+ghCAWE1Tdkp8e0xPASmHN5NZbrT6xqg?=
- =?us-ascii?Q?1sVSadGgfNf09VQXk05vU10qB0fw4dwiRPJe8GWKYvYF/mA+u+kQxoGiRDiX?=
- =?us-ascii?Q?5+BbENYhEeBqp/3yNJEa48X0uSVX6EwmJmMyeEP2jYJmxz+1EcKkYvnbZiIM?=
- =?us-ascii?Q?mS6NIYqo3oP7NNRGb//PKwANSaV+GhyJxpMtOal7qGUJ+9J1cHZ927aGJ2hf?=
- =?us-ascii?Q?4EYy8CFU/JZtN5246nThwXEQ0Y4pSLDWWRemOV8lH2g4BW5XY2vsVzbk1ucC?=
- =?us-ascii?Q?c12QGtEmfIOiT4BZViN0b7Q4b3Ut1w/Hya9hXZsyK7G/x36vJSxXawE/i/U9?=
- =?us-ascii?Q?NiRdSZvc1i6rvoXBrFTZ4tPJmepEY3dMkv9cpSup+kKPWUlHWOVDh2t/LAlt?=
- =?us-ascii?Q?L1IY7lN4Gg1M2FDTrtQV/0Ub5vFO6E8eMlnW8vy+uMR1bGREzD24ekjv6/kg?=
- =?us-ascii?Q?KN/g/GjnE2q8akziFXifwNvAMA5zRLXm50uanbVyh39KXBPuqCE3fZI3zdXs?=
- =?us-ascii?Q?MoMwXjcR4mM2zC4Gjliu3TZrCZlIc8Caji8xptr95+e1pE5RlLw5YKYITWLw?=
- =?us-ascii?Q?eisYZ1eCKEYFmgrxxvQ1S7RNIaDgBI7Z2C+zGbOHXjwzToVwNel49AmpXShK?=
- =?us-ascii?Q?ukVKIzj3mVcBkiQr4d/Ywx0zOz+t/OUmlUsJWKhAB9tF2OWTpxHEwIjvhSlX?=
- =?us-ascii?Q?hAAJkKeAmx6HqLKARY0p+PmvcrDtnMG+1+6B0zc3xgFEN/4mXaHcbR2qdwES?=
- =?us-ascii?Q?tpjrNBs1cCx5pUe+89Tw+2dRykGHknJVp2DryvqTmOp8ATklxpFNlzWyxdTp?=
- =?us-ascii?Q?yEkV1CWkBvQVMB5zOCLUvt0QsDaIfUHCPzNfecaiVXE+wGAf+vAeVaqPHa0C?=
- =?us-ascii?Q?xB53womRAy1DNTuZSjp2WhdIAqav2iMRO+c5YYe/cj1qaofxF1/R4eVeYrsx?=
- =?us-ascii?Q?fiHj384qJxnf62aNJWV162iJI+lvXZq8rqCkBk64YCj/5vlwgr0BTTRZaQzx?=
- =?us-ascii?Q?rqI+kh2riylmI/rHezqHZs2e6/SwRy5IRzExW/zPFVR/6ok4dzsEqtmfIUkx?=
- =?us-ascii?Q?5exEGMB4/Oj58IFQKYtXhuED3Zz1Z+ZdYWr++/9UKGtujJPIGRIjTP1bwlzZ?=
- =?us-ascii?Q?tUJsVC8fgoZUyT/FTg2l0hy7/v61/Z3iz+mQ0hNZlMCrfjk3lpYC5hgOsEQ/?=
- =?us-ascii?Q?U1GTtz/sRT23ZEZWG0iThxw2m9PBRM0=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2974f27-cf64-46e9-8f7f-08da2709f25a
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2022 22:21:30.9317
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HPLfzVw1ZQgFb15oV6MaALEHq3seoPvtFsZ5bP+EQzzz7MskZBS4SfxuJkz+YXwj+ySftC8MdBBzkYgGDdnnFoXvBWyRUyyOLJuwlAM+pnw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB3228
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
- definitions=2022-04-25_08:2022-04-25,2022-04-25 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 spamscore=0
- malwarescore=0 mlxlogscore=999 adultscore=0 mlxscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
- definitions=main-2204250099
-X-Proofpoint-ORIG-GUID: P8lPI_FkKH-WjONUiStvHiA0iDxqSlC9
-X-Proofpoint-GUID: P8lPI_FkKH-WjONUiStvHiA0iDxqSlC9
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v35 23/29] Audit: Create audit_stamp structure
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     linux-audit@redhat.com, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
+References: <20220418145945.38797-1-casey@schaufler-ca.com>
+ <20220418145945.38797-24-casey@schaufler-ca.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20220418145945.38797-24-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The IMA_APPRAISE_BOOTPARM config allows enabling different "ima_appraise="
-modes (log, fix, enforce) to be configured at boot time.  When booting
-with Secure Boot enabled, all modes are ignored except enforce.  To use
-log or fix, Secure Boot must be disabled.
+On 4/18/22 07:59, Casey Schaufler wrote:
+> Replace the timestamp and serial number pair used in audit records
+> with a structure containing the two elements.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  kernel/audit.c   | 17 +++++++++--------
+>  kernel/audit.h   | 12 +++++++++---
+>  kernel/auditsc.c | 22 +++++++++-------------
+>  3 files changed, 27 insertions(+), 24 deletions(-)
+> 
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 28ff7a5f90bd..6b6c089512f7 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -1822,11 +1822,11 @@ unsigned int audit_serial(void)
+>  }
+>  
+>  static inline void audit_get_stamp(struct audit_context *ctx,
+> -				   struct timespec64 *t, unsigned int *serial)
+> +				   struct audit_stamp *stamp)
+>  {
+> -	if (!ctx || !auditsc_get_stamp(ctx, t, serial)) {
+> -		ktime_get_coarse_real_ts64(t);
+> -		*serial = audit_serial();
+> +	if (!ctx || !auditsc_get_stamp(ctx, stamp)) {
+> +		ktime_get_coarse_real_ts64(&stamp->ctime);
+> +		stamp->serial = audit_serial();
+>  	}
+>  }
+>  
+> @@ -1849,8 +1849,7 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
+>  				     int type)
+>  {
+>  	struct audit_buffer *ab;
+> -	struct timespec64 t;
+> -	unsigned int serial;
+> +	struct audit_stamp stamp;
+>  
+>  	if (audit_initialized != AUDIT_INITIALIZED)
+>  		return NULL;
+> @@ -1905,12 +1904,14 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
+>  		return NULL;
+>  	}
+>  
+> -	audit_get_stamp(ab->ctx, &t, &serial);
+> +	audit_get_stamp(ab->ctx, &stamp);
+>  	/* cancel dummy context to enable supporting records */
+>  	if (ctx)
+>  		ctx->dummy = 0;
+>  	audit_log_format(ab, "audit(%llu.%03lu:%u): ",
+> -			 (unsigned long long)t.tv_sec, t.tv_nsec/1000000, serial);
+> +			 (unsigned long long)stamp.ctime.tv_sec,
+> +			 stamp.ctime.tv_nsec/1000000,
+> +			 stamp.serial);
+>  
+>  	return ab;
+>  }
+> diff --git a/kernel/audit.h b/kernel/audit.h
+> index 4af63e7dde17..260dab6e0e15 100644
+> --- a/kernel/audit.h
+> +++ b/kernel/audit.h
+> @@ -99,6 +99,12 @@ struct audit_proctitle {
+>  	char	*value;	/* the cmdline field */
+>  };
+>  
+> +/* A timestamp/serial pair to identify an event */
+> +struct audit_stamp {
+> +	struct timespec64	ctime;	/* time of syscall entry */
+> +	unsigned int		serial;	/* serial number for record */
+> +};
+> +
+>  /* The per-task audit context. */
+>  struct audit_context {
+>  	int		    dummy;	/* must be the first element */
+> @@ -108,10 +114,10 @@ struct audit_context {
+>  		AUDIT_CTX_URING,	/* in use by io_uring */
+>  	} context;
+>  	enum audit_state    state, current_state;
+> +	struct audit_stamp  stamp;	/* event identifier */
+>  	unsigned int	    serial;     /* serial number for record */
 
-With a policy such as:
+shouldn't we be dropping serial from the audit_context, since we have
+moved it into the audit_stamp?
 
-appraise func=BPRM_CHECK appraise_type=imasig
-
-A user may just want to audit signature validation. Not all users
-are interested in full enforcement and find the audit log appropriate
-for their use case.
-
-Add a new IMA_APPRAISE_SB_BOOTPARAM config allowing "ima_appraise="
-to work when Secure Boot is enabled.
-
-Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
----
- security/integrity/ima/Kconfig        | 9 +++++++++
- security/integrity/ima/ima_appraise.c | 2 +-
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index f3a9cc201c8c..66d25345e478 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -237,6 +237,15 @@ config IMA_APPRAISE_BOOTPARAM
- 	  This option enables the different "ima_appraise=" modes
- 	  (eg. fix, log) from the boot command line.
- 
-+config IMA_APPRAISE_SB_BOOTPARAM
-+	bool "ima_appraise secure boot parameter"
-+	depends on IMA_APPRAISE_BOOTPARAM
-+	default n
-+	help
-+	  This option enables the different "ima_appraise=" modes
-+	  (eg. fix, log) from the boot command line when booting
-+	  with Secure Boot enabled.
-+
- config IMA_APPRAISE_MODSIG
- 	bool "Support module-style signatures for appraisal"
- 	depends on IMA_APPRAISE
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 17232bbfb9f9..a66b1e271806 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -43,7 +43,7 @@ void __init ima_appraise_parse_cmdline(void)
- 
- 	/* If appraisal state was changed, but secure boot is enabled,
- 	 * keep its default */
--	if (sb_state) {
-+	if (sb_state && !IS_ENABLED(CONFIG_IMA_APPRAISE_SB_BOOTPARAM)) {
- 		if (!(appraisal_state & IMA_APPRAISE_ENFORCE))
- 			pr_info("Secure boot enabled: ignoring ima_appraise=%s option",
- 				str);
--- 
-2.27.0
+>  	int		    major;      /* syscall number */
+>  	int		    uring_op;   /* uring operation */
+> -	struct timespec64   ctime;      /* time of syscall entry */
+>  	unsigned long	    argv[4];    /* syscall arguments */
+>  	long		    return_code;/* syscall return code */
+>  	u64		    prio;
+> @@ -265,7 +271,7 @@ extern void audit_put_tty(struct tty_struct *tty);
+>  #ifdef CONFIG_AUDITSYSCALL
+>  extern unsigned int audit_serial(void);
+>  extern int auditsc_get_stamp(struct audit_context *ctx,
+> -			      struct timespec64 *t, unsigned int *serial);
+> +			     struct audit_stamp *stamp);
+>  
+>  extern void audit_put_watch(struct audit_watch *watch);
+>  extern void audit_get_watch(struct audit_watch *watch);
+> @@ -306,7 +312,7 @@ extern void audit_filter_inodes(struct task_struct *tsk,
+>  				struct audit_context *ctx);
+>  extern struct list_head *audit_killed_trees(void);
+>  #else /* CONFIG_AUDITSYSCALL */
+> -#define auditsc_get_stamp(c, t, s) 0
+> +#define auditsc_get_stamp(c, s) 0
+>  #define audit_put_watch(w) do { } while (0)
+>  #define audit_get_watch(w) do { } while (0)
+>  #define audit_to_watch(k, p, l, o) (-EINVAL)
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 6fe9f2525fc1..557713954a69 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -992,10 +992,10 @@ static void audit_reset_context(struct audit_context *ctx)
+>  	 */
+>  
+>  	ctx->current_state = ctx->state;
+> -	ctx->serial = 0;
+> +	ctx->stamp.serial = 0;
+>  	ctx->major = 0;
+>  	ctx->uring_op = 0;
+> -	ctx->ctime = (struct timespec64){ .tv_sec = 0, .tv_nsec = 0 };
+> +	ctx->stamp.ctime = (struct timespec64){ .tv_sec = 0, .tv_nsec = 0 };
+>  	memset(ctx->argv, 0, sizeof(ctx->argv));
+>  	ctx->return_code = 0;
+>  	ctx->prio = (ctx->state == AUDIT_STATE_RECORD ? ~0ULL : 0);
+> @@ -1950,7 +1950,7 @@ void __audit_uring_entry(u8 op)
+>  
+>  	ctx->context = AUDIT_CTX_URING;
+>  	ctx->current_state = ctx->state;
+> -	ktime_get_coarse_real_ts64(&ctx->ctime);
+> +	ktime_get_coarse_real_ts64(&ctx->stamp.ctime);
+>  }
+>  
+>  /**
+> @@ -2066,7 +2066,7 @@ void __audit_syscall_entry(int major, unsigned long a1, unsigned long a2,
+>  	context->argv[3]    = a4;
+>  	context->context = AUDIT_CTX_SYSCALL;
+>  	context->current_state  = state;
+> -	ktime_get_coarse_real_ts64(&context->ctime);
+> +	ktime_get_coarse_real_ts64(&context->stamp.ctime);
+>  }
+>  
+>  /**
+> @@ -2535,21 +2535,17 @@ EXPORT_SYMBOL_GPL(__audit_inode_child);
+>  /**
+>   * auditsc_get_stamp - get local copies of audit_context values
+>   * @ctx: audit_context for the task
+> - * @t: timespec64 to store time recorded in the audit_context
+> - * @serial: serial value that is recorded in the audit_context
+> + * @stamp: timestamp to record
+>   *
+>   * Also sets the context as auditable.
+>   */
+> -int auditsc_get_stamp(struct audit_context *ctx,
+> -		       struct timespec64 *t, unsigned int *serial)
+> +int auditsc_get_stamp(struct audit_context *ctx, struct audit_stamp *stamp)
+>  {
+>  	if (ctx->context == AUDIT_CTX_UNUSED)
+>  		return 0;
+> -	if (!ctx->serial)
+> -		ctx->serial = audit_serial();
+> -	t->tv_sec  = ctx->ctime.tv_sec;
+> -	t->tv_nsec = ctx->ctime.tv_nsec;
+> -	*serial    = ctx->serial;
+> +	if (!ctx->stamp.serial)
+> +		ctx->stamp.serial = audit_serial();
+> +	*stamp = ctx->stamp;
+>  	if (!ctx->prio) {
+>  		ctx->prio = 1;
+>  		ctx->current_state = AUDIT_STATE_RECORD;
 
