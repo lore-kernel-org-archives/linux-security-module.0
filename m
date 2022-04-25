@@ -2,134 +2,193 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9248C433F5
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Apr 2022 15:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A60DC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Apr 2022 14:29:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235105AbiDWPpw (ORCPT
+        id S235562AbiDYOci (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 23 Apr 2022 11:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40174 "EHLO
+        Mon, 25 Apr 2022 10:32:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232276AbiDWPpv (ORCPT
+        with ESMTP id S236007AbiDYOc2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 23 Apr 2022 11:45:51 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2CE42AE01;
-        Sat, 23 Apr 2022 08:42:53 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id x18so15037897wrc.0;
-        Sat, 23 Apr 2022 08:42:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yMZzg60G1r0O+zhJPETceGTDi3cD9NRSXbJnU2icLjg=;
-        b=qI/HvanJmIe5IQfPWxxSghqXfQ19PzOOPY5ROUHdV4TgmPwyzKLjHSIymZCv3nMUt4
-         WY/+VQUdJUSmDN+jnmnsDplUuk3Pd7+vYpC23V7xEejA+3OYhHWjv6AwPBut4WisOzkl
-         JIaFLhyhT8Ufpi7GtZMaaz5xBtXAT/+v4DDnFkvC2nZ68G9qhGM+bj81iemNjj5tTQRv
-         jbnEvLxkm8uROWTSFiVpIaT2eAN5Cjdw0X2EkYU3s7EsZyGWG4QhwtG6YC3ZY0Y7m0tH
-         PhWJhp6cAaDqPSP7gfnsbc59li4rf9UI7SQcHr8Dd997+4UJwHgFLzNcpRzGy/UQYasX
-         XyGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yMZzg60G1r0O+zhJPETceGTDi3cD9NRSXbJnU2icLjg=;
-        b=sBjuM0fhWJ1dyP9Mnp/K9Is8odzg/qPkUUY9xNXSrOCOgaExc9nnaN0GVFSWIqT6f0
-         2PZc32HfewzrestJ4XnwyDIoN01Dl0BNk8dXng1X4n/kflrSH2z7eiuu5gr+IUyKfNup
-         zdwqA0HdpPsjYG3hJQQYsORDmbiE3jCCCpiuq1SAXUh/YfRdQbHw+1ojLMHQUYNLj1jo
-         ZvA+an1MA87g2RxRW/2RLLTrYWftnb8ZQFmqqvUmSIAytBs1FP48NlWOaXaJBXeG9LhJ
-         ZVQaotq4nNonAN2m2UrsRVvu589FEKsjF8nQWtYZB9G4NXX8T6FQ0EtBM54jcHBIw6JZ
-         kXsg==
-X-Gm-Message-State: AOAM530WHK7YrgOM7XEZI6ep0l44MDJTOR/mk2E/1oxeM8Y9QuIQ4Tqm
-        1jjsCMnNc5hXgnrwiJB2dci0E0upL/H2Kw==
-X-Google-Smtp-Source: ABdhPJzigspIO+nCb4TJCNeuyV0FmGg5etBtsR3yKIinZAZn7mlaGENk+ItIS6su47dD4tXyRCfeSg==
-X-Received: by 2002:a05:6000:1c0b:b0:20a:855e:1272 with SMTP id ba11-20020a0560001c0b00b0020a855e1272mr8049143wrb.261.1650728572528;
-        Sat, 23 Apr 2022 08:42:52 -0700 (PDT)
-Received: from localhost.localdomain (93-41-17-143.ip79.fastwebnet.it. [93.41.17.143])
-        by smtp.gmail.com with ESMTPSA id t2-20020a1c4602000000b003917d43d339sm7288766wma.4.2022.04.23.08.42.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Apr 2022 08:42:52 -0700 (PDT)
-From:   Alberto Solavagione <albertosolavagione30@gmail.com>
-To:     zohar@linux.ibm.com
-Cc:     scovottodavide@gmail.com, dmitry.kasatkin@gmail.com,
-        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Alberto Solavagione <albertosolavagione30@gmail.com>
-Subject: [PATCH 1/2] clk-bcm2835: use subsys_initcall for the clock driver when IMA is enabled
-Date:   Sat, 23 Apr 2022 11:42:29 -0400
-Message-Id: <20220423154229.3620-1-albertosolavagione30@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Mon, 25 Apr 2022 10:32:28 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B72A34BB8;
+        Mon, 25 Apr 2022 07:29:23 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Kn6lb1Wj2z686wt;
+        Mon, 25 Apr 2022 22:26:51 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Mon, 25 Apr 2022 16:29:19 +0200
+Message-ID: <3809fa82-8484-744b-a491-f8a5f7eda861@huawei.com>
+Date:   Mon, 25 Apr 2022 17:29:18 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [RFC PATCH v4 07/15] landlock: user space API network support
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <artem.kuzin@huawei.com>, <anton.sirazetdinov@huawei.com>
+References: <20220309134459.6448-1-konstantin.meskhidze@huawei.com>
+ <20220309134459.6448-8-konstantin.meskhidze@huawei.com>
+ <d4724117-167d-00b0-1f10-749b35bffc2f@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <d4724117-167d-00b0-1f10-749b35bffc2f@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml753-chm.china.huawei.com (10.201.108.203) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-We are working on a RaspberryPi 4 with the rpi-5.15.y kernel and a Infineon SLB9670 TPM.
-We wrote this two patches in order to fix a problem with IMA and TPM, specifically the TPM device results available when IMA is already in bypass mode.
-We already opened a pull request (https://github.com/raspberrypi/linux/pull/5003) on the rpi-5.15.y branch where you can find additional, more specific, information about the problem and the solution.
-
-Thanks for you attention,
-Davide Scovotto, Master's degree Student at PoliTO,
-Alberto Solavagione, Master's degree Student at PoliTO.
-
-Co-authored-by: Davide Scovotto <scovottodavide@gmail.com>
-Co-developed-by: Davide Scovotto <scovottodavide@gmail.com>
-Signed-off-by: Davide Scovotto <scovottodavide@gmail.com>
-Signed-off-by: Alberto Solavagione <albertosolavagione30@gmail.com>
----
- drivers/clk/bcm/clk-bcm2835.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 7112a9c4f7e3..9ed157b0a37a 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -2408,7 +2408,11 @@ static int __init __bcm2835_clk_driver_init(void)
- {
- 	return platform_driver_register(&bcm2835_clk_driver);
- }
-+#ifdef CONFIG_IMA
-+subsys_initcall(__bcm2835_clk_driver_init);
-+#else
- postcore_initcall(__bcm2835_clk_driver_init);
-+#endif
- 
- MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
- MODULE_DESCRIPTION("BCM2835 clock driver");
--- 
-2.33.0
 
 
-From aaba5263553b28540c8d5a923cadcb424d9b3d12 Mon Sep 17 00:00:00 2001
-From: Scovotto Davide <scovottodavide@gmail.com>
-Date: Wed, 20 Apr 2022 17:22:17 +0200
-Subject: [PATCH 2/2] tpm_tis_spi_main: Force probe routine to run synchronously with driver and device registration when IMA is enabled
+4/12/2022 2:21 PM, Mickaël Salaün пишет:
+> 
+> On 09/03/2022 14:44, Konstantin Meskhidze wrote:
+>> User space API was refactored to support
+>> network actions. New network access flags,
+>> network rule and network attributes were
+>> added.
+>>
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> ---
+>>
+>> Changes since v3:
+>> * Split commit.
+>> * Refactoring User API for network rule type.
+>>
+>> ---
+>>   include/uapi/linux/landlock.h | 48 +++++++++++++++++++++++++++++++++++
+>>   security/landlock/syscalls.c  |  5 ++--
+>>   2 files changed, 51 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/uapi/linux/landlock.h 
+>> b/include/uapi/linux/landlock.h
+>> index b3d952067f59..4fc6c793fdf4 100644
+>> --- a/include/uapi/linux/landlock.h
+>> +++ b/include/uapi/linux/landlock.h
+>> @@ -25,6 +25,13 @@ struct landlock_ruleset_attr {
+>>        * compatibility reasons.
+>>        */
+>>       __u64 handled_access_fs;
+>> +
+>> +    /**
+>> +     * @handled_access_net: Bitmask of actions (cf. `Network flags`_)
+>> +     * that is handled by this ruleset and should then be forbidden 
+>> if no
+>> +     * rule explicitly allow them.
+>> +     */
+>> +    __u64 handled_access_net;
+>>   };
+>>
+>>   /*
+>> @@ -46,6 +53,11 @@ enum landlock_rule_type {
+>>        * landlock_path_beneath_attr .
+>>        */
+>>       LANDLOCK_RULE_PATH_BENEATH = 1,
+>> +    /**
+>> +     * @LANDLOCK_RULE_NET_SERVICE: Type of a &struct
+>> +     * landlock_net_service_attr .
+>> +     */
+>> +    LANDLOCK_RULE_NET_SERVICE = 2,
+>>   };
+>>
+>>   /**
+>> @@ -70,6 +82,24 @@ struct landlock_path_beneath_attr {
+>>        */
+>>   } __attribute__((packed));
+>>
+>> +/**
+>> + * struct landlock_net_service_attr - TCP subnet definition
+>> + *
+>> + * Argument of sys_landlock_add_rule().
+>> + */
+>> +struct landlock_net_service_attr {
+>> +    /**
+>> +     * @allowed_access: Bitmask of allowed access network for services
+>> +     * (cf. `Network flags`_).
+>> +     */
+>> +    __u64 allowed_access;
+>> +    /**
+>> +     * @port: Network port
+>> +     */
+>> +    __u16 port;
+>> +
+>> +} __attribute__((packed));
+>> +
+>>   /**
+>>    * DOC: fs_access
+>>    *
+>> @@ -134,4 +164,22 @@ struct landlock_path_beneath_attr {
+>>   #define LANDLOCK_ACCESS_FS_MAKE_BLOCK            (1ULL << 11)
+>>   #define LANDLOCK_ACCESS_FS_MAKE_SYM            (1ULL << 12)
+>>
+>> +/**
+>> + * DOC: net_access
+>> + *
+>> + * Network flags
+>> + * ~~~~~~~~~~~~~~~~
+>> + *
+>> + * These flags enable to restrict a sandboxed process to a set of 
+>> network
+>> + * actions.
+>> + *
+>> + * TCP sockets with allowed actions:
+>> + *
+>> + * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a local port.
+>> + * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
+>> + *   a remote port.
+>> + */
+>> +#define LANDLOCK_ACCESS_NET_BIND_TCP            (1ULL << 0)
+>> +#define LANDLOCK_ACCESS_NET_CONNECT_TCP            (1ULL << 1)
+>> +
+>>   #endif /* _UAPI_LINUX_LANDLOCK_H */
+>> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+>> index 8c0f6165fe3a..fcbce83d64ef 100644
+>> --- a/security/landlock/syscalls.c
+>> +++ b/security/landlock/syscalls.c
+>> @@ -81,8 +81,9 @@ static void build_check_abi(void)
+>>        * struct size.
+>>        */
+>>       ruleset_size = sizeof(ruleset_attr.handled_access_fs);
+>> +    ruleset_size += sizeof(ruleset_attr.handled_access_net);
+>>       BUILD_BUG_ON(sizeof(ruleset_attr) != ruleset_size);
+>> -    BUILD_BUG_ON(sizeof(ruleset_attr) != 8);
+>> +    BUILD_BUG_ON(sizeof(ruleset_attr) != 16);
+>>
+>>       path_beneath_size = sizeof(path_beneath_attr.allowed_access);
+>>       path_beneath_size += sizeof(path_beneath_attr.parent_fd);
+>> @@ -184,7 +185,7 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+>>
+>>       /* Checks content (and 32-bits cast). */
+>>       if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=
+>> -            LANDLOCK_MASK_ACCESS_FS)
+>> +             LANDLOCK_MASK_ACCESS_FS)
+> 
+> Don't add cosmetic changes. FYI, I'm relying on the way Vim does line 
+> cuts, which is mostly tabs. Please try to do the same.
+> 
+   Ok. I'm using VsCode as an editor. It also could be set up to 
+different code styles.
+> 
+>>           return -EINVAL;
+>>       access_mask_set.fs = ruleset_attr.handled_access_fs;
+>>
+>> -- 
+>> 2.25.1
+>>
+> 
+> You need to also update Documentation/userspace-api/landlock.rst 
+> accordingly. You can check you changes by building the HTML doc.
 
-Co-authored-by: Alberto Solavagione <albertosolavagione30@gmail.com>
-Co-developed-by: Alberto Solavagione <albertosolavagione30@gmail.com>
-Signed-off-by: Alberto Solavagione <albertosolavagione30@gmail.com>
-Signed-off-by: Davide Scovotto <scovottodavide@gmail.com>
----
- drivers/char/tpm/tpm_tis_spi_main.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-index aaa59a00eeae..b6cf04812078 100644
---- a/drivers/char/tpm/tpm_tis_spi_main.c
-+++ b/drivers/char/tpm/tpm_tis_spi_main.c
-@@ -294,7 +294,11 @@ static struct spi_driver tpm_tis_spi_driver = {
- 		.pm = &tpm_tis_pm,
- 		.of_match_table = of_match_ptr(of_tis_spi_match),
- 		.acpi_match_table = ACPI_PTR(acpi_tis_spi_match),
-+#ifdef CONFIG_IMA
-+		.probe_type = PROBE_FORCE_SYNCHRONOUS,
-+#else
- 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+#endif
- 	},
- 	.probe = tpm_tis_spi_driver_probe,
- 	.remove = tpm_tis_spi_remove,
--- 
-2.33.0
-
+   OK. I got it. Thnaks for the comment.
+> .
