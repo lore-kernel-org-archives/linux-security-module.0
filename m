@@ -2,403 +2,199 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3FB4C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Apr 2022 16:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20677C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Apr 2022 22:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235257AbiDYQdO (ORCPT
+        id S235882AbiDYW01 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Apr 2022 12:33:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60234 "EHLO
+        Mon, 25 Apr 2022 18:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238415AbiDYQdM (ORCPT
+        with ESMTP id S231767AbiDYWZv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Apr 2022 12:33:12 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05BF313F07;
-        Mon, 25 Apr 2022 09:30:07 -0700 (PDT)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23PEhvwi009798;
-        Mon, 25 Apr 2022 16:29:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=r4qkiLwhya5oWZXoi5ouFooIYkto4KiJzfBMS5CvVYM=;
- b=H3hq947eLC+CFFdD35aKY0hERPS+HEmVriGh1o8Cf8MuVy6P8ziyl9cksWwKUWzswkz4
- FzGGj/O993TdLOuutE1C9j7WNJFvc/yPhmXj5NHRL5GglpjQs6pp/WMvM189cfc3ukoj
- d98Nw16kYpRTNGiB2Wd+btFImlPExKvcXoTd8rFpq4azXYsdYrlOva6Zpy1OkWaeLnvy
- 6U+TCrkS+KM7Q0KT4uWGoREo1pXp97QhFC5sD3b74h8Z3P+AbM5L9J2FqmUhRWqa5aYJ
- e1ZR7KwXrn8rvV6otwQvCNCVThVNkD8XeYz5wT2bTQzgbPmWHDPtyT/mGmjxf/MewGb+ bA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fnwng2mgn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 25 Apr 2022 16:29:39 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 23PFKJPY014482;
-        Mon, 25 Apr 2022 16:29:39 GMT
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fnwng2mg1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 25 Apr 2022 16:29:39 +0000
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23PGIeo1016077;
-        Mon, 25 Apr 2022 16:29:37 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma04fra.de.ibm.com with ESMTP id 3fm938t6dc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 25 Apr 2022 16:29:37 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23PGTYFu45810120
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Apr 2022 16:29:34 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9E8E42041;
-        Mon, 25 Apr 2022 16:29:34 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EBF644203F;
-        Mon, 25 Apr 2022 16:29:32 +0000 (GMT)
-Received: from sig-9-65-74-143.ibm.com (unknown [9.65.74.143])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Apr 2022 16:29:32 +0000 (GMT)
-Message-ID: <12108732c287a85a417927de37cb027cefae6e06.camel@linux.ibm.com>
-Subject: Re: [PATCH] Carry forward IMA measurement log on kexec on x86_64
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jonathan McDowell <noodles@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Date:   Mon, 25 Apr 2022 12:29:17 -0400
-In-Reply-To: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
-References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 4FwVakIQWg86GLLMMxT-Ze_t5LsdqQFz
-X-Proofpoint-ORIG-GUID: 9JPt9lCb21sjsaUK0mdH3MYBGlCHKxiw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-25_08,2022-04-25_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- spamscore=0 phishscore=0 priorityscore=1501 clxscore=1011 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204250068
+        Mon, 25 Apr 2022 18:25:51 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA2A7A9A7;
+        Mon, 25 Apr 2022 15:21:49 -0700 (PDT)
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23PJat6R022547;
+        Mon, 25 Apr 2022 22:21:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : content-transfer-encoding : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=/VugjAkkwakedsnbxxxfoh52iUiJK7Gbd9Zf81j3sNk=;
+ b=KkBH2bpZc/6jvIx9/juUqUhPkIIVJh9gthmtQ7dNyaXVKh/VYMOYE8v9+bhtj9ASaK2Z
+ MVPrMLLFi9g8UeFmtu471/PIJLvxjlALqcxxk6nVqCJBxYaMGrIhixjrBXz8/m/BnMC/
+ WyxPi+u6UD7ZjduQBA9ABz58E8RMBVSD/jkYg2kmVlCranVTqLyYihzMVRrBOIcy6dBT
+ xLKOu2lLmK4mR9yVmAMDP4Vjyse0XddJ0k10xXEm0XFzEjQ8cNzIt2cxBhbktJ4obZYu
+ XWBuJlz1033XPGxS5kLhII6X10Me8DXwIwgnmVOM+Z3AkbyhYyps1XKcZ8STlHPcAeTQ Tg== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3fmb0yvcv8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Apr 2022 22:21:34 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23PMAP50009898;
+        Mon, 25 Apr 2022 22:21:33 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2047.outbound.protection.outlook.com [104.47.66.47])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fm7w2c8bx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Apr 2022 22:21:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WLIWEPobBeqLutUK7gGFAZ/UfENqIuZRy6J0FAXSwlghqME/a1wp2WtuqUKkhTmMICYRSTdhGF/M+xVxCwynODOI6zRXrRed2fET3Q3xlzk3vwTtp8SbIfkD0pWgesSR7K5vC4Us+IOHbqO5kvZeK3QhC1USCH0pONfwkv+7Hdhc8mV5trbW9t7DqjgW+2zqcF6o7lXK4NnQWjCOGErkOpGwuSDk8Ulnm3j2/s8i7bXwmS2XMifvEC+BOrxU9jJpB3PpBPYo38/79RDR5tdowF0AnjBuRbTIwedagiFt37ubo1Ez1vXe7R/qXOanC4kwCVcad3ZiNEHhPak3YTbGGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/VugjAkkwakedsnbxxxfoh52iUiJK7Gbd9Zf81j3sNk=;
+ b=XO0KHubWOz6VgQpYvflgOkkkKucIRYH41Nx17Bw+OH1DmuYT4W3bYYDANuie5RsEVuP3igYkMkISUIyrM9lyXcL7DaqOeWYbswnUXgzNRJCYaoTOwOKA3JrxKRHTzsd6mG+ItIEkZ9+nQBXOCJnhV1u6F1B/VieuXYQ9sahjR7p88qmPaEkkwGAIzX70rt7vgeimgLr0asUSnHBdcp6kED9ifqLlnvTkR0Or4v7JgZoxlUekNrDRRQP13idSaf+cND8HB7KIgS1n9zbXmi4ayWWHk7ryEKfZcem/fUQ2kiEQggcY5zkehvIIi8miWRxD27Xdu3t6fJY/rrfTXUhGSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/VugjAkkwakedsnbxxxfoh52iUiJK7Gbd9Zf81j3sNk=;
+ b=BLoVO8nQZ/2tARu6xb3/yq6CxN2ksz92LlEv9clo0dueAO7IDLV63+BenVGM3H8YIuqEj/9gF8gbNcmy5BY8gCcBwMYH0RESkUbU/a/v7YD9QZf+WXpxg8+ADYywni2GSczier4yh8niJurqP5pRqI/jxAXGZ3iwfOduauB6Ruc=
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
+ by DM6PR10MB3228.namprd10.prod.outlook.com (2603:10b6:5:1a7::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15; Mon, 25 Apr
+ 2022 22:21:31 +0000
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::7ded:5b3:a28f:2e55]) by CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::7ded:5b3:a28f:2e55%5]) with mapi id 15.20.5186.021; Mon, 25 Apr 2022
+ 22:21:31 +0000
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+To:     zohar@linux.ibm.com
+Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        eric.snowberg@oracle.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] integrity: Allow ima_appraise bootparam to be set when SB is enabled
+Date:   Mon, 25 Apr 2022 18:21:20 -0400
+Message-Id: <20220425222120.1998888-1-eric.snowberg@oracle.com>
+X-Mailer: git-send-email 2.27.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR04CA0016.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::21) To CH2PR10MB4150.namprd10.prod.outlook.com
+ (2603:10b6:610:ac::13)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e2974f27-cf64-46e9-8f7f-08da2709f25a
+X-MS-TrafficTypeDiagnostic: DM6PR10MB3228:EE_
+X-Microsoft-Antispam-PRVS: <DM6PR10MB322877EAF40C936A046ED5B587F89@DM6PR10MB3228.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: T0wv1I4iyHxCPxsqosnvZlIkc6OO9JBNei6Catt3wYwENwngVGnac+tju8C27j32UL0zU5xnvj101QIdIuTHnu8Jc7NULwSb2mQXPpb5/ZAiCfXj3BPdCF5yiycWASp9EZPuhg2f0dJuglOYbLoEkscMCyq9Yy+VFDZy77ll3onIAsodyungyB5fz9ekeutb8KhzPhx+0QnbUDXDmo468q9P97X3BSz8N6H1337vbkH5EiHJK8TGouUJlTOMOjDyV86YjoyES6xpBT0jwf64E26xLgyArcfohcUueuRehCFeW9jhfjcyybnUzKGRB1iS/LC1yfZ2ut1NpFm6k8FT2s7Jb23pvoJB1Z5ZJzLjsLE9GQdC//HkLAnKu4a4UYacVgYdSOu9nuO97Jco/J/5RG+JmjeFM+OrwP9ie+cmrE/1at0PBfPXnAilBykAUrcGn84gFH2BtA/UqQknkBQD4zVepQxVnumYrRKrPK6+dpYuv/lWgd1vt/KSQX4TzmAYGzIWMr/EUcN46V8ZI2J5hrSvPUi6u2qQgMGPrfWLoAyrJj2eHmUcEkrPCulH2WnDpk0JtyV1IOu6WzGOeWjrvnz+VM7ixgqRtB77Q5BuQSZWLTSwcRHOYi3BjM6IrHzWacxWV9bngX1d/fUf+NJA0AdUCotH7AftXcFHQ7z6/xoaoBNGhYWBV3WIMvpKFSkFDhayE3kbwUCNMltWY6869A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(186003)(1076003)(38100700002)(83380400001)(38350700002)(86362001)(508600001)(8936002)(36756003)(5660300002)(44832011)(2906002)(6506007)(52116002)(26005)(66476007)(2616005)(4326008)(6916009)(6512007)(8676002)(66946007)(66556008)(316002)(6666004)(6486002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JDVKU9h8KEqM4dH2+Q2+Rj+3vub40E5xaI5mPcTfnv5dHOoIsxKGHrsgjmuL?=
+ =?us-ascii?Q?X3KOgm1QmGCl7S/tX0kuApv3Ae5GFVtM4jGmOKn4Aix0hFkgsy29lrniarws?=
+ =?us-ascii?Q?04bJUPK9y4MGJ+8G45da4FZBP/C1dUXCi31EGmjHsCSAoR1zbkgBBIO6EzRc?=
+ =?us-ascii?Q?C0uB4vuWZIKZokjG6FuqoLEu7QCN+WJhhR9Lp6/9TAbewnEmuunrr4vdQe7y?=
+ =?us-ascii?Q?Y1xMBp+IdaFF9+j267bpMyQPSTK5gk+D0qtPKqaav8svgXw5PQgliwmK84Th?=
+ =?us-ascii?Q?/G42CdpdhiE+oaiZHGcwi/wUHw9A0cludntArW+me9BowMxr7VsER6Xh5Bd/?=
+ =?us-ascii?Q?T7Y7TLoWmYiT53fOMGqPFH16WmCH9tIaQ04OxvlrFm7pEXTs48fVmY8krIrg?=
+ =?us-ascii?Q?U+V4kOBkBeVLGeoz8GHvXAqdXxohuba6MZ0rd4qvAdJfzDjpEpN/1DzTnnut?=
+ =?us-ascii?Q?USme0pLjLHx8tz27PH1a5Jjavl95+pk9oM33lnQyMuHTT+uAz4shPXEcazzj?=
+ =?us-ascii?Q?aX/Frsy07TGu8yx96NQceKNZj6WX+ghCAWE1Tdkp8e0xPASmHN5NZbrT6xqg?=
+ =?us-ascii?Q?1sVSadGgfNf09VQXk05vU10qB0fw4dwiRPJe8GWKYvYF/mA+u+kQxoGiRDiX?=
+ =?us-ascii?Q?5+BbENYhEeBqp/3yNJEa48X0uSVX6EwmJmMyeEP2jYJmxz+1EcKkYvnbZiIM?=
+ =?us-ascii?Q?mS6NIYqo3oP7NNRGb//PKwANSaV+GhyJxpMtOal7qGUJ+9J1cHZ927aGJ2hf?=
+ =?us-ascii?Q?4EYy8CFU/JZtN5246nThwXEQ0Y4pSLDWWRemOV8lH2g4BW5XY2vsVzbk1ucC?=
+ =?us-ascii?Q?c12QGtEmfIOiT4BZViN0b7Q4b3Ut1w/Hya9hXZsyK7G/x36vJSxXawE/i/U9?=
+ =?us-ascii?Q?NiRdSZvc1i6rvoXBrFTZ4tPJmepEY3dMkv9cpSup+kKPWUlHWOVDh2t/LAlt?=
+ =?us-ascii?Q?L1IY7lN4Gg1M2FDTrtQV/0Ub5vFO6E8eMlnW8vy+uMR1bGREzD24ekjv6/kg?=
+ =?us-ascii?Q?KN/g/GjnE2q8akziFXifwNvAMA5zRLXm50uanbVyh39KXBPuqCE3fZI3zdXs?=
+ =?us-ascii?Q?MoMwXjcR4mM2zC4Gjliu3TZrCZlIc8Caji8xptr95+e1pE5RlLw5YKYITWLw?=
+ =?us-ascii?Q?eisYZ1eCKEYFmgrxxvQ1S7RNIaDgBI7Z2C+zGbOHXjwzToVwNel49AmpXShK?=
+ =?us-ascii?Q?ukVKIzj3mVcBkiQr4d/Ywx0zOz+t/OUmlUsJWKhAB9tF2OWTpxHEwIjvhSlX?=
+ =?us-ascii?Q?hAAJkKeAmx6HqLKARY0p+PmvcrDtnMG+1+6B0zc3xgFEN/4mXaHcbR2qdwES?=
+ =?us-ascii?Q?tpjrNBs1cCx5pUe+89Tw+2dRykGHknJVp2DryvqTmOp8ATklxpFNlzWyxdTp?=
+ =?us-ascii?Q?yEkV1CWkBvQVMB5zOCLUvt0QsDaIfUHCPzNfecaiVXE+wGAf+vAeVaqPHa0C?=
+ =?us-ascii?Q?xB53womRAy1DNTuZSjp2WhdIAqav2iMRO+c5YYe/cj1qaofxF1/R4eVeYrsx?=
+ =?us-ascii?Q?fiHj384qJxnf62aNJWV162iJI+lvXZq8rqCkBk64YCj/5vlwgr0BTTRZaQzx?=
+ =?us-ascii?Q?rqI+kh2riylmI/rHezqHZs2e6/SwRy5IRzExW/zPFVR/6ok4dzsEqtmfIUkx?=
+ =?us-ascii?Q?5exEGMB4/Oj58IFQKYtXhuED3Zz1Z+ZdYWr++/9UKGtujJPIGRIjTP1bwlzZ?=
+ =?us-ascii?Q?tUJsVC8fgoZUyT/FTg2l0hy7/v61/Z3iz+mQ0hNZlMCrfjk3lpYC5hgOsEQ/?=
+ =?us-ascii?Q?U1GTtz/sRT23ZEZWG0iThxw2m9PBRM0=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2974f27-cf64-46e9-8f7f-08da2709f25a
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2022 22:21:30.9317
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HPLfzVw1ZQgFb15oV6MaALEHq3seoPvtFsZ5bP+EQzzz7MskZBS4SfxuJkz+YXwj+ySftC8MdBBzkYgGDdnnFoXvBWyRUyyOLJuwlAM+pnw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB3228
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
+ definitions=2022-04-25_08:2022-04-25,2022-04-25 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 spamscore=0
+ malwarescore=0 mlxlogscore=999 adultscore=0 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2204250099
+X-Proofpoint-ORIG-GUID: P8lPI_FkKH-WjONUiStvHiA0iDxqSlC9
+X-Proofpoint-GUID: P8lPI_FkKH-WjONUiStvHiA0iDxqSlC9
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jonathan,
+The IMA_APPRAISE_BOOTPARM config allows enabling different "ima_appraise="
+modes (log, fix, enforce) to be configured at boot time.  When booting
+with Secure Boot enabled, all modes are ignored except enforce.  To use
+log or fix, Secure Boot must be disabled.
 
-On Fri, 2022-04-22 at 13:50 +0000, Jonathan McDowell wrote:
-> On kexec file load Integrity Measurement Architecture (IMA) subsystem
-> may verify the IMA signature of the kernel and initramfs, and measure
-> it. The command line parameters passed to the kernel in the kexec call
-> may also be measured by IMA. A remote attestation service can verify
-> a TPM quote based on the TPM event log, the IMA measurement list, and
-> the TPM PCR data. This can be achieved only if the IMA measurement log
-> is carried over from the current kernel to the next kernel across
-> the kexec call.
-> 
-> powerpc and ARM64 both achieve this using device tree with a
-> "linux,ima-kexec-buffer" node. x86 platforms generally don't make use of
-> device tree, so the IMA infrastructure is extended to allow non device
-> tree platforms to provide a log buffer. x86 then passes the IMA buffer
-> to the new kernel via the setup_data mechanism.
-> 
-> Signed-off-by: Jonathan McDowell <noodles@fb.com>
+With a policy such as:
 
-FYI, after applying, building, and booting a kernel with this patch,
-"kexec -s -l /boot/vmlinuz-5.18.0-rc4+ --reuse-cmdline --
-initrd=/boot/initramfs-5.18.0-rc4+.img" properly loads the kernel, but
-"kexec -s -e" fails to reboot, at least on a test laptop even with only
-the "boot_aggregate" measurement record.
+appraise func=BPRM_CHECK appraise_type=imasig
 
-Without enabling CONFIG_IMA_KEXEC, kexec boots properly.
+A user may just want to audit signature validation. Not all users
+are interested in full enforcement and find the audit log appropriate
+for their use case.
 
-thanks,
+Add a new IMA_APPRAISE_SB_BOOTPARAM config allowing "ima_appraise="
+to work when Secure Boot is enabled.
 
-Mimi
+Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+---
+ security/integrity/ima/Kconfig        | 9 +++++++++
+ security/integrity/ima/ima_appraise.c | 2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-> ---
->  arch/x86/Kconfig                      |  1 +
->  arch/x86/include/uapi/asm/bootparam.h |  9 ++++
->  arch/x86/kernel/e820.c                |  6 +--
->  arch/x86/kernel/kexec-bzimage64.c     | 37 ++++++++++++++++-
->  arch/x86/kernel/setup.c               | 26 ++++++++++++
->  include/linux/ima.h                   |  1 +
->  security/integrity/ima/ima_kexec.c    | 59 ++++++++++++++++++++++++++-
->  7 files changed, 134 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index b0142e01002e..bde4959d9bdc 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2017,6 +2017,7 @@ config KEXEC_FILE
->  	bool "kexec file based system call"
->  	select KEXEC_CORE
->  	select BUILD_BIN2C
-> +	select HAVE_IMA_KEXEC if IMA
->  	depends on X86_64
->  	depends on CRYPTO=y
->  	depends on CRYPTO_SHA256=y
-> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-> index b25d3f82c2f3..2f7b138a9388 100644
-> --- a/arch/x86/include/uapi/asm/bootparam.h
-> +++ b/arch/x86/include/uapi/asm/bootparam.h
-> @@ -10,6 +10,7 @@
->  #define SETUP_EFI			4
->  #define SETUP_APPLE_PROPERTIES		5
->  #define SETUP_JAILHOUSE			6
-> +#define SETUP_IMA			7
->  
->  #define SETUP_INDIRECT			(1<<31)
->  
-> @@ -171,6 +172,14 @@ struct jailhouse_setup_data {
->  	} __attribute__((packed)) v2;
->  } __attribute__((packed));
->  
-> +/*
-> + * IMA buffer setup data information from the previous kernel during kexec
-> + */
-> +struct ima_setup_data {
-> +	__u64 addr;
-> +	__u64 size;
-> +} __attribute__((packed));
-> +
->  /* The so-called "zeropage" */
->  struct boot_params {
->  	struct screen_info screen_info;			/* 0x000 */
-> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> index f267205f2d5a..9dac24680ff8 100644
-> --- a/arch/x86/kernel/e820.c
-> +++ b/arch/x86/kernel/e820.c
-> @@ -1017,10 +1017,10 @@ void __init e820__reserve_setup_data(void)
->  		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
->  
->  		/*
-> -		 * SETUP_EFI is supplied by kexec and does not need to be
-> -		 * reserved.
-> +		 * SETUP_EFI and SETUP_IMA are supplied by kexec and do not need
-> +		 * to be reserved.
->  		 */
-> -		if (data->type != SETUP_EFI)
-> +		if (data->type != SETUP_EFI && data->type != SETUP_IMA)
->  			e820__range_update_kexec(pa_data,
->  						 sizeof(*data) + data->len,
->  						 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 170d0fd68b1f..07625da33075 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -186,6 +186,32 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
->  }
->  #endif /* CONFIG_EFI */
->  
-> +#ifdef CONFIG_IMA_KEXEC
-> +static void
-> +setup_ima_state(const struct kimage *image, struct boot_params *params,
-> +		unsigned long params_load_addr,
-> +		unsigned int ima_setup_data_offset)
-> +{
-> +	struct setup_data *sd = (void *)params + ima_setup_data_offset;
-> +	struct ima_setup_data *ima = (void *)sd + sizeof(struct setup_data);
-> +	unsigned long setup_data_phys;
-> +
-> +	if (!image->ima_buffer_size)
-> +		return;
-> +
-> +	sd->type = SETUP_IMA;
-> +	sd->len = sizeof(*ima);
-> +
-> +	ima->addr = image->ima_buffer_addr;
-> +	ima->size = image->ima_buffer_size;
-> +
-> +	/* Add setup data */
-> +	setup_data_phys = params_load_addr + ima_setup_data_offset;
-> +	sd->next = params->hdr.setup_data;
-> +	params->hdr.setup_data = setup_data_phys;
-> +}
-> +#endif /* CONFIG_IMA_KEXEC */
-> +
->  static int
->  setup_boot_parameters(struct kimage *image, struct boot_params *params,
->  		      unsigned long params_load_addr,
-> @@ -247,6 +273,13 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
->  	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
->  			efi_setup_data_offset);
->  #endif
-> +
-> +#ifdef CONFIG_IMA_KEXEC
-> +	/* Setup IMA log buffer state */
-> +	setup_ima_state(image, params, params_load_addr,
-> +			efi_setup_data_offset + ALIGN(efi_map_sz, 16) + sizeof(struct setup_data));
-> +#endif
-> +
->  	/* Setup EDD info */
->  	memcpy(params->eddbuf, boot_params.eddbuf,
->  				EDDMAXNR * sizeof(struct edd_info));
-> @@ -401,7 +434,9 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
->  	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
->  				sizeof(struct setup_data) +
-> -				sizeof(struct efi_setup_data);
-> +				sizeof(struct efi_setup_data) +
-> +				sizeof(struct setup_data) +
-> +				sizeof(struct ima_setup_data);
->  
->  	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
->  	if (!params)
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index c95b9ac5a457..8b0e7725f918 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -11,6 +11,7 @@
->  #include <linux/dma-map-ops.h>
->  #include <linux/dmi.h>
->  #include <linux/efi.h>
-> +#include <linux/ima.h>
->  #include <linux/init_ohci1394_dma.h>
->  #include <linux/initrd.h>
->  #include <linux/iscsi_ibft.h>
-> @@ -335,6 +336,28 @@ static void __init reserve_initrd(void)
->  }
->  #endif /* CONFIG_BLK_DEV_INITRD */
->  
-> +#ifdef CONFIG_IMA_KEXEC
-> +static void __init add_early_ima_buffer(u64 phys_addr)
-> +{
-> +	struct ima_setup_data *data;
-> +
-> +	data = early_memremap(phys_addr + sizeof(struct setup_data),
-> +			      sizeof(*data));
-> +	if (!data) {
-> +		pr_warn("setup: failed to memremap ima_setup_data entry\n");
-> +		return;
-> +	}
-> +	memblock_reserve(data->addr, data->size);
-> +	ima_set_kexec_buffer(data->addr, data->size);
-> +	early_memunmap(data, sizeof(*data));
-> +}
-> +#else
-> +static void __init add_early_ima_buffer(u64 phys_addr)
-> +{
-> +	pr_warn("Passed IMA kexec data, but CONFIG_IMA_KEXEC not set. Ignoring.\n");
-> +}
-> +#endif
-> +
->  static void __init parse_setup_data(void)
->  {
->  	struct setup_data *data;
-> @@ -360,6 +383,9 @@ static void __init parse_setup_data(void)
->  		case SETUP_EFI:
->  			parse_efi_setup(pa_data, data_len);
->  			break;
-> +		case SETUP_IMA:
-> +			add_early_ima_buffer(pa_data);
-> +			break;
->  		default:
->  			break;
->  		}
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 426b1744215e..f58aed7acad4 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -48,6 +48,7 @@ static inline void ima_appraise_parse_cmdline(void) {}
->  
->  #ifdef CONFIG_IMA_KEXEC
->  extern void ima_add_kexec_buffer(struct kimage *image);
-> +extern void ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size);
->  #endif
->  
->  #else
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 13753136f03f..419c50cfe6b9 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -10,6 +10,7 @@
->  #include <linux/seq_file.h>
->  #include <linux/vmalloc.h>
->  #include <linux/kexec.h>
-> +#include <linux/memblock.h>
->  #include <linux/of.h>
->  #include <linux/ima.h>
->  #include "ima.h"
-> @@ -134,10 +135,66 @@ void ima_add_kexec_buffer(struct kimage *image)
->  }
->  #endif /* IMA_KEXEC */
->  
-> +#ifndef CONFIG_OF
-> +static phys_addr_t ima_early_kexec_buffer_phys;
-> +static size_t ima_early_kexec_buffer_size;
-> +
-> +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
-> +{
-> +	if (size == 0)
-> +		return;
-> +
-> +	ima_early_kexec_buffer_phys = phys_addr;
-> +	ima_early_kexec_buffer_size = size;
-> +}
-> +
-> +int __init ima_free_kexec_buffer(void)
-> +{
-> +	int rc;
-> +
-> +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
-> +		return -ENOTSUPP;
-> +
-> +	if (ima_early_kexec_buffer_size == 0)
-> +		return -ENOENT;
-> +
-> +	rc = memblock_phys_free(ima_early_kexec_buffer_phys,
-> +				ima_early_kexec_buffer_size);
-> +	if (rc)
-> +		return rc;
-> +
-> +	ima_early_kexec_buffer_phys = 0;
-> +	ima_early_kexec_buffer_size = 0;
-> +
-> +	return 0;
-> +}
-> +
-> +int __init ima_get_kexec_buffer(void **addr, size_t *size)
-> +{
-> +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
-> +		return -ENOTSUPP;
-> +
-> +	if (ima_early_kexec_buffer_size == 0)
-> +		return -ENOENT;
-> +
-> +	*addr = __va(ima_early_kexec_buffer_phys);
-> +	*size = ima_early_kexec_buffer_size;
-> +
-> +	return 0;
-> +}
-> +
-> +#else
-> +
-> +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
-> +{
-> +	pr_warn("CONFIG_OF enabled, ignoring call to set buffer details.\n");
-> +}
-> +#endif /* CONFIG_OF */
-> +
->  /*
->   * Restore the measurement list from the previous kernel.
->   */
-> -void ima_load_kexec_buffer(void)
-> +void __init ima_load_kexec_buffer(void)
->  {
->  	void *kexec_buffer = NULL;
->  	size_t kexec_buffer_size = 0;
-
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index f3a9cc201c8c..66d25345e478 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -237,6 +237,15 @@ config IMA_APPRAISE_BOOTPARAM
+ 	  This option enables the different "ima_appraise=" modes
+ 	  (eg. fix, log) from the boot command line.
+ 
++config IMA_APPRAISE_SB_BOOTPARAM
++	bool "ima_appraise secure boot parameter"
++	depends on IMA_APPRAISE_BOOTPARAM
++	default n
++	help
++	  This option enables the different "ima_appraise=" modes
++	  (eg. fix, log) from the boot command line when booting
++	  with Secure Boot enabled.
++
+ config IMA_APPRAISE_MODSIG
+ 	bool "Support module-style signatures for appraisal"
+ 	depends on IMA_APPRAISE
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 17232bbfb9f9..a66b1e271806 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -43,7 +43,7 @@ void __init ima_appraise_parse_cmdline(void)
+ 
+ 	/* If appraisal state was changed, but secure boot is enabled,
+ 	 * keep its default */
+-	if (sb_state) {
++	if (sb_state && !IS_ENABLED(CONFIG_IMA_APPRAISE_SB_BOOTPARAM)) {
+ 		if (!(appraisal_state & IMA_APPRAISE_ENFORCE))
+ 			pr_info("Secure boot enabled: ignoring ima_appraise=%s option",
+ 				str);
+-- 
+2.27.0
 
