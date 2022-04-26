@@ -2,162 +2,189 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A74FCC433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Apr 2022 18:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAEDC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Apr 2022 18:57:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345970AbiDZSVp (ORCPT
+        id S238075AbiDZTAc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Apr 2022 14:21:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35634 "EHLO
+        Tue, 26 Apr 2022 15:00:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353692AbiDZSVo (ORCPT
+        with ESMTP id S231894AbiDZTAc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Apr 2022 14:21:44 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DBB11C9B6;
-        Tue, 26 Apr 2022 11:18:34 -0700 (PDT)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23QHFaUs023109;
-        Tue, 26 Apr 2022 18:18:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=pZNsKJEhbuvfZEbC4Yw2eoCMWOlmwWXFqFlNgeOEvH8=;
- b=Aat9CsB4Zz7VpTOSk2Sx3PqLAZgS0h+W6JfSIVOwvpKgZ8r4JdmeweRvMSQEy7QrVJT/
- scPrajPLt9PYHVq0iFb9bgAvyu5SO7AY9xG2RuYrW9c0MY4EqFvPSrHhUg1cn82t1u18
- 5UODCRknt6bbhVpbWbv3FEA3U2txebZrpclbKabuKuobOpgvAvnlaEkodY7/ZNg7PE6i
- Op3Iw2XUxSV+DRxLs/bGpmSO+eRwyt547mZHHU9HhNjLbteJ1YthjBc6QQaXF6/Fpp3i
- ByMcoYL2A/df5Oi8w14lRJhkF3lepQDSU65fhB7QDiwX94F/DD9vIh07hmwImLtluRpX 1A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fpgn7ywh0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Apr 2022 18:18:22 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 23QIFNL1019974;
-        Tue, 26 Apr 2022 18:18:22 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fpgn7ywgb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Apr 2022 18:18:21 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23QICdD9023025;
-        Tue, 26 Apr 2022 18:18:19 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma03ams.nl.ibm.com with ESMTP id 3fm938vsn4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Apr 2022 18:18:19 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23QI5FKa44761510
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Apr 2022 18:05:15 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 168614C044;
-        Tue, 26 Apr 2022 18:18:17 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C3154C040;
-        Tue, 26 Apr 2022 18:18:16 +0000 (GMT)
-Received: from sig-9-65-87-209.ibm.com (unknown [9.65.87.209])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Apr 2022 18:18:15 +0000 (GMT)
-Message-ID: <d7ba004bd2ce2a8ce2ff0601b4bca921a5301ece.camel@linux.ibm.com>
-Subject: Re: [PATCH] integrity: Allow ima_appraise bootparam to be set when
- SB is enabled
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 26 Apr 2022 14:18:15 -0400
-In-Reply-To: <20220425222120.1998888-1-eric.snowberg@oracle.com>
-References: <20220425222120.1998888-1-eric.snowberg@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Qgcs47RawS7I43byRURuSWH7aUfJD9rQ
-X-Proofpoint-ORIG-GUID: a7vf_X9dZCdjVbQBPkNl3f4VL_56TnG7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-26_05,2022-04-26_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- priorityscore=1501 mlxscore=0 lowpriorityscore=0 impostorscore=0
- bulkscore=0 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204260115
+        Tue, 26 Apr 2022 15:00:32 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CDB2180EFD
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Apr 2022 11:57:23 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id t6so23305698wra.4
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Apr 2022 11:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YN5oTnEIU4pNM1Sb3nJpdAjaA/oJ2IQFujs0Jps+a9Y=;
+        b=wLkjVxHZBMNNlQ2eMzOmdi1zhi+QqAFf+qfqGanndpXHHK75T5Cx2XtBpV7WJONo0S
+         57Cpy0vv21O9fGFIcYxOaBYK8k8eV9IFefO3gIygGNNkgS49Gfao934wDIvokwr9hdAt
+         KW2KmfNAhdgDVR0tQFIvPnO15AKL+CACbKUkYK+7lChrZwwOX6jUJ3QGhXfVKjcqA7pQ
+         reufn4qSO3+brh0bYiIUAPCuM2Vj05+ca4vWXdmUkNb40B4+uJ6tTP7GXurmfLeAOrBm
+         84Jn+HdJBdzMjFxMRaVqchrseSdroyGzVAIMuLwWWbHR4HC5ZkzJxdEW5h+KdjkupYQH
+         tZNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YN5oTnEIU4pNM1Sb3nJpdAjaA/oJ2IQFujs0Jps+a9Y=;
+        b=u+/Qev06qyqpJ2ARNGLsXu6FrzAf/QuYH8L0tPtW2hEtpHvzZI/blBsTXj/+jS9ydZ
+         jFj7hP6mswc+PjbUJ59a/CVoxIt8szpCjxjdElKBWCk2iiSG6t+F+FSIeXqPIe3z7rQ0
+         3AS5U/AVXgV4RgRSjjNiYT/CZF/ZM+YugZcI+2klkjsl3nf4xDJB6cDGWoMzPE/3HyaA
+         ii+vY+urlq5KhNbt4kLMc3jgjw5gigulpc8YXhCWB320TG+cMw+F/1+caD3PhZChAHcq
+         642o2Uepi6C1q3eNwchd9rdYyA5KG2ugk73tgFSnBsmiYRxK/+XD+9/pt6LoOZUfSfuN
+         WbPA==
+X-Gm-Message-State: AOAM5333Drk5MiHPnWolG1caelmAmjROtbNOue+U9tH4ition+iyKpHU
+        SsNyutl0uUWo+h1zJNBpRPRoXP7/GU0KKf3xGK+C
+X-Google-Smtp-Source: ABdhPJzCoqSO0HOFjAxjiYwi8hx2T3JoRbTDOzldL2FbJ+czUtRSK699iRUtzHvdC/Nq1+fZFD2YroJ1E21D9zBEv9U=
+X-Received: by 2002:a5d:590d:0:b0:20a:c3eb:2584 with SMTP id
+ v13-20020a5d590d000000b0020ac3eb2584mr18774084wrd.18.1650999442153; Tue, 26
+ Apr 2022 11:57:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220418145945.38797-1-casey@schaufler-ca.com>
+ <20220418145945.38797-28-casey@schaufler-ca.com> <f2186f22-5bcd-d962-7e49-c816fc5fbd07@canonical.com>
+In-Reply-To: <f2186f22-5bcd-d962-7e49-c816fc5fbd07@canonical.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 26 Apr 2022 14:57:11 -0400
+Message-ID: <CAHC9VhTXgBTH+7ny-fcMP_HC1ojA1ass38PGHS2tJny0bCGXzA@mail.gmail.com>
+Subject: Re: [PATCH v35 27/29] Audit: Add record for multiple object contexts
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2022-04-25 at 18:21 -0400, Eric Snowberg wrote:
-> The IMA_APPRAISE_BOOTPARM config allows enabling different "ima_appraise="
-> modes (log, fix, enforce) to be configured at boot time.  When booting
-> with Secure Boot enabled, all modes are ignored except enforce.  To use
-> log or fix, Secure Boot must be disabled.
-> 
-> With a policy such as:
-> 
-> appraise func=BPRM_CHECK appraise_type=imasig
-> 
-> A user may just want to audit signature validation. Not all users
-> are interested in full enforcement and find the audit log appropriate
-> for their use case.
-> 
-> Add a new IMA_APPRAISE_SB_BOOTPARAM config allowing "ima_appraise="
-> to work when Secure Boot is enabled.
-> 
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+On Mon, Apr 25, 2022 at 11:38 PM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 4/18/22 07:59, Casey Schaufler wrote:
+> > Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
+> > An example of the MAC_OBJ_CONTEXTS (1421) record is:
+> >
+> >     type=MAC_OBJ_CONTEXTS[1421]
+> >     msg=audit(1601152467.009:1050):
+> >     obj_selinux=unconfined_u:object_r:user_home_t:s0
+> >
+> > When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
+> > the "obj=" field in other records in the event will be "obj=?".
+> > An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
+> > multiple security modules that may make access decisions based
+> > on an object security context.
+> >
+> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > ---
+> >  include/linux/audit.h      |  5 +++
+> >  include/uapi/linux/audit.h |  1 +
+> >  kernel/audit.c             | 47 +++++++++++++++++++++++
+> >  kernel/auditsc.c           | 79 ++++++++++++--------------------------
+> >  4 files changed, 77 insertions(+), 55 deletions(-)
 
-Since the IMA architecture specific policy rules were first
-upstreamed, either enabling IMA_APPRAISE_BOOTPARAM or IMA_ARCH_POLICY
-was permitted, but not both.  This Kconfig negates the assumptions on
-which the CONFIG_IMA_ARCH_POLICY and the ima_appraise_signature() are
-based without any indication of the ramifications.   This impacts the
-kexec file syscall lockdown LSM assumptions as well.
+...
 
-A fuller, more complete explanation for needing "log" mode when secure
-boot is enabled is required.
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index 8ed2d717c217..a8c3ec6ba60b 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -2226,6 +2226,53 @@ static void audit_buffer_aux_end(struct audit_buffer *ab)
+> >       ab->skb = skb_peek(&ab->skb_list);
+> >  }
+> >
+> > +void audit_log_object_context(struct audit_buffer *ab, struct lsmblob *blob)
+> > +{
+> > +     int i;
+> > +     int error;
+> > +     struct lsmcontext context;
+> > +
+> > +     if (!lsm_multiple_contexts()) {
+> > +             error = security_secid_to_secctx(blob, &context, LSMBLOB_FIRST);
+> > +             if (error) {
+> > +                     if (error != -EINVAL)
+> > +                             goto error_path;
+> > +                     return;
+> > +             }
+> > +             audit_log_format(ab, " obj=%s", context.context);
+> > +             security_release_secctx(&context);
+> > +     } else {
+> > +             audit_log_format(ab, " obj=?");
+> > +             error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
+> > +             if (error)
+> > +                     goto error_path;
+> > +
+> > +             for (i = 0; i < LSMBLOB_ENTRIES; i++) {
+> > +                     if (blob->secid[i] == 0)
+> > +                             continue;
+> > +                     error = security_secid_to_secctx(blob, &context, i);
+> > +                     if (error) {
+> > +                             audit_log_format(ab, "%sobj_%s=?",
+> > +                                              i ? " " : "",
+> > +                                              lsm_slot_to_name(i));
+> > +                             if (error != -EINVAL)
+> > +                                     audit_panic("error in audit_log_object_context");
+> > +                     } else {
+> > +                             audit_log_format(ab, "%sobj_%s=%s",
+> > +                                              i ? " " : "",
+> > +                                              lsm_slot_to_name(i),
+> > +                                              context.context);
+> > +                             security_release_secctx(&context);
+> > +                     }
+> > +             }
+> > +
+> > +             audit_buffer_aux_end(ab);
+> > +     }
+> > +     return;
+> > +
+> > +error_path:
+> > +     audit_panic("error in audit_log_object_context");
+>
+> This moves the audit_panic around, so certain operations are not
+> done before the call. I am currently not sure of the implications.
 
-thanks,
+Short version: It's okay.
 
-Mimi
+Longer version: The audit_panic() call is either going to panic the
+kernel (NOT the default), do a pr_err(), or essentially be a no-op.
+In the case of the full blown kernel panic we don't really care, the
+system is going to die before there is any chance of this record in
+progress getting logged.  In the case of a pr_err() or no-op the key
+part is making sure we leave the audit_buffer in a consistent state so
+that we preserve whatever information is already present.  In the
+!lsm_multiple_contexts case we simply return without making any
+changes to the audit_buffer so we're good there; in the multiple LSM
+case we always end the aux record properly (using a "?" when
+necessary) if an aux record has been successfully created.
 
-> ---
->  security/integrity/ima/Kconfig        | 9 +++++++++
->  security/integrity/ima/ima_appraise.c | 2 +-
->  2 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index f3a9cc201c8c..66d25345e478 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -237,6 +237,15 @@ config IMA_APPRAISE_BOOTPARAM
->  	  This option enables the different "ima_appraise=" modes
->  	  (eg. fix, log) from the boot command line.
->  
-> +config IMA_APPRAISE_SB_BOOTPARAM
-> +	bool "ima_appraise secure boot parameter"
-> +	depends on IMA_APPRAISE_BOOTPARAM
-> +	default n
-> +	help
-> +	  This option enables the different "ima_appraise=" modes
-> +	  (eg. fix, log) from the boot command line when booting
-> +	  with Secure Boot enabled.
-> +
->  config IMA_APPRAISE_MODSIG
->  	bool "Support module-style signatures for appraisal"
->  	depends on IMA_APPRAISE
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 17232bbfb9f9..a66b1e271806 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -43,7 +43,7 @@ void __init ima_appraise_parse_cmdline(void)
->  
->  	/* If appraisal state was changed, but secure boot is enabled,
->  	 * keep its default */
-> -	if (sb_state) {
-> +	if (sb_state && !IS_ENABLED(CONFIG_IMA_APPRAISE_SB_BOOTPARAM)) {
->  		if (!(appraisal_state & IMA_APPRAISE_ENFORCE))
->  			pr_info("Secure boot enabled: ignoring ima_appraise=%s option",
->  				str);
+Feel free to point out a specific scenario that you think looks wrong
+- I may have missed it - but I believe this code to be correct.
 
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index 557713954a69..04bf3c04ef3d 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -1420,18 +1409,10 @@ static void show_special(struct audit_context *context, int *call_panic)
+>
+> If pushing audit_panic into audit_log_object_context() is acceptable then this call_panic arg is
+> no longer needed. The same goes for the call_panic arg in audit_log_name(). And call_panic can
+> be dropped from audit_log_exit()
 
+Good catch.
+
+I suspect this is a vestige from when audit_log_end() used to do the
+record's skb write to userspace, meaning it was possible that you
+might get some of the records written to userspace before the system
+killed itself.  Now with all of the queuing involved it's less likely
+that this would be the case, and even if it does happen in some cases,
+it's basically a toss up depending on how the system is loaded, the
+scheduler, etc.
+
+-- 
+paul-moore.com
