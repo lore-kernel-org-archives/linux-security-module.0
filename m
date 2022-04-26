@@ -2,311 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC69FC433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Apr 2022 03:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C04C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Apr 2022 04:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbiDZDlb (ORCPT
+        id S234748AbiDZENX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Apr 2022 23:41:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48244 "EHLO
+        Tue, 26 Apr 2022 00:13:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239126AbiDZDlZ (ORCPT
+        with ESMTP id S243948AbiDZENW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Apr 2022 23:41:25 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59DF2ECCCC;
-        Mon, 25 Apr 2022 20:38:15 -0700 (PDT)
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id A47813F9E0;
-        Tue, 26 Apr 2022 03:38:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1650944288;
-        bh=t5BVhVwPX2LjN7byClOmBAVBS2+Tcozj35sCWydq8Ho=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=i8K/sAv2iKqpr2Llk8lXY5ReC7zxrdiIPVH4k/OPhEQFyowGURO+EMMZHFayqn/Se
-         d9LmP4ihOxZrswc1YSXuTlISvfA4pW8zIAzebHfRbDCj879IVFJFPmckPWbvMqd26H
-         7YkOfdcKWk/K0QxRB3P4H/8VpgsrFZStu66iIRhXgt4tcsqAGHJle1p9naSDIew1cy
-         tCMxJYIV4G8FZkwLoqyBnwmxDC0V2e8A5itDWxW+IpvsT/ZcyDBuahzx9fNiwlaYsf
-         +mUGKFILEvpGV74wFvOIEDwNqAOF7fIW5RpsK+lrUnIOucSiGHF5a1Q/MNUdnyyWjG
-         RVPhWtyDHNjpA==
-Message-ID: <f2186f22-5bcd-d962-7e49-c816fc5fbd07@canonical.com>
-Date:   Mon, 25 Apr 2022 20:37:54 -0700
+        Tue, 26 Apr 2022 00:13:22 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F18761080;
+        Mon, 25 Apr 2022 21:10:15 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4KnT1P2SRFzhYqg;
+        Tue, 26 Apr 2022 12:10:01 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Tue, 26 Apr 2022 12:10:13 +0800
+Message-ID: <853635d6-9e74-c3dc-f6dc-d4166616c8e5@huawei.com>
+Date:   Tue, 26 Apr 2022 12:10:13 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v35 27/29] Audit: Add record for multiple object contexts
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: How to list keys used for kexec
 Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     linux-audit@redhat.com, keescook@chromium.org,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
-References: <20220418145945.38797-1-casey@schaufler-ca.com>
- <20220418145945.38797-28-casey@schaufler-ca.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20220418145945.38797-28-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     =?UTF-8?Q?Michal_Such=c3=a1nek?= <msuchanek@suse.de>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+References: <20220414175930.GM163591@kunlun.suse.cz>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+In-Reply-To: <20220414175930.GM163591@kunlun.suse.cz>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/18/22 07:59, Casey Schaufler wrote:
-> Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
-> An example of the MAC_OBJ_CONTEXTS (1421) record is:
+On 2022/4/15 1:59, Michal Suchánek wrote:
+> Hello,
 > 
->     type=MAC_OBJ_CONTEXTS[1421]
->     msg=audit(1601152467.009:1050):
->     obj_selinux=unconfined_u:object_r:user_home_t:s0
+> apparently modules are verified by keys from 'secondary' keyring on all
+> platforms.
 > 
-> When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
-> the "obj=" field in other records in the event will be "obj=?".
-> An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
-> multiple security modules that may make access decisions based
-> on an object security context.
+> If you happen to know that it's this particular keyring, and know how
+> to list keyrings recursively you can find the keys that are used for
+> verifying modules.
 > 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  include/linux/audit.h      |  5 +++
->  include/uapi/linux/audit.h |  1 +
->  kernel/audit.c             | 47 +++++++++++++++++++++++
->  kernel/auditsc.c           | 79 ++++++++++++--------------------------
->  4 files changed, 77 insertions(+), 55 deletions(-)
+> However, for kexec we have
 > 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 14849d5f84b4..1b05eb2dbe77 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -191,6 +191,8 @@ extern void		    audit_log_path_denied(int type,
->  						  const char *operation);
->  extern void		    audit_log_lost(const char *message);
->  
-> +extern void audit_log_object_context(struct audit_buffer *ab,
-> +				     struct lsmblob *blob);
->  extern int audit_log_task_context(struct audit_buffer *ab);
->  extern void audit_log_task_info(struct audit_buffer *ab);
->  
-> @@ -251,6 +253,9 @@ static inline void audit_log_key(struct audit_buffer *ab, char *key)
->  { }
->  static inline void audit_log_path_denied(int type, const char *operation)
->  { }
-> +static inline  void audit_log_object_context(struct audit_buffer *ab,
-> +					     struct lsmblob *blob)
-> +{ }
->  static inline int audit_log_task_context(struct audit_buffer *ab)
->  {
->  	return 0;
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index af0aaccfaf57..d25d76b29e3c 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -144,6 +144,7 @@
->  #define AUDIT_MAC_CALIPSO_ADD	1418	/* NetLabel: add CALIPSO DOI entry */
->  #define AUDIT_MAC_CALIPSO_DEL	1419	/* NetLabel: del CALIPSO DOI entry */
->  #define AUDIT_MAC_TASK_CONTEXTS	1420	/* Multiple LSM task contexts */
-> +#define AUDIT_MAC_OBJ_CONTEXTS	1421	/* Multiple LSM objext contexts */
->  
->  #define AUDIT_FIRST_KERN_ANOM_MSG   1700
->  #define AUDIT_LAST_KERN_ANOM_MSG    1799
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 8ed2d717c217..a8c3ec6ba60b 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2226,6 +2226,53 @@ static void audit_buffer_aux_end(struct audit_buffer *ab)
->  	ab->skb = skb_peek(&ab->skb_list);
->  }
->  
-> +void audit_log_object_context(struct audit_buffer *ab, struct lsmblob *blob)
-> +{
-> +	int i;
-> +	int error;
-> +	struct lsmcontext context;
-> +
-> +	if (!lsm_multiple_contexts()) {
-> +		error = security_secid_to_secctx(blob, &context, LSMBLOB_FIRST);
-> +		if (error) {
-> +			if (error != -EINVAL)
-> +				goto error_path;
-> +			return;
-> +		}
-> +		audit_log_format(ab, " obj=%s", context.context);
-> +		security_release_secctx(&context);
-> +	} else {
-> +		audit_log_format(ab, " obj=?");
-> +		error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
-> +		if (error)
-> +			goto error_path;
-> +
-> +		for (i = 0; i < LSMBLOB_ENTRIES; i++) {
-> +			if (blob->secid[i] == 0)
-> +				continue;
-> +			error = security_secid_to_secctx(blob, &context, i);
-> +			if (error) {
-> +				audit_log_format(ab, "%sobj_%s=?",
-> +						 i ? " " : "",
-> +						 lsm_slot_to_name(i));
-> +				if (error != -EINVAL)
-> +					audit_panic("error in audit_log_object_context");
-> +			} else {
-> +				audit_log_format(ab, "%sobj_%s=%s",
-> +						 i ? " " : "",
-> +						 lsm_slot_to_name(i),
-> +						 context.context);
-> +				security_release_secctx(&context);
-> +			}
-> +		}
-> +
-> +		audit_buffer_aux_end(ab);
-> +	}
-> +	return;
-> +
-> +error_path:
-> +	audit_panic("error in audit_log_object_context");
+>   - primary keyring on aarch64
+>   - platform keyring on s390
+>   - secondary AND platform keyring on x86
+> 
+> How is a user supposed to know which keys are used for kexec image
+> verification?
+> 
+> There is an implicit keyring that is ad-hoc constructed by the code that
+> does the kexec verification but there is no key list observable from
+> userspace that corresponds to this ad-hoc keyring only known to the kexec
+> code.
+> 
+> Can the kernel make the information which keys are used for what purpose
+> available to the user?
+> 
+> Thanks
+> 
+> Michal
+> 
+> .
 
-This moves the audit_panic around, so certain operations are not
-done before the call. I am currently not sure of the implications.
+Hi Michal
 
-Paul?
+I'll try my best to understand and answer your question.
 
-> +}
->  
->  int audit_log_task_context(struct audit_buffer *ab)
->  {
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 557713954a69..04bf3c04ef3d 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -1114,36 +1114,25 @@ static inline void audit_free_context(struct audit_context *context)
->  	kfree(context);
->  }
->  
-> -static int audit_log_pid_context(struct audit_context *context, pid_t pid,
-> -				 kuid_t auid, kuid_t uid,
-> -				 unsigned int sessionid,
-> -				 struct lsmblob *blob, char *comm)
-> +static void audit_log_pid_context(struct audit_context *context, pid_t pid,
-> +				  kuid_t auid, kuid_t uid,
-> +				  unsigned int sessionid,
-> +				  struct lsmblob *blob, char *comm)
->  {
->  	struct audit_buffer *ab;
-> -	struct lsmcontext lsmctx;
-> -	int rc = 0;
->  
->  	ab = audit_log_start(context, GFP_KERNEL, AUDIT_OBJ_PID);
->  	if (!ab)
-> -		return rc;
-> +		return;
->  
->  	audit_log_format(ab, "opid=%d oauid=%d ouid=%d oses=%d", pid,
->  			 from_kuid(&init_user_ns, auid),
->  			 from_kuid(&init_user_ns, uid), sessionid);
-> -	if (lsmblob_is_set(blob)) {
-> -		if (security_secid_to_secctx(blob, &lsmctx, LSMBLOB_FIRST)) {
-> -			audit_log_format(ab, " obj=(none)");
-> -			rc = 1;
-> -		} else {
-> -			audit_log_format(ab, " obj=%s", lsmctx.context);
-> -			security_release_secctx(&lsmctx);
-> -		}
-> -	}
-> +	if (lsmblob_is_set(blob))
-> +		audit_log_object_context(ab, blob);
->  	audit_log_format(ab, " ocomm=");
->  	audit_log_untrustedstring(ab, comm);
->  	audit_log_end(ab);
-> -
-> -	return rc;
->  }
->  
->  static void audit_log_execve_info(struct audit_context *context,
-> @@ -1420,18 +1409,10 @@ static void show_special(struct audit_context *context, int *call_panic)
+First of all, the "key" you mentioned here is actually certificate. And 
+there are no way for the kernel to know "which certificate is used for 
+what purpose" but to get a hint from the certificate's extension, if 
+they exist. However, the extension only points out what this certificate 
+should be used for, but not exactly what it is actually used for.
 
-If pushing audit_panic into audit_log_object_context() is acceptable then this call_panic arg is
-no longer needed. The same goes for the call_panic arg in audit_log_name(). And call_panic can
-be dropped from audit_log_exit()
+Secondly, the verification process requires the module (kernel image in 
+this question) to contain information on which certificate should be 
+used to verify itself. The signature provided by the module is in PKCS#7 
+format which contains a list of certificates for the verifier to 
+construct a "chain of trust". Each certificates contains information 
+pointing to the certificate of it's issuer, and eventually to one of the 
+certificate stored in one of the keyrings you mentioned.
 
+All in all, certificates in these keyrings you mentioned can be used for 
+various purpose, and it's the responsibility for the modules being 
+verified to provide information stating which certificate should be used 
+for verification. Thus, the best way to find out which key is used for 
+kexec is to look at key used to sign the kernel image.
 
->  				 from_kgid(&init_user_ns, context->ipc.gid),
->  				 context->ipc.mode);
->  		if (osid) {
-> -			struct lsmcontext lsmcxt;
->  			struct lsmblob blob;
->  
->  			lsmblob_init(&blob, osid);
-> -			if (security_secid_to_secctx(&blob, &lsmcxt,
-> -						     LSMBLOB_FIRST)) {
-> -				audit_log_format(ab, " osid=%u", osid);
-> -				*call_panic = 1;
-> -			} else {
-> -				audit_log_format(ab, " obj=%s", lsmcxt.context);
-> -				security_release_secctx(&lsmcxt);
-> -			}
-> +			audit_log_object_context(ab, &blob);
->  		}
->  		if (context->ipc.has_perm) {
->  			audit_log_end(ab);
-> @@ -1588,19 +1569,8 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
->  				 from_kgid(&init_user_ns, n->gid),
->  				 MAJOR(n->rdev),
->  				 MINOR(n->rdev));
-> -	if (lsmblob_is_set(&n->lsmblob)) {
-> -		struct lsmcontext lsmctx;
-> -
-> -		if (security_secid_to_secctx(&n->lsmblob, &lsmctx,
-> -					     LSMBLOB_FIRST)) {
-> -			audit_log_format(ab, " osid=?");
-> -			if (call_panic)
-> -				*call_panic = 2;
-> -		} else {
-> -			audit_log_format(ab, " obj=%s", lsmctx.context);
-> -			security_release_secctx(&lsmctx);
-> -		}
-> -	}
-> +	if (lsmblob_is_set(&n->lsmblob))
-> +		audit_log_object_context(ab, &n->lsmblob);
->  
->  	/* log the audit_names record type */
->  	switch (n->type) {
-> @@ -1805,21 +1775,20 @@ static void audit_log_exit(void)
->  		struct audit_aux_data_pids *axs = (void *)aux;
->  
->  		for (i = 0; i < axs->pid_count; i++)
-> -			if (audit_log_pid_context(context, axs->target_pid[i],
-> -						  axs->target_auid[i],
-> -						  axs->target_uid[i],
-> -						  axs->target_sessionid[i],
-> -						  &axs->target_lsm[i],
-> -						  axs->target_comm[i]))
-> -				call_panic = 1;
-> -	}
-> -
-> -	if (context->target_pid &&
-> -	    audit_log_pid_context(context, context->target_pid,
-> -				  context->target_auid, context->target_uid,
-> -				  context->target_sessionid,
-> -				  &context->target_lsm, context->target_comm))
-> -			call_panic = 1;
-> +			audit_log_pid_context(context, axs->target_pid[i],
-> +					      axs->target_auid[i],
-> +					      axs->target_uid[i],
-> +					      axs->target_sessionid[i],
-> +					      &axs->target_lsm[i],
-> +					      axs->target_comm[i]);
-> +	}
-> +
-> +	if (context->target_pid)
-> +		audit_log_pid_context(context, context->target_pid,
-> +				      context->target_auid, context->target_uid,
-> +				      context->target_sessionid,
-> +				      &context->target_lsm,
-> +				      context->target_comm);
->  
->  	if (context->pwd.dentry && context->pwd.mnt) {
->  		ab = audit_log_start(context, GFP_KERNEL, AUDIT_CWD);
-
+-- 
+Best
+GUO Zihua
