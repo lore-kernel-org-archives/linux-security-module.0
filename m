@@ -2,128 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AE9C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Apr 2022 16:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E06EC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Apr 2022 16:14:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241358AbiD0QGC (ORCPT
+        id S242750AbiD0QRM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Apr 2022 12:06:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44026 "EHLO
+        Wed, 27 Apr 2022 12:17:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243376AbiD0QFw (ORCPT
+        with ESMTP id S244526AbiD0QQK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Apr 2022 12:05:52 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B9973C3060
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Apr 2022 09:02:34 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id j15so3178536wrb.2
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Apr 2022 09:02:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tuXdH3mbYd4Gnl44e//+j/klraKOvkpgOliwGw+YZ7s=;
-        b=BnT4/TnG/yQ41vtWz0BFedhJxhOAqjpLvHN9LNyXhyV8m+8PnZpCz0iC3bfWLFc8PQ
-         Jxw2c4EagSdCNgndlDqapohrwulYpJAwBMaP3C6yZpshJxRG6Sd92TyOVPOVZloVMfo1
-         grZekdjRWmzxzm7BLam6dnAFrfMnghKS5GrLT32H8wSh5EbfG+4gXEvNzkcpEwnMqrk6
-         sUCctJvhvEeGZJXctjBr06vKK30nynGDVRhNXBjTLUBENOBiXnKBsX0DmtPbi6Mwi5Rs
-         JEnp1p5+QxWZusg6F/RzyB1pyHNHvhIymslg5vMAabB6TXqTlwYj2F5oMN9pM3f1trzw
-         p5dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tuXdH3mbYd4Gnl44e//+j/klraKOvkpgOliwGw+YZ7s=;
-        b=fJFmrRtRlTYQl+cQv90XPjjTUuQbyCIy3PuA9YQ1scfwrUtgwpjk4uKBMu6UXc5ui5
-         c0DPWzad4UeGouZ8MKABWrnrEiN1N6mAeY7DpfEXN/0pKJ664FNaNNsGVOYJclKWA56X
-         WtuIxuoG8Kfj8KpfbhQNIVnCURmZ18ckxmS06nlyo1Gs7V4vwgerqSbhiRqu6gKYGb2S
-         4WFXlz2WR83mk9liZNwgrHyeodxYje5IzBSp75OEJEMEVawWja8Lj9SJYljzb6bvW0/f
-         cgjdmc9c+jhKgMshkgDifbJXg7OSVvVorOwzTJmAx4eboCSQgzq2AwFIhnEBDc+U/5f+
-         6aRQ==
-X-Gm-Message-State: AOAM531jQo0cfwe7hP9N6udqVNXTcFzYzg7tkfylgAGEL0f6PP0Fddmo
-        3d4xi1r2tkhss0wC9o+nMSaMHyGM2aNoAJCboQagEwWlbw==
-X-Google-Smtp-Source: ABdhPJzYoyxpMLnD9ubmid4unahg+b0PsIWIS3wxLIoFgmxDjN1rv/qVRxVkpAaGGwTHUHfo5yOg/ZMc8seG7EODIqc=
-X-Received: by 2002:a5d:590d:0:b0:20a:c3eb:2584 with SMTP id
- v13-20020a5d590d000000b0020ac3eb2584mr22239195wrd.18.1651075352543; Wed, 27
- Apr 2022 09:02:32 -0700 (PDT)
+        Wed, 27 Apr 2022 12:16:10 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F723BD05D;
+        Wed, 27 Apr 2022 09:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651075973; x=1682611973;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bvX0aGm4IOnIEg2n6XV2jCB1sY63SGnfB3nZcvk7UT8=;
+  b=NEaSuShCBYthK3Nz3ooFbmqDyKjdRNyml0AeZ+Z0905qcqin9ZxixoG1
+   F0FwWJRQymhdCVRtTSMuEWRjOKgJ8z9G+vuTO8t3aLGD96zW/mhve4wr7
+   5xykQT7RHaNl9NkvrnloaYvQWsfvTM3sQEUHCoGCIBdlk4p3q3DaEX9MQ
+   Fx7JK+ntkEUltcoFHDTj3P9S3fwu6IolWGLIcbD6MOtyVoXAVasAxnN2c
+   FK36dKNW74hutgxv7kl6uet0/jj+76xaPE0y7D0mtLKBG3ZQ7W3tYF5Gn
+   ORi4CvnDoE3Rmq2MysIe47o4ficjwYnvsF0Kswc/l0dBzjDK0KurGHfMv
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10330"; a="264829595"
+X-IronPort-AV: E=Sophos;i="5.90,293,1643702400"; 
+   d="scan'208";a="264829595"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2022 09:06:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,293,1643702400"; 
+   d="scan'208";a="650769561"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 27 Apr 2022 09:06:35 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1njkBW-0004lU-GQ;
+        Wed, 27 Apr 2022 16:06:34 +0000
+Date:   Thu, 28 Apr 2022 00:06:19 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-raid@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Song Liu <song@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v2 2/3] LoadPin: Enable loading from trusted dm-verity
+ devices
+Message-ID: <202204272332.Ro5WIkwF-lkp@intel.com>
+References: <20220426143059.v2.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
 MIME-Version: 1.0
-References: <20220418145945.38797-1-casey@schaufler-ca.com>
- <20220418145945.38797-24-casey@schaufler-ca.com> <a1702622-5980-1eb4-1cf8-b6fc6cd98b25@canonical.com>
- <CAHC9VhRzJKAARW1rnUMu0Y6RVo_uq=i=Jzh4LmA9grtQ1W2C1Q@mail.gmail.com>
- <26eca0aa-111a-9473-8925-e4b12cadbd79@canonical.com> <CAHC9VhQQysL8aEt8w5G-nemJzapY-Q4pYKn0TCdnVjpuiTKqhw@mail.gmail.com>
- <4ec176c6-1f66-3951-f40f-1eb0d5b66a09@schaufler-ca.com>
-In-Reply-To: <4ec176c6-1f66-3951-f40f-1eb0d5b66a09@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 27 Apr 2022 12:02:21 -0400
-Message-ID: <CAHC9VhQow5MaC0O-YJHxXh_=SR5eo3+97pznVyUq4YhkTuBBmg@mail.gmail.com>
-Subject: Re: [PATCH v35 23/29] Audit: Create audit_stamp structure
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, keescook@chromium.org,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220426143059.v2.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 27, 2022 at 11:49 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 4/26/2022 12:18 PM, Paul Moore wrote:
-> > On Tue, Apr 26, 2022 at 2:58 PM John Johansen
-> > <john.johansen@canonical.com> wrote:
-> >> On 4/26/22 11:03, Paul Moore wrote:
-> >>> On Mon, Apr 25, 2022 at 7:31 PM John Johansen
-> >>> <john.johansen@canonical.com> wrote:
-> >>>> On 4/18/22 07:59, Casey Schaufler wrote:
-> >>>>> Replace the timestamp and serial number pair used in audit records
-> >>>>> with a structure containing the two elements.
-> >>>>>
-> >>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >>>>> Acked-by: Paul Moore <paul@paul-moore.com>
-> >>>>> ---
-> >>>>>   kernel/audit.c   | 17 +++++++++--------
-> >>>>>   kernel/audit.h   | 12 +++++++++---
-> >>>>>   kernel/auditsc.c | 22 +++++++++-------------
-> >>>>>   3 files changed, 27 insertions(+), 24 deletions(-)
-> >>> ...
-> >>>
-> >>>>> diff --git a/kernel/audit.h b/kernel/audit.h
-> >>>>> index 4af63e7dde17..260dab6e0e15 100644
-> >>>>> --- a/kernel/audit.h
-> >>>>> +++ b/kernel/audit.h
-> >>>>> @@ -108,10 +114,10 @@ struct audit_context {
-> >>>>>                AUDIT_CTX_URING,        /* in use by io_uring */
-> >>>>>        } context;
-> >>>>>        enum audit_state    state, current_state;
-> >>>>> +     struct audit_stamp  stamp;      /* event identifier */
-> >>>>>        unsigned int        serial;     /* serial number for record */
-> >>>> shouldn't we be dropping serial from the audit_context, since we have
-> >>>> moved it into the audit_stamp?
-> >>> Unless we make some significant changes to audit_log_start() we still
-> >>> need to preserve a timestamp in the audit_context so that regularly
-> >>> associated audit records can share a common timestamp (which is what
-> >>> groups multiple records into a single "event").
-> >>>
-> >> sure, but the patch changes things to use ctx->stamp.serial instead of
-> >> ctx->serial ...
-> > My apologies, I read your original comment wrong; I was thinking you
-> > were suggesting removing the timestamp info from audit_context in
-> > favor of using the timestamp info contained in the audit_buffer.
-> >
-> > Yes, audit_context:serial is no longer needed with audit_context:stamp.
->
-> Thank you for catching that. Easy (I expect) fix.
-> BTW, I'm not supposed to be working the next few weeks,
-> but I should be able to sneak v36 in before the next merge
-> window.
+Hi Matthias,
 
-Enjoy the time away :)
+Thank you for the patch! Yet something to improve:
 
-FWIW, this isn't my call to make, but I would strongly prefer if this
-got a *full* run in linux-next before it was merged into Linus' tree
-during the merge window.  For example, get this into the LSM -next
-tree at -rc1 instead of -rc6.
+[auto build test ERROR on device-mapper-dm/for-next]
+[also build test ERROR on song-md/md-next kees/for-next/pstore v5.18-rc4 next-20220427]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220427-053314
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git for-next
+config: sh-buildonly-randconfig-r004-20220427 (https://download.01.org/0day-ci/archive/20220427/202204272332.Ro5WIkwF-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/f3a54909bcd78b9f7f006d7e78acd03987031fae
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220427-053314
+        git checkout f3a54909bcd78b9f7f006d7e78acd03987031fae
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=sh SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   sh4-linux-ld: security/loadpin/loadpin.o: in function `loadpin_read_file':
+   loadpin.c:(.text+0x2ac): undefined reference to `dm_get_md'
+>> sh4-linux-ld: loadpin.c:(.text+0x2b0): undefined reference to `dm_put'
 
 -- 
-paul-moore.com
+0-DAY CI Kernel Test Service
+https://01.org/lkp
