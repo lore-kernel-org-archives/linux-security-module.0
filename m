@@ -2,266 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 478FFC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Apr 2022 18:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DF2C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Apr 2022 20:55:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229461AbiD0StN (ORCPT
+        id S237140AbiD0U6l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Apr 2022 14:49:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50464 "EHLO
+        Wed, 27 Apr 2022 16:58:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232271AbiD0StE (ORCPT
+        with ESMTP id S236901AbiD0U6i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Apr 2022 14:49:04 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 027221183AF
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Apr 2022 11:32:14 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 4so3763140ljw.11
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Apr 2022 11:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LE417ya6E7m+nXp6VV/VN8esAD2AhVJo0XqStc9jrKk=;
-        b=RkRpVLCj/djXRGkAnPrqrRcldz58N/lNU769t9fa5KcRaUz9rB5K4dE6u1yXQlsMfx
-         I8k1XxLo6SaOA6pzgCwIGoXlEXQp6Z49mUgLLqc1AFPoQbQABpvC25LOj0cySPWBi5xY
-         mlkA0T+/0sIcHgYnsbRjyF5k3OCP5ahpJ5jFk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LE417ya6E7m+nXp6VV/VN8esAD2AhVJo0XqStc9jrKk=;
-        b=0q3n8MzZeqToacXNFN/J6/+U++Z23NBqySQb4JBEk/bddpHAFZY2+ujFTcb9JUjwL3
-         ITUg51AXv/uSoULjW9Y2e40zVl9jjs1+bMfNlPMSvPXjT+Qussr812Kyjf8+DzMcVnGh
-         fHIaiyumTz7mIwwYaIBbCSCcrxYVMh05IxqHTOMsC0t59yXiJsNmgpPmKEvmSMDaediC
-         IJR4RWabNlkNanPxR3+wKkJjd0mfTdoqZ2W3JKWSKYq2tl+Zl7D0lv87YJC5gLem3HaN
-         99QPibBcDkbK11uZK3CGVtWLAgijT+COLUWKJv/+8q+qImuXivdI4m4uLcJAUZ3uuCPC
-         WOTQ==
-X-Gm-Message-State: AOAM533cW8EXnYkZ4v1QKPzTxH56iGHL/q6FeHg8JMiz6k4x6yoAjMLR
-        5XaIUDmN1GiKGKFKRhbKSaKOcpfOSTQoU7TpHMw=
-X-Google-Smtp-Source: ABdhPJzLsh8akioOv2pUlFbTY6Lh0iiEI8MCO2Fy8JVGeaJeIPMw3+Ftlhbbx48Q+ZplBUF9YNqW+A==
-X-Received: by 2002:a05:651c:b13:b0:24d:c518:b7bb with SMTP id b19-20020a05651c0b1300b0024dc518b7bbmr18652147ljr.346.1651084331873;
-        Wed, 27 Apr 2022 11:32:11 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id f2-20020ac24982000000b0047203c37392sm1253798lfl.45.2022.04.27.11.32.10
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Apr 2022 11:32:11 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id 17so3829897lji.1
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Apr 2022 11:32:10 -0700 (PDT)
-X-Received: by 2002:a2e:8789:0:b0:24f:124c:864a with SMTP id
- n9-20020a2e8789000000b0024f124c864amr10454141lji.164.1651084330452; Wed, 27
- Apr 2022 11:32:10 -0700 (PDT)
+        Wed, 27 Apr 2022 16:58:38 -0400
+Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85958723F
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Apr 2022 13:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1651092919; bh=xgehmnJSTKW4K8cVQa6/Sg7BveMcVQzT4njiupCv2Kg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=R7DJz0ehmN2JOnLhvDyI9X9vmrGqZ0ltcLeDwmfoc0GshFicotQYh+IAgQriXe28s9Nj4caMQ53kSGWARi9k8XJ6ii+/KlizUcQ5lSoU/8NW/A/ofZtF9k6qIK01RE4s82PO06xLnHVZkOtx9VBZJD2F2hWgJ6DcFG8DAIJwFbtiVMHQf5WHQ2aGRzDg+pTO/kf86dOZNnfVnsICncmWlt675WwjspNU+9+ddlWCt28QoEwQ4JbMiDY/VPr2gEKsVwgubVStb6tyw+UcJvQtddpTSXq7NIT3+t2itaxOhMwlr6Trk1Opq6E+zAuYwS9kCd6nkKMcRfv5aiZFxwJGcQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1651092919; bh=BLC+GALjnwAPvZSHjInQlCIHCjDRqXeFg5bL4P+XEKO=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=apZFWI6CV05AMeaHhsOdcWdNXez30+ffx0e/HGqAuUr6wyXLiL7ol0EmagWHS/JT5PEWmKoS7h9nPHP7g4hFlavhx2Tpi0EtkyzbT32gOKD67qr+ZMVeFOqe0fOCkhUtAqk3c8Ufhwgzln57kWWlFEV5NS8i1GyyTWL/zubHpsnB7YuGOInBINFns1vlga7BdFBBPBLsl06G/UyQYZbY+wqFwyPaDaUozSJeCWJjFLnadCgzNcoqdO9E53K4UCX7btJV84SkfifT1nwg/t+oKqIzW1tBgPGE5AbCQnQdEWwn1p+2m1MazDNmieL9OngDscgmqNnB6yq4BJU9w1QhzA==
+X-YMail-OSG: Iyn7OOkVM1nuqIGXdn.HwIb7jJQi70mWTKJHCG4ZHVlwLjeteeNY7pp4.kZHeB_
+ j4Zh0cu512PcBjkAzAD5OE7IVzo17qyo5EVTAXSplqaLaT7p5iq6DoAxxqZzqWcGZaJQ0wYCRgbb
+ yCdpYheBUr5qNPPoKIGhWE_EzraD9m9qR5HVMAZVV7Osly2fRbcRzgjj9zWa1DE3t5OpEgoVSCFF
+ 7Ya5Ut2idWzn.5IMu2dOdu24ZDtyIriTYsvPGYi_OjyuGpeXCG39OGM4pOFmplKK2gEVa5BJJZ7Q
+ 47RvblsPF7t4RnSLZegih24KELUG2NvLqp1NnJHcWtWjV4g257GmE_oIxN1twoYwlz5rsC8fMWS6
+ n3rspAyLXKSPOYR2MxDQQpzAL0Mmkq11tT1p3TmZWFzTN0TYiObZBi_By4.GBc8ka9Ue66yBRN2i
+ BcvJlhGXJEyEkvCKoziQ.VLJJDk_v2btpA8YKZHJ44iZbKuapVrIr.GKETtLV3Ry8L2FQovUbpL9
+ Nc1XCoKAPDIIJ6FPx41.EBdqc4AfAnR6_eC2wf.PRFEGeS59axMKqiDlMDCdSkTT2cNcGnx8OUJN
+ QmWWQ2MXL.9nQgDWU__5pJGFtdxpj.UfeR99KvaNbal6vVOwGst_EU9rWDjYcdzybLlibahC6rvL
+ eKSBCblePbLuDZ0TtW4l9mgpNdtiGV95B8bm2nFoPdB4mGdYxieQqSDnnmLFe5xlxOiydQVifE7g
+ 59HJfxBSs8u6NfCjDcVrBlJ9IAyIb81PsoMA3v6jlREOFpIbwqpRcst1g8QPdr6Tr82NK3KVMf.f
+ QHmRgFbrbEgFeJmOs2koNSXyOQHPVGwyVxJgujOe3F5Yulf.5cRd6HW1j7PmMPXMFETlp6D.t5HA
+ pq4oCZPJuMHwrKaL.MBkg3ZeCMN5RXVXscuno2iq.DiSgeFZd8pIYFce3b83YT8W4bqInyDYjxKk
+ gYkr44Eh.ljC6denfZ72cfetrXBkMboqhoMw77tu.9xlWWFhsOVCpI_sTGmmy223lV4f3DsKNmKx
+ 7NyKjwrQhhmb9qiDpNJN97R1G3UM0ckBfB.H_1yLTmyR95OM8xOr8Hq79Vs8vUlr9tMjMVZrQ925
+ Jl2ttp4z3s9mZMXte4aaWMNd7rmp37aQO0hk8evCFx80TaSlGb2OOp1aU.2rtSp_TKw00nfiK2Lu
+ Ii_nbziTBRiD2dFFO6wxX.qmiml6wry6TErCtyZ53Xa7zHduVM7Ms2fAYoJAJtryT0Fbw96Nj3ZG
+ e_fx5by9M1G6aeaxEGvq_ts2hYsvVnSI397Z0FYrQh6p38yzVpn_yXYDU8LsMIFo62XL4x0iorYD
+ W5xD2Lwa1qBf.arvK_r1iSR5_5stufW305FVx.2BHNcZipZ60z0urF9z3hTuCvKO0rbfAWAlzuo9
+ ptbY__RcMqpKL0ObcTmyGaga2qHNmY0RIp.wGyRXTygBuizZLWyvNSLh6R2mExZCrGuSiv.NyG9K
+ X4GvYSmKd0tC2df6W1LbEk00Lb8pSfF9BJnx715cVZJW8uY9dam.7EtKvvHPK3OuC4fXLiM1QZt0
+ eUAjNoF.km0S_Pa9WuB9su.uwo1YEsDaIh7AaSwf7TvEBiPw6Ybid537r9ZzH88tzvk6lZHn_pxe
+ BacxxnsArY.E.iiWZeMV6xluUzYbVpYfanevbHImQ6O4xwwMaa1ILXp9DtYffS3oprkT7UoMZKY_
+ OjLKtUjmTqM_Jwce0IY7e32JfaHWvlBOUha4J2ffilbsw8GWx9OTih9w9UBAamp6AAI9Yjiyklgf
+ LSAdoEl15Pm5wVit.hyLH1Wk2DYT2edqdygv9BK5HwIi47KVwHta3FoT4Z8.5pLAsGbOErIy9YP1
+ 8_7dW7LVXtidWFrS8qO4tEnq7b8TZtCrij1av5V253uNJdl8AgX4U3A1P82dr74TyytfyPqAuqWX
+ uNrHq0oWK8.w._.Isa6VZ6BXzZq9Twu329XP1aUSLJ3z65o6b7GyOx01_OBpVj38NnCZTHzf_aTf
+ gDR6yULu8rx7oVPvXNISTy0pwN1d5SIayCNViE7Yk0hbOuTYIlxuGQXrKrabPlx.nikQz7Hf.sAv
+ yd.tgsIMcxuOr.nJ8XFMwdmqUVwsVSLLyh_SZKEnThi.8P1VOUte0RQb_ywX84jlwEjNW16_fSTQ
+ SJubSWjkac.6TWVirs21aKdXKhvWHJjMItkdgDa0xi9.ZbqNrMZAhKWXMWZMQFiXlLRzq23qjVLJ
+ 1LRfML.lQMKFvYDLnZAYKlqEOczsjug_53FipBBnsF.JXsKhO40KN
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Wed, 27 Apr 2022 20:55:19 +0000
+Received: by hermes--canary-production-ne1-75b69fcf97-7lp55 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8d1b4e2d8871487ec86e963c3b1cd982;
+          Wed, 27 Apr 2022 20:55:14 +0000 (UTC)
+Message-ID: <8bb21e2c-0c09-86ec-13a7-3e316c145ab7@schaufler-ca.com>
+Date:   Wed, 27 Apr 2022 13:55:12 -0700
 MIME-Version: 1.0
-References: <CAHk-=whmtHMzjaVUF9bS+7vE_rrRctcCTvsAeB8fuLYcyYLN-g@mail.gmail.com>
- <226cee6a-6ca1-b603-db08-8500cd8f77b7@gnuweeb.org>
-In-Reply-To: <226cee6a-6ca1-b603-db08-8500cd8f77b7@gnuweeb.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 27 Apr 2022 11:31:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whayT+o58FrPCXVVJ3Bn-3SeoDkMA77TOd9jg4yMGNExw@mail.gmail.com>
-Message-ID: <CAHk-=whayT+o58FrPCXVVJ3Bn-3SeoDkMA77TOd9jg4yMGNExw@mail.gmail.com>
-Subject: Re: Linux 5.18-rc4
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, gwml@vger.gnuweeb.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v35 23/29] Audit: Create audit_stamp structure
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20220418145945.38797-1-casey@schaufler-ca.com>
+ <20220418145945.38797-24-casey@schaufler-ca.com>
+ <a1702622-5980-1eb4-1cf8-b6fc6cd98b25@canonical.com>
+ <CAHC9VhRzJKAARW1rnUMu0Y6RVo_uq=i=Jzh4LmA9grtQ1W2C1Q@mail.gmail.com>
+ <26eca0aa-111a-9473-8925-e4b12cadbd79@canonical.com>
+ <CAHC9VhQQysL8aEt8w5G-nemJzapY-Q4pYKn0TCdnVjpuiTKqhw@mail.gmail.com>
+ <4ec176c6-1f66-3951-f40f-1eb0d5b66a09@schaufler-ca.com>
+ <CAHC9VhQow5MaC0O-YJHxXh_=SR5eo3+97pznVyUq4YhkTuBBmg@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhQow5MaC0O-YJHxXh_=SR5eo3+97pznVyUq4YhkTuBBmg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20118 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This looks like it might be AppArmor-related.
-
-Adding AppArmor and security module people to the participants.
-
-Sorry for top-posting and quoting the whole thing, but this is really
-just bringing in more people to the discussion.
-
-So on the exec path we have
-
-  apparmor_bprm_committing_creds() ->
-    aa_inherit_files() ->
-      iterate_fd (takes files->file_lock) ->
-        aa_file_perm ->
-          update_file_ctx (takes aa_file_ctx->lock)
-
-which gives us that file_lock -> ctx lock order. All within AppArmor.
-
-And then we apparently _also_ have the reverse ctx lock -> file_lock
-order by way of 'alloc_lock', which is the 'task_lock()' thing
-
-That one is a horror to decode and I didn't, but seems to go through
-ipcget -> newseg..
-
-Anybody?
-
-         Linus
-
-On Wed, Apr 27, 2022 at 11:00 AM Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
+On 4/27/2022 9:02 AM, Paul Moore wrote:
+> On Wed, Apr 27, 2022 at 11:49 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 4/26/2022 12:18 PM, Paul Moore wrote:
+>>> On Tue, Apr 26, 2022 at 2:58 PM John Johansen
+>>> <john.johansen@canonical.com> wrote:
+>>>> On 4/26/22 11:03, Paul Moore wrote:
+>>>>> On Mon, Apr 25, 2022 at 7:31 PM John Johansen
+>>>>> <john.johansen@canonical.com> wrote:
+>>>>>> On 4/18/22 07:59, Casey Schaufler wrote:
+>>>>>>> Replace the timestamp and serial number pair used in audit records
+>>>>>>> with a structure containing the two elements.
+>>>>>>>
+>>>>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>>>>> Acked-by: Paul Moore <paul@paul-moore.com>
+>>>>>>> ---
+>>>>>>>    kernel/audit.c   | 17 +++++++++--------
+>>>>>>>    kernel/audit.h   | 12 +++++++++---
+>>>>>>>    kernel/auditsc.c | 22 +++++++++-------------
+>>>>>>>    3 files changed, 27 insertions(+), 24 deletions(-)
+>>>>> ...
+>>>>>
+>>>>>>> diff --git a/kernel/audit.h b/kernel/audit.h
+>>>>>>> index 4af63e7dde17..260dab6e0e15 100644
+>>>>>>> --- a/kernel/audit.h
+>>>>>>> +++ b/kernel/audit.h
+>>>>>>> @@ -108,10 +114,10 @@ struct audit_context {
+>>>>>>>                 AUDIT_CTX_URING,        /* in use by io_uring */
+>>>>>>>         } context;
+>>>>>>>         enum audit_state    state, current_state;
+>>>>>>> +     struct audit_stamp  stamp;      /* event identifier */
+>>>>>>>         unsigned int        serial;     /* serial number for record */
+>>>>>> shouldn't we be dropping serial from the audit_context, since we have
+>>>>>> moved it into the audit_stamp?
+>>>>> Unless we make some significant changes to audit_log_start() we still
+>>>>> need to preserve a timestamp in the audit_context so that regularly
+>>>>> associated audit records can share a common timestamp (which is what
+>>>>> groups multiple records into a single "event").
+>>>>>
+>>>> sure, but the patch changes things to use ctx->stamp.serial instead of
+>>>> ctx->serial ...
+>>> My apologies, I read your original comment wrong; I was thinking you
+>>> were suggesting removing the timestamp info from audit_context in
+>>> favor of using the timestamp info contained in the audit_buffer.
+>>>
+>>> Yes, audit_context:serial is no longer needed with audit_context:stamp.
+>> Thank you for catching that. Easy (I expect) fix.
+>> BTW, I'm not supposed to be working the next few weeks,
+>> but I should be able to sneak v36 in before the next merge
+>> window.
+> Enjoy the time away :)
 >
-> On 4/25/22 5:22 AM, Linus Torvalds wrote:
-> > Fairly slow and calm week - which makes me just suspect that the other
-> > shoe will drop at some point.
-> >
-> > But maybe things are just going really well this release. It's bound
-> > to happen _occasionally_, after all.
->
-> + fs/exec.c maintainers.
->
-> Testing Linux 5.18-rc4 on my laptop, it has been running for 2 days. Got
-> the following lockdep splat this night. I don't have the reproducer. If
-> you need more information, feel free to let me know.
->
-> [78140.503644] ======================================================
-> [78140.503646] WARNING: possible circular locking dependency detected
-> [78140.503648] 5.18.0-rc4-superb-owl-00006-gd615b5416f8a #12 Tainted: G        W
-> [78140.503650] ------------------------------------------------------
-> [78140.503651] preconv/111629 is trying to acquire lock:
-> [78140.503653] ffff88834d633248 (&ctx->lock){+.+.}-{2:2}, at: update_file_ctx+0x19/0xe0
-> [78140.503663]
->                 but task is already holding lock:
-> [78140.503664] ffff888103d80458 (&newf->file_lock){+.+.}-{2:2}, at: iterate_fd+0x34/0x150
-> [78140.503669]
->                 which lock already depends on the new lock.
->
-> [78140.503671]
->                 the existing dependency chain (in reverse order) is:
-> [78140.503672]
->                 -> #4 (&newf->file_lock){+.+.}-{2:2}:
-> [78140.503675]        _raw_spin_lock+0x2f/0x40
-> [78140.503679]        seq_show+0x72/0x280
-> [78140.503681]        seq_read_iter+0x125/0x3c0
-> [78140.503684]        seq_read+0xd0/0xe0
-> [78140.503686]        vfs_read+0xf5/0x2f0
-> [78140.503688]        ksys_read+0x58/0xb0
-> [78140.503690]        do_syscall_64+0x3d/0x90
-> [78140.503693]        entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [78140.503695]
->                 -> #3 (&p->alloc_lock){+.+.}-{2:2}:
-> [78140.503699]        _raw_spin_lock+0x2f/0x40
-> [78140.503700]        newseg+0x25b/0x360
-> [78140.503703]        ipcget+0x3fb/0x480
-> [78140.503705]        __x64_sys_shmget+0x48/0x50
-> [78140.503708]        do_syscall_64+0x3d/0x90
-> [78140.503710]        entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [78140.503713]
->                 -> #2 (&new->lock){+.+.}-{2:2}:
-> [78140.503716]        _raw_spin_lock+0x2f/0x40
-> [78140.503718]        ipc_addid+0xb3/0x700
-> [78140.503720]        newseg+0x238/0x360
-> [78140.503722]        ipcget+0x3fb/0x480
-> [78140.503724]        __x64_sys_shmget+0x48/0x50
-> [78140.503727]        do_syscall_64+0x3d/0x90
-> [78140.503729]        entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [78140.503731]
->                 -> #1 (lock#3){+.+.}-{2:2}:
-> [78140.503735]        local_lock_acquire+0x1d/0x70
-> [78140.503738]        __radix_tree_preload+0x38/0x150
-> [78140.503740]        idr_preload+0xa/0x40
-> [78140.503743]        aa_alloc_secid+0x15/0xb0
-> [78140.503745]        aa_label_alloc+0x6c/0x1b0
-> [78140.503747]        aa_label_merge+0x52/0x430
-> [78140.503750]        update_file_ctx+0x3f/0xe0
-> [78140.503752]        aa_file_perm+0x56e/0x5c0
-> [78140.503754]        common_file_perm+0x70/0xd0
-> [78140.503756]        security_mmap_file+0x4b/0xd0
-> [78140.503759]        vm_mmap_pgoff+0x50/0x150
-> [78140.503761]        elf_map+0x9f/0x120
-> [78140.503763]        load_elf_binary+0x521/0xc80
-> [78140.503767]        bprm_execve+0x39f/0x660
-> [78140.503769]        do_execveat_common+0x1d0/0x220
-> [78140.503771]        __x64_sys_execveat+0x3d/0x50
-> [78140.503773]        do_syscall_64+0x3d/0x90
-> [78140.503775]        entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [78140.503777]
->                 -> #0 (&ctx->lock){+.+.}-{2:2}:
-> [78140.503780]        __lock_acquire+0x1573/0x2ce0
-> [78140.503783]        lock_acquire+0xbd/0x190
-> [78140.503785]        _raw_spin_lock+0x2f/0x40
-> [78140.503787]        update_file_ctx+0x19/0xe0
-> [78140.503788]        aa_file_perm+0x56e/0x5c0
-> [78140.503790]        match_file+0x78/0x90
-> [78140.503792]        iterate_fd+0xae/0x150
-> [78140.503794]        aa_inherit_files+0xbe/0x170
-> [78140.503796]        apparmor_bprm_committing_creds+0x50/0x80
-> [78140.503798]        security_bprm_committing_creds+0x1d/0x30
-> [78140.503800]        begin_new_exec+0x3c5/0x450
-> [78140.503802]        load_elf_binary+0x269/0xc80
-> [78140.503804]        bprm_execve+0x39f/0x660
-> [78140.503806]        do_execveat_common+0x1d0/0x220
-> [78140.503808]        __x64_sys_execve+0x36/0x40
-> [78140.503809]        do_syscall_64+0x3d/0x90
-> [78140.503812]        entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [78140.503815]
->                 other info that might help us debug this:
->
-> [78140.503816] Chain exists of:
->                   &ctx->lock --> &p->alloc_lock --> &newf->file_lock
->
-> [78140.503820]  Possible unsafe locking scenario:
->
-> [78140.503821]        CPU0                    CPU1
-> [78140.503823]        ----                    ----
-> [78140.503824]   lock(&newf->file_lock);
-> [78140.503826]                                lock(&p->alloc_lock);
-> [78140.503828]                                lock(&newf->file_lock);
-> [78140.503830]   lock(&ctx->lock);
-> [78140.503832]
->                  *** DEADLOCK ***
->
-> [78140.503833] 3 locks held by preconv/111629:
-> [78140.503835]  #0: ffff888111b62550 (&sig->cred_guard_mutex){+.+.}-{3:3}, at: bprm_execve+0x39/0x660
-> [78140.503840]  #1: ffff888111b625e8 (&sig->exec_update_lock){++++}-{3:3}, at: exec_mmap+0x4e/0x250
-> [78140.503844]  #2: ffff888103d80458 (&newf->file_lock){+.+.}-{2:2}, at: iterate_fd+0x34/0x150
-> [78140.503849]
->                 stack backtrace:
-> [78140.503851] CPU: 3 PID: 111629 Comm: preconv Tainted: G        W         5.18.0-rc4-superb-owl-00006-gd615b5416f8a #12 6fd282a37da6f0e0172ecfa29689f3d250476a2b
-> [78140.503855] Hardware name: HP HP Laptop 14s-dq2xxx/87FD, BIOS F.15 09/15/2021
-> [78140.503856] Call Trace:
-> [78140.503858]  <TASK>
-> [78140.503860]  dump_stack_lvl+0x5a/0x74
-> [78140.503863]  check_noncircular+0xd3/0xe0
-> [78140.503866]  ? register_lock_class+0x35/0x2a0
-> [78140.503870]  __lock_acquire+0x1573/0x2ce0
-> [78140.503872]  ? prepend_path+0x375/0x410
-> [78140.503876]  ? d_absolute_path+0x48/0x80
-> [78140.503879]  ? aa_path_name+0x132/0x470
-> [78140.503883]  ? lock_is_held_type+0xd0/0x130
-> [78140.503886]  lock_acquire+0xbd/0x190
-> [78140.503888]  ? update_file_ctx+0x19/0xe0
-> [78140.503892]  _raw_spin_lock+0x2f/0x40
-> [78140.503894]  ? update_file_ctx+0x19/0xe0
-> [78140.503896]  update_file_ctx+0x19/0xe0
-> [78140.503899]  aa_file_perm+0x56e/0x5c0
-> [78140.503904]  ? aa_inherit_files+0x170/0x170
-> [78140.503906]  match_file+0x78/0x90
-> [78140.503909]  iterate_fd+0xae/0x150
-> [78140.503912]  aa_inherit_files+0xbe/0x170
-> [78140.503915]  apparmor_bprm_committing_creds+0x50/0x80
-> [78140.503918]  security_bprm_committing_creds+0x1d/0x30
-> [78140.503921]  begin_new_exec+0x3c5/0x450
-> [78140.503924]  load_elf_binary+0x269/0xc80
-> [78140.503928]  ? lock_release+0x1ee/0x260
-> [78140.503930]  ? bprm_execve+0x399/0x660
-> [78140.503933]  bprm_execve+0x39f/0x660
-> [78140.503936]  do_execveat_common+0x1d0/0x220
-> [78140.503940]  __x64_sys_execve+0x36/0x40
-> [78140.503942]  do_syscall_64+0x3d/0x90
-> [78140.503946]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [78140.503948] RIP: 0033:0x7f700a8ea33b
-> [78140.503954] Code: Unable to access opcode bytes at RIP 0x7f700a8ea311.
-> [78140.503955] RSP: 002b:00007fff315e7db8 EFLAGS: 00000246 ORIG_RAX: 000000000000003b
-> [78140.503958] RAX: ffffffffffffffda RBX: 00007fff315e7dc0 RCX: 00007f700a8ea33b
-> [78140.503960] RDX: 000056419e9ea7e0 RSI: 000056419e9e9160 RDI: 00007fff315e7dc0
-> [78140.503962] RBP: 00007fff315e7f60 R08: 0000000000000008 R09: 0000000000000000
-> [78140.503964] R10: 0000000000000001 R11: 0000000000000246 R12: 000056419e9ea760
-> [78140.503965] R13: 000056419e9e9160 R14: 00007fff315e9eb4 R15: 00007fff315e9ebc
-> [78140.503971]  </TASK>
->
-> --
-> Ammar Faizi
+> FWIW, this isn't my call to make, but I would strongly prefer if this
+> got a *full* run in linux-next before it was merged into Linus' tree
+> during the merge window.  For example, get this into the LSM -next
+> tree at -rc1 instead of -rc6.
+
+I am in complete agreement. There's too much Murphy to rush it.
+
