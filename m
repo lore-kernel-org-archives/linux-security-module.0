@@ -2,142 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DF2C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Apr 2022 20:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7608C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Apr 2022 21:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237140AbiD0U6l (ORCPT
+        id S233624AbiD0VYq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Apr 2022 16:58:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45724 "EHLO
+        Wed, 27 Apr 2022 17:24:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236901AbiD0U6i (ORCPT
+        with ESMTP id S229745AbiD0VYg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Apr 2022 16:58:38 -0400
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85958723F
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Apr 2022 13:55:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1651092919; bh=xgehmnJSTKW4K8cVQa6/Sg7BveMcVQzT4njiupCv2Kg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=R7DJz0ehmN2JOnLhvDyI9X9vmrGqZ0ltcLeDwmfoc0GshFicotQYh+IAgQriXe28s9Nj4caMQ53kSGWARi9k8XJ6ii+/KlizUcQ5lSoU/8NW/A/ofZtF9k6qIK01RE4s82PO06xLnHVZkOtx9VBZJD2F2hWgJ6DcFG8DAIJwFbtiVMHQf5WHQ2aGRzDg+pTO/kf86dOZNnfVnsICncmWlt675WwjspNU+9+ddlWCt28QoEwQ4JbMiDY/VPr2gEKsVwgubVStb6tyw+UcJvQtddpTSXq7NIT3+t2itaxOhMwlr6Trk1Opq6E+zAuYwS9kCd6nkKMcRfv5aiZFxwJGcQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1651092919; bh=BLC+GALjnwAPvZSHjInQlCIHCjDRqXeFg5bL4P+XEKO=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=apZFWI6CV05AMeaHhsOdcWdNXez30+ffx0e/HGqAuUr6wyXLiL7ol0EmagWHS/JT5PEWmKoS7h9nPHP7g4hFlavhx2Tpi0EtkyzbT32gOKD67qr+ZMVeFOqe0fOCkhUtAqk3c8Ufhwgzln57kWWlFEV5NS8i1GyyTWL/zubHpsnB7YuGOInBINFns1vlga7BdFBBPBLsl06G/UyQYZbY+wqFwyPaDaUozSJeCWJjFLnadCgzNcoqdO9E53K4UCX7btJV84SkfifT1nwg/t+oKqIzW1tBgPGE5AbCQnQdEWwn1p+2m1MazDNmieL9OngDscgmqNnB6yq4BJU9w1QhzA==
-X-YMail-OSG: Iyn7OOkVM1nuqIGXdn.HwIb7jJQi70mWTKJHCG4ZHVlwLjeteeNY7pp4.kZHeB_
- j4Zh0cu512PcBjkAzAD5OE7IVzo17qyo5EVTAXSplqaLaT7p5iq6DoAxxqZzqWcGZaJQ0wYCRgbb
- yCdpYheBUr5qNPPoKIGhWE_EzraD9m9qR5HVMAZVV7Osly2fRbcRzgjj9zWa1DE3t5OpEgoVSCFF
- 7Ya5Ut2idWzn.5IMu2dOdu24ZDtyIriTYsvPGYi_OjyuGpeXCG39OGM4pOFmplKK2gEVa5BJJZ7Q
- 47RvblsPF7t4RnSLZegih24KELUG2NvLqp1NnJHcWtWjV4g257GmE_oIxN1twoYwlz5rsC8fMWS6
- n3rspAyLXKSPOYR2MxDQQpzAL0Mmkq11tT1p3TmZWFzTN0TYiObZBi_By4.GBc8ka9Ue66yBRN2i
- BcvJlhGXJEyEkvCKoziQ.VLJJDk_v2btpA8YKZHJ44iZbKuapVrIr.GKETtLV3Ry8L2FQovUbpL9
- Nc1XCoKAPDIIJ6FPx41.EBdqc4AfAnR6_eC2wf.PRFEGeS59axMKqiDlMDCdSkTT2cNcGnx8OUJN
- QmWWQ2MXL.9nQgDWU__5pJGFtdxpj.UfeR99KvaNbal6vVOwGst_EU9rWDjYcdzybLlibahC6rvL
- eKSBCblePbLuDZ0TtW4l9mgpNdtiGV95B8bm2nFoPdB4mGdYxieQqSDnnmLFe5xlxOiydQVifE7g
- 59HJfxBSs8u6NfCjDcVrBlJ9IAyIb81PsoMA3v6jlREOFpIbwqpRcst1g8QPdr6Tr82NK3KVMf.f
- QHmRgFbrbEgFeJmOs2koNSXyOQHPVGwyVxJgujOe3F5Yulf.5cRd6HW1j7PmMPXMFETlp6D.t5HA
- pq4oCZPJuMHwrKaL.MBkg3ZeCMN5RXVXscuno2iq.DiSgeFZd8pIYFce3b83YT8W4bqInyDYjxKk
- gYkr44Eh.ljC6denfZ72cfetrXBkMboqhoMw77tu.9xlWWFhsOVCpI_sTGmmy223lV4f3DsKNmKx
- 7NyKjwrQhhmb9qiDpNJN97R1G3UM0ckBfB.H_1yLTmyR95OM8xOr8Hq79Vs8vUlr9tMjMVZrQ925
- Jl2ttp4z3s9mZMXte4aaWMNd7rmp37aQO0hk8evCFx80TaSlGb2OOp1aU.2rtSp_TKw00nfiK2Lu
- Ii_nbziTBRiD2dFFO6wxX.qmiml6wry6TErCtyZ53Xa7zHduVM7Ms2fAYoJAJtryT0Fbw96Nj3ZG
- e_fx5by9M1G6aeaxEGvq_ts2hYsvVnSI397Z0FYrQh6p38yzVpn_yXYDU8LsMIFo62XL4x0iorYD
- W5xD2Lwa1qBf.arvK_r1iSR5_5stufW305FVx.2BHNcZipZ60z0urF9z3hTuCvKO0rbfAWAlzuo9
- ptbY__RcMqpKL0ObcTmyGaga2qHNmY0RIp.wGyRXTygBuizZLWyvNSLh6R2mExZCrGuSiv.NyG9K
- X4GvYSmKd0tC2df6W1LbEk00Lb8pSfF9BJnx715cVZJW8uY9dam.7EtKvvHPK3OuC4fXLiM1QZt0
- eUAjNoF.km0S_Pa9WuB9su.uwo1YEsDaIh7AaSwf7TvEBiPw6Ybid537r9ZzH88tzvk6lZHn_pxe
- BacxxnsArY.E.iiWZeMV6xluUzYbVpYfanevbHImQ6O4xwwMaa1ILXp9DtYffS3oprkT7UoMZKY_
- OjLKtUjmTqM_Jwce0IY7e32JfaHWvlBOUha4J2ffilbsw8GWx9OTih9w9UBAamp6AAI9Yjiyklgf
- LSAdoEl15Pm5wVit.hyLH1Wk2DYT2edqdygv9BK5HwIi47KVwHta3FoT4Z8.5pLAsGbOErIy9YP1
- 8_7dW7LVXtidWFrS8qO4tEnq7b8TZtCrij1av5V253uNJdl8AgX4U3A1P82dr74TyytfyPqAuqWX
- uNrHq0oWK8.w._.Isa6VZ6BXzZq9Twu329XP1aUSLJ3z65o6b7GyOx01_OBpVj38NnCZTHzf_aTf
- gDR6yULu8rx7oVPvXNISTy0pwN1d5SIayCNViE7Yk0hbOuTYIlxuGQXrKrabPlx.nikQz7Hf.sAv
- yd.tgsIMcxuOr.nJ8XFMwdmqUVwsVSLLyh_SZKEnThi.8P1VOUte0RQb_ywX84jlwEjNW16_fSTQ
- SJubSWjkac.6TWVirs21aKdXKhvWHJjMItkdgDa0xi9.ZbqNrMZAhKWXMWZMQFiXlLRzq23qjVLJ
- 1LRfML.lQMKFvYDLnZAYKlqEOczsjug_53FipBBnsF.JXsKhO40KN
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Wed, 27 Apr 2022 20:55:19 +0000
-Received: by hermes--canary-production-ne1-75b69fcf97-7lp55 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8d1b4e2d8871487ec86e963c3b1cd982;
-          Wed, 27 Apr 2022 20:55:14 +0000 (UTC)
-Message-ID: <8bb21e2c-0c09-86ec-13a7-3e316c145ab7@schaufler-ca.com>
-Date:   Wed, 27 Apr 2022 13:55:12 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v35 23/29] Audit: Create audit_stamp structure
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, keescook@chromium.org,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20220418145945.38797-1-casey@schaufler-ca.com>
- <20220418145945.38797-24-casey@schaufler-ca.com>
- <a1702622-5980-1eb4-1cf8-b6fc6cd98b25@canonical.com>
- <CAHC9VhRzJKAARW1rnUMu0Y6RVo_uq=i=Jzh4LmA9grtQ1W2C1Q@mail.gmail.com>
- <26eca0aa-111a-9473-8925-e4b12cadbd79@canonical.com>
- <CAHC9VhQQysL8aEt8w5G-nemJzapY-Q4pYKn0TCdnVjpuiTKqhw@mail.gmail.com>
- <4ec176c6-1f66-3951-f40f-1eb0d5b66a09@schaufler-ca.com>
- <CAHC9VhQow5MaC0O-YJHxXh_=SR5eo3+97pznVyUq4YhkTuBBmg@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhQow5MaC0O-YJHxXh_=SR5eo3+97pznVyUq4YhkTuBBmg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20118 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+        Wed, 27 Apr 2022 17:24:36 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ADDD6E8D0;
+        Wed, 27 Apr 2022 14:21:19 -0700 (PDT)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23RLDsI8020643;
+        Wed, 27 Apr 2022 21:21:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=Kb8QQD4rsJqSzMlQCv657F8recoXzj3ZXDDxMpxp/YM=;
+ b=Q+Sj4OEBwpXuMkY2uEpbT75VqT+DgdHbNRkv6aH9I2Juqri5itqYoRgz6TOWB7WhhPwy
+ w6QZneXyMoODgc+eC9YJuGO+zhuFK2ozxZ52STmYfIUkOeAK1tt3GwnU1TODigEhmgOm
+ Lqf94u9V4EKf2RSnA9qvEh6XQXPUg/0h2Gk9C8pG6ou6RgIWDO2oEfiGKNtEsl51NFkA
+ k6jqDz9Z3xHBI02zSHyDXN7hotI0NoITZ5YdCwxcc20acKvuWPKcmkX6qW6xdwRbVTrk
+ PsE2UoiuGoRMm8QuSzIyH9zHtQWrZFU4KeN/YcoeG2RHn/Q9KcGudhs1eLv+7YARhfZQ Jw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fqdjf039j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Apr 2022 21:21:07 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 23RLDsCI020638;
+        Wed, 27 Apr 2022 21:21:06 GMT
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fqdjf0390-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Apr 2022 21:21:06 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23RL3bCk017390;
+        Wed, 27 Apr 2022 21:21:04 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06fra.de.ibm.com with ESMTP id 3fm8qhn56j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Apr 2022 21:21:04 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23RLL2cj49349036
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Apr 2022 21:21:02 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1011FA405B;
+        Wed, 27 Apr 2022 21:21:02 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 16A88A4054;
+        Wed, 27 Apr 2022 21:21:01 +0000 (GMT)
+Received: from sig-9-65-70-226.ibm.com (unknown [9.65.70.226])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Apr 2022 21:21:00 +0000 (GMT)
+Message-ID: <9a9a6cb0b3f2e643a17743250f4a137baaea7a7e.camel@linux.ibm.com>
+Subject: Re: [PATCH] integrity: Allow ima_appraise bootparam to be set when
+ SB is enabled
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Wed, 27 Apr 2022 17:21:00 -0400
+In-Reply-To: <48467663-5CD6-49C5-B43F-9FA0887D0575@oracle.com>
+References: <20220425222120.1998888-1-eric.snowberg@oracle.com>
+         <d7ba004bd2ce2a8ce2ff0601b4bca921a5301ece.camel@linux.ibm.com>
+         <48467663-5CD6-49C5-B43F-9FA0887D0575@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: wVpVvyL4cW6tz6CMaPfFc-lRyfkYKU_E
+X-Proofpoint-ORIG-GUID: N87tiXpPTrCWlLzWfsOUB04elZ7Ur81-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-04-27_04,2022-04-27_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ malwarescore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 phishscore=0 bulkscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2204270129
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/27/2022 9:02 AM, Paul Moore wrote:
-> On Wed, Apr 27, 2022 at 11:49 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 4/26/2022 12:18 PM, Paul Moore wrote:
->>> On Tue, Apr 26, 2022 at 2:58 PM John Johansen
->>> <john.johansen@canonical.com> wrote:
->>>> On 4/26/22 11:03, Paul Moore wrote:
->>>>> On Mon, Apr 25, 2022 at 7:31 PM John Johansen
->>>>> <john.johansen@canonical.com> wrote:
->>>>>> On 4/18/22 07:59, Casey Schaufler wrote:
->>>>>>> Replace the timestamp and serial number pair used in audit records
->>>>>>> with a structure containing the two elements.
->>>>>>>
->>>>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>>>>> Acked-by: Paul Moore <paul@paul-moore.com>
->>>>>>> ---
->>>>>>>    kernel/audit.c   | 17 +++++++++--------
->>>>>>>    kernel/audit.h   | 12 +++++++++---
->>>>>>>    kernel/auditsc.c | 22 +++++++++-------------
->>>>>>>    3 files changed, 27 insertions(+), 24 deletions(-)
->>>>> ...
->>>>>
->>>>>>> diff --git a/kernel/audit.h b/kernel/audit.h
->>>>>>> index 4af63e7dde17..260dab6e0e15 100644
->>>>>>> --- a/kernel/audit.h
->>>>>>> +++ b/kernel/audit.h
->>>>>>> @@ -108,10 +114,10 @@ struct audit_context {
->>>>>>>                 AUDIT_CTX_URING,        /* in use by io_uring */
->>>>>>>         } context;
->>>>>>>         enum audit_state    state, current_state;
->>>>>>> +     struct audit_stamp  stamp;      /* event identifier */
->>>>>>>         unsigned int        serial;     /* serial number for record */
->>>>>> shouldn't we be dropping serial from the audit_context, since we have
->>>>>> moved it into the audit_stamp?
->>>>> Unless we make some significant changes to audit_log_start() we still
->>>>> need to preserve a timestamp in the audit_context so that regularly
->>>>> associated audit records can share a common timestamp (which is what
->>>>> groups multiple records into a single "event").
->>>>>
->>>> sure, but the patch changes things to use ctx->stamp.serial instead of
->>>> ctx->serial ...
->>> My apologies, I read your original comment wrong; I was thinking you
->>> were suggesting removing the timestamp info from audit_context in
->>> favor of using the timestamp info contained in the audit_buffer.
->>>
->>> Yes, audit_context:serial is no longer needed with audit_context:stamp.
->> Thank you for catching that. Easy (I expect) fix.
->> BTW, I'm not supposed to be working the next few weeks,
->> but I should be able to sneak v36 in before the next merge
->> window.
-> Enjoy the time away :)
->
-> FWIW, this isn't my call to make, but I would strongly prefer if this
-> got a *full* run in linux-next before it was merged into Linus' tree
-> during the merge window.  For example, get this into the LSM -next
-> tree at -rc1 instead of -rc6.
+On Wed, 2022-04-27 at 16:12 +0000, Eric Snowberg wrote:
+> 
+> > On Apr 26, 2022, at 12:18 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > 
+> > On Mon, 2022-04-25 at 18:21 -0400, Eric Snowberg wrote:
+> >> The IMA_APPRAISE_BOOTPARM config allows enabling different "ima_appraise="
+> >> modes (log, fix, enforce) to be configured at boot time.  When booting
+> >> with Secure Boot enabled, all modes are ignored except enforce.  To use
+> >> log or fix, Secure Boot must be disabled.
+> >> 
+> >> With a policy such as:
+> >> 
+> >> appraise func=BPRM_CHECK appraise_type=imasig
+> >> 
+> >> A user may just want to audit signature validation. Not all users
+> >> are interested in full enforcement and find the audit log appropriate
+> >> for their use case.
+> >> 
+> >> Add a new IMA_APPRAISE_SB_BOOTPARAM config allowing "ima_appraise="
+> >> to work when Secure Boot is enabled.
+> >> 
+> >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> > 
+> > Since the IMA architecture specific policy rules were first
+> > upstreamed, either enabling IMA_APPRAISE_BOOTPARAM or IMA_ARCH_POLICY
+> > was permitted, but not both.  
+> 
+> I don’t see code preventing this and just created a config with both of them
+> enabled.  Is this an assumption everyone is supposed to understand?
 
-I am in complete agreement. There's too much Murphy to rush it.
+This was very clear in the original patch upstreamed.  Refer to the
+IMA_APPRAISE_BOOTPRAM in commit d958083a8f64 ("x86/ima: define
+arch_get_ima_policy() for x86").  This subsequently changed to be based
+on  the secureboot runtime state.  Refer to commit 311aa6aafea4 ("ima:
+move APPRAISE_BOOTPARAM dependency on ARCH_POLICY to runtime").
+
+> 
+> > This Kconfig negates the assumptions on
+> > which the CONFIG_IMA_ARCH_POLICY and the ima_appraise_signature() are
+> > based without any indication of the ramifications.   This impacts the
+> > kexec file syscall lockdown LSM assumptions as well.
+> 
+> I will fix this in the next round.
+
+Either secureboot is or isn't enabled.  When it is enabled, then IMA
+must be in enforcing mode.
+
+> > A fuller, more complete explanation for needing "log" mode when secure
+> > boot is enabled is required.
+> 
+> and add a more thorough explanation.  Thanks.
+
+Normally "log" mode is needed during development.
+
+thanks,
+
+Mimi
 
