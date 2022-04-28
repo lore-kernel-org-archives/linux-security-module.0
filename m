@@ -2,132 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D5EC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Apr 2022 02:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384E4C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Apr 2022 03:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241050AbiD1CDp (ORCPT
+        id S242482AbiD1Dot (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Apr 2022 22:03:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54982 "EHLO
+        Wed, 27 Apr 2022 23:44:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241036AbiD1CDm (ORCPT
+        with ESMTP id S241797AbiD1Dot (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Apr 2022 22:03:42 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B24A5F671;
-        Wed, 27 Apr 2022 19:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651111229; x=1682647229;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lulCbLibblcfe+Y3OjIlB++pgig6LUiF7oMjIIEhKF4=;
-  b=FmpiIPBJoTVIG0xYRRNWBldZrGDec+XHZ8vlChWsBARfWagInldFghp8
-   wSopWg9ZymML1Fn2P8GYaHSAYex5S8UpY8XwZLRFqEY+Gxxpn3QRmUBL0
-   RkwLNmCJ4yKQheve+mR70eW9C8Cr/QLdGyCiWlZuxUVEgJPS6nWnPDptf
-   tbkAGUbD2KMpJjV0dLMbFCf3pPFRGb1j4NxOOa9UuNX3XKn0P97Cf46zM
-   ricpam942sSJgRwUdsA5OmRVJv2ooVy0Alr0bphU8giVZTgzy17vmMJXK
-   bTX/SIdumwHfhFzJ/QP9oR1cE9jq8IZ6S7fpDuWOGbi0F12MlB1+ldFoJ
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10330"; a="291287363"
-X-IronPort-AV: E=Sophos;i="5.90,294,1643702400"; 
-   d="scan'208";a="291287363"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2022 19:00:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,294,1643702400"; 
-   d="scan'208";a="617872486"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Apr 2022 19:00:24 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1njtSB-0004xf-IA;
-        Thu, 28 Apr 2022 02:00:23 +0000
-Date:   Thu, 28 Apr 2022 09:59:41 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        Wed, 27 Apr 2022 23:44:49 -0400
+Received: from zg8tmty1ljiyny4xntqumjca.icoremail.net (zg8tmty1ljiyny4xntqumjca.icoremail.net [165.227.154.27])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 1CE9483B1B;
+        Wed, 27 Apr 2022 20:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fudan.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
+        Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=TkdTGRGgDnMX8EaddtL3uKayHDJt8/TLy89laRtXYrQ=; b=Bs50JvXElikc8
+        7LmlIXOE0aU/NqN9yLGnQ7AyQbt+K2NN295V1n12wk+whZrxyTZmGCSyvpYbUA+J
+        EpGVSO8EL2gioZXhd9aIUOmNF5RKblRXuWkia1AUjYm4UO6JgDTvUbfLFVax2jyd
+        DgaIxXcp0eeL49A+etI6rCR8xIgzs0=
+Received: from localhost.localdomain (unknown [10.102.183.96])
+        by app1 (Coremail) with SMTP id XAUFCgAHsrnPDGpi9qRkEQ--.26115S4;
+        Thu, 28 Apr 2022 11:41:08 +0800 (CST)
+From:   Xin Xiong <xiongx18@fudan.edu.cn>
+To:     John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
-        linux-raid@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH v2 2/3] LoadPin: Enable loading from trusted dm-verity
- devices
-Message-ID: <202204280323.OzDYYX55-lkp@intel.com>
-References: <20220426143059.v2.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Seth Arnold <seth.arnold@canonical.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     yuanxzhang@fudan.edu.cn, Xin Xiong <xiongx18@fudan.edu.cn>,
+        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
+        Xin Tan <tanxin.ctf@gmail.com>
+Subject: [PATCH] apparmor: fix reference count leak in aa_pivotroot()
+Date:   Thu, 28 Apr 2022 11:39:08 +0800
+Message-Id: <20220428033907.1658-1-xiongx18@fudan.edu.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220426143059.v2.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: XAUFCgAHsrnPDGpi9qRkEQ--.26115S4
+X-Coremail-Antispam: 1UD129KBjvdXoWruryruFW5tr4kCFWfGry3Arb_yoWkurc_GF
+        1kZwn5urWUZF1qqF4qkay0gF92934kJr4qga4FkrsrG34Y9a1ayrZxJw1fZry2qw47JF15
+        AFZ3Cr9Iy34xZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbT8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j
+        6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+        0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8Jw
+        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+        YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkIecxEwVCm-wCF04k20xvY0x0EwIxGrwCFx2
+        IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v2
+        6r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67
+        AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IY
+        s7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+        WUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUo-BMDUUUU
+X-CM-SenderInfo: arytiiqsuqiimz6i3vldqovvfxof0/1tbiAQ0KEFKp4-Oj6wAAs1
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Matthias,
+The aa_pivotroot() function has a reference counting bug in a specific
+path. When aa_replace_current_label() returns on success, the function
+forgets to decrement the reference count of “target”, which is
+increased earlier by build_pivotroot(), causing a reference leak.
 
-Thank you for the patch! Yet something to improve:
+Fix it by decreasing the refcount of “target” in that path.
 
-[auto build test ERROR on device-mapper-dm/for-next]
-[also build test ERROR on song-md/md-next kees/for-next/pstore v5.18-rc4 next-20220427]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Fixes: 2ea3ffb7782a ("apparmor: add mount mediation")
+Co-developed-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Co-developed-by: Xin Tan <tanxin.ctf@gmail.com>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+Signed-off-by: Xin Xiong <xiongx18@fudan.edu.cn>
+---
+ security/apparmor/mount.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220427-053314
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git for-next
-config: alpha-randconfig-r024-20220425 (https://download.01.org/0day-ci/archive/20220428/202204280323.OzDYYX55-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/f3a54909bcd78b9f7f006d7e78acd03987031fae
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220427-053314
-        git checkout f3a54909bcd78b9f7f006d7e78acd03987031fae
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=alpha SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   security/loadpin/loadpin.c: In function 'loadpin_init':
-   security/loadpin/loadpin.c:436:44: error: 'loadpin_sysctl_path' undeclared (first use in this function)
-     436 |                 if (!register_sysctl_paths(loadpin_sysctl_path,
-         |                                            ^~~~~~~~~~~~~~~~~~~
-   security/loadpin/loadpin.c:436:44: note: each undeclared identifier is reported only once for each function it appears in
->> security/loadpin/loadpin.c:437:44: error: 'loadpin_sysctl_table_verity_digests' undeclared (first use in this function)
-     437 |                                            loadpin_sysctl_table_verity_digests))
-         |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/loadpin_sysctl_table_verity_digests +437 security/loadpin/loadpin.c
-
-   427	
-   428	static int __init loadpin_init(void)
-   429	{
-   430		pr_info("ready to pin (currently %senforcing)\n",
-   431			enforce ? "" : "not ");
-   432		parse_exclude();
-   433		security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
-   434	
-   435		if (IS_ENABLED(CONFIG_SECURITY_LOADPIN_VERITY)) {
-   436			if (!register_sysctl_paths(loadpin_sysctl_path,
- > 437						   loadpin_sysctl_table_verity_digests))
-   438				pr_notice("sysctl registration failed!\n");
-   439		}
-   440	
-   441		return 0;
-   442	}
-   443	
-
+diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+index aa6fcfde3051..d0b19ab9137d 100644
+--- a/security/apparmor/mount.c
++++ b/security/apparmor/mount.c
+@@ -718,6 +718,7 @@ int aa_pivotroot(struct aa_label *label, const struct path *old_path,
+ 			aa_put_label(target);
+ 			goto out;
+ 		}
++		aa_put_label(target);
+ 	} else
+ 		/* already audited error */
+ 		error = PTR_ERR(target);
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.25.1
+
