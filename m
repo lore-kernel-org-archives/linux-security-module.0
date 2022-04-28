@@ -2,69 +2,62 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FA0C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Apr 2022 05:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2340C43217
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Apr 2022 08:36:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231407AbiD1FgE (ORCPT
+        id S1344492AbiD1Ijo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Apr 2022 01:36:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44610 "EHLO
+        Thu, 28 Apr 2022 04:39:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbiD1FgD (ORCPT
+        with ESMTP id S1344794AbiD1IjQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Apr 2022 01:36:03 -0400
-Received: from mx1.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F32845FA4;
-        Wed, 27 Apr 2022 22:32:48 -0700 (PDT)
-Received: from [192.168.0.2] (ip5f5aeb1b.dynamic.kabel-deutschland.de [95.90.235.27])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5957C61EA1923;
-        Thu, 28 Apr 2022 07:32:45 +0200 (CEST)
-Message-ID: <e5aa84ee-69b3-b02a-014d-597a5a03987d@molgen.mpg.de>
-Date:   Thu, 28 Apr 2022 07:32:44 +0200
+        Thu, 28 Apr 2022 04:39:16 -0400
+X-Greylist: delayed 837 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 28 Apr 2022 01:32:21 PDT
+Received: from mail.profitbizdesign.com.pl (mail.profitbizdesign.com.pl [94.177.252.218])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB3FA2056
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Apr 2022 01:32:20 -0700 (PDT)
+Received: by mail.profitbizdesign.com.pl (Postfix, from userid 1001)
+        id 1A4D5A9785; Thu, 28 Apr 2022 09:12:39 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=profitbizdesign.com.pl; s=mail; t=1651133574;
+        bh=Rfzvu4C+yJ1wyuJ4V+t/udh6cgYEQVnY6S5ltO4wdNg=;
+        h=Date:From:To:Subject:From;
+        b=TQ/x5wgDNFCgKNJTtMEhoYR5te6WQMdlxAX3h1ragG8N140LrRoWwdL2Q8rTvOYCZ
+         OIyjaY2CbzLLcruRoLk9RXmeFjvQDQEmEfWlsZ+EK5A5TS+Mf7If/VH9x6Rf9NAZ7I
+         5sQOrCOimSr/QKZFWIGvIJGubPVlwN7ZZxtYORCgoEGPF9cUNqXFJ6hBRxmtzqeJdU
+         A1o5U2lsisZjkqwEDb/GmMRew3CUlC1NqinLy+O7T7th4ENV4NBgrXGmCj2fHMkZ0R
+         di2dvIBQF2SO/UurxcxlklK7SAGI3YVHV5/4OKkg6VTkXyJpxo2GAcZXdx6/0ZJcbp
+         njBsOoOZ/6YBg==
+Received: by mail.profitbizdesign.com.pl for <linux-security-module@vger.kernel.org>; Thu, 28 Apr 2022 08:10:19 GMT
+Message-ID: <20220428074503-0.1.1z.60e0.0.g6ujsq4je1@profitbizdesign.com.pl>
+Date:   Thu, 28 Apr 2022 08:10:19 GMT
+From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
+        <arkadiusz.sokolowski@profitbizdesign.com.pl>
+To:     <linux-security-module@vger.kernel.org>
+Subject: Koszty instalacji fotowoltaicznej
+X-Mailer: mail.profitbizdesign.com.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v2 0/3] LoadPin: Enable loading from trusted dm-verity
- devices
-Content-Language: en-US
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
-        linux-raid@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Song Liu <song@kernel.org>
-References: <20220426213110.3572568-1-mka@chromium.org>
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20220426213110.3572568-1-mka@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dear Matthias,
+Dzie=C5=84 dobry,
 
+stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
+ obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99. =20
 
-Thank you for your patches.
+Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
+acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
+ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
 
-Am 26.04.22 um 23:31 schrieb Matthias Kaehlcke:
-> As of now LoadPin restricts loading of kernel files to a single
-> pinned filesystem, typically the rootfs. This works for many
+Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
+=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
+=2E
 
-[…]
+Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
+temacie?
 
-A small nit, if you should reroll the patches, please use 75 characters 
-per line in commit messages. (`scripts/checkpatch.pl` uses that number.)
-
-
-Kind regards,
-
-Paul
+Pozdrawiam
+Arkadiusz Soko=C5=82owski
