@@ -2,153 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7608C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Apr 2022 21:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D5EC4332F
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Apr 2022 02:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233624AbiD0VYq (ORCPT
+        id S241050AbiD1CDp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Apr 2022 17:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54640 "EHLO
+        Wed, 27 Apr 2022 22:03:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229745AbiD0VYg (ORCPT
+        with ESMTP id S241036AbiD1CDm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Apr 2022 17:24:36 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ADDD6E8D0;
-        Wed, 27 Apr 2022 14:21:19 -0700 (PDT)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23RLDsI8020643;
-        Wed, 27 Apr 2022 21:21:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=Kb8QQD4rsJqSzMlQCv657F8recoXzj3ZXDDxMpxp/YM=;
- b=Q+Sj4OEBwpXuMkY2uEpbT75VqT+DgdHbNRkv6aH9I2Juqri5itqYoRgz6TOWB7WhhPwy
- w6QZneXyMoODgc+eC9YJuGO+zhuFK2ozxZ52STmYfIUkOeAK1tt3GwnU1TODigEhmgOm
- Lqf94u9V4EKf2RSnA9qvEh6XQXPUg/0h2Gk9C8pG6ou6RgIWDO2oEfiGKNtEsl51NFkA
- k6jqDz9Z3xHBI02zSHyDXN7hotI0NoITZ5YdCwxcc20acKvuWPKcmkX6qW6xdwRbVTrk
- PsE2UoiuGoRMm8QuSzIyH9zHtQWrZFU4KeN/YcoeG2RHn/Q9KcGudhs1eLv+7YARhfZQ Jw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fqdjf039j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 Apr 2022 21:21:07 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 23RLDsCI020638;
-        Wed, 27 Apr 2022 21:21:06 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fqdjf0390-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 Apr 2022 21:21:06 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23RL3bCk017390;
-        Wed, 27 Apr 2022 21:21:04 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma06fra.de.ibm.com with ESMTP id 3fm8qhn56j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 Apr 2022 21:21:04 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23RLL2cj49349036
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Apr 2022 21:21:02 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1011FA405B;
-        Wed, 27 Apr 2022 21:21:02 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16A88A4054;
-        Wed, 27 Apr 2022 21:21:01 +0000 (GMT)
-Received: from sig-9-65-70-226.ibm.com (unknown [9.65.70.226])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Apr 2022 21:21:00 +0000 (GMT)
-Message-ID: <9a9a6cb0b3f2e643a17743250f4a137baaea7a7e.camel@linux.ibm.com>
-Subject: Re: [PATCH] integrity: Allow ima_appraise bootparam to be set when
- SB is enabled
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Wed, 27 Apr 2022 17:21:00 -0400
-In-Reply-To: <48467663-5CD6-49C5-B43F-9FA0887D0575@oracle.com>
-References: <20220425222120.1998888-1-eric.snowberg@oracle.com>
-         <d7ba004bd2ce2a8ce2ff0601b4bca921a5301ece.camel@linux.ibm.com>
-         <48467663-5CD6-49C5-B43F-9FA0887D0575@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wVpVvyL4cW6tz6CMaPfFc-lRyfkYKU_E
-X-Proofpoint-ORIG-GUID: N87tiXpPTrCWlLzWfsOUB04elZ7Ur81-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-27_04,2022-04-27_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- malwarescore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 phishscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204270129
+        Wed, 27 Apr 2022 22:03:42 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B24A5F671;
+        Wed, 27 Apr 2022 19:00:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651111229; x=1682647229;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lulCbLibblcfe+Y3OjIlB++pgig6LUiF7oMjIIEhKF4=;
+  b=FmpiIPBJoTVIG0xYRRNWBldZrGDec+XHZ8vlChWsBARfWagInldFghp8
+   wSopWg9ZymML1Fn2P8GYaHSAYex5S8UpY8XwZLRFqEY+Gxxpn3QRmUBL0
+   RkwLNmCJ4yKQheve+mR70eW9C8Cr/QLdGyCiWlZuxUVEgJPS6nWnPDptf
+   tbkAGUbD2KMpJjV0dLMbFCf3pPFRGb1j4NxOOa9UuNX3XKn0P97Cf46zM
+   ricpam942sSJgRwUdsA5OmRVJv2ooVy0Alr0bphU8giVZTgzy17vmMJXK
+   bTX/SIdumwHfhFzJ/QP9oR1cE9jq8IZ6S7fpDuWOGbi0F12MlB1+ldFoJ
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10330"; a="291287363"
+X-IronPort-AV: E=Sophos;i="5.90,294,1643702400"; 
+   d="scan'208";a="291287363"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2022 19:00:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,294,1643702400"; 
+   d="scan'208";a="617872486"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 27 Apr 2022 19:00:24 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1njtSB-0004xf-IA;
+        Thu, 28 Apr 2022 02:00:23 +0000
+Date:   Thu, 28 Apr 2022 09:59:41 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-raid@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Song Liu <song@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v2 2/3] LoadPin: Enable loading from trusted dm-verity
+ devices
+Message-ID: <202204280323.OzDYYX55-lkp@intel.com>
+References: <20220426143059.v2.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220426143059.v2.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-04-27 at 16:12 +0000, Eric Snowberg wrote:
-> 
-> > On Apr 26, 2022, at 12:18 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > On Mon, 2022-04-25 at 18:21 -0400, Eric Snowberg wrote:
-> >> The IMA_APPRAISE_BOOTPARM config allows enabling different "ima_appraise="
-> >> modes (log, fix, enforce) to be configured at boot time.  When booting
-> >> with Secure Boot enabled, all modes are ignored except enforce.  To use
-> >> log or fix, Secure Boot must be disabled.
-> >> 
-> >> With a policy such as:
-> >> 
-> >> appraise func=BPRM_CHECK appraise_type=imasig
-> >> 
-> >> A user may just want to audit signature validation. Not all users
-> >> are interested in full enforcement and find the audit log appropriate
-> >> for their use case.
-> >> 
-> >> Add a new IMA_APPRAISE_SB_BOOTPARAM config allowing "ima_appraise="
-> >> to work when Secure Boot is enabled.
-> >> 
-> >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> > 
-> > Since the IMA architecture specific policy rules were first
-> > upstreamed, either enabling IMA_APPRAISE_BOOTPARAM or IMA_ARCH_POLICY
-> > was permitted, but not both.  
-> 
-> I don’t see code preventing this and just created a config with both of them
-> enabled.  Is this an assumption everyone is supposed to understand?
+Hi Matthias,
 
-This was very clear in the original patch upstreamed.  Refer to the
-IMA_APPRAISE_BOOTPRAM in commit d958083a8f64 ("x86/ima: define
-arch_get_ima_policy() for x86").  This subsequently changed to be based
-on  the secureboot runtime state.  Refer to commit 311aa6aafea4 ("ima:
-move APPRAISE_BOOTPARAM dependency on ARCH_POLICY to runtime").
+Thank you for the patch! Yet something to improve:
 
-> 
-> > This Kconfig negates the assumptions on
-> > which the CONFIG_IMA_ARCH_POLICY and the ima_appraise_signature() are
-> > based without any indication of the ramifications.   This impacts the
-> > kexec file syscall lockdown LSM assumptions as well.
-> 
-> I will fix this in the next round.
+[auto build test ERROR on device-mapper-dm/for-next]
+[also build test ERROR on song-md/md-next kees/for-next/pstore v5.18-rc4 next-20220427]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Either secureboot is or isn't enabled.  When it is enabled, then IMA
-must be in enforcing mode.
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220427-053314
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git for-next
+config: alpha-randconfig-r024-20220425 (https://download.01.org/0day-ci/archive/20220428/202204280323.OzDYYX55-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/f3a54909bcd78b9f7f006d7e78acd03987031fae
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220427-053314
+        git checkout f3a54909bcd78b9f7f006d7e78acd03987031fae
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=alpha SHELL=/bin/bash
 
-> > A fuller, more complete explanation for needing "log" mode when secure
-> > boot is enabled is required.
-> 
-> and add a more thorough explanation.  Thanks.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-Normally "log" mode is needed during development.
+All errors (new ones prefixed by >>):
 
-thanks,
+   security/loadpin/loadpin.c: In function 'loadpin_init':
+   security/loadpin/loadpin.c:436:44: error: 'loadpin_sysctl_path' undeclared (first use in this function)
+     436 |                 if (!register_sysctl_paths(loadpin_sysctl_path,
+         |                                            ^~~~~~~~~~~~~~~~~~~
+   security/loadpin/loadpin.c:436:44: note: each undeclared identifier is reported only once for each function it appears in
+>> security/loadpin/loadpin.c:437:44: error: 'loadpin_sysctl_table_verity_digests' undeclared (first use in this function)
+     437 |                                            loadpin_sysctl_table_verity_digests))
+         |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Mimi
 
+vim +/loadpin_sysctl_table_verity_digests +437 security/loadpin/loadpin.c
+
+   427	
+   428	static int __init loadpin_init(void)
+   429	{
+   430		pr_info("ready to pin (currently %senforcing)\n",
+   431			enforce ? "" : "not ");
+   432		parse_exclude();
+   433		security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
+   434	
+   435		if (IS_ENABLED(CONFIG_SECURITY_LOADPIN_VERITY)) {
+   436			if (!register_sysctl_paths(loadpin_sysctl_path,
+ > 437						   loadpin_sysctl_table_verity_digests))
+   438				pr_notice("sysctl registration failed!\n");
+   439		}
+   440	
+   441		return 0;
+   442	}
+   443	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
