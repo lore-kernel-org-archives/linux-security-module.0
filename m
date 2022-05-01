@@ -2,193 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A44CC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Apr 2022 21:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC05C433F5
+	for <linux-security-module@archiver.kernel.org>; Sun,  1 May 2022 06:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238175AbiD2VeD (ORCPT
+        id S235523AbiEAGZW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Apr 2022 17:34:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47302 "EHLO
+        Sun, 1 May 2022 02:25:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238076AbiD2VeA (ORCPT
+        with ESMTP id S231721AbiEAGZV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Apr 2022 17:34:00 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C34B84756E;
-        Fri, 29 Apr 2022 14:30:40 -0700 (PDT)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23TL0Xqj020003;
-        Fri, 29 Apr 2022 21:30:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=ojD+afCuSHRuR6G/2yGcUe3nIWhNGhLu7OHGLQvK4DE=;
- b=FJmJ1jbxaGw/8k+uTKVqlDa2jFiWXt7zNiuYvBasmXTQk6GQQZPx9ADIYLgtLnBmKzuj
- dsVSTwXdlhuq+YWgcM+/8x5FyLmXhHXmcwstwsnRkg1M9z6K6yQQR09XRdFO+vCW+taA
- g0gQc1lmJQxmGPOeJh/vCsi6e/NUo6IgKzUt0OW00S4wAKEqG4JKSQKuOONALJ8GxOHL
- UoGvsi805h2DDGhD1KtPIfYlaVVLRSnDPkN/kBa9UGK99TCHPP9LkSq1TroDkoB0KiOv
- Xyz04GzWphFT5Hmll51gGhTNygMJCWk5c4jgWbiVteEdpQ13B1RJxmPzDDRubyx6ZEJI NQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3fqqtp2w1b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 29 Apr 2022 21:30:18 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 23TL2mq8028038;
-        Fri, 29 Apr 2022 21:30:17 GMT
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3fqqtp2vyq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 29 Apr 2022 21:30:17 +0000
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23TLJZ9k008476;
-        Fri, 29 Apr 2022 21:30:15 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma02fra.de.ibm.com with ESMTP id 3fpuygbknk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 29 Apr 2022 21:30:15 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23TLUDI946858638
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 Apr 2022 21:30:13 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E80664C040;
-        Fri, 29 Apr 2022 21:30:12 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F4524C044;
-        Fri, 29 Apr 2022 21:30:11 +0000 (GMT)
-Received: from sig-9-65-75-248.ibm.com (unknown [9.65.75.248])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 29 Apr 2022 21:30:10 +0000 (GMT)
-Message-ID: <7d7fa18d396439d98e26890f647fffdc9e7d8b20.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] Carry forward IMA measurement log on kexec on x86_64
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jonathan McDowell <noodles@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Sun, 1 May 2022 02:25:21 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702D14F9CF
+        for <linux-security-module@vger.kernel.org>; Sat, 30 Apr 2022 23:21:56 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id iq10so10395287pjb.0
+        for <linux-security-module@vger.kernel.org>; Sat, 30 Apr 2022 23:21:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=SKTKYlNwPBswI7KvwVvUGgGSktP9nkI84ndIRwt7nQ0=;
+        b=Klg91Olbd9xvNnScoI9Jo7qffnF+b87zdB61YiDV72+oZO1lZnu38azldFFnB409su
+         WisdSBkqncsM9LG+UvU6GTYOBjG9KgdMMMwq25PKUB+zgdvBYW2U/N1Gjj/BAQBBdfs2
+         76jREBR9IZ4vrpFIo9Vz8EUUuF4iFpJyQSqTg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SKTKYlNwPBswI7KvwVvUGgGSktP9nkI84ndIRwt7nQ0=;
+        b=y8eDMGopry1sGYLDP8zZqUaFp1SpK+x3Vd7t7TDNwP1hnFp5CRATkx6FT4YwV231QG
+         AO6b6LhkPd8hpODYM7GqznnfkjWe8km1JyZUrPwey4tbMXHTACCSd0QJND7mCkqv8VjP
+         1vNI055zdhnz8TRTEPChTfUUp9LdOgsVQM/ch7DpuNdmj77pYnSCUOKZFGuLaxIIWpLY
+         FG5CTzrTpSEpEVN7U6p4E+xk5H0mJk9ro33STW/qfMMGFxwz/SiSpqysXRPaYgJr76Bz
+         l3itD8/ZlGH5b/+/TtjwFXYA484VFXtjSNJKkAkDMKBehaxP3c1EzssRaKxzWbIWMaK+
+         ey/w==
+X-Gm-Message-State: AOAM533h1cSqklVz5yNgkfhA0yXYhr22jDRpsCN2vZHGT5TYsGNqYRz5
+        lUL7MsDwm8TE6kdVPuaDDVTw2A==
+X-Google-Smtp-Source: ABdhPJz+jfrVtgiEdIHSI8aK+wUVMyDTcGdWEOLCrg/rORW+7ZJJmVsK5AsizYEC9lrxUsWwCp9rcg==
+X-Received: by 2002:a17:902:f684:b0:15e:8c4a:c54b with SMTP id l4-20020a170902f68400b0015e8c4ac54bmr6278847plg.21.1651386115938;
+        Sat, 30 Apr 2022 23:21:55 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c12-20020a65618c000000b003c14af5061asm9085007pgv.50.2022.04.30.23.21.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Apr 2022 23:21:55 -0700 (PDT)
+Date:   Sat, 30 Apr 2022 23:21:54 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Date:   Fri, 29 Apr 2022 17:30:10 -0400
-In-Reply-To: <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
-References: <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: wSqEkRR4PEQUw2OtGFjUdCJNO5qAyjTA
-X-Proofpoint-GUID: wYfoVQ2G-mAoHaZxBIe0LznPvYrG7-Jg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-29_09,2022-04-28_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- adultscore=0 impostorscore=0 malwarescore=0 suspectscore=0 phishscore=0
- priorityscore=1501 spamscore=0 clxscore=1015 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204290113
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-raid@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Song Liu <song@kernel.org>
+Subject: Re: [PATCH v2 2/3] LoadPin: Enable loading from trusted dm-verity
+ devices
+Message-ID: <202204302316.AF04961@keescook>
+References: <20220426213110.3572568-1-mka@chromium.org>
+ <20220426143059.v2.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220426143059.v2.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 13753136f03f..419c50cfe6b9 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -10,6 +10,7 @@
->  #include <linux/seq_file.h>
->  #include <linux/vmalloc.h>
->  #include <linux/kexec.h>
-> +#include <linux/memblock.h>
->  #include <linux/of.h>
->  #include <linux/ima.h>
->  #include "ima.h"
-> @@ -134,10 +135,66 @@ void ima_add_kexec_buffer(struct kimage *image)
->  }
->  #endif /* IMA_KEXEC */
->  
-> +#ifndef CONFIG_OF
-> +static phys_addr_t ima_early_kexec_buffer_phys;
-> +static size_t ima_early_kexec_buffer_size;
-> +
-> +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
-> +{
-> +	if (size == 0)
-> +		return;
-> +
-> +	ima_early_kexec_buffer_phys = phys_addr;
-> +	ima_early_kexec_buffer_size = size;
-> +}
-> +
-> +int __init ima_free_kexec_buffer(void)
-> +{
-> +	int rc;
-> +
-> +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
-> +		return -ENOTSUPP;
-> +
-> +	if (ima_early_kexec_buffer_size == 0)
-> +		return -ENOENT;
-> +
-> +	rc = memblock_phys_free(ima_early_kexec_buffer_phys,
-> +				ima_early_kexec_buffer_size);
-> +	if (rc)
-> +		return rc;
-> +
-> +	ima_early_kexec_buffer_phys = 0;
-> +	ima_early_kexec_buffer_size = 0;
-> +
-> +	return 0;
-> +}
-> +
-> +int __init ima_get_kexec_buffer(void **addr, size_t *size)
-> +{
-> +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
-> +		return -ENOTSUPP;
-> +
-> +	if (ima_early_kexec_buffer_size == 0)
-> +		return -ENOENT;
-> +
-> +	*addr = __va(ima_early_kexec_buffer_phys);
-> +	*size = ima_early_kexec_buffer_size;
-> +
-> +	return 0;
-> +}
-> +
+On Tue, Apr 26, 2022 at 02:31:09PM -0700, Matthias Kaehlcke wrote:
+> I'm still doubting what would be the best way to configure
+> the list of trusted digests. The approach in v2 of writing
+> a path through sysctl is flexible, but it also feels a bit
+> odd. I did some experiments with passing a file descriptor
+> through sysctl, but it's also odd and has its own issues.
+> Passing the list through a kernel parameter seems hacky.
+> A Kconfig string would work, but can be have issues when
+> the same config is used for different platforms, where
+> some may have trusted digests and others not.
 
-Originally both ima_get_kexec_buffer() and ima_free_kexec_buffer() were
-architecture specific.  Refer to commit 467d27824920 ("powerpc: ima:
-get the kexec buffer passed by the previous kernel").  Is there any
-need for defining them here behind an "#ifndef CONFIG_OF"?
+I prefer the idea of passing an fd, since that can just use LoadPin
+itself to verify the origin of the fd.
 
-> +#else
-> +
-> +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
-> +{
-> +	pr_warn("CONFIG_OF enabled, ignoring call to set buffer details.\n");
-> +}
-> +#endif /* CONFIG_OF */
-> +
+I also agree, though, that it's weird as a sysctl. Possible thoughts:
 
-Only when "HAVE_IMA_KEXEC" is defined is this file included.  Why is
-this warning needed?
+- make it a new ioctl on /dev/mapper/control (seems reasonable given
+  that it's specifically about dm devices).
+- have LoadPin grow a securityfs node, maybe something like
+  /sys/kernel/security/loadpin/dm-verify and do the ioctl there (seems
+  reasonable given that it's specifically about LoadPin, but is perhaps
+  more overhead to built the securityfs).
 
-thanks,
-
-Mimi
-
->  /*
->   * Restore the measurement list from the previous kernel.
->   */
-> -void ima_load_kexec_buffer(void)
-> +void __init ima_load_kexec_buffer(void)
->  {
->  	void *kexec_buffer = NULL;
->  	size_t kexec_buffer_size = 0;
-
-
+-- 
+Kees Cook
