@@ -2,126 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8254C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 May 2022 13:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A9FC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 May 2022 16:00:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385346AbiEBNtX (ORCPT
+        id S1386037AbiEBQEO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 May 2022 09:49:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56150 "EHLO
+        Mon, 2 May 2022 12:04:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385518AbiEBNtU (ORCPT
+        with ESMTP id S241345AbiEBQEN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 May 2022 09:49:20 -0400
-Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0786512614;
-        Mon,  2 May 2022 06:45:52 -0700 (PDT)
-Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-ed9ac77cbbso3710387fac.1;
-        Mon, 02 May 2022 06:45:51 -0700 (PDT)
+        Mon, 2 May 2022 12:04:13 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A165F93;
+        Mon,  2 May 2022 09:00:44 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id kq17so28609143ejb.4;
+        Mon, 02 May 2022 09:00:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KlkPJd9IPwI3xuM5T+5Eqx8x2n4AENEmfcA0g1h3kb8=;
-        b=Y9Ge8Zh0P8Nn7vrmdfyiKMNSXTRSp9YFHQZim+UHkCEFcfwdVdW7Vb8ezfueGEUcHa
-         B1aAFddnxIPGLjcRzkP7XtGk2dlF8RTkPlKJaCYmt9O1naej9QSykekHptyii+fwZRQy
-         l1EWiBVCqbJWRkZ4Klnvtx0ozhx62AmU09qkR9Ola2hClwQjEQZyfYh6q/uEpQuAyrm/
-         YDfjUjrwscX61c0ALQUvQcDFIU5370j4EfVKP7iQobmAodMzzuNMPCmW4S2LWhgAbo8X
-         VwWzk9s3kNbfC3hUgXGX/2R2pel9rOhniwQEMnG5Tpm9jRGvRtVuWVtt1ofUS4hLNBNY
-         P3Eg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=busCb+Om5lGBi8mOWmr9OZyYy/vhvqsiFL5/BXL6zqA=;
+        b=ghk5NXhphzM2gG989XZFhRAZZGZycbT6Xm1juiPzyiJ9UWfO8/jJt8Y905OOl6IeCV
+         StRbo7WnSDtUgPaLnm48Gq7edKbikw4gDhZOtb33pF+vhKu9POC5LHE1FhZLxWGehz+L
+         I5cGaZRIegguH5Enu7D/TXvhLfkMrb7WiHEh9a58D0laKm9jnp5LskhUbH4Nrh3XthN0
+         MzWJaCk6Nz4X6UOp5hZSCibk7EROY0K6aauOALrXk1CHbzgR5+BCuJQWGw5r7MJfcshI
+         Dq5eNcmau6KflTW8SWsYMcQNqaqBcEooEeRaNLwkG+rTo7NNbANgLC0zwAwBVKj5tHtX
+         tTqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KlkPJd9IPwI3xuM5T+5Eqx8x2n4AENEmfcA0g1h3kb8=;
-        b=GlaqFoK98nXaEEYvyCg7kUV2gvAIhFDe7jvAcGk5OPws8WwO7CX7y7roSQPVnZVebg
-         80brvven4c0dIYkmGfxyCDAmYaEayqTQRgjJRVU+06XTVWojlpFudpuyNQiwAqqIKLMG
-         nz0hSosO/BoWUL2TayosZULy7xhUG4rM3PjX7C9omb0ghmO5KsFMmwabF/pHkjP7uwee
-         emPp6qXPpnRkyk9Io72nKjmhAhcmK1vxKdbKvjjTOVcCjzgPzD/m8mIIUbWM2gUrA0hL
-         LS627xsLm+EnZyCz2hk4LxvI/7LA6UjE7jsntNZXV8DWnhMQ09KU+KNAFgZQYyNn9A2N
-         6c1w==
-X-Gm-Message-State: AOAM531tY60jo5iauU6oCT2LzUvclGVdGN4j9DcdeIMxf9NkYrvNj747
-        F+dw6UGdetW9/GvaGgmNo1t/1naRFi4rZ2G5mZs=
-X-Google-Smtp-Source: ABdhPJx5rwU6X5NnnuNmcAS5EItDn5UYn1+bETi6E6Je7tDTBL6rzvnM5hyy2El994VvmDm+qlbjgH1Ln9bev9p14BE=
-X-Received: by 2002:a05:6870:5b8a:b0:e6:589e:201d with SMTP id
- em10-20020a0568705b8a00b000e6589e201dmr6394064oab.71.1651499145960; Mon, 02
- May 2022 06:45:45 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=busCb+Om5lGBi8mOWmr9OZyYy/vhvqsiFL5/BXL6zqA=;
+        b=ERbALm5eqCky8ZJ1Y8L4xG+SHrNSXL9u41gtowRv6phNeY7j/IqO09UvB9CKkIOCKF
+         uZrFjxGqYbbgEbDypS9549GH9DvFk5yvAddmUFPP6qcsuORB+Dn08qe8UnFImPMV1ygi
+         V+dJgc4SXkZpAf6DW/0AVlh3iCeSgqaweiUhIVuLMgb/35Jr5WaiKqSYR5scJSXkmeGD
+         qFCzgbaumfxPb3Y7GUSl+VT9WCMxZKPqkcxjko8bfF2reEMCoP4LFKo2egxuGO5uMHSf
+         V9Zz8wNnCVJERfJ0S9WdFPdmX8f2FZyXa+LOaMYSXHsdUgz3EYSX6NM4XElDvXSoNeTx
+         3dAg==
+X-Gm-Message-State: AOAM531ZWcUAIS9/qXa4/lndY0Mnm3uuPNlKvAvYIP/q0z+PHVF7RM8j
+        NRlotN0VyZN+qnSKLLuaunjn65ywYxCX4g==
+X-Google-Smtp-Source: ABdhPJznP7hHNSMc6KAkJzb55uU2vdD7o+qcKVDmADHxYa4PbgS0HNkxS0e9NHIHM/Y7m2OIX9eouQ==
+X-Received: by 2002:a17:907:3e25:b0:6f4:2c9a:709d with SMTP id hp37-20020a1709073e2500b006f42c9a709dmr8293319ejc.175.1651507242418;
+        Mon, 02 May 2022 09:00:42 -0700 (PDT)
+Received: from debianHome.localdomain (dynamic-077-001-135-067.77.1.pool.telefonica.de. [77.1.135.67])
+        by smtp.gmail.com with ESMTPSA id h18-20020a1709070b1200b006f3ef214dd3sm3689996ejl.57.2022.05.02.09.00.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 May 2022 09:00:42 -0700 (PDT)
+From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
+To:     selinux@vger.kernel.org
+Cc:     Serge Hallyn <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/8] capability: use new capable_or functionality
+Date:   Mon,  2 May 2022 18:00:23 +0200
+Message-Id: <20220502160030.131168-1-cgzones@googlemail.com>
+X-Mailer: git-send-email 2.36.0
+In-Reply-To: <20220217145003.78982-2-cgzones@googlemail.com>
+References: <20220217145003.78982-2-cgzones@googlemail.com>
 MIME-Version: 1.0
-References: <20220125143304.34628-1-cgzones@googlemail.com>
- <CAHC9VhSdGeZ9x-0Hvk9mE=YMXbpk-tC5Ek+uGFGq5U+51qjChw@mail.gmail.com>
- <CAJ2a_DeAUcGTGm_fk8viVbeFXr6FLrJ-oLw-abwFND6Kv0u0gQ@mail.gmail.com> <CAHC9VhRRBrLVtvmbJSTZ7fOkD-8AN4iM0WRmeL4ND001d3viJg@mail.gmail.com>
-In-Reply-To: <CAHC9VhRRBrLVtvmbJSTZ7fOkD-8AN4iM0WRmeL4ND001d3viJg@mail.gmail.com>
-From:   =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date:   Mon, 2 May 2022 15:45:35 +0200
-Message-ID: <CAJ2a_DeT6AG0jp4gTdsEy7nh=s6cLR7QCsYXAz2+3vsdRKxddg@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: create security context for memfd_secret inodes
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 17 Feb 2022 at 23:32, Paul Moore <paul@paul-moore.com> wrote:
->
-> On Thu, Feb 17, 2022 at 9:24 AM Christian G=C3=B6ttsche
-> <cgzones@googlemail.com> wrote:
-> > On Thu, 27 Jan 2022 at 00:01, Paul Moore <paul@paul-moore.com> wrote:
-> > > On Tue, Jan 25, 2022 at 9:33 AM Christian G=C3=B6ttsche
-> > > <cgzones@googlemail.com> wrote:
-> > > >
-> > > > Create a security context for the inodes created by memfd_secret(2)=
- via
-> > > > the LSM hook inode_init_security_anon to allow a fine grained contr=
-ol.
-> > > > As secret memory areas can affect hibernation and have a global sha=
-red
-> > > > limit access control might be desirable.
-> > > >
-> > > > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> > > > ---
-> > > > An alternative way of checking memfd_secret(2) is to create a new L=
-SM
-> > > > hook and e.g. for SELinux check via a new process class permission.
-> > > > ---
-> > > >  mm/secretmem.c | 9 +++++++++
-> > > >  1 file changed, 9 insertions(+)
-> > >
-> > > This seems reasonable to me, and I like the idea of labeling the anon
-> > > inode as opposed to creating a new set of LSM hooks.  If we want to
-> > > apply access control policy to the memfd_secret() fds we are going to
-> > > need to attach some sort of LSM state to the inode, we might as well
-> > > use the mechanism we already have instead of inventing another one.
-> >
-> > Any further comments (on design or implementation)?
-> >
-> > Should I resend a non-rfc?
->
-> I personally would really like to see a selinux-testsuite for this so
-> that we can verify it works not just now but in the future too.  I
-> think having a test would also help demonstrate the usefulness of the
-> additional LSM controls.
->
+Use the new added capable_or function in appropriate cases, where a task
+is required to have any of two capabilities.
 
-Any comments (especially from the mm people)?
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+ include/linux/capability.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Draft SELinux testsuite patch:
-https://github.com/SELinuxProject/selinux-testsuite/pull/80
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index a16d1edea9b3..1f26d6bae4f3 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -261,12 +261,12 @@ extern bool file_ns_capable(const struct file *file, struct user_namespace *ns,
+ extern bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns);
+ static inline bool perfmon_capable(void)
+ {
+-	return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
++	return capable_or(CAP_PERFMON, CAP_SYS_ADMIN);
+ }
+ 
+ static inline bool bpf_capable(void)
+ {
+-	return capable(CAP_BPF) || capable(CAP_SYS_ADMIN);
++	return capable_or(CAP_BPF, CAP_SYS_ADMIN);
+ }
+ 
+ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
+-- 
+2.36.0
 
-> > One naming question:
-> > Should the anonymous inode class be named "[secretmem]", like
-> > "[userfaultfd]", or "[secret_mem]" similar to "[io_uring]"?
->
-> The pr_fmt() string in mm/secretmem.c uses "secretmem" so I would
-> suggest sticking with "[secretmem]", although that is question best
-> answered by the secretmem maintainer.
->
-> --
-> paul-moore.com
