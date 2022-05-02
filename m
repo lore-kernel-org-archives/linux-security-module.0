@@ -2,158 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8822C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 May 2022 16:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E1CC433EF
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 May 2022 22:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386215AbiEBQFP (ORCPT
+        id S230504AbiEBWsa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 May 2022 12:05:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43252 "EHLO
+        Mon, 2 May 2022 18:48:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386161AbiEBQEr (ORCPT
+        with ESMTP id S230310AbiEBWs3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 May 2022 12:04:47 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B0AFDEE7;
-        Mon,  2 May 2022 09:00:58 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id gh6so28686239ejb.0;
-        Mon, 02 May 2022 09:00:58 -0700 (PDT)
+        Mon, 2 May 2022 18:48:29 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B946E09C
+        for <linux-security-module@vger.kernel.org>; Mon,  2 May 2022 15:44:58 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id n14so6706948plf.3
+        for <linux-security-module@vger.kernel.org>; Mon, 02 May 2022 15:44:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=B/k9asq89XDwMG68daWGZty3oeCwoDEDaFSOuEQBtd0=;
-        b=Kks+DHgbblcpg3oeQsjmU6As85p9JWAM6iYN03INHpKmsDsZDYUt9RmrNZO+a4yTOj
-         3IcLeT4NcmDHllUnAJB3GGxDkNWXGSp3RhnAVE31QSplhnuc8HfzGDFE1orJPHWX9JxU
-         eD+R8gvRB50EsPNi3c9tiOztuxPYAbJOSc5MTHUKy0Byz88hfDo62Duf9JXQaY1+/K56
-         lhkuInv8yRcfj4eCQDF3Lc2mKyXcLX5MBDDvvov0tQlyTCpwqwThMODe75U7RXq5ytGj
-         qe7EfAnsQ1rhxrPvEMey38x7me6Xjkuy5IdEiBlVyrUtE/mo6DEySlwhGFlcmuo/nfSh
-         Zmlw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=9Pev6TadqoPCvCslhpANrkqa0tRzANTdzEtaxAf0Hbw=;
+        b=IO+ItVxTbHRREuluGK2fhmQblF4cgW5vavOTKIpFPkRROJX9gmuVnnXRYdROnlh0zK
+         5E/tkPZJOY5b9uCPVSTrQo5ZT1qEvx0sCk9u5l6zkQG9tJNfyrMIAV++5Lw/q2Ftl4OP
+         5q5eBsfs5slcB3cSP6ZXkHWEyjFQtO83O56Dk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=B/k9asq89XDwMG68daWGZty3oeCwoDEDaFSOuEQBtd0=;
-        b=Y/7OydD6Hg0HmoNTwXst8xFFeYrYKXqwRlP9IB6d8ggDGZOGcwG8MFuhV+APHmRIS2
-         MdPiorXa3iO4MO8FJkU0Phb62wtC1gFd44XNwldl1DhV7vFntphZJg5hNO81gQUmoP8F
-         cvG5VvRRpHEbh6zURZzr4UYKbeSa4dwinrG2ZTcODf+fDqEBBWNtAXk1nnjurzNJ0su8
-         BuDFDDxDpWmBw6WVl/5VVRbaao6jJE5JtxB5z3p9YdKhoJfl3wzbtau5VMiOXJgyaYH3
-         YCFc8Om/6+ypIaIM67883LDs/ilwyFsfMhzjtGPgLwW/wh0MQqV4vPFy2oxIV41jnY+X
-         i0WQ==
-X-Gm-Message-State: AOAM532Cg8iodUPPPjogh6FPCdkoO7eeBKWkEjzzrdpyhhSCBZly2XQF
-        sTDwde/XWQfK1EtaZxOWcxDTlrwDBxlKsg==
-X-Google-Smtp-Source: ABdhPJyGrEf0l0QdeT1UVkkGDk/FoP0BwN4rrVHQ6HPsh9J12efhB4B6hiKMIq71/OS1e/S6vs9qBQ==
-X-Received: by 2002:a17:907:6e8a:b0:6f4:2a65:eb4b with SMTP id sh10-20020a1709076e8a00b006f42a65eb4bmr8588785ejc.597.1651507257320;
-        Mon, 02 May 2022 09:00:57 -0700 (PDT)
-Received: from debianHome.localdomain (dynamic-077-001-135-067.77.1.pool.telefonica.de. [77.1.135.67])
-        by smtp.gmail.com with ESMTPSA id h18-20020a1709070b1200b006f3ef214dd3sm3689996ejl.57.2022.05.02.09.00.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 May 2022 09:00:56 -0700 (PDT)
-From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-To:     selinux@vger.kernel.org
-Cc:     Serge Hallyn <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/8] capability: add capable_or to test for multiple caps with exactly one audit message
-Date:   Mon,  2 May 2022 18:00:30 +0200
-Message-Id: <20220502160030.131168-8-cgzones@googlemail.com>
-X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20220502160030.131168-1-cgzones@googlemail.com>
-References: <20220217145003.78982-2-cgzones@googlemail.com>
- <20220502160030.131168-1-cgzones@googlemail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9Pev6TadqoPCvCslhpANrkqa0tRzANTdzEtaxAf0Hbw=;
+        b=XBTBK++RvvWDbynI3lsznS/RPZyyHsT5lFjrN3rRSnB05tafeAYi9TEm/zL3JFb6pC
+         htuy9KxCMOjcunYYo0sdzpdGTAPdPYszlQ+PBb7EdLZKU0EZ8c0BW2EwGfV24nnp/VUK
+         ce78bsqynYMtxEL2ItZjFkG1z9Ejc84GbyWdUJMmR1c1MsolUugLKqN9K+OWXr2wXGLY
+         nFt6i5kAC+HtFVzwMPN8spKNHs5zWc+PXggTZKRbrI+AJAb/V99llULuJQPH18aNRhJS
+         CU5DfXlLpv4QLl+RocPt2jy51HAjArh189l/Iu7qQaDSO1R7CKLIQbpePNtPPX4iRREZ
+         nfRQ==
+X-Gm-Message-State: AOAM532taaylBjyB8tRuC3RY08Js45cBXxQeO92Ld5HSMNO4FmVcy5Ly
+        hOdmNOzb8Kfd9McUJktg+tzGEA==
+X-Google-Smtp-Source: ABdhPJxhVHtiibpNcHj8mIUaI5q3jvfhB3UxBy63zLm72g4zQPjmd26WW0fmoc9EkpEka6ka3qUucw==
+X-Received: by 2002:a17:902:d4c2:b0:15e:abd0:926f with SMTP id o2-20020a170902d4c200b0015eabd0926fmr4925055plg.129.1651531497972;
+        Mon, 02 May 2022 15:44:57 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:1e1a:955c:a9ca:e550])
+        by smtp.gmail.com with UTF8SMTPSA id f3-20020a17090a654300b001d26c7d5aacsm218470pjs.13.2022.05.02.15.44.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 May 2022 15:44:57 -0700 (PDT)
+Date:   Mon, 2 May 2022 15:44:56 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-raid@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Song Liu <song@kernel.org>
+Subject: Re: [PATCH v2 2/3] LoadPin: Enable loading from trusted dm-verity
+ devices
+Message-ID: <YnBe6K72iKSDSqk9@google.com>
+References: <20220426213110.3572568-1-mka@chromium.org>
+ <20220426143059.v2.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
+ <202204302316.AF04961@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202204302316.AF04961@keescook>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add the interface `capable_or()` as an alternative to or multiple
-`capable()` calls, like `capable_or(CAP_SYS_NICE, CAP_SYS_ADMIN)`
-instead of `capable(CAP_SYS_NICE) || capable(CAP_SYS_ADMIN)`.
-`capable_or()` will in particular generate exactly one audit message,
-either for the left most capability in effect or, if the task has none,
-the first one.
-This is especially helpful with regard to SELinux, where each audit
-message about a not allowed capability will create an avc denial.
-Using this function with the least invasive capability as left most
-argument (e.g. CAP_SYS_NICE before CAP_SYS_ADMIN) enables policy writers
-to only allow the least invasive one and SELinux domains pass this check
-with only capability:sys_nice or capability:sys_admin allowed without
-any avc denial message.
+On Sat, Apr 30, 2022 at 11:21:54PM -0700, Kees Cook wrote:
+> On Tue, Apr 26, 2022 at 02:31:09PM -0700, Matthias Kaehlcke wrote:
+> > I'm still doubting what would be the best way to configure
+> > the list of trusted digests. The approach in v2 of writing
+> > a path through sysctl is flexible, but it also feels a bit
+> > odd. I did some experiments with passing a file descriptor
+> > through sysctl, but it's also odd and has its own issues.
+> > Passing the list through a kernel parameter seems hacky.
+> > A Kconfig string would work, but can be have issues when
+> > the same config is used for different platforms, where
+> > some may have trusted digests and others not.
+> 
+> I prefer the idea of passing an fd, since that can just use LoadPin
+> itself to verify the origin of the fd.
+> 
+> I also agree, though, that it's weird as a sysctl. Possible thoughts:
+> 
+> - make it a new ioctl on /dev/mapper/control (seems reasonable given
+>   that it's specifically about dm devices).
+> - have LoadPin grow a securityfs node, maybe something like
+>   /sys/kernel/security/loadpin/dm-verify and do the ioctl there (seems
+>   reasonable given that it's specifically about LoadPin, but is perhaps
+>   more overhead to built the securityfs).
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+Thanks for your feedback!
 
----
-v2:
-   avoid varargs and fix to two capabilities; capable_or3() can be added
-   later if needed
----
- include/linux/capability.h |  5 +++++
- kernel/capability.c        | 29 +++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
-
-diff --git a/include/linux/capability.h b/include/linux/capability.h
-index 65efb74c3585..a16d1edea9b3 100644
---- a/include/linux/capability.h
-+++ b/include/linux/capability.h
-@@ -207,6 +207,7 @@ extern bool has_ns_capability(struct task_struct *t,
- extern bool has_capability_noaudit(struct task_struct *t, int cap);
- extern bool has_ns_capability_noaudit(struct task_struct *t,
- 				      struct user_namespace *ns, int cap);
-+extern bool capable_or(int cap1, int cap2);
- extern bool capable(int cap);
- extern bool ns_capable(struct user_namespace *ns, int cap);
- extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
-@@ -230,6 +231,10 @@ static inline bool has_ns_capability_noaudit(struct task_struct *t,
- {
- 	return true;
- }
-+static inline bool capable_or(int cap1, int cap2)
-+{
-+	return true;
-+}
- static inline bool capable(int cap)
- {
- 	return true;
-diff --git a/kernel/capability.c b/kernel/capability.c
-index 765194f5d678..cd8f3efe6d08 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -435,6 +435,35 @@ bool ns_capable_setid(struct user_namespace *ns, int cap)
- }
- EXPORT_SYMBOL(ns_capable_setid);
- 
-+/**
-+ * capable_or - Determine if the current task has one of two superior capabilities in effect
-+ * @cap1: The capabilities to be tested for first
-+ * @cap2: The capabilities to be tested for secondly
-+ *
-+ * Return true if the current task has at one of the two given superior
-+ * capabilities currently available for use, false if not.
-+ *
-+ * In contrast to or'ing capable() this call will create exactly one audit
-+ * message, either for @cap1, if it is granted or both are not permitted,
-+ * or @cap2, if it is granted while the other one is not.
-+ *
-+ * The capabilities should be ordered from least to most invasive, i.e. CAP_SYS_ADMIN last.
-+ *
-+ * This sets PF_SUPERPRIV on the task if the capability is available on the
-+ * assumption that it's about to be used.
-+ */
-+bool capable_or(int cap1, int cap2)
-+{
-+	if (ns_capable_noaudit(&init_user_ns, cap1))
-+		return ns_capable(&init_user_ns, cap1);
-+
-+	if (ns_capable_noaudit(&init_user_ns, cap2))
-+		return ns_capable(&init_user_ns, cap2);
-+
-+	return ns_capable(&init_user_ns, cap1);
-+}
-+EXPORT_SYMBOL(capable_or);
-+
- /**
-  * capable - Determine if the current task has a superior capability in effect
-  * @cap: The capability to be tested for
--- 
-2.36.0
-
+Agreed that an ioctl is preferable over a sysctl interface. I wasn't aware
+of securityfs and prefer it over a /dev/mapper/control ioctl. Ultimately
+the list of digests is meaningful to LoadPin, not (directly) to the device
+mapper / verity. I'm not sure how well this feature of integrating LoadPin
+with verity will be by the verity maintainers in the first place, it's
+probably best to limit the LoadPin specific stuff in verity to a minimum.
+I experimented a bit with the securityfs option, building it doesn't seem
+too much of an overhead. If loadpin.c ends up too cluttered with the
+verity and securityfs stuff I could try to outsource some of it to (a)
+dedicated file(s).
