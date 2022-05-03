@@ -2,102 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D954DC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 May 2022 16:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A6EC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 May 2022 18:25:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239917AbiECQ6J (ORCPT
+        id S241311AbiECS2m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 May 2022 12:58:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47800 "EHLO
+        Tue, 3 May 2022 14:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239915AbiECQ6H (ORCPT
+        with ESMTP id S235501AbiECS2l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 May 2022 12:58:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC2053A735;
-        Tue,  3 May 2022 09:54:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 3 May 2022 14:28:41 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [176.9.125.105])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEC13F309;
+        Tue,  3 May 2022 11:25:08 -0700 (PDT)
+Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 04738B81F77;
-        Tue,  3 May 2022 16:54:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7148AC385A4;
-        Tue,  3 May 2022 16:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1651596871;
-        bh=ytgntH0O/XbW8+1fR6Md9tL+ex4msLbEc4nV5PiKs1k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oSd/lUGqJGSI3Aru/ScbE5nSf8QCpZOfA+/k9fDh+sazrcp49byG0adp8zTqWNHZM
-         nWXVQgz7KK7l9iJvVMYB6Jmi91ePINmm7iDqLV4ImcFNGDGo6qyLCI3qu4fUE+fPI5
-         zoeHKmX1CgE9y4LY5N2yzU88o0wPCdxcPymmulSA=
-Date:   Tue, 3 May 2022 18:54:29 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <YnFeRe02RqclvZ87@kroah.com>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
- <CAOQ4uxim+JmFbXPQcasELDEgRDP-spdPtJrLuhvSiyxErSUkvw@mail.gmail.com>
- <YnFB/ct2Q/yYBnm8@kroah.com>
- <CAJfpegtZjRca5QPm2QgPtPG0-BJ=15Vtd48OTnRnr5G7ggAtmA@mail.gmail.com>
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 5287822248;
+        Tue,  3 May 2022 20:25:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1651602306;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9iC4cXPg9k+4gpVj29AuB8WPa1LP5MNPiMZNf/cbI60=;
+        b=RkDedRUtGXV+rYDTtGD6Re5PzUJOBv4t7jgDYB3cDSNZ0v6oz4lwCp7IpoCeuwt+18s9MY
+        PbLjrkr/lyl3evJtuCAESVCKxhGl+o8DYxappQloW/rX9+eHSPUo4f4RxMt8f654gPLeY4
+        cWqIHbGZ4YO/qwb3alIBVDznZsUDoxo=
+From:   Michael Walle <michael@walle.cc>
+To:     a.fatoum@pengutronix.de
+Cc:     davem@davemloft.net, david@sigma-star.at, dhowells@redhat.com,
+        ebiggers@kernel.org, franck.lenormand@nxp.com,
+        herbert@gondor.apana.org.au, horia.geanta@nxp.com,
+        j.luebbe@pengutronix.de, jarkko@kernel.org, jejb@linux.ibm.com,
+        jmorris@namei.org, kernel@pengutronix.de, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        matthias.schiffer@ew.tq-group.com, pankaj.gupta@nxp.com,
+        richard@nod.at, serge@hallyn.com, sumit.garg@linaro.org,
+        tharvey@gateworks.com, zohar@linux.ibm.com,
+        Michael Walle <michael@walle.cc>
+Subject: Re: [PATCH v8 3/6] crypto: caam - add in-kernel interface for blob generator
+Date:   Tue,  3 May 2022 20:24:54 +0200
+Message-Id: <20220503182454.2749454-1-michael@walle.cc>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220428140145.870527-4-a.fatoum@pengutronix.de>
+References: <20220428140145.870527-4-a.fatoum@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtZjRca5QPm2QgPtPG0-BJ=15Vtd48OTnRnr5G7ggAtmA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 03, 2022 at 05:04:06PM +0200, Miklos Szeredi wrote:
-> On Tue, 3 May 2022 at 16:53, Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, May 03, 2022 at 05:39:46PM +0300, Amir Goldstein wrote:
+Hi,
+
+> The NXP Cryptographic Acceleration and Assurance Module (CAAM)
+> can be used to protect user-defined data across system reboot:
 > 
-> > > It should be noted that while this API mandates text keys,
-> > > it does not mandate text values, so for example, sb iostats could be
-> > > exported as text or as binary struct, or as individual text/binary records or
-> > > all of the above.
-> >
-> > Ugh, no, that would be a total mess.  Don't go exporting random binary
-> > structs depending on the file, that's going to be completely
-> > unmaintainable.  As it is, this is going to be hard enough with random
-> > text fields.
-> >
-> > As for this format, it needs to be required to be documented in
-> > Documentation/ABI/ for each entry and key type so that we have a chance
-> > of knowing what is going on and tracking how things are working and
-> > validating stuff.
+>   - When the system is fused and boots into secure state, the master
+>     key is a unique never-disclosed device-specific key
+>   - random key is encrypted by key derived from master key
+>   - data is encrypted using the random key
+>   - encrypted data and its encrypted random key are stored alongside
+>   - This blob can now be safely stored in non-volatile memory
 > 
-> My preference would be a single text value for each key.
+> On next power-on:
+>   - blob is loaded into CAAM
+>   - CAAM writes decrypted data either into memory or key register
+> 
+> Add functions to realize encrypting and decrypting into memory alongside
+> the CAAM driver.
+> 
+> They will be used in a later commit as a source for the trusted key
+> seal/unseal mechanism.
 
-Yes!  That's the only sane way to maintain apis, and is why we do that
-for sysfs.
+Thanks for the work on this and I'm excited to try this. I'm currently
+playing with this and one thing I've noticed is that an export restricted
+CAAM isn't handled properly.
 
-If the key isn't present, there's no value, so userspace "knows" this
-automatically and parsing this is trivial.
+That is, there are CAAM's which aren't fully featured. Normally, the
+caam driver will take care of it. For example, see commit f20311cc9c58
+("crypto: caam - disable pkc for non-E SoCs"). For the trusted keys case,
+it would be nice if the kernel will not even probe (or similar).
 
-> Contents of ":mnt:info" contradicts that, but mountinfo has a long
-> established, well documented format, and nothing prevents exporting
-> individual attributes with separate names as well (the getvalues(2)
-> patch did exactly that).
+Right now, everything seems to work fine, but once I try to add a new key,
+I'll get the following errros:
 
-I understand, for "legacy" things like this, that's fine, but don't add
-new fields or change them over time please, that way just gets us back
-to the nightmare of preserving /proc/ file apis.
+# keyctl add trusted mykey "new 32" @u
+add_key: Invalid argument
+[   23.138714] caam_jr 8020000.jr: 20000b0f: CCB: desc idx 11: : Invalid CHA selected.
+[   23.138740] trusted_key: key_seal failed (-22)
 
-thanks,
+Again this is expected, because I run it on a non-E version. IMHO, it
+should be that the trusted keys shouldn't be enabled at all. Like it is
+for example if an unknown rng is given:
 
-greg k-h
+  trusted_key: Unsupported RNG. Supported: kernel, default
+
+Thanks,
+-michael
