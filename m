@@ -2,116 +2,157 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D0EC433F5
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 May 2022 20:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E19DC433FE
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 May 2022 20:12:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235721AbiECUGU (ORCPT
+        id S242541AbiECUP7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 May 2022 16:06:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35542 "EHLO
+        Tue, 3 May 2022 16:15:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231512AbiECUGT (ORCPT
+        with ESMTP id S242603AbiECUPa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 May 2022 16:06:19 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25021403C6
-        for <linux-security-module@vger.kernel.org>; Tue,  3 May 2022 13:02:46 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id a15-20020a17090ad80f00b001dc2e23ad84so3235340pjv.4
-        for <linux-security-module@vger.kernel.org>; Tue, 03 May 2022 13:02:46 -0700 (PDT)
+        Tue, 3 May 2022 16:15:30 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472A940E54
+        for <linux-security-module@vger.kernel.org>; Tue,  3 May 2022 13:10:54 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id cu23-20020a17090afa9700b001d98d8e53b7so2578501pjb.0
+        for <linux-security-module@vger.kernel.org>; Tue, 03 May 2022 13:10:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=lO/St+o2/PonjjcblNEybj23wOVCI5+m6U1+OI/TnZE=;
-        b=PCvGCzsvIlu1EuXOzDqVzSwE4DAmJ15LlcKthP3s6kp4sJdaVpq9wwEcFLGha/McMd
-         E2KG//amULHo4ISJDsiQ3tbmqYzmtcZUlJtCvhMEch/LKDRQZK8W0ShcLlfggWS3h0q7
-         qkw6Ff1OihT0y0Hk+heZknTEeRzZmualGVja8NdrYSVda816O8WOKHPBRZ1XM0xH48Zp
-         pheeFma0vOK2GncA1jZ/fqB0SubqSY44XUX/dLcAp8fUoktfTTqKnq2YJbL+oeV4X4ht
-         4lCKXiUK/OJoyFM/YS8HdWvMOfMgFbGuz2D/V8hmJUhMncrWk2CW4UwrQeubLmzIzkw4
-         k6Hg==
+        bh=F1Z4/d6DDe3J/2+a6zGvXw/SwahIrpiTzs4QPSGop1Q=;
+        b=AhDLELavTudJm4Q4HJmBysN8XtrTMfFnCe15RLGV4KJnUqdms/L3RqTK7tRVF4QFVC
+         T6H+NTDqgYEzJEVqsZdpnLa+6ApN4LBlt6glH8keHBix5Y828v4Fwk4F8EAVosiwPEt8
+         hWWFmf4NCVfMVLqHTyCJcaJDHAeQIdUUkXs1dj8yQN4H8MsJ/K+51jHPKxSBqGOP5J3Y
+         it8s9sBRuEku0sppDBxiZN4y2pWV6M1ulo5q+Wc49JUTMJ9GBDpBJ7nJvoNkRAkpQCkP
+         XbCyCFRw74gGN4A95lOX6TXnYvydrTRttTx4839DDBzRNwd443p7jf8iMZ8HrbCcE38S
+         1Tgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lO/St+o2/PonjjcblNEybj23wOVCI5+m6U1+OI/TnZE=;
-        b=Qg6FJHML/l0f2mba167KDXq7iT7aWyjhTF3n+rdQwLomceLlpRxemvyN0g8UbSbRj4
-         QBkENQIYVM9yaof6+JKCR0eyHGKRURl+UyupXx+JebUXqTFrND/NpMBj8G4EcBlhdjXE
-         zNRpA2Z81cc/OpYb6jEB2cuiUQSeeOt6SSfvpguq7cIxGctNhwtayu8688AAEprCoJO+
-         7Ay2gnVHaHEULJRrF9xEJifyK3kpfrL2+d2etcFXleQi0Ji4ju8KTPG/Yi11QuW+iyTt
-         J+z1VzekV6hok1uv9HAeDsvb47njVtI6pJcAzMqfVi+JO4s5dscd0A6rn4M1B8dWYA2R
-         d81A==
-X-Gm-Message-State: AOAM533N4YMczKOQnjR35+kHZcN2/g8vrgC7dSazHPn9A0qXQaxdlqyC
-        A3P1qsVnIJ8nYwGAQvEnfv/Kx14gbOasriUvdQwE
-X-Google-Smtp-Source: ABdhPJyGr+c8LNlbNNBXcpq/E9lvU6ileaoiIgySTkkuyQiPg6JdjkUnr0umPie0YLBfSrHZOOgapp9FoirQubuXdyk=
-X-Received: by 2002:a17:90a:9294:b0:1b9:48e9:a030 with SMTP id
- n20-20020a17090a929400b001b948e9a030mr6495804pjo.200.1651608165644; Tue, 03
- May 2022 13:02:45 -0700 (PDT)
+        bh=F1Z4/d6DDe3J/2+a6zGvXw/SwahIrpiTzs4QPSGop1Q=;
+        b=PNpxN6A+h4MQWVtFyOb1Iy7uWzsmBljSKqlB99ZmshBMkLKu5P4VXqLzVqanc/orKi
+         aprqZNFeeasJVdKb8yD+X9Z0v1T1ylGgsJ4E0m9SMakrzc+SIzqZaaoP3OjJ1njSwOOa
+         G+bhrgLHhphhY3bqYDTOzlI7+7IeH12JGyiNJrVwdKoPiAa59oEWw1HG7m4l1MD/tBBY
+         UC8VTisTYDZ305wuPZ7YebuptRx8G0V2/yajCTJyUk/83lsmY2kW3SwLVZYrlEiQJfXh
+         SxCeFhlbYedUw1LGivC4VBkjWTk2R51QIT68cxwCEYSesCZZitEA5AaJGESu3M1LgUPO
+         VKWQ==
+X-Gm-Message-State: AOAM532/LZEMlVION27pSnMjqLVzYWUy8qLALEBsGo5pqOWeK8vbmYvv
+        uWc2/GDo0Tqsd2SCZT6N//8oHaTOLFB2sejzXJf2
+X-Google-Smtp-Source: ABdhPJzC8uRUEmor5TSiXSaoorAevlrZJXQ06HarNkBGXZKYY+cwiBMvymFFqCd4CEY2Xo2nfn+MwlAPLNc/IT20HvA=
+X-Received: by 2002:a17:902:b094:b0:15c:dee8:74c8 with SMTP id
+ p20-20020a170902b09400b0015cdee874c8mr18100490plr.6.1651608653214; Tue, 03
+ May 2022 13:10:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220217141858.71281-1-cgzones@googlemail.com>
- <41224e84-2da7-3f69-0fdb-bb309ad6a3d4@schaufler-ca.com> <CAJ2a_Dfqm92Am5PFPh+3itWZmArWRuVadcRO+=i-BPhQ8QmA8Q@mail.gmail.com>
-In-Reply-To: <CAJ2a_Dfqm92Am5PFPh+3itWZmArWRuVadcRO+=i-BPhQ8QmA8Q@mail.gmail.com>
+References: <20220217143457.75229-1-cgzones@googlemail.com>
+ <20220308170928.58040-1-cgzones@googlemail.com> <CAHC9VhSiqvCbKQHYTGAj3vqECNto6eNm0MyzLd92kcJnvZSw1A@mail.gmail.com>
+ <CAHC9VhR1d2aLKsZOxLb6b1uuTcWOpnJ22S5=mXygvjcv6Sm=xg@mail.gmail.com> <CAJ2a_DeWWoSYwhmbNpSuDhve9KUfEnoPiHdd5s_CpKHRUbi8Bw@mail.gmail.com>
+In-Reply-To: <CAJ2a_DeWWoSYwhmbNpSuDhve9KUfEnoPiHdd5s_CpKHRUbi8Bw@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 3 May 2022 16:02:34 -0400
-Message-ID: <CAHC9VhR-Xk65iSfZxVvaK+mJoFszxT2E8vF=cus1aAKcB0EgYg@mail.gmail.com>
-Subject: Re: [PATCH] security: declare member holding string literal const
+Date:   Tue, 3 May 2022 16:10:42 -0400
+Message-ID: <CAHC9VhQYpo38Bv6tHYh=L-Bkxe=ym97xG8pt1tE6wR+V0Qy+WA@mail.gmail.com>
+Subject: Re: [PATCH v2] selinux: log anon inode class name
 To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        SElinux list <selinux@vger.kernel.org>,
+Cc:     SElinux list <selinux@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Richard Guy Briggs <rgb@redhat.com>,
         Ondrej Mosnacek <omosnace@redhat.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>,
-        Todd Kjos <tkjos@google.com>,
-        Olga Kornievskaia <kolga@netapp.com>,
         Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, llvm@lists.linux.dev
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 2, 2022 at 9:38 AM Christian G=C3=B6ttsche
+On Mon, May 2, 2022 at 9:39 AM Christian G=C3=B6ttsche
 <cgzones@googlemail.com> wrote:
-> On Thu, 17 Feb 2022 at 23:50, Casey Schaufler <casey@schaufler-ca.com> wr=
-ote:
-> > On 2/17/2022 6:18 AM, Christian G=C3=B6ttsche wrote:
-> > > The struct security_hook_list member lsm is assigned in
-> > > security_add_hooks() with string literals passed from the individual
-> > > security modules.  Declare the function parameter and the struct memb=
-er
-> > > const to signal their immutability.
+> On Wed, 27 Apr 2022 at 15:19, Paul Moore <paul@paul-moore.com> wrote:
+> > On Mon, Apr 4, 2022 at 4:18 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Tue, Mar 8, 2022 at 12:09 PM Christian G=C3=B6ttsche
+> > > <cgzones@googlemail.com> wrote:
+> > > >
+> > > > Log the anonymous inode class name in the security hook
+> > > > inode_init_security_anon.  This name is the key for name based type
+> > > > transitions on the anon_inode security class on creation.  Example:
+> > > >
+> > > >     type=3DAVC msg=3Daudit(02/16/22 22:02:50.585:216) : avc:  grant=
+ed \
+> > > >         { create } for  pid=3D2136 comm=3Dmariadbd anonclass=3D"[io=
+_uring]" \
+> > > >         scontext=3Dsystem_u:system_r:mysqld_t:s0 \
+> > > >         tcontext=3Dsystem_u:system_r:mysqld_iouring_t:s0 tclass=3Da=
+non_inode
+> > > >
+> > > > Add a new LSM audit data type holding the inode and the class name.
+> > > >
+> > > > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> > > >
+> > > > ---
+> > > > v2:
+> > > >   - drop dev=3D and name=3D output for anonymous inodes, and hence =
+simplify
+> > > >     the common_audit_data union member.
+> > > >   - drop WARN_ON() on empty name passed to inode_init_security_anon=
+ hook
+> > > > ---
+> > > >  include/linux/lsm_audit.h | 2 ++
+> > > >  security/lsm_audit.c      | 4 ++++
+> > > >  security/selinux/hooks.c  | 4 ++--
+> > > >  3 files changed, 8 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
+> > > > index 17d02eda9538..97a8b21eb033 100644
+> > > > --- a/include/linux/lsm_audit.h
+> > > > +++ b/include/linux/lsm_audit.h
+> > > > @@ -76,6 +76,7 @@ struct common_audit_data {
+> > > >  #define LSM_AUDIT_DATA_IBENDPORT 14
+> > > >  #define LSM_AUDIT_DATA_LOCKDOWN 15
+> > > >  #define LSM_AUDIT_DATA_NOTIFICATION 16
+> > > > +#define LSM_AUDIT_DATA_ANONINODE       17
+> > > >         union   {
+> > > >                 struct path path;
+> > > >                 struct dentry *dentry;
+> > > > @@ -96,6 +97,7 @@ struct common_audit_data {
+> > > >                 struct lsm_ibpkey_audit *ibpkey;
+> > > >                 struct lsm_ibendport_audit *ibendport;
+> > > >                 int reason;
+> > > > +               const char *anonclass;
+> > > >         } u;
+> > > >         /* this union contains LSM specific data */
+> > > >         union {
+> > > > diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+> > > > index 1897cbf6fc69..981f6a4e4590 100644
+> > > > --- a/security/lsm_audit.c
+> > > > +++ b/security/lsm_audit.c
+> > > > @@ -433,6 +433,10 @@ static void dump_common_audit_data(struct audi=
+t_buffer *ab,
+> > > >                 audit_log_format(ab, " lockdown_reason=3D\"%s\"",
+> > > >                                  lockdown_reasons[a->u.reason]);
+> > > >                 break;
+> > > > +       case LSM_AUDIT_DATA_ANONINODE:
+> > > > +               audit_log_format(ab, " anonclass=3D");
+> > > > +               audit_log_untrustedstring(ab, a->u.anonclass);
 > > >
-> > > Reported by Clang [-Wwrite-strings]:
+> > > My apologies, I didn't notice this in the previous patch ... I don't
+> > > think we need to log this as an untrusted string as the string value
+> > > is coming from the kernel, not userspace, so we could rewrite the
+> > > above as the following:
 > > >
-> > >      security/selinux/hooks.c:7388:63: error: passing 'const char [8]=
-' to parameter of type 'char *' discards qualifiers [-Werror,-Wincompatible=
--pointer-types-discards-qualifiers]
-> > >              security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hoo=
-ks), selinux);
-> > >                                                                      =
-     ^~~~~~~~~
-> > >      ./include/linux/lsm_hooks.h:1629:11: note: passing argument to p=
-arameter 'lsm' here
-> > >                                      char *lsm);
-> > >                                            ^
+> > >   audit_log_format(ab, " anonclass=3D%s", a->u.anonclass);
 > > >
-> > > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> >
-> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> >
+> > > ... if you are okay with that, I can make the change when I merge the
+> > > patch or you can submit another revision, let me know which you would
+> > > prefer.
 >
-> Kindly ping;
-> any progress on this one?
+> Feel free to adjust while merging, thanks.
 
-I've already added my Reviewed-by tag, as has Casey, so I think it's
-pretty "safe" at this point.  The next step is for James to pull this
-into the LSM tree.  If it is still collecting dust at the end of this
-week, ping us again and I can just go ahead and pull it into the
-SELinux tree, it's small enough that it shouldn't cause any problems.
+Adjusted and merged, thanks.
 
 --=20
 paul-moore.com
