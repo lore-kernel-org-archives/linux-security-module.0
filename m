@@ -2,157 +2,155 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E19DC433FE
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 May 2022 20:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF06DC4332F
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 May 2022 22:43:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242541AbiECUP7 (ORCPT
+        id S243791AbiECWqq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 May 2022 16:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55512 "EHLO
+        Tue, 3 May 2022 18:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242603AbiECUPa (ORCPT
+        with ESMTP id S236973AbiECWqq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 May 2022 16:15:30 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472A940E54
-        for <linux-security-module@vger.kernel.org>; Tue,  3 May 2022 13:10:54 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id cu23-20020a17090afa9700b001d98d8e53b7so2578501pjb.0
-        for <linux-security-module@vger.kernel.org>; Tue, 03 May 2022 13:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=F1Z4/d6DDe3J/2+a6zGvXw/SwahIrpiTzs4QPSGop1Q=;
-        b=AhDLELavTudJm4Q4HJmBysN8XtrTMfFnCe15RLGV4KJnUqdms/L3RqTK7tRVF4QFVC
-         T6H+NTDqgYEzJEVqsZdpnLa+6ApN4LBlt6glH8keHBix5Y828v4Fwk4F8EAVosiwPEt8
-         hWWFmf4NCVfMVLqHTyCJcaJDHAeQIdUUkXs1dj8yQN4H8MsJ/K+51jHPKxSBqGOP5J3Y
-         it8s9sBRuEku0sppDBxiZN4y2pWV6M1ulo5q+Wc49JUTMJ9GBDpBJ7nJvoNkRAkpQCkP
-         XbCyCFRw74gGN4A95lOX6TXnYvydrTRttTx4839DDBzRNwd443p7jf8iMZ8HrbCcE38S
-         1Tgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=F1Z4/d6DDe3J/2+a6zGvXw/SwahIrpiTzs4QPSGop1Q=;
-        b=PNpxN6A+h4MQWVtFyOb1Iy7uWzsmBljSKqlB99ZmshBMkLKu5P4VXqLzVqanc/orKi
-         aprqZNFeeasJVdKb8yD+X9Z0v1T1ylGgsJ4E0m9SMakrzc+SIzqZaaoP3OjJ1njSwOOa
-         G+bhrgLHhphhY3bqYDTOzlI7+7IeH12JGyiNJrVwdKoPiAa59oEWw1HG7m4l1MD/tBBY
-         UC8VTisTYDZ305wuPZ7YebuptRx8G0V2/yajCTJyUk/83lsmY2kW3SwLVZYrlEiQJfXh
-         SxCeFhlbYedUw1LGivC4VBkjWTk2R51QIT68cxwCEYSesCZZitEA5AaJGESu3M1LgUPO
-         VKWQ==
-X-Gm-Message-State: AOAM532/LZEMlVION27pSnMjqLVzYWUy8qLALEBsGo5pqOWeK8vbmYvv
-        uWc2/GDo0Tqsd2SCZT6N//8oHaTOLFB2sejzXJf2
-X-Google-Smtp-Source: ABdhPJzC8uRUEmor5TSiXSaoorAevlrZJXQ06HarNkBGXZKYY+cwiBMvymFFqCd4CEY2Xo2nfn+MwlAPLNc/IT20HvA=
-X-Received: by 2002:a17:902:b094:b0:15c:dee8:74c8 with SMTP id
- p20-20020a170902b09400b0015cdee874c8mr18100490plr.6.1651608653214; Tue, 03
- May 2022 13:10:53 -0700 (PDT)
+        Tue, 3 May 2022 18:46:46 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 80A662DA8D;
+        Tue,  3 May 2022 15:43:12 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id DCC56534356;
+        Wed,  4 May 2022 08:43:06 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nm1EX-007glS-UL; Wed, 04 May 2022 08:43:05 +1000
+Date:   Wed, 4 May 2022 08:43:05 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+Message-ID: <20220503224305.GF1360180@dread.disaster.area>
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-References: <20220217143457.75229-1-cgzones@googlemail.com>
- <20220308170928.58040-1-cgzones@googlemail.com> <CAHC9VhSiqvCbKQHYTGAj3vqECNto6eNm0MyzLd92kcJnvZSw1A@mail.gmail.com>
- <CAHC9VhR1d2aLKsZOxLb6b1uuTcWOpnJ22S5=mXygvjcv6Sm=xg@mail.gmail.com> <CAJ2a_DeWWoSYwhmbNpSuDhve9KUfEnoPiHdd5s_CpKHRUbi8Bw@mail.gmail.com>
-In-Reply-To: <CAJ2a_DeWWoSYwhmbNpSuDhve9KUfEnoPiHdd5s_CpKHRUbi8Bw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 3 May 2022 16:10:42 -0400
-Message-ID: <CAHC9VhQYpo38Bv6tHYh=L-Bkxe=ym97xG8pt1tE6wR+V0Qy+WA@mail.gmail.com>
-Subject: Re: [PATCH v2] selinux: log anon inode class name
-To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=6271afff
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
+        a=yUZlb4BpVi82aJ1b07cA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 2, 2022 at 9:39 AM Christian G=C3=B6ttsche
-<cgzones@googlemail.com> wrote:
-> On Wed, 27 Apr 2022 at 15:19, Paul Moore <paul@paul-moore.com> wrote:
-> > On Mon, Apr 4, 2022 at 4:18 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Tue, Mar 8, 2022 at 12:09 PM Christian G=C3=B6ttsche
-> > > <cgzones@googlemail.com> wrote:
-> > > >
-> > > > Log the anonymous inode class name in the security hook
-> > > > inode_init_security_anon.  This name is the key for name based type
-> > > > transitions on the anon_inode security class on creation.  Example:
-> > > >
-> > > >     type=3DAVC msg=3Daudit(02/16/22 22:02:50.585:216) : avc:  grant=
-ed \
-> > > >         { create } for  pid=3D2136 comm=3Dmariadbd anonclass=3D"[io=
-_uring]" \
-> > > >         scontext=3Dsystem_u:system_r:mysqld_t:s0 \
-> > > >         tcontext=3Dsystem_u:system_r:mysqld_iouring_t:s0 tclass=3Da=
-non_inode
-> > > >
-> > > > Add a new LSM audit data type holding the inode and the class name.
-> > > >
-> > > > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> > > >
-> > > > ---
-> > > > v2:
-> > > >   - drop dev=3D and name=3D output for anonymous inodes, and hence =
-simplify
-> > > >     the common_audit_data union member.
-> > > >   - drop WARN_ON() on empty name passed to inode_init_security_anon=
- hook
-> > > > ---
-> > > >  include/linux/lsm_audit.h | 2 ++
-> > > >  security/lsm_audit.c      | 4 ++++
-> > > >  security/selinux/hooks.c  | 4 ++--
-> > > >  3 files changed, 8 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-> > > > index 17d02eda9538..97a8b21eb033 100644
-> > > > --- a/include/linux/lsm_audit.h
-> > > > +++ b/include/linux/lsm_audit.h
-> > > > @@ -76,6 +76,7 @@ struct common_audit_data {
-> > > >  #define LSM_AUDIT_DATA_IBENDPORT 14
-> > > >  #define LSM_AUDIT_DATA_LOCKDOWN 15
-> > > >  #define LSM_AUDIT_DATA_NOTIFICATION 16
-> > > > +#define LSM_AUDIT_DATA_ANONINODE       17
-> > > >         union   {
-> > > >                 struct path path;
-> > > >                 struct dentry *dentry;
-> > > > @@ -96,6 +97,7 @@ struct common_audit_data {
-> > > >                 struct lsm_ibpkey_audit *ibpkey;
-> > > >                 struct lsm_ibendport_audit *ibendport;
-> > > >                 int reason;
-> > > > +               const char *anonclass;
-> > > >         } u;
-> > > >         /* this union contains LSM specific data */
-> > > >         union {
-> > > > diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> > > > index 1897cbf6fc69..981f6a4e4590 100644
-> > > > --- a/security/lsm_audit.c
-> > > > +++ b/security/lsm_audit.c
-> > > > @@ -433,6 +433,10 @@ static void dump_common_audit_data(struct audi=
-t_buffer *ab,
-> > > >                 audit_log_format(ab, " lockdown_reason=3D\"%s\"",
-> > > >                                  lockdown_reasons[a->u.reason]);
-> > > >                 break;
-> > > > +       case LSM_AUDIT_DATA_ANONINODE:
-> > > > +               audit_log_format(ab, " anonclass=3D");
-> > > > +               audit_log_untrustedstring(ab, a->u.anonclass);
-> > >
-> > > My apologies, I didn't notice this in the previous patch ... I don't
-> > > think we need to log this as an untrusted string as the string value
-> > > is coming from the kernel, not userspace, so we could rewrite the
-> > > above as the following:
-> > >
-> > >   audit_log_format(ab, " anonclass=3D%s", a->u.anonclass);
-> > >
-> > > ... if you are okay with that, I can make the change when I merge the
-> > > patch or you can submit another revision, let me know which you would
-> > > prefer.
->
-> Feel free to adjust while merging, thanks.
+On Tue, May 03, 2022 at 02:23:23PM +0200, Miklos Szeredi wrote:
+> This is a simplification of the getvalues(2) prototype and moving it to the
+> getxattr(2) interface, as suggested by Dave.
+> 
+> The patch itself just adds the possibility to retrieve a single line of
+> /proc/$$/mountinfo (which was the basic requirement from which the fsinfo
+> patchset grew out of).
+> 
+> But this should be able to serve Amir's per-sb iostats, as well as a host of
+> other cases where some statistic needs to be retrieved from some object.  Note:
+> a filesystem object often represents other kinds of objects (such as processes
+> in /proc) so this is not limited to fs attributes.
+> 
+> This also opens up the interface to setting attributes via setxattr(2).
+> 
+> After some pondering I made the namespace so:
+> 
+> : - root
+> bar - an attribute
+> foo: - a folder (can contain attributes and/or folders)
+> 
+> The contents of a folder is represented by a null separated list of names.
+> 
+> Examples:
+> 
+> $ getfattr -etext -n ":" .
+> # file: .
+> :="mnt:\000mntns:"
+> 
+> $ getfattr -etext -n ":mnt:" .
+> # file: .
+> :mnt:="info"
+> 
+> $ getfattr -etext -n ":mnt:info" .
+> # file: .
+> :mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
+> 
+> $ getfattr -etext -n ":mntns:" .
+> # file: .
+> :mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
+> 
+> $ getfattr -etext -n ":mntns:28:" .
+> # file: .
+> :mntns:28:="info"
+> 
+> Comments?
 
-Adjusted and merged, thanks.
+I like. :)
 
---=20
-paul-moore.com
+> Thanks,
+> Miklos
+> 
+> ---
+>  fs/Makefile            |    2 
+>  fs/mount.h             |    8 +
+>  fs/namespace.c         |   15 ++-
+>  fs/pnode.h             |    2 
+>  fs/proc_namespace.c    |   15 ++-
+>  fs/values.c            |  242 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/xattr.c             |   16 ++-
+>  include/linux/values.h |   11 ++
+
+"values" is a very generic name - probably should end up being
+something more descriptive of the functionality is provides,
+especially if the header file is going to be dumped in
+include/linux/. I don't really have a good suggestion at the moment,
+though. 
+
+....
+
+> +
+> +enum {
+> +	VAL_MNT_INFO,
+> +};
+> +
+> +static struct val_desc val_mnt_group[] = {
+> +	{ VD_NAME("info"),		.idx = VAL_MNT_INFO		},
+> +	{ }
+> +};
+....
+> +
+> +
+> +static struct val_desc val_toplevel_group[] = {
+> +	{ VD_NAME("mnt:"),	.get = val_mnt_get,	},
+> +	{ VD_NAME("mntns:"),	.get = val_mntns_get,	},
+> +	{ },
+> +};
+
+I know this is an early POC, my main question is how do you
+envisiage this table driven structure being extended down from just
+the mount into the filesystem so we can expose filesystem specific
+information that isn't covered by generic interfaces like statx?
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
