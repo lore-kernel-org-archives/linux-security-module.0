@@ -2,249 +2,574 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E518AC433F5
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 May 2022 12:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6271CC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 May 2022 12:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235073AbiECMFn (ORCPT
+        id S234880AbiECM1G (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 May 2022 08:05:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51826 "EHLO
+        Tue, 3 May 2022 08:27:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235054AbiECMFm (ORCPT
+        with ESMTP id S233209AbiECM1D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 May 2022 08:05:42 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38D6531234;
-        Tue,  3 May 2022 05:02:10 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 242Lsafc008207;
-        Tue, 3 May 2022 05:02:09 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : mime-version; s=facebook;
- bh=fYXGZFN7ZxeteAf8JWIwevsVC7k3o/R2Z2ty2uOwwnU=;
- b=KQFRF8f5axQ48M+IQtx0FgS0bmiwHPnZbFneADaHCTelS3vo/6Vize5sIWj4l0vU2XM1
- 1KhoAtrkyljN5sIOs/00wZW/TIeUl9wnDaheFpRbIFIQP3cl3/4j1J1rATj8G2+Xm54h
- +vXfqBBSwwwZjYkWDBmUqcdPcAd87zK4fjk= 
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fs2uxye41-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 May 2022 05:02:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UbuLWgZbJSg8F+jOLDE2N/lavnrCdkUJyrc/FXuOQNe6apkr7hT0jlC/p2ADXXnlxgF2RcWIhgOrW4Fu/s8nB2tN7kxyvjtjtdi1u1FzVMS1I0OgLIUmo1dsV52+kYlx4BoRd5ihureF4ZM8NV/VQ/f/M/pWX4Nju4l2rB2n1NTPByvoGVT6nZADsS1cBtaqP3sAxZuYX5KCFraE82TeL7G9e0CFYEpOqpk9UFrjNpggofnxSaj8uYQp74pOldErRqdsiO2bM5V1F5zhFeI4yrpfpp7fO1u211kPT7RVAlXCW0DcFKmz29vbu5kdN6vtMVNIPZrWmgDO5tgWa0Wk/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fYXGZFN7ZxeteAf8JWIwevsVC7k3o/R2Z2ty2uOwwnU=;
- b=Dp5mRe34BWANz2RPqzg2VpHw15A9bHk9AANEkS8HD9P/mlXZe4ciZFuP62zQsI1coo7F8sXsL5NgSdbhiwcQPUz6FoJHeGcfl2prte+CsQb+OasphXVHWnJeddqYkAAsaC51uLN0dX/TeftcV8wtc8O0gIFSFdycXwlpDOKw7daJot07cTto9EM00F1PyYN+G7ptXGsGx3C/bd32fYA9BLuxnh8WR0AkVCDVC3cWk9rfRcfrM4Knn+B7sTm3gKQJIAhnLUXDlk7QSuu3zE8tsuheTQPdvjPMmCfJhaHh3SWD4nYHnkyaAlvbBwrrZZPRM2pYB+8B2fv0xX+BYOkA8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from SJ0PR15MB4552.namprd15.prod.outlook.com (2603:10b6:a03:379::12)
- by DM6PR15MB3097.namprd15.prod.outlook.com (2603:10b6:5:13d::28) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.24; Tue, 3 May
- 2022 12:02:06 +0000
-Received: from SJ0PR15MB4552.namprd15.prod.outlook.com
- ([fe80::af:a5d5:458b:4f4e]) by SJ0PR15MB4552.namprd15.prod.outlook.com
- ([fe80::af:a5d5:458b:4f4e%9]) with mapi id 15.20.5206.024; Tue, 3 May 2022
- 12:02:06 +0000
-From:   Jonathan McDowell <noodles@fb.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2] Carry forward IMA measurement log on kexec on x86_64
-Thread-Topic: [PATCH v2] Carry forward IMA measurement log on kexec on x86_64
-Thread-Index: AQHYWY4Q62zi0Q79MUyPBeRhACU9Yq0HbX8AgAWqkgA=
-Date:   Tue, 3 May 2022 12:02:06 +0000
-Message-ID: <YnEZtisrvO0AhrAz@noodles-fedora.dhcp.thefacebook.com>
-References: <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
- <7d7fa18d396439d98e26890f647fffdc9e7d8b20.camel@linux.ibm.com>
-In-Reply-To: <7d7fa18d396439d98e26890f647fffdc9e7d8b20.camel@linux.ibm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: fcc331ce-cda2-4846-1095-08da2cfcbea4
-x-ms-traffictypediagnostic: DM6PR15MB3097:EE_
-x-microsoft-antispam-prvs: <DM6PR15MB3097C2362FCD5AFC220DB85BC1C09@DM6PR15MB3097.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: KKUXIaqei1lyaUOY8iBDwvolyxWXq3iGytoFBE7TqKq4182e9EK8IODOTRf8Cvg9/1XOpGPD6evpOOrdGEUHzT/T0xDHYBWUvOA8JyPGn0dEm6KlecwPDwWewunZeQzknrpBGrYwhO7m/SYMsaY7rP7jhqxQRo7n65vP6kizafTl/A6YSijjnzmd1YnnZ1vA8/hs95mNUI+NcGnE/Zg8WPGUajiu1OWJbxiFjXQlVuMYYQ9PCoFRqmhh0JT7K5PeX3gE/LUBDCYPj/09LZlYCwuchXbPggaG5fseeHouPDyTvcLXGIasSi7s4z8xZWV0NI+KFkukWNKzI7R3ebDgFqxDCELTV+j6rAQ/2djPoe/hAhkJF71WKtLTyT5FTJk/WJl62cr7b4WiAKmXtFTagw3q3bEiyAxkdJLdLoNffBiyphlo7VaH6AV+QHAaTx8QoMfRkfx25vFcGsNR39g9APMR8F5RckIPF6j3i+g+qnsqm56Uu6a29WaIAiHdatRCmOdlpcdJ4mCO0oPh1Wt9ehExN594GUkf+QSTBSl/8f2h3hP21xO7gE/947+WQeIe5In89FFfAv2k12TMvm/p1oiYQlOBU/Ab0/YmOR2S9iQfuGKbxUTn2JBeY3KOKRHsbxVvUOleNh2MxTl2QGyPONxKxl7q7jq1yhc7GmQHczCQVBCpufos9j6XvZoXKgjLbokOdALfkSm+nhHAYRIwOw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB4552.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(6916009)(54906003)(71200400001)(86362001)(38100700002)(2906002)(38070700005)(83380400001)(122000001)(6512007)(6506007)(26005)(9686003)(186003)(64756008)(66446008)(66476007)(508600001)(6486002)(76116006)(66946007)(316002)(4326008)(66556008)(8676002)(8936002)(5660300002)(7416002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?pS5et29zEaSJ41XJjvjU2mRB4VanzqHAS+YLzo2NqCDNkZ3wetH05hfcRDal?=
- =?us-ascii?Q?/nxPDemdyvdBmEQ/3jI3tH5sC9urCN7ynmS4LsZ0UYaPKnE7CLFKuFakKG0V?=
- =?us-ascii?Q?uCQFtZsst7ppuLeqYAEUGJhKNJdc+iiWyFKmJRZSKrLWyfQJY/hnmwFEqxtV?=
- =?us-ascii?Q?nX9wWbzvTjVMVL0X5g9YlmVQXYRvI3aaZDqvc0i0YqvTYI+5OK875wKvJMua?=
- =?us-ascii?Q?1BSTLktDGSCLclZwWRN3xPUIZEl5FKy1hS0YZvAYMz2bAA/8nnq7NroKmYdf?=
- =?us-ascii?Q?H9LAp+SO/DTgYYK5hRZru1xsvSgG+TH51lb2GegcFJQUMB9lZlZjdlfwDhGD?=
- =?us-ascii?Q?RQfGfiy20UWhqo2zjbMLVoI1117QOd0AVJcabQRlzI3U45yLjgP7bTxmWzqC?=
- =?us-ascii?Q?oI7Tov0jkO05pUgMRE1LYoKbfZapPITKU1e2Vf3nyajUxHDiFzYfZM7tt0Rb?=
- =?us-ascii?Q?V9xxiLHTBHT5PLGb4zAI085ny0Qk3qQtxsRE9Nc4TVvwxXAlv1Yh6430Lu1J?=
- =?us-ascii?Q?3aXklIOXQGEX8PaqeysA15b9IkWpjYPoesE50jdC4cUdx4w8Y2aPsEPtzzGu?=
- =?us-ascii?Q?3LOHNfM4lFX+yFGAi4ivuG+OipIY+O29WVjEMkGNEl2sDrNecDBDrcJEjtCp?=
- =?us-ascii?Q?BR82jhHai5GdvQ37ghYOXZAAOTOkJPHFtLuGj4SpA0ASK4f92jSLHjlIXCuj?=
- =?us-ascii?Q?6cPGk/H+3PccXxTdiBm44GHBjCnCYXslxLob6XiLAktxNUtbt/Y8ljUNfRKa?=
- =?us-ascii?Q?36sHYmAjfDfzijchby+lwo0tooPYzl0J0bgz532ngeAAwVBKFMqQETdNyvfr?=
- =?us-ascii?Q?V1sl2Gb4pEK/BQiIK1mVzpuHv/LdOY5irrMIbcu11UvmU76capxmeka1jrxg?=
- =?us-ascii?Q?EqgX2FuIvpvWugJ7VluJiHhP5P49mG+EcKMXV79KR1/Td6vTAml77fsZx4yw?=
- =?us-ascii?Q?1knarxQHqHooq0DHCCd7Vr+V0VDJgu5C5YwOcpCdOx9MjlW9/vI+TOnGqTwu?=
- =?us-ascii?Q?I6zI/gujna7emOXSJ59F72WQFaqsWvBNLJslq92GhILuy28vnsbU+oRPw09b?=
- =?us-ascii?Q?iGUrSpZRXn64jniafe4nO65H/Q++BySfKd2n5L/76NpBmXC9mhOU34KCiErk?=
- =?us-ascii?Q?UFrIbNeU/F2yrN+clzOZ67GfGU+5qzpKdI9fkKmxyJs0bHWHrgF95ySubMhG?=
- =?us-ascii?Q?yi8B+zVLCI36sQXMjJg/LjFjc/AXyuTn0cq8mAOfLbFIuKvmU1YSUIU5xXk/?=
- =?us-ascii?Q?Pecxj/4gluMp/oasLmRAUNUZzvyK8+ZrWwtpHmBvdZ94s/7xMYEj8k2Ll0hh?=
- =?us-ascii?Q?dEmF2mwmbnQDP7MJRI1dq9YX58WKfxueGUzmJSpPZ0bsEDInwqPBlR1p91Gi?=
- =?us-ascii?Q?Qs3jiiR3xZIP7EW0tNd7vFieJ4e4TIUg8lh4acQ1wZMoDeziqTgky6+2GFfP?=
- =?us-ascii?Q?hv34t+SR9s8E6CGCq02PquiE/uP7Qkb5Dq9JRS2tWjm0K67Qufcqe0dQ2Qty?=
- =?us-ascii?Q?KjCx1hPppM5UbnhBeqRSPMN9wiyNkjXlKYoMrVTgBWKYNAxWGUX7j9PCK/HG?=
- =?us-ascii?Q?vQL2MthESK2S0psoP354zzulP04ZArmdiqHOJXOprXiNhRZ0lgaIWQ30fZ12?=
- =?us-ascii?Q?5X7da5aiZ+kVRDCBLVlwTspmNRaSPhMYdkXyb0kGeWPmbCn6LZxpwAHUh3I6?=
- =?us-ascii?Q?YrTxxU2yIsKk6+G6ijnMcE84IiZn2WtSsVD7f1nurHzPlz8PrqXXMVxgO430?=
- =?us-ascii?Q?hVO+u0YB6Q=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <B3F8502A1178F7479008D8356D849C7F@namprd15.prod.outlook.com>
+        Tue, 3 May 2022 08:27:03 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C1E91FA65
+        for <linux-security-module@vger.kernel.org>; Tue,  3 May 2022 05:23:28 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id g23so19621580edy.13
+        for <linux-security-module@vger.kernel.org>; Tue, 03 May 2022 05:23:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=TE1k+xyihTMSWkSGzrDneVkAum46sMwYkJNJnhAJ764=;
+        b=XyhJnktM7U2LlMZ7TisGrY3ZYOKepHADKspM0LQsbvVOn0BWP5LLxykI4JI7RZisns
+         SdTvPSppnRAC9XndqSQl4Grl1zEqP6CWD5NgcATdrh044EoAzu1MBRGdAzdBmcdfKzPW
+         BMbJ27IvW+Zc2Es3sW4c07lOWRYCbgyOY4VoQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=TE1k+xyihTMSWkSGzrDneVkAum46sMwYkJNJnhAJ764=;
+        b=7GPksaQZBYwozwx+G4lKn81oEmcZJHS2MvAda/p+oFjmhrIG9nOYl7aTa5JxmF7K2X
+         A0KFYJXEGv9Sng8mtidRXp1SatVcrZ20D/SEZpxmWZMIW3z2yI6XYXUmos3RMOd6HaQx
+         2+7sr1Bn3Sx/GEEMSbbpy2ECbzNKZTiEYLPFrqSwO8Fpss3cJ4a1hKwvEyKIqIKlYg0b
+         LNQZ8u8bYV+U4AJqiiJQWGmRrOqBlkn06BG5RoK+ToLaEKKZ3eDbEiJaBv2O+RrPyiko
+         W6pFmRF7wrsqhjI6zN2SUNzF3lye5JuMDAcceRpM84srIiNmub36v3waJDfRghXi+yuc
+         dnoQ==
+X-Gm-Message-State: AOAM5301pwe08pn8sspdhyKOJJVAs4ui9kzwUw8J/0dHvlZbtFtbkaCr
+        WbRhTETT+moYo5PT14KtVxITOw==
+X-Google-Smtp-Source: ABdhPJyidd0sNK3Dvs85E/mvMVYwF6knm8hinBxEIIcMNfcF+DOmOJKgvd2JlTGJ/5dOeoGxnT8HpA==
+X-Received: by 2002:a50:c014:0:b0:41d:5ee9:f354 with SMTP id r20-20020a50c014000000b0041d5ee9f354mr17536367edb.257.1651580606617;
+        Tue, 03 May 2022 05:23:26 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-178-48-189-3.catv.fixed.vodafone.hu. [178.48.189.3])
+        by smtp.gmail.com with ESMTPSA id p14-20020a056402154e00b0042617ba63a8sm7742405edx.50.2022.05.03.05.23.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 May 2022 05:23:25 -0700 (PDT)
+Date:   Tue, 3 May 2022 14:23:23 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
+        Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: [RFC PATCH] getting misc stats/attributes via xattr API
+Message-ID: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR15MB4552.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcc331ce-cda2-4846-1095-08da2cfcbea4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 May 2022 12:02:06.7994
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +uwktJo+hfh7RxSU+u7OCpIi0ctdQlYWrJqBnr9aGdOszrWF3RiBsrPXEoGWk217
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB3097
-X-Proofpoint-ORIG-GUID: BZwHVvDerSBZ3AhCRLc4H5cvrWeKztD0
-X-Proofpoint-GUID: BZwHVvDerSBZ3AhCRLc4H5cvrWeKztD0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-03_03,2022-05-02_03,2022-02-23_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 29, 2022 at 05:30:10PM -0400, Mimi Zohar wrote:
-> > diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> > index 13753136f03f..419c50cfe6b9 100644
-> > --- a/security/integrity/ima/ima_kexec.c
-> > +++ b/security/integrity/ima/ima_kexec.c
-> > @@ -10,6 +10,7 @@
-> >  #include <linux/seq_file.h>
-> >  #include <linux/vmalloc.h>
-> >  #include <linux/kexec.h>
-> > +#include <linux/memblock.h>
-> >  #include <linux/of.h>
-> >  #include <linux/ima.h>
-> >  #include "ima.h"
-> > @@ -134,10 +135,66 @@ void ima_add_kexec_buffer(struct kimage *image)
-> >  }
-> >  #endif /* IMA_KEXEC */
-> >  
-> > +#ifndef CONFIG_OF
-> > +static phys_addr_t ima_early_kexec_buffer_phys;
-> > +static size_t ima_early_kexec_buffer_size;
-> > +
-> > +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
-> > +{
-> > +	if (size == 0)
-> > +		return;
-> > +
-> > +	ima_early_kexec_buffer_phys = phys_addr;
-> > +	ima_early_kexec_buffer_size = size;
-> > +}
-> > +
-> > +int __init ima_free_kexec_buffer(void)
-> > +{
-> > +	int rc;
-> > +
-> > +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
-> > +		return -ENOTSUPP;
-> > +
-> > +	if (ima_early_kexec_buffer_size == 0)
-> > +		return -ENOENT;
-> > +
-> > +	rc = memblock_phys_free(ima_early_kexec_buffer_phys,
-> > +				ima_early_kexec_buffer_size);
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	ima_early_kexec_buffer_phys = 0;
-> > +	ima_early_kexec_buffer_size = 0;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +int __init ima_get_kexec_buffer(void **addr, size_t *size)
-> > +{
-> > +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
-> > +		return -ENOTSUPP;
-> > +
-> > +	if (ima_early_kexec_buffer_size == 0)
-> > +		return -ENOENT;
-> > +
-> > +	*addr = __va(ima_early_kexec_buffer_phys);
-> > +	*size = ima_early_kexec_buffer_size;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> 
-> Originally both ima_get_kexec_buffer() and ima_free_kexec_buffer() were
-> architecture specific.  Refer to commit 467d27824920 ("powerpc: ima:
-> get the kexec buffer passed by the previous kernel").  Is there any
-> need for defining them here behind an "#ifndef CONFIG_OF"?
+This is a simplification of the getvalues(2) prototype and moving it to the
+getxattr(2) interface, as suggested by Dave.
 
-Commit fee3ff99bc67 (powerpc: Move arch independent ima kexec functions
-to drivers/of/kexec.c) moved those functions to drivers/of/kexec.c as a
-more generic implementation so that ARM64 could use them too.
+The patch itself just adds the possibility to retrieve a single line of
+/proc/$$/mountinfo (which was the basic requirement from which the fsinfo
+patchset grew out of).
 
-I think for platforms that use device tree that's the way to go, but the
-functions to generically set + get the IMA buffer for non device tree
-systems were useful enough to put in the IMA code rather than being x86
-specific. If you disagree I can move them under arch/x86/ (assuming the
-x86 folk agree using setup_data is the right way to go, I haven't seen
-any of them comment on this approach yet).
+But this should be able to serve Amir's per-sb iostats, as well as a host of
+other cases where some statistic needs to be retrieved from some object.  Note:
+a filesystem object often represents other kinds of objects (such as processes
+in /proc) so this is not limited to fs attributes.
 
-> > +#else
-> > +
-> > +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
-> > +{
-> > +	pr_warn("CONFIG_OF enabled, ignoring call to set buffer details.\n");
-> > +}
-> > +#endif /* CONFIG_OF */
-> > +
-> 
-> Only when "HAVE_IMA_KEXEC" is defined is this file included.  Why is
-> this warning needed?
+This also opens up the interface to setting attributes via setxattr(2).
 
-x86 *can* have device tree enabled, but the only platform I'm aware that
-did it was OLPC and I haven't seen any of the distros enable it. I put
-this in so there's a warning if we have CONFIG_OF enabled on x86 and
-tried to pass the IMA log via setup_data. Can remove (or fold into the
-x86 code if we go that way).
+After some pondering I made the namespace so:
 
-> >  /*
-> >   * Restore the measurement list from the previous kernel.
-> >   */
-> > -void ima_load_kexec_buffer(void)
-> > +void __init ima_load_kexec_buffer(void)
-> >  {
-> >  	void *kexec_buffer = NULL;
-> >  	size_t kexec_buffer_size = 0;
+: - root
+bar - an attribute
+foo: - a folder (can contain attributes and/or folders)
 
-J.
+The contents of a folder is represented by a null separated list of names.
+
+Examples:
+
+$ getfattr -etext -n ":" .
+# file: .
+:="mnt:\000mntns:"
+
+$ getfattr -etext -n ":mnt:" .
+# file: .
+:mnt:="info"
+
+$ getfattr -etext -n ":mnt:info" .
+# file: .
+:mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
+
+$ getfattr -etext -n ":mntns:" .
+# file: .
+:mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
+
+$ getfattr -etext -n ":mntns:28:" .
+# file: .
+:mntns:28:="info"
+
+Comments?
+
+Thanks,
+Miklos
+
+---
+ fs/Makefile            |    2 
+ fs/mount.h             |    8 +
+ fs/namespace.c         |   15 ++-
+ fs/pnode.h             |    2 
+ fs/proc_namespace.c    |   15 ++-
+ fs/values.c            |  242 +++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/xattr.c             |   16 ++-
+ include/linux/values.h |   11 ++
+ 8 files changed, 295 insertions(+), 16 deletions(-)
+
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -16,7 +16,7 @@ obj-y :=	open.o read_write.o file_table.
+ 		pnode.o splice.o sync.o utimes.o d_path.o \
+ 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+ 		fs_types.o fs_context.o fs_parser.o fsopen.o init.o \
+-		kernel_read_file.o remap_range.o
++		kernel_read_file.o remap_range.o values.o
+ 
+ ifeq ($(CONFIG_BLOCK),y)
+ obj-y +=	buffer.o direct-io.o mpage.o
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -148,3 +148,11 @@ static inline bool is_anon_ns(struct mnt
+ }
+ 
+ extern void mnt_cursor_del(struct mnt_namespace *ns, struct mount *cursor);
++
++struct mount *mnt_list_next(struct mnt_namespace *ns, struct list_head *p);
++extern void namespace_lock_read(void);
++extern void namespace_unlock_read(void);
++extern int show_mountinfo_root(struct seq_file *m, struct vfsmount *mnt,
++			       struct path *root);
++extern bool is_path_reachable(struct mount *, struct dentry *,
++			      const struct path *root);
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1332,9 +1332,7 @@ struct vfsmount *mnt_clone_internal(cons
+ 	return &p->mnt;
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+-static struct mount *mnt_list_next(struct mnt_namespace *ns,
+-				   struct list_head *p)
++struct mount *mnt_list_next(struct mnt_namespace *ns, struct list_head *p)
+ {
+ 	struct mount *mnt, *ret = NULL;
+ 
+@@ -1351,6 +1349,7 @@ static struct mount *mnt_list_next(struc
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_PROC_FS
+ /* iterator; we want it to have access to namespace_sem, thus here... */
+ static void *m_start(struct seq_file *m, loff_t *pos)
+ {
+@@ -1507,6 +1506,16 @@ static inline void namespace_lock(void)
+ 	down_write(&namespace_sem);
+ }
+ 
++void namespace_lock_read(void)
++{
++	down_read(&namespace_sem);
++}
++
++void namespace_unlock_read(void)
++{
++	up_read(&namespace_sem);
++}
++
+ enum umount_tree_flags {
+ 	UMOUNT_SYNC = 1,
+ 	UMOUNT_PROPAGATE = 2,
+--- a/fs/pnode.h
++++ b/fs/pnode.h
+@@ -50,7 +50,5 @@ void mnt_set_mountpoint(struct mount *,
+ void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
+ 			   struct mount *mnt);
+ struct mount *copy_tree(struct mount *, struct dentry *, int);
+-bool is_path_reachable(struct mount *, struct dentry *,
+-			 const struct path *root);
+ int count_mounts(struct mnt_namespace *ns, struct mount *mnt);
+ #endif /* _LINUX_PNODE_H */
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -132,9 +132,9 @@ static int show_vfsmnt(struct seq_file *
+ 	return err;
+ }
+ 
+-static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
++int show_mountinfo_root(struct seq_file *m, struct vfsmount *mnt,
++			struct path *root)
+ {
+-	struct proc_mounts *p = m->private;
+ 	struct mount *r = real_mount(mnt);
+ 	struct super_block *sb = mnt->mnt_sb;
+ 	struct path mnt_path = { .dentry = mnt->mnt_root, .mnt = mnt };
+@@ -152,7 +152,7 @@ static int show_mountinfo(struct seq_fil
+ 	seq_putc(m, ' ');
+ 
+ 	/* mountpoints outside of chroot jail will give SEQ_SKIP on this */
+-	err = seq_path_root(m, &mnt_path, &p->root, " \t\n\\");
++	err = seq_path_root(m, &mnt_path, root, " \t\n\\");
+ 	if (err)
+ 		goto out;
+ 
+@@ -164,7 +164,7 @@ static int show_mountinfo(struct seq_fil
+ 		seq_printf(m, " shared:%i", r->mnt_group_id);
+ 	if (IS_MNT_SLAVE(r)) {
+ 		int master = r->mnt_master->mnt_group_id;
+-		int dom = get_dominating_id(r, &p->root);
++		int dom = get_dominating_id(r, root);
+ 		seq_printf(m, " master:%i", master);
+ 		if (dom && dom != master)
+ 			seq_printf(m, " propagate_from:%i", dom);
+@@ -194,6 +194,13 @@ static int show_mountinfo(struct seq_fil
+ 	return err;
+ }
+ 
++static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
++{
++	struct proc_mounts *p = m->private;
++
++	return show_mountinfo_root(m, mnt, &p->root);
++}
++
+ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
+ {
+ 	struct proc_mounts *p = m->private;
+--- /dev/null
++++ b/fs/values.c
+@@ -0,0 +1,242 @@
++#include <linux/values.h>
++#include <linux/fs_struct.h>
++#include <linux/seq_file.h>
++#include <linux/nsproxy.h>
++#include "../lib/kstrtox.h"
++#include "mount.h"
++
++struct val_string {
++	const char *str;
++	size_t len;
++};
++
++struct val_iter {
++	struct val_string name;
++	struct seq_file seq;
++	int error;
++};
++
++struct val_desc {
++	struct val_string name;
++	union {
++		u64 idx;
++		int (*get)(struct val_iter *vi, const struct path *path);
++	};
++};
++
++#define VAL_STRING(x) { .str = x, .len = sizeof(x) - 1 }
++#define VD_NAME(x) .name = VAL_STRING(x)
++
++static int val_err(struct val_iter *vi, int err)
++{
++	vi->error = err;
++	return 0;
++}
++
++static int val_end_seq(struct val_iter *vi)
++{
++	if (vi->seq.count == vi->seq.size)
++		return -EOVERFLOW;
++
++	return 0;
++}
++
++static inline void val_string_skip(struct val_string *s, size_t count)
++{
++	WARN_ON(s->len < count);
++	s->str += count;
++	s->len -= count;
++}
++
++static bool val_string_prefix(const struct val_string *p,
++			      const struct val_string *s)
++{
++	return s->len >= p->len && !memcmp(s->str, p->str, p->len);
++}
++
++static struct val_desc *val_lookup(struct val_iter *vi, struct val_desc *vd)
++{
++	for (; vd->name.len; vd++) {
++		if (val_string_prefix(&vd->name, &vi->name)) {
++			val_string_skip(&vi->name, vd->name.len);
++			break;
++		}
++	}
++	return vd;
++}
++
++static int val_get_group(struct val_iter *vi, struct val_desc *vd)
++{
++	for (; vd->name.len; vd++)
++		seq_write(&vi->seq, vd->name.str, vd->name.len + 1);
++
++	return val_end_seq(vi);
++}
++
++enum {
++	VAL_MNT_INFO,
++};
++
++static struct val_desc val_mnt_group[] = {
++	{ VD_NAME("info"),		.idx = VAL_MNT_INFO		},
++	{ }
++};
++
++static int val_mnt_show(struct val_iter *vi, struct vfsmount *mnt)
++{
++	struct val_desc *vd = val_lookup(vi, val_mnt_group);
++	struct path root;
++
++	if (!vd->name.str)
++		return val_err(vi, -ENOENT);
++
++	switch(vd->idx) {
++	case VAL_MNT_INFO:
++		get_fs_root(current->fs, &root);
++		show_mountinfo_root(&vi->seq, mnt, &root);
++		path_put(&root);
++		break;
++	}
++
++	return 0;
++}
++
++static int val_mnt_get(struct val_iter *vi, const struct path *path)
++{
++	int err;
++
++	if (!vi->name.len)
++		return val_get_group(vi, val_mnt_group);
++
++	namespace_lock_read();
++	err = val_mnt_show(vi, path->mnt);
++	namespace_unlock_read();
++
++	return err;
++}
++
++/* called with namespace_sem held for read */
++static struct vfsmount *mnt_lookup_by_id(struct mnt_namespace *ns,
++					 struct path *root, int id)
++{
++	struct mount *m;
++
++	for (m = mnt_list_next(ns, &ns->list); m; m = mnt_list_next(ns, &m->mnt_list)) {
++		if (m->mnt_id == id) {
++			if (is_path_reachable(m, m->mnt.mnt_root, root))
++				return mntget(&m->mnt);
++			else
++				return NULL;
++		}
++	}
++	return NULL;
++}
++
++static void seq_mnt_list(struct seq_file *seq, struct mnt_namespace *ns,
++			 struct path *root)
++{
++	struct mount *m;
++
++	namespace_lock_read();
++	for (m = mnt_list_next(ns, &ns->list); m; m = mnt_list_next(ns, &m->mnt_list)) {
++		if (is_path_reachable(m, m->mnt.mnt_root, root)) {
++			seq_printf(seq, "%i:", m->mnt_id);
++			seq_putc(seq, '\0');
++		}
++	}
++	namespace_unlock_read();
++}
++
++static int val_mntns_get(struct val_iter *vi, const struct path *path)
++{
++	struct mnt_namespace *mnt_ns = current->nsproxy->mnt_ns;
++	struct vfsmount *mnt;
++	struct path root;
++	unsigned long long mnt_id;
++	unsigned int end;
++	int err;
++
++	if (!vi->name.len) {
++		get_fs_root(current->fs, &root);
++		seq_mnt_list(&vi->seq, mnt_ns, &root);
++		path_put(&root);
++		return val_end_seq(vi);
++	}
++
++	end = _parse_integer(vi->name.str, 10, &mnt_id);
++	if (end & KSTRTOX_OVERFLOW)
++		return val_err(vi, -ENOENT);
++	if (vi->name.str[end] != VAL_SEP)
++		return val_err(vi, -ENOENT);
++	val_string_skip(&vi->name, end + 1);
++
++	namespace_lock_read();
++	get_fs_root(current->fs, &root);
++	mnt = mnt_lookup_by_id(mnt_ns, &root, mnt_id);
++	path_put(&root);
++	if (!mnt) {
++		namespace_unlock_read();
++		return val_err(vi, -ENOENT);
++	}
++	if (vi->name.len)
++		err = val_mnt_show(vi, mnt);
++	else
++		err = val_get_group(vi, val_mnt_group);
++
++	namespace_unlock_read();
++	mntput(mnt);
++
++	return err;
++}
++
++
++
++static struct val_desc val_toplevel_group[] = {
++	{ VD_NAME("mnt:"),	.get = val_mnt_get,	},
++	{ VD_NAME("mntns:"),	.get = val_mntns_get,	},
++	{ },
++};
++
++static int getvalues(struct val_iter *vi, const struct path *path)
++{
++	struct val_desc *vd;
++	int err;
++
++	if (!vi->name.len)
++		return val_get_group(vi, val_toplevel_group);
++
++	vd = val_lookup(vi, val_toplevel_group);
++	if (!vd->name.len)
++		err = val_err(vi, -ENOENT);
++	else
++		err = vd->get(vi, path);
++
++	return err ?: vi->error;
++}
++
++ssize_t val_getxattr(struct path *path, const char *name, size_t namelen,
++		     void __user *value, size_t size)
++{
++	int err;
++	char val[1024];
++	struct val_iter vi = {
++		.name = { .str = name, .len = namelen },
++		.seq = { .buf = val, .size = min(sizeof(val), size) },
++	};
++
++	if (!size)
++		return sizeof(val);
++
++	val_string_skip(&vi.name, 1);
++
++	err = getvalues(&vi, path);
++	if (err < 0)
++		return err;
++
++	WARN_ON(vi.seq.count > size);
++	if (copy_to_user(value, vi.seq.buf, vi.seq.count))
++		return -EFAULT;
++
++	return vi.seq.count;
++}
++
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -22,6 +22,7 @@
+ #include <linux/audit.h>
+ #include <linux/vmalloc.h>
+ #include <linux/posix_acl_xattr.h>
++#include <linux/values.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -643,12 +644,13 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, cons
+  * Extended attribute GET operations
+  */
+ static ssize_t
+-getxattr(struct user_namespace *mnt_userns, struct dentry *d,
+-	 const char __user *name, void __user *value, size_t size)
++getxattr(struct path *path, const char __user *name,
++	 void __user *value, size_t size)
+ {
+ 	ssize_t error;
+ 	void *kvalue = NULL;
+ 	char kname[XATTR_NAME_MAX + 1];
++	struct user_namespace *mnt_userns = mnt_user_ns(path->mnt);
+ 
+ 	error = strncpy_from_user(kname, name, sizeof(kname));
+ 	if (error == 0 || error == sizeof(kname))
+@@ -656,6 +658,9 @@ getxattr(struct user_namespace *mnt_user
+ 	if (error < 0)
+ 		return error;
+ 
++	if (kname[0] == VAL_SEP)
++		return val_getxattr(path, kname, error, value, size);
++
+ 	if (size) {
+ 		if (size > XATTR_SIZE_MAX)
+ 			size = XATTR_SIZE_MAX;
+@@ -664,7 +669,7 @@ getxattr(struct user_namespace *mnt_user
+ 			return -ENOMEM;
+ 	}
+ 
+-	error = vfs_getxattr(mnt_userns, d, kname, kvalue, size);
++	error = vfs_getxattr(mnt_userns, path->dentry, kname, kvalue, size);
+ 	if (error > 0) {
+ 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+ 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+@@ -693,7 +698,7 @@ static ssize_t path_getxattr(const char
+ 	error = user_path_at(AT_FDCWD, pathname, lookup_flags, &path);
+ 	if (error)
+ 		return error;
+-	error = getxattr(mnt_user_ns(path.mnt), path.dentry, name, value, size);
++	error = getxattr(&path, name, value, size);
+ 	path_put(&path);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+@@ -723,8 +728,7 @@ SYSCALL_DEFINE4(fgetxattr, int, fd, cons
+ 	if (!f.file)
+ 		return error;
+ 	audit_file(f.file);
+-	error = getxattr(file_mnt_user_ns(f.file), f.file->f_path.dentry,
+-			 name, value, size);
++	error = getxattr(&f.file->f_path, name, value, size);
+ 	fdput(f);
+ 	return error;
+ }
+--- /dev/null
++++ b/include/linux/values.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <linux/types.h>
++
++#define VAL_SEP ':'
++
++struct path;
++
++ssize_t val_getxattr(struct path *path, const char *name, size_t namelen,
++		     void __user *value, size_t size);
++
