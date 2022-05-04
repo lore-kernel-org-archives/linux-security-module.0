@@ -2,416 +2,355 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B1DC43219
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 19:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BACCC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 19:58:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377633AbiEDT6L (ORCPT
+        id S1377830AbiEDUCI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 May 2022 15:58:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58608 "EHLO
+        Wed, 4 May 2022 16:02:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377735AbiEDT6G (ORCPT
+        with ESMTP id S1377825AbiEDUBz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 15:58:06 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27CB24EA2B
-        for <linux-security-module@vger.kernel.org>; Wed,  4 May 2022 12:54:28 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id p6so2171783pjm.1
-        for <linux-security-module@vger.kernel.org>; Wed, 04 May 2022 12:54:28 -0700 (PDT)
+        Wed, 4 May 2022 16:01:55 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 963E34EDC0
+        for <linux-security-module@vger.kernel.org>; Wed,  4 May 2022 12:58:15 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a18so303697ejf.2
+        for <linux-security-module@vger.kernel.org>; Wed, 04 May 2022 12:58:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Gp9xlLGWh8jE9LSf7azZ10DOrZcyf+qHkQB0hbwlc6c=;
-        b=Re8w0E71m1NuEGuoKe1+lP1K0mogJQPMQNwOvjgX8GgvdMmbzNvUUBh+uQTk019amF
-         TvDUGdy3yBqpR3CrPi7vZz2JuiApQ08NyIFnvgWplvbqwg4OLntXWKscqGy1zf8jg9Tl
-         X7yfbHlvVMNgs3QO+3sDsG6C8Gm9CJ+q9RwYM=
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y+sByE56HbVf5kRX6gGxIKl4lkDcQYxYxjANal7cqo4=;
+        b=Fisf8qNfLenDK0j792maHiYPMMvmyhGB9B3J/xS9stoAM/UZoSn3s9eWa4z58SqqtN
+         zwNzc/F7jGucn3q+uOerwwvhkYcHR8WadSDg35wFqZ6iJOtuV3DgeIHYCsICPjn3FRC5
+         ijS3ruVDVcid8vwK6Aeyu8cvVWuqX4vHHcMprgjz8mGjIqaTTVh5y7xE1A9w5vPgc3/M
+         9OL1YFUN+X3Smqy7ONv67Xs9IxNQQJThHBH0mRzDjCqw6Y6Boyru+xViNBlwab5eTP66
+         Ql7OyvNLc8tFoVxvf1pFaiO/JKRt9GNoTAQHusID9bvyAzw/qXdqG5nBEcpTVWJq8YZ4
+         Z1Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Gp9xlLGWh8jE9LSf7azZ10DOrZcyf+qHkQB0hbwlc6c=;
-        b=rYJGfsTknXbyp0bk0o7eCM5FikSapnTJJmpfDGakzYmCrXNoe03YcdMs2+5+ZvTJdX
-         abW8u44aL2pPUxaz3xVrCB4U22DhqxE0WThp1BLEy/3muDnWK+tSMNx7tDKe2hT5p3VQ
-         wCbbYm5UH5tO24gx6LgxO0BEac5wD+E5nnd7km2HumNRHXp0caTl5Alrhrkr8aMVQ+z/
-         CYac76HdoeaWz9OqHtIp4y5FHoedaRFABvjJ/z1UjZfSfAggipDb1XGZQvYUYVKLe9Gp
-         tItBDfeSrL9867zKgk93RzVerjIWS+gEj+vbPFRtZbdyoLyzbGv6fvmfticxKYvrSWgb
-         VHyA==
-X-Gm-Message-State: AOAM532iAGaOaBjKjpD3aVadiYkqIy7aEMJtVvjuH47WfVh2cIlQGk1w
-        G4oO4N3Fn+Lcy4jYNbWmJ/xqmg==
-X-Google-Smtp-Source: ABdhPJyBJFV2oTf0rlK//p4KZ3djT6dJ0kNaH/ylPKKm050V3L+WL306CMkubdaar/oyJwhAqtSE/w==
-X-Received: by 2002:a17:903:20f:b0:158:d86a:f473 with SMTP id r15-20020a170903020f00b00158d86af473mr23385549plh.92.1651694067352;
-        Wed, 04 May 2022 12:54:27 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:35b6:c77b:be04:3bd5])
-        by smtp.gmail.com with UTF8SMTPSA id s7-20020a62e707000000b0050dc76281cfsm8598643pfh.169.2022.05.04.12.54.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 May 2022 12:54:26 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, Song Liu <song@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3 2/3] LoadPin: Enable loading from trusted dm-verity devices
-Date:   Wed,  4 May 2022 12:54:18 -0700
-Message-Id: <20220504125404.v3.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
-X-Mailer: git-send-email 2.36.0.464.gb9c8b46e94-goog
-In-Reply-To: <20220504195419.1143099-1-mka@chromium.org>
-References: <20220504195419.1143099-1-mka@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y+sByE56HbVf5kRX6gGxIKl4lkDcQYxYxjANal7cqo4=;
+        b=H2ghFX0C2YEHD6raANWMdQ11xC6fW5OG4JT0OKmTGa4K40jx6B6kxo7Fb39xsMz/LA
+         89WBazoYBn8PZJsJYJyp9ZhOnIPJ7l9S6co4hw+nKfvZhtnVK0/dV16wkh6ml564Exid
+         NhfgWLYkU721IbiKNoNuyGGULJDq9C3pwjGbAb/2pNqL9FFLPbdr0sg74vtQDREK45kZ
+         Ycq5elyazVcCIL6c02ymCgJSDU7XqppkH1ZlvQo9j6cZ9xxHCnySuHD68AlvunJRuyyy
+         GMDzC8SJH7mpu1Ew1LaSGAVAc/MRNs84hx0pVN6wsDS3hcBBLKxSjjeTIibVx4L51ieJ
+         FcHw==
+X-Gm-Message-State: AOAM530siTRufClj9od1Uvuzsv7NmZv6PO9hujQQ96vXZC9UAuh5HiDY
+        jMONt0MepZR6uDRNLAP7SzNvCJgXmIADvZKfDPLAUg==
+X-Google-Smtp-Source: ABdhPJyNqylHJlc3dOLmSwn3LLwT4ktliGhTIZtJUbCp6p9cyFNeSQSMHaaSeuuF72ZsBGrGa7DMKOVMS/2gIc+sdec=
+X-Received: by 2002:a17:907:9726:b0:6f4:c0e:40ce with SMTP id
+ jg38-20020a170907972600b006f40c0e40cemr21300141ejc.170.1651694293700; Wed, 04
+ May 2022 12:58:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220504014440.3697851-1-keescook@chromium.org> <20220504014440.3697851-4-keescook@chromium.org>
+In-Reply-To: <20220504014440.3697851-4-keescook@chromium.org>
+From:   Daniel Latypov <dlatypov@google.com>
+Date:   Wed, 4 May 2022 14:58:02 -0500
+Message-ID: <CAGS_qxrPauYtkrfB37ne9bOXJR2JQc4=jaJP5tGN4mnha7mANg@mail.gmail.com>
+Subject: Re: [PATCH 03/32] flex_array: Add Kunit tests
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        David Gow <davidgow@google.com>, kunit-dev@googlegroups.com,
+        Alexei Starovoitov <ast@kernel.org>,
+        alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Andy Lavr <andy.lavr@gmail.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Baowen Zheng <baowen.zheng@corigine.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Bradley Grove <linuxdrivers@attotech.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        Christian Brauner <brauner@kernel.org>,
+        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        Chris Zankel <chris@zankel.net>,
+        Cong Wang <cong.wang@bytedance.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eli Cohen <elic@nvidia.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Francis Laniel <laniel_francis@privacyrequired.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gregory Greenman <gregory.greenman@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Hulk Robot <hulkci@huawei.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        John Keeping <john@metanate.com>,
+        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
+        Keith Packard <keithp@keithp.com>, keyrings@vger.kernel.org,
+        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Leon Romanovsky <leon@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux1394-devel@lists.sourceforge.net,
+        linux-afs@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Louis Peens <louis.peens@corigine.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Nathan Chancellor <nathan@kernel.org>, netdev@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Rich Felker <dalias@aerifal.cx>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, selinux@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        SHA-cyfmac-dev-list@infineon.com,
+        Simon Horman <simon.horman@corigine.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Tadeusz Struk <tadeusz.struk@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
+        Udipto Goswami <quic_ugoswami@quicinc.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
+        xen-devel@lists.xenproject.org,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        Yang Yingliang <yangyingliang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Extend LoadPin to allow loading of kernel files from trusted dm-verity [1]
-devices.
+On Tue, May 3, 2022 at 8:47 PM Kees Cook <keescook@chromium.org> wrote:
+> +#define COMPARE_STRUCTS(STRUCT_A, STRUCT_B)    do {                    \
+> +       STRUCT_A *ptr_A;                                                \
+> +       STRUCT_B *ptr_B;                                                \
+> +       int rc;                                                         \
+> +       size_t size_A, size_B;                                          \
+> +                                                                       \
+> +       /* matching types for flex array elements and count */          \
+> +       KUNIT_EXPECT_EQ(test, sizeof(*ptr_A), sizeof(*ptr_B));          \
+> +       KUNIT_EXPECT_TRUE(test, __same_type(*ptr_A->data,               \
+> +               *ptr_B->__flex_array_elements));                        \
 
-This change adds the concept of trusted verity devices to LoadPin. LoadPin
-maintains a list of root digests of verity devices it considers trusted.
-Userspace can populate this list through an ioctl on the new LoadPin
-securityfs entry 'dm-verity'. The ioctl receives a file descriptor of
-a file with verity digests as parameter. Verity reads the digests from
-this file after confirming that the file is located on the pinned root.
-The list of trusted digests can only be set up once, which is typically
-done at boot time.
+Leaving some minor suggestions to go along with David's comments.
 
-When a kernel file is read LoadPin first checks (as usual) whether the file
-is located on the pinned root, if so the file can be loaded. Otherwise, if
-the verity extension is enabled, LoadPin determines whether the file is
-located on a verity backed device and whether the root digest of that
-device is in the list of trusted digests. The file can be loaded if the
-verity device has a trusted root digest.
+Should we make these KUNIT_ASSERT_.* instead?
+I assume if we have a type-mismatch, then we should bail out instead
+of continuing to produce more error messages.
 
-Background:
+> +       KUNIT_EXPECT_TRUE(test, __same_type(ptr_A->datalen,             \
+> +               ptr_B->__flex_array_elements_count));                   \
+> +       KUNIT_EXPECT_EQ(test, sizeof(*ptr_A->data),                     \
+> +                             sizeof(*ptr_B->__flex_array_elements));   \
+> +       KUNIT_EXPECT_EQ(test, offsetof(typeof(*ptr_A), data),           \
+> +                             offsetof(typeof(*ptr_B),                  \
+> +                                      __flex_array_elements));         \
+> +       KUNIT_EXPECT_EQ(test, offsetof(typeof(*ptr_A), datalen),        \
+> +                             offsetof(typeof(*ptr_B),                  \
+> +                                      __flex_array_elements_count));   \
+> +                                                                       \
+> +       /* struct_size() vs __fas_bytes() */                            \
+> +       size_A = struct_size(ptr_A, data, 13);                          \
+> +       rc = __fas_bytes(ptr_B, __flex_array_elements,                  \
+> +                        __flex_array_elements_count, 13, &size_B);     \
+> +       KUNIT_EXPECT_EQ(test, rc, 0);                                   \
 
-As of now LoadPin restricts loading of kernel files to a single pinned
-filesystem, typically the rootfs. This works for many systems, however it
-can result in a bloated rootfs (and OTA updates) on platforms where
-multiple boards with different hardware configurations use the same rootfs
-image. Especially when 'optional' files are large it may be preferable to
-download/install them only when they are actually needed by a given board.
-Chrome OS uses Downloadable Content (DLC) [2] to deploy certain 'packages'
-at runtime. As an example a DLC package could contain firmware for a
-peripheral that is not present on all boards. DLCs use dm-verity to verify
-the integrity of the DLC content.
+Hmm, what do you think about inlining the call/dropping rc?
 
-[1] https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/verity.html
-[2] https://chromium.googlesource.com/chromiumos/platform2/+/HEAD/dlcservice/docs/developer.md
+i.e. something like
+KUNIT_EXPECT_EQ(test, 0, __fas_bytes(ptr_B, __flex_array_elements, \
+                        __flex_array_elements_count, 13, &size_B));
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
+That would give a slightly clearer error message on failure.
+Otherwise the user only really gets a line number to try and start to
+understand what went wrong.
 
-Changes in v3:
-- added securityfs for LoadPin (currently only populated when
-  CONFIG_SECURITY_LOADPIN_VERITY=y)
-- added uapi include for LoadPin
-- changed the interface for setting up the list of trusted
-  digests from sysctl to ioctl on securityfs entry
-- added stub for loadpin_is_fs_trusted() to be used
-  CONFIG_SECURITY_LOADPIN_VERITY is not select
-- depend on CONFIG_SECURITYFS instead of CONFIG_SYSTCL
-- updated Kconfig help
-- minor changes in read_trusted_verity_root_digests()
-- updated commit message
+> +
+> +#define CHECK_COPY(ptr)                do {                                            \
+> +       typeof(*(ptr)) *_cc_dst = (ptr);                                        \
+> +       KUNIT_EXPECT_EQ(test, _cc_dst->induce_padding, 0);                      \
+> +       memcpy(&padding, &_cc_dst->induce_padding + sizeof(_cc_dst->induce_padding), \
+> +              sizeof(padding));                                                \
+> +       /* Padding should be zero too. */                                       \
+> +       KUNIT_EXPECT_EQ(test, padding, 0);                                      \
+> +       KUNIT_EXPECT_EQ(test, src->count, _cc_dst->count);                      \
 
-Changes in v2:
-- userspace now passes the path of the file with the verity digests
-  via systcl, instead of the digests themselves
-- renamed sysctl file to 'trusted_verity_root_digests_path'
-- have CONFIG_SECURITY_LOADPIN_VERITY depend on CONFIG_SYSCTL
-- updated Kconfig doc
-- updated commit message
+This also seems like a good place to use ASSERT instead of EXPECT.
 
- include/uapi/linux/loadpin.h |  19 ++++
- security/loadpin/Kconfig     |  16 +++
- security/loadpin/loadpin.c   | 184 ++++++++++++++++++++++++++++++++++-
- 3 files changed, 218 insertions(+), 1 deletion(-)
- create mode 100644 include/uapi/linux/loadpin.h
 
-diff --git a/include/uapi/linux/loadpin.h b/include/uapi/linux/loadpin.h
-new file mode 100644
-index 000000000000..d303a582209b
---- /dev/null
-+++ b/include/uapi/linux/loadpin.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/*
-+ * Copyright (c) 2022, Google LLC
-+ */
-+
-+#ifndef _UAPI_LINUX_LOOP_LOADPIN_H
-+#define _UAPI_LINUX_LOOP_LOADPIN_H
-+
-+#define LOADPIN_IOC_MAGIC	'L'
-+
-+/**
-+ * LOADPIN_IOC_SET_TRUSTED_VERITY_DIGESTS - Set up the root digests of verity devices
-+ *                                          that loadpin should trust.
-+ *
-+ * Takes a file descriptor from which to read the root digests of trusted verity devices.
-+ */
-+#define LOADPIN_IOC_SET_TRUSTED_VERITY_DIGESTS _IOW(LOADPIN_IOC_MAGIC, 0x00, unsigned int)
-+
-+#endif /* _UAPI_LINUX_LOOP_LOADPIN_H */
-diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
-index 91be65dec2ab..e319ca8e3f3d 100644
---- a/security/loadpin/Kconfig
-+++ b/security/loadpin/Kconfig
-@@ -18,3 +18,19 @@ config SECURITY_LOADPIN_ENFORCE
- 	  If selected, LoadPin will enforce pinning at boot. If not
- 	  selected, it can be enabled at boot with the kernel parameter
- 	  "loadpin.enforce=1".
-+
-+config SECURITY_LOADPIN_VERITY
-+	bool "Allow reading files from certain other filesystems that use dm-verity"
-+	depends on DM_VERITY=y && SECURITYFS
-+	help
-+	  If selected LoadPin can allow reading files from filesystems
-+	  that use dm-verity. LoadPin maintains a list of verity root
-+	  digests it considers trusted. A verity backed filesystem is
-+	  considered trusted if its root digest is found in the list
-+	  of trusted digests.
-+
-+	  The list of trusted verity can be populated through an ioctl
-+	  on the LoadPin securityfs entry 'dm-verity'. The ioctl
-+	  expects a file descriptor of a file with verity digests as
-+	  parameter. The file must be located on the pinned root and
-+	  contain a comma separated list of digests.
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index b12f7d986b1e..c29ce562a366 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -18,6 +18,9 @@
- #include <linux/path.h>
- #include <linux/sched.h>	/* current */
- #include <linux/string_helpers.h>
-+#include <linux/device-mapper.h>
-+#include <linux/dm-verity-loadpin.h>
-+#include <uapi/linux/loadpin.h>
- 
- static void report_load(const char *origin, struct file *file, char *operation)
- {
-@@ -43,6 +46,9 @@ static char *exclude_read_files[READING_MAX_ID];
- static int ignore_read_file_id[READING_MAX_ID] __ro_after_init;
- static struct super_block *pinned_root;
- static DEFINE_SPINLOCK(pinned_root_spinlock);
-+#ifdef CONFIG_SECURITY_LOADPIN_VERITY
-+static LIST_HEAD(trusted_verity_root_digests);
-+#endif
- 
- #ifdef CONFIG_SYSCTL
- 
-@@ -118,6 +124,24 @@ static void loadpin_sb_free_security(struct super_block *mnt_sb)
- 	}
- }
- 
-+#ifdef CONFIG_SECURITY_LOADPIN_VERITY
-+static bool loadpin_is_fs_trusted(struct super_block *sb)
-+{
-+	struct mapped_device *md = dm_get_md(sb->s_bdev->bd_dev);
-+	bool trusted;
-+
-+	if (!md)
-+		return false;
-+
-+	trusted = dm_verity_loadpin_is_md_trusted(md);
-+	dm_put(md);
-+
-+	return trusted;
-+}
-+#else
-+static inline bool loadpin_is_fs_trusted(struct super_block *sb) { return false; };
-+#endif
-+
- static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
- 			     bool contents)
- {
-@@ -174,7 +198,8 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id,
- 		spin_unlock(&pinned_root_spinlock);
- 	}
- 
--	if (IS_ERR_OR_NULL(pinned_root) || load_root != pinned_root) {
-+	if (IS_ERR_OR_NULL(pinned_root) ||
-+	    ((load_root != pinned_root) && !loadpin_is_fs_trusted(load_root))) {
- 		if (unlikely(!enforce)) {
- 			report_load(origin, file, "pinning-ignored");
- 			return 0;
-@@ -240,6 +265,7 @@ static int __init loadpin_init(void)
- 		enforce ? "" : "not ");
- 	parse_exclude();
- 	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
-+
- 	return 0;
- }
- 
-@@ -248,6 +274,162 @@ DEFINE_LSM(loadpin) = {
- 	.init = loadpin_init,
- };
- 
-+#ifdef CONFIG_SECURITY_LOADPIN_VERITY
-+
-+enum loadpin_securityfs_interface_index {
-+	LOADPIN_DM_VERITY,
-+};
-+
-+static int read_trusted_verity_root_digests(unsigned int fd)
-+{
-+	struct fd f;
-+	void *data;
-+	int rc;
-+	char *p, *d;
-+
-+	/* The list of trusted root digests can only be set up once */
-+	if (!list_empty(&trusted_verity_root_digests))
-+		return -EPERM;
-+
-+	f = fdget(fd);
-+	if (!f.file)
-+		return -EINVAL;
-+
-+	data = kzalloc(SZ_4K, GFP_KERNEL);
-+	if (!data) {
-+		rc = -ENOMEM;
-+		goto err;
-+	}
-+
-+	rc = kernel_read_file(f.file, 0, &data, SZ_4K - 1, NULL, READING_POLICY);
-+	if (rc < 0)
-+		goto err;
-+
-+	((char *)data)[rc] = '\0';
-+
-+	p = strim(data);
-+	while ((d = strsep(&p, ",")) != NULL) {
-+		int len = strlen(d);
-+		struct trusted_root_digest *trd;
-+
-+		if (len % 2) {
-+			rc = -EPROTO;
-+			goto err;
-+		}
-+
-+		len /= 2;
-+
-+		trd = kzalloc(sizeof(*trd), GFP_KERNEL);
-+		if (!trd) {
-+			rc = -ENOMEM;
-+			goto err;
-+		}
-+
-+		trd->data = kzalloc(len, GFP_KERNEL);
-+		if (!trd->data) {
-+			kfree(trd);
-+			rc = -ENOMEM;
-+			goto err;
-+		}
-+
-+		if (hex2bin(trd->data, d, len)) {
-+			kfree(trd);
-+			kfree(trd->data);
-+			rc = -EPROTO;
-+			goto err;
-+		}
-+
-+		trd->len = len;
-+
-+		list_add_tail(&trd->node, &trusted_verity_root_digests);
-+	}
-+
-+	kfree(data);
-+	fdput(f);
-+
-+	if (!list_empty(&trusted_verity_root_digests))
-+		dm_verity_loadpin_set_trusted_root_digests(&trusted_verity_root_digests);
-+
-+	return 0;
-+
-+err:
-+	kfree(data);
-+
-+	{
-+		struct trusted_root_digest *trd, *tmp;
-+
-+		list_for_each_entry_safe(trd, tmp, &trusted_verity_root_digests, node) {
-+			kfree(trd->data);
-+			list_del(&trd->node);
-+			kfree(trd);
-+		}
-+	}
-+
-+	fdput(f);
-+
-+	return rc;
-+}
-+
-+/******************************** securityfs ********************************/
-+
-+static long dm_verity_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-+{
-+	void __user *uarg = (void __user *)arg;
-+	unsigned int fd;
-+	int rc;
-+
-+	switch (cmd) {
-+	case LOADPIN_IOC_SET_TRUSTED_VERITY_DIGESTS:
-+		rc = copy_from_user(&fd, uarg, sizeof(fd));
-+		if (rc)
-+			return rc;
-+
-+		return read_trusted_verity_root_digests(fd);
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct file_operations loadpin_dm_verity_ops = {
-+	.unlocked_ioctl = dm_verity_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
-+};
-+
-+/**
-+ * init_loadpin_securityfs - create the securityfs directory for LoadPin
-+ *
-+ * We can not put this method normally under the loadpin_init() code path since
-+ * the security subsystem gets initialized before the vfs caches.
-+ *
-+ * Returns 0 if the securityfs directory creation was successful.
-+ */
-+static int __init init_loadpin_securityfs(void)
-+{
-+	struct dentry *loadpin_dir, *dentry;
-+
-+	loadpin_dir = securityfs_create_dir("loadpin", NULL);
-+	if (IS_ERR(loadpin_dir)) {
-+		pr_err("LoadPin: could not create securityfs dir: %d\n",
-+		       PTR_ERR(loadpin_dir));
-+		return PTR_ERR(loadpin_dir);
-+	}
-+
-+	dentry = securityfs_create_file("dm-verity", 0600, loadpin_dir,
-+					(void *)LOADPIN_DM_VERITY, &loadpin_dm_verity_ops);
-+	if (IS_ERR(dentry)) {
-+		pr_err("LoadPin: could not create securityfs entry 'dm-verity': %d\n",
-+		       PTR_ERR(dentry));
-+		return PTR_ERR(dentry);
-+	}
-+
-+	return 0;
-+}
-+
-+fs_initcall(init_loadpin_securityfs);
-+
-+#endif /* CONFIG_SECURITY_LOADPIN_VERITY */
-+
- /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
- module_param(enforce, int, 0);
- MODULE_PARM_DESC(enforce, "Enforce module/firmware pinning");
--- 
-2.36.0.464.gb9c8b46e94-goog
+> +       KUNIT_EXPECT_EQ(test, _cc_dst->count, TEST_TARGET);                     \
+> +       for (i = 0; i < _cc_dst->count - 1; i++) {                              \
+> +               /* 'A' is 0x41, and here repeated in a u32. */                  \
+> +               KUNIT_EXPECT_EQ(test, _cc_dst->flex[i], 0x41414141);            \
+> +       }                                                                       \
+> +       /* Last item should be different. */                                    \
+> +       KUNIT_EXPECT_EQ(test, _cc_dst->flex[_cc_dst->count - 1], 0x14141414);   \
+> +} while (0)
+> +
+> +/* Test copying from one flexible array struct into another. */
+> +static void flex_cpy_test(struct kunit *test)
+> +{
+> +#define TEST_BOUNDS    13
+> +#define TEST_TARGET    12
+> +#define TEST_SMALL     10
+> +       struct flex_cpy_obj *src, *dst;
+> +       unsigned long padding;
+> +       int i, rc;
+> +
+> +       /* Prepare open-coded source. */
+> +       src = kzalloc(struct_size(src, flex, TEST_BOUNDS), GFP_KERNEL);
 
+Looks like we could use kunit_kzalloc() here and avoid needing the
+manual call to kfree?
+This also holds for the other test cases where they don't have early
+calls to kfree().
+
+Doing so would also let you use KUNIT_ASSERT's without fear of leaking
+these allocations.
+
+> +       src->count = TEST_BOUNDS;
+> +       memset(src->flex, 'A', flex_array_size(src, flex, TEST_BOUNDS));
+> +       src->flex[src->count - 2] = 0x14141414;
+> +       src->flex[src->count - 1] = 0x24242424;
+> +
+> +       /* Prepare open-coded destination, alloc only. */
+> +       dst = kzalloc(struct_size(src, flex, TEST_BOUNDS), GFP_KERNEL);
+> +       /* Pre-fill with 0xFE marker. */
+> +       memset(dst, 0xFE, struct_size(src, flex, TEST_BOUNDS));
+> +       /* Pretend we're 1 element smaller. */
+> +       dst->count = TEST_TARGET;
+> +
+> +       /* Pretend to match the target destination size. */
+> +       src->count = TEST_TARGET;
+> +
+> +       rc = flex_cpy(dst, src);
+> +       KUNIT_EXPECT_EQ(test, rc, 0);
+> +       CHECK_COPY(dst);
+> +       /* Item past last copied item is unchanged from initial memset. */
+> +       KUNIT_EXPECT_EQ(test, dst->flex[dst->count], 0xFEFEFEFE);
+> +
+> +       /* Now trip overflow, and verify we didn't clobber beyond end. */
+> +       src->count = TEST_BOUNDS;
+> +       rc = flex_cpy(dst, src);
+> +       KUNIT_EXPECT_EQ(test, rc, -E2BIG);
+> +       /* Item past last copied item is unchanged from initial memset. */
+> +       KUNIT_EXPECT_EQ(test, dst->flex[dst->count], 0xFEFEFEFE);
+> +
+> +       /* Reset destination contents. */
+> +       memset(dst, 0xFD, struct_size(src, flex, TEST_BOUNDS));
+> +       dst->count = TEST_TARGET;
+> +
+> +       /* Copy less than max. */
+> +       src->count = TEST_SMALL;
+> +       rc = flex_cpy(dst, src);
+> +       KUNIT_EXPECT_EQ(test, rc, 0);
+> +       /* Verify count was adjusted. */
+> +       KUNIT_EXPECT_EQ(test, dst->count, TEST_SMALL);
+
+Just an FYI, macros get evaluated before the expect macros can stringify them.
+So the error message would look something like
+  Expected dest->count == 10
+     but dest->count = 9
+
+Not a big concern, but just noting that "TEST_SMALL" won't be visible at all.
+Could opt for
+
+KUNIT_EXPECT_EQ_MSG(test, dst->count, TEST_SMALL, "my custom extra message");
+
+if you think it'd be usable to make the test more grokkable.
+
+> +       /* Verify element beyond src size was wiped. */
+> +       KUNIT_EXPECT_EQ(test, dst->flex[TEST_SMALL], 0);
+> +       /* Verify element beyond original dst size was untouched. */
+> +       KUNIT_EXPECT_EQ(test, dst->flex[TEST_TARGET], 0xFDFDFDFD);
+> +
+> +       kfree(dst);
+> +       kfree(src);
+> +#undef TEST_BOUNDS
+> +#undef TEST_TARGET
+> +#undef TEST_SMALL
+> +}
+> +
+> +static void flex_dup_test(struct kunit *test)
+> +{
+> +#define TEST_TARGET    12
+> +       struct flex_cpy_obj *src, *dst = NULL, **null = NULL;
+> +       struct flex_dup_obj *encap = NULL;
+> +       unsigned long padding;
+> +       int i, rc;
+> +
+> +       /* Prepare open-coded source. */
+> +       src = kzalloc(struct_size(src, flex, TEST_TARGET), GFP_KERNEL);
+> +       src->count = TEST_TARGET;
+> +       memset(src->flex, 'A', flex_array_size(src, flex, TEST_TARGET));
+> +       src->flex[src->count - 1] = 0x14141414;
+> +
+> +       /* Reject NULL @alloc. */
+> +       rc = flex_dup(null, src, GFP_KERNEL);
+> +       KUNIT_EXPECT_EQ(test, rc, -EINVAL);
+> +
+> +       /* Check good copy. */
+> +       rc = flex_dup(&dst, src, GFP_KERNEL);
+> +       KUNIT_EXPECT_EQ(test, rc, 0);
+> +       KUNIT_ASSERT_TRUE(test, dst != NULL);
+> +       CHECK_COPY(dst);
+> +
+> +       /* Reject non-NULL *@alloc. */
+> +       rc = flex_dup(&dst, src, GFP_KERNEL);
+> +       KUNIT_EXPECT_EQ(test, rc, -EINVAL);
+> +
+> +       kfree(dst);
+> +
+> +       /* Check good encap copy. */
+> +       rc = __flex_dup(&encap, .fas, src, GFP_KERNEL);
+> +       KUNIT_EXPECT_EQ(test, rc, 0);
+> +       KUNIT_ASSERT_TRUE(test, dst != NULL);
+
+FYI, there's a new KUNIT_ASSERT_NOT_NULL() macro in the
+-kselftest/kunit branch,
+https://patchwork.kernel.org/project/linux-kselftest/patch/20220211164246.410079-1-ribalda@chromium.org/
+
+But that's not planned for inclusion into mainline until 5.19, so
+leaving this as-is is better for now.
