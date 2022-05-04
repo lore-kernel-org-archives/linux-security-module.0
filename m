@@ -2,64 +2,57 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D59C4167E
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 01:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6B6C4321E
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 01:58:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343921AbiEDCCD (ORCPT
+        id S1343904AbiEDCCP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 May 2022 22:02:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45872 "EHLO
+        Tue, 3 May 2022 22:02:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343930AbiEDCBw (ORCPT
+        with ESMTP id S1343978AbiEDCB4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 May 2022 22:01:52 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41F544759
-        for <linux-security-module@vger.kernel.org>; Tue,  3 May 2022 18:57:43 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id 202so19921pgc.9
-        for <linux-security-module@vger.kernel.org>; Tue, 03 May 2022 18:57:43 -0700 (PDT)
+        Tue, 3 May 2022 22:01:56 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E60445055
+        for <linux-security-module@vger.kernel.org>; Tue,  3 May 2022 18:57:47 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id iq10so16933750pjb.0
+        for <linux-security-module@vger.kernel.org>; Tue, 03 May 2022 18:57:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rbuuZeQPYS/ZqiRJTOL0fJFLrNpJQKS6QwLbS0JMY/Y=;
-        b=Aydv/AU/AZjVEPtiqBONRpzT2Ty39Vvxt2nRw4lRsRTiChjbuH3CBtpVpPkeZSBFK6
-         zdgmOm2O/OwYN3+guV5vUjUfuHrQcdlBHjoZJkVx9D3VoYUSW8m0vG5AtNFTLXP40SJ0
-         Ys4mhsjMHxsUEY5V0SeB81DJET0W6jrFHyAsM=
+        bh=rmxrp/UxOFb8piH92Vxf3rNJk8bX2cfzoG0Wa8qHsPs=;
+        b=M/yQls1bpyaiOjU76efK5Yp3KeWPaKFU4zmgVp0hnDPVEvcbG0Yr2VZsk9GtUI6EW2
+         P3x8PrWJUASQzTlrmV7uEWLEbManT0y+Zg+pt3XuYEBjyOBd/MkDra9+mVvndIuuMdNV
+         ADaMqJRFecvzQ2p2BbgcShyTVJWmeZm5rse6o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rbuuZeQPYS/ZqiRJTOL0fJFLrNpJQKS6QwLbS0JMY/Y=;
-        b=J7iveBIMLT9ortA9Op31hY8R96kulhuov0TlxagnOqm4go7J7lbUPXHmaQHsjpAdj+
-         tPloE0VoNnPLR0ftkLwOxmfVq7eb1i5JbO7K2kc4hvLIRa+S8xrnGqsAfcWxIXtADznZ
-         R7R9eGDO4KaajOHvfZAIheHKdhw8kcKhDaazS1FYw9lAD8vIAi3J3CvPKPeQN5sjDb26
-         mnpRlerEst2xjLzca3+aiIjRjLnI7Fvlpp8AvOKPerUl+RfcwrY9HLQhTm1KlqZ5xVSn
-         r+wwa/6zKzNmL2dlRXBi1bC1+thBBxAVHlhZya6XZdj6al4OMRepwR+DbAjQ3ncGwTwq
-         X4CA==
-X-Gm-Message-State: AOAM530KNR5JoyhcMcNCqxdOwq78RN81PzE5tXXkPXpBWDqmj5VIFKPV
-        cUlg8ukDoAt0u4VKKPrmU7hfJg==
-X-Google-Smtp-Source: ABdhPJwuyR3D3gjHOuMQAe4uLwpskO6bXcMzL1OMGNpp5ZYff9umCciU4RQpJsR0YF0M5vkWDSaqfA==
-X-Received: by 2002:a63:b45:0:b0:3c1:9a7c:8cb2 with SMTP id a5-20020a630b45000000b003c19a7c8cb2mr15872848pgl.197.1651629463449;
-        Tue, 03 May 2022 18:57:43 -0700 (PDT)
+        bh=rmxrp/UxOFb8piH92Vxf3rNJk8bX2cfzoG0Wa8qHsPs=;
+        b=mI14c17YCbyru5GNlc8yztGtrMedlBEMPWAgc3HDs32eUiXb2vIfuoNF+J21/n3Gtv
+         HyY5/VmyzmpIZlfKV4JJwdZAatoLZnz/bBGhgVGU22O2uzBy6Pho5X1sswF6qJhIJrVF
+         YnXQmN7HTSDA80rumkP7oyiQW3h9aeGSXA8LJTVGOhojX15qN6FLPntlfpqbo+UMqNS9
+         l2JsJYNFvAcarAAeENJi+e7ME6f3D4Ybp2CWdijvollLwTOTcqtvSk81r9ZmPWbAx7in
+         YpfQGKehKFzpBm+hBXnWe2MUq7E/t/BSMMnvVSvMsD6uyNlfl1Y920SBxUBfynmN/Wn7
+         ct2g==
+X-Gm-Message-State: AOAM533lq9mnS5miUDwqy54wHhEdgKbw40rMyoH0bxvx/S1eCdoBvYnY
+        +8Vf/j5/sqyJZ5Sn/gCdgorwIg==
+X-Google-Smtp-Source: ABdhPJw5UH+zE7V//6n7buLSwyzvbe4dXHNIfzHZYUp5Gsqm2kqmkk896GY+p9QRLPq6Ee7dPP32pg==
+X-Received: by 2002:a17:902:d1cd:b0:15d:1483:6ed6 with SMTP id g13-20020a170902d1cd00b0015d14836ed6mr20296811plb.58.1651629466374;
+        Tue, 03 May 2022 18:57:46 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h3-20020a62b403000000b0050dc7628181sm7143868pfn.91.2022.05.03.18.57.42
+        by smtp.gmail.com with ESMTPSA id q3-20020a17090311c300b0015e8d4eb2e9sm6671462plh.307.2022.05.03.18.57.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 May 2022 18:57:42 -0700 (PDT)
+        Tue, 03 May 2022 18:57:45 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     "Gustavo A . R . Silva" <gustavoars@kernel.org>
 Cc:     Kees Cook <keescook@chromium.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        netdev@vger.kernel.org, selinux@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
+        Bradley Grove <linuxdrivers@attotech.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Gabbasov <andrew_gabbasov@mentor.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -69,9 +62,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Baowen Zheng <baowen.zheng@corigine.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Bradley Grove <linuxdrivers@attotech.com>,
         brcm80211-dev-list.pdl@broadcom.com,
         Christian Brauner <brauner@kernel.org>,
+        =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
         Christian Lamparter <chunkeey@googlemail.com>,
         Chris Zankel <chris@zankel.net>,
         Cong Wang <cong.wang@bytedance.com>,
@@ -80,11 +73,13 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Dan Williams <dan.j.williams@intel.com>,
         David Gow <davidgow@google.com>,
         David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
         devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         Eli Cohen <elic@nvidia.com>,
         Eric Dumazet <edumazet@google.com>,
+        Eric Paris <eparis@parisplace.org>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         Felipe Balbi <balbi@kernel.org>,
         Francis Laniel <laniel_francis@privacyrequired.com>,
@@ -95,9 +90,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Guenter Roeck <linux@roeck-us.net>,
         Haiyang Zhang <haiyangz@microsoft.com>,
         Hante Meuleman <hante.meuleman@broadcom.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Hulk Robot <hulkci@huawei.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
         James Morris <jmorris@namei.org>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
@@ -121,49 +116,51 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
         linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
         linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
-        Loic Poulain <loic.poulain@linaro.org>,
+        linux-security-module@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        llvm@lists.linux.dev, Loic Poulain <loic.poulain@linaro.org>,
         Louis Peens <louis.peens@corigine.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
         Marc Dionne <marc.dionne@auristor.com>,
         Marcel Holtmann <marcel@holtmann.org>,
         Mark Brown <broonie@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Max Filippov <jcmvbkbc@gmail.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Muchun Song <songmuchun@bytedance.com>,
-        Nathan Chancellor <nathan@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>, netdev@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
         =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
         Paolo Abeni <pabeni@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         Rich Felker <dalias@aerifal.cx>,
         Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>, selinux@vger.kernel.org,
         "Serge E. Hallyn" <serge@hallyn.com>,
         SHA-cyfmac-dev-list@infineon.com,
         Simon Horman <simon.horman@corigine.com>,
         Stefano Stabellini <sstabellini@kernel.org>,
         Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Stephen Hemminger <sthemmin@microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
         Tadeusz Struk <tadeusz.struk@linaro.org>,
         Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
         Udipto Goswami <quic_ugoswami@quicinc.com>,
         Vincenzo Frascino <vincenzo.frascino@arm.com>,
         wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
         xen-devel@lists.xenproject.org,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
         Yang Yingliang <yangyingliang@huawei.com>
-Subject: [PATCH 28/32] selinux: Use mem_to_flex_dup() with xfrm and sidtab
-Date:   Tue,  3 May 2022 18:44:37 -0700
-Message-Id: <20220504014440.3697851-29-keescook@chromium.org>
+Subject: [PATCH 32/32] esas2r: Use __mem_to_flex() with struct atto_ioctl
+Date:   Tue,  3 May 2022 18:44:41 -0700
+Message-Id: <20220504014440.3697851-33-keescook@chromium.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220504014440.3697851-1-keescook@chromium.org>
 References: <20220504014440.3697851-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3696; h=from:subject; bh=lo77E+k1d7CC41pTHDyzxO7V17zZAZU2RAD4DG2zlf8=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBicdqHYGDosyWmB9LoZ/xyfTluExkJdmxRYXDGGUpK LWQR5yOJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYnHahwAKCRCJcvTf3G3AJtEtD/ 9q7isByvmnLJbF2Mqtm1GQLY5WfrgpLpjGz0wPZPFjTuIQg5cBR9sDT+aFaBgykC00RI3PI08gsS9x JTi9K5ZLLk5xSHCb0CjZKLo+ARF0awusiFxdJwvbSdnvd44xlkRwQcTwLZJVGqr2yqy1jJvW1u/3Yh ZZdqt4uhJJpDu5ukdXw+OwIsu09yrTMufSFBgGUsU5+73BimHVDJD+/bAZBGxLMHaKK06iBuF62hS+ XVkvSjBaytrB7eplhA3FHdoU+z/LeETfQYkjmOeYJe6qC/4XyTzzuTjmlkj3sUYna+gIZzZHw5lCgK e8ZKUtmmyjY5P/B2T6F7kreBUKh5iZLQ2r0VwfwJfpJuk13DSHdvjCQuhl4Gt013zBd9fWhQZJesS5 o9IMVFaMGKiFrS1RpL2iZHNi9XVb32DwtShUKjyeEw7ioOL0wYGhna0Kp6zzMgnwjmSeJYnd7Rpifr zM2tyFEjE6tpop237tnM6UbRdzm3XRg4GDWTpvqG9hsvcQcDOk1Wp2/aCUi8Xgzl8dNl2Fr8PklFs5 z9ZW1ImUkK8q5k+Zy0o0VYflt1WZnHugXEEA8b/AT3xAXNqa3BayfVHOM7lLNNWJLV4rSY9HRRJDtf tRpTY3p7aW3hTdJeb21upjhDTPNqM9cBLjUh0Pb2AymaADYZ1hqLMPlC3M+Q==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1840; h=from:subject; bh=wclXkCNzL8tWkFiLRsyBirHZGs1pS2ud8xMfF2Bbgys=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBicdqIM8CXiBVoq1vvnq9rbFmtFRUsN4irOoYa4gS1 0IJEQ2KJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYnHaiAAKCRCJcvTf3G3AJgOdD/ sEBkA9QLnBKc64IqIq4YxEg4VNWAmPZGOznytqC/Owjod/71puJ/xtUz+R2WjO80ATXotNqfvtWe/d 9/yCjwl54Xp//OjYlRlQVLKBx2Q11FBqi4MBsooAiVirzGDDTHxmU1iuq6Wz2ZIdZlghDO60VBIerY f7y/tG7dD7LIfF4hLq69yeIQaG4gx8rz9gY1ntSTDKIZg+3A+cCuG7GHCLE4hzM9XcCNdcjNHkLLzM U6m0NaS7W7NFnR0mxnwloGXZVChfb884A/O/wC2lhgRNoxndIkrhF+x2NIhSvpQQmje9R235snuAfX mTZgHUaiYXSuSt8YrUbWAYgqP95oux1CHcGbFo6OSfvzri3R22Sizw6iJPckU4HcHFbxLD7v2eEMVp 3ECGtyv2+WAG63yJy/2YJm4mTGZKQM9ZC/lL6nR/U6EYIjrevoE7kTnSKMDTU+PS27rxgE+Rh1Hg9K ipwZmZh4bV/Xed50s1aJAocNChxua0lDl5jjP3QaZBpQGTlt8ls0YY8i1DswPFLAiSj88j/CGJOPOK +82q4/Et8Wn6QjhXmaRuef6bFcOHFRRdfpp1PZEOD91CPvnpq0Q9e/WXiAbsnkg/diZHdL5A9LVD0O L6xVqhkIsupraaLBcdxfoyPChtyfc0T1x/f55UeM/J7IkMaJAzAUEKGWn+Gg==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
@@ -171,111 +168,54 @@ List-ID: <linux-security-module.vger.kernel.org>
 As part of the work to perform bounds checking on all memcpy() uses,
 replace the open-coded a deserialization of bytes out of memory into a
 trailing flexible array by using a flex_array.h helper to perform the
-allocation, bounds checking, and copying:
+allocation, bounds checking, and copying. This requires adding the
+flexible array explicitly.
 
-    struct xfrm_sec_ctx
-    struct sidtab_str_cache
-
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Eric Paris <eparis@parisplace.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: "Christian Göttsche" <cgzones@googlemail.com>
-Cc: netdev@vger.kernel.org
-Cc: selinux@vger.kernel.org
+Cc: Bradley Grove <linuxdrivers@attotech.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/uapi/linux/xfrm.h    | 4 ++--
- security/selinux/ss/sidtab.c | 9 +++------
- security/selinux/xfrm.c      | 7 ++-----
- 3 files changed, 7 insertions(+), 13 deletions(-)
+ drivers/scsi/esas2r/atioctl.h      |  1 +
+ drivers/scsi/esas2r/esas2r_ioctl.c | 11 +++++++----
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/include/uapi/linux/xfrm.h b/include/uapi/linux/xfrm.h
-index 65e13a099b1a..4a6fa2beff6a 100644
---- a/include/uapi/linux/xfrm.h
-+++ b/include/uapi/linux/xfrm.h
-@@ -31,9 +31,9 @@ struct xfrm_id {
- struct xfrm_sec_ctx {
- 	__u8	ctx_doi;
- 	__u8	ctx_alg;
--	__u16	ctx_len;
-+	__DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(__u16, ctx_len);
- 	__u32	ctx_sid;
--	char	ctx_str[0];
-+	__DECLARE_FLEX_ARRAY_ELEMENTS(char, ctx_str);
+diff --git a/drivers/scsi/esas2r/atioctl.h b/drivers/scsi/esas2r/atioctl.h
+index ff2ad9b38575..dd3437412ffc 100644
+--- a/drivers/scsi/esas2r/atioctl.h
++++ b/drivers/scsi/esas2r/atioctl.h
+@@ -831,6 +831,7 @@ struct __packed atto_hba_trace {
+ 	u32 total_length;
+ 	u32 trace_mask;
+ 	u8 reserved2[48];
++	u8 contents[];
  };
  
- /* Security Context Domains of Interpretation */
-diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
-index a54b8652bfb5..a9d434e8cff7 100644
---- a/security/selinux/ss/sidtab.c
-+++ b/security/selinux/ss/sidtab.c
-@@ -23,8 +23,8 @@ struct sidtab_str_cache {
- 	struct rcu_head rcu_member;
- 	struct list_head lru_member;
- 	struct sidtab_entry *parent;
--	u32 len;
--	char str[];
-+	DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(u32, len);
-+	DECLARE_FLEX_ARRAY_ELEMENTS(char, str);
- };
+ #define ATTO_FUNC_SCSI_PASS_THRU     0x04
+diff --git a/drivers/scsi/esas2r/esas2r_ioctl.c b/drivers/scsi/esas2r/esas2r_ioctl.c
+index 08f4e43c7d9e..9310b54b1575 100644
+--- a/drivers/scsi/esas2r/esas2r_ioctl.c
++++ b/drivers/scsi/esas2r/esas2r_ioctl.c
+@@ -947,11 +947,14 @@ static int hba_ioctl_callback(struct esas2r_adapter *a,
+ 					break;
+ 				}
  
- #define index_to_sid(index) ((index) + SECINITSID_NUM + 1)
-@@ -570,8 +570,7 @@ void sidtab_sid2str_put(struct sidtab *s, struct sidtab_entry *entry,
- 		goto out_unlock;
- 	}
+-				memcpy(trc + 1,
+-				       a->fw_coredump_buff + offset,
+-				       len);
++				if (__mem_to_flex(hi, data.trace.contents,
++						  data_length,
++						  a->fw_coredump_buff + offset,
++						  len)) {
++					hi->status = ATTO_STS_INV_FUNC;
++					break;
++				}
  
--	cache = kmalloc(struct_size(cache, str, str_len), GFP_ATOMIC);
--	if (!cache)
-+	if (mem_to_flex_dup(&cache, str, str_len, GFP_ATOMIC))
- 		goto out_unlock;
- 
- 	if (s->cache_free_slots == 0) {
-@@ -584,8 +583,6 @@ void sidtab_sid2str_put(struct sidtab *s, struct sidtab_entry *entry,
- 		s->cache_free_slots--;
- 	}
- 	cache->parent = entry;
--	cache->len = str_len;
--	memcpy(cache->str, str, str_len);
- 	list_add(&cache->lru_member, &s->cache_lru_list);
- 
- 	rcu_assign_pointer(entry->cache, cache);
-diff --git a/security/selinux/xfrm.c b/security/selinux/xfrm.c
-index c576832febc6..bc7a54bf8f0d 100644
---- a/security/selinux/xfrm.c
-+++ b/security/selinux/xfrm.c
-@@ -345,7 +345,7 @@ int selinux_xfrm_state_alloc_acquire(struct xfrm_state *x,
- 				     struct xfrm_sec_ctx *polsec, u32 secid)
- {
- 	int rc;
--	struct xfrm_sec_ctx *ctx;
-+	struct xfrm_sec_ctx *ctx = NULL;
- 	char *ctx_str = NULL;
- 	u32 str_len;
- 
-@@ -360,8 +360,7 @@ int selinux_xfrm_state_alloc_acquire(struct xfrm_state *x,
- 	if (rc)
- 		return rc;
- 
--	ctx = kmalloc(struct_size(ctx, ctx_str, str_len), GFP_ATOMIC);
--	if (!ctx) {
-+	if (mem_to_flex_dup(&ctx, ctx_str, str_len, GFP_ATOMIC)) {
- 		rc = -ENOMEM;
- 		goto out;
- 	}
-@@ -369,8 +368,6 @@ int selinux_xfrm_state_alloc_acquire(struct xfrm_state *x,
- 	ctx->ctx_doi = XFRM_SC_DOI_LSM;
- 	ctx->ctx_alg = XFRM_SC_ALG_SELINUX;
- 	ctx->ctx_sid = secid;
--	ctx->ctx_len = str_len;
--	memcpy(ctx->ctx_str, ctx_str, str_len);
- 
- 	x->security = ctx;
- 	atomic_inc(&selinux_xfrm_refcount);
+-				hi->data_length = len;
+ 			} else if (trc->trace_func == ATTO_TRC_TF_RESET) {
+ 				memset(a->fw_coredump_buff, 0,
+ 				       ESAS2R_FWCOREDUMP_SZ);
 -- 
 2.32.0
 
