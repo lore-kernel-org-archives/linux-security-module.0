@@ -2,223 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71ABDC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 06:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA74EC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 07:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345004AbiEDGn0 (ORCPT
+        id S1345156AbiEDHFi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 May 2022 02:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41248 "EHLO
+        Wed, 4 May 2022 03:05:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240220AbiEDGnX (ORCPT
+        with ESMTP id S232560AbiEDHFi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 02:43:23 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C173A13FBF
-        for <linux-security-module@vger.kernel.org>; Tue,  3 May 2022 23:39:48 -0700 (PDT)
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1nm8fZ-0007wQ-Ke; Wed, 04 May 2022 08:39:29 +0200
-Message-ID: <ac014f19-0c08-c6cf-d639-f55268ba11c2@pengutronix.de>
-Date:   Wed, 4 May 2022 08:39:23 +0200
+        Wed, 4 May 2022 03:05:38 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EDAA21260;
+        Wed,  4 May 2022 00:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651647722; x=1683183722;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7ZCqlQA5sx7gnt6UXenHJLpYVoVKeBIUo5U3B8t8rmE=;
+  b=JgsQrAjNoJ2bKHpmeKPP0rymm4WqEYDo24MUUewYIoYW2YCZbO+tbXTg
+   W3A8ppj9USsIf09Ak+kXTlJKXTJri9oiCdi/rQvT44YlYz8v394LWa0dN
+   Kfn/VssNM90dJL2YaLpgQNwjDYoURjPIp++ntxf/J6NvMN+LJgNsMqMJu
+   ajep2Urat2qbuK0ZHEDlqugapvSSsztxSVYApTPV0FGhLCRu26/YL8xM1
+   3SlErWBs+K4t6mqQ8bra2384HEma3siIYo2NaHQyD4dm/Umz/52mULEaO
+   e2tCUZZw5/9M4opfpxyUgreVIiLXLgP0GQ/aI7N/r6fLRlB6NJb0nUDxn
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10336"; a="267279980"
+X-IronPort-AV: E=Sophos;i="5.91,197,1647327600"; 
+   d="scan'208";a="267279980"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2022 00:02:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,197,1647327600"; 
+   d="scan'208";a="653603446"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 May 2022 00:01:55 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nm91G-000B9r-MZ;
+        Wed, 04 May 2022 07:01:54 +0000
+Date:   Wed, 4 May 2022 15:01:44 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Guowei Du <duguoweisz@gmail.com>, jack@suse.cz
+Cc:     kbuild-all@lists.01.org, amir73il@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jmorris@namei.org, serge@hallyn.com,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com, selinux@vger.kernel.org, duguoweisz@gmail.com,
+        duguowei <duguowei@xiaomi.com>
+Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
+Message-ID: <202205041421.bHwZBEFK-lkp@intel.com>
+References: <20220503183750.1977-1-duguoweisz@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Subject: Re: [PATCH v8 3/6] crypto: caam - add in-kernel interface for blob
- generator
-To:     Michael Walle <michael@walle.cc>
-Cc:     davem@davemloft.net, david@sigma-star.at, dhowells@redhat.com,
-        ebiggers@kernel.org, franck.lenormand@nxp.com,
-        herbert@gondor.apana.org.au, horia.geanta@nxp.com,
-        j.luebbe@pengutronix.de, jarkko@kernel.org, jejb@linux.ibm.com,
-        jmorris@namei.org, kernel@pengutronix.de, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        matthias.schiffer@ew.tq-group.com, pankaj.gupta@nxp.com,
-        richard@nod.at, serge@hallyn.com, sumit.garg@linaro.org,
-        tharvey@gateworks.com, zohar@linux.ibm.com
-References: <20220428140145.870527-4-a.fatoum@pengutronix.de>
- <20220503182454.2749454-1-michael@walle.cc>
-Content-Language: en-US
-In-Reply-To: <20220503182454.2749454-1-michael@walle.cc>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220503183750.1977-1-duguoweisz@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Michael,
+Hi Guowei,
 
-On 03.05.22 20:24, Michael Walle wrote:
->> Add functions to realize encrypting and decrypting into memory alongside
->> the CAAM driver.
->>
->> They will be used in a later commit as a source for the trusted key
->> seal/unseal mechanism.
-> 
-> Thanks for the work on this and I'm excited to try this. I'm currently
-> playing with this and one thing I've noticed is that an export restricted
-> CAAM isn't handled properly.
+Thank you for the patch! Perhaps something to improve:
 
-I didn't know there are still crypto export restrictions in place ;o
+[auto build test WARNING on pcmoore-selinux/next]
+[also build test WARNING on linus/master jmorris-security/next-testing v5.18-rc5]
+[cannot apply to jack-fs/fsnotify next-20220503]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-> That is, there are CAAM's which aren't fully featured. Normally, the
-> caam driver will take care of it. For example, see commit f20311cc9c58
-> ("crypto: caam - disable pkc for non-E SoCs"). For the trusted keys case,
-> it would be nice if the kernel will not even probe (or similar).
->
-> Right now, everything seems to work fine, but once I try to add a new key,
-> I'll get the following errros:
-> 
-> # keyctl add trusted mykey "new 32" @u
-> add_key: Invalid argument
-> [   23.138714] caam_jr 8020000.jr: 20000b0f: CCB: desc idx 11: : Invalid CHA selected.
-> [   23.138740] trusted_key: key_seal failed (-22)
+url:    https://github.com/intel-lab-lkp/linux/commits/Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+config: h8300-randconfig-s032-20220501 (https://download.01.org/0day-ci/archive/20220504/202205041421.bHwZBEFK-lkp@intel.com/config)
+compiler: h8300-linux-gcc (GCC) 11.3.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/6f635019bbd2ab22a64e03164c8812a46531966e
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
+        git checkout 6f635019bbd2ab22a64e03164c8812a46531966e
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=h8300 SHELL=/bin/bash
 
-Trusted key core will attempt TPM and TEE if enabled before trying CAAM unless
-CAAM was explicitly requested. Silently failing in this case would not be
-helpful to users. I think an info message (not error, as it'd be annoying to
-see it every time booting a restricted SoC) is a good idea.
-Thanks for the feedback.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-> Again this is expected, because I run it on a non-E version. IMHO, it
-> should be that the trusted keys shouldn't be enabled at all. Like it is
-> for example if an unknown rng is given:
-> 
->   trusted_key: Unsupported RNG. Supported: kernel, default
 
-Other backends return -ENODEV and Trusted key core will ignore and try next
-in list. Please give below patch a try. I tested it on normal unrestricted
-i.MX6. If that's what you had in mind, I can incorporate it into v9.
-If you have any Tested-by's or the like you want me to add, please tell. :)
+sparse warnings: (new ones prefixed by >>)
+   security/security.c:358:25: sparse: sparse: cast removes address space '__rcu' of expression
+>> security/security.c:1169:35: sparse: sparse: incorrect type in argument 1 (different modifiers) @@     expected struct path *path @@     got struct path const *dir @@
+   security/security.c:1169:35: sparse:     expected struct path *path
+   security/security.c:1169:35: sparse:     got struct path const *dir
+   security/security.c:1180:35: sparse: sparse: incorrect type in argument 1 (different modifiers) @@     expected struct path *path @@     got struct path const *dir @@
+   security/security.c:1180:35: sparse:     expected struct path *path
+   security/security.c:1180:35: sparse:     got struct path const *dir
 
-Cheers,
-Ahmad
+vim +1169 security/security.c
 
------------------------------- 8< ------------------------------
+  1160	
+  1161	int security_path_rmdir(const struct path *dir, struct dentry *dentry)
+  1162	{
+  1163		int ret;
+  1164		if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
+  1165			return 0;
+  1166		ret = call_int_hook(path_rmdir, 0, dir, dentry);
+  1167		if (ret)
+  1168			return ret;
+> 1169		return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
+  1170	}
+  1171	
 
-diff --git a/drivers/crypto/caam/blob_gen.c b/drivers/crypto/caam/blob_gen.c
-index d0b1a0015308..1d07e056a5dd 100644
---- a/drivers/crypto/caam/blob_gen.c
-+++ b/drivers/crypto/caam/blob_gen.c
-@@ -4,6 +4,8 @@
-  * Copyright (C) 2021 Pengutronix, Ahmad Fatoum <kernel@pengutronix.de>
-  */
- 
-+#define pr_fmt(fmt) "caam blob_gen: " fmt
-+
- #include <linux/device.h>
- #include <soc/fsl/caam-blob.h>
- 
-@@ -147,11 +149,27 @@ EXPORT_SYMBOL(caam_process_blob);
- 
- struct caam_blob_priv *caam_blob_gen_init(void)
- {
-+	struct caam_drv_private *ctrlpriv;
- 	struct device *jrdev;
- 
-+	/*
-+	 * caam_blob_gen_init() may expectedly fail with -ENODEV, e.g. when
-+	 * CAAM driver didn't probe or when SoC lacks BLOB support. An
-+	 * error would be harsh in this case, so we stick to info level.
-+	 */
-+
- 	jrdev = caam_jr_alloc();
--	if (IS_ERR(jrdev))
--		return ERR_CAST(jrdev);
-+	if (IS_ERR(jrdev)) {
-+		pr_info("no job ring available\n");
-+		return ERR_PTR(-ENODEV);
-+	}
-+
-+	ctrlpriv = dev_get_drvdata(jrdev->parent);
-+	if (!ctrlpriv->blob_present) {
-+		dev_info(jrdev, "no hardware blob generation support\n");
-+		caam_jr_free(jrdev);
-+		return ERR_PTR(-ENODEV);
-+	}
- 
- 	return container_of(jrdev, struct caam_blob_priv, jrdev);
- }
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index ca0361b2dbb0..a0a622ca5dd4 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -660,6 +660,10 @@ static int caam_probe(struct platform_device *pdev)
- 
- 	caam_little_end = !(bool)(rd_reg32(&ctrl->perfmon.status) &
- 				  (CSTA_PLEND | CSTA_ALT_PLEND));
-+
-+	comp_params = rd_reg32(&ctrl->perfmon.comp_parms_ls);
-+	ctrlpriv->blob_present = !!(comp_params & CTPR_LS_BLOB);
-+
- 	comp_params = rd_reg32(&ctrl->perfmon.comp_parms_ms);
- 	if (comp_params & CTPR_MS_PS && rd_reg32(&ctrl->mcr) & MCFGR_LONG_PTR)
- 		caam_ptr_sz = sizeof(u64);
-diff --git a/drivers/crypto/caam/intern.h b/drivers/crypto/caam/intern.h
-index 7d45b21bd55a..e92210e2ab76 100644
---- a/drivers/crypto/caam/intern.h
-+++ b/drivers/crypto/caam/intern.h
-@@ -92,6 +92,7 @@ struct caam_drv_private {
- 	 */
- 	u8 total_jobrs;		/* Total Job Rings in device */
- 	u8 qi_present;		/* Nonzero if QI present in device */
-+	u8 blob_present;	/* Nonzero if BLOB support present in device */
- 	u8 mc_en;		/* Nonzero if MC f/w is active */
- 	int secvio_irq;		/* Security violation interrupt number */
- 	int virt_en;		/* Virtualization enabled in CAAM */
-diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index 3738625c0250..b829066f5063 100644
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -414,6 +414,7 @@ struct caam_perfmon {
- #define CTPR_MS_PG_SZ_MASK	0x10
- #define CTPR_MS_PG_SZ_SHIFT	4
- 	u32 comp_parms_ms;	/* CTPR - Compile Parameters Register	*/
-+#define CTPR_LS_BLOB           BIT(1)
- 	u32 comp_parms_ls;	/* CTPR - Compile Parameters Register	*/
- 	u64 rsvd1[2];
- 
-diff --git a/include/soc/fsl/caam-blob.h b/include/soc/fsl/caam-blob.h
-index ec57eec4f2d2..8e821bd56e54 100644
---- a/include/soc/fsl/caam-blob.h
-+++ b/include/soc/fsl/caam-blob.h
-@@ -38,8 +38,9 @@ struct caam_blob_info {
- 
- /**
-  * caam_blob_gen_init - initialize blob generation
-- * Return: pointer to new caam_blob_priv instance on success
-- * and error pointer otherwise
-+ * Return: pointer to new &struct caam_blob_priv instance on success
-+ * and ``ERR_PTR(-ENODEV)`` if CAAM has no hardware blobbing support
-+ * or no job ring could be allocated.
-  */
- struct caam_blob_priv *caam_blob_gen_init(void);
- 
-diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
-index 46cb2484ec36..e3415c520c0a 100644
---- a/security/keys/trusted-keys/trusted_caam.c
-+++ b/security/keys/trusted-keys/trusted_caam.c
-@@ -55,10 +55,8 @@ static int trusted_caam_init(void)
- 	int ret;
- 
- 	blobifier = caam_blob_gen_init();
--	if (IS_ERR(blobifier)) {
--		pr_err("Job Ring Device allocation for transform failed\n");
-+	if (IS_ERR(blobifier))
- 		return PTR_ERR(blobifier);
--	}
- 
- 	ret = register_key_type(&key_type_trusted);
- 	if (ret)
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+0-DAY CI Kernel Test Service
+https://01.org/lkp
