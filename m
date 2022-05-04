@@ -2,128 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA74EC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 07:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4857C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 07:18:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345156AbiEDHFi (ORCPT
+        id S1345273AbiEDHV5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 May 2022 03:05:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60948 "EHLO
+        Wed, 4 May 2022 03:21:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232560AbiEDHFi (ORCPT
+        with ESMTP id S230240AbiEDHVz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 03:05:38 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EDAA21260;
-        Wed,  4 May 2022 00:02:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651647722; x=1683183722;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7ZCqlQA5sx7gnt6UXenHJLpYVoVKeBIUo5U3B8t8rmE=;
-  b=JgsQrAjNoJ2bKHpmeKPP0rymm4WqEYDo24MUUewYIoYW2YCZbO+tbXTg
-   W3A8ppj9USsIf09Ak+kXTlJKXTJri9oiCdi/rQvT44YlYz8v394LWa0dN
-   Kfn/VssNM90dJL2YaLpgQNwjDYoURjPIp++ntxf/J6NvMN+LJgNsMqMJu
-   ajep2Urat2qbuK0ZHEDlqugapvSSsztxSVYApTPV0FGhLCRu26/YL8xM1
-   3SlErWBs+K4t6mqQ8bra2384HEma3siIYo2NaHQyD4dm/Umz/52mULEaO
-   e2tCUZZw5/9M4opfpxyUgreVIiLXLgP0GQ/aI7N/r6fLRlB6NJb0nUDxn
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10336"; a="267279980"
-X-IronPort-AV: E=Sophos;i="5.91,197,1647327600"; 
-   d="scan'208";a="267279980"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2022 00:02:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,197,1647327600"; 
-   d="scan'208";a="653603446"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 May 2022 00:01:55 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nm91G-000B9r-MZ;
-        Wed, 04 May 2022 07:01:54 +0000
-Date:   Wed, 4 May 2022 15:01:44 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Guowei Du <duguoweisz@gmail.com>, jack@suse.cz
-Cc:     kbuild-all@lists.01.org, amir73il@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, jmorris@namei.org, serge@hallyn.com,
-        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com, selinux@vger.kernel.org, duguoweisz@gmail.com,
-        duguowei <duguowei@xiaomi.com>
-Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
-Message-ID: <202205041421.bHwZBEFK-lkp@intel.com>
-References: <20220503183750.1977-1-duguoweisz@gmail.com>
+        Wed, 4 May 2022 03:21:55 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD4B1ADA5
+        for <linux-security-module@vger.kernel.org>; Wed,  4 May 2022 00:18:16 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id g23so669092edy.13
+        for <linux-security-module@vger.kernel.org>; Wed, 04 May 2022 00:18:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HeDEBC07UgqxsnebnTXHGSAnBgMOF2dSI/K4/ycdir4=;
+        b=YU5OMd73Si+5Q7eezRvTwdPDhF0jXaVTuwFWRU724SKGGloQXdlPG0YIbvGIPIvCEh
+         dbB6OBn/F3ingQg0jfPVD96Mzywvz5BjjGP6iFXZu+DCNmDCBkwsDrGygbU0vRiTBlSB
+         lz1a0yhiew8HtumOPuAlYiBHyLzRep6vC6wrk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HeDEBC07UgqxsnebnTXHGSAnBgMOF2dSI/K4/ycdir4=;
+        b=HRQBRLZzVif9DL/ac2y7309A9d62ey8K4AE+WZ6VJXk1x2GDnCvRQz97/NI/v6HgPE
+         8910QQctWykRKMbbEi+URCoft4nUSU/vtuxdGzWdxWEBOi4muyL5kpkBsj2fUVSU2p8I
+         b3ra7VEtwVXaxnYy9bLD7/nhHqqAkcKB+IOHmPr1dHlF5+uToqHZsopv38RI8GvnwVP+
+         I8Qw/rv46HWpL78zdERNqbddLgAvW3Wvs62bSwn2eDt2gHB955FW/Pqc753cKVolySAU
+         yZOWJaJZJ2K+ahJ+4CDEXHLfeMrzsDTJLAvp/jUxrNITFF61H22h12j2Hp0CYGfK5jwU
+         TS0w==
+X-Gm-Message-State: AOAM532eEAp87grvLWXPEtOIZMk5qVXhOHEcEcc7xdrKLOWD+hbhckLB
+        jbkCbXi4Di//LItgPLNUqOFIy7N+q5Nvh/ElOtduTQ==
+X-Google-Smtp-Source: ABdhPJzPGISWNzSmwrZpgSCpom5e+dKvg459tFdiZ6LU4rFalV9aIdDy7O0Kq0ESHKyLyirLYCZEKqYQh1xQDoPwch4=
+X-Received: by 2002:a50:9346:0:b0:425:e4c0:ab4b with SMTP id
+ n6-20020a509346000000b00425e4c0ab4bmr21853531eda.154.1651648694663; Wed, 04
+ May 2022 00:18:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220503183750.1977-1-duguoweisz@gmail.com>
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <20220503224305.GF1360180@dread.disaster.area>
+In-Reply-To: <20220503224305.GF1360180@dread.disaster.area>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 4 May 2022 09:18:03 +0200
+Message-ID: <CAJfpegt_p2Tg+Tr34PtKSXvTyTJdTTwALMPRVE8KK2NmNVZhEg@mail.gmail.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Guowei,
+On Wed, 4 May 2022 at 00:43, Dave Chinner <david@fromorbit.com> wrote:
 
-Thank you for the patch! Perhaps something to improve:
+> "values" is a very generic name - probably should end up being
+> something more descriptive of the functionality is provides,
+> especially if the header file is going to be dumped in
+> include/linux/. I don't really have a good suggestion at the moment,
+> though.
 
-[auto build test WARNING on pcmoore-selinux/next]
-[also build test WARNING on linus/master jmorris-security/next-testing v5.18-rc5]
-[cannot apply to jack-fs/fsnotify next-20220503]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+The obvious ones are stat and attr, which are taken already.   Info is
+probably too generic as well.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-config: h8300-randconfig-s032-20220501 (https://download.01.org/0day-ci/archive/20220504/202205041421.bHwZBEFK-lkp@intel.com/config)
-compiler: h8300-linux-gcc (GCC) 11.3.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/6f635019bbd2ab22a64e03164c8812a46531966e
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
-        git checkout 6f635019bbd2ab22a64e03164c8812a46531966e
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=h8300 SHELL=/bin/bash
+Ideas are welcome.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+>
+> ....
+>
+> > +
+> > +enum {
+> > +     VAL_MNT_INFO,
+> > +};
+> > +
+> > +static struct val_desc val_mnt_group[] = {
+> > +     { VD_NAME("info"),              .idx = VAL_MNT_INFO             },
+> > +     { }
+> > +};
+> ....
+> > +
+> > +
+> > +static struct val_desc val_toplevel_group[] = {
+> > +     { VD_NAME("mnt:"),      .get = val_mnt_get,     },
+> > +     { VD_NAME("mntns:"),    .get = val_mntns_get,   },
+> > +     { },
+> > +};
+>
+> I know this is an early POC, my main question is how do you
+> envisiage this table driven structure being extended down from just
+> the mount into the filesystem so we can expose filesystem specific
+> information that isn't covered by generic interfaces like statx?
 
+I was thinking of adding a i_op callback.   The details are a bit
+fuzzy, since the vfs and the fs would have to work together when
+listing the attributes and possibly also when retrieving the attribute
+itself (think mount options).
 
-sparse warnings: (new ones prefixed by >>)
-   security/security.c:358:25: sparse: sparse: cast removes address space '__rcu' of expression
->> security/security.c:1169:35: sparse: sparse: incorrect type in argument 1 (different modifiers) @@     expected struct path *path @@     got struct path const *dir @@
-   security/security.c:1169:35: sparse:     expected struct path *path
-   security/security.c:1169:35: sparse:     got struct path const *dir
-   security/security.c:1180:35: sparse: sparse: incorrect type in argument 1 (different modifiers) @@     expected struct path *path @@     got struct path const *dir @@
-   security/security.c:1180:35: sparse:     expected struct path *path
-   security/security.c:1180:35: sparse:     got struct path const *dir
-
-vim +1169 security/security.c
-
-  1160	
-  1161	int security_path_rmdir(const struct path *dir, struct dentry *dentry)
-  1162	{
-  1163		int ret;
-  1164		if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
-  1165			return 0;
-  1166		ret = call_int_hook(path_rmdir, 0, dir, dentry);
-  1167		if (ret)
-  1168			return ret;
-> 1169		return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
-  1170	}
-  1171	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Thanks,
+Miklos
