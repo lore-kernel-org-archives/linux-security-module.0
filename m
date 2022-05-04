@@ -2,155 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF06DC4332F
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 May 2022 22:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8469DC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 01:21:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243791AbiECWqq (ORCPT
+        id S245448AbiEDBZQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 May 2022 18:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34710 "EHLO
+        Tue, 3 May 2022 21:25:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236973AbiECWqq (ORCPT
+        with ESMTP id S245635AbiEDBZK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 May 2022 18:46:46 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 80A662DA8D;
-        Tue,  3 May 2022 15:43:12 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id DCC56534356;
-        Wed,  4 May 2022 08:43:06 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nm1EX-007glS-UL; Wed, 04 May 2022 08:43:05 +1000
-Date:   Wed, 4 May 2022 08:43:05 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <20220503224305.GF1360180@dread.disaster.area>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+        Tue, 3 May 2022 21:25:10 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD034616F;
+        Tue,  3 May 2022 18:20:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651627235; x=1683163235;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=i4MxkxPDNSGtzMvlquogsvEU8lFtzY2vpeFrQnL7YOU=;
+  b=XM9QFrmZspa71IODuBGPKLe8jAEGqod/CRPLKATvxIqfNM+Bbf0wLYgA
+   ltahLkLodmGS9fp/hikMdbAbFCN6Yw9CSudtzs3AuJlv4MKmKI0SIId09
+   HtxaDbomHcPs6LxteZOHJWszPxnVblmw2kNH0JsBD5KWLVXXMM0bNXCto
+   P6M/FpvrbrQlZeLCVOSioDm+jgOZnNndFWIfFjcP0qw77GLINjYInvKF8
+   EtznMu+aFlJxDvwV9bl9PYdFBsAYIQ9yt8vSPXVOQRewIu3EMJULW++cD
+   h66q6IIEYDgqVeSKP2Sp0GhWz6qnp8Di1MdnRi1K/Nmi3PdTcb+6iUGPh
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10336"; a="354072558"
+X-IronPort-AV: E=Sophos;i="5.91,196,1647327600"; 
+   d="scan'208";a="354072558"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2022 18:19:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,196,1647327600"; 
+   d="scan'208";a="516817108"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 03 May 2022 18:19:33 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nm3fw-000Avv-BI;
+        Wed, 04 May 2022 01:19:32 +0000
+Date:   Wed, 4 May 2022 09:19:08 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Guowei Du <duguoweisz@gmail.com>, jack@suse.cz
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, amir73il@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jmorris@namei.org, serge@hallyn.com,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com, selinux@vger.kernel.org, duguoweisz@gmail.com,
+        duguowei <duguowei@xiaomi.com>
+Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
+Message-ID: <202205040959.SAV6vlzH-lkp@intel.com>
+References: <20220503183750.1977-1-duguoweisz@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=6271afff
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
-        a=yUZlb4BpVi82aJ1b07cA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20220503183750.1977-1-duguoweisz@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 03, 2022 at 02:23:23PM +0200, Miklos Szeredi wrote:
-> This is a simplification of the getvalues(2) prototype and moving it to the
-> getxattr(2) interface, as suggested by Dave.
-> 
-> The patch itself just adds the possibility to retrieve a single line of
-> /proc/$$/mountinfo (which was the basic requirement from which the fsinfo
-> patchset grew out of).
-> 
-> But this should be able to serve Amir's per-sb iostats, as well as a host of
-> other cases where some statistic needs to be retrieved from some object.  Note:
-> a filesystem object often represents other kinds of objects (such as processes
-> in /proc) so this is not limited to fs attributes.
-> 
-> This also opens up the interface to setting attributes via setxattr(2).
-> 
-> After some pondering I made the namespace so:
-> 
-> : - root
-> bar - an attribute
-> foo: - a folder (can contain attributes and/or folders)
-> 
-> The contents of a folder is represented by a null separated list of names.
-> 
-> Examples:
-> 
-> $ getfattr -etext -n ":" .
-> # file: .
-> :="mnt:\000mntns:"
-> 
-> $ getfattr -etext -n ":mnt:" .
-> # file: .
-> :mnt:="info"
-> 
-> $ getfattr -etext -n ":mnt:info" .
-> # file: .
-> :mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
-> 
-> $ getfattr -etext -n ":mntns:" .
-> # file: .
-> :mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
-> 
-> $ getfattr -etext -n ":mntns:28:" .
-> # file: .
-> :mntns:28:="info"
-> 
-> Comments?
+Hi Guowei,
 
-I like. :)
+Thank you for the patch! Yet something to improve:
 
-> Thanks,
-> Miklos
-> 
-> ---
->  fs/Makefile            |    2 
->  fs/mount.h             |    8 +
->  fs/namespace.c         |   15 ++-
->  fs/pnode.h             |    2 
->  fs/proc_namespace.c    |   15 ++-
->  fs/values.c            |  242 +++++++++++++++++++++++++++++++++++++++++++++++++
->  fs/xattr.c             |   16 ++-
->  include/linux/values.h |   11 ++
+[auto build test ERROR on pcmoore-selinux/next]
+[also build test ERROR on linus/master v5.18-rc5]
+[cannot apply to jack-fs/fsnotify next-20220503]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-"values" is a very generic name - probably should end up being
-something more descriptive of the functionality is provides,
-especially if the header file is going to be dumped in
-include/linux/. I don't really have a good suggestion at the moment,
-though. 
+url:    https://github.com/intel-lab-lkp/linux/commits/Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+config: hexagon-randconfig-r041-20220501 (https://download.01.org/0day-ci/archive/20220504/202205040959.SAV6vlzH-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 363b3a645a1e30011cc8da624f13dac5fd915628)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/6f635019bbd2ab22a64e03164c8812a46531966e
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
+        git checkout 6f635019bbd2ab22a64e03164c8812a46531966e
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash
 
-....
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-> +
-> +enum {
-> +	VAL_MNT_INFO,
-> +};
-> +
-> +static struct val_desc val_mnt_group[] = {
-> +	{ VD_NAME("info"),		.idx = VAL_MNT_INFO		},
-> +	{ }
-> +};
-....
-> +
-> +
-> +static struct val_desc val_toplevel_group[] = {
-> +	{ VD_NAME("mnt:"),	.get = val_mnt_get,	},
-> +	{ VD_NAME("mntns:"),	.get = val_mntns_get,	},
-> +	{ },
-> +};
+All errors (new ones prefixed by >>):
 
-I know this is an early POC, my main question is how do you
-envisiage this table driven structure being extended down from just
-the mount into the filesystem so we can expose filesystem specific
-information that isn't covered by generic interfaces like statx?
+>> security/security.c:1169:28: error: passing 'const struct path *' to parameter of type 'struct path *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+           return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
+                                     ^~~
+   include/linux/fsnotify.h:83:51: note: passing argument to parameter 'path' here
+   static inline int fsnotify_path_perm(struct path *path, struct dentry *dentry, __u32 mask)
+                                                     ^
+   security/security.c:1180:28: error: passing 'const struct path *' to parameter of type 'struct path *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+           return fsnotify_path_perm(dir, dentry, MAY_UNLINK);
+                                     ^~~
+   include/linux/fsnotify.h:83:51: note: passing argument to parameter 'path' here
+   static inline int fsnotify_path_perm(struct path *path, struct dentry *dentry, __u32 mask)
+                                                     ^
+   2 errors generated.
 
-Cheers,
 
-Dave.
+vim +1169 security/security.c
+
+  1160	
+  1161	int security_path_rmdir(const struct path *dir, struct dentry *dentry)
+  1162	{
+  1163		int ret;
+  1164		if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
+  1165			return 0;
+  1166		ret = call_int_hook(path_rmdir, 0, dir, dentry);
+  1167		if (ret)
+  1168			return ret;
+> 1169		return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
+  1170	}
+  1171	
+
 -- 
-Dave Chinner
-david@fromorbit.com
+0-DAY CI Kernel Test Service
+https://01.org/lkp
