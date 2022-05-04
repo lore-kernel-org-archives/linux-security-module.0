@@ -2,191 +2,232 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DC1C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47867C433FE
 	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 23:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381253AbiEDXe6 (ORCPT
+        id S243842AbiEDXe6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Wed, 4 May 2022 19:34:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41522 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381703AbiEDXYx (ORCPT
+        with ESMTP id S1384659AbiEDXIJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 19:24:53 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0521F4DF55
-        for <linux-security-module@vger.kernel.org>; Wed,  4 May 2022 16:21:15 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id t11-20020a17090ad50b00b001d95bf21996so6486374pju.2
-        for <linux-security-module@vger.kernel.org>; Wed, 04 May 2022 16:21:15 -0700 (PDT)
+        Wed, 4 May 2022 19:08:09 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD5A14665C
+        for <linux-security-module@vger.kernel.org>; Wed,  4 May 2022 16:00:39 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id a14-20020a7bc1ce000000b00393fb52a386so4097859wmj.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 May 2022 16:00:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f0BxOsiS7N+HTfWR68wbuI5GyHjxWUqAQAvHwIwW+yE=;
-        b=R5D0DOFVkQco+OK496uEyWM8qRT/qEDa61ADRf8s0rAJeF034c8CBOcJkI9DhSK99P
-         T9KGcuzycnvXcJPNISrJKPRM0NBDojZJdo/30qDInqLY8l2tGI62dZHO/kSe2d29NFi9
-         K7Vu8cNCpHGLqj5AbbquXriJVZ5gqG2e3HHcg=
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qfWwXZWPvxEE3w1uLnkzPlrx6nJaZSmQ1gbsC3kCZlI=;
+        b=fMehx6+pldeupaypGl5lGMLh8Blc5Pb964suvnwujkOTfmhEds0USznV5iIpAmDMiQ
+         3bX5ovLiBcm+P+Qjkm7S30sNoAIneyphU/3HUmg8FgNya3x4Ys+vGWu+B9CwMsbZwixV
+         5hhw5d61RXfF0ZuA9a19yWLWnmsownsAlvxGOq/bh+zf+KCchfsYUSjN3DbkCogRNiil
+         4sZMBBy0wN3DJWJ3HV3y9RTPrsOy6eZO4wbIVzlw9cfeY3DYzhWrMs9JJuoIK2/rWVPl
+         SzHF6XACCrgzPRUtq8fL5afcNflV6Vriy9o5VdAvBNuxRLNvKxX70jkd0hURqNp4X2R8
+         1xwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f0BxOsiS7N+HTfWR68wbuI5GyHjxWUqAQAvHwIwW+yE=;
-        b=26EpXfzZ7wOM2+Cs7VcJUx6trMDgqiACfArmDsfGsOvUQRHsScgP2TBfEDCL2HyauM
-         WcOwAx5HCiRt/hv8gxSZfUVxxqSxSdNKHvJQXud2K/LDURZinUsTU9kf0NDeljr+GzF0
-         B54+8tliVQD4YF0LjgvxbVopCHO+Cgd52DZZC34w/4QBWMiYPl+7Am6sJQi1mUgGX1X5
-         6LmRKA8DQr5AB/6ZtmTl7S9b1SYPcsKkgPdkGx8Bsk8ZtBjP9wVVN2Hk2mp/pNth77b/
-         1UwWif7IZPpPOIt2mqm33NfcASQEUlPQQJWpSE+b+Evoz0nZ+cKLJx8QDodWdKQ0Nu2i
-         4IVA==
-X-Gm-Message-State: AOAM533V12bo5EMIIWZNxZgmR/CL5LI056n4ywyS4PBfFOVxJooh8lJy
-        L7i1yREnS7zXxA0BEAd/JB0OQQ==
-X-Google-Smtp-Source: ABdhPJz4iqQo29US5gcPdIjO5OrbAwRmVDtwaNJJOfTh1rXJxFOpVW3YvogErA3bWiWXuRJJXotSlg==
-X-Received: by 2002:a17:90b:4b83:b0:1dc:5073:b704 with SMTP id lr3-20020a17090b4b8300b001dc5073b704mr2397627pjb.94.1651706474455;
-        Wed, 04 May 2022 16:21:14 -0700 (PDT)
-Received: from evgreen-glaptop.lan ([98.47.98.87])
-        by smtp.gmail.com with ESMTPSA id q12-20020a170902f78c00b0015e8d4eb2d6sm1901pln.288.2022.05.04.16.21.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 16:21:14 -0700 (PDT)
-From:   Evan Green <evgreen@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Matthew Garrett <mgarrett@aurora.tech>, dlunev@google.com,
-        zohar@linux.ibm.com, jejb@linux.ibm.com,
-        linux-integrity@vger.kernel.org, corbet@lwn.net, rjw@rjwysocki.net,
-        gwendal@chromium.org, jarkko@kernel.org, linux-pm@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        David Howells <dhowells@redhat.com>,
-        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Len Brown <len.brown@intel.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Pavel Machek <pavel@ucw.cz>, Peter Huewe <peterhuewe@gmx.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
-        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 00/10] Encrypted Hibernation
-Date:   Wed,  4 May 2022 16:20:52 -0700
-Message-Id: <20220504232102.469959-1-evgreen@chromium.org>
-X-Mailer: git-send-email 2.31.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qfWwXZWPvxEE3w1uLnkzPlrx6nJaZSmQ1gbsC3kCZlI=;
+        b=S6KmyxPC3UtONTCanhvox45o/f72vEUDJvfB/vWdfCMXPbmrM3CHGqOvF2hn3lr+0e
+         9V65OT4E7DvleAqfcmcZOcMG51xdUdT7WpFrRse3Any0bYiFmdR0sEva+8ytPDDPlT04
+         nhZnJACmgQlq8rdehuiIHViWDwrwPQ6lSCvAAlLeqi0ToXlc4R3w2SH59BA1zBkEUSmJ
+         5iMW1TzC5ivRk8rmLSe2+6AZqBKVWOi+XaJKO/k/XRX1j+8O68AFvxUjrhQqHWD3NzMH
+         gnRt4mM01NBZSZnjsyAitN4wWh+J/N95n7+Dd+jWte6OD25RCpyK1d/HjE/i8d1/DBGm
+         sKrQ==
+X-Gm-Message-State: AOAM532Kc9dIcJ80uEZXfK2nRGJVBf4y5CHa1qw2DFmlZr9JWFbeO3/t
+        X7FyS9El+yEQKR8ThkEZ1lXMAAEnNCRxA77IEbYz
+X-Google-Smtp-Source: ABdhPJzn8kCki7g2xrksVPCE2X0dMoSQ5GNrlnQWJqU+8a/RnZE5ShgkUyQvDBvdRa4kG7oifCsX28YouBnWU5DkxR0=
+X-Received: by 2002:a05:600c:4fc9:b0:394:4317:1aa4 with SMTP id
+ o9-20020a05600c4fc900b0039443171aa4mr1477643wmq.179.1651705059031; Wed, 04
+ May 2022 15:57:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220504014440.3697851-1-keescook@chromium.org> <20220504014440.3697851-29-keescook@chromium.org>
+In-Reply-To: <20220504014440.3697851-29-keescook@chromium.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 4 May 2022 18:57:28 -0400
+Message-ID: <CAHC9VhT5Y=ENiSyb=S-NVbGX63sLOv4nVuR_GS-yww6tiz0wYA@mail.gmail.com>
+Subject: Re: [PATCH 28/32] selinux: Use mem_to_flex_dup() with xfrm and sidtab
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        netdev@vger.kernel.org, selinux@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Andy Lavr <andy.lavr@gmail.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Baowen Zheng <baowen.zheng@corigine.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Bradley Grove <linuxdrivers@attotech.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        Christian Brauner <brauner@kernel.org>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        Chris Zankel <chris@zankel.net>,
+        Cong Wang <cong.wang@bytedance.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Gow <davidgow@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eli Cohen <elic@nvidia.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Francis Laniel <laniel_francis@privacyrequired.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gregory Greenman <gregory.greenman@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        John Keeping <john@metanate.com>,
+        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
+        Keith Packard <keithp@keithp.com>, keyrings@vger.kernel.org,
+        kunit-dev@googlegroups.com,
+        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Leon Romanovsky <leon@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux1394-devel@lists.sourceforge.net,
+        linux-afs@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Louis Peens <louis.peens@corigine.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rich Felker <dalias@aerifal.cx>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        SHA-cyfmac-dev-list@infineon.com,
+        Simon Horman <simon.horman@corigine.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Tadeusz Struk <tadeusz.struk@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
+        Udipto Goswami <quic_ugoswami@quicinc.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
+        xen-devel@lists.xenproject.org,
+        Yang Yingliang <yangyingliang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-We are exploring enabling hibernation in some new scenarios. However,
-our security team has a few requirements, listed below:
-1. The hibernate image must be encrypted with protection derived from
-   both the platform (eg TPM) and user authentication data (eg
-   password).
-2. Hibernation must not be a vector by which a malicious userspace can
-   escalate to the kernel.
+On Tue, May 3, 2022 at 9:57 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> As part of the work to perform bounds checking on all memcpy() uses,
+> replace the open-coded a deserialization of bytes out of memory into a
+> trailing flexible array by using a flex_array.h helper to perform the
+> allocation, bounds checking, and copying:
+>
+>     struct xfrm_sec_ctx
+>     struct sidtab_str_cache
+>
+> Cc: Steffen Klassert <steffen.klassert@secunet.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Cc: Eric Paris <eparis@parisplace.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Xiu Jianfeng <xiujianfeng@huawei.com>
+> Cc: "Christian G=C3=B6ttsche" <cgzones@googlemail.com>
+> Cc: netdev@vger.kernel.org
+> Cc: selinux@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  include/uapi/linux/xfrm.h    | 4 ++--
+>  security/selinux/ss/sidtab.c | 9 +++------
+>  security/selinux/xfrm.c      | 7 ++-----
+>  3 files changed, 7 insertions(+), 13 deletions(-)
+>
+> diff --git a/include/uapi/linux/xfrm.h b/include/uapi/linux/xfrm.h
+> index 65e13a099b1a..4a6fa2beff6a 100644
+> --- a/include/uapi/linux/xfrm.h
+> +++ b/include/uapi/linux/xfrm.h
+> @@ -31,9 +31,9 @@ struct xfrm_id {
+>  struct xfrm_sec_ctx {
+>         __u8    ctx_doi;
+>         __u8    ctx_alg;
+> -       __u16   ctx_len;
+> +       __DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(__u16, ctx_len);
+>         __u32   ctx_sid;
+> -       char    ctx_str[0];
+> +       __DECLARE_FLEX_ARRAY_ELEMENTS(char, ctx_str);
+>  };
 
-Requirement #1 can be achieved solely with uswsusp, however requirement
-2 necessitates mechanisms in the kernel to guarantee integrity of the
-hibernate image. The kernel needs a way to authenticate that it generated
-the hibernate image being loaded, and that the image has not been tampered
-with. Adding support for in-kernel AEAD encryption with a TPM-sealed key
-allows us to achieve both requirements with a single computation pass.
+While I like the idea of this in principle, I'd like to hear about the
+testing you've done on these patches.  A previous flex array
+conversion in the audit uapi headers ended up causing a problem with
+GCC12 and SWIG; while it was a SWIG problem and not a kernel header
+problem that was thin consolation for those with broken builds.
 
-Matthew Garrett published a series [1] that aligns closely with this
-goal. His series utilized the fact that PCR23 is a resettable PCR that
-can be blocked from access by usermode. The TPM can create a sealed key
-tied to PCR23 in two ways. First, the TPM can attest to the value of
-PCR23 when the key was created, which the kernel can use on resume to
-verify that the kernel must have created the key (since it is the only
-one capable of modifying PCR23). It can also create a policy that enforces
-PCR23 be set to a specific value as a condition of unsealing the key,
-preventing usermode from unsealing the key by talking directly to the
-TPM.
+> diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
+> index a54b8652bfb5..a9d434e8cff7 100644
+> --- a/security/selinux/ss/sidtab.c
+> +++ b/security/selinux/ss/sidtab.c
+> @@ -23,8 +23,8 @@ struct sidtab_str_cache {
+>         struct rcu_head rcu_member;
+>         struct list_head lru_member;
+>         struct sidtab_entry *parent;
+> -       u32 len;
+> -       char str[];
+> +       DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(u32, len);
+> +       DECLARE_FLEX_ARRAY_ELEMENTS(char, str);
+>  };
+>
+>  #define index_to_sid(index) ((index) + SECINITSID_NUM + 1)
 
-This series adopts that primitive as a foundation, tweaking and building
-on it a bit. Where Matthew's series used the TPM-backed key to encrypt a
-hash of the image, this series uses the key directly as a gcm(aes)
-encryption key, which the kernel uses to encrypt and decrypt the
-hibernate image in chunks of 16 pages. This provides both encryption and
-integrity, which turns out to be a noticeable performance improvement over
-separate passes for encryption and hashing.
-
-The series also introduces the concept of mixing user key material into
-the encryption key. This allows usermode to introduce key material
-based on unspecified external authentication data (in our case derived
-from something like the user password or PIN), without requiring
-usermode to do a separate encryption pass.
-
-Matthew also documented issues his series had [2] related to generating
-fake images by booting alternate kernels without the PCR23 limiting.
-With access to PCR23 on the same machine, usermode can create fake
-hibernate images that are indistinguishable to the new kernel from
-genuine ones. His post outlines a solution that involves adding more
-PCRs into the creation data and policy, with some gyrations to make this
-work well on a standard PC.
-
-Our approach would be similar: on our machines PCR 0 indicates whether
-the system is booted in secure/verified mode or developer mode. By
-adding PCR0 to the policy, we can reject hibernate images made in
-developer mode while in verified mode (or vice versa).
-
-Additionally, mixing in the user authentication data limits both
-data exfiltration attacks (eg a stolen laptop) and forged hibernation
-image attacks to attackers that already know the authentication data (eg
-user's password). This, combined with our relatively sealed userspace
-(dm-verity on the rootfs), and some judicious clearing of the hibernate
-image (such as across an OS update) further reduce the risk of an online
-attack. The remaining attack space of a forgery from someone with
-physical access to the device and knowledge of the authentication data
-is out of scope for us, given that flipping to developer mode or
-reflashing RO firmware trivially achieves the same thing.
-
-A couple of patches still need to be written on top of this series. The
-generalized functionality to OR in additional PCRs via Kconfig (like PCR
-0 or 5) still needs to be added. We'll also need a patch that disallows
-unencrypted forms of resume from hibernation, to fully close the door
-to malicious userspace. However, I wanted to get this series out first
-and get reactions from upstream before continuing to add to it.
-
-[1] https://patchwork.kernel.org/project/linux-pm/cover/20210220013255.1083202-1-matthewgarrett@google.com/
-[2] https://mjg59.dreamwidth.org/58077.html
-
-
-Evan Green (6):
-  security: keys: trusted: Verify creation data
-  PM: hibernate: Add kernel-based encryption
-  PM: hibernate: Use TPM-backed keys to encrypt image
-  PM: hibernate: Mix user key in encrypted hibernate
-  PM: hibernate: Verify the digest encryption key
-  PM: hibernate: seal the encryption key with a PCR policy
-
-Matthew Garrett (4):
-  tpm: Add support for in-kernel resetting of PCRs
-  tpm: Allow PCR 23 to be restricted to kernel-only use
-  security: keys: trusted: Parse out individual components of the key
-    blob
-  security: keys: trusted: Allow storage of PCR values in creation data
-
- Documentation/power/userland-swsusp.rst       |    8 +
- .../security/keys/trusted-encrypted.rst       |    4 +
- drivers/char/tpm/Kconfig                      |   10 +
- drivers/char/tpm/tpm-dev-common.c             |    8 +
- drivers/char/tpm/tpm-interface.c              |   28 +
- drivers/char/tpm/tpm.h                        |   23 +
- drivers/char/tpm/tpm1-cmd.c                   |   69 ++
- drivers/char/tpm/tpm2-cmd.c                   |   58 +
- drivers/char/tpm/tpm2-space.c                 |    2 +-
- include/keys/trusted-type.h                   |    9 +
- include/linux/tpm.h                           |   12 +
- include/uapi/linux/suspend_ioctls.h           |   28 +-
- kernel/power/Kconfig                          |   15 +
- kernel/power/Makefile                         |    1 +
- kernel/power/power.h                          |    1 +
- kernel/power/snapenc.c                        | 1076 +++++++++++++++++
- kernel/power/snapshot.c                       |    5 +
- kernel/power/user.c                           |   44 +-
- kernel/power/user.h                           |  114 ++
- security/keys/trusted-keys/trusted_tpm1.c     |    9 +
- security/keys/trusted-keys/trusted_tpm2.c     |  164 ++-
- 21 files changed, 1670 insertions(+), 18 deletions(-)
- create mode 100644 kernel/power/snapenc.c
- create mode 100644 kernel/power/user.h
-
--- 
-2.31.0
-
+--=20
+paul-moore.com
