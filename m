@@ -2,122 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D932C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 14:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2BDC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 14:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351144AbiEDOQF (ORCPT
+        id S1350030AbiEDO00 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 May 2022 10:16:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32980 "EHLO
+        Wed, 4 May 2022 10:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239972AbiEDOQE (ORCPT
+        with ESMTP id S238025AbiEDO0Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 10:16:04 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5733A419B9;
-        Wed,  4 May 2022 07:12:28 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id j6so993128qkp.9;
-        Wed, 04 May 2022 07:12:28 -0700 (PDT)
+        Wed, 4 May 2022 10:26:25 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9999A2019D;
+        Wed,  4 May 2022 07:22:49 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id jt15so930600qvb.8;
+        Wed, 04 May 2022 07:22:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Psvejb3DIehY3FGS9OyKG4+k8ZBKjnluQzek7tyYtG0=;
-        b=NVB19D360rzy8jza0DSZqGtGiZmC/x80ZU3H7ffmisxM/CTB+/votosoMhNguUMfTY
-         WlYYS0N8ZD8z/v9Lg3OXnVYB5t6J29WqUnzVXKmr5OxRvWHyWn1SZnpD0pMSlmNXJttS
-         W1W58AUFxiFeOe/JfNiK/O8waBaVshPzEL9nY5R0LOIjfQBy2Xq1PzgmWtJg0yN37azB
-         0UkhuWM0/abUZ/KYz1gW/I9BREH4B4jb3Gbn0nm3yK3GIsepCC4RLdYjYcWaRQSs4RPN
-         CELV+afKwSipQ1Bn0Hnzz27TM4DPrOhMvBdRhtH3Wn7VCl7j+DJptSiEJuumZoYgZ40z
-         QEWQ==
+        bh=JOJe8EFexHCJl/2Bc6RO8FsgtVtMHIZENqTmuqDEE2I=;
+        b=R+I1KpWncwM37jcDvaWaBIuoT9NF2QuLZPr3IjIF3/+9wYNZpMUCmWM4I8X+wd0R+j
+         4jCa+JKhojklqTV34Vg8ws3Oj4dt2uZ3xeqEHypoOH7pgSfZiWXKgAtZrCNR8OV5iOr9
+         N7Z9D3bLQTIAL14ZgAhrx9teDv5uV/2WjOwbkygKqUE6TcMQeMUXn1WQtyfO4RP0psnV
+         pTyNZ8JD/FOYiPBRQW9RN9KF0Q7I6RcCX8WLgk5BMVpfM/StWJDN+IIJXZKLDNqbHRJx
+         9mj1bVojs2UukUKW8UG5Xm5x0UKWCBJUxqN2XI2jMIuU0oaHoqazZWigbqbZ6h2kF7HO
+         u8CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Psvejb3DIehY3FGS9OyKG4+k8ZBKjnluQzek7tyYtG0=;
-        b=sBwWG877Vp2X7EyDElftfF2L54YIbwCvDliV+but8xND9RACDMBydL7guhj1ebb868
-         Um1p6jJhxO8mS9TgUVZl/ihod7dRbkI//nXfYPxfPBIfb5t4pIuNy4DCJRm+Txt5ntGn
-         EdYcqMIRhggf9f/6XGSnEwY9iUR1TlGF0Fg3Xtt+7bNOGATwFYL223b2XhWZE+cIPF4z
-         b4tgaAy9WrOM4SV2h/40URGat9bJCAxndSOHCAnZJCUd1Ep8oXwEFdcDWKwlOBJlU1Pe
-         5JAis5//s4chjE6rz76xyjrSLkaJF+1orLLbsIbd7PWk435vSRbZL3Vao/0KqxP4r1Un
-         7Tuw==
-X-Gm-Message-State: AOAM531m11k6IdR2AgIVMToozTNeyoYt/6JVLuRXN8n/KcAw0b1MTk9P
-        VgXtkIX0Dl8ydb6ezeTaKOT43yjh/jhkD6ae89s=
-X-Google-Smtp-Source: ABdhPJzz5bsZ8/aL9Y1deFid+bYg1ncUA1yDgx1BsSvWd8Twv3mzJ31ZoSG7kzsDEfKgcKrQ0EbXFGJdCiFmfS36M2U=
-X-Received: by 2002:a37:9381:0:b0:69f:62c6:56a7 with SMTP id
- v123-20020a379381000000b0069f62c656a7mr16131554qkd.643.1651673547434; Wed, 04
- May 2022 07:12:27 -0700 (PDT)
+        bh=JOJe8EFexHCJl/2Bc6RO8FsgtVtMHIZENqTmuqDEE2I=;
+        b=TrHsyD4Ex1gOrU53MOICf+G9y9zhcO0bChKTomw5a+cNtgNZTkzfMmaleA754KI8CU
+         W+7HTW92QUzltdD9SztzV6K0LDD34MYF2v6CgD0jw5oah3eRfJyZSATGuEKCczY3X6ak
+         SlfAzsJhW/HIngoWbatqeYD/oiVs7P1AcNc/luB+NrxxcSwfeA9fQZ72GjV1SQO4ngIy
+         eMamI+HldtmeTfVlqORWuafRjqbs+EpWiW0QRIbt6pa0QMTyPPbI7VB7oLXdOBQ0jA/g
+         Zvt/z9KhyqsEAIOcgV/ComeWKR0n11jG57praE3qi+EFDHTOuf6PjiMdr/DPIBsUushQ
+         adHQ==
+X-Gm-Message-State: AOAM531snmsNWPQRxsxwWcVcwOAlef24Qm0xTmPRGH9t2bcWUSUcPeI2
+        VuNIXi6O2jN618dTJrTaakiT1LrOZKS+SL3fvzs=
+X-Google-Smtp-Source: ABdhPJwSLcDDkqI8PXeUJie+v61GcNmYEMGXjvyoA5jowaY5/ifSkN39Q1mNINDyd/sv/G2PmFUQ5nrtxbNGknZIn08=
+X-Received: by 2002:a05:6214:1cc4:b0:435:35c3:f0f1 with SMTP id
+ g4-20020a0562141cc400b0043535c3f0f1mr17657763qvd.0.1651674168694; Wed, 04 May
+ 2022 07:22:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220503183750.1977-1-duguoweisz@gmail.com> <20220503194943.6bcmsxjvinfjrqxa@quack3.lan>
-In-Reply-To: <20220503194943.6bcmsxjvinfjrqxa@quack3.lan>
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <20220503224305.GF1360180@dread.disaster.area>
+ <CAJfpegt_p2Tg+Tr34PtKSXvTyTJdTTwALMPRVE8KK2NmNVZhEg@mail.gmail.com>
+In-Reply-To: <CAJfpegt_p2Tg+Tr34PtKSXvTyTJdTTwALMPRVE8KK2NmNVZhEg@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 4 May 2022 17:12:16 +0300
-Message-ID: <CAOQ4uxguXW05_YSpgT=kGgxztQYqhJ3x4MFsz9ZTO0crc9=4tA@mail.gmail.com>
-Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
-To:     Jan Kara <jack@suse.cz>
-Cc:     Guowei Du <duguoweisz@gmail.com>,
+Date:   Wed, 4 May 2022 17:22:37 +0300
+Message-ID: <CAOQ4uxhALMgZeFHpPhu8oshrBzBjHcV-vTpFO=b-MeQ3OsQ6Ug@mail.gmail.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Dave Chinner <david@fromorbit.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        kpsingh@kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, bpf@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Kees Cook <keescook@chromium.org>, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com, selinux@vger.kernel.org,
-        duguowei <duguowei@xiaomi.com>
+        Christian Brauner <christian@brauner.io>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 3, 2022 at 10:49 PM Jan Kara <jack@suse.cz> wrote:
+On Wed, May 4, 2022 at 10:18 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> On Wed 04-05-22 02:37:50, Guowei Du wrote:
-> > From: duguowei <duguowei@xiaomi.com>
+> On Wed, 4 May 2022 at 00:43, Dave Chinner <david@fromorbit.com> wrote:
+>
+> > "values" is a very generic name - probably should end up being
+> > something more descriptive of the functionality is provides,
+> > especially if the header file is going to be dumped in
+> > include/linux/. I don't really have a good suggestion at the moment,
+> > though.
+>
+> The obvious ones are stat and attr, which are taken already.   Info is
+> probably too generic as well.
+>
+> Ideas are welcome.
+
+I was thinking of "properties".
+
+>
 > >
-> > For now, there have been open/access/open_exec perms for file operation,
-> > so we add new perms check with unlink/rmdir syscall. if one app deletes
-> > any file/dir within pubic area, fsnotify can sends fsnotify_event to
-> > listener to deny that, even if the app have right dac/mac permissions.
+> > ....
 > >
-> > Signed-off-by: duguowei <duguowei@xiaomi.com>
+> > > +
+> > > +enum {
+> > > +     VAL_MNT_INFO,
+> > > +};
+> > > +
+> > > +static struct val_desc val_mnt_group[] = {
+> > > +     { VD_NAME("info"),              .idx = VAL_MNT_INFO             },
+> > > +     { }
+> > > +};
+> > ....
+> > > +
+> > > +
+> > > +static struct val_desc val_toplevel_group[] = {
+> > > +     { VD_NAME("mnt:"),      .get = val_mnt_get,     },
+> > > +     { VD_NAME("mntns:"),    .get = val_mntns_get,   },
+> > > +     { },
+> > > +};
+> >
+> > I know this is an early POC, my main question is how do you
+> > envisiage this table driven structure being extended down from just
+> > the mount into the filesystem so we can expose filesystem specific
+> > information that isn't covered by generic interfaces like statx?
 >
-> Before we go into technical details of implementation can you tell me more
-> details about the usecase? Why do you need to check specifically for unlink
-> / delete?
->
-> Also on the design side of things: Do you realize these permission events
-> will not be usable together with other permission events like
-> FAN_OPEN_PERM? Because these require notification group returning file
-> descriptors while your events will return file handles... I guess we should
-> somehow fix that.
+> I was thinking of adding a i_op callback.   The details are a bit
+> fuzzy, since the vfs and the fs would have to work together when
+> listing the attributes and possibly also when retrieving the attribute
+> itself (think mount options).
 >
 
-IMO, regardless of file descriptions vs. file handles, blocking events have
-no business with async events in the same group at all.
-What is the use case for that?
-Sure, we have the legacy permission event, but if we do add new blocking
-events to UAPI, IMO they should be added to a group that was initialized with a
-different class to indicate "blocking events only".
+No, please do not think mount options :)
+Please think of an interface that does not mix vfs and fs properties.
 
-And if we do that, we will not need to pollute the event mask namespace
-for every permission event.
-When users request to get FAN_UNLINK/FAN_RMDIR events in a
-FAN_CLASS_PERMISSION group, internally, that only captures
-events reported from fsnotify_perm()/fsnotify_path_perm().
+Sure, with mount(2) you can mix fs and vfs options, but with the new interface
+they should be clearly separated for set and get if possible.
 
-FYI, I do intend to try and upload "pre-modify events" [1].
-I had no intention to expose those in fanotify and my implementation
-does not have the granularity of UNLINK/RMDIR, but we do need
-to think about not duplicating too much code with those overlapping
-features.
+":mnt:info" key to get the effective mount options (as in /proc/$$/mountinfo)
+does not contradict that, because it can be read only.
 
 Thanks,
 Amir.
-
-[1] https://github.com/amir73il/linux/commits/fsnotify_pre_modify
