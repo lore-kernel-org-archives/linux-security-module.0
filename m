@@ -2,136 +2,237 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3880C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 13:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 093F5C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 13:50:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350335AbiEDNXG (ORCPT
+        id S1347934AbiEDNyO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 May 2022 09:23:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33922 "EHLO
+        Wed, 4 May 2022 09:54:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350241AbiEDNXG (ORCPT
+        with ESMTP id S1350730AbiEDNyN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 09:23:06 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31FD41CFCD;
-        Wed,  4 May 2022 06:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651670369; x=1683206369;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=H9BdaDvD0tI00BXc7t73JRza9VVjgjSUb1IhYY15jGU=;
-  b=bra9fYXHc7R9xaBslrTNMUOfR+HIxhiZcIM1VKLGM2At1pmci+SpBY9z
-   fiDYi5x+aoLPQM23vIsgaHLSd1CqmXEJJUpJLbTgYrZFG2IJx/fZMCoDd
-   uEjBP7q4GEQ+zUzfyHTjr3aRcGaUhHy95tfLxH+USb9/PcHrlbswm6MlQ
-   wG1SdC/7uGlfv8+1k3yj2444l0qGdvSmEXDe1kFlix9dUra/GrxgFBMle
-   q35E4S8B9sqAWS8Raa5s3/FpbVa09vgE7yDnU6qU7/4z3RaKvFpbZBnq+
-   Bc5uN0UX2fWQIy8euCC3si5BZUP8mm0Q15Fb99VAqzaoj9jIXKSeKW/Qs
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10336"; a="249744969"
-X-IronPort-AV: E=Sophos;i="5.91,198,1647327600"; 
-   d="scan'208";a="249744969"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2022 06:19:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,198,1647327600"; 
-   d="scan'208";a="562717663"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 04 May 2022 06:19:01 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nmEuC-000BPt-S7;
-        Wed, 04 May 2022 13:19:00 +0000
-Date:   Wed, 4 May 2022 21:18:54 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Guowei Du <duguoweisz@gmail.com>, jack@suse.cz
-Cc:     kbuild-all@lists.01.org, amir73il@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, jmorris@namei.org, serge@hallyn.com,
-        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com, selinux@vger.kernel.org, duguoweisz@gmail.com,
-        duguowei <duguowei@xiaomi.com>
-Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
-Message-ID: <202205042136.nn1xy0Ae-lkp@intel.com>
-References: <20220503183750.1977-1-duguoweisz@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220503183750.1977-1-duguoweisz@gmail.com>
+        Wed, 4 May 2022 09:54:13 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A8E53614F;
+        Wed,  4 May 2022 06:50:36 -0700 (PDT)
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 244D89Ej032359;
+        Wed, 4 May 2022 13:49:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=WafK932ObesQwXzcMhdlCMkFPACyb1XIUSZ459VPeVM=;
+ b=GfNGckMlqMq+2bwhPleFOSC33RhhJ4vd/ZnUwSi1ry8ZxLv9Yo+pDia/vvw1tHK/DaxP
+ Fsn6sVF3RuRsKPBKZqkXjJJcUWUhDepRETNGVGGdk5k809wM9QCCUUyFZBdxEFYqrXic
+ HIafOhw9ohW58LZ/tmo+XT9XMWPIVw0XnFoO1TPkuU22oLtiPCnQ9BSxS4e6LimOYvEe
+ 9Onef2st/5I3f3Y8skTfSEVheahP2ryE4xDJWzuQ2ZJDPv2fQvKsAGP8yzUn5rZNeisX
+ UEV0wobi3Y8gi966n79xFGkpFkmTGatgFNcCFOaTxj5QMHTOlhS250/UlfMJV1Wpodbb Gg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fusjwhps8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 May 2022 13:49:58 +0000
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 244DAc7l005951;
+        Wed, 4 May 2022 13:49:58 GMT
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3fusjwhpra-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 May 2022 13:49:58 +0000
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 244DmGHn003903;
+        Wed, 4 May 2022 13:49:55 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma04fra.de.ibm.com with ESMTP id 3frvr8vm3t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 May 2022 13:49:55 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 244DnoXO26018096
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 May 2022 13:49:50 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 14F0F42041;
+        Wed,  4 May 2022 13:49:53 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 833B442045;
+        Wed,  4 May 2022 13:49:51 +0000 (GMT)
+Received: from sig-9-65-73-150.ibm.com (unknown [9.65.73.150])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 May 2022 13:49:51 +0000 (GMT)
+Message-ID: <bbd6886aa5575765b5c223e1b4f5aab336fe4350.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] Carry forward IMA measurement log on kexec on x86_64
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jonathan McDowell <noodles@fb.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Date:   Wed, 04 May 2022 09:49:51 -0400
+In-Reply-To: <YnEZtisrvO0AhrAz@noodles-fedora.dhcp.thefacebook.com>
+References: <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
+         <7d7fa18d396439d98e26890f647fffdc9e7d8b20.camel@linux.ibm.com>
+         <YnEZtisrvO0AhrAz@noodles-fedora.dhcp.thefacebook.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: qoBAfW7MCTZ_vV3jXf2EyNBLgbNTv_mQ
+X-Proofpoint-ORIG-GUID: zljCZxrC8b6iSRP8V_WObcC03bkZCfeI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-05-04_04,2022-05-04_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ suspectscore=0 priorityscore=1501 spamscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 clxscore=1015
+ phishscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2202240000 definitions=main-2205040086
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Guowei,
+On Tue, 2022-05-03 at 12:02 +0000, Jonathan McDowell wrote:
+> On Fri, Apr 29, 2022 at 05:30:10PM -0400, Mimi Zohar wrote:
+> > > diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> > > index 13753136f03f..419c50cfe6b9 100644
+> > > --- a/security/integrity/ima/ima_kexec.c
+> > > +++ b/security/integrity/ima/ima_kexec.c
+> > > @@ -10,6 +10,7 @@
+> > >  #include <linux/seq_file.h>
+> > >  #include <linux/vmalloc.h>
+> > >  #include <linux/kexec.h>
+> > > +#include <linux/memblock.h>
+> > >  #include <linux/of.h>
+> > >  #include <linux/ima.h>
+> > >  #include "ima.h"
+> > > @@ -134,10 +135,66 @@ void ima_add_kexec_buffer(struct kimage *image)
+> > >  }
+> > >  #endif /* IMA_KEXEC */
+> > >  
+> > > +#ifndef CONFIG_OF
+> > > +static phys_addr_t ima_early_kexec_buffer_phys;
+> > > +static size_t ima_early_kexec_buffer_size;
+> > > +
+> > > +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
+> > > +{
+> > > +	if (size == 0)
+> > > +		return;
+> > > +
+> > > +	ima_early_kexec_buffer_phys = phys_addr;
+> > > +	ima_early_kexec_buffer_size = size;
+> > > +}
+> > > +
+> > > +int __init ima_free_kexec_buffer(void)
+> > > +{
+> > > +	int rc;
+> > > +
+> > > +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
+> > > +		return -ENOTSUPP;
+> > > +
+> > > +	if (ima_early_kexec_buffer_size == 0)
+> > > +		return -ENOENT;
+> > > +
+> > > +	rc = memblock_phys_free(ima_early_kexec_buffer_phys,
+> > > +				ima_early_kexec_buffer_size);
+> > > +	if (rc)
+> > > +		return rc;
+> > > +
+> > > +	ima_early_kexec_buffer_phys = 0;
+> > > +	ima_early_kexec_buffer_size = 0;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +int __init ima_get_kexec_buffer(void **addr, size_t *size)
+> > > +{
+> > > +	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
+> > > +		return -ENOTSUPP;
 
-Thank you for the patch! Perhaps something to improve:
+The Kconfig conditionally compiles ima_kexec.c based on
+CONFIG_HAVE_IMA_KEXEC.  This test should be removed from here and from
+ima_get_kexec_buffer().
 
-[auto build test WARNING on pcmoore-selinux/next]
-[also build test WARNING on linus/master jmorris-security/next-testing v5.18-rc5]
-[cannot apply to jack-fs/fsnotify next-20220503]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+CONFIG_IMA_KEXEC controls whether or not to carry the measurement list
+to the next kernel, not whether the measurement list should be
+restored.  Notice that ima_load_kexec_buffer() is not within the ifdef
+CONFIG_IMA_KEXEC.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-config: openrisc-buildonly-randconfig-r003-20220501 (https://download.01.org/0day-ci/archive/20220504/202205042136.nn1xy0Ae-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/6f635019bbd2ab22a64e03164c8812a46531966e
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
-        git checkout 6f635019bbd2ab22a64e03164c8812a46531966e
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=openrisc SHELL=/bin/bash
+> > > +
+> > > +	if (ima_early_kexec_buffer_size == 0)
+> > > +		return -ENOENT;
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+There should always be at least one measurement - the boot_aggregate.
 
-All warnings (new ones prefixed by >>):
+> > > +
+> > > +	*addr = __va(ima_early_kexec_buffer_phys);
+> > > +	*size = ima_early_kexec_buffer_size;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > 
+> > Originally both ima_get_kexec_buffer() and ima_free_kexec_buffer() were
+> > architecture specific.  Refer to commit 467d27824920 ("powerpc: ima:
+> > get the kexec buffer passed by the previous kernel").  Is there any
+> > need for defining them here behind an "#ifndef CONFIG_OF"?
+> 
+> Commit fee3ff99bc67 (powerpc: Move arch independent ima kexec functions
+> to drivers/of/kexec.c) moved those functions to drivers/of/kexec.c as a
+> more generic implementation so that ARM64 could use them too.
+> 
+> I think for platforms that use device tree that's the way to go, but the
+> functions to generically set + get the IMA buffer for non device tree
+> systems were useful enough to put in the IMA code rather than being x86
+> specific. If you disagree I can move them under arch/x86/ (assuming the
+> x86 folk agree using setup_data is the right way to go, I haven't seen
+> any of them comment on this approach yet).
 
-   security/security.c: In function 'security_path_rmdir':
->> security/security.c:1169:35: warning: passing argument 1 of 'fsnotify_path_perm' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-    1169 |         return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
-         |                                   ^~~
-   In file included from security/security.c:24:
-   include/linux/fsnotify.h:83:51: note: expected 'struct path *' but argument is of type 'const struct path *'
-      83 | static inline int fsnotify_path_perm(struct path *path, struct dentry *dentry, __u32 mask)
-         |                                      ~~~~~~~~~~~~~^~~~
-   security/security.c: In function 'security_path_unlink':
-   security/security.c:1180:35: warning: passing argument 1 of 'fsnotify_path_perm' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-    1180 |         return fsnotify_path_perm(dir, dentry, MAY_UNLINK);
-         |                                   ^~~
-   In file included from security/security.c:24:
-   include/linux/fsnotify.h:83:51: note: expected 'struct path *' but argument is of type 'const struct path *'
-      83 | static inline int fsnotify_path_perm(struct path *path, struct dentry *dentry, __u32 mask)
-         |                                      ~~~~~~~~~~~~~^~~~
+So other architectures will need to define CONFIG_HAVE_IMA_KEXEC, a
+function to call ima_set_kexec_buffer() to restore the measurement
+list, and a function equivalent to ima_setup_state().
 
+After removing the unnecessary tests mentioned above, consider whether
+there is still any benefit to defining these functions.
 
-vim +1169 security/security.c
+> > > +#else
+> > > +
+> > > +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
+> > > +{
+> > > +	pr_warn("CONFIG_OF enabled, ignoring call to set buffer details.\n");
+> > > +}
+> > > +#endif /* CONFIG_OF */
+> > > +
+> > 
+> > Only when "HAVE_IMA_KEXEC" is defined is this file included.  Why is
+> > this warning needed?
+> 
+> x86 *can* have device tree enabled, but the only platform I'm aware that
+> did it was OLPC and I haven't seen any of the distros enable it. I put
+> this in so there's a warning if we have CONFIG_OF enabled on x86 and
+> tried to pass the IMA log via setup_data. Can remove (or fold into the
+> x86 code if we go that way).
 
-  1160	
-  1161	int security_path_rmdir(const struct path *dir, struct dentry *dentry)
-  1162	{
-  1163		int ret;
-  1164		if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
-  1165			return 0;
-  1166		ret = call_int_hook(path_rmdir, 0, dir, dentry);
-  1167		if (ret)
-  1168			return ret;
-> 1169		return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
-  1170	}
-  1171	
+Thanks for the explanation.
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+> > >  /*
+> > >   * Restore the measurement list from the previous kernel.
+> > >   */
+> > > -void ima_load_kexec_buffer(void)
+> > > +void __init ima_load_kexec_buffer(void)
+> > >  {
+> > >  	void *kexec_buffer = NULL;
+> > >  	size_t kexec_buffer_size = 0;
+> 
+> J.
+
+thanks,
+
+Mimi
+
