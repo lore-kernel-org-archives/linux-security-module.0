@@ -2,153 +2,290 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2D8C4167B
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 18:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B92EC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 19:28:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377067AbiEDSc6 (ORCPT
+        id S1357259AbiEDTbf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 May 2022 14:32:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57506 "EHLO
+        Wed, 4 May 2022 15:31:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376932AbiEDScm (ORCPT
+        with ESMTP id S231781AbiEDTbe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 14:32:42 -0400
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C50E5AA43;
-        Wed,  4 May 2022 11:09:11 -0700 (PDT)
-Received: by mail-ot1-f43.google.com with SMTP id m6-20020a05683023a600b0060612720715so1395504ots.10;
-        Wed, 04 May 2022 11:09:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=D+E9lNuRbHFdd170vr+MtjOcic+cq6LuKuOZKRSFmmQ=;
-        b=hqu6R1IRae0VoX6RVScHw+Zzo1GjIz7JEVjL/qj/M5RsjpSzZPnxbWaJ2QRNj9pG/V
-         GzcagHr+46Vvmokee05IR5m2irmd6EgL7Zj5NeOxB9mO4H+0VWs7t+QY6SdSEHLAFOQX
-         7nlxFOlTSSaPyJczzOi0IByyUPBRQBxkBJureHxsnNNwZLVdOxVmsPv3XR9dms/Hhmdq
-         Dpei6T4pf7hR9BSOp3RbmeuXVXYkTBZhjTdTpNg8Sjcc5Id2RNDvW92doze4AoQiouKc
-         /p5ZsjI6uJj0BqaJNqAfTwSy3ZnrnJ6J4Wl3iDw286tyYbPdWZk0VQKlkpwQfXgmyYMV
-         dCDg==
-X-Gm-Message-State: AOAM531GBGiEJMipM7x6IPEegxYs2k8skR7Jmuzu2kokd0nLw2UfSWFh
-        7VEkFE2UyuEFyw5s9SPLig==
-X-Google-Smtp-Source: ABdhPJz7UxGCoN/1mtQLUptxPhW193aedSmrIFdTLYGH8vHQEwAOv7HLwELKhlP+txzkjgVxGZbMKA==
-X-Received: by 2002:a05:6830:116:b0:606:3fb1:e89e with SMTP id i22-20020a056830011600b006063fb1e89emr2227922otp.310.1651687750783;
-        Wed, 04 May 2022 11:09:10 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id d19-20020a4ad353000000b0035eb4e5a6bfsm6240803oos.21.2022.05.04.11.09.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 11:09:10 -0700 (PDT)
-Received: (nullmailer pid 1975953 invoked by uid 1000);
-        Wed, 04 May 2022 18:09:09 -0000
-Date:   Wed, 4 May 2022 13:09:09 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-xtensa@linux-xtensa.org, devicetree@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org,
-        linux-bluetooth@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, llvm@lists.linux.dev,
-        netdev@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH 29/32] xtensa: Use mem_to_flex_dup() with struct property
-Message-ID: <YnKbaXEUHyu+btOD@robh.at.kernel.org>
-References: <20220504014440.3697851-1-keescook@chromium.org>
- <20220504014440.3697851-30-keescook@chromium.org>
+        Wed, 4 May 2022 15:31:34 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 591EE2A716;
+        Wed,  4 May 2022 12:27:57 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id CA6491F37F;
+        Wed,  4 May 2022 19:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1651692475; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QfMEuCSetan9XRRWFKWsb6K22EKUj5mlPD2hKmHn9OA=;
+        b=y/UFq5IrvxkZkFmQEu4t3IyAMXoZhnY89D1YCa+4mFShbOT215HyN4juNSRgpppqsdKRqY
+        A6WUzKTWIWW2EPNzducjggk75qLmWOmJpurJjWBrOebo6Y7m2W1TqjKmZ0/Lutga/FG1YR
+        AEAFk16h5ARd30C7wESXwh2P/xPUPu4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1651692475;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QfMEuCSetan9XRRWFKWsb6K22EKUj5mlPD2hKmHn9OA=;
+        b=w2QUOIvAI5xAkcb2v3e6k+WAmBJvCwp+AnfgNQchFDRwvEVGfjVVAGRnMt3Z5s3qooMEX6
+        3tFcy3HY0vS8YCDw==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id EA1B42C141;
+        Wed,  4 May 2022 19:27:54 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 7477FA061E; Wed,  4 May 2022 21:27:51 +0200 (CEST)
+Date:   Wed, 4 May 2022 21:27:51 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     guowei du <duguoweisz@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, amir73il@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jmorris@namei.org, serge@hallyn.com,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com, selinux@vger.kernel.org,
+        duguowei <duguowei@xiaomi.com>
+Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
+Message-ID: <20220504192751.76axinbuuptqdpsz@quack3.lan>
+References: <20220503183750.1977-1-duguoweisz@gmail.com>
+ <20220503194943.6bcmsxjvinfjrqxa@quack3.lan>
+ <CAC+1Nxv5n0eGtRhfS6pxt8Z-no5scu2kO2pu+_6CpbkeeBqFAw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220504014440.3697851-30-keescook@chromium.org>
+In-Reply-To: <CAC+1Nxv5n0eGtRhfS6pxt8Z-no5scu2kO2pu+_6CpbkeeBqFAw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Gmail won't send this, so I've trimmed the recipients...
+Hello!
 
-On Tue, May 03, 2022 at 06:44:38PM -0700, Kees Cook wrote:
-> As part of the work to perform bounds checking on all memcpy() uses,
-> replace the open-coded a deserialization of bytes out of memory into a
-> trailing flexible array by using a flex_array.h helper to perform the
-> allocation, bounds checking, and copying.
+On Wed 04-05-22 11:42:23, guowei du wrote:
+>           for the first issue,one usecase is ,for the shared storage with
+> android device,shared storage is public to all apps which gained whole
+> storage rwx permission,
+>           and computer could also read/write the storage by usb cable
+> connected.
+>          so ,we need to protect some resources such as photoes or videos or
+> some secure documents in the shared storage.
+>          in other words,we want to subdivide permissions of that area  for
+> open/read/unlink and so on.
+
+I see but I thought that MTP protocol was there exactly so that the phone
+can control the access from computer to the shared storage. So it is
+probably not the case that you'd need this fanotify feature to control MTP
+client access but you want to say block image removal while the file is
+being transfered over MTP? Do I get this right?
+
+>          for the second issue. every FANOTIFY_EVENT_TYPE_PATH event will
+> 'dentry_open' a new file with FMODE_NONOTIFY,then bind to a new unused fd,
+> so could tell me the reason?
+
+Yes, this is just how fanotify was designed. And it was designed in this
+way because it was created for use by antivirus scanners which wanted to
+read the file contents and based on that decide whether the file could be
+accessed or not.
+
+>         and next step ,i will go on to fix the related issue such as
+> fanotify module.
+
+I have realized that you do propagate struct path to fsnotify with your new
+RMDIR_PERM and UNLINK_PERM events (unlike standard DELETE fsnotify events)
+so things should work in the same way as say for OPEN_PERM events.
+
+								Honza
+
+> On Wed, May 4, 2022 at 3:49 AM Jan Kara <jack@suse.cz> wrote:
 > 
-> Cc: Chris Zankel <chris@zankel.net>
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: linux-xtensa@linux-xtensa.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  arch/xtensa/platforms/xtfpga/setup.c | 9 +++------
->  include/linux/of.h                   | 3 ++-
->  2 files changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/xtensa/platforms/xtfpga/setup.c b/arch/xtensa/platforms/xtfpga/setup.c
-> index 538e6748e85a..31c1fa4ba4ec 100644
-> --- a/arch/xtensa/platforms/xtfpga/setup.c
-> +++ b/arch/xtensa/platforms/xtfpga/setup.c
-> @@ -102,7 +102,7 @@ CLK_OF_DECLARE(xtfpga_clk, "cdns,xtfpga-clock", xtfpga_clk_setup);
->  #define MAC_LEN 6
->  static void __init update_local_mac(struct device_node *node)
->  {
-> -	struct property *newmac;
-> +	struct property *newmac = NULL;
->  	const u8* macaddr;
->  	int prop_len;
->  
-> @@ -110,19 +110,16 @@ static void __init update_local_mac(struct device_node *node)
->  	if (macaddr == NULL || prop_len != MAC_LEN)
->  		return;
->  
-> -	newmac = kzalloc(sizeof(*newmac) + MAC_LEN, GFP_KERNEL);
-> -	if (newmac == NULL)
-> +	if (mem_to_flex_dup(&newmac, macaddr, MAC_LEN, GFP_KERNEL))
->  		return;
->  
-> -	newmac->value = newmac + 1;
-> -	newmac->length = MAC_LEN;
-> +	newmac->value = newmac->contents;
->  	newmac->name = kstrdup("local-mac-address", GFP_KERNEL);
->  	if (newmac->name == NULL) {
->  		kfree(newmac);
->  		return;
->  	}
->  
-> -	memcpy(newmac->value, macaddr, MAC_LEN);
->  	((u8*)newmac->value)[5] = (*(u32*)DIP_SWITCHES_VADDR) & 0x3f;
->  	of_update_property(node, newmac);
->  }
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 17741eee0ca4..efb0f419fd1f 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -30,7 +30,7 @@ typedef u32 ihandle;
->  
->  struct property {
->  	char	*name;
-> -	int	length;
-> +	DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(int, length);
->  	void	*value;
->  	struct property *next;
->  #if defined(CONFIG_OF_DYNAMIC) || defined(CONFIG_SPARC)
-> @@ -42,6 +42,7 @@ struct property {
->  #if defined(CONFIG_OF_KOBJ)
->  	struct bin_attribute attr;
->  #endif
-> +	DECLARE_FLEX_ARRAY_ELEMENTS(u8, contents);
-
-99.9% of the time, this is not where the property value is stored as it 
-points into an FDT blob. I suppose that is okay, but just want to make 
-sure.
-
-The DT API for creating new nodes and properties is horrible as it is 
-multiple allocs and strdups which makes for tricky error paths. A better 
-API to centralize it would be welcome, but if this is the only case you 
-came across it's certainly not a requirement.
-
-Rob
+> > On Wed 04-05-22 02:37:50, Guowei Du wrote:
+> > > From: duguowei <duguowei@xiaomi.com>
+> > >
+> > > For now, there have been open/access/open_exec perms for file operation,
+> > > so we add new perms check with unlink/rmdir syscall. if one app deletes
+> > > any file/dir within pubic area, fsnotify can sends fsnotify_event to
+> > > listener to deny that, even if the app have right dac/mac permissions.
+> > >
+> > > Signed-off-by: duguowei <duguowei@xiaomi.com>
+> >
+> > Before we go into technical details of implementation can you tell me more
+> > details about the usecase? Why do you need to check specifically for unlink
+> > / delete?
+> >
+> > Also on the design side of things: Do you realize these permission events
+> > will not be usable together with other permission events like
+> > FAN_OPEN_PERM? Because these require notification group returning file
+> > descriptors while your events will return file handles... I guess we should
+> > somehow fix that.
+> >
+> >
+> >                                                                 Honza
+> > > ---
+> > >  fs/notify/fsnotify.c             |  2 +-
+> > >  include/linux/fs.h               |  2 ++
+> > >  include/linux/fsnotify.h         | 16 ++++++++++++++++
+> > >  include/linux/fsnotify_backend.h |  6 +++++-
+> > >  security/security.c              | 12 ++++++++++--
+> > >  security/selinux/hooks.c         |  4 ++++
+> > >  6 files changed, 38 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> > > index 70a8516b78bc..9c03a5f84be0 100644
+> > > --- a/fs/notify/fsnotify.c
+> > > +++ b/fs/notify/fsnotify.c
+> > > @@ -581,7 +581,7 @@ static __init int fsnotify_init(void)
+> > >  {
+> > >       int ret;
+> > >
+> > > -     BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 25);
+> > > +     BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 27);
+> > >
+> > >       ret = init_srcu_struct(&fsnotify_mark_srcu);
+> > >       if (ret)
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index bbde95387a23..9c661584db7d 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -100,6 +100,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb,
+> > loff_t offset,
+> > >  #define MAY_CHDIR            0x00000040
+> > >  /* called from RCU mode, don't block */
+> > >  #define MAY_NOT_BLOCK                0x00000080
+> > > +#define MAY_UNLINK           0x00000100
+> > > +#define MAY_RMDIR            0x00000200
+> > >
+> > >  /*
+> > >   * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must
+> > correspond
+> > > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> > > index bb8467cd11ae..68f5d4aaf1ae 100644
+> > > --- a/include/linux/fsnotify.h
+> > > +++ b/include/linux/fsnotify.h
+> > > @@ -80,6 +80,22 @@ static inline int fsnotify_parent(struct dentry
+> > *dentry, __u32 mask,
+> > >       return fsnotify(mask, data, data_type, NULL, NULL, inode, 0);
+> > >  }
+> > >
+> > > +static inline int fsnotify_path_perm(struct path *path, struct dentry
+> > *dentry, __u32 mask)
+> > > +{
+> > > +     __u32 fsnotify_mask = 0;
+> > > +
+> > > +     if (!(mask & (MAY_UNLINK | MAY_RMDIR)))
+> > > +             return 0;
+> > > +
+> > > +     if (mask & MAY_UNLINK)
+> > > +             fsnotify_mask |= FS_UNLINK_PERM;
+> > > +
+> > > +     if (mask & MAY_RMDIR)
+> > > +             fsnotify_mask |= FS_RMDIR_PERM;
+> > > +
+> > > +     return fsnotify_parent(dentry, fsnotify_mask, path,
+> > FSNOTIFY_EVENT_PATH);
+> > > +}
+> > > +
+> > >  /*
+> > >   * Simple wrappers to consolidate calls to fsnotify_parent() when an
+> > event
+> > >   * is on a file/dentry.
+> > > diff --git a/include/linux/fsnotify_backend.h
+> > b/include/linux/fsnotify_backend.h
+> > > index 0805b74cae44..0e2e240e8234 100644
+> > > --- a/include/linux/fsnotify_backend.h
+> > > +++ b/include/linux/fsnotify_backend.h
+> > > @@ -54,6 +54,8 @@
+> > >  #define FS_OPEN_PERM         0x00010000      /* open event in an
+> > permission hook */
+> > >  #define FS_ACCESS_PERM               0x00020000      /* access event in
+> > a permissions hook */
+> > >  #define FS_OPEN_EXEC_PERM    0x00040000      /* open/exec event in a
+> > permission hook */
+> > > +#define FS_UNLINK_PERM               0x00080000      /* unlink event in
+> > a permission hook */
+> > > +#define FS_RMDIR_PERM                0x00100000      /* rmdir event in
+> > a permission hook */
+> > >
+> > >  #define FS_EXCL_UNLINK               0x04000000      /* do not send
+> > events if object is unlinked */
+> > >  /*
+> > > @@ -79,7 +81,9 @@
+> > >  #define ALL_FSNOTIFY_DIRENT_EVENTS (FS_CREATE | FS_DELETE | FS_MOVE |
+> > FS_RENAME)
+> > >
+> > >  #define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM | \
+> > > -                               FS_OPEN_EXEC_PERM)
+> > > +                               FS_OPEN_EXEC_PERM | \
+> > > +                               FS_UNLINK_PERM | \
+> > > +                               FS_RMDIR_PERM)
+> > >
+> > >  /*
+> > >   * This is a list of all events that may get sent to a parent that is
+> > watching
+> > > diff --git a/security/security.c b/security/security.c
+> > > index b7cf5cbfdc67..8efc00ec02ed 100644
+> > > --- a/security/security.c
+> > > +++ b/security/security.c
+> > > @@ -1160,16 +1160,24 @@ EXPORT_SYMBOL(security_path_mkdir);
+> > >
+> > >  int security_path_rmdir(const struct path *dir, struct dentry *dentry)
+> > >  {
+> > > +     int ret;
+> > >       if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
+> > >               return 0;
+> > > -     return call_int_hook(path_rmdir, 0, dir, dentry);
+> > > +     ret = call_int_hook(path_rmdir, 0, dir, dentry);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +     return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
+> > >  }
+> > >
+> > >  int security_path_unlink(const struct path *dir, struct dentry *dentry)
+> > >  {
+> > > +     int ret;
+> > >       if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
+> > >               return 0;
+> > > -     return call_int_hook(path_unlink, 0, dir, dentry);
+> > > +     ret = call_int_hook(path_unlink, 0, dir, dentry);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +     return fsnotify_path_perm(dir, dentry, MAY_UNLINK);
+> > >  }
+> > >  EXPORT_SYMBOL(security_path_unlink);
+> > >
+> > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > > index e9e959343de9..f0780f0eb903 100644
+> > > --- a/security/selinux/hooks.c
+> > > +++ b/security/selinux/hooks.c
+> > > @@ -1801,8 +1801,12 @@ static int may_create(struct inode *dir,
+> > >  }
+> > >
+> > >  #define MAY_LINK     0
+> > > +#ifndef MAY_UNLINK
+> > >  #define MAY_UNLINK   1
+> > > +#endif
+> > > +#ifndef MAY_RMDIR
+> > >  #define MAY_RMDIR    2
+> > > +#endif
+> > >
+> > >  /* Check whether a task can link, unlink, or rmdir a file/directory. */
+> > >  static int may_link(struct inode *dir,
+> > > --
+> > > 2.17.1
+> > >
+> > --
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
+> >
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
