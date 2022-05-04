@@ -2,117 +2,222 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4857C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 07:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B18BC4167E
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 May 2022 07:28:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345273AbiEDHV5 (ORCPT
+        id S1345435AbiEDHc0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 May 2022 03:21:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43488 "EHLO
+        Wed, 4 May 2022 03:32:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbiEDHVz (ORCPT
+        with ESMTP id S240712AbiEDHcT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 03:21:55 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD4B1ADA5
-        for <linux-security-module@vger.kernel.org>; Wed,  4 May 2022 00:18:16 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id g23so669092edy.13
-        for <linux-security-module@vger.kernel.org>; Wed, 04 May 2022 00:18:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HeDEBC07UgqxsnebnTXHGSAnBgMOF2dSI/K4/ycdir4=;
-        b=YU5OMd73Si+5Q7eezRvTwdPDhF0jXaVTuwFWRU724SKGGloQXdlPG0YIbvGIPIvCEh
-         dbB6OBn/F3ingQg0jfPVD96Mzywvz5BjjGP6iFXZu+DCNmDCBkwsDrGygbU0vRiTBlSB
-         lz1a0yhiew8HtumOPuAlYiBHyLzRep6vC6wrk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HeDEBC07UgqxsnebnTXHGSAnBgMOF2dSI/K4/ycdir4=;
-        b=HRQBRLZzVif9DL/ac2y7309A9d62ey8K4AE+WZ6VJXk1x2GDnCvRQz97/NI/v6HgPE
-         8910QQctWykRKMbbEi+URCoft4nUSU/vtuxdGzWdxWEBOi4muyL5kpkBsj2fUVSU2p8I
-         b3ra7VEtwVXaxnYy9bLD7/nhHqqAkcKB+IOHmPr1dHlF5+uToqHZsopv38RI8GvnwVP+
-         I8Qw/rv46HWpL78zdERNqbddLgAvW3Wvs62bSwn2eDt2gHB955FW/Pqc753cKVolySAU
-         yZOWJaJZJ2K+ahJ+4CDEXHLfeMrzsDTJLAvp/jUxrNITFF61H22h12j2Hp0CYGfK5jwU
-         TS0w==
-X-Gm-Message-State: AOAM532eEAp87grvLWXPEtOIZMk5qVXhOHEcEcc7xdrKLOWD+hbhckLB
-        jbkCbXi4Di//LItgPLNUqOFIy7N+q5Nvh/ElOtduTQ==
-X-Google-Smtp-Source: ABdhPJzPGISWNzSmwrZpgSCpom5e+dKvg459tFdiZ6LU4rFalV9aIdDy7O0Kq0ESHKyLyirLYCZEKqYQh1xQDoPwch4=
-X-Received: by 2002:a50:9346:0:b0:425:e4c0:ab4b with SMTP id
- n6-20020a509346000000b00425e4c0ab4bmr21853531eda.154.1651648694663; Wed, 04
- May 2022 00:18:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <20220503224305.GF1360180@dread.disaster.area>
-In-Reply-To: <20220503224305.GF1360180@dread.disaster.area>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 4 May 2022 09:18:03 +0200
-Message-ID: <CAJfpegt_p2Tg+Tr34PtKSXvTyTJdTTwALMPRVE8KK2NmNVZhEg@mail.gmail.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
+        Wed, 4 May 2022 03:32:19 -0400
+Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC1E823168;
+        Wed,  4 May 2022 00:28:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
+        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+        Resent-Cc:Resent-Message-ID; bh=ity6IPNC2WIGLGTiJizfPDCFcsI1FfOGUjdPuI/9x1Q=;
+        t=1651649323; x=1652858923; b=QT/lqMVOF1wssRE3WxIi8JFq9qydord3vIkdiB2RnWp4foW
+        Y2EKnvOYOMnbG95Qdly+MoPypq2sN7AwddMp0VYIzVbdfWTRU6B/9bcArAn9dLA9S3yjy/847JAMM
+        5LJInaNZlJNS2YxORo9/2LoJ6iUnT3wyCzCYnMBPg0rAQhl5m/80xeXDtvXNqloQm4rd81zUR3d9V
+        +Mcf8XskU9Hf/j9Yc5oRhMJ/y7/9QB3NmD3+sAFKcmfTxKBvoiJ6MhI/+px6IbLVE1cYELVTNv3+3
+        WgYpY8SAyqZNJdmAsttGuK1DDFIY0LoU33uBUCWEOSV4lb0v/xiWF1k3mZZVt6oQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.95)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1nm9Oe-001wnb-ND;
+        Wed, 04 May 2022 09:26:04 +0200
+Message-ID: <d3b73d80f66325fdfaf2d1f00ea97ab3db03146a.camel@sipsolutions.net>
+Subject: Re: [PATCH 02/32] Introduce flexible array struct memcpy() helpers
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Kees Cook <keescook@chromium.org>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>
+Cc:     Keith Packard <keithp@keithp.com>,
+        Francis Laniel <laniel_francis@privacyrequired.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Tadeusz Struk <tadeusz.struk@linaro.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Andy Lavr <andy.lavr@gmail.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Baowen Zheng <baowen.zheng@corigine.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Bradley Grove <linuxdrivers@attotech.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
         Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
+        Christian =?ISO-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        Chris Zankel <chris@zankel.net>,
+        Cong Wang <cong.wang@bytedance.com>,
+        David Gow <davidgow@google.com>,
         David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eli Cohen <elic@nvidia.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gregory Greenman <gregory.greenman@intel.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Hulk Robot <hulkci@huawei.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        John Keeping <john@metanate.com>,
+        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
+        keyrings@vger.kernel.org, kunit-dev@googlegroups.com,
+        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Leon Romanovsky <leon@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux1394-devel@lists.sourceforge.net,
+        linux-afs@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Louis Peens <louis.peens@corigine.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Nathan Chancellor <nathan@kernel.org>, netdev@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Rich Felker <dalias@aerifal.cx>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, selinux@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        SHA-cyfmac-dev-list@infineon.com,
+        Simon Horman <simon.horman@corigine.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
+        Udipto Goswami <quic_ugoswami@quicinc.com>,
+        wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
+        xen-devel@lists.xenproject.org,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        Yang Yingliang <yangyingliang@huawei.com>, kvalo@kernel.org
+Date:   Wed, 04 May 2022 09:25:56 +0200
+In-Reply-To: <20220504014440.3697851-3-keescook@chromium.org>
+References: <20220504014440.3697851-1-keescook@chromium.org>
+         <20220504014440.3697851-3-keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 4 May 2022 at 00:43, Dave Chinner <david@fromorbit.com> wrote:
+On Tue, 2022-05-03 at 18:44 -0700, Kees Cook wrote:
+> 
+> For example, using the most complicated helper, mem_to_flex_dup():
+> 
+>     /* Flexible array struct with members identified. */
+>     struct something {
+>         int mode;
+>         DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(int, how_many);
+>         unsigned long flags;
+>         DECLARE_FLEX_ARRAY_ELEMENTS(u32, value);
 
-> "values" is a very generic name - probably should end up being
-> something more descriptive of the functionality is provides,
-> especially if the header file is going to be dumped in
-> include/linux/. I don't really have a good suggestion at the moment,
-> though.
+In many cases, the order of the elements doesn't really matter, so maybe
+it'd be nicer to be able to write it as something like
 
-The obvious ones are stat and attr, which are taken already.   Info is
-probably too generic as well.
+DECLARE_FLEX_STRUCT(something,
+	int mode;
+	unsigned long flags;
+	,
+	int, how_many,
+	u32, value);
 
-Ideas are welcome.
+perhaps? OK, that doesn't seem so nice either.
 
->
-> ....
->
-> > +
-> > +enum {
-> > +     VAL_MNT_INFO,
-> > +};
-> > +
-> > +static struct val_desc val_mnt_group[] = {
-> > +     { VD_NAME("info"),              .idx = VAL_MNT_INFO             },
-> > +     { }
-> > +};
-> ....
-> > +
-> > +
-> > +static struct val_desc val_toplevel_group[] = {
-> > +     { VD_NAME("mnt:"),      .get = val_mnt_get,     },
-> > +     { VD_NAME("mntns:"),    .get = val_mntns_get,   },
-> > +     { },
-> > +};
->
-> I know this is an early POC, my main question is how do you
-> envisiage this table driven structure being extended down from just
-> the mount into the filesystem so we can expose filesystem specific
-> information that isn't covered by generic interfaces like statx?
+Maybe
 
-I was thinking of adding a i_op callback.   The details are a bit
-fuzzy, since the vfs and the fs would have to work together when
-listing the attributes and possibly also when retrieving the attribute
-itself (think mount options).
+struct something {
+	int mode;
+	unsigned long flags;
+	FLEX_ARRAY(
+		int, how_many,
+		u32, value
+	);
+};
 
-Thanks,
-Miklos
+or so? The long and duplicated DECLARE_FLEX_ARRAY_ELEMENTS_COUNT and
+DECLARE_FLEX_ARRAY_ELEMENTS seems a bit tedious to me, at least in cases
+where the struct layout is not the most important thing (or it's already
+at the end anyway).
+
+
+>     struct something *instance = NULL;
+>     int rc;
+> 
+>     rc = mem_to_flex_dup(&instance, byte_array, count, GFP_KERNEL);
+>     if (rc)
+>         return rc;
+
+This seems rather awkward, having to set it to NULL, then checking rc
+(and possibly needing a separate variable for it), etc.
+
+But I can understand how you arrived at this:
+ - need to pass instance or &instance or such for typeof()
+   or offsetof() or such
+ - instance = mem_to_flex_dup(instance, ...)
+   looks too much like it would actually dup 'instance', rather than
+   'byte_array'
+ - if you pass &instance anyway, checking for NULL is simple and adds a
+   bit of safety
+
+but still, honestly, I don't like it. As APIs go, it feels a bit
+cumbersome and awkward to use, and you really need everyone to use this,
+and not say "uh what, I'll memcpy() instead".
+
+Maybe there should also be a realloc() version of it?
+
+
+> +/** __fas_bytes - Calculate potential size of flexible array structure
+
+I think you forgot "\n *" in many cases here after "/**".
+
+johannes
