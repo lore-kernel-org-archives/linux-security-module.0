@@ -2,121 +2,115 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBEFC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 16:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B89EC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 17:34:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381979AbiEEQdV (ORCPT
+        id S1382725AbiEERiJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 May 2022 12:33:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55048 "EHLO
+        Thu, 5 May 2022 13:38:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381461AbiEEQdU (ORCPT
+        with ESMTP id S1382727AbiEERiI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 May 2022 12:33:20 -0400
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3482E9DB
-        for <linux-security-module@vger.kernel.org>; Thu,  5 May 2022 09:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1651768180; bh=BBoA8CuRgkbA7cmy3x62CIFOIJuQmkI5nM2k21Q2MQY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ihQBmtSn1+pdUrTUfmnYARsRzjV0rUvXD0EZsMkevLZ3gEW2Jgo3bOEZd/y9sYAZDg+vmESB0306l8qb8NRtWyZfK7fSl2HmoGCNmT2sUrTYlPdAwTGZ42UKfX7yzffTk/BKL3ipILCCotqvcpYwk7uKYjikebSnDR+H3Na+0ByXYN44GJDTiIYIp28wrZTLyF2n6fFa/ZvCPN4XmS6V0Abw63qn/VnKuf0icRYzxQ1js7uI7NBU5ZbXqlgPohRyjAZGwIZgMj/ryFqvH2ej3qZHnPKW3A1F37sZ+RxOH1gXslJZ8uvnRpQKEAfTVbILvvUNLp2z1DGY0qTDmLb//w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1651768180; bh=XYk6WA+A2wypDxVG9uSPSh0LN+IeUqUwAyUGgpOqZZp=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=sjxwt7vCpDl64g3JGMGRGCLxdemZ8vGptaT+tB7osT+gkNm4roeys86KKBs9fcIC57Owh9EUystpoCGhrSlKnIkW0Fc3DU+JqQS8Pf79BFZLsMT1eUOAdw7oxSE0ezGQRDVEUkkFYRLocjqXYWoXSaE6h4AGkRAAwtfGZyrpMPBS7VTwYA6xG76jxlwKZI5B9NOTBbJHiBJDaE0hLNDJNNojxBovHrbwhNRONBa80Nfcp224lIBQow0voxF5/A7+SWo93w5343bWjEJOUGRUwBsATsF1qRsuLcXTP8kDFN6oVk1PDkD6sXxnAbkYy4woxPZhQRv00RCdAXoxsxumSw==
-X-YMail-OSG: pJt4TT8VM1nGmnl9kZnN1WCGvMTcLo0RjHLt2muSJ11KFhlldg4TIbu9dAl43b9
- rDjeAqil6mAQpXiq8b.0kWbiLBhxu471LUsdDD63XZa9ADnJQN089vUZFaSc6Vh3iejysuiaW7FU
- 7uhHN1yULCxfJsZH9U2AkSprCAMXgJ65nFuoRuAVex7GpNevd1AyP2NOM.ihhrkl3AsgdCyadbt0
- W02nXqztvEvrMjsrFwibJQBrAJ4nGWr5h0akSmX34dDOlxEkyPc1mcWNHrJE.0s9h9n1sRu9hmTL
- VRBiWprF0PzsIK8Mmo.08NSg_Et4OCk52kidbZia3GJcznVz0VjerLAI0RkmqOFo2WRk.xIdzAoi
- efdX2n3zRSJyiJTQ48oJixUrj7FxoS9wplaR7t4ctnXdr5vNjHPZeSLqgZzDmOLX4trTEwWOFE1Q
- thZ.x61Ivivmeo9Sik0hqY.VsCHHmrhMm_PMGG1VwTPwWhn59Tl6fO_j_zEhymHPtMSXZLJDc0Ph
- jUsoDayuFJYddGOelUFGSMPbrYT9P_T9MRf8Iyqbx7oN4n0DC8GWDMAfb6gcFlBd_sCvf3IzTvRt
- 2BVRoPBq7I1zggrgNjxuW_y2F5HouUPV69dEOF061YUoaW0fmGnu2iEcrpNIe7.Cl473JJcPIvVL
- TOCngx4SsgUGL8qYQHKhSJNw0j5BAlIDp5d.uVmteeFnHmYdPHov9x2b0HZCtrq9p2UwaHbVaSrU
- FsRL0RQluHxp0f2UhXYjqrUJV7Fkk3gAtaV0RjVRr_9BeR0l1LyV.Fp4VKCgj_rTSCa3enkJrRja
- Cf0WFKanBTdnC7xUmdElyKT2JT2ksYL3pg3thBGCDEfnrFK.VWn7ZVLWzIyKALg2fhKREnLYywIa
- yqt9SmirZfZQHuh9XkW.7sTuVR4lea8IKPuQGk7DTsCCYsPMhJbTNd4II8Mlxvd1Xrltq0D3l_G0
- Lwd7gr5vywClwAIUUJEY7mbxmi_PHQTdnJfpSlhE8i_4FYnkDgt5YOK0GmI8ki7uYyvEXXNez.Vw
- ktVwYc.qW9F6MiU8DbYxQkcHEtusrjEwxLlzHdvGamphIyT7jzJgej42M9m9IfK9a5FrjCeRNE2t
- m8_ODJgfyxMJqm4cbLHx7Zbd.wU1oBS9ZF7zT7QhWlAhcY7S5o1QkwOhDn3U0zt0d3Y.s.ilePul
- r1ZfjD70oJpjKBDTAmIBrl7XquFT5PpPWHSrI6DU_tWrbfRtQWLbGq9zKkMp26QOYOuJVS5QjVV5
- .Kz8mJAlw_4gvgmbPF2k16UdGUJmD0XtD1pyE8vNyXt4sLF3h3UxrNeN0BV7CdsWe3gbQ8HVJKKr
- kJW2r5DaT36p4n0ON5i.KEO1LHLmUuoB3RzkqvFMb0.Bb4i8m6.93.TmUfd_Im7wVwuZ8_uGJaLf
- _r3Q.wcanNgli35LRmg2S8wMpR1plfoqo6Q6_AfYV2pyxXH6mPaS1aYcKS5P.ZLE844gBuDflbCr
- ZGAj4h2ekwwTRDBJweLcZ8In4VOMH6GZz6n3_pLwipQTp5e3dSKPts53DZYMw1XcTHP9NaIotwU_
- f_xKwzHrSa3qCnVNUKgCuTiu6oFAEwepXgivRG80xuQz_HyjvEA5XkffnaRzj0Cvq1yrQIuKMMib
- HSIo1wL1anQNanUi8vImo0oanIM1iEXSXtrPy6V8a5CWYLLC4dqlkHxi71kpuxs9rKtvsqKW7qhD
- Wxy1UrcuKgFWgA3B8TLtUJKQuszSu8kI.qjQ0La7msYnHfHLFFofnsxoAnRuUUICzSMZT_v1vrVk
- 4rb2joAcOGhUL0acXXAt2S6hg0khHcYk8IbyUQcQNnU.cuSHBvHNCSSnGOU3tBi7XFVCfzw2NGKS
- NecHIcgH17QABwSyyS53VJjzhHsRuDxaR4MGuOV8ovyAhEJ1vnCkT0fi9qIU_XQwuOjBhcp.pzBh
- kr5Xkjqr6CZbQJvhxTS8r3IQNqLLd9uc_Q3aynbYr5eHXiutnX7CIPd89o4olNZVkitlrE6RUGtB
- I7z659rXcNAGUPnNVGqe.c02IeI3MzzfIGzViNlCcx1euff1ki7qjCCvBjtKM.ql4_Q3WJU.52bk
- 5D8F4y0okxgqgvNg6j3zhz6KkHyBchtOAxYd6fLgCbScXT4eig.zasRdC0lql.BeKO435hNYq0kd
- LjRyeVEW3fp6_O9nQVNqVh6DS6WOA68xrva6_Y11_X.J8.99_iwynRPnkaFL3siQVRwcRUv_7l6z
- ISA831TM_R0p6mWudN4NJn6xS5EMwMzTHSoWCm5I-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 5 May 2022 16:29:39 +0000
-Received: by hermes--canary-production-gq1-647b99747d-ndj76 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 89f08076760c31b5e11091f02eb35912;
-          Thu, 05 May 2022 16:29:36 +0000 (UTC)
-Message-ID: <84b848b6-770a-7d2a-4978-5e758383f994@schaufler-ca.com>
-Date:   Thu, 5 May 2022 09:29:34 -0700
+        Thu, 5 May 2022 13:38:08 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FFE757115
+        for <linux-security-module@vger.kernel.org>; Thu,  5 May 2022 10:34:24 -0700 (PDT)
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1nmfMT-0002m8-KI; Thu, 05 May 2022 19:33:57 +0200
+Message-ID: <09e2552c-7392-e1da-926b-53c7db0b118d@pengutronix.de>
+Date:   Thu, 5 May 2022 19:33:45 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 1/3] securityfs: Append line feed to
- /sys/kernel/security/lsm
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v8 0/6] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
 Content-Language: en-US
-To:     Wang Weiyang <wangweiyang2@huawei.com>, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20220505132301.124832-1-wangweiyang2@huawei.com>
- <20220505132301.124832-2-wangweiyang2@huawei.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20220505132301.124832-2-wangweiyang2@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     John Ernberg <john.ernberg@actia.se>
+Cc:     "andreas@rammhold.de" <andreas@rammhold.de>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "david@sigma-star.at" <david@sigma-star.at>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        "franck.lenormand@nxp.com" <franck.lenormand@nxp.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "horia.geanta@nxp.com" <horia.geanta@nxp.com>,
+        "j.luebbe@pengutronix.de" <j.luebbe@pengutronix.de>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "matthias.schiffer@ew.tq-group.com" 
+        <matthias.schiffer@ew.tq-group.com>,
+        "pankaj.gupta@nxp.com" <pankaj.gupta@nxp.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "s.trumtrar@pengutronix.de" <s.trumtrar@pengutronix.de>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
+        "tharvey@gateworks.com" <tharvey@gateworks.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
+References: <20220428140145.870527-1-a.fatoum@pengutronix.de>
+ <20220505145756.2492566-1-john.ernberg@actia.se>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20220505145756.2492566-1-john.ernberg@actia.se>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20118 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/5/2022 6:22 AM, Wang Weiyang wrote:
-> There is no LF in /sys/kerne/security/lsm output. It is a little weird,
-> so append LF to it.
+Hello John,
 
-NAK: The existing behavior is consistent with long standing LSM convention.
+On 05.05.22 16:58, John Ernberg wrote:
+> Gave this a go on iMX8QXP with Linux 5.17.5 and I can't quite get it working.
+> 
+> I get -ENODEV from add_key() via keyctl. When I traced it in dmesg I couldn't
+> get an as clear picture as I would like but CAAM (and thus possibly JRs?)
+> initialzing after trusted_key.
+> 
+> dmesg snips:
+> [    1.296772] trusted_key: Job Ring Device allocation for transform failed
+> ...
+> [    1.799768] caam 31400000.crypto: device ID = 0x0a16040000000100 (Era 9)
+> [    1.807142] caam 31400000.crypto: job rings = 2, qi = 0
+> [    1.822667] caam algorithms registered in /proc/crypto
+> [    1.830541] caam 31400000.crypto: caam pkc algorithms registered in /proc/crypto
+> [    1.841807] caam 31400000.crypto: registering rng-caam
+> 
+> I didn't quite have the time to get a better trace than that.
+
+I don't see a crypto@31400000 node upstream. Where can I see your device tree?
+Initcall ordering does the right thing, but if CAAM device probe is deferred beyond
+late_initcall, then it won't help.
+
+This is a general limitation with trusted keys at the moment. Anything that's
+not there by the time of the late_initcall won't be tried again. You can work
+around it by having trusted keys as a module. We might be able to do something
+with fw_devlinks in the future and a look into your device tree would help here,
+but I think that should be separate from this patch series.
+
+Please let me know if the module build improves the situation for you.
+
+Cheers,
+Ahmad
 
 >
-> Example:
->
-> / # cat /sys/kernel/security/lsm
-> capability,selinux/ #
->
-> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
-> ---
->   security/inode.c | 16 ++++++++++++++--
->   1 file changed, 14 insertions(+), 2 deletions(-)
->
-> diff --git a/security/inode.c b/security/inode.c
-> index 6c326939750d..bfd5550fa129 100644
-> --- a/security/inode.c
-> +++ b/security/inode.c
-> @@ -318,8 +318,20 @@ static struct dentry *lsm_dentry;
->   static ssize_t lsm_read(struct file *filp, char __user *buf, size_t count,
->   			loff_t *ppos)
->   {
-> -	return simple_read_from_buffer(buf, count, ppos, lsm_names,
-> -		strlen(lsm_names));
-> +	char *tmp;
-> +	ssize_t len = strlen(lsm_names);
-> +	ssize_t rc;
-> +
-> +	tmp = kmalloc(len + 2, GFP_KERNEL);
-> +	if (!tmp)
-> +		return -ENOMEM;
-> +
-> +	scnprintf(tmp, len + 2, "%s\n", lsm_names);
-> +	rc = simple_read_from_buffer(buf, count, ppos, tmp, strlen(tmp));
-> +
-> +	kfree(tmp);
-> +
-> +	return rc;
->   }
->   
->   static const struct file_operations lsm_ops = {
+> Best regards // John Ernberg
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
