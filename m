@@ -2,95 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFF3C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 14:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AC2C43217
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 15:13:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379253AbiEEODp (ORCPT
+        id S1381181AbiEEPRM convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 May 2022 10:03:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53816 "EHLO
+        Thu, 5 May 2022 11:17:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233206AbiEEODo (ORCPT
+        with ESMTP id S1381199AbiEEPRJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 May 2022 10:03:44 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADD423617E
-        for <linux-security-module@vger.kernel.org>; Thu,  5 May 2022 06:59:58 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id a21so5335130edb.1
-        for <linux-security-module@vger.kernel.org>; Thu, 05 May 2022 06:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8cdP+QQ3RkXNjtwvBi4VN1FsvGgtTlKBfCuL8UUAtAI=;
-        b=E8qBemq4oTx4YPbWRWMJzV2qIbcvYOdveNbfeZemz+4dZQ+I0m7fLXmsY75j+/wiX5
-         XaE1LThAuxmxZgvbTboIF71ZZ5XDfPUtgSQz8ZVQ2PL1AE4CxYt/PmItFNePGMLFoNgb
-         A8tRUVmKiVc6KZIJU/kk/0DlACH0+77UO+Qz0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8cdP+QQ3RkXNjtwvBi4VN1FsvGgtTlKBfCuL8UUAtAI=;
-        b=RioeaS6kB8XfK7H/MEIcOQWIIT7jkD5+QT+GHCAFmVj/QGUbm3iK9I1z2RoylpEGE9
-         OAlG2ZXLg+EYfOatrxS0R4HwEa7RdR5kZKooYRtqwHEMbsyCgCmEkkmZ+6s9xieh+I2v
-         3lnmRgD5eVoLKLD+HUb6jOvcF4O/i+Q/qNY4+8Eqyi/6JYdgbdfsuSR1S05I8H0gvUaw
-         XxIRSMVD0+Ha+P3FRsI/M9JWTnYnCIUTfa178BlD9GjoCZmF++Pk7N7SxjaMqCXmE+Iz
-         kHKJ3fDwy2290aYtQpUrEDeEFdaFK+rEVQkhaciWyCAk2P/aZ3m3uINK0D57BbGPyOWt
-         EF5w==
-X-Gm-Message-State: AOAM530EBLsU8PsTkxI6McRxsvGyvn8Ld6ivaa0bCwS5jkF1eXPO5WGc
-        F3p5CUA0+0We69zeKhoqtANCYOKIGkLAJTlBOC2tcw==
-X-Google-Smtp-Source: ABdhPJzTe+CDKCcscUgOgvXLSyK5NVYs7EmJWj3tio4m59arkqFAPKBq+XxNeijdGRs92739wL1GOOxDMjNo+9z+bh8=
-X-Received: by 2002:a05:6402:5ca:b0:423:f330:f574 with SMTP id
- n10-20020a05640205ca00b00423f330f574mr30384732edx.116.1651759197275; Thu, 05
- May 2022 06:59:57 -0700 (PDT)
+        Thu, 5 May 2022 11:17:09 -0400
+X-Greylist: delayed 902 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 05 May 2022 08:13:28 PDT
+Received: from mail.actia.se (212-181-117-226.customer.telia.com [212.181.117.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E90A5C35C;
+        Thu,  5 May 2022 08:13:27 -0700 (PDT)
+Received: from S036ANL.actianordic.se (10.12.31.117) by S035ANL.actianordic.se
+ (10.12.31.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 5 May
+ 2022 16:58:24 +0200
+Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
+ S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%10]) with mapi id
+ 15.01.2375.024; Thu, 5 May 2022 16:58:24 +0200
+From:   John Ernberg <john.ernberg@actia.se>
+To:     "a.fatoum@pengutronix.de" <a.fatoum@pengutronix.de>
+CC:     "andreas@rammhold.de" <andreas@rammhold.de>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "david@sigma-star.at" <david@sigma-star.at>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        "franck.lenormand@nxp.com" <franck.lenormand@nxp.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "horia.geanta@nxp.com" <horia.geanta@nxp.com>,
+        "j.luebbe@pengutronix.de" <j.luebbe@pengutronix.de>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "matthias.schiffer@ew.tq-group.com" 
+        <matthias.schiffer@ew.tq-group.com>,
+        "pankaj.gupta@nxp.com" <pankaj.gupta@nxp.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "s.trumtrar@pengutronix.de" <s.trumtrar@pengutronix.de>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
+        "tharvey@gateworks.com" <tharvey@gateworks.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        John Ernberg <john.ernberg@actia.se>
+Subject: Re: [PATCH v8 0/6] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+Thread-Topic: [PATCH v8 0/6] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+Thread-Index: AQHYYJCRaP1BJI53pkGuwIjy0ObIWw==
+Date:   Thu, 5 May 2022 14:58:23 +0000
+Message-ID: <20220505145756.2492566-1-john.ernberg@actia.se>
+References: <20220428140145.870527-1-a.fatoum@pengutronix.de>
+In-Reply-To: <20220428140145.870527-1-a.fatoum@pengutronix.de>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.35.1
+x-originating-ip: [10.12.12.58]
+x-esetresult: clean, is OK
+x-esetid: 37303A293105C852667D6B
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <20220505123033.sgcyx7kfl4kcfcds@ws.net.home>
-In-Reply-To: <20220505123033.sgcyx7kfl4kcfcds@ws.net.home>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 5 May 2022 15:59:45 +0200
-Message-ID: <CAJfpegv2asQoevG992+1yruSrmMus57CoQ+=Cssf7O50FhyJyQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-To:     Karel Zak <kzak@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 5 May 2022 at 14:30, Karel Zak <kzak@redhat.com> wrote:
+Gave this a go on iMX8QXP with Linux 5.17.5 and I can't quite get it working.
 
-> Is there a way how to get mountinfo-like entry by mount ID for some
-> sub-tree? Something like:
->
->  getfattr -etext -n ":mnt:info:21" /
+I get -ENODEV from add_key() via keyctl. When I traced it in dmesg I couldn't
+get an as clear picture as I would like but CAAM (and thus possibly JRs?)
+initialzing after trusted_key.
 
-Yes:
+dmesg snips:
+[    1.296772] trusted_key: Job Ring Device allocation for transform failed
+...
+[    1.799768] caam 31400000.crypto: device ID = 0x0a16040000000100 (Era 9)
+[    1.807142] caam 31400000.crypto: job rings = 2, qi = 0
+[    1.822667] caam algorithms registered in /proc/crypto
+[    1.830541] caam 31400000.crypto: caam pkc algorithms registered in /proc/crypto
+[    1.841807] caam 31400000.crypto: registering rng-caam
 
-getfattr -etext -n ":mntns:21:info" /
+I didn't quite have the time to get a better trace than that.
 
->
-> The interface has to be consistent with some notification system (I
-> see your question about fsnotify/fanotify at linux-fsdevel) and mount
-> ID seems better than paths due to over-mounts, etc.
-
-Right.
-
-If the mount notification doesn't fit into fsnotify well, the original
-patch from David could be used.  I think that part was
-uncontroversial.
-
-Thanks,
-Miklos
+Best regards // John Ernberg
