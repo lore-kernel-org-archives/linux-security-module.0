@@ -2,185 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAECC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 00:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47248C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 01:35:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236222AbiEEAEU (ORCPT
+        id S234496AbiEEBjW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 May 2022 20:04:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
+        Wed, 4 May 2022 21:39:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381179AbiEDXiD (ORCPT
+        with ESMTP id S230176AbiEEBjV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 19:38:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E38E1EEC0;
-        Wed,  4 May 2022 16:34:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9AAD361CFE;
-        Wed,  4 May 2022 23:34:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B1B9C385A4;
-        Wed,  4 May 2022 23:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651707264;
-        bh=rg7gAW6bX54fvgfTyj+iLNX8iI1sLhWyZHkaZSInPKI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rr/VhCUks/jvvIukLEQ8hvouelHSSI+9oZesVy9WjHsFReyAH53SdMAhNcNxTncRh
-         AeNcfpQbGYHxmfRd7jiZWMjG0UbB4TKauYhVIbCXLf6VkMiM+KTnvLtKq+XumdW3b5
-         5XsvfgT+eqRG0aM2cOon7t/TFhjG0ZcaDmVjSrCT8tVFYMC+NZbIz/9jgmtLbpb2XF
-         jXkHA/11zXgPOkzwOz9hKL1cmOdu/0VL29aSmhBA26JK83Tblanq8QYFCE42J8CQ6Y
-         8C4e2ka/Vcj7axXhNyNWWZ2uF0Rop6olk1luKtEofCYGXG5sML5MH30Czl0f2TcCS9
-         K08sslbYEpn+w==
-Date:   Wed, 4 May 2022 18:43:24 -0500
-From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-        netdev@vger.kernel.org, selinux@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Gross <agross@kernel.org>,
-        Andy Lavr <andy.lavr@gmail.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Baowen Zheng <baowen.zheng@corigine.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Bradley Grove <linuxdrivers@attotech.com>,
-        brcm80211-dev-list.pdl@broadcom.com,
-        Christian Brauner <brauner@kernel.org>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        Chris Zankel <chris@zankel.net>,
-        Cong Wang <cong.wang@bytedance.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Gow <davidgow@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eli Cohen <elic@nvidia.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Francis Laniel <laniel_francis@privacyrequired.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        John Keeping <john@metanate.com>,
-        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
-        Keith Packard <keithp@keithp.com>, keyrings@vger.kernel.org,
-        kunit-dev@googlegroups.com,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Leon Romanovsky <leon@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux1394-devel@lists.sourceforge.net,
-        linux-afs@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Louis Peens <louis.peens@corigine.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rich Felker <dalias@aerifal.cx>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        SHA-cyfmac-dev-list@infineon.com,
-        Simon Horman <simon.horman@corigine.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Tadeusz Struk <tadeusz.struk@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
-        Udipto Goswami <quic_ugoswami@quicinc.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
-        xen-devel@lists.xenproject.org,
-        Yang Yingliang <yangyingliang@huawei.com>
-Subject: Re: [PATCH 28/32] selinux: Use mem_to_flex_dup() with xfrm and sidtab
-Message-ID: <20220504234324.GA12556@embeddedor>
-References: <20220504014440.3697851-1-keescook@chromium.org>
- <20220504014440.3697851-29-keescook@chromium.org>
- <CAHC9VhT5Y=ENiSyb=S-NVbGX63sLOv4nVuR_GS-yww6tiz0wYA@mail.gmail.com>
+        Wed, 4 May 2022 21:39:21 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 082696175;
+        Wed,  4 May 2022 18:35:43 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Ktx8l599GzhYFq;
+        Thu,  5 May 2022 09:35:19 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 5 May 2022 09:35:41 +0800
+Message-ID: <1f40a55b-7489-5e87-3584-73e2b1948615@huawei.com>
+Date:   Thu, 5 May 2022 09:35:40 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhT5Y=ENiSyb=S-NVbGX63sLOv4nVuR_GS-yww6tiz0wYA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v3 1/1] ima: remove the IMA_TEMPLATE Kconfig option
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
+CC:     <dmitry.kasatkin@gmail.com>, <roberto.sassu@huawei.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20220407021619.146410-1-guozihua@huawei.com>
+ <20220407021619.146410-2-guozihua@huawei.com>
+ <fbc9cda8eacc0a701d7b336bf45ecb6dfd450be9.camel@linux.ibm.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+In-Reply-To: <fbc9cda8eacc0a701d7b336bf45ecb6dfd450be9.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Paul,
-
-On Wed, May 04, 2022 at 06:57:28PM -0400, Paul Moore wrote:
-> On Tue, May 3, 2022 at 9:57 PM Kees Cook <keescook@chromium.org> wrote:
-
-[..]
-
-> > +++ b/include/uapi/linux/xfrm.h
-> > @@ -31,9 +31,9 @@ struct xfrm_id {
-> >  struct xfrm_sec_ctx {
-> >         __u8    ctx_doi;
-> >         __u8    ctx_alg;
-> > -       __u16   ctx_len;
-> > +       __DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(__u16, ctx_len);
-> >         __u32   ctx_sid;
-> > -       char    ctx_str[0];
-> > +       __DECLARE_FLEX_ARRAY_ELEMENTS(char, ctx_str);
-> >  };
+On 2022/4/7 22:43, Mimi Zohar wrote:
+> On Thu, 2022-04-07 at 10:16 +0800, GUO Zihua wrote:
+>> The original 'ima' measurement list template contains a hash, defined
+>> as 20 bytes, and a null terminated pathname, limited to 255
+>> characters.  Other measurement list templates permit both larger hashes
+>> and longer pathnames.  When the "ima" template is configured as the
+>> default, a new measurement list template (ima_template=) must be
+>> specified before specifying a larger hash algorithm (ima_hash=) on the
+>> boot command line.
+>>
+>> To avoid this boot command line ordering issue, remove the legacy "ima"
+>> template configuration option, allowing it to still be specified on the
+>> boot command line.
+>>
+>> The root cause of this issue is that during the processing of ima_hash,
+>> we would try to check whether the hash algorithm is compatible with the
+>> template. If the template is not set at the moment we do the check, we
+>> check the algorithm against the configured default template. If the
+>> default template is "ima", then we reject any hash algorithm other than
+>> sha1 and md5.
+>>
+>> For example, if the compiled default template is "ima", and the default
+>> algorithm is sha1 (which is the current default). In the cmdline, we put
+>> in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
+>> that ima starts with ima-ng as the template and sha256 as the hash
+>> algorithm. However, during the processing of "ima_hash=",
+>> "ima_template=" has not been processed yet, and hash_setup would check
+>> the configured hash algorithm against the compiled default: ima, and
+>> reject sha256. So at the end, the hash algorithm that is actually used
+>> will be sha1.
+>>
+>> With template "ima" removed from the configured default, we ensure that
+>> the default tempalte would at least be "ima-ng" which allows for
+>> basically any hash algorithm.
+>>
+>> This change would not break the algorithm compatibility checks for IMA.
+>>
+>> Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
+>> Signed-off-by: GUO Zihua <guozihua@huawei.com>
 > 
-> While I like the idea of this in principle, I'd like to hear about the
-> testing you've done on these patches.  A previous flex array
-> conversion in the audit uapi headers ended up causing a problem with
+> thanks,
+> 
+> Mimi
+> 
+> 
+> .
 
-I'm curious about which commit caused those problems...?
+Hi,
+
+Is this patch picked?
 
 Thanks
---
-Gustavo
-
-> GCC12 and SWIG; while it was a SWIG problem and not a kernel header
-> problem that was thin consolation for those with broken builds.
+GUO Zihua
