@@ -2,77 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B6BC4321E
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 13:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFF3C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 14:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379310AbiEEN2n (ORCPT
+        id S1379253AbiEEODp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 May 2022 09:28:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39204 "EHLO
+        Thu, 5 May 2022 10:03:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377265AbiEEN2i (ORCPT
+        with ESMTP id S233206AbiEEODo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 May 2022 09:28:38 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDCE95677D;
-        Thu,  5 May 2022 06:24:56 -0700 (PDT)
-Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KvDtw5FdMzhYv6;
-        Thu,  5 May 2022 21:24:24 +0800 (CST)
-Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
- dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 5 May 2022 21:24:55 +0800
-Received: from ubuntu1804.huawei.com (10.67.174.152) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 5 May 2022 21:24:54 +0800
-From:   Wang Weiyang <wangweiyang2@huawei.com>
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <wangweiyang2@huawei.com>
-Subject: [PATCH 3/3] ima: Append line feed to ima/binary_runtime_measurements
-Date:   Thu, 5 May 2022 21:23:01 +0800
-Message-ID: <20220505132301.124832-4-wangweiyang2@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220505132301.124832-1-wangweiyang2@huawei.com>
-References: <20220505132301.124832-1-wangweiyang2@huawei.com>
+        Thu, 5 May 2022 10:03:44 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADD423617E
+        for <linux-security-module@vger.kernel.org>; Thu,  5 May 2022 06:59:58 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id a21so5335130edb.1
+        for <linux-security-module@vger.kernel.org>; Thu, 05 May 2022 06:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8cdP+QQ3RkXNjtwvBi4VN1FsvGgtTlKBfCuL8UUAtAI=;
+        b=E8qBemq4oTx4YPbWRWMJzV2qIbcvYOdveNbfeZemz+4dZQ+I0m7fLXmsY75j+/wiX5
+         XaE1LThAuxmxZgvbTboIF71ZZ5XDfPUtgSQz8ZVQ2PL1AE4CxYt/PmItFNePGMLFoNgb
+         A8tRUVmKiVc6KZIJU/kk/0DlACH0+77UO+Qz0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8cdP+QQ3RkXNjtwvBi4VN1FsvGgtTlKBfCuL8UUAtAI=;
+        b=RioeaS6kB8XfK7H/MEIcOQWIIT7jkD5+QT+GHCAFmVj/QGUbm3iK9I1z2RoylpEGE9
+         OAlG2ZXLg+EYfOatrxS0R4HwEa7RdR5kZKooYRtqwHEMbsyCgCmEkkmZ+6s9xieh+I2v
+         3lnmRgD5eVoLKLD+HUb6jOvcF4O/i+Q/qNY4+8Eqyi/6JYdgbdfsuSR1S05I8H0gvUaw
+         XxIRSMVD0+Ha+P3FRsI/M9JWTnYnCIUTfa178BlD9GjoCZmF++Pk7N7SxjaMqCXmE+Iz
+         kHKJ3fDwy2290aYtQpUrEDeEFdaFK+rEVQkhaciWyCAk2P/aZ3m3uINK0D57BbGPyOWt
+         EF5w==
+X-Gm-Message-State: AOAM530EBLsU8PsTkxI6McRxsvGyvn8Ld6ivaa0bCwS5jkF1eXPO5WGc
+        F3p5CUA0+0We69zeKhoqtANCYOKIGkLAJTlBOC2tcw==
+X-Google-Smtp-Source: ABdhPJzTe+CDKCcscUgOgvXLSyK5NVYs7EmJWj3tio4m59arkqFAPKBq+XxNeijdGRs92739wL1GOOxDMjNo+9z+bh8=
+X-Received: by 2002:a05:6402:5ca:b0:423:f330:f574 with SMTP id
+ n10-20020a05640205ca00b00423f330f574mr30384732edx.116.1651759197275; Thu, 05
+ May 2022 06:59:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.174.152]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <20220505123033.sgcyx7kfl4kcfcds@ws.net.home>
+In-Reply-To: <20220505123033.sgcyx7kfl4kcfcds@ws.net.home>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 5 May 2022 15:59:45 +0200
+Message-ID: <CAJfpegv2asQoevG992+1yruSrmMus57CoQ+=Cssf7O50FhyJyQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+To:     Karel Zak <kzak@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There is no LF in binary_runtime_measurements output. It is little weird,
-so append LF to it.
+On Thu, 5 May 2022 at 14:30, Karel Zak <kzak@redhat.com> wrote:
 
-Example:
+> Is there a way how to get mountinfo-like entry by mount ID for some
+> sub-tree? Something like:
+>
+>  getfattr -etext -n ":mnt:info:21" /
 
-/ # cat /sys/kernel/security/ima/binary_runtime_measurements
-...imaboot_aggregate/ #
+Yes:
 
-Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
----
- security/integrity/ima/ima_fs.c | 1 +
- 1 file changed, 1 insertion(+)
+getfattr -etext -n ":mntns:21:info" /
 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index cd1683dad3bf..0a2f9cb25b20 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -183,6 +183,7 @@ int ima_measurements_show(struct seq_file *m, void *v)
- 			show = IMA_SHOW_BINARY_OLD_STRING_FMT;
- 		field->field_show(m, show, &e->template_data[i]);
- 	}
-+	seq_puts(m, "\n");
- 	return 0;
- }
- 
--- 
-2.17.1
+>
+> The interface has to be consistent with some notification system (I
+> see your question about fsnotify/fanotify at linux-fsdevel) and mount
+> ID seems better than paths due to over-mounts, etc.
 
+Right.
+
+If the mount notification doesn't fit into fsnotify well, the original
+patch from David could be used.  I think that part was
+uncontroversial.
+
+Thanks,
+Miklos
