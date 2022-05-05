@@ -2,210 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B82BC43219
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 03:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2841C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 May 2022 12:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240686AbiEEDSh (ORCPT
+        id S1376814AbiEEMeb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 May 2022 23:18:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46116 "EHLO
+        Thu, 5 May 2022 08:34:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240692AbiEEDSf (ORCPT
+        with ESMTP id S232077AbiEEMeZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 May 2022 23:18:35 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF6650052
-        for <linux-security-module@vger.kernel.org>; Wed,  4 May 2022 20:14:55 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id u3so4343106wrg.3
-        for <linux-security-module@vger.kernel.org>; Wed, 04 May 2022 20:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6ucVUJA/3XuUnAZZDdzrSa00V5OM/xNG80G7w+rY/AM=;
-        b=TuxTKLvOuI4WPEKhesTppN+S/ZTkV+RZI5Wf5W2p+hsrw7/gyfISF8EIiT+rnx8Zu6
-         zyyiN1wYwPcxjcCA2Sf5xnxirRkddqYIXy2R06dd7qAEUind0ZWDkOOMEqGzEQWPzWzC
-         ZTGq5qihhGmXwhHHxuYfhzg3wQjnC+ThZO+LDVhD9+QIb89VKx3wO1YbUFwWrxXrBCMa
-         SL8UA4+69pMFcpj8M2pJPoNe1J5xXeNZwxQABf1kR5+ALPhLTrYwt5fLtjpY8BeYkBF4
-         nHH6g/sC5IM5M9d/Ecm/JssJwuDneWf8+Vn5nXmTehGUz+AEuc9+Pt2ztZNda+z83bgG
-         KQkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6ucVUJA/3XuUnAZZDdzrSa00V5OM/xNG80G7w+rY/AM=;
-        b=AJ6YvZtwhoCtKThOqvQUeCknMJH2F3ovVlqHUt6eQyFSEIDDSs80x5I1V5a0SwB7M3
-         y5iXzWhxwX3Y6RU1XP/k1/8fFQz/qPdjLOv8O2cKLc2p5C+NN/7PTOaIDx4+5DHIi1/J
-         NABAV5ep+vO46GZ36kNJiC8N2BLHNh2d4Jrh1rzku79gK5RB0WxjfzSR9g/f7KfBE8SW
-         JYAroR4/tKBDX1qIE7THWik/OQpqcMeYt0cp06N2/snPwgIzySoyHIxsXffd+nBqDfyY
-         1Eau0o00ny8o7NahVb/KKtjmSDR2Zkb/zMvGpTDyOIrErruk8RBjlrhdyyHg4ByS/a9X
-         270w==
-X-Gm-Message-State: AOAM5338SnWenWtqLKffUuVPfYfiZ8gilpgrBM3Cjzll+KamNW/H0wMP
-        xUQeaPcH9Jej81BGrGuxu3b3HKXlyrV3pHHBtH3L
-X-Google-Smtp-Source: ABdhPJzVMX+BMHIo/6Rx3rt/EGt5DUCiA1Xs3vZE5oz5hLJkbM0bMmp2okAEnKI/au/mDAitpvRIKuXqsxBU1V8TuLw=
-X-Received: by 2002:a5d:590d:0:b0:20a:c3eb:2584 with SMTP id
- v13-20020a5d590d000000b0020ac3eb2584mr18412244wrd.18.1651720493308; Wed, 04
- May 2022 20:14:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220504014440.3697851-1-keescook@chromium.org>
- <20220504014440.3697851-29-keescook@chromium.org> <CAHC9VhT5Y=ENiSyb=S-NVbGX63sLOv4nVuR_GS-yww6tiz0wYA@mail.gmail.com>
- <20220504234324.GA12556@embeddedor>
-In-Reply-To: <20220504234324.GA12556@embeddedor>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 4 May 2022 23:14:42 -0400
-Message-ID: <CAHC9VhRJC4AxeDsGpdphfJD4WzgaeBsdONHnixBzft5u_cE-Dw@mail.gmail.com>
-Subject: Re: [PATCH 28/32] selinux: Use mem_to_flex_dup() with xfrm and sidtab
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        netdev@vger.kernel.org, selinux@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Gross <agross@kernel.org>,
-        Andy Lavr <andy.lavr@gmail.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Baowen Zheng <baowen.zheng@corigine.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Bradley Grove <linuxdrivers@attotech.com>,
-        brcm80211-dev-list.pdl@broadcom.com,
+        Thu, 5 May 2022 08:34:25 -0400
+Received: from us-smtp-delivery-74.mimecast.com (us-smtp-delivery-74.mimecast.com [170.10.129.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B53B34FC6A
+        for <linux-security-module@vger.kernel.org>; Thu,  5 May 2022 05:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1651753844;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YlZT13jIA/It2oCfOEpEIe9Baj4YpyTZ8d0J7CEtWsQ=;
+        b=OUf7E+YHkOvM2zS2vtDgKzaBaw/o1s6wu/V4XxHTQZ9JuWIO2PskvMN00sWGvxU4PSt5zN
+        RUc4K8AOYOeLUjAPWkSY/jObnwZMVZnW3XYpXwXdzUoBvdD0TfU0GqXwVQf3qOIWcSoMhF
+        WE490gTwYkvN/2Odib22xJMPubDA23Q=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-343-0xIDvD5lPEWJE6D9hkjW7Q-1; Thu, 05 May 2022 08:30:39 -0400
+X-MC-Unique: 0xIDvD5lPEWJE6D9hkjW7Q-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B60953810D27;
+        Thu,  5 May 2022 12:30:38 +0000 (UTC)
+Received: from ws.net.home (unknown [10.36.112.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 06CB8463E1C;
+        Thu,  5 May 2022 12:30:35 +0000 (UTC)
+Date:   Thu, 5 May 2022 14:30:33 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Greg KH <gregkh@linuxfoundation.org>,
         Christian Brauner <brauner@kernel.org>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        Chris Zankel <chris@zankel.net>,
-        Cong Wang <cong.wang@bytedance.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Gow <davidgow@google.com>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
         David Howells <dhowells@redhat.com>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eli Cohen <elic@nvidia.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Francis Laniel <laniel_francis@privacyrequired.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        John Keeping <john@metanate.com>,
-        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
-        Keith Packard <keithp@keithp.com>, keyrings@vger.kernel.org,
-        kunit-dev@googlegroups.com,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Leon Romanovsky <leon@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux1394-devel@lists.sourceforge.net,
-        linux-afs@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Louis Peens <louis.peens@corigine.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rich Felker <dalias@aerifal.cx>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        SHA-cyfmac-dev-list@infineon.com,
-        Simon Horman <simon.horman@corigine.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Tadeusz Struk <tadeusz.struk@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
-        Udipto Goswami <quic_ugoswami@quicinc.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
-        xen-devel@lists.xenproject.org,
-        Yang Yingliang <yangyingliang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+Message-ID: <20220505123033.sgcyx7kfl4kcfcds@ws.net.home>
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 4, 2022 at 7:34 PM Gustavo A. R. Silva
-<gustavoars@kernel.org> wrote:
->
-> Hi Paul,
->
-> On Wed, May 04, 2022 at 06:57:28PM -0400, Paul Moore wrote:
-> > On Tue, May 3, 2022 at 9:57 PM Kees Cook <keescook@chromium.org> wrote:
->
-> [..]
->
-> > > +++ b/include/uapi/linux/xfrm.h
-> > > @@ -31,9 +31,9 @@ struct xfrm_id {
-> > >  struct xfrm_sec_ctx {
-> > >         __u8    ctx_doi;
-> > >         __u8    ctx_alg;
-> > > -       __u16   ctx_len;
-> > > +       __DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(__u16, ctx_len);
-> > >         __u32   ctx_sid;
-> > > -       char    ctx_str[0];
-> > > +       __DECLARE_FLEX_ARRAY_ELEMENTS(char, ctx_str);
-> > >  };
-> >
-> > While I like the idea of this in principle, I'd like to hear about the
-> > testing you've done on these patches.  A previous flex array
-> > conversion in the audit uapi headers ended up causing a problem with
->
-> I'm curious about which commit caused those problems...?
+On Tue, May 03, 2022 at 02:23:23PM +0200, Miklos Szeredi wrote:
+> Examples:
+> 
+> $ getfattr -etext -n ":" .
+> # file: .
+> :="mnt:\000mntns:"
+> 
+> $ getfattr -etext -n ":mnt:" .
+> # file: .
+> :mnt:="info"
+> 
+> $ getfattr -etext -n ":mnt:info" .
+> # file: .
+> :mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
 
-Commit ed98ea2128b6 ("audit: replace zero-length array with
-flexible-array member"), however, as I said earlier, the problem was
-actually with SWIG, it just happened to be triggered by the kernel
-commit.  There was a brief fedora-devel mail thread about the problem,
-see the link below:
+Is there a way how to get mountinfo-like entry by mount ID for some
+sub-tree? Something like:
 
-* https://www.spinics.net/lists/fedora-devel/msg297991.html
+ getfattr -etext -n ":mnt:info:21" /
 
-To reiterate, I'm supportive of changes like this, but I would like to
-hear how it was tested to ensure there are no unexpected problems with
-userspace.  If there are userspace problems it doesn't mean we can't
-make changes like this, it just means we need to ensure that the
-userspace issues are resolved first.
+The interface has to be consistent with some notification system (I
+see your question about fsnotify/fanotify at linux-fsdevel) and mount
+ID seems better than paths due to over-mounts, etc.
+
+> $ getfattr -etext -n ":mntns:" .
+> # file: .
+> :mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
+> 
+> $ getfattr -etext -n ":mntns:28:" .
+> # file: .
+> :mntns:28:="info"
+
+  Karel
 
 -- 
-paul-moore.com
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
