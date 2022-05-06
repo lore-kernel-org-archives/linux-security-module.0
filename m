@@ -2,66 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B48C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 May 2022 01:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC51C4167B
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 May 2022 06:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376839AbiEFBfc (ORCPT
+        id S237378AbiEFGac (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 May 2022 21:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53714 "EHLO
+        Fri, 6 May 2022 02:30:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232969AbiEFBfc (ORCPT
+        with ESMTP id S237471AbiEFGa3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 May 2022 21:35:32 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BE51EEC7;
-        Thu,  5 May 2022 18:31:49 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.55])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4KvY0v3h5Rz1JBmh;
-        Fri,  6 May 2022 09:30:39 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 6 May 2022 09:31:44 +0800
-Message-ID: <b0937969-a915-b018-64a8-15cac392bf71@huawei.com>
-Date:   Fri, 6 May 2022 09:31:44 +0800
+        Fri, 6 May 2022 02:30:29 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A278665D2D
+        for <linux-security-module@vger.kernel.org>; Thu,  5 May 2022 23:26:41 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1nmrPo-0005oH-Ma; Fri, 06 May 2022 08:26:13 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <afa@pengutronix.de>)
+        id 1nmrPi-000edh-C9; Fri, 06 May 2022 08:26:05 +0200
+Received: from afa by dude04.red.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <afa@pengutronix.de>)
+        id 1nmrPf-004Tw9-LV; Fri, 06 May 2022 08:26:03 +0200
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     kernel@pengutronix.de, Pankaj Gupta <pankaj.gupta@nxp.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Michael Walle <michael@walle.cc>,
+        Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v9 7/7] MAINTAINERS: add KEYS-TRUSTED-CAAM
+Date:   Fri,  6 May 2022 08:25:53 +0200
+Message-Id: <20220506062553.1068296-8-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220506062553.1068296-1-a.fatoum@pengutronix.de>
+References: <20220506062553.1068296-1-a.fatoum@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v3 1/1] ima: remove the IMA_TEMPLATE Kconfig option
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
-CC:     <dmitry.kasatkin@gmail.com>, <roberto.sassu@huawei.com>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20220407021619.146410-1-guozihua@huawei.com>
- <20220407021619.146410-2-guozihua@huawei.com>
- <fbc9cda8eacc0a701d7b336bf45ecb6dfd450be9.camel@linux.ibm.com>
- <1f40a55b-7489-5e87-3584-73e2b1948615@huawei.com>
- <f7d8ebad78e184dd391b920f72ed7a49d3e14aa3.camel@linux.ibm.com>
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-In-Reply-To: <f7d8ebad78e184dd391b920f72ed7a49d3e14aa3.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022/5/5 20:39, Mimi Zohar wrote:
-> On Thu, 2022-05-05 at 09:35 +0800, Guozihua (Scott) wrote:
->> Hi,
->>
->> Is this patch picked?
-> 
-> Yes, the patch is queued in next-integrity, which feeds into linux-
-> next.  For the future, you can check
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git.
-> 
-Thanks Mimi!
+Create a maintainer entry for CAAM trusted keys in the Linux keyring.
 
+Reviewed-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+v8 -> v9:
+  - rewrite commit message (Jarkko)
+v7 -> v8:
+  - add Pankaj's Reviewed-by
+v6 -> v7:
+  - split off as separate patch (Jarkko)
+
+To: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Bottomley <jejb@linux.ibm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+To: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: "Horia Geantă" <horia.geanta@nxp.com>
+Cc: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Jan Luebbe <j.luebbe@pengutronix.de>
+Cc: David Gstir <david@sigma-star.at>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Franck LENORMAND <franck.lenormand@nxp.com>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Michael Walle <michael@walle.cc>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Cc: keyrings@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5e8c2f611766..e58e6fc3016d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10855,6 +10855,15 @@ S:	Supported
+ F:	include/keys/trusted_tee.h
+ F:	security/keys/trusted-keys/trusted_tee.c
+ 
++KEYS-TRUSTED-CAAM
++M:	Ahmad Fatoum <a.fatoum@pengutronix.de>
++R:	Pengutronix Kernel Team <kernel@pengutronix.de>
++L:	linux-integrity@vger.kernel.org
++L:	keyrings@vger.kernel.org
++S:	Maintained
++F:	include/keys/trusted_caam.h
++F:	security/keys/trusted-keys/trusted_caam.c
++
+ KEYS/KEYRINGS
+ M:	David Howells <dhowells@redhat.com>
+ M:	Jarkko Sakkinen <jarkko@kernel.org>
 -- 
-Best
-GUO Zihua
+2.30.2
+
