@@ -2,33 +2,33 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBBFC433F5
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 May 2022 16:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DDBC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 May 2022 16:07:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443449AbiEFQKs (ORCPT
+        id S1443431AbiEFQKt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 May 2022 12:10:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
+        Fri, 6 May 2022 12:10:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443432AbiEFQKm (ORCPT
+        with ESMTP id S237525AbiEFQKs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 May 2022 12:10:42 -0400
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 714DC37BFD
-        for <linux-security-module@vger.kernel.org>; Fri,  6 May 2022 09:06:59 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KvwS14sS9zMqpmv;
-        Fri,  6 May 2022 18:06:57 +0200 (CEST)
+        Fri, 6 May 2022 12:10:48 -0400
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF46457BE
+        for <linux-security-module@vger.kernel.org>; Fri,  6 May 2022 09:07:00 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KvwS274v7zMqwTF;
+        Fri,  6 May 2022 18:06:58 +0200 (CEST)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KvwS05F2nzlhMBg;
-        Fri,  6 May 2022 18:06:56 +0200 (CEST)
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KvwS25C3nzlhSM0;
+        Fri,  6 May 2022 18:06:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1651853217;
-        bh=+g6nltvqYNf1CZKZic5eqqeCIzlw7XGV0BEiW9ZEQ80=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Z2fF1yW2U0IXfjgHxAffPLaWEtBpl7E9tuO99BpdDQsBtPy3tYzbF7JvW1ckSMkwT
-         S158RLiD1+HeLu/ewGy2lH2+VoVjfCK4Kc9B3HUT3LIq4fbLKT+PrS8cLL+IhNZssy
-         3D+ddN+4+RpU+hMlGtCKQFrdvfh0069sREXUGhKg=
+        s=20191114; t=1651853218;
+        bh=AduYp70JJClX3H7fyrnMjxM4mEDJGdCPkPgFeSVZSNA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HRd2e9dcc/zmgOBEtzRIDeZBAr5LsAg51vKVCdAxvFxawfnEEI/4+c+ZvIgVIPiWO
+         3vD53c/qHsyb8ic9wA7Jk+fAHcKxN8UNjIJ8ChmeFR5FrXtELeUD3kZXw5nZMYAijr
+         0VTnvXkGjcXaYaOziNVosPxzxfzQb8Qo8A0iaLsI=
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>
@@ -41,65 +41,105 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Paul Moore <paul@paul-moore.com>,
         Shuah Khan <shuah@kernel.org>, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v2 00/10] Minor Landlock fixes and new tests
-Date:   Fri,  6 May 2022 18:08:10 +0200
-Message-Id: <20220506160820.524344-1-mic@digikod.net>
+Subject: [PATCH v2 02/10] selftests/landlock: Make tests build with old libc
+Date:   Fri,  6 May 2022 18:08:12 +0200
+Message-Id: <20220506160820.524344-3-mic@digikod.net>
+In-Reply-To: <20220506160820.524344-1-mic@digikod.net>
+References: <20220506160820.524344-1-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+Replace SYS_<syscall> with __NR_<syscall>.  Using the __NR_<syscall>
+notation, provided by UAPI, is useful to build tests on systems without
+the SYS_<syscall> definitions.
 
-This series contains some minor code and documentation fixes.  There is
-also some miscellaneous new tests to improve coverage and that may help
-for future access types (e.g. networking).
+Replace SYS_pivot_root with __NR_pivot_root, and SYS_move_mount with
+__NR_move_mount.
 
-The important new patches are the last three ones.  They change the
-landlock_add_rule(2) and landlock_restrict_self(2) check orderings to
-make them more consistent according to future Landlock rule types (e.g.
-networking).
+Define renameat2() and RENAME_EXCHANGE if they are unknown to old build
+systems.
 
-As suggested by Alejandro Colomar [1], I removed the
-landlock_add_rule(2) signature fix.  I added a new patch to test O_PATH
-behavior.
+Cc: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20220506160820.524344-3-mic@digikod.net
+---
 
-Test coverage for security/landlock was 94.4% of 500 lines, and it is
-now 94.4% of 504 lines according to gcc/gcov-11.
+Changes since v1:
+* Format with clang-format and rebase.
+---
+ tools/testing/selftests/landlock/fs_test.c | 23 +++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
-I also fixed some typos and formatted the code with clang-format.  This
-series can be applied on top of
-https://lore.kernel.org/r/20220506160513.523257-1-mic@digikod.net
-
-[1] https://lore.kernel.org/r/ae52c028-05c7-c22e-fc47-d97ee4a2f6c7@gmail.com
-
-Previous version:
-https://lore.kernel.org/r/20220221155311.166278-1-mic@digikod.net
-
-Regards,
-
-Mickaël Salaün (10):
-  landlock: Fix landlock_add_rule(2) documentation
-  selftests/landlock: Make tests build with old libc
-  selftests/landlock: Extend tests for minimal valid attribute size
-  selftests/landlock: Add tests for unknown access rights
-  selftests/landlock: Extend access right tests to directories
-  selftests/landlock: Fully test file rename with "remove" access
-  selftests/landlock: Add tests for O_PATH
-  landlock: Change landlock_add_rule(2) argument check ordering
-  landlock: Change landlock_restrict_self(2) check ordering
-  selftests/landlock: Test landlock_create_ruleset(2) argument check
-    ordering
-
- include/uapi/linux/landlock.h                |   5 +-
- security/landlock/syscalls.c                 |  37 +++---
- tools/testing/selftests/landlock/base_test.c | 107 +++++++++++++++--
- tools/testing/selftests/landlock/fs_test.c   | 120 ++++++++++++++++---
- 4 files changed, 218 insertions(+), 51 deletions(-)
-
-
-base-commit: 763c5dc0e990fbd803c3c2b1ae832366ab7d207f
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 28b01cb30c78..cc7fa7b17578 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -22,6 +22,19 @@
+ 
+ #include "common.h"
+ 
++#ifndef renameat2
++int renameat2(int olddirfd, const char *oldpath, int newdirfd,
++	      const char *newpath, unsigned int flags)
++{
++	return syscall(__NR_renameat2, olddirfd, oldpath, newdirfd, newpath,
++		       flags);
++}
++#endif
++
++#ifndef RENAME_EXCHANGE
++#define RENAME_EXCHANGE (1 << 1)
++#endif
++
+ #define TMP_DIR "tmp"
+ #define BINARY_PATH "./true"
+ 
+@@ -1279,7 +1292,7 @@ TEST_F_FORK(layout1, rule_inside_mount_ns)
+ 	int ruleset_fd;
+ 
+ 	set_cap(_metadata, CAP_SYS_ADMIN);
+-	ASSERT_EQ(0, syscall(SYS_pivot_root, dir_s3d2, dir_s3d3))
++	ASSERT_EQ(0, syscall(__NR_pivot_root, dir_s3d2, dir_s3d3))
+ 	{
+ 		TH_LOG("Failed to pivot root: %s", strerror(errno));
+ 	};
+@@ -1313,7 +1326,7 @@ TEST_F_FORK(layout1, mount_and_pivot)
+ 	set_cap(_metadata, CAP_SYS_ADMIN);
+ 	ASSERT_EQ(-1, mount(NULL, dir_s3d2, NULL, MS_RDONLY, NULL));
+ 	ASSERT_EQ(EPERM, errno);
+-	ASSERT_EQ(-1, syscall(SYS_pivot_root, dir_s3d2, dir_s3d3));
++	ASSERT_EQ(-1, syscall(__NR_pivot_root, dir_s3d2, dir_s3d3));
+ 	ASSERT_EQ(EPERM, errno);
+ 	clear_cap(_metadata, CAP_SYS_ADMIN);
+ }
+@@ -1332,13 +1345,13 @@ TEST_F_FORK(layout1, move_mount)
+ 	ASSERT_LE(0, ruleset_fd);
+ 
+ 	set_cap(_metadata, CAP_SYS_ADMIN);
+-	ASSERT_EQ(0, syscall(SYS_move_mount, AT_FDCWD, dir_s3d2, AT_FDCWD,
++	ASSERT_EQ(0, syscall(__NR_move_mount, AT_FDCWD, dir_s3d2, AT_FDCWD,
+ 			     dir_s1d2, 0))
+ 	{
+ 		TH_LOG("Failed to move mount: %s", strerror(errno));
+ 	}
+ 
+-	ASSERT_EQ(0, syscall(SYS_move_mount, AT_FDCWD, dir_s1d2, AT_FDCWD,
++	ASSERT_EQ(0, syscall(__NR_move_mount, AT_FDCWD, dir_s1d2, AT_FDCWD,
+ 			     dir_s3d2, 0));
+ 	clear_cap(_metadata, CAP_SYS_ADMIN);
+ 
+@@ -1346,7 +1359,7 @@ TEST_F_FORK(layout1, move_mount)
+ 	ASSERT_EQ(0, close(ruleset_fd));
+ 
+ 	set_cap(_metadata, CAP_SYS_ADMIN);
+-	ASSERT_EQ(-1, syscall(SYS_move_mount, AT_FDCWD, dir_s3d2, AT_FDCWD,
++	ASSERT_EQ(-1, syscall(__NR_move_mount, AT_FDCWD, dir_s3d2, AT_FDCWD,
+ 			      dir_s1d2, 0));
+ 	ASSERT_EQ(EPERM, errno);
+ 	clear_cap(_metadata, CAP_SYS_ADMIN);
 -- 
 2.35.1
 
