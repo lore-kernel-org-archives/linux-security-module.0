@@ -2,78 +2,107 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A22C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 May 2022 12:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFC0C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 May 2022 16:03:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1391990AbiEFMfS (ORCPT
+        id S1443330AbiEFQHf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 May 2022 08:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37424 "EHLO
+        Fri, 6 May 2022 12:07:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1392009AbiEFMfP (ORCPT
+        with ESMTP id S1355154AbiEFQHe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 May 2022 08:35:15 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0294269496;
-        Fri,  6 May 2022 05:31:30 -0700 (PDT)
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Kvqfx6wQ6zhYtn;
-        Fri,  6 May 2022 20:31:05 +0800 (CST)
-Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 6 May 2022 20:31:29 +0800
-Received: from [10.67.108.193] (10.67.108.193) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 6 May 2022 20:31:28 +0800
-Subject: Re: [PATCH 3/3] ima: Append line feed to
- ima/binary_runtime_measurements
-To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>
-References: <20220505132301.124832-1-wangweiyang2@huawei.com>
- <20220505132301.124832-4-wangweiyang2@huawei.com>
- <c6df072a55a29f670357e2dda384ec7c9ef332c9.camel@linux.ibm.com>
-From:   wangweiyang <wangweiyang2@huawei.com>
-Message-ID: <d24ec59e-59a6-0c11-681a-63b9ad85877c@huawei.com>
-Date:   Fri, 6 May 2022 20:31:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Fri, 6 May 2022 12:07:34 -0400
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D9469CFB
+        for <linux-security-module@vger.kernel.org>; Fri,  6 May 2022 09:03:50 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KvwNN4jhtzMqKsD;
+        Fri,  6 May 2022 18:03:48 +0200 (CEST)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KvwNN2ZszzljsTF;
+        Fri,  6 May 2022 18:03:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1651853028;
+        bh=b8DXJhHh0abOxq3vv6dVqiGLZkdpmtAtsCbdnpcP6hs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iYHG1HlcrZ5Ja8YnLx0lGGv3m9j+8LE2QQO6osFAB4NUlzesZybjwaZa4tvog+ilo
+         OHp4SJo3BXzO2aoZ5zhsMNNM4gRcQZTU+7KWwMnmlvx1IASZI1HgWyi9/Y1eqpRQqO
+         j/9Dt9FPBq8qDewcItrM9p2tsbEbQvCpf4v38LIQ=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Shuah Khan <shuah@kernel.org>, Tom Rix <trix@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v1 0/7] Landlock: Clean up coding style with clang-format
+Date:   Fri,  6 May 2022 18:05:06 +0200
+Message-Id: <20220506160513.523257-1-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <c6df072a55a29f670357e2dda384ec7c9ef332c9.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.108.193]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mimi,
+Hi,
 
-Sorry I didn't think thoroughly. Just ignore this patch.
+I used a simple coding style for the initial Landlock code.  However,
+this may be subject to different interpretations.  To avoid relying
+on tacit knowledge or text editors for these kind of rules, let's
+automate it as much as possible thanks to clang-format.  This makes the
+code formatting simple, consistent and impersonal.
 
-Thanks.
+Several versions of clang-format can be use but they may have (small)
+different behaviors for undefined/new configuration parts.  After
+testing different versions, I picked clang-format-14 which is relatively
+new and fixes a bug present in version 11 to 13 (visible in the Landlock
+formatted code).
 
-在 2022/5/6 19:16, Mimi Zohar 写道:
-> On Thu, 2022-05-05 at 21:23 +0800, Wang Weiyang wrote:
->> There is no LF in binary_runtime_measurements output. It is little weird,
->> so append LF to it.
->>
->> Example:
->>
->> / # cat /sys/kernel/security/ima/binary_runtime_measurements
->> ...imaboot_aggregate/ #
-> 
-> Why would you cat a binary file?!.  Doesn't make sense.
-> 
-> Mimi
-> 
->>
->> Signed-off-by: Wang Weiyang <wangweiyang2@huawei.com>
-> 
-> .
-> 
+I'll backport these patches and enforce this formatting for all the new
+Landlock patches.
+
+This series uses a patched clang-format configuration to make it
+compatible with checkpatch.pl:
+https://lore.kernel.org/r/20220506160106.522341-1-mic@digikod.net
+
+It can be applied on v5.18-rc5 .
+
+Regards,
+
+Mickaël Salaün (7):
+  landlock: Add clang-format exceptions
+  landlock: Format with clang-format
+  selftests/landlock: Add clang-format exceptions
+  selftests/landlock: Normalize array assignment
+  selftests/landlock: Format with clang-format
+  samples/landlock: Add clang-format exceptions
+  samples/landlock: Format with clang-format
+
+ include/uapi/linux/landlock.h                 |   4 +
+ samples/landlock/sandboxer.c                  | 104 ++--
+ security/landlock/cred.c                      |   4 +-
+ security/landlock/cred.h                      |   8 +-
+ security/landlock/fs.c                        |  80 +--
+ security/landlock/fs.h                        |  11 +-
+ security/landlock/limits.h                    |   4 +
+ security/landlock/object.c                    |   6 +-
+ security/landlock/object.h                    |   6 +-
+ security/landlock/ptrace.c                    |  10 +-
+ security/landlock/ruleset.c                   |  80 +--
+ security/landlock/ruleset.h                   |  15 +-
+ security/landlock/syscalls.c                  |  60 +-
+ tools/testing/selftests/landlock/base_test.c  |  80 +--
+ tools/testing/selftests/landlock/common.h     |  66 ++-
+ tools/testing/selftests/landlock/fs_test.c    | 532 ++++++++++--------
+ .../testing/selftests/landlock/ptrace_test.c  |  38 +-
+ 17 files changed, 615 insertions(+), 493 deletions(-)
+
+
+base-commit: 5c22d35e0cc57032edd92df16f530e3c9a33c027
+-- 
+2.35.1
+
