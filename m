@@ -2,33 +2,33 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F7AC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 May 2022 16:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5506BC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 May 2022 16:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443435AbiEFQKu (ORCPT
+        id S1443434AbiEFQKv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 May 2022 12:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43124 "EHLO
+        Fri, 6 May 2022 12:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443433AbiEFQKr (ORCPT
+        with ESMTP id S1443439AbiEFQKs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 May 2022 12:10:47 -0400
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F6A02E2;
-        Fri,  6 May 2022 09:07:00 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KvwS22VjzzMqwSb;
-        Fri,  6 May 2022 18:06:58 +0200 (CEST)
+        Fri, 6 May 2022 12:10:48 -0400
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAA4B69CCB
+        for <linux-security-module@vger.kernel.org>; Fri,  6 May 2022 09:07:01 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KvwS41jJtzMr2ZJ;
+        Fri,  6 May 2022 18:07:00 +0200 (CEST)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KvwS20gxszlhSLv;
-        Fri,  6 May 2022 18:06:58 +0200 (CEST)
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KvwS36zpTzlhMC1;
+        Fri,  6 May 2022 18:06:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1651853218;
-        bh=yivXrqwHOjEJuB5JO2dFkVkVifT0vIdSPlaZ68dxcTE=;
+        s=20191114; t=1651853220;
+        bh=kL99cMtumD1QSIju+JYUr1ezJx54p7MQnxDHvS0ug5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mvtnmkxj8G1I3mF9KjXpG4pgD7uoCILsZIPoo5A7yu4bfGGeLBSKir4P1G2+Bug/W
-         PHN2E38FCKMoMVLe7wIYjF2pABAeE9nCUAece9ecWukrrw27RRIc5wcPMLuZSNxcT0
-         Grtvtx+sJ/JoLha/UImCZLqdx93NLKZlkj+qVEo4=
+        b=K7yCdbhtnjRe+nxPNSrDCHTy9c7mQejcD3NxaH0m24ixTY2jesKdu4jlM9gqw6y9A
+         kvHQR81mVeCaee/gP/xcdmCOXwKTZ3wfamX9O6Z2uZCyIsbdXaIRPfzQhPQ5eURt+O
+         FQ4QVth19fHjMTsFAGQFXPRi+b8KzQWeQ1b5nv9c=
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>
@@ -41,9 +41,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Paul Moore <paul@paul-moore.com>,
         Shuah Khan <shuah@kernel.org>, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v2 01/10] landlock: Fix landlock_add_rule(2) documentation
-Date:   Fri,  6 May 2022 18:08:11 +0200
-Message-Id: <20220506160820.524344-2-mic@digikod.net>
+Subject: [PATCH v2 04/10] selftests/landlock: Add tests for unknown access rights
+Date:   Fri,  6 May 2022 18:08:14 +0200
+Message-Id: <20220506160820.524344-5-mic@digikod.net>
 In-Reply-To: <20220506160820.524344-1-mic@digikod.net>
 References: <20220506160820.524344-1-mic@digikod.net>
 MIME-Version: 1.0
@@ -52,54 +52,46 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-It is not mandatory to pass a file descriptor obtained with the O_PATH
-flag.  Also, replace rule's accesses with ruleset's accesses.
+Make sure that trying to use unknown access rights returns an error.
 
+Cc: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20220506160820.524344-2-mic@digikod.net
+Link: https://lore.kernel.org/r/20220506160820.524344-5-mic@digikod.net
 ---
- include/uapi/linux/landlock.h | 5 +++--
- security/landlock/syscalls.c  | 7 +++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index 15c31abb0d76..21c8d58283c9 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -62,8 +62,9 @@ struct landlock_path_beneath_attr {
- 	 */
- 	__u64 allowed_access;
- 	/**
--	 * @parent_fd: File descriptor, open with ``O_PATH``, which identifies
--	 * the parent directory of a file hierarchy, or just a file.
-+	 * @parent_fd: File descriptor, preferably opened with ``O_PATH``,
-+	 * which identifies the parent directory of a file hierarchy, or just a
-+	 * file.
- 	 */
- 	__s32 parent_fd;
- 	/*
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 2fde978bf8ca..7edc1d50e2bf 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -292,14 +292,13 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
-  *
-  * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
-  * - EINVAL: @flags is not 0, or inconsistent access in the rule (i.e.
-- *   &landlock_path_beneath_attr.allowed_access is not a subset of the rule's
-- *   accesses);
-+ *   &landlock_path_beneath_attr.allowed_access is not a subset of the
-+ *   ruleset handled accesses);
-  * - ENOMSG: Empty accesses (e.g. &landlock_path_beneath_attr.allowed_access);
-  * - EBADF: @ruleset_fd is not a file descriptor for the current thread, or a
-  *   member of @rule_attr is not a file descriptor as expected;
-  * - EBADFD: @ruleset_fd is not a ruleset file descriptor, or a member of
-- *   @rule_attr is not the expected file descriptor type (e.g. file open
-- *   without O_PATH);
-+ *   @rule_attr is not the expected file descriptor type;
-  * - EPERM: @ruleset_fd has no write access to the underlying ruleset;
-  * - EFAULT: @rule_attr inconsistency.
-  */
+Changes since v1:
+* Format with clang-format and rebase.
+---
+ tools/testing/selftests/landlock/fs_test.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index cc7fa7b17578..f293b7e2a1a7 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -448,6 +448,22 @@ TEST_F_FORK(layout1, file_access_rights)
+ 	ASSERT_EQ(0, close(path_beneath.parent_fd));
+ }
+ 
++TEST_F_FORK(layout1, unknown_access_rights)
++{
++	__u64 access_mask;
++
++	for (access_mask = 1ULL << 63; access_mask != ACCESS_LAST;
++	     access_mask >>= 1) {
++		struct landlock_ruleset_attr ruleset_attr = {
++			.handled_access_fs = access_mask,
++		};
++
++		ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr,
++						      sizeof(ruleset_attr), 0));
++		ASSERT_EQ(EINVAL, errno);
++	}
++}
++
+ static void add_path_beneath(struct __test_metadata *const _metadata,
+ 			     const int ruleset_fd, const __u64 allowed_access,
+ 			     const char *const path)
 -- 
 2.35.1
 
