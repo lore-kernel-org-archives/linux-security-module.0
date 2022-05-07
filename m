@@ -2,135 +2,137 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450A9C433F5
-	for <linux-security-module@archiver.kernel.org>; Sat,  7 May 2022 00:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5112DC43219
+	for <linux-security-module@archiver.kernel.org>; Sat,  7 May 2022 19:24:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1445083AbiEGAfz (ORCPT
+        id S1387037AbiEGT2f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 May 2022 20:35:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43154 "EHLO
+        Sat, 7 May 2022 15:28:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1445071AbiEGAfw (ORCPT
+        with ESMTP id S231754AbiEGT2d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 May 2022 20:35:52 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC6586543F;
-        Fri,  6 May 2022 17:32:07 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C2F1A5344B9;
-        Sat,  7 May 2022 10:32:02 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nn8Ma-008ucI-Uc; Sat, 07 May 2022 10:32:00 +1000
-Date:   Sat, 7 May 2022 10:32:00 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     tytso <tytso@mit.edu>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <20220507003200.GM1949718@dread.disaster.area>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
- <YnRf5CNN2yNKVu0B@mit.edu>
+        Sat, 7 May 2022 15:28:33 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC8B7193F8;
+        Sat,  7 May 2022 12:24:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 494D4CE0B8E;
+        Sat,  7 May 2022 19:24:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 012C8C385A5;
+        Sat,  7 May 2022 19:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651951482;
+        bh=MyfTcFDU6ZdDemzDXz07p3GqM6JlaSU35muvBx+cqsA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nWa5DFGSnHM+5qK1Nz9q8zyDg/AOASCQqnvJ0DnomLwFqMBGsfWD4eNeKL/rCg1nQ
+         EAxoVoCdfC5PO27eZDd65kbixnFzkbauOLmcNodfPZbmJODG5WHub4CKwjK72WqsK6
+         wu2DiGRWmhYqAMz+waY7xpBzGk3I3x4sGM+T53TxtWKzcSy4Wbzy+xOXyCmlDjVg4k
+         bZI69rB9yME650ZZYxdYz3DehxpM+Xoobjwd7Fw7V9a/vuwOyop0cB780iDUKRWfiv
+         rsiJirftMUIYfEmAHlpFPiAqeQq/rRWKpGFhKGgBgL5DlNytyK3XrX19/ROQKmvX94
+         TfZCxf1m/Qo/g==
+Date:   Sat, 7 May 2022 22:26:16 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>, kernel@pengutronix.de,
+        Pankaj Gupta <pankaj.gupta@nxp.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Michael Walle <michael@walle.cc>,
+        Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v9 7/7] MAINTAINERS: add KEYS-TRUSTED-CAAM
+Message-ID: <YnbH2Fgn/JFOU3Rf@iki.fi>
+References: <20220506062553.1068296-1-a.fatoum@pengutronix.de>
+ <20220506062553.1068296-8-a.fatoum@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YnRf5CNN2yNKVu0B@mit.edu>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=6275be06
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
-        a=6tRzxmq33S4bAUIDdMMA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220506062553.1068296-8-a.fatoum@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 05, 2022 at 04:38:12PM -0700, tytso wrote:
-> On Tue, May 03, 2022 at 02:23:23PM +0200, Miklos Szeredi wrote:
-> > 
-> > : - root
-> > bar - an attribute
-> > foo: - a folder (can contain attributes and/or folders)
-> > 
-> > The contents of a folder is represented by a null separated list of names.
-> > 
-> > Examples:
-> > 
-> > $ getfattr -etext -n ":" .
-> > # file: .
-> > :="mnt:\000mntns:"
+On Fri, May 06, 2022 at 08:25:53AM +0200, Ahmad Fatoum wrote:
+> Create a maintainer entry for CAAM trusted keys in the Linux keyring.
 > 
-> In your example, does it matter what "." is?  It looks like in some
-> cases, it makes no difference at all, and in other cases, like this,
-> '.' *does* matter:
+> Reviewed-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+> v8 -> v9:
+>   - rewrite commit message (Jarkko)
+> v7 -> v8:
+>   - add Pankaj's Reviewed-by
+> v6 -> v7:
+>   - split off as separate patch (Jarkko)
 > 
-> > $ getfattr -etext -n ":mnt:info" .
-> > # file: .
-> > :mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
+> To: Jarkko Sakkinen <jarkko@kernel.org>
+> To: James Bottomley <jejb@linux.ibm.com>
+> To: Mimi Zohar <zohar@linux.ibm.com>
+> To: David Howells <dhowells@redhat.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: "Horia Geantă" <horia.geanta@nxp.com>
+> Cc: Pankaj Gupta <pankaj.gupta@nxp.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Biggers <ebiggers@kernel.org>
+> Cc: Jan Luebbe <j.luebbe@pengutronix.de>
+> Cc: David Gstir <david@sigma-star.at>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Franck LENORMAND <franck.lenormand@nxp.com>
+> Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> Cc: Michael Walle <michael@walle.cc>
+> Cc: Sumit Garg <sumit.garg@linaro.org>
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-integrity@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> ---
+>  MAINTAINERS | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> Is that right?
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5e8c2f611766..e58e6fc3016d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10855,6 +10855,15 @@ S:	Supported
+>  F:	include/keys/trusted_tee.h
+>  F:	security/keys/trusted-keys/trusted_tee.c
+>  
+> +KEYS-TRUSTED-CAAM
+> +M:	Ahmad Fatoum <a.fatoum@pengutronix.de>
+> +R:	Pengutronix Kernel Team <kernel@pengutronix.de>
+> +L:	linux-integrity@vger.kernel.org
+> +L:	keyrings@vger.kernel.org
+> +S:	Maintained
+> +F:	include/keys/trusted_caam.h
+> +F:	security/keys/trusted-keys/trusted_caam.c
+> +
+>  KEYS/KEYRINGS
+>  M:	David Howells <dhowells@redhat.com>
+>  M:	Jarkko Sakkinen <jarkko@kernel.org>
+> -- 
+> 2.30.2
 > 
-> > $ getfattr -etext -n ":mntns:" .
-> > # file: .
-> > :mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
-> 
-> What is this returning?  All possible mount name spaces?  Or all of
-> the mount spaces where '.' happens to exist?
-> 
-> Also, using the null character means that we can't really use shell
-> scripts calling getfattr.
 
-Yeah, it should be returning an attr per namespace, not an attr
-whose value contains all the valid namespaces.
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-i.e. if the next level of the heirachy is 21, 22, 24, .... we should
-be seeing a listing of multiple attributes with naming like:
-
-:mntns:21:
-:mntns:22:
-:mntns:24:
-....
-
-rather than an attribute whose value contains the names of the
-attrbiutes in the next layer of the heirarchy. Then we can just
-pull the namespace we want and feed it directly to:
-
-$ getfattr -n ":mntns:21:"
-
-and we get a list of all the attributes available for that
-namespace...
-
-> I understand that the problem is that in
-> some cases, you might want to return a pathname, and NULL is the only
-> character which is guaranteed not to show up in a pathname.  However,
-> it makes parsing the returned value in a shell script exciting.
-
-We shouldn't be returning the names of children in an attribute
-value. We have a syscall API for doing this that - listxattr() will
-iterate attribute names just like a directory does with readdir()
-via listxattr(). IOWs, we should not need to encode the next layer
-of child attribute names into the value of the parent attribute - if
-we do a listxattr on a parent that has children, return the list of
-child names as individual attribute names....
-
-(Yes, I know listxattr null separates the attribute names - it's a
-godawful kernel API - but that's not the programmatic interface
-we should expose at the shell script level.)
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+BR, Jarkko
