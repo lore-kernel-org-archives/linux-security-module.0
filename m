@@ -2,217 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED85CC433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 12:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3249FC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 13:05:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234952AbiEIMwW (ORCPT
+        id S235108AbiEINJI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 May 2022 08:52:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38348 "EHLO
+        Mon, 9 May 2022 09:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234907AbiEIMwR (ORCPT
+        with ESMTP id S235146AbiEINJA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 May 2022 08:52:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9345291CE6;
-        Mon,  9 May 2022 05:48:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 60DC160F83;
-        Mon,  9 May 2022 12:48:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC776C385AB;
-        Mon,  9 May 2022 12:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652100502;
-        bh=PEkal2Mg+V+a1Uc4DwNy01rEfPajZVpu3xEyPDheL7g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nLdqiKtUmlalSDwS1n1Pd+QPOl3ZQ5Z/Px3VzfgDfi/iTVQE75a4Mx59sqYinG3Y/
-         6JQ6tPdvw+spGntcA6/qBbzc0EWVWgvTCSeRhFt1TJnwfvlS403/93TzCxeTfDI7bL
-         Y5ZOPkievIcmDHqw93+6S/hqUlUH3A62X+d+bPRUfl+mF2CJW2bDhz2iBiCLZyWITr
-         djQO1sd/jt9/OKnyv7F6kp5sV6MSxq3kG3Cdq0CXHpH2YpoyabNaeZddaukEfsezds
-         fZkIgyWymXJHtqeaAT7YcpcuzYjWrtm8sVHbltjmgphJAmYJA3YXh3Yq2Rnko/B5MD
-         lwieyoWchdbeg==
-Date:   Mon, 9 May 2022 14:48:15 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
+        Mon, 9 May 2022 09:09:00 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE77F1611E7
+        for <linux-security-module@vger.kernel.org>; Mon,  9 May 2022 06:05:06 -0700 (PDT)
+Received: from birne.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::51])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1no33x-0005Ao-B0; Mon, 09 May 2022 15:04:33 +0200
+Message-ID: <5e7c0b3c9bc285f1cf9f7b20f055aa376e1688cc.camel@pengutronix.de>
+Subject: Re: [EXT] [PATCH v9 3/7] crypto: caam - determine whether CAAM
+ supports blob encap/decap
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Pankaj Gupta <pankaj.gupta@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Michael Walle <michael@walle.cc>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
         David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+        James Morris <jmorris@namei.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Date:   Mon, 09 May 2022 15:04:20 +0200
+In-Reply-To: <DU2PR04MB8630501008F661C596C0106295C69@DU2PR04MB8630.eurprd04.prod.outlook.com>
+References: <20220506062553.1068296-1-a.fatoum@pengutronix.de>
+         <20220506062553.1068296-4-a.fatoum@pengutronix.de>
+         <DU2PR04MB8630501008F661C596C0106295C69@DU2PR04MB8630.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::51
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 03, 2022 at 02:23:23PM +0200, Miklos Szeredi wrote:
-> This is a simplification of the getvalues(2) prototype and moving it to the
-> getxattr(2) interface, as suggested by Dave.
+Hello Pankaj,
+
+On Mon, 2022-05-09 at 12:39 +0000, Pankaj Gupta wrote:
+> > -       if (ctrlpriv->era < 10)
+> > +       comp_params = rd_reg32(&ctrl->perfmon.comp_parms_ls);
+> > +       ctrlpriv->blob_present = !!(comp_params & CTPR_LS_BLOB);
+> > +
+> > +       if (ctrlpriv->era < 10) {
+> >                 rng_vid = (rd_reg32(&ctrl->perfmon.cha_id_ls) &
+> >                            CHA_ID_LS_RNG_MASK) >>
+> > CHA_ID_LS_RNG_SHIFT;
 > 
-> The patch itself just adds the possibility to retrieve a single line of
-> /proc/$$/mountinfo (which was the basic requirement from which the fsinfo
-> patchset grew out of).
-> 
-> But this should be able to serve Amir's per-sb iostats, as well as a host of
-> other cases where some statistic needs to be retrieved from some object.  Note:
-> a filesystem object often represents other kinds of objects (such as processes
-> in /proc) so this is not limited to fs attributes.
-> 
-> This also opens up the interface to setting attributes via setxattr(2).
-> 
-> After some pondering I made the namespace so:
-> 
-> : - root
-> bar - an attribute
-> foo: - a folder (can contain attributes and/or folders)
-> 
-> The contents of a folder is represented by a null separated list of names.
-> 
-> Examples:
-> 
-> $ getfattr -etext -n ":" .
-> # file: .
-> :="mnt:\000mntns:"
-> 
-> $ getfattr -etext -n ":mnt:" .
-> # file: .
-> :mnt:="info"
-> 
-> $ getfattr -etext -n ":mnt:info" .
-> # file: .
-> :mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
+> Check for AES CHAs for Era < 10, should be added.
 
-Hey Miklos,
+Do I need this? I only do this check for Era >= 10, because apparently
+there are Layerscape non-E processors that indicate BLOB support via
+CTPR_LS_BLOB, but fail at runtime. Are there any Era < 10 SoCs
+that are similarly broken?
 
-One comment about this. We really need to have this interface support
-giving us mount options like "relatime" back in numeric form (I assume
-this will be possible.). It is royally annoying having to maintain a
-mapping table in userspace just to do:
+Cheers,
+Ahmad
 
-relatime -> MS_RELATIME/MOUNT_ATTR_RELATIME
-ro	 -> MS_RDONLY/MOUNT_ATTR_RDONLY
-
-A library shouldn't be required to use this interface. Conservative
-low-level software that keeps its shared library dependencies minimal
-will need to be able to use that interface without having to go to an
-external library that transforms text-based output to binary form (Which
-I'm very sure will need to happen if we go with a text-based
-interface.).
-
-> 
-> $ getfattr -etext -n ":mntns:" .
-> # file: .
-> :mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
-> 
-> $ getfattr -etext -n ":mntns:28:" .
-> # file: .
-> :mntns:28:="info"
-> 
-> Comments?
-
-I'm not a fan of text-based APIs and I'm particularly not a fan of the
-xattr APIs. But at this point I'm ready to compromise on a lot as long
-as it gets us values out of the kernel in some way. :)
-
-I had to use xattrs extensively in various low-level userspace projects
-and they continue to be a source of races and memory bugs.
-
-A few initial questions:
-
-* The xattr APIs often require the caller to do sm like (copying some go
-  code quickly as I have that lying around):
-
-	for _, x := range split {
-		xattr := string(x)
-		// Call Getxattr() twice: First, to determine the size of the
-		// buffer we need to allocate to store the extended attributes,
-		// second, to actually store the extended attributes in the
-		// buffer. Also, check if the size of the extended attribute
-		// hasn't increased between the two calls.
-		pre, err = unix.Getxattr(path, xattr, nil)
-		if err != nil || pre < 0 {
-			return nil, err
-		}
-
-		dest = make([]byte, pre)
-		post := 0
-		if pre > 0 {
-			post, err = unix.Getxattr(path, xattr, dest)
-			if err != nil || post < 0 {
-				return nil, err
-			}
-		}
-
-		if post > pre {
-			return nil, fmt.Errorf("Extended attribute '%s' size increased from %d to %d during retrieval", xattr, pre, post)
-		}
-
-		xattrs[xattr] = string(dest)
-	}
-
-  This pattern of requesting the size first by passing empty arguments,
-  then allocating the buffer and then passing down that buffer to
-  retrieve that value is really annoying to use and error prone (I do
-  of course understand why it exists.).
-
-  For real xattrs it's not that bad because we can assume that these
-  values don't change often and so the race window between
-  getxattr(GET_SIZE) and getxattr(GET_VALUES) often doesn't matter. But
-  fwiw, the post > pre check doesn't exist for no reason; we do indeed
-  hit that race.
-  
-  In addition, it is costly having to call getxattr() twice. Again, for
-  retrieving xattrs it often doesn't matter because it's not a super
-  common operation but for mount and other info it might matter.
-
-  Will we have to use the same pattern for mnt and other info as well?
-  If so, I worry that the race is way more likely than it is for real
-  xattrs.
-
-* Would it be possible to support binary output with this interface?
-  I really think users would love to have an interfact where they can
-  get a struct with binary info back. I'm not advocating to make the
-  whole interface binary but I wouldn't mind having the option to
-  support it.
-  Especially for some information at least. I'd really love to have a
-  way go get a struct mount_info or whatever back that gives me all the
-  details about a mount encompassed in a single struct.
-
-  Callers like systemd will have to parse text and will end up
-  converting everything from text into binary anyway; especially for
-  mount information. So giving them an option for this out of the box
-  would be quite good.
-
-  Interfaces like statx aim to be as fast as possible because we exptect
-  them to be called quite often. Retrieving mount info is quite costly
-  and is done quite often as well. Maybe not for all software but for a
-  lot of low-level software. Especially when starting services in
-  systemd a lot of mount parsing happens similar when starting
-  containers in runtimes.
-
-* If we decide to go forward with this interface - and I think I
-  mentioned this in the lsfmm session - could we please at least add a
-  new system call? It really feels wrong to retrieve mount and other
-  information through the xattr interfaces. They aren't really xattrs.
-
-  Imho, xattrs are a bit like a wonky version of streams already (One of
-  the reasons I find them quite unpleasant.). Making mount and other
-  information retrievable directly through the getxattr() interface will
-  turn them into a full-on streams implementation imho. I'd prefer not
-  to do that (Which is another reason I'd prefer at least a separate
-  system call.).
