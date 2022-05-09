@@ -2,103 +2,201 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09CCC3527B
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 09:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D07BAC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 10:46:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235185AbiEIJxT (ORCPT
+        id S231285AbiEIKuF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 May 2022 05:53:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35990 "EHLO
+        Mon, 9 May 2022 06:50:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240006AbiEIJsE (ORCPT
+        with ESMTP id S231304AbiEIKtu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 May 2022 05:48:04 -0400
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93F9D26AE7
-        for <linux-security-module@vger.kernel.org>; Mon,  9 May 2022 02:44:04 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Kxbpn59SKzMpyc1;
-        Mon,  9 May 2022 11:44:01 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Kxbpm2dG6zljsTk;
-        Mon,  9 May 2022 11:44:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1652089441;
-        bh=IFfFmj2+RkCP9G2Z76uXCcYYBbyAciGpIE19FbUTSso=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=IEGm/NO+iC7mfpMeM7kDDqb2BbcLTxaPn10tJd1KkeIhaOhQ0D/esgbepxz2l/IU7
-         Qdm7dVb4MxbAm+acN9SEZk9SpKbJ6jkOoNO1aUBDiByt5HJPYFyT/zVOG/Jd+wqmnp
-         lvaiGBEJQfL2IJW4dBcw7wm5F1fEKD74qlb7q/QQ=
-Message-ID: <0be9b4c6-3e32-3d18-1715-aaadd6324701@digikod.net>
-Date:   Mon, 9 May 2022 11:45:44 +0200
+        Mon, 9 May 2022 06:49:50 -0400
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80DC0165D5F;
+        Mon,  9 May 2022 03:44:13 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id n6-20020a05600c3b8600b0039492b44ce7so1027208wms.5;
+        Mon, 09 May 2022 03:44:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=/AsWycpf07jduXjzH2VNWrB+QTWZXkpPIzj9j/mTLnY=;
+        b=WGDzzNprLAPAUZdI9HQvEBLWWgqFG3Gadgv7ghlmlOVTukZlTZvmGp//DST9QwME5g
+         HLY7/xUJwOCTUldW4z7g6bOcOIGNNFkd30NGr8xN4KLXdM6GBvqtaEuQoAni8cepVEV5
+         7WQc+tyZDEpYYgPma54VlV5a0iGHFG5DsMmysegbyVJVF59jV0xSfrpQ2nb9GCaiwPs7
+         AQMnDfbGfZ7IiC2a/irvNpxoNPdiTDV1DZSvtAVT7iz3/pDoSHmoaCB5LiVYeXUKf+Ok
+         YP4NTC3fbzhqgVKOarTh14OjQROOYXzu//314z841oM+4g0+rMD68w4BU2GCfWo1mz0d
+         Iwrg==
+X-Gm-Message-State: AOAM5301iRr2GATQToqmHjJFu2ClevfbjrTFRwtRB3w8poCd/sH2lkay
+        yjd3MAEsnmavQRhLknQK2GM=
+X-Google-Smtp-Source: ABdhPJwyu0UVEUzmpQEdWqmiHLLdF4bAT8AIED/6I8B1uHX2KqdbK4FXRu7TbYZQRO9V4fkufneL3A==
+X-Received: by 2002:a05:600c:26d2:b0:393:fb8c:dc31 with SMTP id 18-20020a05600c26d200b00393fb8cdc31mr22167324wmv.129.1652093052075;
+        Mon, 09 May 2022 03:44:12 -0700 (PDT)
+Received: from [192.168.1.49] (185-219-167-24-static.vivo.cz. [185.219.167.24])
+        by smtp.gmail.com with ESMTPSA id k21-20020adfb355000000b0020c5253d905sm13727381wrd.81.2022.05.09.03.44.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 May 2022 03:44:11 -0700 (PDT)
+Message-ID: <09374557-8c8d-1925-340c-784f29630ec5@kernel.org>
+Date:   Mon, 9 May 2022 12:44:08 +0200
 MIME-Version: 1.0
-User-Agent: 
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v2 4/8] drivers: use new capable_or functionality
 Content-Language: en-US
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Shuah Khan <shuah@kernel.org>, Tom Rix <trix@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-References: <20220506160513.523257-1-mic@digikod.net>
- <CANiq72=SWen7sJxvQGD5N=ur-gpOiFGeHHfjegHxjaHfN_i95Q@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v1 0/7] Landlock: Clean up coding style with clang-format
-In-Reply-To: <CANiq72=SWen7sJxvQGD5N=ur-gpOiFGeHHfjegHxjaHfN_i95Q@mail.gmail.com>
+To:     =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>,
+        selinux@vger.kernel.org
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>,
+        Zhen Lei <thunder.leizhen@huawei.com>,
+        Ondrej Zary <linux@zary.sk>,
+        David Yang <davidcomponentone@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Colin Ian King <colin.king@intel.com>,
+        Yang Guang <yang.guang5@zte.com.cn>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Du Cheng <ducheng2@gmail.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Pavel Skripkin <paskripkin@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20220217145003.78982-2-cgzones@googlemail.com>
+ <20220502160030.131168-1-cgzones@googlemail.com>
+ <20220502160030.131168-3-cgzones@googlemail.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <20220502160030.131168-3-cgzones@googlemail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 09/05/2022 11:06, Miguel Ojeda wrote:
-> Hi Mickaël,
+On 02. 05. 22, 18:00, Christian Göttsche wrote:
+> Use the new added capable_or function in appropriate cases, where a task
+> is required to have any of two capabilities.
 > 
-> (Answering in v1 since I want to quote something in this cover letter)
-
-There is only a v1 for this specific series, but other series (with 
-higher versions) are now relying on this one. ;)
-
+> Reorder CAP_SYS_ADMIN last.
 > 
-> On Fri, May 6, 2022 at 6:03 PM Mickaël Salaün <mic@digikod.net> wrote:
->>
->> I used a simple coding style for the initial Landlock code.  However,
->> this may be subject to different interpretations.  To avoid relying
->> on tacit knowledge or text editors for these kind of rules, let's
->> automate it as much as possible thanks to clang-format.  This makes the
->> code formatting simple, consistent and impersonal.
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> ---
+
+>   drivers/net/caif/caif_serial.c                   | 2 +-
+
+For the above:
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+
+
+>   7 files changed, 7 insertions(+), 9 deletions(-)
 > 
-> Thanks for moving your subsystem to `clang-format`. I am glad you
-> found it useful.
-> 
->> Several versions of clang-format can be use but they may have (small)
->> different behaviors for undefined/new configuration parts.  After
->> testing different versions, I picked clang-format-14 which is relatively
->> new and fixes a bug present in version 11 to 13 (visible in the Landlock
->> formatted code).
-> 
-> Which was the bug?
+> diff --git a/drivers/media/common/saa7146/saa7146_video.c b/drivers/media/common/saa7146/saa7146_video.c
+> index 66215d9106a4..5eabc2e77cc2 100644
+> --- a/drivers/media/common/saa7146/saa7146_video.c
+> +++ b/drivers/media/common/saa7146/saa7146_video.c
+> @@ -470,7 +470,7 @@ static int vidioc_s_fbuf(struct file *file, void *fh, const struct v4l2_framebuf
+>   
+>   	DEB_EE("VIDIOC_S_FBUF\n");
+>   
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
+> +	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>   		return -EPERM;
+>   
+>   	/* check args */
+> diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
+> index 5ca3d0cc653a..4143f380d44d 100644
+> --- a/drivers/media/pci/bt8xx/bttv-driver.c
+> +++ b/drivers/media/pci/bt8xx/bttv-driver.c
+> @@ -2569,8 +2569,7 @@ static int bttv_s_fbuf(struct file *file, void *f,
+>   	const struct bttv_format *fmt;
+>   	int retval;
+>   
+> -	if (!capable(CAP_SYS_ADMIN) &&
+> -		!capable(CAP_SYS_RAWIO))
+> +	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>   		return -EPERM;
+>   
+>   	/* check args */
+> diff --git a/drivers/media/pci/saa7134/saa7134-video.c b/drivers/media/pci/saa7134/saa7134-video.c
+> index 48543ad3d595..684208ebfdbd 100644
+> --- a/drivers/media/pci/saa7134/saa7134-video.c
+> +++ b/drivers/media/pci/saa7134/saa7134-video.c
+> @@ -1798,8 +1798,7 @@ static int saa7134_s_fbuf(struct file *file, void *f,
+>   	struct saa7134_dev *dev = video_drvdata(file);
+>   	struct saa7134_format *fmt;
+>   
+> -	if (!capable(CAP_SYS_ADMIN) &&
+> -	   !capable(CAP_SYS_RAWIO))
+> +	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>   		return -EPERM;
+>   
+>   	/* check args */
+> diff --git a/drivers/media/platform/nxp/fsl-viu.c b/drivers/media/platform/nxp/fsl-viu.c
+> index afc96f6db2a1..c5ed4c4a1587 100644
+> --- a/drivers/media/platform/nxp/fsl-viu.c
+> +++ b/drivers/media/platform/nxp/fsl-viu.c
+> @@ -803,7 +803,7 @@ static int vidioc_s_fbuf(struct file *file, void *priv, const struct v4l2_frameb
+>   	const struct v4l2_framebuffer *fb = arg;
+>   	struct viu_fmt *fmt;
+>   
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
+> +	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>   		return -EPERM;
+>   
+>   	/* check args */
+> diff --git a/drivers/media/test-drivers/vivid/vivid-vid-cap.c b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
+> index b9caa4b26209..a0cfcf6c22c4 100644
+> --- a/drivers/media/test-drivers/vivid/vivid-vid-cap.c
+> +++ b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
+> @@ -1253,7 +1253,7 @@ int vivid_vid_cap_s_fbuf(struct file *file, void *fh,
+>   	if (dev->multiplanar)
+>   		return -ENOTTY;
+>   
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
+> +	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>   		return -EPERM;
+>   
+>   	if (dev->overlay_cap_owner)
+> diff --git a/drivers/net/caif/caif_serial.c b/drivers/net/caif/caif_serial.c
+> index 688075859ae4..f17b618d8858 100644
+> --- a/drivers/net/caif/caif_serial.c
+> +++ b/drivers/net/caif/caif_serial.c
+> @@ -326,7 +326,7 @@ static int ldisc_open(struct tty_struct *tty)
+>   	/* No write no play */
+>   	if (tty->ops->write == NULL)
+>   		return -EOPNOTSUPP;
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_TTY_CONFIG))
+> +	if (!capable_or(CAP_SYS_TTY_CONFIG, CAP_SYS_ADMIN))
+>   		return -EPERM;
+>   
+>   	/* release devices to avoid name collision */
+> diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+> index 8410a25a65c1..9b5d22dd3e7b 100644
+> --- a/drivers/s390/block/dasd_eckd.c
+> +++ b/drivers/s390/block/dasd_eckd.c
+> @@ -5319,7 +5319,7 @@ static int dasd_symm_io(struct dasd_device *device, void __user *argp)
+>   	char psf0, psf1;
+>   	int rc;
+>   
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
+> +	if (!capable_or(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>   		return -EACCES;
+>   	psf0 = psf1 = 0;
+>   
 
-You can check it by running clang-format-X on security/landlock/fs.c [1] 
-and you'll get different results for this hunk (only):
 
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -688,7 +688,7 @@ static inline access_mask_t maybe_remove(const 
-struct dentry *const dentry)
-  	if (d_is_negative(dentry))
-  		return 0;
-  	return d_is_dir(dentry) ? LANDLOCK_ACCESS_FS_REMOVE_DIR :
--				  LANDLOCK_ACCESS_FS_REMOVE_FILE;
-+					LANDLOCK_ACCESS_FS_REMOVE_FILE;
-  }
-
-  /**
-
-
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=landlock-wip
+-- 
+js
+suse labs
