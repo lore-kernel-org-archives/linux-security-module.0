@@ -2,334 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096ACC4332F
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 15:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16580C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 16:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237996AbiEIPNB (ORCPT
+        id S239270AbiEIQsD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 May 2022 11:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32884 "EHLO
+        Mon, 9 May 2022 12:48:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231773AbiEIPNA (ORCPT
+        with ESMTP id S239272AbiEIQsD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 May 2022 11:13:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D9AE2878C4;
-        Mon,  9 May 2022 08:09:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B16776100A;
-        Mon,  9 May 2022 15:09:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A561C385AF;
-        Mon,  9 May 2022 15:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652108944;
-        bh=WFIu0gjS1af5lvBlJs8F10b/32A4FSpXjvvVOB1DLCU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aERRBHnZ1JXiYYSdxQxnHNG1MDWaT1RvXwDh83ERxtJj3BIcXcapveTWx0A6xScYs
-         ADlZ6JGapxZgC/AK1nu4kl6tnW3X/Ge19LfW3MzLvKHOaZFyIwxI+SvhxAcLbQQOLi
-         ZbkspMS1u1zf/eN37C3ttATrGB4+l/bBbsa+8YnecyhqwWhdRjTIzE97s2vPneji1o
-         ZxRt4iEOGLysOplMpZaESJHIlq/DBT0ihpDsaTre2jDZyAEnKm9FUt7hCvyXQpvGM7
-         QxbgtXRXW4+D92WGED41HvAXSQmBFC72eYEMwUZuXFfyWT1KCWQxODZye0I3sJVxmM
-         4G93xlPZoqlHQ==
-Date:   Mon, 9 May 2022 17:08:56 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <20220509150856.cfsxn5t2tvev2njx@wittgenstein>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
- <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
- <CAOQ4uxgCSJ2rpJkPy1FkP__7zhaVXO5dnZQXSzvk=fReaZH7Aw@mail.gmail.com>
+        Mon, 9 May 2022 12:48:03 -0400
+Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9435E1FC2C0
+        for <linux-security-module@vger.kernel.org>; Mon,  9 May 2022 09:44:08 -0700 (PDT)
+Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-ed9a75c453so15332481fac.11
+        for <linux-security-module@vger.kernel.org>; Mon, 09 May 2022 09:44:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XqWCEiFRZR6d7K91PH8ezSoYLh3BKRbhvIoPlxx9A7I=;
+        b=HUq4PANpxSIB27eIQbGcBLcJ1kMRfgia2LIbn1U/sr3tsZ29aWkap3rwOThAhgUyct
+         MW4AAxZzt0kalHcKw0VYco7ySwx5B0Q6L9DvBsfj/UbG57AwzHEN8a6JkyYUfNQ29VTC
+         pohnxIWc1viOIWSeXqW8vA+HehX4XegFte3mA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XqWCEiFRZR6d7K91PH8ezSoYLh3BKRbhvIoPlxx9A7I=;
+        b=Hnl3JGza0trEh+iNISVlxD/9LAhwwH5ZKIzUXpW4MQQZfzHf3ia5h+ChKwML7xHGC/
+         Tdu7wm7ZCPtT/MophLnH/WqcxEHgyA8W/MMWfgJw/s8O2S1EBXT5XcZxq7jE2yf6jIXY
+         di704OiHrT8/Csxs7uLVE4q0fjOj7AkTE0suOfHN7tpAJjPxt8TwIAQDIqO69ZAAlv1h
+         6iPk6RH2wcUWVjC0INtEL0cr06+7ZpdYk1uwU7iMfK9gTKiy4cO51qSfgb3qx3+lFaiP
+         K/zWKHxEQBp5TT1wTQsCm7bCsBnsHctzBBre1C5gSOy90cRnDs7ZLemEM4/jvznqsQns
+         cjYQ==
+X-Gm-Message-State: AOAM53069UnTsJr0eRg4hGvpop1L5WwgUWVN/UqJqE970/k4ww4LRDh8
+        tPpU8eQU8QgheI6w5CYM1yyhlB/3lHDbW/I+
+X-Google-Smtp-Source: ABdhPJz3G2d5FpBj/Kr2J3MHvcWzOJ1t1gEajZB8Kx2nfdx2Q5/QC2Pn8yINjfxTDH8WOO0tQ4zNuw==
+X-Received: by 2002:a05:6870:5896:b0:e6:6c21:3584 with SMTP id be22-20020a056870589600b000e66c213584mr7442503oab.220.1652114647826;
+        Mon, 09 May 2022 09:44:07 -0700 (PDT)
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com. [209.85.210.53])
+        by smtp.gmail.com with ESMTPSA id c6-20020a0568301ae600b0060603221238sm4820117otd.8.2022.05.09.09.44.07
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 May 2022 09:44:07 -0700 (PDT)
+Received: by mail-ot1-f53.google.com with SMTP id m6-20020a05683023a600b0060612720715so10480368ots.10
+        for <linux-security-module@vger.kernel.org>; Mon, 09 May 2022 09:44:07 -0700 (PDT)
+X-Received: by 2002:a9d:6953:0:b0:606:3534:168e with SMTP id
+ p19-20020a9d6953000000b006063534168emr6192989oto.237.1652114636260; Mon, 09
+ May 2022 09:43:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgCSJ2rpJkPy1FkP__7zhaVXO5dnZQXSzvk=fReaZH7Aw@mail.gmail.com>
+References: <20220504232102.469959-1-evgreen@chromium.org> <20220506160807.GA1060@bug>
+In-Reply-To: <20220506160807.GA1060@bug>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 9 May 2022 09:43:19 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6m75T0UC2DBhfFhuSMW6TK7aatD_04sQ18WosgGVsATw@mail.gmail.com>
+Message-ID: <CAE=gft6m75T0UC2DBhfFhuSMW6TK7aatD_04sQ18WosgGVsATw@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Encrypted Hibernation
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Matthew Garrett <mgarrett@aurora.tech>,
+        Daniil Lunev <dlunev@google.com>, zohar@linux.ibm.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        rjw@rjwysocki.net, Gwendal Grignou <gwendal@chromium.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Len Brown <len.brown@intel.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
+        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 09, 2022 at 05:20:50PM +0300, Amir Goldstein wrote:
-> On Mon, May 9, 2022 at 3:48 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, May 03, 2022 at 02:23:23PM +0200, Miklos Szeredi wrote:
-> > > This is a simplification of the getvalues(2) prototype and moving it to the
-> > > getxattr(2) interface, as suggested by Dave.
-> > >
-> > > The patch itself just adds the possibility to retrieve a single line of
-> > > /proc/$$/mountinfo (which was the basic requirement from which the fsinfo
-> > > patchset grew out of).
-> > >
-> > > But this should be able to serve Amir's per-sb iostats, as well as a host of
-> > > other cases where some statistic needs to be retrieved from some object.  Note:
-> > > a filesystem object often represents other kinds of objects (such as processes
-> > > in /proc) so this is not limited to fs attributes.
-> > >
-> > > This also opens up the interface to setting attributes via setxattr(2).
-> > >
-> > > After some pondering I made the namespace so:
-> > >
-> > > : - root
-> > > bar - an attribute
-> > > foo: - a folder (can contain attributes and/or folders)
-> > >
-> > > The contents of a folder is represented by a null separated list of names.
-> > >
-> > > Examples:
-> > >
-> > > $ getfattr -etext -n ":" .
-> > > # file: .
-> > > :="mnt:\000mntns:"
-> > >
-> > > $ getfattr -etext -n ":mnt:" .
-> > > # file: .
-> > > :mnt:="info"
-> > >
-> > > $ getfattr -etext -n ":mnt:info" .
-> > > # file: .
-> > > :mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
-> >
-> > Hey Miklos,
-> >
-> > One comment about this. We really need to have this interface support
-> > giving us mount options like "relatime" back in numeric form (I assume
-> > this will be possible.). It is royally annoying having to maintain a
-> > mapping table in userspace just to do:
-> >
-> > relatime -> MS_RELATIME/MOUNT_ATTR_RELATIME
-> > ro       -> MS_RDONLY/MOUNT_ATTR_RDONLY
-> >
-> > A library shouldn't be required to use this interface. Conservative
-> > low-level software that keeps its shared library dependencies minimal
-> > will need to be able to use that interface without having to go to an
-> > external library that transforms text-based output to binary form (Which
-> > I'm very sure will need to happen if we go with a text-based
-> > interface.).
-> >
-> 
-> No need for a library.
-> We can export:
-> 
-> :mnt:attr:flags (in hex format)
+On Fri, May 6, 2022 at 9:08 AM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> Hi!
+>
+> > We are exploring enabling hibernation in some new scenarios. However,
+> > our security team has a few requirements, listed below:
+> > 1. The hibernate image must be encrypted with protection derived from
+> >    both the platform (eg TPM) and user authentication data (eg
+> >    password).
+> > 2. Hibernation must not be a vector by which a malicious userspace can
+> >    escalate to the kernel.
+>
+> Can you (or your security team) explain why requirement 2. is needed?
+>
+> On normal systems, trusted userspace handles kernel upgrades (for example),
+> so it can escalate to kernel priviledges.
+>
 
-So a binary attribute or a hex value as a string which we have to parse
-in userspace into proper hex?
+Our systems are a little more sealed up than a normal distro, we use
+Verified Boot [1]. To summarize, RO firmware with an embedded public
+key verifies that the kernel+commandline was signed by Google. The
+commandline includes the root hash of the rootfs as well (where the
+modules live). So when an update is applied (A/B style, including the
+whole rootfs), assuming the RO firmware stayed RO (which requires
+physical measures to defeat), we can guarantee that the kernel,
+commandline, and rootfs have not been tampered with.
 
-> 
-> > >
-> > > $ getfattr -etext -n ":mntns:" .
-> > > # file: .
-> > > :mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
-> > >
-> > > $ getfattr -etext -n ":mntns:28:" .
-> > > # file: .
-> > > :mntns:28:="info"
-> > >
-> > > Comments?
-> >
-> > I'm not a fan of text-based APIs and I'm particularly not a fan of the
-> > xattr APIs. But at this point I'm ready to compromise on a lot as long
-> > as it gets us values out of the kernel in some way. :)
-> >
-> > I had to use xattrs extensively in various low-level userspace projects
-> > and they continue to be a source of races and memory bugs.
-> >
-> > A few initial questions:
-> >
-> > * The xattr APIs often require the caller to do sm like (copying some go
-> >   code quickly as I have that lying around):
-> >
-> >         for _, x := range split {
-> >                 xattr := string(x)
-> >                 // Call Getxattr() twice: First, to determine the size of the
-> >                 // buffer we need to allocate to store the extended attributes,
-> >                 // second, to actually store the extended attributes in the
-> >                 // buffer. Also, check if the size of the extended attribute
-> >                 // hasn't increased between the two calls.
-> >                 pre, err = unix.Getxattr(path, xattr, nil)
-> >                 if err != nil || pre < 0 {
-> >                         return nil, err
-> >                 }
-> >
-> >                 dest = make([]byte, pre)
-> >                 post := 0
-> >                 if pre > 0 {
-> >                         post, err = unix.Getxattr(path, xattr, dest)
-> >                         if err != nil || post < 0 {
-> >                                 return nil, err
-> >                         }
-> >                 }
-> >
-> >                 if post > pre {
-> >                         return nil, fmt.Errorf("Extended attribute '%s' size increased from %d to %d during retrieval", xattr, pre, post)
-> >                 }
-> >
-> >                 xattrs[xattr] = string(dest)
-> >         }
-> >
-> >   This pattern of requesting the size first by passing empty arguments,
-> >   then allocating the buffer and then passing down that buffer to
-> >   retrieve that value is really annoying to use and error prone (I do
-> >   of course understand why it exists.).
-> >
-> >   For real xattrs it's not that bad because we can assume that these
-> >   values don't change often and so the race window between
-> >   getxattr(GET_SIZE) and getxattr(GET_VALUES) often doesn't matter. But
-> >   fwiw, the post > pre check doesn't exist for no reason; we do indeed
-> >   hit that race.
-> 
-> It is not really a race, you can do {} while (errno != ERANGE) and there
-> will be no race.
+Verified boot gives us confidence that on each boot, we're at least
+starting from known code. This makes it more challenging for an
+attacker to persist an exploit across reboot. With the kernel and
+modules verified, we try to make it non-trivial for someone who does
+manage to gain root execution once from escalating to kernel
+execution. Hibernation would be one obvious escalation route, so we're
+hoping to find a way to enable it without handing out that easy
+primitive.
 
-I don't know what your definition of your race is but if a value can
-change between two calls and I have to call it in a loop until I get a
-consistent value then that's a race. At least I know of no better way of
-calling it.
+[1] https://www.chromium.org/chromium-os/chromiumos-design-docs/verified-boot/
 
-> 
-> >
-> >   In addition, it is costly having to call getxattr() twice. Again, for
-> >   retrieving xattrs it often doesn't matter because it's not a super
-> >   common operation but for mount and other info it might matter.
-> >
-> 
-> samba and many other projects that care about efficiency solved this
-> a long time ago with an opportunistic buffer - never start with NULL buffer
-> most values will fit in a 1K buffer.
-
-I'm glad that it's been solved a long time ago. It's still not a good
-property for an interface.
-
-> 
-> >   Will we have to use the same pattern for mnt and other info as well?
-> >   If so, I worry that the race is way more likely than it is for real
-> >   xattrs.
-> >
-> > * Would it be possible to support binary output with this interface?
-> >   I really think users would love to have an interfact where they can
-> >   get a struct with binary info back. I'm not advocating to make the
-> >   whole interface binary but I wouldn't mind having the option to
-> >   support it.
-> >   Especially for some information at least. I'd really love to have a
-> >   way go get a struct mount_info or whatever back that gives me all the
-> >   details about a mount encompassed in a single struct.
-> >
-> 
-> I suggested that up thread and Greg has explicitly and loudly
-> NACKed it - so you will have to take it up with him
-
-This is a vfs API and ultimately I would think that if we agree as a
-subsystem that it would be desirable to have a way of providing binary
-output in the form of well-defined structs in some form then we are free
-to do so.
-
-> 
-> >   Callers like systemd will have to parse text and will end up
-> >   converting everything from text into binary anyway; especially for
-> >   mount information. So giving them an option for this out of the box
-> >   would be quite good.
-> >
-> >   Interfaces like statx aim to be as fast as possible because we exptect
-> >   them to be called quite often. Retrieving mount info is quite costly
-> >   and is done quite often as well. Maybe not for all software but for a
-> >   lot of low-level software. Especially when starting services in
-> >   systemd a lot of mount parsing happens similar when starting
-> >   containers in runtimes.
-> >
-> 
-> This API is not for *everything*. Obviously it does not replace statx and some
-> info (like the cifs OFFLINE flag) should be added to statx.
-
-I'm not sure why you bring up this API as a replacement for statx().
-That was never part of the discussion. And I didn't think I gave the
-impression I was saying this.
-
-This is about mount information and you can't get a lot of meaningful
-mount information from statx(). Though tbh, I really think a mountx() or
-similar system call wouldn't hurt...
-
-> Whether or not mount info needs to get a special treatment like statx
-> is not proven.
-
-Hm, if we take that argument I could also claim that whether or not
-mount info needs to be given in textual form is not proven. Iow, I'm not
-sure what this is an argument for or against.
-
-In fact, most well-used vfs information providing APIs apart from a few
-such as the xattr APIs are based on well-defined structs. And I
-personally at least consider that to be a good thing.
-
-But I'm willing to compromise and support the textual thing. But I'd
-still like to have the possibility to have some information provided in
-binary form. I don't think that needs to be off the table completely.
-
-> Miklos claims this is a notification issue-
-> With David Howells' mount notification API, systemd can be pointed at the new
-> mount that was added/removed/changed and then systemd will rarely need to
-> parse thousands of mounts info.
-
-You seem to be replying to things I didn't say. :)
-
-The notification issue is orthogonal to that and yes, we need that.
-I'm just saying that I want the ability in principal for some properties
-to be given in binary form in addition to textual form. Performance may
-be an aspect of this but that's orthogonal to performance issues when
-being notified about mount changes and reacting to it in e.g. a service.
-
-> 
-> > * If we decide to go forward with this interface - and I think I
-> >   mentioned this in the lsfmm session - could we please at least add a
-> >   new system call? It really feels wrong to retrieve mount and other
-> >   information through the xattr interfaces. They aren't really xattrs.
-> >
-> >   Imho, xattrs are a bit like a wonky version of streams already (One of
-> >   the reasons I find them quite unpleasant.). Making mount and other
-> >   information retrievable directly through the getxattr() interface will
-> >   turn them into a full-on streams implementation imho. I'd prefer not
-> >   to do that (Which is another reason I'd prefer at least a separate
-> >   system call.).
-> 
-> If you are thinking about a read() like interface for xattr or any alternative
-> data stream then Linus has NACKed it times before.
-
-Please don't just make up an argument for me and then counter it. :D
-
-> 
-> However, we could add getxattr_multi() as Dave Chinner suggested for
-> enumerating multiple keys+ (optional) values.
-> In contrast to listxattr(), getxattr_multi() could allow a "short read"
-> at least w.r.t the size of the vector.
-
-Having "xattr" in the system call name is just confusing. These are
-fundamentally not "real" xattrs and we shouldn't mix semantics. There
-should be a clear distinction between traditional xattrs and this vfs
-and potentially fs information providing interface.
-
-Just thinking about what the manpage would look like. We would need to
-add a paragraph to xattr(7) explaining that in addition to the system.*,
-security.*, user.* and other namespaces we now also have a set of
-namespaces that function as ways to get information about mounts or
-other things instead of information attached to specific inodes.
-
-That's super random imho. If I were to be presented with this manpage
-I'd wonder if someone was too lazy to add a proper new system call with
-it's own semantics for this and just stuffed it into an existing API
-because it provided matching system call arguments. We can add a new
-system call. It's not that we're running out of them.
-
-Fwiw, and I'm genuinly _not_ trolling you could call it:
-fsinfo(int dfd, const char *path, const char *key, char *value);
+> Best regards,
+>                                                                         Pavel
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
