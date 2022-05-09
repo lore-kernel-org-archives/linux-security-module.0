@@ -2,100 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD79C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 21:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04C8C433FE
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 23:13:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229506AbiEIVqw (ORCPT
+        id S232304AbiEIXRu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 May 2022 17:46:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42496 "EHLO
+        Mon, 9 May 2022 19:17:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230172AbiEIVqt (ORCPT
+        with ESMTP id S232301AbiEIXRr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 May 2022 17:46:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 22C961C5FBA
-        for <linux-security-module@vger.kernel.org>; Mon,  9 May 2022 14:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652132573;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QL1F9UPYT7jlxdo3Go3SmyooqLgW/z19aEMgC8ZMp+U=;
-        b=K1hGSpLStTlyNauELM3xLumUCeg2cim+QpGo4kXQ6C18Al+q/aWHVl5WoXYlnDhE2GBTiO
-        hgnW4HH3O02kWK/pLLQJjbUDTTrprXb56ya26UHuZy2xVOKdF7QSSuXYd2UBSrXJNi/L9A
-        GlEO6sYVVLEsD/HLQC8VCGpe7CveV6s=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-8-vciVVmlzPqmBLYONgGMbxw-1; Mon, 09 May 2022 17:42:48 -0400
-X-MC-Unique: vciVVmlzPqmBLYONgGMbxw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 9 May 2022 19:17:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D7C2A4705;
+        Mon,  9 May 2022 16:13:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 32F6A185A7B2;
-        Mon,  9 May 2022 21:42:42 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.11.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CAF6D2166B2F;
-        Mon,  9 May 2022 21:42:41 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 7F0F0220463; Mon,  9 May 2022 17:42:41 -0400 (EDT)
-Date:   Mon, 9 May 2022 17:42:41 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <YnmK0VJhQ4sf8AMI@redhat.com>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
- <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
- <CAOQ4uxgCSJ2rpJkPy1FkP__7zhaVXO5dnZQXSzvk=fReaZH7Aw@mail.gmail.com>
- <20220509150856.cfsxn5t2tvev2njx@wittgenstein>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 66ACD61205;
+        Mon,  9 May 2022 23:13:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824D8C385B3;
+        Mon,  9 May 2022 23:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652138030;
+        bh=4dK3VfombzihJEhoOsxtQumd0/18NJxcFNS6Q1FILXU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=s68VrmMb9I42RgQylAe6I2UHS7PbVefvxqYqUkTdxAbwRmUBGYlm88kQbjP4p5B93
+         bu840ucdXrrL/UB/LypRKnlEd1pSUCiJMw9a7nrt+ewBckJGkg6yR+GUntXl3SEs9E
+         GzbxrEg6cgx+pZVVelj4mLIbvyNxtYO4hO7u106EojHs9TMtnJs4N4flPCGgEC72VR
+         HCkj0dYSvb0rhS3L/OwOKJ+6r5QirqzJnp7fDgGwV+U6tb0cmBFBhtOwQHQokgU3rW
+         G9azWrWdfiVno9MlDqELZGU1cURr1KbN8tYcGDWuK5kUdd6jL0tRT3aGdUKiLe+/Sc
+         d9AvZWFfXbj6g==
+Date:   Mon, 9 May 2022 16:13:48 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-hardening@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] big_keys: Use struct for internal payload
+Message-ID: <YnmgLLcJfPRKEYuk@sol.localdomain>
+References: <20220508175732.2693426-1-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220509150856.cfsxn5t2tvev2njx@wittgenstein>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+In-Reply-To: <20220508175732.2693426-1-keescook@chromium.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 09, 2022 at 05:08:56PM +0200, Christian Brauner wrote:
-
-[..]
-> Having "xattr" in the system call name is just confusing. These are
-> fundamentally not "real" xattrs and we shouldn't mix semantics. There
-> should be a clear distinction between traditional xattrs and this vfs
-> and potentially fs information providing interface.
+On Sun, May 08, 2022 at 10:57:31AM -0700, Kees Cook wrote:
+> The randstruct GCC plugin gets upset when it sees struct path (which is
+> randomized) being assigned from a "void *" (which it cannot type-check).
 > 
-> Just thinking about what the manpage would look like. We would need to
-> add a paragraph to xattr(7) explaining that in addition to the system.*,
-> security.*, user.* and other namespaces we now also have a set of
-> namespaces that function as ways to get information about mounts or
-> other things instead of information attached to specific inodes.
+> There's no need for these casts, as the entire internal payload use is
+> following a normal struct layout. Convert the enum-based void * offset
+> dereferencing to the new big_key_payload struct. No meaningful machine
+> code changes result after this change, and source readability is improved.
 > 
-> That's super random imho. If I were to be presented with this manpage
-> I'd wonder if someone was too lazy to add a proper new system call with
-> it's own semantics for this and just stuffed it into an existing API
-> because it provided matching system call arguments. We can add a new
-> system call. It's not that we're running out of them.
+> Drop the randstruct exception now that there is no "confusing" cross-type
+> assignment.
+> 
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-hardening@vger.kernel.org
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  scripts/gcc-plugins/randomize_layout_plugin.c |  2 -
+>  security/keys/big_key.c                       | 64 ++++++++++---------
+>  2 files changed, 34 insertions(+), 32 deletions(-)
 
-FWIW, I also felt that using xattr API to get some sort of mount info felt
-very non-intutive.
+This looks fine to me, although the way that an array of void pointers is cast
+to/from another struct is still weird.  I'd prefer if the payload was just
+changed into a separate allocation.
 
-Thanks
-Vivek
+A couple nits below if you stay with your proposed solution:
 
+>  void big_key_free_preparse(struct key_preparsed_payload *prep)
+>  {
+> +	struct big_key_payload *payload = to_big_key_payload(prep->payload);
+> +
+>  	if (prep->datalen > BIG_KEY_FILE_THRESHOLD) {
+> -		struct path *path = (struct path *)&prep->payload.data[big_key_path];
+> +		struct path *path = &payload->path;
+>  
+>  		path_put(path);
+>  	}
+
+This could just do:
+
+	if (prep->datalen > BIG_KEY_FILE_THRESHOLD)
+		path_put(&payload->path);
+
+>  void big_key_destroy(struct key *key)
+>  {
+> -	size_t datalen = (size_t)key->payload.data[big_key_len];
+> +	struct big_key_payload *payload = to_big_key_payload(key->payload);
+>  
+> -	if (datalen > BIG_KEY_FILE_THRESHOLD) {
+> -		struct path *path = (struct path *)&key->payload.data[big_key_path];
+> +	if (payload->length > BIG_KEY_FILE_THRESHOLD) {
+> +		struct path *path = &payload->path;
+>  
+>  		path_put(path);
+>  		path->mnt = NULL;
+>  		path->dentry = NULL;
+>  	}
+
+And similarly:
+
+	if (payload->length > BIG_KEY_FILE_THRESHOLD) {
+		path_put(&payload->path);
+		payload->path.mnt = NULL;
+		payload->path.dentry = NULL;
+	}
+
+- Eric
