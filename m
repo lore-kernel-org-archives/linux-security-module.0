@@ -2,81 +2,162 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5815CC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 19:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF99C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 May 2022 19:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240613AbiEITo3 (ORCPT
+        id S229785AbiEIT6O (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 May 2022 15:44:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49676 "EHLO
+        Mon, 9 May 2022 15:58:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231781AbiEITo2 (ORCPT
+        with ESMTP id S240677AbiEIT6M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 May 2022 15:44:28 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [5.9.137.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC68B17706D;
-        Mon,  9 May 2022 12:40:32 -0700 (PDT)
-Received: from zn.tnic (p5de8eeb4.dip0.t-ipconnect.de [93.232.238.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8BA8B1EC0494;
-        Mon,  9 May 2022 21:40:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1652125226;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=AoQvWKpDU2P9lFLXU3ELvlGMrlfk5EWwWkEu8isye3M=;
-        b=DQuH+dnuMo1XHCdc4ZpdApzMaFQlpLltEumRjTO50gpT+YcXRQwzFwSB5wJ2DyhUWQ/HFz
-        KZ50vFjPK3Eo8Oo0PNr+rFPebrt+K0CRHG4cS6DBsf7DllxhAOeBaeyMX23V+ApO6wOyW5
-        8OnulC85syhrH2iJiEvQ95QtbvZ2bOo=
-Date:   Mon, 9 May 2022 21:40:28 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jonathan McDowell <noodles@fb.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        James Morris <jmorris@namei.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2] Carry forward IMA measurement log on kexec on x86_64
-Message-ID: <YnluLIEN9HH+QvrD@zn.tnic>
-References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
- <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
- <YnjvfNs5pgWiomWx@noodles-fedora.dhcp.thefacebook.com>
- <0960C132-581C-4881-8948-C566657C3998@alien8.de>
- <YnlTaawPH6T7LOUs@noodles-fedora.dhcp.thefacebook.com>
- <YnlY87wm6WmQjs7m@zn.tnic>
- <YnlgTCyB2ciaD1so@noodles-fedora.dhcp.thefacebook.com>
+        Mon, 9 May 2022 15:58:12 -0400
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2EEB2764E6;
+        Mon,  9 May 2022 12:54:16 -0700 (PDT)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id AA9D9936; Mon,  9 May 2022 14:54:14 -0500 (CDT)
+Date:   Mon, 9 May 2022 14:54:14 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        jpenumak@redhat.com, Christian Brauner <brauner@kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Micah Morton <mortonm@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Subject: Re: [PATCH v12 01/26] securityfs: rework dentry creation
+Message-ID: <20220509195414.GA30894@mail.hallyn.com>
+References: <20220420140633.753772-1-stefanb@linux.ibm.com>
+ <20220420140633.753772-2-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YnlgTCyB2ciaD1so@noodles-fedora.dhcp.thefacebook.com>
+In-Reply-To: <20220420140633.753772-2-stefanb@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 09, 2022 at 06:41:17PM +0000, Jonathan McDowell wrote:
-> I'm not tied to setup_data but given the concerns I raise above with
-> device tree on x86 and the need to handle this in the kernel it seemed
-> like a reasonable first approach. You seem to be saying it's not and
-> either adding the device tree infrastructure or doing a command line
-> hack would be preferable?
+On Wed, Apr 20, 2022 at 10:06:08AM -0400, Stefan Berger wrote:
+> From: Christian Brauner <brauner@kernel.org>
+> 
+> When securityfs creates a new file or directory via
+> securityfs_create_dentry() it will take an additional reference on the
+> newly created dentry after it has attached the new inode to the new
+> dentry and added it to the hashqueues.
+> If we contrast this with debugfs which has the same underlying logic as
+> securityfs. It uses a similar pairing as securityfs. Where securityfs
+> has the securityfs_create_dentry() and securityfs_remove() pairing,
+> debugfs has the __debugfs_create_file() and debugfs_remove() pairing.
+> 
+> In contrast to securityfs, debugfs doesn't take an additional reference
+> on the newly created dentry in __debugfs_create_file() which would need
+> to be put in debugfs_remove().
+> 
+> The additional dget() isn't a problem per se. In the current
+> implementation of securityfs each created dentry pins the filesystem via
 
-All I'm doing is asking more questions to make you give more details as
-to why you wanna do it this way. I'll take a detailed look tomorrow but
-it looks ok from a quick glance.
+Is 'via' an extra word here or is there a missing word?
 
-Thx.
+I'll delay the rest of my response as the missing word may answer my
+remaining question :)
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> until it is removed. Since it is virtually guaranteed that there is at
+> least one user of securityfs that has created dentries the initial
+> securityfs mount cannot go away until all dentries have been removed.
+> 
+> Since most of the users of the initial securityfs mount don't go away
+> until the system is shutdown the initial securityfs won't go away when
+> unmounted. Instead a mount will usually surface the same superblock as
+> before. The additional dget() doesn't matter in this scenario since it
+> is required that all dentries have been cleaned up by the respective
+> users before the superblock can be destroyed, i.e. superblock shutdown
+> is tied to the lifetime of the associated dentries.
+> 
+> However, in order to support ima namespaces we need to extend securityfs
+> to support being mounted outside of the initial user namespace. For
+> namespaced users the pinning logic doesn't make sense. Whereas in the
+> initial namespace the securityfs instance and the associated data
+> structures of its users can't go away for reason explained earlier users
+> of non-initial securityfs instances do go away when the last users of
+> the namespace are gone.
+> 
+> So for those users we neither want to duplicate the pinning logic nor
+> make the global securityfs instance display different information based
+> on the namespace. Both options would be really messy and hacky.
+> 
+> Instead we will simply give each namespace its own securityfs instance
+> similar to how each ipc namespace has its own mqueue instance and all
+> entries in there are cleaned up on umount or when the last user of the
+> associated namespace is gone.
+> 
+> This means that the superblock's lifetime isn't tied to the dentries.
+> Instead the last umount, without any fds kept open, will trigger a clean
+> shutdown. But now the additional dget() gets in the way. Instead of
+> being able to rely on the generic superblock shutdown logic we would
+> need to drop the additional dentry reference during superblock shutdown
+> for all associated users. That would force the use of a generic
+> coordination mechanism for current and future users of securityfs which
+> is unnecessary. Simply remove the additional dget() in
+> securityfs_dentry_create().
+> 
+> In securityfs_remove() we will call dget() to take an additional
+> reference on the dentry about to be removed. After simple_unlink() or
+> simple_rmdir() have dropped the dentry refcount we can call d_delete()
+> which will either turn the dentry into negative dentry if our earlier
+> dget() is the only reference to the dentry, i.e. it has no other users,
+> or remove it from the hashqueues in case there are additional users.
+> 
+> All of these changes should not have any effect on the userspace
+> semantics of the initial securityfs mount.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Cc: John Johansen <john.johansen@canonical.com>
+> Cc: Matthew Garrett <mjg59@srcf.ucam.org>
+> Cc: Micah Morton <mortonm@chromium.org>
+> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  security/inode.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/inode.c b/security/inode.c
+> index 6c326939750d..13e6780c4444 100644
+> --- a/security/inode.c
+> +++ b/security/inode.c
+> @@ -159,7 +159,6 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+>  		inode->i_fop = fops;
+>  	}
+>  	d_instantiate(dentry, inode);
+> -	dget(dentry);
+>  	inode_unlock(dir);
+>  	return dentry;
+>  
+> @@ -302,10 +301,12 @@ void securityfs_remove(struct dentry *dentry)
+>  	dir = d_inode(dentry->d_parent);
+>  	inode_lock(dir);
+>  	if (simple_positive(dentry)) {
+> +		dget(dentry);
+>  		if (d_is_dir(dentry))
+>  			simple_rmdir(dir, dentry);
+>  		else
+>  			simple_unlink(dir, dentry);
+> +		d_delete(dentry);
+>  		dput(dentry);
+>  	}
+>  	inode_unlock(dir);
+> -- 
+> 2.34.1
