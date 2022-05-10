@@ -2,160 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDC8C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 May 2022 22:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE33C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 May 2022 23:04:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229755AbiEJWS2 (ORCPT
+        id S237027AbiEJXEz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 May 2022 18:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37728 "EHLO
+        Tue, 10 May 2022 19:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235441AbiEJWS0 (ORCPT
+        with ESMTP id S230470AbiEJXEy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 May 2022 18:18:26 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 822CA6C54B
-        for <linux-security-module@vger.kernel.org>; Tue, 10 May 2022 15:18:24 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id v10so135327pgl.11
-        for <linux-security-module@vger.kernel.org>; Tue, 10 May 2022 15:18:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=InNCa+xjWOlYGnWYWDC3xJ/eS8N5Jwfc81JekwauSRA=;
-        b=XgtYlZ/dCAkrzwvZEDyVsySj5TSiVF/dDKregrx22WRD39pVwUZcxemUeP7nTgQjba
-         ZCpQo5QtAyL2qT30j6wV9nr0O6tFtX/kYKOb8nswyOkrIjoIPG+7SMbO6lnuGW3up+lq
-         HeUh1iG/VMrfEarCdU3yR1VhJZuE1Z9Y6U6ww=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=InNCa+xjWOlYGnWYWDC3xJ/eS8N5Jwfc81JekwauSRA=;
-        b=ypY2Wk6i4KzavWiziIJY0b3saPlIK2/XCSFclm2OBO54HNSWnpBfNs/8YbwkJhfjsU
-         c/J5oImCnmxNM18LKOYic90D9OdkEJ++e58vAsMwcx9I1liaCvCFaitC0I71Q08xTt/p
-         wJX8fjdlZNxNb1duJWsGZGm1EbQrw9mVJBc0YGwTPoZNz066PHBudZ9T0zlr1whmtEuU
-         l564DO2gp7RugHD1WU7CjUNpCQoUNLx/PXT8mH2ymqfMsSXsXI1jiGoF+JwCPJQV9TYT
-         5rpENihTLyRhusVEfrmEU+pFpYFCaLga7vo47+rY3mgofC1eVZs/nbWzt0NoScdeHt1v
-         0Xig==
-X-Gm-Message-State: AOAM530kxcQkhtqiywQknwtlOuDcDUHrcKwgbswzHTiBhzlLoLTvr1MR
-        hbXgdxdn+i8WqhiUH3IoLJibhQ==
-X-Google-Smtp-Source: ABdhPJykDdBjmf6E/+QD1MPnRy3T6XJmUj5VkOlEr3aIPGjL/svdAg5YZdWeuCvHLVkvcoHgfPX0CQ==
-X-Received: by 2002:a63:181c:0:b0:3da:fe5d:90f3 with SMTP id y28-20020a63181c000000b003dafe5d90f3mr2938243pgl.350.1652221104014;
-        Tue, 10 May 2022 15:18:24 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o6-20020a1709026b0600b0015e8d4eb263sm120406plk.173.2022.05.10.15.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 15:18:23 -0700 (PDT)
-Date:   Tue, 10 May 2022 15:18:22 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-hardening@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] big_keys: Use struct for internal payload
-Message-ID: <202205101509.B5E3096@keescook>
-References: <20220508175732.2693426-1-keescook@chromium.org>
- <YnmgLLcJfPRKEYuk@sol.localdomain>
+        Tue, 10 May 2022 19:04:54 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 072442734DA;
+        Tue, 10 May 2022 16:04:53 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 44A9110E68F9;
+        Wed, 11 May 2022 09:04:49 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1noYuN-00AT9W-Ck; Wed, 11 May 2022 09:04:47 +1000
+Date:   Wed, 11 May 2022 09:04:47 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+Message-ID: <20220510230447.GC2306852@dread.disaster.area>
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+ <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
+ <20220510005533.GA2306852@dread.disaster.area>
+ <87bkw5d098.fsf@oldenburg.str.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YnmgLLcJfPRKEYuk@sol.localdomain>
+In-Reply-To: <87bkw5d098.fsf@oldenburg.str.redhat.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=627aef94
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
+        a=DeMPlFUAyss6Xeq_UakA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 09, 2022 at 04:13:48PM -0700, Eric Biggers wrote:
-> On Sun, May 08, 2022 at 10:57:31AM -0700, Kees Cook wrote:
-> > The randstruct GCC plugin gets upset when it sees struct path (which is
-> > randomized) being assigned from a "void *" (which it cannot type-check).
-> > 
-> > There's no need for these casts, as the entire internal payload use is
-> > following a normal struct layout. Convert the enum-based void * offset
-> > dereferencing to the new big_key_payload struct. No meaningful machine
-> > code changes result after this change, and source readability is improved.
-> > 
-> > Drop the randstruct exception now that there is no "confusing" cross-type
-> > assignment.
-> > 
-> > Cc: David Howells <dhowells@redhat.com>
-> > Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > Cc: linux-hardening@vger.kernel.org
-> > Cc: keyrings@vger.kernel.org
-> > Cc: linux-security-module@vger.kernel.org
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
-> >  scripts/gcc-plugins/randomize_layout_plugin.c |  2 -
-> >  security/keys/big_key.c                       | 64 ++++++++++---------
-> >  2 files changed, 34 insertions(+), 32 deletions(-)
+On Tue, May 10, 2022 at 02:45:39PM +0200, Florian Weimer wrote:
+> * Dave Chinner:
 > 
-> This looks fine to me, although the way that an array of void pointers is cast
-> to/from another struct is still weird.  I'd prefer if the payload was just
-> changed into a separate allocation.
-
-Yeah, though I realized after sending this patch that I'd done it
-before[1] back with the rest of the randstruct GCC plugin enabling,
-and it seems David was against the separate allocation, which, given the
-space available, isn't unreasonable right up until struct path doesn't fit
-anymore, but that's why I've added the BUILD_BUG_ON() to check sizes. :)
-And this version ended up quite close to what hwh suggested[2] in 2017.
-
-> A couple nits below if you stay with your proposed solution:
+> > IOWs, what Linux really needs is a listxattr2() syscall that works
+> > the same way that getdents/XFS_IOC_ATTRLIST_BY_HANDLE work. With the
+> > list function returning value sizes and being able to iterate
+> > effectively, every problem that listxattr() causes goes away.
 > 
-> >  void big_key_free_preparse(struct key_preparsed_payload *prep)
-> >  {
-> > +	struct big_key_payload *payload = to_big_key_payload(prep->payload);
-> > +
-> >  	if (prep->datalen > BIG_KEY_FILE_THRESHOLD) {
-> > -		struct path *path = (struct path *)&prep->payload.data[big_key_path];
-> > +		struct path *path = &payload->path;
-> >  
-> >  		path_put(path);
-> >  	}
-> 
-> This could just do:
-> 
-> 	if (prep->datalen > BIG_KEY_FILE_THRESHOLD)
-> 		path_put(&payload->path);
+> getdents has issues of its own because it's unspecified what happens if
+> the list of entries is modified during iteration.  Few file systems add
+> another tree just to guarantee stable iteration.
 
-Sure, I can avoid the extra variable.
+The filesystem I care about (XFS) guarantees stable iteration and
+stable seekdir/telldir cookies. It's not that hard to do, but it
+requires the filesystem designer to understand that this is a
+necessary feature before they start designing the on-disk directory
+format and lookup algorithms....
 
-> 
-> >  void big_key_destroy(struct key *key)
-> >  {
-> > -	size_t datalen = (size_t)key->payload.data[big_key_len];
-> > +	struct big_key_payload *payload = to_big_key_payload(key->payload);
-> >  
-> > -	if (datalen > BIG_KEY_FILE_THRESHOLD) {
-> > -		struct path *path = (struct path *)&key->payload.data[big_key_path];
-> > +	if (payload->length > BIG_KEY_FILE_THRESHOLD) {
-> > +		struct path *path = &payload->path;
-> >  
-> >  		path_put(path);
-> >  		path->mnt = NULL;
-> >  		path->dentry = NULL;
-> >  	}
-> 
-> And similarly:
-> 
-> 	if (payload->length > BIG_KEY_FILE_THRESHOLD) {
-> 		path_put(&payload->path);
-> 		payload->path.mnt = NULL;
-> 		payload->path.dentry = NULL;
-> 	}
+> Maybe that's different for xattrs because they are supposed to be small
+> and can just be snapshotted with a full copy?
 
-I will respin.
+It's different for xattrs because we directly control the API
+specification for XFS_IOC_ATTRLIST_BY_HANDLE, not POSIX. We can
+define the behaviour however we want. Stable iteration is what
+listing keys needs.
 
-Thanks!
+The cursor is defined as 16 bytes of opaque data, enabling us to
+encoded exactly where in the hashed name btree index we have
+traversed to:
 
--Kees
+/*
+ * Kernel-internal version of the attrlist cursor.
+ */
+struct xfs_attrlist_cursor_kern {
+        __u32   hashval;        /* hash value of next entry to add */
+        __u32   blkno;          /* block containing entry (suggestion) */
+        __u32   offset;         /* offset in list of equal-hashvals */
+        __u16   pad1;           /* padding to match user-level */
+        __u8    pad2;           /* padding to match user-level */
+        __u8    initted;        /* T/F: cursor has been initialized */
+};
 
-[1] https://lore.kernel.org/lkml/20170508214324.GA124468@beast/
-[2] https://lore.kernel.org/lkml/20170528081249.GD22193@infradead.org/
+Hence we have all the information in the cursor we need to reset the
+btree traversal index to the exact entry we finished at (even in the
+presence of hash collisions in the index). Hence removal of the
+entry the cursor points to isn't a problem for us, we just move to
+the next highest sequential hash index in the btree and start again
+from there.
 
+Of course, if this is how we define listxattr2() behaviour (or maybe
+we should call it "list_keys()" to make it clear we are treating
+this as a key/value store instead of xattrs) then each filesystem
+can put what it needs in that cursor to guarantee it can restart key
+iteration correctly if the entry the cursor points to has been
+removed.  We can also make the cursor larger if necessary for other
+filesystems to store the information they need.
+
+Cheers,
+
+Dave.
 -- 
-Kees Cook
+Dave Chinner
+david@fromorbit.com
