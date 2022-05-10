@@ -2,144 +2,296 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942E1C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 May 2022 23:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA3BC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 May 2022 23:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231811AbiEJX0Z (ORCPT
+        id S239141AbiEJX70 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 May 2022 19:26:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
+        Tue, 10 May 2022 19:59:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238085AbiEJX0D (ORCPT
+        with ESMTP id S239105AbiEJX7D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 May 2022 19:26:03 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 721B13BBC5;
-        Tue, 10 May 2022 16:25:57 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id CD42653469D;
-        Wed, 11 May 2022 09:25:54 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1noZEm-00ATWh-9C; Wed, 11 May 2022 09:25:52 +1000
-Date:   Wed, 11 May 2022 09:25:52 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Karel Zak <kzak@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <20220510232552.GD2306852@dread.disaster.area>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
- <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
- <20220510123512.h6jjqgowex6gnjh5@ws.net.home>
+        Tue, 10 May 2022 19:59:03 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8014422440A
+        for <linux-security-module@vger.kernel.org>; Tue, 10 May 2022 16:58:27 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id l20-20020a17090a409400b001dd2a9d555bso577817pjg.0
+        for <linux-security-module@vger.kernel.org>; Tue, 10 May 2022 16:58:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MVicVoJ+TrALEU2dXbajOs+0toQ+N0zOTIwRHd372VE=;
+        b=elygfoJ6jdCUKIGkaFpXhWKX1lUIZ6HXBUgpvizKy5HetuXChlKNoMfqbcqTh5XASK
+         +1305w7e4+xyXP64/tFrLvaW23wyfPErAvuV7B5MTyskiRV0Xpd1uLJzmj1zjlJRdjj9
+         YGYJaQss5QRJcIomyVJPMq4LVqOMB2vDXq4tk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MVicVoJ+TrALEU2dXbajOs+0toQ+N0zOTIwRHd372VE=;
+        b=TN5sEsQ8TDguFnXBnDqJ/SxXt8AvPUE0faxYcLdxhmL1D0L3WxHVJbPyNzFVBQ46/v
+         xCkDCmToSIIOtArBkZ6YtkzDhPLpO7N54aHRKeOu1ZB6kBYnNHYWuotNq710gjLcx7QG
+         5wVGQ/mj1Efr84nxpxgSb62dorRk8MRl74U/9EMyJ1pz7PDflrFd/c+rlpnwPb4bJp8J
+         zQvqi3/pgWrzbWh69XiPuKVHEMnjFB2ta0PoRAUysJJZB12zNXPHgW6iglwwqz1Pcx2V
+         hJFVi7QSFwDcWEMAUEDaoh2y+wbEZ0KBebci3lMaLOzAVCrw/wvCOeYe+Au2Kbmc1g0m
+         jGjg==
+X-Gm-Message-State: AOAM531apMcKerOFj4SWFmVVQPVqdv8xDqvNhTNVLMOypfr7Xcx6ehaw
+        QfK4d7mhFK4Fl4EATyPfxFXpkA==
+X-Google-Smtp-Source: ABdhPJy/IkDWHwXIujDP698RYnO/J68k5WqJwyrvvUbZ1MZJtuS+SdODMwvT+8v5fy67ad4j762C+g==
+X-Received: by 2002:a17:90a:7645:b0:1dd:2482:e4b3 with SMTP id s5-20020a17090a764500b001dd2482e4b3mr2324604pjl.204.1652227106927;
+        Tue, 10 May 2022 16:58:26 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b11-20020a170903228b00b0015eaa9797e8sm193186plh.172.2022.05.10.16.58.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 May 2022 16:58:26 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-hardening@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] big_keys: Use struct for internal payload
+Date:   Tue, 10 May 2022 16:58:17 -0700
+Message-Id: <20220510235817.3627784-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220510123512.h6jjqgowex6gnjh5@ws.net.home>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=627af484
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
-        a=k7MNvsyqWiSqLKXAZKIA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7729; h=from:subject; bh=c98cT0wFABSs1ubFVptJpzmYSiaWgubsH31Bhn/VSsk=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBievwYyfrJEiabIkxaAe4GlYzMSukYR3j833rJK6yS 0vpWRaSJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYnr8GAAKCRCJcvTf3G3AJj6rD/ sH9pngx8uqZGZAIkhCKZ1oYdiRN/w5vub6ZWNer+ao/PFNTQlDvAUQ/wwD+xov1BK73KYrDVOF2MKv olHAOsqIc66bPPrXaotH4ztQ1YLA+0Iqe3eFElniqMBVK7pzmvU0jllQTb5RfxbCl9V9y+iGUXjbVk i5bKu1pSOEWrn9scyHjiVaBH35KKLgv3MedjkNzYzMHvIAKQ5EvO0+8kZ1FEOIvYAypZntZoXog6jR WejfW2HhA3HoGc7tlAtSdgilJNYMMwgE+hU1AvI5H5erySu45fOFIHMVEoSQlWzj4dnFWVZMZ7znai vknf3IYBsNKHHVdmppmbf9zNtv6Ovmp/ifZEpHT9g3lxcJXxz3SCpLLnCe3T8ejG7ls/ZC2ant0iH/ 6lawRNIj09BUs2MRC+B5jzMXZvF8Gs68lK8uTmXRoeqPzFoO37UxgSLWGKikLkpnXG4jtvG62jcekE 3NmJsiGnFexhjcmBxe07Xa9W0ztZoj+vtI7Es4IpeDZnhR4e9UEhx8MTQRXwIStk1qytyHPOYUgQI0 Duy2q7HdnazsXjJ7OVVCaM3YXghNg8d29rVA7nGHIWZaaeizNhGkuf0D1aGEnc7+k5/9g7GcANoP/m L3gZYdtQRzAqWVygPWTM/Z9TiPAwlHYt53n+WsDMtsxy9eJVUZHSHb/2T4Gw==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 10, 2022 at 02:35:12PM +0200, Karel Zak wrote:
-> On Mon, May 09, 2022 at 02:48:15PM +0200, Christian Brauner wrote:
-> > One comment about this. We really need to have this interface support
-> > giving us mount options like "relatime" back in numeric form (I assume
-> > this will be possible.). It is royally annoying having to maintain a
-> > mapping table in userspace just to do:
-> > 
-> > relatime -> MS_RELATIME/MOUNT_ATTR_RELATIME
-> > ro	 -> MS_RDONLY/MOUNT_ATTR_RDONLY
-> > 
-> > A library shouldn't be required to use this interface. Conservative
-> > low-level software that keeps its shared library dependencies minimal
-> > will need to be able to use that interface without having to go to an
-> > external library that transforms text-based output to binary form (Which
-> > I'm very sure will need to happen if we go with a text-based
-> > interface.).
-> 
-> Sounds like David's fsinfo() :-)
-> 
-> We need an interface where the kernel returns a consistent mount table    
-> entry (more syscalls to get more key=value could be a way how to get
-> inconsistent data).                                              
-> 
-> IMHO all the attempts to make a trivial interface will be unsuccessful
-> because the mount table is complex (tree) and mixes strings, paths,
-> and flags. We will always end with a complex interface or complex
-> strings (like the last xatts attempt). There is no 3rd path to go ...
-> 
-> The best would be simplified fsinfo() where userspace defines
-> a request (wanted "keys"), and the kernel fills a buffer with data
-> separated by some header metadata struct. In this case, the kernel can
-> return strings and structs with binary data.  
-> 
-> 
-> I'd love something like:
-> 
-> ssize_t sz;
-> fsinfo_query query[] = {
->     { .request = FSINFO_MOUNT_PATH },
->     { .request = FSINFO_PROPAGATION },
->     { .request = FSINFO_CHILDREN_IDS },
-> };
-> 
-> sz = fsinfo(dfd, "", AT_EMPTY_PATH,
->                 &query, ARRAY_SIZE(query),
->                 buf, sizeof(buf));
-> 
-> for (p = buf; p < buf + sz; ) {
-> {
->     fsinfo_entry *e = (struct fsinfo_entry) p;
->     char *data = p + sizeof(struct fsinfo_entry);
-> 
->     switch(e->request) {
->     case FSINFO_MOUNT_PATH:
->         printf("mountpoint %s\n", data);
->         break;
->     case FSINFO_PROPAGATION:
->         printf("propagation %x\n", (uintptr_t) data);
->         break;
->     case FSINFO_CHILDREN_IDS:
->         fsinfo_child *x = (fsinfo_child *) data;
->         for (i = 0; i < e->count; i++) {
->             printf("child: %d\n", x[i].mnt_id);
->         }
->         break;
->     ...
->     }
-> 
->     p += sizeof(struct fsinfo_entry) + e->len;
-> }
+The randstruct GCC plugin gets upset when it sees struct path (which is
+randomized) being assigned from a "void *" (which it cannot type-check).
 
-That's pretty much what a multi-xattr get operation looks like.
-It's a bit more more intricate in the setup of the request/return
-buffer, but otherwise the structure of the code is the same.
+There's no need for these casts, as the entire internal payload use is
+following a normal struct layout. Convert the enum-based void * offset
+dereferencing to the new big_key_payload struct. No meaningful machine
+code changes result after this change, and source readability is improved.
 
-I just don't see why we need special purpose interfaces like this
-for key/value information when small tweaks to the existing
-generic key/value interfaces can provide exactly the same
-functionality....
+Drop the randstruct exception now that there is no "confusing" cross-type
+assignment.
 
-Cheers,
+Cc: David Howells <dhowells@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-hardening@vger.kernel.org
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ scripts/gcc-plugins/randomize_layout_plugin.c |  2 -
+ security/keys/big_key.c                       | 73 +++++++++----------
+ 2 files changed, 36 insertions(+), 39 deletions(-)
 
-Dave.
+diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
+index 19214e573137..5836a7fc7532 100644
+--- a/scripts/gcc-plugins/randomize_layout_plugin.c
++++ b/scripts/gcc-plugins/randomize_layout_plugin.c
+@@ -50,8 +50,6 @@ static const struct whitelist_entry whitelist[] = {
+ 	{ "drivers/net/ethernet/sun/niu.c", "page", "address_space" },
+ 	/* unix_skb_parms via UNIXCB() buffer */
+ 	{ "net/unix/af_unix.c", "unix_skb_parms", "char" },
+-	/* big_key payload.data struct splashing */
+-	{ "security/keys/big_key.c", "path", "void *" },
+ 	{ }
+ };
+ 
+diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+index d17e5f09eeb8..c3367622c683 100644
+--- a/security/keys/big_key.c
++++ b/security/keys/big_key.c
+@@ -20,12 +20,13 @@
+ /*
+  * Layout of key payload words.
+  */
+-enum {
+-	big_key_data,
+-	big_key_path,
+-	big_key_path_2nd_part,
+-	big_key_len,
++struct big_key_payload {
++	u8 *data;
++	struct path path;
++	size_t length;
+ };
++#define to_big_key_payload(payload)			\
++	(struct big_key_payload *)((payload).data)
+ 
+ /*
+  * If the data is under this limit, there's no point creating a shm file to
+@@ -55,7 +56,7 @@ struct key_type key_type_big_key = {
+  */
+ int big_key_preparse(struct key_preparsed_payload *prep)
+ {
+-	struct path *path = (struct path *)&prep->payload.data[big_key_path];
++	struct big_key_payload *payload = to_big_key_payload(prep->payload);
+ 	struct file *file;
+ 	u8 *buf, *enckey;
+ 	ssize_t written;
+@@ -63,13 +64,15 @@ int big_key_preparse(struct key_preparsed_payload *prep)
+ 	size_t enclen = datalen + CHACHA20POLY1305_AUTHTAG_SIZE;
+ 	int ret;
+ 
++	BUILD_BUG_ON(sizeof(*payload) != sizeof(prep->payload.data));
++
+ 	if (datalen <= 0 || datalen > 1024 * 1024 || !prep->data)
+ 		return -EINVAL;
+ 
+ 	/* Set an arbitrary quota */
+ 	prep->quotalen = 16;
+ 
+-	prep->payload.data[big_key_len] = (void *)(unsigned long)datalen;
++	payload->length = datalen;
+ 
+ 	if (datalen > BIG_KEY_FILE_THRESHOLD) {
+ 		/* Create a shmem file to store the data in.  This will permit the data
+@@ -117,9 +120,9 @@ int big_key_preparse(struct key_preparsed_payload *prep)
+ 		/* Pin the mount and dentry to the key so that we can open it again
+ 		 * later
+ 		 */
+-		prep->payload.data[big_key_data] = enckey;
+-		*path = file->f_path;
+-		path_get(path);
++		payload->data = enckey;
++		payload->path = file->f_path;
++		path_get(&payload->path);
+ 		fput(file);
+ 		kvfree_sensitive(buf, enclen);
+ 	} else {
+@@ -129,7 +132,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
+ 		if (!data)
+ 			return -ENOMEM;
+ 
+-		prep->payload.data[big_key_data] = data;
++		payload->data = data;
+ 		memcpy(data, prep->data, prep->datalen);
+ 	}
+ 	return 0;
+@@ -148,12 +151,11 @@ int big_key_preparse(struct key_preparsed_payload *prep)
+  */
+ void big_key_free_preparse(struct key_preparsed_payload *prep)
+ {
+-	if (prep->datalen > BIG_KEY_FILE_THRESHOLD) {
+-		struct path *path = (struct path *)&prep->payload.data[big_key_path];
++	struct big_key_payload *payload = to_big_key_payload(prep->payload);
+ 
+-		path_put(path);
+-	}
+-	kfree_sensitive(prep->payload.data[big_key_data]);
++	if (prep->datalen > BIG_KEY_FILE_THRESHOLD)
++		path_put(&payload->path);
++	kfree_sensitive(payload->data);
+ }
+ 
+ /*
+@@ -162,13 +164,12 @@ void big_key_free_preparse(struct key_preparsed_payload *prep)
+  */
+ void big_key_revoke(struct key *key)
+ {
+-	struct path *path = (struct path *)&key->payload.data[big_key_path];
++	struct big_key_payload *payload = to_big_key_payload(key->payload);
+ 
+ 	/* clear the quota */
+ 	key_payload_reserve(key, 0);
+-	if (key_is_positive(key) &&
+-	    (size_t)key->payload.data[big_key_len] > BIG_KEY_FILE_THRESHOLD)
+-		vfs_truncate(path, 0);
++	if (key_is_positive(key) && payload->length > BIG_KEY_FILE_THRESHOLD)
++		vfs_truncate(&payload->path, 0);
+ }
+ 
+ /*
+@@ -176,17 +177,15 @@ void big_key_revoke(struct key *key)
+  */
+ void big_key_destroy(struct key *key)
+ {
+-	size_t datalen = (size_t)key->payload.data[big_key_len];
+-
+-	if (datalen > BIG_KEY_FILE_THRESHOLD) {
+-		struct path *path = (struct path *)&key->payload.data[big_key_path];
++	struct big_key_payload *payload = to_big_key_payload(key->payload);
+ 
+-		path_put(path);
+-		path->mnt = NULL;
+-		path->dentry = NULL;
++	if (payload->length > BIG_KEY_FILE_THRESHOLD) {
++		path_put(&payload->path);
++		payload->path.mnt = NULL;
++		payload->path.dentry = NULL;
+ 	}
+-	kfree_sensitive(key->payload.data[big_key_data]);
+-	key->payload.data[big_key_data] = NULL;
++	kfree_sensitive(payload->data);
++	payload->data = NULL;
+ }
+ 
+ /*
+@@ -211,14 +210,14 @@ int big_key_update(struct key *key, struct key_preparsed_payload *prep)
+  */
+ void big_key_describe(const struct key *key, struct seq_file *m)
+ {
+-	size_t datalen = (size_t)key->payload.data[big_key_len];
++	struct big_key_payload *payload = to_big_key_payload(key->payload);
+ 
+ 	seq_puts(m, key->description);
+ 
+ 	if (key_is_positive(key))
+ 		seq_printf(m, ": %zu [%s]",
+-			   datalen,
+-			   datalen > BIG_KEY_FILE_THRESHOLD ? "file" : "buff");
++			   payload->length,
++			   payload->length > BIG_KEY_FILE_THRESHOLD ? "file" : "buff");
+ }
+ 
+ /*
+@@ -227,16 +226,16 @@ void big_key_describe(const struct key *key, struct seq_file *m)
+  */
+ long big_key_read(const struct key *key, char *buffer, size_t buflen)
+ {
+-	size_t datalen = (size_t)key->payload.data[big_key_len];
++	struct big_key_payload *payload = to_big_key_payload(key->payload);
++	size_t datalen = payload->length;
+ 	long ret;
+ 
+ 	if (!buffer || buflen < datalen)
+ 		return datalen;
+ 
+ 	if (datalen > BIG_KEY_FILE_THRESHOLD) {
+-		struct path *path = (struct path *)&key->payload.data[big_key_path];
+ 		struct file *file;
+-		u8 *buf, *enckey = (u8 *)key->payload.data[big_key_data];
++		u8 *buf, *enckey = payload->data;
+ 		size_t enclen = datalen + CHACHA20POLY1305_AUTHTAG_SIZE;
+ 		loff_t pos = 0;
+ 
+@@ -244,7 +243,7 @@ long big_key_read(const struct key *key, char *buffer, size_t buflen)
+ 		if (!buf)
+ 			return -ENOMEM;
+ 
+-		file = dentry_open(path, O_RDONLY, current_cred());
++		file = dentry_open(&payload->path, O_RDONLY, current_cred());
+ 		if (IS_ERR(file)) {
+ 			ret = PTR_ERR(file);
+ 			goto error;
+@@ -274,7 +273,7 @@ long big_key_read(const struct key *key, char *buffer, size_t buflen)
+ 		kvfree_sensitive(buf, enclen);
+ 	} else {
+ 		ret = datalen;
+-		memcpy(buffer, key->payload.data[big_key_data], datalen);
++		memcpy(buffer, payload->data, datalen);
+ 	}
+ 
+ 	return ret;
 -- 
-Dave Chinner
-david@fromorbit.com
+2.32.0
+
