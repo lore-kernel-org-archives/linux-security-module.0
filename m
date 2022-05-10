@@ -2,347 +2,249 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E32C433FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 May 2022 10:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B00BC433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 May 2022 11:53:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240008AbiEJKuQ (ORCPT
+        id S241257AbiEJL5Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 May 2022 06:50:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55066 "EHLO
+        Tue, 10 May 2022 07:57:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240001AbiEJKuO (ORCPT
+        with ESMTP id S230463AbiEJL5Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 May 2022 06:50:14 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A39D1EEEA;
-        Tue, 10 May 2022 03:46:16 -0700 (PDT)
-Received: from zn.tnic (p5de8eeb4.dip0.t-ipconnect.de [93.232.238.180])
+        Tue, 10 May 2022 07:57:24 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 938E327F111;
+        Tue, 10 May 2022 04:53:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1AED31EC06C1;
-        Tue, 10 May 2022 12:46:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1652179571;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=4DDOWWRV7Er4XCaVWMn1PqNM7w3NtFOcI3YkCzw/Dw8=;
-        b=cE2x/If3bYFZbnhb+kryG298EjzsztVhLrtoy+q33SNqOnRXP4vyrlivpc4QpKa2jbz9r2
-        f+iAsG+bAPMPYrDKDSEQ9mJaeFPy5eDYosSCNLPIjyNtGnO+1PLuO63UZaa2JrrtwoZX28
-        svbNkIzVEfvDq9gl55aTMG83mtE5ubY=
-Date:   Tue, 10 May 2022 12:46:18 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jonathan McDowell <noodles@fb.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2] Carry forward IMA measurement log on kexec on x86_64
-Message-ID: <YnpCeje+VXBVChhS@zn.tnic>
-References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
- <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 47908B81A0A;
+        Tue, 10 May 2022 11:53:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D9E7C385A6;
+        Tue, 10 May 2022 11:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652183604;
+        bh=X1QVwFClp9JxInrjSYxI0mlCNQbr24dNo7/S+95efN8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=syghnmj5lzHfIY+E5v4jJE0hutUfRYSXUe1UD9qXPiNu62ZV8BYEt7Ia1EkeeLDCx
+         pq7Uflq901Qrs9jnDOhQlWOjY3FAeP4SlQHwiWDs7D0gBnt35Xsmpl4WY8TZcLvOEf
+         xZqguXt1m8t14Y94scKtgonMzmagKqsm0crte2di4LsGzos3h2SsRYZewWCrfIElYl
+         NhUVaQDq6soEaHe40x80rNFogPlV4Se5aEFRSCPOP1NLvCeHXqJpMD4XkSKhttQpn7
+         AXOQyBkcQij/Kt/rbopkC+0AN5i36i6tMlDxCY7V6doaXUpNfZK8Rhz86L9ONXhfYu
+         9UqXGFdNjabzA==
+Date:   Tue, 10 May 2022 13:53:16 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+Message-ID: <20220510115316.acr6gl5ayqszada6@wittgenstein>
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+ <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
+ <CAJfpegveWaS5pR3O1c_7qLnaEDWwa8oi26x2v_CwDXB_sir1tg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
+In-Reply-To: <CAJfpegveWaS5pR3O1c_7qLnaEDWwa8oi26x2v_CwDXB_sir1tg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 26, 2022 at 04:52:49PM +0000, Jonathan McDowell wrote:
-> Subject: Re: [PATCH v2] Carry forward IMA measurement log on kexec on x86_64
+On Tue, May 10, 2022 at 05:49:04AM +0200, Miklos Szeredi wrote:
+> On Mon, 9 May 2022 at 14:48, Christian Brauner <brauner@kernel.org> wrote:
+> 
+> > One comment about this. We really need to have this interface support
+> > giving us mount options like "relatime" back in numeric form (I assume
+> > this will be possible.). It is royally annoying having to maintain a
+> > mapping table in userspace just to do:
+> >
+> > relatime -> MS_RELATIME/MOUNT_ATTR_RELATIME
+> > ro       -> MS_RDONLY/MOUNT_ATTR_RDONLY
+> >
+> > A library shouldn't be required to use this interface. Conservative
+> > low-level software that keeps its shared library dependencies minimal
+> > will need to be able to use that interface without having to go to an
+> > external library that transforms text-based output to binary form (Which
+> > I'm very sure will need to happen if we go with a text-based
+> > interface.).
+> 
+> Agreed.
+> 
+> >   This pattern of requesting the size first by passing empty arguments,
+> >   then allocating the buffer and then passing down that buffer to
+> >   retrieve that value is really annoying to use and error prone (I do
+> >   of course understand why it exists.).
+> >
+> >   For real xattrs it's not that bad because we can assume that these
+> >   values don't change often and so the race window between
+> >   getxattr(GET_SIZE) and getxattr(GET_VALUES) often doesn't matter. But
+> >   fwiw, the post > pre check doesn't exist for no reason; we do indeed
+> >   hit that race.
+> 
+> That code is wrong.  Changing xattr size is explicitly documented in
 
-The tip tree preferred format for patch subject prefixes is
-'subsys/component:', e.g. 'x86/apic:', 'x86/mm/fault:', 'sched/fair:',
-'genirq/core:'. Please do not use file names or complete file paths as
-prefix. 'git log path/to/file' should give you a reasonable hint in most
-cases.
+When recursively changing the ownership of a filesystem tree for a
+container some xattrs will need to be updated as well.
 
-The condensed patch description in the subject line should start with a
-uppercase letter and should be written in imperative tone.
+For example, if I have files with POSIX ACLs set which store {g,u}ids
+then the ACL needs to be updated to store the {g,u}id mapped to the
+container so the container can interpret them when started.
 
-I guess in your case
+That is a rather sensitive operation with loads of potentials for bugs.
+So if a POSIX ACL changes beneath the chowning daemon they must be
+conservative because it means that there's concurrent modfication or
+possibly an attack going on.
 
-"x86/kexec: Carry ..."
+In general, I feel it's a bit easy to judge the code is wrong without
+looking at the concrete scenario.
 
-> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-> index b25d3f82c2f3..2f7b138a9388 100644
-> --- a/arch/x86/include/uapi/asm/bootparam.h
-> +++ b/arch/x86/include/uapi/asm/bootparam.h
-> @@ -10,6 +10,7 @@
->  #define SETUP_EFI			4
->  #define SETUP_APPLE_PROPERTIES		5
->  #define SETUP_JAILHOUSE			6
-> +#define SETUP_IMA			7
+I'm also unsure how the manpage implies it's not an error condition.
+Afaict, it only implies that the caller needs to handle the case where
+the xattr changes. Whether or not that's an error is up to the caller to
+decide. If the caller expects to be the sole user of a specific
+filesystems then a changing xattr in between should probably be an error
+condition.
 
-There's already
+But I think we're starting to go on a detour.
 
- #define SETUP_CC_BLOB                  7
+> the man page as a non-error condition:
+> 
+>        If size is specified as zero, these calls return the  current  size  of
+>        the  named extended attribute (and leave value unchanged).  This can be
+>        used to determine the size of the buffer that should be supplied  in  a
+>        subsequent  call.   (But, bear in mind that there is a possibility that
+>        the attribute value may change between the two calls,  so  that  it  is
+>        still necessary to check the return status from the second call.)
+> 
+> >
+> >   In addition, it is costly having to call getxattr() twice. Again, for
+> >   retrieving xattrs it often doesn't matter because it's not a super
+> >   common operation but for mount and other info it might matter.
+> 
+> You don't *have* to retrieve the size, it's perfectly valid to e.g.
+> start with a fixed buffer size and double the size until the result
+> fits.
 
-in the tip tree - please redo your patch against current tip/master.
+Yes, I understand and accept that. I'm just not fond of such APIs.
 
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 170d0fd68b1f..cdc73e081585 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -186,6 +186,32 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
->  }
->  #endif /* CONFIG_EFI */
->  
-> +#ifdef CONFIG_IMA_KEXEC
-> +static void
-> +setup_ima_state(const struct kimage *image, struct boot_params *params,
+> 
+> > * Would it be possible to support binary output with this interface?
+> >   I really think users would love to have an interfact where they can
+> >   get a struct with binary info back.
+> 
+> I think that's bad taste.   fsinfo(2) had the same issue.  As well as
+> mount(2) which still interprets the last argument as a binary blob in
+> certain cases (nfs is one I know of).
 
-You can push that ugly ifdeffery inside the function like so:
+In the same vein I could argue it's bad taste that everything gets
+returned as a string. But I do agree that binary blobs through void
+pointers aren't elegant.
 
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index cdc73e081585..47ba7083fd44 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -186,12 +186,12 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
- }
- #endif /* CONFIG_EFI */
- 
--#ifdef CONFIG_IMA_KEXEC
- static void
- setup_ima_state(const struct kimage *image, struct boot_params *params,
- 		unsigned long params_load_addr,
- 		unsigned int ima_setup_data_offset)
- {
-+#ifdef CONFIG_IMA_KEXEC
- 	struct setup_data *sd = (void *)params + ima_setup_data_offset;
- 	struct ima_setup_data *ima = (void *)sd + sizeof(struct setup_data);
- 	unsigned long setup_data_phys;
-@@ -209,8 +209,8 @@ setup_ima_state(const struct kimage *image, struct boot_params *params,
- 	setup_data_phys = params_load_addr + ima_setup_data_offset;
- 	sd->next = params->hdr.setup_data;
- 	params->hdr.setup_data = setup_data_phys;
--}
- #endif /* CONFIG_IMA_KEXEC */
-+}
- 
- static int
- setup_boot_parameters(struct kimage *image, struct boot_params *params,
-@@ -274,13 +274,11 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
- 			efi_setup_data_offset);
- #endif
- 
--#ifdef CONFIG_IMA_KEXEC
- 	/* Setup IMA log buffer state */
- 	setup_ima_state(image, params, params_load_addr,
- 			efi_setup_data_offset +
- 			sizeof(struct setup_data) +
- 			sizeof(struct efi_setup_data));
--#endif
- 
- 	/* Setup EDD info */
- 	memcpy(params->eddbuf, boot_params.eddbuf,
+I just worry that if we have an interface and there's a legitimate
+subset of users that would be well served by a simple struct for e.g.,
+mount properties any attempt to get something like this in the form of a
+separate system call will be shut down with the argument that we already
+have an interface for this.
 
-> +		unsigned long params_load_addr,
-> +		unsigned int ima_setup_data_offset)
-> +{
-> +	struct setup_data *sd = (void *)params + ima_setup_data_offset;
-> +	struct ima_setup_data *ima = (void *)sd + sizeof(struct setup_data);
-> +	unsigned long setup_data_phys;
+So I'd compromise if we have your/any other interface return binary
+blobs. But of course I'd be equally happy if we'd at least expose basic
+mount information in the form of a separate system call.
 
-The tip-tree preferred ordering of variable declarations at the
-beginning of a function is reverse fir tree order::
+> 
+> >   Especially for some information at least. I'd really love to have a
+> >   way go get a struct mount_info or whatever back that gives me all the
+> >   details about a mount encompassed in a single struct.
+> 
+> If we want that, then can do a new syscall with that specific struct
+> as an argument.
 
-	struct long_struct_name *descriptive_name;
-	unsigned long foo, bar;
-	unsigned int tmp;
-	int ret;
+Ok, that sounds good to me.
 
-The above is faster to parse than the reverse ordering::
+> 
+> >   Callers like systemd will have to parse text and will end up
+> >   converting everything from text into binary anyway; especially for
+> >   mount information. So giving them an option for this out of the box
+> >   would be quite good.
+> 
+> What exactly are the attributes that systemd requires?
 
-	int ret;
-	unsigned int tmp;
-	unsigned long foo, bar;
-	struct long_struct_name *descriptive_name;
+We keep a repo with ideas for (kernel) extensions - we should probably
+publish that somewhere - but the list we used for a prototype roughly
+contains:
 
-And even more so than random ordering::
+* mount flags MOUNT_ATTR_RDONLY etc.
+* time flags MOUNT_ATTR_RELATIME etc. (could probably be combined with
+  mount flags. We missed the opportunity to make them proper enums
+  separate from other mount flags imho.)
+* propagation "flags" (MS_SHARED)
+* peer group
+* mnt_id of the mount
+* mnt_id of the mount's parent
+* owning userns
 
-	unsigned long foo, bar;
-	int ret;
-	struct long_struct_name *descriptive_name;
-	unsigned int tmp;
+There's a bit more advanced stuff systemd would really want but which I
+think is misplaced in a mountinfo system call including:
+* list of primary and auxiliary block device major/minor
+* diskseq value of those device nodes (This is a new block device
+  feature we added that allows preventing device recycling issues when
+  e.g. removing usb devices very quickly and is needed for udev.)
+* uuid/fsid
+* feature flags (O_TMPFILE, RENAME_EXCHANGE supported etc.)
 
-> +
-> +	if (!image->ima_buffer_size)
-> +		return;
-> +
-> +	sd->type = SETUP_IMA;
-> +	sd->len = sizeof(*ima);
-> +
-> +	ima->addr = image->ima_buffer_addr;
-> +	ima->size = image->ima_buffer_size;
-> +
-> +	/* Add setup data */
-> +	setup_data_phys = params_load_addr + ima_setup_data_offset;
-> +	sd->next = params->hdr.setup_data;
-> +	params->hdr.setup_data = setup_data_phys;
-> +}
-> +#endif /* CONFIG_IMA_KEXEC */
-> +
->  static int
->  setup_boot_parameters(struct kimage *image, struct boot_params *params,
->  		      unsigned long params_load_addr,
-> @@ -247,6 +273,15 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
->  	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
->  			efi_setup_data_offset);
->  #endif
-> +
-> +#ifdef CONFIG_IMA_KEXEC
-> +	/* Setup IMA log buffer state */
-> +	setup_ima_state(image, params, params_load_addr,
-> +			efi_setup_data_offset +
-> +			sizeof(struct setup_data) +
-> +			sizeof(struct efi_setup_data));
-> +#endif
-> +
->  	/* Setup EDD info */
->  	memcpy(params->eddbuf, boot_params.eddbuf,
->  				EDDMAXNR * sizeof(struct edd_info));
-> @@ -401,7 +436,9 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
->  	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
->  				sizeof(struct setup_data) +
-> -				sizeof(struct efi_setup_data);
-> +				sizeof(struct efi_setup_data) +
-> +				sizeof(struct setup_data) +
-> +				sizeof(struct ima_setup_data);
+> 
+> >   Interfaces like statx aim to be as fast as possible because we exptect
+> >   them to be called quite often. Retrieving mount info is quite costly
+> >   and is done quite often as well. Maybe not for all software but for a
+> >   lot of low-level software. Especially when starting services in
+> >   systemd a lot of mount parsing happens similar when starting
+> >   containers in runtimes.
+> 
+> Was there ever a test patch for systemd using fsinfo(2)?  I think not.
+> 
+> Until systemd people start to reengineer the mount handing to allow
+> for retrieving a single mount instead of the complete mount table we
+> will never know where the performance bottleneck lies.
 
-Just because the EFI thing did it unconditionally, regardless of
-CONFIG_EFI, you don't have to copy that sloppiness:
+I defer to Ian and Karel to answer that. Both did work to prove that
+point triggered by one of your objections to fsinfo() iirc. Karel's
+commits at least are here:
+https://github.com/util-linux/util-linux/tree/topic/fsinfo
 
-	unsigned long ima_buf_sz = 0;
+> 
+> >
+> > * If we decide to go forward with this interface - and I think I
+> >   mentioned this in the lsfmm session - could we please at least add a
+> >   new system call? It really feels wrong to retrieve mount and other
+> >   information through the xattr interfaces. They aren't really xattrs.
+> 
+> I'd argue with that statement.  These are most definitely attributes.
+> As for being extended, we'd just extended the xattr interface...
 
-	...
+I just have a really hard time understanding how this belongs into the
+(f)getxattr() system call family and why it would be a big deal to just
+make this a separate system call.
 
-	if (IS_ENABLED(CONFIG_IMA_EXEC))
-		ima_buf_sz = ...
+I saw that Dave has a long mail on the history of all this so maybe
+that'll help me. I hope I get around to reading it in detail today.
 
-	kbuf.bufsz = ... + ima_buf_sz);
+> 
+> Naming aside... imagine that read(2) has always been used to retrieve
+> disk data, would you say that reading data from proc feels wrong?
+> And in hindsight, would a new syscall for the purpose make any sense?
 
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index c95b9ac5a457..8b0e7725f918 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -11,6 +11,7 @@
->  #include <linux/dma-map-ops.h>
->  #include <linux/dmi.h>
->  #include <linux/efi.h>
-> +#include <linux/ima.h>
->  #include <linux/init_ohci1394_dma.h>
->  #include <linux/initrd.h>
->  #include <linux/iscsi_ibft.h>
-> @@ -335,6 +336,28 @@ static void __init reserve_initrd(void)
->  }
->  #endif /* CONFIG_BLK_DEV_INITRD */
->  
-> +#ifdef CONFIG_IMA_KEXEC
-> +static void __init add_early_ima_buffer(u64 phys_addr)
-> +{
-> +	struct ima_setup_data *data;
-> +
-> +	data = early_memremap(phys_addr + sizeof(struct setup_data),
-> +			      sizeof(*data));
-> +	if (!data) {
-> +		pr_warn("setup: failed to memremap ima_setup_data entry\n");
-> +		return;
-> +	}
-> +	memblock_reserve(data->addr, data->size);
-> +	ima_set_kexec_buffer(data->addr, data->size);
-> +	early_memunmap(data, sizeof(*data));
-> +}
-> +#else
-> +static void __init add_early_ima_buffer(u64 phys_addr)
-> +{
-> +	pr_warn("Passed IMA kexec data, but CONFIG_IMA_KEXEC not set. Ignoring.\n");
-> +}
-> +#endif
-
-ditto:
-
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 9324c30755c5..32403d693bf3 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -336,9 +336,9 @@ static void __init reserve_initrd(void)
- }
- #endif /* CONFIG_BLK_DEV_INITRD */
- 
--#ifdef CONFIG_IMA_KEXEC
- static void __init add_early_ima_buffer(u64 phys_addr)
- {
-+#ifdef CONFIG_IMA_KEXEC
-        struct ima_setup_data *data;
- 
-        data = early_memremap(phys_addr + sizeof(struct setup_data),
-@@ -350,13 +350,10 @@ static void __init add_early_ima_buffer(u64 phys_addr)
-        memblock_reserve(data->addr, data->size);
-        ima_set_kexec_buffer(data->addr, data->size);
-        early_memunmap(data, sizeof(*data));
--}
- #else
--static void __init add_early_ima_buffer(u64 phys_addr)
--{
-        pr_warn("Passed IMA kexec data, but CONFIG_IMA_KEXEC not set. Ignoring.\n");
--}
- #endif
-+}
- 
- static void __init parse_setup_data(void)
- {
-
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 13753136f03f..419c50cfe6b9 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -10,6 +10,7 @@
->  #include <linux/seq_file.h>
->  #include <linux/vmalloc.h>
->  #include <linux/kexec.h>
-> +#include <linux/memblock.h>
->  #include <linux/of.h>
->  #include <linux/ima.h>
->  #include "ima.h"
-> @@ -134,10 +135,66 @@ void ima_add_kexec_buffer(struct kimage *image)
->  }
->  #endif /* IMA_KEXEC */
->  
-> +#ifndef CONFIG_OF
-> +static phys_addr_t ima_early_kexec_buffer_phys;
-> +static size_t ima_early_kexec_buffer_size;
-> +
-> +void __init ima_set_kexec_buffer(phys_addr_t phys_addr, size_t size)
-> +{
-> +	if (size == 0)
-> +		return;
-> +
-> +	ima_early_kexec_buffer_phys = phys_addr;
-> +	ima_early_kexec_buffer_size = size;
-> +}
-> +
-> +int __init ima_free_kexec_buffer(void)
-
-WARNING: modpost: vmlinux.o(.text+0xe4e785): Section mismatch in reference from the function ima_free_kexec_buffer() to the function .meminit.text:memblock_phys_free()
-The function ima_free_kexec_buffer() references
-the function __meminit memblock_phys_free().
-This is often because ima_free_kexec_buffer lacks a __meminit 
-annotation or the annotation of memblock_phys_free is wrong.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+I think past interface decisions don't need to always inform future
+interface decisions.
+And fwiw, yes. Imho, there's stuff in proc that should indeed have been
+covered by a dedicated system call instead of a read-like interface.
