@@ -2,23 +2,23 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA6DC433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 May 2022 18:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0277AC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 May 2022 20:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232913AbiEJSvn (ORCPT
+        id S233461AbiEJUl7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 May 2022 14:51:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48080 "EHLO
+        Tue, 10 May 2022 16:41:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230419AbiEJSvm (ORCPT
+        with ESMTP id S236481AbiEJUl6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 May 2022 14:51:42 -0400
+        Tue, 10 May 2022 16:41:58 -0400
 Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACE439693;
-        Tue, 10 May 2022 11:51:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02A08527E8;
+        Tue, 10 May 2022 13:41:52 -0700 (PDT)
 Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id ECD64FDF; Tue, 10 May 2022 13:51:37 -0500 (CDT)
-Date:   Tue, 10 May 2022 13:51:37 -0500
+        id 404B979C; Tue, 10 May 2022 15:41:51 -0500 (CDT)
+Date:   Tue, 10 May 2022 15:41:51 -0500
 From:   "Serge E. Hallyn" <serge@hallyn.com>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
@@ -37,7 +37,7 @@ Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
         Kentaro Takeda <takedakn@nttdata.co.jp>,
         Jarkko Sakkinen <jarkko@kernel.org>
 Subject: Re: [PATCH v12 01/26] securityfs: rework dentry creation
-Message-ID: <20220510185137.GA10706@mail.hallyn.com>
+Message-ID: <20220510204151.GA12935@mail.hallyn.com>
 References: <20220420140633.753772-1-stefanb@linux.ibm.com>
  <20220420140633.753772-2-stefanb@linux.ibm.com>
  <20220509195414.GA30894@mail.hallyn.com>
@@ -135,7 +135,6 @@ On Tue, May 10, 2022 at 05:51:07PM +0200, Christian Brauner wrote:
 >   	dput(dentry);				// second dput()
 >   }
 
-Oh - I was thinking about the new d_delete, but I guess that doesn't matter.
+Thanks, I get it now
 
-thanks,
--serge
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
