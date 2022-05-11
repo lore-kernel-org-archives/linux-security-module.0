@@ -2,31 +2,48 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA634C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 May 2022 00:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C830EC433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 May 2022 08:58:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbiEKAmI (ORCPT
+        id S230009AbiEKI64 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 May 2022 20:42:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40162 "EHLO
+        Wed, 11 May 2022 04:58:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229795AbiEKAmH (ORCPT
+        with ESMTP id S232483AbiEKI6t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 May 2022 20:42:07 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 686591B57AA;
-        Tue, 10 May 2022 17:42:06 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2B7C25345BC;
-        Wed, 11 May 2022 10:42:02 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1noaQS-00AUmR-E4; Wed, 11 May 2022 10:42:00 +1000
-Date:   Wed, 11 May 2022 10:42:00 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
+        Wed, 11 May 2022 04:58:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8E1FA1238BA
+        for <linux-security-module@vger.kernel.org>; Wed, 11 May 2022 01:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652259526;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+Zc2Huyl9u354IxnbxBuQkxC8HSnVrj0E9v/FWkHr5U=;
+        b=Z6BqGIMCt6mVRD8AH8LAs6u3HckBOZe7sn2MDJiFkf+qpw0df3sdljgkDVsmTQP7VCt1R4
+        XXAGBh2kSR7mbG5aNwmc+N3yeGTDQyFt93PCV8fj3nxhtD4kn9YXJUrqios91h+vAKe6x4
+        1wfhxdvF8Jh/IUzu6kScESfhojTXhWc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-494-koZ8mR_ePsmDMcgIYEqBfg-1; Wed, 11 May 2022 04:58:43 -0400
+X-MC-Unique: koZ8mR_ePsmDMcgIYEqBfg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AFE50185A7B2;
+        Wed, 11 May 2022 08:58:42 +0000 (UTC)
+Received: from ws.net.home (unknown [10.36.112.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 117071121314;
+        Wed, 11 May 2022 08:58:39 +0000 (UTC)
+Date:   Wed, 11 May 2022 10:58:37 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
         Greg KH <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org,
         Linux API <linux-api@vger.kernel.org>,
@@ -40,168 +57,80 @@ Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
         Amir Goldstein <amir73il@gmail.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>
 Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <20220511004200.GE2306852@dread.disaster.area>
+Message-ID: <20220511085837.xkxo5c5fevtgaekz@ws.net.home>
 References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
  <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
- <20220510005533.GA2306852@dread.disaster.area>
- <20220510124033.lobf33hxey4quza3@wittgenstein>
+ <20220510123512.h6jjqgowex6gnjh5@ws.net.home>
+ <20220510232552.GD2306852@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220510124033.lobf33hxey4quza3@wittgenstein>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=627b065d
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
-        a=-VcIyIBGfY_eVRxBFnQA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20220510232552.GD2306852@dread.disaster.area>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 10, 2022 at 02:40:33PM +0200, Christian Brauner wrote:
-> On Tue, May 10, 2022 at 10:55:33AM +1000, Dave Chinner wrote:
-> > On Mon, May 09, 2022 at 02:48:15PM +0200, Christian Brauner wrote:
-> > > On Tue, May 03, 2022 at 02:23:23PM +0200, Miklos Szeredi wrote:
-> > >   I really think users would love to have an interfact where they can
-> > >   get a struct with binary info back.
+On Wed, May 11, 2022 at 09:25:52AM +1000, Dave Chinner wrote:
+> > I'd love something like:
 > > 
-> > No. Not for kernel informational interfaces. We have ioctls and
-> 
-> That feels like semantics. statx is in all sensible readings of the
-> words a kernel informational interface.
-
-statx is an special purpose binary syscall interface for returning
-inode specific information, it's not an abstract, generic
-informational interface.
-
-> I'm really looking at this from the perspective of someone who uses
-> these interfaces regularly in userspace and a text-based interface for
-> very basic information such as detailed information about a mount is
-> cumbersome. I know people like to "counter" with "parsing strings is
-> easy" but it remains a giant pain for userspace; at least for basic
-> info.
-
-As I said last reply, you are making all the same arguements against
-text based information interfaces that were made against proc and
-sysfs a long long time again. they weren't convincing a couple of
-decades ago, and there aren't really convincing now. Text-based
-key/value data is hard to screw up in the long run, binary
-interfaces have a habit of biting hard whenever the contents of
-the binary structure needs to change...
-
-> > >   Imho, xattrs are a bit like a wonky version of streams already (One of
-> > >   the reasons I find them quite unpleasant.). Making mount and other
-> > >   information retrievable directly through the getxattr() interface will
-> > >   turn them into a full-on streams implementation imho. I'd prefer not
-> > >   to do that (Which is another reason I'd prefer at least a separate
-> > >   system call.).
+> > ssize_t sz;
+> > fsinfo_query query[] = {
+> >     { .request = FSINFO_MOUNT_PATH },
+> >     { .request = FSINFO_PROPAGATION },
+> >     { .request = FSINFO_CHILDREN_IDS },
+> > };
 > > 
-> > And that's a total misunderstanding of what xattrs are.
+> > sz = fsinfo(dfd, "", AT_EMPTY_PATH,
+> >                 &query, ARRAY_SIZE(query),
+> >                 buf, sizeof(buf));
 > > 
-> > Alternate data streams are just {file,offset} based data streams
-> > accessed via ithe same read/write() mechanisms as the primary data
-> > stream.
-> 
-> That's why I said "wonky". But I'm not going to argue this point. I
-> think you by necessity have wider historical context on these things
-> that I lack. But I don't find it unreasonable to also see them as an
-> additional information channel.
-> 
-> Sure, they are a generic key=value store for anything _in principle_. In
-> practice however xattrs are very much perceived and used as information
-> storage on files, a metadata side-channel if you will.
-
-That's how *you* perceive them, not how everyone perceives them.
-
-> All I'm claiming here is that it will confuse the living hell out of
-> users if the getxattr() api suddenly is used not to just set and get
-> information associated with inodes but to also provides filesystem or
-> mount information.
-
-Why would it confuse people? The xattr namespace is already well
-known to be heirarchical and context dependent based on the intial
-name prefix (user, security, btrfs, trusted, etc). i.e. if you don't
-know that the context the xattr acts on is determined by the initial
-name prefix, then you need to read the xattr(7) man page again:
-
-Extended attribute namespaces
-
-	Attribute  names  are  null-terminated  strings.   The
-	attribute name is always specified in the fully qualified
-	namespace.attribute form, for example, user.mime_type,
-	trusted.md5sum, system.posix_acl_access, or
-	security.selinux.
-
-	The namespace mechanism is used to define different classes
-	of extended attributes.  These different classes exist for
-	several reasons;  for  example, the permissions and
-	capabilities required for manipulating extended attributes
-	of one namespace may differ to another.
-
-	Currently,  the  security, system, trusted, and user
-	extended attribute classes are defined as described below.
-	Additional classes may be added in the future.
-
-> That's a totally a totally differnet type of information. Sure, it may
-> fit well in the key=value scheme because the xattr key=value _interface_
-> is generic but that's a very technical argument.
-
-Yet adding a new xattr namespace for a new class of information that
-is associated the mount that the path/inode/fd is associated with is
-exactly what the xattr namespaces are intended to allow. And it is
-clearly documented that new classes "may be added in the future".
-
-I just don't see where the confusion would come from...
-
-> 
-> I'm looking at this from the experience of a user of the API for a
-> moment and in code they'd do in one place:
-> 
-> getxattr('/super/special/binary', "security.capability", ...);
-> 
-> and then in another place they do:
-> 
-> getxattr('/path/to/some/mount', "mntns:info", ...);
-> 
-> that is just flatout confusing.
-
-Why? Both are getting different classes of key/value information
-that is specific to the given path. Just because on is on-disk and
-the other is ephemeral doesn't make it in any way confusing. This is
-exactly what xattr namesapces are intended to support...
-
-> > Xattrs provide an *atomic key-value object store API*, not an offset
-> > based data stream API. They are completely different beasts,
-> > intended for completely different purposes. ADS are redundant when you
-> > have directories and files, whilst an atomic key-value store is
-> > something completely different.
+> > for (p = buf; p < buf + sz; ) {
+> > {
+> >     fsinfo_entry *e = (struct fsinfo_entry) p;
+> >     char *data = p + sizeof(struct fsinfo_entry);
 > > 
-> > You do realise we have an independent, scalable, ACID compliant
-> > key-value object store in every inode in an XFS filesystem, right?
+> >     switch(e->request) {
+> >     case FSINFO_MOUNT_PATH:
+> >         printf("mountpoint %s\n", data);
+> >         break;
+> >     case FSINFO_PROPAGATION:
+> >         printf("propagation %x\n", (uintptr_t) data);
+> >         break;
+> >     case FSINFO_CHILDREN_IDS:
+> >         fsinfo_child *x = (fsinfo_child *) data;
+> >         for (i = 0; i < e->count; i++) {
+> >             printf("child: %d\n", x[i].mnt_id);
+> >         }
+> >         break;
+> >     ...
+> >     }
+> > 
+> >     p += sizeof(struct fsinfo_entry) + e->len;
+> > }
 > 
-> So far this was a really mail with good background information but I'm
-> struggling to make sense of what that last sentence is trying to tell
-> me. :)
+> That's pretty much what a multi-xattr get operation looks like.
+> It's a bit more more intricate in the setup of the request/return
+> buffer, but otherwise the structure of the code is the same.
+> 
+> I just don't see why we need special purpose interfaces like this
+> for key/value information when small tweaks to the existing
+> generic key/value interfaces can provide exactly the same
+> functionality....
 
-That people in the past have built large scale data storage
-applications that use XFS inodes as key based object stores, not as
-a offset based data stream. Who needs atomic write() functionality
-when you have ACID set and replace operations for named objects?
+I don't say we need a new interface ;-) I'd be happy with whatever as
+long as:
 
-The reality is that modern filesystems are really just btree based
-object stores with high performance transaction engines overlaid
-with a POSIX wrapper. And in the case of xattrs, we effectively
-expose that btree based key-value database functionality directly to
-userspace....
+  * minimal strings parsing (wish than a requirement)
+  * one syscall returns multiple key/value
+  * can address mount table entries by ID
+  * can ask for list of children (submounts)
+  * extensible
 
-Stop thinking like xattrs are some useless metadata side channel,
-and start thinking of them as an atomic object store that stores and
-retreives millions of small (< 1/2 the filesystem block size) named
-objects far space effciently than a directory structure full of
-small files indexed by object hash.
+if this will be possible with xattr (listxattr2(), or so) when great.
 
-Cheers,
+  Karel
 
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
