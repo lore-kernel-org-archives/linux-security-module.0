@@ -2,296 +2,206 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA3BC433F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 May 2022 23:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA634C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 May 2022 00:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239141AbiEJX70 (ORCPT
+        id S229830AbiEKAmI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 May 2022 19:59:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51002 "EHLO
+        Tue, 10 May 2022 20:42:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239105AbiEJX7D (ORCPT
+        with ESMTP id S229795AbiEKAmH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 May 2022 19:59:03 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8014422440A
-        for <linux-security-module@vger.kernel.org>; Tue, 10 May 2022 16:58:27 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id l20-20020a17090a409400b001dd2a9d555bso577817pjg.0
-        for <linux-security-module@vger.kernel.org>; Tue, 10 May 2022 16:58:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MVicVoJ+TrALEU2dXbajOs+0toQ+N0zOTIwRHd372VE=;
-        b=elygfoJ6jdCUKIGkaFpXhWKX1lUIZ6HXBUgpvizKy5HetuXChlKNoMfqbcqTh5XASK
-         +1305w7e4+xyXP64/tFrLvaW23wyfPErAvuV7B5MTyskiRV0Xpd1uLJzmj1zjlJRdjj9
-         YGYJaQss5QRJcIomyVJPMq4LVqOMB2vDXq4tk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MVicVoJ+TrALEU2dXbajOs+0toQ+N0zOTIwRHd372VE=;
-        b=TN5sEsQ8TDguFnXBnDqJ/SxXt8AvPUE0faxYcLdxhmL1D0L3WxHVJbPyNzFVBQ46/v
-         xCkDCmToSIIOtArBkZ6YtkzDhPLpO7N54aHRKeOu1ZB6kBYnNHYWuotNq710gjLcx7QG
-         5wVGQ/mj1Efr84nxpxgSb62dorRk8MRl74U/9EMyJ1pz7PDflrFd/c+rlpnwPb4bJp8J
-         zQvqi3/pgWrzbWh69XiPuKVHEMnjFB2ta0PoRAUysJJZB12zNXPHgW6iglwwqz1Pcx2V
-         hJFVi7QSFwDcWEMAUEDaoh2y+wbEZ0KBebci3lMaLOzAVCrw/wvCOeYe+Au2Kbmc1g0m
-         jGjg==
-X-Gm-Message-State: AOAM531apMcKerOFj4SWFmVVQPVqdv8xDqvNhTNVLMOypfr7Xcx6ehaw
-        QfK4d7mhFK4Fl4EATyPfxFXpkA==
-X-Google-Smtp-Source: ABdhPJy/IkDWHwXIujDP698RYnO/J68k5WqJwyrvvUbZ1MZJtuS+SdODMwvT+8v5fy67ad4j762C+g==
-X-Received: by 2002:a17:90a:7645:b0:1dd:2482:e4b3 with SMTP id s5-20020a17090a764500b001dd2482e4b3mr2324604pjl.204.1652227106927;
-        Tue, 10 May 2022 16:58:26 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b11-20020a170903228b00b0015eaa9797e8sm193186plh.172.2022.05.10.16.58.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 16:58:26 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-hardening@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] big_keys: Use struct for internal payload
-Date:   Tue, 10 May 2022 16:58:17 -0700
-Message-Id: <20220510235817.3627784-1-keescook@chromium.org>
-X-Mailer: git-send-email 2.32.0
+        Tue, 10 May 2022 20:42:07 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 686591B57AA;
+        Tue, 10 May 2022 17:42:06 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2B7C25345BC;
+        Wed, 11 May 2022 10:42:02 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1noaQS-00AUmR-E4; Wed, 11 May 2022 10:42:00 +1000
+Date:   Wed, 11 May 2022 10:42:00 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+Message-ID: <20220511004200.GE2306852@dread.disaster.area>
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+ <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
+ <20220510005533.GA2306852@dread.disaster.area>
+ <20220510124033.lobf33hxey4quza3@wittgenstein>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7729; h=from:subject; bh=c98cT0wFABSs1ubFVptJpzmYSiaWgubsH31Bhn/VSsk=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBievwYyfrJEiabIkxaAe4GlYzMSukYR3j833rJK6yS 0vpWRaSJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYnr8GAAKCRCJcvTf3G3AJj6rD/ sH9pngx8uqZGZAIkhCKZ1oYdiRN/w5vub6ZWNer+ao/PFNTQlDvAUQ/wwD+xov1BK73KYrDVOF2MKv olHAOsqIc66bPPrXaotH4ztQ1YLA+0Iqe3eFElniqMBVK7pzmvU0jllQTb5RfxbCl9V9y+iGUXjbVk i5bKu1pSOEWrn9scyHjiVaBH35KKLgv3MedjkNzYzMHvIAKQ5EvO0+8kZ1FEOIvYAypZntZoXog6jR WejfW2HhA3HoGc7tlAtSdgilJNYMMwgE+hU1AvI5H5erySu45fOFIHMVEoSQlWzj4dnFWVZMZ7znai vknf3IYBsNKHHVdmppmbf9zNtv6Ovmp/ifZEpHT9g3lxcJXxz3SCpLLnCe3T8ejG7ls/ZC2ant0iH/ 6lawRNIj09BUs2MRC+B5jzMXZvF8Gs68lK8uTmXRoeqPzFoO37UxgSLWGKikLkpnXG4jtvG62jcekE 3NmJsiGnFexhjcmBxe07Xa9W0ztZoj+vtI7Es4IpeDZnhR4e9UEhx8MTQRXwIStk1qytyHPOYUgQI0 Duy2q7HdnazsXjJ7OVVCaM3YXghNg8d29rVA7nGHIWZaaeizNhGkuf0D1aGEnc7+k5/9g7GcANoP/m L3gZYdtQRzAqWVygPWTM/Z9TiPAwlHYt53n+WsDMtsxy9eJVUZHSHb/2T4Gw==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220510124033.lobf33hxey4quza3@wittgenstein>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=627b065d
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
+        a=-VcIyIBGfY_eVRxBFnQA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The randstruct GCC plugin gets upset when it sees struct path (which is
-randomized) being assigned from a "void *" (which it cannot type-check).
+On Tue, May 10, 2022 at 02:40:33PM +0200, Christian Brauner wrote:
+> On Tue, May 10, 2022 at 10:55:33AM +1000, Dave Chinner wrote:
+> > On Mon, May 09, 2022 at 02:48:15PM +0200, Christian Brauner wrote:
+> > > On Tue, May 03, 2022 at 02:23:23PM +0200, Miklos Szeredi wrote:
+> > >   I really think users would love to have an interfact where they can
+> > >   get a struct with binary info back.
+> > 
+> > No. Not for kernel informational interfaces. We have ioctls and
+> 
+> That feels like semantics. statx is in all sensible readings of the
+> words a kernel informational interface.
 
-There's no need for these casts, as the entire internal payload use is
-following a normal struct layout. Convert the enum-based void * offset
-dereferencing to the new big_key_payload struct. No meaningful machine
-code changes result after this change, and source readability is improved.
+statx is an special purpose binary syscall interface for returning
+inode specific information, it's not an abstract, generic
+informational interface.
 
-Drop the randstruct exception now that there is no "confusing" cross-type
-assignment.
+> I'm really looking at this from the perspective of someone who uses
+> these interfaces regularly in userspace and a text-based interface for
+> very basic information such as detailed information about a mount is
+> cumbersome. I know people like to "counter" with "parsing strings is
+> easy" but it remains a giant pain for userspace; at least for basic
+> info.
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-hardening@vger.kernel.org
-Cc: keyrings@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- scripts/gcc-plugins/randomize_layout_plugin.c |  2 -
- security/keys/big_key.c                       | 73 +++++++++----------
- 2 files changed, 36 insertions(+), 39 deletions(-)
+As I said last reply, you are making all the same arguements against
+text based information interfaces that were made against proc and
+sysfs a long long time again. they weren't convincing a couple of
+decades ago, and there aren't really convincing now. Text-based
+key/value data is hard to screw up in the long run, binary
+interfaces have a habit of biting hard whenever the contents of
+the binary structure needs to change...
 
-diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
-index 19214e573137..5836a7fc7532 100644
---- a/scripts/gcc-plugins/randomize_layout_plugin.c
-+++ b/scripts/gcc-plugins/randomize_layout_plugin.c
-@@ -50,8 +50,6 @@ static const struct whitelist_entry whitelist[] = {
- 	{ "drivers/net/ethernet/sun/niu.c", "page", "address_space" },
- 	/* unix_skb_parms via UNIXCB() buffer */
- 	{ "net/unix/af_unix.c", "unix_skb_parms", "char" },
--	/* big_key payload.data struct splashing */
--	{ "security/keys/big_key.c", "path", "void *" },
- 	{ }
- };
- 
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index d17e5f09eeb8..c3367622c683 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -20,12 +20,13 @@
- /*
-  * Layout of key payload words.
-  */
--enum {
--	big_key_data,
--	big_key_path,
--	big_key_path_2nd_part,
--	big_key_len,
-+struct big_key_payload {
-+	u8 *data;
-+	struct path path;
-+	size_t length;
- };
-+#define to_big_key_payload(payload)			\
-+	(struct big_key_payload *)((payload).data)
- 
- /*
-  * If the data is under this limit, there's no point creating a shm file to
-@@ -55,7 +56,7 @@ struct key_type key_type_big_key = {
-  */
- int big_key_preparse(struct key_preparsed_payload *prep)
- {
--	struct path *path = (struct path *)&prep->payload.data[big_key_path];
-+	struct big_key_payload *payload = to_big_key_payload(prep->payload);
- 	struct file *file;
- 	u8 *buf, *enckey;
- 	ssize_t written;
-@@ -63,13 +64,15 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- 	size_t enclen = datalen + CHACHA20POLY1305_AUTHTAG_SIZE;
- 	int ret;
- 
-+	BUILD_BUG_ON(sizeof(*payload) != sizeof(prep->payload.data));
-+
- 	if (datalen <= 0 || datalen > 1024 * 1024 || !prep->data)
- 		return -EINVAL;
- 
- 	/* Set an arbitrary quota */
- 	prep->quotalen = 16;
- 
--	prep->payload.data[big_key_len] = (void *)(unsigned long)datalen;
-+	payload->length = datalen;
- 
- 	if (datalen > BIG_KEY_FILE_THRESHOLD) {
- 		/* Create a shmem file to store the data in.  This will permit the data
-@@ -117,9 +120,9 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- 		/* Pin the mount and dentry to the key so that we can open it again
- 		 * later
- 		 */
--		prep->payload.data[big_key_data] = enckey;
--		*path = file->f_path;
--		path_get(path);
-+		payload->data = enckey;
-+		payload->path = file->f_path;
-+		path_get(&payload->path);
- 		fput(file);
- 		kvfree_sensitive(buf, enclen);
- 	} else {
-@@ -129,7 +132,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- 		if (!data)
- 			return -ENOMEM;
- 
--		prep->payload.data[big_key_data] = data;
-+		payload->data = data;
- 		memcpy(data, prep->data, prep->datalen);
- 	}
- 	return 0;
-@@ -148,12 +151,11 @@ int big_key_preparse(struct key_preparsed_payload *prep)
-  */
- void big_key_free_preparse(struct key_preparsed_payload *prep)
- {
--	if (prep->datalen > BIG_KEY_FILE_THRESHOLD) {
--		struct path *path = (struct path *)&prep->payload.data[big_key_path];
-+	struct big_key_payload *payload = to_big_key_payload(prep->payload);
- 
--		path_put(path);
--	}
--	kfree_sensitive(prep->payload.data[big_key_data]);
-+	if (prep->datalen > BIG_KEY_FILE_THRESHOLD)
-+		path_put(&payload->path);
-+	kfree_sensitive(payload->data);
- }
- 
- /*
-@@ -162,13 +164,12 @@ void big_key_free_preparse(struct key_preparsed_payload *prep)
-  */
- void big_key_revoke(struct key *key)
- {
--	struct path *path = (struct path *)&key->payload.data[big_key_path];
-+	struct big_key_payload *payload = to_big_key_payload(key->payload);
- 
- 	/* clear the quota */
- 	key_payload_reserve(key, 0);
--	if (key_is_positive(key) &&
--	    (size_t)key->payload.data[big_key_len] > BIG_KEY_FILE_THRESHOLD)
--		vfs_truncate(path, 0);
-+	if (key_is_positive(key) && payload->length > BIG_KEY_FILE_THRESHOLD)
-+		vfs_truncate(&payload->path, 0);
- }
- 
- /*
-@@ -176,17 +177,15 @@ void big_key_revoke(struct key *key)
-  */
- void big_key_destroy(struct key *key)
- {
--	size_t datalen = (size_t)key->payload.data[big_key_len];
--
--	if (datalen > BIG_KEY_FILE_THRESHOLD) {
--		struct path *path = (struct path *)&key->payload.data[big_key_path];
-+	struct big_key_payload *payload = to_big_key_payload(key->payload);
- 
--		path_put(path);
--		path->mnt = NULL;
--		path->dentry = NULL;
-+	if (payload->length > BIG_KEY_FILE_THRESHOLD) {
-+		path_put(&payload->path);
-+		payload->path.mnt = NULL;
-+		payload->path.dentry = NULL;
- 	}
--	kfree_sensitive(key->payload.data[big_key_data]);
--	key->payload.data[big_key_data] = NULL;
-+	kfree_sensitive(payload->data);
-+	payload->data = NULL;
- }
- 
- /*
-@@ -211,14 +210,14 @@ int big_key_update(struct key *key, struct key_preparsed_payload *prep)
-  */
- void big_key_describe(const struct key *key, struct seq_file *m)
- {
--	size_t datalen = (size_t)key->payload.data[big_key_len];
-+	struct big_key_payload *payload = to_big_key_payload(key->payload);
- 
- 	seq_puts(m, key->description);
- 
- 	if (key_is_positive(key))
- 		seq_printf(m, ": %zu [%s]",
--			   datalen,
--			   datalen > BIG_KEY_FILE_THRESHOLD ? "file" : "buff");
-+			   payload->length,
-+			   payload->length > BIG_KEY_FILE_THRESHOLD ? "file" : "buff");
- }
- 
- /*
-@@ -227,16 +226,16 @@ void big_key_describe(const struct key *key, struct seq_file *m)
-  */
- long big_key_read(const struct key *key, char *buffer, size_t buflen)
- {
--	size_t datalen = (size_t)key->payload.data[big_key_len];
-+	struct big_key_payload *payload = to_big_key_payload(key->payload);
-+	size_t datalen = payload->length;
- 	long ret;
- 
- 	if (!buffer || buflen < datalen)
- 		return datalen;
- 
- 	if (datalen > BIG_KEY_FILE_THRESHOLD) {
--		struct path *path = (struct path *)&key->payload.data[big_key_path];
- 		struct file *file;
--		u8 *buf, *enckey = (u8 *)key->payload.data[big_key_data];
-+		u8 *buf, *enckey = payload->data;
- 		size_t enclen = datalen + CHACHA20POLY1305_AUTHTAG_SIZE;
- 		loff_t pos = 0;
- 
-@@ -244,7 +243,7 @@ long big_key_read(const struct key *key, char *buffer, size_t buflen)
- 		if (!buf)
- 			return -ENOMEM;
- 
--		file = dentry_open(path, O_RDONLY, current_cred());
-+		file = dentry_open(&payload->path, O_RDONLY, current_cred());
- 		if (IS_ERR(file)) {
- 			ret = PTR_ERR(file);
- 			goto error;
-@@ -274,7 +273,7 @@ long big_key_read(const struct key *key, char *buffer, size_t buflen)
- 		kvfree_sensitive(buf, enclen);
- 	} else {
- 		ret = datalen;
--		memcpy(buffer, key->payload.data[big_key_data], datalen);
-+		memcpy(buffer, payload->data, datalen);
- 	}
- 
- 	return ret;
+> > >   Imho, xattrs are a bit like a wonky version of streams already (One of
+> > >   the reasons I find them quite unpleasant.). Making mount and other
+> > >   information retrievable directly through the getxattr() interface will
+> > >   turn them into a full-on streams implementation imho. I'd prefer not
+> > >   to do that (Which is another reason I'd prefer at least a separate
+> > >   system call.).
+> > 
+> > And that's a total misunderstanding of what xattrs are.
+> > 
+> > Alternate data streams are just {file,offset} based data streams
+> > accessed via ithe same read/write() mechanisms as the primary data
+> > stream.
+> 
+> That's why I said "wonky". But I'm not going to argue this point. I
+> think you by necessity have wider historical context on these things
+> that I lack. But I don't find it unreasonable to also see them as an
+> additional information channel.
+> 
+> Sure, they are a generic key=value store for anything _in principle_. In
+> practice however xattrs are very much perceived and used as information
+> storage on files, a metadata side-channel if you will.
+
+That's how *you* perceive them, not how everyone perceives them.
+
+> All I'm claiming here is that it will confuse the living hell out of
+> users if the getxattr() api suddenly is used not to just set and get
+> information associated with inodes but to also provides filesystem or
+> mount information.
+
+Why would it confuse people? The xattr namespace is already well
+known to be heirarchical and context dependent based on the intial
+name prefix (user, security, btrfs, trusted, etc). i.e. if you don't
+know that the context the xattr acts on is determined by the initial
+name prefix, then you need to read the xattr(7) man page again:
+
+Extended attribute namespaces
+
+	Attribute  names  are  null-terminated  strings.   The
+	attribute name is always specified in the fully qualified
+	namespace.attribute form, for example, user.mime_type,
+	trusted.md5sum, system.posix_acl_access, or
+	security.selinux.
+
+	The namespace mechanism is used to define different classes
+	of extended attributes.  These different classes exist for
+	several reasons;  for  example, the permissions and
+	capabilities required for manipulating extended attributes
+	of one namespace may differ to another.
+
+	Currently,  the  security, system, trusted, and user
+	extended attribute classes are defined as described below.
+	Additional classes may be added in the future.
+
+> That's a totally a totally differnet type of information. Sure, it may
+> fit well in the key=value scheme because the xattr key=value _interface_
+> is generic but that's a very technical argument.
+
+Yet adding a new xattr namespace for a new class of information that
+is associated the mount that the path/inode/fd is associated with is
+exactly what the xattr namespaces are intended to allow. And it is
+clearly documented that new classes "may be added in the future".
+
+I just don't see where the confusion would come from...
+
+> 
+> I'm looking at this from the experience of a user of the API for a
+> moment and in code they'd do in one place:
+> 
+> getxattr('/super/special/binary', "security.capability", ...);
+> 
+> and then in another place they do:
+> 
+> getxattr('/path/to/some/mount', "mntns:info", ...);
+> 
+> that is just flatout confusing.
+
+Why? Both are getting different classes of key/value information
+that is specific to the given path. Just because on is on-disk and
+the other is ephemeral doesn't make it in any way confusing. This is
+exactly what xattr namesapces are intended to support...
+
+> > Xattrs provide an *atomic key-value object store API*, not an offset
+> > based data stream API. They are completely different beasts,
+> > intended for completely different purposes. ADS are redundant when you
+> > have directories and files, whilst an atomic key-value store is
+> > something completely different.
+> > 
+> > You do realise we have an independent, scalable, ACID compliant
+> > key-value object store in every inode in an XFS filesystem, right?
+> 
+> So far this was a really mail with good background information but I'm
+> struggling to make sense of what that last sentence is trying to tell
+> me. :)
+
+That people in the past have built large scale data storage
+applications that use XFS inodes as key based object stores, not as
+a offset based data stream. Who needs atomic write() functionality
+when you have ACID set and replace operations for named objects?
+
+The reality is that modern filesystems are really just btree based
+object stores with high performance transaction engines overlaid
+with a POSIX wrapper. And in the case of xattrs, we effectively
+expose that btree based key-value database functionality directly to
+userspace....
+
+Stop thinking like xattrs are some useless metadata side channel,
+and start thinking of them as an atomic object store that stores and
+retreives millions of small (< 1/2 the filesystem block size) named
+objects far space effciently than a directory structure full of
+small files indexed by object hash.
+
+Cheers,
+
+Dave.
 -- 
-2.32.0
-
+Dave Chinner
+david@fromorbit.com
