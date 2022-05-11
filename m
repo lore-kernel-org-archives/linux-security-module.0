@@ -2,234 +2,443 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D677BC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 May 2022 09:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4379AC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 May 2022 10:00:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233105AbiEKJsv (ORCPT
+        id S230273AbiEKKAT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 May 2022 05:48:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35064 "EHLO
+        Wed, 11 May 2022 06:00:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236604AbiEKJsr (ORCPT
+        with ESMTP id S239458AbiEKJ7s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 May 2022 05:48:47 -0400
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-eopbgr150073.outbound.protection.outlook.com [40.107.15.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2F4A4FC42;
-        Wed, 11 May 2022 02:48:36 -0700 (PDT)
+        Wed, 11 May 2022 05:59:48 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B22891DEC60;
+        Wed, 11 May 2022 02:59:40 -0700 (PDT)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24B3LOc5004358;
+        Wed, 11 May 2022 02:59:40 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : mime-version; s=facebook;
+ bh=PrZjvGBgroFAvE05FcqoqbtsVKVlpsnVpczHpUQ9QC8=;
+ b=gXroE/Q0w9LMiUP919E8MjnxmXi9PZL4p7bNnpF6cnmLkcBG6IDOlpVRj5jgh4VyH0bx
+ OGuwBn1QYIVSABk23hzGE5I1xAeFmxNrcozyOl0ltxtjB5Oyo2QnF/dHd6Dwvi3m/NUq
+ /Ax9uZhnCF1kWP39mYvtA7qmfxZs/voiiGY= 
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2109.outbound.protection.outlook.com [104.47.58.109])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g055hhghh-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 May 2022 02:59:40 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=azxxE1W80zBehU7Eu+497rc9VUVvmV8nlQbKUDgIsIp96ZRpNIOnOzJwXy6FDRoXGKUTSnxW5ts0upm7uKdDO9e2/eCaOzL1SNavjvgx8Iorzq/NCt77LvRvsfryNmtae6GjjIHh72404E1R6hg9eotV7Hvc29+jbA0Xc0zNIM0Udc8yyeCEM5t9SKz3KhcG4/GYwoDeuhdr/DeQ6Gb01i3pCUk+Xwv98vOQdPmxrmBhOs9XIRX8vx2L7p99KhNg8Ed28lgxp0X4QlxiFBJPAZPCiFYAABxKk8Q6twsa4Z4tIDC7Jmpi4KJWPOusUuyuVcEHPdAuq8g8SZZv6KRGog==
+ b=ZU/r46DjhRLCp8BDb/BtZLFaraFFRPKJrdt7Hu1yC3GRqJNQMsa05eL4b5MMI2HKGCcgcDdgiLQvm4KgMkwsDbP4C69U6JO5AVWR43s7wLb3tT5MsckED2AOnnr8bIyf7fKti4NAqsI5oiNvTXzjiPPREue4Pn3yVwK1zFY1m0ECDSyyvwJ6CTiIMLvuERVySHz7xo6jjyFKFMEDQRGkSD96s0Nf+1lx+b/dzjqRsteTSjg7L5S+/XqUcctATcaRiu6GFnKaNsB5CInfpBWpFWnCh1qjOX7A1h2uX1TKY8F+Ai/ZOorH1fJdMx7kCh/lYNIxUsK+kuvU/UV14BafZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cVGoeaKvZFmGKI+7VVijHlcxnVPtIiLi5exON6jSJSI=;
- b=dtbZ+KiupybdOr179qtiSbQAheDTeu2WrTHFBXh9s5D//zFLPnGaFWSQ4adVUzNFsF/i36J53OpUso4wf5PCVCwo10a5iwfQCunchuauA6+5QtFYtqnFFqIqJZB9sdRkuO4MVzDFxHJ79DYoWP1FB2yP0xJQCX3j3nN36dbDmKNd+qaREIPxD4IR7Xpmj4uGxTv1cQM3fJV+tmCmkJOD6jHdxNZVCHhjSV0TsqQ1nDY3ZGvp+8rmnAKVKbTlD3//0br6bEbDOdw4dXyW97wh636Cvfyk14E5T6LiBoEThStQ7EGDGKNsaZr+OSe3YsXjOLVj/MXwjgobWL2xCaGhGw==
+ bh=PrZjvGBgroFAvE05FcqoqbtsVKVlpsnVpczHpUQ9QC8=;
+ b=RExCNF9zrP6IMfftXJstplcLsmqgg1mHGSL1M+ytRRRRVh0TgQF/++hkUR3KW3IfKZbj1RliEG2RFr4YWEtPZO8/mKO7tIVFpzipFZqgT3eiEl9/II5sGfbHfQDBqg9rGHwXDsXuXotwlmzs47FhihI+2+SOp++Pos/7chokTynfnltgn4mmW71kL15hfowpGq1eOMZs6u1YAH5Ut6R9Z7+oER2fuqNIfMfe2m+ubZb7fXF27FRI685L/huhzdbKaJFxvDy1rlAh85IKJ+t3eTwPsMtyb5PO5QFh693UyIowOtd8dZGBaeXPefef+UeKkZfgI9baS0avLf+tpI/3xw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cVGoeaKvZFmGKI+7VVijHlcxnVPtIiLi5exON6jSJSI=;
- b=W1kLCMaXvS3H9QL+WxX33p9YLnLAVGnRG2+jiV5tV886p9Fp9TL9gBf/7jcgenLEHE3Ieuzj1bFnRFzu47yiImiBuPlDdfwO3QWt8INrE/XSVb0LNQ45a09FjLEOpoYXywdroSxZRi9qkzy5sVLvSrStYMWWwgfYG4YYFEg+A4c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from GV1PR04MB9514.eurprd04.prod.outlook.com (2603:10a6:150:20::17)
- by VI1PR0402MB3789.eurprd04.prod.outlook.com (2603:10a6:803:1f::31) with
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+Received: from SJ0PR15MB4552.namprd15.prod.outlook.com (2603:10b6:a03:379::12)
+ by CY4PR15MB1368.namprd15.prod.outlook.com (2603:10b6:903:fb::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.23; Wed, 11 May
- 2022 09:48:34 +0000
-Received: from GV1PR04MB9514.eurprd04.prod.outlook.com
- ([fe80::974:442b:8b4e:d69e]) by GV1PR04MB9514.eurprd04.prod.outlook.com
- ([fe80::974:442b:8b4e:d69e%6]) with mapi id 15.20.5164.025; Wed, 11 May 2022
- 09:48:34 +0000
-Message-ID: <c3c1fbf2-c73a-02ec-d2cb-354880a84d5f@nxp.com>
-Date:   Wed, 11 May 2022 12:48:28 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [EXT] [PATCH v9 3/7] crypto: caam - determine whether CAAM
- supports blob encap/decap
-Content-Language: en-US
-To:     Michael Walle <michael@walle.cc>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
+ 2022 09:59:37 +0000
+Received: from SJ0PR15MB4552.namprd15.prod.outlook.com
+ ([fe80::af:a5d5:458b:4f4e]) by SJ0PR15MB4552.namprd15.prod.outlook.com
+ ([fe80::af:a5d5:458b:4f4e%9]) with mapi id 15.20.5250.013; Wed, 11 May 2022
+ 09:59:37 +0000
+From:   Jonathan McDowell <noodles@fb.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Richard Weinberger <richard@nod.at>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>
-References: <20220506062553.1068296-1-a.fatoum@pengutronix.de>
- <20220506062553.1068296-4-a.fatoum@pengutronix.de>
- <DU2PR04MB8630501008F661C596C0106295C69@DU2PR04MB8630.eurprd04.prod.outlook.com>
- <5e7c0b3c9bc285f1cf9f7b20f055aa376e1688cc.camel@pengutronix.de>
- <DU2PR04MB8630A6F925454E5C007FA3EA95C89@DU2PR04MB8630.eurprd04.prod.outlook.com>
- <232eb799dbbd341c305e911f85341409@walle.cc>
-From:   =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
-In-Reply-To: <232eb799dbbd341c305e911f85341409@walle.cc>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR04CA0067.eurprd04.prod.outlook.com
- (2603:10a6:208:1::44) To GV1PR04MB9514.eurprd04.prod.outlook.com
- (2603:10a6:150:20::17)
+Subject: [PATCH v3] x86/kexec: Carry forward IMA measurement log on kexec
+Thread-Topic: [PATCH v3] x86/kexec: Carry forward IMA measurement log on kexec
+Thread-Index: AQHYZR3SenooBtbIkkixHVw6lrlZMA==
+Date:   Wed, 11 May 2022 09:59:37 +0000
+Message-ID: <YnuJCH75GrhVm0Tp@noodles-fedora.dhcp.thefacebook.com>
+References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
+ <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
+In-Reply-To: <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 88b86e19-108f-4400-db46-08da3334f540
+x-ms-traffictypediagnostic: CY4PR15MB1368:EE_
+x-microsoft-antispam-prvs: <CY4PR15MB13686DF36BFECFCBB0E96D1EC1C89@CY4PR15MB1368.namprd15.prod.outlook.com>
+x-fb-source: Internal
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: tJROBiy17hP/xpTFgQLd+hQMYtp/yXk5Z8uFS3hp5rOS1a6PP9kBc1SqGUu5inofm3V0F/aD22ykdCbvz1YK/RbDoeMTJ4XGCS06+1ahKOIiBrYD5z4WtK8+0c4dsNWhxurpUoAtYs6IcxNOha9v+f5hNAtW7QLpv3RwL/SBZvjolLcOeXtuooOfQrj57g/jDGQ84Ute33ChGwZLTKKOkPKr2qu1D07AWJekBh7bj9+oS9R+HZRBNI38Wf8g4L5VnpAbvOn4tpPufbhmrSa86Vjg4OxHFaCCUimtE312ZBzSM1OzJX/VOAkRj50gX+0+DOVxSFwsRyowUHoIaFswZunlPkSdwQQ1i0NFO9iz+jrqWG13yYv5K4cMXiRdwvvw4Acv6EnAz2VNhiN8A4myYaXR+fg/vDCeIYYdXJn5+a6oq7D5kr4pKPGowi+RxI+63zmX5ZG4EPRqqnMiORKjoZx3opGwE0YYMbFrtwEzPhnISzUg30ApVoR6jDuvePUjFdZnKbTaRcgdvXZEYz2LGy3FXeVt/ufFXhF1OD/IHpb5vzYw7WD3BXQRgjn8K8qEVp3C5e1ebkaTDCdlTZJUvF2MycsEjRmOmx8LlmrEdCLkxrkhK6GlNsNfYAy41DCvthsBOADmDPWyRf/xM3dHwTtyoKgc7IRwkcAh95eButdp4PpPvjaAym19dm/6LEnanxU7iEFdZQuU3m+1yUkaxCKRgtj59Dj2eVagH625lBH2J23KT16AP3rhxp/wfdD/+20hC36fC8GdaC+XCpgCVg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB4552.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(76116006)(7416002)(66946007)(2906002)(66476007)(91956017)(66556008)(6512007)(6486002)(71200400001)(86362001)(508600001)(66446008)(9686003)(64756008)(316002)(4326008)(8676002)(6506007)(122000001)(38070700005)(83380400001)(921005)(38100700002)(8936002)(5660300002)(26005)(186003)(110136005)(54906003)(46800400005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?per9JvR5sAF26pejPXPgkPN4aJiokBBBoDU4vALP9GpgA0rcKDz2pYrj5j81?=
+ =?us-ascii?Q?hs0D/CajVnB5DUABYgOODyMhIcQieGqNac0rjLFH7DbpnW0+bLwvCpTkHPfq?=
+ =?us-ascii?Q?LITIkILc7QCnkB6Yzo/2HcU61MD6TYSLMsPnrYIQ6NTcK6NDLh7t4s5NYvLM?=
+ =?us-ascii?Q?L/2kuheKbRNpMpoFjP1RIJQ7GzskBdAjcUGwLO53l8Ax7HTYXfHYJ7tZWF8h?=
+ =?us-ascii?Q?Q8HqeZdyYFAqrapJPmZDkHJqct/4yxRpp8cufIalhoKmonNdMec0R2V61qeM?=
+ =?us-ascii?Q?gNmuWztn90oZfTlSj8j3/lOEmtdi0FPm1uWdIN/yAOPVq5l5kxugoqLc6Xoi?=
+ =?us-ascii?Q?p6vxRT/ubtz1pflj/mlDkh5KuUA0/YOKojbtKnDiYbXtDWhC794hVhVFWxA3?=
+ =?us-ascii?Q?9JNsFVdpfAq9rlCeDD3zwVFSOhL2zLTfsCpGey/rzQnIO4O5Ruk3Ls3XB/Ek?=
+ =?us-ascii?Q?cRD08J6wVGG+b9J8mY0aDojLYIl+Ma3dOiZtmN6fl9/1Cx7fViNX2gyDYntS?=
+ =?us-ascii?Q?8+FrKHx1IUxsl51P9+IIMADSOLicmDr3krvZ1JdxTyFMMa21PrCSPZa68/sg?=
+ =?us-ascii?Q?cXJlou9a6J+AJIIbZu4ZCpYmHvTihh6Jp3kclm2VkRq4VkBifMI/Qo6TUR15?=
+ =?us-ascii?Q?xMuIHsl6W1iE8Ol2r1j6Xdv65CnbC2fBT8jMDRbj1R826Go0NedEc0dVmK0i?=
+ =?us-ascii?Q?tlauJHCpA9nhXxVIcS8daM+WAZ9BmiDxoCGGeYWayu61S8rvE6oR4fFCTbEs?=
+ =?us-ascii?Q?53hlK8eSZgobbwZ/U2Gcl43Fw+wtn81sRkY1MD0R5sCoqMfIHgzl1fKG2NRn?=
+ =?us-ascii?Q?fahm6t6mceYjj9nLeixoizCKAUTYzwlrDxQ6IhbeeaFk2qp/9izgwJxMdt0d?=
+ =?us-ascii?Q?YLDY2+R4C3SkZ1czdyi+C2RvzGbXzksO+Ym21MC/PekEGLjDSFM78IoXue5S?=
+ =?us-ascii?Q?sZFyvTLWqplzmy+/Y6arLMyfNLN3QhS7rQY7cWedvF0+GJ+ZL4oCeoFASZoA?=
+ =?us-ascii?Q?Wr0yL5ux0QP7ALyAu/qQZVUB1cQuH7yAdExDvEwy2FY0kKpd3UwcpdKEC5bg?=
+ =?us-ascii?Q?Mb+MYAe0X4L3LSpfO/QwcRIKTd0E90VkmKtAiRtrpGfoLVjmQu2KDJ6iqPuv?=
+ =?us-ascii?Q?eRwmjAAFBB4l2jeb+kLX6kC0fErvm/fVFCvgJQxInZw1z5WIiDGgs5GfVJaT?=
+ =?us-ascii?Q?Y5u8ko0jERATilmoVBYSE49AGBMaN25NQ4WdY/xgODpDFUjpW5JHt+6D1CV1?=
+ =?us-ascii?Q?nEk/LqwnmOfHtTsQf1jkASkeMqxtn3nTcouREG+Y0q2f1zMpYQavfoIrLyun?=
+ =?us-ascii?Q?fHfmBS8gY2oVc1ipKmIBnrUPjqQVj0RZwBIv8UT5lhdAi+acMLbdecPOpYxA?=
+ =?us-ascii?Q?dyvd/NAy48T6t2mYxWNle/7OP3hk+yIGH1NlcM/vrUlyyJUwoAJmRCTskomG?=
+ =?us-ascii?Q?jks7I9sXKLTpLOVnmgnvr5osXX4ZpaWXz4G24shoGBOz2Ayet2O4n/Ml9bfi?=
+ =?us-ascii?Q?lKUYHL8AJ7aG9It+VkGlT7abk7rx5BqQOsUGcOAjSKPgKGgDFXWEIWA/4Qbw?=
+ =?us-ascii?Q?Jvfi9+NqkdjPJwnz1faZcAYzdzv3bE53PfwuZYln9ziTfWFUcfm0MWewoAIT?=
+ =?us-ascii?Q?ZkD2VpVRXX8EzIo2KESUV7QBMXlPboCvrsz4CNuQqS2EQ8RcJCkPaDqpp4n9?=
+ =?us-ascii?Q?EOJ0dz6+j7x6NBRRdyBRgmccs+cDv21OBsA5e+YRs7cmvw4X9224KKn+dgj/?=
+ =?us-ascii?Q?+ZvECEP3WA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <DAF2FF08BA568A438508A94999E26DC7@namprd15.prod.outlook.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 361ebe75-4247-49e7-ead9-08da33336950
-X-MS-TrafficTypeDiagnostic: VI1PR0402MB3789:EE_
-X-Microsoft-Antispam-PRVS: <VI1PR0402MB378956E51B3438797B5B003998C89@VI1PR0402MB3789.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 3NRxlq34YgNcuKfjlMJnSN3ZUUYI8rYFrtnpQIuX3HJT0M0A3hr5LxzV4/4zGA2wrv1/zixhS/J7+IqocrDBOu9K4E7Rtp3trGtzfvOp06wZoamsWEpOci103pHJMg7w6KGWYAM35A4Rn73nqXE5n1LcVgc39he0afGt303lM3mNB5st02GslCdMBfuHlnHNKWBLIWqhE/RqN2R2r0DNqvYyYYtidLaze5HpMvjJhyslVDCO3ZGqbfaC2e9ProC+gutwI3S1bIKkCRUqCdlySghZnuu11/zyFrPEnV5840Ry96PwwnBYMgNu+/Rbc/jVXR8nn30rhPoA2VWIxknCxDn7CjR3FjFx5pvZpQEHrxxlGSEjEX+/pJFG0UI6UG07Ly8UW4ijYyngIx9DDnvoyC4hYv3+eNwT0SABDnLwPUnOTxe1IKUo36g3cpgLuByCbcVAbyRxL3GeleeTwvNWs5GXT34sqwffhqnzi9iT7chffGCArDvABmZOaFlAO9aBALod3O08FHUqhUjpyQvGDzrCN0q7ciG9XwHqQsiLNDOe5P+V5LmvjsqPVzfCcxRbPlIxhvCU1FMZXs82p2Ziwhdco51Ja08IkkFsX5dSEkyPOYo44sXBKLVcdZGlY/SLkShmWfa3OHUK0kpoYDnGHTXLvdm8v31YBfzili4ODmL+DfWnyZQmWs5I9rpmLfwezfNf4Yfe6lbucLHJRvmFl79FHuB3fjP6Ou0bPEUBZhQ4HeXjGfDy2XekVk9SukPTQsTy1s2vdGzC8L2EnjxmCY3XspABOjhhmeGvpof7YCC7ELsSHvZpvbcMZYhM4Ri3gYX9Nfc/jM4xSI7ZIqBbKQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9514.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8936002)(7416002)(55236004)(53546011)(6512007)(6666004)(6506007)(52116002)(2906002)(508600001)(31686004)(36756003)(31696002)(26005)(186003)(2616005)(54906003)(966005)(6486002)(110136005)(86362001)(38350700002)(38100700002)(4326008)(5660300002)(8676002)(66476007)(316002)(66946007)(66556008)(83380400001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WllNbWRERzhPUGkzNjJiOU5jMzJuYmlDSVVCRFFuRTJhSC9MTzNnZnJGZjBj?=
- =?utf-8?B?YnpRcjY4dzQvQVV2WWZPUnJaLzhNbFZoVXNsMXp2OWpGSjNYWmtYQjVDRFRI?=
- =?utf-8?B?TitacEhrNEUyR1pLcHY2SVhGRE95R2ZXWlhyZWpVOEVIN2d5OUtKRmU1ZDRD?=
- =?utf-8?B?KzYrSVlxL042SWJwS0lsbG44WWJVU2xZbUlIVExGemR2QWk1VGdGRVRaSm9Q?=
- =?utf-8?B?TThyQ0dLM3h0eE5LUDF3aDc0ekNid2w1RVdxYS83VmpXM0hMa0ZvTDY3RXpv?=
- =?utf-8?B?ZC9ZNjZrVEpDNlNRYy9JSHgyNDM2T1JjdFZhNFlIQ2xtWGFIa0tUbzR2TE1V?=
- =?utf-8?B?YXlKYmFrUW4xZUMybHBWSmxjYkdPWUZSM29uQng1Q2xqS00zOVl1MTQ3c2dO?=
- =?utf-8?B?TmJ6aTRPcWJNbWh3LzU2NDVydTczWGxQcmlKZ1U5am9KTS9xUkhPVE5nVjdZ?=
- =?utf-8?B?M2JXeitzRUhJTUFZdzJ3SHRnRi9FK1V3R3lFYVpuVnZCVENVYkx2N0FLVjN4?=
- =?utf-8?B?ZGRoVDdCOGJmUjRTaHFvUFRUY2U4cGt3VGRWMjZUSjJHUDc0TVdPV1EwZy9B?=
- =?utf-8?B?WVRKQndnR000UTRhVmtJMkN3L2xmdit3RGdsRGhTeW02dWxVY3dTOEhkc0Ni?=
- =?utf-8?B?V3VuUTFqUnpiWmpLYU5tSmk4MXorc0J5NnErOVp0OEhIUE5JVUJEZE5DZ1Fn?=
- =?utf-8?B?a3NXeUFSankxUHRoN0h2dkNqa0swYmlUOXZIS25vMC94VitxMHMzNm9hVU1C?=
- =?utf-8?B?VXpSMDFwZ2NhYVE5SldxMUZXL1N2QzUzd0VSQndEYkxGamMvOEVmTUh2djNJ?=
- =?utf-8?B?WEwrYkxBb0N5N1YvKzJzSUx2cEtoUzFLMW1hZ1MzWkdxckplWnMwZG1qb3Jy?=
- =?utf-8?B?UnN0bWJEQTJhQXJRek9yQmh4VFZZNUIvVkkxSWdSMWxnSlpobmhYaXlNNnpI?=
- =?utf-8?B?c1B3cjA3aU9BV1RTZENSeGJqUER1dWI3UGNzZGNPVExERGpZQ0lRRExxUml4?=
- =?utf-8?B?UXdxcEpFWExLTGxlcHJKVVJiK0FYT1NmcFB2UU5USmdTNzhjVllGSlJtblhC?=
- =?utf-8?B?UnowNndUY2MvYnRLRTlSSG5SS0ZxUjNScU9YVU1wV3QyaXNsWU1RcGdSUjNu?=
- =?utf-8?B?WklUWGZWRTV6bHVtYWpHUi9wbnlQSU9RWkxub29nZkI0U1FRYzdYdisrMEZ5?=
- =?utf-8?B?OVVLaFA5d1JHS2tBV21oVEVYMTBoZmdvZFhrTm03Z2hSaWF6blgxTmh6YThR?=
- =?utf-8?B?WGxrNWdvSXJRWC9Kb3N4Y2t6eW8yY0JmTGtoWlVJM2RKcGpkdS9xU3VvVmJW?=
- =?utf-8?B?bGYxc2NZRVBHS3k3R3ZBUzZxZmlEZ3JBK0VrUzRldlJ1UktXazIwODFLdkg0?=
- =?utf-8?B?MWJhWnF3N0piUEtsbGFvSzRrT1ZGbmhuK3lacCtvSlhZV3lJSmUwMGVscUdu?=
- =?utf-8?B?Z0R6bDBkYWwxclJGN0ZLTWczVzZNVzVlMFBJUk5BMGhBNHFYRGpVQVBUSEx3?=
- =?utf-8?B?SlpmMDVWOXMwVEx5V2pzaDVxTUt6b1c3WENLSmV1d3pkMm13eHNEdlJTeDNy?=
- =?utf-8?B?aE8xRXA5OEdtajNZRGtlaXR1cTI2QnFqdlNBNzQ4WlNFS3Y2WlY2ZGFsQ3dG?=
- =?utf-8?B?SlRldnJObEIzWkRFa1FXZWVudk9Ca0VQU2w1dUpubm9JZmszbzJneHlqdnky?=
- =?utf-8?B?aUUreUVOZVkzSmtoRG94MnlNZFFaMlpKUExQd2JhTkE3VWEvNUswbCtOUU1N?=
- =?utf-8?B?cEpxZ2lIczk2b0dZTEk2RTR6S1p3U0hqbnN1UWFFVDZmUE5SOXY5QU5FRllU?=
- =?utf-8?B?NlkweW5QRWhaTXo3NS9KbXhLck5YM0dJNHliR1Yrb2tGRjdMYnZQRktkVy8r?=
- =?utf-8?B?clZ2QnRFN29sMUpweTFpeGdsS1M5RUhLU2szYlh2eno5UVljM2pseVhmMmdI?=
- =?utf-8?B?UzRTL3ZQRjlqQUhLdnV2RDlLSlFQYk9pRHN0QjBheXZLaVBmMXFhQlQvVnBY?=
- =?utf-8?B?QnRlbWNwdmZYbUFHSnZBQTZqaVZ6a1hLRm1IaHEzeWx0WCtuMU91NERHc014?=
- =?utf-8?B?QUtUajE5ZUhUbGcxR0tHN3RvSW0wOW95QWJmM2VqTVNuT2FZUy8xaFAydXdw?=
- =?utf-8?B?MkFUWC9CMTQyaFV1ejhlbUY1N1p0NnhoVUNUeVZ4K1ZwYjY4R0d4MVdROFFY?=
- =?utf-8?B?NFNFcldSZWJvalNNZTVaV1pZUTI0VFhYYWNXVmtmSE9tUER6NVg1TXRteTNz?=
- =?utf-8?B?ZVBWOWVoU1Rma3RRZFpBK3JnaDRFd0xpUTFKRTdjVm5McWQ2Mk1uSmhkT0VS?=
- =?utf-8?B?S2dGTUtIZzltZEtMS20waDRWbThlK3JkNnU0Z0x4YktXQ0J1SHpiMUtncGZ4?=
- =?utf-8?Q?yzyAjN5AgJ8C5QPg=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 361ebe75-4247-49e7-ead9-08da33336950
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9514.eurprd04.prod.outlook.com
+X-OriginatorOrg: fb.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2022 09:48:33.8837
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR15MB4552.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88b86e19-108f-4400-db46-08da3334f540
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 May 2022 09:59:37.2175
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bZCfpsJSi5D/1+d0bwMxHBGDnMwJ5PBnlmSalLkkr3ZvyTw6mdR1bNgT38DpsHGbhs7n0BacxnJPEqTHpgNGUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3789
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EspkLo4qqHyDe2aEBThJCCdrC7K+Rzc29InClflpN+IS7Ix1RNF2t3O1yA/mDYXW
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1368
+X-Proofpoint-ORIG-GUID: EvNtbLMbMhVm-Pl1cPTv3Kp3YxAJ5-pm
+X-Proofpoint-GUID: EvNtbLMbMhVm-Pl1cPTv3Kp3YxAJ5-pm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-05-11_03,2022-05-11_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/11/2022 12:21 PM, Michael Walle wrote:
-> Hi,
-> 
-> Am 2022-05-11 11:16, schrieb Pankaj Gupta:
->>> -----Original Message-----
->>> From: Ahmad Fatoum <a.fatoum@pengutronix.de>
->>> Sent: Monday, May 9, 2022 6:34 PM
->>> To: Pankaj Gupta <pankaj.gupta@nxp.com>; Horia Geanta
->>> <horia.geanta@nxp.com>; Herbert Xu <herbert@gondor.apana.org.au>; 
->>> David S.
->>> Miller <davem@davemloft.net>
->>> Cc: kernel@pengutronix.de; Michael Walle <michael@walle.cc>; James
->>> Bottomley <jejb@linux.ibm.com>; Jarkko Sakkinen <jarkko@kernel.org>; 
->>> Mimi
->>> Zohar <zohar@linux.ibm.com>; David Howells <dhowells@redhat.com>; 
->>> James
->>> Morris <jmorris@namei.org>; Eric Biggers <ebiggers@kernel.org>; Serge 
->>> E.
->>> Hallyn <serge@hallyn.com>; Jan Luebbe <j.luebbe@pengutronix.de>; David 
->>> Gstir
->>> <david@sigma-star.at>; Richard Weinberger <richard@nod.at>; Franck
->>> Lenormand <franck.lenormand@nxp.com>; Matthias Schiffer
->>> <matthias.schiffer@ew.tq-group.com>; Sumit Garg 
->>> <sumit.garg@linaro.org>;
->>> linux-integrity@vger.kernel.org; keyrings@vger.kernel.org; linux-
->>> crypto@vger.kernel.org; linux-kernel@vger.kernel.org; linux-security-
->>> module@vger.kernel.org
->>> Subject: Re: [EXT] [PATCH v9 3/7] crypto: caam - determine whether 
->>> CAAM
->>> supports blob encap/decap
->>>
->>> Caution: EXT Email
->>>
->>> Hello Pankaj,
->>>
->>> On Mon, 2022-05-09 at 12:39 +0000, Pankaj Gupta wrote:
->>>>> -       if (ctrlpriv->era < 10)
->>>>> +       comp_params = rd_reg32(&ctrl->perfmon.comp_parms_ls);
->>>>> +       ctrlpriv->blob_present = !!(comp_params & CTPR_LS_BLOB);
->>>>> +
->>>>> +       if (ctrlpriv->era < 10) {
->>>>>                 rng_vid = (rd_reg32(&ctrl->perfmon.cha_id_ls) &
->>>>>                            CHA_ID_LS_RNG_MASK) >>
->>>>> CHA_ID_LS_RNG_SHIFT;
->>>>
->>>> Check for AES CHAs for Era < 10, should be added.
->>>
->>> Do I need this? I only do this check for Era >= 10, because apparently 
->>> there are
->>> Layerscape non-E processors that indicate BLOB support via 
->>> CTPR_LS_BLOB, but
->>> fail at runtime. Are there any Era < 10 SoCs that are similarly 
->>> broken?
->>>
->>
->> For non-E variants, it might happen that Blob protocol is enabled, but
->> number of AES CHA are zero.
->> If the output of below expression is > 0, then only blob_present
->> should be marked present or true.
->> For era > 10, you handled. But for era < 10, please add the below code.
-> 
-> Are there any CAAMs which can be just enabled partially for era < 10?
-> I didn't found anything. To me it looks like the non-export controlled
-> CAAM is only available for era >= 10. For era < 10, the CAAM is either
-> fully featured there or it is not available at all and thus the node
-> is removed in the bootloader (at least that is the case for layerscape).
-> 
-Qouting from our previous discussion in U-boot:
-https://patchwork.ozlabs.org/project/uboot/patch/20200602150904.1997-1-michael@walle.cc/#2457448
+On kexec file load Integrity Measurement Architecture (IMA) subsystem
+may verify the IMA signature of the kernel and initramfs, and measure
+it. The command line parameters passed to the kernel in the kexec call
+may also be measured by IMA. A remote attestation service can verify
+a TPM quote based on the TPM event log, the IMA measurement list, and
+the TPM PCR data. This can be achieved only if the IMA measurement log
+is carried over from the current kernel to the next kernel across
+the kexec call.
 
-"
-Based on previous (NXP-internal) discussions, non-E crypto module is:
--fully disabled on: LS1021A (ARMv7), LS1043A, LS1088A, LS2088A
-(and their personalities)
--partially [*] disabled on: LS1012A, LS1028A, LS1046A, LX2160A
-(and their personalities)
-"
+powerpc and ARM64 both achieve this using device tree with a
+"linux,ima-kexec-buffer" node. x86 platforms generally don't make use of
+device tree, so use the setup_data mechanism to pass the IMA buffer to
+the new kernel.
 
-From the partially disabled list, LS1028A and LX2160A have CAAM Era 10,
-while LS1012A and LS1046A integrate CAAM Era 8.
+Signed-off-by: Jonathan McDowell <noodles@fb.com>
+---
+v3:
+ - Rebase on tip/master
+ - Pull ima_(free|get)_kexec_buffer into x86 code
+ - Push ifdefs into functions where possible
+ - Reverse fir tree variable declarations
+ - Fix section annotation on ima_free_kexec_buffer (__meminit)
+ - Only allocate ima_setup_data space when IMA_KEXEC is enabled
+v2:
+ - Fix operation with EFI systems
+---
+ arch/x86/Kconfig                      |  1 +
+ arch/x86/include/uapi/asm/bootparam.h |  9 ++++
+ arch/x86/kernel/e820.c                |  6 +--
+ arch/x86/kernel/kexec-bzimage64.c     | 38 ++++++++++++++++
+ arch/x86/kernel/setup.c               | 62 +++++++++++++++++++++++++++
+ drivers/of/kexec.c                    |  1 +
+ include/linux/ima.h                   |  3 ++
+ include/linux/of.h                    |  2 -
+ security/integrity/ima/ima_kexec.c    |  2 +-
+ 9 files changed, 118 insertions(+), 6 deletions(-)
 
-Horia
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index f1320d9a3da3..594636f02da4 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2027,6 +2027,7 @@ config KEXEC_FILE
+ 	bool "kexec file based system call"
+ 	select KEXEC_CORE
+ 	select BUILD_BIN2C
++	select HAVE_IMA_KEXEC if IMA
+ 	depends on X86_64
+ 	depends on CRYPTO=y
+ 	depends on CRYPTO_SHA256=y
+diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+index bea5cdcdf532..ca0796ac4403 100644
+--- a/arch/x86/include/uapi/asm/bootparam.h
++++ b/arch/x86/include/uapi/asm/bootparam.h
+@@ -11,6 +11,7 @@
+ #define SETUP_APPLE_PROPERTIES		5
+ #define SETUP_JAILHOUSE			6
+ #define SETUP_CC_BLOB			7
++#define SETUP_IMA			8
+ 
+ #define SETUP_INDIRECT			(1<<31)
+ 
+@@ -172,6 +173,14 @@ struct jailhouse_setup_data {
+ 	} __attribute__((packed)) v2;
+ } __attribute__((packed));
+ 
++/*
++ * IMA buffer setup data information from the previous kernel during kexec
++ */
++struct ima_setup_data {
++	__u64 addr;
++	__u64 size;
++} __attribute__((packed));
++
+ /* The so-called "zeropage" */
+ struct boot_params {
+ 	struct screen_info screen_info;			/* 0x000 */
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index f267205f2d5a..9dac24680ff8 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1017,10 +1017,10 @@ void __init e820__reserve_setup_data(void)
+ 		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+ 
+ 		/*
+-		 * SETUP_EFI is supplied by kexec and does not need to be
+-		 * reserved.
++		 * SETUP_EFI and SETUP_IMA are supplied by kexec and do not need
++		 * to be reserved.
+ 		 */
+-		if (data->type != SETUP_EFI)
++		if (data->type != SETUP_EFI && data->type != SETUP_IMA)
+ 			e820__range_update_kexec(pa_data,
+ 						 sizeof(*data) + data->len,
+ 						 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index 170d0fd68b1f..54bd4ce5f908 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -186,6 +186,33 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+ }
+ #endif /* CONFIG_EFI */
+ 
++static void
++setup_ima_state(const struct kimage *image, struct boot_params *params,
++		unsigned long params_load_addr,
++		unsigned int ima_setup_data_offset)
++{
++#ifdef CONFIG_IMA_KEXEC
++	struct setup_data *sd = (void *)params + ima_setup_data_offset;
++	unsigned long setup_data_phys;
++	struct ima_setup_data *ima;
++
++	if (!image->ima_buffer_size)
++		return;
++
++	sd->type = SETUP_IMA;
++	sd->len = sizeof(*ima);
++
++	ima = (void *)sd + sizeof(struct setup_data);
++	ima->addr = image->ima_buffer_addr;
++	ima->size = image->ima_buffer_size;
++
++	/* Add setup data */
++	setup_data_phys = params_load_addr + ima_setup_data_offset;
++	sd->next = params->hdr.setup_data;
++	params->hdr.setup_data = setup_data_phys;
++#endif /* CONFIG_IMA_KEXEC */
++}
++
+ static int
+ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+ 		      unsigned long params_load_addr,
+@@ -247,6 +274,13 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+ 	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+ 			efi_setup_data_offset);
+ #endif
++
++	/* Setup IMA log buffer state */
++	setup_ima_state(image, params, params_load_addr,
++			efi_setup_data_offset +
++			sizeof(struct setup_data) +
++			sizeof(struct efi_setup_data));
++
+ 	/* Setup EDD info */
+ 	memcpy(params->eddbuf, boot_params.eddbuf,
+ 				EDDMAXNR * sizeof(struct edd_info));
+@@ -403,6 +437,10 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+ 				sizeof(struct setup_data) +
+ 				sizeof(struct efi_setup_data);
+ 
++	if (IS_ENABLED(CONFIG_IMA_KEXEC))
++		kbuf.bufsz += sizeof(struct setup_data) +
++			      sizeof(struct ima_setup_data);
++
+ 	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
+ 	if (!params)
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 249981bf3d8a..ab5e7a351845 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -11,6 +11,7 @@
+ #include <linux/dma-map-ops.h>
+ #include <linux/dmi.h>
+ #include <linux/efi.h>
++#include <linux/ima.h>
+ #include <linux/init_ohci1394_dma.h>
+ #include <linux/initrd.h>
+ #include <linux/iscsi_ibft.h>
+@@ -145,6 +146,11 @@ __visible unsigned long mmu_cr4_features __ro_after_init;
+ __visible unsigned long mmu_cr4_features __ro_after_init = X86_CR4_PAE;
+ #endif
+ 
++#ifdef CONFIG_IMA
++static phys_addr_t ima_kexec_buffer_phys;
++static size_t ima_kexec_buffer_size;
++#endif
++
+ /* Boot loader ID and version as integers, for the benefit of proc_dointvec */
+ int bootloader_type, bootloader_version;
+ 
+@@ -335,6 +341,59 @@ static void __init reserve_initrd(void)
+ }
+ #endif /* CONFIG_BLK_DEV_INITRD */
+ 
++static void __init add_early_ima_buffer(u64 phys_addr)
++{
++#ifdef CONFIG_IMA
++	struct ima_setup_data *data;
++
++	data = early_memremap(phys_addr + sizeof(struct setup_data),
++			      sizeof(*data));
++	if (!data) {
++		pr_warn("setup: failed to memremap ima_setup_data entry\n");
++		return;
++	}
++	if (data->size != 0) {
++		memblock_reserve(data->addr, data->size);
++		ima_kexec_buffer_phys = data->addr;
++		ima_kexec_buffer_size = data->size;
++	}
++	early_memunmap(data, sizeof(*data));
++#else
++	pr_warn("Passed IMA kexec data, but CONFIG_IMA not set. Ignoring.\n");
++#endif
++}
++
++#if defined(CONFIG_IMA) && !defined(CONFIG_OF_FLATTREE)
++int __meminit ima_free_kexec_buffer(void)
++{
++	int rc;
++
++	if (ima_kexec_buffer_size == 0)
++		return -ENOENT;
++
++	rc = memblock_phys_free(ima_kexec_buffer_phys,
++				ima_kexec_buffer_size);
++	if (rc)
++		return rc;
++
++	ima_kexec_buffer_phys = 0;
++	ima_kexec_buffer_size = 0;
++
++	return 0;
++}
++
++int __init ima_get_kexec_buffer(void **addr, size_t *size)
++{
++	if (ima_kexec_buffer_size == 0)
++		return -ENOENT;
++
++	*addr = __va(ima_kexec_buffer_phys);
++	*size = ima_kexec_buffer_size;
++
++	return 0;
++}
++#endif
++
+ static void __init parse_setup_data(void)
+ {
+ 	struct setup_data *data;
+@@ -360,6 +419,9 @@ static void __init parse_setup_data(void)
+ 		case SETUP_EFI:
+ 			parse_efi_setup(pa_data, data_len);
+ 			break;
++		case SETUP_IMA:
++			add_early_ima_buffer(pa_data);
++			break;
+ 		default:
+ 			break;
+ 		}
+diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
+index b9bd1cff1793..74fdd490f7c0 100644
+--- a/drivers/of/kexec.c
++++ b/drivers/of/kexec.c
+@@ -9,6 +9,7 @@
+  *  Copyright (C) 2016  IBM Corporation
+  */
+ 
++#include <linux/ima.h>
+ #include <linux/kernel.h>
+ #include <linux/kexec.h>
+ #include <linux/memblock.h>
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 426b1744215e..dc6a59d61a15 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -140,6 +140,9 @@ static inline int ima_measure_critical_data(const char *event_label,
+ 
+ #endif /* CONFIG_IMA */
+ 
++int ima_free_kexec_buffer(void);
++int ima_get_kexec_buffer(void **addr, size_t *size);
++
+ #ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
+ extern bool arch_ima_get_secureboot(void);
+ extern const char * const *arch_get_ima_policy(void);
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 04971e85fbc9..c2f58d2e3a0e 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -441,8 +441,6 @@ void *of_kexec_alloc_and_setup_fdt(const struct kimage *image,
+ 				   unsigned long initrd_load_addr,
+ 				   unsigned long initrd_len,
+ 				   const char *cmdline, size_t extra_fdt_size);
+-int ima_get_kexec_buffer(void **addr, size_t *size);
+-int ima_free_kexec_buffer(void);
+ #else /* CONFIG_OF */
+ 
+ static inline void of_core_init(void)
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 13753136f03f..419dc405c831 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -137,7 +137,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+ /*
+  * Restore the measurement list from the previous kernel.
+  */
+-void ima_load_kexec_buffer(void)
++void __init ima_load_kexec_buffer(void)
+ {
+ 	void *kexec_buffer = NULL;
+ 	size_t kexec_buffer_size = 0;
+-- 
+2.35.3
