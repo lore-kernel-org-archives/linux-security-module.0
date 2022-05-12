@@ -2,183 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78B9C433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 May 2022 21:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A0CC433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 May 2022 22:03:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358895AbiELVsJ (ORCPT
+        id S1359045AbiELWD3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 May 2022 17:48:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53810 "EHLO
+        Thu, 12 May 2022 18:03:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358911AbiELVsH (ORCPT
+        with ESMTP id S1348898AbiELWD2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 May 2022 17:48:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B69E94B1C7
-        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 14:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652392070;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=YWzVrdFw3n8EH2Ce8k4daz33bBf83epcMdzHAJNT8tE=;
-        b=gVuxC4ZW9yIvGTjeB3OLU0RYFZGl+3JyaPzOZoeGcWazdKSwc8Ef9VHjpOOcs+CiEEiJD6
-        0R+dDgBQCPA3pSV3mRTd9mJDJUvE+jnnxCugCPNFLgief/eTZyaYYXSJOl2LMPOQCnmqIw
-        bBAiWyf3GxXB3U2wkXDWdcsApPQTfoY=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-617-E2haYQIaNmW7kVC3uepXEg-1; Thu, 12 May 2022 17:47:46 -0400
-X-MC-Unique: E2haYQIaNmW7kVC3uepXEg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DD7EB383328C;
-        Thu, 12 May 2022 21:47:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.37.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A13B84010E23;
-        Thu, 12 May 2022 21:47:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20220504014440.3697851-1-keescook@chromium.org>
-References: <20220504014440.3697851-1-keescook@chromium.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>, alsa-devel@alsa-project.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Gross <agross@kernel.org>,
-        Andy Lavr <andy.lavr@gmail.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Baowen Zheng <baowen.zheng@corigine.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Bradley Grove <linuxdrivers@attotech.com>,
-        brcm80211-dev-list.pdl@broadcom.com,
-        Christian Brauner <brauner@kernel.org>,
-        Christian =?utf-8?Q?G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        Chris Zankel <chris@zankel.net>,
-        Cong Wang <cong.wang@bytedance.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Gow <davidgow@google.com>,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eli Cohen <elic@nvidia.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Francis Laniel <laniel_francis@privacyrequired.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Hulk Robot <hulkci@huawei.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        John Keeping <john@metanate.com>,
-        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
-        Keith Packard <keithp@keithp.com>, keyrings@vger.kernel.org,
-        kunit-dev@googlegroups.com,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Leon Romanovsky <leon@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux1394-devel@lists.sourceforge.net,
-        linux-afs@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Louis Peens <louis.peens@corigine.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Nathan Chancellor <nathan@kernel.org>, netdev@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nuno =?utf-8?Q?S=C3=A1?= <nuno.sa@analog.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Rich Felker <dalias@aerifal.cx>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, selinux@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        SHA-cyfmac-dev-list@infineon.com,
-        Simon Horman <simon.horman@corigine.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Tadeusz Struk <tadeusz.struk@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
-        Udipto Goswami <quic_ugoswami@quicinc.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
-        xen-devel@lists.xenproject.org,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        Yang Yingliang <yangyingliang@huawei.com>
-Subject: Re: [PATCH 00/32] Introduce flexible array struct memcpy() helpers
+        Thu, 12 May 2022 18:03:28 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7E4B27F114
+        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 15:03:27 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id k126-20020a1ca184000000b003943fd07180so3766790wme.3
+        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 15:03:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3Jn18d1qZKkOahd53J55xmHFXF7VdRPAAkhlV5tmYKk=;
+        b=nYmdMV2ntKt4lkJ7yOQvkzf/JRzEtl7Rf1dfsSfviFUJJ2ww0eDAbukGeZi9l1oZH4
+         Qh+b9pEWhyiFfOhaMMGX6qFfk76VfOmeYrKMbYcjTLGXrh4KWnY/2cTdkNMhcoV+M2mA
+         1HgMDAxMaUsFNtCTE6yqdg+3mfJZbh8fp7pw00PeWEKlYjK0YO7SQnBl+srCsydffv2a
+         9S4tlexQUxnNurok5tYEtz6zo7uC460tChpaSl3gTCyUowhFirAUe5nkl78F4vrE4A1I
+         EUNvvpOmqAuOw9aDSdyLe/CkgKNoiaN1YSgkuyeBakU1BmA0Xx6RjCojAIcEDN8LhVZg
+         uA7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3Jn18d1qZKkOahd53J55xmHFXF7VdRPAAkhlV5tmYKk=;
+        b=dMG5JEcvbmT4zkY4C+Z43VW17PNqNZKpHcMtOYPluUza7frr1o5uxproprx92SmT0E
+         VuD4Id3z7Oe3pH0AwIQk7UWDXJ2uQnVfY0ULBES49eGxlYubWWye5589AoqBRRinj9xG
+         PdhebxM6ADP+kJkGJro8pdJw5TwEhhY5LCqWvS2JDxMqhj58zHhcbSaUrYZxNzqyNTCI
+         1Vni3tiGTLnPxtgqCj+WzzZBmkMqWr4Uv5GfUbn+rMTpqa5mgFiY8+DbTOk2epUjTaMJ
+         X9ttAMI7iJ0Uc9UnIILodHMw6vy83Tzeaoe5xtxaxVANF4xHcnhi0YXusWvCe9BkCQcg
+         Mb9g==
+X-Gm-Message-State: AOAM530VU6+P72rIN6OHgeaHbm8UxZsFmAiJQc39jutVGjM62q70RmvL
+        vtYOHCc349G4rQnzVXUCFqCyrILiytW/Aq1W7pYS
+X-Google-Smtp-Source: ABdhPJwsuxnGt76AlK3oHZf22gRwtAWrjwzm8UOEjWL3AzczIKoP/A/YwUjiu7WxfneTyX6HeEVPC1M31RluJkCmwk4=
+X-Received: by 2002:a05:600c:4fd0:b0:394:7999:98ab with SMTP id
+ o16-20020a05600c4fd000b00394799998abmr1607349wmq.179.1652393006170; Thu, 12
+ May 2022 15:03:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-Date:   Thu, 12 May 2022 22:47:31 +0100
-Message-ID: <899235.1652392051@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+References: <20220512120847.124822-1-mic@digikod.net>
+In-Reply-To: <20220512120847.124822-1-mic@digikod.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 12 May 2022 18:03:15 -0400
+Message-ID: <CAHC9VhRDYnKmSGiNzED5bsT+hGarFBO9M2qHR8v1SKj4zGqMeQ@mail.gmail.com>
+Subject: Re: [PATCH v1] landlock: Explain how to support Landlock
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, May 12, 2022 at 8:08 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+>
+> Let's help users by documenting how to enable and check for Landlock in
+> the kernel and the running system.  The userspace-api section may not be
+> the best place for this but it still makes sense to put all the user
+> documentation at the same place.
+>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20220512120847.124822-1-mic@digikod.net
+> ---
+>  Documentation/userspace-api/landlock.rst | 26 ++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/use=
+rspace-api/landlock.rst
+> index 7b4fe6218132..e69dbddcc191 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -388,6 +388,32 @@ Starting with the Landlock ABI version 2, it is now =
+possible to securely
+>  control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER=
+`
+>  access right.
+>
+> +Landlock support
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Kernel configuration
+> +--------------------
 
-Kees Cook <keescook@chromium.org> wrote:
+I would suggest changing the section name to "Kernel build
+configuration" to make it clear the instructions below need to be done
+at build time.
 
-> I'm happy to also point out that the conversions (patches 5+) are actually
-> a net reduction in lines of code:
->  49 files changed, 154 insertions(+), 244 deletions(-)
+> +Landlock can be supported since Linux 5.13 but it must be configured in =
+the
 
-That doesn't mean that it's actually code that's clearer to read.  I would say
-that it's actually less clear.  In a bunch of places, you've done something
-like:
+I would suggest rephrasing the first part of this sentence slightly:
 
--	e = kmalloc(...);
--	if (!e)
-+	if (__mem_to_flex_dup(&e, ...))
+"Landlock was first introduced in Linux v5.13 but it must be ..."
 
-The problem is that, to me at least, it looks like:
+> +kernel with `CONFIG_SECURITY_LANDLOCK=3Dy`, and it should be enabled at =
+boot time
 
--	e = kmalloc(...);
--	if (kmalloc failed)
-+	if (__mem_to_flex_dup(&e, ...) succeeded)
+CONFIG_LSM is a Kconfig build time variable not a runtime command line
+variable, yes?
 
-David
+> +with `CONFIG_LSM=3Dlandlock,[...]`.  The `[...]` must be replaced with t=
+he list
+> +of LSMs that may be useful for the running system (see the `CONFIG_LSM` =
+help).
+> +
+> +Running system configuration
+> +----------------------------
 
+This is nit-picky, but I would suggest a section name of "Kernel
+command line configuration".
+
+> +If the running kernel doesn't have `landlock` in `CONFIG_LSM`, then we c=
+an
+> +still enable it by adding `lsm=3Dlandlock,[...]` to
+> +Documentation/admin-guide/kernel-parameters.rst. The `[...]` must be rep=
+laced
+> +with the list of LSMs that may be useful for the running system (see the
+> +`CONFIG_LSM` help).
+> +
+> +Running system check
+> +--------------------
+> +
+> +We can check that Landlock is enabled by looking for "landlock: Up and r=
+unning"
+> +in kernel logs: `dmesg | grep landlock`
+
+I would suggest moving the "Running system check" section up closer to
+the top of the documentation, perhaps right before the "Landlock
+rules" section.  My thinking is that it is better to mention this as
+soon as possible in the doc so that users can verify Landlock is
+present and functioning before trying any of the code examples and
+failing.  I think it is okay to leave the "how to enable Landlock"
+sections at the bottom and simply refer to them in the "system check"
+section.
+
+--=20
+paul-moore.com
