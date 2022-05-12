@@ -2,193 +2,67 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A68C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 May 2022 07:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E720C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 May 2022 07:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350077AbiELHWQ (ORCPT
+        id S1351110AbiELHx4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 May 2022 03:22:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50110 "EHLO
+        Thu, 12 May 2022 03:53:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350939AbiELHWO (ORCPT
+        with ESMTP id S1344994AbiELHx4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 May 2022 03:22:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E430E393D9
-        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 00:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652340126;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=uLW+m9ur/lMSYv/hoja8jsAABTcjuU8qCpLCY/fAt6g=;
-        b=MgTuC/pQPcoipAK1vvVO329tToNFIFwFPmK+oXRmLGTugIJdmSduQ3kKaKvW00UI3QIcig
-        EqcCwAhV739syDb1CJVncvcwH059SFvkCzGPfsFppXe/n3nAPi7jw1ymvqiWagfIz3Ig9d
-        g+ltw5Sl6exWK2uvc2YCP6lv6Xd0cfM=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-524-mMkE9jedOmKW7IZwGNGlhA-1; Thu, 12 May 2022 03:22:00 -0400
-X-MC-Unique: mMkE9jedOmKW7IZwGNGlhA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0AD5F382ECC0;
-        Thu, 12 May 2022 07:22:00 +0000 (UTC)
-Received: from localhost (ovpn-12-247.pek2.redhat.com [10.72.12.247])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2FD35416363;
-        Thu, 12 May 2022 07:21:57 +0000 (UTC)
-Date:   Thu, 12 May 2022 15:21:54 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Coiby Xu <coxu@redhat.com>
-Cc:     kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        Michal Suchanek <msuchanek@suse.de>,
-        Dave Young <dyoung@redhat.com>, Will Deacon <will@kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, Chun-Yi Lee <jlee@suse.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 2/4] kexec, KEYS: make the code in
- bzImage64_verify_sig generic
-Message-ID: <Yny1kqrkgQ9u7h8L@MiWiFi-R3L-srv>
-References: <20220512070123.29486-1-coxu@redhat.com>
- <20220512070123.29486-3-coxu@redhat.com>
+        Thu, 12 May 2022 03:53:56 -0400
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C17D5326F7;
+        Thu, 12 May 2022 00:53:54 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VCziySh_1652342031;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0VCziySh_1652342031)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 12 May 2022 15:53:52 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     john.johansen@canonical.com
+Cc:     jmorris@namei.org, serge@hallyn.com, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] apparmor: Fix aa_str_perms() kernel-doc comment
+Date:   Thu, 12 May 2022 15:53:50 +0800
+Message-Id: <20220512075350.31163-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220512070123.29486-3-coxu@redhat.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 05/12/22 at 03:01pm, Coiby Xu wrote:
-> commit 278311e417be ("kexec, KEYS: Make use of platform keyring for
-> signature verify") adds platform keyring support on x86 kexec but not
-> arm64.
-> 
-> The code in bzImage64_verify_sig makes use of system keyrings including
-> .buitin_trusted_keys, .secondary_trusted_keys and .platform keyring to
-> verify signed kernel image as PE file. Make it generic so both x86_64
-> and arm64 can use it.
+Add the description of @start and remove @state in aa_str_perms()
+kernel-doc comment to remove warnings found by running scripts/kernel-doc,
+which is caused by using 'make W=1'.
 
-LGTM,
+security/apparmor/file.c:260: warning: Function parameter or member
+'start' not described in 'aa_str_perms'
+security/apparmor/file.c:260: warning: Excess function parameter 'state'
+description in 'aa_str_perms'
 
-Acked-by: Baoquan He <bhe@redhat.com>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ security/apparmor/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Cc: kexec@lists.infradead.org
-> Cc: keyrings@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Reviewed-by: Michal Suchanek <msuchanek@suse.de>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
->  arch/x86/kernel/kexec-bzimage64.c | 20 +-------------------
->  include/linux/kexec.h             |  7 +++++++
->  kernel/kexec_file.c               | 17 +++++++++++++++++
->  3 files changed, 25 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 170d0fd68b1f..f299b48f9c9f 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -17,7 +17,6 @@
->  #include <linux/kernel.h>
->  #include <linux/mm.h>
->  #include <linux/efi.h>
-> -#include <linux/verification.h>
->  
->  #include <asm/bootparam.h>
->  #include <asm/setup.h>
-> @@ -528,28 +527,11 @@ static int bzImage64_cleanup(void *loader_data)
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_KEXEC_BZIMAGE_VERIFY_SIG
-> -static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
-> -{
-> -	int ret;
-> -
-> -	ret = verify_pefile_signature(kernel, kernel_len,
-> -				      VERIFY_USE_SECONDARY_KEYRING,
-> -				      VERIFYING_KEXEC_PE_SIGNATURE);
-> -	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING)) {
-> -		ret = verify_pefile_signature(kernel, kernel_len,
-> -					      VERIFY_USE_PLATFORM_KEYRING,
-> -					      VERIFYING_KEXEC_PE_SIGNATURE);
-> -	}
-> -	return ret;
-> -}
-> -#endif
-> -
->  const struct kexec_file_ops kexec_bzImage64_ops = {
->  	.probe = bzImage64_probe,
->  	.load = bzImage64_load,
->  	.cleanup = bzImage64_cleanup,
->  #ifdef CONFIG_KEXEC_BZIMAGE_VERIFY_SIG
-> -	.verify_sig = bzImage64_verify_sig,
-> +	.verify_sig = kexec_kernel_verify_pe_sig,
->  #endif
->  };
-> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> index 413235c6c797..da83abfc628b 100644
-> --- a/include/linux/kexec.h
-> +++ b/include/linux/kexec.h
-> @@ -19,6 +19,7 @@
->  #include <asm/io.h>
->  
->  #include <uapi/linux/kexec.h>
-> +#include <linux/verification.h>
->  
->  /* Location of a reserved region to hold the crash kernel.
->   */
-> @@ -202,6 +203,12 @@ int arch_kexec_apply_relocations(struct purgatory_info *pi,
->  				 const Elf_Shdr *relsec,
->  				 const Elf_Shdr *symtab);
->  int arch_kimage_file_post_load_cleanup(struct kimage *image);
-> +#ifdef CONFIG_KEXEC_SIG
-> +#ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
-> +int kexec_kernel_verify_pe_sig(const char *kernel,
-> +				    unsigned long kernel_len);
-> +#endif
-> +#endif
->  int arch_kexec_locate_mem_hole(struct kexec_buf *kbuf);
->  
->  extern int kexec_add_buffer(struct kexec_buf *kbuf);
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 3720435807eb..754885b96aab 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -165,6 +165,23 @@ void kimage_file_post_load_cleanup(struct kimage *image)
->  }
->  
->  #ifdef CONFIG_KEXEC_SIG
-> +#ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
-> +int kexec_kernel_verify_pe_sig(const char *kernel, unsigned long kernel_len)
-> +{
-> +	int ret;
-> +
-> +	ret = verify_pefile_signature(kernel, kernel_len,
-> +				      VERIFY_USE_SECONDARY_KEYRING,
-> +				      VERIFYING_KEXEC_PE_SIGNATURE);
-> +	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING)) {
-> +		ret = verify_pefile_signature(kernel, kernel_len,
-> +					      VERIFY_USE_PLATFORM_KEYRING,
-> +					      VERIFYING_KEXEC_PE_SIGNATURE);
-> +	}
-> +	return ret;
-> +}
-> +#endif
-> +
->  static int kexec_image_verify_sig(struct kimage *image, void *buf,
->  		unsigned long buf_len)
->  {
-> -- 
-> 2.35.3
-> 
+diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+index e1b7e93602e4..137c99bb5d4a 100644
+--- a/security/apparmor/file.c
++++ b/security/apparmor/file.c
+@@ -247,7 +247,7 @@ struct aa_perms aa_compute_fperms(struct aa_dfa *dfa, unsigned int state,
+ /**
+  * aa_str_perms - find permission that match @name
+  * @dfa: to match against  (MAYBE NULL)
+- * @state: state to start matching in
++ * @start: the state of the dfa to start matching in
+  * @name: string to match against dfa  (NOT NULL)
+  * @cond: conditions to consider for permission set computation  (NOT NULL)
+  * @perms: Returns - the permissions found when matching @name
+-- 
+2.20.1.7.g153144c
 
