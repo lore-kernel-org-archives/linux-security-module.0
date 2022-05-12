@@ -2,136 +2,210 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6794CC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 May 2022 20:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 146A9C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 May 2022 21:41:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358412AbiELUpC (ORCPT
+        id S1358778AbiELVle (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 May 2022 16:45:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45622 "EHLO
+        Thu, 12 May 2022 17:41:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352626AbiELUpC (ORCPT
+        with ESMTP id S1358787AbiELVlb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 May 2022 16:45:02 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B3222DA36
-        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 13:45:00 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id c1-20020a17090a558100b001dca2694f23so5926248pji.3
-        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 13:45:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=mfDd2mUqrFJnPjYIAGb7iTHqp7/V/kqIzmO4Ik5ICtE=;
-        b=VSL2P1g6oKCepZ9gpAuZb3IJYGYlROev7evIcpI2bAO4ymJpGTpTPWg28w7aZ74nqu
-         +4hkrxBXxozmtUkznxUeB16mVvTNuWjlKl3GvgorQtDgqz1Nl+vcsah0mU6P4adNEl8I
-         hzSvp6YfypuLT0514UmzVGtZJ2H2UTxby3128=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mfDd2mUqrFJnPjYIAGb7iTHqp7/V/kqIzmO4Ik5ICtE=;
-        b=QyBJ8pVEU+UhRKIgzwqn8CFYqrBpYB/QvFcRPtyh7Q24U0epocRYq/2hesbQaeSBqJ
-         A/vOIEvAFUfyMvgxgZfCjDYe4rq21RqqV/UQyenpigtB3jAOC2OsbBHc0dW+Zbrx/C7z
-         tB2vkV78nL2zMu+DTm089phq/J0fKO6Nyz2HnRE26Aop1lVt057I63KD8rLZYVzF5YFN
-         JPlRoMhOBPsEKEG9f/AioluofqY3qfx9LodG2sa+JLWqPloJ+KKOCoZbM4nbey7NYZxP
-         3imYDYXLgg2dcHi/rXP6algb97dTNE98g9DSUETx/pcpjTbWKK9PyjagzyKz5eY2J6w4
-         KHfg==
-X-Gm-Message-State: AOAM5304lkRw7Um+MI2TpJQK62aBP3i0rBRDmKe059Vd8oyRwv6uHRTm
-        oDGsqo5IeanHWxl8iugfkk1nUg==
-X-Google-Smtp-Source: ABdhPJweC1XGidiP3A3Cg1L4P+c7vLixuIQHOEhEEVMPX3OSorgSxCxtYRx8oqG/gfH5ctvhV02/CQ==
-X-Received: by 2002:a17:902:ed52:b0:15e:c71f:72c8 with SMTP id y18-20020a170902ed5200b0015ec71f72c8mr1599550plb.38.1652388299601;
-        Thu, 12 May 2022 13:44:59 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:4060:29b:ac8a:c726])
-        by smtp.gmail.com with UTF8SMTPSA id i9-20020aa79089000000b0050dc76281e4sm223297pfa.190.2022.05.12.13.44.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 May 2022 13:44:59 -0700 (PDT)
-Date:   Thu, 12 May 2022 13:44:57 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        Thu, 12 May 2022 17:41:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 374226FA0F
+        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 14:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652391688;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YX4qZOz+9WbIDFanSGeueshT1smpwyQHiwCB0mvZIgg=;
+        b=UB0zHdp4klqAngjDbOqmkofzodTQqJrA4GB7Na4o6Xl/gchGA5HDiTJ5iXOV6YXLK5YI0m
+        3ZAYGxnZwtmMcvOlfbi0V6kdThfpGxt6StW0v+SEb5lxJ9sdpdtBnGZ6jC73eNf5Tluvrl
+        DAPKsCGFHYjcHTS4HfE/Kp0t7IyfCtw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-316--9sq3rMhP6iZqr34jl7IjA-1; Thu, 12 May 2022 17:41:24 -0400
+X-MC-Unique: -9sq3rMhP6iZqr34jl7IjA-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E950F8038E3;
+        Thu, 12 May 2022 21:41:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E2C7416156;
+        Thu, 12 May 2022 21:41:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20220504014440.3697851-20-keescook@chromium.org>
+References: <20220504014440.3697851-20-keescook@chromium.org> <20220504014440.3697851-1-keescook@chromium.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org, Alexei Starovoitov <ast@kernel.org>,
+        alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Andy Lavr <andy.lavr@gmail.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Baowen Zheng <baowen.zheng@corigine.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Bradley Grove <linuxdrivers@attotech.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        Christian Brauner <brauner@kernel.org>,
+        Christian =?utf-8?Q?G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        Chris Zankel <chris@zankel.net>,
+        Cong Wang <cong.wang@bytedance.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Gow <davidgow@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eli Cohen <elic@nvidia.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Francis Laniel <laniel_francis@privacyrequired.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gregory Greenman <gregory.greenman@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Hulk Robot <hulkci@huawei.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        Song Liu <song@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dm: Add verity helpers for LoadPin
-Message-ID: <Yn1xyVmPJGQz31lN@google.com>
-References: <20220504195419.1143099-1-mka@chromium.org>
- <20220504125404.v3.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
- <YnwioaRiVmYevo8i@google.com>
- <Yn1BkO4t+CXR0nzk@redhat.com>
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        John Keeping <john@metanate.com>,
+        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
+        Keith Packard <keithp@keithp.com>, keyrings@vger.kernel.org,
+        kunit-dev@googlegroups.com,
+        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Leon Romanovsky <leon@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux1394-devel@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Louis Peens <louis.peens@corigine.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Nathan Chancellor <nathan@kernel.org>, netdev@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nuno =?utf-8?Q?S=C3=A1?= <nuno.sa@analog.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Rich Felker <dalias@aerifal.cx>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, selinux@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        SHA-cyfmac-dev-list@infineon.com,
+        Simon Horman <simon.horman@corigine.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Tadeusz Struk <tadeusz.struk@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
+        Udipto Goswami <quic_ugoswami@quicinc.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
+        xen-devel@lists.xenproject.org,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        Yang Yingliang <yangyingliang@huawei.com>
+Subject: Re: [PATCH 19/32] afs: Use mem_to_flex_dup() with struct afs_acl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Yn1BkO4t+CXR0nzk@redhat.com>
+Content-Type: text/plain
+Date:   Thu, 12 May 2022 22:41:05 +0100
+Message-ID: <898803.1652391665@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 12, 2022 at 01:19:12PM -0400, Mike Snitzer wrote:
-> On Wed, May 11 2022 at  4:54P -0400,
-> Matthias Kaehlcke <mka@chromium.org> wrote:
-> 
-> > Alasdar/Mike, I'd be interested in your take on adding these functions
-> > to verity/DM, to get an idea whether this series has a path forward to
-> > landing upstream.
-> 
-> I'll be reviewing your patchset now. Comments inlined below.
-> 
-> > On Wed, May 04, 2022 at 12:54:17PM -0700, Matthias Kaehlcke wrote:
-> > > LoadPin limits loading of kernel modules, firmware and certain
-> > > other files to a 'pinned' file system (typically a read-only
-> > > rootfs). To provide more flexibility LoadPin is being extended
-> > > to also allow loading these files from trusted dm-verity
-> > > devices. For that purpose LoadPin can be provided with a list
-> > > of verity root digests that it should consider as trusted.
-> > > 
-> > > Add a bunch of helpers to allow LoadPin to check whether a DM
-> > > device is a trusted verity device. The new functions broadly
-> > > fall in two categories: those that need access to verity
-> > > internals (like the root digest), and the 'glue' between
-> > > LoadPin and verity. The new file dm-verity-loadpin.c contains
-> > > the glue functions.
-> > > 
-> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > ---
-> > > 
-> > > Changes in v3:
-> > > - none
-> > > 
-> > > Changes in v2:
-> > > - none
-> > > 
-> > >  drivers/md/Makefile               |  6 +++
-> > >  drivers/md/dm-verity-loadpin.c    | 80 +++++++++++++++++++++++++++++++
-> > >  drivers/md/dm-verity-target.c     | 33 +++++++++++++
-> > >  drivers/md/dm-verity.h            |  4 ++
-> > >  include/linux/dm-verity-loadpin.h | 27 +++++++++++
-> > >  5 files changed, 150 insertions(+)
-> > >  create mode 100644 drivers/md/dm-verity-loadpin.c
-> > >  create mode 100644 include/linux/dm-verity-loadpin.h
-> > > 
-> > > diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-> > > index 0454b0885b01..e12cd004d375 100644
-> > > --- a/drivers/md/Makefile
-> > > +++ b/drivers/md/Makefile
-> > > @@ -100,6 +100,12 @@ ifeq ($(CONFIG_IMA),y)
-> > >  dm-mod-objs			+= dm-ima.o
-> > >  endif
-> > >  
-> > > +ifeq ($(CONFIG_DM_VERITY),y)
-> > > +ifeq ($(CONFIG_SECURITY_LOADPIN),y)
-> > > +dm-mod-objs			+= dm-verity-loadpin.o
-> > > +endif
-> > > +endif
-> > > +
-> 
-> Why are you extending dm-mod-objs?  Why not dm-verity-objs?
 
-Sorry, I missed to address this comment in my earlier reply.
+Kees Cook <keescook@chromium.org> wrote:
 
-I don't recall why I chose dm-mod-objs initially, agreed that
-dm-verity-objs seems a better fit.
+>  struct afs_acl {
+> -	u32	size;
+> -	u8	data[];
+> +	DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(u32, size);
+> +	DECLARE_FLEX_ARRAY_ELEMENTS(u8, data);
+>  };
+
+Oof...  That's really quite unpleasant syntax.  Is it not possible to have
+mem_to_flex_dup() and friends work without that?  You are telling them the
+fields they have to fill in.
+
+> +	struct afs_acl *acl = NULL;
+>  
+> -	acl = kmalloc(sizeof(*acl) + size, GFP_KERNEL);
+> -	if (!acl) {
+> +	if (mem_to_flex_dup(&acl, buffer, size, GFP_KERNEL)) {
+
+Please don't do that.  Either do:
+
+	acl = mem_to_flex_dup(buffer, size, GFP_KERNEL);
+	if (!acl)
+
+or:
+
+	acl = mem_to_flex_dup(buffer, size, GFP_KERNEL);
+	if (IS_ERR(acl))
+
+Please especially don't make it that an apparent 'true' return indicates an
+error.  If you absolutely must return the acl pointer through the argument
+list (presumably because it's actually a macro), make it return false on
+failure:
+
+	if (!mem_to_flex_dup(&acl, buffer, size, GFP_KERNEL))
+
+or return and explicitly check for an error code:
+
+	if (mem_to_flex_dup(&acl, buffer, size, GFP_KERNEL) < 0)
+
+or:
+
+	ret = mem_to_flex_dup(&acl, buffer, size, GFP_KERNEL);
+	if (ret < 0)
+
+(or use != 0 rather than < 0)
+
+David
+
