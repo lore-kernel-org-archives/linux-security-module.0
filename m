@@ -2,51 +2,51 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F51C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 May 2022 18:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6794CC433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 May 2022 20:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357507AbiELSOo (ORCPT
+        id S1358412AbiELUpC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 May 2022 14:14:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58878 "EHLO
+        Thu, 12 May 2022 16:45:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357503AbiELSOn (ORCPT
+        with ESMTP id S1352626AbiELUpC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 May 2022 14:14:43 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CFB826FA4C
-        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 11:14:42 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id i1so5677159plg.7
-        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 11:14:42 -0700 (PDT)
+        Thu, 12 May 2022 16:45:02 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B3222DA36
+        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 13:45:00 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id c1-20020a17090a558100b001dca2694f23so5926248pji.3
+        for <linux-security-module@vger.kernel.org>; Thu, 12 May 2022 13:45:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=cCpgnlokOHjQ6j/qE23MNlKmH4my80Kr9jmbJvKV6HA=;
-        b=a5qdERIG3ORuZdfETXwIMPFBHpvOIL5Zpnqr3dOXvb9bLbOavghwaJ6qOIiYiWjAXV
-         ue7uaM0I7TyWBRAbO+bUzlbtmKi66hmLnqzt1V030GlW1Dm9plw9nb5HqXvqw/FY+LAh
-         7k7FVMeeyV6HWAKZlM7wZPLLY9JFSPoHKI0xY=
+        bh=mfDd2mUqrFJnPjYIAGb7iTHqp7/V/kqIzmO4Ik5ICtE=;
+        b=VSL2P1g6oKCepZ9gpAuZb3IJYGYlROev7evIcpI2bAO4ymJpGTpTPWg28w7aZ74nqu
+         +4hkrxBXxozmtUkznxUeB16mVvTNuWjlKl3GvgorQtDgqz1Nl+vcsah0mU6P4adNEl8I
+         hzSvp6YfypuLT0514UmzVGtZJ2H2UTxby3128=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=cCpgnlokOHjQ6j/qE23MNlKmH4my80Kr9jmbJvKV6HA=;
-        b=qBoAXSbnIZbEkjEzhRMmMgBZdZi5s4oxYHa1+yDD3MvP1izAnE9lpV2VBz6ymUCMIB
-         jRHi9AotPPXl7tA/A727IHO9u2fz/wzBECPsD9MjU++ePnqMzKR+kF7z5xOP7RgU1+UC
-         NAplSgkDReUHoE73ZbJBt2ft58Nlr8rQnaujkvtUQzFxsuMtV402+50l8nSucEk57zHQ
-         hUCiZpej27KnnisYZ6TH4Sa50N9vJ0KRO7yCEQc8nFONIqZKHI57ovZjUnhR9u2mBzZc
-         cHZUQDIiiNlcc9/SnxDD9sE/2SwaZmJu4a1ZEPlXk9ByZALSTQoGNfLhR/hE/3mOw1ar
-         BDjQ==
-X-Gm-Message-State: AOAM531YBmQ3IN/iuW9gbCk5AqnzbdzwjuQf1EixPs9c490Mpq2ZTzaw
-        tT0ef34HWr47lJ8m4o48ElQMzA==
-X-Google-Smtp-Source: ABdhPJypRHjtT0PbhvqQRFPkQZb/fkg7qH35ifjYftEZ78Yyu2okd3YzjQ1tU40i7giF8J8ikKLpqA==
-X-Received: by 2002:a17:90b:4a4a:b0:1dc:4731:31a4 with SMTP id lb10-20020a17090b4a4a00b001dc473131a4mr791436pjb.19.1652379281590;
-        Thu, 12 May 2022 11:14:41 -0700 (PDT)
+        bh=mfDd2mUqrFJnPjYIAGb7iTHqp7/V/kqIzmO4Ik5ICtE=;
+        b=QyBJ8pVEU+UhRKIgzwqn8CFYqrBpYB/QvFcRPtyh7Q24U0epocRYq/2hesbQaeSBqJ
+         A/vOIEvAFUfyMvgxgZfCjDYe4rq21RqqV/UQyenpigtB3jAOC2OsbBHc0dW+Zbrx/C7z
+         tB2vkV78nL2zMu+DTm089phq/J0fKO6Nyz2HnRE26Aop1lVt057I63KD8rLZYVzF5YFN
+         JPlRoMhOBPsEKEG9f/AioluofqY3qfx9LodG2sa+JLWqPloJ+KKOCoZbM4nbey7NYZxP
+         3imYDYXLgg2dcHi/rXP6algb97dTNE98g9DSUETx/pcpjTbWKK9PyjagzyKz5eY2J6w4
+         KHfg==
+X-Gm-Message-State: AOAM5304lkRw7Um+MI2TpJQK62aBP3i0rBRDmKe059Vd8oyRwv6uHRTm
+        oDGsqo5IeanHWxl8iugfkk1nUg==
+X-Google-Smtp-Source: ABdhPJweC1XGidiP3A3Cg1L4P+c7vLixuIQHOEhEEVMPX3OSorgSxCxtYRx8oqG/gfH5ctvhV02/CQ==
+X-Received: by 2002:a17:902:ed52:b0:15e:c71f:72c8 with SMTP id y18-20020a170902ed5200b0015ec71f72c8mr1599550plb.38.1652388299601;
+        Thu, 12 May 2022 13:44:59 -0700 (PDT)
 Received: from localhost ([2620:15c:11a:202:4060:29b:ac8a:c726])
-        by smtp.gmail.com with UTF8SMTPSA id l66-20020a633e45000000b003c14af505f3sm46212pga.11.2022.05.12.11.14.40
+        by smtp.gmail.com with UTF8SMTPSA id i9-20020aa79089000000b0050dc76281e4sm223297pfa.190.2022.05.12.13.44.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 May 2022 11:14:40 -0700 (PDT)
-Date:   Thu, 12 May 2022 11:14:39 -0700
+        Thu, 12 May 2022 13:44:59 -0700 (PDT)
+Date:   Thu, 12 May 2022 13:44:57 -0700
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Mike Snitzer <snitzer@redhat.com>
 Cc:     Alasdair Kergon <agk@redhat.com>,
@@ -59,7 +59,7 @@ Cc:     Alasdair Kergon <agk@redhat.com>,
         Douglas Anderson <dianders@chromium.org>,
         linux-security-module@vger.kernel.org
 Subject: Re: [PATCH v3 1/3] dm: Add verity helpers for LoadPin
-Message-ID: <Yn1Oj5aneik2hNZy@google.com>
+Message-ID: <Yn1xyVmPJGQz31lN@google.com>
 References: <20220504195419.1143099-1-mka@chromium.org>
  <20220504125404.v3.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
  <YnwioaRiVmYevo8i@google.com>
@@ -71,8 +71,6 @@ In-Reply-To: <Yn1BkO4t+CXR0nzk@redhat.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mike,
-
 On Thu, May 12, 2022 at 01:19:12PM -0400, Mike Snitzer wrote:
 > On Wed, May 11 2022 at  4:54P -0400,
 > Matthias Kaehlcke <mka@chromium.org> wrote:
@@ -82,9 +80,7 @@ On Thu, May 12, 2022 at 01:19:12PM -0400, Mike Snitzer wrote:
 > > landing upstream.
 > 
 > I'll be reviewing your patchset now. Comments inlined below.
-
-Thanks for the review!
-
+> 
 > > On Wed, May 04, 2022 at 12:54:17PM -0700, Matthias Kaehlcke wrote:
 > > > LoadPin limits loading of kernel modules, firmware and certain
 > > > other files to a 'pinned' file system (typically a read-only
@@ -134,105 +130,8 @@ Thanks for the review!
 > > > +
 > 
 > Why are you extending dm-mod-objs?  Why not dm-verity-objs?
-> 
-> > >  ifeq ($(CONFIG_DM_VERITY_FEC),y)
-> > >  dm-verity-objs			+= dm-verity-fec.o
-> > >  endif
-> > > diff --git a/drivers/md/dm-verity-loadpin.c b/drivers/md/dm-verity-loadpin.c
-> > > new file mode 100644
-> > > index 000000000000..972ca93a2231
-> > > --- /dev/null
-> > > +++ b/drivers/md/dm-verity-loadpin.c
-> > > @@ -0,0 +1,80 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +
-> > > +#include <linux/list.h>
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/dm-verity-loadpin.h>
-> > > +
-> > > +#include "dm.h"
-> > > +#include "dm-verity.h"
-> > > +
-> > > +static struct list_head *trusted_root_digests;
-> > > +
-> > > +/*
-> > > + * Sets the root digests of verity devices which LoadPin considers as trusted.
-> > > + *
-> > > + * This function must only be called once.
-> > > + */
-> > > +void dm_verity_loadpin_set_trusted_root_digests(struct list_head *digests)
-> > > +{
-> > > +	if (!trusted_root_digests)
-> > > +		trusted_root_digests = digests;
-> > > +	else
-> > > +		pr_warn("verity root digests trusted by LoadPin are already set!!!\n");
-> > > +}
-> 
-> Would prefer you set a DM_MSG_PREFIX and use DMWARN() instead.
 
-Sure, I'll change it to DMWARN().
+Sorry, I missed to address this comment in my earlier reply.
 
-> You never explicitly initialize trusted_root_digests to NULL.
-
-That's what I had initially, however checkpatch didn't like it:
-
-ERROR: do not initialise statics to NULL
-#70: FILE: drivers/md/dm-verity-loadpin.c:10:
-+static struct list_head *trusted_root_digests = NULL;
-
-So I removed it.
-
-> Also, I'll have to look at the caller(s), but without locking this
-> branching is racey.
-
-The list of trusted root digests can only be set once and is never
-cleared. So if it is not set there is nothing to do, and if it is
-set the list is immutable. We are trusting the caller to adhere to
-that 'contract' and partially enforce it in dm_verity_loadpin_set_trusted_root_digests()
-With that do you still think locking is needed?
-
-> > > +
-> > > +static bool is_trusted_verity_target(struct dm_target *ti)
-> > > +{
-> > > +	u8 *root_digest;
-> > > +	unsigned int digest_size;
-> > > +	struct trusted_root_digest *trd;
-> > > +	bool trusted = false;
-> > > +
-> > > +	if (!dm_is_verity_target(ti))
-> > > +		return false;
-> > > +
-> > > +	if (dm_verity_get_root_digest(ti, &root_digest, &digest_size))
-> > > +		return false;
-> > > +
-> > > +	list_for_each_entry(trd, trusted_root_digests, node) {
-> > > +		if ((trd->len == digest_size) &&
-> > > +		    !memcmp(trd->data, root_digest, digest_size)) {
-> > > +			trusted = true;
-> > > +			break;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	kfree(root_digest);
-> > > +
-> > > +	return trusted;
-> > > +}
-> > > +
-> > > +/*
-> > > + * Determines whether a mapped device is a verity device that is trusted
-> > > + * by LoadPin.
-> > > + */
-> > > +bool dm_verity_loadpin_is_md_trusted(struct mapped_device *md)
-> > > +{
-> > > +	int srcu_idx;
-> > > +	struct dm_table *table;
-> > > +	unsigned int num_targets;
-> > > +	bool trusted = false;
-> > > +	int i;
-> > > +
-> > > +	if (!trusted_root_digests || list_empty(trusted_root_digests))
-> > > +		return false;
-> 
-> Again, where is the locking to protect trusted_root_digests?
-
-See above
+I don't recall why I chose dm-mod-objs initially, agreed that
+dm-verity-objs seems a better fit.
