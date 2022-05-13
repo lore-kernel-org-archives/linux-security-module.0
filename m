@@ -2,386 +2,175 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37493C433FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 May 2022 17:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CE7C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 May 2022 18:27:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382883AbiEMRT2 (ORCPT
+        id S1349350AbiEMS07 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 May 2022 13:19:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54242 "EHLO
+        Fri, 13 May 2022 14:26:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382966AbiEMRTW (ORCPT
+        with ESMTP id S1356419AbiEMS0t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 May 2022 13:19:22 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 04B926F4AD;
-        Fri, 13 May 2022 10:19:18 -0700 (PDT)
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7CE1120ECB86;
-        Fri, 13 May 2022 10:19:17 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7CE1120ECB86
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1652462357;
-        bh=ZCTmHx3JqQZkedFPeKXF7MFRF2FXKl7ErItL3WvjCxs=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=qZniULXRXqkHGa0UWik4RNN2Ra+BZd46y3CcyVgv59oTrfffB+Mk7vkUfEOfeCiJj
-         NTDwEurIJ7rA06Re5cdP2RfnFFGzZH+4/LoHhWt331I2LN1MLV149VEM5raV2bhxtA
-         CJp4+OlLrR5T17U07rtfvwJH9e7vIb3C2z+sKJiQ=
-Message-ID: <8bffb420-46d9-eb57-a944-b2389570f88d@linux.microsoft.com>
-Date:   Fri, 13 May 2022 10:19:17 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v4] x86/kexec: Carry forward IMA measurement log on kexec
-Content-Language: en-US
-To:     Jonathan McDowell <noodles@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Fri, 13 May 2022 14:26:49 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFE60E0A1
+        for <linux-security-module@vger.kernel.org>; Fri, 13 May 2022 11:26:47 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id t11-20020a17090ad50b00b001d95bf21996so11532630pju.2
+        for <linux-security-module@vger.kernel.org>; Fri, 13 May 2022 11:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:user-agent:in-reply-to:references
+         :message-id:mime-version:content-transfer-encoding;
+        bh=DWr88KXO8yOHtjVU6pqQ0YSnL6a33gTkT/ttelbBfAE=;
+        b=V3SjT18ZDrdF4vkkT3kKufo35FXfHRIbwvhsO5oJmLbV/qmmImWjKHOcxehhAdW2cz
+         dqi6ggxT+QQUqxqQa5vZlqVUlTbvKdEqgvDJ0KlXmrH4/wc+fknVNp6IxdOl1ymG4Rpv
+         MGOklopUKYWTQkbnkNyWseHpDC2FbOBdCQV4w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:user-agent:in-reply-to
+         :references:message-id:mime-version:content-transfer-encoding;
+        bh=DWr88KXO8yOHtjVU6pqQ0YSnL6a33gTkT/ttelbBfAE=;
+        b=ATafXHW8u7s5pzbRx7s/P1cQ3vTf8J0qe/RvBgV0iFhBjinrQjhkrPQMrtx+jrYdKo
+         BLmcKcT9pIsD9PJ2cEwDvkBGuz8iMjaxUmCAr9y06Fs1fOJH/CCZLX4B7Pdo/v09v2+R
+         gx5VDwB6vYbCgXw0qNxoFIjCRtbRH4KhuTsS0LLIRgKWFsvHrGQDobz+bAG8Iwo4jzyF
+         x24CFWgFXT85YxYJaKXJoxYg1eqAWQrFMXhqVduM9YCEoje4Xshi0nAd0baPSMKCzV8c
+         xXLULDVrBPgLGBzeoCwSo+G8AuWAqyRsUlzq3xB9ZcD68yjbAziAqb9h2m1Jq5TMJ6qn
+         gTNQ==
+X-Gm-Message-State: AOAM532GFzKNF6mM4QTqMnr7Y3qWAnHA5Ur5H3pF7kBiBHMw+cqnwYF3
+        hSuCmf4B2TZWY5UclOivjGXi1GeYHvNEhQ==
+X-Google-Smtp-Source: ABdhPJzw+kzrYWctB0MM/hgYN5NeQJBlpaBicGatEKSdKPEQfZwTCnjWNjioRBrl/vmRGrxHaK9SGw==
+X-Received: by 2002:a17:902:ecca:b0:15e:8971:4540 with SMTP id a10-20020a170902ecca00b0015e89714540mr5596247plh.43.1652466407389;
+        Fri, 13 May 2022 11:26:47 -0700 (PDT)
+Received: from ?IPv6:::1? ([2607:fb90:3304:3e0:87ad:1d43:6a6e:afdd])
+        by smtp.gmail.com with ESMTPSA id e16-20020a17090301d000b0015f2d549b46sm2150754plh.237.2022.05.13.11.26.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 May 2022 11:26:47 -0700 (PDT)
+Date:   Fri, 13 May 2022 11:26:44 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Mike Snitzer <snitzer@redhat.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+CC:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
- <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
- <YnuJCH75GrhVm0Tp@noodles-fedora.dhcp.thefacebook.com>
- <Yn01Cfb3Divf49g7@noodles-fedora.dhcp.thefacebook.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-In-Reply-To: <Yn01Cfb3Divf49g7@noodles-fedora.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        "Serge E . Hallyn" <serge@hallyn.com>, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-security-module@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_2/3=5D_LoadPin=3A_Enable_l?= =?US-ASCII?Q?oading_from_trusted_dm-verity_devices?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Yn6IDNgG+/ySOdmy@redhat.com>
+References: <20220504195419.1143099-1-mka@chromium.org> <20220504125404.v3.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid> <Yn6IDNgG+/ySOdmy@redhat.com>
+Message-ID: <56E309F0-C641-4E1C-9C7F-52198C43731E@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jonathan,
 
-On 5/12/2022 9:25 AM, Jonathan McDowell wrote:
-> On kexec file load Integrity Measurement Architecture (IMA) subsystem
-> may verify the IMA signature of the kernel and initramfs, and measure
-> it. The command line parameters passed to the kernel in the kexec call
-> may also be measured by IMA. A remote attestation service can verify
-> a TPM quote based on the TPM event log, the IMA measurement list, and
-> the TPM PCR data. This can be achieved only if the IMA measurement log
-> is carried over from the current kernel to the next kernel across
-> the kexec call.
-> 
-> powerpc and ARM64 both achieve this using device tree with a
-> "linux,ima-kexec-buffer" node. x86 platforms generally don't make use of
-> device tree, so use the setup_data mechanism to pass the IMA buffer to
-> the new kernel.
-> 
-> Signed-off-by: Jonathan McDowell <noodles@fb.com>
-> ---
-> v4:
->   - Guard ima.h function prototypes with CONFIG_HAVE_IMA_KEXEC
-> v3:
->   - Rebase on tip/master
->   - Pull ima_(free|get)_kexec_buffer into x86 code
->   - Push ifdefs into functions where possible
->   - Reverse fir tree variable declarations
->   - Fix section annotation on ima_free_kexec_buffer (__meminit)
->   - Only allocate ima_setup_data space when IMA_KEXEC is enabled
-> v2:
->   - Fix operation with EFI systems
-> ---
->   arch/x86/Kconfig                      |  1 +
->   arch/x86/include/uapi/asm/bootparam.h |  9 ++++
->   arch/x86/kernel/e820.c                |  6 +--
->   arch/x86/kernel/kexec-bzimage64.c     | 38 ++++++++++++++++
->   arch/x86/kernel/setup.c               | 62 +++++++++++++++++++++++++++
->   drivers/of/kexec.c                    |  1 +
->   include/linux/ima.h                   |  5 +++
->   include/linux/of.h                    |  2 -
->   security/integrity/ima/ima_kexec.c    |  2 +-
->   9 files changed, 120 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index f1320d9a3da3..594636f02da4 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2027,6 +2027,7 @@ config KEXEC_FILE
->   	bool "kexec file based system call"
->   	select KEXEC_CORE
->   	select BUILD_BIN2C
-> +	select HAVE_IMA_KEXEC if IMA
->   	depends on X86_64
->   	depends on CRYPTO=y
->   	depends on CRYPTO_SHA256=y
-> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-> index bea5cdcdf532..ca0796ac4403 100644
-> --- a/arch/x86/include/uapi/asm/bootparam.h
-> +++ b/arch/x86/include/uapi/asm/bootparam.h
-> @@ -11,6 +11,7 @@
->   #define SETUP_APPLE_PROPERTIES		5
->   #define SETUP_JAILHOUSE			6
->   #define SETUP_CC_BLOB			7
-> +#define SETUP_IMA			8
->   
->   #define SETUP_INDIRECT			(1<<31)
->   
-> @@ -172,6 +173,14 @@ struct jailhouse_setup_data {
->   	} __attribute__((packed)) v2;
->   } __attribute__((packed));
->   
-> +/*
-> + * IMA buffer setup data information from the previous kernel during kexec
-> + */
-> +struct ima_setup_data {
-> +	__u64 addr;
-> +	__u64 size;
-> +} __attribute__((packed));
-> +
->   /* The so-called "zeropage" */
->   struct boot_params {
->   	struct screen_info screen_info;			/* 0x000 */
-> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> index f267205f2d5a..9dac24680ff8 100644
-> --- a/arch/x86/kernel/e820.c
-> +++ b/arch/x86/kernel/e820.c
-> @@ -1017,10 +1017,10 @@ void __init e820__reserve_setup_data(void)
->   		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
->   
->   		/*
-> -		 * SETUP_EFI is supplied by kexec and does not need to be
-> -		 * reserved.
-> +		 * SETUP_EFI and SETUP_IMA are supplied by kexec and do not need
-> +		 * to be reserved.
->   		 */
-> -		if (data->type != SETUP_EFI)
-> +		if (data->type != SETUP_EFI && data->type != SETUP_IMA)
->   			e820__range_update_kexec(pa_data,
->   						 sizeof(*data) + data->len,
->   						 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 170d0fd68b1f..54bd4ce5f908 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -186,6 +186,33 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
->   }
->   #endif /* CONFIG_EFI */
->   
-> +static void
-> +setup_ima_state(const struct kimage *image, struct boot_params *params,
-> +		unsigned long params_load_addr,
-> +		unsigned int ima_setup_data_offset)
-> +{
-> +#ifdef CONFIG_IMA_KEXEC
-> +	struct setup_data *sd = (void *)params + ima_setup_data_offset;
-> +	unsigned long setup_data_phys;
-> +	struct ima_setup_data *ima;
-> +
-> +	if (!image->ima_buffer_size)
-> +		return;
-> +
-> +	sd->type = SETUP_IMA;
-> +	sd->len = sizeof(*ima);
-> +
-> +	ima = (void *)sd + sizeof(struct setup_data);
-> +	ima->addr = image->ima_buffer_addr;
-> +	ima->size = image->ima_buffer_size;
-> +
-> +	/* Add setup data */
-> +	setup_data_phys = params_load_addr + ima_setup_data_offset;
-> +	sd->next = params->hdr.setup_data;
-> +	params->hdr.setup_data = setup_data_phys;
-> +#endif /* CONFIG_IMA_KEXEC */
-> +}
-> +
->   static int
->   setup_boot_parameters(struct kimage *image, struct boot_params *params,
->   		      unsigned long params_load_addr,
-> @@ -247,6 +274,13 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
->   	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
->   			efi_setup_data_offset);
->   #endif
-> +
-> +	/* Setup IMA log buffer state */
-> +	setup_ima_state(image, params, params_load_addr,
-> +			efi_setup_data_offset +
-> +			sizeof(struct setup_data) +
-> +			sizeof(struct efi_setup_data));
-Here you could check image->ima_buffer_size and call setup_ima_state() 
-only if it is non-zero.
 
-> +
->   	/* Setup EDD info */
->   	memcpy(params->eddbuf, boot_params.eddbuf,
->   				EDDMAXNR * sizeof(struct edd_info));
-> @@ -403,6 +437,10 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->   				sizeof(struct setup_data) +
->   				sizeof(struct efi_setup_data);
->   
-> +	if (IS_ENABLED(CONFIG_IMA_KEXEC))
-> +		kbuf.bufsz += sizeof(struct setup_data) +
-> +			      sizeof(struct ima_setup_data);
-> +
->   	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
->   	if (!params)
->   		return ERR_PTR(-ENOMEM);
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 249981bf3d8a..ab5e7a351845 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -11,6 +11,7 @@
->   #include <linux/dma-map-ops.h>
->   #include <linux/dmi.h>
->   #include <linux/efi.h>
-> +#include <linux/ima.h>
->   #include <linux/init_ohci1394_dma.h>
->   #include <linux/initrd.h>
->   #include <linux/iscsi_ibft.h>
-> @@ -145,6 +146,11 @@ __visible unsigned long mmu_cr4_features __ro_after_init;
->   __visible unsigned long mmu_cr4_features __ro_after_init = X86_CR4_PAE;
->   #endif
->   
-> +#ifdef CONFIG_IMA
-> +static phys_addr_t ima_kexec_buffer_phys;
-> +static size_t ima_kexec_buffer_size;
-> +#endif
-> +
->   /* Boot loader ID and version as integers, for the benefit of proc_dointvec */
->   int bootloader_type, bootloader_version;
->   
-> @@ -335,6 +341,59 @@ static void __init reserve_initrd(void)
->   }
->   #endif /* CONFIG_BLK_DEV_INITRD */
->   
-> +static void __init add_early_ima_buffer(u64 phys_addr)
-> +{
-> +#ifdef CONFIG_IMA
-> +	struct ima_setup_data *data;
-> +
-> +	data = early_memremap(phys_addr + sizeof(struct setup_data),
-> +			      sizeof(*data));
-> +	if (!data) {
-> +		pr_warn("setup: failed to memremap ima_setup_data entry\n");
-> +		return;
-> +	}
-Here if memory allocation fails, would kexec system call fail or would 
-it only not add IMA buffer, but continue with the system call?
+On May 13, 2022 9:32:12 AM PDT, Mike Snitzer <snitzer@redhat=2Ecom> wrote:
+>On Wed, May 04 2022 at  3:54P -0400,
+>Matthias Kaehlcke <mka@chromium=2Eorg> wrote:
+>
+>> Extend LoadPin to allow loading of kernel files from trusted dm-verity =
+[1]
+>> devices=2E
+>>=20
+>> This change adds the concept of trusted verity devices to LoadPin=2E Lo=
+adPin
+>> maintains a list of root digests of verity devices it considers trusted=
+=2E
+>> Userspace can populate this list through an ioctl on the new LoadPin
+>> securityfs entry 'dm-verity'=2E The ioctl receives a file descriptor of
+>> a file with verity digests as parameter=2E Verity reads the digests fro=
+m
+>> this file after confirming that the file is located on the pinned root=
+=2E
+>> The list of trusted digests can only be set up once, which is typically
+>> done at boot time=2E
+>>=20
+>> When a kernel file is read LoadPin first checks (as usual) whether the =
+file
+>> is located on the pinned root, if so the file can be loaded=2E Otherwis=
+e, if
+>> the verity extension is enabled, LoadPin determines whether the file is
+>> located on a verity backed device and whether the root digest of that
+>> device is in the list of trusted digests=2E The file can be loaded if t=
+he
+>> verity device has a trusted root digest=2E
+>>=20
+>> Background:
+>>=20
+>> As of now LoadPin restricts loading of kernel files to a single pinned
+>> filesystem, typically the rootfs=2E This works for many systems, howeve=
+r it
+>> can result in a bloated rootfs (and OTA updates) on platforms where
+>> multiple boards with different hardware configurations use the same roo=
+tfs
+>> image=2E Especially when 'optional' files are large it may be preferabl=
+e to
+>> download/install them only when they are actually needed by a given boa=
+rd=2E
+>> Chrome OS uses Downloadable Content (DLC) [2] to deploy certain 'packag=
+es'
+>> at runtime=2E As an example a DLC package could contain firmware for a
+>> peripheral that is not present on all boards=2E DLCs use dm-verity to v=
+erify
+>> the integrity of the DLC content=2E
+>>=20
+>> [1] https://www=2Ekernel=2Eorg/doc/html/latest/admin-guide/device-mappe=
+r/verity=2Ehtml
+>> [2] https://chromium=2Egooglesource=2Ecom/chromiumos/platform2/+/HEAD/d=
+lcservice/docs/developer=2Emd
+>>=20
+>> Signed-off-by: Matthias Kaehlcke <mka@chromium=2Eorg>
+>> ---
+>>=20
+>> Changes in v3:
+>> - added securityfs for LoadPin (currently only populated when
+>>   CONFIG_SECURITY_LOADPIN_VERITY=3Dy)
+>> - added uapi include for LoadPin
+>> - changed the interface for setting up the list of trusted
+>>   digests from sysctl to ioctl on securityfs entry
+>> - added stub for loadpin_is_fs_trusted() to be used
+>>   CONFIG_SECURITY_LOADPIN_VERITY is not select
+>> - depend on CONFIG_SECURITYFS instead of CONFIG_SYSTCL
+>> - updated Kconfig help
+>> - minor changes in read_trusted_verity_root_digests()
+>> - updated commit message
+>>=20
+>> Changes in v2:
+>> - userspace now passes the path of the file with the verity digests
+>>   via systcl, instead of the digests themselves
+>> - renamed sysctl file to 'trusted_verity_root_digests_path'
+>> - have CONFIG_SECURITY_LOADPIN_VERITY depend on CONFIG_SYSCTL
+>> - updated Kconfig doc
+>> - updated commit message
+>>=20
+>>  include/uapi/linux/loadpin=2Eh |  19 ++++
+>>  security/loadpin/Kconfig     |  16 +++
+>>  security/loadpin/loadpin=2Ec   | 184 +++++++++++++++++++++++++++++++++=
++-
+>>  3 files changed, 218 insertions(+), 1 deletion(-)
+>>  create mode 100644 include/uapi/linux/loadpin=2Eh
+>
+>I would certainly need some Reviewed-by:s from security and/or loadpin
+>experts if I were to pick this patch up=2E
 
-> +	if (data->size != 0) {
-> +		memblock_reserve(data->addr, data->size);
-> +		ima_kexec_buffer_phys = data->addr;
-> +		ima_kexec_buffer_size = data->size;
-> +	}
-> +	early_memunmap(data, sizeof(*data));
-> +#else
-> +	pr_warn("Passed IMA kexec data, but CONFIG_IMA not set. Ignoring.\n");
-Is this warning message useful? Can we just inline (NOP) this function 
-if CONFIG_IMA is not set?
+Alternatively, since it's mostly touching loadpin, I can carry it in my tr=
+ee, as long as you've Acked the dm bits=2E :)
 
-> +#endif
-> +}
-> +
-> +#if defined(CONFIG_IMA) && !defined(CONFIG_OF_FLATTREE)
-> +int __meminit ima_free_kexec_buffer(void)
-> +{
-ima_free_kexec_buffer() should be invoked if the previous kernel had 
-passed the IMA buffer (i.e., CONFIG_HAVE_IMA_KEXEC is set). 
-CONFIG_HAVE_IMA_KEXEC would be set only if CONFIG_IMA is set. Is the 
-above check still required?
+>Did you see the issues the kernel test robot emailed about?
+>
+>You'd do well to fix those issues up when submitting another revision
+>of this patchset=2E
 
-thanks,
-  -lakshmi
+Agreed=2E
 
-> +	int rc;
-> +
-> +	if (ima_kexec_buffer_size == 0)
-> +		return -ENOENT;
-> +
-> +	rc = memblock_phys_free(ima_kexec_buffer_phys,
-> +				ima_kexec_buffer_size);
-> +	if (rc)
-> +		return rc;
-> +
-> +	ima_kexec_buffer_phys = 0;
-> +	ima_kexec_buffer_size = 0;
-> +
-> +	return 0;
-> +}
-> +
-> +int __init ima_get_kexec_buffer(void **addr, size_t *size)
-> +{
-> +	if (ima_kexec_buffer_size == 0)
-> +		return -ENOENT;
-> +
-> +	*addr = __va(ima_kexec_buffer_phys);
-> +	*size = ima_kexec_buffer_size;
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->   static void __init parse_setup_data(void)
->   {
->   	struct setup_data *data;
-> @@ -360,6 +419,9 @@ static void __init parse_setup_data(void)
->   		case SETUP_EFI:
->   			parse_efi_setup(pa_data, data_len);
->   			break;
-> +		case SETUP_IMA:
-> +			add_early_ima_buffer(pa_data);
-> +			break;
->   		default:
->   			break;
->   		}
-> diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
-> index b9bd1cff1793..74fdd490f7c0 100644
-> --- a/drivers/of/kexec.c
-> +++ b/drivers/of/kexec.c
-> @@ -9,6 +9,7 @@
->    *  Copyright (C) 2016  IBM Corporation
->    */
->   
-> +#include <linux/ima.h>
->   #include <linux/kernel.h>
->   #include <linux/kexec.h>
->   #include <linux/memblock.h>
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 426b1744215e..ff4bd993e432 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -140,6 +140,11 @@ static inline int ima_measure_critical_data(const char *event_label,
->   
->   #endif /* CONFIG_IMA */
->   
-> +#ifdef CONFIG_HAVE_IMA_KEXEC
-> +int ima_free_kexec_buffer(void);
-> +int ima_get_kexec_buffer(void **addr, size_t *size);
-> +#endif
-> +
->   #ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
->   extern bool arch_ima_get_secureboot(void);
->   extern const char * const *arch_get_ima_policy(void);
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 04971e85fbc9..c2f58d2e3a0e 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -441,8 +441,6 @@ void *of_kexec_alloc_and_setup_fdt(const struct kimage *image,
->   				   unsigned long initrd_load_addr,
->   				   unsigned long initrd_len,
->   				   const char *cmdline, size_t extra_fdt_size);
-> -int ima_get_kexec_buffer(void **addr, size_t *size);
-> -int ima_free_kexec_buffer(void);
->   #else /* CONFIG_OF */
->   
->   static inline void of_core_init(void)
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 13753136f03f..419dc405c831 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -137,7 +137,7 @@ void ima_add_kexec_buffer(struct kimage *image)
->   /*
->    * Restore the measurement list from the previous kernel.
->    */
-> -void ima_load_kexec_buffer(void)
-> +void __init ima_load_kexec_buffer(void)
->   {
->   	void *kexec_buffer = NULL;
->   	size_t kexec_buffer_size = 0;
+
+--=20
+Kees Cook
