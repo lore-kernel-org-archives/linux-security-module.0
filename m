@@ -2,175 +2,187 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CE7C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 May 2022 18:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8B6C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 May 2022 18:31:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349350AbiEMS07 (ORCPT
+        id S1383153AbiEMSbd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 May 2022 14:26:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44120 "EHLO
+        Fri, 13 May 2022 14:31:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356419AbiEMS0t (ORCPT
+        with ESMTP id S1382221AbiEMSbc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 May 2022 14:26:49 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFE60E0A1
-        for <linux-security-module@vger.kernel.org>; Fri, 13 May 2022 11:26:47 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id t11-20020a17090ad50b00b001d95bf21996so11532630pju.2
-        for <linux-security-module@vger.kernel.org>; Fri, 13 May 2022 11:26:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:user-agent:in-reply-to:references
-         :message-id:mime-version:content-transfer-encoding;
-        bh=DWr88KXO8yOHtjVU6pqQ0YSnL6a33gTkT/ttelbBfAE=;
-        b=V3SjT18ZDrdF4vkkT3kKufo35FXfHRIbwvhsO5oJmLbV/qmmImWjKHOcxehhAdW2cz
-         dqi6ggxT+QQUqxqQa5vZlqVUlTbvKdEqgvDJ0KlXmrH4/wc+fknVNp6IxdOl1ymG4Rpv
-         MGOklopUKYWTQkbnkNyWseHpDC2FbOBdCQV4w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:user-agent:in-reply-to
-         :references:message-id:mime-version:content-transfer-encoding;
-        bh=DWr88KXO8yOHtjVU6pqQ0YSnL6a33gTkT/ttelbBfAE=;
-        b=ATafXHW8u7s5pzbRx7s/P1cQ3vTf8J0qe/RvBgV0iFhBjinrQjhkrPQMrtx+jrYdKo
-         BLmcKcT9pIsD9PJ2cEwDvkBGuz8iMjaxUmCAr9y06Fs1fOJH/CCZLX4B7Pdo/v09v2+R
-         gx5VDwB6vYbCgXw0qNxoFIjCRtbRH4KhuTsS0LLIRgKWFsvHrGQDobz+bAG8Iwo4jzyF
-         x24CFWgFXT85YxYJaKXJoxYg1eqAWQrFMXhqVduM9YCEoje4Xshi0nAd0baPSMKCzV8c
-         xXLULDVrBPgLGBzeoCwSo+G8AuWAqyRsUlzq3xB9ZcD68yjbAziAqb9h2m1Jq5TMJ6qn
-         gTNQ==
-X-Gm-Message-State: AOAM532GFzKNF6mM4QTqMnr7Y3qWAnHA5Ur5H3pF7kBiBHMw+cqnwYF3
-        hSuCmf4B2TZWY5UclOivjGXi1GeYHvNEhQ==
-X-Google-Smtp-Source: ABdhPJzw+kzrYWctB0MM/hgYN5NeQJBlpaBicGatEKSdKPEQfZwTCnjWNjioRBrl/vmRGrxHaK9SGw==
-X-Received: by 2002:a17:902:ecca:b0:15e:8971:4540 with SMTP id a10-20020a170902ecca00b0015e89714540mr5596247plh.43.1652466407389;
-        Fri, 13 May 2022 11:26:47 -0700 (PDT)
-Received: from ?IPv6:::1? ([2607:fb90:3304:3e0:87ad:1d43:6a6e:afdd])
-        by smtp.gmail.com with ESMTPSA id e16-20020a17090301d000b0015f2d549b46sm2150754plh.237.2022.05.13.11.26.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 May 2022 11:26:47 -0700 (PDT)
-Date:   Fri, 13 May 2022 11:26:44 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Mike Snitzer <snitzer@redhat.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-CC:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        Song Liu <song@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-security-module@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_2/3=5D_LoadPin=3A_Enable_l?= =?US-ASCII?Q?oading_from_trusted_dm-verity_devices?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <Yn6IDNgG+/ySOdmy@redhat.com>
-References: <20220504195419.1143099-1-mka@chromium.org> <20220504125404.v3.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid> <Yn6IDNgG+/ySOdmy@redhat.com>
-Message-ID: <56E309F0-C641-4E1C-9C7F-52198C43731E@chromium.org>
+        Fri, 13 May 2022 14:31:32 -0400
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2012.outbound.protection.outlook.com [40.92.103.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC3BF3CA5E;
+        Fri, 13 May 2022 11:31:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lnIpn5ZGTG8DnDWZfC7T+Cc1XqVB8o5dzns0wGtMlrI1R9hKxVQJmovHCuC+lJ07kBOeHerUbfthDWTl3b5qbCzBrFnM8xkI8wp+qaZKilZihO9BMUIRAlmfT0OJ6duOvDqv+LRntoCLCIiYFGWd2kKBhQOppIpH/LTuf96THtouqCwf3F28uLPWp8hQOfoPqIZs9V9DFDawcq7bElnsd8YI13wdKcI59Nf7ZBS/2BMO7hViDXx0q0y6Ca2N30casVWAU6EpRmyFgumSoFuMoW//ZqKUgNojjJgvcji7g3DtOgK2YlshNinK5kM8fpipc/MGB/LEa5tOM+3tkxKF5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TDKTMSoRxRGhvP6sQa1O6AdMk+6c69lhrOX4wkBilY4=;
+ b=Ewq5cQAo7vfO9Nzv51CRmsr/LInZHD+aCsJSEEY1xWfCKi8Z/symcDThfw/FlrSnn/DXUjxobUTUe2X2NlPNCnjwLPuQFowon9VyBsfDKTbJs6owNzzfgNz6MlZFSz50oGBiNeM+OV6ugCeMX+R8wHoY7z3RWYze0uNKV0yWh9qI6yHQvoOc2LSqYcqKYbVybbqlOz0KHzoNdv4P6enInXmUq804SmTA0KVJfz2Qu/6bDRvszVvSyIFwfDUW2buPJddeBbZgbr8YMVOevHortkeHJc25sYYj+4NMhYIS+pcGLrycVio0t2OYk8yv8QyKmKKkj6EjPXO0Omz+EKNARw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TDKTMSoRxRGhvP6sQa1O6AdMk+6c69lhrOX4wkBilY4=;
+ b=IkaoOkvWXlMxauvgsRaq+28WjurUvwFWeqC6hUHg9Gmr6ZJ5mytIvoAOIY8djD4fTkcNaWii4wOtgUUinqevoOgSQV9HQ1O+wGdF6ZbysFME9SrLt5OWhhjupX5skf5sIc8uI0jaFWJ0ZTjAo8ldNnJNwTkdmFCBQ5v3cmLMFZLl6V6ZqK/4mKpw652KplFRjWnpRu8IGSMNtsVl8f8PUCDsuXPpnNRpdYkWx3cdiT8XRK02KpGMHcBWBgzxychwLvGJ/RaBBx6GaMU2rAEiR/DbiWKHgWd6O5P+qKlDbwzwvufGUdgwHWcSDG33JPhaV26rRBWqxia73lNCmWYpkw==
+Received: from PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:1b::13)
+ by BM1PR01MB3843.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00:77::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.16; Fri, 13 May
+ 2022 18:31:19 +0000
+Received: from PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::3d8a:448e:5dc6:510a]) by PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::3d8a:448e:5dc6:510a%8]) with mapi id 15.20.5250.017; Fri, 13 May 2022
+ 18:31:19 +0000
+From:   Aditya Garg <gargaditya08@live.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+CC:     "jarkko@kernel.org" <jarkko@kernel.org>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "kafai@fb.com" <kafai@fb.com>,
+        "songliubraving@fb.com" <songliubraving@fb.com>,
+        "yhs@fb.com" <yhs@fb.com>,
+        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        Orlando Chamberlain <redecorating@protonmail.com>,
+        "admin@kodeit.net" <admin@kodeit.net>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v7] efi: Do not import certificates from UEFI Secure Boot
+ for T2 Macs
+Thread-Topic: [PATCH v7] efi: Do not import certificates from UEFI Secure Boot
+ for T2 Macs
+Thread-Index: AQHYUOqhZ3rJVKiKIEGNviGnPrtC160dGVGAgAA0G4A=
+Date:   Fri, 13 May 2022 18:31:18 +0000
+Message-ID: <D6CDA21E-CC8F-4DA1-A5A4-8B706CA79182@live.com>
+References: <652C3E9E-CB97-4C70-A961-74AF8AEF9E39@live.com>
+ <94DD0D83-8FDE-4A61-AAF0-09A0175A0D0D@live.com>
+ <590ED76A-EE91-4ED1-B524-BC23419C051E@live.com>
+ <E9C28706-2546-40BF-B32C-66A047BE9EFB@live.com>
+ <02125722-91FC-43D3-B63C-1B789C2DA8C3@live.com>
+ <958B8D22-F11E-4B5D-9F44-6F0626DBCB63@live.com>
+ <06062b288d675dc060f33041e9b2009c151698e6.camel@linux.ibm.com>
+In-Reply-To: <06062b288d675dc060f33041e9b2009c151698e6.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [w8iim0wr1kaoJ3FRLU993eVh63ZsXXfyBKAdP6Yjih/vaWLNdLQk6U/8RLPOJVbh]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9dfdc68a-48b1-488e-318a-08da350ec59d
+x-ms-traffictypediagnostic: BM1PR01MB3843:EE_
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wt8QJR5LeR5JdeS+YuNFYefQr4s+wdnDT/tqHpZVGQ3Y6v5tca9yyragV3wQMRzEzlavg9kSKV7Y+/Rxd9FQSmUIdSMpTQP+1XDaHuYeL3kf+W5hKYNVkIMQFiNU5sOYvVyJt8sGjwcNX6QZogFRVelpxmp2zFTKzXcX8Yx+Qf0FUN3r0sbjyBs+6HnTKfeKLT1Gh6I/X6K5ZpRZ7jspI2c9pZPtigfdoQtI3xUizA25ejyIjE407+Zw+Ygx/3Hk7B9pK47Vpcf1XdtV9UD7aFjtJZkVWnToqfu3bjFBhodZy79r+0o1UxkDBkSbEm+WyoxpBteEwqu0lhidbJ9DUkrPIdHIccK3tRhb7RE9DHndgeY7ElAgZxs+ZNFC7g2cJDU5yR36RUZ3JXbxY1T7Jfy97MFQjV8OdM7R5Rlizfa5p2/D0gdcuCSN24Efjhsr935xC2NhplX83VsL0BFNWX6mV21XTxjjBLLPk6QHUIIkCVuKFHbQBDe3bQCHnzyYMgusKzwpCEnC00whOpnxsKO9GbCZ36K2hMFoLxMq9p4DeAOYOkzr3fzeDlpjMBOHQFjVxtBInHXKtrqddvUPvOlLMRcGKyn5gwmrAf2kEwcwxs5YLAMsMp9VAIPNUH5Q
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?R1B6amhDTXZYQUZ4OXQrSXExTFRzUVQ2NjJaU2hwSDBneEZGcHdQc05tK2k4?=
+ =?utf-8?B?dEdFTlZDelY4QnFhalYvVHk0YklBWHVRWnF1NEJvWGllWXhCRWxCWUMvZ1cy?=
+ =?utf-8?B?NlEzNjhHRy9YcEsrWTFTdDhnbjAwblk3SGpJVW1oU2tIamorWVMwUHI1WUt6?=
+ =?utf-8?B?RzVSK3NFYnFXY2tnMmNFTjdNcTFvZEZkblhVZ2FBanpGa2tsOTROa3lPbjJp?=
+ =?utf-8?B?WVJVNkNpUFFLcjUyZHRTSVBoWFFoZzRnVThmSHJBTnFxTVc1SG54TE1qRzl6?=
+ =?utf-8?B?QjVPamR3WUFpYUppOUFDS0hPZGdtNlo4UmlleFI1enk4WFZTOE5WQlZ2MHZr?=
+ =?utf-8?B?MXNmbVBVRzhSbFBvK1E4TTBZWGloVll4dEJqN0orcFlwdFI5RmVGZjQ2Wjd4?=
+ =?utf-8?B?NG8yYmtXWWN2NDJFUzArYjJDMTQ3V1RQTHc0Z2JwK1dqWFRZQzRzRlMvRVZX?=
+ =?utf-8?B?QU5nL2FqUFVId2oxYlBoSHNkKzJiek9DUXloUE9hWTlabkxjZVZDWHlaS21L?=
+ =?utf-8?B?N1YxZXRzZkRhY2JLVnlSakxnMEhTZ0RqVHhIcjVUMVVoL2NBbS84N2NaRzdk?=
+ =?utf-8?B?eENpVHBTUVFqakxVZkVQcUw0alRSbGQ0YTRLbnhYdXE2YXdYaDFBQlFJamdH?=
+ =?utf-8?B?Tk1JYnRtbStMUlNDR1VDQUZkVmZNVjFoMTJQYy9XYmNYcjlRbVgzY3JMQml1?=
+ =?utf-8?B?WWE4eTdIQ1FmVkxma215QWhjRkhzQUJ6YTNQaElDZ01sOGtYdk94a25WN1ZJ?=
+ =?utf-8?B?ZXdyNnBvVDI3TEJCOVNjQ0RWWENFbkdLTTczdGhCNVJqbjJlLzk0aThLK1VI?=
+ =?utf-8?B?NWtQdmMrU0NPeUF2dGExQzhSSWVZbWVvZFZyV3pNWlZaSks5elM3QWkzek1v?=
+ =?utf-8?B?Q2ZSRUc3LzR0bG93UjMvWlIyYm9Zb3ZQVlh0ZGpvWXpIdlJDRFpWSFhuQ2pD?=
+ =?utf-8?B?U0NCRGRyeGM0eFI2T1U2MUNKZ3QvbUZEY1JWMlJrcGdQMkhadlhYbWdRdE9M?=
+ =?utf-8?B?QXNEWUNSWnp5Y0F0RWFQNktXOUg0NTFYSkdZMm5nQ1pZM3Npa0ZMb2tYQkZD?=
+ =?utf-8?B?Qzl5UGYyZVd0a2o1dXJjeEQ2ejhqMnNrNk8vTmVjV1QyUDBuRzU3MUpwaUxZ?=
+ =?utf-8?B?QWNYVU9OOFAwU2VzaFVoOGZVaHl5MGVQMG0zQVJCSUd5SFRhMHB4ZWZONUR1?=
+ =?utf-8?B?NnI4WmtoMEVnc0paRTBiUXc1WGpXYjRaY2hXMGRtTFRzUUppN2VvQWNDVnlY?=
+ =?utf-8?B?eFJJUTI3ekpMa29IaXV5SCtLSVVXcTRXSGdMNlJpT1k5VVJwc3U0R3RnNHJY?=
+ =?utf-8?B?YlVVTU9nS0xma1JKT0xlTEhtZHpLZC9UVVFEdnNKcGYrU21rZjJXa0VOR2VR?=
+ =?utf-8?B?ay9kbTBuK0l3b1JtcGVBRmFJaGl1anNlNkRESDA5NmdjSWhhV1A1dm5oUEdU?=
+ =?utf-8?B?QUczR29KbDdSUWU0T2xyS0NQckNKbVBqNU9GYXJxK2Z2bVlqbW1UUFNnTU1q?=
+ =?utf-8?B?NC9GWS9mR1ZzWDRhUnlLN2RVZmY5RVoxS0J5akYxWGhFNUYyUG5FMGhrWGIy?=
+ =?utf-8?B?OE9ENklUNzNwdXdrNm5RSFNlWUxsczloUnQzcHRKMEg4QUJQYU9XcjJDWFBh?=
+ =?utf-8?B?RGJoQ0lFdGlyNHBSR0NveXpiblE2M254Tk4zaDJXemFDQUhUaDJ2bVZibU9w?=
+ =?utf-8?B?RXZXc2lHTzcrQzdrdUgvbFE5eHMzRDdqRk10NGdtS3V6Z3ljclIxNEI4T3I3?=
+ =?utf-8?B?ZWR0Y1RCblRFZGNIVzNVUnRYKzdyNGwzQjNsdW9TS1g5UCtpSFV3anVvc2Y2?=
+ =?utf-8?B?TnFpdFQzbHQ2Tmg4MkI2VjZmQWM3MXc4QW9JVlk0dXp5YW5CK3E1MFAyMkRQ?=
+ =?utf-8?B?d0FUYW5tdVlOVUgrOGFSVGlNWkdGYTlsRHZzem5NSU5SaW5EOHN4Z2V4OUo1?=
+ =?utf-8?B?aCtwZkdQbTlreGx1Mk1QYU5ORmc1WFNWekZSZmhxZmdEWVZ2UDh1aVBPSkty?=
+ =?utf-8?Q?2YeIQ6S6twnaNOH4BG3wYNlI0DXt9c=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B1D4D3F880FA3B48B47E76D7982AA010@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-42ed3.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PNZPR01MB4415.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9dfdc68a-48b1-488e-318a-08da350ec59d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2022 18:31:18.7261
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BM1PR01MB3843
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On May 13, 2022 9:32:12 AM PDT, Mike Snitzer <snitzer@redhat=2Ecom> wrote:
->On Wed, May 04 2022 at  3:54P -0400,
->Matthias Kaehlcke <mka@chromium=2Eorg> wrote:
->
->> Extend LoadPin to allow loading of kernel files from trusted dm-verity =
-[1]
->> devices=2E
->>=20
->> This change adds the concept of trusted verity devices to LoadPin=2E Lo=
-adPin
->> maintains a list of root digests of verity devices it considers trusted=
-=2E
->> Userspace can populate this list through an ioctl on the new LoadPin
->> securityfs entry 'dm-verity'=2E The ioctl receives a file descriptor of
->> a file with verity digests as parameter=2E Verity reads the digests fro=
-m
->> this file after confirming that the file is located on the pinned root=
-=2E
->> The list of trusted digests can only be set up once, which is typically
->> done at boot time=2E
->>=20
->> When a kernel file is read LoadPin first checks (as usual) whether the =
-file
->> is located on the pinned root, if so the file can be loaded=2E Otherwis=
-e, if
->> the verity extension is enabled, LoadPin determines whether the file is
->> located on a verity backed device and whether the root digest of that
->> device is in the list of trusted digests=2E The file can be loaded if t=
-he
->> verity device has a trusted root digest=2E
->>=20
->> Background:
->>=20
->> As of now LoadPin restricts loading of kernel files to a single pinned
->> filesystem, typically the rootfs=2E This works for many systems, howeve=
-r it
->> can result in a bloated rootfs (and OTA updates) on platforms where
->> multiple boards with different hardware configurations use the same roo=
-tfs
->> image=2E Especially when 'optional' files are large it may be preferabl=
-e to
->> download/install them only when they are actually needed by a given boa=
-rd=2E
->> Chrome OS uses Downloadable Content (DLC) [2] to deploy certain 'packag=
-es'
->> at runtime=2E As an example a DLC package could contain firmware for a
->> peripheral that is not present on all boards=2E DLCs use dm-verity to v=
-erify
->> the integrity of the DLC content=2E
->>=20
->> [1] https://www=2Ekernel=2Eorg/doc/html/latest/admin-guide/device-mappe=
-r/verity=2Ehtml
->> [2] https://chromium=2Egooglesource=2Ecom/chromiumos/platform2/+/HEAD/d=
-lcservice/docs/developer=2Emd
->>=20
->> Signed-off-by: Matthias Kaehlcke <mka@chromium=2Eorg>
->> ---
->>=20
->> Changes in v3:
->> - added securityfs for LoadPin (currently only populated when
->>   CONFIG_SECURITY_LOADPIN_VERITY=3Dy)
->> - added uapi include for LoadPin
->> - changed the interface for setting up the list of trusted
->>   digests from sysctl to ioctl on securityfs entry
->> - added stub for loadpin_is_fs_trusted() to be used
->>   CONFIG_SECURITY_LOADPIN_VERITY is not select
->> - depend on CONFIG_SECURITYFS instead of CONFIG_SYSTCL
->> - updated Kconfig help
->> - minor changes in read_trusted_verity_root_digests()
->> - updated commit message
->>=20
->> Changes in v2:
->> - userspace now passes the path of the file with the verity digests
->>   via systcl, instead of the digests themselves
->> - renamed sysctl file to 'trusted_verity_root_digests_path'
->> - have CONFIG_SECURITY_LOADPIN_VERITY depend on CONFIG_SYSCTL
->> - updated Kconfig doc
->> - updated commit message
->>=20
->>  include/uapi/linux/loadpin=2Eh |  19 ++++
->>  security/loadpin/Kconfig     |  16 +++
->>  security/loadpin/loadpin=2Ec   | 184 +++++++++++++++++++++++++++++++++=
-+-
->>  3 files changed, 218 insertions(+), 1 deletion(-)
->>  create mode 100644 include/uapi/linux/loadpin=2Eh
->
->I would certainly need some Reviewed-by:s from security and/or loadpin
->experts if I were to pick this patch up=2E
-
-Alternatively, since it's mostly touching loadpin, I can carry it in my tr=
-ee, as long as you've Acked the dm bits=2E :)
-
->Did you see the issues the kernel test robot emailed about?
->
->You'd do well to fix those issues up when submitting another revision
->of this patchset=2E
-
-Agreed=2E
-
-
---=20
-Kees Cook
+DQo+IEFyZSB0aGVyZSBkaXJlY3Rpb25zIGZvciBpbnN0YWxsaW5nIExpbnV4IG9uIGEgTWFjIHdp
+dGggQXBwbGUgZmlybXdhcmUNCj4gY29kZT8gIA0KDQpXZWxsLCBkaXJlY3Rpb25zIG9mIGluc3Rh
+bGxpbmcgTGludXggb24gYW4gSW50ZWwgYmFzZWQgTWFjLCB3aGljaCBpbmNsdWRlcyB0aGUgVDIg
+TWFjcyBpcyB0aGUgc2FtZSBhcyBvbiBhIG5vcm1hbCBQQy4NCg0KVGhvdWdoLCBpbiBjYXNlIG9m
+IFQyIE1hY3MsIHdlIGZvciBub3cgbmVlZCB0byB1c2UgY3VzdG9taXNlZCBJU09zLCBzaW5jZSBz
+b21lIGRyaXZlcnMgYW5kIHBhdGNoZXMgdG8gc3VwcG9ydCBUMiBNYWNzIGFyZSB5ZXQgdG8gYmUg
+dXBzdHJlYW1lZC4NCg0KQW4gZXhhbXBsZSBvZiBpbnN0YWxsaW5nIFVidW50dSBjYW4gYmUgcmVh
+ZCBoZXJlIG9uIGh0dHBzOi8vd2lraS50MmxpbnV4Lm9yZy9kaXN0cmlidXRpb25zL3VidW50dS9p
+bnN0YWxsYXRpb24vDQoNClRhbGtpbmcgYWJvdXQgdGhlIG9mZmljaWFsIElTT3MsIGZvciBtYW55
+IGRpc3Ryb3MsIHNpbmNlIENPTkZJR19MT0FEX1VFRklfS0VZUyBpcyBub3QgZW5hYmxlZCBpbiB0
+aGVpciBrZXJuZWwgY29uZmlnLCB3ZSBjYW4gaW5zdGFsbCBMaW51eCB1c2luZyB0aGVtLCBidXQg
+dGhleSBzdGlsbCBsYWNrIG1hbnkgZHJpdmVycyByZXF1aXJlZCwgc2luY2UgdGhleSBhcmUgeWV0
+IHRvIGJlIHVwc3RyZWFtZWQuIFNvIHRoZSBpbnN0YWxsYXRpb24gZG9lc27igJl0IHdvcmsgZWZm
+aWNpZW50bHkgYW5kIHdlIGhhdmUgdG8gbWFudWFsbHkgaW5zdGFsbCBjdXN0b20ga2VybmVscyBo
+YXZpbmcgdGhvc2UgcGF0Y2hlcy4NCg0KSW4gc29tZSBkaXN0cm9zIGxpa2UgVWJ1bnR1LCB0aGV5
+IGhhdmUgQ09ORklHX0xPQURfVUVGSV9LRVlTIGVuYWJsZWQgaW4gdGhlaXIga2VybmVsIGNvbmZp
+Zy4gSW4gdGhpcyBjYXNlIHRoZSBjcmFzaCBhcyBtZW50aW9uZWQgaW4gdGhlIHBhdGNoIGRlc2Ny
+aXB0aW9uIG9jY3VycyBhbmQgRUZJIFJ1bnRpbWUgU2VydmljZXMgZ2V0IGRpc2FibGVkLiBTaW5j
+ZSBpbnN0YWxsaW5nIEdSVUIgcmVxdWlyZXMgYWNjZXNzIHRvIE5WUkFNLCB0aGUgaW5zdGFsbGF0
+aW9uIGZhaWxzIHdpdGggb2ZmaWNpYWwgSVNPcyBpbiB0aGlzIGNhc2UuIFRodXMsIGEgY3VzdG9t
+IElTTywgd2l0aCB0aGlzIHBhdGNoIGluY29ycG9yYXRlZCBpbiBiZWluZyB1c2VkIGZvciBub3cg
+Zm9yIHVzZXJzIGludGVyZXN0ZWQgaW4gVWJ1bnR1IG9uIFQyIE1hY3MuDQoNCj4gQXJlIHlvdSBk
+dWFsIGJvb3RpbmcgTGludXggYW5kIE1hYywgb3IganVzdCBMaW51eD8NCg0KSSBkb27igJl0IHRo
+aW5rIGl0IGFjdHVhbGx5IG1hdHRlcnMsIHRob3VnaCBpbiBtb3N0IG9mIHRoZSBjYXNlcywgd2Ug
+ZHVhbCBib290IG1hY09TIGFuZCBMaW51eCwgYnV0IEkgZG8gaGF2ZSBzZWVuIGNhc2VzIHdobyB3
+aXBlIG91dCB0aGVpciBtYWNPUyBjb21wbGV0ZWx5LiBCdXQgdGhpcyBkb2Vzbid0IGFmZmVjdCB0
+aGUgU2VjdXJlIEJvb3QgcG9saWN5IG9mIHRoZXNlIG1hY2hpbmVzLg0KDQo+ICBXaGlsZSBpbg0K
+PiBzZWN1cmUgYm9vdCBtb2RlLCB3aXRob3V0IGJlaW5nIGFibGUgdG8gcmVhZCB0aGUga2V5cyB0
+byB2ZXJpZnkgdGhlDQo+IGtlcm5lbCBpbWFnZSBzaWduYXR1cmUsIHRoZSBzaWduYXR1cmUgdmVy
+aWZpY2F0aW9uIHNob3VsZCBmYWlsLg0KDQpJZiBJIGVuYWJsZSBzZWN1cmUgYm9vdCBpbiB0aGUg
+QklPUyBzZXR0aW5ncyAobWFjT1MgUmVjb3ZlcnkpLCBBcHBsZeKAmXMgZmlybXdhcmUgd29uJ3Qg
+YWxsb3cgZXZlbiB0aGUgYm9vdCBsb2FkZXIgbGlrZSBHUlVCLCByRUZJbmQgdG8gYm9vdC4gSXQg
+c2hhbGwgb25seSBhbGxvdyBXaW5kb3dzIGFuZCBtYWNPUyB0byBCb290LiBZb3UgY291bGQgc2Vl
+IGh0dHBzOi8vc3VwcG9ydC5hcHBsZS5jb20vZW4taW4vSFQyMDgxOTggZm9yIG1vcmUgZGV0YWls
+cy4NCg0KPiANCj4gSGFzIGFueW9uZSBlbHNlIHRlc3RlZCB0aGlzIHBhdGNoPw0KDQpJIHdvcmsg
+YXMgYSBtYWludGFpbmVyIGZvciBVYnVudHUgZm9yIFQyIExpbnV4IGNvbW11bml0eSBhbmQgSSBo
+YXZlIHRoaXMgcGF0Y2ggaW5jb3Jwb3JhdGVkIGluIHRoZSBrZXJuZWxzIHVzZWQgZm9yIFVidW50
+dSBJU09zIGN1c3RvbWlzZWQgZm9yIFQyIE1hY3MsIGFuZCB0aHVzIGhhdmUgbWFueSB1c2VycyB3
+aG8gaGF2ZSB1c2VkIHRoZSBJU08gYW5kIGhhdmUgYSBzdWNjZXNzZnVsIGluc3RhbGxhdGlvbi4g
+VGh1cywgdGhlcmUgYXJlIG1hbnkgdXNlcnMgd2hvIGhhdmUgdGVzdGVkIHRoaXMgcGF0Y2ggYW5k
+IGFyZSBhY3R1YWxseSB1c2luZyBpdCByaWdodCBub3cuDQpXZSBhbHNvIG5lZWQgdGhlIGhhdmUg
+dGhlIE5WUkFNIHdyaXRlcyBlbmFibGVkIHNvIGFzIHRvIHVubG9jayB0aGUgaUdQVSBpbiBNYWNz
+IHdpdGggYm90aCBJbnRlbCBhbmQgQU1EIEdQVSwgYW5kIHdpdGggdGhpcyBwYXRjaCwgd2UgaGF2
+ZSBiZWVuIHN1Y2Nlc3NmdWxseSBhYmxlIHRvIHVubG9jayBpdCwNCg0KSSBob3BlIEkgY291bGQg
+YW5zd2VyIHlvdXIgcXVlc3Rpb25zDQoNClJlZ2FyZHMNCkFkaXR5YQ==
