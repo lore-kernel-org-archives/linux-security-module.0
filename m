@@ -2,136 +2,98 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4A2C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 May 2022 11:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6031EC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 May 2022 12:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379904AbiEML1y (ORCPT
+        id S1380495AbiEMM6O (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 May 2022 07:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
+        Fri, 13 May 2022 08:58:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379907AbiEML1x (ORCPT
+        with ESMTP id S1380492AbiEMM6N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 May 2022 07:27:53 -0400
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 133C753B4C
-        for <linux-security-module@vger.kernel.org>; Fri, 13 May 2022 04:27:50 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4L05wj138fzMqC2k;
-        Fri, 13 May 2022 13:27:49 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4L05wh360LzlhMCB;
-        Fri, 13 May 2022 13:27:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1652441269;
-        bh=blIYqHr32Eel+j77HwQCDY9ZnNncNKIoiGfSCtzJN3k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=vTFEClJavy0JQhCqXjfS/363YXlUVFqpbgLEA/iuWKWfJ5HDUTSUarGbLO8uuaaA/
-         P/qvSzgEVCbF+grDsFG4hup2XmsTDEJTEiXq6D+nvVOmXhwj4M2Z1Etu1dhncin/f+
-         JZj8l8zobSValxEqXogaFkQR9XMUt08K4n8kRK8Q=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Fri, 13 May 2022 08:58:13 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30F129B19B
+        for <linux-security-module@vger.kernel.org>; Fri, 13 May 2022 05:58:11 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id p189so4760387wmp.3
+        for <linux-security-module@vger.kernel.org>; Fri, 13 May 2022 05:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=thaX8F5YMEB8rBSpYIHSf7KiewyBMS4c1TXezvvYXWo=;
+        b=auGUYIiH8r7oJP67oOuHmzM/NOGPcdCLkLQF91WtkEgHQTmkJLUMnLAuJDyzjYn4e2
+         2t8AnU/iUvEat3vHWqybIizYNTPVY0ZILJEv2VtWYhJv4l6so1W1LFOoNYlSuXPbDREi
+         CaWD/8FR0FE/ZE//HYKE5FX42YiD7R6zQrQdllq9MeLOMcL/PmTY9bEtbPaGwG1GUk8I
+         YXfqv/Clz9P/mcGMzzMu65NpEzl6n5AizJbkoffXPxU2NidzoyAY9tD0kyqBJW+cV6Yo
+         L2XUKHbPY5DKUYM1pS6eoC+6qn9GDVlPBM5mHQ4SaO+Ed5OW841882ELq1gSprMqGPzV
+         8sFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=thaX8F5YMEB8rBSpYIHSf7KiewyBMS4c1TXezvvYXWo=;
+        b=7Xzuo4eP2ODcQzpoKSH3WdH83BNK5iNy72npurpys2Uu6NU+nuzbG7noVB3J6jl6jg
+         R4kzlWC/Sqn0yH5nIoHgbghffnrvzyhRZthx9N3A1zO9qdEWdbgldjrJ+SEF09LnP467
+         9TWMTj+72VoSrGp9GesrK+Ak1tpTnf/VbWxMOGs7JnH2nxzuhZAJ+S3uiwoTA9MDNp/I
+         HikGSu44c8tnUFi1pRSACwaik/EJzMmh7OOFxL6T6pllqyWmi/9i1SQz58DM2xTye+5Y
+         5vIuQM7GuLzfsl9XxsDRJETNqpYOk2Y2uKDE4NIyYNmw6tjyAnZUUs5dgAIH032beAPe
+         1Myw==
+X-Gm-Message-State: AOAM533hHJO1cbxaQME8c6lVMe/p/TKSoT8zYEFVFYpem1KmUuLh2FWW
+        7PuQ6mzFjw17MnQi0/HX2Hxi/XfinOH3HmnO3bfP
+X-Google-Smtp-Source: ABdhPJyuPrauqU//BMVcgTUuAktKz5n/8NYQebKBmgF7eFtX+zbGS3ouW2oyFE/TlzAylCXCC9SYX/nSdl005MFElIs=
+X-Received: by 2002:a05:600c:4fd0:b0:394:7999:98ab with SMTP id
+ o16-20020a05600c4fd000b00394799998abmr4378959wmq.179.1652446690471; Fri, 13
+ May 2022 05:58:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220513112743.156414-1-mic@digikod.net>
+In-Reply-To: <20220513112743.156414-1-mic@digikod.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 13 May 2022 08:57:59 -0400
+Message-ID: <CAHC9VhQS1mNAzC2Qo2+rxUs5BERA6Y9FyzapdRQ65g5FY1Mwtw@mail.gmail.com>
+Subject: Re: [PATCH v2] landlock: Explain how to support Landlock
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
         Alejandro Colomar <alx.manpages@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v2] landlock: Explain how to support Landlock
-Date:   Fri, 13 May 2022 13:27:43 +0200
-Message-Id: <20220513112743.156414-1-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Let's help users by documenting how to enable and check for Landlock in
-the kernel and the running system.  The userspace-api section may not be
-the best place for this but it still makes sense to put all the user
-documentation at the same place.
+On Fri, May 13, 2022 at 7:27 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+>
+> Let's help users by documenting how to enable and check for Landlock in
+> the kernel and the running system.  The userspace-api section may not be
+> the best place for this but it still makes sense to put all the user
+> documentation at the same place.
+>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20220513112743.156414-1-mic@digikod.net
+> ---
+>
+> Changes since v1:
+> * Move the checking subsection at the beginning (suggested by Paul
+>   Moore) and merge the two configuration subsections.
+> * Use both dmesg and journalctl to handle cases where journald is not
+>   installed or when the kernel log buffer is full.
+> * Add reference to the syscall check (ABI section).
+> * Improve explanations.
+> * Update copyright date.
+> ---
+>  Documentation/userspace-api/landlock.rst | 29 +++++++++++++++++++++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
 
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20220513112743.156414-1-mic@digikod.net
----
+Looks good to me.
 
-Changes since v1:
-* Move the checking subsection at the beginning (suggested by Paul
-  Moore) and merge the two configuration subsections.
-* Use both dmesg and journalctl to handle cases where journald is not
-  installed or when the kernel log buffer is full.
-* Add reference to the syscall check (ABI section).
-* Improve explanations.
-* Update copyright date.
----
- Documentation/userspace-api/landlock.rst | 29 +++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 7b4fe6218132..b8ea59493964 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -1,7 +1,7 @@
- .. SPDX-License-Identifier: GPL-2.0
- .. Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
- .. Copyright © 2019-2020 ANSSI
--.. Copyright © 2021 Microsoft Corporation
-+.. Copyright © 2021-2022 Microsoft Corporation
- 
- =====================================
- Landlock: unprivileged access control
-@@ -18,6 +18,13 @@ is expected to help mitigate the security impact of bugs or
- unexpected/malicious behaviors in user space applications.  Landlock empowers
- any process, including unprivileged ones, to securely restrict themselves.
- 
-+We can quickly make sure that Landlock is enabled in the running system by
-+looking for "landlock: Up and running" in kernel logs (as root): ``dmesg | grep
-+landlock || journalctl -kg landlock`` .  Developers can also easily check for
-+Landlock support with a :ref:`related system call <landlock_abi_versions>`.  If
-+Landlock is not currently supported, we need to :ref:`configure the kernel
-+appropriately <kernel_support>`.
-+
- Landlock rules
- ==============
- 
-@@ -264,6 +271,8 @@ users, and because they may use different kernel versions, it is strongly
- encouraged to follow a best-effort security approach by checking the Landlock
- ABI version at runtime and only enforcing the supported features.
- 
-+.. _landlock_abi_versions:
-+
- Landlock ABI versions
- ---------------------
- 
-@@ -388,6 +397,24 @@ Starting with the Landlock ABI version 2, it is now possible to securely
- control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER`
- access right.
- 
-+.. _kernel_support:
-+
-+Kernel support
-+==============
-+
-+Landlock was first introduced in Linux 5.13 but it must be configured at build
-+time with `CONFIG_SECURITY_LANDLOCK=y`.  Landlock must also be enabled at boot
-+time as the other security modules.  The list of security modules enabled by
-+default is set with `CONFIG_LSM`.  The kernel configuration should then
-+contains `CONFIG_LSM=landlock,[...]` with `[...]`  as the list of other
-+potentially useful security modules for the running system (see the
-+`CONFIG_LSM` help).
-+
-+If the running kernel doesn't have `landlock` in `CONFIG_LSM`, then we can
-+still enable it by adding ``lsm=landlock,[...]`` to
-+Documentation/admin-guide/kernel-parameters.rst thanks to the bootloader
-+configuration.
-+
- Questions and answers
- =====================
- 
-
-base-commit: 67761d8181f0fb9dbd264caa5b6408dbc0d8e86a
--- 
-2.36.0
-
+--=20
+paul-moore.com
