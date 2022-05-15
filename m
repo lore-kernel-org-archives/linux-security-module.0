@@ -2,481 +2,185 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28125C433F5
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 May 2022 22:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D8BC433EF
+	for <linux-security-module@archiver.kernel.org>; Sun, 15 May 2022 12:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231667AbiEMWgh (ORCPT
+        id S236889AbiEOMnD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 May 2022 18:36:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39044 "EHLO
+        Sun, 15 May 2022 08:43:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232212AbiEMWgf (ORCPT
+        with ESMTP id S236773AbiEOMml (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 May 2022 18:36:35 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86B1E38196
-        for <linux-security-module@vger.kernel.org>; Fri, 13 May 2022 15:36:29 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id q76so8713627pgq.10
-        for <linux-security-module@vger.kernel.org>; Fri, 13 May 2022 15:36:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:user-agent:in-reply-to:references
-         :message-id:mime-version:content-transfer-encoding;
-        bh=5gA/z5w3iSZBhMGL4NGMxYvM+06CCYMA733n8qghoV8=;
-        b=Kp5u4/CM0YQ2KQq5OsxAXepvwvZdx5O2/gLoWa1K/zJm+KgMoVemmr6ZO5ms2bBWxB
-         MFhshJjvZob1rJ6M1wEFqyuGQscI3Rer4cVoAwHloLdE4OLC2RsqxoJUDUsoAMQbdkeN
-         kktH9Ey9YNW+hpYreY7t4FSY2x9qp4cORAKl4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:user-agent:in-reply-to
-         :references:message-id:mime-version:content-transfer-encoding;
-        bh=5gA/z5w3iSZBhMGL4NGMxYvM+06CCYMA733n8qghoV8=;
-        b=flNjyAhU+tPEhamOAANa2+Rf98ddIZQeeaL98WNYc8DTpeQqbHwoMiOlE1/SU1EHNl
-         D5uxHduPkHHidQy/97DRq2IKbAbEXMC4JxqnU2690yw/gtlL0IZjEKK2oOPob2wroUOF
-         FUTVgPqfy7rzHd5kkJOzn8fELhORwyocWHuD8QxPSwLQ7xPAgUCeN20L+oDxBCvPJPaZ
-         ldfhsiv07IYduRGk1HcV5gF0I5bOsj/aXbnW4nCJViFJM6gzcug6+sbRJGCcDM3Uw6W9
-         ZgqIE3CMMOQoKhQKpFI4rp77qJPscYXCLvpb2ugx05t8ulVnBCz4gt2y1jyqFrUdjzRL
-         zg2g==
-X-Gm-Message-State: AOAM533SPVy0DqQNpeLvGxmWqrwx7h4+/GOYyCYOGJ99ETxnAln9zrXk
-        tRk0n9+qmUH//J0XDKeP9XTc8w==
-X-Google-Smtp-Source: ABdhPJxBG6e3E9oNiJFfeBHLppZK7vFJX4UY0lZeJxSrEESj5nfl/PMVKHRcA3ds9aAvC7+znYeatA==
-X-Received: by 2002:a05:6a00:10cc:b0:4fe:3f1c:2d1 with SMTP id d12-20020a056a0010cc00b004fe3f1c02d1mr6472165pfu.0.1652481388955;
-        Fri, 13 May 2022 15:36:28 -0700 (PDT)
-Received: from ?IPv6:::1? ([2607:fb90:3322:7d68:6474:9b3c:2c42:56f1])
-        by smtp.gmail.com with ESMTPSA id r15-20020a17090a940f00b001cd8e9ea22asm4025665pjo.52.2022.05.13.15.36.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 May 2022 15:36:28 -0700 (PDT)
-Date:   Fri, 13 May 2022 15:36:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-CC:     dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, Song Liu <song@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-security-module@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_2/3=5D_LoadPin=3A_Enable_l?= =?US-ASCII?Q?oading_from_trusted_dm-verity_devices?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20220504125404.v3.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
-References: <20220504195419.1143099-1-mka@chromium.org> <20220504125404.v3.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
-Message-ID: <B7FB2BE6-DF1C-414A-B4C2-0C15FD1CBF75@chromium.org>
+        Sun, 15 May 2022 08:42:41 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B497D17A9C;
+        Sun, 15 May 2022 05:42:39 -0700 (PDT)
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24F64tN2018967;
+        Sun, 15 May 2022 12:42:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=1l2WtRMp20/zQ/ARHctl2Xng4JO8XSuqPYRhaDk3aLw=;
+ b=dZMuiPoMk+WxPCjwNoZsekgcEowc7lrwMfmxvnU2IjKVfAJV/io+ABy04qhfwzLhZYrw
+ 8BchtP3QhnvBBLAxnFLdXUnEA8VRxsZfTcpJiUZaIau+pxO20J2i2iE9IYY/t/0ZX8A7
+ lA2H8tbK+DXtzsgMigKOCclwALVh7xStuQAAi3o2nV8Z07jk9QrO2/XvE+St/4/kuhxt
+ 2uyrWr+RVrdpS+/nSeu4cohuFXCGAMc3kllhzQEppeteR/85wkiZezmO9pLlxGp71LSL
+ ixnjBh5E9w2z6QzeYn8p90mDEgwi/X6iNRLxiNp1Glb+xYjBKb7Do8zMadwAHTjLm4Kk VQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3g2e07x6nb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 15 May 2022 12:42:08 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 24FCg7u7016544;
+        Sun, 15 May 2022 12:42:07 GMT
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3g2e07x6ms-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 15 May 2022 12:42:07 +0000
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24FCdeI1022804;
+        Sun, 15 May 2022 12:42:05 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03fra.de.ibm.com with ESMTP id 3g2428s208-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 15 May 2022 12:42:05 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24FCg3bI22020378
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 15 May 2022 12:42:03 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E94B811C058;
+        Sun, 15 May 2022 12:42:02 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53EFB11C04A;
+        Sun, 15 May 2022 12:42:00 +0000 (GMT)
+Received: from sig-9-65-80-60.ibm.com (unknown [9.65.80.60])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 15 May 2022 12:42:00 +0000 (GMT)
+Message-ID: <5d5e459069bef1c9c7eddec973987a08c4b16d30.camel@linux.ibm.com>
+Subject: Re: [PATCH v7] efi: Do not import certificates from UEFI Secure
+ Boot for T2 Macs
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Aditya Garg <gargaditya08@live.com>
+Cc:     "jarkko@kernel.org" <jarkko@kernel.org>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "kafai@fb.com" <kafai@fb.com>,
+        "songliubraving@fb.com" <songliubraving@fb.com>,
+        "yhs@fb.com" <yhs@fb.com>,
+        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        Orlando Chamberlain <redecorating@protonmail.com>,
+        "admin@kodeit.net" <admin@kodeit.net>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Date:   Sun, 15 May 2022 08:41:59 -0400
+In-Reply-To: <D6CDA21E-CC8F-4DA1-A5A4-8B706CA79182@live.com>
+References: <652C3E9E-CB97-4C70-A961-74AF8AEF9E39@live.com>
+         <94DD0D83-8FDE-4A61-AAF0-09A0175A0D0D@live.com>
+         <590ED76A-EE91-4ED1-B524-BC23419C051E@live.com>
+         <E9C28706-2546-40BF-B32C-66A047BE9EFB@live.com>
+         <02125722-91FC-43D3-B63C-1B789C2DA8C3@live.com>
+         <958B8D22-F11E-4B5D-9F44-6F0626DBCB63@live.com>
+         <06062b288d675dc060f33041e9b2009c151698e6.camel@linux.ibm.com>
+         <D6CDA21E-CC8F-4DA1-A5A4-8B706CA79182@live.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: saHdDgJSxeCMDniNSm7mqvPsBH743un7
+X-Proofpoint-GUID: 2Fr8-VO3Z_jmN7W97rGgdr-O6jwKDpMn
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-05-15_06,2022-05-13_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 phishscore=0 priorityscore=1501 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2205150065
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, 2022-05-13 at 18:31 +0000, Aditya Garg wrote:
+> > Are there directions for installing Linux on a Mac with Apple firmware
+> > code?  
+> 
+> Well, directions of installing Linux on an Intel based Mac, which
+> includes the T2 Macs is the same as on a normal PC.
+> 
+> Though, in case of T2 Macs, we for now need to use customised ISOs,
+> since some drivers and patches to support T2 Macs are yet to be
+> upstreamed.
+> 
+> An example of installing Ubuntu can be read here on 
+> https://wiki.t2linux.org/distributions/ubuntu/installation/
+> 
+> Talking about the official ISOs, for many distros, since
+> CONFIG_LOAD_UEFI_KEYS is not enabled in their kernel config, we can
+> install Linux using them, but they still lack many drivers required,
+> since they are yet to be upstreamed. So the installation doesn’t work
+> efficiently and we have to manually install custom kernels having
+> those patches.
+> 
+> In some distros like Ubuntu, they have CONFIG_LOAD_UEFI_KEYS enabled
+> in their kernel config. In this case the crash as mentioned in the
+> patch description occurs and EFI Runtime Services get disabled. Since
+> installing GRUB requires access to NVRAM, the installation fails with
+> official ISOs in this case. Thus, a custom ISO, with this patch
+> incorporated in being used for now for users interested in Ubuntu on
+> T2 Macs.
+> 
+> > Are you dual booting Linux and Mac, or just Linux?
+> 
+> I don’t think it actually matters, though in most of the cases, we
+> dual boot macOS and Linux, but I do have seen cases who wipe out
+> their macOS completely. But this doesn't affect the Secure Boot
+> policy of these machines.
+> 
+> >  While in
+> > secure boot mode, without being able to read the keys to verify the
+> > kernel image signature, the signature verification should fail.
+> 
+> If I enable secure boot in the BIOS settings (macOS Recovery),
+> Apple’s firmware won't allow even the boot loader like GRUB, rEFInd
+> to boot. It shall only allow Windows and macOS to Boot. You could see
+> https://support.apple.com/en-in/HT208198 for more details.
+> 
+> > 
+> > Has anyone else tested this patch?
+> 
+> I work as a maintainer for Ubuntu for T2 Linux community and I have
+> this patch incorporated in the kernels used for Ubuntu ISOs
+> customised for T2 Macs, and thus have many users who have used the
+> ISO and have a successful installation. Thus, there are many users
+> who have tested this patch and are actually using it right now.
+> We also need the have the NVRAM writes enabled so as to unlock the
+> iGPU in Macs with both Intel and AMD GPU, and with this patch, we
+> have been successfully able to unlock it,
+> 
+> I hope I could answer your questions
 
+Yes, thank you.   Based on the link above and 
+https://wiki.t2linux.org/guides/kernel/, I was able boot a kernel
+with/without this patch.
 
-On May 4, 2022 12:54:18 PM PDT, Matthias Kaehlcke <mka@chromium=2Eorg> wro=
-te:
->Extend LoadPin to allow loading of kernel files from trusted dm-verity [1=
-]
->devices=2E
->
->This change adds the concept of trusted verity devices to LoadPin=2E Load=
-Pin
->maintains a list of root digests of verity devices it considers trusted=
-=2E
->Userspace can populate this list through an ioctl on the new LoadPin
->securityfs entry 'dm-verity'=2E The ioctl receives a file descriptor of
->a file with verity digests as parameter=2E Verity reads the digests from
->this file after confirming that the file is located on the pinned root=2E
->The list of trusted digests can only be set up once, which is typically
->done at boot time=2E
->
->When a kernel file is read LoadPin first checks (as usual) whether the fi=
-le
->is located on the pinned root, if so the file can be loaded=2E Otherwise,=
- if
->the verity extension is enabled, LoadPin determines whether the file is
->located on a verity backed device and whether the root digest of that
+The patch is now queued in the next-integrity-testing branch.
 
-I think this should be "=2E=2E=2E on an already trusted device =2E=2E=2E"
+thanks,
 
->device is in the list of trusted digests=2E The file can be loaded if the
->verity device has a trusted root digest=2E
->
->Background:
->
->As of now LoadPin restricts loading of kernel files to a single pinned
->filesystem, typically the rootfs=2E This works for many systems, however =
-it
->can result in a bloated rootfs (and OTA updates) on platforms where
->multiple boards with different hardware configurations use the same rootf=
-s
->image=2E Especially when 'optional' files are large it may be preferable =
-to
->download/install them only when they are actually needed by a given board=
-=2E
->Chrome OS uses Downloadable Content (DLC) [2] to deploy certain 'packages=
-'
->at runtime=2E As an example a DLC package could contain firmware for a
->peripheral that is not present on all boards=2E DLCs use dm-verity to ver=
-ify
->the integrity of the DLC content=2E
->
->[1] https://www=2Ekernel=2Eorg/doc/html/latest/admin-guide/device-mapper/=
-verity=2Ehtml
->[2] https://chromium=2Egooglesource=2Ecom/chromiumos/platform2/+/HEAD/dlc=
-service/docs/developer=2Emd
->
->Signed-off-by: Matthias Kaehlcke <mka@chromium=2Eorg>
->---
->
->Changes in v3:
->- added securityfs for LoadPin (currently only populated when
->  CONFIG_SECURITY_LOADPIN_VERITY=3Dy)
->- added uapi include for LoadPin
->- changed the interface for setting up the list of trusted
->  digests from sysctl to ioctl on securityfs entry
->- added stub for loadpin_is_fs_trusted() to be used
->  CONFIG_SECURITY_LOADPIN_VERITY is not select
->- depend on CONFIG_SECURITYFS instead of CONFIG_SYSTCL
->- updated Kconfig help
->- minor changes in read_trusted_verity_root_digests()
->- updated commit message
->
->Changes in v2:
->- userspace now passes the path of the file with the verity digests
->  via systcl, instead of the digests themselves
->- renamed sysctl file to 'trusted_verity_root_digests_path'
->- have CONFIG_SECURITY_LOADPIN_VERITY depend on CONFIG_SYSCTL
->- updated Kconfig doc
->- updated commit message
->
-> include/uapi/linux/loadpin=2Eh |  19 ++++
-> security/loadpin/Kconfig     |  16 +++
-> security/loadpin/loadpin=2Ec   | 184 ++++++++++++++++++++++++++++++++++-
-> 3 files changed, 218 insertions(+), 1 deletion(-)
-> create mode 100644 include/uapi/linux/loadpin=2Eh
->
->diff --git a/include/uapi/linux/loadpin=2Eh b/include/uapi/linux/loadpin=
-=2Eh
->new file mode 100644
->index 000000000000=2E=2Ed303a582209b
->--- /dev/null
->+++ b/include/uapi/linux/loadpin=2Eh
->@@ -0,0 +1,19 @@
->+/* SPDX-License-Identifier: GPL-2=2E0 WITH Linux-syscall-note */
->+/*
->+ * Copyright (c) 2022, Google LLC
->+ */
->+
->+#ifndef _UAPI_LINUX_LOOP_LOADPIN_H
->+#define _UAPI_LINUX_LOOP_LOADPIN_H
->+
->+#define LOADPIN_IOC_MAGIC	'L'
->+
->+/**
->+ * LOADPIN_IOC_SET_TRUSTED_VERITY_DIGESTS - Set up the root digests of v=
-erity devices
->+ *                                          that loadpin should trust=2E
->+ *
->+ * Takes a file descriptor from which to read the root digests of truste=
-d verity devices=2E
+Mimi
 
-Maybe add to the comment the securityfs node path here as a helpful hint t=
-o the reader, and mention the format (comma separated?)
-
->+ */
->+#define LOADPIN_IOC_SET_TRUSTED_VERITY_DIGESTS _IOW(LOADPIN_IOC_MAGIC, 0=
-x00, unsigned int)
->+
->+#endif /* _UAPI_LINUX_LOOP_LOADPIN_H */
->diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
->index 91be65dec2ab=2E=2Ee319ca8e3f3d 100644
->--- a/security/loadpin/Kconfig
->+++ b/security/loadpin/Kconfig
->@@ -18,3 +18,19 @@ config SECURITY_LOADPIN_ENFORCE
-> 	  If selected, LoadPin will enforce pinning at boot=2E If not
-> 	  selected, it can be enabled at boot with the kernel parameter
-> 	  "loadpin=2Eenforce=3D1"=2E
->+
->+config SECURITY_LOADPIN_VERITY
->+	bool "Allow reading files from certain other filesystems that use dm-ve=
-rity"
->+	depends on DM_VERITY=3Dy && SECURITYFS
->+	help
->+	  If selected LoadPin can allow reading files from filesystems
->+	  that use dm-verity=2E LoadPin maintains a list of verity root
->+	  digests it considers trusted=2E A verity backed filesystem is
->+	  considered trusted if its root digest is found in the list
->+	  of trusted digests=2E
->+
->+	  The list of trusted verity can be populated through an ioctl
->+	  on the LoadPin securityfs entry 'dm-verity'=2E The ioctl
->+	  expects a file descriptor of a file with verity digests as
->+	  parameter=2E The file must be located on the pinned root and
->+	  contain a comma separated list of digests=2E
->diff --git a/security/loadpin/loadpin=2Ec b/security/loadpin/loadpin=2Ec
->index b12f7d986b1e=2E=2Ec29ce562a366 100644
->--- a/security/loadpin/loadpin=2Ec
->+++ b/security/loadpin/loadpin=2Ec
->@@ -18,6 +18,9 @@
-> #include <linux/path=2Eh>
-> #include <linux/sched=2Eh>	/* current */
-> #include <linux/string_helpers=2Eh>
->+#include <linux/device-mapper=2Eh>
->+#include <linux/dm-verity-loadpin=2Eh>
->+#include <uapi/linux/loadpin=2Eh>
->=20
-> static void report_load(const char *origin, struct file *file, char *ope=
-ration)
-> {
->@@ -43,6 +46,9 @@ static char *exclude_read_files[READING_MAX_ID];
-> static int ignore_read_file_id[READING_MAX_ID] __ro_after_init;
-> static struct super_block *pinned_root;
-> static DEFINE_SPINLOCK(pinned_root_spinlock);
->+#ifdef CONFIG_SECURITY_LOADPIN_VERITY
->+static LIST_HEAD(trusted_verity_root_digests);
->+#endif
->=20
-> #ifdef CONFIG_SYSCTL
->=20
->@@ -118,6 +124,24 @@ static void loadpin_sb_free_security(struct super_bl=
-ock *mnt_sb)
-> 	}
-> }
->=20
->+#ifdef CONFIG_SECURITY_LOADPIN_VERITY
->+static bool loadpin_is_fs_trusted(struct super_block *sb)
->+{
->+	struct mapped_device *md =3D dm_get_md(sb->s_bdev->bd_dev);
->+	bool trusted;
->+
->+	if (!md)
->+		return false;
->+
->+	trusted =3D dm_verity_loadpin_is_md_trusted(md);
->+	dm_put(md);
->+
->+	return trusted;
->+}
->+#else
->+static inline bool loadpin_is_fs_trusted(struct super_block *sb) { retur=
-n false; };
->+#endif
->+
-> static int loadpin_read_file(struct file *file, enum kernel_read_file_id=
- id,
-> 			     bool contents)
-> {
->@@ -174,7 +198,8 @@ static int loadpin_read_file(struct file *file, enum =
-kernel_read_file_id id,
-> 		spin_unlock(&pinned_root_spinlock);
-> 	}
->=20
->-	if (IS_ERR_OR_NULL(pinned_root) || load_root !=3D pinned_root) {
->+	if (IS_ERR_OR_NULL(pinned_root) ||
->+	    ((load_root !=3D pinned_root) && !loadpin_is_fs_trusted(load_root))=
-) {
-> 		if (unlikely(!enforce)) {
-> 			report_load(origin, file, "pinning-ignored");
-> 			return 0;
->@@ -240,6 +265,7 @@ static int __init loadpin_init(void)
-> 		enforce ? "" : "not ");
-> 	parse_exclude();
-> 	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin")=
-;
->+
-> 	return 0;
-> }
->=20
->@@ -248,6 +274,162 @@ DEFINE_LSM(loadpin) =3D {
-> 	=2Einit =3D loadpin_init,
-> };
->=20
->+#ifdef CONFIG_SECURITY_LOADPIN_VERITY
->+
->+enum loadpin_securityfs_interface_index {
->+	LOADPIN_DM_VERITY,
->+};
->+
->+static int read_trusted_verity_root_digests(unsigned int fd)
->+{
->+	struct fd f;
->+	void *data;
-
-Probably easier if this is u8 *?
-
->+	int rc;
->+	char *p, *d;
->+
->+	/* The list of trusted root digests can only be set up once */
->+	if (!list_empty(&trusted_verity_root_digests))
->+		return -EPERM;
->+
->+	f =3D fdget(fd);
->+	if (!f=2Efile)
->+		return -EINVAL;
->+
->+	data =3D kzalloc(SZ_4K, GFP_KERNEL);
->+	if (!data) {
->+		rc =3D -ENOMEM;
->+		goto err;
->+	}
->+
->+	rc =3D kernel_read_file(f=2Efile, 0, &data, SZ_4K - 1, NULL, READING_PO=
-LICY);
->+	if (rc < 0)
->+		goto err;
->+
->+	((char *)data)[rc] =3D '\0';
->+
->+	p =3D strim(data);
->+	while ((d =3D strsep(&p, ",")) !=3D NULL) {
-
-Maybe be flexible and add newline as a separator too?
-
->+		int len =3D strlen(d);
->+		struct trusted_root_digest *trd;
->+
->+		if (len % 2) {
->+			rc =3D -EPROTO;
->+			goto err;
->+		}
->+
->+		len /=3D 2;
->+
->+		trd =3D kzalloc(sizeof(*trd), GFP_KERNEL);
-
-With the struct change, this could be:
-
-kzalloc(struct_size(trd, data, len), =2E=2E=2E)
-
->+		if (!trd) {
->+			rc =3D -ENOMEM;
->+			goto err;
->+		}
->+
->+		trd->data =3D kzalloc(len, GFP_KERNEL);
->+		if (!trd->data) {
->+			kfree(trd);
->+			rc =3D -ENOMEM;
->+			goto err;
->+		}
->+
->+		if (hex2bin(trd->data, d, len)) {
->+			kfree(trd);
->+			kfree(trd->data);
->+			rc =3D -EPROTO;
->+			goto err;
->+		}
->+
->+		trd->len =3D len;
->+
->+		list_add_tail(&trd->node, &trusted_verity_root_digests);
->+	}
->+
->+	kfree(data);
->+	fdput(f);
->+
->+	if (!list_empty(&trusted_verity_root_digests))
->+		dm_verity_loadpin_set_trusted_root_digests(&trusted_verity_root_digest=
-s);
->+
->+	return 0;
->+
->+err:
->+	kfree(data);
->+
-
-Maybe add a comment that any load failure will invalidate the entire list?
-
->+	{
->+		struct trusted_root_digest *trd, *tmp;
->+
->+		list_for_each_entry_safe(trd, tmp, &trusted_verity_root_digests, node)=
- {
->+			kfree(trd->data);
->+			list_del(&trd->node);
->+			kfree(trd);
->+		}
->+	}
->+
->+	fdput(f);
->+
->+	return rc;
->+}
->+
->+/******************************** securityfs ***************************=
-*****/
->+
->+static long dm_verity_ioctl(struct file *filp, unsigned int cmd, unsigne=
-d long arg)
->+{
->+	void __user *uarg =3D (void __user *)arg;
->+	unsigned int fd;
->+	int rc;
->+
->+	switch (cmd) {
->+	case LOADPIN_IOC_SET_TRUSTED_VERITY_DIGESTS:
->+		rc =3D copy_from_user(&fd, uarg, sizeof(fd));
->+		if (rc)
->+			return rc;
->+
->+		return read_trusted_verity_root_digests(fd);
->+
->+	default:
->+		return -EINVAL;
->+	}
->+}
->+
->+static const struct file_operations loadpin_dm_verity_ops =3D {
->+	=2Eunlocked_ioctl =3D dm_verity_ioctl,
->+	=2Ecompat_ioctl =3D compat_ptr_ioctl,
->+};
->+
->+/**
->+ * init_loadpin_securityfs - create the securityfs directory for LoadPin
->+ *
->+ * We can not put this method normally under the loadpin_init() code pat=
-h since
->+ * the security subsystem gets initialized before the vfs caches=2E
->+ *
->+ * Returns 0 if the securityfs directory creation was successful=2E
->+ */
->+static int __init init_loadpin_securityfs(void)
->+{
->+	struct dentry *loadpin_dir, *dentry;
->+
->+	loadpin_dir =3D securityfs_create_dir("loadpin", NULL);
->+	if (IS_ERR(loadpin_dir)) {
->+		pr_err("LoadPin: could not create securityfs dir: %d\n",
->+		       PTR_ERR(loadpin_dir));
->+		return PTR_ERR(loadpin_dir);
->+	}
->+
->+	dentry =3D securityfs_create_file("dm-verity", 0600, loadpin_dir,
->+					(void *)LOADPIN_DM_VERITY, &loadpin_dm_verity_ops);
->+	if (IS_ERR(dentry)) {
->+		pr_err("LoadPin: could not create securityfs entry 'dm-verity': %d\n",
->+		       PTR_ERR(dentry));
->+		return PTR_ERR(dentry);
->+	}
->+
->+	return 0;
->+}
->+
->+fs_initcall(init_loadpin_securityfs);
->+
->+#endif /* CONFIG_SECURITY_LOADPIN_VERITY */
->+
-> /* Should not be mutable after boot, so not listed in sysfs (perm =3D=3D=
- 0)=2E */
-> module_param(enforce, int, 0);
-> MODULE_PARM_DESC(enforce, "Enforce module/firmware pinning");
-
-Otherwise looks good! The only other thing I can think of is pondering mor=
-e about more carefully failing closed=2E E=2Eg=2E instead of just throwing =
-away all the other hashes on a file load failure, maybe lock out future att=
-empts to set it too? I'm not sure this is actually useful, though=2E :P it =
-shouldn't be possible to corrupt the file, etc=2E But in the universe where=
- things like DirtyCOW happens, I've gotten even more paranoid=2E ;)
-
---=20
-Kees Cook
