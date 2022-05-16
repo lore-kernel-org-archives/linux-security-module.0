@@ -2,266 +2,252 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA9FC433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 18:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BE5C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 18:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344660AbiEPSRs (ORCPT
+        id S1344789AbiEPS2R (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 May 2022 14:17:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51066 "EHLO
+        Mon, 16 May 2022 14:28:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238321AbiEPSRs (ORCPT
+        with ESMTP id S1344823AbiEPS2H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 May 2022 14:17:48 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E852929C8A
-        for <linux-security-module@vger.kernel.org>; Mon, 16 May 2022 11:17:46 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id i17so15198104pla.10
-        for <linux-security-module@vger.kernel.org>; Mon, 16 May 2022 11:17:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uT/H9lZy9IyzIRo1BQPyvaimIM9+75W3QLmIxSLbuUU=;
-        b=X/dO4kHPPX6KVzqik98XxhX4qe4Hr1GB5v1Wpz0rg5kveBi8fb1EaSY3qqpBdekATl
-         WmSUzbMAG4lMNQM42rPgDMUMefvuggeIOojhi9gZIEnpXsnzXBaXl4TH3em8ry7dOLT4
-         HfLQkYE7bIugkTRczU3iNdQSDYZ4PsuA4zJhY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uT/H9lZy9IyzIRo1BQPyvaimIM9+75W3QLmIxSLbuUU=;
-        b=HjQ8Fbpl/3SNNkyMQpoLALGZQmi8ZKWpiLFGs0IIRhJRa5FIchIYSTx4RvHmYkZ3n7
-         wTZqbxqs5wf452TiqG0miLAEiepJ3vPmvfX83fui4/b8uJRkGUFsBaqFS/2b96bD5AES
-         KfAozQrYPkOZnPUmXhdQH1V+ehLYrGCLupVLyX8Q6Gfj/NKc3fVkdK1TxF+mJ8IS/oJ0
-         /Y2aoo3BvzRfEjv8KDAP0VJ+fZRCQZTehcPLUZuET03Tb8Jpe8/4d86Tn9IcLgMphz/N
-         e/WfAK035rz3A1A3rApKqixewt8KJ6vcqCMDGC9rIhjG7DPnIixp/SQH+6r2Uj2z3GMI
-         HYiQ==
-X-Gm-Message-State: AOAM533lmtH0PQf1x0/iCL/5aCecADSy34lS6WPwJ6AfB5O6d9ENOjV/
-        4UPuvLusJm7sx7k6PnB8GRoryA==
-X-Google-Smtp-Source: ABdhPJwB7aNz9FzyraE3HZ214E4qpUBNZvJ5G0yqjEDlZDbTxbrjUI8/xzb3tlOkPTBXN2yurcWawg==
-X-Received: by 2002:a17:902:b906:b0:158:3120:3b69 with SMTP id bf6-20020a170902b90600b0015831203b69mr18435617plb.33.1652725066427;
-        Mon, 16 May 2022 11:17:46 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:4ee0:ca4c:63fd:81d2])
-        by smtp.gmail.com with UTF8SMTPSA id p11-20020a170902e74b00b0015e8d4eb1d8sm7431343plf.34.2022.05.16.11.17.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 May 2022 11:17:46 -0700 (PDT)
-Date:   Mon, 16 May 2022 11:17:44 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        Song Liu <song@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] LoadPin: Enable loading from trusted dm-verity
- devices
-Message-ID: <YoKVSEJyHvFg/V9+@google.com>
-References: <20220504195419.1143099-1-mka@chromium.org>
- <20220504125404.v3.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
- <B7FB2BE6-DF1C-414A-B4C2-0C15FD1CBF75@chromium.org>
+        Mon, 16 May 2022 14:28:07 -0400
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [IPv6:2001:1600:3:17::42af])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 352ED3DDD7
+        for <linux-security-module@vger.kernel.org>; Mon, 16 May 2022 11:28:04 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4L276B4yMlzMqDml;
+        Mon, 16 May 2022 20:28:02 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4L276B1DPCzlhSMS;
+        Mon, 16 May 2022 20:28:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1652725682;
+        bh=grTh156LoOpwtgT4v+e7d4bjWG5VtqWp85aZTKbF2VE=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=DVYfzuNVafKNI3X0EdaV58AGGu40qBjMnjFEtWWSc2SjqUcLWcIZCoMImdhYFaH2j
+         +8nBKVAvxxhFU/GKhkMcdeRbM8b9s7kohVjKcMm8P6+L1dBcri5qsG6oWt8B09g8wz
+         IGi0isNl0+3y9IcqM56PNyn91NheqQF3w6nCrmCU=
+Message-ID: <1aaaf30d-f727-63c4-e5ee-e88ff51af300@digikod.net>
+Date:   Mon, 16 May 2022 20:28:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <B7FB2BE6-DF1C-414A-B4C2-0C15FD1CBF75@chromium.org>
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        anton.sirazetdinov@huawei.com
+References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
+ <20220516152038.39594-5-konstantin.meskhidze@huawei.com>
+ <ce1201e9-8493-8387-9df4-f0f8b75011c9@digikod.net>
+ <8c272564-1033-f100-23b6-db6579085fd0@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v5 04/15] landlock: helper functions refactoring
+In-Reply-To: <8c272564-1033-f100-23b6-db6579085fd0@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Kees,
 
-thanks for the review!
-
-On Fri, May 13, 2022 at 03:36:26PM -0700, Kees Cook wrote:
+On 16/05/2022 19:43, Konstantin Meskhidze wrote:
 > 
 > 
-> On May 4, 2022 12:54:18 PM PDT, Matthias Kaehlcke <mka@chromium.org> wrote:
-> >Extend LoadPin to allow loading of kernel files from trusted dm-verity [1]
-> >devices.
-> >
-> >This change adds the concept of trusted verity devices to LoadPin. LoadPin
-> >maintains a list of root digests of verity devices it considers trusted.
-> >Userspace can populate this list through an ioctl on the new LoadPin
-> >securityfs entry 'dm-verity'. The ioctl receives a file descriptor of
-> >a file with verity digests as parameter. Verity reads the digests from
-> >this file after confirming that the file is located on the pinned root.
-> >The list of trusted digests can only be set up once, which is typically
-> >done at boot time.
-> >
-> >When a kernel file is read LoadPin first checks (as usual) whether the file
-> >is located on the pinned root, if so the file can be loaded. Otherwise, if
-> >the verity extension is enabled, LoadPin determines whether the file is
-> >located on a verity backed device and whether the root digest of that
+> 5/16/2022 8:14 PM, Mickaël Salaün пишет:
+>>
+>> On 16/05/2022 17:20, Konstantin Meskhidze wrote:
+>>> Unmask_layers(), init_layer_masks() and
+>>> get_handled_accesses() helper functions move to
+>>> ruleset.c and rule_type argument is added.
+>>> This modification supports implementing new rule
+>>> types into next landlock versions.
+>>>
+>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+
+[...]
+
+>>> -/*
+>>> - * @layer_masks is read and may be updated according to the access 
+>>> request and
+>>> - * the matching rule.
+>>> - *
+>>> - * Returns true if the request is allowed (i.e. relevant layer masks 
+>>> for the
+>>> - * request are empty).
+>>> - */
+>>> -static inline bool
+>>> -unmask_layers(const struct landlock_rule *const rule,
+>>> -          const access_mask_t access_request,
+>>> -          layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+>>
+>> Moving these entire blocks of code make the review/diff impossible. 
+>> Why moving these helpers?
 > 
-> I think this should be "... on an already trusted device ..."
+>    Cause these helpers are going to be used both for filesystem and 
+> network. I moved them into ruleset.c/h
 
-It's not entirely clear which part you want me to substitute. 'an already
-trusted device' makes me wonder whether you are thinking about reading the
-list of digests, and not the general case of reading a kernel file, which
-this paragraph intends to describe.
+Right. Please create a commit which only moves these helpers without 
+modifying them, and explain in the commit message that this removes 
+inlined code. We'll see later if this adds a visible performance impact.
 
-> >device is in the list of trusted digests. The file can be loaded if the
-> >verity device has a trusted root digest.
-> >
-> >Background:
-> >
-> >As of now LoadPin restricts loading of kernel files to a single pinned
-> >filesystem, typically the rootfs. This works for many systems, however it
-> >can result in a bloated rootfs (and OTA updates) on platforms where
-> >multiple boards with different hardware configurations use the same rootfs
-> >image. Especially when 'optional' files are large it may be preferable to
-> >download/install them only when they are actually needed by a given board.
-> >Chrome OS uses Downloadable Content (DLC) [2] to deploy certain 'packages'
-> >at runtime. As an example a DLC package could contain firmware for a
-> >peripheral that is not present on all boards. DLCs use dm-verity to verify
-> >the integrity of the DLC content.
-> >
-> >[1] https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/verity.html
-> >[2] https://chromium.googlesource.com/chromiumos/platform2/+/HEAD/dlcservice/docs/developer.md
-> >
-> >Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> >---
-> >
-> >Changes in v3:
-> >- added securityfs for LoadPin (currently only populated when
-> >  CONFIG_SECURITY_LOADPIN_VERITY=y)
-> >- added uapi include for LoadPin
-> >- changed the interface for setting up the list of trusted
-> >  digests from sysctl to ioctl on securityfs entry
-> >- added stub for loadpin_is_fs_trusted() to be used
-> >  CONFIG_SECURITY_LOADPIN_VERITY is not select
-> >- depend on CONFIG_SECURITYFS instead of CONFIG_SYSTCL
-> >- updated Kconfig help
-> >- minor changes in read_trusted_verity_root_digests()
-> >- updated commit message
-> >
-> >Changes in v2:
-> >- userspace now passes the path of the file with the verity digests
-> >  via systcl, instead of the digests themselves
-> >- renamed sysctl file to 'trusted_verity_root_digests_path'
-> >- have CONFIG_SECURITY_LOADPIN_VERITY depend on CONFIG_SYSCTL
-> >- updated Kconfig doc
-> >- updated commit message
-> >
-> > include/uapi/linux/loadpin.h |  19 ++++
-> > security/loadpin/Kconfig     |  16 +++
-> > security/loadpin/loadpin.c   | 184 ++++++++++++++++++++++++++++++++++-
-> > 3 files changed, 218 insertions(+), 1 deletion(-)
-> > create mode 100644 include/uapi/linux/loadpin.h
-> >
-> >diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-> >index b12f7d986b1e..c29ce562a366 100644
-> >--- a/security/loadpin/loadpin.c
-> >+++ b/security/loadpin/loadpin.c
->
-> ...
->
-> >+static int read_trusted_verity_root_digests(unsigned int fd)
-> >+{
-> >+	struct fd f;
-> >+	void *data;
+[...]
+
+>>> @@ -519,17 +413,25 @@ static int check_access_path_dual(
+>>>
+>>>       if (unlikely(dentry_child1)) {
+>>>           unmask_layers(find_rule(domain, dentry_child1),
+>>> -                  init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+>>> -                           &_layer_masks_child1),
+>>> -                  &_layer_masks_child1);
+>>> +                init_layer_masks(domain,
+>>> +                    LANDLOCK_MASK_ACCESS_FS,
+>>> +                    &_layer_masks_child1,
+>>> +                    sizeof(_layer_masks_child1),
+>>> +                    LANDLOCK_RULE_PATH_BENEATH),
+>>> +                &_layer_masks_child1,
+>>> +                ARRAY_SIZE(_layer_masks_child1));
+>>
+>> There is a lot of formatting diff and that makes the review difficult. 
+>> Please format everything with clang-format-14.
 > 
-> Probably easier if this is u8 *?
+>    Ok. Do you have some tool that helps you with editing code with clang 
+> format?
 
-Maybe slightly, it would then require a cast when passing it to
-kernel_read_file()
+I just run `clang-format-14 -i` on files before each commit. Some 
+editors such as VSCode can handle the clang-format configuration (which 
+is in the Linux source tree).
 
-> >+	int rc;
-> >+	char *p, *d;
-> >+
-> >+	/* The list of trusted root digests can only be set up once */
-> >+	if (!list_empty(&trusted_verity_root_digests))
-> >+		return -EPERM;
-> >+
-> >+	f = fdget(fd);
-> >+	if (!f.file)
-> >+		return -EINVAL;
-> >+
-> >+	data = kzalloc(SZ_4K, GFP_KERNEL);
-> >+	if (!data) {
-> >+		rc = -ENOMEM;
-> >+		goto err;
-> >+	}
-> >+
-> >+	rc = kernel_read_file(f.file, 0, &data, SZ_4K - 1, NULL, READING_POLICY);
-> >+	if (rc < 0)
-> >+		goto err;
-> >+
-> >+	((char *)data)[rc] = '\0';
-> >+
-> >+	p = strim(data);
-> >+	while ((d = strsep(&p, ",")) != NULL) {
-> 
-> Maybe be flexible and add newline as a separator too?
 
-Sure, I can add that. I'd also be fine with just allowing a newline as
-separator, which seems a reasonable format for a sysfs file.
+>>
+>>>           layer_masks_child1 = &_layer_masks_child1;
+>>>           child1_is_directory = d_is_dir(dentry_child1);
+>>>       }
+>>>       if (unlikely(dentry_child2)) {
+>>>           unmask_layers(find_rule(domain, dentry_child2),
+>>> -                  init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+>>> -                           &_layer_masks_child2),
+>>> -                  &_layer_masks_child2);
+>>> +                init_layer_masks(domain,
+>>> +                    LANDLOCK_MASK_ACCESS_FS,
+>>> +                    &_layer_masks_child2,
+>>> +                    sizeof(_layer_masks_child2),
+>>> +                    LANDLOCK_RULE_PATH_BENEATH),
+>>> +                &_layer_masks_child2,
+>>> +                ARRAY_SIZE(_layer_masks_child2));
+>>>           layer_masks_child2 = &_layer_masks_child2;
+>>>           child2_is_directory = d_is_dir(dentry_child2);
+>>>       }
+>>> @@ -582,14 +484,15 @@ static int check_access_path_dual(
+>>>
+>>>           rule = find_rule(domain, walker_path.dentry);
+>>>           allowed_parent1 = unmask_layers(rule, access_masked_parent1,
+>>> -                        layer_masks_parent1);
+>>> +                layer_masks_parent1,
+>>> +                ARRAY_SIZE(*layer_masks_parent1));
+>>>           allowed_parent2 = unmask_layers(rule, access_masked_parent2,
+>>> -                        layer_masks_parent2);
+>>> +                layer_masks_parent2,
+>>> +                ARRAY_SIZE(*layer_masks_parent2));
+>>>
+>>>           /* Stops when a rule from each layer grants access. */
+>>>           if (allowed_parent1 && allowed_parent2)
+>>>               break;
+>>> -
+>>
+>> There is no place for such formatting/whitespace patches.
+>>
+>    I missed that. scripts/checkpatch.pl did not show any problem here.
 
-> >+		int len = strlen(d);
-> >+		struct trusted_root_digest *trd;
-> >+
-> >+		if (len % 2) {
-> >+			rc = -EPROTO;
-> >+			goto err;
-> >+		}
-> >+
-> >+		len /= 2;
-> >+
-> >+		trd = kzalloc(sizeof(*trd), GFP_KERNEL);
-> 
-> With the struct change, this could be:
-> 
-> kzalloc(struct_size(trd, data, len), ...)
+checkpatch.pl doesn't warn about whitespace changes.
 
-Will change
 
-> >+		if (!trd) {
-> >+			rc = -ENOMEM;
-> >+			goto err;
-> >+		}
-> >+
-> >+		trd->data = kzalloc(len, GFP_KERNEL);
-> >+		if (!trd->data) {
-> >+			kfree(trd);
-> >+			rc = -ENOMEM;
-> >+			goto err;
-> >+		}
-> >+
-> >+		if (hex2bin(trd->data, d, len)) {
-> >+			kfree(trd);
-> >+			kfree(trd->data);
-> >+			rc = -EPROTO;
-> >+			goto err;
-> >+		}
-> >+
-> >+		trd->len = len;
-> >+
-> >+		list_add_tail(&trd->node, &trusted_verity_root_digests);
-> >+	}
-> >+
-> >+	kfree(data);
-> >+	fdput(f);
-> >+
-> >+	if (!list_empty(&trusted_verity_root_digests))
-> >+		dm_verity_loadpin_set_trusted_root_digests(&trusted_verity_root_digests);
-> >+
-> >+	return 0;
-> >+
-> >+err:
-> >+	kfree(data);
-> >+
-> 
-> Maybe add a comment that any load failure will invalidate the entire list?
+>    I will fix it. Thanks.
+>>
+>>>   jump_up:
+>>>           if (walker_path.dentry == walker_path.mnt->mnt_root) {
+>>>               if (follow_up(&walker_path)) {
+>>> @@ -645,7 +548,9 @@ static inline int check_access_path(const struct 
+>>> landlock_ruleset *const domain,
+>>>   {
+>>>       layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+>>>
+>>> -    access_request = init_layer_masks(domain, access_request, 
+>>> &layer_masks);
+>>> +    access_request = init_layer_masks(domain, access_request,
+>>> +            &layer_masks, sizeof(layer_masks),
+>>> +            LANDLOCK_RULE_PATH_BENEATH);
+>>>       return check_access_path_dual(domain, path, access_request,
+>>>                         &layer_masks, NULL, 0, NULL, NULL);
+>>>   }
+>>> @@ -729,7 +634,8 @@ static bool collect_domain_accesses(
+>>>           return true;
+>>>
+>>>       access_dom = init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+>>> -                      layer_masks_dom);
+>>> +            layer_masks_dom, sizeof(*layer_masks_dom),
+>>> +            LANDLOCK_RULE_PATH_BENEATH);
+>>>
+>>>       dget(dir);
+>>>       while (true) {
+>>> @@ -737,7 +643,8 @@ static bool collect_domain_accesses(
+>>>
+>>>           /* Gets all layers allowing all domain accesses. */
+>>>           if (unmask_layers(find_rule(domain, dir), access_dom,
+>>> -                  layer_masks_dom)) {
+>>> +                    layer_masks_dom,
+>>> +                    ARRAY_SIZE(*layer_masks_dom))) {
+>>>               /*
+>>>                * Stops when all handled accesses are allowed by at
+>>>                * least one rule in each layer.
+>>> @@ -851,9 +758,10 @@ static int current_check_refer_path(struct 
+>>> dentry *const old_dentry,
+>>>            * The LANDLOCK_ACCESS_FS_REFER access right is not required
+>>>            * for same-directory referer (i.e. no reparenting).
+>>>            */
+>>> -        access_request_parent1 = init_layer_masks(
+>>> -            dom, access_request_parent1 | access_request_parent2,
+>>> -            &layer_masks_parent1);
+>>> +        access_request_parent1 = init_layer_masks(dom,
+>>> +                access_request_parent1 | access_request_parent2,
+>>> +                &layer_masks_parent1, sizeof(layer_masks_parent1),
+>>> +                LANDLOCK_RULE_PATH_BENEATH);
+>>>           return check_access_path_dual(dom, new_dir,
+>>>                             access_request_parent1,
+>>>                             &layer_masks_parent1, NULL, 0,
+>>> @@ -861,7 +769,9 @@ static int current_check_refer_path(struct dentry 
+>>> *const old_dentry,
+>>>       }
+>>>
+>>>       /* Backward compatibility: no reparenting support. */
+>>> -    if (!(get_handled_accesses(dom) & LANDLOCK_ACCESS_FS_REFER))
+>>> +    if (!(get_handled_accesses(dom, LANDLOCK_RULE_PATH_BENEATH,
+>>> +                   LANDLOCK_NUM_ACCESS_FS) &
+>>> +                        LANDLOCK_ACCESS_FS_REFER))
+>>>           return -EXDEV;
+>>>
+>>>       access_request_parent1 |= LANDLOCK_ACCESS_FS_REFER;
+>>> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+>>> index 4b4c9953bb32..c4ed783d655b 100644
+>>> --- a/security/landlock/ruleset.c
+>>> +++ b/security/landlock/ruleset.c
+>>> @@ -233,7 +233,8 @@ static int insert_rule(struct landlock_ruleset 
+>>> *const ruleset,
+>>>                              &(*layers)[0]);
+>>>               if (IS_ERR(new_rule))
+>>>                   return PTR_ERR(new_rule);
+>>> -            rb_replace_node(&this->node, &new_rule->node, 
+>>> &ruleset->root_inode);
+>>> +            rb_replace_node(&this->node, &new_rule->node,
+>>> +                    &ruleset->root_inode);
+>>
+>> This is a pure formatting hunk. :/
+>>
+>    Thats strange, cause in my editor I have normal aligment of arguments.
+>    Could please share clang-format-14 tab size and other format     
+> parameters?
 
-ok
-
-> Otherwise looks good! The only other thing I can think of is pondering more
-> about more carefully failing closed. E.g. instead of just throwing away all
-> the other hashes on a file load failure, maybe lock out future attempts to
-> set it too? I'm not sure this is actually useful, though. :P it shouldn't be
-> possible to corrupt the file, etc. But in the universe where things like
-> DirtyCOW happens, I've gotten even more paranoid. ;)
-
-Sure, we can do that
+They are in the .clang-format file. It would be much easier to just run 
+clang-format-14 -i on your changed files. I guess you had different 
+changes between consecutive commits.
