@@ -2,36 +2,36 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DBAC433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 15:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DE9C433F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 15:21:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240352AbiEPPVi (ORCPT
+        id S245237AbiEPPVj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 May 2022 11:21:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58582 "EHLO
+        Mon, 16 May 2022 11:21:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245291AbiEPPVM (ORCPT
+        with ESMTP id S245275AbiEPPVJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 May 2022 11:21:12 -0400
+        Mon, 16 May 2022 11:21:09 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96C4310571;
-        Mon, 16 May 2022 08:21:11 -0700 (PDT)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4L22tK2Cy7z67Zm5;
-        Mon, 16 May 2022 23:17:29 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4CE43BA67;
+        Mon, 16 May 2022 08:21:05 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4L22tz3lCvz6H7Ht;
+        Mon, 16 May 2022 23:18:03 +0800 (CST)
 Received: from mscphispre00059.huawei.com (10.123.71.64) by
  fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Mon, 16 May 2022 17:21:09 +0200
+ 15.1.2375.24; Mon, 16 May 2022 17:21:03 +0200
 From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 To:     <mic@digikod.net>
 CC:     <willemdebruijn.kernel@gmail.com>,
         <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
         <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
         <anton.sirazetdinov@huawei.com>
-Subject: [PATCH v5 14/15] seltests/landlock: invalid user input data test
-Date:   Mon, 16 May 2022 23:20:37 +0800
-Message-ID: <20220516152038.39594-15-konstantin.meskhidze@huawei.com>
+Subject: [PATCH v5 12/15] seltests/landlock: rules overlapping test
+Date:   Mon, 16 May 2022 23:20:35 +0800
+Message-ID: <20220516152038.39594-13-konstantin.meskhidze@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
 References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
@@ -45,85 +45,83 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch adds rules with invalid user space
-supplied data:
-    - unhandled allowed access;
-    - zero port value;
-    - zero access value;
+This patch adds overlapping rules for one port.
+First rule adds just bind() access right for a port.
+The second one adds both bind() and connect()
+access rights for the same port.
 
 Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 ---
 
 Changes since v3:
-* Add inval test.
+* Add ruleset_overlap test.
 
 Changes since v4:
-* Refactoring code with self->port variable.
+* Refactoring code with self->port, self->addr4 variables.
 
 ---
- tools/testing/selftests/landlock/net_test.c | 52 +++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ tools/testing/selftests/landlock/net_test.c | 51 +++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
 diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index b1639a55a898..ca4b7a7256e8 100644
+index bf8e49466d1d..1d8c9dfdbd48 100644
 --- a/tools/testing/selftests/landlock/net_test.c
 +++ b/tools/testing/selftests/landlock/net_test.c
-@@ -880,4 +880,56 @@ TEST_F_FORK(socket_test, ruleset_expanding) {
- 	/* Closes socket 1 */
- 	ASSERT_EQ(0, close(sockfd_1));
+@@ -677,4 +677,55 @@ TEST_F_FORK(socket_test, connect_afunspec_with_restictions) {
+ 	ASSERT_EQ(1, WIFEXITED(status));
+ 	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
  }
 +
-+TEST_F_FORK(socket_test, inval) {
++TEST_F_FORK(socket_test, ruleset_overlap) {
++
++	int sockfd;
 +
 +	struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP
++		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
++				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
 +	};
 +	struct landlock_net_service_attr net_service_1 = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
-+				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
++		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
++
 +		.port = self->port[0],
 +	};
-+	struct landlock_net_service_attr net_service_2 = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.port = 0,
-+	};
-+	struct landlock_net_service_attr net_service_3 = {
-+		.allowed_access = 0,
-+		.port = self->port[1],
-+	};
-+	struct landlock_net_service_attr net_service_4 = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.port = self->port[2],
++
++		struct landlock_net_service_attr net_service_2 = {
++		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
++				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
++
++		.port = self->port[0],
 +	};
 +
-+	/* Gets ruleset. */
 +	const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-+			sizeof(ruleset_attr), 0);
++					sizeof(ruleset_attr), 0);
 +	ASSERT_LE(0, ruleset_fd);
 +
-+	/* Checks unhandled allowed_access. */
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+					&net_service_1, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	/* Checks zero port value. */
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+					&net_service_2, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	/* Checks zero access value. */
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+					&net_service_3, 0));
-+	ASSERT_EQ(ENOMSG, errno);
-+
-+	/* Adds with legitimate values. */
++	/* Allows bind operations to the port[0] socket */
 +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+					&net_service_4, 0));
++				       &net_service_1, 0));
++	/* Allows connect and bind operations to the port[0] socket */
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
++				       &net_service_2, 0));
 +
 +	/* Enforces the ruleset. */
 +	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
++
++	/* Creates a server socket */
++	sockfd = create_socket(_metadata, false, false);
++	ASSERT_LE(0, sockfd);
++
++	/* Binds the socket to address with port[0] */
++	ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr4[0], sizeof(self->addr4[0])));
++
++	/* Makes connection to socket with port[0] */
++	ASSERT_EQ(0, connect(sockfd, (struct sockaddr *)&self->addr4[0],
++						   sizeof(self->addr4[0])));
++
++	/* Closes socket */
++	ASSERT_EQ(0, close(sockfd));
 +}
++
  TEST_HARNESS_MAIN
 --
 2.25.1
