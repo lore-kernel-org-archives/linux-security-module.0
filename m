@@ -2,220 +2,233 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EE9C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 18:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6913FC433FE
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 18:52:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345005AbiEPSi3 (ORCPT
+        id S1345174AbiEPSwF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 May 2022 14:38:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48950 "EHLO
+        Mon, 16 May 2022 14:52:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345002AbiEPSi2 (ORCPT
+        with ESMTP id S1345153AbiEPSv6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 May 2022 14:38:28 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 511723E5E9;
-        Mon, 16 May 2022 11:38:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0DF63B815B4;
-        Mon, 16 May 2022 18:38:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C94C385AA;
-        Mon, 16 May 2022 18:38:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652726303;
-        bh=0QvHgpJb4KFdSPQhvpkbywnyC2wGLiX11TmowfYp2s0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iF8HVDkBiP42BWNMLdac03I5u5aAhpR+vhIMwoa1mpYAaeYITtvbtHdkiVBaFM65S
-         kNFEIyXvMAgnIU/eU4Uq1bQ34AV2coojUp23sJhrEQcmDO7s8O+cDWA9rgtdm+v45d
-         MeQpFXSpV6GLLbFtK4a9TDdVHeJCbXjNz5xEHMv0sj4VuaCGZoapoXf7TFScaVAAcf
-         UBAgyQC1Iga4ix6xqfX1RsHzYCqIN2AXwApLthNoENTq030XBy4B6qmqfhhbz5aCHA
-         AGCf6Z8xnfs0RE3ctYQViFD3MbP2MHvEMCQDZMFjGCipUhJboRCZKJPzRsNBRmDaPO
-         h0Ql4Y/5m2G/g==
-Date:   Mon, 16 May 2022 21:36:48 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        James Bottomley <jejb@linux.ibm.com>, kernel@pengutronix.de,
-        David Howells <dhowells@redhat.com>,
+        Mon, 16 May 2022 14:51:58 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE663EAA7
+        for <linux-security-module@vger.kernel.org>; Mon, 16 May 2022 11:51:56 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id bo5so14834309pfb.4
+        for <linux-security-module@vger.kernel.org>; Mon, 16 May 2022 11:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=w/vXrhHYz4hayxXTpvluCRqtSLwMXWsi89GFr9tS/YQ=;
+        b=JRehcpW7+f4z4nnJVoYyyn8JTHfm9l7lwwg3/Zc+NghG/A9LUfElMU7tlAgI6zJnGo
+         LKCQmvcigbZB1ml+BnZ81ev55Yy/YSw6DMFKbYvOep7hxWh/H/lxwexytzZbDoi5s68a
+         gMMP2W5FrOB7qNl/5JgcTVgbYZxRV0HozsCvY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=w/vXrhHYz4hayxXTpvluCRqtSLwMXWsi89GFr9tS/YQ=;
+        b=naB6Y3BWwvoeRuu2mNKRUOiqhTzEa7MftGpxtv070p+gVpk3q5TTJpcE7PhiponYlc
+         j9Rpbyh78Nvna5U6V0MFN3H+85+Ji/dbj60YiHzk0uy6u/bETevXQB9YVdpXK7UesCuI
+         cizRcTsXCAVAaRqxVE0e+sEKLKxPvv9N0tVlmWQ+igtcAXt11aKiOrvgczUdr58/ozy8
+         NUvCy73byeTaUWOJ4vf4tk7X3xmKICcTf29VilIGBcdivcAdJ+8PQCLPrbRmInw6Uu/2
+         cXcxu4+CmkxQ6ZRIi00OMpmGa/7LPuaLjpfU0sveicDpTXiNrgKP/zZgGf9sm6M/PLr5
+         QXCg==
+X-Gm-Message-State: AOAM533AVztAj/xN7CPdCKilOdPnDAEgWq8tZLCxDTL5YsQh8ksftxMv
+        tGgfz1BUrFv/VO6PZlG5bXh42Q==
+X-Google-Smtp-Source: ABdhPJymcURqRMGcWWF5SnA9wwUQk3JoOR0K/mUC0Yv15khQOmO0SNCL+Q4Njsx+FkSULBV01/EO0w==
+X-Received: by 2002:a63:4387:0:b0:3c6:9490:4e4b with SMTP id q129-20020a634387000000b003c694904e4bmr16157541pga.438.1652727116092;
+        Mon, 16 May 2022 11:51:56 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:4ee0:ca4c:63fd:81d2])
+        by smtp.gmail.com with UTF8SMTPSA id b2-20020a170902650200b0015e8d4eb264sm7480975plk.174.2022.05.16.11.51.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 May 2022 11:51:55 -0700 (PDT)
+Date:   Mon, 16 May 2022 11:51:54 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Andreas Rammhold <andreas@rammhold.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Michael Walle <michael@walle.cc>,
-        John Ernberg <john.ernberg@actia.se>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Serge E . Hallyn" <serge@hallyn.com>, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v10 0/7] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-Message-ID: <YoKZwFkfcl7ixTF4@kernel.org>
-References: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
+Subject: Re: [PATCH v3 1/3] dm: Add verity helpers for LoadPin
+Message-ID: <YoKdSrjVf/tHGoa5@google.com>
+References: <20220504195419.1143099-1-mka@chromium.org>
+ <20220504125404.v3.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
+ <02028CEA-5704-4A51-8CAD-BEE53CEF7CCA@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
+In-Reply-To: <02028CEA-5704-4A51-8CAD-BEE53CEF7CCA@chromium.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 13, 2022 at 04:56:58PM +0200, Ahmad Fatoum wrote:
-> Series applies on top of v5.18-rc6. Would be great if this could make it
-> into v5.19.
-> 
-> v9 was here:
-> https://lore.kernel.org/linux-integrity/20220506062553.1068296-1-a.fatoum@pengutronix.de
-> 
-> Changelog is beneath each individual patch. Compared to v9, only code
-> change is checking whether CAAM can support blobbing at init-time for
-> CAAM revisions < 10 (such as LS1046A) to avoid a cryptic error message
-> at first use.
+On Fri, May 13, 2022 at 03:15:53PM -0700, Kees Cook wrote:
 > 
 > 
-> The Cryptographic Acceleration and Assurance Module (CAAM) is an IP core
-> built into many newer i.MX and QorIQ SoCs by NXP.
+> On May 4, 2022 12:54:17 PM PDT, Matthias Kaehlcke <mka@chromium.org> wrote:
+> >LoadPin limits loading of kernel modules, firmware and certain
+> >other files to a 'pinned' file system (typically a read-only
+> >rootfs). To provide more flexibility LoadPin is being extended
+> >to also allow loading these files from trusted dm-verity
+> >devices. For that purpose LoadPin can be provided with a list
+> >of verity root digests that it should consider as trusted.
+> >
+> >Add a bunch of helpers to allow LoadPin to check whether a DM
+> >device is a trusted verity device. The new functions broadly
+> >fall in two categories: those that need access to verity
+> >internals (like the root digest), and the 'glue' between
+> >LoadPin and verity. The new file dm-verity-loadpin.c contains
+> >the glue functions.
+> >
+> >Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > [...]
+> >diff --git a/drivers/md/dm-verity-loadpin.c b/drivers/md/dm-verity-loadpin.c
+> >new file mode 100644
+> >index 000000000000..972ca93a2231
+> >--- /dev/null
+> >+++ b/drivers/md/dm-verity-loadpin.c
+> >@@ -0,0 +1,80 @@
+> >+// SPDX-License-Identifier: GPL-2.0-only
+> >+
+> >+#include <linux/list.h>
+> >+#include <linux/kernel.h>
+> >+#include <linux/dm-verity-loadpin.h>
+> >+
+> >+#include "dm.h"
+> >+#include "dm-verity.h"
+> >+
+> >+static struct list_head *trusted_root_digests;
 > 
-> Its blob mechanism can AES encrypt/decrypt user data using a unique
-> never-disclosed device-specific key.
-> 
-> There has been multiple discussions on how to represent this within the kernel:
-> 
-> The Cryptographic Acceleration and Assurance Module (CAAM) is an IP core
-> built into many newer i.MX and QorIQ SoCs by NXP.
-> 
-> Its blob mechanism can AES encrypt/decrypt user data using a unique
-> never-disclosed device-specific key. There has been multiple
-> discussions on how to represent this within the kernel:
-> 
->  - [RFC] crypto: caam - add red blobifier
->    Steffen implemented[1] a PoC sysfs driver to start a discussion on how to
->    best integrate the blob mechanism.
->    Mimi suggested that it could be used to implement trusted keys.
->    Trusted keys back then were a TPM-only feature.
-> 
->  - security/keys/secure_key: Adds the secure key support based on CAAM.
->    Udit Agarwal added[2] a new "secure" key type with the CAAM as backend.
->    The key material stays within the kernel only.
->    Mimi and James agreed that this needs a generic interface, not specific
->    to CAAM. Mimi suggested trusted keys. Jan noted that this could serve as
->    basis for TEE-backed keys.
-> 
->  - [RFC] drivers: crypto: caam: key: Add caam_tk key type
->    Franck added[3] a new "caam_tk" key type based on Udit's work. This time
->    it uses CAAM "black blobs" instead of "red blobs", so key material stays
->    within the CAAM and isn't exposed to kernel in plaintext.
->    James voiced the opinion that there should be just one user-facing generic
->    wrap/unwrap key type with multiple possible handlers.
->    David suggested trusted keys.
-> 
->  - Introduce TEE based Trusted Keys support
->    Sumit reworked[4] trusted keys to support multiple possible backends with
->    one chosen at boot time and added a new TEE backend along with TPM.
->    This now sits in Jarkko's master branch to be sent out for v5.13
-> 
-> This patch series builds on top of Sumit's rework to have the CAAM as yet another
-> trusted key backend.
-> 
-> The CAAM bits are based on Steffen's initial patch from 2015. His work had been
-> used in the field for some years now, so I preferred not to deviate too much from it.
-> 
-> This series has been tested with dmcrypt[5] on an i.MX6Q/DL, i.MX8M[6]
-> and LS1028[7].
-> 
-> Looking forward to your feedback.
-> 
-> Cheers,
-> Ahmad
-> 
->  [1]: https://lore.kernel.org/linux-crypto/1447082306-19946-2-git-send-email-s.trumtrar@pengutronix.de/
->  [2]: https://lore.kernel.org/linux-integrity/20180723111432.26830-1-udit.agarwal@nxp.com/
->  [3]: https://lore.kernel.org/lkml/1551456599-10603-2-git-send-email-franck.lenormand@nxp.com/
->  [4]: https://lore.kernel.org/lkml/1604419306-26105-1-git-send-email-sumit.garg@linaro.org/
->  [5]: https://lore.kernel.org/linux-integrity/20210122084321.24012-2-a.fatoum@pengutronix.de/
->  [6]: https://lore.kernel.org/linux-integrity/DU2PR04MB8630D83FE9BBC0D782C4FAF595089@DU2PR04MB8630.eurprd04.prod.outlook.com/
->  [7]: https://lore.kernel.org/linux-integrity/49e1738c55c73819ee0e2cac0be74d81@walle.cc/
-> 
-> ---
-> To: Jarkko Sakkinen <jarkko@kernel.org>
-> To: "Horia Geantă" <horia.geanta@nxp.com>
-> To: Mimi Zohar <zohar@linux.ibm.com>
-> To: Pankaj Gupta <pankaj.gupta@nxp.com>
-> To: Herbert Xu <herbert@gondor.apana.org.au>
-> To: "David S. Miller" <davem@davemloft.net>
-> To: James Bottomley <jejb@linux.ibm.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> Cc: Jan Luebbe <j.luebbe@pengutronix.de>
-> Cc: David Gstir <david@sigma-star.at>
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Franck LENORMAND <franck.lenormand@nxp.com>
-> Cc: Sumit Garg <sumit.garg@linaro.org>
-> Cc: Andreas Rammhold <andreas@rammhold.de>
-> Cc: Tim Harvey <tharvey@gateworks.com>
-> Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> Cc: Michael Walle <michael@walle.cc>
-> Cc: John Ernberg <john.ernberg@actia.se>
-> Cc: linux-integrity@vger.kernel.org
-> Cc: keyrings@vger.kernel.org
-> Cc: linux-crypto@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> 
-> 
-> 
-> Ahmad Fatoum (7):
->   KEYS: trusted: allow use of TEE as backend without TCG_TPM support
->   KEYS: trusted: allow use of kernel RNG for key material
->   crypto: caam - determine whether CAAM supports blob encap/decap
->   crypto: caam - add in-kernel interface for blob generator
->   KEYS: trusted: Introduce support for NXP CAAM-based trusted keys
->   doc: trusted-encrypted: describe new CAAM trust source
->   MAINTAINERS: add KEYS-TRUSTED-CAAM
-> 
->  .../admin-guide/kernel-parameters.txt         |  11 ++
->  .../security/keys/trusted-encrypted.rst       |  60 +++++-
->  MAINTAINERS                                   |   9 +
->  drivers/crypto/caam/Kconfig                   |   3 +
->  drivers/crypto/caam/Makefile                  |   1 +
->  drivers/crypto/caam/blob_gen.c                | 182 ++++++++++++++++++
->  drivers/crypto/caam/ctrl.c                    |  17 +-
->  drivers/crypto/caam/intern.h                  |   1 +
->  drivers/crypto/caam/regs.h                    |   4 +-
->  include/keys/trusted-type.h                   |   2 +-
->  include/keys/trusted_caam.h                   |  11 ++
->  include/soc/fsl/caam-blob.h                   | 103 ++++++++++
->  security/keys/Kconfig                         |  18 +-
->  security/keys/trusted-keys/Kconfig            |  38 ++++
->  security/keys/trusted-keys/Makefile           |  10 +-
->  security/keys/trusted-keys/trusted_caam.c     |  80 ++++++++
->  security/keys/trusted-keys/trusted_core.c     |  45 ++++-
->  17 files changed, 563 insertions(+), 32 deletions(-)
->  create mode 100644 drivers/crypto/caam/blob_gen.c
->  create mode 100644 include/keys/trusted_caam.h
->  create mode 100644 include/soc/fsl/caam-blob.h
->  create mode 100644 security/keys/trusted-keys/Kconfig
->  create mode 100644 security/keys/trusted-keys/trusted_caam.c
-> 
-> -- 
-> 2.30.2
-> 
+> Does this need to exist in two places? (i.e. why can't dm and loadpin share
+> this instead of needing dm_verity_loadpin_set_trusted_digests()?)
 
-I can probably pick these unless objections?
+We could share it. Probably it should then be defined here, since this is
+the first patch of the series, we could add an extern declaration to
+dm-verity-loadpin.h.
 
-BR, Jarkko
+> >+
+> >+/*
+> >+ * Sets the root digests of verity devices which LoadPin considers as trusted.
+> >+ *
+> >+ * This function must only be called once.
+> >+ */
+> >+void dm_verity_loadpin_set_trusted_root_digests(struct list_head *digests)
+> >+{
+> >+	if (!trusted_root_digests)
+> >+		trusted_root_digests = digests;
+> >+	else
+> >+		pr_warn("verity root digests trusted by LoadPin are already set!!!\n");
+> >+}
+> >+
+> >+static bool is_trusted_verity_target(struct dm_target *ti)
+> >+{
+> >+	u8 *root_digest;
+> >+	unsigned int digest_size;
+> >+	struct trusted_root_digest *trd;
+> >+	bool trusted = false;
+> >+
+> >+	if (!dm_is_verity_target(ti))
+> >+		return false;
+> >+
+> >+	if (dm_verity_get_root_digest(ti, &root_digest, &digest_size))
+> >+		return false;
+> >+
+> >+	list_for_each_entry(trd, trusted_root_digests, node) {
+> >+		if ((trd->len == digest_size) &&
+> >+		    !memcmp(trd->data, root_digest, digest_size)) {
+> >+			trusted = true;
+> >+			break;
+> >+		}
+> >+	}
+> >+
+> >+	kfree(root_digest);
+> >+
+> >+	return trusted;
+> >+}
+> >+
+> >+/*
+> >+ * Determines whether a mapped device is a verity device that is trusted
+> >+ * by LoadPin.
+> >+ */
+> >+bool dm_verity_loadpin_is_md_trusted(struct mapped_device *md)
+> >+{
+> >+	int srcu_idx;
+> >+	struct dm_table *table;
+> >+	unsigned int num_targets;
+> >+	bool trusted = false;
+> >+	int i;
+> >+
+> >+	if (!trusted_root_digests || list_empty(trusted_root_digests))
+> >+		return false;
+> >+
+> >+	table = dm_get_live_table(md, &srcu_idx);
+> >+	num_targets = dm_table_get_num_targets(table);
+> >+	for (i = 0; i < num_targets; i++) {
+> >+		struct dm_target *ti = dm_table_get_target(table, i);
+> >+
+> >+		if (is_trusted_verity_target(ti)) {
+> >+			trusted = true;
+> >+			break;
+> >+		}
+> >+	}
+> 
+> Pardon my lack of dm vocabulary, but what is "target" vs "table" here?
+> I was only thinking of "whole device", so I must not understand what this is
+> examining.
+
+'targets' are different types of DM mappings like 'linear' or 'verity'. A
+device mapper table contains has one or more targets that define the mapping
+of the blocks of the mapped device.
+
+Having spelled that out I realize that the above check is wrong. It would
+consider a device like this trusted:
+
+0 10000000 linear 8:1
+10000000 10001000 verity <params>
+
+In the above case only a small part of the DM device would be backed by verity.
+
+I think we want a table with a single entry that is a verity target.
+
+> > [...]
+> >diff --git a/include/linux/dm-verity-loadpin.h b/include/linux/dm-verity-loadpin.h
+> >new file mode 100644
+> >index 000000000000..12a86911d05a
+> >--- /dev/null
+> >+++ b/include/linux/dm-verity-loadpin.h
+> >@@ -0,0 +1,27 @@
+> >+/* SPDX-License-Identifier: GPL-2.0 */
+> >+
+> >+#ifndef __LINUX_DM_VERITY_LOADPIN_H
+> >+#define __LINUX_DM_VERITY_LOADPIN_H
+> >+
+> >+#include <linux/list.h>
+> >+
+> >+struct mapped_device;
+> >+
+> >+struct trusted_root_digest {
+> >+	u8 *data;
+> >+	unsigned int len;
+> >+	struct list_head node;
+> >+};
+> 
+> To avoid the double-alloc in patch 2 (and save 1 pointer size of memory), this could just be:
+> 
+> struct trusted_root_digest {
+> 	struct list_head node;
+> 	unsigned int len;
+> 	u8 data[];
+> };
+
+Looks good to me, will change
+
+> Otherwise, looks good to me!
+
+Excellent, thanks for the review!
