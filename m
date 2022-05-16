@@ -2,575 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04A0C433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 17:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB556C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 17:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235783AbiEPRPC (ORCPT
+        id S230270AbiEPRl7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 May 2022 13:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
+        Mon, 16 May 2022 13:41:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbiEPRPB (ORCPT
+        with ESMTP id S1344392AbiEPRlc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 May 2022 13:15:01 -0400
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E61453207C
-        for <linux-security-module@vger.kernel.org>; Mon, 16 May 2022 10:14:57 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4L25Tr2BskzMqGT4;
-        Mon, 16 May 2022 19:14:56 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4L25Tq5982zlhSMk;
-        Mon, 16 May 2022 19:14:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1652721296;
-        bh=ckn2vRizr6EM5+UjPKTmBlUvHZbPFsLH9ffNAx/yOGM=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=ZwhU0EKLbg62WOnFcj7+dUUVceRg/jdibH5kyeafrzOJolWTZhVKrEzmO16XqtG+A
-         VOjnIEndx54DavkNW/C5XuvOSu7z16gS3/1eBA4+xukrpBvEIE/UUCGIbFpyoZdEnr
-         iIpa2hNCGuhNelVu3iUP5+qVpIbErOAmaag3r3Sw=
-Message-ID: <ce1201e9-8493-8387-9df4-f0f8b75011c9@digikod.net>
-Date:   Mon, 16 May 2022 19:14:55 +0200
-MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        anton.sirazetdinov@huawei.com
-References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
- <20220516152038.39594-5-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v5 04/15] landlock: helper functions refactoring
-In-Reply-To: <20220516152038.39594-5-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Mon, 16 May 2022 13:41:32 -0400
+X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 16 May 2022 10:41:25 PDT
+Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 3C4423701D;
+        Mon, 16 May 2022 10:41:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pku.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
+        Message-Id; bh=DjFY8kI2tBxuMhCnW3UlpTLlJzV7HoCSZMoVqH/WCD8=; b=S
+        RirxfGceUucx9whh94apwdg2TnJjAuwqnl5Q25s4qXetI+lACrLCcYCaz4sEG03b
+        T+xN3MQh5Jczp+gCk5J/5avnk6+p/yC4fN2ygWCFxottkUetJW/q1muDbkEGnYHi
+        wl5oAFUyLNYbbdsO4TXRLbirXMxCjcx8p87lqJvNEo=
+Received: from localhost (unknown [10.129.21.144])
+        by front02 (Coremail) with SMTP id 54FpogD39OR0jIJidi5ABg--.34814S2;
+        Tue, 17 May 2022 01:40:05 +0800 (CST)
+From:   Yongzhi Liu <lyz_cs@pku.edu.cn>
+To:     serge@hallyn.com, jmorris@namei.org, viro@zeniv.linux.org.uk,
+        dhowells@redhat.com, ebiederm@xmission.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yongzhi Liu <lyz_cs@pku.edu.cn>
+Subject: [PATCH] commoncap: check return value to avoid null pointer dereference
+Date:   Mon, 16 May 2022 10:40:02 -0700
+Message-Id: <1652722802-66170-1-git-send-email-lyz_cs@pku.edu.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: 54FpogD39OR0jIJidi5ABg--.34814S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7trWfuryxJF15Xr43tF15XFb_yoW8Xr4fpa
+        1fCa48Jr4rJFyj9w1vvF4Duw1Y9ayfZFW8GFWkuw1ayFs3Gry0yryakw1UuF15CryYk34j
+        qr4Yk3y5WF1UA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkK1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
+        w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
+        IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E
+        87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzx
+        vE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+        JVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+        AKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l
+        42xK82IY6x8ErcxFaVAv8VWkJr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+        AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+        6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbU
+        UUUUU==
+X-CM-SenderInfo: irzqijirqukmo6sn3hxhgxhubq/1tbiAwEHBlPy7vG+mAAFse
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+The pointer inode is dereferenced before a null pointer
+check on inode, hence if inode is actually null we will
+get a null pointer dereference. Fix this by only dereferencing
+inode after the null pointer check on inode.
 
-On 16/05/2022 17:20, Konstantin Meskhidze wrote:
-> Unmask_layers(), init_layer_masks() and
-> get_handled_accesses() helper functions move to
-> ruleset.c and rule_type argument is added.
-> This modification supports implementing new rule
-> types into next landlock versions.
-> 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
-> 
-> Changes since v3:
-> * Splits commit.
-> * Refactoring landlock_unmask_layers functions.
-> 
+Fixes: c6f493d631c ("VFS: security/: d_backing_inode() annotations")
+Fixes: 8db6c34 ("Introduce v3 namespaced file capabilities")
 
-Please sort changes in antichronological order. It is easier to look at 
-the first lines to get the last changes.
+Signed-off-by: Yongzhi Liu <lyz_cs@pku.edu.cn>
+---
+ security/commoncap.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> Changes since v4:
-> * Refactoring init_layer_masks(), get_handled_accesses()
-> and unmask_layers() functions to support multiple rule types.
-> * Refactoring landlock_get_fs_access_mask() function with
-> LANDLOCK_MASK_ACCESS_FS mask. >
-> ---
->   security/landlock/fs.c      | 158 ++++++++----------------------------
->   security/landlock/ruleset.c | 152 +++++++++++++++++++++++++++++++---
->   security/landlock/ruleset.h |  17 +++-
->   3 files changed, 192 insertions(+), 135 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 5de24d4dd74c..3506e182b23e 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -211,60 +211,6 @@ find_rule(const struct landlock_ruleset *const domain,
->   	return rule;
->   }
-> 
-> -/*
-> - * @layer_masks is read and may be updated according to the access request and
-> - * the matching rule.
-> - *
-> - * Returns true if the request is allowed (i.e. relevant layer masks for the
-> - * request are empty).
-> - */
-> -static inline bool
-> -unmask_layers(const struct landlock_rule *const rule,
-> -	      const access_mask_t access_request,
-> -	      layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 5fc8986..978f011 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -298,6 +298,8 @@ int cap_inode_need_killpriv(struct dentry *dentry)
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	int error;
+ 
++	if (!inode)
++		return 0;
+ 	error = __vfs_getxattr(dentry, inode, XATTR_NAME_CAPS, NULL, 0);
+ 	return error > 0;
+ }
+@@ -545,11 +547,13 @@ int cap_convert_nscap(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 	const struct vfs_cap_data *cap = *ivalue;
+ 	__u32 magic, nsmagic;
+ 	struct inode *inode = d_backing_inode(dentry);
+-	struct user_namespace *task_ns = current_user_ns(),
+-		*fs_ns = inode->i_sb->s_user_ns;
++	struct user_namespace *task_ns = current_user_ns(), *fs_ns;
+ 	kuid_t rootid;
+ 	size_t newsize;
+ 
++	if (!inode)
++		return -EINVAL;
++	fs_ns = inode->i_sb->s_user_ns;
+ 	if (!*ivalue)
+ 		return -EINVAL;
+ 	if (!validheader(size, cap))
+-- 
+2.7.4
 
-Moving these entire blocks of code make the review/diff impossible. Why 
-moving these helpers?
-
-> -{
-> -	size_t layer_level;
-> -
-> -	if (!access_request || !layer_masks)
-> -		return true;
-> -	if (!rule)
-> -		return false;
-> -
-> -	/*
-> -	 * An access is granted if, for each policy layer, at least one rule
-> -	 * encountered on the pathwalk grants the requested access,
-> -	 * regardless of its position in the layer stack.  We must then check
-> -	 * the remaining layers for each inode, from the first added layer to
-> -	 * the last one.  When there is multiple requested accesses, for each
-> -	 * policy layer, the full set of requested accesses may not be granted
-> -	 * by only one rule, but by the union (binary OR) of multiple rules.
-> -	 * E.g. /a/b <execute> + /a <read> => /a/b <execute + read>
-> -	 */
-> -	for (layer_level = 0; layer_level < rule->num_layers; layer_level++) {
-> -		const struct landlock_layer *const layer =
-> -			&rule->layers[layer_level];
-> -		const layer_mask_t layer_bit = BIT_ULL(layer->level - 1);
-> -		const unsigned long access_req = access_request;
-> -		unsigned long access_bit;
-> -		bool is_empty;
-> -
-> -		/*
-> -		 * Records in @layer_masks which layer grants access to each
-> -		 * requested access.
-> -		 */
-> -		is_empty = true;
-> -		for_each_set_bit(access_bit, &access_req,
-> -				 ARRAY_SIZE(*layer_masks)) {
-> -			if (layer->access & BIT_ULL(access_bit))
-> -				(*layer_masks)[access_bit] &= ~layer_bit;
-> -			is_empty = is_empty && !(*layer_masks)[access_bit];
-> -		}
-> -		if (is_empty)
-> -			return true;
-> -	}
-> -	return false;
-> -}
-> -
->   /*
->    * Allows access to pseudo filesystems that will never be mountable (e.g.
->    * sockfs, pipefs), but can still be reachable through
-> @@ -277,59 +223,6 @@ static inline bool is_nouser_or_private(const struct dentry *dentry)
->   		unlikely(IS_PRIVATE(d_backing_inode(dentry))));
->   }
-> 
-> -static inline access_mask_t
-> -get_handled_accesses(const struct landlock_ruleset *const domain)
-> -{
-> -	access_mask_t access_dom = 0;
-> -	unsigned long access_bit;
-> -
-> -	for (access_bit = 0; access_bit < LANDLOCK_NUM_ACCESS_FS;
-> -	     access_bit++) {
-> -		size_t layer_level;
-> -
-> -		for (layer_level = 0; layer_level < domain->num_layers;
-> -				layer_level++) {
-> -			if (landlock_get_fs_access_mask(domain, layer_level) &
-> -					BIT_ULL(access_bit)) {
-> -				access_dom |= BIT_ULL(access_bit);
-> -				break;
-> -			}
-> -		}
-> -	}
-> -	return access_dom;
-> -}
-> -
-> -static inline access_mask_t
-> -init_layer_masks(const struct landlock_ruleset *const domain,
-> -		 const access_mask_t access_request,
-> -		 layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> -{
-> -	access_mask_t handled_accesses = 0;
-> -	size_t layer_level;
-> -
-> -	memset(layer_masks, 0, sizeof(*layer_masks));
-> -	/* An empty access request can happen because of O_WRONLY | O_RDWR. */
-> -	if (!access_request)
-> -		return 0;
-> -
-> -	/* Saves all handled accesses per layer. */
-> -	for (layer_level = 0; layer_level < domain->num_layers; layer_level++) {
-> -		const unsigned long access_req = access_request;
-> -		unsigned long access_bit;
-> -
-> -		for_each_set_bit(access_bit, &access_req,
-> -				ARRAY_SIZE(*layer_masks)) {
-> -			if (landlock_get_fs_access_mask(domain, layer_level) &
-> -					BIT_ULL(access_bit)) {
-> -				(*layer_masks)[access_bit] |=
-> -					BIT_ULL(layer_level);
-> -				handled_accesses |= BIT_ULL(access_bit);
-> -			}
-> -		}
-> -	}
-> -	return handled_accesses;
-> -}
-> -
->   /*
->    * Check that a destination file hierarchy has more restrictions than a source
->    * file hierarchy.  This is only used for link and rename actions.
-> @@ -506,7 +399,8 @@ static int check_access_path_dual(
->   		 * a superset of the meaningful requested accesses).
->   		 */
->   		access_masked_parent1 = access_masked_parent2 =
-> -			get_handled_accesses(domain);
-> +			get_handled_accesses(domain, LANDLOCK_RULE_PATH_BENEATH,
-> +					     LANDLOCK_NUM_ACCESS_FS);
->   		is_dom_check = true;
->   	} else {
->   		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
-> @@ -519,17 +413,25 @@ static int check_access_path_dual(
-> 
->   	if (unlikely(dentry_child1)) {
->   		unmask_layers(find_rule(domain, dentry_child1),
-> -			      init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
-> -					       &_layer_masks_child1),
-> -			      &_layer_masks_child1);
-> +				init_layer_masks(domain,
-> +					LANDLOCK_MASK_ACCESS_FS,
-> +					&_layer_masks_child1,
-> +					sizeof(_layer_masks_child1),
-> +					LANDLOCK_RULE_PATH_BENEATH),
-> +				&_layer_masks_child1,
-> +				ARRAY_SIZE(_layer_masks_child1));
-
-There is a lot of formatting diff and that makes the review difficult. 
-Please format everything with clang-format-14.
-
->   		layer_masks_child1 = &_layer_masks_child1;
->   		child1_is_directory = d_is_dir(dentry_child1);
->   	}
->   	if (unlikely(dentry_child2)) {
->   		unmask_layers(find_rule(domain, dentry_child2),
-> -			      init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
-> -					       &_layer_masks_child2),
-> -			      &_layer_masks_child2);
-> +				init_layer_masks(domain,
-> +					LANDLOCK_MASK_ACCESS_FS,
-> +					&_layer_masks_child2,
-> +					sizeof(_layer_masks_child2),
-> +					LANDLOCK_RULE_PATH_BENEATH),
-> +				&_layer_masks_child2,
-> +				ARRAY_SIZE(_layer_masks_child2));
->   		layer_masks_child2 = &_layer_masks_child2;
->   		child2_is_directory = d_is_dir(dentry_child2);
->   	}
-> @@ -582,14 +484,15 @@ static int check_access_path_dual(
-> 
->   		rule = find_rule(domain, walker_path.dentry);
->   		allowed_parent1 = unmask_layers(rule, access_masked_parent1,
-> -						layer_masks_parent1);
-> +				layer_masks_parent1,
-> +				ARRAY_SIZE(*layer_masks_parent1));
->   		allowed_parent2 = unmask_layers(rule, access_masked_parent2,
-> -						layer_masks_parent2);
-> +				layer_masks_parent2,
-> +				ARRAY_SIZE(*layer_masks_parent2));
-> 
->   		/* Stops when a rule from each layer grants access. */
->   		if (allowed_parent1 && allowed_parent2)
->   			break;
-> -
-
-There is no place for such formatting/whitespace patches.
-
-
->   jump_up:
->   		if (walker_path.dentry == walker_path.mnt->mnt_root) {
->   			if (follow_up(&walker_path)) {
-> @@ -645,7 +548,9 @@ static inline int check_access_path(const struct landlock_ruleset *const domain,
->   {
->   	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
-> 
-> -	access_request = init_layer_masks(domain, access_request, &layer_masks);
-> +	access_request = init_layer_masks(domain, access_request,
-> +			&layer_masks, sizeof(layer_masks),
-> +			LANDLOCK_RULE_PATH_BENEATH);
->   	return check_access_path_dual(domain, path, access_request,
->   				      &layer_masks, NULL, 0, NULL, NULL);
->   }
-> @@ -729,7 +634,8 @@ static bool collect_domain_accesses(
->   		return true;
-> 
->   	access_dom = init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
-> -				      layer_masks_dom);
-> +			layer_masks_dom, sizeof(*layer_masks_dom),
-> +			LANDLOCK_RULE_PATH_BENEATH);
-> 
->   	dget(dir);
->   	while (true) {
-> @@ -737,7 +643,8 @@ static bool collect_domain_accesses(
-> 
->   		/* Gets all layers allowing all domain accesses. */
->   		if (unmask_layers(find_rule(domain, dir), access_dom,
-> -				  layer_masks_dom)) {
-> +					layer_masks_dom,
-> +					ARRAY_SIZE(*layer_masks_dom))) {
->   			/*
->   			 * Stops when all handled accesses are allowed by at
->   			 * least one rule in each layer.
-> @@ -851,9 +758,10 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->   		 * The LANDLOCK_ACCESS_FS_REFER access right is not required
->   		 * for same-directory referer (i.e. no reparenting).
->   		 */
-> -		access_request_parent1 = init_layer_masks(
-> -			dom, access_request_parent1 | access_request_parent2,
-> -			&layer_masks_parent1);
-> +		access_request_parent1 = init_layer_masks(dom,
-> +				access_request_parent1 | access_request_parent2,
-> +				&layer_masks_parent1, sizeof(layer_masks_parent1),
-> +				LANDLOCK_RULE_PATH_BENEATH);
->   		return check_access_path_dual(dom, new_dir,
->   					      access_request_parent1,
->   					      &layer_masks_parent1, NULL, 0,
-> @@ -861,7 +769,9 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->   	}
-> 
->   	/* Backward compatibility: no reparenting support. */
-> -	if (!(get_handled_accesses(dom) & LANDLOCK_ACCESS_FS_REFER))
-> +	if (!(get_handled_accesses(dom, LANDLOCK_RULE_PATH_BENEATH,
-> +				   LANDLOCK_NUM_ACCESS_FS) &
-> +						LANDLOCK_ACCESS_FS_REFER))
->   		return -EXDEV;
-> 
->   	access_request_parent1 |= LANDLOCK_ACCESS_FS_REFER;
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index 4b4c9953bb32..c4ed783d655b 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -233,7 +233,8 @@ static int insert_rule(struct landlock_ruleset *const ruleset,
->   					       &(*layers)[0]);
->   			if (IS_ERR(new_rule))
->   				return PTR_ERR(new_rule);
-> -			rb_replace_node(&this->node, &new_rule->node, &ruleset->root_inode);
-> +			rb_replace_node(&this->node, &new_rule->node,
-> +					&ruleset->root_inode);
-
-This is a pure formatting hunk. :/
-
-
->   			free_rule(this, rule_type);
->   			break;
->   		}
-> @@ -246,7 +247,8 @@ static int insert_rule(struct landlock_ruleset *const ruleset,
->   		return -E2BIG;
->   	switch (rule_type) {
->   	case LANDLOCK_RULE_PATH_BENEATH:
-> -		new_rule = create_rule(object_ptr, 0, layers, num_layers, NULL);
-> +		new_rule = create_rule(object_ptr, 0, layers,
-> +				       num_layers, NULL);
->   		if (IS_ERR(new_rule))
->   			return PTR_ERR(new_rule);
->   		rb_link_node(&new_rule->node, parent_node, walker_node);
-> @@ -281,8 +283,8 @@ int landlock_insert_rule(struct landlock_ruleset *const ruleset,
->   	} };
-> 
->   	build_check_layer();
-> -	return insert_rule(ruleset, object_ptr, object_data, rule_type, &layers,
-> -			   ARRAY_SIZE(layers));
-> +	return insert_rule(ruleset, object_ptr, object_data, rule_type,
-> +			   &layers, ARRAY_SIZE(layers));
->   }
-> 
->   static inline void get_hierarchy(struct landlock_hierarchy *const hierarchy)
-> @@ -335,8 +337,9 @@ static int tree_merge(struct landlock_ruleset *const src,
-> 
->   		switch (rule_type) {
->   		case LANDLOCK_RULE_PATH_BENEATH:
-> -			err = insert_rule(dst, walker_rule->object.ptr, 0, rule_type,
-> -					  &layers, ARRAY_SIZE(layers));
-> +			err = insert_rule(dst, walker_rule->object.ptr, 0,
-> +					  rule_type, &layers,
-> +					  ARRAY_SIZE(layers));
->   			break;
->   		}
->   		if (err)
-> @@ -433,9 +436,13 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
->   		err = -EINVAL;
->   		goto out_unlock;
->   	}
-> -	/* Copies the parent layer stack and leaves a space for the new layer. */
-> +	/*
-> +	 * Copies the parent layer stack and leaves a space
-> +	 * for the new layer.
-> +	 */
->   	memcpy(child->access_masks, parent->access_masks,
-> -			flex_array_size(parent, access_masks, parent->num_layers));
-> +			flex_array_size(parent, access_masks,
-> +					parent->num_layers));
-> 
->   	if (WARN_ON_ONCE(!parent->hierarchy)) {
->   		err = -EINVAL;
-> @@ -455,8 +462,9 @@ static void free_ruleset(struct landlock_ruleset *const ruleset)
->   	struct landlock_rule *freeme, *next;
-> 
->   	might_sleep();
-> -	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root_inode,
-> -			node)
-> +	rbtree_postorder_for_each_entry_safe(freeme, next,
-> +					     &ruleset->root_inode,
-> +					     node)
->   		free_rule(freeme, LANDLOCK_RULE_PATH_BENEATH);
->   	put_hierarchy(ruleset->hierarchy);
->   	kfree(ruleset);
-> @@ -577,3 +585,127 @@ const struct landlock_rule *landlock_find_rule(
->   	}
->   	return NULL;
->   }
-> +
-> +access_mask_t get_handled_accesses(
-> +		const struct landlock_ruleset *const domain,
-> +		u16 rule_type, u16 num_access)
-> +{
-> +	access_mask_t access_dom = 0;
-> +	unsigned long access_bit;
-> +
-> +	switch (rule_type) {
-> +	case LANDLOCK_RULE_PATH_BENEATH:
-> +		for (access_bit = 0; access_bit < LANDLOCK_NUM_ACCESS_FS;
-> +			access_bit++) {
-> +			size_t layer_level;
-> +
-> +			for (layer_level = 0; layer_level < domain->num_layers;
-> +					layer_level++) {
-> +				if (landlock_get_fs_access_mask(domain,
-> +								layer_level) &
-> +						BIT_ULL(access_bit)) {
-> +					access_dom |= BIT_ULL(access_bit);
-> +					break;
-> +				}
-> +			}
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	return access_dom;
-> +}
-> +
-> +/*
-> + * @layer_masks is read and may be updated according to the access request and
-> + * the matching rule.
-> + *
-> + * Returns true if the request is allowed (i.e. relevant layer masks for the
-> + * request are empty).
-> + */
-> +bool unmask_layers(const struct landlock_rule *const rule,
-> +		const access_mask_t access_request,
-> +		layer_mask_t (*const layer_masks)[], size_t masks_array_size)
-> +{
-> +	size_t layer_level;
-> +
-> +	if (!access_request || !layer_masks)
-> +		return true;
-> +	if (!rule)
-> +		return false;
-> +
-> +	/*
-> +	 * An access is granted if, for each policy layer, at least one rule
-> +	 * encountered on the pathwalk grants the requested access,
-> +	 * regardless of its position in the layer stack.  We must then check
-> +	 * the remaining layers for each inode, from the first added layer to
-> +	 * the last one.  When there is multiple requested accesses, for each
-> +	 * policy layer, the full set of requested accesses may not be granted
-> +	 * by only one rule, but by the union (binary OR) of multiple rules.
-> +	 * E.g. /a/b <execute> + /a <read> => /a/b <execute + read>
-> +	 */
-> +	for (layer_level = 0; layer_level < rule->num_layers; layer_level++) {
-> +		const struct landlock_layer *const layer =
-> +			&rule->layers[layer_level];
-> +		const layer_mask_t layer_bit = BIT_ULL(layer->level - 1);
-> +		const unsigned long access_req = access_request;
-> +		unsigned long access_bit;
-> +		bool is_empty;
-> +
-> +		/*
-> +		 * Records in @layer_masks which layer grants access to each
-> +		 * requested access.
-> +		 */
-> +		is_empty = true;
-> +		for_each_set_bit(access_bit, &access_req, masks_array_size) {
-> +			if (layer->access & BIT_ULL(access_bit))
-> +				(*layer_masks)[access_bit] &= ~layer_bit;
-> +			is_empty = is_empty && !(*layer_masks)[access_bit];
-> +		}
-> +		if (is_empty)
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +access_mask_t init_layer_masks(const struct landlock_ruleset *const domain,
-> +			       const access_mask_t access_request,
-> +			       layer_mask_t (*const layer_masks)[],
-> +			       size_t masks_size,
-> +			       u16 rule_type)
-> +{
-> +	access_mask_t handled_accesses = 0;
-> +	size_t layer_level;
-> +
-> +	memset(layer_masks, 0, masks_size);
-> +
-> +	/* An empty access request can happen because of O_WRONLY | O_RDWR. */
-> +	if (!access_request)
-> +		return 0;
-> +
-> +	/* Saves all handled accesses per layer. */
-> +	for (layer_level = 0; layer_level < domain->num_layers;
-> +			layer_level++) {
-> +		const unsigned long access_req = access_request;
-> +		unsigned long access_bit;
-> +
-> +		switch (rule_type) {
-> +		case LANDLOCK_RULE_PATH_BENEATH:
-> +			for_each_set_bit(access_bit, &access_req,
-> +					LANDLOCK_NUM_ACCESS_FS) {
-> +				if (landlock_get_fs_access_mask(domain,
-> +								layer_level) &
-> +						BIT_ULL(access_bit)) {
-> +					(*layer_masks)[access_bit] |=
-> +						BIT_ULL(layer_level);
-> +					handled_accesses |=
-> +							   BIT_ULL(access_bit);
-> +				}
-> +			}
-> +			break;
-> +		default:
-> +			return 0;
-> +		}
-> +	}
-> +	return handled_accesses;
-> +}
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index 3066e5d7180c..f3cd890d0348 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -195,7 +195,22 @@ static inline u32 landlock_get_fs_access_mask(
->   					const struct landlock_ruleset *ruleset,
->   					u16 mask_level)
->   {
-> -	return ruleset->access_masks[mask_level];
-> +	return (ruleset->access_masks[mask_level] & LANDLOCK_MASK_ACCESS_FS);
->   }
-> 
-> +access_mask_t get_handled_accesses(
-> +		const struct landlock_ruleset *const domain,
-> +		u16 rule_type, u16 num_access);
-> +
-> +bool unmask_layers(const struct landlock_rule *const rule,
-> +		   const access_mask_t access_request,
-> +		   layer_mask_t (*const layer_masks)[],
-> +		   size_t masks_array_size);
-> +
-> +access_mask_t init_layer_masks(const struct landlock_ruleset *const domain,
-> +			       const access_mask_t access_request,
-> +			       layer_mask_t (*const layer_masks)[],
-> +			       size_t masks_size,
-> +			       u16 rule_type);
-
-These declarations are useless.
-
-> +
->   #endif /* _SECURITY_LANDLOCK_RULESET_H */
-> --
-> 2.25.1
-> 
