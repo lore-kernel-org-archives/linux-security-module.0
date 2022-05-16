@@ -2,36 +2,36 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8540EC4167D
-	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 15:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C047BC4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 16 May 2022 15:21:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245185AbiEPPVg (ORCPT
+        id S245193AbiEPPVh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 16 May 2022 11:21:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58318 "EHLO
+        Mon, 16 May 2022 11:21:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245261AbiEPPVI (ORCPT
+        with ESMTP id S245288AbiEPPVL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 16 May 2022 11:21:08 -0400
+        Mon, 16 May 2022 11:21:11 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC093BFB1;
-        Mon, 16 May 2022 08:21:02 -0700 (PDT)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4L22yK6Kwhz67bhp;
-        Mon, 16 May 2022 23:20:57 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4318E3B550;
+        Mon, 16 May 2022 08:21:10 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4L22tH6rCzz67n8d;
+        Mon, 16 May 2022 23:17:27 +0800 (CST)
 Received: from mscphispre00059.huawei.com (10.123.71.64) by
  fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Mon, 16 May 2022 17:21:00 +0200
+ 15.1.2375.24; Mon, 16 May 2022 17:21:08 +0200
 From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 To:     <mic@digikod.net>
 CC:     <willemdebruijn.kernel@gmail.com>,
         <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
         <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
         <anton.sirazetdinov@huawei.com>
-Subject: [PATCH v5 10/15] seltests/landlock: add tests for connect() hooks
-Date:   Mon, 16 May 2022 23:20:33 +0800
-Message-ID: <20220516152038.39594-11-konstantin.meskhidze@huawei.com>
+Subject: [PATCH v5 13/15] seltests/landlock: ruleset expanding test
+Date:   Mon, 16 May 2022 23:20:36 +0800
+Message-ID: <20220516152038.39594-14-konstantin.meskhidze@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
 References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
@@ -45,360 +45,182 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Adds selftests for connect socket action.
-The first are with no landlock restrictions:
-    - connect_no_restrictions_ip4;
-    - connect_no_restrictions_ip6;
-The second ones are with mixed landlock rules:
-    - connect_with_restrictions_ip4;
-    - connect_with_restrictions_ip6;
+This patch adds expanding rulesets in which
+rules are gradually added one by one, restricting
+sockets' connections.
 
 Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 ---
 
 Changes since v3:
-* Split commit.
+* Add ruleset_expanding test.
 
 Changes since v4:
-* Adds selftests for IP6 family:
-    - connect_no_restrictions_ip6.
-    - connect_with_restrictions_ip6.
-* Refactoring code with self->port, self->addr4 and
-self->addr6 variables.
+* Refactoring code with self->port, self->addr4 variables.
 
 ---
- tools/testing/selftests/landlock/net_test.c | 322 ++++++++++++++++++++
- 1 file changed, 322 insertions(+)
+ tools/testing/selftests/landlock/net_test.c | 152 ++++++++++++++++++++
+ 1 file changed, 152 insertions(+)
 
 diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index 478ef2eff559..cf914d311eb3 100644
+index 1d8c9dfdbd48..b1639a55a898 100644
 --- a/tools/testing/selftests/landlock/net_test.c
 +++ b/tools/testing/selftests/landlock/net_test.c
-@@ -234,4 +234,326 @@ TEST_F_FORK(socket_test, bind_with_restrictions_ip6) {
- 	ASSERT_EQ(-1, bind(sockfd, (struct sockaddr *)&self->addr6[2], sizeof(self->addr6[2])));
- 	ASSERT_EQ(EACCES, errno);
+@@ -728,4 +728,156 @@ TEST_F_FORK(socket_test, ruleset_overlap) {
+ 	ASSERT_EQ(0, close(sockfd));
  }
+
++TEST_F_FORK(socket_test, ruleset_expanding) {
 +
-+TEST_F_FORK(socket_test, connect_no_restrictions_ip4) {
-+
-+	int sockfd, new_fd;
-+	pid_t child;
-+	int status;
-+
-+	/* Creates a server socket */
-+	sockfd = create_socket(_metadata, false, false);
-+	ASSERT_LE(0, sockfd);
-+
-+	/* Binds a socket to port[0] */
-+	ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr4[0], sizeof(self->addr4[0])));
-+
-+	/* Makes listening socket */
-+	ASSERT_EQ(0, listen(sockfd, BACKLOG));
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+	if (child == 0) {
-+		int child_sockfd;
-+
-+		/* Closes listening socket for the child */
-+		ASSERT_EQ(0, close(sockfd));
-+		/* Create a stream client socket */
-+		child_sockfd = create_socket(_metadata, false, false);
-+		ASSERT_LE(0, child_sockfd);
-+
-+		/* Makes connection to the listening socket */
-+		ASSERT_EQ(0, connect(child_sockfd, (struct sockaddr *)&self->addr4[0],
-+						   sizeof(self->addr4[0])));
-+		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
-+		return;
-+	}
-+	/* Accepts connection from the child */
-+	new_fd = accept(sockfd, NULL, 0);
-+	ASSERT_LE(0, new_fd);
-+
-+	/* Closes connection */
-+	ASSERT_EQ(0, close(new_fd));
-+
-+	/* Closes listening socket for the parent*/
-+	ASSERT_EQ(0, close(sockfd));
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_EQ(1, WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+}
-+
-+TEST_F_FORK(socket_test, connect_no_restrictions_ip6) {
-+
-+	int sockfd, new_fd;
-+	pid_t child;
-+	int status;
-+
-+	/* Creates a server socket */
-+	sockfd = create_socket(_metadata, true, false);
-+	ASSERT_LE(0, sockfd);
-+
-+	/* Binds a socket to port[0] */
-+	ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr6[0], sizeof(self->addr6[0])));
-+
-+	/* Makes listening socket */
-+	ASSERT_EQ(0, listen(sockfd, BACKLOG));
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+	if (child == 0) {
-+		int child_sockfd;
-+
-+		/* Closes listening socket for the child */
-+		ASSERT_EQ(0, close(sockfd));
-+		/* Create a stream client socket */
-+		child_sockfd = create_socket(_metadata, true, false);
-+		ASSERT_LE(0, child_sockfd);
-+
-+		/* Makes connection to the listening socket */
-+		ASSERT_EQ(0, connect(child_sockfd, (struct sockaddr *)&self->addr6[0],
-+						   sizeof(self->addr6[0])));
-+		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
-+		return;
-+	}
-+	/* Accepts connection from the child */
-+	new_fd = accept(sockfd, NULL, 0);
-+	ASSERT_LE(0, new_fd);
-+
-+	/* Closes connection */
-+	ASSERT_EQ(0, close(new_fd));
-+
-+	/* Closes listening socket for the parent*/
-+	ASSERT_EQ(0, close(sockfd));
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_EQ(1, WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+}
-+
-+TEST_F_FORK(socket_test, connect_with_restrictions_ip4) {
-+
-+	int new_fd;
 +	int sockfd_1, sockfd_2;
-+	pid_t child_1, child_2;
-+	int status;
 +
-+	struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-+				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
++	struct landlock_ruleset_attr ruleset_attr_1 = {
++		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
 +	};
 +	struct landlock_net_service_attr net_service_1 = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
-+				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
++		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
++
 +		.port = self->port[0],
 +	};
-+	struct landlock_net_service_attr net_service_2 = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.port = self->port[1],
-+	};
 +
-+	const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-+			sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
++	const int ruleset_fd_1 = landlock_create_ruleset(&ruleset_attr_1,
++					sizeof(ruleset_attr_1), 0);
++	ASSERT_LE(0, ruleset_fd_1);
 +
-+	/* Allows connect and bind operations to the port[0] socket */
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+				&net_service_1, 0));
-+	/* Allows connect and deny bind operations to the port[1] socket */
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+				&net_service_2, 0));
++	/* Adds rule to port[0] socket */
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd_1, LANDLOCK_RULE_NET_SERVICE,
++				       &net_service_1, 0));
 +
 +	/* Enforces the ruleset. */
-+	enforce_ruleset(_metadata, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd_1);
++	ASSERT_EQ(0, close(ruleset_fd_1));
 +
-+	/* Creates a server socket 1 */
-+	sockfd_1 = create_socket(_metadata, false, false);
++	/* Creates a socket 1 */
++	sockfd_1 = create_socket(_metadata, false, true);
 +	ASSERT_LE(0, sockfd_1);
 +
 +	/* Binds the socket 1 to address with port[0] */
 +	ASSERT_EQ(0, bind(sockfd_1, (struct sockaddr *)&self->addr4[0], sizeof(self->addr4[0])));
 +
-+	/* Makes listening socket 1 */
-+	ASSERT_EQ(0, listen(sockfd_1, BACKLOG));
-+
-+	child_1 = fork();
-+	ASSERT_LE(0, child_1);
-+	if (child_1 == 0) {
-+		int child_sockfd;
-+
-+		/* Closes listening socket for the child */
-+		ASSERT_EQ(0, close(sockfd_1));
-+		/* Creates a stream client socket */
-+		child_sockfd = create_socket(_metadata, false, false);
-+		ASSERT_LE(0, child_sockfd);
-+
-+		/* Makes connection to the listening socket */
-+		ASSERT_EQ(0, connect(child_sockfd, (struct sockaddr *)&self->addr4[0],
++	/* Makes connection to socket 1 with port[0] */
++	ASSERT_EQ(0, connect(sockfd_1, (struct sockaddr *)&self->addr4[0],
 +						   sizeof(self->addr4[0])));
-+		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
-+		return;
-+	}
-+	/* Accepts connection from the child 1 */
-+	new_fd = accept(sockfd_1, NULL, 0);
-+	ASSERT_LE(0, new_fd);
 +
-+	/* Closes connection */
-+	ASSERT_EQ(0, close(new_fd));
-+
-+	/* Closes listening socket 1 for the parent*/
++	/* Closes socket 1 */
 +	ASSERT_EQ(0, close(sockfd_1));
 +
-+	ASSERT_EQ(child_1, waitpid(child_1, &status, 0));
-+	ASSERT_EQ(1, WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+
-+	/* Creates a server socket 2 */
-+	sockfd_2 = create_socket(_metadata, false, false);
++	/* Creates a socket 2 */
++	sockfd_2 = create_socket(_metadata, false, true);
 +	ASSERT_LE(0, sockfd_2);
 +
-+	/* Binds the socket 2 to address with port[1] */
-+	ASSERT_EQ(0, bind(sockfd_2, (struct sockaddr *)&self->addr4[1], sizeof(self->addr4[1])));
++	/*
++	 * Forbids to bind the socket 2 to address with port[1],
++	 * cause there is no rule with bind() access for port[1].
++	 */
++	ASSERT_EQ(-1, bind(sockfd_2, (struct sockaddr *)&self->addr4[1], sizeof(self->addr4[1])));
++	ASSERT_EQ(EACCES, errno);
 +
-+	/* Makes listening socket 2 */
-+	ASSERT_EQ(0, listen(sockfd_2, BACKLOG));
-+
-+	child_2 = fork();
-+	ASSERT_LE(0, child_2);
-+	if (child_2 == 0) {
-+		int child_sockfd;
-+
-+		/* Closes listening socket for the child */
-+		ASSERT_EQ(0, close(sockfd_2));
-+		/* Creates a stream client socket */
-+		child_sockfd = create_socket(_metadata, false, false);
-+		ASSERT_LE(0, child_sockfd);
-+
-+		/* Makes connection to the listening socket */
-+		ASSERT_EQ(-1, connect(child_sockfd, (struct sockaddr *)&self->addr4[1],
-+						   sizeof(self->addr4[1])));
-+		ASSERT_EQ(EACCES, errno);
-+		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
-+		return;
-+	}
-+
-+	/* Closes listening socket 2 for the parent*/
-+	ASSERT_EQ(0, close(sockfd_2));
-+
-+	ASSERT_EQ(child_2, waitpid(child_2, &status, 0));
-+	ASSERT_EQ(1, WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+}
-+
-+TEST_F_FORK(socket_test, connect_with_restrictions_ip6) {
-+
-+	int new_fd;
-+	int sockfd_1, sockfd_2;
-+	pid_t child_1, child_2;
-+	int status;
-+
-+	struct landlock_ruleset_attr ruleset_attr = {
++	/* Expands network mask */
++	struct landlock_ruleset_attr ruleset_attr_2 = {
 +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
 +				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
 +	};
-+	struct landlock_net_service_attr net_service_1 = {
++
++	/* Adds connect() access to port[0] */
++	struct landlock_net_service_attr net_service_2 = {
 +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
 +				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
++
 +		.port = self->port[0],
 +	};
-+	struct landlock_net_service_attr net_service_2 = {
++	/* Adds bind() access to port[1] */
++	struct landlock_net_service_attr net_service_3 = {
 +		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
++
 +		.port = self->port[1],
 +	};
 +
-+	const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-+			sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
++	const int ruleset_fd_2 = landlock_create_ruleset(&ruleset_attr_2,
++					sizeof(ruleset_attr_2), 0);
++	ASSERT_LE(0, ruleset_fd_2);
 +
-+	/* Allows connect and bind operations to the port[0] socket */
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+				&net_service_1, 0));
-+	/* Allows connect and deny bind operations to the port[1] socket */
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+				&net_service_2, 0));
++	/* Adds rule to port[0] socket */
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd_2, LANDLOCK_RULE_NET_SERVICE,
++				       &net_service_2, 0));
++	/* Adds rule to port[1] socket */
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd_2, LANDLOCK_RULE_NET_SERVICE,
++				       &net_service_3, 0));
 +
 +	/* Enforces the ruleset. */
-+	enforce_ruleset(_metadata, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd_2);
++	ASSERT_EQ(0, close(ruleset_fd_2));
 +
-+	/* Creates a server socket 1 */
-+	sockfd_1 = create_socket(_metadata, true, false);
++	/* Creates a socket 1 */
++	sockfd_1 = create_socket(_metadata, false, true);
 +	ASSERT_LE(0, sockfd_1);
 +
 +	/* Binds the socket 1 to address with port[0] */
-+	ASSERT_EQ(0, bind(sockfd_1, (struct sockaddr *)&self->addr6[0], sizeof(self->addr6[0])));
++	ASSERT_EQ(0, bind(sockfd_1, (struct sockaddr *)&self->addr4[0], sizeof(self->addr4[0])));
 +
-+	/* Makes listening socket 1 */
-+	ASSERT_EQ(0, listen(sockfd_1, BACKLOG));
-+
-+	child_1 = fork();
-+	ASSERT_LE(0, child_1);
-+	if (child_1 == 0) {
-+		int child_sockfd;
-+
-+		/* Closes listening socket for the child */
-+		ASSERT_EQ(0, close(sockfd_1));
-+		/* Creates a stream client socket */
-+		child_sockfd = create_socket(_metadata, true, false);
-+		ASSERT_LE(0, child_sockfd);
-+
-+		/* Makes connection to the listening socket */
-+		ASSERT_EQ(0, connect(child_sockfd, (struct sockaddr *)&self->addr6[0],
-+						   sizeof(self->addr6[0])));
-+		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
-+		return;
-+	}
-+	/* Accepts connection from the child 1 */
-+	new_fd = accept(sockfd_1, NULL, 0);
-+	ASSERT_LE(0, new_fd);
-+
-+	/* Closes connection */
-+	ASSERT_EQ(0, close(new_fd));
-+
-+	/* Closes listening socket 1 for the parent*/
++	/* Makes connection to socket 1 with port[0] */
++	ASSERT_EQ(0, connect(sockfd_1, (struct sockaddr *)&self->addr4[0],
++						   sizeof(self->addr4[0])));
++	/* Closes socket 1 */
 +	ASSERT_EQ(0, close(sockfd_1));
 +
-+	ASSERT_EQ(child_1, waitpid(child_1, &status, 0));
-+	ASSERT_EQ(1, WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+
-+	/* Creates a server socket 2 */
-+	sockfd_2 = create_socket(_metadata, true, false);
++	/* Creates a socket 2 */
++	sockfd_2 = create_socket(_metadata, false, true);
 +	ASSERT_LE(0, sockfd_2);
 +
-+	/* Binds the socket 2 to address with port[1] */
-+	ASSERT_EQ(0, bind(sockfd_2, (struct sockaddr *)&self->addr6[1], sizeof(self->addr6[1])));
++	/*
++	 * Forbids to bind the socket 2 to address with port[1],
++	 * cause just one layer has bind() access rule.
++	 */
++	ASSERT_EQ(-1, bind(sockfd_2, (struct sockaddr *)&self->addr4[1], sizeof(self->addr4[1])));
++	ASSERT_EQ(EACCES, errno);
 +
-+	/* Makes listening socket 2 */
-+	ASSERT_EQ(0, listen(sockfd_2, BACKLOG));
++	/* Expands network mask */
++	struct landlock_ruleset_attr ruleset_attr_3 = {
++		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
++				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
++	};
 +
-+	child_2 = fork();
-+	ASSERT_LE(0, child_2);
-+	if (child_2 == 0) {
-+		int child_sockfd;
++	/* Restricts connect() access to port[0] */
++	struct landlock_net_service_attr net_service_4 = {
++		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
 +
-+		/* Closes listening socket for the child */
-+		ASSERT_EQ(0, close(sockfd_2));
-+		/* Creates a stream client socket */
-+		child_sockfd = create_socket(_metadata, true, false);
-+		ASSERT_LE(0, child_sockfd);
++		.port = self->port[0],
++	};
 +
-+		/* Makes connection to the listening socket */
-+		ASSERT_EQ(-1, connect(child_sockfd, (struct sockaddr *)&self->addr6[1],
-+						   sizeof(self->addr6[1])));
-+		ASSERT_EQ(EACCES, errno);
-+		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
-+		return;
-+	}
++	const int ruleset_fd_3 = landlock_create_ruleset(&ruleset_attr_3,
++					sizeof(ruleset_attr_3), 0);
++	ASSERT_LE(0, ruleset_fd_3);
 +
-+	/* Closes listening socket 2 for the parent*/
-+	ASSERT_EQ(0, close(sockfd_2));
++	/* Adds rule to port[0] socket */
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd_3, LANDLOCK_RULE_NET_SERVICE,
++				       &net_service_4, 0));
 +
-+	ASSERT_EQ(child_2, waitpid(child_2, &status, 0));
-+	ASSERT_EQ(1, WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
++	/* Enforces the ruleset. */
++	enforce_ruleset(_metadata, ruleset_fd_3);
++	ASSERT_EQ(0, close(ruleset_fd_3));
++
++	/* Creates a socket 1 */
++	sockfd_1 = create_socket(_metadata, false, true);
++	ASSERT_LE(0, sockfd_1);
++
++	/* Binds the socket 1 to address with port[0] */
++	ASSERT_EQ(0, bind(sockfd_1, (struct sockaddr *)&self->addr4[0], sizeof(self->addr4[0])));
++
++	/*
++	 * Forbids to bind the socket 1 to address with port[0],
++	 * cause just one layer has connect() access rule.
++	 */
++	ASSERT_EQ(-1, connect(sockfd_1, (struct sockaddr *)&self->addr4[0],
++						   sizeof(self->addr4[0])));
++	ASSERT_EQ(EACCES, errno);
++
++	/* Closes socket 1 */
++	ASSERT_EQ(0, close(sockfd_1));
 +}
  TEST_HARNESS_MAIN
 --
