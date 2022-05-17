@@ -2,69 +2,78 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D6EC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 May 2022 08:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E78C433F5
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 May 2022 08:14:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229486AbiEQILv (ORCPT
+        id S241735AbiEQIOx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 May 2022 04:11:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34594 "EHLO
+        Tue, 17 May 2022 04:14:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242638AbiEQIK5 (ORCPT
+        with ESMTP id S242826AbiEQIN3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 May 2022 04:10:57 -0400
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F05664C9
-        for <linux-security-module@vger.kernel.org>; Tue, 17 May 2022 01:10:56 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4L2TMf4BykzMpnlD;
-        Tue, 17 May 2022 10:10:54 +0200 (CEST)
+        Tue, 17 May 2022 04:13:29 -0400
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98654991C
+        for <linux-security-module@vger.kernel.org>; Tue, 17 May 2022 01:12:36 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4L2TPZ5H7rzMrBqC;
+        Tue, 17 May 2022 10:12:34 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4L2TMf0v4LzlhRV4;
-        Tue, 17 May 2022 10:10:54 +0200 (CEST)
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4L2TPZ1y6qzlhMC5;
+        Tue, 17 May 2022 10:12:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1652775054;
-        bh=QSvIKgcPbtswa6FCH51xSiVof77XHJ5FF/xz//8wBlY=;
-        h=Date:From:To:Cc:References:Subject:In-Reply-To:From;
-        b=INqGamUJNKXAS6+uYsxv1scucimt4LtXYvj6t9q454KX9iYsfxX4UO7SkNQq1sN0s
-         hDpjGIHRYVSC9Yq23XzK9eAuljA0ti4CVPXIim2Tf+GQTrtj7R9QtXkiNQjp6C3tHY
-         nxyhyD5dVZD4Gr2IgnT4JtmpaQegMuIrm3zuLrmI=
-Message-ID: <ed56f8a3-5469-2b62-ea29-1f7164b0638a@digikod.net>
-Date:   Tue, 17 May 2022 10:10:53 +0200
+        s=20191114; t=1652775154;
+        bh=Wlo13ZQ1fjXEj/AZR+D+T5bedv0V+KydvqaxiHUOJb4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=i8mUt8stPxvNARDvMT22qV9SlqPmrMhW1geD9DVQPe805afS53dp4bBcbG6oy23Y6
+         pwK2edYJdAwdX+H8yCYlTHz+XMFzKI9W0Bv077HHH7+7jWMo8tzPpBWymBO06/rtw9
+         Ngrqtg1xJLWkJO915sPcTDAoEsLhJoO82TOPXQEk=
+Message-ID: <a6300c07-87f5-21a4-8998-facbecd63787@digikod.net>
+Date:   Tue, 17 May 2022 10:12:33 +0200
 MIME-Version: 1.0
 User-Agent: 
+Subject: Re: [PATCH v5 01/15] landlock: access mask renaming
 Content-Language: en-US
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
 To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 Cc:     willemdebruijn.kernel@gmail.com,
         linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
         netfilter-devel@vger.kernel.org, yusongping@huawei.com,
         anton.sirazetdinov@huawei.com
 References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
- <20220516152038.39594-6-konstantin.meskhidze@huawei.com>
- <9456ccf3-e2b3-bb65-f24f-e6d2761120e5@digikod.net>
-Subject: Re: [PATCH v5 05/15] landlock: landlock_add_rule syscall refactoring
-In-Reply-To: <9456ccf3-e2b3-bb65-f24f-e6d2761120e5@digikod.net>
+ <20220516152038.39594-2-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20220516152038.39594-2-konstantin.meskhidze@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 17/05/2022 10:04, Mickaël Salaün wrote:
-> You can rename the subject to "landlock: Refactor landlock_add_rule()"
+On 16/05/2022 17:20, Konstantin Meskhidze wrote:
+> Currently Landlock supports filesystem
+> restrictions. To support network type rules,
+> this modification extends and renames
+> ruleset's access masks.
+> This patch adds filesystem helper functions
+> to set and get filesystem mask. Also the modification
+> adds a helper structure landlock_access_mask to
+> support managing multiple access mask.
 > 
-> 
-> On 16/05/2022 17:20, Konstantin Meskhidze wrote:
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
 
 [...]
 
->> helper was added to support current filesystem rules. It is called
->> by the switch case.
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index d43231b783e4..f27a79624962 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -20,6 +20,7 @@
+>   #include "object.h"
 > 
-> You can rephrase (all commit messages) in the present form:
-present *tense*
-> 
-> Refactor the landlock_add_rule() syscall to easily support for a new 
-> rule type in a following commit. The new add_rule_path_beneath() helper 
-> supports current filesystem rules.
+>   typedef u16 access_mask_t;
+> +
+>   /* Makes sure all filesystem access rights can be stored. */
+
+Please don't add whitespaces.
