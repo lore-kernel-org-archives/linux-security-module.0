@@ -2,169 +2,190 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2EDC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 May 2022 19:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 760E2C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 May 2022 19:50:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352692AbiEQT2M (ORCPT
+        id S1352843AbiEQTuM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 May 2022 15:28:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36266 "EHLO
+        Tue, 17 May 2022 15:50:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352687AbiEQT2L (ORCPT
+        with ESMTP id S233185AbiEQTuL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 May 2022 15:28:11 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58F1E5046F
-        for <linux-security-module@vger.kernel.org>; Tue, 17 May 2022 12:28:10 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id ds11so6729609pjb.0
-        for <linux-security-module@vger.kernel.org>; Tue, 17 May 2022 12:28:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=sRnxrATUFurY+xdKnn0z6Pv7TbtVcM0Bq4eah/DEREU=;
-        b=JcsUddQn7mwi3Hs9+4T2lmrTBhkTURZOl+VlTxQkmcpmYim4U4ziDUuR9aUZ9PLDNq
-         aZ9CRydRn53CuQ+S0m2vFy3wZqugRK7eiBqw+07aK3Gx5fgT3z3c5mHlKv5NqFnuVqsh
-         CBwQT0NomHnxqzS3NbUSHfeVmZhTTWwqod3jc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sRnxrATUFurY+xdKnn0z6Pv7TbtVcM0Bq4eah/DEREU=;
-        b=ZEgwFu8hPIcHkVW1MkOBnUBIES3kZk/pUY/RszBd2nc+swCjFz+XlNJGBa+Ji5o4Ts
-         B4bRj2U0G+vfTNw2Oc939zMhuu5nq625JbVXK8y02QV2GQ8b75tdJLvxs7lgF76sBZ1n
-         RhN+abxZepDN61+WS0y+hOxpyS9NTq9LCY95VrFvtTtxbJPlqoxPb/YzJ+VYgukomJOX
-         G04oUNiuhcnL6SJMtaDHIsagd5/MM0wxaTUg7B4hjatLO0E21QssFkovf0GW8NjhWTGY
-         8EsvZWidu1pJNjGEKTH7cphUadC7iTHZvckgy4zAfSypfeJcWDeUpZdmtSgKVsgzJGTG
-         cZpg==
-X-Gm-Message-State: AOAM530M05uzFf7/3m5CImtVwqPEqHCYSCyNnfGCvexS6LCJH/9LoWIL
-        kE+B28BLdBqoeNG95MshAosM7g==
-X-Google-Smtp-Source: ABdhPJzb6NxCGOhL9QfuLNbvRAfqqVCHjnAogoMxMJEoG6YKx2Kx62sZPGUOs+pIjzwhzNyg+KiRSQ==
-X-Received: by 2002:a17:90a:9914:b0:1db:d10f:1fcf with SMTP id b20-20020a17090a991400b001dbd10f1fcfmr37464999pjp.241.1652815689928;
-        Tue, 17 May 2022 12:28:09 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:641e:de1c:873b:321e])
-        by smtp.gmail.com with UTF8SMTPSA id k1-20020a170902694100b0015e8d4eb2bcsm9412366plt.262.2022.05.17.12.28.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 12:28:09 -0700 (PDT)
-Date:   Tue, 17 May 2022 12:28:08 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
+        Tue, 17 May 2022 15:50:11 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8BAD381A2;
+        Tue, 17 May 2022 12:50:08 -0700 (PDT)
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24HJj5nj007921;
+        Tue, 17 May 2022 19:49:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=cI+oIgMmdU+emHoSmuCJfl7DDPI2DU7nUb6sIjNnUjE=;
+ b=nscihTpC5el6eAjl9Tw2n8BGB6v1zMOzGVCtmzaVZPnqNZAbi5po8qQ1qn/cFPQ9tUMd
+ JUUr+Gdln/DDgPqmOsUw9fuHg/2qY4hgDnHH/YTp9LNjMCxxJL96C82s20RBz15Cgm4+
+ 52ayLYVLllYK4DECR5twGsmWzujhuPCa2cu8E44kY3rV1wZiQg9b4B5OKLsgRC+gmpSp
+ sOwmtPcHeP8XzJpYowjxz12Wn3G2roVoNGIJj5E6uRB4HNFQKCF3h1Vm5RfIRLxi1fCy
+ 9IuCjDFXuy6PGlcbPHWuoh+hhIC/VILAI95p0+R+Pnuh5Kri7uoX1V9DQyyRL/o0f1KE Xw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3g4j5001wm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 May 2022 19:49:44 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 24HJnWm0021912;
+        Tue, 17 May 2022 19:49:43 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3g4j5001w3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 May 2022 19:49:43 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24HJglUj004965;
+        Tue, 17 May 2022 19:49:41 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03ams.nl.ibm.com with ESMTP id 3g2429cpp0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 May 2022 19:49:41 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24HJncO358982762
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 May 2022 19:49:38 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CFB4C11C050;
+        Tue, 17 May 2022 19:49:38 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2AB7811C054;
+        Tue, 17 May 2022 19:49:35 +0000 (GMT)
+Received: from sig-9-65-95-105.ibm.com (unknown [9.65.95.105])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 17 May 2022 19:49:35 +0000 (GMT)
+Message-ID: <dd488736ab86c0e0b2809b4ce30f1827563b52b2.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 2/7] KEYS: trusted: allow use of kernel RNG for key
+ material
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>, kernel@pengutronix.de,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Pankaj Gupta <pankaj.gupta@nxp.com>,
+        David Gstir <david@sigma-star.at>,
+        Michael Walle <michael@walle.cc>,
+        John Ernberg <john.ernberg@actia.se>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        Song Liu <song@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] LoadPin: Enable loading from trusted dm-verity
- devices
-Message-ID: <YoP3SJ62uHI7nrXy@google.com>
-References: <20220504195419.1143099-1-mka@chromium.org>
- <20220504125404.v3.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
- <B7FB2BE6-DF1C-414A-B4C2-0C15FD1CBF75@chromium.org>
- <YoKVSEJyHvFg/V9+@google.com>
- <202205162038.B2D1BBAB3@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202205162038.B2D1BBAB3@keescook>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Horia =?UTF-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
+Date:   Tue, 17 May 2022 15:49:34 -0400
+In-Reply-To: <YoPpyDjn61AFqcZp@zx2c4.com>
+References: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
+         <20220513145705.2080323-3-a.fatoum@pengutronix.de>
+         <1c6a5ce2564c29a06eca255072a379351a5fc026.camel@linux.ibm.com>
+         <YoPdfjswwA2wKinr@zx2c4.com>
+         <4fe5564e860eb3093a88528ba1d30364d57723e0.camel@linux.ibm.com>
+         <YoPpyDjn61AFqcZp@zx2c4.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: PbWP-fmv3bYEWPSRRHfxdQcuFVuveDXv
+X-Proofpoint-GUID: wTyBvInx9LJoH0s5-vgBBc7fDZWpQaOW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-05-17_03,2022-05-17_02,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 lowpriorityscore=0 adultscore=0 impostorscore=0 mlxscore=0
+ clxscore=1015 spamscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2205170111
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 16, 2022 at 08:44:37PM -0700, Kees Cook wrote:
-> On Mon, May 16, 2022 at 11:17:44AM -0700, Matthias Kaehlcke wrote:
-> > On Fri, May 13, 2022 at 03:36:26PM -0700, Kees Cook wrote:
+On Tue, 2022-05-17 at 20:30 +0200, Jason A. Donenfeld wrote:
+> Hi Mimi,
+> 
+> On Tue, May 17, 2022 at 02:21:08PM -0400, Mimi Zohar wrote:
+> > On Tue, 2022-05-17 at 19:38 +0200, Jason A. Donenfeld wrote:
+> > > On Tue, May 17, 2022 at 11:52:55AM -0400, Mimi Zohar wrote:
+> > > > On Fri, 2022-05-13 at 16:57 +0200, Ahmad Fatoum wrote:
+> > > > >  static int __init init_trusted(void)
+> > > > >  {
+> > > > > +       int (*get_random)(unsigned char *key, size_t key_len);
+> > > > >         int i, ret = 0;
+> > > > >  
+> > > > >         for (i = 0; i < ARRAY_SIZE(trusted_key_sources); i++) {
+> > > > > @@ -322,6 +333,28 @@ static int __init init_trusted(void)
+> > > > >                             strlen(trusted_key_sources[i].name)))
+> > > > >                         continue;
+> > > > >  
+> > > > > +               /*
+> > > > > +                * We always support trusted.rng="kernel" and "default" as
+> > > > > +                * well as trusted.rng=$trusted.source if the trust source
+> > > > > +                * defines its own get_random callback.
+> > > > > +                */
+> > > >  
+> > > > While TEE trusted keys support was upstreamed, there was a lot of
+> > > > discussion about using kernel RNG.  One of the concerns was lack of or
+> > > > insuffiencent entropy during early boot on embedded devices.  This
+> > > > concern needs to be clearly documented in both Documentation/admin-
+> > > > guide/kernel-parameters.txt and Documentation/security/keys/trusted-
+> > > > encrypted.rst.
 > > > 
-> > > 
-> > > On May 4, 2022 12:54:18 PM PDT, Matthias Kaehlcke <mka@chromium.org> wrote:
-> > > >Extend LoadPin to allow loading of kernel files from trusted dm-verity [1]
-> > > >devices.
-> > > >
-> > > >This change adds the concept of trusted verity devices to LoadPin. LoadPin
-> > > >maintains a list of root digests of verity devices it considers trusted.
-> > > >Userspace can populate this list through an ioctl on the new LoadPin
-> > > >securityfs entry 'dm-verity'. The ioctl receives a file descriptor of
-> > > >a file with verity digests as parameter. Verity reads the digests from
-> > > >this file after confirming that the file is located on the pinned root.
-> > > >The list of trusted digests can only be set up once, which is typically
-> > > >done at boot time.
-> > > >
-> > > >When a kernel file is read LoadPin first checks (as usual) whether the file
-> > > >is located on the pinned root, if so the file can be loaded. Otherwise, if
-> > > >the verity extension is enabled, LoadPin determines whether the file is
-> > > >located on a verity backed device and whether the root digest of that
-> > > 
-> > > I think this should be "... on an already trusted device ..."
+> > > Sounds like FUD. Use `get_random_bytes_wait()`, and you'll be fine.
 > > 
-> > It's not entirely clear which part you want me to substitute. 'an already
-> > trusted device' makes me wonder whether you are thinking about reading the
-> > list of digests, and not the general case of reading a kernel file, which
-> > this paragraph intends to describe.
+> > As per the original discussion, there's also certification requirements
+> > [1].
 > 
-> Sorry, I think I confused myself while reading what you'd written. I
-> think it's fine as is. I think I had skipped around in my mind thinking
-> about the trusted verity hashes file coming from the pinned root, but
-> you basically already said that. :) Nevermind!
+> As per countless conversations on this mailing list -- which I really
+> really really hope you will not attempt to drown me in again -- I'm not
+> too keen on the certification requirements. Let's just leave that
+> conversation there.
 > 
-> > > >+static int read_trusted_verity_root_digests(unsigned int fd)
-> > > >+{
-> > > >+	struct fd f;
-> > > >+	void *data;
-> > > 
-> > > Probably easier if this is u8 *?
-> > 
-> > Maybe slightly, it would then require a cast when passing it to
-> > kernel_read_file()
+> There *is* a cryptographic design reason why you might want certain keys
+> generated on a TPM rather than in the kernel though: so that the keys
+> can be marked as unexportable and never leave the hardware. In that case
+> -- I assume -- the kernel just operates on a handle to the key, rather
+> than possessing the key material itself. And this is probably a good
+> thing. (On the other hand, people who think the TPM might be backdoored
+> may prefer the kernel's open source RNG, which in theory is in a
+> position to aggregate entropy from many sources, so that one being
+> backdoored isn't a problem. So maybe that's the purpose of having this
+> switch?)
 > 
-> Oh, good point. That is a kinda weird API.
+> So to the extent that this driver (I haven't looked deeply at it) is
+> doing the thing where a TPM generates the key and just returns a
+> handle to it, that sounds good. But if actually you're implementing some
+> wrapper around a hardware rng, it'd be convenient if there was instead a
+> hw_random driver for this, so it can be one of the many sources that the
+> kernel rng aggregates.
 > 
-> > 
-> > > >+	int rc;
-> > > >+	char *p, *d;
-> > > >+
-> > > >+	/* The list of trusted root digests can only be set up once */
-> > > >+	if (!list_empty(&trusted_verity_root_digests))
-> > > >+		return -EPERM;
-> > > >+
-> > > >+	f = fdget(fd);
-> > > >+	if (!f.file)
-> > > >+		return -EINVAL;
-> > > >+
-> > > >+	data = kzalloc(SZ_4K, GFP_KERNEL);
-> > > >+	if (!data) {
-> > > >+		rc = -ENOMEM;
-> > > >+		goto err;
-> > > >+	}
-> > > >+
-> > > >+	rc = kernel_read_file(f.file, 0, &data, SZ_4K - 1, NULL, READING_POLICY);
-> > > >+	if (rc < 0)
-> > > >+		goto err;
-> 
-> So maybe, here, you could do:
-> 
-> 	p = data;
-> 	p[rc] '\0';
-> 	p = strim(p);
-> 
-> etc... (the void * -> char * cast in the assignment should be accepted
-> without warning?)
+> Apologies in advance if I've missed the mark here; I'm not very familiar
+> with this thread or what it's driving at. If the simple question was
+> just "is get_random_bytes_wait() good to use?" the answer is just "yes"
+> and I can disappear and stop confusing things. :)
 
-Yes, that would work, I'll change it accordingly, thanks!
+My apologies for your having been brought into this discussion without
+having properly reviewed and summarized the previous thread.   As you
+saw there is a long history.
 
-> > > >+
-> > > >+	((char *)data)[rc] = '\0';
-> > > >+
-> > > >+	p = strim(data);
-> > > >+	while ((d = strsep(&p, ",")) != NULL) {
-> > > 
-> > > Maybe be flexible and add newline as a separator too?
-> > 
-> > Sure, I can add that. I'd also be fine with just allowing a newline as
-> > separator, which seems a reasonable format for a sysfs file.
-> 
-> Yeah, that was my thinking too. And easier to parse for command line
-> tools, etc. Not a requirement at all, but might make testing easier,
-> etc.
+Jarrko, Ahmad,  "Trusted" keys, by definition, are based on the TPM
+RNG.  If CAAM trusted key support wants to use kernel RNG by default,
+that's fine.  However defining and allowing a boot command line option
+to use kernel RNG instead of the TPM RNG, needs to be configurable.
 
-Ok, I'll change it to use newline as the only separator.
+thanks,
+
+Mimi
+
