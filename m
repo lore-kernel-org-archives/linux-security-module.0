@@ -2,120 +2,148 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240C6C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 14:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 988D5C433F5
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 15:13:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239095AbiERO4l (ORCPT
+        id S239191AbiERPNk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 May 2022 10:56:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55046 "EHLO
+        Wed, 18 May 2022 11:13:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239093AbiERO4d (ORCPT
+        with ESMTP id S239190AbiERPNj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 May 2022 10:56:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF5319FF45;
-        Wed, 18 May 2022 07:56:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B3758B82124;
-        Wed, 18 May 2022 14:56:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616F0C385A5;
-        Wed, 18 May 2022 14:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652885788;
-        bh=JoHYiEVfVna108Cm8DYUO6EeVHUhH/jsA2hx84cxhc4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YXloz30g2ROWJVE5AwCu6ZoycqVAtob21szWjAezE1juW3k44jgPVBlzoPpNtuRvo
-         FulCY7iLDeRngt1eLgkyV+EK2jWMlRvaC7TZrnBeRQGco3i5PE9l1IZn0smZdfHEpD
-         UNC5/YDJLLD4NcdQ9Bc+UwKTFXLZu/tJWPTS9WBLpP99RQVsnF3GP3ExVMeVW0MCB9
-         VUgQCtT2t8iN16fDAGHBL96TyetYvqsbhoPgrIuYXtk7GKSpv9m7WEboi56ITE+XQi
-         VoAcy6cVoubz5/pS3D+7QJ50FkmTSgFeda7uGNQRpBgZVUCvwgqyzmmHcVgZHsZn+O
-         qfumUFmSmYViA==
-Date:   Wed, 18 May 2022 17:58:09 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        James Bottomley <jejb@linux.ibm.com>, kernel@pengutronix.de,
-        David Howells <dhowells@redhat.com>,
+        Wed, 18 May 2022 11:13:39 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D58941E0101
+        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 08:13:37 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id c14so2441661pfn.2
+        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 08:13:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=R6GKon/CB8AHTG2BVleTAVkCbJAIy+Ec31rGL7OpKrA=;
+        b=ZsuolC/u6gVSVbsjl80xIx9d92sVwUDm1BDTXCnzgAFODiEOkChMaPBr7zQUMfYsht
+         SSH+xklDOFhrdNLYvsq0Y8M9re/iu2wBG9DbpNQVk4p8RpbiOaJJNrkyRR4wSiJDPbPH
+         V7V19n7NzwXmmsj8U31P/+1xRFdHTgxMOiSlw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=R6GKon/CB8AHTG2BVleTAVkCbJAIy+Ec31rGL7OpKrA=;
+        b=VM4q30D/VxA/XIdfRsrcvr9fHJyVlqjRWrQab63YsYZEV5AhUQE0w9M9d6j6rawJRK
+         VlQ5Sdx0FS45qhnoHSEt5OFw/r+nE3xEjrXUN8AhUOVCW5m2jm8vEWnshS3YMSZo3dkA
+         WScLGAn+WmqjtxxPPzMUQnvKLnpa3NqPBDjst+QBF8Ocpl15HosUxyJs+IWqaLGZ2PLU
+         jChx9B3u5Q6fg33RxQ8cDL3Mmz4aOon05/jwznGYr2gvCN0NkQizfVdvRuJoLvr1u2CV
+         Totb0vXBT2EmZeDrHSD/UDUVKlr+knpV4iq8E1Epr8b9CajKu4t+mlez0uFIoAFBZxuG
+         U4cg==
+X-Gm-Message-State: AOAM531YFxnAyPW0fEu188ckKUQzV4lNVr9f8pPxWJHW2oDI5qWDkIuf
+        tDWiRbFrUMwxNhX9e+AIQdXOfQ==
+X-Google-Smtp-Source: ABdhPJyFOeC90y1HStFFR+BKQhegBQbMZrwLsSMlHpm5O9PYUeML8M3eBG6IOYh/5ylSnQ2jWSXYFw==
+X-Received: by 2002:a65:4bc5:0:b0:3da:ec0c:c5f2 with SMTP id p5-20020a654bc5000000b003daec0cc5f2mr23770774pgr.221.1652886817386;
+        Wed, 18 May 2022 08:13:37 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:a14:3166:4b67:b688])
+        by smtp.gmail.com with UTF8SMTPSA id j128-20020a62c586000000b005182e39038csm1629435pfg.38.2022.05.18.08.13.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 May 2022 08:13:36 -0700 (PDT)
+Date:   Wed, 18 May 2022 08:13:35 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Milan Broz <gmazyland@gmail.com>
+Cc:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Andreas Rammhold <andreas@rammhold.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Michael Walle <michael@walle.cc>,
-        John Ernberg <john.ernberg@actia.se>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH v10 0/7] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-Message-ID: <YoUJgUbSRVnTfTj/@iki.fi>
-References: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
- <YoKZwFkfcl7ixTF4@kernel.org>
- <4d4ecd4b-9683-08a0-7a5f-11a7ff86ea6d@pengutronix.de>
- <c511995075cafb35bfefcbfe6fa6e84aa31c536f.camel@kernel.org>
- <6f6a5524-9661-9a9f-a674-915efa33f6f6@pengutronix.de>
+        "Serge E . Hallyn" <serge@hallyn.com>, dm-devel@redhat.com,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [dm-devel] [PATCH v4 1/3] dm: Add verity helpers for LoadPin
+Message-ID: <YoUNH7MrfEb844ft@google.com>
+References: <20220517233457.1123309-1-mka@chromium.org>
+ <20220517163437.v4.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
+ <19149028-ec94-8f64-aed4-1e58f29942a8@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6f6a5524-9661-9a9f-a674-915efa33f6f6@pengutronix.de>
+In-Reply-To: <19149028-ec94-8f64-aed4-1e58f29942a8@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 18, 2022 at 06:36:18AM +0200, Ahmad Fatoum wrote:
-> On 18.05.22 03:08, Jarkko Sakkinen wrote:
-> > On Tue, 2022-05-17 at 14:44 +0200, Ahmad Fatoum wrote:
-> >> Hello Herbert,
-> >>
-> >> On 16.05.22 20:36, Jarkko Sakkinen wrote:
-> >>> On Fri, May 13, 2022 at 04:56:58PM +0200, Ahmad Fatoum wrote:
-> >>> I can probably pick these unless objections?
-> >>
-> >> Pankaj has given his Reviewed-by for the CAAM parts he co-maintains,
-> >> is it ok for this to go in via Jarkko's tree?
-> >>
-> >> Note that applying this series on top of jarkko/linux-tpmdd.git has a
-> >> trivial conflict when merged with herbert/cryptodev-2.6.git:
-> >> Two independently added Kconfig options need to coexist in
-> >> drivers/crypto/caam/Kconfig.
-> >>
-> >> I can resend my series rebased if needed.
-> >>
-> >> Cheers,
-> >> Ahmad
-> >>
-> >>>
-> >>> BR, Jarkko
-> >>>
-> >>
-> >>
+Hi Milan,
+
+On Wed, May 18, 2022 at 09:57:43AM +0200, Milan Broz wrote:
+> On 18/05/2022 01:34, Matthias Kaehlcke wrote:
+> > LoadPin limits loading of kernel modules, firmware and certain
+> > other files to a 'pinned' file system (typically a read-only
+> > rootfs). To provide more flexibility LoadPin is being extended
+> > to also allow loading these files from trusted dm-verity
+> > devices. For that purpose LoadPin can be provided with a list
+> > of verity root digests that it should consider as trusted.
 > > 
-> > This came up:
+> > Add a bunch of helpers to allow LoadPin to check whether a DM
+> > device is a trusted verity device. The new functions broadly
+> > fall in two categories: those that need access to verity
+> > internals (like the root digest), and the 'glue' between
+> > LoadPin and verity. The new file dm-verity-loadpin.c contains
+> > the glue functions.
 > > 
-> > https://lore.kernel.org/keyrings/0e8da958a222e5c1dccaaf1600b08bdb8705b48e.camel@kernel.org/
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > 
-> And it turned out to be a misunderstanding. Or do you think there is still anything
-> to do there?
+> ...
 > 
-> Thanks,
-> Ahmad
+> > +
+> > +	if (dm_verity_get_root_digest(ti, &root_digest, &digest_size))
+> > +		return false;
+> 
+> Almost unrelated note, but as there are more and more situations
+> that checks verity root digest, shouldn't we export this as read-only
+> sysfs attribute for DM verity devices?
+> 
+> Attacker can always calculate (but not change) Merkle tree, so this
+> is not something that need to be hidden.
+> 
+> It would allow userspace to easily enumerate trusted DM devices without
+> calling kernel ioctls...
 
-Oops, you're right, sorry.
+I guess that's an option if there are scenarios where it is useful. It
+should probably be a separate patch, since it isn't directly related with
+extending LoadPin support to trusted verity devices.
 
-Yeah, I guess I can pick these patches now.
+> > +
+> > +	table = dm_get_live_table(md, &srcu_idx);
+> > +
+> > +	if (dm_table_get_num_targets(table) != 1)
+> > +		goto out;
+> > +
+> > +	ti = dm_table_get_target(table, 0);
+> > +
+> > +	if (is_trusted_verity_target(ti))
+> > +		trusted = true;
+> 
+> What happens is someone reloads verity table later with
+> a different content (or even different target type)?
+> Does LoadPin even care here?
 
-BR, Jarkko
+LoadPin cares, but only when new kernel files are loaded. It will then check
+against the new verity table, and only allow loading of the file if it comes
+from a verity target with a trusted digest.
+
+> >   static struct target_type verity_target = {
+> >   	.name		= "verity",
+> >   	.version	= {1, 8, 0},
+> 
+> Please increase the minor version, it is very useful to detect (in logs)
+> that the target driver has compatible extensions.
+
+I can do that, but would like to confirm that this is really needed/desired.
+This patch adds kernel-internal APIs which aren't accessible to userspace,
+that don't impact verity directly, so I'm not sure an increased minor version
+would be useful.
+
+> I guess this change does not affect userspace veristysetup
+> (as it is used handled by different tooling), right?
+
+Correct, from the verity side this is effectively a NOP, the new
+kernel-internal APIs only provide information to LoadPin, but don't
+change any verity specific behavior.
