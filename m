@@ -2,126 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C02AC433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 14:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240C6C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 14:56:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238805AbiEROoQ (ORCPT
+        id S239095AbiERO4l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 May 2022 10:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56774 "EHLO
+        Wed, 18 May 2022 10:56:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238795AbiEROoQ (ORCPT
+        with ESMTP id S239093AbiERO4d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 May 2022 10:44:16 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24E771BB13E;
-        Wed, 18 May 2022 07:44:13 -0700 (PDT)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24IETksQ027084;
-        Wed, 18 May 2022 14:43:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=s2X7aKS1B3qNFqFNHXfey4nXV8WvfRyNdSmSs1pSdhA=;
- b=F7f1kErIqMMm6Oy/QYJJCeifq7HzAAzezJWo6o6hECUEU2dM9/CWKNzbBXA6cwBnrPu8
- 3E87/9okzG/cAudc7NFDcN70DNyfRwtrcUehaMyv/pU8WHTM2Y8ZjD6W+fbPIuH/W8No
- alH2jnThs1KQspeHFbqpEamZ8iPuJmEsAcXhvk/cEYPkxGf3OyMRXrraaQdIrq70C3QF
- 8+esJeSBEr5/pwbJwcNJLRwzaJgvB8y6CZj6NN7IV1PF6oZKDcthx8lTGXELd8lv8op9
- QoRXiVRMqMxvU4FPED0hcQcFIuE0I7s/VIXkL1vfL490lIVfg8Goj2341V84x9w06hNU FQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3g52m60cy6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 May 2022 14:43:39 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 24IEUe8f030487;
-        Wed, 18 May 2022 14:43:38 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3g52m60cww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 May 2022 14:43:38 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24IEcDZT002835;
-        Wed, 18 May 2022 14:43:36 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 3g23pjdvej-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 May 2022 14:43:36 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24IEgxPJ32702858
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 May 2022 14:42:59 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 499E2A405C;
-        Wed, 18 May 2022 14:43:34 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B627DA4054;
-        Wed, 18 May 2022 14:43:32 +0000 (GMT)
-Received: from sig-9-65-85-166.ibm.com (unknown [9.65.85.166])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 18 May 2022 14:43:32 +0000 (GMT)
-Message-ID: <8634d4dd0813b9522f039ed211023c2c65c6f888.camel@linux.ibm.com>
-Subject: Re: [PATCH v4] x86/kexec: Carry forward IMA measurement log on kexec
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jonathan McDowell <noodles@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Wed, 18 May 2022 10:56:33 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF5319FF45;
+        Wed, 18 May 2022 07:56:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B3758B82124;
+        Wed, 18 May 2022 14:56:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616F0C385A5;
+        Wed, 18 May 2022 14:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652885788;
+        bh=JoHYiEVfVna108Cm8DYUO6EeVHUhH/jsA2hx84cxhc4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YXloz30g2ROWJVE5AwCu6ZoycqVAtob21szWjAezE1juW3k44jgPVBlzoPpNtuRvo
+         FulCY7iLDeRngt1eLgkyV+EK2jWMlRvaC7TZrnBeRQGco3i5PE9l1IZn0smZdfHEpD
+         UNC5/YDJLLD4NcdQ9Bc+UwKTFXLZu/tJWPTS9WBLpP99RQVsnF3GP3ExVMeVW0MCB9
+         VUgQCtT2t8iN16fDAGHBL96TyetYvqsbhoPgrIuYXtk7GKSpv9m7WEboi56ITE+XQi
+         VoAcy6cVoubz5/pS3D+7QJ50FkmTSgFeda7uGNQRpBgZVUCvwgqyzmmHcVgZHsZn+O
+         qfumUFmSmYViA==
+Date:   Wed, 18 May 2022 17:58:09 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Pankaj Gupta <pankaj.gupta@nxp.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        James Bottomley <jejb@linux.ibm.com>, kernel@pengutronix.de,
+        David Howells <dhowells@redhat.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Date:   Wed, 18 May 2022 10:43:32 -0400
-In-Reply-To: <Yn01Cfb3Divf49g7@noodles-fedora.dhcp.thefacebook.com>
-References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
-         <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
-         <YnuJCH75GrhVm0Tp@noodles-fedora.dhcp.thefacebook.com>
-         <Yn01Cfb3Divf49g7@noodles-fedora.dhcp.thefacebook.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3j1qAuAknE9Q2XYy-99AwogH-4lbo8ak
-X-Proofpoint-ORIG-GUID: BzPswUanOJTZocBwpcSZoufSs1cruqHx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-18_05,2022-05-17_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- spamscore=0 impostorscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 mlxlogscore=999 mlxscore=0
- bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2205180087
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Andreas Rammhold <andreas@rammhold.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Michael Walle <michael@walle.cc>,
+        John Ernberg <john.ernberg@actia.se>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [PATCH v10 0/7] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+Message-ID: <YoUJgUbSRVnTfTj/@iki.fi>
+References: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
+ <YoKZwFkfcl7ixTF4@kernel.org>
+ <4d4ecd4b-9683-08a0-7a5f-11a7ff86ea6d@pengutronix.de>
+ <c511995075cafb35bfefcbfe6fa6e84aa31c536f.camel@kernel.org>
+ <6f6a5524-9661-9a9f-a674-915efa33f6f6@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f6a5524-9661-9a9f-a674-915efa33f6f6@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-05-12 at 16:25 +0000, Jonathan McDowell wrote:
-> On kexec file load Integrity Measurement Architecture (IMA) subsystem
-> may verify the IMA signature of the kernel and initramfs, and measure
-> it. The command line parameters passed to the kernel in the kexec call
-> may also be measured by IMA. A remote attestation service can verify
-> a TPM quote based on the TPM event log, the IMA measurement list, and
-> the TPM PCR data. This can be achieved only if the IMA measurement log
-> is carried over from the current kernel to the next kernel across
-> the kexec call.
+On Wed, May 18, 2022 at 06:36:18AM +0200, Ahmad Fatoum wrote:
+> On 18.05.22 03:08, Jarkko Sakkinen wrote:
+> > On Tue, 2022-05-17 at 14:44 +0200, Ahmad Fatoum wrote:
+> >> Hello Herbert,
+> >>
+> >> On 16.05.22 20:36, Jarkko Sakkinen wrote:
+> >>> On Fri, May 13, 2022 at 04:56:58PM +0200, Ahmad Fatoum wrote:
+> >>> I can probably pick these unless objections?
+> >>
+> >> Pankaj has given his Reviewed-by for the CAAM parts he co-maintains,
+> >> is it ok for this to go in via Jarkko's tree?
+> >>
+> >> Note that applying this series on top of jarkko/linux-tpmdd.git has a
+> >> trivial conflict when merged with herbert/cryptodev-2.6.git:
+> >> Two independently added Kconfig options need to coexist in
+> >> drivers/crypto/caam/Kconfig.
+> >>
+> >> I can resend my series rebased if needed.
+> >>
+> >> Cheers,
+> >> Ahmad
+> >>
+> >>>
+> >>> BR, Jarkko
+> >>>
+> >>
+> >>
+> > 
+> > This came up:
+> > 
+> > https://lore.kernel.org/keyrings/0e8da958a222e5c1dccaaf1600b08bdb8705b48e.camel@kernel.org/
 > 
-> powerpc and ARM64 both achieve this using device tree with a
-> "linux,ima-kexec-buffer" node. x86 platforms generally don't make use of
-> device tree, so use the setup_data mechanism to pass the IMA buffer to
-> the new kernel.
+> And it turned out to be a misunderstanding. Or do you think there is still anything
+> to do there?
 > 
-> Signed-off-by: Jonathan McDowell <noodles@fb.com>
+> Thanks,
+> Ahmad
 
-Not from using "setup_data" perspective,
+Oops, you're right, sorry.
 
-	Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>  # IMA function
-definitions
+Yeah, I guess I can pick these patches now.
 
-thanks,
-
-Mimi
-
+BR, Jarkko
