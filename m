@@ -2,106 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71115C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 20:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30116C433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 20:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242565AbiERUZb (ORCPT
+        id S242687AbiERUe1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 May 2022 16:25:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51850 "EHLO
+        Wed, 18 May 2022 16:34:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242552AbiERUZb (ORCPT
+        with ESMTP id S242648AbiERUe0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 May 2022 16:25:31 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8C393469
-        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 13:25:30 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id a11so3189966pff.1
-        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 13:25:30 -0700 (PDT)
+        Wed, 18 May 2022 16:34:26 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CAA8129EFF
+        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 13:34:24 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id l20-20020a17090a409400b001dd2a9d555bso3240835pjg.0
+        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 13:34:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=T0RUFEAAb0EUvAvgjmVhvNXqgIl2634hQPp6NyaB/BE=;
-        b=L6sJM823YSYGCEu5Vx6kyBcGRMkDtvbRk1g3zMveNTQGmV1rJUbhpDm7tL9Sx53GdH
-         9BrG2SjuHMe2C+hS937ohWm4LWCp73Kyg7h/TnDUfPe5ubtQDzsM0mbu8ovx+iAubhfz
-         4oTampAzdwVEv+3BeGvkjx4CzH4EErl0TPsPw=
+        bh=66dr9Y4+nGAythBm/U+gBptPm1LvULEFY+Acr0MuJSw=;
+        b=IFIIjOZP8JMz9UkUvzfqKSCnU028VvXg61mf6KVfqaQsH8r2nfSUQP8Q2iqstDxtAc
+         g+5H+E3NLGNM7MivtBuS+BGfWyqcdEdlizi5T744PxohMf1uFK6VRnxlqGIYesC9uI5s
+         7z6/kkpPrnCb0pEH0pxHKN6ZAtfUBKr/dDXL8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=T0RUFEAAb0EUvAvgjmVhvNXqgIl2634hQPp6NyaB/BE=;
-        b=fqi/TfHW7ejLKhI4joDcvrx0KogzsTZ3btlvlz6PzC6S1TmTR4UHv6KfZEZ8MrmK45
-         QynG31ucYu5x4S1quhpviiyqZQNYTFQD3l5r3a/1Qz/JpIwugUpgOugG0n+3/PNkICP8
-         xFrTR3F6dntM1ZYVkWIcfM/GipMZ155YSH2Y/Na2lcn1QjK927HidDm9zO0jusw12ygg
-         ovUNYCeb7qhH8uf9M8kgfqLkB4wdg/kEAVIWqPrlz5lfqO+tlTML3XbVxauLq7JQWalf
-         f279vrkU4xNDoxJ1I+NqjF6kgkZS++21il42ohg6jAx7Ht00V7Qlve72lF6gWEj+rCzA
-         XmUw==
-X-Gm-Message-State: AOAM53388aMIGJvenVeL/0q4sM57Ae+CxwuTSQMGXzz/GnJMa9l9Fqjr
-        RBWd0deBT3Tpt9QR7qqc/pCCviDz/70YCQ==
-X-Google-Smtp-Source: ABdhPJwFG8w1ZTkhJXaj8JxUZLxZnFHlyBsxl5a7UPCmYkYRpDDj0B2yfmzhsYf7Q7TqK6uD1CEWqw==
-X-Received: by 2002:a63:e40c:0:b0:3f2:5729:eace with SMTP id a12-20020a63e40c000000b003f25729eacemr998455pgi.384.1652905530072;
-        Wed, 18 May 2022 13:25:30 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id ji15-20020a170903324f00b001616e13fccdsm2114121plb.221.2022.05.18.13.25.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 May 2022 13:25:29 -0700 (PDT)
-Date:   Wed, 18 May 2022 13:25:28 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "GONG, Ruiqi" <gongruiqi1@huawei.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
+        bh=66dr9Y4+nGAythBm/U+gBptPm1LvULEFY+Acr0MuJSw=;
+        b=XEe5xuFEmuATljHKuq2TL4wi+8TgDq9bDh0hVWDghLpINvmCP3KrjlksOp/25CZ0LH
+         zSNIDyy3JCdVJx6YTXecqe5HT+rVIJgpHkKs2QEk01L9hJv2S+47CmQ5fLxTpqYNnYvK
+         8Sjl49SRDyYeKKmqYrbPuRmffZN4BWcBT9FGYCSpZiM3GSSPBMLlOg7V/IX8nV6JgxvP
+         BFeBtXXxV/A4QAffJ+JntBKPSYcuvHb717/RIpObVYE22DMHKKWywAGLQDvn5v+0UTU1
+         OM208nrnFShzKJnsUVV935tMI+j7ea6p8i2ZDc2VrXjp/IoiWltgG4KY+tgVUxQDtanu
+         NOpQ==
+X-Gm-Message-State: AOAM533Q0t0hWLzAAvcKr52kTORJuM6c1Rg3dnu1atEvR5kniKyvP0a4
+        bK6qz8p7pnK5UsN78ifJQZl7Bw==
+X-Google-Smtp-Source: ABdhPJwCOuHJM7T0rMcLBaHOW9wPJYWpAE1ug6I4fbANLq4cLIwuxoLqQF+SDIvDnlzyTgKdZun+3Q==
+X-Received: by 2002:a17:903:228e:b0:161:8632:2725 with SMTP id b14-20020a170903228e00b0016186322725mr1358741plh.126.1652906064039;
+        Wed, 18 May 2022 13:34:24 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:a14:3166:4b67:b688])
+        by smtp.gmail.com with UTF8SMTPSA id m1-20020a17090a858100b001d792761e2esm4020445pjn.47.2022.05.18.13.34.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 May 2022 13:34:23 -0700 (PDT)
+Date:   Wed, 18 May 2022 13:34:21 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Mike Snitzer <snitzer@kernel.org>
+Cc:     Milan Broz <gmazyland@gmail.com>, Alasdair Kergon <agk@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>
-Subject: Re: [PATCH] security: keys: add __randomize_layout to
- keyring_search_context
-Message-ID: <202205181325.0D772A54@keescook>
-References: <20220518091841.141441-1-gongruiqi1@huawei.com>
+        "Serge E . Hallyn" <serge@hallyn.com>, dm-devel@redhat.com,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dm: Add verity helpers for LoadPin
+Message-ID: <YoVYTf7oI4FNVHAJ@google.com>
+References: <20220517233457.1123309-1-mka@chromium.org>
+ <20220517163437.v4.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
+ <19149028-ec94-8f64-aed4-1e58f29942a8@gmail.com>
+ <YoUNH7MrfEb844ft@google.com>
+ <YoVRIHfXPa7+e1Zh@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220518091841.141441-1-gongruiqi1@huawei.com>
+In-Reply-To: <YoVRIHfXPa7+e1Zh@redhat.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 18, 2022 at 09:18:41AM +0000, GONG, Ruiqi wrote:
-> Struct keyring_search_context contains a pointer to `struct cred`, which
-> is a security-critical structure and whose layout is randomized already.
-> Apply __randomize_layout to struct keyring_search_context as well, as
-> suggested in [1].
+On Wed, May 18, 2022 at 04:03:44PM -0400, Mike Snitzer wrote:
+> On Wed, May 18 2022 at 11:13P -0400,
+> Matthias Kaehlcke <mka@chromium.org> wrote:
 > 
-> [1]: https://github.com/KSPP/linux/issues/188
+> > Hi Milan,
+> > 
+> > On Wed, May 18, 2022 at 09:57:43AM +0200, Milan Broz wrote:
+> > > On 18/05/2022 01:34, Matthias Kaehlcke wrote:
+> > > > LoadPin limits loading of kernel modules, firmware and certain
+> > > > other files to a 'pinned' file system (typically a read-only
+> > > > rootfs). To provide more flexibility LoadPin is being extended
+> > > > to also allow loading these files from trusted dm-verity
+> > > > devices. For that purpose LoadPin can be provided with a list
+> > > > of verity root digests that it should consider as trusted.
+> > > > 
+> > > > Add a bunch of helpers to allow LoadPin to check whether a DM
+> > > > device is a trusted verity device. The new functions broadly
+> > > > fall in two categories: those that need access to verity
+> > > > internals (like the root digest), and the 'glue' between
+> > > > LoadPin and verity. The new file dm-verity-loadpin.c contains
+> > > > the glue functions.
+> > > > 
+> > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > 
+> > > ...
+> > > 
+> > > > +
+> > > > +	if (dm_verity_get_root_digest(ti, &root_digest, &digest_size))
+> > > > +		return false;
+> > > 
+> > > Almost unrelated note, but as there are more and more situations
+> > > that checks verity root digest, shouldn't we export this as read-only
+> > > sysfs attribute for DM verity devices?
+> > > 
+> > > Attacker can always calculate (but not change) Merkle tree, so this
+> > > is not something that need to be hidden.
+> > > 
+> > > It would allow userspace to easily enumerate trusted DM devices without
+> > > calling kernel ioctls...
+> > 
+> > I guess that's an option if there are scenarios where it is useful. It
+> > should probably be a separate patch, since it isn't directly related with
+> > extending LoadPin support to trusted verity devices.
+> > 
+> > > > +
+> > > > +	table = dm_get_live_table(md, &srcu_idx);
+> > > > +
+> > > > +	if (dm_table_get_num_targets(table) != 1)
+> > > > +		goto out;
+> > > > +
+> > > > +	ti = dm_table_get_target(table, 0);
+> > > > +
+> > > > +	if (is_trusted_verity_target(ti))
+> > > > +		trusted = true;
+> > > 
+> > > What happens is someone reloads verity table later with
+> > > a different content (or even different target type)?
+> > > Does LoadPin even care here?
+> > 
+> > LoadPin cares, but only when new kernel files are loaded. It will then check
+> > against the new verity table, and only allow loading of the file if it comes
+> > from a verity target with a trusted digest.
+> > 
+> > > >   static struct target_type verity_target = {
+> > > >   	.name		= "verity",
+> > > >   	.version	= {1, 8, 0},
+> > > 
+> > > Please increase the minor version, it is very useful to detect (in logs)
+> > > that the target driver has compatible extensions.
+> > 
+> > I can do that, but would like to confirm that this is really needed/desired.
+> > This patch adds kernel-internal APIs which aren't accessible to userspace,
+> > that don't impact verity directly, so I'm not sure an increased minor version
+> > would be useful.
 > 
-> Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
+> Bumping to 1.8.1 is useful to indicate new changes that offer expanded
+> use of the verity target (even if by LoadPin).
 
-Seems reasonable to me; it's an entirely internal structure.
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
-> ---
->  security/keys/internal.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/keys/internal.h b/security/keys/internal.h
-> index 9b9cf3b6fcbb..3e3def5fbaa4 100644
-> --- a/security/keys/internal.h
-> +++ b/security/keys/internal.h
-> @@ -136,7 +136,7 @@ struct keyring_search_context {
->  	bool			possessed;
->  	key_ref_t		result;
->  	time64_t		now;
-> -};
-> +} __randomize_layout;
->  
->  extern bool key_default_cmp(const struct key *key,
->  			    const struct key_match_data *match_data);
-> -- 
-> 2.17.1
-> 
-
--- 
-Kees Cook
+Ok, I'll bump the version, thanks for the confirmation.
