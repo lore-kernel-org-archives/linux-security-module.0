@@ -2,123 +2,264 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC7FC433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 08:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A29BC433FE
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 09:14:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233671AbiERI6y (ORCPT
+        id S233916AbiERJOn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 May 2022 04:58:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34542 "EHLO
+        Wed, 18 May 2022 05:14:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233688AbiERI6x (ORCPT
+        with ESMTP id S233872AbiERJOm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 May 2022 04:58:53 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9025D13CA3B;
-        Wed, 18 May 2022 01:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652864327; x=1684400327;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xR5ju/m+J7LrQ2NG96ZPR+tRwF+afBBK3BjNI5wn7n4=;
-  b=keH05FyVsuyBYS/g6Lkp6aZWjz8B0/3do5lA8Ha86hH7s0YZIYyU9u0A
-   LyjXqRwwzsz6/NVxB9ftqmwzB8egsIXGGfKY2czvH3u7p7E/z7A9aRu5J
-   FSsr3SKX9Qj4lHscOnAidR+SrC+pu6Pe7Or0TEXTS4sDpjnjs9msXos2T
-   EabAnVZ8ppm2rvzZVcqwfBlY7Sf7Onejazh3bJloGh5vq9VPZEZKgVpHY
-   KMOkKjtXOc9BXJkadKOskHg7deWL6tHkF8luGlZ2wK2UqgJegoIFFrhDc
-   xFK7IYuch6ZnqBxpEeyOoCoXSW4PiMGx6B7vBknqxcQYC9w+PLtOvBIOE
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10350"; a="334615033"
-X-IronPort-AV: E=Sophos;i="5.91,234,1647327600"; 
-   d="scan'208";a="334615033"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2022 01:58:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,234,1647327600"; 
-   d="scan'208";a="605789798"
-Received: from lkp-server02.sh.intel.com (HELO 242b25809ac7) ([10.239.97.151])
-  by orsmga001.jf.intel.com with ESMTP; 18 May 2022 01:58:25 -0700
-Received: from kbuild by 242b25809ac7 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nrFVh-0001zV-1B;
-        Wed, 18 May 2022 08:58:25 +0000
-Date:   Wed, 18 May 2022 16:58:06 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     kbuild-all@lists.01.org, linux-security-module@vger.kernel.org,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, Song Liu <song@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH v4 2/3] LoadPin: Enable loading from trusted dm-verity
- devices
-Message-ID: <202205181616.3eTP2DaC-lkp@intel.com>
-References: <20220517163437.v4.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
+        Wed, 18 May 2022 05:14:42 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94918140878;
+        Wed, 18 May 2022 02:14:40 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4L36gC6Qzrz6H8VX;
+        Wed, 18 May 2022 17:11:35 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Wed, 18 May 2022 11:14:37 +0200
+Message-ID: <08444718-341f-40db-b7b1-636942269c03@huawei.com>
+Date:   Wed, 18 May 2022 12:14:35 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220517163437.v4.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v5 04/15] landlock: helper functions refactoring
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <anton.sirazetdinov@huawei.com>
+References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
+ <20220516152038.39594-5-konstantin.meskhidze@huawei.com>
+ <ce1201e9-8493-8387-9df4-f0f8b75011c9@digikod.net>
+ <8c272564-1033-f100-23b6-db6579085fd0@huawei.com>
+ <1aaaf30d-f727-63c4-e5ee-e88ff51af300@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <1aaaf30d-f727-63c4-e5ee-e88ff51af300@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Matthias,
-
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on device-mapper-dm/for-next]
-[also build test WARNING on song-md/md-next kees/for-next/pstore linus/master v5.18-rc7 next-20220517]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220518-073635
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git for-next
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20220518/202205181616.3eTP2DaC-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/755e5d82e4d054b2b58a54c94681080cc8cb4582
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220518-073635
-        git checkout 755e5d82e4d054b2b58a54c94681080cc8cb4582
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash security/loadpin/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
-   In file included from security/loadpin/loadpin.c:21:
-   include/linux/dm-verity-loadpin.h:22:1: error: expected identifier or '(' before '{' token
-      22 | {
-         | ^
->> include/linux/dm-verity-loadpin.h:21:20: warning: 'dm_verity_loadpin_is_sb_trusted' used but never defined
-      21 | static inline bool dm_verity_loadpin_is_sb_trusted(struct super_block *sb);
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-vim +/dm_verity_loadpin_is_sb_trusted +21 include/linux/dm-verity-loadpin.h
+5/16/2022 9:28 PM, Mickaël Salaün пишет:
+> 
+> On 16/05/2022 19:43, Konstantin Meskhidze wrote:
+>>
+>>
+>> 5/16/2022 8:14 PM, Mickaël Salaün пишет:
+>>>
+>>> On 16/05/2022 17:20, Konstantin Meskhidze wrote:
+>>>> Unmask_layers(), init_layer_masks() and
+>>>> get_handled_accesses() helper functions move to
+>>>> ruleset.c and rule_type argument is added.
+>>>> This modification supports implementing new rule
+>>>> types into next landlock versions.
+>>>>
+>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> 
+> [...]
+> 
+>>>> -/*
+>>>> - * @layer_masks is read and may be updated according to the access 
+>>>> request and
+>>>> - * the matching rule.
+>>>> - *
+>>>> - * Returns true if the request is allowed (i.e. relevant layer 
+>>>> masks for the
+>>>> - * request are empty).
+>>>> - */
+>>>> -static inline bool
+>>>> -unmask_layers(const struct landlock_rule *const rule,
+>>>> -          const access_mask_t access_request,
+>>>> -          layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+>>>
+>>> Moving these entire blocks of code make the review/diff impossible. 
+>>> Why moving these helpers?
+>>
+>>    Cause these helpers are going to be used both for filesystem and 
+>> network. I moved them into ruleset.c/h
+> 
+> Right. Please create a commit which only moves these helpers without 
+> modifying them, and explain in the commit message that this removes 
+> inlined code. We'll see later if this adds a visible performance impact.
+> 
+    Ok. I will create towo commits - the first one moves helpers to 
+ruleset.c/h and the second one changes helpers to support network.
+> [...]
+> 
+>>>> @@ -519,17 +413,25 @@ static int check_access_path_dual(
+>>>>
+>>>>       if (unlikely(dentry_child1)) {
+>>>>           unmask_layers(find_rule(domain, dentry_child1),
+>>>> -                  init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+>>>> -                           &_layer_masks_child1),
+>>>> -                  &_layer_masks_child1);
+>>>> +                init_layer_masks(domain,
+>>>> +                    LANDLOCK_MASK_ACCESS_FS,
+>>>> +                    &_layer_masks_child1,
+>>>> +                    sizeof(_layer_masks_child1),
+>>>> +                    LANDLOCK_RULE_PATH_BENEATH),
+>>>> +                &_layer_masks_child1,
+>>>> +                ARRAY_SIZE(_layer_masks_child1));
+>>>
+>>> There is a lot of formatting diff and that makes the review 
+>>> difficult. Please format everything with clang-format-14.
+>>
+>>    Ok. Do you have some tool that helps you with editing code with 
+>> clang format?
+> 
+> I just run `clang-format-14 -i` on files before each commit. Some 
+> editors such as VSCode can handle the clang-format configuration (which 
+> is in the Linux source tree).
+> 
+  Ok. I have updated installed cloang-format-14 executable and setup my 
+VSCode to use .clang-format file.
+> 
+>>>
+>>>>           layer_masks_child1 = &_layer_masks_child1;
+>>>>           child1_is_directory = d_is_dir(dentry_child1);
+>>>>       }
+>>>>       if (unlikely(dentry_child2)) {
+>>>>           unmask_layers(find_rule(domain, dentry_child2),
+>>>> -                  init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+>>>> -                           &_layer_masks_child2),
+>>>> -                  &_layer_masks_child2);
+>>>> +                init_layer_masks(domain,
+>>>> +                    LANDLOCK_MASK_ACCESS_FS,
+>>>> +                    &_layer_masks_child2,
+>>>> +                    sizeof(_layer_masks_child2),
+>>>> +                    LANDLOCK_RULE_PATH_BENEATH),
+>>>> +                &_layer_masks_child2,
+>>>> +                ARRAY_SIZE(_layer_masks_child2));
+>>>>           layer_masks_child2 = &_layer_masks_child2;
+>>>>           child2_is_directory = d_is_dir(dentry_child2);
+>>>>       }
+>>>> @@ -582,14 +484,15 @@ static int check_access_path_dual(
+>>>>
+>>>>           rule = find_rule(domain, walker_path.dentry);
+>>>>           allowed_parent1 = unmask_layers(rule, access_masked_parent1,
+>>>> -                        layer_masks_parent1);
+>>>> +                layer_masks_parent1,
+>>>> +                ARRAY_SIZE(*layer_masks_parent1));
+>>>>           allowed_parent2 = unmask_layers(rule, access_masked_parent2,
+>>>> -                        layer_masks_parent2);
+>>>> +                layer_masks_parent2,
+>>>> +                ARRAY_SIZE(*layer_masks_parent2));
+>>>>
+>>>>           /* Stops when a rule from each layer grants access. */
+>>>>           if (allowed_parent1 && allowed_parent2)
+>>>>               break;
+>>>> -
+>>>
+>>> There is no place for such formatting/whitespace patches.
+>>>
+>>    I missed that. scripts/checkpatch.pl did not show any problem here.
+> 
+> checkpatch.pl doesn't warn about whitespace changes.
 
-afd03270f57b8c Matthias Kaehlcke 2022-05-17  17  
-afd03270f57b8c Matthias Kaehlcke 2022-05-17  18  #if IS_ENABLED(CONFIG_SECURITY_LOADPIN) && IS_BUILTIN(CONFIG_DM_VERITY)
-afd03270f57b8c Matthias Kaehlcke 2022-05-17  19  bool dm_verity_loadpin_is_sb_trusted(struct super_block *sb);
-afd03270f57b8c Matthias Kaehlcke 2022-05-17  20  #else
-afd03270f57b8c Matthias Kaehlcke 2022-05-17 @21  static inline bool dm_verity_loadpin_is_sb_trusted(struct super_block *sb);
-afd03270f57b8c Matthias Kaehlcke 2022-05-17 @22  {
-afd03270f57b8c Matthias Kaehlcke 2022-05-17  23  	return false;
-afd03270f57b8c Matthias Kaehlcke 2022-05-17  24  }
-afd03270f57b8c Matthias Kaehlcke 2022-05-17  25  #endif
-afd03270f57b8c Matthias Kaehlcke 2022-05-17  26  
+   yep. I will use Vscode clang plugin to follow the required code style.
+> 
+> 
+>>    I will fix it. Thanks.
+>>>
+>>>>   jump_up:
+>>>>           if (walker_path.dentry == walker_path.mnt->mnt_root) {
+>>>>               if (follow_up(&walker_path)) {
+>>>> @@ -645,7 +548,9 @@ static inline int check_access_path(const struct 
+>>>> landlock_ruleset *const domain,
+>>>>   {
+>>>>       layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+>>>>
+>>>> -    access_request = init_layer_masks(domain, access_request, 
+>>>> &layer_masks);
+>>>> +    access_request = init_layer_masks(domain, access_request,
+>>>> +            &layer_masks, sizeof(layer_masks),
+>>>> +            LANDLOCK_RULE_PATH_BENEATH);
+>>>>       return check_access_path_dual(domain, path, access_request,
+>>>>                         &layer_masks, NULL, 0, NULL, NULL);
+>>>>   }
+>>>> @@ -729,7 +634,8 @@ static bool collect_domain_accesses(
+>>>>           return true;
+>>>>
+>>>>       access_dom = init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+>>>> -                      layer_masks_dom);
+>>>> +            layer_masks_dom, sizeof(*layer_masks_dom),
+>>>> +            LANDLOCK_RULE_PATH_BENEATH);
+>>>>
+>>>>       dget(dir);
+>>>>       while (true) {
+>>>> @@ -737,7 +643,8 @@ static bool collect_domain_accesses(
+>>>>
+>>>>           /* Gets all layers allowing all domain accesses. */
+>>>>           if (unmask_layers(find_rule(domain, dir), access_dom,
+>>>> -                  layer_masks_dom)) {
+>>>> +                    layer_masks_dom,
+>>>> +                    ARRAY_SIZE(*layer_masks_dom))) {
+>>>>               /*
+>>>>                * Stops when all handled accesses are allowed by at
+>>>>                * least one rule in each layer.
+>>>> @@ -851,9 +758,10 @@ static int current_check_refer_path(struct 
+>>>> dentry *const old_dentry,
+>>>>            * The LANDLOCK_ACCESS_FS_REFER access right is not required
+>>>>            * for same-directory referer (i.e. no reparenting).
+>>>>            */
+>>>> -        access_request_parent1 = init_layer_masks(
+>>>> -            dom, access_request_parent1 | access_request_parent2,
+>>>> -            &layer_masks_parent1);
+>>>> +        access_request_parent1 = init_layer_masks(dom,
+>>>> +                access_request_parent1 | access_request_parent2,
+>>>> +                &layer_masks_parent1, sizeof(layer_masks_parent1),
+>>>> +                LANDLOCK_RULE_PATH_BENEATH);
+>>>>           return check_access_path_dual(dom, new_dir,
+>>>>                             access_request_parent1,
+>>>>                             &layer_masks_parent1, NULL, 0,
+>>>> @@ -861,7 +769,9 @@ static int current_check_refer_path(struct 
+>>>> dentry *const old_dentry,
+>>>>       }
+>>>>
+>>>>       /* Backward compatibility: no reparenting support. */
+>>>> -    if (!(get_handled_accesses(dom) & LANDLOCK_ACCESS_FS_REFER))
+>>>> +    if (!(get_handled_accesses(dom, LANDLOCK_RULE_PATH_BENEATH,
+>>>> +                   LANDLOCK_NUM_ACCESS_FS) &
+>>>> +                        LANDLOCK_ACCESS_FS_REFER))
+>>>>           return -EXDEV;
+>>>>
+>>>>       access_request_parent1 |= LANDLOCK_ACCESS_FS_REFER;
+>>>> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+>>>> index 4b4c9953bb32..c4ed783d655b 100644
+>>>> --- a/security/landlock/ruleset.c
+>>>> +++ b/security/landlock/ruleset.c
+>>>> @@ -233,7 +233,8 @@ static int insert_rule(struct landlock_ruleset 
+>>>> *const ruleset,
+>>>>                              &(*layers)[0]);
+>>>>               if (IS_ERR(new_rule))
+>>>>                   return PTR_ERR(new_rule);
+>>>> -            rb_replace_node(&this->node, &new_rule->node, 
+>>>> &ruleset->root_inode);
+>>>> +            rb_replace_node(&this->node, &new_rule->node,
+>>>> +                    &ruleset->root_inode);
+>>>
+>>> This is a pure formatting hunk. :/
+>>>
+>>    Thats strange, cause in my editor I have normal aligment of arguments.
+>>    Could please share clang-format-14 tab size and other format 
+>> parameters?
+> 
+> They are in the .clang-format file. It would be much easier to just run 
+> clang-format-14 -i on your changed files. I guess you had different 
+> changes between consecutive commits.
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+  Yep. Thnank you for help here.
+> .
