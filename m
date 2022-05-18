@@ -2,117 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721C8C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 04:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AD2C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 07:57:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbiEREgp (ORCPT
+        id S232770AbiERH5s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 May 2022 00:36:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37044 "EHLO
+        Wed, 18 May 2022 03:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229953AbiEREgo (ORCPT
+        with ESMTP id S232769AbiERH5s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 May 2022 00:36:44 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD31B1D6
-        for <linux-security-module@vger.kernel.org>; Tue, 17 May 2022 21:36:43 -0700 (PDT)
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1nrBQ5-0000jh-6u; Wed, 18 May 2022 06:36:21 +0200
-Message-ID: <6f6a5524-9661-9a9f-a674-915efa33f6f6@pengutronix.de>
-Date:   Wed, 18 May 2022 06:36:18 +0200
+        Wed, 18 May 2022 03:57:48 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACCC118007;
+        Wed, 18 May 2022 00:57:47 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id i19so2126166eja.11;
+        Wed, 18 May 2022 00:57:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=7ktjmA9lbYY+r3k7Xl4dUBOmRn/WA+0dOC0w53gvyVI=;
+        b=X0zcqKITNYv1TLoj7hswq47oFfYJ7vnsmf3gLIsQ7si/uX69O69xbpuznQyl96N2KR
+         6xl+3NoBa6wa9trbSHLKUdcI/doQHK8unsfCuQHXKvz9oYTQKR+RV31uM75p30dYaQu8
+         EAkBrThXrZJusSX8iicfNV1vRQQnBc81rGVtDvJdIa5EITWBcbnKBsEtPPJ1jV3MD8bU
+         XQEp3gdMeslcQY8gcRFIY5A+LH35hlhCVRdPv3WIF06Kyfyzazkti9tdidslDYjaxYva
+         2L1uTNvWeoRBrq3ohGmn4BKzSLH4n6Xc3T7NX1v1HrUjgoTAglis9mleel6rzIWqN5E+
+         4edg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=7ktjmA9lbYY+r3k7Xl4dUBOmRn/WA+0dOC0w53gvyVI=;
+        b=LfsSVB0MEIMk7pGtSiEbvhsgkYxGwxroA7nFtmNUTPCrUYZsAgspKAafMrtaZ/iP1K
+         6DxVcp8r5otFu4It6GkKS3bNcAYBnrydrM/umiWB5Ey+PMZlCCNwECZwZy2xyas7K3xd
+         l+EO9b29QV9nNFb/hphQN9fjrd5ELCH4uzgJSC2wGqlXJ2ykLGuL1Rlk/ZfZuf04WX9G
+         allNgTLLHDW+W9osh5Tb7uk2IOX+/6f+BKdOuPa4zhHYowYgM7mD4czvnwHtDCFT++j4
+         ybV/+9cndx/G7R90gki46SK6Ez5qLcLMq9RHVAq9MPICeiYX2+EFQn/mX5sVpCjBbENB
+         S/Sg==
+X-Gm-Message-State: AOAM533SqgPGR5jV8Pq9nTs5HqM+lsiSBMpehxeaS4aGAqhIBpjDspeR
+        ceyrYaFmFwVP3XINjDZRNec=
+X-Google-Smtp-Source: ABdhPJztZ+He6oZQpf5QYU8EpE4w74uBqb8gCz5K0anlddF2ScBUceeYay5gmr2N6k7sTt2XgAqIxw==
+X-Received: by 2002:a17:907:7216:b0:6f4:70d4:a3c4 with SMTP id dr22-20020a170907721600b006f470d4a3c4mr22754545ejc.529.1652860665411;
+        Wed, 18 May 2022 00:57:45 -0700 (PDT)
+Received: from [192.168.2.27] (85-70-151-113.rcd.o2.cz. [85.70.151.113])
+        by smtp.gmail.com with ESMTPSA id ee46-20020a056402292e00b0042617ba63aesm928060edb.56.2022.05.18.00.57.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 May 2022 00:57:44 -0700 (PDT)
+Message-ID: <19149028-ec94-8f64-aed4-1e58f29942a8@gmail.com>
+Date:   Wed, 18 May 2022 09:57:43 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v10 0/7] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
+ Thunderbird/91.8.1
+Subject: Re: [dm-devel] [PATCH v4 1/3] dm: Add verity helpers for LoadPin
 Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        James Bottomley <jejb@linux.ibm.com>, kernel@pengutronix.de,
-        David Howells <dhowells@redhat.com>,
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Andreas Rammhold <andreas@rammhold.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Michael Walle <michael@walle.cc>,
-        John Ernberg <john.ernberg@actia.se>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>
-References: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
- <YoKZwFkfcl7ixTF4@kernel.org>
- <4d4ecd4b-9683-08a0-7a5f-11a7ff86ea6d@pengutronix.de>
- <c511995075cafb35bfefcbfe6fa6e84aa31c536f.camel@kernel.org>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <c511995075cafb35bfefcbfe6fa6e84aa31c536f.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     dm-devel@redhat.com, Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        linux-security-module@vger.kernel.org
+References: <20220517233457.1123309-1-mka@chromium.org>
+ <20220517163437.v4.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
+From:   Milan Broz <gmazyland@gmail.com>
+In-Reply-To: <20220517163437.v4.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 18.05.22 03:08, Jarkko Sakkinen wrote:
-> On Tue, 2022-05-17 at 14:44 +0200, Ahmad Fatoum wrote:
->> Hello Herbert,
->>
->> On 16.05.22 20:36, Jarkko Sakkinen wrote:
->>> On Fri, May 13, 2022 at 04:56:58PM +0200, Ahmad Fatoum wrote:
->>> I can probably pick these unless objections?
->>
->> Pankaj has given his Reviewed-by for the CAAM parts he co-maintains,
->> is it ok for this to go in via Jarkko's tree?
->>
->> Note that applying this series on top of jarkko/linux-tpmdd.git has a
->> trivial conflict when merged with herbert/cryptodev-2.6.git:
->> Two independently added Kconfig options need to coexist in
->> drivers/crypto/caam/Kconfig.
->>
->> I can resend my series rebased if needed.
->>
->> Cheers,
->> Ahmad
->>
->>>
->>> BR, Jarkko
->>>
->>
->>
+On 18/05/2022 01:34, Matthias Kaehlcke wrote:
+> LoadPin limits loading of kernel modules, firmware and certain
+> other files to a 'pinned' file system (typically a read-only
+> rootfs). To provide more flexibility LoadPin is being extended
+> to also allow loading these files from trusted dm-verity
+> devices. For that purpose LoadPin can be provided with a list
+> of verity root digests that it should consider as trusted.
 > 
-> This came up:
+> Add a bunch of helpers to allow LoadPin to check whether a DM
+> device is a trusted verity device. The new functions broadly
+> fall in two categories: those that need access to verity
+> internals (like the root digest), and the 'glue' between
+> LoadPin and verity. The new file dm-verity-loadpin.c contains
+> the glue functions.
 > 
-> https://lore.kernel.org/keyrings/0e8da958a222e5c1dccaaf1600b08bdb8705b48e.camel@kernel.org/
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-And it turned out to be a misunderstanding. Or do you think there is still anything
-to do there?
+...
+
+> +
+> +	if (dm_verity_get_root_digest(ti, &root_digest, &digest_size))
+> +		return false;
+
+Almost unrelated note, but as there are more and more situations
+that checks verity root digest, shouldn't we export this as read-only
+sysfs attribute for DM verity devices?
+
+Attacker can always calculate (but not change) Merkle tree, so this
+is not something that need to be hidden.
+
+It would allow userspace to easily enumerate trusted DM devices without
+calling kernel ioctls...
+
+...
+
+> +
+> +	table = dm_get_live_table(md, &srcu_idx);
+> +
+> +	if (dm_table_get_num_targets(table) != 1)
+> +		goto out;
+> +
+> +	ti = dm_table_get_target(table, 0);
+> +
+> +	if (is_trusted_verity_target(ti))
+> +		trusted = true;
+
+What happens is someone reloads verity table later with
+a different content (or even different target type)?
+Does LoadPin even care here?
+
+...
+
+>   static struct target_type verity_target = {
+>   	.name		= "verity",
+>   	.version	= {1, 8, 0},
+
+Please increase the minor version, it is very useful to detect (in logs)
+that the target driver has compatible extensions.
+
+
+I guess this change does not affect userspace veristysetup
+(as it is used handled by different tooling), right?
 
 Thanks,
-Ahmad
-
-> 
-> BR, Jarkko
-> 
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Milan
