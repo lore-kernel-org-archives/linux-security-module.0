@@ -2,130 +2,107 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78A1C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 May 2022 23:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09157C4332F
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 01:09:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231859AbiEQXfK (ORCPT
+        id S233207AbiERBJ5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 May 2022 19:35:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55110 "EHLO
+        Tue, 17 May 2022 21:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231855AbiEQXfI (ORCPT
+        with ESMTP id S230428AbiERBJ4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 May 2022 19:35:08 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96B44527E0
-        for <linux-security-module@vger.kernel.org>; Tue, 17 May 2022 16:35:05 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id g184so611946pgc.1
-        for <linux-security-module@vger.kernel.org>; Tue, 17 May 2022 16:35:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dDud8QpcHOOGMYFVwG6KRCTw7kIHDGrPd+sI68v2xZg=;
-        b=GPXx2iWGpvjahWJ/eNt1vuxX+XfXwsKDhFEE5llZ+iBUQkHBDl8Q1os/RQzkoSp4Xw
-         oTtcxIKjZMu/LrvUzup2xopqBZYgA6GQbmmxYEoGNvGbf76Qscn6owliQXAnB1t6K2DR
-         4P2qMtKQ+M3+qEFrUp0umfBe7sJ+lxeus7J2A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dDud8QpcHOOGMYFVwG6KRCTw7kIHDGrPd+sI68v2xZg=;
-        b=7NwFgwLOIl02bKs8NguJQNWDcphIP8bYL7+8IoNPG0DYqFd9a6w4bnseSmR7h0aTfQ
-         uSu7T8wqcMu0NUMfOkXv5cdlZIyV4t+Tcf5JJBdMiTrfMM8G4anglJjGzSAqnmmjKpbl
-         ka0rHRqIUEN309Uiqmd+XUNWbsHq3zvwp9/0I5BWP8XWrF5ufbWjL1riX49fdVQF5aXb
-         HmNv3hZfLqwB9b+e3yKpr4YQLexIgwRuYg9oU1/OjLtOEgloAP8IiMyiFJ68jaDwCKNn
-         S4wUZaKzYht9GSrc9FaDvf8zYXlwdpOA1ekyr6MbRwWhVVWVmujl68+a0J4/ZrioblX+
-         jgHg==
-X-Gm-Message-State: AOAM531X1sJoZGeqzWmre/EqJTV645z6vIFjtllm10BdCrCWtgRPFW5y
-        tU8VKwFD0hbtRnuBHpId1x6v1Q==
-X-Google-Smtp-Source: ABdhPJyZj+2Vn+6W69AKPRTh2wk4PKvqzqVqTA63hYJRVSIAYcQ/O1m9fMYTQtqsbh7pki5RFa2oow==
-X-Received: by 2002:a05:6a00:298a:b0:50e:8e3:b673 with SMTP id cj10-20020a056a00298a00b0050e08e3b673mr24631943pfb.28.1652830505085;
-        Tue, 17 May 2022 16:35:05 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:a14:3166:4b67:b688])
-        by smtp.gmail.com with UTF8SMTPSA id l17-20020a170903245100b001617e18e253sm162705pls.143.2022.05.17.16.35.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 16:35:04 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        Tue, 17 May 2022 21:09:56 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CACA736E16;
+        Tue, 17 May 2022 18:09:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7751AB81BEA;
+        Wed, 18 May 2022 01:09:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC81AC385B8;
+        Wed, 18 May 2022 01:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652836191;
+        bh=fXm/jNWiR+uB6y2skR3sOXI5YjTEgz3MjlGfetpWRgc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=SyUEAn+gBKLP4/y7Dp2x8gWSW1lqeyqAXiL2vBFEZeB2RkB5kpLoHp6ZrlZ8QfQ+v
+         CJiDHmKolgvDy3q0WmtL/Fr4i/y1mA+txWjVxbXEPA2LASDGCfeihKmNBcJIKZlODp
+         yctJBSwOgWdGhXJS4xHrCWRbCe6soNnAOJjOEe1KGpFwQatT201u0KiW6A8msecgLb
+         UP3yu7Hl05XwGV7BFMKjs1U0Dr8VO2eIf5Y1I2quQOw/uJNgGivzuP+cknMFzbkQVn
+         WaswSxl512pCH+OJw40YH93JG3CE5Zvt6DbCKBydO1c9zaoLwCzSeoxMZaOeISSshJ
+         qIh02HXYMpZgQ==
+Message-ID: <c511995075cafb35bfefcbfe6fa6e84aa31c536f.camel@kernel.org>
+Subject: Re: [PATCH v10 0/7] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia =?UTF-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        James Bottomley <jejb@linux.ibm.com>, kernel@pengutronix.de,
+        David Howells <dhowells@redhat.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        Song Liu <song@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v4 3/3] dm: verity-loadpin: Use CONFIG_SECURITY_LOADPIN_VERITY for conditional compilation
-Date:   Tue, 17 May 2022 16:34:57 -0700
-Message-Id: <20220517163437.v4.3.I5aca2dcc3b06de4bf53696cd21329dce8272b8aa@changeid>
-X-Mailer: git-send-email 2.36.0.550.gb090851708-goog
-In-Reply-To: <20220517233457.1123309-1-mka@chromium.org>
-References: <20220517233457.1123309-1-mka@chromium.org>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Andreas Rammhold <andreas@rammhold.de>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Michael Walle <michael@walle.cc>,
+        John Ernberg <john.ernberg@actia.se>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Wed, 18 May 2022 04:08:15 +0300
+In-Reply-To: <4d4ecd4b-9683-08a0-7a5f-11a7ff86ea6d@pengutronix.de>
+References: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
+         <YoKZwFkfcl7ixTF4@kernel.org>
+         <4d4ecd4b-9683-08a0-7a5f-11a7ff86ea6d@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The verity glue for LoadPin is only needed when CONFIG_SECURITY_LOADPIN_VERITY
-is set, use this option for conditional compilation instead of the combo of
-CONFIG_DM_VERITY and CONFIG_SECURITY_LOADPIN.
+On Tue, 2022-05-17 at 14:44 +0200, Ahmad Fatoum wrote:
+> Hello Herbert,
+>=20
+> On 16.05.22 20:36, Jarkko Sakkinen wrote:
+> > On Fri, May 13, 2022 at 04:56:58PM +0200, Ahmad Fatoum wrote:
+> > I can probably pick these unless objections?
+>=20
+> Pankaj has given his Reviewed-by for the CAAM parts he co-maintains,
+> is it ok for this to go in via Jarkko's tree?
+>=20
+> Note that applying this series on top of jarkko/linux-tpmdd.git has a
+> trivial conflict when merged with herbert/cryptodev-2.6.git:
+> Two independently added Kconfig options need to coexist in
+> drivers/crypto/caam/Kconfig.
+>=20
+> I can resend my series rebased if needed.
+>=20
+> Cheers,
+> Ahmad
+>=20
+> >=20
+> > BR, Jarkko
+> >=20
+>=20
+>=20
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
+This came up:
 
-Changes in v4:
-- none
+https://lore.kernel.org/keyrings/0e8da958a222e5c1dccaaf1600b08bdb8705b48e.c=
+amel@kernel.org/
 
-Changes in v3:
-- none
-
-Changes in v2:
-- none
-
- drivers/md/Makefile               | 7 +------
- include/linux/dm-verity-loadpin.h | 2 +-
- 2 files changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-index 71771901c823..a96441752ec7 100644
---- a/drivers/md/Makefile
-+++ b/drivers/md/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_DM_LOG_WRITES)	+= dm-log-writes.o
- obj-$(CONFIG_DM_INTEGRITY)	+= dm-integrity.o
- obj-$(CONFIG_DM_ZONED)		+= dm-zoned.o
- obj-$(CONFIG_DM_WRITECACHE)	+= dm-writecache.o
-+obj-$(CONFIG_SECURITY_LOADPIN_VERITY)	+= dm-verity-loadpin.o
- 
- ifeq ($(CONFIG_DM_INIT),y)
- dm-mod-objs			+= dm-init.o
-@@ -108,12 +109,6 @@ ifeq ($(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG),y)
- dm-verity-objs			+= dm-verity-verify-sig.o
- endif
- 
--ifeq ($(CONFIG_DM_VERITY),y)
--ifeq ($(CONFIG_SECURITY_LOADPIN),y)
--dm-verity-objs			+= dm-verity-loadpin.o
--endif
--endif
--
- ifeq ($(CONFIG_DM_AUDIT),y)
- dm-mod-objs			+= dm-audit.o
- endif
-diff --git a/include/linux/dm-verity-loadpin.h b/include/linux/dm-verity-loadpin.h
-index c2bfd2b9c651..dd66ece9a751 100644
---- a/include/linux/dm-verity-loadpin.h
-+++ b/include/linux/dm-verity-loadpin.h
-@@ -15,7 +15,7 @@ struct trusted_root_digest {
- 	u8 data[];
- };
- 
--#if IS_ENABLED(CONFIG_SECURITY_LOADPIN) && IS_BUILTIN(CONFIG_DM_VERITY)
-+#if IS_ENABLED(CONFIG_SECURITY_LOADPIN_VERITY)
- bool dm_verity_loadpin_is_sb_trusted(struct super_block *sb);
- #else
- static inline bool dm_verity_loadpin_is_sb_trusted(struct super_block *sb);
--- 
-2.36.0.550.gb090851708-goog
-
+BR, Jarkko
