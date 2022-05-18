@@ -2,129 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D2DC4332F
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 11:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FBAC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 12:47:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235671AbiERL35 (ORCPT
+        id S237402AbiERMrV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 May 2022 07:29:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47242 "EHLO
+        Wed, 18 May 2022 08:47:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235643AbiERL34 (ORCPT
+        with ESMTP id S237191AbiERMpt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 May 2022 07:29:56 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E101778A8;
-        Wed, 18 May 2022 04:29:55 -0700 (PDT)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24IBOs2m016543;
-        Wed, 18 May 2022 11:29:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=0EciM2JOStnqa7conOmfeN1U3vKQZFHvrLdmVzuLBUk=;
- b=lkrAr7oPP61U5vpzE2lSKvsJx/FVB4lPNeqjp0CexhhHGevAEH4aUhvIsBL7SFp6X8sj
- UKRgQQEPl+4+cnCXIzgIq9SrSX7DA4FKGy58SRCCuZQSWPHLZIyjPxB+BWsZ6yg9jmmS
- RDY/eUfjsLxT/ySmu/5GzSaoNveeWLmt0EgxPvE/x+L3KNILvWQVzwO5iVAqy/mVITwg
- /S7wqiW0xrCoRS2vEnzgXssapY4QwpY0uzwaIoO87I7x0HOP5XZOBQn/QGsgaJgNLEjM
- DxnvxWJiXzTbHJmYSp9Hx46UskLiD6bD90cTajYqIeI2f2W+Sp6oGhhVRLSgZhS/CypZ BQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3g4yw6r29u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 May 2022 11:29:40 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 24IBPnB8023788;
-        Wed, 18 May 2022 11:29:38 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3g4yw6r28k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 May 2022 11:29:38 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24IB854f028911;
-        Wed, 18 May 2022 11:29:36 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06ams.nl.ibm.com with ESMTP id 3g23pjdmg9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 May 2022 11:29:36 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24IBFfBX52232570
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 May 2022 11:15:41 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 27C75A404D;
-        Wed, 18 May 2022 11:29:33 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5FCAEA4040;
-        Wed, 18 May 2022 11:29:32 +0000 (GMT)
-Received: from osiris (unknown [9.145.54.247])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 18 May 2022 11:29:32 +0000 (GMT)
-Date:   Wed, 18 May 2022 13:29:31 +0200
-From:   Heiko Carstens <hca@linux.ibm.com>
-To:     Coiby Xu <coxu@redhat.com>
-Cc:     kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        Michal Suchanek <msuchanek@suse.de>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, Chun-Yi Lee <jlee@suse.com>,
-        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "open list:S390" <linux-s390@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 4/4] kexec, KEYS, s390: Make use of built-in and
- secondary keyring for signature verification
-Message-ID: <YoTYm6Fo1vBUuJGu@osiris>
-References: <20220512070123.29486-1-coxu@redhat.com>
- <20220512070123.29486-5-coxu@redhat.com>
+        Wed, 18 May 2022 08:45:49 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92065E02;
+        Wed, 18 May 2022 05:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1652877731; x=1684413731;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=g12NRS8alSxAMdjIZ7FyL80YifoKRkRmio1kwZZ1BfQ=;
+  b=BfbxW1gcSO24QVRvo6ssEedhk1lu9c77zNq8gfdaTQaftojY2dtHhTg5
+   IaqToqJnFaI/aQDUiEt8GqiWXx9zF8a86UN8P0+bY066Scx8rAAO11bIn
+   Ql0EngWZneimo9rfH5MwestFV48oHE6ZbXmJLP9PfVFCX6LKDPfuESc4Z
+   wNJnP3eaB9k5Qt5DQ6TlMmtccHFvztTs7ZLNAMgPzQwZKdzEIQcXTos2+
+   RHPIR8s7ElhyoNuoeVldnab9W7OFaI7XbeOnvrysotcqJ2LUVCz1lpkca
+   r5lkKcVsU4xgaNbr/UFj64e1RCQ6/aW93cLhu0iioE3hrC7BntSAaIe1D
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10350"; a="332270387"
+X-IronPort-AV: E=Sophos;i="5.91,234,1647327600"; 
+   d="scan'208";a="332270387"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2022 05:41:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,234,1647327600"; 
+   d="scan'208";a="639243416"
+Received: from lkp-server02.sh.intel.com (HELO 242b25809ac7) ([10.239.97.151])
+  by fmsmga004.fm.intel.com with ESMTP; 18 May 2022 05:41:33 -0700
+Received: from kbuild by 242b25809ac7 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nrIzd-0002BR-4H;
+        Wed, 18 May 2022 12:41:33 +0000
+Date:   Wed, 18 May 2022 20:40:33 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     kbuild-all@lists.01.org, linux-security-module@vger.kernel.org,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, Song Liu <song@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v4 2/3] LoadPin: Enable loading from trusted dm-verity
+ devices
+Message-ID: <202205182059.6QY3zspw-lkp@intel.com>
+References: <20220517163437.v4.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220512070123.29486-5-coxu@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: QZ2aRxCw1ojqOWeZzANhIM2N8TBQebSk
-X-Proofpoint-ORIG-GUID: IjCvJ7YuMN2ii3itPe7V6ahbqtuLjERA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-18_04,2022-05-17_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=905 phishscore=0 spamscore=0 bulkscore=0 mlxscore=0
- priorityscore=1501 impostorscore=0 clxscore=1011 malwarescore=0
- adultscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2202240000 definitions=main-2205180059
+In-Reply-To: <20220517163437.v4.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 12, 2022 at 03:01:23PM +0800, Coiby Xu wrote:
-> From: Michal Suchanek <msuchanek@suse.de>
-> 
-> commit e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-> adds support for KEXEC_SIG verification with keys from platform keyring
-> but the built-in keys and secondary keyring are not used.
-> 
-> Add support for the built-in keys and secondary keyring as x86 does.
-> 
-> Fixes: e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-> Cc: stable@vger.kernel.org
-> Cc: Philipp Rudo <prudo@linux.ibm.com>
-> Cc: kexec@lists.infradead.org
-> Cc: keyrings@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-> Acked-by: Baoquan He <bhe@redhat.com>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
->  arch/s390/kernel/machine_kexec_file.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
+Hi Matthias,
 
-As far as I can tell this doesn't have any dependency to the other
-patches in this series, so should I pick this up for the s390 tree, or
-how will this go upstream?
+Thank you for the patch! Yet something to improve:
 
-In any case:
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+[auto build test ERROR on device-mapper-dm/for-next]
+[also build test ERROR on song-md/md-next kees/for-next/pstore linus/master v5.18-rc7 next-20220517]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220518-073635
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git for-next
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20220518/202205182059.6QY3zspw-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/755e5d82e4d054b2b58a54c94681080cc8cb4582
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Matthias-Kaehlcke/LoadPin-Enable-loading-from-trusted-dm-verity-devices/20220518-073635
+        git checkout 755e5d82e4d054b2b58a54c94681080cc8cb4582
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash security/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   In file included from security/loadpin/loadpin.c:21:
+>> include/linux/dm-verity-loadpin.h:22:1: error: expected identifier or '(' before '{' token
+      22 | {
+         | ^
+   include/linux/dm-verity-loadpin.h:21:20: warning: 'dm_verity_loadpin_is_sb_trusted' used but never defined
+      21 | static inline bool dm_verity_loadpin_is_sb_trusted(struct super_block *sb);
+         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +22 include/linux/dm-verity-loadpin.h
+
+afd03270f57b8c Matthias Kaehlcke 2022-05-17  17  
+afd03270f57b8c Matthias Kaehlcke 2022-05-17  18  #if IS_ENABLED(CONFIG_SECURITY_LOADPIN) && IS_BUILTIN(CONFIG_DM_VERITY)
+afd03270f57b8c Matthias Kaehlcke 2022-05-17  19  bool dm_verity_loadpin_is_sb_trusted(struct super_block *sb);
+afd03270f57b8c Matthias Kaehlcke 2022-05-17  20  #else
+afd03270f57b8c Matthias Kaehlcke 2022-05-17  21  static inline bool dm_verity_loadpin_is_sb_trusted(struct super_block *sb);
+afd03270f57b8c Matthias Kaehlcke 2022-05-17 @22  {
+afd03270f57b8c Matthias Kaehlcke 2022-05-17  23  	return false;
+afd03270f57b8c Matthias Kaehlcke 2022-05-17  24  }
+afd03270f57b8c Matthias Kaehlcke 2022-05-17  25  #endif
+afd03270f57b8c Matthias Kaehlcke 2022-05-17  26  
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
