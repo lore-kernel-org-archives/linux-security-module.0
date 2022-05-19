@@ -2,85 +2,267 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A360C433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 12:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06811C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 12:31:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237931AbiESM2F (ORCPT
+        id S237857AbiESMbz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 May 2022 08:28:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43148 "EHLO
+        Thu, 19 May 2022 08:31:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230522AbiESM2C (ORCPT
+        with ESMTP id S237968AbiESMbx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 May 2022 08:28:02 -0400
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE52BA57A;
-        Thu, 19 May 2022 05:28:01 -0700 (PDT)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 20D5C1C0B92; Thu, 19 May 2022 14:27:58 +0200 (CEST)
-Date:   Thu, 19 May 2022 14:27:46 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Arseny Maslennikov <ar@cs.msu.ru>
-Cc:     Walt Drummond <walt@drummond.us>, Theodore Ts'o <tytso@mit.edu>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, aacraid@microsemi.com,
-        viro@zeniv.linux.org.uk, anna.schumaker@netapp.com, arnd@arndb.de,
-        bsegall@google.com, bp@alien8.de, chuck.lever@oracle.com,
-        bristot@redhat.com, dave.hansen@linux.intel.com,
-        dwmw2@infradead.org, dietmar.eggemann@arm.com, dinguyen@kernel.org,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        idryomov@gmail.com, mingo@redhat.com, yzaikin@google.com,
-        ink@jurassic.park.msu.ru, jejb@linux.ibm.com, jmorris@namei.org,
-        bfields@fieldses.org, jlayton@kernel.org, jirislaby@kernel.org,
-        john.johansen@canonical.com, juri.lelli@redhat.com,
-        keescook@chromium.org, mcgrof@kernel.org,
-        martin.petersen@oracle.com, mattst88@gmail.com, mgorman@suse.de,
-        oleg@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
-        rth@twiddle.net, richard@nod.at, serge@hallyn.com,
-        rostedt@goodmis.org, tglx@linutronix.de,
-        trond.myklebust@hammerspace.com, vincent.guittot@linaro.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 0/8] signals: Support more than 64 signals
-Message-ID: <20220519122746.GA3904@localhost>
-References: <20220103181956.983342-1-walt@drummond.us>
- <87iluzidod.fsf@email.froward.int.ebiederm.org>
- <YdSzjPbVDVGKT4km@mit.edu>
- <87pmp79mxl.fsf@email.froward.int.ebiederm.org>
- <YdTI16ZxFFNco7rH@mit.edu>
- <CADCN6nzT-Dw-AabtwWrfVRDd5HzMS3EOy8WkeomicJF07nQyoA@mail.gmail.com>
- <YdiUiHAhLyfgpvVY@cello>
+        Thu, 19 May 2022 08:31:53 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31AE42C677;
+        Thu, 19 May 2022 05:31:38 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4L3q3J1dyPz6F99q;
+        Thu, 19 May 2022 20:31:24 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Thu, 19 May 2022 14:31:35 +0200
+Message-ID: <1297f02f-5c2c-bebd-da58-eed9b8ee97cc@huawei.com>
+Date:   Thu, 19 May 2022 15:31:33 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YdiUiHAhLyfgpvVY@cello>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v5 11/15] seltests/landlock: connect() with AF_UNSPEC
+ tests
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <anton.sirazetdinov@huawei.com>
+References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
+ <20220516152038.39594-12-konstantin.meskhidze@huawei.com>
+ <e2c67180-3ec5-f710-710a-0c2644bfa54e@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <e2c67180-3ec5-f710-710a-0c2644bfa54e@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml753-chm.china.huawei.com (10.201.108.203) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi!
 
-> > The only standard tools that support SIGINFO are sleep, dd and ping,
-> > (and kill, for obvious reasons) so it's not like there's a vast hole
-> > in the tooling or something, nor is there a large legacy software base
-> > just waiting for SIGINFO to appear.   So while I very much enjoyed
-> > figuring out how to make SIGINFO work ...
+
+5/17/2022 11:55 AM, Mickaël Salaün пишет:
+> I guess these tests would also work with IPv6. You can then use the 
+> "alternative" tests I explained.
 > 
-> As far as I recall, GNU make on *BSD does support SIGINFO (Not a
-> standard tool, but obviously an established one).
+   Do you mean adding new helpers such as bind_variant() and 
+connect_variant()??
+> On 16/05/2022 17:20, Konstantin Meskhidze wrote:
+>> Adds two selftests for connect() action with
+>> AF_UNSPEC family flag.
+>> The one is with no landlock restrictions
+>> allows to disconnect already conneted socket
+>> with connect(..., AF_UNSPEC, ...):
+>>      - connect_afunspec_no_restictions;
+>> The second one refuses landlocked process
+>> to disconnect already connected socket:
+>>      - connect_afunspec_with_restictions;
+>>
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> ---
+>>
+>> Changes since v3:
+>> * Add connect_afunspec_no_restictions test.
+>> * Add connect_afunspec_with_restictions test.
+>>
+>> Changes since v4:
+>> * Refactoring code with self->port, self->addr4 variables.
+>> * Adds bind() hook check for with AF_UNSPEC family.
+>>
+>> ---
+>>   tools/testing/selftests/landlock/net_test.c | 121 ++++++++++++++++++++
+>>   1 file changed, 121 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/landlock/net_test.c 
+>> b/tools/testing/selftests/landlock/net_test.c
+>> index cf914d311eb3..bf8e49466d1d 100644
+>> --- a/tools/testing/selftests/landlock/net_test.c
+>> +++ b/tools/testing/selftests/landlock/net_test.c
+>> @@ -449,6 +449,7 @@ TEST_F_FORK(socket_test, 
+>> connect_with_restrictions_ip6) {
+>>       int new_fd;
+>>       int sockfd_1, sockfd_2;
+>>       pid_t child_1, child_2;
+>> +
+>>       int status;
+>>
+>>       struct landlock_ruleset_attr ruleset_attr = {
+>> @@ -467,10 +468,12 @@ TEST_F_FORK(socket_test, 
+>> connect_with_restrictions_ip6) {
+>>
+>>       const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+>>               sizeof(ruleset_attr), 0);
+>> +
 > 
-> The developers of strace have expressed interest in SIGINFO support
-> to print tracer status messages (unfortunately, not on a public list).
-> Computational software can use this instead of stderr progress spam, if
-> run in an interactive fashion on a terminal, as it frequently is. There
-> is a user base, it's just not very vocal on kernel lists. :)
+> Please no…
+> 
+  Sorry for that. I will apply clang-format-14.
+> 
+>>       ASSERT_LE(0, ruleset_fd);
+>>
+>>       /* Allows connect and bind operations to the port[0] socket */
+>>       ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +
+> 
+> ditto
 
-And often it would be useful if cp supported this. Yes, this
-is feature I'd like to see.
-
-BR,							Pavel
-
--- 
+   Ditto. Will be fixed with clang-format.
+> 
+>>                   &net_service_1, 0));
+>>       /* Allows connect and deny bind operations to the port[1] socket */
+>>       ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> @@ -480,6 +483,7 @@ TEST_F_FORK(socket_test, 
+>> connect_with_restrictions_ip6) {
+>>       enforce_ruleset(_metadata, ruleset_fd);
+>>
+>>       /* Creates a server socket 1 */
+>> +
+>>       sockfd_1 = create_socket(_metadata, true, false);
+>>       ASSERT_LE(0, sockfd_1);
+>>
+>> @@ -556,4 +560,121 @@ TEST_F_FORK(socket_test, 
+>> connect_with_restrictions_ip6) {
+>>       ASSERT_EQ(1, WIFEXITED(status));
+>>       ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+>>   }
+>> +
+>> +TEST_F_FORK(socket_test, connect_afunspec_no_restictions) {
+>> +
+>> +    int sockfd;
+>> +    pid_t child;
+>> +    int status;
+>> +
+>> +    /* Creates a server socket 1 */
+>> +    sockfd = create_socket(_metadata, false, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +
+>> +    /* Binds the socket 1 to address with port[0] with AF_UNSPEC 
+>> family */
+>> +    self->addr4[0].sin_family = AF_UNSPEC;
+>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr4[0], 
+>> sizeof(self->addr4[0])));
+>> +
+>> +    /* Makes connection to socket with port[0] */
+>> +    ASSERT_EQ(0, connect(sockfd, (struct sockaddr *)&self->addr4[0],
+>> +                           sizeof(self->addr4[0])));
+>> +
+>> +    child = fork();
+>> +    ASSERT_LE(0, child);
+>> +    if (child == 0) {
+>> +        struct sockaddr addr_unspec = {.sa_family = AF_UNSPEC};
+>> +
+>> +        /* Child tries to disconnect already connected socket */
+>> +        ASSERT_EQ(0, connect(sockfd, (struct sockaddr *)&addr_unspec,
+>> +                        sizeof(addr_unspec)));
+>> +        _exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
+>> +        return;
+>> +    }
+>> +    /* Closes listening socket 1 for the parent*/
+>> +    ASSERT_EQ(0, close(sockfd));
+>> +
+>> +    ASSERT_EQ(child, waitpid(child, &status, 0));
+>> +    ASSERT_EQ(1, WIFEXITED(status));
+>> +    ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+>> +}
+>> +
+>> +TEST_F_FORK(socket_test, connect_afunspec_with_restictions) {
+>> +
+>> +    int sockfd;
+>> +    pid_t child;
+>> +    int status;
+>> +
+>> +    struct landlock_ruleset_attr ruleset_attr_1 = {
+>> +        .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
+>> +    };
+>> +    struct landlock_net_service_attr net_service_1 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
+>> +
+>> +        .port = self->port[0],
+>> +    };
+>> +
+>> +    struct landlock_ruleset_attr ruleset_attr_2 = {
+>> +        .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +    };
+>> +    struct landlock_net_service_attr net_service_2 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +
+>> +        .port = self->port[0],
+>> +    };
+>> +
+>> +    const int ruleset_fd_1 = landlock_create_ruleset(&ruleset_attr_1,
+>> +                    sizeof(ruleset_attr_1), 0);
+>> +    ASSERT_LE(0, ruleset_fd_1);
+>> +
+>> +    /* Allows bind operations to the port[0] socket */
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd_1, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                       &net_service_1, 0));
+>> +
+>> +    /* Enforces the ruleset. */
+>> +    enforce_ruleset(_metadata, ruleset_fd_1);
+>> +
+>> +    /* Creates a server socket 1 */
+>> +    sockfd = create_socket(_metadata, false, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +
+>> +    /* Binds the socket 1 to address with port[0] with AF_UNSPEC 
+>> family */
+>> +    self->addr4[0].sin_family = AF_UNSPEC;
+>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr4[0], 
+>> sizeof(self->addr4[0])));
+>> +
+>> +    /* Makes connection to socket with port[0] */
+>> +    ASSERT_EQ(0, connect(sockfd, (struct sockaddr *)&self->addr4[0],
+>> +                           sizeof(self->addr4[0])));
+>> +
+>> +    const int ruleset_fd_2 = landlock_create_ruleset(&ruleset_attr_2,
+>> +                    sizeof(ruleset_attr_2), 0);
+>> +    ASSERT_LE(0, ruleset_fd_2);
+>> +
+>> +    /* Allows connect and bind operations to the port[0] socket */
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd_2, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                       &net_service_2, 0));
+>> +
+>> +    /* Enforces the ruleset. */
+>> +    enforce_ruleset(_metadata, ruleset_fd_2);
+>> +
+>> +    child = fork();
+>> +    ASSERT_LE(0, child);
+>> +    if (child == 0) {
+>> +        struct sockaddr addr_unspec = {.sa_family = AF_UNSPEC};
+>> +
+>> +        /* Child tries to disconnect already connected socket */
+>> +        ASSERT_EQ(-1, connect(sockfd, (struct sockaddr *)&addr_unspec,
+>> +                        sizeof(addr_unspec)));
+>> +        ASSERT_EQ(EACCES, errno);
+>> +        _exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
+>> +        return;
+>> +    }
+>> +    /* Closes listening socket 1 for the parent*/
+>> +    ASSERT_EQ(0, close(sockfd));
+>> +
+>> +    ASSERT_EQ(child, waitpid(child, &status, 0));
+>> +    ASSERT_EQ(1, WIFEXITED(status));
+>> +    ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+>> +}
+>>   TEST_HARNESS_MAIN
+>> -- 
+>> 2.25.1
+>>
+> .
