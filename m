@@ -2,111 +2,164 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80131C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 00:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E792C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 00:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232269AbiESAjX (ORCPT
+        id S232250AbiESAsA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 May 2022 20:39:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49062 "EHLO
+        Wed, 18 May 2022 20:48:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232311AbiESAjN (ORCPT
+        with ESMTP id S232142AbiESAr6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 May 2022 20:39:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F21C236B6E
-        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 17:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652920752;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dhPoiNFlWhE/EG2LfPsngTKf/wXSwPmET9DKcPeU2e0=;
-        b=g20+EyGP9AvxddG+xUW+9AEUm8/0REdAr0DB9+HtKToO70jkscS2bM1W1qrCcYRcZtiSSW
-        mAi4Ae4AvAl46dEjpcwzebPYeNGt2qqVl/ZQ4yPuCGwBoY3SE8JyzDZJg7DQS/Wd0BEPlU
-        6EL8CjDNkrmlf+lh8n43GEaOEb2XU00=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-650-L87-ln_FMa6BzS8tUYo5IA-1; Wed, 18 May 2022 20:39:07 -0400
-X-MC-Unique: L87-ln_FMa6BzS8tUYo5IA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 021A48015BA;
-        Thu, 19 May 2022 00:39:07 +0000 (UTC)
-Received: from localhost (ovpn-12-103.pek2.redhat.com [10.72.12.103])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD749492C3B;
-        Thu, 19 May 2022 00:39:05 +0000 (UTC)
-Date:   Thu, 19 May 2022 08:39:02 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Heiko Carstens <hca@linux.ibm.com>, akpm@linux-foundation.org,
-        zohar@linux.ibm.com
-Cc:     Coiby Xu <coxu@redhat.com>, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michal Suchanek <msuchanek@suse.de>,
-        Dave Young <dyoung@redhat.com>, Will Deacon <will@kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, Chun-Yi Lee <jlee@suse.com>,
-        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "open list:S390" <linux-s390@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 4/4] kexec, KEYS, s390: Make use of built-in and
- secondary keyring for signature verification
-Message-ID: <20220519003902.GE156677@MiWiFi-R3L-srv>
-References: <20220512070123.29486-1-coxu@redhat.com>
- <20220512070123.29486-5-coxu@redhat.com>
- <YoTYm6Fo1vBUuJGu@osiris>
+        Wed, 18 May 2022 20:47:58 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA96811446
+        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 17:47:57 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id v11so3688358pff.6
+        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 17:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0dmLJVwCa/DghSPPAq3/ILY1JgWX+nBsu5yiEOAQ9ss=;
+        b=XMODawl+7/0Y5Xh+b7gsipx99R4vrMlDVUJhygLFG7mr2rmjqW84L/f6uhId0MVlCM
+         +7YHF+QsNYi15C1v725aS6OaBX9ZEjzCjL+F41eoG4Hbu8LlXissF8hjPeLMSl9nNire
+         6tWIj/frqGlWx4+/gOTTDSdUVC5q88N9ooLdU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0dmLJVwCa/DghSPPAq3/ILY1JgWX+nBsu5yiEOAQ9ss=;
+        b=Blqxs9n0jsIYA6XE30/9U6NIpNOjZDOzq7OfH4qfMVRNznlF4TDRK/D+epJe0UWwUc
+         g8EXXcabD8za3loHWdhgpKowNLo6NRp2RPlY6Lfxejmp5LcT9ibZeWHcc7x+muU5k30F
+         6ISASIBrfjOJRTvMwDOdfCZdzhCGoQfp3L2vzCX5fCoQRe7ZoIHdPA5H8TbQk+v0J+P/
+         23F9ep6mD0W/j0l5xFhz2S8alixiXv5ottWllDgSij5zYQp6TjQQI9loRcuKa+dszR23
+         Xh70urCvLEOpRdHyqS7N1RnDqWt66ruo98Z0cQeOg6xEcdOl025k5cE+9mNjEeK/Ddk9
+         vxQw==
+X-Gm-Message-State: AOAM530X3+AUF+QzzS0+dHW035X2gKCHLNje6I6UIVfeC7b5FbMJ7UO4
+        hGaOAtHNiPPP2l5nqD1miYl3ug==
+X-Google-Smtp-Source: ABdhPJxPgVklbI1Lz7IgXdVY0Dozqllrmq/dawwTwH/MMyxvIe35uXRiIXra8YQiTvV2RUlZEyKpvA==
+X-Received: by 2002:a65:554a:0:b0:3f6:885:b291 with SMTP id t10-20020a65554a000000b003f60885b291mr1746494pgr.608.1652921277291;
+        Wed, 18 May 2022 17:47:57 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:e229:79ea:227e:d9dd])
+        by smtp.gmail.com with UTF8SMTPSA id u26-20020aa7839a000000b0050dc76281c2sm2515274pfm.156.2022.05.18.17.47.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 May 2022 17:47:56 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     Song Liu <song@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-raid@vger.kernel.org,
+        dm-devel@redhat.com, Milan Broz <gmazyland@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v5 0/3] LoadPin: Enable loading from trusted dm-verity devices
+Date:   Wed, 18 May 2022 17:47:51 -0700
+Message-Id: <20220519004754.2174254-1-mka@chromium.org>
+X-Mailer: git-send-email 2.36.1.124.g0e6072fb45-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YoTYm6Fo1vBUuJGu@osiris>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 05/18/22 at 01:29pm, Heiko Carstens wrote:
-> On Thu, May 12, 2022 at 03:01:23PM +0800, Coiby Xu wrote:
-> > From: Michal Suchanek <msuchanek@suse.de>
-> > 
-> > commit e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-> > adds support for KEXEC_SIG verification with keys from platform keyring
-> > but the built-in keys and secondary keyring are not used.
-> > 
-> > Add support for the built-in keys and secondary keyring as x86 does.
-> > 
-> > Fixes: e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-> > Cc: stable@vger.kernel.org
-> > Cc: Philipp Rudo <prudo@linux.ibm.com>
-> > Cc: kexec@lists.infradead.org
-> > Cc: keyrings@vger.kernel.org
-> > Cc: linux-security-module@vger.kernel.org
-> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-> > Acked-by: Baoquan He <bhe@redhat.com>
-> > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> > ---
-> >  arch/s390/kernel/machine_kexec_file.c | 18 +++++++++++++-----
-> >  1 file changed, 13 insertions(+), 5 deletions(-)
-> 
-> As far as I can tell this doesn't have any dependency to the other
-> patches in this series, so should I pick this up for the s390 tree, or
-> how will this go upstream?
+As of now LoadPin restricts loading of kernel files to a single pinned
+filesystem, typically the rootfs. This works for many systems, however it
+can result in a bloated rootfs (and OTA updates) on platforms where
+multiple boards with different hardware configurations use the same rootfs
+image. Especially when 'optional' files are large it may be preferable to
+download/install them only when they are actually needed by a given board.
+Chrome OS uses Downloadable Content (DLC) [1] to deploy certain 'packages'
+at runtime. As an example a DLC package could contain firmware for a
+peripheral that is not present on all boards. DLCs use dm-verity [2] to
+verify the integrity of the DLC content.
 
-Thanks, Heiko.
+This series extends LoadPin to allow loading of kernel files from trusted
+dm-verity devices. LoadPin maintains a list of root digests of verity
+devices it considers trusted. Userspace can populate this list through an
+ioctl on the new LoadPin securityfs entry 'dm-verity'. The ioctl receives
+a file descriptor of a file with verity digests as parameter. Verity reads
+the digests from this file after confirming that the file is located on the
+pinned root. The digest file must contain one digest per line. The list of
+trusted digests can only be set up once, which is typically done at boot
+time.
 
-I want to ask Mimi if this can be taken into KEYS-ENCRYPTED tree.
-Otherwise I will ask Andrew to help pick this whole series.
+When a kernel file is read LoadPin first checks (as usual) whether the file
+is located on the pinned root, if so the file can be loaded. Otherwise, if
+the verity extension is enabled, LoadPin determines whether the file is
+located on a verity backed device and whether the root digest of that
+device is in the list of trusted digests. The file can be loaded if the
+verity device has a trusted root digest.
 
-Surely, this patch 4 can be taken into s390 seperately since it's
-independent, both looks good.
+[1] https://chromium.googlesource.com/chromiumos/platform2/+/HEAD/dlcservice/docs/developer.md
+[2] https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/verity.html
 
-Thanks
-Baoquan
+Changes in v5:
+- changed dm_verity_loadpin_is_sb_trusted() to
+  dm_verity_loadpin_is_bdev_trusted()
+- deleted bad semicolon in declaration of stub for
+  dm_verity_loadpin_is_bdev_trusted()
+- bumped verity version number to 1.8.1
+- added 'Acked-by' tags from Kees
+
+Changes in v4:
+- a trusted verity device must have a single target of
+  type 'verity'
+- changed struct trusted_root_digest to have an unsized
+  u8 array instead of a pointer
+- use shared list of verity digests, deleted
+  dm_verity_loadpin_set_trusted_root_digests()
+- use newline as separator in digest file instead of comma
+- after reading an invalid/corrupt digest file deny further attempts
+  of setting up the list of digests
+- added comment to read_trusted_verity_root_digests() explaining that
+  an invalid digests entry invalidates the entire list of digests
+- minor refactoring of verity related code in LoadPin
+
+Changes in v3:
+- added securityfs for LoadPin (currently only populated when
+  CONFIG_SECURITY_LOADPIN_VERITY=y)
+- added uapi include for LoadPin
+- changed the interface for setting up the list of trusted
+  digests from sysctl to ioctl on securityfs entry
+- added stub for loadpin_is_fs_trusted() to be used
+  CONFIG_SECURITY_LOADPIN_VERITY is not select
+- depend on CONFIG_SECURITYFS instead of CONFIG_SYSTCL
+- updated Kconfig help
+- minor changes in read_trusted_verity_root_digests()
+- updated commit message
+
+Changes in v2:
+- userspace now passes the path of the file with the verity digests
+  via systcl, instead of the digests themselves
+- renamed sysctl file to 'trusted_verity_root_digests_path'
+- have CONFIG_SECURITY_LOADPIN_VERITY depend on CONFIG_SYSCTL
+- updated Kconfig doc
+- updated commit message
+
+Matthias Kaehlcke (3):
+  dm: Add verity helpers for LoadPin
+  LoadPin: Enable loading from trusted dm-verity devices
+  dm: verity-loadpin: Use CONFIG_SECURITY_LOADPIN_VERITY for conditional
+    compilation
+
+ drivers/md/Makefile               |   1 +
+ drivers/md/dm-verity-loadpin.c    |  74 +++++++++++++
+ drivers/md/dm-verity-target.c     |  35 ++++++-
+ drivers/md/dm-verity.h            |   4 +
+ include/linux/dm-verity-loadpin.h |  27 +++++
+ include/uapi/linux/loadpin.h      |  22 ++++
+ security/loadpin/Kconfig          |  16 +++
+ security/loadpin/loadpin.c        | 167 +++++++++++++++++++++++++++++-
+ 8 files changed, 344 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/md/dm-verity-loadpin.c
+ create mode 100644 include/linux/dm-verity-loadpin.h
+ create mode 100644 include/uapi/linux/loadpin.h
+
+-- 
+2.36.1.124.g0e6072fb45-goog
 
