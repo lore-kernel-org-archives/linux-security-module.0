@@ -2,223 +2,69 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A637C433F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 May 2022 20:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3DCC433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 00:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242768AbiERUfa (ORCPT
+        id S232048AbiESAfm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 May 2022 16:35:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38220 "EHLO
+        Wed, 18 May 2022 20:35:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242648AbiERUf3 (ORCPT
+        with ESMTP id S232100AbiESAfV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 May 2022 16:35:29 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24F3822EA65
-        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 13:35:28 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id q4so2848448plr.11
-        for <linux-security-module@vger.kernel.org>; Wed, 18 May 2022 13:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=s00itn5NvBR8SqfO71jcdooofGWmlax4Aisj/z2cDTA=;
-        b=GGmmLX7x8zK3D6+JP5kv/Qow7dHNLOWa7bbHSBmP2iu9pm8M7/Z6KSg0ZIdUW3H0fi
-         X0KCV5CjkLXO4nhYw0hYSdMEG9l9aTSc/KKtX3OuWugEhPvGoFKyTnYFkXsbeeNNR11W
-         Zi6ImRD7ajC/dQemrIQmifJDcfp1dE4Np+Om4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=s00itn5NvBR8SqfO71jcdooofGWmlax4Aisj/z2cDTA=;
-        b=dtEcApAsTg9PHHvzvwb6NvmmfyA5SBuURlkoenC7XutPYP1YB3vWELQmVZXd/DV3ZL
-         x7SxcXZQXCssG1HSgLD9dQ9vkslMHro75F3hI/xFCDso2vpllOOACjIdQK8JAWm/YeCQ
-         /DrGQw2lPKgl1cNFpbhV+wlUnKbj8s/U2iW/DPTwqE8pWVlxlok0wezKGxyf8B/6m3po
-         mfejdGOcWJKs8C/dKIUmQsL2JCPeXVh9jsVq+UA9OMTQlY9dMl9CnZovQWvulpLXTn2U
-         CizH0S6suL3VWKQUVFsi2M7kGTeiYvpaEtXuRcs7CaZN0CLK6Pl8pJWr9T8+qZwVny8B
-         EPaw==
-X-Gm-Message-State: AOAM532ccSJuj7g9k255540JdSCyhNj1ABkWjiwRKJcGgQiS148WJ8JY
-        sjOj23D9+YoP7xv6tlcQ0gnBMA==
-X-Google-Smtp-Source: ABdhPJzWsyakzD3BLxsN4vgv1ImwuP5KxbtbCan4rtC1ARwCTboGrDTLGgS1+SENNtXcN/mO8X3D1Q==
-X-Received: by 2002:a17:90a:ec01:b0:1df:56aa:6b7b with SMTP id l1-20020a17090aec0100b001df56aa6b7bmr1258866pjy.230.1652906127604;
-        Wed, 18 May 2022 13:35:27 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:a14:3166:4b67:b688])
-        by smtp.gmail.com with UTF8SMTPSA id w2-20020a62c702000000b0050dc7628161sm2336979pfg.59.2022.05.18.13.35.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 May 2022 13:35:27 -0700 (PDT)
-Date:   Wed, 18 May 2022 13:35:26 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Mike Snitzer <snitzer@kernel.org>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, dm-devel@redhat.com,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        Song Liu <song@kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] dm: Add verity helpers for LoadPin
-Message-ID: <YoVYjgwrTdB2DvbW@google.com>
-References: <20220517233457.1123309-1-mka@chromium.org>
- <20220517163437.v4.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
- <YoVOdYHJd/LbYIaE@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YoVOdYHJd/LbYIaE@redhat.com>
+        Wed, 18 May 2022 20:35:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3645B0423;
+        Wed, 18 May 2022 17:35:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2A9ABB8227F;
+        Thu, 19 May 2022 00:35:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C9579C385AA;
+        Thu, 19 May 2022 00:35:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652920517;
+        bh=GZXlC8RXj+9gJ2vO1wBQSODOhCnAgbIF5Ag6MR/5zG8=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=r3zXQHdbTlvx7Z+hnMzHYpBVAsyl9FJVh7rcgCLAPzNDHkICVcM1XvjFnwGrztket
+         0n5/5h/2rDvqHKmoxBCk0Gq4iFzZ+89iEJDlSRpHAbS5jYCxaY4WDzpQ+q05iHSSVW
+         /mgF16Li53lvvlEXv7eh3eA7v71ZLqqt/KRjU4cuMRsD0DHcf/Vi7u3UukPw8K79XH
+         X/u/9/jYune7y8eiiK6GUKlnnoffq+YyXf5BmkoLLxzU5rCNuAx/25JkHNn8hanYcj
+         4vOSiR2K2rS40xhThuhIfArVI162iU/qARy8a4JFfc8hLpAqnQxVUF76NWtkEpeR72
+         2D8LAt3O1BFpg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B57C6F0383D;
+        Thu, 19 May 2022 00:35:17 +0000 (UTC)
+Subject: Re: [GIT PULL] SELinux fixes for v5.18 (#1)
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhRzZwD5X6AVojX8eFyN8i4fHfw1T5ugDd8brb=qRi1Cug@mail.gmail.com>
+References: <CAHC9VhRzZwD5X6AVojX8eFyN8i4fHfw1T5ugDd8brb=qRi1Cug@mail.gmail.com>
+X-PR-Tracked-List-Id: <selinux.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhRzZwD5X6AVojX8eFyN8i4fHfw1T5ugDd8brb=qRi1Cug@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20220518
+X-PR-Tracked-Commit-Id: 6254bd3db316c9ccb3b05caa8b438be63245466f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6899c161313671ca37a7a56429a3a80dad56ee8a
+Message-Id: <165292051773.29647.13553381295845820106.pr-tracker-bot@kernel.org>
+Date:   Thu, 19 May 2022 00:35:17 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 18, 2022 at 03:52:21PM -0400, Mike Snitzer wrote:
-> On Tue, May 17 2022 at  7:34P -0400,
-> Matthias Kaehlcke <mka@chromium.org> wrote:
-> 
-> > LoadPin limits loading of kernel modules, firmware and certain
-> > other files to a 'pinned' file system (typically a read-only
-> > rootfs). To provide more flexibility LoadPin is being extended
-> > to also allow loading these files from trusted dm-verity
-> > devices. For that purpose LoadPin can be provided with a list
-> > of verity root digests that it should consider as trusted.
-> > 
-> > Add a bunch of helpers to allow LoadPin to check whether a DM
-> > device is a trusted verity device. The new functions broadly
-> > fall in two categories: those that need access to verity
-> > internals (like the root digest), and the 'glue' between
-> > LoadPin and verity. The new file dm-verity-loadpin.c contains
-> > the glue functions.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> > 
-> > Changes in v4:
-> > - a trusted verity device must have a single target of
-> >   type 'verity'
-> > - share list of verity digests with loadpin, deleted
-> >   dm_verity_loadpin_set_trusted_root_digests()
-> > - dm_verity_loadpin_is_md_trusted() is now dm_verity_loadpin_is_sb_trusted(),
-> >   it receives a super_block instead of mapped_device. Updated kernel doc.
-> > - changed struct trusted_root_digest to have an unsized
-> >   u8 array instead of a pointer
-> > - extend 'dm-verity-objs' instead of 'dm-mod-objs'
-> > 
-> > Changes in v3:
-> > - none
-> > 
-> > Changes in v2:
-> > - none
-> > 
-> >  drivers/md/Makefile               |  6 +++
-> >  drivers/md/dm-verity-loadpin.c    | 74 +++++++++++++++++++++++++++++++
-> >  drivers/md/dm-verity-target.c     | 33 ++++++++++++++
-> >  drivers/md/dm-verity.h            |  4 ++
-> >  include/linux/dm-verity-loadpin.h | 27 +++++++++++
-> >  5 files changed, 144 insertions(+)
-> >  create mode 100644 drivers/md/dm-verity-loadpin.c
-> >  create mode 100644 include/linux/dm-verity-loadpin.h
-> > 
-> > diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-> > index 0454b0885b01..71771901c823 100644
-> > --- a/drivers/md/Makefile
-> > +++ b/drivers/md/Makefile
-> > @@ -108,6 +108,12 @@ ifeq ($(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG),y)
-> >  dm-verity-objs			+= dm-verity-verify-sig.o
-> >  endif
-> >  
-> > +ifeq ($(CONFIG_DM_VERITY),y)
-> > +ifeq ($(CONFIG_SECURITY_LOADPIN),y)
-> > +dm-verity-objs			+= dm-verity-loadpin.o
-> > +endif
-> > +endif
-> > +
-> >  ifeq ($(CONFIG_DM_AUDIT),y)
-> >  dm-mod-objs			+= dm-audit.o
-> >  endif
-> > diff --git a/drivers/md/dm-verity-loadpin.c b/drivers/md/dm-verity-loadpin.c
-> > new file mode 100644
-> > index 000000000000..3226fbe4a1fe
-> > --- /dev/null
-> > +++ b/drivers/md/dm-verity-loadpin.c
-> > @@ -0,0 +1,74 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +#include <linux/list.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/dm-verity-loadpin.h>
-> > +
-> > +#include "dm.h"
-> > +#include "dm-verity.h"
-> > +
-> > +#define DM_MSG_PREFIX	"verity-loadpin"
-> > +
-> > +LIST_HEAD(loadpin_trusted_verity_root_digests);
-> > +
-> > +static bool is_trusted_verity_target(struct dm_target *ti)
-> > +{
-> > +	u8 *root_digest;
-> > +	unsigned int digest_size;
-> > +	struct trusted_root_digest *trd;
-> > +	bool trusted = false;
-> > +
-> > +	if (!dm_is_verity_target(ti))
-> > +		return false;
-> > +
-> > +	if (dm_verity_get_root_digest(ti, &root_digest, &digest_size))
-> > +		return false;
-> > +
-> > +	list_for_each_entry(trd, &loadpin_trusted_verity_root_digests, node) {
-> > +		if ((trd->len == digest_size) &&
-> > +		    !memcmp(trd->data, root_digest, digest_size)) {
-> > +			trusted = true;
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	kfree(root_digest);
-> > +
-> > +	return trusted;
-> > +}
-> > +
-> > +/*
-> > + * Determines whether the file system of a superblock is located on
-> > + * a verity device that is trusted by LoadPin.
-> > + */
-> > +bool dm_verity_loadpin_is_sb_trusted(struct super_block *sb)
-> > +{
-> > +	struct mapped_device *md;
-> > +	struct dm_table *table;
-> > +	struct dm_target *ti;
-> > +	int srcu_idx;
-> > +	bool trusted = false;
-> > +
-> > +	if (list_empty(&loadpin_trusted_verity_root_digests))
-> > +		return false;
-> > +
-> > +	md = dm_get_md(sb->s_bdev->bd_dev);
-> > +	if (!md)
-> > +		return false;
-> > +
-> > +	table = dm_get_live_table(md, &srcu_idx);
-> > +
-> > +	if (dm_table_get_num_targets(table) != 1)
-> > +		goto out;
-> > +
-> > +	ti = dm_table_get_target(table, 0);
-> > +
-> > +	if (is_trusted_verity_target(ti))
-> > +		trusted = true;
-> > +
-> > +out:
-> > +	dm_put_live_table(md, srcu_idx);
-> > +	dm_put(md);
-> > +
-> > +	return trusted;
-> > +}
-> 
-> Not seeing why passing a super_block a block layer interface was
-> chosen.
-> 
-> Please pass the super_block's block_device and rename to
-> dm_verity_loadpin_is_bdev_trusted()
+The pull request you sent on Wed, 18 May 2022 14:16:39 -0400:
 
-Agreed, passing a block_device is a better choice here, I'll
-change it as suggested.
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20220518
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6899c161313671ca37a7a56429a3a80dad56ee8a
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
