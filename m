@@ -2,155 +2,275 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9ECBC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 14:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08037C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 14:30:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239504AbiESOW2 (ORCPT
+        id S239008AbiESO36 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 May 2022 10:22:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51018 "EHLO
+        Thu, 19 May 2022 10:29:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239331AbiESOW1 (ORCPT
+        with ESMTP id S239751AbiESO3z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 May 2022 10:22:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2CAFD1409E
-        for <linux-security-module@vger.kernel.org>; Thu, 19 May 2022 07:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652970145;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8QmPbRB1QFxv/pF4z1RFQhVilnkWaoFyXeE0F38Hzf4=;
-        b=ekxaxrICnQcOsPNXHIJ1ArdyQO+V/mZk5CBIvjFHHlOutHlsxpAAniJPv0JOATr0ZCSFCQ
-        oJBYZyrZHp9bCHoVpMOMbBo94U8jYy6b8qdueCjfW6QPa5NYlLTSJp8BVme7XdERG7mtRg
-        CgJo98rIRMEl02YWe0C8VbcWzZG6Y3w=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-452-yprCcXR-NICTCUXaCRUCMQ-1; Thu, 19 May 2022 10:22:21 -0400
-X-MC-Unique: yprCcXR-NICTCUXaCRUCMQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5157F397968A;
-        Thu, 19 May 2022 14:22:20 +0000 (UTC)
-Received: from localhost (ovpn-13-136.pek2.redhat.com [10.72.13.136])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1CFF21121314;
-        Thu, 19 May 2022 14:22:19 +0000 (UTC)
-Date:   Thu, 19 May 2022 22:22:15 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, Coiby Xu <coxu@redhat.com>
-Cc:     Heiko Carstens <hca@linux.ibm.com>, akpm@linux-foundation.org,
-        kexec@lists.infradead.org, keyrings@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Michal Suchanek <msuchanek@suse.de>,
-        Dave Young <dyoung@redhat.com>, Will Deacon <will@kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Chun-Yi Lee <jlee@suse.com>, stable@vger.kernel.org,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "open list:S390" <linux-s390@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Subject: Re: [PATCH v8 4/4] kexec, KEYS, s390: Make use of built-in and
- secondary keyring for signature verification
-Message-ID: <YoZSl84aJYTscgfO@MiWiFi-R3L-srv>
-References: <20220512070123.29486-1-coxu@redhat.com>
- <20220512070123.29486-5-coxu@redhat.com>
- <YoTYm6Fo1vBUuJGu@osiris>
- <20220519003902.GE156677@MiWiFi-R3L-srv>
- <c47299b899da4ad4b6d3ad637022ad82c8ed6ed2.camel@linux.ibm.com>
+        Thu, 19 May 2022 10:29:55 -0400
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F0270904
+        for <linux-security-module@vger.kernel.org>; Thu, 19 May 2022 07:29:52 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4L3sgy3WL4zMqwSk;
+        Thu, 19 May 2022 16:29:50 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4L3sgy0BTwzlhZwX;
+        Thu, 19 May 2022 16:29:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1652970590;
+        bh=PrL+sFyxtDDv5pPp5JYDv7WES+E0Ra3QU510nOg0BZs=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=psLnvf1wMaBQC1OS9cCmgLGfqD+UOdpDFf3JL+eW1O8U+56Dj7skR7rmBIpkhONmg
+         M/78RFvn81hRrXkB6gJ1VHc7I1Thwn8Tl/NZzlplLKmd9/R04H6pg5U7gF3w/ptCS8
+         s+mQKy3Mp6qNb2Fbw0dZWLXfekGWBdkrVpaxJH6E=
+Message-ID: <fd996135-1ad5-dd3c-4b42-23013cad208d@digikod.net>
+Date:   Thu, 19 May 2022 16:29:49 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c47299b899da4ad4b6d3ad637022ad82c8ed6ed2.camel@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        anton.sirazetdinov@huawei.com
+References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
+ <20220516152038.39594-10-konstantin.meskhidze@huawei.com>
+ <eaa4cc8f-4c4a-350d-6b96-551f32156e3d@digikod.net>
+ <5124df18-ebc0-7b9b-84d5-89e1c458bc09@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v5 09/15] seltests/landlock: add tests for bind() hooks
+In-Reply-To: <5124df18-ebc0-7b9b-84d5-89e1c458bc09@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 05/19/22 at 07:56am, Mimi Zohar wrote:
-> [Cc'ing Jarkko, linux-integrity]
-> 
-> On Thu, 2022-05-19 at 08:39 +0800, Baoquan He wrote:
-> > On 05/18/22 at 01:29pm, Heiko Carstens wrote:
-> > > On Thu, May 12, 2022 at 03:01:23PM +0800, Coiby Xu wrote:
-> > > > From: Michal Suchanek <msuchanek@suse.de>
-> > > > 
-> > > > commit e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-> > > > adds support for KEXEC_SIG verification with keys from platform keyring
-> > > > but the built-in keys and secondary keyring are not used.
-> > > > 
-> > > > Add support for the built-in keys and secondary keyring as x86 does.
-> > > > 
-> > > > Fixes: e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-> > > > Cc: stable@vger.kernel.org
-> > > > Cc: Philipp Rudo <prudo@linux.ibm.com>
-> > > > Cc: kexec@lists.infradead.org
-> > > > Cc: keyrings@vger.kernel.org
-> > > > Cc: linux-security-module@vger.kernel.org
-> > > > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > > > Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-> > > > Acked-by: Baoquan He <bhe@redhat.com>
-> > > > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> > > > ---
-> > > >  arch/s390/kernel/machine_kexec_file.c | 18 +++++++++++++-----
-> > > >  1 file changed, 13 insertions(+), 5 deletions(-)
-> > > 
-> > > As far as I can tell this doesn't have any dependency to the other
-> > > patches in this series, so should I pick this up for the s390 tree, or
-> > > how will this go upstream?
-> > 
-> > Thanks, Heiko.
-> > 
-> > I want to ask Mimi if this can be taken into KEYS-ENCRYPTED tree.
-> > Otherwise I will ask Andrew to help pick this whole series.
-> > 
-> > Surely, this patch 4 can be taken into s390 seperately since it's
-> > independent, both looks good.
-> 
-> KEYS-ENCRYTPED is a type of key, unrelated to using the .platform,
-> .builtin, .machine, or .secondary keyrings.  One of the main reasons
-> for this patch set is to use the new ".machine" keyring, which, if
-> enabled, is linked to the "secondary" keyring.  However, the only
-> reference to the ".machine" keyring is in the cover letter, not any of
-> the patch descriptions.  Since this is the basis for the system's
-> integrity, this seems like a pretty big omission.
-> 
-> From patch 2/4:
-> "The code in bzImage64_verify_sig makes use of system keyrings
-> including
-> .buitin_trusted_keys, .secondary_trusted_keys and .platform keyring to
-> verify signed kernel image as PE file..."
-> 
-> From patch 3/4:
-> "This patch allows to verify arm64 kernel image signature using not
-> only
-> .builtin_trusted_keys but also .platform and .secondary_trusted_keys
-> keyring."
-> 
-> From patch 4/4:
-> "... with keys from platform keyring but the built-in keys and
-> secondary keyring are not used."
-> 
-> This patch set could probably go through KEYS/KEYRINGS_INTEGRITY, but
-> it's kind of late to be asking.  Has it been in linux-next?  Should I
-> assume this patch set has been fully tested or can we get some "tags"?
 
-Right, it should be KEYS/KEYRINGS_INTEGRITY related, I made mistaken.
-Now it got two ACKs from Michal and me. Michal met the same issue on
-arm64 and posted another series of patches, finally Coiby integrated
-Michal's patch and his to make this patchset. That would be great if
-this can get reviewing from experts on key/keyring. Surely, Coiby need
-update the patch log to add the '.machine' keyring into patch logs as
-you pointed out.
+On 19/05/2022 14:10, Konstantin Meskhidze wrote:
+> 
+> 
+> 5/17/2022 12:11 AM, Mickaël Salaün пишет:
+>>
+>> On 16/05/2022 17:20, Konstantin Meskhidze wrote:
+>>> Adds selftests for bind socket action.
+>>> The first is with no landlock restrictions:
+>>>      - bind_no_restrictions_ip4;
+>>>      - bind_no_restrictions_ip6;
+>>> The second ones is with mixed landlock rules:
+>>>      - bind_with_restrictions_ip4;
+>>>      - bind_with_restrictions_ip6;
+>>>
+>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>> ---
+>>>
+>>> Changes since v3:
+>>> * Split commit.
+>>> * Add helper create_socket.
+>>> * Add FIXTURE_SETUP.
+>>>
+>>> Changes since v4:
+>>> * Adds port[MAX_SOCKET_NUM], struct sockaddr_in addr4
+>>> and struct sockaddr_in addr6 in FIXTURE.
+>>> * Refactoring FIXTURE_SETUP:
+>>>      - initializing self->port, self->addr4 and self->addr6.
+>>>      - adding network namespace.
+>>> * Refactoring code with self->port, self->addr4 and
+>>> self->addr6 variables.
+>>> * Adds selftests for IP6 family:
+>>>      - bind_no_restrictions_ip6.
+>>>      - bind_with_restrictions_ip6.
+>>> * Refactoring selftests/landlock/config
+>>> * Moves enforce_ruleset() into common.h
+>>>
+>>> ---
+>>>   tools/testing/selftests/landlock/common.h   |   9 +
+>>>   tools/testing/selftests/landlock/config     |   5 +-
+>>>   tools/testing/selftests/landlock/fs_test.c  |  10 -
+>>>   tools/testing/selftests/landlock/net_test.c | 237 ++++++++++++++++++++
+>>>   4 files changed, 250 insertions(+), 11 deletions(-)
+>>>   create mode 100644 tools/testing/selftests/landlock/net_test.c
+>>>
+>>> diff --git a/tools/testing/selftests/landlock/common.h 
+>>> b/tools/testing/selftests/landlock/common.h
+>>> index 7ba18eb23783..c5381e641dfd 100644
+>>> --- a/tools/testing/selftests/landlock/common.h
+>>> +++ b/tools/testing/selftests/landlock/common.h
+>>> @@ -102,6 +102,15 @@ static inline int landlock_restrict_self(const 
+>>> int ruleset_fd,
+>>>   }
+>>>   #endif
+>>>
+>>> +static void enforce_ruleset(struct __test_metadata *const _metadata,
+>>> +        const int ruleset_fd)
+>>> +{
+>>> +    ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
+>>> +    ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0)) {
+>>> +        TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
+>>> +    }
+>>> +}
+>>> +
+>>
+>> Please create a commit which moves all the needed code for all network 
+>> tests. I think there is only this helper though.
+> 
+>    Ok. I will create one additional commit for moving this helper.
+>    But after I have moved the helper to common.h, I got warnings while 
+> compiling seltests where I don't use the one (base_test and ptrace_test)
 
-IIRC, Coiby has tested it on x86_64/arm64, not sure if he took test on
-s390. No, this hasn't been in linux-next.
+Move it after clear_cap() and use the same attributes.
 
+[...]
+
+ >>> diff --git a/tools/testing/selftests/landlock/config
+ >>> b/tools/testing/selftests/landlock/config
+ >>> index 0f0a65287bac..b56f3274d3f5 100644
+ >>> --- a/tools/testing/selftests/landlock/config
+ >>> +++ b/tools/testing/selftests/landlock/config
+ >>> @@ -1,7 +1,10 @@
+ >>> +CONFIG_INET=y
+ >>> +CONFIG_IPV6=y
+ >>> +CONFIG_NET=y
+ >>>   CONFIG_OVERLAY_FS=y
+ >>>   CONFIG_SECURITY_LANDLOCK=y
+ >>>   CONFIG_SECURITY_PATH=y
+ >>>   CONFIG_SECURITY=y
+ >>>   CONFIG_SHMEM=y
+ >>>   CONFIG_TMPFS_XATTR=y
+ >>> -CONFIG_TMPFS=y
+ >>> +CONFIG_TMPFS=y
+ >>> \ No newline at end of file
+
+You also need to add CONFIG_NET_NS.
+
+[...]
+
+>>
+>>> +        self->port[i] = SOCK_PORT_START + SOCK_PORT_ADD*i;
+>>> +        self->addr4[i].sin_family = AF_INET;
+>>> +        self->addr4[i].sin_port = htons(self->port[i]);
+>>> +        self->addr4[i].sin_addr.s_addr = htonl(INADDR_ANY);
+>>
+>> Could you use the local addr (127.0.0.1) instead?
+> 
+>    Why cant I use INADDR_ANY here?
+
+You can, but it is cleaner to bind to a specified address (i.e. you 
+control where a connection come from), and I guess this variable/address 
+could be used to establish connections as well.
+
+>>
+>>> +        memset(&(self->addr4[i].sin_zero), '\0', 8);
+>>> +    }
+>>> +
+>>> +    /* Creates IP6 socket addresses */
+>>> +    for (i = 0; i < MAX_SOCKET_NUM; i++) {
+>>> +        self->port[i] = SOCK_PORT_START + SOCK_PORT_ADD*i;
+>>> +        self->addr6[i].sin6_family = AF_INET6;
+>>> +        self->addr6[i].sin6_port = htons(self->port[i]);
+>>> +        self->addr6[i].sin6_addr = in6addr_any;
+>>
+>> ditto
+> 
+>    Why cant I use in6addr_any here?
+
+Same as for IPV4.
+
+> 
+>>
+>>> +    }
+>>> +
+>>> +    set_cap(_metadata, CAP_SYS_ADMIN);
+>>> +    ASSERT_EQ(0, unshare(CLONE_NEWNET));
+>>> +    ASSERT_EQ(0, system("ip link set dev lo up"));
+>>
+>> If this is really required, could you avoid calling system() but set 
+>> up the network in C? You can strace it to see what is going on 
+>> underneath.
+>>
+>   I did check. It's a lot of code to be run under the hood (more than 
+> one line) and it will just will complicate the test so I suggest to 
+> leave just ONE line of code here.
+
+OK
+
+
+>>
+>>> +    clear_cap(_metadata, CAP_SYS_ADMIN);
+>>> +}
+>>> +
+>>> +FIXTURE_TEARDOWN(socket_test)
+>>> +{ }
+>>> +
+>>> +TEST_F_FORK(socket_test, bind_no_restrictions_ip4) {
+>>> +
+>>> +    int sockfd;
+>>> +
+>>> +    sockfd = create_socket(_metadata, false, false);
+>>> +    ASSERT_LE(0, sockfd);
+>>> +
+>>> +    /* Binds a socket to port[0] */
+>>
+>> This comment is not very useful in this context considering the below 
+>> line. It will be even more clear with the bind_variant() call.
+>>
+>   Ok. I will fix it.
+>>
+>>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr4[0], 
+>>> sizeof(self->addr4[0])));
+>>> +
+>>> +    ASSERT_EQ(0, close(sockfd));
+>>> +}
+>>> +
+>>> +TEST_F_FORK(socket_test, bind_no_restrictions_ip6) {
+>>> +
+>>> +    int sockfd;
+>>> +
+>>> +    sockfd = create_socket(_metadata, true, false);
+>>> +    ASSERT_LE(0, sockfd);
+>>> +
+>>> +    /* Binds a socket to port[0] */
+>>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr6[0], 
+>>> sizeof(self->addr6[0])));
+>>> +
+>>> +    ASSERT_EQ(0, close(sockfd));
+>>> +}
+>>> +
+>>> +TEST_F_FORK(socket_test, bind_with_restrictions_ip4) {
+>>> +
+>>> +    int sockfd;
+>>> +
+>>> +    struct landlock_ruleset_attr ruleset_attr = {
+>>> +        .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>>> +                      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>> +    };
+>>> +    struct landlock_net_service_attr net_service_1 = {
+>>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>>> +                  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>> +        .port = self->port[0],
+>>> +    };
+>>> +    struct landlock_net_service_attr net_service_2 = {
+>>> +        .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>>> +        .port = self->port[1],
+>>> +    };
+>>> +    struct landlock_net_service_attr net_service_3 = {
+>>> +        .allowed_access = 0,
+>>> +        .port = self->port[2],
+>>> +    };
+>>> +
+>>> +    const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+>>> +            sizeof(ruleset_attr), 0);
+>>> +    ASSERT_LE(0, ruleset_fd);
+>>> +
+>>> +    /* Allows connect and bind operations to the port[0] socket. */
+>>
+>> This comment is useful though because the below call is more complex.
+>>
+>    So I can leave it as it's, cant I?
+
+Yes, keep it, I'd just like a fair amount of useful comments. ;)
