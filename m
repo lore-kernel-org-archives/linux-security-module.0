@@ -2,169 +2,85 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B25AC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 12:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A360C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 12:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237877AbiESMZE (ORCPT
+        id S237931AbiESM2F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 May 2022 08:25:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34872 "EHLO
+        Thu, 19 May 2022 08:28:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237866AbiESMZB (ORCPT
+        with ESMTP id S230522AbiESM2C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 May 2022 08:25:01 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB39BA55F;
-        Thu, 19 May 2022 05:25:00 -0700 (PDT)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4L3pvf0yFPz6FCs6;
-        Thu, 19 May 2022 20:24:46 +0800 (CST)
-Received: from [10.122.132.241] (10.122.132.241) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Thu, 19 May 2022 14:24:57 +0200
-Message-ID: <09ab37e1-eba5-80be-8fb3-df2bde698fc6@huawei.com>
-Date:   Thu, 19 May 2022 15:24:54 +0300
+        Thu, 19 May 2022 08:28:02 -0400
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE52BA57A;
+        Thu, 19 May 2022 05:28:01 -0700 (PDT)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 20D5C1C0B92; Thu, 19 May 2022 14:27:58 +0200 (CEST)
+Date:   Thu, 19 May 2022 14:27:46 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Arseny Maslennikov <ar@cs.msu.ru>
+Cc:     Walt Drummond <walt@drummond.us>, Theodore Ts'o <tytso@mit.edu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, aacraid@microsemi.com,
+        viro@zeniv.linux.org.uk, anna.schumaker@netapp.com, arnd@arndb.de,
+        bsegall@google.com, bp@alien8.de, chuck.lever@oracle.com,
+        bristot@redhat.com, dave.hansen@linux.intel.com,
+        dwmw2@infradead.org, dietmar.eggemann@arm.com, dinguyen@kernel.org,
+        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
+        idryomov@gmail.com, mingo@redhat.com, yzaikin@google.com,
+        ink@jurassic.park.msu.ru, jejb@linux.ibm.com, jmorris@namei.org,
+        bfields@fieldses.org, jlayton@kernel.org, jirislaby@kernel.org,
+        john.johansen@canonical.com, juri.lelli@redhat.com,
+        keescook@chromium.org, mcgrof@kernel.org,
+        martin.petersen@oracle.com, mattst88@gmail.com, mgorman@suse.de,
+        oleg@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
+        rth@twiddle.net, richard@nod.at, serge@hallyn.com,
+        rostedt@goodmis.org, tglx@linutronix.de,
+        trond.myklebust@hammerspace.com, vincent.guittot@linaro.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 0/8] signals: Support more than 64 signals
+Message-ID: <20220519122746.GA3904@localhost>
+References: <20220103181956.983342-1-walt@drummond.us>
+ <87iluzidod.fsf@email.froward.int.ebiederm.org>
+ <YdSzjPbVDVGKT4km@mit.edu>
+ <87pmp79mxl.fsf@email.froward.int.ebiederm.org>
+ <YdTI16ZxFFNco7rH@mit.edu>
+ <CADCN6nzT-Dw-AabtwWrfVRDd5HzMS3EOy8WkeomicJF07nQyoA@mail.gmail.com>
+ <YdiUiHAhLyfgpvVY@cello>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v5 12/15] seltests/landlock: rules overlapping test
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <anton.sirazetdinov@huawei.com>
-References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
- <20220516152038.39594-13-konstantin.meskhidze@huawei.com>
- <4806f5ed-41c0-f9f2-d7a1-2173c8494399@digikod.net>
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-In-Reply-To: <4806f5ed-41c0-f9f2-d7a1-2173c8494399@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml753-chm.china.huawei.com (10.201.108.203) To
- fraeml704-chm.china.huawei.com (10.206.15.53)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YdiUiHAhLyfgpvVY@cello>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi!
 
+> > The only standard tools that support SIGINFO are sleep, dd and ping,
+> > (and kill, for obvious reasons) so it's not like there's a vast hole
+> > in the tooling or something, nor is there a large legacy software base
+> > just waiting for SIGINFO to appear.   So while I very much enjoyed
+> > figuring out how to make SIGINFO work ...
+> 
+> As far as I recall, GNU make on *BSD does support SIGINFO (Not a
+> standard tool, but obviously an established one).
+> 
+> The developers of strace have expressed interest in SIGINFO support
+> to print tracer status messages (unfortunately, not on a public list).
+> Computational software can use this instead of stderr progress spam, if
+> run in an interactive fashion on a terminal, as it frequently is. There
+> is a user base, it's just not very vocal on kernel lists. :)
 
-5/16/2022 8:41 PM, Mickaël Salaün пишет:
-> Please fix these kind of subjects (selftests). I'd also like the subject 
-> description to (quickly) describe what is done (with a verb), to start 
-> with a capital (like a title), and to contain "network", something like 
-> this:
-> selftests/landlock: Add test for overlapping network rules
-> 
-> This is a good test though.
-> 
-> 
-> On 16/05/2022 17:20, Konstantin Meskhidze wrote:
->> This patch adds overlapping rules for one port.
->> First rule adds just bind() access right for a port.
->> The second one adds both bind() and connect()
->> access rights for the same port.
->>
->> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->> ---
->>
->> Changes since v3:
->> * Add ruleset_overlap test.
->>
->> Changes since v4:
->> * Refactoring code with self->port, self->addr4 variables.
->>
->> ---
->>   tools/testing/selftests/landlock/net_test.c | 51 +++++++++++++++++++++
->>   1 file changed, 51 insertions(+)
->>
->> diff --git a/tools/testing/selftests/landlock/net_test.c 
->> b/tools/testing/selftests/landlock/net_test.c
->> index bf8e49466d1d..1d8c9dfdbd48 100644
->> --- a/tools/testing/selftests/landlock/net_test.c
->> +++ b/tools/testing/selftests/landlock/net_test.c
->> @@ -677,4 +677,55 @@ TEST_F_FORK(socket_test, 
->> connect_afunspec_with_restictions) {
->>       ASSERT_EQ(1, WIFEXITED(status));
->>       ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
->>   }
->> +
->> +TEST_F_FORK(socket_test, ruleset_overlap) {
-> 
-> Please run clang-format-14 on all files (and all commits).
-> 
-   Yep. I already have updated clang-format executable on my Ubuntu and
-setup Vscode to use .clang-format file.
->> +
->> +    int sockfd;
->> +
->> +    struct landlock_ruleset_attr ruleset_attr = {
->> +        .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
->> +                      LANDLOCK_ACCESS_NET_CONNECT_TCP,
->> +    };
->> +    struct landlock_net_service_attr net_service_1 = {
->> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
->> +
->> +        .port = self->port[0],
->> +    };
->> +
->> +        struct landlock_net_service_attr net_service_2 = {
->> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
->> +                  LANDLOCK_ACCESS_NET_CONNECT_TCP,
->> +
->> +        .port = self->port[0],
->> +    };
->> +
->> +    const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
->> +                    sizeof(ruleset_attr), 0);
->> +    ASSERT_LE(0, ruleset_fd);
->> +
->> +    /* Allows bind operations to the port[0] socket */
-> 
-> Please ends this kind of comments with a final dot (all files/commits).
-> 
-   Ok. I will.
->> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
->> LANDLOCK_RULE_NET_SERVICE,
->> +                       &net_service_1, 0));
->> +    /* Allows connect and bind operations to the port[0] socket */
->> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
->> LANDLOCK_RULE_NET_SERVICE,
->> +                       &net_service_2, 0));
->> +
->> +    /* Enforces the ruleset. */
->> +    enforce_ruleset(_metadata, ruleset_fd);
->> +
->> +    /* Creates a server socket */
->> +    sockfd = create_socket(_metadata, false, false);
->> +    ASSERT_LE(0, sockfd);
->> +
->> +    /* Binds the socket to address with port[0] */
->> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr4[0], 
->> sizeof(self->addr4[0])));
->> +
->> +    /* Makes connection to socket with port[0] */
->> +    ASSERT_EQ(0, connect(sockfd, (struct sockaddr *)&self->addr4[0],
-> 
-> Can you please get rid of this (struct sockaddr *) type casting please 
-> (without compiler warning)?
-> 
-   Do you have a warning here? Cause I don't.
->> +                           sizeof(self->addr4[0])));
-> 
-> Here, you can enforce a new ruleset with net_service_1 and check that 
-> bind() is still allowed but not connect().
-> 
-  Ok. Thank you for advice.
->> +
->> +    /* Closes socket */
->> +    ASSERT_EQ(0, close(sockfd));
->> +}
->> +
->>   TEST_HARNESS_MAIN
->> -- 
->> 2.25.1
->>
-> .
+And often it would be useful if cp supported this. Yes, this
+is feature I'd like to see.
+
+BR,							Pavel
+
+-- 
