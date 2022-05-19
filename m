@@ -2,177 +2,538 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40984C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 11:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C12C3C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 12:10:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232317AbiESL4z (ORCPT
+        id S237265AbiESMKl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 May 2022 07:56:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37296 "EHLO
+        Thu, 19 May 2022 08:10:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237593AbiESL4v (ORCPT
+        with ESMTP id S237708AbiESMKj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 May 2022 07:56:51 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF2266AF5;
-        Thu, 19 May 2022 04:56:50 -0700 (PDT)
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24J9njiB014680;
-        Thu, 19 May 2022 11:56:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=7ukxmzai3Of0C2DKPzah5+6xoHT5hdoRomBqRrlp/Yg=;
- b=PhQ7vRDp1w9gdhXqZp8KaLNKu8CUDQ4sgwM+7+27tw1fJ/N35+ENPvK/RoCw0s3SQ//i
- W8T84CWAlVoiEJPHngpb2wsCMzJGOzRUaa59j+MipsTNHEqQmxtPsjGgC2SvlUioP4H/
- 94P8F/u+S0s09OG9M7c26PY2PJpGYOfRUeMjyd/ODkoRxakc4gPGIZCuoXeMpw2coiPt
- ZeqfEzLEebdIbR5fX0bvcHcZO2YUbtUbJQ28PePEMAzgzH8dVznT/CZ002iO2mQ4Td4+
- UvHdTfJVT6VQAlzB6cp/XulprAJNCe10ilIv16GSquIvqLvvRevdfEDT/HQz0KuxG8Kv +g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3g5kkw2st2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 May 2022 11:56:35 +0000
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 24JBlm1O018178;
-        Thu, 19 May 2022 11:56:34 GMT
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3g5kkw2ssb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 May 2022 11:56:34 +0000
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24JBqir1021062;
-        Thu, 19 May 2022 11:56:31 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04fra.de.ibm.com with ESMTP id 3g2428wv05-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 May 2022 11:56:31 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24JBgYo238273382
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 May 2022 11:42:34 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6C5914203F;
-        Thu, 19 May 2022 11:56:28 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6D3B42041;
-        Thu, 19 May 2022 11:56:25 +0000 (GMT)
-Received: from sig-9-65-82-167.ibm.com (unknown [9.65.82.167])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 19 May 2022 11:56:25 +0000 (GMT)
-Message-ID: <c47299b899da4ad4b6d3ad637022ad82c8ed6ed2.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 4/4] kexec, KEYS, s390: Make use of built-in and
- secondary keyring for signature verification
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Baoquan He <bhe@redhat.com>, Heiko Carstens <hca@linux.ibm.com>,
-        akpm@linux-foundation.org
-Cc:     Coiby Xu <coxu@redhat.com>, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michal Suchanek <msuchanek@suse.de>,
-        Dave Young <dyoung@redhat.com>, Will Deacon <will@kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Chun-Yi Lee <jlee@suse.com>, stable@vger.kernel.org,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "open list:S390" <linux-s390@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Date:   Thu, 19 May 2022 07:56:25 -0400
-In-Reply-To: <20220519003902.GE156677@MiWiFi-R3L-srv>
-References: <20220512070123.29486-1-coxu@redhat.com>
-         <20220512070123.29486-5-coxu@redhat.com> <YoTYm6Fo1vBUuJGu@osiris>
-         <20220519003902.GE156677@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: pODijiS05G_BlMkECJ3lUiCw2rg3g4l4
-X-Proofpoint-GUID: oUjdCxRT26f3yTIYGuFU7UbYqUR4xUcJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-19_03,2022-05-19_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 mlxscore=0 bulkscore=0 adultscore=0
- mlxlogscore=999 clxscore=1011 malwarescore=0 impostorscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
- definitions=main-2205190065
+        Thu, 19 May 2022 08:10:39 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74866BA541;
+        Thu, 19 May 2022 05:10:37 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4L3pb30NHZz6FBYc;
+        Thu, 19 May 2022 20:10:23 +0800 (CST)
+Received: from [10.122.132.241] (10.122.132.241) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Thu, 19 May 2022 14:10:34 +0200
+Message-ID: <5124df18-ebc0-7b9b-84d5-89e1c458bc09@huawei.com>
+Date:   Thu, 19 May 2022 15:10:32 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v5 09/15] seltests/landlock: add tests for bind() hooks
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <anton.sirazetdinov@huawei.com>
+References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
+ <20220516152038.39594-10-konstantin.meskhidze@huawei.com>
+ <eaa4cc8f-4c4a-350d-6b96-551f32156e3d@digikod.net>
+From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+In-Reply-To: <eaa4cc8f-4c4a-350d-6b96-551f32156e3d@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml704-chm.china.huawei.com (10.206.15.53)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[Cc'ing Jarkko, linux-integrity]
 
-On Thu, 2022-05-19 at 08:39 +0800, Baoquan He wrote:
-> On 05/18/22 at 01:29pm, Heiko Carstens wrote:
-> > On Thu, May 12, 2022 at 03:01:23PM +0800, Coiby Xu wrote:
-> > > From: Michal Suchanek <msuchanek@suse.de>
-> > > 
-> > > commit e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-> > > adds support for KEXEC_SIG verification with keys from platform keyring
-> > > but the built-in keys and secondary keyring are not used.
-> > > 
-> > > Add support for the built-in keys and secondary keyring as x86 does.
-> > > 
-> > > Fixes: e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-> > > Cc: stable@vger.kernel.org
-> > > Cc: Philipp Rudo <prudo@linux.ibm.com>
-> > > Cc: kexec@lists.infradead.org
-> > > Cc: keyrings@vger.kernel.org
-> > > Cc: linux-security-module@vger.kernel.org
-> > > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > > Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-> > > Acked-by: Baoquan He <bhe@redhat.com>
-> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> > > ---
-> > >  arch/s390/kernel/machine_kexec_file.c | 18 +++++++++++++-----
-> > >  1 file changed, 13 insertions(+), 5 deletions(-)
-> > 
-> > As far as I can tell this doesn't have any dependency to the other
-> > patches in this series, so should I pick this up for the s390 tree, or
-> > how will this go upstream?
+
+5/17/2022 12:11 AM, Mickaël Salaün пишет:
 > 
-> Thanks, Heiko.
+> On 16/05/2022 17:20, Konstantin Meskhidze wrote:
+>> Adds selftests for bind socket action.
+>> The first is with no landlock restrictions:
+>>      - bind_no_restrictions_ip4;
+>>      - bind_no_restrictions_ip6;
+>> The second ones is with mixed landlock rules:
+>>      - bind_with_restrictions_ip4;
+>>      - bind_with_restrictions_ip6;
+>>
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> ---
+>>
+>> Changes since v3:
+>> * Split commit.
+>> * Add helper create_socket.
+>> * Add FIXTURE_SETUP.
+>>
+>> Changes since v4:
+>> * Adds port[MAX_SOCKET_NUM], struct sockaddr_in addr4
+>> and struct sockaddr_in addr6 in FIXTURE.
+>> * Refactoring FIXTURE_SETUP:
+>>      - initializing self->port, self->addr4 and self->addr6.
+>>      - adding network namespace.
+>> * Refactoring code with self->port, self->addr4 and
+>> self->addr6 variables.
+>> * Adds selftests for IP6 family:
+>>      - bind_no_restrictions_ip6.
+>>      - bind_with_restrictions_ip6.
+>> * Refactoring selftests/landlock/config
+>> * Moves enforce_ruleset() into common.h
+>>
+>> ---
+>>   tools/testing/selftests/landlock/common.h   |   9 +
+>>   tools/testing/selftests/landlock/config     |   5 +-
+>>   tools/testing/selftests/landlock/fs_test.c  |  10 -
+>>   tools/testing/selftests/landlock/net_test.c | 237 ++++++++++++++++++++
+>>   4 files changed, 250 insertions(+), 11 deletions(-)
+>>   create mode 100644 tools/testing/selftests/landlock/net_test.c
+>>
+>> diff --git a/tools/testing/selftests/landlock/common.h 
+>> b/tools/testing/selftests/landlock/common.h
+>> index 7ba18eb23783..c5381e641dfd 100644
+>> --- a/tools/testing/selftests/landlock/common.h
+>> +++ b/tools/testing/selftests/landlock/common.h
+>> @@ -102,6 +102,15 @@ static inline int landlock_restrict_self(const 
+>> int ruleset_fd,
+>>   }
+>>   #endif
+>>
+>> +static void enforce_ruleset(struct __test_metadata *const _metadata,
+>> +        const int ruleset_fd)
+>> +{
+>> +    ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
+>> +    ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0)) {
+>> +        TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
+>> +    }
+>> +}
+>> +
 > 
-> I want to ask Mimi if this can be taken into KEYS-ENCRYPTED tree.
-> Otherwise I will ask Andrew to help pick this whole series.
+> Please create a commit which moves all the needed code for all network 
+> tests. I think there is only this helper though.
+
+   Ok. I will create one additional commit for moving this helper.
+   But after I have moved the helper to common.h, I got warnings while 
+compiling seltests where I don't use the one (base_test and ptrace_test)
+
 > 
-> Surely, this patch 4 can be taken into s390 seperately since it's
-> independent, both looks good.
+> 
+>>   static void _init_caps(struct __test_metadata *const _metadata, bool 
+>> drop_all)
+>>   {
+>>       cap_t cap_p;
+>> diff --git a/tools/testing/selftests/landlock/config 
+>> b/tools/testing/selftests/landlock/config
+>> index 0f0a65287bac..b56f3274d3f5 100644
+>> --- a/tools/testing/selftests/landlock/config
+>> +++ b/tools/testing/selftests/landlock/config
+>> @@ -1,7 +1,10 @@
+>> +CONFIG_INET=y
+>> +CONFIG_IPV6=y
+>> +CONFIG_NET=y
+>>   CONFIG_OVERLAY_FS=y
+>>   CONFIG_SECURITY_LANDLOCK=y
+>>   CONFIG_SECURITY_PATH=y
+>>   CONFIG_SECURITY=y
+>>   CONFIG_SHMEM=y
+>>   CONFIG_TMPFS_XATTR=y
+>> -CONFIG_TMPFS=y
+>> +CONFIG_TMPFS=y
+>> \ No newline at end of file
+> 
+> You add whitespace changes.
+> 
+   OK. I will fix it. Thank you.
+> 
+>> diff --git a/tools/testing/selftests/landlock/fs_test.c 
+>> b/tools/testing/selftests/landlock/fs_test.c
+>> index 21a2ce8fa739..036dd6f8f9ea 100644
+>> --- a/tools/testing/selftests/landlock/fs_test.c
+>> +++ b/tools/testing/selftests/landlock/fs_test.c
+>> @@ -551,16 +551,6 @@ static int create_ruleset(struct __test_metadata 
+>> *const _metadata,
+>>       return ruleset_fd;
+>>   }
+>>
+>> -static void enforce_ruleset(struct __test_metadata *const _metadata,
+>> -                const int ruleset_fd)
+>> -{
+>> -    ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
+>> -    ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0))
+>> -    {
+>> -        TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
+>> -    }
+>> -}
+>> -
+>>   TEST_F_FORK(layout1, proc_nsfs)
+>>   {
+>>       const struct rule rules[] = {
+>> diff --git a/tools/testing/selftests/landlock/net_test.c 
+>> b/tools/testing/selftests/landlock/net_test.c
+>> new file mode 100644
+>> index 000000000000..478ef2eff559
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/landlock/net_test.c
+>> @@ -0,0 +1,237 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Landlock tests - Network
+>> + *
+>> + * Copyright (C) 2022 Huawei Tech. Co., Ltd.
+>> + */
+>> +
+>> +#define _GNU_SOURCE
+>> +#include <arpa/inet.h>
+>> +#include <errno.h>
+>> +#include <fcntl.h>
+>> +#include <linux/landlock.h>
+>> +#include <netinet/in.h>
+>> +#include <sched.h>
+>> +#include <string.h>
+>> +#include <sys/prctl.h>
+>> +#include <sys/socket.h>
+>> +#include <sys/types.h>
+>> +
+>> +#include "common.h"
+>> +
+>> +#define MAX_SOCKET_NUM 10
+>> +
+>> +#define SOCK_PORT_START 3470
+>> +#define SOCK_PORT_ADD 10
+>> +
+>> +#define IP_ADDRESS "127.0.0.1"
+>> +
+>> +/* Number pending connections queue to be hold */
+>> +#define BACKLOG 10
+> 
+> "Number of pending connection queues to be hold." maybe? This is not use 
+> in this patch so it shouldn't be added by this patch.
+> 
+   You are right. I will move it in the patch where listen() function 
+appear. Thank you for noticing.
+> 
+>> +
+>> +static int create_socket(struct __test_metadata *const _metadata,
+>> +            bool ip6, bool reuse_addr)
+> 
+> This helper is good and I think you can improve it by leveraging test 
+> variants. You could even factor out all the ipv4/ipv6 tests thanks to 
+> new helpers such as bind_variant() and connect_variant(). No need to add 
+> _metadata to those though. This would avoid duplicating all ipv4/ipv6 
+> tests and even simplifying bind() and connect() calls. Something like this:
+> 
+> // rename "socket_test" to "socket" (no need to duplicate "test")
+> FIXTURE_VARIANT(socket)
+> {
+>      const bool is_ipv4;
+> };
+> 
+> /* clang-format off */
+> FIXTURE_VARIANT_ADD(socket, ipv4) {
+>      /* clang-format on */
+>      .is_ipv4 = true,
+> };
+> 
+> /* clang-format off */
+> FIXTURE_VARIANT_ADD(socket, ipv6) {
+>      /* clang-format on */
+>      .is_ipv4 = false,
+> };
+> 
+> static int socket_variant(const FIXTURE_VARIANT(socket) *const variant, 
+> const int type)
+> {
+>      if (variant->is_ipv4)
+>          return socket(AF_INET, type | SOCK_CLOEXEC, 0);
+>      else
+>          return socket(AF_INET6, type | SOCK_CLOEXEC, 0);
+> }
+> 
+> socket_variant(variant, SOCK_STREAM);
+> // this could be used to create UDP sockets too
+> 
+> 
+> static int bind_variant(const FIXTURE_VARIANT(socket) *const variant, 
+> const int sockfd, const FIXTURE_DATA(socket) *const self, const size_t 
+> index)
+> {
+>      if (variant->is_ipv4)
+>          return bind(sockfd, &self->addr4[index], 
+> sizeof(self->addr4[index]));
+>      else
+>          return bind(sockfd, &self->addr6[index], 
+> sizeof(self->addr6[index]));
+> }
+> 
+> bind_variant(variant, sockfd, self, 0);
+> 
+  Ok. Thank you for this suggestion.
+> 
+>> +{
+>> +        int sockfd;
+>> +        int one = 1;
+>> +
+>> +        if (ip6)
+>> +            sockfd = socket(AF_INET6, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>> +        else
+>> +            sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>> +
+>> +        ASSERT_LE(0, sockfd);
+>> +        /* Allows to reuse of local address */
+>> +        if (reuse_addr)
+>> +            ASSERT_EQ(0, setsockopt(sockfd, SOL_SOCKET,
+>> +                    SO_REUSEADDR, &one, sizeof(one)));
+> 
+> This reuse_addr part is not used in this patch and I think it would 
+> simplify this helper to not add reuse_addr but to explicitely call 
+> setsockopt() when required. This also enables to get rid of _metadata in 
+> this helper.
+> 
+   Yep. You are right. I will fix it.
+> 
+>> +        return sockfd;
+>> +}
+>> +
+>> +FIXTURE(socket_test) {
+>> +    uint port[MAX_SOCKET_NUM];
+>> +    struct sockaddr_in addr4[MAX_SOCKET_NUM];
+>> +    struct sockaddr_in6 addr6[MAX_SOCKET_NUM];
+>> +};
+>> +
+>> +FIXTURE_SETUP(socket_test)
+>> +{
+>> +    int i;
+>> +    /* Creates IP4 socket addresses */
+>> +    for (i = 0; i < MAX_SOCKET_NUM; i++) {
+> 
+> Nice!
+> 
+>> +        self->port[i] = SOCK_PORT_START + SOCK_PORT_ADD*i;
+>> +        self->addr4[i].sin_family = AF_INET;
+>> +        self->addr4[i].sin_port = htons(self->port[i]);
+>> +        self->addr4[i].sin_addr.s_addr = htonl(INADDR_ANY);
+> 
+> Could you use the local addr (127.0.0.1) instead?
 
-KEYS-ENCRYTPED is a type of key, unrelated to using the .platform,
-.builtin, .machine, or .secondary keyrings.  One of the main reasons
-for this patch set is to use the new ".machine" keyring, which, if
-enabled, is linked to the "secondary" keyring.  However, the only
-reference to the ".machine" keyring is in the cover letter, not any of
-the patch descriptions.  Since this is the basis for the system's
-integrity, this seems like a pretty big omission.
+   Why cant I use INADDR_ANY here?
+> 
+>> +        memset(&(self->addr4[i].sin_zero), '\0', 8);
+>> +    }
+>> +
+>> +    /* Creates IP6 socket addresses */
+>> +    for (i = 0; i < MAX_SOCKET_NUM; i++) {
+>> +        self->port[i] = SOCK_PORT_START + SOCK_PORT_ADD*i;
+>> +        self->addr6[i].sin6_family = AF_INET6;
+>> +        self->addr6[i].sin6_port = htons(self->port[i]);
+>> +        self->addr6[i].sin6_addr = in6addr_any;
+> 
+> ditto
 
-From patch 2/4:
-"The code in bzImage64_verify_sig makes use of system keyrings
-including
-.buitin_trusted_keys, .secondary_trusted_keys and .platform keyring to
-verify signed kernel image as PE file..."
+   Why cant I use in6addr_any here?
 
-From patch 3/4:
-"This patch allows to verify arm64 kernel image signature using not
-only
-.builtin_trusted_keys but also .platform and .secondary_trusted_keys
-keyring."
-
-From patch 4/4:
-"... with keys from platform keyring but the built-in keys and
-secondary keyring are not used."
-
-This patch set could probably go through KEYS/KEYRINGS_INTEGRITY, but
-it's kind of late to be asking.  Has it been in linux-next?  Should I
-assume this patch set has been fully tested or can we get some "tags"?
-
-thanks,
-
-Mimi
-
+> 
+>> +    }
+>> +
+>> +    set_cap(_metadata, CAP_SYS_ADMIN);
+>> +    ASSERT_EQ(0, unshare(CLONE_NEWNET));
+>> +    ASSERT_EQ(0, system("ip link set dev lo up"));
+> 
+> If this is really required, could you avoid calling system() but set up 
+> the network in C? You can strace it to see what is going on underneath.
+> 
+  I did check. It's a lot of code to be run under the hood (more than 
+one line) and it will just will complicate the test so I suggest to 
+leave just ONE line of code here.
+> 
+>> +    clear_cap(_metadata, CAP_SYS_ADMIN);
+>> +}
+>> +
+>> +FIXTURE_TEARDOWN(socket_test)
+>> +{ }
+>> +
+>> +TEST_F_FORK(socket_test, bind_no_restrictions_ip4) {
+>> +
+>> +    int sockfd;
+>> +
+>> +    sockfd = create_socket(_metadata, false, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +
+>> +    /* Binds a socket to port[0] */
+> 
+> This comment is not very useful in this context considering the below 
+> line. It will be even more clear with the bind_variant() call.
+> 
+  Ok. I will fix it.
+> 
+>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr4[0], 
+>> sizeof(self->addr4[0])));
+>> +
+>> +    ASSERT_EQ(0, close(sockfd));
+>> +}
+>> +
+>> +TEST_F_FORK(socket_test, bind_no_restrictions_ip6) {
+>> +
+>> +    int sockfd;
+>> +
+>> +    sockfd = create_socket(_metadata, true, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +
+>> +    /* Binds a socket to port[0] */
+>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr6[0], 
+>> sizeof(self->addr6[0])));
+>> +
+>> +    ASSERT_EQ(0, close(sockfd));
+>> +}
+>> +
+>> +TEST_F_FORK(socket_test, bind_with_restrictions_ip4) {
+>> +
+>> +    int sockfd;
+>> +
+>> +    struct landlock_ruleset_attr ruleset_attr = {
+>> +        .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +    };
+>> +    struct landlock_net_service_attr net_service_1 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +        .port = self->port[0],
+>> +    };
+>> +    struct landlock_net_service_attr net_service_2 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +        .port = self->port[1],
+>> +    };
+>> +    struct landlock_net_service_attr net_service_3 = {
+>> +        .allowed_access = 0,
+>> +        .port = self->port[2],
+>> +    };
+>> +
+>> +    const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+>> +            sizeof(ruleset_attr), 0);
+>> +    ASSERT_LE(0, ruleset_fd);
+>> +
+>> +    /* Allows connect and bind operations to the port[0] socket. */
+> 
+> This comment is useful though because the below call is more complex.
+> 
+   So I can leave it as it's, cant I?
+> 
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_1, 0));
+>> +    /* Allows connect and deny bind operations to the port[1] socket. */
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_2, 0));
+>> +    /* Empty allowed_access (i.e. deny rules) are ignored in network 
+>> actions
+>> +     * for port[2] socket.
+>> +     */
+>> +    ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_3, 0));
+>> +    ASSERT_EQ(ENOMSG, errno);
+>> +
+>> +    /* Enforces the ruleset. */
+>> +    enforce_ruleset(_metadata, ruleset_fd);
+>> +
+>> +    sockfd = create_socket(_metadata, false, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +    /* Binds a socket to port[0] */
+>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr4[0], 
+>> sizeof(self->addr4[0])));
+>> +
+>> +    /* Close bounded socket*/
+>> +    ASSERT_EQ(0, close(sockfd));
+>> +
+>> +    sockfd = create_socket(_metadata, false, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +    /* Binds a socket to port[1] */
+>> +    ASSERT_EQ(-1, bind(sockfd, (struct sockaddr *)&self->addr4[1], 
+>> sizeof(self->addr4[1])));
+>> +    ASSERT_EQ(EACCES, errno);
+>> +
+>> +    sockfd = create_socket(_metadata, false, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +    /* Binds a socket to port[2] */
+>> +    ASSERT_EQ(-1, bind(sockfd, (struct sockaddr *)&self->addr4[2], 
+>> sizeof(self->addr4[2])));
+>> +    ASSERT_EQ(EACCES, errno);
+>> +}
+>> +
+>> +TEST_F_FORK(socket_test, bind_with_restrictions_ip6) {
+>> +
+>> +    int sockfd;
+>> +
+>> +    struct landlock_ruleset_attr ruleset_attr = {
+>> +        .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +    };
+>> +    struct landlock_net_service_attr net_service_1 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
+>> +                  LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +        .port = self->port[0],
+>> +    };
+>> +    struct landlock_net_service_attr net_service_2 = {
+>> +        .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+>> +        .port = self->port[1],
+>> +    };
+>> +    struct landlock_net_service_attr net_service_3 = {
+>> +        .allowed_access = 0,
+>> +        .port = self->port[2],
+>> +    };
+>> +
+>> +    const int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+>> +            sizeof(ruleset_attr), 0);
+>> +    ASSERT_LE(0, ruleset_fd);
+>> +
+>> +    /* Allows connect and bind operations to the port[0] socket. */
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_1, 0));
+>> +    /* Allows connect and deny bind operations to the port[1] socket. */
+>> +    ASSERT_EQ(0, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_2, 0));
+>> +    /* Empty allowed_access (i.e. deny rules) are ignored in network 
+>> actions
+>> +     * for port[2] socket.
+>> +     */
+>> +    ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, 
+>> LANDLOCK_RULE_NET_SERVICE,
+>> +                &net_service_3, 0));
+>> +    ASSERT_EQ(ENOMSG, errno);
+>> +
+>> +    /* Enforces the ruleset. */
+>> +    enforce_ruleset(_metadata, ruleset_fd);
+>> +
+>> +    sockfd = create_socket(_metadata, true, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +    /* Binds a socket to port[0] */
+>> +    ASSERT_EQ(0, bind(sockfd, (struct sockaddr *)&self->addr6[0], 
+>> sizeof(self->addr6[0])));
+>> +
+>> +    /* Close bounded socket*/
+>> +    ASSERT_EQ(0, close(sockfd));
+>> +
+>> +    sockfd = create_socket(_metadata, false, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +    /* Binds a socket to port[1] */
+>> +    ASSERT_EQ(-1, bind(sockfd, (struct sockaddr *)&self->addr6[1], 
+>> sizeof(self->addr6[1])));
+>> +    ASSERT_EQ(EACCES, errno);
+>> +
+>> +    sockfd = create_socket(_metadata, false, false);
+>> +    ASSERT_LE(0, sockfd);
+>> +    /* Binds a socket to port[2] */
+>> +    ASSERT_EQ(-1, bind(sockfd, (struct sockaddr *)&self->addr6[2], 
+>> sizeof(self->addr6[2])));
+>> +    ASSERT_EQ(EACCES, errno);
+>> +}
+>> +TEST_HARNESS_MAIN
+>> -- 
+>> 2.25.1
+>>
+> .
