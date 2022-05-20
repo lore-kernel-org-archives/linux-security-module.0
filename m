@@ -2,126 +2,150 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7ADC4332F
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 May 2022 23:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AB3C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 May 2022 10:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235496AbiESXnC (ORCPT
+        id S236422AbiETKsa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 May 2022 19:43:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46432 "EHLO
+        Fri, 20 May 2022 06:48:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231951AbiESXnB (ORCPT
+        with ESMTP id S231633AbiETKs3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 May 2022 19:43:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 136CEB042E;
-        Thu, 19 May 2022 16:43:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A1B1461943;
-        Thu, 19 May 2022 23:43:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F9BEC385AA;
-        Thu, 19 May 2022 23:42:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653003780;
-        bh=6JGyfhNXfNm06GnBDot5qMy5WIBj4ipB36DG8PIGeWk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PDDeKqV+B8s4g1Gv66ZmQTK/XyaX3H7n7/hVJ9z1x1I3SE8cSo7uEAKJ27J2PvKjW
-         68R61oWOiNwsgwwjDMdoCT11grrtc0Xlsp8L12B0gzJWr6PViSMOsraQAAsSqyS05o
-         wCREsib0UGEoKw2BhZv5rW7X7F1i0J8vsGgniXyc29mJ9tuht1Lx7cKRnQU7E6YXn/
-         mqLTVtoMsdT5x4sRDlHqNHXZY/sIaTryjTuntCXlz04hdJV00c1y+0yFAIVR8zHC8B
-         oCCnThSzW7wqKw90ygLEVR4V1XgAmhTK7HDcrak+yFRGhoZNYYuN7J5TbGjkRxodyf
-         aeQMgM4NJ2Gcg==
-Date:   Fri, 20 May 2022 02:41:21 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Pankaj Gupta <pankaj.gupta@nxp.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        James Bottomley <jejb@linux.ibm.com>, kernel@pengutronix.de,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Andreas Rammhold <andreas@rammhold.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Michael Walle <michael@walle.cc>,
-        John Ernberg <john.ernberg@actia.se>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH v10 0/7] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-Message-ID: <YobVoQ+enx0IY4z1@kernel.org>
-References: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
- <YoKZwFkfcl7ixTF4@kernel.org>
- <4d4ecd4b-9683-08a0-7a5f-11a7ff86ea6d@pengutronix.de>
- <c511995075cafb35bfefcbfe6fa6e84aa31c536f.camel@kernel.org>
- <6f6a5524-9661-9a9f-a674-915efa33f6f6@pengutronix.de>
- <YoUJgUbSRVnTfTj/@iki.fi>
+        Fri, 20 May 2022 06:48:29 -0400
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 443BB5AECC
+        for <linux-security-module@vger.kernel.org>; Fri, 20 May 2022 03:48:27 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4L4Nk11GJszMqkPY;
+        Fri, 20 May 2022 12:48:25 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4L4Nk02SjgzlhSMV;
+        Fri, 20 May 2022 12:48:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1653043705;
+        bh=4/DTGTCgp4U0kXNFebaREvz0BDD6lnA4+jHOrbX2u+Q=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=rvbEshG08kgbPp2tW/9PUxfsO9sT6rFw62n/ybnajefDszYLouuiRePzGKp7f2Djd
+         WOodqge80GqNylBp2slxcBARfF5SEmK55yo1STowGHXvCQ7cQWL9DvzMCfufpxvyJq
+         nbc1vpAF1FaaXZzV8k9x7Y0wFy5ZkAjFMHbCEcAQ=
+Message-ID: <a5ef620d-0447-3d58-d9bd-1220b8411957@digikod.net>
+Date:   Fri, 20 May 2022 12:48:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YoUJgUbSRVnTfTj/@iki.fi>
+User-Agent: 
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        anton.sirazetdinov@huawei.com, Paul Moore <paul@paul-moore.com>
+References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v5 00/15] Network support for Landlock - UDP discussion
+In-Reply-To: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 18, 2022 at 05:58:09PM +0300, Jarkko Sakkinen wrote:
-> On Wed, May 18, 2022 at 06:36:18AM +0200, Ahmad Fatoum wrote:
-> > On 18.05.22 03:08, Jarkko Sakkinen wrote:
-> > > On Tue, 2022-05-17 at 14:44 +0200, Ahmad Fatoum wrote:
-> > >> Hello Herbert,
-> > >>
-> > >> On 16.05.22 20:36, Jarkko Sakkinen wrote:
-> > >>> On Fri, May 13, 2022 at 04:56:58PM +0200, Ahmad Fatoum wrote:
-> > >>> I can probably pick these unless objections?
-> > >>
-> > >> Pankaj has given his Reviewed-by for the CAAM parts he co-maintains,
-> > >> is it ok for this to go in via Jarkko's tree?
-> > >>
-> > >> Note that applying this series on top of jarkko/linux-tpmdd.git has a
-> > >> trivial conflict when merged with herbert/cryptodev-2.6.git:
-> > >> Two independently added Kconfig options need to coexist in
-> > >> drivers/crypto/caam/Kconfig.
-> > >>
-> > >> I can resend my series rebased if needed.
-> > >>
-> > >> Cheers,
-> > >> Ahmad
-> > >>
-> > >>>
-> > >>> BR, Jarkko
-> > >>>
-> > >>
-> > >>
-> > > 
-> > > This came up:
-> > > 
-> > > https://lore.kernel.org/keyrings/0e8da958a222e5c1dccaaf1600b08bdb8705b48e.camel@kernel.org/
-> > 
-> > And it turned out to be a misunderstanding. Or do you think there is still anything
-> > to do there?
-> > 
-> > Thanks,
-> > Ahmad
+Hi,
+
+Regarding future plan to support UDP, it may not be possible to 
+efficiently restrict sending on a port or receiving on a port because of 
+the non-connnected state of UDP sockets. Indeed, when setting up a 
+socket to send a packet on a specified port, we (automatically or 
+manually) have a receiving port configured and this socket can be used 
+to receive any UDP packet. An UDP socket could be restricted to only 
+send/write or to receive/read from a specific port, but this would 
+probably not be as useful as the TCP restrictions. That could look like 
+RECEIVE_UDP and SEND_UDP access-rights but the LSM implementation would 
+be more complex because of the socket/FD tracking. Moreover, the 
+performance impact could be more important for every read and write 
+syscall (whatever the FD type).
+
+Any opinion?
+
+Regards,
+  Mickaël
+
+
+On 16/05/2022 17:20, Konstantin Meskhidze wrote:
+> Hi,
+> This is a new V5 patch related to Landlock LSM network confinement.
+> It is based on the latest landlock-wip branch on top of v5.18-rc5:
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=landlock-wip
 > 
-> Oops, you're right, sorry.
+> It brings refactoring of previous patch version V4.
+> Added additional selftests for IP6 network families and network namespace.
+> Added TCP sockets confinement support in sandboxer demo.
 > 
-> Yeah, I guess I can pick these patches now.
-
-Applied:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=next
-
-BR, Jarkko
+> All test were run in QEMU evironment and compiled with
+>   -static flag.
+>   1. network_test: 13/13 tests passed.
+>   2. base_test: 7/7 tests passed.
+>   3. fs_test: 59/59 tests passed.
+>   4. ptrace_test: 8/8 tests passed.
+> 
+> Still have issue with base_test were compiled without -static flag
+> (landlock-wip branch without network support)
+> 1. base_test: 6/7 tests passed.
+>   Error:
+>   #  RUN           global.inconsistent_attr ...
+>   # base_test.c:54:inconsistent_attr:Expected ENOMSG (42) == errno (22)
+>   # inconsistent_attr: Test terminated by assertion
+>   #          FAIL  global.inconsistent_attr
+> not ok 1 global.inconsistent_attr
+> 
+> LCOV - code coverage report:
+>              Hit  Total  Coverage
+> Lines:      952  1010    94.3 %
+> Functions:  79   82      96.3 %
+> 
+> Previous versions:
+> v4: https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+> v3: https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+> v2: https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+> v1: https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
+> 
+> Konstantin Meskhidze (15):
+>    landlock: access mask renaming
+>    landlock: landlock_find/insert_rule refactoring
+>    landlock: merge and inherit function refactoring
+>    landlock: helper functions refactoring
+>    landlock: landlock_add_rule syscall refactoring
+>    landlock: user space API network support
+>    landlock: add support network rules
+>    landlock: TCP network hooks implementation
+>    seltests/landlock: add tests for bind() hooks
+>    seltests/landlock: add tests for connect() hooks
+>    seltests/landlock: connect() with AF_UNSPEC tests
+>    seltests/landlock: rules overlapping test
+>    seltests/landlock: ruleset expanding test
+>    seltests/landlock: invalid user input data test
+>    samples/landlock: adds network demo
+> 
+>   include/uapi/linux/landlock.h                |  48 +
+>   samples/landlock/sandboxer.c                 | 105 ++-
+>   security/landlock/Kconfig                    |   1 +
+>   security/landlock/Makefile                   |   2 +
+>   security/landlock/fs.c                       | 169 +---
+>   security/landlock/limits.h                   |   8 +-
+>   security/landlock/net.c                      | 159 ++++
+>   security/landlock/net.h                      |  25 +
+>   security/landlock/ruleset.c                  | 481 ++++++++--
+>   security/landlock/ruleset.h                  | 102 +-
+>   security/landlock/setup.c                    |   2 +
+>   security/landlock/syscalls.c                 | 173 ++--
+>   tools/testing/selftests/landlock/base_test.c |   4 +-
+>   tools/testing/selftests/landlock/common.h    |   9 +
+>   tools/testing/selftests/landlock/config      |   5 +-
+>   tools/testing/selftests/landlock/fs_test.c   |  10 -
+>   tools/testing/selftests/landlock/net_test.c  | 935 +++++++++++++++++++
+>   17 files changed, 1925 insertions(+), 313 deletions(-)
+>   create mode 100644 security/landlock/net.c
+>   create mode 100644 security/landlock/net.h
+>   create mode 100644 tools/testing/selftests/landlock/net_test.c
+> 
+> --
+> 2.25.1
+> 
