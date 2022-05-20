@@ -2,150 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AB3C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 May 2022 10:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2432C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 May 2022 15:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236422AbiETKsa (ORCPT
+        id S1351033AbiETPp1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 May 2022 06:48:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37316 "EHLO
+        Fri, 20 May 2022 11:45:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231633AbiETKs3 (ORCPT
+        with ESMTP id S1351032AbiETPp0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 May 2022 06:48:29 -0400
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 443BB5AECC
-        for <linux-security-module@vger.kernel.org>; Fri, 20 May 2022 03:48:27 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4L4Nk11GJszMqkPY;
-        Fri, 20 May 2022 12:48:25 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4L4Nk02SjgzlhSMV;
-        Fri, 20 May 2022 12:48:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1653043705;
-        bh=4/DTGTCgp4U0kXNFebaREvz0BDD6lnA4+jHOrbX2u+Q=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=rvbEshG08kgbPp2tW/9PUxfsO9sT6rFw62n/ybnajefDszYLouuiRePzGKp7f2Djd
-         WOodqge80GqNylBp2slxcBARfF5SEmK55yo1STowGHXvCQ7cQWL9DvzMCfufpxvyJq
-         nbc1vpAF1FaaXZzV8k9x7Y0wFy5ZkAjFMHbCEcAQ=
-Message-ID: <a5ef620d-0447-3d58-d9bd-1220b8411957@digikod.net>
-Date:   Fri, 20 May 2022 12:48:23 +0200
+        Fri, 20 May 2022 11:45:26 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C78161796F5
+        for <linux-security-module@vger.kernel.org>; Fri, 20 May 2022 08:45:23 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id g184so8064564pgc.1
+        for <linux-security-module@vger.kernel.org>; Fri, 20 May 2022 08:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
+        h=subject:date:message-id:mime-version:content-transfer-encoding:cc
+         :from:to;
+        bh=gs3k/28itFHvJXmdsRExbdUsV2UQMie33SCkn2ny4ZU=;
+        b=0L8NTjV/6EsGEzTVPkwaauu66xx4YsEzUoOBnKyeT8AKQ+eiucSVQznEY4zduqcyDi
+         0CLs1ZMX4LtInxWYR0lOUHXiLuT12sMMkriI+yvKElKS9UMbR0JE+OaI+76C2qdfF3Hy
+         jZtun6jyoo7julKaC4P4QdqO9PLV/Vg5jCN1X0S47LZt+9QFApjRdLCcdWX62xXndUY2
+         nQnxou1/l4hl7wb+KaYWLjGwV7izEFK3VT+KEM82NspqCBHbsTa80DQ5q+k3u7jsgDO7
+         h/fFQFJjvATlEy9anqSgbM0MJQYkuyscPwNW5Es94zhcTICI8DGnphfk4ySh06KjrZAa
+         zQ/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:date:message-id:mime-version
+         :content-transfer-encoding:cc:from:to;
+        bh=gs3k/28itFHvJXmdsRExbdUsV2UQMie33SCkn2ny4ZU=;
+        b=a/3hpcNuUijPdRjPFwdJt1+QIImd6EziGE6AxnCtC6EHISx0l69ijboizjhib1MZFp
+         r9EYbXhBo6eynXYplGmd/D36woRzdPJNUhGAimUT6Uv9Gqe8n52K5IlluBmW3Gl//KzL
+         PUeN/AyVW+2jrygB89/nw3llE0PfLMobjLqVS5O30S8VA8oUMt1qR2U6LiOwlAvb18t0
+         PQog9gZEUxvVl4cEk+/tozikroQEeDW4DMEUWFdBgtSCOfUJCakO8aLlVNIMjU4p1cnO
+         3JJR4HEVVbHZqWAAKEQ2qEPM2hUsfCQNWG+qt/V/skHP3y4B1WKLcao10PheJ6IgreEt
+         Dwig==
+X-Gm-Message-State: AOAM531sqhbY4TXMLp6sSc4m4jOmDDvexAErAe5AmY010E8VmvYvl19m
+        BgY/zWRcvhYiweBs7TIv2f5Irg==
+X-Google-Smtp-Source: ABdhPJwZQuyWJmMpMf/TR7lpahjw2nquTx9J7AVvExgDhp9Su6K3b7Yem6V1CcSf9pHCcHH0pCVRBw==
+X-Received: by 2002:a63:488:0:b0:3f5:e6da:4619 with SMTP id 130-20020a630488000000b003f5e6da4619mr8966800pge.6.1653061523297;
+        Fri, 20 May 2022 08:45:23 -0700 (PDT)
+Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
+        by smtp.gmail.com with ESMTPSA id k18-20020a170902ce1200b0015e8d4eb1easm5838502plg.52.2022.05.20.08.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 May 2022 08:45:22 -0700 (PDT)
+Subject: [PATCH v1 0/5] Support kexec_file on 32-bit RISC-V
+Date:   Fri, 20 May 2022 08:44:26 -0700
+Message-Id: <20220520154430.18593-1-palmer@rivosinc.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        anton.sirazetdinov@huawei.com, Paul Moore <paul@paul-moore.com>
-References: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v5 00/15] Network support for Landlock - UDP discussion
-In-Reply-To: <20220516152038.39594-1-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>, aou@eecs.berkeley.edu,
+        robh+dt@kernel.org, frowand.list@gmail.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        liaochang1@huawei.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux@rivosinc.com
+From:   Palmer Dabbelt <palmer@rivosinc.com>
+To:     lizhengyu3@huawei.com
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+kexec_file() support was recently added for RISC-V [1], which triggered
+a handful of build issues on rv32.  These all seemed pretty minor, but
+it looks like this is the only 32-bit platform that has attempted to
+build the kexec IMA support before so I'm not sure if there's something
+more complicated going on that I'm missing (I haven't tested any of
+this).
 
-Regarding future plan to support UDP, it may not be possible to 
-efficiently restrict sending on a port or receiving on a port because of 
-the non-connnected state of UDP sockets. Indeed, when setting up a 
-socket to send a packet on a specified port, we (automatically or 
-manually) have a receiving port configured and this socket can be used 
-to receive any UDP packet. An UDP socket could be restricted to only 
-send/write or to receive/read from a specific port, but this would 
-probably not be as useful as the TCP restrictions. That could look like 
-RECEIVE_UDP and SEND_UDP access-rights but the LSM implementation would 
-be more complex because of the socket/FD tracking. Moreover, the 
-performance impact could be more important for every read and write 
-syscall (whatever the FD type).
+The rv64 support was just merged into kernel.org/riscv/linux/for-next as
+83a7a614ce58 ("riscv: kexec: add kexec_file_load() support").  I've put
+these on top of the pre-merged version at
+kernel.org/palmer/linux/riscv-kexec_file-rv32 if that helps anyone.
 
-Any opinion?
-
-Regards,
-  Mickaël
+1: https://lore.kernel.org/all/20220408100914.150110-1-lizhengyu3@huawei.com/
 
 
-On 16/05/2022 17:20, Konstantin Meskhidze wrote:
-> Hi,
-> This is a new V5 patch related to Landlock LSM network confinement.
-> It is based on the latest landlock-wip branch on top of v5.18-rc5:
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=landlock-wip
-> 
-> It brings refactoring of previous patch version V4.
-> Added additional selftests for IP6 network families and network namespace.
-> Added TCP sockets confinement support in sandboxer demo.
-> 
-> All test were run in QEMU evironment and compiled with
->   -static flag.
->   1. network_test: 13/13 tests passed.
->   2. base_test: 7/7 tests passed.
->   3. fs_test: 59/59 tests passed.
->   4. ptrace_test: 8/8 tests passed.
-> 
-> Still have issue with base_test were compiled without -static flag
-> (landlock-wip branch without network support)
-> 1. base_test: 6/7 tests passed.
->   Error:
->   #  RUN           global.inconsistent_attr ...
->   # base_test.c:54:inconsistent_attr:Expected ENOMSG (42) == errno (22)
->   # inconsistent_attr: Test terminated by assertion
->   #          FAIL  global.inconsistent_attr
-> not ok 1 global.inconsistent_attr
-> 
-> LCOV - code coverage report:
->              Hit  Total  Coverage
-> Lines:      952  1010    94.3 %
-> Functions:  79   82      96.3 %
-> 
-> Previous versions:
-> v4: https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
-> v3: https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
-> v2: https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
-> v1: https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
-> 
-> Konstantin Meskhidze (15):
->    landlock: access mask renaming
->    landlock: landlock_find/insert_rule refactoring
->    landlock: merge and inherit function refactoring
->    landlock: helper functions refactoring
->    landlock: landlock_add_rule syscall refactoring
->    landlock: user space API network support
->    landlock: add support network rules
->    landlock: TCP network hooks implementation
->    seltests/landlock: add tests for bind() hooks
->    seltests/landlock: add tests for connect() hooks
->    seltests/landlock: connect() with AF_UNSPEC tests
->    seltests/landlock: rules overlapping test
->    seltests/landlock: ruleset expanding test
->    seltests/landlock: invalid user input data test
->    samples/landlock: adds network demo
-> 
->   include/uapi/linux/landlock.h                |  48 +
->   samples/landlock/sandboxer.c                 | 105 ++-
->   security/landlock/Kconfig                    |   1 +
->   security/landlock/Makefile                   |   2 +
->   security/landlock/fs.c                       | 169 +---
->   security/landlock/limits.h                   |   8 +-
->   security/landlock/net.c                      | 159 ++++
->   security/landlock/net.h                      |  25 +
->   security/landlock/ruleset.c                  | 481 ++++++++--
->   security/landlock/ruleset.h                  | 102 +-
->   security/landlock/setup.c                    |   2 +
->   security/landlock/syscalls.c                 | 173 ++--
->   tools/testing/selftests/landlock/base_test.c |   4 +-
->   tools/testing/selftests/landlock/common.h    |   9 +
->   tools/testing/selftests/landlock/config      |   5 +-
->   tools/testing/selftests/landlock/fs_test.c   |  10 -
->   tools/testing/selftests/landlock/net_test.c  | 935 +++++++++++++++++++
->   17 files changed, 1925 insertions(+), 313 deletions(-)
->   create mode 100644 security/landlock/net.c
->   create mode 100644 security/landlock/net.h
->   create mode 100644 tools/testing/selftests/landlock/net_test.c
-> 
-> --
-> 2.25.1
-> 
