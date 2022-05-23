@@ -2,161 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D49A7C4332F
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 May 2022 16:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFA6C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 May 2022 19:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234176AbiEWQ7j (ORCPT
+        id S229852AbiEWTbp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 May 2022 12:59:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59174 "EHLO
+        Mon, 23 May 2022 15:31:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238994AbiEWQ7h (ORCPT
+        with ESMTP id S230504AbiEWTay (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 May 2022 12:59:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C5C340D5;
-        Mon, 23 May 2022 09:59:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 135E2614AB;
-        Mon, 23 May 2022 16:59:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF590C385AA;
-        Mon, 23 May 2022 16:59:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653325175;
-        bh=JD4vUg5P0ha+qnAxEQ/1K+c2zyCjSh6N/g9oM1/e13s=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hHEVLd+W+IKAK7huRJaRTprXZYDkmj/tkJXO5eY1IwPr4caapKhNueUPpQzFc57za
-         NgyyRmm8MvuMsbpiiVWbf+k2cKQfe1y7iGbodIelhjKJ1Q+shafuEydxAm1REbARIa
-         8Q5JKYumb4AFVVttum0/cu83SRg3uZHMiUN6yBfEbJc/Djhy660C1xqPD6p4nVI+fe
-         lOFFezmlIAT5HhlHTvcaEiZFTTdGTKjW3G2wtTgtERDwuHZf+Hgm80pJFHK2rUY560
-         /nELiROQKN6SCm3DSswNB+qkN9fnl9ldPDRo++t46tIQdWf4ma4DD4ERlPrBCA0OJc
-         7Aw1nDWeYNjgg==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] TPM DEVICE DRIVER updates for v5.19-rc1
-Date:   Mon, 23 May 2022 19:57:44 +0300
-Message-Id: <20220523165744.48234-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.36.1
+        Mon, 23 May 2022 15:30:54 -0400
+Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4835A111B91
+        for <linux-security-module@vger.kernel.org>; Mon, 23 May 2022 12:12:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1653333143; bh=0r/nfafogot5XMVQwRUvUeOafN0fuSbPENhCVxJYeUg=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=lZ/nwJMH623xoqactQQ4jH0Rc3WDfKVioTsME2h71hmt92mL7Ix0kGN+QPpSVisJolf77dRvNSg6KkIXnQfeA4iPS1S1o2ZpM8F8G8cOWb0OUDqXBTNKcbH6LMELBZDVmjN0Mv1LdOn/v0VCLBrJg4fc2nPLNEayJ7YF3wY3mrlAvcLsC+6ELrBwaclAS99CrnK7SAZ520my1pJ1Z4uxKczCzwpGk7lLBxeKC6Y9Oen/Sow/gPPdSxdiAPr4WAz+ZbzwMecfN7pcMthKZCsEFZj/lIbUr6JMK7+M9G3T/FdhgpiEmvaQ+GD1UZouVkk5ZuZnC7mZPvgK7tdOSxmSPw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1653333143; bh=TwUZZzdKrq2Hn/qKQvQnkuNBG9vN/wUikcPVY31NZlQ=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=nNT/XcpW+MXSVM0UJ6kf3XPxdKvkyKcW5TOTUZk3uwuGP797u3fZXqHrc2X0A8uk/UB2qcM1cCOT0h9D+aXPlXq3Ya/WswGAev7YfVi6HakXP1tKx/RPTDhtQWbpfBFfy2JbRB2xyCaSSgAbIx/Wj3NpiNdQHSHrQ6twhCqmXLTE2jxHq7EC6O8d1nuYDkwR0NymoqrnHSqeo/Z4g6fDTrwctyZHAAsI1i8g1d3fHI2L4JhWyA21vZ4iRc26pzYoZZS2TB73cvNJwusXFy69FLXJJct1UTjFADypBE3AmWZtrUauXReS9h4ITyUsaP13FhM8ipVB8Xg1Llb/M8IN4Q==
+X-YMail-OSG: 4l6kipQVM1mD1hc2_cW6VhyZZddctPgpn9SZypmcVb0zG4VDrPd7YLiN5_o1bkm
+ uNKyEIC60o4wjk_WomgwMjMTX9ICI.fIV1E5aOe98KaR_eTyOZoCKrBk0km8V4CQUHjK.6hZ7UQP
+ B5smLWJKwKWsMBWcwRwLoT0vr3KzwIusta62G4kfTqFgjEhJVIyFkBPY7CwqIExFlQw6BQsWq6Vm
+ EEpGyUWPIULUF.JEi7xEhbAYAU6DLUbyxg98_svAralVPPs7hFij_idvPg3zlCs9L60cw4OPjhWm
+ 7gS8.Ny_.4Q.oM0ugxJE99Lf3dIPDi7eez2ArNebG7bGJlYwlCUh3z3EqSSiLpAy.pAGmJx.zjHr
+ XrSbBZllzf4kvw0bTZXiw5vPkwElOl3_0mgPECw1kjbW7xYA6O7Rpvmp3E1P45nJwNt5M8Fx49CK
+ mREbn_Q9809xmFNGxhSWzkIcsIOjZ6oiI7SVSVzHShh3HGmluM4hRrTkpF_obvcyFK6oCuA1Mq0P
+ TWnL6JRfveFLu1APQV4_jsg5keFni.mDJS_uVmllWT.I9.Z8IF.dWLALFja9huRlpEZTwLZkrPs4
+ 38ALgVP726.UceqWdV7nPGyDVTfX7W0zmy8ZGL1Dltxc67GJk6g5ZAy_Kx0HGh8e79fYEQpPi4vt
+ uq3JP2WWY8iRLmsGvtvnlwgqyBVTiFltjk7SrHHcySWSlD_wKbJkEwBOy3425EVfVFZZMwKlYGfV
+ b1GmEG6biTq7bgFOhKwEt8.QAzXGNadTRYweACYNzoPTuQXFk4Ik9w7djWOR4cLa2JlSXj.9YCaO
+ am4wGKuGOaj7Y3w4ahAtK.u.inqXIYQfbzOp0XwQX3i26iGCeN8GW4ByMSmPlxubOVNuymRp4gd5
+ CRfbUemsde_jAcV_5rdhIrpWxKhG3ScMCHoxAsn3pI288W23rH3SPin41S.kx2cZwPgrSnRcSuDD
+ GX4hjfwk87ahdaW07bB_0Wf07obg_J4Xs2LwhfamY3n5RqmHzleDWRHyjYOuEWcOxjsUfYd0ME_D
+ SsB6hVEBpwVKFOR27vwq2cLHTiY915DOGY8cj1u1bTWnF_NFlJbhtPdNRJHFhjsfHbNOtMK4oYM5
+ rkvIMefEapaNbBGXXyv8ZrkZjIR6TSxpjJ3sb04WkF.7I1X7gZo7bbKtGluCBlUiCn_njT2Wl8Kq
+ fgWpF6m0TtxKrf2YUL9PN_6.STWZG4V6ufYAP8jGNpGYWk5Naba7VG4jhGDOPoQr98hhebnALF.d
+ wpuJ.nMHzlFOunVbl441kDwGDJceVqNxldNfRDOnCXoV3xqPNgegupetmHdu5I4P40DUkYSpc17T
+ 8RYD8RZllsYqu82icO.aln22AxkCAC8TRrp_kvfwKSzcadsVKRfwBxS_hsEE25VbAIo65kIXpBlS
+ n_i229Y9XMB0dc3TPuVE7opvEoyVbZwd586Hl632pRI62km3zzUrGSyqXC.cREUcjudTttfRgaB7
+ UPouA4nAD8Y4j7KCHaquBnlVQxryDXY2vj6WmlZxEEVvTQJmDsbLBPccz6t8QnbXiAHHi2DOreT0
+ F0bZv0Sggi4.GkyZNjRM6mZ.OLg4M6j_PuL1IzL1LcKu7uuwa3FLIUNDsC.xHtB._HVv4DI4YRex
+ IAEEo47zzRzWMXiagbhacyUeA5oKGJjpwG2QLf_jKerAlEOq55o9sqMgAerQikDzY2teD4R.j52F
+ pPrFFmsmuUKSq.JoEPypO3i06Z8MVGDkETZBZDHgt9sF3OyAGK33OH0.IpKLWdlBEjBy2VbIRhGX
+ OlGUu8jYdARGX4xfOrs9k61I3iqEYjGgUOE6Kx1DTLcTJzWyyvUTkYvMeeDld_Zf889a0xHu6X.G
+ 2iZojzBBHWwDqOpHfZCtx9jheCFYiTkLqdlqOvnHL2IFhXDNgo23a1z7U9WSuY5J4nqDaTqooXwc
+ mIQukZZR6x755ztb0q9YTrMSRy7xqUauIqXfMKnKcnV_lQRIKlxnQRXSUcRoASZPff6YAetDDiKx
+ qLsHN3JMqJ.K2EL8KOdJ3VnJfZvBNXPX_s1kAQqyFP9nnf_d3iOveyOPJ0w39FGB2S6FBw6osQL_
+ bww08RBkCIvNN5RdGbFWlHfbzPUaDdfEeRhv81745voHN9wRNlTMleeYmVvOfnhJ9rM60Spabgms
+ DR7NFZQp3hoOklVWfkzWyJY3xEHPVxwtenxEi32vhZ_H_.sE3awSVrZUInK6JrPPd.bRhyzk8atw
+ Fi12oAFdH6Z6KVNDz9BhIrZPG7pA5RBIFVT1KYnZVpXfiBCtuQmhZJqA_gmjo1unT5SeN_MDOzFp
+ S640GHbQFWcVbNmzBF2A-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 23 May 2022 19:12:23 +0000
+Received: by hermes--canary-production-bf1-5d4b57496-lhzp8 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 08ea89ddc253c345cd6d029d7f01b725;
+          Mon, 23 May 2022 19:12:21 +0000 (UTC)
+Message-ID: <52db2436-fe75-0810-aa82-382aa4ffd0b5@schaufler-ca.com>
+Date:   Mon, 23 May 2022 12:12:19 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for v5.19
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+References: <52db2436-fe75-0810-aa82-382aa4ffd0b5.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.20225 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hello Linus,
+
+Here is the Smack pull request for v5.19.
+
+There is a single change to remove a pointless assignment.
+It's been in next and passes all tests.
+Thank you.
+
 The following changes since commit 4b0986a3613c92f4ec1bdc7f60ec66fea135991f:
 
-  Linux 5.18 (2022-05-22 09:52:31 -1000)
+   Linux 5.18 (2022-05-22 09:52:31 -1000)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/ tags/tpmdd-next-v5.19-rc1
+   https://github.com/cschaufler/smack-next tags/Smack-for-5.19
 
-for you to fetch changes up to 7f3113e3b9f7207f0bd57b5fdae1a1b9c8215e08:
+for you to fetch changes up to eaff451d4b7c86e3db3c03611426f5ce1d3826fd:
 
-  MAINTAINERS: add KEYS-TRUSTED-CAAM (2022-05-23 18:47:50 +0300)
-
-----------------------------------------------------------------
-tpmdd updates for v5.19-rc1
-
-- Strictened validation of key hashes for SYSTEM_BLACKLIST_HASH_LIST.  An
-  invalid hash format causes a compilation error.  Previously, they got
-  included to the kernel binary but were silently ignored at run-time.
-- Allow root user to append new hashes to the blacklist keyring.
-- Trusted keys backed with Cryptographic Acceleration and Assurance Module
-  (CAAM), which part of some of the new NXP's SoC's.  Now there is total
-  three hardware backends for trusted keys: TPM, ARM TEE and CAAM.
-- A scattered set of fixes and small improvements for the TPM driver.
-
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+   smack: Remove redundant assignments (2022-05-23 11:12:08 -0700)
 
 ----------------------------------------------------------------
-Ahmad Fatoum (7):
-      KEYS: trusted: allow use of TEE as backend without TCG_TPM support
-      KEYS: trusted: allow use of kernel RNG for key material
-      crypto: caam - determine whether CAAM supports blob encap/decap
-      crypto: caam - add in-kernel interface for blob generator
-      KEYS: trusted: Introduce support for NXP CAAM-based trusted keys
-      doc: trusted-encrypted: describe new CAAM trust source
-      MAINTAINERS: add KEYS-TRUSTED-CAAM
+Smack update for 5.19
+	Remove unnecessary assignment
 
-Haowen Bai (1):
-      tpm/tpm_ftpm_tee: Return true/false (not 1/0) from bool functions
+----------------------------------------------------------------
+Michal Orzel (1):
+       smack: Remove redundant assignments
 
-Jes B. Klinke (1):
-      tpm: cr50: Add new device/vendor ID 0x504a6666
+  security/smack/smackfs.c | 1 -
+  1 file changed, 1 deletion(-)
 
-Johannes Holland (1):
-      tpm: Remove read16/read32/write32 calls from tpm_tis_phy_ops
-
-Mickaël Salaün (6):
-      tools/certs: Add print-cert-tbs-hash.sh
-      certs: Factor out the blacklist hash creation
-      certs: Make blacklist_vet_description() more strict
-      certs: Check that builtin blacklist hashes are valid
-      certs: Allow root user to append signed hashes to the blacklist keyring
-      certs: Explain the rationale to call panic()
-
-Stefan Mahnke-Hartmann (2):
-      tpm: Fix buffer access in tpm2_get_tpm_pt()
-      tpm: Add field upgrade mode support for Infineon TPM2 modules
-
-Uwe Kleine-König (1):
-      char: tpm: cr50_i2c: Suppress duplicated error message in .remove()
-
-Xiu Jianfeng (1):
-      tpm: ibmvtpm: Correct the return value in tpm_ibmvtpm_probe()
-
- Documentation/admin-guide/kernel-parameters.txt    |  11 +
- Documentation/security/keys/trusted-encrypted.rst  |  60 +++++-
- MAINTAINERS                                        |  11 +
- certs/.gitignore                                   |   1 +
- certs/Kconfig                                      |  17 +-
- certs/Makefile                                     |  14 +-
- certs/blacklist.c                                  | 227 ++++++++++++++++-----
- crypto/asymmetric_keys/x509_public_key.c           |   3 +-
- drivers/char/tpm/tpm2-cmd.c                        |  17 +-
- drivers/char/tpm/tpm_ftpm_tee.c                    |   2 +-
- drivers/char/tpm/tpm_ibmvtpm.c                     |   1 +
- drivers/char/tpm/tpm_tis.c                         |  67 +++---
- drivers/char/tpm/tpm_tis_core.h                    |  58 ++++--
- drivers/char/tpm/tpm_tis_i2c_cr50.c                |  11 +-
- drivers/char/tpm/tpm_tis_spi.h                     |   4 -
- drivers/char/tpm/tpm_tis_spi_cr50.c                |   7 +-
- drivers/char/tpm/tpm_tis_spi_main.c                |  45 +---
- drivers/char/tpm/tpm_tis_synquacer.c               |  98 ++++-----
- drivers/crypto/caam/Kconfig                        |   3 +
- drivers/crypto/caam/Makefile                       |   1 +
- drivers/crypto/caam/blob_gen.c                     | 182 +++++++++++++++++
- drivers/crypto/caam/ctrl.c                         |  17 +-
- drivers/crypto/caam/intern.h                       |   1 +
- drivers/crypto/caam/regs.h                         |   4 +-
- include/keys/system_keyring.h                      |  14 +-
- include/keys/trusted-type.h                        |   2 +-
- include/keys/trusted_caam.h                        |  11 +
- include/soc/fsl/caam-blob.h                        | 103 ++++++++++
- scripts/check-blacklist-hashes.awk                 |  37 ++++
- .../integrity/platform_certs/keyring_handler.c     |  26 +--
- security/keys/Kconfig                              |  18 +-
- security/keys/trusted-keys/Kconfig                 |  38 ++++
- security/keys/trusted-keys/Makefile                |  10 +-
- security/keys/trusted-keys/trusted_caam.c          |  80 ++++++++
- security/keys/trusted-keys/trusted_core.c          |  45 +++-
- tools/certs/print-cert-tbs-hash.sh                 |  91 +++++++++
- 36 files changed, 1056 insertions(+), 281 deletions(-)
- create mode 100644 drivers/crypto/caam/blob_gen.c
- create mode 100644 include/keys/trusted_caam.h
- create mode 100644 include/soc/fsl/caam-blob.h
- create mode 100755 scripts/check-blacklist-hashes.awk
- create mode 100644 security/keys/trusted-keys/Kconfig
- create mode 100644 security/keys/trusted-keys/trusted_caam.c
- create mode 100755 tools/certs/print-cert-tbs-hash.sh
