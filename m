@@ -2,178 +2,152 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE50C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 May 2022 14:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34125C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 May 2022 16:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237085AbiEWOZG (ORCPT
+        id S238414AbiEWQNc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 May 2022 10:25:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33802 "EHLO
+        Mon, 23 May 2022 12:13:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237080AbiEWOZG (ORCPT
+        with ESMTP id S236486AbiEWQNb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 May 2022 10:25:06 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D927580C8;
-        Mon, 23 May 2022 07:25:02 -0700 (PDT)
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 609E07DD; Mon, 23 May 2022 09:25:00 -0500 (CDT)
-Date:   Mon, 23 May 2022 09:25:00 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        jpenumak@redhat.com
-Subject: Re: [PATCH v12 13/26] userns: Add pointer to ima_namespace to
- user_namespace
-Message-ID: <20220523142500.GA1599@mail.hallyn.com>
-References: <20220420140633.753772-1-stefanb@linux.ibm.com>
- <20220420140633.753772-14-stefanb@linux.ibm.com>
- <20220522182426.GA24765@mail.hallyn.com>
- <20220523095932.adr2r26o2obch4r5@wittgenstein>
- <e1df20d5-a6c9-d30c-3671-46f7a8742bc0@linux.ibm.com>
- <20220523124159.zsbp2gonh2dum4jm@wittgenstein>
+        Mon, 23 May 2022 12:13:31 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93C215AEFA
+        for <linux-security-module@vger.kernel.org>; Mon, 23 May 2022 09:13:29 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4L6Mng4qkszMqCsj;
+        Mon, 23 May 2022 18:13:27 +0200 (CEST)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4L6Mnf45hLzlhMCc;
+        Mon, 23 May 2022 18:13:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1653322407;
+        bh=XhUEXOgvMyh0yaNnTTP+A90mHJw1pe7rby6geeIj66w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RJx2Mcv6Igs2Fb+Wk9itfGL7Yrg8wli7MAdBjIK9zfDLJoVpuZOMFCDZq+PCrysRO
+         dwF6QKAo/9PNNHlyXjIIQcb+hgDo6WLr1eBdhfsYstbxxRFddZRe3CL/jTPpUgDcF7
+         yASOe57XCJd9pfCoyY0QyacLLh2DRNl1KPG/wOTo=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] Landlock changes for v5.19
+Date:   Mon, 23 May 2022 18:12:45 +0200
+Message-Id: <20220523161245.2451265-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220523124159.zsbp2gonh2dum4jm@wittgenstein>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 23, 2022 at 02:41:59PM +0200, Christian Brauner wrote:
-> On Mon, May 23, 2022 at 07:31:29AM -0400, Stefan Berger wrote:
-> > 
-> > 
-> > On 5/23/22 05:59, Christian Brauner wrote:
-> > > On Sun, May 22, 2022 at 01:24:26PM -0500, Serge Hallyn wrote:
-> > > > On Wed, Apr 20, 2022 at 10:06:20AM -0400, Stefan Berger wrote:
-> > > > > Add a pointer to ima_namespace to the user_namespace and initialize
-> > > > > the init_user_ns with a pointer to init_ima_ns. We need a pointer from
-> > > > > the user namespace to its associated IMA namespace since IMA namespaces
-> > > > > are piggybacking on user namespaces.
-> > > > > 
-> > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > Acked-by: Christian Brauner <brauner@kernel.org>
-> > > > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > > 
-> > > > > ---
-> > > > > v11:
-> > > > >   - Added lost A-b from Christian back
-> > > > >   - Added sentence to patch description explaining why we need the pointer
-> > > > > 
-> > > > > v9:
-> > > > >   - Deferred implementation of ima_ns_from_user_ns() to later patch
-> > > > > ---
-> > > > >   include/linux/ima.h            | 2 ++
-> > > > >   include/linux/user_namespace.h | 4 ++++
-> > > > >   kernel/user.c                  | 4 ++++
-> > > > >   3 files changed, 10 insertions(+)
-> > > > > 
-> > > > > diff --git a/include/linux/ima.h b/include/linux/ima.h
-> > > > > index 426b1744215e..fcb60a44e05f 100644
-> > > > > --- a/include/linux/ima.h
-> > > > > +++ b/include/linux/ima.h
-> > > > > @@ -14,6 +14,8 @@
-> > > > >   #include <crypto/hash_info.h>
-> > > > >   struct linux_binprm;
-> > > > > +extern struct ima_namespace init_ima_ns;
-> > > > > +
-> > > > >   #ifdef CONFIG_IMA
-> > > > >   extern enum hash_algo ima_get_current_hash_algo(void);
-> > > > >   extern int ima_bprm_check(struct linux_binprm *bprm);
-> > > > > diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-> > > > > index 33a4240e6a6f..019e8cf7b633 100644
-> > > > > --- a/include/linux/user_namespace.h
-> > > > > +++ b/include/linux/user_namespace.h
-> > > > > @@ -36,6 +36,7 @@ struct uid_gid_map { /* 64 bytes -- 1 cache line */
-> > > > >   #define USERNS_INIT_FLAGS USERNS_SETGROUPS_ALLOWED
-> > > > >   struct ucounts;
-> > > > > +struct ima_namespace;
-> > > > >   enum ucount_type {
-> > > > >   	UCOUNT_USER_NAMESPACES,
-> > > > > @@ -99,6 +100,9 @@ struct user_namespace {
-> > > > >   #endif
-> > > > >   	struct ucounts		*ucounts;
-> > > > >   	long ucount_max[UCOUNT_COUNTS];
-> > > > > +#ifdef CONFIG_IMA_NS
-> > > > 
-> > > > It's probably worth putting a comment here saying that user_ns does not
-> > > > pin ima_ns.
-> > > > 
-> > > > That the only time the ima_ns will be freed is when user_ns is freed,
-> > > > and only time it will be changed is when user_ns is freed, or during
-> > > > ima_fs_ns_init() (under smp_load_acquire) during a new mount.
-> > > > 
-> > > > > +	struct ima_namespace	*ima_ns;
-> > > > 
-> > > > So, if I create a new user_ns with a new ima_ns, and in there I
-> > > > create a new user_ns again, it looks like ima_ns will be NULL in
-> > > > the new user_ns?  Should it not be set to the parent->ima_ns?
-> > > > (which would cause trouble for the way it's currently being
-> > > > freed...)
-> > > 
-> > > Would also work and wouldn't be difficult to do imho.
-> > 
-> > We previously decide to create an ima_namespace when securityfs is mounted.
-> > This now also applies to nested containers where an IMA namespace is first
-> > configured with the hash and template to use in a particular container and
-> > then activated. If no configuration is done it will inherit the hash and
-> > template from the first ancestor that has been configure when it is
-> > activated. So the same steps and behavior applies to *all* containers, no
-> > difference at any depth of nesting. Besides that, we don't want nested
-> > containers to share policy and logs but keep them isolated from each other,
-> > or do we not?
-> > 
-> > Further, how should it work if we were to apply this even to the first
-> > container? Should it just inherit the &init_ima_namespace and we'd have no
-> > isolation at all? Why would we start treating containers at deeper nesting
-> > levels differently?
-> 
-> Valid points. I understood Serge as suggesting an implementation detail
-> change not a design change but might misunderstand him here.
-> 
-> # Currently
-> 
-> 1. create new userns -> imans set to NULL
-> 2. mount securityfs and configure imans -> set imans to &new_ima_ns
-> 
-> When 2. hasn't been done then we find the relevant imans by walking
-> the userns hierarchy upwards finding the first parent userns that has a
-> non-NULL imans.
+Hi Linus,
 
-Ah, right, thanks Christian.
+Please pull these Landlock changes for v5.19-rc1 .  These 30 commits
+have been successfully tested in the latest linux-next releases for
+several weeks, and with syzkaller:
+https://github.com/google/syzkaller/pull/3133
 
-But so the code - I think where the ima_ns is defined in the user_ns
-struct, needs to make this clear.  Just something like
+Regards,
+ Mickaël
 
-	// Pointer to ima_ns which this user_ns created.  Can be null.
-	// Access checks will walk the userns->parent chain and check
-	// against all active ima_ns's.  Note that when the user_ns is
-	// freed, the ima_ns is guaranteed to be free-able.
-	struct ima_namespace	*ima_ns;
+--
+The following changes since commit 672c0c5173427e6b3e2a9bbb7be51ceeec78093a:
 
-> # Serge's suggestion
-> 
-> 1. create new userns -> imans is set to parent imans
-> 2. mount securityfs and configure imans -> replace parent with &new_ima_ns
-> 
-> So when 2. hasn't been done we don't need to walk the userns hierarchy
-> upwards. We always find the relevant imans directly. Some massaging
-> would be needed in process_measurement() probably but it wouldn't need
-> to change semantics per se.
-> 
-> But I think I misunderstood something in any case. So looking at an
-> example like ima_post_path_mknod(). You seem to not call into
-> ima_must_appraise() if the caller's userns doesn't have an imans
-> enabled. I somehow had thought that the same logic applied as in
-> process_measurement. But if it isn't then it might make sense to keep
-> the current implementation.
+  Linux 5.18-rc5 (2022-05-01 13:57:58 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-5.19-rc1
+
+for you to fetch changes up to 5e469829baa1b1320e843adf3631edef1d6d2cf2:
+
+  landlock: Explain how to support Landlock (2022-05-23 13:28:03 +0200)
+
+----------------------------------------------------------------
+Landlock updates for v5.19-rc1
+
+Important changes:
+* improve the path_rename LSM hook implementations for RENAME_EXCHANGE;
+* fix a too-restrictive filesystem control for a rare corner case;
+* set the nested sandbox limitation to 16 layers;
+* add a new LANDLOCK_ACCESS_FS_REFER access right to properly handle
+  file reparenting (i.e. full rename and link support);
+* add new tests and documentation;
+* format code with clang-format to make it easier to maintain and
+  contribute.
+
+Related patch series:
+* [PATCH v1 0/7] Landlock: Clean up coding style with clang-format
+  https://lore.kernel.org/r/20220506160513.523257-1-mic@digikod.net
+* [PATCH v2 00/10] Minor Landlock fixes and new tests
+  https://lore.kernel.org/r/20220506160820.524344-1-mic@digikod.net
+* [PATCH v3 00/12] Landlock: file linking and renaming support
+  https://lore.kernel.org/r/20220506161102.525323-1-mic@digikod.net
+* [PATCH v2] landlock: Explain how to support Landlock
+  https://lore.kernel.org/r/20220513112743.156414-1-mic@digikod.net
+
+----------------------------------------------------------------
+Mickaël Salaün (30):
+      landlock: Add clang-format exceptions
+      landlock: Format with clang-format
+      selftests/landlock: Add clang-format exceptions
+      selftests/landlock: Normalize array assignment
+      selftests/landlock: Format with clang-format
+      samples/landlock: Add clang-format exceptions
+      samples/landlock: Format with clang-format
+      landlock: Fix landlock_add_rule(2) documentation
+      selftests/landlock: Make tests build with old libc
+      selftests/landlock: Extend tests for minimal valid attribute size
+      selftests/landlock: Add tests for unknown access rights
+      selftests/landlock: Extend access right tests to directories
+      selftests/landlock: Fully test file rename with "remove" access
+      selftests/landlock: Add tests for O_PATH
+      landlock: Change landlock_add_rule(2) argument check ordering
+      landlock: Change landlock_restrict_self(2) check ordering
+      selftests/landlock: Test landlock_create_ruleset(2) argument check ordering
+      landlock: Define access_mask_t to enforce a consistent access mask size
+      landlock: Reduce the maximum number of layers to 16
+      landlock: Create find_rule() from unmask_layers()
+      landlock: Fix same-layer rule unions
+      landlock: Move filesystem helpers and add a new one
+      LSM: Remove double path_rename hook calls for RENAME_EXCHANGE
+      landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER
+      selftests/landlock: Add 11 new test suites dedicated to file reparenting
+      samples/landlock: Add support for file reparenting
+      landlock: Document LANDLOCK_ACCESS_FS_REFER and ABI versioning
+      landlock: Document good practices about filesystem policies
+      landlock: Add design choices documentation for filesystem access rights
+      landlock: Explain how to support Landlock
+
+ Documentation/security/landlock.rst            |   17 +-
+ Documentation/userspace-api/landlock.rst       |  180 ++-
+ include/linux/lsm_hook_defs.h                  |    2 +-
+ include/linux/lsm_hooks.h                      |    1 +
+ include/uapi/linux/landlock.h                  |   36 +-
+ samples/landlock/sandboxer.c                   |  132 +-
+ security/apparmor/lsm.c                        |   30 +-
+ security/landlock/cred.c                       |    4 +-
+ security/landlock/cred.h                       |    8 +-
+ security/landlock/fs.c                         |  815 +++++++++---
+ security/landlock/fs.h                         |   11 +-
+ security/landlock/limits.h                     |   10 +-
+ security/landlock/object.c                     |    6 +-
+ security/landlock/object.h                     |    6 +-
+ security/landlock/ptrace.c                     |   10 +-
+ security/landlock/ruleset.c                    |   84 +-
+ security/landlock/ruleset.h                    |   35 +-
+ security/landlock/syscalls.c                   |   95 +-
+ security/security.c                            |    9 +-
+ security/tomoyo/tomoyo.c                       |   11 +-
+ tools/testing/selftests/landlock/base_test.c   |  179 ++-
+ tools/testing/selftests/landlock/common.h      |   66 +-
+ tools/testing/selftests/landlock/fs_test.c     | 1619 +++++++++++++++++++-----
+ tools/testing/selftests/landlock/ptrace_test.c |   40 +-
+ 24 files changed, 2646 insertions(+), 760 deletions(-)
