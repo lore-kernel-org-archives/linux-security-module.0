@@ -2,94 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C65EC433FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 May 2022 20:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E380C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 May 2022 11:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348444AbiEZUks (ORCPT
+        id S242641AbiE0LTM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 May 2022 16:40:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45534 "EHLO
+        Fri, 27 May 2022 07:19:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231861AbiEZUkr (ORCPT
+        with ESMTP id S233963AbiE0LTM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 May 2022 16:40:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C0AC4E15FA
-        for <linux-security-module@vger.kernel.org>; Thu, 26 May 2022 13:40:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653597645;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qeYoBwClMquOdM4mrLC20XcvsQqVIaRivM3jxGFd6y4=;
-        b=LJLD5JJYfPIA0uSTSJYs7G5KQFxh1a6gxUfmYta7+IHFRFLwignvl/+1U5eaeOojDOUzTj
-        POoKi/Cx5dfxjhei3BgGNV9YaOJsbuf01S2xIQ/pIapvuU21sXPj+icI9nuViRWDegnrhM
-        OLSE0lsFaysieD32KShKNgp0VyFUArY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-112-mc-1D6SBM96eFkb1G_VMfw-1; Thu, 26 May 2022 16:40:40 -0400
-X-MC-Unique: mc-1D6SBM96eFkb1G_VMfw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A2A5D185A7A4;
-        Thu, 26 May 2022 20:40:39 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 31DDF1121315;
-        Thu, 26 May 2022 20:40:39 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Frederick Lawler <fred@cloudflare.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com
-Subject: Re: [PATCH v2] cred: Propagate security_prepare_creds() error code
-References: <20220525183703.466936-1-fred@cloudflare.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 26 May 2022 16:43:44 -0400
-In-Reply-To: <20220525183703.466936-1-fred@cloudflare.com> (Frederick Lawler's
-        message of "Wed, 25 May 2022 13:37:03 -0500")
-Message-ID: <x49o7zkvxbz.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 27 May 2022 07:19:12 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA82122B74;
+        Fri, 27 May 2022 04:19:09 -0700 (PDT)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4L8j305MlyzjWxY;
+        Fri, 27 May 2022 19:18:04 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.58) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Fri, 27 May 2022 19:19:07 +0800
+From:   Xiu Jianfeng <xiujianfeng@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <jmorris@namei.org>, <serge@hallyn.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] Revert "evm: Fix memleak in init_desc"
+Date:   Fri, 27 May 2022 19:17:26 +0800
+Message-ID: <20220527111726.195825-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Originating-IP: [10.67.174.58]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Frederick Lawler <fred@cloudflare.com> writes:
+This reverts commit ccf11dbaa07b328fa469415c362d33459c140a37.
 
-> While experimenting with the security_prepare_creds() LSM hook, we
-> noticed that our EPERM error code was not propagated up the callstack.
-> Instead ENOMEM is always returned.  As a result, some tools may send a
-> confusing error message to the user:
->
-> $ unshare -rU
-> unshare: unshare failed: Cannot allocate memory
->
-> A user would think that the system didn't have enough memory, when
-> instead the action was denied.
->
-> This problem occurs because prepare_creds() and prepare_kernel_cred()
-> return NULL when security_prepare_creds() returns an error code. Later,
-> functions calling prepare_creds() and prepare_kernel_cred() return
-> ENOMEM because they assume that a NULL meant there was no memory
-> allocated.
->
-> Fix this by propagating an error code from security_prepare_creds() up
-> the callstack.
->
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+Commit ccf11dbaa07b ("evm: Fix memleak in init_desc") said there is
+memleak in init_desc. That may be incorrect, as we can see, tmp_tfm is
+saved in one of the two global variables hmac_tfm or evm_tfm[hash_algo],
+then if init_desc is called next time, there is no need to alloc tfm
+again, so in the error path of kmalloc desc or crypto_shash_init(desc),
+It is not a problem without freeing tmp_tfm.
 
-The fs/aio.c part looks ok to me.  We should probably also update the
-man page for io_submit, though, to document the conditions under which
-EPERM can be returned.
+And also that commit did not reset the global variable to NULL after
+freeing tmp_tfm and this makes *tfm a dangling pointer which may cause a
+UAF issue.
 
-Acked-by: Jeff Moyer <jmoyer@redhat.com>
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ security/integrity/evm/evm_crypto.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index a733aff02006..708de9656bbd 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -75,7 +75,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ {
+ 	long rc;
+ 	const char *algo;
+-	struct crypto_shash **tfm, *tmp_tfm = NULL;
++	struct crypto_shash **tfm, *tmp_tfm;
+ 	struct shash_desc *desc;
+ 
+ 	if (type == EVM_XATTR_HMAC) {
+@@ -120,16 +120,13 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ alloc:
+ 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+ 			GFP_KERNEL);
+-	if (!desc) {
+-		crypto_free_shash(tmp_tfm);
++	if (!desc)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	desc->tfm = *tfm;
+ 
+ 	rc = crypto_shash_init(desc);
+ 	if (rc) {
+-		crypto_free_shash(tmp_tfm);
+ 		kfree(desc);
+ 		return ERR_PTR(rc);
+ 	}
+-- 
+2.17.1
 
