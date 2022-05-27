@@ -2,95 +2,141 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E380C4332F
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 May 2022 11:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F97C4332F
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 May 2022 20:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242641AbiE0LTM (ORCPT
+        id S1350035AbiE0UFn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 May 2022 07:19:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56612 "EHLO
+        Fri, 27 May 2022 16:05:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233963AbiE0LTM (ORCPT
+        with ESMTP id S232673AbiE0UFl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 May 2022 07:19:12 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA82122B74;
-        Fri, 27 May 2022 04:19:09 -0700 (PDT)
-Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4L8j305MlyzjWxY;
-        Fri, 27 May 2022 19:18:04 +0800 (CST)
-Received: from ubuntu1804.huawei.com (10.67.174.58) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 27 May 2022 19:19:07 +0800
-From:   Xiu Jianfeng <xiujianfeng@huawei.com>
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] Revert "evm: Fix memleak in init_desc"
-Date:   Fri, 27 May 2022 19:17:26 +0800
-Message-ID: <20220527111726.195825-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 27 May 2022 16:05:41 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E7C140F5
+        for <linux-security-module@vger.kernel.org>; Fri, 27 May 2022 13:05:39 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id h126-20020a1c2184000000b003975cedb52bso3007583wmh.1
+        for <linux-security-module@vger.kernel.org>; Fri, 27 May 2022 13:05:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3hDs5pMehEzS9JtBcciO3du/140ZEedg4Xg+u6dsQZw=;
+        b=oihAaWbcG7Yr9p0y5ULTKT7tU46NohvPTW+4VGetJ03GHSZRqq4LU+CPKg0Z2PrH5R
+         b7AoPxPSIySEEsBuGcjzbeg273gPzUDiuDgPQe8t+O97X7MaFFmZxPWkqR1LY9W4beoO
+         n00RsO520VB1zU12ITOAw5pKWroS+wVFZbCpC2euQgZwg2TwOVdcJe/hm29p06XZbpk9
+         Sux3vMrXw4iwBHlCbOLNQjWoRtlyXEU5R6srtHjt5qRoh4UhA0D6F4jCnsUI6KqRNPOo
+         yBXjUTB2xOyeoHGBTQdQEu/248CfGEyYoUye03xA0p2HIRWz4ulUElW6T5at8G4x+QOH
+         iljg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3hDs5pMehEzS9JtBcciO3du/140ZEedg4Xg+u6dsQZw=;
+        b=w6EdtlJUGEiY8+1UeeWeMFxemwHtLFSEtUFQ8XwWUKXMn04IJRiu/sR5iE8Rp8q+NW
+         OiIbUAiUjLY+3U0FWnLXmefJaFW7Ve91KdbjnER2KD8cqrwi5pSqKEgIqobdb5JVaUBK
+         XLpZjdC7x9/aVsj+gTIcd1skz8uq2DRlykoCbQ78Uq/pdUJF2DAe7C0nEmpH+VGnXJzw
+         ghO/q6yh/Pm70OBwYeGiNxLYzX7oYFefpA9SfWl6LtaxoreHabdyskzFtv0+LzTp7/pV
+         da2kcf7BnNILh6dvU7WZIv7WVUCwf4GVqsu8+UBH/3QJDCf+TAkRfFIioPEXH8aRwIde
+         Qg3A==
+X-Gm-Message-State: AOAM530O6oCk53ya1nwIUvMh1yEqrwjRLVLouQCIetM1oAZu9ZtRZ6+c
+        0HOdR9Yt07SLfjuMzig1pkcYI0Xc7Lm0ElhMhKlH
+X-Google-Smtp-Source: ABdhPJzSQiwbwdo8FqZ111McYTLFv4bwIxxTTbHCjxtpHRnG+P00gPgVzRWa/5Bdb55lusFwlbu3a5oOnOFQ3+tgAU8=
+X-Received: by 2002:a05:600c:3b05:b0:397:54ce:896 with SMTP id
+ m5-20020a05600c3b0500b0039754ce0896mr8458182wms.3.1653681937794; Fri, 27 May
+ 2022 13:05:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.174.58]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
+References: <20220525183703.466936-1-fred@cloudflare.com>
+In-Reply-To: <20220525183703.466936-1-fred@cloudflare.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 27 May 2022 16:05:26 -0400
+Message-ID: <CAHC9VhS=_RvB66J9D5AZ+XnyDKupvTQpFzni2uvz348REPUT5A@mail.gmail.com>
+Subject: Re: [PATCH v2] cred: Propagate security_prepare_creds() error code
+To:     Frederick Lawler <fred@cloudflare.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This reverts commit ccf11dbaa07b328fa469415c362d33459c140a37.
+On Wed, May 25, 2022 at 2:37 PM Frederick Lawler <fred@cloudflare.com> wrote:
+>
+> While experimenting with the security_prepare_creds() LSM hook, we
+> noticed that our EPERM error code was not propagated up the callstack.
+> Instead ENOMEM is always returned.  As a result, some tools may send a
+> confusing error message to the user:
+>
+> $ unshare -rU
+> unshare: unshare failed: Cannot allocate memory
+>
+> A user would think that the system didn't have enough memory, when
+> instead the action was denied.
+>
+> This problem occurs because prepare_creds() and prepare_kernel_cred()
+> return NULL when security_prepare_creds() returns an error code. Later,
+> functions calling prepare_creds() and prepare_kernel_cred() return
+> ENOMEM because they assume that a NULL meant there was no memory
+> allocated.
+>
+> Fix this by propagating an error code from security_prepare_creds() up
+> the callstack.
+>
+> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+>
+> ---
+> Changes since v1:
+> - Revert style churn in ovl_create_or_link() noted by Amir
+> - Revert style churn in prepare_nsset() noted by Serge
+> - Update documentation for prepare_creds()
+> - Set ofs->creator_cred in ovl_fill_super() and req->creds in aio_fsync()
+>   to NULL on error noted by Amir
+> ---
+>  Documentation/security/credentials.rst |  6 +++---
+>  fs/aio.c                               |  9 +++++++--
+>  fs/cachefiles/security.c               |  8 ++++----
+>  fs/cifs/cifs_spnego.c                  |  4 ++--
+>  fs/cifs/cifsacl.c                      |  4 ++--
+>  fs/coredump.c                          |  2 +-
+>  fs/exec.c                              | 14 ++++++++-----
+>  fs/ksmbd/smb_common.c                  |  4 ++--
+>  fs/nfs/flexfilelayout/flexfilelayout.c |  7 +++++--
+>  fs/nfs/nfs4idmap.c                     |  4 ++--
+>  fs/nfsd/auth.c                         |  4 ++--
+>  fs/nfsd/nfs4callback.c                 | 10 ++++-----
+>  fs/nfsd/nfs4recover.c                  |  4 ++--
+>  fs/nfsd/nfsfh.c                        |  4 ++--
+>  fs/open.c                              |  8 ++++----
+>  fs/overlayfs/dir.c                     |  6 ++++--
+>  fs/overlayfs/super.c                   |  6 ++++--
+>  kernel/capability.c                    |  4 ++--
+>  kernel/cred.c                          | 28 +++++++++++++++-----------
+>  kernel/groups.c                        |  4 ++--
+>  kernel/nsproxy.c                       |  9 ++++++++-
+>  kernel/sys.c                           | 28 +++++++++++++-------------
+>  kernel/trace/trace_events_user.c       |  4 ++--
+>  kernel/umh.c                           |  5 +++--
+>  kernel/user_namespace.c                |  6 ++++--
+>  net/dns_resolver/dns_key.c             |  4 ++--
+>  security/apparmor/task.c               | 12 +++++------
+>  security/commoncap.c                   | 20 +++++++++---------
+>  security/keys/keyctl.c                 |  8 ++++----
+>  security/keys/process_keys.c           | 16 +++++++--------
+>  security/landlock/syscalls.c           |  4 ++--
+>  security/selinux/hooks.c               |  8 ++++----
+>  security/smack/smack_lsm.c             |  8 ++++----
+>  security/smack/smackfs.c               |  4 ++--
+>  34 files changed, 153 insertions(+), 123 deletions(-)
 
-Commit ccf11dbaa07b ("evm: Fix memleak in init_desc") said there is
-memleak in init_desc. That may be incorrect, as we can see, tmp_tfm is
-saved in one of the two global variables hmac_tfm or evm_tfm[hash_algo],
-then if init_desc is called next time, there is no need to alloc tfm
-again, so in the error path of kmalloc desc or crypto_shash_init(desc),
-It is not a problem without freeing tmp_tfm.
+The SELinux bits look fine to me.
 
-And also that commit did not reset the global variable to NULL after
-freeing tmp_tfm and this makes *tfm a dangling pointer which may cause a
-UAF issue.
+Acked-by: Paul Moore <paul@paul-moore.com> (SELinux)
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- security/integrity/evm/evm_crypto.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index a733aff02006..708de9656bbd 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -75,7 +75,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- {
- 	long rc;
- 	const char *algo;
--	struct crypto_shash **tfm, *tmp_tfm = NULL;
-+	struct crypto_shash **tfm, *tmp_tfm;
- 	struct shash_desc *desc;
- 
- 	if (type == EVM_XATTR_HMAC) {
-@@ -120,16 +120,13 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- alloc:
- 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
- 			GFP_KERNEL);
--	if (!desc) {
--		crypto_free_shash(tmp_tfm);
-+	if (!desc)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	desc->tfm = *tfm;
- 
- 	rc = crypto_shash_init(desc);
- 	if (rc) {
--		crypto_free_shash(tmp_tfm);
- 		kfree(desc);
- 		return ERR_PTR(rc);
- 	}
 -- 
-2.17.1
-
+paul-moore.com
