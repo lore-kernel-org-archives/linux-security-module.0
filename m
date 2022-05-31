@@ -2,178 +2,349 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C644C433FE
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 May 2022 08:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DF1C433FE
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 May 2022 19:27:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233804AbiE3IkO (ORCPT
+        id S245058AbiEaT1R (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 May 2022 04:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51300 "EHLO
+        Tue, 31 May 2022 15:27:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231968AbiE3IkL (ORCPT
+        with ESMTP id S231594AbiEaT1P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 May 2022 04:40:11 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01243643F;
-        Mon, 30 May 2022 01:40:10 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24TN21aM031704;
-        Mon, 30 May 2022 01:40:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : mime-version; s=facebook;
- bh=NlEdmC7NYjImbryESYTte73yqxxjFGoz/o3chQPvE1M=;
- b=JvryfsOuaTGWwKVPUr0NTMgYeDXe7apAvldbG9ibBuUK+pX7bO6Z+jd3WbESe7iEp2ss
- D0mgNzJsT2+TlgCjlPLmY++KT4Wj1SuaV6OVqbQiuli97QgfAKn5LSoMGCeyJKBjWKh/
- aTJ2VTOSFrUiziNkKmdzcDFM/VtelUGp1f0= 
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gbhfwf2dm-2
+        Tue, 31 May 2022 15:27:15 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A72851324;
+        Tue, 31 May 2022 12:27:13 -0700 (PDT)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24VHOgWb010757;
+        Tue, 31 May 2022 19:26:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=0i13K6S4RX30Jw1cMxVp7UgOOnAiK4TbUeW/yC0pBkA=;
+ b=KdqLyJR9ZwgYsadrcAMw0khLnSkuiK5y1msC4M6tavbkT+bsOeck1bK5ROS7LDOAkRZG
+ w0Xi0mvzd6dAoCNRg6lWJj0Wx+UBWQbfPrd83UVxj7S5lyYz8nEsh8ctepaH6R//7ZZG
+ 6CoVf5GJAKcHUzJXGW9O8SLAAUqJRfxwe9ybQ3HTGUXxyHKe6qYctHpaxc49LZKxy3F4
+ 1PjtUIR37fy3ktRYM4dZBfQVIBJAF5/zd6lKnTlAeYshJasXFGOskmESHWwerjvntUpI
+ o0xum9XNWQ8owR/CdHC2wN4lSN024fj84owK3nuypVFnI0xtL1CUq1KritFg7bohrwr7 Rw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gdq5gasfb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 May 2022 01:40:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QU+/o5lHZoqEUduRL33B/II633vGaH47Z6jAvdZIxktGnBTAOqqITqVVWdY/uytEIWrLN/TKWGEjY7Wil43R1IAXwDg+uHXjCvL+yEBp3hXpnKTUv4t9rxhYloAhGooNMHbkI5dKEsjK+x+J7N4KIL8MFJzfvIwSDlr1n2Ajj9Wh4ga0chMsftnrsdJBsVP3ZRWnPIAc1r58rM/yhXdqR4Grb9jVjPKnaPfxKJZGnMksReU1Rj+ca0UkMPP/8ft8fHhEn8DymSAf+C2IlMlai3edH9lzAKQPsa/KyaYzBrJdUOJFqgi7Ug86OcMCvnQj+Uyme+BKxibPLs9Z8LUYwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NlEdmC7NYjImbryESYTte73yqxxjFGoz/o3chQPvE1M=;
- b=VwpzWiCBOEgJX7B9nr7JVP9seEvPyaext7nrklGTS+z0uLYIIOs+BzYhYBZ5ujIGJrbfYaT3spPx6AETg7vkWtdST6IG2LI8Vs3J9Sn6JioQlsMCGFwBft7dKfDUPCUmIT3U3z3MgAnEh+XSzI7BR+lUmTARIjkqmGMsdrtJ3KSYBnzCVWiVkJvS2Xil6mgYLFHcWXyD8TgjtPjrl48Uyg2MDFC2sM+Lg+A3wxEBq6EhEVACPcd0iQvuQ464pdymV3bueMrd9bolisCj4si6hfvqJGkYFDXNWlDCT/IRggctqK3c7AKVPj8sbMlUMVVQIu0vaUELp3INWhYc0RrOVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from SJ0PR15MB4552.namprd15.prod.outlook.com (2603:10b6:a03:379::12)
- by DM6PR15MB2604.namprd15.prod.outlook.com (2603:10b6:5:1a4::33) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.19; Mon, 30 May
- 2022 08:40:07 +0000
-Received: from SJ0PR15MB4552.namprd15.prod.outlook.com
- ([fe80::1dd0:f1c9:43d7:b7ab]) by SJ0PR15MB4552.namprd15.prod.outlook.com
- ([fe80::1dd0:f1c9:43d7:b7ab%9]) with mapi id 15.20.5293.019; Mon, 30 May 2022
- 08:40:07 +0000
-From:   Jonathan McDowell <noodles@fb.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v4] x86/kexec: Carry forward IMA measurement log on kexec
-Thread-Topic: [PATCH v4] x86/kexec: Carry forward IMA measurement log on kexec
-Thread-Index: AQHYZhzxVqT3nOkmWUWyxVUnnMcrja0kvxAAgBJ2aAA=
-Date:   Mon, 30 May 2022 08:40:07 +0000
-Message-ID: <YpSC4AQInLM73wex@noodles-fedora.dhcp.thefacebook.com>
-References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
- <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
- <YnuJCH75GrhVm0Tp@noodles-fedora.dhcp.thefacebook.com>
- <Yn01Cfb3Divf49g7@noodles-fedora.dhcp.thefacebook.com>
- <8634d4dd0813b9522f039ed211023c2c65c6f888.camel@linux.ibm.com>
-In-Reply-To: <8634d4dd0813b9522f039ed211023c2c65c6f888.camel@linux.ibm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2ee13072-e550-439d-a99f-08da42180051
-x-ms-traffictypediagnostic: DM6PR15MB2604:EE_
-x-microsoft-antispam-prvs: <DM6PR15MB26043B80B72E20534C308A1AC1DD9@DM6PR15MB2604.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: WtyDKdvZ9NSTtcq9jEA2H5tUNocPa0B0FUjbhH5UBz7gWKgtXLAZqwb+y+TjVogXpwb6IhC/eMDibwp5ynOnQaEkP4aMY0jqSk/+xnEPzGMJ4xr+pw4Ci/UFtah+OeFg+O/E8TwWmotMVD8xtv5HR4vD19QMes2J3F8Gsn+gLOMkRsQwhuY5oDiLWbleGZsC2UXvariEB0aixAwgTRcAEwwNPUvLPtTBKjVF9srOM4uSnmlIqf4716TdD9OKyMxtxaMvl0aVUo/GYdT1VXwzap27Ta/SPnXbRAukWM5d3u3AjPTJv/UsHqk82r1pZA9VrzMq2K+W8e8Q1hvrvulHHYq3Xs1wvo5bZvayBhdT+QDzQp3Bi0/6chYCzyQgAKCfW6dbBl0jIKr4pfMFYl3O3QdAXLCv0stugBuax66rx43TXtA9Y74ksyoUbTu5AYHWgerESFx7dOWL6EyKEPo6caUbNZZONe51Gjo0/kauGrZSm2YoWNW0RdQk635G2sjE1S38J4BeJcHJxwPcTMvR0/kTLlV8gT+sprnXT4ANJCrug+dU7zhq8rGheSg+q13onpKZqKoIsFECvJqivU7mbZZbI2EJuhqdlb+MJQHUYyqnaKFkEzUWTn+nTGhrb5XRAxlDnLM/JRll1qzEfa0ubLDWzyQ6KOQJrW8PpxIj4Uhl3lJi4wBYVenJVfq1qwat+33GgEUhKkNviThzLkRxyg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB4552.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6512007)(6506007)(2906002)(38100700002)(26005)(9686003)(38070700005)(83380400001)(122000001)(186003)(4326008)(8676002)(8936002)(5660300002)(7416002)(508600001)(76116006)(91956017)(86362001)(64756008)(66446008)(66946007)(54906003)(6916009)(66556008)(66476007)(6486002)(316002)(71200400001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ruYMGRswEA3+0ZnEEQUv60M0HRrI4DFWvQzBUKEQXj1xIDx3lEzjJTznHuq5?=
- =?us-ascii?Q?X0/ErLtlc/Ix3uy5qk048G0o9WV+voxe+al8pkJu4OZAlW36HgBWUJBnWwWd?=
- =?us-ascii?Q?X22B8fXb50nXWda6oIYY2AtnEz+xr0PNADgkc5RpxYJzgKy9KTB7zhKenNqh?=
- =?us-ascii?Q?5A2l7UZGryAnPGz7Srhwu4CEZoSHZk/LakvJNVBezygQjULRFLH1N81rTQG0?=
- =?us-ascii?Q?bEz1JURasszxMWh50yQbh4xvsj9JlKwW2Zyo3YuU0qWfVOJU+UlRKUf3LqDF?=
- =?us-ascii?Q?GtoSW0Xi+nQbPItjUhKfrN9YmS00Aadsy/w0YX8SV808aMDqIbf5kyRUHX8j?=
- =?us-ascii?Q?bNgw0iTSRCqfZcv0Fina1EQXsHds+hKCuXUXm6RCCoxYor0LFPyj8zwfDC22?=
- =?us-ascii?Q?zTNsYBgOS5OK1PozxAtUDXVO5m/rVeO5M93GUQlyA/3mdEsN6c4w7YueRU8c?=
- =?us-ascii?Q?nHyFij/Hbe8VKY7VyObJJ3+ccTrY5AEE5/hVKd4JlNvAGBGIax6Ub1l1yzAX?=
- =?us-ascii?Q?NKY7MS9RnblcxdwpEtJ0VnsIcdaIJkCJBp3AkcjdFMN4hnMs1zeL6qTjGnTt?=
- =?us-ascii?Q?mcPv0M+o+HRjYAtwSbPOBs2luWvl0uHVX3ywhJSnyuZ7aIb1i5B4aqUtAnwa?=
- =?us-ascii?Q?87DwxIASqqguRMyK+Qd1CAn9KXkXdWMiL+EtGerdFYOUttfrUZBrNeusOWRm?=
- =?us-ascii?Q?Eu6NdRg2yK37ITankA41RGStxStEr1zgaFr/iEgAG21oFWDNubNhqUE3wWpy?=
- =?us-ascii?Q?j/u5qtoS+lz8pHriG9DoEwXOfq8VTCc8aN2BoyijtXUpv59Repg+baBDNrp+?=
- =?us-ascii?Q?4S4pYB9JCb8BB+C2F8mdw0aEkjHkMi3bq9nsLoBDttKT5vtLqUtGLZYqnOCC?=
- =?us-ascii?Q?bSG7p52G7T49cx7oq8rkOCiD+ANbwcj77t2xDiicrhBo6QFe1KPVn8v29WZZ?=
- =?us-ascii?Q?CmPOIRd1Blo8CuKGjD27mpDtqEmqUh7ERuZH2wnXven4rkbSMzR+gCaqtZw4?=
- =?us-ascii?Q?sxdfroqonkqZhD/sD6ghgdL3EzZ6UQ68wg5vD/QV8ebAUVXx/WL7yoM3Mc7v?=
- =?us-ascii?Q?vl6YV66So5Azl0zJC5gTGEGyyVH78LEBtwkhdGlUN9wWhBkbk1fMQjAXCA/y?=
- =?us-ascii?Q?ffXWF6HD4PPXXCHiOLE0kHK5bjfo6Pn0NyQt4t2BUNRrGVUwE1Z75oMEHALj?=
- =?us-ascii?Q?D5d9QR/cqRfdqDto9fhH9d2mznYbP4l6gQFKEbxmrlmyx4IfJlNXwYAL39tu?=
- =?us-ascii?Q?MnnK0D8bV7sFTmcKg3u2cEN+nzJnXCuYeFSu4veowcjn+YuilhClAxmhNk32?=
- =?us-ascii?Q?M3MOjFvcMF+6Zog3D4TpR8ynOB6obdrHh8WCUr+p4GUEJdj6NWSvNdlo6GuM?=
- =?us-ascii?Q?MqNtzL3C8n6ldvaAc3GcBcLaOrg6bJi026QY+C8XWbjTlD/06tN66flWM1yZ?=
- =?us-ascii?Q?n0h/BIejSvrc62X2YAiFRGAx7jt+6q+2piALdDkz/hp31c1ti8oBdI0Lhl2A?=
- =?us-ascii?Q?W8euGzXMxsQ0vWdfjvqtLzxEAS+zV0PyXvy8FSsbPngIsa+AISUG/tejWjGy?=
- =?us-ascii?Q?2z+WJanDOm3jYn7XWbvB7nNP3WqFyVc5NpJcB9Qb5Ajbf8FMljF5zVjDjAPh?=
- =?us-ascii?Q?ywoSorFAgVMSmE5TmfP3a8q9GTuCojIPTysAfwel/YYptAeayx/PRj14KSox?=
- =?us-ascii?Q?F7JiJT3zip54ETomXRCqD2Bea9d8F2BuXqlTtTlJnikq7j3ARp8fA0r1KQ8n?=
- =?us-ascii?Q?KQ9PWqTy5A=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <635819A1C704204980F829A6257BD003@namprd15.prod.outlook.com>
+        Tue, 31 May 2022 19:26:24 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 24VJQ0fb007764;
+        Tue, 31 May 2022 19:26:24 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gdq5gases-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 May 2022 19:26:24 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24VJKAO2007276;
+        Tue, 31 May 2022 19:26:22 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01wdc.us.ibm.com with ESMTP id 3gbcbhx7ju-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 May 2022 19:26:22 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24VJQLAv44958008
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 May 2022 19:26:21 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C665F2805E;
+        Tue, 31 May 2022 19:26:21 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B60F28059;
+        Tue, 31 May 2022 19:26:21 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 31 May 2022 19:26:21 +0000 (GMT)
+Message-ID: <7e3f497e-fe51-bdc8-54c9-96b5e059935f@linux.ibm.com>
+Date:   Tue, 31 May 2022 15:26:21 -0400
 MIME-Version: 1.0
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR15MB4552.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ee13072-e550-439d-a99f-08da42180051
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2022 08:40:07.7721
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Wwr9wZQwZfB/XeZcQHHz1lW34W8cvNdcMbh57maWS8DAaIrbaTduObd3nxhaRxd0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB2604
-X-Proofpoint-GUID: XpXUBTNMTUtCfDRv1xQVC5qgW0LVwwwU
-X-Proofpoint-ORIG-GUID: XpXUBTNMTUtCfDRv1xQVC5qgW0LVwwwU
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v12 21/26] ima: Setup securityfs for IMA namespace
+Content-Language: en-US
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        jpenumak@redhat.com,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Christian Brauner <brauner@kernel.org>
+References: <20220420140633.753772-1-stefanb@linux.ibm.com>
+ <20220420140633.753772-22-stefanb@linux.ibm.com>
+ <20220530011610.GA7909@mail.hallyn.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20220530011610.GA7909@mail.hallyn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: NHXGye_mCzRaBmikV0hacZ0ZdkEbN1yC
+X-Proofpoint-ORIG-GUID: FlgReY-G9z2PI-PKjfNvet3Z688iMNMm
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-30_02,2022-05-27_01,2022-02-23_01
+ engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-05-31_07,2022-05-30_03,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 adultscore=0 spamscore=0
+ suspectscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
+ definitions=main-2205310085
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Borislav,
 
-I don't think there are any outstanding review comments for me to deal
-with on this, so is it safe to assume it'll get picked up at some point
-once the merge window calms down?
 
-On Wed, May 18, 2022 at 10:43:32AM -0400, Mimi Zohar wrote:
-> On Thu, 2022-05-12 at 16:25 +0000, Jonathan McDowell wrote:
-> > On kexec file load Integrity Measurement Architecture (IMA) subsystem
-> > may verify the IMA signature of the kernel and initramfs, and measure
-> > it. The command line parameters passed to the kernel in the kexec call
-> > may also be measured by IMA. A remote attestation service can verify
-> > a TPM quote based on the TPM event log, the IMA measurement list, and
-> > the TPM PCR data. This can be achieved only if the IMA measurement log
-> > is carried over from the current kernel to the next kernel across
-> > the kexec call.
-> > 
-> > powerpc and ARM64 both achieve this using device tree with a
-> > "linux,ima-kexec-buffer" node. x86 platforms generally don't make use of
-> > device tree, so use the setup_data mechanism to pass the IMA buffer to
-> > the new kernel.
-> > 
-> > Signed-off-by: Jonathan McDowell <noodles@fb.com>
+On 5/29/22 21:16, Serge E. Hallyn wrote:
+> On Wed, Apr 20, 2022 at 10:06:28AM -0400, Stefan Berger wrote:
+>> Setup securityfs with symlinks, directories, and files for IMA
+>> namespacing support. The same directory structure that IMA uses on the
+>> host is also created for the namespacing case.
+>>
+>> The securityfs file and directory ownerships cannot be set when the
+>> IMA namespace is initialized. Therefore, delay the setup of the file
+>> system to a later point when securityfs is in securityfs_fill_super.
+>>
+>> Introduce a variable ima_policy_removed in ima_namespace that is used to
+>> remember whether the policy file has previously been removed and thus
+>> should not be created again in case of unmounting and again mounting
+>> securityfs inside an IMA namespace.
+>>
+>> This filesystem can now be mounted as follows:
+>>
+>> mount -t securityfs /sys/kernel/security/ /sys/kernel/security/
+>>
+>> The following directories, symlinks, and files are available
+>> when IMA namespacing is enabled, otherwise it will be empty:
+>>
+>> $ ls -l sys/kernel/security/
+>> total 0
+>> lr--r--r--. 1 root root 0 Dec  2 00:18 ima -> integrity/ima
+>> drwxr-xr-x. 3 root root 0 Dec  2 00:18 integrity
+>>
+>> $ ls -l sys/kernel/security/ima/
+>> total 0
+>> -r--r-----. 1 root root 0 Dec  2 00:18 ascii_runtime_measurements
+>> -r--r-----. 1 root root 0 Dec  2 00:18 binary_runtime_measurements
+>> -rw-------. 1 root root 0 Dec  2 00:18 policy
+>> -r--r-----. 1 root root 0 Dec  2 00:18 runtime_measurements_count
+>> -r--r-----. 1 root root 0 Dec  2 00:18 violations
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+>> Acked-by: Christian Brauner <brauner@kernel.org>
+>> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > 
-> Not from using "setup_data" perspective,
+> Acked-by: Serge Hallyn <serge@hallyn.com>
 > 
-> 	Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>  # IMA function
-> definitions
-> 
-> thanks,
-> 
-> Mimi
+> but a nit below
 
-Thanks,
-J.
+Thanks for all the tags, I took all of them.
+Would I need to worry about the other reviewerss' tags regardig the nit 
+below? I'd rather leave it as-is otherwise.
+
+    Stefan
+
+
+> 
+>>
+>> ---
+>>
+>> v9:
+>>   - rename policy_dentry_removed to ima_policy_removed
+>> ---
+>>   include/linux/ima.h             | 13 ++++++++++
+>>   security/inode.c                |  6 ++++-
+>>   security/integrity/ima/ima.h    |  1 +
+>>   security/integrity/ima/ima_fs.c | 46 +++++++++++++++++++++++----------
+>>   4 files changed, 52 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/include/linux/ima.h b/include/linux/ima.h
+>> index b9301e2aaa8b..0cbf0434bc93 100644
+>> --- a/include/linux/ima.h
+>> +++ b/include/linux/ima.h
+>> @@ -41,6 +41,7 @@ extern int ima_measure_critical_data(const char *event_label,
+>>   				     const char *event_name,
+>>   				     const void *buf, size_t buf_len,
+>>   				     bool hash, u8 *digest, size_t digest_len);
+>> +extern int ima_fs_ns_init(struct user_namespace *user_ns, struct dentry *root);
+>>   
+>>   #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
+>>   extern void ima_appraise_parse_cmdline(void);
+>> @@ -227,6 +228,12 @@ void free_ima_ns(struct user_namespace *ns);
+>>   
+>>   void ima_free_ns_status_list(struct list_head *head, rwlock_t *ns_list_lock);
+>>   
+>> +static inline int ima_securityfs_init(struct user_namespace *user_ns,
+>> +				      struct dentry *root)
+>> +{
+>> +	return ima_fs_ns_init(user_ns, root);
+>> +}
+>> +
+>>   #else
+>>   
+>>   static inline void free_ima_ns(struct user_namespace *user_ns)
+>> @@ -238,6 +245,12 @@ static inline void ima_free_ns_status_list(struct list_head *head,
+>>   {
+>>   }
+>>   
+>> +static inline int ima_securityfs_init(struct user_namespace *ns,
+>> +				      struct dentry *root)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>>   #endif /* CONFIG_IMA_NS */
+>>   
+>>   #endif /* _LINUX_IMA_H */
+>> diff --git a/security/inode.c b/security/inode.c
+>> index 84c9396792a9..e81f55f054dc 100644
+>> --- a/security/inode.c
+>> +++ b/security/inode.c
+>> @@ -16,6 +16,7 @@
+>>   #include <linux/fs_context.h>
+>>   #include <linux/mount.h>
+>>   #include <linux/pagemap.h>
+>> +#include <linux/ima.h>
+>>   #include <linux/init.h>
+>>   #include <linux/namei.h>
+>>   #include <linux/security.h>
+>> @@ -82,7 +83,10 @@ static int securityfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>>   	sb->s_op = &securityfs_super_operations;
+>>   	sb->s_root->d_inode->i_op = &securityfs_dir_inode_operations;
+>>   
+>> -	return 0;
+>> +	if (ns != &init_user_ns)
+>> +		error = ima_securityfs_init(ns, sb->s_root);
+>> +
+>> +	return error;
+>>   }
+>>   
+>>   static int securityfs_get_tree(struct fs_context *fc)
+>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>> index cb48fc1d5b80..801dc3c8bfde 100644
+>> --- a/security/integrity/ima/ima.h
+>> +++ b/security/integrity/ima/ima.h
+>> @@ -152,6 +152,7 @@ struct ima_namespace {
+>>   	int valid_policy;
+>>   
+>>   	struct dentry *ima_policy;
+>> +	bool ima_policy_removed;
+>>   
+>>   	struct notifier_block ima_lsm_policy_notifier;
+>>   } __randomize_layout;
+>> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+>> index c41aa61b7393..84cd02a9e19b 100644
+>> --- a/security/integrity/ima/ima_fs.c
+>> +++ b/security/integrity/ima/ima_fs.c
+>> @@ -21,6 +21,7 @@
+>>   #include <linux/rcupdate.h>
+>>   #include <linux/parser.h>
+>>   #include <linux/vmalloc.h>
+>> +#include <linux/ima.h>
+>>   
+>>   #include "ima.h"
+>>   
+>> @@ -433,6 +434,7 @@ static int ima_release_policy(struct inode *inode, struct file *file)
+>>   #if !defined(CONFIG_IMA_WRITE_POLICY) && !defined(CONFIG_IMA_READ_POLICY)
+>>   	securityfs_remove(ns->ima_policy);
+>>   	ns->ima_policy = NULL;
+>> +	ns->ima_policy_removed = true;
+>>   #elif defined(CONFIG_IMA_WRITE_POLICY)
+>>   	clear_bit(IMA_FS_BUSY, &ns->ima_fs_flags);
+>>   #elif defined(CONFIG_IMA_READ_POLICY)
+>> @@ -449,9 +451,11 @@ static const struct file_operations ima_measure_policy_ops = {
+>>   	.llseek = generic_file_llseek,
+>>   };
+>>   
+>> -static int __init ima_fs_ns_init(struct ima_namespace *ns)
+>> +int ima_fs_ns_init(struct user_namespace *user_ns, struct dentry *root)
+>>   {
+>> -	struct dentry *ima_dir;
+>> +	struct ima_namespace *ns = ima_ns_from_user_ns(user_ns);
+>> +	struct dentry *int_dir;
+>> +	struct dentry *ima_dir = NULL;
+>>   	struct dentry *ima_symlink = NULL;
+>>   	struct dentry *binary_runtime_measurements = NULL;
+>>   	struct dentry *ascii_runtime_measurements = NULL;
+>> @@ -459,11 +463,22 @@ static int __init ima_fs_ns_init(struct ima_namespace *ns)
+>>   	struct dentry *violations = NULL;
+>>   	int ret;
+>>   
+>> -	ima_dir = securityfs_create_dir("ima", integrity_dir);
+>> -	if (IS_ERR(ima_dir))
+>> -		return PTR_ERR(ima_dir);
+>> +	/* FIXME: update when evm and integrity are namespaced */
+>> +	if (user_ns != &init_user_ns) {
+>> +		int_dir = securityfs_create_dir("integrity", root);
+>> +		if (IS_ERR(int_dir))
+>> +			return PTR_ERR(int_dir);
+>> +	} else {
+>> +		int_dir = integrity_dir;
+>> +	}
+>>   
+>> -	ima_symlink = securityfs_create_symlink("ima", NULL, "integrity/ima",
+>> +	ima_dir = securityfs_create_dir("ima", int_dir);
+>> +	if (IS_ERR(ima_dir)) {
+>> +		ret = PTR_ERR(ima_dir);
+>> +		goto out;
+>> +	}
+>> +
+>> +	ima_symlink = securityfs_create_symlink("ima", root, "integrity/ima",
+>>   						NULL);
+>>   	if (IS_ERR(ima_symlink)) {
+>>   		ret = PTR_ERR(ima_symlink);
+>> @@ -505,12 +520,15 @@ static int __init ima_fs_ns_init(struct ima_namespace *ns)
+>>   		goto out;
+>>   	}
+>>   
+>> -	ns->ima_policy = securityfs_create_file("policy", POLICY_FILE_FLAGS,
+>> -						ima_dir, NULL,
+>> -						&ima_measure_policy_ops);
+>> -	if (IS_ERR(ns->ima_policy)) {
+>> -		ret = PTR_ERR(ns->ima_policy);
+>> -		goto out;
+>> +	if (!ns->ima_policy_removed) {
+> 
+> It would be nicer to avoid this indent level by just doing
+> 
+> 	if (ns->ima_policy_removed)
+> 		return 0;
+> 
+> above the securityfs_create_file().
+> 
+>> +		ns->ima_policy =
+>> +		    securityfs_create_file("policy", POLICY_FILE_FLAGS,
+>> +					   ima_dir, NULL,
+>> +					   &ima_measure_policy_ops);
+>> +		if (IS_ERR(ns->ima_policy)) {
+>> +			ret = PTR_ERR(ns->ima_policy);
+>> +			goto out;
+>> +		}
+>>   	}
+>>   
+>>   	return 0;
+>> @@ -522,11 +540,13 @@ static int __init ima_fs_ns_init(struct ima_namespace *ns)
+>>   	securityfs_remove(binary_runtime_measurements);
+>>   	securityfs_remove(ima_symlink);
+>>   	securityfs_remove(ima_dir);
+>> +	if (user_ns != &init_user_ns)
+>> +		securityfs_remove(int_dir);
+>>   
+>>   	return ret;
+>>   }
+>>   
+>>   int __init ima_fs_init(void)
+>>   {
+>> -	return ima_fs_ns_init(&init_ima_ns);
+>> +	return ima_fs_ns_init(&init_user_ns, NULL);
+>>   }
+>> -- 
+>> 2.34.1
+>>
