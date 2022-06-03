@@ -2,69 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 189E0C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jun 2022 07:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C2FC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jun 2022 15:55:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231757AbiFBHbQ (ORCPT
+        id S242361AbiFCPzo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Jun 2022 03:31:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54410 "EHLO
+        Fri, 3 Jun 2022 11:55:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231169AbiFBHbP (ORCPT
+        with ESMTP id S231203AbiFCPzn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Jun 2022 03:31:15 -0400
-Received: from m12-16.163.com (m12-16.163.com [220.181.12.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 41DDF2A90C4
-        for <linux-security-module@vger.kernel.org>; Thu,  2 Jun 2022 00:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=gaEyDHO1LpI7BPrJT3
-        Ah6HERITFafn14fFE2XuY+C3w=; b=RtUtyDNHQcDLIbAVRWbhpNGMKgoXrLdoJ9
-        PKD8GfQxRIwqAla4CzdAxAlW7gjgnF3jDQ8lKIytt2B7XCGpt8kI7Q80Srz+IKJr
-        zMO8kz74oloA6uOcatjRB+kl292xX9Fhqm/Z4cUqs9/iqEh89DzWYKaOliYF9Pmc
-        YQXYCCOV0=
-Received: from localhost.localdomain (unknown [202.112.113.212])
-        by smtp12 (Coremail) with SMTP id EMCowACX1jHuZphiC_kjAA--.3208S4;
-        Thu, 02 Jun 2022 15:30:13 +0800 (CST)
-From:   Yuanjun Gong <ruc_gongyuanjun@163.com>
-To:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org,
-        Yuanjun Gong <ruc_gongyuanjun@163.com>
-Subject: [PATCH 1/1] security: avoid a leak in securityfs_remove()
-Date:   Thu,  2 Jun 2022 15:29:43 +0800
-Message-Id: <20220602072943.8095-1-ruc_gongyuanjun@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: EMCowACX1jHuZphiC_kjAA--.3208S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWrGw1xWF15ZF1ftryxKF1UAwb_yoWxGwb_CF
-        y5Ar4kG3yDu3WrJrsxAF4FvFZI9r95Gry8Ca4fJ3ZFy345Ar45XFy7JryxXryUGr4UWr90
-        kFsxGFyIk3W7WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_-tx3UUUUU==
-X-Originating-IP: [202.112.113.212]
-X-CM-SenderInfo: 5uxfsw5rqj53pdqm30i6rwjhhfrp/xtbB0AUU5WEsqyef-QAAsH
+        Fri, 3 Jun 2022 11:55:43 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75403BE04;
+        Fri,  3 Jun 2022 08:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654271742; x=1685807742;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=blHQrZ0g94mMvLynPtoK8ncChfAm2Hug5DTS5ZrddFY=;
+  b=CtJI9fgQDZorAHra/fjotVhBPOpocWYo7ZaQ3gYhAB4xVed+EOUqzAbq
+   DRIIgqAQl/r2HHB6ckyeEn+WEe9jCyNi4dsHmpTW+nuJhCKMV8dHlF2ZH
+   YE4Xc9P5ojNqt/IC7xyqmpaNscSmAWATRotnJnE71BnQ7/YUzP4Vcg3uI
+   1Saejw4A/8RxDKosn2QE7nNDWxV6wx6zzLpKnwVnF/V4Vw05OReNy5oUY
+   lwNkWyL0P03a4fJuaP2JQxvvfAuG8bfepfuqkX97FPp+gp6h9qAo8Z17J
+   pHtxnIDpygi6gO7YrnllDX7V47gmjxDg4VuA7bkvoQ2e/lpq10NrVKS1V
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10367"; a="362649491"
+X-IronPort-AV: E=Sophos;i="5.91,274,1647327600"; 
+   d="scan'208";a="362649491"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 08:55:42 -0700
+X-IronPort-AV: E=Sophos;i="5.91,274,1647327600"; 
+   d="scan'208";a="613323243"
+Received: from fbarati-mobl.amr.corp.intel.com (HELO [10.251.24.19]) ([10.251.24.19])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 08:55:41 -0700
+Message-ID: <e7758ed1-5dcb-80dd-092a-a6bb21c3997d@intel.com>
+Date:   Fri, 3 Jun 2022 08:55:39 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v4] x86/kexec: Carry forward IMA measurement log on kexec
+Content-Language: en-US
+To:     Jonathan McDowell <noodles@fb.com>, Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org
+References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
+ <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
+ <YnuJCH75GrhVm0Tp@noodles-fedora.dhcp.thefacebook.com>
+ <Yn01Cfb3Divf49g7@noodles-fedora.dhcp.thefacebook.com>
+ <8634d4dd0813b9522f039ed211023c2c65c6f888.camel@linux.ibm.com>
+ <YpSC4AQInLM73wex@noodles-fedora.dhcp.thefacebook.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <YpSC4AQInLM73wex@noodles-fedora.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Delete the dentry in securityfs_remove() to make sure the
-dentry is not used by another thread and live longer than
-the call of securityfs_remove().
+On 5/30/22 01:40, Jonathan McDowell wrote:
+> Borislav,
+> 
+> I don't think there are any outstanding review comments for me to deal
+> with on this, so is it safe to assume it'll get picked up at some point
+> once the merge window calms down?
 
-Signed-off-by: Yuanjun Gong <ruc_gongyuanjun@163.com>
----
- security/inode.c | 1 +
- 1 file changed, 1 insertion(+)
+Nothing here looks too crazy, but it's still been _very_ lightly
+reviewed.  It doesn't seem like anyone from the kexec world has seen it,
+for instance.
 
-diff --git a/security/inode.c b/security/inode.c
-index 6c326939750d..606f390d21d2 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -306,6 +306,7 @@ void securityfs_remove(struct dentry *dentry)
- 			simple_rmdir(dir, dentry);
- 		else
- 			simple_unlink(dir, dentry);
-+		d_delete(dentry);
- 		dput(dentry);
- 	}
- 	inode_unlock(dir);
--- 
-2.17.1
-
+Mimi's review was a great start, but it would be really nice to make
+sure that the kexec bits look good.
