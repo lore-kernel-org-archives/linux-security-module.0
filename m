@@ -2,51 +2,47 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C2FC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jun 2022 15:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F38C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jun 2022 03:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242361AbiFCPzo (ORCPT
+        id S229512AbiFFDyx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jun 2022 11:55:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57568 "EHLO
+        Sun, 5 Jun 2022 23:54:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231203AbiFCPzn (ORCPT
+        with ESMTP id S229490AbiFFDyw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jun 2022 11:55:43 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75403BE04;
-        Fri,  3 Jun 2022 08:55:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654271742; x=1685807742;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=blHQrZ0g94mMvLynPtoK8ncChfAm2Hug5DTS5ZrddFY=;
-  b=CtJI9fgQDZorAHra/fjotVhBPOpocWYo7ZaQ3gYhAB4xVed+EOUqzAbq
-   DRIIgqAQl/r2HHB6ckyeEn+WEe9jCyNi4dsHmpTW+nuJhCKMV8dHlF2ZH
-   YE4Xc9P5ojNqt/IC7xyqmpaNscSmAWATRotnJnE71BnQ7/YUzP4Vcg3uI
-   1Saejw4A/8RxDKosn2QE7nNDWxV6wx6zzLpKnwVnF/V4Vw05OReNy5oUY
-   lwNkWyL0P03a4fJuaP2JQxvvfAuG8bfepfuqkX97FPp+gp6h9qAo8Z17J
-   pHtxnIDpygi6gO7YrnllDX7V47gmjxDg4VuA7bkvoQ2e/lpq10NrVKS1V
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10367"; a="362649491"
-X-IronPort-AV: E=Sophos;i="5.91,274,1647327600"; 
-   d="scan'208";a="362649491"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 08:55:42 -0700
-X-IronPort-AV: E=Sophos;i="5.91,274,1647327600"; 
-   d="scan'208";a="613323243"
-Received: from fbarati-mobl.amr.corp.intel.com (HELO [10.251.24.19]) ([10.251.24.19])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 08:55:41 -0700
-Message-ID: <e7758ed1-5dcb-80dd-092a-a6bb21c3997d@intel.com>
-Date:   Fri, 3 Jun 2022 08:55:39 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v4] x86/kexec: Carry forward IMA measurement log on kexec
-Content-Language: en-US
-To:     Jonathan McDowell <noodles@fb.com>, Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Sun, 5 Jun 2022 23:54:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0F0348CB1D
+        for <linux-security-module@vger.kernel.org>; Sun,  5 Jun 2022 20:54:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1654487687;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=i5iEgTqlGFXZU9nwYiUMELTTny6xbpViLZQTc0dGuT4=;
+        b=gdNq6b1j3LwZiFwwV2EXrkCL/7775WAKNO9uwd+3T05oFgeVc9uLm9XT/mM5u7WZZLRQHR
+        J6ym13wFZp/2xKOK0xI1V64WuZRyKq6nOVEzcMp0HMtWBgTnpndLfEYFspkx9oOobcyErC
+        SAU981lJLwZ+AybWcdv6d4XuXhv6IgM=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-637-IQrCFuIjN8215spNptb1Rg-1; Sun, 05 Jun 2022 23:54:42 -0400
+X-MC-Unique: IQrCFuIjN8215spNptb1Rg-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 41FCD398CA60;
+        Mon,  6 Jun 2022 03:54:41 +0000 (UTC)
+Received: from localhost (ovpn-12-209.pek2.redhat.com [10.72.12.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AB65D403371;
+        Mon,  6 Jun 2022 03:54:38 +0000 (UTC)
+Date:   Mon, 6 Jun 2022 11:54:35 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jonathan McDowell <noodles@fb.com>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -61,29 +57,38 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         <linux-security-module@vger.kernel.org>,
         Eric Biederman <ebiederm@xmission.com>,
         kexec@lists.infradead.org
+Subject: Re: [PATCH v4] x86/kexec: Carry forward IMA measurement log on kexec
+Message-ID: <Yp16e5hMphomr2+H@MiWiFi-R3L-srv>
 References: <YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG>
  <YmgjXZphkmDKgaOA@noodles-fedora-PC23Y6EG>
  <YnuJCH75GrhVm0Tp@noodles-fedora.dhcp.thefacebook.com>
  <Yn01Cfb3Divf49g7@noodles-fedora.dhcp.thefacebook.com>
  <8634d4dd0813b9522f039ed211023c2c65c6f888.camel@linux.ibm.com>
  <YpSC4AQInLM73wex@noodles-fedora.dhcp.thefacebook.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <YpSC4AQInLM73wex@noodles-fedora.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <e7758ed1-5dcb-80dd-092a-a6bb21c3997d@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7758ed1-5dcb-80dd-092a-a6bb21c3997d@intel.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/30/22 01:40, Jonathan McDowell wrote:
-> Borislav,
+On 06/03/22 at 08:55am, Dave Hansen wrote:
+> On 5/30/22 01:40, Jonathan McDowell wrote:
+> > Borislav,
+> > 
+> > I don't think there are any outstanding review comments for me to deal
+> > with on this, so is it safe to assume it'll get picked up at some point
+> > once the merge window calms down?
 > 
-> I don't think there are any outstanding review comments for me to deal
-> with on this, so is it safe to assume it'll get picked up at some point
-> once the merge window calms down?
+> Nothing here looks too crazy, but it's still been _very_ lightly
+> reviewed.  It doesn't seem like anyone from the kexec world has seen it,
+> for instance.
+> 
+> Mimi's review was a great start, but it would be really nice to make
+> sure that the kexec bits look good.
 
-Nothing here looks too crazy, but it's still been _very_ lightly
-reviewed.  It doesn't seem like anyone from the kexec world has seen it,
-for instance.
+The change looks good from kexec/kdump side. Not sure if Eric has
+any concern.
 
-Mimi's review was a great start, but it would be really nice to make
-sure that the kexec bits look good.
