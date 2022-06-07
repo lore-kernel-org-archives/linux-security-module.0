@@ -2,87 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6B8C43334
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jun 2022 01:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47ED5C43334
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jun 2022 06:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233150AbiFGBgb (ORCPT
+        id S230075AbiFGGG6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jun 2022 21:36:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41450 "EHLO
+        Tue, 7 Jun 2022 02:06:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231345AbiFGBga (ORCPT
+        with ESMTP id S230266AbiFGGG5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jun 2022 21:36:30 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A14CECEBB9;
-        Mon,  6 Jun 2022 18:36:29 -0700 (PDT)
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.54])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4LHCZm5xMyz1K9Rj;
-        Tue,  7 Jun 2022 09:34:40 +0800 (CST)
-Received: from dggpemm500016.china.huawei.com (7.185.36.25) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 7 Jun 2022 09:36:27 +0800
-Received: from huawei.com (10.67.174.33) by dggpemm500016.china.huawei.com
- (7.185.36.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Tue, 7 Jun
- 2022 09:36:27 +0800
-From:   "GONG, Ruiqi" <gongruiqi1@huawei.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-CC:     Kees Cook <keescook@chromium.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Wang Weiyang" <wangweiyang2@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        Gong Ruiqi <gongruiqi1@huawei.com>
-Subject: [RESEND PATCH] smack: Replace kzalloc + strncpy with kstrndup
-Date:   Tue, 7 Jun 2022 17:36:49 +0800
-Message-ID: <20220607093649.928131-1-gongruiqi1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 7 Jun 2022 02:06:57 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C3815817
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Jun 2022 23:06:56 -0700 (PDT)
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1nySMU-0001nK-Lo; Tue, 07 Jun 2022 08:06:42 +0200
+Message-ID: <64511312-df94-c40b-689c-5fc3823e91f5@pengutronix.de>
+Date:   Tue, 7 Jun 2022 08:06:37 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.67.174.33]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500016.china.huawei.com (7.185.36.25)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH -next] evm: Use IS_ENABLED to initialize .enabled
+Content-Language: en-US
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220606101042.89638-1-xiujianfeng@huawei.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20220606101042.89638-1-xiujianfeng@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Simplify the code by using kstrndup instead of kzalloc and strncpy in
-smk_parse_smack(), which meanwhile remove strncpy as [1] suggests.
+On 06.06.22 12:10, Xiu Jianfeng wrote:
+> Use IS_ENABLED(CONFIG_XXX) instead of #ifdef/#endif statements to
+> initialize .enabled, minor simplicity improvement.
+> 
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-[1]: https://github.com/KSPP/linux/issues/90
+Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
----
+> ---
+>  security/integrity/evm/evm_main.c | 52 ++++++++++++++-----------------
+>  1 file changed, 23 insertions(+), 29 deletions(-)
+> 
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index cc88f02c7562..397fea5b3fa6 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -36,42 +36,36 @@ static const char * const integrity_status_msg[] = {
+>  int evm_hmac_attrs;
+>  
+>  static struct xattr_list evm_config_default_xattrnames[] = {
+> -	{.name = XATTR_NAME_SELINUX,
+> -#ifdef CONFIG_SECURITY_SELINUX
+> -	 .enabled = true
+> -#endif
+> +	{
+> +	 .name = XATTR_NAME_SELINUX,
+> +	 .enabled = IS_ENABLED(CONFIG_SECURITY_SELINUX)
+>  	},
+> -	{.name = XATTR_NAME_SMACK,
+> -#ifdef CONFIG_SECURITY_SMACK
+> -	 .enabled = true
+> -#endif
+> +	{
+> +	 .name = XATTR_NAME_SMACK,
+> +	 .enabled = IS_ENABLED(CONFIG_SECURITY_SMACK)
+>  	},
+> -	{.name = XATTR_NAME_SMACKEXEC,
+> -#ifdef CONFIG_EVM_EXTRA_SMACK_XATTRS
+> -	 .enabled = true
+> -#endif
+> +	{
+> +	 .name = XATTR_NAME_SMACKEXEC,
+> +	 .enabled = IS_ENABLED(CONFIG_EVM_EXTRA_SMACK_XATTRS)
+>  	},
+> -	{.name = XATTR_NAME_SMACKTRANSMUTE,
+> -#ifdef CONFIG_EVM_EXTRA_SMACK_XATTRS
+> -	 .enabled = true
+> -#endif
+> +	{
+> +	 .name = XATTR_NAME_SMACKTRANSMUTE,
+> +	 .enabled = IS_ENABLED(CONFIG_EVM_EXTRA_SMACK_XATTRS)
+>  	},
+> -	{.name = XATTR_NAME_SMACKMMAP,
+> -#ifdef CONFIG_EVM_EXTRA_SMACK_XATTRS
+> -	 .enabled = true
+> -#endif
+> +	{
+> +	 .name = XATTR_NAME_SMACKMMAP,
+> +	 .enabled = IS_ENABLED(CONFIG_EVM_EXTRA_SMACK_XATTRS)
+>  	},
+> -	{.name = XATTR_NAME_APPARMOR,
+> -#ifdef CONFIG_SECURITY_APPARMOR
+> -	 .enabled = true
+> -#endif
+> +	{
+> +	 .name = XATTR_NAME_APPARMOR,
+> +	 .enabled = IS_ENABLED(CONFIG_SECURITY_APPARMOR)
+>  	},
+> -	{.name = XATTR_NAME_IMA,
+> -#ifdef CONFIG_IMA_APPRAISE
+> -	 .enabled = true
+> -#endif
+> +	{
+> +	 .name = XATTR_NAME_IMA,
+> +	 .enabled = IS_ENABLED(CONFIG_IMA_APPRAISE)
+>  	},
+> -	{.name = XATTR_NAME_CAPS,
+> +	{
+> +	 .name = XATTR_NAME_CAPS,
+>  	 .enabled = true
+>  	},
+>  };
 
-Resend: fix email issue to make it acceptable by the mailing list
 
- security/smack/smack_access.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index d2186e2757be..585e5e35710b 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -465,12 +465,9 @@ char *smk_parse_smack(const char *string, int len)
- 	if (i == 0 || i >= SMK_LONGLABEL)
- 		return ERR_PTR(-EINVAL);
- 
--	smack = kzalloc(i + 1, GFP_NOFS);
--	if (smack == NULL)
-+	smack = kstrndup(string, i, GFP_NOFS);
-+	if (!smack)
- 		return ERR_PTR(-ENOMEM);
--
--	strncpy(smack, string, i);
--
- 	return smack;
- }
- 
 -- 
-2.25.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
