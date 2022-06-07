@@ -2,133 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47ED5C43334
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jun 2022 06:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68380CCA47F
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jun 2022 08:02:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230075AbiFGGG6 (ORCPT
+        id S236951AbiFGIC6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jun 2022 02:06:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35616 "EHLO
+        Tue, 7 Jun 2022 04:02:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230266AbiFGGG5 (ORCPT
+        with ESMTP id S231132AbiFGIC5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jun 2022 02:06:57 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C3815817
-        for <linux-security-module@vger.kernel.org>; Mon,  6 Jun 2022 23:06:56 -0700 (PDT)
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1nySMU-0001nK-Lo; Tue, 07 Jun 2022 08:06:42 +0200
-Message-ID: <64511312-df94-c40b-689c-5fc3823e91f5@pengutronix.de>
-Date:   Tue, 7 Jun 2022 08:06:37 +0200
+        Tue, 7 Jun 2022 04:02:57 -0400
+X-Greylist: delayed 915 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 07 Jun 2022 01:02:54 PDT
+Received: from mail-m972.mail.163.com (mail-m972.mail.163.com [123.126.97.2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8029F35878;
+        Tue,  7 Jun 2022 01:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=FzsQe
+        Klfx+PTNhydCXy5arK4m63g42oEcDpVKHz+ar0=; b=Eqd5XGCE4BV50FAUN/N4t
+        q7z/nZMZr7sIwloIGMSpLbKhTA7sDPho1a0gsRfPPiIdh3JUiz1ZfbYx06iFRxKT
+        kr/NKH0YuNIgP0XSHvW99p93YbU/3sNYKGZJw0MJjc+NpPfDPuHx/yVEY2okMPPv
+        G2irPV95sR/DiAtmPSgcxU=
+Received: from localhost.localdomain (unknown [123.112.69.106])
+        by smtp2 (Coremail) with SMTP id GtxpCgB3PCJrAp9iIndHHQ--.24586S4;
+        Tue, 07 Jun 2022 15:47:06 +0800 (CST)
+From:   Jianglei Nie <niejianglei2021@163.com>
+To:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jianglei Nie <niejianglei2021@163.com>
+Subject: [PATCH] security:trusted_tpm2: Fix memory leak in tpm2_key_encode()
+Date:   Tue,  7 Jun 2022 15:46:50 +0800
+Message-Id: <20220607074650.432834-1-niejianglei2021@163.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH -next] evm: Use IS_ENABLED to initialize .enabled
-Content-Language: en-US
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220606101042.89638-1-xiujianfeng@huawei.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20220606101042.89638-1-xiujianfeng@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GtxpCgB3PCJrAp9iIndHHQ--.24586S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar4xKFyxXF18uFykuFyDKFg_yoW8Zr1kpF
+        ZxKF4aqrZF9F9rAry7JF4fZF13C395Gr47Gwsru39rGasxJFsxtFy7AF4Ygr17CFWftw15
+        AFWDZFWUWrWqvr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRIPfLUUUUU=
+X-Originating-IP: [123.112.69.106]
+X-CM-SenderInfo: xqlhyxxdqjzvrlsqjii6rwjhhfrp/1tbiWxoZjGI0U5oI1wAAsU
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 06.06.22 12:10, Xiu Jianfeng wrote:
-> Use IS_ENABLED(CONFIG_XXX) instead of #ifdef/#endif statements to
-> initialize .enabled, minor simplicity improvement.
-> 
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+The function allocates a memory chunk for scratch by kmalloc(), but
+it is never freed through the function, which leads to a memory leak.
+Handle those cases with kfree().
 
-Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
+---
+ security/keys/trusted-keys/trusted_tpm2.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-> ---
->  security/integrity/evm/evm_main.c | 52 ++++++++++++++-----------------
->  1 file changed, 23 insertions(+), 29 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index cc88f02c7562..397fea5b3fa6 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -36,42 +36,36 @@ static const char * const integrity_status_msg[] = {
->  int evm_hmac_attrs;
->  
->  static struct xattr_list evm_config_default_xattrnames[] = {
-> -	{.name = XATTR_NAME_SELINUX,
-> -#ifdef CONFIG_SECURITY_SELINUX
-> -	 .enabled = true
-> -#endif
-> +	{
-> +	 .name = XATTR_NAME_SELINUX,
-> +	 .enabled = IS_ENABLED(CONFIG_SECURITY_SELINUX)
->  	},
-> -	{.name = XATTR_NAME_SMACK,
-> -#ifdef CONFIG_SECURITY_SMACK
-> -	 .enabled = true
-> -#endif
-> +	{
-> +	 .name = XATTR_NAME_SMACK,
-> +	 .enabled = IS_ENABLED(CONFIG_SECURITY_SMACK)
->  	},
-> -	{.name = XATTR_NAME_SMACKEXEC,
-> -#ifdef CONFIG_EVM_EXTRA_SMACK_XATTRS
-> -	 .enabled = true
-> -#endif
-> +	{
-> +	 .name = XATTR_NAME_SMACKEXEC,
-> +	 .enabled = IS_ENABLED(CONFIG_EVM_EXTRA_SMACK_XATTRS)
->  	},
-> -	{.name = XATTR_NAME_SMACKTRANSMUTE,
-> -#ifdef CONFIG_EVM_EXTRA_SMACK_XATTRS
-> -	 .enabled = true
-> -#endif
-> +	{
-> +	 .name = XATTR_NAME_SMACKTRANSMUTE,
-> +	 .enabled = IS_ENABLED(CONFIG_EVM_EXTRA_SMACK_XATTRS)
->  	},
-> -	{.name = XATTR_NAME_SMACKMMAP,
-> -#ifdef CONFIG_EVM_EXTRA_SMACK_XATTRS
-> -	 .enabled = true
-> -#endif
-> +	{
-> +	 .name = XATTR_NAME_SMACKMMAP,
-> +	 .enabled = IS_ENABLED(CONFIG_EVM_EXTRA_SMACK_XATTRS)
->  	},
-> -	{.name = XATTR_NAME_APPARMOR,
-> -#ifdef CONFIG_SECURITY_APPARMOR
-> -	 .enabled = true
-> -#endif
-> +	{
-> +	 .name = XATTR_NAME_APPARMOR,
-> +	 .enabled = IS_ENABLED(CONFIG_SECURITY_APPARMOR)
->  	},
-> -	{.name = XATTR_NAME_IMA,
-> -#ifdef CONFIG_IMA_APPRAISE
-> -	 .enabled = true
-> -#endif
-> +	{
-> +	 .name = XATTR_NAME_IMA,
-> +	 .enabled = IS_ENABLED(CONFIG_IMA_APPRAISE)
->  	},
-> -	{.name = XATTR_NAME_CAPS,
-> +	{
-> +	 .name = XATTR_NAME_CAPS,
->  	 .enabled = true
->  	},
->  };
-
-
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 0165da386289..dc9efd6c8b14 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -57,8 +57,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 		unsigned char bool[3], *w = bool;
+ 		/* tag 0 is emptyAuth */
+ 		w = asn1_encode_boolean(w, w + sizeof(bool), true);
+-		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
++		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode")) {
++			kfree(scratch);
+ 			return PTR_ERR(w);
++		}
+ 		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
+ 	}
+ 
+@@ -69,8 +71,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	 * trigger, so if it does there's something nefarious going on
+ 	 */
+ 	if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
+-		 "BUG: scratch buffer is too small"))
++		 "BUG: scratch buffer is too small")) {
++		kfree(scratch);
+ 		return -EINVAL;
++	}
+ 
+ 	work = asn1_encode_integer(work, end_work, options->keyhandle);
+ 	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
+@@ -79,8 +83,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	work1 = payload->blob;
+ 	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
+ 				     scratch, work - scratch);
+-	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
++	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed")) {
++		kfree(scratch);
+ 		return PTR_ERR(work1);
++	}
+ 
+ 	return work1 - payload->blob;
+ }
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.25.1
+
