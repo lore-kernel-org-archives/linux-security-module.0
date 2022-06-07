@@ -2,104 +2,79 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1A8CCA483
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jun 2022 21:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F70C43334
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 00:43:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378977AbiFGVLx (ORCPT
+        id S244411AbiFHAnJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jun 2022 17:11:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44098 "EHLO
+        Tue, 7 Jun 2022 20:43:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379997AbiFGVLW (ORCPT
+        with ESMTP id S1840090AbiFHAEX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jun 2022 17:11:22 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F6E21734D
-        for <linux-security-module@vger.kernel.org>; Tue,  7 Jun 2022 11:52:49 -0700 (PDT)
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1nyeJf-0007KB-17; Tue, 07 Jun 2022 20:52:35 +0200
-Message-ID: <0429fbb6-691d-1283-e364-209054bc38a7@pengutronix.de>
-Date:   Tue, 7 Jun 2022 20:52:29 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2] KEYS: trusted: tpm2: Fix migratable logic
-Content-Language: en-US
-To:     david.safford@gmail.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
+        Tue, 7 Jun 2022 20:04:23 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C422534ED
+        for <linux-security-module@vger.kernel.org>; Tue,  7 Jun 2022 12:18:24 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id w13-20020a17090a780d00b001e8961b355dso4540107pjk.5
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jun 2022 12:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0EImpbXnAApSc8BvVL56qbdQpeRig2mR5AXQClUMyjc=;
+        b=D+sDw6OfB5boDSeDNM9bqFr0F+tvRj6Ohj2Z1YTWNs+0xdYLLaOMK5kJXF2k+FXvoN
+         S1Jx/D6ktM3EJjcmR6k7X2cXEptshfJtA4Ojr3XNwEKFX52bC4dCEHTSLs803Od905Qd
+         +7X+bRiPsgncXxvXODceVFz4G8VDzZDv6yt5U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0EImpbXnAApSc8BvVL56qbdQpeRig2mR5AXQClUMyjc=;
+        b=kw4Wc2Vt2CaRhwuIuw1h/jnoJGOqppYmuAGoNfgr3T41vhTGPpqUshV/7asUgHB0Y2
+         zRYuOoO+ulYs5l4jngeIL4pdALLtwzLXPhvFvIiDy4ZVxQhqcw6n2yrk3SctcLe3AeBq
+         D4fGzgdYGyx0LoRMZ7Bojw8wyAKL9r1BPZs+qQrarLXbR8Q2ZlL+OHXzoNtaEVhhEX9D
+         EF0M6m0Kz0eusLF8/UYQkNIR/gmw7zeCqFojQl50ZC553lfTBmS7OGR2Gm/o8Y3VXZYE
+         Hwm9HYNEuyJEdRfZAn5vpUGeCb7BeJx9fg3qJrFhdhOmW9bv/Qh4/3VgpzLmuQ2xTwab
+         1R4g==
+X-Gm-Message-State: AOAM533ZZtpaHfbZd7ziQvkWX5kg+aFX2Y6u9clbEml8ZS5L0wXoMjB9
+        KkeNJK5DO9WL7jA31/o6yDvyJwYM5263dg==
+X-Google-Smtp-Source: ABdhPJyBmgCZaEYkm6poadEXRpVAz2i5/BGDgN9MhkPQ/Q6rYJplJtUTI/mP0HwnvEwNnezRL45GYQ==
+X-Received: by 2002:a17:903:240c:b0:153:c452:f282 with SMTP id e12-20020a170903240c00b00153c452f282mr29733430plo.88.1654629502873;
+        Tue, 07 Jun 2022 12:18:22 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q3-20020a056a0002a300b0051be16492basm9177167pfs.195.2022.06.07.12.18.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jun 2022 12:18:22 -0700 (PDT)
+Date:   Tue, 7 Jun 2022 12:18:21 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "GONG, Ruiqi" <gongruiqi1@huawei.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         James Morris <jmorris@namei.org>,
-        "SergeE.Hallyn" <serge@hallyn.com>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <141492344ae13c9842626e696685316ee340d717.camel@gmail.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <141492344ae13c9842626e696685316ee340d717.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Wang Weiyang <wangweiyang2@huawei.com>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+Subject: Re: [RESEND PATCH] smack: Replace kzalloc + strncpy with kstrndup
+Message-ID: <202206071218.D281DE50@keescook>
+References: <20220607093649.928131-1-gongruiqi1@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220607093649.928131-1-gongruiqi1@huawei.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 07.06.22 20:07, david.safford@gmail.com wrote:
-> When creating (sealing) a new trusted key, migratable
-> trusted keys have the FIXED_TPM and FIXED_PARENT attributes
-> set, and non-migratable keys don't. This is backwards, and
-> also causes creation to fail when creating a migratable key
-> under a migratable parent. (The TPM thinks you are trying to
-> seal a non-migratable blob under a migratable parent.)
+On Tue, Jun 07, 2022 at 05:36:49PM +0800, GONG, Ruiqi wrote:
+> Simplify the code by using kstrndup instead of kzalloc and strncpy in
+> smk_parse_smack(), which meanwhile remove strncpy as [1] suggests.
 > 
-> The following simple patch fixes the logic, and has been
-> tested for all four combinations of migratable and non-migratable
-> trusted keys and parent storage keys. With this logic, you will
-> get a proper failure if you try to create a non-migratable
-> trusted key under a migratable parent storage key, and all other
-> combinations work correctly.
+> [1]: https://github.com/KSPP/linux/issues/90
 > 
-> Fixes: e5fb5d2c5a03 ("security: keys: trusted: Make sealed key properly interoperable")
-> Signed-off-by: David Safford <david.safford@gmail.com>
+> Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
 
-Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-
-Thanks,
-Ahmad
-
-> ---
-> Changelog:
->  * v2:
->    * added Signed-off-by, Fixes, proper Subject and distribution
-> .
->  security/keys/trusted-keys/trusted_tpm2.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> index 0165da386289..2b2c8eb258d5 100644
-> --- a/security/keys/trusted-keys/trusted_tpm2.c
-> +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> @@ -283,8 +283,8 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
->  	/* key properties */
->  	flags = 0;
->  	flags |= options->policydigest_len ? 0 : TPM2_OA_USER_WITH_AUTH;
-> -	flags |= payload->migratable ? (TPM2_OA_FIXED_TPM |
-> -					TPM2_OA_FIXED_PARENT) : 0;
-> +	flags |= payload->migratable ? 0 : (TPM2_OA_FIXED_TPM |
-> +					    TPM2_OA_FIXED_PARENT);
->  	tpm_buf_append_u32(&buf, flags);
-> 
->  	/* policy */
-> --
-> 2.36.1
-> 
-
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Kees Cook
