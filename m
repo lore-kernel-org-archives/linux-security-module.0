@@ -2,121 +2,77 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B21C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jun 2022 08:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D23CCA47F
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jun 2022 10:11:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238332AbiFGIf0 (ORCPT
+        id S240674AbiFGKL4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jun 2022 04:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55808 "EHLO
+        Tue, 7 Jun 2022 06:11:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232260AbiFGIfH (ORCPT
+        with ESMTP id S240669AbiFGKLz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jun 2022 04:35:07 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68850CEB98
-        for <linux-security-module@vger.kernel.org>; Tue,  7 Jun 2022 01:35:06 -0700 (PDT)
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1nyUfm-0006dl-1V; Tue, 07 Jun 2022 10:34:46 +0200
-Message-ID: <3d42d774-5e12-f983-d6a1-7f644285b509@pengutronix.de>
-Date:   Tue, 7 Jun 2022 10:34:38 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
+        Tue, 7 Jun 2022 06:11:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC1DA338C;
+        Tue,  7 Jun 2022 03:11:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F3A09B81EDB;
+        Tue,  7 Jun 2022 10:11:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F64AC3411E;
+        Tue,  7 Jun 2022 10:11:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654596711;
+        bh=u/LeARG2hwxh21NjNwvi6BgnN1cum7FrrFPMu1OzkfY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ep4byXZ8izun2IJ+1pW7U1VjvjuX0mLio8JYSqFxp96ZTPtlppNuwjAgGzLO58DmO
+         F1BS8dLeF3tRS57YXHB2AvkPU01RHWYxPVpx92soGPkInCwWYWmomoS9qYBNmd0ku0
+         YxFLyuy9RTaY8uFE8iT3Ls3OI2sWZO3Mob0QDIvNY89Scx0xrDv690vrFmpi9mB2Ni
+         CWPTE4foaaomaw1I+BJzDb48A7ytfFhQt0+boLnB0h0DeMLFoZuV9Nt0xooN6rLOn+
+         bMikhScHjD8yv0fS1vf3q59YUNCycOQzHg5Fh17I+XYsHnJuayqQIPG0pCqkVnLbeF
+         JRyee4eULKOWg==
+Date:   Tue, 7 Jun 2022 13:09:56 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jianglei Nie <niejianglei2021@163.com>
+Cc:     jejb@linux.ibm.com, zohar@linux.ibm.com, dhowells@redhat.com,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] security:trusted_tpm2: Fix memory leak in
  tpm2_key_encode()
-Content-Language: en-US
-To:     Jianglei Nie <niejianglei2021@163.com>, jejb@linux.ibm.com,
-        jarkko@kernel.org, zohar@linux.ibm.com, dhowells@redhat.com,
-        jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <Yp8j9FilcBMyeL2G@iki.fi>
 References: <20220607074650.432834-1-niejianglei2021@163.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20220607074650.432834-1-niejianglei2021@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Jianglei,
+"KEYS: trusted: fix memory leak in tpm2_key_encode()"
 
-On 07.06.22 09:46, Jianglei Nie wrote:
+On Tue, Jun 07, 2022 at 03:46:50PM +0800, Jianglei Nie wrote:
 > The function allocates a memory chunk for scratch by kmalloc(), but
+                                        ~~~         ~~ 
+                                        from        with
+
+There's more than one function in Linux - maybe you'd rather want
+to write: "tpm2_key_encode() allocates ..."
+
 > it is never freed through the function, which leads to a memory leak.
+
+You can just write "it is never freed, which leads to a memory leak."
+
 > Handle those cases with kfree().
 
-Thanks for your patch.
+"Free the memory chunk with kfree() in the return paths."
 
-Shouldn't you free scratch before successful return too?
-
-I haven't looked too deeply, but it looks like scratch is indeed
-scratch space and data written to it are memcpy'd elsewhere before
-the function returns and no pointer derived from it survives after
-function return.
-
-If this is indeed the case, consider also to switch this to a goto out.
-
-Cheers,
-Ahmad
-  
-
-> 
 > Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
-> ---
->  security/keys/trusted-keys/trusted_tpm2.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> index 0165da386289..dc9efd6c8b14 100644
-> --- a/security/keys/trusted-keys/trusted_tpm2.c
-> +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> @@ -57,8 +57,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
->  		unsigned char bool[3], *w = bool;
->  		/* tag 0 is emptyAuth */
->  		w = asn1_encode_boolean(w, w + sizeof(bool), true);
-> -		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
-> +		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode")) {
-> +			kfree(scratch);
->  			return PTR_ERR(w);
-> +		}
->  		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
->  	}
->  
-> @@ -69,8 +71,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
->  	 * trigger, so if it does there's something nefarious going on
->  	 */
->  	if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
-> -		 "BUG: scratch buffer is too small"))
-> +		 "BUG: scratch buffer is too small")) {
-> +		kfree(scratch);
->  		return -EINVAL;
-> +	}
->  
->  	work = asn1_encode_integer(work, end_work, options->keyhandle);
->  	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
-> @@ -79,8 +83,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
->  	work1 = payload->blob;
->  	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
->  				     scratch, work - scratch);
-> -	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
-> +	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed")) {
-> +		kfree(scratch);
->  		return PTR_ERR(work1);
-> +	}
->  
->  	return work1 - payload->blob;
->  }
 
+Thank you finding this and providing a fix, it is highly appreciated.
+Please don't take the nitpicking with the language personally. Just want
+to have it documented in appropriate form.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+BR, Jarkko
