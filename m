@@ -2,79 +2,139 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F70C43334
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 00:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F861C43334
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 00:43:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244411AbiFHAnJ (ORCPT
+        id S231255AbiFHAnU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jun 2022 20:43:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48024 "EHLO
+        Tue, 7 Jun 2022 20:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1840090AbiFHAEX (ORCPT
+        with ESMTP id S1444025AbiFGXBh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jun 2022 20:04:23 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C422534ED
-        for <linux-security-module@vger.kernel.org>; Tue,  7 Jun 2022 12:18:24 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id w13-20020a17090a780d00b001e8961b355dso4540107pjk.5
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Jun 2022 12:18:24 -0700 (PDT)
+        Tue, 7 Jun 2022 19:01:37 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DFF327CD43
+        for <linux-security-module@vger.kernel.org>; Tue,  7 Jun 2022 13:10:40 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id z9so3089357wmf.3
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jun 2022 13:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=0EImpbXnAApSc8BvVL56qbdQpeRig2mR5AXQClUMyjc=;
-        b=D+sDw6OfB5boDSeDNM9bqFr0F+tvRj6Ohj2Z1YTWNs+0xdYLLaOMK5kJXF2k+FXvoN
-         S1Jx/D6ktM3EJjcmR6k7X2cXEptshfJtA4Ojr3XNwEKFX52bC4dCEHTSLs803Od905Qd
-         +7X+bRiPsgncXxvXODceVFz4G8VDzZDv6yt5U=
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PLD8bMvN51Cij4xdm7K//UbBPopjl8IHgVt7TPHocZY=;
+        b=i2kaYQ6j5Q8SFA4O5Y3knelSOyr95qvMEWqsg29kMrTB8PQiNOrW1HRsCY0v9REmUA
+         MNnKCXpGrmr8D7QexF3moz6L5iuMd8l0FTkbqhLRp9QxBQGVBe5LGE+DngOXpbQ4nww3
+         Wqj82xBn8bye0OsYOcmrN7MAU43F5L73GrSpnM9BEnREQ3yUW7+Y4RtVEJvawoK1TVmG
+         KDlhsp2EQmehusDg2ubUvtXKe4RhIwrl2QTJWx3/Ak+80wjoOQjkOY4jdj+2Ft54GtSK
+         m6l5rpqDgdvNoh0XKRLtkEBAokvaVGkzqAgRX8uGk/gxtUkMhKVTqvkK/W+JyI4JYSJY
+         L63A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0EImpbXnAApSc8BvVL56qbdQpeRig2mR5AXQClUMyjc=;
-        b=kw4Wc2Vt2CaRhwuIuw1h/jnoJGOqppYmuAGoNfgr3T41vhTGPpqUshV/7asUgHB0Y2
-         zRYuOoO+ulYs5l4jngeIL4pdALLtwzLXPhvFvIiDy4ZVxQhqcw6n2yrk3SctcLe3AeBq
-         D4fGzgdYGyx0LoRMZ7Bojw8wyAKL9r1BPZs+qQrarLXbR8Q2ZlL+OHXzoNtaEVhhEX9D
-         EF0M6m0Kz0eusLF8/UYQkNIR/gmw7zeCqFojQl50ZC553lfTBmS7OGR2Gm/o8Y3VXZYE
-         Hwm9HYNEuyJEdRfZAn5vpUGeCb7BeJx9fg3qJrFhdhOmW9bv/Qh4/3VgpzLmuQ2xTwab
-         1R4g==
-X-Gm-Message-State: AOAM533ZZtpaHfbZd7ziQvkWX5kg+aFX2Y6u9clbEml8ZS5L0wXoMjB9
-        KkeNJK5DO9WL7jA31/o6yDvyJwYM5263dg==
-X-Google-Smtp-Source: ABdhPJyBmgCZaEYkm6poadEXRpVAz2i5/BGDgN9MhkPQ/Q6rYJplJtUTI/mP0HwnvEwNnezRL45GYQ==
-X-Received: by 2002:a17:903:240c:b0:153:c452:f282 with SMTP id e12-20020a170903240c00b00153c452f282mr29733430plo.88.1654629502873;
-        Tue, 07 Jun 2022 12:18:22 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q3-20020a056a0002a300b0051be16492basm9177167pfs.195.2022.06.07.12.18.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jun 2022 12:18:22 -0700 (PDT)
-Date:   Tue, 7 Jun 2022 12:18:21 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "GONG, Ruiqi" <gongruiqi1@huawei.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>
-Subject: Re: [RESEND PATCH] smack: Replace kzalloc + strncpy with kstrndup
-Message-ID: <202206071218.D281DE50@keescook>
-References: <20220607093649.928131-1-gongruiqi1@huawei.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PLD8bMvN51Cij4xdm7K//UbBPopjl8IHgVt7TPHocZY=;
+        b=jUMzAEstYBMlPefvy1JdeBf7GgckNAMG1MokunmdJOJbe9Exzby1yyKphYmyS+FyUT
+         HiR1sRfR+PU8NBAu+yaKVbuGR0ow4pA03UdY+dkdU5nanVjNLV1XrtG/laQBhvXoeOEb
+         MJen+/FxiTZfdllTXEKg29i4w1G248bIdVoRpeAdSimx64lnsGKn0Qn9ts7nUttrxjW6
+         MAM71boFn03OMx6poOVH24kaVmpDnf3vpi/QdUbwHF3XgBGzawIrF1zQyqEge39oqiGU
+         BCnFebDlumJ162Ws6RglukMwgmpGk4CKx9bHgRy1+kAknREAJc3mHelpmwycTC8MCe2q
+         plQw==
+X-Gm-Message-State: AOAM530iJ2unCOQSmBY1A6kKAAuEzv1B+KRmXgOGawKd3s2/YgTbrvHe
+        6ESjE0xv8cNRvsBImrzg9uYHPv0+T1iZpW2nHBsx
+X-Google-Smtp-Source: ABdhPJwyFkl5Wu37OltnZgyQnBX2dD7guis4PxRqva+UdiTXRjPsIzjBlv+N77/IeKSH93JcMAUzMvIjfEltCOeIf0g=
+X-Received: by 2002:a05:600c:414e:b0:397:55aa:ccc0 with SMTP id
+ h14-20020a05600c414e00b0039755aaccc0mr61318457wmm.51.1654632638942; Tue, 07
+ Jun 2022 13:10:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220607093649.928131-1-gongruiqi1@huawei.com>
+References: <20220125143304.34628-1-cgzones@googlemail.com>
+ <CAHC9VhSdGeZ9x-0Hvk9mE=YMXbpk-tC5Ek+uGFGq5U+51qjChw@mail.gmail.com>
+ <CAJ2a_DeAUcGTGm_fk8viVbeFXr6FLrJ-oLw-abwFND6Kv0u0gQ@mail.gmail.com>
+ <CAHC9VhRRBrLVtvmbJSTZ7fOkD-8AN4iM0WRmeL4ND001d3viJg@mail.gmail.com> <CAJ2a_DeT6AG0jp4gTdsEy7nh=s6cLR7QCsYXAz2+3vsdRKxddg@mail.gmail.com>
+In-Reply-To: <CAJ2a_DeT6AG0jp4gTdsEy7nh=s6cLR7QCsYXAz2+3vsdRKxddg@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 7 Jun 2022 16:10:28 -0400
+Message-ID: <CAHC9VhQXdNieG8_uWBfCCFSow6AVaxNBhB3GNU8ea1j5rjgZiA@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: create security context for memfd_secret inodes
+To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Cc:     SElinux list <selinux@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 07, 2022 at 05:36:49PM +0800, GONG, Ruiqi wrote:
-> Simplify the code by using kstrndup instead of kzalloc and strncpy in
-> smk_parse_smack(), which meanwhile remove strncpy as [1] suggests.
-> 
-> [1]: https://github.com/KSPP/linux/issues/90
-> 
-> Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
+On Mon, May 2, 2022 at 9:45 AM Christian G=C3=B6ttsche
+<cgzones@googlemail.com> wrote:
+> On Thu, 17 Feb 2022 at 23:32, Paul Moore <paul@paul-moore.com> wrote:
+> > On Thu, Feb 17, 2022 at 9:24 AM Christian G=C3=B6ttsche
+> > <cgzones@googlemail.com> wrote:
+> > > On Thu, 27 Jan 2022 at 00:01, Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Tue, Jan 25, 2022 at 9:33 AM Christian G=C3=B6ttsche
+> > > > <cgzones@googlemail.com> wrote:
+> > > > >
+> > > > > Create a security context for the inodes created by memfd_secret(=
+2) via
+> > > > > the LSM hook inode_init_security_anon to allow a fine grained con=
+trol.
+> > > > > As secret memory areas can affect hibernation and have a global s=
+hared
+> > > > > limit access control might be desirable.
+> > > > >
+> > > > > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> > > > > ---
+> > > > > An alternative way of checking memfd_secret(2) is to create a new=
+ LSM
+> > > > > hook and e.g. for SELinux check via a new process class permissio=
+n.
+> > > > > ---
+> > > > >  mm/secretmem.c | 9 +++++++++
+> > > > >  1 file changed, 9 insertions(+)
+> > > >
+> > > > This seems reasonable to me, and I like the idea of labeling the an=
+on
+> > > > inode as opposed to creating a new set of LSM hooks.  If we want to
+> > > > apply access control policy to the memfd_secret() fds we are going =
+to
+> > > > need to attach some sort of LSM state to the inode, we might as wel=
+l
+> > > > use the mechanism we already have instead of inventing another one.
+> > >
+> > > Any further comments (on design or implementation)?
+> > >
+> > > Should I resend a non-rfc?
+> >
+> > I personally would really like to see a selinux-testsuite for this so
+> > that we can verify it works not just now but in the future too.  I
+> > think having a test would also help demonstrate the usefulness of the
+> > additional LSM controls.
+> >
+>
+> Any comments (especially from the mm people)?
+>
+> Draft SELinux testsuite patch:
+> https://github.com/SELinuxProject/selinux-testsuite/pull/80
+>
+> > > One naming question:
+> > > Should the anonymous inode class be named "[secretmem]", like
+> > > "[userfaultfd]", or "[secret_mem]" similar to "[io_uring]"?
+> >
+> > The pr_fmt() string in mm/secretmem.c uses "secretmem" so I would
+> > suggest sticking with "[secretmem]", although that is question best
+> > answered by the secretmem maintainer.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+I think this patchset has been posted for long enough with no
+comments, and no objections, that I can pull this into the
+selinux/next tree.  However, I'll give it until the end of this week
+just to give folks one last chance to comment.  If I don't hear any
+objections by the end of day on Friday, June 10th I'll go ahead and
+merge this.
 
--- 
-Kees Cook
+--=20
+paul-moore.com
