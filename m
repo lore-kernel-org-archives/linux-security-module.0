@@ -2,75 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA9CCCA482
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 16:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CAECCCA48D
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 19:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245484AbiFHQ12 (ORCPT
+        id S234606AbiFHTB6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jun 2022 12:27:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55764 "EHLO
+        Wed, 8 Jun 2022 15:01:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245461AbiFHQ11 (ORCPT
+        with ESMTP id S231942AbiFHTBr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jun 2022 12:27:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6104F4C7BE;
-        Wed,  8 Jun 2022 09:27:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0E1A3B828A4;
-        Wed,  8 Jun 2022 16:27:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BB8FEC34116;
-        Wed,  8 Jun 2022 16:27:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654705643;
-        bh=jnV8D6F6t5LRcnIMrtuP3YnUfQqo0fSVsHE2ZEkxPAo=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Z6Wz0kLZI2+ET5dq0GNVXDxpQsRPz6p41+Iywc9q5zUVHCKT7FiMbtSV5q8TgW2l+
-         chvgIMvFA8jeSzrEsytrJPJPFkeRFuwDqoaf+Cp/3UVqmdpxYCnwJ0kez9BuG9kNOX
-         /EyXi63ANSFkCBVXp18+qh4tXjcWoPZ/pi740I+9i8G/hdSVW+VoPC8+RDQFGM93Sf
-         7vpmPCyttwlGmSIUKJUC9o0gRLKeAfX4CRXtTmdffy0QvDvIYUxwsgjbirsloe0KSR
-         IhrA19qO4yl2WK/ZeZrIC6XTxREX6TMCGh9Fssqc1qZfktsQkEucsoh7rXdUJv2Up6
-         6/1ltHhnV+BDw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A3AECE737EF;
-        Wed,  8 Jun 2022 16:27:23 +0000 (UTC)
-Subject: Re: [GIT PULL] tpmdd updates for v5.19-rc2-v2
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220608111418.3081578-1-jarkko@kernel.org>
-References: <20220608111418.3081578-1-jarkko@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220608111418.3081578-1-jarkko@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/ tags/tpmdd-next-v5.19-rc2-v2
-X-PR-Tracked-Commit-Id: dda5384313a40ecbaafd8a9a80f47483255e4c4d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 32d380a7ef0254d65763408b955a5aa6848ea49c
-Message-Id: <165470564365.4500.8712069598214562693.pr-tracker-bot@kernel.org>
-Date:   Wed, 08 Jun 2022 16:27:23 +0000
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+        Wed, 8 Jun 2022 15:01:47 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C50E328E32;
+        Wed,  8 Jun 2022 12:01:45 -0700 (PDT)
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 6C2EB20BE66F;
+        Wed,  8 Jun 2022 12:01:44 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6C2EB20BE66F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1654714904;
+        bh=euocF9AshgwQ/HeYq7HRbOZg4Tix9Q9xWo3qeMMR15k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IHdxECteh9neNFSBOclwX21THPS3ic9bHRX+Ye+TCJMt7oOmkpb1d7ruCO4BkQsk6
+         IdaBTt5YNhaP61aEbp8MHywRIwm34JRjmW+3f0ervXfsfpXstn/ihu8Y9Jff2lNDf2
+         UND/dV8qiyo/UzBqmo5QKgaSCeQoGh0TJKjWZUOU=
+From:   Deven Bowers <deven.desai@linux.microsoft.com>
+To:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+        eparis@redhat.com, paul@paul-moore.com
+Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, linux-audit@redhat.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v8 06/17] uapi|audit: add ipe audit message definitions
+Date:   Wed,  8 Jun 2022 12:01:18 -0700
+Message-Id: <1654714889-26728-7-git-send-email-deven.desai@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1654714889-26728-1-git-send-email-deven.desai@linux.microsoft.com>
+References: <1654714889-26728-1-git-send-email-deven.desai@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Wed,  8 Jun 2022 14:14:17 +0300:
+Introduce new definitions to audit.h centered around trust
+decisions and policy loading and activation, as an extension
+of the mandatory access control fields.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/ tags/tpmdd-next-v5.19-rc2-v2
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/32d380a7ef0254d65763408b955a5aa6848ea49c
+---
+v2:
+  + Split evaluation loop, access control hooks,
+    and evaluation loop from policy parser and userspace
+    interface to pass mailing list character limit
 
-Thank you!
+v3:
+  + Move ipe_load_properties to patch 04.
+  + Remove useless 0-initializations
+  + Prefix extern variables with ipe_
+  + Remove kernel module parameters, as these are
+    exposed through sysctls.
+  + Add more prose to the IPE base config option
+    help text.
+  + Use GFP_KERNEL for audit_log_start.
+  + Remove unnecessary caching system.
+  + Remove comments from headers
+  + Use rcu_access_pointer for rcu-pointer null check
+  + Remove usage of reqprot; use prot only.
+  + Move policy load and activation audit event to 03/12
 
+v4:
+  + Remove sysctls in favor of securityfs nodes
+  + Re-add kernel module parameters, as these are now
+    exposed through securityfs.
+  + Refactor property audit loop to a separate function.
+
+v5:
+  + fix minor grammatical errors
+  + do not group rule by curly-brace in audit record,
+    reconstruct the exact rule.
+
+v6:
+  + No changes
+
+v7:
+  + Further split audit system patch into two separate patches; one
+    for include/uapi, and the usage of the new defines.
+
+  + Change audit records to MAC region (14XX) from
+    Integrity region (18XX), as IPE is an effectively a MAC system
+    around authenticity versus an extension to the integrity subsystem.
+
+  + Generalize the #defines to support the class of trust-based
+    access-control LSMs.
+
+v8:
+  + Change audit type:
+    + AUDIT_TRUST_RESULT -> AUDIT_IPE_ACCESS
+
+  + Remove audit types (replaced by existing types):
+    + AUDIT_TRUST_POLICY_LOAD
+    + AUDIT_TRUST_POLICY_ACTIVATE
+    + AUDIT_TRUST_STATUS
+---
+ include/uapi/linux/audit.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 7c1dc818b1d5..78b9a04d5b41 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -143,6 +143,7 @@
+ #define AUDIT_MAC_UNLBL_STCDEL	1417	/* NetLabel: del a static label */
+ #define AUDIT_MAC_CALIPSO_ADD	1418	/* NetLabel: add CALIPSO DOI entry */
+ #define AUDIT_MAC_CALIPSO_DEL	1419	/* NetLabel: del CALIPSO DOI entry */
++#define AUDIT_IPE_ACCESS	1420	/* IPE Denial or Grant */
+ 
+ #define AUDIT_FIRST_KERN_ANOM_MSG   1700
+ #define AUDIT_LAST_KERN_ANOM_MSG    1799
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.25.1
+
