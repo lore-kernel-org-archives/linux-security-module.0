@@ -2,139 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F861C43334
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 00:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D516C43334
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 05:33:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231255AbiFHAnU (ORCPT
+        id S232676AbiFHFdk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jun 2022 20:43:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33720 "EHLO
+        Wed, 8 Jun 2022 01:33:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1444025AbiFGXBh (ORCPT
+        with ESMTP id S234023AbiFHFdY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jun 2022 19:01:37 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DFF327CD43
-        for <linux-security-module@vger.kernel.org>; Tue,  7 Jun 2022 13:10:40 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id z9so3089357wmf.3
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Jun 2022 13:10:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PLD8bMvN51Cij4xdm7K//UbBPopjl8IHgVt7TPHocZY=;
-        b=i2kaYQ6j5Q8SFA4O5Y3knelSOyr95qvMEWqsg29kMrTB8PQiNOrW1HRsCY0v9REmUA
-         MNnKCXpGrmr8D7QexF3moz6L5iuMd8l0FTkbqhLRp9QxBQGVBe5LGE+DngOXpbQ4nww3
-         Wqj82xBn8bye0OsYOcmrN7MAU43F5L73GrSpnM9BEnREQ3yUW7+Y4RtVEJvawoK1TVmG
-         KDlhsp2EQmehusDg2ubUvtXKe4RhIwrl2QTJWx3/Ak+80wjoOQjkOY4jdj+2Ft54GtSK
-         m6l5rpqDgdvNoh0XKRLtkEBAokvaVGkzqAgRX8uGk/gxtUkMhKVTqvkK/W+JyI4JYSJY
-         L63A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PLD8bMvN51Cij4xdm7K//UbBPopjl8IHgVt7TPHocZY=;
-        b=jUMzAEstYBMlPefvy1JdeBf7GgckNAMG1MokunmdJOJbe9Exzby1yyKphYmyS+FyUT
-         HiR1sRfR+PU8NBAu+yaKVbuGR0ow4pA03UdY+dkdU5nanVjNLV1XrtG/laQBhvXoeOEb
-         MJen+/FxiTZfdllTXEKg29i4w1G248bIdVoRpeAdSimx64lnsGKn0Qn9ts7nUttrxjW6
-         MAM71boFn03OMx6poOVH24kaVmpDnf3vpi/QdUbwHF3XgBGzawIrF1zQyqEge39oqiGU
-         BCnFebDlumJ162Ws6RglukMwgmpGk4CKx9bHgRy1+kAknREAJc3mHelpmwycTC8MCe2q
-         plQw==
-X-Gm-Message-State: AOAM530iJ2unCOQSmBY1A6kKAAuEzv1B+KRmXgOGawKd3s2/YgTbrvHe
-        6ESjE0xv8cNRvsBImrzg9uYHPv0+T1iZpW2nHBsx
-X-Google-Smtp-Source: ABdhPJwyFkl5Wu37OltnZgyQnBX2dD7guis4PxRqva+UdiTXRjPsIzjBlv+N77/IeKSH93JcMAUzMvIjfEltCOeIf0g=
-X-Received: by 2002:a05:600c:414e:b0:397:55aa:ccc0 with SMTP id
- h14-20020a05600c414e00b0039755aaccc0mr61318457wmm.51.1654632638942; Tue, 07
- Jun 2022 13:10:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220125143304.34628-1-cgzones@googlemail.com>
- <CAHC9VhSdGeZ9x-0Hvk9mE=YMXbpk-tC5Ek+uGFGq5U+51qjChw@mail.gmail.com>
- <CAJ2a_DeAUcGTGm_fk8viVbeFXr6FLrJ-oLw-abwFND6Kv0u0gQ@mail.gmail.com>
- <CAHC9VhRRBrLVtvmbJSTZ7fOkD-8AN4iM0WRmeL4ND001d3viJg@mail.gmail.com> <CAJ2a_DeT6AG0jp4gTdsEy7nh=s6cLR7QCsYXAz2+3vsdRKxddg@mail.gmail.com>
-In-Reply-To: <CAJ2a_DeT6AG0jp4gTdsEy7nh=s6cLR7QCsYXAz2+3vsdRKxddg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 7 Jun 2022 16:10:28 -0400
-Message-ID: <CAHC9VhQXdNieG8_uWBfCCFSow6AVaxNBhB3GNU8ea1j5rjgZiA@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: create security context for memfd_secret inodes
-To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        Wed, 8 Jun 2022 01:33:24 -0400
+Received: from mail-m972.mail.163.com (mail-m972.mail.163.com [123.126.97.2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5ED0F2A8938;
+        Tue,  7 Jun 2022 20:00:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=55rL/
+        8+u+QDxUibK3Ff+8lesiAblAVPkbmExdrwsXfg=; b=dFYbY7AT6Lfit+gyHZSrT
+        WyOO1/iDneqIGtne0jlzyA7YRERDocaDDSDt68wdd04AzvAO0AE3PwslK0ZKzXWO
+        /OckntlXewtygVQ+LB2Gzku38QFkgB8qFZbQMxOkHOD6aNw9QY+OG5pfcWLkebUy
+        INUq/ct9M+BjKaoQpdCN14=
+Received: from localhost.localdomain (unknown [123.112.69.106])
+        by smtp2 (Coremail) with SMTP id GtxpCgC3KgCcEKBiolEjHg--.26179S4;
+        Wed, 08 Jun 2022 10:59:51 +0800 (CST)
+From:   Jianglei Nie <niejianglei2021@163.com>
+To:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-kernel@vger.kernel.org,
+        Jianglei Nie <niejianglei2021@163.com>
+Subject: [PATCH] security:trusted_tpm2: Fix memory leak in tpm2_key_encode()
+Date:   Wed,  8 Jun 2022 10:59:38 +0800
+Message-Id: <20220608025938.447908-1-niejianglei2021@163.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GtxpCgC3KgCcEKBiolEjHg--.26179S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7urWxGF17Wr1ftF1kZw4ktFb_yoW8Zr4fpF
+        ZxKF13XrZF9F9rAry3JF4SvF43C3s5GrW7Wwsru39rGasxJFsxtFy7Ar4Ygr17AFWSqw15
+        AFWDZFWUuFWqqr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRID7fUUUUU=
+X-Originating-IP: [123.112.69.106]
+X-CM-SenderInfo: xqlhyxxdqjzvrlsqjii6rwjhhfrp/1tbiPgcajFxBsmbZUwAAss
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 2, 2022 at 9:45 AM Christian G=C3=B6ttsche
-<cgzones@googlemail.com> wrote:
-> On Thu, 17 Feb 2022 at 23:32, Paul Moore <paul@paul-moore.com> wrote:
-> > On Thu, Feb 17, 2022 at 9:24 AM Christian G=C3=B6ttsche
-> > <cgzones@googlemail.com> wrote:
-> > > On Thu, 27 Jan 2022 at 00:01, Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Tue, Jan 25, 2022 at 9:33 AM Christian G=C3=B6ttsche
-> > > > <cgzones@googlemail.com> wrote:
-> > > > >
-> > > > > Create a security context for the inodes created by memfd_secret(=
-2) via
-> > > > > the LSM hook inode_init_security_anon to allow a fine grained con=
-trol.
-> > > > > As secret memory areas can affect hibernation and have a global s=
-hared
-> > > > > limit access control might be desirable.
-> > > > >
-> > > > > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> > > > > ---
-> > > > > An alternative way of checking memfd_secret(2) is to create a new=
- LSM
-> > > > > hook and e.g. for SELinux check via a new process class permissio=
-n.
-> > > > > ---
-> > > > >  mm/secretmem.c | 9 +++++++++
-> > > > >  1 file changed, 9 insertions(+)
-> > > >
-> > > > This seems reasonable to me, and I like the idea of labeling the an=
-on
-> > > > inode as opposed to creating a new set of LSM hooks.  If we want to
-> > > > apply access control policy to the memfd_secret() fds we are going =
-to
-> > > > need to attach some sort of LSM state to the inode, we might as wel=
-l
-> > > > use the mechanism we already have instead of inventing another one.
-> > >
-> > > Any further comments (on design or implementation)?
-> > >
-> > > Should I resend a non-rfc?
-> >
-> > I personally would really like to see a selinux-testsuite for this so
-> > that we can verify it works not just now but in the future too.  I
-> > think having a test would also help demonstrate the usefulness of the
-> > additional LSM controls.
-> >
->
-> Any comments (especially from the mm people)?
->
-> Draft SELinux testsuite patch:
-> https://github.com/SELinuxProject/selinux-testsuite/pull/80
->
-> > > One naming question:
-> > > Should the anonymous inode class be named "[secretmem]", like
-> > > "[userfaultfd]", or "[secret_mem]" similar to "[io_uring]"?
-> >
-> > The pr_fmt() string in mm/secretmem.c uses "secretmem" so I would
-> > suggest sticking with "[secretmem]", although that is question best
-> > answered by the secretmem maintainer.
+tpm2_key_encode() allocates a memory chunk from scratch with kmalloc(),
+but it is never freed, which leads to a memory leak. Free the memory
+chunk with kfree() in the return path.
 
-I think this patchset has been posted for long enough with no
-comments, and no objections, that I can pull this into the
-selinux/next tree.  However, I'll give it until the end of this week
-just to give folks one last chance to comment.  If I don't hear any
-objections by the end of day on Friday, June 10th I'll go ahead and
-merge this.
+Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
+---
+ security/keys/trusted-keys/trusted_tpm2.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---=20
-paul-moore.com
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 0165da386289..dc9efd6c8b14 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -57,8 +57,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 		unsigned char bool[3], *w = bool;
+ 		/* tag 0 is emptyAuth */
+ 		w = asn1_encode_boolean(w, w + sizeof(bool), true);
+-		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
++		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode")) {
++			kfree(scratch);
+ 			return PTR_ERR(w);
++		}
+ 		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
+ 	}
+ 
+@@ -69,8 +71,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	 * trigger, so if it does there's something nefarious going on
+ 	 */
+ 	if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
+-		 "BUG: scratch buffer is too small"))
++		 "BUG: scratch buffer is too small")) {
++		kfree(scratch);
+ 		return -EINVAL;
++	}
+ 
+ 	work = asn1_encode_integer(work, end_work, options->keyhandle);
+ 	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
+@@ -79,8 +83,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	work1 = payload->blob;
+ 	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
+ 				     scratch, work - scratch);
+-	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
++	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed")) {
++		kfree(scratch);
+ 		return PTR_ERR(work1);
++	}
+ 
+ 	return work1 - payload->blob;
+ }
+-- 
+2.25.1
+
