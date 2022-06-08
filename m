@@ -2,58 +2,86 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D51C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 09:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 524F3C43334
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 11:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235581AbiFHJ7z (ORCPT
+        id S237887AbiFHLJD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jun 2022 05:59:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49868 "EHLO
+        Wed, 8 Jun 2022 07:09:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235694AbiFHJ7l (ORCPT
+        with ESMTP id S237780AbiFHLIt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jun 2022 05:59:41 -0400
-X-Greylist: delayed 2398 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 08 Jun 2022 02:33:27 PDT
-Received: from mail.puregrowthonline.pl (mail.puregrowthonline.pl [51.38.124.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF81114AAA
-        for <linux-security-module@vger.kernel.org>; Wed,  8 Jun 2022 02:33:22 -0700 (PDT)
-Received: by mail.puregrowthonline.pl (Postfix, from userid 1002)
-        id 9C9C0A2938; Wed,  8 Jun 2022 08:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=puregrowthonline.pl;
-        s=mail; t=1654676115;
-        bh=CSKXLMgcdpWkXuTgJn5+jsCVobtU9JEF4vCnS5z6McM=;
-        h=Date:From:To:Subject:From;
-        b=rAGxsGTivPlcAJUrSALGfgWjeSTV3fmChzEGBiHQggn2SDgNZxOT76kpaekVCd1Ve
-         w90fh2ziXfV4TSGP2e4cBP1gR9wXU2+CuFrzQwcbta69wiJxZkpa+I7KqrzDifqUXe
-         1cM93YP6Bqezv68RKTbpFGKOl449QjTNkInPAFDcGyHe1l9pNk2P+OGytUV4+FQqO+
-         Xmlg06uDuNJUbqbtR3hl8Qv/EEDBCi6SZTTJ3O5kcUhZ/jzZuo/2d5Qpy7tJuy0/AZ
-         GcH/OYpOIcx9haNcUBfnsUpHeT14z7/XILQODAbvvloxccqwzj3a48YPJZWh+bcb1s
-         OkH6LohAGM9gQ==
-Received: by mail.puregrowthonline.pl for <linux-security-module@vger.kernel.org>; Wed,  8 Jun 2022 08:15:09 GMT
-Message-ID: <20220608064500-0.1.41.cywx.0.fmdlp97dmx@puregrowthonline.pl>
-Date:   Wed,  8 Jun 2022 08:15:09 GMT
-From:   "Wiktor Nurek" <wiktor.nurek@puregrowthonline.pl>
-To:     <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?Nap=C5=82yw_Klient=C3=B3w_ze_strony?=
-X-Mailer: mail.puregrowthonline.pl
-MIME-Version: 1.0
+        Wed, 8 Jun 2022 07:08:49 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DAA61B2168;
+        Wed,  8 Jun 2022 04:08:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 881CFCE1D6F;
+        Wed,  8 Jun 2022 11:08:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 933C9C34116;
+        Wed,  8 Jun 2022 11:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654686524;
+        bh=bnCVPgqGZK5fBMahxZ7HHsO5nJ1Jj7QarAUy/aXfRws=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=c+C0Bs4PJEMrAs5KNJQYYQB770dgj5XpSjU3AsiD0N1+NCQIf7Dx3qcpzRjMACHv/
+         aOXyvsLwpF3LVq9qVa1qXsEviv4RldtK1Fgvi9zYYeOdE3Hx6OIsxjugkLWuntRNJ8
+         0bw3E2glXXDor1q8252nHJqrqhrzAMwyfgy0ge940nqs/HH0/33UBZRjuBfK0dVVJW
+         DHGJBBu2PoM9xlXFCtRpE3HtIgny7SmKTISZZpacNcP1scv6xmtHIXfdUElkSJ3Yy6
+         bEwqV6TZom+9LX6mZhiUkcBKNGByasRpl9UmEHtlZyUMh3B4Wjo1nsC0dAal3gDwlO
+         8PbA7fVvkb/rw==
+Message-ID: <830f58cbcae3275310fe8b132c8f7cb12842e0f4.camel@kernel.org>
+Subject: Re: [GIT PULL] tpmdd updates for v5.19-rc2
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Date:   Wed, 08 Jun 2022 14:06:48 +0300
+In-Reply-To: <20220608092646.3074700-1-jarkko@kernel.org>
+References: <20220608092646.3074700-1-jarkko@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.2 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+On Wed, 2022-06-08 at 12:26 +0300, Jarkko Sakkinen wrote:
+> The following changes since commit 9886142c7a2226439c1e3f7d9b69f9c7094c3e=
+f6:
+>=20
+> =C2=A0 Merge tag 'input-for-v5.19-rc1' of git://git.kernel.org/pub/scm/li=
+nux/kernel/git/dtor/input (2022-06-07 15:00:29 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+> =C2=A0 git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.g=
+it/ tags/tpmdd-next-v5.19-rc2
+>=20
+> for you to fetch changes up to 967a4b757b51164a3dc3307234fcb48b7be2745b:
+>=20
+> =C2=A0 KEYS: trusted: tpm2: Fix migratable logic (2022-06-08 12:13:26 +03=
+00)
+>=20
+> ----------------------------------------------------------------
+> A bug fix for migratable (whether or not a key is tied to the TPM chip
+> soldered to the machine) handling for TPM2 trusted keys.
+>=20
+> ----------------------------------------------------------------
+> david.safford@gmail.com=C2=A0(1):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 KEYS: trusted: tpm2: Fix migratable logic
+>=20
+> =C2=A0security/keys/trusted-keys/trusted_tpm2.c | 4 ++--
+> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
 
-chcia=C5=82bym poinformowa=C4=87 Pa=C5=84stwa o mo=C5=BCliwo=C5=9Bci pozy=
-skania nowych zlece=C5=84 ze strony www.
+Ugh, from-address in malformed. I'll need to redo the PR.
 
-Widzimy zainteresowanie potencjalnych Klient=C3=B3w Pa=C5=84stwa firm=C4=85=
-, dlatego ch=C4=99tnie pomo=C5=BCemy Pa=C5=84stwu dotrze=C4=87 z ofert=C4=
-=85 do wi=C4=99kszego grona odbiorc=C3=B3w poprzez efektywne metody pozyc=
-jonowania strony w Google.
+BR, Jarkko
 
-Czy m=C3=B3g=C5=82bym liczy=C4=87 na kontakt zwrotny?
-
-
-Pozdrawiam serdecznie,
-Wiktor Nurek
