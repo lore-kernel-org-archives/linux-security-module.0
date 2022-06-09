@@ -2,124 +2,139 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD701C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jun 2022 14:29:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE17CCA473
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jun 2022 22:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243442AbiFIO3R (ORCPT
+        id S1345607AbiFIWT0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jun 2022 10:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58440 "EHLO
+        Thu, 9 Jun 2022 18:19:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344109AbiFIO2y (ORCPT
+        with ESMTP id S1345597AbiFIWTW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jun 2022 10:28:54 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF5D51D0581;
-        Thu,  9 Jun 2022 07:28:51 -0700 (PDT)
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 259DkBCQ007837;
-        Thu, 9 Jun 2022 14:28:08 GMT
+        Thu, 9 Jun 2022 18:19:22 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B7C457BC;
+        Thu,  9 Jun 2022 15:19:20 -0700 (PDT)
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 259LqV4d021237;
+        Thu, 9 Jun 2022 22:18:52 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=BMK2RcYGfDwfWKAQf1dsbtB2ffMcLJIkRzaY8eo1+0Y=;
- b=tQ4eAZPxCwgOGTTjHqXQB8Yqj/4yWjWxh4r/upUVch/2svZszgy51HfDIJQ/Wjyf9x2C
- kNX5PEQghTZDE3n+rYNzD8syHpGKgVyw/kXJby0uF/w1L3ZoSvg7f97YPOe0ucI0m+JW
- UR7nQNhDqwxU7TFZFIkwj2mW3iLX0Ekjwk9jM1dXUUYsyIQP4nCcxqt3w6NL4hI3ukQp
- up7E4uisSy203+gnkPetvg6ch9aYUamUZyHjv+QBUJK1z2jqcfBoTMuzOuWzTV+NWgrA
- oD02kSx3WXvb88+SEdtAO7VtPoM+M8FrO3wnLUeUnCZwrfGhD9w1i5s/vgjH10t2k307 mw== 
+ bh=5HFels0siO9Bs1KgO2JhJGYpJaNAG8PeqPH7KCpQZ8I=;
+ b=iAzYl3HGbDPjGXTh3OP2TMtL8+E00E4alPACUjc12mHEx1F0g4Wav7UU13WA58TpKEN/
+ v6svbQGfFE5DAdCcgmlNFzKBE+Eg000u0UbngUGaRd/c6ooO0uKyt8bL4tWzFKvEH80x
+ w3pe1l2FoKqhiHzfDe0FNnF7eEOGiyQ//lcjABbhVvN3CyO8iJL8P/m9rSQR2RFK4Jqf
+ ZvD55hb1u8ldwCuT+DqIv4ppav4SCUQUf3IjuBlPaM7mQLxC4GlYpocdXVXrVmdKSxG1
+ Io++Oyg5UxHMfTpYFdaQswQqtjpC6/7M3jgumv2ROuP29D2kSIu3MfU8vvZRNRU/0hjV RA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gkj1j8xv2-1
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3gks5cgctx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jun 2022 14:28:08 +0000
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 259DlpN2013121;
-        Thu, 9 Jun 2022 14:28:08 GMT
+        Thu, 09 Jun 2022 22:18:51 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 259MD8WL005156;
+        Thu, 9 Jun 2022 22:18:51 GMT
 Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gkj1j8xu8-1
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3gks5cgct7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jun 2022 14:28:07 +0000
+        Thu, 09 Jun 2022 22:18:51 +0000
 Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 259E6Mvu005858;
-        Thu, 9 Jun 2022 14:28:05 GMT
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 259M6fwY027968;
+        Thu, 9 Jun 2022 22:18:49 GMT
 Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma04ams.nl.ibm.com with ESMTP id 3gfy19f2bc-1
+        by ppma04ams.nl.ibm.com with ESMTP id 3gfy19ff4p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jun 2022 14:28:05 +0000
+        Thu, 09 Jun 2022 22:18:49 +0000
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 259ES1xG13762924
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 259MIkPq9175434
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 Jun 2022 14:28:01 GMT
+        Thu, 9 Jun 2022 22:18:46 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AD30C4C044;
-        Thu,  9 Jun 2022 14:28:01 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id BEFFC4C044;
+        Thu,  9 Jun 2022 22:18:46 +0000 (GMT)
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 969014C040;
-        Thu,  9 Jun 2022 14:27:58 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id BD1FF4C040;
+        Thu,  9 Jun 2022 22:18:44 +0000 (GMT)
 Received: from sig-9-65-64-6.ibm.com (unknown [9.65.64.6])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Jun 2022 14:27:58 +0000 (GMT)
-Message-ID: <686b3d50a03d189f965e90d47043f9a515eb4199.camel@linux.ibm.com>
-Subject: Re: [PATCH v12 01/26] securityfs: rework dentry creation
+        Thu,  9 Jun 2022 22:18:44 +0000 (GMT)
+Message-ID: <5db507747b2be22499e7357ce65f1800b36e1de4.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 2/4] kexec, KEYS: make the code in
+ bzImage64_verify_sig generic
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <brauner@kernel.org>,
-        James Morris <jmorris@namei.org>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, christian.brauner@ubuntu.com,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        jpenumak@redhat.com, John Johansen <john.johansen@canonical.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Micah Morton <mortonm@chromium.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Date:   Thu, 09 Jun 2022 10:27:58 -0400
-In-Reply-To: <20220510204151.GA12935@mail.hallyn.com>
-References: <20220420140633.753772-1-stefanb@linux.ibm.com>
-         <20220420140633.753772-2-stefanb@linux.ibm.com>
-         <20220509195414.GA30894@mail.hallyn.com>
-         <20220510102525.hlt2rm3k3hg5r6gg@wittgenstein>
-         <20220510141025.GA7290@mail.hallyn.com>
-         <20220510155107.srxifzuqfstvet2f@wittgenstein>
-         <20220510204151.GA12935@mail.hallyn.com>
+To:     Coiby Xu <coxu@redhat.com>, kexec@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Michal Suchanek <msuchanek@suse.de>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Chun-Yi Lee <jlee@suse.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Date:   Thu, 09 Jun 2022 18:18:44 -0400
+In-Reply-To: <20220512070123.29486-3-coxu@redhat.com>
+References: <20220512070123.29486-1-coxu@redhat.com>
+         <20220512070123.29486-3-coxu@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: FdkeeX_OpzDnD7xynR3IFonJRL0P0Ffm
-X-Proofpoint-GUID: efRawx1twZkB0tKMkSiF2xy8adpEXW3S
+X-Proofpoint-ORIG-GUID: 7wDBaP3m-VYgn90ZlORpX0j8Rd3YzlsY
+X-Proofpoint-GUID: BG6JqiSb9BIi2R873tnMtsXFSjA4dDlA
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-09_10,2022-06-09_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- mlxlogscore=491 clxscore=1011 mlxscore=0 adultscore=0 bulkscore=0
- spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2204290000 definitions=main-2206090058
+ definitions=2022-06-09_15,2022-06-09_02,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 clxscore=1011 adultscore=0 mlxscore=0 mlxlogscore=781
+ impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206090082
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi James,
+Hi Coiby,
 
-On Tue, 2022-05-10 at 15:41 -0500, Serge E. Hallyn wrote:
+On Thu, 2022-05-12 at 15:01 +0800, Coiby Xu wrote:
+> commit 278311e417be ("kexec, KEYS: Make use of platform keyring for
+> signature verify") adds platform keyring support on x86 kexec but not
+> arm64.
+> 
+> The code in bzImage64_verify_sig makes use of system keyrings including
+> .buitin_trusted_keys, .secondary_trusted_keys and .platform keyring to
+> verify signed kernel image as PE file. Make it generic so both x86_64
+> and arm64 can use it.
 
-<snip>
+^uses the keys on the .builtin_trusted_keys, .machine, if configured
+and enabled, .secondary_trusted_keys, also if configured, and .platform
+keyrings to verify the signed kernel image as PE file. 
 
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> 
+> @@ -202,6 +203,12 @@ int arch_kexec_apply_relocations(struct purgatory_info *pi,
+>  				 const Elf_Shdr *relsec,
+>  				 const Elf_Shdr *symtab);
+>  int arch_kimage_file_post_load_cleanup(struct kimage *image);
+> +#ifdef CONFIG_KEXEC_SIG
+> +#ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
+> +int kexec_kernel_verify_pe_sig(const char *kernel,
+> +				    unsigned long kernel_len);
 
-b4 properly applies Serge's tag.  Any chance you could take this patch
-and, probably, 2/26 via the security tree?
+Please join this line with the previous one.
+
+> +#endif
+> +#endif
+>  int arch_kexec_locate_mem_hole(struct kexec_buf *kbuf);
+>  
+>  extern int kexec_add_buffer(struct kexec_buf *kbuf);
 
 thanks,
 
 Mimi
-
-
 
