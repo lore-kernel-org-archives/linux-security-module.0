@@ -2,139 +2,199 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE17CCA473
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jun 2022 22:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF9DC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jun 2022 23:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345607AbiFIWT0 (ORCPT
+        id S237254AbiFIXB7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jun 2022 18:19:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51010 "EHLO
+        Thu, 9 Jun 2022 19:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345597AbiFIWTW (ORCPT
+        with ESMTP id S230371AbiFIXB7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jun 2022 18:19:22 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B7C457BC;
-        Thu,  9 Jun 2022 15:19:20 -0700 (PDT)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 259LqV4d021237;
-        Thu, 9 Jun 2022 22:18:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=5HFels0siO9Bs1KgO2JhJGYpJaNAG8PeqPH7KCpQZ8I=;
- b=iAzYl3HGbDPjGXTh3OP2TMtL8+E00E4alPACUjc12mHEx1F0g4Wav7UU13WA58TpKEN/
- v6svbQGfFE5DAdCcgmlNFzKBE+Eg000u0UbngUGaRd/c6ooO0uKyt8bL4tWzFKvEH80x
- w3pe1l2FoKqhiHzfDe0FNnF7eEOGiyQ//lcjABbhVvN3CyO8iJL8P/m9rSQR2RFK4Jqf
- ZvD55hb1u8ldwCuT+DqIv4ppav4SCUQUf3IjuBlPaM7mQLxC4GlYpocdXVXrVmdKSxG1
- Io++Oyg5UxHMfTpYFdaQswQqtjpC6/7M3jgumv2ROuP29D2kSIu3MfU8vvZRNRU/0hjV RA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3gks5cgctx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jun 2022 22:18:51 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 259MD8WL005156;
-        Thu, 9 Jun 2022 22:18:51 GMT
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3gks5cgct7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jun 2022 22:18:51 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 259M6fwY027968;
-        Thu, 9 Jun 2022 22:18:49 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma04ams.nl.ibm.com with ESMTP id 3gfy19ff4p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jun 2022 22:18:49 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 259MIkPq9175434
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 Jun 2022 22:18:46 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BEFFC4C044;
-        Thu,  9 Jun 2022 22:18:46 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BD1FF4C040;
-        Thu,  9 Jun 2022 22:18:44 +0000 (GMT)
-Received: from sig-9-65-64-6.ibm.com (unknown [9.65.64.6])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Jun 2022 22:18:44 +0000 (GMT)
-Message-ID: <5db507747b2be22499e7357ce65f1800b36e1de4.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 2/4] kexec, KEYS: make the code in
- bzImage64_verify_sig generic
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Coiby Xu <coxu@redhat.com>, kexec@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Michal Suchanek <msuchanek@suse.de>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Chun-Yi Lee <jlee@suse.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Date:   Thu, 09 Jun 2022 18:18:44 -0400
-In-Reply-To: <20220512070123.29486-3-coxu@redhat.com>
-References: <20220512070123.29486-1-coxu@redhat.com>
-         <20220512070123.29486-3-coxu@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 7wDBaP3m-VYgn90ZlORpX0j8Rd3YzlsY
-X-Proofpoint-GUID: BG6JqiSb9BIi2R873tnMtsXFSjA4dDlA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-09_15,2022-06-09_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 clxscore=1011 adultscore=0 mlxscore=0 mlxlogscore=781
- impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2204290000 definitions=main-2206090082
+        Thu, 9 Jun 2022 19:01:59 -0400
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5203F3A79E6
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Jun 2022 16:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1654815716; bh=3o5SNPwTygO2LFJJxsuqLI+/nYBK+jKK5VhgaHDFflQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=MB0GbsJpA9f+Go2z+Gg1OD7CbkwIhsEW6qVqdyv8KJQMR1TiJtdhm5PQpoa3viYnzwQ+FGEjOrmi8pt7qSAcbRGwsEso3cMrL0CMsiKuCUGoW7lBBadsxTyn7PVX5iASlMkCmIxRcKyHAe1F1pFogUWo/JmCCSawKl2sSwe37mfdyGwAyANbI6hvV7JvcSesDjDXA12Kp8p0dUNcP6sYO3dzpVXCYZaO4NXlk4j0gCKhG24Mu3Ef1J9nN6MXcv5U2LO/MiDut1OzKACGnllDWO5NX+5IuEddVGx+xcb5SvWJ4BqmlrcXViWwiunxuolPgsPIH2wX3qso4/x0jNIAYA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1654815716; bh=ImdRA8lD7GaElGNVKGeK5gfGoIW5FujHb1sXef9nKX2=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=qbEDwjx3KO1UvaJyjxGwEvce1IR7kPma+s/2eL+393BK/zuWQdf524oG3/Jfowj8kJ26YIqpBpnYAp6AS0/neZuPG/zL6sJKQljpKlc6NtEZzTGwaTGe+gfiLIYDIVNzloNJDe0uqssnc0jHIMInfqMAUnP8+f9Ply/VkTqhu2Nyq0i7BVUJOGagCE/Q+6Kb6fMO+pU2C4zyhhGwC2BkBHnX4yQ8fC+QBHqtDbh77z4W5r1HiYI2xkwoLBRpMgL8fiCOrwUtK0fMJmWi/m4yN+gUAd0VGhQAU+iPLLRuxM58VDJ7exxjGnoJmkthTlI2/OjBR1Zf1AtFUkZHd9DHiQ==
+X-YMail-OSG: iUOlzhAVM1l_HU.psXHgLSlUCS46SpbDejCxG0EL.cHrwH.MCXY0ci8HCty5TY0
+ B22PWoVxqs0lMz0wAR5iH.ASwNmxW0Btp7WkRX727UWQM6_FsLlzt9QpwvOG17E3QdIpcEmK7siQ
+ 3USPrkBvjA_yKX4Yni4gCa.u4TwTHNYTnz5MgJ6wSPynmcsT6dce2ipmezBp0qlyFYwvqFuqx3EA
+ 8u44SycOl84w4Tvi4gaEU983uJhA9ujsZGJkSUXfzajSII1z.egsIvzirXUPpQO7G27YTg9BgcPU
+ Ap3LGnUn1zuKK9ec6L2S0B2LlNWAQLg1WQ21Ov7ZOyPebGecn4bgUfggiNW70yRzWtEbuvNWRVf3
+ 4YmA6k.HXLUhlfiOkr1iW9mRNmRZf6dWNXSn6Za2J5p2sLc2D2HDzjiBESZ8RGXg953X6emS2orr
+ fuBSwynmF821CM0rpbA8IfbB_qI8tF7vRWu7ujD0f75VuTjiJNYwdrk8n42NR4G8vbqW68lEWUJe
+ JoIbFCg5ny.9kk1fx7FExuJ.811eJz5DMHzuIuf1svBK62fuT6.GmMMNYGQfjCdwI..mUJq9K1yE
+ s4Bpyh_8u_FB4lHVx2DMIMQsbX3K8iwihDd1YockhMKOofzhuxdLtdaAV_NKZ8yF9ScXkJVG2tLb
+ uOFwSPf4svEL8gYz7v6MbBbgkKrgOiU3uHtmoNW7asJwMbwGwKAnHEveOVS9680JylY6fDQscfw.
+ X_hTW88lhZwbUFBkvGDeEHAxefoQyiFT2A0ZgQyTVuRBsnf9fojiyj.9i5RrwU3p1mfPF_TUdkdC
+ pafeS_zmYEV5AKjKCR8gyte0mr1SZtDCujmdynYanH62XzvSyy53Ga8tgt5zEF0NdwHxeSBflvjF
+ eXd8Yhjkfbrg2bEdajgNsFC8ioSYRORKvkpNojQfTjB6vbujE4KPawb7791bSyDX_M8DTU5cVL70
+ poIEmlnlSLjPrDz1XocyLru6gCKyY95E7QY0ZHYZ_jqIJCvbXhjRbr.thxAHd3fTzFmMMA13tulg
+ 85BMxnoHvGotQc3aZiY7pqKZtl1XNRwiwRBA3bxzP6ddSAkoTkmxwbP5hj4oriDXKU5PS5ztxBvN
+ zfOL8HzXQE5sk9Ix14FXG1MlkMmyzRLy9Y_o.rcBv8J.nJvLM3uyywB2LSprApLVv505lEx0p.Zm
+ hsK3e5VRy4qLTvVf7RzdwJoz.iT2gNKZBybY3GGrDngWJXy0bpm2pTgmc7UXwFmiTAz4T9PKrtzQ
+ jjx1k8YoRU72Robar0WOyAR1JqT3qZsWETWWFh5mCV0IIqe9RRsZmFz48CcrhGwpxe.VWxu4lqKk
+ j0dSDNjQr06IRdVoouYgM2H_7gzsgv1cBO1rd.y322xLTz.ea1eJTB_zBL6j5AjBHYBbXm4zNs.X
+ tr590AFYbxb9OJ6krDGvyH3AtlmvgHwoK2xoWwxWwgyzi4tLqYsdOgq1RokOJHafK9lPaPn_Feib
+ wDeyZ.EUFQ2MrGOhkIVL4EBA1JE4VI_Kj_OZEV2W6.GrKdf0Mm_FAvyCqaWhL_9wqBll.zl3P81i
+ .s9OyZfWphRUBDywAKUMXee8kRk_HEHrMcshNyR_lkRvcklSwOnzuAbnABaPvokqHmqRRnRGlzEp
+ xOvG1ex3sUDjV47D7ow4Pcq4V5EOhNUkyOD2_puGBOtm9BE9Q6hj5.LsvM8ayz9HC9z2Pb23UOQG
+ bpHmGZPz83S_Zslm9WquGOoET.c9Y0yrBJ35A9b53OBolk41IG00PLzYPRAPPNrBpVIBc69ZSQDD
+ 0Dhwyqwh236rDJslpCRG5ljFFE_wKC3hsqyMHDHaQZf5UstTH7zi5P.4EnW9iKI_IhIDkXFXwb2n
+ 7ictLf8ahGIanqXR1wrF41MIo2yvmf5clU1WNXFokD0Ey57ZrqhzSyFp.o68A28GUGbmgPcv2HMz
+ atWJtyq9CvukSyvVJOT4llXWYgGo140aVnqzAqhkoVh9CbPedlEOv5LtQhLZXL8CVIljlwtFMzMQ
+ ydH5e6c7F7GyWf2Oh6UO.WhyOqNtkIVQLN0y5OOS4KHPc3W4A0H1UqzbnCvxZTwavtTALhO_jnQw
+ WUuFWFFAXFdsWp8DlTtf2F5mt8FKKFae3bn7erBDVIdv2rbmAhhBd3_LuEg_sQ8IYQEt5kl1ayTh
+ TFBIyqT6sWyzTDenvXqC5g4zQ0u2xaxwty6LoqpHPTJy6Dm8LDesuk3CPjQerLM7keCm5nNRNdXX
+ WdEm4qrz8lhUJU39UWW7r.Z_wCS6f1uGgm3kiOjTJYSfbIGKHy6Xip4qOiVK7RXjiwT5.spzjVah
+ .dKP8NCJSbrp.Xp1ushv5Ju7UY4QnC_FmSmaYSRLtyAki9L2EVa0Qxz08jzHofBYY4ESaJHEFya1
+ 1
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Thu, 9 Jun 2022 23:01:56 +0000
+Received: by hermes--canary-production-gq1-54945cc758-xkjn5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0e6e0ce8663761707dd7260b164b0053;
+          Thu, 09 Jun 2022 23:01:52 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH v36 01/33] integrity: disassociate ima_filter_rule from security_audit_rule
+Date:   Thu,  9 Jun 2022 16:01:14 -0700
+Message-Id: <20220609230146.319210-2-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220609230146.319210-1-casey@schaufler-ca.com>
+References: <20220609230146.319210-1-casey@schaufler-ca.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Coiby,
+Create real functions for the ima_filter_rule interfaces.
+These replace #defines that obscure the reuse of audit
+interfaces. The new functions are put in security.c because
+they use security module registered hooks that we don't
+want exported.
 
-On Thu, 2022-05-12 at 15:01 +0800, Coiby Xu wrote:
-> commit 278311e417be ("kexec, KEYS: Make use of platform keyring for
-> signature verify") adds platform keyring support on x86 kexec but not
-> arm64.
-> 
-> The code in bzImage64_verify_sig makes use of system keyrings including
-> .buitin_trusted_keys, .secondary_trusted_keys and .platform keyring to
-> verify signed kernel image as PE file. Make it generic so both x86_64
-> and arm64 can use it.
+Acked-by: Paul Moore <paul@paul-moore.com>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org
+---
+ include/linux/security.h     | 24 ++++++++++++++++++++++++
+ security/integrity/ima/ima.h | 26 --------------------------
+ security/security.c          | 21 +++++++++++++++++++++
+ 3 files changed, 45 insertions(+), 26 deletions(-)
 
-^uses the keys on the .builtin_trusted_keys, .machine, if configured
-and enabled, .secondary_trusted_keys, also if configured, and .platform
-keyrings to verify the signed kernel image as PE file. 
-
-> 
-> @@ -202,6 +203,12 @@ int arch_kexec_apply_relocations(struct purgatory_info *pi,
->  				 const Elf_Shdr *relsec,
->  				 const Elf_Shdr *symtab);
->  int arch_kimage_file_post_load_cleanup(struct kimage *image);
-> +#ifdef CONFIG_KEXEC_SIG
-> +#ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
-> +int kexec_kernel_verify_pe_sig(const char *kernel,
-> +				    unsigned long kernel_len);
-
-Please join this line with the previous one.
-
-> +#endif
-> +#endif
->  int arch_kexec_locate_mem_hole(struct kexec_buf *kbuf);
->  
->  extern int kexec_add_buffer(struct kexec_buf *kbuf);
-
-thanks,
-
-Mimi
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 7fc4e9f49f54..5260dbe9ef0d 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1919,6 +1919,30 @@ static inline void security_audit_rule_free(void *lsmrule)
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_AUDIT */
+ 
++#if defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY)
++int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
++int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
++void ima_filter_rule_free(void *lsmrule);
++
++#else
++
++static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
++					   void **lsmrule)
++{
++	return 0;
++}
++
++static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
++					    void *lsmrule)
++{
++	return 0;
++}
++
++static inline void ima_filter_rule_free(void *lsmrule)
++{ }
++
++#endif /* defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY) */
++
+ #ifdef CONFIG_SECURITYFS
+ 
+ extern struct dentry *securityfs_create_file(const char *name, umode_t mode,
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index be965a8715e4..1b5d70ac2dc9 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -418,32 +418,6 @@ static inline void ima_free_modsig(struct modsig *modsig)
+ }
+ #endif /* CONFIG_IMA_APPRAISE_MODSIG */
+ 
+-/* LSM based policy rules require audit */
+-#ifdef CONFIG_IMA_LSM_RULES
+-
+-#define ima_filter_rule_init security_audit_rule_init
+-#define ima_filter_rule_free security_audit_rule_free
+-#define ima_filter_rule_match security_audit_rule_match
+-
+-#else
+-
+-static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+-				       void **lsmrule)
+-{
+-	return -EINVAL;
+-}
+-
+-static inline void ima_filter_rule_free(void *lsmrule)
+-{
+-}
+-
+-static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+-					void *lsmrule)
+-{
+-	return -EINVAL;
+-}
+-#endif /* CONFIG_IMA_LSM_RULES */
+-
+ #ifdef	CONFIG_IMA_READ_POLICY
+ #define	POLICY_FILE_FLAGS	(S_IWUSR | S_IRUSR)
+ #else
+diff --git a/security/security.c b/security/security.c
+index 188b8f782220..8b176769dd86 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2580,6 +2580,27 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+ }
+ #endif /* CONFIG_AUDIT */
+ 
++#ifdef CONFIG_IMA_LSM_RULES
++/*
++ * The integrity subsystem uses the same hooks as
++ * the audit subsystem.
++ */
++int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
++{
++	return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
++}
++
++void ima_filter_rule_free(void *lsmrule)
++{
++	call_void_hook(audit_rule_free, lsmrule);
++}
++
++int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
++{
++	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
++}
++#endif /* CONFIG_IMA_LSM_RULES */
++
+ #ifdef CONFIG_BPF_SYSCALL
+ int security_bpf(int cmd, union bpf_attr *attr, unsigned int size)
+ {
+-- 
+2.35.1
 
