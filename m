@@ -2,69 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB66CCA47E
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jun 2022 22:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C10C43334
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jun 2022 05:23:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232833AbiFHW2N (ORCPT
+        id S238178AbiFIFXS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jun 2022 18:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42584 "EHLO
+        Thu, 9 Jun 2022 01:23:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231161AbiFHW2J (ORCPT
+        with ESMTP id S235383AbiFIFXR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jun 2022 18:28:09 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5821142ED0;
-        Wed,  8 Jun 2022 15:28:08 -0700 (PDT)
-Received: by linux.microsoft.com (Postfix, from userid 1033)
-        id E908320BE66A; Wed,  8 Jun 2022 15:28:07 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E908320BE66A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1654727287;
-        bh=MF2Y1CBDjZevU8fKZUp5kTEpEkoKnGareWA0GYzqeq8=;
+        Thu, 9 Jun 2022 01:23:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 507C3E0BF;
+        Wed,  8 Jun 2022 22:23:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A7A7961D1F;
+        Thu,  9 Jun 2022 05:23:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8052C34114;
+        Thu,  9 Jun 2022 05:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654752195;
+        bh=XHZdFhnq6qjYdg5fXbtYu1DYUiXJ7YdR40VwYr8Qwhs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rTkhDmYdY7rpVbQEn9L9mKl43RlPXNjWiPuTNIqmZzVD1Iy9c2bksxjgfYkkouLUq
-         UPAyhyoSZskG+YgEI73GZWcdXpE59XsE7Wc7P1fKK/FdeMciH5m3kdKbrOjuvWo3TL
-         GZqDCdh02EtKnOhBTJsUGaZi51u2R0kWzglRF03M=
-Date:   Wed, 8 Jun 2022 15:28:07 -0700
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, paul@paul-moore.com, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, linux-audit@redhat.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v8 10/17] block|security: add LSM blob to block_device
-Message-ID: <20220608222807.GA7650@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1654714889-26728-1-git-send-email-deven.desai@linux.microsoft.com>
- <1654714889-26728-11-git-send-email-deven.desai@linux.microsoft.com>
- <14754d16-75ae-cc92-cfc5-adce0628d9d9@schaufler-ca.com>
+        b=S4jNXjOa+bXfsBQgDssKkfORXh7KV4Fv2Qbc1fIUpHJ9pwlQ6mdX+H2LjTz2f+uIU
+         l2a5Dvp03xSxHTGoi0XvVX3+rpg+JNkhEWbTM3hsK8tahLym+j1QiV/FxQZoRJ/luc
+         CCaMTsS/9Guys5kITQ7QS7h1kmAXR6bJcTJn9LHJIhYMyL7fc+AmbrxNqItuGDSPsA
+         m4lf6G+itblmu7MwvAWKxZzOF7YF8Em86E2V6X/X5HpAAhRK1XEbwgDGIza7r7DDsv
+         fzEpaigSTtdKaowngUCwPEirA8QeCLXzXVb3MrzNYaN6BykbvjdEU4iP4JL6kT6h4c
+         LoMbeCq+Sl+kQ==
+Date:   Thu, 9 Jun 2022 08:21:17 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jianglei Nie <niejianglei2021@163.com>
+Cc:     jejb@linux.ibm.com, zohar@linux.ibm.com, dhowells@redhat.com,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] KEYS: trusted: Fix memory leak in tpm2_key_encode()
+Message-ID: <YqGDTVa64aknbldb@iki.fi>
+References: <20220608131732.550234-1-niejianglei2021@163.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <14754d16-75ae-cc92-cfc5-adce0628d9d9@schaufler-ca.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20220608131732.550234-1-niejianglei2021@163.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 08, 2022 at 01:07:39PM -0700, Casey Schaufler wrote:
-> On 6/8/2022 12:01 PM, Deven Bowers wrote:
-> >block_device structures can have valuable security properties,
-> >based on how they are created, and what subsystem manages them.
-> >
-> >By adding LSM storage to this structure, this data can be accessed
-> >at the LSM layer.
-> >
-> >Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+On Wed, Jun 08, 2022 at 09:17:32PM +0800, Jianglei Nie wrote:
+> tpm2_key_encode() allocates a memory chunk from scratch with kmalloc(),
+> but it is never freed, which leads to a memory leak. Free the memory
+> chunk with kfree() in the return path.
 > 
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
+> ---
+
+You should write down the changelog ere. No idea what changed
+from the previous version.
+
+>  security/keys/trusted-keys/trusted_tpm2.c | 23 +++++++++++++++++------
+>  1 file changed, 17 insertions(+), 6 deletions(-)
 > 
-> Not everyone is going to appreciate the infrastructure allocation
-> of the block_device security blob, but I do.
+> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> index 0165da386289..8b7ab22950d1 100644
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -32,6 +32,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  			   struct trusted_key_options *options,
+>  			   u8 *src, u32 len)
+>  {
+> +	int err;
 
-Thanks Casey.
+Declare as the last local variable (reverse christmas tree order).
 
+Also, I'd use "int ret" since in other functions that is used.
+
+>  	const int SCRATCH_SIZE = PAGE_SIZE;
+>  	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+>  	u8 *work = scratch, *work1;
+> @@ -57,8 +58,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  		unsigned char bool[3], *w = bool;
+>  		/* tag 0 is emptyAuth */
+>  		w = asn1_encode_boolean(w, w + sizeof(bool), true);
+> -		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
+> -			return PTR_ERR(w);
+> +		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode")) {
+> +			err = PTR_ERR(w);
+> +			goto out;
+> +		}
+>  		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
+>  	}
+>  
+> @@ -69,8 +72,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  	 * trigger, so if it does there's something nefarious going on
+>  	 */
+>  	if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
+> -		 "BUG: scratch buffer is too small"))
+> -		return -EINVAL;
+> +		 "BUG: scratch buffer is too small")) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+>  
+>  	work = asn1_encode_integer(work, end_work, options->keyhandle);
+>  	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
+> @@ -79,10 +84,16 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  	work1 = payload->blob;
+>  	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
+>  				     scratch, work - scratch);
+> -	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
+> -		return PTR_ERR(work1);
+> +	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed")) {
+> +		err = -EINVAL;
+> +		goto out;
+
+Why you are changing the return value from PTR_ERR(work1
+to -EINVAL?
+
+> +	}
+> +	kfree(scratch);
+>  
+>  	return work1 - payload->blob;
+> +
+> +out:
+
+Nit:
+
+err:
+
+It's only used for the error path.
+
+> +	return err;
+>  }
+>  
+>  struct tpm2_key_context {
+> -- 
+> 2.25.1
+> 
+
+BR, Jarkko
