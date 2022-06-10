@@ -2,52 +2,53 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F566C43334
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jun 2022 00:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30776C43334
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jun 2022 02:39:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239357AbiFJAzu (ORCPT
+        id S238404AbiFJCjb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jun 2022 20:55:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42410 "EHLO
+        Thu, 9 Jun 2022 22:39:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239344AbiFJAzu (ORCPT
+        with ESMTP id S237302AbiFJCja (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jun 2022 20:55:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68742506DB
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Jun 2022 17:55:49 -0700 (PDT)
+        Thu, 9 Jun 2022 22:39:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DA7F168362
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Jun 2022 19:39:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 05BE7615D2
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 00:55:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6317DC34115
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 00:55:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8434361973
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 02:39:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3270C34115
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 02:39:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654822548;
-        bh=tPPcB6qg2ZDplGPe5r34eX0A1FBrYHTtZQ+pNqpv4cA=;
+        s=k20201202; t=1654828767;
+        bh=rsmpjQKyhTk7pqGkO4fYTQg8y7bY511N7uz04exIUZI=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rN5vKZT7vMn0D59pBjQMR6mer6VECxTn1hYov3KEh5snnj1z7CwMg13lMNf9o7IUA
-         lF9I8W0oA15/RX9rX7hvXCCv6D4Gl/uuANjLnuDTJt36EPbFmvkXNUfMUw3eIyRTqQ
-         KPez9+0cjELSSt72zYM5K+D/Lp0VG4PW3Z/U4PGvGDcTkxetZJyTohPfopkrwDUQJ5
-         874N91QIlhffz1T9+T+DvffzZLX8R8lnFhW/tw8vQlh8uWmCcaMqLiAXD2pvRPgWVq
-         zEzffesV+lvotIb7YSb5M59646RksweW82+DEAsqhuW5kQVqkgpxB8TMt0GCCplgPT
-         mm5MjSG1/tlAA==
-Received: by mail-yb1-f174.google.com with SMTP id r3so10386067ybr.6
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Jun 2022 17:55:48 -0700 (PDT)
-X-Gm-Message-State: AOAM533f63oyOTIhnAc6dWY14Q8izR/Ucau1+mnUgjz2OVQ+21b0ES+1
-        BK+YI3gw2pMHunr4sB3kVo7lIEkoWJQaFmBYA9lKVg==
-X-Google-Smtp-Source: ABdhPJyUNbhO6WzB5L/SFE1CmuOEdZh1ZSad2If7CbByV6A9zwXVh1jSuEqwGjwBpyNA794D0lNgL1YDOJF2KTfy2ZM=
-X-Received: by 2002:a5b:10b:0:b0:654:74c1:61cf with SMTP id
- 11-20020a5b010b000000b0065474c161cfmr43467397ybx.42.1654822547386; Thu, 09
- Jun 2022 17:55:47 -0700 (PDT)
+        b=a9n/XmZYq7xcguH7yVhiZiLJyfmqkVyvsJ+7fC9AwJlZ4F7U66kEmZ7kgSXyybTYV
+         n7xbHu8mxN3sqjzvVZOe57wTbsJKVBY175ACD6Dzsc9EVcatyTwFnWjSJq8tSzX06L
+         Efjy/yQ6HPWtgsGaSGL8h/dfqtUblx+4mT9p3itJODqH+pxkbb1ml5DxaYkTQRJ3iK
+         e11n1xa65CbZckq+6oDBJfADxRrndU1wOwJfPqxQgMvCqAe73BimLt21tpqI/jKxZt
+         S/7sAfDsgcK8G7aB53vWqv/8HJpnpv99n4WZ+EyXem9hAMLm1gM+fXSzKKaEwAjB8G
+         NY/p3MNVzPiLA==
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-30fdbe7467cso224385917b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Jun 2022 19:39:27 -0700 (PDT)
+X-Gm-Message-State: AOAM532g5nW8bSJVTRHXBJyGF7wlwvme7kKfAuelXiNO+Bb9HK59hA4b
+        H9Js8GGYNkvlGpm7ZYK+i3kBaavnyOOGMtJ+Ey1oHw==
+X-Google-Smtp-Source: ABdhPJyjn/3sT5tAZubi103CMBTjOKQAmXzbIkVasMHwP55lWHnixOhFNhO1ozS/oK6gxaVpaoEMSUoq7o/F1DOycc4=
+X-Received: by 2002:a81:b0b:0:b0:2e5:dcc1:3d49 with SMTP id
+ 11-20020a810b0b000000b002e5dcc13d49mr45112515ywl.210.1654828766880; Thu, 09
+ Jun 2022 19:39:26 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220609234601.2026362-1-kpsingh@kernel.org> <CAADnVQJSijXmDG0C+U101ahgOYTmHEuyBu_=CS87rJ9GchFQyA@mail.gmail.com>
-In-Reply-To: <CAADnVQJSijXmDG0C+U101ahgOYTmHEuyBu_=CS87rJ9GchFQyA@mail.gmail.com>
+ <CACYkzJ4L=SxggPxrqEC1yzv-DzM1-w0ZPo-E1HPE-8ob-r0UTw@mail.gmail.com>
+In-Reply-To: <CACYkzJ4L=SxggPxrqEC1yzv-DzM1-w0ZPo-E1HPE-8ob-r0UTw@mail.gmail.com>
 From:   KP Singh <kpsingh@kernel.org>
-Date:   Fri, 10 Jun 2022 02:55:36 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4L=SxggPxrqEC1yzv-DzM1-w0ZPo-E1HPE-8ob-r0UTw@mail.gmail.com>
-Message-ID: <CACYkzJ4L=SxggPxrqEC1yzv-DzM1-w0ZPo-E1HPE-8ob-r0UTw@mail.gmail.com>
+Date:   Fri, 10 Jun 2022 04:39:15 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4TDp1=-h0+1z+dvjs5eEGjQhMhrvi=4Yck3wp8dVD0hA@mail.gmail.com>
+Message-ID: <CACYkzJ4TDp1=-h0+1z+dvjs5eEGjQhMhrvi=4Yck3wp8dVD0hA@mail.gmail.com>
 Subject: Re: [PATCH linux-next] security: Fix side effects of default BPF LSM hooks
 To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Cc:     LSM List <linux-security-module@vger.kernel.org>,
@@ -62,69 +63,93 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 10, 2022 at 2:44 AM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+On Fri, Jun 10, 2022 at 2:55 AM KP Singh <kpsingh@kernel.org> wrote:
 >
-> On Thu, Jun 9, 2022 at 4:46 PM KP Singh <kpsingh@kernel.org> wrote:
+> On Fri, Jun 10, 2022 at 2:44 AM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
 > >
-> > BPF LSM currently has a default implementation for each LSM hooks which
-> > return a default value defined in include/linux/lsm_hook_defs.h. These
-> > hooks should have no functional effect when there is no BPF program
-> > loaded to implement the hook logic.
+> > On Thu, Jun 9, 2022 at 4:46 PM KP Singh <kpsingh@kernel.org> wrote:
+> > >
+> > > BPF LSM currently has a default implementation for each LSM hooks which
+> > > return a default value defined in include/linux/lsm_hook_defs.h. These
+> > > hooks should have no functional effect when there is no BPF program
+> > > loaded to implement the hook logic.
+> > >
+> > > Some LSM hooks treat any return value of the hook as policy decision
+> > > which results in destructive side effects.
+> > >
+> > > This issue and the effects were reported to me by Jann Horn:
+> > >
+> > > For a system configured with CONFIG_BPF_LSM and the bpf lsm is enabled
+> > > (via lsm= or CONFIG_LSM) an unprivileged user can vandalize the system
+> > > by removing the security.capability xattrs from binaries, preventing
+> > > them from working normally:
+> > >
+> > > $ getfattr -d -m- /bin/ping
+> > > getfattr: Removing leading '/' from absolute path names
+> > > security.capability=0sAQAAAgAgAAAAAAAAAAAAAAAAAAA=
+> > >
+> > > $ setfattr -x security.capability /bin/ping
+> > > $ getfattr -d -m- /bin/ping
+> > > $ ping 1.2.3.4
+> > > $ ping google.com
+> > > $ echo $?
+> > > 2
+> > >
+> > > The above reproduces with:
+> > >
+> > > cat /sys/kernel/security/lsm
+> > > capability,apparmor,bpf
 > >
-> > Some LSM hooks treat any return value of the hook as policy decision
-> > which results in destructive side effects.
+> > Why is this bpf related?
+> > apparmor doesn't have that hook,
+> > while capability returns 0.
+> > So bpf's default==0 doesn't change the situation.
 > >
-> > This issue and the effects were reported to me by Jann Horn:
-> >
-> > For a system configured with CONFIG_BPF_LSM and the bpf lsm is enabled
-> > (via lsm= or CONFIG_LSM) an unprivileged user can vandalize the system
-> > by removing the security.capability xattrs from binaries, preventing
-> > them from working normally:
-> >
-> > $ getfattr -d -m- /bin/ping
-> > getfattr: Removing leading '/' from absolute path names
-> > security.capability=0sAQAAAgAgAAAAAAAAAAAAAAAAAAA=
-> >
-> > $ setfattr -x security.capability /bin/ping
-> > $ getfattr -d -m- /bin/ping
-> > $ ping 1.2.3.4
-> > $ ping google.com
-> > $ echo $?
-> > 2
-> >
-> > The above reproduces with:
-> >
+> > Just
 > > cat /sys/kernel/security/lsm
-> > capability,apparmor,bpf
+> > capability
+> >
+> > would reproduce the issue?
+
+Just to clarify, when one just has:
+
+cat /sys/kernel/security/lsm
+capability
+
+call_int_hook would return the IRC (i.e 1) which would lead the code
+to the capability check. (i.e. cap_inode_removexattr)
+
+ret = call_int_hook(inode_removexattr, 1, mnt_userns, dentry, name);
+if (ret == 1)
+    ret = cap_inode_removexattr(mnt_userns, dentry, name);
+
+cap_inode_removexattr restricts setting security.* xattrs to only CAP_SYS_ADMIN.
+
+Now, since BPF's hook returns 0 here, the capability check is skipped.
+
+But then again, this is just one of the hooks which has the issue.
+
+
+
+
+> > what am I missing?
 >
-> Why is this bpf related?
-> apparmor doesn't have that hook,
-> while capability returns 0.
-> So bpf's default==0 doesn't change the situation.
+> capability does not define the inode_removexattr LSM hook:
 >
-> Just
-> cat /sys/kernel/security/lsm
-> capability
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/commoncap.c#n1449
 >
-> would reproduce the issue?
-> what am I missing?
-
-capability does not define the inode_removexattr LSM hook:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/commoncap.c#n1449
-
-It's only when the return value of the hook is 1, it checks for
-cap_inode_removexattr.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/security.c#n1408
-
-Only 3 LSMs define the hook (bpf, smack and selinux):
-
-fgrep -R LSM_HOOK_INIT *  | grep inode_removexattr
-selinux/hooks.c: LSM_HOOK_INIT(inode_removexattr, selinux_inode_removexattr),
-smack/smack_lsm.c: LSM_HOOK_INIT(inode_removexattr, smack_inode_removexattr),
-
-The BPF LSM default hooks intend to provide no side-effects when the
-LSM is enabled and
-for the hooks that the patch updates, there is a side-effect.
+> It's only when the return value of the hook is 1, it checks for
+> cap_inode_removexattr.
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/security.c#n1408
+>
+> Only 3 LSMs define the hook (bpf, smack and selinux):
+>
+> fgrep -R LSM_HOOK_INIT *  | grep inode_removexattr
+> selinux/hooks.c: LSM_HOOK_INIT(inode_removexattr, selinux_inode_removexattr),
+> smack/smack_lsm.c: LSM_HOOK_INIT(inode_removexattr, smack_inode_removexattr),
+>
+> The BPF LSM default hooks intend to provide no side-effects when the
+> LSM is enabled and
+> for the hooks that the patch updates, there is a side-effect.
