@@ -2,108 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BF4C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jun 2022 20:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D243C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jun 2022 21:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348069AbiFJULl (ORCPT
+        id S1350794AbiFJVE4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jun 2022 16:11:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50162 "EHLO
+        Fri, 10 Jun 2022 17:04:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347206AbiFJULk (ORCPT
+        with ESMTP id S1348020AbiFJVEv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jun 2022 16:11:40 -0400
-Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E15C12D1F8
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 13:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1654891899; bh=//Lgu6FNCj1OdZR2z+ecuBjS0y8kGKR6qF1xrMgUGG0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=SB2dukGKQSL2kZ1VwAokjUScLXWVfF0/a1NTU3Rlwh+gVNsjXLJLqWqdwzw3Qyl8yo4rcqip/jforjoV3v/xhzBxFPiQeCXG91BtozAO3HxJpaWGIrj9SUijx/p0jJ1J34V0+PBwxosleYpr+3D/x+N9rTYqRtx5Rm7oDIXfnISNgJVl7V/SGQWLuZzy4mDpBMCPWB4AiS1H6LB8deKFsRU0fyNHIWTlTmlJnumCng305G2aI1B71HLEC0XrqDryvmPtFiHShPraTDVoERx5LdqsrlC/RhqaO4UON8QpI2CG7U7Et/ndCbm8YVb/0vvFuNFJV5fWmLKFSYg4d2WqOg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1654891899; bh=cZsuKSfvppVleNqLP2Re8xVsq8A3iTDLhOaNltDn863=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Kd6nvGlcJl+A4aWnG9nXxzQ+44ZhMXwbx0Az/EEbRkNIBde/myqfJCbJo6cnGTPeIQru6jmKLWKdcqzydZEFvzUjVqs+gMLhamEpVlenMv/kcm3KZDp8vRuUf0bDFKwu0NWGA3axzYQ3nAaN01wSgU6iTjQLDEMRX5JFT0b0NOqHkHyXzINxfpQNtPomhu6SHrgkXXP/2F8qUqxvoZ4Q1MQVvB4RyJXvM9cW0dCOsgdMeUiXV1ZPNv6As67J8O8313fSCrdPnDmBkOpZ9NXqVWmLBLPGUAZV9ZItsD+MQHYMFfifSwKlifBaFntGTUxzljCo57eWTd6fHxgq9dXwNQ==
-X-YMail-OSG: 6PWn3moVM1mGZX.HN4U9CaPheWTrVSDOnsMa5qtfw4iDsW_yd.YO15lm0gkdLzn
- ATaQ46Ww4Ma1AyvzUBaaVm9l_VLvnJU7BwVb1.F3y3EV.6Zd.HqQ83Kr1r5PtYat822xMMsikOCi
- 0syVpfPMKPA4CL0qTDeuExHW8oM_RQw0Wny1.cRWLIktvWEXWeVciDRGdZrkFU_El912XBJ_tZHh
- i0GhEsLDEHjKHve4DLg8elWrIBvxhReLAarfLCCQ81jA6ePOETNGGfEKuxmQy.muwHhBH_xNV0BX
- xJWk62agDBMIpcM8ZJ.1M.bhK.kP2xyX7IWRFgwHT_WM9..nT1KX57yvdUtB3k1XErGtXKCoTYIF
- .wPONkUBZ.KGnYFz2DT9H2.gWHs_fG_gw1OewcI.zUC3ev_ScSj6ZyXg25YkJvSKA3uwupbUom0k
- zeZyFnBdPC1YaaE4MvN89hWr9aAm.7VqtXnWk0cdUxXZVSchFuvKKUOgSFZo1UauSWLi8H2_FwqX
- nJ4MCKbvBXmjPdNCLi2UDd8pUZdP6l36u7lF3VKYPn.AqNCMNmm7ZAOqJCqZ1S4tUUT6Gb1KDS78
- iqKPeC1j9mnU7LXQpuQomPspiIGhZuBfB6CW6e0rYh5FwjdOwR6VnCA9wlJHZvCS5p7YvhRqt.id
- TWZTtuvSMVg4S_5e1rzjZpgsTvd5S2gX5OfgJDtW7XHEaS9jkJ69Tq7VwoFuzo.Tu1gO9nYuvPcp
- EiNVObrgafESd1pm9fI1rsMpvf7hoQIGrRbxomJlSKZ_l.lEIG0I6gbF9bRErIlWUEZ1cMvPSnmM
- iXl4QIGKgmXzM4EOBnMgS9v.6p4DVnCm5mxItLLYlBrWEIHUEpKFc81D5jZdb30BfCGiiNcxVeA9
- fsefuPdY6G3cpTUDxW04YdqsmEmy0qdkOHME1yLst0SMqE9Lpd_K.K26dlkqpdHJS3gy3tead84g
- rm5V7LGRCpQtVAFtpPKcMfwrlKIc.8F9Z0nKz2q8qslGJAzhLmjebgKX9laHskDMueqsaaOBciiL
- jKpluiNrazfPriHyCP.ZbZA23BjpKkdtSHZMLT3olI9mHJvbFeuJO7l1UN_K.f0RNBIEKA4SdDII
- RoskakHEUVVIiMerGa_FbnPprstXOG4gYL7mIMyI2IwphADJ.ZqqQUuXk80d4wMI4d72N8ALY1WS
- PAXFhNin8aLqvTxj0hTI49Vn7B82SpkJI5ob9_VaS0wXJ.zLhIXrrtsxlBORqMN743xZiBpco2SJ
- JOEEUHvB74S3rXjR3FSGhlhzDnQiKMOO1o2h9rQNsLWwzEkrmLbBXGigThNBJleppDpN7vvETZav
- RuebfJ8ovMIVM4b1aDYSujc8bCynIs9azyp3.ku8Dwi3YrgcAvk85I84Mbuv.aAurJ.UoP2g22Qe
- 97IEZZWCS1cD7B..OdkGRwB9C.aT2lDylOeb7l.POu3piEMW1Kh79C2gOgBzGCyNrAUAqBNuxX_x
- 4kUVq6XPK7ZEtTApbyD.unl252fko9b1JpV2hK3iPnqkJxxkKdcSW6seWHauC_p5KG6CO1r_QfsP
- OrXd0w_t.UinGhSbVVPWrixVg0vOmdqTKk0ZnmahTrtHwMuOkrOY3jROhP89H1vJr1oWIU0VAMh.
- baiDkoerEPq2dnfLarvMZiDgMWp36ltkIUIv6p_hs2i8tZmxkUaWqsarYCa12bzLkKGvmqSwzqV5
- tsVdHktOPuU7qYd1YnWztDCmK__5.V5.IOlk_iep86RwP5tx1HjkH9hez9UmuJ_c.CbnVES54nQ5
- zTfmIF82C.TJogfcEanTpTlLG9UG9UqQmm6wlmO.Q4TGbrPvpt6n_sMQkTU9JRrk4H7jBae99YTr
- 8CncT6UlZwRUpq4JZWDQ0KtddyJAysVAQAS25Ekx4G_nuVVBoTqN3K5ypNQsRCv24AfLl_5sXjcI
- MQfKwD39G9ps2SqJf5IAXdorRn9FlLlo3HERlgwcRwoap0XCXZfQ2oaW5Mw28DwzKJcrhhcYiRc9
- Dztn1D3oG9xRkuEzPs_1OoHD736L0SObBRHyk_csIxTVHTUgUtcJUy_czXnEk_CGr.jtzh0ai8sM
- Zfc5RCC5IRPUQWxdgMAFWdtk1o_9UCsKkW5wokfCVVU.l7Dbk2FfwPsryxvwm5qv3jN7LYMkasP9
- 5witT69filpjfvtEIX66Sdx59khFvq_y2cXry1icp2T_3AjUoD82BbIUVEwL6kOxb17k_2_YIi2Z
- Q2fOz7zpFwsK0Vm7C99vqVao87k3J4AHz5_9A8hG.wCNk8LXyDxllZMCaIHE3oLrzhXTiOmuJw5g
- fuERPsxGs8LuKXYqxlW5xEl7va.GI58Kr
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Jun 2022 20:11:39 +0000
-Received: by hermes--canary-production-gq1-54945cc758-2bxrx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 080d6361399dc7c2051a9e68bd9c139a;
-          Fri, 10 Jun 2022 20:11:37 +0000 (UTC)
-Message-ID: <f98c7555-50ba-d505-b3bf-c3c8c5b2d290@schaufler-ca.com>
-Date:   Fri, 10 Jun 2022 13:11:36 -0700
+        Fri, 10 Jun 2022 17:04:51 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26C7423BF8
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 14:04:50 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id q140so264314pgq.6
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 14:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SiLCrAL53VdiLKOXfLPLunTsPwo2FINx12xxld+VcU4=;
+        b=bFQVTO6kUj6C9eZqt3ASwH3yDJCd8h4+qHqP1I+aPVsKQAS8QoEkX82JRGy9ooQDC2
+         MR8htAsandvUIN3h90FZvL04oRvRshPFFbdKJ1A29ojwxreeu/mqSzweWjeNRGmGx7xK
+         Vs/O8fPBaQaYpevC/OBloET2GC9ejXJDZpiNRsmSGIxlYWF9RIQEu1Gf6dmrhl7I17o0
+         RB5a0RHCLeFhu3WcZSBQtNm0A6dj5SnN2ZdpmFi2FYl4qCF/bRV7JG8Su4HSu+8+sCZH
+         2eeIIsuAeOG5yJwagorVIKfbV+8tCYLs/V4UtEdtzjxCBKK+8VbpEUb2vw187EbIm1YC
+         t1Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SiLCrAL53VdiLKOXfLPLunTsPwo2FINx12xxld+VcU4=;
+        b=IDd0UdJhFz0ULXZoG6z1Cz7yBu2ozU04hesWTVuVZyu3kJXWuYT8DDaI7liYsooo6k
+         IfGkUYisiJtv69pSY52LWkaGBtv8ow1lTL6vrtxfGA+i9Ge9ufPTDlOr3hlFoCc3ae/U
+         l4+q8St2qWhFGWzQTQasiU9Jwrxv0QGP/nzANxZdQ2um47NNjQaMxehlYXdTMUjhhD45
+         Ttq+Hddz9S8CgGYwdYWQJ44phsfmtHkoFJNtux3aC6s5jY+cue3WxLlsTfMsbvh7LxfR
+         fixgtZZnKzDQl8a09LwupIGBpWMlh2FOCjKUoiHS1oe849356tjYxKI+NVi1xm05Uyf9
+         dKpg==
+X-Gm-Message-State: AOAM530aeV/nxdYi/rEXCdBG+5WHM7RtE+UzieOKdVKzkKAj5ZAk4Ch7
+        gmdIVdWOpRA5dG1CnrT3no7i21oeM62VeVwNLxtJ
+X-Google-Smtp-Source: ABdhPJwNdRdVzr3QMEopSyl6AGpCfiZgxW6A683tU/g0pcw8EZpJjU6kRe3OUp1IJyJkmTxwo6rWP/C3gyWE88D/3OI=
+X-Received: by 2002:a62:868c:0:b0:51b:bd62:4c87 with SMTP id
+ x134-20020a62868c000000b0051bbd624c87mr47036124pfd.83.1654895089650; Fri, 10
+ Jun 2022 14:04:49 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH -next] smack: Remove the redundant lsm_inode_alloc
-Content-Language: en-US
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20220610092307.30311-1-xiujianfeng@huawei.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20220610092307.30311-1-xiujianfeng@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20280 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20220609230146.319210-1-casey@schaufler-ca.com> <20220609230146.319210-27-casey@schaufler-ca.com>
+In-Reply-To: <20220609230146.319210-27-casey@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 10 Jun 2022 17:04:38 -0400
+Message-ID: <CAHC9VhT-qo=N4k7fWvZNELNLTGDWuE4kDXEOYwMBgZGRQu8f7w@mail.gmail.com>
+Subject: Re: [PATCH v36 26/33] Audit: Allow multiple records in an audit_buffer
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/10/2022 2:23 AM, Xiu Jianfeng wrote:
-> It's not possible for inode->i_security to be NULL here because every
-> inode will call inode_init_always and then lsm_inode_alloc to alloc
-> memory for inode->security, this is what LSM infrastructure management
-> do, so remove this redundant code.
+On Thu, Jun 9, 2022 at 7:15 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-
-I've taken this for smack-next. Thank you.
-
+> Replace the single skb pointer in an audit_buffer with
+> a list of skb pointers. Add the audit_stamp information
+> to the audit_buffer as there's no guarantee that there
+> will be an audit_context containing the stamp associated
+> with the event. At audit_log_end() time create auxiliary
+> records (none are currently defined) as have been added
+> to the list. Functions are created to manage the skb list
+> in the audit_buffer.
+>
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->   security/smack/smack_lsm.c | 7 -------
->   1 file changed, 7 deletions(-)
+>  kernel/audit.c | 113 +++++++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 90 insertions(+), 23 deletions(-)
+
+...
+
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 6b6c089512f7..987740374dfa 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -1784,8 +1789,12 @@ static struct audit_buffer *audit_buffer_alloc(struct audit_context *ctx,
+>         ab->skb = nlmsg_new(AUDIT_BUFSIZ, gfp_mask);
+>         if (!ab->skb)
+>                 goto err;
+> +
+> +       skb_queue_head_init(&ab->skb_list);
+> +       skb_queue_tail(&ab->skb_list, ab->skb);
+> +
+>         if (!nlmsg_put(ab->skb, 0, 0, type, 0, 0))
+> -               goto err;
+> +               kfree_skb(ab->skb);
 >
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 6207762dbdb1..001831458fa2 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -766,13 +766,6 @@ static int smack_set_mnt_opts(struct super_block *sb,
->   	if (sp->smk_flags & SMK_SB_INITIALIZED)
->   		return 0;
->   
-> -	if (inode->i_security == NULL) {
-> -		int rc = lsm_inode_alloc(inode);
-> -
-> -		if (rc)
-> -			return rc;
-> -	}
-> -
->   	if (!smack_privileged(CAP_MAC_ADMIN)) {
->   		/*
->   		 * Unprivileged mounts don't get to specify Smack values.
+>         ab->ctx = ctx;
+>         ab->gfp_mask = gfp_mask;
+
+I didn't notice this in v35, but if the nlmsg_put() fails I think you
+need to preserve the 'goto err;' since the skb hasn't been properly
+initialized.  The good news is that I don't think you need to worry
+about the 'kfree_skb(ab->skb);' in the error handler as it's already
+been placed on the audit_buffer:skb_list list and will be freed when
+audit_buffer_alloc()'s error handling code calls audit_buffer_free().
+
+-- 
+paul-moore.com
