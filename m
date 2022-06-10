@@ -2,92 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA95C43334
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jun 2022 19:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BF4C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jun 2022 20:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346894AbiFJTA3 (ORCPT
+        id S1348069AbiFJULl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jun 2022 15:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48108 "EHLO
+        Fri, 10 Jun 2022 16:11:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345414AbiFJTA1 (ORCPT
+        with ESMTP id S1347206AbiFJULk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jun 2022 15:00:27 -0400
-Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D102C27AD
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 12:00:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1654887624; bh=CoHFBlqP5GXHtUUHwPpf8gQLqlpn60neJTGXZxwigKA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qVypmjzldOE4h9POK4gUbJiaat5QsqyXwdX2RKZVEqurlRFw/ROsC/JBxx+Tz5l8n/Nl99+js6KQLvvZJ2RE/HvlsUp03EDfag2q8byc63qmaYrIVNGMXf7OdGsQGVpJTQ02QCaIEGYRgjYplBW42c9vMLi6vZfXWVKWww4uL6anHtkoXfsWVpYCyZ8u8MkLFBQVk9abpv8rkH4gpCIQOLM+RiODS0Iks4gjS93Qd+1Pfa9cphmC3N87OtKQ3xlZuuMc5kVs9r95JhZieBagnGuFGvdSQTZTen1wZLDZn/5wQyQlLi1ZdbIRrnOyb4r1yqC0Nd4RP6GIW+OsLPoSiA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1654887624; bh=MQwMgz8gP1L6+pq7ni+hvxp72eFJL09Ejr9u8PNch9n=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=LZGBv1cXc2C3LmYx2BHev74mQipnNvBxm9ML63irp01m+yzDckHbC5cQ7Y8MfpB2RFcKiqUOfpde6pJjmtw9aWf+kegC4ElraQwSuSsFTjTIXceMCjQml4dUfvEPh/P/ypEEcicYUkoxddnfMbIm67wFiVOFqroKFkctsiFg66O3lHLECIqz3unoNvadv+d3BWX93HwXdFqu9iHXmDQm/JBU1OoWHyht1MSZa9g4MrrhHp5cSP2edaYsKCdkmnztca4sr86t3O+k7Fd18mjC/+FQQ2pf5AMBx8NZoRxIRiQ4tW70I4obqQ+ICho/GSsb6XMOwOtY4dpQ1FIBRhqkkw==
-X-YMail-OSG: 4GKpoBQVM1n0rCZqisqJ5zDEkiOU00YJqbZOsw8oQiR6u9E9l2usSrQYSXOkrGe
- CbggZlFTriZlHvxIbr_Hag9anyR2iL11Eif2doEqDsLYrYiDyisg6uu0wLM.KcPNFwJeRIaZVNxR
- S2Q5_pIiZ_W7CROD8OE5lneU8c8LRc5LAHZpqOqS3i1kSqqstqpj7WQODQccr_5LNiDS8XKv06F_
- 5kCQQesP3LI114JkNpRvxsx5ziqrpmzsDVymzF3KoMSLXZZQRp.FfS1v35uFnDJaNZqEkIYYhEPI
- FAD5X3uKtpkEzqyAEuVVK5MlDchk75uoL.h5lj2_pLhHxPyr2dHoRQCQExC_X6atqq66PwfclHaL
- IneYvBSVwUsmGVPurknO5JWDILRQzhjG_F8jKmcTwmh3UQafIUZWG_VYQ3ZXg_arrFvkoKCLnlVZ
- TSUsmvj6WF3zvWsJpPrkc6RiOBEEFG2vrPv.B6iCf4U7Oslomk501kwNlathbgV3UkbdOQBQi8.F
- J4k0FQ1oSSNFttfj9Lie3Xw7k6xQneB2faIc5eBaX86d5kXZC2a5xvDzxMqTwyLscaUlhSMdGubX
- kxPJ5arSZ8W1PXoT5kAy.CkKdNIVqjZIMIUItxHrvcZiqRIKsTYyEH2_a7ojfWoOxWDLiPk.7RcU
- 0nBTnFmyy4OO_kVNEhf4vQqS3ew.xE30GOWKqu5iutypG0BiRrUcDrqfiHwlpt_VMUsIcbW9m_Vy
- MR_7VyRLAnkTGsrHOVyh2CClCJCsW3Qt52PzDc2ffd8PKeKRm.6Hv3_rJut4TSS9UJadRoZgc6GI
- ukfHvltEFtBSSFLp_fCgaqga.JVEFyMMwXJWrbD5.BpLvSmgZN5NYGPZgIQkeNx8utNzHxoSQIlD
- aUBHO0tBZU31eak81UEPw78AATn62cgxb_cQ4JIFG36dHBploFMXHxXUFeAMgJ5SvNxQs8Q3jb7n
- uLPS7DhSJLkOeYsAbmkO0oWMjx_qFxMXW6ApntCWO._atLX55Heol9.V8.r3AmxqJjbNuuzUNt2y
- RhC2pdVmNHsPP8i4bxFl4dgVxQVkTgUWL.wEJKNwz7N4xHeqfqTMIp.Hj37hGcKEuXcmPF5JyuOm
- dxNxw_oY749Gl1xlX.CI04olSwH9YpEzzce_tuC.CtlYJVmkjuWQu33W4nMtgQx6GR5rfMusOiwG
- Pt1joEnN6SVaE6p2zq.MEJk2njsquFsc2Q.AM82XmMtyocwsBqcp0PB2oeU8xmnf4U2wjo0fvtZa
- L59TVnqSfHGtd1VmE3enaC2XXX5GwAl6yfhzBqvLb642KVcdpdHsqMx6g064QI6qNytZOiAhHkIj
- HSEcIML5v2XgqWUL5ydubEv52HW4K93IVMbdNhTDWNNwWEUygz.BqqmoJ5HIiDAwmSHPKpn05d2s
- RY0McYNfDt367ZF8HJnxGrv8PBa3tal1q1j78iS0V.drFD_e8Eu6JPYrAhmLslLQgIxlbrMDg.lo
- YI6E7DMiraduiMABQkJMYyyygTAiyBacIIC49ZQOqInV9d6RJLbuuA_dwHboEB9pSr9zqdQ7Elm3
- KLoPmp_MKgGqhLK1kVRhh6pXN6RObnm3f7afHiVTrCNVT7lPoRL7fqg2.EQs0JzJ6Of3bEib9jL2
- lvQ_GRD_j_qQ0NlDUakYXjhOdHk.Y755xoFIxx9lAPfQdEZ0LQQJGOyjIC4rZBm6cbvaXdgM9sWW
- VzP4tre3UMAXcCDhbTgMCi4ETVacOtsZQfEvo9jjnSYffYAcd_S1a.BJbfOj6pi_P4bGB_t0jUHC
- dwD2hIRwepYqXgPRg6JkIsw_dyoKlzQWs4BlfCNh.drxZlE0qrAzUtjwZhPMPJbv4beM4K50qnuk
- AyxjZvKL5H.unaYLHB.3OXz9LU.HhbQDtLPQcwQ8hIfLl4w7IbAKlAt.LQ_1j4geCNYDjXBszfPn
- dYSlUjmKzxHyYMGcKxH3wTzOokt2zP1A9UMOPHQKC2G.wYWUuuNzwMPWOFTa2wAI5so76gh3mie4
- 8nlJtJXgctbZS0.DMrIP8B3nkfzVhGbeewY8128ECD9W4tPFUXSTbqw2YjsrzRLmaG5JQtWWLZLt
- pf6DrzptVTykcdzzumpsmc9nFVeZ9cjVpDeq7ya6SwrGydM29JoUFTIf31FYfGF.y0VcGZmpMgz4
- a8kqDxzlIiUXvQlPy59hLQ6PcH.wHzcyHmHRe6SFWlrihvqVJFd07l0Gc0EvvUacit4aXzllAo73
- 1aIGcLHt6Lyiud8JWFm3IOXHGiJEL4RZfxlvktfL26MlepjToLPhXvXNo
+        Fri, 10 Jun 2022 16:11:40 -0400
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E15C12D1F8
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 13:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1654891899; bh=//Lgu6FNCj1OdZR2z+ecuBjS0y8kGKR6qF1xrMgUGG0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=SB2dukGKQSL2kZ1VwAokjUScLXWVfF0/a1NTU3Rlwh+gVNsjXLJLqWqdwzw3Qyl8yo4rcqip/jforjoV3v/xhzBxFPiQeCXG91BtozAO3HxJpaWGIrj9SUijx/p0jJ1J34V0+PBwxosleYpr+3D/x+N9rTYqRtx5Rm7oDIXfnISNgJVl7V/SGQWLuZzy4mDpBMCPWB4AiS1H6LB8deKFsRU0fyNHIWTlTmlJnumCng305G2aI1B71HLEC0XrqDryvmPtFiHShPraTDVoERx5LdqsrlC/RhqaO4UON8QpI2CG7U7Et/ndCbm8YVb/0vvFuNFJV5fWmLKFSYg4d2WqOg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1654891899; bh=cZsuKSfvppVleNqLP2Re8xVsq8A3iTDLhOaNltDn863=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Kd6nvGlcJl+A4aWnG9nXxzQ+44ZhMXwbx0Az/EEbRkNIBde/myqfJCbJo6cnGTPeIQru6jmKLWKdcqzydZEFvzUjVqs+gMLhamEpVlenMv/kcm3KZDp8vRuUf0bDFKwu0NWGA3axzYQ3nAaN01wSgU6iTjQLDEMRX5JFT0b0NOqHkHyXzINxfpQNtPomhu6SHrgkXXP/2F8qUqxvoZ4Q1MQVvB4RyJXvM9cW0dCOsgdMeUiXV1ZPNv6As67J8O8313fSCrdPnDmBkOpZ9NXqVWmLBLPGUAZV9ZItsD+MQHYMFfifSwKlifBaFntGTUxzljCo57eWTd6fHxgq9dXwNQ==
+X-YMail-OSG: 6PWn3moVM1mGZX.HN4U9CaPheWTrVSDOnsMa5qtfw4iDsW_yd.YO15lm0gkdLzn
+ ATaQ46Ww4Ma1AyvzUBaaVm9l_VLvnJU7BwVb1.F3y3EV.6Zd.HqQ83Kr1r5PtYat822xMMsikOCi
+ 0syVpfPMKPA4CL0qTDeuExHW8oM_RQw0Wny1.cRWLIktvWEXWeVciDRGdZrkFU_El912XBJ_tZHh
+ i0GhEsLDEHjKHve4DLg8elWrIBvxhReLAarfLCCQ81jA6ePOETNGGfEKuxmQy.muwHhBH_xNV0BX
+ xJWk62agDBMIpcM8ZJ.1M.bhK.kP2xyX7IWRFgwHT_WM9..nT1KX57yvdUtB3k1XErGtXKCoTYIF
+ .wPONkUBZ.KGnYFz2DT9H2.gWHs_fG_gw1OewcI.zUC3ev_ScSj6ZyXg25YkJvSKA3uwupbUom0k
+ zeZyFnBdPC1YaaE4MvN89hWr9aAm.7VqtXnWk0cdUxXZVSchFuvKKUOgSFZo1UauSWLi8H2_FwqX
+ nJ4MCKbvBXmjPdNCLi2UDd8pUZdP6l36u7lF3VKYPn.AqNCMNmm7ZAOqJCqZ1S4tUUT6Gb1KDS78
+ iqKPeC1j9mnU7LXQpuQomPspiIGhZuBfB6CW6e0rYh5FwjdOwR6VnCA9wlJHZvCS5p7YvhRqt.id
+ TWZTtuvSMVg4S_5e1rzjZpgsTvd5S2gX5OfgJDtW7XHEaS9jkJ69Tq7VwoFuzo.Tu1gO9nYuvPcp
+ EiNVObrgafESd1pm9fI1rsMpvf7hoQIGrRbxomJlSKZ_l.lEIG0I6gbF9bRErIlWUEZ1cMvPSnmM
+ iXl4QIGKgmXzM4EOBnMgS9v.6p4DVnCm5mxItLLYlBrWEIHUEpKFc81D5jZdb30BfCGiiNcxVeA9
+ fsefuPdY6G3cpTUDxW04YdqsmEmy0qdkOHME1yLst0SMqE9Lpd_K.K26dlkqpdHJS3gy3tead84g
+ rm5V7LGRCpQtVAFtpPKcMfwrlKIc.8F9Z0nKz2q8qslGJAzhLmjebgKX9laHskDMueqsaaOBciiL
+ jKpluiNrazfPriHyCP.ZbZA23BjpKkdtSHZMLT3olI9mHJvbFeuJO7l1UN_K.f0RNBIEKA4SdDII
+ RoskakHEUVVIiMerGa_FbnPprstXOG4gYL7mIMyI2IwphADJ.ZqqQUuXk80d4wMI4d72N8ALY1WS
+ PAXFhNin8aLqvTxj0hTI49Vn7B82SpkJI5ob9_VaS0wXJ.zLhIXrrtsxlBORqMN743xZiBpco2SJ
+ JOEEUHvB74S3rXjR3FSGhlhzDnQiKMOO1o2h9rQNsLWwzEkrmLbBXGigThNBJleppDpN7vvETZav
+ RuebfJ8ovMIVM4b1aDYSujc8bCynIs9azyp3.ku8Dwi3YrgcAvk85I84Mbuv.aAurJ.UoP2g22Qe
+ 97IEZZWCS1cD7B..OdkGRwB9C.aT2lDylOeb7l.POu3piEMW1Kh79C2gOgBzGCyNrAUAqBNuxX_x
+ 4kUVq6XPK7ZEtTApbyD.unl252fko9b1JpV2hK3iPnqkJxxkKdcSW6seWHauC_p5KG6CO1r_QfsP
+ OrXd0w_t.UinGhSbVVPWrixVg0vOmdqTKk0ZnmahTrtHwMuOkrOY3jROhP89H1vJr1oWIU0VAMh.
+ baiDkoerEPq2dnfLarvMZiDgMWp36ltkIUIv6p_hs2i8tZmxkUaWqsarYCa12bzLkKGvmqSwzqV5
+ tsVdHktOPuU7qYd1YnWztDCmK__5.V5.IOlk_iep86RwP5tx1HjkH9hez9UmuJ_c.CbnVES54nQ5
+ zTfmIF82C.TJogfcEanTpTlLG9UG9UqQmm6wlmO.Q4TGbrPvpt6n_sMQkTU9JRrk4H7jBae99YTr
+ 8CncT6UlZwRUpq4JZWDQ0KtddyJAysVAQAS25Ekx4G_nuVVBoTqN3K5ypNQsRCv24AfLl_5sXjcI
+ MQfKwD39G9ps2SqJf5IAXdorRn9FlLlo3HERlgwcRwoap0XCXZfQ2oaW5Mw28DwzKJcrhhcYiRc9
+ Dztn1D3oG9xRkuEzPs_1OoHD736L0SObBRHyk_csIxTVHTUgUtcJUy_czXnEk_CGr.jtzh0ai8sM
+ Zfc5RCC5IRPUQWxdgMAFWdtk1o_9UCsKkW5wokfCVVU.l7Dbk2FfwPsryxvwm5qv3jN7LYMkasP9
+ 5witT69filpjfvtEIX66Sdx59khFvq_y2cXry1icp2T_3AjUoD82BbIUVEwL6kOxb17k_2_YIi2Z
+ Q2fOz7zpFwsK0Vm7C99vqVao87k3J4AHz5_9A8hG.wCNk8LXyDxllZMCaIHE3oLrzhXTiOmuJw5g
+ fuERPsxGs8LuKXYqxlW5xEl7va.GI58Kr
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Jun 2022 19:00:24 +0000
-Received: by hermes--canary-production-gq1-54945cc758-2fhnd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e47e41f11a8babd86c4090dc16771578;
-          Fri, 10 Jun 2022 19:00:21 +0000 (UTC)
-Message-ID: <07babe1c-5ae9-a619-b159-f1bb7f3108ca@schaufler-ca.com>
-Date:   Fri, 10 Jun 2022 12:00:20 -0700
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Jun 2022 20:11:39 +0000
+Received: by hermes--canary-production-gq1-54945cc758-2bxrx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 080d6361399dc7c2051a9e68bd9c139a;
+          Fri, 10 Jun 2022 20:11:37 +0000 (UTC)
+Message-ID: <f98c7555-50ba-d505-b3bf-c3c8c5b2d290@schaufler-ca.com>
+Date:   Fri, 10 Jun 2022 13:11:36 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH linux-next] security: Fix side effects of default BPF LSM
- hooks
+Subject: Re: [PATCH -next] smack: Remove the redundant lsm_inode_alloc
 Content-Language: en-US
-To:     KP Singh <kpsingh@kernel.org>,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc:     Jann Horn <jannh@google.com>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>
-References: <20220609234601.2026362-1-kpsingh@kernel.org>
- <bc4fe45a-b730-1832-7476-8ecb10ae5f90@schaufler-ca.com>
+References: <20220610092307.30311-1-xiujianfeng@huawei.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <bc4fe45a-b730-1832-7476-8ecb10ae5f90@schaufler-ca.com>
+In-Reply-To: <20220610092307.30311-1-xiujianfeng@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.20280 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/10/2022 11:50 AM, Casey Schaufler wrote:
-> On 6/9/2022 4:46 PM, KP Singh wrote:
->> BPF LSM currently has a default implementation for each LSM hooks which
->> return a default value defined in include/linux/lsm_hook_defs.h. These
->> hooks should have no functional effect when there is no BPF program
->> loaded to implement the hook logic.
+On 6/10/2022 2:23 AM, Xiu Jianfeng wrote:
+> It's not possible for inode->i_security to be NULL here because every
+> inode will call inode_init_always and then lsm_inode_alloc to alloc
+> memory for inode->security, this is what LSM infrastructure management
+> do, so remove this redundant code.
+>
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-What I failed to point out earlier is that you really want general
-LSM stacking for BPF to work the way you want it to. Reviewed-bys,
-Acked-bys and other participation in that effort would be most
-appreciated.
+I've taken this for smack-next. Thank you.
 
+> ---
+>   security/smack/smack_lsm.c | 7 -------
+>   1 file changed, 7 deletions(-)
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 6207762dbdb1..001831458fa2 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -766,13 +766,6 @@ static int smack_set_mnt_opts(struct super_block *sb,
+>   	if (sp->smk_flags & SMK_SB_INITIALIZED)
+>   		return 0;
+>   
+> -	if (inode->i_security == NULL) {
+> -		int rc = lsm_inode_alloc(inode);
+> -
+> -		if (rc)
+> -			return rc;
+> -	}
+> -
+>   	if (!smack_privileged(CAP_MAC_ADMIN)) {
+>   		/*
+>   		 * Unprivileged mounts don't get to specify Smack values.
