@@ -2,57 +2,62 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C38C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jun 2022 23:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F2DC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jun 2022 23:55:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245496AbiFJXu2 (ORCPT
+        id S1349078AbiFJXzf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jun 2022 19:50:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40202 "EHLO
+        Fri, 10 Jun 2022 19:55:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238092AbiFJXu1 (ORCPT
+        with ESMTP id S235486AbiFJXzf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jun 2022 19:50:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CECA81FD9E0
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 16:50:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 85674B837EF
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 23:50:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52425C3411E
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 23:50:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654905024;
-        bh=KYBNepAhHucXR/PExiSlnZsz5w016fhUepMKAXCkf2Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TEJ+0qTrjUTppwQq46B8P08Up24ch5A0UAT1t0XIETLHr1thlvg9N9QRc5zjkDlHi
-         5MSaZVhJPWISt+jwj90W6C5LpI5N8Pq1hssR7jFhfggaAn1i4FWqBgkGQN44+e1rW/
-         gdrj7FAOK0Ctx7OHe5TXzUgcHSXDmx1PBdW7UzoBDwCF+f57vyvXRdQaL9FpJSxUTt
-         84bW2NF6l2Pm7ZUjMKdagb8Q6RnT32yhLAuOEMjA3hQVU2mJNrd1Yz2hmEYISa3WqK
-         8xLhEDxAh5FdR9svLsna3Wfk0jjl6Dq1Ob92do512k8aevjrR49wuCUHSHJbVas744
-         PcjYyXT25/qmg==
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-30ce6492a60so6096877b3.8
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jun 2022 16:50:24 -0700 (PDT)
-X-Gm-Message-State: AOAM533RhcN9qm3TkLKn3FvaG6w7T/SgAUXCYieP+obj7GYavZ9eeAXS
-        TCEFHcj5yafAnqfmJ3p87UXvbzjgPwtJEeczIb7YSQ==
-X-Google-Smtp-Source: ABdhPJyMFUotmHwmu0OOQQuMr1PEE/e2CbP//1sfjX+Bie3qrJLHMs2/mlVzmMKQhswPv4i983EVi2fnRvzKOHD9lkI=
-X-Received: by 2002:a0d:dd54:0:b0:30d:1079:4569 with SMTP id
- g81-20020a0ddd54000000b0030d10794569mr51097936ywe.340.1654905023434; Fri, 10
- Jun 2022 16:50:23 -0700 (PDT)
+        Fri, 10 Jun 2022 19:55:35 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E25AC12740;
+        Fri, 10 Jun 2022 16:55:33 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id kq6so802558ejb.11;
+        Fri, 10 Jun 2022 16:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m2fXIIXeQGxSM/RZDHtCli6wPQtwAxjAErth8QWW4uE=;
+        b=gh9IKPSk1pn6D61IY2qGzrrdlbFPdi6uDVVHGEiANe4eqku4MXjhjo94lxlNnTGyqo
+         XNN3xX5yKDybwSWyHzr/RabT3R6UjhGKDUzLGrgCAjfACG1fx8AActWd6o5vphRBZzfu
+         QWDzrmY2j/uv0P1CJw+Q37UUcUSdXZ6Wh2SsplOvCLtUNCgWN9i4NCSmaMEigpnUBDUa
+         eEzHnuy2hjXL8rgWZiIonw53AZsUk56UiDP/Okh3JGo0adQawskZldyIWre0ScH4F3JE
+         yG5UnX66j8zXsylLjAdoDHIbgxAuIraVeiJxf12Mm8ZeoOQdF9tawbKqAOv2oAaCj4rF
+         1jzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m2fXIIXeQGxSM/RZDHtCli6wPQtwAxjAErth8QWW4uE=;
+        b=XZe+j8leGPXzxeBEOHbsONPzSx9hrVSbjOPocJSZ8dql1uJ20zXJ8fjfu92yCXitKM
+         ciXxTn4d5l50qJ13P9YBVPo2kOsVHhILB27cgiKIMqvFoTfmdIJawfmZ1ZZk0zH4lYTr
+         ZCtQLgkpZJcryaerJ3RFI1en2UnafvozriEoi6KNFNB8xBxwCojnvQ87dUrANtqMikUZ
+         eaODPIJCD3be9iXcD6HtEt0gC+tOevyqJjkjj1f8dWCi1wDEw//cL3XYPKJ3mrnmbfrl
+         x1X01czAxKWIz0Q4LaEcjzI/uRktqBvW7Lit4oOHNrRNXMoeZH5GRnxfwn/3Iuk9MbPV
+         j42Q==
+X-Gm-Message-State: AOAM533wO+BJseIxSTqwxT9Q5ShH8eKVqZGBFOsoD+4qfyoavuI5y0eM
+        TfG2keQgwxVYmrBSBwR9RiBPTy8Kad+qpR4XU+Aqvwn2
+X-Google-Smtp-Source: ABdhPJzZ/P/FaQm3gPaq3MIw10TqMwsCUU//pYhOgtv3RX4Oh+ktO3ddpaHHI6WiN9T7zxGH8qULKAmnSPrQ5p6v78E=
+X-Received: by 2002:a17:906:586:b0:70d:9052:fdf0 with SMTP id
+ 6-20020a170906058600b0070d9052fdf0mr37262501ejn.633.1654905332409; Fri, 10
+ Jun 2022 16:55:32 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220609234601.2026362-1-kpsingh@kernel.org> <bc4fe45a-b730-1832-7476-8ecb10ae5f90@schaufler-ca.com>
- <07babe1c-5ae9-a619-b159-f1bb7f3108ca@schaufler-ca.com>
-In-Reply-To: <07babe1c-5ae9-a619-b159-f1bb7f3108ca@schaufler-ca.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Sat, 11 Jun 2022 01:50:12 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ5FcvY-UviCoynkNsxaSfv_mr61n0xgYpteCGMxTGPioA@mail.gmail.com>
-Message-ID: <CACYkzJ5FcvY-UviCoynkNsxaSfv_mr61n0xgYpteCGMxTGPioA@mail.gmail.com>
+ <CACYkzJ6e2f+vdQmWBvRaQCJJ1ABPrfw4hYU231LbwhB_03GWLQ@mail.gmail.com>
+In-Reply-To: <CACYkzJ6e2f+vdQmWBvRaQCJJ1ABPrfw4hYU231LbwhB_03GWLQ@mail.gmail.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Fri, 10 Jun 2022 16:55:20 -0700
+Message-ID: <CAADnVQJrbySvD9UB8POyhL6hKx6mEkh1EZfeWbmm5nTrfsyViQ@mail.gmail.com>
 Subject: Re: [PATCH linux-next] security: Fix side effects of default BPF LSM hooks
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        Jann Horn <jannh@google.com>,
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, Jann Horn <jannh@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -62,20 +67,25 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 10, 2022 at 9:00 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Fri, Jun 10, 2022 at 4:49 PM KP Singh <kpsingh@kernel.org> wrote:
+> >
+> > > In order to reliably fix this issue and also allow LSM Hooks and BPF
+> > > programs which implement hook logic to choose to not make a decision
+> > > in certain conditions (e.g. when BPF programs are used for auditing),
+> > > introduce a special return value LSM_HOOK_NO_EFFECT which can be used
+> > > by the hook to indicate to the framework that it does not intend to
+> > > make a decision.
+> >
+> > The LSM infrastructure already has a convention of returning
+> > -EOPNOTSUPP for this condition. Why add another value to check?'
 >
-> On 6/10/2022 11:50 AM, Casey Schaufler wrote:
-> > On 6/9/2022 4:46 PM, KP Singh wrote:
-> >> BPF LSM currently has a default implementation for each LSM hooks which
-> >> return a default value defined in include/linux/lsm_hook_defs.h. These
-> >> hooks should have no functional effect when there is no BPF program
-> >> loaded to implement the hook logic.
+> This is not the case in call_int_hook currently.
 >
-> What I failed to point out earlier is that you really want general
-> LSM stacking for BPF to work the way you want it to. Reviewed-bys,
+> If we can update the LSM infra to imply that  -EOPNOTSUPP means
+> that the hook iteration can continue as that implies "no decision"
+> this would be okay as well.
 
-Happy to take a look, but we should fix this bug independently though.
+Agree that it's cleaner to use existing code like EOPNOTSUPP
+to indicate 'ignore this lsm'.
 
-> Acked-bys and other participation in that effort would be most
-> appreciated.
->
+Folks, reminder, please trim your replies.
