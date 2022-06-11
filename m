@@ -2,90 +2,83 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F2DC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jun 2022 23:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5705AC43334
+	for <linux-security-module@archiver.kernel.org>; Sat, 11 Jun 2022 02:38:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349078AbiFJXzf (ORCPT
+        id S1349130AbiFKCiN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jun 2022 19:55:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33960 "EHLO
+        Fri, 10 Jun 2022 22:38:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235486AbiFJXzf (ORCPT
+        with ESMTP id S1346449AbiFKCiL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jun 2022 19:55:35 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E25AC12740;
-        Fri, 10 Jun 2022 16:55:33 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id kq6so802558ejb.11;
-        Fri, 10 Jun 2022 16:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m2fXIIXeQGxSM/RZDHtCli6wPQtwAxjAErth8QWW4uE=;
-        b=gh9IKPSk1pn6D61IY2qGzrrdlbFPdi6uDVVHGEiANe4eqku4MXjhjo94lxlNnTGyqo
-         XNN3xX5yKDybwSWyHzr/RabT3R6UjhGKDUzLGrgCAjfACG1fx8AActWd6o5vphRBZzfu
-         QWDzrmY2j/uv0P1CJw+Q37UUcUSdXZ6Wh2SsplOvCLtUNCgWN9i4NCSmaMEigpnUBDUa
-         eEzHnuy2hjXL8rgWZiIonw53AZsUk56UiDP/Okh3JGo0adQawskZldyIWre0ScH4F3JE
-         yG5UnX66j8zXsylLjAdoDHIbgxAuIraVeiJxf12Mm8ZeoOQdF9tawbKqAOv2oAaCj4rF
-         1jzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m2fXIIXeQGxSM/RZDHtCli6wPQtwAxjAErth8QWW4uE=;
-        b=XZe+j8leGPXzxeBEOHbsONPzSx9hrVSbjOPocJSZ8dql1uJ20zXJ8fjfu92yCXitKM
-         ciXxTn4d5l50qJ13P9YBVPo2kOsVHhILB27cgiKIMqvFoTfmdIJawfmZ1ZZk0zH4lYTr
-         ZCtQLgkpZJcryaerJ3RFI1en2UnafvozriEoi6KNFNB8xBxwCojnvQ87dUrANtqMikUZ
-         eaODPIJCD3be9iXcD6HtEt0gC+tOevyqJjkjj1f8dWCi1wDEw//cL3XYPKJ3mrnmbfrl
-         x1X01czAxKWIz0Q4LaEcjzI/uRktqBvW7Lit4oOHNrRNXMoeZH5GRnxfwn/3Iuk9MbPV
-         j42Q==
-X-Gm-Message-State: AOAM533wO+BJseIxSTqwxT9Q5ShH8eKVqZGBFOsoD+4qfyoavuI5y0eM
-        TfG2keQgwxVYmrBSBwR9RiBPTy8Kad+qpR4XU+Aqvwn2
-X-Google-Smtp-Source: ABdhPJzZ/P/FaQm3gPaq3MIw10TqMwsCUU//pYhOgtv3RX4Oh+ktO3ddpaHHI6WiN9T7zxGH8qULKAmnSPrQ5p6v78E=
-X-Received: by 2002:a17:906:586:b0:70d:9052:fdf0 with SMTP id
- 6-20020a170906058600b0070d9052fdf0mr37262501ejn.633.1654905332409; Fri, 10
- Jun 2022 16:55:32 -0700 (PDT)
+        Fri, 10 Jun 2022 22:38:11 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5445326065D;
+        Fri, 10 Jun 2022 19:38:10 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4LKhmX1MWxzjXNV;
+        Sat, 11 Jun 2022 10:36:44 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Sat, 11 Jun 2022 10:38:08 +0800
+Message-ID: <2df1631b-3c3c-be97-0e93-a1ade05828c2@huawei.com>
+Date:   Sat, 11 Jun 2022 10:38:07 +0800
 MIME-Version: 1.0
-References: <20220609234601.2026362-1-kpsingh@kernel.org> <bc4fe45a-b730-1832-7476-8ecb10ae5f90@schaufler-ca.com>
- <CACYkzJ6e2f+vdQmWBvRaQCJJ1ABPrfw4hYU231LbwhB_03GWLQ@mail.gmail.com>
-In-Reply-To: <CACYkzJ6e2f+vdQmWBvRaQCJJ1ABPrfw4hYU231LbwhB_03GWLQ@mail.gmail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 10 Jun 2022 16:55:20 -0700
-Message-ID: <CAADnVQJrbySvD9UB8POyhL6hKx6mEkh1EZfeWbmm5nTrfsyViQ@mail.gmail.com>
-Subject: Re: [PATCH linux-next] security: Fix side effects of default BPF LSM hooks
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, Jann Horn <jannh@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH -next] Revert "evm: Fix memleak in init_desc"
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        <dmitry.kasatkin@gmail.com>, <jmorris@namei.org>,
+        <serge@hallyn.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20220527111726.195825-1-xiujianfeng@huawei.com>
+ <5842536c5c2bde1e3c2840f7e877becc3282b47c.camel@linux.ibm.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+In-Reply-To: <5842536c5c2bde1e3c2840f7e877becc3282b47c.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 10, 2022 at 4:49 PM KP Singh <kpsingh@kernel.org> wrote:
-> >
-> > > In order to reliably fix this issue and also allow LSM Hooks and BPF
-> > > programs which implement hook logic to choose to not make a decision
-> > > in certain conditions (e.g. when BPF programs are used for auditing),
-> > > introduce a special return value LSM_HOOK_NO_EFFECT which can be used
-> > > by the hook to indicate to the framework that it does not intend to
-> > > make a decision.
-> >
-> > The LSM infrastructure already has a convention of returning
-> > -EOPNOTSUPP for this condition. Why add another value to check?'
->
-> This is not the case in call_int_hook currently.
->
-> If we can update the LSM infra to imply that  -EOPNOTSUPP means
-> that the hook iteration can continue as that implies "no decision"
-> this would be okay as well.
+On 2022/6/10 22:20, Mimi Zohar wrote:
+> On Fri, 2022-05-27 at 19:17 +0800, Xiu Jianfeng wrote:
+>> This reverts commit ccf11dbaa07b328fa469415c362d33459c140a37.
+>>
+>> Commit ccf11dbaa07b ("evm: Fix memleak in init_desc") said there is
+>> memleak in init_desc. That may be incorrect, as we can see, tmp_tfm is
+>> saved in one of the two global variables hmac_tfm ohr evm_tfm[hash_algo],
+>> then if init_desc is called next time, there is no need to alloc tfm
+>> again, so in the error path of kmalloc desc or crypto_shash_init(desc),
+>> It is not a problem without freeing tmp_tfm.
+>>
+>> And also that commit did not reset the global variable to NULL after
+>> freeing tmp_tfm and this makes *tfm a dangling pointer which may cause a
+>> UAF issue.
+>>
+>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> 
+> Agreed, thanks.  This was first reported by Guozihua (Scott) <
+> guozihua@huawei.com>.  If neither you nor Scott object, I'll add his
+> Reported-by tag.
+> 
+> thanks,
+> 
+> Mimi
+> 
+> .
 
-Agree that it's cleaner to use existing code like EOPNOTSUPP
-to indicate 'ignore this lsm'.
+Good for me.
 
-Folks, reminder, please trim your replies.
+-- 
+Best
+GUO Zihua
