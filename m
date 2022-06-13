@@ -2,202 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A75C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jun 2022 15:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DE9C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jun 2022 18:34:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244247AbiFMP4k (ORCPT
+        id S245225AbiFMSec (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Jun 2022 11:56:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42254 "EHLO
+        Mon, 13 Jun 2022 14:34:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243346AbiFMP4M (ORCPT
+        with ESMTP id S245236AbiFMSeG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Jun 2022 11:56:12 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1DCF193225
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Jun 2022 06:46:52 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id k24so7807266oij.2
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Jun 2022 06:46:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=F8034aqgQYOIDnTJYbKnqdxe/P3NxT2RcNrYib0/ruQ=;
-        b=R4MMR5hyemRuM3l2mh4JZIS+Ysd67mGMs9w57QzxuAYNivT2oR2uA0ccLItOXx/Nff
-         HI6/bkCTWcHzuf8uaxK0aZVKIRxAzJmo3pQ4NckjHUXisjQlQKqlTIlGGFMleFZ26TS5
-         XrbPJQzMEXp3LBINHndQ9fwG3XW2+NnK70OZQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=F8034aqgQYOIDnTJYbKnqdxe/P3NxT2RcNrYib0/ruQ=;
-        b=PCgploRE2eWCh6K6g4qahaColcuy6PgX4zDeWEtSvbfqSt3apt2IJ62QBgfgNYLpA4
-         x2uliubVyvky8ww/TC8d3k9JWGHBjqzNqi8m5sfRNTfvxDc0xPccv/UONcHKLWTyXmJi
-         uC8FXISbSiw9gq5ykd3uA3h/222PGNPyHHWqpfDUZn5CmRh1xqdrbR7AXJCrjkfBpTfC
-         UfALDGMv/Tea+QbSy4fPzIDz4GU+R+lGd6UOnZS6OvihvJ6VC2DsWLhlQw6T+k31kcGj
-         6/ZdAK1B4EZ/hsW/SZCYcs0hft89zIaKmUube/+y8fpjUxGCUOgUE8I79cIUz2Ux9JjZ
-         k+iw==
-X-Gm-Message-State: AOAM531LuGDENWe5ES6ofrXJKo7T7eeovbhOmwPBBXfUXDm7Q5ZCSgWj
-        KiMk2HGwRnw6Mate5DMPLGoszA==
-X-Google-Smtp-Source: ABdhPJxMf2Qm5H8GA35Xq5n+x+nRvAKUAEETko5C92sldqd/ieCBtB6EHAADbYtdN68bTfZpGjw0Ow==
-X-Received: by 2002:aca:b744:0:b0:32f:4c19:cec1 with SMTP id h65-20020acab744000000b0032f4c19cec1mr1696209oif.43.1655128012170;
-        Mon, 13 Jun 2022 06:46:52 -0700 (PDT)
-Received: from [192.168.0.41] ([184.4.90.121])
-        by smtp.gmail.com with ESMTPSA id o20-20020a4ad494000000b0035eb4e5a6b5sm3699171oos.11.2022.06.13.06.46.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jun 2022 06:46:51 -0700 (PDT)
-Message-ID: <b4113083-73de-3ab6-e23f-32c6627d177e@cloudflare.com>
-Date:   Mon, 13 Jun 2022 08:46:49 -0500
+        Mon, 13 Jun 2022 14:34:06 -0400
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDAEBC9652
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Jun 2022 07:53:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655132021; bh=0SgoT7OQEOKIkib3oIGruLdZdvQGYAiUQ4MXiAUTnPI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FXke69JqlRRNJrFFWvEOaPCujhPRK221IP9c3YDlGwPEBRdFzJZzFtjHPUmW1k4q+b7iMdili2lrpgJj+l4qie8Wkqyb1eP36fWrIdUAQb51SG+unKpw/p30eIEJoDi3uoSan+LUESE7hNGLwJLoEWNjwKyYq54CMvxYa9nfrX4mBujcERvRSlnPDXDko0Q5vVyUe/p92IDzW4sZ3cMivBx6DWqKFsCG2jILkSBO7N5BPHm2VgZTriYrOPOrK9tLghcWARHBIQkGtOMgRXi7SUm3zHAXKpD/5QUGtjVsnKpcX//uqeQUughn6WMR+OJmNQtwC/dmiCeIomrKh/k+Jw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655132021; bh=grY/OEdyoXdDjlfXN0/WNt7lg26XYsq3xUM46loWHYq=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=TXf93jjHQtF0SYfWaqpCmU+mfcET2+RuDUTrRJwdRV9TCx1YMk2pcbcK/y2ZbO0Z6+23EBR5NzHIMTZVqXB7AJQabf1dCGzkRc6EoFxsIjz5J7sfhb1o/4lEkP0Og9UQR5MaljnZHylHgN+qVlpW5ADFIbSDfGeEkbP/vMx1F2W+HQAmzZnQltqmPJXgG57ONDL18qZptZ3UVUkHYEBDO3q+78jnhqrCi2cWlUnEfWNO/JQAAfyP5YEB+yn/MFQAHBxvbimq6r1fr7h+vGss4sA5gIbLfKH6RAPsNKACkaslNMzobmTDV6bhq2CUiwgbKN41K+H3fb/lJoAQJt/4Nw==
+X-YMail-OSG: CBD8m6sVM1mWWJAJktVvFXOdXPIh01AqOykUKU6tjLybFlu0MbXn8siUQnJPdK5
+ pJkRlW9z8kTyajt73IQ.H9kO7TFfFYeVEWc2CagvVFNTngALaInQWI_7BRHuHUYAvAJ1M7s1uVah
+ lV35hC.5gp95I1TBStohgbUNkUy_NFhTcnAJYXNAVHaKss2REl5Yvj6rlAnJE8pXvjQiU0pZUUIQ
+ Mk78gDxnb2GfQy50e86oad1rWJZsAdYrOmXxR3dI8ZFzhDBoZa_gYB_gPPzG0ZPTbXuazxtUDG6Y
+ wUgehSGMSm1Ju3QNMQH12EP.SVcFLqACieUK2FVZ3H4oHfvG2NoJRLztiHkKd4c6eUMSWFOahXSL
+ .ErMKIAqZh855oc8DIgg3b3inMk2AowuXePypXU42vWt22gzHRP53ntPkCicrafYs_8Uj4wx3H5u
+ eWQwtNOewGndsVCwgmAKbH5SEvwo7naOOPjJcNo2M5adkrVC4sGuc2a74.i3kpq9FTm5UflngbNe
+ vTcnNTbXglj_iC1h0lyU7cWone4DPYPbvmQYYFGHZHek9jEdRv5CI22YCbkkZDHLodtWowWYt3By
+ BHDGmnKow6weKsqErZ9.B7q.P1_rUAB07SExKYF70xhrWR_2d7AuvJM68pdIN3Aihzg8EYpipmJw
+ V5hArBMtyzoYiTUJ6Y7otrADachTRw6PEQVlSY8DxRidimBOqPVU1zhQHJDWCerHo7pi4VBhf8I3
+ .vyNxj3bKxKOkyk2H.kQILzlWpAhcUeWbx84Iv0jh_XftG01DopPcO2PDVAYd3ZA6uu9oDB_vtUo
+ .pVNf1ewC7Jt4THvozxFVTsSuoUKmw3m_zs4XNttcgPu.qUWB5iRSsSirWeCV2OG468GLlwOGpQu
+ OdiRffzwLFEcEW6BA7UMhOvsHfhJAS1FpegaRmgvyFNv4SI60odpz7OoKraLjSTPlAv.eapbC9wj
+ YTRzA7c2.s3Cn_jexuGsOQX98WeJXRMsy81_b6bycp14iFdQfWVbtxyTktRK59DacI3HVDh50WPq
+ d_e113GdPG.CJl6yuZe.YOExvlRj0QtUclZGjXHYaLKMdw_7BRRjkkWqkDUP36f1mzoZMHsAmUjN
+ AJR95D1cvkTahP1i16WwqyMwexJ8xtsf2GxDStXkXXWQLm2H5TYBbN8U_kSiXfKKxB7pdGsWUtqQ
+ L_93lbD6lKH8HanxeZP2rh0GBThm36V9OlS1EiVNYRMWDBU82wnbSRLclTEsEG_h1ee3.4iDFKb0
+ dvbLNStL2mj_U.pBYcv7DmsCmtcXLBr8IimYx2P0cO5Gj.7DYMR6msy1XuvvUTMh4Adt.kBJ7SUN
+ 1tXfUMlFIYN.nHGY_AQjo4Jhvcfy9BKV9w3HMwkkko4C_YufHcAFte6AyC4OXwkopn6JZQqN13va
+ 0dEe35j9xsJ6nsqHDWgIla34.HThBHx8s8zEguHdtIz7kVYe4vo3_esmvCE3yXFJaBzaRWVyFcIZ
+ vVWa_otkQ2abgjV.XqHNVbz5Cpx6WUjRmSD2jppojRdaqIvSvoJtAs19GTeKa6mHcG_pQCcy98pi
+ eWBth_xHQyKOSdSWIilg6kPO8lKRO0YYbiDwRvMGThH4zetoMlj4rHKqDOcGIaOLfyLVV1gZ7A4I
+ ue_gPyCT7M9wqRwSApoV3T6U3zEDHkyGdrx1bFJGTGxNknnrDx9.4hScHWHbhhxli1xZMCob_ZIb
+ vYEzAkFZWwtiXTDeWWtEv3S83I40YeRyvLiHED3x9RsyvV9vtNnGReMTf.woXnQ9qnIALAa25PgL
+ cGGNkea1Zuy3O02n7o6EmQNwSS5g4QPdh7Hlw2vRe3BcscZHQ.hcGDru_z3YzMp2AA6HUnIZaYen
+ 9Yi9CdpnmO5y.C3uVVAJ2JLGqBo90MRgJjmBzj1nLG1eFnhNJuhcYdJ35tBvBt1ApOCeEY_Op8UV
+ DDdhsfeZIaB39pj785P7krEy_pxh5PRkw93.YFtec8j96XtjW1Hg0bWiGt0iW5GvnhIgnpVd8xp.
+ VGYyaM7g9pBG4zQW9KlE3NAvn5JPtDzg1_FjtRtx.VSRsLkct2jJ5P8im49_.P80d1NWjcek7ggy
+ _3RNuPGuGUmuxKLi3RrYEGuS9x_oyWytgHLmOGuNAF_G5hIZBJjgaLy.D3h72mWVS6qCQLRlJ0yG
+ bozTQwZrsaTYPCpgf0gU1Fbh3bcIfDtUe_7ZAY6SExM.4zT.6IjKHnAYhwbXS.77lkpJCK3ucN9c
+ fYp1YbIxb7gK8n0v4e3c4wYExBTspHn7OFyJh_c_cU2I1kTu_hJEwmZb.apIj4xJUI3T5mfTjZsX
+ 0Ppt.lSaHZ5Q7S.T4KzL.TWzrSWZiRvk-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Mon, 13 Jun 2022 14:53:41 +0000
+Received: by hermes--canary-production-bf1-856dbf94db-lkxdg (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1de6620996886a81d03d658fd9893895;
+          Mon, 13 Jun 2022 14:53:39 +0000 (UTC)
+Message-ID: <88718d10-4435-f5a8-9123-afc73257e0ca@schaufler-ca.com>
+Date:   Mon, 13 Jun 2022 07:53:36 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
+Subject: Re: [PATCH] smackfs: check for allocation failure of kmalloc()
 Content-Language: en-US
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-References: <20220608150942.776446-1-fred@cloudflare.com>
- <YqJ/0W3wxPThWqgC@sol.localdomain>
-From:   Frederick Lawler <fred@cloudflare.com>
-In-Reply-To: <YqJ/0W3wxPThWqgC@sol.localdomain>
+To:     Li Qiong <liqiong@nfschina.com>, James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yuzhe@nfschina.com,
+        renyu@nfschina.com, Casey Schaufler <casey@schaufler-ca.com>
+References: <20220613062202.29194-1-liqiong@nfschina.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20220613062202.29194-1-liqiong@nfschina.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20280 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Eric,
+On 6/12/2022 11:22 PM, Li Qiong wrote:
+> As the possible failure of the kmalloc(), it should be better
+> to check it and print a warning message.
 
-On 6/9/22 6:18 PM, Eric Biggers wrote:
-> On Wed, Jun 08, 2022 at 10:09:42AM -0500, Frederick Lawler wrote:
->> diff --git a/fs/aio.c b/fs/aio.c
->> index 3c249b938632..5abbe88c3ca7 100644
->> --- a/fs/aio.c
->> +++ b/fs/aio.c
->> @@ -1620,6 +1620,8 @@ static void aio_fsync_work(struct work_struct *work)
->>   static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
->>   		     bool datasync)
->>   {
->> +	int err;
->> +
->>   	if (unlikely(iocb->aio_buf || iocb->aio_offset || iocb->aio_nbytes ||
->>   			iocb->aio_rw_flags))
->>   		return -EINVAL;
->> @@ -1628,8 +1630,11 @@ static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
->>   		return -EINVAL;
->>   
->>   	req->creds = prepare_creds();
->> -	if (!req->creds)
->> -		return -ENOMEM;
->> +	if (IS_ERR(req->creds)) {
->> +		err = PTR_ERR(req->creds);
->> +		req->creds = NULL;
->> +		return err;
->> +	}
-> 
-> This part is a little ugly.  How about doing:
-> 
-> 	creds = prepare_creds();
-> 	if (IS_ERR(creds))
-> 		return PTR_ERR(creds);
-> 	req->creds = creds;
-> 
+The allocation is done with __GFP_NOFAIL, which assures
+it will not fail.
 
-I can do that, and same for below.
-
->> diff --git a/fs/exec.c b/fs/exec.c
->> index 0989fb8472a1..02624783e40e 100644
->> --- a/fs/exec.c
->> +++ b/fs/exec.c
->> @@ -1468,15 +1468,19 @@ EXPORT_SYMBOL(finalize_exec);
->>    */
->>   static int prepare_bprm_creds(struct linux_binprm *bprm)
->>   {
->> +	int err = -ERESTARTNOINTR;
->>   	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
->> -		return -ERESTARTNOINTR;
->> +		return err;
->>   
->>   	bprm->cred = prepare_exec_creds();
->> -	if (likely(bprm->cred))
->> -		return 0;
->> +	if (IS_ERR(bprm->cred)) {
->> +		err = PTR_ERR(bprm->cred);
->> +		bprm->cred = NULL;
->> +		mutex_unlock(&current->signal->cred_guard_mutex);
->> +		return err;
->> +	}
->>   
->> -	mutex_unlock(&current->signal->cred_guard_mutex);
->> -	return -ENOMEM;
->> +	return 0;
->>   }
-> 
-> Similarly:
-> 
-> static int prepare_bprm_creds(struct linux_binprm *bprm)
-> {
-> 	struct cred *cred;
-> 
-> 	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
-> 		return -ERESTARTNOINTR;
-> 
-> 	cred = prepare_exec_creds();
-> 	if (IS_ERR(cred)) {
-> 		mutex_unlock(&current->signal->cred_guard_mutex);
-> 		return PTR_ERR(cred);
-> 	}
-> 	bprm->cred = cred;
-> 	return 0;
-> }
-> 
->> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
->> index eec72ca962e2..6cf75aa83b6c 100644
->> --- a/kernel/nsproxy.c
->> +++ b/kernel/nsproxy.c
->> @@ -311,6 +311,7 @@ static void put_nsset(struct nsset *nsset)
->>   
->>   static int prepare_nsset(unsigned flags, struct nsset *nsset)
->>   {
->> +	int err = -ENOMEM;
->>   	struct task_struct *me = current;
->>   
->>   	nsset->nsproxy = create_new_namespaces(0, me, current_user_ns(), me->fs);
->> @@ -324,6 +325,12 @@ static int prepare_nsset(unsigned flags, struct nsset *nsset)
->>   	if (!nsset->cred)
->>   		goto out;
->>   
->> +	if (IS_ERR(nsset->cred)) {
->> +		err = PTR_ERR(nsset->cred);
->> +		nsset->cred = NULL;
->> +		goto out;
->> +	}
-> 
-> Why is the NULL check above being kept?
-> 
-
-In the branch prior:
-
-	if (flags & CLONE_NEWUSER) {
-		nsset->cred = prepare_creds();
-	else
-		nsset->cred = current_cred();
-
-I don't see cases where others are checking for null after 
-current_cred(), therefore I can remove that check.
-
-> Also, drivers/crypto/ccp/sev-dev.c needs to be updated.
-> 
-
-Nice catch! I clearly missed addition after the merge window.
-
-> - Eric
-
+>
+> Signed-off-by: Li Qiong <liqiong@nfschina.com>
+> ---
+>   security/smack/smackfs.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 4b58526450d4..0d11ba3cb4cd 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -695,6 +695,11 @@ static void smk_cipso_doi(void)
+>   		       __func__, __LINE__, rc);
+>   
+>   	doip = kmalloc(sizeof(struct cipso_v4_doi), GFP_KERNEL | __GFP_NOFAIL);
+> +	if (unlikely(!doip)) {
+> +		printk(KERN_WARNING "%s:%d failed to allocate a memory for doip\n",
+> +		       __func__, __LINE__);
+> +		return;
+> +	}
+>   	doip->map.std = NULL;
+>   	doip->doi = smk_cipso_doi_value;
+>   	doip->type = CIPSO_V4_MAP_PASS;
