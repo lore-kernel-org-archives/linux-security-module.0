@@ -2,1073 +2,334 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0971C43334
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jun 2022 19:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BECB4CCA47B
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jun 2022 19:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348075AbiFMTKq (ORCPT
+        id S239018AbiFMTTx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Jun 2022 15:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60670 "EHLO
+        Mon, 13 Jun 2022 15:19:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348545AbiFMTI0 (ORCPT
+        with ESMTP id S1348907AbiFMTSY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Jun 2022 15:08:26 -0400
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625F395;
-        Mon, 13 Jun 2022 10:04:35 -0700 (PDT)
-Received: from in01.mta.xmission.com ([166.70.13.51]:52124)
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1o0nUP-001lWm-HI; Mon, 13 Jun 2022 11:04:33 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:40286 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1o0nUM-009X6G-Cj; Mon, 13 Jun 2022 11:04:33 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Frederick Lawler <fred@cloudflare.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-References: <20220608150942.776446-1-fred@cloudflare.com>
-Date:   Mon, 13 Jun 2022 12:04:23 -0500
-In-Reply-To: <20220608150942.776446-1-fred@cloudflare.com> (Frederick Lawler's
-        message of "Wed, 8 Jun 2022 10:09:42 -0500")
-Message-ID: <87tu8oze94.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Mon, 13 Jun 2022 15:18:24 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 016063139B
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Jun 2022 10:15:28 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id e66so6096606pgc.8
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Jun 2022 10:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=HplHX2Dj1z/sWHxSKlJW/gqEIj/eDK55kENWjykpP0s=;
+        b=DqStzqcZt8eFT2eOiyFphW3284ou3VB/B0VSmaKnmfmYTUjrRf0X39Xd+f7wilrK8O
+         gCuJ5mksskKjlT9sQZJ/0W6BLQhy+PDGjGJeeZy0lNpZtIAiCoThrATw8kB79tsD1NFM
+         ocxPy/XOH6QkVlvvPavuovxKddyLa6ngaCtUs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HplHX2Dj1z/sWHxSKlJW/gqEIj/eDK55kENWjykpP0s=;
+        b=X08MH5T5dHDkxh2GbvX6KI1zjh/Y2wZ5RwNAw/QilDG4OoeBsazP0lqM7OM56jLafy
+         FeVdoJpD7PI6WqAMuZZIPGJJNQrz+y/8fAWpn1iAifySB+RzMophSRL9x4mae/ZSNbLx
+         sAuH2rrbFaZImCT2CrNz+LopzJapLw3z+qxNW4DX1Dy9I/xRnuVGMoFvOt4C1gke/uwW
+         IZVuUu6GjC5pDNtj4LKFzfU8yRPzFd4h7aPSkWfZ3DlUjgXJtnw7JP2UKqbNeE3UNJD+
+         YkndvAqxVxrh4KnFztxJ5uRsqyLpOZ/W9LwOwXAn2lhbfvwvmZZ3kwuVFUGJReKFkw3o
+         ZSfA==
+X-Gm-Message-State: AOAM532UwRJnY0B5PITC3hQ4h3wSlYWMePt0uGwVkEqPlXNs/tSRKllP
+        XK5McOkpW9Egva/x73YC8Tmlfg==
+X-Google-Smtp-Source: ABdhPJxeMM7KYRXm0u0KsG75RyBBXv3/0OQRUh4WZMtUklEUzQc43TFu+c9tkQBt+JNomJsFdNFtlg==
+X-Received: by 2002:a63:30f:0:b0:3fd:f9de:a35d with SMTP id 15-20020a63030f000000b003fdf9dea35dmr519789pgd.317.1655140528387;
+        Mon, 13 Jun 2022 10:15:28 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:c4fb:a1d8:47ef:f10c])
+        by smtp.gmail.com with UTF8SMTPSA id x12-20020a17090300cc00b00167705fd12asm5374876plc.135.2022.06.13.10.15.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jun 2022 10:15:27 -0700 (PDT)
+Date:   Mon, 13 Jun 2022 10:15:25 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     Milan Broz <gmazyland@gmail.com>, dm-devel@redhat.com,
+        linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] dm: Add verity helpers for LoadPin
+Message-ID: <YqdwrWFXNtsKaTm7@google.com>
+References: <20220523211400.290537-1-mka@chromium.org>
+ <20220523141325.v6.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1o0nUM-009X6G-Cj;;;mid=<87tu8oze94.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX18F8px10JhmQV6mijhIgLaHeslAmJlxlNU=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220523141325.v6.1.I3e928575a23481121e73286874c4c2bdb403355d@changeid>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Frederick Lawler <fred@cloudflare.com> writes:
+Mike, does this look good to you or are any further changes needed
+to get this landed?
 
-> While experimenting with the security_prepare_creds() LSM hook, we
-> noticed that our EPERM error code was not propagated up the callstack.
-> Instead ENOMEM is always returned.  As a result, some tools may send a
-> confusing error message to the user:
->
-> $ unshare -rU
-> unshare: unshare failed: Cannot allocate memory
->
-> A user would think that the system didn't have enough memory, when
-> instead the action was denied.
->
-> This problem occurs because prepare_creds() and prepare_kernel_cred()
-> return NULL when security_prepare_creds() returns an error code. Later,
-> functions calling prepare_creds() and prepare_kernel_cred() return
-> ENOMEM because they assume that a NULL meant there was no memory
-> allocated.
->
-> Fix this by propagating an error code from security_prepare_creds() up
-> the callstack.
+Thanks
 
-Why would it make sense for security_prepare_creds to return an error
-code other than ENOMEM?
+Matthias
 
-That seems a bit of a violation of what that function is supposed to do.
-
-I have probably missed a very interesting discussion where that was
-mentioned but I don't see link to the discussion or anything explaining
-why we want to do that in this change.
-
-Eric
-
-
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> Acked-by: Jeff Moyer <jmoyer@redhat.com>
-> Acked-by: Paul Moore <paul@paul-moore.com> (SELinux)
->
+On Mon, May 23, 2022 at 02:13:58PM -0700, Matthias Kaehlcke wrote:
+> LoadPin limits loading of kernel modules, firmware and certain
+> other files to a 'pinned' file system (typically a read-only
+> rootfs). To provide more flexibility LoadPin is being extended
+> to also allow loading these files from trusted dm-verity
+> devices. For that purpose LoadPin can be provided with a list
+> of verity root digests that it should consider as trusted.
+> 
+> Add a bunch of helpers to allow LoadPin to check whether a DM
+> device is a trusted verity device. The new functions broadly
+> fall in two categories: those that need access to verity
+> internals (like the root digest), and the 'glue' between
+> LoadPin and verity. The new file dm-verity-loadpin.c contains
+> the glue functions.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> Acked-by: Kees Cook <keescook@chromium.org>
 > ---
-> Changes since v2:
-> - Rebase onto 5.19-rc1 from 5.18-rc1
->
-> Changes since v1:
-> - Revert style churn in ovl_create_or_link() noted by Amir
-> - Revert style churn in prepare_nsset() noted by Serge
-> - Update documentation for prepare_creds()
-> - Set ofs->creator_cred in ovl_fill_super() and req->creds in aio_fsync()
->   to NULL on error noted by Amir
-> ---
->  Documentation/security/credentials.rst |  6 +++---
->  fs/aio.c                               |  9 +++++++--
->  fs/cachefiles/security.c               |  8 ++++----
->  fs/cifs/cifs_spnego.c                  |  4 ++--
->  fs/cifs/cifsacl.c                      |  4 ++--
->  fs/coredump.c                          |  2 +-
->  fs/exec.c                              | 14 ++++++++-----
->  fs/ksmbd/smb_common.c                  |  4 ++--
->  fs/nfs/flexfilelayout/flexfilelayout.c |  7 +++++--
->  fs/nfs/nfs4idmap.c                     |  4 ++--
->  fs/nfsd/auth.c                         |  4 ++--
->  fs/nfsd/nfs4callback.c                 | 10 ++++-----
->  fs/nfsd/nfs4recover.c                  |  4 ++--
->  fs/nfsd/nfsfh.c                        |  4 ++--
->  fs/open.c                              |  8 ++++----
->  fs/overlayfs/dir.c                     |  6 ++++--
->  fs/overlayfs/super.c                   |  6 ++++--
->  kernel/capability.c                    |  4 ++--
->  kernel/cred.c                          | 28 +++++++++++++++-----------
->  kernel/groups.c                        |  4 ++--
->  kernel/nsproxy.c                       |  9 ++++++++-
->  kernel/sys.c                           | 28 +++++++++++++-------------
->  kernel/trace/trace_events_user.c       |  4 ++--
->  kernel/umh.c                           |  5 +++--
->  kernel/user_namespace.c                |  6 ++++--
->  net/dns_resolver/dns_key.c             |  4 ++--
->  security/apparmor/task.c               | 12 +++++------
->  security/commoncap.c                   | 20 +++++++++---------
->  security/keys/keyctl.c                 |  8 ++++----
->  security/keys/process_keys.c           | 16 +++++++--------
->  security/landlock/syscalls.c           |  4 ++--
->  security/selinux/hooks.c               |  8 ++++----
->  security/smack/smack_lsm.c             |  8 ++++----
->  security/smack/smackfs.c               |  4 ++--
->  34 files changed, 153 insertions(+), 123 deletions(-)
->
-> diff --git a/Documentation/security/credentials.rst b/Documentation/security/credentials.rst
-> index 357328d566c8..8852b2ab6a18 100644
-> --- a/Documentation/security/credentials.rst
-> +++ b/Documentation/security/credentials.rst
-> @@ -438,7 +438,7 @@ new set of credentials by calling::
+> 
+> Changes in v6:
+> - s/loadpin_trusted_verity_root_digests/dm_verity_loadpin_trusted_root_digests/
+> - s/trusted_root_digest/dm_verity_loadpin_trusted_root_digest/
+> - removed unnecessary symbol exports
+> 
+> Changes in v5:
+> - changed dm_verity_loadpin_is_sb_trusted() to
+>   dm_verity_loadpin_is_bdev_trusted()
+> - bumped version number to 1.8.1
+> - deleted bad semicolon in declaration of stub for
+>   dm_verity_loadpin_is_bdev_trusted()
+> - added 'Acked-by' tag from Kees
+> 
+> Changes in v4:
+> - a trusted verity device must have a single target of
+>   type 'verity'
+> - share list of verity digests with loadpin, deleted
+>   dm_verity_loadpin_set_trusted_root_digests()
+> - dm_verity_loadpin_is_md_trusted() is now dm_verity_loadpin_is_sb_trusted(),
+>   it receives a super_block instead of mapped_device. Updated kernel doc.
+> - changed struct trusted_root_digest to have an unsized
+>   u8 array instead of a pointer
+> - extend 'dm-verity-objs' instead of 'dm-mod-objs'
+> 
+> Changes in v3:
+> - none
+> 
+> Changes in v2:
+> - none
+> 
+>  drivers/md/Makefile               |  6 +++
+>  drivers/md/dm-verity-loadpin.c    | 74 +++++++++++++++++++++++++++++++
+>  drivers/md/dm-verity-target.c     | 33 +++++++++++++-
+>  drivers/md/dm-verity.h            |  4 ++
+>  include/linux/dm-verity-loadpin.h | 27 +++++++++++
+>  5 files changed, 143 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/md/dm-verity-loadpin.c
+>  create mode 100644 include/linux/dm-verity-loadpin.h
+> 
+> diff --git a/drivers/md/Makefile b/drivers/md/Makefile
+> index 0454b0885b01..71771901c823 100644
+> --- a/drivers/md/Makefile
+> +++ b/drivers/md/Makefile
+> @@ -108,6 +108,12 @@ ifeq ($(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG),y)
+>  dm-verity-objs			+= dm-verity-verify-sig.o
+>  endif
 >  
->  this locks current->cred_replace_mutex and then allocates and constructs a
->  duplicate of the current process's credentials, returning with the mutex still
-> -held if successful.  It returns NULL if not successful (out of memory).
-> +held if successful.  It returns < 0 if not successful.
->  
->  The mutex prevents ``ptrace()`` from altering the ptrace state of a process
->  while security checks on credentials construction and changing is taking place
-> @@ -497,8 +497,8 @@ A typical credentials alteration function would look something like this::
->  		int ret;
->  
->  		new = prepare_creds();
-> -		if (!new)
-> -			return -ENOMEM;
-> +		if (IS_ERR(new))
-> +			return PTR_ERR(new);
->  
->  		new->suid = suid;
->  		ret = security_alter_suid(new);
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 3c249b938632..5abbe88c3ca7 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1620,6 +1620,8 @@ static void aio_fsync_work(struct work_struct *work)
->  static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
->  		     bool datasync)
->  {
-> +	int err;
+> +ifeq ($(CONFIG_DM_VERITY),y)
+> +ifeq ($(CONFIG_SECURITY_LOADPIN),y)
+> +dm-verity-objs			+= dm-verity-loadpin.o
+> +endif
+> +endif
 > +
->  	if (unlikely(iocb->aio_buf || iocb->aio_offset || iocb->aio_nbytes ||
->  			iocb->aio_rw_flags))
->  		return -EINVAL;
-> @@ -1628,8 +1630,11 @@ static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
->  		return -EINVAL;
->  
->  	req->creds = prepare_creds();
-> -	if (!req->creds)
-> -		return -ENOMEM;
-> +	if (IS_ERR(req->creds)) {
-> +		err = PTR_ERR(req->creds);
-> +		req->creds = NULL;
-> +		return err;
-> +	}
->  
->  	req->datasync = datasync;
->  	INIT_WORK(&req->work, aio_fsync_work);
-> diff --git a/fs/cachefiles/security.c b/fs/cachefiles/security.c
-> index fe777164f1d8..8dc256b18312 100644
-> --- a/fs/cachefiles/security.c
-> +++ b/fs/cachefiles/security.c
-> @@ -21,8 +21,8 @@ int cachefiles_get_security_ID(struct cachefiles_cache *cache)
->  	_enter("{%s}", cache->secctx);
->  
->  	new = prepare_kernel_cred(current);
-> -	if (!new) {
-> -		ret = -ENOMEM;
-> +	if (IS_ERR(new)) {
-> +		ret = PTR_ERR(new);
->  		goto error;
->  	}
->  
-> @@ -84,8 +84,8 @@ int cachefiles_determine_cache_security(struct cachefiles_cache *cache,
->  	/* duplicate the cache creds for COW (the override is currently in
->  	 * force, so we can use prepare_creds() to do this) */
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	cachefiles_end_secure(cache, *_saved_cred);
->  
-> diff --git a/fs/cifs/cifs_spnego.c b/fs/cifs/cifs_spnego.c
-> index 342717bf1dc2..0a5b8157387a 100644
-> --- a/fs/cifs/cifs_spnego.c
-> +++ b/fs/cifs/cifs_spnego.c
-> @@ -190,8 +190,8 @@ init_cifs_spnego(void)
->  	 */
->  
->  	cred = prepare_kernel_cred(NULL);
-> -	if (!cred)
-> -		return -ENOMEM;
-> +	if (IS_ERR(cred))
-> +		return PTR_ERR(cred);
->  
->  	keyring = keyring_alloc(".cifs_spnego",
->  				GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, cred,
-> diff --git a/fs/cifs/cifsacl.c b/fs/cifs/cifsacl.c
-> index bf861fef2f0c..1debcfa927d1 100644
-> --- a/fs/cifs/cifsacl.c
-> +++ b/fs/cifs/cifsacl.c
-> @@ -466,8 +466,8 @@ init_cifs_idmap(void)
->  	 * with add_key().
->  	 */
->  	cred = prepare_kernel_cred(NULL);
-> -	if (!cred)
-> -		return -ENOMEM;
-> +	if (IS_ERR(cred))
-> +		return PTR_ERR(cred);
->  
->  	keyring = keyring_alloc(".cifs_idmap",
->  				GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, cred,
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index ebc43f960b64..ea4ccae6368a 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -546,7 +546,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->  		goto fail;
->  
->  	cred = prepare_creds();
-> -	if (!cred)
-> +	if (IS_ERR(cred))
->  		goto fail;
->  	/*
->  	 * We cannot trust fsuid as being the "true" uid of the process
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 0989fb8472a1..02624783e40e 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1468,15 +1468,19 @@ EXPORT_SYMBOL(finalize_exec);
->   */
->  static int prepare_bprm_creds(struct linux_binprm *bprm)
->  {
-> +	int err = -ERESTARTNOINTR;
->  	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
-> -		return -ERESTARTNOINTR;
-> +		return err;
->  
->  	bprm->cred = prepare_exec_creds();
-> -	if (likely(bprm->cred))
-> -		return 0;
-> +	if (IS_ERR(bprm->cred)) {
-> +		err = PTR_ERR(bprm->cred);
-> +		bprm->cred = NULL;
-> +		mutex_unlock(&current->signal->cred_guard_mutex);
-> +		return err;
-> +	}
->  
-> -	mutex_unlock(&current->signal->cred_guard_mutex);
-> -	return -ENOMEM;
-> +	return 0;
->  }
->  
->  static void free_bprm(struct linux_binprm *bprm)
-> diff --git a/fs/ksmbd/smb_common.c b/fs/ksmbd/smb_common.c
-> index 7f8ab14fb8ec..5c703ab65ecf 100644
-> --- a/fs/ksmbd/smb_common.c
-> +++ b/fs/ksmbd/smb_common.c
-> @@ -622,8 +622,8 @@ int ksmbd_override_fsids(struct ksmbd_work *work)
->  		gid = share->force_gid;
->  
->  	cred = prepare_kernel_cred(NULL);
-> -	if (!cred)
-> -		return -ENOMEM;
-> +	if (IS_ERR(cred))
-> +		return PTR_ERR(cred);
->  
->  	cred->fsuid = make_kuid(current_user_ns(), uid);
->  	cred->fsgid = make_kgid(current_user_ns(), gid);
-> diff --git a/fs/nfs/flexfilelayout/flexfilelayout.c b/fs/nfs/flexfilelayout/flexfilelayout.c
-> index 604be402ae13..74d950a6dd55 100644
-> --- a/fs/nfs/flexfilelayout/flexfilelayout.c
-> +++ b/fs/nfs/flexfilelayout/flexfilelayout.c
-> @@ -493,9 +493,12 @@ ff_layout_alloc_lseg(struct pnfs_layout_hdr *lh,
->  			kcred = prepare_kernel_cred(NULL);
->  			memalloc_nofs_restore(nofs_flags);
->  		}
-> -		rc = -ENOMEM;
-> -		if (!kcred)
+>  ifeq ($(CONFIG_DM_AUDIT),y)
+>  dm-mod-objs			+= dm-audit.o
+>  endif
+> diff --git a/drivers/md/dm-verity-loadpin.c b/drivers/md/dm-verity-loadpin.c
+> new file mode 100644
+> index 000000000000..10c18bc1652c
+> --- /dev/null
+> +++ b/drivers/md/dm-verity-loadpin.c
+> @@ -0,0 +1,74 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
 > +
-> +		if (IS_ERR(kcred)) {
-> +			rc = PTR_ERR(kcred);
->  			goto out_err_free;
+> +#include <linux/list.h>
+> +#include <linux/kernel.h>
+> +#include <linux/dm-verity-loadpin.h>
+> +
+> +#include "dm.h"
+> +#include "dm-verity.h"
+> +
+> +#define DM_MSG_PREFIX	"verity-loadpin"
+> +
+> +LIST_HEAD(dm_verity_loadpin_trusted_root_digests);
+> +
+> +static bool is_trusted_verity_target(struct dm_target *ti)
+> +{
+> +	u8 *root_digest;
+> +	unsigned int digest_size;
+> +	struct dm_verity_loadpin_trusted_root_digest *trd;
+> +	bool trusted = false;
+> +
+> +	if (!dm_is_verity_target(ti))
+> +		return false;
+> +
+> +	if (dm_verity_get_root_digest(ti, &root_digest, &digest_size))
+> +		return false;
+> +
+> +	list_for_each_entry(trd, &dm_verity_loadpin_trusted_root_digests, node) {
+> +		if ((trd->len == digest_size) &&
+> +		    !memcmp(trd->data, root_digest, digest_size)) {
+> +			trusted = true;
+> +			break;
 > +		}
-> +
->  		kcred->fsuid = uid;
->  		kcred->fsgid = gid;
->  		cred = RCU_INITIALIZER(kcred);
-> diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
-> index f331866dd418..6ddceff5fbe0 100644
-> --- a/fs/nfs/nfs4idmap.c
-> +++ b/fs/nfs/nfs4idmap.c
-> @@ -204,8 +204,8 @@ int nfs_idmap_init(void)
->  		key_type_id_resolver.name);
->  
->  	cred = prepare_kernel_cred(NULL);
-> -	if (!cred)
-> -		return -ENOMEM;
-> +	if (IS_ERR(cred))
-> +		return PTR_ERR(cred);
->  
->  	keyring = keyring_alloc(".id_resolver",
->  				GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, cred,
-> diff --git a/fs/nfsd/auth.c b/fs/nfsd/auth.c
-> index fdf2aad73470..9206ec3ed0f1 100644
-> --- a/fs/nfsd/auth.c
-> +++ b/fs/nfsd/auth.c
-> @@ -31,8 +31,8 @@ int nfsd_setuser(struct svc_rqst *rqstp, struct svc_export *exp)
->  	/* discard any old override before preparing the new set */
->  	revert_creds(get_cred(current_real_cred()));
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	new->fsuid = rqstp->rq_cred.cr_uid;
->  	new->fsgid = rqstp->rq_cred.cr_gid;
-> diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-> index 11f8715d92d6..630c2af0ec74 100644
-> --- a/fs/nfsd/nfs4callback.c
-> +++ b/fs/nfsd/nfs4callback.c
-> @@ -872,8 +872,8 @@ static const struct cred *get_backchannel_cred(struct nfs4_client *clp, struct r
->  		struct cred *kcred;
->  
->  		kcred = prepare_kernel_cred(NULL);
-> -		if (!kcred)
-> -			return NULL;
-> +		if (IS_ERR(kcred))
-> +			return ERR_CAST(kcred);
->  
->  		kcred->uid = ses->se_cb_sec.uid;
->  		kcred->gid = ses->se_cb_sec.gid;
-> @@ -932,10 +932,10 @@ static int setup_callback_client(struct nfs4_client *clp, struct nfs4_cb_conn *c
->  		return PTR_ERR(client);
->  	}
->  	cred = get_backchannel_cred(clp, client, ses);
-> -	if (!cred) {
-> -		trace_nfsd_cb_setup_err(clp, -ENOMEM);
-> +	if (IS_ERR(cred)) {
-> +		trace_nfsd_cb_setup_err(clp, PTR_ERR(cred));
->  		rpc_shutdown_client(client);
-> -		return -ENOMEM;
-> +		return PTR_ERR(cred);
->  	}
->  	clp->cl_cb_client = client;
->  	clp->cl_cb_cred = cred;
-> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> index c634483d85d2..8e1b196928c1 100644
-> --- a/fs/nfsd/nfs4recover.c
-> +++ b/fs/nfsd/nfs4recover.c
-> @@ -75,8 +75,8 @@ nfs4_save_creds(const struct cred **original_creds)
->  	struct cred *new;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	new->fsuid = GLOBAL_ROOT_UID;
->  	new->fsgid = GLOBAL_ROOT_GID;
-> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> index c29baa03dfaf..af41db078843 100644
-> --- a/fs/nfsd/nfsfh.c
-> +++ b/fs/nfsd/nfsfh.c
-> @@ -219,8 +219,8 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqstp, struct svc_fh *fhp)
->  		 * fix that case easily.
->  		 */
->  		struct cred *new = prepare_creds();
-> -		if (!new) {
-> -			error =  nfserrno(-ENOMEM);
-> +		if (IS_ERR(new)) {
-> +			error = nfserrno(PTR_ERR(new));
->  			goto out;
->  		}
->  		new->cap_effective =
-> diff --git a/fs/open.c b/fs/open.c
-> index 1d57fbde2feb..9c667fe67a69 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -374,8 +374,8 @@ static const struct cred *access_override_creds(void)
->  	struct cred *override_cred;
->  
->  	override_cred = prepare_creds();
-> -	if (!override_cred)
-> -		return NULL;
-> +	if (IS_ERR(override_cred))
-> +		return ERR_CAST(override_cred);
->  
->  	override_cred->fsuid = override_cred->uid;
->  	override_cred->fsgid = override_cred->gid;
-> @@ -438,8 +438,8 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
->  
->  	if (!(flags & AT_EACCESS)) {
->  		old_cred = access_override_creds();
-> -		if (!old_cred)
-> -			return -ENOMEM;
-> +		if (IS_ERR(old_cred))
-> +			return PTR_ERR(old_cred);
->  	}
->  
->  retry:
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 6b03457f72bb..aafd0a905d34 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -592,9 +592,8 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
->  			goto out_revert_creds;
->  	}
->  
-> -	err = -ENOMEM;
->  	override_cred = prepare_creds();
-> -	if (override_cred) {
-> +	if (!IS_ERR(override_cred)) {
->  		override_cred->fsuid = inode->i_uid;
->  		override_cred->fsgid = inode->i_gid;
->  		if (!attr->hardlink) {
-> @@ -613,7 +612,10 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
->  			err = ovl_create_upper(dentry, inode, attr);
->  		else
->  			err = ovl_create_over_whiteout(dentry, inode, attr);
-> +	} else {
-> +		err = PTR_ERR(override_cred);
->  	}
-> +
->  out_revert_creds:
->  	revert_creds(old_cred);
->  	return err;
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index e0a2e0468ee7..d4353a32681a 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -1983,10 +1983,12 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  	if (!ofs)
->  		goto out;
->  
-> -	err = -ENOMEM;
->  	ofs->creator_cred = cred = prepare_creds();
-> -	if (!cred)
-> +	if (IS_ERR(cred)) {
-> +		err = PTR_ERR(cred);
-> +		ofs->creator_cred = NULL;
->  		goto out_err;
 > +	}
->  
->  	/* Is there a reason anyone would want not to share whiteouts? */
->  	ofs->share_whiteout = true;
-> diff --git a/kernel/capability.c b/kernel/capability.c
-> index 765194f5d678..7a722754f571 100644
-> --- a/kernel/capability.c
-> +++ b/kernel/capability.c
-> @@ -263,8 +263,8 @@ SYSCALL_DEFINE2(capset, cap_user_header_t, header, const cap_user_data_t, data)
->  	inheritable.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	ret = security_capset(new, current_cred(),
->  			      &effective, &inheritable, &permitted);
-> diff --git a/kernel/cred.c b/kernel/cred.c
-> index e10c15f51c1f..dba33c9fa869 100644
-> --- a/kernel/cred.c
-> +++ b/kernel/cred.c
-> @@ -245,12 +245,13 @@ struct cred *cred_alloc_blank(void)
->   *
->   * Preparation involves making a copy of the objective creds for modification.
->   *
-> - * Returns a pointer to the new creds-to-be if successful, NULL otherwise.
-> + * Returns a pointer to the new creds-to-be if successful, < 0 on error.
->   *
->   * Call commit_creds() or abort_creds() to clean up.
->   */
->  struct cred *prepare_creds(void)
->  {
-> +	int err = -ENOMEM;
->  	struct task_struct *task = current;
->  	const struct cred *old;
->  	struct cred *new;
-> @@ -259,7 +260,7 @@ struct cred *prepare_creds(void)
->  
->  	new = kmem_cache_alloc(cred_jar, GFP_KERNEL);
->  	if (!new)
-> -		return NULL;
-> +		return ERR_PTR(err);
->  
->  	kdebug("prepare_creds() alloc %p", new);
->  
-> @@ -288,7 +289,8 @@ struct cred *prepare_creds(void)
->  	if (!new->ucounts)
->  		goto error;
->  
-> -	if (security_prepare_creds(new, old, GFP_KERNEL_ACCOUNT) < 0)
-> +	err = security_prepare_creds(new, old, GFP_KERNEL_ACCOUNT);
-> +	if (err < 0)
->  		goto error;
->  
->  	validate_creds(new);
-> @@ -296,7 +298,7 @@ struct cred *prepare_creds(void)
->  
->  error:
->  	abort_creds(new);
-> -	return NULL;
-> +	return ERR_PTR(err);
->  }
->  EXPORT_SYMBOL(prepare_creds);
->  
-> @@ -309,8 +311,8 @@ struct cred *prepare_exec_creds(void)
->  	struct cred *new;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return new;
-> +	if (IS_ERR(new))
-> +		return ERR_CAST(new);
->  
->  #ifdef CONFIG_KEYS
->  	/* newly exec'd tasks don't get a thread keyring */
-> @@ -363,8 +365,8 @@ int copy_creds(struct task_struct *p, unsigned long clone_flags)
->  	}
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	if (clone_flags & CLONE_NEWUSER) {
->  		ret = create_user_ns(new);
-> @@ -707,16 +709,17 @@ void __init cred_init(void)
->   *
->   * The caller may change these controls afterwards if desired.
->   *
-> - * Returns the new credentials or NULL if out of memory.
-> + * Returns the new credentials or < 0 on error
->   */
->  struct cred *prepare_kernel_cred(struct task_struct *daemon)
->  {
-> +	int err = -ENOMEM;
->  	const struct cred *old;
->  	struct cred *new;
->  
->  	new = kmem_cache_alloc(cred_jar, GFP_KERNEL);
->  	if (!new)
-> -		return NULL;
-> +		return ERR_PTR(err);
->  
->  	kdebug("prepare_kernel_cred() alloc %p", new);
->  
-> @@ -750,7 +753,8 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
->  	if (!new->ucounts)
->  		goto error;
->  
-> -	if (security_prepare_creds(new, old, GFP_KERNEL_ACCOUNT) < 0)
-> +	err = security_prepare_creds(new, old, GFP_KERNEL_ACCOUNT);
-> +	if (err < 0)
->  		goto error;
->  
->  	put_cred(old);
-> @@ -760,7 +764,7 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
->  error:
->  	put_cred(new);
->  	put_cred(old);
-> -	return NULL;
-> +	return ERR_PTR(err);
->  }
->  EXPORT_SYMBOL(prepare_kernel_cred);
->  
-> diff --git a/kernel/groups.c b/kernel/groups.c
-> index 787b381c7c00..140915fbb31f 100644
-> --- a/kernel/groups.c
-> +++ b/kernel/groups.c
-> @@ -136,8 +136,8 @@ int set_current_groups(struct group_info *group_info)
->  	struct cred *new;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	set_groups(new, group_info);
->  	return commit_creds(new);
-> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-> index eec72ca962e2..6cf75aa83b6c 100644
-> --- a/kernel/nsproxy.c
-> +++ b/kernel/nsproxy.c
-> @@ -311,6 +311,7 @@ static void put_nsset(struct nsset *nsset)
->  
->  static int prepare_nsset(unsigned flags, struct nsset *nsset)
->  {
-> +	int err = -ENOMEM;
->  	struct task_struct *me = current;
->  
->  	nsset->nsproxy = create_new_namespaces(0, me, current_user_ns(), me->fs);
-> @@ -324,6 +325,12 @@ static int prepare_nsset(unsigned flags, struct nsset *nsset)
->  	if (!nsset->cred)
->  		goto out;
->  
-> +	if (IS_ERR(nsset->cred)) {
-> +		err = PTR_ERR(nsset->cred);
-> +		nsset->cred = NULL;
+> +
+> +	kfree(root_digest);
+> +
+> +	return trusted;
+> +}
+> +
+> +/*
+> + * Determines whether the file system of a superblock is located on
+> + * a verity device that is trusted by LoadPin.
+> + */
+> +bool dm_verity_loadpin_is_bdev_trusted(struct block_device *bdev)
+> +{
+> +	struct mapped_device *md;
+> +	struct dm_table *table;
+> +	struct dm_target *ti;
+> +	int srcu_idx;
+> +	bool trusted = false;
+> +
+> +	if (list_empty(&dm_verity_loadpin_trusted_root_digests))
+> +		return false;
+> +
+> +	md = dm_get_md(bdev->bd_dev);
+> +	if (!md)
+> +		return false;
+> +
+> +	table = dm_get_live_table(md, &srcu_idx);
+> +
+> +	if (dm_table_get_num_targets(table) != 1)
 > +		goto out;
-> +	}
 > +
->  	/* Only create a temporary copy of fs_struct if we really need to. */
->  	if (flags == CLONE_NEWNS) {
->  		nsset->fs = me->fs;
-> @@ -338,7 +345,7 @@ static int prepare_nsset(unsigned flags, struct nsset *nsset)
+> +	ti = dm_table_get_target(table, 0);
+> +
+> +	if (is_trusted_verity_target(ti))
+> +		trusted = true;
+> +
+> +out:
+> +	dm_put_live_table(md, srcu_idx);
+> +	dm_put(md);
+> +
+> +	return trusted;
+> +}
+> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+> index 80133aae0db3..c5395e93525a 100644
+> --- a/drivers/md/dm-verity-target.c
+> +++ b/drivers/md/dm-verity-target.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/module.h>
+>  #include <linux/reboot.h>
+>  #include <linux/scatterlist.h>
+> +#include <linux/string.h>
 >  
->  out:
->  	put_nsset(nsset);
-> -	return -ENOMEM;
-> +	return err;
+>  #define DM_MSG_PREFIX			"verity"
+>  
+> @@ -1310,9 +1311,39 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  	return r;
 >  }
 >  
->  static inline int validate_ns(struct nsset *nsset, struct ns_common *ns)
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index b911fa6d81ab..bfba37c1cad8 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -378,8 +378,8 @@ long __sys_setregid(gid_t rgid, gid_t egid)
->  		return -EINVAL;
+> +/*
+> + * Check whether a DM target is a verity target.
+> + */
+> +bool dm_is_verity_target(struct dm_target *ti)
+> +{
+> +	return ti->type->module == THIS_MODULE;
+> +}
+> +
+> +/*
+> + * Get the root digest of a verity target.
+> + *
+> + * Returns a copy of the root digest, the caller is responsible for
+> + * freeing the memory of the digest.
+> + */
+> +int dm_verity_get_root_digest(struct dm_target *ti, u8 **root_digest, unsigned int *digest_size)
+> +{
+> +	struct dm_verity *v = ti->private;
+> +
+> +	if (!dm_is_verity_target(ti))
+> +		return -EINVAL;
+> +
+> +	*root_digest = kmemdup(v->root_digest, v->digest_size, GFP_KERNEL);
+> +	if (*root_digest == NULL)
+> +		return -ENOMEM;
+> +
+> +	*digest_size = v->digest_size;
+> +
+> +	return 0;
+> +}
+> +
+>  static struct target_type verity_target = {
+>  	.name		= "verity",
+> -	.version	= {1, 8, 0},
+> +	.version	= {1, 8, 1},
+>  	.module		= THIS_MODULE,
+>  	.ctr		= verity_ctr,
+>  	.dtr		= verity_dtr,
+> diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+> index 4e769d13473a..c832cc3e3d24 100644
+> --- a/drivers/md/dm-verity.h
+> +++ b/drivers/md/dm-verity.h
+> @@ -129,4 +129,8 @@ extern int verity_hash(struct dm_verity *v, struct ahash_request *req,
+>  extern int verity_hash_for_block(struct dm_verity *v, struct dm_verity_io *io,
+>  				 sector_t block, u8 *digest, bool *is_zero);
 >  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  	old = current_cred();
->  
->  	retval = -EPERM;
-> @@ -440,8 +440,8 @@ long __sys_setgid(gid_t gid)
->  		return -EINVAL;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  	old = current_cred();
->  
->  	retval = -EPERM;
-> @@ -535,8 +535,8 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
->  		return -EINVAL;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  	old = current_cred();
->  
->  	retval = -EPERM;
-> @@ -612,8 +612,8 @@ long __sys_setuid(uid_t uid)
->  		return -EINVAL;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  	old = current_cred();
->  
->  	retval = -EPERM;
-> @@ -678,8 +678,8 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
->  		return -EINVAL;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	old = current_cred();
->  
-> @@ -773,8 +773,8 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
->  		return -EINVAL;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  	old = current_cred();
->  
->  	retval = -EPERM;
-> @@ -856,7 +856,7 @@ long __sys_setfsuid(uid_t uid)
->  		return old_fsuid;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> +	if (IS_ERR(new))
->  		return old_fsuid;
->  
->  	if (uid_eq(kuid, old->uid)  || uid_eq(kuid, old->euid)  ||
-> @@ -900,7 +900,7 @@ long __sys_setfsgid(gid_t gid)
->  		return old_fsgid;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> +	if (IS_ERR(new))
->  		return old_fsgid;
->  
->  	if (gid_eq(kgid, old->gid)  || gid_eq(kgid, old->egid)  ||
-> diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
-> index 706e1686b5eb..35bca2fd9e8d 100644
-> --- a/kernel/trace/trace_events_user.c
-> +++ b/kernel/trace/trace_events_user.c
-> @@ -559,8 +559,8 @@ static int user_event_set_call_visible(struct user_event *user, bool visible)
->  
->  	cred = prepare_creds();
->  
-> -	if (!cred)
-> -		return -ENOMEM;
-> +	if (IS_ERR(cred))
-> +		return PTR_ERR(cred);
->  
->  	/*
->  	 * While by default tracefs is locked down, systems can be configured
-> diff --git a/kernel/umh.c b/kernel/umh.c
-> index b989736e8707..9337b0a17dd2 100644
-> --- a/kernel/umh.c
-> +++ b/kernel/umh.c
-> @@ -87,10 +87,11 @@ static int call_usermodehelper_exec_async(void *data)
->  	 */
->  	set_user_nice(current, 0);
->  
-> -	retval = -ENOMEM;
->  	new = prepare_kernel_cred(current);
-> -	if (!new)
-> +	if (IS_ERR(new)) {
-> +		retval = PTR_ERR(new);
->  		goto out;
-> +	}
->  
->  	spin_lock(&umh_sysctl_lock);
->  	new->cap_bset = cap_intersect(usermodehelper_bset, new->cap_bset);
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 5481ba44a8d6..56c94b0867b4 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -171,18 +171,20 @@ int create_user_ns(struct cred *new)
->  int unshare_userns(unsigned long unshare_flags, struct cred **new_cred)
->  {
->  	struct cred *cred;
-> -	int err = -ENOMEM;
-> +	int err;
->  
->  	if (!(unshare_flags & CLONE_NEWUSER))
->  		return 0;
->  
->  	cred = prepare_creds();
-> -	if (cred) {
-> +	if (!IS_ERR(cred)) {
->  		err = create_user_ns(cred);
->  		if (err)
->  			put_cred(cred);
->  		else
->  			*new_cred = cred;
-> +	} else {
-> +		err = PTR_ERR(cred);
->  	}
->  
->  	return err;
-> diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
-> index 3aced951d5ab..dbfb2b17491e 100644
-> --- a/net/dns_resolver/dns_key.c
-> +++ b/net/dns_resolver/dns_key.c
-> @@ -338,8 +338,8 @@ static int __init init_dns_resolver(void)
->  	 * with add_key().
->  	 */
->  	cred = prepare_kernel_cred(NULL);
-> -	if (!cred)
-> -		return -ENOMEM;
-> +	if (IS_ERR(cred))
-> +		return PTR_ERR(cred);
->  
->  	keyring = keyring_alloc(".dns_resolver",
->  				GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, cred,
-> diff --git a/security/apparmor/task.c b/security/apparmor/task.c
-> index d17130ee6795..77d0bb7f0aa6 100644
-> --- a/security/apparmor/task.c
-> +++ b/security/apparmor/task.c
-> @@ -53,8 +53,8 @@ int aa_replace_current_label(struct aa_label *label)
->  		return -EBUSY;
->  
->  	new  = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	if (ctx->nnp && label_is_stale(ctx->nnp)) {
->  		struct aa_label *tmp = ctx->nnp;
-> @@ -118,8 +118,8 @@ int aa_set_current_hat(struct aa_label *label, u64 token)
->  	struct cred *new;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  	AA_BUG(!label);
->  
->  	if (!ctx->previous) {
-> @@ -164,8 +164,8 @@ int aa_restore_previous_label(u64 token)
->  		return 0;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	aa_put_label(cred_label(new));
->  	set_cred_label(new, aa_get_newest_label(ctx->previous));
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 5fc8986c3c77..906d1bf4a226 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -1247,8 +1247,8 @@ static int cap_prctl_drop(unsigned long cap)
->  		return -EINVAL;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  	cap_lower(new->cap_bset, cap);
->  	return commit_creds(new);
->  }
-> @@ -1323,8 +1323,8 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
->  			return -EPERM;
->  
->  		new = prepare_creds();
-> -		if (!new)
-> -			return -ENOMEM;
-> +		if (IS_ERR(new))
-> +			return PTR_ERR(new);
->  		new->securebits = arg2;
->  		return commit_creds(new);
->  
-> @@ -1341,8 +1341,8 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
->  			return -EPERM;
->  
->  		new = prepare_creds();
-> -		if (!new)
-> -			return -ENOMEM;
-> +		if (IS_ERR(new))
-> +			return PTR_ERR(new);
->  		if (arg2)
->  			new->securebits |= issecure_mask(SECURE_KEEP_CAPS);
->  		else
-> @@ -1355,8 +1355,8 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
->  				return -EINVAL;
->  
->  			new = prepare_creds();
-> -			if (!new)
-> -				return -ENOMEM;
-> +			if (IS_ERR(new))
-> +				return PTR_ERR(new);
->  			cap_clear(new->cap_ambient);
->  			return commit_creds(new);
->  		}
-> @@ -1378,8 +1378,8 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
->  				return -EPERM;
->  
->  			new = prepare_creds();
-> -			if (!new)
-> -				return -ENOMEM;
-> +			if (IS_ERR(new))
-> +				return PTR_ERR(new);
->  			if (arg2 == PR_CAP_AMBIENT_RAISE)
->  				cap_raise(new->cap_ambient, arg3);
->  			else
-> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-> index 96a92a645216..cb3be208bc7d 100644
-> --- a/security/keys/keyctl.c
-> +++ b/security/keys/keyctl.c
-> @@ -1146,8 +1146,8 @@ static int keyctl_change_reqkey_auth(struct key *key)
->  	struct cred *new;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	key_put(new->request_key_auth);
->  	new->request_key_auth = key_get(key);
-> @@ -1396,8 +1396,8 @@ long keyctl_set_reqkey_keyring(int reqkey_defl)
->  		return old_setting;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	switch (reqkey_defl) {
->  	case KEY_REQKEY_DEFL_THREAD_KEYRING:
-> diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-> index b5d5333ab330..8e7655d48319 100644
-> --- a/security/keys/process_keys.c
-> +++ b/security/keys/process_keys.c
-> @@ -247,8 +247,8 @@ static int install_thread_keyring(void)
->  	int ret;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	ret = install_thread_keyring_to_cred(new);
->  	if (ret < 0) {
-> @@ -294,8 +294,8 @@ static int install_process_keyring(void)
->  	int ret;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	ret = install_process_keyring_to_cred(new);
->  	if (ret < 0) {
-> @@ -359,8 +359,8 @@ static int install_session_keyring(struct key *keyring)
->  	int ret;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	ret = install_session_keyring_to_cred(new, keyring);
->  	if (ret < 0) {
-> @@ -842,8 +842,8 @@ long join_session_keyring(const char *name)
->  	long ret, serial;
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  	old = current_cred();
->  
->  	/* if no name is provided, install an anonymous keyring */
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index 735a0865ea11..ba34df79b30e 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -424,8 +424,8 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
->  
->  	/* Prepares new credentials. */
->  	new_cred = prepare_creds();
-> -	if (!new_cred) {
-> -		err = -ENOMEM;
-> +	if (IS_ERR(new_cred)) {
-> +		err = PTR_ERR(new_cred);
->  		goto out_put_ruleset;
->  	}
->  	new_llcred = landlock_cred(new_cred);
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index beceb89f68d9..01f43e433750 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3472,8 +3472,8 @@ static int selinux_inode_copy_up(struct dentry *src, struct cred **new)
->  
->  	if (new_creds == NULL) {
->  		new_creds = prepare_creds();
-> -		if (!new_creds)
-> -			return -ENOMEM;
-> +		if (IS_ERR(new_creds))
-> +			return PTR_ERR(new_creds);
->  	}
->  
->  	tsec = selinux_cred(new_creds);
-> @@ -6457,8 +6457,8 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
->  	}
->  
->  	new = prepare_creds();
-> -	if (!new)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	/* Permission checking based on the specified context is
->  	   performed during the actual operation (execve,
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 6207762dbdb1..ca4e2b906cce 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -3555,8 +3555,8 @@ static int smack_setprocattr(const char *name, void *value, size_t size)
->  	}
->  
->  	new = prepare_creds();
-> -	if (new == NULL)
-> -		return -ENOMEM;
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
->  
->  	tsp = smack_cred(new);
->  	tsp->smk_task = skp;
-> @@ -4633,8 +4633,8 @@ static int smack_inode_copy_up(struct dentry *dentry, struct cred **new)
->  
->  	if (new_creds == NULL) {
->  		new_creds = prepare_creds();
-> -		if (new_creds == NULL)
-> -			return -ENOMEM;
-> +		if (IS_ERR(new_creds))
-> +			return PTR_ERR(new_creds);
->  	}
->  
->  	tsp = smack_cred(new_creds);
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index 4b58526450d4..4f2a446a6683 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -2777,8 +2777,8 @@ static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
->  		struct task_smack *tsp;
->  
->  		new = prepare_creds();
-> -		if (!new) {
-> -			rc = -ENOMEM;
-> +		if (IS_ERR(new)) {
-> +			rc = PTR_ERR(new);
->  			goto out;
->  		}
->  		tsp = smack_cred(new);
+> +extern bool dm_is_verity_target(struct dm_target *ti);
+> +extern int dm_verity_get_root_digest(struct dm_target *ti, u8 **root_digest,
+> +				     unsigned int *digest_size);
+> +
+>  #endif /* DM_VERITY_H */
+> diff --git a/include/linux/dm-verity-loadpin.h b/include/linux/dm-verity-loadpin.h
+> new file mode 100644
+> index 000000000000..fb695ecaa5d5
+> --- /dev/null
+> +++ b/include/linux/dm-verity-loadpin.h
+> @@ -0,0 +1,27 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef __LINUX_DM_VERITY_LOADPIN_H
+> +#define __LINUX_DM_VERITY_LOADPIN_H
+> +
+> +#include <linux/list.h>
+> +
+> +struct block_device;
+> +
+> +extern struct list_head dm_verity_loadpin_trusted_root_digests;
+> +
+> +struct dm_verity_loadpin_trusted_root_digest {
+> +	struct list_head node;
+> +	unsigned int len;
+> +	u8 data[];
+> +};
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_LOADPIN) && IS_BUILTIN(CONFIG_DM_VERITY)
+> +bool dm_verity_loadpin_is_bdev_trusted(struct block_device *bdev);
+> +#else
+> +static inline bool dm_verity_loadpin_is_bdev_trusted(struct block_device *bdev)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+> +#endif /* __LINUX_DM_VERITY_LOADPIN_H */
+> -- 
+> 2.36.1.124.g0e6072fb45-goog
+> 
