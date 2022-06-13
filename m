@@ -2,147 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E59C6CCA47B
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jun 2022 19:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6670C43334
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jun 2022 20:56:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344939AbiFMTrG (ORCPT
+        id S245594AbiFMU4i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Jun 2022 15:47:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52346 "EHLO
+        Mon, 13 Jun 2022 16:56:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344203AbiFMTqv (ORCPT
+        with ESMTP id S1345169AbiFMUzf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Jun 2022 15:46:51 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 638575535A
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Jun 2022 11:17:54 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id cx11so6364835pjb.1
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Jun 2022 11:17:54 -0700 (PDT)
+        Mon, 13 Jun 2022 16:55:35 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A121274D
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Jun 2022 13:28:12 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id k12-20020a17090a404c00b001eaabc1fe5dso4005842pjg.1
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Jun 2022 13:28:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=THDzxPXwnrXgbH5TVo5+XbAuUhPSiF5R1K9yx5fzgl4=;
-        b=I9R3QCS8x2h9rOtgVNPZ+kQdPg0f1EhqgoMkf4TTQQXrzl/+IrBZA+lY4Wj9oyvAsO
-         3G7QqjbjT9sZWOuyhBAQ8XiYweHVz3mMo7ntib1AkO0DABvSHHMbP7GIQosE3IXbSLoH
-         IMSdXELOOafuDokRP60++MMSuMhPbciV2uTumfENBfPvCLKuWFyO+yabUB0Qz9l0R+Bh
-         FtmUid8oGTVMZVzxe3wzlWfcXqrRKp46yFaXq5vlpoDhxCC+AJqft5hi91L5eCGptyqm
-         LWRMAsniyXmkW709BmrIwNv08RcRcUzjFn0UtdHGPu49vqEiweDeTnnWReDEmwxOGAqy
-         ez2A==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=osZI55S/5dMcmV9pE2V+C0A43bBMSnu9K9IPGFv9W/Q=;
+        b=mWUznRIloP2KlmQ1d/y4w2DVizn3o5dRam9GxBJuSDKWWJyNFWl8lbPbBDxPFrlLYF
+         bL6KsouwqNO7nn0ZucMLrpAvQeeMlv6Lz+ixXEBs2F9gtF6UMucw2rUHLthFUr17mVkI
+         9R2z0NFBWgYL9bSujjUguW3v3dnYtOlRyA60Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=THDzxPXwnrXgbH5TVo5+XbAuUhPSiF5R1K9yx5fzgl4=;
-        b=2AuaPaWyS51+e92JXsHHNFiPfHZX2igU1kqrrYRpCqee7lgNtjA0g7EV6HOCw3x78G
-         R2OAT8BfFXHtVoAAnACmZtkfiiZEunpy1M5smJfpoOJulOkG531GbqUAzNnkjcDJIF/P
-         Gvk8gK0rKG0GZU1L1nR4jogJQYtemiAr/BycvoqCQE8uBbqNkHL7FcSyBZY96tXFZej7
-         K/FN3dOMkjPvWlu+UR5SzLxDKomcfXfbgptDhcPGrpciT+7aFzoJhdflzm5kUv8L6TF2
-         B9uz0aQwsXW4/8NkHnkchEYxdpxIrQfSsN+yP15lpn9G9Dzf+jq2O7EZ7VsE9U94Ytob
-         yJaA==
-X-Gm-Message-State: AJIora+GsTneA1PUuIMi6x5qw7Kl9aXPbpHxkJDyvybzin2RWfoBbLIP
-        ao4OBPZx2IzKtw5Jd9NlEqUqWKnzHuLJ1UNIBeslJqXKfgWP
-X-Google-Smtp-Source: ABdhPJxr+HkD+ptO5rppukZz7x6VARn4tsHmirXuW0Vt35nic5PNRbZOk9JJnwL2Pb76zYiZ3aCUbShyIS74UydsHIk=
-X-Received: by 2002:a17:902:ef43:b0:168:dbf0:bc47 with SMTP id
- e3-20020a170902ef4300b00168dbf0bc47mr587340plx.6.1655144273994; Mon, 13 Jun
- 2022 11:17:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=osZI55S/5dMcmV9pE2V+C0A43bBMSnu9K9IPGFv9W/Q=;
+        b=oJMkOw0I02JjcW2tK5XZcirHg07zV/KhgXKamC+S7bAT48QumnhYJ8p70LW3wmw+Ms
+         M49pOsQIN+/ijPifDOcwlG22eeOjEh7knvkBYXCaKvRWq0VKbLWMCi1EHtWSguTN80Nb
+         dOkNx3PUQV53POIGe38abwZDFP9G41FwSqSbxlAJzQe3jQZ58rOPE7D5ztcmlMspIO57
+         H3mtcyhKCg6cv2BXt/kSsnUQEPznIitI4Wxa3XtjMABsmJkWQLJnvNhdri0Km09ESPkm
+         z5S36JxQyXr/kAaI1Aqqqg9qn90DTpdCe/XxHofQOVwcPZ6zT/2iQCVzKF71SzxIiYBj
+         1Uew==
+X-Gm-Message-State: AJIora8nQucn7Kw6y5G8pEZrf/LucG1rmjehEUAWx8JrjalZNdSXN2f4
+        hetUI1WZWvzbprn9T892EVtz91JLKYQsjQ==
+X-Google-Smtp-Source: ABdhPJwWHXAV5GrU0wvTAGyjLfVkRBvo2yWyHFPTojpJxd+BGIwMV6Tfi1FuKAqpnzhRjLbV0+62Vg==
+X-Received: by 2002:a17:902:eb90:b0:163:e4c1:b2fc with SMTP id q16-20020a170902eb9000b00163e4c1b2fcmr807340plg.159.1655152092015;
+        Mon, 13 Jun 2022 13:28:12 -0700 (PDT)
+Received: from localhost ([2620:15c:202:200:cf79:20b3:87b5:90bc])
+        by smtp.gmail.com with UTF8SMTPSA id f13-20020a170902f38d00b0016413dbbf92sm5531140ple.234.2022.06.13.13.28.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jun 2022 13:28:10 -0700 (PDT)
+From:   Micah Morton <mortonm@chromium.org>
+To:     linux-security-module@vger.kernel.org
+Cc:     keescook@chromium.org, jmorris@namei.org, serge@hallyn.com,
+        linux-kernel@vger.kernel.org, Micah Morton <mortonm@chromium.org>
+Subject: [PATCH 1/2] security: Add LSM hook to setgroups() syscall
+Date:   Mon, 13 Jun 2022 13:28:07 -0700
+Message-Id: <20220613202807.447694-1-mortonm@chromium.org>
+X-Mailer: git-send-email 2.36.1.476.g0c4daa206d-goog
 MIME-Version: 1.0
-References: <20220125143304.34628-1-cgzones@googlemail.com>
- <CAHC9VhSdGeZ9x-0Hvk9mE=YMXbpk-tC5Ek+uGFGq5U+51qjChw@mail.gmail.com>
- <CAJ2a_DeAUcGTGm_fk8viVbeFXr6FLrJ-oLw-abwFND6Kv0u0gQ@mail.gmail.com>
- <CAHC9VhRRBrLVtvmbJSTZ7fOkD-8AN4iM0WRmeL4ND001d3viJg@mail.gmail.com>
- <CAJ2a_DeT6AG0jp4gTdsEy7nh=s6cLR7QCsYXAz2+3vsdRKxddg@mail.gmail.com> <CAHC9VhQXdNieG8_uWBfCCFSow6AVaxNBhB3GNU8ea1j5rjgZiA@mail.gmail.com>
-In-Reply-To: <CAHC9VhQXdNieG8_uWBfCCFSow6AVaxNBhB3GNU8ea1j5rjgZiA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 13 Jun 2022 14:17:43 -0400
-Message-ID: <CAHC9VhT+FptRYzr9KGny_2wUUh2=ZZYSx0TP_uYEHW0zZsSxMQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: create security context for memfd_secret inodes
-To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 7, 2022 at 4:10 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Mon, May 2, 2022 at 9:45 AM Christian G=C3=B6ttsche
-> <cgzones@googlemail.com> wrote:
-> > On Thu, 17 Feb 2022 at 23:32, Paul Moore <paul@paul-moore.com> wrote:
-> > > On Thu, Feb 17, 2022 at 9:24 AM Christian G=C3=B6ttsche
-> > > <cgzones@googlemail.com> wrote:
-> > > > On Thu, 27 Jan 2022 at 00:01, Paul Moore <paul@paul-moore.com> wrot=
-e:
-> > > > > On Tue, Jan 25, 2022 at 9:33 AM Christian G=C3=B6ttsche
-> > > > > <cgzones@googlemail.com> wrote:
-> > > > > >
-> > > > > > Create a security context for the inodes created by memfd_secre=
-t(2) via
-> > > > > > the LSM hook inode_init_security_anon to allow a fine grained c=
-ontrol.
-> > > > > > As secret memory areas can affect hibernation and have a global=
- shared
-> > > > > > limit access control might be desirable.
-> > > > > >
-> > > > > > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> > > > > > ---
-> > > > > > An alternative way of checking memfd_secret(2) is to create a n=
-ew LSM
-> > > > > > hook and e.g. for SELinux check via a new process class permiss=
-ion.
-> > > > > > ---
-> > > > > >  mm/secretmem.c | 9 +++++++++
-> > > > > >  1 file changed, 9 insertions(+)
-> > > > >
-> > > > > This seems reasonable to me, and I like the idea of labeling the =
-anon
-> > > > > inode as opposed to creating a new set of LSM hooks.  If we want =
-to
-> > > > > apply access control policy to the memfd_secret() fds we are goin=
-g to
-> > > > > need to attach some sort of LSM state to the inode, we might as w=
-ell
-> > > > > use the mechanism we already have instead of inventing another on=
-e.
-> > > >
-> > > > Any further comments (on design or implementation)?
-> > > >
-> > > > Should I resend a non-rfc?
-> > >
-> > > I personally would really like to see a selinux-testsuite for this so
-> > > that we can verify it works not just now but in the future too.  I
-> > > think having a test would also help demonstrate the usefulness of the
-> > > additional LSM controls.
-> > >
-> >
-> > Any comments (especially from the mm people)?
-> >
-> > Draft SELinux testsuite patch:
-> > https://github.com/SELinuxProject/selinux-testsuite/pull/80
-> >
-> > > > One naming question:
-> > > > Should the anonymous inode class be named "[secretmem]", like
-> > > > "[userfaultfd]", or "[secret_mem]" similar to "[io_uring]"?
-> > >
-> > > The pr_fmt() string in mm/secretmem.c uses "secretmem" so I would
-> > > suggest sticking with "[secretmem]", although that is question best
-> > > answered by the secretmem maintainer.
->
-> I think this patchset has been posted for long enough with no
-> comments, and no objections, that I can pull this into the
-> selinux/next tree.  However, I'll give it until the end of this week
-> just to give folks one last chance to comment.  If I don't hear any
-> objections by the end of day on Friday, June 10th I'll go ahead and
-> merge this.
+Give the LSM framework the ability to filter setgroups() syscalls. There
+are already analagous hooks for the set*uid() and set*gid() syscalls.
+The SafeSetID LSM will use this new hook to ensure setgroups() calls are
+allowed by the installed security policy.
 
-I didn't see any comments so I just merged this into selinux/next.
-Thanks for your patience Christian.
+Signed-off-by: Micah Morton <mortonm@chromium.org>
+---
 
---=20
-paul-moore.com
+Developed on 5.18
+
+ include/linux/lsm_hook_defs.h |  1 +
+ include/linux/lsm_hooks.h     |  7 +++++++
+ include/linux/security.h      |  7 +++++++
+ kernel/groups.c               | 12 ++++++++++++
+ security/security.c           |  5 +++++
+ 5 files changed, 32 insertions(+)
+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index db924fe379c9..c01063ec4be7 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -201,6 +201,7 @@ LSM_HOOK(int, 0, task_fix_setuid, struct cred *new, const struct cred *old,
+ 	 int flags)
+ LSM_HOOK(int, 0, task_fix_setgid, struct cred *new, const struct cred * old,
+ 	 int flags)
++LSM_HOOK(int, 0, task_fix_setgroups, struct cred *new, const struct cred * old)
+ LSM_HOOK(int, 0, task_setpgid, struct task_struct *p, pid_t pgid)
+ LSM_HOOK(int, 0, task_getpgid, struct task_struct *p)
+ LSM_HOOK(int, 0, task_getsid, struct task_struct *p)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 419b5febc3ca..b5143d9a1127 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -701,6 +701,13 @@
+  *	@old is the set of credentials that are being replaced.
+  *	@flags contains one of the LSM_SETID_* values.
+  *	Return 0 on success.
++ * @task_fix_setgroups:
++ *	Update the module's state after setting the supplementary group
++ *	identity attributes of the current process.
++ *	@new is the set of credentials that will be installed.  Modifications
++ *	should be made to this rather than to @current->cred.
++ *	@old is the set of credentials that are being replaced.
++ *	Return 0 on success.
+  * @task_setpgid:
+  *	Check permission before setting the process group identifier of the
+  *	process @p to @pgid.
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 25b3ef71f495..d111ff830742 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -413,6 +413,7 @@ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+ 			     int flags);
+ int security_task_fix_setgid(struct cred *new, const struct cred *old,
+ 			     int flags);
++int security_task_fix_setgroups(struct cred *new, const struct cred *old);
+ int security_task_setpgid(struct task_struct *p, pid_t pgid);
+ int security_task_getpgid(struct task_struct *p);
+ int security_task_getsid(struct task_struct *p);
+@@ -1096,6 +1097,12 @@ static inline int security_task_fix_setgid(struct cred *new,
+ 	return 0;
+ }
+ 
++static inline int security_task_fix_setgroups(struct cred *new,
++					   const struct cred *old)
++{
++	return 0;
++}
++
+ static inline int security_task_setpgid(struct task_struct *p, pid_t pgid)
+ {
+ 	return 0;
+diff --git a/kernel/groups.c b/kernel/groups.c
+index 787b381c7c00..c085f54d8dbb 100644
+--- a/kernel/groups.c
++++ b/kernel/groups.c
+@@ -134,13 +134,25 @@ EXPORT_SYMBOL(set_groups);
+ int set_current_groups(struct group_info *group_info)
+ {
+ 	struct cred *new;
++	struct cred *old;
+ 
+ 	new = prepare_creds();
+ 	if (!new)
+ 		return -ENOMEM;
+ 
++	old = current_cred();
++
+ 	set_groups(new, group_info);
++
++	retval = security_task_fix_setgroups(new, old);
++	if (retval < 0)
++		goto error;
++
+ 	return commit_creds(new);
++
++error:
++	abort_creds(new);
++	return retval;
+ }
+ 
+ EXPORT_SYMBOL(set_current_groups);
+diff --git a/security/security.c b/security/security.c
+index b7cf5cbfdc67..eaed8d16d90a 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1809,6 +1809,11 @@ int security_task_fix_setgid(struct cred *new, const struct cred *old,
+ 	return call_int_hook(task_fix_setgid, 0, new, old, flags);
+ }
+ 
++int security_task_fix_setgroups(struct cred *new, const struct cred *old)
++{
++	return call_int_hook(task_fix_setgroups, 0, new, old);
++}
++
+ int security_task_setpgid(struct task_struct *p, pid_t pgid)
+ {
+ 	return call_int_hook(task_setpgid, 0, p, pgid);
+-- 
+2.36.1.476.g0c4daa206d-goog
+
