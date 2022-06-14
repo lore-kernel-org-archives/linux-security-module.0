@@ -2,158 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CED2CCA481
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jun 2022 16:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD026C43334
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jun 2022 17:37:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244603AbiFNQbj (ORCPT
+        id S237749AbiFNRhN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jun 2022 12:31:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46564 "EHLO
+        Tue, 14 Jun 2022 13:37:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243064AbiFNQbg (ORCPT
+        with ESMTP id S234072AbiFNRhM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jun 2022 12:31:36 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1D82443C9;
-        Tue, 14 Jun 2022 09:31:35 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:56828)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1o19S2-00AmWn-9i; Tue, 14 Jun 2022 10:31:34 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:40454 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1o19S0-009rSu-TN; Tue, 14 Jun 2022 10:31:33 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Frederick Lawler <fred@cloudflare.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-References: <20220608150942.776446-1-fred@cloudflare.com>
-        <87tu8oze94.fsf@email.froward.int.ebiederm.org>
-        <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com>
-        <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
-        <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com>
-Date:   Tue, 14 Jun 2022 11:30:54 -0500
-In-Reply-To: <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com> (Frederick
-        Lawler's message of "Tue, 14 Jun 2022 11:06:24 -0500")
-Message-ID: <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 14 Jun 2022 13:37:12 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B88CC2BB18
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jun 2022 10:37:11 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id x62so12651897ede.10
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jun 2022 10:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y/o/RV1wuM6nbYpO+7qYN86XKOHWQh2hN8VI/abfDqY=;
+        b=UJxaWhDmrHuXP7KTB8VONn/p0WAg1P1msemNJScm0SoQJUhLcLCZJFkvAWGV22KmGT
+         dTfXA5SlP3e4nZ3q52s+wIHCwtJOsdn3t7BDmkibJfyr6sIkvwjL6icoJDNzkLxPSlvz
+         Zoux5qJ8F81p//tB87eH2FMACflqCgXnIEyq4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y/o/RV1wuM6nbYpO+7qYN86XKOHWQh2hN8VI/abfDqY=;
+        b=E6aQFNjTWNfKRuUjs9l95zXLkzpHfHGbFzy7VFp6GECtK6M0+TstVH1fE+VpRvxgcm
+         9Z/L97qxVM77D6oKluCkoJ0sqsDWAIUoQoIRHzahu5krn1yrcNnD+FmyOGFetSd9rTR+
+         Qcu3woE/ayWaeLJbQDx8+ClhiX24zIHFyZ/rHXBDkUS6fQKDZ+RImattKg30M1n8Kr3o
+         T8204qpxAM0SWbI1ETRi4M6GTUEb1QtUBGjE8vbe7ZFNoJmxdI+YzKwri9GcgpSgxOsC
+         q3SD/2ohqKugALZB2YbXcpL3Hdw93A/1qFcIaomZq1grkDNO5Xq8cnfw6ltX171KcuXC
+         OZYQ==
+X-Gm-Message-State: AJIora/bw5LgYUsIUHBTN0eVy3SiTh+XJ0FseakcXBvSHf2C/Jp/g58Z
+        vLY90c5ntFcJonTASG4cO/4edZFyJ0tRdt018Lx+NQ==
+X-Google-Smtp-Source: ABdhPJyrfOeRdnBJVarAPxPF8qq+CzWi0JMQggifnrweZOadB0KybCiGeWW4fBj+3mahljtsS5ySOTCTxkA+RYnIn2c=
+X-Received: by 2002:a05:6402:2554:b0:42d:ee79:559d with SMTP id
+ l20-20020a056402255400b0042dee79559dmr7460933edb.175.1655228230349; Tue, 14
+ Jun 2022 10:37:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1o19S0-009rSu-TN;;;mid=<87o7yvxl4x.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX19OwrPXsW8XkXxckntCYt4oo3aNKl7qziA=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20220613202852.447738-1-mortonm@chromium.org> <CAJ-EccOhrYG6n6As72R7YzSk+Zzy=oFFJ62hG9476njprpJuvw@mail.gmail.com>
+ <202206131643.4FB2340C43@keescook>
+In-Reply-To: <202206131643.4FB2340C43@keescook>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Tue, 14 Jun 2022 10:36:59 -0700
+Message-ID: <CAJ-EccN92u8y46j+h1Vg8tzFfRDynMM=1zRF6zGjx_4qKJ=AbQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] LSM: SafeSetID: Add setgroups() security policy handling
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Frederick Lawler <fred@cloudflare.com> writes:
-
-> On 6/13/22 11:44 PM, Eric W. Biederman wrote:
->> Frederick Lawler <fred@cloudflare.com> writes:
->> 
->>> Hi Eric,
->>>
->>> On 6/13/22 12:04 PM, Eric W. Biederman wrote:
->>>> Frederick Lawler <fred@cloudflare.com> writes:
->>>>
->>>>> While experimenting with the security_prepare_creds() LSM hook, we
->>>>> noticed that our EPERM error code was not propagated up the callstack.
->>>>> Instead ENOMEM is always returned.  As a result, some tools may send a
->>>>> confusing error message to the user:
->>>>>
->>>>> $ unshare -rU
->>>>> unshare: unshare failed: Cannot allocate memory
->>>>>
->>>>> A user would think that the system didn't have enough memory, when
->>>>> instead the action was denied.
->>>>>
->>>>> This problem occurs because prepare_creds() and prepare_kernel_cred()
->>>>> return NULL when security_prepare_creds() returns an error code. Later,
->>>>> functions calling prepare_creds() and prepare_kernel_cred() return
->>>>> ENOMEM because they assume that a NULL meant there was no memory
->>>>> allocated.
->>>>>
->>>>> Fix this by propagating an error code from security_prepare_creds() up
->>>>> the callstack.
->>>> Why would it make sense for security_prepare_creds to return an error
->>>> code other than ENOMEM?
->>>>   > That seems a bit of a violation of what that function is supposed to do
->>>>
->>>
->>> The API allows LSM authors to decide what error code is returned from the
->>> cred_prepare hook. security_task_alloc() is a similar hook, and has its return
->>> code propagated.
->> It is not an api.  It is an implementation detail of the linux kernel.
->> It is a set of convenient functions that do a job.
->> The general rule is we don't support cases without an in-tree user.  I
->> don't see an in-tree user.
->> 
->>> I'm proposing we follow security_task_allocs() pattern, and add visibility for
->>> failure cases in prepare_creds().
->> I am asking why we would want to.  Especially as it is not an API, and I
->> don't see any good reason for anything but an -ENOMEM failure to be
->> supported.
->>
-> We're writing a LSM BPF policy, and not a new LSM. Our policy aims to solve
-> unprivileged unshare, similar to Debian's patch [1]. We're in a position such
-> that we can't use that patch because we can't block _all_ of our applications
-> from performing an unshare. We prefer a granular approach. LSM BPF seems like a
-> good choice.
-
-I am quite puzzled why doesn't /proc/sys/user/max_user_namespaces work
-for you?
-
-> Because LSM BPF exposes these hooks, we should probably treat them as an
-> API. From that perspective, userspace expects unshare to return a EPERM 
-> when the call is denied permissions.
-
-The BPF code gets to be treated as a out of tree kernel module.
-
->> Without an in-tree user that cares it is probably better to go the
->> opposite direction and remove the possibility of return anything but
->> memory allocation failure.  That will make it clearer to implementors
->> that a general error code is not supported and this is not a location
->> to implement policy, this is only a hook to allocate state for the LSM.
->> 
+On Mon, Jun 13, 2022 at 4:46 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> That's a good point, and it's possible we're using the wrong hook for the
-> policy. Do you know of other hooks we can look into?
-
-Not off the top of my head.
-
->>>> I have probably missed a very interesting discussion where that was
->>>> mentioned but I don't see link to the discussion or anything explaining
->>>> why we want to do that in this change.
->>>>
->>>
->>> AFAIK, this is the start of the discussion.
->> You were on v3 and had an out of tree piece of code so I assumed someone
->> had at least thought about why you want to implement policy in a piece
->> of code whose only purpose is to allocate memory to store state.
->> 
+> On Mon, Jun 13, 2022 at 02:00:03PM -0700, Micah Morton wrote:
+> > On Mon, Jun 13, 2022 at 1:28 PM Micah Morton <mortonm@chromium.org> wrote:
+> > [...]
+> > > +static int safesetid_task_fix_setgroups(struct cred *new, const struct cred *old)
+> > > +{
+> > > +       int i;
+> > > +
+> > > +       /* Do nothing if there are no setgid restrictions for our old RGID. */
+> > > +       if (setid_policy_lookup((kid_t){.gid = old->gid}, INVALID_ID, GID) == SIDPOL_DEFAULT)
+> > > +               return 0;
+> > > +
+> > > +       get_group_info(new->group_info);
+> > > +       for (i = 0; i < new->group_info->ngroups; i++) {
+> > > +               if (!id_permitted_for_cred(old, (kid_t){.gid = group_info->gid[i]}, GID)) {
+> >
+> > Oops, should be:
+> >
+> > !id_permitted_for_cred(old, (kid_t){.gid = new->group_info->gid[i]}, GID)
+> >
+> > Guess I won't send a whole new patch just for that one line
 >
-> No worries.
->
->> Eric
->> 
->> 
->
-> Links:
-> 1:
-> https://sources.debian.org/patches/linux/3.16.56-1+deb8u1/debian/add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by-default.patch/
+> This begs the question: are there self-tests for this LSM somewhere?
+> It'd be really nice to add them to tool/testing/selftests ...
 
-Eric
+There actually is tools/testing/selftests/safesetid/ but I haven't
+updated it since v1 of SafeSetID that only accommodated UIDs. I've
+been relying on integration testing we have out of tree on the Chrome
+OS side but I suppose its reasonable to bring the selftest up to date
+as well :)
+
+Also both patches are a couple lines off from the ones I was finished
+developing/testing with.. some kind of screw up happened when I copied
+from my dev machine to another where I could get git-send-email
+working properly. I'll just resend these 2 patches along with the
+update to the selftest.
+
+Thanks
+
+>
+> --
+> Kees Cook
