@@ -2,75 +2,188 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DD0C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 19:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFFAC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 22:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344979AbiFOTlJ (ORCPT
+        id S244186AbiFOWMl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jun 2022 15:41:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42598 "EHLO
+        Wed, 15 Jun 2022 18:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232127AbiFOTlI (ORCPT
+        with ESMTP id S1348555AbiFOWMk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jun 2022 15:41:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19BE22E0B5;
-        Wed, 15 Jun 2022 12:41:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D93E60EB1;
-        Wed, 15 Jun 2022 19:41:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 016E2C34115;
-        Wed, 15 Jun 2022 19:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655322063;
-        bh=RzP3qZTZJINHqTKFXOClmmCHrILPHRVdARLSckRDLu4=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=sPr3tIrT00EMIjz/ONdLIRYJ+CB3UQOmsXySLdFOSmMVE2PIqmKgbXhYyH32JQZOj
-         f6o4nwcpo1SxAbGU4TcsxsaJ6rLXGSSmag8Q+kJlSv2x/nHwW+EXm33zaZiLMoVba/
-         XyUP4fWev//LsLGc6CqxUc/QPEU6VyFffwW010XBEEVSHnQG74LfDlu6/TyNaBRe/d
-         wL6xNNbxbp38Yf2kJrfPjTVJVyseia0LPYGREuqKzE/gtOt0X+Q0ErfsJ8F+n6qSfn
-         ZpyGr0xWlE/fK5Fwg/q4GZf76t52zYvIz156FNbzmt1ErWyOQlrDVbqYz25AxHW0Hq
-         Vzs4DM4Pq/Urg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E0890E73856;
-        Wed, 15 Jun 2022 19:41:02 +0000 (UTC)
-Subject: Re: [GIT PULL] tpmdd updates for v5.19-rc3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220615185912.40987-1-jarkko@kernel.org>
-References: <20220615185912.40987-1-jarkko@kernel.org>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220615185912.40987-1-jarkko@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v5.19-rc3
-X-PR-Tracked-Commit-Id: 27b5b22d252c6d71a2a37a4bdf18d0be6d25ee5a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: afe9eb14ea1cbac5d91ca04eb64810d2d9fa22b0
-Message-Id: <165532206290.28565.8327730742132157264.pr-tracker-bot@kernel.org>
-Date:   Wed, 15 Jun 2022 19:41:02 +0000
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+        Wed, 15 Jun 2022 18:12:40 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8FC10AC
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 15:12:33 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id x17so17090217wrg.6
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 15:12:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0nYF2+L0+nfm2ZZrGFnn5kpR2H6SVKM0WrlyyHrypck=;
+        b=IfERn+03UqWtxXLyO34clbji2GIEw/NmkaNlK0oeunYY/1Hsy4RFRtzmZRukgQ38zS
+         BZJDIKoEyYef2iPVHLWo2zeziufyg23fZvcvQwstDSlaP3Co8MYRvbvCA8cN7dzV+i86
+         M9xQetZI485xvvbOtVjDy+1wJG/y2zrDyysgM0Elv9145+H/1cUqnn220imqz118qZVu
+         +GGQzJ2Ak9lVih6J0scW99b1gdgm0STHKRJXpOwAXryBgGma7c/m+VuTprCV/CjwXA/q
+         qDPvEDudDimD3QikadNk3tJv8DuFl1zzvXPFPycPuDupe0Ih4S7u7yEFoOf/tZzq7MK0
+         J8zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0nYF2+L0+nfm2ZZrGFnn5kpR2H6SVKM0WrlyyHrypck=;
+        b=G3Geu0K9e6B8XL+UeJkexyfHmT9f6jeO9NkTTonjpmNIl17xI1nsDUpktXK1rcIOrR
+         TKUFqqV7PGYYXY+sftWIk2X0QO7K1F2/QK5kuoGDVYWXNjTzrY9XEZJOunhSflucaAK2
+         EjwS7IXFHl/WGh5DjyTMASAgLTctPGUQ8b8IZVzRkGeksh1F5E8JFx9IJkpNdFgzC0Bk
+         A/Om4zMPT1opKFPOfcHsfFJZizG/aMuuJ5eypR69ulDz5KyHTKT9ITE0QgjPUWQKDzy+
+         y35jAIWqm1M1jcaVLwN80WS1B8cdtryGqIRqeFq/ywkTt8b9uid0shoTJkYYBPrp15Js
+         Ztdg==
+X-Gm-Message-State: AJIora+ouEMEp2xn81I2MWpVLUGAiBb6RRTxWPM88IIa0+5dHdoD2pIs
+        BS6wdP3+D14FghYqgSUmUDNw53ZUQEt6ItbaMFZF4nBSxQ==
+X-Google-Smtp-Source: AGRyM1u/WGHw/3tv1rjJVxbCcTw2Va1S87bCBsDXwO9w9w+rsBwJm64Rn4aYl5YK1dRF5MTqCXjGUMyJeamkdiB6/+E=
+X-Received: by 2002:a05:6000:230:b0:210:31ca:28b8 with SMTP id
+ l16-20020a056000023000b0021031ca28b8mr1794755wrz.538.1655331152126; Wed, 15
+ Jun 2022 15:12:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <1654714889-26728-1-git-send-email-deven.desai@linux.microsoft.com>
+ <1654714889-26728-3-git-send-email-deven.desai@linux.microsoft.com>
+In-Reply-To: <1654714889-26728-3-git-send-email-deven.desai@linux.microsoft.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 15 Jun 2022 18:12:21 -0400
+Message-ID: <CAHC9VhQum+az8SLd64rPfi_fyHGE2nePodF_pTzUtk-8y6wpSg@mail.gmail.com>
+Subject: Re: [RFC PATCH v8 02/17] ipe: add policy parser
+To:     Deven Bowers <deven.desai@linux.microsoft.com>
+Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+        eparis@redhat.com, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, linux-audit@redhat.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Wed, 15 Jun 2022 21:59:12 +0300:
+On Wed, Jun 8, 2022 at 3:03 PM Deven Bowers
+<deven.desai@linux.microsoft.com> wrote:
+>
+> IPE's interpretation of the what the user trusts is accomplished through
+> its policy. IPE's design is to not provide support for a single trust
+> provider, but to support multiple providers to enable the end-user to
+> choose the best one to seek their needs.
+>
+> This requires the policy to be rather flexible and modular so that
+> integrity providers, like fs-verity, dm-verity, dm-integrity, or
+> some other system, can plug into the policy with minimal code changes,
+> and IPE can
+>
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+>
+> ---
+> v2:
+>   + Split evaluation loop, access control hooks,
+>     and evaluation loop from policy parser and userspace
+>     interface to pass mailing list character limit
+>
+> v3:
+>   + Move policy load and activation audit event to 03/12
+>   + Fix a potential panic when a policy failed to load.
+>   + use pr_warn for a failure to parse instead of an
+>     audit record
+>   + Remove comments from headers
+>   + Add lockdep assertions to ipe_update_active_policy and
+>     ipe_activate_policy
+>   + Fix up warnings with checkpatch --strict
+>   + Use file_ns_capable for CAP_MAC_ADMIN for securityfs
+>     nodes.
+>   + Use memdup_user instead of kzalloc+simple_write_to_buffer.
+>   + Remove strict_parse command line parameter, as it is added
+>     by the sysctl command line.
+>   + Prefix extern variables with ipe_
+>
+> v4:
+>   + Remove securityfs to reverse-dependency
+>   + Add SHA1 reverse dependency.
+>   + Add versioning scheme for IPE properties, and associated
+>     interface to query the versioning scheme.
+>   + Cause a parser to always return an error on unknown syntax.
+>   + Remove strict_parse option
+>   + Change active_policy interface from sysctl, to securityfs,
+>     and change scheme.
+>
+> v5:
+>   + Cause an error if a default action is not defined for each
+>     operaiton.
+>   + Minor function renames
+>
+> v6:
+>   + No changes
+>
+> v7:
+>   + Further split parser and userspace interface into two
+>     separate commits, for easier review.
+>
+>   + Refactor policy parser to make code cleaner via introducing a
+>     more modular design, for easier extension of policy, and
+>     easier review.
+>
+> v8:
+>   + remove unnecessary pr_info emission on parser loading
+>
+>   + add explicit newline to the pr_err emitted when a parser
+>     fails to load.
+> ---
+>  include/asm-generic/vmlinux.lds.h    |  16 +
+>  security/ipe/Makefile                |   6 +
+>  security/ipe/ipe.c                   |  61 ++
+>  security/ipe/ipe.h                   |   5 +
+>  security/ipe/ipe_parser.h            |  59 ++
+>  security/ipe/modules.c               | 109 +++
+>  security/ipe/modules.h               |  17 +
+>  security/ipe/modules/ipe_module.h    |  33 +
+>  security/ipe/parsers.c               | 143 ++++
+>  security/ipe/parsers/Makefile        |  12 +
+>  security/ipe/parsers/default.c       | 106 +++
+>  security/ipe/parsers/policy_header.c | 126 ++++
+>  security/ipe/policy.c                | 946 +++++++++++++++++++++++++++
+>  security/ipe/policy.h                |  97 +++
+>  14 files changed, 1736 insertions(+)
+>  create mode 100644 security/ipe/ipe_parser.h
+>  create mode 100644 security/ipe/modules.c
+>  create mode 100644 security/ipe/modules.h
+>  create mode 100644 security/ipe/modules/ipe_module.h
+>  create mode 100644 security/ipe/parsers.c
+>  create mode 100644 security/ipe/parsers/Makefile
+>  create mode 100644 security/ipe/parsers/default.c
+>  create mode 100644 security/ipe/parsers/policy_header.c
+>  create mode 100644 security/ipe/policy.c
+>  create mode 100644 security/ipe/policy.h
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v5.19-rc3
+I had a few small comments while reading through this code, e.g. try
+to drop the support for quoted values, but I think my big issue here
+is that non-trivial string parsers in the kernel make me nervous and
+with +1700 lines spread across 14 files this is definitely a
+non-trivial parser.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/afe9eb14ea1cbac5d91ca04eb64810d2d9fa22b0
+I understand the basic 'key=value' pair format, and I think that's
+okay, but I worry about the added complexity in the parser brought
+about by the need to introduce an abstraction layer between the core
+parser(s) and modules.  I realize flexibility is an important part of
+IPE, and this relies on the ability to add support for new language
+keys/modules, but I don't believe that requires the level of
+indirection seen here.
 
-Thank you!
+I'm not asking you to make radical changes to the IPE policy language,
+but I do believe spending some time to rethink how you parse the
+language would be a good idea.  When in doubt keep the parser as
+simple as possible, you can always add complexity and more nuance in
+the future when the language requires it.  The IPE policy language
+grammar is the immutable kernel/userspace API promise, not the parser
+implementation.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+--
+paul-moore.com
