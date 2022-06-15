@@ -2,122 +2,81 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B56C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 17:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E14CCA47F
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 19:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347996AbiFORyW (ORCPT
+        id S1345400AbiFOTB3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jun 2022 13:54:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38626 "EHLO
+        Wed, 15 Jun 2022 15:01:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235028AbiFORyV (ORCPT
+        with ESMTP id S239945AbiFOTB2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jun 2022 13:54:21 -0400
-Received: from hi1smtp01.de.adit-jv.com (smtp1.de.adit-jv.com [93.241.18.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6634E26117;
-        Wed, 15 Jun 2022 10:54:20 -0700 (PDT)
-Received: from hi2exch02.adit-jv.com (hi2exch02.adit-jv.com [10.72.92.28])
+        Wed, 15 Jun 2022 15:01:28 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E2A5003C;
+        Wed, 15 Jun 2022 12:01:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by hi1smtp01.de.adit-jv.com (Postfix) with ESMTPS id 33E96520291;
-        Wed, 15 Jun 2022 19:54:18 +0200 (CEST)
-Received: from lxhi-065 (10.72.94.5) by hi2exch02.adit-jv.com (10.72.92.28)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.27; Wed, 15 Jun
- 2022 19:54:17 +0200
-Date:   Wed, 15 Jun 2022 19:54:12 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-CC:     <viro@zeniv.linux.org.uk>, <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
-        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
-        <takondra@cisco.com>, <kamensky@cisco.com>, <hpa@zytor.com>,
-        <arnd@arndb.de>, <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        <niveditas98@gmail.com>, Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v4 1/3] initramfs: add file metadata
-Message-ID: <20220615175412.GA7029@lxhi-065>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <20190523121803.21638-2-roberto.sassu@huawei.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 719D4B81D81;
+        Wed, 15 Jun 2022 19:01:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DD46C34115;
+        Wed, 15 Jun 2022 19:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655319685;
+        bh=Qy3C78QNyFeJXZqCKviEM5fZjl3ArDFvWJxIFv9WMmc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=p93f1K/23X5iAmwtne1iGvfX+uBZTya3MQCvxjhSUx4Mkv9s1RO0h23hv8ky52TMP
+         nYw8uPPZ9m1E7C8P9Jju3eUcALOL9OBbmVR7LzdFk+mYb062/vTiSoGLPp87tP6MH0
+         7/IC70HJX5GNLc/+TZzBhSjEogUyFdlrSTvfFlRM1122VgNeftbEc152Buo86BrvBM
+         4W4R+rvD41wjQf25Smm8MQTP+7N1GuoT6ShttHTq4ciMvnsC2/COijRUs/NqN37ocN
+         TBSftnGvXsR2+Y8liZHcVAdpH4LxSf9Rb1jFDERxGigJq1ZYcqcIrxtEf6zQy4XDuo
+         OUMofXLpgEevA==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] tpmdd updates for v5.19-rc3
+Date:   Wed, 15 Jun 2022 21:59:12 +0300
+Message-Id: <20220615185912.40987-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190523121803.21638-2-roberto.sassu@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.94.5]
-X-ClientProxiedBy: hi2exch02.adit-jv.com (10.72.92.28) To
- hi2exch02.adit-jv.com (10.72.92.28)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Roberto,
-Hello Mimi,
+The following changes since commit 979086f5e0066b4eff66e1eee123da228489985c:
 
-On Thu, May 23, 2019 at 02:18:01PM +0200, Roberto Sassu wrote:
-> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> 
-> This patch adds metadata to a file from a supplied buffer. The buffer might
-> contains multiple metadata records. The format of each record is:
-> 
-> <metadata len (ASCII, 8 chars)><version><type><metadata>
-> 
-> For now, only the TYPE_XATTR metadata type is supported. The specific
-> format of this metadata type is:
-> 
-> <xattr #N name>\0<xattr #N value>
-> 
-> [kamensky: fixed restoring of xattrs for symbolic links by using
->            sys_lsetxattr() instead of sys_setxattr()]
-> 
-> [sassu: removed state management, kept only do_setxattrs(), added support
->         for generic file metadata, replaced sys_lsetxattr() with
->         vfs_setxattr(), added check for entry_size, added check for
->         hdr->c_size, replaced strlen() with strnlen(); moved do_setxattrs()
->         before do_name()]
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Signed-off-by: Victor Kamensky <kamensky@cisco.com>
-> Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  include/linux/initramfs.h | 21 ++++++++++
->  init/initramfs.c          | 88 ++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 107 insertions(+), 2 deletions(-)
->  create mode 100644 include/linux/initramfs.h
+  Merge tag 'fs.fixes.v5.19-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux (2022-06-15 09:04:55 -0700)
 
-[..]
+are available in the Git repository at:
 
-> +static int __init do_setxattrs(char *pathname, char *buf, size_t size)
-> +{
-> +	struct path path;
-> +	char *xattr_name, *xattr_value;
-> +	size_t xattr_name_size, xattr_value_size;
-> +	int ret;
-> +
-> +	xattr_name = buf;
-> +	xattr_name_size = strnlen(xattr_name, size);
-> +	if (xattr_name_size == size) {
-> +		error("malformed xattrs");
-> +		return -EINVAL;
-> +	}
-> +
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v5.19-rc3
 
-[..]
+for you to fetch changes up to 27b5b22d252c6d71a2a37a4bdf18d0be6d25ee5a:
 
-> +
-> +		switch (hdr->c_type) {
-> +		case TYPE_XATTR:
-> +			do_setxattrs(pathname, buf + sizeof(*hdr),
-> +				     entry_size - sizeof(*hdr));
+  certs: fix and refactor CONFIG_SYSTEM_BLACKLIST_HASH_LIST build (2022-06-15 21:52:32 +0300)
 
-Is it on purpose not to check the return value of do_setxattrs?
+----------------------------------------------------------------
+Hi,
 
-I think I would have more comfort and piece of mind if I knew
-the return value is properly checked and acted upon. Otherwise,
-why returning an int from within do_setxattrs() at all?
+Two fixes for rc1 PR.
 
-BR, Eugeniu
+BR, Jarkko
+
+----------------------------------------------------------------
+Masahiro Yamada (2):
+      certs/blacklist_hashes.c: fix const confusion in certs blacklist
+      certs: fix and refactor CONFIG_SYSTEM_BLACKLIST_HASH_LIST build
+
+ certs/.gitignore         |  2 +-
+ certs/Makefile           | 20 ++++++++++----------
+ certs/blacklist_hashes.c |  4 ++--
+ 3 files changed, 13 insertions(+), 13 deletions(-)
