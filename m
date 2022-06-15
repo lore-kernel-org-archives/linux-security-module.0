@@ -2,191 +2,76 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021AFCCA47A
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jun 2022 19:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41552C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 02:07:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344564AbiFNTBa (ORCPT
+        id S234155AbiFOCHi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jun 2022 15:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37802 "EHLO
+        Tue, 14 Jun 2022 22:07:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357308AbiFNTBM (ORCPT
+        with ESMTP id S233114AbiFOCHh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jun 2022 15:01:12 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751941181D
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jun 2022 11:59:13 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-fe32122311so13679262fac.7
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jun 2022 11:59:13 -0700 (PDT)
+        Tue, 14 Jun 2022 22:07:37 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE869FD1
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jun 2022 19:07:26 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id w17so5918303wrg.7
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jun 2022 19:07:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=P/zvL47bzMX9zv6R9Iu19Vam9aHyZ/GbOGpqtXAWqMc=;
-        b=YbrS1rTCXkBCIbh142yEwubaBQ2XkSJH/0xKf0lf6tUumEJSdjOkNie1Nx61lojoXo
-         7ghRJ4k9WRR4jECQ0Dr2ZPBq/WU7t6xV2yqW0HATlcT/2Yl8k5zRPz4Fct1kN9ZfM/ig
-         wiY+zF/49Otr9jZ/sUBro5DEDVmoThVwMV6c4=
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pka2Wf3vF4GgaDRWibWr079VJVrRTWnpwOYpLbvjDbs=;
+        b=I9lCrgw50jYr/zbSokAJMRemwaludazv+GM8VWtF36MwEVXl5X7SPH+6w41n5np1/s
+         aLFPX857Tjt538NSgzqurAYE5pBQOByU5FPDFHGWCitBZq1I9lzarzB5Msfg40UDBAi1
+         ujwSx+JjugS5Wh6d6j0AqJdOIWiJ4sT9GBVd/XM4ElMWvjKgWiCRoqBFKV9nLJNcawNp
+         btWTTK2vhhrnmP880PjIhbX66F6pr14AM55cZtD1eHnDoxTlr9AdT/vtlAmRd5gCsDTd
+         4/4oUUMvwfExzdu3ts39FrqR7ahvIvD7XsjGxjBWxynrSEgiNSKjY9hkTHg93uTHqCGf
+         auSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=P/zvL47bzMX9zv6R9Iu19Vam9aHyZ/GbOGpqtXAWqMc=;
-        b=3h/jOXsII+TWaqK+hwnGAbQIz9rf36JemApsTj93TeXQgOvTJe84s7ZIkKj3xsEAwv
-         FKk7oAAAGiUVP0KoPg9B8mTH1gvG9Q5DeP4q7keFKxkj5H4KzFuRT6PO4xS9jzJQv+mV
-         NwBP3q5od5Nn0H2Chs9KVGHNmprN7o4dIfrYBfbTyQvY5AvZT86K7tz3UVZ0cwHsW/LH
-         QdDz4HWhLqYEFUuRX4Ve6EX5TuyKPPb1dF5KN06rYkkgj7sNFydE2szM+ReKmVzmJ7zk
-         dKC0a9l3dOmlhWhNYVW9raPJSEUwtuQXYUJ0lK/EUsd+OoQkYcKJ2zooEl/IisGaLsh8
-         +lFQ==
-X-Gm-Message-State: AJIora8T8XU4ufktrV8JurQN19BgLpmFiZKiODYI6sIGRVVA6tOeDQ+C
-        i9j9ptCJ5OguImd6nL0mCBpHvg==
-X-Google-Smtp-Source: AGRyM1ufL5MDqjvHIo4wa13zoHeLqce3gwGBqjZkT/cfGeJacNorGFZd87ZD1rOQxbOuCm8UywPhnQ==
-X-Received: by 2002:a05:6870:c151:b0:fe:251b:804c with SMTP id g17-20020a056870c15100b000fe251b804cmr3187763oad.15.1655233152767;
-        Tue, 14 Jun 2022 11:59:12 -0700 (PDT)
-Received: from [192.168.0.41] ([184.4.90.121])
-        by smtp.gmail.com with ESMTPSA id x64-20020acae043000000b0032ecb7370ffsm5017316oig.41.2022.06.14.11.59.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jun 2022 11:59:10 -0700 (PDT)
-Message-ID: <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com>
-Date:   Tue, 14 Jun 2022 13:59:08 -0500
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pka2Wf3vF4GgaDRWibWr079VJVrRTWnpwOYpLbvjDbs=;
+        b=LD28no+PuaskxWnwN7zTUWe2ecxdTZdthoD52M0gRkXB2cwIA9wwaDYOH1OQn9iVPl
+         ylxbAZrrxZ4scRjkgvvRfA/sX7rzKjJu4yZBNA13ZBw08rUBpR3nQrl+WSNMnOh6UkGq
+         La+Z90LDE5ZSmtXLcGi3IkM059ACGImYnDxG45JggK6XgPrHtvPDpgqn8wlFPAckYjru
+         bLMiI5zW3BVz0HMat7cNeY8VH53Xrea5wGJowjCP1apRVbAUpCtrpCOu2C1EsF943uOY
+         AmxvQCDW7m2Ayg1R6V3DzdQpB4OTXEUaHFeBLi4WIY03xUzD1iomaR/i+HnOAuXIwibP
+         wlDg==
+X-Gm-Message-State: AJIora+/0Pw0L5hN6TfxC8nyWfYeThKNEUADXEvbwiIbYUTJwhswzSZD
+        GXyjJBunq7BZJhV3w/dJUQMkQ7pU97WdBK3yDTN7
+X-Google-Smtp-Source: AGRyM1u/SjHMDbnC03CAUgMJ1rqh1VaHc6RFE84uufAQpvDP3zd1dOKS/VWzDHy3BOe+tRjYspRfWlm44PW8kCU90kA=
+X-Received: by 2002:a05:6000:1448:b0:219:ebf7:79ff with SMTP id
+ v8-20020a056000144800b00219ebf779ffmr7723237wrx.70.1655258845363; Tue, 14 Jun
+ 2022 19:07:25 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
-Content-Language: en-US
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-References: <20220608150942.776446-1-fred@cloudflare.com>
- <87tu8oze94.fsf@email.froward.int.ebiederm.org>
- <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com>
- <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
- <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com>
- <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
-From:   Frederick Lawler <fred@cloudflare.com>
-In-Reply-To: <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220614121030.115491-1-xiujianfeng@huawei.com>
+In-Reply-To: <20220614121030.115491-1-xiujianfeng@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 14 Jun 2022 22:07:14 -0400
+Message-ID: <CAHC9VhR8k-MDnHsMcdYb5SondWGem19CRPx5p23WtkcrHFaBnQ@mail.gmail.com>
+Subject: Re: [PATCH -next] lsm_audit: Clean up redundant NULL pointer check
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc:     jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/14/22 11:30 AM, Eric W. Biederman wrote:
-> Frederick Lawler <fred@cloudflare.com> writes:
-> 
->> On 6/13/22 11:44 PM, Eric W. Biederman wrote:
->>> Frederick Lawler <fred@cloudflare.com> writes:
->>>
->>>> Hi Eric,
->>>>
->>>> On 6/13/22 12:04 PM, Eric W. Biederman wrote:
->>>>> Frederick Lawler <fred@cloudflare.com> writes:
->>>>>
->>>>>> While experimenting with the security_prepare_creds() LSM hook, we
->>>>>> noticed that our EPERM error code was not propagated up the callstack.
->>>>>> Instead ENOMEM is always returned.  As a result, some tools may send a
->>>>>> confusing error message to the user:
->>>>>>
->>>>>> $ unshare -rU
->>>>>> unshare: unshare failed: Cannot allocate memory
->>>>>>
->>>>>> A user would think that the system didn't have enough memory, when
->>>>>> instead the action was denied.
->>>>>>
->>>>>> This problem occurs because prepare_creds() and prepare_kernel_cred()
->>>>>> return NULL when security_prepare_creds() returns an error code. Later,
->>>>>> functions calling prepare_creds() and prepare_kernel_cred() return
->>>>>> ENOMEM because they assume that a NULL meant there was no memory
->>>>>> allocated.
->>>>>>
->>>>>> Fix this by propagating an error code from security_prepare_creds() up
->>>>>> the callstack.
->>>>> Why would it make sense for security_prepare_creds to return an error
->>>>> code other than ENOMEM?
->>>>>    > That seems a bit of a violation of what that function is supposed to do
->>>>>
->>>>
->>>> The API allows LSM authors to decide what error code is returned from the
->>>> cred_prepare hook. security_task_alloc() is a similar hook, and has its return
->>>> code propagated.
->>> It is not an api.  It is an implementation detail of the linux kernel.
->>> It is a set of convenient functions that do a job.
->>> The general rule is we don't support cases without an in-tree user.  I
->>> don't see an in-tree user.
->>>
->>>> I'm proposing we follow security_task_allocs() pattern, and add visibility for
->>>> failure cases in prepare_creds().
->>> I am asking why we would want to.  Especially as it is not an API, and I
->>> don't see any good reason for anything but an -ENOMEM failure to be
->>> supported.
->>>
->> We're writing a LSM BPF policy, and not a new LSM. Our policy aims to solve
->> unprivileged unshare, similar to Debian's patch [1]. We're in a position such
->> that we can't use that patch because we can't block _all_ of our applications
->> from performing an unshare. We prefer a granular approach. LSM BPF seems like a
->> good choice.
-> 
-> I am quite puzzled why doesn't /proc/sys/user/max_user_namespaces work
-> for you?
-> 
+On Tue, Jun 14, 2022 at 8:13 AM Xiu Jianfeng <xiujianfeng@huawei.com> wrote:
+>
+> The implements of {ip,tcp,udp,dccp,sctp,ipv6}_hdr(skb) guarantee that
+> they will never return NULL, and elsewhere user don't do the check
+> as well, so remove the check here.
+>
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> ---
+>  security/lsm_audit.c | 14 +-------------
+>  1 file changed, 1 insertion(+), 13 deletions(-)
 
-We have the following requirements:
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-1. Allow list criteria
-2. root user must be able to create namespaces whenever
-3. Everything else not in 1 & 2 must be denied
-
-We use per task attributes to determine whether or not we allow/deny the 
-current call to unshare().
-
-/proc/sys/user/max_user_namespaces limits are a bit broad for this level 
-of detail.
-
->> Because LSM BPF exposes these hooks, we should probably treat them as an
->> API. From that perspective, userspace expects unshare to return a EPERM
->> when the call is denied permissions.
-> 
-> The BPF code gets to be treated as a out of tree kernel module.
-> 
->>> Without an in-tree user that cares it is probably better to go the
->>> opposite direction and remove the possibility of return anything but
->>> memory allocation failure.  That will make it clearer to implementors
->>> that a general error code is not supported and this is not a location
->>> to implement policy, this is only a hook to allocate state for the LSM.
->>>
->>
->> That's a good point, and it's possible we're using the wrong hook for the
->> policy. Do you know of other hooks we can look into?
-> 
-> Not off the top of my head.
-> 
->>>>> I have probably missed a very interesting discussion where that was
->>>>> mentioned but I don't see link to the discussion or anything explaining
->>>>> why we want to do that in this change.
->>>>>
->>>>
->>>> AFAIK, this is the start of the discussion.
->>> You were on v3 and had an out of tree piece of code so I assumed someone
->>> had at least thought about why you want to implement policy in a piece
->>> of code whose only purpose is to allocate memory to store state.
->>>
->>
->> No worries.
->>
->>> Eric
->>>
->>>
->>
->> Links:
->> 1:
->> https://sources.debian.org/patches/linux/3.16.56-1+deb8u1/debian/add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by-default.patch/
-> 
-> Eric
-
+-- 
+paul-moore.com
