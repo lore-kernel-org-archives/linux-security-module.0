@@ -2,76 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41552C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 02:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71741CCA47F
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 09:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234155AbiFOCHi (ORCPT
+        id S1344518AbiFOJ1W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jun 2022 22:07:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35532 "EHLO
+        Wed, 15 Jun 2022 05:27:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233114AbiFOCHh (ORCPT
+        with ESMTP id S234780AbiFOJ1V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jun 2022 22:07:37 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE869FD1
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jun 2022 19:07:26 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id w17so5918303wrg.7
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jun 2022 19:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pka2Wf3vF4GgaDRWibWr079VJVrRTWnpwOYpLbvjDbs=;
-        b=I9lCrgw50jYr/zbSokAJMRemwaludazv+GM8VWtF36MwEVXl5X7SPH+6w41n5np1/s
-         aLFPX857Tjt538NSgzqurAYE5pBQOByU5FPDFHGWCitBZq1I9lzarzB5Msfg40UDBAi1
-         ujwSx+JjugS5Wh6d6j0AqJdOIWiJ4sT9GBVd/XM4ElMWvjKgWiCRoqBFKV9nLJNcawNp
-         btWTTK2vhhrnmP880PjIhbX66F6pr14AM55cZtD1eHnDoxTlr9AdT/vtlAmRd5gCsDTd
-         4/4oUUMvwfExzdu3ts39FrqR7ahvIvD7XsjGxjBWxynrSEgiNSKjY9hkTHg93uTHqCGf
-         auSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pka2Wf3vF4GgaDRWibWr079VJVrRTWnpwOYpLbvjDbs=;
-        b=LD28no+PuaskxWnwN7zTUWe2ecxdTZdthoD52M0gRkXB2cwIA9wwaDYOH1OQn9iVPl
-         ylxbAZrrxZ4scRjkgvvRfA/sX7rzKjJu4yZBNA13ZBw08rUBpR3nQrl+WSNMnOh6UkGq
-         La+Z90LDE5ZSmtXLcGi3IkM059ACGImYnDxG45JggK6XgPrHtvPDpgqn8wlFPAckYjru
-         bLMiI5zW3BVz0HMat7cNeY8VH53Xrea5wGJowjCP1apRVbAUpCtrpCOu2C1EsF943uOY
-         AmxvQCDW7m2Ayg1R6V3DzdQpB4OTXEUaHFeBLi4WIY03xUzD1iomaR/i+HnOAuXIwibP
-         wlDg==
-X-Gm-Message-State: AJIora+/0Pw0L5hN6TfxC8nyWfYeThKNEUADXEvbwiIbYUTJwhswzSZD
-        GXyjJBunq7BZJhV3w/dJUQMkQ7pU97WdBK3yDTN7
-X-Google-Smtp-Source: AGRyM1u/SjHMDbnC03CAUgMJ1rqh1VaHc6RFE84uufAQpvDP3zd1dOKS/VWzDHy3BOe+tRjYspRfWlm44PW8kCU90kA=
-X-Received: by 2002:a05:6000:1448:b0:219:ebf7:79ff with SMTP id
- v8-20020a056000144800b00219ebf779ffmr7723237wrx.70.1655258845363; Tue, 14 Jun
- 2022 19:07:25 -0700 (PDT)
+        Wed, 15 Jun 2022 05:27:21 -0400
+Received: from hi1smtp01.de.adit-jv.com (smtp1.de.adit-jv.com [93.241.18.167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA01115A31;
+        Wed, 15 Jun 2022 02:27:19 -0700 (PDT)
+Received: from hi2exch02.adit-jv.com (hi2exch02.adit-jv.com [10.72.92.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hi1smtp01.de.adit-jv.com (Postfix) with ESMTPS id E66CB52042F;
+        Wed, 15 Jun 2022 11:27:17 +0200 (CEST)
+Received: from lxhi-065 (10.72.94.26) by hi2exch02.adit-jv.com (10.72.92.28)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.27; Wed, 15 Jun
+ 2022 11:27:17 +0200
+Date:   Wed, 15 Jun 2022 11:27:12 +0200
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+CC:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        "takondra@cisco.com" <takondra@cisco.com>,
+        "kamensky@cisco.com" <kamensky@cisco.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Message-ID: <20220615092712.GA4068@lxhi-065>
+References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
+ <1561909199.3985.33.camel@linux.ibm.com>
+ <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
+ <1561991485.4067.14.camel@linux.ibm.com>
+ <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
+ <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
+ <20220609102627.GA3922@lxhi-065>
+ <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
+ <20220610153336.GA8881@lxhi-065>
+ <4bc349a59e4042f7831b1190914851fe@huawei.com>
 MIME-Version: 1.0
-References: <20220614121030.115491-1-xiujianfeng@huawei.com>
-In-Reply-To: <20220614121030.115491-1-xiujianfeng@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 14 Jun 2022 22:07:14 -0400
-Message-ID: <CAHC9VhR8k-MDnHsMcdYb5SondWGem19CRPx5p23WtkcrHFaBnQ@mail.gmail.com>
-Subject: Re: [PATCH -next] lsm_audit: Clean up redundant NULL pointer check
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <4bc349a59e4042f7831b1190914851fe@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.72.94.26]
+X-ClientProxiedBy: hi2exch02.adit-jv.com (10.72.92.28) To
+ hi2exch02.adit-jv.com (10.72.92.28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 14, 2022 at 8:13 AM Xiu Jianfeng <xiujianfeng@huawei.com> wrote:
->
-> The implements of {ip,tcp,udp,dccp,sctp,ipv6}_hdr(skb) guarantee that
-> they will never return NULL, and elsewhere user don't do the check
-> as well, so remove the check here.
->
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> ---
->  security/lsm_audit.c | 14 +-------------
->  1 file changed, 1 insertion(+), 13 deletions(-)
+Hello Roberto,
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+On Fr, Jun 10, 2022 at 03:38:24 +0000, Roberto Sassu wrote:
+> I would be happy to address the remaining concerns, or take more
+> suggestions, and then develop a new version of the patch set.
 
--- 
-paul-moore.com
+I face a number of conflicts when I try to rebase the latest openEuler
+commits against vanilla master (v5.19-rc2). Do you think it is possible
+to submit the rebased version to ML?
+
+In addition, I can also see some open/unresolved points from Mimi [*].
+Did you by chance find some mutual agreement offline or do you think
+they would still potentially need some attention?
+
+Maybe we can resume the discussion once you submit the rebased series?
+
+Many thanks and looking forward to it.
+
+[*] Potentially comments which deserve a reply/clarification/resolution
+
+https://lore.kernel.org/lkml/1561985652.4049.24.camel@linux.ibm.com/#t
+https://lore.kernel.org/lkml/1561908456.3985.23.camel@linux.ibm.com/
+
+BR, Eugeniu.
