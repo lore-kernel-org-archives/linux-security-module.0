@@ -2,120 +2,194 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5434DCCA473
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 15:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7DDC43334
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 15:46:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348390AbiFOPdy (ORCPT
+        id S230330AbiFOPqK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jun 2022 11:33:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58578 "EHLO
+        Wed, 15 Jun 2022 11:46:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244694AbiFOPdw (ORCPT
+        with ESMTP id S229752AbiFOPqK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jun 2022 11:33:52 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B15651FA4E
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 08:33:50 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id x6-20020a1c7c06000000b003972dfca96cso1332663wmc.4
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 08:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J5eKPAN5lqKWqHRVMFEt8bECLi2YfU3n/Xvj8y2gEBE=;
-        b=Zv2JhKlV+WgmpireahD92+ZSg2KnCdRZZvKLhjp5oxI5lNh/Plc3RXY+mQgK5+7Vg0
-         YcEbwmKcYO+eUdZVm8cnx1XTn3jFZkr+/y958BJAt6RHw6tO4gb/qGpriKZF4237xYW8
-         XdcUnlcVAybauV76RUaKKOU+9Jk1HAP8Ybq8jFsO4UP/QfChfQnRT6ZMjB1JSUkSG5A+
-         eeKIxvMjnfgD/uvv36ColBnfjqbtL+d7YJ45Q6RgQZkCXiULCPAF4BJO7j+EvyygfMPL
-         eLCZ6VWgFpV+KubW52X0faomk4hEuBQnOj14ASkrNV4X772O83FKpX8IgKteHTah4Jpx
-         0t5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J5eKPAN5lqKWqHRVMFEt8bECLi2YfU3n/Xvj8y2gEBE=;
-        b=wLSAt/BrNjXuMDCAu2fwhL4d8i5nFY/ezSmiy7WXDhkFB5FFK7HkOFiOQQtMhhoJRu
-         r9/yo8QJD2YVws1xTozOpmDfyaqx4caIKrgCO029y+sgemkHX8m+mg6ufq0G30b0fDvX
-         /1D9g1XnUCTy3RG+IPm+a4SRhfuhsx+4BjZR/PdqqR0xEe3sa995bk+J+OLcSDcEUqlS
-         5WqWgeyXS76Nshc0np7n0F5tsqjfh1iHpUIzMZBnkVT9VaDaacitVEkN0oFq+k2iVVOs
-         5arr/3Cipz8XgVaGcIYAtTr+4almuKPQ0LkB8QBkhXYFVdA0g0jgAdKmep5x4CppCb0V
-         PnqA==
-X-Gm-Message-State: AJIora9WMn3dwm9FZ0G2n3si1lpUy/mO16dFZzA1dl0KjHo+Lf9xnJrE
-        ObPGCY9uu5qrnZaqdwUfRmD6KEBTjrJEFWVROFLl
-X-Google-Smtp-Source: AGRyM1tbSXhyojX0sdqJuy36Y8CiIJerDEBwNNO0en1/SGp4CFCRbzqu86TVD3k4/Lh2/5SBr3CWSXHz2TZ3Gh292cQ=
-X-Received: by 2002:a05:600c:1d91:b0:39c:544b:abdd with SMTP id
- p17-20020a05600c1d9100b0039c544babddmr20003wms.70.1655307229181; Wed, 15 Jun
- 2022 08:33:49 -0700 (PDT)
+        Wed, 15 Jun 2022 11:46:10 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 049F3286CD;
+        Wed, 15 Jun 2022 08:46:05 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1D77E5A9;
+        Wed, 15 Jun 2022 17:46:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1655307963;
+        bh=m3A5dqZop5odCJRCkgs9BvSWyBpz30/KNAeaIHJZ1q0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gz+qyRs9G+48QItleZ7QvFKhIzWdHGgYD3bsSj4cvZevz+vnv/bHuU11OCDz2zfvV
+         mVSOAOmfirc3j3SuYgvLYBpRzrMfP0UyUXAilgSvgVHGUDVUOChMlva/17o7wLGv0O
+         tPxdzNanUqOciJtQpE5RO6ZydGGmlUaux55rBxfs=
+Date:   Wed, 15 Jun 2022 18:45:52 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
+Cc:     selinux@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        Zhen Lei <thunder.leizhen@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>, Ondrej Zary <linux@zary.sk>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        David Yang <davidcomponentone@gmail.com>,
+        Colin Ian King <colin.king@intel.com>,
+        Yang Guang <yang.guang5@zte.com.cn>,
+        Wan Jiabing <wanjiabing@vivo.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 4/8] drivers: use new capable_any functionality
+Message-ID: <Yqn+sCXTHeTH5v+R@pendragon.ideasonboard.com>
+References: <20220502160030.131168-8-cgzones@googlemail.com>
+ <20220615152623.311223-1-cgzones@googlemail.com>
+ <20220615152623.311223-3-cgzones@googlemail.com>
 MIME-Version: 1.0
-References: <20220608150942.776446-1-fred@cloudflare.com> <87tu8oze94.fsf@email.froward.int.ebiederm.org>
- <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com> <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
- <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com> <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
- <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com> <20220615103031.qkzae4xr34wysj4b@wittgenstein>
- <CAHC9VhR8yPHZb2sCu4JGgXOSs7rudm=9opB+-LsG6_Lta9466A@mail.gmail.com> <CALrw=nGZtrNYn+CV+Q_w-2=Va_9m3C8PDvvPtd01d0tS=2NMWQ@mail.gmail.com>
-In-Reply-To: <CALrw=nGZtrNYn+CV+Q_w-2=Va_9m3C8PDvvPtd01d0tS=2NMWQ@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 15 Jun 2022 11:33:38 -0400
-Message-ID: <CAHC9VhRSzXeAZmBdNSAFEh=6XR57ecO7Ov+6BV9b0xVN1YR_Qw@mail.gmail.com>
-Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
-To:     Ignat Korchagin <ignat@cloudflare.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Frederick Lawler <fred@cloudflare.com>,
-        linux-doc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, serge@hallyn.com, amir73il@gmail.com,
-        kernel-team <kernel-team@cloudflare.com>,
-        Jeff Moyer <jmoyer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220615152623.311223-3-cgzones@googlemail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 15, 2022 at 11:06 AM Ignat Korchagin <ignat@cloudflare.com> wrote:
-> On Wed, Jun 15, 2022 at 3:14 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Wed, Jun 15, 2022 at 6:30 AM Christian Brauner <brauner@kernel.org> wrote:
+Hi Christian,
 
-...
+Thank you for the patch.
 
-> > > Fwiw, from this commit it wasn't very clear what you wanted to achieve
-> > > with this. It might be worth considering adding a new security hook for
-> > > this. Within msft it recently came up SELinux might have an interest in
-> > > something like this as well.
-> >
-> > Just to clarify things a bit, I believe SELinux would have an interest
-> > in a LSM hook capable of implementing an access control point for user
-> > namespaces regardless of Microsoft's current needs.  I suspect due to
-> > the security relevant nature of user namespaces most other LSMs would
-> > be interested as well; it seems like a well crafted hook would be
-> > welcome by most folks I think.
->
-> Just to get the full picture: is there actually a good reason not to
-> make this hook support this scenario? I understand it was not
-> originally intended for this, but it is well positioned in the code,
-> covers multiple subsystems (not only user namespaces), doesn't require
-> changing the LSM interface and it already does the job - just the
-> kernel internals need to respect the error code better. What bad
-> things can happen if we extend its use case to not only allocate
-> resources in LSMs?
+On Wed, Jun 15, 2022 at 05:26:18PM +0200, Christian Göttsche wrote:
+> Use the new added capable_any function in appropriate cases, where a
+> task is required to have any of two capabilities.
+> 
+> Reorder CAP_SYS_ADMIN last.
+> 
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 
-My concern is that the security_prepare_creds() hook, while only
-called from two different functions, ends up being called for a
-variety of different uses (look at the prepare_creds() and
-perpare_kernel_cred() callers) and I think it would be a challenge to
-identify the proper calling context in the LSM hook implementation
-given the current hook parameters.  One might be able to modify the
-hook to pass the necessary information, but I don't think that would
-be any cleaner than adding a userns specific hook.  I'm also guessing
-that the modified security_prepare_creds() hook implementations would
-also be more likely to encounter future maintenance issues as
-overriding credentials in the kernel seems only to be increasing, and
-each future caller would risk using the modified hook wrong by passing
-the wrong context and triggering the wrong behavior in the LSM.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> v3:
+>    rename to capable_any()
+> ---
+>  drivers/media/common/saa7146/saa7146_video.c     | 2 +-
+>  drivers/media/pci/bt8xx/bttv-driver.c            | 3 +--
+>  drivers/media/pci/saa7134/saa7134-video.c        | 3 +--
+>  drivers/media/platform/nxp/fsl-viu.c             | 2 +-
+>  drivers/media/test-drivers/vivid/vivid-vid-cap.c | 2 +-
+>  drivers/net/caif/caif_serial.c                   | 2 +-
+>  drivers/s390/block/dasd_eckd.c                   | 2 +-
+>  7 files changed, 7 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/common/saa7146/saa7146_video.c b/drivers/media/common/saa7146/saa7146_video.c
+> index 2296765079a4..f0d08935b096 100644
+> --- a/drivers/media/common/saa7146/saa7146_video.c
+> +++ b/drivers/media/common/saa7146/saa7146_video.c
+> @@ -469,7 +469,7 @@ static int vidioc_s_fbuf(struct file *file, void *fh, const struct v4l2_framebuf
+>  
+>  	DEB_EE("VIDIOC_S_FBUF\n");
+>  
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
+> +	if (!capable_any(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+>  	/* check args */
+> diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
+> index d40b537f4e98..7098cff2ea51 100644
+> --- a/drivers/media/pci/bt8xx/bttv-driver.c
+> +++ b/drivers/media/pci/bt8xx/bttv-driver.c
+> @@ -2567,8 +2567,7 @@ static int bttv_s_fbuf(struct file *file, void *f,
+>  	const struct bttv_format *fmt;
+>  	int retval;
+>  
+> -	if (!capable(CAP_SYS_ADMIN) &&
+> -		!capable(CAP_SYS_RAWIO))
+> +	if (!capable_any(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+>  	/* check args */
+> diff --git a/drivers/media/pci/saa7134/saa7134-video.c b/drivers/media/pci/saa7134/saa7134-video.c
+> index 4d8974c9fcc9..23104c04a9aa 100644
+> --- a/drivers/media/pci/saa7134/saa7134-video.c
+> +++ b/drivers/media/pci/saa7134/saa7134-video.c
+> @@ -1797,8 +1797,7 @@ static int saa7134_s_fbuf(struct file *file, void *f,
+>  	struct saa7134_dev *dev = video_drvdata(file);
+>  	struct saa7134_format *fmt;
+>  
+> -	if (!capable(CAP_SYS_ADMIN) &&
+> -	   !capable(CAP_SYS_RAWIO))
+> +	if (!capable_any(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+>  	/* check args */
+> diff --git a/drivers/media/platform/nxp/fsl-viu.c b/drivers/media/platform/nxp/fsl-viu.c
+> index afc96f6db2a1..81a90c113dc6 100644
+> --- a/drivers/media/platform/nxp/fsl-viu.c
+> +++ b/drivers/media/platform/nxp/fsl-viu.c
+> @@ -803,7 +803,7 @@ static int vidioc_s_fbuf(struct file *file, void *priv, const struct v4l2_frameb
+>  	const struct v4l2_framebuffer *fb = arg;
+>  	struct viu_fmt *fmt;
+>  
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
+> +	if (!capable_any(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+>  	/* check args */
+> diff --git a/drivers/media/test-drivers/vivid/vivid-vid-cap.c b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
+> index b9caa4b26209..918913e47069 100644
+> --- a/drivers/media/test-drivers/vivid/vivid-vid-cap.c
+> +++ b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
+> @@ -1253,7 +1253,7 @@ int vivid_vid_cap_s_fbuf(struct file *file, void *fh,
+>  	if (dev->multiplanar)
+>  		return -ENOTTY;
+>  
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
+> +	if (!capable_any(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+>  	if (dev->overlay_cap_owner)
+> diff --git a/drivers/net/caif/caif_serial.c b/drivers/net/caif/caif_serial.c
+> index 688075859ae4..ca3f82a0e3a6 100644
+> --- a/drivers/net/caif/caif_serial.c
+> +++ b/drivers/net/caif/caif_serial.c
+> @@ -326,7 +326,7 @@ static int ldisc_open(struct tty_struct *tty)
+>  	/* No write no play */
+>  	if (tty->ops->write == NULL)
+>  		return -EOPNOTSUPP;
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_TTY_CONFIG))
+> +	if (!capable_any(CAP_SYS_TTY_CONFIG, CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+>  	/* release devices to avoid name collision */
+> diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+> index 836838f7d686..66f6db7a11fc 100644
+> --- a/drivers/s390/block/dasd_eckd.c
+> +++ b/drivers/s390/block/dasd_eckd.c
+> @@ -5330,7 +5330,7 @@ static int dasd_symm_io(struct dasd_device *device, void __user *argp)
+>  	char psf0, psf1;
+>  	int rc;
+>  
+> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_RAWIO))
+> +	if (!capable_any(CAP_SYS_RAWIO, CAP_SYS_ADMIN))
+>  		return -EACCES;
+>  	psf0 = psf1 = 0;
+>  
 
 -- 
-paul-moore.com
+Regards,
+
+Laurent Pinchart
