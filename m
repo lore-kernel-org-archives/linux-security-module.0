@@ -2,107 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8491C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 17:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34980C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 21:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377496AbiFPRT6 (ORCPT
+        id S230194AbiFPVow (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jun 2022 13:19:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33464 "EHLO
+        Thu, 16 Jun 2022 17:44:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378286AbiFPRTz (ORCPT
+        with ESMTP id S230302AbiFPVow (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jun 2022 13:19:55 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 355FE4CD59
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 10:19:54 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id m20so3989563ejj.10
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 10:19:54 -0700 (PDT)
+        Thu, 16 Jun 2022 17:44:52 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DC1C5E76B
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 14:44:48 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id o8so3455666wro.3
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 14:44:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bHjV6+d1wPcbJIXXueZ8eXPKto8w1sGcbUP/nhry+Lc=;
-        b=fZLZmEgXFFCbwyUw1zXJ5JL28E/ey7iqcZSqht9lq7kKmvINuMARA0+Ulb4FJDUsty
-         hAgz7ZM0rJIjo1enFtWyVxi8pMFilkYjG+n1yIzkefLHxUTnJEm9Z7JzL0MpVfkVVr0k
-         /IPzEpcZksaPiymRJXKfSMDmYfFX1gnvZoDKU=
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=vJM7RdjKz/WSSaxBuzaq5SgZIUwXr5fvQdIIno3C/Lw=;
+        b=o8EaRErmx8+qFSfgfxIM6dwARWAwD+PiJ4fLDS2AOQ4ULPRbJkDX33w2KJqeQ3FegE
+         BWtcYvEND6HVWWXe4fvl7Bi1J1PyB3S1OFqoD5ZeHD0y/dXN52uzp58YD5NnCgct6RS5
+         4gikIPO65o33LG1qGA81jKRkT/TEF5USZ4N+y6G9VhhZ2Bv8A4QQzsbzFL08ksjkgYI5
+         83zDxuYYLF/qL5fc0S+Wq80lMJsqmJSt2zJmvfgbXFL1553ZYhEpq8TMzdoIKC27Q+LZ
+         CNl0KY/fLbjDzvmUT1HMNyNPoUtdJ+f0NFREQqT8G/owLBLrW3MeEKI6q2JWsyJBYKGK
+         weAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bHjV6+d1wPcbJIXXueZ8eXPKto8w1sGcbUP/nhry+Lc=;
-        b=WwuWn/3VVFScKbe2GU0OgMPxQ1v0H6lfVCfAa1Y6HOaWkYHcs6zItGoIQF7YFdDU5p
-         NsjFqtaF3NccQJimdLauMfiyRSmgmi2YcXqlaPAYIPJeucp7ELIu19FP7ynpe4sBtQ9N
-         gYamLYGceMRQGgaVvqqepIlWBGtsGAPdEE5QfaI7kDJRpvf/qJuz1mkuDvP3dTMmth97
-         bA9/Chzx5EDHRGfu6/P4wAEWAxFUfHf3KojPSed6fG3qO30iCiGbcY4Rib+XMM5pMmgd
-         qLs61hKiGcg5lNP9y0W0SVSDmBis8uGiifFCS0PMoCh/xc4fYe0UKQZfaNI8aV7sd4pV
-         fLyQ==
-X-Gm-Message-State: AJIora89C1Z5aiuVnp05EWiEj0djqsVzc09AB4VnpNf5+FA+b/XEEFdj
-        0UOluHscuRey4o7tILYsPi4HzwSLqlbq+pN5ZoJMQm0iYZ0=
-X-Google-Smtp-Source: AGRyM1vE8prXPyyX2KZN3XXldr/y6R0KwwEZo+KVjq+te8IczQ+4jeOKiFUFoM9AGnEq4B+OLELhdnvfnwrsQXYLabg=
-X-Received: by 2002:a17:906:4fd6:b0:70c:9284:cc01 with SMTP id
- i22-20020a1709064fd600b0070c9284cc01mr5513350ejw.553.1655399992619; Thu, 16
- Jun 2022 10:19:52 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=vJM7RdjKz/WSSaxBuzaq5SgZIUwXr5fvQdIIno3C/Lw=;
+        b=nUVK944T2ScylsdoecSedJEwrF0O3cJ0Lp6Vev1vDFVsBR3t2obr1gNoJQAbKiJkuN
+         x6+EvhafvC7fpMu+6ekqZpfE2S1a2UoW1KRMkM0eeeuaS0upy8N5H/jiAJYeqDimQSsI
+         bHh5V3Da7BWWJk92Jwt+ucH2ROGO0oVx0v6WWSMClR1VFYDJblS9qqf15lJtveyfbxIC
+         zfRMdDPVe+hd0rVAPopNxhyLz7INvpSEXrL3FcFE0Zg2pxqiZgFPYq2NRczLqdrq6J0H
+         R956DM8M6+WHixeWh12mWo96FiY9+ayLXb7BF0eg2AtxO7KAzb44WTN6TTyWtCirSg/T
+         225w==
+X-Gm-Message-State: AJIora+SPu4X7w5yCbdND4IlPqSdb47AN2WIOCCBg55HzHA+u00LxDtX
+        zA8ERvBW12zG/3Fd3eIdK+WzLmhEUmRzAvZ9TAIe
+X-Google-Smtp-Source: AGRyM1vBeV64jRUDVLystW6tHyzywN0o3N1mBbA7cC++KJi1ZRusep3xIZkzfptMKv69n0GAU0SVYiYV8w3yvfY77B4=
+X-Received: by 2002:a5d:5272:0:b0:210:33b8:ac4a with SMTP id
+ l18-20020a5d5272000000b0021033b8ac4amr6329037wrc.483.1655415886658; Thu, 16
+ Jun 2022 14:44:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220613202852.447738-1-mortonm@chromium.org> <CAJ-EccOhrYG6n6As72R7YzSk+Zzy=oFFJ62hG9476njprpJuvw@mail.gmail.com>
- <202206131643.4FB2340C43@keescook> <CAJ-EccN92u8y46j+h1Vg8tzFfRDynMM=1zRF6zGjx_4qKJ=AbQ@mail.gmail.com>
-In-Reply-To: <CAJ-EccN92u8y46j+h1Vg8tzFfRDynMM=1zRF6zGjx_4qKJ=AbQ@mail.gmail.com>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Thu, 16 Jun 2022 10:19:41 -0700
-Message-ID: <CAJ-EccMGXZ_-eQsqwFEbxXs-ZBah5q4okBVL9cf8Qx+0nuLs7Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] LSM: SafeSetID: Add setgroups() security policy handling
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, linux-kernel@vger.kernel.org
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 16 Jun 2022 17:44:35 -0400
+Message-ID: <CAHC9VhQa-L-_F4UdMekqvyF714xhEerVQzc9rPvuwTQJtmMd8A@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v5.19 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 14, 2022 at 10:36 AM Micah Morton <mortonm@chromium.org> wrote:
->
-> On Mon, Jun 13, 2022 at 4:46 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Mon, Jun 13, 2022 at 02:00:03PM -0700, Micah Morton wrote:
-> > > On Mon, Jun 13, 2022 at 1:28 PM Micah Morton <mortonm@chromium.org> wrote:
-> > > [...]
-> > > > +static int safesetid_task_fix_setgroups(struct cred *new, const struct cred *old)
-> > > > +{
-> > > > +       int i;
-> > > > +
-> > > > +       /* Do nothing if there are no setgid restrictions for our old RGID. */
-> > > > +       if (setid_policy_lookup((kid_t){.gid = old->gid}, INVALID_ID, GID) == SIDPOL_DEFAULT)
-> > > > +               return 0;
-> > > > +
-> > > > +       get_group_info(new->group_info);
-> > > > +       for (i = 0; i < new->group_info->ngroups; i++) {
-> > > > +               if (!id_permitted_for_cred(old, (kid_t){.gid = group_info->gid[i]}, GID)) {
-> > >
-> > > Oops, should be:
-> > >
-> > > !id_permitted_for_cred(old, (kid_t){.gid = new->group_info->gid[i]}, GID)
-> > >
-> > > Guess I won't send a whole new patch just for that one line
-> >
-> > This begs the question: are there self-tests for this LSM somewhere?
-> > It'd be really nice to add them to tool/testing/selftests ...
->
-> There actually is tools/testing/selftests/safesetid/ but I haven't
-> updated it since v1 of SafeSetID that only accommodated UIDs. I've
-> been relying on integration testing we have out of tree on the Chrome
-> OS side but I suppose its reasonable to bring the selftest up to date
-> as well :)
->
-> Also both patches are a couple lines off from the ones I was finished
-> developing/testing with.. some kind of screw up happened when I copied
-> from my dev machine to another where I could get git-send-email
-> working properly. I'll just resend these 2 patches along with the
-> update to the selftest.
+Linus,
 
-Just sent the updated patches and selftest patch.
+A single SELinux patch to fix memory leaks when mounting filesystems
+with SELinux mount options.  Please merge for v5.19.
 
->
-> Thanks
->
-> >
-> > --
-> > Kees Cook
+Thanks,
+-Paul
+
+--
+The following changes since commit b13baccc3850ca8b8cccbf8ed9912dbaa0fdf7f3=
+:
+
+ Linux 5.19-rc2 (2022-06-12 16:11:37 -0700)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+   selinux-pr-20220616
+
+for you to fetch changes up to cad140d00899e7a9cb6fe93b282051df589e671c:
+
+ selinux: free contexts previously transferred in selinux_add_opt()
+   (2022-06-15 21:20:45 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.19 PR 20220616
+
+----------------------------------------------------------------
+Christian G=C3=B6ttsche (1):
+     selinux: free contexts previously transferred in selinux_add_opt()
+
+security/selinux/hooks.c | 11 ++++-------
+1 file changed, 4 insertions(+), 7 deletions(-)
+
+--=20
+paul-moore.com
