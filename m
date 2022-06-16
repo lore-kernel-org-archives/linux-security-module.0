@@ -2,272 +2,179 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98443C43334
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jun 2022 22:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28A5CCA473
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 01:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354878AbiFOWwX (ORCPT
+        id S1351028AbiFPBZZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jun 2022 18:52:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37920 "EHLO
+        Wed, 15 Jun 2022 21:25:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350639AbiFOWwR (ORCPT
+        with ESMTP id S1350832AbiFPBZW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jun 2022 18:52:17 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B864756760
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 15:51:57 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id z14so8555489pgh.0
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 15:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TbQgSf1OVIiwYx0Sn2rxiHGy/GEMZk1makKhYfLcgyY=;
-        b=atnEyFN3QfrBooqRfgo4iT32q8OxlL/fSIuJyquYCjy1Umx0nzVkiDIEIxSz2ENHAF
-         XmEEhfEx5WHhEt7zEXIhxT8YDoTcLP5xnmjzxJ9VHP6LNjUkk9OfIPYf9Ne1rgwxyNji
-         nlfNYMTub/Dw0Z/+EfCdXN4/j62btlN2tHONM=
+        Wed, 15 Jun 2022 21:25:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A6C974ECF9
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 18:25:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1655342719;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=D44Dr4YMc8cT2I8kBBUFAcAZBxETYvbJSxn5FHOEfW4=;
+        b=MDQV+jh1SXU4WYxkXXdSTQ7AmkCPtC8INSAkYAGX2yimTdXcJqZY8xJRPqiS54MRcdPhk0
+        yF94HvC4ule7VltMlJwwjvRDkcPVgK1L8eYNlLgmPS4xVQ+p7Ee8fgjoFk3ayCMtFP0m9n
+        o06DrUE0jCqN10Y6ZAnjntpgfvruxzE=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-567-Vus2oYcXNhOnSEXKE5JnIQ-1; Wed, 15 Jun 2022 21:25:18 -0400
+X-MC-Unique: Vus2oYcXNhOnSEXKE5JnIQ-1
+Received: by mail-pg1-f199.google.com with SMTP id q8-20020a632a08000000b00402de053ef9so7320609pgq.3
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 18:25:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TbQgSf1OVIiwYx0Sn2rxiHGy/GEMZk1makKhYfLcgyY=;
-        b=r1HW1uNHygEfgWnP0WQidVaMWymFQ74Fu+ybTmeuE+aX4NIkd44Qbhn9ZWcck1/7ha
-         otOyHen8E+enrhp0Jb5MutEDtpwOMbllqdiimxoFeIsfECvUFg/UF8gvfZphFqvj68cJ
-         cdoeASw0yWGN8ocWmXh9LzJHoOx8htR1aVqlSG2fdy3G/4MT2EMJL8LxeqoK/Tq2YMwp
-         wyn0PX9XcEY3+sf8TOrGUVRYn8o5Kue4ynp6+U8TLl3TEzqUNDbNCJx6k+oUWcmndlMD
-         DWUfvI0q/FwUtYnzAZdPC0bjHA8fIv2De9oUYmQ93ricGmKjClBL9AbFhHkPaJzuL41j
-         1vwQ==
-X-Gm-Message-State: AJIora8ZE9A0bI749zQCZMtat+P39qYPKNoFvPV8I7z9ProsYP5TFS/f
-        btdnkoFcBrf9TrbiYh99Oa+8Mvxqzu0iCg==
-X-Google-Smtp-Source: AGRyM1uisy5NigZ4m/urj0nd+xkA5dGeXQPVz66hbTR3qEHNQ7QBrYrQagMKhifuQTg9hhy9sQuslg==
-X-Received: by 2002:a62:b802:0:b0:51b:f4d2:65be with SMTP id p2-20020a62b802000000b0051bf4d265bemr1708795pfe.79.1655333516970;
-        Wed, 15 Jun 2022 15:51:56 -0700 (PDT)
-Received: from localhost ([2620:15c:202:200:6db4:3c00:379:4cf6])
-        by smtp.gmail.com with UTF8SMTPSA id w22-20020a1709026f1600b0015e8d4eb2c0sm125045plk.266.2022.06.15.15.51.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jun 2022 15:51:56 -0700 (PDT)
-From:   Micah Morton <mortonm@chromium.org>
-To:     linux-security-module@vger.kernel.org
-Cc:     keescook@chromium.org, jmorris@namei.org, serge@hallyn.com,
-        linux-kernel@vger.kernel.org, Micah Morton <mortonm@chromium.org>
-Subject: [PATCH 3/3] LSM: SafeSetID: add GID testing to selftest
-Date:   Wed, 15 Jun 2022 15:51:52 -0700
-Message-Id: <20220615225152.707016-1-mortonm@chromium.org>
-X-Mailer: git-send-email 2.36.1.476.g0c4daa206d-goog
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=D44Dr4YMc8cT2I8kBBUFAcAZBxETYvbJSxn5FHOEfW4=;
+        b=y5z7PgklDIedc96xJvry2AEKiNMRCCqk0F2Z0e8T3tNMiHceEc+CGDVBVXoaG6gFDy
+         EawmaB2uGTRzkzkMbMhOzphcKDxzxNniJc84KfSwLKcWnV8MpETzn11v5zJK+SOM7O7X
+         aavuKoe1O7DpwwYGm6Uuulsa73Vdx8Yk7k0DFl1/fEQYcvfvdDHKNsfLjFOkdXczd6OX
+         J9q6moHfjwpQEN/96Eqci6SvH7o6/3vhQT682NiQdmDAlnriXRpR+OYWxJg+9HfwA6UM
+         diNjy06MfpolXNuhr0UbdyRim9zmzkaUOMTAqvLV0OzmlYz5BJwPI2pVBAGyptA/1Cce
+         9CGg==
+X-Gm-Message-State: AJIora8XrXrxGnrGedUrHoNTgYo4wg8/8ExvD4u/mQwEgnLGLrVFCmjk
+        wkfGhNFD+N8JP4DbgESDwWKckHsiU1kBxwKv/Ahc6RBPX+iTrhOtQQnI4XKS6AOa3Z15tmhWWVz
+        vc/eyizBY0DA8ocdIP+bXduDPVLFIulbcKRpQ
+X-Received: by 2002:a17:90b:1d0a:b0:1e8:7f14:8db with SMTP id on10-20020a17090b1d0a00b001e87f1408dbmr13087395pjb.218.1655342717160;
+        Wed, 15 Jun 2022 18:25:17 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1sOjYTGh40XzdifkbuDHlq13ntELiTF3c1SqlwRgQ4mA+C9ql0VnOeF8KNef5kg+vvKioqBXA==
+X-Received: by 2002:a17:90b:1d0a:b0:1e8:7f14:8db with SMTP id on10-20020a17090b1d0a00b001e87f1408dbmr13087362pjb.218.1655342716811;
+        Wed, 15 Jun 2022 18:25:16 -0700 (PDT)
+Received: from localhost ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id 203-20020a6218d4000000b0051ba0ee30cbsm275270pfy.128.2022.06.15.18.25.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jun 2022 18:25:16 -0700 (PDT)
+Date:   Thu, 16 Jun 2022 09:22:32 +0800
+From:   Coiby Xu <coxu@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        Michal Suchanek <msuchanek@suse.de>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Chun-Yi Lee <jlee@suse.com>, stable@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 3/4] arm64: kexec_file: use more system keyrings to
+ verify kernel image signature
+Message-ID: <20220616012232.5rjmukabncqnus5s@Rk>
+References: <20220512070123.29486-1-coxu@redhat.com>
+ <20220512070123.29486-4-coxu@redhat.com>
+ <e44bb6b11573838417b5d561173c27a1571c94b6.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e44bb6b11573838417b5d561173c27a1571c94b6.camel@linux.ibm.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=coxu@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-GID security policies were added back in v5.10, update the selftest to
-reflect this.
+On Thu, Jun 09, 2022 at 07:15:27PM -0400, Mimi Zohar wrote:
+>On Thu, 2022-05-12 at 15:01 +0800, Coiby Xu wrote:
+>> Currently, a problem faced by arm64 is if a kernel image is signed by a
+>> MOK key, loading it via the kexec_file_load() system call would be
+>> rejected with the error "Lockdown: kexec: kexec of unsigned images is
+>> restricted; see man kernel_lockdown.7".
+>>
+>> This happens because image_verify_sig uses only the primary keyring that
+>> contains only kernel built-in keys to verify the kexec image.
+>
+>From the git history it's clear that .platform keyring was upstreamed
+>during the same open window as commit 732b7b93d849 ("arm64: kexec_file:
+>add kernel signature verification support").   Loading the MOK keys
+>onto the .platform keyring was upstreamed much later.  For this reason,
+>commit 732b7b93d849 only used keys on the  .builtin_trusted_keys
+>keyring.   This patch is now addressing it and the newly upstreamed
+>.machine keyring.
 
-Signed-off-by: Micah Morton <mortonm@chromium.org>
----
- .../selftests/safesetid/safesetid-test.c      | 131 ++++++++++++++++++
- 1 file changed, 131 insertions(+)
+Thanks for explaining the history to me!
 
-diff --git a/tools/testing/selftests/safesetid/safesetid-test.c b/tools/testing/selftests/safesetid/safesetid-test.c
-index c16977e4b913..a653c47a4ab5 100644
---- a/tools/testing/selftests/safesetid/safesetid-test.c
-+++ b/tools/testing/selftests/safesetid/safesetid-test.c
-@@ -3,6 +3,7 @@
- #include <stdio.h>
- #include <errno.h>
- #include <pwd.h>
-+#include <grp.h>
- #include <string.h>
- #include <syscall.h>
- #include <sys/capability.h>
-@@ -120,6 +121,7 @@ static void ensure_user_exists(uid_t uid)
- 		snprintf(name_str, 10, "user %d", uid);
- 		p.pw_name=name_str;
- 		p.pw_uid=uid;
-+		p.pw_gid=uid;
- 		p.pw_gecos="Test account";
- 		p.pw_dir="/dev/null";
- 		p.pw_shell="/bin/false";
-@@ -131,6 +133,33 @@ static void ensure_user_exists(uid_t uid)
- 	}
- }
- 
-+static void ensure_group_exists(gid_t gid)
-+{
-+	struct group g;
-+
-+	FILE *fd;
-+	char name_str[10];
-+
-+	if (getgrgid(gid) == NULL) {
-+		memset(&g,0x00,sizeof(g));
-+		fd=fopen("/etc/group","a");
-+		if (fd == NULL)
-+			die("couldn't open group file\n");
-+		if (fseek(fd, 0, SEEK_END))
-+			die("couldn't fseek group file\n");
-+		snprintf(name_str, 10, "group %d", gid);
-+		g.gr_name=name_str;
-+		g.gr_gid=gid;
-+		g.gr_passwd=NULL;
-+		g.gr_mem=NULL;
-+		int value = putgrent(&g,fd);
-+		if (value != 0)
-+			die("putgrent failed\n");
-+		if (fclose(fd))
-+			die("fclose failed\n");
-+	}
-+}
-+
- static void ensure_securityfs_mounted(void)
- {
- 	int fd = open(add_uid_whitelist_policy_file, O_WRONLY);
-@@ -175,6 +204,31 @@ static void write_uid_policies()
- 	}
- }
- 
-+static void write_gid_policies()
-+{
-+	static char *policy_str = UGID_POLICY_STRING;
-+	ssize_t written;
-+	int fd;
-+
-+	fd = open(add_gid_whitelist_policy_file, O_WRONLY);
-+	if (fd < 0)
-+		die("can't open add_gid_whitelist_policy file\n");
-+	written = write(fd, policy_str, strlen(policy_str));
-+	if (written != strlen(policy_str)) {
-+		if (written >= 0) {
-+			die("short write to %s\n", add_gid_whitelist_policy_file);
-+		} else {
-+			die("write to %s failed: %s\n",
-+				add_gid_whitelist_policy_file, strerror(errno));
-+		}
-+	}
-+	if (close(fd) != 0) {
-+		die("close of %s failed: %s\n",
-+			add_gid_whitelist_policy_file, strerror(errno));
-+	}
-+}
-+
-+
- static bool test_userns(bool expect_success)
- {
- 	uid_t uid;
-@@ -265,6 +319,63 @@ static void test_setuid(uid_t child_uid, bool expect_success)
- 	die("should not reach here\n");
- }
- 
-+static void test_setgid(gid_t child_gid, bool expect_success)
-+{
-+	pid_t cpid, w;
-+	int wstatus;
-+
-+	cpid = fork();
-+	if (cpid == -1) {
-+		die("fork\n");
-+	}
-+
-+	if (cpid == 0) {	    /* Code executed by child */
-+		if (setgid(child_gid) < 0)
-+			exit(EXIT_FAILURE);
-+		if (getgid() == child_gid)
-+			exit(EXIT_SUCCESS);
-+		else
-+			exit(EXIT_FAILURE);
-+	} else {		 /* Code executed by parent */
-+		do {
-+			w = waitpid(cpid, &wstatus, WUNTRACED | WCONTINUED);
-+			if (w == -1) {
-+				die("waitpid\n");
-+			}
-+
-+			if (WIFEXITED(wstatus)) {
-+				if (WEXITSTATUS(wstatus) == EXIT_SUCCESS) {
-+					if (expect_success) {
-+						return;
-+					} else {
-+						die("unexpected success\n");
-+					}
-+				} else {
-+					if (expect_success) {
-+						die("unexpected failure\n");
-+					} else {
-+						return;
-+					}
-+				}
-+			} else if (WIFSIGNALED(wstatus)) {
-+				if (WTERMSIG(wstatus) == 9) {
-+					if (expect_success)
-+						die("killed unexpectedly\n");
-+					else
-+						return;
-+				} else {
-+					die("unexpected signal: %d\n", wstatus);
-+				}
-+			} else {
-+				die("unexpected status: %d\n", wstatus);
-+			}
-+		} while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
-+	}
-+
-+	die("should not reach here\n");
-+}
-+
-+
- static void ensure_users_exist(void)
- {
- 	ensure_user_exists(ROOT_UGID);
-@@ -274,6 +385,15 @@ static void ensure_users_exist(void)
- 	ensure_user_exists(NO_POLICY_UGID);
- }
- 
-+static void ensure_groups_exist(void)
-+{
-+	ensure_group_exists(ROOT_UGID);
-+	ensure_group_exists(RESTRICTED_PARENT_UGID);
-+	ensure_group_exists(ALLOWED_CHILD1_UGID);
-+	ensure_group_exists(ALLOWED_CHILD2_UGID);
-+	ensure_group_exists(NO_POLICY_UGID);
-+}
-+
- static void drop_caps(bool setid_retained)
- {
- 	cap_value_t cap_values[] = {CAP_SETUID, CAP_SETGID};
-@@ -290,9 +410,11 @@ static void drop_caps(bool setid_retained)
- 
- int main(int argc, char **argv)
- {
-+	ensure_groups_exist();
- 	ensure_users_exist();
- 	ensure_securityfs_mounted();
- 	write_uid_policies();
-+	write_gid_policies();
- 
- 	if (prctl(PR_SET_KEEPCAPS, 1L))
- 		die("Error with set keepcaps\n");
-@@ -325,6 +447,12 @@ int main(int argc, char **argv)
- 	test_setuid(ALLOWED_CHILD2_UGID, true);
- 	test_setuid(NO_POLICY_UGID, false);
- 
-+	test_setgid(ROOT_UGID, false);
-+	test_setgid(ALLOWED_CHILD1_UGID, true);
-+	test_setgid(ALLOWED_CHILD2_UGID, true);
-+	test_setgid(NO_POLICY_UGID, false);
-+
-+
- 	if (!test_userns(false)) {
- 		die("test_userns worked when it should fail\n");
- 	}
-@@ -334,6 +462,9 @@ int main(int argc, char **argv)
- 	test_setuid(2, false);
- 	test_setuid(3, false);
- 	test_setuid(4, false);
-+	test_setgid(2, false);
-+	test_setgid(3, false);
-+	test_setgid(4, false);
- 
- 	// NOTE: this test doesn't clean up users that were created in
- 	// /etc/passwd or flush policies that were added to the LSM.
+>
+>Only using the .builtin_trusted_keys is the problem statement, which
+>should be one of the first lines of the patch description, if not the
+>first line.
+
+Thanks for the suggestion! I've provided a new version of commit message
+in the end.
+
+>
+>>
+>> This patch allows to verify arm64 kernel image signature using not only
+>> .builtin_trusted_keys but also .platform and .secondary_trusted_keys
+>> keyring.
+>
+>Please remember to update this to include the .machine keyring.
+
+Sure, thanks for the reminder!
+
+>
+>>
+>> Fixes: 732b7b93d849 ("arm64: kexec_file: add kernel signature verification support")
+>
+>Since the MOK keys weren't loaded onto the .platform keyring until much
+>later, I would not classify this as a fix.
+
+For this Fixes tag, I mean arm64 couldn't make use of the secondary
+keyring because a secondary system keyring was introduced long before
+commit 732b7b93d849 ("arm64: kexec_file: add kernel signature
+verification support"),
+
+	commit d3bfe84129f65e0af2450743ebdab33d161d01c9
+	Author: David Howells <dhowells@redhat.com>
+	Date:   Wed Apr 6 16:14:27 2016 +0100
+	
+	    certs: Add a secondary system keyring that can be added to dynamically
+	
+	
+	commit 732b7b93d849f8a44886ead563dfb6adec7f4419
+	Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
+	Date:   Thu Nov 15 14:52:54 2018 +0900
+	
+	    arm64: kexec_file: add kernel signature verification support
+
+Of course, my commit message is misleading since it talks about MOK key
+in the first line. If stating the problem as arm64 only using the
+.builtin_trusted_keys as suggested by you, I think this Fixes tag would
+make sense. How about the following one?
+
+Currently, when loading a kernel image via the kexec_file_load() system
+call, arm64 can only use the .builtin_trusted_keys keyring to verify
+a signature whereas x86 can use three more keyrings i.e.
+.secondary_trusted_keys, .machine and .platform keyrings. For example,
+one resulting problem is kexec'ing a kernel image  would be rejected
+with the error "Lockdown: kexec: kexec of unsigned images is restricted;
+see man kernel_lockdown.7".
+  
+This patch set enables arm64 to make use of the same keyrings as x86 to
+verify the signature kexec'ed kernel image. 
+
+Fixes: 732b7b93d849 ("arm64: kexec_file: add kernel signature verification support")
+
+
+>
+>thanks,
+>
+>Mimi
+>
+
 -- 
-2.36.1.476.g0c4daa206d-goog
+Best regards,
+Coiby
 
