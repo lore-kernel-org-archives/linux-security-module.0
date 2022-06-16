@@ -2,93 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5C4CCA479
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 01:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B440CCCA481
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 01:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350450AbiFPBuZ (ORCPT
+        id S1350511AbiFPBu0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jun 2022 21:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53378 "EHLO
+        Wed, 15 Jun 2022 21:50:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348760AbiFPBuS (ORCPT
+        with ESMTP id S1350262AbiFPBuV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jun 2022 21:50:18 -0400
+        Wed, 15 Jun 2022 21:50:21 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B3FA1580D4
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 18:50:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1C04F580D4
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 18:50:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655344216;
+        s=mimecast20190719; t=1655344220;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Mfnj3kbt/mcFDC8cZyL7mlTMEbSGwlIrcY0mmV2SXko=;
-        b=OX4zT2HuN9E+iW/XfQd9sPvcgw2HUPtTcSZk6xjX8vtxt0RHLxRnTlNu3I7wYb/kOk9+Gb
-        Do2fwcHgvbLIDREIUGxAvt3Ort+n0MXBfKK7zYTxRD0Rp6tqPKWQsp7tx2qmWnE5RVfE/g
-        GJF2yCD39CdAiBSbO8IhwDJt/BIfZw0=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=fVV/WU4SmfLzF3DDklDbzisp7F5k+JmdrLDWS6yeIfg=;
+        b=JrDyFlAvxSxlBY+HBrcP1teh/2vFF/g+pchJQdZREV57ODoGSkP2T0dAvNjkBLICOO3vqF
+        cxnuvNUd4L3ewbdxwUpMY1LuTUQYQgUYBMGkDWPGx+ciYy/3sfps3sIlK8l3WRvBlmkKAc
+        bozH7arTJu23kCPZDT9vdodz1qYJb2I=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-339-glswz0EuOFuTH9_Y2MYJ7g-1; Wed, 15 Jun 2022 21:50:15 -0400
-X-MC-Unique: glswz0EuOFuTH9_Y2MYJ7g-1
-Received: by mail-pg1-f199.google.com with SMTP id h7-20020a63e147000000b00408948ba461so4553433pgk.15
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 18:50:15 -0700 (PDT)
+ us-mta-665-ZkFPJMrCN1egz1nCumoGpg-1; Wed, 15 Jun 2022 21:50:19 -0400
+X-MC-Unique: ZkFPJMrCN1egz1nCumoGpg-1
+Received: by mail-pg1-f198.google.com with SMTP id q8-20020a632a08000000b00402de053ef9so7349141pgq.3
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jun 2022 18:50:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Mfnj3kbt/mcFDC8cZyL7mlTMEbSGwlIrcY0mmV2SXko=;
-        b=MXNN0fbgKkGuhZT/zKJ3EacWDrNtnq3QKRl2FyhQrhzk7YtXvp8TGhVO00hosliDFj
-         mwqpyUJKEM7+KIxdteGUjp3lDgG8a8awCgnceqJlBIdNAZNvMbdWe/FIuN/+TjxPErtu
-         EtJLvyZXnogEB8Zr00+OvU088fdCjFOwEnUPb7ZOJAFktOcUHUTS9ca/jPwAn6g/Xfs3
-         4DSWjPVKoGw8ccngNtqTyLpDGlvENRaKiIhB4V3a9HNofn1mPvKQ1TewVl79qVvczAKK
-         4jcoOm0SuO2GaLe3fs8+/m4niTkYAinnTmEJlY5I1AJ+EcIW/JlqSwI9LUxflx2N4nCK
-         +KZw==
-X-Gm-Message-State: AJIora82cZu/w764k+64zzi7leVwgZL+g7M0rPj5IP6RBvDVq+spj9IJ
-        3pNdjpmJWZqTwTwLsedgEW5MwyyU6HCk8pat68yBdTFB9TNBzwjxAC2oXpURChOny8N6N5vPAV7
-        vr/dbvpO+NDrV4AqgdjlDNmGRrVpGRrWQ080h
-X-Received: by 2002:a63:1e1d:0:b0:401:a251:767e with SMTP id e29-20020a631e1d000000b00401a251767emr2357335pge.26.1655344214526;
-        Wed, 15 Jun 2022 18:50:14 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1sEarbrrVxjiXB2Z4yglIOjHVgXmEDqqN6H9xo+0t/vhcHtsIxwYcmDDYcM0diomczP0LPViQ==
-X-Received: by 2002:a63:1e1d:0:b0:401:a251:767e with SMTP id e29-20020a631e1d000000b00401a251767emr2357317pge.26.1655344214223;
-        Wed, 15 Jun 2022 18:50:14 -0700 (PDT)
+        bh=fVV/WU4SmfLzF3DDklDbzisp7F5k+JmdrLDWS6yeIfg=;
+        b=kPQ6tP4Xy+xLRoJkYHViwqG15b5BgLLyCP8Ahs/bXj3pnx2D9v0ylOKiqpUcHGpC1K
+         QimMDx1nNFDEoP9uVDbah03iVFscmEa0khGePc8dq22gglvN4w63d+SN89lpoNx7ZNQL
+         fbnSHDr3h8L1Tb0YRaI8JbDH4arlDE0jakmk8LY2Sh2wgtv53Zw0J0bwUPYz+et6o3Ja
+         W1JsC8vDf4DISJIlLmP8+yz8YY+ySVYx+kxzMVPIE13MRzz3rtZWLzUcX3PxV5wb7F49
+         F57FDLUIcQPuQBo9PYU0l8XSl8Z2KC3y1eB+/POHIcqVjUAoCP5QAo4dbxSmEwP72xNo
+         DybQ==
+X-Gm-Message-State: AJIora8SANIai4U+HJacErg7pZHtgGB/AbjxQPphb25kcHl67eoOlgn0
+        LN1DIpBr9pAki0LmgyeagHguHAw2GXUwwJr1t18Ob+ystAGChrDW3AErByUbZkDF+bhqn4VW9x1
+        C7kZBWZNCY+8nNMx5K4KrpAgMuDu1qDpurCWl
+X-Received: by 2002:a65:6b8a:0:b0:3db:7dc5:fec2 with SMTP id d10-20020a656b8a000000b003db7dc5fec2mr2271728pgw.223.1655344218185;
+        Wed, 15 Jun 2022 18:50:18 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1tat2EzR0T5nORvsBcX3iBlSsbkY9k1dYVtfU8jZxFaMpWCPS32EidaNFNhOavM/bEZa8rfiQ==
+X-Received: by 2002:a65:6b8a:0:b0:3db:7dc5:fec2 with SMTP id d10-20020a656b8a000000b003db7dc5fec2mr2271708pgw.223.1655344217907;
+        Wed, 15 Jun 2022 18:50:17 -0700 (PDT)
 Received: from localhost ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id k16-20020a17090aaa1000b001e3351cb7fbsm2464671pjq.28.2022.06.15.18.50.12
+        by smtp.gmail.com with ESMTPSA id z11-20020a63b90b000000b00408b89e4282sm280945pge.47.2022.06.15.18.50.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jun 2022 18:50:13 -0700 (PDT)
-Date:   Thu, 16 Jun 2022 09:46:50 +0800
+        Wed, 15 Jun 2022 18:50:17 -0700 (PDT)
+Date:   Thu, 16 Jun 2022 09:47:48 +0800
 From:   Coiby Xu <coxu@redhat.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Baoquan He <bhe@redhat.com>,
-        Michal =?utf-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>,
-        Heiko Carstens <hca@linux.ibm.com>, akpm@linux-foundation.org,
-        kexec@lists.infradead.org, keyrings@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dave Young <dyoung@redhat.com>, Will Deacon <will@kernel.org>,
+Cc:     kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        Michal Suchanek <msuchanek@suse.de>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Will Deacon <will@kernel.org>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
-        Chun-Yi Lee <jlee@suse.com>, stable@vger.kernel.org,
-        Philipp Rudo <prudo@linux.ibm.com>,
+        Chun-Yi Lee <jlee@suse.com>, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "open list:S390" <linux-s390@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Subject: Re: [PATCH v8 4/4] kexec, KEYS, s390: Make use of built-in and
- secondary keyring for signature verification
-Message-ID: <20220616014650.wd6saed72breqeyb@Rk>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 2/4] kexec, KEYS: make the code in
+ bzImage64_verify_sig generic
+Message-ID: <20220616014748.ys3abgfakedckvag@Rk>
 References: <20220512070123.29486-1-coxu@redhat.com>
- <20220512070123.29486-5-coxu@redhat.com>
- <YoTYm6Fo1vBUuJGu@osiris>
- <20220519003902.GE156677@MiWiFi-R3L-srv>
- <c47299b899da4ad4b6d3ad637022ad82c8ed6ed2.camel@linux.ibm.com>
- <YoZSl84aJYTscgfO@MiWiFi-R3L-srv>
- <20220519171134.GN163591@kunlun.suse.cz>
+ <20220512070123.29486-3-coxu@redhat.com>
+ <5db507747b2be22499e7357ce65f1800b36e1de4.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20220519171134.GN163591@kunlun.suse.cz>
+In-Reply-To: <5db507747b2be22499e7357ce65f1800b36e1de4.camel@linux.ibm.com>
 Authentication-Results: relay.mimecast.com;
         auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=coxu@redhat.com
 X-Mimecast-Spam-Score: 0
@@ -100,49 +91,47 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Hi Mimi,
 
->> >
->> > This patch set could probably go through KEYS/KEYRINGS_INTEGRITY, but
->> > it's kind of late to be asking.  Has it been in linux-next?  Should I
->> > assume this patch set has been fully tested or can we get some "tags"?
+On Thu, Jun 09, 2022 at 06:18:44PM -0400, Mimi Zohar wrote:
+>Hi Coiby,
+>
+>On Thu, 2022-05-12 at 15:01 +0800, Coiby Xu wrote:
+>> commit 278311e417be ("kexec, KEYS: Make use of platform keyring for
+>> signature verify") adds platform keyring support on x86 kexec but not
+>> arm64.
 >>
-[...]
+>> The code in bzImage64_verify_sig makes use of system keyrings including
+>> .buitin_trusted_keys, .secondary_trusted_keys and .platform keyring to
+>> verify signed kernel image as PE file. Make it generic so both x86_64
+>> and arm64 can use it.
+>
+>^uses the keys on the .builtin_trusted_keys, .machine, if configured
+>and enabled, .secondary_trusted_keys, also if configured, and .platform
+>keyrings to verify the signed kernel image as PE file.
+>
 >>
->> IIRC, Coiby has tested it on x86_64/arm64, not sure if he took test on
->> s390. No, this hasn't been in linux-next.
+>> @@ -202,6 +203,12 @@ int arch_kexec_apply_relocations(struct purgatory_info *pi,
+>>  				 const Elf_Shdr *relsec,
+>>  				 const Elf_Shdr *symtab);
+>>  int arch_kimage_file_post_load_cleanup(struct kimage *image);
+>> +#ifdef CONFIG_KEXEC_SIG
+>> +#ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
+>> +int kexec_kernel_verify_pe_sig(const char *kernel,
+>> +				    unsigned long kernel_len);
+>
+>Please join this line with the previous one.
+>
+>> +#endif
+>> +#endif
+>>  int arch_kexec_locate_mem_hole(struct kexec_buf *kbuf);
+>>
+>>  extern int kexec_add_buffer(struct kexec_buf *kbuf);
 
-For arm64, recently I did a new round of test and the patches works as
-expected,
-   1. Build 5.19.0-rc2
-   2. generate keys and add them to .secondary_trusted_keys, MOK, UEFI
-      db; 
-   3. sign different kernel images with different keys including keys
-      from .builtin_trusted_key, .secondary_trusted_keys keyring, UEFI db
-      key and MOK key 
-   4. Without lockdown, all kernel images can be kexec'ed; with lockdown
-      enabled, only the kernel image signed by the key from
-      .builtin_trusted_key can be kexec'ed
-
-Then I build a new kernel with the patches applied and confirm all
-kernel images can be kexec'ed.
+I've applied the two suggestions, thanks!
 
 >
->I used the s390 code on powerpc and there it did not work because the
->built-in key was needed to verify the kernel.
+>thanks,
 >
->I did not really run this on s390, only ported the fix I needed on
->powerpc back to s390.
-
-For 390, I commented out the code that skips signature verification
-when secure boot is not enabled since I couldn't find a machine that
-supports secure boot and confirm before applying the patch, kernel
-images signed by keys from .builtin_trusted_key, .secondary_trusted_keys
-couldn't be kexec'ed when lockdown is enabled; after applying the
-patch, those kernel images could be kexec'ed. 
-
->
->Thanks
->
->Michal
+>Mimi
 >
 
 -- 
