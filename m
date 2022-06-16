@@ -2,158 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54EFCC43334
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 15:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE58BC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 17:18:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238552AbiFPPne (ORCPT
+        id S1378222AbiFPRSZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jun 2022 11:43:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51086 "EHLO
+        Thu, 16 Jun 2022 13:18:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238783AbiFPPnd (ORCPT
+        with ESMTP id S1377915AbiFPRSY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jun 2022 11:43:33 -0400
-Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3A3F18E03
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 08:43:31 -0700 (PDT)
-Received: by mail-ot1-x330.google.com with SMTP id c3-20020a9d6843000000b0060c2c63c337so1268436oto.5
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 08:43:31 -0700 (PDT)
+        Thu, 16 Jun 2022 13:18:24 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 666FB39162
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 10:18:23 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id t3-20020a17090a510300b001ea87ef9a3dso2051999pjh.4
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 10:18:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/gQbIaU17eRw5sO/hecNb5FpluiGnQGygV2egDmXIIk=;
-        b=ehE/gd4tah9jS/e8Ze0l+xwI3htCbpaNOqoUJX7AbepMSAJB7sjMCvDJmqYls5FM/e
-         F+y7gfLeUntwqRbT824JObmT4UsnMPnZepY+gdttD59wtsyHuqRPnFlASHQpgPMKidRb
-         BCO5iBlThav5VCTLbd9PY0Av71Kt15RjOCU8k=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/F8W4X0OG/zaI5SNdaWcoXd2ZhB+Vu7miSvJF8gcVgY=;
+        b=TJjkupzaO1XanVa1a8MhVf2wS5mS4CLkAxnyU2AT4h6QR0Gb0ZyoWoYLUkUW0B3mQv
+         tGBExJHMLN4zEOfuldWF+pLYgkGGqzLFFoHP6xYZI3TOStk8OSdr1sl9iudd+OntIKwh
+         AIEX0Mq/0LBxOdTp//Pu1JhSe2QZgtF9YCuoU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/gQbIaU17eRw5sO/hecNb5FpluiGnQGygV2egDmXIIk=;
-        b=M8yVDlFDKYbd+98fqsaZ/pLKdehvwFYOYPF9N3vSfpGxtujAJ34eXBjhzAcb2NOI/D
-         7VKALkXRTsNE2yV7oG79Q4A/66s1qJcvlxO+98WsTxAlW1oC95R0Aqzc+RzeP6Bsvtgi
-         iXe1GzI7b+zOMu1I5j7kasYJX5SL3pX9UwwDlhexKgvMHZelpQrhvgBvXnlgPzXDTFae
-         tgi/f54pbt3HBydyuS8ENarAYy9VfPO88pB4b2JslR50PRs/CRkXL0f4OMFM9awSFs+Z
-         CkN4Uj8qByza/e+e3QMBX6t09k/hhKxKFcniGEleUkfhT7uvZ64XvWxMNEN/Ka/qThUX
-         JPYQ==
-X-Gm-Message-State: AJIora/Nd49WnPhY0tlMg1zTM42dILVNEas5OCbEAlJcf/oOxAejk0oX
-        UTtnDYd/I2EZ4/m9mWsX2HVnf4sFsf132g==
-X-Google-Smtp-Source: AGRyM1vMP4lEg6DmhqSrmBoPDx+gxAyXxNypKvZmhcRQh6he1s+nFWoAuImgFZbEwwP8oN5RTKb+rA==
-X-Received: by 2002:a9d:6a46:0:b0:60b:efa2:6ddb with SMTP id h6-20020a9d6a46000000b0060befa26ddbmr2274707otn.365.1655394210944;
-        Thu, 16 Jun 2022 08:43:30 -0700 (PDT)
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com. [209.85.167.169])
-        by smtp.gmail.com with ESMTPSA id l3-20020a4aa783000000b0041bc35464e0sm1225974oom.0.2022.06.16.08.43.30
-        for <linux-security-module@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/F8W4X0OG/zaI5SNdaWcoXd2ZhB+Vu7miSvJF8gcVgY=;
+        b=zPnmrJcJKhHa+HuDU1HrG50FJQQ6cUTkdIjzbqI1mn1PJLPrEjw3n80RTu0yCUTUks
+         gK7ddL87P6EFkzv3XpOmA3svuMOXV+DJP60kncOR13VKftVMNIdaeIulCnl1nBiIDd7g
+         EZ7LnKz7iVJw+mZPMIZZiCetIqwZgyfWVx/uj5l/hjQUbWxXEeLwoYYFYAL76MuIuTQZ
+         x0bgLL/bbVpUEB0DvwwynLuXDPKErcecRW4wvk+6zpl6e/f/rbJKABy3sXCo2oXE6AHn
+         JXP5RiBTPzVrp3W39Xa6kXvHT+G/J417RJwSG6YB/kSCTocGYGGptjSfILAgmFw9Vusg
+         R1dw==
+X-Gm-Message-State: AJIora/9+o8YVDEa0zY5sOqFuS9AAoecZYVfyt5e+TMujHHW9hhclbgr
+        pNRm4BVRqmxV03x1hCjFG8w7F/n6EFfM1A==
+X-Google-Smtp-Source: AGRyM1vPSDMIElCPrx4yIRc2lam3wMaH0PbSNRhHXnY4BG5I9I07mOaikaL+u5z4b3MRGxlRwHa6FA==
+X-Received: by 2002:a17:90a:cc0d:b0:1e3:1256:faa3 with SMTP id b13-20020a17090acc0d00b001e31256faa3mr17228215pju.107.1655399902597;
+        Thu, 16 Jun 2022 10:18:22 -0700 (PDT)
+Received: from localhost ([2620:15c:202:200:46bc:126f:64c1:579a])
+        by smtp.gmail.com with UTF8SMTPSA id s12-20020a63924c000000b003fe4da67980sm2002300pgn.68.2022.06.16.10.18.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jun 2022 08:43:30 -0700 (PDT)
-Received: by mail-oi1-f169.google.com with SMTP id bd16so2316587oib.6
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 08:43:30 -0700 (PDT)
-X-Received: by 2002:a05:6870:5247:b0:fb:2e60:26c6 with SMTP id
- o7-20020a056870524700b000fb2e6026c6mr3012759oai.241.1655394200150; Thu, 16
- Jun 2022 08:43:20 -0700 (PDT)
+        Thu, 16 Jun 2022 10:18:17 -0700 (PDT)
+From:   Micah Morton <mortonm@chromium.org>
+To:     linux-security-module@vger.kernel.org
+Cc:     keescook@chromium.org, jmorris@namei.org, serge@hallyn.com,
+        linux-kernel@vger.kernel.org, Micah Morton <mortonm@chromium.org>
+Subject: [PATCH 1/3] security: Add LSM hook to setgroups() syscall
+Date:   Thu, 16 Jun 2022 10:18:09 -0700
+Message-Id: <20220616171809.783277-1-mortonm@chromium.org>
+X-Mailer: git-send-email 2.36.1.476.g0c4daa206d-goog
 MIME-Version: 1.0
-References: <20220504232102.469959-1-evgreen@chromium.org> <20220506160807.GA1060@bug>
- <CAE=gft6m75T0UC2DBhfFhuSMW6TK7aatD_04sQ18WosgGVsATw@mail.gmail.com>
- <CAJZ5v0gxq=EA_WWUiCR_w8o87iTHDR7OC5wi=GRBaAQS2ofd5w@mail.gmail.com> <CAE=gft6V6RLc-d4AOuRUVU2u1jMGghDRSrFqiCqMCLxemui8Pw@mail.gmail.com>
-In-Reply-To: <CAE=gft6V6RLc-d4AOuRUVU2u1jMGghDRSrFqiCqMCLxemui8Pw@mail.gmail.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 16 Jun 2022 08:42:43 -0700
-X-Gmail-Original-Message-ID: <CAE=gft5OYAgosqmwNkk=Cwoooeg93Njmnzfz=gwCaLB0Ts+=sw@mail.gmail.com>
-Message-ID: <CAE=gft5OYAgosqmwNkk=Cwoooeg93Njmnzfz=gwCaLB0Ts+=sw@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Encrypted Hibernation
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, LKML <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <mgarrett@aurora.tech>,
-        Daniil Lunev <dlunev@google.com>, zohar@linux.ibm.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Len Brown <len.brown@intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
-        keyrings@vger.kernel.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 17, 2022 at 10:34 AM Evan Green <evgreen@chromium.org> wrote:
->
-> Hi Rafael,
->
-> On Tue, May 17, 2022 at 9:06 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Mon, May 9, 2022 at 6:44 PM Evan Green <evgreen@chromium.org> wrote:
-> > >
-> > > On Fri, May 6, 2022 at 9:08 AM Pavel Machek <pavel@ucw.cz> wrote:
-> > > >
-> > > > Hi!
-> > > >
-> > > > > We are exploring enabling hibernation in some new scenarios. However,
-> > > > > our security team has a few requirements, listed below:
-> > > > > 1. The hibernate image must be encrypted with protection derived from
-> > > > >    both the platform (eg TPM) and user authentication data (eg
-> > > > >    password).
-> > > > > 2. Hibernation must not be a vector by which a malicious userspace can
-> > > > >    escalate to the kernel.
-> > > >
-> > > > Can you (or your security team) explain why requirement 2. is needed?
-> > > >
-> > > > On normal systems, trusted userspace handles kernel upgrades (for example),
-> > > > so it can escalate to kernel priviledges.
-> > > >
-> > >
-> > > Our systems are a little more sealed up than a normal distro, we use
-> > > Verified Boot [1]. To summarize, RO firmware with an embedded public
-> > > key verifies that the kernel+commandline was signed by Google. The
-> > > commandline includes the root hash of the rootfs as well (where the
-> > > modules live). So when an update is applied (A/B style, including the
-> > > whole rootfs), assuming the RO firmware stayed RO (which requires
-> > > physical measures to defeat), we can guarantee that the kernel,
-> > > commandline, and rootfs have not been tampered with.
-> > >
-> > > Verified boot gives us confidence that on each boot, we're at least
-> > > starting from known code. This makes it more challenging for an
-> > > attacker to persist an exploit across reboot. With the kernel and
-> > > modules verified, we try to make it non-trivial for someone who does
-> > > manage to gain root execution once from escalating to kernel
-> > > execution. Hibernation would be one obvious escalation route, so we're
-> > > hoping to find a way to enable it without handing out that easy
-> > > primitive.
-> > >
-> > > [1] https://www.chromium.org/chromium-os/chromiumos-design-docs/verified-boot/
-> >
-> > So I guess this really is an RFC.
->
-> Yes, I suppose it is.
->
-> >
-> > Honestly, I need more time to go through this and there are pieces of
-> > it that need to be looked at other people (like the TPM-related
-> > changes).
->
-> No problem, thanks for the reply to let me know. I expect some back
-> and forth in terms of what should be hidden behind abstractions and
-> where exactly things should live. But I wanted to get this out to
-> upstream as early as I could, just to get initial reactions on the
-> overall concept and design. Looking forward to hearing your thoughts
-> when you get a chance, and let me know if there are others I should be
-> adding that I've missed.
+Give the LSM framework the ability to filter setgroups() syscalls. There
+are already analagous hooks for the set*uid() and set*gid() syscalls.
+The SafeSetID LSM will use this new hook to ensure setgroups() calls are
+allowed by the installed security policy. Tested by putting print
+statement in security_task_fix_setgroups() hook and confirming that it
+gets hit when userspace does a setgroups() syscall.
 
-Gentle bump in case this dropped off of radars, I'd still appreciate
-any feedback folks had on this series.
--Evan
+Signed-off-by: Micah Morton <mortonm@chromium.org>
+---
+ include/linux/lsm_hook_defs.h |  1 +
+ include/linux/lsm_hooks.h     |  7 +++++++
+ include/linux/security.h      |  7 +++++++
+ kernel/groups.c               | 13 +++++++++++++
+ security/security.c           |  5 +++++
+ 5 files changed, 33 insertions(+)
 
->
-> -Evan
->
-> >
-> > Thanks!
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index eafa1d2489fd..806448173033 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -201,6 +201,7 @@ LSM_HOOK(int, 0, task_fix_setuid, struct cred *new, const struct cred *old,
+ 	 int flags)
+ LSM_HOOK(int, 0, task_fix_setgid, struct cred *new, const struct cred * old,
+ 	 int flags)
++LSM_HOOK(int, 0, task_fix_setgroups, struct cred *new, const struct cred * old)
+ LSM_HOOK(int, 0, task_setpgid, struct task_struct *p, pid_t pgid)
+ LSM_HOOK(int, 0, task_getpgid, struct task_struct *p)
+ LSM_HOOK(int, 0, task_getsid, struct task_struct *p)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 91c8146649f5..84a0d7e02176 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -702,6 +702,13 @@
+  *	@old is the set of credentials that are being replaced.
+  *	@flags contains one of the LSM_SETID_* values.
+  *	Return 0 on success.
++ * @task_fix_setgroups:
++ *	Update the module's state after setting the supplementary group
++ *	identity attributes of the current process.
++ *	@new is the set of credentials that will be installed.  Modifications
++ *	should be made to this rather than to @current->cred.
++ *	@old is the set of credentials that are being replaced.
++ *	Return 0 on success.
+  * @task_setpgid:
+  *	Check permission before setting the process group identifier of the
+  *	process @p to @pgid.
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 7fc4e9f49f54..1dfd32c49fa3 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -415,6 +415,7 @@ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+ 			     int flags);
+ int security_task_fix_setgid(struct cred *new, const struct cred *old,
+ 			     int flags);
++int security_task_fix_setgroups(struct cred *new, const struct cred *old);
+ int security_task_setpgid(struct task_struct *p, pid_t pgid);
+ int security_task_getpgid(struct task_struct *p);
+ int security_task_getsid(struct task_struct *p);
+@@ -1098,6 +1099,12 @@ static inline int security_task_fix_setgid(struct cred *new,
+ 	return 0;
+ }
+ 
++static inline int security_task_fix_setgroups(struct cred *new,
++					   const struct cred *old)
++{
++	return 0;
++}
++
+ static inline int security_task_setpgid(struct task_struct *p, pid_t pgid)
+ {
+ 	return 0;
+diff --git a/kernel/groups.c b/kernel/groups.c
+index 787b381c7c00..9aaed2a31073 100644
+--- a/kernel/groups.c
++++ b/kernel/groups.c
+@@ -134,13 +134,26 @@ EXPORT_SYMBOL(set_groups);
+ int set_current_groups(struct group_info *group_info)
+ {
+ 	struct cred *new;
++	const struct cred *old;
++	int retval;
+ 
+ 	new = prepare_creds();
+ 	if (!new)
+ 		return -ENOMEM;
+ 
++	old = current_cred();
++
+ 	set_groups(new, group_info);
++
++	retval = security_task_fix_setgroups(new, old);
++	if (retval < 0)
++		goto error;
++
+ 	return commit_creds(new);
++
++error:
++	abort_creds(new);
++	return retval;
+ }
+ 
+ EXPORT_SYMBOL(set_current_groups);
+diff --git a/security/security.c b/security/security.c
+index 188b8f782220..15c686145ad6 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1803,6 +1803,11 @@ int security_task_fix_setgid(struct cred *new, const struct cred *old,
+ 	return call_int_hook(task_fix_setgid, 0, new, old, flags);
+ }
+ 
++int security_task_fix_setgroups(struct cred *new, const struct cred *old)
++{
++	return call_int_hook(task_fix_setgroups, 0, new, old);
++}
++
+ int security_task_setpgid(struct task_struct *p, pid_t pgid)
+ {
+ 	return call_int_hook(task_setpgid, 0, p, pgid);
+-- 
+2.36.1.476.g0c4daa206d-goog
+
