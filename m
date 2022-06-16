@@ -2,96 +2,147 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43890CCA47A
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 14:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E25CCA47E
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 15:04:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376845AbiFPOs3 (ORCPT
+        id S1377786AbiFPPEP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jun 2022 10:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56346 "EHLO
+        Thu, 16 Jun 2022 11:04:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376708AbiFPOsL (ORCPT
+        with ESMTP id S1377768AbiFPPEO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jun 2022 10:48:11 -0400
-Received: from hi1smtp01.de.adit-jv.com (smtp1.de.adit-jv.com [93.241.18.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 852342983E;
-        Thu, 16 Jun 2022 07:48:09 -0700 (PDT)
-Received: from hi2exch02.adit-jv.com (hi2exch02.adit-jv.com [10.72.92.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hi1smtp01.de.adit-jv.com (Postfix) with ESMTPS id C22C9520290;
-        Thu, 16 Jun 2022 16:48:07 +0200 (CEST)
-Received: from lxhi-065 (10.72.94.5) by hi2exch02.adit-jv.com (10.72.92.28)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.27; Thu, 16 Jun
- 2022 16:48:07 +0200
-Date:   Thu, 16 Jun 2022 16:47:59 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-CC:     <viro@zeniv.linux.org.uk>, <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
-        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
-        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
-        <kamensky@cisco.com>, <hpa@zytor.com>, <arnd@arndb.de>,
-        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        <niveditas98@gmail.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v4 3/3] gen_init_cpio: add support for file metadata
-Message-ID: <20220616144759.GA3967@lxhi-065>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <20190523121803.21638-4-roberto.sassu@huawei.com>
+        Thu, 16 Jun 2022 11:04:14 -0400
+Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D63CA377CC
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 08:04:10 -0700 (PDT)
+Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-fe32122311so2191906fac.7
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jun 2022 08:04:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=zoPzQU7tFCHKbazE96n62nKhOYL6lpl30iCKAfHWF3k=;
+        b=hzB+iWkLegyX/YVU4Z4Uk20/fD5mQ12Bb87V6Eh8E5BihrifNpR/2Kid3c5IL3kULj
+         /Kav66ARa+qN/N67YFml7VO4vjU3H+d51tIoMenFO1qIG1cNa0TEMy6orpmxvFp0gMGw
+         /kiER4gc6alC0Jl/FnyoXaEN+XA94MiTxlaik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=zoPzQU7tFCHKbazE96n62nKhOYL6lpl30iCKAfHWF3k=;
+        b=0rFaSgYpShUk71NXAoFmMWAKg9zZAkee4le1kgaXd2qOUu4425XikDbF8cZm/8YoXI
+         J/HxigI2HGLZ7F2vZY1SvBBBcMaDrBMKxq1idvn5j6YxTxRiuh1Yb+HkQCscJ8LGRgxP
+         EBESjqRzxzhaPJAUhDUDKnN5Bwlm0lFwGirsSbShwCEN82xnuzJVtuRir1MsRu5T1uG2
+         5VckHyv9QcUMbpnvu1Gt5xgXmzqc3C3UAF2CidEYmuY1nXX9vqicD2u9hYZ4ucvqriyq
+         F+lQAKX3mF8a9hyuhDH9slI320yaxQozGPr6GsbX6PcAA7Yfyxj7A2VKkMuB24GBIejG
+         FL+Q==
+X-Gm-Message-State: AJIora9S679uE7F0pfvozpBj8p/TIjFOJUuPnALjDCynzn3Jat68PC2b
+        tSvhFQZdigSEYIf4YxNCQMVJxg==
+X-Google-Smtp-Source: AGRyM1t/ql2JMv1ewpAojMoM3/cs4LVSN9IuvwaxwKyqaHE21iNNhZqbPJBxqQN/Cljh9oFWXsyihg==
+X-Received: by 2002:a05:6870:c181:b0:f1:ea2f:f7f7 with SMTP id h1-20020a056870c18100b000f1ea2ff7f7mr8618905oad.18.1655391849854;
+        Thu, 16 Jun 2022 08:04:09 -0700 (PDT)
+Received: from [192.168.0.41] ([184.4.90.121])
+        by smtp.gmail.com with ESMTPSA id n5-20020a4ab345000000b0035eb4e5a6d6sm1098587ooo.44.2022.06.16.08.04.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jun 2022 08:04:08 -0700 (PDT)
+Message-ID: <9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com>
+Date:   Thu, 16 Jun 2022 10:04:07 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190523121803.21638-4-roberto.sassu@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.94.5]
-X-ClientProxiedBy: hi2exch02.adit-jv.com (10.72.92.28) To
- hi2exch02.adit-jv.com (10.72.92.28)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Ignat Korchagin <ignat@cloudflare.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, serge@hallyn.com, amir73il@gmail.com,
+        kernel-team <kernel-team@cloudflare.com>,
+        Jeff Moyer <jmoyer@redhat.com>
+References: <20220608150942.776446-1-fred@cloudflare.com>
+ <87tu8oze94.fsf@email.froward.int.ebiederm.org>
+ <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com>
+ <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
+ <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com>
+ <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
+ <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com>
+ <20220615103031.qkzae4xr34wysj4b@wittgenstein>
+ <CAHC9VhR8yPHZb2sCu4JGgXOSs7rudm=9opB+-LsG6_Lta9466A@mail.gmail.com>
+ <CALrw=nGZtrNYn+CV+Q_w-2=Va_9m3C8PDvvPtd01d0tS=2NMWQ@mail.gmail.com>
+ <CAHC9VhRSzXeAZmBdNSAFEh=6XR57ecO7Ov+6BV9b0xVN1YR_Qw@mail.gmail.com>
+ <1c4b1c0d-12f6-6e9e-a6a3-cdce7418110c@schaufler-ca.com>
+From:   Frederick Lawler <fred@cloudflare.com>
+In-Reply-To: <1c4b1c0d-12f6-6e9e-a6a3-cdce7418110c@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Roberto,
-
-On Do, Mai 23, 2019 at 02:18:03 +0200, Roberto Sassu wrote:
-> This patch adds support for file metadata (only TYPE_XATTR metadata type).
-> gen_init_cpio has been modified to read xattrs from files that will be
-> added to the image and to include file metadata as separate files with the
-> special name 'METADATA!!!'.
+On 6/15/22 10:55 AM, Casey Schaufler wrote:
+> On 6/15/2022 8:33 AM, Paul Moore wrote:
+>> On Wed, Jun 15, 2022 at 11:06 AM Ignat Korchagin 
+>> <ignat@cloudflare.com> wrote:
+>>> On Wed, Jun 15, 2022 at 3:14 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>> On Wed, Jun 15, 2022 at 6:30 AM Christian Brauner 
+>>>> <brauner@kernel.org> wrote:
+>> ...
+>>
+>>>>> Fwiw, from this commit it wasn't very clear what you wanted to achieve
+>>>>> with this. It might be worth considering adding a new security hook 
+>>>>> for
+>>>>> this. Within msft it recently came up SELinux might have an 
+>>>>> interest in
+>>>>> something like this as well.
+>>>> Just to clarify things a bit, I believe SELinux would have an interest
+>>>> in a LSM hook capable of implementing an access control point for user
+>>>> namespaces regardless of Microsoft's current needs.  I suspect due to
+>>>> the security relevant nature of user namespaces most other LSMs would
+>>>> be interested as well; it seems like a well crafted hook would be
+>>>> welcome by most folks I think.
+>>> Just to get the full picture: is there actually a good reason not to
+>>> make this hook support this scenario? I understand it was not
+>>> originally intended for this, but it is well positioned in the code,
+>>> covers multiple subsystems (not only user namespaces), doesn't require
+>>> changing the LSM interface and it already does the job - just the
+>>> kernel internals need to respect the error code better. What bad
+>>> things can happen if we extend its use case to not only allocate
+>>> resources in LSMs?
+>> My concern is that the security_prepare_creds() hook, while only
+>> called from two different functions, ends up being called for a
+>> variety of different uses (look at the prepare_creds() and
+>> perpare_kernel_cred() callers) and I think it would be a challenge to
+>> identify the proper calling context in the LSM hook implementation
+>> given the current hook parameters.  One might be able to modify the
+>> hook to pass the necessary information, but I don't think that would
+>> be any cleaner than adding a userns specific hook.  I'm also guessing
+>> that the modified security_prepare_creds() hook implementations would
+>> also be more likely to encounter future maintenance issues as
+>> overriding credentials in the kernel seems only to be increasing, and
+>> each future caller would risk using the modified hook wrong by passing
+>> the wrong context and triggering the wrong behavior in the LSM.
 > 
-> This behavior can be selected by setting the desired file metadata type as
-> value for CONFIG_INITRAMFS_FILE_METADATA.
+> We don't usually have hooks that do both attribute management and
+> access control. Some people seem excessively concerned about "cluttering"
+> calling code with security_something() instances, but for the most
+> part I think we're past that. I agree that making security_prepare_creds()
+> multi-purpose is a bad idea. Shared cred management isn't simple, and
+> adding access checks there is only going to make it worse.
 > 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  usr/Kconfig               |   8 +++
->  usr/Makefile              |   4 +-
->  usr/gen_init_cpio.c       | 137 ++++++++++++++++++++++++++++++++++++--
->  usr/gen_initramfs_list.sh |  10 ++-
->  4 files changed, 150 insertions(+), 9 deletions(-)
-> 
-> diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
-> index 03b21189d58b..e93cb1093e77 100644
-> --- a/usr/gen_init_cpio.c
-> +++ b/usr/gen_init_cpio.c
 
-[..]
+Sounds like we've reached the conclusion not to proceed with a v4 of 
+this patch. I'll pivot to propose a new hook instead.
 
-> +static int write_xattrs(const char *path)
-> +{
+Thanks for the feedback everyone :)
 
-[..]
-
-> +
-> +		snprintf(str, sizeof(str), "%.8lx",
-> +			 sizeof(hdr) + name_len + 1 + value_len);
-
-Cppcheck 2.7 reports at this line:
-
-usr/gen_init_cpio.c:107,portability,invalidPrintfArgType_uint,%lx in format string (no. 1) requires 'unsigned long' but the argument type is 'size_t {aka unsigned long}'.
-
-This can be addressed via 's/lx/zx/', according to https://www.kernel.org/doc/Documentation/printk-formats.txt .
-
-BR, Eugeniu
+Fred
