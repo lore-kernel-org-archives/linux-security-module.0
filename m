@@ -2,101 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5AAC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 03:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64662CCA480
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 13:24:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356172AbiFPDAX (ORCPT
+        id S233370AbiFPNYS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jun 2022 23:00:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59948 "EHLO
+        Thu, 16 Jun 2022 09:24:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355750AbiFPDAV (ORCPT
+        with ESMTP id S229740AbiFPNYR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jun 2022 23:00:21 -0400
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D74A45A2C3;
-        Wed, 15 Jun 2022 20:00:20 -0700 (PDT)
-Received: by mail-pf1-f174.google.com with SMTP id s37so293663pfg.11;
-        Wed, 15 Jun 2022 20:00:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=kLu0AyZbwG8o8hfD/fv5Wh7BJxHL6y7f8uHQKEJJV6U=;
-        b=k3iAfz3repC7wE79wV5V9jmg7OTywTvZQCS6xd/4rdeiVtRUs0zT9HlIgTw3IePSeR
-         RhNy43WOSAVQPzquN2IkpzIK3DaNPvyghrQKhV8EtL9nTDjnZy8dostvB+cHEdQec+fH
-         Tg1u+9a5gEZUfGxYUqUF6kAk5XJIloDHXEtwOmprLD96Cc4f1TaWyTuKpc7UPOlpIbTh
-         TUyqq8jlRcHsWcnv4FUU3SpHDTyMi7ZzI1cAKHqppeeoQ91cGVaHIuBafjPSSwXfdMDm
-         RrJVihVqm/2zPKAfCvC1Z3fboamcD/gW9o/naihh9dpTp6dWE8IuYZ86uc7S1O7XDPmP
-         XF/A==
-X-Gm-Message-State: AJIora/hGBWpHXq9W1K2Y/z6dQ+HtYNyZaHKLTZzo+xs0Hs3aFn0PFqO
-        4qPQQBd5g1Po6nc3QnU1++4=
-X-Google-Smtp-Source: AGRyM1uRqJci6ZIfCJSBxo3jFrvP6GWbLFgj40m+japCby9a0CiFohY8D+yndlsBrHLluXlD0d2bTA==
-X-Received: by 2002:a63:8a42:0:b0:3fc:f8b5:291f with SMTP id y63-20020a638a42000000b003fcf8b5291fmr2547392pgd.550.1655348420055;
-        Wed, 15 Jun 2022 20:00:20 -0700 (PDT)
-Received: from ?IPV6:2601:647:4000:d7:feaa:14ff:fe9d:6dbd? ([2601:647:4000:d7:feaa:14ff:fe9d:6dbd])
-        by smtp.gmail.com with ESMTPSA id fu13-20020a17090ad18d00b001cb6527ca39sm2582309pjb.0.2022.06.15.20.00.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jun 2022 20:00:19 -0700 (PDT)
-Message-ID: <7fd6f544-0bd2-62fe-bddd-869364f351e8@acm.org>
-Date:   Wed, 15 Jun 2022 20:00:17 -0700
+        Thu, 16 Jun 2022 09:24:17 -0400
+Received: from hi1smtp01.de.adit-jv.com (smtp1.de.adit-jv.com [93.241.18.167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F8033EB6;
+        Thu, 16 Jun 2022 06:24:15 -0700 (PDT)
+Received: from hi2exch02.adit-jv.com (hi2exch02.adit-jv.com [10.72.92.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hi1smtp01.de.adit-jv.com (Postfix) with ESMTPS id 56957520290;
+        Thu, 16 Jun 2022 15:24:13 +0200 (CEST)
+Received: from lxhi-065 (10.72.94.14) by hi2exch02.adit-jv.com (10.72.92.28)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.27; Thu, 16 Jun
+ 2022 15:24:12 +0200
+Date:   Thu, 16 Jun 2022 15:24:08 +0200
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <linux-security-module@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
+        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
+        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
+        <kamensky@cisco.com>, <hpa@zytor.com>, <arnd@arndb.de>,
+        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
+        <niveditas98@gmail.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Message-ID: <20220616132408.GA4018@lxhi-065>
+References: <20190523121803.21638-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3 3/8] block: use new capable_any functionality
-Content-Language: en-US
-To:     =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>,
-        selinux@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Serge Hallyn <serge@hallyn.com>,
-        Alistair Delva <adelva@google.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20220502160030.131168-8-cgzones@googlemail.com>
- <20220615152623.311223-1-cgzones@googlemail.com>
- <20220615152623.311223-2-cgzones@googlemail.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20220615152623.311223-2-cgzones@googlemail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190523121803.21638-1-roberto.sassu@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.72.94.14]
+X-ClientProxiedBy: hi2exch02.adit-jv.com (10.72.92.28) To
+ hi2exch02.adit-jv.com (10.72.92.28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/15/22 08:26, Christian Göttsche wrote:
-> Use the new added capable_any function in appropriate cases, where a
-> task is required to have any of two capabilities.
-> 
-> Reorder CAP_SYS_ADMIN last.
-> 
-> Fixes: 94c4b4fd25e6 ("block: Check ADMIN before NICE for IOPRIO_CLASS_RT")
-> 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> ---
-> v3:
->     rename to capable_any()
-> ---
->   block/ioprio.c | 9 +--------
->   1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/block/ioprio.c b/block/ioprio.c
-> index 2fe068fcaad5..6441c052f837 100644
-> --- a/block/ioprio.c
-> +++ b/block/ioprio.c
-> @@ -37,14 +37,7 @@ int ioprio_check_cap(int ioprio)
->   
->   	switch (class) {
->   		case IOPRIO_CLASS_RT:
-> -			/*
-> -			 * Originally this only checked for CAP_SYS_ADMIN,
-> -			 * which was implicitly allowed for pid 0 by security
-> -			 * modules such as SELinux. Make sure we check
-> -			 * CAP_SYS_ADMIN first to avoid a denial/avc for
-> -			 * possibly missing CAP_SYS_NICE permission.
-> -			 */
-> -			if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_NICE))
-> +			if (!capable_any(CAP_SYS_NICE, CAP_SYS_ADMIN))
->   				return -EPERM;
->   			fallthrough;
->   			/* rt has prio field too */
+Dear Yamada-san,
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+On Do, Mai 23, 2019 at 02:18:00 +0200, Roberto Sassu wrote:
+> This patch set aims at solving the following use case: appraise files from
+> the initial ram disk. To do that, IMA checks the signature/hash from the
+> security.ima xattr. Unfortunately, this use case cannot be implemented
+> currently, as the CPIO format does not support xattrs.
+> 
+> This proposal consists in including file metadata as additional files named
+> METADATA!!!, for each file added to the ram disk. The CPIO parser in the
+> kernel recognizes these special files from the file name, and calls the
+> appropriate parser to add metadata to the previously extracted file. It has
+> been proposed to use bit 17:16 of the file mode as a way to recognize files
+> with metadata, but both the kernel and the cpio tool declare the file mode
+> as unsigned short.
+> 
+> The difference from v2, v3 (https://lkml.org/lkml/2019/5/9/230,
+> https://lkml.org/lkml/2019/5/17/466) is that file metadata are stored in
+> separate files instead of a single file. Given that files with metadata
+> must immediately follow the files metadata will be added to, image
+> generators have to be modified in this version.
+> 
+> The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that
+> all files have the same name. The file metadata are added to is always the
+> previous one, and the image generator in user space will make sure that
+> files are in the correct sequence.
+> 
+> The difference with another proposal
+> (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+> included in an image without changing the image format. Files with metadata
+> will appear as regular files. It will be task of the parser in the kernel
+> to process them.
+> 
+> This patch set extends the format of data defined in patch 9/15 of the last
+> proposal. It adds header version and type, so that new formats can be
+> defined and arbitrary metadata types can be processed.
+> 
+> The changes introduced by this patch set don't cause any compatibility
+> issue: kernels without the metadata parser simply extract the special files
+> and don't process metadata; kernels with the metadata parser don't process
+> metadata if the special files are not included in the image.
+> 
+> >From the kernel space perspective, backporting this functionality to older
+> kernels should be very easy. It is sufficient to add two calls to the new
+> function do_process_metadata() in do_copy(), and to check the file name in
+> do_name(). From the user space perspective, unlike the previous version of
+> the patch set, it is required to modify the image generators in order to
+> include metadata as separate files.
+
+Since this patch series most likely falls under your jurisdiction and
+also given your recent commits [*] in the same area, I am curious if
+there are any early signs which would prevent your final acceptance
+and would potentially result in a no-Go?
+
+Can we have an early confirmation that, upon rebasing and handling of
+all the review comments, you would be willing to accept the patches?
+
+[*] Most recent commits touching usr/gen_initramfs.sh
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7168965ec7b10b8a2c7dea1f82f1ebadf44d64ba
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=65e00e04e5aea34b256814cfa21b32e3b94a2402
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=469e87e89fd61de804bd29f6dd0380a399b567a7
+
+Thanks,
+Eugeniu.
