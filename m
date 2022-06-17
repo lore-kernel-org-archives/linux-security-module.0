@@ -2,69 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4A7C43334
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jun 2022 22:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDABCCA479
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jun 2022 09:34:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378348AbiFPW5O (ORCPT
+        id S1380608AbiFQJeT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jun 2022 18:57:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33172 "EHLO
+        Fri, 17 Jun 2022 05:34:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379248AbiFPW5M (ORCPT
+        with ESMTP id S1380379AbiFQJeT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jun 2022 18:57:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E06806212F;
-        Thu, 16 Jun 2022 15:57:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Fri, 17 Jun 2022 05:34:19 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C6BB17041;
+        Fri, 17 Jun 2022 02:34:17 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 1AAE51F9F2;
+        Fri, 17 Jun 2022 09:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1655458456; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=h/9jqjrWjBq+e8n5l8yHB+T+IMUuGKVC8FC3ULDVvXU=;
+        b=FTPJFKA8FeF9eqe9UAx56v0OCaYJQ98NUpJd/Fyu/841zDYpmp7V+vrQsAaMyJTaLIHpDY
+        jW9QIC1yFPElNwZ+OaFngDZ+N+49bTldw4qwJSKasPgVqLc42YFrrwQd8+Us4hOBxatBb+
+        0uyd0BqBYJUd6fO4ZwcpZKpnlDzIxvI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1655458456;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=h/9jqjrWjBq+e8n5l8yHB+T+IMUuGKVC8FC3ULDVvXU=;
+        b=EFEK7kcQRPw9Mm0TJwQfiIJswOmHv9RkqbMuwSjmowmKP+lRPUGBTalCTRC2LKzeJOIXfD
+        gvMyeDTeYhGX+rCg==
+Received: from kitsune.suse.cz (kitsune.suse.cz [10.100.12.127])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CE6F60F73;
-        Thu, 16 Jun 2022 22:57:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E4AC2C34114;
-        Thu, 16 Jun 2022 22:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655420230;
-        bh=zznE9cygfawFKzOkGsp6z3Fu47wZj6MgkBmsFByFzmw=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=FVTyeuiQzn3V09bbv6wCSuwKmkC9M5KbQlVW0AjVPW5nyA0IfvttriuKd7y9qGaUy
-         GElzfaC1SZkTeGe2rTiqEhcOwbcsKAsWlMPT3EgqBHKr1Pl5YepYT0jFOBpKn3eptt
-         iIszudU4VGkykwgoTTHw1XGCozaXpr6BfpFHnN4AlgNM/15618Ytl1mfagFD378vo0
-         ukko0HIk4PzEisfaVe+D8bdsgFG9EAIflOoAO8iNH/nu4xx25w3P0x3flQ5w46RsWf
-         NB7j9aGlhmUN5sMADNyjtdEYPZlG+fgc12tJmMxWODoXr7vWi9xwkGBSD7WbIlN+mo
-         2ZTISfJyaMlzA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D15A1FD99FB;
-        Thu, 16 Jun 2022 22:57:10 +0000 (UTC)
-Subject: Re: [GIT PULL] SELinux fixes for v5.19 (#1)
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAHC9VhQa-L-_F4UdMekqvyF714xhEerVQzc9rPvuwTQJtmMd8A@mail.gmail.com>
-References: <CAHC9VhQa-L-_F4UdMekqvyF714xhEerVQzc9rPvuwTQJtmMd8A@mail.gmail.com>
-X-PR-Tracked-List-Id: <selinux.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAHC9VhQa-L-_F4UdMekqvyF714xhEerVQzc9rPvuwTQJtmMd8A@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git selinux-pr-20220616
-X-PR-Tracked-Commit-Id: cad140d00899e7a9cb6fe93b282051df589e671c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6decbf75c93e654ce6cb0e93a02ca6575dce9922
-Message-Id: <165542023085.4629.13548382440245751190.pr-tracker-bot@kernel.org>
-Date:   Thu, 16 Jun 2022 22:57:10 +0000
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        by relay2.suse.de (Postfix) with ESMTPS id B54492C141;
+        Fri, 17 Jun 2022 09:34:15 +0000 (UTC)
+Date:   Fri, 17 Jun 2022 11:34:14 +0200
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Coiby Xu <coxu@redhat.com>, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, Baoquan He <bhe@redhat.com>,
+        Dave Young <dyoung@redhat.com>, Will Deacon <will@kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Chun-Yi Lee <jlee@suse.com>, stable@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 3/4] arm64: kexec_file: use more system keyrings to
+ verify kernel image signature
+Message-ID: <20220617093414.GA4660@kitsune.suse.cz>
+References: <20220512070123.29486-1-coxu@redhat.com>
+ <20220512070123.29486-4-coxu@redhat.com>
+ <e44bb6b11573838417b5d561173c27a1571c94b6.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e44bb6b11573838417b5d561173c27a1571c94b6.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Thu, 16 Jun 2022 17:44:35 -0400:
+Hello,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git selinux-pr-20220616
+On Thu, Jun 09, 2022 at 07:15:27PM -0400, Mimi Zohar wrote:
+> On Thu, 2022-05-12 at 15:01 +0800, Coiby Xu wrote:
+> > Currently, a problem faced by arm64 is if a kernel image is signed by a
+> > MOK key, loading it via the kexec_file_load() system call would be
+> > rejected with the error "Lockdown: kexec: kexec of unsigned images is
+> > restricted; see man kernel_lockdown.7".
+> > 
+> > This happens because image_verify_sig uses only the primary keyring that
+> > contains only kernel built-in keys to verify the kexec image.
+> 
+> From the git history it's clear that .platform keyring was upstreamed
+> during the same open window as commit 732b7b93d849 ("arm64: kexec_file:
+> add kernel signature verification support").   Loading the MOK keys
+> onto the .platform keyring was upstreamed much later.  For this reason,
+> commit 732b7b93d849 only used keys on the  .builtin_trusted_keys
+> keyring.   This patch is now addressing it and the newly upstreamed
+> .machine keyring.
+> 
+> Only using the .builtin_trusted_keys is the problem statement, which
+> should be one of the first lines of the patch description, if not the
+> first line.
+> 
+> > 
+> > This patch allows to verify arm64 kernel image signature using not only
+> > .builtin_trusted_keys but also .platform and .secondary_trusted_keys
+> > keyring.
+> 
+> Please remember to update this to include the .machine keyring.
+> 
+> > 
+> > Fixes: 732b7b93d849 ("arm64: kexec_file: add kernel signature verification support")
+> 
+> Since the MOK keys weren't loaded onto the .platform keyring until much
+> later, I would not classify this as a fix.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6decbf75c93e654ce6cb0e93a02ca6575dce9922
+It's definitely a fix
 
-Thank you!
+ea93102f32244e3f45c8b26260be77ed0cc1d16c v4.19-rc1 Fix kexec forbidding kernels signed with keys in the secondary keyring to boot
+732b7b93d849f8a44886ead563dfb6adec7f4419 v5.0-rc1 arm64: kexec_file: add kernel signature verification support
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+the arm code does not reflect the preexisting use of the secondary keyring.
+
+278311e417be60f7caef6fcb12bda4da2711ceff v5.1-rc1 kexec, KEYS: Make use of platform keyring for signature
+
+This was added a bit later, indeed.
+
+Cherry-picking the changes one by one to the arm code you can get
+separate fixes tag for each change.
+
+Replacing the arm code with the x86 code by code deduplication you get
+whatever is the state of the art in the kernel in question. In 5.0 you
+get the secondary keyring, and since 5.1 you also get the platform
+keyring.
+
+Nonetheless, it's a fix for the arm code which is deficient from the
+very start.
+
+Thanks
+
+Michal
+
