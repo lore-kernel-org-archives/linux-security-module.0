@@ -2,114 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4619AC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Jun 2022 20:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D23E0C43334
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Jun 2022 23:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352338AbiFUU1u (ORCPT
+        id S232194AbiFUXjv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Jun 2022 16:27:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33594 "EHLO
+        Tue, 21 Jun 2022 19:39:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235086AbiFUU1t (ORCPT
+        with ESMTP id S232552AbiFUXjv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Jun 2022 16:27:49 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F079D2EA03;
-        Tue, 21 Jun 2022 13:27:47 -0700 (PDT)
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 942D241625;
-        Tue, 21 Jun 2022 20:27:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1655843265;
-        bh=FHOjmjAGhb/jKh/X38HObStif09xq2VOvZEQFXt3zqo=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=REhG/YvE5Y5HZv8PaXPYcPM44vP8IEJ8IMzZFA32j0rDjJBvP54vgsg5TljnEVb2C
-         6l9Gw8xSjfI1zJUVeqU706hHjnfTfXBQg2mjFR6AwzXgBae9AkqRIO3MW8Nnl/QIYx
-         a1aXnHf31tgETQ71gAcLHrFbepqdBlwyN+w4B9rXjnOL0oVRtEXzi0mdktd1n9nhlu
-         c44GHwZtTKZGR9nZxxQNYa84k7b7lT8U8Rrb1bb1ojiaT2SzJ9CuwKDkd0rVfWt/0m
-         kvplSORt2LLsRq1jQmvt49GetCZG97LSsyDGbhwWhE+cCGxDZom8/JBlMrQKyYTzOo
-         3XS9YZXjztRIg==
-Message-ID: <cd2a4ea4-52d2-cf95-7769-859b0a35b564@canonical.com>
-Date:   Tue, 21 Jun 2022 13:27:33 -0700
+        Tue, 21 Jun 2022 19:39:51 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB7831226
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Jun 2022 16:39:47 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id v143so19046224oie.13
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Jun 2022 16:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R2mtRCui72arwwdDzhHcYMhEmif96x0EwcrauisT3VI=;
+        b=OKq+JTNlWYyJIGaHUB9FKXgvMsyco0CeOWV1KYGWQohAZt5NFz5zqXeDRWNKqF0Aqt
+         GOLRsh7mIOUphoH/n2W4X+nfqb4ogdgJU1DmkO3+vV9csNfMd8uYI2VVWvf1QxtvoGND
+         znZdRcMnCbbdIrTnDFZCu2eAdFbusULqHF9wI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R2mtRCui72arwwdDzhHcYMhEmif96x0EwcrauisT3VI=;
+        b=eszfrozkEjZ0TwNnP3/aT691qteuuffL8FyBLaPlPYu5c5vWnU+O6t7jea34cFq/TL
+         nKamp7oIAP4tevV6W9qw+/z/Ov+V2z3XpInvAAT0ExO43Tr6Soiku8bEUkr38qJsQ2xy
+         r6rnxaCPs8/w4skDdlkHGBJo4fQBHcxzYUETLHTPXYuOtkt9pmKVq2+Rj2s8jRu/EO6V
+         wDk+R7R7sq/piPebrVaSSz9FTaO0dZRWZ2l/iJg8ZuAsZQZkSU2glnCtozxYmbDf3Bcy
+         G+IvQiu7FpljPpIhyIaab30W8z6FegnP/xUzapR4G0aySNEEKUoZApPonpv4DEAbw/Ng
+         F3KQ==
+X-Gm-Message-State: AJIora9L+xOChyVqdaK6dDLLjXepIWrxU8zFq9tj59HN0yP4yJCDOMTj
+        Q47uMOEpTfu+1R9iMW525bN28Q==
+X-Google-Smtp-Source: AGRyM1ts+C26w140QWlx3d+zDUAjQ78qI7RFoU1b/uc+4z1s7d/teJ2UVJd9we/sAYT8ZD8v8Ai1ZQ==
+X-Received: by 2002:a05:6808:150e:b0:331:39bf:2228 with SMTP id u14-20020a056808150e00b0033139bf2228mr329850oiw.9.1655854786546;
+        Tue, 21 Jun 2022 16:39:46 -0700 (PDT)
+Received: from localhost.localdomain ([172.58.70.161])
+        by smtp.gmail.com with ESMTPSA id v73-20020acaac4c000000b00326414c1bb7sm9839181oie.35.2022.06.21.16.39.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jun 2022 16:39:46 -0700 (PDT)
+From:   Frederick Lawler <fred@cloudflare.com>
+To:     kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     brauner@kernel.org, casey@schaufler-ca.com, paul@paul-moore.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@cloudflare.com, Frederick Lawler <fred@cloudflare.com>
+Subject: [PATCH 0/2] Introduce security_create_user_ns()
+Date:   Tue, 21 Jun 2022 18:39:37 -0500
+Message-Id: <20220621233939.993579-1-fred@cloudflare.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: Linux 5.18-rc4
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        gwml@vger.gnuweeb.org
-References: <CAHk-=whmtHMzjaVUF9bS+7vE_rrRctcCTvsAeB8fuLYcyYLN-g@mail.gmail.com>
- <226cee6a-6ca1-b603-db08-8500cd8f77b7@gnuweeb.org>
- <CAHk-=whayT+o58FrPCXVVJ3Bn-3SeoDkMA77TOd9jg4yMGNExw@mail.gmail.com>
- <87r1414y5v.fsf@email.froward.int.ebiederm.org>
- <CAHk-=wijAnOcC2qQEAvFtRD_xpPbG+aSUXkfM-nFTHuMmPbZGA@mail.gmail.com>
- <266e648a-c537-66bc-455b-37105567c942@canonical.com>
- <Yp5iOlrgELc9SkSI@casper.infradead.org>
- <dd654ee2-ae10-e247-f98b-f5057dbb380b@canonical.com>
- <Yqe+zE4f7uo8YdBE@casper.infradead.org>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <Yqe+zE4f7uo8YdBE@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/13/22 15:48, Matthew Wilcox wrote:
-> On Mon, Jun 06, 2022 at 02:00:33PM -0700, John Johansen wrote:
->> On 6/6/22 13:23, Matthew Wilcox wrote:
->>> On Mon, Jun 06, 2022 at 12:19:36PM -0700, John Johansen wrote:
->>>>> I suspect that part is that both Apparmor and IPC use the idr local lock.
->>>>>
->>>> bingo,
->>>>
->>>> apparmor moved its secids allocation from a custom radix tree to idr in
->>>>
->>>>   99cc45e48678 apparmor: Use an IDR to allocate apparmor secids
->>>>
->>>> and ipc is using the idr for its id allocation as well
->>>>
->>>> I can easily lift the secid() allocation out of the ctx->lock but that
->>>> would still leave it happening under the file_lock and not fix the problem.
->>>> I think the quick solution would be for apparmor to stop using idr, reverting
->>>> back at least temporarily to the custom radix tree.
->>>
->>> How about moving forward to the XArray that doesn't use that horrid
->>> prealloc gunk?  Compile tested only.
->>>
->>
->> I'm not very familiar with XArray but it does seem like a good fit. We do try
->> to keep the secid allocation dense, ideally no holes. Wrt the current locking
->> issue I want to hear what Thomas has to say. Regardless I am looking into
->> whether we should just switch to XArrays going forward.
-> 
-> Nothing from Thomas ... shall we just go with this?  Do you want a
-> commit message, etc for the patch?
+While creating a LSM BPF MAC policy to block user namespace creation, we
+used the LSM cred_prepare hook because that is the closest hook to prevent
+a call to create_user_ns().
 
-Hey Matthew,
+The calls look something like this:
 
-I have done testing with this and the patch looks good. We will certainly
-go this route going forward so a commit message, would be good. As for
-fixing the issue in current kernels. I am not opposed to pulling this
-back as fixes for
+    cred = prepare_creds()
+        security_prepare_creds()
+            call_int_hook(cred_prepare, ...
+    if (cred)
+        create_user_ns(cred)
 
-  99cc45e48678 apparmor: Use an IDR to allocate apparmor secids
+We noticed that error codes were not propagated from this hook and
+introduced a patch [1] to propagate those errors.
 
-but I would like some other peoples opinions on doing that, because we
-don't understand why we are getting the current lock splat, and without
-understanding it is a fix by avoiding the issue rather than being sure
-the actual issue is fixed.
+The discussion notes that security_prepare_creds()
+is not appropriate for MAC policies, and instead the hook is
+meant for LSM authors to prepare credentials for mutation. [2]
+
+Ultimately, we concluded that a better course of action is to introduce
+a new security hook for LSM authors. [3]
+
+This patch set first introduces a new security_create_user_ns() function
+and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+
+Links:
+1. https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
+2. https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
+3. https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
+
+Frederick Lawler (2):
+  security, lsm: Introduce security_create_user_ns()
+  bpf-lsm: Make bpf_lsm_create_user_ns() sleepable
+
+ include/linux/lsm_hook_defs.h | 2 ++
+ include/linux/lsm_hooks.h     | 5 +++++
+ include/linux/security.h      | 8 ++++++++
+ kernel/bpf/bpf_lsm.c          | 1 +
+ kernel/user_namespace.c       | 5 +++++
+ security/security.c           | 6 ++++++
+ 6 files changed, 27 insertions(+)
+
+--
+2.30.2
 
