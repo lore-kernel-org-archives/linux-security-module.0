@@ -2,134 +2,75 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBEFC43334
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jun 2022 00:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F110C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jun 2022 02:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353804AbiFVATY (ORCPT
+        id S232438AbiFVCRt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Jun 2022 20:19:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35486 "EHLO
+        Tue, 21 Jun 2022 22:17:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbiFVATX (ORCPT
+        with ESMTP id S229734AbiFVCRt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Jun 2022 20:19:23 -0400
-Received: from sonic308-16.consmr.mail.ne1.yahoo.com (sonic308-16.consmr.mail.ne1.yahoo.com [66.163.187.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A40925E8A
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Jun 2022 17:19:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655857161; bh=LduUrw3eVyp6mK0CVKmYw4M59cd6hwNqy8Oc641QJFE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ga1vDngwiwM55nMY03lGZvtii8Fm1eWiG/k66DEH4EXprwPWRsKfEucaq2MabOP5YL7GTW2rcVgSdjbqTI6dD0tl73j1vJJs53Qj3ffhvDbIDrqfPHo5UbP/Q7PMzDnlilXIEhhI4VCvKm+saTnT5xlBbJH9hXfhyZfIwJ75BC6UqYFfcDkGlfxadVK2XWJl4ZISomM2+5pyBoBpshDOL0ijN8eK7tCYZndKM3c/GZvQEW4io7YDf1rfBVQ2Z0alYjBFaaseYj0/o7nfwnplJCVMCqPmRn9XcjRtm/HcTkNPGEm98lqMiad7GmEcxCnnjF3rq5LkQKjtMJ0592uj6Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655857161; bh=Damb/FchBMGqo36QVmZilqPN1InpZOwIXasJWXsBfIC=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=HM3rHxxAduejaYdLVdLUx0+EYZl9v32YVS53OF38jaQTHFH2Rv8iHdL5PRsGN0SbtGnoYL+P7jPkzyUccqKHJpSUz9G3s14kcBOrlvzbEIPY5DGC+O721X3v7otbjQ06lMK/21PWFJymUTL68MwM8Ymt+9OPKktLA1yZc0HbReQwd5jFur4bRROl1J94BYxg9FOy2g2i9iAaXqRFyOhqe+yqsiNLeWw6pfo8WKAOwSXpDCVkYz/qOzWK8D+yof81dh7nn1zbGZtXS7yRvdQpdqeUD6No7avSOOxACBW+EaI23OXB1j3s8TJHSttTd1JrGNx/wTSVoJa4innJRA6djw==
-X-YMail-OSG: kTbEmRgVM1lycM4fN4Fo0k5USdwJrrQonPUOb9bDgKcBdzB.B1dR4UrLmmh4LNZ
- FHC1kjd2FCK_si76YkFdeNQDgCsUG1zYndHE.krl.4KOlp5P4Inkcs8haXpNeLoYSUB0Zj7Ok4.h
- 0_bdRSaacplsY3sgOphvlxvlN_whPBQYbwNLRBe3Vr3405fuayHKp44Zdm8ATQ9jZxrAj2JNiumV
- npWlMRwWlFiN22DzHMUDTYXfJkxXchCbq5MVPlhp5Jf2dWJL9BCp8T_oZxlWK6emb4SQCFrOyIAx
- lzBncDVnZaOoOf46d2OtQgfbgpZbo8X788o0Qm3GgnDWFgsOfaz2oy4HmnfB5g2eBkVGMZnHHpma
- Zhb1nQsM9dctR3vd4fcJWtcmw241XXvwbL6Y32cMNybssfsrCE_kB_hyKAeWp8UwRPg6nZgqTPTh
- ETonSXR2NamGGnN2eDluWyyPa3xXHdUAOJt2BzMTR3u8ukTnZdtg1LDTuPZ2aQgUON653.3Xik_r
- 9t_jY32JPfHKlOa5oPGQn2CyxXYX9sO09E4zc6yeelv6QZFk0.hwYANtPYnt8O1FF1MntLflrnN0
- yVmSWENGMaRagyI.Cs5wAG6Nt_f7R_z4a2xDU7o6Cwkt_CmHd131DZ53OUajshoSaf84X3ErqRhq
- 5eDzAQDKXpoFfLnQPSVvhIZcZllxdUm6jPMD9cYWZGZISQvliX3bjAZZOL2aQtiUgLcCdVrEcFpc
- HDVnWMGH6i3X4rwb_OF6UQ0P0gCVON9mxUGD_41cSFFIYBC5r1DOvTAN6LlGCo04jwdPHwxu9TM6
- PO0AK4nckvxcZGZgLt701vOO_Ycuq1N7tGOu57D6nAm6DcfiGvAfPEB9CXZIE3K892rD5wM7KEpM
- bOosOIlIKcuhYsPjYG_9slhBuXwAzESat2TNqsXggjkV_H0n6r.cVtITZsPoT01JsaiPRV24vhkd
- yBo0_XOMfu89Zw_BEuwfJ23jB7Yh0xXoUymOEAAKe1xxGT4TANA1CL3z9I6fyI12iHJ5iwCo1Y.f
- .VWHHi2R2na0ZSXG_RFp42AttcMjRPqLqfraaUd.z89BCFNrn7NBk6D7FwX0LvjEfRKKJFbLO_0n
- XWOk55wmVrhNZTbr7EZaWF7pxQH5sRivoslQWdSIO4yNKyNzVy75SJskii7qIT0ZP8Dt.sCyLCNN
- ZmuQVZfskm8NiWznmAEDC_vRsbtsKux7.S1TZizyhuZVaRwWC4QWLy34CplRQno9_n96iWw6pCcE
- MtgbR34Otba5JiTL6kW4jG2amGCeHBtCjV3rrmZct1cMCg9ZKLNJKu_UD4ulFbc8j7gBpP3c9XUj
- CRkI1xSrW7SfelzTG.Y4BTSZjxHP2UxWWLyamAux4mEgnETm3Xd7FA.bw7451.Ptn6Gnck1SBn30
- vATtV1OyQ4ftbrfCc1FVh170v6xTcrJ7rITQ6ybLoOSuYb2HQsJ6KUAciCmjhGoRkbAfw.ABSMHS
- qsOAoZ0WMm54hEqq9XZDSdJifHUjMnx5qB9hzJp.11JkGY_nUdVeFKQr2lEFUOGZPvHXc9.1OXuV
- chitkUqWHTambDZMLkDDv4NGqAFNvAzhdPaEao8hE3eSS95pYA_hkD4CPmOAZQ3jjClZccu0xg0i
- lOcZLwaJEBVwUkPIWixfrMMU1Vkk0prmbyWXuWClAp5.upWmvQoE_2UBV3w6nooKuQC.N0UAFKHM
- pygv_D_MNOUSGRC6ZdnIlX0AedQ7ZePAoR4AOkDl2WPZxLUXCm2ZBykBtdtmnX06uq9836hXW.Fo
- TXUtkPHWewUXts9V5TPEEbmcIvlwPFLD2frYYDcwau3TydYXioaJibz6kv.0in5qjsdk2jdkSzNE
- Rmez0IZyxRR.iAL0je9GlPU8fI.bIYBpEfoWEZuHQ1uhaIwoCvMD0hP6AbKDc2Nk_.BA.P712Ekw
- VWO0zaWAazBDeedF5f2pH_n3yMI5wZnllUoJdtFsRGT9Vhii7nidn8EkxWGahXqQOahVOMvKkcXD
- a4lbu8Kvpcd_rp9d_.AnYhC1a.ICdvP6ZLqq96n3RPuLV0atC28qoRwEWfp1fdntKURaYXMB_lJe
- K.nYkp_zK4AUuy7hhgzo6YFMfcU3o0DPICJTijBHc.au9ADC_o4xl9Ny1Lwd11xag1_zqSoSHCsH
- QAYLxDBaVczxZQ1ZS12woM5wc9txPgaTF4ywnRg0ViSpHjSYb1rCAt5fVKd2fniRoGaoKXpjo9G8
- vo8ilkcltbfKMHuZKsBMs6pOPfr3rLi0XiBpZtSRiC_bCKMOgDprLfdkSa434FXtfCO.sxkwx4BM
- -
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Wed, 22 Jun 2022 00:19:21 +0000
-Received: by hermes--canary-production-bf1-8bb76d6cf-xkxwt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID caa03a9c3f5621a0acb91f535e7b9383;
-          Wed, 22 Jun 2022 00:19:18 +0000 (UTC)
-Message-ID: <ce1653b1-feb0-1a99-0e97-8dfb289eeb79@schaufler-ca.com>
-Date:   Tue, 21 Jun 2022 17:19:15 -0700
+        Tue, 21 Jun 2022 22:17:49 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8071230F5B;
+        Tue, 21 Jun 2022 19:17:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3C42DB81A94;
+        Wed, 22 Jun 2022 02:17:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 795D1C3411C;
+        Wed, 22 Jun 2022 02:17:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655864265;
+        bh=Hy9uGehsjDlrdBYoTgczfaFinnYGX3nIlRrm+aT86Og=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=noM6Oiz4Kaq06o4h5aJoVXOy0efNuPqWT5OzeXiF8OE5vs5tp70Zxmdl9WLlU3jq+
+         GDofdZOxO6pnNby1wq3vEL6RKRT+/VL0pwTkYQC9ao8dIdFnTJC9bv0ynQ3wBw2xHd
+         Jj0guKo7mojh6JO/tgvsCWNcj06xDX5JFuaXhwTUILmMsFvuUorzQYaxUok11prGXb
+         l9QxK69CWeyS/SxvL9h5RpuZS023g8aclu35BOAweLB0MkXrpmpfDAWTJNy5ArVdeA
+         /ZSV6GM20lshTmgHaGoHLzYLuD+qhX5ECG/qIiqZ7rz5GqIHIZRHL+gqb/CzUNYev+
+         r2cwiZcfbfQ7Q==
+Date:   Tue, 21 Jun 2022 19:17:43 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     xiujianfeng <xiujianfeng@huawei.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] evm: Use IS_ENABLED to initialize .enabled
+Message-ID: <YrJ7x3kCTy3ZutZ/@sol.localdomain>
+References: <20220606101042.89638-1-xiujianfeng@huawei.com>
+ <64511312-df94-c40b-689c-5fc3823e91f5@pengutronix.de>
+ <812c4ee9-56f7-900a-df48-f3ca3e15542f@huawei.com>
+ <5d0c291bb4a674a6733a18f9eb67cf40193732f4.camel@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 0/2] Introduce security_create_user_ns()
-Content-Language: en-US
-To:     Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
-        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        jmorris@namei.org, serge@hallyn.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     brauner@kernel.org, paul@paul-moore.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20220621233939.993579-1-fred@cloudflare.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20220621233939.993579-1-fred@cloudflare.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20280 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5d0c291bb4a674a6733a18f9eb67cf40193732f4.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/21/2022 4:39 PM, Frederick Lawler wrote:
-> While creating a LSM BPF MAC policy to block user namespace creation, we
-> used the LSM cred_prepare hook because that is the closest hook to prevent
-> a call to create_user_ns().
->
-> The calls look something like this:
->
->      cred = prepare_creds()
->          security_prepare_creds()
->              call_int_hook(cred_prepare, ...
->      if (cred)
->          create_user_ns(cred)
->
-> We noticed that error codes were not propagated from this hook and
-> introduced a patch [1] to propagate those errors.
->
-> The discussion notes that security_prepare_creds()
-> is not appropriate for MAC policies, and instead the hook is
-> meant for LSM authors to prepare credentials for mutation. [2]
->
-> Ultimately, we concluded that a better course of action is to introduce
-> a new security hook for LSM authors. [3]
->
-> This patch set first introduces a new security_create_user_ns() function
-> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+On Tue, Jun 21, 2022 at 10:03:39AM -0400, Mimi Zohar wrote:
+> On Tue, 2022-06-21 at 18:58 +0800, xiujianfeng wrote:
+> > Hi, Ahmad
+> > 
+> > 在 2022/6/7 14:06, Ahmad Fatoum 写道:
+> > > On 06.06.22 12:10, Xiu Jianfeng wrote:
+> > >> Use IS_ENABLED(CONFIG_XXX) instead of #ifdef/#endif statements to
+> > >> initialize .enabled, minor simplicity improvement.
+> 
+> The difference between using ifdef's and IS_ENABLED is when the
+> decision is made - build time, run time.   Please update the patch
+> description providing an explanation for needing to make the decision
+> at run time.
+> 
+> thanks,
 
-Why restrict this hook to user namespaces? It seems that an LSM that
-chooses to preform controls on user namespaces may want to do so for
-network namespaces as well. Also, the hook seems backwards. You should
-decide if the creation of the namespace is allowed before you create it.
-Passing the new namespace to a function that checks to see creating a
-namespace is allowed doesn't make a lot off sense.
+IS_ENABLED() is a compile time constant.  So the patch looks fine to me.
 
->
-> Links:
-> 1. https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
-> 2. https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
-> 3. https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
->
-> Frederick Lawler (2):
->    security, lsm: Introduce security_create_user_ns()
->    bpf-lsm: Make bpf_lsm_create_user_ns() sleepable
->
->   include/linux/lsm_hook_defs.h | 2 ++
->   include/linux/lsm_hooks.h     | 5 +++++
->   include/linux/security.h      | 8 ++++++++
->   kernel/bpf/bpf_lsm.c          | 1 +
->   kernel/user_namespace.c       | 5 +++++
->   security/security.c           | 6 ++++++
->   6 files changed, 27 insertions(+)
->
-> --
-> 2.30.2
->
+- Eric
