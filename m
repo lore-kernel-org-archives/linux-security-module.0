@@ -2,87 +2,204 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AF9C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jun 2022 19:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 118C3C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jun 2022 21:57:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239267AbiFVTuI (ORCPT
+        id S231616AbiFVV5m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Jun 2022 15:50:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59778 "EHLO
+        Wed, 22 Jun 2022 17:57:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235098AbiFVTuH (ORCPT
+        with ESMTP id S229794AbiFVV5l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Jun 2022 15:50:07 -0400
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C14240903;
-        Wed, 22 Jun 2022 12:50:06 -0700 (PDT)
-Received: from [192.168.192.153] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id BDA954162B;
-        Wed, 22 Jun 2022 19:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1655927404;
-        bh=EkPLoMlB5urjTl/KfgKOygiZqi6zn+K/seeJTHaMOME=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=FSNbigvl5J71VArTsLrqadPIQK76Q8y+Ll+gjMoPoF4ZDMzxmEKfCIy/bUBXYuxxb
-         x/PSOaQY8hS1Egjv5/a4nvocVSJO8cPuWTO83ppDM4qugJuyJvU/CX6z+O/b7aHijr
-         TvChCox9Fs214d4wWnsgugtQobh3h6BOZJxelzyAQu3n/0O2Lvm/jFVlfpp0CTK0Gr
-         1SY7W3OOD8HClN3PHJktYqPGA9a0C6SG3BbbBkXylsL4+OBA9xouogdOKzx4Kd0rdr
-         EEL+bCJnEJMeekndLPNb3XjRoMBtMwkGyPpnAptMvgNCOeuJXjA/owdGPoLwCdrV5k
-         /k38nwUDRIqXQ==
-Message-ID: <3839b02b-36b2-a722-83f9-1e86e66746f2@canonical.com>
-Date:   Wed, 22 Jun 2022 12:49:48 -0700
+        Wed, 22 Jun 2022 17:57:41 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB78640A02;
+        Wed, 22 Jun 2022 14:57:40 -0700 (PDT)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25MLPvrW013871;
+        Wed, 22 Jun 2022 21:57:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=wNrQVEVaFcDMWmqDST9SZuYibDEqKfSUZp7T+Wo55Ac=;
+ b=G2u+N0OgeVVS8kzXrD4OajoJy1zGHoZg8PXfuSlx38UTYBP1e83uWZmCjNA4Is4j/5Nu
+ cZSQ9Ft7AkyrVfLZe1uWpdQ7PT0zDv+ILR0dQYjKEopnetCS7Jw3WygGTEEGxdzVxKMx
+ bW0sYVM5LEYXLEi6zhrDxPBDmBMZGnJ5QgRi1co0/b4J5G0URJAe/ruSPONt4j5B+uJL
+ xFtvpASaNBQso0snWI2t83Z2IzARV0k6V0YJy3C61BfSX4c6A7juaLALGtMm+b4+hFoa
+ ohXsKsOo8SXl4h4caRJM8RGorZ2Ihq6ClYS+KtRMegSTJkKnIk50WmzyaIDzUOetVBZ/ JA== 
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gvb08gsc1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Jun 2022 21:57:07 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25MLqKwm002781;
+        Wed, 22 Jun 2022 21:57:05 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma03ams.nl.ibm.com with ESMTP id 3gs6b8x8h1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Jun 2022 21:57:05 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25MLuEX912714340
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 Jun 2022 21:56:14 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B8240A4040;
+        Wed, 22 Jun 2022 21:57:01 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4158EA404D;
+        Wed, 22 Jun 2022 21:56:58 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.125.38])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Jun 2022 21:56:58 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>, gjoyce@ibm.com,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [RFC PATCH v2 0/3] powerpc/pseries: add support for local secure storage called Platform KeyStore(PKS) 
+Date:   Wed, 22 Jun 2022 17:56:45 -0400
+Message-Id: <20220622215648.96723-1-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ie8oPpULTEbPRXGCYP4_7THoM8DyvL3m
+X-Proofpoint-GUID: ie8oPpULTEbPRXGCYP4_7THoM8DyvL3m
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH -next] apparmor: Fix memleak in
- aa_simple_write_to_buffer()
-Content-Language: en-US
-To:     Xiu Jianfeng <xiujianfeng@huawei.com>, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220614090001.155107-1-xiujianfeng@huawei.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20220614090001.155107-1-xiujianfeng@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-06-22_08,2022-06-22_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ lowpriorityscore=0 mlxscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ phishscore=0 clxscore=1011 mlxlogscore=999 spamscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
+ definitions=main-2206220097
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Sorry this feel through the cracks some how.
+PowerVM provides an isolated Platform KeyStore(PKS)[1] storage allocation
+for each partition(LPAR) with individually managed access controls to store
+sensitive information securely. Linux Kernel can access this storage by
+interfacing with hypervisor using a new set of hypervisor calls. 
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+PowerVM guest secure boot feature intend to use Platform KeyStore for
+the purpose of storing public keys. Secure boot requires public keys to
+be able to verify the grub and boot kernel. To allow authenticated
+ manipulation of keys, it supports variables to store key authorities
+- PK/KEK. Other variables are used to store code signing keys - db/grubdb.
+It also supports denied list to disallow booting even if signed with
+valid key. This is done via denied list database - dbx or sbat. These
+variables would be stored in PKS, and are managed and controlled by
+firmware.
 
-I will pull this into my tree and send it up with my next pull request.
+The purpose of this patchset is to add userspace interface to manage
+these variables.
 
-On 6/14/22 02:00, Xiu Jianfeng wrote:
-> When copy_from_user failed, the memory is freed by kvfree. however the
-> management struct and data blob are allocated independently, so only
-> kvfree(data) cause a memleak issue here. Use aa_put_loaddata(data) to
-> fix this issue.
-> 
-> Fixes: a6a52579e52b5 ("apparmor: split load data into management struct and data blob")
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> ---
->  security/apparmor/apparmorfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 8b9c92f3ff95..0275a350dc23 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -403,7 +403,7 @@ static struct aa_loaddata *aa_simple_write_to_buffer(const char __user *userbuf,
->  
->  	data->size = copy_size;
->  	if (copy_from_user(data->data, userbuf, copy_size)) {
-> -		kvfree(data);
-> +		aa_put_loaddata(data);
->  		return ERR_PTR(-EFAULT);
->  	}
->  
+For v1[2] version, we received following feedback
+"Ok, this is like the 3rd or 4th different platform-specific proposal for
+this type of functionality.  I think we need to give up on
+platform-specific user/kernel apis on this (random sysfs/securityfs
+files scattered around the tree), and come up with a standard place for
+all of this."
 
+Currently, OpenPOWER exposes variables via sysfs, while EFI platforms
+have used sysfs and then moved to their own efivarfs filesystem.
+Recently, coco feature is using securityfs to expose their
+secrets. All of these environments are different both syntactically and
+semantically.
+
+securityfs is meant for linux security subsystems to expose policies/logs
+or any other information, and do not interact with firmware for managing
+these variables. However, there are various firmware security
+features which expose their variables for user management via kernel as
+discussed above. There is currently no single place to expose these
+variables. Different platforms use sysfs/platform specific
+filesystem(efivarfs)/securityfs interface as find appropriate. This has
+resulted in interfaces scattered around the tree.
+
+This resulted in demand of a need for a common single place for new
+platform interfaces to expose their variables for firmware security
+features. This would simplify the interface for users of these platforms.
+This patchset proposes firmware security filesystem(fwsecurityfs). Any
+platform can expose the variables which are required by firmware security
+features via this interface. Going forward, this would give a common place
+for exposing variables managed by firmware while still allowing platforms
+to implement their own underlying semantics.
+
+This design consists of two parts:
+1. firmware security filesystem(fwsecurityfs) that provides platforms with
+APIs to create their own underlying directory and file structure. It is
+recommended to establish a well known mount point:
+i.e. /sys/firmware/security/
+
+2. platform specific implementation for these variables which implements
+underlying semantics. Platforms can expose their variables as files
+allowing read/write/add/delete operations by defining their own inode and
+file operations.
+
+This patchset defines:
+1. pseries driver to access LPAR Platform Key Store(PLPKS)
+2. firmware security filesystem named fwsecurityfs
+3. Interface to expose secure variables stored in LPAR PKS via fwsecurityfs
+
+[1] https://community.ibm.com/community/user/power/blogs/chris-engel1/2020/11/20/powervm-introduces-the-platform-keystore
+[2] https://lore.kernel.org/linuxppc-dev/20220122005637.28199-1-nayna@linux.ibm.com/
+
+Changelog:
+
+v1:
+
+* Defined unified interface(firmware security filesystem) for all platforms
+to expose their variables used for security features. 
+* Expose secvars using firmware security fileystem.
+* Renamed PKS driver to PLPKS to avoid naming conflict as mentioned by
+Dave Hanson.
+
+Nayna Jain (3):
+  powerpc/pseries: define driver for Platform KeyStore
+  fs: define a firmware security filesystem named fwsecurityfs
+  powerpc/pseries: expose authenticated variables stored in LPAR PKS
+
+ arch/powerpc/include/asm/hvcall.h             |  12 +-
+ arch/powerpc/include/asm/plpks.h              |  92 ++++
+ arch/powerpc/platforms/pseries/Kconfig        |  27 +
+ arch/powerpc/platforms/pseries/Makefile       |   2 +
+ arch/powerpc/platforms/pseries/plpks/Makefile |   9 +
+ .../pseries/plpks/fwsecurityfs_arch.c         |  16 +
+ .../platforms/pseries/plpks/internal.h        |  18 +
+ arch/powerpc/platforms/pseries/plpks/plpks.c  | 517 ++++++++++++++++++
+ .../powerpc/platforms/pseries/plpks/secvars.c | 239 ++++++++
+ fs/Kconfig                                    |   1 +
+ fs/Makefile                                   |   1 +
+ fs/fwsecurityfs/Kconfig                       |  14 +
+ fs/fwsecurityfs/Makefile                      |  10 +
+ fs/fwsecurityfs/inode.c                       | 159 ++++++
+ fs/fwsecurityfs/internal.h                    |  13 +
+ fs/fwsecurityfs/super.c                       | 154 ++++++
+ include/linux/fwsecurityfs.h                  |  33 ++
+ include/uapi/linux/magic.h                    |   1 +
+ 18 files changed, 1317 insertions(+), 1 deletion(-)
+ create mode 100644 arch/powerpc/include/asm/plpks.h
+ create mode 100644 arch/powerpc/platforms/pseries/plpks/Makefile
+ create mode 100644 arch/powerpc/platforms/pseries/plpks/fwsecurityfs_arch.c
+ create mode 100644 arch/powerpc/platforms/pseries/plpks/internal.h
+ create mode 100644 arch/powerpc/platforms/pseries/plpks/plpks.c
+ create mode 100644 arch/powerpc/platforms/pseries/plpks/secvars.c
+ create mode 100644 fs/fwsecurityfs/Kconfig
+ create mode 100644 fs/fwsecurityfs/Makefile
+ create mode 100644 fs/fwsecurityfs/inode.c
+ create mode 100644 fs/fwsecurityfs/internal.h
+ create mode 100644 fs/fwsecurityfs/super.c
+ create mode 100644 include/linux/fwsecurityfs.h
+
+-- 
+2.27.0
