@@ -2,56 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF692C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jun 2022 04:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD5CC43334
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jun 2022 04:50:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231888AbiFXEud (ORCPT
+        id S231891AbiFXEuh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jun 2022 00:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49402 "EHLO
+        Fri, 24 Jun 2022 00:50:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231891AbiFXEs3 (ORCPT
+        with ESMTP id S231929AbiFXEsb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jun 2022 00:48:29 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 954C36927C
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 21:48:28 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id 184so1324861pga.12
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 21:48:28 -0700 (PDT)
+        Fri, 24 Jun 2022 00:48:31 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80AE26927F
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 21:48:29 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id g16-20020a17090a7d1000b001ea9f820449so4629722pjl.5
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 21:48:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
         h=subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding:cc:from:to;
-        bh=jMCGTpB4qORgO/HAj9/J+wYW1m5dKZO1Y3zKxKtdM4E=;
-        b=vKrF/uHWOix1+6Rl9MXcsk8W+kFQn6mM1CVaeA0uQogMNrgp1k5wMZQey+aLu9X84R
-         BHXhsOPoUF5SO8RkvrBFWIykapEklgV+UwvVqywVNBz3I1je7hl1nHH5FqCv2/bTn5gE
-         b6zmsjYCTjMu2DCbRqxal23S6foeAxjvZ0I9Vb5h7bTIL5rTPNVCdmhSv3BwnpnzJ8+h
-         sFU3SoJoaQ9pnSxUOSPWi0V0Q5O82fR6fWL+FaNZd8GLx4embxn/u/LXoRJYHDE0pb8r
-         gD6DJ+Rd7qA2JTDGwJ+L08FUMO2kUJU+iPqZ6+nAFU93FeYZs3QiOusK8ZsB5m3Zx5Bw
-         TQ3Q==
+        bh=wG/cL1k0Db5CVASFDb2IJyBBfutIm8qgplfgRR5fvCw=;
+        b=w8F/BHDTxvIXVC6FheFa0ViKJnTjyUoyIMvRk0YYdJtATT1LrUdw4skWF37W1cigG1
+         8x26sID7xOkrcZRAchZerfjH7lOACfj2tmNIrBZ1/r2GPmzAKWlx6frKuZjlCffBR3dT
+         cILziiDXGtRMOmeDIPoYZvVFfjJHND4L3eYFVKazXRkfaPzs5IxUG8YfnCnNLEcIIGiZ
+         ucX6bRmC3mnNG88dA73+TR1MtLtUG2atpNDco24+MUvNN7l5Tt8gB3lTehD+HUIQi1N8
+         eABa8iunfXAEsLk03BnTZMhn+68TeYVz2heeoCqjLyH8V0dLx6q5hl8IYX/wXoFj5UTt
+         CYsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding:cc:from:to;
-        bh=jMCGTpB4qORgO/HAj9/J+wYW1m5dKZO1Y3zKxKtdM4E=;
-        b=VqMs+o8GLJPTqt3ewUgLf7h9ea1KVF3DwUDjGEXz91D61SNUTnbl5gcJfZ5itkda95
-         z/JoIbeiqvh/EtDy0+ocW/WiW0KngmLY4IHWxFBtKMYpSghB4d/a5v3byNsekWpesVc6
-         M0GfWWucO/RcPItBv8/kndcj+7nbTIGl4Id2WKBqSR8+Co5oRdaT9fDiIbRcWm851CKf
-         sr+HbgNTHoJkym4rMSYgQjGeBYcCxSP5n2O6yV4r/W8N6p7lhE3fbp/UWf1OXNmU+wUj
-         wdd/qN/JQ8qeo5sY0GE1AIAWdxuKOFAwyRhbuhIbxqGOk8WqHxoqacdzGsu8tnikGkDc
-         FT7Q==
-X-Gm-Message-State: AJIora9Mq5O+9nlyr/TceOiEtQxBzgDMWHd8+AUnrSW8uW/X3FDmeHiW
-        JvAovExR7HHWX6sHLGo/dad+xQ==
-X-Google-Smtp-Source: AGRyM1uXZHQEpXqpNCieCPKUs298Zc7ZlsXzMC3KKqzIqfHMvB+F20JyDbM4hFNh9MRoTPgZTKoG4A==
-X-Received: by 2002:a63:fa41:0:b0:408:9d1b:2e57 with SMTP id g1-20020a63fa41000000b004089d1b2e57mr10364962pgk.102.1656046108122;
-        Thu, 23 Jun 2022 21:48:28 -0700 (PDT)
+        bh=wG/cL1k0Db5CVASFDb2IJyBBfutIm8qgplfgRR5fvCw=;
+        b=K2H2AMe2YQ3TgtOwNoa5NfyiMWt9YarJzLbvprnyMmaz31hxj762MBjwbzoB/5OAl0
+         Ft5m+VDTpHlBa99mt9utX4RtM59LNgILxZ+K5Hui0RlPzf+wBqa/hloDK/kQfdZxtFph
+         fduD29xPG/P517fnPJlTWTJ8NRqPGzQwL7NK13IPgUiPwYlMoFPrwrcHnags09NWgsUs
+         jkjDzC3gRs3Xx0UiMKwSM4tV+UNEXv6D3hPQdNOAsRLo/hBEwhxIQR6wCzD8lb6rw8mz
+         rBE6c1n1S6S8CQ26oeGIZFRMNpnoGYbk5Mh3fYH+nUn9vNB2+oVAUBQMtWYB8pk30F28
+         EYow==
+X-Gm-Message-State: AJIora+vxInuj5xHif0+vOdjUnsbI37x6sSqdZ5YumiogYjrvJamRI3U
+        dzx5+NfHF6GCIUYS3y104DEB9g==
+X-Google-Smtp-Source: AGRyM1tDIqY+T0/4qiFzu9A4UssddVx4//CxdxfSa1dBpSxtstyE6Y1jCr4wGD+7ippEZV5Y3XJaZw==
+X-Received: by 2002:a17:902:b681:b0:16a:f81:6b02 with SMTP id c1-20020a170902b68100b0016a0f816b02mr31620723pls.28.1656046109159;
+        Thu, 23 Jun 2022 21:48:29 -0700 (PDT)
 Received: from localhost ([12.3.194.138])
-        by smtp.gmail.com with ESMTPSA id 64-20020a621743000000b0051e7b6e8b12sm579926pfx.11.2022.06.23.21.48.27
+        by smtp.gmail.com with ESMTPSA id ik14-20020a170902ab0e00b0015e8d4eb2e3sm651922plb.301.2022.06.23.21.48.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 21:48:27 -0700 (PDT)
-Subject: [PATCH v2 3/5] RISC-V: kexec: Use Elf64 on 64-bit targets
-Date:   Thu, 23 Jun 2022 21:48:09 -0700
-Message-Id: <20220624044811.9682-4-palmer@rivosinc.com>
+        Thu, 23 Jun 2022 21:48:28 -0700 (PDT)
+Subject: [PATCH v2 4/5] RISC-V: purgatory: Use XLEN-length loads to support rv32
+Date:   Thu, 23 Jun 2022 21:48:10 -0700
+Message-Id: <20220624044811.9682-5-palmer@rivosinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220624044811.9682-1-palmer@rivosinc.com>
 References: <20220624044811.9682-1-palmer@rivosinc.com>
@@ -66,40 +66,45 @@ To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Most of the Elf macros automatically select the correct Elf type, this
-converts the one explicit Elf64 usage to depend on XLEN.
+This uses an explicit "ld" to load up target address, which dosn't work
+on rv32.  Convert it to a REG_L macro, like everywhere else.
 
 Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
 ---
- arch/riscv/kernel/elf_kexec.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/riscv/purgatory/entry.S | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/kernel/elf_kexec.c b/arch/riscv/kernel/elf_kexec.c
-index 9cb85095fd45..4532e3cf17a5 100644
---- a/arch/riscv/kernel/elf_kexec.c
-+++ b/arch/riscv/kernel/elf_kexec.c
-@@ -342,6 +342,12 @@ static void *elf_kexec_load(struct kimage *image, char *kernel_buf,
- #define CLEAN_IMM(type, x) \
- 	((~ENCODE_##type##_IMM((uint64_t)(-1))) & (x))
+diff --git a/arch/riscv/purgatory/entry.S b/arch/riscv/purgatory/entry.S
+index 0194f4554130..71c50fef051c 100644
+--- a/arch/riscv/purgatory/entry.S
++++ b/arch/riscv/purgatory/entry.S
+@@ -8,6 +8,8 @@
+  *
+  */
  
-+#if __riscv_xlen == 32
-+#define ELFN(T) ELF32 ## T
-+#else
-+#define ELFN(T) ELF64 ## T
-+#endif
++#include <asm/asm.h>
 +
- int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
- 				     Elf_Shdr *section,
- 				     const Elf_Shdr *relsec,
-@@ -367,7 +373,7 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
- 		void *loc;		/* tmp location to modify */
+ .macro	size, sym:req
+ 	.size \sym, . - \sym
+ .endm
+@@ -26,7 +28,7 @@ purgatory_start:
+ 	/* Start new image. */
+ 	mv	a0, s0
+ 	mv	a1, s1
+-	ld	a2, riscv_kernel_entry
++	REG_L	a2, riscv_kernel_entry
+ 	jr	a2
  
- 		sym = (void *)pi->ehdr + symtab->sh_offset;
--		sym += ELF64_R_SYM(relas[i].r_info);
-+		sym += ELFN(_R_SYM)(relas[i].r_info);
+ size purgatory_start
+@@ -41,7 +43,7 @@ size purgatory_start
  
- 		if (sym->st_name)
- 			name = strtab + sym->st_name;
+ .globl riscv_kernel_entry
+ riscv_kernel_entry:
+-	.quad	0
++	REG_ASM	0
+ size riscv_kernel_entry
+ 
+ .end
 -- 
 2.34.1
 
