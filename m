@@ -2,80 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141CCC43334
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jun 2022 04:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 770B8C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jun 2022 04:50:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231731AbiFXEty (ORCPT
+        id S232049AbiFXEu1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jun 2022 00:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
+        Fri, 24 Jun 2022 00:50:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231860AbiFXEs2 (ORCPT
+        with ESMTP id S231890AbiFXEs3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jun 2022 00:48:28 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFA7369253
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 21:48:24 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id h9-20020a17090a648900b001ecb8596e43so1685908pjj.5
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 21:48:24 -0700 (PDT)
+        Fri, 24 Jun 2022 00:48:29 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6519869276
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 21:48:27 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id k127so1531048pfd.10
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 21:48:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
-        h=subject:date:message-id:mime-version:content-transfer-encoding:cc
-         :from:to;
-        bh=VOrN2Skldd6ynBdimZLEfOLlQdQeXbU4ZvduMfJHL6c=;
-        b=XgTwJU2SJn7OgRjOacDrBq8AbIvZy9A81IA50d1kPRNcGZ35nasRgjV4RLK/GhrSHQ
-         liBXBNjEUUlPp7BL7s5TqwGWSyxagHvQ+xTyaGyQcCkEpt11davqrfMjfjAoapuf6WZn
-         v6n8vJYQWsu4abQaVlYDcuSEV6Jot7TID2g+Pt0cEwyChpdWBH/41ODLnB/El/jl5Xlc
-         WGrSAghyUAohMDgNK8/g16MxKloX+ZO5e5BTBzscGGT9lseU/cNO1WuZfmcRl5onAV85
-         +S2Z1J0jMLcEbiefwlIIQiebdEEaaQDPxk7iERWdaKfVeUWSz1gTQ1mXF06EWgq4DNX0
-         fgPA==
+        h=subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding:cc:from:to;
+        bh=YbFhCGzhKhLbr2G2ThS1s0sN7jwXYQ4vWhYkrXF5osc=;
+        b=kkxvDxX6n5CO12HAysNPgLTCaKTovZj6n1W4WM6NrdWPKdt8jHf/gjXiqu7I26pISm
+         ua6NuOBU0e747Hkio56Q5FXCk7rSyhq3Y6Zq55CZ25pU97Fj2MfR7zJOcZ41hi7FIff1
+         UZdKWwl3KHRXa7tdvTwjrgx6d6+yqM9BG8AZIhTjl1u7f/aVNNosUAXA5LKe9/MYnIvG
+         LlPZDl/L+rPWYZtuuiuwai4BFZqZ2PEnrQKWLvGk7JAWOVawnMXlmZxb2Q+2Kgculowg
+         wQXZjqI2+6jVMZLja/f8RD2VIlQY6lApwCHArAD4TdMuo1d9XJYF0lETVOugyAaATC3x
+         mPRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:date:message-id:mime-version
-         :content-transfer-encoding:cc:from:to;
-        bh=VOrN2Skldd6ynBdimZLEfOLlQdQeXbU4ZvduMfJHL6c=;
-        b=m6ZkDmtta4bPNIxIVtSZFXglagL9dZGtWLiGwU9JsgtKvPF/6RaytupKmcVn59qOPz
-         mC1twEU+XmXxPNZwdxfoYzjB1DgG09tiAUYFerGKy7AE9/ZQSLlfpdrVPcIsvwAkgN3X
-         e7gpb6jLlMXcCpBSSTFFzkLxbFYYqQGUs3UgHIqgi0hCHWeyDuuGnbCb/7MWWoZaXho1
-         ufgRQaK9Fq7B7RvravA42IkRaSFn2h0kv1e1lEFsTIHJrUAsKh482mbEBcqIub3tehNc
-         YTGBWJdkshNSpQxwy7dHdqLARPanR6DpP/BXwVu2kn2QQrxJCrJMiRum+ElOxpcAurgH
-         Ae6A==
-X-Gm-Message-State: AJIora+CINA2CEksYGveog+hhOFQZQ8xnJS/e8kHZW/FZCgNUb23Ub6n
-        IgWdKXXybSp/rDYyK4nZDe0WPQ==
-X-Google-Smtp-Source: AGRyM1twjNfvXdC15oBPlo3E7P9L0CcbGOzh0tICPbKtW3VyqvOblbLp0OUdm7yJez7FETjSBlaYbg==
-X-Received: by 2002:a17:902:d48e:b0:16a:67e7:d979 with SMTP id c14-20020a170902d48e00b0016a67e7d979mr1887249plg.29.1656046104242;
-        Thu, 23 Jun 2022 21:48:24 -0700 (PDT)
+        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding:cc:from:to;
+        bh=YbFhCGzhKhLbr2G2ThS1s0sN7jwXYQ4vWhYkrXF5osc=;
+        b=rjlyMYGDhY7oIONaEJpNkuGWWp2msm0l2MY+VAwrqdeANBt3viYytUpJAq4Z91cX5U
+         /1r1jSaTGQJDRhaS4fJS8AXf3N5p2ERgwZoXzcIcsXJWiLEcrrUvlqjWncO2aCghw3xf
+         95vgHSkKO5a5FNHKdqmS78vW7PV1D2O0lWaGE6xAcZel3zirjJxUFqO+QNZrYJgYA801
+         0rdqSBZMs1uuEDPrV6zcsi06WApkcLS31V86lF4hUEO4sxRHIGcmxryZMTBlNRM3CPAt
+         Z9Se2hRIPjG84si7s/d0yO67B09Bi5elHjUnhpaOO+Rq9pbMdtsOIn79RZC/WKYnBcFX
+         ipWQ==
+X-Gm-Message-State: AJIora+uMhm+mpi6CXaeh+avgxu/Ph1pCamwDiQigWxOVEh/ypwJWN/0
+        92zYZXzrmgPN9H7hvjnwdXHT87VwvsIHzw==
+X-Google-Smtp-Source: AGRyM1vJW29/sVxuMxr0tG1PDaIe69h+YLS81Q9kQN6GZXjLMUjcoObBkYAeIvvbIZG+ephEELUDwg==
+X-Received: by 2002:aa7:9470:0:b0:525:4214:bd9e with SMTP id t16-20020aa79470000000b005254214bd9emr13914582pfq.11.1656046106909;
+        Thu, 23 Jun 2022 21:48:26 -0700 (PDT)
 Received: from localhost ([12.3.194.138])
-        by smtp.gmail.com with ESMTPSA id x20-20020a056a00189400b005251b9102dbsm557073pfh.144.2022.06.23.21.48.23
+        by smtp.gmail.com with ESMTPSA id j5-20020a63ec05000000b0040d2f92d30fsm503488pgh.88.2022.06.23.21.48.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 21:48:23 -0700 (PDT)
-Subject: [PATCH v2 0/5] Support kexec_file on 32-bit RISC-V
-Date:   Thu, 23 Jun 2022 21:48:06 -0700
-Message-Id: <20220624044811.9682-1-palmer@rivosinc.com>
+        Thu, 23 Jun 2022 21:48:26 -0700 (PDT)
+Subject: [PATCH v2 2/5] ima: Fix a build issue on 32-bit platforms
+Date:   Thu, 23 Jun 2022 21:48:08 -0700
+Message-Id: <20220624044811.9682-3-palmer@rivosinc.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220624044811.9682-1-palmer@rivosinc.com>
+References: <20220624044811.9682-1-palmer@rivosinc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Cc:         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-            linux-security-module@vger.kernel.org
+            linux-security-module@vger.kernel.org,
+            Palmer Dabbelt <palmer@rivosinc.com>
 From:   Palmer Dabbelt <palmer@rivosinc.com>
 To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
         linux-integrity@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This rolled itself back to the top of my inbox, so I figured I'd send it
-again as Rob's review landed.  IMO the security/integrity/ima/ change is
-sufficiently trivial that it's fine to take it through the RISC-V tree
-but I don't have an Review/Ack so I'll wait until this loops back again
-to give the security/integrity/ folks a chance to chime in.
+ima_dump_measurement_list() took an "unsigned long *", but was passed a
+size_t.  This triggers build warnings on 32-bit RISC-V.
 
-If this loops back to the top of my queue (which looks about a month
-deep right now) without any comments then I'll put it in riscv/for-next.
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+ security/integrity/ima/ima_kexec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-Changes since v1
-<https://lore.kernel.org/all/20220520154430.18593-1-palmer@rivosinc.com/>
-* Collected reviews for drivers/of/kexec.c.
-
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 13753136f03f..f2a94ec3002a 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -15,7 +15,7 @@
+ #include "ima.h"
+ 
+ #ifdef CONFIG_IMA_KEXEC
+-static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
++static int ima_dump_measurement_list(size_t *buffer_size, void **buffer,
+ 				     unsigned long segment_size)
+ {
+ 	struct ima_queue_entry *qe;
+-- 
+2.34.1
 
