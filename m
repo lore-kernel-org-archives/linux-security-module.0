@@ -2,147 +2,162 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 995EEC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jun 2022 13:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD2FC43334
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jun 2022 03:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231716AbiFWNXh (ORCPT
+        id S229811AbiFXDVw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Jun 2022 09:23:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35672 "EHLO
+        Thu, 23 Jun 2022 23:21:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbiFWNXg (ORCPT
+        with ESMTP id S229545AbiFXDVv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Jun 2022 09:23:36 -0400
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A3ED22B05;
-        Thu, 23 Jun 2022 06:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1655990602;
-        bh=2+RnhRSYBf9t0pLNaFxZTzdzl+ka8qJGuDaaIJ0J+SE=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=jQZxMm2qirAr+munyYWPBowvfq9hHN90Qjs6CLjfowE3BiVJ37/R2Y0y+OoSYHzov
-         2ODPECkLsMZa5jHp4mf5/RN+kal13JqodQkywQs78EY54f1wTMg44+63Yjp8wsGgs7
-         /Et2tUa+r685pKlwTloW2yk1NNkDyjconWxyZO/c=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 02B821281161;
-        Thu, 23 Jun 2022 09:23:22 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9zhIpAMrBkCT; Thu, 23 Jun 2022 09:23:21 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1655990601;
-        bh=2+RnhRSYBf9t0pLNaFxZTzdzl+ka8qJGuDaaIJ0J+SE=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=eBrnwNmoTPKz2acfj3bSSE37qXRZymR6d57PTcwrdbVLvtNEzgwvb/jnjwQM3LZxK
-         DABRjQo8IG8dpHo8+xRe79xEm+ChL5obtdmWZsLK8l3DoFbw5T0QrjGxcarv7kfRHq
-         k+DN7QN6QiXBzDt0DlqdF03HzXqaw670zyu8Vl9A=
-Received: from [IPv6:2601:5c4:4300:c551:a71:90ff:fec2:f05b] (unknown [IPv6:2601:5c4:4300:c551:a71:90ff:fec2:f05b])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A62431280DD8;
-        Thu, 23 Jun 2022 09:23:20 -0400 (EDT)
-Message-ID: <41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH v2 2/3] fs: define a firmware security filesystem
- named fwsecurityfs
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>, gjoyce@ibm.com,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Date:   Thu, 23 Jun 2022 09:23:19 -0400
-In-Reply-To: <YrQqPhi4+jHZ1WJc@kroah.com>
-References: <20220622215648.96723-1-nayna@linux.ibm.com>
-         <20220622215648.96723-3-nayna@linux.ibm.com> <YrQqPhi4+jHZ1WJc@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Thu, 23 Jun 2022 23:21:51 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A736270B
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 20:21:50 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id r20so1366334wra.1
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jun 2022 20:21:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nkA12o8J/G8WC/x2ZjqUQFWdUod71jTMrhuVlQ+gIfc=;
+        b=cB+o0n9FydEJuF7kdgUBwLms6sg/mL07v5Fm4wCK5oaeo52McxaVgaMqRXxn82FBYl
+         YxRmxsrCOhxOyr1v5satohMH1/s+X6ZRb+NJZsgIthjEXz6y1+tTqFm9WOGZz6rr3SU/
+         zxWAbi5cozSEypGIO33gbc+ffLdv5Sp3E+DAETn5U87nrlBRouptfEhknKi4Q0S6RWgc
+         cpkb+qF9DXJ54Hj4sYi+NOHN1ZYPWYZfkUTQBbwufaxWiz9mBlye7YYbqmcYiM9KFWbU
+         aakhigOid5o+64hSNKle7XLMwbisINZEz+pZtDge+dsqY4Z+lGnJ08gdtXl5Xz5lLx1D
+         U6dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nkA12o8J/G8WC/x2ZjqUQFWdUod71jTMrhuVlQ+gIfc=;
+        b=DS0pkAfvo8AzfW7TLKM++RiBJsAJVEjD8WWKYKXp7cdoA28NztErVpjW3Q5KBb67fr
+         8uIfLMe2gs85+xuLzldKSUWwjdwMVMEzmTaBS2MjgfFS0GukwdViFebYQKAgDFRQwrh7
+         hEzRQZDpkETx78MArH08OFY/UEaA5pD16cqJ3JplUDccxJK52K+IAdC2Emp+hDidtqUi
+         htECn+obF43OV3mDACXNSin6VqQILZ+z4mLV4Lxw/HKvPT/+OKcVivYzYZNZTQzUO/TU
+         wablLu+9Og1mKeeThTl6L4aWQADF9Y4mg4K1wY//d0cUlsCD6bCiyiGRSDFkdRDfuBvS
+         Wf7w==
+X-Gm-Message-State: AJIora8dJIMMuQVrBsiz6kgOwIRZzDRJdrWS55LBcgz7FCshP7tXCqlz
+        GI0TDGzoXq/IyW2LPA4lTseUH2E14QG6La6B0KD7
+X-Google-Smtp-Source: AGRyM1vzEq1PW3uWevmMOO7hQB/5IqqeX5H+D3AuL1YvM7TVvsF3TSr0F7DNVOKp8u3V2fk0wOc1mjVvEQuIplvXnCM=
+X-Received: by 2002:a5d:4848:0:b0:21b:8cda:5747 with SMTP id
+ n8-20020a5d4848000000b0021b8cda5747mr11337757wrs.483.1656040908556; Thu, 23
+ Jun 2022 20:21:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20220621233939.993579-1-fred@cloudflare.com> <ce1653b1-feb0-1a99-0e97-8dfb289eeb79@schaufler-ca.com>
+ <b72c889a-4a50-3330-baae-3bbf065e7187@cloudflare.com>
+In-Reply-To: <b72c889a-4a50-3330-baae-3bbf065e7187@cloudflare.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 23 Jun 2022 23:21:37 -0400
+Message-ID: <CAHC9VhSTkEMT90Tk+=iTyp3npWEm+3imrkFVX2qb=XsOPp9F=A@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Introduce security_create_user_ns()
+To:     Frederick Lawler <fred@cloudflare.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, brauner@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-06-23 at 10:54 +0200, Greg Kroah-Hartman wrote:
-[...]
-> > diff --git a/fs/fwsecurityfs/inode.c b/fs/fwsecurityfs/inode.c
-> > new file mode 100644
-> > index 000000000000..5d06dc0de059
-> > --- /dev/null
-> > +++ b/fs/fwsecurityfs/inode.c
-> > @@ -0,0 +1,159 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2022 IBM Corporation
-> > + * Author: Nayna Jain <nayna@linux.ibm.com>
-> > + */
-> > +
-> > +#include <linux/sysfs.h>
-> > +#include <linux/kobject.h>
-> > +#include <linux/fs.h>
-> > +#include <linux/fs_context.h>
-> > +#include <linux/mount.h>
-> > +#include <linux/pagemap.h>
-> > +#include <linux/init.h>
-> > +#include <linux/namei.h>
-> > +#include <linux/security.h>
-> > +#include <linux/lsm_hooks.h>
-> > +#include <linux/magic.h>
-> > +#include <linux/ctype.h>
-> > +#include <linux/fwsecurityfs.h>
-> > +
-> > +#include "internal.h"
-> > +
-> > +int fwsecurityfs_remove_file(struct dentry *dentry)
-> > +{
-> > +	drop_nlink(d_inode(dentry));
-> > +	dput(dentry);
-> > +	return 0;
-> > +};
-> > +EXPORT_SYMBOL_GPL(fwsecurityfs_remove_file);
-> > +
-> > +int fwsecurityfs_create_file(const char *name, umode_t mode,
-> > +					u16 filesize, struct dentry
-> > *parent,
-> > +					struct dentry *dentry,
-> > +					const struct file_operations
-> > *fops)
-> > +{
-> > +	struct inode *inode;
-> > +	int error;
-> > +	struct inode *dir;
-> > +
-> > +	if (!parent)
-> > +		return -EINVAL;
-> > +
-> > +	dir = d_inode(parent);
-> > +	pr_debug("securityfs: creating file '%s'\n", name);
-> 
-> Did you forget to call simple_pin_fs() here or anywhere else?
-> 
-> And this can be just one function with the directory creation file,
-> just check the mode and you will be fine.  Look at securityfs as an
-> example of how to make this simpler.
+On Wed, Jun 22, 2022 at 10:24 AM Frederick Lawler <fred@cloudflare.com> wrote:
+> On 6/21/22 7:19 PM, Casey Schaufler wrote:
+> > On 6/21/2022 4:39 PM, Frederick Lawler wrote:
+> >> While creating a LSM BPF MAC policy to block user namespace creation, we
+> >> used the LSM cred_prepare hook because that is the closest hook to
+> >> prevent
+> >> a call to create_user_ns().
+> >>
+> >> The calls look something like this:
+> >>
+> >>      cred = prepare_creds()
+> >>          security_prepare_creds()
+> >>              call_int_hook(cred_prepare, ...
+> >>      if (cred)
+> >>          create_user_ns(cred)
+> >>
+> >> We noticed that error codes were not propagated from this hook and
+> >> introduced a patch [1] to propagate those errors.
+> >>
+> >> The discussion notes that security_prepare_creds()
+> >> is not appropriate for MAC policies, and instead the hook is
+> >> meant for LSM authors to prepare credentials for mutation. [2]
+> >>
+> >> Ultimately, we concluded that a better course of action is to introduce
+> >> a new security hook for LSM authors. [3]
+> >>
+> >> This patch set first introduces a new security_create_user_ns() function
+> >> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+> >
+> > Why restrict this hook to user namespaces? It seems that an LSM that
+> > chooses to preform controls on user namespaces may want to do so for
+> > network namespaces as well.
+>
+> IIRC, CLONE_NEWUSER is the only namespace flag that does not require
+> CAP_SYS_ADMIN. There is a security use case to prevent this namespace
+> from being created within an unprivileged environment. I'm not opposed
+> to a more generic hook, but I don't currently have a use case to block
+> any others. We can also say the same is true for the other namespaces:
+> add this generic security function to these too.
+>
+> I'm curious what others think about this too.
 
-Actually, before you go down this route can you consider the namespace
-ramifications.  In fact we're just having to rework securityfs to pull
-out all the simple_pin_... calls because simple_pin_... is completely
-inimical to namespaces.
+While user namespaces are obviously one of the more significant
+namespaces from a security perspective, I do think it seems reasonable
+that the LSMs could benefit from additional namespace creation hooks.
+However, I don't think we need to do all of them at once, starting
+with a userns hook seems okay to me.
 
-The first thing to consider is if you simply use securityfs you'll
-inherit all the simple_pin_... removal work and be namespace ready.  It
-could be that creating a new filesystem that can't be namespaced is the
-right thing to do here, but at least ask the question: would we ever
-want any of these files to be presented selectively inside containers? 
-If the answer is "yes" then simple_pin_... is the wrong interface.
+I also think that using the same LSM hook as an access control point
+for all of the different namespaces would be a mistake.  At the very
+least we would need to pass a flag or some form of context to the hook
+to indicate which new namespace(s) are being requested and I fear that
+is a problem waiting to happen.  That isn't to say someone couldn't
+mistakenly call the security_create_user_ns(...) from the mount
+namespace code, but I suspect that is much easier to identify as wrong
+than the equivalent security_create_ns(USER, ...).
 
-James
+We also should acknowledge that while in most cases the current task's
+credentials are probably sufficient to make any LSM access control
+decisions around namespace creation, it's possible that for some
+namespaces we would need to pass additional, namespace specific info
+to the LSM.  With a shared LSM hook this could become rather awkward.
 
+> > Also, the hook seems backwards. You should
+> > decide if the creation of the namespace is allowed before you create it.
+> > Passing the new namespace to a function that checks to see creating a
+> > namespace is allowed doesn't make a lot off sense.
+>
+> I think having more context to a security hook is a good thing.
 
+This is one of the reasons why I usually like to see at least one LSM
+implementation to go along with every new/modified hook.  The
+implementation forces you to think about what information is necessary
+to perform a basic access control decision; sometimes it isn't always
+obvious until you have to write the access control :)
+
+[aside: If you would like to explore the SELinux implementation let me
+know, I'm happy to work with you on this.  I suspect Casey and the
+other LSM maintainers would also be willing to do the same for their
+LSMs.]
+
+In this particular case I think the calling task's credentials are
+generally all that is needed.  You mention that the newly created
+namespace would be helpful, so I'll ask: what info in the new ns do
+you believe would be helpful in making an access decision about its
+creation?
+
+Once we've sorted that we can make a better decision about the hook
+placement, but right now my gut feeling is that we only need to pass
+the task's creds, and I think placing the hook right after the UID/GID
+mapping check (before the new ns allocation) would be the best spot.
+
+-- 
+paul-moore.com
