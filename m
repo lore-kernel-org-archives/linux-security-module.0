@@ -2,73 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E74CAC43334
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jun 2022 10:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05BCC43334
+	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jun 2022 13:55:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbiFXKFv (ORCPT
+        id S232971AbiFYNzO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jun 2022 06:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50140 "EHLO
+        Sat, 25 Jun 2022 09:55:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230509AbiFXKFu (ORCPT
+        with ESMTP id S232822AbiFYNzN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jun 2022 06:05:50 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B0E4E3B7;
-        Fri, 24 Jun 2022 03:05:49 -0700 (PDT)
-Received: from fsav111.sakura.ne.jp (fsav111.sakura.ne.jp [27.133.134.238])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 25OA5QLd099780;
-        Fri, 24 Jun 2022 19:05:26 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav111.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp);
- Fri, 24 Jun 2022 19:05:26 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 25OA5Q1V099777
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 24 Jun 2022 19:05:26 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <f754e6cd-8f99-a42e-9b65-3f4971e51432@I-love.SAKURA.ne.jp>
-Date:   Fri, 24 Jun 2022 19:05:25 +0900
+        Sat, 25 Jun 2022 09:55:13 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CAE912ACB;
+        Sat, 25 Jun 2022 06:55:12 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id g16-20020a17090a7d1000b001ea9f820449so8207440pjl.5;
+        Sat, 25 Jun 2022 06:55:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rq85kfN+kIsKSpiVIlYRgY/oRH6pyH6elOkY0pr17X8=;
+        b=hgfxS3V4J1iXv9Nrh0fcvKWIa/amBW6X3fvUiBLLphkpMJt9wcgDSWULqm7GP/0GaP
+         6aSfy+jSCZ9j4WZexZhFObM3rwxX5lPJsFFZN076vmGQmL5F6VIzmzoUAY8rY6KRMSjv
+         R6ZhugXIa6LdfrPlfK9JaOa2U5bXh812sAwaUmgup8SDolYUTYEo+70VZvtcrFnSuFxi
+         04ypGDWM//+TRLLtFoEyutvFarER9RIv67xr7XYhJR1OgU+hLOJ0DxkN7EHu9Um5lj4r
+         KISANjryYyHsprldO94mdBahgWp9ATn+ceH0x3vcFmnINanU50nMhQKDvWs4Phh9vN1z
+         vACA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rq85kfN+kIsKSpiVIlYRgY/oRH6pyH6elOkY0pr17X8=;
+        b=c3BqLgFuxZZMw9oiFdXnxOq94AIpSgYY+Uq/0Q9+iyQu48R73HEQw0SdauQLRE2uPp
+         l8t9xoBerbSeeFwWeAgtVYRxaUx/RPuTIwduZ/fcMIfSSiTNI7u4hDTTG3VBSkSsZv/t
+         u3tVNNeo04X+wOcA3bEOCC36Oo37sCpsHhCm4NUOyY/MQoX+Kn9JonAa1+fzwVcq5E/b
+         43pHqipRCzes0+ufSjx9m5G/UKvTtqdesGerN3vaOXaa/pknTTNY+xY4SD19MwZ5kD2i
+         f31EAAuD8fBAVeEgc4/3IQ8CRFmSMqLApfV15c0MkCCbiOtUUDXauctbNaTcJUJQnbxF
+         5GuQ==
+X-Gm-Message-State: AJIora+pbcv8zYS//Ob9o9VRZFPxb2ZpETPkGAoJmMXmQ80q/w0v9w3M
+        ffP4dUwDG8bUUVBILO0yVwM56TA2k2nj588P
+X-Google-Smtp-Source: AGRyM1tHN1gbZ2yVQGHra6qT4FiOfTNe6GbslEsaiCOvnvsi/mWa+4LCop/8sCB+fYivYjFqNJC8HQ==
+X-Received: by 2002:a17:90b:3a8f:b0:1ec:93d4:f955 with SMTP id om15-20020a17090b3a8f00b001ec93d4f955mr9909343pjb.23.1656165311419;
+        Sat, 25 Jun 2022 06:55:11 -0700 (PDT)
+Received: from fedora.. ([2409:4042:261d:8029:35f0:415b:b9b4:3fcb])
+        by smtp.gmail.com with ESMTPSA id a4-20020a170902710400b00162037fbb68sm3708733pll.215.2022.06.25.06.55.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Jun 2022 06:55:10 -0700 (PDT)
+From:   Gautam <gautammenghani201@gmail.com>
+To:     shuah@kernel.org, brauner@kernel.org, keescook@chromium.org
+Cc:     Gautam <gautammenghani201@gmail.com>, kafai@fb.com,
+        songliubraving@fb.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH] kselftests: Enable the echo command to print newlines in Makefile
+Date:   Sat, 25 Jun 2022 19:24:55 +0530
+Message-Id: <20220625135455.167939-1-gautammenghani201@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] tomoyo: Fix typo in comment
-Content-Language: en-US
-To:     Xiang wangx <wangxiang@cdjrlc.com>
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, takedakn@nttdata.co.jp
-References: <20220624070254.33998-1-wangxiang@cdjrlc.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20220624070254.33998-1-wangxiang@cdjrlc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks for a patch, but current is correct. ("path2" means takes two path arguments)
+In the install section of the main Makefile of kselftests, the echo
+command is used with -n flag, which disables the printing of new line
+due to which the output contains "\n" chars as follows:
 
-On 2022/06/24 16:02, Xiang wangx wrote:
-> Delete the redundant word 'path'.
-> 
-> Signed-off-by: Xiang wangx <wangxiang@cdjrlc.com>
-> ---
->  security/tomoyo/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/tomoyo/file.c b/security/tomoyo/file.c
-> index 1e6077568fde..772f7e1ddf6e 100644
-> --- a/security/tomoyo/file.c
-> +++ b/security/tomoyo/file.c
-> @@ -286,7 +286,7 @@ static bool tomoyo_check_path_number_acl(struct tomoyo_request_info *r,
->  }
->  
->  /**
-> - * tomoyo_check_path2_acl - Check permission for path path operation.
-> + * tomoyo_check_path2_acl - Check permission for path operation.
->   *
->   * @r:   Pointer to "struct tomoyo_request_info".
->   * @ptr: Pointer to "struct tomoyo_acl_info".
+  Emit Tests for alsa\nSkipping non-existent dir: arm64
+  Emit Tests for breakpoints\nEmit Tests for capabilities\n
+
+This patch fixes the above bug by using the -e flag.
+
+Signed-off-by: Gautam <gautammenghani201@gmail.com>
+---
+ tools/testing/selftests/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index de11992dc577..52e31437f1a3 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -253,7 +253,7 @@ ifdef INSTALL_PATH
+ 	for TARGET in $(TARGETS); do \
+ 		BUILD_TARGET=$$BUILD/$$TARGET;	\
+ 		[ ! -d $(INSTALL_PATH)/$$TARGET ] && echo "Skipping non-existent dir: $$TARGET" && continue; \
+-		echo -n "Emit Tests for $$TARGET\n"; \
++		echo -ne "Emit Tests for $$TARGET\n"; \
+ 		$(MAKE) -s --no-print-directory OUTPUT=$$BUILD_TARGET COLLECTION=$$TARGET \
+ 			-C $$TARGET emit_tests >> $(TEST_LIST); \
+ 	done;
+-- 
+2.36.1
+
