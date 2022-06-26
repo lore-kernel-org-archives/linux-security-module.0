@@ -2,174 +2,161 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 413F1CCA47C
-	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jun 2022 22:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5723C433EF
+	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jun 2022 23:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbiFZWeq (ORCPT
+        id S229468AbiFZXd4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 26 Jun 2022 18:34:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58692 "EHLO
+        Sun, 26 Jun 2022 19:33:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbiFZWeo (ORCPT
+        with ESMTP id S229492AbiFZXd4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 26 Jun 2022 18:34:44 -0400
+        Sun, 26 Jun 2022 19:33:56 -0400
 Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3DED2DDE;
-        Sun, 26 Jun 2022 15:34:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 856942BEC;
+        Sun, 26 Jun 2022 16:33:54 -0700 (PDT)
 Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 2E4BF186C; Sun, 26 Jun 2022 17:34:41 -0500 (CDT)
-Date:   Sun, 26 Jun 2022 17:34:41 -0500
+        id 0617E113A; Sun, 26 Jun 2022 18:33:53 -0500 (CDT)
+Date:   Sun, 26 Jun 2022 18:33:52 -0500
 From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>
-Cc:     selinux@vger.kernel.org, Serge Hallyn <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/8] capability: add any wrapper to test for multiple
- caps with exactly one audit message
-Message-ID: <20220626223441.GA30137@mail.hallyn.com>
-References: <20220502160030.131168-8-cgzones@googlemail.com>
- <20220615152623.311223-1-cgzones@googlemail.com>
- <20220615152623.311223-8-cgzones@googlemail.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Micah Morton <mortonm@chromium.org>,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] security: Add LSM hook to setgroups() syscall
+Message-ID: <20220626233352.GA31265@mail.hallyn.com>
+References: <20220616171809.783277-1-mortonm@chromium.org>
+ <034eb96c-573e-a074-2506-99456ec7f6f7@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220615152623.311223-8-cgzones@googlemail.com>
+In-Reply-To: <034eb96c-573e-a074-2506-99456ec7f6f7@schaufler-ca.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 15, 2022 at 05:26:23PM +0200, Christian Göttsche wrote:
-> Add the interfaces `capable_any()` and `ns_capable_any()` as an
-> alternative to multiple `capable()`/`ns_capable()` calls, like
-> `capable_any(CAP_SYS_NICE, CAP_SYS_ADMIN)` instead of
-> `capable(CAP_SYS_NICE) || capable(CAP_SYS_ADMIN)`.
+On Mon, Jun 20, 2022 at 11:15:05AM -0700, Casey Schaufler wrote:
+> On 6/16/2022 10:18 AM, Micah Morton wrote:
+> > Give the LSM framework the ability to filter setgroups() syscalls. There
+> > are already analagous hooks for the set*uid() and set*gid() syscalls.
+> > The SafeSetID LSM will use this new hook to ensure setgroups() calls are
+> > allowed by the installed security policy. Tested by putting print
+> > statement in security_task_fix_setgroups() hook and confirming that it
+> > gets hit when userspace does a setgroups() syscall.
+> > 
+> > Signed-off-by: Micah Morton <mortonm@chromium.org>
 > 
-> `capable_any()`/`ns_capable_any()` will in particular generate exactly
-> one audit message, either for the left most capability in effect or, if
-> the task has none, the first one.
+> I don't see any problems with this.
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 > 
-> This is especially helpful with regard to SELinux, where each audit
-> message about a not allowed capability will create an AVC denial.
-> Using this function with the least invasive capability as left most
-> argument (e.g. CAP_SYS_NICE before CAP_SYS_ADMIN) enables policy writers
-> to only allow the least invasive one and SELinux domains pass this check
-> with only capability:sys_nice or capability:sys_admin allowed without
-> any AVC denial message.
-> 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+
+Ditto.  Thanks.
 
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-> 
-> ---
-> v3:
->    - rename to capable_any()
->    - fix typo in function documentation
->    - add ns_capable_any()
-> v2:
->    avoid varargs and fix to two capabilities; capable_or3() can be added
->    later if needed
-> ---
->  include/linux/capability.h | 10 +++++++
->  kernel/capability.c        | 53 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 63 insertions(+)
-> 
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index 65efb74c3585..7316d5339a6e 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -208,7 +208,9 @@ extern bool has_capability_noaudit(struct task_struct *t, int cap);
->  extern bool has_ns_capability_noaudit(struct task_struct *t,
->  				      struct user_namespace *ns, int cap);
->  extern bool capable(int cap);
-> +extern bool capable_any(int cap1, int cap2);
->  extern bool ns_capable(struct user_namespace *ns, int cap);
-> +extern bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2);
->  extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
->  extern bool ns_capable_setid(struct user_namespace *ns, int cap);
->  #else
-> @@ -234,10 +236,18 @@ static inline bool capable(int cap)
->  {
->  	return true;
->  }
-> +static inline bool capable_any(int cap1, int cap2)
-> +{
-> +	return true;
-> +}
->  static inline bool ns_capable(struct user_namespace *ns, int cap)
->  {
->  	return true;
->  }
-> +static inline bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2)
-> +{
-> +	return true;
-> +}
->  static inline bool ns_capable_noaudit(struct user_namespace *ns, int cap)
->  {
->  	return true;
-> diff --git a/kernel/capability.c b/kernel/capability.c
-> index 765194f5d678..ab9b889c3f4d 100644
-> --- a/kernel/capability.c
-> +++ b/kernel/capability.c
-> @@ -435,6 +435,59 @@ bool ns_capable_setid(struct user_namespace *ns, int cap)
->  }
->  EXPORT_SYMBOL(ns_capable_setid);
->  
-> +/**
-> + * ns_capable_any - Determine if the current task has one of two superior capabilities in effect
-> + * @ns:  The usernamespace we want the capability in
-> + * @cap1: The capabilities to be tested for first
-> + * @cap2: The capabilities to be tested for secondly
-> + *
-> + * Return true if the current task has at least one of the two given superior
-> + * capabilities currently available for use, false if not.
-> + *
-> + * In contrast to or'ing capable() this call will create exactly one audit
-> + * message, either for @cap1, if it is granted or both are not permitted,
-> + * or @cap2, if it is granted while the other one is not.
-> + *
-> + * The capabilities should be ordered from least to most invasive, i.e. CAP_SYS_ADMIN last.
-> + *
-> + * This sets PF_SUPERPRIV on the task if the capability is available on the
-> + * assumption that it's about to be used.
-> + */
-> +bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2)
-> +{
-> +	if (ns_capable_noaudit(ns, cap1))
-> +		return ns_capable(ns, cap1);
-> +
-> +	if (ns_capable_noaudit(ns, cap2))
-> +		return ns_capable(ns, cap2);
-> +
-> +	return ns_capable(ns, cap1);
-> +}
-> +EXPORT_SYMBOL(ns_capable_any);
-> +
-> +/**
-> + * capable_any - Determine if the current task has one of two superior capabilities in effect
-> + * @cap1: The capabilities to be tested for first
-> + * @cap2: The capabilities to be tested for secondly
-> + *
-> + * Return true if the current task has at least one of the two given superior
-> + * capabilities currently available for use, false if not.
-> + *
-> + * In contrast to or'ing capable() this call will create exactly one audit
-> + * message, either for @cap1, if it is granted or both are not permitted,
-> + * or @cap2, if it is granted while the other one is not.
-> + *
-> + * The capabilities should be ordered from least to most invasive, i.e. CAP_SYS_ADMIN last.
-> + *
-> + * This sets PF_SUPERPRIV on the task if the capability is available on the
-> + * assumption that it's about to be used.
-> + */
-> +bool capable_any(int cap1, int cap2)
-> +{
-> +	return ns_capable_any(&init_user_ns, cap1, cap2);
-> +}
-> +EXPORT_SYMBOL(capable_any);
-> +
->  /**
->   * capable - Determine if the current task has a superior capability in effect
->   * @cap: The capability to be tested for
-> -- 
-> 2.36.1
+> > ---
+> >   include/linux/lsm_hook_defs.h |  1 +
+> >   include/linux/lsm_hooks.h     |  7 +++++++
+> >   include/linux/security.h      |  7 +++++++
+> >   kernel/groups.c               | 13 +++++++++++++
+> >   security/security.c           |  5 +++++
+> >   5 files changed, 33 insertions(+)
+> > 
+> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> > index eafa1d2489fd..806448173033 100644
+> > --- a/include/linux/lsm_hook_defs.h
+> > +++ b/include/linux/lsm_hook_defs.h
+> > @@ -201,6 +201,7 @@ LSM_HOOK(int, 0, task_fix_setuid, struct cred *new, const struct cred *old,
+> >   	 int flags)
+> >   LSM_HOOK(int, 0, task_fix_setgid, struct cred *new, const struct cred * old,
+> >   	 int flags)
+> > +LSM_HOOK(int, 0, task_fix_setgroups, struct cred *new, const struct cred * old)
+> >   LSM_HOOK(int, 0, task_setpgid, struct task_struct *p, pid_t pgid)
+> >   LSM_HOOK(int, 0, task_getpgid, struct task_struct *p)
+> >   LSM_HOOK(int, 0, task_getsid, struct task_struct *p)
+> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > index 91c8146649f5..84a0d7e02176 100644
+> > --- a/include/linux/lsm_hooks.h
+> > +++ b/include/linux/lsm_hooks.h
+> > @@ -702,6 +702,13 @@
+> >    *	@old is the set of credentials that are being replaced.
+> >    *	@flags contains one of the LSM_SETID_* values.
+> >    *	Return 0 on success.
+> > + * @task_fix_setgroups:
+> > + *	Update the module's state after setting the supplementary group
+> > + *	identity attributes of the current process.
+> > + *	@new is the set of credentials that will be installed.  Modifications
+> > + *	should be made to this rather than to @current->cred.
+> > + *	@old is the set of credentials that are being replaced.
+> > + *	Return 0 on success.
+> >    * @task_setpgid:
+> >    *	Check permission before setting the process group identifier of the
+> >    *	process @p to @pgid.
+> > diff --git a/include/linux/security.h b/include/linux/security.h
+> > index 7fc4e9f49f54..1dfd32c49fa3 100644
+> > --- a/include/linux/security.h
+> > +++ b/include/linux/security.h
+> > @@ -415,6 +415,7 @@ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+> >   			     int flags);
+> >   int security_task_fix_setgid(struct cred *new, const struct cred *old,
+> >   			     int flags);
+> > +int security_task_fix_setgroups(struct cred *new, const struct cred *old);
+> >   int security_task_setpgid(struct task_struct *p, pid_t pgid);
+> >   int security_task_getpgid(struct task_struct *p);
+> >   int security_task_getsid(struct task_struct *p);
+> > @@ -1098,6 +1099,12 @@ static inline int security_task_fix_setgid(struct cred *new,
+> >   	return 0;
+> >   }
+> > +static inline int security_task_fix_setgroups(struct cred *new,
+> > +					   const struct cred *old)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> >   static inline int security_task_setpgid(struct task_struct *p, pid_t pgid)
+> >   {
+> >   	return 0;
+> > diff --git a/kernel/groups.c b/kernel/groups.c
+> > index 787b381c7c00..9aaed2a31073 100644
+> > --- a/kernel/groups.c
+> > +++ b/kernel/groups.c
+> > @@ -134,13 +134,26 @@ EXPORT_SYMBOL(set_groups);
+> >   int set_current_groups(struct group_info *group_info)
+> >   {
+> >   	struct cred *new;
+> > +	const struct cred *old;
+> > +	int retval;
+> >   	new = prepare_creds();
+> >   	if (!new)
+> >   		return -ENOMEM;
+> > +	old = current_cred();
+> > +
+> >   	set_groups(new, group_info);
+> > +
+> > +	retval = security_task_fix_setgroups(new, old);
+> > +	if (retval < 0)
+> > +		goto error;
+> > +
+> >   	return commit_creds(new);
+> > +
+> > +error:
+> > +	abort_creds(new);
+> > +	return retval;
+> >   }
+> >   EXPORT_SYMBOL(set_current_groups);
+> > diff --git a/security/security.c b/security/security.c
+> > index 188b8f782220..15c686145ad6 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -1803,6 +1803,11 @@ int security_task_fix_setgid(struct cred *new, const struct cred *old,
+> >   	return call_int_hook(task_fix_setgid, 0, new, old, flags);
+> >   }
+> > +int security_task_fix_setgroups(struct cred *new, const struct cred *old)
+> > +{
+> > +	return call_int_hook(task_fix_setgroups, 0, new, old);
+> > +}
+> > +
+> >   int security_task_setpgid(struct task_struct *p, pid_t pgid)
+> >   {
+> >   	return call_int_hook(task_setpgid, 0, p, pgid);
