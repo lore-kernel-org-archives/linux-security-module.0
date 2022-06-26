@@ -2,124 +2,174 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 071F7C43334
-	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jun 2022 16:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413F1CCA47C
+	for <linux-security-module@archiver.kernel.org>; Sun, 26 Jun 2022 22:34:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231128AbiFZQNw (ORCPT
+        id S229519AbiFZWeq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 26 Jun 2022 12:13:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37402 "EHLO
+        Sun, 26 Jun 2022 18:34:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230413AbiFZQNv (ORCPT
+        with ESMTP id S229468AbiFZWeo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 26 Jun 2022 12:13:51 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E803E6466;
-        Sun, 26 Jun 2022 09:13:50 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25QFBMY8016249;
-        Sun, 26 Jun 2022 16:13:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=9bOOwg7KyFjJW5FLMZFmjAf3RG25Cs8657ZdDmoMgfM=;
- b=E7n2+R7ISaDMexWYNkaLx+pfmgGes7KY1L4ZW/gAHHanPKGVenCP+pb5t12y7hqMr6cw
- FMukv/cidUlStaGqo8Pp4rH+Jc4SjsdjIF95NoPaxBfyfZiKJSAvLQw5PvApjuudA+FT
- FmxiLLIsdJ5BFbRgza03w+GgN4aVJaNC08KLEWM9T27cgmeEImwQReR2AmnoKlQI3U6G
- vQ1o4fds7ioGLFawQe2R75/q3vvX8jK3CZX/3CesMybgvMd1WWMK4dCmXhXI8qAuXr0O
- LBJCwRMvSayqTWR1Yyw6PHL50S1X/fnfeO1IJc4PsayUL22CH75AovE09KIj35gvvPqr 8A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gxseph276-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 26 Jun 2022 16:13:22 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 25QGDMLM011401;
-        Sun, 26 Jun 2022 16:13:22 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gxseph26q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 26 Jun 2022 16:13:21 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25QG6ot2016412;
-        Sun, 26 Jun 2022 16:13:19 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 3gwsmj1ra1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 26 Jun 2022 16:13:19 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25QGDHdo23331232
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 26 Jun 2022 16:13:17 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 146FCA4051;
-        Sun, 26 Jun 2022 16:13:17 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A5B87A404D;
-        Sun, 26 Jun 2022 16:13:14 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.95.64])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 26 Jun 2022 16:13:14 +0000 (GMT)
-Message-ID: <38fd40d03b030f9a60afe4445ddc0daca220e449.camel@linux.ibm.com>
-Subject: Re: [PATCH -next] evm: Use IS_ENABLED to initialize .enabled
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     xiujianfeng <xiujianfeng@huawei.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org,
+        Sun, 26 Jun 2022 18:34:44 -0400
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3DED2DDE;
+        Sun, 26 Jun 2022 15:34:42 -0700 (PDT)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 2E4BF186C; Sun, 26 Jun 2022 17:34:41 -0500 (CDT)
+Date:   Sun, 26 Jun 2022 17:34:41 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>
+Cc:     selinux@vger.kernel.org, Serge Hallyn <serge@hallyn.com>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sun, 26 Jun 2022 12:13:13 -0400
-In-Reply-To: <YrJ7x3kCTy3ZutZ/@sol.localdomain>
-References: <20220606101042.89638-1-xiujianfeng@huawei.com>
-         <64511312-df94-c40b-689c-5fc3823e91f5@pengutronix.de>
-         <812c4ee9-56f7-900a-df48-f3ca3e15542f@huawei.com>
-         <5d0c291bb4a674a6733a18f9eb67cf40193732f4.camel@linux.ibm.com>
-         <YrJ7x3kCTy3ZutZ/@sol.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
+Subject: Re: [PATCH v3 1/8] capability: add any wrapper to test for multiple
+ caps with exactly one audit message
+Message-ID: <20220626223441.GA30137@mail.hallyn.com>
+References: <20220502160030.131168-8-cgzones@googlemail.com>
+ <20220615152623.311223-1-cgzones@googlemail.com>
+ <20220615152623.311223-8-cgzones@googlemail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PAS0ahUU4Eu5nM8Lj6csyxE8Ll0pSe7L
-X-Proofpoint-ORIG-GUID: CPqnM25LhCrOzG4V4dzu6NrFY7yHn6TU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-06-26_04,2022-06-24_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 spamscore=0 adultscore=0 malwarescore=0 bulkscore=0
- impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2204290000 definitions=main-2206260067
+In-Reply-To: <20220615152623.311223-8-cgzones@googlemail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-06-21 at 19:17 -0700, Eric Biggers wrote:
-> On Tue, Jun 21, 2022 at 10:03:39AM -0400, Mimi Zohar wrote:
-> > On Tue, 2022-06-21 at 18:58 +0800, xiujianfeng wrote:
-> > > Hi, Ahmad
-> > > 
-> > > åœ¨ 2022/6/7 14:06, Ahmad Fatoum å†™é“:
-> > > > On 06.06.22 12:10, Xiu Jianfeng wrote:
-> > > >> Use IS_ENABLED(CONFIG_XXX) instead of #ifdef/#endif statements to
-> > > >> initialize .enabled, minor simplicity improvement.
-> > 
-> > The difference between using ifdef's and IS_ENABLED is when the
-> > decision is made - build time, run time.   Please update the patch
-> > description providing an explanation for needing to make the decision
-> > at run time.
-> > 
-> > thanks,
+On Wed, Jun 15, 2022 at 05:26:23PM +0200, Christian Göttsche wrote:
+> Add the interfaces `capable_any()` and `ns_capable_any()` as an
+> alternative to multiple `capable()`/`ns_capable()` calls, like
+> `capable_any(CAP_SYS_NICE, CAP_SYS_ADMIN)` instead of
+> `capable(CAP_SYS_NICE) || capable(CAP_SYS_ADMIN)`.
 > 
-> IS_ENABLED() is a compile time constant.  So the patch looks fine to me.
+> `capable_any()`/`ns_capable_any()` will in particular generate exactly
+> one audit message, either for the left most capability in effect or, if
+> the task has none, the first one.
+> 
+> This is especially helpful with regard to SELinux, where each audit
+> message about a not allowed capability will create an AVC denial.
+> Using this function with the least invasive capability as left most
+> argument (e.g. CAP_SYS_NICE before CAP_SYS_ADMIN) enables policy writers
+> to only allow the least invasive one and SELinux domains pass this check
+> with only capability:sys_nice or capability:sys_admin allowed without
+> any AVC denial message.
+> 
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 
-Thanks, Eric, for the clarification.
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-As LSMs are only builtin, why the need for using IS_ENABLED as opposed
-to IS_BUILTIN?
-
-#define IS_ENABLED(option) __or(IS_BUILTIN(option), IS_MODULE(option))
-
-thanks,
-
-Mimi
-
+> 
+> ---
+> v3:
+>    - rename to capable_any()
+>    - fix typo in function documentation
+>    - add ns_capable_any()
+> v2:
+>    avoid varargs and fix to two capabilities; capable_or3() can be added
+>    later if needed
+> ---
+>  include/linux/capability.h | 10 +++++++
+>  kernel/capability.c        | 53 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 63 insertions(+)
+> 
+> diff --git a/include/linux/capability.h b/include/linux/capability.h
+> index 65efb74c3585..7316d5339a6e 100644
+> --- a/include/linux/capability.h
+> +++ b/include/linux/capability.h
+> @@ -208,7 +208,9 @@ extern bool has_capability_noaudit(struct task_struct *t, int cap);
+>  extern bool has_ns_capability_noaudit(struct task_struct *t,
+>  				      struct user_namespace *ns, int cap);
+>  extern bool capable(int cap);
+> +extern bool capable_any(int cap1, int cap2);
+>  extern bool ns_capable(struct user_namespace *ns, int cap);
+> +extern bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2);
+>  extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
+>  extern bool ns_capable_setid(struct user_namespace *ns, int cap);
+>  #else
+> @@ -234,10 +236,18 @@ static inline bool capable(int cap)
+>  {
+>  	return true;
+>  }
+> +static inline bool capable_any(int cap1, int cap2)
+> +{
+> +	return true;
+> +}
+>  static inline bool ns_capable(struct user_namespace *ns, int cap)
+>  {
+>  	return true;
+>  }
+> +static inline bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2)
+> +{
+> +	return true;
+> +}
+>  static inline bool ns_capable_noaudit(struct user_namespace *ns, int cap)
+>  {
+>  	return true;
+> diff --git a/kernel/capability.c b/kernel/capability.c
+> index 765194f5d678..ab9b889c3f4d 100644
+> --- a/kernel/capability.c
+> +++ b/kernel/capability.c
+> @@ -435,6 +435,59 @@ bool ns_capable_setid(struct user_namespace *ns, int cap)
+>  }
+>  EXPORT_SYMBOL(ns_capable_setid);
+>  
+> +/**
+> + * ns_capable_any - Determine if the current task has one of two superior capabilities in effect
+> + * @ns:  The usernamespace we want the capability in
+> + * @cap1: The capabilities to be tested for first
+> + * @cap2: The capabilities to be tested for secondly
+> + *
+> + * Return true if the current task has at least one of the two given superior
+> + * capabilities currently available for use, false if not.
+> + *
+> + * In contrast to or'ing capable() this call will create exactly one audit
+> + * message, either for @cap1, if it is granted or both are not permitted,
+> + * or @cap2, if it is granted while the other one is not.
+> + *
+> + * The capabilities should be ordered from least to most invasive, i.e. CAP_SYS_ADMIN last.
+> + *
+> + * This sets PF_SUPERPRIV on the task if the capability is available on the
+> + * assumption that it's about to be used.
+> + */
+> +bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2)
+> +{
+> +	if (ns_capable_noaudit(ns, cap1))
+> +		return ns_capable(ns, cap1);
+> +
+> +	if (ns_capable_noaudit(ns, cap2))
+> +		return ns_capable(ns, cap2);
+> +
+> +	return ns_capable(ns, cap1);
+> +}
+> +EXPORT_SYMBOL(ns_capable_any);
+> +
+> +/**
+> + * capable_any - Determine if the current task has one of two superior capabilities in effect
+> + * @cap1: The capabilities to be tested for first
+> + * @cap2: The capabilities to be tested for secondly
+> + *
+> + * Return true if the current task has at least one of the two given superior
+> + * capabilities currently available for use, false if not.
+> + *
+> + * In contrast to or'ing capable() this call will create exactly one audit
+> + * message, either for @cap1, if it is granted or both are not permitted,
+> + * or @cap2, if it is granted while the other one is not.
+> + *
+> + * The capabilities should be ordered from least to most invasive, i.e. CAP_SYS_ADMIN last.
+> + *
+> + * This sets PF_SUPERPRIV on the task if the capability is available on the
+> + * assumption that it's about to be used.
+> + */
+> +bool capable_any(int cap1, int cap2)
+> +{
+> +	return ns_capable_any(&init_user_ns, cap1, cap2);
+> +}
+> +EXPORT_SYMBOL(capable_any);
+> +
+>  /**
+>   * capable - Determine if the current task has a superior capability in effect
+>   * @cap: The capability to be tested for
+> -- 
+> 2.36.1
