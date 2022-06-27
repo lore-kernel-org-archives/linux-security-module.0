@@ -2,139 +2,226 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 430A2C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jun 2022 15:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B47C5CCA473
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jun 2022 15:52:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238768AbiF0Pfw (ORCPT
+        id S238710AbiF0PwB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jun 2022 11:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58090 "EHLO
+        Mon, 27 Jun 2022 11:52:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238450AbiF0Pfk (ORCPT
+        with ESMTP id S238552AbiF0Pv6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jun 2022 11:35:40 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D815F1A82B
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jun 2022 08:35:37 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id a15so9334193pfv.13
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jun 2022 08:35:37 -0700 (PDT)
+        Mon, 27 Jun 2022 11:51:58 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE645193E2
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Jun 2022 08:51:51 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id q11so13351765oih.10
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Jun 2022 08:51:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0M1pQcOKied9vqnWW/vxW+YZhV9nZDUGj0eSUFDJbwg=;
-        b=Cv61qlgrIl9Hv9WvUrykcJQWqfl6bT/dGI9EfXEXeQMObQcjF8qFPkJ4lxEIMKZQM+
-         Tdw34lCxt44f5k2/Z7ulr6Lvy6lknHiv+9DdCmdMfimmwemlRrIpnNtY3WNnOhzWLM56
-         9ocMgnjpRORfrpUiHF2ZQh+9fKbVOvnIBjg5s=
+        d=cloudflare.com; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ACMt+3gd0WeWEO4zAvKHfGmdHNjeEgmzzRorzEO8OBw=;
+        b=S7vVltqVFyPWDgkx3urxeq1fSYIanMWU4w04IcHnhHvCGKwOiPMCcyAoZ8OFeW4aH1
+         B7o+UTCQwppWEWXf4LHepEqnFLG4WccrbFGj0fRvklp8EppWd/sYMtRZjCDcmK0cjs7H
+         zItnJRRbfNHiPy5vEgpYSUuVqJ6exRelij9i4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0M1pQcOKied9vqnWW/vxW+YZhV9nZDUGj0eSUFDJbwg=;
-        b=P+hN8w/+/m7xSmwbqs5/zxUfRgv1TbgXsWFnQXCxjgpz+l2F/actu7CBwYkFMrPTt5
-         e6HmMkASiHSfVk8pF7WKnpONzdLfba/AkhqTNJABzLCoSPdsbeCrsLf7DpFeL64syS2l
-         Z+SmqTzZJJiWHyeepVorYvfXUciZK3RNDg+fgBtOrVrLBan+S4DQIzTqSYU9jWDo1iD7
-         iYagCxnnA1/vYLahEF+OLroctBpZId751eX6rHQs6N380FpR97KjGVe12Qrxt69CHcJW
-         RLAF5g1Q8WbHLPyUvFhfn+GNCDhnPr1K6GH8A8wqfNE8DpRSn/0hx+ccBj8gNR4u5BvM
-         P14w==
-X-Gm-Message-State: AJIora8y+g3HBKmAxggdG0EWnit5KN6yXFfJrGUlB4vVblD/FZ2svYL/
-        fEDxrrc0exrdXXYd4ssyO52eFg==
-X-Google-Smtp-Source: AGRyM1tmA32fcPl+dNPL9uVWTM9M7VWXEcrf6Blr3EM8NH842MbiJviT40bZbAwSKyWKFIITMupuYg==
-X-Received: by 2002:a63:8f56:0:b0:40c:9877:9f51 with SMTP id r22-20020a638f56000000b0040c98779f51mr13147028pgn.206.1656344137416;
-        Mon, 27 Jun 2022 08:35:37 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:f31c:687c:3a61:62c5])
-        by smtp.gmail.com with UTF8SMTPSA id cd21-20020a056a00421500b0051b32c2a5a7sm7434309pfb.138.2022.06.27.08.35.36
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ACMt+3gd0WeWEO4zAvKHfGmdHNjeEgmzzRorzEO8OBw=;
+        b=fDoiTVXLrYhFBGpG1NgYNJC7elWSgws6DiaISX5eqBqsWaibDocywcLqe3AsA8jdVl
+         f9JFlSBzTIMABV+PvWP8AjwekMILdma8qlOsbMonXL25xwcrMkgdFI0sqpJYnKGvsbcw
+         /w0mMmd1oTl+hYkt+YgLfD5rYd+xqPA4sP1nJNHYbtxdSusIFWErOdZHTbRuSzJgezgW
+         PQGlay55Mar52S0RHxo2y8OafP4rG4D7nYKDKJ0mHB/H+QCZDJ6/e6e5wsCGiOezwW3f
+         RU/AhK/6LcOgh5dG5XjUvA3KAEebnW/9QGxV7fgXpVBRdbiKdaKAJSi76moJ0hsITWhE
+         a3sg==
+X-Gm-Message-State: AJIora9ObqIqMYfIpmD2dH7rZOoJrI/W7ybqR7NynCAdptorA1Eb+BEg
+        Wk6jWmQDbMzc5zzL+EYbxYnGgA==
+X-Google-Smtp-Source: AGRyM1uSg9BhGhCGEiFsNutZIatJeC/ZQ2GnuNnGjCpkQC5Pjilq3I5ke+gQ5cagxZwppjlJtdZF9g==
+X-Received: by 2002:aca:170b:0:b0:335:6ee0:cd2a with SMTP id j11-20020aca170b000000b003356ee0cd2amr4067799oii.198.1656345110972;
+        Mon, 27 Jun 2022 08:51:50 -0700 (PDT)
+Received: from [192.168.0.41] ([184.4.90.121])
+        by smtp.gmail.com with ESMTPSA id i1-20020a4addc1000000b0041b768b58basm6085091oov.22.2022.06.27.08.51.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jun 2022 08:35:37 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org, linux-raid@vger.kernel.org,
-        Song Liu <song@kernel.org>, Milan Broz <gmazyland@gmail.com>,
-        dm-devel@redhat.com, Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v7 3/3] dm: verity-loadpin: Use CONFIG_SECURITY_LOADPIN_VERITY for conditional compilation
-Date:   Mon, 27 Jun 2022 08:35:26 -0700
-Message-Id: <20220627083512.v7.3.I5aca2dcc3b06de4bf53696cd21329dce8272b8aa@changeid>
-X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
-In-Reply-To: <20220627153526.3750341-1-mka@chromium.org>
-References: <20220627153526.3750341-1-mka@chromium.org>
+        Mon, 27 Jun 2022 08:51:50 -0700 (PDT)
+Message-ID: <b7c23d54-d196-98d1-8187-605f6d4dca4d@cloudflare.com>
+Date:   Mon, 27 Jun 2022 10:51:48 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 0/2] Introduce security_create_user_ns()
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+References: <20220621233939.993579-1-fred@cloudflare.com>
+ <ce1653b1-feb0-1a99-0e97-8dfb289eeb79@schaufler-ca.com>
+ <b72c889a-4a50-3330-baae-3bbf065e7187@cloudflare.com>
+ <CAHC9VhSTkEMT90Tk+=iTyp3npWEm+3imrkFVX2qb=XsOPp9F=A@mail.gmail.com>
+ <20220627121137.cnmctlxxtcgzwrws@wittgenstein>
+From:   Frederick Lawler <fred@cloudflare.com>
+In-Reply-To: <20220627121137.cnmctlxxtcgzwrws@wittgenstein>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The verity glue for LoadPin is only needed when CONFIG_SECURITY_LOADPIN_VERITY
-is set, use this option for conditional compilation instead of the combo of
-CONFIG_DM_VERITY and CONFIG_SECURITY_LOADPIN.
+On 6/27/22 7:11 AM, Christian Brauner wrote:
+> On Thu, Jun 23, 2022 at 11:21:37PM -0400, Paul Moore wrote:
+>> On Wed, Jun 22, 2022 at 10:24 AM Frederick Lawler <fred@cloudflare.com> wrote:
+>>> On 6/21/22 7:19 PM, Casey Schaufler wrote:
+>>>> On 6/21/2022 4:39 PM, Frederick Lawler wrote:
+>>>>> While creating a LSM BPF MAC policy to block user namespace creation, we
+>>>>> used the LSM cred_prepare hook because that is the closest hook to
+>>>>> prevent
+>>>>> a call to create_user_ns().
+>>>>>
+>>>>> The calls look something like this:
+>>>>>
+>>>>>       cred = prepare_creds()
+>>>>>           security_prepare_creds()
+>>>>>               call_int_hook(cred_prepare, ...
+>>>>>       if (cred)
+>>>>>           create_user_ns(cred)
+>>>>>
+>>>>> We noticed that error codes were not propagated from this hook and
+>>>>> introduced a patch [1] to propagate those errors.
+>>>>>
+>>>>> The discussion notes that security_prepare_creds()
+>>>>> is not appropriate for MAC policies, and instead the hook is
+>>>>> meant for LSM authors to prepare credentials for mutation. [2]
+>>>>>
+>>>>> Ultimately, we concluded that a better course of action is to introduce
+>>>>> a new security hook for LSM authors. [3]
+>>>>>
+>>>>> This patch set first introduces a new security_create_user_ns() function
+>>>>> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+>>>>
+>>>> Why restrict this hook to user namespaces? It seems that an LSM that
+>>>> chooses to preform controls on user namespaces may want to do so for
+>>>> network namespaces as well.
+>>>
+>>> IIRC, CLONE_NEWUSER is the only namespace flag that does not require
+>>> CAP_SYS_ADMIN. There is a security use case to prevent this namespace
+>>> from being created within an unprivileged environment. I'm not opposed
+>>> to a more generic hook, but I don't currently have a use case to block
+>>> any others. We can also say the same is true for the other namespaces:
+>>> add this generic security function to these too.
+>>>
+>>> I'm curious what others think about this too.
+>>
+>> While user namespaces are obviously one of the more significant
+>> namespaces from a security perspective, I do think it seems reasonable
+>> that the LSMs could benefit from additional namespace creation hooks.
+>> However, I don't think we need to do all of them at once, starting
+>> with a userns hook seems okay to me.
+>>
+>> I also think that using the same LSM hook as an access control point
+>> for all of the different namespaces would be a mistake.  At the very
+> 
+> Agreed. >
+>> least we would need to pass a flag or some form of context to the hook
+>> to indicate which new namespace(s) are being requested and I fear that
+>> is a problem waiting to happen.  That isn't to say someone couldn't
+>> mistakenly call the security_create_user_ns(...) from the mount
+>> namespace code, but I suspect that is much easier to identify as wrong
+>> than the equivalent security_create_ns(USER, ...).
+> 
+> Yeah, I think that's a pretty unlikely scenario.
+> 
+>>
+>> We also should acknowledge that while in most cases the current task's
+>> credentials are probably sufficient to make any LSM access control
+>> decisions around namespace creation, it's possible that for some
+>> namespaces we would need to pass additional, namespace specific info
+>> to the LSM.  With a shared LSM hook this could become rather awkward.
+> 
+> Agreed.
+> 
+>>
+>>>> Also, the hook seems backwards. You should
+>>>> decide if the creation of the namespace is allowed before you create it.
+>>>> Passing the new namespace to a function that checks to see creating a
+>>>> namespace is allowed doesn't make a lot off sense.
+>>>
+>>> I think having more context to a security hook is a good thing.
+>>
+>> This is one of the reasons why I usually like to see at least one LSM
+>> implementation to go along with every new/modified hook.  The
+>> implementation forces you to think about what information is necessary
+>> to perform a basic access control decision; sometimes it isn't always
+>> obvious until you have to write the access control :)
+> 
+> I spoke to Frederick at length during LSS and as I've been given to
+> understand there's a eBPF program that would immediately use this new
+> hook. Now I don't want to get into the whole "Is the eBPF LSM hook
+> infrastructure an LSM" but I think we can let this count as a legitimate
+> first user of this hook/code.
+> 
+>>
+>> [aside: If you would like to explore the SELinux implementation let me
+>> know, I'm happy to work with you on this.  I suspect Casey and the
+>> other LSM maintainers would also be willing to do the same for their
+>> LSMs.]
+>>
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Acked-by: Kees Cook <keescook@chromium.org>
----
+I can take a shot at making a SELinux implementation, but the question 
+becomes: is that for v2 or a later patch? I don't think the 
+implementation for SELinux would be too complicated (i.e. make a call to 
+avc_has_perm()?) but, testing and revisions might take a bit longer.
 
-Changes in v7:
-- none
+>> In this particular case I think the calling task's credentials are
+>> generally all that is needed.  You mention that the newly created
+> 
+> Agreed.
+> 
+>> namespace would be helpful, so I'll ask: what info in the new ns do
+>> you believe would be helpful in making an access decision about its
+>> creation?
+>>
 
-Changes in v6:
-- none
+In the other thread [1], there was mention of xattr mapping support. As 
+I understand Caseys response to this thread [2], that feature is no 
+longer requested for this hook.
 
-Changes in v5:
-- added 'Acked-by' tag from Kees
+Users can still access the older parent ns from the passed in cred, but 
+I was thinking of handling the transition point here. There's probably 
+more suitable hooks for that case.
 
-Changes in v4:
-- none
 
-Changes in v3:
-- none
+>> Once we've sorted that we can make a better decision about the hook
+>> placement, but right now my gut feeling is that we only need to pass
+>> the task's creds, and I think placing the hook right after the UID/GID
+>> mapping check (before the new ns allocation) would be the best spot.
+> 
 
-Changes in v2:
-- none
+I don't specifically have a use case to pass the new user namespace for 
+this hook at this time. I'll move the hook in v2.
 
- drivers/md/Makefile               | 7 +------
- include/linux/dm-verity-loadpin.h | 2 +-
- 2 files changed, 2 insertions(+), 7 deletions(-)
+> When I toyed with this I placed it directly into create_user_ns() and
+> only relied on the calling task's cred. I just created an eBPF program
+> that verifies the caller is capable(CAP_SYS_ADMIN). Since both the
+> chrooted and mapping check return EPERM it doesn't really matter that
+> much where exactly. Conceptually it makes more sense to me to place it
+> after the mapping check because then all the preliminaries are done.
+> 
 
-diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-index 71771901c823..a96441752ec7 100644
---- a/drivers/md/Makefile
-+++ b/drivers/md/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_DM_LOG_WRITES)	+= dm-log-writes.o
- obj-$(CONFIG_DM_INTEGRITY)	+= dm-integrity.o
- obj-$(CONFIG_DM_ZONED)		+= dm-zoned.o
- obj-$(CONFIG_DM_WRITECACHE)	+= dm-writecache.o
-+obj-$(CONFIG_SECURITY_LOADPIN_VERITY)	+= dm-verity-loadpin.o
- 
- ifeq ($(CONFIG_DM_INIT),y)
- dm-mod-objs			+= dm-init.o
-@@ -108,12 +109,6 @@ ifeq ($(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG),y)
- dm-verity-objs			+= dm-verity-verify-sig.o
- endif
- 
--ifeq ($(CONFIG_DM_VERITY),y)
--ifeq ($(CONFIG_SECURITY_LOADPIN),y)
--dm-verity-objs			+= dm-verity-loadpin.o
--endif
--endif
--
- ifeq ($(CONFIG_DM_AUDIT),y)
- dm-mod-objs			+= dm-audit.o
- endif
-diff --git a/include/linux/dm-verity-loadpin.h b/include/linux/dm-verity-loadpin.h
-index fb695ecaa5d5..552b817ab102 100644
---- a/include/linux/dm-verity-loadpin.h
-+++ b/include/linux/dm-verity-loadpin.h
-@@ -15,7 +15,7 @@ struct dm_verity_loadpin_trusted_root_digest {
- 	u8 data[];
- };
- 
--#if IS_ENABLED(CONFIG_SECURITY_LOADPIN) && IS_BUILTIN(CONFIG_DM_VERITY)
-+#if IS_ENABLED(CONFIG_SECURITY_LOADPIN_VERITY)
- bool dm_verity_loadpin_is_bdev_trusted(struct block_device *bdev);
- #else
- static inline bool dm_verity_loadpin_is_bdev_trusted(struct block_device *bdev)
--- 
-2.37.0.rc0.161.g10f37bed90-goog
+Agreed.
+
+> Christian
+
+Links:
+1. 
+https://lore.kernel.org/all/4ae12ee6-959c-51cb-9d7a-54adb3a0ea53@schaufler-ca.com/
+2. 
+https://lore.kernel.org/all/4b62f0c5-9f3c-e0bc-d836-1b7cdea429da@schaufler-ca.com/
 
