@@ -2,61 +2,61 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D11CCA480
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jun 2022 21:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C57C43334
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jun 2022 22:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242181AbiF0V7G (ORCPT
+        id S234577AbiF0WNU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jun 2022 17:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60896 "EHLO
+        Mon, 27 Jun 2022 18:13:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242062AbiF0V5j (ORCPT
+        with ESMTP id S241961AbiF0WNT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jun 2022 17:57:39 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02FF8DF2C
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jun 2022 14:56:27 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id i67-20020a1c3b46000000b003a03567d5e9so6649866wma.1
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jun 2022 14:56:26 -0700 (PDT)
+        Mon, 27 Jun 2022 18:13:19 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31BAA60DC
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Jun 2022 15:13:17 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id o16-20020a05600c379000b003a02eaea815so5448343wmr.0
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Jun 2022 15:13:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=j50Rgb0UoT37KieYstNf0pUQuA+Xdht7tbivSbvQRIg=;
-        b=kNgPnT8A46jB1Z772VOHfNfUU46YYFHUHF/Wey9vzvPcHaO0Z9jD3j8LZU4e+Jisub
-         vK8hmqhdWiWSQ95Hdo+ix2mQyzOA9jkBaCgbfsbHnKq4JVo5GMwPJ1442wBQ/mileWbf
-         9mYo+EvdIX7WeqBf5wylyUrv9l9eXYUiBdLrzceiZN0BT948fspmog/Yv6bFC/nFQbvW
-         ryjWzOewkiJCeqwMKkHdd1a/SWhpBv3PHqKe8slaoOS7Z+rGEeW1344IYDCm9U2Iotk6
-         BWwtOsUXNjiGMBup++IkLKdpS5mkqL0+RTt6ngzpFa78W4V62n9dsq7yCP+6Kd6lWZq9
-         dIog==
+        bh=S6bwOwkX5Z4SGSfVMm1UXqbEyn0vLvM5TyBgzsUl/Fc=;
+        b=WIN/GT25JMWQXYpou5yhbufZOZ52jehFNogFtuMhPrGblHj3rgciMNCiLXwB6buaTn
+         PeuLPWBx8Z3cZ1u2Aj7Jvmkt77i0llP2A/+n7Lgw4VWMxoSZetHhy1RPuHxS0qWMHlxs
+         VdjP86ZaE0PknIxnbZSM6dqtHVHfZHc9o5qGGj3VwMqvkf/JpVHW6Efnxgb04JSwPH7r
+         PLFTqTtQG6Ft9JiFXcInmfitBMZ7kHX84lvwNy43yHqsWqgXRJagzDu5rRnkhwE5LlIh
+         In1mPJP1AAK07noCszmXhRFUnacTse7du2Ka9gmKHkMBcFr1UN6ITpzQ+3Rzqh8BsNs1
+         kxng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=j50Rgb0UoT37KieYstNf0pUQuA+Xdht7tbivSbvQRIg=;
-        b=Ur3PabZusm+2uuQf+RoGxyX8SmZ7Uw4Ytc7DB5O6viAbNqrVyK+cIdtjYxpsP6C8Fc
-         ldTWH37K3WKFnjVJIc1/KbXko3FD4Eze16cmJewaSLpFl8AQqFOXIN08kv6qnYTfIvUV
-         t7cX97JnIfHqVDFkJjDfSKd7Ad2wdQ+DtC4Vn5wxXdgs1rec5zs6P6en/5OL9XImpbSJ
-         zhJrijpGCypQt0JfXg3udn3VlOZ3Eqog9q3s2ITSc83B4oVJHbzJV51StMR1vTqp3CMc
-         T5JHSXhWhzB8LEZdxp+HuQ7BTDH6GHD2a/ueWK3FVNauG2vvgbiasQX22ielE9mu+wMa
-         lW4g==
-X-Gm-Message-State: AJIora9GfA8J+2uDPRSEmrQYFpNCS8mhSPLRj8vj67YB3tUqedsZIGm3
-        EN9rFIFoaTLozflUbe496M5zmGXSKv79XIxGIXkL
-X-Google-Smtp-Source: AGRyM1ttvt1ApkpTPqcwbne7qYG4tYVamXmU4jEvQ3apNg8AHj9gs6Ech4xvdOAfdmWgLjNkk6YvbCCDCzTzaEHUnFE=
+        bh=S6bwOwkX5Z4SGSfVMm1UXqbEyn0vLvM5TyBgzsUl/Fc=;
+        b=lDy1SNz9rcn4g64Cbtxxy1EOn+gxHz3DbWb+Gpo/LijrXuqycirxdyf2rLEukzYWiM
+         2rtbQOuSt5Hs/T0ZCgp2f9eitk9XvZ0L5RZ58YxJhup4IiySk4uOt+UZHwbxnrgm9XGN
+         ZLE+mFrY0b7P2aEhcMvgK5Uc/ZIBehrLD6QX41JbQ6xTFUDBCXTtqroFWIZk9+jrbUEz
+         SRWcgvidJW0JUyVZ7+rkq9L8EptnxohRjAhXSypxHP9/aoLKO0Zug/F31HE/sFit+XNA
+         HZUmF4CbR+HJ3gb2/8feThOJymsk0hpSDzEWnl/BiKMQycclnSjWPuVjCekKSEJOQYfg
+         FXPg==
+X-Gm-Message-State: AJIora8Oby49KSx00ewY8YSVJ945yt0LRV8elxC/sDe+vbNaudAd22BX
+        Z7GVSSwVMpLlLD1gOaQeYdX0Ut4OVmpMOdEfeqvj
+X-Google-Smtp-Source: AGRyM1tKXfVOvMGC2IdFJFP01pHIVz3vf1EXnyA6Ayo7/R555UfIdQ3+MDb9Um1+kx/tE/qpCl0+OITpEWAnPwUqQuM=
 X-Received: by 2002:a05:600c:2246:b0:3a0:4d14:e9d5 with SMTP id
- a6-20020a05600c224600b003a04d14e9d5mr5247909wmm.70.1656366985523; Mon, 27 Jun
- 2022 14:56:25 -0700 (PDT)
+ a6-20020a05600c224600b003a04d14e9d5mr5318298wmm.70.1656367995692; Mon, 27 Jun
+ 2022 15:13:15 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220621233939.993579-1-fred@cloudflare.com> <ce1653b1-feb0-1a99-0e97-8dfb289eeb79@schaufler-ca.com>
  <b72c889a-4a50-3330-baae-3bbf065e7187@cloudflare.com> <CAHC9VhSTkEMT90Tk+=iTyp3npWEm+3imrkFVX2qb=XsOPp9F=A@mail.gmail.com>
- <20220627121137.cnmctlxxtcgzwrws@wittgenstein>
-In-Reply-To: <20220627121137.cnmctlxxtcgzwrws@wittgenstein>
+ <20220627121137.cnmctlxxtcgzwrws@wittgenstein> <b7c23d54-d196-98d1-8187-605f6d4dca4d@cloudflare.com>
+In-Reply-To: <b7c23d54-d196-98d1-8187-605f6d4dca4d@cloudflare.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 27 Jun 2022 17:56:14 -0400
-Message-ID: <CAHC9VhSQH9tE-NgU6Q-GLqSy7R6FVjSbp4Tc4gVTbjZCqAWy5Q@mail.gmail.com>
+Date:   Mon, 27 Jun 2022 18:13:04 -0400
+Message-ID: <CAHC9VhRfRq7wYx7mm-9AiepbULtbmih5pbfeunB823zt7_rrLg@mail.gmail.com>
 Subject: Re: [PATCH 0/2] Introduce security_create_user_ns()
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Frederick Lawler <fred@cloudflare.com>,
+To:     Frederick Lawler <fred@cloudflare.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>, kpsingh@kernel.org,
         revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
         daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
@@ -68,31 +68,146 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 27, 2022 at 8:11 AM Christian Brauner <brauner@kernel.org> wrote:
-> On Thu, Jun 23, 2022 at 11:21:37PM -0400, Paul Moore wrote:
+On Mon, Jun 27, 2022 at 11:51 AM Frederick Lawler <fred@cloudflare.com> wrote:
+> On 6/27/22 7:11 AM, Christian Brauner wrote:
+> > On Thu, Jun 23, 2022 at 11:21:37PM -0400, Paul Moore wrote:
+> >> On Wed, Jun 22, 2022 at 10:24 AM Frederick Lawler <fred@cloudflare.com> wrote:
+> >>> On 6/21/22 7:19 PM, Casey Schaufler wrote:
+> >>>> On 6/21/2022 4:39 PM, Frederick Lawler wrote:
 
 ...
 
-> > This is one of the reasons why I usually like to see at least one LSM
-> > implementation to go along with every new/modified hook.  The
-> > implementation forces you to think about what information is necessary
-> > to perform a basic access control decision; sometimes it isn't always
-> > obvious until you have to write the access control :)
+> >>>>> While creating a LSM BPF MAC policy to block user namespace creation, we
+> >>>>> used the LSM cred_prepare hook because that is the closest hook to
+> >>>>> prevent
+> >>>>> a call to create_user_ns().
+> >>>>>
+> >>>>> The calls look something like this:
+> >>>>>
+> >>>>>       cred = prepare_creds()
+> >>>>>           security_prepare_creds()
+> >>>>>               call_int_hook(cred_prepare, ...
+> >>>>>       if (cred)
+> >>>>>           create_user_ns(cred)
+> >>>>>
+> >>>>> We noticed that error codes were not propagated from this hook and
+> >>>>> introduced a patch [1] to propagate those errors.
+> >>>>>
+> >>>>> The discussion notes that security_prepare_creds()
+> >>>>> is not appropriate for MAC policies, and instead the hook is
+> >>>>> meant for LSM authors to prepare credentials for mutation. [2]
+> >>>>>
+> >>>>> Ultimately, we concluded that a better course of action is to introduce
+> >>>>> a new security hook for LSM authors. [3]
+> >>>>>
+> >>>>> This patch set first introduces a new security_create_user_ns() function
+> >>>>> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+> >>>>
+> >>>> Why restrict this hook to user namespaces? It seems that an LSM that
+> >>>> chooses to preform controls on user namespaces may want to do so for
+> >>>> network namespaces as well.
+> >>>
+> >>> IIRC, CLONE_NEWUSER is the only namespace flag that does not require
+> >>> CAP_SYS_ADMIN. There is a security use case to prevent this namespace
+> >>> from being created within an unprivileged environment. I'm not opposed
+> >>> to a more generic hook, but I don't currently have a use case to block
+> >>> any others. We can also say the same is true for the other namespaces:
+> >>> add this generic security function to these too.
+> >>>
+> >>> I'm curious what others think about this too.
+> >>
+> >> While user namespaces are obviously one of the more significant
+> >> namespaces from a security perspective, I do think it seems reasonable
+> >> that the LSMs could benefit from additional namespace creation hooks.
+> >> However, I don't think we need to do all of them at once, starting
+> >> with a userns hook seems okay to me.
+> >>
+> >> I also think that using the same LSM hook as an access control point
+> >> for all of the different namespaces would be a mistake.  At the very
+> >
+> > Agreed. >
+> >> least we would need to pass a flag or some form of context to the hook
+> >> to indicate which new namespace(s) are being requested and I fear that
+> >> is a problem waiting to happen.  That isn't to say someone couldn't
+> >> mistakenly call the security_create_user_ns(...) from the mount
+> >> namespace code, but I suspect that is much easier to identify as wrong
+> >> than the equivalent security_create_ns(USER, ...).
+> >
+> > Yeah, I think that's a pretty unlikely scenario.
+> >
+> >>
+> >> We also should acknowledge that while in most cases the current task's
+> >> credentials are probably sufficient to make any LSM access control
+> >> decisions around namespace creation, it's possible that for some
+> >> namespaces we would need to pass additional, namespace specific info
+> >> to the LSM.  With a shared LSM hook this could become rather awkward.
+> >
+> > Agreed.
+> >
+> >>
+> >>>> Also, the hook seems backwards. You should
+> >>>> decide if the creation of the namespace is allowed before you create it.
+> >>>> Passing the new namespace to a function that checks to see creating a
+> >>>> namespace is allowed doesn't make a lot off sense.
+> >>>
+> >>> I think having more context to a security hook is a good thing.
+> >>
+> >> This is one of the reasons why I usually like to see at least one LSM
+> >> implementation to go along with every new/modified hook.  The
+> >> implementation forces you to think about what information is necessary
+> >> to perform a basic access control decision; sometimes it isn't always
+> >> obvious until you have to write the access control :)
+> >
+> > I spoke to Frederick at length during LSS and as I've been given to
+> > understand there's a eBPF program that would immediately use this new
+> > hook. Now I don't want to get into the whole "Is the eBPF LSM hook
+> > infrastructure an LSM" but I think we can let this count as a legitimate
+> > first user of this hook/code.
+> >
+> >>
+> >> [aside: If you would like to explore the SELinux implementation let me
+> >> know, I'm happy to work with you on this.  I suspect Casey and the
+> >> other LSM maintainers would also be willing to do the same for their
+> >> LSMs.]
+> >>
 >
-> I spoke to Frederick at length during LSS and as I've been given to
-> understand there's a eBPF program that would immediately use this new
-> hook. Now I don't want to get into the whole "Is the eBPF LSM hook
-> infrastructure an LSM" but I think we can let this count as a legitimate
-> first user of this hook/code.
+> I can take a shot at making a SELinux implementation, but the question
+> becomes: is that for v2 or a later patch? I don't think the
+> implementation for SELinux would be too complicated (i.e. make a call to
+> avc_has_perm()?) but, testing and revisions might take a bit longer.
 
-Yes, for the most part I don't really worry about the "is a BPF LSM a
-LSM?" question, it's generally not important for most discussions.
-However, there is an issue unique to the BPF LSMs which I think is
-relevant here: there is no hook implementation code living under
-security/.  While I talked about a hook implementation being helpful
-to verify the hook prototype, it is also helpful in providing an
-in-tree example for other LSMs; unfortunately we don't get that same
-example value when the initial hook implementation is a BPF LSM.
+Isn't that the truth, writing code is easy(ish); testing it well is
+the hard part ;)  Joking aside, I would suggest starting with v2.
+
+As an example, the code below might be a good place to start - we would need to
+discuss this on the SELinux list as there are some design decisions
+I'm glossing over[1].
+
+  int selinux_userns_create(struct cred *new)
+  {
+    u32 sid = current_sid();
+
+    return avc_has_perm(&selinux_state, sid, sid,
+                        SECCLASS_NAMESPACE,
+                        NAMESPACE__USERNS_CREATE);
+  }
+
+You would also need to add the "namespace" class and the
+"userns_create" permission in security/selinux/include/classmap.h.
+
+  const struct security_class_mapping secclass_map[] = {
+    ...
+    { "namespace",
+      { "userns_create", NULL } },
+  }
+
+As I mentioned earlier, if you find yourself getting stuck, or needing
+some help, please feel free to send mail.
+
+[1] This code snippet uses a new object class and permission for this
+(namespace:userns_create).  I made that choice as object classes are
+limited to 32 unique permissions and I expect the number of namespaces
+to continue to grow.
 
 -- 
 paul-moore.com
