@@ -2,60 +2,60 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2195CCA479
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 08:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48C2CCA479
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 11:25:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245476AbiF1Ipw (ORCPT
+        id S244677AbiF1LZL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jun 2022 04:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41502 "EHLO
+        Tue, 28 Jun 2022 07:25:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343939AbiF1Ipu (ORCPT
+        with ESMTP id S239678AbiF1LZK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jun 2022 04:45:50 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DC742DD59;
-        Tue, 28 Jun 2022 01:45:23 -0700 (PDT)
+        Tue, 28 Jun 2022 07:25:10 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 193DA2CDF0;
+        Tue, 28 Jun 2022 04:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656405923; x=1687941923;
+  t=1656415508; x=1687951508;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=bo/E4btYumeo3V4vdBSaofslPgRUpYOLcJoSzJYvuOw=;
-  b=mO+UnOxjweyJOku9mOjjaQz5ktbSwuUX3XYnQskfurZBDaZ63xHXPZzb
-   A0GohAg28UJt3VmDOEf6NfdVg9slENEyKcnKRSQ0W2tAaBXZPN6tb06qZ
-   lWd6Fr3APjb8ICiuBxELxW1ryk5W6LGVAQBb8QfUt2hOMcDvPkWe1UvaT
-   yPZVx6rdaEpGyYxIncspuX1noAMwGhnVoKHHyVvv8TRGfVvJcO8FFmcqo
-   ELTHCvX4Kx5NBrFkY4JK+G8ELzhOtORgEURR+Qbx1UFl85+4gey7oEURZ
-   Hl2r3xVZ2KAA/PZPgQ+K4L75/nNPryXNBlbA4HTA049iRNcV+dinv5Qox
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10391"; a="270426298"
+  bh=cV9gLh7/ksNfxbUkADTMFCNP+M9eg5dvTgDTdjYN6QQ=;
+  b=nNKliq9m5ulO4VeKDs8Y8B+v6E9KznAj40C0ZwSmGFUa0REU757wjyBT
+   9Uskplw3TRTdAmHicqmR5P5Llq/gNatfTM4/xvM+NRuPB613Cg7OVRqbp
+   VHWEpp6uW0C3pxFfwH6sX9OvBwg85av/PzQtRac9UPvNGg2GAaK1Ek0E0
+   T2K/5YwDg+ViBNvd8+cogSodQDfYI2VQgm8OR22QgW7CThkO2S6XKnCzb
+   jpNKEcwWz2M9iNZtixhnmvUmfU4AsDu/8b0Zyk9ZUSv5OcdyKx4PXoneb
+   L/EB62hE5QjbSKBRHYoc7aoad7eA540EADFHtRlwKRHElo2i+t65EjAVn
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10391"; a="345710578"
 X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
-   d="scan'208";a="270426298"
+   d="scan'208";a="345710578"
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 01:45:23 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 04:25:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
-   d="scan'208";a="540417688"
+   d="scan'208";a="540458827"
 Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 28 Jun 2022 01:45:19 -0700
+  by orsmga003.jf.intel.com with ESMTP; 28 Jun 2022 04:25:03 -0700
 Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
         (envelope-from <lkp@intel.com>)
-        id 1o66qV-0009mQ-8m;
-        Tue, 28 Jun 2022 08:45:19 +0000
-Date:   Tue, 28 Jun 2022 16:44:19 +0800
+        id 1o69L4-0009xs-QF;
+        Tue, 28 Jun 2022 11:25:02 +0000
+Date:   Tue, 28 Jun 2022 19:24:19 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Casey Schaufler <casey@schaufler-ca.com>,
         casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, casey@schaufler-ca.com,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        casey@schaufler-ca.com, linux-audit@redhat.com,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v37 18/33] LSM: Use lsmcontext in
  security_dentry_init_security
-Message-ID: <202206281633.LuFVQ9tq-lkp@intel.com>
+Message-ID: <202206281923.PWn0D5ak-lkp@intel.com>
 References: <20220628005611.13106-19-casey@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -69,7 +69,7 @@ Hi Casey,
 I love your patch! Yet something to improve:
 
 [auto build test ERROR on pcmoore-audit/next]
-[also build test ERROR on pcmoore-selinux/next linus/master v5.19-rc4 next-20220627]
+[also build test ERROR on pcmoore-selinux/next linus/master v5.19-rc4 next-20220628]
 [cannot apply to jmorris-security/next-testing]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
@@ -77,35 +77,35 @@ https://git-scm.com/docs/git-format-patch]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20220628-095614
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git next
-config: x86_64-randconfig-r022-20220627 (https://download.01.org/0day-ci/archive/20220628/202206281633.LuFVQ9tq-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-3) 11.3.0
+config: x86_64-randconfig-a002-20220627 (https://download.01.org/0day-ci/archive/20220628/202206281923.PWn0D5ak-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project df18167ac56d05f2ab55f9d874aee7ab6d5bc9a2)
 reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
         # https://github.com/intel-lab-lkp/linux/commit/c930a07cebde69363d3633fba8bd4cac46dd1520
         git remote add linux-review https://github.com/intel-lab-lkp/linux
         git fetch --no-tags linux-review Casey-Schaufler/integrity-disassociate-ima_filter_rule-from-security_audit_rule/20220628-095614
         git checkout c930a07cebde69363d3633fba8bd4cac46dd1520
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
 
 If you fix the issue, kindly add following tag where applicable
 Reported-by: kernel test robot <lkp@intel.com>
 
 All errors (new ones prefixed by >>):
 
-   security/security.c: In function 'security_setprocattr':
->> security/security.c:2319:45: error: 'lsm_slotlist' undeclared (first use in this function); did you mean 'lsm_slot'?
-    2319 |                         if (!strcmp(termed, lsm_slotlist[slot]->lsm)) {
-         |                                             ^~~~~~~~~~~~
-         |                                             lsm_slot
-   security/security.c:2319:45: note: each undeclared identifier is reported only once for each function it appears in
-   security/security.c:2285:21: warning: variable 'slotname' set but not used [-Wunused-but-set-variable]
-    2285 |         const char *slotname;
-         |                     ^~~~~~~~
-   At top level:
-   security/security.c:763:12: warning: 'lsm_sock_alloc' defined but not used [-Wunused-function]
-     763 | static int lsm_sock_alloc(struct sock *sock, gfp_t priority)
-         |            ^~~~~~~~~~~~~~
+>> security/security.c:2319:24: error: use of undeclared identifier 'lsm_slotlist'; did you mean 'lsm_slot'?
+                           if (!strcmp(termed, lsm_slotlist[slot]->lsm)) {
+                                               ^~~~~~~~~~~~
+                                               lsm_slot
+   security/security.c:489:12: note: 'lsm_slot' declared here
+   static int lsm_slot __lsm_ro_after_init;
+              ^
+>> security/security.c:2319:36: error: subscripted value is not an array, pointer, or vector
+                           if (!strcmp(termed, lsm_slotlist[slot]->lsm)) {
+                                               ~~~~~~~~~~~~^~~~~
+   2 errors generated.
 
 
 vim +2319 security/security.c
