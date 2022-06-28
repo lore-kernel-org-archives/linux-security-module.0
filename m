@@ -2,128 +2,148 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBC1C43334
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 22:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C5EC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 22:29:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229471AbiF1W26 (ORCPT
+        id S229459AbiF1W3s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jun 2022 18:28:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35130 "EHLO
+        Tue, 28 Jun 2022 18:29:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231256AbiF1W26 (ORCPT
+        with ESMTP id S229449AbiF1W3q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jun 2022 18:28:58 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5C35326F4;
-        Tue, 28 Jun 2022 15:28:55 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id ge10so28653459ejb.7;
-        Tue, 28 Jun 2022 15:28:55 -0700 (PDT)
+        Tue, 28 Jun 2022 18:29:46 -0400
+Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A732CC86
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 15:29:45 -0700 (PDT)
+Received: by mail-pg1-x54a.google.com with SMTP id 15-20020a63020f000000b003fca9ebc5cbso7283960pgc.22
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 15:29:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/p+VBJHi7cSugXFzDfkbh/toN1rTiOXrhRk0iFHxs+w=;
-        b=L2hTwYVED6MA41WA6gbymxFKubwf1toua3N2XTav+vNkwVUbHqK8CHQ0fVv5fb+UwO
-         q1Qk/cpgUb+fYyMIWMUC69Khuo0hfg4SgaiVhO7Pfccn/1WIiReGI0c3E0hVW+Ownq8x
-         q0TEbShWi8T8CVy4sF0TvXiJXWzo3zMYS2O9dpbGIAiyTnugcFT6AumFnS2sntayxLQH
-         09QzHQ5NEM1DGizZJzKs3gqw7rcnlxU5W/TKkHK+0ERh2i6RB+TNYjJmiaGb4ks/sQ7v
-         yZypTe3uO6d3tGeCOUf7MnHXCGwlLjDan4F1fq450PwxWQe+UkEIYqDIk3Aj4VjzQjUD
-         GjFA==
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=xN1tr+EF1U2lJ5hEJvDA2irPOc2C4bJjaXH4buE8Ybc=;
+        b=c8kPmxVkddBB2y1bWEwiJQtC1wpNCWo5LteiR+O0AIIzEsPUdZ9cGWqK61JUH+PIJA
+         I5O5kDD5RO8vyKoeZ34Xyu8u2NOqfcucCcYf0PaZ/m6p+JBRcOvRe/wablznGpg2SZ1z
+         JZxbBFCGgb3XFZ7f/YpHzy8Z6qI4YzH2sMmIRwgQgCBipYXUk53bzFhiCuivD0gYJlKh
+         rc2QwbHtiM/1qP++ES6IY2PhdsCvppbhl/FOgFudjFZL7CHuIs7pfEZyTD1qCjyzq2Ev
+         CuyQa099vVGS1/+6kfzuMKfIpW5ugBKoZzUarQtnNfEfSRIdaUs636nZpdFFDWesrMYz
+         zZGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/p+VBJHi7cSugXFzDfkbh/toN1rTiOXrhRk0iFHxs+w=;
-        b=YTBjC+AP2KSrM6RNIbwJ9UhSNQfZrCULfTxOz29EA5t8uSfhevddAeAh4qCLbmpOGK
-         DMcnKqwdr4G0h3ppfM34mK2hHOqKQWKa5SUXn3WZBlcofrnQw/o+fdPUuH8CAr30SXl4
-         Ojo75Q9fmaCdi+no1TFAkEFMZZcP5WrIvC9T8QTiR+N2FhqDmAuAXeNOGUrn/jbe2fPh
-         uT+koBRQnEMS1Upje4VhjAEUrbTbwjPHlxANNadQZJoGj95ZgcCFmsE+60oxHOmivM5t
-         4QBgnvFcSGtyQR0XpAlWklV9nke062Nel3NGaIQH8aRQ9bgUfV46RhOm+otaFwPsnTgq
-         38Vg==
-X-Gm-Message-State: AJIora8Gjxt7bNLAESnnqXnHYJAm2ZPCB2N9Vo/u4K90gkBcU5HNaRHx
-        dUTKK3pZE56uYtHblalbc3fZSM3HgU/4vXFPT5nmofstSv4=
-X-Google-Smtp-Source: AGRyM1v1p1Kn3v/cTgLk0NVTh9TAohxGe0CcC7eKkBrms2nF0ev42HUXkW129A7zcpUM82FYs5reNB421pMvN7d89N0=
-X-Received: by 2002:a17:906:6146:b0:722:f8c4:ec9b with SMTP id
- p6-20020a170906614600b00722f8c4ec9bmr358606ejl.708.1656455334132; Tue, 28 Jun
- 2022 15:28:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220628161948.475097-1-kpsingh@kernel.org> <20220628161948.475097-6-kpsingh@kernel.org>
- <20220628173344.h7ihvyl6vuky5xus@wittgenstein> <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
-In-Reply-To: <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Tue, 28 Jun 2022 15:28:42 -0700
-Message-ID: <CAADnVQ+mokn3Yo492Zng=Gtn_LgT-T1XLth5BXyKZXFno-3ZDg@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for bpf_getxattr
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Yosry Ahmed <yosryahmed@google.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=xN1tr+EF1U2lJ5hEJvDA2irPOc2C4bJjaXH4buE8Ybc=;
+        b=4kOtxOWOXf1n0oPr1Wpnrei5hUTXixpvYT/Q8l/CtmmDj+3CEOlv2kAXZJhzns70YD
+         bxD+bobfiWNLiIyjxGuffn5b0yM7/cSFfgfeJ52Akt9MICQNfC021WIkpUnC5Ts2OOFf
+         X51wzRjQqPJN6+W0+E+aBcnsIt/Y3fOveZuTiFsIaz7Chx9UXgF2x2b2rZsDsuPV4fc+
+         TIlWEV/vbvblko5MFEZjgmTc4/vmdpyptMS1ahGb/X8eih0C6XlrvazFRYuf4AILcQ2e
+         phP66BYxAVM7JVwOoDp1ccCcL4qtY8rlY8yHZeRoDrShZI6y73ceocRCYBGCS5WcJfcm
+         NXeA==
+X-Gm-Message-State: AJIora/1qN+KfOQL9O+JnAcCRS0vqtd+kr6EIknUMhqgXP9ppu4hW5fI
+        FW9Tt3zJDCsXhuEosI+5UaBdUqw9kus=
+X-Google-Smtp-Source: AGRyM1sb4gu4wh5t9NQKPjdrCAAjh5Tye0AhwWk6lGIKhKerpY6JHghFizoXUql4EeVUdekawlr2sfZTuNo=
+X-Received: from jeffxuc.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:31a7])
+ (user=jeffxu job=sendgmr) by 2002:aa7:82ca:0:b0:51b:cf43:d00a with SMTP id
+ f10-20020aa782ca000000b0051bcf43d00amr6978032pfn.58.1656455385235; Tue, 28
+ Jun 2022 15:29:45 -0700 (PDT)
+Date:   Tue, 28 Jun 2022 22:29:41 +0000
+Message-Id: <20220628222941.2642917-1-jeffxu@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
+Subject: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
+From:   Jeff Xu <jeffxu@google.com>
+To:     "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 28, 2022 at 10:52 AM KP Singh <kpsingh@kernel.org> wrote:
->
-> On Tue, Jun 28, 2022 at 7:33 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Jun 28, 2022 at 04:19:48PM +0000, KP Singh wrote:
-> > > A simple test that adds an xattr on a copied /bin/ls and reads it back
-> > > when the copied ls is executed.
-> > >
-> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
-> > > ---
-> > >  .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++++++++++
->
-> [...]
->
-> > > +SEC("lsm.s/bprm_committed_creds")
-> > > +void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
-> > > +{
-> > > +     struct task_struct *current = bpf_get_current_task_btf();
-> > > +     char dir_xattr_value[64] = {0};
-> > > +     int xattr_sz = 0;
-> > > +
-> > > +     xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
-> > > +                             bprm->file->f_path.dentry->d_inode, XATTR_NAME,
-> > > +                             dir_xattr_value, 64);
-> >
-> > Yeah, this isn't right. You're not accounting for the caller's userns
-> > nor for the idmapped mount. If this is supposed to work you will need a
-> > variant of vfs_getxattr() that takes the mount's idmapping into account
-> > afaict. See what needs to happen after do_getxattr().
->
-> Thanks for taking a look.
->
-> So, If I understand correctly, we don't need xattr_permission (and
-> other checks in
-> vfs_getxattr) here as the BPF programs run as CAP_SYS_ADMIN.
->
-> but...
->
-> So, Is this bit what's missing then?
->
-> error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
-> if (error > 0) {
->     if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
-> (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
->         posix_acl_fix_xattr_to_user(mnt_userns, d_inode(d),
->             ctx->kvalue, error);
+ptrace_test assumes YAMA is disabled, skip it if YAMA is enabled.
 
-That will not be correct.
-posix_acl_fix_xattr_to_user checking current_user_ns()
-is checking random tasks that happen to be running
-when lsm hook got invoked.
+Cc: Jorge Lucangeli Obes <jorgelo@chromium.org>
+Cc: Guenter Roeck <groeck@chromium.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+Tested-by: Jeff Xu <jeffxu@google.com>
+Signed-off-by: Jeff Xu <jeffxu@google.com>
+Change-Id: I623742ca9f20ec706a38c92f6c0bab755f73578f
+---
+ .../testing/selftests/landlock/ptrace_test.c  | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-KP,
-we probably have to document clearly that neither 'current*'
-should not be used here.
-xattr_permission also makes little sense in this context.
-If anything it can be a different kfunc if there is a use case,
-but I don't see it yet.
-bpf-lsm prog calling __vfs_getxattr is just like other lsm-s that
-call it directly. It's the kernel that is doing its security thing.
+diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing=
+/selftests/landlock/ptrace_test.c
+index c28ef98ff3ac..ef2d36f56764 100644
+--- a/tools/testing/selftests/landlock/ptrace_test.c
++++ b/tools/testing/selftests/landlock/ptrace_test.c
+@@ -226,6 +226,44 @@ FIXTURE_TEARDOWN(hierarchy)
+ {
+ }
+=20
++int open_sysfs(const char *path, int flags, int *fd)
++{
++	*fd =3D open(path, flags);
++
++	if (fd < 0)
++		return -1;
++
++	return 0;
++}
++
++int read_sysfs_int_fd(int fd, int *val)
++{
++	char buf[2];
++
++	if (read(fd, buf, sizeof(buf)) < 0)
++		return -1;
++
++	buf[sizeof(buf) - 1] =3D '\0';
++	*val =3D atoi(buf);
++	return 0;
++}
++
++int read_sysfs_int(const char *path, int *val)
++{
++	int fd;
++
++	if (open_sysfs(path, O_RDONLY, &fd) !=3D 0)
++		return -1;
++
++	if (read_sysfs_int_fd(fd, val) !=3D 0) {
++		close(fd);
++		return -1;
++	}
++
++	close(fd);
++	return 0;
++}
++
+ /* Test PTRACE_TRACEME and PTRACE_ATTACH for parent and child. */
+ TEST_F(hierarchy, trace)
+ {
+@@ -235,6 +273,17 @@ TEST_F(hierarchy, trace)
+ 	char buf_parent;
+ 	long ret;
+=20
++	int ptrace_val;
++
++	ASSERT_EQ(0, read_sysfs_int("/proc/sys/kernel/yama/ptrace_scope",
++				    &ptrace_val));
++	if (ptrace_val !=3D 0) {
++		/*
++		 * Yama's scoped ptrace is presumed disabled.  If enabled, skip.
++		 */
++		SKIP(return, "yama is enabled, skip current test");
++	}
++
+ 	/*
+ 	 * Removes all effective and permitted capabilities to not interfere
+ 	 * with cap_ptrace_access_check() in case of PTRACE_MODE_FSCREDS.
+--=20
+2.37.0.rc0.161.g10f37bed90-goog
+
