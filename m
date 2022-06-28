@@ -2,37 +2,37 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6393DCCA487
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 16:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F185FCCA486
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 16:30:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234154AbiF1QaS (ORCPT
+        id S234688AbiF1QaT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jun 2022 12:30:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47532 "EHLO
+        Tue, 28 Jun 2022 12:30:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347466AbiF1Q3J (ORCPT
+        with ESMTP id S1347724AbiF1Q3O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jun 2022 12:29:09 -0400
+        Tue, 28 Jun 2022 12:29:14 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 581603A182;
-        Tue, 28 Jun 2022 09:19:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3E23A1A0;
+        Tue, 28 Jun 2022 09:20:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 16A83B81F15;
-        Tue, 28 Jun 2022 16:19:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1614EC341CD;
-        Tue, 28 Jun 2022 16:19:53 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7BAF7B81EF1;
+        Tue, 28 Jun 2022 16:20:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF58C385A5;
+        Tue, 28 Jun 2022 16:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656433195;
-        bh=uZ0a5aDXW8MZkIEq0XmbcRjUTh8YkwmgzJs6XG0ENok=;
+        s=k20201202; t=1656433204;
+        bh=9pchgL8YFP3Hx5Q02p0k2JNpsUBkX+zukfrJ3q2OcKI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qCz6rDAbKU0oO71+34+lZjqNMXkCbW6WI+5/itTKjwMCcKz6Ukno9pgLnu0CrrQdQ
-         YbGOa/8PMeu2M8Nw+G3b7CGJ9Pp71MEMY/lJw/O/yNuL1FjP/8D3aX5ooyUx+Qgxbf
-         1Z/aOr0tbvoOwvEzuaN3ViIWWLBloc+fRcDinX58eTrzolVw6LS5ac3XVX8pi6JQXg
-         Mb/puUcabKhLRL22bKcJU6JlqPv0Vo4T9mZqmHB2v4LhQQ4la68DtBV5FdKe772o6y
-         UQ4lrA4OM796Ud5f4deH88uo6gKU1LKnjFAvdSBtvCHassLxWROhMpodfqUqA+eH5X
-         G9c2WfOI3xFgA==
+        b=O5fRq5RidSwRGjSy3tClru4NFzOywFU0UFX7DH9LUOrUQsivUbrDr2uT4moov+Kkx
+         KWZvUES4e4R03/T5Uy4dCylqjBtpiBzNRvEuK3KI8e9039f9K97/lLdPsSTtbqexx/
+         4+vPwqQ8gSnHBApZIsgu3qVvau8NRIi9Dn5/9x1L2cqqh/+N5OzZ4MnZe/hvKo5Jv9
+         qJfFZPtGkGKXjZTtjlGTgGxgS2at0UEhleWIItaps/NFm4ZKWBpkMWJkh6ILYBQKj1
+         cj1c//KDlTwBWma3mZ1YGIZK2Z4YMIh+TGEvzh4Fm6w8CWj5s1amo8A1Wtt0Rdx8yb
+         4oJYwcD/CGTTA==
 From:   KP Singh <kpsingh@kernel.org>
 To:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
@@ -41,9 +41,9 @@ Cc:     KP Singh <kpsingh@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Yosry Ahmed <yosryahmed@google.com>
-Subject: [PATCH v5 bpf-next 1/5] btf: Add a new kfunc set which allows to mark a function to be sleepable
-Date:   Tue, 28 Jun 2022 16:19:44 +0000
-Message-Id: <20220628161948.475097-2-kpsingh@kernel.org>
+Subject: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for bpf_getxattr
+Date:   Tue, 28 Jun 2022 16:19:48 +0000
+Message-Id: <20220628161948.475097-6-kpsingh@kernel.org>
 X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
 In-Reply-To: <20220628161948.475097-1-kpsingh@kernel.org>
 References: <20220628161948.475097-1-kpsingh@kernel.org>
@@ -52,78 +52,120 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+A simple test that adds an xattr on a copied /bin/ls and reads it back
+when the copied ls is executed.
 
-This allows to declare a kfunc as sleepable and prevents its use in
-a non sleepable program.
-
-Acked-by: KP Singh <kpsingh@kernel.org>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: KP Singh <kpsingh@kernel.org>
 ---
- include/linux/btf.h |  2 ++
- kernel/bpf/btf.c    | 12 ++++++++++--
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++++++++++
+ tools/testing/selftests/bpf/progs/xattr.c     | 37 +++++++++++++
+ 2 files changed, 91 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/xattr.c
+ create mode 100644 tools/testing/selftests/bpf/progs/xattr.c
 
-diff --git a/include/linux/btf.h b/include/linux/btf.h
-index 1bfed7fa0428..6e7517573d9e 100644
---- a/include/linux/btf.h
-+++ b/include/linux/btf.h
-@@ -18,6 +18,7 @@ enum btf_kfunc_type {
- 	BTF_KFUNC_TYPE_RELEASE,
- 	BTF_KFUNC_TYPE_RET_NULL,
- 	BTF_KFUNC_TYPE_KPTR_ACQUIRE,
-+	BTF_KFUNC_TYPE_SLEEPABLE,
- 	BTF_KFUNC_TYPE_MAX,
- };
- 
-@@ -37,6 +38,7 @@ struct btf_kfunc_id_set {
- 			struct btf_id_set *release_set;
- 			struct btf_id_set *ret_null_set;
- 			struct btf_id_set *kptr_acquire_set;
-+			struct btf_id_set *sleepable_set;
- 		};
- 		struct btf_id_set *sets[BTF_KFUNC_TYPE_MAX];
- 	};
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 2e2066d6af94..37bc77b3b499 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -6171,7 +6171,7 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
- 	struct bpf_verifier_log *log = &env->log;
- 	u32 i, nargs, ref_id, ref_obj_id = 0;
- 	bool is_kfunc = btf_is_kernel(btf);
--	bool rel = false, kptr_get = false;
-+	bool rel = false, kptr_get = false, sleepable = false;
- 	const char *func_name, *ref_tname;
- 	const struct btf_type *t, *ref_t;
- 	const struct btf_param *args;
-@@ -6202,9 +6202,10 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
- 	}
- 
- 	if (is_kfunc) {
--		/* Only kfunc can be release func */
- 		rel = btf_kfunc_id_set_contains(btf, resolve_prog_type(env->prog),
- 						BTF_KFUNC_TYPE_RELEASE, func_id);
-+		sleepable = btf_kfunc_id_set_contains(btf, resolve_prog_type(env->prog),
-+						      BTF_KFUNC_TYPE_SLEEPABLE, func_id);
- 		kptr_get = btf_kfunc_id_set_contains(btf, resolve_prog_type(env->prog),
- 						     BTF_KFUNC_TYPE_KPTR_ACQUIRE, func_id);
- 	}
-@@ -6404,6 +6405,13 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
- 			func_name);
- 		return -EINVAL;
- 	}
+diff --git a/tools/testing/selftests/bpf/prog_tests/xattr.c b/tools/testing/selftests/bpf/prog_tests/xattr.c
+new file mode 100644
+index 000000000000..ef07fa8a1763
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/xattr.c
+@@ -0,0 +1,54 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+	if (sleepable && !env->prog->aux->sleepable) {
-+		bpf_log(log, "kernel function %s is sleepable but the program is not\n",
-+			func_name);
-+		return -EINVAL;
-+	}
++/*
++ * Copyright 2022 Google LLC.
++ */
 +
- 	/* returns argument register number > 0 in case of reference release kfunc */
- 	return rel ? ref_regno : 0;
- }
++#include <test_progs.h>
++#include <sys/xattr.h>
++#include "xattr.skel.h"
++
++#define XATTR_NAME "security.bpf"
++#define XATTR_VALUE "test_progs"
++
++void test_xattr(void)
++{
++	struct xattr *skel = NULL;
++	char tmp_dir_path[] = "/tmp/xattrXXXXXX";
++	char tmp_exec_path[64];
++	char cmd[256];
++	int err;
++
++	if (CHECK_FAIL(!mkdtemp(tmp_dir_path)))
++		goto close_prog;
++
++	snprintf(tmp_exec_path, sizeof(tmp_exec_path), "%s/copy_of_ls",
++		 tmp_dir_path);
++	snprintf(cmd, sizeof(cmd), "cp /bin/ls %s", tmp_exec_path);
++	if (CHECK_FAIL(system(cmd)))
++		goto close_prog_rmdir;
++
++	if (CHECK_FAIL(setxattr(tmp_exec_path, XATTR_NAME, XATTR_VALUE,
++			   sizeof(XATTR_VALUE), 0)))
++		goto close_prog_rmdir;
++
++	skel = xattr__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "skel_load"))
++		goto close_prog_rmdir;
++
++	err = xattr__attach(skel);
++	if (!ASSERT_OK(err, "xattr__attach failed"))
++		goto close_prog_rmdir;
++
++	snprintf(cmd, sizeof(cmd), "%s -l", tmp_exec_path);
++	if (CHECK_FAIL(system(cmd)))
++		goto close_prog_rmdir;
++
++	ASSERT_EQ(skel->bss->result, 1, "xattr result");
++
++close_prog_rmdir:
++	snprintf(cmd, sizeof(cmd), "rm -rf %s", tmp_dir_path);
++	system(cmd);
++close_prog:
++	xattr__destroy(skel);
++}
+diff --git a/tools/testing/selftests/bpf/progs/xattr.c b/tools/testing/selftests/bpf/progs/xattr.c
+new file mode 100644
+index 000000000000..ccc078fb8ebd
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/xattr.c
+@@ -0,0 +1,37 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2022 Google LLC.
++ */
++
++#include "vmlinux.h"
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++char _license[] SEC("license") = "GPL";
++
++#define XATTR_NAME "security.bpf"
++#define XATTR_VALUE "test_progs"
++
++__u64 result = 0;
++
++extern ssize_t bpf_getxattr(struct dentry *dentry, struct inode *inode,
++			    const char *name, void *value, int size) __ksym;
++
++SEC("lsm.s/bprm_committed_creds")
++void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
++{
++	struct task_struct *current = bpf_get_current_task_btf();
++	char dir_xattr_value[64] = {0};
++	int xattr_sz = 0;
++
++	xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
++				bprm->file->f_path.dentry->d_inode, XATTR_NAME,
++				dir_xattr_value, 64);
++
++	if (xattr_sz <= 0)
++		return;
++
++	if (!bpf_strncmp(dir_xattr_value, sizeof(XATTR_VALUE), XATTR_VALUE))
++		result = 1;
++}
 -- 
 2.37.0.rc0.161.g10f37bed90-goog
 
