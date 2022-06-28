@@ -2,116 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B9FCCA479
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 17:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82345C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 17:29:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232508AbiF1RXP (ORCPT
+        id S229479AbiF1R3p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jun 2022 13:23:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35930 "EHLO
+        Tue, 28 Jun 2022 13:29:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232997AbiF1RWb (ORCPT
+        with ESMTP id S232786AbiF1R3o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jun 2022 13:22:31 -0400
+        Tue, 28 Jun 2022 13:29:44 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4614538DB8;
-        Tue, 28 Jun 2022 10:22:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03CFD3879D
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 10:29:44 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B8F1561937;
-        Tue, 28 Jun 2022 17:22:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C214CC3411D;
-        Tue, 28 Jun 2022 17:22:26 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9B6EF61988
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 17:29:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0131FC341C6
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 17:29:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656436949;
-        bh=AW4NvSDSH3WYN2zjWgwf6ndsawKs4nf7g7OMTdNj0TY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LmAThDZKaCeBk3WeY/01QFAuLlyrBMop0iKe6RoJwALfnRuIpUvMPHgkPvU3KEC33
-         8hP3Wizxq9/12Q88PGFFBBCHzr8xiMtAkJkG/flI8U0EPQw3+7VUPJzvoHgDt4Tt16
-         D/5N5EBcqOIdPFWj1eqkAuufEPoCBcVXz9qR87/dYw18dbnSMJleFFX4okkyVSUOvF
-         LmZ8z4G5o1UIFEa3qwazaIOfShP/enU3TxtmvKzV0cXx8hNSzVXbbloeSIJvZbhLl5
-         T1dHNBMd1OMg+GRguf2jv5IgWDnQLIj+oy/DOsablaaAWBGZ4h8hzRe8wVt4+ySfq9
-         ht6sV3ZmltL7w==
-Date:   Tue, 28 Jun 2022 19:22:18 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     KP Singh <kpsingh@kernel.org>
+        s=k20201202; t=1656437383;
+        bh=TqEYTZnMgksw0Z2Wcnpbc4laQ2Yl9I0Q2zLV8wa/sQ4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BeJx60YZ3iy46fSHB9s+0nASIyUqWvA5+4pTt9eJ79A+Wrt+pQlWfxX7v5Ck/6slT
+         tLMwCuJO51fg9c9xdASV2P53gX7lO12ZrMKhfzXs0CFNLHZGQVUxeKND3MDZGz70Cw
+         luWuzf4Q7oLInMYZGWGOkrPUsWMN7/fvVP17+jS4ooL9s5pTP1SMJHZpA3kzkPji7g
+         Z9ETPkf9PW57hK9VvPU74e+ViVODollDaeHEhlYNB461F4LRpc6/HWHZuAHTGjpoCC
+         lH7U4YGoJa78AggNbfxzrmAxJtlspdezcFBU3y757NLBUXjHW0X2PyiHdHhIabJnSe
+         lvPEKCII3E4IQ==
+Received: by mail-yb1-f178.google.com with SMTP id i7so23349820ybe.11
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 10:29:42 -0700 (PDT)
+X-Gm-Message-State: AJIora9BUjbFAv3h08FD0SP01n3u/J3MMisPoyQJW1Ryd1HZXjvaFoRq
+        vjYe2qRw7B+0X+fC9ggUSQ4xuIsJSJkRN9B+1Gn0UQ==
+X-Google-Smtp-Source: AGRyM1uL5WWmevZOAv80me4K4eb2sB6Nm3KzUbn3rqFmoXRjZ0358Dge6nXwFDzpRGo+tp+WsYXuS8PaHbnt+rMCyUg=
+X-Received: by 2002:a05:6902:701:b0:66d:2797:ec90 with SMTP id
+ k1-20020a056902070100b0066d2797ec90mr4702142ybt.84.1656437382101; Tue, 28 Jun
+ 2022 10:29:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220628161948.475097-1-kpsingh@kernel.org> <20220628161948.475097-5-kpsingh@kernel.org>
+ <Yrs4+ThR4ACb5eD/@ZenIV>
+In-Reply-To: <Yrs4+ThR4ACb5eD/@ZenIV>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Tue, 28 Jun 2022 19:29:31 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4RyrF4dZWwt-Wo75AbE7eK7Q6dbr+b8DHcw7paMeUEwA@mail.gmail.com>
+Message-ID: <CACYkzJ4RyrF4dZWwt-Wo75AbE7eK7Q6dbr+b8DHcw7paMeUEwA@mail.gmail.com>
+Subject: Re: [PATCH v5 bpf-next 4/5] bpf: Add a bpf_getxattr kfunc
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Andrii Nakryiko <andrii@kernel.org>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Yosry Ahmed <yosryahmed@google.com>
-Subject: Re: [PATCH v5 bpf-next 4/5] bpf: Add a bpf_getxattr kfunc
-Message-ID: <20220628172218.yzsrafhoof4wuf45@wittgenstein>
-References: <20220628161948.475097-1-kpsingh@kernel.org>
- <20220628161948.475097-5-kpsingh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220628161948.475097-5-kpsingh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 28, 2022 at 04:19:47PM +0000, KP Singh wrote:
-> LSMs like SELinux store security state in xattrs. bpf_getxattr enables
-> BPF LSM to implement similar functionality. In combination with
-> bpf_local_storage, xattrs can be used to develop more complex security
-> policies.
-> 
-> This kfunc wraps around __vfs_getxattr which can sleep and is,
-> therefore, limited to sleepable programs using the newly added
-> sleepable_set for kfuncs.
-> 
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
-> ---
->  kernel/trace/bpf_trace.c | 42 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index 4be976cf7d63..87496d57b099 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -20,6 +20,7 @@
->  #include <linux/fprobe.h>
->  #include <linux/bsearch.h>
->  #include <linux/sort.h>
-> +#include <linux/xattr.h>
->  
->  #include <net/bpf_sk_storage.h>
->  
-> @@ -1181,6 +1182,47 @@ static const struct bpf_func_proto bpf_get_func_arg_cnt_proto = {
->  	.arg1_type	= ARG_PTR_TO_CTX,
->  };
->  
-> +__diag_push();
-> +__diag_ignore_all("-Wmissing-prototypes",
-> +		  "kfuncs that are used in tracing/LSM BPF programs");
-> +
-> +ssize_t bpf_getxattr(struct dentry *dentry, struct inode *inode,
-> +		     const char *name, void *value, int value__sz)
-> +{
-> +	return __vfs_getxattr(dentry, inode, name, value, value__sz);
+On Tue, Jun 28, 2022 at 7:23 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Tue, Jun 28, 2022 at 04:19:47PM +0000, KP Singh wrote:
+> > LSMs like SELinux store security state in xattrs. bpf_getxattr enables
+> > BPF LSM to implement similar functionality. In combination with
+> > bpf_local_storage, xattrs can be used to develop more complex security
+> > policies.
+> >
+> > This kfunc wraps around __vfs_getxattr which can sleep and is,
+> > therefore, limited to sleepable programs using the newly added
+> > sleepable_set for kfuncs.
+>
+> "Sleepable" is nowhere near enough - for a trivial example, consider
+> what e.g. ext2_xattr_get() does.
+>         down_read(&EXT2_I(inode)->xattr_sem);
+> in there means that having that thing executed in anything that happens
+> to hold ->xattr_sem is a deadlock fodder.
+>
 
-So this might all be due to my ignorance where and how this is supposed
-to be used but using __vfs_getxattr() is performing _zero_ permission
-checks. That means every eBPF program will be able to retrieve whatever
-extended attribute it likes.
+We could limit this to sleepable LSM hooks:
 
-In addition to generic permission checking your code also assumes that
-every caller is located in the initial user namespace. Is that a valid
-assumption?
+https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/kernel/bpf/bpf_lsm.c#n169
 
-POSIX ACLs can store additional [u,g]ids on disk that need to be
-translated according to the caller's user namespace.
+and when we have abilities to tag
+kernel functions and pointers with the work Yonghong did
+(e.g. https://reviews.llvm.org/D113496) we can expand the set.
 
-Looking at your selftest example you have a current task and you also
-have access to a struct file which makes me doubt that this assumption
-is correct. But I'm happy to be convinced otherwise.
 
-Also, if the current task is retrieving extended attributes from an
-idmapped mount you also need to take the mount's idmapping into account.
-Otherwise again, you'll retrieve misleading [g,u]id values...
-
-Could you explain to me why that is safe and how this is going to be
-used, please? As it stands I can't make heads nor tails of this.
+> "Can't use that in BPF program executed in non-blocking context" is
+> *not* sufficient to make it safe.
