@@ -2,138 +2,130 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52239C43334
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 16:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4159CCA483
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 16:30:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235838AbiF1QUq (ORCPT
+        id S231987AbiF1QaL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jun 2022 12:20:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39404 "EHLO
+        Tue, 28 Jun 2022 12:30:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233183AbiF1QUG (ORCPT
+        with ESMTP id S1347635AbiF1Q3L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jun 2022 12:20:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FDFD3AA76
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 09:12:40 -0700 (PDT)
+        Tue, 28 Jun 2022 12:29:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C4FF3A191;
+        Tue, 28 Jun 2022 09:20:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E4714B81F17
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 16:12:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77FFFC341CE
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 16:12:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BD946617CB;
+        Tue, 28 Jun 2022 16:20:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 748AFC341CD;
+        Tue, 28 Jun 2022 16:20:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656432757;
-        bh=EIP5j5pZ7wbFNo8siwNKuft7SrlYIU0lHe3T+ppJNCY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RthYxAUpkMhtCPVpjqK/2tyQbKXMLwVyHDoez99UtKDcFb4i7v/gA+J0j79uGS05+
-         JmBwd5N8KOjpUWYgdyPSEcR9LDD4l4m5LDMxFXzIVFYP81P/+k9gYmetUTpowsrObO
-         swu7ITNGRhlx3cW8/JVzyWwoJZ7qipXr7+YPZkMHKjFB32WNM8n+wc78dcfwsohPhp
-         zFf06R5P+++x/7X7p6mwEvht4NCmX4EIurJINw0Z7A6Xqh5jebH0IjlwuQWR0Fy/MS
-         CukYIpGb9G+tBIEa0P7mqUUfmNf/8s4bK/GhrfEfxiju9wLSpPMS+KaqLFT7QtJkf8
-         yDYVUCsB4z/mA==
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-31bf327d4b5so32963767b3.13
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 09:12:37 -0700 (PDT)
-X-Gm-Message-State: AJIora8OcCTDSrjcJ7DJUp5lbEkuzf1VututGcAbmv+EfGjfxVnsoAGu
-        uI5j70RGLS0r0UhqtiVXEI3oM+VSkRKXRYzglB4RrQ==
-X-Google-Smtp-Source: AGRyM1tAQfsb70s3aJIgwOAS2pkRUBhwPFRBswHFom3lZRvCVZ4Ufl+bfM0XenuZWxEdN1dwZ1aAvc0cdAEfPtaF0a8=
-X-Received: by 2002:a81:1b4b:0:b0:317:a2dd:31fa with SMTP id
- b72-20020a811b4b000000b00317a2dd31famr22481892ywb.476.1656432756482; Tue, 28
- Jun 2022 09:12:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220621233939.993579-1-fred@cloudflare.com> <ce1653b1-feb0-1a99-0e97-8dfb289eeb79@schaufler-ca.com>
- <b72c889a-4a50-3330-baae-3bbf065e7187@cloudflare.com> <CAHC9VhSTkEMT90Tk+=iTyp3npWEm+3imrkFVX2qb=XsOPp9F=A@mail.gmail.com>
- <20220627121137.cnmctlxxtcgzwrws@wittgenstein> <CAHC9VhSQH9tE-NgU6Q-GLqSy7R6FVjSbp4Tc4gVTbjZCqAWy5Q@mail.gmail.com>
- <6a8fba0a-c9c9-61ba-793a-c2e0c2924f88@iogearbox.net> <CAHC9VhQQJH95jTWMOGDB4deS=whSfnaF_e73zoabOOeHJMv+0Q@mail.gmail.com>
- <685096bb-af0a-08c0-491a-e176ac009e85@schaufler-ca.com> <9ae473c4-cd42-bb45-bce2-8aa2e4784a43@cloudflare.com>
- <d70d3b2d-6c3f-b1fc-f40c-f5ec01a627c0@schaufler-ca.com>
-In-Reply-To: <d70d3b2d-6c3f-b1fc-f40c-f5ec01a627c0@schaufler-ca.com>
+        s=k20201202; t=1656433202;
+        bh=uBHpOboY6y9w+HwMF5AuSrCFXcv/uOgB4BTVB2oGngo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cnvuNN2i97ReGHjMPkFMfNtPeC9XLQ+9qYt9/BMZH9jj3tbFvd15y6pnVHVmS+Gnd
+         swrPLE6ii2PsVrcsKhuJDmM+BVf24MKm2HXptqOk38QMgkT7IZZdU3xzjCBiLErZqE
+         Gs/u2PZT342n388LeTUOi3nUcKnrMLgMxWqj5zOyaZ3diE+Oexnz9zusWPNQeprYt8
+         0+w+p2FNodbJhhNxFwaMNkpIFXZ8sHPIf9krSQ4/w6nj9sgQP+yCnK/K964dJVX5PD
+         vAtQe/sewg5GrDmYG1MJ7hZxZKAugAV11pKqcVnFpc7OnrSinfmtGiI/Ji82tsXj3z
+         rELaR4IyoM+zg==
 From:   KP Singh <kpsingh@kernel.org>
-Date:   Tue, 28 Jun 2022 18:12:25 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6GmotfhBk1+9BjGC6Ct7bGxQGVTZTX2iQcrhjfV7VHwQ@mail.gmail.com>
-Message-ID: <CACYkzJ6GmotfhBk1+9BjGC6Ct7bGxQGVTZTX2iQcrhjfV7VHwQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Introduce security_create_user_ns()
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Frederick Lawler <fred@cloudflare.com>,
-        Paul Moore <paul@paul-moore.com>,
+To:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     KP Singh <kpsingh@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Christian Brauner <brauner@kernel.org>, revest@chromium.org,
-        jackmanb@chromium.org, ast@kernel.org, andrii@kernel.org,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@cloudflare.com
-Content-Type: text/plain; charset="UTF-8"
+        Andrii Nakryiko <andrii@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Yosry Ahmed <yosryahmed@google.com>
+Subject: [PATCH v5 bpf-next 4/5] bpf: Add a bpf_getxattr kfunc
+Date:   Tue, 28 Jun 2022 16:19:47 +0000
+Message-Id: <20220628161948.475097-5-kpsingh@kernel.org>
+X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
+In-Reply-To: <20220628161948.475097-1-kpsingh@kernel.org>
+References: <20220628161948.475097-1-kpsingh@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 28, 2022 at 6:02 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 6/28/2022 8:14 AM, Frederick Lawler wrote:
-> > On 6/27/22 6:18 PM, Casey Schaufler wrote:
-> >> On 6/27/2022 3:27 PM, Paul Moore wrote:
-> >>> On Mon, Jun 27, 2022 at 6:15 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
-> >>>> On 6/27/22 11:56 PM, Paul Moore wrote:
-> >>>>> On Mon, Jun 27, 2022 at 8:11 AM Christian Brauner <brauner@kernel.org> wrote:
-> >>>>>> On Thu, Jun 23, 2022 at 11:21:37PM -0400, Paul Moore wrote:
-> >>>>> ...
-> >>>>>
-> >>>>>>> This is one of the reasons why I usually like to see at least one LSM
-> >>>>>>> implementation to go along with every new/modified hook.  The
-> >>>>>>> implementation forces you to think about what information is necessary
-> >>>>>>> to perform a basic access control decision; sometimes it isn't always
-> >>>>>>> obvious until you have to write the access control :)
-> >>>>>> I spoke to Frederick at length during LSS and as I've been given to
-> >>>>>> understand there's a eBPF program that would immediately use this new
-> >>>>>> hook. Now I don't want to get into the whole "Is the eBPF LSM hook
-> >>>>>> infrastructure an LSM" but I think we can let this count as a legitimate
-> >>>>>> first user of this hook/code.
-> >>>>> Yes, for the most part I don't really worry about the "is a BPF LSM a
-> >>>>> LSM?" question, it's generally not important for most discussions.
-> >>>>> However, there is an issue unique to the BPF LSMs which I think is
-> >>>>> relevant here: there is no hook implementation code living under
-> >>>>> security/.  While I talked about a hook implementation being helpful
-> >>>>> to verify the hook prototype, it is also helpful in providing an
-> >>>>> in-tree example for other LSMs; unfortunately we don't get that same
-> >>>>> example value when the initial hook implementation is a BPF LSM.
-> >>>> I would argue that such a patch series must come together with a BPF
-> >>>> selftest which then i) contains an in-tree usage example, ii) adds BPF
-> >>>> CI test coverage. Shipping with a BPF selftest at least would be the
-> >>>> usual expectation.
-> >>> I'm not going to disagree with that, I generally require matching
-> >>> tests for new SELinux kernel code, but I was careful to mention code
-> >>> under 'security/' and not necessarily just a test implementation :)  I
-> >>> don't want to get into a big discussion about it, but I think having a
-> >>> working implementation somewhere under 'security/' is more
-> >>> discoverable for most LSM folks.
-> >>
-> >> I agree. It would be unfortunate if we added a hook explicitly for eBPF
-> >> only to discover that the proposed user needs something different. The
-> >> LSM community should have a chance to review the code before committing
-> >> to all the maintenance required in supporting it.
-> >>
-> >> Is there a reference on how to write an eBPF security module?
-> >
-> > There's a documentation page that briefly touches on a BPF LSM implementation [1].
->
-> That's a brief touch, alright. I'll grant that the LSM interface isn't
-> especially well documented for C developers, but we have done tutorials
-> and have multiple examples. I worry that without an in-tree example for
-> eBPF we might well be setting developers up for spectacular failure.
->
+LSMs like SELinux store security state in xattrs. bpf_getxattr enables
+BPF LSM to implement similar functionality. In combination with
+bpf_local_storage, xattrs can be used to develop more complex security
+policies.
 
-Casey, Daniel and I are recommending an in-tree example, it will be
-in BPF selftests and we will CC you on the reviews.
+This kfunc wraps around __vfs_getxattr which can sleep and is,
+therefore, limited to sleepable programs using the newly added
+sleepable_set for kfuncs.
 
-Frederick, is that okay with you?
+Signed-off-by: KP Singh <kpsingh@kernel.org>
+---
+ kernel/trace/bpf_trace.c | 42 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-> >
-> >> There should be something out there warning the eBPF programmer of the
-> >> implications of providing a secid_to_secctx hook for starters.
-> >>
-> >
-> > Links:
-> > 1. https://docs.kernel.org/bpf/prog_lsm.html?highlight=bpf+lsm#
-> >
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 4be976cf7d63..87496d57b099 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -20,6 +20,7 @@
+ #include <linux/fprobe.h>
+ #include <linux/bsearch.h>
+ #include <linux/sort.h>
++#include <linux/xattr.h>
+ 
+ #include <net/bpf_sk_storage.h>
+ 
+@@ -1181,6 +1182,47 @@ static const struct bpf_func_proto bpf_get_func_arg_cnt_proto = {
+ 	.arg1_type	= ARG_PTR_TO_CTX,
+ };
+ 
++__diag_push();
++__diag_ignore_all("-Wmissing-prototypes",
++		  "kfuncs that are used in tracing/LSM BPF programs");
++
++ssize_t bpf_getxattr(struct dentry *dentry, struct inode *inode,
++		     const char *name, void *value, int value__sz)
++{
++	return __vfs_getxattr(dentry, inode, name, value, value__sz);
++}
++
++__diag_pop();
++
++BTF_SET_START(bpf_trace_kfunc_ids)
++BTF_ID(func, bpf_getxattr)
++BTF_SET_END(bpf_trace_kfunc_ids)
++
++BTF_SET_START(bpf_trace_sleepable_kfunc_ids)
++BTF_ID(func, bpf_getxattr)
++BTF_SET_END(bpf_trace_sleepable_kfunc_ids)
++
++static const struct btf_kfunc_id_set bpf_trace_kfunc_set = {
++	.owner = THIS_MODULE,
++	.check_set = &bpf_trace_kfunc_ids,
++	.sleepable_set = &bpf_trace_sleepable_kfunc_ids,
++};
++
++static int __init bpf_trace_kfunc_init(void)
++{
++	int ret;
++
++	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING,
++					&bpf_trace_kfunc_set);
++	if (!ret)
++		return ret;
++
++	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM,
++					&bpf_trace_kfunc_set);
++
++}
++late_initcall(bpf_trace_kfunc_init);
++
+ static const struct bpf_func_proto *
+ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ {
+-- 
+2.37.0.rc0.161.g10f37bed90-goog
+
