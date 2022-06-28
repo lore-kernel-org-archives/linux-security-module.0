@@ -2,70 +2,114 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB74C433EF
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 17:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 733BAC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jun 2022 17:53:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231871AbiF1RqL (ORCPT
+        id S230527AbiF1Rxi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jun 2022 13:46:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33764 "EHLO
+        Tue, 28 Jun 2022 13:53:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231258AbiF1RqK (ORCPT
+        with ESMTP id S232996AbiF1RxR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jun 2022 13:46:10 -0400
-X-Greylist: delayed 1382 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 28 Jun 2022 10:46:10 PDT
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F76260B;
-        Tue, 28 Jun 2022 10:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9fZi2wVpseV5qaJLN8cZxnxeYMl08M5K1Z2WID49zDo=; b=v4FWrxlcBnWQ6N/88GLnrGBy7o
-        tKSMy1wSolOLXEeAlE6mtFmhU+uBhrQoOQFkstc7W0HnfL4giQhmOp6ashAMtoP+3cNgr9+B+5S6H
-        xBQ2ir1IkhQZIY1oLL77pocaVYstTjvr7qbgXIv7vKrNd6ldKwX69fl1LtU484zB/wa7/brRjYv8S
-        lQTreRU21Al1j0tMJpquq73DtUdkScha8HvIFQag4yrXiOCrvo3G0gkD5RZErjIS8wdRBVBQ8FFQj
-        57Z8MyoUShjtQZGLoLhK35+SvJWgf1Efcqh/YZqUeHX1r5Ldz+gK+LSYH+I36Z2XCN4FsFDhOuU2+
-        e92sqrCw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o6EvZ-005gwn-Aj;
-        Tue, 28 Jun 2022 17:23:05 +0000
-Date:   Tue, 28 Jun 2022 18:23:05 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     KP Singh <kpsingh@kernel.org>
+        Tue, 28 Jun 2022 13:53:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA553A446
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 10:52:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1D7C1619CC
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 17:52:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA67C341CA
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 17:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656438754;
+        bh=1CFWsHDyBFCdk9FMXqZqtRxlJwOD4QYi3VLp5L9waFM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BCxJVxRxNIvf878wioP92nIRzTDhLQJrXig5WEBroiYB/kVtUw7aznYFX2/Pr7oy4
+         VcM+Bvs/DfZeKQ5TYWNGkm1xwm3OKQ1w5eQZbkJYjvPeDKlmKWfwFhSCdc5LHYEDqV
+         UiT4O2bgPfk9tpmFDjAMDtsDITn4xtZIwSYPTkKc7flUI7UUpzve6EiuAurjImAfp7
+         TRb5v3FnpQmTkRpj4bIH/3MWWUAWVLlwHyNr6/PJ+J9qjczlRIoI1W3ADbyjVNH02o
+         smWHLt/gbva1MfV5XNYFroFZ6PkKiBoh5+5RL4Ua2RDqryXcjZppYzwWLhc/uSciZf
+         L/hoFskcccFUw==
+Received: by mail-yb1-f178.google.com with SMTP id l11so23450856ybu.13
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jun 2022 10:52:34 -0700 (PDT)
+X-Gm-Message-State: AJIora/gMMXBj3l7S3TlwXNQ0y9CDdspti06/js8liGLSfRqa075LSjS
+        TtUXIVW9RJBixTpdLtYB3ujjj8rqWR8PPMCLLGG8Zw==
+X-Google-Smtp-Source: AGRyM1sPwROEYpARjmuZt7KnRCmkADqIZe/mLmQImXBKPlGfyx79CeXHkdgcwtsTldmt0vI4w1n6oI7l1gAz2DhnFDI=
+X-Received: by 2002:a25:9a48:0:b0:669:b51a:5b8d with SMTP id
+ r8-20020a259a48000000b00669b51a5b8dmr20982749ybo.404.1656438753522; Tue, 28
+ Jun 2022 10:52:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220628161948.475097-1-kpsingh@kernel.org> <20220628161948.475097-6-kpsingh@kernel.org>
+ <20220628173344.h7ihvyl6vuky5xus@wittgenstein>
+In-Reply-To: <20220628173344.h7ihvyl6vuky5xus@wittgenstein>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Tue, 28 Jun 2022 19:52:22 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
+Message-ID: <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
+Subject: Re: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for bpf_getxattr
+To:     Christian Brauner <brauner@kernel.org>
 Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Andrii Nakryiko <andrii@kernel.org>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Yosry Ahmed <yosryahmed@google.com>
-Subject: Re: [PATCH v5 bpf-next 4/5] bpf: Add a bpf_getxattr kfunc
-Message-ID: <Yrs4+ThR4ACb5eD/@ZenIV>
-References: <20220628161948.475097-1-kpsingh@kernel.org>
- <20220628161948.475097-5-kpsingh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220628161948.475097-5-kpsingh@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 28, 2022 at 04:19:47PM +0000, KP Singh wrote:
-> LSMs like SELinux store security state in xattrs. bpf_getxattr enables
-> BPF LSM to implement similar functionality. In combination with
-> bpf_local_storage, xattrs can be used to develop more complex security
-> policies.
-> 
-> This kfunc wraps around __vfs_getxattr which can sleep and is,
-> therefore, limited to sleepable programs using the newly added
-> sleepable_set for kfuncs.
+On Tue, Jun 28, 2022 at 7:33 PM Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Tue, Jun 28, 2022 at 04:19:48PM +0000, KP Singh wrote:
+> > A simple test that adds an xattr on a copied /bin/ls and reads it back
+> > when the copied ls is executed.
+> >
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++++++++++
 
-"Sleepable" is nowhere near enough - for a trivial example, consider
-what e.g. ext2_xattr_get() does.
-        down_read(&EXT2_I(inode)->xattr_sem);
-in there means that having that thing executed in anything that happens
-to hold ->xattr_sem is a deadlock fodder.
+[...]
 
-"Can't use that in BPF program executed in non-blocking context" is
-*not* sufficient to make it safe.
+> > +SEC("lsm.s/bprm_committed_creds")
+> > +void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
+> > +{
+> > +     struct task_struct *current = bpf_get_current_task_btf();
+> > +     char dir_xattr_value[64] = {0};
+> > +     int xattr_sz = 0;
+> > +
+> > +     xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
+> > +                             bprm->file->f_path.dentry->d_inode, XATTR_NAME,
+> > +                             dir_xattr_value, 64);
+>
+> Yeah, this isn't right. You're not accounting for the caller's userns
+> nor for the idmapped mount. If this is supposed to work you will need a
+> variant of vfs_getxattr() that takes the mount's idmapping into account
+> afaict. See what needs to happen after do_getxattr().
+
+Thanks for taking a look.
+
+So, If I understand correctly, we don't need xattr_permission (and
+other checks in
+vfs_getxattr) here as the BPF programs run as CAP_SYS_ADMIN.
+
+but...
+
+So, Is this bit what's missing then?
+
+error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
+if (error > 0) {
+    if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+(strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+        posix_acl_fix_xattr_to_user(mnt_userns, d_inode(d),
+            ctx->kvalue, error);
+    if (ctx->size && copy_to_user(ctx->value, ctx->kvalue, error))
+        error = -EFAULT;
+}
+else if (error == -ERANGE && ctx->size >= XATTR_SIZE_MAX) {
+    /* The file system tried to returned a value bigger
+than XATTR_SIZE_MAX bytes. Not possible. */
+    error = -E2BIG;
+}
