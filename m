@@ -2,64 +2,64 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B65E4CCA47B
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jun 2022 13:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6C8C43334
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jun 2022 13:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233975AbiF3NCd (ORCPT
+        id S233981AbiF3NVG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Jun 2022 09:02:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41208 "EHLO
+        Thu, 30 Jun 2022 09:21:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235190AbiF3NCb (ORCPT
+        with ESMTP id S230129AbiF3NVF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Jun 2022 09:02:31 -0400
+        Thu, 30 Jun 2022 09:21:05 -0400
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2529140E67;
-        Thu, 30 Jun 2022 06:02:31 -0700 (PDT)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25UCCcJE021718;
-        Thu, 30 Jun 2022 13:02:20 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABA312C65F;
+        Thu, 30 Jun 2022 06:21:04 -0700 (PDT)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25UCfvdo027105;
+        Thu, 30 Jun 2022 13:20:57 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
  bh=Zin55iReFVYask8LlcnJU0tNnOs0FShBSAddaEKcrN0=;
- b=dbkl6VK6WiMjcBPjLV73Br82dDU9TRpCFWkPS/CAJZ9qymYCsNoN/SMkmv9kRwqIdumj
- iYp3Bv1R1sx6ZDo8zRY5OetkmqwTrYRV8T9YHRG4oppAdG5jV1T7m5WVuW/b8Gfp0Ty2
- rFk8BNsZgVEnIn/glP6XRDFGwm5kH+5f02To6vftesLmBLuxBN0g/c1HK5CiSl/ETN7C
- swbskNLA8OhYCMp6guygBJSJft4sR49tQ4MzEOCGMVMgYFVSZrTJS5pAAxXzsIhCCQYg
- 0N5yqxYTA69m08c4c7+vbxjM6N9XU4cKs8Fep+OM751SiAIQTW3kFXPmBDXQadq9SKGi bA== 
+ b=IwFOJybj8W3VuhbmQd9BVR/Kr3MLx63k/LTOZJwQY20DxcTOhQYMvGAuM8SbHC3Z55zM
+ 4rlpkGOUyiPMC26V0W44XPEpg8gzs/RA0JUeDOW6WLn0+V+AOVwoPF/EgFEifsXM0fW5
+ Rc1RBr1GO2SWdgJIdc1QCZVQsCr3H+Mh2kg7NSLN/6rXkTmZqXziV7cQaEx/sBAINs2t
+ 1/fmEoL1aeemyvzXBRfx3YoneUSNNClasI9Ljga1xj095oLJ91b1HY6KqJCPeJpB/4dd
+ OCBpElyQagJWlByKPOhgcIMtsvkxniE53paWgPbEg/GR4IoeX4CRbHeDlMSxlCPP/xBg cA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h1bmmsfa3-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h1c2ch95b-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 Jun 2022 13:02:20 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 25UCDEwB022982;
-        Thu, 30 Jun 2022 13:02:19 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h1bmmsf8e-1
+        Thu, 30 Jun 2022 13:20:57 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 25UDIa31019546;
+        Thu, 30 Jun 2022 13:20:56 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h1c2ch94h-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 Jun 2022 13:02:19 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25UColij026794;
-        Thu, 30 Jun 2022 13:02:17 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma06fra.de.ibm.com with ESMTP id 3gwsmhx3nu-1
+        Thu, 30 Jun 2022 13:20:56 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25UDKswc024881;
+        Thu, 30 Jun 2022 13:20:54 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma04ams.nl.ibm.com with ESMTP id 3gwt0905hg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 Jun 2022 13:02:16 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25UD2EsX21561680
+        Thu, 30 Jun 2022 13:20:54 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25UDKqMx22020546
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Jun 2022 13:02:14 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9B3F14C044;
-        Thu, 30 Jun 2022 13:02:14 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7549C4C040;
-        Thu, 30 Jun 2022 13:02:12 +0000 (GMT)
+        Thu, 30 Jun 2022 13:20:52 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3988EA4051;
+        Thu, 30 Jun 2022 13:20:52 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45E79A4040;
+        Thu, 30 Jun 2022 13:20:50 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.82.30])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 30 Jun 2022 13:02:12 +0000 (GMT)
-Message-ID: <85e23c1c9460b3b3e9afbeb0789bb0320dda3f51.camel@linux.ibm.com>
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 30 Jun 2022 13:20:49 +0000 (GMT)
+Message-ID: <c0dc0b9dbdc50045ccb5dbdd09ddac1f9a01f7a9.camel@linux.ibm.com>
 Subject: Re: [PATCH v2 1/5] drivers: of: kexec ima: Support 32-bit platforms
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Palmer Dabbelt <palmer@rivosinc.com>, dmitry.kasatkin@gmail.com,
@@ -67,7 +67,7 @@ To:     Palmer Dabbelt <palmer@rivosinc.com>, dmitry.kasatkin@gmail.com,
 Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Rob Herring <robh@kernel.org>
-Date:   Thu, 30 Jun 2022 09:02:11 -0400
+Date:   Thu, 30 Jun 2022 09:20:48 -0400
 In-Reply-To: <20220624044811.9682-2-palmer@rivosinc.com>
 References: <20220624044811.9682-1-palmer@rivosinc.com>
          <20220624044811.9682-2-palmer@rivosinc.com>
@@ -76,16 +76,16 @@ X-Mailer: Evolution 3.28.5 (3.28.5-18.el8)
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: OIbSsAg0_Mv4tb80y96_oDp23Vz_FRel
-X-Proofpoint-ORIG-GUID: 03tDXB3J7cuQMldkokm7ErA1U1XRRNKu
+X-Proofpoint-ORIG-GUID: ahopxTEWvcumkRLOLUuf7gpLmYE3V92I
+X-Proofpoint-GUID: 4rWqa6R6ZJQrqoRJPolKSe2f80WIzXhL
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-06-30_09,2022-06-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=977
- suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2204290000 definitions=main-2206300052
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ phishscore=0 malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206300050
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
@@ -97,5 +97,5 @@ On Thu, 2022-06-23 at 21:48 -0700, Palmer Dabbelt wrote:
 > Acked-by: Rob Herring <robh@kernel.org>
 > Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by:  Mimi Zohar <zohar@linux.ibm.com>
 
