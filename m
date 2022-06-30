@@ -2,104 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B61A0C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jun 2022 16:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610A9C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jun 2022 18:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236292AbiF3Q3G (ORCPT
+        id S235890AbiF3S25 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Jun 2022 12:29:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37524 "EHLO
+        Thu, 30 Jun 2022 14:28:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236274AbiF3Q3G (ORCPT
+        with ESMTP id S233056AbiF3S2z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Jun 2022 12:29:06 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7751735242;
-        Thu, 30 Jun 2022 09:29:05 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id w187so18803365vsb.1;
-        Thu, 30 Jun 2022 09:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1a1RzxlSCIM5dhtCqVAmfijoRUkJ4QQhUiMrMG0/U+k=;
-        b=nge/4Og2obmsAZqMW7WDf73S0qVksl/kWK/6XGt1QGAZoUZvRdszv07aJYpM7wDVPr
-         CV6hD27j9UyiaFC+frjNcMd0HBOqkEkvLyDFUGVUrfmN+PacsRLCngGVi/7b554YK7Fz
-         JMQwNuMEurGBA5RLnxHaq+Dnvb95xEH5I2X9ioJxpUqxB2e5s2npEncLYf7hY/MbIIU3
-         Q65sZmCKg5gdcAmX2b8AcCRghD21iTBp3A0nLVJBjdDV1OdGjnp+ZiS76DEppwDHACvR
-         fmN3N3CHeI4syPY5ia37AulmGr4Zt0iepvuBeMqe9S4V7h2OaeNDo3nIuRr19nQgHB3C
-         ojMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1a1RzxlSCIM5dhtCqVAmfijoRUkJ4QQhUiMrMG0/U+k=;
-        b=tEv24tUDxCwMmErgLKbwNIJNwUwAmKitSWAn/Xj3gLPuLQjM/AN1ryR8CT4yREVW25
-         5KPyHLNIOHFoTHozEQ5tXfKn3uKyilf34j0FW1rI7nML8hQd1IXofmbQGpOSOE1E58u6
-         0xneGixD/o7jZHlKyHCOfK6zIExswlAuwkhGV6cjdwf6kdBlqUJt1bWwovU9NGzJXmv9
-         G10VhE9QdJKJ1QE8ZBmlWdt0SB/kwCU39h37UeREuAsoxozs/Du8iIPhizPvcYmpynmL
-         Pp6txlNhPpS5jbVyisijl7MvpytvGgU3ooKoJE6joO7Cm9jfG3233pSCl5s8sbsn9xar
-         w+vg==
-X-Gm-Message-State: AJIora/m+q477irGsQzmaGoUyhNWrPq+08TCi0RJ3U43w1BoAkkitKn3
-        CvqZwPoH3To/HrEOnfNDcEtHWop+uyiXE6ZutF8=
-X-Google-Smtp-Source: AGRyM1sgS6ijsKCwRqwmgQKWMOIBMYAygsJYHI3yCEwvUdnIrxokOV2PwPiDavJUDDs9Cm+7xBjrbstsdcfeGiezf0c=
-X-Received: by 2002:a67:c113:0:b0:354:3ef9:3f79 with SMTP id
- d19-20020a67c113000000b003543ef93f79mr8992976vsj.3.1656606544004; Thu, 30 Jun
- 2022 09:29:04 -0700 (PDT)
+        Thu, 30 Jun 2022 14:28:55 -0400
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17562DD5A;
+        Thu, 30 Jun 2022 11:28:53 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:47676)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1o6yuJ-00ADRh-2N; Thu, 30 Jun 2022 12:28:51 -0600
+Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:58094 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1o6yuI-0067by-0q; Thu, 30 Jun 2022 12:28:50 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Frederick Lawler <fred@cloudflare.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, brauner@kernel.org,
+        paul@paul-moore.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+References: <20220621233939.993579-1-fred@cloudflare.com>
+        <ce1653b1-feb0-1a99-0e97-8dfb289eeb79@schaufler-ca.com>
+        <b72c889a-4a50-3330-baae-3bbf065e7187@cloudflare.com>
+Date:   Thu, 30 Jun 2022 13:28:42 -0500
+In-Reply-To: <b72c889a-4a50-3330-baae-3bbf065e7187@cloudflare.com> (Frederick
+        Lawler's message of "Wed, 22 Jun 2022 09:24:31 -0500")
+Message-ID: <87v8singyt.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20220628161948.475097-1-kpsingh@kernel.org> <20220628161948.475097-6-kpsingh@kernel.org>
- <20220628173344.h7ihvyl6vuky5xus@wittgenstein> <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
- <CAADnVQ+mokn3Yo492Zng=Gtn_LgT-T1XLth5BXyKZXFno-3ZDg@mail.gmail.com>
- <20220629081119.ddqvfn3al36fl27q@wittgenstein> <20220629095557.oet6u2hi7msit6ff@wittgenstein>
- <CAADnVQ+HhhQdcz_u8kP45Db_gUK+pOYg=jObZpLtdin=v_t9tw@mail.gmail.com>
- <20220630114549.uakuocpn7w5jfrz2@wittgenstein> <CACYkzJ4uiY5B09RqRFhePNXKYLmhD_F2KepEO-UZ4tQN09yWBg@mail.gmail.com>
-In-Reply-To: <CACYkzJ4uiY5B09RqRFhePNXKYLmhD_F2KepEO-UZ4tQN09yWBg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 30 Jun 2022 19:28:52 +0300
-Message-ID: <CAOQ4uxhKG7wDsh2qhtzcF7QYFRD51r500C9YKp2NrBPJtjphww@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for bpf_getxattr
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Yosry Ahmed <yosryahmed@google.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jan Kara <jack@suse.cz>, Alessio Balsini <balsini@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1o6yuI-0067by-0q;;;mid=<87v8singyt.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX19nEYAl7ZwZ3vMuIzS+P2PIngCXHdeK06Y=
+X-SA-Exim-Connect-IP: 68.227.174.4
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 0/2] Introduce security_create_user_ns()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> >
-> > This discussion would probably be a lot shorter if this series were sent
-> > with a proper explanation of how this supposed to work and what it's
-> > used for.
+Frederick Lawler <fred@cloudflare.com> writes:
+
+> Hi Casey,
 >
-> It's currently scoped to BPF LSM (albeit limited to LSM for now)
-> but it won't just be used in LSM programs but some (allow-listed)
-> tracing programs too.
->
+> On 6/21/22 7:19 PM, Casey Schaufler wrote:
+>> On 6/21/2022 4:39 PM, Frederick Lawler wrote:
+>>> While creating a LSM BPF MAC policy to block user namespace creation, we
+>>> used the LSM cred_prepare hook because that is the closest hook to prevent
+>>> a call to create_user_ns().
+>>>
+>>> The calls look something like this:
+>>>
+>>>      cred = prepare_creds()
+>>>          security_prepare_creds()
+>>>              call_int_hook(cred_prepare, ...
+>>>      if (cred)
+>>>          create_user_ns(cred)
+>>>
+>>> We noticed that error codes were not propagated from this hook and
+>>> introduced a patch [1] to propagate those errors.
+>>>
+>>> The discussion notes that security_prepare_creds()
+>>> is not appropriate for MAC policies, and instead the hook is
+>>> meant for LSM authors to prepare credentials for mutation. [2]
+>>>
+>>> Ultimately, we concluded that a better course of action is to introduce
+>>> a new security hook for LSM authors. [3]
+>>>
+>>> This patch set first introduces a new security_create_user_ns() function
+>>> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+>> Why restrict this hook to user namespaces? It seems that an LSM that
+>> chooses to preform controls on user namespaces may want to do so for
+>> network namespaces as well.
+> IIRC, CLONE_NEWUSER is the only namespace flag that does not require
+> CAP_SYS_ADMIN. There is a security use case to prevent this namespace 
+> from being created within an unprivileged environment. I'm not opposed to a more
+> generic hook, but I don't currently have a use case to block any others. We can
+> also say the same is true for the other namespaces: add this generic security
+> function to these too.
 
-KP,
+There is also a very strong security use case for not putting security
+checks in the creation of the user namespace.
 
-Without taking sides in the discussion about the security aspect of
-bpf_getxattr(),
-I wanted to say that we have plans to add BPF hooks for fanotify event
-filters and
-AFAIK Alessio's team is working on adding BPF hooks for FUSE bypass decisions.
+In particular there are all kinds of kernel features that are useful for
+building sandboxes namespaces, chroot, etc, that previous to user
+namespaces were not possible to make available to unprivileged users
+because they could confuse suid-root executables.  With user namespaces
+the concern about confusing suid-root executable goes away.
 
-In both those cases, being able to tag files with some xattr and use
-that as part of
-criteria in the hook would be very useful IMO, but I don't think that
-it should be a
-problem to limit the scope of the allowed namespace to security.bpf.* for these
-use cases.
+The only justification I have ever heard for restricting the user
+namespace is because it indirectly allows for greater kernel attack
+surface.
 
-Thanks,
-Amir.
+Do you have a case for restricting the user namespace other than the
+kernel is buggy and the user namespace makes the kernel bugs easier
+to access?
+
+How does increasing the attack surface of the kernel make the situation
+that the kernel is buggy and the attack surface is too big better?
+
+Perhaps it is explained somewhere down-thread and I just have not caught
+up yet, but so far I have not see a description of why it makes sense
+for a security module to restrict the kernel here.
+
+Eric
+
+p.s.  I am little disappointed that I was not copied on this thread
+given that it is my code you are messing with, and I was in an earlier
+version of this thread.
+
+
+
+
