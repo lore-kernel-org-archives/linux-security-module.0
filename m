@@ -2,79 +2,76 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6FEC43334
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Jul 2022 13:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D43AC43334
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Jul 2022 13:54:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229741AbiGENvi (ORCPT
+        id S231904AbiGENyw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Jul 2022 09:51:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40596 "EHLO
+        Tue, 5 Jul 2022 09:54:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232002AbiGENvY (ORCPT
+        with ESMTP id S230131AbiGENyX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Jul 2022 09:51:24 -0400
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [IPv6:2001:1600:4:17::8faa])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 699DB329
-        for <linux-security-module@vger.kernel.org>; Tue,  5 Jul 2022 06:26:07 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lck2j0203zMqKGy;
-        Tue,  5 Jul 2022 15:26:05 +0200 (CEST)
-Received: from [127.0.0.1] (unknown [10.92.211.175])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lck2h4l19zlqV06;
-        Tue,  5 Jul 2022 15:26:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1657027564;
-        bh=X04nMg7KIWXVr55GSJJdNdLM5zG9bs44VM58INpK+SU=;
-        h=Date:Subject:From:Reply-To:To:Cc:References:In-Reply-To:From;
-        b=sbEQ8k/9EoRJyW8aFsOgJLn4sTot0TMcNScGdgt5ZAF8L8sRbyTmvYhYfP4DHCt41
-         SKMa2cZF2i7HfFCFbcUzpAVpaCk5HyGtE6zCOCA509NglQLyYOXu+RQjV/Oc2xGy4h
-         D1eQkG4zZHcYUixo/Aln4G/BgWEwXYVdrGCqN2dU=
-Message-ID: <99f4ac6eb9ede955af7426f3989e57a4@mail.infomaniak.com>
-Date:   Tue, 05 Jul 2022 15:26:04 +0200
-Subject: Re: [PATCH v6 01/17] landlock: renames access mask
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Reply-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        anton.sirazetdinov@huawei.com
+        Tue, 5 Jul 2022 09:54:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 44CC8B44
+        for <linux-security-module@vger.kernel.org>; Tue,  5 Jul 2022 06:32:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657027942;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VnUeyAuXTRR13vDRjc/+AnsnriTCOJeZopadyOQXHsI=;
+        b=U7GDaZHaUvC1r+TtmtMzpVYNx4YQZ5rKtbhhzBrjoi+vnUHV+HEOG7qJonTUndoVgpu6g4
+        56dQvzCSIESu9Gfps3MmMdDoqK/ajxd82E+GcguZK04NjPVt9zrvflQ7QJoQ/mhfb89tgR
+        /y3iQ3OpTNuvPJ6An/aUuPE2b1jgkpk=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-623-gcAlfXMAPEiIz2jHO1zvjA-1; Tue, 05 Jul 2022 09:32:17 -0400
+X-MC-Unique: gcAlfXMAPEiIz2jHO1zvjA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 57C01294EDCC;
+        Tue,  5 Jul 2022 13:32:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.50])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B5022166B26;
+        Tue,  5 Jul 2022 13:32:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20220704025610.3834-1-zeming@nfschina.com>
+References: <20220704025610.3834-1-zeming@nfschina.com>
+To:     Li zeming <zeming@nfschina.com>
+Cc:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
+        serge@hallyn.com, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@nfschina.com
+Subject: Re: [PATCH] keys/keyring: Fix typo in string
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-WS-User-Origin: eyJpdiI6IjZEVXcxY01rNGhWNzdhV3Vjb3V6UEE9PSIsInZhbHVlIjoiSjExSm0zOG00bXpMbUNiZ1FsNHRtQT09IiwibWFjIjoiMGU4OTQ4ZjhhYmZkNGY4ODBmNDI4YzgwMzQ2YmJjM2FlODEyZTkxODYwY2IyM2JkYjQ5NjhjMzBiZTU1MTRkYiIsInRhZyI6IiJ9
-X-WS-User-Mbox: eyJpdiI6IlNvbDJnejMyVldGNU9scyt5QmNBeHc9PSIsInZhbHVlIjoiaEFkVDNiVUNFQXpSU3pDVUYzUnRqQT09IiwibWFjIjoiNGRlNjA4NjNlNGE2YWM1ZGUyNmExYzk2ZmU3YTAyYjRiYTUyMmM3NDY4NjZlYzE4MjQ2ODU2ZGQ0NDUxM2ZiOSIsInRhZyI6IiJ9
-X-WS-Location: eJxzKUpMKykGAAfpAmU-
-X-Mailer: Infomaniak Workspace (1.3.335)
-References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
- <20220621082313.3330667-2-konstantin.meskhidze@huawei.com>
- <09f25976-e1a6-02af-e8ca-6feef0cdebec@digikod.net>
- <a211ec4b-9004-2503-d419-217d18505271@huawei.com>
-In-Reply-To: <a211ec4b-9004-2503-d419-217d18505271@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2217585.1657027935.1@warthog.procyon.org.uk>
+Date:   Tue, 05 Jul 2022 14:32:15 +0100
+Message-ID: <2217586.1657027935@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022-07-05T13:29:04.000+02:00, Konstantin Meskhidze (A) <konstantin.mesk=
-hidze@huawei.com> wrote:
->  7/1/2022 8:08 PM, Micka=C3=ABl Sala=C3=BCn =D0=BF=D0=B8=D1=88=D0=B5=
-=D1=82:
->=20
-> >   =20
-> >  On 21/06/2022 10:22, Konstantin Meskhidze wrote:
-> >=20
-> > >    To support network type rules,
-> > >  this modification extends and renames
-> > >  ruleset's access masks.
-> > >  This patch adds filesystem helper functions
-> > >  to set and get filesystem mask. Also the
-> > >  modification adds a helper structure
-> > >  landlock_access_mask to support managing
-> > >  multiple access mask.
-> >  =20
-> >  Please use a text-width of 72 columns for all commit messages. You can
-> >  also split them into paragraphs.
-> > =20
->     By the way, are you going to review the rest patches?
+Li zeming <zeming@nfschina.com> wrote:
 
-Yes, of course, I'm busy right now but I'll send more reviews by the end of=
- the week.
+> -	kenter("{%s,%d},,{%zu/%zu}",
+> +	kenter("{%s,%d},{%zu/%zu}",
+>  	       key->type->name, key->serial, ctx->count, ctx->buflen);
+
+This changed, so yes, it can be fixed.
+
+> -	kenter("{%d},,%zu", key_serial(keyring), buflen);
+> +	kenter("{%d},%zu", key_serial(keyring), buflen);
+
+This one's not a typo.
+
+David
+
