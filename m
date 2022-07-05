@@ -2,33 +2,33 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F45C43334
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Jul 2022 09:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 032BBC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Jul 2022 11:29:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232935AbiGDJXu (ORCPT
+        id S230300AbiGEL3L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Jul 2022 05:23:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49258 "EHLO
+        Tue, 5 Jul 2022 07:29:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230098AbiGDJXu (ORCPT
+        with ESMTP id S229575AbiGEL3K (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Jul 2022 05:23:50 -0400
+        Tue, 5 Jul 2022 07:29:10 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FF3656D;
-        Mon,  4 Jul 2022 02:23:47 -0700 (PDT)
-Received: from fraeml710-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Lc0cl6Pvnz67x0m;
-        Mon,  4 Jul 2022 17:19:35 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A78F13E3A;
+        Tue,  5 Jul 2022 04:29:09 -0700 (PDT)
+Received: from fraeml735-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4LcgNg51sPz67txK;
+        Tue,  5 Jul 2022 19:26:27 +0800 (CST)
 Received: from lhreml745-chm.china.huawei.com (10.201.108.195) by
- fraeml710-chm.china.huawei.com (10.206.15.59) with Microsoft SMTP Server
+ fraeml735-chm.china.huawei.com (10.206.15.216) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 4 Jul 2022 11:23:45 +0200
+ 15.1.2375.24; Tue, 5 Jul 2022 13:29:06 +0200
 Received: from [10.122.132.241] (10.122.132.241) by
  lhreml745-chm.china.huawei.com (10.201.108.195) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 4 Jul 2022 10:23:44 +0100
-Message-ID: <5bc000ac-3761-7128-1dc9-f7179fcb2164@huawei.com>
-Date:   Mon, 4 Jul 2022 12:23:43 +0300
+ 15.1.2375.24; Tue, 5 Jul 2022 12:29:05 +0100
+Message-ID: <a211ec4b-9004-2503-d419-217d18505271@huawei.com>
+Date:   Tue, 5 Jul 2022 14:29:04 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.4.1
@@ -47,7 +47,7 @@ In-Reply-To: <09f25976-e1a6-02af-e8ca-6feef0cdebec@digikod.net>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+X-ClientProxiedBy: lhreml750-chm.china.huawei.com (10.201.108.200) To
  lhreml745-chm.china.huawei.com (10.201.108.195)
 X-CFilter-Loop: Reflected
 Precedence: bulk
@@ -70,7 +70,7 @@ List-ID: <linux-security-module.vger.kernel.org>
 > Please use a text-width of 72 columns for all commit messages. You can
 > also split them into paragraphs.
 > 
-   Ok. I will rewrite all commits' messages. Thanks.
+   By the way, are you going to review the rest patches?
 >> 
 >> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 >> ---
@@ -259,8 +259,6 @@ List-ID: <linux-security-module.vger.kernel.org>
 > 
 > You need to use access_mask_t everywhere, including here.
 > 
-   I got it. Will fix it. Thanks.
-
 >> +landlock_get_fs_access_mask(const struct landlock_ruleset *ruleset,
 >> +			    u16 mask_level)
 >> +{
