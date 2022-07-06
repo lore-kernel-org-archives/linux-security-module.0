@@ -2,242 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4248BC433EF
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Jul 2022 21:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B320CCA473
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Jul 2022 10:06:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232071AbiGEVtt (ORCPT
+        id S230269AbiGFKGR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Jul 2022 17:49:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37830 "EHLO
+        Wed, 6 Jul 2022 06:06:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231859AbiGEVts (ORCPT
+        with ESMTP id S229789AbiGFKGQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Jul 2022 17:49:48 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097385F73
-        for <linux-security-module@vger.kernel.org>; Tue,  5 Jul 2022 14:49:48 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id w185so8998671pfb.4
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Jul 2022 14:49:48 -0700 (PDT)
+        Wed, 6 Jul 2022 06:06:16 -0400
+Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B583725281
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 03:06:15 -0700 (PDT)
+Received: by mail-pg1-x549.google.com with SMTP id f9-20020a636a09000000b00401b6bc63beso5862242pgc.23
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Jul 2022 03:06:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=tjX2w9M7EFtHsZFZhsx3c4SCQweNBQqkhUorHIIQxAQ=;
-        b=HvXl6ClLvedc6raRJMhoNGimAYSs25KyzKad82UhTKWnzhCAy6nlXOgA1UQDZ1NrTV
-         zPGWl+PeNp4sb233HYvM+9DCsFBdX4kvrqSAKK2BJ0wAwDTqybVQQUk7h4fA4eWYI64Q
-         8jGUF0W3R7nF3rOFFWaGr72lUVe06uB49zvw25PfzIR8mNLali9dOCJHKCQpjU8wGiTp
-         sLjs4tau82CNnSwcpSFCJUUt6F5WQPEbtP+4gFnaztZCyaqQA3N4p6xjIsZviDMTH9K8
-         XUFR684AvlhXWXxfUfgodVrhU/7JTQxgBX47cmYetqrTK1fQo0uyseI2Z9b55jU2fk4k
-         +OAA==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=ps635/kpA1eo1e2a/d/LkjenrD3s0FFYKtlQH5og2M0=;
+        b=NnynWWsFfTO+dssm6EIyPhjE+6ApmP6rlGBgJIa4hjcU/iJJY5BwKVCYSsog4WiWVX
+         VDsaEFZrRp+XsyKcCEmw4KZWipHQRyDu/cD9ip08AN20WScWrdo+817dBdzSnXfpxgCg
+         VTEuIjEiJBrB9mFSCrZWEG19FX6yzHPv6lhcjBomqEFUcUy/Oy9nmcqAwT4xnbIDTHVk
+         b6zqi0B1PK3O/xgcbr3fO7C7Wmj+l9j5BHZx7Hu2NhioXvuc3dlbOVw8fotQHF2X6w0z
+         2P/Jy5KOYU7EZjo97NVQnQ3mZEH10ekINoXovU53Su/npgQOQyJVdGhQIlbipJbPHJli
+         qz6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=tjX2w9M7EFtHsZFZhsx3c4SCQweNBQqkhUorHIIQxAQ=;
-        b=Qf7sU1EUD0u/eOJNHkjGUSJjxb0wtTxZaFe6orEtwVadpmaSkGHNzo7FJ2b483v622
-         /z0UV0kTMQub2sc4RvV/Tm0L+yObLbznP3NEp1RLL5zCP8Zqh7XfWTxdhOeFMDj6eDJz
-         8uLcNvbxKqx3njefOeYQbgZA639Gw5i6l6JcZZ1RzE9E7nIzIOjGp+JhmiSMKQwTMAor
-         YWyz0HbzW6/SPOlG1Lm+OYA46HS79z65J/fs4T+mouNKsLDR4gYcQn/ILpKVArzRri57
-         iVAZ7UZ7HVoeQLZWnY1CeXNDjYK+6ogyecfcnI6nboZ/HBVeCup1iE6/7SHDzWI+z043
-         pPFg==
-X-Gm-Message-State: AJIora8kdSIua7Gxsw3k7ujT219kA2z/zS7x5bH9WgaPI0Ylqvv5l/m4
-        s/Jf0EbDzazapgex2w92qR7WeU2NqZiiigelj16/Og==
-X-Google-Smtp-Source: AGRyM1u7nssJEQxEFORZ2ICttHs8r1YyjWRqLPtub3pQnl8k0K2Gx+kfiDCwO149Qd4zDix1vqAvmMixnvUAtxJ31D4=
-X-Received: by 2002:aa7:8883:0:b0:525:6b0a:b23d with SMTP id
- z3-20020aa78883000000b005256b0ab23dmr43165296pfe.82.1657057787103; Tue, 05
- Jul 2022 14:49:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220628222941.2642917-1-jeffxu@google.com> <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
-In-Reply-To: <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Tue, 5 Jul 2022 14:49:11 -0700
-Message-ID: <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kees Cook <keescook@chromium.org>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=ps635/kpA1eo1e2a/d/LkjenrD3s0FFYKtlQH5og2M0=;
+        b=QCF20mX8sI5mqEWOUeNlgup7TrVtJMAV43FygwLBG/TSZYyMrSyKqeLGY6nEQ1VQlW
+         NKCo30hcWff5wOSa16TN2Xtm/yVszddH218ROFSK1MBf3n+198QifALr07ZRs5yx7E/U
+         aYukL3UpeHB72j8mLZyezplA5f970t72OBVSJh09K+Mx/935Pc45lTm64pMjW5b3CH4B
+         6elaQu3DOZAtWghLhu0eQ7wF7wOu+Wak5KKLy04MaIYdRFpLTy5nbvman7u8fjfV2XSk
+         dAmq+jyNYrWPozjXbBO5BcRG94YMWRwq0a3CSII3q745iGqn7B9FgoVTopFikzSx69ta
+         6xfA==
+X-Gm-Message-State: AJIora+vCFSDX9Znzzcu0un/cfLVkzGXrJ9wwUklPjnD0BUhIXonDoRQ
+        EzXW9dgV/k5+VxnFG/W6wIV6W2M4kmNb0A==
+X-Google-Smtp-Source: AGRyM1uOxF/MrPzQp6BtGripzjqJC6JwABG5OHiDEZ1tbj3+JeUCDkBfbNlhP7R6C3rOrgYGj62qT2p8TRZx3A==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
+ (user=davidgow job=sendgmr) by 2002:a17:90a:d243:b0:1ef:9e70:3d4e with SMTP
+ id o3-20020a17090ad24300b001ef9e703d4emr9065309pjw.232.1657101975263; Wed, 06
+ Jul 2022 03:06:15 -0700 (PDT)
+Date:   Wed,  6 Jul 2022 18:06:07 +0800
+Message-Id: <20220706100607.75761-1-davidgow@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
+Subject: [PATCH v3] apparmor: test: Remove some casts which are no-longer required
+From:   David Gow <davidgow@google.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Daniel Latypov <dlatypov@google.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     David Gow <davidgow@google.com>, kunit-dev@googlegroups.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Micka=C3=ABl
+With some of the stricter type checking in KUnit's EXPECT macros
+removed, several casts in policy_unpack_test are no longer required.
 
-Thank you for your review, please see my response below.
+Remove the unnecessary casts, making the conditions clearer.
 
-> Hi Jeff,
->
-> Thanks for this patch. Here are some comments:
->
-> On 29/06/2022 00:29, Jeff Xu wrote:
-> > ptrace_test assumes YAMA is disabled, skip it if YAMA is enabled.
-> >
-> > Cc: Jorge Lucangeli Obes <jorgelo@chromium.org>
-> > Cc: Guenter Roeck <groeck@chromium.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > Tested-by: Jeff Xu <jeffxu@google.com>
-> > Signed-off-by: Jeff Xu <jeffxu@google.com>
-> > Change-Id: I623742ca9f20ec706a38c92f6c0bab755f73578f
-> > ---
-> >   .../testing/selftests/landlock/ptrace_test.c  | 49 ++++++++++++++++++=
-+
-> >   1 file changed, 49 insertions(+)
-> >
-> > diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/tes=
-ting/selftests/landlock/ptrace_test.c
-> > index c28ef98ff3ac..ef2d36f56764 100644
-> > --- a/tools/testing/selftests/landlock/ptrace_test.c
-> > +++ b/tools/testing/selftests/landlock/ptrace_test.c
-> > @@ -226,6 +226,44 @@ FIXTURE_TEARDOWN(hierarchy)
-> >   {
-> >   }
-> >
->
-> Please move these new helpers after test_ptrace_read() and make them stat=
-ic.
->
-> > +int open_sysfs(const char *path, int flags, int *fd)
-> > +{
-> > +     *fd =3D open(path, flags);
-> > +
-> > +     if (fd < 0)
-> > +             return -1;
-> > +
-> > +     return 0;
-> > +}
->
-> open_sysfs() can be replaced with a call to open(). This makes the code
-> simpler.
->
-> > +
-> > +int read_sysfs_int_fd(int fd, int *val)
-> > +{
-> > +     char buf[2];
-> > +
-> > +     if (read(fd, buf, sizeof(buf)) < 0)
->
-> I guess `read(fd, buf, 1)` should be enough and it enables keeping the
-> final '\0'. A comment should state that this helper only read the first
-> digit (which is enough for Yama).
->
-> > +             return -1;
-> > +
-> > +     buf[sizeof(buf) - 1] =3D '\0';
->
-> Use `char buf[2] =3D {};` instead.
->
-> > +     *val =3D atoi(buf);
-> > +     return 0;
-> > +}
->
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: David Gow <davidgow@google.com>
+---
 
-Thanks, I will revise the code, my original thought is to extend it as
-a common utility function to parse an int, let me finish it in the
-next iteration of patch.
+This is a rebase and resend of [1], which had been accepted into the
+AppArmor tree, but eventually conflicted with [2]. Let's push it via the
+KUnit tree to avoid any further conflicts, as discussed in [3].
 
-> Same for read_sysfs_int_fd(), you can inline the code in read_sysfs_int()=
-.
-> This is a good test but it fail if Yama is not built in the kernel.
->
-I don't have a kernel built without yama, so my original thought is to
-fail it and whoever has the need can fix it. What is your thought on this ?
+Cheers,
+-- David
 
-> For now, I think you can create two helpers named something like
-> is_yama_restricting() and is_yama_denying() (for admin-only attach).
->
-Can you please clarify on the difference/implementation on those 2 ?
+[1]: https://lore.kernel.org/linux-kselftest/20210513193204.816681-9-davidgow@google.com/
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5f91bd9f1e7ad5a2025a2f95a2bc002cb7c9e0f9
+[3]: https://lore.kernel.org/all/20220405125540.2135d81d@canb.auug.org.au/
+---
+ security/apparmor/policy_unpack_test.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> > +     if (ptrace_val !=3D 0) {
->
-> Some tests should work even if ptrace_val =3D=3D 1. SKIP() should only be
-> called when the test would fail. Can you please check all tests with all
-> Yama values?
-Sure, below are yama cases with testing result:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-case 0 - classic ptrace permissions: a process can PTRACE_ATTACH to any oth=
-er
-    process running under the same uid, as long as it is dumpable (i.e.
-    did not transition uids, start privileged, or have called
-    prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEME is
-    unchanged.
+diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+index 5c18d2f19862..7954cb23d5f2 100644
+--- a/security/apparmor/policy_unpack_test.c
++++ b/security/apparmor/policy_unpack_test.c
+@@ -177,7 +177,7 @@ static void policy_unpack_test_unpack_array_out_of_bounds(struct kunit *test)
+ 
+ 	array_size = unpack_array(puf->e, name);
+ 
+-	KUNIT_EXPECT_EQ(test, array_size, (u16)0);
++	KUNIT_EXPECT_EQ(test, array_size, 0);
+ 	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
+ 		puf->e->start + TEST_NAMED_ARRAY_BUF_OFFSET);
+ }
+@@ -391,10 +391,10 @@ static void policy_unpack_test_unpack_u16_chunk_basic(struct kunit *test)
+ 
+ 	size = unpack_u16_chunk(puf->e, &chunk);
+ 
+-	KUNIT_EXPECT_PTR_EQ(test, (void *)chunk,
++	KUNIT_EXPECT_PTR_EQ(test, chunk,
+ 			    puf->e->start + TEST_U16_OFFSET + 2);
+-	KUNIT_EXPECT_EQ(test, size, (size_t)TEST_U16_DATA);
+-	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, (void *)(chunk + TEST_U16_DATA));
++	KUNIT_EXPECT_EQ(test, size, TEST_U16_DATA);
++	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, (chunk + TEST_U16_DATA));
+ }
+ 
+ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_1(
+@@ -408,7 +408,7 @@ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_1(
+ 
+ 	size = unpack_u16_chunk(puf->e, &chunk);
+ 
+-	KUNIT_EXPECT_EQ(test, size, (size_t)0);
++	KUNIT_EXPECT_EQ(test, size, 0);
+ 	KUNIT_EXPECT_NULL(test, chunk);
+ 	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, puf->e->end - 1);
+ }
+@@ -430,7 +430,7 @@ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_2(
+ 
+ 	size = unpack_u16_chunk(puf->e, &chunk);
+ 
+-	KUNIT_EXPECT_EQ(test, size, (size_t)0);
++	KUNIT_EXPECT_EQ(test, size, 0);
+ 	KUNIT_EXPECT_NULL(test, chunk);
+ 	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, puf->e->start + TEST_U16_OFFSET);
+ }
+-- 
+2.37.0.rc0.161.g10f37bed90-goog
 
-Test: All passing
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Case 1 - restricted ptrace: a process must have a predefined relationship
-    with the inferior it wants to call PTRACE_ATTACH on. By default,
-    this relationship is that of only its descendants when the above
-    classic criteria is also met. To change the relationship, an
-    inferior can call prctl(PR_SET_PTRACER, debugger, ...) to declare
-    an allowed debugger PID to call PTRACE_ATTACH on the inferior.
-    Using PTRACE_TRACEME is unchanged.
-
-Test:
-// Base_test: 7/7 pass.
-// Fs_test 46/48 pass
-//.   not ok 47 layout2_overlay.no_restriction
-//.   not ok 48 layout2_overlay.same_content_different_file
-//  Ptrace_test 4/8 pass
-// #          FAIL  hierarchy.allow_without_domain.trace
-// #          FAIL  hierarchy.deny_with_parent_domain.trace
-// #          FAIL  hierarchy.allow_sibling_domain.trace
-// #          FAIL  hierarchy.deny_with_nested_and_parent_domain.trace
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-Case 2 - admin-only attach: only processes with CAP_SYS_PTRACE may use ptra=
-ce
-    with PTRACE_ATTACH, or through children calling PTRACE_TRACEME.
-Case 3 - no attach: no processes may use ptrace with PTRACE_ATTACH nor via
-    PTRACE_TRACEME. Once set, this sysctl value cannot be changed.
-Test: *case2 and case3 have the same results:
-// Base_test: 7/7 pass.
-// Fs_test 46/48 pass
-//.   not ok 47 layout2_overlay.no_restriction
-//.   not ok 48 layout2_overlay.same_content_different_file
-//  Ptrace 2/8 pass
-//.  ok 4 hierarchy.deny_with_sibling_domain.trace
-//.  ok 8 hierarchy.deny_with_forked_domain.trace
-// the other 6 tests failed with timeout.
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Do you know why fs_test (47,48) is failing when yama value =3D 1,2,3 ?
-
-FOR SKIP,  it might be messy to add SKIP after checking variant names
-in TEST_F(), (too many if/else , which make it less readable),
-ideally this should be when or before FIXTURE_VARIANT_ADD() is called.
-or somehow refactor the code to remove the variant check in TEST_F()
-
-Is there a better way  ?
-
-Thanks
-Best Regards,
-Jeff
-
-
-
-On Thu, Jun 30, 2022 at 8:31 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
->
->
-> On 29/06/2022 00:29, Jeff Xu wrote:
-> > ptrace_test assumes YAMA is disabled, skip it if YAMA is enabled.
-> >
-> > Cc: Jorge Lucangeli Obes <jorgelo@chromium.org>
-> > Cc: Guenter Roeck <groeck@chromium.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > Tested-by: Jeff Xu <jeffxu@google.com>
->
-> I guess we assume that Signed-off-by implies Tested-by, so you can
-> remove this Tested-by.
->
-> > Signed-off-by: Jeff Xu <jeffxu@google.com>
-> > Change-Id: I623742ca9f20ec706a38c92f6c0bab755f73578f
->
-> Please remove this Change-Id too.
