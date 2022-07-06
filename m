@@ -2,96 +2,269 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B67C43334
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Jul 2022 20:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03943C43334
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Jul 2022 23:42:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231407AbiGFUij (ORCPT
+        id S234874AbiGFXmQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Jul 2022 16:38:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45882 "EHLO
+        Wed, 6 Jul 2022 19:42:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231703AbiGFUij (ORCPT
+        with ESMTP id S234780AbiGFXmB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Jul 2022 16:38:39 -0400
-Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F7AB1A066
-        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 13:38:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657139913; bh=qMlT1sfyIOKt9jSEGJ2PIEJGFPTv60Qeq8zjL0K+GZ4=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=e85t85RLoOMduveY0OlQcD24tBDf3j8U9W/HmfJyfHmydQijfGWuplcpCprV5i4vwxgGLDiMNZpFVrFpcJCYiVfrRtWRjouBFPfkP9bxXSvKw1NSAxTYDasGu0LEllEdutBFObD1CHKX7FQEHgqG5MVyvE1YpF57VC735dm1c7fUNpiz/2s/2nccqK8ZHKUuQolTZS+uCm1TH9vgtepNCYdfCZSqdGVgHfak50z8fVFoS6v/dZSsQ6gSMEu+DYistLAk6YflcDIE+RAURwRbwH+5UXKYCLJhqZCT/9orIt5ZLj2/DHGeZszK3XIhonSTFQUPN9bVPsUMAS/X8Xa1iw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657139913; bh=Gtqqye2h8n/R559w24sF4GgpqAomjX9UPEX0C5+jq5g=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=edb0EzatNvySHxC9CdNGZgtOvOw4lNhC+fV816IL6OEoxou7+sPXhiJKbv+ZaiZzGgEDku8LWF8e9Fpd4On8xPxY+50wLahKuOPrD+WkNIM6nw9XRL6p4EfErYj1oNb6fuafvlY9YjRpNOjxlL3JHkqFMCxxOObWezirErr2guZPIhhEqQaF3f+nNIsBPHDcMHsmdk3sHyVp0a4PMjTZzGhwRJfNAmHCFW7ge7RuyUE1M9WmU2/SX7dWYs+n1z5TInSCvVnIVkx8zyEBt17B0poSi9mCXrYPCh/y/JhH8Aj0JU9PHJqzHtq755I+XhzpFPAQnGYPcyoK9qK68XTArA==
-X-YMail-OSG: mikaX0wVM1mT2v6Z6cO6InAh2xs7dWOEtCdCzW0RiNppO75sa50sqWREqd0h5Z5
- PE3DcDeO458tO9XLFH43B0d5VMLArjaE1VxgpGXRmtzf0O9oCUKdAwBXnhyaD.EHVNx3FBhG3qGb
- rORy3WItZHCEX8A9QnXOGzmqCNbbJs4aKmlvfGhk_phryfPLjMupXGJXIgJ.sDAEtgadTnmnJjB9
- fIWjsbHUxyGv.r0P_hoMDa8V76dv0hrgnWbX_nxsRLXTyNpoc4LQpz4fABoNlbh4dyqZP0o9Bs62
- Ysbtul1LZGHPG2k.xI3vdYIB_RVpjMJRkHKDDZEu9QqzFI1FuUTk0SniPn_gNufvGBoTMNhNr.82
- g7eOyp_zFehu3PCqxi45eWuAEfKZuleTRdPYShCA7iNhgWTLmIcbES6F8BHel4bJqMYfHFY0qVCR
- Qsjghi1Ge3pTLHYNZ3S3jOvg0nrseRk1xejSOy9d2Vb7QRYhY7MeIa95Wrv.qk3x5Tbw9K5Sq6nj
- kcVS2DXKLxpbYXcJDpwu2sXlNSUtG0CoPtR.OUaacNXIyJifeQLRZhcj12hgTQBwynbPFCkSwKAP
- S2zE_iJZfosH09vuroKZhP.kQP4B4CATWSFoA1q7f5LhIL5MWwriM4pV_q6Ye_ZaNWuK1XcSOGVM
- .QYgydhJh9bjQxL2E0c7EU0TKhfNX1aMJ1kGQT1H9KJWBD4GzcE_KJJ0KqLnVzPaanOgGzEUCUJK
- aarGRIMtEUJhqN8VKCDAXPjxeCoC9Tq6mJ9l3wOvYG87rjSJLg2MKMkiLLfhHlx2W3oJBHJympXt
- amqScWbutjKVttKaMGgOM_UeP7VCOij2bsIray5T93oLk1wFg.XTqLIzZComznWSO1Puf_qeWGY4
- GkcLD5apAXIM5KC04y3ynWPIsZiooNi4Cx8E3WaEudlUihRfYokn3wWsNDfym15M7tYOAs0.77Vd
- WveBpnvAleyrKXWGvv.Z4UzP4eIIp_cAwjGy3CipUehGS2SoTuruVdwZplifY0oNjx7oiypno1LZ
- wdYNvvgJxQOp1bVmbmPBclz8k5kOHQNohfezNA97FYbkge6jZgIasu3oTOK2DenMI1s5VsWJLuJU
- 6HXCld2T7qPha.EX0YZ6QJMH3OwjtC4FoOFYy186cG6kRsyUl68.Z9M1Q1PA6sYKiqly_aDze8Ry
- oyz8uhhXWRLpef75vbKEJo9846IajMSspzUcyeDCYZ3adFJsxcjGrEV9lMYzGEDKT9bd6PJSp6E0
- isyWfEAM1rwLYFU8nh5dIHhzhF3tOFDUBRf10TOsvL2mKFPRpaB57r.bXlSANVkKu2AAeRtZqppo
- mpo3VE.LIrWqYbFs3PwxAesewyNb_C3khoh7bw8aEJ2UY3qKfI66TWYCYckzVOKWiYpIJqmFL_Pi
- 9gLPUd_q9m..TgDNA8q4.YAJn8aWQQOGTqdxk6stR.Zhz6HgmzZXZ.lfAV2xNCqJpK9gDqLJCm6s
- NPQdgC7YATmsjnKylphVuf0Uq2Q1zzRE62yWxJaz1hrW653ex5VVAotQMUhooGPh88.uk8PFBxTp
- FGnnN7Zz.zCZiIGnOxWK.C8mhw6cjKsdX5kkA.L4fi.k17l_oTJeiRx6mN3tFesBqoKTqCiPnx0G
- zZDi1DsUufdN55gbSgVgJkIZqmse5XRk41MLoo8SjhHU8HyV.oBFP4MdLWIiv0D5X93EiXKAjsZC
- 5J8t3IhKC.9XSemOx7eeQvrCeZDASjHbVgovO1pP2_MA8TZUGBoNxISmBVkMM.3vwrlkMhqT8dsD
- LuJS0E78FeuiNN.1hngDkUtqFtp140YqNwc_zcYgO91rdQ_4UMILCCDQrvUDpQPbNq0M2aq04efv
- yedaQ.KXNhnfa7RxdDd.eOA5ONx9QqmX002qnTlNXKB4.GH86aT7kImVftfC3FtJwFbTJHzRhqc9
- R4ZSZIcRRLJQR4ckf3Aw6F7hAS9VplpUBCkyG.zi4hMU0rZRCVa.yeE.hYfmUYTb1sGrbNdb6Pol
- cUle9DsHkB8esKXVrXTBjpp2iOBqhGfRGm_c.qlmQHbA.Ee0FGKmAoC75Rnu8No2IHDnqcSDn16B
- tdjDn3Zw_Htl9MnUNMb4ObUh19Jz.px30UAJrYpIQg80TM.epC0LrtmcfgiuYpsSW3ug25.2y0Sb
- 8AgSpKqjKmuiF28l7x9N0iRuqWJ_kDOqS0kJ7mmmL6fq9rlOUHUnHUnz2YKl9JgLO87p5jDYrIAo
- 2LgipKqgZ7H4YJe0N6cszlU7xNjM5udVc9lIYYZZ3sSOekZzHkfCB.JYwf7Ihm.l8ciPxKTiHDER
- 9RE4pUzrB3ylY
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 6 Jul 2022 20:38:33 +0000
-Received: by hermes--production-gq1-56bb98dbc7-gxlbk (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 48867d5fce25f0ef3819f44c1eefcdbe;
-          Wed, 06 Jul 2022 20:38:28 +0000 (UTC)
-Message-ID: <35a2891e-64f3-6139-eb3f-5acc6dd406df@schaufler-ca.com>
-Date:   Wed, 6 Jul 2022 13:38:28 -0700
+        Wed, 6 Jul 2022 19:42:01 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69BB2CE15
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 16:42:00 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id e16so3179780pfm.11
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Jul 2022 16:42:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vwwdZ2fP1UVZmO57D1mqd5DMh9/cGanDM/yWeofOBB8=;
+        b=HXhsRLjNcAdSNBCMPnn8uTMcRGkSzCmOslY6oJ8F3aJ1au86E5TTKS1M6ZpxFTZkWS
+         fS0jl0Y7IhcjWop0GhVASBwr17+mC106Re6MdKOsndwD0bvMdNrh85kN7VAGYC84c+id
+         JGqOoAcsz4wAKYvN7uTa2U2AvFodltT/odqkZ3bGxpduIBMlyprcSx5K+E61F/umvnBN
+         +fDoyG8ElFy84QoGNW9xj2P8ErPaPkethL2XwY4O0xqfsNeMygg1ickSpsnTfdPHhlbi
+         75hOEyRgvSN/4HCgJAc/W73kL9Ceqqc22dXK0O/vDjyWLeEvUg/qglnqxloiLtWH9HSa
+         st/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vwwdZ2fP1UVZmO57D1mqd5DMh9/cGanDM/yWeofOBB8=;
+        b=XGig8sQzMNEpzNhrtiB/KNWUcZRMhHONjmpIdj3ILVAxuWX0yyTo+v7qu7MVOY5zeU
+         799YD715/2rq1CtkTPzTzZOK7WBQNp9E0Fdp5j9Gvw3GJ3bQZoedQILqLidwcoz6LBZx
+         BKcLJGREhXRAjQD4+h+me3Fp3oMOOisq7dagm2UiB8NtAOh4p3wlCR/O1lmihlcDIbmo
+         niUiYl1Br/DMwQ9Wk+vJ0gGFc06iIi7p46SQ3K8sZJF6UHJbM6kaxvUzIb27z56HhzT2
+         m73b+jbCdpplwVvwSKPetiE/NxOtqZ5b7L+gsm3CUXiMpZLG4nteVsE1KlMKeoWNaJ+F
+         wLJQ==
+X-Gm-Message-State: AJIora/nfYhI6ojd5hRfaHeslRNZGTjnaGv1BBg/bzQw+Bs/WAISqhIc
+        u3Dx2pjpeHycR6xdd+YpJyMgWW+HBH9L04Q1mZcqNg==
+X-Google-Smtp-Source: AGRyM1ugcCpXnL4qo4ZqEc+QoA8wPgzX0CPzASOI52vjcIbNGVDVWNpsQ5HxSJWbVPjZHb3XskTJ/XfkEOlUqqEYRgM=
+X-Received: by 2002:aa7:8883:0:b0:525:6b0a:b23d with SMTP id
+ z3-20020aa78883000000b005256b0ab23dmr49502147pfe.82.1657150919937; Wed, 06
+ Jul 2022 16:41:59 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: Maintainer update
-Content-Language: en-US
-To:     James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org
-References: <c513dcdb-17f9-377a-1329-2b8fee8dc28c@namei.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <c513dcdb-17f9-377a-1329-2b8fee8dc28c@namei.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20381 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20220628222941.2642917-1-jeffxu@google.com> <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
+ <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
+In-Reply-To: <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
+From:   Jeff Xu <jeffxu@google.com>
+Date:   Wed, 6 Jul 2022 16:41:24 -0700
+Message-ID: <CALmYWFs2gv-z8W=vNpQf6G32VHd=ptGQ4cx+ahcEPtf6Y4UC0A@mail.gmail.com>
+Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/6/2022 11:56 AM, James Morris wrote:
-> Hi Folks,
->
-> I'm now a manager and don't get as much time to focus directly on 
-> development work.
->
-> I'd like to propose that we add Paul Moore as a maintainer of the Security 
-> Subsystem, and for him to take the lead on that, in addition to his 
-> SELinux and other maintainer work.
->
-> With LSMs pushing directly to Linus, this maintainer role is now mostly 
-> about merging new LSMs and major LSM changes, and integrating bugfixes.
->
-> Paul has been taking many LSM bugfixes through his SELinux tree for a 
-> while, so this would be somewhat a formalization of things there. In terms 
-> of new LSMs and major changes, this is and will remain a collaborative 
-> process with the LSM community.
->
->
-> Any thoughts, concerns, objections?
+A correction (resend with plain text)
 
-It was pretty easy to see this coming, and I support it completely.
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> case 0 - classic ptrace permissions: a process can PTRACE_ATTACH to any o=
+ther
+>     process running under the same uid, as long as it is dumpable (i.e.
+>     did not transition uids, start privileged, or have called
+>     prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEME is
+>     unchanged.
 
+// Base_test: 7/7 pass.
+// Fs_test 46/48 pass
+//.   not ok 47 layout2_overlay.no_restriction
+//.   not ok 48 layout2_overlay.same_content_different_file
+//  Ptrace 8/8 pass
+
+Note: 47,48 of fs_test are failing for all YAMA config values (0-3)
+
+
+On Tue, Jul 5, 2022 at 2:49 PM Jeff Xu <jeffxu@google.com> wrote:
+>
+> Hi Micka=C3=ABl
+>
+> Thank you for your review, please see my response below.
+>
+> > Hi Jeff,
+> >
+> > Thanks for this patch. Here are some comments:
+> >
+> > On 29/06/2022 00:29, Jeff Xu wrote:
+> > > ptrace_test assumes YAMA is disabled, skip it if YAMA is enabled.
+> > >
+> > > Cc: Jorge Lucangeli Obes <jorgelo@chromium.org>
+> > > Cc: Guenter Roeck <groeck@chromium.org>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > Tested-by: Jeff Xu <jeffxu@google.com>
+> > > Signed-off-by: Jeff Xu <jeffxu@google.com>
+> > > Change-Id: I623742ca9f20ec706a38c92f6c0bab755f73578f
+> > > ---
+> > >   .../testing/selftests/landlock/ptrace_test.c  | 49 ++++++++++++++++=
++++
+> > >   1 file changed, 49 insertions(+)
+> > >
+> > > diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/t=
+esting/selftests/landlock/ptrace_test.c
+> > > index c28ef98ff3ac..ef2d36f56764 100644
+> > > --- a/tools/testing/selftests/landlock/ptrace_test.c
+> > > +++ b/tools/testing/selftests/landlock/ptrace_test.c
+> > > @@ -226,6 +226,44 @@ FIXTURE_TEARDOWN(hierarchy)
+> > >   {
+> > >   }
+> > >
+> >
+> > Please move these new helpers after test_ptrace_read() and make them st=
+atic.
+> >
+> > > +int open_sysfs(const char *path, int flags, int *fd)
+> > > +{
+> > > +     *fd =3D open(path, flags);
+> > > +
+> > > +     if (fd < 0)
+> > > +             return -1;
+> > > +
+> > > +     return 0;
+> > > +}
+> >
+> > open_sysfs() can be replaced with a call to open(). This makes the code
+> > simpler.
+> >
+> > > +
+> > > +int read_sysfs_int_fd(int fd, int *val)
+> > > +{
+> > > +     char buf[2];
+> > > +
+> > > +     if (read(fd, buf, sizeof(buf)) < 0)
+> >
+> > I guess `read(fd, buf, 1)` should be enough and it enables keeping the
+> > final '\0'. A comment should state that this helper only read the first
+> > digit (which is enough for Yama).
+> >
+> > > +             return -1;
+> > > +
+> > > +     buf[sizeof(buf) - 1] =3D '\0';
+> >
+> > Use `char buf[2] =3D {};` instead.
+> >
+> > > +     *val =3D atoi(buf);
+> > > +     return 0;
+> > > +}
+> >
+>
+> Thanks, I will revise the code, my original thought is to extend it as
+> a common utility function to parse an int, let me finish it in the
+> next iteration of patch.
+>
+> > Same for read_sysfs_int_fd(), you can inline the code in read_sysfs_int=
+().
+> > This is a good test but it fail if Yama is not built in the kernel.
+> >
+> I don't have a kernel built without yama, so my original thought is to
+> fail it and whoever has the need can fix it. What is your thought on this=
+ ?
+>
+> > For now, I think you can create two helpers named something like
+> > is_yama_restricting() and is_yama_denying() (for admin-only attach).
+> >
+> Can you please clarify on the difference/implementation on those 2 ?
+>
+> > > +     if (ptrace_val !=3D 0) {
+> >
+> > Some tests should work even if ptrace_val =3D=3D 1. SKIP() should only =
+be
+> > called when the test would fail. Can you please check all tests with al=
+l
+> > Yama values?
+> Sure, below are yama cases with testing result:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> case 0 - classic ptrace permissions: a process can PTRACE_ATTACH to any o=
+ther
+>     process running under the same uid, as long as it is dumpable (i.e.
+>     did not transition uids, start privileged, or have called
+>     prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEME is
+>     unchanged.
+>
+> Test: All passing
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Case 1 - restricted ptrace: a process must have a predefined relationship
+>     with the inferior it wants to call PTRACE_ATTACH on. By default,
+>     this relationship is that of only its descendants when the above
+>     classic criteria is also met. To change the relationship, an
+>     inferior can call prctl(PR_SET_PTRACER, debugger, ...) to declare
+>     an allowed debugger PID to call PTRACE_ATTACH on the inferior.
+>     Using PTRACE_TRACEME is unchanged.
+>
+> Test:
+> // Base_test: 7/7 pass.
+> // Fs_test 46/48 pass
+> //.   not ok 47 layout2_overlay.no_restriction
+> //.   not ok 48 layout2_overlay.same_content_different_file
+> //  Ptrace_test 4/8 pass
+> // #          FAIL  hierarchy.allow_without_domain.trace
+> // #          FAIL  hierarchy.deny_with_parent_domain.trace
+> // #          FAIL  hierarchy.allow_sibling_domain.trace
+> // #          FAIL  hierarchy.deny_with_nested_and_parent_domain.trace
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> Case 2 - admin-only attach: only processes with CAP_SYS_PTRACE may use pt=
+race
+>     with PTRACE_ATTACH, or through children calling PTRACE_TRACEME.
+> Case 3 - no attach: no processes may use ptrace with PTRACE_ATTACH nor vi=
+a
+>     PTRACE_TRACEME. Once set, this sysctl value cannot be changed.
+> Test: *case2 and case3 have the same results:
+> // Base_test: 7/7 pass.
+> // Fs_test 46/48 pass
+> //.   not ok 47 layout2_overlay.no_restriction
+> //.   not ok 48 layout2_overlay.same_content_different_file
+> //  Ptrace 2/8 pass
+> //.  ok 4 hierarchy.deny_with_sibling_domain.trace
+> //.  ok 8 hierarchy.deny_with_forked_domain.trace
+> // the other 6 tests failed with timeout.
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Do you know why fs_test (47,48) is failing when yama value =3D 1,2,3 ?
+>
+> FOR SKIP,  it might be messy to add SKIP after checking variant names
+> in TEST_F(), (too many if/else , which make it less readable),
+> ideally this should be when or before FIXTURE_VARIANT_ADD() is called.
+> or somehow refactor the code to remove the variant check in TEST_F()
+>
+> Is there a better way  ?
+>
+> Thanks
+> Best Regards,
+> Jeff
+>
+>
+>
+> On Thu, Jun 30, 2022 at 8:31 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net=
+> wrote:
+> >
+> >
+> > On 29/06/2022 00:29, Jeff Xu wrote:
+> > > ptrace_test assumes YAMA is disabled, skip it if YAMA is enabled.
+> > >
+> > > Cc: Jorge Lucangeli Obes <jorgelo@chromium.org>
+> > > Cc: Guenter Roeck <groeck@chromium.org>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > Tested-by: Jeff Xu <jeffxu@google.com>
+> >
+> > I guess we assume that Signed-off-by implies Tested-by, so you can
+> > remove this Tested-by.
+> >
+> > > Signed-off-by: Jeff Xu <jeffxu@google.com>
+> > > Change-Id: I623742ca9f20ec706a38c92f6c0bab755f73578f
+> >
+> > Please remove this Change-Id too.
