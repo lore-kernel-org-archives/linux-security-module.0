@@ -2,47 +2,47 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B22C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Jul 2022 15:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A484EC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Jul 2022 15:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbiGFPJN (ORCPT
+        id S232907AbiGFPMC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Jul 2022 11:09:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54852 "EHLO
+        Wed, 6 Jul 2022 11:12:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231552AbiGFPJM (ORCPT
+        with ESMTP id S232413AbiGFPMC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Jul 2022 11:09:12 -0400
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4007D5FBF
-        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 08:09:11 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id g14so18607738qto.9
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Jul 2022 08:09:11 -0700 (PDT)
+        Wed, 6 Jul 2022 11:12:02 -0400
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31FC412AF8
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 08:12:01 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id bs20so18621279qtb.11
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Jul 2022 08:12:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Tsz2MOLF2Bl4qmuGvjK22N+/EXyHNeIKMYNiVvkEHV8=;
-        b=thPqX0IGEWjZaK/iFd2XgSBQnatpfmWUkxwOAAHv83ZWD04IHiwfBS1k+UdXIKnlMu
-         0pxOKX9HcpydZ7rCINIJezXgylHrBHEgM5hZoDKbjCau6KZjY2+IqcOoR4bgAVkK7ODd
-         w5RVoNQiKiB73AIcRkBKLylavTgMi8EtaadalBfRf3Ab9N4jpSV5mD3qfkYxmUthcecG
-         TTcNLv/vkeMzOrKDX9CAxvqgvr7A2s0cx+T8MFe26VX0gejEM0HfwH+1u4Q61AiBVoNG
-         ob0LVpa26NhpX89Uvr0tDwI4Oh6ouE01+1MRFI3AeGdOpw3ROTB03/jk4gRS81by6SrG
-         y31g==
-X-Gm-Message-State: AJIora8YCrjhe+aO9FjCh2r/gee5qUFc/rsHXhQVDVGRpik5OzPD3ROE
-        I6qWt7DtPcXeNAExImvK5mK6
-X-Google-Smtp-Source: AGRyM1t5PF0DSFrQbt4bi5LBPcIBQxZL7P89Hk2jkSRxl7RATw5BhQNCdgNUDq/Dg1qVd17q5SsXwQ==
-X-Received: by 2002:a05:622a:110b:b0:31d:3958:e6e9 with SMTP id e11-20020a05622a110b00b0031d3958e6e9mr22319256qty.660.1657120150141;
-        Wed, 06 Jul 2022 08:09:10 -0700 (PDT)
+        bh=u094c1pWAuc2qjFRYuYIiBLyQBzCT6qd8wf4uxXSTSI=;
+        b=VCY8Hf+yBZ4/OWD3tVFeArjRVGbK9le1+u1dW7wMFiKbCuFyEF97yc6bhNOJCLTYBR
+         Ymg/ue/wmloBqzp95tPGzu6I/5Qc/yeK7uLKrAqH/ny3h7BTlKaLt8dba0RGzsanAD7u
+         u/TY9Lgmpw2B6rmInwoooNT6fdJMpMQermDZ9m9SK5EQDPMLSdnr9TFWJh+Y8iHDsZVw
+         iedpFhjX3X9zxLq9AfxfEFG9+9jzfjir3ZjWx6/rQp6ncA/5X9cHon3bOuHZJVO8ME0w
+         nxpT+bVffIz3r1BHB3Y/qKpBJCdgfiXfD5adg6shMmbzMxKVCMq+OeaMwJYFXIY8v6Uk
+         RgTQ==
+X-Gm-Message-State: AJIora+71To3VMb2+iiUapGV45BzkgYRstGwx0++JUtn+5HzP4mmuHeW
+        2ci3zKqy+rPHE07zBLSff/xx
+X-Google-Smtp-Source: AGRyM1tmmHS3hmEoSfozfOq3OFvufYVLm+WLqowCSt0K1ZgT8OE07PhhFHfBTGi7f9mSyqrGwqz2Lg==
+X-Received: by 2002:ac8:5985:0:b0:31d:3ea5:12f4 with SMTP id e5-20020ac85985000000b0031d3ea512f4mr18144555qte.274.1657120320113;
+        Wed, 06 Jul 2022 08:12:00 -0700 (PDT)
 Received: from localhost (pool-68-160-176-52.bstnma.fios.verizon.net. [68.160.176.52])
-        by smtp.gmail.com with ESMTPSA id u16-20020a05620a431000b006a7284e5741sm30587670qko.54.2022.07.06.08.09.09
+        by smtp.gmail.com with ESMTPSA id j4-20020a05620a410400b006a6278a2b31sm20037145qko.75.2022.07.06.08.11.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 08:09:09 -0700 (PDT)
-Date:   Wed, 6 Jul 2022 11:09:08 -0400
+        Wed, 06 Jul 2022 08:11:59 -0700 (PDT)
+Date:   Wed, 6 Jul 2022 11:11:58 -0400
 From:   Mike Snitzer <snitzer@kernel.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Alasdair Kergon <agk@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
         James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         linux-kernel@vger.kernel.org, dm-devel@redhat.com,
@@ -50,26 +50,53 @@ Cc:     Alasdair Kergon <agk@redhat.com>,
         linux-raid@vger.kernel.org, Song Liu <song@kernel.org>,
         linux-security-module@vger.kernel.org,
         Milan Broz <gmazyland@gmail.com>
-Subject: Re: [PATCH v7 3/3] dm: verity-loadpin: Use
- CONFIG_SECURITY_LOADPIN_VERITY for conditional compilation
-Message-ID: <YsWllA0uZadrrXut@redhat.com>
+Subject: Re: [PATCH v7 0/3] LoadPin: Enable loading from trusted dm-verity
+ devices
+Message-ID: <YsWmPt7xwTlvTfAf@redhat.com>
 References: <20220627153526.3750341-1-mka@chromium.org>
- <20220627083512.v7.3.I5aca2dcc3b06de4bf53696cd21329dce8272b8aa@changeid>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220627083512.v7.3.I5aca2dcc3b06de4bf53696cd21329dce8272b8aa@changeid>
+In-Reply-To: <20220627153526.3750341-1-mka@chromium.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Mon, Jun 27 2022 at 11:35P -0400,
 Matthias Kaehlcke <mka@chromium.org> wrote:
 
-> The verity glue for LoadPin is only needed when CONFIG_SECURITY_LOADPIN_VERITY
-> is set, use this option for conditional compilation instead of the combo of
-> CONFIG_DM_VERITY and CONFIG_SECURITY_LOADPIN.
+> As of now LoadPin restricts loading of kernel files to a single pinned
+> filesystem, typically the rootfs. This works for many systems, however it
+> can result in a bloated rootfs (and OTA updates) on platforms where
+> multiple boards with different hardware configurations use the same rootfs
+> image. Especially when 'optional' files are large it may be preferable to
+> download/install them only when they are actually needed by a given board.
+> Chrome OS uses Downloadable Content (DLC) [1] to deploy certain 'packages'
+> at runtime. As an example a DLC package could contain firmware for a
+> peripheral that is not present on all boards. DLCs use dm-verity [2] to
+> verify the integrity of the DLC content.
 > 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> Acked-by: Kees Cook <keescook@chromium.org>
+> This series extends LoadPin to allow loading of kernel files from trusted
+> dm-verity devices. LoadPin maintains a list of root digests of verity
+> devices it considers trusted. Userspace can populate this list through an
+> ioctl on the new LoadPin securityfs entry 'dm-verity'. The ioctl receives
+> a file descriptor of a file with verity digests as parameter. Verity reads
+> the digests from this file after confirming that the file is located on the
+> pinned root. The digest file must contain one digest per line. The list of
+> trusted digests can only be set up once, which is typically done at boot
+> time.
+> 
+> When a kernel file is read LoadPin first checks (as usual) whether the file
+> is located on the pinned root, if so the file can be loaded. Otherwise, if
+> the verity extension is enabled, LoadPin determines whether the file is
+> located on a verity backed device and whether the root digest of that
+> device is in the list of trusted digests. The file can be loaded if the
+> verity device has a trusted root digest.
+> 
+> [1] https://chromium.googlesource.com/chromiumos/platform2/+/HEAD/dlcservice/docs/developer.md
+> [2] https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/verity.html
 
-Acked-by: Mike Snitzer <snitzer@kernel.org>
+Hi Kees,
+
+Please pick this series up, thanks.
+
+Mike
