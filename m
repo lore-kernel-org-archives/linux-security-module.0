@@ -2,269 +2,256 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03943C43334
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Jul 2022 23:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FD0CCA47C
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Jul 2022 23:49:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234874AbiGFXmQ (ORCPT
+        id S230331AbiGFXtm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Jul 2022 19:42:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53496 "EHLO
+        Wed, 6 Jul 2022 19:49:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234780AbiGFXmB (ORCPT
+        with ESMTP id S230521AbiGFXtm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Jul 2022 19:42:01 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69BB2CE15
-        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 16:42:00 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id e16so3179780pfm.11
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Jul 2022 16:42:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vwwdZ2fP1UVZmO57D1mqd5DMh9/cGanDM/yWeofOBB8=;
-        b=HXhsRLjNcAdSNBCMPnn8uTMcRGkSzCmOslY6oJ8F3aJ1au86E5TTKS1M6ZpxFTZkWS
-         fS0jl0Y7IhcjWop0GhVASBwr17+mC106Re6MdKOsndwD0bvMdNrh85kN7VAGYC84c+id
-         JGqOoAcsz4wAKYvN7uTa2U2AvFodltT/odqkZ3bGxpduIBMlyprcSx5K+E61F/umvnBN
-         +fDoyG8ElFy84QoGNW9xj2P8ErPaPkethL2XwY4O0xqfsNeMygg1ickSpsnTfdPHhlbi
-         75hOEyRgvSN/4HCgJAc/W73kL9Ceqqc22dXK0O/vDjyWLeEvUg/qglnqxloiLtWH9HSa
-         st/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vwwdZ2fP1UVZmO57D1mqd5DMh9/cGanDM/yWeofOBB8=;
-        b=XGig8sQzMNEpzNhrtiB/KNWUcZRMhHONjmpIdj3ILVAxuWX0yyTo+v7qu7MVOY5zeU
-         799YD715/2rq1CtkTPzTzZOK7WBQNp9E0Fdp5j9Gvw3GJ3bQZoedQILqLidwcoz6LBZx
-         BKcLJGREhXRAjQD4+h+me3Fp3oMOOisq7dagm2UiB8NtAOh4p3wlCR/O1lmihlcDIbmo
-         niUiYl1Br/DMwQ9Wk+vJ0gGFc06iIi7p46SQ3K8sZJF6UHJbM6kaxvUzIb27z56HhzT2
-         m73b+jbCdpplwVvwSKPetiE/NxOtqZ5b7L+gsm3CUXiMpZLG4nteVsE1KlMKeoWNaJ+F
-         wLJQ==
-X-Gm-Message-State: AJIora/nfYhI6ojd5hRfaHeslRNZGTjnaGv1BBg/bzQw+Bs/WAISqhIc
-        u3Dx2pjpeHycR6xdd+YpJyMgWW+HBH9L04Q1mZcqNg==
-X-Google-Smtp-Source: AGRyM1ugcCpXnL4qo4ZqEc+QoA8wPgzX0CPzASOI52vjcIbNGVDVWNpsQ5HxSJWbVPjZHb3XskTJ/XfkEOlUqqEYRgM=
-X-Received: by 2002:aa7:8883:0:b0:525:6b0a:b23d with SMTP id
- z3-20020aa78883000000b005256b0ab23dmr49502147pfe.82.1657150919937; Wed, 06
- Jul 2022 16:41:59 -0700 (PDT)
+        Wed, 6 Jul 2022 19:49:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FA12CE3E
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 16:49:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 35F9F61F4D
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 23:49:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D612C341D1
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 23:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657151379;
+        bh=fQu2htsFT44q478MOdi5pVGALEfmok32wUDouba7C8E=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nkDjswnwK+ss4/QExIKXU5HhnNG/+9N0dGaZVJytJSUxtxFm0h98mcQd/dvsU1V7G
+         bnJHSfuH1dbVWBTh/g9g20Xo7ME5vQW2FmYal448H1eNXRxehbglDY6/+v5cLBJlQc
+         z47zzkOpvkZydwSSYT1hvzwosQ4zi4lyn9fmwdrOPT9yr/UKeNmpwXk2yo4ZHcVnS7
+         jhdWpMQyfKG1w9G+vcBzd624sgDYWjlUcCSGLgllWyAK55wBUKF1AUfVv4OvZeSDMX
+         CL/3i5H2wyq/W5v/V5e+0AqRPnlSY3mgAiohANfO7YJfumWagmu1wKWyLZnrDaOcEO
+         K+qc2OxqTTy7g==
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2ef5380669cso154976127b3.9
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Jul 2022 16:49:39 -0700 (PDT)
+X-Gm-Message-State: AJIora8rTg6XkUZF9hISvWv70qOBDplBmxzc/lH29Fjnms3YRLEYC/px
+        PFMmzAc4m9vN817J0O+96MpfOjpQZiyfC14DOaqJxQ==
+X-Google-Smtp-Source: AGRyM1scb85wOqxPw547s6M27o6xFWA7hxGa2bjDyeXOU2HGlYReTCcDvnEf221P4RtTBZHZo6v/XPG0yBTjNLiffAE=
+X-Received: by 2002:a81:3d1:0:b0:31c:9b70:ba8a with SMTP id
+ 200-20020a8103d1000000b0031c9b70ba8amr20225796ywd.204.1657151378426; Wed, 06
+ Jul 2022 16:49:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220628222941.2642917-1-jeffxu@google.com> <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
- <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
-In-Reply-To: <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Wed, 6 Jul 2022 16:41:24 -0700
-Message-ID: <CALmYWFs2gv-z8W=vNpQf6G32VHd=ptGQ4cx+ahcEPtf6Y4UC0A@mail.gmail.com>
-Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kees Cook <keescook@chromium.org>
+References: <20220628122750.1895107-1-roberto.sassu@huawei.com>
+ <20220628122750.1895107-5-roberto.sassu@huawei.com> <903b1b6c-b0fd-d624-a24b-5983d8d661b7@iogearbox.net>
+In-Reply-To: <903b1b6c-b0fd-d624-a24b-5983d8d661b7@iogearbox.net>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Thu, 7 Jul 2022 01:49:27 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4iR=FurW2UZdgycTdu54kNoFrw4uvmDrpTd3xuvpvVTw@mail.gmail.com>
+Message-ID: <CACYkzJ4iR=FurW2UZdgycTdu54kNoFrw4uvmDrpTd3xuvpvVTw@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] bpf: Add bpf_verify_pkcs7_signature() helper
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>, ast@kernel.org,
+        andrii@kernel.org, john.fastabend@gmail.com, songliubraving@fb.com,
+        kafai@fb.com, yhs@fb.com, dhowells@redhat.com,
+        keyrings@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A correction (resend with plain text)
+On Wed, Jul 6, 2022 at 6:04 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>
+> On 6/28/22 2:27 PM, Roberto Sassu wrote:
+> > Add the bpf_verify_pkcs7_signature() helper, to give eBPF security modules
+> > the ability to check the validity of a signature against supplied data, by
+> > using user-provided or system-provided keys as trust anchor.
+> >
+> > The new helper makes it possible to enforce mandatory policies, as eBPF
+> > programs might be allowed to make security decisions only based on data
+> > sources the system administrator approves.
+> >
+> > The caller should provide both the data to be verified and the signature as
+> > eBPF dynamic pointers (to minimize the number of parameters).
+> >
+> > The caller should also provide a trusted keyring serial, together with key
+> > lookup-specific flags, to determine which keys can be used for signature
+> > verification. Alternatively, the caller could specify zero as serial value
+> > (not valid, serials must be positive), and provide instead a special
+> > keyring ID.
+> >
+> > Key lookup flags are defined in include/linux/key.h and can be: 1, to
+> > request that special keyrings be created if referred to directly; 2 to
+> > permit partially constructed keys to be found.
+> >
+> > Special IDs are defined in include/linux/verification.h and can be: 0 for
+> > the primary keyring (immutable keyring of system keys); 1 for both the
+> > primary and secondary keyring (where keys can be added only if they are
+> > vouched for by existing keys in those keyrings); 2 for the platform keyring
+> > (primarily used by the integrity subsystem to verify a kexec'ed kerned
+> > image and, possibly, the initramfs signature).
+> >
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Reported-by: kernel test robot <lkp@intel.com> (cast warning)
+>
+> nit: Given this a new feature not a fix to existing code, there is no need to
+>       add the above reported-by from kbuild bot.
+>
+> > ---
+> >   include/uapi/linux/bpf.h       | 24 +++++++++++++
+> >   kernel/bpf/bpf_lsm.c           | 63 ++++++++++++++++++++++++++++++++++
+> >   tools/include/uapi/linux/bpf.h | 24 +++++++++++++
+> >   3 files changed, 111 insertions(+)
+> >
+> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > index e81362891596..b4f5ad863281 100644
+> > --- a/include/uapi/linux/bpf.h
+> > +++ b/include/uapi/linux/bpf.h
+> > @@ -5325,6 +5325,29 @@ union bpf_attr {
+> >    *          **-EACCES** if the SYN cookie is not valid.
+> >    *
+> >    *          **-EPROTONOSUPPORT** if CONFIG_IPV6 is not builtin.
+> > + *
+> > + * long bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr, struct bpf_dynptr *sig_ptr, u32 trusted_keyring_serial, unsigned long lookup_flags, unsigned long trusted_keyring_id)
+>
+> nit: for the args instead of ulong, just do u64
+>
+> > + *   Description
+> > + *           Verify the PKCS#7 signature *sig_ptr* against the supplied
+> > + *           *data_ptr* with keys in a keyring with serial
+> > + *           *trusted_keyring_serial*, searched with *lookup_flags*, if the
+> > + *           parameter value is positive, or alternatively in a keyring with
+> > + *           special ID *trusted_keyring_id* if *trusted_keyring_serial* is
+> > + *           zero.
+> > + *
+> > + *           *lookup_flags* are defined in include/linux/key.h and can be: 1,
+> > + *           to request that special keyrings be created if referred to
+> > + *           directly; 2 to permit partially constructed keys to be found.
+> > + *
+> > + *           Special IDs are defined in include/linux/verification.h and can
+> > + *           be: 0 for the primary keyring (immutable keyring of system
+> > + *           keys); 1 for both the primary and secondary keyring (where keys
+> > + *           can be added only if they are vouched for by existing keys in
+> > + *           those keyrings); 2 for the platform keyring (primarily used by
+> > + *           the integrity subsystem to verify a kexec'ed kerned image and,
+> > + *           possibly, the initramfs signature).
+> > + *   Return
+> > + *           0 on success, a negative value on error.
+> >    */
+> >   #define __BPF_FUNC_MAPPER(FN)               \
+> >       FN(unspec),                     \
+> > @@ -5535,6 +5558,7 @@ union bpf_attr {
+> >       FN(tcp_raw_gen_syncookie_ipv6), \
+> >       FN(tcp_raw_check_syncookie_ipv4),       \
+> >       FN(tcp_raw_check_syncookie_ipv6),       \
+> > +     FN(verify_pkcs7_signature),     \
+>
+> (Needs rebase)
+>
+> >       /* */
+> >
+> >   /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+> > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> > index c1351df9f7ee..401bda01ad84 100644
+> > --- a/kernel/bpf/bpf_lsm.c
+> > +++ b/kernel/bpf/bpf_lsm.c
+> > @@ -16,6 +16,8 @@
+> >   #include <linux/bpf_local_storage.h>
+> >   #include <linux/btf_ids.h>
+> >   #include <linux/ima.h>
+> > +#include <linux/verification.h>
+> > +#include <linux/key.h>
+> >
+> >   /* For every LSM hook that allows attachment of BPF programs, declare a nop
+> >    * function where a BPF program can be attached.
+> > @@ -132,6 +134,62 @@ static const struct bpf_func_proto bpf_get_attach_cookie_proto = {
+> >       .arg1_type      = ARG_PTR_TO_CTX,
+> >   };
+> >
+> > +#ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+> > +BPF_CALL_5(bpf_verify_pkcs7_signature, struct bpf_dynptr_kern *, data_ptr,
+> > +        struct bpf_dynptr_kern *, sig_ptr, u32, trusted_keyring_serial,
+> > +        unsigned long, lookup_flags, unsigned long, trusted_keyring_id)
+> > +{
+> > +     key_ref_t trusted_keyring_ref;
+> > +     struct key *trusted_keyring;
+> > +     int ret;
+> > +
+> > +     /* Keep in sync with defs in include/linux/key.h. */
+> > +     if (lookup_flags > KEY_LOOKUP_PARTIAL)
+> > +             return -EINVAL;
+>
+> iiuc, the KEY_LOOKUP_* is a mask, so you could also combine the two, e.g.
+> KEY_LOOKUP_CREATE | KEY_LOOKUP_PARTIAL. I haven't seen you mentioning anything
+> specific on why it is not allowed. What's the rationale, if it's intentional
+> if should probably be documented?
 
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> case 0 - classic ptrace permissions: a process can PTRACE_ATTACH to any o=
-ther
->     process running under the same uid, as long as it is dumpable (i.e.
->     did not transition uids, start privileged, or have called
->     prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEME is
->     unchanged.
+I think this was a part of the digilim threat model (only allow
+limited lookup operations),
+but this seems to be conflating the policy into the implementation of
+the helper.
 
-// Base_test: 7/7 pass.
-// Fs_test 46/48 pass
-//.   not ok 47 layout2_overlay.no_restriction
-//.   not ok 48 layout2_overlay.same_content_different_file
-//  Ptrace 8/8 pass
+Roberto, can this not be implemented in digilim as a BPF LSM check
+that attaches to the key_permission LSM hook?
 
-Note: 47,48 of fs_test are failing for all YAMA config values (0-3)
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/lsm_hooks.h#n1158
 
+>
+> At minimum I also think the helper description needs to be improved for people
+> to understand enough w/o reading through the kernel source, e.g. wrt lookup_flags
+> since I haven't seen it in your selftests either ... when does a user need to
+> use the given flags.
+>
+> nit: when both trusted_keyring_serial and trusted_keyring_id are passed to the
+> helper, then this should be rejected as invalid argument? (Kind of feels a bit
+> like we're cramming two things in one helper.. KP, thoughts? :))
 
-On Tue, Jul 5, 2022 at 2:49 PM Jeff Xu <jeffxu@google.com> wrote:
+EINVAL when both are passed seems reasonable. The signature (pun?) of the
+does seem to get bloated, but I am not sure if it's worth adding two
+helpers here.
+
 >
-> Hi Micka=C3=ABl
->
-> Thank you for your review, please see my response below.
->
-> > Hi Jeff,
-> >
-> > Thanks for this patch. Here are some comments:
-> >
-> > On 29/06/2022 00:29, Jeff Xu wrote:
-> > > ptrace_test assumes YAMA is disabled, skip it if YAMA is enabled.
-> > >
-> > > Cc: Jorge Lucangeli Obes <jorgelo@chromium.org>
-> > > Cc: Guenter Roeck <groeck@chromium.org>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > Tested-by: Jeff Xu <jeffxu@google.com>
-> > > Signed-off-by: Jeff Xu <jeffxu@google.com>
-> > > Change-Id: I623742ca9f20ec706a38c92f6c0bab755f73578f
-> > > ---
-> > >   .../testing/selftests/landlock/ptrace_test.c  | 49 ++++++++++++++++=
-+++
-> > >   1 file changed, 49 insertions(+)
-> > >
-> > > diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/t=
-esting/selftests/landlock/ptrace_test.c
-> > > index c28ef98ff3ac..ef2d36f56764 100644
-> > > --- a/tools/testing/selftests/landlock/ptrace_test.c
-> > > +++ b/tools/testing/selftests/landlock/ptrace_test.c
-> > > @@ -226,6 +226,44 @@ FIXTURE_TEARDOWN(hierarchy)
-> > >   {
-> > >   }
-> > >
-> >
-> > Please move these new helpers after test_ptrace_read() and make them st=
-atic.
-> >
-> > > +int open_sysfs(const char *path, int flags, int *fd)
-> > > +{
-> > > +     *fd =3D open(path, flags);
-> > > +
-> > > +     if (fd < 0)
-> > > +             return -1;
-> > > +
-> > > +     return 0;
-> > > +}
-> >
-> > open_sysfs() can be replaced with a call to open(). This makes the code
-> > simpler.
-> >
-> > > +
-> > > +int read_sysfs_int_fd(int fd, int *val)
-> > > +{
-> > > +     char buf[2];
-> > > +
-> > > +     if (read(fd, buf, sizeof(buf)) < 0)
-> >
-> > I guess `read(fd, buf, 1)` should be enough and it enables keeping the
-> > final '\0'. A comment should state that this helper only read the first
-> > digit (which is enough for Yama).
-> >
-> > > +             return -1;
-> > > +
-> > > +     buf[sizeof(buf) - 1] =3D '\0';
-> >
-> > Use `char buf[2] =3D {};` instead.
-> >
-> > > +     *val =3D atoi(buf);
-> > > +     return 0;
-> > > +}
-> >
->
-> Thanks, I will revise the code, my original thought is to extend it as
-> a common utility function to parse an int, let me finish it in the
-> next iteration of patch.
->
-> > Same for read_sysfs_int_fd(), you can inline the code in read_sysfs_int=
-().
-> > This is a good test but it fail if Yama is not built in the kernel.
-> >
-> I don't have a kernel built without yama, so my original thought is to
-> fail it and whoever has the need can fix it. What is your thought on this=
- ?
->
-> > For now, I think you can create two helpers named something like
-> > is_yama_restricting() and is_yama_denying() (for admin-only attach).
-> >
-> Can you please clarify on the difference/implementation on those 2 ?
->
-> > > +     if (ptrace_val !=3D 0) {
-> >
-> > Some tests should work even if ptrace_val =3D=3D 1. SKIP() should only =
-be
-> > called when the test would fail. Can you please check all tests with al=
-l
-> > Yama values?
-> Sure, below are yama cases with testing result:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> case 0 - classic ptrace permissions: a process can PTRACE_ATTACH to any o=
-ther
->     process running under the same uid, as long as it is dumpable (i.e.
->     did not transition uids, start privileged, or have called
->     prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEME is
->     unchanged.
->
-> Test: All passing
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Case 1 - restricted ptrace: a process must have a predefined relationship
->     with the inferior it wants to call PTRACE_ATTACH on. By default,
->     this relationship is that of only its descendants when the above
->     classic criteria is also met. To change the relationship, an
->     inferior can call prctl(PR_SET_PTRACER, debugger, ...) to declare
->     an allowed debugger PID to call PTRACE_ATTACH on the inferior.
->     Using PTRACE_TRACEME is unchanged.
->
-> Test:
-> // Base_test: 7/7 pass.
-> // Fs_test 46/48 pass
-> //.   not ok 47 layout2_overlay.no_restriction
-> //.   not ok 48 layout2_overlay.same_content_different_file
-> //  Ptrace_test 4/8 pass
-> // #          FAIL  hierarchy.allow_without_domain.trace
-> // #          FAIL  hierarchy.deny_with_parent_domain.trace
-> // #          FAIL  hierarchy.allow_sibling_domain.trace
-> // #          FAIL  hierarchy.deny_with_nested_and_parent_domain.trace
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> Case 2 - admin-only attach: only processes with CAP_SYS_PTRACE may use pt=
-race
->     with PTRACE_ATTACH, or through children calling PTRACE_TRACEME.
-> Case 3 - no attach: no processes may use ptrace with PTRACE_ATTACH nor vi=
-a
->     PTRACE_TRACEME. Once set, this sysctl value cannot be changed.
-> Test: *case2 and case3 have the same results:
-> // Base_test: 7/7 pass.
-> // Fs_test 46/48 pass
-> //.   not ok 47 layout2_overlay.no_restriction
-> //.   not ok 48 layout2_overlay.same_content_different_file
-> //  Ptrace 2/8 pass
-> //.  ok 4 hierarchy.deny_with_sibling_domain.trace
-> //.  ok 8 hierarchy.deny_with_forked_domain.trace
-> // the other 6 tests failed with timeout.
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Do you know why fs_test (47,48) is failing when yama value =3D 1,2,3 ?
->
-> FOR SKIP,  it might be messy to add SKIP after checking variant names
-> in TEST_F(), (too many if/else , which make it less readable),
-> ideally this should be when or before FIXTURE_VARIANT_ADD() is called.
-> or somehow refactor the code to remove the variant check in TEST_F()
->
-> Is there a better way  ?
->
-> Thanks
-> Best Regards,
-> Jeff
->
->
->
-> On Thu, Jun 30, 2022 at 8:31 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net=
-> wrote:
-> >
-> >
-> > On 29/06/2022 00:29, Jeff Xu wrote:
-> > > ptrace_test assumes YAMA is disabled, skip it if YAMA is enabled.
-> > >
-> > > Cc: Jorge Lucangeli Obes <jorgelo@chromium.org>
-> > > Cc: Guenter Roeck <groeck@chromium.org>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > Tested-by: Jeff Xu <jeffxu@google.com>
-> >
-> > I guess we assume that Signed-off-by implies Tested-by, so you can
-> > remove this Tested-by.
-> >
-> > > Signed-off-by: Jeff Xu <jeffxu@google.com>
-> > > Change-Id: I623742ca9f20ec706a38c92f6c0bab755f73578f
-> >
-> > Please remove this Change-Id too.
+> > +     /* Keep in sync with defs in include/linux/verification.h. */
+> > +     if (trusted_keyring_id > (unsigned long)VERIFY_USE_PLATFORM_KEYRING)
+> > +             return -EINVAL;
+> > +
+> > +     if (trusted_keyring_serial) {
+> > +             trusted_keyring_ref = lookup_user_key(trusted_keyring_serial,
+> > +                                                   lookup_flags,
+> > +                                                   KEY_NEED_SEARCH);
+> > +             if (IS_ERR(trusted_keyring_ref))
+> > +                     return PTR_ERR(trusted_keyring_ref);
+> > +
+> > +             trusted_keyring = key_ref_to_ptr(trusted_keyring_ref);
+> > +             goto verify;
+> > +     }
+> > +
+> > +     trusted_keyring = (struct key *)trusted_keyring_id;
+> > +verify:
+> > +     ret = verify_pkcs7_signature(data_ptr->data,
+> > +                                  bpf_dynptr_get_size(data_ptr),
+> > +                                  sig_ptr->data,
+> > +                                  bpf_dynptr_get_size(sig_ptr),
+> > +                                  trusted_keyring,
+> > +                                  VERIFYING_UNSPECIFIED_SIGNATURE, NULL,
+> > +                                  NULL);
+> > +     if (trusted_keyring_serial)
+> > +             key_put(trusted_keyring);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static const struct bpf_func_proto bpf_verify_pkcs7_signature_proto = {
+> > +     .func           = bpf_verify_pkcs7_signature,
+> > +     .gpl_only       = false,
+> > +     .ret_type       = RET_INTEGER,
+> > +     .arg1_type      = ARG_PTR_TO_DYNPTR | DYNPTR_TYPE_LOCAL,
+> > +     .arg2_type      = ARG_PTR_TO_DYNPTR | DYNPTR_TYPE_LOCAL,
+> > +     .arg3_type      = ARG_ANYTHING,
+> > +     .arg4_type      = ARG_ANYTHING,
+> > +     .arg5_type      = ARG_ANYTHING,
+> > +     .allowed        = bpf_ima_inode_hash_allowed,
+> > +};
+> > +#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
+> > +
