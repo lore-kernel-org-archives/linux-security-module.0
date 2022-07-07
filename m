@@ -2,238 +2,232 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F3CCCA479
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 14:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3642C43334
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 14:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235484AbiGGOOj (ORCPT
+        id S235267AbiGGOYI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Jul 2022 10:14:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42196 "EHLO
+        Thu, 7 Jul 2022 10:24:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235567AbiGGOOg (ORCPT
+        with ESMTP id S234818AbiGGOYH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Jul 2022 10:14:36 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98ACD2F3B3;
-        Thu,  7 Jul 2022 07:14:31 -0700 (PDT)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 267Datg6029570;
-        Thu, 7 Jul 2022 14:14:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=e4XJIRn0ATPLPAT/5norm4jYg66ITgsbYuh4hfzdCFg=;
- b=MBZiWG3K+Uug8CdsSlDjoeCPQIml9IMK1FUelQaUqOz8U84NHvfVVhRCF4OtQxdxvjF1
- NTw/b2qYu+XDpwTI1zxMKQct3Uq66Jdy2oHh0MTkvsC28VWtmGBcp6Wod9ewkc+2M8hd
- 5YAR2dVvq85+31zFCOuwCq4XSAUCljRzur4hQrdiJYH8+XACqHkl6ZYc7VCmLKqeWygd
- HPOyHoOMeafPfO458kJm99rzHwTLM699aF4N/kDMcQKdy6jpcLX3eiU8CdJx9guDGaxw
- gOkozFiyDKgWdk7GZXK12+7uUMV2lQcunY/fNAYy1I6dAjVjm9kuN7vyxbYScLTgNAhq Fg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3h5yxvae94-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 14:14:09 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 267DasPQ029495;
-        Thu, 7 Jul 2022 14:14:08 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3h5yxvae8b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 14:14:08 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 267E6lbE005011;
-        Thu, 7 Jul 2022 14:14:07 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma03wdc.us.ibm.com with ESMTP id 3h4ucnusnh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 14:14:07 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 267EE6eQ44433830
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jul 2022 14:14:06 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2952BBE058;
-        Thu,  7 Jul 2022 14:14:06 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 22FC5BE053;
-        Thu,  7 Jul 2022 14:14:04 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Jul 2022 14:14:04 +0000 (GMT)
-Message-ID: <ccdf515d-56d3-7a9d-a632-91cb527133b1@linux.ibm.com>
-Date:   Thu, 7 Jul 2022 10:14:03 -0400
+        Thu, 7 Jul 2022 10:24:07 -0400
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F7942715
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Jul 2022 07:24:05 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4LdzDd2n9TzMqFtp;
+        Thu,  7 Jul 2022 16:24:01 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4LdzDc71C0zln2Gb;
+        Thu,  7 Jul 2022 16:24:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1657203841;
+        bh=c2T73G/oD3h2FObyodYc936lU/03TXlWFYRvqppR8d8=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=i38UJ+C+PyTt29nueB50zY9D7E3uqPSFJg53O7jDxEK2sg5lws2toOoNE+Bp77HEO
+         h6tNCLACbPcOhmqwSX3ic4lmvdQ9QFo8pSjChgw11XwgFYTsYN7FYPQ9YatRm2J4tf
+         Xofe+f5ueENIxXUe1GcXK+OZ8WJXP7/9P+tg31D8=
+Message-ID: <9428441c-8189-e7c4-1308-ea15c80ba7c1@digikod.net>
+Date:   Thu, 7 Jul 2022 16:24:00 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v12 13/26] userns: Add pointer to ima_namespace to
- user_namespace
+User-Agent: 
 Content-Language: en-US
-To:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        jpenumak@redhat.com
-References: <20220420140633.753772-1-stefanb@linux.ibm.com>
- <20220420140633.753772-14-stefanb@linux.ibm.com>
- <20220522182426.GA24765@mail.hallyn.com>
- <20220523095932.adr2r26o2obch4r5@wittgenstein>
- <e1df20d5-a6c9-d30c-3671-46f7a8742bc0@linux.ibm.com>
- <20220523124159.zsbp2gonh2dum4jm@wittgenstein>
- <20220523142500.GA1599@mail.hallyn.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20220523142500.GA1599@mail.hallyn.com>
+To:     Jeff Xu <jeffxu@google.com>
+Cc:     linux-security-module@vger.kernel.org,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+References: <20220628222941.2642917-1-jeffxu@google.com>
+ <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
+ <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
+In-Reply-To: <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: GuaFaVYoF0E7qKL4RJ4hDMJrhK7Ssrl0
-X-Proofpoint-ORIG-GUID: qjv-mZOXOhe11UqgPqdgeeEviuRHgowf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-07_11,2022-06-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 impostorscore=0 bulkscore=0
- clxscore=1015 mlxscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207070055
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
+On 05/07/2022 23:49, Jeff Xu wrote:
+> Hi Mickaël
+> 
+> Thank you for your review, please see my response below.
+> 
+>> Hi Jeff,
+>>
+>> Thanks for this patch. Here are some comments:
+>>
+>> On 29/06/2022 00:29, Jeff Xu wrote:
+>>> ptrace_test assumes YAMA is disabled, skip it if YAMA is enabled.
+>>>
+>>> Cc: Jorge Lucangeli Obes <jorgelo@chromium.org>
+>>> Cc: Guenter Roeck <groeck@chromium.org>
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> Cc: Mickaël Salaün <mic@digikod.net>
+>>> Tested-by: Jeff Xu <jeffxu@google.com>
+>>> Signed-off-by: Jeff Xu <jeffxu@google.com>
+>>> Change-Id: I623742ca9f20ec706a38c92f6c0bab755f73578f
+>>> ---
+>>>    .../testing/selftests/landlock/ptrace_test.c  | 49 +++++++++++++++++++
+>>>    1 file changed, 49 insertions(+)
+>>>
+>>> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
+>>> index c28ef98ff3ac..ef2d36f56764 100644
+>>> --- a/tools/testing/selftests/landlock/ptrace_test.c
+>>> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+>>> @@ -226,6 +226,44 @@ FIXTURE_TEARDOWN(hierarchy)
+>>>    {
+>>>    }
+>>>
+>>
+>> Please move these new helpers after test_ptrace_read() and make them static.
+>>
+>>> +int open_sysfs(const char *path, int flags, int *fd)
+>>> +{
+>>> +     *fd = open(path, flags);
+>>> +
+>>> +     if (fd < 0)
+>>> +             return -1;
+>>> +
+>>> +     return 0;
+>>> +}
+>>
+>> open_sysfs() can be replaced with a call to open(). This makes the code
+>> simpler.
+>>
+>>> +
+>>> +int read_sysfs_int_fd(int fd, int *val)
+>>> +{
+>>> +     char buf[2];
+>>> +
+>>> +     if (read(fd, buf, sizeof(buf)) < 0)
+>>
+>> I guess `read(fd, buf, 1)` should be enough and it enables keeping the
+>> final '\0'. A comment should state that this helper only read the first
+>> digit (which is enough for Yama).
+>>
+>>> +             return -1;
+>>> +
+>>> +     buf[sizeof(buf) - 1] = '\0';
+>>
+>> Use `char buf[2] = {};` instead.
+>>
+>>> +     *val = atoi(buf);
+>>> +     return 0;
+>>> +}
+>>
+> 
+> Thanks, I will revise the code, my original thought is to extend it as
+> a common utility function to parse an int, let me finish it in the
+> next iteration of patch.
+> 
+>> Same for read_sysfs_int_fd(), you can inline the code in read_sysfs_int().
+>> This is a good test but it fail if Yama is not built in the kernel.
+>>
+> I don't have a kernel built without yama, so my original thought is to
+> fail it and whoever has the need can fix it. What is your thought on this ?
 
-On 5/23/22 10:25, Serge E. Hallyn wrote:
-> On Mon, May 23, 2022 at 02:41:59PM +0200, Christian Brauner wrote:
->> On Mon, May 23, 2022 at 07:31:29AM -0400, Stefan Berger wrote:
->>>
->>>
->>> On 5/23/22 05:59, Christian Brauner wrote:
->>>> On Sun, May 22, 2022 at 01:24:26PM -0500, Serge Hallyn wrote:
->>>>> On Wed, Apr 20, 2022 at 10:06:20AM -0400, Stefan Berger wrote:
->>>>>> Add a pointer to ima_namespace to the user_namespace and initialize
->>>>>> the init_user_ns with a pointer to init_ima_ns. We need a pointer from
->>>>>> the user namespace to its associated IMA namespace since IMA namespaces
->>>>>> are piggybacking on user namespaces.
->>>>>>
->>>>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->>>>>> Acked-by: Christian Brauner <brauner@kernel.org>
->>>>>> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->>>>>>
->>>>>> ---
->>>>>> v11:
->>>>>>    - Added lost A-b from Christian back
->>>>>>    - Added sentence to patch description explaining why we need the pointer
->>>>>>
->>>>>> v9:
->>>>>>    - Deferred implementation of ima_ns_from_user_ns() to later patch
->>>>>> ---
->>>>>>    include/linux/ima.h            | 2 ++
->>>>>>    include/linux/user_namespace.h | 4 ++++
->>>>>>    kernel/user.c                  | 4 ++++
->>>>>>    3 files changed, 10 insertions(+)
->>>>>>
->>>>>> diff --git a/include/linux/ima.h b/include/linux/ima.h
->>>>>> index 426b1744215e..fcb60a44e05f 100644
->>>>>> --- a/include/linux/ima.h
->>>>>> +++ b/include/linux/ima.h
->>>>>> @@ -14,6 +14,8 @@
->>>>>>    #include <crypto/hash_info.h>
->>>>>>    struct linux_binprm;
->>>>>> +extern struct ima_namespace init_ima_ns;
->>>>>> +
->>>>>>    #ifdef CONFIG_IMA
->>>>>>    extern enum hash_algo ima_get_current_hash_algo(void);
->>>>>>    extern int ima_bprm_check(struct linux_binprm *bprm);
->>>>>> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
->>>>>> index 33a4240e6a6f..019e8cf7b633 100644
->>>>>> --- a/include/linux/user_namespace.h
->>>>>> +++ b/include/linux/user_namespace.h
->>>>>> @@ -36,6 +36,7 @@ struct uid_gid_map { /* 64 bytes -- 1 cache line */
->>>>>>    #define USERNS_INIT_FLAGS USERNS_SETGROUPS_ALLOWED
->>>>>>    struct ucounts;
->>>>>> +struct ima_namespace;
->>>>>>    enum ucount_type {
->>>>>>    	UCOUNT_USER_NAMESPACES,
->>>>>> @@ -99,6 +100,9 @@ struct user_namespace {
->>>>>>    #endif
->>>>>>    	struct ucounts		*ucounts;
->>>>>>    	long ucount_max[UCOUNT_COUNTS];
->>>>>> +#ifdef CONFIG_IMA_NS
->>>>>
->>>>> It's probably worth putting a comment here saying that user_ns does not
->>>>> pin ima_ns.
->>>>>
->>>>> That the only time the ima_ns will be freed is when user_ns is freed,
->>>>> and only time it will be changed is when user_ns is freed, or during
->>>>> ima_fs_ns_init() (under smp_load_acquire) during a new mount.
->>>>>
->>>>>> +	struct ima_namespace	*ima_ns;
->>>>>
->>>>> So, if I create a new user_ns with a new ima_ns, and in there I
->>>>> create a new user_ns again, it looks like ima_ns will be NULL in
->>>>> the new user_ns?  Should it not be set to the parent->ima_ns?
->>>>> (which would cause trouble for the way it's currently being
->>>>> freed...)
->>>>
->>>> Would also work and wouldn't be difficult to do imho.
->>>
->>> We previously decide to create an ima_namespace when securityfs is mounted.
->>> This now also applies to nested containers where an IMA namespace is first
->>> configured with the hash and template to use in a particular container and
->>> then activated. If no configuration is done it will inherit the hash and
->>> template from the first ancestor that has been configure when it is
->>> activated. So the same steps and behavior applies to *all* containers, no
->>> difference at any depth of nesting. Besides that, we don't want nested
->>> containers to share policy and logs but keep them isolated from each other,
->>> or do we not?
->>>
->>> Further, how should it work if we were to apply this even to the first
->>> container? Should it just inherit the &init_ima_namespace and we'd have no
->>> isolation at all? Why would we start treating containers at deeper nesting
->>> levels differently?
->>
->> Valid points. I understood Serge as suggesting an implementation detail
->> change not a design change but might misunderstand him here.
->>
->> # Currently
->>
->> 1. create new userns -> imans set to NULL
->> 2. mount securityfs and configure imans -> set imans to &new_ima_ns
->>
->> When 2. hasn't been done then we find the relevant imans by walking
->> the userns hierarchy upwards finding the first parent userns that has a
->> non-NULL imans.
-> 
-> Ah, right, thanks Christian.
-> 
-> But so the code - I think where the ima_ns is defined in the user_ns
-> struct, needs to make this clear.  Just something like
-> 
-> 	// Pointer to ima_ns which this user_ns created.  Can be null.
-> 	// Access checks will walk the userns->parent chain and check
-> 	// against all active ima_ns's.  Note that when the user_ns is
-> 	// freed, the ima_ns is guaranteed to be free-able.
-> 	struct ima_namespace	*ima_ns;
+The current status is that all tests should pass with a minimal kernel 
+configuration (cf. the test config file). Yama is an exception for these 
+tests, not the norm, so you also need to test against a kernel without Yama.
 
-I added this comment now. Thanks.
 
 > 
->> # Serge's suggestion
+>> For now, I think you can create two helpers named something like
+>> is_yama_restricting() and is_yama_denying() (for admin-only attach).
 >>
->> 1. create new userns -> imans is set to parent imans
->> 2. mount securityfs and configure imans -> replace parent with &new_ima_ns
+> Can you please clarify on the difference/implementation on those 2 ?
+
+They should check for the different values of ptrace_scope: 
+https://docs.kernel.org/admin-guide/LSM/Yama.html
+- is_yama_restricting() should return true if ptrace_scope == 1
+- is_yama_denying() should return true if ptrace_scope >= 2
+
+Restricted ptrace only forbids a child process to ptrace its parents. 
+There is no specific restriction for a parent to ptrace its children.
+
+Ptracing is always denied if ptrace_scope >= 2 (without specific 
+capabilties, which is the case for these tests).
+
+> 
+>>> +     if (ptrace_val != 0) {
 >>
->> So when 2. hasn't been done we don't need to walk the userns hierarchy
->> upwards. We always find the relevant imans directly. Some massaging
->> would be needed in process_measurement() probably but it wouldn't need
->> to change semantics per se.
->>
->> But I think I misunderstood something in any case. So looking at an
->> example like ima_post_path_mknod(). You seem to not call into
->> ima_must_appraise() if the caller's userns doesn't have an imans
->> enabled. I somehow had thought that the same logic applied as in
->> process_measurement. But if it isn't then it might make sense to keep
->> the current implementation.
+>> Some tests should work even if ptrace_val == 1. SKIP() should only be
+>> called when the test would fail. Can you please check all tests with all
+>> Yama values?
+> Sure, below are yama cases with testing result:
+> =====================================
+> case 0 - classic ptrace permissions: a process can PTRACE_ATTACH to any other
+>      process running under the same uid, as long as it is dumpable (i.e.
+>      did not transition uids, start privileged, or have called
+>      prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEME is
+>      unchanged.
+> 
+> Test: All passing
+> ======================================
+> Case 1 - restricted ptrace: a process must have a predefined relationship
+>      with the inferior it wants to call PTRACE_ATTACH on. By default,
+>      this relationship is that of only its descendants when the above
+>      classic criteria is also met. To change the relationship, an
+>      inferior can call prctl(PR_SET_PTRACER, debugger, ...) to declare
+>      an allowed debugger PID to call PTRACE_ATTACH on the inferior.
+>      Using PTRACE_TRACEME is unchanged.
+> 
+> Test:
+> // Base_test: 7/7 pass.
+> // Fs_test 46/48 pass
+> //.   not ok 47 layout2_overlay.no_restriction
+> //.   not ok 48 layout2_overlay.same_content_different_file
+> //  Ptrace_test 4/8 pass
+> // #          FAIL  hierarchy.allow_without_domain.trace
+> // #          FAIL  hierarchy.deny_with_parent_domain.trace
+> // #          FAIL  hierarchy.allow_sibling_domain.trace
+> // #          FAIL  hierarchy.deny_with_nested_and_parent_domain.trace
+> ====================================================
+> Case 2 - admin-only attach: only processes with CAP_SYS_PTRACE may use ptrace
+>      with PTRACE_ATTACH, or through children calling PTRACE_TRACEME.
+> Case 3 - no attach: no processes may use ptrace with PTRACE_ATTACH nor via
+>      PTRACE_TRACEME. Once set, this sysctl value cannot be changed.
+> Test: *case2 and case3 have the same results:
+> // Base_test: 7/7 pass.
+> // Fs_test 46/48 pass
+> //.   not ok 47 layout2_overlay.no_restriction
+> //.   not ok 48 layout2_overlay.same_content_different_file
+> //  Ptrace 2/8 pass
+> //.  ok 4 hierarchy.deny_with_sibling_domain.trace
+> //.  ok 8 hierarchy.deny_with_forked_domain.trace
+> // the other 6 tests failed with timeout.
+> ===============================================
+> 
+> Do you know why fs_test (47,48) is failing when yama value = 1,2,3 ?
+
+These are all the overlayfs tests but I don't know why they are failing 
+with Yama. Could you please pinpoint the exact(s) failing ASSERT? 
+(Whatever my following comments, this would be valuable to know the issue.)
+
+
+> 
+> FOR SKIP,  it might be messy to add SKIP after checking variant names
+> in TEST_F(), (too many if/else , which make it less readable),
+> ideally this should be when or before FIXTURE_VARIANT_ADD() is called.
+> or somehow refactor the code to remove the variant check in TEST_F()
+> 
+> Is there a better way  ?
+
+OK, let's follow another approach.
+
+The first alternative would be to disable Yama for all the Landlock 
+ptrace tests. You'll first need to save the current Yama settings and 
+restore it after each test, even if they failed. I think this 
+alternative makes sense because Landlock tests should not be about Yama.
+
+The second alternative would be to test with and without Yama, with 
+different Yama settings. That would also require to disable Yama for 1/3 
+or 1/4 of tests. The downside of this alternative is that it requires 3 
+or 4 times variants, and it actually test Yama, which is not the goal of 
+the Landlock tests.
+
+Anyway, you also need to update the comment about Yama in the current tests.
