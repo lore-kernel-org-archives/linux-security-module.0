@@ -2,106 +2,87 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1323C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 16:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF22C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 19:04:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236270AbiGGQqm (ORCPT
+        id S236685AbiGGTEv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Jul 2022 12:46:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56088 "EHLO
+        Thu, 7 Jul 2022 15:04:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236250AbiGGQqk (ORCPT
+        with ESMTP id S236544AbiGGTEi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Jul 2022 12:46:40 -0400
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C6530565
-        for <linux-security-module@vger.kernel.org>; Thu,  7 Jul 2022 09:46:39 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lf2P96f5fzMqQhx;
-        Thu,  7 Jul 2022 18:46:37 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lf2P931wczlqwrn;
-        Thu,  7 Jul 2022 18:46:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1657212397;
-        bh=gppSphjURzSVISUgaNdkCDnGfz6Vgo6oN8MoVN6XCnU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=FB24CKuD9quvNRsvNjgkNCdkE3t9SW8/QqesR5btCalCU+mP/wk6fzIcDzESzAjys
-         lcgtmFu1rvpMEIw9uKs37KOI7Bpz2rT/CjLnFd28hQzG6vULlHzvtiSo1xKw0a7acL
-         UeeZ8qXi/KDEMa9N6B4pmLgsE2Mx62ojFseyoMMs=
-Message-ID: <b02d6f95-ea80-b82d-5b7b-6d116a9b5078@digikod.net>
-Date:   Thu, 7 Jul 2022 18:46:36 +0200
+        Thu, 7 Jul 2022 15:04:38 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9972A1EAE7
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Jul 2022 12:04:36 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id d16so21286541wrv.10
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Jul 2022 12:04:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PvbWOmfqFQDZxi50SzgZZmdTVRAaxdCY1RZHpPXVEMs=;
+        b=sQXbPP029EsL0H2p6P1gN30yzE8ETEjjvGpFb7Z0AlZdjrDvtC8M0pOdlUuJWgjEP9
+         t7yAIEuxsACYGDUS5C17SSSFkB3xod8OGr4+wyBDoVBvN3KQIwYTJplu8zNYJNAymVSJ
+         olLYLU+SiI9Hv9Ji4cBrZuiH0zuCY7au3GNPzNxkKvpWEblJPJHz1lVHSnrRw6JEKXMi
+         vE3YlWoJa9HcUAVloluTOXwSoTqDDZY5bofygSgfIM4C3x+rR9g+Box1vi1C51MM3GFu
+         gKRCrOPGY7VjioBXNUlRGQL5XcTZo1vAanbxAYC5E05Js4Sq89XV8p/1BB+oBnRtpEAV
+         nKVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PvbWOmfqFQDZxi50SzgZZmdTVRAaxdCY1RZHpPXVEMs=;
+        b=6vXK2G/2S26yN8bBt1cMt34Zl1iXVJKC9WJkpv+qhGU9lz67vMvIZw+feltzjwYdot
+         /gyuh5/pMNKDKLADxbFsd76twHzIha5UpFYizjCOUU0C3EEMTcev2SeDmbflM+TY9KE1
+         eoTFMwJMPb+A9pBvgEl5UY5jzUoFQ9VGXMP4kyLUUh0pFqi2epA0rSTIGoa6DGEk0EAg
+         1pIhAKA57kGuiFeWx0d505XdFn498Fm8Sx/A88pLO8n0eKjFAf60LYhn7+eTDpP7r9aJ
+         UM6Itl67WEBk94+UOPeQLNsFY5Mnc7qRqUbty0YuqNyaq32MU1V0qq+vPWTL4ruze+Wj
+         DSHA==
+X-Gm-Message-State: AJIora/KBPEZ+0EUBXCYZwyVKtEEY++eYroGcCv5vO9PooADPiTT9fZM
+        qpg3ub+gNuuYvF2bSOkwhm9YtW9CDV6PAloGHsgBbkd1uw==
+X-Google-Smtp-Source: AGRyM1vrpmFLPdKWe+jpcz+rkPcEbAbBWm488b1dVLLK1KoQw/HGAQmgvK/oDBN7Ib9CVomTUhm49PYHQyxptAumNSI=
+X-Received: by 2002:a5d:64ad:0:b0:21b:b412:a34b with SMTP id
+ m13-20020a5d64ad000000b0021bb412a34bmr45101495wrp.161.1657220675093; Thu, 07
+ Jul 2022 12:04:35 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v6 02/17] landlock: refactors landlock_find/insert_rule
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        anton.sirazetdinov@huawei.com
-References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
- <20220621082313.3330667-3-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20220621082313.3330667-3-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <c513dcdb-17f9-377a-1329-2b8fee8dc28c@namei.org>
+In-Reply-To: <c513dcdb-17f9-377a-1329-2b8fee8dc28c@namei.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 7 Jul 2022 15:04:24 -0400
+Message-ID: <CAHC9VhSMHqiXrLhA_DXrstTod2Afjy6v9fPjJfygfC36D2cHuw@mail.gmail.com>
+Subject: Re: Maintainer update
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Jul 6, 2022 at 3:15 PM James Morris <jmorris@namei.org> wrote:
+>
+> Hi Folks,
+>
+> I'm now a manager and don't get as much time to focus directly on
+> development work.
+>
+> I'd like to propose that we add Paul Moore as a maintainer of the Security
+> Subsystem, and for him to take the lead on that, in addition to his
+> SELinux and other maintainer work.
+>
+> With LSMs pushing directly to Linus, this maintainer role is now mostly
+> about merging new LSMs and major LSM changes, and integrating bugfixes.
+>
+> Paul has been taking many LSM bugfixes through his SELinux tree for a
+> while, so this would be somewhat a formalization of things there. In terms
+> of new LSMs and major changes, this is and will remain a collaborative
+> process with the LSM community.
 
+Thanks James, Serge, Casey.  I promise to do my best not to screw
+things up too badly ;)
 
-On 21/06/2022 10:22, Konstantin Meskhidze wrote:
-> Adds a new object union to support a socket port
-> rule type. Refactors landlock_insert_rule() and
-> landlock_find_rule() to support coming network
-> modifications. Now adding or searching a rule
-> in a ruleset depends on a rule_type argument
-> provided in refactored functions mentioned above.
-> 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
-> 
-> Changes since v5:
-> * Formats code with clang-format-14.
-> 
-> Changes since v4:
-> * Refactors insert_rule() and create_rule() functions by deleting
-> rule_type from their arguments list, it helps to reduce useless code.
-> 
-> Changes since v3:
-> * Splits commit.
-> * Refactors landlock_insert_rule and landlock_find_rule functions.
-> * Rename new_ruleset->root_inode.
-> 
-> ---
->   security/landlock/fs.c      |   7 ++-
->   security/landlock/ruleset.c | 105 ++++++++++++++++++++++++++----------
->   security/landlock/ruleset.h |  27 +++++-----
->   3 files changed, 96 insertions(+), 43 deletions(-)
+I'll put together a new LSM tree under my kernel.org account and send
+out a MAINTAINERS patch with the updated info.
 
-[...]
-
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index bd7ab39859bf..a22d132c32a7 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -53,15 +53,17 @@ struct landlock_rule {
->   	 */
->   	struct rb_node node;
->   	/**
-> -	 * @object: Pointer to identify a kernel object (e.g. an inode).  This
-> -	 * is used as a key for this ruleset element.  This pointer is set once
-> -	 * and never modified.  It always points to an allocated object because
-> -	 * each rule increments the refcount of its object.
-> -	 */
-> -	struct landlock_object *object;
-> -	/**
-> -	 * @num_layers: Number of entries in @layers.
-> +	 * @object: A union to identify either a kernel object (e.g. an inode) or
-> +	 * a raw data value (e.g. a network socket port). This is used as a key
-> +	 * for this ruleset element. This pointer/@object.ptr/ is set once and
-> +	 * never modified. It always points to an allocated object because each
-> +	 * rule increments the refcount of its object (for inodes).;
-
-Extra ";"
+-- 
+paul-moore.com
