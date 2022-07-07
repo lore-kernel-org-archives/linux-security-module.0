@@ -2,136 +2,98 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C12EBCCA480
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 22:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A85C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 23:15:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237116AbiGGWdS (ORCPT
+        id S236491AbiGGXPe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Jul 2022 18:33:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60298 "EHLO
+        Thu, 7 Jul 2022 19:15:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237076AbiGGWcw (ORCPT
+        with ESMTP id S236156AbiGGXPd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Jul 2022 18:32:52 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDC6F675B7
-        for <linux-security-module@vger.kernel.org>; Thu,  7 Jul 2022 15:32:45 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id t26-20020a9d775a000000b006168f7563daso15011990otl.2
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Jul 2022 15:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gpnGP72y7AlRDZxLLIIKCxGjGB4QqIYx1EtuBERrAGY=;
-        b=KfAsVex69jTCIdg5XmbRjXWWWy/S0Tca6CS8SwDAmazdBPIoDnrCREhbjrLFevHaGt
-         6ufFk77dMvGWeRIVQPkT2IDgHAiRo2457GzNSRpAj0LvK9u6HolMJoALdrhWiSJY3cDP
-         lupYF3+zn3pi6FeorsgnBUBjJN6/6EstmhD80=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gpnGP72y7AlRDZxLLIIKCxGjGB4QqIYx1EtuBERrAGY=;
-        b=NqREgYYJzSAleh8Adr9xxYat+L0vr8v7BwKAG2AZAl41E5KPfDmVd/D2KeHspK/yyi
-         cUvzPloCYklbA8ueG6T5ssVEpqaN4pM0sCicxxADyPT8t4UnoYx5fTDGcLFKet2rqiy8
-         YKWUpCRhdeKt9uOojUzN5v7C1ETyAh6Ux9KAJHQw7ELq2uOJTlgXvG5RLO1tcZrGyUCa
-         6X/PoS1DllQ3p73Eq2wDTqmWXP+U3CqWNFXHmb+Dp9VOFLzzGOvmARDpCyHHf2DfmJjG
-         boTmMSp9noGjiEINm7e1ozFWq4CBPauVc2t224zGplUlaBzB0UI/jUgTOxlTA/gYpqfU
-         2yXQ==
-X-Gm-Message-State: AJIora/k5mrVuwYCOyi2hJu7RUWNZRb+xLtPYDp32TGq5LIoNf2m+xY6
-        OD2v4M1/QHuiI5ASEv1Pz3kB7Q==
-X-Google-Smtp-Source: AGRyM1sGIyzyI1rIE0sIpG00vgHQmsRFAehgN6hwD9szVgsHUkRW2ie4sEb+YtA6SNwdPP9ZDtc8qw==
-X-Received: by 2002:a9d:4c0e:0:b0:616:dd87:cb91 with SMTP id l14-20020a9d4c0e000000b00616dd87cb91mr182367otf.185.1657233164958;
-        Thu, 07 Jul 2022 15:32:44 -0700 (PDT)
-Received: from localhost.localdomain ([184.4.90.121])
-        by smtp.gmail.com with ESMTPSA id i16-20020a05683033f000b00616b835f5e7sm16246222otu.43.2022.07.07.15.32.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 15:32:43 -0700 (PDT)
-From:   Frederick Lawler <fred@cloudflare.com>
-To:     kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
-        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
-        casey@schaufler-ca.com, ebiederm@xmission.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-team@cloudflare.com, Frederick Lawler <fred@cloudflare.com>
-Subject: [PATCH v2 4/4] selinux: Implement create_user_ns hook
-Date:   Thu,  7 Jul 2022 17:32:28 -0500
-Message-Id: <20220707223228.1940249-5-fred@cloudflare.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220707223228.1940249-1-fred@cloudflare.com>
-References: <20220707223228.1940249-1-fred@cloudflare.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jul 2022 19:15:33 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6002127FD5;
+        Thu,  7 Jul 2022 16:15:30 -0700 (PDT)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 267NCGVc006368;
+        Thu, 7 Jul 2022 23:15:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=KAXRanh8SZV9oVzDpI4U/Isuvm+o+aN26hXhRYySckc=;
+ b=byDRGw8iGLugWdm91oA1f2TUyZKxoTu8mBeawYCkx15OsWk3gBNibN8mZh8ipVnPAEja
+ 0Hqu4ipKpaLORwkDqW4aNpPZ/cw5XtMfQbMbWohH78ITUF73UVuIoqI109g3e99qZW6L
+ uqAkL0rZ0akGRCwG0DbiT/tvQ8NSs5w5ch2n9BoyvdQG20BGZGKmvI48k6VF4oB+dj+R
+ m2QIr5mT9RgPDCX9TLQUIeyI6sgqlUkEY6xEjPWXtb62MunbzvmKB+W/ZiBFnN5jI8lG
+ CS5l0fTzpR7OwBjIEoEblxoICx45rYMWjoLDDTwo2WodrFgGkuz4nsGhLzMqLnrBepSP nw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h68xr821y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Jul 2022 23:15:22 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 267NEajQ020952;
+        Thu, 7 Jul 2022 23:15:22 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h68xr8216-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Jul 2022 23:15:22 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 267N5uVw010938;
+        Thu, 7 Jul 2022 23:15:19 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06ams.nl.ibm.com with ESMTP id 3h4usd35uf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Jul 2022 23:15:19 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 267NFHqj21299500
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Jul 2022 23:15:17 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 71CF1A4057;
+        Thu,  7 Jul 2022 23:15:17 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 97139A4051;
+        Thu,  7 Jul 2022 23:15:15 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.77.198])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Jul 2022 23:15:15 +0000 (GMT)
+Message-ID: <47fc2c7857600dd017cdede786b094d7b961dab6.camel@linux.ibm.com>
+Subject: Re: [PATCH -next] evm: Use IS_ENABLED to initialize .enabled
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 07 Jul 2022 19:15:14 -0400
+In-Reply-To: <20220606101042.89638-1-xiujianfeng@huawei.com>
+References: <20220606101042.89638-1-xiujianfeng@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: datqKVPqvBnsxJBdrgI9yc6ZZkyXQxzA
+X-Proofpoint-ORIG-GUID: EbxYwlsqVjBRcvApq6B-xszh25UDEKjA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-07_17,2022-06-28_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0
+ clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0 mlxlogscore=958
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2206140000 definitions=main-2207070090
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Unprivileged user namespace creation is an intended feature to enable
-sandboxing, however this feature is often used to as an initial step to
-perform a privilege escalation attack.
+On Mon, 2022-06-06 at 18:10 +0800, Xiu Jianfeng wrote:
+> Use IS_ENABLED(CONFIG_XXX) instead of #ifdef/#endif statements to
+> initialize .enabled, minor simplicity improvement.
+> 
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-This patch implements a new namespace { userns_create } access control
-permission to restrict which domains allow or deny user namespace
-creation. This is necessary for system administrators to quickly protect
-their systems while waiting for vulnerability patches to be applied.
+Thanks, Xiu.   This patch is now queued in next-testing.
 
-This permission can be used in the following way:
-
-        allow domA_t domB_t : namespace { userns_create };
-
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-
----
-Changes since v1:
-- Introduce this patch
----
- security/selinux/hooks.c            | 9 +++++++++
- security/selinux/include/classmap.h | 2 ++
- 2 files changed, 11 insertions(+)
-
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index beceb89f68d9..73fbcb434fe0 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4227,6 +4227,14 @@ static void selinux_task_to_inode(struct task_struct *p,
- 	spin_unlock(&isec->lock);
- }
- 
-+static int selinux_userns_create(const struct cred *cred)
-+{
-+	u32 sid = current_sid();
-+
-+	return avc_has_perm(&selinux_state, sid, sid, SECCLASS_NAMESPACE,
-+						NAMESPACE__USERNS_CREATE, NULL);
-+}
-+
- /* Returns error only if unable to parse addresses */
- static int selinux_parse_skb_ipv4(struct sk_buff *skb,
- 			struct common_audit_data *ad, u8 *proto)
-@@ -7117,6 +7125,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(task_movememory, selinux_task_movememory),
- 	LSM_HOOK_INIT(task_kill, selinux_task_kill),
- 	LSM_HOOK_INIT(task_to_inode, selinux_task_to_inode),
-+	LSM_HOOK_INIT(create_user_ns, selinux_userns_create),
- 
- 	LSM_HOOK_INIT(ipc_permission, selinux_ipc_permission),
- 	LSM_HOOK_INIT(ipc_getsecid, selinux_ipc_getsecid),
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index ff757ae5f253..9943e85c6b3e 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -254,6 +254,8 @@ const struct security_class_mapping secclass_map[] = {
- 	  { COMMON_FILE_PERMS, NULL } },
- 	{ "io_uring",
- 	  { "override_creds", "sqpoll", NULL } },
-+	{ "namespace",
-+	  { "userns_create", NULL } },
- 	{ NULL }
-   };
- 
--- 
-2.30.2
+Mimi
 
