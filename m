@@ -2,87 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF22C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 19:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 762DAC43334
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 20:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236685AbiGGTEv (ORCPT
+        id S236101AbiGGUHQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Jul 2022 15:04:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56824 "EHLO
+        Thu, 7 Jul 2022 16:07:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236544AbiGGTEi (ORCPT
+        with ESMTP id S236077AbiGGUHP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Jul 2022 15:04:38 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9972A1EAE7
-        for <linux-security-module@vger.kernel.org>; Thu,  7 Jul 2022 12:04:36 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id d16so21286541wrv.10
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Jul 2022 12:04:36 -0700 (PDT)
+        Thu, 7 Jul 2022 16:07:15 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5E885C97A
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Jul 2022 13:07:13 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id y8so18754600eda.3
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Jul 2022 13:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PvbWOmfqFQDZxi50SzgZZmdTVRAaxdCY1RZHpPXVEMs=;
-        b=sQXbPP029EsL0H2p6P1gN30yzE8ETEjjvGpFb7Z0AlZdjrDvtC8M0pOdlUuJWgjEP9
-         t7yAIEuxsACYGDUS5C17SSSFkB3xod8OGr4+wyBDoVBvN3KQIwYTJplu8zNYJNAymVSJ
-         olLYLU+SiI9Hv9Ji4cBrZuiH0zuCY7au3GNPzNxkKvpWEblJPJHz1lVHSnrRw6JEKXMi
-         vE3YlWoJa9HcUAVloluTOXwSoTqDDZY5bofygSgfIM4C3x+rR9g+Box1vi1C51MM3GFu
-         gKRCrOPGY7VjioBXNUlRGQL5XcTZo1vAanbxAYC5E05Js4Sq89XV8p/1BB+oBnRtpEAV
-         nKVg==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QyLCv6GFZyRrT8PyPfSfjKuUQbWmAns4RxbWXOJiOAA=;
+        b=NVWojgaiOlNhKq4J8EOO0rle1VvYJJxmh6WUyFJe+4oqAG7tjEXMgxjdmKClchgCco
+         2pJPMIrUO7jnD2OQ9Y+fnODK1gS3OuyG+GTIhiiGzEJAGnsIOM84fKS7LczTwds+IeLl
+         V9K1cPPrVKL9h3pZJxG0QvYb48VftfgHH6iN4bQrWRnERQZp/Jvh17WNSmwaPERqKUnJ
+         R5xMxlBJkHzGIXVCcIhnZGyfRCU9EAMO4N54nMpNn4eSv0fzwhB/HlByoGAqX6kcRPeI
+         iUS8zbkupwRLLmSy2BpqLEIU8n6bnJzjT0H7FXgeo7sRuJx4dXkZ449QBgS1SzTKlCB6
+         91Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PvbWOmfqFQDZxi50SzgZZmdTVRAaxdCY1RZHpPXVEMs=;
-        b=6vXK2G/2S26yN8bBt1cMt34Zl1iXVJKC9WJkpv+qhGU9lz67vMvIZw+feltzjwYdot
-         /gyuh5/pMNKDKLADxbFsd76twHzIha5UpFYizjCOUU0C3EEMTcev2SeDmbflM+TY9KE1
-         eoTFMwJMPb+A9pBvgEl5UY5jzUoFQ9VGXMP4kyLUUh0pFqi2epA0rSTIGoa6DGEk0EAg
-         1pIhAKA57kGuiFeWx0d505XdFn498Fm8Sx/A88pLO8n0eKjFAf60LYhn7+eTDpP7r9aJ
-         UM6Itl67WEBk94+UOPeQLNsFY5Mnc7qRqUbty0YuqNyaq32MU1V0qq+vPWTL4ruze+Wj
-         DSHA==
-X-Gm-Message-State: AJIora/KBPEZ+0EUBXCYZwyVKtEEY++eYroGcCv5vO9PooADPiTT9fZM
-        qpg3ub+gNuuYvF2bSOkwhm9YtW9CDV6PAloGHsgBbkd1uw==
-X-Google-Smtp-Source: AGRyM1vrpmFLPdKWe+jpcz+rkPcEbAbBWm488b1dVLLK1KoQw/HGAQmgvK/oDBN7Ib9CVomTUhm49PYHQyxptAumNSI=
-X-Received: by 2002:a5d:64ad:0:b0:21b:b412:a34b with SMTP id
- m13-20020a5d64ad000000b0021bb412a34bmr45101495wrp.161.1657220675093; Thu, 07
- Jul 2022 12:04:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QyLCv6GFZyRrT8PyPfSfjKuUQbWmAns4RxbWXOJiOAA=;
+        b=hcs/TCjYmSPMwvYrWnrWcne+fgoD8C8VDzCxO9JKkGo1/OcpAJsIKlOiZc4MzDO6Hg
+         ELZfPdaSVWRkzdt8cRYKvN3Of0nDdaafY1ESKovdOXd/YZ32BAvHvc8RMjdULRBVY0lh
+         3o+0muAtHKZGLmGrY8ovq7tg8pKEX1WaUF8ENYJLWnf/umKBmJG+dVNena+0Wfy1KqYi
+         0G5Rjgnxdb8WEsIfcTHmVLOLwxnEwfe1uUX34oGdsGzKQNyHuDvf0OE+4r/ipM/lWu3H
+         N5weWv/5NZ5vX+qChpKop5kgVk0YzpVrrNHb5fmXUiWMaWeLtAMKacF47vIfeS1FjKsd
+         R6bg==
+X-Gm-Message-State: AJIora/GUBP1rVgUdCqsCrv6GlZ1rO0Cqn5J412thz7dQN6lAhtpjVZM
+        VD9NthX6iRYd7YNgOCwKPymmYWt5dHs=
+X-Google-Smtp-Source: AGRyM1tsHqe9023sdyYwgfSy6hPcNY0MMpNsYYVaw/ELuKtZTUGAg10kphHQQZ8tEsfpDYDk61U+yQ==
+X-Received: by 2002:a05:6402:42cb:b0:43a:5df2:bb5d with SMTP id i11-20020a05640242cb00b0043a5df2bb5dmr31694775edc.36.1657224432192;
+        Thu, 07 Jul 2022 13:07:12 -0700 (PDT)
+Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id t13-20020a056402020d00b0043a71775903sm8397959edv.39.2022.07.07.13.07.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Jul 2022 13:07:11 -0700 (PDT)
+From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH 0/2] landlock: truncate(2) support
+Date:   Thu,  7 Jul 2022 22:06:11 +0200
+Message-Id: <20220707200612.132705-1-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.37.0
 MIME-Version: 1.0
-References: <c513dcdb-17f9-377a-1329-2b8fee8dc28c@namei.org>
-In-Reply-To: <c513dcdb-17f9-377a-1329-2b8fee8dc28c@namei.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 7 Jul 2022 15:04:24 -0400
-Message-ID: <CAHC9VhSMHqiXrLhA_DXrstTod2Afjy6v9fPjJfygfC36D2cHuw@mail.gmail.com>
-Subject: Re: Maintainer update
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 6, 2022 at 3:15 PM James Morris <jmorris@namei.org> wrote:
->
-> Hi Folks,
->
-> I'm now a manager and don't get as much time to focus directly on
-> development work.
->
-> I'd like to propose that we add Paul Moore as a maintainer of the Security
-> Subsystem, and for him to take the lead on that, in addition to his
-> SELinux and other maintainer work.
->
-> With LSMs pushing directly to Linus, this maintainer role is now mostly
-> about merging new LSMs and major LSM changes, and integrating bugfixes.
->
-> Paul has been taking many LSM bugfixes through his SELinux tree for a
-> while, so this would be somewhat a formalization of things there. In terms
-> of new LSMs and major changes, this is and will remain a collaborative
-> process with the LSM community.
+The goal of these patches is to work towards a more complete coverage
+of file system operations that are restrictable with Landlock.
 
-Thanks James, Serge, Casey.  I promise to do my best not to screw
-things up too badly ;)
+The known set of currently unsupported file system operations in
+Landlock is described at [1]. Out of the operations listed there,
+truncate is the only one that modifies file contents, so these patches
+should make it possible to prevent the direct modification of file
+contents with Landlock.
 
-I'll put together a new LSM tree under my kernel.org account and send
-out a MAINTAINERS patch with the updated info.
+The patch introduces the truncate(2) restriction feature as an
+additional bit in the access_mask_t bitmap, in line with the existing
+supported operations.
 
--- 
-paul-moore.com
+Apart from Landlock, the truncate(2) and ftruncate(2) family of system
+calls can also be restricted using seccomp-bpf, but it is a
+complicated mechanism (requires BPF, requires keeping up-to-date
+syscall lists) and it also is not configurable by file hierarchy, as
+Landlock is. The simplicity and flexibility of the Landlock approach
+makes it worthwhile adding.
+
+I am aware that the documentation and samples/landlock/sandboxer.c
+tool still need corresponding updates; I'm hoping to get some early
+feedback this way.
+
+These patches are based on version 5.19-rc5.
+The patch set can also be browsed on the web at [2].
+
+Best regards,
+Günther
+
+[1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+[2] https://github.com/gnoack/linux/tree/landlock-truncate
+
+Günther Noack (2):
+  landlock: Support truncate(2).
+  landlock: Selftests for truncate(2) support.
+
+ include/uapi/linux/landlock.h                |  2 +
+ security/landlock/fs.c                       |  9 +-
+ security/landlock/limits.h                   |  2 +-
+ security/landlock/syscalls.c                 |  2 +-
+ tools/testing/selftests/landlock/base_test.c |  2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 87 +++++++++++++++++++-
+ 6 files changed, 97 insertions(+), 7 deletions(-)
+
+--
+2.37.0
