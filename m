@@ -2,115 +2,114 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4706C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 03:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5DEC43334
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 03:58:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234762AbiGGDTc (ORCPT
+        id S234056AbiGGD6Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Jul 2022 23:19:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46330 "EHLO
+        Wed, 6 Jul 2022 23:58:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234890AbiGGDTb (ORCPT
+        with ESMTP id S230197AbiGGD6X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Jul 2022 23:19:31 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB5230F50;
-        Wed,  6 Jul 2022 20:19:25 -0700 (PDT)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2672jJgi023338;
-        Thu, 7 Jul 2022 03:19:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=ewEvjwCu5GaxlyxrOtKYIf26jccNqy2aF7IVAq2XlCs=;
- b=Nmwn6jpiQ6ku70TyKirPR/YGsF6y9VY8lOHxSuN8EtKB4tt3K8Sdo+E9PWLPflZjTU14
- qlj5E5RKmXYdNRVLCQuLSQyDUmnZvE1x6mYgc+T/8GqPOx5w7lUeEUPBZkFX84ZPNdyy
- Ng4RxBOxkl/JvzTISzB1+YWWjML9dPvXXAOW2zO391/qeS+XhEgq1pllh8iOqKKpC68P
- 48bY6VmThvX9SOeJl6ZcWHuiwkx3jTZIbISG/zc228+DY3Hgey1+g/Sj6RgGJxgh1G99
- RrXLezrPtlF3x27RUN1bcLKexe1WErrG7ve+0jZW8g9Zy7jq0cSX2CRLdbzAqV5GyKrb rw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h5mcvbwsm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 03:19:15 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 26739ixG025579;
-        Thu, 7 Jul 2022 03:19:15 GMT
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h5mcvbws2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 03:19:15 +0000
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 26738MNJ016780;
-        Thu, 7 Jul 2022 03:19:13 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma01fra.de.ibm.com with ESMTP id 3h4ukw1der-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 03:19:13 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2673Hrio19530146
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jul 2022 03:17:53 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D4844C044;
-        Thu,  7 Jul 2022 03:19:11 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A8584C040;
-        Thu,  7 Jul 2022 03:19:09 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.163.26.108])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Jul 2022 03:19:08 +0000 (GMT)
-Message-ID: <0196570e0deb244b5e846925098ddc5085dddaf9.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima/evm: Fix potential memory leak in ima_init_crypto()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jianglei Nie <niejianglei2021@163.com>, dmitry.kasatkin@gmail.com,
-        jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 06 Jul 2022 23:19:07 -0400
-In-Reply-To: <20220704005932.2217025-1-niejianglei2021@163.com>
-References: <20220704005932.2217025-1-niejianglei2021@163.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 2SHe4gmWDMj28RF8IlCg-3RjXnh4bZuw
-X-Proofpoint-GUID: Dt9uzsfmEQvwxV8e1gEgjWNjmZxTAFmV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-07_02,2022-06-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxlogscore=999 lowpriorityscore=0
- malwarescore=0 mlxscore=0 bulkscore=0 suspectscore=0 spamscore=0
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2206140000 definitions=main-2207070011
+        Wed, 6 Jul 2022 23:58:23 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F25C2654C
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Jul 2022 20:58:21 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id 70so1765843pfx.1
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Jul 2022 20:58:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JxCvx3Wm6aJVrrCk9KxbfLNMLkjb2WQRHJLc9xDV7wo=;
+        b=H9LFGZCSA2LuADklmnd2mY5ca/5IZfgA7lt/vP+GxQPOHG6Eoc+SRSUtdiWbeV5G2c
+         mzi6WcAlyXYhcPcnOFtTB3YtuLHUPEUVox+cOrEbaZNGt/ddTlFPO1AmzHsD1GPDHa2k
+         pV3Jh0ZoXFNYKlRvCTjk1l4nTQfHqGNtLLuAA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JxCvx3Wm6aJVrrCk9KxbfLNMLkjb2WQRHJLc9xDV7wo=;
+        b=kXNqeOQ3f7tQmUOylDivlrWdiOQ6Gr3rbhSZIyDgbsk55/JsXmpjaFZ4N+RloYVbjK
+         AP88GPkeY6OZ/DKBbJz+XZRbaiE0fgMAHS+aOkSfM4zC4rqc8yJ2wmnie4HMrUpGtiTP
+         m/RZpU++TFg9H5D6+2aa7yJ04Lfpdcg2gSl156oMFQTCiTha1NjlaPtbtgjl77uIkG4M
+         yAOXLrPMtMxlCZ4uNbt1uVCrHcYhrTvnYM0bijHy92PVceoDhMUAOAI9awHHnVFYWdiM
+         gIBgbQh4s2zZlr+q5ZoOl3aLITGkhNSlp26aVThv/tk3XDtBsFqSnnEDQz2JsRU+eMhs
+         7g1g==
+X-Gm-Message-State: AJIora+NVSaAyvmomIydgj/z8VAFmnuyW3jHGddh5Eo/JjcpuovEwvLe
+        NgE66ivm9wSPMgNpBqaqMulgqg==
+X-Google-Smtp-Source: AGRyM1t4S2EttzYuHEUjp0/XnuFNsoOvI4ExjjU9puQ2Rr17H7beMyUoSMv6NJayHK6t/EwYutkiyw==
+X-Received: by 2002:a17:903:1c7:b0:16a:2844:8c1f with SMTP id e7-20020a17090301c700b0016a28448c1fmr51071550plh.30.1657166300753;
+        Wed, 06 Jul 2022 20:58:20 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c10-20020a170903234a00b0016b9b6d67a2sm17284819plh.155.2022.07.06.20.58.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jul 2022 20:58:20 -0700 (PDT)
+Date:   Wed, 6 Jul 2022 20:58:19 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Mike Snitzer <snitzer@kernel.org>
+Cc:     Alasdair Kergon <agk@redhat.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-raid@vger.kernel.org, Song Liu <song@kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Milan Broz <gmazyland@gmail.com>
+Subject: Re: [PATCH v7 0/3] LoadPin: Enable loading from trusted dm-verity
+ devices
+Message-ID: <202207062058.49046961A4@keescook>
+References: <20220627153526.3750341-1-mka@chromium.org>
+ <YsWmPt7xwTlvTfAf@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YsWmPt7xwTlvTfAf@redhat.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jianglei,
-
-Thank you for the patch.
-
-On Mon, 2022-07-04 at 08:59 +0800, Jianglei Nie wrote:
-> ima_init_crypto() allocates a memory chunk for "ima_algo_array" with
-> kcalloc(). When some errors occur, the function jumps to "out_array"
-> and releases the "ima_algo_array[i].tfm". But "ima_algo_array" is
-> not released, which will lead to a memory leak.
-
-There's too much low level code details in the above paragraph.  The
-patch description should be written from a higher level perspective. 
-Refer to the original commit 6d94809af6b0 ("ima: Allocate and
-initialize tfm for each PCR bank") for an example.
+On Wed, Jul 06, 2022 at 11:11:58AM -0400, Mike Snitzer wrote:
+> On Mon, Jun 27 2022 at 11:35P -0400,
+> Matthias Kaehlcke <mka@chromium.org> wrote:
 > 
-> We can release the ima_algo_array with kfree() when some errors occur
-> to fix the memory leak.
-
-Please re-word the above sentence in the imperative mode.  Refer to
-Documentation/process/submitting-patches.rst for an example.
-
-thanks,
-
-Mimi
+> > As of now LoadPin restricts loading of kernel files to a single pinned
+> > filesystem, typically the rootfs. This works for many systems, however it
+> > can result in a bloated rootfs (and OTA updates) on platforms where
+> > multiple boards with different hardware configurations use the same rootfs
+> > image. Especially when 'optional' files are large it may be preferable to
+> > download/install them only when they are actually needed by a given board.
+> > Chrome OS uses Downloadable Content (DLC) [1] to deploy certain 'packages'
+> > at runtime. As an example a DLC package could contain firmware for a
+> > peripheral that is not present on all boards. DLCs use dm-verity [2] to
+> > verify the integrity of the DLC content.
+> > 
+> > This series extends LoadPin to allow loading of kernel files from trusted
+> > dm-verity devices. LoadPin maintains a list of root digests of verity
+> > devices it considers trusted. Userspace can populate this list through an
+> > ioctl on the new LoadPin securityfs entry 'dm-verity'. The ioctl receives
+> > a file descriptor of a file with verity digests as parameter. Verity reads
+> > the digests from this file after confirming that the file is located on the
+> > pinned root. The digest file must contain one digest per line. The list of
+> > trusted digests can only be set up once, which is typically done at boot
+> > time.
+> > 
+> > When a kernel file is read LoadPin first checks (as usual) whether the file
+> > is located on the pinned root, if so the file can be loaded. Otherwise, if
+> > the verity extension is enabled, LoadPin determines whether the file is
+> > located on a verity backed device and whether the root digest of that
+> > device is in the list of trusted digests. The file can be loaded if the
+> > verity device has a trusted root digest.
+> > 
+> > [1] https://chromium.googlesource.com/chromiumos/platform2/+/HEAD/dlcservice/docs/developer.md
+> > [2] https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/verity.html
 > 
-> Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
+> Hi Kees,
+> 
+> Please pick this series up, thanks.
 
+Thanks for the Acks! I'll get this into -next shortly.
+
+-- 
+Kees Cook
