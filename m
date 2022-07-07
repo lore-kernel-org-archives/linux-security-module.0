@@ -2,179 +2,130 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AE0C433EF
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 20:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716EDC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jul 2022 22:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236375AbiGGUHW (ORCPT
+        id S236760AbiGGWci (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Jul 2022 16:07:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46214 "EHLO
+        Thu, 7 Jul 2022 18:32:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236019AbiGGUHS (ORCPT
+        with ESMTP id S236312AbiGGWch (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Jul 2022 16:07:18 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9434E5C97A
-        for <linux-security-module@vger.kernel.org>; Thu,  7 Jul 2022 13:07:17 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id r18so24483785edb.9
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Jul 2022 13:07:17 -0700 (PDT)
+        Thu, 7 Jul 2022 18:32:37 -0400
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A0A65D76
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Jul 2022 15:32:36 -0700 (PDT)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-101b4f9e825so27163199fac.5
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Jul 2022 15:32:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RFEiXmlmmakvJoKKqKPuYTzu0f95IywK8wLMlckOUZ0=;
-        b=gqUYmvaJrb4vM6sk+/P3kr0D3bZfrLZoU3z0g+Io7zpSPnIv5qdpF4lp8hjTkuEdaH
-         p6EnJZ4dDi2IHwjpsysXdJGVTGfqWnBj5jwWbGCl/PE6m5K/r+C09cNUMyctVBULAgFx
-         YImop4s1yMJ2tBXJelsZQ/v0h2YeUxkYqt9NDSunb6zFCesA3snU+yMXHA/ewp7RN1HK
-         NVPpinsZ3QO8jW5DfdLHMtYyXdBWk1elcOx+jFsjHSCmcS1NB+J0x1JlaRkKb35WP3xX
-         HzO3Igh7lgmVxzoDkeK2kJx+Y1DcZoW4fWd8ZO/VHctEOI79NJBlgCFp3wFJfnWOIpD+
-         BTcQ==
+        d=cloudflare.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w5ngIuUcsL6V72N4sBi1nVKjzL39vm3/CQze7FH+2hA=;
+        b=YnZCQafPM5prD6/n+Fb5qat9jQy+eMYSObcvtGYlOA7HZtw4hrgj5iKVvG/KF/lwid
+         FW+SUFxTPlYJodi+C5GQdnzT/E2LyvPJ3qJ8JvDmW5gZ+cB+wDuXel/62IPfMynLw11d
+         92w1iWcm9u4S7M9C6Bl/r9VYJOJTIygJlHTes=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RFEiXmlmmakvJoKKqKPuYTzu0f95IywK8wLMlckOUZ0=;
-        b=UF4xnm2p/fBow2F4fqqky8saba8SMYg9rDb7S1118phdukK1t6iyHEAbI/tQz1thJl
-         nRlQ8lmCLJIkz5iKEn0NSTU6597Keiu+7pG857q4L/ufbURdcRES2BePfalYrisXnrtj
-         rA8wPP9Fa85PpPYYEIEYAuMcSIZzndxeZ3fsnDlvSdOM8x7pEvlEWTJVkrijZ52xol4C
-         zBo07R3ZNlN/T8hh9t8m9oRawciPAuoRzbgmFeyU04lbHYHBYoPbaIzNltb0stRbb0+F
-         +iv55kxuqh7w3aklmjwK/zTtsP0vkKHpU8WEOxL17UJuhj0KOroyxK2Cq9Ym7w78Wshl
-         9Iaw==
-X-Gm-Message-State: AJIora9cxJHITJ6tU+brhc1zUypY7B5izcofFZ9hPBLd+htlycOBUyaX
-        Q7RDWDUpAj5BH+YGrwSM81Q942WEY2U=
-X-Google-Smtp-Source: AGRyM1vHo/pm/dw2+qo1nwbQO0dka70NODfZG9j3iExRAwLn4Zd68k5QDF6FE+Lo2Rl0ByWhDFyDyw==
-X-Received: by 2002:a05:6402:150d:b0:43a:2cac:ca24 with SMTP id f13-20020a056402150d00b0043a2cacca24mr34759177edw.110.1657224436068;
-        Thu, 07 Jul 2022 13:07:16 -0700 (PDT)
-Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id t13-20020a056402020d00b0043a71775903sm8397959edv.39.2022.07.07.13.07.15
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w5ngIuUcsL6V72N4sBi1nVKjzL39vm3/CQze7FH+2hA=;
+        b=0a12MqEvIxdTDB22GYG2Lng9LyRZtkxzK346FDR5KNkUIVK7c3V92b784gtTUsKBtJ
+         G5dowiX6OvNt8F0QE9L96lVx6vpnK9KEICgaf6Zb4xVyT1/WQ08VMO3tXlFXJnYpUzgi
+         ZVCi9h36x0UL8PMiEeRhqDpT10w274271OoQpMiwKvzZ9J01N7UHOWkpicD7dzEIf1iz
+         sg+jlesmyJy514yHUjtaqzaOIP58EWKz2iQ+1D0REzZGJzJOezsmF8KxsIUF0Z/0wuV4
+         Nkiq9CGSop57w3zfqUSOtHgWTHjgQDcva7bNbgPHTOsQokurMpvqbmU+wMeMkUfFjZKp
+         KQ2w==
+X-Gm-Message-State: AJIora+WYurrxQ1Aq1Gm9jWOMhEquBuE20deF3b/3W4rdDA1hnjt+n1t
+        9uXMLvXhEMSSxRW5SA8RB6iKOQ==
+X-Google-Smtp-Source: AGRyM1vIqtnT6lw5R/fcEfoiZ5MwUbb7toc3P9udUrr7HIOVUFz0P7kJ2u/nLlL3mSC8VGz+3bVwpA==
+X-Received: by 2002:a05:6870:2049:b0:101:1df6:8fc with SMTP id l9-20020a056870204900b001011df608fcmr111637oad.125.1657233156130;
+        Thu, 07 Jul 2022 15:32:36 -0700 (PDT)
+Received: from localhost.localdomain ([184.4.90.121])
+        by smtp.gmail.com with ESMTPSA id i16-20020a05683033f000b00616b835f5e7sm16246222otu.43.2022.07.07.15.32.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 13:07:15 -0700 (PDT)
-From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH 2/2] landlock: Selftests for truncate(2) support.
-Date:   Thu,  7 Jul 2022 22:06:13 +0200
-Message-Id: <20220707200612.132705-3-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.37.0
-In-Reply-To: <20220707200612.132705-1-gnoack3000@gmail.com>
-References: <20220707200612.132705-1-gnoack3000@gmail.com>
+        Thu, 07 Jul 2022 15:32:35 -0700 (PDT)
+From:   Frederick Lawler <fred@cloudflare.com>
+To:     kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
+        casey@schaufler-ca.com, ebiederm@xmission.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-team@cloudflare.com, Frederick Lawler <fred@cloudflare.com>
+Subject: [PATCH v2 0/4] Introduce security_create_user_ns()
+Date:   Thu,  7 Jul 2022 17:32:24 -0500
+Message-Id: <20220707223228.1940249-1-fred@cloudflare.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-These tests exercise the following scenarios:
+While creating a LSM BPF MAC policy to block user namespace creation, we
+used the LSM cred_prepare hook because that is the closest hook to prevent
+a call to create_user_ns().
 
-* File with Read, Write, Truncate rights.
-* File with Read, Write rights.
-* File with Truncate rights.
-* File with no rights.
-* Directory with Truncate rights.
+The calls look something like this:
 
-For each of the scenarios, both truncate() and the open() +
-ftruncate() syscalls get exercised and their results checked.
+    cred = prepare_creds()
+        security_prepare_creds()
+            call_int_hook(cred_prepare, ...
+    if (cred)
+        create_user_ns(cred)
 
-In particular, the test demonstrates that opening a file for writing
-is not enough to call truncate().
+We noticed that error codes were not propagated from this hook and
+introduced a patch [1] to propagate those errors.
 
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- tools/testing/selftests/landlock/fs_test.c | 80 ++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+The discussion notes that security_prepare_creds()
+is not appropriate for MAC policies, and instead the hook is
+meant for LSM authors to prepare credentials for mutation. [2]
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index cb77eaa01c91..c3e48fd12b2b 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -2237,6 +2237,86 @@ TEST_F_FORK(layout1, reparent_rename)
- 	ASSERT_EQ(EXDEV, errno);
- }
- 
-+TEST_F_FORK(layout1, truncate)
-+{
-+	const struct rule rules[] = {
-+		{
-+			.path = file1_s1d1,
-+			.access = LANDLOCK_ACCESS_FS_READ_FILE |
-+				  LANDLOCK_ACCESS_FS_WRITE_FILE |
-+				  LANDLOCK_ACCESS_FS_TRUNCATE,
-+		},
-+		{
-+			.path = file2_s1d2,
-+			.access = LANDLOCK_ACCESS_FS_READ_FILE |
-+				  LANDLOCK_ACCESS_FS_WRITE_FILE,
-+		},
-+		{
-+			.path = file1_s1d2,
-+			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
-+		},
-+		{
-+			.path = dir_s2d3,
-+			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
-+		},
-+		// Implicitly: No access rights for file2_s1d1.
-+		{},
-+	};
-+	const int ruleset_fd = create_ruleset(_metadata, ACCESS_ALL, rules);
-+	int reg_fd;
-+
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	/* Read, write and truncate permissions => truncate and ftruncate work. */
-+	reg_fd = open(file1_s1d1, O_RDWR | O_CLOEXEC);
-+	ASSERT_LE(0, reg_fd);
-+	EXPECT_EQ(0, ftruncate(reg_fd, 10));
-+	EXPECT_EQ(0, ftruncate64(reg_fd, 20));
-+	ASSERT_EQ(0, close(reg_fd));
-+
-+	EXPECT_EQ(0, truncate(file1_s1d1, 10));
-+	EXPECT_EQ(0, truncate64(file1_s1d1, 20));
-+
-+	/* Just read and write permissions => no truncate variant works. */
-+	reg_fd = open(file2_s1d2, O_RDWR | O_CLOEXEC);
-+	ASSERT_LE(0, reg_fd);
-+	EXPECT_EQ(-1, ftruncate(reg_fd, 10));
-+	EXPECT_EQ(EACCES, errno);
-+	EXPECT_EQ(-1, ftruncate64(reg_fd, 20));
-+	EXPECT_EQ(EACCES, errno);
-+	ASSERT_EQ(0, close(reg_fd));
-+
-+	EXPECT_EQ(-1, truncate(file2_s1d2, 10));
-+	EXPECT_EQ(EACCES, errno);
-+	EXPECT_EQ(-1, truncate64(file2_s1d2, 20));
-+	EXPECT_EQ(EACCES, errno);
-+
-+	/* Just truncate permissions => truncate(64) works, but can't open file. */
-+	ASSERT_EQ(-1, open(file1_s1d2, O_RDWR | O_CLOEXEC));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	EXPECT_EQ(0, truncate(file1_s1d2, 10));
-+	EXPECT_EQ(0, truncate64(file1_s1d2, 20));
-+
-+	/* Just truncate permission on directory => truncate(64) works, but can't open file. */
-+	ASSERT_EQ(-1, open(file1_s2d3, O_RDWR | O_CLOEXEC));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	EXPECT_EQ(0, truncate(file1_s2d3, 10));
-+	EXPECT_EQ(0, truncate64(file1_s2d3, 20));
-+
-+	/* No permissions => Neither truncate nor ftruncate work. */
-+	ASSERT_EQ(-1, open(file2_s1d1, O_RDWR | O_CLOEXEC));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	EXPECT_EQ(-1, truncate(file2_s1d1, 10));
-+	EXPECT_EQ(EACCES, errno);
-+	EXPECT_EQ(-1, truncate64(file2_s1d1, 20));
-+	EXPECT_EQ(EACCES, errno);
-+}
-+
- static void
- reparent_exdev_layers_enforce1(struct __test_metadata *const _metadata)
- {
+Ultimately, we concluded that a better course of action is to introduce
+a new security hook for LSM authors. [3]
+
+This patch set first introduces a new security_create_user_ns() function
+and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+
+Links:
+1. https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
+2. https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
+3. https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
+
+Changes since v1:
+- Add selftests/bpf: Add tests verifying bpf lsm create_user_ns hook patch
+- Add selinux: Implement create_user_ns hook patch
+- Change function signature of security_create_user_ns() to only take
+  struct cred
+- Move security_create_user_ns() call after id mapping check in
+  create_user_ns()
+- Update documentation to reflect changes
+
+Frederick Lawler (4):
+  security, lsm: Introduce security_create_user_ns()
+  bpf-lsm: Make bpf_lsm_create_user_ns() sleepable
+  selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
+  selinux: Implement create_user_ns hook
+
+ include/linux/lsm_hook_defs.h                 |  1 +
+ include/linux/lsm_hooks.h                     |  4 +
+ include/linux/security.h                      |  6 ++
+ kernel/bpf/bpf_lsm.c                          |  1 +
+ kernel/user_namespace.c                       |  5 ++
+ security/security.c                           |  5 ++
+ security/selinux/hooks.c                      |  9 ++
+ security/selinux/include/classmap.h           |  2 +
+ .../selftests/bpf/prog_tests/deny_namespace.c | 88 +++++++++++++++++++
+ .../selftests/bpf/progs/test_deny_namespace.c | 39 ++++++++
+ 10 files changed, 160 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/deny_namespace.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_deny_namespace.c
+
 -- 
-2.37.0
+2.30.2
 
