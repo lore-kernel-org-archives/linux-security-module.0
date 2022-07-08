@@ -2,237 +2,246 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA12CCA482
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jul 2022 15:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A45CCA47F
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jul 2022 16:11:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238651AbiGHPeS (ORCPT
+        id S237977AbiGHQL0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Jul 2022 11:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52138 "EHLO
+        Fri, 8 Jul 2022 12:11:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238613AbiGHPeR (ORCPT
+        with ESMTP id S238146AbiGHQLY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Jul 2022 11:34:17 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE031A3A6;
-        Fri,  8 Jul 2022 08:34:16 -0700 (PDT)
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2686HETX022113;
-        Fri, 8 Jul 2022 08:34:15 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : mime-version; s=facebook;
- bh=KHuRAmkjWXGkEbEaOgra6KB65MUFyEEv1Q8DSQVuWko=;
- b=LrmBVsZ9wq/gm+BrhwG/fffZUu8mDYapuebWPUreiaJTkUOXjwC9FoyE7rDcG8udydUa
- 8WeAdr+jES4ch7PSHQrBlxI1mUWYT1UB6sZTrKEaxzv3OGgEsFGWgkmT7XT/JSzRVvk7
- OJc2jIxDdtK4fmDCWMsgPdxGDDKhbgw4gLQ= 
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2048.outbound.protection.outlook.com [104.47.66.48])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h6f69tpca-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Jul 2022 08:34:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mjd674sENYZNy0xaoXqUBrz6cRGcWU2Eo2j29jH3DGp874cOJtk3BgMXgOZuNMp6LcIott1Js0+mmt5kkcKGF3dADVAtcb44HpSzRcx8x1ZBA7Y5ltk4K4qSWnBfIZafnbDXclvA7nxuLNW/GQPJ+C8Uz7Edljr65GO+g1ilMZlWlVfHtNJMKs5Gpz3f2hOjDbpZiSwMFTPqycpKOHuDEfdf45V+AUuUfEGiRKMLYXFMBHcqB4ayuQzzDtMq6T/iXV39ccckcXQR6YUwBIpmR/R4L+SfIP1U2mq42enJfsRa+B/yO/qBUDYfelNTqoX1o/rioGLw9XqSaHTmHmryTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KHuRAmkjWXGkEbEaOgra6KB65MUFyEEv1Q8DSQVuWko=;
- b=BDZYUMYhg2VWFliJGwFp35HPJul/g51DJFGRz/h+FXiM0XkYyzmmTQTRPIWvJ4A58fcuNH24l1mWm/eKSdI2t37odXGamBpKcxHwnOMrLDWpJ4wb4jnCCRCOc0gFdBC1A2bZeijrVj4h2V34E6GQ1ZPQf+lhI1DtTjzN4O1R5VxPnAfAKCUC5S57i9m9fentxp9S9I+cqaYrANLJPlnqTHoHkg0uufp5iBz4l2qTQLL5hZ7yH/F9jkKJKL8KLtoH0pZWSl5BG9HdP7XMWqzRFsZFVIjkEle8llKeBecluyeoe6QI+Ak7PXq4G0hCab66rCvr5jQ0AU6cWcxGmQF6MQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from SJ0PR15MB4552.namprd15.prod.outlook.com (2603:10b6:a03:379::12)
- by MN2PR15MB3198.namprd15.prod.outlook.com (2603:10b6:208:39::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16; Fri, 8 Jul
- 2022 15:34:12 +0000
-Received: from SJ0PR15MB4552.namprd15.prod.outlook.com
- ([fe80::81f9:c21c:c5bf:e174]) by SJ0PR15MB4552.namprd15.prod.outlook.com
- ([fe80::81f9:c21c:c5bf:e174%8]) with mapi id 15.20.5417.017; Fri, 8 Jul 2022
- 15:34:12 +0000
-From:   Jonathan McDowell <noodles@fb.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Fri, 8 Jul 2022 12:11:24 -0400
+Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B992A7697C
+        for <linux-security-module@vger.kernel.org>; Fri,  8 Jul 2022 09:11:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657296680; bh=d3szPQdw5PU82djtwqik1CLYc98SgVpLE9KkrFdMseg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=HlJ2bMARaUNCp3N36jhFM5ltkxGIpgQP4PKUo4uilwA2NpAbJ4hovt+CkVsZrAZAPFaxGT3zuhFCfBpuH3X9Rp8Oo3S9WQkOZQpFCv0Ay491OPIRvUt7CJSDjJ74rZ07v0ukEBQVMQn9z/BRNOoW9f+NtP8ycHI0bC7jRRVO/lbclqkBFF6mOoPJ17XVXm40Yqjasv70PaSZ+vBAnZCNy8QVPIWpamFIOwI1+8fX0fRAZSvzjtQbxRepko8nrbiJMfp5nncZqPassH23aBNW0XXlGt7op2a7LNHAj3C8Ljvss8IIlwjNoV8/A9bCINxnxZcB/Cv8EBM/YnCrlchUfw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657296680; bh=AbFJt0Oieo/Py+ErmmtY2lRKz7uULoJDjAXA/Bipvz7=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=JZeIWVP6/qKKLOMFyJ01/+nZru+86+vsnnMTGk5ztxfFpEyOXvxUqjVNYR0lackNBILwIMUqHVABaccL/rjKQ6KNj61KjezaEX/MB6Uw0SozDFJexoekBcq2RjOnXYPOLy8fysPsfEIP6MQ5AjOvouk5XyGDKdWONQHHb0VTNDyoiEG970iAf85fq0hMRZPojVU2KYelOET6YQ+JMHboObc4EMbLlGT5beYErAdh+KOzN/WNeGBwtzkAXDc4P1AbAHIjGn2C0BWFtZwUtgwZ28EYEt7x0szQQDt5172w79gx+0sFHAxc73CdpVk8oondIPDVPsHpYYj1zVMQT2WHqA==
+X-YMail-OSG: PgiMNgoVM1m5GnAyscEVZuUhhX2NnOVBFNf0MEuvNsyYkbXv0CbYM381tfaKwQa
+ jww5tekFjrI3L2OGD5m2SVzGNmosj49iPUAiCXdHgJDnnwme.B46moyM1Aue8wogdejGHvp87vBE
+ BCx1gWEd1m52T155jAtHSPHm9Y.4_kJEACyX0SZtFKfEyZO_6h02b41enWYm6EkabhtvYcyaMAVn
+ iPXYXd2fMTC1W0Vy2mMJrJ1uA5Q7dhJlD0Fkl50HEBNbe88aKntoTDhDYdjLvc8Rv0xiE8yDYoDU
+ YNCruH9PFDsSMD0Vs15euAqs802WvMJJ_5_baBoHbgrkbByBsp7IoM6ZwuUxsuXXrELRbipSz5Of
+ I0sYq6U0Cjgw6wwZAWuJoNirnlopJVOYTq1KiVpsyjfA4qdxXsYD7Mra.pTUjwBXwOdM5Dr31ipP
+ 5iT2punKTHKPKA3ABf66nauqenzsp71pnF.XK0bru20A9RgngoAMMI.5mhDztiL_tjVJXU6LRX6t
+ hc8fZNjXFfPQGfh0cJqZOoGQU9ycmP2PEg5YXmRLFP00Ztxw9lvJhG45PugBVmgk5_i.mb9ei5WJ
+ V3Y0vB0HHsfe16E3WoaGLTuHuFtM9_O_8RTKDUpQEJAC9yualTdY9PzrJyNFZiYDo1ab724I8P6z
+ 72BZmDQy.apetF8aZkjGfidOQwrGj8HjvX8FjQYkzE5KjrYYBLazT0leRbpFmPJ4baOhrzc91n5H
+ 2qPP456WgJqMUQ1e3HRgW2GgnRG86tGjrMcc84KPM5YeHfFNcFtdMRIVuysn2MgdgDzEPO3Hbz8I
+ YcVKOZJ5JqX4yPWuL0dGO3n70Nlx6wO9zmRMYlqnMNSt4UYWFl2Gv92U0vFeuyx1stFOt9EWclTW
+ gTxsedO6E.uRq5gYBtinKKMgPNjH4gyBvtRIfLdHkNFQqEDHtaAW92lOeS6hspR_2Ppg5NTn6JQG
+ 1gDVWY7arw9cGqVUgH1m4mXkFV5S74o5q2ROybt081lw4UDoCyKwBQ6ZBYHTASeGCiV6eVFjSIqh
+ 6ir2fvpLRBfmVbm_rk060RyVT5uR8.Ex9t3cSe4L_PBvdUggvj2eoTItv30hAC1OzzgWS2BP3iHp
+ .VBZf7zgRw.yBzpJbxu_2FcH7DwYhsIwHNAq6uO9saqADVUfdkY7lY1X7raCK_GUo3HxNwsWo0wn
+ mfL.De.s6_I2.Dl15x6_vePHXWobSjvsjC2lDlLtZpRN8_zGMMp9qpos2bj_nO_uxStnM0yiqx_H
+ zKdtv.8NVxUSv4rmkAKVbio_gFrEjtlTAV6rOzer4a8rfJULzdf3ti6ozMhZb9Vrnzx_8QByjyjM
+ eEZmWu3fXiVeDkCzpYrO0IhfjM6_BFdV1UdbDjpbxbdCDqbEN2qFhapnpdPtl_QJqkxVlxVlKl0i
+ ENRime5_GOP7CqDyjUYTJbv7mMDoSKf1yVgJSbGo1Xroz7QjqPF1tckeacNZQY31Cvm6Ukprhh5o
+ Y8XAGwL23nWFpsx0JOG90yV32_75EhjzSJzEltwlOhZcU6jQxVooi5KyfHTBktDGJarAItZSm_Ps
+ LFaND_JP6RzMKvyr92Mu6QGg4rvgQpIhBni1A_oHFWxcDd0LYVjR6dxSwOz2vFj43L73LaFz_oyB
+ y1MJChH.Rg1cMtoeUH8Hh0LNBO9aEokr2TpVjgEQApwyY72R9ZtJkxczrIBO9qZujSDiiVk8bOYv
+ hBkNrGb8fVhb2cIebob8_c_hSq8gcMDsVP9xbKq9_5idMMYz2QlnycsQCowH5nTTeZ1_7l_Evmzm
+ uBln5UfdZ7J.W_7h.pzRaXmNLW9FKWVvVrHcZbHa7BRDWlwdgsYK41s3anfhMJKtsP_LADOcntDx
+ 5c2Hbhoz5RQsnlnHMOV0FCX__YteTESapESh9zxAKmE1VgDFqNkZxQDSTdWx.eV9SqTZ8Oq5nLwl
+ Dg6WrYitmwa8tloc5NWlNBnSzuZ7yqP4s6r5CV1kKSVE_lyFQxbM2TnWhNuf3FKwl4V6spz5iLfS
+ FFByOVcAgB0rCZu1WL.S_SzYrOq_qA6iZMOt845u5Ny6ksgVrgUKmI9bk.sMcKpEhuLbkVEBNKNM
+ WXaBuAVqZyagyIEyqRS_AJy5Y_4n1DFQjEwYxt02uKGin0jdlFEtkFzadPlQ0p09jBiTzOfKVf0m
+ fkEK7uvijniuh60ss49DyajKGS88W9CUTmBJaCEUULc4hWVQn_BfbV9nIc1z168hYHUUiTvlRePT
+ ye.E4l0azldfuPOLYnQSEdBlV0j.NPY2eFp.6NO6S
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 8 Jul 2022 16:11:20 +0000
+Received: by hermes--production-gq1-56bb98dbc7-8vq2m (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 05ccd01a84644cefb61c7f788262db90;
+          Fri, 08 Jul 2022 16:11:17 +0000 (UTC)
+Message-ID: <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
+Date:   Fri, 8 Jul 2022 09:11:15 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2 0/4] Introduce security_create_user_ns()
+Content-Language: en-US
+To:     Frederick Lawler <fred@cloudflare.com>,
+        =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>
+Cc:     KP Singh <kpsingh@kernel.org>, revest@chromium.org,
+        jackmanb@chromium.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dmitrii Potoskuev <dpotoskuev@fb.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [RFC PATCH 0/7] ima: Support measurement of kexec initramfs
- components
-Thread-Topic: [RFC PATCH 0/7] ima: Support measurement of kexec initramfs
- components
-Thread-Index: AQHYkrL0bI78Vrzdvk2Q1fjMWNCY+K10XEwAgAA+oIA=
-Date:   Fri, 8 Jul 2022 15:34:12 +0000
-Message-ID: <YshObzBwiUoyJ3oP@noodles-fedora.dhcp.thefacebook.com>
-References: <cover.1657272362.git.noodles@fb.com>
- <01c9e6e230b54831091757fe7a09714ccf4bd898.camel@linux.ibm.com>
-In-Reply-To: <01c9e6e230b54831091757fe7a09714ccf4bd898.camel@linux.ibm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dc8b94f4-a1a4-4b64-218c-08da60f74efc
-x-ms-traffictypediagnostic: MN2PR15MB3198:EE_
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nd7J1GuSn8mlPUxjryh72EJ/WnhjkvJ5L1J4qhBf4ciMlOmaklWWMiQl9mvKmdAvvkIT//Gc4ogbwj3hGzNAjszdVYC4fSPtEWQhGfblitAS2NqY3y/Im1I9IszeiHSPkHLuN4nvWzh/iJIHMd465PCcWepWG7JESQ+Zi8FSozt1B7Ww9CQXk2TYFdFAoKbFlXYMXTNbUBgOKpDbPAaOW9TmaCAsCmQvhmEZjxEE+Hycx2e8L9SMKLuCMPWpWbk0ObJRVSSmotgL/nbtr8ieb0yBHDobMaEojcTukXziH1pOiFzv0ANPPTyCUTqOhTrrSxXZlU7kc3qppSN+HBNW1ZHaTRpc/hnEXnmfq7rmC2XUaIYtuPMjGSRuaAJm/MVMRwDslvJEWQj+7IqYyi01UTBobesrwA9WbJGzwu7oa6FvyYfBlb3U5GlthxhOdetHQhvRQDlQsIT9/hMYFvf6LeIrkaAL98vp0W7EbEaC/06FPiUl8B30p7FCe8Ba6Mwj109F5FYK/hdYGBv7gJpLLj3gmcnWsMvTJcIagzCqEZjBpilnncrkA7jNiwyJhE+Pwoo+JYpxS4YpBYuLD6u1i+hODPvNrjVS+0aw5qaajKo7D0bcCQ+HC2NNuZqGSUpT2EdZag6sa+cX5rSDRHf+2SOzmc8sVFkAw+k9msWRUcrhrLENZpPex75UOYOQihFlGC/NsLt2qd+Fx0UlBoQMjXaNs4JcgyClQm4wna+cNr17rNe8PkEBHRqv+WcAngOmYr29RwRg2Wt1b5jCPDVO0+szSot/s7Vl8dsD+3PiEJrhoCo9arK25Np3PY+7/M9S
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB4552.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(39860400002)(366004)(136003)(376002)(396003)(86362001)(6916009)(66556008)(4326008)(41300700001)(6486002)(76116006)(38100700002)(316002)(478600001)(8676002)(64756008)(66476007)(66446008)(186003)(66946007)(6506007)(26005)(91956017)(83380400001)(2906002)(6512007)(54906003)(122000001)(9686003)(7416002)(5660300002)(71200400001)(8936002)(38070700005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?8qrRr7ykkSIJz973rMKEPtUf8MdtH1jzbxZjd/1VpJLEkXTrnJRWAkPS1w0G?=
- =?us-ascii?Q?+Bf9/ZzPZqaQyo/+tcLmYIfZgEgKf1eY889amzgduXw47IHjbWkcxcV9S5Kh?=
- =?us-ascii?Q?NnuTm+F6Gc2R+GbE4LzCc32Hh7z2RI8QZmePmIT+54P3x/rmud46sY52hZZc?=
- =?us-ascii?Q?zX93miNtexY3sWb9KjncQhSZbkqkRiY6hw+1hzjGcn7w/50L2KOfbG17Ovrv?=
- =?us-ascii?Q?DNtVT090i82x/aNm++HLp92UH3pPpPXbbnH2UG8I/46OPMi08VNERwIZcG7X?=
- =?us-ascii?Q?wylVJIlRk4Az/e+e6xYSwoOOAlGD+Mcp+sPTb8PmvhWRD8EtqNsibFusuivP?=
- =?us-ascii?Q?B5HjaRDLFEEs5FELIbrfw8VHjKDNTzudnQG/KQZl4xNrHLKJrSbfDKZQeGj5?=
- =?us-ascii?Q?ynhR8v9qHgkjXFW3jIT6zi527t+b99gQKYhNzVgDl5OCmYCQZG/WcwSu/h+v?=
- =?us-ascii?Q?r0NZ3jOyOhu6phn1UkAbNxu7xDYFxvXvSeq0nPG1I66IpPZBCRWpA0QDKPL5?=
- =?us-ascii?Q?pW7akSKED6wCTdAVCYKiPUSDnSNkcWoAnPW1FdC4Uzp3XfGA1fv9nPMNDpxC?=
- =?us-ascii?Q?IHGLgfhke0MbyYi41SN1F+asZ3pm4SYOOyUWoa0uWzOhoyW+5bx6uf9eKby0?=
- =?us-ascii?Q?b8u6bbJFY+WbvMaQ+CWvXqK4c5xOajFSdXOTcqRBBzvGs8VYb8aKJ2u+e1uy?=
- =?us-ascii?Q?GXE3lhvpy4PGdiga1ZOTrJqEXk8aEzi2N64AaSSTBmhJ4dSKxCQTFi2tgUXG?=
- =?us-ascii?Q?AOcmzTkcoTZDtiA8CCUiAoKSD25+BedbVenT2JaRUuS5h5/GVVdV8XwqtqvK?=
- =?us-ascii?Q?TlXleWyEvSN8cw916dm+Scm7G0saw99VTJCIAURkXwpmK/np26RffGyyXhMX?=
- =?us-ascii?Q?lJNHgNLOzXxI/9svyQ/1EVGlP5dvGbzctYtNWP1fUOZ8QVT19pRIKatjOfvD?=
- =?us-ascii?Q?xubXZ5y/vRAY1mJQkRlToJ/+5vUM1AZBj6J8LPxHC7WgSmlLlBFuynG7EcBo?=
- =?us-ascii?Q?7r+TSK+GvS1ZdAZ6lVB9SNMbaTTnyBNkph6nMi9xt3Pb4b9t1rnosddMvSeD?=
- =?us-ascii?Q?RP2BOwcIWYCPgPb4fUT5DXDVAmjd54BLTiHM7lQ+gFfFhWSMqZbpeZwkI10d?=
- =?us-ascii?Q?rBBuK0lf5ky5sotw8qldSg4QJpIjHHQnOgJu5GvJ+FZ/4g0Lb33EUI83uAYw?=
- =?us-ascii?Q?p3Itp3FVqCsmul2UkDKMZ799e53OCULrK8jnlItvw+VM1soHViIjJY59n3l8?=
- =?us-ascii?Q?YSJIGm4WGMGo/sQmtZfKOmhbBYuLhmTHzLtBWg1ncrl+pzO4fxH1JL16hsvo?=
- =?us-ascii?Q?Fat8jBGpH368NQlhks9osRlfX0FDRVvl4MCtoMw6DIf1M9fc1oUmhGl7ZRzB?=
- =?us-ascii?Q?Mt/Lk/853BoLp9NfWwKOQ6FAY1cPa+8UjHTEjCPQoy5lMKPnXeEu1as5D5e7?=
- =?us-ascii?Q?jx63UGtaHisZDS4jxVbJoKZPkC8SoIKlHKkmMrGH41ZONDids5z0lDAlz15O?=
- =?us-ascii?Q?cF4Zwtcs76ABs3Sy7nehiWBJpdJm4KT2Si8QLNQfku3aBQli1Acb57p3EKhA?=
- =?us-ascii?Q?tLoe/5SmMk12vaofhck6//S95YlFCzU7um64d0XQ?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <699E7F58919E8D4F9D08CB78C3879D6D@namprd15.prod.outlook.com>
-MIME-Version: 1.0
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR15MB4552.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc8b94f4-a1a4-4b64-218c-08da60f74efc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2022 15:34:12.4524
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0+GEkhXJqTxWA7Vo8guA9KgjQcM6xPB2E4R3LSp09kWfAeNNC1somWBb3y7Nn2at
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR15MB3198
-X-Proofpoint-ORIG-GUID: EShIWND1gyTj0B5KLwDnMhLxzKM5tT9r
-X-Proofpoint-GUID: EShIWND1gyTj0B5KLwDnMhLxzKM5tT9r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-08_13,2022-07-08_01,2022-06-22_01
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, shuah@kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com,
+        casey@schaufler-ca.com
+References: <20220707223228.1940249-1-fred@cloudflare.com>
+ <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
+ <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.20381 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 08, 2022 at 07:49:58AM -0400, Mimi Zohar wrote:
-> On Fri, 2022-07-08 at 10:10 +0000, Jonathan McDowell wrote:
-> > This patchset is not yet complete, but it's already moving around a
-> > bunch of stuff so I am sending it out to get either some agreement that
-> > it's a vaguely sane approach, or some pointers about how I should be
-> > doing this instead.
-> > 
-> > It aims to add an option to IMA to measure the individual components
-> > that make up an initramfs that is being used for kexec, rather than the
-> > entire initramfs blob. For example in the situation where the initramfs
-> > blob contains some uncompressed early firmware and then a compressed
-> > filesystem there will be 2 measurements folded into the TPM, and logged
-> > into the IMA log.
-> > 
-> > Why is this useful? Consider the situation where images have been split
-> > out to a set of firmware, an initial userspace image that does the usual
-> > piece of finding the right root device and switching into it, and an
-> > image that contains the necessary kernel modules.
-> > 
-> > For a given machine the firmware + userspace images are unlikely to
-> > change often, while the kernel modules change with each upgrade. If we
-> > measure the concatenated image as a single blob then it is necessary to
-> > calculate all the permutations of images that result, which means
-> > building and hashing the combinations. By measuring each piece
-> > individually a hash can be calculated for each component up front
-> > allowing for easier analysis of whether the running state is an expected
-> > one.
-> > 
-> > The KEXEC_FILE_LOAD syscall only allows a single initramfs image to be
-> > passed in; one option would be to add a new syscall that supports
-> > multiple initramfs fds and read each in kimage_file_prepare_segments().
-> > 
-> > Instead I've taken a more complicated approach that doesn't involve a
-> > new syscall or altering the kexec userspace, building on top of the way
-> > the boot process parses the initramfs and using that same technique
-> > within the IMA measurement for the READING_KEXEC_INITRAMFS path.
-> > 
-> > To that end I've pulled the cpio handling code out of init/initramfs.c
-> > and into lib/ and made it usable outside of __init when required. That's
-> > involved having to pull some of the init_syscall file handling routines
-> > into the cpio code (and cleaning them up when the cpio code is the only
-> > user). I think there's the potential for a bit more code clean up here,
-> > but I've tried to keep it limited to providing the functionality I need
-> > and making checkpatch happy for the moment.
-> > 
-> > Patch 1 pulls the code out to lib/ and moves the global static variables
-> > that hold the state into a single context structure.
-> > 
-> > Patch 2 does some minimal error path improvements so we're not just
-> > passing a string around to indicate there's been an error.
-> > 
-> > Patch 3 is where I pull the file handling routines into the cpio code.
-> > It didn't seem worth moving this to somewhere other code could continue
-> > to use them when only the cpio code was doing so, but it did involve a
-> > few extra exported functions from fs/
-> > 
-> > Patch 4 actually allows the use of the cpio code outside of __init when
-> > CONFIG_CPIO is selected.
-> > 
-> > Patch 5 is a hack so I can use the generic decompress + gzip outside of
-> > __init. If this overall approach is acceptable then I'll do some work to
-> > make this generically available in the same manner as the cpio code
-> > before actually submitting for inclusion.
-> > 
-> > Patch 6 is the actual piece I'm interested in; doing individual
-> > measurements for each component within IMA.
-> 
-> Hi Jonathan,
-> 
-> Before going down this path, just making sure you're aware:
-> - of the IMA hooks for measuring and appraising firmware.
+On 7/8/2022 7:01 AM, Frederick Lawler wrote:
+> On 7/8/22 7:10 AM, Christian Göttsche wrote:
+>> ,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com>
+>> wrote:
+>>>
+>>> While creating a LSM BPF MAC policy to block user namespace
+>>> creation, we
+>>> used the LSM cred_prepare hook because that is the closest hook to
+>>> prevent
+>>> a call to create_user_ns().
+>>>
+>>> The calls look something like this:
+>>>
+>>>      cred = prepare_creds()
+>>>          security_prepare_creds()
+>>>              call_int_hook(cred_prepare, ...
+>>>      if (cred)
+>>>          create_user_ns(cred)
+>>>
+>>> We noticed that error codes were not propagated from this hook and
+>>> introduced a patch [1] to propagate those errors.
+>>>
+>>> The discussion notes that security_prepare_creds()
+>>> is not appropriate for MAC policies, and instead the hook is
+>>> meant for LSM authors to prepare credentials for mutation. [2]
+>>>
+>>> Ultimately, we concluded that a better course of action is to introduce
+>>> a new security hook for LSM authors. [3]
+>>>
+>>> This patch set first introduces a new security_create_user_ns()
+>>> function
+>>> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+>>
+>> Some thoughts:
+>>
+>> I.
+>>
+>> Why not make the hook more generic, e.g. support all other existing
+>> and potential future namespaces?
+>
+> The main issue with a generic hook is that different namespaces have
+> different calling contexts. We decided in a previous discussion to
+> opt-out of a generic hook for this reason. [1]
+>
+>> Also I think the naming scheme is <object>_<verb>.
+>
+> That's a good call out. I was originally hoping to keep the
+> security_*() match with the hook name matched with the caller function
+> to keep things all aligned. If no one objects to renaming the hook, I
+> can rename the hook for v3.
+>
+>>
+>>      LSM_HOOK(int, 0, namespace_create, const struct cred *cred,
+>> unsigned int flags)
+>>
+>> where flags is a bitmap of CLONE flags from include/uapi/linux/sched.h
+>> (like CLONE_NEWUSER).
+>>
+>> II.
+>>
+>> While adding policing for namespaces maybe also add a new hook for
+>> setns(2)
+>>
+>>      LSM_HOOK(int, 0, namespace_join, const struct cred *subj,  const
+>> struct cred *obj, unsigned int flags)
+>>
+>
+> IIUC, setns() will create a new namespace for the other namespaces
+> except for user namespace. If we add a security hook for the other
+> create_*_ns() functions, then we can catch setns() at that point.
+>
+>> III.
+>>
+>> Maybe even attach a security context to namespaces so they can be
+>> further governed?
 
-Yes, I'm aware of the FIRMWARE_CHECK hooks. This is more accurately
-early stage firmware e.g. CPU microcode and it's not that we're
-expecting this to load over a kexec but instead that the kernel /
-initramfs loaded via kexec are what is also used for a traditional disk
-boot, the kexec is just being used to shorten restart time. So although
-the firmware isn't actually loaded it's part of the image and we'd like
-to be able to keep the measurements for the parts separate.
+That would likely add confusion to the existing security module namespace
+efforts. SELinux, Smack and AppArmor have all developed namespace models.
+That, or it could replace the various independent efforts with a single,
+unified security module namespace effort. There's more work to that than
+adding a context to a namespace. Treating namespaces as objects is almost,
+but not quite, solidifying containers as a kernel construct. We know we
+can't do that.
 
-> - of Roberto Sassu's "initramfs: add support for xattrs in the initial
-> ram disk" patch set that have been lingering for lack of review and
-> upstreaming.[1]   There's been some recent interest in it.
-> 
-> [1] Message-Id: <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
+>> SELinux example:
+>>
+>>      type domainA_userns_t;
+>>      type_transition domainA_t domainA_t : namespace domainA_userns_t
+>> "user";
+>>      allow domainA_t domainA_userns_t:namespace create;
+>>
+>>      # domainB calling setns(2) with domainA as target
+>>      allow domainB_t domainA_userns_t:namespace join;
 
-That looks interesting, and obviously has some overlap in the areas I'm
-touching, but I don't think it gives me the information I want from a
-measurement perspective. The desire is that we can build a suitable
-initramfs from a set of component building blocks, rather than a custom
-image for each machine, and that we can measure the blocks rather than
-the final result so that we just store the hash for each building block.
-I think xattrs start to be more interesting when we extend to use some
-sort of signing or fs-verity approach (which is in progress), but we'll
-still want the measurement piece so we understand exactly what it is we
-used to get to the current point in time.
+While I'm not an expert on SELinux policy, I'd bet a refreshing beverage
+that there's already a way to achieve this with existing constructs.
+Smack, which is subject+object MAC couldn't care less about the user
+namespace configuration. User namespaces are DAC constructs.
 
-J.
+>>
+>
+> Links:
+> 1.
+> https://lore.kernel.org/all/CAHC9VhSTkEMT90Tk+=iTyp3npWEm+3imrkFVX2qb=XsOPp9F=A@mail.gmail.com/
+>
+>>>
+>>> Links:
+>>> 1.
+>>> https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
+>>>
+>>> 2.
+>>> https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
+>>> 3.
+>>> https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
+>>>
+>>> Changes since v1:
+>>> - Add selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
+>>> patch
+>>> - Add selinux: Implement create_user_ns hook patch
+>>> - Change function signature of security_create_user_ns() to only take
+>>>    struct cred
+>>> - Move security_create_user_ns() call after id mapping check in
+>>>    create_user_ns()
+>>> - Update documentation to reflect changes
+>>>
+>>> Frederick Lawler (4):
+>>>    security, lsm: Introduce security_create_user_ns()
+>>>    bpf-lsm: Make bpf_lsm_create_user_ns() sleepable
+>>>    selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
+>>>    selinux: Implement create_user_ns hook
+>>>
+>>>   include/linux/lsm_hook_defs.h                 |  1 +
+>>>   include/linux/lsm_hooks.h                     |  4 +
+>>>   include/linux/security.h                      |  6 ++
+>>>   kernel/bpf/bpf_lsm.c                          |  1 +
+>>>   kernel/user_namespace.c                       |  5 ++
+>>>   security/security.c                           |  5 ++
+>>>   security/selinux/hooks.c                      |  9 ++
+>>>   security/selinux/include/classmap.h           |  2 +
+>>>   .../selftests/bpf/prog_tests/deny_namespace.c | 88
+>>> +++++++++++++++++++
+>>>   .../selftests/bpf/progs/test_deny_namespace.c | 39 ++++++++
+>>>   10 files changed, 160 insertions(+)
+>>>   create mode 100644
+>>> tools/testing/selftests/bpf/prog_tests/deny_namespace.c
+>>>   create mode 100644
+>>> tools/testing/selftests/bpf/progs/test_deny_namespace.c
+>>>
+>>> -- 
+>>> 2.30.2
+>>>
+>
