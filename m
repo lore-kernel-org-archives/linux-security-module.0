@@ -2,246 +2,207 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A45CCA47F
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jul 2022 16:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCD2C43334
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jul 2022 16:57:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237977AbiGHQL0 (ORCPT
+        id S239508AbiGHQ5r (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Jul 2022 12:11:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53982 "EHLO
+        Fri, 8 Jul 2022 12:57:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238146AbiGHQLY (ORCPT
+        with ESMTP id S239535AbiGHQ5j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Jul 2022 12:11:24 -0400
-Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B992A7697C
-        for <linux-security-module@vger.kernel.org>; Fri,  8 Jul 2022 09:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657296680; bh=d3szPQdw5PU82djtwqik1CLYc98SgVpLE9KkrFdMseg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=HlJ2bMARaUNCp3N36jhFM5ltkxGIpgQP4PKUo4uilwA2NpAbJ4hovt+CkVsZrAZAPFaxGT3zuhFCfBpuH3X9Rp8Oo3S9WQkOZQpFCv0Ay491OPIRvUt7CJSDjJ74rZ07v0ukEBQVMQn9z/BRNOoW9f+NtP8ycHI0bC7jRRVO/lbclqkBFF6mOoPJ17XVXm40Yqjasv70PaSZ+vBAnZCNy8QVPIWpamFIOwI1+8fX0fRAZSvzjtQbxRepko8nrbiJMfp5nncZqPassH23aBNW0XXlGt7op2a7LNHAj3C8Ljvss8IIlwjNoV8/A9bCINxnxZcB/Cv8EBM/YnCrlchUfw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657296680; bh=AbFJt0Oieo/Py+ErmmtY2lRKz7uULoJDjAXA/Bipvz7=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=JZeIWVP6/qKKLOMFyJ01/+nZru+86+vsnnMTGk5ztxfFpEyOXvxUqjVNYR0lackNBILwIMUqHVABaccL/rjKQ6KNj61KjezaEX/MB6Uw0SozDFJexoekBcq2RjOnXYPOLy8fysPsfEIP6MQ5AjOvouk5XyGDKdWONQHHb0VTNDyoiEG970iAf85fq0hMRZPojVU2KYelOET6YQ+JMHboObc4EMbLlGT5beYErAdh+KOzN/WNeGBwtzkAXDc4P1AbAHIjGn2C0BWFtZwUtgwZ28EYEt7x0szQQDt5172w79gx+0sFHAxc73CdpVk8oondIPDVPsHpYYj1zVMQT2WHqA==
-X-YMail-OSG: PgiMNgoVM1m5GnAyscEVZuUhhX2NnOVBFNf0MEuvNsyYkbXv0CbYM381tfaKwQa
- jww5tekFjrI3L2OGD5m2SVzGNmosj49iPUAiCXdHgJDnnwme.B46moyM1Aue8wogdejGHvp87vBE
- BCx1gWEd1m52T155jAtHSPHm9Y.4_kJEACyX0SZtFKfEyZO_6h02b41enWYm6EkabhtvYcyaMAVn
- iPXYXd2fMTC1W0Vy2mMJrJ1uA5Q7dhJlD0Fkl50HEBNbe88aKntoTDhDYdjLvc8Rv0xiE8yDYoDU
- YNCruH9PFDsSMD0Vs15euAqs802WvMJJ_5_baBoHbgrkbByBsp7IoM6ZwuUxsuXXrELRbipSz5Of
- I0sYq6U0Cjgw6wwZAWuJoNirnlopJVOYTq1KiVpsyjfA4qdxXsYD7Mra.pTUjwBXwOdM5Dr31ipP
- 5iT2punKTHKPKA3ABf66nauqenzsp71pnF.XK0bru20A9RgngoAMMI.5mhDztiL_tjVJXU6LRX6t
- hc8fZNjXFfPQGfh0cJqZOoGQU9ycmP2PEg5YXmRLFP00Ztxw9lvJhG45PugBVmgk5_i.mb9ei5WJ
- V3Y0vB0HHsfe16E3WoaGLTuHuFtM9_O_8RTKDUpQEJAC9yualTdY9PzrJyNFZiYDo1ab724I8P6z
- 72BZmDQy.apetF8aZkjGfidOQwrGj8HjvX8FjQYkzE5KjrYYBLazT0leRbpFmPJ4baOhrzc91n5H
- 2qPP456WgJqMUQ1e3HRgW2GgnRG86tGjrMcc84KPM5YeHfFNcFtdMRIVuysn2MgdgDzEPO3Hbz8I
- YcVKOZJ5JqX4yPWuL0dGO3n70Nlx6wO9zmRMYlqnMNSt4UYWFl2Gv92U0vFeuyx1stFOt9EWclTW
- gTxsedO6E.uRq5gYBtinKKMgPNjH4gyBvtRIfLdHkNFQqEDHtaAW92lOeS6hspR_2Ppg5NTn6JQG
- 1gDVWY7arw9cGqVUgH1m4mXkFV5S74o5q2ROybt081lw4UDoCyKwBQ6ZBYHTASeGCiV6eVFjSIqh
- 6ir2fvpLRBfmVbm_rk060RyVT5uR8.Ex9t3cSe4L_PBvdUggvj2eoTItv30hAC1OzzgWS2BP3iHp
- .VBZf7zgRw.yBzpJbxu_2FcH7DwYhsIwHNAq6uO9saqADVUfdkY7lY1X7raCK_GUo3HxNwsWo0wn
- mfL.De.s6_I2.Dl15x6_vePHXWobSjvsjC2lDlLtZpRN8_zGMMp9qpos2bj_nO_uxStnM0yiqx_H
- zKdtv.8NVxUSv4rmkAKVbio_gFrEjtlTAV6rOzer4a8rfJULzdf3ti6ozMhZb9Vrnzx_8QByjyjM
- eEZmWu3fXiVeDkCzpYrO0IhfjM6_BFdV1UdbDjpbxbdCDqbEN2qFhapnpdPtl_QJqkxVlxVlKl0i
- ENRime5_GOP7CqDyjUYTJbv7mMDoSKf1yVgJSbGo1Xroz7QjqPF1tckeacNZQY31Cvm6Ukprhh5o
- Y8XAGwL23nWFpsx0JOG90yV32_75EhjzSJzEltwlOhZcU6jQxVooi5KyfHTBktDGJarAItZSm_Ps
- LFaND_JP6RzMKvyr92Mu6QGg4rvgQpIhBni1A_oHFWxcDd0LYVjR6dxSwOz2vFj43L73LaFz_oyB
- y1MJChH.Rg1cMtoeUH8Hh0LNBO9aEokr2TpVjgEQApwyY72R9ZtJkxczrIBO9qZujSDiiVk8bOYv
- hBkNrGb8fVhb2cIebob8_c_hSq8gcMDsVP9xbKq9_5idMMYz2QlnycsQCowH5nTTeZ1_7l_Evmzm
- uBln5UfdZ7J.W_7h.pzRaXmNLW9FKWVvVrHcZbHa7BRDWlwdgsYK41s3anfhMJKtsP_LADOcntDx
- 5c2Hbhoz5RQsnlnHMOV0FCX__YteTESapESh9zxAKmE1VgDFqNkZxQDSTdWx.eV9SqTZ8Oq5nLwl
- Dg6WrYitmwa8tloc5NWlNBnSzuZ7yqP4s6r5CV1kKSVE_lyFQxbM2TnWhNuf3FKwl4V6spz5iLfS
- FFByOVcAgB0rCZu1WL.S_SzYrOq_qA6iZMOt845u5Ny6ksgVrgUKmI9bk.sMcKpEhuLbkVEBNKNM
- WXaBuAVqZyagyIEyqRS_AJy5Y_4n1DFQjEwYxt02uKGin0jdlFEtkFzadPlQ0p09jBiTzOfKVf0m
- fkEK7uvijniuh60ss49DyajKGS88W9CUTmBJaCEUULc4hWVQn_BfbV9nIc1z168hYHUUiTvlRePT
- ye.E4l0azldfuPOLYnQSEdBlV0j.NPY2eFp.6NO6S
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 8 Jul 2022 16:11:20 +0000
-Received: by hermes--production-gq1-56bb98dbc7-8vq2m (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 05ccd01a84644cefb61c7f788262db90;
-          Fri, 08 Jul 2022 16:11:17 +0000 (UTC)
-Message-ID: <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
-Date:   Fri, 8 Jul 2022 09:11:15 -0700
+        Fri, 8 Jul 2022 12:57:39 -0400
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [IPv6:2001:1600:3:17::42ad])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17145E08
+        for <linux-security-module@vger.kernel.org>; Fri,  8 Jul 2022 09:57:37 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4LffbL5D3lzMqD8M;
+        Fri,  8 Jul 2022 18:57:34 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4LffbL1vMvzln2G9;
+        Fri,  8 Jul 2022 18:57:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1657299454;
+        bh=Qw59FDtqD8nojf3FMAqraBM3XJAAKEP12B6NgU6LwV0=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=abGlx7afXg/wnMLIZHV5t3pl7hnInDLDh4DdVRWVWDMDYmIuPtyb1vk8H7jTXVEv3
+         VYDxCTNkJNjBQ13O97YLbRpKyRI4l0mOj5CxBXc2SghLLNkCx5HLvrLT6VqXG5rrOQ
+         No9aHJq0WIln/xd3OPnSrdM47V/vgcdN5Kd0DL6s=
+Message-ID: <7d72fc3e-bdeb-14b8-1e6c-a99c2d052e3f@digikod.net>
+Date:   Fri, 8 Jul 2022 18:57:33 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2 0/4] Introduce security_create_user_ns()
+User-Agent: 
 Content-Language: en-US
-To:     Frederick Lawler <fred@cloudflare.com>,
-        =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>
-Cc:     KP Singh <kpsingh@kernel.org>, revest@chromium.org,
-        jackmanb@chromium.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, shuah@kernel.org,
-        Christian Brauner <brauner@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, kernel-team@cloudflare.com,
-        casey@schaufler-ca.com
-References: <20220707223228.1940249-1-fred@cloudflare.com>
- <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
- <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com>
-Content-Type: text/plain; charset=UTF-8
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        anton.sirazetdinov@huawei.com
+References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
+ <20220621082313.3330667-3-konstantin.meskhidze@huawei.com>
+ <0bbbcf21-1e7d-5585-545f-bf89d8ebd527@digikod.net>
+ <9d0c8780-6648-404f-7e51-b62a36617121@huawei.com>
+ <72375435-94d4-e3aa-c27b-b44382dde6ad@digikod.net>
+ <76c7c92e-3377-0bb8-14d5-e5c286c67dc3@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v6 02/17] landlock: refactors landlock_find/insert_rule
+In-Reply-To: <76c7c92e-3377-0bb8-14d5-e5c286c67dc3@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.20381 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/8/2022 7:01 AM, Frederick Lawler wrote:
-> On 7/8/22 7:10 AM, Christian Göttsche wrote:
->> ,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com>
->> wrote:
->>>
->>> While creating a LSM BPF MAC policy to block user namespace
->>> creation, we
->>> used the LSM cred_prepare hook because that is the closest hook to
->>> prevent
->>> a call to create_user_ns().
->>>
->>> The calls look something like this:
->>>
->>>      cred = prepare_creds()
->>>          security_prepare_creds()
->>>              call_int_hook(cred_prepare, ...
->>>      if (cred)
->>>          create_user_ns(cred)
->>>
->>> We noticed that error codes were not propagated from this hook and
->>> introduced a patch [1] to propagate those errors.
->>>
->>> The discussion notes that security_prepare_creds()
->>> is not appropriate for MAC policies, and instead the hook is
->>> meant for LSM authors to prepare credentials for mutation. [2]
->>>
->>> Ultimately, we concluded that a better course of action is to introduce
->>> a new security hook for LSM authors. [3]
->>>
->>> This patch set first introduces a new security_create_user_ns()
->>> function
->>> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
->>
->> Some thoughts:
->>
->> I.
->>
->> Why not make the hook more generic, e.g. support all other existing
->> and potential future namespaces?
->
-> The main issue with a generic hook is that different namespaces have
-> different calling contexts. We decided in a previous discussion to
-> opt-out of a generic hook for this reason. [1]
->
->> Also I think the naming scheme is <object>_<verb>.
->
-> That's a good call out. I was originally hoping to keep the
-> security_*() match with the hook name matched with the caller function
-> to keep things all aligned. If no one objects to renaming the hook, I
-> can rename the hook for v3.
->
->>
->>      LSM_HOOK(int, 0, namespace_create, const struct cred *cred,
->> unsigned int flags)
->>
->> where flags is a bitmap of CLONE flags from include/uapi/linux/sched.h
->> (like CLONE_NEWUSER).
->>
->> II.
->>
->> While adding policing for namespaces maybe also add a new hook for
->> setns(2)
->>
->>      LSM_HOOK(int, 0, namespace_join, const struct cred *subj,  const
->> struct cred *obj, unsigned int flags)
->>
->
-> IIUC, setns() will create a new namespace for the other namespaces
-> except for user namespace. If we add a security hook for the other
-> create_*_ns() functions, then we can catch setns() at that point.
->
->> III.
->>
->> Maybe even attach a security context to namespaces so they can be
->> further governed?
 
-That would likely add confusion to the existing security module namespace
-efforts. SELinux, Smack and AppArmor have all developed namespace models.
-That, or it could replace the various independent efforts with a single,
-unified security module namespace effort. There's more work to that than
-adding a context to a namespace. Treating namespaces as objects is almost,
-but not quite, solidifying containers as a kernel construct. We know we
-can't do that.
-
->> SELinux example:
+On 08/07/2022 16:20, Konstantin Meskhidze (A) wrote:
+> 
+> 
+> 7/8/2022 4:56 PM, Mickaël Salaün пишет:
 >>
->>      type domainA_userns_t;
->>      type_transition domainA_t domainA_t : namespace domainA_userns_t
->> "user";
->>      allow domainA_t domainA_userns_t:namespace create;
+>> On 08/07/2022 14:53, Konstantin Meskhidze (A) wrote:
+>>>
+>>>
+>>> 7/7/2022 7:44 PM, Mickaël Salaün пишет:
+>>>>
+>>>> On 21/06/2022 10:22, Konstantin Meskhidze wrote:
+>>>>> Adds a new object union to support a socket port
+>>>>> rule type. Refactors landlock_insert_rule() and
+>>>>> landlock_find_rule() to support coming network
+>>>>> modifications. Now adding or searching a rule
+>>>>> in a ruleset depends on a rule_type argument
+>>>>> provided in refactored functions mentioned above.
+>>>>>
+>>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>>>>> ---
+>>>>>
+>>>>> Changes since v5:
+>>>>> * Formats code with clang-format-14.
+>>>>>
+>>>>> Changes since v4:
+>>>>> * Refactors insert_rule() and create_rule() functions by deleting
+>>>>> rule_type from their arguments list, it helps to reduce useless code.
+>>>>>
+>>>>> Changes since v3:
+>>>>> * Splits commit.
+>>>>> * Refactors landlock_insert_rule and landlock_find_rule functions.
+>>>>> * Rename new_ruleset->root_inode.
+>>>>>
+>>>>> ---
+>>>>>   security/landlock/fs.c      |   7 ++-
+>>>>>   security/landlock/ruleset.c | 105 
+>>>>> ++++++++++++++++++++++++++----------
+>>>>>   security/landlock/ruleset.h |  27 +++++-----
+>>>>>   3 files changed, 96 insertions(+), 43 deletions(-)
+>>>>>
+>>>>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+>>>>> index e6da08ed99d1..46aedc2a05a8 100644
+>>>>> --- a/security/landlock/fs.c
+>>>>> +++ b/security/landlock/fs.c
+>>>>> @@ -173,7 +173,8 @@ int landlock_append_fs_rule(struct 
+>>>>> landlock_ruleset *const ruleset,
+>>>>>       if (IS_ERR(object))
+>>>>>           return PTR_ERR(object);
+>>>>>       mutex_lock(&ruleset->lock);
+>>>>> -    err = landlock_insert_rule(ruleset, object, access_rights);
+>>>>> +    err = landlock_insert_rule(ruleset, object, 0, access_rights,
+>>>>> +                   LANDLOCK_RULE_PATH_BENEATH);
+>>>>>       mutex_unlock(&ruleset->lock);
+>>>>>       /*
+>>>>>        * No need to check for an error because landlock_insert_rule()
+>>>>> @@ -204,7 +205,9 @@ find_rule(const struct landlock_ruleset *const 
+>>>>> domain,
+>>>>>       inode = d_backing_inode(dentry);
+>>>>>       rcu_read_lock();
+>>>>>       rule = landlock_find_rule(
+>>>>> -        domain, rcu_dereference(landlock_inode(inode)->object));
+>>>>> +        domain,
+>>>>> +        (uintptr_t)rcu_dereference(landlock_inode(inode)->object),
+>>>>> +        LANDLOCK_RULE_PATH_BENEATH);
+>>>>>       rcu_read_unlock();
+>>>>>       return rule;
+>>>>>   }
+>>>>> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+>>>>> index a3fd58d01f09..5f13f8a12aee 100644
+>>>>> --- a/security/landlock/ruleset.c
+>>>>> +++ b/security/landlock/ruleset.c
+>>>>> @@ -35,7 +35,7 @@ static struct landlock_ruleset 
+>>>>> *create_ruleset(const u32 num_layers)
+>>>>>           return ERR_PTR(-ENOMEM);
+>>>>>       refcount_set(&new_ruleset->usage, 1);
+>>>>>       mutex_init(&new_ruleset->lock);
+>>>>> -    new_ruleset->root = RB_ROOT;
+>>>>> +    new_ruleset->root_inode = RB_ROOT;
+>>>>>       new_ruleset->num_layers = num_layers;
+>>>>>       /*
+>>>>>        * hierarchy = NULL
+>>>>> @@ -69,7 +69,8 @@ static void build_check_rule(void)
+>>>>>   }
+>>>>>
+>>>>>   static struct landlock_rule *
+>>>>> -create_rule(struct landlock_object *const object,
+>>>>> +create_rule(struct landlock_object *const object_ptr,
+>>>>> +        const uintptr_t object_data,
+>>>>>           const struct landlock_layer (*const layers)[], const u32 
+>>>>> num_layers,
+>>>>>           const struct landlock_layer *const new_layer)
+>>>>>   {
+>>>>> @@ -90,8 +91,15 @@ create_rule(struct landlock_object *const object,
+>>>>>       if (!new_rule)
+>>>>>           return ERR_PTR(-ENOMEM);
+>>>>>       RB_CLEAR_NODE(&new_rule->node);
+>>>>> -    landlock_get_object(object);
+>>>>> -    new_rule->object = object;
+>>>>> +
+>>>>> +    if (object_ptr) {
+>>>>> +        landlock_get_object(object_ptr);
+>>>>> +        new_rule->object.ptr = object_ptr;
+>>>>> +    } else if (object_ptr && object_data) {
+>>>>
+>>>> Something is wrong with this second check: else + object_ptr?
+>>>
+>>> It was your suggestion to use it like this:
+>>> " ....You can also add a WARN_ON_ONCE(object_ptr && object_data)."
+>>>
+>>> Please check it here:
+>>> https://lore.kernel.org/linux-security-module/bc44f11f-0eaa-a5f6-c5dc-1d36570f1be1@digikod.net/ 
 >>
->>      # domainB calling setns(2) with domainA as target
->>      allow domainB_t domainA_userns_t:namespace join;
-
-While I'm not an expert on SELinux policy, I'd bet a refreshing beverage
-that there's already a way to achieve this with existing constructs.
-Smack, which is subject+object MAC couldn't care less about the user
-namespace configuration. User namespaces are DAC constructs.
-
 >>
->
-> Links:
-> 1.
-> https://lore.kernel.org/all/CAHC9VhSTkEMT90Tk+=iTyp3npWEm+3imrkFVX2qb=XsOPp9F=A@mail.gmail.com/
->
->>>
->>> Links:
->>> 1.
->>> https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
->>>
->>> 2.
->>> https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
->>> 3.
->>> https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
->>>
->>> Changes since v1:
->>> - Add selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
->>> patch
->>> - Add selinux: Implement create_user_ns hook patch
->>> - Change function signature of security_create_user_ns() to only take
->>>    struct cred
->>> - Move security_create_user_ns() call after id mapping check in
->>>    create_user_ns()
->>> - Update documentation to reflect changes
->>>
->>> Frederick Lawler (4):
->>>    security, lsm: Introduce security_create_user_ns()
->>>    bpf-lsm: Make bpf_lsm_create_user_ns() sleepable
->>>    selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
->>>    selinux: Implement create_user_ns hook
->>>
->>>   include/linux/lsm_hook_defs.h                 |  1 +
->>>   include/linux/lsm_hooks.h                     |  4 +
->>>   include/linux/security.h                      |  6 ++
->>>   kernel/bpf/bpf_lsm.c                          |  1 +
->>>   kernel/user_namespace.c                       |  5 ++
->>>   security/security.c                           |  5 ++
->>>   security/selinux/hooks.c                      |  9 ++
->>>   security/selinux/include/classmap.h           |  2 +
->>>   .../selftests/bpf/prog_tests/deny_namespace.c | 88
->>> +++++++++++++++++++
->>>   .../selftests/bpf/progs/test_deny_namespace.c | 39 ++++++++
->>>   10 files changed, 160 insertions(+)
->>>   create mode 100644
->>> tools/testing/selftests/bpf/prog_tests/deny_namespace.c
->>>   create mode 100644
->>> tools/testing/selftests/bpf/progs/test_deny_namespace.c
->>>
->>> -- 
->>> 2.30.2
->>>
->
+>> Yes, but the error is in the "else", you should write:
+>> if (WARN_ON_ONCE(object_ptr && object_data))
+>>     return ERR_PTR(-EINVAL);
+>>
+>> …and this should be before the `if (object_ptr) {` line (to avoid
+>> erronous landlock_get_object() call), just after the `if (!new_rule)` 
+>> check.
+> 
+>    Maybe we could delete this check here cause we have it in the upper 
+> insert_rule() function??
+> 
+> ...
+>      if (WARN_ON_ONCE(!layers))
+>          return -ENOENT;
+> ------>    if (WARN_ON_ONCE(object_ptr && object_data))
+>          return -EINVAL;
+>      /* Chooses rb_tree structure depending on a rule type. */
+>      switch (rule_type) {
+>      case LANDLOCK_RULE_PATH_BENEATH:
+>          if (WARN_ON_ONCE(!object_ptr))
+>              return -ENOENT;
+>          object_data = (uintptr_t)object_ptr;
+>          root = &ruleset->root_inode;
+>          break;
+>      default:
+>          WARN_ON_ONCE(1);
+>          return -EINVAL;
+>      }
+> ...
+> 
+> This is double check here. What do you think?
+
+This check is indeed done twice, and for now create_rule() is only 
+called from insert_rule(), but I prefer to keep it in both location to 
+not get bitten in the future were it could be called from other 
+locations. The compiler may be smart enough to remove the redundant 
+checks though.
+
+I'll send a patch to improve this part.
