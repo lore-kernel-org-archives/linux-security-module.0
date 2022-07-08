@@ -2,178 +2,178 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D4DC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jul 2022 11:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDE6C43334
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jul 2022 12:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238158AbiGHLup (ORCPT
+        id S237965AbiGHMKU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Jul 2022 07:50:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46698 "EHLO
+        Fri, 8 Jul 2022 08:10:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238173AbiGHLuk (ORCPT
+        with ESMTP id S237495AbiGHMKR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Jul 2022 07:50:40 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33FB29A6A8;
-        Fri,  8 Jul 2022 04:50:28 -0700 (PDT)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 268BM0tL029788;
-        Fri, 8 Jul 2022 11:50:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=9lirF09Kmt0HGQk1TfIGDd4fJQRMu7hqmmT+uH9e9ck=;
- b=lgR+wc0ahBhfEyMyrk6h1AMNSXqis1tdeTPEgqju57+bZIZ9Hd0Ai9Ywd9pDQbsLzEtc
- tb2HXyGeVKeE0ygxzM85Nm/PBM0HtsvXF0rlpC2tUlMfwLzZLXV71KLAYvyr9li0yXA4
- wyK61kWIlq/stLJl5YW357PcDTHHduFP4g9WXmx9XQNnXArw4MFRYOnr9y7ee5kW6VmX
- 8ek5wdlaBXWn+pzzWDu7Vp2xJzZ6DqO64gIPdnq+Mp+ET5lKb/ylfi+jN6JrC14LaruN
- QNOpEJukgXgTsVc7ikRkvG4UM7/ynfe2Ot164wqLLYWkREHWKCiHn8B9wpN4rLMmypnp SA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h6kn4rgs4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Jul 2022 11:50:08 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 268BNVM8031916;
-        Fri, 8 Jul 2022 11:50:07 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h6kn4rgr8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Jul 2022 11:50:07 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 268BMHt9008105;
-        Fri, 8 Jul 2022 11:50:05 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06ams.nl.ibm.com with ESMTP id 3h4usd3x7s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Jul 2022 11:50:05 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 268Bmg7s24248692
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Jul 2022 11:48:42 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C65055204F;
-        Fri,  8 Jul 2022 11:50:02 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.64.141])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B9CD452050;
-        Fri,  8 Jul 2022 11:49:59 +0000 (GMT)
-Message-ID: <01c9e6e230b54831091757fe7a09714ccf4bd898.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH 0/7] ima: Support measurement of kexec initramfs
- components
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jonathan McDowell <noodles@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Fri, 8 Jul 2022 08:10:17 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 369519CE06;
+        Fri,  8 Jul 2022 05:10:16 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id t26-20020a9d775a000000b006168f7563daso16069252otl.2;
+        Fri, 08 Jul 2022 05:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GpQvth/YlRPRLXM2wq2zvzgjKdxbpn6/Zk9RhPLEGYg=;
+        b=IoqP8q5VZ5pk4QJgOwAfmFwAW9TPNsIiOuFdanrxu2zmQQ3sb9r90FuhkeI7RBwfrE
+         DCR2kpud+3/E6fCStcfxQA0W/IteFr5fRIshCU8SNzfXl0MOjqJA23rMCJd23Vr6wSY2
+         LN6VcrVOKc075R1TU3Rjxv5rBkt+Gser9VlxPSdxLIBXseawhiWFtV2mSWlYgaCPArq2
+         gTpxQAAyygaAtMP5Uj7YO++qpBQsoDQx+wVhRuDO6KXcxDFq2GrJUC1qXF7Zs0Ll1C0G
+         I3uuejIpb7F9yWK03KH4HrcgZdaZBfAFW6Ldi8sHeUBZ/ExGyc/xzgbg4WQ9m2yxFJaV
+         W7Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GpQvth/YlRPRLXM2wq2zvzgjKdxbpn6/Zk9RhPLEGYg=;
+        b=yf0pnKLk4v9GmKCsYECHnLsUCMHthzKJW4x05ja/PBzf1xkAH4qXTdzWmdZz48glZ+
+         eQM+G0dKF2IsjRRDW7wLmB4OiYIx6Aa0vQcnwiC7Sg1J7lYPsGtLihKz97kd7TNs6zfL
+         6WQpasDq4fOW4RlZXMuPaBJFYs/N2W6QzwF11xwkP08CZyt5dX0mjbAQFUTSSlsgwFFb
+         XhvRO6/q8yP62vIOUWYYdgkbiBkMlcC2Oy45v0bhxTAgyX59/jqKS+W79+1TZVnzXUJb
+         4t1g5eiTQ2cUOImdHUuIdR0CXDxOyAk0pnUENsn3PTpp0G+rgYqtklFNE0prAlrUeGLD
+         Vuvg==
+X-Gm-Message-State: AJIora9Flmg0l55S5e09D5XOS0/wLiuUP6tRRlNR9jWPjH7aeW6hItc5
+        ONeVvx5XOyl4d6hff4SIQzA7r0arZ1Q47hDHW0rm5bvifpagyoIq
+X-Google-Smtp-Source: AGRyM1tHWy4Tlx5fwGEXEdMD+rUEyIqRPxAEtDWj9qSQGdS2+QKidSUUGKaTp9bjOEoECFbtvsRIe31ma8aVvJAOfFk=
+X-Received: by 2002:a9d:630b:0:b0:619:1204:d36f with SMTP id
+ q11-20020a9d630b000000b006191204d36fmr1367344otk.56.1657282215497; Fri, 08
+ Jul 2022 05:10:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220707223228.1940249-1-fred@cloudflare.com>
+In-Reply-To: <20220707223228.1940249-1-fred@cloudflare.com>
+From:   =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Date:   Fri, 8 Jul 2022 14:10:04 +0200
+Message-ID: <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Introduce security_create_user_ns()
+To:     Frederick Lawler <fred@cloudflare.com>
+Cc:     KP Singh <kpsingh@kernel.org>, revest@chromium.org,
+        jackmanb@chromium.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dmitrii Potoskuev <dpotoskuev@fb.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Date:   Fri, 08 Jul 2022 07:49:58 -0400
-In-Reply-To: <cover.1657272362.git.noodles@fb.com>
-References: <cover.1657272362.git.noodles@fb.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: kTyHucsnhDSKbscf09Oh3zDa-C4FtSr_
-X-Proofpoint-GUID: UwNG2QbbcUtmRMAfCoOHPXgyQiHrAfeH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-08_08,2022-07-08_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- malwarescore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207080042
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, shuah@kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2022-07-08 at 10:10 +0000, Jonathan McDowell wrote:
-> This patchset is not yet complete, but it's already moving around a
-> bunch of stuff so I am sending it out to get either some agreement that
-> it's a vaguely sane approach, or some pointers about how I should be
-> doing this instead.
-> 
-> It aims to add an option to IMA to measure the individual components
-> that make up an initramfs that is being used for kexec, rather than the
-> entire initramfs blob. For example in the situation where the initramfs
-> blob contains some uncompressed early firmware and then a compressed
-> filesystem there will be 2 measurements folded into the TPM, and logged
-> into the IMA log.
-> 
-> Why is this useful? Consider the situation where images have been split
-> out to a set of firmware, an initial userspace image that does the usual
-> piece of finding the right root device and switching into it, and an
-> image that contains the necessary kernel modules.
-> 
-> For a given machine the firmware + userspace images are unlikely to
-> change often, while the kernel modules change with each upgrade. If we
-> measure the concatenated image as a single blob then it is necessary to
-> calculate all the permutations of images that result, which means
-> building and hashing the combinations. By measuring each piece
-> individually a hash can be calculated for each component up front
-> allowing for easier analysis of whether the running state is an expected
-> one.
-> 
-> The KEXEC_FILE_LOAD syscall only allows a single initramfs image to be
-> passed in; one option would be to add a new syscall that supports
-> multiple initramfs fds and read each in kimage_file_prepare_segments().
-> 
-> Instead I've taken a more complicated approach that doesn't involve a
-> new syscall or altering the kexec userspace, building on top of the way
-> the boot process parses the initramfs and using that same technique
-> within the IMA measurement for the READING_KEXEC_INITRAMFS path.
-> 
-> To that end I've pulled the cpio handling code out of init/initramfs.c
-> and into lib/ and made it usable outside of __init when required. That's
-> involved having to pull some of the init_syscall file handling routines
-> into the cpio code (and cleaning them up when the cpio code is the only
-> user). I think there's the potential for a bit more code clean up here,
-> but I've tried to keep it limited to providing the functionality I need
-> and making checkpatch happy for the moment.
-> 
-> Patch 1 pulls the code out to lib/ and moves the global static variables
-> that hold the state into a single context structure.
-> 
-> Patch 2 does some minimal error path improvements so we're not just
-> passing a string around to indicate there's been an error.
-> 
-> Patch 3 is where I pull the file handling routines into the cpio code.
-> It didn't seem worth moving this to somewhere other code could continue
-> to use them when only the cpio code was doing so, but it did involve a
-> few extra exported functions from fs/
-> 
-> Patch 4 actually allows the use of the cpio code outside of __init when
-> CONFIG_CPIO is selected.
-> 
-> Patch 5 is a hack so I can use the generic decompress + gzip outside of
-> __init. If this overall approach is acceptable then I'll do some work to
-> make this generically available in the same manner as the cpio code
-> before actually submitting for inclusion.
-> 
-> Patch 6 is the actual piece I'm interested in; doing individual
-> measurements for each component within IMA.
+,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com> wrote:
+>
+> While creating a LSM BPF MAC policy to block user namespace creation, we
+> used the LSM cred_prepare hook because that is the closest hook to prevent
+> a call to create_user_ns().
+>
+> The calls look something like this:
+>
+>     cred = prepare_creds()
+>         security_prepare_creds()
+>             call_int_hook(cred_prepare, ...
+>     if (cred)
+>         create_user_ns(cred)
+>
+> We noticed that error codes were not propagated from this hook and
+> introduced a patch [1] to propagate those errors.
+>
+> The discussion notes that security_prepare_creds()
+> is not appropriate for MAC policies, and instead the hook is
+> meant for LSM authors to prepare credentials for mutation. [2]
+>
+> Ultimately, we concluded that a better course of action is to introduce
+> a new security hook for LSM authors. [3]
+>
+> This patch set first introduces a new security_create_user_ns() function
+> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
 
-Hi Jonathan,
+Some thoughts:
 
-Before going down this path, just making sure you're aware:
-- of the IMA hooks for measuring and appraising firmware.
+I.
 
-- of Roberto Sassu's "initramfs: add support for xattrs in the initial
-ram disk" patch set that have been lingering for lack of review and
-upstreaming.[1]   There's been some recent interest in it.
+Why not make the hook more generic, e.g. support all other existing
+and potential future namespaces?
+Also I think the naming scheme is <object>_<verb>.
 
-[1] Message-Id: <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
+    LSM_HOOK(int, 0, namespace_create, const struct cred *cred,
+unsigned int flags)
 
-thanks,
+where flags is a bitmap of CLONE flags from include/uapi/linux/sched.h
+(like CLONE_NEWUSER).
 
-Mimi
+II.
 
+While adding policing for namespaces maybe also add a new hook for setns(2)
+
+    LSM_HOOK(int, 0, namespace_join, const struct cred *subj,  const
+struct cred *obj, unsigned int flags)
+
+III.
+
+Maybe even attach a security context to namespaces so they can be
+further governed?
+SELinux example:
+
+    type domainA_userns_t;
+    type_transition domainA_t domainA_t : namespace domainA_userns_t "user";
+    allow domainA_t domainA_userns_t:namespace create;
+
+    # domainB calling setns(2) with domainA as target
+    allow domainB_t domainA_userns_t:namespace join;
+
+>
+> Links:
+> 1. https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
+> 2. https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
+> 3. https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
+>
+> Changes since v1:
+> - Add selftests/bpf: Add tests verifying bpf lsm create_user_ns hook patch
+> - Add selinux: Implement create_user_ns hook patch
+> - Change function signature of security_create_user_ns() to only take
+>   struct cred
+> - Move security_create_user_ns() call after id mapping check in
+>   create_user_ns()
+> - Update documentation to reflect changes
+>
+> Frederick Lawler (4):
+>   security, lsm: Introduce security_create_user_ns()
+>   bpf-lsm: Make bpf_lsm_create_user_ns() sleepable
+>   selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
+>   selinux: Implement create_user_ns hook
+>
+>  include/linux/lsm_hook_defs.h                 |  1 +
+>  include/linux/lsm_hooks.h                     |  4 +
+>  include/linux/security.h                      |  6 ++
+>  kernel/bpf/bpf_lsm.c                          |  1 +
+>  kernel/user_namespace.c                       |  5 ++
+>  security/security.c                           |  5 ++
+>  security/selinux/hooks.c                      |  9 ++
+>  security/selinux/include/classmap.h           |  2 +
+>  .../selftests/bpf/prog_tests/deny_namespace.c | 88 +++++++++++++++++++
+>  .../selftests/bpf/progs/test_deny_namespace.c | 39 ++++++++
+>  10 files changed, 160 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/deny_namespace.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/test_deny_namespace.c
+>
+> --
+> 2.30.2
+>
