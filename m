@@ -2,41 +2,41 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC68C43334
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jul 2022 10:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7360CCA47B
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jul 2022 10:13:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237899AbiGHKMl (ORCPT
+        id S238036AbiGHKND (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Jul 2022 06:12:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56960 "EHLO
+        Fri, 8 Jul 2022 06:13:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237961AbiGHKMZ (ORCPT
+        with ESMTP id S238003AbiGHKMv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Jul 2022 06:12:25 -0400
+        Fri, 8 Jul 2022 06:12:51 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B659783F3D;
-        Fri,  8 Jul 2022 03:12:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A94284EE0;
+        Fri,  8 Jul 2022 03:12:45 -0700 (PDT)
 Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 267LPjkM002415;
-        Fri, 8 Jul 2022 03:12:24 -0700
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 267LQ5tS003531;
+        Fri, 8 Jul 2022 03:12:45 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : references : in-reply-to : content-type : content-id
  : mime-version; s=facebook;
- bh=vKUzmmaj9HD089hhxLbjvs0fUXwF6qLRWuimkKOR9tc=;
- b=odbZaz4jO+mv5h4T40r86aerUD52QnhP+ZY1i8ha2KWUu436elXfL43ZI4dQxQOZXJOO
- BOIZzT6fZGweFBTil7Dg6LK55Hwvo46Nq7YqSyXb9IINh+zqcH6daalahzxpb/xNylen
- lwVygHg8IvvOAVAuuYwLVqkkqMs9J58Ijpo= 
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2109.outbound.protection.outlook.com [104.47.55.109])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h67d23c6j-2
+ bh=zjZxs3sHJCcGfe2WaxNN4wBqJbhgFayELS86JTHs9Sg=;
+ b=DrzGp/QosIM2Jyf+0p0OZaseK/OIvYEev/xoIEB3jHWRv3QgsJikn8a4L8SQ00xBjU+N
+ RsmTGUy01xwu1AYK8VSX1gv8h8gAtprK+RZenEejvAF1qAetuqMXZjGPaotJ2/qbjBeg
+ UDPeeJaSbko5SH2MezgQj8t8pjN6MsaBVhs= 
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2106.outbound.protection.outlook.com [104.47.55.106])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h67d23c7w-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Jul 2022 03:12:24 -0700
+        Fri, 08 Jul 2022 03:12:45 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AlKn/Wk0WI6Jq9M9PThjvrNeiv45B2IvNsVKekpT6Anh/siD6UpDpSRrphPf7axtFseSPAqJITKUNVRRk9IZ04qfwiVg3q7ZPq3Kd7emOduk5OrIJ4ykrzphcVF38TgDVUxq30qb9pYqb6WZuGogxDlyqoqF2NI8NX4E5YG+tCMyRMG6QaiPo97jVyHuBQg8PVtYsCIL79VqTY0CCO6rFAY5FTGI701UfKTc18oRJkJ0opEcD/xLMkc/rllEOLgU7ve/9mb5BP9WN7sum46rKfzOkt6vaKVdWxDKONsbmmrMHsB6c8HvyeB6mRaP4bXnSgNDM3Y6969l0clid36Xsg==
+ b=mN0qUfoHPS5jpS5JB+pYHYQtCRMuFgIsyQ3Gabx/dx5CMnk82lYZIsC41t8CkPoceZjE1XtfC2CQuhDPI9M/jsyWbGI/4Zt96SsN8kvqE3PenL0A0ZxvYNZTeJQUJKskZcL42eJlNBiVRj5cGrgEiKx+7PRDDFnNlTWw0RbWvfEcSmiAKCkFvYFNrpNjwIQf52DvMf8kMk0cwrZpwraiocojp8YRoGInRjmQmzX+S/Nb07YldSZQnjbGGZu0kuH0siRj73Zzu4w6aHzIrStZicy5MTgrtCQRZ4Yfm9fqhwz/8EAzPPJOHSq5qfiLX9BpYQOcDNkRFoMzJZQc9+KFww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vKUzmmaj9HD089hhxLbjvs0fUXwF6qLRWuimkKOR9tc=;
- b=nGyWPboa2kPPLFZznXen8Z6/a2VSMTQc8h+44dASbV/fVFfgGqnsO69Zpi0OKQVaMMsUdpqquzV2E2U6vZA4Qf0WlHB4zBiAJUlAe6cqdiczyNgv2pvPXGt52pBmle0PVGXRSGyHn73Wr9BKlIxUpNui0YTsM1EGGCI0Fjunwgdg0OFdZB7oCuK/y8011vZijvsD9M/ZcUVe2uVVLOf6GTrjobEIRHKei7b+ac8BCZgZ55lzXvHCictFE5AsmfmiQ3ft+tXl9Cd2S9IiFrhgc53q5VQn6MSgbjzGYmx7y03cUt2G1eh1MSJ5EBml97RWWwEbtkANMLjW/WGjRdaNsg==
+ bh=zjZxs3sHJCcGfe2WaxNN4wBqJbhgFayELS86JTHs9Sg=;
+ b=m4BoQ5TCKVgAgvBo5H0CuE/cb4/1Uc8/Xy3t8+grtgaDkFHPgFIo0ekX0zPMUwk51THFGXHgZU++CN79QOJtpBPUO0lLB8jvC7ZjQsnWePZRG4G5Xf+CcSVVfFbja5Pj1Y3m8/3OfdajscVcJxD/yn5soLU3VyjuitWWvNXB5Phz83QoahmYJU3hcn1zvSGpeit2v39C6gMZNumlnYLvWeXh+Vr30nk4mIH5ZARjyyhcDIn7TSd1vtQ92K+g7TXlgGrrJbqDQW1jrG9fEnmFQnaI6vVBAEboo3zLqvNPgPHddizf4SQgHv1x+NSpFQ7nEwkmxj6Aaw5AmVcaeKAJSA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
  header.d=fb.com; arc=none
@@ -44,11 +44,11 @@ Received: from SJ0PR15MB4552.namprd15.prod.outlook.com (2603:10b6:a03:379::12)
  by BYAPR15MB2501.namprd15.prod.outlook.com (2603:10b6:a02:88::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.20; Fri, 8 Jul
- 2022 10:12:22 +0000
+ 2022 10:12:42 +0000
 Received: from SJ0PR15MB4552.namprd15.prod.outlook.com
  ([fe80::81f9:c21c:c5bf:e174]) by SJ0PR15MB4552.namprd15.prod.outlook.com
  ([fe80::81f9:c21c:c5bf:e174%8]) with mapi id 15.20.5417.017; Fri, 8 Jul 2022
- 10:12:22 +0000
+ 10:12:42 +0000
 From:   Jonathan McDowell <noodles@fb.com>
 To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
@@ -63,13 +63,13 @@ CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Matthew Garrett <mjg59@srcf.ucam.org>,
         Dmitrii Potoskuev <dpotoskuev@fb.com>
-Subject: [RFC PATCH 5/7] lib/cpio: Add a parse-only option that doesn't
- extract any files
-Thread-Topic: [RFC PATCH 5/7] lib/cpio: Add a parse-only option that doesn't
- extract any files
-Thread-Index: AQHYkrM2UIzPSfO/y02wvkpXYXbtcw==
-Date:   Fri, 8 Jul 2022 10:12:22 +0000
-Message-ID: <b5f14649db9615bb9cbfc66863547aa96f7e7786.1657272362.git.noodles@fb.com>
+Subject: [RFC PATCH 7/7] ima: Support measurement of kexec initramfs
+ components
+Thread-Topic: [RFC PATCH 7/7] ima: Support measurement of kexec initramfs
+ components
+Thread-Index: AQHYkrNDsat2nr2ZjUCutP79WCPZOA==
+Date:   Fri, 8 Jul 2022 10:12:42 +0000
+Message-ID: <a34feafe9794749aca848c814ac87013cbbc594b.1657272362.git.noodles@fb.com>
 References: <cover.1657272362.git.noodles@fb.com>
 In-Reply-To: <cover.1657272362.git.noodles@fb.com>
 Accept-Language: en-GB, en-US
@@ -77,173 +77,323 @@ Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: cf9c15bc-651b-4f73-0768-08da60ca5927
+x-ms-office365-filtering-correlation-id: e4be3d2c-f562-473d-fdb8-08da60ca657f
 x-ms-traffictypediagnostic: BYAPR15MB2501:EE_
 x-fb-source: Internal
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: svbtnW8+4R/botIKPLcPPhQEiof4E4vT6+GlfoftHBkxw95+fVNKo9NYL/OO5Q1Ok8WgyDObH4G+t+rEFtgekfh1T2xr/m3AD56U8jYbFy/HZwdVKu2TozbZlseM8uPB7zxkFe05t0ipG4e0+loxKIZRcVikGn7venbYoqxM7zqgKiFi1ec7gLWeRQBcQJItyK0Gxy/gtrzrEzjGfq+pyCS8LRqmMZ1Xsx1tTKxlaMjQeO2gelhdVOESG6q9qLGetc5aAc2xMYSjaaeWc5b2hpMMlanRY3E7aw+dfCwUi0dljWJOkGjrZDwg4IcdrDF1lUSLKPwJwgc4Z+0N21BRkXEdZD6gYbCpcbV90SiL1sTJz/BkaSRrWDBWYtd+nV0MqUbkMuQMIF4XNDReYXkRHw+wqEnLtAIkvbLqkTxG0J4k/FmUpCsZhJCJOWUIk0vCKa0APahg3v9FfpyQozsEXljCHXU5/Hi+YPQ8Z5JglkBG+H/5ur6GQRmtMhamnnICsZn6QE97qw2E5ByZEe+uXeFmn/u/6pKSa/eQjy/Iz6AWuX5n4KuPlxzpjuMyCxQMkGUs3olhr3PM6MCim9wnZiNeMoh6Bp7XQioIDY9mzv4glzKE30W7YDfWRnXM7wUaG1k8lbeaaC5zO5JKj2Gna7vrCqB5c/VWuy5yMOblFlI/EJO8ugKPCaLb+VSdGZWv91oRqflc4NcK2vaUKA6W6ewluKgP09QgqilCGvHfHUofvjEdWRcYrOxFJGP6cAcQ7jUPXoI9nWp6L2aJtBYCP/qW2g+KkOYkQKPKL0XM71rgyJSRbrRFDVy86Hm8Y9ef
+x-microsoft-antispam-message-info: 2D66VnBiNdVwZsmRWbqOZHKUZo1/xzzn+cSwa1zazDEXgaYCKEsKsa4Mf+Q8Hxm/9M4Ur8BTwXTv3kA6vfVeCvOS5cWnNw0d7rZntRz++arIrn+IokBzXX4cKEDO3HV43AeC27NRau0b1oYzKSkOYjkWcvYCkyDIJLsfUszjNrV5/Mx+El48BbQylv0UuvmH2QPWyKcWAUyPVD2wP5snRfrbHdsMY2mGK4H0oyBbwHxV5wMOCmn7ijQRyhozvGeLXcTJEiC8QUW0qlM+Oi05g1TXMZfzj6hV17SVibXmZPqmKE9P7SkL7+I7ELnnYWTVOp+jlsPRsbGY9NGpTP6LREgH9Jw2kGFdZWmwiSomgmpFPyyBnZtcuPdnaN1TpKaGHlr5iRGZTcvGudQfx4G8FGrCLBI1TGoG4jvDelgKLBtotOODt7gc8dLMkfr6jb8nTfIxkiwFOniudELbUhHtCennOnR/GbQ/AJcQc2898WJhkcHIIw8olJ98D0R2hnwT8ypD/ogxDuoIk5DnzmtUT5sbSqK7aej522ptvMds/Uf4ecPlGaB27j73CXkP0iZdcx/3Wy4L+lY+ZpcyNk84/zHUWuMAn5MBiQllERYMo9KLho2TbvGoJjRu6XFSWEvoZzVcBjt5xRxRfXy2QCuoSuJ1gwwlSbtSgtAh+eGSeE9YEk+uv0weSUrpExz4WqAvhtmE9Ajy4Q3qzOs8+ZrKhQ1b+1X1Bc4ZKeFQcYL5vJmfhRBWZDiXbAFNF4cvsAT3VnZrxj8kp+mf1t4nfzkW524J5RhxxHnRQkDLDeCjy7jNkun654D7+ir0mYSi702X
 x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB4552.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(376002)(136003)(396003)(346002)(39860400002)(366004)(38100700002)(110136005)(2906002)(54906003)(122000001)(316002)(7416002)(83380400001)(8936002)(2616005)(5660300002)(36756003)(6506007)(38070700005)(6512007)(26005)(76116006)(91956017)(8676002)(66946007)(4326008)(64756008)(66446008)(66476007)(66556008)(71200400001)(186003)(86362001)(6486002)(478600001)(41300700001);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?WSyiQEewKk72uRrJo6vTlJ5sTsju0ISQtOyM4AsEMZwV8azPdtCAZxyGksQE?=
- =?us-ascii?Q?QEfsskrJZ6Q0rv7uDR5gOtIN/8hIYvw72JUh/CnEYHNruNFhfNvDFlKhNBQM?=
- =?us-ascii?Q?URWIjA2QlaENDsXk7Qe2Q+NpsayCEhnBc5TyiDRNMQXO26pVewezLX4j6Txb?=
- =?us-ascii?Q?KUrD7vhN42dDHYCylxtJQSd4qTVmJqkfOnTGACvfZiLA4k7TYhV3Tzf+GMar?=
- =?us-ascii?Q?Y2RVjde5TePEggTwMXg9UTyp9efA6nbaz0a8f3hdgkk4pi8rTsRBdYIyFO+z?=
- =?us-ascii?Q?NuFBAKg3LRyfgnm0DUeuzXC0ck2yBrpc2i9plnPyWISQvhQBwaj5XHrVa5hE?=
- =?us-ascii?Q?WcUMRHhhjbS3PBSzuNjngHjCPx9HEjxx/l8vjsSNvT4Y13q3mENwDyC0tVuu?=
- =?us-ascii?Q?kzgHPqyd89p7RYgXjsLY/AnwvkbYtqIc4Go2nMycr8WX86tme5/c90cCLf/O?=
- =?us-ascii?Q?cxKwNZ/p4yEtTlHh25QmhPT7n5zAmbg3wxmRVVq+8M6x02EgRdszQpQbcS/7?=
- =?us-ascii?Q?elK7F+b+TF6vR+kcfW2jO8v+PH1suIrrRTrkfaxk90BjuUEeAoOWxAHbm1pF?=
- =?us-ascii?Q?7cTtnozKAVEZAyTfHZV4Oyndbdi3lfJKQhd7ZORW7vszXCA3qYl+WJogvuSu?=
- =?us-ascii?Q?xYd2qbRPy8quMg71cmifEhk+mZuDwRikZLFra2qrdLelEl4JDCY0u+GndV2n?=
- =?us-ascii?Q?YjQdx8WxXtT06ynyUIt3WUSzavaXDU5mWavxzzFnNuDfBu9mrtICqOZvH5mq?=
- =?us-ascii?Q?8MHtuV5PDCIZy7Jdp7XOM5eEy92QLMksxJ0LjTLj1g48NUexv+elZBuFsoBd?=
- =?us-ascii?Q?Dujt5i5BqTZswk5kZSM8v8SPQ7NAK/+aNJ7sQq61/E6wpQFJbGyyRzOwxk1Y?=
- =?us-ascii?Q?lNBuUY/zxOBP0GHFeSFtu2jAxhv6FkJqPK7FCfYZtC7we4Ne4XIyq44s+yLI?=
- =?us-ascii?Q?w4mHkNzbxiIHP0Pc7LysaLRGu6bDCmYdtHb3DCkSSHNAsTJJWy674KN7hQXj?=
- =?us-ascii?Q?7jqK0kfLOtZYvsqe3HGeOyNCIX8/9Ed0P72k/3tKP45Q2mpVjF7uEpfGRa7A?=
- =?us-ascii?Q?OofYb3h4EvR7Erql6WCVgixFuw0mD3EBigILM5cTYBNG9ec7sDAjvkJWuvza?=
- =?us-ascii?Q?siScDA5oU29vgnImAjLX1dBVPsJjdHNs4QlWDsIDduZjA9sLgt+OYCzIw8cx?=
- =?us-ascii?Q?k7Jz5rP2bVz9mkJMz7x7pZKQurjqhYH6icwec5iUecXX5FS/vxDvmz30qSYy?=
- =?us-ascii?Q?peEWTionMmR6+0uXVr83jAQjNdRYAcxqqQgzbt2lJavnl3T5H9a7/eErfgpp?=
- =?us-ascii?Q?YKcVnOvCOgcVvl1jp52QCJy/b3COK3hNt+XGIXejqy3jF4azoucWJsL9/M4/?=
- =?us-ascii?Q?WAYmGi5cEl/b6jm9p0GrIAyue9UhFKxVq88+Et9OYFydiaTxqqYrHarNhcGc?=
- =?us-ascii?Q?UNo649nOadfOBCPhSWN5xTMFOQbyu923rRPEsYPSwiXXE4i/CdkJsQnrSJ7s?=
- =?us-ascii?Q?bX5OxhtJsOFHDhIKLvljZwCoRLRRk6mgpb9LOzHxXYFMcPjs2FXm56aZXBnM?=
- =?us-ascii?Q?1cMpIN3i0oI5BCxrNaSM6yFMv9AqBY50dsnbz9UO?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ARjriCiTSV+Zv29LiNfp08sxvG//0y5t7e3Y1HN7KCZ4Fp2hoZ4+7JGV3wF5?=
+ =?us-ascii?Q?3OqCnRN/2F8sfgPD+HFeaaFuxwTTyfU2UsT2SC5uG9QNBIp67a4LFyBpLI9I?=
+ =?us-ascii?Q?joGijhElVkTHbcYZYSYqnGnowBS08eXBpAO7GCtCCYZZoqhegaRdAnFlVudF?=
+ =?us-ascii?Q?a8UftCmd47QaaP19T2G4T5HxgnotDNGRksmzL1WR626AraEIW0QNC5NlZFPB?=
+ =?us-ascii?Q?CK46R7Ap5I9FCfEWvBxN+5a1uSsPyoPZIi65KMvA1zFktm/U/e3UaLc/UwPq?=
+ =?us-ascii?Q?qqygS3Tfgi2qD6t4mcm/Jlg3yBzBSDFRsVSExRhbBflO32maXYI74qmtXRNo?=
+ =?us-ascii?Q?UGwmDfT3EdvINofT9pZfdE5474R4jfkgyzNZjbDdGN7LyXCXxVBIcdee3l47?=
+ =?us-ascii?Q?77Mcb0Xygst+o4reuj6o4AGpht6AXDswIsbZw/7CNCAUoAmoC9HUmFr5ubDj?=
+ =?us-ascii?Q?Swo5qu4Hc6k0rOUWH+Me/W9NrRrcSpWlNelmRPVTzGA7wlQQDac/trqsaQgi?=
+ =?us-ascii?Q?BWpmEMXWzA6LbnhrE2PLkyGaJJ0teC0pez12re0JCNFtnKq2gonKqhy2NDcv?=
+ =?us-ascii?Q?EQZde8Kjg4n/DKCdRsZN6rka/QqQPT3xuaqs/RYVkXoP43cT6LgMcXvOcM7F?=
+ =?us-ascii?Q?DNZsF1Z/nI8dMbEqDTI4r9id5ZHWZ28+S146CHPed7Qmenusd4wtz7+IasB5?=
+ =?us-ascii?Q?aRT5msn8hoa2SxtsjiSuU0awQdqwrPWTs5nDKxnvhyOORaztfzi5+D6cO+IJ?=
+ =?us-ascii?Q?wgpLX3aKi6QDQAsOlHwWhfxForQWH+W0+flBn5fd2md12oqouVqmMhH8+eXy?=
+ =?us-ascii?Q?yG7HovaZjwji7kg5IczO5HQPzVTG/5f3qfK6LtpcVYicTBnTkSyXq+36b/jn?=
+ =?us-ascii?Q?iKcVQg9ypISBklIoPnMV4ScqNU3x+PLL4juzSckHNUm8KJdblAvyU+0MCsOU?=
+ =?us-ascii?Q?JbDAaw5gAx41K4K8v/hGSf8zRvS5dCvgeOPmxEuUW46KopgZgwscPbdeIocE?=
+ =?us-ascii?Q?Rgjaei7W5DZf+tOg6oFPBEOjiveli+6cEOjgpkdCJbvBxH6xPNvbU6tv/4i1?=
+ =?us-ascii?Q?VocXfbDN1bmctqakUwik1g1p1IDgD7ZXCUYxn+CiWBHd1RZi/HmbK/z/fiP8?=
+ =?us-ascii?Q?P4TM4saC9HAgGyqtQ6X4PcOlyK+iZUhMposD6RyfsYNKc0MvKfzaPpyGnC79?=
+ =?us-ascii?Q?Pah50e3aKWmUre/TbqbsXS2BcC15s/viT4b/jR9PaCUIp01zN7k9sFkaY694?=
+ =?us-ascii?Q?mmfSlON9/ONs0x8j/sF524vjHPoFcEvGYm4zl0ftycGCDjZKFmo3uKdf5IYf?=
+ =?us-ascii?Q?ULzPLnQgv5rzpNU5fZQujB+OwZ8ziMB6ROXhe9vWPYnLFCbBihpjvBypVvfo?=
+ =?us-ascii?Q?fxs15LSquBxxOx16cILx3S7+KGXOEPyFvVxiQxgx7zBYsL0WVMOqEDqfe/u6?=
+ =?us-ascii?Q?DmGRO+VGSXN6YLZ0Luss8kH5zMInzPqAzrskeSYzg4+xRE2Besu0DhRUG72Q?=
+ =?us-ascii?Q?8Tb2OemUg3Qc75TgmcFrtMQXrAiM6obYx321SH8Z6BFmGa7IPUd2IjT90qZU?=
+ =?us-ascii?Q?zr+wEka40noVcvVJaQ1LVUsuEhxv4NadJS1BpbB1?=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0BEEE6E71A15F449B39A5A2AF84B6F74@namprd15.prod.outlook.com>
+Content-ID: <44B9BED31809C24DBE92192698654E43@namprd15.prod.outlook.com>
 MIME-Version: 1.0
 X-OriginatorOrg: fb.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR15MB4552.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf9c15bc-651b-4f73-0768-08da60ca5927
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2022 10:12:22.1268
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4be3d2c-f562-473d-fdb8-08da60ca657f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2022 10:12:42.8737
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zdp7/B8hTBq9FchY0v7PzPCx9QAT6ztgCcKfS5j5+fxQUVaqysFzN2tgGcfDF5pa
+X-MS-Exchange-CrossTenant-userprincipalname: TXIlD1GSxQyOahVixBQnULEq6s2K5Y+X17vPTGiMYsm+9vAAs6uZGtx5tWiG90E6
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2501
-X-Proofpoint-GUID: dfGwPNSXUFXQGG0wBPbnBPYjVR2Cuyo6
-X-Proofpoint-ORIG-GUID: dfGwPNSXUFXQGG0wBPbnBPYjVR2Cuyo6
+X-Proofpoint-GUID: Ud51Ebe8-mman3GWqjyu2wzU2rc49v5R
+X-Proofpoint-ORIG-GUID: Ud51Ebe8-mman3GWqjyu2wzU2rc49v5R
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-07-08_08,2022-06-28_01,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In order to allow a CPIO archive to be parsed without actually
-extracting anything add a parse_only flag.
+An initramfs can be made up of multiple components that are concatenated
+together e.g. an early uncompressed cpio archive containing early
+firmware followed by a gziped cpio archive containing the actual
+userspace initramfs. Add a Kconfig option to allow the IMA subsystem to
+measure these components separately rather than as a single blob,
+allowing for easier reasoning about system state when checking TPM PCR
+values or the IMA integrity log.
 
 Signed-off-by: Jonathan McDowell <noodles@fb.com>
 ---
- include/linux/cpio.h |  2 ++
- lib/cpio.c           | 35 ++++++++++++++++++++++++++++-------
- 2 files changed, 30 insertions(+), 7 deletions(-)
+ security/integrity/ima/Kconfig    |  16 +++
+ security/integrity/ima/ima_main.c | 191 ++++++++++++++++++++++++++++--
+ 2 files changed, 199 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/cpio.h b/include/linux/cpio.h
-index b05140a565cb..86a43270d186 100644
---- a/include/linux/cpio.h
-+++ b/include/linux/cpio.h
-@@ -77,6 +77,8 @@ struct cpio_context {
- 	struct cpio_link_hash *link_hash[CPIO_LINK_HASH_SIZE];
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 7249f16257c7..b75da44a32f2 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -41,6 +41,22 @@ config IMA_KEXEC
+ 	   Depending on the IMA policy, the measurement list can grow to
+ 	   be very large.
  
- 	struct list_head dir_list;
++config IMA_MEASURE_INITRAMFS_COMPONENTS
++	bool "Enable measurement of individual kexec initramfs components"
++	depends on IMA
++	select CPIO
++	default n
++	help
++	   initramfs images can be made up of multiple separate components,
++	   e.g. an early uncompressed cpio archive containing early firmware
++	   followed by a gziped cpio archive containing the actual userspace
++	   initramfs. More complex systems might involve a firmware archive,
++	   a userspace archive and then a kernel module archive, allowing for
++	   only the piece that needs changed to vary between boots.
 +
-+	bool parse_only;
- };
- 
- int __cpio cpio_start(struct cpio_context *ctx);
-diff --git a/lib/cpio.c b/lib/cpio.c
-index 16629ad1e339..36357806eb70 100644
---- a/lib/cpio.c
-+++ b/lib/cpio.c
-@@ -15,7 +15,12 @@ static ssize_t __cpio xwrite(struct cpio_context *ctx, struct file *file,
- 
- 	/* sys_write only can write MAX_RW_COUNT aka 2G-4K bytes at most */
- 	while (count) {
--		ssize_t rv = kernel_write(file, p, count, pos);
-+		ssize_t rv;
++	   This option tells IMA to measure each individual component of the
++	   initramfs separately, rather than as a single blob.
 +
-+		if (ctx->parse_only)
-+			rv = count;
-+		else
-+			rv = kernel_write(file, p, count, pos);
+ config IMA_MEASURE_PCR_IDX
+ 	int
+ 	depends on IMA
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 040b03ddc1c7..be7f446df4f2 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -26,6 +26,8 @@
+ #include <linux/ima.h>
+ #include <linux/iversion.h>
+ #include <linux/fs.h>
++#include <linux/cpio.h>
++#include <linux/decompress/generic.h>
  
- 		if (rv < 0) {
- 			if (rv == -EINTR || rv == -EAGAIN)
-@@ -136,7 +141,8 @@ static void __cpio dir_utime(struct cpio_context *ctx)
+ #include "ima.h"
  
- 	list_for_each_entry_safe(de, tmp, &ctx->dir_list, list) {
- 		list_del(&de->list);
--		do_utime(de->name, de->mtime);
-+		if (!ctx->parse_only)
-+			do_utime(de->name, de->mtime);
- 		kfree(de);
- 	}
+@@ -198,6 +200,169 @@ void ima_file_free(struct file *file)
+ 	ima_check_last_writer(iint, inode, file);
  }
-@@ -374,6 +380,13 @@ static int __cpio do_name(struct cpio_context *ctx)
- 		free_hash(ctx);
- 		return 0;
- 	}
+ 
++#ifdef CONFIG_IMA_MEASURE_INITRAMFS_COMPONENTS
++static void initrd_error(char *x)
++{
++	pr_err("measure initrd: error from decompressor: %s\n", x);
++}
 +
-+	if (ctx->parse_only) {
-+		if (S_ISREG(ctx->mode))
-+			ctx->state = CPIO_COPYFILE;
-+		return 0;
++static long initrd_flush(void *buf, unsigned long size)
++{
++	return size;
++}
++
++static int process_initrd_measurement(struct integrity_iint_cache *iint,
++				      struct file *file, char *buf,
++				      loff_t size, const char *pathname,
++				      struct modsig *modsig, int pcr,
++				      struct evm_ima_xattr_data *xattr_value,
++				      int xattr_len,
++				      struct ima_template_desc *template_desc)
++{
++	struct cpio_context cpio_ctx;
++	const char *compress_name;
++	enum hash_algo hash_algo;
++	decompress_fn decompress;
++	long consumed, written;
++	char *start, *cur;
++	char *component;
++	int buf_len;
++	bool in_cpio;
++	int rc = 0;
++	int part;
++
++	/*
++	 * We collect this once, over the whole buffer.
++	 */
++	if (modsig)
++		ima_collect_modsig(modsig, buf, size);
++
++	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
++
++	/*
++	 * Pathname, compression name, 2 : separators, single digit part
++	 * and a trailing NUL.
++	 */
++	buf_len = strlen(pathname) + 5 + 2 + 2;
++	component = kmalloc(buf_len, GFP_KERNEL);
++	if (!component)
++		return -ENOMEM;
++
++	memset(&cpio_ctx, 0, sizeof(cpio_ctx));
++	cpio_ctx.parse_only = true;
++	rc = cpio_start(&cpio_ctx);
++	if (rc)
++		goto out;
++	in_cpio = false;
++	start = buf;
++	cur = buf;
++	part = 0;
++
++	while (rc == 0 && size) {
++		loff_t saved_offset = cpio_ctx.this_header;
++
++		/* It's a CPIO archive, process it */
++		if (*buf == '0' && !(cpio_ctx.this_header & 3)) {
++			in_cpio = true;
++			cpio_ctx.state = CPIO_START;
++			written = cpio_write_buffer(&cpio_ctx, buf, size);
++
++			if (written < 0) {
++				pr_err("Failed to process archive: %ld\n",
++				       written);
++				break;
++			}
++
++			buf += written;
++			size -= written;
++			continue;
++		}
++		if (!*buf) {
++			buf++;
++			size--;
++			cpio_ctx.this_header++;
++			continue;
++		}
++
++		if (in_cpio) {
++			iint->flags &= ~(IMA_COLLECTED);
++			iint->measured_pcrs &= ~(0x1 << pcr);
++			rc = ima_collect_measurement(iint, file, cur,
++						     buf - cur, hash_algo,
++						     NULL);
++			if (rc == -ENOMEM)
++				return rc;
++
++			snprintf(component, buf_len, "%s:%s:%d",
++				 pathname, "cpio", part);
++
++			ima_store_measurement(iint, file, component,
++					      xattr_value, xattr_len, NULL, pcr,
++					      template_desc);
++			part++;
++
++			in_cpio = false;
++		}
++
++		decompress = decompress_method(buf, size, &compress_name);
++		if (decompress) {
++			rc = decompress(buf, size, NULL, initrd_flush, NULL,
++					&consumed, initrd_error);
++			if (rc) {
++				pr_err("Failed to decompress archive\n");
++				break;
++			}
++		} else if (compress_name) {
++			pr_info("Compression method %s not configured.\n", compress_name);
++			break;
++		}
++
++		iint->flags &= ~(IMA_COLLECTED);
++		iint->measured_pcrs &= ~(0x1 << pcr);
++		rc = ima_collect_measurement(iint, file, buf,
++					     consumed, hash_algo, NULL);
++		if (rc == -ENOMEM)
++			goto out;
++
++		snprintf(component, buf_len, "%s:%s:%d", pathname,
++			 compress_name, part);
++
++		ima_store_measurement(iint, file, component,
++				      xattr_value, xattr_len, NULL, pcr,
++				      template_desc);
++		part++;
++
++		cpio_ctx.this_header = saved_offset + consumed;
++		buf += consumed;
++		size -= consumed;
++		cur = buf;
++	}
++	cpio_finish(&cpio_ctx);
++
++	/* Measure anything that remains */
++	if (size != 0) {
++		iint->flags &= ~(IMA_COLLECTED);
++		iint->measured_pcrs &= ~(0x1 << pcr);
++		rc = ima_collect_measurement(iint, file, buf, size, hash_algo,
++					     NULL);
++		if (rc == -ENOMEM)
++			goto out;
++
++		snprintf(component, buf_len, "%s:left:%d",
++			 pathname,
++			 part);
++
++		ima_store_measurement(iint, file, component,
++				      xattr_value, xattr_len, NULL, pcr,
++				      template_desc);
 +	}
 +
- 	clean_path(ctx->collected, ctx->mode);
- 	if (S_ISREG(ctx->mode)) {
- 		int ml = maybe_link(ctx);
-@@ -452,8 +465,10 @@ static int __cpio do_copy(struct cpio_context *ctx)
- 		if (ret != ctx->body_len)
- 			return (ret < 0) ? ret : -EIO;
- 
--		do_utime_path(&ctx->wfile->f_path, ctx->mtime);
--		fput(ctx->wfile);
-+		if (!ctx->parse_only) {
-+			do_utime_path(&ctx->wfile->f_path, ctx->mtime);
-+			fput(ctx->wfile);
-+		}
- 		if (ctx->csum_present && ctx->io_csum != ctx->hdr_csum)
- 			return -EBADMSG;
- 
-@@ -478,6 +493,12 @@ static int __cpio do_symlink(struct cpio_context *ctx)
- 	struct path path;
- 	int error;
- 
-+	ctx->state = CPIO_SKIPIT;
-+	ctx->next_state = CPIO_RESET;
++out:
++	kfree(component);
++	return rc;
++}
++#endif
 +
-+	if (ctx->parse_only)
-+		return 0;
+ static int process_measurement(struct file *file, const struct cred *cred,
+ 			       u32 secid, char *buf, loff_t size, int mask,
+ 			       enum ima_hooks func)
+@@ -334,17 +499,27 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 
+ 	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+ 
+-	rc = ima_collect_measurement(iint, file, buf, size, hash_algo, modsig);
+-	if (rc == -ENOMEM)
+-		goto out_locked;
+-
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+ 
+-	if (action & IMA_MEASURE)
+-		ima_store_measurement(iint, file, pathname,
+-				      xattr_value, xattr_len, modsig, pcr,
+-				      template_desc);
++	if (IS_ENABLED(CONFIG_IMA_MEASURE_INITRAMFS_COMPONENTS) &&
++	    (action & IMA_MEASURE) && func == KEXEC_INITRAMFS_CHECK) {
++		rc = process_initrd_measurement(iint, file, buf, size,
++						pathname, modsig, pcr,
++						xattr_value, xattr_len,
++						template_desc);
++	} else {
++		rc = ima_collect_measurement(iint, file, buf, size, hash_algo,
++					     modsig);
++		if (rc == -ENOMEM)
++			goto out_locked;
 +
- 	ctx->collected[N_ALIGN(ctx->name_len) + ctx->body_len] = '\0';
- 	clean_path(ctx->collected, 0);
- 
-@@ -496,8 +517,7 @@ static int __cpio do_symlink(struct cpio_context *ctx)
- 
- 	cpio_chown(ctx->collected, ctx->uid, ctx->gid, AT_SYMLINK_NOFOLLOW);
- 	do_utime(ctx->collected, ctx->mtime);
--	ctx->state = CPIO_SKIPIT;
--	ctx->next_state = CPIO_RESET;
++		if (action & IMA_MEASURE)
++			ima_store_measurement(iint, file, pathname,
++					      xattr_value, xattr_len, modsig,
++					      pcr, template_desc);
++	}
 +
- 	return 0;
- }
- 
-@@ -579,7 +599,8 @@ int __cpio cpio_start(struct cpio_context *ctx)
- 
- void __cpio cpio_finish(struct cpio_context *ctx)
- {
--	dir_utime(ctx);
-+	if (!ctx->parse_only)
-+		dir_utime(ctx);
- 	kfree(ctx->name_buf);
- 	kfree(ctx->symlink_buf);
- 	kfree(ctx->header_buf);
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+ 		rc = ima_check_blacklist(iint, modsig, pcr);
+ 		if (rc != -EPERM) {
 -- 
 2.36.1
