@@ -2,239 +2,81 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25859C43334
-	for <linux-security-module@archiver.kernel.org>; Sun, 10 Jul 2022 10:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D61C43334
+	for <linux-security-module@archiver.kernel.org>; Sun, 10 Jul 2022 14:07:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229476AbiGJKCe (ORCPT
+        id S229456AbiGJOHL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 10 Jul 2022 06:02:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57776 "EHLO
+        Sun, 10 Jul 2022 10:07:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbiGJKCd (ORCPT
+        with ESMTP id S229450AbiGJOHK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 10 Jul 2022 06:02:33 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29373644C;
-        Sun, 10 Jul 2022 03:02:32 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id l23so4359096ejr.5;
-        Sun, 10 Jul 2022 03:02:32 -0700 (PDT)
+        Sun, 10 Jul 2022 10:07:10 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A81BF4A
+        for <linux-security-module@vger.kernel.org>; Sun, 10 Jul 2022 07:07:09 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id d13-20020a05600c34cd00b003a2dc1cf0b4so1671465wmq.4
+        for <linux-security-module@vger.kernel.org>; Sun, 10 Jul 2022 07:07:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=swFPCXufrNxRRVtb689Z8yc0A8TSAEZQ8ASdk/OWEgA=;
-        b=j7lBMMrjS36jBxQ9GzGFdYg+Botc5Kg9/GlouVmdtXRY53Z491omx3jCgnNlq3IzZe
-         0pgBB14FOlTpnXQDgpEKz3sYn07QKDuZBjaBbWqGLy+4g7Jlj2YYjFcY6wTeHZ2cQIYc
-         JRZXagUOq0myqL+qtLwqNMV3sEOvAxWESmiPQ0ER/XzVf5J3woL4UbsEf+UjnzE5Pxum
-         SKZwGSX4KHwGngRTCNJ6BdbpgmPN3h2JmKaWpdql+XMCU7LJMX4vh4Te/Ru7D4RYGIxc
-         46W2Z42pCQMMspFECwtsm7a8Zz17bYqJdHXB1RRmVbHyEVx241QDd9YBQPif31iVUdZz
-         p4YA==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+Kz8nRCFUne/Ayme9USyvJHMtzkXtw/liE+I0kdzCAQ=;
+        b=OAh8jrFeAVNUvqcMF/44zwipUxUoOwMKA02uG2J7CWXP0X6jfBm6iHDuoDnFGhx3xF
+         dB1Srh1CIVse8+XiIFxzXRbcpK3EKKQPCzWi8KD0pxr+R0Qg+YcCrrfypK5pEBUC2abM
+         Xyppv08mRP2/HgpUVwtsv2+o3iuNRMZj99jeE9/13l05Lrrofh06kiu18mbuRAstcPSV
+         uyQjcpDHpeWUROX0kTZRzaXf1DkVuP1Z9ZVvhyk3hpLKbe0NfmiYvSdMfw1t/LtS05wz
+         jL6+91zPp6P5uIg9n6yt2tDF+GNJrLOCl79MAOQ8gP4vkLsKh++K0fn+qLbcAAEBw/pv
+         FeJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=swFPCXufrNxRRVtb689Z8yc0A8TSAEZQ8ASdk/OWEgA=;
-        b=585bVkuOtb61sNdAD1wXCqxHykxkCskJc+ioOM/I/OYKo63fuzYInFsII52aJ3Do54
-         I09BR/QPYLAgnXUqZFPMFmZ5dMY8kpTDQw5B3e0lfW5YIs7gBjSaL67QsAefPbsJL3mm
-         GE9HfceO8ge2LLdZrMsSJTSkC3e8REuJcbrMdfhvFu5YwpkGxL5X1wFC7/o7uMLsb1To
-         efPw6EEreldcBbjvlvessNC608eVKdPr2Loy883z3Xv5eNtEnQURwVoFQajQZRySfExB
-         r4Uy+n0IF93xo8Nao12i3u7rDxkeApUWhW8/yQX1YCS4VPMTlyomd1DX6FqKTZwz4hCV
-         aC7A==
-X-Gm-Message-State: AJIora8W/VVTrAf2RvQqwv/TNn1L5Pb8oZ/9jPJXkCfN51EYJz+KAdCu
-        QrJWRm1Uncu6AxTOXLEN1vA=
-X-Google-Smtp-Source: AGRyM1spHiiIlC05ygs9jn5HBKBf78FmjeoWRrBODOAvoSoVXI8CtVqfCv48XyuKC+e9izG3qUk+wg==
-X-Received: by 2002:a17:907:7349:b0:72b:4d9f:1418 with SMTP id dq9-20020a170907734900b0072b4d9f1418mr1270450ejc.304.1657447350661;
-        Sun, 10 Jul 2022 03:02:30 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id 15-20020a170906318f00b0072b2ffc662esm1436875ejy.156.2022.07.10.03.02.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Jul 2022 03:02:30 -0700 (PDT)
-Date:   Sun, 10 Jul 2022 12:02:28 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH 1/2] landlock: Support truncate(2).
-Message-ID: <YsqjtDO6m4OakGSi@nuc>
-References: <20220707200612.132705-1-gnoack3000@gmail.com>
- <20220707200612.132705-2-gnoack3000@gmail.com>
- <78bf2921-388b-df21-303c-c7d1eaa5b681@digikod.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+Kz8nRCFUne/Ayme9USyvJHMtzkXtw/liE+I0kdzCAQ=;
+        b=PIJU04AjD+duIKOBKXSJZ0HlVKIBWcm+z82p5wRCDUUkvOXM/29I2SagTeXzTqV9yF
+         pPHV+q8aiRUKPA651pEKoYCj8jGvxL60RpG1aKIxBd56SqLr/k7YuHjCq9rG3M4voLre
+         Uxfwq8qPjwvOV9tkP7GCk6jkRvYiSooatvOw6lHxpVZ7NeEjOr4B/Cc7iSV8Q/vLr6O7
+         GZtuGZQRVs5SyKNeuS0IPC6QP2tWl43dSd+o1aAIwMBdt2VxVOOEZYaQ8wWjRSleKk5I
+         KzfozZzHqKP8CUIzHdO470VpSgkSUS8jQxEWnXkaQWuR3iClj2Yun9kyPQfB7KCJ35ri
+         Truw==
+X-Gm-Message-State: AJIora95iLEgbC4aZ4waTyVOPJDpIWGC7KQRMTvEwsnIGgw+2JDxzBDo
+        J2AAisn9T48c6H4d0nZmYlVgFxI+x3cUaQ63+dNe
+X-Google-Smtp-Source: AGRyM1vk1v28We6QeGJ22gblHF1ObtlVMRmckfY1rLhyq1jXklIFXsZNKyo816TkaOWhzvu26JHyPx3i/XiN8dH+/bY=
+X-Received: by 2002:a05:600c:22c9:b0:3a2:d069:a046 with SMTP id
+ 9-20020a05600c22c900b003a2d069a046mr11036828wmg.29.1657462027911; Sun, 10 Jul
+ 2022 07:07:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <78bf2921-388b-df21-303c-c7d1eaa5b681@digikod.net>
+References: <165731248606.335227.15503387932450699761.stgit@olly> <4c33604f-25ee-c1e7-4a4c-afe95b3dba15@namei.org>
+In-Reply-To: <4c33604f-25ee-c1e7-4a4c-afe95b3dba15@namei.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 10 Jul 2022 10:06:56 -0400
+Message-ID: <CAHC9VhSowtGrY=Crgk85Yf6G+o-4SsWgDMJc_T_Jpw7yPx8zkg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: update the LSM maintainer info
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 08, 2022 at 01:17:32PM +0200, Mickaël Salaün wrote:
-> No final dot for a subject please.
-
-Done. Will be fixed in the next version.
-
->
-> On 07/07/2022 22:06, Günther Noack wrote:
-> > Add support for restricting the use of the truncate(2) and
-> > ftruncate(2) family of syscalls with Landlock.
+On Fri, Jul 8, 2022 at 5:19 PM James Morris <jmorris@namei.org> wrote:
+> On Fri, 8 Jul 2022, Paul Moore wrote:
+> > After many years of shepherding the LSM layer, and Linux kernel
+> > access control in general, James has decided to take a small step
+> > away from his technical role and has asked me to assume the
+> > day-to-day maintenance tasks for the LSM.  This patch makes the
+> > necessary updates to the MAINTAINERS file.
 > >
-> > This change also updates the Landlock ABI version and updates the
-> > existing Landlock tests to match the new ABI version.
+> > Thanks for all you patience and stewardship over the years James,
+> > I promise to do my best not to screw it all up :)
 > >
-> > Technically, unprivileged processes can already restrict the use of
-> > truncate(2) with seccomp-bpf.
-> >
-> > Using Landlock instead of seccomp-bpf has the folowwing advantages:
+> > Cc: linux-security-module@vger.kernel.org
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
 >
-> typo: following
+> Acked-by: James Morris <jamorris@linux.microsoft.com>
 
-Done. Will be fixed in the next version.
+James, are you planning to send this up to Linus during the next merge
+window or should I?
 
->
-> >
-> > - it doesn't require the use of BPF (conceptually simpler)
-> >
-> > - callers don't need to keep track of lists of syscall numbers for
-> >    different architectures and kernel versions
-> >
-> > - the restriction policy can be configured per file hierarchy.
-> >
-> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > ---
-> >   include/uapi/linux/landlock.h                | 2 ++
-> >   security/landlock/fs.c                       | 9 ++++++++-
-> >   security/landlock/limits.h                   | 2 +-
-> >   security/landlock/syscalls.c                 | 2 +-
-> >   tools/testing/selftests/landlock/base_test.c | 2 +-
-> >   tools/testing/selftests/landlock/fs_test.c   | 7 ++++---
-> >   6 files changed, 17 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> > index 23df4e0e8ace..2351050d4773 100644
-> > --- a/include/uapi/linux/landlock.h
-> > +++ b/include/uapi/linux/landlock.h
-> > @@ -134,6 +134,7 @@ struct landlock_path_beneath_attr {
-> >    *   directory) parent.  Otherwise, such actions are denied with errno set to
-> >    *   EACCES.  The EACCES errno prevails over EXDEV to let user space
-> >    *   efficiently deal with an unrecoverable error.
-> > + * - %LANDLOCK_ACCESS_FS_TRUNCATE%: Truncate a file.
->
-> We need to specify the ABI version starting to support this right.
-
-Done. Will be fixed in the next version.
-
->
-> >    *
-> >    * .. warning::
->
-> You need to remove truncate(2) from this warning block.
-
-Done. Will be fixed in the next version.
-
->
-> >    *
-> > @@ -160,6 +161,7 @@ struct landlock_path_beneath_attr {
-> >   #define LANDLOCK_ACCESS_FS_MAKE_BLOCK			(1ULL << 11)
-> >   #define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
-> >   #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
-> > +#define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
-> >   /* clang-format on */
-> >   #endif /* _UAPI_LINUX_LANDLOCK_H */
-> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > index ec5a6247cd3e..c57f581a9cd5 100644
-> > --- a/security/landlock/fs.c
-> > +++ b/security/landlock/fs.c
-> > @@ -146,7 +146,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
-> >   #define ACCESS_FILE ( \
-> >   	LANDLOCK_ACCESS_FS_EXECUTE | \
-> >   	LANDLOCK_ACCESS_FS_WRITE_FILE | \
-> > -	LANDLOCK_ACCESS_FS_READ_FILE)
-> > +	LANDLOCK_ACCESS_FS_READ_FILE | \
-> > +	LANDLOCK_ACCESS_FS_TRUNCATE)
-> >   /* clang-format on */
-> >   /*
-> > @@ -1140,6 +1141,11 @@ static int hook_path_rmdir(const struct path *const dir,
-> >   	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_DIR);
-> >   }
-> > +static int hook_path_truncate(const struct path *const path)
-> > +{
-> > +	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
-> > +}
-> > +
-> >   /* File hooks */
-> >   static inline access_mask_t get_file_access(const struct file *const file)
-> > @@ -1192,6 +1198,7 @@ static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
-> >   	LSM_HOOK_INIT(path_symlink, hook_path_symlink),
-> >   	LSM_HOOK_INIT(path_unlink, hook_path_unlink),
-> >   	LSM_HOOK_INIT(path_rmdir, hook_path_rmdir),
-> > +	LSM_HOOK_INIT(path_truncate, hook_path_truncate),
-> >   	LSM_HOOK_INIT(file_open, hook_file_open),
-> >   };
-> > diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> > index b54184ab9439..82288f0e9e5e 100644
-> > --- a/security/landlock/limits.h
-> > +++ b/security/landlock/limits.h
-> > @@ -18,7 +18,7 @@
-> >   #define LANDLOCK_MAX_NUM_LAYERS		16
-> >   #define LANDLOCK_MAX_NUM_RULES		U32_MAX
-> > -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_REFER
-> > +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_TRUNCATE
-> >   #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
-> >   #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
-> > diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> > index 735a0865ea11..f4d6fc7ed17f 100644
-> > --- a/security/landlock/syscalls.c
-> > +++ b/security/landlock/syscalls.c
-> > @@ -129,7 +129,7 @@ static const struct file_operations ruleset_fops = {
-> >   	.write = fop_dummy_write,
-> >   };
-> > -#define LANDLOCK_ABI_VERSION 2
-> > +#define LANDLOCK_ABI_VERSION 3
-> >   /**
-> >    * sys_landlock_create_ruleset - Create a new ruleset
-> > diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-> > index da9290817866..72cdae277b02 100644
-> > --- a/tools/testing/selftests/landlock/base_test.c
-> > +++ b/tools/testing/selftests/landlock/base_test.c
-> > @@ -75,7 +75,7 @@ TEST(abi_version)
-> >   	const struct landlock_ruleset_attr ruleset_attr = {
-> >   		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
-> >   	};
-> > -	ASSERT_EQ(2, landlock_create_ruleset(NULL, 0,
-> > +	ASSERT_EQ(3, landlock_create_ruleset(NULL, 0,
-> >   					     LANDLOCK_CREATE_RULESET_VERSION));
-> >   	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
-> > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> > index 21a2ce8fa739..cb77eaa01c91 100644
-> > --- a/tools/testing/selftests/landlock/fs_test.c
-> > +++ b/tools/testing/selftests/landlock/fs_test.c
-> > @@ -399,9 +399,10 @@ TEST_F_FORK(layout1, inval)
-> >   #define ACCESS_FILE ( \
-> >   	LANDLOCK_ACCESS_FS_EXECUTE | \
-> >   	LANDLOCK_ACCESS_FS_WRITE_FILE | \
-> > -	LANDLOCK_ACCESS_FS_READ_FILE)
-> > +	LANDLOCK_ACCESS_FS_READ_FILE | \
-> > +	LANDLOCK_ACCESS_FS_TRUNCATE)
-> > -#define ACCESS_LAST LANDLOCK_ACCESS_FS_REFER
-> > +#define ACCESS_LAST LANDLOCK_ACCESS_FS_TRUNCATE
-> >   #define ACCESS_ALL ( \
-> >   	ACCESS_FILE | \
-> > @@ -415,7 +416,7 @@ TEST_F_FORK(layout1, inval)
-> >   	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
-> >   	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
-> >   	LANDLOCK_ACCESS_FS_MAKE_SYM | \
-> > -	ACCESS_LAST)
-> > +	LANDLOCK_ACCESS_FS_REFER)
->
-> I created ACCESS_LAST to store the last access right while avoiding to copy
-> it in ACCESS_FILE or ACCESS_ALL, and then avoid forgetting about new access
-> right, but I now think it is not worth it and I prefer your approach which
-> will be easier to maintain.
-
-OK, thanks.
-
->
-> >   /* clang-format on */
-
---
+-- 
+paul-moore.com
