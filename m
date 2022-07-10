@@ -2,86 +2,220 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A2DC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jul 2022 21:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84568C43334
+	for <linux-security-module@archiver.kernel.org>; Sun, 10 Jul 2022 09:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240464AbiGHVTL (ORCPT
+        id S229505AbiGJJ5a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Jul 2022 17:19:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38920 "EHLO
+        Sun, 10 Jul 2022 05:57:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240462AbiGHVTK (ORCPT
+        with ESMTP id S229450AbiGJJ53 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Jul 2022 17:19:10 -0400
-Received: from mail.namei.org (namei.org [65.99.196.166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFE505C9D0
-        for <linux-security-module@vger.kernel.org>; Fri,  8 Jul 2022 14:19:06 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id 6B1AF197;
-        Fri,  8 Jul 2022 21:00:26 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.namei.org 6B1AF197
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=namei.org; s=2;
-        t=1657314026; bh=suzpY7Zig2TvjbgCxOSj0C8bJ24M8lH+Ouzqa9qMIHc=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=N2xt+Lyj6mButhrhxRBUDSUbUVSNWI38N8tUWfbQPwaxyJUACk9m9+uQt49ij+XZp
-         4AiK7TbMmSzvtG13R/x1cLNa4OdG1TO8QVHo2u45q0oM5X101WOqXMtCWEvqGxv0Y0
-         6/gtz9UvhteEP3023ExDMC5PdONk1h6IVb92rOJ8=
-Date:   Sat, 9 Jul 2022 07:00:26 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Paul Moore <paul@paul-moore.com>
-cc:     linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: update the LSM maintainer info
-In-Reply-To: <165731248606.335227.15503387932450699761.stgit@olly>
-Message-ID: <4c33604f-25ee-c1e7-4a4c-afe95b3dba15@namei.org>
-References: <165731248606.335227.15503387932450699761.stgit@olly>
+        Sun, 10 Jul 2022 05:57:29 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 444B410544;
+        Sun, 10 Jul 2022 02:57:28 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id v12so3145207edc.10;
+        Sun, 10 Jul 2022 02:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=zGY4kgOqFCDmXLRHsh0LG2vDnIGDCuRQpfcwHB3KcWU=;
+        b=q6YGZXsiC7lRySvNR9x7EICYmgXyoe8znrqSso5dmz3hPzbBQd+AcyyWm8ByP2puRs
+         vcfiNh58zgu8Z8mxVdFMMIgtshr/QSrKsrnb6Jf/+d5wbyfOfuNvsj9N/6zd9KofPxS7
+         4V04r6mqgxZ1QpodbQoRZJTep60s+mhngK7ZN90PtYMZWE44ufuRskZCgpBqvxFixgMU
+         XTR9q3gSz7WL/8Rcz3+Dkgi4Bbe2qnCOsYDtvzWk53QWdYVDKvf/DEQIEhUZEDoG5vWP
+         7GfJ9eQq5QjMUYFakDYHcNod3mRUxwcfvK+hxFnyNjCSmn8QSPUs98dcJXXx+YOMxvm6
+         WemQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=zGY4kgOqFCDmXLRHsh0LG2vDnIGDCuRQpfcwHB3KcWU=;
+        b=EystYOn+gfBa3bBEt2JmiYIPIorr3RpumTZChs2kpLo57JRPKBad604ANri/EJKSha
+         Wrf6u6hhJ0l4hOKB2EeLoRFJXh984LbsjT6du3rIsu2hKmN4gcxqQImIzXTix/JvBW4S
+         AxZVdlohfnj5kzjXfUAUE5Zxr3gscmDQe02Oy+Wo8IOnH14WqJlWwGAldrsOuCrHT8dj
+         8/1h2HhuPd0p8WRO0id9NqrZsqACxHW0LzWiAHa924RGNQZueP1b6ZnGfqhc6cbEI08z
+         qmIcoxuE5gE4giI4aiLGvjmWAS7xxDxUvNuHZf0sAJooHuVRKPegXo56qGjeD07HGsYB
+         pHZA==
+X-Gm-Message-State: AJIora/M/b3WR2t+4fcTWEYP37jffQicmIp1T/75Oh37iRe41zzkSNXH
+        rjUnfzymqOMXSy+xNNN+VS9tgQsfEAk=
+X-Google-Smtp-Source: AGRyM1sap0lzmD9khzBA+L/RBTXnOVPipjkOYrYQ1IAVhsT58ZpYVKd+Dibp6xXLWWpCwOkVDqB8mQ==
+X-Received: by 2002:a05:6402:40cb:b0:43a:8a99:225f with SMTP id z11-20020a05640240cb00b0043a8a99225fmr17281136edb.414.1657447046824;
+        Sun, 10 Jul 2022 02:57:26 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id b4-20020aa7d484000000b0043a46f5fb82sm2453873edr.73.2022.07.10.02.57.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Jul 2022 02:57:26 -0700 (PDT)
+Date:   Sun, 10 Jul 2022 11:57:24 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [PATCH 0/2] landlock: truncate(2) support
+Message-ID: <YsqihF0387fBeiVa@nuc>
+References: <20220707200612.132705-1-gnoack3000@gmail.com>
+ <dbb0cd04-72a8-b014-b442-a85075314464@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dbb0cd04-72a8-b014-b442-a85075314464@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 8 Jul 2022, Paul Moore wrote:
+Hello Mickaël!
 
-> After many years of shepherding the LSM layer, and Linux kernel
-> access control in general, James has decided to take a small step
-> away from his technical role and has asked me to assume the
-> day-to-day maintenance tasks for the LSM.  This patch makes the
-> necessary updates to the MAINTAINERS file.
-> 
-> Thanks for all you patience and stewardship over the years James,
-> I promise to do my best not to screw it all up :)
-> 
-> Cc: linux-security-module@vger.kernel.org
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+Thank you for the fast feedback! I'm looking into your comments from
+this mail and the rest of the thread and am working on an updated
+patch set.
 
+On Fri, Jul 08, 2022 at 01:16:29PM +0200, Mickaël Salaün wrote:
+> Hi Günther, this looks good!
+>
+> Added linux-fsdevel@vger.kernel.org
+>
+> On 07/07/2022 22:06, Günther Noack wrote:
+> > The goal of these patches is to work towards a more complete coverage
+> > of file system operations that are restrictable with Landlock.
+> >
+> > The known set of currently unsupported file system operations in
+> > Landlock is described at [1]. Out of the operations listed there,
+> > truncate is the only one that modifies file contents, so these patches
+> > should make it possible to prevent the direct modification of file
+> > contents with Landlock.
+> >
+> > The patch introduces the truncate(2) restriction feature as an
+> > additional bit in the access_mask_t bitmap, in line with the existing
+> > supported operations.
+> >
+> > Apart from Landlock, the truncate(2) and ftruncate(2) family of system
+> > calls can also be restricted using seccomp-bpf, but it is a
+> > complicated mechanism (requires BPF, requires keeping up-to-date
+> > syscall lists) and it also is not configurable by file hierarchy, as
+> > Landlock is. The simplicity and flexibility of the Landlock approach
+> > makes it worthwhile adding.
+> >
+> > I am aware that the documentation and samples/landlock/sandboxer.c
+> > tool still need corresponding updates; I'm hoping to get some early
+> > feedback this way.
+> Yes, that's a good approach.
+>
+> Extending the sandboxer should be straightforward, you can just extend the
+> scope of LL_FS_RW, taking into account the system Landlock ABI because there
+> is no "contract" for this sample.
 
-Acked-by: James Morris <jamorris@linux.microsoft.com>
+Sounds good, I'll extend the sample tool like this for the updated patch set.
 
-> ---
->  MAINTAINERS |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a6d3bd9d2a8d..5c7c5d04b99d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17909,12 +17909,13 @@ S:	Supported
->  F:	Documentation/admin-guide/security-bugs.rst
->  
->  SECURITY SUBSYSTEM
-> +M:	Paul Moore <paul@paul-moore.com>
->  M:	James Morris <jmorris@namei.org>
->  M:	"Serge E. Hallyn" <serge@hallyn.com>
->  L:	linux-security-module@vger.kernel.org (suggested Cc:)
->  S:	Supported
->  W:	http://kernsec.org/
-> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
->  F:	security/
->  X:	security/selinux/
->  
-> 
+(On the side, as you know from the discussion on the go-landlock
+library, I have some suspicion that the "best effort"
+backwards-compatibility approach in the sample tool is not the right
+one for the "refer" right, but that might be better suited for a
+separate patch. Maybe it'll be simpler to just not support a
+best-effort downgrade in the sample tool.)
 
--- 
-James Morris
-<jmorris@namei.org>
+> You'll need to remove the warning about truncate(2) in the documentation,
+> and maybe to move it to the "previous limitations" section, with the
+> LANDLOCK_ACCESS_TRUNCATE doc pointing to it. I think it would be nice to
+> extend the LANDLOCK_ACCESS_FS_WRITE documentation to point to
+> LANDLOCK_ACCESS_FS_TRUNCATE because this distinction could be disturbing for
+> users. Indeed, all inode-based LSMs (SELinux and Smack) deny such action if
+> the inode is not writable (with the inode_permission check), which is not
+> the case for path-based LSMs (AppArmor and Tomoyo).
 
+This makes a lot of sense, I'll work on the documentation to point this out.
+
+I suspect that for many common use cases, the
+LANDLOCK_ACCESS_FS_TRUNCATE right will anyway only be used together
+with LANDLOCK_ACCESS_FS_FILE_WRITE in practice. (See below for more
+detail.)
+
+> While we may question whether a dedicated access right should be added for
+> the Landlock use case, two arguments are in favor of this approach:
+> - For compatibility reasons, the kernel must follow the semantic of a
+> specific Landlock ABI, otherwise it could break user space. We could still
+> backport this patch and merge it with the ABI 1 and treat it as a bug, but
+> the initial version of Landlock was meant to be an MVP, hence this lack of
+> access right.
+> - There is a specific access right for Capsicum (CAP_FTRUNCATE) that could
+> makes more sense in the future.
+>
+> Following the Capsicum semantic, I think it would be a good idea to also
+> check for the O_TRUNC open flag:
+> https://www.freebsd.org/cgi/man.cgi?query=rights
+
+open() with O_TRUNC was indeed a case I had not thought about - thanks
+for pointing it out.
+
+I started adding some tests for it, and found to my surprise that
+open() *is* already checking security_path_truncate() when it is
+truncating files. So there is a chance that we can get away without a
+special check for O_TRUNC in the security_file_open hook.
+
+The exact semantics might be slightly different to Capsicum though -
+in particular, the creat() call (= open with O_TRUNC|O_CREAT|O_WRONLY)
+will require the Landlock truncate right when it's overwriting an
+existing regular file, but it will not require the Landlock truncate
+right when it's creating a new file.
+
+I'm not fully sure how this is done in Capsicum. I assume that the
+Comparison with Capsicum is mostly for inspiration, but there is no
+goal of being fully compatible with that model?
+
+The creat() behaviour is non-intuitive from userspace, I think:
+creat() is a pretty common way to create new files, and it might come
+as a surprise to people that this can require the truncate right,
+because:
+
+- The function creat() doesn't have "truncate" in its name, and you
+  might be tempted to think that the LANDLOCK_ACCESS_FS_MAKE_REG is
+  sufficient for calling it.
+
+- Users can work around the need for the truncate right by unlinking
+  the existing regular file with the same name and creating a new one.
+  So for the most common use case (where users do not care about the
+  file's inode identity or race conditions), it is surprising that
+  the truncate right is required.
+
+Summarizing this, I also think that the truncate right needs to be a
+separate flag, even if just for backwards compatibility reasons.
+
+But at the same time, I suspect that in practice, the truncate right
+will probably have to usually go together with the file_write right,
+so that the very common creat() use case (and possibly others) does
+not yield surprising behaviour.
+
+—Günther
+
+>
+>
+> >
+> > These patches are based on version 5.19-rc5.
+> > The patch set can also be browsed on the web at [2].
+> >
+> > Best regards,
+> > Günther
+> >
+> > [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+> > [2] https://github.com/gnoack/linux/tree/landlock-truncate
+> >
+> > Günther Noack (2):
+> >    landlock: Support truncate(2).
+> >    landlock: Selftests for truncate(2) support.
+> >
+> >   include/uapi/linux/landlock.h                |  2 +
+> >   security/landlock/fs.c                       |  9 +-
+> >   security/landlock/limits.h                   |  2 +-
+> >   security/landlock/syscalls.c                 |  2 +-
+> >   tools/testing/selftests/landlock/base_test.c |  2 +-
+> >   tools/testing/selftests/landlock/fs_test.c   | 87 +++++++++++++++++++-
+> >   6 files changed, 97 insertions(+), 7 deletions(-)
+> >
+> > --
+> > 2.37.0
+
+--
