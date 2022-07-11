@@ -2,219 +2,103 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 629A9C43334
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jul 2022 08:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D04BCCA480
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jul 2022 12:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbiGKIQn (ORCPT
+        id S231326AbiGKMEX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Jul 2022 04:16:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54328 "EHLO
+        Mon, 11 Jul 2022 08:04:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbiGKIQn (ORCPT
+        with ESMTP id S231363AbiGKMEV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Jul 2022 04:16:43 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752B61D32B;
-        Mon, 11 Jul 2022 01:16:41 -0700 (PDT)
-Received: from fraeml715-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4LhGnv6hPCz67xNM;
-        Mon, 11 Jul 2022 16:12:19 +0800 (CST)
-Received: from lhreml745-chm.china.huawei.com (10.201.108.195) by
- fraeml715-chm.china.huawei.com (10.206.15.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 11 Jul 2022 10:16:39 +0200
-Received: from [10.122.132.241] (10.122.132.241) by
- lhreml745-chm.china.huawei.com (10.201.108.195) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 11 Jul 2022 09:16:38 +0100
-Message-ID: <88cd33f2-8c6c-bfff-7271-7508b1ebac17@huawei.com>
-Date:   Mon, 11 Jul 2022 11:16:37 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v6 02/17] landlock: refactors landlock_find/insert_rule
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <anton.sirazetdinov@huawei.com>
-References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
- <20220621082313.3330667-3-konstantin.meskhidze@huawei.com>
- <0bbbcf21-1e7d-5585-545f-bf89d8ebd527@digikod.net>
- <9d0c8780-6648-404f-7e51-b62a36617121@huawei.com>
- <72375435-94d4-e3aa-c27b-b44382dde6ad@digikod.net>
- <76c7c92e-3377-0bb8-14d5-e5c286c67dc3@huawei.com>
- <7d72fc3e-bdeb-14b8-1e6c-a99c2d052e3f@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <7d72fc3e-bdeb-14b8-1e6c-a99c2d052e3f@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
- lhreml745-chm.china.huawei.com (10.201.108.195)
-X-CFilter-Loop: Reflected
+        Mon, 11 Jul 2022 08:04:21 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF66741D33;
+        Mon, 11 Jul 2022 05:04:20 -0700 (PDT)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26BBJPKt014047;
+        Mon, 11 Jul 2022 12:04:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=dy5qnrY8PKyQYQC1yezcdT8KNhS4VxqtVLh8J5ex2n0=;
+ b=kldtlybrL5SobUYT5Gx/8XXk5K2c3LFBfbnr25NJqOxoa2Ve+4PeBkpMFOGvYfaifTwR
+ xdfVysUDoMrcEasglFMFDRXwyLEHnJuzLJBf388+HcEsUoDCek+GX2Qm2GEXtdqFq/e9
+ iE1VOH0aXbuxFl1Vj+xHxHIyblZ0GEkj6Ej3XBgOwuFdLXwC4Xz7XDracfuHZC8zDNCz
+ l1T4Ac+pc45iuUmsqZLfCtKFvKMxhlnY/fw4VVcN4rR8nGYHvxmCnhgoqi7fxnre+CKi
+ 5vglCmgwIFBoxXTcq89TUDgVJgP62QFUw6s6CQSxSef9RBJciPDhDsWf1EuL6zQ1fNJv mA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h84sagfn4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Jul 2022 12:04:10 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 26BAXTw3026877;
+        Mon, 11 Jul 2022 12:04:10 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h84sagfkj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Jul 2022 12:04:09 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 26BBq16i027196;
+        Mon, 11 Jul 2022 12:04:07 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma03ams.nl.ibm.com with ESMTP id 3h71a8tpgr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Jul 2022 12:04:07 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 26BC45nA17629598
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Jul 2022 12:04:05 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 113D9A4060;
+        Mon, 11 Jul 2022 12:04:05 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 04CFBA405F;
+        Mon, 11 Jul 2022 12:04:03 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.107.19])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Jul 2022 12:04:02 +0000 (GMT)
+Message-ID: <81ea189fd671947efc61000a745599a4b0573370.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima/evm: Fix potential memory leak in ima_init_crypto()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jianglei Nie <niejianglei2021@163.com>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 11 Jul 2022 08:04:01 -0400
+In-Reply-To: <20220711072202.2319030-1-niejianglei2021@163.com>
+References: <20220711072202.2319030-1-niejianglei2021@163.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: kM73rs2Rr-dLTyIY3ri_t9sjkc7zXq29
+X-Proofpoint-ORIG-GUID: ESBp5WcxjtrgDeLcV_KlZiXzMkb1K52C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-11_17,2022-07-08_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015
+ malwarescore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
+ mlxlogscore=797 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2206140000 definitions=main-2207110052
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, 2022-07-11 at 15:22 +0800, Jianglei Nie wrote:
+> This patch adds the missing kfree() for ima_algo_array allocated by
+> kcalloc() to avoid potential memory leak.
 
+Missing is the reason that ima_algo_array is being freed.
 
-7/8/2022 7:57 PM, Mickaël Salaün пишет:
-> 
-> On 08/07/2022 16:20, Konstantin Meskhidze (A) wrote:
->> 
->> 
->> 7/8/2022 4:56 PM, Mickaël Salaün пишет:
->>>
->>> On 08/07/2022 14:53, Konstantin Meskhidze (A) wrote:
->>>>
->>>>
->>>> 7/7/2022 7:44 PM, Mickaël Salaün пишет:
->>>>>
->>>>> On 21/06/2022 10:22, Konstantin Meskhidze wrote:
->>>>>> Adds a new object union to support a socket port
->>>>>> rule type. Refactors landlock_insert_rule() and
->>>>>> landlock_find_rule() to support coming network
->>>>>> modifications. Now adding or searching a rule
->>>>>> in a ruleset depends on a rule_type argument
->>>>>> provided in refactored functions mentioned above.
->>>>>>
->>>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>>>> ---
->>>>>>
->>>>>> Changes since v5:
->>>>>> * Formats code with clang-format-14.
->>>>>>
->>>>>> Changes since v4:
->>>>>> * Refactors insert_rule() and create_rule() functions by deleting
->>>>>> rule_type from their arguments list, it helps to reduce useless code.
->>>>>>
->>>>>> Changes since v3:
->>>>>> * Splits commit.
->>>>>> * Refactors landlock_insert_rule and landlock_find_rule functions.
->>>>>> * Rename new_ruleset->root_inode.
->>>>>>
->>>>>> ---
->>>>>>   security/landlock/fs.c      |   7 ++-
->>>>>>   security/landlock/ruleset.c | 105 
->>>>>> ++++++++++++++++++++++++++----------
->>>>>>   security/landlock/ruleset.h |  27 +++++-----
->>>>>>   3 files changed, 96 insertions(+), 43 deletions(-)
->>>>>>
->>>>>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
->>>>>> index e6da08ed99d1..46aedc2a05a8 100644
->>>>>> --- a/security/landlock/fs.c
->>>>>> +++ b/security/landlock/fs.c
->>>>>> @@ -173,7 +173,8 @@ int landlock_append_fs_rule(struct 
->>>>>> landlock_ruleset *const ruleset,
->>>>>>       if (IS_ERR(object))
->>>>>>           return PTR_ERR(object);
->>>>>>       mutex_lock(&ruleset->lock);
->>>>>> -    err = landlock_insert_rule(ruleset, object, access_rights);
->>>>>> +    err = landlock_insert_rule(ruleset, object, 0, access_rights,
->>>>>> +                   LANDLOCK_RULE_PATH_BENEATH);
->>>>>>       mutex_unlock(&ruleset->lock);
->>>>>>       /*
->>>>>>        * No need to check for an error because landlock_insert_rule()
->>>>>> @@ -204,7 +205,9 @@ find_rule(const struct landlock_ruleset *const 
->>>>>> domain,
->>>>>>       inode = d_backing_inode(dentry);
->>>>>>       rcu_read_lock();
->>>>>>       rule = landlock_find_rule(
->>>>>> -        domain, rcu_dereference(landlock_inode(inode)->object));
->>>>>> +        domain,
->>>>>> +        (uintptr_t)rcu_dereference(landlock_inode(inode)->object),
->>>>>> +        LANDLOCK_RULE_PATH_BENEATH);
->>>>>>       rcu_read_unlock();
->>>>>>       return rule;
->>>>>>   }
->>>>>> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
->>>>>> index a3fd58d01f09..5f13f8a12aee 100644
->>>>>> --- a/security/landlock/ruleset.c
->>>>>> +++ b/security/landlock/ruleset.c
->>>>>> @@ -35,7 +35,7 @@ static struct landlock_ruleset 
->>>>>> *create_ruleset(const u32 num_layers)
->>>>>>           return ERR_PTR(-ENOMEM);
->>>>>>       refcount_set(&new_ruleset->usage, 1);
->>>>>>       mutex_init(&new_ruleset->lock);
->>>>>> -    new_ruleset->root = RB_ROOT;
->>>>>> +    new_ruleset->root_inode = RB_ROOT;
->>>>>>       new_ruleset->num_layers = num_layers;
->>>>>>       /*
->>>>>>        * hierarchy = NULL
->>>>>> @@ -69,7 +69,8 @@ static void build_check_rule(void)
->>>>>>   }
->>>>>>
->>>>>>   static struct landlock_rule *
->>>>>> -create_rule(struct landlock_object *const object,
->>>>>> +create_rule(struct landlock_object *const object_ptr,
->>>>>> +        const uintptr_t object_data,
->>>>>>           const struct landlock_layer (*const layers)[], const u32 
->>>>>> num_layers,
->>>>>>           const struct landlock_layer *const new_layer)
->>>>>>   {
->>>>>> @@ -90,8 +91,15 @@ create_rule(struct landlock_object *const object,
->>>>>>       if (!new_rule)
->>>>>>           return ERR_PTR(-ENOMEM);
->>>>>>       RB_CLEAR_NODE(&new_rule->node);
->>>>>> -    landlock_get_object(object);
->>>>>> -    new_rule->object = object;
->>>>>> +
->>>>>> +    if (object_ptr) {
->>>>>> +        landlock_get_object(object_ptr);
->>>>>> +        new_rule->object.ptr = object_ptr;
->>>>>> +    } else if (object_ptr && object_data) {
->>>>>
->>>>> Something is wrong with this second check: else + object_ptr?
->>>>
->>>> It was your suggestion to use it like this:
->>>> " ....You can also add a WARN_ON_ONCE(object_ptr && object_data)."
->>>>
->>>> Please check it here:
->>>> https://lore.kernel.org/linux-security-module/bc44f11f-0eaa-a5f6-c5dc-1d36570f1be1@digikod.net/ 
->>>
->>>
->>> Yes, but the error is in the "else", you should write:
->>> if (WARN_ON_ONCE(object_ptr && object_data))
->>>     return ERR_PTR(-EINVAL);
->>>
->>> …and this should be before the `if (object_ptr) {` line (to avoid
->>> erronous landlock_get_object() call), just after the `if (!new_rule)` 
->>> check.
+Perhaps something like, 
+"On failure to allocate the SHA1 tfm, IMA fails to initialize and exits
+without freeing the ima_algo_array.   Add the missing kfree() for
+ima_algo_array to avoid the potential memory leak."
 
-     Ok. I got it.
->> 
->>    Maybe we could delete this check here cause we have it in the upper 
->> insert_rule() function??
->> 
->> ...
->>      if (WARN_ON_ONCE(!layers))
->>          return -ENOENT;
->> ------>    if (WARN_ON_ONCE(object_ptr && object_data))
->>          return -EINVAL;
->>      /* Chooses rb_tree structure depending on a rule type. */
->>      switch (rule_type) {
->>      case LANDLOCK_RULE_PATH_BENEATH:
->>          if (WARN_ON_ONCE(!object_ptr))
->>              return -ENOENT;
->>          object_data = (uintptr_t)object_ptr;
->>          root = &ruleset->root_inode;
->>          break;
->>      default:
->>          WARN_ON_ONCE(1);
->>          return -EINVAL;
->>      }
->> ...
->> 
->> This is double check here. What do you think?
-> 
-> This check is indeed done twice, and for now create_rule() is only
-> called from insert_rule(), but I prefer to keep it in both location to
-> not get bitten in the future were it could be called from other
-> locations. The compiler may be smart enough to remove the redundant
-> checks though.
-> 
-> I'll send a patch to improve this part.
+thanks,
 
-  Ok. thanks!!!
-> .
+Mimi
+
