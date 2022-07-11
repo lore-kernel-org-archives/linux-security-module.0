@@ -2,87 +2,72 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08652CCA479
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jul 2022 02:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1011C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jul 2022 07:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229599AbiGKCxG (ORCPT
+        id S230077AbiGKHWv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 10 Jul 2022 22:53:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49218 "EHLO
+        Mon, 11 Jul 2022 03:22:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiGKCxF (ORCPT
+        with ESMTP id S229978AbiGKHWv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 10 Jul 2022 22:53:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 696A9183A8;
-        Sun, 10 Jul 2022 19:53:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F36E8610A5;
-        Mon, 11 Jul 2022 02:53:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07264C3411E;
-        Mon, 11 Jul 2022 02:53:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657507983;
-        bh=PCWoXAlR4NxLTHXg0LrKWX+ks7as6mmpDn6fX/LsNHU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hywFkzoAIkBPJDBfXVkvAObcMXd2FqviNCH/dD4P34ClqDPjfWp2U3b4k6HdRaw3P
-         Xbc/i/wrzaYBnlKavv9BCRAnZ1NganrvYxGA+mkgP3Ewy6L096MKjQWhO/QLEK8jxn
-         4Z/p3VldcMJSjcXWd3LrTbpyop020gD5uIlSSXXnr91QQeU11Y0BIZqIjDEmtcrDKO
-         8j9ule6Umk3yel3Le4oYzW6IRgEMq5PZB8NtR9uW8wOyacVgXD4lykuis40gHbaQ6+
-         Yb8vX0SzNMhb71rn5VTD3UQsnx5XcexEbDSefXz4DwKe5FYa3l0UT7cYpO6c1m9m4R
-         wCokhaeSl4Mgg==
-Date:   Mon, 11 Jul 2022 05:52:58 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Li zeming <zeming@nfschina.com>
-Cc:     dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@nfschina.com
-Subject: Re: [PATCH] keys/keyring: Fix typo in string
-Message-ID: <YsuQihEKR8DC+Pnm@kernel.org>
-References: <20220704025610.3834-1-zeming@nfschina.com>
+        Mon, 11 Jul 2022 03:22:51 -0400
+Received: from mail-m971.mail.163.com (mail-m971.mail.163.com [123.126.97.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5DCB41055F;
+        Mon, 11 Jul 2022 00:22:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=AH2Ez
+        WZfnJV6fIlvat5MXanKCwJ4URf7qbM1gSDXMpI=; b=G4RNUrAD7r0CRtlLAAib5
+        sRtXfps0BpUR+wIHr92y0A5J5zsfltOS2VKQQGYk9gTvfR2I3zmInh+PokMhzJqK
+        I+4InpAN1vrUyHIi2hIg6hKRQG1j8AAPJNZdU6yxdyJl9y2eacwJB8ez1bNf2Fc3
+        BhxNPLKsTa2yzSn66+MtZA=
+Received: from localhost.localdomain (unknown [123.112.69.106])
+        by smtp1 (Coremail) with SMTP id GdxpCgBnpeabz8tisz21Ng--.19861S4;
+        Mon, 11 Jul 2022 15:22:16 +0800 (CST)
+From:   Jianglei Nie <niejianglei2021@163.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jianglei Nie <niejianglei2021@163.com>
+Subject: [PATCH] ima/evm: Fix potential memory leak in ima_init_crypto()
+Date:   Mon, 11 Jul 2022 15:22:02 +0800
+Message-Id: <20220711072202.2319030-1-niejianglei2021@163.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220704025610.3834-1-zeming@nfschina.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GdxpCgBnpeabz8tisz21Ng--.19861S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtFWfKFy8ZF1fCw48CFWxJFb_yoWxuFgE9a
+        s0934xW3W7Zan3ZayjvFZ7ZF4vgrZ5XFyFgr9IywnruFy3Cr45Xa47Xrs3Jry8AryUAF4q
+        ga98JFW2kwnFgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xREs2-3UUUUU==
+X-Originating-IP: [123.112.69.106]
+X-CM-SenderInfo: xqlhyxxdqjzvrlsqjii6rwjhhfrp/xtbBOQg7jF-PObrQ9QAAsw
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 04, 2022 at 10:56:10AM +0800, Li zeming wrote:
-> Remove the repeated ',' from string
-> 
-> Signed-off-by: Li zeming <zeming@nfschina.com>
-> ---
->  security/keys/keyring.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> index 5e6a90760753..c6c47ca9b57d 100644
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
-> @@ -460,7 +460,7 @@ static int keyring_read_iterator(const void *object, void *data)
->  	struct keyring_read_iterator_context *ctx = data;
->  	const struct key *key = keyring_ptr_to_key(object);
->  
-> -	kenter("{%s,%d},,{%zu/%zu}",
-> +	kenter("{%s,%d},{%zu/%zu}",
->  	       key->type->name, key->serial, ctx->count, ctx->buflen);
->  
->  	if (ctx->count >= ctx->buflen)
-> @@ -484,7 +484,7 @@ static long keyring_read(const struct key *keyring,
->  	struct keyring_read_iterator_context ctx;
->  	long ret;
->  
-> -	kenter("{%d},,%zu", key_serial(keyring), buflen);
-> +	kenter("{%d},%zu", key_serial(keyring), buflen);
->  
->  	if (buflen & (sizeof(key_serial_t) - 1))
->  		return -EINVAL;
-> -- 
-> 2.18.2
-> 
+This patch adds the missing kfree() for ima_algo_array allocated by
+kcalloc() to avoid potential memory leak.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
+---
+ security/integrity/ima/ima_crypto.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-BR, Jarkko
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index a7206cc1d7d1..64499056648a 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -205,6 +205,7 @@ int __init ima_init_crypto(void)
+ 
+ 		crypto_free_shash(ima_algo_array[i].tfm);
+ 	}
++	kfree(ima_algo_array);
+ out:
+ 	crypto_free_shash(ima_shash_tfm);
+ 	return rc;
+-- 
+2.25.1
+
