@@ -2,73 +2,80 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AD3C43334
-	for <linux-security-module@archiver.kernel.org>; Sun, 10 Jul 2022 14:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE7FC43334
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jul 2022 00:10:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229476AbiGJOPb (ORCPT
+        id S229502AbiGKAKL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 10 Jul 2022 10:15:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39536 "EHLO
+        Sun, 10 Jul 2022 20:10:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiGJOPa (ORCPT
+        with ESMTP id S229476AbiGKAKL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 10 Jul 2022 10:15:30 -0400
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98FDBB841
-        for <linux-security-module@vger.kernel.org>; Sun, 10 Jul 2022 07:15:28 -0700 (PDT)
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id BC1369CB; Sun, 10 Jul 2022 09:15:26 -0500 (CDT)
-Date:   Sun, 10 Jul 2022 09:15:26 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>
-Subject: Re: [PATCH] MAINTAINERS: update the LSM maintainer info
-Message-ID: <20220710141526.GA10287@mail.hallyn.com>
-References: <165731248606.335227.15503387932450699761.stgit@olly>
+        Sun, 10 Jul 2022 20:10:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EEB15714;
+        Sun, 10 Jul 2022 17:10:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 45AB260FCB;
+        Mon, 11 Jul 2022 00:10:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A55C3411E;
+        Mon, 11 Jul 2022 00:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657498209;
+        bh=+F9YL090Ob/Y03kL/DzycGK6iSAWPTVALwZmsSBa0S4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BwliBKCdFJSZZPg3Lct3qOjaBKwqkHQXx7OhyJFcUK9T+61zNjEHmh++cDUWXK+0Y
+         Ua5i5K6N13sG5ErdRIe0oZkYD6H8WHQzWtmgMkhqPxxITt067a3MlD7WkSjQjxcLNN
+         vKerkDmaRAt9GNyDn2eBdiCAaSYsnr5AK9WV1BBkn7Mkm3f6RLvITjlbTFy7IMltPo
+         PTM/Qu6oAVKiSSlsN672iEQ0L1zXlnTaXe0Aa6Ubrw851uNFG9sNPB72ztTo7dvncb
+         5xpoSl7BDerFeOesEPMP/OA7W37G811KTnvHzm/nYKVyPlLBuRCdXXBqSkql7fRdFL
+         1a/IdDu52mDFw==
+Date:   Mon, 11 Jul 2022 03:10:04 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Li zeming <zeming@nfschina.com>
+Cc:     dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@nfschina.com
+Subject: Re: [PATCH] keys/keyctl: Fix typo in string
+Message-ID: <YstqXEPmPV2YUfWN@kernel.org>
+References: <20220704025248.3695-1-zeming@nfschina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <165731248606.335227.15503387932450699761.stgit@olly>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20220704025248.3695-1-zeming@nfschina.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 08, 2022 at 04:34:46PM -0400, Paul Moore wrote:
-> After many years of shepherding the LSM layer, and Linux kernel
-> access control in general, James has decided to take a small step
-> away from his technical role and has asked me to assume the
-> day-to-day maintenance tasks for the LSM.  This patch makes the
-> necessary updates to the MAINTAINERS file.
+On Mon, Jul 04, 2022 at 10:52:48AM +0800, Li zeming wrote:
+> Remove the repeated ',' from string
 > 
-> Thanks for all you patience and stewardship over the years James,
-> I promise to do my best not to screw it all up :)
-> 
-> Cc: linux-security-module@vger.kernel.org
-
-Acked-by: Serge Hallyn <serge@hallyn.com>
-
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Li zeming <zeming@nfschina.com>
 > ---
->  MAINTAINERS |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  security/keys/keyctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a6d3bd9d2a8d..5c7c5d04b99d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17909,12 +17909,13 @@ S:	Supported
->  F:	Documentation/admin-guide/security-bugs.rst
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index 96a92a645216..2be09642dd13 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -1175,7 +1175,7 @@ static long keyctl_instantiate_key_common(key_serial_t id,
+>  	void *payload;
+>  	long ret;
 >  
->  SECURITY SUBSYSTEM
-> +M:	Paul Moore <paul@paul-moore.com>
->  M:	James Morris <jmorris@namei.org>
->  M:	"Serge E. Hallyn" <serge@hallyn.com>
->  L:	linux-security-module@vger.kernel.org (suggested Cc:)
->  S:	Supported
->  W:	http://kernsec.org/
-> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
->  F:	security/
->  X:	security/selinux/
+> -	kenter("%d,,%zu,%d", id, plen, ringid);
+> +	kenter("%d,%zu,%d", id, plen, ringid);
 >  
+>  	if (!plen)
+>  		from = NULL;
+> -- 
+> 2.18.2
+> 
+
+Please, add
+
+Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
+
+BR, Jarkko
