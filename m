@@ -2,773 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0F9CCA480
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jul 2022 18:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54826C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jul 2022 21:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234493AbiGLSsD (ORCPT
+        id S230166AbiGLVOR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jul 2022 14:48:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46684 "EHLO
+        Tue, 12 Jul 2022 17:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234000AbiGLSrd (ORCPT
+        with ESMTP id S231283AbiGLVOQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jul 2022 14:47:33 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA929DE1A0;
-        Tue, 12 Jul 2022 11:43:17 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Lj8gq3HLQz67LYY;
-        Wed, 13 Jul 2022 02:40:07 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 12 Jul 2022 20:43:08 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <ast@kernel.org>, <daniel@iogearbox.net>,
-        <john.fastabend@gmail.com>, <andrii@kernel.org>,
-        <martin.lau@linux.dev>, <song@kernel.org>, <yhs@fb.com>,
-        <kpsingh@kernel.org>, <dhowells@redhat.com>, <jarkko@kernel.org>,
-        <shuah@kernel.org>
-CC:     <bpf@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v7 7/7] selftests/bpf: Add test for bpf_verify_pkcs7_signature() helper
-Date:   Tue, 12 Jul 2022 20:41:28 +0200
-Message-ID: <20220712184128.999301-8-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220712184128.999301-1-roberto.sassu@huawei.com>
-References: <20220712184128.999301-1-roberto.sassu@huawei.com>
+        Tue, 12 Jul 2022 17:14:16 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4B466F7C0
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Jul 2022 14:14:15 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id ss3so10514841ejc.11
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Jul 2022 14:14:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dnza/TjQ7QeLiCmPalDtqdBTF9zncr1x2refxXYD3HM=;
+        b=Prx0XhE88I2EKI8II/4iWAiHg7t3/QhFkXhNvHaJhPZQ8f7a10H1PeducjauL2UNqi
+         BklLFKKw+UAKUFFFmdNJCAjs90/IymvLp4w1EnZD7Ik84glAo/9pDAmJpc/vc1GGGihr
+         aP8DsssfB+tDuJco4nH8BJKOaCi/AONgHoEzlxoYrNuHP5FVUQBm3lnsJ5ngyqUrVQ6r
+         jPloKSOfervXHzG6GZNxiijOd7SJiLMcmC2xU/SNz0Fhm5yLLxaNSAIFPnCkAx3W4kyu
+         AbKF+BhrwsD2Pe8IudVY/ESvMRitOr9RZnYJ5emBg4yRYPiFedv1Gbf3pzZuF1gbN8e+
+         FV+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dnza/TjQ7QeLiCmPalDtqdBTF9zncr1x2refxXYD3HM=;
+        b=UkgWMs54xSLJnXeXoEtbfbfKbWR5BjLUqrg7UVXY9KjHl8Gb3Pa+gMQVqLCd2JyN6H
+         Hppr86vg4mSwcimXsgtOco33UPm86Xr5uBGtXWW3uoXfy2rK+L3HM4JbO/Ca+k+xi037
+         G18Z7s/hIQvNIsFGq7QU6IwmySASoaLa1K62vBtwqnBw5yVO+CAVPfR3rBQbUZzWVs5l
+         Na7ORRGp7x2MRov+sEIuFzJrQ/eqrINHl0Ui7XgbkHdGt0OvuitkJx7Y6i/b4sozzwPX
+         DeCm1Guz1hDwrlfH1W/4Nlf6uQyR9CzvQfgl4l/tEj3n6KB2akyDMd05d+IL8+fcpByJ
+         IzmA==
+X-Gm-Message-State: AJIora+k9EZt0RKSZUiqe87rwXB9X5amBVhLn/4VSHe5kBMS0BfPIQKq
+        ABuEVSTL5F1jgWwkxhw+mhNuTR1vvig=
+X-Google-Smtp-Source: AGRyM1uuTfGQcAI7LZexX47whluAjd8ZLAyERIjO/XJKxpSOEAFjr9IhbxGVtAO+6c2+NOL7h1mDBw==
+X-Received: by 2002:a17:907:2814:b0:72a:3758:e948 with SMTP id eb20-20020a170907281400b0072a3758e948mr100133ejc.8.1657660454266;
+        Tue, 12 Jul 2022 14:14:14 -0700 (PDT)
+Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id e41-20020a056402332900b0042de3d661d2sm6679296eda.1.2022.07.12.14.14.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jul 2022 14:14:13 -0700 (PDT)
+From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH v2 0/4] landlock: truncate support
+Date:   Tue, 12 Jul 2022 23:14:01 +0200
+Message-Id: <20220712211405.14705-1-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.37.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.63.22]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Perform several tests to ensure the correct implementation of the
-bpf_verify_pkcs7_signature() helper.
+The goal of these patches is to work towards a more complete coverage
+of file system operations that are restrictable with Landlock.
 
-Do the tests with data signed with a generated testing key (by using
-sign-file from scripts/) and with the tcp_bic.ko kernel module if it is
-found in the system. The test does not fail if tcp_bic.ko is not found.
+The known set of currently unsupported file system operations in
+Landlock is described at [1]. Out of the operations listed there,
+truncate is the only one that modifies file contents, so these patches
+should make it possible to prevent the direct modification of file
+contents with Landlock.
 
-First, ensure that bpf_verify_pkcs7_signature() rejects invalid parameters.
+The patch introduces the truncation restriction feature as an
+additional bit in the access_mask_t bitmap, in line with the existing
+supported operations.
 
-Then, perform a successful signature verification with the session keyring
-and a new one created for testing.
+The truncation flag covers both the truncate(2) and ftruncate(2)
+families of syscalls, as well as open(2) with the O_TRUNC flag.
+This includes uses of creat() that overwrite existing regular files.
 
-Then, ensure that permission and validation checks are done properly on the
-keyring provided to bpf_verify_pkcs7_signature(), despite those checks were
-deferred at the time the keyring was retrieved with bpf_lookup_user_key().
-The tests expect to encounter an error if the Search permission is removed
-from the keyring, or the keyring is expired.
+Apart from Landlock, file truncation can also be restricted using
+seccomp-bpf, but it is more difficult to use (requires BPF, requires
+keeping up-to-date syscall lists) and it is not configurable by file
+hierarchy, as Landlock is. The simplicity and flexibility of the
+Landlock approach makes it worthwhile adding.
 
-Finally, perform a successful and unsuccessful signature verification with
-the keyrings with pre-determined IDs (the last test fails because the key
-is not in the platform keyring).
+While it's possible to use the "write file" and "truncate" rights
+independent of each other, it simplifies the mental model for
+userspace callers to always use them together.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- tools/testing/selftests/bpf/Makefile          |  14 +-
- tools/testing/selftests/bpf/config            |   2 +
- .../bpf/prog_tests/verify_pkcs7_sig.c         | 410 ++++++++++++++++++
- .../bpf/progs/test_verify_pkcs7_sig.c         |  90 ++++
- .../testing/selftests/bpf/verify_sig_setup.sh | 104 +++++
- 5 files changed, 617 insertions(+), 3 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
- create mode 100755 tools/testing/selftests/bpf/verify_sig_setup.sh
+Specifically, the following behaviours might be surprising for users
+when using these independently:
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 8d59ec7f4c2d..5ae079e276b3 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -14,6 +14,7 @@ BPFTOOLDIR := $(TOOLSDIR)/bpf/bpftool
- APIDIR := $(TOOLSINCDIR)/uapi
- GENDIR := $(abspath ../../../../include/generated)
- GENHDR := $(GENDIR)/autoconf.h
-+HOSTPKG_CONFIG := pkg-config
- 
- ifneq ($(wildcard $(GENHDR)),)
-   GENFLAGS := -DHAVE_GENHDR
-@@ -75,7 +76,7 @@ TEST_PROGS := test_kmod.sh \
- 	test_xsk.sh
- 
- TEST_PROGS_EXTENDED := with_addr.sh \
--	with_tunnels.sh ima_setup.sh \
-+	with_tunnels.sh ima_setup.sh verify_sig_setup.sh \
- 	test_xdp_vlan.sh test_bpftool.py
- 
- # Compile but not part of 'make run_tests'
-@@ -84,7 +85,7 @@ TEST_GEN_PROGS_EXTENDED = test_sock_addr test_skb_cgroup_id_user \
- 	test_lirc_mode2_user xdping test_cpp runqslower bench bpf_testmod.ko \
- 	xskxceiver xdp_redirect_multi xdp_synproxy
- 
--TEST_CUSTOM_PROGS = $(OUTPUT)/urandom_read
-+TEST_CUSTOM_PROGS = $(OUTPUT)/urandom_read $(OUTPUT)/sign-file
- 
- # Emit succinct information message describing current building step
- # $1 - generic step name (e.g., CC, LINK, etc);
-@@ -189,6 +190,12 @@ $(OUTPUT)/urandom_read: urandom_read.c urandom_read_aux.c $(OUTPUT)/liburandom_r
- 		     -fuse-ld=$(LLD) -Wl,-znoseparate-code		       \
- 		     -Wl,-rpath=. -Wl,--build-id=sha1 -o $@
- 
-+$(OUTPUT)/sign-file: ../../../../scripts/sign-file.c
-+	$(call msg,SIGN-FILE,,$@)
-+	$(Q)$(CC) $(shell $(HOSTPKG_CONFIG)--cflags libcrypto 2> /dev/null) \
-+		  $< -o $@ \
-+		  $(shell $(HOSTPKG_CONFIG) --libs libcrypto 2> /dev/null || echo -lcrypto)
-+
- $(OUTPUT)/bpf_testmod.ko: $(VMLINUX_BTF) $(wildcard bpf_testmod/Makefile bpf_testmod/*.[ch])
- 	$(call msg,MOD,,$@)
- 	$(Q)$(RM) bpf_testmod/bpf_testmod.ko # force re-compilation
-@@ -514,7 +521,8 @@ TRUNNER_EXTRA_SOURCES := test_progs.c cgroup_helpers.c trace_helpers.c	\
- TRUNNER_EXTRA_FILES := $(OUTPUT)/urandom_read $(OUTPUT)/bpf_testmod.ko	\
- 		       $(OUTPUT)/liburandom_read.so			\
- 		       $(OUTPUT)/xdp_synproxy				\
--		       ima_setup.sh					\
-+		       $(OUTPUT)/sign-file				\
-+		       ima_setup.sh verify_sig_setup.sh			\
- 		       $(wildcard progs/btf_dump_test_case_*.c)
- TRUNNER_BPF_BUILD_RULE := CLANG_BPF_BUILD_RULE
- TRUNNER_BPF_CFLAGS := $(BPF_CFLAGS) $(CLANG_CFLAGS) -DENABLE_ATOMICS_TESTS
-diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
-index c05904d631ec..76b65acd897e 100644
---- a/tools/testing/selftests/bpf/config
-+++ b/tools/testing/selftests/bpf/config
-@@ -63,3 +63,5 @@ CONFIG_NETFILTER_XT_MATCH_STATE=y
- CONFIG_IP_NF_FILTER=y
- CONFIG_IP_NF_TARGET_SYNPROXY=y
- CONFIG_IP_NF_RAW=y
-+CONFIG_MODULE_SIG=y
-+CONFIG_KEYS=y
-diff --git a/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c b/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
-new file mode 100644
-index 000000000000..05f7580e34ec
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
-@@ -0,0 +1,410 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ */
-+
-+#include <stdio.h>
-+#include <errno.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <endian.h>
-+#include <limits.h>
-+#include <sys/stat.h>
-+#include <sys/wait.h>
-+#include <sys/mman.h>
-+#include <linux/keyctl.h>
-+#include <test_progs.h>
-+
-+#include "test_verify_pkcs7_sig.skel.h"
-+
-+#define MAX_DATA_SIZE (1024 * 1024)
-+#define MAX_SIG_SIZE 1024
-+#define LOG_BUF_SIZE 16384
-+
-+#define VERIFY_USE_SECONDARY_KEYRING (1UL)
-+#define VERIFY_USE_PLATFORM_KEYRING  (2UL)
-+
-+/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
-+#define MODULE_SIG_STRING "~Module signature appended~\n"
-+
-+/*
-+ * Module signature information block.
-+ *
-+ * The constituents of the signature section are, in order:
-+ *
-+ *	- Signer's name
-+ *	- Key identifier
-+ *	- Signature data
-+ *	- Information block
-+ */
-+struct module_signature {
-+	u8	algo;		/* Public-key crypto algorithm [0] */
-+	u8	hash;		/* Digest algorithm [0] */
-+	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
-+	u8	signer_len;	/* Length of signer's name [0] */
-+	u8	key_id_len;	/* Length of key identifier [0] */
-+	u8	__pad[3];
-+	__be32	sig_len;	/* Length of signature data */
-+};
-+
-+struct data {
-+	u8 data[MAX_DATA_SIZE];
-+	u32 data_len;
-+	u8 sig[MAX_SIG_SIZE];
-+	u32 sig_len;
-+};
-+
-+static int _run_setup_process(const char *setup_dir, const char *cmd)
-+{
-+	int child_pid, child_status;
-+
-+	child_pid = fork();
-+	if (child_pid == 0) {
-+		execlp("./verify_sig_setup.sh", "./verify_sig_setup.sh", cmd,
-+		       setup_dir, NULL);
-+		exit(errno);
-+
-+	} else if (child_pid > 0) {
-+		waitpid(child_pid, &child_status, 0);
-+		return WEXITSTATUS(child_status);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int populate_data_item_str(const char *tmp_dir, struct data *data_item)
-+{
-+	struct stat st;
-+	char data_template[] = "/tmp/dataXXXXXX";
-+	char path[PATH_MAX];
-+	int ret, fd, child_status, child_pid;
-+
-+	data_item->data_len = 4;
-+	memcpy(data_item->data, "test", data_item->data_len);
-+
-+	fd = mkstemp(data_template);
-+	if (fd == -1)
-+		return -errno;
-+
-+	ret = write(fd, data_item->data, data_item->data_len);
-+
-+	close(fd);
-+
-+	if (ret != data_item->data_len) {
-+		ret = -EIO;
-+		goto out;
-+	}
-+
-+	child_pid = fork();
-+
-+	if (child_pid == -1) {
-+		ret = -errno;
-+		goto out;
-+	}
-+
-+	if (child_pid == 0) {
-+		snprintf(path, sizeof(path), "%s/signing_key.pem", tmp_dir);
-+
-+		return execlp("./sign-file", "./sign-file", "-d", "sha256",
-+			      path, path, data_template, NULL);
-+	}
-+
-+	waitpid(child_pid, &child_status, 0);
-+
-+	ret = WEXITSTATUS(child_status);
-+	if (ret)
-+		goto out;
-+
-+	snprintf(path, sizeof(path), "%s.p7s", data_template);
-+
-+	ret = stat(path, &st);
-+	if (ret == -1) {
-+		ret = -errno;
-+		goto out;
-+	}
-+
-+	if (st.st_size > sizeof(data_item->sig)) {
-+		ret = -EINVAL;
-+		goto out_sig;
-+	}
-+
-+	data_item->sig_len = st.st_size;
-+
-+	fd = open(path, O_RDONLY);
-+	if (fd == -1) {
-+		ret = -errno;
-+		goto out_sig;
-+	}
-+
-+	ret = read(fd, data_item->sig, data_item->sig_len);
-+
-+	close(fd);
-+
-+	if (ret != data_item->sig_len) {
-+		ret = -EIO;
-+		goto out_sig;
-+	}
-+
-+	ret = 0;
-+out_sig:
-+	unlink(path);
-+out:
-+	unlink(data_template);
-+	return ret;
-+}
-+
-+static int populate_data_item_mod(struct data *data_item)
-+{
-+	char mod_path[PATH_MAX], *mod_path_ptr;
-+	struct stat st;
-+	void *mod;
-+	FILE *fp;
-+	struct module_signature ms;
-+	int ret, fd, modlen, marker_len, sig_len;
-+
-+	data_item->data_len = 0;
-+
-+	if (stat("/lib/modules", &st) == -1)
-+		return 0;
-+
-+	/* Requires CONFIG_TCP_CONG_BIC=m. */
-+	fp = popen("find /lib/modules/$(uname -r) -name tcp_bic.ko", "r");
-+	if (!fp)
-+		return 0;
-+
-+	mod_path_ptr = fgets(mod_path, sizeof(mod_path), fp);
-+	pclose(fp);
-+
-+	if (!mod_path_ptr)
-+		return 0;
-+
-+	mod_path_ptr = strchr(mod_path, '\n');
-+	if (!mod_path_ptr)
-+		return 0;
-+
-+	*mod_path_ptr = '\0';
-+
-+	if (stat(mod_path, &st) == -1)
-+		return 0;
-+
-+	modlen = st.st_size;
-+	marker_len = sizeof(MODULE_SIG_STRING) - 1;
-+
-+	fd = open(mod_path, O_RDONLY);
-+	if (fd == -1)
-+		return -errno;
-+
-+	mod = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-+
-+	close(fd);
-+
-+	if (mod == MAP_FAILED)
-+		return -errno;
-+
-+	if (strncmp(mod + modlen - marker_len, MODULE_SIG_STRING, marker_len)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	modlen -= marker_len;
-+
-+	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
-+
-+	sig_len = __be32_to_cpu(ms.sig_len);
-+	modlen -= sig_len + sizeof(ms);
-+
-+	if (modlen > sizeof(data_item->data)) {
-+		ret = -E2BIG;
-+		goto out;
-+	}
-+
-+	memcpy(data_item->data, mod, modlen);
-+	data_item->data_len = modlen;
-+
-+	if (sig_len > sizeof(data_item->sig)) {
-+		ret = -E2BIG;
-+		goto out;
-+	}
-+
-+	memcpy(data_item->sig, mod + modlen, sig_len);
-+	data_item->sig_len = sig_len;
-+	ret = 0;
-+out:
-+	munmap(mod, st.st_size);
-+	return ret;
-+}
-+
-+void test_verify_pkcs7_sig(void)
-+{
-+	char tmp_dir_template[] = "/tmp/verify_sigXXXXXX";
-+	char *tmp_dir;
-+	char *buf = NULL;
-+	struct test_verify_pkcs7_sig *skel = NULL;
-+	struct bpf_map *map;
-+	struct data data;
-+	int ret, zero = 0;
-+
-+	LIBBPF_OPTS(bpf_object_open_opts, opts);
-+
-+	/* Trigger creation of session keyring. */
-+	syscall(__NR_request_key, "keyring", "_uid.0", NULL,
-+		KEY_SPEC_SESSION_KEYRING);
-+
-+	tmp_dir = mkdtemp(tmp_dir_template);
-+	if (!ASSERT_OK_PTR(tmp_dir, "mkdtemp"))
-+		return;
-+
-+	ret = _run_setup_process(tmp_dir, "setup");
-+	if (!ASSERT_OK(ret, "_run_setup_process"))
-+		goto close_prog;
-+
-+	buf = malloc(LOG_BUF_SIZE);
-+	if (!ASSERT_OK_PTR(buf, "malloc"))
-+		goto close_prog;
-+
-+	opts.kernel_log_buf = buf;
-+	opts.kernel_log_size = LOG_BUF_SIZE;
-+	opts.kernel_log_level = 1;
-+
-+	skel = test_verify_pkcs7_sig__open_opts(&opts);
-+	if (!ASSERT_OK_PTR(skel, "test_verify_pkcs7_sig__open_opts"))
-+		goto close_prog;
-+
-+	ret = test_verify_pkcs7_sig__load(skel);
-+
-+	if (ret < 0 && strstr(buf, "unknown func bpf_verify_pkcs7_signature")) {
-+		printf(
-+		  "%s:SKIP:bpf_verify_pkcs7_signature() helper not supported\n",
-+		  __func__);
-+		test__skip();
-+		goto close_prog;
-+	}
-+
-+	if (!ASSERT_OK(ret, "test_verify_pkcs7_sig__load"))
-+		goto close_prog;
-+
-+	ret = test_verify_pkcs7_sig__attach(skel);
-+	if (!ASSERT_OK(ret, "test_verify_pkcs7_sig__attach"))
-+		goto close_prog;
-+
-+	map = bpf_object__find_map_by_name(skel->obj, "data_input");
-+	if (!ASSERT_OK_PTR(map, "data_input not found"))
-+		goto close_prog;
-+
-+	skel->bss->monitored_pid = getpid();
-+
-+	/* Test incorrect parameters. */
-+	skel->bss->user_keyring_serial = 0;
-+	skel->bss->system_keyring = UINT64_MAX;
-+
-+	ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data, BPF_ANY);
-+	if (!ASSERT_LT(ret, 0, "bpf_map_update_elem data_input"))
-+		goto close_prog;
-+
-+	skel->bss->user_keyring_serial = KEY_SPEC_SESSION_KEYRING;
-+	skel->bss->system_keyring = 0;
-+
-+	ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data, BPF_ANY);
-+	if (!ASSERT_LT(ret, 0, "bpf_map_update_elem data_input"))
-+		goto close_prog;
-+
-+	/* Test without data and signature. */
-+	skel->bss->user_keyring_serial = KEY_SPEC_SESSION_KEYRING;
-+	skel->bss->system_keyring = UINT64_MAX;
-+
-+	ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data, BPF_ANY);
-+	if (!ASSERT_LT(ret, 0, "bpf_map_update_elem data_input"))
-+		goto close_prog;
-+
-+	/* Test successful signature verification with session keyring. */
-+	ret = populate_data_item_str(tmp_dir, &data);
-+	if (!ASSERT_OK(ret, "populate_data_item_str"))
-+		goto close_prog;
-+
-+	ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data, BPF_ANY);
-+	if (!ASSERT_OK(ret, "bpf_map_update_elem data_input"))
-+		goto close_prog;
-+
-+	/* Test successful signature verification with testing keyring. */
-+	skel->bss->user_keyring_serial = syscall(__NR_request_key, "keyring",
-+						 "ebpf_testing_keyring", NULL,
-+						 KEY_SPEC_SESSION_KEYRING);
-+
-+	ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data, BPF_ANY);
-+	if (!ASSERT_OK(ret, "bpf_map_update_elem data_input"))
-+		goto close_prog;
-+
-+	/*
-+	 * Ensure key_task_permission() is called and rejects the keyring
-+	 * (no Search permission).
-+	 */
-+	syscall(__NR_keyctl, KEYCTL_SETPERM, skel->bss->user_keyring_serial,
-+		0x37373737);
-+
-+	ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data, BPF_ANY);
-+	if (!ASSERT_LT(ret, 0, "bpf_map_update_elem data_input"))
-+		goto close_prog;
-+
-+	syscall(__NR_keyctl, KEYCTL_SETPERM, skel->bss->user_keyring_serial,
-+		0x3f3f3f3f);
-+
-+	/*
-+	 * Ensure key_validate() is called and rejects the keyring (key expired)
-+	 */
-+	syscall(__NR_keyctl, KEYCTL_SET_TIMEOUT,
-+		skel->bss->user_keyring_serial, 1);
-+	sleep(1);
-+
-+	ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data, BPF_ANY);
-+	if (!ASSERT_LT(ret, 0, "bpf_map_update_elem data_input"))
-+		goto close_prog;
-+
-+	skel->bss->user_keyring_serial = KEY_SPEC_SESSION_KEYRING;
-+
-+	/* Test with corrupted data (signature verification should fail). */
-+	data.data[0] = 'a';
-+	ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data, BPF_ANY);
-+	if (!ASSERT_LT(ret, 0, "bpf_map_update_elem data_input"))
-+		goto close_prog;
-+
-+	ret = populate_data_item_mod(&data);
-+	if (!ASSERT_OK(ret, "populate_data_item_mod"))
-+		goto close_prog;
-+
-+	/* Test signature verification with system keyrings. */
-+	if (data.data_len) {
-+		skel->bss->user_keyring_serial = 0;
-+		skel->bss->system_keyring = 0;
-+
-+		ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data,
-+					  BPF_ANY);
-+		if (!ASSERT_OK(ret, "bpf_map_update_elem data_input"))
-+			goto close_prog;
-+
-+		skel->bss->system_keyring = VERIFY_USE_SECONDARY_KEYRING;
-+
-+		ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data,
-+					  BPF_ANY);
-+		if (!ASSERT_OK(ret, "bpf_map_update_elem data_input"))
-+			goto close_prog;
-+
-+		skel->bss->system_keyring = VERIFY_USE_PLATFORM_KEYRING;
-+
-+		ret = bpf_map_update_elem(bpf_map__fd(map), &zero, &data,
-+					  BPF_ANY);
-+		ASSERT_LT(ret, 0, "bpf_map_update_elem data_input");
-+	}
-+
-+close_prog:
-+	_run_setup_process(tmp_dir, "cleanup");
-+	free(buf);
-+
-+	if (!skel)
-+		return;
-+
-+	skel->bss->monitored_pid = 0;
-+	test_verify_pkcs7_sig__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
-new file mode 100644
-index 000000000000..421de5ed3fcb
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ */
-+
-+#include <errno.h>
-+#include <stdlib.h>
-+#include <limits.h>
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+#define MAX_DATA_SIZE (1024 * 1024)
-+#define MAX_SIG_SIZE 1024
-+
-+typedef __u8 u8;
-+typedef __u16 u16;
-+typedef __u32 u32;
-+typedef __u64 u64;
-+
-+u32 monitored_pid;
-+u32 user_keyring_serial;
-+u64 system_keyring;
-+
-+struct data {
-+	u8 data[MAX_DATA_SIZE];
-+	u32 data_len;
-+	u8 sig[MAX_SIG_SIZE];
-+	u32 sig_len;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__uint(max_entries, 1);
-+	__type(key, __u32);
-+	__type(value, struct data);
-+} data_input SEC(".maps");
-+
-+char _license[] SEC("license") = "GPL";
-+
-+SEC("lsm.s/bpf")
-+int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
-+{
-+	struct bpf_dynptr data_ptr, sig_ptr;
-+	struct data *data_val;
-+	struct key *user_keyring = NULL;
-+	u32 pid;
-+	u64 value;
-+	int ret, zero = 0;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	data_val = bpf_map_lookup_elem(&data_input, &zero);
-+	if (!data_val)
-+		return 0;
-+
-+	bpf_probe_read(&value, sizeof(value), &attr->value);
-+
-+	bpf_copy_from_user(data_val, sizeof(struct data),
-+			   (void *)(unsigned long)value);
-+
-+	if (data_val->data_len > sizeof(data_val->data))
-+		return -EINVAL;
-+
-+	bpf_dynptr_from_mem(data_val->data, data_val->data_len, 0, &data_ptr);
-+
-+	if (data_val->sig_len > sizeof(data_val->sig))
-+		return -EINVAL;
-+
-+	bpf_dynptr_from_mem(data_val->sig, data_val->sig_len, 0, &sig_ptr);
-+
-+	if (user_keyring_serial) {
-+		user_keyring = bpf_lookup_user_key(user_keyring_serial, 0);
-+		if (!user_keyring)
-+			return -ENOENT;
-+	}
-+
-+	ret = bpf_verify_pkcs7_signature(&data_ptr, &sig_ptr, user_keyring,
-+					 system_keyring);
-+
-+	if (user_keyring)
-+		bpf_key_put(user_keyring);
-+
-+	return ret;
-+}
-diff --git a/tools/testing/selftests/bpf/verify_sig_setup.sh b/tools/testing/selftests/bpf/verify_sig_setup.sh
-new file mode 100755
-index 000000000000..ba08922b4a27
---- /dev/null
-+++ b/tools/testing/selftests/bpf/verify_sig_setup.sh
-@@ -0,0 +1,104 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+set -e
-+set -u
-+set -o pipefail
-+
-+VERBOSE="${SELFTESTS_VERBOSE:=0}"
-+LOG_FILE="$(mktemp /tmp/verify_sig_setup.log.XXXXXX)"
-+
-+x509_genkey_content="\
-+[ req ]
-+default_bits = 2048
-+distinguished_name = req_distinguished_name
-+prompt = no
-+string_mask = utf8only
-+x509_extensions = myexts
-+
-+[ req_distinguished_name ]
-+CN = eBPF Signature Verification Testing Key
-+
-+[ myexts ]
-+basicConstraints=critical,CA:FALSE
-+keyUsage=digitalSignature
-+subjectKeyIdentifier=hash
-+authorityKeyIdentifier=keyid
-+"
-+
-+usage()
-+{
-+	echo "Usage: $0 <setup|cleanup <existing_tmp_dir>"
-+	exit 1
-+}
-+
-+setup()
-+{
-+	local tmp_dir="$1"
-+
-+	echo "${x509_genkey_content}" > ${tmp_dir}/x509.genkey
-+
-+	openssl req -new -nodes -utf8 -sha256 -days 36500 \
-+			-batch -x509 -config ${tmp_dir}/x509.genkey \
-+			-outform PEM -out ${tmp_dir}/signing_key.pem \
-+			-keyout ${tmp_dir}/signing_key.pem 2>&1
-+
-+	openssl x509 -in ${tmp_dir}/signing_key.pem -out \
-+		${tmp_dir}/signing_key.der -outform der
-+
-+	key_id=$(cat ${tmp_dir}/signing_key.der | keyctl padd asymmetric ebpf_testing_key @s)
-+
-+	keyring_id=$(keyctl newring ebpf_testing_keyring @s)
-+	keyctl link $key_id $keyring_id
-+}
-+
-+cleanup() {
-+	local tmp_dir="$1"
-+
-+	keyctl unlink $(keyctl search @s asymmetric ebpf_testing_key) @s
-+	keyctl unlink $(keyctl search @s keyring ebpf_testing_keyring) @s
-+	rm -rf ${tmp_dir}
-+}
-+
-+catch()
-+{
-+	local exit_code="$1"
-+	local log_file="$2"
-+
-+	if [[ "${exit_code}" -ne 0 ]]; then
-+		cat "${log_file}" >&3
-+	fi
-+
-+	rm -f "${log_file}"
-+	exit ${exit_code}
-+}
-+
-+main()
-+{
-+	[[ $# -ne 2 ]] && usage
-+
-+	local action="$1"
-+	local tmp_dir="$2"
-+
-+	[[ ! -d "${tmp_dir}" ]] && echo "Directory ${tmp_dir} doesn't exist" && exit 1
-+
-+	if [[ "${action}" == "setup" ]]; then
-+		setup "${tmp_dir}"
-+	elif [[ "${action}" == "cleanup" ]]; then
-+		cleanup "${tmp_dir}"
-+	else
-+		echo "Unknown action: ${action}"
-+		exit 1
-+	fi
-+}
-+
-+trap 'catch "$?" "${LOG_FILE}"' EXIT
-+
-+if [[ "${VERBOSE}" -eq 0 ]]; then
-+	# Save the stderr to 3 so that we can output back to
-+	# it incase of an error.
-+	exec 3>&2 1>"${LOG_FILE}" 2>&1
-+fi
-+
-+main "$@"
-+rm -f "${LOG_FILE}"
--- 
-2.25.1
+ * The commonly creat() syscall requires the truncate right when
+   overwriting existing files, as it is equivalent to open(2) with
+   O_TRUNC|O_CREAT|O_WRONLY.
+ * The "write file" right is not always required to truncate a file,
+   even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
 
+Nevertheless, keeping the two flags separate is the correct approach
+to guarantee backwards compatibility for existing Landlock users.
+
+These patches are based on version 5.19-rc6.
+
+Best regards,
+Günther
+
+[1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+
+History
+v2:
+ * Documentation: Mention the truncation flag where needed.
+ * Documentation: Point out connection between truncation and file writing.
+ * samples: Add file truncation to the landlock/sandboxer.c sample tool.
+ * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
+ * selftests: Exercise truncation syscalls when the truncate right
+   is not handled by Landlock.
+
+Previous versions:
+v1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
+
+Günther Noack (4):
+  landlock: Support file truncation
+  selftests/landlock: Selftests for file truncation support
+  samples/landlock: Extend sample tool to support
+    LANDLOCK_ACCESS_FS_TRUNCATE
+  landlock: Document Landlock's file truncation support
+
+ Documentation/userspace-api/landlock.rst     |  24 +-
+ include/uapi/linux/landlock.h                |  13 +-
+ samples/landlock/sandboxer.c                 |  15 +-
+ security/landlock/fs.c                       |   9 +-
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/syscalls.c                 |   2 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 245 ++++++++++++++++++-
+ 8 files changed, 294 insertions(+), 18 deletions(-)
+
+--
+2.37.0
