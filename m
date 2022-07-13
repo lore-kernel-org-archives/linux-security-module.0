@@ -2,117 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72810C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jul 2022 14:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FD6C43334
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jul 2022 23:44:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236085AbiGMOYL (ORCPT
+        id S231362AbiGMXok (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jul 2022 10:24:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57646 "EHLO
+        Wed, 13 Jul 2022 19:44:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231576AbiGMOYI (ORCPT
+        with ESMTP id S231363AbiGMXoh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jul 2022 10:24:08 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E048023160;
-        Wed, 13 Jul 2022 07:24:07 -0700 (PDT)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26DEEgor004515;
-        Wed, 13 Jul 2022 14:23:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=Kqd8S3YsVTupeYDsw/0CEjgSPyDSJBms6hyW9oBAQeM=;
- b=QswoJDCWPAwTxoZHbdQEOYKJFNMNTb2KFlnGbq7oimxzEtYekgdpSiRH/HNBsveUdi/f
- 1c4OgdZzQ7WLvfp5Gh+2GZ/LXRW8hApTxw75mJZhcsPDNNgnlyJ+Z89sKRqwNHEooqX+
- czJ8NIQEa4koGb3HjCFShmMwZeEIocw9bWmvbkNOizW6cHrfWrta+3DFONOUT42z6MFV
- u9nj5WHC2ENWupHa+kNzIwpjhdmcuVdSiuKRm7clv7Lfh9eh9b1idBzuyd7gxRNzD9hg
- pQELC3clUGyVOLTRv8+FgiKBwKBoqzTxWvwdIrSC7/cs8xZ0bppXs2d8s5idEtkUeH9E Ng== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h9ymvratk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Jul 2022 14:23:45 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 26DEFSXF013891;
-        Wed, 13 Jul 2022 14:23:44 GMT
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h9ymvrasc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Jul 2022 14:23:44 +0000
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 26DEKPjp000304;
-        Wed, 13 Jul 2022 14:23:42 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma01fra.de.ibm.com with ESMTP id 3h71a8w2sf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Jul 2022 14:23:41 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 26DENdG921365098
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jul 2022 14:23:39 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4C5D52051;
-        Wed, 13 Jul 2022 14:23:39 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.111.228])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 883BE5204F;
-        Wed, 13 Jul 2022 14:23:36 +0000 (GMT)
-Message-ID: <8bea9e61be96e0358a43e320f9b89b742e8ca992.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: force signature verification when
- CONFIG_KEXEC_SIG is configured
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc:     kexec@lists.infradead.org, Baoquan He <bhe@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jiri Bohac <jbohac@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
-Date:   Wed, 13 Jul 2022 10:23:35 -0400
-In-Reply-To: <20220713072111.230333-1-coxu@redhat.com>
-References: <20220712093302.49490-1-coxu@redhat.com>
-         <20220713072111.230333-1-coxu@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Fr7HlAMLzOgY2q57u1UJRu5T-WiUxJYG
-X-Proofpoint-ORIG-GUID: FClJBHTbZacQzfCFbUO4Cd14E0SRbUrp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-13_03,2022-07-13_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 bulkscore=0 malwarescore=0
- adultscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207130055
+        Wed, 13 Jul 2022 19:44:37 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 012D352DFC
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Jul 2022 16:44:36 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id t5-20020a17090a6a0500b001ef965b262eso597227pjj.5
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Jul 2022 16:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DkLczyynfYqNqbmOPaNJ7DNHFGb7fm4PXY7dj6rYjTQ=;
+        b=loYuYy3MmNz6Uj1ZIA98jCbcYDXIDl09HIF11IVrvPgGq0dBLFL1FzHZ30rajZVYKj
+         Gbj9CsrM6c/2bJRBnoNTG0rJJHuUYeVMbEpdP+0czlCJCXWWIzZa+H531jivzil/sOwY
+         GoRaTDyXM0qgBqPnTOs+McDg8ctCpA/hKhyilae34nB3vZ1TSUMyy5UqSxDV9KooXGRK
+         3bCyQXnxwLqQToKcbwm2HsaUdmZY+wr1Zkl+Ci1GqZqslYGjveHXFKj3TfM5T7lWOR1j
+         DsAeIZ+l9U9uO/e2UG1s+FSyPfWNfZYd93qRDSX1H3UUGKf47KCdIvMwoPDLeiykWvtS
+         4W8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DkLczyynfYqNqbmOPaNJ7DNHFGb7fm4PXY7dj6rYjTQ=;
+        b=5s5ZNuMciZigdQBfJTwZl6gebkc0XgcEs8zfxwdNMxCWJKiNED8QXjIoPZJAJVzba0
+         JSTOzFYks9R9a3z+vC4fhY3pg3Um51dQ8jxk1JFyI+Qn/yHz5YSctXd4NwGbxXUzkJtb
+         U2x2EOaw/vJnB5RbnWCTIvMi9faRCyC3ZENMeC+Gp/WevuA+moJoJm4cSJUa1bXwbGrE
+         rV/W0YhnJhwcLp/hvIgDv84FnCvG/H+/xMDZpklNprSyww0pHtoa06knfRroQpHuk3QW
+         7ryR1QO58VfqAJs9gOPSXw1EUGaC6HpwrdTItDiy0Xs7iRNgu8AjeOOvjszuOhSn7jix
+         5W3g==
+X-Gm-Message-State: AJIora9X0dYcugMhcDW36fuehywnrSG4j3x/rMwe10ZbLgn1+hxYgd5Y
+        7SxVaolylvlnQWuDpcUd/A9up4RKFPtcf4b4GYPkAA==
+X-Google-Smtp-Source: AGRyM1sF0CHBSujgRPezFJtGPT9byf+jCqWPrGeecAwg3HFZ3hLEipwDkpuiYZMxog4exJ2JfLXSf/gw55p7jxc3ji4=
+X-Received: by 2002:a17:90a:db96:b0:1ef:8c86:eb09 with SMTP id
+ h22-20020a17090adb9600b001ef8c86eb09mr12548254pjv.22.1657755876399; Wed, 13
+ Jul 2022 16:44:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220628222941.2642917-1-jeffxu@google.com> <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
+ <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
+ <CALmYWFvcSn_wks0bXo3_DUyYGtVW_MHrrO1dRoYcxY4uiB1KEA@mail.gmail.com> <0abdd920-b5cc-2fa9-7494-104c9c67480d@digikod.net>
+In-Reply-To: <0abdd920-b5cc-2fa9-7494-104c9c67480d@digikod.net>
+From:   Jeff Xu <jeffxu@google.com>
+Date:   Wed, 13 Jul 2022 16:44:00 -0700
+Message-ID: <CALmYWFvfRFfZbk=9P-=RNtjhXoR0ToQKnVVEZwmXB9yxLEHotg@mail.gmail.com>
+Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-07-13 at 15:21 +0800, Coiby Xu wrote:
-> Currently, an unsigned kernel could be kexec'ed when IMA arch specific
-> policy is configured unless lockdown is enabled. Enforce kernel
-> signature verification check in the kexec_file_load syscall when IMA
-> arch specific policy is configured.
-> 
-> Fixes: 99d5cadfde2b ("kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE")
-> Reported-by: Mimi Zohar <zohar@linux.ibm.com>
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
-> v2
->  - don't include linux/kexec.h since it's already been included in
->    linux/ima.h
->  - fix build errors when KEXEC_FILE/KEXEC_CORE is disable as caught by
->    kernel test robot <lkp@intel.com>
+> > a correction:
+> >
+> >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >     case 0 - classic ptrace permissions: a process can PTRACE_ATTACH to
+> >     any other
+> >          process running under the same uid, as long as it is dumpable =
+(i.e.
+> >          did not transition uids, start privileged, or have called
+> >          prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEME =
+is
+> >          unchanged.
+> >
+> >     Test: All passing
+> >
+> > // Base_test: 7/7 pass.
+> > // Fs_test 46/48 pass
+> > //.   not ok 47 layout2_overlay.no_restriction
+> > //.   not ok 48 layout2_overlay.same_content_different_file
+> > //  Ptrace 8/8 pass
 
-Thanks, Coiby.  This version of the patch is now queued in next-
-integrity/next-
-integrity-testing.
 
-Mimi
+> Hmm, well, it is not related to Yama then. Could it be linked to other
+> Chromium OS non-upstream patches?
 
+
+fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS is not
+enabled in chromeOS.
+If there is a reliable way of detecting OVERLAYFS (checking mount
+overlayfs is successful ? ), this is a good candidate to add SKIP.
+
+Overall, all the failure of landlock selftest seen in chromeOS are
+expected, we just need to modify the test.
+
+Thanks
+Best Regards
+Jeff
+
+
+
+On Thu, Jul 7, 2022 at 7:25 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
+rote:
+>
+>
+> On 07/07/2022 01:35, Jeff Xu wrote:
+> > a correction:
+> >
+> >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >     case 0 - classic ptrace permissions: a process can PTRACE_ATTACH to
+> >     any other
+> >          process running under the same uid, as long as it is dumpable =
+(i.e.
+> >          did not transition uids, start privileged, or have called
+> >          prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEME =
+is
+> >          unchanged.
+> >
+> >     Test: All passing
+> >
+> > // Base_test: 7/7 pass.
+> > // Fs_test 46/48 pass
+> > //.   not ok 47 layout2_overlay.no_restriction
+> > //.   not ok 48 layout2_overlay.same_content_different_file
+> > //  Ptrace 8/8 pass
+>
+> Hmm, well, it is not related to Yama then. Could it be linked to other
+> Chromium OS non-upstream patches?
