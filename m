@@ -2,143 +2,149 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3CDCCA479
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jul 2022 03:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FA1C43334
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jul 2022 13:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232253AbiGNDA5 (ORCPT
+        id S239824AbiGNNlI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jul 2022 23:00:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59362 "EHLO
+        Thu, 14 Jul 2022 09:41:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232042AbiGNDA4 (ORCPT
+        with ESMTP id S238596AbiGNNlH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jul 2022 23:00:56 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DA8921E05
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Jul 2022 20:00:55 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id h17so782409wrx.0
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Jul 2022 20:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+xwAXAvYI9FTbVDjyFeCH64OhB8MXdH0zkgpyggSvUk=;
-        b=dMCsTIAFAcgVHxxSiOLpbduJW+c7ON7UybqBzef+4ZnZnGUYbSLHechQQdGPF7SLa7
-         Xcl7s4pBFVoASRgo8sggxFSu0BuIzvYnjIauzoDCpmOkbiJ0k9J1yofYL6Jd4W4OpCIZ
-         vZu+IImCn4t+odtM7993ooGtuwJET10zE1b7fZ+moMrtVjeylBBr/DN4V+ukrwSozaKX
-         Mqln9AlXkZphrX0FvdbJulL0n7XymjCkeZFn/W0jQICg7syyUfDLs6lB6aymnFGRCaFw
-         Emz39/ROBeBxLQ42xcazo+DFBJCTkt9AR+z/KHtFFfj9P2fu49qjTkTmUyCKmQd7LDPf
-         1w5w==
+        Thu, 14 Jul 2022 09:41:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BA362606B4
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Jul 2022 06:41:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657806065;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nYaKoPGAE5GuTNjUTcyk/8OnPeCKT4Q4LTaKkZkFBRE=;
+        b=ABx94QTbAN3lL+mvdsyqt90WrVygEPn8YEi41HyiIJBOpKlZwyhBkq+DqO6KukzbQN4uPK
+        2OMVf2Yuxlw6Ny8GzZ8ovg3mAzmKCWkbH+Hnu8RDU8wQJoRmY8a1ZUhtVS5TVnpoS9yDA3
+        WTLUVTL4/s3k4XeXPB0looosoRNeV3U=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-427-CpOQEZPzPm-V8NuWuPK87g-1; Thu, 14 Jul 2022 09:41:03 -0400
+X-MC-Unique: CpOQEZPzPm-V8NuWuPK87g-1
+Received: by mail-pf1-f200.google.com with SMTP id 5-20020a620605000000b00527ca01f8a3so1214154pfg.19
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Jul 2022 06:41:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+xwAXAvYI9FTbVDjyFeCH64OhB8MXdH0zkgpyggSvUk=;
-        b=ollS8XdSSJQQvN8nmlom+MEMIp/OdD63Oqv2Nkt1ZjT2Mvt4GXTo8C8dYrmRGKB6mo
-         EwJmiEDZmdw7AtcFLwduNw0P7GydLy02vTLS9le+3DBWGwyvXXgR2fELxE+fQ6mU4131
-         PWmOGywwBlUMyrTiZgP2pS9Irqmiifue3osjOmLAi4ziT5gQiKli/krq2Q6rpZb6bd3s
-         02b2TeZVegY5pfB2xQTj0oDrOwc5Wq2WMPB5VOPecfbF5XfpxBI0mbpyw+IIoDkWUhHb
-         LD2lMx+bYf0Dp+5OfnBp8dT8o1QOrqQCwy/WI2SdXCF6hlJuU7Bjfl6ivBL/NJZ9zNvt
-         erRQ==
-X-Gm-Message-State: AJIora/Eeml28UVcXh7udt6ie9+0Z9bSNhYPd3ntB/2fFhbBdUd0Frpj
-        /rtImoOErUQ2mOL1xfiUhgM27DyH+elRqBeSRMGF
-X-Google-Smtp-Source: AGRyM1vvo+tthDYWScteO4hpZvrGvs19yHNivGyWRsakaG8eMJ8KqyISvXRV6JQGpJ44lzvE5fOckdhkSSV/DO8/okM=
-X-Received: by 2002:a5d:64a3:0:b0:21d:adaa:ce4c with SMTP id
- m3-20020a5d64a3000000b0021dadaace4cmr6001437wrp.161.1657767653490; Wed, 13
- Jul 2022 20:00:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nYaKoPGAE5GuTNjUTcyk/8OnPeCKT4Q4LTaKkZkFBRE=;
+        b=WULd/diAwub0iW2vgPHPZaubbM3Ws8pfDSa1d+nm2yvI1bHkKweLh2XnzJUdn92XXz
+         lTU5Nz3PsHFhG9an0OTCxw2uJgcS3znKF05IkySct2TvAg6wyX4rXiBKhUFwBO9PS0/v
+         OHEoQJ3J3uN0jDPCR0BcFfkt2jhARqqQQCP4AdndFkGfoMKsu3+C3UQB3CVSaa1PEYOg
+         2Qk5V/ENL+YSA5/kHeLl1MfiGNO2DYQeM8NWqGrxmT77Vf4a9M730kUdMwI2/RAbvqle
+         eMcBccm53GIldy9HqTr/ignFj67jftsYM5q0XcaSmKuExn9Rn16c54RNU8tRp8OIkr9G
+         Qa6Q==
+X-Gm-Message-State: AJIora/Y1r7lMNXJVNeTso6ddGn1+KCRghtuGggjqZv3IQICB+xtX9qG
+        l1LrIDBkC6S5KSTjRMA1LlMe3r8Sl0Y7NVoogvlwvf5oE8/mBkgMNEdvFtG1Agr/h/+dL5bCEkq
+        eTYKbGhlbQiAW8tKi0wkrdyG/BUNFAq5InrzY
+X-Received: by 2002:a17:90b:3c07:b0:1f0:eab4:79e4 with SMTP id pb7-20020a17090b3c0700b001f0eab479e4mr1116960pjb.186.1657806062499;
+        Thu, 14 Jul 2022 06:41:02 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1sPB4AJHTz7fd94myeXuSf8getkOgYveQhJicFIsXMd+oF8xCeEgRFuBRRxo5JHCdTOoHv9uw==
+X-Received: by 2002:a17:90b:3c07:b0:1f0:eab4:79e4 with SMTP id pb7-20020a17090b3c0700b001f0eab479e4mr1116928pjb.186.1657806062264;
+        Thu, 14 Jul 2022 06:41:02 -0700 (PDT)
+Received: from localhost ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id j31-20020a63fc1f000000b00419ab8f8d2csm1342551pgi.20.2022.07.14.06.41.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Jul 2022 06:41:01 -0700 (PDT)
+From:   Coiby Xu <coxu@redhat.com>
+To:     kexec@lists.infradead.org, linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Michal Suchanek <msuchanek@suse.de>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Chun-Yi Lee <jlee@suse.com>, stable@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v10 3/4] arm64: kexec_file: use more system keyrings to verify kernel image signature
+Date:   Thu, 14 Jul 2022 21:40:26 +0800
+Message-Id: <20220714134027.394370-4-coxu@redhat.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20220714134027.394370-1-coxu@redhat.com>
+References: <20220714134027.394370-1-coxu@redhat.com>
 MIME-Version: 1.0
-References: <20220714000536.2250531-1-mcgrof@kernel.org>
-In-Reply-To: <20220714000536.2250531-1-mcgrof@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 13 Jul 2022 23:00:42 -0400
-Message-ID: <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
-Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file op
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, casey@schaufler-ca.com, joshi.k@samsung.com,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        a.manzanares@samsung.com, javier@javigon.com
-Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=coxu@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"; x-default=true
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 13, 2022 at 8:05 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
-> add infrastructure for uring-cmd"), this extended the struct
-> file_operations to allow a new command which each subsystem can use
-> to enable command passthrough. Add an LSM specific for the command
-> passthrough which enables LSMs to inspect the command details.
->
-> This was discussed long ago without no clear pointer for something
-> conclusive, so this enables LSMs to at least reject this new file
-> operation.
->
-> [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
+Currently, when loading a kernel image via the kexec_file_load() system
+call, arm64 can only use the .builtin_trusted_keys keyring to verify
+a signature whereas x86 can use three more keyrings i.e.
+.secondary_trusted_keys, .machine and .platform keyrings. For example,
+one resulting problem is kexec'ing a kernel image  would be rejected
+with the error "Lockdown: kexec: kexec of unsigned images is restricted;
+see man kernel_lockdown.7".
 
-[NOTE: I now see that the IORING_OP_URING_CMD has made it into the
-v5.19-rcX releases, I'm going to be honest and say that I'm
-disappointed you didn't post the related LSM additions until
-v5.19-rc6, especially given our earlier discussions.]
+This patch set enables arm64 to make use of the same keyrings as x86 to
+verify the signature kexec'ed kernel image.
 
-While the earlier discussion may not have offered a detailed approach
-on how to solve this, I think it was rather conclusive in that the
-approach used then (and reproduced here) did not provide enough
-context to the LSMs to be able to make a decision.  There were similar
-concerns when it came to auditing the command passthrough.  It appears
-that most of my concerns in the original thread still apply to this
-patch.
+Fixes: 732b7b93d849 ("arm64: kexec_file: add kernel signature verification support")
+Cc: stable@vger.kernel.org # 105e10e2cf1c: kexec_file: drop weak attribute from functions
+Cc: stable@vger.kernel.org # 34d5960af253: kexec: clean up arch_kexec_kernel_verify_sig
+Cc: stable@vger.kernel.org # 83b7bb2d49ae: kexec, KEYS: make the code in bzImage64_verify_sig generic
+Acked-by: Baoquan He <bhe@redhat.com>
+Cc: kexec@lists.infradead.org
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Co-developed-by: Michal Suchanek <msuchanek@suse.de>
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+Acked-by: Will Deacon <will@kernel.org>
+Signed-off-by: Coiby Xu <coxu@redhat.com>
+---
+ arch/arm64/kernel/kexec_image.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-Given the LSM hook in this patch, it is very difficult (impossible?)
-to determine the requested operation as these command opcodes are
-device/subsystem specific.  The unfortunate result is that the LSMs
-are likely going to either allow all, or none, of the commands for a
-given device/subsystem, and I think we can all agree that is not a
-good idea.
-
-That is the critical bit of feedback on this patch, but there is more
-feedback inline below.
-
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  include/linux/lsm_hook_defs.h | 1 +
->  include/linux/lsm_hooks.h     | 3 +++
->  include/linux/security.h      | 5 +++++
->  io_uring/uring_cmd.c          | 5 +++++
->  security/security.c           | 4 ++++
->  5 files changed, 18 insertions(+)
-
-...
-
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 0a421ed51e7e..5e666aa7edb8 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -3,6 +3,7 @@
->  #include <linux/errno.h>
->  #include <linux/file.h>
->  #include <linux/io_uring.h>
-> +#include <linux/security.h>
->
->  #include <uapi/linux/io_uring.h>
->
-> @@ -82,6 +83,10 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
->         struct file *file = req->file;
->         int ret;
->
-> +       ret = security_uring_cmd(ioucmd);
-> +       if (ret)
-> +               return ret;
-> +
->         if (!req->file->f_op->uring_cmd)
->                 return -EOPNOTSUPP;
->
-
-In order to be consistent with most of the other LSM hooks, the
-'req->file->f_op->uring_cmd' check should come before the LSM hook
-call.  The general approach used in most places is to first validate
-the request and do any DAC based access checks before calling into the
-LSM.
-
+diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+index 9ec34690e255..5ed6a585f21f 100644
+--- a/arch/arm64/kernel/kexec_image.c
++++ b/arch/arm64/kernel/kexec_image.c
+@@ -14,7 +14,6 @@
+ #include <linux/kexec.h>
+ #include <linux/pe.h>
+ #include <linux/string.h>
+-#include <linux/verification.h>
+ #include <asm/byteorder.h>
+ #include <asm/cpufeature.h>
+ #include <asm/image.h>
+@@ -130,18 +129,10 @@ static void *image_load(struct kimage *image,
+ 	return NULL;
+ }
+ 
+-#ifdef CONFIG_KEXEC_IMAGE_VERIFY_SIG
+-static int image_verify_sig(const char *kernel, unsigned long kernel_len)
+-{
+-	return verify_pefile_signature(kernel, kernel_len, NULL,
+-				       VERIFYING_KEXEC_PE_SIGNATURE);
+-}
+-#endif
+-
+ const struct kexec_file_ops kexec_image_ops = {
+ 	.probe = image_probe,
+ 	.load = image_load,
+ #ifdef CONFIG_KEXEC_IMAGE_VERIFY_SIG
+-	.verify_sig = image_verify_sig,
++	.verify_sig = kexec_kernel_verify_pe_sig,
+ #endif
+ };
 -- 
-paul-moore.com
+2.35.3
+
