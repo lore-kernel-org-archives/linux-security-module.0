@@ -2,62 +2,62 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B452CC433EF
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jul 2022 18:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D40CC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jul 2022 20:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239881AbiGNShR (ORCPT
+        id S240530AbiGNUkJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Jul 2022 14:37:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53548 "EHLO
+        Thu, 14 Jul 2022 16:40:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232538AbiGNShR (ORCPT
+        with ESMTP id S240536AbiGNUkI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Jul 2022 14:37:17 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C071D32E
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Jul 2022 11:37:16 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id s206so2357832pgs.3
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Jul 2022 11:37:16 -0700 (PDT)
+        Thu, 14 Jul 2022 16:40:08 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B2C7459B7
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Jul 2022 13:40:07 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id y8so3917372eda.3
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Jul 2022 13:40:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=mv6Ais6a1OwoEfLCL/NPmNpCc0j2/ke9MOGDspErNCI=;
-        b=OFkf9Icl6x60f3aTVTmcwyk4b9m9Gf6l1dBRXuZEhzAKqsrw+GoLzyQAhTndpSiB8b
-         YhFyLDTWIDQ6t8KkWorN7GMw7fL38KtNITGThiKpOfV9nXWfqGLWa9OaHDYggBKMmEgE
-         3OBS6er/dynj36kZ2Z9frXBBvLrkKgEk8iRXfg+1Skg3Rv1nd0eJO4iJT3LUi01YaB+f
-         AVlikHVxRAXM+VHI+nSOTu2kihiBJUrA33qhXH4O1GmbS5B1Ms+jr1ETXu/FBuG81rUE
-         CvnU1HKjgTvNg007LZPN35TdqPLJelx9tSvjZC+SF67DPeKCnIYzO4tp+OG7dIvUNbna
-         FROg==
+        bh=oXMTJkj0mgFYfrxnvrq1Nl3bOB7zIE52cHZ1POgb4b8=;
+        b=MNa9Jn/nFo5sq7+KAUEoHvFMaq8CmDnUh3itCCsdhuwBnBBpJz2EG/juTpPrjrPoJ9
+         cA0LwXtLidwBUzRCl0hZa+5h5fq5Fb84duycV0lxLEaJ/0Nor3YYyj41s/EIBsTLxrYb
+         5j4Mm/qlOna1nBZRPviVAUva+1oBNx9dS0cdguq/hbC2CZw5djTGjcxTSQ9F2gGdWXhX
+         J92mYD+IRRlGBypvsKsuNDqE/ducJjrYUFQ/YrSt0vbqEj1KjESK9j7QZSNZA57URZdV
+         XMyPPjKfnjJWcGQ+gu3k+guoR3qcP1Fc9F6mRHnyhU+dT9PZNn3biG+QwvzaJE8LX9Rk
+         PNWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=mv6Ais6a1OwoEfLCL/NPmNpCc0j2/ke9MOGDspErNCI=;
-        b=z9t2vJ3c54Bmt8eTKJLi14EanGs+oVQh7M8eF3W2YSnpXh0zs1uUVoSlzBmDC8hEY2
-         h++QuUBcwGZGAe6DgOV9vMKyZrd08dXCuYJJcjnhiS8jU2zvh38hbbFXyJ34h5AmobSc
-         01dT5WOyBzLKx7jjXQ/VZcSxiCUqJCnnlTXCC00NhRaAJAL5mPz7SPMEvw7Psc9T0b9g
-         TVIOxkgFvNb9UrvcGAjrRFuQXkce5iJichvlgqNaI4/JJqXGdvFS+trhWJgC03oJdSWm
-         gWgU25Z8WM5LMqhKZWjZq5PbwtIH9Z/Hf4M0Ik0Vcdf9gE7jlZpUlC2Unf0I0YGPyMtQ
-         5ERw==
-X-Gm-Message-State: AJIora8fxGRDuFzHSM/d/7jlRERcuuLbVpiO8ah21Czuh15jtOh7Vvif
-        A/K5ogZVUDaHoaWM10pXtW+yQDSrSDhgiGPZ8ObViQ==
-X-Google-Smtp-Source: AGRyM1uaAZJzRD+seDhPKu9/4dc1eUNC/vupvXJwL8/TzSC8urZcCpDlVwigMNLFnihf2hUEvtDppnSwtM+xpW93Akc=
-X-Received: by 2002:a05:6a02:313:b0:416:73c:507c with SMTP id
- bn19-20020a056a02031300b00416073c507cmr8663579pgb.366.1657823835941; Thu, 14
- Jul 2022 11:37:15 -0700 (PDT)
+        bh=oXMTJkj0mgFYfrxnvrq1Nl3bOB7zIE52cHZ1POgb4b8=;
+        b=jdMKWW4UznR6c/OPPJuqmcpcyr0FGwgWYyHVPWLHjqF7H8A+UaMJxKpyy2Z7QeWV+4
+         Zel+N6eelr4akZalD7E3GuRrdZO4FNrQykB7r0M6v+PITOBzdhwSNmRNEr2FhpR1P46F
+         JC+ClN2iPxmmtgTyXKsX9qf+cMn5U0STSHR98+d7WSshSCzAoSO4lTVHtC3p8LdXdeN8
+         XdJLEn+6zWjvE6ZB5lNX4uBuRVA3LYybvY83h8N0FPIzPl9jfpk8hAZ6OYGdM/tql25r
+         9gttG1EhPxjSqnHsIf3/HgKsJDKUnoZI1jUSeopyDdgqtQY9zjJv8BxoRbEd53zU+D5C
+         yBwg==
+X-Gm-Message-State: AJIora/ukPtp37VXEWngS9l8viZkQwpAIEqEVOSk7ts4QswPwyxzzYmd
+        XT7D4yHj07N3cRMMlfjbK+22Qz0/Nm8DHnVKAUhG0mWvPQQ=
+X-Google-Smtp-Source: AGRyM1tx9GiLKAXVVO9IIxREypzj3c80Ewygb2GTpWBr8bOBFy/rNwmpSkvhOdfdeMWlwmGswO3QlX1mlAlDZJ6aGdE=
+X-Received: by 2002:a05:6402:4252:b0:43a:9232:dafc with SMTP id
+ g18-20020a056402425200b0043a9232dafcmr14447157edb.243.1657831205558; Thu, 14
+ Jul 2022 13:40:05 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220628222941.2642917-1-jeffxu@google.com> <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
  <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
  <CALmYWFvcSn_wks0bXo3_DUyYGtVW_MHrrO1dRoYcxY4uiB1KEA@mail.gmail.com>
  <0abdd920-b5cc-2fa9-7494-104c9c67480d@digikod.net> <CALmYWFvfRFfZbk=9P-=RNtjhXoR0ToQKnVVEZwmXB9yxLEHotg@mail.gmail.com>
- <CABXOdTf=o1zSSDUPNubHxAnF=1dOwOuxKfrViPHAD-tV_4x=Ww@mail.gmail.com>
-In-Reply-To: <CABXOdTf=o1zSSDUPNubHxAnF=1dOwOuxKfrViPHAD-tV_4x=Ww@mail.gmail.com>
-From:   Jeff Xu <jeffxu@google.com>
-Date:   Thu, 14 Jul 2022 11:36:40 -0700
-Message-ID: <CALmYWFvfDcJCUDCLhrDPdvyY6fH_2diQbbo8ejq3Xvu6E8_2rA@mail.gmail.com>
+ <CABXOdTf=o1zSSDUPNubHxAnF=1dOwOuxKfrViPHAD-tV_4x=Ww@mail.gmail.com> <CALmYWFvfDcJCUDCLhrDPdvyY6fH_2diQbbo8ejq3Xvu6E8_2rA@mail.gmail.com>
+In-Reply-To: <CALmYWFvfDcJCUDCLhrDPdvyY6fH_2diQbbo8ejq3Xvu6E8_2rA@mail.gmail.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Thu, 14 Jul 2022 13:39:54 -0700
+Message-ID: <CABXOdTcQOrat3vGCm3nw_ufYKcrQ1gqVdvbUSEUehfhZ7gAW4g@mail.gmail.com>
 Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
-To:     Guenter Roeck <groeck@google.com>
+To:     Jeff Xu <jeffxu@google.com>
 Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
         linux-security-module@vger.kernel.org,
         Jorge Lucangeli Obes <jorgelo@chromium.org>,
@@ -68,99 +68,110 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> > > Hmm, well, it is not related to Yama then. Could it be linked to othe=
-r
-> > > Chromium OS non-upstream patches?
-> >
-> >
-> > fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS is not
-> > enabled in chromeOS.
-> > If there is a reliable way of detecting OVERLAYFS (checking mount
-> > overlayfs is successful ? ), this is a good candidate to add SKIP.
-> >
-
-> IS_ENABLED(CONFIG_OVERLAY_FS) ?
-
-Could be. Landlock selftest currently is a user space program though,
-IS_ENABLED will depend on the kernel header during compile time.
-
-
-On Wed, Jul 13, 2022 at 5:30 PM Guenter Roeck <groeck@google.com> wrote:
+On Thu, Jul 14, 2022 at 11:37 AM Jeff Xu <jeffxu@google.com> wrote:
 >
-> On Wed, Jul 13, 2022 at 4:44 PM Jeff Xu <jeffxu@google.com> wrote:
-> >
-> > > > a correction:
-> > > >
-> > > >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >     case 0 - classic ptrace permissions: a process can PTRACE_ATTAC=
-H to
-> > > >     any other
-> > > >          process running under the same uid, as long as it is dumpa=
-ble (i.e.
-> > > >          did not transition uids, start privileged, or have called
-> > > >          prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRAC=
-EME is
-> > > >          unchanged.
-> > > >
-> > > >     Test: All passing
-> > > >
-> > > > // Base_test: 7/7 pass.
-> > > > // Fs_test 46/48 pass
-> > > > //.   not ok 47 layout2_overlay.no_restriction
-> > > > //.   not ok 48 layout2_overlay.same_content_different_file
-> > > > //  Ptrace 8/8 pass
-> >
-> >
-> > > Hmm, well, it is not related to Yama then. Could it be linked to othe=
-r
-> > > Chromium OS non-upstream patches?
-> >
-> >
-> > fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS is not
-> > enabled in chromeOS.
-> > If there is a reliable way of detecting OVERLAYFS (checking mount
-> > overlayfs is successful ? ), this is a good candidate to add SKIP.
-> >
->
-> IS_ENABLED(CONFIG_OVERLAY_FS) ?
->
-> > Overall, all the failure of landlock selftest seen in chromeOS are
-> > expected, we just need to modify the test.
-> >
-> > Thanks
-> > Best Regards
-> > Jeff
-> >
-> >
-> >
-> > On Thu, Jul 7, 2022 at 7:25 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.ne=
-t> wrote:
+> > > > Hmm, well, it is not related to Yama then. Could it be linked to ot=
+her
+> > > > Chromium OS non-upstream patches?
 > > >
 > > >
-> > > On 07/07/2022 01:35, Jeff Xu wrote:
-> > > > a correction:
-> > > >
-> > > >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >     case 0 - classic ptrace permissions: a process can PTRACE_ATTAC=
-H to
-> > > >     any other
-> > > >          process running under the same uid, as long as it is dumpa=
-ble (i.e.
-> > > >          did not transition uids, start privileged, or have called
-> > > >          prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRAC=
-EME is
-> > > >          unchanged.
-> > > >
-> > > >     Test: All passing
-> > > >
-> > > > // Base_test: 7/7 pass.
-> > > > // Fs_test 46/48 pass
-> > > > //.   not ok 47 layout2_overlay.no_restriction
-> > > > //.   not ok 48 layout2_overlay.same_content_different_file
-> > > > //  Ptrace 8/8 pass
+> > > fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS is not
+> > > enabled in chromeOS.
+> > > If there is a reliable way of detecting OVERLAYFS (checking mount
+> > > overlayfs is successful ? ), this is a good candidate to add SKIP.
 > > >
-> > > Hmm, well, it is not related to Yama then. Could it be linked to othe=
-r
-> > > Chromium OS non-upstream patches?
+>
+> > IS_ENABLED(CONFIG_OVERLAY_FS) ?
+>
+> Could be. Landlock selftest currently is a user space program though,
+> IS_ENABLED will depend on the kernel header during compile time.
+>
+
+Ah, sorry, I thought it was an in-kernel test. Userspace should be
+able to determine if overlayfs is supported by checking /sys/fs/ or
+possibly /proc/fs/.
+
+Guenter
+
+>
+> On Wed, Jul 13, 2022 at 5:30 PM Guenter Roeck <groeck@google.com> wrote:
+> >
+> > On Wed, Jul 13, 2022 at 4:44 PM Jeff Xu <jeffxu@google.com> wrote:
+> > >
+> > > > > a correction:
+> > > > >
+> > > > >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > >     case 0 - classic ptrace permissions: a process can PTRACE_ATT=
+ACH to
+> > > > >     any other
+> > > > >          process running under the same uid, as long as it is dum=
+pable (i.e.
+> > > > >          did not transition uids, start privileged, or have calle=
+d
+> > > > >          prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TR=
+ACEME is
+> > > > >          unchanged.
+> > > > >
+> > > > >     Test: All passing
+> > > > >
+> > > > > // Base_test: 7/7 pass.
+> > > > > // Fs_test 46/48 pass
+> > > > > //.   not ok 47 layout2_overlay.no_restriction
+> > > > > //.   not ok 48 layout2_overlay.same_content_different_file
+> > > > > //  Ptrace 8/8 pass
+> > >
+> > >
+> > > > Hmm, well, it is not related to Yama then. Could it be linked to ot=
+her
+> > > > Chromium OS non-upstream patches?
+> > >
+> > >
+> > > fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS is not
+> > > enabled in chromeOS.
+> > > If there is a reliable way of detecting OVERLAYFS (checking mount
+> > > overlayfs is successful ? ), this is a good candidate to add SKIP.
+> > >
+> >
+> > IS_ENABLED(CONFIG_OVERLAY_FS) ?
+> >
+> > > Overall, all the failure of landlock selftest seen in chromeOS are
+> > > expected, we just need to modify the test.
+> > >
+> > > Thanks
+> > > Best Regards
+> > > Jeff
+> > >
+> > >
+> > >
+> > > On Thu, Jul 7, 2022 at 7:25 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.=
+net> wrote:
+> > > >
+> > > >
+> > > > On 07/07/2022 01:35, Jeff Xu wrote:
+> > > > > a correction:
+> > > > >
+> > > > >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > >     case 0 - classic ptrace permissions: a process can PTRACE_ATT=
+ACH to
+> > > > >     any other
+> > > > >          process running under the same uid, as long as it is dum=
+pable (i.e.
+> > > > >          did not transition uids, start privileged, or have calle=
+d
+> > > > >          prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TR=
+ACEME is
+> > > > >          unchanged.
+> > > > >
+> > > > >     Test: All passing
+> > > > >
+> > > > > // Base_test: 7/7 pass.
+> > > > > // Fs_test 46/48 pass
+> > > > > //.   not ok 47 layout2_overlay.no_restriction
+> > > > > //.   not ok 48 layout2_overlay.same_content_different_file
+> > > > > //  Ptrace 8/8 pass
+> > > >
+> > > > Hmm, well, it is not related to Yama then. Could it be linked to ot=
+her
+> > > > Chromium OS non-upstream patches?
