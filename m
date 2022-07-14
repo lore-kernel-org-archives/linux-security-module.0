@@ -2,153 +2,227 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48265C43334
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jul 2022 13:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17D1C433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jul 2022 14:27:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239855AbiGNNl3 (ORCPT
+        id S229560AbiGNO1s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Jul 2022 09:41:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38756 "EHLO
+        Thu, 14 Jul 2022 10:27:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239868AbiGNNlW (ORCPT
+        with ESMTP id S240400AbiGNO1o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Jul 2022 09:41:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1BC2B61134
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Jul 2022 06:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657806079;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Sd8cjBSOdeaVjyH4f3lxl+0xYw15nzSjwpJw6bzSgLk=;
-        b=O1AWLKOn0yn4kfIvDEt3fEEoE/qVkSxP9IhgWZ4mSjASVhkhauaSudFhxqB6mvGmcd8hp9
-        tfAxGwvTj8eJgCAFJFg4Tb6j8HRak0WNt0xRWgSnV7JXmFNVjI/oahZWgZotj/5hG2BTo+
-        nx+4YAswYXIolZYiunuO1ypPWCQR5Zs=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-328-NR74tsqhOqGJ1pSZqu6JjQ-1; Thu, 14 Jul 2022 09:41:11 -0400
-X-MC-Unique: NR74tsqhOqGJ1pSZqu6JjQ-1
-Received: by mail-pg1-f200.google.com with SMTP id 79-20020a630252000000b004125da7d520so1266149pgc.11
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Jul 2022 06:41:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Sd8cjBSOdeaVjyH4f3lxl+0xYw15nzSjwpJw6bzSgLk=;
-        b=vhvCLXtSx1Uf+D+qUN6KKN5fK3mSk5cSY0T21DARLiSvRT41vJUf6Nb0US2VM1ITp5
-         CRNmE4/PsYRSsSSHgTrZsAKzK7098WTx54pbyOOY8mjIYzBi2uPLEN06tFJ+VIa8RvIk
-         PDT8aB2esW5X8AGiYh9tjAsBBAk4a4nSMpGJx2Tx/xU3/sHrAC4uYfojom8h1UrlEvdY
-         QiACj2XOQAt6u2pnEnGpLCJu2lpflf29fDZfToAWsZilmflpTxqk52XHZXNpOhIJWZEs
-         cAV6zC+dgDw703cMINKJ7xBPy/ldHNgIk8SfzxPKiYEkOn4G7j/pI5Uv/AItvu2m5OP4
-         jW9Q==
-X-Gm-Message-State: AJIora/pvKoKcCRiaPug+3D7V1O0KVmQgYHdC0jGt+rN7zX788O9ZfPp
-        kgKmd3GCRyzYTylU0DIGQ05C+0YQu0iWW/Bh7n4XeYWXBshVSMLGbxecwWgAzUXjEgL8Ruy9olG
-        chAI/XMA9zMiAQGUjVa6E8X3gFtJl9XO3PrzW
-X-Received: by 2002:a17:90b:4b82:b0:1f0:196d:4204 with SMTP id lr2-20020a17090b4b8200b001f0196d4204mr16396528pjb.194.1657806070933;
-        Thu, 14 Jul 2022 06:41:10 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1v6W73kkND0lzdShUq0XCk7I59w6K6H/HhxbM9LJ4h4Bhv+gs6tfqbnzg5qbuZf1Ex6YUHUFA==
-X-Received: by 2002:a17:90b:4b82:b0:1f0:196d:4204 with SMTP id lr2-20020a17090b4b8200b001f0196d4204mr16396483pjb.194.1657806070591;
-        Thu, 14 Jul 2022 06:41:10 -0700 (PDT)
-Received: from localhost ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id h10-20020aa79f4a000000b00528d880a32fsm1663006pfr.78.2022.07.14.06.41.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jul 2022 06:41:10 -0700 (PDT)
-From:   Coiby Xu <coxu@redhat.com>
-To:     kexec@lists.infradead.org, linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Michal Suchanek <msuchanek@suse.de>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Chun-Yi Lee <jlee@suse.com>, stable@vger.kernel.org,
-        Philipp Rudo <prudo@linux.ibm.com>, keyrings@vger.kernel.org,
+        Thu, 14 Jul 2022 10:27:44 -0400
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD5B95F126;
+        Thu, 14 Jul 2022 07:27:42 -0700 (PDT)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id E128966C; Thu, 14 Jul 2022 09:27:40 -0500 (CDT)
+Date:   Thu, 14 Jul 2022 09:27:40 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>,
+        Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
+        KP Singh <kpsingh@kernel.org>, revest@chromium.org,
+        jackmanb@chromium.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, shuah@kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-s390@vger.kernel.org (open list:S390),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v10 4/4] kexec, KEYS, s390: Make use of built-in and secondary keyring for signature verification
-Date:   Thu, 14 Jul 2022 21:40:27 +0800
-Message-Id: <20220714134027.394370-5-coxu@redhat.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20220714134027.394370-1-coxu@redhat.com>
-References: <20220714134027.394370-1-coxu@redhat.com>
+        SElinux list <selinux@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH v2 0/4] Introduce security_create_user_ns()
+Message-ID: <20220714142740.GA10621@mail.hallyn.com>
+References: <20220707223228.1940249-1-fred@cloudflare.com>
+ <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
+ <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com>
+ <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=coxu@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"; x-default=true
+In-Reply-To: <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Michal Suchanek <msuchanek@suse.de>
+On Fri, Jul 08, 2022 at 09:11:15AM -0700, Casey Schaufler wrote:
+> On 7/8/2022 7:01 AM, Frederick Lawler wrote:
+> > On 7/8/22 7:10 AM, Christian Göttsche wrote:
+> >> ,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com>
+> >> wrote:
+> >>>
+> >>> While creating a LSM BPF MAC policy to block user namespace
+> >>> creation, we
+> >>> used the LSM cred_prepare hook because that is the closest hook to
+> >>> prevent
+> >>> a call to create_user_ns().
+> >>>
+> >>> The calls look something like this:
+> >>>
+> >>>      cred = prepare_creds()
+> >>>          security_prepare_creds()
+> >>>              call_int_hook(cred_prepare, ...
+> >>>      if (cred)
+> >>>          create_user_ns(cred)
+> >>>
+> >>> We noticed that error codes were not propagated from this hook and
+> >>> introduced a patch [1] to propagate those errors.
+> >>>
+> >>> The discussion notes that security_prepare_creds()
+> >>> is not appropriate for MAC policies, and instead the hook is
+> >>> meant for LSM authors to prepare credentials for mutation. [2]
+> >>>
+> >>> Ultimately, we concluded that a better course of action is to introduce
+> >>> a new security hook for LSM authors. [3]
+> >>>
+> >>> This patch set first introduces a new security_create_user_ns()
+> >>> function
+> >>> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+> >>
+> >> Some thoughts:
+> >>
+> >> I.
+> >>
+> >> Why not make the hook more generic, e.g. support all other existing
+> >> and potential future namespaces?
+> >
+> > The main issue with a generic hook is that different namespaces have
+> > different calling contexts. We decided in a previous discussion to
+> > opt-out of a generic hook for this reason. [1]
+> >
+> >> Also I think the naming scheme is <object>_<verb>.
+> >
+> > That's a good call out. I was originally hoping to keep the
+> > security_*() match with the hook name matched with the caller function
+> > to keep things all aligned. If no one objects to renaming the hook, I
+> > can rename the hook for v3.
+> >
+> >>
+> >>      LSM_HOOK(int, 0, namespace_create, const struct cred *cred,
+> >> unsigned int flags)
+> >>
+> >> where flags is a bitmap of CLONE flags from include/uapi/linux/sched.h
+> >> (like CLONE_NEWUSER).
+> >>
+> >> II.
+> >>
+> >> While adding policing for namespaces maybe also add a new hook for
+> >> setns(2)
+> >>
+> >>      LSM_HOOK(int, 0, namespace_join, const struct cred *subj,  const
+> >> struct cred *obj, unsigned int flags)
+> >>
+> >
+> > IIUC, setns() will create a new namespace for the other namespaces
+> > except for user namespace. If we add a security hook for the other
+> > create_*_ns() functions, then we can catch setns() at that point.
+> >
+> >> III.
+> >>
+> >> Maybe even attach a security context to namespaces so they can be
+> >> further governed?
+> 
+> That would likely add confusion to the existing security module namespace
+> efforts. SELinux, Smack and AppArmor have all developed namespace models.
+> That, or it could replace the various independent efforts with a single,
 
-commit e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-adds support for KEXEC_SIG verification with keys from platform keyring
-but the built-in keys and secondary keyring are not used.
+I feel like you're attaching more meaning to this than there needs to be.
+I *think* he's just talking about a user_namespace->u_security void*.
+So that for instance while deciding whether to allow some transition,
+selinux could check whether the caller's user namespace was created by
+a task in an selinux context authorized to create user namespaces.
 
-Add support for the built-in keys and secondary keyring as x86 does.
+The "user namespaces are DAC and orthogonal to MAC" is of course true
+(where the LSM does not itself tie them together), except that we all
+know that a process running as root in a user namespace gains access to
+often-less-trustworthy code gated under CAP_SYS_ADMIN.
 
-Fixes: e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-Cc: stable@vger.kernel.org
-Cc: Philipp Rudo <prudo@linux.ibm.com>
-Cc: kexec@lists.infradead.org
-Cc: keyrings@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-Acked-by: Baoquan He <bhe@redhat.com>
-Signed-off-by: Coiby Xu <coxu@redhat.com>
----
- arch/s390/kernel/machine_kexec_file.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+> unified security module namespace effort. There's more work to that than
+> adding a context to a namespace. Treating namespaces as objects is almost,
+> but not quite, solidifying containers as a kernel construct. We know we
+> can't do that.
 
-diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
-index 8f43575a4dd3..fc6d5f58debe 100644
---- a/arch/s390/kernel/machine_kexec_file.c
-+++ b/arch/s390/kernel/machine_kexec_file.c
-@@ -31,6 +31,7 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
- 	const unsigned long marker_len = sizeof(MODULE_SIG_STRING) - 1;
- 	struct module_signature *ms;
- 	unsigned long sig_len;
-+	int ret;
- 
- 	/* Skip signature verification when not secure IPLed. */
- 	if (!ipl_secure_flag)
-@@ -65,11 +66,18 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
- 		return -EBADMSG;
- 	}
- 
--	return verify_pkcs7_signature(kernel, kernel_len,
--				      kernel + kernel_len, sig_len,
--				      VERIFY_USE_PLATFORM_KEYRING,
--				      VERIFYING_MODULE_SIGNATURE,
--				      NULL, NULL);
-+	ret = verify_pkcs7_signature(kernel, kernel_len,
-+				     kernel + kernel_len, sig_len,
-+				     VERIFY_USE_SECONDARY_KEYRING,
-+				     VERIFYING_MODULE_SIGNATURE,
-+				     NULL, NULL);
-+	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING))
-+		ret = verify_pkcs7_signature(kernel, kernel_len,
-+					     kernel + kernel_len, sig_len,
-+					     VERIFY_USE_PLATFORM_KEYRING,
-+					     VERIFYING_MODULE_SIGNATURE,
-+					     NULL, NULL);
-+	return ret;
- }
- #endif /* CONFIG_KEXEC_SIG */
- 
--- 
-2.35.3
+What we "can't do" (imo) is to create a "full container" construct which
+ties together the various namespaces and other concepts in a restrictive
+way.
 
+> >> SELinux example:
+> >>
+> >>      type domainA_userns_t;
+> >>      type_transition domainA_t domainA_t : namespace domainA_userns_t
+> >> "user";
+> >>      allow domainA_t domainA_userns_t:namespace create;
+> >>
+> >>      # domainB calling setns(2) with domainA as target
+> >>      allow domainB_t domainA_userns_t:namespace join;
+> 
+> While I'm not an expert on SELinux policy, I'd bet a refreshing beverage
+> that there's already a way to achieve this with existing constructs.
+> Smack, which is subject+object MAC couldn't care less about the user
+> namespace configuration. User namespaces are DAC constructs.
+> 
+> >>
+> >
+> > Links:
+> > 1.
+> > https://lore.kernel.org/all/CAHC9VhSTkEMT90Tk+=iTyp3npWEm+3imrkFVX2qb=XsOPp9F=A@mail.gmail.com/
+> >
+> >>>
+> >>> Links:
+> >>> 1.
+> >>> https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
+> >>>
+> >>> 2.
+> >>> https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
+> >>> 3.
+> >>> https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
+> >>>
+> >>> Changes since v1:
+> >>> - Add selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
+> >>> patch
+> >>> - Add selinux: Implement create_user_ns hook patch
+> >>> - Change function signature of security_create_user_ns() to only take
+> >>>    struct cred
+> >>> - Move security_create_user_ns() call after id mapping check in
+> >>>    create_user_ns()
+> >>> - Update documentation to reflect changes
+> >>>
+> >>> Frederick Lawler (4):
+> >>>    security, lsm: Introduce security_create_user_ns()
+> >>>    bpf-lsm: Make bpf_lsm_create_user_ns() sleepable
+> >>>    selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
+> >>>    selinux: Implement create_user_ns hook
+> >>>
+> >>>   include/linux/lsm_hook_defs.h                 |  1 +
+> >>>   include/linux/lsm_hooks.h                     |  4 +
+> >>>   include/linux/security.h                      |  6 ++
+> >>>   kernel/bpf/bpf_lsm.c                          |  1 +
+> >>>   kernel/user_namespace.c                       |  5 ++
+> >>>   security/security.c                           |  5 ++
+> >>>   security/selinux/hooks.c                      |  9 ++
+> >>>   security/selinux/include/classmap.h           |  2 +
+> >>>   .../selftests/bpf/prog_tests/deny_namespace.c | 88
+> >>> +++++++++++++++++++
+> >>>   .../selftests/bpf/progs/test_deny_namespace.c | 39 ++++++++
+> >>>   10 files changed, 160 insertions(+)
+> >>>   create mode 100644
+> >>> tools/testing/selftests/bpf/prog_tests/deny_namespace.c
+> >>>   create mode 100644
+> >>> tools/testing/selftests/bpf/progs/test_deny_namespace.c
+> >>>
+> >>> -- 
+> >>> 2.30.2
+> >>>
+> >
