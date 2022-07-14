@@ -2,152 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5BFCCA479
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jul 2022 00:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6230DC43334
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jul 2022 00:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbiGNAHI (ORCPT
+        id S229725AbiGNAan (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jul 2022 20:07:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39112 "EHLO
+        Wed, 13 Jul 2022 20:30:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230271AbiGNAGy (ORCPT
+        with ESMTP id S229619AbiGNAam (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jul 2022 20:06:54 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AFBBDFA5;
-        Wed, 13 Jul 2022 17:05:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=dQtjYYA8h5wgwDxBEFOLKVei5N9YdmKdkt6ehHz9dmQ=; b=lCFOLYhEwl+IuvPJnQCWoLo1tw
-        VKktzQFiMT29Ivnfdq/iuQYJ5May9TshQpb9xGfi+U1yH3dwuZ8SKbMeX9QO0KvObbDZ/WMELhRlf
-        ftnqX/UjihPnp68tdVk+HorUEuvtPuX2OCsvftdaJsPTnq5Rzl34P4kDMwaVJN/N/lzdFukY+3IyU
-        MvFy2wbn3eeZdck6xOhKPNZEvL7RoX6pbkTTh+gW6Qc+uXfCTQMku7uPSvma9tuBC4hYvf1DjBdW9
-        Q+4Hutd2byc3a+yjgh1dyYifROR1TVOXz680l46mxAwcIFzvwG/OCPjP06wM9/7cYbP52Mu8aKRWT
-        JrW3WvlA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oBmML-009RTh-Nb; Thu, 14 Jul 2022 00:05:37 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     axboe@kernel.dk, casey@schaufler-ca.com, paul@paul-moore.com,
-        joshi.k@samsung.com, linux-security-module@vger.kernel.org,
-        io-uring@vger.kernel.org
-Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        a.manzanares@samsung.com, javier@javigon.com, mcgrof@kernel.org
-Subject: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file op
-Date:   Wed, 13 Jul 2022 17:05:36 -0700
-Message-Id: <20220714000536.2250531-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.35.3
+        Wed, 13 Jul 2022 20:30:42 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 497C05F6D
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Jul 2022 17:30:41 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id e15so453954edj.2
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Jul 2022 17:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=lG3/DfoKYyB+1bMvX+d64tmSHkJ/WWOCfRxBHwhRaQM=;
+        b=pFG6rdb6Bh8kj4vwdoJ162lsvMFvGosKAIp+/I5muhEaqOFtqknRCOIa0RPfPCrEdZ
+         rsnMIkB/f3QhbMDYXqDv73NJ+JU2P6RGpt+C0zVlUG2jz6dVvwtmunqSLLY1nIykPbYQ
+         FC4TEMCESMUbs3NjEzBDVV3qv4mnpNExhz2by4I1a5xFFQMW82exoKCh9GeTgHESEa1O
+         fl+aCyJyuzEgnZ2uUI9e6D2/DOVTtW6MkYIAwTyraF148DPJnanioEb/8EgMYH4r6xE2
+         Ogf1XKqlEU6r47UmOR9Ty1WfYsERQr0NxaUzuVwONK/6s4fRC/aqsG+4iS86zMjPB0lS
+         EW+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=lG3/DfoKYyB+1bMvX+d64tmSHkJ/WWOCfRxBHwhRaQM=;
+        b=6rxnhDMKJTf17uuUk/lXW3jGCMGct8LeyR4A1gpl89/OmH4e1JugH5HTsAUoTXn7zn
+         uU3+cdp71+kMrqJDP3ty8j2/O9RLXY/O+ljXHWlxwHipRsdfGVnQOVXvf5LDAMRN6Bvj
+         OyuxoH0cd1pPIvBzpZSpcbXdXD/WoPx/Dk9iACV6EUmB4KcJ1z3l7eIWP+RpAGexj+a/
+         pZvOfTyxNV6Y6d+yuQd1UcVmqkLE4TYQUBMuFgdhncYVdHkCcYh0we0QCOppIZKfWq8x
+         9wA6RyDrGhftAKrbS4tVMti6n3fC+vHWCZc7/R9d0lpwNGvzFfTaqg1q5Q3zqrm8RxnE
+         w1oA==
+X-Gm-Message-State: AJIora/twHSMtlHi0sJr9J5yrYNoUaZZ2nntPcyXU17Ps3edxNVUiOmF
+        RrQ5O0LqLY9FPkXr/HTxSfqInOI76/+6wPqeh8i+Gw==
+X-Google-Smtp-Source: AGRyM1u/VchFi65j/v+lkYNQseIRYA8zOomib844qMdIlc8nep6xQZl7NOBrGDosUyTB0rIiJUUq/VEfT+2CBlzRMKY=
+X-Received: by 2002:a05:6402:2404:b0:437:d11f:b9c7 with SMTP id
+ t4-20020a056402240400b00437d11fb9c7mr8940139eda.176.1657758639748; Wed, 13
+ Jul 2022 17:30:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <20220628222941.2642917-1-jeffxu@google.com> <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
+ <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
+ <CALmYWFvcSn_wks0bXo3_DUyYGtVW_MHrrO1dRoYcxY4uiB1KEA@mail.gmail.com>
+ <0abdd920-b5cc-2fa9-7494-104c9c67480d@digikod.net> <CALmYWFvfRFfZbk=9P-=RNtjhXoR0ToQKnVVEZwmXB9yxLEHotg@mail.gmail.com>
+In-Reply-To: <CALmYWFvfRFfZbk=9P-=RNtjhXoR0ToQKnVVEZwmXB9yxLEHotg@mail.gmail.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Wed, 13 Jul 2022 17:30:28 -0700
+Message-ID: <CABXOdTf=o1zSSDUPNubHxAnF=1dOwOuxKfrViPHAD-tV_4x=Ww@mail.gmail.com>
+Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
+To:     Jeff Xu <jeffxu@google.com>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        linux-security-module@vger.kernel.org,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
-add infrastructure for uring-cmd"), this extended the struct
-file_operations to allow a new command which each subsystem can use
-to enable command passthrough. Add an LSM specific for the command
-passthrough which enables LSMs to inspect the command details.
+On Wed, Jul 13, 2022 at 4:44 PM Jeff Xu <jeffxu@google.com> wrote:
+>
+> > > a correction:
+> > >
+> > >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >     case 0 - classic ptrace permissions: a process can PTRACE_ATTACH =
+to
+> > >     any other
+> > >          process running under the same uid, as long as it is dumpabl=
+e (i.e.
+> > >          did not transition uids, start privileged, or have called
+> > >          prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEM=
+E is
+> > >          unchanged.
+> > >
+> > >     Test: All passing
+> > >
+> > > // Base_test: 7/7 pass.
+> > > // Fs_test 46/48 pass
+> > > //.   not ok 47 layout2_overlay.no_restriction
+> > > //.   not ok 48 layout2_overlay.same_content_different_file
+> > > //  Ptrace 8/8 pass
+>
+>
+> > Hmm, well, it is not related to Yama then. Could it be linked to other
+> > Chromium OS non-upstream patches?
+>
+>
+> fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS is not
+> enabled in chromeOS.
+> If there is a reliable way of detecting OVERLAYFS (checking mount
+> overlayfs is successful ? ), this is a good candidate to add SKIP.
+>
 
-This was discussed long ago without no clear pointer for something
-conclusive, so this enables LSMs to at least reject this new file
-operation.
+IS_ENABLED(CONFIG_OVERLAY_FS) ?
 
-[0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
-
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- include/linux/lsm_hook_defs.h | 1 +
- include/linux/lsm_hooks.h     | 3 +++
- include/linux/security.h      | 5 +++++
- io_uring/uring_cmd.c          | 5 +++++
- security/security.c           | 4 ++++
- 5 files changed, 18 insertions(+)
-
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index eafa1d2489fd..4e94755098f1 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -406,4 +406,5 @@ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
- #ifdef CONFIG_IO_URING
- LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
- LSM_HOOK(int, 0, uring_sqpoll, void)
-+LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
- #endif /* CONFIG_IO_URING */
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 91c8146649f5..b681cfce6190 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1575,6 +1575,9 @@
-  *      Check whether the current task is allowed to spawn a io_uring polling
-  *      thread (IORING_SETUP_SQPOLL).
-  *
-+ * @uring_cmd:
-+ *      Check whether the file_operations uring_cmd is allowed to run.
-+ *
-  */
- union security_list_options {
- 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 4d0baf30266e..421856919b1e 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2053,6 +2053,7 @@ static inline int security_perf_event_write(struct perf_event *event)
- #ifdef CONFIG_SECURITY
- extern int security_uring_override_creds(const struct cred *new);
- extern int security_uring_sqpoll(void);
-+extern int security_uring_cmd(struct io_uring_cmd *ioucmd);
- #else
- static inline int security_uring_override_creds(const struct cred *new)
- {
-@@ -2062,6 +2063,10 @@ static inline int security_uring_sqpoll(void)
- {
- 	return 0;
- }
-+static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_SECURITY */
- #endif /* CONFIG_IO_URING */
- 
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 0a421ed51e7e..5e666aa7edb8 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -3,6 +3,7 @@
- #include <linux/errno.h>
- #include <linux/file.h>
- #include <linux/io_uring.h>
-+#include <linux/security.h>
- 
- #include <uapi/linux/io_uring.h>
- 
-@@ -82,6 +83,10 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
- 	struct file *file = req->file;
- 	int ret;
- 
-+	ret = security_uring_cmd(ioucmd);
-+	if (ret)
-+		return ret;
-+
- 	if (!req->file->f_op->uring_cmd)
- 		return -EOPNOTSUPP;
- 
-diff --git a/security/security.c b/security/security.c
-index f85afb02ea1c..ad7d7229bd72 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2655,4 +2655,8 @@ int security_uring_sqpoll(void)
- {
- 	return call_int_hook(uring_sqpoll, 0);
- }
-+int security_uring_cmd(struct io_uring_cmd *ioucmd)
-+{
-+	return call_int_hook(uring_cmd, 0, ioucmd);
-+}
- #endif /* CONFIG_IO_URING */
--- 
-2.35.1
-
+> Overall, all the failure of landlock selftest seen in chromeOS are
+> expected, we just need to modify the test.
+>
+> Thanks
+> Best Regards
+> Jeff
+>
+>
+>
+> On Thu, Jul 7, 2022 at 7:25 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
+ wrote:
+> >
+> >
+> > On 07/07/2022 01:35, Jeff Xu wrote:
+> > > a correction:
+> > >
+> > >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >     case 0 - classic ptrace permissions: a process can PTRACE_ATTACH =
+to
+> > >     any other
+> > >          process running under the same uid, as long as it is dumpabl=
+e (i.e.
+> > >          did not transition uids, start privileged, or have called
+> > >          prctl(PR_SET_DUMPABLE...) already). Similarly, PTRACE_TRACEM=
+E is
+> > >          unchanged.
+> > >
+> > >     Test: All passing
+> > >
+> > > // Base_test: 7/7 pass.
+> > > // Fs_test 46/48 pass
+> > > //.   not ok 47 layout2_overlay.no_restriction
+> > > //.   not ok 48 layout2_overlay.same_content_different_file
+> > > //  Ptrace 8/8 pass
+> >
+> > Hmm, well, it is not related to Yama then. Could it be linked to other
+> > Chromium OS non-upstream patches?
