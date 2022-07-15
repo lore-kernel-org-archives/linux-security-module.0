@@ -2,94 +2,208 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8BFC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jul 2022 19:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA00CCA480
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jul 2022 19:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231226AbiGOT2l (ORCPT
+        id S231206AbiGOTvK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Jul 2022 15:28:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59494 "EHLO
+        Fri, 15 Jul 2022 15:51:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbiGOT2k (ORCPT
+        with ESMTP id S231172AbiGOTvI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Jul 2022 15:28:40 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E235271E
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 12:28:38 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id v7so5495991pfb.0
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 12:28:38 -0700 (PDT)
+        Fri, 15 Jul 2022 15:51:08 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85D452FD5
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 12:51:05 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id az2-20020a05600c600200b003a301c985fcso3433824wmb.4
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 12:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=qLmffwl75hgVbG2gk0tD6CR2NK/r5FWbW6d2Hfhvklw=;
-        b=tBNflhJG39NNOtRJAnSsZf0Mz1s7O9xDQiesgT8qsidLnFtuOTSk+TbYvdMNItHTPn
-         PpvmA9kGK70VxNP2LiF7AZMV54w4qphldr0uoS4HsMGePDL/vlr9tA9u8C4ZK4y32zEw
-         PtcAWB08G5Jq81PsYzRlscnqOQS3yK9+qdTF+iuBD7cGbbqJ+Zpd4YK4HaS5xL/JivC2
-         XNkTdf+HGR3BkV91vPU3dMChnCOTzOB6tJ2dWRqvkEFLhhrt/wAlYBG6XuNJ9++fM/Eh
-         X2Mmem6tjHdZ0kL0PWeVBukomdpxpIvJ7NaBhRPAB2OacrCq48ujcQYvFG9AqBbw8bkB
-         4KIQ==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B3ZiGF2tDesE+mQexAH3kzTRyU5arN1AgSUXC9Mb9ew=;
+        b=C5BVrNOtv8yFXOUZEUcznwAm5ACBfjZTrKM1nrHegqukd1Hefyz/I3PKLnAXdbXEoE
+         1omsOY2A1h6uFtkMNOPd5VIMCEzPixeQzbWmXfuLw/U0cGxNRVYdieybJHOLmWkNABp7
+         ZYt5+A8yXbuOPwvnW9yLTpWHcAzjBoIeZm2/3WBb6Oyyfh+nN9nVotozZk8+9mtsse6Z
+         IlR6KcOyCfoeoWHvi6NCyl9HjQrL3NDJZcB1gWLtlEPa6kdO85zxzaqceIqt02hvo6Pe
+         prnbeU/odHesphjOtzqT94rWWlIv1xQqKBImdJ0+B+3BECh8YelGM1dR35482bVn1NTo
+         ZolA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=qLmffwl75hgVbG2gk0tD6CR2NK/r5FWbW6d2Hfhvklw=;
-        b=JKUy2ooDcm8C8wumuNCo7RsgFihk5N8lQAK/7RH+ACAzI+1B3u7gXdMyfTXRQKPYE5
-         J3R2gdca/LbaSu+p3qTN6UbbcokzZ5otC5r3rwFHn367bwjLJlxP5cCEpENT6ZMORBKE
-         1dar13zSrPXDyZHHKb1mtfRoM8WaoMqKmkpUWJ7JdBmMA5AWjMw7OcSvzo/t82+Waa7y
-         gkQiMehR1NNutk2XF+/WUYxmBFNy8q8s+n5g8yHhNxWEfSVvCfQquPCOtHZ98ZI1T7uV
-         3gjy8fR/h9I+Xp9rzy2n6kG6K0TECmQlg7tjdWkJbyr42R25/WDqi87eRIoF+j21iy3s
-         zxUQ==
-X-Gm-Message-State: AJIora+LWwIQA/0lFG+soes+tlzC5JV9EH0LK628jZImabIJBDfH7xoZ
-        530cUiVLIPVLwuP+HGg+2hKmoQ==
-X-Google-Smtp-Source: AGRyM1sguRsI0CLbyOSQx7uqFMEBO/+wa1uRdB/NxjvCJYWu8rLyJIPfD1UcG2YEKSuCOARPIH+ROg==
-X-Received: by 2002:a65:5605:0:b0:419:d863:8d94 with SMTP id l5-20020a655605000000b00419d8638d94mr5229267pgs.359.1657913317875;
-        Fri, 15 Jul 2022 12:28:37 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a8-20020a170902ecc800b001641b2d61d4sm3967075plh.30.2022.07.15.12.28.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jul 2022 12:28:37 -0700 (PDT)
-Message-ID: <a56d191e-a3a3-76b9-6ca3-782803d2600c@kernel.dk>
-Date:   Fri, 15 Jul 2022 13:28:35 -0600
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B3ZiGF2tDesE+mQexAH3kzTRyU5arN1AgSUXC9Mb9ew=;
+        b=YGpLM8NykR+RXT5tA8WKvcYA9s6W/fnxhaybzU18pciaiXJMeUZaVpz/BBK5OnkrSE
+         jxjQR6gDJBEwqC/UWl1Njz0YoxR3fSK9YJxJ3qhRXeiyBOvwC4NvBYhRKmQpdun2lLWE
+         sJepYQ2w7tkFzDRK+bpdHQUSxkHv8BCb9g9Xmnz6RK54yBxezThMu4LOqRkxF99mfUbZ
+         jRCtWeohtQZJPgOoxRYKTbzOOnuvUWdWc8JFDnwenQlMHBMkkoIbr5Wws+V6gjvYozJz
+         2UUq/WwcTvU1EfuY4Aa29t3qidLg4QZADajz1XegsIOyAt/jdsC40O1+RJ/h6XZl6kAK
+         7WVw==
+X-Gm-Message-State: AJIora8pEv3FvFjjBwxnCb8JQ61Gk1B4IOkC4FrZJQIyk5oxulaAN4qS
+        sI38J2c9OigZxPb4IDp7HfIEuNyHCxaZ2+XqXmICXSwYa01h
+X-Google-Smtp-Source: AGRyM1v9Y59NpuNV8HmLV11n89oSkcfJUYTmai6o9MEZYymhprlb09bXYf1KArAe8J77kBFj3VQqmYg4BbMmRnRxhY8=
+X-Received: by 2002:a7b:c381:0:b0:3a2:fe96:2ce4 with SMTP id
+ s1-20020a7bc381000000b003a2fe962ce4mr13050035wmj.70.1657914664182; Fri, 15
+ Jul 2022 12:51:04 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2] lsm,io_uring: add LSM hooks for the new uring_cmd file
- op
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>, casey@schaufler-ca.com,
-        paul@paul-moore.com, joshi.k@samsung.com,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
-Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        a.manzanares@samsung.com, javier@javigon.com
-References: <20220715191622.2310436-1-mcgrof@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220715191622.2310436-1-mcgrof@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220714000536.2250531-1-mcgrof@kernel.org> <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
+ <YtC8Hg1mjL+0mjfl@bombadil.infradead.org> <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
+ <a91fdbe3-fe01-c534-29ee-f05056ffd74f@kernel.dk>
+In-Reply-To: <a91fdbe3-fe01-c534-29ee-f05056ffd74f@kernel.dk>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 15 Jul 2022 15:50:53 -0400
+Message-ID: <CAHC9VhRCW4PFwmwyAYxYmLUDuY-agHm1CejBZJUpHTVbZE8L1Q@mail.gmail.com>
+Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file op
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, casey@schaufler-ca.com,
+        joshi.k@samsung.com, linux-security-module@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, a.manzanares@samsung.com,
+        javier@javigon.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/15/22 1:16 PM, Luis Chamberlain wrote:
-> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
-> add infrastructure for uring-cmd"), this extended the struct
-> file_operations to allow a new command which each subsystem can use
-> to enable command passthrough. Add an LSM specific for the command
-> passthrough which enables LSMs to inspect the command details.
-> 
-> This was discussed long ago without no clear pointer for something
-> conclusive, so this enables LSMs to at least reject this new file
-> operation.
+On Fri, Jul 15, 2022 at 3:07 PM Jens Axboe <axboe@kernel.dk> wrote:
+> On 7/15/22 12:46 PM, Paul Moore wrote:
+> > On Thu, Jul 14, 2022 at 9:00 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >> On Wed, Jul 13, 2022 at 11:00:42PM -0400, Paul Moore wrote:
+> >>> On Wed, Jul 13, 2022 at 8:05 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >>>>
+> >>>> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+> >>>> add infrastructure for uring-cmd"), this extended the struct
+> >>>> file_operations to allow a new command which each subsystem can use
+> >>>> to enable command passthrough. Add an LSM specific for the command
+> >>>> passthrough which enables LSMs to inspect the command details.
+> >>>>
+> >>>> This was discussed long ago without no clear pointer for something
+> >>>> conclusive, so this enables LSMs to at least reject this new file
+> >>>> operation.
+> >>>>
+> >>>> [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
+> >>>
+> >>> [NOTE: I now see that the IORING_OP_URING_CMD has made it into the
+> >>> v5.19-rcX releases, I'm going to be honest and say that I'm
+> >>> disappointed you didn't post the related LSM additions
+> >>
+> >> It does not mean I didn't ask for them too.
+> >>
+> >>> until
+> >>> v5.19-rc6, especially given our earlier discussions.]
+> >>
+> >> And hence since I don't see it either, it's on us now.
+> >
+> > It looks like I owe you an apology, Luis.  While my frustration over
+> > io_uring remains, along with my disappointment that the io_uring
+> > developers continue to avoid discussing access controls with the LSM
+> > community, you are not the author of the IORING_OP_URING_CMD.   You
+> > are simply trying to do the right thing by adding the necessary LSM
+> > controls and in my confusion I likely caused you a bit of frustration;
+> > I'm sorry for that.
+>
+> Maybe, just maybe, outbursts like this are why there's not a lot of
+> incentive to collaborate on this? I get why it can seem frustrating and
+> that you are being ignored, but I think it's more likely that people
+> just don't think of adding these hooks. I don't use any of the access
+> controls, nor do I really have a good idea which one exists and what
+> they do. None of the external developers or internal use cases we have
+> use any of this, and nobody outside of the developers of these kernel
+> features have ever brought it up...
 
-From an io_uring perspective, this looks fine to me. It may be easier if
-I take this through my tree due to the moving of the files, or the
-security side can do it but it'd have to then wait for merge window (and
-post io_uring branch merge) to do so. Just let me know. If done outside
-of my tree, feel free to add:
+While my response may have been misdirected (once again, sorry Luis),
+I feel that expressing frustration about the LSMs being routinely left
+out of the discussion when new functionality is added to the kernel is
+a reasonable response; especially when one considers the history of
+this particular situation.  I was willing to attribute the initial
+LSM/audit omission in io_uring to an honest oversight, and the fact
+that we were able to work together to get something in place was a
+good thing which gave me some hope.  However, the issue around
+IORING_OP_URING_CMD was brought up earlier this year and many of us on
+the LSM side expressed concern, only to see the code present in
+v5.19-rcX with little heads-up given outside of Luis' patch a few days
+ago.  You can call my comments an outburst if you like, but it seems
+like an appropriate reaction in this case.
 
-Acked-by: Jens Axboe <axboe@kernel.dk>
+> I don't mind getting these added, but since I wasn't really part of
+> driving this particular feature, it wasn't on my radar.
+
+I generally don't care who authors a commit, it's that code itself
+that matters, not who wrote it.  However, since you mentioned it I
+went back to check, and it looks like you authored the basic
+IORING_OP_URING_CMD infrastructure according to ee692a21e9bf
+("fs,io_uring: add infrastructure for uring-cmd"); that seems like a
+decent level of awareness to me.
+
+> >> Given a clear solution is not easily tangible at this point
+> >> I was hoping perhaps at least the abilility to enable LSMs to
+> >> reject uring-cmd would be better than nothing at this point.
+> >
+> > Without any cooperation from the io_uring developers, that is likely
+> > what we will have to do.  I know there was a lot of talk about this
+> > functionality not being like another ioctl(), but from a LSM
+> > perspective I think that is how we will need to treat it.
+>
+> Again this perceived ill intent. What are you looking for here?
+
+We expressed concern earlier this year and were largely ignored, and
+when the functionality was merged into mainline the LSM community was
+not notified despite our previous comments.  Perhaps there is no ill
+intent on the side of io_uring, but from my perspective it sure seems
+like there was an effort to avoid the LSM community.
+
+As far as what I'm looking for, I think basic consideration for
+comments coming from the LSM community would be a good start.  We
+obviously have had some success in the past with this, which is why
+I'm a bit shocked that our IORING_OP_URING_CMD comments from earlier
+this year appeared to fall on deaf ears.
+
+> >>>> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+>
+> > Well, we're at -rc6 right now which means IORING_OP_URING_CMD is
+> > happening and it's unlikely the LSM folks are going to be able to
+> > influence the design/implementation much at this point so we have to
+> > do the best we can.  Given the existing constraints, I think your
+> > patch is reasonable (although please do shift the hook call site down
+> > a bit as discussed above), we just need to develop the LSM
+> > implementations to go along with it.
+> >
+> > Luis, can you respin and resend the patch with the requested changes?
+> >
+> > Casey, it looks like Smack and SELinux are the only LSMs to implement
+> > io_uring access controls.  Given the hook that Luis developed in this
+> > patch, could you draft a patch for Smack to add the necessary checks?
+> > I'll do the same for SELinux.  My initial thinking is that all we can
+> > really do is check the access between the creds on the current task
+> > (any overrides will have already taken place by the time the LSM hook
+> > is called) with the io_uring_cmd:file label/creds; we won't be able to
+> > provide much permission granularity for all the reasons previously
+> > discussed, but I suspect that will be more of a SELinux problem than a
+> > Smack problem (although I suspect Smack will need to treat this as
+> > both a read and a write, which is likely less than ideal).
+> >
+> > I think it's doubtful we will have all of this ready and tested in
+> > time for v5.19, but I think we can have it ready shortly after that
+> > and I'll mark all of the patches for -stable when I send them to
+> > Linus.
+> >
+> > I also think we should mark the patches with a 'Fixes:' line that
+> > points at the IORING_OP_URING_CMD commit, ee692a21e9bf ("fs,io_uring:
+> > add infrastructure for uring-cmd").
+> >
+> > How does that sound to everyone?
+>
+> Let's do it the right way for 5.20, and then get it marked for a
+> backport. That will be trivial enough and will hit 5.19-stable shortly
+> as well. Rushing it now with 1 week before release will most likely
+> yield a worse long term result.
+
+That is what I suggested above; it looks like we are on the same page
+at least with the resolution.  I'll plan on bundling Luis' hook patch,
+Casey's Smack patch, the SELinux patch and send them up to Linus once
+they are ready.  If you, and/or other io_uring developers, could
+review Luis' LSM hook patch from an io_uring perspective and add your
+Ack/Review-by tag I would appreciate it.
 
 -- 
-Jens Axboe
-
+paul-moore.com
