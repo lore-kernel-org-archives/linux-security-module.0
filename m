@@ -2,64 +2,219 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 712BCC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jul 2022 09:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6FDC433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jul 2022 18:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231852AbiGOJTA (ORCPT
+        id S229947AbiGOSqd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Jul 2022 05:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37498 "EHLO
+        Fri, 15 Jul 2022 14:46:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231653AbiGOJS4 (ORCPT
+        with ESMTP id S229481AbiGOSqc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Jul 2022 05:18:56 -0400
-Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EA0EE15FFD;
-        Fri, 15 Jul 2022 02:18:49 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id CA52C1E80D19;
-        Fri, 15 Jul 2022 17:15:16 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id J2h_zqWIEWNU; Fri, 15 Jul 2022 17:15:14 +0800 (CST)
-Received: from localhost.localdomain.localdomain (unknown [219.141.250.2])
-        (Authenticated sender: xupengfei@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 1BDF21E80D11;
-        Fri, 15 Jul 2022 17:15:14 +0800 (CST)
-From:   XU pengfei <xupengfei@nfschina.com>
-To:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kernel@nfschina.com,
-        XU pengfei <xupengfei@nfschina.com>
-Subject: [PATCH 1/1] keys/keyrings: Fix typo in string
-Date:   Fri, 15 Jul 2022 17:18:42 +0800
-Message-Id: <20220715091842.4419-1-xupengfei@nfschina.com>
-X-Mailer: git-send-email 2.18.2
+        Fri, 15 Jul 2022 14:46:32 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90A9F3C8EA
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 11:46:29 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id f2so7927319wrr.6
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 11:46:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HgEvmkQJ8DtoN15myw3ivc8jTluNDOe94y/KIzzFT9M=;
+        b=byEaUquOywUh4/sI3O3G5seHxneOlm644kl23aMyMln/dSMw+9cYnpM/LNL1/lM7wE
+         8lDvBLEv47nOVylQKRUNRLVEu1nk7XBWsI2TlZk44qsX543geBtZ2WKGg1GPwz7mrgp6
+         frhlEH5FCyH3tucdbbL+ILEYj4fzpPytsZRy0zL8U135ad8eLvL+8mK7yDm7ZGcuvINF
+         0aX8gChK00UY3FTIx+e/cD3Odz7zNBiCoT0mSEO1XSWuntGXoxZoHua+Smk38hCNxFLR
+         F9s8rEeQF42aeZs+/RlFhO4CLv4MP0HGruQ1YD3PjXngCO5IyECztMrbH0Kj2z9TMeng
+         9R8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HgEvmkQJ8DtoN15myw3ivc8jTluNDOe94y/KIzzFT9M=;
+        b=2gxFU0sAkYuSuPMCTni8bPhL6nVhj2euqlm3CKfFpRJaSyurcO5Ymmf2Cpvzal8ccR
+         tsi1nLlZZZQWJWFCy18y37xPB1zhE0aG+ReuK8BR1BLovm5ncnq9OgUCGtJSYfhEkNv5
+         twQWS4mz+Ygo4rdeJu3tD/Q2wPbGxzEvvxdsg0q5f3PfhKAshQJ4NqMUAfcMboJMHJ4F
+         4qzP9vzlM/Dr2ABq1QM/VyeK4AF1fUf+4Vxijr/Cf49+QLJ2heBWIxEfBIQHApJavu0c
+         0uAfQNzHYzQ0pyKWPIgc/lHlV4h2Nx2yGGT6Iapu97eGc5q3UddrktA+T0ZYjAO0L72D
+         qBig==
+X-Gm-Message-State: AJIora/c17TYZZ0isPfHhrWHZs5s69HczRs59Hc7UPX3HyG/Xj7Ke9D/
+        TIUH2LuFwhXLxlF8I+AYmryJaBi9mbrwUWs/p3Lc
+X-Google-Smtp-Source: AGRyM1sMRQOGr4iboLKVVfr4M8h98/DvcanhVGhBrLtpBWNIjFHka5pgln3Ffjq4ZGfhCBUczGY4SyT7k+AEk6OM99o=
+X-Received: by 2002:adf:d22f:0:b0:21d:6b26:8c6f with SMTP id
+ k15-20020adfd22f000000b0021d6b268c6fmr14457397wrh.70.1657910788008; Fri, 15
+ Jul 2022 11:46:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220714000536.2250531-1-mcgrof@kernel.org> <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
+ <YtC8Hg1mjL+0mjfl@bombadil.infradead.org>
+In-Reply-To: <YtC8Hg1mjL+0mjfl@bombadil.infradead.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 15 Jul 2022 14:46:16 -0400
+Message-ID: <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
+Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file op
+To:     Luis Chamberlain <mcgrof@kernel.org>, casey@schaufler-ca.com
+Cc:     axboe@kernel.dk, joshi.k@samsung.com,
+        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        a.manzanares@samsung.com, javier@javigon.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Remove the repeated ',' from string
+On Thu, Jul 14, 2022 at 9:00 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> On Wed, Jul 13, 2022 at 11:00:42PM -0400, Paul Moore wrote:
+> > On Wed, Jul 13, 2022 at 8:05 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > >
+> > > io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+> > > add infrastructure for uring-cmd"), this extended the struct
+> > > file_operations to allow a new command which each subsystem can use
+> > > to enable command passthrough. Add an LSM specific for the command
+> > > passthrough which enables LSMs to inspect the command details.
+> > >
+> > > This was discussed long ago without no clear pointer for something
+> > > conclusive, so this enables LSMs to at least reject this new file
+> > > operation.
+> > >
+> > > [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
+> >
+> > [NOTE: I now see that the IORING_OP_URING_CMD has made it into the
+> > v5.19-rcX releases, I'm going to be honest and say that I'm
+> > disappointed you didn't post the related LSM additions
+>
+> It does not mean I didn't ask for them too.
+>
+> > until
+> > v5.19-rc6, especially given our earlier discussions.]
+>
+> And hence since I don't see it either, it's on us now.
 
-Signed-off-by: XU pengfei <xupengfei@nfschina.com>
----
- security/keys/request_key.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It looks like I owe you an apology, Luis.  While my frustration over
+io_uring remains, along with my disappointment that the io_uring
+developers continue to avoid discussing access controls with the LSM
+community, you are not the author of the IORING_OP_URING_CMD.   You
+are simply trying to do the right thing by adding the necessary LSM
+controls and in my confusion I likely caused you a bit of frustration;
+I'm sorry for that.
 
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 2da4404276f0..190608719f3d 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -375,7 +375,7 @@ static int construct_alloc_key(struct keyring_search_context *ctx,
- 	key_ref_t key_ref;
- 	int ret;
- 
--	kenter("%s,%s,,,",
-+	kenter("%s,%s",
- 	       ctx->index_key.type->name, ctx->index_key.description);
- 
- 	*_key = NULL;
+> As important as I think LSMs are, I cannot convince everyone
+> to take them as serious as I do.
+
+Yes, I think a lot of us are familiar with that feeling unfortunately :/
+
+> > While the earlier discussion may not have offered a detailed approach
+> > on how to solve this, I think it was rather conclusive in that the
+> > approach used then (and reproduced here) did not provide enough
+> > context to the LSMs to be able to make a decision.
+>
+> Right...
+>
+> > There were similar
+> > concerns when it came to auditing the command passthrough.  It appears
+> > that most of my concerns in the original thread still apply to this
+> > patch.
+> >
+> > Given the LSM hook in this patch, it is very difficult (impossible?)
+> > to determine the requested operation as these command opcodes are
+> > device/subsystem specific.  The unfortunate result is that the LSMs
+> > are likely going to either allow all, or none, of the commands for a
+> > given device/subsystem, and I think we can all agree that is not a
+> > good idea.
+> >
+> > That is the critical bit of feedback on this patch, but there is more
+> > feedback inline below.
+>
+> Given a clear solution is not easily tangible at this point
+> I was hoping perhaps at least the abilility to enable LSMs to
+> reject uring-cmd would be better than nothing at this point.
+
+Without any cooperation from the io_uring developers, that is likely
+what we will have to do.  I know there was a lot of talk about this
+functionality not being like another ioctl(), but from a LSM
+perspective I think that is how we will need to treat it.
+
+> > > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > > ---
+> > >  include/linux/lsm_hook_defs.h | 1 +
+> > >  include/linux/lsm_hooks.h     | 3 +++
+> > >  include/linux/security.h      | 5 +++++
+> > >  io_uring/uring_cmd.c          | 5 +++++
+> > >  security/security.c           | 4 ++++
+> > >  5 files changed, 18 insertions(+)
+> >
+> > ...
+> >
+> > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> > > index 0a421ed51e7e..5e666aa7edb8 100644
+> > > --- a/io_uring/uring_cmd.c
+> > > +++ b/io_uring/uring_cmd.c
+> > > @@ -3,6 +3,7 @@
+> > >  #include <linux/errno.h>
+> > >  #include <linux/file.h>
+> > >  #include <linux/io_uring.h>
+> > > +#include <linux/security.h>
+> > >
+> > >  #include <uapi/linux/io_uring.h>
+> > >
+> > > @@ -82,6 +83,10 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+> > >         struct file *file = req->file;
+> > >         int ret;
+> > >
+> > > +       ret = security_uring_cmd(ioucmd);
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > >         if (!req->file->f_op->uring_cmd)
+> > >                 return -EOPNOTSUPP;
+> > >
+> >
+> > In order to be consistent with most of the other LSM hooks, the
+> > 'req->file->f_op->uring_cmd' check should come before the LSM hook
+> > call.
+>
+> Sure.
+>
+> > The general approach used in most places is to first validate
+> > the request and do any DAC based access checks before calling into the
+> > LSM.
+>
+> OK.
+>
+> Let me know how you'd like to proceed given our current status.
+
+Well, we're at -rc6 right now which means IORING_OP_URING_CMD is
+happening and it's unlikely the LSM folks are going to be able to
+influence the design/implementation much at this point so we have to
+do the best we can.  Given the existing constraints, I think your
+patch is reasonable (although please do shift the hook call site down
+a bit as discussed above), we just need to develop the LSM
+implementations to go along with it.
+
+Luis, can you respin and resend the patch with the requested changes?
+
+Casey, it looks like Smack and SELinux are the only LSMs to implement
+io_uring access controls.  Given the hook that Luis developed in this
+patch, could you draft a patch for Smack to add the necessary checks?
+I'll do the same for SELinux.  My initial thinking is that all we can
+really do is check the access between the creds on the current task
+(any overrides will have already taken place by the time the LSM hook
+is called) with the io_uring_cmd:file label/creds; we won't be able to
+provide much permission granularity for all the reasons previously
+discussed, but I suspect that will be more of a SELinux problem than a
+Smack problem (although I suspect Smack will need to treat this as
+both a read and a write, which is likely less than ideal).
+
+I think it's doubtful we will have all of this ready and tested in
+time for v5.19, but I think we can have it ready shortly after that
+and I'll mark all of the patches for -stable when I send them to
+Linus.
+
+I also think we should mark the patches with a 'Fixes:' line that
+points at the IORING_OP_URING_CMD commit, ee692a21e9bf ("fs,io_uring:
+add infrastructure for uring-cmd").
+
+How does that sound to everyone?
+
 -- 
-2.18.2
-
+paul-moore.com
