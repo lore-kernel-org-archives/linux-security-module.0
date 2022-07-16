@@ -2,115 +2,317 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDE7CCA47F
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jul 2022 23:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D51C433EF
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Jul 2022 00:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232707AbiGOXeT (ORCPT
+        id S231187AbiGPARP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Jul 2022 19:34:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60634 "EHLO
+        Fri, 15 Jul 2022 20:17:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232880AbiGOXeR (ORCPT
+        with ESMTP id S229594AbiGPARO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Jul 2022 19:34:17 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ECA413E19
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 16:34:16 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id y14-20020a17090a644e00b001ef775f7118so12911182pjm.2
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 16:34:16 -0700 (PDT)
+        Fri, 15 Jul 2022 20:17:14 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C8B8AEF9
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 17:17:13 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id y9so5904242pff.12
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Jul 2022 17:17:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=pzoy1lB0v/6rv9DQZd9VxpupwhasQh/2PyI0IHfFrE8=;
-        b=RUs4RJG10t3npoapeFLstot6OT3s2CAwPPMDxx6WbB3XyCwITIKcdE3hATQeTbgqfx
-         siSLu2Cow1Al91+Yj8cXP5+AWJYjhrWfOMekD+G6U75zr6J3b+m0Har1b5wy0oea/Fuo
-         K6mRsgzH2NiuaPebhGSgxUiRrXnFBypAVT+ZYqxzkksZeIz7aKtkb//RMMl1plawY3ht
-         W0ALarB+KnUC9LxxFHiauxK3EFv6BIRLpzhGmpOlmeP0fgWQ39bO+hhJdQ1KBHBMXDOj
-         2AOdqFWz4vnpQ3laCcsLaYV5N+tcLXX1MC/zSr07XvHakv3Ez87bNlANsMXCky9ks+M6
-         TPOg==
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=33aLPVfV/p8z6kSz9uJOGMRkk7ogvLEZ28WOlKkS5vA=;
+        b=c8WD17cRV/deM+xMwUGamEY/ZaJLMrcLy0mU/oKDiRD5JMm+YYbOHzy4jEORMhMkgI
+         /vq6n774VVd2TeAeOOkyquTv1rsrvsLLRi9L5wHYeOrgaG8IW6d1vo9vDxgJ029zL1UI
+         r4dYaNFqJTMKzLT4SMSmiAvbeQbX/1my7hBD3485Fasmp86tuVfqzO2mRMbQWEJ2/thX
+         n7NAYmhXIgr9Gq2XRB+XmGJeXP1SgZUDZ6vWgDS1k4Xd6Ac7fksV8hpOYH1/FZAxJvxj
+         oWIPe/ZH9DlcOJPNWLPd3WKq6x/P/Ii/F594+yLBysAcE7nvaV74Z26gX9fITSyLVVk4
+         z0yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=pzoy1lB0v/6rv9DQZd9VxpupwhasQh/2PyI0IHfFrE8=;
-        b=1eH9RlrotQBhbg/pCv0mMD6ELzussldK/bZ4YGmrg9We1Dfhnj0rJAAliiX7ILVrki
-         3E4TJzBNNOYSaLec+cLG07CdjkBsl0ujnu7LC+npyKIHzZyen2J6P0ZdW0RJ2I5iWB8O
-         f3LJk2YAlmsl/q84fqyDqok8O3YLAw/9gjSAuiEKGWyesgEWoMg9ErfDw/QA6r7/7g5Q
-         5lvPXyds1RX7f6reT7Oh4ptUXlo/ASr49T7HPms5yO6NC0bf4Soi1VkuSshXyQssAcGu
-         rQw5UeA+ry0IyENENh/vvfPqg+kxROhG3hiRavAwtvEPIugI1aodP9k/yEQ1zHjGPE44
-         RhMg==
-X-Gm-Message-State: AJIora9jwLKsYMc4jp9tYmaCq1RNy5dlZt2Gx/udofyoP+ylmGmNajf2
-        d4YAEGAhQ2/edOgfDFACmRGhSL6IaX/MPA==
-X-Google-Smtp-Source: AGRyM1vuPuU3qfouowNfCFYUqlvzGi9NLhytJ13Q1VlElKwXTIZX+SBEfFQdjaOUe7RlMwvURt059A==
-X-Received: by 2002:a17:90a:d714:b0:1ef:b93d:fc4d with SMTP id y20-20020a17090ad71400b001efb93dfc4dmr18709466pju.49.1657928055988;
-        Fri, 15 Jul 2022 16:34:15 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u9-20020a1709026e0900b0016be702a535sm4086321plk.187.2022.07.15.16.34.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jul 2022 16:34:15 -0700 (PDT)
-Message-ID: <7d928dc4-ed59-3858-803a-41b3947ea12b@kernel.dk>
-Date:   Fri, 15 Jul 2022 17:34:14 -0600
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=33aLPVfV/p8z6kSz9uJOGMRkk7ogvLEZ28WOlKkS5vA=;
+        b=GScroJqS8cwPXzWBS8xSrpOv1Oh7aPAOgS+5KsJ9mvxPpj2GC4W07oYK6qsdaWixHO
+         waTdhwdzeFlw5a5u1bS6otuDicxruBi3yCVmhP7MRbFSZWufNUO/6CEsYmBVECIjUn+D
+         PZiLC8Bu54n8Sen6zfme+yg2LZgBUFKWmdmvba0pFuMGa4NRIAzJWdvJNcLeJ7bWt/aA
+         dGvQ7/wocB0AvenmPetFHLRfVr9Wmzm38k4TggpAUjXr6CPQI3aGax/06T087hmv5Ggd
+         8QfdmGwKepRXlYGT9MpzchrRCTBGCvaAzxb5TAHRf47mQEehvL+PcdtVjR3vFVZejUTn
+         BAzw==
+X-Gm-Message-State: AJIora+W7bVQbfY0JUnuTsd2cTGYZSqZ0WbiKfGL9+jWWp05r1gZntVA
+        2nHCj4ySlRZRV1UMO3iKqeYHreQz5SXIcMZJ/0DL5g==
+X-Google-Smtp-Source: AGRyM1s4hJOfWDmnafP1ll7ToDcTXNM2KPL6AFPIXcyPZ+MQMIo07HSgDduKSje28wCu3uOBrwcrCWZnMD1aF7v4MTA=
+X-Received: by 2002:a05:6a00:815:b0:52a:dea8:269b with SMTP id
+ m21-20020a056a00081500b0052adea8269bmr16628360pfk.66.1657930632829; Fri, 15
+ Jul 2022 17:17:12 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file
- op
-Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Cc:     joshi.k@samsung.com, linux-security-module@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, a.manzanares@samsung.com,
-        javier@javigon.com
-References: <20220714000536.2250531-1-mcgrof@kernel.org>
- <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
- <YtC8Hg1mjL+0mjfl@bombadil.infradead.org>
- <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
- <566af35b-cebb-20a4-99b8-93184f185491@schaufler-ca.com>
- <e9cd6c3a-0658-c770-e403-9329b8e9d841@schaufler-ca.com>
- <4588f798-54d6-311a-fcd2-0d0644829fc2@kernel.dk>
- <d8912809-ffeb-8d88-3b6b-fd30681ad898@schaufler-ca.com>
- <27b03030-3ee7-f795-169a-5c49de2f6dd2@kernel.dk>
- <5615235a-ccc4-efc7-c395-f50909860ab0@schaufler-ca.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <5615235a-ccc4-efc7-c395-f50909860ab0@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220628222941.2642917-1-jeffxu@google.com> <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
+ <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
+ <CALmYWFvcSn_wks0bXo3_DUyYGtVW_MHrrO1dRoYcxY4uiB1KEA@mail.gmail.com>
+ <0abdd920-b5cc-2fa9-7494-104c9c67480d@digikod.net> <CALmYWFvfRFfZbk=9P-=RNtjhXoR0ToQKnVVEZwmXB9yxLEHotg@mail.gmail.com>
+ <CABXOdTf=o1zSSDUPNubHxAnF=1dOwOuxKfrViPHAD-tV_4x=Ww@mail.gmail.com>
+ <CALmYWFvfDcJCUDCLhrDPdvyY6fH_2diQbbo8ejq3Xvu6E8_2rA@mail.gmail.com>
+ <CABXOdTcQOrat3vGCm3nw_ufYKcrQ1gqVdvbUSEUehfhZ7gAW4g@mail.gmail.com>
+ <CALmYWFu-c7HvfqB=JpX-iN8QUfEwwZpQRpwncebJ8R8urvvCUQ@mail.gmail.com>
+ <CALmYWFtrMdTY9HTWzG=MctUcsKQZVExHWu7+3C58hncazH5+5w@mail.gmail.com> <CABXOdTcZM-RomzrCZQkzexCSS7RTFf_Mz+kCghqEK_icd9W3LQ@mail.gmail.com>
+In-Reply-To: <CABXOdTcZM-RomzrCZQkzexCSS7RTFf_Mz+kCghqEK_icd9W3LQ@mail.gmail.com>
+From:   Jeff Xu <jeffxu@google.com>
+Date:   Fri, 15 Jul 2022 17:16:36 -0700
+Message-ID: <CALmYWFtstvRVZOYCJBwrhayGJDc-=c8avuD0wWm6LURu8EKG2g@mail.gmail.com>
+Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
+To:     Guenter Roeck <groeck@google.com>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        linux-security-module@vger.kernel.org,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/15/22 5:31 PM, Casey Schaufler wrote:
-> On 7/15/2022 4:18 PM, Jens Axboe wrote:
->> On 7/15/22 5:14 PM, Casey Schaufler wrote:
->>> On 7/15/2022 4:05 PM, Jens Axboe wrote:
->>>> On 7/15/22 5:03 PM, Casey Schaufler wrote:
->>>>
->>>>> There isn't (as of this writing) a file io_uring/uring_cmd.c in
->>>>> Linus' tree. What tree does this patch apply to?
->>>> It's the for-5.20 tree. See my reply to the v2 of the patch, including
->>>> suggestions on how to stage it.
->>> A URL for the io_uring tree would be REAL helpful.
->> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.20/io_uring
-> 
-> I'm sorry, I must be being extremely obtuse. I want to create the Smack
-> patch to go along with the patch under discussion. I would like to clone
-> the tree (with git clone <URL> ; git checkout <branch>) so I can build
-> the tree and then develop the code.  The URL you provided is a web front
-> end to the git tree, and does not provide the clone URL (that I can find).
+> Maybe the error code returned from mount gives a hint.
 
-Just go one level back, out of the branch, and it'll tell you:
+It returns -1
 
-git://git.kernel.dk/linux-block
+>
+> Also, how about
+> /proc/filesystems ?
 
-or
+Yes. it has what I want:
+nodev overlay
 
-https://git.kernel.dk/linux-block
+Thanks for your help! I can use this at runtime check.
 
-and the branch is for-5.20/io_uring as in the link.
+Jeff
 
--- 
-Jens Axboe
 
+On Fri, Jul 15, 2022 at 3:42 PM Guenter Roeck <groeck@google.com> wrote:
+>
+> On Fri, Jul 15, 2022 at 2:42 PM Jeff Xu <jeffxu@google.com> wrote:
+> >
+> > Jeff Xu <jeffxu@google.com>
+> >
+> > > Jul 14, 2022, 5:35 PM (20 hours ago)
+> > > to Guenter, Micka=C3=ABl, linux-security-module, Jorge, Guenter, Kees
+> > > > On Thu, Jul 14, 2022 at 11:37 AM Jeff Xu <jeffxu@google.com> wrote:
+> > > > >
+> > > > > > > > Hmm, well, it is not related to Yama then. Could it be link=
+ed to other
+> > > > > > > > Chromium OS non-upstream patches?
+> > > > > > >
+> > > > > > >
+> > > > > > > fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS=
+ is not
+> > > > > > > enabled in chromeOS.
+> > > > > > > If there is a reliable way of detecting OVERLAYFS (checking m=
+ount
+> > > > > > > overlayfs is successful ? ), this is a good candidate to add =
+SKIP.
+> > > > > > >
+> > > > >
+> > > > > > IS_ENABLED(CONFIG_OVERLAY_FS) ?
+> > > > >
+> > > > > Could be. Landlock selftest currently is a user space program tho=
+ugh,
+> > > > > IS_ENABLED will depend on the kernel header during compile time.
+> > > > >
+> >
+> >
+> >
+> > > > Ah, sorry, I thought it was an in-kernel test. Userspace should be
+> > > > able to determine if overlayfs is supported by checking /sys/fs/ or
+> > > > possibly /proc/fs/.
+> >
+> >
+> > > Thanks for clarifying.
+> >
+> >
+> > > lsmod might be the one, such as:
+> > > lsmod | grep overlayfs
+> >
+> >
+> > I built a kernel with overlayfs on chromeos, and lsmod didn't give me
+> > what I wanted.
+> > /sys/fs and /proc/fs also doesn't show anything about overlayfs
+> >
+> > @Micka=C3=ABl Sala=C3=BCn
+> > Are you OK with SKIP the overlay test when mount("overlay",...) fails
+> > in FIXTURE_SETUP() ? Mount failure can be used as an indication.
+> >
+>
+> Maybe the error code returned from mount gives a hint. Also, how about
+> /proc/filesystems ?
+>
+> Guenter
+>
+> > Jeff
+> >
+> >
+> >
+> >
+> >
+> > On Thu, Jul 14, 2022 at 5:35 PM Jeff Xu <jeffxu@google.com> wrote:
+> > >
+> > > > On Thu, Jul 14, 2022 at 11:37 AM Jeff Xu <jeffxu@google.com> wrote:
+> > > > >
+> > > > > > > > Hmm, well, it is not related to Yama then. Could it be link=
+ed to other
+> > > > > > > > Chromium OS non-upstream patches?
+> > > > > > >
+> > > > > > >
+> > > > > > > fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS=
+ is not
+> > > > > > > enabled in chromeOS.
+> > > > > > > If there is a reliable way of detecting OVERLAYFS (checking m=
+ount
+> > > > > > > overlayfs is successful ? ), this is a good candidate to add =
+SKIP.
+> > > > > > >
+> > > > >
+> > > > > > IS_ENABLED(CONFIG_OVERLAY_FS) ?
+> > > > >
+> > > > > Could be. Landlock selftest currently is a user space program tho=
+ugh,
+> > > > > IS_ENABLED will depend on the kernel header during compile time.
+> > > > >
+> > >
+> > >
+> > > > Ah, sorry, I thought it was an in-kernel test. Userspace should be
+> > > > able to determine if overlayfs is supported by checking /sys/fs/ or
+> > > > possibly /proc/fs/.
+> > >
+> > > Thanks for clarifying.
+> > >
+> > > lsmod might be the one, such as:
+> > > lsmod | grep overlayfs
+> > >
+> > >
+> > > Thanks
+> > > Jeff
+> > >
+> > >
+> > >
+> > > On Thu, Jul 14, 2022 at 1:40 PM Guenter Roeck <groeck@google.com> wro=
+te:
+> > > >
+> > > > On Thu, Jul 14, 2022 at 11:37 AM Jeff Xu <jeffxu@google.com> wrote:
+> > > > >
+> > > > > > > > Hmm, well, it is not related to Yama then. Could it be link=
+ed to other
+> > > > > > > > Chromium OS non-upstream patches?
+> > > > > > >
+> > > > > > >
+> > > > > > > fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS=
+ is not
+> > > > > > > enabled in chromeOS.
+> > > > > > > If there is a reliable way of detecting OVERLAYFS (checking m=
+ount
+> > > > > > > overlayfs is successful ? ), this is a good candidate to add =
+SKIP.
+> > > > > > >
+> > > > >
+> > > > > > IS_ENABLED(CONFIG_OVERLAY_FS) ?
+> > > > >
+> > > > > Could be. Landlock selftest currently is a user space program tho=
+ugh,
+> > > > > IS_ENABLED will depend on the kernel header during compile time.
+> > > > >
+> > > >
+> > > > Ah, sorry, I thought it was an in-kernel test. Userspace should be
+> > > > able to determine if overlayfs is supported by checking /sys/fs/ or
+> > > > possibly /proc/fs/.
+> > > >
+> > > > Guenter
+> > > >
+> > > > >
+> > > > > On Wed, Jul 13, 2022 at 5:30 PM Guenter Roeck <groeck@google.com>=
+ wrote:
+> > > > > >
+> > > > > > On Wed, Jul 13, 2022 at 4:44 PM Jeff Xu <jeffxu@google.com> wro=
+te:
+> > > > > > >
+> > > > > > > > > a correction:
+> > > > > > > > >
+> > > > > > > > >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > >     case 0 - classic ptrace permissions: a process can PT=
+RACE_ATTACH to
+> > > > > > > > >     any other
+> > > > > > > > >          process running under the same uid, as long as i=
+t is dumpable (i.e.
+> > > > > > > > >          did not transition uids, start privileged, or ha=
+ve called
+> > > > > > > > >          prctl(PR_SET_DUMPABLE...) already). Similarly, P=
+TRACE_TRACEME is
+> > > > > > > > >          unchanged.
+> > > > > > > > >
+> > > > > > > > >     Test: All passing
+> > > > > > > > >
+> > > > > > > > > // Base_test: 7/7 pass.
+> > > > > > > > > // Fs_test 46/48 pass
+> > > > > > > > > //.   not ok 47 layout2_overlay.no_restriction
+> > > > > > > > > //.   not ok 48 layout2_overlay.same_content_different_fi=
+le
+> > > > > > > > > //  Ptrace 8/8 pass
+> > > > > > >
+> > > > > > >
+> > > > > > > > Hmm, well, it is not related to Yama then. Could it be link=
+ed to other
+> > > > > > > > Chromium OS non-upstream patches?
+> > > > > > >
+> > > > > > >
+> > > > > > > fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS=
+ is not
+> > > > > > > enabled in chromeOS.
+> > > > > > > If there is a reliable way of detecting OVERLAYFS (checking m=
+ount
+> > > > > > > overlayfs is successful ? ), this is a good candidate to add =
+SKIP.
+> > > > > > >
+> > > > > >
+> > > > > > IS_ENABLED(CONFIG_OVERLAY_FS) ?
+> > > > > >
+> > > > > > > Overall, all the failure of landlock selftest seen in chromeO=
+S are
+> > > > > > > expected, we just need to modify the test.
+> > > > > > >
+> > > > > > > Thanks
+> > > > > > > Best Regards
+> > > > > > > Jeff
+> > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > > On Thu, Jul 7, 2022 at 7:25 AM Micka=C3=ABl Sala=C3=BCn <mic@=
+digikod.net> wrote:
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > On 07/07/2022 01:35, Jeff Xu wrote:
+> > > > > > > > > a correction:
+> > > > > > > > >
+> > > > > > > > >     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > >     case 0 - classic ptrace permissions: a process can PT=
+RACE_ATTACH to
+> > > > > > > > >     any other
+> > > > > > > > >          process running under the same uid, as long as i=
+t is dumpable (i.e.
+> > > > > > > > >          did not transition uids, start privileged, or ha=
+ve called
+> > > > > > > > >          prctl(PR_SET_DUMPABLE...) already). Similarly, P=
+TRACE_TRACEME is
+> > > > > > > > >          unchanged.
+> > > > > > > > >
+> > > > > > > > >     Test: All passing
+> > > > > > > > >
+> > > > > > > > > // Base_test: 7/7 pass.
+> > > > > > > > > // Fs_test 46/48 pass
+> > > > > > > > > //.   not ok 47 layout2_overlay.no_restriction
+> > > > > > > > > //.   not ok 48 layout2_overlay.same_content_different_fi=
+le
+> > > > > > > > > //  Ptrace 8/8 pass
+> > > > > > > >
+> > > > > > > > Hmm, well, it is not related to Yama then. Could it be link=
+ed to other
+> > > > > > > > Chromium OS non-upstream patches?
