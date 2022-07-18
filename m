@@ -2,92 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F9BC433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Jul 2022 06:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17721C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Jul 2022 14:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233111AbiGRGa2 (ORCPT
+        id S229774AbiGROzj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Jul 2022 02:30:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
+        Mon, 18 Jul 2022 10:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232841AbiGRGa1 (ORCPT
+        with ESMTP id S229647AbiGROzi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Jul 2022 02:30:27 -0400
-Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAAB315FFB;
-        Sun, 17 Jul 2022 23:30:26 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VJe-3rM_1658125823;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0VJe-3rM_1658125823)
-          by smtp.aliyun-inc.com;
-          Mon, 18 Jul 2022 14:30:24 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     john.johansen@canonical.com
-Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] apparmor: Fix some kernel-doc comments
-Date:   Mon, 18 Jul 2022 14:30:22 +0800
-Message-Id: <20220718063022.129998-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        Mon, 18 Jul 2022 10:55:38 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6848D2229C
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Jul 2022 07:55:37 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id j29-20020a05600c1c1d00b003a2fdafdefbso7499781wms.2
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Jul 2022 07:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=awB3IScCM82ThTtG2SFehRsEwEakyzEv6teXUnsFMUA=;
+        b=xpExZ3kZCdk2WKHRKvNTZvS7M91X0EEJtGhiw331LmrtUZOYjX68OUTX0PXvRoq9Mg
+         rqRaN2pueOU9+e0THRE0dnpvpdRcP3K01m4gEUfL1uPoqfF0O0ihsPtN58yxHoc7voDY
+         1cQFrVWgDcoMgZ2WmrmEL8uzt0DB4SWAnFV2j4Taehtrz8/xQLX0L0ptEmEwFjp60GVk
+         0S5wr44rR8pwrLJpegsNUKKkLGK+MuKZxkjnEkCS7p+fYa7uxUteoCgcGecUQA0ED3RN
+         YE1oRr4rJnXM+3ZYpfeYSI/rtdPEpucaIulaDfXRio1x4Wkz9vHEqUBu5M1jnvusK3wR
+         CITA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=awB3IScCM82ThTtG2SFehRsEwEakyzEv6teXUnsFMUA=;
+        b=c3zJJeJIE1eeeoGzW3Yc3OyhcAu62ANvcK73ZrV53ax+CDrw+iQLSaG2aUpr+UArNL
+         BrX1P0ekqKvXN0WGlCmHJoad46QS+W7QIMGwSeJjXquXiQvqr0h11xPNYXMU8FPwcvMJ
+         Ix1KQJF+qlsLhP9OVgPkiNg6xFCZdnpsT/BPl/tuk+11vMS/PWTvqRDVFoL8nzGZxULA
+         HLAUuTbyFd7sqnpSYLngmiJfgI4+Z2Z0pid1BToYhibjIJPHfBSEbP+j4dFGsxpFOnVW
+         y5KWgFW4j5vEoA0tii6rsoEHZb2miQh6ixoJ4Oe4jE5nEDgFz+8JskbF3QPHnRGuFB3B
+         zSFw==
+X-Gm-Message-State: AJIora/y5g7CYEx80XQqeMFO1xqRiJ/uNvZXRr3uiI4nf+9ZEDhmBI2X
+        a4wRGX8tbbvCB60IPy4i2gT8QWM9gjbnsnFMJJG9
+X-Google-Smtp-Source: AGRyM1tH7+KDgIRxNaY2LGntFQMixVhfjpDqcUF6WGCiIIg9/YcIi0aQwTC6+2UR286rXvWRV6cy1fT2sqKQ7U2WyyY=
+X-Received: by 2002:a7b:c3cc:0:b0:3a3:8ec:d69 with SMTP id t12-20020a7bc3cc000000b003a308ec0d69mr17787022wmj.78.1658156135929;
+ Mon, 18 Jul 2022 07:55:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220714000536.2250531-1-mcgrof@kernel.org> <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
+ <YtC8Hg1mjL+0mjfl@bombadil.infradead.org> <CGME20220715184632epcas5p36bd157d36a2aed044de40264911bec05@epcas5p3.samsung.com>
+ <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com> <20220716032041.GB25618@test-zns>
+In-Reply-To: <20220716032041.GB25618@test-zns>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 18 Jul 2022 10:55:24 -0400
+Message-ID: <CAHC9VhQKeufrqN=dVZ74wEFgd3K=KY-aEZafYembT738juzWUw@mail.gmail.com>
+Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file op
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, casey@schaufler-ca.com,
+        axboe@kernel.dk, linux-security-module@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, a.manzanares@samsung.com,
+        javier@javigon.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Remove warnings found by running scripts/kernel-doc, which is caused by
-using 'make W=1'.
-security/apparmor/policy_ns.c:65: warning: Function parameter or member 'curr' not described in 'aa_ns_name'
-security/apparmor/policy_ns.c:65: warning: Function parameter or member 'view' not described in 'aa_ns_name'
-security/apparmor/policy_ns.c:65: warning: Function parameter or member 'subns' not described in 'aa_ns_name'
-security/apparmor/policy_ns.c:65: warning: expecting prototype for aa_na_name(). Prototype was for aa_ns_name() instead
-security/apparmor/policy_ns.c:214: warning: Function parameter or member 'view' not described in '__aa_lookupn_ns'
-security/apparmor/policy_ns.c:214: warning: Excess function parameter 'base' description in '__aa_lookupn_ns'
-security/apparmor/policy_ns.c:297: warning: expecting prototype for aa_create_ns(). Prototype was for __aa_find_or_create_ns() instead
+On Fri, Jul 15, 2022 at 11:26 PM Kanchan Joshi <joshi.k@samsung.com> wrote:
+> On Fri, Jul 15, 2022 at 02:46:16PM -0400, Paul Moore wrote:
+> >On Thu, Jul 14, 2022 at 9:00 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >> On Wed, Jul 13, 2022 at 11:00:42PM -0400, Paul Moore wrote:
+> >> > On Wed, Jul 13, 2022 at 8:05 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >> > >
+> >> > > io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+> >> > > add infrastructure for uring-cmd"), this extended the struct
+> >> > > file_operations to allow a new command which each subsystem can use
+> >> > > to enable command passthrough. Add an LSM specific for the command
+> >> > > passthrough which enables LSMs to inspect the command details.
+> >> > >
+> >> > > This was discussed long ago without no clear pointer for something
+> >> > > conclusive, so this enables LSMs to at least reject this new file
+> >> > > operation.
+> >> > >
+> >> > > [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
+> >> >
+> >> > [NOTE: I now see that the IORING_OP_URING_CMD has made it into the
+> >> > v5.19-rcX releases, I'm going to be honest and say that I'm
+> >> > disappointed you didn't post the related LSM additions
+> >>
+> >> It does not mean I didn't ask for them too.
+> >>
+> >> > until
+> >> > v5.19-rc6, especially given our earlier discussions.]
+> >>
+> >> And hence since I don't see it either, it's on us now.
+> >
+> >It looks like I owe you an apology, Luis.  While my frustration over
+> >io_uring remains, along with my disappointment that the io_uring
+> >developers continue to avoid discussing access controls with the LSM
+> >community, you are not the author of the IORING_OP_URING_CMD.   You
+>
+> I am to be shot down here. Solely.
+> My LSM understanding has been awful. At a level that I am not clear
+> how to fix if someone says - your code lacks LSM consideration.
+> But nothing to justify, I fully understand this is not someone else's
+> problem but mine. I intend to get better at it.
+> And I owe apology (to you/LSM-folks, Luis, Jens) for the mess.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- security/apparmor/policy_ns.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Thanks for your honesty.  If it is any consolation, my understanding
+of io_uring remains superficial at best, and it's one of the reasons
+I've asked the io_uring devs to ack/review the LSM io_uring hooks and
+their placement in the io_uring code.  Developing a deep understanding
+of one kernel subsystem is often very difficult, doing the same across
+multiple subsystems requires a *lot* of time and effort.  We have to
+rely on our combined expertise to help each other fill in the gaps :)
 
-diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
-index 300953a02a24..0ef268d6554d 100644
---- a/security/apparmor/policy_ns.c
-+++ b/security/apparmor/policy_ns.c
-@@ -54,10 +54,10 @@ bool aa_ns_visible(struct aa_ns *curr, struct aa_ns *view, bool subns)
- }
- 
- /**
-- * aa_na_name - Find the ns name to display for @view from @curr
-- * @curr - current namespace (NOT NULL)
-- * @view - namespace attempting to view (NOT NULL)
-- * @subns - are subns visible
-+ * aa_ns_name - Find the ns name to display for @view from @curr
-+ * @curr: current namespace (NOT NULL)
-+ * @view: namespace attempting to view (NOT NULL)
-+ * @subns: are subns visible
-  *
-  * Returns: name of @view visible from @curr
-  */
-@@ -200,7 +200,7 @@ struct aa_ns *aa_find_ns(struct aa_ns *root, const char *name)
- 
- /**
-  * __aa_lookupn_ns - lookup the namespace matching @hname
-- * @base: base list to start looking up profile name from  (NOT NULL)
-+ * @view: namespace to search in  (NOT NULL)
-  * @hname: hierarchical ns name  (NOT NULL)
-  * @n: length of @hname
-  *
-@@ -285,7 +285,7 @@ static struct aa_ns *__aa_create_ns(struct aa_ns *parent, const char *name,
- }
- 
- /**
-- * aa_create_ns - create an ns, fail if it already exists
-+ * __aa_find_or_create_ns - create an ns, fail if it already exists
-  * @parent: the parent of the namespace being created
-  * @name: the name of the namespace
-  * @dir: if not null the dir to put the ns entries in
+If you are ever unsure about something in the LSM layer, or how a
+change to io_uring (or any other subsystem) might impact the LSMs,
+please don't hesitate to ask us.  It might take all of us a little
+while to sort it out, but we can usually get it working in the end.
+
+There shouldn't be harm in asking for help/clarification, the harm
+usually comes when assumptions are made.
+
 -- 
-2.20.1.7.g153144c
-
+paul-moore.com
