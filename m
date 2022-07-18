@@ -2,153 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D9CC43334
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Jul 2022 21:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00655CCA47F
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Jul 2022 21:52:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233811AbiGRVZK (ORCPT
+        id S235690AbiGRVwR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Jul 2022 17:25:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48682 "EHLO
+        Mon, 18 Jul 2022 17:52:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233142AbiGRVZJ (ORCPT
+        with ESMTP id S234131AbiGRVwQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Jul 2022 17:25:09 -0400
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [IPv6:2001:1600:4:17::190c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4860F29CBB
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Jul 2022 14:25:07 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lmw3N6GKFzMq4HH;
-        Mon, 18 Jul 2022 23:25:04 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lmw3N2ZpZzlrKcd;
-        Mon, 18 Jul 2022 23:25:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1658179504;
-        bh=uihiR1f4lYUSezy+w1vsLpwdQHDrAdjGFXDr/iSKEUg=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=J8SeEUPxGPIv+q6/PgK+rCdPIy0Rh9huigjRJ/GI0G5aphiZbv8mh/a/utyL3mUh3
-         EWEeT/fYTMOTXm4HgFVc48dySvAU+QdkD+M0UChtIP1/bPso8CPyZQijgEw2KtaLIF
-         wlqlcrtCCZX9in3lE+exEOcfofBj4KvjPbjhm2+k=
-Message-ID: <b851a37a-f5f1-3ee0-edf7-582d848c915b@digikod.net>
-Date:   Mon, 18 Jul 2022 23:24:48 +0200
+        Mon, 18 Jul 2022 17:52:16 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF4C2E9FE
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Jul 2022 14:52:14 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id h17so19011686wrx.0
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Jul 2022 14:52:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h9woUmKziOSYMEOzduzyD/qFH0+bR5EPCY6q/eggFXo=;
+        b=EypuYtIoFxGWldjnCkEvixi/5nqZRcKxgu9gksofTF/7OzAHPa7nULrCiL7jAbKYAr
+         Xgdrjgcisf4pc+AY4AnLrxTS2Ks5w0h3XMZSfZzqnjGLdZ5u2ewA/8Ksj1WmrTomqh47
+         xp1XmGJqxGVxdfZNGx+vxw1Z6S95GVwzbMFA6UH8WNWYgmej1SP13Uce7EpORBhHYPxU
+         2TwP0+gH5O3aQVh2vPRuSTrr8Lrr35X3YKdQ8RG7USZr0p6fHDzQAZVvqbT04hJZessh
+         eNFHnt8M/P8EabU18CILE0P8s5dVT/bN3OzyhgwNhOa+BCS9G79k9OLCF0/rmzqnOSCT
+         UC2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h9woUmKziOSYMEOzduzyD/qFH0+bR5EPCY6q/eggFXo=;
+        b=hjerFhzFakBYtS2+wF8ynPAyHg6kIW1BwjcInO1C2FnBlJkFqz8U87oHKBKs7frG0E
+         KROixveaA9hyrSNTMIBCIxP5luiSWpQblMauLmWESXJF/x6UrvJS9XgIKmknfrk2tilt
+         O0yqEWk6h23SxaVzzJhZ0BAO8ePhBlJB/LQcK4sT5tyXKaHLPqlBuwIhoIBWfxGHD5l8
+         bP5MRE2GWJvuOVFWh5gUyMXFUPNI6308uZPV3KcVkHo7C8TvoCvJ9s9TwhX+WezPJAwR
+         PS98lI5hAQCnQ5Ivq0Ehsv+V60hGTn6yFMlQvBxDI7iCVePwbhIeMmvttdXFVF+znbRX
+         lFow==
+X-Gm-Message-State: AJIora9IGeCqQgVDQjVF34bSV3adj+O1I32ghp1v75oy+CFnxJMqFRCc
+        pUZRLJE0zTH62Ig342/g7KswMMzzjYBWbOMRIw5k
+X-Google-Smtp-Source: AGRyM1sK8QBEOZVKtlfTmdajnsX69FmXFPbExPnoOWj0fyUUVKvHCszqdWqig5PeaOgS5K5CwqzofilUO6EDkOahZ0g=
+X-Received: by 2002:a5d:64a3:0:b0:21d:adaa:ce4c with SMTP id
+ m3-20020a5d64a3000000b0021dadaace4cmr24233512wrp.161.1658181133286; Mon, 18
+ Jul 2022 14:52:13 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Guenter Roeck <groeck@google.com>, Jeff Xu <jeffxu@google.com>
-Cc:     linux-security-module@vger.kernel.org,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-References: <20220628222941.2642917-1-jeffxu@google.com>
- <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
- <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
- <CALmYWFvcSn_wks0bXo3_DUyYGtVW_MHrrO1dRoYcxY4uiB1KEA@mail.gmail.com>
- <0abdd920-b5cc-2fa9-7494-104c9c67480d@digikod.net>
- <CALmYWFvfRFfZbk=9P-=RNtjhXoR0ToQKnVVEZwmXB9yxLEHotg@mail.gmail.com>
- <CABXOdTf=o1zSSDUPNubHxAnF=1dOwOuxKfrViPHAD-tV_4x=Ww@mail.gmail.com>
- <CALmYWFvfDcJCUDCLhrDPdvyY6fH_2diQbbo8ejq3Xvu6E8_2rA@mail.gmail.com>
- <CABXOdTcQOrat3vGCm3nw_ufYKcrQ1gqVdvbUSEUehfhZ7gAW4g@mail.gmail.com>
- <CALmYWFu-c7HvfqB=JpX-iN8QUfEwwZpQRpwncebJ8R8urvvCUQ@mail.gmail.com>
- <CALmYWFtrMdTY9HTWzG=MctUcsKQZVExHWu7+3C58hncazH5+5w@mail.gmail.com>
- <CABXOdTcZM-RomzrCZQkzexCSS7RTFf_Mz+kCghqEK_icd9W3LQ@mail.gmail.com>
- <CALmYWFtstvRVZOYCJBwrhayGJDc-=c8avuD0wWm6LURu8EKG2g@mail.gmail.com>
- <CABXOdTdzHu6CkNvOLvFoxH13MBo=r+TCr56xJsK3oXCbuOp4NA@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
-In-Reply-To: <CABXOdTdzHu6CkNvOLvFoxH13MBo=r+TCr56xJsK3oXCbuOp4NA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220715191622.2310436-1-mcgrof@kernel.org> <a56d191e-a3a3-76b9-6ca3-782803d2600c@kernel.dk>
+ <CAHC9VhRzm=1mh9bZKEdLSG0vet=amQDVpuZk+1shMuXYLV_qoQ@mail.gmail.com>
+ <CAHC9VhQm3CBUkVz2OHBmuRi1VDNxvfWs-tFT2UO9LKMbO7YJMg@mail.gmail.com> <e139a585-ece7-7813-7c90-9ffc3a924a87@schaufler-ca.com>
+In-Reply-To: <e139a585-ece7-7813-7c90-9ffc3a924a87@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 18 Jul 2022 17:52:01 -0400
+Message-ID: <CAHC9VhRzjLFg9B4wL7GvW3WY-qM4BoqqcpyS0gW8MUbQ9BD2mg@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm,io_uring: add LSM hooks for the new uring_cmd file op
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Luis Chamberlain <mcgrof@kernel.org>,
+        joshi.k@samsung.com, linux-security-module@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, a.manzanares@samsung.com,
+        javier@javigon.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Jul 18, 2022 at 1:12 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 7/15/2022 8:33 PM, Paul Moore wrote:
+> > On Fri, Jul 15, 2022 at 3:52 PM Paul Moore <paul@paul-moore.com> wrote:
+> >> On Fri, Jul 15, 2022 at 3:28 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>> On 7/15/22 1:16 PM, Luis Chamberlain wrote:
+> >>>> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+> >>>> add infrastructure for uring-cmd"), this extended the struct
+> >>>> file_operations to allow a new command which each subsystem can use
+> >>>> to enable command passthrough. Add an LSM specific for the command
+> >>>> passthrough which enables LSMs to inspect the command details.
+> >>>>
+> >>>> This was discussed long ago without no clear pointer for something
+> >>>> conclusive, so this enables LSMs to at least reject this new file
+> >>>> operation.
+> >>> From an io_uring perspective, this looks fine to me. It may be easier if
+> >>> I take this through my tree due to the moving of the files, or the
+> >>> security side can do it but it'd have to then wait for merge window (and
+> >>> post io_uring branch merge) to do so. Just let me know. If done outside
+> >>> of my tree, feel free to add:
+> > I forgot to add this earlier ... let's see how the timing goes, I
+> > don't expect the LSM/Smack/SELinux bits to be ready and tested before
+> > the merge window opens so I'm guessing this will not be an issue in
+> > practice, but thanks for the heads-up.
+>
+> I have a patch that may or may not be appropriate. I ran the
+> liburing tests without (additional) failures, but it looks like
+> there isn't anything there testing uring_cmd. Do you have a
+> test tucked away somewhere I can use?
 
-On 16/07/2022 23:45, Guenter Roeck wrote:
-> On Fri, Jul 15, 2022 at 5:17 PM Jeff Xu <jeffxu@google.com> wrote:
->>
->>> Maybe the error code returned from mount gives a hint.
->>
->> It returns -1
->>
-> Sorry, I meant errno, not the return value.
-> 
->>>
->>> Also, how about
->>> /proc/filesystems ?
->>
->> Yes. it has what I want:
->> nodev overlay
->>
-> Excellent.
-> 
-> Guenter
-> 
->> Thanks for your help! I can use this at runtime check.
->>
->> Jeff
->>
->>
->> On Fri, Jul 15, 2022 at 3:42 PM Guenter Roeck <groeck@google.com> wrote:
->>>
->>> On Fri, Jul 15, 2022 at 2:42 PM Jeff Xu <jeffxu@google.com> wrote:
->>>>
->>>> Jeff Xu <jeffxu@google.com>
->>>>
->>>>> Jul 14, 2022, 5:35 PM (20 hours ago)
->>>>> to Guenter, Mickaël, linux-security-module, Jorge, Guenter, Kees
->>>>>> On Thu, Jul 14, 2022 at 11:37 AM Jeff Xu <jeffxu@google.com> wrote:
->>>>>>>
->>>>>>>>>> Hmm, well, it is not related to Yama then. Could it be linked to other
->>>>>>>>>> Chromium OS non-upstream patches?
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS is not
->>>>>>>>> enabled in chromeOS.
->>>>>>>>> If there is a reliable way of detecting OVERLAYFS (checking mount
->>>>>>>>> overlayfs is successful ? ), this is a good candidate to add SKIP.
->>>>>>>>>
->>>>>>>
->>>>>>>> IS_ENABLED(CONFIG_OVERLAY_FS) ?
->>>>>>>
->>>>>>> Could be. Landlock selftest currently is a user space program though,
->>>>>>> IS_ENABLED will depend on the kernel header during compile time.
->>>>>>>
->>>>
->>>>
->>>>
->>>>>> Ah, sorry, I thought it was an in-kernel test. Userspace should be
->>>>>> able to determine if overlayfs is supported by checking /sys/fs/ or
->>>>>> possibly /proc/fs/.
->>>>
->>>>
->>>>> Thanks for clarifying.
->>>>
->>>>
->>>>> lsmod might be the one, such as:
->>>>> lsmod | grep overlayfs
->>>>
->>>>
->>>> I built a kernel with overlayfs on chromeos, and lsmod didn't give me
->>>> what I wanted.
->>>> /sys/fs and /proc/fs also doesn't show anything about overlayfs
->>>>
->>>> @Mickaël Salaün
->>>> Are you OK with SKIP the overlay test when mount("overlay",...) fails
->>>> in FIXTURE_SETUP() ? Mount failure can be used as an indication.
+All I have at the moment is the audit-testsuite io_uring test (link
+below) which is lacking a test for the io_uring CMD command.  I plan
+on adding that, but I haven't finished the SELinux patch yet.
 
-In a normal scenario, all configurations in 
-tools/testing/selftests/landlock/config should be enabled, but I think 
-it makes sense for some use cases like chromeOS to be able to not fail 
-if overlayfs is not supported. Please patch 
-FIXTURE_SETUP(layout2_overlay) to skip these tests if the related 
-filesystem string is present (with or without "nodev") in 
-/proc/filesystems . You can create a is_filesystem_supported(const char 
-*filesystem) helper before prepare_layout() for this check, we'll need 
-it for future tests.
+* https://github.com/linux-audit/audit-testsuite/tree/main/tests/io_uring
 
+(Side note: there will be a SELinux io_uring test similar to the
+audit-testsuite test, but that effort was delayed due to lack of
+io_uring support in the Fedora policy for a while; it's working now,
+but the SELinux/SCTP issues have been stealing my time lately.)
 
->>>>
->>>
->>> Maybe the error code returned from mount gives a hint. Also, how about
->>> /proc/filesystems ?
->>>
->>> Guenter
+-- 
+paul-moore.com
