@@ -2,190 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86460CCA485
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Jul 2022 18:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D9CC43334
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Jul 2022 21:25:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235683AbiGRSIR (ORCPT
+        id S233811AbiGRVZK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Jul 2022 14:08:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50324 "EHLO
+        Mon, 18 Jul 2022 17:25:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235694AbiGRSIQ (ORCPT
+        with ESMTP id S233142AbiGRVZJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Jul 2022 14:08:16 -0400
-Received: from esa2.mentor.iphmx.com (esa2.mentor.iphmx.com [68.232.141.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09FB22F004;
-        Mon, 18 Jul 2022 11:08:15 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.92,281,1650960000"; 
-   d="scan'208";a="79917465"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa2.mentor.iphmx.com with ESMTP; 18 Jul 2022 10:08:14 -0800
-IronPort-SDR: zDH7NpIdnCMcwT/D3prrqMMhlGnooyg0d/vhKwsQ0lbC8PuU04Gv9ZCy4BNlxdbHMTipPu7yzI
- dRMIu+m44ScLzHSFuk1bs8Ke08oCUF1fdtWSLySCjNnRNbNbRqvzPvN10aGLaiF4xz+hncd+0H
- w6grKi3yhHgBbe41Ac8tf1gLu427xsb4JbCK67KTEudG/ltVQCQNF9/N9qfGccyar1t//X34gq
- HsStVJsdYbWaWOsQLdbtbvtx5Nc4d6iFxX75zmgTGALxm3lBG+OSR+9nWMcypiPEFqSevnUg3O
- bnk=
-Message-ID: <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
-Date:   Mon, 18 Jul 2022 19:08:04 +0100
+        Mon, 18 Jul 2022 17:25:09 -0400
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [IPv6:2001:1600:4:17::190c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4860F29CBB
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Jul 2022 14:25:07 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lmw3N6GKFzMq4HH;
+        Mon, 18 Jul 2022 23:25:04 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lmw3N2ZpZzlrKcd;
+        Mon, 18 Jul 2022 23:25:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1658179504;
+        bh=uihiR1f4lYUSezy+w1vsLpwdQHDrAdjGFXDr/iSKEUg=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=J8SeEUPxGPIv+q6/PgK+rCdPIy0Rh9huigjRJ/GI0G5aphiZbv8mh/a/utyL3mUh3
+         EWEeT/fYTMOTXm4HgFVc48dySvAU+QdkD+M0UChtIP1/bPso8CPyZQijgEw2KtaLIF
+         wlqlcrtCCZX9in3lE+exEOcfofBj4KvjPbjhm2+k=
+Message-ID: <b851a37a-f5f1-3ee0-edf7-582d848c915b@digikod.net>
+Date:   Mon, 18 Jul 2022 23:24:48 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Content-Language: en-GB
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-CC:     Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "takondra@cisco.com" <takondra@cisco.com>,
-        "kamensky@cisco.com" <kamensky@cisco.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
- <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
- <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
- <20220609102627.GA3922@lxhi-065>
- <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
- <20220610153336.GA8881@lxhi-065>
- <4bc349a59e4042f7831b1190914851fe@huawei.com>
- <20220615092712.GA4068@lxhi-065>
- <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
- <f82d4961986547b28b6de066219ad08b@huawei.com>
-From:   Jim Baxter <jim_baxter@mentor.com>
-Organization: Siemens Digital Industries Software
-In-Reply-To: <f82d4961986547b28b6de066219ad08b@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-12.mgc.mentorg.com (139.181.222.12) To
- svr-ies-mbx-12.mgc.mentorg.com (139.181.222.12)
+User-Agent: 
+Content-Language: en-US
+To:     Guenter Roeck <groeck@google.com>, Jeff Xu <jeffxu@google.com>
+Cc:     linux-security-module@vger.kernel.org,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+References: <20220628222941.2642917-1-jeffxu@google.com>
+ <06847585-8712-5f0c-b7e4-e32745576e16@digikod.net>
+ <CALmYWFtn97HpsTK02Sn7riD7yJ3zdbGob+Yz8PHa_Yx0tgfchQ@mail.gmail.com>
+ <CALmYWFvcSn_wks0bXo3_DUyYGtVW_MHrrO1dRoYcxY4uiB1KEA@mail.gmail.com>
+ <0abdd920-b5cc-2fa9-7494-104c9c67480d@digikod.net>
+ <CALmYWFvfRFfZbk=9P-=RNtjhXoR0ToQKnVVEZwmXB9yxLEHotg@mail.gmail.com>
+ <CABXOdTf=o1zSSDUPNubHxAnF=1dOwOuxKfrViPHAD-tV_4x=Ww@mail.gmail.com>
+ <CALmYWFvfDcJCUDCLhrDPdvyY6fH_2diQbbo8ejq3Xvu6E8_2rA@mail.gmail.com>
+ <CABXOdTcQOrat3vGCm3nw_ufYKcrQ1gqVdvbUSEUehfhZ7gAW4g@mail.gmail.com>
+ <CALmYWFu-c7HvfqB=JpX-iN8QUfEwwZpQRpwncebJ8R8urvvCUQ@mail.gmail.com>
+ <CALmYWFtrMdTY9HTWzG=MctUcsKQZVExHWu7+3C58hncazH5+5w@mail.gmail.com>
+ <CABXOdTcZM-RomzrCZQkzexCSS7RTFf_Mz+kCghqEK_icd9W3LQ@mail.gmail.com>
+ <CALmYWFtstvRVZOYCJBwrhayGJDc-=c8avuD0wWm6LURu8EKG2g@mail.gmail.com>
+ <CABXOdTdzHu6CkNvOLvFoxH13MBo=r+TCr56xJsK3oXCbuOp4NA@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH] selftests/landlock: skip ptrace_test when YAMA is enabled
+In-Reply-To: <CABXOdTdzHu6CkNvOLvFoxH13MBo=r+TCr56xJsK3oXCbuOp4NA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-
-Best regards,
-
-*Jim Baxter*
-
-Siemens Digital Industries Software
-Automotive Business Unit
-DI SW STS ABU
-UK
-Tel.: +44 (161) 926-1656
-mailto:jim.baxter@siemens.com <mailto:jim.baxter@siemens.com>
-sw.siemens.com <https://sw.siemens.com/>
-
-On 18/07/2022 17:49, Roberto Sassu wrote:
->> From: Jim Baxter [mailto:jim_baxter@mentor.com]
->> Sent: Monday, July 18, 2022 6:36 PM
+On 16/07/2022 23:45, Guenter Roeck wrote:
+> On Fri, Jul 15, 2022 at 5:17 PM Jeff Xu <jeffxu@google.com> wrote:
+>>
+>>> Maybe the error code returned from mount gives a hint.
+>>
+>> It returns -1
+>>
+> Sorry, I meant errno, not the return value.
+> 
+>>>
+>>> Also, how about
+>>> /proc/filesystems ?
+>>
+>> Yes. it has what I want:
+>> nodev overlay
+>>
+> Excellent.
+> 
+> Guenter
+> 
+>> Thanks for your help! I can use this at runtime check.
+>>
+>> Jeff
 >>
 >>
->> Hello,
->>
->> I have been testing these patches and do not see the xattr information when
->> trying to retrieve it within the initramfs, do you have an example of how
->> you tested this originally?
-> 
-> Hi Jim, all
-> 
-> apologies, I didn't find yet the time to look at this.
+>> On Fri, Jul 15, 2022 at 3:42 PM Guenter Roeck <groeck@google.com> wrote:
+>>>
+>>> On Fri, Jul 15, 2022 at 2:42 PM Jeff Xu <jeffxu@google.com> wrote:
+>>>>
+>>>> Jeff Xu <jeffxu@google.com>
+>>>>
+>>>>> Jul 14, 2022, 5:35 PM (20 hours ago)
+>>>>> to Guenter, Mickaël, linux-security-module, Jorge, Guenter, Kees
+>>>>>> On Thu, Jul 14, 2022 at 11:37 AM Jeff Xu <jeffxu@google.com> wrote:
+>>>>>>>
+>>>>>>>>>> Hmm, well, it is not related to Yama then. Could it be linked to other
+>>>>>>>>>> Chromium OS non-upstream patches?
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> fs_test.c 47 and 48 are failing in chromeOS because OVERLAYFS is not
+>>>>>>>>> enabled in chromeOS.
+>>>>>>>>> If there is a reliable way of detecting OVERLAYFS (checking mount
+>>>>>>>>> overlayfs is successful ? ), this is a good candidate to add SKIP.
+>>>>>>>>>
+>>>>>>>
+>>>>>>>> IS_ENABLED(CONFIG_OVERLAY_FS) ?
+>>>>>>>
+>>>>>>> Could be. Landlock selftest currently is a user space program though,
+>>>>>>> IS_ENABLED will depend on the kernel header during compile time.
+>>>>>>>
+>>>>
+>>>>
+>>>>
+>>>>>> Ah, sorry, I thought it was an in-kernel test. Userspace should be
+>>>>>> able to determine if overlayfs is supported by checking /sys/fs/ or
+>>>>>> possibly /proc/fs/.
+>>>>
+>>>>
+>>>>> Thanks for clarifying.
+>>>>
+>>>>
+>>>>> lsmod might be the one, such as:
+>>>>> lsmod | grep overlayfs
+>>>>
+>>>>
+>>>> I built a kernel with overlayfs on chromeos, and lsmod didn't give me
+>>>> what I wanted.
+>>>> /sys/fs and /proc/fs also doesn't show anything about overlayfs
+>>>>
+>>>> @Mickaël Salaün
+>>>> Are you OK with SKIP the overlay test when mount("overlay",...) fails
+>>>> in FIXTURE_SETUP() ? Mount failure can be used as an indication.
 
-Hello Roberto,
-
-Thank you for your response, I can wait until you have looked at the patches,
-I asked the question to make sure it was not something wrong in my
-configuration.
-
-> 
-> Uhm, I guess this could be solved with:
-> 
-> https://github.com/openeuler-mirror/kernel/commit/18a502f7e3b1de7b9ba0c70896ce08ee13d052da
-> 
-> and adding initramtmpfs to the kernel command line. You are
-> probably using ramfs, which does not have xattr support.
-> 
-
-
-Thank you, I have tested that patch but the problem remained. Here is my
-command line, I wonder if there is something wrong.
-
-Kernel command line: rw rootfstype=initramtmpfs root=/dev/ram0 initrd=0x500000000 rootwait 
-
-
-I also found that root is always mounted as rootfs in my initramfs system
-which I understood to be tmpfs, is that incorrect?
-
-sh-3.2# mount
-none on / type rootfs (rw)
-
-
->> So far I have set the xattr in the rootfs before creating the cpio file like this:
->> $ setfattr -n user.comment -v "this is a comment" test.txt
->> If I access the data here it works:
->> $ getfattr test.txt
->> # file: test.txt
->> user.comment
->>
->>
->> Then I package it and try to verify it with this command:
->> $getfattr /test.txt
-> 
-> I assume you try to pack/unpack, right? If I remember correctly
-> I only implemented the pack part. Unpacking is done by the kernel
-> (but you are right, it should be done by user space too).
-> 
-
-
-I modified the file before packing. To pack I use the following commands:
-
-$ ./usr/gen_initramfs.sh -l initramfs.list -e xattr ../rootfs > initramfs.cpio
-$ gzip initramfs.cpio
-$ mkimage -A arm64 -O linux -T ramdisk -d initramfs.cpio.gz uRamdisk
-
-The kernel is loaded using:
-booti ${kernaddr} ${initramaddr} ${dtbaddr}
+In a normal scenario, all configurations in 
+tools/testing/selftests/landlock/config should be enabled, but I think 
+it makes sense for some use cases like chromeOS to be able to not fail 
+if overlayfs is not supported. Please patch 
+FIXTURE_SETUP(layout2_overlay) to skip these tests if the related 
+filesystem string is present (with or without "nodev") in 
+/proc/filesystems . You can create a is_filesystem_supported(const char 
+*filesystem) helper before prepare_layout() for this check, we'll need 
+it for future tests.
 
 
-
-
->> Which returns to the command line without the data.
->>
->>
->>
->> I believe the cpio is working because I see the file /METADATA\!\!\! in
->> the target root filesystem, which shows the following when viewed with cat -e:
->> 00000028^A^Auser.comment^@this is a comment
->>
->> This matches the data I fed in at the start, so I believe the data is being
->> transferred correctly but I am accessioning it with the wrong tools.
-> 
-> Yes, xattrs are marshalled in the METADATA!!! file, one per regular file
-> xattrs are applied to. Xattrs are applied to the previous regular file.
-> That file name was preferred to adding a suffix to the file, to avoid
-> reaching the filename size limit.
-> 
-> Roberto
-
-Best regards,
-Jim
+>>>>
+>>>
+>>> Maybe the error code returned from mount gives a hint. Also, how about
+>>> /proc/filesystems ?
+>>>
+>>> Guenter
