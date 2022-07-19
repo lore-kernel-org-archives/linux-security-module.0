@@ -2,126 +2,188 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0066AC43334
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jul 2022 14:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D47CCA489
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jul 2022 14:23:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235962AbiGSOTg (ORCPT
+        id S237981AbiGSOXs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Jul 2022 10:19:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32948 "EHLO
+        Tue, 19 Jul 2022 10:23:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238682AbiGSOSp (ORCPT
+        with ESMTP id S238427AbiGSOXh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Jul 2022 10:18:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 979E02B7
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 06:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1658238904;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=O/FvAWLla+1Wk19cGVtJlLnIWGf+0LUDeRirr49qjb4=;
-        b=JMdlwr+9uOR7vs7NM/YUaLY0XMpfjWY2B3ek+RQSE++JvvK3FfH4uh4gL8nmrJtNA4+T3v
-        HHfVUhpD1McLaodCRSFMHM4Iug6MmSjsh9ZxvxB+KFC8J/Pcx5ffMHKozoktMAs/J+/lAZ
-        F5AoV0gtkIFUDEluMDlq0VPjVZvLREo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-412-PkzAgNblNLyduQFKc5j3NA-1; Tue, 19 Jul 2022 09:55:01 -0400
-X-MC-Unique: PkzAgNblNLyduQFKc5j3NA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7B6658039A5;
-        Tue, 19 Jul 2022 13:55:00 +0000 (UTC)
-Received: from T590 (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 72E7140CF8E5;
-        Tue, 19 Jul 2022 13:54:52 +0000 (UTC)
-Date:   Tue, 19 Jul 2022 21:54:47 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        a.manzanares@samsung.com, javier@javigon.com,
-        ankit.kumar@samsung.com, ming.lei@redhat.com
-Subject: Re: [PATCH v2] lsm,io_uring: add LSM hooks for the new uring_cmd
- file op
-Message-ID: <Yta3pzbOTgdFp+yV@T590>
-References: <20220715191622.2310436-1-mcgrof@kernel.org>
- <a56d191e-a3a3-76b9-6ca3-782803d2600c@kernel.dk>
- <CAHC9VhRzm=1mh9bZKEdLSG0vet=amQDVpuZk+1shMuXYLV_qoQ@mail.gmail.com>
- <CAHC9VhQm3CBUkVz2OHBmuRi1VDNxvfWs-tFT2UO9LKMbO7YJMg@mail.gmail.com>
- <e139a585-ece7-7813-7c90-9ffc3a924a87@schaufler-ca.com>
- <CGME20220718215605epcas5p4332ce1e7321243d7052834b0804c91c6@epcas5p4.samsung.com>
- <CAHC9VhRzjLFg9B4wL7GvW3WY-qM4BoqqcpyS0gW8MUbQ9BD2mg@mail.gmail.com>
- <20220719044717.GA22571@test-zns>
+        Tue, 19 Jul 2022 10:23:37 -0400
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D214BD1C
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 07:07:48 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id j3so6854710oif.8
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 07:07:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=osSTkxJZgJpQ+PpleR38uqX6sr8qSursZWPy8Gnrp3c=;
+        b=5y+y11aL9cS10irNQNHyhFUmcki91yUAvNRnUHVQQjaZI8FJ67zeroCwMy8y0/831o
+         3HovzzmXdiTc7Ulu8mCPh4Odn+lqgV9msAQyOaoO2kmchswvnug4cd3y0lfu1Zp4R/mU
+         qvPRaU6EZNBZKLUiN1OlNlST0MeNu+R2icr7MP9fzpwsOXq6O++mC26QEAYGSsEAtbEh
+         UUQV6fildXbvGSSb1c7MhBetE4IxaiJ7v294jkq8/eEZG7kaDBKwQCyZVF3FeAP5Al7o
+         H6Q2EDuVjUSGqUqYNK8n0ElWaMCQeIgc2PYJKXOWJl4x079dKrHLDRzBC8CgnJImfbtv
+         Wbrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=osSTkxJZgJpQ+PpleR38uqX6sr8qSursZWPy8Gnrp3c=;
+        b=usOwldr/U/NRdVS/sgo2c/6i75BXtSq7EBvHVA91P1TvWNAT3TQxfA6o3ml+Xlr+lT
+         O0eEzQVjHzwlV9vlOMsPmvqKjmuDausH4r4tt+APcdcC2vppHjLdxXEJwORc2JDrlE0J
+         mXNlQWZzDti9Oi3QAIcraQi2ra0/elNdKhQJs5xf14g6s2ndWa0KFjHsU6yzL8RW+JE4
+         9C5CqzD2hBWgNoQFyZ/aafy9GW7Y4XCiSKE4iNNoqh4tM+PrXnOSphezS7BA4zVNxYGR
+         WAeLDNWQZ5+B2Tz3SujLVmb7undF4eYD25uAaqmhwDXptVQUR+Zg79A33k4YKtmAFZzm
+         Qm6A==
+X-Gm-Message-State: AJIora9KFNlfcTZ4cUb8eNKK2CS3Te2FuzU5nHxf9diwRyFybeFCQnx4
+        NXkhky76PGxWdbey1H3apeiuHw==
+X-Google-Smtp-Source: AGRyM1sMdBW91AM42YKUQ50RhFP8uiXcWLPwzdBFpgJSeJRd80Ipgmv7NwiofiIh7CRXqiQVJKOtNg==
+X-Received: by 2002:a05:6808:220c:b0:33a:2e51:3cd1 with SMTP id bd12-20020a056808220c00b0033a2e513cd1mr15017715oib.293.1658239668225;
+        Tue, 19 Jul 2022 07:07:48 -0700 (PDT)
+Received: from [192.168.86.210] ([136.62.38.22])
+        by smtp.gmail.com with ESMTPSA id er10-20020a056870c88a00b0010cbd1baf5esm7625192oab.51.2022.07.19.07.07.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Jul 2022 07:07:47 -0700 (PDT)
+Message-ID: <3d77db23-51da-be5e-b40d-a92aeb568833@landley.net>
+Date:   Tue, 19 Jul 2022 09:14:39 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220719044717.GA22571@test-zns>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Jim Baxter <jim_baxter@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     "hpa@zytor.com" <hpa@zytor.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        "takondra@cisco.com" <takondra@cisco.com>,
+        "kamensky@cisco.com" <kamensky@cisco.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
+ <1561909199.3985.33.camel@linux.ibm.com>
+ <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
+ <1561991485.4067.14.camel@linux.ibm.com>
+ <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
+ <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
+ <20220609102627.GA3922@lxhi-065>
+ <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
+ <20220610153336.GA8881@lxhi-065>
+ <4bc349a59e4042f7831b1190914851fe@huawei.com>
+ <20220615092712.GA4068@lxhi-065>
+ <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
+ <f82d4961986547b28b6de066219ad08b@huawei.com>
+ <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
+ <8e6a723874644449be99fcebb0905058@huawei.com>
+ <dc86769f-0ac6-d9f3-c003-54d3793ccfec@landley.net>
+ <5b8b0bcac01b477eaa777ceb8c109f58@huawei.com>
+From:   Rob Landley <rob@landley.net>
+In-Reply-To: <5b8b0bcac01b477eaa777ceb8c109f58@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 19, 2022 at 10:17:17AM +0530, Kanchan Joshi wrote:
-> On Mon, Jul 18, 2022 at 05:52:01PM -0400, Paul Moore wrote:
-> > On Mon, Jul 18, 2022 at 1:12 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > On 7/15/2022 8:33 PM, Paul Moore wrote:
-> > > > On Fri, Jul 15, 2022 at 3:52 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > >> On Fri, Jul 15, 2022 at 3:28 PM Jens Axboe <axboe@kernel.dk> wrote:
-> > > >>> On 7/15/22 1:16 PM, Luis Chamberlain wrote:
-> > > >>>> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
-> > > >>>> add infrastructure for uring-cmd"), this extended the struct
-> > > >>>> file_operations to allow a new command which each subsystem can use
-> > > >>>> to enable command passthrough. Add an LSM specific for the command
-> > > >>>> passthrough which enables LSMs to inspect the command details.
-> > > >>>>
-> > > >>>> This was discussed long ago without no clear pointer for something
-> > > >>>> conclusive, so this enables LSMs to at least reject this new file
-> > > >>>> operation.
-> > > >>> From an io_uring perspective, this looks fine to me. It may be easier if
-> > > >>> I take this through my tree due to the moving of the files, or the
-> > > >>> security side can do it but it'd have to then wait for merge window (and
-> > > >>> post io_uring branch merge) to do so. Just let me know. If done outside
-> > > >>> of my tree, feel free to add:
-> > > > I forgot to add this earlier ... let's see how the timing goes, I
-> > > > don't expect the LSM/Smack/SELinux bits to be ready and tested before
-> > > > the merge window opens so I'm guessing this will not be an issue in
-> > > > practice, but thanks for the heads-up.
-> > > 
-> > > I have a patch that may or may not be appropriate. I ran the
-> > > liburing tests without (additional) failures, but it looks like
-> > > there isn't anything there testing uring_cmd. Do you have a
-> > > test tucked away somewhere I can use?
+On 7/19/22 07:26, Roberto Sassu wrote:
+>> P.P.S. If you want to run a command other than /init out of initramfs or initrd,
+>> use the rdinit=/run/this option. Note the root= overmount mechanism is
+>> completely different code and uses the init=/run/this argument instead, which
+>> means nothing to initramfs. Again, specifying root= says we are NOT staying in
+>> initramfs.
 > 
-> Earlier testing was done using fio. liburing tests need a formal review
-> in list. Tree is here -
-> https://github.com/ankit-sam/liburing/tree/uring-pt
-> It adds new "test/io_uring_passthrough.t", which can be run this way:
-> 
-> ./test/io_uring_passthrough.t /dev/ng0n1
-> 
-> Requires nvme device (/dev/ng0n1). And admin-access as well, as this
-> is raw open. FWIW, each passthrough command (at nvme driver level) is
-> also guarded by admin-access.
-> 
-> Ankit (CCed) has the plans to post it (will keep you guys in loop) after
-> bit more testing with 5.20 branch.
+> Sorry, it was some time ago. I have to go back and see why we needed
+> a separate option.
 
-Another candidate is ublksrv[1] which doesn't require any device and
-is pretty easy to setup. However, the kernel side driver(ublk_drv) isn't
-merged to linus tree yet, but has been in for-5.20/block.
+Did I mention that init/do_mounts.c already has:
 
-And io_uring command is sent to both /dev/ublk-control and /dev/ublkcN.
+__setup("rootfstype=", fs_names_setup);
 
-[1] https://github.com/ming1/ubdsrv.git
+static char * __initdata root_fs_names;
+static int __init fs_names_setup(char *str)
+{
+        root_fs_names = str;
+        return 1;
+}
+
+void __init init_rootfs(void)
+{
+        if (IS_ENABLED(CONFIG_TMPFS) && !saved_root_name[0] &&
+                (!root_fs_names || strstr(root_fs_names, "tmpfs")))
+                is_tmpfs = true;
+}
+
+I thought I'd dealt with this back in commit 6e19eded3684? Hmmm, looks like it
+might need something like:
+
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 7058e14ad5f7..4b4e1ffa20e1 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -665,7 +665,7 @@ struct file_system_type rootfs_fs_type = {
+
+ void __init init_rootfs(void)
+ {
+-       if (IS_ENABLED(CONFIG_TMPFS) && !saved_root_name[0] &&
+-               (!root_fs_names || strstr(root_fs_names, "tmpfs")))
++       if (IS_ENABLED(CONFIG_TMPFS) && (!root_fs_names ? !saved_root_name[0] :
++               strstr(root_fs_names, "tmpfs"))
+                is_tmpfs = true;
+ }
 
 
-Thanks,
-Ming
+> Maybe omitting root= was impacting on mounting
+> the real root filesystem. Will get that information.
 
+I know some old bootloaders hardwire in the command line so people can't
+_remove_ the root=.
+
+The reason I didn't just make rootfs always be tmpfs when CONFIG_TMPFS is
+enabled is:
+
+A) It uses very slightly more resources, and the common case is overmounting an
+empty rootfs. (And then hiding it from /proc/mounts so people don't ask too many
+questions.)
+
+B) Some embedded systems use more than 50% of the system's memory for initramfs
+contents, which the tmpfs defaults won't allow (fills up at 50%), and I'm not
+sure I ever hooked up I don't think I ever hooked up rootflags= ala
+root_mount_data to the initramfs mount? (If so, setting size= through that
+should work...)
+
+> Intuitively, given that root= is consumed for example by dracut, it seems
+> a safer choice to have an option to explicitly choose the desired filesystem.
+
+Sounds like a dracut issue. Have you used dracut in a system running from initramfs?
+
+Lots of systems running from initramfs already DON'T have a root=, so you're
+saying dracut being broken when there is no root= is something to work around
+rather than fix in dracut, even though it's been easy to create a system without
+a root= for a decade and a half already...
+
+> Roberto
+
+Rob
