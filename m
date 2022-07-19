@@ -2,125 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 510B5CCA483
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jul 2022 13:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0066AC43334
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jul 2022 14:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242501AbiGSNDT (ORCPT
+        id S235962AbiGSOTg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Jul 2022 09:03:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54316 "EHLO
+        Tue, 19 Jul 2022 10:19:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242502AbiGSNBS (ORCPT
+        with ESMTP id S238682AbiGSOSp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Jul 2022 09:01:18 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E42309C242;
-        Tue, 19 Jul 2022 05:26:06 -0700 (PDT)
-Received: from fraeml701-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4LnJ103Zbcz6HJf3;
-        Tue, 19 Jul 2022 20:24:20 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Tue, 19 Jul 2022 14:26:02 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
- Tue, 19 Jul 2022 14:26:02 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Rob Landley <rob@landley.net>, Jim Baxter <jim_baxter@mentor.com>,
-        "Eugeniu Rosca" <erosca@de.adit-jv.com>
-CC:     "hpa@zytor.com" <hpa@zytor.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "takondra@cisco.com" <takondra@cisco.com>,
-        "kamensky@cisco.com" <kamensky@cisco.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: RE: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Thread-Topic: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Thread-Index: AQHYe+tsPH1HC/8x8Uq7oovD5MPpKK1G5r2QgAG+ywCAACILEIAHUz4AgDRUxQCAACKFgP//9y0AgAD3swCAADE5AIAAIobA
-Date:   Tue, 19 Jul 2022 12:26:02 +0000
-Message-ID: <5b8b0bcac01b477eaa777ceb8c109f58@huawei.com>
-References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
-        <1561909199.3985.33.camel@linux.ibm.com>
-        <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
-        <1561991485.4067.14.camel@linux.ibm.com>
-        <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
-        <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
-        <20220609102627.GA3922@lxhi-065>
-        <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
-        <20220610153336.GA8881@lxhi-065>
-        <4bc349a59e4042f7831b1190914851fe@huawei.com>
-        <20220615092712.GA4068@lxhi-065>
-        <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
-        <f82d4961986547b28b6de066219ad08b@huawei.com>
-        <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
-        <8e6a723874644449be99fcebb0905058@huawei.com>
- <dc86769f-0ac6-d9f3-c003-54d3793ccfec@landley.net>
-In-Reply-To: <dc86769f-0ac6-d9f3-c003-54d3793ccfec@landley.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 19 Jul 2022 10:18:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 979E02B7
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 06:55:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1658238904;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=O/FvAWLla+1Wk19cGVtJlLnIWGf+0LUDeRirr49qjb4=;
+        b=JMdlwr+9uOR7vs7NM/YUaLY0XMpfjWY2B3ek+RQSE++JvvK3FfH4uh4gL8nmrJtNA4+T3v
+        HHfVUhpD1McLaodCRSFMHM4Iug6MmSjsh9ZxvxB+KFC8J/Pcx5ffMHKozoktMAs/J+/lAZ
+        F5AoV0gtkIFUDEluMDlq0VPjVZvLREo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-412-PkzAgNblNLyduQFKc5j3NA-1; Tue, 19 Jul 2022 09:55:01 -0400
+X-MC-Unique: PkzAgNblNLyduQFKc5j3NA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7B6658039A5;
+        Tue, 19 Jul 2022 13:55:00 +0000 (UTC)
+Received: from T590 (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 72E7140CF8E5;
+        Tue, 19 Jul 2022 13:54:52 +0000 (UTC)
+Date:   Tue, 19 Jul 2022 21:54:47 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        a.manzanares@samsung.com, javier@javigon.com,
+        ankit.kumar@samsung.com, ming.lei@redhat.com
+Subject: Re: [PATCH v2] lsm,io_uring: add LSM hooks for the new uring_cmd
+ file op
+Message-ID: <Yta3pzbOTgdFp+yV@T590>
+References: <20220715191622.2310436-1-mcgrof@kernel.org>
+ <a56d191e-a3a3-76b9-6ca3-782803d2600c@kernel.dk>
+ <CAHC9VhRzm=1mh9bZKEdLSG0vet=amQDVpuZk+1shMuXYLV_qoQ@mail.gmail.com>
+ <CAHC9VhQm3CBUkVz2OHBmuRi1VDNxvfWs-tFT2UO9LKMbO7YJMg@mail.gmail.com>
+ <e139a585-ece7-7813-7c90-9ffc3a924a87@schaufler-ca.com>
+ <CGME20220718215605epcas5p4332ce1e7321243d7052834b0804c91c6@epcas5p4.samsung.com>
+ <CAHC9VhRzjLFg9B4wL7GvW3WY-qM4BoqqcpyS0gW8MUbQ9BD2mg@mail.gmail.com>
+ <20220719044717.GA22571@test-zns>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220719044717.GA22571@test-zns>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBSb2IgTGFuZGxleSBbbWFpbHRvOnJvYkBsYW5kbGV5Lm5ldF0NCj4gU2VudDogVHVl
-c2RheSwgSnVseSAxOSwgMjAyMiAxOjUxIFBNDQo+IE9uIDcvMTkvMjIgMDE6NTUsIFJvYmVydG8g
-U2Fzc3Ugd3JvdGU6DQo+ID4+IFRoYW5rIHlvdSwgSSBoYXZlIHRlc3RlZCB0aGF0IHBhdGNoIGJ1
-dCB0aGUgcHJvYmxlbSByZW1haW5lZC4gSGVyZSBpcyBteQ0KPiA+PiBjb21tYW5kIGxpbmUsIEkg
-d29uZGVyIGlmIHRoZXJlIGlzIHNvbWV0aGluZyB3cm9uZy4NCj4gPj4NCj4gPj4gS2VybmVsIGNv
-bW1hbmQgbGluZTogcncgcm9vdGZzdHlwZT1pbml0cmFtdG1wZnMgcm9vdD0vZGV2L3JhbTANCj4g
-Pj4gaW5pdHJkPTB4NTAwMDAwMDAwIHJvb3R3YWl0DQo+ID4NCj4gPiBJdCBpcyBqdXN0IGluaXRy
-YW10bXBmcywgd2l0aG91dCByb290ZnN0eXBlPS4NCj4gDQo+IFdob2V2ZXIgd3JvdGUgdGhhdCBw
-YXRjaCByZWFsbHkgZG9lc24ndCB1bmRlcnN0YW5kIGhvdyB0aGlzIHN0dWZmIHdvcmtzLiBJIGNh
-bg0KPiB0ZWxsIGZyb20gdGhlIG5hbWUuDQoNCkhpIFJvYg0KDQpzdXJlbHksIEkgc2hvdWxkIGhh
-dmUgYmVlbiBtb3JlIGNhcmVmdWwgaW4gY2hvb3NpbmcgdGhlIG5hbWUgb2YNCnRoZSBvcHRpb24u
-DQoNCj4gVGVjaG5pY2FsbHksIGluaXRyYW1mcyBpcyB0aGUgbG9hZGVyLCBJLkUuICJpbml0IHJh
-bWZzIi4gVGhlIGZpbGVzeXN0ZW0gaW5zdGFuY2UNCj4gaXMgY2FsbGVkICJyb290ZnMiIChoZW5j
-ZSB0aGUgbmFtZSBpbiAvcHJvYy9tb3VudHMgd2hlbiB0aGUgaW5zYW5lIHNwZWNpYWwgY2FzZQ0K
-PiB0aGUga2VybmVsIGFkZGVkIGRvZXNuJ3QgaGlkZSBpbmZvcm1hdGlvbiBmcm9tIHBlb3BsZSwg
-bWFraW5nIGFsbCB0aGlzIGhhcmRlciB0bw0KPiB1bmRlcnN0YW5kIGZvciBubyBvYnZpb3VzIHJl
-YXNvbikuDQoNCk9rLCB0aGFua3MgZm9yIHRoZSBleHBsYW5hdGlvbi4NCg0KPiByYW1mcyBhbmQg
-dG1wZnMgYXJlIHR3byBkaWZmZXJlbnQgZmlsZXN5c3RlbXMgdGhhdCBDT1VMRCBiZSB1c2VkIHRv
-IGltcGxlbWVudA0KPiByb290ZnMuIChMYXN0IEkgY2hlY2tlZCB0aGV5IHdlcmUgdGhlIG9ubHkg
-cmFtIGJhY2tlZCBmaWxlc3lzdGVtcyBpbiBMaW51eC4pDQoNClllcywgdGhhdCBwYXJ0IEkgZ290
-IGl0Lg0KDQo+IElmIGEgc3lzdGVtIGFkbWluaXN0cmF0b3Igc2F5cyB0aGV5J3JlIGdvaW5nIHRv
-IGluc3RhbGwgeW91ciBzZXJ2ZXIncyByb290DQo+IHBhcnRpdGlvbiB1c2luZyB0aGUgInJlaXNl
-cnhmcyIgZmlsZXN5c3RlbSwgSSB3b3VsZCBub3QgYmUgcmVhc3N1cmVkLg0KDQpEZWZpbml0ZWx5
-Lg0KDQpbLi4uXQ0KDQo+IFAuUC5TLiBJZiB5b3Ugd2FudCB0byBydW4gYSBjb21tYW5kIG90aGVy
-IHRoYW4gL2luaXQgb3V0IG9mIGluaXRyYW1mcyBvciBpbml0cmQsDQo+IHVzZSB0aGUgcmRpbml0
-PS9ydW4vdGhpcyBvcHRpb24uIE5vdGUgdGhlIHJvb3Q9IG92ZXJtb3VudCBtZWNoYW5pc20gaXMN
-Cj4gY29tcGxldGVseSBkaWZmZXJlbnQgY29kZSBhbmQgdXNlcyB0aGUgaW5pdD0vcnVuL3RoaXMg
-YXJndW1lbnQgaW5zdGVhZCwgd2hpY2gNCj4gbWVhbnMgbm90aGluZyB0byBpbml0cmFtZnMuIEFn
-YWluLCBzcGVjaWZ5aW5nIHJvb3Q9IHNheXMgd2UgYXJlIE5PVCBzdGF5aW5nIGluDQo+IGluaXRy
-YW1mcy4NCg0KU29ycnksIGl0IHdhcyBzb21lIHRpbWUgYWdvLiBJIGhhdmUgdG8gZ28gYmFjayBh
-bmQgc2VlIHdoeSB3ZSBuZWVkZWQNCmEgc2VwYXJhdGUgb3B0aW9uLiBNYXliZSBvbWl0dGluZyBy
-b290PSB3YXMgaW1wYWN0aW5nIG9uIG1vdW50aW5nDQp0aGUgcmVhbCByb290IGZpbGVzeXN0ZW0u
-IFdpbGwgZ2V0IHRoYXQgaW5mb3JtYXRpb24uDQoNCkludHVpdGl2ZWx5LCBnaXZlbiB0aGF0IHJv
-b3Q9IGlzIGNvbnN1bWVkIGZvciBleGFtcGxlIGJ5IGRyYWN1dCwgaXQgc2VlbXMNCmEgc2FmZXIg
-Y2hvaWNlIHRvIGhhdmUgYW4gb3B0aW9uIHRvIGV4cGxpY2l0bHkgY2hvb3NlIHRoZSBkZXNpcmVk
-IGZpbGVzeXN0ZW0uDQoNClJvYmVydG8NCg==
+On Tue, Jul 19, 2022 at 10:17:17AM +0530, Kanchan Joshi wrote:
+> On Mon, Jul 18, 2022 at 05:52:01PM -0400, Paul Moore wrote:
+> > On Mon, Jul 18, 2022 at 1:12 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > On 7/15/2022 8:33 PM, Paul Moore wrote:
+> > > > On Fri, Jul 15, 2022 at 3:52 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > >> On Fri, Jul 15, 2022 at 3:28 PM Jens Axboe <axboe@kernel.dk> wrote:
+> > > >>> On 7/15/22 1:16 PM, Luis Chamberlain wrote:
+> > > >>>> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+> > > >>>> add infrastructure for uring-cmd"), this extended the struct
+> > > >>>> file_operations to allow a new command which each subsystem can use
+> > > >>>> to enable command passthrough. Add an LSM specific for the command
+> > > >>>> passthrough which enables LSMs to inspect the command details.
+> > > >>>>
+> > > >>>> This was discussed long ago without no clear pointer for something
+> > > >>>> conclusive, so this enables LSMs to at least reject this new file
+> > > >>>> operation.
+> > > >>> From an io_uring perspective, this looks fine to me. It may be easier if
+> > > >>> I take this through my tree due to the moving of the files, or the
+> > > >>> security side can do it but it'd have to then wait for merge window (and
+> > > >>> post io_uring branch merge) to do so. Just let me know. If done outside
+> > > >>> of my tree, feel free to add:
+> > > > I forgot to add this earlier ... let's see how the timing goes, I
+> > > > don't expect the LSM/Smack/SELinux bits to be ready and tested before
+> > > > the merge window opens so I'm guessing this will not be an issue in
+> > > > practice, but thanks for the heads-up.
+> > > 
+> > > I have a patch that may or may not be appropriate. I ran the
+> > > liburing tests without (additional) failures, but it looks like
+> > > there isn't anything there testing uring_cmd. Do you have a
+> > > test tucked away somewhere I can use?
+> 
+> Earlier testing was done using fio. liburing tests need a formal review
+> in list. Tree is here -
+> https://github.com/ankit-sam/liburing/tree/uring-pt
+> It adds new "test/io_uring_passthrough.t", which can be run this way:
+> 
+> ./test/io_uring_passthrough.t /dev/ng0n1
+> 
+> Requires nvme device (/dev/ng0n1). And admin-access as well, as this
+> is raw open. FWIW, each passthrough command (at nvme driver level) is
+> also guarded by admin-access.
+> 
+> Ankit (CCed) has the plans to post it (will keep you guys in loop) after
+> bit more testing with 5.20 branch.
+
+Another candidate is ublksrv[1] which doesn't require any device and
+is pretty easy to setup. However, the kernel side driver(ublk_drv) isn't
+merged to linus tree yet, but has been in for-5.20/block.
+
+And io_uring command is sent to both /dev/ublk-control and /dev/ublkcN.
+
+[1] https://github.com/ming1/ubdsrv.git
+
+
+Thanks,
+Ming
+
