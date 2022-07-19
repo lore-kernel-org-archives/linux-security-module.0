@@ -2,247 +2,264 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D94CCA47F
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jul 2022 17:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F8CC433EF
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jul 2022 20:00:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237341AbiGSRit (ORCPT
+        id S239930AbiGSUAX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Jul 2022 13:38:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37646 "EHLO
+        Tue, 19 Jul 2022 16:00:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbiGSRir (ORCPT
+        with ESMTP id S239786AbiGSUAA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Jul 2022 13:38:47 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5ADC5B7A7;
-        Tue, 19 Jul 2022 10:38:46 -0700 (PDT)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26JGu6fh030727;
-        Tue, 19 Jul 2022 17:38:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- mime-version; s=corp-2022-7-12;
- bh=GG9vSG2qge75b0qe8H8Dz1MLyEaq9zZ8Be++3h9I0nE=;
- b=gOlTvRdd+9bOr3KtW4M46cdUQIMOJj5xzn4Gh5+Azvadp/xxQopPHufznWMFVHdFF0xU
- kMVBetfvdKpJukBGnq0gMkmEcXSLQnIcKEbXb0QAa4Lhy5+gAlIIFqOaKIGc/Slrg4bq
- zZFT7gh/B454WBksma8yOYTglmF9Die8UsXebzmpAHTBR9coD9PdP2RwJnHwArxvZU3f
- 8TsliQLzqeFHDqDpRa2LYBo8jkUcZiFv1MRAqlrGWJfBdlxdezNQrSxxXijIA5ZuP4Ag
- cF39GzVPld92Q5grUNQvn3AmsIG7vjXLnxdaElphwCMwFz+FgZuwRvuzgWnxoxKXzgCa og== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3hbkrc74us-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jul 2022 17:38:38 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 26JG2lNt007941;
-        Tue, 19 Jul 2022 17:38:37 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2173.outbound.protection.outlook.com [104.47.59.173])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3hc1k3k55d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jul 2022 17:38:37 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EcYKg+jpL4pMMAbnQNHpcdN7TlScG1zbGkUhuqqhRdVW7f5PuMvtb+kAE8vW/kPZR5yc9RfaAnbZf2MvOu2Zx7P0hNU4TIA3gS/Io48NuCiMpLxm9loJHKD++romQ0k9MslrU6vJXo349QUMq21esMRwkSnZcYeRTg53SgIln0mGAUC3VRrIB0DoHpNhfqhJX6ldLNVWX3+U4QcvMwSkrkhXKplHjQZJB6TQPBitUBhf7weqfjbqCb6HeMur/IgjIbvzfno6BXnWVQ+wD7Hl2BKlkW87xd5kVYSnzmi+REuzai9gs5LwQgy+VX7HlJw1NaurKroWis1/WvzaIWhD2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GG9vSG2qge75b0qe8H8Dz1MLyEaq9zZ8Be++3h9I0nE=;
- b=hypNfyeE9qSK3mTY29eUgHIBmKsGLk5IRhVQCetUSfRSisRZGN0O0zhvPeleMxY5yjhef9mv6kKAnTuS8aoZyzu7LcWqUoTNPttw+qK6bwbA7CgVrFk7VU3v+YdiEGJ3vZsQb3l4X3CNPnj6+z5hjZFKR/L912Lz38AdARKHgxECtzmAd0/xRvMAs6YZMENDi8AyjImZZXEv3bwyT4viOjenlJ0LeRyZoIpaTapDlGvxCxyg+xPmeT+0dxEJWJIRXki9ZmLaz6CuSebohCIYCaV2zvSkVVKfuf3c8HFc2rd+V66bK2UzPG4AqoOHmOHpvFLzOLNmoXL7EfK0g7jWAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Tue, 19 Jul 2022 16:00:00 -0400
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44A15FAF9
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 12:59:47 -0700 (PDT)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-10d6cdf829aso5789113fac.1
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 12:59:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GG9vSG2qge75b0qe8H8Dz1MLyEaq9zZ8Be++3h9I0nE=;
- b=b8FnxY/ZT+qzonWdwQG14uAO2YBUGeqOrKHoKcioiTF0hp7peOv9xIGCRP70nNhRZixYHMV9RxENqA6aQBFD+gCGp6fO1V7jobDKOlFiw0MY3FtttGDSO7/hUS2cpNSLO16+DFEFs0dgphKzySuPr17+qks8+HOWvvTz7cFWetM=
-Received: from PH0PR10MB5660.namprd10.prod.outlook.com (2603:10b6:510:ff::6)
- by MW4PR10MB5703.namprd10.prod.outlook.com (2603:10b6:303:18d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.23; Tue, 19 Jul
- 2022 17:38:35 +0000
-Received: from PH0PR10MB5660.namprd10.prod.outlook.com
- ([fe80::29ce:70ed:1141:d773]) by PH0PR10MB5660.namprd10.prod.outlook.com
- ([fe80::29ce:70ed:1141:d773%7]) with mapi id 15.20.5438.023; Tue, 19 Jul 2022
- 17:38:35 +0000
-From:   John Haxby <john.haxby@oracle.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "matthewgarrett@google.com" <matthewgarrett@google.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] lockdown: Fix kexec lockdown bypass with ima policy
-Thread-Topic: [PATCH] lockdown: Fix kexec lockdown bypass with ima policy
-Thread-Index: AQHYm5Zfj1zmFrd/K0SmFoV1QR5XJg==
-Date:   Tue, 19 Jul 2022 17:38:35 +0000
-Message-ID: <F47EA986-6D9D-423A-B80E-2A54DB2214D5@oracle.com>
-References: <20220719171647.3574253-1-eric.snowberg@oracle.com>
-In-Reply-To: <20220719171647.3574253-1-eric.snowberg@oracle.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3696.100.31)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 01584f55-7dd1-4f47-9433-08da69ad81f0
-x-ms-traffictypediagnostic: MW4PR10MB5703:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: TyikI5ClfdJTmz4oYuNjFlyK8G1+DYAWR+wq0NpC2LEvQ96k+45C5PulaBB3LXx3IUcOhhMMEYEqgfgbSb0uMtg3Jd1wAJ7kz1Lrzq7ooi35OmTFzhXSs7nhnPrn+sceId1UQMF/v4hCjEmmDKwXJGSDxgp8yhI3ux1mp7TQHnlhtzUmZFi2AMxi3JJgACLdqTxnlJRBMOkBueXkiehfdZtGOiP916kQSE7UN4519hldfI1B+a3aKnC0A6AAlI5d/BwiJGzDI8lrqBLpmVmDGyErOSRa4e5k1ORSN58HW08n+xNHQLACVWPW4N0+4bd003NXvE6vQi+54RLkAAmWXDJDZDLyz5+TpQZE0dD7ywaFUxkiiPzuxmGkPrVJr00OUapXY/u3nrzib3CMxiVqaSev28Cyhm6uPTYZEgI0BNIu+IIL3/06Cfl4+AE60FRmib0e//sXjP031sfuLOwp/8O1+RJm+NJyDUqidizjPBscjbSDWyhL9dHeqkyppkfhlVfyg0tydoo7lEA0i1cbG/LW4Hr3uVas0OvQxSi6pXaXNtqS9Px2GyzxQKXVHXCpEUip9Z4tbkIQYOGCjpRe0kCp6IZAGcJ0C47etJMWPqF7MHXbBhF8awPtAnXnfpBPFWRHsQV0tfeXsu7JFIGnTDgmEQs5fkpbnyS91b+K+2A6wqPc5jaYdofEhQM5fV6zN+dF2V0yQ4L9lEcSwGRMDCXY9E0+u7s8IzmVpUDdFGCftLkvGg5t8j72cGjuQbcasB/QhzrwqzdUrfvu1LWkNKFpJbJyCeCWTRMjrLQL1y3qJD4z3jKh3dgtzWldg1NGzxHFPNoAR9rb7JBRWnLFeg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5660.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(39860400002)(396003)(366004)(376002)(136003)(346002)(186003)(2906002)(54906003)(66946007)(66476007)(83380400001)(66446008)(91956017)(64756008)(8676002)(71200400001)(4326008)(76116006)(66556008)(36756003)(6512007)(6506007)(6636002)(53546011)(37006003)(2616005)(8936002)(86362001)(5660300002)(41300700001)(44832011)(316002)(33656002)(6486002)(122000001)(99936003)(6862004)(38070700005)(478600001)(38100700002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?eWSAJT4So0mE+xmNok59RNuFniJDQz8ZOfRlNU0imZqqYb+09CLUh3UhgWKS?=
- =?us-ascii?Q?kDbpjWN5maVvAuStEEMQHW3R1FyV0BG7LXZ78cRHfjCRWoeGCilMpSIg0KDk?=
- =?us-ascii?Q?ogK8ju1HIhbnFaV9XfHcANBmTjCaLJPiaSfEl5yCOLWb0G8o6P4Q8xs2bL5A?=
- =?us-ascii?Q?z7BnxWQlf54Je1+Qayssj5MZSQ6egibzERiFRC47BJjxdFIlARMbo8Cgio/X?=
- =?us-ascii?Q?H5mh33Z560u8khRkrT6oHULahdkZCBnlI5dGUWn5ScOP2zJ1Gt57+xZA4mAq?=
- =?us-ascii?Q?bOMAze3MkIp0eRPOdXvLeHVJ3xch1F8xnz/AErgKm63ShZasy3FFMpexgLkX?=
- =?us-ascii?Q?fLEoEHOJWTAPz+3dz50310cUn4WVGaMJwd1IXzFZOQXn/XcTpkeESIiS7Ppj?=
- =?us-ascii?Q?VPobr4MsFUcl8b3AI/bgWnrX+15n4ljw1AvaZJseWx2i4oJxGglM/v//eIUe?=
- =?us-ascii?Q?rCjKPPEinoyIyoE8/08wWI9dSjFlHpV0tHMqtJTUKQFlIc0jtQ2J1ENXqjkC?=
- =?us-ascii?Q?9kUxYwhRGbI+hnedeQ3bmjGHh88ZHSv0mJyoyiNHtU6D2BpfEpz5XJhdxLtp?=
- =?us-ascii?Q?LgbNSrOy36T+HekcXgM5wVl8Lom1TAT+nqbHI+UeiLk94MDrhiJfHh+z6UE0?=
- =?us-ascii?Q?L02kMlTIhYqh+Xg+I7gL1ecwO17/HMjBnazA1+nTts5YY+tYKjyK76V2Fnd4?=
- =?us-ascii?Q?3bc0ydgRyPD+5SjGWqZI3SzdMvzAxY9Il/xqqDhe2DgtFiZ1c9odJNtOHL2O?=
- =?us-ascii?Q?VtPbc79JVDLC8nR6eBMWa6JWN79ccycni+rTSdAfw0PJdoiI+FRomkwhJs9O?=
- =?us-ascii?Q?gGgC/SDXImoK5hA+XmVkeY+XRaQvFPMPIIgkXBxpoEec0GDAB7f+DIynUZr0?=
- =?us-ascii?Q?mPC8Bs/2Zbvs18w5Wx+N5UI6Yn4xR71zKLp1auIe1lThX2Sr3wVxf5xZbCGn?=
- =?us-ascii?Q?TOiMNRXY6SmHQDVUyZfwNtVJ8/XDJOix1sBNgfKWwE6vQ8uMquE8Y4tpxwdG?=
- =?us-ascii?Q?ei32D+vssNV2F5Dwtso0D8mPSTbknISekY66sEoApNQJqzKAbJPnz7gs/per?=
- =?us-ascii?Q?FW4E/DhnATvtaPtw/5c8zDrqQwpZ2+m9YikL83T20mwDB1RaAddC9HQEtCGR?=
- =?us-ascii?Q?oEag5zIAIcXc3Km0OhL8UcTPBYFC0hly8NiUU7LDKtvBsWhDDctkVh+a2axg?=
- =?us-ascii?Q?2QluuOP9EjZ5Gktx/mMcicjBGbUUjCNp70f1GTmhnr+cig0VvK94rtBFeIna?=
- =?us-ascii?Q?r24c+N3s1mBZR553Xu1K2gSsgLxcE3F8EGJocIJ8o79xc1doYBCIZqrUhO7d?=
- =?us-ascii?Q?CNjUycExIZePV/OqumOymxn4kyVHLLLooaaDZdV5rtsVfdIC9UGw9oxvWne4?=
- =?us-ascii?Q?aMpw+m7mkxYrhi1OxV0GgRFunlYqHFTcGsE3P7VTrOalYe2jYa64WPcpKJOc?=
- =?us-ascii?Q?ucB2D3diyUTJNkWdS4Ga6Cx6HsLXXIQPD39HnP6z+LmHXuoEgdW5W8D+P07z?=
- =?us-ascii?Q?WlRSgLyszgVSnhOYewpB/pRnGNHdF20R+MUqfYDVNqqCjZIq6+/L6xkh2kDs?=
- =?us-ascii?Q?hO0vFlzVDxPIASMnGSS0F+ZvxAqr0u0TM0biXFKS3ReA60nXteKyLcvYqRjO?=
- =?us-ascii?Q?cT6inunOOzy353WlpIDZzH0=3D?=
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_63BF5564-F7F1-4231-970A-BF216D4C6B74";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha256
+        d=cloudflare.com; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=aGGVmINUCSfsk250AOJFB90sOOysp1l6u1HPvFdfWvo=;
+        b=ByN/WIZ20Mym344bNDca0YyD6ieOFhDy2+cjjAn7+bgOD4umhohA8AY6fW8GUKxF/E
+         JXtuTSxOeVL8xaQ92eweEBfjCUimNWVPS3L/6yTzIK1dwKqcDg1CRZXgYE92y009O6k5
+         MPHJi4Y6gMZzc4PyDtZlv3BdZ5+mVVA+yx4hc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=aGGVmINUCSfsk250AOJFB90sOOysp1l6u1HPvFdfWvo=;
+        b=CG120iCJ+yhUNaQfz+BryhY2NgH8TtQG0aTgdFlEN9ROUW4g5/unvgBsbYe2rLTMS9
+         oDHgAXJ3vClsclWVCXYAptIT7fjGvkevN4jSH3euyiMz2PcL7nqd0CU4H8uO57bsm5Z1
+         /pwO0c6mcPShzal4glofdACqEcbLR6cFDtuMtG1QrfkQVf0tRUKcMQZFuWCp8ZLGShOB
+         9uFIFBAZMpnJF5YeRIgqc6AzxtfsBd8lG6Hg0Tpllt6f/3C2jgnTeMe/vOK6o5geY0cS
+         HbivwmmQ2gqNp9abRMCUxOGXhAGTDcjb7Sc92PWutasicOcBOw5YTXCcZCrsc+x4L5Gw
+         ebzg==
+X-Gm-Message-State: AJIora8TXD+yotou+yIHAEheOXZ2xo9MqzoIqbMSg7YD7T87ETSyXS56
+        Jm1HRObX1WPNihGJ1o6Tb1Od1Q==
+X-Google-Smtp-Source: AGRyM1vz38JlwdypV+2Kw3t+SJQfxVmBJbWv7CQJcjGO2llN++Gpadp4l+cZxasrvtmR2oIYwSNQ9g==
+X-Received: by 2002:a05:6870:2195:b0:10d:596:40c3 with SMTP id l21-20020a056870219500b0010d059640c3mr654876oae.228.1658260787018;
+        Tue, 19 Jul 2022 12:59:47 -0700 (PDT)
+Received: from [192.168.0.41] ([184.4.90.121])
+        by smtp.gmail.com with ESMTPSA id h24-20020a9d6418000000b00618ecbca69asm6504625otl.74.2022.07.19.12.59.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Jul 2022 12:59:46 -0700 (PDT)
+Message-ID: <305d165d-0a29-390c-f424-284333c78c38@cloudflare.com>
+Date:   Tue, 19 Jul 2022 14:59:44 -0500
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5660.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01584f55-7dd1-4f47-9433-08da69ad81f0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2022 17:38:35.6306
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LFlpd/lldm+utEcY3T9oEUBVyDo1WF/E1xp36zCVMHY0k3pDYzK2Qps2IOfp/5Tx/JblWyWXAS3RAFFjwSYQAA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5703
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-19_06,2022-07-19_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 phishscore=0
- mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207190074
-X-Proofpoint-GUID: 67jb8V0BBHVkqXlpAUuFpZTFeDN72lkp
-X-Proofpoint-ORIG-GUID: 67jb8V0BBHVkqXlpAUuFpZTFeDN72lkp
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2 0/4] Introduce security_create_user_ns()
+Content-Language: en-US
+To:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>,
+        KP Singh <kpsingh@kernel.org>, revest@chromium.org,
+        jackmanb@chromium.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, shuah@kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com
+References: <20220707223228.1940249-1-fred@cloudflare.com>
+ <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
+ <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com>
+ <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
+ <20220714142740.GA10621@mail.hallyn.com>
+From:   Frederick Lawler <fred@cloudflare.com>
+In-Reply-To: <20220714142740.GA10621@mail.hallyn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---Apple-Mail=_63BF5564-F7F1-4231-970A-BF216D4C6B74
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+On 7/14/22 9:27 AM, Serge E. Hallyn wrote:
+> On Fri, Jul 08, 2022 at 09:11:15AM -0700, Casey Schaufler wrote:
+>> On 7/8/2022 7:01 AM, Frederick Lawler wrote:
+>>> On 7/8/22 7:10 AM, Christian Göttsche wrote:
+>>>> ,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com>
+>>>> wrote:
+>>>>>
+>>>>> While creating a LSM BPF MAC policy to block user namespace
+>>>>> creation, we
+>>>>> used the LSM cred_prepare hook because that is the closest hook to
+>>>>> prevent
+>>>>> a call to create_user_ns().
+>>>>>
+>>>>> The calls look something like this:
+>>>>>
+>>>>>       cred = prepare_creds()
+>>>>>           security_prepare_creds()
+>>>>>               call_int_hook(cred_prepare, ...
+>>>>>       if (cred)
+>>>>>           create_user_ns(cred)
+>>>>>
+>>>>> We noticed that error codes were not propagated from this hook and
+>>>>> introduced a patch [1] to propagate those errors.
+>>>>>
+>>>>> The discussion notes that security_prepare_creds()
+>>>>> is not appropriate for MAC policies, and instead the hook is
+>>>>> meant for LSM authors to prepare credentials for mutation. [2]
+>>>>>
+>>>>> Ultimately, we concluded that a better course of action is to introduce
+>>>>> a new security hook for LSM authors. [3]
+>>>>>
+>>>>> This patch set first introduces a new security_create_user_ns()
+>>>>> function
+>>>>> and create_user_ns LSM hook, then marks the hook as sleepable in BPF.
+>>>>
+>>>> Some thoughts:
+>>>>
+>>>> I.
+>>>>
+>>>> Why not make the hook more generic, e.g. support all other existing
+>>>> and potential future namespaces?
+>>>
+>>> The main issue with a generic hook is that different namespaces have
+>>> different calling contexts. We decided in a previous discussion to
+>>> opt-out of a generic hook for this reason. [1]
+>>>
+>>>> Also I think the naming scheme is <object>_<verb>.
+>>>
+>>> That's a good call out. I was originally hoping to keep the
+>>> security_*() match with the hook name matched with the caller function
+>>> to keep things all aligned. If no one objects to renaming the hook, I
+>>> can rename the hook for v3.
+>>>
+>>>>
+>>>>       LSM_HOOK(int, 0, namespace_create, const struct cred *cred,
+>>>> unsigned int flags)
+>>>>
+>>>> where flags is a bitmap of CLONE flags from include/uapi/linux/sched.h
+>>>> (like CLONE_NEWUSER).
+>>>>
+>>>> II.
+>>>>
+>>>> While adding policing for namespaces maybe also add a new hook for
+>>>> setns(2)
+>>>>
+>>>>       LSM_HOOK(int, 0, namespace_join, const struct cred *subj,  const
+>>>> struct cred *obj, unsigned int flags)
+>>>>
+>>>
+>>> IIUC, setns() will create a new namespace for the other namespaces
+>>> except for user namespace. If we add a security hook for the other
+>>> create_*_ns() functions, then we can catch setns() at that point.
+>>>
+>>>> III.
+>>>>
+>>>> Maybe even attach a security context to namespaces so they can be
+>>>> further governed?
+>>
+>> That would likely add confusion to the existing security module namespace
+>> efforts. SELinux, Smack and AppArmor have all developed namespace models.
+>> That, or it could replace the various independent efforts with a single,
+> 
+> I feel like you're attaching more meaning to this than there needs to be.
+> I *think* he's just talking about a user_namespace->u_security void*.
+> So that for instance while deciding whether to allow some transition,
+> selinux could check whether the caller's user namespace was created by
+> a task in an selinux context authorized to create user namespaces.
+> 
+> The "user namespaces are DAC and orthogonal to MAC" is of course true
+> (where the LSM does not itself tie them together), except that we all
+> know that a process running as root in a user namespace gains access to
+> often-less-trustworthy code gated under CAP_SYS_ADMIN.
+> 
+>> unified security module namespace effort. There's more work to that than
+>> adding a context to a namespace. Treating namespaces as objects is almost,
+>> but not quite, solidifying containers as a kernel construct. We know we
+>> can't do that.
+> 
+> What we "can't do" (imo) is to create a "full container" construct which
+> ties together the various namespaces and other concepts in a restrictive
+> way.
+> 
 
+Is this the direction we want to go with the SELinux implementation? If 
+so, where can I find a similar implementation to make the userns_create 
+work with this? If not, I have a v3 with the hook name change ready to post.
 
+>>>> SELinux example:
+>>>>
+>>>>       type domainA_userns_t;
+>>>>       type_transition domainA_t domainA_t : namespace domainA_userns_t
+>>>> "user";
+>>>>       allow domainA_t domainA_userns_t:namespace create;
+>>>>
+>>>>       # domainB calling setns(2) with domainA as target
+>>>>       allow domainB_t domainA_userns_t:namespace join;
+>>
+>> While I'm not an expert on SELinux policy, I'd bet a refreshing beverage
+>> that there's already a way to achieve this with existing constructs.
+>> Smack, which is subject+object MAC couldn't care less about the user
+>> namespace configuration. User namespaces are DAC constructs.
+>>
+>>>>
+>>>
+>>> Links:
+>>> 1.
+>>> https://lore.kernel.org/all/CAHC9VhSTkEMT90Tk+=iTyp3npWEm+3imrkFVX2qb=XsOPp9F=A@mail.gmail.com/
+>>>
+>>>>>
+>>>>> Links:
+>>>>> 1.
+>>>>> https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
+>>>>>
+>>>>> 2.
+>>>>> https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
+>>>>> 3.
+>>>>> https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
+>>>>>
+>>>>> Changes since v1:
+>>>>> - Add selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
+>>>>> patch
+>>>>> - Add selinux: Implement create_user_ns hook patch
+>>>>> - Change function signature of security_create_user_ns() to only take
+>>>>>     struct cred
+>>>>> - Move security_create_user_ns() call after id mapping check in
+>>>>>     create_user_ns()
+>>>>> - Update documentation to reflect changes
+>>>>>
+>>>>> Frederick Lawler (4):
+>>>>>     security, lsm: Introduce security_create_user_ns()
+>>>>>     bpf-lsm: Make bpf_lsm_create_user_ns() sleepable
+>>>>>     selftests/bpf: Add tests verifying bpf lsm create_user_ns hook
+>>>>>     selinux: Implement create_user_ns hook
+>>>>>
+>>>>>    include/linux/lsm_hook_defs.h                 |  1 +
+>>>>>    include/linux/lsm_hooks.h                     |  4 +
+>>>>>    include/linux/security.h                      |  6 ++
+>>>>>    kernel/bpf/bpf_lsm.c                          |  1 +
+>>>>>    kernel/user_namespace.c                       |  5 ++
+>>>>>    security/security.c                           |  5 ++
+>>>>>    security/selinux/hooks.c                      |  9 ++
+>>>>>    security/selinux/include/classmap.h           |  2 +
+>>>>>    .../selftests/bpf/prog_tests/deny_namespace.c | 88
+>>>>> +++++++++++++++++++
+>>>>>    .../selftests/bpf/progs/test_deny_namespace.c | 39 ++++++++
+>>>>>    10 files changed, 160 insertions(+)
+>>>>>    create mode 100644
+>>>>> tools/testing/selftests/bpf/prog_tests/deny_namespace.c
+>>>>>    create mode 100644
+>>>>> tools/testing/selftests/bpf/progs/test_deny_namespace.c
+>>>>>
+>>>>> -- 
+>>>>> 2.30.2
+>>>>>
+>>>
 
-> On 19 Jul 2022, at 18:16, Eric Snowberg <eric.snowberg@oracle.com> =
-wrote:
->=20
-> The lockdown LSM is primarily used in conjunction with UEFI Secure =
-Boot.
-> This LSM may also be used on machines without UEFI.  It can also be =
-enabled
-> when UEFI Secure Boot is disabled. One of lockdown's features is to =
-prevent
-> kexec from loading untrusted kernels. Lockdown can be enabled through =
-a
-> bootparam or after the kernel has booted through securityfs.
->=20
-> If IMA appraisal is used with the "ima_appraise=3Dlog" boot param,
-> lockdown can be defeated with kexec on any machine when Secure Boot is
-> disabled or unavailable. IMA prevents setting "ima_appraise=3Dlog"
-> from the boot param when Secure Boot is enabled, but this does not =
-cover
-> cases where lockdown is used without Secure Boot.
->=20
-> To defeat lockdown, boot without Secure Boot and add ima_appraise=3Dlog
-> to the kernel command line; then:
->=20
-> $ echo "integrity" > /sys/kernel/security/lockdown
-> $ echo "appraise func=3DKEXEC_KERNEL_CHECK appraise_type=3Dimasig" > \
->  /sys/kernel/security/ima/policy
-> $ kexec -ls unsigned-kernel
->=20
-> Add a call to verify ima appraisal is set to "enforce" whenever =
-lockdown
-> is enabled. This fixes CVE-2022-21505.
->=20
-> Fixes: 29d3c1c8dfe7 ("kexec: Allow kexec_file() with appropriate IMA =
-policy when locked down")
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-
-
-Reviewed-by: John Haxby <john.haxby@oracle.com>
-
-
-> ---
-> security/integrity/ima/ima_policy.c | 4 ++++
-> 1 file changed, 4 insertions(+)
->=20
-> diff --git a/security/integrity/ima/ima_policy.c =
-b/security/integrity/ima/ima_policy.c
-> index 73917413365b..a8802b8da946 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -2247,6 +2247,10 @@ bool ima_appraise_signature(enum =
-kernel_read_file_id id)
-> 	if (id >=3D READING_MAX_ID)
-> 		return false;
->=20
-> +	if (id =3D=3D READING_KEXEC_IMAGE && !(ima_appraise & =
-IMA_APPRAISE_ENFORCE)
-> +	    && security_locked_down(LOCKDOWN_KEXEC))
-> +		return false;
-> +
-> 	func =3D read_idmap[id] ?: FILE_CHECK;
->=20
-> 	rcu_read_lock();
-> --
-> 2.27.0
->=20
->=20
-
-
---Apple-Mail=_63BF5564-F7F1-4231-970A-BF216D4C6B74
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iHUEAREIAB0WIQT+pxvb11CFWUkNSOVFC7t+lC+jyAUCYtbsGgAKCRBFC7t+lC+j
-yPQXAP9vi//B3U1QH+E6AyM4zzsjtOToUowka4uY5NQbIQydrAD8Co/p4W6l5S1f
-CWekP25ZYBGsX39Vx3pdkt/OYRDBY2o=
-=B5pO
------END PGP SIGNATURE-----
-
---Apple-Mail=_63BF5564-F7F1-4231-970A-BF216D4C6B74--
