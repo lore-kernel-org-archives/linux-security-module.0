@@ -2,144 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B518CCA485
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 01:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6247C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 01:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242302AbiGTBlQ (ORCPT
+        id S241767AbiGTBlc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Jul 2022 21:41:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35408 "EHLO
+        Tue, 19 Jul 2022 21:41:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242072AbiGTBkz (ORCPT
+        with ESMTP id S241774AbiGTBlF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Jul 2022 21:40:55 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6387AB3F
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 18:32:28 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id bu1so24035414wrb.9
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 18:32:28 -0700 (PDT)
+        Tue, 19 Jul 2022 21:41:05 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139417AC3C
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 18:32:44 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id i132-20020a1c3b8a000000b003a2fa488efdso385211wma.4
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Jul 2022 18:32:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lFJ7CZhIyt7Ssrykbv8kM2S+JMXiMSgZGBb+WDmkybI=;
-        b=GQBSn18YXc5a1Vg115mj7mzNNR3H9JpDcz/bapsgiFbNzf+3zZ5JPHxQ67bvQ0C+Q6
-         39K7vJACGmZEVMV8wBg2DnXlsV2v97MwvLULYiSiFau6hIQ9Y0cjyC3TNDxlXImxA+m2
-         E3UVbO4IDqtJHKRo1WddtroXHK3Z6XFxoZXhwaMZkvdRkyUNQVo+u9Qs+8CqXituAktq
-         9GRmIFiWRRMruWoPCuFmOarxs/Tc8AzI4kPAAB/WRS0+xpkx6xAKU4CiENIt7LkpcPkd
-         Fv6PjYDHfMxzyd+/M+EO3B73gT7XcDR7/eNUuaO3Pivmgus+b9tb7L2C7x8Eh7Wbmk+t
-         V7FQ==
+         :cc:content-transfer-encoding;
+        bh=tQp/N6Uk+UKd7eDu5UmzGuGhmF0Y+ibaoFPpIegLF+Y=;
+        b=by6T/E8VkX8oFtD8dnsR64IT7UFDcrTPCAIRCgOPa/LJUI8JOCFbfiz7J364/bCOeH
+         rd2SkAx8XnmkmyymE0WIWkYVOzMHAWDtTOM7/pu4iS/Fe00JFXhg564o71FrfrqpBCLX
+         kNQx4x/jPUrpwvMLbAB7FQyDSSJU5xbxfQ3JJ8oycJgKPUTeAw2TRAoGo85orXqi0A8u
+         Xs58+Hntk7L9VAArrtF/7CD3yaGAuk+/qXl0aNv10D0zU/SEvOHRpjy0Q2PZ1bdEhEgl
+         88w2QZanxV32ADu69Bwbh0ecfaxCfSbzFZyoWEIAXF445J3pol4ru5Qh5EMeLZvIwOIM
+         TLcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lFJ7CZhIyt7Ssrykbv8kM2S+JMXiMSgZGBb+WDmkybI=;
-        b=5raU4g5zlI66JUsK07H1h9UAEx1ukzLpdIQT9ixisKY4O0jsf/KQI//QXuz1FgFFfV
-         ZFmVdakFYLW466R0jJMRFevFOPLjl00/N382VtXbc3g4GPCdNAfnTJCEdSKWPsLlBcJv
-         D9Spqujka3HDmYCrPOzBTVUylcYThGyulkSoJlzE3bAASEZqWEc8rOQM3ldTMOZ1vNkO
-         JfnPEmg9MBWHncqxCrWRCDeCTjZVQdf6di1HRQVk4Zg5DmEw/DK/alogi6D9GJ5b0aVu
-         Kf0V9hgihTX92ShIhNotVOEdmqmyUFaKH3wjUpvrjQ7PA42o1ehmEuCHJUB/ffFFQJMe
-         yl6Q==
-X-Gm-Message-State: AJIora8JIpTWhD388kHFR/pujvJrpR8pCMe17SlYBBG1E6XNu0vTgmji
-        6GUxSHAfNOWbV8ZKdJ/X71dvyP07/cGjB67CZJ8K
-X-Google-Smtp-Source: AGRyM1uWDMAPpLcAcuhuXmGi220naKmTccHLcXTkaRT/NUDVG1/wgr1FCbEQ6qb3r+rzrfrLeILxcvpi7tI7/QDmcUg=
-X-Received: by 2002:a5d:64a3:0:b0:21d:adaa:ce4c with SMTP id
- m3-20020a5d64a3000000b0021dadaace4cmr28631806wrp.161.1658280746684; Tue, 19
- Jul 2022 18:32:26 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tQp/N6Uk+UKd7eDu5UmzGuGhmF0Y+ibaoFPpIegLF+Y=;
+        b=dvKs0/+8kdHeef3no+5PY9TpfUe6Fm1o51zoapFY5tUharPLjgmaJzprGG++JNNkvx
+         vIF17OmiDmb++BPcygYLVvXs7fZsNmsWaXfwS2g/OO2AFJvNK1J0MpBw1eEKc6wuNGUP
+         6KhQMbvETd/2Iq3mCeV4o0i0TnNqiOdsIijtd/ewtbMlI8zxbtjhKkYbefBD7qNA0pSI
+         od6KEqkUk/ZYw4uWs4zpOh29aDuaKJh9I+bGhL2DKKKE3MQe+UZ6W4qNYHmBjcKCdnu6
+         U7ubWeeW+EUAIkllSWmPv6mhc6aZE99T4FVHkN1U1fDa7gBB4kV8ZrZ2mOs70s+n4VR8
+         zvug==
+X-Gm-Message-State: AJIora8QqPxfxtJM9POJ6Xncrv1nax2SuGNZGOmR/afvM4SoGj/UVC/9
+        DgmHL0aJMsVZ+BraOz+4vCaZYhGagVleoVwxGFku
+X-Google-Smtp-Source: AGRyM1ubeyz5pphxIFoknkif5zSYvGormRenvsTvDWi7UK6OclfHHNS+LtozRpPhZOyHN270g6dMP5377DarcQ4fJ5w=
+X-Received: by 2002:a7b:ce8f:0:b0:3a2:ff2d:915f with SMTP id
+ q15-20020a7bce8f000000b003a2ff2d915fmr1512608wmj.165.1658280762556; Tue, 19
+ Jul 2022 18:32:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220707223228.1940249-1-fred@cloudflare.com> <20220707223228.1940249-5-fred@cloudflare.com>
-In-Reply-To: <20220707223228.1940249-5-fred@cloudflare.com>
+References: <20220707223228.1940249-1-fred@cloudflare.com> <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
+ <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com> <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
+In-Reply-To: <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 19 Jul 2022 21:32:15 -0400
-Message-ID: <CAHC9VhTkvPvqGQjyEKbi2pkKBtRQE=Uat34aoKsxjWU0qkF6CA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] selinux: Implement create_user_ns hook
-To:     Frederick Lawler <fred@cloudflare.com>
-Cc:     kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
-        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
-        ebiederm@xmission.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+Date:   Tue, 19 Jul 2022 21:32:31 -0400
+Message-ID: <CAHC9VhQ-mBYH-GwSULDyyQ6mNC6K8GNB4fra0pJ+s0ZnEpCgcg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Introduce security_create_user_ns()
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>,
+        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        KP Singh <kpsingh@kernel.org>, revest@chromium.org,
+        jackmanb@chromium.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, shuah@kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
         netdev@vger.kernel.org, kernel-team@cloudflare.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 7, 2022 at 6:32 PM Frederick Lawler <fred@cloudflare.com> wrote:
->
-> Unprivileged user namespace creation is an intended feature to enable
-> sandboxing, however this feature is often used to as an initial step to
-> perform a privilege escalation attack.
->
-> This patch implements a new namespace { userns_create } access control
-> permission to restrict which domains allow or deny user namespace
-> creation. This is necessary for system administrators to quickly protect
-> their systems while waiting for vulnerability patches to be applied.
->
-> This permission can be used in the following way:
->
->         allow domA_t domB_t : namespace { userns_create };
->
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
->
-> ---
-> Changes since v1:
-> - Introduce this patch
-> ---
->  security/selinux/hooks.c            | 9 +++++++++
->  security/selinux/include/classmap.h | 2 ++
->  2 files changed, 11 insertions(+)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index beceb89f68d9..73fbcb434fe0 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4227,6 +4227,14 @@ static void selinux_task_to_inode(struct task_struct *p,
->         spin_unlock(&isec->lock);
->  }
->
-> +static int selinux_userns_create(const struct cred *cred)
-> +{
-> +       u32 sid = current_sid();
-> +
-> +       return avc_has_perm(&selinux_state, sid, sid, SECCLASS_NAMESPACE,
-> +                                               NAMESPACE__USERNS_CREATE, NULL);
-> +}
+On Fri, Jul 8, 2022 at 12:11 PM Casey Schaufler <casey@schaufler-ca.com> wr=
+ote:
+> On 7/8/2022 7:01 AM, Frederick Lawler wrote:
+> > On 7/8/22 7:10 AM, Christian G=C3=B6ttsche wrote:
+> >> ,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com>
+> >> wrote:
 
-As we continue to discuss this, I'm beginning to think that having a
-dedicated object class for the userns might be a good idea.  I believe
-I was the one who gave you these code snippets, so feel free to blame
-me for the respin ;)
+...
 
-This is what I'm thinking:
+> >> Also I think the naming scheme is <object>_<verb>.
+> >
+> > That's a good call out. I was originally hoping to keep the
+> > security_*() match with the hook name matched with the caller function
+> > to keep things all aligned. If no one objects to renaming the hook, I
+> > can rename the hook for v3.
 
-  static int selinux_userns_create(const struct cred *cred)
-  {
-    u32 sid = current_sid();
+No objection from me.
 
-    return avc_has_perm(&selinux_state, sid, sid,
-                        SECCLASS_USER_NAMESPACE,
-                        USER_NAMESPACE__CREATE, NULL);
-  }
+[Sorry for the delay, the last week or two has been pretty busy.]
 
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> index ff757ae5f253..9943e85c6b3e 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -254,6 +254,8 @@ const struct security_class_mapping secclass_map[] = {
->           { COMMON_FILE_PERMS, NULL } },
->         { "io_uring",
->           { "override_creds", "sqpoll", NULL } },
-> +       { "namespace",
-> +         { "userns_create", NULL } },
+> >> III.
+> >>
+> >> Maybe even attach a security context to namespaces so they can be
+> >> further governed?
+>
+> That would likely add confusion to the existing security module namespace
+> efforts. SELinux, Smack and AppArmor have all developed namespace models.
 
-The above would need to change to:
+I'm not sure I fully understand what Casey is saying here as SELinux
+does not yet have an established namespace model to the best of my
+understanding, but perhaps we are talking about different concepts for
+the word "namespace"?
 
-  { "user_namespace",
-    { "create", NULL } }
+From a SELinux perspective, if we are going to control access to a
+namespace beyond simple creation, we would need to assign the
+namespace a label (inherited from the creating process).  Although
+that would need some discussion among the SELinux folks as this would
+mean treating a userns as a proper system entity from a policy
+perspective which is ... interesting.
 
--- 
+> That, or it could replace the various independent efforts with a single,
+> unified security module namespace effort.
+
+We've talked about this before and I just don't see how that could
+ever work, the LSM implementations are just too different to do
+namespacing at the LSM layer.  If a LSM is going to namespace
+themselves, they need the ability to define what that means without
+having to worry about what other LSMs want to do.
+
+
+--
 paul-moore.com
