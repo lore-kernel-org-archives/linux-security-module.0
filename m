@@ -2,106 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0660C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 14:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4BEC433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 14:52:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbiGTOYr (ORCPT
+        id S240830AbiGTOwi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jul 2022 10:24:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38588 "EHLO
+        Wed, 20 Jul 2022 10:52:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiGTOYr (ORCPT
+        with ESMTP id S240631AbiGTOwh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jul 2022 10:24:47 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F7B22718;
-        Wed, 20 Jul 2022 07:24:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3065FB81E8B;
-        Wed, 20 Jul 2022 14:24:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86ADCC3411E;
-        Wed, 20 Jul 2022 14:24:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1658327084;
-        bh=uZmlk4L16kHiiiMJsIDyQCxOHqW3mlXAesVQgZ/Qo9s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mNFK6baGAMSJglZ5hOlc2nOiYM3sOufjgKNYZ/yCmEuhqGGO7635dl7vFpiXkQIfQ
-         DKlB1yaaDxxq1nlTY/AcuUheq8yvt4xsoVj8QSKNiWLCNAL4oOfcRzxvHVYFcHYYN/
-         FghNi1GU6PxXJpIxBq5FMxE33bkNZESbGtcEOwRI=
-Date:   Wed, 20 Jul 2022 16:24:40 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        matthewgarrett@google.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] lockdown: Fix kexec lockdown bypass with ima policy
-Message-ID: <YtgQKHwPAVBSHjcY@kroah.com>
-References: <20220719171647.3574253-1-eric.snowberg@oracle.com>
+        Wed, 20 Jul 2022 10:52:37 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC48B1ADBF
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Jul 2022 07:52:35 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id u5so3433779wrm.4
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Jul 2022 07:52:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PUMNzOcke9F/E6l0+nSlaEl2q/BLzsi49G5O8oR/nQk=;
+        b=05e5XLBmfccOHOTn5Xi23vWg8lqNJPD/R1R0dBx9OAM6rEtAjGyDb7fFMs3y3i/7oD
+         /Ok5WoBVNnLuPSv+vaxNoWo7ozHczx628+bmwDooSBy4Ell7vhkiyYtko7XwBb+kbr/R
+         BAjORV2J0Is7Zf5la7TDJ8tdimEtSTjqnhLmTWTo+VkhDV2SDH+8N+fLRE2KY7wZfezY
+         T+8JyFzZ6P9hW/0ZmdZZ/B/Uv/FqGJI9SKb0Tf0iLP0d+exKHiujMl9frRdeNNWZHTAH
+         i9rgvXBSrNV3XeYyu2mF/sA2JpA/OlBjHP/f6HQ3JwqaawYdWHZ7Uly6ofxMlSylDhlx
+         Vy5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PUMNzOcke9F/E6l0+nSlaEl2q/BLzsi49G5O8oR/nQk=;
+        b=AXlR92Ir1N2fciBm24Xkc03hhIBaaT1EIcevuKTtDrAk6Z+PGrh9aStKSjuNBfgsWU
+         98iLx3vEEn0fRXvdcwQIJovhINWG9mMJQq54Tc9MyrcvCZo9tA+gcVHmxBPG/aLr3hx2
+         ySRTdC9RMcWLNLhokhnGZNzoRsBjVSG4pHO8SHSFXs06Yw2YBCg/WWgXn+QbiOb2VXNo
+         v5K6n5U9hSIZNuI4DlsSEu/vcfR3/q73n+AFrfV34oZQ3AGKgwJZhAlGYhA5ISqy/sUn
+         kW21tzqhWkYrmAjGT4XA7K0PYG5dtGcZwiK4MXIIFBR7nCIrGw55/0nKuZYwBaS3KA2M
+         FwnA==
+X-Gm-Message-State: AJIora9zkw7+Umcu2TPtEHdjA52seIhM1iYXMkSLE8ArrlSbTSemzTql
+        /U+aj9SkgOy/UZCCPMeQ8OlDFYmeCVGGIE/sa3SY
+X-Google-Smtp-Source: AGRyM1vRgjFuWdos6HfR4YAkcb84ehTx76Uq4a7TaHyarDjXm0pNXoiIf0CYV/zUZqhGSCYFaueGHUufPPeJ3RbZVR0=
+X-Received: by 2002:a5d:4f8f:0:b0:21e:4f09:9e15 with SMTP id
+ d15-20020a5d4f8f000000b0021e4f099e15mr1313451wru.55.1658328754216; Wed, 20
+ Jul 2022 07:52:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220719171647.3574253-1-eric.snowberg@oracle.com>
+References: <20220707223228.1940249-1-fred@cloudflare.com> <20220707223228.1940249-5-fred@cloudflare.com>
+ <CA+EEuAhfMrg=goGhWxVW2=i4Z7mVN4GvfzettvX8T+tFcOPKCw@mail.gmail.com>
+In-Reply-To: <CA+EEuAhfMrg=goGhWxVW2=i4Z7mVN4GvfzettvX8T+tFcOPKCw@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 20 Jul 2022 10:52:23 -0400
+Message-ID: <CAHC9VhSbKct_hY4UNS0oyqsov9ELxXeQc4rqpRO7AuLKfWrGDA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] selinux: Implement create_user_ns hook
+To:     Karl MacMillan <karl@bigbadwolfsecurity.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>, andrii@kernel.org,
+        ast@kernel.org, bpf@vger.kernel.org, brauner@kernel.org,
+        casey@schaufler-ca.com, daniel@iogearbox.net,
+        ebiederm@xmission.com, eparis@parisplace.org,
+        jackmanb@chromium.org, jmorris@namei.org, john.fastabend@gmail.com,
+        kafai@fb.com, kernel-team@cloudflare.com, kpsingh@kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        revest@chromium.org, selinux@vger.kernel.org, serge@hallyn.com,
+        shuah@kernel.org, songliubraving@fb.com,
+        stephen.smalley.work@gmail.com, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 19, 2022 at 01:16:47PM -0400, Eric Snowberg wrote:
-> The lockdown LSM is primarily used in conjunction with UEFI Secure Boot.
-> This LSM may also be used on machines without UEFI.  It can also be enabled
-> when UEFI Secure Boot is disabled. One of lockdown's features is to prevent
-> kexec from loading untrusted kernels. Lockdown can be enabled through a
-> bootparam or after the kernel has booted through securityfs.
-> 
-> If IMA appraisal is used with the "ima_appraise=log" boot param,
-> lockdown can be defeated with kexec on any machine when Secure Boot is
-> disabled or unavailable. IMA prevents setting "ima_appraise=log"
-> from the boot param when Secure Boot is enabled, but this does not cover
-> cases where lockdown is used without Secure Boot.
-> 
-> To defeat lockdown, boot without Secure Boot and add ima_appraise=log
-> to the kernel command line; then:
-> 
-> $ echo "integrity" > /sys/kernel/security/lockdown
-> $ echo "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig" > \
->   /sys/kernel/security/ima/policy
-> $ kexec -ls unsigned-kernel
-> 
-> Add a call to verify ima appraisal is set to "enforce" whenever lockdown
-> is enabled. This fixes CVE-2022-21505.
-> 
-> Fixes: 29d3c1c8dfe7 ("kexec: Allow kexec_file() with appropriate IMA policy when locked down")
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  security/integrity/ima/ima_policy.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 73917413365b..a8802b8da946 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -2247,6 +2247,10 @@ bool ima_appraise_signature(enum kernel_read_file_id id)
->  	if (id >= READING_MAX_ID)
->  		return false;
->  
-> +	if (id == READING_KEXEC_IMAGE && !(ima_appraise & IMA_APPRAISE_ENFORCE)
-> +	    && security_locked_down(LOCKDOWN_KEXEC))
-> +		return false;
-> +
->  	func = read_idmap[id] ?: FILE_CHECK;
->  
->  	rcu_read_lock();
-> -- 
-> 2.27.0
-> 
+On Tue, Jul 19, 2022 at 10:42 PM Karl MacMillan
+<karl@bigbadwolfsecurity.com> wrote:
+> On Thu, Jul 7, 2022 at 6:34 PM Frederick Lawler <fred@cloudflare.com> wro=
+te:
+>>
+>> Unprivileged user namespace creation is an intended feature to enable
+>> sandboxing, however this feature is often used to as an initial step to
+>> perform a privilege escalation attack.
+>>
+>> This patch implements a new namespace { userns_create } access control
+>> permission to restrict which domains allow or deny user namespace
+>> creation. This is necessary for system administrators to quickly protect
+>> their systems while waiting for vulnerability patches to be applied.
+>>
+>> This permission can be used in the following way:
+>>
+>>         allow domA_t domB_t : namespace { userns_create };
+>
+>
+> Isn=E2=80=99t this actually domA_t domA_t : namespace . . .
+>
+> I got confused reading this initially trying to figure out what the secon=
+d domain type would be, but looking at the code cleared that up.
 
-<formletter>
+Ah, good catch, thanks Karl!
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
-
-</formletter>
+--=20
+paul-moore.com
