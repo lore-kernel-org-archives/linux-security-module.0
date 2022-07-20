@@ -2,37 +2,37 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 189F4CCA47F
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 01:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10858C43334
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 01:17:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238851AbiGTBKh (ORCPT
+        id S241126AbiGTBRC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Jul 2022 21:10:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60610 "EHLO
+        Tue, 19 Jul 2022 21:17:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237934AbiGTBKg (ORCPT
+        with ESMTP id S241132AbiGTBQF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Jul 2022 21:10:36 -0400
+        Tue, 19 Jul 2022 21:16:05 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6AB348C84;
-        Tue, 19 Jul 2022 18:10:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 078F36714F;
+        Tue, 19 Jul 2022 18:13:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F3C061702;
-        Wed, 20 Jul 2022 01:10:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50AE6C341C6;
-        Wed, 20 Jul 2022 01:10:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3CDCE6172E;
+        Wed, 20 Jul 2022 01:13:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84AC5C341C6;
+        Wed, 20 Jul 2022 01:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658279434;
+        s=k20201202; t=1658279633;
         bh=HknqFPjSCc5JfdKYaORi1g6JqArL7Yr58MkFT15ATao=;
         h=From:To:Cc:Subject:Date:From;
-        b=Tbv/ViAps/oAtnUlFBfIUGOjxMxrVyQEXcCw3i2rm9tOSZGBegAIgjRU5SNRK0TX4
-         LHy5mPT+VqFsvjCtr6+zG/4+46HV2Q4nbsmaJbEOlF97oHZEtOkMPcrM7Uq54B+QwM
-         ygIaFocls6OVzf7imA/CqisyqHtmSj5KcUxdQsv5t0Hz93rAEC0jyLU7J5SvreBZzg
-         abp/Pia40vXaKMZ7B0Xh2ki6s3MWE+GN4l+k2XuYaCkasF2vls3PCmkiIQiHFrdw+O
-         3G+v4KJvOPV+fwUKlGpDYlcHZTZrIqspzzgNR6qtEPc3B0/9ax9rrsldkIOOZT1z51
-         65TgcMY2Cj7zQ==
+        b=rQmOLnM7/0LEzSTetJGYC2nSY8BIebFC/tKutCwSO4DsHLg8IuV6+VOcLObITHkpH
+         vTHtXwyuxAkszIz0EmZw0N4sGrKHM0hFztNs9qyrW1f4wi4dlFImxH96s8PdFh39Cq
+         iqIGmlD3n1c4FmaQ0BLmRudy1BnDEH3xYuBWrfW1sgfZK3x5dkVuuxUxK9b9umZA7E
+         iA/w4wLzLkSlA0JGYDssRi3z2va3q/rIQtCjsRw129D5l1Jmki6v8SRaGCfjJZv7pV
+         eATM9JI6h+vF20OdssunKGqNza9ryGnLxklKige4oT4kttu85aRtHRczoOqYSUj94/
+         2FRngC+cgCYGg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Xiu Jianfeng <xiujianfeng@huawei.com>,
@@ -41,9 +41,9 @@ Cc:     Xiu Jianfeng <xiujianfeng@huawei.com>,
         jmorris@namei.org, serge@hallyn.com,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.18 01/54] Revert "evm: Fix memleak in init_desc"
-Date:   Tue, 19 Jul 2022 21:09:38 -0400
-Message-Id: <20220720011031.1023305-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 01/42] Revert "evm: Fix memleak in init_desc"
+Date:   Tue, 19 Jul 2022 21:13:09 -0400
+Message-Id: <20220720011350.1024134-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 X-stable: review
