@@ -2,67 +2,62 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A838CCA488
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 21:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE059C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 22:39:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231253AbiGTVmW (ORCPT
+        id S230460AbiGTWjT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jul 2022 17:42:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35198 "EHLO
+        Wed, 20 Jul 2022 18:39:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229871AbiGTVmU (ORCPT
+        with ESMTP id S229441AbiGTWjT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jul 2022 17:42:20 -0400
-Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C0242AE5
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Jul 2022 14:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1658353338; bh=024Za88HO+9X5Rrkmz+l65LYdp4ARNuEcFMmXa44Nvc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=rPnIw53cgHymRSqYc47n0VX8Iy6rXPSqim2Z/Z1+Isirkw04IyQ6CHGiaDhtrZi9hlsZPz7yevrEoRGdtx+v5f+1Y67q/gbnxTdK6D58aRpIPIWvHpMjtsFeBDaX9sJUb8Ji88FiFeAHo4o7bzzTLbapx9ehPZES3XicxooOie5Uy0/fLuGp2RQ05XSOzXrCYrWgHdh/cvuDhnlR3Ef6bvaph7aqv0knDvDv8y7CALxY0W4ROL7Jn9FfNPUN81KLVGMUU6purJb5ACXBGcDJi97sk12iUjiJJxwV22VQ/PNCmP2TmU6qOpds1KXM52O/3TeKYoXYT8R8vwGj6RJRow==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1658353338; bh=PliYMJuTipfZXacnZ3n2Q/EQrXc4+8YW+Y2cjiQgK7N=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=YwEb+s1QHE2QAZjhG/3WqxxejdGOsHGKoAODUws1VU8zJ60S7hcmpn8iV5mqJkqaOWp9bwGQQSjm2dZQzmJKJWOigx6P40gCxlOI58qamtZv+hg2zmFHUjh+uYX8UPkmI/NqdTO4U937QDErh1MH91S9e/evnq818JddYf7W7QdpZZW1biMuJCTvRES3Fwq1EfrBTEcwZEJflIsI1gTMm8RTTvFTrOdNEiEFFwB2j/QrMlYZ4gM9gdrEXZ+rfxbuPi0zo3bPi0IsZjwBLk/yxQgw8MbweyiQN9SWaykZnOR/dm1eP/hPv7V42nbBN2ELruUiEbHPTdBLBixkXWkGzA==
-X-YMail-OSG: 4iE9000VM1mvGFKgiz8JI0BR2S4bwwaLHLFFg3MI.zCYp7TcDpKM9bdkPEeLv.m
- U1_lLO4rd4HLDDFBnVkLMN46qNhIxjbCQVBrZ_PFS41l.80PFPJm8GVlDjMOTor6.pELnFRjt_t9
- x0iaRzAsFPcBYVPdo3O6qsVUiWW4A_kCTVtBEBT2IugV9JsFt_ts24Dttn.M5nnRmaiKz97cLNB3
- 8nuy1U.FJ3Vtn2ITJYTdB.JV_TwFAK8bJ.335q7ILA9wdLinHo4KUD3nC8XCRqPdWJtlVMVQaQWY
- fSvz4vpHHj2sKkqIqVLzLAcEr976SV4cmO6hiIJm2RKkl0Q324haKPUxgj_rffn5w3_4b2ZB_Akb
- 4KgOFvdJEsn_JQ6xCHaNZEPr7.rvRxW4UDZG2IH5YatG8NAYG_Iub3jK1SaD72MOyp.BqqIbjGu1
- hvVhVkETt3JEkFLRzY8K2c9AHucKD14ZeyUbNYzURtwHeKz1U0XtDxXc3P3iWOOh7bcS3XTL2WCI
- cfHfXhdd5qy8c6U_clNcx7VOyeoFMdtbcxDI7FOTaK.Jt6b1TQ794YhQ4HO.rBRQ5BKKIYWRJtbs
- lGoGbtEDoJWnGMJYx_xLQzyFEK4hW86xUaaNJ.U3gZtHHhbtw2kZr8dBU349umDS6OF616e1yNAO
- d72c1Lmitns_mQm_iIdpjfmILskcjGaMzvqpEgo9ToqYSpCJsr16mgKmKqvhVtaQBqJRhrV2H2Ib
- Q36lh7udgEFeTuQn1kHnGyXPXjn8ooYmJJnFvSnfcFHO19lIiI.bVhKZqTErp5uvJGbmIlzsApIV
- D2ubl0rkXDXAitfQkv2Fq3AOybcDpEgfbrlJYuHIAECktscaJHhCg9KzQE.jcAxg_wNmRGLoNn.F
- 33XDqUDDjqtD1YGov4TF9MzOWlDmg_lRT4F5uIErR_hLUsAcL7yTVvP2EDbFw4swNK1pWdHj9ag.
- 58KWnuSmKWvgg_vItGzamkAkR7vRSt02ttxHrRX_y5LiYvfcZ86hG.Cxx7JuYbf4JqeLzEJG4HR0
- dbf7PGloC3j4opghP37xhlE1t17gUjV7ToH0DuuV9lL30HLpm.rrUFZnDc4n0yAsN3siO1PevLJR
- _Sa4J9sg9muptgcaPEP1hhKoTWtJAoQ8f80E19Yecjek1KUqVdyNUXByXblRR1w7ekG3wPJ6rYkI
- 9LVotjE9o6QlZCF390qz8t3psZd074cPGZgTPpufPR6KpQIFbfIBkp1NhCJXQ3wWAGb3jo7HCn_q
- STBcbCeGHI9lVS2kKdmHbymlnnFJCL4mjRUyQPFUFzOGQBrlwy7wiIa4EseRNhl4eio_RR2hZmMw
- XeVMujh4a6xZTVNnqeSlaoML5X7hS8oHQuMhu3v7gADZCVqsd52.3i63V9eTfZ3.tCigYLUo46i0
- frIiHNXL1bFhKQOMQEJiHpeWWHlTRtDld6Q59pxVBn_GTDMj6MV7sv6wQjmUYGUsy0WNt2qzIi2g
- rNIXwvWzklwDWXXzDKGL4gRcBPHDcZSHBAL.gvu4iROnSuNHE7yo.VFBUHNHk2vBD9Mqkj.ZPS7S
- O4JVJFsyCoebiGr3gSdSOMZzewUoR1MYry7FRTkbDCuWujgpMSkbkrohWkKJ5yQH0GtnklwaR1a8
- PFjpJ6h_enssf_giRX3wBGKxIN5HkAUqXZfSfw1H2CydKfhicREdoTTbrTO0h0U1T1pk_4sOGjfu
- ZtdmSzaoFLfomLXK9BuXxucS1HZU01deqkSdl41dEsHHwLCXTir.kpCt7GQWl8AcctFejGQy.p_U
- YPUif.ACQ4QB3DIE8Q.75i8gGJQwG_a.5v2RKbMPL2awZ6Zqt.MVm.UYK3L_FcwJxTpvt8nS107g
- tyX_cC0F6MdYwc9Uc_rBtyv0vVht6Kit8lvZMTnZQjEesNycBVoFdFHYeXewu5F6VHhf_KqmZZf3
- bClLhac36gOzhnCjBtqIO.HkL3mBisTAtZzZAKywVQ._pvX.Mg9tMh1xjUObqPlAk8pbI1am8rBY
- P51UjvJYunDa9zZlkrLdCokgAXJvSBZX7EmzKgyUho9YdcocwDmvjjT594.zfwN5Ru62AjOV8Kj1
- 08oZ4yHAlFINtcelSg2rv9EFQ1Ov.Yzni0nbpp58nsrVyPFX7KZFdh5.NPTK6AcPfdWYTTJU27hG
- uReasEqDKD9CXTYGoeKcamlPwtZciUfITP6Nx_c_eIF8Ip8lY2zpGDD9hl_JlkHcsZxewtRNryjk
- q9StXkopiSU1E8jBYk2wRbSBdQPPl_YSPr2MWdik-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 20 Jul 2022 21:42:18 +0000
-Received: by hermes--production-gq1-56bb98dbc7-hx587 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 926c34200fa537ef42813b3d43720d1f;
-          Wed, 20 Jul 2022 21:42:13 +0000 (UTC)
-Message-ID: <f1f8b350-4dc5-b975-3854-ecbf9f4e54ba@schaufler-ca.com>
-Date:   Wed, 20 Jul 2022 14:42:11 -0700
+        Wed, 20 Jul 2022 18:39:19 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA48E2DAA7
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Jul 2022 15:39:17 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id h9so2979625wrm.0
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Jul 2022 15:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=gjQxo0hKIVF1YVkSJ8Tt3ejloLl3VpIsO9hirXnFH+U=;
+        b=zI4b6Z/wGUUgwWeOD3pQ7dMozzrzLOSSr5UB4/ki36H/h/zC0Qb1NCR/RhxeQdHB+Z
+         3FCKUbPYT5+bU3pmhLvpKxSDvhXulocHKjQJIK9p2OWuINXr0ivOwxxFVq8r2AsYJL0k
+         h2jIEJlNGTvnLKbR2B1DBtIZIcqD7gzg4o3ocXh3FpoC1frMzUOTzgFrhv924XvD3qy6
+         bGkXIyFJEC3lxyxyiCQL50o2Lakud4qBn1yd2/Ofteeaj17Q+3Q2Y9JWICUkKp2nG3tu
+         nmWKI3COxvtxiKvkkyvYG9tb5TN1DQ3EJhT9fkaryBkGsfd6tZY/Q5QUvQapNTufNH1C
+         bPlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=gjQxo0hKIVF1YVkSJ8Tt3ejloLl3VpIsO9hirXnFH+U=;
+        b=DVrn83iU+We2ygU+r9wpx0JfZKhxucnP0yRajORxl7H6SZKUhAA8pCbKKLUcbhnAfU
+         E6kOgEjUswSTXVFoT7IROnPJaER7e5re8N3QuklvjdsEdypYvy0NbdOXUR7InPgmE1gE
+         4X64Ma3CLaYPrKB7ILGRJJPTuo6aTLyVhOzb78bpc8xorwowdJBn39ZoCXCL1RxrM4zZ
+         EFuI9TK7e8pArzOEOWN6oxW4m97rfGNO7Bx0dsvXCrQ+v1xtPyB8N7iJFpaTxhmGGT9f
+         Inf12CcRYXU46hIt6Mh5YlaLHeKw8WIKOf5YGPGXFeWjNoBFDMa1C9AQX/cMGzgOVJwl
+         pGHQ==
+X-Gm-Message-State: AJIora+skAHDNLurDdKWKQdLF0hACK8dBmIELXGMEY54eef+PBVXuuvD
+        DXI7KzMMFK9qwC76SHEG40iBN/W4g606oxrY12GH
+X-Google-Smtp-Source: AGRyM1tdrjUF8cXJwhaIP6PHYKjrB2YVUyMErv5SbIcoUCr7yadS90weIQu40rllAkj9qSRNkrh4MkilhnWcTexYRQo=
+X-Received: by 2002:adf:e492:0:b0:21e:45af:5070 with SMTP id
+ i18-20020adfe492000000b0021e45af5070mr5887107wrm.483.1658356756213; Wed, 20
+ Jul 2022 15:39:16 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
+References: <20220707223228.1940249-1-fred@cloudflare.com> <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
+ <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com> <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
+ <CAHC9VhQ-mBYH-GwSULDyyQ6mNC6K8GNB4fra0pJ+s0ZnEpCgcg@mail.gmail.com> <f1f8b350-4dc5-b975-3854-ecbf9f4e54ba@schaufler-ca.com>
+In-Reply-To: <f1f8b350-4dc5-b975-3854-ecbf9f4e54ba@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 20 Jul 2022 18:39:05 -0400
+Message-ID: <CAHC9VhTFb7=FUyq4oM8ULtnZpZYj3ztpNhASy3WtHnn6QWwZig@mail.gmail.com>
 Subject: Re: [PATCH v2 0/4] Introduce security_create_user_ns()
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     Frederick Lawler <fred@cloudflare.com>,
-        =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>,
+        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
         KP Singh <kpsingh@kernel.org>, revest@chromium.org,
         jackmanb@chromium.org, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
@@ -80,79 +75,98 @@ Cc:     Frederick Lawler <fred@cloudflare.com>,
         SElinux list <selinux@vger.kernel.org>,
         linux-kselftest@vger.kernel.org,
         Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, kernel-team@cloudflare.com,
-        casey@schaufler-ca.com
-References: <20220707223228.1940249-1-fred@cloudflare.com>
- <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
- <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com>
- <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
- <CAHC9VhQ-mBYH-GwSULDyyQ6mNC6K8GNB4fra0pJ+s0ZnEpCgcg@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhQ-mBYH-GwSULDyyQ6mNC6K8GNB4fra0pJ+s0ZnEpCgcg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.20447 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+        netdev@vger.kernel.org, kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/19/2022 6:32 PM, Paul Moore wrote:
-> On Fri, Jul 8, 2022 at 12:11 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 7/8/2022 7:01 AM, Frederick Lawler wrote:
->>> On 7/8/22 7:10 AM, Christian Göttsche wrote:
->>>> ,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com>
->>>> wrote:
-> ..
+On Wed, Jul 20, 2022 at 5:42 PM Casey Schaufler <casey@schaufler-ca.com> wr=
+ote:
+> On 7/19/2022 6:32 PM, Paul Moore wrote:
+> > On Fri, Jul 8, 2022 at 12:11 PM Casey Schaufler <casey@schaufler-ca.com=
+> wrote:
+> >> On 7/8/2022 7:01 AM, Frederick Lawler wrote:
+> >>> On 7/8/22 7:10 AM, Christian G=C3=B6ttsche wrote:
+> >>>> ,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com>
+> >>>> wrote:
+
+...
+
+> >>>> III.
+> >>>>
+> >>>> Maybe even attach a security context to namespaces so they can be
+> >>>> further governed?
+> >> That would likely add confusion to the existing security module namesp=
+ace
+> >> efforts. SELinux, Smack and AppArmor have all developed namespace mode=
+ls.
+> >
+> > I'm not sure I fully understand what Casey is saying here as SELinux
+> > does not yet have an established namespace model to the best of my
+> > understanding, but perhaps we are talking about different concepts for
+> > the word "namespace"?
 >
->>>> Also I think the naming scheme is <object>_<verb>.
->>> That's a good call out. I was originally hoping to keep the
->>> security_*() match with the hook name matched with the caller function
->>> to keep things all aligned. If no one objects to renaming the hook, I
->>> can rename the hook for v3.
-> No objection from me.
+> Stephen Smalley proposed a SELinux namespace model, with patches,
+> some time back. It hasn't been adopted, but I've seen at least one
+> attempt to revive it. You're right that there isn't an established
+> model.
+
+If it isn't in the mainline kernel, it isn't an established namespace model=
+.
+
+I ported Stephen's initial namespace patches to new kernels for quite
+some time, look at the working-selinuxns branch in the main SELinux
+repository, but that doesn't mean they are ready for upstreaming.
+Aside from some pretty critical implementation holes, there is the
+much larger conceptual issue of how to deal with persistent filesystem
+objects.  We've discussed that quite a bit among the SELinux
+developers but have yet to arrive at a good-enough solution.  I have
+some thoughts on how we might be able to make forward progress on
+that, but it's wildly off-topic for this patchset discussion.  I
+mostly wanted to make sure I was understanding what you were
+referencing when you talked about a "SELinux namespace model", and it
+is what I suspected ... which I believe is unrelated to the patches
+being discussed here.
+
+> >> That, or it could replace the various independent efforts with a singl=
+e,
+> >> unified security module namespace effort.
+> >
+> > We've talked about this before and I just don't see how that could
+> > ever work, the LSM implementations are just too different to do
+> > namespacing at the LSM layer.
 >
-> [Sorry for the delay, the last week or two has been pretty busy.]
+> It's possible that fresh eyes might see options that those who have
+> been staring at the current state and historical proposals may have
+> missed.
+
+That's always a possibility, and I'm definitely open to a clever
+approach that would resolve all the current issues and not paint us
+into a corner in the future, but I haven't seen anything close (or any
+serious effort for that matter).
+
+... and this still remains way off-topic for a discussion around
+adding a hook to allow LSMs to enforce access controls on user
+namespace creation.
+
+> >   If a LSM is going to namespace
+> > themselves, they need the ability to define what that means without
+> > having to worry about what other LSMs want to do.
 >
->>>> III.
->>>>
->>>> Maybe even attach a security context to namespaces so they can be
->>>> further governed?
->> That would likely add confusion to the existing security module namespace
->> efforts. SELinux, Smack and AppArmor have all developed namespace models.
-> I'm not sure I fully understand what Casey is saying here as SELinux
-> does not yet have an established namespace model to the best of my
-> understanding, but perhaps we are talking about different concepts for
-> the word "namespace"?
+> Possibly. On the other hand, if someone came up with a rational scheme
+> for general xattr namespacing I don't see that anyone would pass it up.
 
-Stephen Smalley proposed a SELinux namespace model, with patches,
-some time back. It hasn't been adopted, but I've seen at least one
-attempt to revive it. You're right that there isn't an established
-model. The model proposed for Smack wasn't adopted either. My point
-is that models have been developed and refinements and/or alternatives
-are likely to be suggested.
+Oh geez ...
 
->
-> >From a SELinux perspective, if we are going to control access to a
-> namespace beyond simple creation, we would need to assign the
-> namespace a label (inherited from the creating process).  Although
-> that would need some discussion among the SELinux folks as this would
-> mean treating a userns as a proper system entity from a policy
-> perspective which is ... interesting.
->
->> That, or it could replace the various independent efforts with a single,
->> unified security module namespace effort.
-> We've talked about this before and I just don't see how that could
-> ever work, the LSM implementations are just too different to do
-> namespacing at the LSM layer.
+Namespacing xattrs is not the same thing as namespacing LSMs.  LSMs
+may make use of xattrs, and namespacing xattrs may make it easier to
+namespace a given LSM, but I'm not aware of an in-tree LSM that would
+be magically namespaced if xattrs were namespaced.
 
-It's possible that fresh eyes might see options that those who have
-been staring at the current state and historical proposals may have
-missed.
+This patchset has nothing to do with xattrs, it deals with adding a
+LSM hook to implement LSM-based access controls for user namespace
+creation.
 
->   If a LSM is going to namespace
-> themselves, they need the ability to define what that means without
-> having to worry about what other LSMs want to do.
-
-Possibly. On the other hand, if someone came up with a rational scheme
-for general xattr namespacing I don't see that anyone would pass it up.
-
-
+--=20
+paul-moore.com
