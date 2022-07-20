@@ -2,135 +2,157 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38394C43334
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 20:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A838CCA488
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 21:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbiGTUar (ORCPT
+        id S231253AbiGTVmW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jul 2022 16:30:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50000 "EHLO
+        Wed, 20 Jul 2022 17:42:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbiGTUaq (ORCPT
+        with ESMTP id S229871AbiGTVmU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jul 2022 16:30:46 -0400
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11C315A3C;
-        Wed, 20 Jul 2022 13:30:45 -0700 (PDT)
-Received: from [192.168.192.83] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 6E7313F3C0;
-        Wed, 20 Jul 2022 20:30:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1658349044;
-        bh=BGEt2HkznZL24U9s42qayMEz611QIKArNki0juuuhFQ=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=mo7CpljjuC+AVQaJAPR5Wau+gc41VQAzRNFKOx8d+OwVA7oWD/aVhhr7BFB88QmfF
-         uacq1yNK0vNuSQc3C8xY10V8bwekJw5r2RFux0ljP8a8Zq94be/XtCNvw/5ICnLtL9
-         R77uNeu+RFTCz+7z49M9cunb7KKeuy2G0mHTk1vamK4AJmFU1H9gm4SMQzgjVzztSZ
-         yqB6Angro8QXfGizezJY5tZFhZjJ/MmYFGY3axlo80JfT1OZmwu3lmxzmB1lh0wuYy
-         Nu0HmgxWPQjf3V2R9zFNeiK7FrZTuJnRAJ/JF3he42QEhCI1tnd/NzE1tWOF+mTOWH
-         Kr0p5MlyoSsNA==
-Message-ID: <6f32491d-cefa-0a3c-a2e5-3c9cd40ec8a1@canonical.com>
-Date:   Wed, 20 Jul 2022 13:30:40 -0700
+        Wed, 20 Jul 2022 17:42:20 -0400
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C0242AE5
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Jul 2022 14:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1658353338; bh=024Za88HO+9X5Rrkmz+l65LYdp4ARNuEcFMmXa44Nvc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=rPnIw53cgHymRSqYc47n0VX8Iy6rXPSqim2Z/Z1+Isirkw04IyQ6CHGiaDhtrZi9hlsZPz7yevrEoRGdtx+v5f+1Y67q/gbnxTdK6D58aRpIPIWvHpMjtsFeBDaX9sJUb8Ji88FiFeAHo4o7bzzTLbapx9ehPZES3XicxooOie5Uy0/fLuGp2RQ05XSOzXrCYrWgHdh/cvuDhnlR3Ef6bvaph7aqv0knDvDv8y7CALxY0W4ROL7Jn9FfNPUN81KLVGMUU6purJb5ACXBGcDJi97sk12iUjiJJxwV22VQ/PNCmP2TmU6qOpds1KXM52O/3TeKYoXYT8R8vwGj6RJRow==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1658353338; bh=PliYMJuTipfZXacnZ3n2Q/EQrXc4+8YW+Y2cjiQgK7N=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=YwEb+s1QHE2QAZjhG/3WqxxejdGOsHGKoAODUws1VU8zJ60S7hcmpn8iV5mqJkqaOWp9bwGQQSjm2dZQzmJKJWOigx6P40gCxlOI58qamtZv+hg2zmFHUjh+uYX8UPkmI/NqdTO4U937QDErh1MH91S9e/evnq818JddYf7W7QdpZZW1biMuJCTvRES3Fwq1EfrBTEcwZEJflIsI1gTMm8RTTvFTrOdNEiEFFwB2j/QrMlYZ4gM9gdrEXZ+rfxbuPi0zo3bPi0IsZjwBLk/yxQgw8MbweyiQN9SWaykZnOR/dm1eP/hPv7V42nbBN2ELruUiEbHPTdBLBixkXWkGzA==
+X-YMail-OSG: 4iE9000VM1mvGFKgiz8JI0BR2S4bwwaLHLFFg3MI.zCYp7TcDpKM9bdkPEeLv.m
+ U1_lLO4rd4HLDDFBnVkLMN46qNhIxjbCQVBrZ_PFS41l.80PFPJm8GVlDjMOTor6.pELnFRjt_t9
+ x0iaRzAsFPcBYVPdo3O6qsVUiWW4A_kCTVtBEBT2IugV9JsFt_ts24Dttn.M5nnRmaiKz97cLNB3
+ 8nuy1U.FJ3Vtn2ITJYTdB.JV_TwFAK8bJ.335q7ILA9wdLinHo4KUD3nC8XCRqPdWJtlVMVQaQWY
+ fSvz4vpHHj2sKkqIqVLzLAcEr976SV4cmO6hiIJm2RKkl0Q324haKPUxgj_rffn5w3_4b2ZB_Akb
+ 4KgOFvdJEsn_JQ6xCHaNZEPr7.rvRxW4UDZG2IH5YatG8NAYG_Iub3jK1SaD72MOyp.BqqIbjGu1
+ hvVhVkETt3JEkFLRzY8K2c9AHucKD14ZeyUbNYzURtwHeKz1U0XtDxXc3P3iWOOh7bcS3XTL2WCI
+ cfHfXhdd5qy8c6U_clNcx7VOyeoFMdtbcxDI7FOTaK.Jt6b1TQ794YhQ4HO.rBRQ5BKKIYWRJtbs
+ lGoGbtEDoJWnGMJYx_xLQzyFEK4hW86xUaaNJ.U3gZtHHhbtw2kZr8dBU349umDS6OF616e1yNAO
+ d72c1Lmitns_mQm_iIdpjfmILskcjGaMzvqpEgo9ToqYSpCJsr16mgKmKqvhVtaQBqJRhrV2H2Ib
+ Q36lh7udgEFeTuQn1kHnGyXPXjn8ooYmJJnFvSnfcFHO19lIiI.bVhKZqTErp5uvJGbmIlzsApIV
+ D2ubl0rkXDXAitfQkv2Fq3AOybcDpEgfbrlJYuHIAECktscaJHhCg9KzQE.jcAxg_wNmRGLoNn.F
+ 33XDqUDDjqtD1YGov4TF9MzOWlDmg_lRT4F5uIErR_hLUsAcL7yTVvP2EDbFw4swNK1pWdHj9ag.
+ 58KWnuSmKWvgg_vItGzamkAkR7vRSt02ttxHrRX_y5LiYvfcZ86hG.Cxx7JuYbf4JqeLzEJG4HR0
+ dbf7PGloC3j4opghP37xhlE1t17gUjV7ToH0DuuV9lL30HLpm.rrUFZnDc4n0yAsN3siO1PevLJR
+ _Sa4J9sg9muptgcaPEP1hhKoTWtJAoQ8f80E19Yecjek1KUqVdyNUXByXblRR1w7ekG3wPJ6rYkI
+ 9LVotjE9o6QlZCF390qz8t3psZd074cPGZgTPpufPR6KpQIFbfIBkp1NhCJXQ3wWAGb3jo7HCn_q
+ STBcbCeGHI9lVS2kKdmHbymlnnFJCL4mjRUyQPFUFzOGQBrlwy7wiIa4EseRNhl4eio_RR2hZmMw
+ XeVMujh4a6xZTVNnqeSlaoML5X7hS8oHQuMhu3v7gADZCVqsd52.3i63V9eTfZ3.tCigYLUo46i0
+ frIiHNXL1bFhKQOMQEJiHpeWWHlTRtDld6Q59pxVBn_GTDMj6MV7sv6wQjmUYGUsy0WNt2qzIi2g
+ rNIXwvWzklwDWXXzDKGL4gRcBPHDcZSHBAL.gvu4iROnSuNHE7yo.VFBUHNHk2vBD9Mqkj.ZPS7S
+ O4JVJFsyCoebiGr3gSdSOMZzewUoR1MYry7FRTkbDCuWujgpMSkbkrohWkKJ5yQH0GtnklwaR1a8
+ PFjpJ6h_enssf_giRX3wBGKxIN5HkAUqXZfSfw1H2CydKfhicREdoTTbrTO0h0U1T1pk_4sOGjfu
+ ZtdmSzaoFLfomLXK9BuXxucS1HZU01deqkSdl41dEsHHwLCXTir.kpCt7GQWl8AcctFejGQy.p_U
+ YPUif.ACQ4QB3DIE8Q.75i8gGJQwG_a.5v2RKbMPL2awZ6Zqt.MVm.UYK3L_FcwJxTpvt8nS107g
+ tyX_cC0F6MdYwc9Uc_rBtyv0vVht6Kit8lvZMTnZQjEesNycBVoFdFHYeXewu5F6VHhf_KqmZZf3
+ bClLhac36gOzhnCjBtqIO.HkL3mBisTAtZzZAKywVQ._pvX.Mg9tMh1xjUObqPlAk8pbI1am8rBY
+ P51UjvJYunDa9zZlkrLdCokgAXJvSBZX7EmzKgyUho9YdcocwDmvjjT594.zfwN5Ru62AjOV8Kj1
+ 08oZ4yHAlFINtcelSg2rv9EFQ1Ov.Yzni0nbpp58nsrVyPFX7KZFdh5.NPTK6AcPfdWYTTJU27hG
+ uReasEqDKD9CXTYGoeKcamlPwtZciUfITP6Nx_c_eIF8Ip8lY2zpGDD9hl_JlkHcsZxewtRNryjk
+ q9StXkopiSU1E8jBYk2wRbSBdQPPl_YSPr2MWdik-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 20 Jul 2022 21:42:18 +0000
+Received: by hermes--production-gq1-56bb98dbc7-hx587 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 926c34200fa537ef42813b3d43720d1f;
+          Wed, 20 Jul 2022 21:42:13 +0000 (UTC)
+Message-ID: <f1f8b350-4dc5-b975-3854-ecbf9f4e54ba@schaufler-ca.com>
+Date:   Wed, 20 Jul 2022 14:42:11 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH v3] apparmor: test: Remove some casts which are no-longer
- required
+Subject: Re: [PATCH v2 0/4] Introduce security_create_user_ns()
 Content-Language: en-US
-To:     David Gow <davidgow@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Daniel Latypov <dlatypov@google.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>,
+        =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>,
+        KP Singh <kpsingh@kernel.org>, revest@chromium.org,
+        jackmanb@chromium.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, shuah@kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20220706100607.75761-1-davidgow@google.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20220706100607.75761-1-davidgow@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        SElinux list <selinux@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com,
+        casey@schaufler-ca.com
+References: <20220707223228.1940249-1-fred@cloudflare.com>
+ <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
+ <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com>
+ <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
+ <CAHC9VhQ-mBYH-GwSULDyyQ6mNC6K8GNB4fra0pJ+s0ZnEpCgcg@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhQ-mBYH-GwSULDyyQ6mNC6K8GNB4fra0pJ+s0ZnEpCgcg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.20447 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/6/22 03:06, David Gow wrote:
-> With some of the stricter type checking in KUnit's EXPECT macros
-> removed, several casts in policy_unpack_test are no longer required.
-> 
-> Remove the unnecessary casts, making the conditions clearer.
-> 
-> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-> Acked-by: John Johansen <john.johansen@canonical.com>
-> Signed-off-by: David Gow <davidgow@google.com>
+On 7/19/2022 6:32 PM, Paul Moore wrote:
+> On Fri, Jul 8, 2022 at 12:11 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 7/8/2022 7:01 AM, Frederick Lawler wrote:
+>>> On 7/8/22 7:10 AM, Christian Göttsche wrote:
+>>>> ,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com>
+>>>> wrote:
+> ..
+>
+>>>> Also I think the naming scheme is <object>_<verb>.
+>>> That's a good call out. I was originally hoping to keep the
+>>> security_*() match with the hook name matched with the caller function
+>>> to keep things all aligned. If no one objects to renaming the hook, I
+>>> can rename the hook for v3.
+> No objection from me.
+>
+> [Sorry for the delay, the last week or two has been pretty busy.]
+>
+>>>> III.
+>>>>
+>>>> Maybe even attach a security context to namespaces so they can be
+>>>> further governed?
+>> That would likely add confusion to the existing security module namespace
+>> efforts. SELinux, Smack and AppArmor have all developed namespace models.
+> I'm not sure I fully understand what Casey is saying here as SELinux
+> does not yet have an established namespace model to the best of my
+> understanding, but perhaps we are talking about different concepts for
+> the word "namespace"?
 
-I have pulled this into apparmor-next
+Stephen Smalley proposed a SELinux namespace model, with patches,
+some time back. It hasn't been adopted, but I've seen at least one
+attempt to revive it. You're right that there isn't an established
+model. The model proposed for Smack wasn't adopted either. My point
+is that models have been developed and refinements and/or alternatives
+are likely to be suggested.
 
-> ---
-> 
-> This is a rebase and resend of [1], which had been accepted into the
-> AppArmor tree, but eventually conflicted with [2]. Let's push it via the
-> KUnit tree to avoid any further conflicts, as discussed in [3].
-> 
-> Cheers,
-> -- David
-> 
-> [1]: https://lore.kernel.org/linux-kselftest/20210513193204.816681-9-davidgow@google.com/
-> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5f91bd9f1e7ad5a2025a2f95a2bc002cb7c9e0f9
-> [3]: https://lore.kernel.org/all/20220405125540.2135d81d@canb.auug.org.au/
-> ---
->   security/apparmor/policy_unpack_test.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-> index 5c18d2f19862..7954cb23d5f2 100644
-> --- a/security/apparmor/policy_unpack_test.c
-> +++ b/security/apparmor/policy_unpack_test.c
-> @@ -177,7 +177,7 @@ static void policy_unpack_test_unpack_array_out_of_bounds(struct kunit *test)
->   
->   	array_size = unpack_array(puf->e, name);
->   
-> -	KUNIT_EXPECT_EQ(test, array_size, (u16)0);
-> +	KUNIT_EXPECT_EQ(test, array_size, 0);
->   	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
->   		puf->e->start + TEST_NAMED_ARRAY_BUF_OFFSET);
->   }
-> @@ -391,10 +391,10 @@ static void policy_unpack_test_unpack_u16_chunk_basic(struct kunit *test)
->   
->   	size = unpack_u16_chunk(puf->e, &chunk);
->   
-> -	KUNIT_EXPECT_PTR_EQ(test, (void *)chunk,
-> +	KUNIT_EXPECT_PTR_EQ(test, chunk,
->   			    puf->e->start + TEST_U16_OFFSET + 2);
-> -	KUNIT_EXPECT_EQ(test, size, (size_t)TEST_U16_DATA);
-> -	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, (void *)(chunk + TEST_U16_DATA));
-> +	KUNIT_EXPECT_EQ(test, size, TEST_U16_DATA);
-> +	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, (chunk + TEST_U16_DATA));
->   }
->   
->   static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_1(
-> @@ -408,7 +408,7 @@ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_1(
->   
->   	size = unpack_u16_chunk(puf->e, &chunk);
->   
-> -	KUNIT_EXPECT_EQ(test, size, (size_t)0);
-> +	KUNIT_EXPECT_EQ(test, size, 0);
->   	KUNIT_EXPECT_NULL(test, chunk);
->   	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, puf->e->end - 1);
->   }
-> @@ -430,7 +430,7 @@ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_2(
->   
->   	size = unpack_u16_chunk(puf->e, &chunk);
->   
-> -	KUNIT_EXPECT_EQ(test, size, (size_t)0);
-> +	KUNIT_EXPECT_EQ(test, size, 0);
->   	KUNIT_EXPECT_NULL(test, chunk);
->   	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, puf->e->start + TEST_U16_OFFSET);
->   }
+>
+> >From a SELinux perspective, if we are going to control access to a
+> namespace beyond simple creation, we would need to assign the
+> namespace a label (inherited from the creating process).  Although
+> that would need some discussion among the SELinux folks as this would
+> mean treating a userns as a proper system entity from a policy
+> perspective which is ... interesting.
+>
+>> That, or it could replace the various independent efforts with a single,
+>> unified security module namespace effort.
+> We've talked about this before and I just don't see how that could
+> ever work, the LSM implementations are just too different to do
+> namespacing at the LSM layer.
+
+It's possible that fresh eyes might see options that those who have
+been staring at the current state and historical proposals may have
+missed.
+
+>   If a LSM is going to namespace
+> themselves, they need the ability to define what that means without
+> having to worry about what other LSMs want to do.
+
+Possibly. On the other hand, if someone came up with a rational scheme
+for general xattr namespacing I don't see that anyone would pass it up.
+
 
