@@ -2,91 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5FAC43334
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 12:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0660C433EF
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 14:24:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232187AbiGTMFD (ORCPT
+        id S229578AbiGTOYr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jul 2022 08:05:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42796 "EHLO
+        Wed, 20 Jul 2022 10:24:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbiGTMFC (ORCPT
+        with ESMTP id S229478AbiGTOYr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jul 2022 08:05:02 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D4D6B74E;
-        Wed, 20 Jul 2022 05:05:00 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id a5so25787402wrx.12;
-        Wed, 20 Jul 2022 05:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=wpY8Fn5dD5ki3izlk7rpyV14VYuNyQSG8TlGbXhx8No=;
-        b=E1yjOeYEWLfJi/4H5c4TezE+AA1j/db/ERei6jUfneCjFxtZ5eq/tgZqAsg6lyTHy9
-         NWKwPHBrkVSB/ow8jBMNCTJbW56JYv4iDWxyQJzkdZewQmKa+LJaeqIRydoy7CMll2A8
-         +HfyVR+DmLsWNOXxst+zhPjZFg4/Tm2YBMxUtFHxmxn337we06kWQGhS6thzNCUs5Kgh
-         tdqpRW2bLvRkO/kd8S4s4e60x2NFQ31n3XgjA1DAIPtas1GPAKRFZq7UfOQ1Eng0VDxf
-         wmPGp/uRWx/s27Lib1fQb3mFlD00vprSrj2+JW0BjdJefZUlm0gXdONB1Xcu3hHqjFFa
-         0pUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wpY8Fn5dD5ki3izlk7rpyV14VYuNyQSG8TlGbXhx8No=;
-        b=zJveaJOawcwgCBvQr7JHsof6n2uXgp2IKxQF5pWOpjo3qAcO6LgiKEM+Y1sitOH8mh
-         fAZ9TFDXjfS/NIR5ERE4VBWXZzN/EkbXui4PYXkyZfjr9s7cEbfhvJaikWrvq+ZVz/xY
-         cm/FpDzX5xtb8wmOFjuNrR1Xl/9skQP2MDw6p54aBZbr9J+VCLabYd5tkXfZhm/zEXn9
-         CewKGfBLhu3sjWjoANziyvRQO15Zuh4bfTXTHyUVAbXmEYc9C70f7MkN/9NTkFFBJWtC
-         mjCin1oS63a6SmKXwsX+gEvPR1z/fjn8CPULZkMyYsYA2AKceuqr1Hpig8jNjEso470N
-         6qzw==
-X-Gm-Message-State: AJIora/Q9/YvKqwypntVHQ3ozYhM3Pao5c53aQKV38e8/bsyXKZviL49
-        cVjZ9eEJSwKz9QgsxYP7iYyGKSBrjuI=
-X-Google-Smtp-Source: AGRyM1sWSLteQUScsqfZ5Bz9P7W9wCqZ6Bc9liATh6PJxssCgIl6il4d8JhIZC8unswcIy7qtIR40Q==
-X-Received: by 2002:adf:fcca:0:b0:21d:68ff:2e5a with SMTP id f10-20020adffcca000000b0021d68ff2e5amr31936301wrs.453.1658318699075;
-        Wed, 20 Jul 2022 05:04:59 -0700 (PDT)
-Received: from felia.fritz.box (200116b826a11f008020c2fc6e115b3e.dip.versatel-1u1.de. [2001:16b8:26a1:1f00:8020:c2fc:6e11:5b3e])
-        by smtp.gmail.com with ESMTPSA id n5-20020a1c2705000000b003a1980d55c4sm2177090wmn.47.2022.07.20.05.04.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jul 2022 05:04:58 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] apparmor: correct config reference to intended one
-Date:   Wed, 20 Jul 2022 14:04:43 +0200
-Message-Id: <20220720120443.16518-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 20 Jul 2022 10:24:47 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F7B22718;
+        Wed, 20 Jul 2022 07:24:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3065FB81E8B;
+        Wed, 20 Jul 2022 14:24:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86ADCC3411E;
+        Wed, 20 Jul 2022 14:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1658327084;
+        bh=uZmlk4L16kHiiiMJsIDyQCxOHqW3mlXAesVQgZ/Qo9s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mNFK6baGAMSJglZ5hOlc2nOiYM3sOufjgKNYZ/yCmEuhqGGO7635dl7vFpiXkQIfQ
+         DKlB1yaaDxxq1nlTY/AcuUheq8yvt4xsoVj8QSKNiWLCNAL4oOfcRzxvHVYFcHYYN/
+         FghNi1GU6PxXJpIxBq5FMxE33bkNZESbGtcEOwRI=
+Date:   Wed, 20 Jul 2022 16:24:40 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        matthewgarrett@google.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] lockdown: Fix kexec lockdown bypass with ima policy
+Message-ID: <YtgQKHwPAVBSHjcY@kroah.com>
+References: <20220719171647.3574253-1-eric.snowberg@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220719171647.3574253-1-eric.snowberg@oracle.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Commit 5bfcbd22ee4e ("apparmor: Enable tuning of policy paranoid load for
-embedded systems") introduces the config SECURITY_APPARMOR_PARANOID_LOAD,
-but then refers in the code to SECURITY_PARANOID_LOAD; note the missing
-APPARMOR in the middle.
+On Tue, Jul 19, 2022 at 01:16:47PM -0400, Eric Snowberg wrote:
+> The lockdown LSM is primarily used in conjunction with UEFI Secure Boot.
+> This LSM may also be used on machines without UEFI.  It can also be enabled
+> when UEFI Secure Boot is disabled. One of lockdown's features is to prevent
+> kexec from loading untrusted kernels. Lockdown can be enabled through a
+> bootparam or after the kernel has booted through securityfs.
+> 
+> If IMA appraisal is used with the "ima_appraise=log" boot param,
+> lockdown can be defeated with kexec on any machine when Secure Boot is
+> disabled or unavailable. IMA prevents setting "ima_appraise=log"
+> from the boot param when Secure Boot is enabled, but this does not cover
+> cases where lockdown is used without Secure Boot.
+> 
+> To defeat lockdown, boot without Secure Boot and add ima_appraise=log
+> to the kernel command line; then:
+> 
+> $ echo "integrity" > /sys/kernel/security/lockdown
+> $ echo "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig" > \
+>   /sys/kernel/security/ima/policy
+> $ kexec -ls unsigned-kernel
+> 
+> Add a call to verify ima appraisal is set to "enforce" whenever lockdown
+> is enabled. This fixes CVE-2022-21505.
+> 
+> Fixes: 29d3c1c8dfe7 ("kexec: Allow kexec_file() with appropriate IMA policy when locked down")
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  security/integrity/ima/ima_policy.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 73917413365b..a8802b8da946 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -2247,6 +2247,10 @@ bool ima_appraise_signature(enum kernel_read_file_id id)
+>  	if (id >= READING_MAX_ID)
+>  		return false;
+>  
+> +	if (id == READING_KEXEC_IMAGE && !(ima_appraise & IMA_APPRAISE_ENFORCE)
+> +	    && security_locked_down(LOCKDOWN_KEXEC))
+> +		return false;
+> +
+>  	func = read_idmap[id] ?: FILE_CHECK;
+>  
+>  	rcu_read_lock();
+> -- 
+> 2.27.0
+> 
 
-Correct this to the introduced and intended config option.
+<formletter>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- security/apparmor/lsm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 090a20805664..e29cade7b662 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1402,7 +1402,7 @@ module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
-  * DEPRECATED: read only as strict checking of load is always done now
-  * that none root users (user namespaces) can load policy.
-  */
--bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_PARANOID_LOAD);
-+bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_APPARMOR_PARANOID_LOAD);
- module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
- 
- static int param_get_aaintbool(char *buffer, const struct kernel_param *kp);
--- 
-2.17.1
-
+</formletter>
