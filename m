@@ -2,115 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A14CCCA486
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 11:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5FAC43334
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 12:05:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233067AbiGTLwG (ORCPT
+        id S232187AbiGTMFD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jul 2022 07:52:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34078 "EHLO
+        Wed, 20 Jul 2022 08:05:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbiGTLwE (ORCPT
+        with ESMTP id S229554AbiGTMFC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jul 2022 07:52:04 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B227157268;
-        Wed, 20 Jul 2022 04:52:03 -0700 (PDT)
-Received: from fraeml705-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Lnv9H1bNxz6J6Mk;
-        Wed, 20 Jul 2022 19:48:35 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml705-chm.china.huawei.com (10.206.15.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Wed, 20 Jul 2022 13:52:01 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
- Wed, 20 Jul 2022 13:52:01 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Rob Landley <rob@landley.net>, Jim Baxter <jim_baxter@mentor.com>,
-        "Eugeniu Rosca" <erosca@de.adit-jv.com>
-CC:     "hpa@zytor.com" <hpa@zytor.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "takondra@cisco.com" <takondra@cisco.com>,
-        "kamensky@cisco.com" <kamensky@cisco.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: RE: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Thread-Topic: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Thread-Index: AQHYe+tsPH1HC/8x8Uq7oovD5MPpKK1G5r2QgAG+ywCAACILEIAHUz4AgDRUxQCAACKFgP//9y0AgAD3swCAADE5AIAAIobAgAAFq4CAAYjhkA==
-Date:   Wed, 20 Jul 2022 11:52:00 +0000
-Message-ID: <0b9971555f6b4a319614570aae8bcdf3@huawei.com>
-References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
-        <1561909199.3985.33.camel@linux.ibm.com>
-        <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
-        <1561991485.4067.14.camel@linux.ibm.com>
-        <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
-        <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
-        <20220609102627.GA3922@lxhi-065>
-        <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
-        <20220610153336.GA8881@lxhi-065>
-        <4bc349a59e4042f7831b1190914851fe@huawei.com>
-        <20220615092712.GA4068@lxhi-065>
-        <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
-        <f82d4961986547b28b6de066219ad08b@huawei.com>
-        <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
-        <8e6a723874644449be99fcebb0905058@huawei.com>
-        <dc86769f-0ac6-d9f3-c003-54d3793ccfec@landley.net>
-        <5b8b0bcac01b477eaa777ceb8c109f58@huawei.com>
- <3d77db23-51da-be5e-b40d-a92aeb568833@landley.net>
-In-Reply-To: <3d77db23-51da-be5e-b40d-a92aeb568833@landley.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        Wed, 20 Jul 2022 08:05:02 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D4D6B74E;
+        Wed, 20 Jul 2022 05:05:00 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id a5so25787402wrx.12;
+        Wed, 20 Jul 2022 05:05:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=wpY8Fn5dD5ki3izlk7rpyV14VYuNyQSG8TlGbXhx8No=;
+        b=E1yjOeYEWLfJi/4H5c4TezE+AA1j/db/ERei6jUfneCjFxtZ5eq/tgZqAsg6lyTHy9
+         NWKwPHBrkVSB/ow8jBMNCTJbW56JYv4iDWxyQJzkdZewQmKa+LJaeqIRydoy7CMll2A8
+         +HfyVR+DmLsWNOXxst+zhPjZFg4/Tm2YBMxUtFHxmxn337we06kWQGhS6thzNCUs5Kgh
+         tdqpRW2bLvRkO/kd8S4s4e60x2NFQ31n3XgjA1DAIPtas1GPAKRFZq7UfOQ1Eng0VDxf
+         wmPGp/uRWx/s27Lib1fQb3mFlD00vprSrj2+JW0BjdJefZUlm0gXdONB1Xcu3hHqjFFa
+         0pUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wpY8Fn5dD5ki3izlk7rpyV14VYuNyQSG8TlGbXhx8No=;
+        b=zJveaJOawcwgCBvQr7JHsof6n2uXgp2IKxQF5pWOpjo3qAcO6LgiKEM+Y1sitOH8mh
+         fAZ9TFDXjfS/NIR5ERE4VBWXZzN/EkbXui4PYXkyZfjr9s7cEbfhvJaikWrvq+ZVz/xY
+         cm/FpDzX5xtb8wmOFjuNrR1Xl/9skQP2MDw6p54aBZbr9J+VCLabYd5tkXfZhm/zEXn9
+         CewKGfBLhu3sjWjoANziyvRQO15Zuh4bfTXTHyUVAbXmEYc9C70f7MkN/9NTkFFBJWtC
+         mjCin1oS63a6SmKXwsX+gEvPR1z/fjn8CPULZkMyYsYA2AKceuqr1Hpig8jNjEso470N
+         6qzw==
+X-Gm-Message-State: AJIora/Q9/YvKqwypntVHQ3ozYhM3Pao5c53aQKV38e8/bsyXKZviL49
+        cVjZ9eEJSwKz9QgsxYP7iYyGKSBrjuI=
+X-Google-Smtp-Source: AGRyM1sWSLteQUScsqfZ5Bz9P7W9wCqZ6Bc9liATh6PJxssCgIl6il4d8JhIZC8unswcIy7qtIR40Q==
+X-Received: by 2002:adf:fcca:0:b0:21d:68ff:2e5a with SMTP id f10-20020adffcca000000b0021d68ff2e5amr31936301wrs.453.1658318699075;
+        Wed, 20 Jul 2022 05:04:59 -0700 (PDT)
+Received: from felia.fritz.box (200116b826a11f008020c2fc6e115b3e.dip.versatel-1u1.de. [2001:16b8:26a1:1f00:8020:c2fc:6e11:5b3e])
+        by smtp.gmail.com with ESMTPSA id n5-20020a1c2705000000b003a1980d55c4sm2177090wmn.47.2022.07.20.05.04.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jul 2022 05:04:58 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] apparmor: correct config reference to intended one
+Date:   Wed, 20 Jul 2022 14:04:43 +0200
+Message-Id: <20220720120443.16518-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBSb2IgTGFuZGxleSBbbWFpbHRvOnJvYkBsYW5kbGV5Lm5ldF0NCj4gU2VudDogVHVl
-c2RheSwgSnVseSAxOSwgMjAyMiA0OjE1IFBNDQo+IE9uIDcvMTkvMjIgMDc6MjYsIFJvYmVydG8g
-U2Fzc3Ugd3JvdGU6DQo+ID4+IFAuUC5TLiBJZiB5b3Ugd2FudCB0byBydW4gYSBjb21tYW5kIG90
-aGVyIHRoYW4gL2luaXQgb3V0IG9mIGluaXRyYW1mcyBvciBpbml0cmQsDQo+ID4+IHVzZSB0aGUg
-cmRpbml0PS9ydW4vdGhpcyBvcHRpb24uIE5vdGUgdGhlIHJvb3Q9IG92ZXJtb3VudCBtZWNoYW5p
-c20gaXMNCj4gPj4gY29tcGxldGVseSBkaWZmZXJlbnQgY29kZSBhbmQgdXNlcyB0aGUgaW5pdD0v
-cnVuL3RoaXMgYXJndW1lbnQgaW5zdGVhZCwNCj4gd2hpY2gNCj4gPj4gbWVhbnMgbm90aGluZyB0
-byBpbml0cmFtZnMuIEFnYWluLCBzcGVjaWZ5aW5nIHJvb3Q9IHNheXMgd2UgYXJlIE5PVCBzdGF5
-aW5nDQo+IGluDQo+ID4+IGluaXRyYW1mcy4NCj4gPg0KPiA+IFNvcnJ5LCBpdCB3YXMgc29tZSB0
-aW1lIGFnby4gSSBoYXZlIHRvIGdvIGJhY2sgYW5kIHNlZSB3aHkgd2UgbmVlZGVkDQo+ID4gYSBz
-ZXBhcmF0ZSBvcHRpb24uDQo+IA0KPiBEaWQgSSBtZW50aW9uIHRoYXQgaW5pdC9kb19tb3VudHMu
-YyBhbHJlYWR5IGhhczoNCj4gDQo+IF9fc2V0dXAoInJvb3Rmc3R5cGU9IiwgZnNfbmFtZXNfc2V0
-dXApOw0KDQpJdCBpcyBjb25zdW1lZCBieSBkcmFjdXQgdG9vLCBmb3IgdGhlIHJlYWwgcm9vdCBm
-aWxlc3lzdGVtLg0KDQpbLi4uXQ0KDQo+IExvdHMgb2Ygc3lzdGVtcyBydW5uaW5nIGZyb20gaW5p
-dHJhbWZzIGFscmVhZHkgRE9OJ1QgaGF2ZSBhIHJvb3Q9LCBzbyB5b3UncmUNCj4gc2F5aW5nIGRy
-YWN1dCBiZWluZyBicm9rZW4gd2hlbiB0aGVyZSBpcyBubyByb290PSBpcyBzb21ldGhpbmcgdG8g
-d29yayBhcm91bmQNCj4gcmF0aGVyIHRoYW4gZml4IGluIGRyYWN1dCwgZXZlbiB0aG91Z2ggaXQn
-cyBiZWVuIGVhc3kgdG8gY3JlYXRlIGEgc3lzdGVtIHdpdGhvdXQNCj4gYSByb290PSBmb3IgYSBk
-ZWNhZGUgYW5kIGEgaGFsZiBhbHJlYWR5Li4uDQoNCklmIHRoZXJlIGlzIGEgcG9zc2liaWxpdHkg
-dGhhdCByb290PSBvciByb290ZnN0eXBlPSBhcmUgdXNlZCBieQ0Kc29tZW9uZSBlbHNlLCBJIHdv
-dWxkIG5vdCBjb3VudCBvbiB0aG9zZSB0byBtYWtlIGEgc2VsZWN0aW9uDQpvZiB0aGUgZmlsZXN5
-c3RlbSBmb3Igcm9vdGZzLg0KDQpPbiB0aGUgb3RoZXIgaGFuZCwgd2hhdCBjYW4gZ28gd3Jvbmcg
-aW4gaGF2aW5nIGEgZGVkaWNhdGVkLA0Kbm90IHVzZWQgYnkgYW55b25lIG9wdGlvbiB0byBkbyB0
-aGlzIGpvYj8NCg0KVGhhbmtzDQoNClJvYmVydG8NCg==
+Commit 5bfcbd22ee4e ("apparmor: Enable tuning of policy paranoid load for
+embedded systems") introduces the config SECURITY_APPARMOR_PARANOID_LOAD,
+but then refers in the code to SECURITY_PARANOID_LOAD; note the missing
+APPARMOR in the middle.
+
+Correct this to the introduced and intended config option.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 090a20805664..e29cade7b662 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1402,7 +1402,7 @@ module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
+  * DEPRECATED: read only as strict checking of load is always done now
+  * that none root users (user namespaces) can load policy.
+  */
+-bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_PARANOID_LOAD);
++bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_APPARMOR_PARANOID_LOAD);
+ module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
+ 
+ static int param_get_aaintbool(char *buffer, const struct kernel_param *kp);
+-- 
+2.17.1
+
