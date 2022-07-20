@@ -2,88 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70205CCA486
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 20:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38394C43334
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 20:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229469AbiGTUYl (ORCPT
+        id S229452AbiGTUar (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jul 2022 16:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46496 "EHLO
+        Wed, 20 Jul 2022 16:30:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiGTUYl (ORCPT
+        with ESMTP id S229449AbiGTUaq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jul 2022 16:24:41 -0400
+        Wed, 20 Jul 2022 16:30:46 -0400
 Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0504B4A820;
-        Wed, 20 Jul 2022 13:24:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11C315A3C;
+        Wed, 20 Jul 2022 13:30:45 -0700 (PDT)
 Received: from [192.168.192.83] (unknown [50.126.114.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B9FFD3F3C0;
-        Wed, 20 Jul 2022 20:24:36 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 6E7313F3C0;
+        Wed, 20 Jul 2022 20:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1658348678;
-        bh=2Y97BB6vjKwhsIP/n0mmC5lKGsgfc1sWpUPesvKpSUs=;
+        s=20210705; t=1658349044;
+        bh=BGEt2HkznZL24U9s42qayMEz611QIKArNki0juuuhFQ=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=BkHvcOoTUxNqlPN6hRu6IhlmX/H22u5RTBiCWqXmvS4tR+w1w2JCEOrMCciawX516
-         keEJTKastKE5xCQIbR3C5sUSt6YZClBVAnWLskC/fRFmrnzahoeel6ErhhLVSqDZoD
-         Priuv9JFPA/JzOUcKAnKH3yyM26SGZOfpy86FvShyprVvMUcmoOgefroPRRBDC6L7p
-         74CPbbeuY8WMU0q9bJW7gfehEHcoV+SoCihf6eTOcSgSAjUgRzGDivzkQf145GY91D
-         A/Flm1SMM2Jqn9MUWY2IachSuWNPlFNIKSYzClXaKHZRvxts4bKCvGRA6O2NnubjC0
-         jK3vvPsSzsLWA==
-Message-ID: <847ef193-71a7-9714-be20-2cbb654e9c09@canonical.com>
-Date:   Wed, 20 Jul 2022 13:24:34 -0700
+        b=mo7CpljjuC+AVQaJAPR5Wau+gc41VQAzRNFKOx8d+OwVA7oWD/aVhhr7BFB88QmfF
+         uacq1yNK0vNuSQc3C8xY10V8bwekJw5r2RFux0ljP8a8Zq94be/XtCNvw/5ICnLtL9
+         R77uNeu+RFTCz+7z49M9cunb7KKeuy2G0mHTk1vamK4AJmFU1H9gm4SMQzgjVzztSZ
+         yqB6Angro8QXfGizezJY5tZFhZjJ/MmYFGY3axlo80JfT1OZmwu3lmxzmB1lh0wuYy
+         Nu0HmgxWPQjf3V2R9zFNeiK7FrZTuJnRAJ/JF3he42QEhCI1tnd/NzE1tWOF+mTOWH
+         Kr0p5MlyoSsNA==
+Message-ID: <6f32491d-cefa-0a3c-a2e5-3c9cd40ec8a1@canonical.com>
+Date:   Wed, 20 Jul 2022 13:30:40 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH] apparmor: correct config reference to intended one
+Subject: Re: [PATCH v3] apparmor: test: Remove some casts which are no-longer
+ required
 Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
+To:     David Gow <davidgow@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Daniel Latypov <dlatypov@google.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220720120443.16518-1-lukas.bulwahn@gmail.com>
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20220706100607.75761-1-davidgow@google.com>
 From:   John Johansen <john.johansen@canonical.com>
 Organization: Canonical
-In-Reply-To: <20220720120443.16518-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220706100607.75761-1-davidgow@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/20/22 05:04, Lukas Bulwahn wrote:
-> Commit 5bfcbd22ee4e ("apparmor: Enable tuning of policy paranoid load for
-> embedded systems") introduces the config SECURITY_APPARMOR_PARANOID_LOAD,
-> but then refers in the code to SECURITY_PARANOID_LOAD; note the missing
-> APPARMOR in the middle.
+On 7/6/22 03:06, David Gow wrote:
+> With some of the stricter type checking in KUnit's EXPECT macros
+> removed, several casts in policy_unpack_test are no longer required.
 > 
-> Correct this to the introduced and intended config option.
+> Remove the unnecessary casts, making the conditions clearer.
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> Acked-by: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: David Gow <davidgow@google.com>
 
-thanks, I have pulled this into apparmor-next
-
-Acked-by: John Johansen <john.johansen@canonical.com>
+I have pulled this into apparmor-next
 
 > ---
->   security/apparmor/lsm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 090a20805664..e29cade7b662 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1402,7 +1402,7 @@ module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
->    * DEPRECATED: read only as strict checking of load is always done now
->    * that none root users (user namespaces) can load policy.
->    */
-> -bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_PARANOID_LOAD);
-> +bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_APPARMOR_PARANOID_LOAD);
->   module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
+> This is a rebase and resend of [1], which had been accepted into the
+> AppArmor tree, but eventually conflicted with [2]. Let's push it via the
+> KUnit tree to avoid any further conflicts, as discussed in [3].
+> 
+> Cheers,
+> -- David
+> 
+> [1]: https://lore.kernel.org/linux-kselftest/20210513193204.816681-9-davidgow@google.com/
+> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5f91bd9f1e7ad5a2025a2f95a2bc002cb7c9e0f9
+> [3]: https://lore.kernel.org/all/20220405125540.2135d81d@canb.auug.org.au/
+> ---
+>   security/apparmor/policy_unpack_test.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+> index 5c18d2f19862..7954cb23d5f2 100644
+> --- a/security/apparmor/policy_unpack_test.c
+> +++ b/security/apparmor/policy_unpack_test.c
+> @@ -177,7 +177,7 @@ static void policy_unpack_test_unpack_array_out_of_bounds(struct kunit *test)
 >   
->   static int param_get_aaintbool(char *buffer, const struct kernel_param *kp);
+>   	array_size = unpack_array(puf->e, name);
+>   
+> -	KUNIT_EXPECT_EQ(test, array_size, (u16)0);
+> +	KUNIT_EXPECT_EQ(test, array_size, 0);
+>   	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
+>   		puf->e->start + TEST_NAMED_ARRAY_BUF_OFFSET);
+>   }
+> @@ -391,10 +391,10 @@ static void policy_unpack_test_unpack_u16_chunk_basic(struct kunit *test)
+>   
+>   	size = unpack_u16_chunk(puf->e, &chunk);
+>   
+> -	KUNIT_EXPECT_PTR_EQ(test, (void *)chunk,
+> +	KUNIT_EXPECT_PTR_EQ(test, chunk,
+>   			    puf->e->start + TEST_U16_OFFSET + 2);
+> -	KUNIT_EXPECT_EQ(test, size, (size_t)TEST_U16_DATA);
+> -	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, (void *)(chunk + TEST_U16_DATA));
+> +	KUNIT_EXPECT_EQ(test, size, TEST_U16_DATA);
+> +	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, (chunk + TEST_U16_DATA));
+>   }
+>   
+>   static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_1(
+> @@ -408,7 +408,7 @@ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_1(
+>   
+>   	size = unpack_u16_chunk(puf->e, &chunk);
+>   
+> -	KUNIT_EXPECT_EQ(test, size, (size_t)0);
+> +	KUNIT_EXPECT_EQ(test, size, 0);
+>   	KUNIT_EXPECT_NULL(test, chunk);
+>   	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, puf->e->end - 1);
+>   }
+> @@ -430,7 +430,7 @@ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_2(
+>   
+>   	size = unpack_u16_chunk(puf->e, &chunk);
+>   
+> -	KUNIT_EXPECT_EQ(test, size, (size_t)0);
+> +	KUNIT_EXPECT_EQ(test, size, 0);
+>   	KUNIT_EXPECT_NULL(test, chunk);
+>   	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, puf->e->start + TEST_U16_OFFSET);
+>   }
 
