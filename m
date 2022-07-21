@@ -2,171 +2,139 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE059C433EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jul 2022 22:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0930BC433EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jul 2022 17:28:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230460AbiGTWjT (ORCPT
+        id S231147AbiGUR2R (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jul 2022 18:39:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
+        Thu, 21 Jul 2022 13:28:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbiGTWjT (ORCPT
+        with ESMTP id S230488AbiGUR2Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jul 2022 18:39:19 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA48E2DAA7
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Jul 2022 15:39:17 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id h9so2979625wrm.0
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Jul 2022 15:39:17 -0700 (PDT)
+        Thu, 21 Jul 2022 13:28:16 -0400
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7195089EB4
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Jul 2022 10:28:15 -0700 (PDT)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-10d867a8358so3276687fac.10
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Jul 2022 10:28:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gjQxo0hKIVF1YVkSJ8Tt3ejloLl3VpIsO9hirXnFH+U=;
-        b=zI4b6Z/wGUUgwWeOD3pQ7dMozzrzLOSSr5UB4/ki36H/h/zC0Qb1NCR/RhxeQdHB+Z
-         3FCKUbPYT5+bU3pmhLvpKxSDvhXulocHKjQJIK9p2OWuINXr0ivOwxxFVq8r2AsYJL0k
-         h2jIEJlNGTvnLKbR2B1DBtIZIcqD7gzg4o3ocXh3FpoC1frMzUOTzgFrhv924XvD3qy6
-         bGkXIyFJEC3lxyxyiCQL50o2Lakud4qBn1yd2/Ofteeaj17Q+3Q2Y9JWICUkKp2nG3tu
-         nmWKI3COxvtxiKvkkyvYG9tb5TN1DQ3EJhT9fkaryBkGsfd6tZY/Q5QUvQapNTufNH1C
-         bPlA==
+        d=cloudflare.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N1mPfR3D12ZnGHuxmP4MWOfQkjon3IFNK8YMkGzC5zg=;
+        b=AK+QQ07cWg5OzZYxkHTagjOQVVhcMylfq0iUug7TKRBMO4je+Hyjphi5L6Oy++ntVY
+         hD9+BcYVn1+pGlKypGr+DIG6uKTSSql1iw69t9a3NqFVXnWh76Y9r9hik483VgrU6jmZ
+         MZYXmLVlTbWBUZNPyPyvGksxg2e+ceQYEpPUU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gjQxo0hKIVF1YVkSJ8Tt3ejloLl3VpIsO9hirXnFH+U=;
-        b=DVrn83iU+We2ygU+r9wpx0JfZKhxucnP0yRajORxl7H6SZKUhAA8pCbKKLUcbhnAfU
-         E6kOgEjUswSTXVFoT7IROnPJaER7e5re8N3QuklvjdsEdypYvy0NbdOXUR7InPgmE1gE
-         4X64Ma3CLaYPrKB7ILGRJJPTuo6aTLyVhOzb78bpc8xorwowdJBn39ZoCXCL1RxrM4zZ
-         EFuI9TK7e8pArzOEOWN6oxW4m97rfGNO7Bx0dsvXCrQ+v1xtPyB8N7iJFpaTxhmGGT9f
-         Inf12CcRYXU46hIt6Mh5YlaLHeKw8WIKOf5YGPGXFeWjNoBFDMa1C9AQX/cMGzgOVJwl
-         pGHQ==
-X-Gm-Message-State: AJIora+skAHDNLurDdKWKQdLF0hACK8dBmIELXGMEY54eef+PBVXuuvD
-        DXI7KzMMFK9qwC76SHEG40iBN/W4g606oxrY12GH
-X-Google-Smtp-Source: AGRyM1tdrjUF8cXJwhaIP6PHYKjrB2YVUyMErv5SbIcoUCr7yadS90weIQu40rllAkj9qSRNkrh4MkilhnWcTexYRQo=
-X-Received: by 2002:adf:e492:0:b0:21e:45af:5070 with SMTP id
- i18-20020adfe492000000b0021e45af5070mr5887107wrm.483.1658356756213; Wed, 20
- Jul 2022 15:39:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N1mPfR3D12ZnGHuxmP4MWOfQkjon3IFNK8YMkGzC5zg=;
+        b=ucAAhiyzErXnGH4oti62LhIWtcfpuiX3GOac9EthEY4kxtaqk6eK63Cb1Y/4cd3PX+
+         lqfBsgC1WV14Ca9R0aUhy+WrEfUEhPx3+pyudcJVecJzsegZe8HuXTPOvE8woniTGMsj
+         RGC9hHf9Y2gfbPyzLbvUW0/H6LHXWjVTveY88H8odekuq8HC80EDqZ/LisJcKjPwypa7
+         88g6rXsh0Zm/RTQbyUGhgG2wehtFmax11wJRYRxqnZFhLIUt25AlVAnhxej0+ttzAr8G
+         JyHWdSGYXzMgeNcFtA9N2EZsemALVEJ4DQIBSnZ8LMO+78jQaaXE41qru+WbIFGt4w9Q
+         pRpw==
+X-Gm-Message-State: AJIora+pqlDi+pUsKgtRyNgTepVECzse5vQNEQejSp6XD5FFVd1j54Ln
+        DpW0zV2XPyuunwfBMKC1oYcEqA==
+X-Google-Smtp-Source: AGRyM1ucz1/qbrcJkssVY75ngCanvcCZN+R6AF84LUHfijoH0ifhCLQYVSwrkU4TK8tIsfKFLjjkdA==
+X-Received: by 2002:a05:6870:9a09:b0:e9:20a7:6cf6 with SMTP id fo9-20020a0568709a0900b000e920a76cf6mr5980435oab.122.1658424494733;
+        Thu, 21 Jul 2022 10:28:14 -0700 (PDT)
+Received: from localhost.localdomain ([184.4.90.121])
+        by smtp.gmail.com with ESMTPSA id du24-20020a0568703a1800b00101c83352c6sm1106207oab.34.2022.07.21.10.28.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Jul 2022 10:28:14 -0700 (PDT)
+From:   Frederick Lawler <fred@cloudflare.com>
+To:     kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
+        casey@schaufler-ca.com, ebiederm@xmission.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-team@cloudflare.com, cgzones@googlemail.com,
+        karl@bigbadwolfsecurity.com, Frederick Lawler <fred@cloudflare.com>
+Subject: [PATCH v3 0/4] Introduce security_create_user_ns()
+Date:   Thu, 21 Jul 2022 12:28:04 -0500
+Message-Id: <20220721172808.585539-1-fred@cloudflare.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20220707223228.1940249-1-fred@cloudflare.com> <CAJ2a_DezgSpc28jvJuU_stT7V7et-gD7qjy409oy=ZFaUxJneg@mail.gmail.com>
- <3dbd5b30-f869-b284-1383-309ca6994557@cloudflare.com> <84fbd508-65da-1930-9ed3-f53f16679043@schaufler-ca.com>
- <CAHC9VhQ-mBYH-GwSULDyyQ6mNC6K8GNB4fra0pJ+s0ZnEpCgcg@mail.gmail.com> <f1f8b350-4dc5-b975-3854-ecbf9f4e54ba@schaufler-ca.com>
-In-Reply-To: <f1f8b350-4dc5-b975-3854-ecbf9f4e54ba@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 20 Jul 2022 18:39:05 -0400
-Message-ID: <CAHC9VhTFb7=FUyq4oM8ULtnZpZYj3ztpNhASy3WtHnn6QWwZig@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] Introduce security_create_user_ns()
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Frederick Lawler <fred@cloudflare.com>,
-        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        KP Singh <kpsingh@kernel.org>, revest@chromium.org,
-        jackmanb@chromium.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, shuah@kernel.org,
-        Christian Brauner <brauner@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, kernel-team@cloudflare.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 20, 2022 at 5:42 PM Casey Schaufler <casey@schaufler-ca.com> wr=
-ote:
-> On 7/19/2022 6:32 PM, Paul Moore wrote:
-> > On Fri, Jul 8, 2022 at 12:11 PM Casey Schaufler <casey@schaufler-ca.com=
-> wrote:
-> >> On 7/8/2022 7:01 AM, Frederick Lawler wrote:
-> >>> On 7/8/22 7:10 AM, Christian G=C3=B6ttsche wrote:
-> >>>> ,On Fri, 8 Jul 2022 at 00:32, Frederick Lawler <fred@cloudflare.com>
-> >>>> wrote:
+While creating a LSM BPF MAC policy to block user namespace creation, we
+used the LSM cred_prepare hook because that is the closest hook to prevent
+a call to create_user_ns().
 
-...
+The calls look something like this:
 
-> >>>> III.
-> >>>>
-> >>>> Maybe even attach a security context to namespaces so they can be
-> >>>> further governed?
-> >> That would likely add confusion to the existing security module namesp=
-ace
-> >> efforts. SELinux, Smack and AppArmor have all developed namespace mode=
-ls.
-> >
-> > I'm not sure I fully understand what Casey is saying here as SELinux
-> > does not yet have an established namespace model to the best of my
-> > understanding, but perhaps we are talking about different concepts for
-> > the word "namespace"?
->
-> Stephen Smalley proposed a SELinux namespace model, with patches,
-> some time back. It hasn't been adopted, but I've seen at least one
-> attempt to revive it. You're right that there isn't an established
-> model.
+    cred = prepare_creds()
+        security_prepare_creds()
+            call_int_hook(cred_prepare, ...
+    if (cred)
+        create_user_ns(cred)
 
-If it isn't in the mainline kernel, it isn't an established namespace model=
-.
+We noticed that error codes were not propagated from this hook and
+introduced a patch [1] to propagate those errors.
 
-I ported Stephen's initial namespace patches to new kernels for quite
-some time, look at the working-selinuxns branch in the main SELinux
-repository, but that doesn't mean they are ready for upstreaming.
-Aside from some pretty critical implementation holes, there is the
-much larger conceptual issue of how to deal with persistent filesystem
-objects.  We've discussed that quite a bit among the SELinux
-developers but have yet to arrive at a good-enough solution.  I have
-some thoughts on how we might be able to make forward progress on
-that, but it's wildly off-topic for this patchset discussion.  I
-mostly wanted to make sure I was understanding what you were
-referencing when you talked about a "SELinux namespace model", and it
-is what I suspected ... which I believe is unrelated to the patches
-being discussed here.
+The discussion notes that security_prepare_creds()
+is not appropriate for MAC policies, and instead the hook is
+meant for LSM authors to prepare credentials for mutation. [2]
 
-> >> That, or it could replace the various independent efforts with a singl=
-e,
-> >> unified security module namespace effort.
-> >
-> > We've talked about this before and I just don't see how that could
-> > ever work, the LSM implementations are just too different to do
-> > namespacing at the LSM layer.
->
-> It's possible that fresh eyes might see options that those who have
-> been staring at the current state and historical proposals may have
-> missed.
+Ultimately, we concluded that a better course of action is to introduce
+a new security hook for LSM authors. [3]
 
-That's always a possibility, and I'm definitely open to a clever
-approach that would resolve all the current issues and not paint us
-into a corner in the future, but I haven't seen anything close (or any
-serious effort for that matter).
+This patch set first introduces a new security_create_user_ns() function
+and userns_create LSM hook, then marks the hook as sleepable in BPF.
 
-... and this still remains way off-topic for a discussion around
-adding a hook to allow LSMs to enforce access controls on user
-namespace creation.
+Links:
+1. https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
+2. https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
+3. https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
 
-> >   If a LSM is going to namespace
-> > themselves, they need the ability to define what that means without
-> > having to worry about what other LSMs want to do.
->
-> Possibly. On the other hand, if someone came up with a rational scheme
-> for general xattr namespacing I don't see that anyone would pass it up.
+Past discussions:
+V2: https://lore.kernel.org/all/20220707223228.1940249-1-fred@cloudflare.com/
+V1: https://lore.kernel.org/all/20220621233939.993579-1-fred@cloudflare.com/
 
-Oh geez ...
+Changes since v2:
+- Rename create_user_ns hook to userns_create
+- Use user_namespace as an object opposed to a generic namespace object
+- s/domB_t/domA_t in commit message
+Changes since v1:
+- Add selftests/bpf: Add tests verifying bpf lsm create_user_ns hook patch
+- Add selinux: Implement create_user_ns hook patch
+- Change function signature of security_create_user_ns() to only take
+  struct cred
+- Move security_create_user_ns() call after id mapping check in
+  create_user_ns()
+- Update documentation to reflect changes
 
-Namespacing xattrs is not the same thing as namespacing LSMs.  LSMs
-may make use of xattrs, and namespacing xattrs may make it easier to
-namespace a given LSM, but I'm not aware of an in-tree LSM that would
-be magically namespaced if xattrs were namespaced.
+Frederick Lawler (4):
+  security, lsm: Introduce security_create_user_ns()
+  bpf-lsm: Make bpf_lsm_userns_create() sleepable
+  selftests/bpf: Add tests verifying bpf lsm userns_create hook
+  selinux: Implement userns_create hook
 
-This patchset has nothing to do with xattrs, it deals with adding a
-LSM hook to implement LSM-based access controls for user namespace
-creation.
+ include/linux/lsm_hook_defs.h                 |  1 +
+ include/linux/lsm_hooks.h                     |  4 +
+ include/linux/security.h                      |  6 ++
+ kernel/bpf/bpf_lsm.c                          |  1 +
+ kernel/user_namespace.c                       |  5 ++
+ security/security.c                           |  5 ++
+ security/selinux/hooks.c                      |  9 ++
+ security/selinux/include/classmap.h           |  2 +
+ .../selftests/bpf/prog_tests/deny_namespace.c | 88 +++++++++++++++++++
+ .../selftests/bpf/progs/test_deny_namespace.c | 39 ++++++++
+ 10 files changed, 160 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/deny_namespace.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_deny_namespace.c
 
---=20
-paul-moore.com
+--
+2.30.2
+
