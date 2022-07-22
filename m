@@ -2,139 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E30F7C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Jul 2022 08:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470AFCCA489
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Jul 2022 12:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234955AbiGVIWZ (ORCPT
+        id S231814AbiGVMUT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Jul 2022 04:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49030 "EHLO
+        Fri, 22 Jul 2022 08:20:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234956AbiGVIWW (ORCPT
+        with ESMTP id S234195AbiGVMUR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Jul 2022 04:22:22 -0400
-Received: from mail-m973.mail.163.com (mail-m973.mail.163.com [123.126.97.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A30749E2A8;
-        Fri, 22 Jul 2022 01:22:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=jT8xe
-        TD2gI4EzRHhvnNsYVU4bZ3vev/hiB/gq6Vqy48=; b=drJmURO5QCePd0ZjqcF3V
-        BbMNClINUkt5AQLtJPIhlN+GbTphU0hBTVEXEeiklCQqQX4Kl0+fpqoTHmW+wvcL
-        T+jWpHDsQuOxpTWfONUUZZzqkBjFuRNy25JKPPoyVRRSJXRAkI3P1J736AbTfXOR
-        22SHlPJXmXiBUd/55CTXso=
-Received: from localhost.localdomain (unknown [123.112.69.106])
-        by smtp3 (Coremail) with SMTP id G9xpCgDnRmMHXtpiTpGIQg--.59076S4;
-        Fri, 22 Jul 2022 16:21:44 +0800 (CST)
-From:   Jianglei Nie <niejianglei2021@163.com>
-To:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
-        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jianglei Nie <niejianglei2021@163.com>
-Subject: [PATCH v3] KEYS: trusted: Fix memory leak in tpm2_key_encode()
-Date:   Fri, 22 Jul 2022 16:21:25 +0800
-Message-Id: <20220722082125.2526529-1-niejianglei2021@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <YqGE/v0Zgi+g4gY6@iki.fi>
-References: <YqGE/v0Zgi+g4gY6@iki.fi>
+        Fri, 22 Jul 2022 08:20:17 -0400
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B7E14023
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Jul 2022 05:20:15 -0700 (PDT)
+Received: by mail-qt1-x82d.google.com with SMTP id x11so3313964qts.13
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Jul 2022 05:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:date:message-id:in-reply-to:references:user-agent
+         :subject:mime-version:content-transfer-encoding;
+        bh=kIKMl7lknNmrR7/g3+eBdSau4//c4Zzr0QaeUiEir7A=;
+        b=cHhHjmlahYQ+EmtKYhfCB8KTNgvpM7+cBXuWAwrqR7qvzNU8+HhLRnTdPxxvFVeHh3
+         1nUaRHsHw8NQy+w+KEbL1WitYxDtz85JVMIVI6ao9QwCutRBsbMgBOX4RICVcuV9E3oe
+         AWc4nmne8ushnOtD6AFil/8ViyNXbqrdkinYxQ3k4aucoZdSrbdYliPQjWq0MBJj/Bn8
+         JL9k1d5L3NzOCtYoIbyj6v7UD2hB1lFi0USJqy10hnlWJwfYP2r/1IG2soYO4rnBxTgq
+         H4IMse2/xdiaEKZwKqcUw9ZoKLvnfHoeFJLzprkjkdjavu6OyvtAFHUEfzaDx+u7Zpd5
+         vOhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:date:message-id:in-reply-to
+         :references:user-agent:subject:mime-version
+         :content-transfer-encoding;
+        bh=kIKMl7lknNmrR7/g3+eBdSau4//c4Zzr0QaeUiEir7A=;
+        b=4RZtI1DKfieuwOlcMruTC4i4DDogr888L0SVg2KXxVWfEuKtUR1lE8HZtqGGG/iuIn
+         gGY6IZ0vBSYl8UzSnv8JA9HT5121IsyCFqnZUttEGJX0HiFdMbqeKVgN+Q3z1OziMi7Z
+         G3tOoMNejyvWZgjybd+lGiWrkUOq/y9dpESFlY/w0M50b+arIJFmJPnM9JUbN268TT1T
+         Wa8lzKZ4OMg4ar+7sZI2bQUIWZv+L53URFtcdj2JnHn0TM62B2niEi5gQdXHDtFI7mak
+         +UQw+gqf5i8L7EtvKso+6g4pKd3wa9254JENqyFzHoFHdbUA2BKvtFGF6AZjk/WPb73s
+         5i7A==
+X-Gm-Message-State: AJIora9UYwxElOzGhHygPwPdKrQgKwV4CzSXKrQXXy5CiOWFsOKtA3w3
+        SgwzhAu/NpJAbfR2hZnCC00b
+X-Google-Smtp-Source: AGRyM1vRv8Pg5YMxgoX//w7Bar4An6ugLUhEpTDVLqgE1K9tMb0kLUN+xQP5nT2rrJ4QhsOwsmCzBg==
+X-Received: by 2002:ac8:7f8e:0:b0:31f:10bc:f5d7 with SMTP id z14-20020ac87f8e000000b0031f10bcf5d7mr140040qtj.561.1658492414525;
+        Fri, 22 Jul 2022 05:20:14 -0700 (PDT)
+Received: from [10.130.209.145] (mobile-166-170-54-234.mycingular.net. [166.170.54.234])
+        by smtp.gmail.com with ESMTPSA id m1-20020a05620a24c100b006b259b5dd12sm3456272qkn.53.2022.07.22.05.20.11
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jul 2022 05:20:13 -0700 (PDT)
+From:   Paul Moore <paul@paul-moore.com>
+To:     Martin KaFai Lau <kafai@fb.com>,
+        Frederick Lawler <fred@cloudflare.com>
+CC:     <kpsingh@kernel.org>, <revest@chromium.org>,
+        <jackmanb@chromium.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <andrii@kernel.org>, <songliubraving@fb.com>, <yhs@fb.com>,
+        <john.fastabend@gmail.com>, <jmorris@namei.org>,
+        <serge@hallyn.com>, <stephen.smalley.work@gmail.com>,
+        <eparis@parisplace.org>, <shuah@kernel.org>, <brauner@kernel.org>,
+        <casey@schaufler-ca.com>, <ebiederm@xmission.com>,
+        <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <selinux@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <kernel-team@cloudflare.com>, <cgzones@googlemail.com>,
+        <karl@bigbadwolfsecurity.com>
+Date:   Fri, 22 Jul 2022 08:20:10 -0400
+Message-ID: <18225d94bf0.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+In-Reply-To: <20220722061137.jahbjeucrljn2y45@kafai-mbp.dhcp.thefacebook.com>
+References: <20220721172808.585539-1-fred@cloudflare.com>
+ <20220722061137.jahbjeucrljn2y45@kafai-mbp.dhcp.thefacebook.com>
+User-Agent: AquaMail/1.37.0 (build: 103700163)
+Subject: Re: [PATCH v3 0/4] Introduce security_create_user_ns()
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: G9xpCgDnRmMHXtpiTpGIQg--.59076S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZr4UGF4DAw43Zr17Zr4DXFb_yoW5Ww1fpF
-        W3KF1jqrWavry7AryxAF4Sv3WSkw1rtFW7KwsFq397GasxJFsxtFy7Ar4Ygr17AFWSqw15
-        ZFWqvFWUuFZFqrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zR4SoAUUUUU=
-X-Originating-IP: [123.112.69.106]
-X-CM-SenderInfo: xqlhyxxdqjzvrlsqjii6rwjhhfrp/1tbiWxlGjGI0VjNM6gAAsd
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-tpm2_key_encode() allocates a memory chunk from scratch with kmalloc(),
-but it is never freed, which leads to a memory leak. Free the memory
-chunk with kfree() in the return path.
+On July 22, 2022 2:12:03 AM Martin KaFai Lau <kafai@fb.com> wrote:
 
-Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
----
- security/keys/trusted-keys/trusted_tpm2.c | 33 ++++++++++++++++-------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+> On Thu, Jul 21, 2022 at 12:28:04PM -0500, Frederick Lawler wrote:
+>> While creating a LSM BPF MAC policy to block user namespace creation, we
+>> used the LSM cred_prepare hook because that is the closest hook to preve=
+nt
+>> a call to create_user_ns().
+>>
+>> The calls look something like this:
+>>
+>> cred =3D prepare_creds()
+>> security_prepare_creds()
+>> call_int_hook(cred_prepare, ...
+>> if (cred)
+>> create_user_ns(cred)
+>>
+>> We noticed that error codes were not propagated from this hook and
+>> introduced a patch [1] to propagate those errors.
+>>
+>> The discussion notes that security_prepare_creds()
+>> is not appropriate for MAC policies, and instead the hook is
+>> meant for LSM authors to prepare credentials for mutation. [2]
+>>
+>> Ultimately, we concluded that a better course of action is to introduce
+>> a new security hook for LSM authors. [3]
+>>
+>> This patch set first introduces a new security_create_user_ns() function
+>> and userns_create LSM hook, then marks the hook as sleepable in BPF.
+> Patch 1 and 4 still need review from the lsm/security side.
 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 2b2c8eb258d5..eb25c784b5c3 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -32,8 +32,13 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 			   struct trusted_key_options *options,
- 			   u8 *src, u32 len)
- {
-+	int ret;
- 	const int SCRATCH_SIZE = PAGE_SIZE;
--	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
-+	u8 *scratch;
-+
-+	scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
-+	if (!scratch)
-+		return -ENOMEM;
- 	u8 *work = scratch, *work1;
- 	u8 *end_work = scratch + SCRATCH_SIZE;
- 	u8 *priv, *pub;
-@@ -47,9 +52,6 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	pub_len = get_unaligned_be16(src) + 2;
- 	pub = src;
- 
--	if (!scratch)
--		return -ENOMEM;
--
- 	work = asn1_encode_oid(work, end_work, tpm2key_oid,
- 			       asn1_oid_len(tpm2key_oid));
- 
-@@ -57,8 +59,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 		unsigned char bool[3], *w = bool;
- 		/* tag 0 is emptyAuth */
- 		w = asn1_encode_boolean(w, w + sizeof(bool), true);
--		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
--			return PTR_ERR(w);
-+		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode")) {
-+			ret = PTR_ERR(w);
-+			goto err;
-+		}
- 		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
- 	}
- 
-@@ -69,8 +73,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	 * trigger, so if it does there's something nefarious going on
- 	 */
- 	if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
--		 "BUG: scratch buffer is too small"))
--		return -EINVAL;
-+		 "BUG: scratch buffer is too small")) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
- 
- 	work = asn1_encode_integer(work, end_work, options->keyhandle);
- 	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
-@@ -79,10 +85,17 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	work1 = payload->blob;
- 	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
- 				     scratch, work - scratch);
--	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
--		return PTR_ERR(work1);
-+	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed")) {
-+		ret = PTR_ERR(work1);
-+		goto err;
-+	}
- 
-+	kfree(scratch);
- 	return work1 - payload->blob;
-+
-+err:
-+	kfree(scratch);
-+	return ret;
- }
- 
- struct tpm2_key_context {
--- 
-2.25.1
+
+This patchset is in my review queue and assuming everything checks out, I e=
+xpect to merge it after the upcoming merge window closes.
+
+I would also need an ACK from the BPF LSM folks, but they're CC'd on this p=
+atchset.
+
+--
+paul-moore.com
+
 
