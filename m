@@ -2,87 +2,80 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCF3C43334
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Jul 2022 14:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A62C43334
+	for <linux-security-module@archiver.kernel.org>; Sat, 23 Jul 2022 14:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232496AbiGWOHN (ORCPT
+        id S237992AbiGWOaR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 23 Jul 2022 10:07:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43536 "EHLO
+        Sat, 23 Jul 2022 10:30:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234203AbiGWOHM (ORCPT
+        with ESMTP id S238014AbiGWOaG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 23 Jul 2022 10:07:12 -0400
+        Sat, 23 Jul 2022 10:30:06 -0400
 Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10E44B1F1
-        for <linux-security-module@vger.kernel.org>; Sat, 23 Jul 2022 07:07:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1658584264; cv=none; 
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4187E17E04;
+        Sat, 23 Jul 2022 07:30:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1658586576; cv=none; 
         d=zohomail.in; s=zohoarc; 
-        b=XYU1zZnXuqFX5/HEudi9MdMxktvd9itAU+I2kePgDtCgp6Li1x8deFEeTSo4eTQS1AbaC/ivef2pbxmOYDcr2MTZ3t4RpyknGzLsXwEhNuVnyM40iFlvYFHv1s6A4JVc97EEyhqomPGugRHf6mFMnY8vj2Z+pRvpg+t8RZgiH00=
+        b=Cdk5zB8spFUck32lES6ymvWOW49Nk2dX62Ga5BzHiEMuUVqsF+VOY0B6Xd8XbFfH5G56ExBvuWYOSsk5g+HWOyjIaF7xqmwNNTz6f/r3tUYOJlmBaxKm0LEEAbEAanSYrU8oskEZqNdQIv+UWUBlbPnq4V4G5ds0OGP7xcLRPgY=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1658584264; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
-        bh=kk/+ZMIM3QEokLR9dNDr3dm8l5WXXAEPykmzd3WKeh8=; 
-        b=bBmfhYES5zT2HidO8HpjBfslnBmO60DtgLqOtOH5Sz+OLgjxOhtn2KH1Uz8/eFMCpaI5O6vHw+spAgfOU1gCxzta9YMbvk6j9CBjTZqDm1BkKRuOV9X+zPxixdBv4ljsbHaOpjPz5HMLN2uqV6ievgrMCFjHYvCafKDwNv099Dg=
+        t=1658586576; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=nrLqE1VQZTfewo+huIJiOECXb8Z/AkxV3GsY/VPoroA=; 
+        b=TGXEGLyCPRw7jo2oPjtSaayeHmx0mwu5QPW9yhNoVwvYF6agE0ruM2srciLqk0aR+OB+ZFhst6wJutv1gI5Sg53KTnryGX+XS4/rPstaBIPgejnD4vPPbBdb484yXGuvgVctvF96UIyRpDFVacRDFbxnY+ePUhN89MD8h/32ck8=
 ARC-Authentication-Results: i=1; mx.zohomail.in;
         dkim=pass  header.i=siddh.me;
         spf=pass  smtp.mailfrom=code@siddh.me;
         dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1658584264;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1658586576;
         s=zmail; d=siddh.me; i=code@siddh.me;
-        h=From:From:To:To:Cc:Cc:Message-ID:Subject:Subject:Date:Date:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-        bh=kk/+ZMIM3QEokLR9dNDr3dm8l5WXXAEPykmzd3WKeh8=;
-        b=C5Kc0g6QcesPZacQeSWUfVye11w85Epm+2OhT0JWxQuKAC0qiYGDe5rM2GegGr6F
-        0GncE33rxOJHfMEfbX9lJ/wGrkzBNGaBREdPQmq4uoF7icdrgn8A0XmbYG4yKWadTN6
-        O7VluijrgjArt2qZmswtFWS1t01hw+BtIxp4wY6s=
-Received: from localhost.localdomain (43.250.158.127 [43.250.158.127]) by mx.zoho.in
-        with SMTPS id 1658584262744848.2252468169082; Sat, 23 Jul 2022 19:21:02 +0530 (IST)
+        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=nrLqE1VQZTfewo+huIJiOECXb8Z/AkxV3GsY/VPoroA=;
+        b=HAwK2u2fVT4U+qrBKk2SJpEACflR3vDhV78T1rrMbXVDqo/6SCTTmQFzR1+X6ppZ
+        MUq22UDFeKpknOEywseYLkVEs53BkHwqtlfFE76BK8v0IWOkCjp4pqBO5H8TK8J8aZy
+        ootDBrMvSQQuZ+LPAGFVwpYPC4KAhKwC/cwPXLx4=
+Received: from mail.zoho.in by mx.zoho.in
+        with SMTP id 1658586563873727.0268161715809; Sat, 23 Jul 2022 19:59:23 +0530 (IST)
+Date:   Sat, 23 Jul 2022 19:59:23 +0530
 From:   Siddh Raman Pant <code@siddh.me>
-To:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     keyrings <keyrings@vger.kernel.org>,
-        linux-security-modules <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kernel-mentees 
-        <linux-kernel-mentees@lists.linuxfoundation.org>
-Message-ID: <20220723135035.199188-1-code@siddh.me>
-Subject: [PATCH] keys/keyctl: Use kfree_rcu instead of kfree
-Date:   Sat, 23 Jul 2022 19:20:35 +0530
-X-Mailer: git-send-email 2.35.1
+To:     "Greg KH" <gregkh@linuxfoundation.org>
+Cc:     "David Howells" <dhowells@redhat.com>,
+        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        "linux-security-modules" <linux-security-module@vger.kernel.org>,
+        "linux-kernel-mentees" 
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "syzbot+c70d87ac1d001f29a058" 
+        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>
+Message-ID: <1822b768504.1d4e377e236061.5518350412857967240@siddh.me>
+In-Reply-To: <Ytv/4Tljvlt0PJ2r@kroah.com>
+References: <20220723135447.199557-1-code@siddh.me> <Ytv/4Tljvlt0PJ2r@kroah.com>
+Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
-Content-Type: text/plain; charset=utf8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In keyctl_watch_key, use kfree_rcu() for freeing watch and wlist
-as they support RCU and have an rcu_head in the struct definition.
+On Sat, 23 Jul 2022 19:34:17 +0530  Greg KH <gregkh@linuxfoundation.org> wrote:
+> Also you now have a spinlock held when calling rcu_read_unlock(), are
+> you sure that's ok?
+> 
+> 
 
-Signed-off-by: Siddh Raman Pant <code@siddh.me>
----
- security/keys/keyctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+We logically should not do write operations in a read critical section, so the
+nulling of `wqueue->pipe->watch_queue` should happen after rcu_read_unlock().
+Also, since we already have a spinlock, we can use it to ensure the nulling.
+So I think it is okay.
 
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 96a92a645216..087fbc141cfd 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1832,9 +1832,9 @@ long keyctl_watch_key(key_serial_t id, int watch_queu=
-e_fd, int watch_id)
- =09}
-=20
- err_watch:
--=09kfree(watch);
-+=09kfree_rcu(watch, rcu);
- err_wlist:
--=09kfree(wlist);
-+=09kfree_rcu(wlist, rcu);
- err_wqueue:
- =09put_watch_queue(wqueue);
- err_key:
---=20
-2.35.1
+Though, it is my first time encountering a spinlock and an rcu lock together,
+so if I am wrong, please do correct me.
 
-
+Thanks,
+Siddh
