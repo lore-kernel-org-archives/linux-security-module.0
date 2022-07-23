@@ -2,58 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF791C43334
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Jul 2022 14:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11C3C43334
+	for <linux-security-module@archiver.kernel.org>; Sat, 23 Jul 2022 14:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238149AbiGWOaX (ORCPT
+        id S238219AbiGWOgJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 23 Jul 2022 10:30:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33952 "EHLO
+        Sat, 23 Jul 2022 10:36:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238130AbiGWOaG (ORCPT
+        with ESMTP id S238214AbiGWOgJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 23 Jul 2022 10:30:06 -0400
+        Sat, 23 Jul 2022 10:36:09 -0400
 Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C83D1C138;
-        Sat, 23 Jul 2022 07:30:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1658586572; cv=none; 
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22F4EDF44;
+        Sat, 23 Jul 2022 07:36:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1658586938; cv=none; 
         d=zohomail.in; s=zohoarc; 
-        b=OYq163lvA2Bqz3Yn4jatz3mbts9pw8Mo0ri4o5+iknE4WgtpLwGFwRrk138GGR29SrCrRgPY29+sl6+YRWivTJUNquN/MoLZpPSQllxdqLyeX0QK2zNOY4v3iOrrI3CHD7q6+PIpiHHVhOagmanPWMq2DfOk33ZgmiG/0+WMPlw=
+        b=P14KMg7Zc246bVkhisdefrW6lxfNpldYDDzSVYqK0RNGk9phCJMo14SjMus4YHD71M+5L2KIkmKCotIBvpC75T1AV0i/xtcICFJGXTWecTOBXJJ1dF/pG8KgRV7i1n/G/MOCTYB3TdJ09BvyjejLMcRnvVEubEF7XMSqSBdlUvc=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1658586572; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=a/9usRWIfKTQJmjOCrdt/xVzLad7G/lItwk6BnowcDE=; 
-        b=bb/Kj22EZ5tXuuv0BNBthqeUKbZsM3AFivbJlFn7yUkiHvxVMqM7unOFZgPAEfHJTt3VD/t0nnj4/1AebnYEqteIaXMRmgBf3sMk98FJSldaWHRsl5aOckmNUUkCR1y9YMquLH+r7oul9T49mAghXodRj9UBojPMgabbRekEdhk=
+        t=1658586938; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=+F8VEZ1Z9Pj1QEwW5vQk6MFoPQK/TpHHEams4IFBR5o=; 
+        b=FxX9ttl/jntH3qcSUk2myZJl+keN4fVeE4RmdRYUXjqmBShsPp5xdWWBJO8yV7vMbAQuVqi7IPRVCQSdDEspii/9GPc30fxqNgmvcYD6QR4ZtlanEvi32HmoflggMi5YW4yZpa1aKalHoe4nLyMSQbg9FqmEws7cx0Q9V+2qtSA=
 ARC-Authentication-Results: i=1; mx.zohomail.in;
         dkim=pass  header.i=siddh.me;
         spf=pass  smtp.mailfrom=code@siddh.me;
         dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1658586572;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1658586938;
         s=zmail; d=siddh.me; i=code@siddh.me;
         h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=a/9usRWIfKTQJmjOCrdt/xVzLad7G/lItwk6BnowcDE=;
-        b=tDBA1sdg8MTEoxUTL9NLDKsUFJjHvaYYFZOKCPtKEMZ6jE4SDp5StnQnIPF6h5Cr
-        qu4ZsClhibfg3Q+LpT0awGh8WffR6wu4WznGGvnmccX+oIM1XdAIL8ihFpVqTjHz/Zv
-        XVfwg38ljifrVetqLVHN90zDhBri5l/VnqfuyHM8=
+        bh=+F8VEZ1Z9Pj1QEwW5vQk6MFoPQK/TpHHEams4IFBR5o=;
+        b=KbKtqbecy0QVLwF36Avuvq0fq3nBQzaO+KqXMun669P08qJxDt7fvskseBUZ4R7t
+        cTs6071CJGosVhZvQ8XdOnOXoaVh2LQncYcURGrR/WZQY3cuz8PAOwLIH98iv85dnFb
+        VFUYNXf4lA5olE3VDQVY+gjJ0JHKYPDTkaOu+WPU=
 Received: from mail.zoho.in by mx.zoho.in
-        with SMTP id 1658586560433935.6815882019292; Sat, 23 Jul 2022 19:59:20 +0530 (IST)
-Date:   Sat, 23 Jul 2022 19:59:20 +0530
+        with SMTP id 165858692779635.69655596083135; Sat, 23 Jul 2022 20:05:27 +0530 (IST)
+Date:   Sat, 23 Jul 2022 20:05:27 +0530
 From:   Siddh Raman Pant <code@siddh.me>
 To:     "Greg KH" <gregkh@linuxfoundation.org>
 Cc:     "David Howells" <dhowells@redhat.com>,
-        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        "Jarkko Sakkinen" <jarkko@kernel.org>,
+        "James Morris" <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         "linux-security-modules" <linux-security-module@vger.kernel.org>,
+        "keyrings" <keyrings@vger.kernel.org>,
         "linux-kernel-mentees" 
         <linux-kernel-mentees@lists.linuxfoundation.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "syzbot+c70d87ac1d001f29a058" 
-        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>
-Message-ID: <1822b76775c.69c52873236056.4849193904753307696@siddh.me>
-In-Reply-To: <Ytv/tUrdK1ZTn4Uk@kroah.com>
-References: <20220723135447.199557-1-code@siddh.me> <Ytv/tUrdK1ZTn4Uk@kroah.com>
-Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
- watch_queue
+        "linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <1822b7c129a.14411444236159.6380883938307880248@siddh.me>
+In-Reply-To: <YtwAHGISvlgXgXZM@kroah.com>
+References: <20220723135035.199188-1-code@siddh.me> <YtwAHGISvlgXgXZM@kroah.com>
+Subject: Re: [PATCH] keys/keyctl: Use kfree_rcu instead of kfree
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
@@ -63,20 +61,27 @@ X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 23 Jul 2022 19:33:33 +0530  Greg KH <gregkh@linuxfoundation.org> wrote:
-> You should not use #ifdef in .c files, it's unmaintainable over time.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Sat, 23 Jul 2022 19:35:16 +0530  Greg KH <gregkh@linuxfoundation.org> wrote:
+> That does not explain why this change is needed.  What problem does this
+> solve?  Why use RCU if you don't have to?  What functionality did you
+> just change in this commit and why?
 
-I used it because it is used in the same way in fs/pipe.c too (please check the
-stated line number).
+We can avoid a race condition wherein some process tries to access them while
+they are being freed. For instance, the comment on `watch_queue_clear()` also
+states that:
+        /*
+         * Remove all the watches that are contributory to a queue.  This has the
+         * potential to race with removal of the watches by the destruction of the
+         * objects being watched or with the distribution of notifications.
+         */
+And an RCU read critical section is initiated in that function, so we should
+use kfree_rcu() to not unintentionally free it while it is in the critical
+section.
 
-That, in turn, is because `watch_queue` member in the `pipe_inode_info` struct
-is defined that way (see line 80 of include/linux/pipe_fs_i.h), so I am forced
-to use the ifdef guard.
+> And how was this tested?
+
+It compiles locally for me, and I used syzbot on this along with testing the
+other `watch_queue_clear` patch, which generated no errors.
 
 Thanks,
 Siddh
