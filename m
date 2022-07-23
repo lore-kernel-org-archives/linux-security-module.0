@@ -2,103 +2,89 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1E3C433EF
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Jul 2022 13:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC5CC43334
+	for <linux-security-module@archiver.kernel.org>; Sat, 23 Jul 2022 14:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231994AbiGWN5k (ORCPT
+        id S236274AbiGWODv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 23 Jul 2022 09:57:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37038 "EHLO
+        Sat, 23 Jul 2022 10:03:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbiGWN5j (ORCPT
+        with ESMTP id S236970AbiGWODl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 23 Jul 2022 09:57:39 -0400
-X-Greylist: delayed 340 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 23 Jul 2022 06:57:38 PDT
-Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B931A397;
-        Sat, 23 Jul 2022 06:57:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1658584631; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=R9dbIFc1ASVJ9R34cbOfYzXoARqki1ZPvuRVpM4LJ/uWcDrzYgRRfR2ygb+ykBXgnpVzSCyZGPkZLozYWups1guJmNmRdNbTFz/pnrr1ytekq14hpRefLCR06ibCUDFhMA8NuBK+cxL88yiDTqkcyg38hUaSB29jl4EXHXj9bS4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1658584631; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
-        bh=8L4SM4wJh/annJul/rPP0P8kFy0c6pBphS7E4f99Zxw=; 
-        b=FY2CfHGUEizRbQmYUjGiV5OVrPCX8GidwKBP8KBmhTY6Ol5Nnoi4aNQx7fMW4F1O8A6Uf10z+JVk1jDZfDWxnoUjB7nwUb0EQWu8heTAoZKYlKimbld0bNzgAi0Nulb9IrrGTeq9/R5bdz8Ni7vKdaAs3WQf6H8BGofoeL1oCqg=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1658584631;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=From:From:To:To:Cc:Cc:Message-ID:Subject:Subject:Date:Date:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-        bh=8L4SM4wJh/annJul/rPP0P8kFy0c6pBphS7E4f99Zxw=;
-        b=W2LzvKrxqDsIgR7clEFkfAgceQV7UP8aH2pplFvqPzBpQWdcyI+ebtJbamdvRuQH
-        7BlUbSLLb/aYOLX7qjoRrmjvgrecUn6VxwBpFPc3dFJVceF2peCcKW32rsRjItX5OgT
-        1UuMaEW2un8UgomefCzWk/ckyHj34V8sR+jTbKnc=
-Received: from localhost.localdomain (43.250.158.127 [43.250.158.127]) by mx.zoho.in
-        with SMTPS id 1658584630365731.3156260741329; Sat, 23 Jul 2022 19:27:10 +0530 (IST)
-From:   Siddh Raman Pant <code@siddh.me>
-To:     David Howells <dhowells@redhat.com>,
+        Sat, 23 Jul 2022 10:03:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67E7118352;
+        Sat, 23 Jul 2022 07:03:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 27411B80933;
+        Sat, 23 Jul 2022 14:03:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446A9C341C0;
+        Sat, 23 Jul 2022 14:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1658585016;
+        bh=XqGMGbWcq/P/xI62FKVCA6GKm6TlYQEjhChvhcH8c6c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2v4Ogmb1fTi6SwT/Cl8Yh7GOWTfgYMWnRtwFzv4NkzAvLBEQ4id717IHS/adN5rmh
+         ScFUmUAENhzejbd4i51Tmupu3c2iNmwZxV75dfibaN3amEb+eP2d10ZlngTPGZVDpV
+         tHnNtGv970qVPIm8c6jnOVFxSNJyNyM8ylAXKHOA=
+Date:   Sat, 23 Jul 2022 16:03:33 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Siddh Raman Pant <code@siddh.me>
+Cc:     David Howells <dhowells@redhat.com>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Eric Dumazet <edumazet@google.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Cc:     linux-security-modules <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        linux-security-modules <linux-security-module@vger.kernel.org>,
         linux-kernel-mentees 
         <linux-kernel-mentees@lists.linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
         syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com
-Message-ID: <20220723135447.199557-1-code@siddh.me>
-Subject: [PATCH] kernel/watch_queue: Make pipe NULL while clearing watch_queue
-Date:   Sat, 23 Jul 2022 19:24:47 +0530
-X-Mailer: git-send-email 2.35.1
+Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
+Message-ID: <Ytv/tUrdK1ZTn4Uk@kroah.com>
+References: <20220723135447.199557-1-code@siddh.me>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
-Content-Type: text/plain; charset=utf8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220723135447.199557-1-code@siddh.me>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-If not done, a reference to a freed pipe remains in the watch_queue,
-as this function is called before freeing a pipe in free_pipe_info()
-(see line 834 of fs/pipe.c).
+On Sat, Jul 23, 2022 at 07:24:47PM +0530, Siddh Raman Pant via Linux-kernel-mentees wrote:
+> If not done, a reference to a freed pipe remains in the watch_queue,
+> as this function is called before freeing a pipe in free_pipe_info()
+> (see line 834 of fs/pipe.c).
+> 
+> This causes a UAF when post_one_notification tries to access the pipe on
+> a key update, which is reported by syzbot.
+> 
+> Bug report: https://syzkaller.appspot.com/bug?id=1870dd7791ba05f2ea7f47f7cbdde701173973fc
+> Reported-and-tested-by: syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com
+> 
+> Signed-off-by: Siddh Raman Pant <code@siddh.me>
+> ---
+>  kernel/watch_queue.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+> index bb9962b33f95..bab9e09c74cf 100644
+> --- a/kernel/watch_queue.c
+> +++ b/kernel/watch_queue.c
+> @@ -637,8 +637,17 @@ void watch_queue_clear(struct watch_queue *wqueue)
+>  		spin_lock_bh(&wqueue->lock);
+>  	}
+>  
+> -	spin_unlock_bh(&wqueue->lock);
+>  	rcu_read_unlock();
+> +
+> +	/* Clearing the watch queue, so we should clean the associated pipe. */
+> +#ifdef CONFIG_WATCH_QUEUE
 
-This causes a UAF when post_one_notification tries to access the pipe on
-a key update, which is reported by syzbot.
+You should not use #ifdef in .c files, it's unmaintainable over time.
 
-Bug report: https://syzkaller.appspot.com/bug?id=3D1870dd7791ba05f2ea7f47f7=
-cbdde701173973fc
-Reported-and-tested-by: syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.c=
-om
+thanks,
 
-Signed-off-by: Siddh Raman Pant <code@siddh.me>
----
- kernel/watch_queue.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index bb9962b33f95..bab9e09c74cf 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -637,8 +637,17 @@ void watch_queue_clear(struct watch_queue *wqueue)
- =09=09spin_lock_bh(&wqueue->lock);
- =09}
-=20
--=09spin_unlock_bh(&wqueue->lock);
- =09rcu_read_unlock();
-+
-+=09/* Clearing the watch queue, so we should clean the associated pipe. */
-+#ifdef CONFIG_WATCH_QUEUE
-+=09if (wqueue->pipe) {
-+=09=09wqueue->pipe->watch_queue =3D NULL;
-+=09=09wqueue->pipe =3D NULL;
-+=09}
-+#endif
-+
-+=09spin_unlock_bh(&wqueue->lock);
- }
-=20
- /**
---=20
-2.35.1
-
-
+greg k-h
