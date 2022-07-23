@@ -2,185 +2,103 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3382DC433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Jul 2022 17:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1E3C433EF
+	for <linux-security-module@archiver.kernel.org>; Sat, 23 Jul 2022 13:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234520AbiGVRFj (ORCPT
+        id S231994AbiGWN5k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Jul 2022 13:05:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58316 "EHLO
+        Sat, 23 Jul 2022 09:57:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231816AbiGVRFi (ORCPT
+        with ESMTP id S229760AbiGWN5j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Jul 2022 13:05:38 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E9ED220FC;
-        Fri, 22 Jul 2022 10:05:37 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:39236)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oEw5l-007IFI-NJ; Fri, 22 Jul 2022 11:05:33 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:59484 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oEw5k-00AACQ-Cs; Fri, 22 Jul 2022 11:05:33 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Frederick Lawler <fred@cloudflare.com>
-Cc:     kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
-        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
-        casey@schaufler-ca.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@cloudflare.com,
-        cgzones@googlemail.com, karl@bigbadwolfsecurity.com
-References: <20220721172808.585539-1-fred@cloudflare.com>
-Date:   Fri, 22 Jul 2022 12:05:07 -0500
-In-Reply-To: <20220721172808.585539-1-fred@cloudflare.com> (Frederick Lawler's
-        message of "Thu, 21 Jul 2022 12:28:04 -0500")
-Message-ID: <877d45kri4.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Sat, 23 Jul 2022 09:57:39 -0400
+X-Greylist: delayed 340 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 23 Jul 2022 06:57:38 PDT
+Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B931A397;
+        Sat, 23 Jul 2022 06:57:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1658584631; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=R9dbIFc1ASVJ9R34cbOfYzXoARqki1ZPvuRVpM4LJ/uWcDrzYgRRfR2ygb+ykBXgnpVzSCyZGPkZLozYWups1guJmNmRdNbTFz/pnrr1ytekq14hpRefLCR06ibCUDFhMA8NuBK+cxL88yiDTqkcyg38hUaSB29jl4EXHXj9bS4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1658584631; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=8L4SM4wJh/annJul/rPP0P8kFy0c6pBphS7E4f99Zxw=; 
+        b=FY2CfHGUEizRbQmYUjGiV5OVrPCX8GidwKBP8KBmhTY6Ol5Nnoi4aNQx7fMW4F1O8A6Uf10z+JVk1jDZfDWxnoUjB7nwUb0EQWu8heTAoZKYlKimbld0bNzgAi0Nulb9IrrGTeq9/R5bdz8Ni7vKdaAs3WQf6H8BGofoeL1oCqg=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1658584631;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=From:From:To:To:Cc:Cc:Message-ID:Subject:Subject:Date:Date:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+        bh=8L4SM4wJh/annJul/rPP0P8kFy0c6pBphS7E4f99Zxw=;
+        b=W2LzvKrxqDsIgR7clEFkfAgceQV7UP8aH2pplFvqPzBpQWdcyI+ebtJbamdvRuQH
+        7BlUbSLLb/aYOLX7qjoRrmjvgrecUn6VxwBpFPc3dFJVceF2peCcKW32rsRjItX5OgT
+        1UuMaEW2un8UgomefCzWk/ckyHj34V8sR+jTbKnc=
+Received: from localhost.localdomain (43.250.158.127 [43.250.158.127]) by mx.zoho.in
+        with SMTPS id 1658584630365731.3156260741329; Sat, 23 Jul 2022 19:27:10 +0530 (IST)
+From:   Siddh Raman Pant <code@siddh.me>
+To:     David Howells <dhowells@redhat.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Eric Dumazet <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Cc:     linux-security-modules <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees 
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com
+Message-ID: <20220723135447.199557-1-code@siddh.me>
+Subject: [PATCH] kernel/watch_queue: Make pipe NULL while clearing watch_queue
+Date:   Sat, 23 Jul 2022 19:24:47 +0530
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1oEw5k-00AACQ-Cs;;;mid=<877d45kri4.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX18ocw5vbG1LyqBTp8XMLyREW1cVYxPT3iU=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v3 0/4] Introduce security_create_user_ns()
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Frederick Lawler <fred@cloudflare.com> writes:
+If not done, a reference to a freed pipe remains in the watch_queue,
+as this function is called before freeing a pipe in free_pipe_info()
+(see line 834 of fs/pipe.c).
 
-> While creating a LSM BPF MAC policy to block user namespace creation, we
-> used the LSM cred_prepare hook because that is the closest hook to prevent
-> a call to create_user_ns().
+This causes a UAF when post_one_notification tries to access the pipe on
+a key update, which is reported by syzbot.
 
-That description is wrong.  Your goal his is not to limit access to
-the user namespace.  Your goal is to reduce the attack surface of the
-kernel by not allowing some processes access to a user namespace.
+Bug report: https://syzkaller.appspot.com/bug?id=3D1870dd7791ba05f2ea7f47f7=
+cbdde701173973fc
+Reported-and-tested-by: syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.c=
+om
 
-You have already said that you don't have concerns about the
-fundamentals of the user namespace, and what it enables only that
-it allows access to exploitable code.
+Signed-off-by: Siddh Raman Pant <code@siddh.me>
+---
+ kernel/watch_queue.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Achieving the protection you seek requires talking and thinking clearly
-about the goal.
+diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+index bb9962b33f95..bab9e09c74cf 100644
+--- a/kernel/watch_queue.c
++++ b/kernel/watch_queue.c
+@@ -637,8 +637,17 @@ void watch_queue_clear(struct watch_queue *wqueue)
+ =09=09spin_lock_bh(&wqueue->lock);
+ =09}
+=20
+-=09spin_unlock_bh(&wqueue->lock);
+ =09rcu_read_unlock();
++
++=09/* Clearing the watch queue, so we should clean the associated pipe. */
++#ifdef CONFIG_WATCH_QUEUE
++=09if (wqueue->pipe) {
++=09=09wqueue->pipe->watch_queue =3D NULL;
++=09=09wqueue->pipe =3D NULL;
++=09}
++#endif
++
++=09spin_unlock_bh(&wqueue->lock);
+ }
+=20
+ /**
+--=20
+2.35.1
 
 
-
-
-I have a couple of deep and fundamental problems with this approach,
-to limiting access to potentially exploitable code.
-
-1) The first is that unless there is a high probability (say 90%) that at
-   any time the only exploitable code in the kernel can only be accessed
-   by an unprivileged user with the help of user namespaces, attackers
-   will just route around this restriction and so it will achieve
-   nothing in practice, while at the same time incur an extra
-   maintenance burden.
-
-2) The second is that there is a long standing problem with code that
-   gets added to the kernel.  Many times new kernel code because it has
-   the potential to confuse suid root executables that code has been
-   made root only.  Over time that results in more and more code running
-   as root to be able to make use of the useful features of the linux
-   kernel.
-
-   One of the goals of the user namespace is to avoid more and more code
-   migrating to running as root.  To achieve that goal ordinary
-   application developers need to be able to assume that typically user
-   namespaces will be available on linux.
-
-   An assumption that ordinary applications like chromium make today.
-
-   Your intentions seem to be to place a capability check so that only
-   root can use user namespaces or something of the sort.  Thus breaking
-   the general availability of user namespaces for ordinary applications
-   on your systems.
-   
-
-My apologies if this has been addressed somewhere in the conversation
-already.  I don't see these issues addressed in the descriptions of your
-patches.
-
-Until these issues are firmly addressed and you are not proposing a
-patch that can only cause regressions in userspace applications.
-
-Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
->
-> The calls look something like this:
->
->     cred = prepare_creds()
->         security_prepare_creds()
->             call_int_hook(cred_prepare, ...
->     if (cred)
->         create_user_ns(cred)
->
-> We noticed that error codes were not propagated from this hook and
-> introduced a patch [1] to propagate those errors.
->
-> The discussion notes that security_prepare_creds()
-> is not appropriate for MAC policies, and instead the hook is
-> meant for LSM authors to prepare credentials for mutation. [2]
->
-> Ultimately, we concluded that a better course of action is to introduce
-> a new security hook for LSM authors. [3]
->
-> This patch set first introduces a new security_create_user_ns() function
-> and userns_create LSM hook, then marks the hook as sleepable in BPF.
->
-> Links:
-> 1. https://lore.kernel.org/all/20220608150942.776446-1-fred@cloudflare.com/
-> 2. https://lore.kernel.org/all/87y1xzyhub.fsf@email.froward.int.ebiederm.org/
-> 3. https://lore.kernel.org/all/9fe9cd9f-1ded-a179-8ded-5fde8960a586@cloudflare.com/
->
-> Past discussions:
-> V2: https://lore.kernel.org/all/20220707223228.1940249-1-fred@cloudflare.com/
-> V1: https://lore.kernel.org/all/20220621233939.993579-1-fred@cloudflare.com/
->
-> Changes since v2:
-> - Rename create_user_ns hook to userns_create
-> - Use user_namespace as an object opposed to a generic namespace object
-> - s/domB_t/domA_t in commit message
-> Changes since v1:
-> - Add selftests/bpf: Add tests verifying bpf lsm create_user_ns hook patch
-> - Add selinux: Implement create_user_ns hook patch
-> - Change function signature of security_create_user_ns() to only take
->   struct cred
-> - Move security_create_user_ns() call after id mapping check in
->   create_user_ns()
-> - Update documentation to reflect changes
->
-> Frederick Lawler (4):
->   security, lsm: Introduce security_create_user_ns()
->   bpf-lsm: Make bpf_lsm_userns_create() sleepable
->   selftests/bpf: Add tests verifying bpf lsm userns_create hook
->   selinux: Implement userns_create hook
->
->  include/linux/lsm_hook_defs.h                 |  1 +
->  include/linux/lsm_hooks.h                     |  4 +
->  include/linux/security.h                      |  6 ++
->  kernel/bpf/bpf_lsm.c                          |  1 +
->  kernel/user_namespace.c                       |  5 ++
->  security/security.c                           |  5 ++
->  security/selinux/hooks.c                      |  9 ++
->  security/selinux/include/classmap.h           |  2 +
->  .../selftests/bpf/prog_tests/deny_namespace.c | 88 +++++++++++++++++++
->  .../selftests/bpf/progs/test_deny_namespace.c | 39 ++++++++
->  10 files changed, 160 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/deny_namespace.c
->  create mode 100644 tools/testing/selftests/bpf/progs/test_deny_namespace.c
->
-> --
-> 2.30.2
-
-Eric
