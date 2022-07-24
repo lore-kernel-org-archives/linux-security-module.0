@@ -2,103 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EADC433EF
-	for <linux-security-module@archiver.kernel.org>; Sun, 24 Jul 2022 03:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0F1C433EF
+	for <linux-security-module@archiver.kernel.org>; Sun, 24 Jul 2022 04:02:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239599AbiGXDpl (ORCPT
+        id S229602AbiGXECv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 23 Jul 2022 23:45:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34650 "EHLO
+        Sun, 24 Jul 2022 00:02:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbiGXDpj (ORCPT
+        with ESMTP id S229445AbiGXECt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 23 Jul 2022 23:45:39 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8A1EE06;
-        Sat, 23 Jul 2022 20:45:38 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id h145so6392705iof.9;
-        Sat, 23 Jul 2022 20:45:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=urdOpy9asLw3Y6MlWSHoFWdbz6150EOdUC7TdYBaBuE=;
-        b=LsldSwyvy+YhsmguyJks6+5wlPrp4WItiFSfIL1Vjp+D33iw4UekGa9I/D+fSLB4VG
-         j7jPHJWrjbxipCBmPxShuRBFINBE24/iMBsIIoA/aMLAPPpNjasZJu3rrVMdIfmqQ6L8
-         ZY5llKN3UaNPFBeyfnQsPIgcvNlI81fippMTadgMZfNySakXYqLrIxGKvK6WJqcemNoJ
-         Cv8vJx6gqiyrZQGVvoL2Bo4jyRbF9l77M0ODMLcGu4lUhYKu5CnRgutqt3bkYpG0kwTx
-         Ed6NoKFDzuim6Lu4/f2/fAQM16/I0181UQy/0NdSi74OmhhB0K/DzZx2V/DvHtD9ohCQ
-         jcqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=urdOpy9asLw3Y6MlWSHoFWdbz6150EOdUC7TdYBaBuE=;
-        b=mqBQfX+ccdDAHQC1X5SqQWk7ZyTme0Fus2OMk8YGnukKxm2XqO4q+CI9JPdac1ZUB5
-         A59aoTsD18U7U9w4Qxfw7/X8Kt9G4j3rGWakt3ANSZLaI0cXq92/tjK2aVXOD5+ehGrA
-         KiCpfg7xYFewiZWrt4hJICDG+gvuLOuwulbnIeSbi8CqN+cOSq25Q/FJSOwOkmeXIICa
-         MERFxgchX3iexxmYmR4AV+O27dFmozLsZq3RqL0CCviw+O6aBNCU0nZmSKEa/P/vmbPc
-         JUZH0Vp/o4k1Tb0Ht/EYZEEz6dnlAlIxc5FqPySMEoM3PoaOSxpM3kE1WOW0Avz8YX6b
-         ooGg==
-X-Gm-Message-State: AJIora/TAjMIjDXqAR+/ggO3D8ptbW1GIq+NmmJHhZzf86ZQUVmhxyhd
-        zZnxhemWJ95Oqln2948qZQaDBgmG2Hq1Juers4o=
-X-Google-Smtp-Source: AGRyM1v7iy25GYE3XYGsRD0mZ/puTi9gGiZl52cB3A4p9UEHjE5y8TJgmOjaRPS9Y/yajSX0p3Tsex8/S1SqQWLXJAI=
-X-Received: by 2002:a05:6638:16cb:b0:33f:8871:1b5c with SMTP id
- g11-20020a05663816cb00b0033f88711b5cmr2717685jat.11.1658634338052; Sat, 23
- Jul 2022 20:45:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220723135447.199557-1-code@siddh.me> <Ytv/tUrdK1ZTn4Uk@kroah.com>
- <1822b76775c.69c52873236056.4849193904753307696@siddh.me>
-In-Reply-To: <1822b76775c.69c52873236056.4849193904753307696@siddh.me>
-From:   Khalid Masum <khalid.masum.92@gmail.com>
-Date:   Sun, 24 Jul 2022 09:45:27 +0600
-Message-ID: <CAABMjtEHCy=YcfqYfsQdqt9pWHHRoOLYHiRCsj8HjZVfAOB+6A@mail.gmail.com>
-Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing watch_queue
-To:     Siddh Raman Pant <code@siddh.me>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Sun, 24 Jul 2022 00:02:49 -0400
+Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEE2EE0DA;
+        Sat, 23 Jul 2022 21:02:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1658635334; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=FKgmmK4qST/lw4r8NbvBMwkC47maL+Vn68jcKSRRTr9yN5eVH4djyiPYot/BeAWI7wD+EDBi9zGwVl/SkkKMoqlVSAguglKUp6BsMNpx5QM/DI2mApiid5zHu5I+T1MLb8QTXwTMQ1SoFBbLyKb0/EB/4gF4ywkRVjOmCMBQWuU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1658635334; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=ZsIO24j3JVV1dGHrjewZL3uR5Q3eQ+kXFdkNGODCBfw=; 
+        b=A59IBYy8EidnQCVDDH7KxoNqOBZ9Q+XVz8nTwAhv90pXatlvgF+kE4wvy+CQ1Rsas5pKchSzux0yU4vcY3nHW2XjhtaUf84fCLONRthl/TUI7839DZfPqFOdaBH2kEh59xjt5vx0+T0m0cWtGvLXFcJVuHFyV93l5kR3qcit1Qw=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1658635334;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=ZsIO24j3JVV1dGHrjewZL3uR5Q3eQ+kXFdkNGODCBfw=;
+        b=ByFyVWEXVlIkXz4FEwz3wvsZXLYNGsn1uC9hrdpSw2a7Bnw0Gwvy5h3jGPDjGQs0
+        AYebS12UWXLtXXZJB2Qv2PiSPDnIODcoFj8g/KtpZ81TMsYFDZEmOSQ2AG6oJxQ4tEy
+        0RbilO/qxVyAlqRZN7ZdzUrIuIVIewzV0MxahS74=
+Received: from mail.zoho.in by mx.zoho.in
+        with SMTP id 1658635323452803.7680563486452; Sun, 24 Jul 2022 09:32:03 +0530 (IST)
+Date:   Sun, 24 Jul 2022 09:32:03 +0530
+From:   Siddh Raman Pant <code@siddh.me>
+To:     "Khalid Masum" <khalid.masum.92@gmail.com>
+Cc:     "Greg KH" <gregkh@linuxfoundation.org>,
         "syzbot+c70d87ac1d001f29a058" 
         <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>,
-        linux-kernel-mentees 
+        "linux-kernel-mentees" 
         <linux-kernel-mentees@lists.linuxfoundation.org>,
-        linux-security-modules <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "linux-security-modules" <linux-security-module@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "David Howells" <dhowells@redhat.com>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
         "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Message-ID: <1822e5e8826.6da46246626262.8013427986163664185@siddh.me>
+In-Reply-To: <CAABMjtEHCy=YcfqYfsQdqt9pWHHRoOLYHiRCsj8HjZVfAOB+6A@mail.gmail.com>
+References: <20220723135447.199557-1-code@siddh.me> <Ytv/tUrdK1ZTn4Uk@kroah.com>
+ <1822b76775c.69c52873236056.4849193904753307696@siddh.me> <CAABMjtEHCy=YcfqYfsQdqt9pWHHRoOLYHiRCsj8HjZVfAOB+6A@mail.gmail.com>
+Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jul 23, 2022 at 8:29 PM Siddh Raman Pant via
-Linux-kernel-mentees <linux-kernel-mentees@lists.linuxfoundation.org>
-wrote:
->
-> On Sat, 23 Jul 2022 19:33:33 +0530  Greg KH <gregkh@linuxfoundation.org> wrote:
-> > You should not use #ifdef in .c files, it's unmaintainable over time.
+On Sun, 24 Jul 2022 09:15:27 +0530  Khalid Masum <khalid.masum.92@gmail.com> wrote:
+> On Sat, Jul 23, 2022 at 8:29 PM Siddh Raman Pant via
+> Linux-kernel-mentees <linux-kernel-mentees@lists.linuxfoundation.org>
+> wrote:
 > >
-> > thanks,
+> > On Sat, 23 Jul 2022 19:33:33 +0530  Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > You should not use #ifdef in .c files, it's unmaintainable over time.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> > >
 > >
-> > greg k-h
+> > I used it because it is used in the same way in fs/pipe.c too (please check the
+> > stated line number).
 > >
->
-> I used it because it is used in the same way in fs/pipe.c too (please check the
-> stated line number).
->
-> That, in turn, is because `watch_queue` member in the `pipe_inode_info` struct
-> is defined that way (see line 80 of include/linux/pipe_fs_i.h), so I am forced
-> to use the ifdef guard.
->
-Maybe, we can use the IS_ENABLED macro here to avoid ifdef in the .c file as
-suggested here:
-https://www.kernel.org/doc/html/v4.10/process/coding-style.html#conditional-compilation
-
-if(IS_ENABLED(CONFIG_WATCH_QUEUE)){
-     ...
-}
-
+> > That, in turn, is because `watch_queue` member in the `pipe_inode_info` struct
+> > is defined that way (see line 80 of include/linux/pipe_fs_i.h), so I am forced
+> > to use the ifdef guard.
+> >
+> Maybe, we can use the IS_ENABLED macro here to avoid ifdef in the .c file as
+> suggested here:
+> https://www.kernel.org/doc/html/v4.10/process/coding-style.html#conditional-compilation
+> 
+> if(IS_ENABLED(CONFIG_WATCH_QUEUE)){
+>      ...
+> }
+> 
+> > Thanks,
+> > Siddh
+> 
 > Thanks,
-> Siddh
+>   -- Khalid Masum
+ 
+I have looked at it again. The guard is superfluous in watch_queue.c (don't
+need it since we are already in watch queue), hence I am sending v2 with it
+removed.
 
 Thanks,
-  -- Khalid Masum
+Siddh
