@@ -2,104 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62664C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Jul 2022 12:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AF8CCA48B
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Jul 2022 22:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235217AbiGYMmW (ORCPT
+        id S237624AbiGYWxm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Jul 2022 08:42:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47772 "EHLO
+        Mon, 25 Jul 2022 18:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235176AbiGYMmT (ORCPT
+        with ESMTP id S237548AbiGYWxk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Jul 2022 08:42:19 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 04BF5F594;
-        Mon, 25 Jul 2022 05:42:17 -0700 (PDT)
-Received: from pwmachine.numericable.fr (82.65.121.78.rev.sfr.net [78.121.65.82])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 04B5520C144A;
-        Mon, 25 Jul 2022 05:42:14 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 04B5520C144A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1658752936;
-        bh=2j8Ih/EjSfDlFogjnBWHcfLYq+13KlAkeT4Uf98CxPw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lilC8T96j7LLSZvF8awzzMyMyj8jNJ+NsoEuyahBOvr8wIk9ntjjfUab3r+Ntekwt
-         JK+RWyjUqGNADBJiXSrKltpkJPzyD+lB5ow89wzFDuOYr3DaaLMLyel3zH1Z2hZbmt
-         fQvS4Vt+g2cIUHL7a6mw/DLb+Tj2bQzvtANcI16s=
-From:   Francis Laniel <flaniel@linux.microsoft.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Francis Laniel <flaniel@linux.microsoft.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [RFC PATCH v4 2/2] security/inode.c: Add capabilities file.
-Date:   Mon, 25 Jul 2022 14:41:23 +0200
-Message-Id: <20220725124123.12975-3-flaniel@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220725124123.12975-1-flaniel@linux.microsoft.com>
-References: <20220725124123.12975-1-flaniel@linux.microsoft.com>
+        Mon, 25 Jul 2022 18:53:40 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F07820F5F
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Jul 2022 15:53:39 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id g2so9852994wru.3
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Jul 2022 15:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/W5yt/hqpa2H9l51KPyc7KtGFLwJRO5GtKdVuzCYcYE=;
+        b=eRiyLuxpX5qC8hQzrRkg9frLl3gSC//o1oyul/HoGdiNoF4so6toscBjafhGAfLQqp
+         UCQghoJOnPMwYy0xIHbRlsbkOyD4ektNaPpsrnGpnIlwnydmsHdNvVWSDXiObsYavolQ
+         7R9fpfH9/S4xUCE48oVAhrrLdNjiAmJBq47B5m9UMaOVMHUD9QB7mJrifTVcP6fdgeH8
+         wIXb/bkULIJKGTX2mtNfykVdShVFSTtMxCwl2eqvu7rrTu8g5gyuddq7KlYNBQws6Mb2
+         fnbp/R1KutfkZXIE80k12jmE3KUrvJxhFXu33hIrDM9gJvLIwcHEpdtbMY4NQG2VxAbg
+         71dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/W5yt/hqpa2H9l51KPyc7KtGFLwJRO5GtKdVuzCYcYE=;
+        b=qDLhaKotmi1VkvqyRm1VWwPe0aze9wtsx7nQKGdevDg6FWia6H0lknT37pzurcFQ2Q
+         Do40mLT3clsAxdZCtrWm2U+52Iv2LpKOxGwqX6L28QPRQyYXtQb+nAu4zRDQDz41dyxI
+         7Bul/e46rcXHAgOh+1WYQi9qCGzpheY3/v9mN/T+MGtNof8Bkz/LpPjgybghBG1ODjka
+         ONWsJ5gXsU4tOrCQJyq6nxsgLZ6pBB6TRmYctSgStbXCDMkTh++pw1ijCryTpMtAp/1l
+         jyZvvMzYGamiFMe3xurhA/86YpiiF0CjxylUSdwgstGJ978EA5h/PR7Jtt5y2b0zsrPB
+         ebIQ==
+X-Gm-Message-State: AJIora+Fd/AbWdmeW2f3zRrylYeCdoYtEpgJ8uxTnP36Q2Q/DOtAyhaK
+        4YCbI/qGLcr8mh+8Ez5BEq7lwt6ChqCwVq7FXrET
+X-Google-Smtp-Source: AGRyM1sHda4R7slO2THldYmCB6hufThJf2miVQonTYTic0+WRH9UBEOBbGg/X6g4BlFU1purnp8Q+Tj47z8FJeAvPUY=
+X-Received: by 2002:adf:fb86:0:b0:21e:3cc8:a917 with SMTP id
+ a6-20020adffb86000000b0021e3cc8a917mr9220347wrr.538.1658789617917; Mon, 25
+ Jul 2022 15:53:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220721172808.585539-1-fred@cloudflare.com> <877d45kri4.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <877d45kri4.fsf@email.froward.int.ebiederm.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 25 Jul 2022 18:53:26 -0400
+Message-ID: <CAHC9VhQXSXWv=+WYwU=Qq0w3rd+zOFPHL5yut1JdV2K=DDRmmg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Introduce security_create_user_ns()
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-team@cloudflare.com, cgzones@googlemail.com,
+        karl@bigbadwolfsecurity.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This new read-only file prints the capabilities values with their names:
-cat /sys/kernel/security/capabilities
-0       CAP_CHOWN
-1       CAP_DAC_OVERRIDE
-...
-40      CAP_CHECKPOINT_RESTORE
+On Fri, Jul 22, 2022 at 1:05 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> Frederick Lawler <fred@cloudflare.com> writes:
+>
+> > While creating a LSM BPF MAC policy to block user namespace creation, we
+> > used the LSM cred_prepare hook because that is the closest hook to prevent
+> > a call to create_user_ns().
+>
+> That description is wrong.  Your goal his is not to limit access to
+> the user namespace.  Your goal is to reduce the attack surface of the
+> kernel by not allowing some processes access to a user namespace.
+>
+> You have already said that you don't have concerns about the
+> fundamentals of the user namespace, and what it enables only that
+> it allows access to exploitable code.
+>
+> Achieving the protection you seek requires talking and thinking clearly
+> about the goal.
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: Francis Laniel <flaniel@linux.microsoft.com>
----
- security/inode.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Providing a single concrete goal for a LSM hook is always going to be
+a challenge due to the nature of the LSM layer and the great unknown
+of all the different LSMs that are implemented underneath the LSM
+abstraction.  However, we can make some very general statements such
+that up to this point the LSMs that have been merged into mainline
+generally provide some level of access control, observability, or
+both.  While that may change in the future (the LSM layer does not
+attempt to restrict LSMs to just these two ideas), I think they are
+"good enough" goals for this discussion.
 
-diff --git a/security/inode.c b/security/inode.c
-index 6c326939750d..6da87ae5a8d6 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -21,6 +21,7 @@
- #include <linux/security.h>
- #include <linux/lsm_hooks.h>
- #include <linux/magic.h>
-+#include <linux/capability.h>
- 
- static struct vfsmount *mount;
- static int mount_count;
-@@ -328,6 +329,19 @@ static const struct file_operations lsm_ops = {
- };
- #endif
- 
-+static struct dentry *capabilities_dentry;
-+static ssize_t capabilities_read(struct file *unused, char __user *buf,
-+				 size_t count, loff_t *ppos)
-+{
-+	return simple_read_from_buffer(buf, count, ppos, cap_string,
-+				       strlen(cap_string));
-+}
-+
-+static const struct file_operations capabilities_ops = {
-+	.read = capabilities_read,
-+	.llseek = generic_file_llseek,
-+};
-+
- static int __init securityfs_init(void)
- {
- 	int retval;
-@@ -345,6 +359,8 @@ static int __init securityfs_init(void)
- 	lsm_dentry = securityfs_create_file("lsm", 0444, NULL, NULL,
- 						&lsm_ops);
- #endif
-+	capabilities_dentry = securityfs_create_file("capabilities", 0444, NULL,
-+						     NULL, &capabilities_ops);
- 	return 0;
- }
- core_initcall(securityfs_init);
+In addition to thinking about these goals, I think it also important
+to take a step back and think about the original motivation for the
+LSM and why it, and Linux itself, has proven to be popular with
+everything from the phone in your hand to the datacenter servers
+powering ... pretty much everything :)  Arguably Linux has seen such
+profound success because of its malleability; the open nature of the
+kernel development process has allowed the Linux Kernel to adopt
+capabilities well beyond what any one dev team could produce, and as
+Linux continues to grow in adoption, its ability to flex into new use
+cases only increases.  The kernel namespace concept is an excellent
+example of this: virtualizing core kernel ideas, such as user
+credentials, to provide better, safer solutions.  It is my belief that
+the LSM layer is very much built around this same idea of abstracting
+and extending core kernel concepts, in this case security controls, to
+provide better solutions.  Integrating the LSM into the kernel's
+namespaces is a natural fit, and one that is long overdue.
+
+If we can't find a way to make everyone happy here, let's at least try
+to find a way to make everyone "okay" with adding a LSM hook to the
+user namespace.  If you want to NACK this approach Eric, that's okay,
+but please provide some alternative paths forward that we can discuss.
+
 -- 
-2.25.1
-
+paul-moore.com
