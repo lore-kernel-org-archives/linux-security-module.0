@@ -2,124 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19025C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Jul 2022 16:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24243C04A68
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Jul 2022 19:55:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233914AbiG0QVd (ORCPT
+        id S231599AbiG0TzA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Jul 2022 12:21:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48442 "EHLO
+        Wed, 27 Jul 2022 15:55:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234075AbiG0QVc (ORCPT
+        with ESMTP id S229898AbiG0Ty7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Jul 2022 12:21:32 -0400
-Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0796343E48;
-        Wed, 27 Jul 2022 09:21:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1658938862; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=YPp9A7wZ03tp8wezdjbFc7e9zwHpNpauHaJ6PHEKXYAihY+pGlTxgXZNIVVwMzJDCqoExmkzi+bP88Vs+c84o3IveIS0vlBR9TY6ieWSSQqFIt7ItCbxLv1/8+ZNksi6lMeMPg+lLvvwSVKOziC4MwzwgqqC5bK9eHPilrNGj1I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1658938862; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=9bWNAdarOcU8borJ9QY+qCVRT1DHj4b2kF/jYpSU85c=; 
-        b=WLnR68oCZhvr3LV8cR3r+pA1PahfvotNElQAGKwKistPSqtxzjgjDZuO+uSuL0Nea+ID0/WmdXNxQgb6mzCksukbuDYsRXUww3HbemDvK1iNcvR28RonnH6fwYPq8Qi633QtCoBwBKSdXeXcZTZHLxYKM3xZt3pNt9zulc/2OW0=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1658938862;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=9bWNAdarOcU8borJ9QY+qCVRT1DHj4b2kF/jYpSU85c=;
-        b=WBiMOvQofgnmrlX/KDTIEWdpfV4rkfLrTG5khAOmhrYCG98rlbYRkEUNabWjw6nu
-        OFttNqXLjHsqjrq7SLioHW6hhVhlA9XdS14RGv9TzPfbf9FA1BKrD7RJauVo/ezCWMM
-        El4HJjMSakXH4IOQchuwITyfgJ3Cg3vVrwzdqWUQ=
-Received: from mail.zoho.in by mx.zoho.in
-        with SMTP id 1658938852066566.1813973782993; Wed, 27 Jul 2022 21:50:52 +0530 (IST)
-Date:   Wed, 27 Jul 2022 21:50:52 +0530
-From:   Siddh Raman Pant <code@siddh.me>
-To:     "David Howells" <dhowells@redhat.com>
-Cc:     "Greg KH" <gregkh@linuxfoundation.org>,
-        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        "linux-security-modules" <linux-security-module@vger.kernel.org>,
-        "linux-kernel-mentees" 
-        <linux-kernel-mentees@lists.linuxfoundation.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "syzbot+c70d87ac1d001f29a058" 
-        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>
-Message-ID: <182407602ce.190e58816827.7904364186178466266@siddh.me>
-In-Reply-To: <3558070.1658933200@warthog.procyon.org.uk>
-References: <1822b768504.1d4e377e236061.5518350412857967240@siddh.me> <20220723135447.199557-1-code@siddh.me> <Ytv/4Tljvlt0PJ2r@kroah.com> <3558070.1658933200@warthog.procyon.org.uk>
-Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
- watch_queue
+        Wed, 27 Jul 2022 15:54:59 -0400
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18CB356BBF
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Jul 2022 12:54:57 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4LtPdB18x9zMqMfb;
+        Wed, 27 Jul 2022 21:54:54 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4LtPd94vGmzln8VM;
+        Wed, 27 Jul 2022 21:54:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1658951694;
+        bh=4vCIXI/5V3E0JoYph3HCIwV+ywjIiRGEiTJoYTbvjqU=;
+        h=Date:From:To:Cc:References:Subject:In-Reply-To:From;
+        b=JLd6rI6QFfGKUYvO4L//xHwQ8B+HcmzFAMiLSZeXtx8kqBbP4EIV8HqrjIe4IDYRH
+         q8hUmmzO2vfdwXSJBaky84TvrgNPe8ppj0BrilJuQ6quZNrKV/j9n1EoBuVH8H1wxE
+         MEFHY+JouSLlPOBQAEJVRxpI3DV3HDTKnubrcZRo=
+Message-ID: <6691d91f-c03b-30fa-2fa0-d062b3b234b9@digikod.net>
+Date:   Wed, 27 Jul 2022 21:54:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+User-Agent: 
+Content-Language: en-US
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        anton.sirazetdinov@huawei.com
+References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
+ <4c57a0c2-e207-10d6-c73d-bcda66bf3963@digikod.net>
+Subject: Re: [PATCH v6 00/17] Network support for Landlock
+In-Reply-To: <4c57a0c2-e207-10d6-c73d-bcda66bf3963@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 27 Jul 2022 20:16:40 +0530  David Howells <dhowells@redhat.com> wrote:
-> Siddh Raman Pant <code@siddh.me> wrote:
-> 
-> > Greg KH <gregkh@linuxfoundation.org> wrote:
-> 
-> > > > - spin_unlock_bh(&wqueue->lock);
-> > > >   rcu_read_unlock();
-> > >
-> > > Also you now have a spinlock held when calling rcu_read_unlock(), are
-> > > you sure that's ok?
-> 
-> Worse, we have softirqs disabled still, which might cause problems for
-> rcu_read_unlock()?
-> 
-> > We logically should not do write operations in a read critical section, so the
-> > nulling of `wqueue->pipe->watch_queue` should happen after rcu_read_unlock().
-> > Also, since we already have a spinlock, we can use it to ensure the nulling.
-> > So I think it is okay.
-> 
-> Read/write locks are perhaps misnamed in this sense; they perhaps should be
-> shared/exclusive.  But, yes, we *can* do certain write operations with the
-> lock held - if we're careful.  Locks are required if we need to pairs of
-> related memory accesses; if we're only making a single non-dependent write,
-> then we don't necessarily need a write lock.
-> 
-> However, you're referring to RCU read lock.  That's a very special lock that
-> has to do with maintenance of persistence of objects without taking any other
-> lock.  The moment you drop that lock, anything you accessed under RCU protocol
-> rules should be considered to have evaporated.
-> 
-> Think of it more as a way to have a deferred destructor/deallocator.
-> 
-> So I would do:
-> 
-> +
-> +       /* Clearing the watch queue, so we should clean the associated pipe. */
-> +       if (wqueue->pipe) {
-> +               wqueue->pipe->watch_queue = NULL;
-> +               wqueue->pipe = NULL;
-> +       }
-> +
->         spin_unlock_bh(&wqueue->lock);
->         rcu_read_unlock();
->  }
-> 
-> However, since you're now changing wqueue->pipe whilst a notification is being
-> posted, you need a barrier in post_one_notification() to prevent the compiler
-> from reloading the value:
-> 
->         struct pipe_inode_info *pipe = READ_ONCE(wqueue->pipe);
-> 
-> David
-> 
 
-Thank you for explaining it!
 
-I will send a v3. Should I add a Suggested-by tag mentioning you?
+On 26/07/2022 19:43, Mickaël Salaün wrote:
+> 
+> On 21/06/2022 10:22, Konstantin Meskhidze wrote:
+>> Hi,
+>> This is a new V6 patch related to Landlock LSM network confinement.
+>> It is based on the latest landlock-wip branch on top of v5.19-rc2:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=landlock-wip
+>>
+>> It brings refactoring of previous patch version V5:
+>>      - Fixes some logic errors and typos.
+>>      - Adds additional FIXTURE_VARIANT and FIXTURE_VARIANT_ADD helpers
+>>      to support both ip4 and ip6 families and shorten seltests' code.
+>>      - Makes TCP sockets confinement support optional in sandboxer demo.
+>>      - Formats the code with clang-format-14
+>>
+>> All test were run in QEMU evironment and compiled with
+>>   -static flag.
+>>   1. network_test: 18/18 tests passed.
+>>   2. base_test: 7/7 tests passed.
+>>   3. fs_test: 59/59 tests passed.
+>>   4. ptrace_test: 8/8 tests passed.
+>>
+>> Still have issue with base_test were compiled without -static flag
+>> (landlock-wip branch without network support)
+>> 1. base_test: 6/7 tests passed.
+>>   Error:
+>>   #  RUN           global.inconsistent_attr ...
+>>   # base_test.c:54:inconsistent_attr:Expected ENOMSG (42) == errno (22)
+>>   # inconsistent_attr: Test terminated by assertion
+>>   #          FAIL  global.inconsistent_attr
+>> not ok 1 global.inconsistent_attr
+>>
+>> LCOV - code coverage report:
+>>              Hit  Total  Coverage
+>> Lines:      952  1010    94.3 %
+>> Functions:  79   82      96.3 %
+>>
+>> Previous versions:
+>> v5: 
+>> https://lore.kernel.org/linux-security-module/20220516152038.39594-1-konstantin.meskhidze@huawei.com
+>> v4: 
+>> https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+>> v3: 
+>> https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+>> v2: 
+>> https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+>> v1: 
+>> https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
+>>
+>> Konstantin Meskhidze (17):
+>>    landlock: renames access mask
+>>    landlock: refactors landlock_find/insert_rule
+>>    landlock: refactors merge and inherit functions
+>>    landlock: moves helper functions
+>>    landlock: refactors helper functions
+>>    landlock: refactors landlock_add_rule syscall
+>>    landlock: user space API network support
+>>    landlock: adds support network rules
+>>    landlock: implements TCP network hooks
+>>    seltests/landlock: moves helper function
+>>    seltests/landlock: adds tests for bind() hooks
+>>    seltests/landlock: adds tests for connect() hooks
+>>    seltests/landlock: adds AF_UNSPEC family test
+>>    seltests/landlock: adds rules overlapping test
+>>    seltests/landlock: adds ruleset expanding test
+>>    seltests/landlock: adds invalid input data test
+>>    samples/landlock: adds network demo
+>>
+>>   include/uapi/linux/landlock.h               |  49 ++
+>>   samples/landlock/sandboxer.c                | 118 ++-
+>>   security/landlock/Kconfig                   |   1 +
+>>   security/landlock/Makefile                  |   2 +
+>>   security/landlock/fs.c                      | 162 +---
+>>   security/landlock/limits.h                  |   8 +-
+>>   security/landlock/net.c                     | 155 ++++
+>>   security/landlock/net.h                     |  26 +
+>>   security/landlock/ruleset.c                 | 448 +++++++++--
+>>   security/landlock/ruleset.h                 |  91 ++-
+>>   security/landlock/setup.c                   |   2 +
+>>   security/landlock/syscalls.c                | 168 +++--
+>>   tools/testing/selftests/landlock/common.h   |  10 +
+>>   tools/testing/selftests/landlock/config     |   4 +
+>>   tools/testing/selftests/landlock/fs_test.c  |  10 -
+>>   tools/testing/selftests/landlock/net_test.c | 774 ++++++++++++++++++++
+>>   16 files changed, 1737 insertions(+), 291 deletions(-)
+>>   create mode 100644 security/landlock/net.c
+>>   create mode 100644 security/landlock/net.h
+>>   create mode 100644 tools/testing/selftests/landlock/net_test.c
+>>
+>> -- 
+>> 2.25.1
+>>
+> 
+> I did a thorough review of all the code. I found that the main issue 
+> with this version is that we stick to the layers limit whereas it is 
+> only relevant for filesystem hierarchies. You'll find in the following 
+> patch miscellaneous fixes and improvement, with some TODOs to get rid of 
+> this layer limit. We'll need a test to check that too. You'll need to 
+> integrate this diff into your patches though.
 
-Thanks,
-Siddh
+You can find the related patch here: 
+https://git.kernel.org/mic/c/8f4104b3dc59e7f110c9b83cdf034d010a2d006f
