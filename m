@@ -2,81 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C9AC04A68
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Jul 2022 14:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19025C3F6B0
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Jul 2022 16:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234212AbiG0OtW (ORCPT
+        id S233914AbiG0QVd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Jul 2022 10:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37280 "EHLO
+        Wed, 27 Jul 2022 12:21:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233042AbiG0OtV (ORCPT
+        with ESMTP id S234075AbiG0QVc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Jul 2022 10:49:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C5E693FA16
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Jul 2022 07:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1658933360;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Pr0XffMgM0PbydBzrF3k1K/HGVzJTnmqlVyn8cjx5NE=;
-        b=Fz0PgOY+vTH1TKrLdv79X8XtDPEYwGzrIf/q+3hQuAIc6bTjskKzdOcdAXdIigEfUitiQu
-        YT2wbWnv7yas5/V9/TtdCPuuDfiK//uio6gMezlnI/K5mTjigIDVCGtO+G3qlCLUFqGYH5
-        a+ZAnsyGAHlkRbeqgQtKaqZ6zmT+qwA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-220-4S3EawaGOK6EetPWgEohYw-1; Wed, 27 Jul 2022 10:49:18 -0400
-X-MC-Unique: 4S3EawaGOK6EetPWgEohYw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A2FA285A581;
-        Wed, 27 Jul 2022 14:49:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7CF9AC33AE6;
-        Wed, 27 Jul 2022 14:49:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20220724071958.2557-1-hdanton@sina.com>
-References: <20220724071958.2557-1-hdanton@sina.com> <20220724052426.2504-1-hdanton@sina.com>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     dhowells@redhat.com, Siddh Raman Pant <code@siddh.me>,
+        Wed, 27 Jul 2022 12:21:32 -0400
+Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0796343E48;
+        Wed, 27 Jul 2022 09:21:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1658938862; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=YPp9A7wZ03tp8wezdjbFc7e9zwHpNpauHaJ6PHEKXYAihY+pGlTxgXZNIVVwMzJDCqoExmkzi+bP88Vs+c84o3IveIS0vlBR9TY6ieWSSQqFIt7ItCbxLv1/8+ZNksi6lMeMPg+lLvvwSVKOziC4MwzwgqqC5bK9eHPilrNGj1I=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1658938862; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=9bWNAdarOcU8borJ9QY+qCVRT1DHj4b2kF/jYpSU85c=; 
+        b=WLnR68oCZhvr3LV8cR3r+pA1PahfvotNElQAGKwKistPSqtxzjgjDZuO+uSuL0Nea+ID0/WmdXNxQgb6mzCksukbuDYsRXUww3HbemDvK1iNcvR28RonnH6fwYPq8Qi633QtCoBwBKSdXeXcZTZHLxYKM3xZt3pNt9zulc/2OW0=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1658938862;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=9bWNAdarOcU8borJ9QY+qCVRT1DHj4b2kF/jYpSU85c=;
+        b=WBiMOvQofgnmrlX/KDTIEWdpfV4rkfLrTG5khAOmhrYCG98rlbYRkEUNabWjw6nu
+        OFttNqXLjHsqjrq7SLioHW6hhVhlA9XdS14RGv9TzPfbf9FA1BKrD7RJauVo/ezCWMM
+        El4HJjMSakXH4IOQchuwITyfgJ3Cg3vVrwzdqWUQ=
+Received: from mail.zoho.in by mx.zoho.in
+        with SMTP id 1658938852066566.1813973782993; Wed, 27 Jul 2022 21:50:52 +0530 (IST)
+Date:   Wed, 27 Jul 2022 21:50:52 +0530
+From:   Siddh Raman Pant <code@siddh.me>
+To:     "David Howells" <dhowells@redhat.com>
+Cc:     "Greg KH" <gregkh@linuxfoundation.org>,
+        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+        "Eric Dumazet" <edumazet@google.com>,
         "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "syzbot+c70d87ac1d001f29a058" 
-        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>,
         "linux-security-modules" <linux-security-module@vger.kernel.org>,
         "linux-kernel-mentees" 
-        <linux-kernel-mentees@lists.linuxfoundation.org>
-Subject: Re: [PATCH v2] kernel/watch_queue: Make pipe NULL while clearing watch_queue
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "syzbot+c70d87ac1d001f29a058" 
+        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>
+Message-ID: <182407602ce.190e58816827.7904364186178466266@siddh.me>
+In-Reply-To: <3558070.1658933200@warthog.procyon.org.uk>
+References: <1822b768504.1d4e377e236061.5518350412857967240@siddh.me> <20220723135447.199557-1-code@siddh.me> <Ytv/4Tljvlt0PJ2r@kroah.com> <3558070.1658933200@warthog.procyon.org.uk>
+Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3565219.1658933355.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 27 Jul 2022 15:49:15 +0100
-Message-ID: <3565221.1658933355@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hillf Danton <hdanton@sina.com> wrote:
+On Wed, 27 Jul 2022 20:16:40 +0530  David Howells <dhowells@redhat.com> wrote:
+> Siddh Raman Pant <code@siddh.me> wrote:
+> 
+> > Greg KH <gregkh@linuxfoundation.org> wrote:
+> 
+> > > > - spin_unlock_bh(&wqueue->lock);
+> > > >   rcu_read_unlock();
+> > >
+> > > Also you now have a spinlock held when calling rcu_read_unlock(), are
+> > > you sure that's ok?
+> 
+> Worse, we have softirqs disabled still, which might cause problems for
+> rcu_read_unlock()?
+> 
+> > We logically should not do write operations in a read critical section, so the
+> > nulling of `wqueue->pipe->watch_queue` should happen after rcu_read_unlock().
+> > Also, since we already have a spinlock, we can use it to ensure the nulling.
+> > So I think it is okay.
+> 
+> Read/write locks are perhaps misnamed in this sense; they perhaps should be
+> shared/exclusive.  But, yes, we *can* do certain write operations with the
+> lock held - if we're careful.  Locks are required if we need to pairs of
+> related memory accesses; if we're only making a single non-dependent write,
+> then we don't necessarily need a write lock.
+> 
+> However, you're referring to RCU read lock.  That's a very special lock that
+> has to do with maintenance of persistence of objects without taking any other
+> lock.  The moment you drop that lock, anything you accessed under RCU protocol
+> rules should be considered to have evaporated.
+> 
+> Think of it more as a way to have a deferred destructor/deallocator.
+> 
+> So I would do:
+> 
+> +
+> +       /* Clearing the watch queue, so we should clean the associated pipe. */
+> +       if (wqueue->pipe) {
+> +               wqueue->pipe->watch_queue = NULL;
+> +               wqueue->pipe = NULL;
+> +       }
+> +
+>         spin_unlock_bh(&wqueue->lock);
+>         rcu_read_unlock();
+>  }
+> 
+> However, since you're now changing wqueue->pipe whilst a notification is being
+> posted, you need a barrier in post_one_notification() to prevent the compiler
+> from reloading the value:
+> 
+>         struct pipe_inode_info *pipe = READ_ONCE(wqueue->pipe);
+> 
+> David
+> 
 
-> Yes, you are right. I missed 353f7988dd84 ("watchqueue: make sure to ser=
-ialize
-> 'wqueue->defunct' properly"). Sorry for my noise.
-> =
+Thank you for explaining it!
 
-> Given defunct serialized, still need to clear wqueue->pipe in the clear
-> path as proposed?
+I will send a v3. Should I add a Suggested-by tag mentioning you?
 
-In fact, with the locking, is wqueue->defunct even still needed, I wonder?
-
-David
-
+Thanks,
+Siddh
