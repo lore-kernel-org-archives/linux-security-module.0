@@ -2,254 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13EAEC04A68
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jul 2022 14:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 999EDC04A68
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jul 2022 15:52:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbiG1OtD (ORCPT
+        id S232464AbiG1PwB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Jul 2022 10:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56908 "EHLO
+        Thu, 28 Jul 2022 11:52:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiG1OtC (ORCPT
+        with ESMTP id S232435AbiG1PwB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Jul 2022 10:49:02 -0400
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8D0152FC2
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Jul 2022 07:49:00 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lttnk72LXzMq6g7;
-        Thu, 28 Jul 2022 16:48:58 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lttnk2R1wzlqws1;
-        Thu, 28 Jul 2022 16:48:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1659019738;
-        bh=1KSzps2FiDNUEsMo4bn2QdGV/JFCQrKWqavbNdoEi9w=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=zICIAE8Whjm7YrvVrMDcOP9hhl0wYVp13iBOnuMoEFyNfH22Ply5FauIHhQ/PIVmT
-         gDr1zsnMaiVSnOvnrP0YHoBnTNrfZipziaXBQouRSqYQ6eko5VIFPilR6sj9yOEt4I
-         N/t1uWCzkKWh/Cje8NtU7X7eKybf4gAj1FxHzR0E=
-Message-ID: <e0ee8ddd-e34d-eb4d-1258-09c70753c294@digikod.net>
-Date:   Thu, 28 Jul 2022 16:48:57 +0200
+        Thu, 28 Jul 2022 11:52:01 -0400
+Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 819766BC35;
+        Thu, 28 Jul 2022 08:51:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1659023494; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=Uoivu6Vw8N4PfBieS8/LwV2EQRNlD+AssZI3OJn5KE0QEVhIQfeIIvNXCVf0fWZSxTJGRTqElYNdVo5QCmsl9KKqY5H0BV6IqN3i+SIYyXbvD7fO9cKcizRRYSWAJfh2IczAHtdjCQ8d86DVa1zRPtSAZdCbFAsOubhDbPooMs4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1659023494; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=eIVJdUXeEoFT0XsTWsjdI7cmvorFUz8L2j4z7229AqY=; 
+        b=RVch7ePCikqtfxJqLaM+nv8llTUaXEANzYlKNrGZn09b2WiBWDcFingqQn1ztDMm+Qo/4Ta/LmqduVa1kCugIU+55e8oUlIeOq6W2omdIzZORaB7QLqUwWzXCBTcnWkZo+2KICsCACSJnhXZ1HPxvASKVtUYNNgJAa9F+B5wD+w=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1659023494;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=From:From:To:To:Cc:Cc:Message-ID:Subject:Subject:Date:Date:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+        bh=eIVJdUXeEoFT0XsTWsjdI7cmvorFUz8L2j4z7229AqY=;
+        b=N6d4JhE7ZNMe/aFMTTJJsjLy6QJLLpWLY/QbLPU1ywmqu6AXmKXNk3+CV0gNPZhg
+        owpUBrPVFeu9XqnZZN9JKcEn06olrfFAotIDh7BukRhSC+KlhRwrD2Motes9YjZDKor
+        H8bneZk037DCCPqx+T1QJD7cIV0hFpj3cQIQkAGU=
+Received: from localhost.localdomain (43.250.165.51 [43.250.165.51]) by mx.zoho.in
+        with SMTPS id 1659023493370468.4685004171713; Thu, 28 Jul 2022 21:21:33 +0530 (IST)
+From:   Siddh Raman Pant <code@siddh.me>
+To:     David Howells <dhowells@redhat.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Eric Dumazet <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Cc:     linux-security-modules <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees 
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com
+Message-ID: <20220728155121.12145-1-code@siddh.me>
+Subject: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing watch_queue
+Date:   Thu, 28 Jul 2022 21:21:21 +0530
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        anton.sirazetdinov@huawei.com
-References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
- <20220621082313.3330667-3-konstantin.meskhidze@huawei.com>
- <0bbbcf21-1e7d-5585-545f-bf89d8ebd527@digikod.net>
- <7735ae47-9088-be29-2696-c5170031d7c2@huawei.com>
- <b08fe5cc-3be0-390b-3575-4f27f795f609@digikod.net>
- <6ee7e769-ce91-a6cc-378b-f206e04d112a@huawei.com>
- <582f8ace-1f95-16a6-fa9e-4014ddd8b7f2@digikod.net>
- <223e6a19-058e-439e-ef29-a53d086838d9@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v6 02/17] landlock: refactors landlock_find/insert_rule
-In-Reply-To: <223e6a19-058e-439e-ef29-a53d086838d9@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+If not done, a reference to a freed pipe remains in the watch_queue,
+as this function is called before freeing a pipe in free_pipe_info()
+(see line 834 of fs/pipe.c).
 
-On 11/07/2022 16:05, Konstantin Meskhidze (A) wrote:
-> 
-> 
-> 7/8/2022 5:35 PM, Mickaël Salaün пишет:
->>
->> On 08/07/2022 16:14, Konstantin Meskhidze (A) wrote:
->>>
->>>
->>> 7/8/2022 4:59 PM, Mickaël Salaün пишет:
->>>>
->>>> On 08/07/2022 15:10, Konstantin Meskhidze (A) wrote:
->>>>>
->>>>>
->>>>> 7/7/2022 7:44 PM, Mickaël Salaün пишет:
->>>>>>
->>>>>> On 21/06/2022 10:22, Konstantin Meskhidze wrote:
->>>>>>> Adds a new object union to support a socket port
->>>>>>> rule type. Refactors landlock_insert_rule() and
->>>>>>> landlock_find_rule() to support coming network
->>>>>>> modifications. Now adding or searching a rule
->>>>>>> in a ruleset depends on a rule_type argument
->>>>>>> provided in refactored functions mentioned above.
->>>>>>>
->>>>>>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->>>>>>> ---
->>>>>>>
->>>>>>> Changes since v5:
->>>>>>> * Formats code with clang-format-14.
->>>>>>>
->>>>>>> Changes since v4:
->>>>>>> * Refactors insert_rule() and create_rule() functions by deleting
->>>>>>> rule_type from their arguments list, it helps to reduce useless code.
->>>>>>>
->>>>>>> Changes since v3:
->>>>>>> * Splits commit.
->>>>>>> * Refactors landlock_insert_rule and landlock_find_rule functions.
->>>>>>> * Rename new_ruleset->root_inode.
->>>>>>>
->>>>>>> ---
->>>>>>>    security/landlock/fs.c      |   7 ++-
->>>>>>>    security/landlock/ruleset.c | 105
->>>>>>> ++++++++++++++++++++++++++----------
->>>>>>>    security/landlock/ruleset.h |  27 +++++-----
->>>>>>>    3 files changed, 96 insertions(+), 43 deletions(-)
->>>>>>>
->>>>>>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
->>>>>>> index e6da08ed99d1..46aedc2a05a8 100644
->>>>>>> --- a/security/landlock/fs.c
->>>>>>> +++ b/security/landlock/fs.c
->>>>>>> @@ -173,7 +173,8 @@ int landlock_append_fs_rule(struct
->>>>>>> landlock_ruleset *const ruleset,
->>>>>>>        if (IS_ERR(object))
->>>>>>>            return PTR_ERR(object);
->>>>>>>        mutex_lock(&ruleset->lock);
->>>>>>> -    err = landlock_insert_rule(ruleset, object, access_rights);
->>>>>>> +    err = landlock_insert_rule(ruleset, object, 0, access_rights,
->>>>>>> +                   LANDLOCK_RULE_PATH_BENEATH);
->>>>>>>        mutex_unlock(&ruleset->lock);
->>>>>>>        /*
->>>>>>>         * No need to check for an error because landlock_insert_rule()
->>>>>>> @@ -204,7 +205,9 @@ find_rule(const struct landlock_ruleset *const
->>>>>>> domain,
->>>>>>>        inode = d_backing_inode(dentry);
->>>>>>>        rcu_read_lock();
->>>>>>>        rule = landlock_find_rule(
->>>>>>> -        domain, rcu_dereference(landlock_inode(inode)->object));
->>>>>>> +        domain,
->>>>>>> +        (uintptr_t)rcu_dereference(landlock_inode(inode)->object),
->>>>>>> +        LANDLOCK_RULE_PATH_BENEATH);
->>>>>>>        rcu_read_unlock();
->>>>>>>        return rule;
->>>>>>>    }
->>>>>>> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
->>>>>>> index a3fd58d01f09..5f13f8a12aee 100644
->>>>>>> --- a/security/landlock/ruleset.c
->>>>>>> +++ b/security/landlock/ruleset.c
->>>>>>> @@ -35,7 +35,7 @@ static struct landlock_ruleset
->>>>>>> *create_ruleset(const u32 num_layers)
->>>>>>>            return ERR_PTR(-ENOMEM);
->>>>>>>        refcount_set(&new_ruleset->usage, 1);
->>>>>>>        mutex_init(&new_ruleset->lock);
->>>>>>> -    new_ruleset->root = RB_ROOT;
->>>>>>> +    new_ruleset->root_inode = RB_ROOT;
->>>>>>>        new_ruleset->num_layers = num_layers;
->>>>>>>        /*
->>>>>>>         * hierarchy = NULL
->>>>>>> @@ -69,7 +69,8 @@ static void build_check_rule(void)
->>>>>>>    }
->>>>>>>
->>>>>>>    static struct landlock_rule *
->>>>>>> -create_rule(struct landlock_object *const object,
->>>>>>> +create_rule(struct landlock_object *const object_ptr,
->>>>>>> +        const uintptr_t object_data,
->>>>>>>            const struct landlock_layer (*const layers)[], const u32
->>>>>>> num_layers,
->>>>>>>            const struct landlock_layer *const new_layer)
->>>>>>>    {
->>>>>>> @@ -90,8 +91,15 @@ create_rule(struct landlock_object *const object,
->>>>>>>        if (!new_rule)
->>>>>>>            return ERR_PTR(-ENOMEM);
->>>>>>>        RB_CLEAR_NODE(&new_rule->node);
->>>>>>> -    landlock_get_object(object);
->>>>>>> -    new_rule->object = object;
->>>>>>> +
->>>>>>> +    if (object_ptr) {
->>>>>>> +        landlock_get_object(object_ptr);
->>>>>>> +        new_rule->object.ptr = object_ptr;
->>>>>>> +    } else if (object_ptr && object_data) {
->>>>>>
->>>>>> Something is wrong with this second check: else + object_ptr?
->>>>>
->>>>>    Sorry. Do you mean logical error here? I got your point.
->>>>>    You are right!
->>>>>
->>>>>    I think it must be refactored like this:
->>>>>
->>>>>       if (object_ptr && !object_data) {
->>>>>           landlock_get_object(object_ptr);
->>>>>           new_rule->object.ptr = object_ptr;
->>>>>       } else if (object_ptr && object_data) {
->>>>>           ...
->>>>>       }
->>>>
->>>> There is indeed a logical error but this doesn't fix everything. Please
->>>> include my previous suggestion instead.
->>>>
->>>      By the way, in the next commits I have fixed this logic error.
->>> Anyway I will refactor this one also. Thanks.
->>>>
->>>>> Plus, I will add a test for this case.
->>>>
->>>> That would be great but I don't think this code is reachable from user
->>>> space. I think that would require kunit but I may be missing something.
->>>> How would you test this?
->>>
->>> You are correct. I checked it. It's impossible to reach this line from
->>> userpace (insert both object_ptr and object_data). But create_rule()
->>> must be used carefuly by other developers (if any in future). Do you
->>> think if its possible to have some internal kernel tests that could
->>> handle this issue?
->>
->> We can use kunit tests for such kernel functions, but in this case I'm
->> not sure what could be tested. I started working on bringing kunit tests
->> to Landlock but it's not ready yet. Please list all non-userspace tests
->> you can think about.
-> 
->    I'm thinking about ones that we can't reach from the userspace.
+This causes a UAF when post_one_notification() tries to access the pipe
+on a key update, which is reported by syzbot.
 
-Right, some lines cannot be reached by user space because they are logically
-not possible but safety checks in case of unexpected kernel code modification
-(which, unfortunately, cannot be done at build time).
+We also need to use READ_ONCE() in post_one_notification() to prevent the
+compiler from optimising and loading a non-NULL value from wqueue->pipe.
+
+Bug report: https://syzkaller.appspot.com/bug?id=3D1870dd7791ba05f2ea7f47f7=
+cbdde701173973fc
+Reported-and-tested-by: syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.c=
+om
+
+Signed-off-by: Siddh Raman Pant <code@siddh.me>
+---
+Changes in v3:
+- Restore the original unlock order, and clear before unlock.
+- Use READ_ONCE() in post path.
+
+This was explained by David Howells <dhowells@redhat.com> in
+reply to v1. Not added Suggested-by since he didn't reply yet.
+
+Changes in v2:
+- Removed the superfluous ifdef guard.
+
+ kernel/watch_queue.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+index bb9962b33f95..617425e34252 100644
+--- a/kernel/watch_queue.c
++++ b/kernel/watch_queue.c
+@@ -99,7 +99,7 @@ static bool post_one_notification(struct watch_queue *wqu=
+eue,
+ =09=09=09=09  struct watch_notification *n)
+ {
+ =09void *p;
+-=09struct pipe_inode_info *pipe =3D wqueue->pipe;
++=09struct pipe_inode_info *pipe =3D READ_ONCE(wqueue->pipe);
+ =09struct pipe_buffer *buf;
+ =09struct page *page;
+ =09unsigned int head, tail, mask, note, offset, len;
+@@ -637,6 +637,12 @@ void watch_queue_clear(struct watch_queue *wqueue)
+ =09=09spin_lock_bh(&wqueue->lock);
+ =09}
+=20
++=09/* Clearing the watch queue, so we should clean the associated pipe. */
++=09if (wqueue->pipe) {
++=09=09wqueue->pipe->watch_queue =3D NULL;
++=09=09wqueue->pipe =3D NULL;
++=09}
++
+ =09spin_unlock_bh(&wqueue->lock);
+ =09rcu_read_unlock();
+ }
+--=20
+2.35.1
 
 
->    I analyzed test coverage logs finding lines that are untouched by the
-> userspace tests.
->    Let's discus this list:
-> 
-> 	1. create_rule():  - insert both  object_ptr and object_data.
-
-This check is gone with my last patch.
-
-> 
-> 	2. insert_rule():  - insert both  object_ptr and object_data.
-
-This check is gone with my last patch.
-
-
-> 			   - insert NULL (*const layers).
-> 			   - insert layers[0].level != 0.
-> 			   - insert num_layers != 1.
-> 			   - insert default rule_type.
-> 	
-> 	3. tree_merge():   - insert default rule_type.
-> 			   - insert walker_rule->num_layers != 1.
-> 			   - insert walker_rule->layers[0].level != 0.
-> 	
-> 	4. tree_copy():    - insert default rule_type.
-> 	
-> 	5. merge_ruleset:  - insert !dst || !dst->hierarchy.
-> 			   - insert src->num_layers != 1 ||
->                                       dst->num_layers < 1.
-> 
-> 	6. inherit_ruleset(): - insert child->num_layers <=
-> 				   parent->num_layers.
->    			      - insert parent->hierarchy = NULL.
-> 
-> 	7. landlock_merge_ruleset(): - insert ruleset = NULL.
-> 				     - insert parent = ruleset
-> 
-> 	8. landlock_find_rule(): - insert default rule_type.
-> 
->    Please your opinion?
-
-All these checks are enclosed with WARN_ON_ONCE(). I'm not sure it will help
-to add kunit tests for them. It could be interesting to add kunit test to
-check the behavior of standalone helpers though, e.g. managing rulesets or
-trees.
