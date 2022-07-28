@@ -2,71 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C5DC04A68
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jul 2022 10:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82728C19F29
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jul 2022 11:27:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235831AbiG1KOC (ORCPT
+        id S234498AbiG1L1i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Jul 2022 06:14:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
+        Thu, 28 Jul 2022 07:27:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235788AbiG1KOB (ORCPT
+        with ESMTP id S231272AbiG1L1h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Jul 2022 06:14:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 32A55655B0
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Jul 2022 03:14:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1659003239;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cRquouMZ72XSevzpz4XHT0m3YbEnzXxom7ZqAfoxxsU=;
-        b=IeI9w2oEDrk16NuuzajHr2F7A6MlhTfbe8JuSi7qD/5CokLJ8XqwlGep+y33uNuVAvd4iY
-        2nFtZ5HS6jMIrMn2yVLyb99A3/kur01dHcN/Va0dPJBwc1O3rFC0d1hAwAZicwh8E0VfDY
-        vImhzywWJ9FjzHiqboSB9rZcJL4Mt28=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-144-21pW1NJ5Poe1rZSJWc6qmg-1; Thu, 28 Jul 2022 06:13:54 -0400
-X-MC-Unique: 21pW1NJ5Poe1rZSJWc6qmg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7FCA8811E75;
-        Thu, 28 Jul 2022 10:13:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E76262166B26;
-        Thu, 28 Jul 2022 10:13:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YstqXEPmPV2YUfWN@kernel.org>
-References: <YstqXEPmPV2YUfWN@kernel.org> <20220704025248.3695-1-zeming@nfschina.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     dhowells@redhat.com, Li zeming <zeming@nfschina.com>,
-        jmorris@namei.org, serge@hallyn.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@nfschina.com
-Subject: Re: [PATCH] keys/keyctl: Fix typo in string
+        Thu, 28 Jul 2022 07:27:37 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E893BD;
+        Thu, 28 Jul 2022 04:27:35 -0700 (PDT)
+Received: from fraeml709-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4LtpGs0scTz6H7Bh;
+        Thu, 28 Jul 2022 19:25:25 +0800 (CST)
+Received: from lhreml745-chm.china.huawei.com (10.201.108.195) by
+ fraeml709-chm.china.huawei.com (10.206.15.37) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 28 Jul 2022 13:27:32 +0200
+Received: from [10.122.132.241] (10.122.132.241) by
+ lhreml745-chm.china.huawei.com (10.201.108.195) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 28 Jul 2022 12:27:31 +0100
+Message-ID: <69215fd9-6f85-9329-14c6-2dd830af9528@huawei.com>
+Date:   Thu, 28 Jul 2022 14:27:30 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2687695.1659003230.1@warthog.procyon.org.uk>
-Date:   Thu, 28 Jul 2022 11:13:50 +0100
-Message-ID: <2687696.1659003230@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v6 00/17] Network support for Landlock
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <anton.sirazetdinov@huawei.com>
+References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
+ <4c57a0c2-e207-10d6-c73d-bcda66bf3963@digikod.net>
+ <6691d91f-c03b-30fa-2fa0-d062b3b234b9@digikod.net>
+ <38fa02c6-a8d1-892b-3f30-4a2d6b38efe5@huawei.com>
+ <83796b1f-d2c0-06f9-c5fd-eb81d51a1a95@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <83796b1f-d2c0-06f9-c5fd-eb81d51a1a95@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ lhreml745-chm.china.huawei.com (10.201.108.195)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Jarkko Sakkinen <jarkko@kernel.org> wrote:
 
-> Please, add
+
+7/28/2022 1:12 PM, Mickaël Salaün пишет:
 > 
-> Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
+> 
+> On 28/07/2022 11:25, Konstantin Meskhidze (A) wrote:
+>> 
+>> 
+>> 7/27/2022 10:54 PM, Mickaël Salaün пишет:
+>>>
+>>>
+>>> On 26/07/2022 19:43, Mickaël Salaün wrote:
+>>>>
+>>>> On 21/06/2022 10:22, Konstantin Meskhidze wrote:
+>>>>> Hi,
+>>>>> This is a new V6 patch related to Landlock LSM network confinement.
+>>>>> It is based on the latest landlock-wip branch on top of v5.19-rc2:
+>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=landlock-wip
+>>>>>
+>>>>> It brings refactoring of previous patch version V5:
+>>>>>      - Fixes some logic errors and typos.
+>>>>>      - Adds additional FIXTURE_VARIANT and FIXTURE_VARIANT_ADD helpers
+>>>>>      to support both ip4 and ip6 families and shorten seltests' code.
+>>>>>      - Makes TCP sockets confinement support optional in sandboxer 
+>>>>> demo.
+>>>>>      - Formats the code with clang-format-14
+>>>>>
+>>>>> All test were run in QEMU evironment and compiled with
+>>>>>   -static flag.
+>>>>>   1. network_test: 18/18 tests passed.
+>>>>>   2. base_test: 7/7 tests passed.
+>>>>>   3. fs_test: 59/59 tests passed.
+>>>>>   4. ptrace_test: 8/8 tests passed.
+>>>>>
+>>>>> Still have issue with base_test were compiled without -static flag
+>>>>> (landlock-wip branch without network support)
+>>>>> 1. base_test: 6/7 tests passed.
+>>>>>   Error:
+>>>>>   #  RUN           global.inconsistent_attr ...
+>>>>>   # base_test.c:54:inconsistent_attr:Expected ENOMSG (42) == errno (22)
+>>>>>   # inconsistent_attr: Test terminated by assertion
+>>>>>   #          FAIL  global.inconsistent_attr
+>>>>> not ok 1 global.inconsistent_attr
+>>>>>
+>>>>> LCOV - code coverage report:
+>>>>>              Hit  Total  Coverage
+>>>>> Lines:      952  1010    94.3 %
+>>>>> Functions:  79   82      96.3 %
+>>>>>
+>>>>> Previous versions:
+>>>>> v5: 
+>>>>> https://lore.kernel.org/linux-security-module/20220516152038.39594-1-konstantin.meskhidze@huawei.com
+>>>>> v4: 
+>>>>> https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+>>>>> v3: 
+>>>>> https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+>>>>> v2: 
+>>>>> https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+>>>>> v1: 
+>>>>> https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
+>>>>>
+>>>>> Konstantin Meskhidze (17):
+>>>>>    landlock: renames access mask
+>>>>>    landlock: refactors landlock_find/insert_rule
+>>>>>    landlock: refactors merge and inherit functions
+>>>>>    landlock: moves helper functions
+>>>>>    landlock: refactors helper functions
+>>>>>    landlock: refactors landlock_add_rule syscall
+>>>>>    landlock: user space API network support
+>>>>>    landlock: adds support network rules
+>>>>>    landlock: implements TCP network hooks
+>>>>>    seltests/landlock: moves helper function
+>>>>>    seltests/landlock: adds tests for bind() hooks
+>>>>>    seltests/landlock: adds tests for connect() hooks
+>>>>>    seltests/landlock: adds AF_UNSPEC family test
+>>>>>    seltests/landlock: adds rules overlapping test
+>>>>>    seltests/landlock: adds ruleset expanding test
+>>>>>    seltests/landlock: adds invalid input data test
+>>>>>    samples/landlock: adds network demo
+>>>>>
+>>>>>   include/uapi/linux/landlock.h               |  49 ++
+>>>>>   samples/landlock/sandboxer.c                | 118 ++-
+>>>>>   security/landlock/Kconfig                   |   1 +
+>>>>>   security/landlock/Makefile                  |   2 +
+>>>>>   security/landlock/fs.c                      | 162 +---
+>>>>>   security/landlock/limits.h                  |   8 +-
+>>>>>   security/landlock/net.c                     | 155 ++++
+>>>>>   security/landlock/net.h                     |  26 +
+>>>>>   security/landlock/ruleset.c                 | 448 +++++++++--
+>>>>>   security/landlock/ruleset.h                 |  91 ++-
+>>>>>   security/landlock/setup.c                   |   2 +
+>>>>>   security/landlock/syscalls.c                | 168 +++--
+>>>>>   tools/testing/selftests/landlock/common.h   |  10 +
+>>>>>   tools/testing/selftests/landlock/config     |   4 +
+>>>>>   tools/testing/selftests/landlock/fs_test.c  |  10 -
+>>>>>   tools/testing/selftests/landlock/net_test.c | 774 
+>>>>> ++++++++++++++++++++
+>>>>>   16 files changed, 1737 insertions(+), 291 deletions(-)
+>>>>>   create mode 100644 security/landlock/net.c
+>>>>>   create mode 100644 security/landlock/net.h
+>>>>>   create mode 100644 tools/testing/selftests/landlock/net_test.c
+>>>>>
+>>>>> -- 
+>>>>> 2.25.1
+>>>>>
+>>>>
+>>>> I did a thorough review of all the code. I found that the main issue 
+>>>> with this version is that we stick to the layers limit whereas it is 
+>>>> only relevant for filesystem hierarchies. You'll find in the 
+>>>> following patch miscellaneous fixes and improvement, with some TODOs 
+>>>> to get rid of this layer limit. We'll need a test to check that too. 
+>>>> You'll need to integrate this diff into your patches though.
+>>>
+>>> You can find the related patch here:
+>>> https://git.kernel.org/mic/c/8f4104b3dc59e7f110c9b83cdf034d010a2d006f
+>> 
+>>   Is this patch based on your updated landlock-wip branch or it's still 
+>> on Linux 5.19-rc2 version?
+> 
+> It's based on v5.19-rc2 but it doesn't really matter. I removed the
+> landlock-wip branch, which is not needed anymore. You can base your
+> patches on Linus' master branch.
 
-Since it's not a bugfix, I wouldn't put that in.  It doesn't need backporting.
-
-David
-
+   Ok. Thank you.
+> .
