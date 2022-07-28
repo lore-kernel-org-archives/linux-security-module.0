@@ -2,105 +2,248 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC55CC04A68
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jul 2022 15:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC6BC04A68
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jul 2022 16:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232622AbiG1PzE (ORCPT
+        id S229627AbiG1Q0F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Jul 2022 11:55:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38068 "EHLO
+        Thu, 28 Jul 2022 12:26:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231587AbiG1Pyr (ORCPT
+        with ESMTP id S231758AbiG1Q0D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Jul 2022 11:54:47 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB54B6C117
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Jul 2022 08:54:46 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id 6so1834883pgb.13
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Jul 2022 08:54:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kU+1umJQF2o/NXaZ6DOn2fpiiayOd6S6bPdTx2dKd/k=;
-        b=dcP32hnVDAltE5oC+wFB7l+/9L6Z/Bg5HW+o9yRipBBv5uJDAQXieFFGffT0dNJZ7l
-         zEqG4XhEhIB0FrK93YOLQ4BJORQ8hjBdq2MOry8P8m+EZz0Cz2Rj7fHJJ1k3L22PNqoW
-         9YBcW2a6vn5f+takyY6WspSt+E5TvXmdfcbNU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kU+1umJQF2o/NXaZ6DOn2fpiiayOd6S6bPdTx2dKd/k=;
-        b=vd9g1gZojRTULIROfRf7+RwnJB2zXLE3kbS18tUC7ILggMQGpHswSmEdkbjXMnp6qX
-         JTBfqTW+ZJX2xK4xD2urYPonBaXfP7MdQopHoYcQoOHbu6CDgvDFO+6aJDjEWYEL8x6N
-         roApWlOV/a/Ydxxci24Es2n8fadaM91ZV8T4rJ06eqZJ9em9C0b+1DfN6phkXmre0zs+
-         8FDTitc9S1jWmXnjt4swm62R1uDALTzwtiX2MePOLpmAmqvJBISz3hKntMKZtaPxHlEw
-         8uIfjaKTQpmbNDiISjkweh75unoZix7KxECBCH5bSsNNavlpmLmwpq1KrYBZW2fidSNh
-         HOGw==
-X-Gm-Message-State: AJIora9BiHa9fSz+lRT9UBFzEJ8dPZg+4giO3Bc65zOgct6FfaGfuFED
-        9xd5tzmT9Qrsfuwj9uxow5mqIQ==
-X-Google-Smtp-Source: AGRyM1uEQZQL0BQQkR3RNvEAFIjhq7+7MXq8qU7ybWJ2B13O/5RNLqRZS5pTd/rmE0sG+MnN8+l1Xg==
-X-Received: by 2002:a05:6a00:234c:b0:52b:7cb:ed9d with SMTP id j12-20020a056a00234c00b0052b07cbed9dmr27527599pfj.32.1659023686099;
-        Thu, 28 Jul 2022 08:54:46 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:bb10:e729:7f59:7cbc])
-        by smtp.gmail.com with UTF8SMTPSA id i6-20020a626d06000000b0052c70770b24sm974115pfc.40.2022.07.28.08.54.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Jul 2022 08:54:45 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     Douglas Anderson <dianders@chromium.org>, dm-devel@redhat.com,
-        Song Liu <song@kernel.org>, linux-kernel@vger.kernel.org,
-        Milan Broz <gmazyland@gmail.com>, linux-raid@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] dm: verity-loadpin: Drop use of dm_table_get_num_targets()
-Date:   Thu, 28 Jul 2022 08:54:41 -0700
-Message-Id: <20220728085412.1.I242d21b378410eb6f9897a3160efb56e5608c59d@changeid>
-X-Mailer: git-send-email 2.37.1.455.g008518b4e5-goog
+        Thu, 28 Jul 2022 12:26:03 -0400
+X-Greylist: delayed 71977 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 28 Jul 2022 09:25:56 PDT
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE0965816
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Jul 2022 09:25:55 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4LtwxY4kxdzMqCt6;
+        Thu, 28 Jul 2022 18:25:53 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4LtwxX6XCqzln8Vn;
+        Thu, 28 Jul 2022 18:25:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1659025553;
+        bh=Pl4MC1G55w9kjQ0nNPlWhyA8ireueH4Y6aya5DNm77A=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=sGgkpYMboNYEXatLQ9JUVNBqPZW9a2nGSPJb9RPeUN95kDbuv5Kc0oMGF5cX/iJG6
+         p7f/vmPlJ5deyhuH/IVOKdDxdVz31cfRqTQzqEC4mTA5gMDrY86iYdKGqGMxraKyT/
+         G3vDrYxTJSevkqDlzlgDoi+K9qEUdH6h9M+vdbcs=
+Message-ID: <8b3cdfe3-9013-71b5-05c1-469888c65218@digikod.net>
+Date:   Thu, 28 Jul 2022 18:25:52 +0200
 MIME-Version: 1.0
+User-Agent: 
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        linux-security-module@vger.kernel.org
+Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+References: <20220712211405.14705-1-gnoack3000@gmail.com>
+ <20220712211405.14705-2-gnoack3000@gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v2 1/4] landlock: Support file truncation
+In-Reply-To: <20220712211405.14705-2-gnoack3000@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Commit 2aec377a2925 ("dm table: remove dm_table_get_num_targets()
-wrapper") in linux-dm/for-next removed the function
-dm_table_get_num_targets() which is used by verity-loadpin. Access
-table->num_targets directly instead of using the defunct wrapper.
 
-Fixes: b6c1c5745ccc ("dm: Add verity helpers for LoadPin")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
+On 12/07/2022 23:14, Günther Noack wrote:
+> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
+> 
+> This flag hooks into the path_truncate LSM hook and covers file
+> truncation using truncate(2), ftruncate(2), open(2) with O_TRUNC, as
+> well as creat().
+> 
+> This change also increments the Landlock ABI version, updates
+> corresponding selftests, and includes minor documentation changes to
+> document the flag.
+> 
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> Link: https://lore.kernel.org/all/20220707200612.132705-2-gnoack3000@gmail.com/
 
- drivers/md/dm-verity-loadpin.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Please don't include Link tags pointing to the previous version of the 
+patch. You could add it after a "---" but you already added a link to 
+the v1 in your cover letter, which is great. I'll add fresh links 
+pointing to your emails when I'll merge your changes.
 
-diff --git a/drivers/md/dm-verity-loadpin.c b/drivers/md/dm-verity-loadpin.c
-index 10c18bc1652c..387ec43aef72 100644
---- a/drivers/md/dm-verity-loadpin.c
-+++ b/drivers/md/dm-verity-loadpin.c
-@@ -5,6 +5,7 @@
- #include <linux/dm-verity-loadpin.h>
- 
- #include "dm.h"
-+#include "dm-core.h"
- #include "dm-verity.h"
- 
- #define DM_MSG_PREFIX	"verity-loadpin"
-@@ -58,7 +59,7 @@ bool dm_verity_loadpin_is_bdev_trusted(struct block_device *bdev)
- 
- 	table = dm_get_live_table(md, &srcu_idx);
- 
--	if (dm_table_get_num_targets(table) != 1)
-+	if (table->num_targets != 1)
- 		goto out;
- 
- 	ti = dm_table_get_target(table, 0);
--- 
-2.37.1.455.g008518b4e5-goog
+Also, don't add anything after your Signed-off-by, it should be the last 
+line of your commit message.
 
+
+> ---
+>   Documentation/userspace-api/landlock.rst     |  5 +++++
+>   include/uapi/linux/landlock.h                | 13 +++++++++----
+>   security/landlock/fs.c                       |  9 ++++++++-
+>   security/landlock/limits.h                   |  2 +-
+>   security/landlock/syscalls.c                 |  2 +-
+>   tools/testing/selftests/landlock/base_test.c |  2 +-
+>   tools/testing/selftests/landlock/fs_test.c   |  7 ++++---
+>   7 files changed, 29 insertions(+), 11 deletions(-)
+> 
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> index b8ea59493964..b86fd94ae797 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -380,6 +380,11 @@ by the Documentation/admin-guide/cgroup-v1/memory.rst.
+>   Previous limitations
+>   ====================
+>   
+> +File truncation (ABI 1-2)
+
+I think "ABI < 3" should be easier to understand.
+
+
+> +-------------------------
+> +
+> +File truncation was not restrictable in ABI 1-2, so it was always permitted.
+
+What about:
+File truncation couldn't be denied before the third Landlock ABI, so it 
+is always allowed for kernels only supporting the first to the second ABI.
+
+
+> +
+>   File renaming and linking (ABI 1)
+>   ---------------------------------
+>   
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 23df4e0e8ace..9ca7f9d0d862 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -96,7 +96,12 @@ struct landlock_path_beneath_attr {
+>    *
+>    * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
+>    * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access.
+> + *   Note that you might additionally need the LANDLOCK_ACCESS_FS_TRUNCATE
+> + *   right in order to overwrite files with open(2) using O_TRUNC or creat(2).
+>    * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
+> + * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file through file truncation
+> + *   APIs like truncate(2), ftruncate(2), open(2) with O_TRUNC or creat(2).
+> + *   This access right is available since the third version of the Landlock ABI.
+>    *
+>    * A directory can receive access rights related to files or directories.  The
+>    * following access right is applied to the directory itself, and the
+> @@ -139,10 +144,9 @@ struct landlock_path_beneath_attr {
+>    *
+>    *   It is currently not possible to restrict some file-related actions
+>    *   accessible through these syscall families: :manpage:`chdir(2)`,
+> - *   :manpage:`truncate(2)`, :manpage:`stat(2)`, :manpage:`flock(2)`,
+> - *   :manpage:`chmod(2)`, :manpage:`chown(2)`, :manpage:`setxattr(2)`,
+> - *   :manpage:`utime(2)`, :manpage:`ioctl(2)`, :manpage:`fcntl(2)`,
+> - *   :manpage:`access(2)`.
+> + *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+> + *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+> + *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
+>    *   Future Landlock evolutions will enable to restrict them.
+>    */
+>   /* clang-format off */
+> @@ -160,6 +164,7 @@ struct landlock_path_beneath_attr {
+>   #define LANDLOCK_ACCESS_FS_MAKE_BLOCK			(1ULL << 11)
+>   #define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
+>   #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+> +#define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+>   /* clang-format on */
+>   
+>   #endif /* _UAPI_LINUX_LANDLOCK_H */
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index ec5a6247cd3e..c57f581a9cd5 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -146,7 +146,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+>   #define ACCESS_FILE ( \
+>   	LANDLOCK_ACCESS_FS_EXECUTE | \
+>   	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> -	LANDLOCK_ACCESS_FS_READ_FILE)
+> +	LANDLOCK_ACCESS_FS_READ_FILE | \
+> +	LANDLOCK_ACCESS_FS_TRUNCATE)
+>   /* clang-format on */
+>   
+>   /*
+> @@ -1140,6 +1141,11 @@ static int hook_path_rmdir(const struct path *const dir,
+>   	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_DIR);
+>   }
+>   
+> +static int hook_path_truncate(const struct path *const path)
+> +{
+> +	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+> +}
+> +
+>   /* File hooks */
+>   
+>   static inline access_mask_t get_file_access(const struct file *const file)
+> @@ -1192,6 +1198,7 @@ static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
+>   	LSM_HOOK_INIT(path_symlink, hook_path_symlink),
+>   	LSM_HOOK_INIT(path_unlink, hook_path_unlink),
+>   	LSM_HOOK_INIT(path_rmdir, hook_path_rmdir),
+> +	LSM_HOOK_INIT(path_truncate, hook_path_truncate),
+>   
+>   	LSM_HOOK_INIT(file_open, hook_file_open),
+>   };
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index b54184ab9439..82288f0e9e5e 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -18,7 +18,7 @@
+>   #define LANDLOCK_MAX_NUM_LAYERS		16
+>   #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+>   
+> -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_REFER
+> +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_TRUNCATE
+>   #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>   #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>   
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index 735a0865ea11..f4d6fc7ed17f 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -129,7 +129,7 @@ static const struct file_operations ruleset_fops = {
+>   	.write = fop_dummy_write,
+>   };
+>   
+> -#define LANDLOCK_ABI_VERSION 2
+> +#define LANDLOCK_ABI_VERSION 3
+>   
+>   /**
+>    * sys_landlock_create_ruleset - Create a new ruleset
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> index da9290817866..72cdae277b02 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -75,7 +75,7 @@ TEST(abi_version)
+>   	const struct landlock_ruleset_attr ruleset_attr = {
+>   		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+>   	};
+> -	ASSERT_EQ(2, landlock_create_ruleset(NULL, 0,
+> +	ASSERT_EQ(3, landlock_create_ruleset(NULL, 0,
+>   					     LANDLOCK_CREATE_RULESET_VERSION));
+>   
+>   	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 21a2ce8fa739..cb77eaa01c91 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -399,9 +399,10 @@ TEST_F_FORK(layout1, inval)
+>   #define ACCESS_FILE ( \
+>   	LANDLOCK_ACCESS_FS_EXECUTE | \
+>   	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> -	LANDLOCK_ACCESS_FS_READ_FILE)
+> +	LANDLOCK_ACCESS_FS_READ_FILE | \
+> +	LANDLOCK_ACCESS_FS_TRUNCATE)
+>   
+> -#define ACCESS_LAST LANDLOCK_ACCESS_FS_REFER
+> +#define ACCESS_LAST LANDLOCK_ACCESS_FS_TRUNCATE
+>   
+>   #define ACCESS_ALL ( \
+>   	ACCESS_FILE | \
+> @@ -415,7 +416,7 @@ TEST_F_FORK(layout1, inval)
+>   	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
+>   	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
+>   	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+> -	ACCESS_LAST)
+> +	LANDLOCK_ACCESS_FS_REFER)
+>   
+>   /* clang-format on */
+>   
