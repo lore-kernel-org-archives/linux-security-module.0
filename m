@@ -2,133 +2,146 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3D7C04A68
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Jul 2022 20:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70284C19F21
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jul 2022 08:07:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230415AbiG0U0X (ORCPT
+        id S234999AbiG1IHZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Jul 2022 16:26:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60392 "EHLO
+        Thu, 28 Jul 2022 04:07:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230365AbiG0U0V (ORCPT
+        with ESMTP id S234838AbiG1IHY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Jul 2022 16:26:21 -0400
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [IPv6:2001:1600:4:17::1908])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFD224E86B
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Jul 2022 13:26:20 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4LtQKP2DcxzMqR8X;
-        Wed, 27 Jul 2022 22:26:17 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4LtQKN5kMNzlqV0d;
-        Wed, 27 Jul 2022 22:26:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1658953577;
-        bh=hLCaudxmTLn46TzdaaEDyaJ1LW+mZoCAbGYIV24EY24=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=BrVNFm3AcZPEr7U7GUUVSRzgny1p6Xmv13vAfms1zeANQ833+rFqI4pHRBS/ZQI+v
-         2i/EFqXJsrTWeu56U4mX3TjGQBcvXBWxpdW5L8H3Lzh3k5KMzlMRduz287SLWgcRdq
-         SfAInsit0fLrzUWeMvDac007zsjyMBBFCV7UDxjU=
-Message-ID: <78b7cd69-46d2-2868-8c9c-f4f29958a679@digikod.net>
-Date:   Wed, 27 Jul 2022 22:26:16 +0200
+        Thu, 28 Jul 2022 04:07:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE3184BD07;
+        Thu, 28 Jul 2022 01:07:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5C13761B89;
+        Thu, 28 Jul 2022 08:07:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A82AC433C1;
+        Thu, 28 Jul 2022 08:07:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658995642;
+        bh=+HJ6jlAD0ouWT2q+KDfgQAcYPW1ZDvP8eATEJFjyLNQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EORXPtO2GMMtPF95tHjY1C1ceuBdtFgTuIPtUvaOWzpXvtlMFJ8iZyndsUvS1/tvO
+         rFi4/wltv4mJyt52zll5VvTVNLeNaiJdqMqNR/HLzPIxyu2vkOjRa/hIJU6AgYtxMw
+         884HHcxbC81jJiv/+JHVNR/esc/6ABm2JN53uxxhQzZNnU/kLPtJik+I+nQvX/Navj
+         GOXFZeUqYFjLvSBs4w/uZ8cW3nVGI2Hi0Nn+eC29FTWXMbCJf3i0/ns+oUbrThhtGA
+         nVVDwWQVLemryqS+lf+pkB/ocYg2h1g0yTMw8zV0E2+W30UY9maC35xirn0IWoNoIB
+         FJVq5w5pWGHig==
+Date:   Thu, 28 Jul 2022 11:07:19 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jianglei Nie <niejianglei2021@163.com>
+Cc:     jejb@linux.ibm.com, zohar@linux.ibm.com, dhowells@redhat.com,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] KEYS: trusted: Fix memory leak in tpm2_key_encode()
+Message-ID: <YuJDt6T6tUv76bIT@kernel.org>
+References: <YqGE/v0Zgi+g4gY6@iki.fi>
+ <20220722082125.2526529-1-niejianglei2021@163.com>
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        anton.sirazetdinov@huawei.com
-References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
- <20220621082313.3330667-18-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v6 17/17] samples/landlock: adds network demo
-In-Reply-To: <20220621082313.3330667-18-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220722082125.2526529-1-niejianglei2021@163.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 21/06/2022 10:23, Konstantin Meskhidze wrote:
-> This commit adds network demo. It's possible to
-> allow a sandoxer to bind/connect to a list of
-> particular ports restricting networks actions to
-> the rest of ports.
+On Fri, Jul 22, 2022 at 04:21:25PM +0800, Jianglei Nie wrote:
+> tpm2_key_encode() allocates a memory chunk from scratch with kmalloc(),
+> but it is never freed, which leads to a memory leak. Free the memory
+> chunk with kfree() in the return path.
 > 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+> Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
 > ---
+
+The change log is missing. I have no idea what happened in v2 and v3.
+
+>  security/keys/trusted-keys/trusted_tpm2.c | 33 ++++++++++++++++-------
+>  1 file changed, 23 insertions(+), 10 deletions(-)
 > 
-> Changes since v5:
-> * Makes network ports sandboxing optional.
-> * Fixes some logic errors.
-> * Formats code with clang-format-14.
-> 
-> Changes since v4:
-> * Adds ENV_TCP_BIND_NAME "LL_TCP_BIND" and
-> ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT" variables
-> to insert TCP ports.
-> * Renames populate_ruleset() to populate_ruleset_fs().
-> * Adds populate_ruleset_net() and parse_port_num() helpers.
-> * Refactors main() to support network sandboxing.
-> 
-> ---
->   samples/landlock/sandboxer.c | 118 +++++++++++++++++++++++++++++++----
->   1 file changed, 107 insertions(+), 11 deletions(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index 3e404e51ec64..0606c676fded 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-
-
-[...]
-
-> @@ -232,16 +308,36 @@ int main(const int argc, char *const argv[], char *const *const envp)
->   		access_fs_rw &= ~ACCESS_ABI_2;
-
-We need to check the ABI to make this sample work without a kernel 
-supporting Landlock network access rights, and error out if the user 
-explicitely asked for it anyway (with the environement variable).
-
-
->   	}
-> 
-> +	/* Adds optionally network bind() support. */
-> +	env_port_name = getenv(ENV_TCP_BIND_NAME);
-> +	if (env_port_name) {
-> +		access_net_tcp |= LANDLOCK_ACCESS_NET_BIND_TCP;
-> +	}
-> +	/* Adds optionally network connect() support. */
-> +	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
-> +	if (env_port_name) {
-> +		access_net_tcp |= LANDLOCK_ACCESS_NET_CONNECT_TCP;
-> +	}
-> +	ruleset_attr.handled_access_net = access_net_tcp;
+> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> index 2b2c8eb258d5..eb25c784b5c3 100644
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -32,8 +32,13 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  			   struct trusted_key_options *options,
+>  			   u8 *src, u32 len)
+>  {
+> +	int ret;
+>  	const int SCRATCH_SIZE = PAGE_SIZE;
+> -	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+> +	u8 *scratch;
 > +
->   	ruleset_fd =
->   		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
->   	if (ruleset_fd < 0) {
->   		perror("Failed to create a ruleset");
->   		return 1;
->   	}
-> -	if (populate_ruleset(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
-> +	if (populate_ruleset_fs(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
-> +		goto err_close_ruleset;
+> +	scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+> +	if (!scratch)
+> +		return -ENOMEM;
+>  	u8 *work = scratch, *work1;
+>  	u8 *end_work = scratch + SCRATCH_SIZE;
+>  	u8 *priv, *pub;
+> @@ -47,9 +52,6 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  	pub_len = get_unaligned_be16(src) + 2;
+>  	pub = src;
+>  
+> -	if (!scratch)
+> -		return -ENOMEM;
+> -
+>  	work = asn1_encode_oid(work, end_work, tpm2key_oid,
+>  			       asn1_oid_len(tpm2key_oid));
+>  
+> @@ -57,8 +59,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  		unsigned char bool[3], *w = bool;
+>  		/* tag 0 is emptyAuth */
+>  		w = asn1_encode_boolean(w, w + sizeof(bool), true);
+> -		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
+> -			return PTR_ERR(w);
+> +		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode")) {
+> +			ret = PTR_ERR(w);
+> +			goto err;
+> +		}
+>  		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
+>  	}
+>  
+> @@ -69,8 +73,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  	 * trigger, so if it does there's something nefarious going on
+>  	 */
+>  	if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
+> -		 "BUG: scratch buffer is too small"))
+> -		return -EINVAL;
+> +		 "BUG: scratch buffer is too small")) {
+> +		ret = -EINVAL;
+> +		goto err;
 > +	}
-> +	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
-> +		goto err_close_ruleset;
+>  
+>  	work = asn1_encode_integer(work, end_work, options->keyhandle);
+>  	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
+> @@ -79,10 +85,17 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  	work1 = payload->blob;
+>  	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
+>  				     scratch, work - scratch);
+> -	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
+> -		return PTR_ERR(work1);
+> +	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed")) {
+> +		ret = PTR_ERR(work1);
+> +		goto err;
 > +	}
-> +	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
->   		goto err_close_ruleset;
->   	}
-> -	if (populate_ruleset(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
-> +	if (populate_ruleset_net(ENV_TCP_CONNECT_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
->   		goto err_close_ruleset;
->   	}
->   	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-> --
+>  
+> +	kfree(scratch);
+>  	return work1 - payload->blob;
+> +
+> +err:
+> +	kfree(scratch);
+> +	return ret;
+>  }
+>  
+>  struct tpm2_key_context {
+> -- 
 > 2.25.1
 > 
+
+BR, Jarkko
