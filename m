@@ -2,92 +2,165 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E895C19F29
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jul 2022 08:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFF4C04A68
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jul 2022 09:19:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234611AbiG1ILU (ORCPT
+        id S234668AbiG1JTr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Jul 2022 04:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57504 "EHLO
+        Thu, 28 Jul 2022 05:19:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233818AbiG1ILU (ORCPT
+        with ESMTP id S234427AbiG1JTq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Jul 2022 04:11:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9BD63AE5D;
-        Thu, 28 Jul 2022 01:11:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5387C61B46;
-        Thu, 28 Jul 2022 08:11:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D8E9C433D6;
-        Thu, 28 Jul 2022 08:11:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658995878;
-        bh=c23ZgkhJmhmN1wnP5D1JbbpVm4WFz2aOVz5hhH/OAds=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z6e9VtqnnXePXNjtw/HfVPKcu1t2JMIo6Iv9/mcYraldHi3VQmAugHjzmBeHVwKJ0
-         EcnRRZBaYls2zcLrnVc1N90lnqVy2u0IwgA7ZTzu1OYDIFUbOR/px12dG6syjgta5T
-         YqDUOCRtt4vEkZJ02v/sq5ezmt3GO7kkWCoIR9tNq5rD68ewo0db8PiUZaLdlvHQar
-         CKP3cFp3dpSkig2mT1gUfpQ8CfPrveelpo7RK8+F5wybjDK3yVoNMrr2qcKBfdZj98
-         SoqtG4M6AkV06JNl6Z+4pCe3X7ZKy5Ec/VALfOZdfs48PHwzoCVk/HVj16BEz0wN3R
-         aQTXlXvF8zkbQ==
-Date:   Thu, 28 Jul 2022 11:11:15 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Siddh Raman Pant <code@siddh.me>
-Cc:     David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        keyrings <keyrings@vger.kernel.org>,
-        linux-security-modules <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kernel-mentees 
-        <linux-kernel-mentees@lists.linuxfoundation.org>
-Subject: Re: [PATCH] keys/keyctl: Use kfree_rcu instead of kfree
-Message-ID: <YuJEozyceOKQ63/6@kernel.org>
-References: <20220723135035.199188-1-code@siddh.me>
+        Thu, 28 Jul 2022 05:19:46 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3392961B3A;
+        Thu, 28 Jul 2022 02:19:45 -0700 (PDT)
+Received: from fraeml702-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4LtlRM2QHWz687qT;
+        Thu, 28 Jul 2022 17:17:35 +0800 (CST)
+Received: from lhreml745-chm.china.huawei.com (10.201.108.195) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Thu, 28 Jul 2022 11:19:42 +0200
+Received: from [10.122.132.241] (10.122.132.241) by
+ lhreml745-chm.china.huawei.com (10.201.108.195) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 28 Jul 2022 10:19:41 +0100
+Message-ID: <3d3b683d-8dfe-1b45-c7ee-a4dadeb4c1c5@huawei.com>
+Date:   Thu, 28 Jul 2022 12:19:40 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220723135035.199188-1-code@siddh.me>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v6 00/17] Network support for Landlock
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+        <anton.sirazetdinov@huawei.com>
+References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
+ <4c57a0c2-e207-10d6-c73d-bcda66bf3963@digikod.net>
+ <6691d91f-c03b-30fa-2fa0-d062b3b234b9@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <6691d91f-c03b-30fa-2fa0-d062b3b234b9@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhreml751-chm.china.huawei.com (10.201.108.201) To
+ lhreml745-chm.china.huawei.com (10.201.108.195)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jul 23, 2022 at 07:20:35PM +0530, Siddh Raman Pant wrote:
-> In keyctl_watch_key, use kfree_rcu() for freeing watch and wlist
-> as they support RCU and have an rcu_head in the struct definition.
-> 
-> Signed-off-by: Siddh Raman Pant <code@siddh.me>
 
-Applies to any patch: the commit message should *clearly* describe
 
-1. What is wrong in the current code *behaviour*.
-2. Why does the code change save the day.
-
-> ---
->  security/keys/keyctl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-> index 96a92a645216..087fbc141cfd 100644
-> --- a/security/keys/keyctl.c
-> +++ b/security/keys/keyctl.c
-> @@ -1832,9 +1832,9 @@ long keyctl_watch_key(key_serial_t id, int watch_queue_fd, int watch_id)
->  	}
->  
->  err_watch:
-> -	kfree(watch);
-> +	kfree_rcu(watch, rcu);
->  err_wlist:
-> -	kfree(wlist);
-> +	kfree_rcu(wlist, rcu);
->  err_wqueue:
->  	put_watch_queue(wqueue);
->  err_key:
-> -- 
-> 2.35.1
+7/27/2022 10:54 PM, Mickaël Salaün пишет:
 > 
 > 
+> On 26/07/2022 19:43, Mickaël Salaün wrote:
+>> 
+>> On 21/06/2022 10:22, Konstantin Meskhidze wrote:
+>>> Hi,
+>>> This is a new V6 patch related to Landlock LSM network confinement.
+>>> It is based on the latest landlock-wip branch on top of v5.19-rc2:
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=landlock-wip
+>>>
+>>> It brings refactoring of previous patch version V5:
+>>>      - Fixes some logic errors and typos.
+>>>      - Adds additional FIXTURE_VARIANT and FIXTURE_VARIANT_ADD helpers
+>>>      to support both ip4 and ip6 families and shorten seltests' code.
+>>>      - Makes TCP sockets confinement support optional in sandboxer demo.
+>>>      - Formats the code with clang-format-14
+>>>
+>>> All test were run in QEMU evironment and compiled with
+>>>   -static flag.
+>>>   1. network_test: 18/18 tests passed.
+>>>   2. base_test: 7/7 tests passed.
+>>>   3. fs_test: 59/59 tests passed.
+>>>   4. ptrace_test: 8/8 tests passed.
+>>>
+>>> Still have issue with base_test were compiled without -static flag
+>>> (landlock-wip branch without network support)
+>>> 1. base_test: 6/7 tests passed.
+>>>   Error:
+>>>   #  RUN           global.inconsistent_attr ...
+>>>   # base_test.c:54:inconsistent_attr:Expected ENOMSG (42) == errno (22)
+>>>   # inconsistent_attr: Test terminated by assertion
+>>>   #          FAIL  global.inconsistent_attr
+>>> not ok 1 global.inconsistent_attr
+>>>
+>>> LCOV - code coverage report:
+>>>              Hit  Total  Coverage
+>>> Lines:      952  1010    94.3 %
+>>> Functions:  79   82      96.3 %
+>>>
+>>> Previous versions:
+>>> v5: 
+>>> https://lore.kernel.org/linux-security-module/20220516152038.39594-1-konstantin.meskhidze@huawei.com
+>>> v4: 
+>>> https://lore.kernel.org/linux-security-module/20220309134459.6448-1-konstantin.meskhidze@huawei.com/
+>>> v3: 
+>>> https://lore.kernel.org/linux-security-module/20220124080215.265538-1-konstantin.meskhidze@huawei.com/
+>>> v2: 
+>>> https://lore.kernel.org/linux-security-module/20211228115212.703084-1-konstantin.meskhidze@huawei.com/
+>>> v1: 
+>>> https://lore.kernel.org/linux-security-module/20211210072123.386713-1-konstantin.meskhidze@huawei.com/
+>>>
+>>> Konstantin Meskhidze (17):
+>>>    landlock: renames access mask
+>>>    landlock: refactors landlock_find/insert_rule
+>>>    landlock: refactors merge and inherit functions
+>>>    landlock: moves helper functions
+>>>    landlock: refactors helper functions
+>>>    landlock: refactors landlock_add_rule syscall
+>>>    landlock: user space API network support
+>>>    landlock: adds support network rules
+>>>    landlock: implements TCP network hooks
+>>>    seltests/landlock: moves helper function
+>>>    seltests/landlock: adds tests for bind() hooks
+>>>    seltests/landlock: adds tests for connect() hooks
+>>>    seltests/landlock: adds AF_UNSPEC family test
+>>>    seltests/landlock: adds rules overlapping test
+>>>    seltests/landlock: adds ruleset expanding test
+>>>    seltests/landlock: adds invalid input data test
+>>>    samples/landlock: adds network demo
+>>>
+>>>   include/uapi/linux/landlock.h               |  49 ++
+>>>   samples/landlock/sandboxer.c                | 118 ++-
+>>>   security/landlock/Kconfig                   |   1 +
+>>>   security/landlock/Makefile                  |   2 +
+>>>   security/landlock/fs.c                      | 162 +---
+>>>   security/landlock/limits.h                  |   8 +-
+>>>   security/landlock/net.c                     | 155 ++++
+>>>   security/landlock/net.h                     |  26 +
+>>>   security/landlock/ruleset.c                 | 448 +++++++++--
+>>>   security/landlock/ruleset.h                 |  91 ++-
+>>>   security/landlock/setup.c                   |   2 +
+>>>   security/landlock/syscalls.c                | 168 +++--
+>>>   tools/testing/selftests/landlock/common.h   |  10 +
+>>>   tools/testing/selftests/landlock/config     |   4 +
+>>>   tools/testing/selftests/landlock/fs_test.c  |  10 -
+>>>   tools/testing/selftests/landlock/net_test.c | 774 ++++++++++++++++++++
+>>>   16 files changed, 1737 insertions(+), 291 deletions(-)
+>>>   create mode 100644 security/landlock/net.c
+>>>   create mode 100644 security/landlock/net.h
+>>>   create mode 100644 tools/testing/selftests/landlock/net_test.c
+>>>
+>>> -- 
+>>> 2.25.1
+>>>
+>> 
+>> I did a thorough review of all the code. I found that the main issue 
+>> with this version is that we stick to the layers limit whereas it is 
+>> only relevant for filesystem hierarchies. You'll find in the following 
+>> patch miscellaneous fixes and improvement, with some TODOs to get rid of 
+>> this layer limit. We'll need a test to check that too. You'll need to 
+>> integrate this diff into your patches though.
+> 
+> You can find the related patch here:
+> https://git.kernel.org/mic/c/8f4104b3dc59e7f110c9b83cdf034d010a2d006f
 
-BR, Jarkko
+  Ok. Thank you.
+  I will split your patch among my next V7 version.
+> .
