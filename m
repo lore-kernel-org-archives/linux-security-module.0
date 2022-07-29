@@ -2,153 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371CAC19F2C
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Jul 2022 10:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 831AFC00144
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Jul 2022 10:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235603AbiG2KiB (ORCPT
+        id S235460AbiG2KiT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Jul 2022 06:38:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34720 "EHLO
+        Fri, 29 Jul 2022 06:38:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235421AbiG2KiA (ORCPT
+        with ESMTP id S235700AbiG2KiQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Jul 2022 06:38:00 -0400
-Received: from esa2.mentor.iphmx.com (esa2.mentor.iphmx.com [68.232.141.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3DE38238A;
-        Fri, 29 Jul 2022 03:37:58 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.93,201,1654588800"; 
-   d="scan'208";a="80469973"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa2.mentor.iphmx.com with ESMTP; 29 Jul 2022 02:37:57 -0800
-IronPort-SDR: qPRhArPH6ZfwOvrGboF1DO33OGLMQs0xHIKjcfXqY8Lk27NI4sJNrioLfb4O/zeu75QM7acBJx
- RUiWkZqPSTWojbH0H0gXzxy/AL+nvHb00tFrOLkYnz/RHKwpAFa5g0qG3soTRxC8QbfLqoSHZk
- wsjD87724I0ya8BQw7zoawEfU6OQAUebQgZEiBN7/k3LcVgLyKE/KE0Am/W2zUJ6Nf1J6hiQhb
- AHY6i8npVGsz+kLBnTR84kSvUca7daDXzQ9R7oRw907kjBH87faV4+/VQ35izCe2TiLYq2O+Cp
- xwo=
-Message-ID: <d6af7f7e-7f8c-a6a7-7a09-84928fd69774@mentor.com>
-Date:   Fri, 29 Jul 2022 11:37:49 +0100
+        Fri, 29 Jul 2022 06:38:16 -0400
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D54B82132
+        for <linux-security-module@vger.kernel.org>; Fri, 29 Jul 2022 03:38:13 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4LvP9v3M5yzMqvpc;
+        Fri, 29 Jul 2022 12:38:11 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4LvP9t6PRhzln8Vq;
+        Fri, 29 Jul 2022 12:38:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1659091091;
+        bh=gXnHJqipFdFVjG4i6bM4bQYpa0JvtXNOV0rD5pgfdzk=;
+        h=Date:From:To:Cc:References:Subject:In-Reply-To:From;
+        b=G6VN3bi+TwM5g3zCFpXxjKzdmCAMi+W2Nf6ZG/DvyFO4E4I1L7nRiJvbdEuQAMcPh
+         5fgPXQcW5eiNl+Kd0t9dWRpLkMA1eNl74LBNQ5WDDJFK1QugkDfbARx8mPjFF18IRj
+         Cirb+041uhiOXE4oti0aYXprRckEPl+kBDaCGz1U=
+Message-ID: <731b40e2-a95d-5eef-077b-375a50061a11@digikod.net>
+Date:   Fri, 29 Jul 2022 12:38:10 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Content-Language: en-GB
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-CC:     Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "takondra@cisco.com" <takondra@cisco.com>,
-        "kamensky@cisco.com" <kamensky@cisco.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
- <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
- <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
- <20220609102627.GA3922@lxhi-065>
- <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
- <20220610153336.GA8881@lxhi-065>
- <4bc349a59e4042f7831b1190914851fe@huawei.com>
- <20220615092712.GA4068@lxhi-065>
- <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
- <f82d4961986547b28b6de066219ad08b@huawei.com>
- <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
- <8e6a723874644449be99fcebb0905058@huawei.com>
-From:   Jim Baxter <jim_baxter@mentor.com>
-Organization: Siemens Digital Industries Software
-In-Reply-To: <8e6a723874644449be99fcebb0905058@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-09.mgc.mentorg.com (139.181.222.9) To
- svr-ies-mbx-12.mgc.mentorg.com (139.181.222.12)
+User-Agent: 
+Content-Language: en-US
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        linux-security-module@vger.kernel.org
+Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+References: <20220712211405.14705-1-gnoack3000@gmail.com>
+ <20220712211405.14705-4-gnoack3000@gmail.com>
+ <a300def1-587f-a770-2c3a-045e4da8d56a@digikod.net>
+Subject: Re: [PATCH v2 3/4] samples/landlock: Extend sample tool to support
+ LANDLOCK_ACCESS_FS_TRUNCATE
+In-Reply-To: <a300def1-587f-a770-2c3a-045e4da8d56a@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 19/07/2022 07:55, Roberto Sassu wrote:
->> From: Jim Baxter [mailto:jim_baxter@mentor.com]
->> Sent: Monday, July 18, 2022 8:08 PM
->>
->>
->>
->> Best regards,
->>
->> *Jim Baxter*
->>
->> Siemens Digital Industries Software
->> Automotive Business Unit
->> DI SW STS ABU
->> UK
->> Tel.: +44 (161) 926-1656
->> mailto:jim.baxter@siemens.com <mailto:jim.baxter@siemens.com>
->> sw.siemens.com <https://sw.siemens.com/>
->>
->> On 18/07/2022 17:49, Roberto Sassu wrote:
->>>> From: Jim Baxter [mailto:jim_baxter@mentor.com]
->>>> Sent: Monday, July 18, 2022 6:36 PM
->>>>
->>>>
->>>> Hello,
->>>>
->>>> I have been testing these patches and do not see the xattr information when
->>>> trying to retrieve it within the initramfs, do you have an example of how
->>>> you tested this originally?
->>>
->>> Hi Jim, all
->>>
->>> apologies, I didn't find yet the time to look at this.
->>
->> Hello Roberto,
->>
->> Thank you for your response, I can wait until you have looked at the patches,
->> I asked the question to make sure it was not something wrong in my
->> configuration.
->>
->>>
->>> Uhm, I guess this could be solved with:
->>>
->>> https://github.com/openeuler-
->> mirror/kernel/commit/18a502f7e3b1de7b9ba0c70896ce08ee13d052da
->>>
->>> and adding initramtmpfs to the kernel command line. You are
->>> probably using ramfs, which does not have xattr support.
->>>
-
-Can I clarify which filesystem type is supported with this patch series?
-Is it tmpfs or perhaps a ramdisk?
-
-
->>
->>
->> Thank you, I have tested that patch but the problem remained. Here is my
->> command line, I wonder if there is something wrong.
->>
->> Kernel command line: rw rootfstype=initramtmpfs root=/dev/ram0
->> initrd=0x500000000 rootwait
+On 29/07/2022 12:31, Mickaël Salaün wrote:
 > 
-> It is just initramtmpfs, without rootfstype=.
+> On 12/07/2022 23:14, Günther Noack wrote:
+>> The sample tool will restrict the truncate operation if possible with
+>> the current kernel.
 > 
-> Roberto
+> "Update the sandboxer sample to restrict truncate actions.  This is
+> automatically enabled by default if the running kernel supports
+> LANDLOCK_ACCESS_FS_TRUNCATE, except for the paths listed in the LL_FS_RW
+> environment variable."
+> 
+> 
+>>
+>> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+>> Link: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
+>> ---
+>>    samples/landlock/sandboxer.c | 15 +++++++++++++--
+>>    1 file changed, 13 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+>> index 3e404e51ec64..4c3ed0097ffd 100644
+>> --- a/samples/landlock/sandboxer.c
+>> +++ b/samples/landlock/sandboxer.c
+>> @@ -76,7 +76,8 @@ static int parse_path(char *env_path, const char ***const path_list)
+>>    #define ACCESS_FILE ( \
+>>    	LANDLOCK_ACCESS_FS_EXECUTE | \
+>>    	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>> -	LANDLOCK_ACCESS_FS_READ_FILE)
+>> +	LANDLOCK_ACCESS_FS_READ_FILE | \
+>> +	LANDLOCK_ACCESS_FS_TRUNCATE)
+>>    
+>>    /* clang-format on */
+>>    
+>> @@ -160,11 +161,15 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
+>>    	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
+>>    	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
+>>    	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+>> -	LANDLOCK_ACCESS_FS_REFER)
+>> +	LANDLOCK_ACCESS_FS_REFER | \
+>> +	LANDLOCK_ACCESS_FS_TRUNCATE)
+>>    
+>>    #define ACCESS_ABI_2 ( \
+>>    	LANDLOCK_ACCESS_FS_REFER)
+>>    
+>> +#define ACCESS_ABI_3 ( \
+>> +	LANDLOCK_ACCESS_FS_TRUNCATE)
+>> +
+>>    /* clang-format on */
+>>    
+>>    int main(const int argc, char *const argv[], char *const *const envp)
+>> @@ -226,6 +231,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>>    		return 1;
+>>    	}
+>>    	/* Best-effort security. */
+>> +	if (abi < 3) {
+>> +		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_3;
+>> +		access_fs_ro &= ~ACCESS_ABI_3;
+>> +		access_fs_rw &= ~ACCESS_ABI_3;
+>> +	}
+> 
+> I think it is a good time to start replacing this "if" check with a
+> switch one:
+> 
+> switch (abi) {
+> case 1:
+> 	ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
+> 	access_fs_rw &= ~ACCESS_ABI_2;
+> 	__attribute__((fallthrough));
+> case 2:
+> 	ruleset_attr.handled_access_fs &= ~ACCESS_ABI_3;
+> 	access_fs_rw &= ~ACCESS_ABI_3;
+> }
 
-Best regards,
-Jim
+Well, we can just mask ruleset_attr.handled_access_fs in this 
+switch/case and after mask access_fs_ro and access_fs_rw after.
+
+
+> 
+> 
+>> +
+>>    	if (abi < 2) {
+>>    		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
+>>    		access_fs_ro &= ~ACCESS_ABI_2;
