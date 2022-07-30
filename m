@@ -2,211 +2,194 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA640C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Jul 2022 11:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD98C19F2B
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Jul 2022 09:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235911AbiG2L6Z (ORCPT
+        id S230209AbiG3JcH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Jul 2022 07:58:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37306 "EHLO
+        Sat, 30 Jul 2022 05:32:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235851AbiG2L6Y (ORCPT
+        with ESMTP id S234433AbiG3JcG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Jul 2022 07:58:24 -0400
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40BF387C14
-        for <linux-security-module@vger.kernel.org>; Fri, 29 Jul 2022 04:58:20 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4LvQyL3Vf0zMqPRv;
-        Fri, 29 Jul 2022 13:58:18 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4LvQyL0XFJzlq6Mv;
-        Fri, 29 Jul 2022 13:58:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1659095898;
-        bh=CsI5Svm/rgvYVqv6A6gv4agjS5R+C2dOfunzOYx5hO0=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=UN/8F/QnPv2hyHVHpTcv+AXImbZ3k+JzFEf/rfmGOOF0wTcI8oW58zDpPXofoo/+7
-         qGB4M7X9VPM15cOul6HyoQGRxa6Q//VlL79WUgo/F8ptll41EKNUlXCYg61fJYmFIj
-         wRSEP70AfMFR3EyOibgPAqWjhKLQmIQZ0eaLSNzI=
-Message-ID: <b7ee2d01-2e33-bf9c-3b56-b649e2fde0fb@digikod.net>
-Date:   Fri, 29 Jul 2022 13:58:17 +0200
+        Sat, 30 Jul 2022 05:32:06 -0400
+Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125DD4330F
+        for <linux-security-module@vger.kernel.org>; Sat, 30 Jul 2022 02:32:05 -0700 (PDT)
+Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-10ea30a098bso3484607fac.8
+        for <linux-security-module@vger.kernel.org>; Sat, 30 Jul 2022 02:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=VQvaSdst3GlNtIz5gSEbzEWnw6iJp0dnfjX2/uw4Pi0=;
+        b=WwZeLQPHVZMv7Tf/yzouYMy/N8ncJHBvNxrLWXHyVtWxdZ1PxHorwX/QP+bQZFNbY1
+         rFwGJtpccThotO8bEaWew5690F3KBLjHib7+tV2wpgxvsFLNez3D6LNChyTXqofSjLSL
+         3t6mL4NZhitq1h4tRWJkYont7aB4p6WDw3W2nbHcvT//xibau8r6KMdHFoQnG+SQ/3rI
+         3j0ybuxX0FIf2CU4lpJxYEwnn2Qs8McUF9hZQ8kDHVp4HHibCyHITaH7wbRaDD6Z8BOI
+         nolUx7bNdTsURyp6dA0MSYRIyofqMVotGVXSojpI8bVNj+lPXZDKpcXfE/3CmYrakb10
+         Apmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=VQvaSdst3GlNtIz5gSEbzEWnw6iJp0dnfjX2/uw4Pi0=;
+        b=t0JwmXYhhrZP1vtlXaEqQxwYRBA1zNN5/f/tmMpa74xphI3+V4gOKi9OLd5c8vepyQ
+         QEIIiTw4iThJWrVjg2/QIQdZAMlkIUg9OcGPHeXBUW1lIc+j1JMXpNqEVkUGjzl96sv/
+         2ti98+K6mIk7JTA77JH9qMB0xCtMRVZE5mTSbbtT70Wep2ZJvS/Flj00BLuob4ZhqErM
+         u1bpqwQsHZz4ijihURf+1HhhIMxtdJvzAPEqQBqLpiHGwHBrM37t2bxyk0L/CxdI/ed4
+         w/IDoFPSklexvZ47Y7m2b0KGU1j6Da+6QGjVgf4tJ36q+U+gBJv5TeGrnag3IQ5Xex2F
+         PLjg==
+X-Gm-Message-State: AJIora+B+fiBvwnVsRhMbRcSstQiB6CO+ayrC3nIlg8DaCkac3CvYB/S
+        y6YkLnG3KFxmP9U0knfb4k3V1A==
+X-Google-Smtp-Source: AGRyM1vlzdqQ1oG5qxelDaZGwViNeSWbgs5sytdvECpAolwn1LIlFKm9WBz+/JKkjdUAPx95t1xc6g==
+X-Received: by 2002:a05:6870:f2a0:b0:fe:29a0:4b48 with SMTP id u32-20020a056870f2a000b000fe29a04b48mr3309674oap.183.1659173524398;
+        Sat, 30 Jul 2022 02:32:04 -0700 (PDT)
+Received: from ?IPV6:2607:fb90:c2d4:35df:6680:99ff:fe6f:cb54? ([2607:fb90:c2d4:35df:6680:99ff:fe6f:cb54])
+        by smtp.gmail.com with ESMTPSA id q16-20020a05683033d000b0061c29a38b3bsm1633168ott.33.2022.07.30.02.32.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Jul 2022 02:32:03 -0700 (PDT)
+Message-ID: <e850477a-6dd8-0a76-cfa0-bf78951f7281@landley.net>
+Date:   Sat, 30 Jul 2022 04:39:13 -0500
 MIME-Version: 1.0
-User-Agent: 
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
 Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-References: <20220707200612.132705-1-gnoack3000@gmail.com>
- <dbb0cd04-72a8-b014-b442-a85075314464@digikod.net> <YsqihF0387fBeiVa@nuc>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH 0/2] landlock: truncate(2) support
-In-Reply-To: <YsqihF0387fBeiVa@nuc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     Jim Baxter <jim_baxter@mentor.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     "hpa@zytor.com" <hpa@zytor.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        "takondra@cisco.com" <takondra@cisco.com>,
+        "kamensky@cisco.com" <kamensky@cisco.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
+ <1561909199.3985.33.camel@linux.ibm.com>
+ <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
+ <1561991485.4067.14.camel@linux.ibm.com>
+ <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
+ <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
+ <20220609102627.GA3922@lxhi-065>
+ <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
+ <20220610153336.GA8881@lxhi-065>
+ <4bc349a59e4042f7831b1190914851fe@huawei.com>
+ <20220615092712.GA4068@lxhi-065>
+ <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
+ <f82d4961986547b28b6de066219ad08b@huawei.com>
+ <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
+ <8e6a723874644449be99fcebb0905058@huawei.com>
+ <d6af7f7e-7f8c-a6a7-7a09-84928fd69774@mentor.com>
+From:   Rob Landley <rob@landley.net>
+In-Reply-To: <d6af7f7e-7f8c-a6a7-7a09-84928fd69774@mentor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 7/29/22 05:37, Jim Baxter wrote:
+>>>> Uhm, I guess this could be solved with:
+>>>>
+>>>> https://github.com/openeuler-
+>>> mirror/kernel/commit/18a502f7e3b1de7b9ba0c70896ce08ee13d052da
+>>>>
+>>>> and adding initramtmpfs to the kernel command line. You are
+>>>> probably using ramfs, which does not have xattr support.
+>>>>
 
-On 10/07/2022 11:57, Günther Noack wrote:
-> Hello Mickaël!
-> 
-> Thank you for the fast feedback! I'm looking into your comments from
-> this mail and the rest of the thread and am working on an updated
-> patch set.
-> 
-> On Fri, Jul 08, 2022 at 01:16:29PM +0200, Mickaël Salaün wrote:
->> Hi Günther, this looks good!
->>
->> Added linux-fsdevel@vger.kernel.org
->>
->> On 07/07/2022 22:06, Günther Noack wrote:
->>> The goal of these patches is to work towards a more complete coverage
->>> of file system operations that are restrictable with Landlock.
+Oh, here's the actual tested version of the patch wiring up rootfstype=tmpfs to
+force rootfs to be tmpfs even when you specify root=
+
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 7058e14ad5f7..dedf27fe9044 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -665,7 +665,7 @@ struct file_system_type rootfs_fs_type = {
+
+ void __init init_rootfs(void)
+ {
+-	if (IS_ENABLED(CONFIG_TMPFS) && !saved_root_name[0] &&
+-		(!root_fs_names || strstr(root_fs_names, "tmpfs")))
++	if (IS_ENABLED(CONFIG_TMPFS) && (!root_fs_names ? !saved_root_name[0] :
++		!!strstr(root_fs_names, "tmpfs")))
+ 		is_tmpfs = true;
+ }
+
+Signed-in-triplicate-by: Rob Landley <rob@landley.net>
+
+No idea why nobody else has fixed that bug in the past 9 years, seems obvious?
+
+Anyway, here's the testing I did using mkroot (ala
+https://landley.net/toybox/faq.html#mkroot):
+
+$ (cd root/x86_64; KARGS='quiet root=potato HANDOFF="/bin/head -n 1
+/proc/mounts"' ./run-qemu.sh) | tail -n 3
+rootfs / rootfs rw 0 0
+reboot: Restarting system
+
+$ (cd root/x86_64; KARGS='quiet HANDOFF="/bin/head -n 1 /proc/mounts"'
+./run-qemu.sh) | tail -n 3
+rootfs / rootfs rw,size=121828k,nr_inodes=30457 0 0
+reboot: Restarting system
+
+$ (cd root/x86_64; KARGS='quiet rootfstype=tmpfs root=potato HANDOFF="/bin/head
+-n 1 /proc/mounts"' ./run-qemu.sh) | tail -n 3
+rootfs / rootfs rw,size=121828k,nr_inodes=30457 0 0
+reboot: Restarting system
+
+I.E. rootfstype=tmpfs neutralized the root= so it was still tmpfs despite the
+kernel being explicitly told you weren't going to stay on initramfs (which is
+still what root= means). With just root= it's still ramfs, with all the "my log
+file got too big and the system livelocked" and "querying available space always
+returns zero" that entails.
+
+> Can I clarify which filesystem type is supported with this patch series?
+> Is it tmpfs or perhaps a ramdisk?
+
+I believe both tmpfs and ramfs support xattrs? (I know tmpfs does, and
+fs/ramfs/file-mmu.c plugs simple_getattr() into ramfs_file_operations.setattr so
+it looks like that would too? Haven't tried it.)
+
+This isn't a modification to the filesystem code (ramfs/tmpfs), this is a
+modification to the boot-time loader (initramfs) that extracts a cpio.gz file
+into the filesystem.
+
+Ramdisks have supported xattrs for years: they fake up a block device out of a
+chunk of memory and them format it and mount some other filesystem on it,
+meaning the driver for the other filesystem handles the xattr support.
+
+But ramdisks don't use initramfs, they load an image of the preformatted
+filesystem into the ramdisk block device. Completely separate mechanism, sharing
+no code with initramfs, depending on the block layer, etc.
+
+>>> Thank you, I have tested that patch but the problem remained. Here is my
+>>> command line, I wonder if there is something wrong.
 >>>
->>> The known set of currently unsupported file system operations in
->>> Landlock is described at [1]. Out of the operations listed there,
->>> truncate is the only one that modifies file contents, so these patches
->>> should make it possible to prevent the direct modification of file
->>> contents with Landlock.
->>>
->>> The patch introduces the truncate(2) restriction feature as an
->>> additional bit in the access_mask_t bitmap, in line with the existing
->>> supported operations.
->>>
->>> Apart from Landlock, the truncate(2) and ftruncate(2) family of system
->>> calls can also be restricted using seccomp-bpf, but it is a
->>> complicated mechanism (requires BPF, requires keeping up-to-date
->>> syscall lists) and it also is not configurable by file hierarchy, as
->>> Landlock is. The simplicity and flexibility of the Landlock approach
->>> makes it worthwhile adding.
->>>
->>> I am aware that the documentation and samples/landlock/sandboxer.c
->>> tool still need corresponding updates; I'm hoping to get some early
->>> feedback this way.
->> Yes, that's a good approach.
->>
->> Extending the sandboxer should be straightforward, you can just extend the
->> scope of LL_FS_RW, taking into account the system Landlock ABI because there
->> is no "contract" for this sample.
-> 
-> Sounds good, I'll extend the sample tool like this for the updated patch set.
-> 
-> (On the side, as you know from the discussion on the go-landlock
-> library, I have some suspicion that the "best effort"
-> backwards-compatibility approach in the sample tool is not the right
-> one for the "refer" right, but that might be better suited for a
-> separate patch. Maybe it'll be simpler to just not support a
-> best-effort downgrade in the sample tool.)
+>>> Kernel command line: rw rootfstype=initramtmpfs root=/dev/ram0
+>>> initrd=0x500000000 rootwait
+>> 
+>> It is just initramtmpfs, without rootfstype=.
 
-Please share your though about the "refer" right.
+The above patch does not go on top of that patch, it's instead of.
 
-
-> 
->> You'll need to remove the warning about truncate(2) in the documentation,
->> and maybe to move it to the "previous limitations" section, with the
->> LANDLOCK_ACCESS_TRUNCATE doc pointing to it. I think it would be nice to
->> extend the LANDLOCK_ACCESS_FS_WRITE documentation to point to
->> LANDLOCK_ACCESS_FS_TRUNCATE because this distinction could be disturbing for
->> users. Indeed, all inode-based LSMs (SELinux and Smack) deny such action if
->> the inode is not writable (with the inode_permission check), which is not
->> the case for path-based LSMs (AppArmor and Tomoyo).
-> 
-> This makes a lot of sense, I'll work on the documentation to point this out.
-> 
-> I suspect that for many common use cases, the
-> LANDLOCK_ACCESS_FS_TRUNCATE right will anyway only be used together
-> with LANDLOCK_ACCESS_FS_FILE_WRITE in practice. (See below for more
-> detail.)
-
-Agree
-
-
-> 
->> While we may question whether a dedicated access right should be added for
->> the Landlock use case, two arguments are in favor of this approach:
->> - For compatibility reasons, the kernel must follow the semantic of a
->> specific Landlock ABI, otherwise it could break user space. We could still
->> backport this patch and merge it with the ABI 1 and treat it as a bug, but
->> the initial version of Landlock was meant to be an MVP, hence this lack of
->> access right.
->> - There is a specific access right for Capsicum (CAP_FTRUNCATE) that could
->> makes more sense in the future.
->>
->> Following the Capsicum semantic, I think it would be a good idea to also
->> check for the O_TRUNC open flag:
->> https://www.freebsd.org/cgi/man.cgi?query=rights
-> 
-> open() with O_TRUNC was indeed a case I had not thought about - thanks
-> for pointing it out.
-> 
-> I started adding some tests for it, and found to my surprise that
-> open() *is* already checking security_path_truncate() when it is
-> truncating files. So there is a chance that we can get away without a
-> special check for O_TRUNC in the security_file_open hook.
-> 
-> The exact semantics might be slightly different to Capsicum though -
-> in particular, the creat() call (= open with O_TRUNC|O_CREAT|O_WRONLY)
-> will require the Landlock truncate right when it's overwriting an
-> existing regular file, but it will not require the Landlock truncate
-> right when it's creating a new file.
-
-Is the creat() check really different from what is done by Capsicum?
-
-
-> 
-> I'm not fully sure how this is done in Capsicum. I assume that the
-> Comparison with Capsicum is mostly for inspiration, but there is no
-> goal of being fully compatible with that model?
-
-I think Landlock has all the technical requirements to implement a 
-Capsicum-like on Linux: unprivileged access control (which implies 
-scoped access control, policies composition, only new restrictions, 
-nesting, dedicated syscalls…). The main difference with the actual 
-Landlock sandboxing would be that restrictions would apply to all 
-processes doing actions on a specific kind of file descriptor (i.e. 
-capability). Instead of checking the current thread's domain, Landlock 
-could check the "file descriptor's domain". We're definitely not there 
-yet but let's keep this in mind. ;)
-
-
-> 
-> The creat() behaviour is non-intuitive from userspace, I think:
-> creat() is a pretty common way to create new files, and it might come
-> as a surprise to people that this can require the truncate right,
-> because:
-> 
-> - The function creat() doesn't have "truncate" in its name, and you
->    might be tempted to think that the LANDLOCK_ACCESS_FS_MAKE_REG is
->    sufficient for calling it.
-> 
-> - Users can work around the need for the truncate right by unlinking
->    the existing regular file with the same name and creating a new one.
->    So for the most common use case (where users do not care about the
->    file's inode identity or race conditions), it is surprising that
->    the truncate right is required.
-
-These are useful information to put in the documentation. Explaining why 
-it is required should help users. From my point of view, the logic 
-behind is that replacing a file modifies its content (i.e. shrink it to 
-zero), while unlinking a file doesn't change its content but makes it 
-unreachable (removes it) from a directory (and it might not be deleted 
-if linked elsewhere).
-
-
-> 
-> Summarizing this, I also think that the truncate right needs to be a
-> separate flag, even if just for backwards compatibility reasons.
-> 
-> But at the same time, I suspect that in practice, the truncate right
-> will probably have to usually go together with the file_write right,
-> so that the very common creat() use case (and possibly others) does
-> not yield surprising behaviour.
-
-Agree. User space libraries might (and probably should) have a different 
-interface than the raw syscalls. The Landlock syscalls are meant to 
-provide a flexible interface for different use cases. We should keep in 
-mind that the goal of libraries is to help developers. ;)
+Rob
