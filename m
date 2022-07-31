@@ -2,194 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD98C19F2B
-	for <linux-security-module@archiver.kernel.org>; Sat, 30 Jul 2022 09:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7857C00140
+	for <linux-security-module@archiver.kernel.org>; Sun, 31 Jul 2022 04:02:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230209AbiG3JcH (ORCPT
+        id S230492AbiGaECS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 30 Jul 2022 05:32:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33692 "EHLO
+        Sun, 31 Jul 2022 00:02:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234433AbiG3JcG (ORCPT
+        with ESMTP id S229820AbiGaECR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 30 Jul 2022 05:32:06 -0400
-Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125DD4330F
-        for <linux-security-module@vger.kernel.org>; Sat, 30 Jul 2022 02:32:05 -0700 (PDT)
-Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-10ea30a098bso3484607fac.8
-        for <linux-security-module@vger.kernel.org>; Sat, 30 Jul 2022 02:32:05 -0700 (PDT)
+        Sun, 31 Jul 2022 00:02:17 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB2C12A96
+        for <linux-security-module@vger.kernel.org>; Sat, 30 Jul 2022 21:02:15 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id o13so10047946edc.0
+        for <linux-security-module@vger.kernel.org>; Sat, 30 Jul 2022 21:02:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=VQvaSdst3GlNtIz5gSEbzEWnw6iJp0dnfjX2/uw4Pi0=;
-        b=WwZeLQPHVZMv7Tf/yzouYMy/N8ncJHBvNxrLWXHyVtWxdZ1PxHorwX/QP+bQZFNbY1
-         rFwGJtpccThotO8bEaWew5690F3KBLjHib7+tV2wpgxvsFLNez3D6LNChyTXqofSjLSL
-         3t6mL4NZhitq1h4tRWJkYont7aB4p6WDw3W2nbHcvT//xibau8r6KMdHFoQnG+SQ/3rI
-         3j0ybuxX0FIf2CU4lpJxYEwnn2Qs8McUF9hZQ8kDHVp4HHibCyHITaH7wbRaDD6Z8BOI
-         nolUx7bNdTsURyp6dA0MSYRIyofqMVotGVXSojpI8bVNj+lPXZDKpcXfE/3CmYrakb10
-         Apmw==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=dS1gnirPaPIBPW+4HAsPhAM2Po3GcMN0qT2m5lg+fpg=;
+        b=phMdau5Q+uuFquEvPmnS6HSL/18zz+bUW5aMUMyObJZ0NF9q1xVKLI3BQjQlfmM2uJ
+         Of/mTF0xmIu/Vj2G44REluOqYnduXIF6+pad9Fz7HXwxywUejputsnD2s0Nma05Rv8cZ
+         Ykn0+GYcu2aPF3Jj0CBMXsDFPGYIQu/old0U+j9Czye/9COJvmpjr2GMU1fRTNoEc8Jg
+         wPra2i+MnfMHTVt6cKD2Go8THWFMUbQ2f3Jwp/i7Ts+0JcN/nLZhsqciusn3o/H7Ekui
+         OxBDiwY11WtJJEh0jABmMFqJr+aIcDNmPhva0XS0sAxvusJ06fY3cmkpXRhLoljs8mJN
+         Bu5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=VQvaSdst3GlNtIz5gSEbzEWnw6iJp0dnfjX2/uw4Pi0=;
-        b=t0JwmXYhhrZP1vtlXaEqQxwYRBA1zNN5/f/tmMpa74xphI3+V4gOKi9OLd5c8vepyQ
-         QEIIiTw4iThJWrVjg2/QIQdZAMlkIUg9OcGPHeXBUW1lIc+j1JMXpNqEVkUGjzl96sv/
-         2ti98+K6mIk7JTA77JH9qMB0xCtMRVZE5mTSbbtT70Wep2ZJvS/Flj00BLuob4ZhqErM
-         u1bpqwQsHZz4ijihURf+1HhhIMxtdJvzAPEqQBqLpiHGwHBrM37t2bxyk0L/CxdI/ed4
-         w/IDoFPSklexvZ47Y7m2b0KGU1j6Da+6QGjVgf4tJ36q+U+gBJv5TeGrnag3IQ5Xex2F
-         PLjg==
-X-Gm-Message-State: AJIora+B+fiBvwnVsRhMbRcSstQiB6CO+ayrC3nIlg8DaCkac3CvYB/S
-        y6YkLnG3KFxmP9U0knfb4k3V1A==
-X-Google-Smtp-Source: AGRyM1vlzdqQ1oG5qxelDaZGwViNeSWbgs5sytdvECpAolwn1LIlFKm9WBz+/JKkjdUAPx95t1xc6g==
-X-Received: by 2002:a05:6870:f2a0:b0:fe:29a0:4b48 with SMTP id u32-20020a056870f2a000b000fe29a04b48mr3309674oap.183.1659173524398;
-        Sat, 30 Jul 2022 02:32:04 -0700 (PDT)
-Received: from ?IPV6:2607:fb90:c2d4:35df:6680:99ff:fe6f:cb54? ([2607:fb90:c2d4:35df:6680:99ff:fe6f:cb54])
-        by smtp.gmail.com with ESMTPSA id q16-20020a05683033d000b0061c29a38b3bsm1633168ott.33.2022.07.30.02.32.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Jul 2022 02:32:03 -0700 (PDT)
-Message-ID: <e850477a-6dd8-0a76-cfa0-bf78951f7281@landley.net>
-Date:   Sat, 30 Jul 2022 04:39:13 -0500
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=dS1gnirPaPIBPW+4HAsPhAM2Po3GcMN0qT2m5lg+fpg=;
+        b=uYElW3SgbMIAluTTkxpcNVq8Noen1FIAQqz5Vm7N2TdAuthLzFUMRgRDAr0bt3L0GT
+         Nwrnth7omJflmAfzDp5Oome2+v/TuiPshv5lYY9sYMR1MB4PktdpYgMplTU7MDhK5jO3
+         PkEVzOgt3POg3y8r5mSDKlCZS7LJoO1f/+rbhd1hmEQA5NM0QX2tIIWVNVxLIrOEtm3x
+         tN9x8Zj0aHmF/JEUsVQ6ddiNBUE2BNRKcc9u/dufwXslifhmtkLm4QRMB8GQ+UsCLLEM
+         3yPCXF8AmzcAMz8h94nOrwzBJjRBNpPz5mZ4onpippRfsNLaGwbqXGlLUQPGyExawwYm
+         XY3A==
+X-Gm-Message-State: AJIora9lHeHG/yHwHjECwAl6aggwSUhmWTIRot6BjupOmCc2c7KgP+GP
+        T3Lc5XtJXNx3MI/dQY1jUv0=
+X-Google-Smtp-Source: AGRyM1u7NZvP+Xzrt7OZ0vARDj/6M2wa4dK7uocIn0rzH07JXU9ZzisazBwcopgv4L8DkMvxpVIMrQ==
+X-Received: by 2002:a05:6402:51ce:b0:43c:4326:26d3 with SMTP id r14-20020a05640251ce00b0043c432626d3mr9836732edd.411.1659240134371;
+        Sat, 30 Jul 2022 21:02:14 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id i23-20020a1709063c5700b007306ae5bb1esm323255ejg.82.2022.07.30.21.02.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Jul 2022 21:02:13 -0700 (PDT)
+Date:   Sun, 31 Jul 2022 06:02:12 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v2 1/4] landlock: Support file truncation
+Message-ID: <YuX+xGUMubWnWAwp@nuc>
+References: <20220712211405.14705-1-gnoack3000@gmail.com>
+ <20220712211405.14705-2-gnoack3000@gmail.com>
+ <77116641-4f5f-f152-4032-d83011b05d97@digikod.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Content-Language: en-US
-To:     Jim Baxter <jim_baxter@mentor.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     "hpa@zytor.com" <hpa@zytor.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "takondra@cisco.com" <takondra@cisco.com>,
-        "kamensky@cisco.com" <kamensky@cisco.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
- <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
- <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
- <20220609102627.GA3922@lxhi-065>
- <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
- <20220610153336.GA8881@lxhi-065>
- <4bc349a59e4042f7831b1190914851fe@huawei.com>
- <20220615092712.GA4068@lxhi-065>
- <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
- <f82d4961986547b28b6de066219ad08b@huawei.com>
- <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
- <8e6a723874644449be99fcebb0905058@huawei.com>
- <d6af7f7e-7f8c-a6a7-7a09-84928fd69774@mentor.com>
-From:   Rob Landley <rob@landley.net>
-In-Reply-To: <d6af7f7e-7f8c-a6a7-7a09-84928fd69774@mentor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <77116641-4f5f-f152-4032-d83011b05d97@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/29/22 05:37, Jim Baxter wrote:
->>>> Uhm, I guess this could be solved with:
->>>>
->>>> https://github.com/openeuler-
->>> mirror/kernel/commit/18a502f7e3b1de7b9ba0c70896ce08ee13d052da
->>>>
->>>> and adding initramtmpfs to the kernel command line. You are
->>>> probably using ramfs, which does not have xattr support.
->>>>
+On Fri, Jul 29, 2022 at 12:49:29PM +0200, Mickaël Salaün wrote:
+>
+> On 12/07/2022 23:14, Günther Noack wrote:
+>
+> [...]
+>
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index 23df4e0e8ace..9ca7f9d0d862 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -96,7 +96,12 @@ struct landlock_path_beneath_attr {
+> >    *
+> >    * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
+> >    * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access.
+> > + *   Note that you might additionally need the LANDLOCK_ACCESS_FS_TRUNCATE
+> > + *   right in order to overwrite files with open(2) using O_TRUNC or creat(2).
+>
+> Please use the :manpage: notation for syscalls.
 
-Oh, here's the actual tested version of the patch wiring up rootfstype=tmpfs to
-force rootfs to be tmpfs even when you specify root=
+Done, will be included in the next version.
 
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 7058e14ad5f7..dedf27fe9044 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -665,7 +665,7 @@ struct file_system_type rootfs_fs_type = {
+>
+>
+> >    * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
+> > + * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file through file truncation
+> > + *   APIs like truncate(2), ftruncate(2), open(2) with O_TRUNC or creat(2).
+> > + *   This access right is available since the third version of the Landlock ABI.
+> >    *
+> >    * A directory can receive access rights related to files or directories.  The
+> >    * following access right is applied to the directory itself, and the
+> > @@ -139,10 +144,9 @@ struct landlock_path_beneath_attr {
+> >    *
+> >    *   It is currently not possible to restrict some file-related actions
+> >    *   accessible through these syscall families: :manpage:`chdir(2)`,
+> > - *   :manpage:`truncate(2)`, :manpage:`stat(2)`, :manpage:`flock(2)`,
+> > - *   :manpage:`chmod(2)`, :manpage:`chown(2)`, :manpage:`setxattr(2)`,
+> > - *   :manpage:`utime(2)`, :manpage:`ioctl(2)`, :manpage:`fcntl(2)`,
+> > - *   :manpage:`access(2)`.
+> > + *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+> > + *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+> > + *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
+> >    *   Future Landlock evolutions will enable to restrict them.
+> >    */
+> >   /* clang-format off */
 
- void __init init_rootfs(void)
- {
--	if (IS_ENABLED(CONFIG_TMPFS) && !saved_root_name[0] &&
--		(!root_fs_names || strstr(root_fs_names, "tmpfs")))
-+	if (IS_ENABLED(CONFIG_TMPFS) && (!root_fs_names ? !saved_root_name[0] :
-+		!!strstr(root_fs_names, "tmpfs")))
- 		is_tmpfs = true;
- }
-
-Signed-in-triplicate-by: Rob Landley <rob@landley.net>
-
-No idea why nobody else has fixed that bug in the past 9 years, seems obvious?
-
-Anyway, here's the testing I did using mkroot (ala
-https://landley.net/toybox/faq.html#mkroot):
-
-$ (cd root/x86_64; KARGS='quiet root=potato HANDOFF="/bin/head -n 1
-/proc/mounts"' ./run-qemu.sh) | tail -n 3
-rootfs / rootfs rw 0 0
-reboot: Restarting system
-
-$ (cd root/x86_64; KARGS='quiet HANDOFF="/bin/head -n 1 /proc/mounts"'
-./run-qemu.sh) | tail -n 3
-rootfs / rootfs rw,size=121828k,nr_inodes=30457 0 0
-reboot: Restarting system
-
-$ (cd root/x86_64; KARGS='quiet rootfstype=tmpfs root=potato HANDOFF="/bin/head
--n 1 /proc/mounts"' ./run-qemu.sh) | tail -n 3
-rootfs / rootfs rw,size=121828k,nr_inodes=30457 0 0
-reboot: Restarting system
-
-I.E. rootfstype=tmpfs neutralized the root= so it was still tmpfs despite the
-kernel being explicitly told you weren't going to stay on initramfs (which is
-still what root= means). With just root= it's still ramfs, with all the "my log
-file got too big and the system livelocked" and "querying available space always
-returns zero" that entails.
-
-> Can I clarify which filesystem type is supported with this patch series?
-> Is it tmpfs or perhaps a ramdisk?
-
-I believe both tmpfs and ramfs support xattrs? (I know tmpfs does, and
-fs/ramfs/file-mmu.c plugs simple_getattr() into ramfs_file_operations.setattr so
-it looks like that would too? Haven't tried it.)
-
-This isn't a modification to the filesystem code (ramfs/tmpfs), this is a
-modification to the boot-time loader (initramfs) that extracts a cpio.gz file
-into the filesystem.
-
-Ramdisks have supported xattrs for years: they fake up a block device out of a
-chunk of memory and them format it and mount some other filesystem on it,
-meaning the driver for the other filesystem handles the xattr support.
-
-But ramdisks don't use initramfs, they load an image of the preformatted
-filesystem into the ramdisk block device. Completely separate mechanism, sharing
-no code with initramfs, depending on the block layer, etc.
-
->>> Thank you, I have tested that patch but the problem remained. Here is my
->>> command line, I wonder if there is something wrong.
->>>
->>> Kernel command line: rw rootfstype=initramtmpfs root=/dev/ram0
->>> initrd=0x500000000 rootwait
->> 
->> It is just initramtmpfs, without rootfstype=.
-
-The above patch does not go on top of that patch, it's instead of.
-
-Rob
+--
