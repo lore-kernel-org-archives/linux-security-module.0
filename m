@@ -2,117 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7857C00140
-	for <linux-security-module@archiver.kernel.org>; Sun, 31 Jul 2022 04:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56977C00140
+	for <linux-security-module@archiver.kernel.org>; Sun, 31 Jul 2022 18:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbiGaECS (ORCPT
+        id S230074AbiGaSLh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 31 Jul 2022 00:02:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46182 "EHLO
+        Sun, 31 Jul 2022 14:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229820AbiGaECR (ORCPT
+        with ESMTP id S229558AbiGaSLg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 31 Jul 2022 00:02:17 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB2C12A96
-        for <linux-security-module@vger.kernel.org>; Sat, 30 Jul 2022 21:02:15 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id o13so10047946edc.0
-        for <linux-security-module@vger.kernel.org>; Sat, 30 Jul 2022 21:02:15 -0700 (PDT)
+        Sun, 31 Jul 2022 14:11:36 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04871A193;
+        Sun, 31 Jul 2022 11:11:35 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id f65so7832799pgc.12;
+        Sun, 31 Jul 2022 11:11:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=dS1gnirPaPIBPW+4HAsPhAM2Po3GcMN0qT2m5lg+fpg=;
-        b=phMdau5Q+uuFquEvPmnS6HSL/18zz+bUW5aMUMyObJZ0NF9q1xVKLI3BQjQlfmM2uJ
-         Of/mTF0xmIu/Vj2G44REluOqYnduXIF6+pad9Fz7HXwxywUejputsnD2s0Nma05Rv8cZ
-         Ykn0+GYcu2aPF3Jj0CBMXsDFPGYIQu/old0U+j9Czye/9COJvmpjr2GMU1fRTNoEc8Jg
-         wPra2i+MnfMHTVt6cKD2Go8THWFMUbQ2f3Jwp/i7Ts+0JcN/nLZhsqciusn3o/H7Ekui
-         OxBDiwY11WtJJEh0jABmMFqJr+aIcDNmPhva0XS0sAxvusJ06fY3cmkpXRhLoljs8mJN
-         Bu5A==
+        bh=hqBKgf+Ek/JQSC2ln2M+FhamOJdervk7JOSiOKWTnXE=;
+        b=FeKk7GPwptQofjZCsnRB6M98VcwSqFPPVXTVn5P5eIpBwkgiDjjqHkXgEV3C6Z6vFD
+         4p46kuwmXz60IlNZyF8Ri6j4juO3EQeKMQf08tUD+MTBqb3zhiSidiQvi1fAJk92QbT8
+         ZJncYLYWceXFFKGRLlJ/mRjBfW6zlFSgtvDmBCSoe4TmJzymjUVsBJPECPTc2g2lz+Xd
+         kwhlgTXrCpxS0ScT34Ah0QUwC+ZWc0JNOlo9XG7gEfmQemEScTd9LrVeKY7QAuVeRVGC
+         ks3jN72FnZtyD8pbyLlZytmx56A3lKVFbDJqSENadff5EQfW6lBElkTyYPVCQhqm9NV6
+         3cIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=dS1gnirPaPIBPW+4HAsPhAM2Po3GcMN0qT2m5lg+fpg=;
-        b=uYElW3SgbMIAluTTkxpcNVq8Noen1FIAQqz5Vm7N2TdAuthLzFUMRgRDAr0bt3L0GT
-         Nwrnth7omJflmAfzDp5Oome2+v/TuiPshv5lYY9sYMR1MB4PktdpYgMplTU7MDhK5jO3
-         PkEVzOgt3POg3y8r5mSDKlCZS7LJoO1f/+rbhd1hmEQA5NM0QX2tIIWVNVxLIrOEtm3x
-         tN9x8Zj0aHmF/JEUsVQ6ddiNBUE2BNRKcc9u/dufwXslifhmtkLm4QRMB8GQ+UsCLLEM
-         3yPCXF8AmzcAMz8h94nOrwzBJjRBNpPz5mZ4onpippRfsNLaGwbqXGlLUQPGyExawwYm
-         XY3A==
-X-Gm-Message-State: AJIora9lHeHG/yHwHjECwAl6aggwSUhmWTIRot6BjupOmCc2c7KgP+GP
-        T3Lc5XtJXNx3MI/dQY1jUv0=
-X-Google-Smtp-Source: AGRyM1u7NZvP+Xzrt7OZ0vARDj/6M2wa4dK7uocIn0rzH07JXU9ZzisazBwcopgv4L8DkMvxpVIMrQ==
-X-Received: by 2002:a05:6402:51ce:b0:43c:4326:26d3 with SMTP id r14-20020a05640251ce00b0043c432626d3mr9836732edd.411.1659240134371;
-        Sat, 30 Jul 2022 21:02:14 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id i23-20020a1709063c5700b007306ae5bb1esm323255ejg.82.2022.07.30.21.02.13
+        bh=hqBKgf+Ek/JQSC2ln2M+FhamOJdervk7JOSiOKWTnXE=;
+        b=XCxWLrD3t4nHRTxvPzzKGBGtuUivEIaM1uw3lrCJb82YCImAge4qfF0MBmgUUdXiYC
+         zkPdMWBXYEZtSC3PDD8ZQT/g+7HkfkmahCw0FxIOFqJzlkbwcTpwGrq5V9BxCc6sGOpM
+         NVd/ap7VJLe4NpEHMyj0AUtqm/rfuRX2QjWJfAgyQKCiheS2SsSyr86zWesS1azkjioc
+         om7nvdhA1Ah+OoI8zntT8utQr4u8YbvnyLn2oP77ynGVaX83k+fj5FM+bAek38jP9crY
+         Pjos0kXWGdDRaYQruXimPLVQaTntC40k+KPf8CBTMO0zD8f+UawRiO5CG6thYeoCtsLb
+         +lgw==
+X-Gm-Message-State: AJIora+u8N9nIGDoDhB9MKgETe+I5bXjBQkVMXfBL9BoQM/upkYggjfV
+        UQix4/60KAqRdFoEsUUCHWc=
+X-Google-Smtp-Source: AGRyM1sEvp+XYTCpwY4d2dm6Zd2VcBXo3vZHY8FWqth2u8zv48qtjSvQbAihhZJKf0JdVGKrtys2xg==
+X-Received: by 2002:a63:1941:0:b0:41b:6722:b2df with SMTP id 1-20020a631941000000b0041b6722b2dfmr10392818pgz.263.1659291094444;
+        Sun, 31 Jul 2022 11:11:34 -0700 (PDT)
+Received: from berlinger (berlinger.seclab.cs.ucsb.edu. [128.111.49.72])
+        by smtp.gmail.com with ESMTPSA id i18-20020a635852000000b0041bc393e594sm2795825pgm.6.2022.07.31.11.11.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Jul 2022 21:02:13 -0700 (PDT)
-Date:   Sun, 31 Jul 2022 06:02:12 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2 1/4] landlock: Support file truncation
-Message-ID: <YuX+xGUMubWnWAwp@nuc>
-References: <20220712211405.14705-1-gnoack3000@gmail.com>
- <20220712211405.14705-2-gnoack3000@gmail.com>
- <77116641-4f5f-f152-4032-d83011b05d97@digikod.net>
+        Sun, 31 Jul 2022 11:11:33 -0700 (PDT)
+Date:   Sun, 31 Jul 2022 11:11:31 -0700
+From:   Dipanjan Das <mail.dipanjan.das@gmail.com>
+To:     Siddh Raman Pant <code@siddh.me>
+Cc:     David Howells <dhowells@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Eric Dumazet <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        linux-security-modules <linux-security-module@vger.kernel.org>,
+        linux-kernel-mentees 
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        syzbot+c70d87ac1d001f29a058 
+        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>,
+        Marius Fleischer <fleischermarius@googlemail.com>,
+        Priyanka Bose <its.priyanka.bose@gmail.com>
+Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
+Message-ID: <20220731181131.GB3569921@berlinger>
+References: <1822b768504.1d4e377e236061.5518350412857967240@siddh.me>
+ <20220723135447.199557-1-code@siddh.me>
+ <Ytv/4Tljvlt0PJ2r@kroah.com>
+ <3558070.1658933200@warthog.procyon.org.uk>
+ <182407602ce.190e58816827.7904364186178466266@siddh.me>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <77116641-4f5f-f152-4032-d83011b05d97@digikod.net>
+In-Reply-To: <182407602ce.190e58816827.7904364186178466266@siddh.me>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 29, 2022 at 12:49:29PM +0200, Mickaël Salaün wrote:
->
-> On 12/07/2022 23:14, Günther Noack wrote:
->
-> [...]
->
-> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> > index 23df4e0e8ace..9ca7f9d0d862 100644
-> > --- a/include/uapi/linux/landlock.h
-> > +++ b/include/uapi/linux/landlock.h
-> > @@ -96,7 +96,12 @@ struct landlock_path_beneath_attr {
-> >    *
-> >    * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
-> >    * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access.
-> > + *   Note that you might additionally need the LANDLOCK_ACCESS_FS_TRUNCATE
-> > + *   right in order to overwrite files with open(2) using O_TRUNC or creat(2).
->
-> Please use the :manpage: notation for syscalls.
+On Wed, Jul 27, 2022 at 09:50:52PM +0530, Siddh Raman Pant wrote:
+> Thank you for explaining it!
+> 
+> I will send a v3. Should I add a Suggested-by tag mentioning you?
 
-Done, will be included in the next version.
+Sorry for jumping in.
 
->
->
-> >    * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
-> > + * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file through file truncation
-> > + *   APIs like truncate(2), ftruncate(2), open(2) with O_TRUNC or creat(2).
-> > + *   This access right is available since the third version of the Landlock ABI.
-> >    *
-> >    * A directory can receive access rights related to files or directories.  The
-> >    * following access right is applied to the directory itself, and the
-> > @@ -139,10 +144,9 @@ struct landlock_path_beneath_attr {
-> >    *
-> >    *   It is currently not possible to restrict some file-related actions
-> >    *   accessible through these syscall families: :manpage:`chdir(2)`,
-> > - *   :manpage:`truncate(2)`, :manpage:`stat(2)`, :manpage:`flock(2)`,
-> > - *   :manpage:`chmod(2)`, :manpage:`chown(2)`, :manpage:`setxattr(2)`,
-> > - *   :manpage:`utime(2)`, :manpage:`ioctl(2)`, :manpage:`fcntl(2)`,
-> > - *   :manpage:`access(2)`.
-> > + *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
-> > + *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
-> > + *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
-> >    *   Future Landlock evolutions will enable to restrict them.
-> >    */
-> >   /* clang-format off */
+We have reported the same bug in kernel v5.10.131 [https://lore.kernel.org/all/CANX2M5bHye2ZEEhEV6PUj1kYL2KdWYeJtgXw8KZRzwrNpLYz+A@mail.gmail.com]. We have been suggested to join this discussion so that we can have appropriate meta-information injected in this patchâ€™s commit message to make sure that it gets backported to v5.10.y.  Therefore, we would like to be in the loop so that we can offer help in the process, if needed.
 
---
