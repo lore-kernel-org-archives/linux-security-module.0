@@ -2,41 +2,41 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E777C00144
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 12:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DDCC19F2A
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 13:01:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231420AbiHAM7O (ORCPT
+        id S232120AbiHANBp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Aug 2022 08:59:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34766 "EHLO
+        Mon, 1 Aug 2022 09:01:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230206AbiHAM7N (ORCPT
+        with ESMTP id S231401AbiHANBo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Aug 2022 08:59:13 -0400
+        Mon, 1 Aug 2022 09:01:44 -0400
 Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C93288E;
-        Mon,  1 Aug 2022 05:59:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1659358717; cv=none; 
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DFAB65F7;
+        Mon,  1 Aug 2022 06:01:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1659358869; cv=none; 
         d=zohomail.in; s=zohoarc; 
-        b=SpgIT+u0ciSNpFpvsl8bfy86f8eiatGHZ0VCBxSC9rz7xqBjwJpE5mdRoEokHhASezWRr5WjRbdsDm/6K5hMAdlA43RWO5ZCBsMXQyI+KaFgsXZzbjwyvOu9ZsCXrnw95Mq5mtWY4H6a+iUvSqDd4douveZ3KUddV9JA4Eg3czc=
+        b=M2npo+8rvf2mQf9u6Grt4ErfFGR/2ZHMYR8rCOrdB8348R+FuXI2qwKOqsrH5wg81pChgmd/yUZIjgpggaEl21qJDPaDemkWPD6NQQBMbliqzlrZia9SUY66zNTmiWd/zJ09E7HFcZNQ8W5XxP/t0FeB85/MTngZViQetdsZJMs=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1659358717; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=7d8/VXWIL9kZoRLYBc/HuPEUPqfjdq8sxW9WzxOKpTo=; 
-        b=UoSmkfVRWDIqbz1U2gpMYT7YCT8Vx+xcs/vlnikEoo5ox1LIB4WuMID2zM+NOtSSFXUuhob65oTIHPl37qxJfPSXEIx+k/pCKJ9wLSVDr4b6Xh2oAWZB9JniJz+/8fiYB2bnlT5yX45vA0/eM5m3pO5T8gNcDaHzIWQF8uXmMPI=
+        t=1659358869; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=SQ0v85mLbFdTasT7Xfcj7jIsYFQii/2HWb8VZtzXjyM=; 
+        b=Eoc/U40ZXnlz6FMuqeRxVjZqLbkWIBczvDc/QkvA2ACTtXyKk2bQt/keZlOgcG48LisE9Llyry9OIBpmUGQqr7B0NRtkZ55x7BmM+XgOpKK2kJAo23ASSF6ZAL3p2VKgBYq/Ip6+HSP8GPtPmIdakiiApnvcN1o9l1YDgu+mvwc=
 ARC-Authentication-Results: i=1; mx.zohomail.in;
         dkim=pass  header.i=siddh.me;
         spf=pass  smtp.mailfrom=code@siddh.me;
         dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1659358717;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1659358869;
         s=zmail; d=siddh.me; i=code@siddh.me;
         h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=7d8/VXWIL9kZoRLYBc/HuPEUPqfjdq8sxW9WzxOKpTo=;
-        b=pncPOQ1dxoDMKbA+s7DlqsRvGXY2P6tXdGWN32RFuyVud/cs6qQQORpJGLoTf8/a
-        HMQJ/US1pYBf5lr0X8AbsM5qG0BqxcM8YX7cSsJeq0QPN/YEgm7xtQ4oUhp7PaXnGm0
-        2BmbSxBS1KBvOYnuUeRUjf8Xud1JcH9f2PBWnha8=
+        bh=SQ0v85mLbFdTasT7Xfcj7jIsYFQii/2HWb8VZtzXjyM=;
+        b=NJZfe/IX8tF8KFHUNwwJfRldlrpua714VbMxQqn+B8og+4rGW33ux2jDIe0di8xB
+        C7ORSZ/7CR5NjkF8SzC0O13KI1CxqZAMMjxofVBal/jSLxO0fBaFBspKwFBkOUNnS7v
+        Mv2zm0Tn9mqyuDyd6t8eMK0QVHEnzN8DSY9iVMdE=
 Received: from mail.zoho.in by mx.zoho.in
-        with SMTP id 165935870593423.691156058112256; Mon, 1 Aug 2022 18:28:25 +0530 (IST)
-Date:   Mon, 01 Aug 2022 18:28:25 +0530
+        with SMTP id 1659358858473203.14224248901678; Mon, 1 Aug 2022 18:30:58 +0530 (IST)
+Date:   Mon, 01 Aug 2022 18:30:58 +0530
 From:   Siddh Raman Pant <code@siddh.me>
 To:     "Greg KH" <gregkh@linuxfoundation.org>
 Cc:     "Dipanjan Das" <mail.dipanjan.das@gmail.com>,
@@ -50,10 +50,10 @@ Cc:     "Dipanjan Das" <mail.dipanjan.das@gmail.com>,
         "Eric Dumazet" <edumazet@google.com>,
         "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
         "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Message-ID: <182597c78f6.70a93066293735.4741894763116073008@siddh.me>
-In-Reply-To: <Yuepw21SyLbWt9F+@kroah.com>
+Message-ID: <182597eccd3.14cac6a4293987.1730526835854998440@siddh.me>
+In-Reply-To: <182597c78f6.70a93066293735.4741894763116073008@siddh.me>
 References: <20220728155121.12145-1-code@siddh.me>
- <18258c1d370.6c4bec7a269297.4170944235031209431@siddh.me> <Yuepw21SyLbWt9F+@kroah.com>
+ <18258c1d370.6c4bec7a269297.4170944235031209431@siddh.me> <Yuepw21SyLbWt9F+@kroah.com> <182597c78f6.70a93066293735.4741894763116073008@siddh.me>
 Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing
  watch_queue
 MIME-Version: 1.0
@@ -65,37 +65,11 @@ X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 01 Aug 2022 15:54:03 +0530  Greg KH <gregkh@linuxfoundation.org> wrote:
-> A: http://en.wikipedia.org/wiki/Top_post
-> Q: Were do I find info about this thing called top-posting?
-> A: Because it messes up the order in which people normally read text.
-> Q: Why is top-posting such a bad thing?
-> A: Top-posting.
-> Q: What is the most annoying thing in e-mail?
-> 
-> A: No.
-> Q: Should I include quotations after my reply?
-> 
-> http://daringfireball.net/2007/07/on_top
-> 
+On Mon, 01 Aug 2022 18:28:25 +0530  Siddh Raman Pant <code@siddh.me> wrote:
+> I now tried the 5.10.y branch of stable (which has v5.10.134), but the
+> reproducer isn't triggering the bug for me. 
 
-Oops, sorry.
-
-> Trying anything on tag v5.10 is not a good test as that kernel is very
-> old and obsolete and over 15000 changes behind what the latest 5.10.y
-> kernel release has in it.
-> 
-> So trying it on v5.10.134 would be best.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-
-Noted.
-
-I now tried the 5.10.y branch of stable (which has v5.10.134), but the
-reproducer isn't triggering the bug for me. 
+By this, I mean without the patches. I should have been clear.
 
 Thanks,
 Siddh
