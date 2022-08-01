@@ -2,87 +2,137 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E2DC00144
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 16:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F4DC00144
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 16:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232596AbiHAQQr (ORCPT
+        id S232888AbiHAQfl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Aug 2022 12:16:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42404 "EHLO
+        Mon, 1 Aug 2022 12:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231728AbiHAQQq (ORCPT
+        with ESMTP id S232954AbiHAQfS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Aug 2022 12:16:46 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A456C15824;
-        Mon,  1 Aug 2022 09:16:45 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id 15-20020a17090a098f00b001f305b453feso15807941pjo.1;
-        Mon, 01 Aug 2022 09:16:45 -0700 (PDT)
+        Mon, 1 Aug 2022 12:35:18 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8F23B0
+        for <linux-security-module@vger.kernel.org>; Mon,  1 Aug 2022 09:35:10 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id n133so13720600oib.0
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Aug 2022 09:35:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DyQ9K8ymMDEzTjm8+aouou/83gQAMkkB40Lq7COAi90=;
-        b=bKc+XzrgkCFZiEUbnAS5/FO+43F/9SjycwR/YkYtA5DisTt0Do0fsQg6bF49bGnGd9
-         YA0a3vSXT4RPvmr8zpb5WPNfsG11qdnVmP5H+cZ4kmPs3GXxtQb13FmSs/fqFOEBXLQH
-         anlVgMx+bTF316hXTuS3rispdu1AK1ZbEhokhVLNBAJzU62ck1eKyaEuoND5XoMx50Ig
-         gcveZR6kzZRu20VjweEzzurVLn1Mf5i49vnaK7i1JyiV4ityVX4lsHE7wg3cWc4Q+j6S
-         6NvGPsgenWjJdFEmu9Wk4wB66TR//iFiNIsncnefryw8HBT/ThlsXMA7A+daWK3oj587
-         7/Ow==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=Fto1MpscWUFMNnBCFYXAwkIBHHJszVTIcxuhyhUimb8=;
+        b=FI+OTAEIYz2VsoXDkzo0BCE6i9UMDcLbhJ8KfQlM/Yb9whP/Aso6fJ6y77PQwhSnmh
+         LxrcRuG9r+1+NvdtFo31ZVrKx3dxqveIXaUH1MX9/P2cjvo8vJJiQImvUd5srpvFqSjX
+         gWd329LBF4+LFX44YhtcZ3a9uJTsRResZet1+XcU1+rNQD/w9pcinpKpIdIqvt9yl5gw
+         iXliFpwyHfGGnu7OpXt6GjUGhpaateed5310JLq6R84x7GmQyYp1iRpuyOIIhQXgRxzD
+         S3YHp7JVREAfFsiFCf0AWwsBF5mWhs1fqm12YsQRTrLC8OkjHs5jWq2wHG7W89qukPgb
+         shyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DyQ9K8ymMDEzTjm8+aouou/83gQAMkkB40Lq7COAi90=;
-        b=OzZWqd2lI4VvFw23u6J5drulM3cLbAL/W2kkoQfT397D1Ziq8C7rnzhpMLQitKZMl9
-         7fPqd2SQY+EVTvT1Eqzh5uGgApSR4hpNm27YxAJPkb0ExXj7LGxYYcsCvi9VeQCiIXSL
-         s9vZIKzZkuVlrzdKn0p23RSdFgOJj/AosDlZToMrK/0kkeonRVgy+/axqCoUygCmo0pZ
-         jHfVGRsWCeztoqqKdsn4kZ0EZU7byhpjBltKC6fhnP5S8TYC1AphL515yfCCCyIqTk0Y
-         WsiTvK2edvfkiJo5OEeTTD0bsubNrbH9jE1HjqQ+4Eiyb45+GABz4w6MQ7pw37w7LOLP
-         R5uA==
-X-Gm-Message-State: ACgBeo1UcaMmAKLx8RZRwkZAy0JZ0DRaZEeQLOxXlx4AL6CX0cA4Ukzz
-        3SGG50RuZX69KEuuzemTvDY=
-X-Google-Smtp-Source: AA6agR5WQHS2QRnUdDFKIXQxlmyPnqxXuPRAoKSIJNemA2+P+CYErRyt7sfsSAhSbAbcAFNBb+Sz3Q==
-X-Received: by 2002:a17:90b:4b81:b0:1ef:cd2c:bf2e with SMTP id lr1-20020a17090b4b8100b001efcd2cbf2emr19492079pjb.137.1659370605031;
-        Mon, 01 Aug 2022 09:16:45 -0700 (PDT)
-Received: from berlinger (berlinger.seclab.cs.ucsb.edu. [128.111.49.72])
-        by smtp.gmail.com with ESMTPSA id q11-20020a170903204b00b0016c27561454sm9671277pla.283.2022.08.01.09.16.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Aug 2022 09:16:44 -0700 (PDT)
-Date:   Mon, 1 Aug 2022 09:16:42 -0700
-From:   Dipanjan Das <mail.dipanjan.das@gmail.com>
-To:     Siddh Raman Pant <code@siddh.me>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        syzbot+c70d87ac1d001f29a058 
-        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>,
-        linux-kernel-mentees 
-        <linux-kernel-mentees@lists.linuxfoundation.org>,
-        linux-security-modules <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing
- watch_queue
-Message-ID: <20220801161642.GA1932489@berlinger>
-References: <20220728155121.12145-1-code@siddh.me>
- <18258c1d370.6c4bec7a269297.4170944235031209431@siddh.me>
- <Yuepw21SyLbWt9F+@kroah.com>
- <182597c78f6.70a93066293735.4741894763116073008@siddh.me>
- <182597eccd3.14cac6a4293987.1730526835854998440@siddh.me>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=Fto1MpscWUFMNnBCFYXAwkIBHHJszVTIcxuhyhUimb8=;
+        b=IxSd3rxQT+l1Q8nFkhqxXTeW3OvVAU+479vPL7hk7hMXHLTWQ4FeoBbOpP1FGcImG0
+         WgAX5EGAm1ZfUTKH7b6ulFW7qM8xkRmxlhdH2S7w6YGkgO/77OGY3X49NJQGamrCIiUY
+         ONG2F0gF1dGO8Mu3cEouHw94E1f4U6jE9E4YW8kOqInWFIzy35E3R86ZrfOFer59cn7L
+         msDxQkTz6cm785HLXSpmfVNC0Jozn50lpbXXUurLF36maYN2BEkoCfrGWt6xVe/7Vpxn
+         /9T1LDGU7wzqHnMwQ7eaI6b4rKAwn+LuhG/8MThH/XPdDKao0f3ane0CKVT+zCL2xQNB
+         yWOA==
+X-Gm-Message-State: AJIora9ch3Y38+XeDSErG+B/fz4yUCDP1k/SrrzWMedmVHCYa9U1mZqs
+        jyKsxedKSpLkl/g9O3Z85bKy8Pbk3hxYhp1o2xKY
+X-Google-Smtp-Source: AGRyM1sRwoHyAz1+k6JJUYUkUrZCg+t9c/gxOPl7fh2C55+kVa8+g83QHhkhNo8kDmE2GSBbgnazRbcpMAgwbTLYWjE=
+X-Received: by 2002:a05:6808:3087:b0:33a:a6ae:7bf7 with SMTP id
+ bl7-20020a056808308700b0033aa6ae7bf7mr7223113oib.41.1659371710188; Mon, 01
+ Aug 2022 09:35:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <182597eccd3.14cac6a4293987.1730526835854998440@siddh.me>
+References: <20220721172808.585539-1-fred@cloudflare.com> <20220722061137.jahbjeucrljn2y45@kafai-mbp.dhcp.thefacebook.com>
+ <18225d94bf0.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <a4db1154-94bc-9833-1665-a88a5eee48de@cloudflare.com> <9eee1d03-3153-67d3-fe21-14fcb5fe8d27@schaufler-ca.com>
+In-Reply-To: <9eee1d03-3153-67d3-fe21-14fcb5fe8d27@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 1 Aug 2022 12:34:59 -0400
+Message-ID: <CAHC9VhS9NN9a0=4ANwOf1e74+mKMD5BwE+rKhXcno3dtrZ7GVg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Introduce security_create_user_ns()
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>,
+        Martin KaFai Lau <kafai@fb.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, songliubraving@fb.com,
+        yhs@fb.com, john.fastabend@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
+        ebiederm@xmission.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com,
+        cgzones@googlemail.com, karl@bigbadwolfsecurity.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 01, 2022 at 06:30:58PM +0530, Siddh Raman Pant wrote:
-> On Mon, 01 Aug 2022 18:28:25 +0530  Siddh Raman Pant <code@siddh.me> wrote:
-> > I now tried the 5.10.y branch of stable (which has v5.10.134), but the
-> > reproducer isn't triggering the bug for me. 
+On Mon, Aug 1, 2022 at 11:25 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 8/1/2022 6:13 AM, Frederick Lawler wrote:
+> > On 7/22/22 7:20 AM, Paul Moore wrote:
+> >> On July 22, 2022 2:12:03 AM Martin KaFai Lau <kafai@fb.com> wrote:
+> >>
+> >>> On Thu, Jul 21, 2022 at 12:28:04PM -0500, Frederick Lawler wrote:
+> >>>> While creating a LSM BPF MAC policy to block user namespace
+> >>>> creation, we
+> >>>> used the LSM cred_prepare hook because that is the closest hook to
+> >>>> prevent
+> >>>> a call to create_user_ns().
+> >>>>
+> >>>> The calls look something like this:
+> >>>>
+> >>>> cred = prepare_creds()
+> >>>> security_prepare_creds()
+> >>>> call_int_hook(cred_prepare, ...
+> >>>> if (cred)
+> >>>> create_user_ns(cred)
+> >>>>
+> >>>> We noticed that error codes were not propagated from this hook and
+> >>>> introduced a patch [1] to propagate those errors.
+> >>>>
+> >>>> The discussion notes that security_prepare_creds()
+> >>>> is not appropriate for MAC policies, and instead the hook is
+> >>>> meant for LSM authors to prepare credentials for mutation. [2]
+> >>>>
+> >>>> Ultimately, we concluded that a better course of action is to
+> >>>> introduce
+> >>>> a new security hook for LSM authors. [3]
+> >>>>
+> >>>> This patch set first introduces a new security_create_user_ns()
+> >>>> function
+> >>>> and userns_create LSM hook, then marks the hook as sleepable in BPF.
+> >>> Patch 1 and 4 still need review from the lsm/security side.
+> >>
+> >>
+> >> This patchset is in my review queue and assuming everything checks
+> >> out, I expect to merge it after the upcoming merge window closes.
+> >>
+> >> I would also need an ACK from the BPF LSM folks, but they're CC'd on
+> >> this patchset.
+> >
+> > Based on last weeks comments, should I go ahead and put up v4 for
+> > 5.20-rc1 when that drops, or do I need to wait for more feedback?
+>
+> As the primary consumer of this hook is BPF I would really expect their
+> reviewed-by before accepting this.
 
-Are you referring to the reproducer attached to our original report?
-https://lore.kernel.org/all/CANX2M5bHye2ZEEhEV6PUj1kYL2KdWYeJtgXw8KZRzwrNpLYz+A@mail.gmail.com/
+We love all our in-tree LSMs equally.  As long as there is at least
+one LSM which provides an implementation and has ACK'd the hook, and
+no other LSMs have NACK'd the hook, then I have no problem merging it.
+I doubt it will be necessary in this case, but if we need to tweak the
+hook in the future we can definitely do that; we've done this in the
+past when it has made sense.
 
+As a reminder, the LSM hooks are *not* part of the "don't break
+userspace" promise.  I know it gets a little muddy with the way the
+BPF LSM works, but just as we don't want to allow one LSM to impact
+the runtime controls on another, we don't want to allow one LSM to
+freeze the hooks for everyone.
+
+-- 
+paul-moore.com
