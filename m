@@ -2,89 +2,85 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F178C00144
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 08:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B77DC00144
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 08:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbiHAIr2 (ORCPT
+        id S229725AbiHAIyE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Aug 2022 04:47:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54754 "EHLO
+        Mon, 1 Aug 2022 04:54:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230237AbiHAIr2 (ORCPT
+        with ESMTP id S229709AbiHAIyE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Aug 2022 04:47:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB5032DB5;
-        Mon,  1 Aug 2022 01:47:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C80B61008;
-        Mon,  1 Aug 2022 08:47:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E94C433D6;
-        Mon,  1 Aug 2022 08:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1659343646;
-        bh=xbJSzaTJLqf/iz1sUggkR2WIMbRuPaCeSIwGgeDNNw8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dEZ3ZGt7IBgk3rFNv6L+SpJp9GAYTM2u17D05UdDWVsQpSAQ+t6TkEM/juvVJLwBT
-         YlBVqOlMJN8w4yn+p5K0j4SpZDcqRQellWTl2iFQM40T2SXcZEVIJfUWs4lXMuTCb6
-         CSR1l9mRovyfJWAfhe4BuHHhPoQMXSOxUhs7RnXQ=
-Date:   Mon, 1 Aug 2022 10:47:23 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Siddh Raman Pant <code@siddh.me>
-Cc:     Dipanjan Das <mail.dipanjan.das@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Eric Dumazet <edumazet@google.com>,
+        Mon, 1 Aug 2022 04:54:04 -0400
+Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8FE3AE60;
+        Mon,  1 Aug 2022 01:54:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1659344010; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=M0r0JCXgGx9pjQ/ydIjoSm+85Ug+MekmokoXdbPUmjwzAaZCuhBHOvH/y1PbTP4y47VYZICgIihZU/TXeSGmhjiPQYCnOwvjqFCKMurktVsbeJ6bD1GVr2P1VeHY6xeFxLksz6hQ9/c5g1V2H5FolCJeFj90C+zV43LcOvMQfHA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1659344010; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=9KIdphyCYOH/4OA0LAvAgOPow7h5ET3rK7jn+N74c4E=; 
+        b=B4XOwHd4TerCqbXXjmKDYUCdC0TYlzBLpxCrl9PRCDy2n++lxb7/7PUBi2B2te2AEsfMCEzdj+0XeGz5DguoriRMOIYLBa5ty56cHV0u4R0oydM40nezBliRnaYeQt8hUkI1i4YheG9FTgz860fL1EhzuXpsPNNw/BoAtOVQLUs=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1659344010;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=9KIdphyCYOH/4OA0LAvAgOPow7h5ET3rK7jn+N74c4E=;
+        b=HWPQpzixnc+vQQ4haylmY3BafaioQvZvIoH1nf2bIU7rkyKLDyGlAFSNZdVGTBjU
+        oJAVJQvrBPHE62jnYyVfyw5qb95aKnrePHhtXFhMYlCIYiSJU9KmVX3MWMsGRKka/OA
+        yLoLOK9m6+3Lik5jScYafBn5XPeafkVqgzBTbNwE=
+Received: from mail.zoho.in by mx.zoho.in
+        with SMTP id 1659343997151238.53429778420264; Mon, 1 Aug 2022 14:23:17 +0530 (IST)
+Date:   Mon, 01 Aug 2022 14:23:17 +0530
+From:   Siddh Raman Pant <code@siddh.me>
+To:     "Greg KH" <gregkh@linuxfoundation.org>
+Cc:     "Dipanjan Das" <mail.dipanjan.das@gmail.com>,
+        "David Howells" <dhowells@redhat.com>,
+        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+        "Eric Dumazet" <edumazet@google.com>,
         "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        linux-security-modules <linux-security-module@vger.kernel.org>,
-        linux-kernel-mentees 
+        "linux-security-modules" <linux-security-module@vger.kernel.org>,
+        "linux-kernel-mentees" 
         <linux-kernel-mentees@lists.linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        syzbot+c70d87ac1d001f29a058 
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "syzbot+c70d87ac1d001f29a058" 
         <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>,
-        Marius Fleischer <fleischermarius@googlemail.com>,
-        Priyanka Bose <its.priyanka.bose@gmail.com>
-Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
- watch_queue
-Message-ID: <YueTG6Nla1pMcW/1@kroah.com>
+        "Marius Fleischer" <fleischermarius@googlemail.com>,
+        "Priyanka Bose" <its.priyanka.bose@gmail.com>
+Message-ID: <182589c08c8.3f58696e264303.1478535037206263797@siddh.me>
+In-Reply-To: <YueTG6Nla1pMcW/1@kroah.com>
 References: <1822b768504.1d4e377e236061.5518350412857967240@siddh.me>
  <20220723135447.199557-1-code@siddh.me>
  <Ytv/4Tljvlt0PJ2r@kroah.com>
  <3558070.1658933200@warthog.procyon.org.uk>
  <182407602ce.190e58816827.7904364186178466266@siddh.me>
  <20220731181131.GB3569921@berlinger>
- <1825594fdb6.52eb2a02235647.5426665702277259900@siddh.me>
+ <1825594fdb6.52eb2a02235647.5426665702277259900@siddh.me> <YueTG6Nla1pMcW/1@kroah.com>
+Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1825594fdb6.52eb2a02235647.5426665702277259900@siddh.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 01, 2022 at 12:16:43AM +0530, Siddh Raman Pant wrote:
-> On Sun, 31 Jul 2022 23:41:31 +0530  Dipanjan Das <mail.dipanjan.das@gmail.com> wrote:
-> > On Wed, Jul 27, 2022 at 09:50:52PM +0530, Siddh Raman Pant wrote:
-> > > Thank you for explaining it!
-> > > 
-> > > I will send a v3. Should I add a Suggested-by tag mentioning you?
-> > 
-> > Sorry for jumping in.
-> > 
-> > We have reported the same bug in kernel v5.10.131 [https://lore.kernel.org/all/CANX2M5bHye2ZEEhEV6PUj1kYL2KdWYeJtgXw8KZRzwrNpLYz+A@mail.gmail.com]. We have been suggested to join this discussion so that we can have appropriate meta-information injected in this patch’s commit message to make sure that it gets backported to v5.10.y.  Therefore, we would like to be in the loop so that we can offer help in the process, if needed.
-> > 
+On Mon, 01 Aug 2022 14:17:23 +0530  Greg KH <gregkh@linuxfoundation.org> wrote:
+> There are no active supported kernels other than the ones listed on
+> kernel.org, so 5.8 doesn't make much sense here, only 5.10 and 5.15 and
+> 5.18 at the moment.
 > 
-> As you are suggesting for backporting, I should CC the stable list, or mail
-> after it gets merged. You have reproduced it on v5.10, but the change seems to
-> be introduced by c73be61cede5 ("pipe: Add general notification queue support"),
-> which got in at v5.8. So should it be backported till v5.8 instead?
+> thanks,
+> 
+> greg k-h
 
-There are no active supported kernels other than the ones listed on
-kernel.org, so 5.8 doesn't make much sense here, only 5.10 and 5.15 and
-5.18 at the moment.
+Okay, thanks for correcting me.
 
-thanks,
-
-greg k-h
+-- Siddh
