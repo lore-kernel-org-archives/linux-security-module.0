@@ -2,119 +2,89 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C21C00140
-	for <linux-security-module@archiver.kernel.org>; Sun, 31 Jul 2022 18:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F178C00144
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 08:47:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237373AbiGaSra (ORCPT
+        id S229642AbiHAIr2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 31 Jul 2022 14:47:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41144 "EHLO
+        Mon, 1 Aug 2022 04:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231146AbiGaSr3 (ORCPT
+        with ESMTP id S230237AbiHAIr2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 31 Jul 2022 14:47:29 -0400
-Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EABA6DF6A;
-        Sun, 31 Jul 2022 11:47:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1659293214; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=VMtZTlZqTpIyiVgpkxvDTwe/5hDJ5qiZzIN+CYThyu+b1oOBOMk+xvSBiB7SY/inhuFbMnx156X/Er9T8DTWf+AKvQwLC5GYo+gRSiF+AwNrI5KDHcAHJXYn9lS5PX18k9g3COaEmxLj8bvMJ0V3dnd64gLOUz0QRB26XVo7zpk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1659293214; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=Uj4glfeT9Z7nH5oo3H/JP4uyo13D+BpPuLlcPeEcVE0=; 
-        b=cbFVMWjHuh+2Tbvv+yheSdv8Rsv4rCdwAUpwnXajeTpSVXcmZPKY6d5bC6yPXFaWCkqfF1QXem9bTZF2qhp417JRgIgHqHQ2PwERbmapIY0J4go9lS5PyOj9/cG2VIPk8fVk3ze0GgFxhEbEA1jL+NkV7zdhF/wW0ozu5UwukzM=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1659293214;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=Uj4glfeT9Z7nH5oo3H/JP4uyo13D+BpPuLlcPeEcVE0=;
-        b=GGC6NTSC74sqGG+ekDg5O9aXSNSdgGaBexWLPVoO1uzC5640kYibHqavkoUyeBM/
-        rQvW3e7LueMbBxio0QfREfJW3AjnDLqD3//LQ3p5o+/w463Lmsleam1dQxN01R+5IYO
-        frk8Rf34MWUGr/KplwnIA7j9c5s8qXmSg2GrlC6A=
-Received: from mail.zoho.in by mx.zoho.in
-        with SMTP id 1659293203918386.25370840011624; Mon, 1 Aug 2022 00:16:43 +0530 (IST)
-Date:   Mon, 01 Aug 2022 00:16:43 +0530
-From:   Siddh Raman Pant <code@siddh.me>
-To:     "Dipanjan Das" <mail.dipanjan.das@gmail.com>
-Cc:     "David Howells" <dhowells@redhat.com>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Eric Dumazet" <edumazet@google.com>,
+        Mon, 1 Aug 2022 04:47:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB5032DB5;
+        Mon,  1 Aug 2022 01:47:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C80B61008;
+        Mon,  1 Aug 2022 08:47:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E94C433D6;
+        Mon,  1 Aug 2022 08:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1659343646;
+        bh=xbJSzaTJLqf/iz1sUggkR2WIMbRuPaCeSIwGgeDNNw8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dEZ3ZGt7IBgk3rFNv6L+SpJp9GAYTM2u17D05UdDWVsQpSAQ+t6TkEM/juvVJLwBT
+         YlBVqOlMJN8w4yn+p5K0j4SpZDcqRQellWTl2iFQM40T2SXcZEVIJfUWs4lXMuTCb6
+         CSR1l9mRovyfJWAfhe4BuHHhPoQMXSOxUhs7RnXQ=
+Date:   Mon, 1 Aug 2022 10:47:23 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Siddh Raman Pant <code@siddh.me>
+Cc:     Dipanjan Das <mail.dipanjan.das@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Eric Dumazet <edumazet@google.com>,
         "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        "linux-security-modules" <linux-security-module@vger.kernel.org>,
-        "linux-kernel-mentees" 
+        linux-security-modules <linux-security-module@vger.kernel.org>,
+        linux-kernel-mentees 
         <linux-kernel-mentees@lists.linuxfoundation.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "syzbot+c70d87ac1d001f29a058" 
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        syzbot+c70d87ac1d001f29a058 
         <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>,
-        "Marius Fleischer" <fleischermarius@googlemail.com>,
-        "Priyanka Bose" <its.priyanka.bose@gmail.com>
-Message-ID: <1825594fdb6.52eb2a02235647.5426665702277259900@siddh.me>
-In-Reply-To: <20220731181131.GB3569921@berlinger>
+        Marius Fleischer <fleischermarius@googlemail.com>,
+        Priyanka Bose <its.priyanka.bose@gmail.com>
+Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
+Message-ID: <YueTG6Nla1pMcW/1@kroah.com>
 References: <1822b768504.1d4e377e236061.5518350412857967240@siddh.me>
  <20220723135447.199557-1-code@siddh.me>
  <Ytv/4Tljvlt0PJ2r@kroah.com>
  <3558070.1658933200@warthog.procyon.org.uk>
- <182407602ce.190e58816827.7904364186178466266@siddh.me> <20220731181131.GB3569921@berlinger>
-Subject: Re: [PATCH] kernel/watch_queue: Make pipe NULL while clearing
- watch_queue
+ <182407602ce.190e58816827.7904364186178466266@siddh.me>
+ <20220731181131.GB3569921@berlinger>
+ <1825594fdb6.52eb2a02235647.5426665702277259900@siddh.me>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1825594fdb6.52eb2a02235647.5426665702277259900@siddh.me>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 31 Jul 2022 23:41:31 +0530  Dipanjan Das <mail.dipanjan.das@gmail.c=
-om> wrote:
-> On Wed, Jul 27, 2022 at 09:50:52PM +0530, Siddh Raman Pant wrote:
-> > Thank you for explaining it!
-> >=20
-> > I will send a v3. Should I add a Suggested-by tag mentioning you?
->=20
-> Sorry for jumping in.
->=20
-> We have reported the same bug in kernel v5.10.131 [https://lore.kernel.or=
-g/all/CANX2M5bHye2ZEEhEV6PUj1kYL2KdWYeJtgXw8KZRzwrNpLYz+A@mail.gmail.com]. =
-We have been suggested to join this discussion so that we can have appropri=
-ate meta-information injected in this patch=E2=80=99s commit message to mak=
-e sure that it gets backported to v5.10.y.  Therefore, we would like to be =
-in the loop so that we can offer help in the process, if needed.
->=20
+On Mon, Aug 01, 2022 at 12:16:43AM +0530, Siddh Raman Pant wrote:
+> On Sun, 31 Jul 2022 23:41:31 +0530  Dipanjan Das <mail.dipanjan.das@gmail.com> wrote:
+> > On Wed, Jul 27, 2022 at 09:50:52PM +0530, Siddh Raman Pant wrote:
+> > > Thank you for explaining it!
+> > > 
+> > > I will send a v3. Should I add a Suggested-by tag mentioning you?
+> > 
+> > Sorry for jumping in.
+> > 
+> > We have reported the same bug in kernel v5.10.131 [https://lore.kernel.org/all/CANX2M5bHye2ZEEhEV6PUj1kYL2KdWYeJtgXw8KZRzwrNpLYz+A@mail.gmail.com]. We have been suggested to join this discussion so that we can have appropriate meta-information injected in this patch’s commit message to make sure that it gets backported to v5.10.y.  Therefore, we would like to be in the loop so that we can offer help in the process, if needed.
+> > 
+> 
+> As you are suggesting for backporting, I should CC the stable list, or mail
+> after it gets merged. You have reproduced it on v5.10, but the change seems to
+> be introduced by c73be61cede5 ("pipe: Add general notification queue support"),
+> which got in at v5.8. So should it be backported till v5.8 instead?
 
-As you are suggesting for backporting, I should CC the stable list, or mail
-after it gets merged. You have reproduced it on v5.10, but the change seems=
- to
-be introduced by c73be61cede5 ("pipe: Add general notification queue suppor=
-t"),
-which got in at v5.8. So should it be backported till v5.8 instead?
+There are no active supported kernels other than the ones listed on
+kernel.org, so 5.8 doesn't make much sense here, only 5.10 and 5.15 and
+5.18 at the moment.
 
-I actually looked this up on the internet / lore now for any other reports,=
- and
-it seems this fixes a CVE (CVE-2022-1882).
+thanks,
 
-The reporter of CVE seems to have linked his patch as a part of CVE report,=
- of
-which he sent v2, but he seems to do it in a roundabout way, and also in a =
-way
-similar to what Hillf Danton had replied to my v2 patch, wherein he missed
-353f7988dd84 ("watchqueue: make sure to serialize 'wqueue->defunct' properl=
-y"),
-so I guess I can propose my patch as a fix for the CVE.
-
-Note: I have already sent the v3, so please suggest any new improvements et=
-c.
-(except replying to the conversation here) to the v3, which can be found he=
-re:
-https://lore.kernel.org/linux-kernel/20220728155121.12145-1-code@siddh.me/
-
-Also, you may want to break text into multiples lines instead of one huge l=
-ine.
-
-Thanks,
-Siddh
+greg k-h
