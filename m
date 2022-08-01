@@ -2,142 +2,87 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6041AC3F6B0
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 15:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E2DC00144
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 16:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231736AbiHAPZe (ORCPT
+        id S232596AbiHAQQr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Aug 2022 11:25:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59588 "EHLO
+        Mon, 1 Aug 2022 12:16:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233466AbiHAPZc (ORCPT
+        with ESMTP id S231728AbiHAQQq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Aug 2022 11:25:32 -0400
-Received: from sonic301-37.consmr.mail.ne1.yahoo.com (sonic301-37.consmr.mail.ne1.yahoo.com [66.163.184.206])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B74D9AE73
-        for <linux-security-module@vger.kernel.org>; Mon,  1 Aug 2022 08:25:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1659367529; bh=ydTZpaJWqAT9cjmUlXwwbM4irBM4gGoMQmHn2NJk1SA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=H60WFCyrKRGVzG6CGZ7MrAtq1+frl1IMnkaQJHTelFSOSV5ADE/aAQpf6Uj/QojHksfI5dRQIvUQK3gImjD8Hbco7G96Jm0eBpFJqBlMdSv7JsW+f0ca2f9sdnHfNcHrRvwfESD2P4lOetJj0BfXcMh7sU2eeBS7HOLlAc4zz7sFCpd+oR0Ey2fC30fk44vd2DBI1TZ/J8hsysa7HtWIQWaPrZ+HTbIdHEopm0wgmKcnoi4dZo/C6H8kXC60naZgGHQslwY210lHXaArBg9fs/YxKbR+jYA49xEh2F8HWiVKLe0RFTDC8/8PPCwd6GfnSSo7JWAV19tOjaqG21MUJA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1659367529; bh=4PqTug5C/GPHgjqeMioDo3ZjyC0XwU8oiOivPVRkn0b=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=KfOt1BlczXizUYImPvLkHMP6Hl7/hkh7zNt2HAlGJ984QKbvoUGxYAiPCNZLKAP9bH27CLaz4gTv92qIWmjL6Ud486yCPZIDC9idor2L4g5iwxu+4vTLnjYuCd6aGfF56FV9QIKJ9Vj3IBBQvFaiC/ZW9d7fsIjTDij/74HcHaErDAzaxS2a6LA98730RcCthFoSlK5dgpGuT1vr+W40wPHML1qLkYI4Q9s5/pl/6MarGktILB8fzT8pp5khhJ261puRcmQXXqU7ZJo8HeIT8pM12jN1bhoEOJPBN4FdX82PAns42CoJYLs/Z/SMA58XhDIybCv8tYh07hJ7SyXynw==
-X-YMail-OSG: pnHYgnQVM1mV8dN5XQN44IPbkFqQLDGFO8YwhKT.ObcP.oD4Y0seG9fmmesqXjS
- RizjCw1njM8ZJKgDHKnUczbn1oLl3Fv4hA68cpFzRQiyIbBdz0hO0V9uTlm5GvxWTplaiqe4w1EC
- aE.zLboSnYSrv2G1U0EfZrUT1lRi09Bu5meU5my_AVA1OtklkuKGl2W35A_DjgY6ydSCESNa9sQu
- tU9_HgpU_yAEB.6u89XOfEZEYG9nIGIn2mXC1r1E8WA20qiTnkrAG_RjhiGy9yMVE6jPs3QXJoNm
- HaGOxvsKavtNbig7SViy83k8gThBX5H2yU6F6eunfhZWt8Er3828H7zr9uZfS9DvUNraYklXrqe1
- 0XfgMkOz3P8RKoC6bR3dlPHpuM2oCHYK.QTW5ShtzV1aNFF1vxJE_Ed_kTXXJ7GII0AdgNkEOTBO
- R0lrlJyvkOisIE9KP.t55acHc7nqDdmX55XkDT7N624I_dix7CI.IINOIwdPVgxHeUYNWoZCNSwZ
- rvYInA3WzqdwYIeSSg.JtB.L0LJqZc0TsPCDvGU1UQcnYHXxKbbS6fo.4KJ4CcTOa7a8bfXev4re
- d5j.fUempXQ6d9RqYPSGs2zLUO6jb8prEbFl6U9MvQGiZG.iDbTop3UZfMdalkmmDYzDkEcLAvd.
- ZP.E6VR4N4OsVmtLCPR5NRck6Lqa8q_HoYkkhbmifl.TYowheLpWq7OzvyQ_BgkffUkA2Rdisb7H
- oSDp9zfxGIAPF.ouhvXKoP7NHJpdUWaxzBGXVkEoDkfmAcsSX9gs3vIjStT3tCFsDs0.wAJHhuPV
- lt0PZXnPOB0d_aYlAEo.8r9uZkt35GBEeco5e6GHXDiMffbXZ3bI0o96RI8ZO19j6Pkb96aipPf3
- D9urdKEy1BxbJomIkCLgMMLbilsIZzYrK0vuS1z4LEZaeKCX5X11pYO3nQWSZ2U4DDnV5TJJB0_F
- PGeDzUobbDtO71jad9YjQLhlSQqsxTkTbaZ_4N.rr_mtXIGBO0Pi25oy8JIaMR.TTQUjy7JBSLdd
- zC59b42n41lb5erft6CAXjRnkwNJxoFnkBU2OquaAdwp6TOlyi5uY_xru2chQcIYZiQ_G0x3z8QA
- QPrM2X480_mm5Uharq6Bc1rmAL..Ciqr1yhgz1HFiUUWJnRONzzuNYNF6peKtjBm1dnPslR6Ipjr
- EO6KqFOgmLr.s_gBwPaGGjTv7RHy1bTK3LiqkfUatNGoO_1i0fGHVpLOZ4mRO.TpkZa1_Qk4alU4
- 5uHkXxTQ2g4_w7X5tTpKfIB1cndGDFJeAFvQFvJZdGsett1fUCzjsYRENvxJXNW2MlvIzPPDZ442
- j6W7iwZkBuceTKJGezZV1YwZ.o89Jor2lVI_ghURghmQPSO1FrKNGPRbUNfN0WBWq1lIXsc6KUei
- GPLWCt6w.criQBbGrasI9HhkrXsrNPYv8_Cv5o9IIwk2OvLGe4nxDaW6.k9zKiDzLyqgKid5mQ.5
- BRpTY77Ovq2pCJj_ETMxG5pA3DRQlQzKzyCe_DstoeVfeTIw4ux7VPRg7Dm79XW96zdcWBNLpHKZ
- H.y_OHsxt65HBmuwevKDG.FxFYUMR8HF0IJV8g97u0Z0QCQVrFrq1ZPIj5YnaGUhPyuQYE3vHSVn
- eWHW7J6keuxRNSQi7_hEk9rvJrkphXnL8O66AzjHE7J8vulXVR.YLTmvAHv9mj65y9QLP.O8FqMW
- mTGWUOmQV4gz8pDM5A2buq9r6Y68H2tXgG6lBcPMT_eomOJkpBG0jHS79gsjW8zTNSim7UMraZu.
- 5pbvNrNJHJJb6SwDEmohq9t7NhUXv9bf3D4AecS3UaSZop1u0jx1Xa22C..kp5G.MbUYpxBvcRSx
- 50Fn81xzBFcupBNICA1HvFppBXHbTdB7_W985KjTPcXGH8WpBf9U2MRc4tlS69_ZJLmJ8cjzExNG
- vDdvrg8ZrEmcszUOLrXLzD0aD4OFVY1CcHNvstdK8YJm.r_PLvaU1GbDnQW3jlujWoipm.wlTSMh
- U7S8UpETMj8w.18Ps69iP8He35Zq15qXHHzmnU_QmxtqK7DD03WW7XZryqxtq5SMjPSsk9ivituL
- hcJlayr5AMXypBpqJ16pudyPTlsENqv7YxyjKlfOhBxcnoGBNt.D59ocPjdyTlT7hyMW6bk.aIxa
- 1HjL9GT6NNuQOTDzrfH0zOO.Pe_nYoycbNClujvM2A81VNWc1U1YlqU055qN7Y1hPM04kHPYL65i
- Q4F4WBzRHltb_10b5pfbNKQflpJk_PFAZku_LPhBpPRD143k-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Mon, 1 Aug 2022 15:25:29 +0000
-Received: by hermes--production-bf1-99ddd9c9c-2w8k9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID dbbb92685cbe537e4f74d17fd5963314;
-          Mon, 01 Aug 2022 15:25:28 +0000 (UTC)
-Message-ID: <9eee1d03-3153-67d3-fe21-14fcb5fe8d27@schaufler-ca.com>
-Date:   Mon, 1 Aug 2022 08:25:23 -0700
+        Mon, 1 Aug 2022 12:16:46 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A456C15824;
+        Mon,  1 Aug 2022 09:16:45 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id 15-20020a17090a098f00b001f305b453feso15807941pjo.1;
+        Mon, 01 Aug 2022 09:16:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=DyQ9K8ymMDEzTjm8+aouou/83gQAMkkB40Lq7COAi90=;
+        b=bKc+XzrgkCFZiEUbnAS5/FO+43F/9SjycwR/YkYtA5DisTt0Do0fsQg6bF49bGnGd9
+         YA0a3vSXT4RPvmr8zpb5WPNfsG11qdnVmP5H+cZ4kmPs3GXxtQb13FmSs/fqFOEBXLQH
+         anlVgMx+bTF316hXTuS3rispdu1AK1ZbEhokhVLNBAJzU62ck1eKyaEuoND5XoMx50Ig
+         gcveZR6kzZRu20VjweEzzurVLn1Mf5i49vnaK7i1JyiV4ityVX4lsHE7wg3cWc4Q+j6S
+         6NvGPsgenWjJdFEmu9Wk4wB66TR//iFiNIsncnefryw8HBT/ThlsXMA7A+daWK3oj587
+         7/Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DyQ9K8ymMDEzTjm8+aouou/83gQAMkkB40Lq7COAi90=;
+        b=OzZWqd2lI4VvFw23u6J5drulM3cLbAL/W2kkoQfT397D1Ziq8C7rnzhpMLQitKZMl9
+         7fPqd2SQY+EVTvT1Eqzh5uGgApSR4hpNm27YxAJPkb0ExXj7LGxYYcsCvi9VeQCiIXSL
+         s9vZIKzZkuVlrzdKn0p23RSdFgOJj/AosDlZToMrK/0kkeonRVgy+/axqCoUygCmo0pZ
+         jHfVGRsWCeztoqqKdsn4kZ0EZU7byhpjBltKC6fhnP5S8TYC1AphL515yfCCCyIqTk0Y
+         WsiTvK2edvfkiJo5OEeTTD0bsubNrbH9jE1HjqQ+4Eiyb45+GABz4w6MQ7pw37w7LOLP
+         R5uA==
+X-Gm-Message-State: ACgBeo1UcaMmAKLx8RZRwkZAy0JZ0DRaZEeQLOxXlx4AL6CX0cA4Ukzz
+        3SGG50RuZX69KEuuzemTvDY=
+X-Google-Smtp-Source: AA6agR5WQHS2QRnUdDFKIXQxlmyPnqxXuPRAoKSIJNemA2+P+CYErRyt7sfsSAhSbAbcAFNBb+Sz3Q==
+X-Received: by 2002:a17:90b:4b81:b0:1ef:cd2c:bf2e with SMTP id lr1-20020a17090b4b8100b001efcd2cbf2emr19492079pjb.137.1659370605031;
+        Mon, 01 Aug 2022 09:16:45 -0700 (PDT)
+Received: from berlinger (berlinger.seclab.cs.ucsb.edu. [128.111.49.72])
+        by smtp.gmail.com with ESMTPSA id q11-20020a170903204b00b0016c27561454sm9671277pla.283.2022.08.01.09.16.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Aug 2022 09:16:44 -0700 (PDT)
+Date:   Mon, 1 Aug 2022 09:16:42 -0700
+From:   Dipanjan Das <mail.dipanjan.das@gmail.com>
+To:     Siddh Raman Pant <code@siddh.me>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        syzbot+c70d87ac1d001f29a058 
+        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>,
+        linux-kernel-mentees 
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        linux-security-modules <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
+Message-ID: <20220801161642.GA1932489@berlinger>
+References: <20220728155121.12145-1-code@siddh.me>
+ <18258c1d370.6c4bec7a269297.4170944235031209431@siddh.me>
+ <Yuepw21SyLbWt9F+@kroah.com>
+ <182597c78f6.70a93066293735.4741894763116073008@siddh.me>
+ <182597eccd3.14cac6a4293987.1730526835854998440@siddh.me>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v3 0/4] Introduce security_create_user_ns()
-Content-Language: en-US
-To:     Frederick Lawler <fred@cloudflare.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Martin KaFai Lau <kafai@fb.com>
-Cc:     kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
-        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        shuah@kernel.org, brauner@kernel.org, ebiederm@xmission.com,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-team@cloudflare.com, cgzones@googlemail.com,
-        karl@bigbadwolfsecurity.com, casey@schaufler-ca.com
-References: <20220721172808.585539-1-fred@cloudflare.com>
- <20220722061137.jahbjeucrljn2y45@kafai-mbp.dhcp.thefacebook.com>
- <18225d94bf0.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <a4db1154-94bc-9833-1665-a88a5eee48de@cloudflare.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <a4db1154-94bc-9833-1665-a88a5eee48de@cloudflare.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20447 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <182597eccd3.14cac6a4293987.1730526835854998440@siddh.me>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/1/2022 6:13 AM, Frederick Lawler wrote:
-> On 7/22/22 7:20 AM, Paul Moore wrote:
->> On July 22, 2022 2:12:03 AM Martin KaFai Lau <kafai@fb.com> wrote:
->>
->>> On Thu, Jul 21, 2022 at 12:28:04PM -0500, Frederick Lawler wrote:
->>>> While creating a LSM BPF MAC policy to block user namespace
->>>> creation, we
->>>> used the LSM cred_prepare hook because that is the closest hook to
->>>> prevent
->>>> a call to create_user_ns().
->>>>
->>>> The calls look something like this:
->>>>
->>>> cred = prepare_creds()
->>>> security_prepare_creds()
->>>> call_int_hook(cred_prepare, ...
->>>> if (cred)
->>>> create_user_ns(cred)
->>>>
->>>> We noticed that error codes were not propagated from this hook and
->>>> introduced a patch [1] to propagate those errors.
->>>>
->>>> The discussion notes that security_prepare_creds()
->>>> is not appropriate for MAC policies, and instead the hook is
->>>> meant for LSM authors to prepare credentials for mutation. [2]
->>>>
->>>> Ultimately, we concluded that a better course of action is to
->>>> introduce
->>>> a new security hook for LSM authors. [3]
->>>>
->>>> This patch set first introduces a new security_create_user_ns()
->>>> function
->>>> and userns_create LSM hook, then marks the hook as sleepable in BPF.
->>> Patch 1 and 4 still need review from the lsm/security side.
->>
->>
->> This patchset is in my review queue and assuming everything checks
->> out, I expect to merge it after the upcoming merge window closes.
->>
->> I would also need an ACK from the BPF LSM folks, but they're CC'd on
->> this patchset.
->>
->
-> Based on last weeks comments, should I go ahead and put up v4 for
-> 5.20-rc1 when that drops, or do I need to wait for more feedback?
+On Mon, Aug 01, 2022 at 06:30:58PM +0530, Siddh Raman Pant wrote:
+> On Mon, 01 Aug 2022 18:28:25 +0530  Siddh Raman Pant <code@siddh.me> wrote:
+> > I now tried the 5.10.y branch of stable (which has v5.10.134), but the
+> > reproducer isn't triggering the bug for me. 
 
-As the primary consumer of this hook is BPF I would really expect their
-reviewed-by before accepting this. 
+Are you referring to the reproducer attached to our original report?
+https://lore.kernel.org/all/CANX2M5bHye2ZEEhEV6PUj1kYL2KdWYeJtgXw8KZRzwrNpLYz+A@mail.gmail.com/
 
->
->> -- 
->> paul-moore.com
->>
->>
->
