@@ -2,74 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DDCC19F2A
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 13:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BB1C19F2A
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Aug 2022 13:13:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232120AbiHANBp (ORCPT
+        id S231564AbiHANN7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Aug 2022 09:01:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37376 "EHLO
+        Mon, 1 Aug 2022 09:13:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231401AbiHANBo (ORCPT
+        with ESMTP id S229971AbiHANN5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Aug 2022 09:01:44 -0400
-Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DFAB65F7;
-        Mon,  1 Aug 2022 06:01:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1659358869; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=M2npo+8rvf2mQf9u6Grt4ErfFGR/2ZHMYR8rCOrdB8348R+FuXI2qwKOqsrH5wg81pChgmd/yUZIjgpggaEl21qJDPaDemkWPD6NQQBMbliqzlrZia9SUY66zNTmiWd/zJ09E7HFcZNQ8W5XxP/t0FeB85/MTngZViQetdsZJMs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1659358869; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=SQ0v85mLbFdTasT7Xfcj7jIsYFQii/2HWb8VZtzXjyM=; 
-        b=Eoc/U40ZXnlz6FMuqeRxVjZqLbkWIBczvDc/QkvA2ACTtXyKk2bQt/keZlOgcG48LisE9Llyry9OIBpmUGQqr7B0NRtkZ55x7BmM+XgOpKK2kJAo23ASSF6ZAL3p2VKgBYq/Ip6+HSP8GPtPmIdakiiApnvcN1o9l1YDgu+mvwc=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1659358869;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=SQ0v85mLbFdTasT7Xfcj7jIsYFQii/2HWb8VZtzXjyM=;
-        b=NJZfe/IX8tF8KFHUNwwJfRldlrpua714VbMxQqn+B8og+4rGW33ux2jDIe0di8xB
-        C7ORSZ/7CR5NjkF8SzC0O13KI1CxqZAMMjxofVBal/jSLxO0fBaFBspKwFBkOUNnS7v
-        Mv2zm0Tn9mqyuDyd6t8eMK0QVHEnzN8DSY9iVMdE=
-Received: from mail.zoho.in by mx.zoho.in
-        with SMTP id 1659358858473203.14224248901678; Mon, 1 Aug 2022 18:30:58 +0530 (IST)
-Date:   Mon, 01 Aug 2022 18:30:58 +0530
-From:   Siddh Raman Pant <code@siddh.me>
-To:     "Greg KH" <gregkh@linuxfoundation.org>
-Cc:     "Dipanjan Das" <mail.dipanjan.das@gmail.com>,
-        "syzbot+c70d87ac1d001f29a058" 
-        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>,
-        "linux-kernel-mentees" 
-        <linux-kernel-mentees@lists.linuxfoundation.org>,
-        "linux-security-modules" <linux-security-module@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "David Howells" <dhowells@redhat.com>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Message-ID: <182597eccd3.14cac6a4293987.1730526835854998440@siddh.me>
-In-Reply-To: <182597c78f6.70a93066293735.4741894763116073008@siddh.me>
-References: <20220728155121.12145-1-code@siddh.me>
- <18258c1d370.6c4bec7a269297.4170944235031209431@siddh.me> <Yuepw21SyLbWt9F+@kroah.com> <182597c78f6.70a93066293735.4741894763116073008@siddh.me>
-Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing
- watch_queue
+        Mon, 1 Aug 2022 09:13:57 -0400
+Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7ACB2559F
+        for <linux-security-module@vger.kernel.org>; Mon,  1 Aug 2022 06:13:55 -0700 (PDT)
+Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-10ee900cce0so1644122fac.5
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Aug 2022 06:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=S4v2xzmivjkPNxxCfifaPK4xR7fi1R2DYRzw0gzDhqk=;
+        b=aU/EMjwvPmQHuC3EBkgE95P1u4OscFyLNRNnnObQ+qrX4FI5VdaEavlkuJv0eLaafS
+         LRfaSM+ftYFZBzQXUQVTjMlxhJ82TBVrX2MBIhQvsXC+TEYUHrHEHfxiIZvTEcQvnkne
+         otTWe5IN176ijSIBTW+IPCt5doE2JAB8vJu0Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=S4v2xzmivjkPNxxCfifaPK4xR7fi1R2DYRzw0gzDhqk=;
+        b=18FdTblgYn/iBSvHNUTXnXWYVtG70ea2zUgzE/42b+Ijv+Laz3wct0ZVXr5TgCAEUf
+         zAfTfycPLNFHY7Eome59KNUJEMmvP/6Cd+zBn5/wzcr88TnJss0Ffp0w5jkMi5oufx8a
+         fwYJOhd0ZX8F/m3ANzj46jLbhGAUgf7lDfkRFmPkL98yv/DuVX2mfF3h4TgnecL3Cp2Y
+         Pf4YyqViQEXMDzWqH3glt0bpVTBORcjYtF84/CG6SbdUMX/gV2rdoADq/a4XQsWRmXIN
+         /P1s4+21hdbBF4ZAW7Pii1QFcSeOy0AipM7RglMNHY9c7HqYa3O8yETzzNNhJ54lKf9n
+         L54A==
+X-Gm-Message-State: AJIora8ZEBKSfWfk88FQt7lZ+8HcQQVu2nL3rhf29Rsxl5WoBsi1F4XI
+        fECbWXplndhyzbK7/6NGMV0yWA==
+X-Google-Smtp-Source: AGRyM1vAYe6eYSqkhNEffp5nkSzS3sTGEFR4Fq4tFcvvlB80G4i7/GERIpfxWhXyvbYGQjvJ5+67TQ==
+X-Received: by 2002:a05:6870:f149:b0:de:e873:4a46 with SMTP id l9-20020a056870f14900b000dee8734a46mr6761101oac.286.1659359635202;
+        Mon, 01 Aug 2022 06:13:55 -0700 (PDT)
+Received: from [192.168.0.41] ([184.4.90.121])
+        by smtp.gmail.com with ESMTPSA id 22-20020aca2816000000b00339ff117f38sm2400911oix.53.2022.08.01.06.13.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Aug 2022 06:13:54 -0700 (PDT)
+Message-ID: <a4db1154-94bc-9833-1665-a88a5eee48de@cloudflare.com>
+Date:   Mon, 1 Aug 2022 08:13:57 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v3 0/4] Introduce security_create_user_ns()
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>, Martin KaFai Lau <kafai@fb.com>
+Cc:     kpsingh@kernel.org, revest@chromium.org, jackmanb@chromium.org,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
+        ebiederm@xmission.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com,
+        cgzones@googlemail.com, karl@bigbadwolfsecurity.com
+References: <20220721172808.585539-1-fred@cloudflare.com>
+ <20220722061137.jahbjeucrljn2y45@kafai-mbp.dhcp.thefacebook.com>
+ <18225d94bf0.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+From:   Frederick Lawler <fred@cloudflare.com>
+In-Reply-To: <18225d94bf0.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 01 Aug 2022 18:28:25 +0530  Siddh Raman Pant <code@siddh.me> wrote:
-> I now tried the 5.10.y branch of stable (which has v5.10.134), but the
-> reproducer isn't triggering the bug for me. 
+On 7/22/22 7:20 AM, Paul Moore wrote:
+> On July 22, 2022 2:12:03 AM Martin KaFai Lau <kafai@fb.com> wrote:
+> 
+>> On Thu, Jul 21, 2022 at 12:28:04PM -0500, Frederick Lawler wrote:
+>>> While creating a LSM BPF MAC policy to block user namespace creation, we
+>>> used the LSM cred_prepare hook because that is the closest hook to prevent
+>>> a call to create_user_ns().
+>>>
+>>> The calls look something like this:
+>>>
+>>> cred = prepare_creds()
+>>> security_prepare_creds()
+>>> call_int_hook(cred_prepare, ...
+>>> if (cred)
+>>> create_user_ns(cred)
+>>>
+>>> We noticed that error codes were not propagated from this hook and
+>>> introduced a patch [1] to propagate those errors.
+>>>
+>>> The discussion notes that security_prepare_creds()
+>>> is not appropriate for MAC policies, and instead the hook is
+>>> meant for LSM authors to prepare credentials for mutation. [2]
+>>>
+>>> Ultimately, we concluded that a better course of action is to introduce
+>>> a new security hook for LSM authors. [3]
+>>>
+>>> This patch set first introduces a new security_create_user_ns() function
+>>> and userns_create LSM hook, then marks the hook as sleepable in BPF.
+>> Patch 1 and 4 still need review from the lsm/security side.
+> 
+> 
+> This patchset is in my review queue and assuming everything checks out, I expect to merge it after the upcoming merge window closes.
+> 
+> I would also need an ACK from the BPF LSM folks, but they're CC'd on this patchset.
+> 
 
-By this, I mean without the patches. I should have been clear.
+Based on last weeks comments, should I go ahead and put up v4 for 
+5.20-rc1 when that drops, or do I need to wait for more feedback?
 
-Thanks,
-Siddh
+> --
+> paul-moore.com
+> 
+> 
+
