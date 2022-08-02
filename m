@@ -2,102 +2,130 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35731C19F29
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Aug 2022 18:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDC3C00140
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Aug 2022 21:25:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237856AbiHBShF (ORCPT
+        id S232787AbiHBVZV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Aug 2022 14:37:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47632 "EHLO
+        Tue, 2 Aug 2022 17:25:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237852AbiHBShD (ORCPT
+        with ESMTP id S232312AbiHBVZS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Aug 2022 14:37:03 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C80E2714F
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 11:36:55 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id t22so23213999lfg.1
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Aug 2022 11:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=aurora.tech; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=0V0vFut6oA8ltHdEyyj9G6rE8xemZdZlYLyGMvFW5i4=;
-        b=JbMbzCWRmy2/Iq8VzGanXbbRzWl9cc1EE2JwK+mM841qApg8exzR+ojIFePkA7dQsb
-         gRvYUobGX7Snt7L3xK5hiI7zmrzrfLFRObO9mFClHnUkwfU6RNbXI69ns2zApTAL5gwY
-         kR7qULTZV5hfS9jHk1j94fGdCQkp4OBZzlsDCSvL9fb11iscSOr5AmCiXIvg1FPe5NWO
-         koW2x7Wj40zQPUC0l7K2Xgx4uTqPUvDr2YMa8LZhVKI2B+MeIHFWqwE8TEimAQrNInYn
-         is/ADBfYIy6DYJUaZIuUiI0ETOFvlzjoNx0rvql7JSvU6PkaoZznCv80G6c9ccum3uVl
-         vtog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=0V0vFut6oA8ltHdEyyj9G6rE8xemZdZlYLyGMvFW5i4=;
-        b=o/Jas+WZkN3lV1eJUL6SM4USYqCLXY2ZUkF7lyZ/Xxud0kvJnth3OAr9vGl3cr2eGz
-         bekUHUqUs5RISrqP5xcz/Wyc4Ul84E4uQ6MX1eIt2+OIkGADZgRj+foiwDsZ8znxuNGI
-         rjfMegTvLIe71fkA8tfK8fxDq6z1gfs0DfBIWS4JD4vly8WwCuvW+wW3n+CR5QdOAubJ
-         XEbFB6FuExFmTcWnZR27bs7vGGawgXGa09YsVJVoPwDbLkCnE67Uc9eawZcq4BtfYx8u
-         ODkTWQLe9Wbdgqz2WyY3YNlV/608wO7J9gCNI4KzTu6nrjLg3GrBTBHkekw2Tl6hmiDM
-         nX9g==
-X-Gm-Message-State: ACgBeo2DF1f3Y+khrTVhpr1rXuHMexS9XWqikoQGT652u8kGVHMJdinP
-        bqWngY6odeRSNf24Qu/r9bOtqPqFJBXO6cRwNPlm2w==
-X-Google-Smtp-Source: AA6agR70SjsuYYJddFRJXTUrFz/CWwlMCj2fILiDwxN6veWaZoGRKD8kCvsT07vO/4pAW16kbrglao8qW/EMdbXFqzc=
-X-Received: by 2002:a05:6512:210a:b0:48a:eaaf:b889 with SMTP id
- q10-20020a056512210a00b0048aeaafb889mr6144760lfr.89.1659465413351; Tue, 02
- Aug 2022 11:36:53 -0700 (PDT)
+        Tue, 2 Aug 2022 17:25:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE8851146
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 14:25:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0C914B82102
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 21:25:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE03C43151
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 21:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659475511;
+        bh=DRcXHF+hL2akkSQuSU/bab25l1HxDgWat6fbp5QgZhU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bR/qioeYhsfMIBAQnO7sev2rDjT1MncB540KMDTiwIY8EWui0lhJiryo3qvJymfVQ
+         QPi87451GYeehG76IdrqbkcLNmwZncDuTuUEzX2yHOeT8Bf0APt53GFq9fnJMlbqbZ
+         idTn74DAL5U7R+Dm/LdrqhpTu9YHw2IpjWpIuDAm0iYmH5e5pwxUJz5aLjr97VjdaG
+         cLQYFNVR7DKcZ4yQ0kPm+0XGu5k+IO2fJf/fIPT2iVWV+MlKAa6OJC/Ryx3M0tjjA3
+         p4Du0uWZFljxAtPqvm1kNW9JmNDR02g06XLzR4RshU7hWKqZNyQstkWqCN0Lmrvzqb
+         MjlO36f9s1E+A==
+Received: by mail-ua1-f42.google.com with SMTP id c19so6310232uat.6
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Aug 2022 14:25:11 -0700 (PDT)
+X-Gm-Message-State: ACgBeo2dM1aY6/RM6+MKCJdGO0enUL5p0NkMImypGNoRJv6oo+jQLdAZ
+        b95AtG+8d/avGBD9vk+VmT0JvTdxQ7tLCaAv+3paRA==
+X-Google-Smtp-Source: AA6agR76IZreUuGci5NqrZubzetTIA/QdScJIvyrhjNqtyLp6A9JrFMy5bTInLzADq8lje7PLu8L4AMmL5D5TBPUlpI=
+X-Received: by 2002:a0d:f0c7:0:b0:31e:e814:e7d6 with SMTP id
+ z190-20020a0df0c7000000b0031ee814e7d6mr20401368ywe.340.1659475500117; Tue, 02
+ Aug 2022 14:25:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220504232102.469959-1-evgreen@chromium.org> <20220506160807.GA1060@bug>
- <CAE=gft6m75T0UC2DBhfFhuSMW6TK7aatD_04sQ18WosgGVsATw@mail.gmail.com>
- <CAJZ5v0gxq=EA_WWUiCR_w8o87iTHDR7OC5wi=GRBaAQS2ofd5w@mail.gmail.com>
- <CAE=gft6V6RLc-d4AOuRUVU2u1jMGghDRSrFqiCqMCLxemui8Pw@mail.gmail.com>
- <CAE=gft5OYAgosqmwNkk=Cwoooeg93Njmnzfz=gwCaLB0Ts+=sw@mail.gmail.com> <CAE=gft6sPkhNcz7+fJuDzQo2f8fM_0Wv_OWC9W2LyvXd6M6zeQ@mail.gmail.com>
-In-Reply-To: <CAE=gft6sPkhNcz7+fJuDzQo2f8fM_0Wv_OWC9W2LyvXd6M6zeQ@mail.gmail.com>
-From:   Matthew Garrett <mgarrett@aurora.tech>
-Date:   Tue, 2 Aug 2022 11:36:43 -0700
-Message-ID: <CAHSSk05JEcZfS2tc22F+m76T3vZt-mZ7zUQaGRgSanKaFc5xBg@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Encrypted Hibernation
-To:     Evan Green <evgreen@chromium.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniil Lunev <dlunev@google.com>, zohar@linux.ibm.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Len Brown <len.brown@intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
-        keyrings@vger.kernel.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
+References: <20220721172808.585539-1-fred@cloudflare.com> <20220722061137.jahbjeucrljn2y45@kafai-mbp.dhcp.thefacebook.com>
+ <18225d94bf0.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <a4db1154-94bc-9833-1665-a88a5eee48de@cloudflare.com> <CAHC9VhQw8LR9yJ9UkA-9aPNETQavt25G-GGSs-_ztg6ZpxNzxA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQw8LR9yJ9UkA-9aPNETQavt25G-GGSs-_ztg6ZpxNzxA@mail.gmail.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Tue, 2 Aug 2022 23:24:49 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7=Cvo9qncMX_5_Wp1zNNWDyh3DxdOLq_ysWxDCs8VC8g@mail.gmail.com>
+Message-ID: <CACYkzJ7=Cvo9qncMX_5_Wp1zNNWDyh3DxdOLq_ysWxDCs8VC8g@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Introduce security_create_user_ns()
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>,
+        Martin KaFai Lau <kafai@fb.com>, revest@chromium.org,
+        jackmanb@chromium.org, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
+        ebiederm@xmission.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com,
+        cgzones@googlemail.com, karl@bigbadwolfsecurity.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 1, 2022 at 3:33 PM Evan Green <evgreen@chromium.org> wrote:
-
-> One more bump here, as we'd really love to get encrypted hibernation
-> to a form upstream would accept if at all possible. We were
-> considering landing this in our Chrome OS tree for now, then coming
-> back in a couple months with a "we've been baking this ourselves and
-> it's going so great, oooh yeah". I'm not sure if upstream would find
-> that compelling or not. But in any case, some guidance towards making
-> this more upstream friendly would be well appreciated.
+On Mon, Aug 1, 2022 at 5:19 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> One thing I realized in attempting to pick this myself is that the
-> trusted key blob format has moved to ASN.1. So I should really move
-> the creation ticket to the new ASN.1 format (if I can figure out the
-> right OID for that piece), which would allow me to drop a lot of the
-> ugly stuff in tpm2_unpack_blob(). Maybe if I get no other comments
-> I'll work on that and resend.
+> On Mon, Aug 1, 2022 at 9:13 AM Frederick Lawler <fred@cloudflare.com> wrote:
+> > On 7/22/22 7:20 AM, Paul Moore wrote:
+> > > On July 22, 2022 2:12:03 AM Martin KaFai Lau <kafai@fb.com> wrote:
+> > >
+> > >> On Thu, Jul 21, 2022 at 12:28:04PM -0500, Frederick Lawler wrote:
+> > >>> While creating a LSM BPF MAC policy to block user namespace creation, we
+> > >>> used the LSM cred_prepare hook because that is the closest hook to prevent
+> > >>> a call to create_user_ns().
+> > >>>
+> > >>> The calls look something like this:
+> > >>>
+> > >>> cred = prepare_creds()
+> > >>> security_prepare_creds()
+> > >>> call_int_hook(cred_prepare, ...
+> > >>> if (cred)
+> > >>> create_user_ns(cred)
+> > >>>
+> > >>> We noticed that error codes were not propagated from this hook and
+> > >>> introduced a patch [1] to propagate those errors.
+> > >>>
+> > >>> The discussion notes that security_prepare_creds()
+> > >>> is not appropriate for MAC policies, and instead the hook is
+> > >>> meant for LSM authors to prepare credentials for mutation. [2]
+> > >>>
+> > >>> Ultimately, we concluded that a better course of action is to introduce
+> > >>> a new security hook for LSM authors. [3]
+> > >>>
+> > >>> This patch set first introduces a new security_create_user_ns() function
+> > >>> and userns_create LSM hook, then marks the hook as sleepable in BPF.
+> > >> Patch 1 and 4 still need review from the lsm/security side.
+> > >
+> > > This patchset is in my review queue and assuming everything checks out, I expect to merge it after the upcoming merge window closes.
+> > >
+> > > I would also need an ACK from the BPF LSM folks, but they're CC'd on this patchset.
+> >
+> > Based on last weeks comments, should I go ahead and put up v4 for
+> > 5.20-rc1 when that drops, or do I need to wait for more feedback?
+>
+> In general it rarely hurts to make another revision, and I think
+> you've gotten some decent feedback on this draft, especially around
+> the BPF LSM tests; I think rebasing on Linus tree after the upcoming
+> io_uring changes are merged would be a good idea.  Although as a
+> reminder to the BPF LSM folks - I'm looking at you KP Singh :) - I
+> need an ACK from you guys before I merge the BPF related patches
 
-I've been revamping my TPM-backed verified hibernation implementation
-based on this work, so I'd definitely be enthusiastic about it being
-mergeable.
+Apologies, I was on vacation. I am looking at the patches now.
+Reviews and acks coming soon :)
+
+- KP
+
+> (patches {2,3}/4).  For the record, I think the SELinux portion of
+> this patchset (path 4/4) is fine.
+>
+
+[...]
+
+>
+> --
+> paul-moore.com
