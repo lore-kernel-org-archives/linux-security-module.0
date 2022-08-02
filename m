@@ -2,58 +2,214 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83A7C00140
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Aug 2022 07:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C00EC00140
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Aug 2022 09:51:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236010AbiHBHj1 (ORCPT
+        id S236181AbiHBJvT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Aug 2022 03:39:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44340 "EHLO
+        Tue, 2 Aug 2022 05:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232158AbiHBHjX (ORCPT
+        with ESMTP id S235830AbiHBJvS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Aug 2022 03:39:23 -0400
-X-Greylist: delayed 495 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 02 Aug 2022 00:39:22 PDT
-Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A8881276F
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 00:39:21 -0700 (PDT)
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id 334CA823C9; Tue,  2 Aug 2022 08:31:00 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1659425463; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=Ve75kt9CYnCzlVBVpCmjFP3mCH56gbEqUP8fW0RT0Z2jWz1Adh/GSi5IBa13hlybT
-         RixgI0Sohe4lyO+BDxQq+F6P97Pv5a5kRtpE71Dy1apQ+xaJ6Jr+C4evFySgu9wFlc
-         kageEoH+o5Nq4+vXkVMgir4/CokkYwlbAvBUcRG8kTyFwXyNh6/QtCnN41r3f2f79X
-         rIWi/3oy0z9pmP39hGLs5ORRDKeiQLJq2U8EznfoV2xV1sFQViXh3CyXVCmeaMeusG
-         BV9q3rej2wQE+K4Tuo5/YCo/WsGJLZwe1TQVJNyDr0+cAj+d/ve6P6w+RUCQZulDfV
-         3fFzlJDyMbDdw==
-Received: by mail.lokoho.com for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 07:30:58 GMT
-Message-ID: <20220802074500-0.1.d.lo4.0.9p219nqtjq@lokoho.com>
-Date:   Tue,  2 Aug 2022 07:30:58 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
+        Tue, 2 Aug 2022 05:51:18 -0400
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C877915833
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 02:51:15 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lxqxs33g8zMptYk;
+        Tue,  2 Aug 2022 11:51:13 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lxqxr590Qzlqwsl;
+        Tue,  2 Aug 2022 11:51:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1659433873;
+        bh=1zHRiAqo3P/dojkNK+hYHzjUFBL4CkZLzF7FK2fml6I=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=yubBe6Oo6HwAr99wsPmEZJALzIaciq9i8qNhdXbQ62s5yam2Z21lr4NT1c76h4xVp
+         EZndDrz2aLGgYqsCnIkP3v6gXa79Prd3jd3wRVYwWxZK9FxtMha8El+S/oYz018ZQv
+         h+Go38FAOlZssRp0+iylAHifHtozQjL+VPDlDORk=
+Message-ID: <2838c247-0648-3828-efb3-e11d7a0616b2@digikod.net>
+Date:   Tue, 2 Aug 2022 11:51:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: 
+Content-Language: en-US
+To:     Shuah Khan <skhan@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <430ef132-2ac7-e1be-68ed-3d9c27382143@linuxfoundation.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [GIT PULL] Kselftest update for Linux 5.20-rc1
+In-Reply-To: <430ef132-2ac7-e1be-68ed-3d9c27382143@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+Hi,
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+This change breaks the Landlock test build when performed on the 
+tools/testing/selftests/landlock directory because the 
+(non-system/up-to-date) kernel headers aren't found. Looking at the use 
+of top_srcdir and HDR_PATH, it seems that multiple subsystems are using 
+this feature. I consider this change a regression.
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+It also removes the check on up-to-date kernel headers (thanks to the 
+Makefile's target timestamp).
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+I wasn't CCed for this change impacting Landlock [1]. Please keep in 
+mind to add at least maintainers and related mailing-lists for changes 
+on related subsystems.
+
+The following patch almost revert commit a917dd94b832 
+("selftests/landlock: drop deprecated headers dependency") and partially 
+fixes commit 49de12ba06ef ("selftests: drop KSFT_KHDR_INSTALL make target"):
+
+--- a/tools/testing/selftests/landlock/Makefile
++++ b/tools/testing/selftests/landlock/Makefile
+@@ -9,10 +9,13 @@ TEST_GEN_PROGS := $(src_test:.c=)
+  TEST_GEN_PROGS_EXTENDED := true
+
+  OVERRIDE_TARGETS := 1
++top_srcdir = ../../../..
+  include ../lib.mk
+
++khdr_dir = $(top_srcdir)/usr/include
++
+  $(OUTPUT)/true: true.c
+  	$(LINK.c) $< $(LDLIBS) -o $@ -static
+
+-$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
+-	$(LINK.c) $< $(LDLIBS) -o $@ -lcap
++$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h 
+../kselftest_harness.h common.h
++	$(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
 
 
-Pozdrawiam
-Adam Charachuta
+This doesn't fix the header timestamp check though.
+
+Regards,
+  Mickaël
+
+[1] 
+https://lore.kernel.org/all/b79c51ed97219b1c10e2e3f2bcd3269305f0f035.1657694067.git.guillaume.tucker@collabora.com/
+
+
+On 02/08/2022 00:03, Shuah Khan wrote:
+> Hi Linus,
+> 
+> Please pull the following Kselftest update for Linux 5.20-rc1.
+> 
+> This Kselftest update for Linux 5.20-rc1 consists of:
+> 
+> - timers test build fixes and cleanups for new tool chains
+> - removing khdr from kselftest framework and main Makefile
+> - changes to test output messages to improve reports
+> 
+> Please not that this update also included main Makefile change
+> to kselftest build logic in it.
+> 
+> diff is attached.
+> 
+> thanks,
+> -- Shuah
+> 
+> ----------------------------------------------------------------
+> The following changes since commit 03c765b0e3b4cb5063276b086c76f7a612856a9a:
+> 
+>     Linux 5.19-rc4 (2022-06-26 14:22:10 -0700)
+> 
+> are available in the Git repository at:
+> 
+>     git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-next-5.20-rc1
+> 
+> for you to fetch changes up to 4062eba9f3d072e72645860fbc5d160428a75c50:
+> 
+>     Makefile: replace headers_install with headers for kselftest (2022-07-26 18:06:33 -0600)
+> 
+> ----------------------------------------------------------------
+> linux-kselftest-next-5.20-rc1
+> 
+> This Kselftest update for Linux 5.20-rc1 consists of:
+> 
+> - timers test build fixes and cleanups for new tool chains
+> - removing khdr from kselftest framework and main Makefile
+> - changes to test output messages to improve reports
+> 
+> ----------------------------------------------------------------
+> Gautam (2):
+>         kselftests: Enable the echo command to print newlines in Makefile
+>         kselftests/damon: add support for cases where debugfs cannot be read
+> 
+> Gautam Menghani (3):
+>         selftests: Make the usage formatting consistent in kselftest_deps.sh
+>         selftests/drivers/gpu: Add error messages to drm_mm.sh
+>         selftests/kcmp: Make the test output consistent and clear
+> 
+> Guillaume Tucker (6):
+>         selftests: drop khdr make target
+>         selftests: stop using KSFT_KHDR_INSTALL
+>         selftests: drop KSFT_KHDR_INSTALL make target
+>         Makefile: add headers_install to kselftest targets
+>         selftests/landlock: drop deprecated headers dependency
+>         Makefile: replace headers_install with headers for kselftest
+> 
+> Johannes Holland (1):
+>         selftests/tpm2: increase timeout for kselftests
+> 
+> Soumya Negi (1):
+>         selftests: drivers/dma-buf: Improve message in selftest summary
+> 
+> Wolfram Sang (9):
+>         selftests: timers: valid-adjtimex: build fix for newer toolchains
+>         selftests: timers: fix declarations of main()
+>         selftests: timers: nanosleep: adapt to kselftest framework
+>         selftests: timers: inconsistency-check: adapt to kselftest framework
+>         selftests: timers: clocksource-switch: fix passing errors from child
+>         selftests: timers: clocksource-switch: sort includes
+>         selftests: timers: clocksource-switch: add command line switch to skip sanity check
+>         selftests: timers: clocksource-switch: add 'runtime' command line parameter
+>         selftests: timers: clocksource-switch: adapt to kselftest framework
+> 
+> Xiang wangx (1):
+>         userfaultfd/selftests: Fix typo in comment
+> 
+> Zan Aziz (1):
+>         selftests:timers: globals don't need initialization to 0
+> 
+>    Makefile                                           |  4 +-
+>    tools/testing/selftests/Makefile                   | 30 +--------
+>    tools/testing/selftests/arm64/mte/Makefile         |  1 -
+>    tools/testing/selftests/arm64/signal/Makefile      |  1 -
+>    .../testing/selftests/arm64/signal/test_signals.h  |  4 +-
+>    tools/testing/selftests/damon/_chk_dependency.sh   | 10 +++
+>    tools/testing/selftests/drivers/dma-buf/udmabuf.c  |  3 +-
+>    tools/testing/selftests/drivers/gpu/drm_mm.sh      |  4 +-
+>    .../selftests/drivers/s390x/uvdevice/Makefile      |  1 -
+>    tools/testing/selftests/futex/functional/Makefile  |  1 -
+>    tools/testing/selftests/kcmp/kcmp_test.c           |  6 +-
+>    tools/testing/selftests/kselftest_deps.sh          |  2 +-
+>    tools/testing/selftests/kvm/Makefile               |  1 -
+>    tools/testing/selftests/landlock/Makefile          | 10 +--
+>    tools/testing/selftests/lib.mk                     | 38 ------------
+>    tools/testing/selftests/net/Makefile               |  1 -
+>    tools/testing/selftests/net/mptcp/Makefile         |  1 -
+>    tools/testing/selftests/tc-testing/Makefile        |  1 -
+>    tools/testing/selftests/timers/adjtick.c           |  2 +-
+>    .../testing/selftests/timers/alarmtimer-suspend.c  |  2 +-
+>    tools/testing/selftests/timers/change_skew.c       |  2 +-
+>    .../testing/selftests/timers/clocksource-switch.c  | 71 ++++++++++++++--------
+>    .../testing/selftests/timers/inconsistency-check.c | 32 +++++-----
+>    tools/testing/selftests/timers/nanosleep.c         | 18 +++---
+>    tools/testing/selftests/timers/raw_skew.c          |  2 +-
+>    tools/testing/selftests/timers/skew_consistency.c  |  2 +-
+>    tools/testing/selftests/timers/valid-adjtimex.c    |  2 +-
+>    tools/testing/selftests/tpm2/settings              |  1 +
+>    tools/testing/selftests/vm/Makefile                |  1 -
+>    tools/testing/selftests/vm/userfaultfd.c           |  2 +-
+>    30 files changed, 111 insertions(+), 145 deletions(-)
+>    create mode 100644 tools/testing/selftests/tpm2/settings
+> ----------------------------------------------------------------
