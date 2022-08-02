@@ -2,125 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9580C00140
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Aug 2022 14:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35731C19F29
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Aug 2022 18:37:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237288AbiHBO3k (ORCPT
+        id S237856AbiHBShF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Aug 2022 10:29:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51368 "EHLO
+        Tue, 2 Aug 2022 14:37:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234025AbiHBO3j (ORCPT
+        with ESMTP id S237852AbiHBShD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Aug 2022 10:29:39 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 443F721E3C
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 07:29:38 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id n138so10766589iod.4
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Aug 2022 07:29:38 -0700 (PDT)
+        Tue, 2 Aug 2022 14:37:03 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C80E2714F
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 11:36:55 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id t22so23213999lfg.1
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Aug 2022 11:36:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=X7Hm0u9qMwzlB0EPKeiGIRJ5T3Cdcf+L/7KSSDvl0hk=;
-        b=V3CbIjz0IqwMu9qJT7/0gVE97AFRo6nwNmwyuXcOiFRsIF4gTG63bgySn0IZedd73R
-         rWI8/uffPLy8/IaRwVPUOWUgplTP+nC595Hq63FfIRQW7rQsPFe73x9/K1as9/QtP4fI
-         l8Zqwp+lo0Dhm+cV6MyiAJTpu9vS7StOH/8PU=
+        d=aurora.tech; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=0V0vFut6oA8ltHdEyyj9G6rE8xemZdZlYLyGMvFW5i4=;
+        b=JbMbzCWRmy2/Iq8VzGanXbbRzWl9cc1EE2JwK+mM841qApg8exzR+ojIFePkA7dQsb
+         gRvYUobGX7Snt7L3xK5hiI7zmrzrfLFRObO9mFClHnUkwfU6RNbXI69ns2zApTAL5gwY
+         kR7qULTZV5hfS9jHk1j94fGdCQkp4OBZzlsDCSvL9fb11iscSOr5AmCiXIvg1FPe5NWO
+         koW2x7Wj40zQPUC0l7K2Xgx4uTqPUvDr2YMa8LZhVKI2B+MeIHFWqwE8TEimAQrNInYn
+         is/ADBfYIy6DYJUaZIuUiI0ETOFvlzjoNx0rvql7JSvU6PkaoZznCv80G6c9ccum3uVl
+         vtog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=X7Hm0u9qMwzlB0EPKeiGIRJ5T3Cdcf+L/7KSSDvl0hk=;
-        b=MMbfYp1d7KfXyQtP9NAhaYbY69pli20srdI25oVsahD3vAgKiCzZN/JXHu7EcXbpro
-         B+pfecEs86Jw2NuRVRG9lYFH2k7WmxmLYQT0zz6AhXemZMfMup1iFo/Zbd6eVkscc+k5
-         KjYT5m2pHEEs12y1Zobktxo9Tm1WHsu0hM49PAzLgto5L28yxS8Ct2LeckT6ttAPfvSQ
-         KVqFkaP5vdwFpqB/oevHInS+xKNoIDpiEe7AfQq5eHCWqQktfNVXmVFNOmSlgTB0zMti
-         0XEAgJc4+IJ/o/pKcxj28zBgdt7vyODDmHNOV2Udh0fn3ieKQjKulJJsDCyj1YGOc31Q
-         sBTg==
-X-Gm-Message-State: AJIora/t3XZP1Ku9Gthyn+YsxriSLLpeYQDkFiUozaozWEn5ha2dy29m
-        UkMZugSBY+JrbO3ZLifAX5Vnmg==
-X-Google-Smtp-Source: AGRyM1sv2sJthqbr+9zq0hE9qcHjoYD1XTNQ+/fOt/wczi41khz9f7bL+JmEmLJtn1TwRrTbqqma9w==
-X-Received: by 2002:a05:6638:37aa:b0:33f:8980:5b50 with SMTP id w42-20020a05663837aa00b0033f89805b50mr8482091jal.103.1659450577255;
-        Tue, 02 Aug 2022 07:29:37 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id z11-20020a027a4b000000b00339bae1dab9sm6483462jad.40.2022.08.02.07.29.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Aug 2022 07:29:36 -0700 (PDT)
-Subject: Re: [GIT PULL] Kselftest update for Linux 5.20-rc1
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <430ef132-2ac7-e1be-68ed-3d9c27382143@linuxfoundation.org>
- <2838c247-0648-3828-efb3-e11d7a0616b2@digikod.net>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <84560b65-12ed-da24-3698-45484f80802a@linuxfoundation.org>
-Date:   Tue, 2 Aug 2022 08:29:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=0V0vFut6oA8ltHdEyyj9G6rE8xemZdZlYLyGMvFW5i4=;
+        b=o/Jas+WZkN3lV1eJUL6SM4USYqCLXY2ZUkF7lyZ/Xxud0kvJnth3OAr9vGl3cr2eGz
+         bekUHUqUs5RISrqP5xcz/Wyc4Ul84E4uQ6MX1eIt2+OIkGADZgRj+foiwDsZ8znxuNGI
+         rjfMegTvLIe71fkA8tfK8fxDq6z1gfs0DfBIWS4JD4vly8WwCuvW+wW3n+CR5QdOAubJ
+         XEbFB6FuExFmTcWnZR27bs7vGGawgXGa09YsVJVoPwDbLkCnE67Uc9eawZcq4BtfYx8u
+         ODkTWQLe9Wbdgqz2WyY3YNlV/608wO7J9gCNI4KzTu6nrjLg3GrBTBHkekw2Tl6hmiDM
+         nX9g==
+X-Gm-Message-State: ACgBeo2DF1f3Y+khrTVhpr1rXuHMexS9XWqikoQGT652u8kGVHMJdinP
+        bqWngY6odeRSNf24Qu/r9bOtqPqFJBXO6cRwNPlm2w==
+X-Google-Smtp-Source: AA6agR70SjsuYYJddFRJXTUrFz/CWwlMCj2fILiDwxN6veWaZoGRKD8kCvsT07vO/4pAW16kbrglao8qW/EMdbXFqzc=
+X-Received: by 2002:a05:6512:210a:b0:48a:eaaf:b889 with SMTP id
+ q10-20020a056512210a00b0048aeaafb889mr6144760lfr.89.1659465413351; Tue, 02
+ Aug 2022 11:36:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <2838c247-0648-3828-efb3-e11d7a0616b2@digikod.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20220504232102.469959-1-evgreen@chromium.org> <20220506160807.GA1060@bug>
+ <CAE=gft6m75T0UC2DBhfFhuSMW6TK7aatD_04sQ18WosgGVsATw@mail.gmail.com>
+ <CAJZ5v0gxq=EA_WWUiCR_w8o87iTHDR7OC5wi=GRBaAQS2ofd5w@mail.gmail.com>
+ <CAE=gft6V6RLc-d4AOuRUVU2u1jMGghDRSrFqiCqMCLxemui8Pw@mail.gmail.com>
+ <CAE=gft5OYAgosqmwNkk=Cwoooeg93Njmnzfz=gwCaLB0Ts+=sw@mail.gmail.com> <CAE=gft6sPkhNcz7+fJuDzQo2f8fM_0Wv_OWC9W2LyvXd6M6zeQ@mail.gmail.com>
+In-Reply-To: <CAE=gft6sPkhNcz7+fJuDzQo2f8fM_0Wv_OWC9W2LyvXd6M6zeQ@mail.gmail.com>
+From:   Matthew Garrett <mgarrett@aurora.tech>
+Date:   Tue, 2 Aug 2022 11:36:43 -0700
+Message-ID: <CAHSSk05JEcZfS2tc22F+m76T3vZt-mZ7zUQaGRgSanKaFc5xBg@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Encrypted Hibernation
+To:     Evan Green <evgreen@chromium.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniil Lunev <dlunev@google.com>, zohar@linux.ibm.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Len Brown <len.brown@intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
+        keyrings@vger.kernel.org,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/2/22 3:51 AM, Mickaël Salaün wrote:
-> Hi,
-> 
-> This change breaks the Landlock test build when performed on the tools/testing/selftests/landlock directory because the (non-system/up-to-date) kernel headers aren't found. Looking at the use of top_srcdir and HDR_PATH, it seems that multiple subsystems are using this feature. I consider this change a regression.
-> 
+On Mon, Aug 1, 2022 at 3:33 PM Evan Green <evgreen@chromium.org> wrote:
 
-I did a build test from the top level before sending the pull request
-and didn't catch this breakage as a result. This breaks when build is
-run from the test directory.
+> One more bump here, as we'd really love to get encrypted hibernation
+> to a form upstream would accept if at all possible. We were
+> considering landing this in our Chrome OS tree for now, then coming
+> back in a couple months with a "we've been baking this ourselves and
+> it's going so great, oooh yeah". I'm not sure if upstream would find
+> that compelling or not. But in any case, some guidance towards making
+> this more upstream friendly would be well appreciated.
+>
+> One thing I realized in attempting to pick this myself is that the
+> trusted key blob format has moved to ASN.1. So I should really move
+> the creation ticket to the new ASN.1 format (if I can figure out the
+> right OID for that piece), which would allow me to drop a lot of the
+> ugly stuff in tpm2_unpack_blob(). Maybe if I get no other comments
+> I'll work on that and resend.
 
-We have had several problems related to khdr_dir and target and decided
-to move away from it with this change.
-
-> It also removes the check on up-to-date kernel headers (thanks to the Makefile's target timestamp).
-> 
-> I wasn't CCed for this change impacting Landlock [1]. Please keep in mind to add at least maintainers and related mailing-lists for changes on related subsystems.
-> 
-
-That is the usual practice and if I notice missing maintainers, I add
-them. We missed this one.
-
-> The following patch almost revert commit a917dd94b832 ("selftests/landlock: drop deprecated headers dependency") and partially fixes commit 49de12ba06ef ("selftests: drop KSFT_KHDR_INSTALL make target"):
-> 
-
-Guillaume,
-
-Will you be able to look at this and send a patch on top? I will
-send another pull request before merge window closes?
-
-> --- a/tools/testing/selftests/landlock/Makefile
-> +++ b/tools/testing/selftests/landlock/Makefile
-> @@ -9,10 +9,13 @@ TEST_GEN_PROGS := $(src_test:.c=)
->   TEST_GEN_PROGS_EXTENDED := true
-> 
->   OVERRIDE_TARGETS := 1
-> +top_srcdir = ../../../..
->   include ../lib.mk
-> 
-> +khdr_dir = $(top_srcdir)/usr/include
-> +
->   $(OUTPUT)/true: true.c
->       $(LINK.c) $< $(LDLIBS) -o $@ -static
-> 
-> -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
-> -    $(LINK.c) $< $(LDLIBS) -o $@ -lcap
-> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
-> +    $(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
-> 
-> 
-> This doesn't fix the header timestamp check though.
-> 
-
-thanks,
--- Shuah
+I've been revamping my TPM-backed verified hibernation implementation
+based on this work, so I'd definitely be enthusiastic about it being
+mergeable.
