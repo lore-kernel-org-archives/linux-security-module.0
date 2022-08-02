@@ -2,88 +2,83 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F03CC25B06
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Aug 2022 22:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6F3C00140
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Aug 2022 22:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbiHBWJL (ORCPT
+        id S235360AbiHBWLt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Aug 2022 18:09:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40344 "EHLO
+        Tue, 2 Aug 2022 18:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234700AbiHBWJJ (ORCPT
+        with ESMTP id S235213AbiHBWLj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Aug 2022 18:09:09 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A21221822
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 15:09:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id AB48FCE21B1
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 22:09:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAA8CC43140
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 22:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659478144;
-        bh=FcdHNfXuQiJB9HM66+G68cqs7BlM13zGpj+qnB1hK7Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mwc0mJ/Uagxs63fdJ+TLVG3mhnFR4VGPxxOjmn5oiMB8BQud58sGsuAPuA24OkUhF
-         997xHQkIq6P2In0oUqnXvW4avG4GxfsQHBbJFkWAu1yF6ZIMcGOg93CoxQga5vSR+o
-         eTgI07G4JLKJ9kETODLdvZX3i8ZmDlIctv7rmJF5CrNIirBCAxjwvhHeUzFZeeRmfH
-         U2zDHnBz/u+RSon9OzX+HeJEo2qB9OK/IOJu75UWUMcMd6XHp5rSPUF1rL+ORpz55I
-         rfJA0UzdiKngh2f145eitGYoz/MvP1S68gKxsIDgTHjhGDFPFqkObZxaYIQuP5jzlo
-         Asq0za7Wvsvtg==
-Received: by mail-yb1-f177.google.com with SMTP id r3so25700330ybr.6
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Aug 2022 15:09:04 -0700 (PDT)
-X-Gm-Message-State: ACgBeo3yTqUnIKVXCj0+mCmJgZiSjhNA5yP7B6sKbjlCt5AdVuCoHKng
-        w8W8lWhcAo7iJ5kqytWHwPHmb+zHeOl8Q4VWoNk+AQ==
-X-Google-Smtp-Source: AA6agR6ZWQQsYK03aDTp4UgsRj0FlS39f5Llvh0WRP0M8eyLjhhx3O7M9XERlWsQl+Kc/FPxwU7DIeUW6BkyNdZDstw=
-X-Received: by 2002:a81:14c7:0:b0:328:25f0:9c89 with SMTP id
- 190-20020a8114c7000000b0032825f09c89mr2602862ywu.476.1659478133089; Tue, 02
- Aug 2022 15:08:53 -0700 (PDT)
+        Tue, 2 Aug 2022 18:11:39 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A85D432DBB
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 15:11:37 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id m8so19253682edd.9
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Aug 2022 15:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=k6pIxoS6xr69cL31tnJGd/edjv23VUk7urmVJKHeHw8=;
+        b=FwrSh8M2yilbskdsO4gXxUoC2Ed+FeryminZgruVH00UecbUpXqRgNsVHrZfOtz6xc
+         ib05vYtYPKWhkIqV87INC126FLDR+3Wl/KgQ7OB87pUtFbUh3h4sX0GHaJUVqmIocbuN
+         5gXLQkyeN80KnkVUepMPBUS/nqR8X4BXEHwZ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=k6pIxoS6xr69cL31tnJGd/edjv23VUk7urmVJKHeHw8=;
+        b=ZWaWuWLPR/q960E+7s7pUjN1Ba8O7vA0N/5mCcJinXYFxiHUEHYKjWqOGJdE4qX3Qu
+         vBYQuUuCN6IG9xyb46i7J/sYl2AseQWRc/Teb17QxDMpmcqEI1ZkzAJZoMhX7ni3Osp4
+         JJADYmDead9hyW4907hEkByV1K5MI/StmHv0RTUbfGJXwIngWfKA5KtZ74yzjWXUqNhv
+         10+X0IbTpEgAe82QioSNlRpdtOjNjJfkcP5LhGwXXcWsW2LCdrjvX+zzTEdfUL0MTbEd
+         dvH5/unRyGaD8DHFV3ASlcwHX3ke0CCfckjdiJPJYAuz0jhkaTBxVGEud7lzd0szZFqg
+         rubw==
+X-Gm-Message-State: ACgBeo0e7ua7By+3VrJEw1DaqLEJCsyotQNHe0yk1DqcDxipR0HyHS9W
+        +3jH8lHHEe669gN9sSJJFT0WjWybHROIPVhG
+X-Google-Smtp-Source: AA6agR6Pw51t+Ehto9QWHVHITizbGU6L8LDW2/IoBFWCzlGboemRaF8h1D9/TmA8LZvSbxmbFHL+nQ==
+X-Received: by 2002:a05:6402:190d:b0:43d:f64f:9a0e with SMTP id e13-20020a056402190d00b0043df64f9a0emr4974297edz.346.1659478296041;
+        Tue, 02 Aug 2022 15:11:36 -0700 (PDT)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
+        by smtp.gmail.com with ESMTPSA id b1-20020a05640202c100b0043cf2e0ce1csm8709202edx.48.2022.08.02.15.11.35
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Aug 2022 15:11:35 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id n185so7835069wmn.4
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Aug 2022 15:11:35 -0700 (PDT)
+X-Received: by 2002:a05:600c:21d7:b0:3a3:2088:bbc6 with SMTP id
+ x23-20020a05600c21d700b003a32088bbc6mr843858wmj.68.1659478294886; Tue, 02 Aug
+ 2022 15:11:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220801180146.1157914-1-fred@cloudflare.com> <20220801180146.1157914-4-fred@cloudflare.com>
-In-Reply-To: <20220801180146.1157914-4-fred@cloudflare.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Wed, 3 Aug 2022 00:08:42 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4_MrbS-2S_R3KSZnL8h9pWnP6ih5ccKPGYxZTaESMZ2g@mail.gmail.com>
-Message-ID: <CACYkzJ4_MrbS-2S_R3KSZnL8h9pWnP6ih5ccKPGYxZTaESMZ2g@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] selftests/bpf: Add tests verifying bpf lsm
- userns_create hook
-To:     Frederick Lawler <fred@cloudflare.com>
-Cc:     revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
-        ebiederm@xmission.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@cloudflare.com,
-        cgzones@googlemail.com, karl@bigbadwolfsecurity.com
+References: <827a0fe0-03a3-b5ca-db34-daff17095b8f.ref@schaufler-ca.com> <827a0fe0-03a3-b5ca-db34-daff17095b8f@schaufler-ca.com>
+In-Reply-To: <827a0fe0-03a3-b5ca-db34-daff17095b8f@schaufler-ca.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 2 Aug 2022 15:11:18 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjsM9cUHfmGMcco5zCuBqMpM-97hBkBX5_vzoRLm5SvJw@mail.gmail.com>
+Message-ID: <CAHk-=wjsM9cUHfmGMcco5zCuBqMpM-97hBkBX5_vzoRLm5SvJw@mail.gmail.com>
+Subject: Re: [GIT PULL] Smack patches for v6.0
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 1, 2022 at 8:02 PM Frederick Lawler <fred@cloudflare.com> wrote:
+On Mon, Aug 1, 2022 at 1:13 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> The LSM hook userns_create was introduced to provide LSM's an
-> opportunity to block or allow unprivileged user namespace creation. This
-> test serves two purposes: it provides a test eBPF implementation, and
-> tests the hook successfully blocks or allows user namespace creation.
->
-> This tests 3 cases:
->
->         1. Unattached bpf program does not block unpriv user namespace
->            creation.
->         2. Attached bpf program allows user namespace creation given
->            CAP_SYS_ADMIN privileges.
->         3. Attached bpf program denies user namespace creation for a
->            user without CAP_SYS_ADMIN.
->
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> There are two minor code clean-ups. One removes a touch of
+> dead code and the other replaces an instance of kzalloc + strncpy
+> with kstrndup.
 
-Looks good to me (Also checked it on vmtest.sh)
+Hmm. That second one looks like it really should have just used
+"kmemdup()" (and a zero termination) instead, since it has already
+done all the string length calculations.
 
-Acked-by: KP Singh <kpsingh@kernel.org>
+Oh well. I guess the strndup() works too, but it seems kind of odd to
+do a strnlen() there when you have literally limited 'len' to smaller
+than the string you are going to duplicate.
+
+                   Linus
