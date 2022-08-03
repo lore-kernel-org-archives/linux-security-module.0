@@ -2,82 +2,141 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1013C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 02:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB292C19F28
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 03:56:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235541AbiHCCkr (ORCPT
+        id S231720AbiHCD4w (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Aug 2022 22:40:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56982 "EHLO
+        Tue, 2 Aug 2022 23:56:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233385AbiHCCkq (ORCPT
+        with ESMTP id S231321AbiHCD4w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Aug 2022 22:40:46 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F1CA3335C
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Aug 2022 19:40:46 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id h188so18228012oia.13
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Aug 2022 19:40:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=dJ9RyKWE5FBwVhzJS/Ney0KLGBUDYNi42Whw7jsCqTk=;
-        b=Pb2Eej0xmH23y/cqzxJPqY7hR1X5oZDSF3Ij3l5/RGclHhaIy+1giMDCyH6E97NFtw
-         W7X8k0+rOQNq7e1b+QP8yaXoPmf+qMf6CRY+OtEnlKXjnb7XFhgGh/463kRiVyWF7sEJ
-         2ks+XT7DASO3j70gCiOwsvZl/c6VaVseb8He8FApS/vdEXrmKVJeJd/HpZoNtO2dQoWS
-         W23yk7KbilvyYWCQg4K3FoK0MopX7hfo/gsWWqE8RR8xXHUj0N4MpYTT/v/7R+B6NDmZ
-         17+OATGNanpWeQa72PZc4UUaEZpBHSPUuYebvjMsZgMHlQPnGOk0Ou0b6zPKA9p7+yFe
-         Zefg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=dJ9RyKWE5FBwVhzJS/Ney0KLGBUDYNi42Whw7jsCqTk=;
-        b=0uVYwE2mZCwKy6c3YjyZSxhgv/o8NY2BelDHwjZ6FzYPTh1k8X3LlRVHfb5xU/INp0
-         wXLSAlhWBs6fRBoRE979AqNkxJFYmf8YcsI9knl/2dn3g5VYJnXoQq0IX8SbmTRBAfdY
-         DKGcTsCxyTmBbIHBQ8UU9Yj/DJMhDrmlenis3j9b0c1qn/IuXwEDHHEYEYq4OjIqyDYH
-         SHpcRXuu66qWrab0K4pG5qPYLJ5p1eNggub5QDXChsV4Y56PUn1HbaPwY5DSDgCQL3CE
-         yXESsVeIGq2J6MudIfLv5NWieTRWFpuwGxIwmjVO7FFkAiLEHbNOnQCE3e+TE7etrGmT
-         I8YA==
-X-Gm-Message-State: ACgBeo1cs9cg2I/DYehNenLIlle0oA8oCskX6cg4mVWWiHDK0f2tkw/H
-        dye3HJgsqG8He4VRCRxpwxPJ/wi5I3SHCQc1r7WA
-X-Google-Smtp-Source: AA6agR5+3/8/YLolArypjH7JH1LqPE7ZmK02/QYNQW0OMSF5rhL00CxWaT/Z0tNJLAoc36IeOmsIxl5nMMQQIu3vF8c=
-X-Received: by 2002:a05:6808:2389:b0:33a:cbdb:f37a with SMTP id
- bp9-20020a056808238900b0033acbdbf37amr962169oib.136.1659494445502; Tue, 02
- Aug 2022 19:40:45 -0700 (PDT)
+        Tue, 2 Aug 2022 23:56:52 -0400
+Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0E81C909;
+        Tue,  2 Aug 2022 20:56:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1659498976; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=aRmv8ft/QV0SV0pY9DB8VSmzcWxlYMX3VCP8fvpSBmBXvT2I2LFOJNCjLBygrSDOpv935TBJVZh/SFRN1Gfn76O8cL/JumUl+b1fIvnzVpfHT4P4FaZTCDBxQiJxFLlHBhvVlB9+Vw/WmWzXBanXZrBYdKt9MWad/MkLNZ7TKZk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1659498976; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=xU5ES2CK52NAh8jyyaVRlZryGewNv2BrrDPGvXlAlJA=; 
+        b=c+CizvWRt8OK57861X+Fm+zOyZW97ncwGtpGGZfQxrbWWjM8mRNNhZU3oMKn2MqtyovHj4P2OU1aO3Wn9XnQeHRT1bjLf/9LGkxGwwk25lsDPej5Ty5oGQOakqxPewSXllrchUAOUJbwH6BF5/PjEAHud+wkhQzDMWze45FAUM0=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1659498976;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=xU5ES2CK52NAh8jyyaVRlZryGewNv2BrrDPGvXlAlJA=;
+        b=R/VQkNWzGmZSw9cHnIPU2cRDV0IwE8FIoJ3CVRWRYexIbNvTkdbF8AmF+LGC9tXE
+        sUMwDAxJt6NdG9qLjczLSJ1VOPtBaS6sT634lWpXa3TLvO3k+XfOvv0HdctteRnvGq3
+        nuhBVEFkkhEIR/S28VwgGrL3y/dafxhoDMdta5Ds=
+Received: from mail.zoho.in by mx.zoho.in
+        with SMTP id 1659498964559564.7672547663559; Wed, 3 Aug 2022 09:26:04 +0530 (IST)
+Date:   Wed, 03 Aug 2022 09:26:04 +0530
+From:   Siddh Raman Pant <code@siddh.me>
+To:     "Eric Biggers" <ebiggers@kernel.org>
+Cc:     "David Howells" <dhowells@redhat.com>,
+        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        "linux-security-modules" <linux-security-module@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "linux-kernel-mentees" 
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        "syzbot+c70d87ac1d001f29a058" 
+        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>
+Message-ID: <18261d8a63a.33799d2a402802.7512018232560408914@siddh.me>
+In-Reply-To: <YunKlJCDlmyn2hJ4@sol.localdomain>
+References: <20220728155121.12145-1-code@siddh.me> <YunKlJCDlmyn2hJ4@sol.localdomain>
+Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
 MIME-Version: 1.0
-References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
- <791e13b5-bebd-12fc-53de-e9a86df23836@schaufler-ca.com> <CAHC9VhSF8hWg=7tbFiCrizNF61vpwJcU3793LcStiu-anW4i1g@mail.gmail.com>
- <2642904.mvXUDI8C0e@x2>
-In-Reply-To: <2642904.mvXUDI8C0e@x2>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 2 Aug 2022 22:40:34 -0400
-Message-ID: <CAHC9VhR0mhUp-dnyP3uE5ALS6Dt43k6xQ_LVYw+QVjC5LG3qqA@mail.gmail.com>
-Subject: Re: LSM stacking in next for 6.1?
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>, linux-audit@redhat.com,
-        John Johansen <john.johansen@canonical.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 2, 2022 at 10:34 PM Steve Grubb <sgrubb@redhat.com> wrote:
-> On Tuesday, August 2, 2022 8:56:21 PM EDT Paul Moore wrote:
-> >  I can tell you that I've never been really excited about the /proc
-> >  changes, and believe it or not I've been thinking about those a fair
-> >  amount since James asked me to start maintaining the LSM.
->
-> Why do we not have auid and sessionid in /proc/<pid>/status  ?
->
-> This has been needed for 10 - 15 years.
+On Wed, 03 Aug 2022 06:38:36 +0530  Eric Biggers <ebiggers@kernel.org> wrote:
+> On Thu, Jul 28, 2022 at 09:21:21PM +0530, Siddh Raman Pant wrote:
+> > If not done, a reference to a freed pipe remains in the watch_queue,
+> > as this function is called before freeing a pipe in free_pipe_info()
+> > (see line 834 of fs/pipe.c).
+> > 
+> > This causes a UAF when post_one_notification() tries to access the pipe
+> > on a key update, which is reported by syzbot.
+> > 
+> > We also need to use READ_ONCE() in post_one_notification() to prevent the
+> > compiler from optimising and loading a non-NULL value from wqueue->pipe.
+> 
+> Didn't this already get fixed by the following commit?
+> 
+>     commit 353f7988dd8413c47718f7ca79c030b6fb62cfe5
+>     Author: Linus Torvalds <torvalds@linux-foundation.org>
+>     Date:   Tue Jul 19 11:09:01 2022 -0700
+> 
+>         watchqueue: make sure to serialize 'wqueue->defunct' properly
+> 
+> With that, post_one_notification() only runs while the watch_queue is locked and
+> not "defunct".  So it's guaranteed that the pipe still exists.  Any concurrent
+> free_pipe_info() waits for the watch_queue to be unlocked in watch_queue_clear()
+> before proceeding to free the pipe.  So where is there still a bug?
 
-Nice thread hijack, but I believe you already know the answer to your
-question Steve: submit a patch for review.
+It doesn't fix the dangling pointer to the freed pipe in the watch_queue, which
+had caused this crash.
 
--- 
-paul-moore.com
+> > 
+> > Bug report: https://syzkaller.appspot.com/bug?id=1870dd7791ba05f2ea7f47f7cbdde701173973fc
+> > Reported-and-tested-by: syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com
+> 
+> If this actually does fix something, then it's mixing Fixes and Cc stable tags.
+
+Noted.
+
+> > diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+> > index bb9962b33f95..617425e34252 100644
+> > --- a/kernel/watch_queue.c
+> > +++ b/kernel/watch_queue.c
+> > @@ -99,7 +99,7 @@ static bool post_one_notification(struct watch_queue *wqueue,
+> >                    struct watch_notification *n)
+> >  {
+> >      void *p;
+> > -    struct pipe_inode_info *pipe = wqueue->pipe;
+> > +    struct pipe_inode_info *pipe = READ_ONCE(wqueue->pipe);
+> >      struct pipe_buffer *buf;
+> >      struct page *page;
+> >      unsigned int head, tail, mask, note, offset, len;
+> > @@ -637,6 +637,12 @@ void watch_queue_clear(struct watch_queue *wqueue)
+> >          spin_lock_bh(&wqueue->lock);
+> >      }
+> >  
+> > +    /* Clearing the watch queue, so we should clean the associated pipe. */
+> > +    if (wqueue->pipe) {
+> > +        wqueue->pipe->watch_queue = NULL;
+> > +        wqueue->pipe = NULL;
+> > +    }
+> > +
+> >      spin_unlock_bh(&wqueue->lock);
+> >      rcu_read_unlock();
+> >  }
+> 
+> And this is clearly the wrong fix anyway, since it makes the call to
+> put_watch_queue() in free_pipe_info() never be executed.  So AFAICT, this patch
+> introduces a memory leak, and doesn't actually fix anything...
+> 
+> - Eric
+> 
+
+Sorry for overlooking that. wqueue->pipe->watch_queue = NULL; is unnecessary,
+but wqueue->pipe = NULL; is needed.
+
+I will send a final v4 once all issues are resolved in this thread.
+
+Thanks,
+Siddh
