@@ -2,121 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23731C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 04:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A24C19F28
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 05:14:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233179AbiHCEoK (ORCPT
+        id S234033AbiHCFOR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Aug 2022 00:44:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34886 "EHLO
+        Wed, 3 Aug 2022 01:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiHCEoJ (ORCPT
+        with ESMTP id S229730AbiHCFOP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Aug 2022 00:44:09 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCDB231377;
-        Tue,  2 Aug 2022 21:44:07 -0700 (PDT)
-Received: from [192.168.43.224] (92.40.178.41.threembb.co.uk [92.40.178.41])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: gtucker)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 544F76601B45;
-        Wed,  3 Aug 2022 05:44:05 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1659501845;
-        bh=7yGjpM0HgyH1Sv1LbDc+Kr8ogiOCMctPl1YxkMRebl0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=TPf1Y9FH1Nbix3eA+tAq+62JUvC/jvDXV+65YgYFVJZp+vEJVhAEsmGbU2BLxOtut
-         mW2sJjAot/PTOW3P2mZI8bZ9gFN/JuP5mLuAusw2RAPty7pNHtU/k8siKIZQYOlNb/
-         0XgL5c5VADYtEYNYIfo24/NmnZmyFzYPXuCe+TOAuR+Kf5iZ5rRURghlfth9r4iDF3
-         MbTWTGNhj27cmg83jfkdTTR/mm/mAoz4gWichyBFDIM9p6wXjkEE8CuX4i5CiFmH3p
-         JWwQn4XySe3inmwSaMjsk3YvcNBtlCAjbsTSVolzCUD6qjNewl16Rxu1lMxNTibA52
-         j5ShCAFIAH47g==
-Message-ID: <fa7fb9b3-169a-199f-22da-006777a14e03@collabora.com>
-Date:   Wed, 3 Aug 2022 06:44:06 +0200
+        Wed, 3 Aug 2022 01:14:15 -0400
+Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBCD41D0D2;
+        Tue,  2 Aug 2022 22:14:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1659503622; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=ereNJZG2TKcY8VEIiZ6G6l976YWYGMO3JS4bz9yBr7P7UPduBIxij0IjmWYS42QTVCg8SEbPcsnZYF9iXh/dQLx5RyoaXHoYk/drSvswFzGZ72r/TP032pTn/OxUHQ0YdmdWeDVIYCI5QxKqj3pFhK+jFk95TTqo3YH45wsNkHw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1659503622; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=ankEwCNW2dYC4+n+miX8LYk427uSNCA75Yi5kRdEzXQ=; 
+        b=S81e4BHRUI5TLzQMNay6MoN2XrtUEOVCkxXnJQhsn+L/y/7Wo5csOz8BYZ25cSFq2L67BNHtQPAB2CeSqGZRDuqPf6NMTVzyaA7FeYKs93eZKCZdSD/tiiG/K5WgqKAZYAmD/Qjlnk9zEdpCfb2T8m39MkimO5e0+ZYyExCIvGc=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1659503622;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=ankEwCNW2dYC4+n+miX8LYk427uSNCA75Yi5kRdEzXQ=;
+        b=seNAjkZMS25o+88HZF3N9XkiMwSuLx9JxVdk/iga/VX+CnOF2SdIwNDMFRJ8xSJj
+        uqFqDHqxhMY2uh2TvuHDtU99CmH+uRHXr1Q0nrL0Nl3TuE/yAD85XDvqz4DLGMGFfGL
+        KKv8QU94iLsS1Nk+Czwr0b2z6PQHA6p9VEnji614=
+Received: from mail.zoho.in by mx.zoho.in
+        with SMTP id 1659503611368815.0380681354741; Wed, 3 Aug 2022 10:43:31 +0530 (IST)
+Date:   Wed, 03 Aug 2022 10:43:31 +0530
+From:   Siddh Raman Pant <code@siddh.me>
+To:     "Eric Biggers" <ebiggers@kernel.org>
+Cc:     "David Howells" <dhowells@redhat.com>,
+        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        "linux-security-modules" <linux-security-module@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "linux-kernel-mentees" 
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        "syzbot+c70d87ac1d001f29a058" 
+        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>
+Message-ID: <182621f8dca.1e0e6161130907.1470656861897824669@siddh.me>
+In-Reply-To: <Yun1rC59USrgd0fu@sol.localdomain>
+References: <20220728155121.12145-1-code@siddh.me>
+ <YunKlJCDlmyn2hJ4@sol.localdomain>
+ <18261d8a63a.33799d2a402802.7512018232560408914@siddh.me> <Yun1rC59USrgd0fu@sol.localdomain>
+Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [GIT PULL] Kselftest update for Linux 5.20-rc1
-Content-Language: en-US
-To:     Shuah Khan <skhan@linuxfoundation.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?= =?UTF-8?Q?n?= <mic@digikod.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-References: <430ef132-2ac7-e1be-68ed-3d9c27382143@linuxfoundation.org>
- <2838c247-0648-3828-efb3-e11d7a0616b2@digikod.net>
- <84560b65-12ed-da24-3698-45484f80802a@linuxfoundation.org>
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-In-Reply-To: <84560b65-12ed-da24-3698-45484f80802a@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 02/08/2022 15:29, Shuah Khan wrote:
-> On 8/2/22 3:51 AM, Mickaël Salaün wrote:
->> Hi,
->>
->> This change breaks the Landlock test build when performed on the tools/testing/selftests/landlock directory because the (non-system/up-to-date) kernel headers aren't found. Looking at the use of top_srcdir and HDR_PATH, it seems that multiple subsystems are using this feature. I consider this change a regression.
->>
-> 
-> I did a build test from the top level before sending the pull request
-> and didn't catch this breakage as a result. This breaks when build is
-> run from the test directory.
-> 
-> We have had several problems related to khdr_dir and target and decided
-> to move away from it with this change.
-> 
->> It also removes the check on up-to-date kernel headers (thanks to the Makefile's target timestamp).
->>
->> I wasn't CCed for this change impacting Landlock [1]. Please keep in mind to add at least maintainers and related mailing-lists for changes on related subsystems.
->>
-> 
-> That is the usual practice and if I notice missing maintainers, I add
-> them. We missed this one.
-> 
->> The following patch almost revert commit a917dd94b832 ("selftests/landlock: drop deprecated headers dependency") and partially fixes commit 49de12ba06ef ("selftests: drop KSFT_KHDR_INSTALL make target"):
->>
-> 
-> Guillaume,
-> 
-> Will you be able to look at this and send a patch on top? I will
-> send another pull request before merge window closes?
+On Wed, 03 Aug 2022 09:42:28 +0530  Eric Biggers <ebiggers@kernel.org> wrote:
+> Under what circumstances is the pipe pointer still being dereferenced after the
+> pipe has been freed?  I don't see how it can be; see my explanation above.
 
-Sure, I'll take a look today.
+It really didn't fix the crash. It caused the same crash reported here, which
+I was already locally getting:
+https://syzkaller.appspot.com/bug?extid=03d7b43290037d1f87ca
 
-Also I'll see if we can add some extra build tests in KernelCI
-for the kselftest tree to catch issues like these automatically.
+(It's same because __post_watch_notification calls post_one_notification, and
+this patch seems to stop that crash too, as was verified by Dipanjan here).
 
-Best wishes,
-Guillaume
+While it has been fixed by e64ab2dbd882 ("watch_queue: Fix missing locking in
+add_watch_to_object()"), it just shows there can be paths leading to it. (Also,
+I posted this patch (v1, v2, v3) before that even landed, so I had no way of
+knowing about it).
 
->> --- a/tools/testing/selftests/landlock/Makefile
->> +++ b/tools/testing/selftests/landlock/Makefile
->> @@ -9,10 +9,13 @@ TEST_GEN_PROGS := $(src_test:.c=)
->>   TEST_GEN_PROGS_EXTENDED := true
->>
->>   OVERRIDE_TARGETS := 1
->> +top_srcdir = ../../../..
->>   include ../lib.mk
->>
->> +khdr_dir = $(top_srcdir)/usr/include
->> +
->>   $(OUTPUT)/true: true.c
->>       $(LINK.c) $< $(LDLIBS) -o $@ -static
->>
->> -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
->> -    $(LINK.c) $< $(LDLIBS) -o $@ -lcap
->> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
->> +    $(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
->>
->>
->> This doesn't fix the header timestamp check though.
->>
-> 
-> thanks,
-> -- Shuah
+There is a null check in post_one_notification for the pipe, most probably
+because it *expects* the pointer to be NULL'd. Also, there is no reason to have
+a dangling pointer stay, it's just a recipe for further bugs.
 
+Thanks,
+Siddh
