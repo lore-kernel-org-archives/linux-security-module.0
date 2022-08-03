@@ -2,90 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 144F7C19F28
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 16:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A132EC19F28
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 18:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236536AbiHCQGg (ORCPT
+        id S235668AbiHCSRj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Aug 2022 12:06:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37966 "EHLO
+        Wed, 3 Aug 2022 14:17:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232563AbiHCQGe (ORCPT
+        with ESMTP id S237847AbiHCSPh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Aug 2022 12:06:34 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 031131A82F
-        for <linux-security-module@vger.kernel.org>; Wed,  3 Aug 2022 09:06:34 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id o22so6602945edc.10
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Aug 2022 09:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5szB0Yt8wfbiTaP8/uH11/lZ59NOlpGeFsdpgoLNvJ8=;
-        b=ic+vNPABuREX+PIjwaM+VOGEJw6oF2ebKuLtvGvb4/Hb7YaZRdZFas4fPAdzbAg7jx
-         aesjy+76DTWh4E6VOx93inA8iC/941RMQo8fsSmtWm07+lOlWWxdSUMOghm1jrWvVoR4
-         U/LivSCQiuMwcebAF9+j1uTdx7DTBfUBhs5nQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5szB0Yt8wfbiTaP8/uH11/lZ59NOlpGeFsdpgoLNvJ8=;
-        b=L1naw6iAYiJwqe/JUKtFSSrzZEG8U/s569E5R4rH6UwZo7jJUojSf14gZb1SwSmVoQ
-         jqbhXZU5vR11J5ajCDn1/7LL7F+wy7g6LRgH+Qm+OZ0oL/5WJwqbNNmiQ/KCgPe9dguN
-         AuK3yimNTklnBeVrwLNQ5tjA8u5iTQmwfNny8SF+HgwXjg8Tq/dof983ATD4c6hwC+J5
-         fDlva/A7ed03kbirjFJpyQTzxYm/Yyq+msJEzdScgVf6dKvMr/XNv8agS/xGnB3ObRJt
-         +VBj8TWVEkfTolxvJZBMW5LV9YUWl5GyM/M7XZV4xRrzKaX2mZCMeQvC+t2NsORQUcjT
-         Caeg==
-X-Gm-Message-State: AJIora8C6KmfBMlMe+Jpm/mmO+j5Ezf/LjCHZrrxSE1d1MV2nz8S2o/i
-        GmORVkFsh+731dKl1VDwuY4d7eWwdpDHusy5zOXKrQ==
-X-Google-Smtp-Source: AGRyM1tY9355tF5SR98IYTJw6jtydsojrQZtfOZY+tbbLicCH00rJyvlJeK55pfPj3vsy9eOthOXBZnjsNPgYb7wPm8=
-X-Received: by 2002:aa7:d813:0:b0:43c:dedd:b4e8 with SMTP id
- v19-20020aa7d813000000b0043cdeddb4e8mr26254900edq.231.1659542792573; Wed, 03
- Aug 2022 09:06:32 -0700 (PDT)
+        Wed, 3 Aug 2022 14:15:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA9460CA;
+        Wed,  3 Aug 2022 11:15:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E1DE61262;
+        Wed,  3 Aug 2022 18:15:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9600FC433C1;
+        Wed,  3 Aug 2022 18:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659550534;
+        bh=7O/on+19Nue3/Vk4JQ7+/4AVjwXWMn+5GbqToJguIEI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cmRFsOWkOufQEawUoZve7qnELukP37q45otVfWWsf//TiVfLXIZvmJ/mffOL/oSo5
+         aAIRdmlpqFbaBrkf4CQ4JFM0DA7O/cYLQKmaLhPa2ih01chciOJGzcyDGy6UEhmUJN
+         gFwTcgSd6oBeMORJDMeNtCVmvzL6g4eYlDQib900LSBDgEDFIOy1ZkojGNbrB4sk6J
+         KOmeag/W0n5DuctpmmJkN0JAGcgz7iiZB9w4K35HagHmUVfwWT8XczimkKRekQKpII
+         f2rlvhhtOYTicCRD0zL+vXh9re35hsZvHR6OnC0Olbl50+HDm7P4K2CC30zt7Cujgq
+         XJ1Z0nVaWDuDA==
+Date:   Wed, 3 Aug 2022 18:15:31 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Siddh Raman Pant <code@siddh.me>
+Cc:     David Howells <dhowells@redhat.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Eric Dumazet <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        linux-security-modules <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees 
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        syzbot+c70d87ac1d001f29a058 
+        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>
+Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing
+ watch_queue
+Message-ID: <Yuq7Q//SH/HjLsxH@gmail.com>
+References: <20220728155121.12145-1-code@siddh.me>
+ <YunKlJCDlmyn2hJ4@sol.localdomain>
+ <18261d8a63a.33799d2a402802.7512018232560408914@siddh.me>
+ <Yun1rC59USrgd0fu@sol.localdomain>
+ <182621f8dca.1e0e6161130907.1470656861897824669@siddh.me>
+ <YuoKi0GigXm/Hcb+@sol.localdomain>
+ <18262dcb20e.4bf31faa421018.1228982721921458740@siddh.me>
 MIME-Version: 1.0
-References: <CAJ-EccPH46FGKQj8gYEg5HGpmmRiqzrZouTZauwpvX-+2j4GNA@mail.gmail.com>
- <CAHk-=wim4B671BOPfxoXDSz0xfOruqoKCMQrjAX0R95PH5Wy4g@mail.gmail.com>
-In-Reply-To: <CAHk-=wim4B671BOPfxoXDSz0xfOruqoKCMQrjAX0R95PH5Wy4g@mail.gmail.com>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Wed, 3 Aug 2022 09:08:22 -0700
-Message-ID: <CAJ-EccOP4Yq4RSBSkA_71kagqvA=a+tUV63UbHWZVM2uqJMDFQ@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID changes for v6.0
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18262dcb20e.4bf31faa421018.1228982721921458740@siddh.me>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 2, 2022 at 3:20 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, Aug 1, 2022 at 7:40 PM Micah Morton <mortonm@chromium.org> wrote:
-> >
-> > This pull request contains one commit that touches common kernel code,
-> >
-> > one that adds functionality internal to the SafeSetID LSM code, and a
-> >
-> > few other commits that only modify the SafeSetID LSM selftest.
-> [...]
->
-> What odd MUA do you use that causes this double-spaced text email?
->
-> I can read it, but it really is a bit strange. It was all plain text,
-> and marked as utf-8, and otherwise looked normal except for that
-> double spacing.
->
-> I get flashbacks to my "writing papers at university" days.
+On Wed, Aug 03, 2022 at 02:10:06PM +0530, Siddh Raman Pant wrote:
+> On Wed, 03 Aug 2022 11:11:31 +0530  Eric Biggers <ebiggers@kernel.org> wrote:
+> > I tested the syzbot reproducer
+> > https://syzkaller.appspot.com/text?tag=ReproC&x=174ea97e080000, and it does
+> > *not* trigger the bug on the latest upstream.  But, it does trigger the bug if I
+> > recent Linus's recent watch_queue fixes.
+> > 
+> > So I don't currently see any evidence of an unfixed bug.  If, nevertheless, you
+> > believe that a bug is still unfixed, then please provide a reproducer and a fix
+> > patch that clearly explains what it is fixing. 
+> > 
+> > > There is a null check in post_one_notification for the pipe, most probably
+> > > because it *expects* the pointer to be NULL'd. Also, there is no reason to have
+> > > a dangling pointer stay, it's just a recipe for further bugs.
+> > 
+> > If you want to send a patch or patches to clean up the code, that is fine, but
+> > please make it super clear what is a cleanup and what is a fix.
+> > 
+> > - Eric
+> > 
+> 
+> I honestly feel like I am repeating myself yet again, but okay.
 
-I know, it was ugly. I just switched laptops to a Mac and thought for
-sure the mail message preview I was seeing in gmail after copy+paste
-from a terminal window was just some weird scaling issue on my
-external monitor or something. Sure enough the message was sent off
-looking like a double spaced book report from 8th grade :)
+Well, you should try listening instead.  Because you are not listening.
 
-I'll have to find what's going wrong with the copy+paste to gmail on
-this particular device.
-
+> Of course, the race condition has been solved by a patch upstream, which I had
+> myself mentioned earlier.
+> 
+> But what I am saying is that it did *not* address *what* that race condition
+> had triggered, i.e. the visible cause of the UAF crash, which, among other
+> things, is *because* there is a dangling pointer to the freed pipe, which
+> *caused* the crash in post_one_notification() when it tried to access
+> &pipe->rd.wait_lock as an argument to spin_lock_irq(), a path it reached
+> after checking if wqueue->pipe is NULL and proceeded when it was not the case.
 >
->              Linus
+> And the upstream commit was made *after* I had posted this patch, hence this
+> was a fix for the syzkaller issue. While I am *not* saying to accept it just
+> because this was posted earlier, I am saying this patch addresses a parallel
+> issue, i.e. the *actual use-after-free crash* which was reproduced by those
+> reproducers, i.e., what was attempted to be used after getting freed and
+> detected by KASAN.
+
+Even if wqueue->pipe was set to NULL during free_pipe_info(), there would still
+have been a use-after-free, as the real bug was the lack of synchronization
+between post_one_notification() and free_pipe_info().  That is fixed now.
+
+> 
+> We don't need to wait for another similar syzbot report to pop up before doing
+> this change, and say let's not fix a dangling pointer reference because now
+> another commit apparately fixes the specific syzkaller issue, causing the given
+> specific reproducer with its specific way of reproducing to fail, when we in
+> fact now know it *can* be a valid problem in practice and doing this change
+> too causes the specific reproducer under consideration to fail reproducing, as
+> was reported by the reproducer itself.
+
+To re-iterate, I encourage you to send a cleanup patch if you see an
+opportunity.  It looks like the state wqueue->defunct==true could be replaced
+with wqueue->pipe==NULL, which would be simpler, so how about doing that?  Just
+don't claim that it is "fixing" something, unless it is, as that makes things
+very confusing and difficult for everyone.
+
+> 
+> I really don't know how to create stress tests / reproducers like how syzkaller
+> makes, so if a similar new reproducer is really required for showing this
+> patch's validity disregarding any earlier reproducers, I unfortunately cannot
+> make it due to skill issue as I just started in kernel dev, and I am deeply
+> sorry for wasting the time of everyone, and I am thankful for your criticism of
+> my patch.
+
+A reproducer can just be written as a normal program, in C or another language.
+The syzkaller reproducers are really hard to read as they are auto-generated, so
+don't read too much into them -- they're certainly not examples of good code.
+
+- Eric
