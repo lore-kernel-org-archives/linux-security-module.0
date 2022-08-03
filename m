@@ -2,138 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A132EC19F28
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 18:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B33C19F2C
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 20:14:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235668AbiHCSRj (ORCPT
+        id S238124AbiHCUOX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Aug 2022 14:17:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45316 "EHLO
+        Wed, 3 Aug 2022 16:14:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237847AbiHCSPh (ORCPT
+        with ESMTP id S237819AbiHCUOW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Aug 2022 14:15:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA9460CA;
-        Wed,  3 Aug 2022 11:15:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 3 Aug 2022 16:14:22 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1FF4E86B;
+        Wed,  3 Aug 2022 13:14:21 -0700 (PDT)
+Received: from localhost.localdomain (92.40.178.37.threembb.co.uk [92.40.178.37])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E1DE61262;
-        Wed,  3 Aug 2022 18:15:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9600FC433C1;
-        Wed,  3 Aug 2022 18:15:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659550534;
-        bh=7O/on+19Nue3/Vk4JQ7+/4AVjwXWMn+5GbqToJguIEI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cmRFsOWkOufQEawUoZve7qnELukP37q45otVfWWsf//TiVfLXIZvmJ/mffOL/oSo5
-         aAIRdmlpqFbaBrkf4CQ4JFM0DA7O/cYLQKmaLhPa2ih01chciOJGzcyDGy6UEhmUJN
-         gFwTcgSd6oBeMORJDMeNtCVmvzL6g4eYlDQib900LSBDgEDFIOy1ZkojGNbrB4sk6J
-         KOmeag/W0n5DuctpmmJkN0JAGcgz7iiZB9w4K35HagHmUVfwWT8XczimkKRekQKpII
-         f2rlvhhtOYTicCRD0zL+vXh9re35hsZvHR6OnC0Olbl50+HDm7P4K2CC30zt7Cujgq
-         XJ1Z0nVaWDuDA==
-Date:   Wed, 3 Aug 2022 18:15:31 +0000
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Siddh Raman Pant <code@siddh.me>
-Cc:     David Howells <dhowells@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Eric Dumazet <edumazet@google.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        linux-security-modules <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kernel-mentees 
-        <linux-kernel-mentees@lists.linuxfoundation.org>,
-        syzbot+c70d87ac1d001f29a058 
-        <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing
- watch_queue
-Message-ID: <Yuq7Q//SH/HjLsxH@gmail.com>
-References: <20220728155121.12145-1-code@siddh.me>
- <YunKlJCDlmyn2hJ4@sol.localdomain>
- <18261d8a63a.33799d2a402802.7512018232560408914@siddh.me>
- <Yun1rC59USrgd0fu@sol.localdomain>
- <182621f8dca.1e0e6161130907.1470656861897824669@siddh.me>
- <YuoKi0GigXm/Hcb+@sol.localdomain>
- <18262dcb20e.4bf31faa421018.1228982721921458740@siddh.me>
+        (Authenticated sender: gtucker)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E86BD66017FE;
+        Wed,  3 Aug 2022 21:14:17 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1659557658;
+        bh=tabkDjgdyw2xBTyi9xcIpJHbuW1UrDhBK1x+ki9o6ZM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QvWsQUzNeyhffDtJ4G0dvV5w50VTfSz0XgJeveb597J1f6azxDYwGtR4npfykBqv0
+         pcAakntnog4hv3M/eiRmjHRFrtvpvxJ948Wn8LayWOmdtJBdaL3IR18QOvSygvSMq/
+         qHOOmVtwnW5X9qsOBxohmnWH+T5hYNpe4ycNPMlAe4y4oUekY4TcXpVEbtV68SFQ3x
+         zNL4VMCvAuqw4r+VhEmb5jv4pH8/KyDynLvq4Lxr2uMCX2H+HqJ7jYLHQ+ZJdop1AT
+         K8c55HlfExrQoAiZy1ZPOh5y0AlwxWCB3+lEBcUHaCyYskBe6XhZFCjQVPonzbR33I
+         rkQ6/GBiA8tzA==
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+To:     Guillaume <guillaume.tucker@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc:     Anders Roxell <anders.roxell@linaro.org>, Tim.Bird@sony.com,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH] selftests/landlock: fix broken include of linux/landlock.h
+Date:   Wed,  3 Aug 2022 22:13:54 +0200
+Message-Id: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18262dcb20e.4bf31faa421018.1228982721921458740@siddh.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 03, 2022 at 02:10:06PM +0530, Siddh Raman Pant wrote:
-> On Wed, 03 Aug 2022 11:11:31 +0530  Eric Biggers <ebiggers@kernel.org> wrote:
-> > I tested the syzbot reproducer
-> > https://syzkaller.appspot.com/text?tag=ReproC&x=174ea97e080000, and it does
-> > *not* trigger the bug on the latest upstream.  But, it does trigger the bug if I
-> > recent Linus's recent watch_queue fixes.
-> > 
-> > So I don't currently see any evidence of an unfixed bug.  If, nevertheless, you
-> > believe that a bug is still unfixed, then please provide a reproducer and a fix
-> > patch that clearly explains what it is fixing. 
-> > 
-> > > There is a null check in post_one_notification for the pipe, most probably
-> > > because it *expects* the pointer to be NULL'd. Also, there is no reason to have
-> > > a dangling pointer stay, it's just a recipe for further bugs.
-> > 
-> > If you want to send a patch or patches to clean up the code, that is fine, but
-> > please make it super clear what is a cleanup and what is a fix.
-> > 
-> > - Eric
-> > 
-> 
-> I honestly feel like I am repeating myself yet again, but okay.
+Revert part of the earlier changes to fix the kselftest build when
+using a sub-directory from the top of the tree as this broke the
+landlock test build as a side-effect when building with "make -C
+tools/testing/selftests/landlock".
 
-Well, you should try listening instead.  Because you are not listening.
+Reported-by: Mickaël Salaün <mic@digikod.net>
+Fixes: a917dd94b832 ("selftests/landlock: drop deprecated headers dependency")
+Fixes: f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")
+Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+---
+ tools/testing/selftests/landlock/Makefile | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-> Of course, the race condition has been solved by a patch upstream, which I had
-> myself mentioned earlier.
-> 
-> But what I am saying is that it did *not* address *what* that race condition
-> had triggered, i.e. the visible cause of the UAF crash, which, among other
-> things, is *because* there is a dangling pointer to the freed pipe, which
-> *caused* the crash in post_one_notification() when it tried to access
-> &pipe->rd.wait_lock as an argument to spin_lock_irq(), a path it reached
-> after checking if wqueue->pipe is NULL and proceeded when it was not the case.
->
-> And the upstream commit was made *after* I had posted this patch, hence this
-> was a fix for the syzkaller issue. While I am *not* saying to accept it just
-> because this was posted earlier, I am saying this patch addresses a parallel
-> issue, i.e. the *actual use-after-free crash* which was reproduced by those
-> reproducers, i.e., what was attempted to be used after getting freed and
-> detected by KASAN.
+diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
+index a6959df28eb0..02868ac3bc71 100644
+--- a/tools/testing/selftests/landlock/Makefile
++++ b/tools/testing/selftests/landlock/Makefile
+@@ -9,10 +9,13 @@ TEST_GEN_PROGS := $(src_test:.c=)
+ TEST_GEN_PROGS_EXTENDED := true
+ 
+ OVERRIDE_TARGETS := 1
++top_srcdir := ../../../..
+ include ../lib.mk
+ 
++khdr_dir = $(top_srcdir)/usr/include
++
+ $(OUTPUT)/true: true.c
+ 	$(LINK.c) $< $(LDLIBS) -o $@ -static
+ 
+-$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
+-	$(LINK.c) $< $(LDLIBS) -o $@ -lcap
++$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
++	$(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
+-- 
+2.30.2
 
-Even if wqueue->pipe was set to NULL during free_pipe_info(), there would still
-have been a use-after-free, as the real bug was the lack of synchronization
-between post_one_notification() and free_pipe_info().  That is fixed now.
-
-> 
-> We don't need to wait for another similar syzbot report to pop up before doing
-> this change, and say let's not fix a dangling pointer reference because now
-> another commit apparately fixes the specific syzkaller issue, causing the given
-> specific reproducer with its specific way of reproducing to fail, when we in
-> fact now know it *can* be a valid problem in practice and doing this change
-> too causes the specific reproducer under consideration to fail reproducing, as
-> was reported by the reproducer itself.
-
-To re-iterate, I encourage you to send a cleanup patch if you see an
-opportunity.  It looks like the state wqueue->defunct==true could be replaced
-with wqueue->pipe==NULL, which would be simpler, so how about doing that?  Just
-don't claim that it is "fixing" something, unless it is, as that makes things
-very confusing and difficult for everyone.
-
-> 
-> I really don't know how to create stress tests / reproducers like how syzkaller
-> makes, so if a similar new reproducer is really required for showing this
-> patch's validity disregarding any earlier reproducers, I unfortunately cannot
-> make it due to skill issue as I just started in kernel dev, and I am deeply
-> sorry for wasting the time of everyone, and I am thankful for your criticism of
-> my patch.
-
-A reproducer can just be written as a normal program, in C or another language.
-The syzkaller reproducers are really hard to read as they are auto-generated, so
-don't read too much into them -- they're certainly not examples of good code.
-
-- Eric
