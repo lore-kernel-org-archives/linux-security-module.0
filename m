@@ -2,175 +2,90 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EEBC19F29
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 15:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144F7C19F28
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 16:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238016AbiHCPUl (ORCPT
+        id S236536AbiHCQGg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Aug 2022 11:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53966 "EHLO
+        Wed, 3 Aug 2022 12:06:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238087AbiHCPUh (ORCPT
+        with ESMTP id S232563AbiHCQGe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Aug 2022 11:20:37 -0400
-Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFF613EB2
-        for <linux-security-module@vger.kernel.org>; Wed,  3 Aug 2022 08:20:35 -0700 (PDT)
-Received: by mail-ot1-x32b.google.com with SMTP id x1-20020a056830278100b00636774b0e54so2448644otu.4
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Aug 2022 08:20:35 -0700 (PDT)
+        Wed, 3 Aug 2022 12:06:34 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 031131A82F
+        for <linux-security-module@vger.kernel.org>; Wed,  3 Aug 2022 09:06:34 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id o22so6602945edc.10
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Aug 2022 09:06:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=RPqGFZtbNqgICpWV/6VvhSR6n3AOi6dZZb+5V7yogyQ=;
-        b=eKxcY/wUV1t5iGFQOTkC3uUqXsNlO3wJPUXpinu2/pZFiIuEZDbShMVl1SWFB8VMKG
-         dN33busgN2TumcApmrWbU9bmxspzUC3EobauqLvOHnBA8X1FgGKATmogtCPRFVJX7swX
-         jnEljBTuf+JFh+gnVMEfcFQpvfPapnczKgq9A=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5szB0Yt8wfbiTaP8/uH11/lZ59NOlpGeFsdpgoLNvJ8=;
+        b=ic+vNPABuREX+PIjwaM+VOGEJw6oF2ebKuLtvGvb4/Hb7YaZRdZFas4fPAdzbAg7jx
+         aesjy+76DTWh4E6VOx93inA8iC/941RMQo8fsSmtWm07+lOlWWxdSUMOghm1jrWvVoR4
+         U/LivSCQiuMwcebAF9+j1uTdx7DTBfUBhs5nQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=RPqGFZtbNqgICpWV/6VvhSR6n3AOi6dZZb+5V7yogyQ=;
-        b=uio1KJWSlhjPfKmcAGlOSrm9FE7bobGF5wZubq/dd3sgWR/++qxfTpG27e/Tp8tnjc
-         68iz1jMAjIAtCyZgi06FyptACOYV+g6mDNNK5rqmpMkY/kAewT1K6Q5Db+YmuFtOSm+w
-         j/DddxUa2kpzSDOml1BcG5orDsXzRK75y8vhxdw1MQM82Y7d/94K9PE1n4CxMblMTmj+
-         5BWWyA4GJz0qZt1UTbcqhL0KQuKe+Q3YQWpmmdIelTK243Xam/vpP/gHJhydQtPo7SsT
-         l5EdmZfu7fsqUO4GrZcS5JTZ3rocvQH3k7AbTnIkXVHwolzXLm358odbnSd7eJvacM7K
-         aWWw==
-X-Gm-Message-State: AJIora9vH4lUPS1kcKyH2/HJjtos+UXUxZ5LS2rjg7/H8/yZtgfXMdHD
-        sOxPnXeEOtBByGmhKxuwJYm7uw==
-X-Google-Smtp-Source: AGRyM1vhYxujzT2YaLXCnoBJSDqDHPUJMnPpsU0AX9VW0hT0pmIMq5BAvFR7alVbeYb7pUS4X0XAlA==
-X-Received: by 2002:a9d:6007:0:b0:61c:ecd2:ac55 with SMTP id h7-20020a9d6007000000b0061cecd2ac55mr8737434otj.32.1659540034249;
-        Wed, 03 Aug 2022 08:20:34 -0700 (PDT)
-Received: from [192.168.0.41] ([184.4.90.121])
-        by smtp.gmail.com with ESMTPSA id fo22-20020a0568709a1600b0010eaeee89a1sm3056992oab.46.2022.08.03.08.20.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Aug 2022 08:20:33 -0700 (PDT)
-Message-ID: <aad6c2cb-abdd-b066-9d1d-d0f415256ae6@cloudflare.com>
-Date:   Wed, 3 Aug 2022 10:20:32 -0500
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5szB0Yt8wfbiTaP8/uH11/lZ59NOlpGeFsdpgoLNvJ8=;
+        b=L1naw6iAYiJwqe/JUKtFSSrzZEG8U/s569E5R4rH6UwZo7jJUojSf14gZb1SwSmVoQ
+         jqbhXZU5vR11J5ajCDn1/7LL7F+wy7g6LRgH+Qm+OZ0oL/5WJwqbNNmiQ/KCgPe9dguN
+         AuK3yimNTklnBeVrwLNQ5tjA8u5iTQmwfNny8SF+HgwXjg8Tq/dof983ATD4c6hwC+J5
+         fDlva/A7ed03kbirjFJpyQTzxYm/Yyq+msJEzdScgVf6dKvMr/XNv8agS/xGnB3ObRJt
+         +VBj8TWVEkfTolxvJZBMW5LV9YUWl5GyM/M7XZV4xRrzKaX2mZCMeQvC+t2NsORQUcjT
+         Caeg==
+X-Gm-Message-State: AJIora8C6KmfBMlMe+Jpm/mmO+j5Ezf/LjCHZrrxSE1d1MV2nz8S2o/i
+        GmORVkFsh+731dKl1VDwuY4d7eWwdpDHusy5zOXKrQ==
+X-Google-Smtp-Source: AGRyM1tY9355tF5SR98IYTJw6jtydsojrQZtfOZY+tbbLicCH00rJyvlJeK55pfPj3vsy9eOthOXBZnjsNPgYb7wPm8=
+X-Received: by 2002:aa7:d813:0:b0:43c:dedd:b4e8 with SMTP id
+ v19-20020aa7d813000000b0043cdeddb4e8mr26254900edq.231.1659542792573; Wed, 03
+ Aug 2022 09:06:32 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v3 0/4] Introduce security_create_user_ns()
-Content-Language: en-US
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     Martin KaFai Lau <kafai@fb.com>, kpsingh@kernel.org,
-        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, songliubraving@fb.com,
-        yhs@fb.com, john.fastabend@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
-        casey@schaufler-ca.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@cloudflare.com,
-        cgzones@googlemail.com, karl@bigbadwolfsecurity.com,
-        tixxdz@gmail.com
-References: <20220721172808.585539-1-fred@cloudflare.com>
- <20220722061137.jahbjeucrljn2y45@kafai-mbp.dhcp.thefacebook.com>
- <18225d94bf0.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <87a68mcouk.fsf@email.froward.int.ebiederm.org>
-From:   Frederick Lawler <fred@cloudflare.com>
-In-Reply-To: <87a68mcouk.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAJ-EccPH46FGKQj8gYEg5HGpmmRiqzrZouTZauwpvX-+2j4GNA@mail.gmail.com>
+ <CAHk-=wim4B671BOPfxoXDSz0xfOruqoKCMQrjAX0R95PH5Wy4g@mail.gmail.com>
+In-Reply-To: <CAHk-=wim4B671BOPfxoXDSz0xfOruqoKCMQrjAX0R95PH5Wy4g@mail.gmail.com>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Wed, 3 Aug 2022 09:08:22 -0700
+Message-ID: <CAJ-EccOP4Yq4RSBSkA_71kagqvA=a+tUV63UbHWZVM2uqJMDFQ@mail.gmail.com>
+Subject: Re: [GIT PULL] SafeSetID changes for v6.0
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/2/22 4:33 PM, Eric W. Biederman wrote:
-> Paul Moore <paul@paul-moore.com> writes:
-> 
->> On July 22, 2022 2:12:03 AM Martin KaFai Lau <kafai@fb.com> wrote:
->>
->>> On Thu, Jul 21, 2022 at 12:28:04PM -0500, Frederick Lawler wrote:
->>>> While creating a LSM BPF MAC policy to block user namespace creation, we
->>>> used the LSM cred_prepare hook because that is the closest hook to prevent
->>>> a call to create_user_ns().
->>>>
->>>> The calls look something like this:
->>>>
->>>> cred = prepare_creds()
->>>> security_prepare_creds()
->>>> call_int_hook(cred_prepare, ...
->>>> if (cred)
->>>> create_user_ns(cred)
->>>>
->>>> We noticed that error codes were not propagated from this hook and
->>>> introduced a patch [1] to propagate those errors.
->>>>
->>>> The discussion notes that security_prepare_creds()
->>>> is not appropriate for MAC policies, and instead the hook is
->>>> meant for LSM authors to prepare credentials for mutation. [2]
->>>>
->>>> Ultimately, we concluded that a better course of action is to introduce
->>>> a new security hook for LSM authors. [3]
->>>>
->>>> This patch set first introduces a new security_create_user_ns() function
->>>> and userns_create LSM hook, then marks the hook as sleepable in BPF.
->>> Patch 1 and 4 still need review from the lsm/security side.
->>
->>
->> This patchset is in my review queue and assuming everything checks
->> out, I expect to merge it after the upcoming merge window closes.
-> 
-> It doesn't even address my issues with the last patchset.
+On Tue, Aug 2, 2022 at 3:20 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, Aug 1, 2022 at 7:40 PM Micah Morton <mortonm@chromium.org> wrote:
+> >
+> > This pull request contains one commit that touches common kernel code,
+> >
+> > one that adds functionality internal to the SafeSetID LSM code, and a
+> >
+> > few other commits that only modify the SafeSetID LSM selftest.
+> [...]
+>
+> What odd MUA do you use that causes this double-spaced text email?
+>
+> I can read it, but it really is a bit strange. It was all plain text,
+> and marked as utf-8, and otherwise looked normal except for that
+> double spacing.
+>
+> I get flashbacks to my "writing papers at university" days.
 
-Are you referring to [1], and with regards to [2], is the issue that the 
-wording could be improved for both the cover letter and patch 1/4?
+I know, it was ugly. I just switched laptops to a Mac and thought for
+sure the mail message preview I was seeing in gmail after copy+paste
+from a terminal window was just some weird scaling issue on my
+external monitor or something. Sure enough the message was sent off
+looking like a double spaced book report from 8th grade :)
 
-Ultimately, the goal of CF is to leverage and use user namespaces and 
-block tasks whose meta information do not align with our allow list 
-criteria. Yes, there is a higher goal of restricting our attack surface. 
-Yes, people will find ways around security. The point is to have 
-multiple levels of security, and this patch series allows people to add 
-another level.
+I'll have to find what's going wrong with the copy+paste to gmail on
+this particular device.
 
-Calling this hook a regression is not true since there's no actual 
-regression in the code. What would constitute a perceived regression is 
-an admin imposing such a SELinux or BPF restriction within their 
-company, but developers in that company ideally would try to work with 
-the admin to enable user namespaces for certain use cases, or 
-alternatively do what you don't want given current tooling: always run 
-code as root. That's where this hook comes in: let people observe and 
-enforce how they see fit. The average enthusiasts would see no impact.
-
-I was requested to add _some_ test to BPF and to add a SELinux 
-implementation. The low hanging fruit for a test to prove that the hook 
-is capable of doing _something_ was to simply just block outright, and 
-provide _some example_ of use. It doesn't make sense for us to write a 
-test that outlines specifically what CF or others are doing because that 
-would put too much emphasis on an implementation detail that doesn't 
-matter to prove that the hook works.
-
-Without Djalal's comment, I can't defend an observability use case that 
-we're not currently leveraging. We have it now, so therefore I'll defend 
-it per KP's suggestion[3] in v5.
-
-By not responding to the email discussions, we can't accurately gauge 
-what should or should not be in the descriptions. No one here 
-necessarily disagrees with some of the points you made, and others have 
-appropriately responded. As others have also wrote, you're not proposing 
-alternatives. How do you expect us to work with that?
-
-Please, let us know which bits and pieces ought to be included in the 
-descriptions, and let us know what things we should call out caveats to 
-that would satisfy your concerns.
-
-Links:
-1. 
-https://lore.kernel.org/all/01368386-521f-230b-1d49-de19377c27d1@cloudflare.com/
-2. 
-https://lore.kernel.org/all/877d45kri4.fsf@email.froward.int.ebiederm.org/#t
-3. 
-https://lore.kernel.org/all/CACYkzJ4x90DamdN4dRCn1gZuAHLqJNy4MoP=qTX+44Bqx1uxSQ@mail.gmail.com/
-4. 
-https://lore.kernel.org/all/CAEiveUdPhEPAk7Y0ZXjPsD=Vb5hn453CHzS9aG-tkyRa8bf_eg@mail.gmail.com/#t
-
-> 
-> So it has my NACK.
-> 
-> Eric
-
+>
+>              Linus
