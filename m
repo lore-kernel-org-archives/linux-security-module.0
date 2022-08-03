@@ -2,87 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FF3C19F2A
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 03:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5F1C19F28
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 04:11:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233263AbiHCD7c (ORCPT
+        id S233982AbiHCELG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Aug 2022 23:59:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38856 "EHLO
+        Wed, 3 Aug 2022 00:11:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231321AbiHCD7b (ORCPT
+        with ESMTP id S231321AbiHCELE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Aug 2022 23:59:31 -0400
-Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1DB729C9E;
-        Tue,  2 Aug 2022 20:59:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1659499130; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=SxluoMGqshcewBNXgbTBE+Wj78bg7jVL4wk9wYS/+08/F6J/6txR07qNAGNIAkJUmP0B+xpBOcbYO/dvN00G32dd4TJac3RI79ql+ox7lP6Vw4jPvKTjrHQ90wjOIavjLf1DKSNv+OxH6VULKL4ySPilhEUZYYm9qI3b+Nvul6o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1659499130; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=EOCqi05TVQ1bxrfwzBcSMdn9OtCKKp7BF1VgC9KoHcQ=; 
-        b=BUBYkVsY2M1EuLEY0lBl3Ma2TxCkL8iC+J4wVims7qhcPkgGGk7S9aZ7FpttsP/ztv2GHDIQDC2vz3rbMkIX3Pb5676XxQ1Sv1KQAwDN3Mdi483qXMka6xwfi7v8O4bvU/NjZin6OCqgfgztbR5CK55MQgCgWM7O85zd5/I5TJY=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1659499130;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=EOCqi05TVQ1bxrfwzBcSMdn9OtCKKp7BF1VgC9KoHcQ=;
-        b=JHDi2gpAYfI2FcQtzPlchMdta80W2hcoLI3WAPhl+fTo7ZGiYWmQqkwJmsf7s49B
-        NPZzITdqwH53t+h7I9+8oejJCNQyGfHdbonem+ud2KCXEQEtkUmZDIswJVGPQaxUTnG
-        omdzGVvy8+5GQLajrybLuisF3f3g6qN29O+z8ero=
-Received: from mail.zoho.in by mx.zoho.in
-        with SMTP id 1659499118244159.0457474938786; Wed, 3 Aug 2022 09:28:38 +0530 (IST)
-Date:   Wed, 03 Aug 2022 09:28:38 +0530
-From:   Siddh Raman Pant <code@siddh.me>
-To:     "Eric Biggers" <ebiggers@kernel.org>
-Cc:     "Dipanjan Das" <mail.dipanjan.das@gmail.com>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
+        Wed, 3 Aug 2022 00:11:04 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB59D5FF7;
+        Tue,  2 Aug 2022 21:11:03 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id tl27so11422568ejc.1;
+        Tue, 02 Aug 2022 21:11:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WBcWLfOi59Zr0OA6U2ZttJvd4WsA8un2MakZZH/LgV0=;
+        b=D6kV0fC3rK/LOD5m0hcWijn1wlfGGcZssoqodkcTn+/Cm0HOeSQ4TfcZ1qjI0He4+Z
+         ZexOIfLUrcDA0spFK3yGySsBVibEV++GmmBTY8WEdFt52uNemXA+mxP7srG48R9TGX2T
+         0DeXhTkxTzUM4WG5IrLgNaK7oNAS7/95/uj+VOXGeP06ioEb9dK2gtDrAx5P1lwHEJz4
+         A0HorGO9TB0SMac2TPz3RSVKmGJkCBY/02IVX/TSXeV9A3eCpFtuXS5IIpPUi5LArKH+
+         nhXWlhiM7K+vBGdFzg3cc1DpmXwts8Z95jLd87uu2XYwKUMXVMUvIDnUAHiz8VtAPksP
+         gcXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WBcWLfOi59Zr0OA6U2ZttJvd4WsA8un2MakZZH/LgV0=;
+        b=GgkbuSJy+l7kO8PQ5KokpnUl2zptObCpWD5rYrNjOQE0DXS4mz8Q3NY2FfVbHcs8LT
+         g99Bzi+5+C1EX+JRaB+Rqy/D+3XpyoYZ4eIKQD/f+eVxARfXUDAE7WV0HiVkv2Pqc4NK
+         T0FzGEEb+9HRuULldmJka1tA9WjRckWvvonotlsvbq+S48oKW6ObZ/R+9xwyhXcve3T0
+         bZvfXnZD+H5iYK691hjRIFn+Qvy86Llz6Y8kwpNnTpeI+Vf0HXND0Ix1COm0rygAga3a
+         VaOuQpWJd0D7cvDdxR/amWktpjSaAXwOcdp7XhEyKyz/XvrkPVZHHWK6FUaZS4fPtVxF
+         Uu/A==
+X-Gm-Message-State: AJIora8nPI0vIlAw1W6xBKB063GxuMQiLR/Aq4yDLVsE/bfOQFbe6GqU
+        NmXSucuFGB0THHLzmETTOyroSFXDMyR/nqPY/dE=
+X-Google-Smtp-Source: AGRyM1soNFypQaJtvjgXMvAEI6HJEv2aCgoO8EqtElH6QUrSikaWdCRfoInwTfCYEKKwn0F52DRoiLdyScRVZ84K0XQ=
+X-Received: by 2002:a17:906:2ed7:b0:72f:d080:411 with SMTP id
+ s23-20020a1709062ed700b0072fd0800411mr18505734eji.203.1659499861920; Tue, 02
+ Aug 2022 21:11:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220728155121.12145-1-code@siddh.me> <18258c1d370.6c4bec7a269297.4170944235031209431@siddh.me>
+ <Yuepw21SyLbWt9F+@kroah.com> <182597c78f6.70a93066293735.4741894763116073008@siddh.me>
+ <182597eccd3.14cac6a4293987.1730526835854998440@siddh.me> <20220801161642.GA1932489@berlinger>
+ <1825abd83c7.2fc2819e194605.6286442523651645797@siddh.me>
+In-Reply-To: <1825abd83c7.2fc2819e194605.6286442523651645797@siddh.me>
+From:   Dipanjan Das <mail.dipanjan.das@gmail.com>
+Date:   Tue, 2 Aug 2022 21:10:50 -0700
+Message-ID: <CANX2M5aK5HED2R=VyXGw9osEn3MoX=sRjH9x2i8WvGcM8VFhrg@mail.gmail.com>
+Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing watch_queue
+To:     Siddh Raman Pant <code@siddh.me>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
         "syzbot+c70d87ac1d001f29a058" 
         <syzbot+c70d87ac1d001f29a058@syzkaller.appspotmail.com>,
-        "linux-kernel-mentees" 
+        linux-kernel-mentees 
         <linux-kernel-mentees@lists.linuxfoundation.org>,
-        "linux-security-modules" <linux-security-module@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "David Howells" <dhowells@redhat.com>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Message-ID: <18261dafe82.76905409402903.8534116548428194689@siddh.me>
-In-Reply-To: <YunMXRhAM5g3tNnJ@sol.localdomain>
-References: <20220728155121.12145-1-code@siddh.me>
- <18258c1d370.6c4bec7a269297.4170944235031209431@siddh.me>
- <Yuepw21SyLbWt9F+@kroah.com>
- <182597c78f6.70a93066293735.4741894763116073008@siddh.me>
- <182597eccd3.14cac6a4293987.1730526835854998440@siddh.me>
- <20220801161642.GA1932489@berlinger>
- <1825abd83c7.2fc2819e194605.6286442523651645797@siddh.me> <YunMXRhAM5g3tNnJ@sol.localdomain>
-Subject: Re: [PATCH v3] kernel/watch_queue: Make pipe NULL while clearing
- watch_queue
-MIME-Version: 1.0
+        linux-security-modules <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Priyanka Bose <its.priyanka.bose@gmail.com>,
+        Marius Fleischer <fleischermarius@googlemail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 03 Aug 2022 06:46:13 +0530  Eric Biggers <ebiggers@kernel.org> wrote:
-> There were several watch_queue fixes that got merged in v5.10.134, so there's no
-> point in testing v5.10.131.  If you're still seeing a bug in the *latest*
-> 5.10.y, then please check whether it's also present upstream.  If yes, then send
-> out a fix for it.  If no, then tell stable@vger.kernel.org what commit(s) need
-> to be backported.  Please provide *full* details in each case, including any
-> KASAN reports or other information that would help people understand the bug.
-> 
-> - Eric
-> 
+On Mon, Aug 1, 2022 at 11:49 AM Siddh Raman Pant <code@siddh.me> wrote:
+>
+> On Mon, 01 Aug 2022 21:46:42 +0530  Dipanjan Das <mail.dipanjan.das@gmail.com> wrote:
+> > Are you referring to the reproducer attached to our original report?
+> > https://lore.kernel.org/all/CANX2M5bHye2ZEEhEV6PUj1kYL2KdWYeJtgXw8KZRzwrNpLYz+A@mail.gmail.com/
+>
+> Yes, I meant the reproducer you gave.
+>
+> I suspect I must have missed CONFIG_WATCH_QUEUE=y while setting the kernel
+> up, extremely sorry for it.
+>
+> I now tried 5.10.y with it (using a modification of syzkaller's dashboard
+> config I had been using[1]), and I'm getting a __post_watch_notification()
+> crash (which is a related crash, as the fix[2][3] for that causes the
+> reproducer to not reproduce the post_one_notification crash on mainline),
+> but not the post_one_notification() crash you had reported. It seems if I
+> apply my patch, it doesn't trigger this related crash, so these bugs are
+> seem to be very related maybe due to racing? I haven't looked at that yet.
+>
+> I then tried on v5.10.131 since that was the exact version you had
+> reproduced on, and it reproduces the post_one_notification() error
+> successfully. Applying 353f7988dd84 causes __post_watch_notification()
+> crash, and then applying this v3 patch does not trigger the issue, but
+> the patch to fix __post_watch_notification() crash is [2], which does
+> not really address the issue of post_one_notification() crash which
+> is due to the dangling reference to a freed pipe.
+>
+> Can you please try reproducer at your end?
 
-Okay, noted.
+We can confirm that the repro triggers the `post_watch_notification`
+crash on 5.10.134 (7a62a4b6212a7f04251fdaf8b049c47aec59c54a). After
+applying your v3 patch, the repro did not trigger the bug.
 
-Thanks,
-Siddh
+>
+> [1] https://gist.github.com/siddhpant/06c7d64ca83273f0fd6604e4677f7c0d
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e64ab2dbd882933b65cd82ff6235d705ad65dbb6
+> [3] https://lore.kernel.org/linux-mm/18259769e5e.52eb2082293078.3991591702430862151@siddh.me/
+
+
+
+-- 
+Thanks and Regards,
+
+Dipanjan
