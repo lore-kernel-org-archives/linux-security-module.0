@@ -2,126 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF8FC19F2B
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 20:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1992EC19F2D
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 21:02:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236488AbiHCUz1 (ORCPT
+        id S238772AbiHCVCt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Aug 2022 16:55:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58544 "EHLO
+        Wed, 3 Aug 2022 17:02:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236574AbiHCUzZ (ORCPT
+        with ESMTP id S238619AbiHCVCs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Aug 2022 16:55:25 -0400
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B30D2AFF
-        for <linux-security-module@vger.kernel.org>; Wed,  3 Aug 2022 13:55:24 -0700 (PDT)
-Received: by mail-qt1-x831.google.com with SMTP id z3so2451102qtv.5
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Aug 2022 13:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qCvjB0XOGwom3VuKpUHiorVjWdQfyMRzQDadmEnUHfo=;
-        b=iH2cHiyXqK9lCPc7UF2E5siG7sE1VBvgiD6bj0XQ2XOZEaHWJVTEvWFzAA+rrjMZ7J
-         83IqAOQGL8q5iEALOWpLAFFRpwoS2W0T5hAzgenMRyTvAkanoMjyTA1vMnKZDjkRagYa
-         mZErqeI7eut841LPwAGXKQTDKHa/GLL+Sd9GY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qCvjB0XOGwom3VuKpUHiorVjWdQfyMRzQDadmEnUHfo=;
-        b=ICaaafZl/ZzWpPWZWRhaqP7hGilnRqosIHESzu9YIUJBY9CfDTlBJ5r6uiJ4i8jvYm
-         edqJQL14bU7AnUosbJGcNUKcw69mhdWlPk0Tew9qrtqIs6m4yeztHn8/lASYkWuQh8oR
-         bHmHj+bOJIBphxeKK7eqcWfQ6rh/k0ysFCDTzUVQNFTqE8pEqZ1Dtpw/MH6VX4B5WI25
-         hN7yvjPggJKrdIWlylrDjwslNbOQSYk80Ae6dUehe1bI+iXEKz/vXjxT5YkrkU4VJV4W
-         xXRtWiUWDuldojpT6eO240LNJGiYpS2qxsC/QLLFGFOd88yFR7m4u7v06efAUdC04sf/
-         j3HQ==
-X-Gm-Message-State: AJIora91s8mxo30DvqP+RoByfooyU3R6oNTkeBF64VU5Oj4TOYp3c7iC
-        MTwAlxjVXnIypvEptVrVyWRgDbN4OFXWfg==
-X-Google-Smtp-Source: AGRyM1sPL1/09RU0866byAYFW56l6LkwldhUbE97ZwmIop0mje+zDvP0GeLEoxpiRJiZsidnbA8UPw==
-X-Received: by 2002:ac8:5c87:0:b0:31f:188e:b1f with SMTP id r7-20020ac85c87000000b0031f188e0b1fmr24148744qta.153.1659560123342;
-        Wed, 03 Aug 2022 13:55:23 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id bk28-20020a05620a1a1c00b006b8d977d87dsm3473513qkb.55.2022.08.03.13.55.23
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Aug 2022 13:55:23 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 204so29020479yba.1
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Aug 2022 13:55:23 -0700 (PDT)
-X-Received: by 2002:a05:6830:290a:b0:618:b519:53f5 with SMTP id
- z10-20020a056830290a00b00618b51953f5mr9795854otu.237.1659559753343; Wed, 03
- Aug 2022 13:49:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220504232102.469959-1-evgreen@chromium.org> <20220504161439.4.I32591db064b6cdc91850d777f363c9d05c985b39@changeid>
- <Yumskea9UJ9n0uPz@sol.localdomain>
-In-Reply-To: <Yumskea9UJ9n0uPz@sol.localdomain>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 3 Aug 2022 13:48:37 -0700
-X-Gmail-Original-Message-ID: <CAE=gft4jTQY1N5X=Yyg6g6-e0EBPHKhnQxcX02NZU0mZxaTvwA@mail.gmail.com>
-Message-ID: <CAE=gft4jTQY1N5X=Yyg6g6-e0EBPHKhnQxcX02NZU0mZxaTvwA@mail.gmail.com>
-Subject: Re: [PATCH 04/10] security: keys: trusted: Allow storage of PCR
- values in creation data
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <mgarrett@aurora.tech>,
-        Daniil Lunev <dlunev@google.com>, zohar@linux.ibm.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
+        Wed, 3 Aug 2022 17:02:48 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05D715C975;
+        Wed,  3 Aug 2022 14:02:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AE1E4B8227F;
+        Wed,  3 Aug 2022 21:02:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC5CEC433C1;
+        Wed,  3 Aug 2022 21:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659560565;
+        bh=e+grTF5BE4esl7EzfvSL6GjdlRB7jhRFfHvw7jH6pxg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OZk4UIopQVoEbylvtTkTJUwOrpHDwWqYwZDK5TqVpbsJnc/OBciMhmH/iIaTNPk+m
+         BQrT/EwwHs2eAjPdXNb2gphNWUp+XlFj3Rc25cQioXWtbOzjZ9CX6ffnLMwMwftgs/
+         fiz3wM3DI7e7Wnmfw+BaEsqoxW9MEAccOobYTJ51TV+J9ThZQOIi2A1ZuMkwH/UcOI
+         MTH2JL3rLzmdEswbZvY4HmyNafn6Tsifr5L9mYMhZC4pAVYiiHgL+ko0KyUYbwQkUB
+         eaN6pOzDPOk3S/HBgbQgt9BlaSpL+dMG/BezZ3aXFJe5WyaUHwpZWgEd3cjJ3/CVlL
+         AKtgWprzmiW0w==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] tpmdd updates for v5.20
+Date:   Thu,  4 Aug 2022 00:02:28 +0300
+Message-Id: <20220803210228.158993-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.37.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 2, 2022 at 4:00 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Wed, May 04, 2022 at 04:20:56PM -0700, Evan Green wrote:
-> > diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> > index aa108bea6739b3..2975827c01bec0 100644
-> > --- a/security/keys/trusted-keys/trusted_tpm1.c
-> > +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> > @@ -713,6 +713,7 @@ enum {
-> >       Opt_hash,
-> >       Opt_policydigest,
-> >       Opt_policyhandle,
-> > +     Opt_creationpcrs,
-> >  };
-> >
-> >  static const match_table_t key_tokens = {
-> > @@ -725,6 +726,7 @@ static const match_table_t key_tokens = {
-> >       {Opt_hash, "hash=%s"},
-> >       {Opt_policydigest, "policydigest=%s"},
-> >       {Opt_policyhandle, "policyhandle=%s"},
-> > +     {Opt_creationpcrs, "creationpcrs=%s"},
-> >       {Opt_err, NULL}
-> >  };
-> >
-> > @@ -858,6 +860,13 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
-> >                               return -EINVAL;
-> >                       opt->policyhandle = handle;
-> >                       break;
-> > +             case Opt_creationpcrs:
-> > +                     if (!tpm2)
-> > +                             return -EINVAL;
-> > +                     res = kstrtoint(args[0].from, 16, &opt->creation_pcrs);
-> > +                     if (res < 0)
-> > +                             return -EINVAL;
-> > +                     break;
->
-> I thought that TPM1 is deprecated.  Are you sure you need more TPM1 features?
+Contains mostly TPM and also few keyring fixes.
 
-It seems that trusted_tpm1.c is not just TPM1 functions, but also
-common functions that call TPM2 primitives. A few of these functions
-(like this getoptions()) seem to even error out if !tpm_is_tpm2(chip).
+BR, Jarkko
 
--Evan
+The following changes since commit 200e340f2196d7fd427a5810d06e893b932f145a:
+
+  Merge tag 'pull-work.dcache' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs (2022-08-03 11:43:12 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/ tags/tpmdd-next-v5.20
+
+for you to fetch changes up to 863ed94c589fcd1984f4e3080f069d30508044bb:
+
+  tpm: Add check for Failure mode for TPM2 modules (2022-08-03 23:56:20 +0300)
+
+----------------------------------------------------------------
+tpmdd updates for Linux v5.20
+
+----------------------------------------------------------------
+Alexander Steffen (3):
+      dt-bindings: trivial-devices: Add Infineon SLB9673 TPM
+      tpm: Add tpm_tis_verify_crc to the tpm_tis_phy_ops protocol layer
+      tpm: Add tpm_tis_i2c backend for tpm_tis_core
+
+Elvira Khabirova (1):
+      pkcs7: support EC-RDSA/streebog in SignerInfo
+
+Huacai Chen (1):
+      tpm: eventlog: Fix section mismatch for DEBUG_SECTION_MISMATCH
+
+Mårten Lindahl (1):
+      tpm: Add check for Failure mode for TPM2 modules
+
+Stefan Mahnke-Hartmann (1):
+      tpm: Add upgrade/reduced mode support for TPM1.2 modules
+
+Tianjia Zhang (4):
+      X.509: Support parsing certificate using SM2 algorithm
+      sign-file: Fix confusing error messages
+      pkcs7: parser support SM2 and SM3 algorithms combination
+      KEYS: asymmetric: enforce SM2 signature use pkey algo
+
+Yang Li (1):
+      tpm: fix platform_no_drv_owner.cocci warning
+
+ .../devicetree/bindings/trivial-devices.yaml       |   2 +
+ crypto/asymmetric_keys/pkcs7_parser.c              |  18 +
+ crypto/asymmetric_keys/public_key.c                |   7 +-
+ crypto/asymmetric_keys/x509_cert_parser.c          |   3 +
+ drivers/char/tpm/Kconfig                           |  12 +
+ drivers/char/tpm/Makefile                          |   1 +
+ drivers/char/tpm/tpm.h                             |   1 +
+ drivers/char/tpm/tpm1-cmd.c                        |   7 +-
+ drivers/char/tpm/tpm2-cmd.c                        |   6 +
+ drivers/char/tpm/tpm_tis_core.c                    |  14 +
+ drivers/char/tpm/tpm_tis_core.h                    |  10 +
+ drivers/char/tpm/tpm_tis_i2c.c                     | 390 +++++++++++++++++++++
+ include/linux/tpm_eventlog.h                       |   2 +-
+ scripts/sign-file.c                                |   2 +-
+ 14 files changed, 470 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm_tis_i2c.c
