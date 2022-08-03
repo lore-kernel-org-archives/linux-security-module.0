@@ -2,120 +2,175 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A35C19F28
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 14:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EEBC19F29
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 15:20:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236998AbiHCOcQ (ORCPT
+        id S238016AbiHCPUl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Aug 2022 10:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51714 "EHLO
+        Wed, 3 Aug 2022 11:20:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiHCOcP (ORCPT
+        with ESMTP id S238087AbiHCPUh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Aug 2022 10:32:15 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE7219C1B
-        for <linux-security-module@vger.kernel.org>; Wed,  3 Aug 2022 07:32:14 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id o2so12984510iof.8
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Aug 2022 07:32:14 -0700 (PDT)
+        Wed, 3 Aug 2022 11:20:37 -0400
+Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFF613EB2
+        for <linux-security-module@vger.kernel.org>; Wed,  3 Aug 2022 08:20:35 -0700 (PDT)
+Received: by mail-ot1-x32b.google.com with SMTP id x1-20020a056830278100b00636774b0e54so2448644otu.4
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Aug 2022 08:20:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/j3Fr9QfRk1x010uV68rYVXfeBewZsxPUcsGA68QruU=;
-        b=ZT3M9S40JMm27FIyb88LE0A+y31FE3ad/p6C/2XVdnxiIhnM2OFNQ1iGSQ9l+zGNPL
-         fhOl6eg9vCmzgIEHGt66RUNLluN+PHl9v8eoy9SDJkTtUBL8odKOA35IwkxOMPVfyAV9
-         /2PiWH9AkH6iVsy/TEqhuNrzE+97ete50KaRk=
+        d=cloudflare.com; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=RPqGFZtbNqgICpWV/6VvhSR6n3AOi6dZZb+5V7yogyQ=;
+        b=eKxcY/wUV1t5iGFQOTkC3uUqXsNlO3wJPUXpinu2/pZFiIuEZDbShMVl1SWFB8VMKG
+         dN33busgN2TumcApmrWbU9bmxspzUC3EobauqLvOHnBA8X1FgGKATmogtCPRFVJX7swX
+         jnEljBTuf+JFh+gnVMEfcFQpvfPapnczKgq9A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/j3Fr9QfRk1x010uV68rYVXfeBewZsxPUcsGA68QruU=;
-        b=1tFR0DQCOkCan7nqoj3djI2F/iwU9joB60BBN+0mh0ScZVytreaIj4ollEPSAKFsPR
-         W4IWe4G5Ha0W0VKqaka6t4KhX5Ihrzi/1ycu/YAXnlmr5cRAfh/dQArIz/sdnMVhgfsP
-         mllOFzIK+zSPtsr7V8xc+fqn9GwUlidIg2ZvvtNgpM4osiqle9KFhPIyVIRfMVLhr1oc
-         hs3iETY2SsqmGFFznlVxHTtIiW8fcQ5fgizMtI6rmqsATy38l7J8Cejg1tvBCJAO1FWQ
-         8bdKF8N+SuQT/pdmvJQhAM0mD/o3V1uRTz2P58OAtH6Pms97NFMX7ZxZDH7SQ19vSumk
-         ncdQ==
-X-Gm-Message-State: AJIora8lQpHdgI3DzMpwI2NGPt+HM065FTNoa2HVfrHX8e6cEH3plsrr
-        kZRLhsdzY8aKbsKfsHI2KJ2dWV4sAGeAUg==
-X-Google-Smtp-Source: AGRyM1vZ69hqTbQsygxpXIz1EH0kGCtYdQTsYCzbIYHN2gVW/05TXgy8zPaYnUUdx0aEW/r+fqyxYg==
-X-Received: by 2002:a6b:6911:0:b0:67b:f03b:74c1 with SMTP id e17-20020a6b6911000000b0067bf03b74c1mr8859031ioc.58.1659537134101;
-        Wed, 03 Aug 2022 07:32:14 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id z7-20020a056e02088700b002de213ddb31sm1721276ils.71.2022.08.03.07.32.13
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=RPqGFZtbNqgICpWV/6VvhSR6n3AOi6dZZb+5V7yogyQ=;
+        b=uio1KJWSlhjPfKmcAGlOSrm9FE7bobGF5wZubq/dd3sgWR/++qxfTpG27e/Tp8tnjc
+         68iz1jMAjIAtCyZgi06FyptACOYV+g6mDNNK5rqmpMkY/kAewT1K6Q5Db+YmuFtOSm+w
+         j/DddxUa2kpzSDOml1BcG5orDsXzRK75y8vhxdw1MQM82Y7d/94K9PE1n4CxMblMTmj+
+         5BWWyA4GJz0qZt1UTbcqhL0KQuKe+Q3YQWpmmdIelTK243Xam/vpP/gHJhydQtPo7SsT
+         l5EdmZfu7fsqUO4GrZcS5JTZ3rocvQH3k7AbTnIkXVHwolzXLm358odbnSd7eJvacM7K
+         aWWw==
+X-Gm-Message-State: AJIora9vH4lUPS1kcKyH2/HJjtos+UXUxZ5LS2rjg7/H8/yZtgfXMdHD
+        sOxPnXeEOtBByGmhKxuwJYm7uw==
+X-Google-Smtp-Source: AGRyM1vhYxujzT2YaLXCnoBJSDqDHPUJMnPpsU0AX9VW0hT0pmIMq5BAvFR7alVbeYb7pUS4X0XAlA==
+X-Received: by 2002:a9d:6007:0:b0:61c:ecd2:ac55 with SMTP id h7-20020a9d6007000000b0061cecd2ac55mr8737434otj.32.1659540034249;
+        Wed, 03 Aug 2022 08:20:34 -0700 (PDT)
+Received: from [192.168.0.41] ([184.4.90.121])
+        by smtp.gmail.com with ESMTPSA id fo22-20020a0568709a1600b0010eaeee89a1sm3056992oab.46.2022.08.03.08.20.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Aug 2022 07:32:13 -0700 (PDT)
-Subject: Re: [GIT PULL] Kselftest update for Linux 5.20-rc1
-To:     Guillaume Tucker <guillaume.tucker@collabora.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <430ef132-2ac7-e1be-68ed-3d9c27382143@linuxfoundation.org>
- <2838c247-0648-3828-efb3-e11d7a0616b2@digikod.net>
- <84560b65-12ed-da24-3698-45484f80802a@linuxfoundation.org>
- <fa7fb9b3-169a-199f-22da-006777a14e03@collabora.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <15a23d4b-ee26-a6a1-a785-b640c550bfb8@linuxfoundation.org>
-Date:   Wed, 3 Aug 2022 08:32:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 03 Aug 2022 08:20:33 -0700 (PDT)
+Message-ID: <aad6c2cb-abdd-b066-9d1d-d0f415256ae6@cloudflare.com>
+Date:   Wed, 3 Aug 2022 10:20:32 -0500
 MIME-Version: 1.0
-In-Reply-To: <fa7fb9b3-169a-199f-22da-006777a14e03@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v3 0/4] Introduce security_create_user_ns()
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     Martin KaFai Lau <kafai@fb.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, songliubraving@fb.com,
+        yhs@fb.com, john.fastabend@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
+        casey@schaufler-ca.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com,
+        cgzones@googlemail.com, karl@bigbadwolfsecurity.com,
+        tixxdz@gmail.com
+References: <20220721172808.585539-1-fred@cloudflare.com>
+ <20220722061137.jahbjeucrljn2y45@kafai-mbp.dhcp.thefacebook.com>
+ <18225d94bf0.28e3.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <87a68mcouk.fsf@email.froward.int.ebiederm.org>
+From:   Frederick Lawler <fred@cloudflare.com>
+In-Reply-To: <87a68mcouk.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/2/22 10:44 PM, Guillaume Tucker wrote:
-> On 02/08/2022 15:29, Shuah Khan wrote:
->> On 8/2/22 3:51 AM, Mickaël Salaün wrote:
->>> Hi,
->>>
->>> This change breaks the Landlock test build when performed on the tools/testing/selftests/landlock directory because the (non-system/up-to-date) kernel headers aren't found. Looking at the use of top_srcdir and HDR_PATH, it seems that multiple subsystems are using this feature. I consider this change a regression.
->>>
->>
->> I did a build test from the top level before sending the pull request
->> and didn't catch this breakage as a result. This breaks when build is
->> run from the test directory.
->>
->> We have had several problems related to khdr_dir and target and decided
->> to move away from it with this change.
->>
->>> It also removes the check on up-to-date kernel headers (thanks to the Makefile's target timestamp).
->>>
->>> I wasn't CCed for this change impacting Landlock [1]. Please keep in mind to add at least maintainers and related mailing-lists for changes on related subsystems.
->>>
->>
->> That is the usual practice and if I notice missing maintainers, I add
->> them. We missed this one.
->>
->>> The following patch almost revert commit a917dd94b832 ("selftests/landlock: drop deprecated headers dependency") and partially fixes commit 49de12ba06ef ("selftests: drop KSFT_KHDR_INSTALL make target"):
->>>
->>
->> Guillaume,
->>
->> Will you be able to look at this and send a patch on top? I will
->> send another pull request before merge window closes?
+On 8/2/22 4:33 PM, Eric W. Biederman wrote:
+> Paul Moore <paul@paul-moore.com> writes:
 > 
-> Sure, I'll take a look today.
+>> On July 22, 2022 2:12:03 AM Martin KaFai Lau <kafai@fb.com> wrote:
+>>
+>>> On Thu, Jul 21, 2022 at 12:28:04PM -0500, Frederick Lawler wrote:
+>>>> While creating a LSM BPF MAC policy to block user namespace creation, we
+>>>> used the LSM cred_prepare hook because that is the closest hook to prevent
+>>>> a call to create_user_ns().
+>>>>
+>>>> The calls look something like this:
+>>>>
+>>>> cred = prepare_creds()
+>>>> security_prepare_creds()
+>>>> call_int_hook(cred_prepare, ...
+>>>> if (cred)
+>>>> create_user_ns(cred)
+>>>>
+>>>> We noticed that error codes were not propagated from this hook and
+>>>> introduced a patch [1] to propagate those errors.
+>>>>
+>>>> The discussion notes that security_prepare_creds()
+>>>> is not appropriate for MAC policies, and instead the hook is
+>>>> meant for LSM authors to prepare credentials for mutation. [2]
+>>>>
+>>>> Ultimately, we concluded that a better course of action is to introduce
+>>>> a new security hook for LSM authors. [3]
+>>>>
+>>>> This patch set first introduces a new security_create_user_ns() function
+>>>> and userns_create LSM hook, then marks the hook as sleepable in BPF.
+>>> Patch 1 and 4 still need review from the lsm/security side.
+>>
+>>
+>> This patchset is in my review queue and assuming everything checks
+>> out, I expect to merge it after the upcoming merge window closes.
 > 
+> It doesn't even address my issues with the last patchset.
 
-Thank you.
+Are you referring to [1], and with regards to [2], is the issue that the 
+wording could be improved for both the cover letter and patch 1/4?
 
-> Also I'll see if we can add some extra build tests in KernelCI
-> for the kselftest tree to catch issues like these automatically.
+Ultimately, the goal of CF is to leverage and use user namespaces and 
+block tasks whose meta information do not align with our allow list 
+criteria. Yes, there is a higher goal of restricting our attack surface. 
+Yes, people will find ways around security. The point is to have 
+multiple levels of security, and this patch series allows people to add 
+another level.
+
+Calling this hook a regression is not true since there's no actual 
+regression in the code. What would constitute a perceived regression is 
+an admin imposing such a SELinux or BPF restriction within their 
+company, but developers in that company ideally would try to work with 
+the admin to enable user namespaces for certain use cases, or 
+alternatively do what you don't want given current tooling: always run 
+code as root. That's where this hook comes in: let people observe and 
+enforce how they see fit. The average enthusiasts would see no impact.
+
+I was requested to add _some_ test to BPF and to add a SELinux 
+implementation. The low hanging fruit for a test to prove that the hook 
+is capable of doing _something_ was to simply just block outright, and 
+provide _some example_ of use. It doesn't make sense for us to write a 
+test that outlines specifically what CF or others are doing because that 
+would put too much emphasis on an implementation detail that doesn't 
+matter to prove that the hook works.
+
+Without Djalal's comment, I can't defend an observability use case that 
+we're not currently leveraging. We have it now, so therefore I'll defend 
+it per KP's suggestion[3] in v5.
+
+By not responding to the email discussions, we can't accurately gauge 
+what should or should not be in the descriptions. No one here 
+necessarily disagrees with some of the points you made, and others have 
+appropriately responded. As others have also wrote, you're not proposing 
+alternatives. How do you expect us to work with that?
+
+Please, let us know which bits and pieces ought to be included in the 
+descriptions, and let us know what things we should call out caveats to 
+that would satisfy your concerns.
+
+Links:
+1. 
+https://lore.kernel.org/all/01368386-521f-230b-1d49-de19377c27d1@cloudflare.com/
+2. 
+https://lore.kernel.org/all/877d45kri4.fsf@email.froward.int.ebiederm.org/#t
+3. 
+https://lore.kernel.org/all/CACYkzJ4x90DamdN4dRCn1gZuAHLqJNy4MoP=qTX+44Bqx1uxSQ@mail.gmail.com/
+4. 
+https://lore.kernel.org/all/CAEiveUdPhEPAk7Y0ZXjPsD=Vb5hn453CHzS9aG-tkyRa8bf_eg@mail.gmail.com/#t
+
 > 
+> So it has my NACK.
+> 
+> Eric
 
-Yes. Adding tests to catch these automatically will be great.
-Please refer to use-cases for kselftest for tips on tests to
-add. Beig able to build from individual test directory is one
-of the use-cases.
-
-thanks,
--- Shuah
