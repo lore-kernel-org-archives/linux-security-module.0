@@ -2,53 +2,53 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BFAC19F21
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 19:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC3AC19F21
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 19:38:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233483AbiHDTiB (ORCPT
+        id S233360AbiHDTiI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Aug 2022 15:38:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44260 "EHLO
+        Thu, 4 Aug 2022 15:38:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233360AbiHDTiA (ORCPT
+        with ESMTP id S235224AbiHDTiG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Aug 2022 15:38:00 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E606E2C3
-        for <linux-security-module@vger.kernel.org>; Thu,  4 Aug 2022 12:37:59 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id w19so1102889ejc.7
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Aug 2022 12:37:58 -0700 (PDT)
+        Thu, 4 Aug 2022 15:38:06 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E13EE6E2D5
+        for <linux-security-module@vger.kernel.org>; Thu,  4 Aug 2022 12:38:04 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id e13so880997edj.12
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Aug 2022 12:38:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=iSDlUN3gIHdfL+T+Jd8PQ9lH81xfneY44PJpAP4thR0=;
-        b=Ap1HpRGFu0Im0Fy39tYcWbCXEf36NXu7i9vThZjiuWfmtKT36JjybUvopB6MHUk9hr
-         N+PmeeisJ1Xk8aCwdq4bS2r2lKtlslW1+WTn1dHJyCs967J2rgZlUoEI6tTUzF2JgvgZ
-         vq4CrEJHSJGjjhNqPp86x8UP3rOy3SksqjvXDCnc8k5cDJvnHNbva5OKAFhqXifmMbuC
-         xC3EJsbsWlpKurI4ROYub9eGVSjb/gpCg+Mx63W3HpXl0XdQ/TdEFXZoF/1Sm+zYuIHP
-         TQWOB7SY6E+epO6MTTm5KI6fd1hGxCdyyF3SxtlXYtZDNZkjWftTlA7ReBEFWcn5Is8Z
-         /40w==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=3j1qLeekZcD1KvZE0aOzlzwKDFcypE2FPEHeWsDtdjY=;
+        b=RxECg/x6VpxJatl0LTZrJTahrO3yCfu+keuEjDJcFxpDqGqmUn/+QcVSf6wh2ufsoL
+         lCRRZiH84oc93jt23ip2WK2nQbuxQ9vnFn4/uQLDCqgwwDarY9PXpw/7cfBl28oD45vp
+         aJBuzE2R/L1pJqCOIruJUhcWydn3mEo9w/3wvrD3iEdeB4VvZj6qD49aM8dzCK0tSJw/
+         4PRJavNavml7fPwbQdgivt/qKH0rI/eJx2rcZfU4GXRHLMaTgY5R2B3hiQz0rskBQyK9
+         XOHa2rgdfVtvM6xr3b7yrPyzMhLvlk/vfG50ZFEsHyq0ooMzXVEWiqDmBJOr+UBcMphe
+         rjzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=iSDlUN3gIHdfL+T+Jd8PQ9lH81xfneY44PJpAP4thR0=;
-        b=pN4qIU4kNdzJJnNxdUuZpqd3hbS0mbQNAAv65VjTe8FMvkbq2rsMmj+pCxNUjr/vbV
-         JFwOT3dNR86UnF8+hAwQcnMe2OhjBUty5BhO+ciimwoBiWyhZD+vV+9TSJI534C0Ka7T
-         cGn/xa/etfPDalBkTuNT1V7MlnAN9qitO5t/kTe4prLntGo73x1gfV6xnVBOWOUOrwsI
-         FOHNBu3AtROdcRY5VigswSnnNzjhBFwQGFDCcuPr+m+Y9E/0Le8RhF5iuEFWw/TUZ34Z
-         WdKYUWy4HBaH5v/Yawy2Zs/xXItXPedYz6d8/P0VpDvUSZe2kK2Y4yzTSkD8UmnZOBWY
-         CwGw==
-X-Gm-Message-State: ACgBeo3D0EGlu6ofixiuTXgO2Ytjg6fabdlgL2hhjy4Zkx5xvU+OatCL
-        HJHXM67BcTj6NMRgDc9wOFb77/LRIZk=
-X-Google-Smtp-Source: AA6agR5n8ZWRj4YRpUDc+cA4HJn9jEhPRyTLdSvI7iW+Yuzzo1300gF/y6lUkFT5MxvAB/7NGuDFGw==
-X-Received: by 2002:a17:907:a424:b0:730:b777:d6e5 with SMTP id sg36-20020a170907a42400b00730b777d6e5mr2501943ejc.746.1659641877585;
-        Thu, 04 Aug 2022 12:37:57 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=3j1qLeekZcD1KvZE0aOzlzwKDFcypE2FPEHeWsDtdjY=;
+        b=FHuMCVqYSlSOLAkjTe/wHORoYcCBcUL4jArPS7WoWHcQKU/YlcIxvimXzYehnvvMC/
+         U+LPpZrHHmk7AAM6VkMJbUUeRX6EpIx4Y0O9J1LLq5zCxGgMVBoYAydqxeKFyqRQnP1Y
+         kcaIk7gip06foHYzMaSjNPWnEWmnFkY7HgERw88mJ+E0iMNJB0yf9sUFzZjPA5wLheXI
+         l2SZbUnOLtsTmxqS2zgEAOirB1edKUm0He4zH8pApzwznOStN8yljNR4Y6HD8oLYqcR5
+         GTU1WoiHu6FOgQyd2sy1pTBYgDCJw/TVDQyOIojt1TrpaX4rhgXcsiXMdvke4kgE0nmn
+         iUzQ==
+X-Gm-Message-State: ACgBeo2IXFUdJ/TWhyhTDAsNRJPg1XEXiAOVVrKJKMzs1dXp6//v/1u3
+        UIGC1WIQiiKmeaOSyLqNsiKNp7KwbYk=
+X-Google-Smtp-Source: AA6agR5A13SqeDcK7LL4CIjcbr8vV48RMlmqZKsoOjBSl7FpL/wG1sr/DvUU9R8iWzvrgX+JF6iWUA==
+X-Received: by 2002:a05:6402:450d:b0:43b:d99:6d4f with SMTP id ez13-20020a056402450d00b0043b0d996d4fmr3542649edb.39.1659641883400;
+        Thu, 04 Aug 2022 12:38:03 -0700 (PDT)
 Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id u1-20020a1709061da100b0072abb95c9f4sm631851ejh.193.2022.08.04.12.37.56
+        by smtp.gmail.com with ESMTPSA id u1-20020a1709061da100b0072abb95c9f4sm631851ejh.193.2022.08.04.12.38.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 12:37:57 -0700 (PDT)
+        Thu, 04 Aug 2022 12:38:02 -0700 (PDT)
 From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To:     linux-security-module@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -56,116 +56,292 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v3 0/4] landlock: truncate support
-Date:   Thu,  4 Aug 2022 21:37:42 +0200
-Message-Id: <20220804193746.9161-1-gnoack3000@gmail.com>
+Subject: [PATCH v3 2/4] selftests/landlock: Selftests for file truncation support
+Date:   Thu,  4 Aug 2022 21:37:44 +0200
+Message-Id: <20220804193746.9161-3-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20220804193746.9161-1-gnoack3000@gmail.com>
+References: <20220804193746.9161-1-gnoack3000@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The goal of these patches is to work towards a more complete coverage
-of file system operations that are restrictable with Landlock.
+These tests exercise the following truncation operations:
 
-The known set of currently unsupported file system operations in
-Landlock is described at [1]. Out of the operations listed there,
-truncate is the only one that modifies file contents, so these patches
-should make it possible to prevent the direct modification of file
-contents with Landlock.
+* truncate() (truncate by path)
+* ftruncate() (truncate by file descriptor)
+* open with the O_TRUNC flag
+* special case: creat(), which is open with O_CREAT|O_WRONLY|O_TRUNC.
 
-The patch introduces the truncation restriction feature as an
-additional bit in the access_mask_t bitmap, in line with the existing
-supported operations.
+in the following scenarios:
 
-The truncation flag covers both the truncate(2) and ftruncate(2)
-families of syscalls, as well as open(2) with the O_TRUNC flag.
-This includes usages of creat() in the case where existing regular
-files are overwritten.
+* Files with read, write and truncate rights.
+* Files with read and truncate rights.
+* Files with the truncate right.
+* Files without the truncate right.
 
-Apart from Landlock, file truncation can also be restricted using
-seccomp-bpf, but it is more difficult to use (requires BPF, requires
-keeping up-to-date syscall lists) and it is not configurable by file
-hierarchy, as Landlock is. The simplicity and flexibility of the
-Landlock approach makes it worthwhile adding.
+In particular, the following scenarios are enforced with the test:
 
-While it's possible to use the "write file" and "truncate" rights
-independent of each other, it simplifies the mental model for
-userspace callers to always use them together.
+* The truncate right is required to use ftruncate,
+  even when the thread already has the right to write to the file.
+* open() with O_TRUNC requires the truncate right, if it truncates a file.
+  open() already checks security_path_truncate() in this case,
+  and it required no additional check in the Landlock LSM's file_open hook.
+* creat() requires the truncate right
+  when called with an existing filename.
+* creat() does *not* require the truncate right
+  when it's creating a new file.
 
-Specifically, the following behaviours might be surprising for users
-when using these independently:
+Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+---
+ tools/testing/selftests/landlock/fs_test.c | 204 +++++++++++++++++++++
+ 1 file changed, 204 insertions(+)
 
- * The commonly creat() syscall requires the truncate right when
-   overwriting existing files, as it is equivalent to open(2) with
-   O_TRUNC|O_CREAT|O_WRONLY.
- * The "write file" right is not always required to truncate a file,
-   even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
-
-Nevertheless, keeping the two flags separate is the correct approach
-to guarantee backwards compatibility for existing Landlock users.
-
-These patches are based on version 5.19.
-
-Best regards,
-Günther
-
-[1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
-
-History:
-
-v3:
- * selftests:
-   * Explicitly test ftruncate with readonly file descriptors
-     (returns EINVAL).
-   * Extract test_ftruncate, test_truncate, test_creat helpers,
-     which simplified the previously mixed usage of EXPECT/ASSERT.
-   * Test creat() behaviour as part of the big truncation test.
-   * Stop testing the truncate64(2) and ftruncate64(2) syscalls.
-     This simplifies the tests a bit. The kernel implementations are the
-     same as for truncate(2) and ftruncate(2), so there is little benefit
-     from testing them exhaustively. (We aren't testing all open(2)
-     variants either.)
- * samples/landlock/sandboxer.c:
-   * Use switch() to implement best effort mode.
- * Documentation:
-   * Give more background on surprising truncation behaviour.
-   * Use switch() in the example too, to stay in-line with the sample tool.
-   * Small fixes in header file to address previous comments.
-* misc:
-  * Fix some typos and const usages.
-
-v2:
- * Documentation: Mention the truncation flag where needed.
- * Documentation: Point out connection between truncation and file writing.
- * samples: Add file truncation to the landlock/sandboxer.c sample tool.
- * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
- * selftests: Exercise truncation syscalls when the truncate right
-   is not handled by Landlock.
-
-Previous versions:
-v1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
-v2: https://lore.kernel.org/all/20220712211405.14705-1-gnoack3000@gmail.com/
-
-Günther Noack (4):
-  landlock: Support file truncation
-  selftests/landlock: Selftests for file truncation support
-  samples/landlock: Extend sample tool to support
-    LANDLOCK_ACCESS_FS_TRUNCATE
-  landlock: Document Landlock's file truncation support
-
- Documentation/userspace-api/landlock.rst     |  47 ++++-
- include/uapi/linux/landlock.h                |  17 +-
- samples/landlock/sandboxer.c                 |  21 +-
- security/landlock/fs.c                       |   9 +-
- security/landlock/limits.h                   |   2 +-
- security/landlock/syscalls.c                 |   2 +-
- tools/testing/selftests/landlock/base_test.c |   2 +-
- tools/testing/selftests/landlock/fs_test.c   | 211 ++++++++++++++++++-
- 8 files changed, 283 insertions(+), 28 deletions(-)
-
-
-base-commit: 3d7cb6b04c3f3115719235cc6866b10326de34cd
---
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index cb77eaa01c91..3e84bae7e83a 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -58,6 +58,7 @@ static const char file1_s2d3[] = TMP_DIR "/s2d1/s2d2/s2d3/f1";
+ static const char file2_s2d3[] = TMP_DIR "/s2d1/s2d2/s2d3/f2";
+ 
+ static const char dir_s3d1[] = TMP_DIR "/s3d1";
++static const char file1_s3d1[] = TMP_DIR "/s3d1/f1";
+ /* dir_s3d2 is a mount point. */
+ static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
+ static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
+@@ -83,6 +84,7 @@ static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
+  * │           ├── f1
+  * │           └── f2
+  * └── s3d1
++ *     ├── f1
+  *     └── s3d2
+  *         └── s3d3
+  */
+@@ -208,6 +210,7 @@ static void create_layout1(struct __test_metadata *const _metadata)
+ 	create_file(_metadata, file1_s2d3);
+ 	create_file(_metadata, file2_s2d3);
+ 
++	create_file(_metadata, file1_s3d1);
+ 	create_directory(_metadata, dir_s3d2);
+ 	set_cap(_metadata, CAP_SYS_ADMIN);
+ 	ASSERT_EQ(0, mount("tmp", dir_s3d2, "tmpfs", 0, "size=4m,mode=700"));
+@@ -230,6 +233,7 @@ static void remove_layout1(struct __test_metadata *const _metadata)
+ 	EXPECT_EQ(0, remove_path(file1_s2d2));
+ 	EXPECT_EQ(0, remove_path(file1_s2d1));
+ 
++	EXPECT_EQ(0, remove_path(file1_s3d1));
+ 	EXPECT_EQ(0, remove_path(dir_s3d3));
+ 	set_cap(_metadata, CAP_SYS_ADMIN);
+ 	umount(dir_s3d2);
+@@ -3023,6 +3027,206 @@ TEST_F_FORK(layout1, proc_pipe)
+ 	ASSERT_EQ(0, close(pipe_fds[1]));
+ }
+ 
++/* Opens the file, invokes ftruncate(2) and returns the errno or 0. */
++static int test_ftruncate(struct __test_metadata *const _metadata,
++			  const char *const path, int flags)
++{
++	int res, err, fd;
++
++	fd = open(path, flags | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++
++	res = ftruncate(fd, 10);
++	err = errno;
++	ASSERT_EQ(0, close(fd));
++
++	if (res < 0)
++		return err;
++	return 0;
++}
++
++/* Invokes truncate(2) and returns the errno or 0. */
++static int test_truncate(const char *const path)
++{
++	if (truncate(path, 10) < 0)
++		return errno;
++	return 0;
++}
++
++/* Invokes creat(2) and returns the errno or 0. */
++static int test_creat(struct __test_metadata *const _metadata,
++		      const char *const path, mode_t mode)
++{
++	int fd = creat(path, mode);
++
++	if (fd < 0)
++		return errno;
++	ASSERT_EQ(0, close(fd));
++	return 0;
++}
++
++TEST_F_FORK(layout1, truncate)
++{
++	const char *const file_rwt = file1_s1d1;
++	const char *const file_rw = file2_s1d1;
++	const char *const file_rt = file1_s1d2;
++	const char *const file_t = file2_s1d2;
++	const char *const file_none = file1_s1d3;
++	const char *const dir_t = dir_s2d1;
++	const char *const file_in_dir_t = file1_s2d1;
++	const char *const dir_w = dir_s3d1;
++	const char *const file_in_dir_w = file1_s3d1;
++	const struct rule rules[] = {
++		{
++			.path = file_rwt,
++			.access = LANDLOCK_ACCESS_FS_READ_FILE |
++				  LANDLOCK_ACCESS_FS_WRITE_FILE |
++				  LANDLOCK_ACCESS_FS_TRUNCATE,
++		},
++		{
++			.path = file_rw,
++			.access = LANDLOCK_ACCESS_FS_READ_FILE |
++				  LANDLOCK_ACCESS_FS_WRITE_FILE,
++		},
++		{
++			.path = file_rt,
++			.access = LANDLOCK_ACCESS_FS_READ_FILE |
++				  LANDLOCK_ACCESS_FS_TRUNCATE,
++		},
++		{
++			.path = file_t,
++			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
++		},
++		// Implicitly: No access rights for file_none.
++		{
++			.path = dir_t,
++			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
++		},
++		{
++			.path = dir_w,
++			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
++		},
++		{},
++	};
++	const __u64 handled = LANDLOCK_ACCESS_FS_READ_FILE |
++			      LANDLOCK_ACCESS_FS_WRITE_FILE |
++			      LANDLOCK_ACCESS_FS_TRUNCATE;
++	const int ruleset_fd = create_ruleset(_metadata, handled, rules);
++
++	ASSERT_LE(0, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd);
++	ASSERT_EQ(0, close(ruleset_fd));
++
++	/*
++	 * Checks read, write and truncate rights: truncation works.
++	 *
++	 * Note: Independent of Landlock, ftruncate(2) on read-only
++	 * file descriptors never works.
++	 */
++	EXPECT_EQ(0, test_ftruncate(_metadata, file_rwt, O_WRONLY));
++	EXPECT_EQ(EINVAL, test_ftruncate(_metadata, file_rwt, O_RDONLY));
++	EXPECT_EQ(0, test_truncate(file_rwt));
++	EXPECT_EQ(0, test_open(file_rwt, O_WRONLY | O_TRUNC));
++	EXPECT_EQ(0, test_open(file_rwt, O_RDONLY | O_TRUNC));
++
++	/* Checks read and write rights: no truncate variant works. */
++	EXPECT_EQ(EACCES, test_ftruncate(_metadata, file_rw, O_WRONLY));
++	EXPECT_EQ(EINVAL, test_ftruncate(_metadata, file_rw, O_RDONLY));
++	EXPECT_EQ(EACCES, test_truncate(file_rw));
++	EXPECT_EQ(EACCES, test_open(file_rw, O_WRONLY | O_TRUNC));
++	EXPECT_EQ(EACCES, test_open(file_rw, O_RDONLY | O_TRUNC));
++
++	/*
++	 * Checks read and truncate rights: truncation works.
++	 *
++	 * Note: Files opened in O_RDONLY can get truncated as part of
++	 * the same operation.
++	 */
++	EXPECT_EQ(0, test_open(file_rt, O_RDONLY));
++	EXPECT_EQ(0, test_open(file_rt, O_RDONLY | O_TRUNC));
++	EXPECT_EQ(EACCES, test_open(file_rt, O_WRONLY));
++	EXPECT_EQ(EACCES, test_open(file_rt, O_WRONLY));
++	EXPECT_EQ(0, test_truncate(file_rt));
++
++	/* Checks truncate right: truncate works, but can't open file. */
++	EXPECT_EQ(EACCES, test_open(file_t, O_WRONLY));
++	EXPECT_EQ(EACCES, test_open(file_t, O_RDONLY));
++	EXPECT_EQ(EACCES, test_open(file_t, O_WRONLY | O_TRUNC));
++	EXPECT_EQ(EACCES, test_open(file_t, O_RDONLY | O_TRUNC));
++	EXPECT_EQ(0, test_truncate(file_t));
++
++	/* Checks "no rights" case: No form of truncation works. */
++	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY));
++	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY));
++	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY | O_TRUNC));
++	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY | O_TRUNC));
++	EXPECT_EQ(EACCES, test_truncate(file_none));
++
++	/* Checks truncate right on directory: truncate works on contained files */
++	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_WRONLY));
++	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_RDONLY));
++	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_WRONLY | O_TRUNC));
++	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_RDONLY | O_TRUNC));
++	EXPECT_EQ(0, test_truncate(file_in_dir_t));
++
++	/*
++	 * Checks creat in dir_w: This requires the truncate right
++	 * when overwriting an existing file, but does not require it
++	 * when the file is new.
++	 */
++	EXPECT_EQ(EACCES, test_creat(_metadata, file_in_dir_w, 0600));
++
++	ASSERT_EQ(0, unlink(file_in_dir_w));
++	EXPECT_EQ(0, test_creat(_metadata, file_in_dir_w, 0600));
++}
++
++/*
++ * Exercises file truncation when it's not restricted,
++ * as it was the case before LANDLOCK_ACCESS_FS_TRUNCATE existed.
++ */
++TEST_F_FORK(layout1, truncate_unhandled)
++{
++	const char *const file_r = file1_s1d1;
++	const char *const file_w = file2_s1d1;
++	const char *const file_none = file1_s1d2;
++	const struct rule rules[] = {
++		{
++			.path = file_r,
++			.access = LANDLOCK_ACCESS_FS_READ_FILE,
++		},
++		{
++			.path = file_w,
++			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
++		},
++		// Implicitly: No rights for file_none.
++		{},
++	};
++	const __u64 handled = LANDLOCK_ACCESS_FS_READ_FILE |
++			      LANDLOCK_ACCESS_FS_WRITE_FILE;
++	const int ruleset_fd = create_ruleset(_metadata, handled, rules);
++
++	ASSERT_LE(0, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd);
++	ASSERT_EQ(0, close(ruleset_fd));
++
++	/* Checks read right: truncation should work through truncate and open. */
++	EXPECT_EQ(0, test_truncate(file_r));
++	EXPECT_EQ(0, test_open(file_r, O_RDONLY | O_TRUNC));
++	EXPECT_EQ(EACCES, test_open(file_r, O_WRONLY | O_TRUNC));
++
++	/* Checks write right: truncation should work through truncate, ftruncate and open. */
++	EXPECT_EQ(0, test_truncate(file_w));
++	EXPECT_EQ(0, test_ftruncate(_metadata, file_w, O_WRONLY));
++	EXPECT_EQ(EACCES, test_open(file_w, O_RDONLY | O_TRUNC));
++	EXPECT_EQ(0, test_open(file_w, O_WRONLY | O_TRUNC));
++
++	/* Checks "no rights" case: truncate works but all open attempts fail. */
++	EXPECT_EQ(0, test_truncate(file_none));
++	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY | O_TRUNC));
++	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY | O_TRUNC));
++	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY));
++}
++
+ /* clang-format off */
+ FIXTURE(layout1_bind) {};
+ /* clang-format on */
+-- 
 2.37.1
+
