@@ -2,113 +2,129 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A576AC3F6B0
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 19:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E7CC25B06
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 21:56:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234346AbiHDTih (ORCPT
+        id S239644AbiHDV40 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Aug 2022 15:38:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44556 "EHLO
+        Thu, 4 Aug 2022 17:56:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233658AbiHDTig (ORCPT
+        with ESMTP id S239506AbiHDV40 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Aug 2022 15:38:36 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBB8E6E2C3;
-        Thu,  4 Aug 2022 12:38:34 -0700 (PDT)
-Received: from [192.168.43.224] (92.40.178.239.threembb.co.uk [92.40.178.239])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: gtucker)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id BC6A66601BFA;
-        Thu,  4 Aug 2022 20:38:32 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1659641913;
-        bh=YR06TcNC313+o+tpJhkeCXhA11OnSzpwetPY80MPTq8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=eCtIdWnL2e3j3b9gdVcogqaPJdIXpTMgJxLBj4dlqklzGGr+zjNymQNEg7n7pyu4d
-         GHPEo9M+McUemcrv9Otu2/Z3Fn3IP7VHZBgkh8JdXIgkRumV3jUOUH5bWWDLXChCj1
-         3kyMMD36iE+unBbMXx/uLjMr6ij+L+dRnYM/tSRs0lFwcSU2llcza8j3lFy/3rL3QO
-         B0pR71xhOFsP6GtYzQ9WcKE/BEq9TueMWvOGCDNenJsuNwqohBwmv/Qunff/g1u9PP
-         DO2U1/v78mnY1VI+v/I3DZXZ2f0mQesixMRx4sbXDY5m4+YPxTM8M6VhekCvZUBjIl
-         oNSnzdAWn2foQ==
-Message-ID: <76a2ac43-6e3d-0b62-7c8c-eec5f247f8f8@collabora.com>
-Date:   Thu, 4 Aug 2022 21:38:34 +0200
+        Thu, 4 Aug 2022 17:56:26 -0400
+Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3A4F1D0CE
+        for <linux-security-module@vger.kernel.org>; Thu,  4 Aug 2022 14:56:23 -0700 (PDT)
+Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-10dc1b16c12so1039498fac.6
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Aug 2022 14:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=A3KaqbTDvr6yI86EPzA1l0NOPWv07KWx997g85QsDx4=;
+        b=V06sSFt2ksPjM8k6wnSbaG2QkPaVwvcAPAKnSzq34sTv9ksxh2OqhTuqg8SpivF9Y0
+         BeAYJPw9WS7SWCrlAS2ZuZhlUV0Va814LRQgaD8u4FmAed6qJn5lA7YVe7jiuQtzViV2
+         U2pdwnl+QBpBXtgGdP1BnbBo3Ok4S5SQTNkLc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=A3KaqbTDvr6yI86EPzA1l0NOPWv07KWx997g85QsDx4=;
+        b=EEd57b6WmSXgpMn5KN0cPYK7RsuIwHkMcpP6A/2dmWDm4ty+/V+EMcVgZn7ganDPL9
+         MetUkajkGL6uWsrq/Yea+Iq14RgLCzZY11u1XOxuoclDERB7aSoyr9fF/GBdZe1daz0j
+         wQ7H8gBBQGjvKVaxdk7e7WIIN8xtxvlJEjDts6krQlKPVOjjeMOM0Sf+cN8A/js3ZKsr
+         bd11LeQvYDBnUZIGLhFCDqIyklbSFj68A9MfjU+zwOt4OKT7FtX2fsD2ndoFlAL/wypG
+         WJ5gs/CoDUNANJFpjV3MR8aIP6jX2U5Oq5VG/ceGKdop1Akq7NuFHYKEb5fFwy2lpNIY
+         VExQ==
+X-Gm-Message-State: ACgBeo2m1p81D2nIIdwUN64/1jaay1Kp5Ybs9e5uoYkdyWv5NsXPMQMH
+        wDuK/NCt/5uYS67/aATBdwV6qPoNLInZdg==
+X-Google-Smtp-Source: AA6agR7/W65syJyzL40gDyuBDRFX5zBRg21HT+a36An/Gm2s1t9d4dwBI+wrwr+oeocn2tftUqD0+g==
+X-Received: by 2002:a05:6870:4152:b0:10e:84d9:6119 with SMTP id r18-20020a056870415200b0010e84d96119mr5291173oad.178.1659650182922;
+        Thu, 04 Aug 2022 14:56:22 -0700 (PDT)
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com. [209.85.160.49])
+        by smtp.gmail.com with ESMTPSA id 78-20020a9d0154000000b0061c87262540sm17781otu.65.2022.08.04.14.56.22
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Aug 2022 14:56:22 -0700 (PDT)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-10ec41637b3so1051289fac.4
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Aug 2022 14:56:22 -0700 (PDT)
+X-Received: by 2002:a05:6870:b4a1:b0:10e:50b8:50aa with SMTP id
+ y33-20020a056870b4a100b0010e50b850aamr1952047oap.174.1659650171298; Thu, 04
+ Aug 2022 14:56:11 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] selftests/landlock: fix broken include of
- linux/landlock.h
-Content-Language: en-US
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Anders Roxell <anders.roxell@linaro.org>, Tim.Bird@sony.com,
-        kernel@collabora.com, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
+References: <20220504232102.469959-1-evgreen@chromium.org> <20220506160807.GA1060@bug>
+ <CAE=gft6m75T0UC2DBhfFhuSMW6TK7aatD_04sQ18WosgGVsATw@mail.gmail.com>
+ <CAJZ5v0gxq=EA_WWUiCR_w8o87iTHDR7OC5wi=GRBaAQS2ofd5w@mail.gmail.com>
+ <CAE=gft6V6RLc-d4AOuRUVU2u1jMGghDRSrFqiCqMCLxemui8Pw@mail.gmail.com>
+ <CAE=gft5OYAgosqmwNkk=Cwoooeg93Njmnzfz=gwCaLB0Ts+=sw@mail.gmail.com>
+ <CAE=gft6sPkhNcz7+fJuDzQo2f8fM_0Wv_OWC9W2LyvXd6M6zeQ@mail.gmail.com>
+ <CAHSSk05JEcZfS2tc22F+m76T3vZt-mZ7zUQaGRgSanKaFc5xBg@mail.gmail.com> <YusZ8gD/LjiAXadR@kernel.org>
+In-Reply-To: <YusZ8gD/LjiAXadR@kernel.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Thu, 4 Aug 2022 14:55:35 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6LaNZLTK72n_Z7an0VA1FxxFFgGk6rmUF_Jvf=JinG3A@mail.gmail.com>
+Message-ID: <CAE=gft6LaNZLTK72n_Z7an0VA1FxxFFgGk6rmUF_Jvf=JinG3A@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Encrypted Hibernation
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Matthew Garrett <mgarrett@aurora.tech>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniil Lunev <dlunev@google.com>, zohar@linux.ibm.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Len Brown <len.brown@intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
+        keyrings@vger.kernel.org,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         linux-security-module@vger.kernel.org
-References: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
- <f1fc4e6e-e2a6-3ec7-2d3b-215111a4b9ae@digikod.net>
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-In-Reply-To: <f1fc4e6e-e2a6-3ec7-2d3b-215111a4b9ae@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 04/08/2022 12:36, Mickaël Salaün wrote:
-> 
-> On 03/08/2022 22:13, Guillaume Tucker wrote:
->> Revert part of the earlier changes to fix the kselftest build when
->> using a sub-directory from the top of the tree as this broke the
->> landlock test build as a side-effect when building with "make -C
->> tools/testing/selftests/landlock".
->>
->> Reported-by: Mickaël Salaün <mic@digikod.net>
->> Fixes: a917dd94b832 ("selftests/landlock: drop deprecated headers dependency")
->> Fixes: f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")
->> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
->> ---
->>   tools/testing/selftests/landlock/Makefile | 7 +++++--
->>   1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
->> index a6959df28eb0..02868ac3bc71 100644
->> --- a/tools/testing/selftests/landlock/Makefile
->> +++ b/tools/testing/selftests/landlock/Makefile
->> @@ -9,10 +9,13 @@ TEST_GEN_PROGS := $(src_test:.c=)
->>   TEST_GEN_PROGS_EXTENDED := true
->>     OVERRIDE_TARGETS := 1
->> +top_srcdir := ../../../..
-> 
-> Not sure it changes much, but most other selftests Makefiles use "top_srcdir = ../../../.." (without ":="). Why this change?
+On Wed, Aug 3, 2022 at 5:59 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+>
+> On Tue, Aug 02, 2022 at 11:36:43AM -0700, Matthew Garrett wrote:
+> > On Mon, Aug 1, 2022 at 3:33 PM Evan Green <evgreen@chromium.org> wrote:
+> >
+> > > One more bump here, as we'd really love to get encrypted hibernation
+> > > to a form upstream would accept if at all possible. We were
+> > > considering landing this in our Chrome OS tree for now, then coming
+> > > back in a couple months with a "we've been baking this ourselves and
+> > > it's going so great, oooh yeah". I'm not sure if upstream would find
+> > > that compelling or not. But in any case, some guidance towards making
+> > > this more upstream friendly would be well appreciated.
+> > >
+> > > One thing I realized in attempting to pick this myself is that the
+> > > trusted key blob format has moved to ASN.1. So I should really move
+> > > the creation ticket to the new ASN.1 format (if I can figure out the
+> > > right OID for that piece), which would allow me to drop a lot of the
+> > > ugly stuff in tpm2_unpack_blob(). Maybe if I get no other comments
+> > > I'll work on that and resend.
+> >
+> > I've been revamping my TPM-backed verified hibernation implementation
+> > based on this work, so I'd definitely be enthusiastic about it being
+> > mergeable.
+>
+> BTW, is it tested with QEMU + swtpm?
 
-I didn't simply apply your diff but edited the file by hand to
-test various combinations and see what side effects it might
-have.  So when I added top_srcdir I typed it by hand and used :=
-as a reflex since it's the standard way of assigning variables.
-Using = instead only makes a difference when the r-value has
-something dynamic as it will be re-evaluated every time it's
-used.  So for constant values, I guess it's more of a question of
-coding style and conventions.  Maybe all the top_srcdir variables
-should be changed to := but that's unnecessary churn...  Either
-way, it's benign.
+For myself, so far I've been testing on a recent Intel Chromebook. The
+H1 (aka cr50) security chip on modern chromebooks implements a subset
+[1] of TPM2.0, and is exposed through the standard TPM APIs in the
+kernel. I can make sure to test on Qemu as well, is there anything in
+particular I should look out for?
 
-Shuah, feel free to change this back to = in this particular case
-if it's more consistent with other Makefiles.  Consistency is
-often better than arbitrary rules.  Or conversely, change to :=
-for the khdr_dir definition...  Entirely up to you I think.
+-Evan
 
-Thanks,
-Guillaume
+[1] https://chromium-review.googlesource.com/c/chromiumos/third_party/tpm2/+/3373466
 
->>   include ../lib.mk
->>   +khdr_dir = $(top_srcdir)/usr/include
->> +
->>   $(OUTPUT)/true: true.c
->>       $(LINK.c) $< $(LDLIBS) -o $@ -static
->>   -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
->> -    $(LINK.c) $< $(LDLIBS) -o $@ -lcap
->> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
->> +    $(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
-
+>
+> BR, Jarkko
