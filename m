@@ -2,135 +2,170 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C10EDC3F6B0
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 16:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BFAC19F21
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 19:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234174AbiHDQp4 (ORCPT
+        id S233483AbiHDTiB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Aug 2022 12:45:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53600 "EHLO
+        Thu, 4 Aug 2022 15:38:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbiHDQp4 (ORCPT
+        with ESMTP id S233360AbiHDTiA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Aug 2022 12:45:56 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E502AFD2D;
-        Thu,  4 Aug 2022 09:45:54 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id tl27so370730ejc.1;
-        Thu, 04 Aug 2022 09:45:54 -0700 (PDT)
+        Thu, 4 Aug 2022 15:38:00 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E606E2C3
+        for <linux-security-module@vger.kernel.org>; Thu,  4 Aug 2022 12:37:59 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id w19so1102889ejc.7
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Aug 2022 12:37:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=LvrnXCwtv5XHtMInXUKtDOn3It9BRLTfFYtNjh6ssqk=;
-        b=XEHGgov0RYLghH9FXzXqDRL+IMOdobJ10apI0VhCUxMt8Hw9mb7wh1m6IYu0YYDup1
-         WT+2x7RsovYzx6QWjqrGj1pj6QqCbGpMmOiaWa5FiTgnpI95Wp2UUKxm/gOwvvFPIb5b
-         m523pl2Hl5y2NxOF64KpwluJvuogzSeeGeutvH2o0YtvGFUi1+08jGksb8OIdJu0LpC8
-         S2yofSQm8EagzfEZm93aXGg8DVRaxIlbk8ZOsmwep7q2gWGc3hvLNVtOsh2jfCUQ9+Ae
-         znimak4uRWGFomYLg5tmtgxpDXHHeVSJbuuf1nF8tbx9RSOfJpU81xL1BdM6NCtaesKg
-         1L4A==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=iSDlUN3gIHdfL+T+Jd8PQ9lH81xfneY44PJpAP4thR0=;
+        b=Ap1HpRGFu0Im0Fy39tYcWbCXEf36NXu7i9vThZjiuWfmtKT36JjybUvopB6MHUk9hr
+         N+PmeeisJ1Xk8aCwdq4bS2r2lKtlslW1+WTn1dHJyCs967J2rgZlUoEI6tTUzF2JgvgZ
+         vq4CrEJHSJGjjhNqPp86x8UP3rOy3SksqjvXDCnc8k5cDJvnHNbva5OKAFhqXifmMbuC
+         xC3EJsbsWlpKurI4ROYub9eGVSjb/gpCg+Mx63W3HpXl0XdQ/TdEFXZoF/1Sm+zYuIHP
+         TQWOB7SY6E+epO6MTTm5KI6fd1hGxCdyyF3SxtlXYtZDNZkjWftTlA7ReBEFWcn5Is8Z
+         /40w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=LvrnXCwtv5XHtMInXUKtDOn3It9BRLTfFYtNjh6ssqk=;
-        b=eeSmGqe2HTG9MdgO3YpmHREIwFz5YUuvaMDsF0yVJwq0DsqfXGS6aawxRK+sTiQ38/
-         WjOrd/kUGnjEmrA2Gbp2TMPrL91rv+67lblEfN0sAbJ1FyXuZKzjYXZjv/2W8TvSaMG6
-         ejJTwdgCRn+fpT7Il//9VEMqdKD5L6aW4yVcVFATTvKwIPvL+3VI0tH6b5Kv8nE9roEk
-         yHfHXoniUzBaxXizMTuJST3VKbCfW7KXYxIwGX9zGTsxyZKvWGgEA3fCO/iHKogcUOwg
-         yPTtmSKd+mN7p53h5LxjCJfU/vPVxb5TW8uaED77nTqbNDOuMnM9HzuQYtWXEhnsAmdg
-         5KhQ==
-X-Gm-Message-State: ACgBeo0Kfu716gmrFynn4Wj7prGNdGyznrcy4Lt1VrRCsuKfIAgfkqZU
-        IVw9KAL2DYsjMmz8bkRXdRA=
-X-Google-Smtp-Source: AA6agR6WbdMBoJ1rxIgQWinbQTwv5zfPEdGzVlp7VnGWHgjI/Mpjn623/U0h88RuCPkRAvOcDwqbSw==
-X-Received: by 2002:a17:907:2bc4:b0:730:aa9c:bd86 with SMTP id gv4-20020a1709072bc400b00730aa9cbd86mr2064543ejc.341.1659631553514;
-        Thu, 04 Aug 2022 09:45:53 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id e13-20020a170906314d00b00730948cd6c9sm515761eje.118.2022.08.04.09.45.52
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=iSDlUN3gIHdfL+T+Jd8PQ9lH81xfneY44PJpAP4thR0=;
+        b=pN4qIU4kNdzJJnNxdUuZpqd3hbS0mbQNAAv65VjTe8FMvkbq2rsMmj+pCxNUjr/vbV
+         JFwOT3dNR86UnF8+hAwQcnMe2OhjBUty5BhO+ciimwoBiWyhZD+vV+9TSJI534C0Ka7T
+         cGn/xa/etfPDalBkTuNT1V7MlnAN9qitO5t/kTe4prLntGo73x1gfV6xnVBOWOUOrwsI
+         FOHNBu3AtROdcRY5VigswSnnNzjhBFwQGFDCcuPr+m+Y9E/0Le8RhF5iuEFWw/TUZ34Z
+         WdKYUWy4HBaH5v/Yawy2Zs/xXItXPedYz6d8/P0VpDvUSZe2kK2Y4yzTSkD8UmnZOBWY
+         CwGw==
+X-Gm-Message-State: ACgBeo3D0EGlu6ofixiuTXgO2Ytjg6fabdlgL2hhjy4Zkx5xvU+OatCL
+        HJHXM67BcTj6NMRgDc9wOFb77/LRIZk=
+X-Google-Smtp-Source: AA6agR5n8ZWRj4YRpUDc+cA4HJn9jEhPRyTLdSvI7iW+Yuzzo1300gF/y6lUkFT5MxvAB/7NGuDFGw==
+X-Received: by 2002:a17:907:a424:b0:730:b777:d6e5 with SMTP id sg36-20020a170907a42400b00730b777d6e5mr2501943ejc.746.1659641877585;
+        Thu, 04 Aug 2022 12:37:57 -0700 (PDT)
+Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id u1-20020a1709061da100b0072abb95c9f4sm631851ejh.193.2022.08.04.12.37.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 09:45:52 -0700 (PDT)
-Date:   Thu, 4 Aug 2022 18:45:50 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
+        Thu, 04 Aug 2022 12:37:57 -0700 (PDT)
+From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         James Morris <jmorris@namei.org>,
         Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] landlock: Document Landlock's file truncation
- support
-Message-ID: <Yuv3vte5eMCuIULv@nuc>
-References: <20220712211405.14705-1-gnoack3000@gmail.com>
- <20220712211405.14705-5-gnoack3000@gmail.com>
- <d198d2b4-ebf4-c7a2-cf95-f028d48c09e5@digikod.net>
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH v3 0/4] landlock: truncate support
+Date:   Thu,  4 Aug 2022 21:37:42 +0200
+Message-Id: <20220804193746.9161-1-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d198d2b4-ebf4-c7a2-cf95-f028d48c09e5@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 29, 2022 at 12:47:46PM +0200, Mickaël Salaün wrote:
->
-> On 12/07/2022 23:14, Günther Noack wrote:
-> > Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
-> >
-> > Adapt the backwards compatibility example and discussion to remove the
-> > truncation flag if needed.
-> >
-> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > Link: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
-> > ---
-> >   Documentation/userspace-api/landlock.rst | 19 ++++++++++++++-----
-> >   1 file changed, 14 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> > index b86fd94ae797..41fa464cc8b8 100644
-> > --- a/Documentation/userspace-api/landlock.rst
-> > +++ b/Documentation/userspace-api/landlock.rst
-> > @@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
-> >               LANDLOCK_ACCESS_FS_MAKE_FIFO |
-> >               LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-> >               LANDLOCK_ACCESS_FS_MAKE_SYM |
-> > -            LANDLOCK_ACCESS_FS_REFER,
-> > +            LANDLOCK_ACCESS_FS_REFER |
-> > +            LANDLOCK_ACCESS_FS_TRUNCATE,
-> >       };
-> >   Because we may not know on which kernel version an application will be
-> > @@ -69,14 +70,22 @@ should try to protect users as much as possible whatever the kernel they are
-> >   using.  To avoid binary enforcement (i.e. either all security features or
-> >   none), we can leverage a dedicated Landlock command to get the current version
-> >   of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> > -remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
-> > -starting with the second version of the ABI.
-> > +remove the `LANDLOCK_ACCESS_FS_REFER` and `LANDLOCK_ACCESS_FS_TRUNCATE` access
-> > +rights, which are only supported starting with the second and third version of
-> > +the ABI.
-> >   .. code-block:: c
-> >       int abi;
-> >       abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-> > +    if (abi == -1) {
-> > +        perror("Landlock is unsupported on this kernel");
->
-> "Landlock is not supported with the running kernel"?
+The goal of these patches is to work towards a more complete coverage
+of file system operations that are restrictable with Landlock.
 
-Done.
+The known set of currently unsupported file system operations in
+Landlock is described at [1]. Out of the operations listed there,
+truncate is the only one that modifies file contents, so these patches
+should make it possible to prevent the direct modification of file
+contents with Landlock.
 
->
->
-> > +        return 1;
-> > +    }
-> > +    if (abi < 3) {
-> > +        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-> > +    }
->
-> I guess we could use the same switch/case code as for the sample. I'm not
-> sure what would be the less confusing for users though.
+The patch introduces the truncation restriction feature as an
+additional bit in the access_mask_t bitmap, in line with the existing
+supported operations.
 
-Done. (Both are mildly confusing, IMHO %-))
+The truncation flag covers both the truncate(2) and ftruncate(2)
+families of syscalls, as well as open(2) with the O_TRUNC flag.
+This includes usages of creat() in the case where existing regular
+files are overwritten.
 
-> [...]
+Apart from Landlock, file truncation can also be restricted using
+seccomp-bpf, but it is more difficult to use (requires BPF, requires
+keeping up-to-date syscall lists) and it is not configurable by file
+hierarchy, as Landlock is. The simplicity and flexibility of the
+Landlock approach makes it worthwhile adding.
 
+While it's possible to use the "write file" and "truncate" rights
+independent of each other, it simplifies the mental model for
+userspace callers to always use them together.
+
+Specifically, the following behaviours might be surprising for users
+when using these independently:
+
+ * The commonly creat() syscall requires the truncate right when
+   overwriting existing files, as it is equivalent to open(2) with
+   O_TRUNC|O_CREAT|O_WRONLY.
+ * The "write file" right is not always required to truncate a file,
+   even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
+
+Nevertheless, keeping the two flags separate is the correct approach
+to guarantee backwards compatibility for existing Landlock users.
+
+These patches are based on version 5.19.
+
+Best regards,
+GÃ¼nther
+
+[1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+
+History:
+
+v3:
+ * selftests:
+   * Explicitly test ftruncate with readonly file descriptors
+     (returns EINVAL).
+   * Extract test_ftruncate, test_truncate, test_creat helpers,
+     which simplified the previously mixed usage of EXPECT/ASSERT.
+   * Test creat() behaviour as part of the big truncation test.
+   * Stop testing the truncate64(2) and ftruncate64(2) syscalls.
+     This simplifies the tests a bit. The kernel implementations are the
+     same as for truncate(2) and ftruncate(2), so there is little benefit
+     from testing them exhaustively. (We aren't testing all open(2)
+     variants either.)
+ * samples/landlock/sandboxer.c:
+   * Use switch() to implement best effort mode.
+ * Documentation:
+   * Give more background on surprising truncation behaviour.
+   * Use switch() in the example too, to stay in-line with the sample tool.
+   * Small fixes in header file to address previous comments.
+* misc:
+  * Fix some typos and const usages.
+
+v2:
+ * Documentation: Mention the truncation flag where needed.
+ * Documentation: Point out connection between truncation and file writing.
+ * samples: Add file truncation to the landlock/sandboxer.c sample tool.
+ * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
+ * selftests: Exercise truncation syscalls when the truncate right
+   is not handled by Landlock.
+
+Previous versions:
+v1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
+v2: https://lore.kernel.org/all/20220712211405.14705-1-gnoack3000@gmail.com/
+
+GÃ¼nther Noack (4):
+  landlock: Support file truncation
+  selftests/landlock: Selftests for file truncation support
+  samples/landlock: Extend sample tool to support
+    LANDLOCK_ACCESS_FS_TRUNCATE
+  landlock: Document Landlock's file truncation support
+
+ Documentation/userspace-api/landlock.rst     |  47 ++++-
+ include/uapi/linux/landlock.h                |  17 +-
+ samples/landlock/sandboxer.c                 |  21 +-
+ security/landlock/fs.c                       |   9 +-
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/syscalls.c                 |   2 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 211 ++++++++++++++++++-
+ 8 files changed, 283 insertions(+), 28 deletions(-)
+
+
+base-commit: 3d7cb6b04c3f3115719235cc6866b10326de34cd
 --
+2.37.1
