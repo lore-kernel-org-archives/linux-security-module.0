@@ -2,53 +2,53 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E2BC19F2A
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 19:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 382E9C19F21
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 19:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233660AbiHDTiJ (ORCPT
+        id S238331AbiHDTiU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Aug 2022 15:38:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44348 "EHLO
+        Thu, 4 Aug 2022 15:38:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237219AbiHDTiG (ORCPT
+        with ESMTP id S233658AbiHDTiJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Aug 2022 15:38:06 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C6496E2D6
-        for <linux-security-module@vger.kernel.org>; Thu,  4 Aug 2022 12:38:05 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id w19so1103429ejc.7
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Aug 2022 12:38:05 -0700 (PDT)
+        Thu, 4 Aug 2022 15:38:09 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 696AB6E2C9
+        for <linux-security-module@vger.kernel.org>; Thu,  4 Aug 2022 12:38:08 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id b96so1016152edf.0
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Aug 2022 12:38:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=liWS+mbzdn/5uZ7TQqXTdXkRPTN/UcHsj0kI7okFJ90=;
-        b=L5eTUTFMVy0xWYcAyjoiWAKqzsEWhViL+wVK2I1fv6ilJYeu+0KrOotwTRkvFQ7zJd
-         CSQWl3JUTYauGV3y3SJNhTft2Ggvp04dSazXGNW79dgbdrR5CXnuPYf+5tYrWFhsi/9i
-         HBa8DIlNGLQZ3IXJA3lTY8RhuLwewHqqQAhmDFsTUpuOutY2XvwofIM3pdY4buI8iyzi
-         L8VNiGKyPjrCTyrpRaZmFmHR5mPrfDCJEvYpLk+kmE60dWeliM02MLWr9vlHGC137vwe
-         bGmX6zSUXuiPG/fIfG/sU3D6z137lVh0vHLuVmJ5pr4Bkeujt6cBfbvZdKXUmdwOGOXc
-         tZsQ==
+        bh=kjoSV2O7dr/1ghBAP2+33C9U6pxl/HAlANzNjIYzCsw=;
+        b=oFoku01v5ZEw1P6dTV3/onjfr130C03HJbF4Xj4MDVmDWLwJ+33taFoTvivReBNcVI
+         +DxM6teNs8Dn8rb5rzu48drEpWIXjZbULO6LXghONemkN0xzr63lgRxZ8+mT/ZnwVClb
+         0QIpLFpaKlERLegT7Tx8HUn5Il/o0BPH7LiAQMtxSK2nyZi2srMQ4DS+yRul5SsD8nYy
+         m2FvvobHgPezlP74mISTUTPmNJGw4CNfJipkH/ZnwVa5RYCt6vPvKMqODWFJxWWNN3pz
+         HZlZQsbYwYrFMsh4yEZS6rqH1ZxWQLYYJxhLk8bbRYmlrED296IOV/j4cMR6TyXXLi98
+         VmJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=liWS+mbzdn/5uZ7TQqXTdXkRPTN/UcHsj0kI7okFJ90=;
-        b=1Cbo8J/Xt/Gt5/KMd+Th1IaoB2Q16k5W9VmpiZu2CpONDsude6elIlLquIwhkmExlg
-         CjYGCxxBwLvf7kb5Zsfrzkm1iU+P+0YhM/2KEKqzQVhaAJhpZXfp/nx/mm2LMKpIHIMK
-         VMhLR5rZOl61zWio5FqAhLKr61p6B2Vjbapmnx7s8at8fn1X0G85XVW24/V4vMq1AMcP
-         lNfBuxoS0OPMwX9fz/+5lUQ2jQ6dDyo0mC++16/vRGEtyyHpnyRXKbtuXsq5BiEsE8pR
-         C3uiUI4VGhp/TLfwkLXLIIRaemaorP+VzfcBAES7q00uJIiaw+MvOv9KV1ODYnOAU+dI
-         uwJg==
-X-Gm-Message-State: ACgBeo2AeNy46VH0fcVWA7rLk9isCwx/Duwgi4GQdx8Pp8NN94/vxXWb
-        LgFjko8NTQdVnyYsOHa4LAVCkxbxhvo=
-X-Google-Smtp-Source: AA6agR5hk5JE/qSJpc37HWoGGIm+mZ3Xdw/deieeql79yKwR3BECFzR7bSRKiUGE1zD6K5LzK4s5uA==
-X-Received: by 2002:a17:906:847a:b0:730:9a59:3958 with SMTP id hx26-20020a170906847a00b007309a593958mr2505893ejc.62.1659641885072;
-        Thu, 04 Aug 2022 12:38:05 -0700 (PDT)
+        bh=kjoSV2O7dr/1ghBAP2+33C9U6pxl/HAlANzNjIYzCsw=;
+        b=6XH7vnHL/t+xV++41ZMOUY7TRMN4iJe1h03g5P0Ehdc0kQdAuy+ZBhFujUAWVyPZXI
+         YQD1KmdJPjN4LQCv58ZFaLWkAr59HFTdJ3uMWGV+JRRXnb3xQHbw7YIlPmVp3E6r0caU
+         GQHCqnPBLPSIdiGKwscnuxlBXj9uBhW7IBcyz0pBxjmSWBtWmQP02MgNrM8wIB5gsPIa
+         CAezzcnuDGay465SPsqPPM+lrkBLrV1EaiIJdgbQ6d4x2c9awJ3FrNH/48/VKB425Jai
+         DweYMwlkkYms01sjI4Tev6ZACDfQ30vPQu4SNasC9OhQhj4Ajs/cuINfvtUgjFM0ZGw6
+         yNYA==
+X-Gm-Message-State: ACgBeo2p5lYVsqJGdSHEfK5HKbuGktDDNq4TQ0KLXPXn7WVswJ9GTK2M
+        zetQpOZfh02WOanrb08X7NfP3LnaBaI=
+X-Google-Smtp-Source: AA6agR4S4QroVh2atJ71wKBy/QDB3smpubijoRKNPUooZW3Xws3qiQZpkuNuQfOEQDAuI8UaUiCM0Q==
+X-Received: by 2002:a05:6402:43c5:b0:43d:f9ca:4061 with SMTP id p5-20020a05640243c500b0043df9ca4061mr3547979edc.352.1659641886974;
+        Thu, 04 Aug 2022 12:38:06 -0700 (PDT)
 Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id u1-20020a1709061da100b0072abb95c9f4sm631851ejh.193.2022.08.04.12.38.04
+        by smtp.gmail.com with ESMTPSA id u1-20020a1709061da100b0072abb95c9f4sm631851ejh.193.2022.08.04.12.38.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 12:38:04 -0700 (PDT)
+        Thu, 04 Aug 2022 12:38:06 -0700 (PDT)
 From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To:     linux-security-module@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -56,9 +56,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v3 3/4] samples/landlock: Extend sample tool to support LANDLOCK_ACCESS_FS_TRUNCATE
-Date:   Thu,  4 Aug 2022 21:37:45 +0200
-Message-Id: <20220804193746.9161-4-gnoack3000@gmail.com>
+Subject: [PATCH v3 4/4] landlock: Document Landlock's file truncation support
+Date:   Thu,  4 Aug 2022 21:37:46 +0200
+Message-Id: <20220804193746.9161-5-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20220804193746.9161-1-gnoack3000@gmail.com>
 References: <20220804193746.9161-1-gnoack3000@gmail.com>
@@ -68,63 +68,97 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Update the sandboxer sample to restrict truncate actions. This is
-automatically enabled by default if the running kernel supports
-LANDLOCK_ACCESS_FS_TRUNCATE, expect for the paths listed in the
-LL_FS_RW environment variable.
+Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
+
+Adapt the backwards compatibility example and discussion to remove the
+truncation flag where needed.
+
+Point out potential surprising behaviour related to truncate.
 
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- samples/landlock/sandboxer.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ Documentation/userspace-api/landlock.rst | 41 ++++++++++++++++++++----
+ 1 file changed, 34 insertions(+), 7 deletions(-)
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index 3e404e51ec64..d266f3abbf63 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -76,7 +76,8 @@ static int parse_path(char *env_path, const char ***const path_list)
- #define ACCESS_FILE ( \
- 	LANDLOCK_ACCESS_FS_EXECUTE | \
- 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
--	LANDLOCK_ACCESS_FS_READ_FILE)
-+	LANDLOCK_ACCESS_FS_READ_FILE | \
-+	LANDLOCK_ACCESS_FS_TRUNCATE)
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+index d92e335380d4..9c3c9fa65958 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
+             LANDLOCK_ACCESS_FS_MAKE_FIFO |
+             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+             LANDLOCK_ACCESS_FS_MAKE_SYM |
+-            LANDLOCK_ACCESS_FS_REFER,
++            LANDLOCK_ACCESS_FS_REFER |
++            LANDLOCK_ACCESS_FS_TRUNCATE,
+     };
  
- /* clang-format on */
+ Because we may not know on which kernel version an application will be
+@@ -69,16 +70,24 @@ should try to protect users as much as possible whatever the kernel they are
+ using.  To avoid binary enforcement (i.e. either all security features or
+ none), we can leverage a dedicated Landlock command to get the current version
+ of the Landlock ABI and adapt the handled accesses.  Let's check if we should
+-remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
+-starting with the second version of the ABI.
++remove the `LANDLOCK_ACCESS_FS_REFER` and `LANDLOCK_ACCESS_FS_TRUNCATE` access
++rights, which are only supported starting with the second and third version of
++the ABI.
  
-@@ -160,10 +161,8 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
- 	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
- 	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
- 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
--	LANDLOCK_ACCESS_FS_REFER)
--
--#define ACCESS_ABI_2 ( \
--	LANDLOCK_ACCESS_FS_REFER)
-+	LANDLOCK_ACCESS_FS_REFER | \
-+	LANDLOCK_ACCESS_FS_TRUNCATE)
+ .. code-block:: c
  
- /* clang-format on */
+     int abi;
  
-@@ -226,11 +225,15 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		return 1;
- 	}
- 	/* Best-effort security. */
--	if (abi < 2) {
--		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
--		access_fs_ro &= ~ACCESS_ABI_2;
--		access_fs_rw &= ~ACCESS_ABI_2;
-+	switch (abi) {
-+	case 1:
-+		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-+		__attribute__((fallthrough));
-+	case 2:
-+		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
- 	}
-+	access_fs_ro &= ruleset_attr.handled_access_fs;
-+	access_fs_rw &= ruleset_attr.handled_access_fs;
+     abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
+-    if (abi < 2) {
+-        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
++    switch (abi) {
++    case -1:
++            perror("Landlock is not supported with the running kernel");
++            return 1;
++    case 1:
++            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
++            __attribute__((fallthrough));
++    case 2:
++            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+     }
  
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+ This enables to create an inclusive ruleset that will contain our rules.
+@@ -127,8 +136,8 @@ descriptor.
+ 
+ It may also be required to create rules following the same logic as explained
+ for the ruleset creation, by filtering access rights according to the Landlock
+-ABI version.  In this example, this is not required because
+-`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
++ABI version.  In this example, this is not required because all of the requested
++``allowed_access`` rights are already available in ABI 1.
+ 
+ We now have a ruleset with one rule allowing read access to ``/usr`` while
+ denying all other handled accesses for the filesystem.  The next step is to
+@@ -251,6 +260,24 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
+ process, a sandboxed process should have a subset of the target process rules,
+ which means the tracee must be in a sub-domain of the tracer.
+ 
++Truncating files
++----------------
++
++The operations covered by `LANDLOCK_ACCESS_FS_WRITE_FILE` and
++`LANDLOCK_ACCESS_FS_TRUNCATE` both change the contents of a file and
++sometimes overlap in non-intuitive ways. It is recommended to always
++specify both of these together.
++
++A particularly surprising example is :manpage:`creat(2)`. The name
++suggests that this system call requires the rights to create and write
++files. However, it also requires the truncate right if an existing
++file under the same name is already present.
++
++It should also be noted that truncating files does not necessarily
++require the `LANDLOCK_ACCESS_FS_WRITE_FILE` right. Apart from the
++obvious :manpage:`truncate(2)` system call, this can also be done
++through :manpage:`open(2)` with the flags `O_RDONLY` and `O_TRUNC`.
++
+ Compatibility
+ =============
+ 
 -- 
 2.37.1
 
