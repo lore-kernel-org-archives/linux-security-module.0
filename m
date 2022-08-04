@@ -2,158 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD9D7C19F2A
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 16:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10EDC3F6B0
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 16:45:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236704AbiHDQfE (ORCPT
+        id S234174AbiHDQp4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Aug 2022 12:35:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48252 "EHLO
+        Thu, 4 Aug 2022 12:45:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235808AbiHDQfC (ORCPT
+        with ESMTP id S230177AbiHDQp4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Aug 2022 12:35:02 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4C091CB37
-        for <linux-security-module@vger.kernel.org>; Thu,  4 Aug 2022 09:35:00 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id f22so327124edc.7
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Aug 2022 09:35:00 -0700 (PDT)
+        Thu, 4 Aug 2022 12:45:56 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E502AFD2D;
+        Thu,  4 Aug 2022 09:45:54 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id tl27so370730ejc.1;
+        Thu, 04 Aug 2022 09:45:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=rqaulu7H6cbAAFa+EeBtTzKSO174IAzVyd5jN0Jcuz0=;
-        b=nEpPp2VPcWyetoDFnxbeoIhoxZ2UFj/5l4iwjQiDbZ+nksoS3VEihKmIi22fBrJuyn
-         znG4TRYzdIGFatNUWEQCRUmsR2wGqWP1S6uCt9jS29PqtoIpuIA37URoojvjGJ5CIyUq
-         FPzDeaTpANBWnLo3Np3U/79honlLIi72pXcd4b747T4r9Bt8YOrqYrZrso562HSnNyX7
-         lbz7fzUngq5V9JeAe/6+jbXx6RUxhuCKiYGqvqN9Qv+JB3HZMqZ4NxjUQlDqudBRwfia
-         X2Kb90lXlgEpawrDlB2/UXUZ4lYsykbpq7z/Dj2d0GonYQjIJzkXCWc4A7Bid7VQPZga
-         noIw==
+        bh=LvrnXCwtv5XHtMInXUKtDOn3It9BRLTfFYtNjh6ssqk=;
+        b=XEHGgov0RYLghH9FXzXqDRL+IMOdobJ10apI0VhCUxMt8Hw9mb7wh1m6IYu0YYDup1
+         WT+2x7RsovYzx6QWjqrGj1pj6QqCbGpMmOiaWa5FiTgnpI95Wp2UUKxm/gOwvvFPIb5b
+         m523pl2Hl5y2NxOF64KpwluJvuogzSeeGeutvH2o0YtvGFUi1+08jGksb8OIdJu0LpC8
+         S2yofSQm8EagzfEZm93aXGg8DVRaxIlbk8ZOsmwep7q2gWGc3hvLNVtOsh2jfCUQ9+Ae
+         znimak4uRWGFomYLg5tmtgxpDXHHeVSJbuuf1nF8tbx9RSOfJpU81xL1BdM6NCtaesKg
+         1L4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=rqaulu7H6cbAAFa+EeBtTzKSO174IAzVyd5jN0Jcuz0=;
-        b=iM0sj1nMZKvrjiRywXImfOBbVIUH2nK14VL7gAzoZFw3mq/VewMGJC7zFWLX/hspqY
-         NIVy0QXhFJ9IBeHnbEQ6g8fVG998lJSwmblbfYW+9x5TpZvOGEKOivZXykThSQSrdcya
-         e8CIgLfWPd5Q/u1bq5a65s0zXN1R9T+1IgGYvNZOaJlEuLfBD50nM8ieAk/yskJastwC
-         tM6Mn0+vCX5gGxfY7vCHZnpfXMZ1CZzynJaT8rPX212b3GsERbHhltkeVYmbYEGV1he2
-         eI5kewqzGshLyzoCe8cquzx4ub/2xN5IW1JWaEa2mbftpNMZIxotZDcPAf25bqmJLyyI
-         r0fg==
-X-Gm-Message-State: ACgBeo14NLdcrvhAzJPT1e0sYdUUlRSN+mw4a+fOA1SzHy1SZytRCcjr
-        No+z7bgR9z5D4XJ6GF9MscsFp0Zc+K4=
-X-Google-Smtp-Source: AA6agR6t8WlI8NbwXiX7x+xxlnoBgFhYHhu0wrBSx6zHOk0ilXSWKhQ21Fwqtpb6sA6KUUt0mO+veQ==
-X-Received: by 2002:a05:6402:42cb:b0:43d:bf29:cf89 with SMTP id i11-20020a05640242cb00b0043dbf29cf89mr2833210edc.400.1659630899436;
-        Thu, 04 Aug 2022 09:34:59 -0700 (PDT)
+        bh=LvrnXCwtv5XHtMInXUKtDOn3It9BRLTfFYtNjh6ssqk=;
+        b=eeSmGqe2HTG9MdgO3YpmHREIwFz5YUuvaMDsF0yVJwq0DsqfXGS6aawxRK+sTiQ38/
+         WjOrd/kUGnjEmrA2Gbp2TMPrL91rv+67lblEfN0sAbJ1FyXuZKzjYXZjv/2W8TvSaMG6
+         ejJTwdgCRn+fpT7Il//9VEMqdKD5L6aW4yVcVFATTvKwIPvL+3VI0tH6b5Kv8nE9roEk
+         yHfHXoniUzBaxXizMTuJST3VKbCfW7KXYxIwGX9zGTsxyZKvWGgEA3fCO/iHKogcUOwg
+         yPTtmSKd+mN7p53h5LxjCJfU/vPVxb5TW8uaED77nTqbNDOuMnM9HzuQYtWXEhnsAmdg
+         5KhQ==
+X-Gm-Message-State: ACgBeo0Kfu716gmrFynn4Wj7prGNdGyznrcy4Lt1VrRCsuKfIAgfkqZU
+        IVw9KAL2DYsjMmz8bkRXdRA=
+X-Google-Smtp-Source: AA6agR6WbdMBoJ1rxIgQWinbQTwv5zfPEdGzVlp7VnGWHgjI/Mpjn623/U0h88RuCPkRAvOcDwqbSw==
+X-Received: by 2002:a17:907:2bc4:b0:730:aa9c:bd86 with SMTP id gv4-20020a1709072bc400b00730aa9cbd86mr2064543ejc.341.1659631553514;
+        Thu, 04 Aug 2022 09:45:53 -0700 (PDT)
 Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id 5-20020a170906300500b007262a1c8d20sm525212ejz.19.2022.08.04.09.34.58
+        by smtp.gmail.com with ESMTPSA id e13-20020a170906314d00b00730948cd6c9sm515761eje.118.2022.08.04.09.45.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 09:34:58 -0700 (PDT)
-Date:   Thu, 4 Aug 2022 18:34:57 +0200
+        Thu, 04 Aug 2022 09:45:52 -0700 (PDT)
+Date:   Thu, 4 Aug 2022 18:45:50 +0200
 From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
 To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Cc:     linux-security-module@vger.kernel.org,
         James Morris <jmorris@namei.org>,
         Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2 3/4] samples/landlock: Extend sample tool to support
- LANDLOCK_ACCESS_FS_TRUNCATE
-Message-ID: <Yuv1MeHMLLK0ICIp@nuc>
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] landlock: Document Landlock's file truncation
+ support
+Message-ID: <Yuv3vte5eMCuIULv@nuc>
 References: <20220712211405.14705-1-gnoack3000@gmail.com>
- <20220712211405.14705-4-gnoack3000@gmail.com>
- <a300def1-587f-a770-2c3a-045e4da8d56a@digikod.net>
- <731b40e2-a95d-5eef-077b-375a50061a11@digikod.net>
- <62c37433-b9bd-ce7d-0b45-18ecfb15b248@digikod.net>
+ <20220712211405.14705-5-gnoack3000@gmail.com>
+ <d198d2b4-ebf4-c7a2-cf95-f028d48c09e5@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <62c37433-b9bd-ce7d-0b45-18ecfb15b248@digikod.net>
+In-Reply-To: <d198d2b4-ebf4-c7a2-cf95-f028d48c09e5@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 29, 2022 at 12:43:47PM +0200, Mickaël Salaün wrote:
+On Fri, Jul 29, 2022 at 12:47:46PM +0200, Mickaël Salaün wrote:
 >
-> On 29/07/2022 12:38, Mickaël Salaün wrote:
+> On 12/07/2022 23:14, Günther Noack wrote:
+> > Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
 > >
-> > On 29/07/2022 12:31, Mickaël Salaün wrote:
-> > >
-> > > On 12/07/2022 23:14, Günther Noack wrote:
-> > > > The sample tool will restrict the truncate operation if possible with
-> > > > the current kernel.
-> > >
-> > > "Update the sandboxer sample to restrict truncate actions.  This is
-> > > automatically enabled by default if the running kernel supports
-> > > LANDLOCK_ACCESS_FS_TRUNCATE, except for the paths listed in the LL_FS_RW
-> > > environment variable."
+> > Adapt the backwards compatibility example and discussion to remove the
+> > truncation flag if needed.
+> >
+> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > Link: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
+> > ---
+> >   Documentation/userspace-api/landlock.rst | 19 ++++++++++++++-----
+> >   1 file changed, 14 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> > index b86fd94ae797..41fa464cc8b8 100644
+> > --- a/Documentation/userspace-api/landlock.rst
+> > +++ b/Documentation/userspace-api/landlock.rst
+> > @@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
+> >               LANDLOCK_ACCESS_FS_MAKE_FIFO |
+> >               LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+> >               LANDLOCK_ACCESS_FS_MAKE_SYM |
+> > -            LANDLOCK_ACCESS_FS_REFER,
+> > +            LANDLOCK_ACCESS_FS_REFER |
+> > +            LANDLOCK_ACCESS_FS_TRUNCATE,
+> >       };
+> >   Because we may not know on which kernel version an application will be
+> > @@ -69,14 +70,22 @@ should try to protect users as much as possible whatever the kernel they are
+> >   using.  To avoid binary enforcement (i.e. either all security features or
+> >   none), we can leverage a dedicated Landlock command to get the current version
+> >   of the Landlock ABI and adapt the handled accesses.  Let's check if we should
+> > -remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
+> > -starting with the second version of the ABI.
+> > +remove the `LANDLOCK_ACCESS_FS_REFER` and `LANDLOCK_ACCESS_FS_TRUNCATE` access
+> > +rights, which are only supported starting with the second and third version of
+> > +the ABI.
+> >   .. code-block:: c
+> >       int abi;
+> >       abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
+> > +    if (abi == -1) {
+> > +        perror("Landlock is unsupported on this kernel");
+>
+> "Landlock is not supported with the running kernel"?
 
 Done.
 
-> > >
-> > >
-> > > >
-> > > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > > > Link: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
-> > > > ---
-> > > >     samples/landlock/sandboxer.c | 15 +++++++++++++--
-> > > >     1 file changed, 13 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> > > > index 3e404e51ec64..4c3ed0097ffd 100644
-> > > > --- a/samples/landlock/sandboxer.c
-> > > > +++ b/samples/landlock/sandboxer.c
-> > > > @@ -76,7 +76,8 @@ static int parse_path(char *env_path, const char ***const path_list)
-> > > >     #define ACCESS_FILE ( \
-> > > >     	LANDLOCK_ACCESS_FS_EXECUTE | \
-> > > >     	LANDLOCK_ACCESS_FS_WRITE_FILE | \
-> > > > -	LANDLOCK_ACCESS_FS_READ_FILE)
-> > > > +	LANDLOCK_ACCESS_FS_READ_FILE | \
-> > > > +	LANDLOCK_ACCESS_FS_TRUNCATE)
-> > > >     /* clang-format on */
-> > > > @@ -160,11 +161,15 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
-> > > >     	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
-> > > >     	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
-> > > >     	LANDLOCK_ACCESS_FS_MAKE_SYM | \
-> > > > -	LANDLOCK_ACCESS_FS_REFER)
-> > > > +	LANDLOCK_ACCESS_FS_REFER | \
-> > > > +	LANDLOCK_ACCESS_FS_TRUNCATE)
-> > > >     #define ACCESS_ABI_2 ( \
-> > > >     	LANDLOCK_ACCESS_FS_REFER)
-> > > > +#define ACCESS_ABI_3 ( \
-> > > > +	LANDLOCK_ACCESS_FS_TRUNCATE)
-> > > > +
-> > > >     /* clang-format on */
-> > > >     int main(const int argc, char *const argv[], char *const *const envp)
-> > > > @@ -226,6 +231,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
-> > > >     		return 1;
-> > > >     	}
-> > > >     	/* Best-effort security. */
-> > > > +	if (abi < 3) {
-> > > > +		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_3;
-> > > > +		access_fs_ro &= ~ACCESS_ABI_3;
-> > > > +		access_fs_rw &= ~ACCESS_ABI_3;
-> > > > +	}
-> > >
-> > > I think it is a good time to start replacing this "if" check with a
-> > > switch one:
-> > >
-> > > switch (abi) {
-> > > case 1:
-> > > 	ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
-> > > 	access_fs_rw &= ~ACCESS_ABI_2;
-> > > 	__attribute__((fallthrough));
-> > > case 2:
-> > > 	ruleset_attr.handled_access_fs &= ~ACCESS_ABI_3;
-> > > 	access_fs_rw &= ~ACCESS_ABI_3;
-> > > }
-> >
-> > Well, we can just mask ruleset_attr.handled_access_fs in this
-> > switch/case and after mask access_fs_ro and access_fs_rw after.
 >
-> In fact, we can remove ACCESS_ABI_2 and ACCESS_ABI_3 (which are only used
-> here).
+>
+> > +        return 1;
+> > +    }
+> > +    if (abi < 3) {
+> > +        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+> > +    }
+>
+> I guess we could use the same switch/case code as for the sample. I'm not
+> sure what would be the less confusing for users though.
 
-Done (all three).
+Done. (Both are mildly confusing, IMHO %-))
+
+> [...]
 
 --
