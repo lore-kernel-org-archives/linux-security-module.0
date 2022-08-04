@@ -2,128 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6D7C19F2D
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 08:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66ABCC19F2B
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 10:36:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239481AbiHDIk6 (ORCPT
+        id S232471AbiHDKgT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Aug 2022 04:40:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46388 "EHLO
+        Thu, 4 Aug 2022 06:36:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239333AbiHDIkw (ORCPT
+        with ESMTP id S230220AbiHDKgS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Aug 2022 04:40:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 065EF4E61E
-        for <linux-security-module@vger.kernel.org>; Thu,  4 Aug 2022 01:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1659602449;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=W3oflKZ7g4iM+N4+kxgav6X7gDZ8PgCWL94kRakC7bM=;
-        b=TgTn6oyH1Xea+9shmTeKwd7MYspWJTazf52Acj/XKfd2sns1CeYsErpCszwlwLhSaWACxO
-        6RxO9/Fn/H+w/FUdN8vepPWJTw/P+rljU/ACEjsqFZLXr4B3+le+UjKDp+xVCVo9uIJXpR
-        NSfi8MsYMFCDsDcsBmtlKyucjArLiAY=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-472-7SnJtrTnMsCTXDHd-RkUcQ-1; Thu, 04 Aug 2022 04:40:47 -0400
-X-MC-Unique: 7SnJtrTnMsCTXDHd-RkUcQ-1
-Received: by mail-yb1-f197.google.com with SMTP id j11-20020a05690212cb00b006454988d225so15441843ybu.10
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Aug 2022 01:40:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc;
-        bh=W3oflKZ7g4iM+N4+kxgav6X7gDZ8PgCWL94kRakC7bM=;
-        b=SCCVm5hJeQcmI801QZpcEKemR/kqwOMpAWTKpeNxIHtFqeVdyy7fec0/8SfMRoEdFo
-         KXOSptSR8QU+oDTf9Ty6wZoRGOn+8dfwNP9XRaRsB2m5OYWV6ojehMZ7Ls3jPWMe5Ox4
-         gwuD4sbWGBASqFIWxGvWy4/f0lFB7CYK2OyeQdv5CCVBoFhOwUPySI8bXgqXNmYHtf2W
-         dpKg1EidLCH1eMlJDxcecVSQqz3uxgYtatnUMSvrj075Ebc4VLAZB+AJEhh1tK5B9Q9c
-         WdPIwEvx0kYt2YRNOaaNhTjQ3zRCKVXJ9B5/qSh9nwEL/YKExuEsSoIdpCP4AMg9w7cU
-         fqVg==
-X-Gm-Message-State: ACgBeo2BvR8YO9nkjvF8yOLKCOw7PUvhnCXmw+xBsmiVRQugg20vjEFH
-        WeQb1sDzX6BCEQkX2VtuE8YQsb57NglemS4yd4ZzwKFT41kg0kKA1jLcSuNXCkRORfsDKANI3hw
-        zfFmwgL7D17bPaxHx+jpR0R8i08qeVb6MallgEgpgWkdRXOaYbsk0
-X-Received: by 2002:a81:7c03:0:b0:328:25ee:40d with SMTP id x3-20020a817c03000000b0032825ee040dmr772945ywc.12.1659602446568;
-        Thu, 04 Aug 2022 01:40:46 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR7fJPHYOm6mQ0iaP+t9lkWuo9d4kCbFvcMsT6xSOPGMlLHLE0dIlFmyYiKvxL5Yjqv125SXMhI0twSJXUsquEU=
-X-Received: by 2002:a81:7c03:0:b0:328:25ee:40d with SMTP id
- x3-20020a817c03000000b0032825ee040dmr772931ywc.12.1659602446379; Thu, 04 Aug
- 2022 01:40:46 -0700 (PDT)
+        Thu, 4 Aug 2022 06:36:18 -0400
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 841E920BEB
+        for <linux-security-module@vger.kernel.org>; Thu,  4 Aug 2022 03:36:16 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lz4rt6SBMzMqDHS;
+        Thu,  4 Aug 2022 12:36:14 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lz4rt1sqPzlrKcW;
+        Thu,  4 Aug 2022 12:36:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1659609374;
+        bh=g2rymSQG1vHFCBe1enE68xLQbZN2nl3oT5hI4acwh2A=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=XNs9eaQkVQ2v0MMthjZKwzaY8OGZAXcnWW2hcNtoyEHYo8y7kCHLLaeP1G66Ib7UY
+         iV1y8AnZq0D+jlSkSTOUlhfuh1KDMpFbeQbvu4cbl2GA3LH2Rg8ur7t0HLb42wed/v
+         dsSdeNGDtYvKTavZtUjKB3nL9Tmnk+VoHj/T7FoQ=
+Message-ID: <f1fc4e6e-e2a6-3ec7-2d3b-215111a4b9ae@digikod.net>
+Date:   Thu, 4 Aug 2022 12:36:13 +0200
 MIME-Version: 1.0
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Thu, 4 Aug 2022 10:40:35 +0200
-Message-ID: <CAFqZXNtBouZcXOpfs7agZU8xsW4VcEoHqdTAX9No0uCWrU613g@mail.gmail.com>
-Subject: [BUG] watch_queue resource accounting seems broken
-To:     David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/mixed; boundary="0000000000004938b705e5664e03"
+User-Agent: 
+Content-Language: en-US
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Guillaume <guillaume.tucker@gmail.com>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>, Tim.Bird@sony.com,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH] selftests/landlock: fix broken include of
+ linux/landlock.h
+In-Reply-To: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---0000000000004938b705e5664e03
-Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On 03/08/2022 22:13, Guillaume Tucker wrote:
+> Revert part of the earlier changes to fix the kselftest build when
+> using a sub-directory from the top of the tree as this broke the
+> landlock test build as a side-effect when building with "make -C
+> tools/testing/selftests/landlock".
+> 
+> Reported-by: Mickaël Salaün <mic@digikod.net>
+> Fixes: a917dd94b832 ("selftests/landlock: drop deprecated headers dependency")
+> Fixes: f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")
+> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+> ---
+>   tools/testing/selftests/landlock/Makefile | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
+> index a6959df28eb0..02868ac3bc71 100644
+> --- a/tools/testing/selftests/landlock/Makefile
+> +++ b/tools/testing/selftests/landlock/Makefile
+> @@ -9,10 +9,13 @@ TEST_GEN_PROGS := $(src_test:.c=)
+>   TEST_GEN_PROGS_EXTENDED := true
+>   
+>   OVERRIDE_TARGETS := 1
+> +top_srcdir := ../../../..
 
-It seems there is something wrong with resource accounting for
-watch_queues. When a watch_queue is created, its size is set, and then
-both ends are closed, it seems the resource usage increment is not
-released as it should be and repeated creations of watch_queues
-eventually (and quite fast!) exhaust the per-user pipe limit. I tested
-this only on kernels 5.19 and 5.17.5, but I suspect the bug has been
-there since the watch_queue introduction.
+Not sure it changes much, but most other selftests Makefiles use 
+"top_srcdir = ../../../.." (without ":="). Why this change?
 
-The issue can be reproduced by the attached C program. When it is run
-by an unprivileged user (or by root with cap_sys_admin and
-cap_sys_resource dropped), the pipe allocation/size setting starts to
-fail after a few iterations.
 
-I found this bug thanks to selinux-testuite's [1] watchkey test, which
-started repeatably failing after I ran it a couple times in a row.
-
-I'm not very familiar with this code area, so I'm hoping that someone
-who understands the inner workings of watch_queue will be able and
-willing to look into it and fix it.
-
-Thanks,
-
-[1] https://github.com/SELinuxProject/selinux-testsuite/
-
---
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
---0000000000004938b705e5664e03
-Content-Type: text/x-c-code; charset="US-ASCII"; name="watch_queue_bug.c"
-Content-Disposition: attachment; filename="watch_queue_bug.c"
-Content-Transfer-Encoding: base64
-Content-ID: <f_l6dplwvp0>
-X-Attachment-Id: f_l6dplwvp0
-
-I2RlZmluZSBfR05VX1NPVVJDRQojaW5jbHVkZSA8c3RkbGliLmg+CiNpbmNsdWRlIDxzdGRpby5o
-PgojaW5jbHVkZSA8c3RyaW5nLmg+CiNpbmNsdWRlIDx1bmlzdGQuaD4KI2luY2x1ZGUgPGVycm5v
-Lmg+CiNpbmNsdWRlIDxzeXMvaW9jdGwuaD4KI2luY2x1ZGUgPGxpbnV4L3dhdGNoX3F1ZXVlLmg+
-CgojZGVmaW5lIEJVRl9TSVpFIDI1NgoKaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KQp7
-CiAgICBpbnQgaSwgcGlwZWZkWzJdLCByZXN1bHQ7CgogICAgZm9yIChpID0gMDsgaSA8IDEwMDA7
-IGkrKykgewogICAgICAgIGZwcmludGYoc3RkZXJyLCAiJWRcbiIsIGkpOwogICAgICAgIHJlc3Vs
-dCA9IHBpcGUyKHBpcGVmZCwgT19OT1RJRklDQVRJT05fUElQRSk7CiAgICAgICAgaWYgKHJlc3Vs
-dCA8IDApIHsKICAgICAgICAgICAgZnByaW50ZihzdGRlcnIsICJGYWlsZWQgdG8gY3JlYXRlIHBp
-cGUyKDIpOiAlc1xuIiwKICAgICAgICAgICAgICAgICAgICBzdHJlcnJvcihlcnJubykpOwogICAg
-ICAgICAgICByZXR1cm4gZXJybm87CiAgICAgICAgfQoKICAgICAgICByZXN1bHQgPSBpb2N0bChw
-aXBlZmRbMF0sIElPQ19XQVRDSF9RVUVVRV9TRVRfU0laRSwgQlVGX1NJWkUpOwogICAgICAgIGlm
-IChyZXN1bHQgPCAwKSB7CiAgICAgICAgICAgIGZwcmludGYoc3RkZXJyLCAiRmFpbGVkIHRvIHNl
-dCB3YXRjaF9xdWV1ZSBzaXplOiAlc1xuIiwKICAgICAgICAgICAgICAgICAgICBzdHJlcnJvcihl
-cnJubykpOwogICAgICAgICAgICByZXR1cm4gZXJybm87CiAgICAgICAgfQoKICAgICAgICBjbG9z
-ZShwaXBlZmRbMF0pOwogICAgICAgIGNsb3NlKHBpcGVmZFsxXSk7CiAgICB9CiAgICByZXR1cm4g
-MDsKfQo=
---0000000000004938b705e5664e03--
-
+>   include ../lib.mk
+>   
+> +khdr_dir = $(top_srcdir)/usr/include
+> +
+>   $(OUTPUT)/true: true.c
+>   	$(LINK.c) $< $(LDLIBS) -o $@ -static
+>   
+> -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
+> -	$(LINK.c) $< $(LDLIBS) -o $@ -lcap
+> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
+> +	$(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
