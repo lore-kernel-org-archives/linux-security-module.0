@@ -2,156 +2,98 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E39C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Aug 2022 23:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0062C25B08
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Aug 2022 00:59:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237021AbiHCXMf (ORCPT
+        id S238864AbiHDA7h (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Aug 2022 19:12:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50062 "EHLO
+        Wed, 3 Aug 2022 20:59:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbiHCXMe (ORCPT
+        with ESMTP id S238861AbiHDA7g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Aug 2022 19:12:34 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68FD25C366
-        for <linux-security-module@vger.kernel.org>; Wed,  3 Aug 2022 16:12:33 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id s16so5560829ilp.3
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Aug 2022 16:12:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7Yh1GeaOYFjJIe9+oI56LqaRda7Oz6X4Jb6/nxg3/9U=;
-        b=N5uVyzQvv03TkDg8UyAd605uXTbQuazjvAkrI6JQpMVGUkEKHR4rKR8FxI6dTgw8vI
-         k1pPzVDnRQKYW9RNFv9ZR+4mBg5Jc0BlRRnPtZiwWgBE4TQH2GcNScnkW8F3kCKwYljF
-         bQzOld/VoOaupxxTHsqSwzGmB9ETtTpbsGMwo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7Yh1GeaOYFjJIe9+oI56LqaRda7Oz6X4Jb6/nxg3/9U=;
-        b=Coa/KaBEsmDC4BxMA5+GRIT9yGrd75cES38ML38Tpc4JeSAzpJM31WEMYHCr4NZNXl
-         KqU6I+ijFUmLjAuUA/AijqjR+X+7K+WTpphz1P10u0jiUrR0mefCLMECXMIqD28MWWPM
-         XZMQVou7dBFBwQCtjFV7MTGPpts92AMZ4czKy87SdNsA62pEY3krhkiafPXhK3kzFcAT
-         eHtdsNt0xCn47mH/Z1FiEoxioOelgo8c1Xh7F8gMUsbeX5Sq6nr3fZtDLPA4CctKrcbj
-         Y3El95M5PXD6sRWTm4v1v1A6mBjvBW1ca8fOIEqUNT8wrww1V8XME/WGtLSJMZe8WAmG
-         qi8w==
-X-Gm-Message-State: AJIora+p26ZIaFd1HJZFWzdolr+gQ4oG85oY0cBPVJIUHzWias9htDqb
-        qBLmRCMNP0n+LeIAO7F97X94KQ==
-X-Google-Smtp-Source: AGRyM1vs1lsRZKuWF7cjOzHXC4X4N1DpumplKPDthw5AOMD4g9p5AQ1gT2p3Es01r6dY4WUaSPOhiA==
-X-Received: by 2002:a05:6e02:194f:b0:2dc:7d9d:3b06 with SMTP id x15-20020a056e02194f00b002dc7d9d3b06mr11515873ilu.242.1659568352770;
-        Wed, 03 Aug 2022 16:12:32 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id cx10-20020a056638490a00b0034142dad202sm1088057jab.31.2022.08.03.16.12.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Aug 2022 16:12:32 -0700 (PDT)
-Subject: Re: [GIT PULL] Kselftest update for Linux 5.20-rc1
-To:     Guillaume Tucker <guillaume.tucker@collabora.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <430ef132-2ac7-e1be-68ed-3d9c27382143@linuxfoundation.org>
- <2838c247-0648-3828-efb3-e11d7a0616b2@digikod.net>
- <84560b65-12ed-da24-3698-45484f80802a@linuxfoundation.org>
- <fa7fb9b3-169a-199f-22da-006777a14e03@collabora.com>
- <15a23d4b-ee26-a6a1-a785-b640c550bfb8@linuxfoundation.org>
- <7a412c45-4536-1f0b-d04e-24b2063ac034@collabora.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <c227526a-6cf6-247a-df8f-6574e3c748ad@linuxfoundation.org>
-Date:   Wed, 3 Aug 2022 17:12:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 3 Aug 2022 20:59:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440655F9AF;
+        Wed,  3 Aug 2022 17:59:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B839861751;
+        Thu,  4 Aug 2022 00:59:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98755C433C1;
+        Thu,  4 Aug 2022 00:59:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659574773;
+        bh=c0/kYEt5J2FdFJ1FwCq/4THeVhzcRRwZ4/5qZhcI7OE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=F4wcugpqGGlPXXs70am0ZjVTUrZiqaKLeXs3OasZWwFdN1LltdJ4eybaDZ6H0ns5y
+         v6uB4vaqKembrVC3p0SxJHJlHmqCBe/dU50f7AyBp/tWsTyk1HD4O6CQFuOE86dcid
+         G0Nh7kIvy/CPexZ3/IOJF+CQE9+d5L7VFpu9zaqeuuLR8Y/8SKN7+3Fo9SVGrqnfgC
+         tWWzGeEToXMW6Vex1z+NbfJubFno50C/TkJscFAhkDFvjh9xBPcOm8a1TjtrsB3vxT
+         czEg5uT1k7lwXWapU3btmj1gxrU2X4GutaCBtKlp3z9oqXiIdMQfSijMSZ/jNcKmNg
+         yzkbTbJIgOcIA==
+Date:   Thu, 4 Aug 2022 03:59:30 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Matthew Garrett <mgarrett@aurora.tech>
+Cc:     Evan Green <evgreen@chromium.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniil Lunev <dlunev@google.com>, zohar@linux.ibm.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Len Brown <len.brown@intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
+        keyrings@vger.kernel.org,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 00/10] Encrypted Hibernation
+Message-ID: <YusZ8gD/LjiAXadR@kernel.org>
+References: <20220504232102.469959-1-evgreen@chromium.org>
+ <20220506160807.GA1060@bug>
+ <CAE=gft6m75T0UC2DBhfFhuSMW6TK7aatD_04sQ18WosgGVsATw@mail.gmail.com>
+ <CAJZ5v0gxq=EA_WWUiCR_w8o87iTHDR7OC5wi=GRBaAQS2ofd5w@mail.gmail.com>
+ <CAE=gft6V6RLc-d4AOuRUVU2u1jMGghDRSrFqiCqMCLxemui8Pw@mail.gmail.com>
+ <CAE=gft5OYAgosqmwNkk=Cwoooeg93Njmnzfz=gwCaLB0Ts+=sw@mail.gmail.com>
+ <CAE=gft6sPkhNcz7+fJuDzQo2f8fM_0Wv_OWC9W2LyvXd6M6zeQ@mail.gmail.com>
+ <CAHSSk05JEcZfS2tc22F+m76T3vZt-mZ7zUQaGRgSanKaFc5xBg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7a412c45-4536-1f0b-d04e-24b2063ac034@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHSSk05JEcZfS2tc22F+m76T3vZt-mZ7zUQaGRgSanKaFc5xBg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/3/22 2:22 PM, Guillaume Tucker wrote:
-> On 03/08/2022 16:32, Shuah Khan wrote:
->> On 8/2/22 10:44 PM, Guillaume Tucker wrote:
->>> On 02/08/2022 15:29, Shuah Khan wrote:
->>>> On 8/2/22 3:51 AM, Mickaël Salaün wrote:
->>>>> Hi,
->>>>>
->>>>> This change breaks the Landlock test build when performed on the tools/testing/selftests/landlock directory because the (non-system/up-to-date) kernel headers aren't found. Looking at the use of top_srcdir and HDR_PATH, it seems that multiple subsystems are using this feature. I consider this change a regression.
->>>>>
->>>>
->>>> I did a build test from the top level before sending the pull request
->>>> and didn't catch this breakage as a result. This breaks when build is
->>>> run from the test directory.
->>>>
->>>> We have had several problems related to khdr_dir and target and decided
->>>> to move away from it with this change.
->>>>
->>>>> It also removes the check on up-to-date kernel headers (thanks to the Makefile's target timestamp).
->>>>>
->>>>> I wasn't CCed for this change impacting Landlock [1]. Please keep in mind to add at least maintainers and related mailing-lists for changes on related subsystems.
->>>>>
->>>>
->>>> That is the usual practice and if I notice missing maintainers, I add
->>>> them. We missed this one.
->>>>
->>>>> The following patch almost revert commit a917dd94b832 ("selftests/landlock: drop deprecated headers dependency") and partially fixes commit 49de12ba06ef ("selftests: drop KSFT_KHDR_INSTALL make target"):
->>>>>
->>>>
->>>> Guillaume,
->>>>
->>>> Will you be able to look at this and send a patch on top? I will
->>>> send another pull request before merge window closes?
->>>
->>> Sure, I'll take a look today.
->>>
->>
->> Thank you.
+On Tue, Aug 02, 2022 at 11:36:43AM -0700, Matthew Garrett wrote:
+> On Mon, Aug 1, 2022 at 3:33 PM Evan Green <evgreen@chromium.org> wrote:
 > 
-> OK I just sent "selftests/landlock: fix broken include of linux/landlock.h"
+> > One more bump here, as we'd really love to get encrypted hibernation
+> > to a form upstream would accept if at all possible. We were
+> > considering landing this in our Chrome OS tree for now, then coming
+> > back in a couple months with a "we've been baking this ourselves and
+> > it's going so great, oooh yeah". I'm not sure if upstream would find
+> > that compelling or not. But in any case, some guidance towards making
+> > this more upstream friendly would be well appreciated.
+> >
+> > One thing I realized in attempting to pick this myself is that the
+> > trusted key blob format has moved to ASN.1. So I should really move
+> > the creation ticket to the new ASN.1 format (if I can figure out the
+> > right OID for that piece), which would allow me to drop a lot of the
+> > ugly stuff in tpm2_unpack_blob(). Maybe if I get no other comments
+> > I'll work on that and resend.
 > 
-> This does fix the build when doing:
-> 
->    make -C tools/testing/selftests/landlock
-> 
+> I've been revamping my TPM-backed verified hibernation implementation
+> based on this work, so I'd definitely be enthusiastic about it being
+> mergeable.
 
-Thank you for fixing this quickly.
+BTW, is it tested with QEMU + swtpm?
 
-> However I've also noticed the landlock test is failing to build
-> when make is invoked from the top-level directory and using a
-> sub-directory for the build output, in other words my earlier
-> patches didn't fix the build for this test, but that's not a
-> regression.
-> 
-
-Okay.
-
-> I'll see if that can be fixed too while also not breaking
-> the "-C" sub-make build.
-> 
-
-Sounds good. Supporting all these use-cases makes it a bit hard.
-
->>> Also I'll see if we can add some extra build tests in KernelCI
->>> for the kselftest tree to catch issues like these automatically.
->>>
->>
-
-> Great.  Well I shall try and get that set up before making further changes ;)
-> 
-
-Thanks.
-
-> 
-> P.S. The output of gen_tar is showing "-ne " on every line, is that expected?
->       For example: -ne Emit Tests for alsa
-> 
-
-Hmm. I will try and let you. I haven't used this one in a bit.
-
-thanks,
--- Shuah
+BR, Jarkko
