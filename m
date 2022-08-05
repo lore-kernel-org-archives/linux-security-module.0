@@ -2,95 +2,115 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D78AC25B08
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Aug 2022 17:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E85EC3F6B0
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Aug 2022 17:16:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240754AbiHERMq (ORCPT
+        id S241069AbiHERQK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Aug 2022 13:12:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34628 "EHLO
+        Fri, 5 Aug 2022 13:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237513AbiHERMp (ORCPT
+        with ESMTP id S236261AbiHERQJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Aug 2022 13:12:45 -0400
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [IPv6:2001:1600:3:17::8faf])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D4B91571B
-        for <linux-security-module@vger.kernel.org>; Fri,  5 Aug 2022 10:12:43 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lzsbt1l2KzMqKDR;
-        Fri,  5 Aug 2022 19:12:42 +0200 (CEST)
+        Fri, 5 Aug 2022 13:16:09 -0400
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C952A422E7
+        for <linux-security-module@vger.kernel.org>; Fri,  5 Aug 2022 10:16:07 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lzsgp0LP4zMqK1c;
+        Fri,  5 Aug 2022 19:16:06 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lzsbs5rrZzln8Vs;
-        Fri,  5 Aug 2022 19:12:41 +0200 (CEST)
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lzsgn3LXJzlrKd0;
+        Fri,  5 Aug 2022 19:16:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1659719562;
-        bh=ByfgOk0a145mOwBW4wWN/5/1GIUsi6+DCI0MKP3Cg1Y=;
+        s=20191114; t=1659719766;
+        bh=lNZkRZlxYcCJLjsqfaYlILC0M7oDXWgtnjCf/3RVbso=;
         h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=j/Qcv/0GenZDzBu7Ueu55i+FkibDfgFYIat5DwKA0Vx2j8pKXhgJ1RLtcWH8Mcv3+
-         IC8FMyEJHFMZmXuvGlqt+pAHl4/w3UmDZH00GsrtZOTh2g3GjXsRGIal6u6J5Suza7
-         sDDoh1e3JwiNStRW/xkgotMHOj6NGwm2V3b7Xb3A=
-Message-ID: <cf51d454-0b7d-ed21-3a7f-9b0e109a5e98@digikod.net>
-Date:   Fri, 5 Aug 2022 19:12:41 +0200
+        b=nlMcoVN0nI7/hM8/BvLhgkqom/D3l9NBJGb+AvenQOKT9B64m2q2mF6yym8jifJdc
+         wagOCf6RToWl4xwARp+ViE9QU+5XJJXVxfzmvPzOU8Pvtv21I0FjKLlZCtCPFud9Kv
+         TdDiviqF5B+g0Tnm7E+EsSnVaX4q9lsBv8m0JBpw=
+Message-ID: <3de9a64e-6f27-8f76-9626-6ee082d382ea@digikod.net>
+Date:   Fri, 5 Aug 2022 19:16:04 +0200
 MIME-Version: 1.0
 User-Agent: 
 Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-References: <20220707200612.132705-1-gnoack3000@gmail.com>
- <dbb0cd04-72a8-b014-b442-a85075314464@digikod.net> <YsqihF0387fBeiVa@nuc>
- <b7ee2d01-2e33-bf9c-3b56-b649e2fde0fb@digikod.net> <YuvvXI5Y2azqiQyU@nuc>
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>, Tim.Bird@sony.com,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
+ <f1fc4e6e-e2a6-3ec7-2d3b-215111a4b9ae@digikod.net>
+ <76a2ac43-6e3d-0b62-7c8c-eec5f247f8f8@collabora.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH 0/2] landlock: truncate(2) support
-In-Reply-To: <YuvvXI5Y2azqiQyU@nuc>
+Subject: Re: [PATCH] selftests/landlock: fix broken include of
+ linux/landlock.h
+In-Reply-To: <76a2ac43-6e3d-0b62-7c8c-eec5f247f8f8@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 04/08/2022 18:10, Günther Noack wrote:
-> On Fri, Jul 29, 2022 at 01:58:17PM +0200, Mickaël Salaün wrote:
-
-[...]
-
->>>> While we may question whether a dedicated access right should be added for
->>>> the Landlock use case, two arguments are in favor of this approach:
->>>> - For compatibility reasons, the kernel must follow the semantic of a
->>>> specific Landlock ABI, otherwise it could break user space. We could still
->>>> backport this patch and merge it with the ABI 1 and treat it as a bug, but
->>>> the initial version of Landlock was meant to be an MVP, hence this lack of
->>>> access right.
->>>> - There is a specific access right for Capsicum (CAP_FTRUNCATE) that could
->>>> makes more sense in the future.
->>>>
->>>> Following the Capsicum semantic, I think it would be a good idea to also
->>>> check for the O_TRUNC open flag:
->>>> https://www.freebsd.org/cgi/man.cgi?query=rights
->>>
->>> open() with O_TRUNC was indeed a case I had not thought about - thanks
->>> for pointing it out.
->>>
->>> I started adding some tests for it, and found to my surprise that
->>> open() *is* already checking security_path_truncate() when it is
->>> truncating files. So there is a chance that we can get away without a
->>> special check for O_TRUNC in the security_file_open hook.
->>>
->>> The exact semantics might be slightly different to Capsicum though -
->>> in particular, the creat() call (= open with O_TRUNC|O_CREAT|O_WRONLY)
->>> will require the Landlock truncate right when it's overwriting an
->>> existing regular file, but it will not require the Landlock truncate
->>> right when it's creating a new file.
+On 04/08/2022 21:38, Guillaume Tucker wrote:
+> On 04/08/2022 12:36, Mickaël Salaün wrote:
 >>
->> Is the creat() check really different from what is done by Capsicum?
+>> On 03/08/2022 22:13, Guillaume Tucker wrote:
+>>> Revert part of the earlier changes to fix the kselftest build when
+>>> using a sub-directory from the top of the tree as this broke the
+>>> landlock test build as a side-effect when building with "make -C
+>>> tools/testing/selftests/landlock".
+>>>
+>>> Reported-by: Mickaël Salaün <mic@digikod.net>
+>>> Fixes: a917dd94b832 ("selftests/landlock: drop deprecated headers dependency")
+>>> Fixes: f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")
+>>> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+>>> ---
+>>>    tools/testing/selftests/landlock/Makefile | 7 +++++--
+>>>    1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
+>>> index a6959df28eb0..02868ac3bc71 100644
+>>> --- a/tools/testing/selftests/landlock/Makefile
+>>> +++ b/tools/testing/selftests/landlock/Makefile
+>>> @@ -9,10 +9,13 @@ TEST_GEN_PROGS := $(src_test:.c=)
+>>>    TEST_GEN_PROGS_EXTENDED := true
+>>>      OVERRIDE_TARGETS := 1
+>>> +top_srcdir := ../../../..
+>>
+>> Not sure it changes much, but most other selftests Makefiles use "top_srcdir = ../../../.." (without ":="). Why this change?
 > 
-> TBH, I'm not sure, it might also do the same thing. I don't have a
-> FreeBSD machine at hand and am not familiar with Capsicum in detail.
-> Let me know if you think we should go to the effort of ensuring the
-> compatibility down to that level.
+> I didn't simply apply your diff but edited the file by hand to
+> test various combinations and see what side effects it might
+> have.  So when I added top_srcdir I typed it by hand and used :=
+> as a reflex since it's the standard way of assigning variables.
+> Using = instead only makes a difference when the r-value has
+> something dynamic as it will be re-evaluated every time it's
+> used.  So for constant values, I guess it's more of a question of
+> coding style and conventions.  Maybe all the top_srcdir variables
+> should be changed to := but that's unnecessary churn...  Either
+> way, it's benign.
+> 
+> Shuah, feel free to change this back to = in this particular case
+> if it's more consistent with other Makefiles.  Consistency is
+> often better than arbitrary rules.  Or conversely, change to :=
+> for the khdr_dir definition...  Entirely up to you I think.
 
-I'll take a look at the code, but it makes sense to implement it like 
-you did.
+Looks good to me, thanks! Shuah, feel free to add
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+
+> 
+> Thanks,
+> Guillaume
+> 
+>>>    include ../lib.mk
+>>>    +khdr_dir = $(top_srcdir)/usr/include
+>>> +
+>>>    $(OUTPUT)/true: true.c
+>>>        $(LINK.c) $< $(LDLIBS) -o $@ -static
+>>>    -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
+>>> -    $(LINK.c) $< $(LDLIBS) -o $@ -lcap
+>>> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
+>>> +    $(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
+> 
