@@ -2,86 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4205BC19F2D
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Aug 2022 10:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 362AEC3F6B0
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Aug 2022 11:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbiHFKN3 (ORCPT
+        id S238543AbiHFLVJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 6 Aug 2022 06:13:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36386 "EHLO
+        Sat, 6 Aug 2022 07:21:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbiHFKN2 (ORCPT
+        with ESMTP id S238569AbiHFLVI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 6 Aug 2022 06:13:28 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF2D112A81;
-        Sat,  6 Aug 2022 03:13:26 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id v10so1857890ljh.9;
-        Sat, 06 Aug 2022 03:13:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f5buEkOG5SU9AwpY1A3SFs8pS1q6UuxaXzfG0OHWAVg=;
-        b=Ee20urYg6Q5t8YFdUdLeIBgZPa8KFrTquVccZRj+EXlz86pyniz9P7oomOfeq5g5JH
-         Vq+BHZJE7eAJcvF/zVTptoYaaBcsPZxwf1vn/YlaGc7FAyW5yv6OmQub3OCjq7Ach/1y
-         HBlXwznvr6+XHWz1yhfEsVt61ZqAsOg8Seq36OOADBZAjxtZTygIXcjY8Y08nUHeBZop
-         97jYwyMOUqXycSTwmXLZc3U6p10jQBFBjmQQPAudjjqkFZ9D1fYnM9nx5S3yO4nSlfCG
-         Oe8Skmwn+LXyXl4n9fb7aJqFvFI2j3l+sqY/dkwqvyf/ndIsemJk5bzgAS6tqlKa5aai
-         kV/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f5buEkOG5SU9AwpY1A3SFs8pS1q6UuxaXzfG0OHWAVg=;
-        b=YTrXtlWfQYhet+Q7WTqlAZ+yuM9MUpOILWatLgZXwrJHTEW/fzej5ch45x8ufDdDOC
-         V6J0i4yj83+l1c4qDMIrBHWNzknKTCVeWuVXBHvzFZxJgLxW0WrnziO/nMVQrGeMqfBd
-         +6pvYntH8GsxCU0iNZqgq+Ic85FIu5SMmqDxlYvQQebS8zz25UCKDgLaul7OECpogUwG
-         gYjME1PWdxks5JXVVDnO1NMRqJ1DxT2tXDFcXuf63qFyaSlBE4l+1dFzkShyWSRu34Dl
-         3xxD9yvXOt93DdVSoJr9VfsZUr2A85HGzgkJZvSjRve46lYNNRKVHIoG9CTyTdnoLtxn
-         qm4g==
-X-Gm-Message-State: ACgBeo3HGoyV7NAWEyt0bzrgGY90vvBZ970EYycvRd2HuwJD8qP3Ys2c
-        bWOFW1aXLMVsWmTXCSx8qUI=
-X-Google-Smtp-Source: AA6agR4o9F7TTNICeUag3oz7A3uJ2Xc2EiGmj/KS8IiH1fETqa/CKEMuYqDk5KO3ejLMLCBLikK0vQ==
-X-Received: by 2002:a2e:9d91:0:b0:25e:dd34:f5d6 with SMTP id c17-20020a2e9d91000000b0025edd34f5d6mr31186ljj.501.1659780805056;
-        Sat, 06 Aug 2022 03:13:25 -0700 (PDT)
-Received: from localhost.localdomain (91-158-88-16.elisa-laajakaista.fi. [91.158.88.16])
-        by smtp.gmail.com with ESMTPSA id g9-20020a2eb5c9000000b0025e87b1fdbcsm494461ljn.63.2022.08.06.03.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Aug 2022 03:13:24 -0700 (PDT)
-From:   Topi Miettinen <toiwoton@gmail.com>
-To:     paul@paul-moore.com, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Topi Miettinen <toiwoton@gmail.com>
-Subject: [PATCH] netlabel: fix typo in comment
-Date:   Sat,  6 Aug 2022 13:12:53 +0300
-Message-Id: <20220806101253.13865-1-toiwoton@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Sat, 6 Aug 2022 07:21:08 -0400
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E87E38B8;
+        Sat,  6 Aug 2022 04:21:07 -0700 (PDT)
+Date:   Sat, 06 Aug 2022 11:20:56 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1659784862; x=1660044062;
+        bh=DDaQcBxHbVdvNZavclAGBdmxiITV+EWaWcRqMUPt5p8=;
+        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:Feedback-ID:From:To:
+         Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID;
+        b=BGrH2+qcjrK0MP5HogcDJv73gftDl1EkjqxRPM6kXvzN86aRgi9OleJXcj4jqVAyr
+         uQnODZHK6+WsXnBihCaLaMjAukgk06TdXzmxnnAbikVrljJdn1Ys9hht2RfaynCO82
+         eCRwVJHXTcCIcnPMi8uYPefUssQVA5LBfcE1BwRrV9gYP+P5HkktBeAah/mvcDct1h
+         Hc0A9uzrYMVNQEJssCRIW1EbwtmSxMlw5P1nzlcXhWFiCkDjs/N3MTHoieC+k4tPym
+         3b3uUGo7xG51axne0JPaBceJdFfZys44URGC3X/xCV9Q6wSj/UfTPfK8FtxRp/9Fzb
+         KTMA7+kwv51uw==
+To:     linux-kernel@vger.kernel.org
+From:   Orlando Chamberlain <redecorating@protonmail.com>
+Cc:     jarkko@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        gargaditya08@live.com, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Orlando Chamberlain <redecorating@protonmail.com>,
+        stable@vger.kernel.org, Samuel Jiang <chyishian.jiang@gmail.com>
+Reply-To: Orlando Chamberlain <redecorating@protonmail.com>
+Subject: [PATCH 1/1] efi: Correct Macmini capitalisation in uefi cert quirk
+Message-ID: <20220806111940.6950-1-redecorating@protonmail.com>
+Feedback-ID: 28131841:user:proton
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-'IPv4 and IPv4' should be 'IPv4 and IPv6'.
+It turns out Apple doesn't capitalise the "mini" in "Macmini", which is
+inconsistent with other model line names.
 
-Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+Correct the capitalisation of Macmini in the quirk for skipping loading
+platform certs on T2 Macs.
+
+Currently users get:
+
+------------[ cut here ]------------
+[Firmware Bug]: Page fault caused by firmware at PA: 0xffffa30640054000
+WARNING: CPU: 1 PID: 8 at arch/x86/platform/efi/quirks.c:735 efi_crash_grac=
+efully_on_page_fault+0x55/0xe0
+Modules linked in:
+CPU: 1 PID: 8 Comm: kworker/u12:0 Not tainted 5.18.14-arch1-2-t2 #1 4535eb3=
+fc40fd08edab32a509fbf4c9bc52d111e
+Hardware name: Apple Inc. Macmini8,1/Mac-7BA5B2DFE22DDD8C, BIOS 1731.120.10=
+.0.0 (iBridge: 19.16.15071.0.0,0) 04/24/2022
+Workqueue: efi_rts_wq efi_call_rts
+...
+---[ end trace 0000000000000000 ]---
+efi: Froze efi_rts_wq and disabled EFI Runtime Services
+integrity: Couldn't get size: 0x8000000000000015
+integrity: MODSIGN: Couldn't get UEFI db list
+efi: EFI Runtime Services are disabled!
+integrity: Couldn't get size: 0x8000000000000015
+integrity: Couldn't get UEFI dbx list
+
+Fixes: 155ca952c7ca ("efi: Do not import certificates from UEFI Secure Boot=
+ for T2 Macs")
+Cc: stable@vger.kernel.org
+Cc: Aditya Garg <gargaditya08@live.com>
+Tested-by: Samuel Jiang <chyishian.jiang@gmail.com>
+Signed-off-by: Orlando Chamberlain <redecorating@protonmail.com>
 ---
- net/netlabel/netlabel_unlabeled.c | 2 +-
+ security/integrity/platform_certs/load_uefi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index 8490e46359ae..0555dffd80e0 100644
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -885,7 +885,7 @@ static int netlbl_unlabel_staticadd(struct sk_buff *skb,
- 
- 	/* Don't allow users to add both IPv4 and IPv6 addresses for a
- 	 * single entry.  However, allow users to create two entries, one each
--	 * for IPv4 and IPv4, with the same LSM security context which should
-+	 * for IPv4 and IPv6, with the same LSM security context which should
- 	 * achieve the same result. */
- 	if (!info->attrs[NLBL_UNLABEL_A_SECCTX] ||
- 	    !info->attrs[NLBL_UNLABEL_A_IFACE] ||
--- 
-2.35.1
+diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integ=
+rity/platform_certs/load_uefi.c
+index 093894a640dc..b78753d27d8e 100644
+--- a/security/integrity/platform_certs/load_uefi.c
++++ b/security/integrity/platform_certs/load_uefi.c
+@@ -31,7 +31,7 @@ static const struct dmi_system_id uefi_skip_cert[] =3D {
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,2") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir9,1") },
+-=09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacMini8,1") },
++=09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "Macmini8,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacPro7,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,1") },
+ =09{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,2") },
+--=20
+2.37.1
+
 
