@@ -2,115 +2,86 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E85EC3F6B0
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Aug 2022 17:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4205BC19F2D
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Aug 2022 10:13:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241069AbiHERQK (ORCPT
+        id S229970AbiHFKN3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Aug 2022 13:16:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37382 "EHLO
+        Sat, 6 Aug 2022 06:13:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236261AbiHERQJ (ORCPT
+        with ESMTP id S229695AbiHFKN2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Aug 2022 13:16:09 -0400
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C952A422E7
-        for <linux-security-module@vger.kernel.org>; Fri,  5 Aug 2022 10:16:07 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Lzsgp0LP4zMqK1c;
-        Fri,  5 Aug 2022 19:16:06 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Lzsgn3LXJzlrKd0;
-        Fri,  5 Aug 2022 19:16:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1659719766;
-        bh=lNZkRZlxYcCJLjsqfaYlILC0M7oDXWgtnjCf/3RVbso=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=nlMcoVN0nI7/hM8/BvLhgkqom/D3l9NBJGb+AvenQOKT9B64m2q2mF6yym8jifJdc
-         wagOCf6RToWl4xwARp+ViE9QU+5XJJXVxfzmvPzOU8Pvtv21I0FjKLlZCtCPFud9Kv
-         TdDiviqF5B+g0Tnm7E+EsSnVaX4q9lsBv8m0JBpw=
-Message-ID: <3de9a64e-6f27-8f76-9626-6ee082d382ea@digikod.net>
-Date:   Fri, 5 Aug 2022 19:16:04 +0200
-MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Guillaume Tucker <guillaume.tucker@collabora.com>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Anders Roxell <anders.roxell@linaro.org>, Tim.Bird@sony.com,
-        kernel@collabora.com, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
+        Sat, 6 Aug 2022 06:13:28 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF2D112A81;
+        Sat,  6 Aug 2022 03:13:26 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id v10so1857890ljh.9;
+        Sat, 06 Aug 2022 03:13:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f5buEkOG5SU9AwpY1A3SFs8pS1q6UuxaXzfG0OHWAVg=;
+        b=Ee20urYg6Q5t8YFdUdLeIBgZPa8KFrTquVccZRj+EXlz86pyniz9P7oomOfeq5g5JH
+         Vq+BHZJE7eAJcvF/zVTptoYaaBcsPZxwf1vn/YlaGc7FAyW5yv6OmQub3OCjq7Ach/1y
+         HBlXwznvr6+XHWz1yhfEsVt61ZqAsOg8Seq36OOADBZAjxtZTygIXcjY8Y08nUHeBZop
+         97jYwyMOUqXycSTwmXLZc3U6p10jQBFBjmQQPAudjjqkFZ9D1fYnM9nx5S3yO4nSlfCG
+         Oe8Skmwn+LXyXl4n9fb7aJqFvFI2j3l+sqY/dkwqvyf/ndIsemJk5bzgAS6tqlKa5aai
+         kV/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f5buEkOG5SU9AwpY1A3SFs8pS1q6UuxaXzfG0OHWAVg=;
+        b=YTrXtlWfQYhet+Q7WTqlAZ+yuM9MUpOILWatLgZXwrJHTEW/fzej5ch45x8ufDdDOC
+         V6J0i4yj83+l1c4qDMIrBHWNzknKTCVeWuVXBHvzFZxJgLxW0WrnziO/nMVQrGeMqfBd
+         +6pvYntH8GsxCU0iNZqgq+Ic85FIu5SMmqDxlYvQQebS8zz25UCKDgLaul7OECpogUwG
+         gYjME1PWdxks5JXVVDnO1NMRqJ1DxT2tXDFcXuf63qFyaSlBE4l+1dFzkShyWSRu34Dl
+         3xxD9yvXOt93DdVSoJr9VfsZUr2A85HGzgkJZvSjRve46lYNNRKVHIoG9CTyTdnoLtxn
+         qm4g==
+X-Gm-Message-State: ACgBeo3HGoyV7NAWEyt0bzrgGY90vvBZ970EYycvRd2HuwJD8qP3Ys2c
+        bWOFW1aXLMVsWmTXCSx8qUI=
+X-Google-Smtp-Source: AA6agR4o9F7TTNICeUag3oz7A3uJ2Xc2EiGmj/KS8IiH1fETqa/CKEMuYqDk5KO3ejLMLCBLikK0vQ==
+X-Received: by 2002:a2e:9d91:0:b0:25e:dd34:f5d6 with SMTP id c17-20020a2e9d91000000b0025edd34f5d6mr31186ljj.501.1659780805056;
+        Sat, 06 Aug 2022 03:13:25 -0700 (PDT)
+Received: from localhost.localdomain (91-158-88-16.elisa-laajakaista.fi. [91.158.88.16])
+        by smtp.gmail.com with ESMTPSA id g9-20020a2eb5c9000000b0025e87b1fdbcsm494461ljn.63.2022.08.06.03.13.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Aug 2022 03:13:24 -0700 (PDT)
+From:   Topi Miettinen <toiwoton@gmail.com>
+To:     paul@paul-moore.com, netdev@vger.kernel.org,
         linux-security-module@vger.kernel.org
-References: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
- <f1fc4e6e-e2a6-3ec7-2d3b-215111a4b9ae@digikod.net>
- <76a2ac43-6e3d-0b62-7c8c-eec5f247f8f8@collabora.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH] selftests/landlock: fix broken include of
- linux/landlock.h
-In-Reply-To: <76a2ac43-6e3d-0b62-7c8c-eec5f247f8f8@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc:     Topi Miettinen <toiwoton@gmail.com>
+Subject: [PATCH] netlabel: fix typo in comment
+Date:   Sat,  6 Aug 2022 13:12:53 +0300
+Message-Id: <20220806101253.13865-1-toiwoton@gmail.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+'IPv4 and IPv4' should be 'IPv4 and IPv6'.
 
-On 04/08/2022 21:38, Guillaume Tucker wrote:
-> On 04/08/2022 12:36, Mickaël Salaün wrote:
->>
->> On 03/08/2022 22:13, Guillaume Tucker wrote:
->>> Revert part of the earlier changes to fix the kselftest build when
->>> using a sub-directory from the top of the tree as this broke the
->>> landlock test build as a side-effect when building with "make -C
->>> tools/testing/selftests/landlock".
->>>
->>> Reported-by: Mickaël Salaün <mic@digikod.net>
->>> Fixes: a917dd94b832 ("selftests/landlock: drop deprecated headers dependency")
->>> Fixes: f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")
->>> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
->>> ---
->>>    tools/testing/selftests/landlock/Makefile | 7 +++++--
->>>    1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
->>> index a6959df28eb0..02868ac3bc71 100644
->>> --- a/tools/testing/selftests/landlock/Makefile
->>> +++ b/tools/testing/selftests/landlock/Makefile
->>> @@ -9,10 +9,13 @@ TEST_GEN_PROGS := $(src_test:.c=)
->>>    TEST_GEN_PROGS_EXTENDED := true
->>>      OVERRIDE_TARGETS := 1
->>> +top_srcdir := ../../../..
->>
->> Not sure it changes much, but most other selftests Makefiles use "top_srcdir = ../../../.." (without ":="). Why this change?
-> 
-> I didn't simply apply your diff but edited the file by hand to
-> test various combinations and see what side effects it might
-> have.  So when I added top_srcdir I typed it by hand and used :=
-> as a reflex since it's the standard way of assigning variables.
-> Using = instead only makes a difference when the r-value has
-> something dynamic as it will be re-evaluated every time it's
-> used.  So for constant values, I guess it's more of a question of
-> coding style and conventions.  Maybe all the top_srcdir variables
-> should be changed to := but that's unnecessary churn...  Either
-> way, it's benign.
-> 
-> Shuah, feel free to change this back to = in this particular case
-> if it's more consistent with other Makefiles.  Consistency is
-> often better than arbitrary rules.  Or conversely, change to :=
-> for the khdr_dir definition...  Entirely up to you I think.
+Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+---
+ net/netlabel/netlabel_unlabeled.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks good to me, thanks! Shuah, feel free to add
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
+diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+index 8490e46359ae..0555dffd80e0 100644
+--- a/net/netlabel/netlabel_unlabeled.c
++++ b/net/netlabel/netlabel_unlabeled.c
+@@ -885,7 +885,7 @@ static int netlbl_unlabel_staticadd(struct sk_buff *skb,
+ 
+ 	/* Don't allow users to add both IPv4 and IPv6 addresses for a
+ 	 * single entry.  However, allow users to create two entries, one each
+-	 * for IPv4 and IPv4, with the same LSM security context which should
++	 * for IPv4 and IPv6, with the same LSM security context which should
+ 	 * achieve the same result. */
+ 	if (!info->attrs[NLBL_UNLABEL_A_SECCTX] ||
+ 	    !info->attrs[NLBL_UNLABEL_A_IFACE] ||
+-- 
+2.35.1
 
-> 
-> Thanks,
-> Guillaume
-> 
->>>    include ../lib.mk
->>>    +khdr_dir = $(top_srcdir)/usr/include
->>> +
->>>    $(OUTPUT)/true: true.c
->>>        $(LINK.c) $< $(LDLIBS) -o $@ -static
->>>    -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
->>> -    $(LINK.c) $< $(LDLIBS) -o $@ -lcap
->>> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
->>> +    $(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
-> 
