@@ -2,111 +2,75 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B51C19F2D
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Aug 2022 18:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6EDC19F2A
+	for <linux-security-module@archiver.kernel.org>; Sun,  7 Aug 2022 15:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233805AbiHFSVz (ORCPT
+        id S234111AbiHGP4r (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 6 Aug 2022 14:21:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50006 "EHLO
+        Sun, 7 Aug 2022 11:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241657AbiHFSVk (ORCPT
+        with ESMTP id S229616AbiHGP4p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 6 Aug 2022 14:21:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A74D1E25;
-        Sat,  6 Aug 2022 11:21:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 42BC461221;
-        Sat,  6 Aug 2022 18:21:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271BAC433C1;
-        Sat,  6 Aug 2022 18:21:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659810064;
-        bh=orcjVHFk4lFBov1ujUSmqLHsLoO2iIvfGgGHJHlIh7A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FWMhuXFJSleNWQKkiPFl4VU6fLgJgg6NLKSQrAlEY/EFTQ9ut+LINlEq4+P8A76ir
-         IvyBzut+gNS7PLgDqedD3Lom2EzymAV2djRK1XpPyawrVNmOacohakfCykPAhI8xbb
-         Y8SnjOMZWNinwDaIqEUVGkxQlmlIciOCeYQ/r4VeVn/N/FXRdtUd3W1fJGX7qUfjvG
-         eSMWVoal7Q1bqcQbqRZCy3pbAPd90fAtGG81LEqp8ofNdOI3Y9onRrpPZEvacpHvDJ
-         Hl38QHCxXBh3JLj/eY20OJYs7ADgNsiFMtAyfyJW2Ne2V3Pii9H1HZAHJJLRXJACXZ
-         dDFGHS6h1Yfdw==
-Date:   Sat, 6 Aug 2022 21:21:01 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Matthew Garrett <mgarrett@aurora.tech>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniil Lunev <dlunev@google.com>, zohar@linux.ibm.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Len Brown <len.brown@intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
-        keyrings@vger.kernel.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 00/10] Encrypted Hibernation
-Message-ID: <Yu6xDf9ejxHbLyJ6@kernel.org>
-References: <20220504232102.469959-1-evgreen@chromium.org>
- <20220506160807.GA1060@bug>
- <CAE=gft6m75T0UC2DBhfFhuSMW6TK7aatD_04sQ18WosgGVsATw@mail.gmail.com>
- <CAJZ5v0gxq=EA_WWUiCR_w8o87iTHDR7OC5wi=GRBaAQS2ofd5w@mail.gmail.com>
- <CAE=gft6V6RLc-d4AOuRUVU2u1jMGghDRSrFqiCqMCLxemui8Pw@mail.gmail.com>
- <CAE=gft5OYAgosqmwNkk=Cwoooeg93Njmnzfz=gwCaLB0Ts+=sw@mail.gmail.com>
- <CAE=gft6sPkhNcz7+fJuDzQo2f8fM_0Wv_OWC9W2LyvXd6M6zeQ@mail.gmail.com>
- <CAHSSk05JEcZfS2tc22F+m76T3vZt-mZ7zUQaGRgSanKaFc5xBg@mail.gmail.com>
- <YusZ8gD/LjiAXadR@kernel.org>
- <CAE=gft6LaNZLTK72n_Z7an0VA1FxxFFgGk6rmUF_Jvf=JinG3A@mail.gmail.com>
+        Sun, 7 Aug 2022 11:56:45 -0400
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F72295BD
+        for <linux-security-module@vger.kernel.org>; Sun,  7 Aug 2022 08:56:44 -0700 (PDT)
+Received: by mail-ot1-x329.google.com with SMTP id br15-20020a056830390f00b0061c9d73b8bdso5004784otb.6
+        for <linux-security-module@vger.kernel.org>; Sun, 07 Aug 2022 08:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=tnkMy90miiYykpI+4R1JbqPUfm8FqXUj36yuJdO5lZQ=;
+        b=04TcRDDnQ/n11tjO3q2a9hJ4jGbfIbJaW7mx0SB6gZ5L4yoY8n3fLm3er880S4x4iX
+         vzYte+KixhJeKl+VthtAq3fFD9LJarWfY356ntsGb0STqseQGrOP8MkME58FPFPcj90Y
+         +YDXcGXh6AOQ5o819qrFPx/RP3vmykt6X7yuBOwyAod3AxgrwanNJnphHPRRLfNtyv1B
+         7aLSl1pfs7CDf+d2xNRPQEzeg1qEsccxszVPUxCxyCOPlVPaKSpJh6cokkwKcaUEhg7R
+         6WV868ttwy1j/VZoWibA0kF/REF19gC7jVCOCpRwUG4OrjHIpd5odWIcx6xBFbJ0xuYt
+         yvCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=tnkMy90miiYykpI+4R1JbqPUfm8FqXUj36yuJdO5lZQ=;
+        b=Jp1aKR/16Tot/g9eGl9Rt1Ud94WXQJYN83Ec81hGmtQEmqTRxC1wiEQcR2sbe2pxys
+         Ck9uYjNByJIzOLdOhxiZpqogv3j3KWHphjCGGNzCyvXv6f9xuca4FYtfwk5Ohot/5d5e
+         cQesSZ6DmhMbLPhwnVheMAZl7GsVa7VpVPoCYwgEUb3ro6h68spsBdImpgqQirzkxjgK
+         pjCSCEc6IMol2+Atike5Umsg3PHQRYK4I3YPSqyh+10dangQEFXm+W+GlerIrK7Dw7bJ
+         vHzA9pyPk3m8fqT7/81vuym4wqqHrwfkxS70j5R6FXWGm8uHSNlIlpnUSZZlZPMtjNCh
+         udxQ==
+X-Gm-Message-State: ACgBeo2Fdtf5AfrJ8qms/CqV6abknDLs/qTMwPw2XqI+fs2AvSOeoYK5
+        h3DVgyxpqDRFsx+mDMgpLJMJW78ic2ZxVwNG2wmb+4YNRQ==
+X-Google-Smtp-Source: AA6agR4Jo+rOQva+fvprNdCfYk170dTkQW52EuCCfVrlN5lste6gHm1XEEVirBB3TnHF9GTNsVkrILmixIDOMbPMhIc=
+X-Received: by 2002:a9d:4d13:0:b0:636:bdd9:b57b with SMTP id
+ n19-20020a9d4d13000000b00636bdd9b57bmr3280310otf.26.1659887803849; Sun, 07
+ Aug 2022 08:56:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAE=gft6LaNZLTK72n_Z7an0VA1FxxFFgGk6rmUF_Jvf=JinG3A@mail.gmail.com>
+References: <20220806101253.13865-1-toiwoton@gmail.com>
+In-Reply-To: <20220806101253.13865-1-toiwoton@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 7 Aug 2022 11:56:33 -0400
+Message-ID: <CAHC9VhQz_gcJHuKEpkJTgOw1PLHNoEY+vniEpW+qs=76w0eLPQ@mail.gmail.com>
+Subject: Re: [PATCH] netlabel: fix typo in comment
+To:     Topi Miettinen <toiwoton@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 04, 2022 at 02:55:35PM -0700, Evan Green wrote:
-> On Wed, Aug 3, 2022 at 5:59 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >
-> > On Tue, Aug 02, 2022 at 11:36:43AM -0700, Matthew Garrett wrote:
-> > > On Mon, Aug 1, 2022 at 3:33 PM Evan Green <evgreen@chromium.org> wrote:
-> > >
-> > > > One more bump here, as we'd really love to get encrypted hibernation
-> > > > to a form upstream would accept if at all possible. We were
-> > > > considering landing this in our Chrome OS tree for now, then coming
-> > > > back in a couple months with a "we've been baking this ourselves and
-> > > > it's going so great, oooh yeah". I'm not sure if upstream would find
-> > > > that compelling or not. But in any case, some guidance towards making
-> > > > this more upstream friendly would be well appreciated.
-> > > >
-> > > > One thing I realized in attempting to pick this myself is that the
-> > > > trusted key blob format has moved to ASN.1. So I should really move
-> > > > the creation ticket to the new ASN.1 format (if I can figure out the
-> > > > right OID for that piece), which would allow me to drop a lot of the
-> > > > ugly stuff in tpm2_unpack_blob(). Maybe if I get no other comments
-> > > > I'll work on that and resend.
-> > >
-> > > I've been revamping my TPM-backed verified hibernation implementation
-> > > based on this work, so I'd definitely be enthusiastic about it being
-> > > mergeable.
-> >
-> > BTW, is it tested with QEMU + swtpm?
-> 
-> For myself, so far I've been testing on a recent Intel Chromebook. The
-> H1 (aka cr50) security chip on modern chromebooks implements a subset
-> [1] of TPM2.0, and is exposed through the standard TPM APIs in the
-> kernel. I can make sure to test on Qemu as well, is there anything in
-> particular I should look out for?
+On Sat, Aug 6, 2022 at 6:13 AM Topi Miettinen <toiwoton@gmail.com> wrote:
+>
+> 'IPv4 and IPv4' should be 'IPv4 and IPv6'.
+>
+> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+> ---
+>  net/netlabel/netlabel_unlabeled.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-I was just thinking what I could use for testing
+Thanks for catching this.
 
-BR, Jarkko
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+-- 
+paul-moore.com
