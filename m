@@ -2,174 +2,175 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8FCC00140
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Aug 2022 17:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86965C25B0C
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Aug 2022 18:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbiHHR5O (ORCPT
+        id S243732AbiHHS4t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Aug 2022 13:57:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33592 "EHLO
+        Mon, 8 Aug 2022 14:56:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244144AbiHHR4i (ORCPT
+        with ESMTP id S243680AbiHHS4t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Aug 2022 13:56:38 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A665918341
-        for <linux-security-module@vger.kernel.org>; Mon,  8 Aug 2022 10:56:31 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id j144-20020a25d296000000b0067ba828624fso6133805ybg.16
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Aug 2022 10:56:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc;
-        bh=yr7nZVaG6KnPFzU0GkO8LDPXim3Y8RycylsE6e+KYS8=;
-        b=XTaOh2Emx3RzjrAPUqBKn7IkMuMVZE1sNV0UiYrdi4ST+a2W2wVmMRWlnckX47kh8Z
-         3pwWPZdwO8GQdIoktR8SRLEK3dSAejavjjUTWBsMyR+Lp5qe4E/lj1k5E4pudhXvTlU1
-         vWnmtqMlJJxhIo/oHFLmarz9DbuZqb7BY/Hq5+m69WpRoZFozOBzbmm16L/QQMNwNYDw
-         /zjQVMRUVK3zklQ5u/E8z49CYBhRyjzy5hwdW98+CYPELiPv45DHhqY4YhFMqJv/CvHY
-         fo3mzTiobWlSpgKtmrAIQxHOldOvv7ws6xTPxVwYC1JWlOe8DXo3TZGLvcyRrvwKcC6H
-         hdPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc;
-        bh=yr7nZVaG6KnPFzU0GkO8LDPXim3Y8RycylsE6e+KYS8=;
-        b=KSTSB6gDRHzZFhk51He/0uKOnIHb8U5S+4Tty7lGHNspNhjSWzLRsn0123GX6a77A1
-         e5O3V5AlgwCphkJWrGLNf+ev7wEuT+3iH2hbJJHJIPQk787UiXGPdHwomfAl5TLvm3Oc
-         30i+TsGdVMEwtsw5FxXMeFqt3tuBGPaJv5bXzpIvWdTN08sbRda5gSq0oVM6K+pfnYbJ
-         9jaYRIg8Q3jKSEs0dLZ70SJAzHaB0tzq0LujYpueDfOVLxezDgaNZp6IdiORqq03aOph
-         PWcQtOT6nrljutwNcd8eKHaYZrxxmJBRlGsGrA8snNLgzAc6qiQMUHv0OlwMUOsqMP5m
-         kTRg==
-X-Gm-Message-State: ACgBeo12RrjKRLgYxdRajMbvzqRVGULCfwyC+f+vRC+Ax0BUydzM0MHG
-        kobo1lJIpD3rYF40qFo8e+rvDMDsTHtZt2cXqvda
-X-Google-Smtp-Source: AA6agR5OFChi2bWVcsCQV2S7ZdR7lgDMmRJT1bj1DNJoylej7bIRyUqOMr7NzN7+osLysSkQ7f1ZEMtCfU38FTFoNzeM
-X-Received: from ajr0.svl.corp.google.com ([2620:15c:2d4:203:7a2a:3bb5:f3a0:3bbc])
- (user=axelrasmussen job=sendgmr) by 2002:a25:25d8:0:b0:671:80a8:2d73 with
- SMTP id l207-20020a2525d8000000b0067180a82d73mr16769495ybl.125.1659981390656;
- Mon, 08 Aug 2022 10:56:30 -0700 (PDT)
-Date:   Mon,  8 Aug 2022 10:56:13 -0700
-In-Reply-To: <20220808175614.3885028-1-axelrasmussen@google.com>
-Message-Id: <20220808175614.3885028-5-axelrasmussen@google.com>
-Mime-Version: 1.0
-References: <20220808175614.3885028-1-axelrasmussen@google.com>
-X-Mailer: git-send-email 2.37.1.559.g78731f0fdb-goog
-Subject: [PATCH v5 4/5] userfaultfd: update documentation to describe /dev/userfaultfd
-From:   Axel Rasmussen <axelrasmussen@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, zhangyi <yi.zhang@huawei.com>
-Cc:     Axel Rasmussen <axelrasmussen@google.com>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 8 Aug 2022 14:56:49 -0400
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6B61834B;
+        Mon,  8 Aug 2022 11:56:48 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:35272)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oL7vh-00BiRy-6H; Mon, 08 Aug 2022 12:56:45 -0600
+Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:45314 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oL7vf-00HUDL-GZ; Mon, 08 Aug 2022 12:56:44 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-team@cloudflare.com, cgzones@googlemail.com,
+        karl@bigbadwolfsecurity.com
+References: <20220801180146.1157914-1-fred@cloudflare.com>
+        <87les7cq03.fsf@email.froward.int.ebiederm.org>
+        <CAHC9VhRpUxyxkPaTz1scGeRm+i4KviQQA7WismOX2q5agzC+DQ@mail.gmail.com>
+Date:   Mon, 08 Aug 2022 13:56:18 -0500
+In-Reply-To: <CAHC9VhRpUxyxkPaTz1scGeRm+i4KviQQA7WismOX2q5agzC+DQ@mail.gmail.com>
+        (Paul Moore's message of "Tue, 2 Aug 2022 22:10:07 -0400")
+Message-ID: <87wnbia7jh.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1oL7vf-00HUDL-GZ;;;mid=<87wnbia7jh.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX1+Nfaifvy48ZLTWFCOzOsrcFXZE8jWgnyo=
+X-SA-Exim-Connect-IP: 68.227.174.4
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v4 0/4] Introduce security_create_user_ns()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Explain the different ways to create a new userfaultfd, and how access
-control works for each way.
+Paul Moore <paul@paul-moore.com> writes:
 
-Acked-by: Peter Xu <peterx@redhat.com>
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
----
- Documentation/admin-guide/mm/userfaultfd.rst | 41 ++++++++++++++++++--
- Documentation/admin-guide/sysctl/vm.rst      |  3 ++
- 2 files changed, 41 insertions(+), 3 deletions(-)
+> On Mon, Aug 1, 2022 at 10:56 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> Frederick Lawler <fred@cloudflare.com> writes:
+>>
+>> > While creating a LSM BPF MAC policy to block user namespace creation, we
+>> > used the LSM cred_prepare hook because that is the closest hook to prevent
+>> > a call to create_user_ns().
+>>
+>> Re-nack for all of the same reasons.
+>> AKA This can only break the users of the user namespace.
+>>
+>> Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>>
+>> You aren't fixing what your problem you are papering over it by denying
+>> access to the user namespace.
+>>
+>> Nack Nack Nack.
+>>
+>> Stop.
+>>
+>> Go back to the drawing board.
+>>
+>> Do not pass go.
+>>
+>> Do not collect $200.
+>
+> If you want us to take your comments seriously Eric, you need to
+> provide the list with some constructive feedback that would allow
+> Frederick to move forward with a solution to the use case that has
+> been proposed.  You response above may be many things, but it is
+> certainly not that.
 
-diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
-index 6528036093e1..a76c9dc1865b 100644
---- a/Documentation/admin-guide/mm/userfaultfd.rst
-+++ b/Documentation/admin-guide/mm/userfaultfd.rst
-@@ -17,7 +17,10 @@ of the ``PROT_NONE+SIGSEGV`` trick.
- Design
- ======
- 
--Userfaults are delivered and resolved through the ``userfaultfd`` syscall.
-+Userspace creates a new userfaultfd, initializes it, and registers one or more
-+regions of virtual memory with it. Then, any page faults which occur within the
-+region(s) result in a message being delivered to the userfaultfd, notifying
-+userspace of the fault.
- 
- The ``userfaultfd`` (aside from registering and unregistering virtual
- memory ranges) provides two primary functionalities:
-@@ -34,12 +37,11 @@ The real advantage of userfaults if compared to regular virtual memory
- management of mremap/mprotect is that the userfaults in all their
- operations never involve heavyweight structures like vmas (in fact the
- ``userfaultfd`` runtime load never takes the mmap_lock for writing).
--
- Vmas are not suitable for page- (or hugepage) granular fault tracking
- when dealing with virtual address spaces that could span
- Terabytes. Too many vmas would be needed for that.
- 
--The ``userfaultfd`` once opened by invoking the syscall, can also be
-+The ``userfaultfd``, once created, can also be
- passed using unix domain sockets to a manager process, so the same
- manager process could handle the userfaults of a multitude of
- different processes without them being aware about what is going on
-@@ -50,6 +52,39 @@ is a corner case that would currently return ``-EBUSY``).
- API
- ===
- 
-+Creating a userfaultfd
-+----------------------
-+
-+There are two ways to create a new userfaultfd, each of which provide ways to
-+restrict access to this functionality (since historically userfaultfds which
-+handle kernel page faults have been a useful tool for exploiting the kernel).
-+
-+The first way, supported since userfaultfd was introduced, is the
-+userfaultfd(2) syscall. Access to this is controlled in several ways:
-+
-+- Any user can always create a userfaultfd which traps userspace page faults
-+  only. Such a userfaultfd can be created using the userfaultfd(2) syscall
-+  with the flag UFFD_USER_MODE_ONLY.
-+
-+- In order to also trap kernel page faults for the address space, then either
-+  the process needs the CAP_SYS_PTRACE capability, or the system must have
-+  vm.unprivileged_userfaultfd set to 1. By default, vm.unprivileged_userfaultfd
-+  is set to 0.
-+
-+The second way, added to the kernel more recently, is by opening and issuing a
-+USERFAULTFD_IOC_NEW ioctl to /dev/userfaultfd. This method yields equivalent
-+userfaultfds to the userfaultfd(2) syscall.
-+
-+Unlike userfaultfd(2), access to /dev/userfaultfd is controlled via normal
-+filesystem permissions (user/group/mode), which gives fine grained access to
-+userfaultfd specifically, without also granting other unrelated privileges at
-+the same time (as e.g. granting CAP_SYS_PTRACE would do). Users who have access
-+to /dev/userfaultfd can always create userfaultfds that trap kernel page faults;
-+vm.unprivileged_userfaultfd is not considered.
-+
-+Initializing a userfaultfd
-+--------------------------
-+
- When first opened the ``userfaultfd`` must be enabled invoking the
- ``UFFDIO_API`` ioctl specifying a ``uffdio_api.api`` value set to ``UFFD_API`` (or
- a later API version) which will specify the ``read/POLLIN`` protocol
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index f74f722ad702..b3e40b42e1b3 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -927,6 +927,9 @@ calls without any restrictions.
- 
- The default value is 0.
- 
-+Another way to control permissions for userfaultfd is to use
-+/dev/userfaultfd instead of userfaultfd(2). See
-+Documentation/admin-guide/mm/userfaultfd.rst.
- 
- user_reserve_kbytes
- ===================
--- 
-2.37.1.559.g78731f0fdb-goog
+I did provide constructive feedback.  My feedback to his problem
+was to address the real problem of bugs in the kernel.
+
+It is not a constructive approach to shoot the messenger
+and is not a constructive approach to blow me off every time you
+reply.
+
+I have proposed that is there is a subsystem that is unduly buggy we
+stop it from being enabled with a user-namespaces.
+
+Further this is a hook really should have extra-ordinary requirements,
+as all it can do is add additional failure modes to something that
+does not really fail.  AKA all it can do is break-userspace.
+
+As such I need to see a justification on why it makes sense to
+break-userspace.
+
+> We've heard from different users now that there are very real use
+> cases for this LSM hook.  I understand you are concerned about adding
+ > additional controls to user namespaces, but these are controls
+> requested by real users, and the controls being requested (LSM hooks,
+> with BPF and SELinux implementations) are configurable by the *users*
+> at *runtime*.  This patchset does not force additional restrictions on
+> user namespaces, it provides a mechanism that *users* can leverage to
+> add additional granularity to the access controls surrounding user
+> namespaces.
+
+But that is not the problem that cloudfare encountered and are trying to
+solve.
+
+At least that is not what I was told when I asked early in the review
+cycle.
+
+All saying that is user-configurable does is shift the blame from the
+kernel maintainers to the users.  Shift the responsibility from people
+who should have enough expertise to know what is going on to people
+who are by definition have other concerns, so are less likely to be as
+well informed, and less likely to come up with good solutions.
+
+> Eric, if you have a different approach in mind to adding a LSM hook to
+> user namespace creation I think we would all very much like to hear
+> about it.  However, if you do not have any suggestions along those
+> lines, and simply want to NACK any effort to add a LSM hook to user
+> namespace creation, I think we all understand your point of view and
+> respectfully disagree.  Barring any new approaches or suggestions, I
+> think Frederick's patches look reasonable and I still plan on merging
+> them into the LSM next branch when the merge window closes.
+
+
+But it is my code you are planning to merge this into, and your are
+asking me to support something.
+
+I admit I have not had time to read everything.  I am sick and tired
+and quite frankly very tired that people are busy wanting to shoot
+the messenger to the fact that there are bugs in the kernel.
+
+I am speaking up and engaging as best as I can with objections that
+are not hot-air.
+
+You are very much proposing to merge code that can only cause
+regressions and cause me grief.  At least that is all I see.  I don't
+see anything in the change descriptions of the change that refutes that.
+
+I don't see any interaction in fact with my concerns.
+
+In fact your last reply was to completely blow off my request on how to
+address the concerns that inspired this patch and to say other people
+have a use too.
+
+At this point I am happy to turn your request around and ask that you
+address my concerns and not blow them off.  As I have seen no
+constructive engagement with my concerns.   I think that is reasonable
+as by definition I will get the support issues when some LSM has some
+ill-thought out idea of how things should work and I get the bug report.
+
+Eric
+
+
+
+
 
