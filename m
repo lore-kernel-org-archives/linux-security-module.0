@@ -2,75 +2,86 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6EDC19F2A
-	for <linux-security-module@archiver.kernel.org>; Sun,  7 Aug 2022 15:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFEEC3F6B0
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Aug 2022 13:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234111AbiHGP4r (ORCPT
+        id S243199AbiHHNpX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 7 Aug 2022 11:56:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53176 "EHLO
+        Mon, 8 Aug 2022 09:45:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbiHGP4p (ORCPT
+        with ESMTP id S243134AbiHHNpW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 7 Aug 2022 11:56:45 -0400
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F72295BD
-        for <linux-security-module@vger.kernel.org>; Sun,  7 Aug 2022 08:56:44 -0700 (PDT)
-Received: by mail-ot1-x329.google.com with SMTP id br15-20020a056830390f00b0061c9d73b8bdso5004784otb.6
-        for <linux-security-module@vger.kernel.org>; Sun, 07 Aug 2022 08:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=tnkMy90miiYykpI+4R1JbqPUfm8FqXUj36yuJdO5lZQ=;
-        b=04TcRDDnQ/n11tjO3q2a9hJ4jGbfIbJaW7mx0SB6gZ5L4yoY8n3fLm3er880S4x4iX
-         vzYte+KixhJeKl+VthtAq3fFD9LJarWfY356ntsGb0STqseQGrOP8MkME58FPFPcj90Y
-         +YDXcGXh6AOQ5o819qrFPx/RP3vmykt6X7yuBOwyAod3AxgrwanNJnphHPRRLfNtyv1B
-         7aLSl1pfs7CDf+d2xNRPQEzeg1qEsccxszVPUxCxyCOPlVPaKSpJh6cokkwKcaUEhg7R
-         6WV868ttwy1j/VZoWibA0kF/REF19gC7jVCOCpRwUG4OrjHIpd5odWIcx6xBFbJ0xuYt
-         yvCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=tnkMy90miiYykpI+4R1JbqPUfm8FqXUj36yuJdO5lZQ=;
-        b=Jp1aKR/16Tot/g9eGl9Rt1Ud94WXQJYN83Ec81hGmtQEmqTRxC1wiEQcR2sbe2pxys
-         Ck9uYjNByJIzOLdOhxiZpqogv3j3KWHphjCGGNzCyvXv6f9xuca4FYtfwk5Ohot/5d5e
-         cQesSZ6DmhMbLPhwnVheMAZl7GsVa7VpVPoCYwgEUb3ro6h68spsBdImpgqQirzkxjgK
-         pjCSCEc6IMol2+Atike5Umsg3PHQRYK4I3YPSqyh+10dangQEFXm+W+GlerIrK7Dw7bJ
-         vHzA9pyPk3m8fqT7/81vuym4wqqHrwfkxS70j5R6FXWGm8uHSNlIlpnUSZZlZPMtjNCh
-         udxQ==
-X-Gm-Message-State: ACgBeo2Fdtf5AfrJ8qms/CqV6abknDLs/qTMwPw2XqI+fs2AvSOeoYK5
-        h3DVgyxpqDRFsx+mDMgpLJMJW78ic2ZxVwNG2wmb+4YNRQ==
-X-Google-Smtp-Source: AA6agR4Jo+rOQva+fvprNdCfYk170dTkQW52EuCCfVrlN5lste6gHm1XEEVirBB3TnHF9GTNsVkrILmixIDOMbPMhIc=
-X-Received: by 2002:a9d:4d13:0:b0:636:bdd9:b57b with SMTP id
- n19-20020a9d4d13000000b00636bdd9b57bmr3280310otf.26.1659887803849; Sun, 07
- Aug 2022 08:56:43 -0700 (PDT)
+        Mon, 8 Aug 2022 09:45:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5F73893;
+        Mon,  8 Aug 2022 06:45:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B55D3B80EA1;
+        Mon,  8 Aug 2022 13:45:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A234BC433C1;
+        Mon,  8 Aug 2022 13:45:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659966317;
+        bh=a8EU6eGbgWuI9B2ElfWOtvEkJxdtJvEBO0Sx4mMYwzQ=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=WUDcfYUE+/C4GY6bP96exqGCPwib378v8h7/9uULoLgZoE79oHM1LRomIjlcgYXyF
+         K0X2cIl9VnrgViNfDMgNoxN27Wm6QAnfdMhjI5k7lmaLdcKGQ5beT8NzRrKzwKQ+dA
+         z59FI6SO+Ebrjqq8alLtSjRYBWScRi5ERU5oaTzdqNmxflnBu1d7Bl+KX/XR75ZfKT
+         qLCKHvvG/wLoug+BtNFCclMWF158zRgKBGXrwiiDj3erDjvrUlWrUHlQN2LvH6meT3
+         +QlLqcKys0DjKDv2jO+6Tzo7zlgEWgdm28QAf3gwBxBoG92YA1TSU87I3VILlpixVX
+         LVvYNJ2q4tjPA==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] tpmdd updates for v5.20
+References: <20220803210228.158993-1-jarkko@kernel.org>
+        <87pmhgikhk.fsf@kernel.org>
+        <5653318a776a8044f413ed1a4b6e3965fac2297e.camel@HansenPartnership.com>
+        <87czdfi6t9.fsf@kernel.org> <Yu6qQHMoBzC4zprg@kernel.org>
+Date:   Mon, 08 Aug 2022 16:45:12 +0300
+In-Reply-To: <Yu6qQHMoBzC4zprg@kernel.org> (Jarkko Sakkinen's message of "Sat,
+        6 Aug 2022 20:52:00 +0300")
+Message-ID: <87o7wun91z.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20220806101253.13865-1-toiwoton@gmail.com>
-In-Reply-To: <20220806101253.13865-1-toiwoton@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 7 Aug 2022 11:56:33 -0400
-Message-ID: <CAHC9VhQz_gcJHuKEpkJTgOw1PLHNoEY+vniEpW+qs=76w0eLPQ@mail.gmail.com>
-Subject: Re: [PATCH] netlabel: fix typo in comment
-To:     Topi Miettinen <toiwoton@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Aug 6, 2022 at 6:13 AM Topi Miettinen <toiwoton@gmail.com> wrote:
->
-> 'IPv4 and IPv4' should be 'IPv4 and IPv6'.
->
-> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
-> ---
->  net/netlabel/netlabel_unlabeled.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Jarkko Sakkinen <jarkko@kernel.org> writes:
 
-Thanks for catching this.
+>> Odd, I haven't noticed any UTF-8 problems in my setup but Gnus/Emacs is
+>> known to be picky. After some more investigation I noticed this in
+>> Jarkko's email:
+>> 
+>> Content-Type: text/plain; charset=y
+>> 
+>> I admit I'm not up to par with the latest cool stuff but that charset
+>> can't be valid, right? :)
+>
+> I must have pressed 'y' and enter, instead of enter,
+> when git send-email asked whether to use UTF-8 or
+> something like that.
+>
+> Sorry about that :-) I don't recall doing that but
+> that is what it looks like for me.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Hehe, that indeed sounds likely. Thanks, I was curious where that 'y'
+came from :)
 
 -- 
-paul-moore.com
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
