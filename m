@@ -2,112 +2,175 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA98C25B0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Aug 2022 15:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 212ACC25B0C
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Aug 2022 16:08:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244753AbiHIP6P (ORCPT
+        id S244882AbiHIQIY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Aug 2022 11:58:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54300 "EHLO
+        Tue, 9 Aug 2022 12:08:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244778AbiHIP6L (ORCPT
+        with ESMTP id S240145AbiHIQIY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Aug 2022 11:58:11 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94A1919C1C
-        for <linux-security-module@vger.kernel.org>; Tue,  9 Aug 2022 08:58:09 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id w196so9268146oiw.10
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Aug 2022 08:58:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tyhicks-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HUXaYVwE6orHodeBsCAxKkSFqqLupHxNZ2roYGcQJ3U=;
-        b=qLwOZH9UT3mHrvDuf0QBZ8Am9wtvtBRS7umuarT0r9UbJrssHJXWIg3h17TiycX1dn
-         qNENXZ3y9l8gp9q5l7k7gVd+1kToWHoZlaQeyXGNtDa1Fjdv5FtAHWLTAuo0i/HDTXtu
-         Ka+AzCyLNZ4IjM1vO/jXPagJT2MvcrqGBhTMTrTQldfvo9C7x7+I66tQNMdXJ+/72K87
-         yjjt59mRZjWUoigeMet/tlZrmNdPLPYXuEJpvtVGq7r0+3OrCGBlvcaO0FKvBuZHkbhU
-         n5a3agXQ6rwmxQV5QaRqMGukQA9NhloWit2Ndwft7b6D9v0HCU8O44NqoCkfz80MYgoW
-         8ghw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HUXaYVwE6orHodeBsCAxKkSFqqLupHxNZ2roYGcQJ3U=;
-        b=XkBlclB/jRtFgtTRn879ecVB6Lpg4uBajAe4faE30HzPXRFE6h+b41BGMyAx6FAlA0
-         mFjA+HnEgHpEABIAvLBZBQ8DFlkvg3zC8e/wBVREQBiCLnR/Q71z063evCLc1FZZw34R
-         ybJfn7RU+W55ySpjyYbDLM+bUjqqCZhA/cW0YhBHD8kvpGIIa0kmuEQaP4OB3zpA21e4
-         BKqVZruhvXjZVVuZWrGk7WiCRpLGmTsBLGdqhOqg3zzdh2vCaD+l1L4cYYdZWSbC2aih
-         mxVzCR/7lYZ6b6ga2mo+AkvADKgQGamN0apviwRjbwdxlprNbnz647bbXxwIhY468HuH
-         DtOA==
-X-Gm-Message-State: ACgBeo3yYZGNz2Gx0zDAwUAqnLv6Sw7V2HQ7/H1jXbMWjhLSBvHl1TPo
-        gY725dF+fr1iEmHRAwhfFrbAEQ==
-X-Google-Smtp-Source: AA6agR5yALJSQiqpyuDxfVXadUjpSlKzadaxwr3uRwJCazGWMfl76Mg96IgJ2CaNNqe5ceJ+1WIb5A==
-X-Received: by 2002:a05:6808:1889:b0:33b:2f70:cca0 with SMTP id bi9-20020a056808188900b0033b2f70cca0mr10801550oib.253.1660060688904;
-        Tue, 09 Aug 2022 08:58:08 -0700 (PDT)
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net. [162.237.133.238])
-        by smtp.gmail.com with ESMTPSA id c4-20020a056870c08400b0010e81e27b99sm3179258oad.17.2022.08.09.08.58.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Aug 2022 08:58:08 -0700 (PDT)
-Date:   Tue, 9 Aug 2022 10:57:50 -0500
-From:   Tyler Hicks <code@tyhicks.com>
-To:     Deven Bowers <deven.desai@linux.microsoft.com>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        eparis@redhat.com, paul@paul-moore.com, dm-devel@redhat.com,
-        linux-doc@vger.kernel.org, roberto.sassu@huawei.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-audit@redhat.com,
-        linux-integrity@vger.kernel.org
-Subject: Re: [RFC PATCH v8 07/17] ipe: add auditing support
-Message-ID: <20220809155737.GA39351@sequoia>
-References: <1654714889-26728-1-git-send-email-deven.desai@linux.microsoft.com>
- <1654714889-26728-8-git-send-email-deven.desai@linux.microsoft.com>
+        Tue, 9 Aug 2022 12:08:24 -0400
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 933DB1132;
+        Tue,  9 Aug 2022 09:08:21 -0700 (PDT)
+Received: from in02.mta.xmission.com ([166.70.13.52]:51188)
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oLRmD-003S1H-KH; Tue, 09 Aug 2022 10:08:17 -0600
+Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:57438 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oLRmC-00C526-5Z; Tue, 09 Aug 2022 10:08:17 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-team@cloudflare.com, cgzones@googlemail.com,
+        karl@bigbadwolfsecurity.com
+References: <20220801180146.1157914-1-fred@cloudflare.com>
+        <87les7cq03.fsf@email.froward.int.ebiederm.org>
+        <CAHC9VhRpUxyxkPaTz1scGeRm+i4KviQQA7WismOX2q5agzC+DQ@mail.gmail.com>
+        <87wnbia7jh.fsf@email.froward.int.ebiederm.org>
+        <CAHC9VhS3udhEecVYVvHm=tuqiPGh034-xPqXYtFjBk23+p-Szg@mail.gmail.com>
+        <877d3ia65v.fsf@email.froward.int.ebiederm.org>
+        <87bksu8qs2.fsf@email.froward.int.ebiederm.org>
+        <CAHC9VhTEwD2y9Witj-1z3e2TC-NGjghQ4KT4Dqf3UOLzDcDc3Q@mail.gmail.com>
+Date:   Tue, 09 Aug 2022 11:07:51 -0500
+In-Reply-To: <CAHC9VhTEwD2y9Witj-1z3e2TC-NGjghQ4KT4Dqf3UOLzDcDc3Q@mail.gmail.com>
+        (Paul Moore's message of "Mon, 8 Aug 2022 18:47:21 -0400")
+Message-ID: <87czd95rjc.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1654714889-26728-8-git-send-email-deven.desai@linux.microsoft.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1oLRmC-00C526-5Z;;;mid=<87czd95rjc.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX1/OKOUHv1PWhUjp+g6EbQWzYWXeUfqqFrY=
+X-SA-Exim-Connect-IP: 68.227.174.4
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v4 0/4] Introduce security_create_user_ns()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022-06-08 12:01:19, Deven Bowers wrote:
-> +/**
-> + * getaudit: Read handler for the securityfs node, "ipe/success_audit"
-> + * @f: Supplies a file structure representing the securityfs node.
-> + * @data: Supplies a buffer passed to the read syscall
-> + * @len: Supplies the length of @data
-> + * @offset: unused.
-> + *
-> + * Return:
-> + * >0 - Success, Length of buffer written
-> + * <0 - Error
-> + */
-> +static ssize_t getaudit(struct file *f, char __user *data,
-> +			size_t len, loff_t *offset)
-> +{
-> +	const char *result;
-> +	struct ipe_context *ctx;
-> +
-> +	ctx = ipe_current_ctx();
-> +
-> +	rcu_read_lock();
-> +	result = ((READ_ONCE(ctx->success_audit)) ? "1" : "0");
-> +	rcu_read_unlock();
-> +
-> +	ipe_put_ctx(ctx);
-> +	return simple_read_from_buffer(data, len, offset, result, 2);
+Paul Moore <paul@paul-moore.com> writes:
 
-While doing some internal testing, I noticed that some of the IPE files
-in securityfs (ipe/audit, ipe/enforce, and ipe/policies/*/active) are
-including the NULL terminator (size of 2) in the securityfs file
-contents. This is not common to do and this busybox build that my test
-machine is using even has some trouble when displaying those files with
-cat. I see all three instances of this pattern with this command:
+> On Mon, Aug 8, 2022 at 3:43 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> "Eric W. Biederman" <ebiederm@xmission.com> writes:
+>> > Paul Moore <paul@paul-moore.com> writes:
+>> >
+>> >>> I did provide constructive feedback.  My feedback to his problem
+>> >>> was to address the real problem of bugs in the kernel.
+>> >>
+>> >> We've heard from several people who have use cases which require
+>> >> adding LSM-level access controls and observability to user namespace
+>> >> creation.  This is the problem we are trying to solve here; if you do
+>> >> not like the approach proposed in this patchset please suggest another
+>> >> implementation that allows LSMs visibility into user namespace
+>> >> creation.
+>> >
+>> > Please stop, ignoring my feedback, not detailing what problem or
+>> > problems you are actually trying to be solved, and threatening to merge
+>> > code into files that I maintain that has the express purpose of breaking
+>> > my users.
+>> >
+>> > You just artificially constrained the problems, so that no other
+>> > solution is acceptable.  On that basis alone I am object to this whole
+>> > approach to steam roll over me and my code.
+>>
+>> If you want an example of what kind of harm it can cause to introduce a
+>> failure where no failure was before I invite you to look at what
+>> happened with sendmail when setuid was modified to fail, when changing
+>> the user of a process would cause RLIMIT_NPROC to be exceeded.
+>
+> I think we are all familiar with the sendmail capabilities bug and the
+> others like it, but using that as an excuse to block additional access
+> controls seems very weak.  The Linux Kernel is very different from
+> when the sendmail bug hit (what was that, ~20 years ago?), with
+> advancements in capabilities and other discretionary controls, as well
+> as mandatory access controls which have enabled Linux to be certified
+> through a number of third party security evaluations.
 
- $ git grep simple_read_from_buffer\(.*,\ 2\) security/ipe
+If you are familiar with scenarios like that then why is there not
+being due diligence performed to ensure that userspace won't break?
 
-I think going to a length of 1 would be best.
+Certainly none of the paperwork you are talking about does that kind
+of checking and it most definitely is not happening before the code
+gets merged. 
 
-Tyler
+I am saying that performing that due diligence should be a requirement
+before anyone even thinks about merging a patch that adds permission
+checks where no existed before.
+
+Sometimes changes to fix security bugs can get away with adding new
+restrictions because we know with a very very high degree of probability
+that the only thing that will break will be exploit code.  In the rare
+case when real world applications are broken such changes need to be
+reverted or adapted.  No one has even made the argument that only
+exploit code will be affected.
+
+So I am sorry I am the one who has to be the one to get in the way of a
+broken process with semantic review,  but due diligence has not been
+done.  So I am say no way this code should be merged.
+
+
+In addition to actually breaking existing userspace, I think there is a
+very real danger of breaking userspace, I think there is a very real
+danger of breaking network effects by making such a large change to the
+design of user namespaces.
+
+
+>> I am not arguing that what you are proposing is that bad but unexpected
+>> failures cause real problems, and at a minimum that needs a better
+>> response than: "There is at least one user that wants a failure here".
+>
+> Let me fix that for you: "There are multiple users who want to have
+> better visibility and access control for user namespace creation."
+
+Visibility sure.  Design a proper hook for that.  All the proposed hook
+can do is print an audit message.  It can't allocate or manage any state
+as there is not the corresponding hook when a user namespace is freed.
+So the proposed hook is not appropriate for increasing visibility.
+
+
+Access control.  Not a chance unless it is carefully designed and
+reviewed.  There is a very large cost to adding access control where
+it has not previously existed.
+
+I talk about that cost as people breaking my users as that is how I see
+it.  I don't see any discussion on why I am wrong.
+
+If we are going to add an access controls I want to see someone point
+out something that is actually semantically a problem.  What motivates
+an access control?
+
+So far the only answer I have received is people want to reduce the
+attack surface of the kernel.  I don't possibly see how reducing the
+attack surface by removing user namespaces makes the probability of
+having an exploitable kernel bug, anything approaching zero.
+
+So I look at the calculus.  Chance of actually breaking userspace, or
+preventing people with a legitimate use from using user namespaces > 0%.
+Chance of actually preventing a determined attacker from exploiting the
+kernel < 1%.  Amount of work to maintain, non-zero, and I really don't
+like it.
+
+Lots of work to achieve nothing but breaking some of my users.
+
+So please stop trying to redesign my subsystem and cause me headaches,
+unless you are going to do the due diligence necessary to do so
+responsibly.
+
+Eric
