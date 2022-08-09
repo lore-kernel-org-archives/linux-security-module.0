@@ -2,234 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CC1C2BB45
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Aug 2022 13:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA98C25B0E
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Aug 2022 15:58:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244587AbiHINtn (ORCPT
+        id S244753AbiHIP6P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Aug 2022 09:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55728 "EHLO
+        Tue, 9 Aug 2022 11:58:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244359AbiHINsD (ORCPT
+        with ESMTP id S244778AbiHIP6L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Aug 2022 09:48:03 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40975DEA3;
-        Tue,  9 Aug 2022 06:48:02 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4M2Dsp1JT7z67NYP;
-        Tue,  9 Aug 2022 21:47:58 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 9 Aug 2022 15:47:59 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-        <martin.lau@linux.dev>, <song@kernel.org>, <yhs@fb.com>,
-        <john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@google.com>,
-        <haoluo@google.com>, <jolsa@kernel.org>, <corbet@lwn.net>,
-        <dhowells@redhat.com>, <jarkko@kernel.org>, <rostedt@goodmis.org>,
-        <mingo@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-        <serge@hallyn.com>, <shuah@kernel.org>
-CC:     <bpf@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <keyrings@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v9 08/10] selftests/bpf: Add verifier tests for bpf_lookup_*_key() and bpf_key_put()
-Date:   Tue, 9 Aug 2022 15:46:01 +0200
-Message-ID: <20220809134603.1769279-9-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220809134603.1769279-1-roberto.sassu@huawei.com>
-References: <20220809134603.1769279-1-roberto.sassu@huawei.com>
+        Tue, 9 Aug 2022 11:58:11 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94A1919C1C
+        for <linux-security-module@vger.kernel.org>; Tue,  9 Aug 2022 08:58:09 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id w196so9268146oiw.10
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Aug 2022 08:58:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tyhicks-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=HUXaYVwE6orHodeBsCAxKkSFqqLupHxNZ2roYGcQJ3U=;
+        b=qLwOZH9UT3mHrvDuf0QBZ8Am9wtvtBRS7umuarT0r9UbJrssHJXWIg3h17TiycX1dn
+         qNENXZ3y9l8gp9q5l7k7gVd+1kToWHoZlaQeyXGNtDa1Fjdv5FtAHWLTAuo0i/HDTXtu
+         Ka+AzCyLNZ4IjM1vO/jXPagJT2MvcrqGBhTMTrTQldfvo9C7x7+I66tQNMdXJ+/72K87
+         yjjt59mRZjWUoigeMet/tlZrmNdPLPYXuEJpvtVGq7r0+3OrCGBlvcaO0FKvBuZHkbhU
+         n5a3agXQ6rwmxQV5QaRqMGukQA9NhloWit2Ndwft7b6D9v0HCU8O44NqoCkfz80MYgoW
+         8ghw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HUXaYVwE6orHodeBsCAxKkSFqqLupHxNZ2roYGcQJ3U=;
+        b=XkBlclB/jRtFgtTRn879ecVB6Lpg4uBajAe4faE30HzPXRFE6h+b41BGMyAx6FAlA0
+         mFjA+HnEgHpEABIAvLBZBQ8DFlkvg3zC8e/wBVREQBiCLnR/Q71z063evCLc1FZZw34R
+         ybJfn7RU+W55ySpjyYbDLM+bUjqqCZhA/cW0YhBHD8kvpGIIa0kmuEQaP4OB3zpA21e4
+         BKqVZruhvXjZVVuZWrGk7WiCRpLGmTsBLGdqhOqg3zzdh2vCaD+l1L4cYYdZWSbC2aih
+         mxVzCR/7lYZ6b6ga2mo+AkvADKgQGamN0apviwRjbwdxlprNbnz647bbXxwIhY468HuH
+         DtOA==
+X-Gm-Message-State: ACgBeo3yYZGNz2Gx0zDAwUAqnLv6Sw7V2HQ7/H1jXbMWjhLSBvHl1TPo
+        gY725dF+fr1iEmHRAwhfFrbAEQ==
+X-Google-Smtp-Source: AA6agR5yALJSQiqpyuDxfVXadUjpSlKzadaxwr3uRwJCazGWMfl76Mg96IgJ2CaNNqe5ceJ+1WIb5A==
+X-Received: by 2002:a05:6808:1889:b0:33b:2f70:cca0 with SMTP id bi9-20020a056808188900b0033b2f70cca0mr10801550oib.253.1660060688904;
+        Tue, 09 Aug 2022 08:58:08 -0700 (PDT)
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net. [162.237.133.238])
+        by smtp.gmail.com with ESMTPSA id c4-20020a056870c08400b0010e81e27b99sm3179258oad.17.2022.08.09.08.58.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Aug 2022 08:58:08 -0700 (PDT)
+Date:   Tue, 9 Aug 2022 10:57:50 -0500
+From:   Tyler Hicks <code@tyhicks.com>
+To:     Deven Bowers <deven.desai@linux.microsoft.com>
+Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+        eparis@redhat.com, paul@paul-moore.com, dm-devel@redhat.com,
+        linux-doc@vger.kernel.org, roberto.sassu@huawei.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-audit@redhat.com,
+        linux-integrity@vger.kernel.org
+Subject: Re: [RFC PATCH v8 07/17] ipe: add auditing support
+Message-ID: <20220809155737.GA39351@sequoia>
+References: <1654714889-26728-1-git-send-email-deven.desai@linux.microsoft.com>
+ <1654714889-26728-8-git-send-email-deven.desai@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.63.22]
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1654714889-26728-8-git-send-email-deven.desai@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add verifier tests for bpf_lookup_*_key() and bpf_key_put(), to ensure that
-acquired key references stored in the bpf_key structure are released, that
-a non-NULL bpf_key pointer is passed to bpf_key_put(), and that key
-references are not leaked.
+On 2022-06-08 12:01:19, Deven Bowers wrote:
+> +/**
+> + * getaudit: Read handler for the securityfs node, "ipe/success_audit"
+> + * @f: Supplies a file structure representing the securityfs node.
+> + * @data: Supplies a buffer passed to the read syscall
+> + * @len: Supplies the length of @data
+> + * @offset: unused.
+> + *
+> + * Return:
+> + * >0 - Success, Length of buffer written
+> + * <0 - Error
+> + */
+> +static ssize_t getaudit(struct file *f, char __user *data,
+> +			size_t len, loff_t *offset)
+> +{
+> +	const char *result;
+> +	struct ipe_context *ctx;
+> +
+> +	ctx = ipe_current_ctx();
+> +
+> +	rcu_read_lock();
+> +	result = ((READ_ONCE(ctx->success_audit)) ? "1" : "0");
+> +	rcu_read_unlock();
+> +
+> +	ipe_put_ctx(ctx);
+> +	return simple_read_from_buffer(data, len, offset, result, 2);
 
-Also, slightly modify test_verifier.c, to find the BTF ID of the attach
-point for the LSM program type (currently, it is done only for TRACING).
+While doing some internal testing, I noticed that some of the IPE files
+in securityfs (ipe/audit, ipe/enforce, and ipe/policies/*/active) are
+including the NULL terminator (size of 2) in the securityfs file
+contents. This is not common to do and this busybox build that my test
+machine is using even has some trouble when displaying those files with
+cat. I see all three instances of this pattern with this command:
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- tools/testing/selftests/bpf/test_verifier.c   |   3 +-
- .../selftests/bpf/verifier/ref_tracking.c     | 139 ++++++++++++++++++
- 2 files changed, 141 insertions(+), 1 deletion(-)
+ $ git grep simple_read_from_buffer\(.*,\ 2\) security/ipe
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index f9d553fbf68a..2dbcbf363c18 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -1498,7 +1498,8 @@ static void do_test_single(struct bpf_test *test, bool unpriv,
- 		opts.log_level = DEFAULT_LIBBPF_LOG_LEVEL;
- 	opts.prog_flags = pflags;
- 
--	if (prog_type == BPF_PROG_TYPE_TRACING && test->kfunc) {
-+	if ((prog_type == BPF_PROG_TYPE_TRACING ||
-+	     prog_type == BPF_PROG_TYPE_LSM) && test->kfunc) {
- 		int attach_btf_id;
- 
- 		attach_btf_id = libbpf_find_vmlinux_btf_id(test->kfunc,
-diff --git a/tools/testing/selftests/bpf/verifier/ref_tracking.c b/tools/testing/selftests/bpf/verifier/ref_tracking.c
-index 57a83d763ec1..f18ce867271f 100644
---- a/tools/testing/selftests/bpf/verifier/ref_tracking.c
-+++ b/tools/testing/selftests/bpf/verifier/ref_tracking.c
-@@ -84,6 +84,145 @@
- 	.errstr = "Unreleased reference",
- 	.result = REJECT,
- },
-+{
-+	"reference tracking: acquire/release user key reference",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_1, -3),
-+	BPF_MOV64_IMM(BPF_REG_2, 0),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 2),
-+	BPF_MOV64_REG(BPF_REG_1, BPF_REG_0),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "bpf",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.flags = BPF_F_SLEEPABLE,
-+	.fixup_kfunc_btf_id = {
-+		{ "bpf_lookup_user_key", 2 },
-+		{ "bpf_key_put", 5 },
-+	},
-+	.result = ACCEPT,
-+},
-+{
-+	"reference tracking: acquire/release system key reference",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_1, 1),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 2),
-+	BPF_MOV64_REG(BPF_REG_1, BPF_REG_0),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "bpf",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.flags = BPF_F_SLEEPABLE,
-+	.fixup_kfunc_btf_id = {
-+		{ "bpf_lookup_system_key", 1 },
-+		{ "bpf_key_put", 4 },
-+	},
-+	.result = ACCEPT,
-+},
-+{
-+	"reference tracking: release user key reference without check",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_1, -3),
-+	BPF_MOV64_IMM(BPF_REG_2, 0),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_MOV64_REG(BPF_REG_1, BPF_REG_0),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "bpf",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.flags = BPF_F_SLEEPABLE,
-+	.errstr = "arg#0 pointer type STRUCT bpf_key must point to scalar, or struct with scalar",
-+	.fixup_kfunc_btf_id = {
-+		{ "bpf_lookup_user_key", 2 },
-+		{ "bpf_key_put", 4 },
-+	},
-+	.result = REJECT,
-+},
-+{
-+	"reference tracking: release system key reference without check",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_1, 1),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_MOV64_REG(BPF_REG_1, BPF_REG_0),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "bpf",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.flags = BPF_F_SLEEPABLE,
-+	.errstr = "arg#0 pointer type STRUCT bpf_key must point to scalar, or struct with scalar",
-+	.fixup_kfunc_btf_id = {
-+		{ "bpf_lookup_system_key", 1 },
-+		{ "bpf_key_put", 3 },
-+	},
-+	.result = REJECT,
-+},
-+{
-+	"reference tracking: release with NULL key pointer",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_1, 0),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "bpf",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.flags = BPF_F_SLEEPABLE,
-+	.errstr = "arg#0 pointer type STRUCT bpf_key must point to scalar, or struct with scalar",
-+	.fixup_kfunc_btf_id = {
-+		{ "bpf_key_put", 1 },
-+	},
-+	.result = REJECT,
-+},
-+{
-+	"reference tracking: leak potential reference to user key",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_1, -3),
-+	BPF_MOV64_IMM(BPF_REG_2, 0),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "bpf",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.flags = BPF_F_SLEEPABLE,
-+	.errstr = "Unreleased reference",
-+	.fixup_kfunc_btf_id = {
-+		{ "bpf_lookup_user_key", 2 },
-+	},
-+	.result = REJECT,
-+},
-+{
-+	"reference tracking: leak potential reference to system key",
-+	.insns = {
-+	BPF_MOV64_IMM(BPF_REG_1, 1),
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.prog_type = BPF_PROG_TYPE_LSM,
-+	.kfunc = "bpf",
-+	.expected_attach_type = BPF_LSM_MAC,
-+	.flags = BPF_F_SLEEPABLE,
-+	.errstr = "Unreleased reference",
-+	.fixup_kfunc_btf_id = {
-+		{ "bpf_lookup_system_key", 1 },
-+	},
-+	.result = REJECT,
-+},
- {
- 	"reference tracking: release reference without check",
- 	.insns = {
--- 
-2.25.1
+I think going to a length of 1 would be best.
 
+Tyler
