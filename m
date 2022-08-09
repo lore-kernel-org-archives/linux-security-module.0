@@ -2,119 +2,137 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EDEC25B0E
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Aug 2022 22:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21B4C32762
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Aug 2022 13:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244490AbiHHWrh (ORCPT
+        id S244340AbiHINqr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Aug 2022 18:47:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39258 "EHLO
+        Tue, 9 Aug 2022 09:46:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244443AbiHHWrg (ORCPT
+        with ESMTP id S244161AbiHINqk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Aug 2022 18:47:36 -0400
-Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B7F1929A
-        for <linux-security-module@vger.kernel.org>; Mon,  8 Aug 2022 15:47:32 -0700 (PDT)
-Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-10e6bdbe218so12139266fac.10
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Aug 2022 15:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=Xgr1zcvVw2pumc5i5OyXUSrHvFDN2EKwHe94fGDtFRc=;
-        b=SpIxuRBySHLiJnzlZCqbG6d10oLBSB6+sdgZ2x0xGqg9Qwam4ErXCCwXAKSMe60/qQ
-         LXKVAHne5E6sMcti6T8BzKOmUlluVg+91nYIVsD/0Gx3/1Rh2GpuPw9yoGoFsgMlDreE
-         Hyl7ji9Dex0sOxkL7gyZ6yKDSJMbl0988qMpWHJVC/avb0dk6uwrDgie4XTtnptBThSh
-         Up1jSUYskmN+BE7RpU+76YeIe2h9UEMKds5itTlwRZM2KUpbnrIwFoatEQqlk2f3vpqS
-         XUCZ38YIDNDrGV3oUTW23sBHHU+JWpi09zppu2VYozxXeu5uN48iLjgdfOfOEWtu5/ZA
-         oTxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=Xgr1zcvVw2pumc5i5OyXUSrHvFDN2EKwHe94fGDtFRc=;
-        b=m3ASqmLe4gp2gI5iZfXCFKhEyFZpX3H/YYBvMrEdBENBudbrnBZ8vG/DTRml/jKo+U
-         Q2ehKW3hYTmDaOTouR5t7eiogVlO/3Hxn64tJVENnlhHdIAlf9BjU0HvE/zeXEp1b8Mm
-         Izd1PmMOgJX7vC65WFinP5WaoRh8N0pE/Qad4YBJQOCBlrPX3+hHqXGerC4D7BAuQOWg
-         B0h3OU70pt5WuarSi/RhmtGlfeDDL9WuY32zvSU583QDXhHThftY/+RpNZwQ3EtH9RTS
-         795+3wMJ+AHKdV46bBECxC9A9cnQNcjOHnZf/5yMKI3fpJvGt3EBQRjsElA5gOdG6up8
-         pcTA==
-X-Gm-Message-State: ACgBeo0r/QN1SJ/XK7Wrl1UQhMZCbl4DiN+DzKp0bw2raoX56GPXV/YN
-        DVjHQgMgSGICwuKTlpXeOPf/gVggvMgQKnmPRDA4
-X-Google-Smtp-Source: AA6agR4xuYwVmCC3J5R5EIaV2vMNU+sZEdEaDmuaoGD6OS/1cZ5bdac1//FK/Z+H/JjLJ5ZJ0b1/X9olSD/ppX1e9zM=
-X-Received: by 2002:a05:6870:b41e:b0:116:5dc7:192a with SMTP id
- x30-20020a056870b41e00b001165dc7192amr2571672oap.136.1659998852083; Mon, 08
- Aug 2022 15:47:32 -0700 (PDT)
+        Tue, 9 Aug 2022 09:46:40 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9A19DEA3;
+        Tue,  9 Aug 2022 06:46:39 -0700 (PDT)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4M2Dl503Xkz67VCj;
+        Tue,  9 Aug 2022 21:42:09 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Tue, 9 Aug 2022 15:46:36 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+        <martin.lau@linux.dev>, <song@kernel.org>, <yhs@fb.com>,
+        <john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@google.com>,
+        <haoluo@google.com>, <jolsa@kernel.org>, <corbet@lwn.net>,
+        <dhowells@redhat.com>, <jarkko@kernel.org>, <rostedt@goodmis.org>,
+        <mingo@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+        <serge@hallyn.com>, <shuah@kernel.org>
+CC:     <bpf@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Yosry Ahmed <yosryahmed@google.com>
+Subject: [PATCH v9 01/10] btf: Add a new kfunc flag which allows to mark a function to be sleepable
+Date:   Tue, 9 Aug 2022 15:45:54 +0200
+Message-ID: <20220809134603.1769279-2-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220809134603.1769279-1-roberto.sassu@huawei.com>
+References: <20220809134603.1769279-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-References: <20220801180146.1157914-1-fred@cloudflare.com> <87les7cq03.fsf@email.froward.int.ebiederm.org>
- <CAHC9VhRpUxyxkPaTz1scGeRm+i4KviQQA7WismOX2q5agzC+DQ@mail.gmail.com>
- <87wnbia7jh.fsf@email.froward.int.ebiederm.org> <CAHC9VhS3udhEecVYVvHm=tuqiPGh034-xPqXYtFjBk23+p-Szg@mail.gmail.com>
- <877d3ia65v.fsf@email.froward.int.ebiederm.org> <87bksu8qs2.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87bksu8qs2.fsf@email.froward.int.ebiederm.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 8 Aug 2022 18:47:21 -0400
-Message-ID: <CAHC9VhTEwD2y9Witj-1z3e2TC-NGjghQ4KT4Dqf3UOLzDcDc3Q@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] Introduce security_create_user_ns()
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
-        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-team@cloudflare.com, cgzones@googlemail.com,
-        karl@bigbadwolfsecurity.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.63.22]
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 8, 2022 at 3:43 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> "Eric W. Biederman" <ebiederm@xmission.com> writes:
-> > Paul Moore <paul@paul-moore.com> writes:
-> >
-> >>> I did provide constructive feedback.  My feedback to his problem
-> >>> was to address the real problem of bugs in the kernel.
-> >>
-> >> We've heard from several people who have use cases which require
-> >> adding LSM-level access controls and observability to user namespace
-> >> creation.  This is the problem we are trying to solve here; if you do
-> >> not like the approach proposed in this patchset please suggest another
-> >> implementation that allows LSMs visibility into user namespace
-> >> creation.
-> >
-> > Please stop, ignoring my feedback, not detailing what problem or
-> > problems you are actually trying to be solved, and threatening to merge
-> > code into files that I maintain that has the express purpose of breaking
-> > my users.
-> >
-> > You just artificially constrained the problems, so that no other
-> > solution is acceptable.  On that basis alone I am object to this whole
-> > approach to steam roll over me and my code.
->
-> If you want an example of what kind of harm it can cause to introduce a
-> failure where no failure was before I invite you to look at what
-> happened with sendmail when setuid was modified to fail, when changing
-> the user of a process would cause RLIMIT_NPROC to be exceeded.
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-I think we are all familiar with the sendmail capabilities bug and the
-others like it, but using that as an excuse to block additional access
-controls seems very weak.  The Linux Kernel is very different from
-when the sendmail bug hit (what was that, ~20 years ago?), with
-advancements in capabilities and other discretionary controls, as well
-as mandatory access controls which have enabled Linux to be certified
-through a number of third party security evaluations.
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-> I am not arguing that what you are proposing is that bad but unexpected
-> failures cause real problems, and at a minimum that needs a better
-> response than: "There is at least one user that wants a failure here".
+This allows to declare a kfunc as sleepable and prevents its use in
+a non sleepable program.
 
-Let me fix that for you: "There are multiple users who want to have
-better visibility and access control for user namespace creation."
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Co-developed-by: Yosry Ahmed <yosryahmed@google.com>
+Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+Signed-off-by: Hao Luo <haoluo@google.com>
+---
+ Documentation/bpf/kfuncs.rst | 6 ++++++
+ include/linux/btf.h          | 1 +
+ kernel/bpf/btf.c             | 9 +++++++++
+ 3 files changed, 16 insertions(+)
 
---
-paul-moore.com
+diff --git a/Documentation/bpf/kfuncs.rst b/Documentation/bpf/kfuncs.rst
+index c0b7dae6dbf5..c8b21de1c772 100644
+--- a/Documentation/bpf/kfuncs.rst
++++ b/Documentation/bpf/kfuncs.rst
+@@ -146,6 +146,12 @@ that operate (change some property, perform some operation) on an object that
+ was obtained using an acquire kfunc. Such kfuncs need an unchanged pointer to
+ ensure the integrity of the operation being performed on the expected object.
+ 
++2.4.6 KF_SLEEPABLE flag
++-----------------------
++
++The KF_SLEEPABLE flag is used for kfuncs that may sleep. Such kfuncs can only
++be called by sleepable BPF programs (BPF_F_SLEEPABLE).
++
+ 2.5 Registering the kfuncs
+ --------------------------
+ 
+diff --git a/include/linux/btf.h b/include/linux/btf.h
+index cdb376d53238..976cbdd2981f 100644
+--- a/include/linux/btf.h
++++ b/include/linux/btf.h
+@@ -49,6 +49,7 @@
+  * for this case.
+  */
+ #define KF_TRUSTED_ARGS (1 << 4) /* kfunc only takes trusted pointer arguments */
++#define KF_SLEEPABLE   (1 << 5) /* kfunc may sleep */
+ 
+ struct btf;
+ struct btf_member;
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 7e64447659f3..d3e4c86b8fcd 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -6175,6 +6175,7 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
+ {
+ 	enum bpf_prog_type prog_type = resolve_prog_type(env->prog);
+ 	bool rel = false, kptr_get = false, trusted_arg = false;
++	bool sleepable = false;
+ 	struct bpf_verifier_log *log = &env->log;
+ 	u32 i, nargs, ref_id, ref_obj_id = 0;
+ 	bool is_kfunc = btf_is_kernel(btf);
+@@ -6212,6 +6213,7 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
+ 		rel = kfunc_flags & KF_RELEASE;
+ 		kptr_get = kfunc_flags & KF_KPTR_GET;
+ 		trusted_arg = kfunc_flags & KF_TRUSTED_ARGS;
++		sleepable = kfunc_flags & KF_SLEEPABLE;
+ 	}
+ 
+ 	/* check that BTF function arguments match actual types that the
+@@ -6419,6 +6421,13 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
+ 			func_name);
+ 		return -EINVAL;
+ 	}
++
++	if (sleepable && !env->prog->aux->sleepable) {
++		bpf_log(log, "kernel function %s is sleepable but the program is not\n",
++			func_name);
++		return -EINVAL;
++	}
++
+ 	/* returns argument register number > 0 in case of reference release kfunc */
+ 	return rel ? ref_regno : 0;
+ }
+-- 
+2.25.1
+
