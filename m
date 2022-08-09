@@ -2,105 +2,192 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E872BC25B0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Aug 2022 16:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB740C25B0C
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Aug 2022 16:40:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244870AbiHIQUV (ORCPT
+        id S236704AbiHIQk1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Aug 2022 12:20:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39666 "EHLO
+        Tue, 9 Aug 2022 12:40:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244942AbiHIQUS (ORCPT
+        with ESMTP id S231409AbiHIQkZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Aug 2022 12:20:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2813DCB;
-        Tue,  9 Aug 2022 09:20:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A0008B81627;
-        Tue,  9 Aug 2022 16:20:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5148CC433D6;
-        Tue,  9 Aug 2022 16:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660062014;
-        bh=pH94ZgNSPsft0KMGKgNtAAy5I1z5p+RQ7sS2YK/gSFA=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=KzaIq/DjAPWWMODx0NABsh615wiKrLh3RKkH1WfZpnARD84xYVrv2HCtf+SNjD7tx
-         OJ03GVvaQjO1E9TZ5PMAhlhG4SIkummt3jUGCPyxynksYTlamx3y/BSraS8+09CuX/
-         ywBaMi7L/xRaKm3lpN//DKdEuLhbz6p34ZTAk1i4ZHARb6DSOSXhlA+lFoH+olJ0aq
-         tOf9OEQS6eQZFaDgZBQS65RW9bwIAjAuA8pLMEN0iIrWPiNTglaXsMWXXEveanGbTG
-         C1xjhCiJ1Dcaw/kmR2O+qqDU7YSV5TU8hbg2FtDoRJMYpIZR0hMI8sUNAtNR5xYstN
-         i1ti62C1lp60w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 35F78C43140;
-        Tue,  9 Aug 2022 16:20:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 9 Aug 2022 12:40:25 -0400
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62E821138;
+        Tue,  9 Aug 2022 09:40:23 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:40688)
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oLSHF-003Ve1-S8; Tue, 09 Aug 2022 10:40:21 -0600
+Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:59198 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oLSHE-002Sv9-L4; Tue, 09 Aug 2022 10:40:21 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-team@cloudflare.com, cgzones@googlemail.com,
+        karl@bigbadwolfsecurity.com
+References: <20220801180146.1157914-1-fred@cloudflare.com>
+        <87les7cq03.fsf@email.froward.int.ebiederm.org>
+        <CAHC9VhRpUxyxkPaTz1scGeRm+i4KviQQA7WismOX2q5agzC+DQ@mail.gmail.com>
+        <87wnbia7jh.fsf@email.froward.int.ebiederm.org>
+        <CAHC9VhS3udhEecVYVvHm=tuqiPGh034-xPqXYtFjBk23+p-Szg@mail.gmail.com>
+        <877d3ia65v.fsf@email.froward.int.ebiederm.org>
+        <CAHC9VhSKmqn5wxF3BZ67Z+-CV7sZzdnO+JODq48rZJ4WAe8ULA@mail.gmail.com>
+Date:   Tue, 09 Aug 2022 11:40:12 -0500
+In-Reply-To: <CAHC9VhSKmqn5wxF3BZ67Z+-CV7sZzdnO+JODq48rZJ4WAe8ULA@mail.gmail.com>
+        (Paul Moore's message of "Mon, 8 Aug 2022 15:49:48 -0400")
+Message-ID: <87a68d4bgz.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v9 00/10] bpf: Add kfuncs for PKCS#7 signature verification
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166006201421.29142.5957999549167447991.git-patchwork-notify@kernel.org>
-Date:   Tue, 09 Aug 2022 16:20:14 +0000
-References: <20220809134603.1769279-1-roberto.sassu@huawei.com>
-In-Reply-To: <20220809134603.1769279-1-roberto.sassu@huawei.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, corbet@lwn.net,
-        dhowells@redhat.com, jarkko@kernel.org, rostedt@goodmis.org,
-        mingo@redhat.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, shuah@kernel.org, bpf@vger.kernel.org,
-        linux-doc@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-XM-SPF: eid=1oLSHE-002Sv9-L4;;;mid=<87a68d4bgz.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX18HBy/xVu3Fi4ZlEEXadKSoHy1u0KD36K8=
+X-SA-Exim-Connect-IP: 68.227.174.4
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v4 0/4] Introduce security_create_user_ns()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
+Paul Moore <paul@paul-moore.com> writes:
 
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+> On Mon, Aug 8, 2022 at 3:26 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> Paul Moore <paul@paul-moore.com> writes:
+>> >> I did provide constructive feedback.  My feedback to his problem
+>> >> was to address the real problem of bugs in the kernel.
+>> >
+>> > We've heard from several people who have use cases which require
+>> > adding LSM-level access controls and observability to user namespace
+>> > creation.  This is the problem we are trying to solve here; if you do
+>> > not like the approach proposed in this patchset please suggest another
+>> > implementation that allows LSMs visibility into user namespace
+>> > creation.
+>>
+>> Please stop, ignoring my feedback, not detailing what problem or
+>> problems you are actually trying to be solved, and threatening to merge
+>> code into files that I maintain that has the express purpose of breaking
+>> my users.
+>
+> I've heard you talk about bugs being the only reason why people would
+> want to ever block user namespaces, but I think we've all seen use
+> cases now where it goes beyond that.
 
-On Tue, 9 Aug 2022 15:45:53 +0200 you wrote:
-> One of the desirable features in security is the ability to restrict import
-> of data to a given system based on data authenticity. If data import can be
-> restricted, it would be possible to enforce a system-wide policy based on
-> the signing keys the system owner trusts.
-> 
-> This feature is widely used in the kernel. For example, if the restriction
-> is enabled, kernel modules can be plugged in only if they are signed with a
-> key whose public part is in the primary or secondary keyring.
-> 
-> [...]
+I really have not, and I don't appreciate being called a liar.
 
-Here is the summary with links:
-  - [v9,01/10] btf: Add a new kfunc flag which allows to mark a function to be sleepable
-    https://git.kernel.org/bpf/bpf-next/c/fa96b24204af
-  - [v9,02/10] bpf: Allow kfuncs to be used in LSM programs
-    (no matching commit)
-  - [v9,03/10] btf: Handle dynamic pointer parameter in kfuncs
-    (no matching commit)
-  - [v9,04/10] bpf: Export bpf_dynptr_get_size()
-    (no matching commit)
-  - [v9,05/10] KEYS: Move KEY_LOOKUP_ to include/linux/key.h
-    (no matching commit)
-  - [v9,06/10] bpf: Add bpf_lookup_*_key() and bpf_key_put() kfuncs
-    (no matching commit)
-  - [v9,07/10] bpf: Add bpf_verify_pkcs7_signature() kfunc
-    (no matching commit)
-  - [v9,08/10] selftests/bpf: Add verifier tests for bpf_lookup_*_key() and bpf_key_put()
-    (no matching commit)
-  - [v9,09/10] selftests/bpf: Add additional tests for bpf_lookup_*_key()
-    (no matching commit)
-  - [v9,10/10] selftests/bpf: Add test for bpf_verify_pkcs7_signature() kfunc
-    (no matching commit)
+> However, even if it didn't, the
+> need to build high confidence/assurance systems where big chunks of
+> functionality can be disabled based on a security policy is a very
+> real use case, and this patchset would help enable that.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Details please.  What does this look like.  What is the overall plan for
+attack surface reduction in one of these systems.  How does it differ
+from seccomp?
+
+How does this differ from setting /proc/sys/user/max_usernamespaces to 0?
+
+Why is it only the user namespace that needs to be modified to implement
+such a system?
+
+Why is there no discussion of that in the change description.
+
+> I've noticed
+> you like to talk about these hooks being a source of "regressions",
+> but access controls are not regressions Eric, they are tools that
+> system builders, administrators, and users use to secure their
+> systems.
+>
+> From my perspective, I believe that addresses your feedback around
+> "fix the bugs" and "this is a regression", which is the only thing
+> I've noted from your responses in this thread and others, but if I'm
+> missing something more technical please let me/us know.
+
+Which is a short way of saying that the using this hook for attack
+surface reduction without a larger plan will be ineffective.  If the
+attack surface is not sufficiently reduced it will not achieve a
+prevention of exploits and the attacks will still happen and be
+successful.
+
+With a change that is designed to prevent exploits not actually doing so
+all that is left is breaking userspace and causing maintenance problems.
+
+Earlier I asked to confirm that was the only reason cloudfare was
+interested in this change.  I have asked that we have an actual
+conversation about what is trying to be achieved.
+
+Instead the conversation has simply been about implementation issues
+and not about if the code will be worth having.  So far in my book the
+code very much does not look worth having.  That is my technical
+judgment and I don't see anyone taking about my arguments or even
+really engaging in them.
+
+Since I keep getting blown off, instead of having my concerns addressed
+I say this code should not go.
 
 
+>> You just artificially constrained the problems, so that no other
+>> solution is acceptable.
+>
+> There is a real need to be able to gain both additional visibility and
+> access control over user namespace creation, please suggest the
+> approach(es) you would find acceptable.
+
+The suggested hook is not at all appropriate for visibility.  Either the
+user namespace needs to have some state that can be set, or there needs
+to be something that is notified when the user namespace goes away.  At
+best the hook can print an audit message.  So the proposed hook is
+really not appropriate to add visibility to the user namespace.
+
+For the record I don't object to adding visibility, I am just pointing
+out the proposed hook is not appropriate to that task.
+
+
+What is the need to have an access control?
+
+Why do you need to fundamentally change the design of user namespaces?
+
+Those are questions I have not seen any answers to.  Without actual
+answers of what the actual problems are I can't have a reasonable
+technical conversation.
+
+>> On that basis alone I am object to this whole
+>> approach to steam roll over me and my code.
+>
+> I saw that choice of wording in your last email and thought it a bit
+> curious, so I did a quick git log dump on kernel/user_namespace.c and
+> I see approximately 31 contributors to that one file.  I've always
+> thought of the open source maintainer role as more of a "steward" and
+> less of an "owner", but that's just my opinion.
+
+As such it is unfortunately my responsibility to say no to badly thought
+out proposals.  Proposals that will negatively affect the people using
+the code I maintain.
+
+
+My apologies if I have not been more elegant right now when I have been
+constantly sick, and tired.  People getting scared of user namespaces
+for no real reason has been an on-going trend for a decade or so.  This
+isn't a new issue, and it irritates me that it is still going on.  I
+have addressed real concerns and fixed code, for many many years.
+
+This round of the people being afraid of user namespaces, I have yet to
+find any real concerns.
+
+So when I express my concerns that this is a pointless exercise and
+people don't address my concern.  I say no.
+
+Eric
