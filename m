@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289C7C25B0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Aug 2022 13:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFD0C25B0F
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Aug 2022 13:46:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244326AbiHINqs (ORCPT
+        id S244080AbiHINqs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Tue, 9 Aug 2022 09:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54106 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244080AbiHINql (ORCPT
+        with ESMTP id S244278AbiHINqp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Aug 2022 09:46:41 -0400
+        Tue, 9 Aug 2022 09:46:45 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1028F13E39;
-        Tue,  9 Aug 2022 06:46:41 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4M2Dl62TlBz67Mxp;
-        Tue,  9 Aug 2022 21:42:10 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC29E15A09;
+        Tue,  9 Aug 2022 06:46:43 -0700 (PDT)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4M2DrH5qCjz688fv;
+        Tue,  9 Aug 2022 21:46:39 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 9 Aug 2022 15:46:37 +0200
+ 15.1.2375.24; Tue, 9 Aug 2022 15:46:40 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
         <martin.lau@linux.dev>, <song@kernel.org>, <yhs@fb.com>,
@@ -34,10 +34,12 @@ To:     <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
 CC:     <bpf@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <keyrings@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 02/10] bpf: Allow kfuncs to be used in LSM programs
-Date:   Tue, 9 Aug 2022 15:45:55 +0200
-Message-ID: <20220809134603.1769279-3-roberto.sassu@huawei.com>
+        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Joanne Koong <joannelkoong@gmail.com>
+Subject: [PATCH v9 04/10] bpf: Export bpf_dynptr_get_size()
+Date:   Tue, 9 Aug 2022 15:45:57 +0200
+Message-ID: <20220809134603.1769279-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220809134603.1769279-1-roberto.sassu@huawei.com>
 References: <20220809134603.1769279-1-roberto.sassu@huawei.com>
@@ -51,27 +53,41 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@kernel.org>
+Export bpf_dynptr_get_size(), so that kernel code dealing with eBPF dynamic
+pointers can obtain the real size of data carried by this data structure.
 
-In preparation for the addition of bpf_getxattr kfunc.
-
-Signed-off-by: KP Singh <kpsingh@kernel.org>
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- kernel/bpf/btf.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/bpf.h  | 1 +
+ kernel/bpf/helpers.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index d3e4c86b8fcd..67dfc728fbf8 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -7244,6 +7244,7 @@ static int bpf_prog_type_to_kfunc_hook(enum bpf_prog_type prog_type)
- 	case BPF_PROG_TYPE_STRUCT_OPS:
- 		return BTF_KFUNC_HOOK_STRUCT_OPS;
- 	case BPF_PROG_TYPE_TRACING:
-+	case BPF_PROG_TYPE_LSM:
- 		return BTF_KFUNC_HOOK_TRACING;
- 	case BPF_PROG_TYPE_SYSCALL:
- 		return BTF_KFUNC_HOOK_SYSCALL;
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 20c26aed7896..0d56c23cc504 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2562,6 +2562,7 @@ void bpf_dynptr_init(struct bpf_dynptr_kern *ptr, void *data,
+ 		     enum bpf_dynptr_type type, u32 offset, u32 size);
+ void bpf_dynptr_set_null(struct bpf_dynptr_kern *ptr);
+ int bpf_dynptr_check_size(u32 size);
++u32 bpf_dynptr_get_size(struct bpf_dynptr_kern *ptr);
+ 
+ #ifdef CONFIG_BPF_LSM
+ void bpf_cgroup_atype_get(u32 attach_btf_id, int cgroup_atype);
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index 1f961f9982d2..5dbb90ec34b0 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -1430,7 +1430,7 @@ static void bpf_dynptr_set_type(struct bpf_dynptr_kern *ptr, enum bpf_dynptr_typ
+ 	ptr->size |= type << DYNPTR_TYPE_SHIFT;
+ }
+ 
+-static u32 bpf_dynptr_get_size(struct bpf_dynptr_kern *ptr)
++u32 bpf_dynptr_get_size(struct bpf_dynptr_kern *ptr)
+ {
+ 	return ptr->size & DYNPTR_SIZE_MASK;
+ }
 -- 
 2.25.1
 
