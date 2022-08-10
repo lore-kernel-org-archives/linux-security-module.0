@@ -2,75 +2,68 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B4BC3F6B0
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Aug 2022 08:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC915C00140
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Aug 2022 08:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231165AbiHJIaq (ORCPT
+        id S231718AbiHJIjz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Aug 2022 04:30:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51544 "EHLO
+        Wed, 10 Aug 2022 04:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229951AbiHJIaT (ORCPT
+        with ESMTP id S230378AbiHJIjy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Aug 2022 04:30:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 953AE192;
-        Wed, 10 Aug 2022 01:30:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C98B60DD1;
-        Wed, 10 Aug 2022 08:30:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8FE2BC433D7;
-        Wed, 10 Aug 2022 08:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660120215;
-        bh=FF7J0DTrGGZjgpb8MEFPQJvwNg4cYx7QMlN0iNTcGhs=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=dVqE7f/vQI4+cAclDugsYC0Q5GBBW+cIpVaJxxtLf65csG0bukJqbVe8Q9tfhrqSS
-         bzF9PftejAN3UUDLsvLcZf7uV5Ln8RcL1hrdhM2l2wRuJaIuPgUTM/EzBtkW3nA2gq
-         SBFf/1LM0V1fPYj3iXNYsPgQroG9L4MiIXmf+8YRZPigmaMFzcfxALwaW/Hah0HQMG
-         og9xpQAFrctlwKDAKWyKLe6CAwZRVCpApzU8E/1YiHxtOqeTOnZTWe1d10avBLl7aX
-         x4fhA+6/uICd4Bmla68D6f3D6s+cB/mfb0Twf0HyDz92IxTvJhMN1FCKC2gBKLmTBz
-         5/2ccur9fePjA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6C662C43141;
-        Wed, 10 Aug 2022 08:30:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 10 Aug 2022 04:39:54 -0400
+Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5DD9321271;
+        Wed, 10 Aug 2022 01:39:53 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id CE7C31E80D95;
+        Wed, 10 Aug 2022 16:37:58 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WsnNz-N9TF6o; Wed, 10 Aug 2022 16:37:56 +0800 (CST)
+Received: from nfschina.com.localdomain (unknown [219.141.250.2])
+        (Authenticated sender: zhounan@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id F25D01E80CD2;
+        Wed, 10 Aug 2022 16:37:55 +0800 (CST)
+From:   zhoun <zhounan@nfschina.com>
+To:     john.johansen@canonical.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhounan <zhounan@nfschina.com>
+Subject: [PATCH] remove unnecessary type casting
+Date:   Wed, 10 Aug 2022 04:39:35 -0400
+Message-Id: <20220810083935.83452-1-zhounan@nfschina.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] netlabel: fix typo in comment
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166012021543.17355.3583207371635676893.git-patchwork-notify@kernel.org>
-Date:   Wed, 10 Aug 2022 08:30:15 +0000
-References: <20220806101253.13865-1-toiwoton@gmail.com>
-In-Reply-To: <20220806101253.13865-1-toiwoton@gmail.com>
-To:     Topi Miettinen <toiwoton@gmail.com>
-Cc:     paul@paul-moore.com, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
+From: zhounan <zhounan@nfschina.com>
 
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
+'policy' is already a pointer to the struct aa_profile,
+ so there is no need to cast 'policy' when it is called.
 
-On Sat,  6 Aug 2022 13:12:53 +0300 you wrote:
-> 'IPv4 and IPv4' should be 'IPv4 and IPv6'.
-> 
-> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
-> ---
->  net/netlabel/netlabel_unlabeled.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: zhounan <zhounan@nfschina.com>
+---
+ security/apparmor/policy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - netlabel: fix typo in comment
-    https://git.kernel.org/netdev/net/c/2cd0e8dba7a5
-
-You are awesome, thank you!
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index b0cbc4906cb3..9643801c4ee7 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -1003,7 +1003,7 @@ ssize_t aa_replace_profiles(struct aa_ns *policy_ns, struct aa_label *label,
+ 			rcu_assign_pointer(ent->new->parent, aa_get_profile(p));
+ 		} else if (policy != &ns->base) {
+ 			/* released on profile replacement or free_profile */
+-			struct aa_profile *p = (struct aa_profile *) policy;
++			struct aa_profile *p = policy;
+ 			rcu_assign_pointer(ent->new->parent, aa_get_profile(p));
+ 		}
+ 	}
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.27.0
 
