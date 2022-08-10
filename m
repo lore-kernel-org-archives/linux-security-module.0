@@ -2,75 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1F9C00140
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Aug 2022 18:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB1FC00140
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Aug 2022 18:33:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232449AbiHJSOw (ORCPT
+        id S233144AbiHJSdh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Aug 2022 14:14:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51254 "EHLO
+        Wed, 10 Aug 2022 14:33:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230433AbiHJSOv (ORCPT
+        with ESMTP id S232361AbiHJSdf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Aug 2022 14:14:51 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB9275389;
-        Wed, 10 Aug 2022 11:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Wdyptz8v1uMMnY9kHa999mGXzTZq4vrNBD6JJO975pY=; b=xQFEJRje+5KYZsm78qd561Znmf
-        3i3ixO5ZS9RypJYMDJuHQ/VVnpJ5ey3altYugRYiy3drQQ8N8HWCpLpIYWlbqfVzPd17sMCFv8Wwo
-        izZECbe0a8Jql4C6P94qRJdH8aY8N50tF0PrsS3hEH0yraNcuryt6RA7MIrca9sLI6bBNLHri/ct+
-        hD/fsxAykUqXjtMYm7VZaDWQ4cLkVx46dpxm6MFZVzdxi7+jwbFNo7V4A92mrI60xAa/OVKRt9EIC
-        6P0AKidp0kYcs/a41sR1v+oma/Psnh5Y+5+x3BmIcUuS1ji2YRWet1IOUaTKtvIIqlC5nj2vjjyys
-        wMWXbB2A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oLqE0-00De0o-Nx; Wed, 10 Aug 2022 18:14:36 +0000
-Date:   Wed, 10 Aug 2022 11:14:36 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
-        casey@schaufler-ca.com, paul@paul-moore.com, joshi.k@samsung.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        a.manzanares@samsung.com, javier@javigon.com
-Subject: Re: [PATCH v2] lsm,io_uring: add LSM hooks for the new uring_cmd
- file op
-Message-ID: <YvP1jK/J4m8TE8BZ@bombadil.infradead.org>
-References: <20220715191622.2310436-1-mcgrof@kernel.org>
- <a56d191e-a3a3-76b9-6ca3-782803d2600c@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a56d191e-a3a3-76b9-6ca3-782803d2600c@kernel.dk>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+        Wed, 10 Aug 2022 14:33:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A977C1A3;
+        Wed, 10 Aug 2022 11:33:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 01B546145A;
+        Wed, 10 Aug 2022 18:33:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5CEE8C433D6;
+        Wed, 10 Aug 2022 18:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660156413;
+        bh=D19PBfwAbILfrAJ4e9YsCKnRJIu9jYWXcH95v4mOsYQ=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=j86uRzgiptrIjcG0yXhFK7fczl+KPvK2HqMhPlYsg2FKcAQUmtC1qhkbzmUs+K7Fe
+         HU1blg8181F8P4W5iugwoLyQrRXoicIEEkTpjivovPBtHHBI7Jrx4gISGiDfBF9DR9
+         OhAdbEHv8GUACA5rGb0pEnnnRxRbHcgly9mp+i5XFDmatw6OClbo1e2qtLKrCLqyU+
+         CuYmUBa991YJNnSqW7ZfTaecCAtYNkAHc0nVIpmpVFAtKJoV71bE46BEQK9ojGVGF0
+         anM3HJ+6l/9XNYICX7PHGstdE4Xb7p5BlsFIFopvQFhOVjYPZNIGaL8I+RNtmj+1RF
+         LIX/ajIbaysEA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4C4DAC43142;
+        Wed, 10 Aug 2022 18:33:33 +0000 (UTC)
+Subject: Re: [GIT PULL] apparmor changes for v5.20
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <8009201e-be46-a237-c6b1-e133dbc84137@canonical.com>
+References: <8009201e-be46-a237-c6b1-e133dbc84137@canonical.com>
+X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
+X-PR-Tracked-Message-Id: <8009201e-be46-a237-c6b1-e133dbc84137@canonical.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2022-08-08
+X-PR-Tracked-Commit-Id: c269fca7b37a08b7eec6f6b79a0abf1d0a245acb
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 00aa9d0bbfec91dcf191dd7899a65ab28b6cc76d
+Message-Id: <166015641330.32353.2643261231802451855.pr-tracker-bot@kernel.org>
+Date:   Wed, 10 Aug 2022 18:33:33 +0000
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 15, 2022 at 01:28:35PM -0600, Jens Axboe wrote:
-> On 7/15/22 1:16 PM, Luis Chamberlain wrote:
-> > io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
-> > add infrastructure for uring-cmd"), this extended the struct
-> > file_operations to allow a new command which each subsystem can use
-> > to enable command passthrough. Add an LSM specific for the command
-> > passthrough which enables LSMs to inspect the command details.
-> > 
-> > This was discussed long ago without no clear pointer for something
-> > conclusive, so this enables LSMs to at least reject this new file
-> > operation.
-> 
-> From an io_uring perspective, this looks fine to me. It may be easier if
-> I take this through my tree due to the moving of the files, or the
-> security side can do it but it'd have to then wait for merge window (and
-> post io_uring branch merge) to do so. Just let me know. If done outside
-> of my tree, feel free to add:
-> 
-> Acked-by: Jens Axboe <axboe@kernel.dk>
+The pull request you sent on Tue, 9 Aug 2022 10:53:33 -0700:
 
-Paul, Casey, Jens,
+> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2022-08-08
 
-should this be picked up now that we're one week into the merge window?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/00aa9d0bbfec91dcf191dd7899a65ab28b6cc76d
 
-  Luis
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
