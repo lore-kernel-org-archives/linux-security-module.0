@@ -2,138 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE0EC25B06
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Aug 2022 17:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C58C25B06
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Aug 2022 23:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235351AbiHKRP0 (ORCPT
+        id S235882AbiHKXyV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Aug 2022 13:15:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44730 "EHLO
+        Thu, 11 Aug 2022 19:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235108AbiHKROr (ORCPT
+        with ESMTP id S234955AbiHKXyU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Aug 2022 13:14:47 -0400
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAAD3EA6
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Aug 2022 09:59:31 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4M3Y1t1RrqzMqNP5;
-        Thu, 11 Aug 2022 18:59:30 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4M3Y1s2yH3zln8Vd;
-        Thu, 11 Aug 2022 18:59:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1660237170;
-        bh=LSlcy2SLvMkGTKXYuNvaBfeuyw7ATcD4CeV8gpzoDQ0=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=dEUQJhS26w7CbWzHz6pue1x3aAcbSQfmsqisr8ntWmKizc8G4ZzHeL0gV3BoQSBGn
-         L22DQObhJQlY/8v2FGGpyunl9TlPvC0d6NX1/QUEz6ZQm2lED4+feo+JMO/VkWdPj9
-         ezE6U0ZR2PR7D0Uq2EE6q6xAfNtU5hScAw+vVJoM=
-Message-ID: <a9c9124c-84a3-da5e-23f1-3eecf0b226ce@digikod.net>
-Date:   Thu, 11 Aug 2022 18:59:28 +0200
+        Thu, 11 Aug 2022 19:54:20 -0400
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C74A1D48
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Aug 2022 16:54:18 -0700 (PDT)
+Received: from submission (posteo.de [185.67.36.169]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id 94023240105
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Aug 2022 01:54:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+        t=1660262056; bh=JkMK2ZzPPyQl8oBskpaCW68aHa6Y2QAApaUOJCrkky0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=NhFylEAcYSP6ooajuZO4T2YGW5fL5ATOhgbkDJooGFyAbZTbVwTZnX5pApklMyoSF
+         Aap+nYNKvCfvx9nZRlcKWt2CvEm/dN0ajORKOl6OqcT8Yxh6ZuWlD5+W+Gc3Fm6f+B
+         LMKIFBWuqLyW43a3noOsHPkh5P8CzorGxYoYPkEUGtvLchkv70K8nzJuhZKeodw6jG
+         LQ4mNGo/BVKiMFMvD8jxUH5xJCpw6RDbYMH98HcgdlQaSrer9xPQGHJ3R3xrGS75ec
+         Yw0kyhs1pYpcO6zPr4fU8xKEbf9ueKqkuD2FYp76ICzCIDq4S1XRVN6N6Rfs0wZY5C
+         DI/hfLUca7cYQ==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 4M3kDF2Dxrz6tm9;
+        Fri, 12 Aug 2022 01:54:04 +0200 (CEST)
+Date:   Thu, 11 Aug 2022 23:52:22 +0000
+From:   Daniel =?utf-8?Q?M=C3=BCller?= <deso@posteo.net>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "martin.lau@linux.dev" <martin.lau@linux.dev>,
+        "song@kernel.org" <song@kernel.org>, "yhs@fb.com" <yhs@fb.com>,
+        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "sdf@google.com" <sdf@google.com>,
+        "haoluo@google.com" <haoluo@google.com>,
+        "jolsa@kernel.org" <jolsa@kernel.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 5/9] bpf: Add bpf_lookup_*_key() and bpf_key_put()
+ kfuncs
+Message-ID: <20220811235222.inghj73tf6vudoyw@vaio>
+References: <20220810165932.2143413-1-roberto.sassu@huawei.com>
+ <20220810165932.2143413-6-roberto.sassu@huawei.com>
+ <20220810213351.wm5utltm67q4i6lu@MacBook-Pro-3.local.dhcp.thefacebook.com>
+ <2415f4931a364541b2e6d14a8185ffbb@huawei.com>
+ <f7d401d6ec6c47cbb358046a2d3ca5e8@huawei.com>
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-References: <20220804193746.9161-1-gnoack3000@gmail.com>
- <20220804193746.9161-2-gnoack3000@gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v3 1/4] landlock: Support file truncation
-In-Reply-To: <20220804193746.9161-2-gnoack3000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f7d401d6ec6c47cbb358046a2d3ca5e8@huawei.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 04/08/2022 21:37, Günther Noack wrote:
-> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
+On Thu, Aug 11, 2022 at 12:02:57PM +0000, Roberto Sassu wrote:
+> > From: Roberto Sassu [mailto:roberto.sassu@huawei.com]
+> > Sent: Thursday, August 11, 2022 9:47 AM
+> > > From: Alexei Starovoitov [mailto:alexei.starovoitov@gmail.com]
+> > > Sent: Wednesday, August 10, 2022 11:34 PM
+> > > On Wed, Aug 10, 2022 at 06:59:28PM +0200, Roberto Sassu wrote:
+> > > > +
+> > > > +static int __init bpf_key_sig_kfuncs_init(void)
+> > > > +{
+> > > > +	int ret;
+> > > > +
+> > > > +	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING,
+> > > > +					&bpf_key_sig_kfunc_set);
+> > > > +	if (!ret)
+> > > > +		return 0;
+> > > > +
+> > > > +	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM,
+> > > > +					 &bpf_key_sig_kfunc_set);
+> > >
+> > > Isn't this a watery water ?
+> > > Don't you have a patch 1 ?
+> > > What am I missing ?
+> > 
+> > Uhm, yes. I had doubts too. That was what also KP did.
+> > 
+> > It makes sense to register once, since we mapped LSM to
+> > TRACING.
+> > 
+> > Will resend only this patch. And I will figure out why CI failed.
 > 
-> This flag hooks into the path_truncate LSM hook and covers file
-> truncation using truncate(2), ftruncate(2), open(2) with O_TRUNC, as
-> well as creat().
+> Adding in CC Daniel M�ller, which worked on this.
 > 
-> This change also increments the Landlock ABI version, updates
-> corresponding selftests, and includes minor documentation changes to
-> document the flag.
+> I think the issue is that some kernel options are set to =m.
+> This causes the CI to miss all kernel modules, since they are
+> not copied to the virtual machine that executes the tests.
 > 
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->   Documentation/userspace-api/landlock.rst     |  6 ++++++
->   include/uapi/linux/landlock.h                | 17 ++++++++++++-----
->   security/landlock/fs.c                       |  9 ++++++++-
->   security/landlock/limits.h                   |  2 +-
->   security/landlock/syscalls.c                 |  2 +-
->   tools/testing/selftests/landlock/base_test.c |  2 +-
->   tools/testing/selftests/landlock/fs_test.c   |  7 ++++---
->   7 files changed, 33 insertions(+), 12 deletions(-)
+> I'm testing this patch:
 > 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index b8ea59493964..d92e335380d4 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -380,6 +380,12 @@ by the Documentation/admin-guide/cgroup-v1/memory.rst.
->   Previous limitations
->   ====================
->   
-> +File truncation (ABI < 3)
-> +-------------------------
-> +
-> +File truncation could not be denied before the third Landlock ABI, so it is
-> +always allowed when using a kernel that only supports the first or second ABI.
+> https://github.com/robertosassu/libbpf-ci/commit/b665e001b58c4ddb792a2a68098ea5dc6936b15c
 
-I think this addition could make the documentation more consistent and 
-helpful:
+I commented on the pull request. Would it make sense to adjust the
+kernel configuration in this repository instead? I am worried that
+otherwise everybody may need a similar work around, depending on how
+selftests are ultimately run.
 
-Starting with the Landlock ABI version 3, it is now possible to securely
-control truncation thanks to the new `LANDLOCK_ACCESS_FS_TRUNCATE`
-access right.
-
-
-> +
->   File renaming and linking (ABI 1)
->   ---------------------------------
->   
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 23df4e0e8ace..1beb8289708d 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -95,8 +95,15 @@ struct landlock_path_beneath_attr {
->    * A file can only receive these access rights:
->    *
->    * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
-> - * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access.
-> + * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note that
-> + *   you might additionally need the LANDLOCK_ACCESS_FS_TRUNCATE right in order
-
-Please use backquotes for code such as `LANDLOCK_ACCESS_FS_TRUNCATE`, 
-`O_TRUNC`…
-
-
-> + *   to overwrite files with :manpage:`open(2)` using O_TRUNC or
-> + *   :manpage:`creat(2)`.
->    * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
-> + * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file through file truncation APIs
-> + *   like :manpage:`truncate(2)`, :manpage:`ftruncate(2)`, or
-> + *   :manpage:`open(2)` with O_TRUNC or :manpage:`creat(2)`. This access right
-> + *   is available since the third version of the Landlock ABI.
->    *
->    * A directory can receive access rights related to files or directories.  The
->    * following access right is applied to the directory itself, and the
-> @@ -139,10 +146,9 @@ struct landlock_path_beneath_attr {
->    *
->    *   It is currently not possible to restrict some file-related actions
->    *   accessible through these syscall families: :manpage:`chdir(2)`,
-> - *   :manpage:`truncate(2)`, :manpage:`stat(2)`, :manpage:`flock(2)`,
-> - *   :manpage:`chmod(2)`, :manpage:`chown(2)`, :manpage:`setxattr(2)`,
-> - *   :manpage:`utime(2)`, :manpage:`ioctl(2)`, :manpage:`fcntl(2)`,
-> - *   :manpage:`access(2)`.
-> + *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
-> + *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
-> + *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
->    *   Future Landlock evolutions will enable to restrict them.
->    */
->   /* clang-format off */
+Thanks,
+Daniel
