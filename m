@@ -2,299 +2,345 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09DACC19F2A
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Aug 2022 12:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549D1C19F2A
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Aug 2022 17:15:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234540AbiHKM2z (ORCPT
+        id S236452AbiHKRPZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Aug 2022 08:28:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35716 "EHLO
+        Thu, 11 Aug 2022 13:15:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234580AbiHKM2x (ORCPT
+        with ESMTP id S235868AbiHKROw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Aug 2022 08:28:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E60DC94ECA
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Aug 2022 05:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660220930;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ldt5YH2vUdUY3Rfwj7va1rTsTGCGWHudQKX+6U+hrBE=;
-        b=LePoK+lDIc6UgZKK4W9O8tlsrQYzQF3XpiBcNf4WXWLdhVWrQPjJvHaQsq9vGWygzKmRYL
-        znPwzyEuErKJuYb4NDrqeLBjimK0JXLjzMKQd1w+rCcYnmmYmJ/oHU8XXjv6atfhuRw2+q
-        hCDqsO2s6Rq3kY2jiw0Cwntjn/A4iMc=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-376-WrMqCor8ONWb3OA88bT-LA-1; Thu, 11 Aug 2022 08:28:49 -0400
-X-MC-Unique: WrMqCor8ONWb3OA88bT-LA-1
-Received: by mail-yb1-f199.google.com with SMTP id 130-20020a250188000000b006777ce7728cso14374343ybb.4
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Aug 2022 05:28:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=Ldt5YH2vUdUY3Rfwj7va1rTsTGCGWHudQKX+6U+hrBE=;
-        b=HpoRBEhCdYynQUc+kyeNUwuJojgSqiiEx7BuB6O+dOKezqHOM0g9sl47orCgGYsx+X
-         cf86cPDhO63eh6VRdebjoTdNQBHYH/2e1YHdFLXaS+6NGmTOQqjGbZvByLtiBtyReNNz
-         zeTA7Bpfw7FpPXZ1MwqrERO0oDd+GOJZUrVPh85LyvnrFfe+IUrdol1MxaDd0nfC63mU
-         3jAQjuJu3AydOkHbIht2d3yAasgLxuU6bO+XP0mZqZ/ethBBk15jUGRhjmwLiECxxp9z
-         4MWh+vJz4JFU0VPQbnz8n3QF5tjDumAhz3ghocoQjptxjMW+fSHZh1DGV8x3xCwLCfA8
-         kq8Q==
-X-Gm-Message-State: ACgBeo3878zrFre5V7UNHxd0At2IxR7YjfcdcWkacpCNkCLSqhDVfosC
-        R1k/VlVA2b5H3o7R9A9qieFvcAsyH2aQ0ORaGBWIQMwfBeNknKrGGH1fbRlohuI5u/E1YwBW7Sy
-        eAK+ppCI23oR0vzusnKxLiHW0HjfhswnDhdoUwfmeiSuA900y/WWB
-X-Received: by 2002:a0d:f6c4:0:b0:328:2c56:6463 with SMTP id g187-20020a0df6c4000000b003282c566463mr35602502ywf.459.1660220929343;
-        Thu, 11 Aug 2022 05:28:49 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR7i/yLgTzvo55oX3D4yxqarpwhjtEMknT6HPFwQbuQSzI78hubppBmLMXchXKyrb6WYwsWpPElHXQtb2k2pY1U=
-X-Received: by 2002:a0d:f6c4:0:b0:328:2c56:6463 with SMTP id
- g187-20020a0df6c4000000b003282c566463mr35602473ywf.459.1660220929084; Thu, 11
- Aug 2022 05:28:49 -0700 (PDT)
+        Thu, 11 Aug 2022 13:14:52 -0400
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8AABF13
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Aug 2022 09:59:41 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4M3Y232rFZzMqPRk;
+        Thu, 11 Aug 2022 18:59:39 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4M3Y226kH4zlrKcg;
+        Thu, 11 Aug 2022 18:59:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1660237179;
+        bh=ZcmzDu8m3HZOuhVsJJCKrT8/W4uG5CpXWVzF7YLAh40=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=apFeXDsAYZ6GCeIQAQQ54QqYceNfy2Vj3m7ZDuTHjncJuSVfohxZk3kdCXm4FkCHb
+         ocm4Opir5ydxyhLJZYvJs1OVFrldsR6XJ0vEmDFnvbsMenpHRrMSYKSIKO2ovk0jiR
+         KNEFXftSWiUFm7kDfOF/k1j5BWkSEX50ShNJ6t1c=
+Message-ID: <40ad7781-a94d-7be2-e5b9-64b6893a669e@digikod.net>
+Date:   Thu, 11 Aug 2022 18:59:38 +0200
 MIME-Version: 1.0
-References: <165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk>
-In-Reply-To: <165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Thu, 11 Aug 2022 14:28:38 +0200
-Message-ID: <CAFqZXNv+ahpN3Hdv54ixa4u-LKaqTtCyjtkpzKGbv7x4dzwc0Q@mail.gmail.com>
-Subject: Re: [PATCH v3] nfs: Fix automount superblock LSM init problem,
- preventing sb sharing
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        dwysocha@redhat.com,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        linux-security-module@vger.kernel.org
+Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+References: <20220804193746.9161-1-gnoack3000@gmail.com>
+ <20220804193746.9161-3-gnoack3000@gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v3 2/4] selftests/landlock: Selftests for file truncation
+ support
+In-Reply-To: <20220804193746.9161-3-gnoack3000@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 5, 2022 at 3:36 PM David Howells <dhowells@redhat.com> wrote:
-> When NFS superblocks are created by automounting, their LSM parameters
-> aren't set in the fs_context struct prior to sget_fc() being called,
-> leading to failure to match existing superblocks.
->
-> Fix this by adding a new LSM hook to load fc->security for submount
-> creation when alloc_fs_context() is creating the fs_context for it.
->
-> However, this uncovers a further bug: nfs_get_root() initialises the
-> superblock security manually by calling security_sb_set_mnt_opts() or
-> security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-> security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-> complaining.
->
-> Fix that by adding a flag to the fs_context that suppresses the
-> security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
-> when it sets the LSM context on the new superblock.
->
-> The first bug leads to messages like the following appearing in dmesg:
->
->         NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
->
-> Changes
-> =======
-> ver #2)
->  - Made LSM parameter extraction dependent on fc->purpose ==
->    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
->
-> ver #2)
->  - Added Smack support
->  - Made LSM parameter extraction dependent on reference != NULL.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-> cc: Anna Schumaker <anna@kernel.org>
-> cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> cc: Scott Mayhew <smayhew@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Paul Moore <paul@paul-moore.com>
-> cc: Casey Schaufler <casey@schaufler-ca.com>
-> cc: linux-nfs@vger.kernel.org
-> cc: selinux@vger.kernel.org
-> cc: linux-security-module@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
+
+On 04/08/2022 21:37, Günther Noack wrote:
+> These tests exercise the following truncation operations:
+> 
+> * truncate() (truncate by path)
+> * ftruncate() (truncate by file descriptor)
+> * open with the O_TRUNC flag
+> * special case: creat(), which is open with O_CREAT|O_WRONLY|O_TRUNC.
+> 
+> in the following scenarios:
+> 
+> * Files with read, write and truncate rights.
+> * Files with read and truncate rights.
+> * Files with the truncate right.
+> * Files without the truncate right.
+> 
+> In particular, the following scenarios are enforced with the test:
+> 
+> * The truncate right is required to use ftruncate,
+>    even when the thread already has the right to write to the file.
+> * open() with O_TRUNC requires the truncate right, if it truncates a file.
+>    open() already checks security_path_truncate() in this case,
+>    and it required no additional check in the Landlock LSM's file_open hook.
+> * creat() requires the truncate right
+>    when called with an existing filename.
+> * creat() does *not* require the truncate right
+>    when it's creating a new file.
+> 
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 > ---
->
->  fs/fs_context.c               |    4 +++
->  fs/nfs/getroot.c              |    1 +
->  fs/super.c                    |   10 ++++---
->  include/linux/fs_context.h    |    1 +
->  include/linux/lsm_hook_defs.h |    1 +
->  include/linux/lsm_hooks.h     |    6 +++-
->  include/linux/security.h      |    6 ++++
->  security/security.c           |    5 +++
->  security/selinux/hooks.c      |   29 +++++++++++++++++++
->  security/smack/smack_lsm.c    |   61 +++++++++++++++++++++++++++++++++++++++++
->  10 files changed, 119 insertions(+), 5 deletions(-)
-
-<snip>
-
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 1bbd53321d13..ddeaff4f3bb1 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2768,6 +2768,34 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
->                                    FILESYSTEM__UNMOUNT, NULL);
->  }
->
-> +static int selinux_fs_context_init(struct fs_context *fc,
-> +                                  struct dentry *reference)
+>   tools/testing/selftests/landlock/fs_test.c | 204 +++++++++++++++++++++
+>   1 file changed, 204 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index cb77eaa01c91..3e84bae7e83a 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -58,6 +58,7 @@ static const char file1_s2d3[] = TMP_DIR "/s2d1/s2d2/s2d3/f1";
+>   static const char file2_s2d3[] = TMP_DIR "/s2d1/s2d2/s2d3/f2";
+>   
+>   static const char dir_s3d1[] = TMP_DIR "/s3d1";
+> +static const char file1_s3d1[] = TMP_DIR "/s3d1/f1";
+>   /* dir_s3d2 is a mount point. */
+>   static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
+>   static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
+> @@ -83,6 +84,7 @@ static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
+>    * │           ├── f1
+>    * │           └── f2
+>    * └── s3d1
+> + *     ├── f1
+>    *     └── s3d2
+>    *         └── s3d3
+>    */
+> @@ -208,6 +210,7 @@ static void create_layout1(struct __test_metadata *const _metadata)
+>   	create_file(_metadata, file1_s2d3);
+>   	create_file(_metadata, file2_s2d3);
+>   
+> +	create_file(_metadata, file1_s3d1);
+>   	create_directory(_metadata, dir_s3d2);
+>   	set_cap(_metadata, CAP_SYS_ADMIN);
+>   	ASSERT_EQ(0, mount("tmp", dir_s3d2, "tmpfs", 0, "size=4m,mode=700"));
+> @@ -230,6 +233,7 @@ static void remove_layout1(struct __test_metadata *const _metadata)
+>   	EXPECT_EQ(0, remove_path(file1_s2d2));
+>   	EXPECT_EQ(0, remove_path(file1_s2d1));
+>   
+> +	EXPECT_EQ(0, remove_path(file1_s3d1));
+>   	EXPECT_EQ(0, remove_path(dir_s3d3));
+>   	set_cap(_metadata, CAP_SYS_ADMIN);
+>   	umount(dir_s3d2);
+> @@ -3023,6 +3027,206 @@ TEST_F_FORK(layout1, proc_pipe)
+>   	ASSERT_EQ(0, close(pipe_fds[1]));
+>   }
+>   
+> +/* Opens the file, invokes ftruncate(2) and returns the errno or 0. */
+> +static int test_ftruncate(struct __test_metadata *const _metadata,
+> +			  const char *const path, int flags)
 > +{
-> +       const struct superblock_security_struct *sbsec;
-> +       const struct inode_security_struct *root_isec;
-> +       struct selinux_mnt_opts *opts;
+> +	int res, err, fd;
 > +
-> +       if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-> +               opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-> +               if (!opts)
-> +                       return -ENOMEM;
+> +	fd = open(path, flags | O_CLOEXEC);
+> +	ASSERT_LE(0, fd);
 > +
-> +               root_isec = backing_inode_security(reference->d_sb->s_root);
-> +               sbsec = selinux_superblock(reference->d_sb);
-> +               if (sbsec->flags & FSCONTEXT_MNT)
-> +                       opts->fscontext_sid     = sbsec->sid;
-> +               if (sbsec->flags & CONTEXT_MNT)
-> +                       opts->context_sid       = sbsec->mntpoint_sid;
-> +               if (sbsec->flags & ROOTCONTEXT_MNT)
-> +                       opts->rootcontext_sid   = root_isec->sid;
-
-I wonder if this part is correct... The rootcontext=... mount option
-relates to the root inode of the mount where it is specified - i.e. in
-case of NFS only to the toplevel inode of the initial mount. Setting
-the same context on the root inode of submounts, which AFAIK are
-supposed to be transparent to the user, doesn't seem correct to me -
-i.e. it should just be left unset for the automatically created
-submounts.
-
-That said, I always feel lost in the super-complex LSM-VFS
-interactions, so I'd welcome it if someone gives a second opinion
-here.
-
-> +               if (sbsec->flags & DEFCONTEXT_MNT)
-> +                       opts->defcontext_sid    = sbsec->def_sid;
-> +               fc->security = opts;
-> +       }
+> +	res = ftruncate(fd, 10);
+> +	err = errno;
+> +	ASSERT_EQ(0, close(fd));
 > +
-> +       return 0;
+> +	if (res < 0)
+> +		return err;
+> +	return 0;
 > +}
 > +
->  static int selinux_fs_context_dup(struct fs_context *fc,
->                                   struct fs_context *src_fc)
->  {
-> @@ -7239,6 +7267,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
->         /*
->          * PUT "CLONING" (ACCESSING + ALLOCATING) HOOKS HERE
->          */
-> +       LSM_HOOK_INIT(fs_context_init, selinux_fs_context_init),
->         LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
->         LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
->         LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 6207762dbdb1..6ba32bb097b5 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -612,6 +612,66 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
->         return -EINVAL;
->  }
->
-> +/**
-> + * smack_fs_context_init - Initialise security data for a filesystem context
-> + * @fc: The filesystem context.
-> + * @reference: Reference dentry (automount/reconfigure) or NULL
-> + *
-> + * Returns 0 on success or -ENOMEM on error.
+> +/* Invokes truncate(2) and returns the errno or 0. */
+> +static int test_truncate(const char *const path)
+> +{
+> +	if (truncate(path, 10) < 0)
+> +		return errno;
+> +	return 0;
+> +}
+> +
+> +/* Invokes creat(2) and returns the errno or 0. */
+> +static int test_creat(struct __test_metadata *const _metadata,
+> +		      const char *const path, mode_t mode)
+> +{
+> +	int fd = creat(path, mode);
+> +
+> +	if (fd < 0)
+> +		return errno;
+> +	ASSERT_EQ(0, close(fd));
+
+test_creat() contains an ASSERT, which would only print this line, which 
+would not help much if it is called multiple times, which is the case. I 
+prefer not passing _metadata but only returning errno or 0 and handling 
+the ASSERT in layout1.truncate* . It is not the case everywhere but we 
+should try to follow this rule as much as possible.
+
+
+> +	return 0;
+> +}
+> +
+> +TEST_F_FORK(layout1, truncate)
+> +{
+> +	const char *const file_rwt = file1_s1d1;
+> +	const char *const file_rw = file2_s1d1;
+> +	const char *const file_rt = file1_s1d2;
+> +	const char *const file_t = file2_s1d2;
+> +	const char *const file_none = file1_s1d3;
+> +	const char *const dir_t = dir_s2d1;
+> +	const char *const file_in_dir_t = file1_s2d1;
+> +	const char *const dir_w = dir_s3d1;
+> +	const char *const file_in_dir_w = file1_s3d1;
+> +	const struct rule rules[] = {
+> +		{
+> +			.path = file_rwt,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+> +				  LANDLOCK_ACCESS_FS_WRITE_FILE |
+> +				  LANDLOCK_ACCESS_FS_TRUNCATE,
+> +		},
+> +		{
+> +			.path = file_rw,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +		},
+> +		{
+> +			.path = file_rt,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+> +				  LANDLOCK_ACCESS_FS_TRUNCATE,
+> +		},
+> +		{
+> +			.path = file_t,
+> +			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
+> +		},
+> +		// Implicitly: No access rights for file_none.
+> +		{
+> +			.path = dir_t,
+> +			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
+> +		},
+> +		{
+> +			.path = dir_w,
+> +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +		},
+> +		{},
+> +	};
+> +	const __u64 handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +			      LANDLOCK_ACCESS_FS_WRITE_FILE |
+> +			      LANDLOCK_ACCESS_FS_TRUNCATE;
+> +	const int ruleset_fd = create_ruleset(_metadata, handled, rules);
+> +
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	/*
+> +	 * Checks read, write and truncate rights: truncation works.
+> +	 *
+> +	 * Note: Independent of Landlock, ftruncate(2) on read-only
+> +	 * file descriptors never works.
+> +	 */
+> +	EXPECT_EQ(0, test_ftruncate(_metadata, file_rwt, O_WRONLY));
+
+Other than following the original Google Test documentation, what is the 
+advantage to use EXPECT? Don't you think it would be harder to debug a 
+bunch of failed expect? What is the reason for other test frameworks to 
+not implement EXPECT? How Chromium or other Google code really use it? 
+Genuine questions.
+
+
+> +	EXPECT_EQ(EINVAL, test_ftruncate(_metadata, file_rwt, O_RDONLY));
+> +	EXPECT_EQ(0, test_truncate(file_rwt));
+> +	EXPECT_EQ(0, test_open(file_rwt, O_WRONLY | O_TRUNC));
+> +	EXPECT_EQ(0, test_open(file_rwt, O_RDONLY | O_TRUNC));
+> +
+> +	/* Checks read and write rights: no truncate variant works. */
+> +	EXPECT_EQ(EACCES, test_ftruncate(_metadata, file_rw, O_WRONLY));
+> +	EXPECT_EQ(EINVAL, test_ftruncate(_metadata, file_rw, O_RDONLY));
+> +	EXPECT_EQ(EACCES, test_truncate(file_rw));
+> +	EXPECT_EQ(EACCES, test_open(file_rw, O_WRONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_rw, O_RDONLY | O_TRUNC));
+> +
+> +	/*
+> +	 * Checks read and truncate rights: truncation works.
+> +	 *
+> +	 * Note: Files opened in O_RDONLY can get truncated as part of
+> +	 * the same operation.
+> +	 */
+> +	EXPECT_EQ(0, test_open(file_rt, O_RDONLY));
+> +	EXPECT_EQ(0, test_open(file_rt, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_rt, O_WRONLY));
+> +	EXPECT_EQ(EACCES, test_open(file_rt, O_WRONLY));
+> +	EXPECT_EQ(0, test_truncate(file_rt));
+> +
+> +	/* Checks truncate right: truncate works, but can't open file. */
+> +	EXPECT_EQ(EACCES, test_open(file_t, O_WRONLY));
+> +	EXPECT_EQ(EACCES, test_open(file_t, O_RDONLY));
+> +	EXPECT_EQ(EACCES, test_open(file_t, O_WRONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_t, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(0, test_truncate(file_t));
+> +
+> +	/* Checks "no rights" case: No form of truncation works. */
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_truncate(file_none));
+> +
+> +	/* Checks truncate right on directory: truncate works on contained files */
+> +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_WRONLY));
+> +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_RDONLY));
+> +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_WRONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(0, test_truncate(file_in_dir_t));
+> +
+> +	/*
+> +	 * Checks creat in dir_w: This requires the truncate right
+> +	 * when overwriting an existing file, but does not require it
+> +	 * when the file is new.
+> +	 */
+> +	EXPECT_EQ(EACCES, test_creat(_metadata, file_in_dir_w, 0600));
+> +
+> +	ASSERT_EQ(0, unlink(file_in_dir_w));
+> +	EXPECT_EQ(0, test_creat(_metadata, file_in_dir_w, 0600));
+> +}
+> +
+> +/*
+> + * Exercises file truncation when it's not restricted,
+> + * as it was the case before LANDLOCK_ACCESS_FS_TRUNCATE existed.
 > + */
-> +static int smack_fs_context_init(struct fs_context *fc,
-> +                                struct dentry *reference)
+> +TEST_F_FORK(layout1, truncate_unhandled)
 > +{
-> +       struct superblock_smack *sbsp;
-> +       struct smack_mnt_opts *ctx;
-> +       struct inode_smack *isp;
+> +	const char *const file_r = file1_s1d1;
+> +	const char *const file_w = file2_s1d1;
+> +	const char *const file_none = file1_s1d2;
+> +	const struct rule rules[] = {
+> +		{
+> +			.path = file_r,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
+> +		},
+> +		{
+> +			.path = file_w,
+> +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +		},
+> +		// Implicitly: No rights for file_none.
+> +		{},
+> +	};
+> +	const __u64 handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +			      LANDLOCK_ACCESS_FS_WRITE_FILE;
+> +	const int ruleset_fd = create_ruleset(_metadata, handled, rules);
 > +
-> +       ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +       if (!ctx)
-> +               return -ENOMEM;
-> +       fc->security = ctx;
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
 > +
-> +       if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-> +               sbsp = smack_superblock(reference->d_sb);
-> +               isp = smack_inode(reference->d_sb->s_root->d_inode);
+> +	/* Checks read right: truncation should work through truncate and open. */
+> +	EXPECT_EQ(0, test_truncate(file_r));
+> +	EXPECT_EQ(0, test_open(file_r, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_r, O_WRONLY | O_TRUNC));
 > +
-> +               if (sbsp->smk_default) {
-> +                       ctx->fsdefault = kstrdup(sbsp->smk_default->smk_known, GFP_KERNEL);
-> +                       if (!ctx->fsdefault)
-> +                               return -ENOMEM;
-> +               }
+> +	/* Checks write right: truncation should work through truncate, ftruncate and open. */
+> +	EXPECT_EQ(0, test_truncate(file_w));
+> +	EXPECT_EQ(0, test_ftruncate(_metadata, file_w, O_WRONLY));
+> +	EXPECT_EQ(EACCES, test_open(file_w, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(0, test_open(file_w, O_WRONLY | O_TRUNC));
 > +
-> +               if (sbsp->smk_floor) {
-> +                       ctx->fsfloor = kstrdup(sbsp->smk_floor->smk_known, GFP_KERNEL);
-> +                       if (!ctx->fsfloor)
-> +                               return -ENOMEM;
-> +               }
-> +
-> +               if (sbsp->smk_hat) {
-> +                       ctx->fshat = kstrdup(sbsp->smk_hat->smk_known, GFP_KERNEL);
-> +                       if (!ctx->fshat)
-> +                               return -ENOMEM;
-> +               }
-> +
-> +
-
-^ double empty line, FWIW
-
-> +               if (isp->smk_flags & SMK_INODE_TRANSMUTE) {
-> +                       if (sbsp->smk_root) {
-> +                               ctx->fstransmute = kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
-> +                               if (!ctx->fstransmute)
-> +                                       return -ENOMEM;
-> +                       }
-> +               } else {
-> +                       if (sbsp->smk_root) {
-> +                               ctx->fsroot = kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
-> +                               if (!ctx->fsroot)
-> +                                       return -ENOMEM;
-> +                       }
-> +               }
-
-Similar concerns may or may not apply here, but I know too little
-about how Smack handles mount options to be sure.
-
-
-> +       }
-> +
-> +       return 0;
+> +	/* Checks "no rights" case: truncate works but all open attempts fail. */
+> +	EXPECT_EQ(0, test_truncate(file_none));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY));
 > +}
+
+These tests looks good!
+
 > +
->  /**
->   * smack_fs_context_dup - Duplicate the security data on fs_context duplication
->   * @fc: The new filesystem context.
-> @@ -4755,6 +4815,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
->         LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
->         LSM_HOOK_INIT(syslog, smack_syslog),
->
-> +       LSM_HOOK_INIT(fs_context_init, smack_fs_context_init),
->         LSM_HOOK_INIT(fs_context_dup, smack_fs_context_dup),
->         LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
->
->
->
-
---
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+>   /* clang-format off */
+>   FIXTURE(layout1_bind) {};
+>   /* clang-format on */
