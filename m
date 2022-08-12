@@ -2,170 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0CAC00140
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Aug 2022 11:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09569C3F6B0
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Aug 2022 15:30:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbiHLLTy (ORCPT
+        id S239046AbiHLPaE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Aug 2022 07:19:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54602 "EHLO
+        Fri, 12 Aug 2022 11:30:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbiHLLTw (ORCPT
+        with ESMTP id S236964AbiHLPaD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Aug 2022 07:19:52 -0400
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DB3CAA4D2
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Aug 2022 04:19:50 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4M41RS2zlzzMqDVT;
-        Fri, 12 Aug 2022 13:19:48 +0200 (CEST)
+        Fri, 12 Aug 2022 11:30:03 -0400
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9A97C769
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Aug 2022 08:29:59 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4M47045hnZzMqDVK;
+        Fri, 12 Aug 2022 17:29:56 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4M41RR52YszlnSCn;
-        Fri, 12 Aug 2022 13:19:47 +0200 (CEST)
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4M47041ZGnzlrKd0;
+        Fri, 12 Aug 2022 17:29:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1660303188;
-        bh=f1TxXhTOa1NMhiGRUraFER6eY+mBEueYd/G1GUMoDtQ=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=kouhCtTYxg8COlsvYY+5FGlK6LNqB5hEydJ+iaZuUmHyDF9tKlXT3bydTJ5sUXhVo
-         EbdZ+jZPNawncXzdNbfD8oarT47GMzfXBYqAq8Yljya6aWAk/AGhLN3+h2PWQ9rYZg
-         UnpMJ30ydyC+ILd2g6xNUMDZZ2BlBku9xKbBIVfg=
-Message-ID: <b559e738-f000-f279-ef00-50906c79464b@digikod.net>
-Date:   Fri, 12 Aug 2022 13:19:47 +0200
+        s=20191114; t=1660318196;
+        bh=os1y2RaZXpvAPI4x/Kt6ufZlR7Y3TXa/5EBs1HgStPQ=;
+        h=Date:From:To:Cc:References:Subject:In-Reply-To:From;
+        b=NjjQHOj4WEACVa+xDGjILXnFy5XnjPmlCEtyh2SaOS2Lled9uOoY+Cgv2IWI6Kv2G
+         eQEgBhSQe7WKHruYwnS/X77IzbcZYHD8tmLasVjBJtE7KLZGUP4srfc+zLJ6gGCdA7
+         BKQ3nDXlPorpPTJHUivrmF8vV8ovr241v/5Y/5CU=
+Message-ID: <c0c65ade-1d2a-5466-2c12-8e016904817f@digikod.net>
+Date:   Fri, 12 Aug 2022 17:29:55 +0200
 MIME-Version: 1.0
 User-Agent: 
 Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-References: <20220804193746.9161-1-gnoack3000@gmail.com>
- <20220804193746.9161-5-gnoack3000@gmail.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v3 4/4] landlock: Document Landlock's file truncation
- support
-In-Reply-To: <20220804193746.9161-5-gnoack3000@gmail.com>
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>, Tim.Bird@sony.com,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
+ <f1fc4e6e-e2a6-3ec7-2d3b-215111a4b9ae@digikod.net>
+ <76a2ac43-6e3d-0b62-7c8c-eec5f247f8f8@collabora.com>
+ <3de9a64e-6f27-8f76-9626-6ee082d382ea@digikod.net>
+Subject: Re: [PATCH] selftests/landlock: fix broken include of
+ linux/landlock.h
+In-Reply-To: <3de9a64e-6f27-8f76-9626-6ee082d382ea@digikod.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Shuah, do you plan to send a pull request before merge window closes?
 
-On 04/08/2022 21:37, Günther Noack wrote:
-> Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
+On 05/08/2022 19:16, Mickaël Salaün wrote:
 > 
-> Adapt the backwards compatibility example and discussion to remove the
-> truncation flag where needed.
+> On 04/08/2022 21:38, Guillaume Tucker wrote:
+>> On 04/08/2022 12:36, Mickaël Salaün wrote:
+>>>
+>>> On 03/08/2022 22:13, Guillaume Tucker wrote:
+>>>> Revert part of the earlier changes to fix the kselftest build when
+>>>> using a sub-directory from the top of the tree as this broke the
+>>>> landlock test build as a side-effect when building with "make -C
+>>>> tools/testing/selftests/landlock".
+>>>>
+>>>> Reported-by: Mickaël Salaün <mic@digikod.net>
+>>>> Fixes: a917dd94b832 ("selftests/landlock: drop deprecated headers dependency")
+>>>> Fixes: f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")
+>>>> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+>>>> ---
+>>>>     tools/testing/selftests/landlock/Makefile | 7 +++++--
+>>>>     1 file changed, 5 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
+>>>> index a6959df28eb0..02868ac3bc71 100644
+>>>> --- a/tools/testing/selftests/landlock/Makefile
+>>>> +++ b/tools/testing/selftests/landlock/Makefile
+>>>> @@ -9,10 +9,13 @@ TEST_GEN_PROGS := $(src_test:.c=)
+>>>>     TEST_GEN_PROGS_EXTENDED := true
+>>>>       OVERRIDE_TARGETS := 1
+>>>> +top_srcdir := ../../../..
+>>>
+>>> Not sure it changes much, but most other selftests Makefiles use "top_srcdir = ../../../.." (without ":="). Why this change?
+>>
+>> I didn't simply apply your diff but edited the file by hand to
+>> test various combinations and see what side effects it might
+>> have.  So when I added top_srcdir I typed it by hand and used :=
+>> as a reflex since it's the standard way of assigning variables.
+>> Using = instead only makes a difference when the r-value has
+>> something dynamic as it will be re-evaluated every time it's
+>> used.  So for constant values, I guess it's more of a question of
+>> coding style and conventions.  Maybe all the top_srcdir variables
+>> should be changed to := but that's unnecessary churn...  Either
+>> way, it's benign.
+>>
+>> Shuah, feel free to change this back to = in this particular case
+>> if it's more consistent with other Makefiles.  Consistency is
+>> often better than arbitrary rules.  Or conversely, change to :=
+>> for the khdr_dir definition...  Entirely up to you I think.
 > 
-> Point out potential surprising behaviour related to truncate.
+> Looks good to me, thanks! Shuah, feel free to add
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
 > 
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->   Documentation/userspace-api/landlock.rst | 41 ++++++++++++++++++++----
->   1 file changed, 34 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index d92e335380d4..9c3c9fa65958 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
->               LANDLOCK_ACCESS_FS_MAKE_FIFO |
->               LANDLOCK_ACCESS_FS_MAKE_BLOCK |
->               LANDLOCK_ACCESS_FS_MAKE_SYM |
-> -            LANDLOCK_ACCESS_FS_REFER,
-> +            LANDLOCK_ACCESS_FS_REFER |
-> +            LANDLOCK_ACCESS_FS_TRUNCATE,
->       };
->   
->   Because we may not know on which kernel version an application will be
-> @@ -69,16 +70,24 @@ should try to protect users as much as possible whatever the kernel they are
->   using.  To avoid binary enforcement (i.e. either all security features or
->   none), we can leverage a dedicated Landlock command to get the current version
->   of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> -remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
-> -starting with the second version of the ABI.
-> +remove the `LANDLOCK_ACCESS_FS_REFER` and `LANDLOCK_ACCESS_FS_TRUNCATE` access
-> +rights, which are only supported starting with the second and third version of
-> +the ABI.
->   
->   .. code-block:: c
->   
->       int abi;
->   
->       abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-> -    if (abi < 2) {
-> -        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-> +    switch (abi) {
-> +    case -1:
-> +            perror("Landlock is not supported with the running kernel");
-
-Because there is a distinction between "supported" and "enabled" (as 
-explained in the sample), let's make this message more generic. The 
-additional strerror() output would then be enough to distinguish the 
-error type.
-
-"The running kernel does not enable to use Landlock"
-
-> +            return 1;
-> +    case 1:
-
-This switch/case logic might be a bit confusing; let's explain it for 
-this doc *and the sample code*:
-
-/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-
-> +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-> +            __attribute__((fallthrough));
-> +    case 2:
-
-/* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-
-> +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
->       }
->   
->   This enables to create an inclusive ruleset that will contain our rules.
-> @@ -127,8 +136,8 @@ descriptor.
->   
->   It may also be required to create rules following the same logic as explained
->   for the ruleset creation, by filtering access rights according to the Landlock
-> -ABI version.  In this example, this is not required because
-> -`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
-> +ABI version.  In this example, this is not required because all of the requested
-> +``allowed_access`` rights are already available in ABI 1.
->   
->   We now have a ruleset with one rule allowing read access to ``/usr`` while
->   denying all other handled accesses for the filesystem.  The next step is to
-> @@ -251,6 +260,24 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
->   process, a sandboxed process should have a subset of the target process rules,
->   which means the tracee must be in a sub-domain of the tracer.
->   
-> +Truncating files
-> +----------------
-> +
-> +The operations covered by `LANDLOCK_ACCESS_FS_WRITE_FILE` and
-> +`LANDLOCK_ACCESS_FS_TRUNCATE` both change the contents of a file and
-> +sometimes overlap in non-intuitive ways. It is recommended to always
-> +specify both of these together.
-> +
-> +A particularly surprising example is :manpage:`creat(2)`. The name
-> +suggests that this system call requires the rights to create and write
-> +files. However, it also requires the truncate right if an existing
-> +file under the same name is already present.
-> +
-> +It should also be noted that truncating files does not necessarily
-
-FYI, I'll send a standalone patch to remove all contractions and get a 
-more consistent documentation. Please, keep it this way.
-
-
-> +require the `LANDLOCK_ACCESS_FS_WRITE_FILE` right. Apart from the
-> +obvious :manpage:`truncate(2)` system call, this can also be done
-> +through :manpage:`open(2)` with the flags `O_RDONLY` and `O_TRUNC`.
-
-Good!
-
-nit: you can use a 80-columns limit.
-
-> +
->   Compatibility
->   =============
->   
+>>
+>> Thanks,
+>> Guillaume
+>>
+>>>>     include ../lib.mk
+>>>>     +khdr_dir = $(top_srcdir)/usr/include
+>>>> +
+>>>>     $(OUTPUT)/true: true.c
+>>>>         $(LINK.c) $< $(LDLIBS) -o $@ -static
+>>>>     -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
+>>>> -    $(LINK.c) $< $(LDLIBS) -o $@ -lcap
+>>>> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_harness.h common.h
+>>>> +    $(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
+>>
