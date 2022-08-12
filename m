@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DF0C32763
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Aug 2022 10:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 156D3C2BB43
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Aug 2022 10:20:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238397AbiHLKUB (ORCPT
+        id S238425AbiHLKUD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Aug 2022 06:20:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47624 "EHLO
+        Fri, 12 Aug 2022 06:20:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237236AbiHLKT7 (ORCPT
+        with ESMTP id S238415AbiHLKUC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Aug 2022 06:19:59 -0400
+        Fri, 12 Aug 2022 06:20:02 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35F00AB4C6;
-        Fri, 12 Aug 2022 03:19:58 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4M4036015Jz688p4;
-        Fri, 12 Aug 2022 18:17:06 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1118AB4C6;
+        Fri, 12 Aug 2022 03:20:00 -0700 (PDT)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4M40386BLgz688sr;
+        Fri, 12 Aug 2022 18:17:08 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 12 Aug 2022 12:19:54 +0200
+ 15.1.2375.24; Fri, 12 Aug 2022 12:19:57 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
         <martin.lau@linux.dev>, <song@kernel.org>, <yhs@fb.com>,
@@ -35,11 +35,10 @@ CC:     <bpf@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <keyrings@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Joanne Koong <joannelkoong@gmail.com>
-Subject: [PATCH v11 2/9] btf: Handle dynamic pointer parameter in kfuncs
-Date:   Fri, 12 Aug 2022 12:18:55 +0200
-Message-ID: <20220812101902.2846182-3-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v11 4/9] KEYS: Move KEY_LOOKUP_ to include/linux/key.h
+Date:   Fri, 12 Aug 2022 12:18:57 +0200
+Message-ID: <20220812101902.2846182-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220812101902.2846182-1-roberto.sassu@huawei.com>
 References: <20220812101902.2846182-1-roberto.sassu@huawei.com>
@@ -53,102 +52,56 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Allow the bpf_dynptr_kern parameter to be specified in kfuncs. Also, ensure
-that the dynamic pointer is valid and initialized.
+In preparation for the patch that introduces the bpf_lookup_user_key() eBPF
+kfunc, move KEY_LOOKUP_ definitions to include/linux/key.h, to be able to
+validate the kfunc parameters.
 
-Cc: Joanne Koong <joannelkoong@gmail.com>
+Also, introduce key_lookup_flags_check() directly in include/linux/key.h,
+to reduce the risk that the check is not in sync with currently defined
+flags.
+
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: KP Singh <kpsingh@kernel.org>
 ---
- include/linux/bpf_verifier.h |  3 +++
- kernel/bpf/btf.c             | 22 ++++++++++++++++++++++
- kernel/bpf/verifier.c        |  4 ++--
- 3 files changed, 27 insertions(+), 2 deletions(-)
+ include/linux/key.h      | 11 +++++++++++
+ security/keys/internal.h |  2 --
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
-index 2e3bad8640dc..55876fbdbae2 100644
---- a/include/linux/bpf_verifier.h
-+++ b/include/linux/bpf_verifier.h
-@@ -560,6 +560,9 @@ int check_kfunc_mem_size_reg(struct bpf_verifier_env *env, struct bpf_reg_state
- 			     u32 regno);
- int check_mem_reg(struct bpf_verifier_env *env, struct bpf_reg_state *reg,
- 		   u32 regno, u32 mem_size);
-+bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env,
-+			      struct bpf_reg_state *reg,
-+			      enum bpf_arg_type arg_type);
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 7febc4881363..b5bbae77a9e7 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -88,6 +88,17 @@ enum key_need_perm {
+ 	KEY_DEFER_PERM_CHECK,	/* Special: permission check is deferred */
+ };
  
- /* this lives here instead of in bpf.h because it needs to dereference tgt_prog */
- static inline u64 bpf_trampoline_compute_key(const struct bpf_prog *tgt_prog,
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index e49b3b6d48ad..86e63f2ee5da 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -195,6 +195,10 @@
- 	     i < btf_type_vlen(struct_type);					\
- 	     i++, member++)
- 
-+#define stringify_struct(x)			\
-+	({ BUILD_BUG_ON(sizeof(struct x) < 0);	\
-+	   __stringify(x); })
++#define KEY_LOOKUP_CREATE	0x01
++#define KEY_LOOKUP_PARTIAL	0x02
 +
- DEFINE_IDR(btf_idr);
- DEFINE_SPINLOCK(btf_idr_lock);
- 
-@@ -6362,15 +6366,20 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
- 
- 			if (is_kfunc) {
- 				bool arg_mem_size = i + 1 < nargs && is_kfunc_arg_mem_size(btf, &args[i + 1], &regs[regno + 1]);
-+				bool arg_dynptr = btf_type_is_struct(ref_t) &&
-+						  !strcmp(ref_tname,
-+							  stringify_struct(bpf_dynptr_kern));
- 
- 				/* Permit pointer to mem, but only when argument
- 				 * type is pointer to scalar, or struct composed
- 				 * (recursively) of scalars.
- 				 * When arg_mem_size is true, the pointer can be
- 				 * void *.
-+				 * Also permit initialized dynamic pointers.
- 				 */
- 				if (!btf_type_is_scalar(ref_t) &&
- 				    !__btf_type_is_scalar_struct(log, btf, ref_t, 0) &&
-+				    !arg_dynptr &&
- 				    (arg_mem_size ? !btf_type_is_void(ref_t) : 1)) {
- 					bpf_log(log,
- 						"arg#%d pointer type %s %s must point to %sscalar, or struct with scalar\n",
-@@ -6378,6 +6387,19 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
- 					return -EINVAL;
- 				}
- 
-+				if (arg_dynptr) {
-+					if (!is_dynptr_reg_valid_init(env, reg,
-+							ARG_PTR_TO_DYNPTR)) {
-+						bpf_log(log,
-+							"arg#%d pointer type %s %s must be initialized\n",
-+							i, btf_type_str(ref_t),
-+							ref_tname);
-+						return -EINVAL;
-+					}
++static inline int key_lookup_flags_check(u64 flags)
++{
++	if (flags & ~(KEY_LOOKUP_CREATE | KEY_LOOKUP_PARTIAL))
++		return -EINVAL;
 +
-+					continue;
-+				}
++	return 0;
++}
 +
- 				/* Check for mem, len pair */
- 				if (arg_mem_size) {
- 					if (check_kfunc_mem_size_reg(env, &regs[regno + 1], regno + 1)) {
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 2c1f8069f7b7..aa834e7bb296 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -779,8 +779,8 @@ static bool is_dynptr_reg_valid_uninit(struct bpf_verifier_env *env, struct bpf_
- 	return true;
- }
+ struct seq_file;
+ struct user_struct;
+ struct signal_struct;
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index 9b9cf3b6fcbb..3c1e7122076b 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -165,8 +165,6 @@ extern struct key *request_key_and_link(struct key_type *type,
  
--static bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env, struct bpf_reg_state *reg,
--				     enum bpf_arg_type arg_type)
-+bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env, struct bpf_reg_state *reg,
-+			      enum bpf_arg_type arg_type)
- {
- 	struct bpf_func_state *state = func(env, reg);
- 	int spi = get_spi(reg->off);
+ extern bool lookup_user_key_possessed(const struct key *key,
+ 				      const struct key_match_data *match_data);
+-#define KEY_LOOKUP_CREATE	0x01
+-#define KEY_LOOKUP_PARTIAL	0x02
+ 
+ extern long join_session_keyring(const char *name);
+ extern void key_change_session_keyring(struct callback_head *twork);
 -- 
 2.25.1
 
