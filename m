@@ -2,157 +2,447 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB48DC19F2D
-	for <linux-security-module@archiver.kernel.org>; Sat, 13 Aug 2022 10:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F0CC19F2D
+	for <linux-security-module@archiver.kernel.org>; Sat, 13 Aug 2022 10:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238860AbiHMKB1 (ORCPT
+        id S238659AbiHMKH7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 13 Aug 2022 06:01:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52426 "EHLO
+        Sat, 13 Aug 2022 06:07:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238496AbiHMKB0 (ORCPT
+        with ESMTP id S238496AbiHMKH7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 13 Aug 2022 06:01:26 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7450C7675
-        for <linux-security-module@vger.kernel.org>; Sat, 13 Aug 2022 03:01:24 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id ha11so3019625pjb.2
-        for <linux-security-module@vger.kernel.org>; Sat, 13 Aug 2022 03:01:24 -0700 (PDT)
+        Sat, 13 Aug 2022 06:07:59 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8565DDFE0
+        for <linux-security-module@vger.kernel.org>; Sat, 13 Aug 2022 03:07:57 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id qn6so5713615ejc.11
+        for <linux-security-module@vger.kernel.org>; Sat, 13 Aug 2022 03:07:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc;
-        bh=rXjZq7TyJRpGA36wuNWeax0N/DTCuezFM2I6n+kaOFc=;
-        b=uludQ0lLYxsMsamFFMGEAF4NjuSBTl68G7b7d5T0Xyrr1vKPHVnSigosbzHsNWpJ6c
-         lnun7Gx5kbIHOBuPvWXq/znBa6WjZh6uG+avVo3AtMmdq8io6sddwwKHRAkQ+S7vq2eN
-         A/Pou91K9q3DcouiBrvJRDkTzd6GtgxnNDt8HTi3XXlHiDBoI8FYWGvak7noJLaoqHQq
-         fjvj83QfEkS3s38zh/DRL/tHYz901CKghNoqoIKn/mRAvXgvIcKvb+ZW8emMfm5MZGyo
-         /s3fYXOxL8Y5m0xY4qz7twAk94MjBZulAuxffst0EQEGfOfw0c7eEVh5Dc+njTqxPd9U
-         MnPQ==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc;
+        bh=WpPE74zzzUw30rL3cB0AN//HhwqDLceRRgWhL2z0N68=;
+        b=YlY3+qAGXEWtoAQsKXhgbLZiHIJHdgUtIxK6HnV0t/KDvsxp0NrmfcdNkLex1tQCH2
+         GhIJ48JBNvu+hiDchArv0nmbNJQNzwaMYd9B+BoGxBtGB2C1d1fyYje5Lmki7sLUYrKn
+         ORI5Efyoy9Ajzsvq5X5EzjwK22wKk4m01jXlBqDEjYdzOWvQk47ZJtCGz0s5jeJGCn8y
+         EG2Oa8W0jP1Oi57d6vWws3yK7lBnvEU+hde+aiayh1+0nFEBv3p6WYswzBYfywhhN1uY
+         mz1V+kV67EyMa0ojZqLraniQz3dumPegDk5Fbu9mAzset8vydWCVXUR0wtS2QQuQI7Xk
+         K9yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
-        bh=rXjZq7TyJRpGA36wuNWeax0N/DTCuezFM2I6n+kaOFc=;
-        b=pp7no9V8a9UMMD8q2Vng51OwKyaiIkqENsao/Vs+lC8HbEN0po5GHxNp22GjS7uZkg
-         88FkJGR5OjTvsBZOLZ5O/3NJ1s1OoXKE6CuJBnYKy4cSGCbGzoowPmrM0Zi8MwJrBN5Q
-         xTDPmPBTKDTZooz++l6az/38q9zjjLX7/ZYWbWhd3SbV+nXH1f1YVbxkJwOv4IOsxthP
-         oJBeAtLOjaSR02qpomDl9bBesm86yiqZ2VTb2+KCCmQ0O99lUEAGRzQfOfVWfRV7Jb3H
-         R/Rh27bES4aKoPSGwXWw9aT/5d/93s45QItdZAkGtzqEFIO4m09v0EY+T+IPDB9/FOwR
-         S29g==
-X-Gm-Message-State: ACgBeo2zxAFV3nrsKs8tdQxtJixJnjuSWh3nemBgrHirIklAKB1sPAYT
-        ShwrXHihcsOGYZJ6C+lPWOBD8zKHzfBcZ3y39IzwYw==
-X-Google-Smtp-Source: AA6agR6APTL3EkQhR9XXVJ4cdNRgW1zCMot4F0nMgyVJDj6msnWklnLNGrD42dX8QV/lT+YbFRlDfGnOgAuMQ+FfteY=
-X-Received: by 2002:a17:902:8683:b0:171:3114:7678 with SMTP id
- g3-20020a170902868300b0017131147678mr7861379plo.172.1660384883745; Sat, 13
- Aug 2022 03:01:23 -0700 (PDT)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc;
+        bh=WpPE74zzzUw30rL3cB0AN//HhwqDLceRRgWhL2z0N68=;
+        b=st2iebiJe8tuiwUkPPPK3yvxZ5U/U4s+eFL3/G0oToPDoJFlxZNbWS/Vh4bsJbUj0/
+         NzjaWsY26ZmuhXs73+trH8Jvt6ecoKZPW86RgeVxHGxTnDqP3972U84pn2GO7b12hrqw
+         l7p+k5zKfAmEPhZTTyhTldt4fmEC9mW9tCDhjVQ+gNn1Ujmq4cc4S4wuRHHZY6GXEFDM
+         V3eHGYF4FXZ1xQnJYONSypPbCTvezgtUq6rK3HzT5X/EKjEsOM2dmbxZRoXx9S9atG5o
+         +z7L/HrGCdEIUs6vsdsDTXckzMTNGEJ6hKDKmG0JfKmlOkDeiPcYkgqCII0JAeMR98lE
+         yoHw==
+X-Gm-Message-State: ACgBeo07fbnQW48HnZicCvHeThCPzoxVf/LMNEdTiC9d85OwgbcMFsKM
+        pub248sr6zEQWRf7C3B4HuU=
+X-Google-Smtp-Source: AA6agR6liU71XgIrpO1zCE4d8OpSBm4LSvlwp0Gdit+NuWrNUzT5ebmOA+CKbapYunGMoiOIq89W1w==
+X-Received: by 2002:a17:906:7e43:b0:72b:52de:b039 with SMTP id z3-20020a1709067e4300b0072b52deb039mr5165918ejr.198.1660385275675;
+        Sat, 13 Aug 2022 03:07:55 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id n18-20020aa7c452000000b0043ba437fe04sm2810411edr.78.2022.08.13.03.07.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Aug 2022 03:07:55 -0700 (PDT)
+Date:   Sat, 13 Aug 2022 12:07:53 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v3 2/4] selftests/landlock: Selftests for file truncation
+ support
+Message-ID: <Yvd3+fy+mDBop+YA@nuc>
+References: <20220804193746.9161-1-gnoack3000@gmail.com>
+ <20220804193746.9161-3-gnoack3000@gmail.com>
+ <40ad7781-a94d-7be2-e5b9-64b6893a669e@digikod.net>
 MIME-Version: 1.0
-References: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
-In-Reply-To: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Sat, 13 Aug 2022 12:01:12 +0200
-Message-ID: <CADYN=9JM1nnjC9LypHqrz7JJjbZLpm8rArDUy4zgYYrajErBnA@mail.gmail.com>
-Subject: Re: [PATCH] selftests/landlock: fix broken include of linux/landlock.h
-To:     Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc:     Guillaume <guillaume.tucker@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Tim.Bird@sony.com, kernel@collabora.com,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <40ad7781-a94d-7be2-e5b9-64b6893a669e@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 3 Aug 2022 at 22:14, Guillaume Tucker
-<guillaume.tucker@collabora.com> wrote:
+On Thu, Aug 11, 2022 at 06:59:38PM +0200, Mickaël Salaün wrote:
 >
-> Revert part of the earlier changes to fix the kselftest build when
-> using a sub-directory from the top of the tree as this broke the
-> landlock test build as a side-effect when building with "make -C
-> tools/testing/selftests/landlock".
+> On 04/08/2022 21:37, Günther Noack wrote:
+> > These tests exercise the following truncation operations:
+> >
+> > * truncate() (truncate by path)
+> > * ftruncate() (truncate by file descriptor)
+> > * open with the O_TRUNC flag
+> > * special case: creat(), which is open with O_CREAT|O_WRONLY|O_TRUNC.
+> >
+> > in the following scenarios:
+> >
+> > * Files with read, write and truncate rights.
+> > * Files with read and truncate rights.
+> > * Files with the truncate right.
+> > * Files without the truncate right.
+> >
+> > In particular, the following scenarios are enforced with the test:
+> >
+> > * The truncate right is required to use ftruncate,
+> >    even when the thread already has the right to write to the file.
+> > * open() with O_TRUNC requires the truncate right, if it truncates a file.
+> >    open() already checks security_path_truncate() in this case,
+> >    and it required no additional check in the Landlock LSM's file_open hook.
+> > * creat() requires the truncate right
+> >    when called with an existing filename.
+> > * creat() does *not* require the truncate right
+> >    when it's creating a new file.
+> >
+> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > ---
+> >   tools/testing/selftests/landlock/fs_test.c | 204 +++++++++++++++++++++
+> >   1 file changed, 204 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> > index cb77eaa01c91..3e84bae7e83a 100644
+> > --- a/tools/testing/selftests/landlock/fs_test.c
+> > +++ b/tools/testing/selftests/landlock/fs_test.c
+> > @@ -58,6 +58,7 @@ static const char file1_s2d3[] = TMP_DIR "/s2d1/s2d2/s2d3/f1";
+> >   static const char file2_s2d3[] = TMP_DIR "/s2d1/s2d2/s2d3/f2";
+> >   static const char dir_s3d1[] = TMP_DIR "/s3d1";
+> > +static const char file1_s3d1[] = TMP_DIR "/s3d1/f1";
+> >   /* dir_s3d2 is a mount point. */
+> >   static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
+> >   static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
+> > @@ -83,6 +84,7 @@ static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
+> >    * │           ├── f1
+> >    * │           └── f2
+> >    * └── s3d1
+> > + *     ├── f1
+> >    *     └── s3d2
+> >    *         └── s3d3
+> >    */
+> > @@ -208,6 +210,7 @@ static void create_layout1(struct __test_metadata *const _metadata)
+> >   	create_file(_metadata, file1_s2d3);
+> >   	create_file(_metadata, file2_s2d3);
+> > +	create_file(_metadata, file1_s3d1);
+> >   	create_directory(_metadata, dir_s3d2);
+> >   	set_cap(_metadata, CAP_SYS_ADMIN);
+> >   	ASSERT_EQ(0, mount("tmp", dir_s3d2, "tmpfs", 0, "size=4m,mode=700"));
+> > @@ -230,6 +233,7 @@ static void remove_layout1(struct __test_metadata *const _metadata)
+> >   	EXPECT_EQ(0, remove_path(file1_s2d2));
+> >   	EXPECT_EQ(0, remove_path(file1_s2d1));
+> > +	EXPECT_EQ(0, remove_path(file1_s3d1));
+> >   	EXPECT_EQ(0, remove_path(dir_s3d3));
+> >   	set_cap(_metadata, CAP_SYS_ADMIN);
+> >   	umount(dir_s3d2);
+> > @@ -3023,6 +3027,206 @@ TEST_F_FORK(layout1, proc_pipe)
+> >   	ASSERT_EQ(0, close(pipe_fds[1]));
+> >   }
+> > +/* Opens the file, invokes ftruncate(2) and returns the errno or 0. */
+> > +static int test_ftruncate(struct __test_metadata *const _metadata,
+> > +			  const char *const path, int flags)
+> > +{
+> > +	int res, err, fd;
+> > +
+> > +	fd = open(path, flags | O_CLOEXEC);
+> > +	ASSERT_LE(0, fd);
+> > +
+> > +	res = ftruncate(fd, 10);
+> > +	err = errno;
+> > +	ASSERT_EQ(0, close(fd));
+> > +
+> > +	if (res < 0)
+> > +		return err;
+> > +	return 0;
+> > +}
+> > +
+> > +/* Invokes truncate(2) and returns the errno or 0. */
+> > +static int test_truncate(const char *const path)
+> > +{
+> > +	if (truncate(path, 10) < 0)
+> > +		return errno;
+> > +	return 0;
+> > +}
+> > +
+> > +/* Invokes creat(2) and returns the errno or 0. */
+> > +static int test_creat(struct __test_metadata *const _metadata,
+> > +		      const char *const path, mode_t mode)
+> > +{
+> > +	int fd = creat(path, mode);
+> > +
+> > +	if (fd < 0)
+> > +		return errno;
+> > +	ASSERT_EQ(0, close(fd));
 >
-> Reported-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Fixes: a917dd94b832 ("selftests/landlock: drop deprecated headers depende=
-ncy")
-> Fixes: f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")
-> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+> test_creat() contains an ASSERT, which would only print this line, which
+> would not help much if it is called multiple times, which is the case. I
+> prefer not passing _metadata but only returning errno or 0 and handling the
+> ASSERT in layout1.truncate* . It is not the case everywhere but we should
+> try to follow this rule as much as possible.
 
-Building with this patch doesn't work, it gives this output:
-make[3]: Entering directory
-'/home/anders/src/kernel/next/tools/testing/selftests/landlock'
-make[3]: Leaving directory
-'/home/anders/src/kernel/next/tools/testing/selftests/landlock'
-make[3]: *** No rule to make target
-'/home/anders/.cache/tuxmake/builds/78/build/kselftest/landlock/base_test',
-needed by 'all'.  Stop.
+Thanks, that's a good point that the line number attribution becomes confusing.
 
-I'm building like this:
-tuxmake --runtime podman --target-arch x86_64 --toolchain gcc-12
---kconfig defconfig kselftest
+I changed these ASSERT_EQ() calls to just return the errno directly.
 
-which translates into this make command:
-make --silent --keep-going --jobs=3D32
-O=3D/home/anders/.cache/tuxmake/builds/78/build
-INSTALL_PATH=3D/home/anders/.cache/tuxmake/builds/78/build/kselftest_instal=
-l
-ARCH=3Dx86_64 CROSS_COMPILE=3Dx86_64-linux-gnu- kselftest-install
 
-building without this patch works, see below:
-
-make[3]: Entering directory
-'/home/anders/src/kernel/next/tools/testing/selftests/landlock'
-x86_64-linux-gnu-gcc -Wall -O2 -isystem
-/home/anders/.cache/tuxmake/builds/77/build/usr/include    base_test.c
- -o /home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/base_tes=
-t
--lcap
-x86_64-linux-gnu-gcc -Wall -O2 -isystem
-/home/anders/.cache/tuxmake/builds/77/build/usr/include    fs_test.c
--o /home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/fs_test
--lcap
-x86_64-linux-gnu-gcc -Wall -O2 -isystem
-/home/anders/.cache/tuxmake/builds/77/build/usr/include
-ptrace_test.c  -o
-/home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/ptrace_test
--lcap
-x86_64-linux-gnu-gcc -Wall -O2 -isystem
-/home/anders/.cache/tuxmake/builds/77/build/usr/include    true.c  -o
-/home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/true
--static
-make[3]: Leaving directory
-'/home/anders/src/kernel/next/tools/testing/selftests/landlock'
-
-Cheers,
-Anders
-
-> ---
->  tools/testing/selftests/landlock/Makefile | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> > +	return 0;
+> > +}
+> > +
+> > +TEST_F_FORK(layout1, truncate)
+> > +{
+> > +	const char *const file_rwt = file1_s1d1;
+> > +	const char *const file_rw = file2_s1d1;
+> > +	const char *const file_rt = file1_s1d2;
+> > +	const char *const file_t = file2_s1d2;
+> > +	const char *const file_none = file1_s1d3;
+> > +	const char *const dir_t = dir_s2d1;
+> > +	const char *const file_in_dir_t = file1_s2d1;
+> > +	const char *const dir_w = dir_s3d1;
+> > +	const char *const file_in_dir_w = file1_s3d1;
+> > +	const struct rule rules[] = {
+> > +		{
+> > +			.path = file_rwt,
+> > +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+> > +				  LANDLOCK_ACCESS_FS_WRITE_FILE |
+> > +				  LANDLOCK_ACCESS_FS_TRUNCATE,
+> > +		},
+> > +		{
+> > +			.path = file_rw,
+> > +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+> > +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
+> > +		},
+> > +		{
+> > +			.path = file_rt,
+> > +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+> > +				  LANDLOCK_ACCESS_FS_TRUNCATE,
+> > +		},
+> > +		{
+> > +			.path = file_t,
+> > +			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
+> > +		},
+> > +		// Implicitly: No access rights for file_none.
+> > +		{
+> > +			.path = dir_t,
+> > +			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
+> > +		},
+> > +		{
+> > +			.path = dir_w,
+> > +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
+> > +		},
+> > +		{},
+> > +	};
+> > +	const __u64 handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> > +			      LANDLOCK_ACCESS_FS_WRITE_FILE |
+> > +			      LANDLOCK_ACCESS_FS_TRUNCATE;
+> > +	const int ruleset_fd = create_ruleset(_metadata, handled, rules);
+> > +
+> > +	ASSERT_LE(0, ruleset_fd);
+> > +	enforce_ruleset(_metadata, ruleset_fd);
+> > +	ASSERT_EQ(0, close(ruleset_fd));
+> > +
+> > +	/*
+> > +	 * Checks read, write and truncate rights: truncation works.
+> > +	 *
+> > +	 * Note: Independent of Landlock, ftruncate(2) on read-only
+> > +	 * file descriptors never works.
+> > +	 */
+> > +	EXPECT_EQ(0, test_ftruncate(_metadata, file_rwt, O_WRONLY));
 >
-> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/se=
-lftests/landlock/Makefile
-> index a6959df28eb0..02868ac3bc71 100644
-> --- a/tools/testing/selftests/landlock/Makefile
-> +++ b/tools/testing/selftests/landlock/Makefile
-> @@ -9,10 +9,13 @@ TEST_GEN_PROGS :=3D $(src_test:.c=3D)
->  TEST_GEN_PROGS_EXTENDED :=3D true
+> Other than following the original Google Test documentation, what is the
+> advantage to use EXPECT? Don't you think it would be harder to debug a bunch
+> of failed expect?
+
+<This is maybe slightly philosophical, which means that I have no hard
+proof for any of this, but I'm happy to discuss it :)>
+
+I think at the root, most test frameworks agree that the test output
+should ideally be a list of mostly-independent test scenarios together
+with their failure statuses.
+
+I think it is actually *easier* to debug a bunch of failed
+expectations if they fail at the same time: When multiple of these
+scenarios fail at the same time, that would give you a hint that
+something more fundamental is broken, whereas when only one of them
+fails, you'd know that it is a problem specific to the test scenario
+at hand.
+
+> What is the reason for other test frameworks to not
+> implement EXPECT?
+
+The way that the different test frameworks try to achieve this "table
+of scenarios" output is different:
+
+The JUnit/xUnit-style frameworks only have an ASSERT-equivalent, and I
+think in these testing cultures there is a greater emphasis on having
+a separate test function for each exercised scenario. That way, you
+still end up with a long table of test scenarios with their failure
+statuses. -- But that is not the test structure that we have here in
+the Landlock selftests.
+
+In Googletest, or in the Go test framework, there is a distinction
+between ASSERT and EXPECT, and people are more encouraged to test
+multiple similar scenarios in the same function (in Go, they call it a
+"table driven test"). It works as well, as long as people take care
+that the scenarios that are tested together don't accidentally depend
+on each others left-over state.
+
+I'm not sure why some test frameworks do this with assert-only and
+others distinguish between assert and expect.
+
+I *suspect* that in C and C++, it is more difficult to factor out
+shared test setup code than in Java or Python, and so people tend to
+write bigger test functions that exercise more scenarios at once, and
+then the distinction between assert and expect became more useful.
+
+<end of philosophical derail>
+
+
+> How Chromium or other Google code really use it? Genuine questions.
+
+This is how Chromium uses it:
+
+https://source.chromium.org/search?q=ASSERT_EQ (~6000 hits)
+https://source.chromium.org/search?q=EXPECT_EQ (~5800 hits)
+
+This is how Absl uses it (from the website: "Abseil is an open source
+collection of C++ libraries drawn from the most fundamental pieces of
+Google’s internal codebase."):
+
+https://github.com/abseil/abseil-cpp/search?q=EXPECT_EQ (163 results)
+https://github.com/abseil/abseil-cpp/search?q=ASSERT_EQ (24 results)
+
+In Chromium, there are clearly some corners where they use ASSERT
+exclusively. In Abseil, I think it gets used more in the spirit of the
+framework, but it's also a smaller codebase.
+
+
+**To make a constructive proposal**:
+
+I think that using EXPECT improves debuggability in case of a test
+failure, but both with EXPECT and with ASSERT, the tests will give the
+same guarantee that the code works, so I feel that this should not be
+blocking the truncate patch... so I'd just go and convert it all to
+ASSERTs, it'll be consistent with the surrounding tests, and we can
+have that EXPECT/ASSERT discussion separately if you like. Does that
+sound good?
+
 >
->  OVERRIDE_TARGETS :=3D 1
-> +top_srcdir :=3D ../../../..
->  include ../lib.mk
 >
-> +khdr_dir =3D $(top_srcdir)/usr/include
-> +
->  $(OUTPUT)/true: true.c
->         $(LINK.c) $< $(LDLIBS) -o $@ -static
+> > +	EXPECT_EQ(EINVAL, test_ftruncate(_metadata, file_rwt, O_RDONLY));
+> > +	EXPECT_EQ(0, test_truncate(file_rwt));
+> > +	EXPECT_EQ(0, test_open(file_rwt, O_WRONLY | O_TRUNC));
+> > +	EXPECT_EQ(0, test_open(file_rwt, O_RDONLY | O_TRUNC));
+> > +
+> > +	/* Checks read and write rights: no truncate variant works. */
+> > +	EXPECT_EQ(EACCES, test_ftruncate(_metadata, file_rw, O_WRONLY));
+> > +	EXPECT_EQ(EINVAL, test_ftruncate(_metadata, file_rw, O_RDONLY));
+> > +	EXPECT_EQ(EACCES, test_truncate(file_rw));
+> > +	EXPECT_EQ(EACCES, test_open(file_rw, O_WRONLY | O_TRUNC));
+> > +	EXPECT_EQ(EACCES, test_open(file_rw, O_RDONLY | O_TRUNC));
+> > +
+> > +	/*
+> > +	 * Checks read and truncate rights: truncation works.
+> > +	 *
+> > +	 * Note: Files opened in O_RDONLY can get truncated as part of
+> > +	 * the same operation.
+> > +	 */
+> > +	EXPECT_EQ(0, test_open(file_rt, O_RDONLY));
+> > +	EXPECT_EQ(0, test_open(file_rt, O_RDONLY | O_TRUNC));
+> > +	EXPECT_EQ(EACCES, test_open(file_rt, O_WRONLY));
+> > +	EXPECT_EQ(EACCES, test_open(file_rt, O_WRONLY));
+> > +	EXPECT_EQ(0, test_truncate(file_rt));
+> > +
+> > +	/* Checks truncate right: truncate works, but can't open file. */
+> > +	EXPECT_EQ(EACCES, test_open(file_t, O_WRONLY));
+> > +	EXPECT_EQ(EACCES, test_open(file_t, O_RDONLY));
+> > +	EXPECT_EQ(EACCES, test_open(file_t, O_WRONLY | O_TRUNC));
+> > +	EXPECT_EQ(EACCES, test_open(file_t, O_RDONLY | O_TRUNC));
+> > +	EXPECT_EQ(0, test_truncate(file_t));
+> > +
+> > +	/* Checks "no rights" case: No form of truncation works. */
+> > +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY));
+> > +	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY));
+> > +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY | O_TRUNC));
+> > +	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY | O_TRUNC));
+> > +	EXPECT_EQ(EACCES, test_truncate(file_none));
+> > +
+> > +	/* Checks truncate right on directory: truncate works on contained files */
+> > +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_WRONLY));
+> > +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_RDONLY));
+> > +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_WRONLY | O_TRUNC));
+> > +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_RDONLY | O_TRUNC));
+> > +	EXPECT_EQ(0, test_truncate(file_in_dir_t));
+> > +
+> > +	/*
+> > +	 * Checks creat in dir_w: This requires the truncate right
+> > +	 * when overwriting an existing file, but does not require it
+> > +	 * when the file is new.
+> > +	 */
+> > +	EXPECT_EQ(EACCES, test_creat(_metadata, file_in_dir_w, 0600));
+> > +
+> > +	ASSERT_EQ(0, unlink(file_in_dir_w));
+> > +	EXPECT_EQ(0, test_creat(_metadata, file_in_dir_w, 0600));
+> > +}
+> > +
+> > +/*
+> > + * Exercises file truncation when it's not restricted,
+> > + * as it was the case before LANDLOCK_ACCESS_FS_TRUNCATE existed.
+> > + */
+> > +TEST_F_FORK(layout1, truncate_unhandled)
+> > +{
+> > +	const char *const file_r = file1_s1d1;
+> > +	const char *const file_w = file2_s1d1;
+> > +	const char *const file_none = file1_s1d2;
+> > +	const struct rule rules[] = {
+> > +		{
+> > +			.path = file_r,
+> > +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
+> > +		},
+> > +		{
+> > +			.path = file_w,
+> > +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
+> > +		},
+> > +		// Implicitly: No rights for file_none.
+> > +		{},
+> > +	};
+> > +	const __u64 handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> > +			      LANDLOCK_ACCESS_FS_WRITE_FILE;
+> > +	const int ruleset_fd = create_ruleset(_metadata, handled, rules);
+> > +
+> > +	ASSERT_LE(0, ruleset_fd);
+> > +	enforce_ruleset(_metadata, ruleset_fd);
+> > +	ASSERT_EQ(0, close(ruleset_fd));
+> > +
+> > +	/* Checks read right: truncation should work through truncate and open. */
+> > +	EXPECT_EQ(0, test_truncate(file_r));
+> > +	EXPECT_EQ(0, test_open(file_r, O_RDONLY | O_TRUNC));
+> > +	EXPECT_EQ(EACCES, test_open(file_r, O_WRONLY | O_TRUNC));
+> > +
+> > +	/* Checks write right: truncation should work through truncate, ftruncate and open. */
+> > +	EXPECT_EQ(0, test_truncate(file_w));
+> > +	EXPECT_EQ(0, test_ftruncate(_metadata, file_w, O_WRONLY));
+> > +	EXPECT_EQ(EACCES, test_open(file_w, O_RDONLY | O_TRUNC));
+> > +	EXPECT_EQ(0, test_open(file_w, O_WRONLY | O_TRUNC));
+> > +
+> > +	/* Checks "no rights" case: truncate works but all open attempts fail. */
+> > +	EXPECT_EQ(0, test_truncate(file_none));
+> > +	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY | O_TRUNC));
+> > +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY | O_TRUNC));
+> > +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY));
+> > +}
 >
-> -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
-> -       $(LINK.c) $< $(LDLIBS) -o $@ -lcap
-> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_har=
-ness.h common.h
-> +       $(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
-> --
-> 2.30.2
+> These tests looks good!
+
+Thanks!
+
 >
+> > +
+> >   /* clang-format off */
+> >   FIXTURE(layout1_bind) {};
+> >   /* clang-format on */
+
+--
