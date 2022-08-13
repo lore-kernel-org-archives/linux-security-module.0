@@ -2,168 +2,157 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E63C19F2D
-	for <linux-security-module@archiver.kernel.org>; Sat, 13 Aug 2022 09:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB48DC19F2D
+	for <linux-security-module@archiver.kernel.org>; Sat, 13 Aug 2022 10:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238597AbiHMJKe (ORCPT
+        id S238860AbiHMKB1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 13 Aug 2022 05:10:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39926 "EHLO
+        Sat, 13 Aug 2022 06:01:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiHMJKd (ORCPT
+        with ESMTP id S238496AbiHMKB0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 13 Aug 2022 05:10:33 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B171313D0F
-        for <linux-security-module@vger.kernel.org>; Sat, 13 Aug 2022 02:10:31 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id y13so5560459ejp.13
-        for <linux-security-module@vger.kernel.org>; Sat, 13 Aug 2022 02:10:31 -0700 (PDT)
+        Sat, 13 Aug 2022 06:01:26 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7450C7675
+        for <linux-security-module@vger.kernel.org>; Sat, 13 Aug 2022 03:01:24 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id ha11so3019625pjb.2
+        for <linux-security-module@vger.kernel.org>; Sat, 13 Aug 2022 03:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc;
-        bh=6A6zGy+Dw7QRnjj1aohdeyT4LCVZKfkSwo4XZQgFQyk=;
-        b=atv3pnMMjrvS7ck6x/bLSSgxemd09vniMm6RGiQsJR4q9qxvsstPmLtDOS+796E6lC
-         F7WwEMAD+alRSnnUMxwD+fgUpI2O8bMtXovzNb04LYRI2twqODuCCQM0lUI4NoCIBz5Q
-         PRyEKGOY/+m+fsOqa0536rkY6NXArPcKhBxJ8A4lB5Dv7Smd+sxkhgfsAMoEx46IeY/K
-         r088pDFo3claSkwVOi3YnlBmy8fzn0VklpZ3xTb+NrAYRLamLDV2F3crjeiHljKmNCrF
-         sbAv96JtOjzAcGqC4rd5PApsoWh3Vs8a/fbSApe/96lQs1BXx7zAEIwFEWVM3VQ7KBVh
-         eeEw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc;
+        bh=rXjZq7TyJRpGA36wuNWeax0N/DTCuezFM2I6n+kaOFc=;
+        b=uludQ0lLYxsMsamFFMGEAF4NjuSBTl68G7b7d5T0Xyrr1vKPHVnSigosbzHsNWpJ6c
+         lnun7Gx5kbIHOBuPvWXq/znBa6WjZh6uG+avVo3AtMmdq8io6sddwwKHRAkQ+S7vq2eN
+         A/Pou91K9q3DcouiBrvJRDkTzd6GtgxnNDt8HTi3XXlHiDBoI8FYWGvak7noJLaoqHQq
+         fjvj83QfEkS3s38zh/DRL/tHYz901CKghNoqoIKn/mRAvXgvIcKvb+ZW8emMfm5MZGyo
+         /s3fYXOxL8Y5m0xY4qz7twAk94MjBZulAuxffst0EQEGfOfw0c7eEVh5Dc+njTqxPd9U
+         MnPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc;
-        bh=6A6zGy+Dw7QRnjj1aohdeyT4LCVZKfkSwo4XZQgFQyk=;
-        b=yqY+g5VEP9+pTd6gPIyrEkHsufeyBKRcFjqDmjLhNkZM6FdVPK3An8tsA+zgiHmL+r
-         /dmhfPXRHFQyWiBLz9Qn/FaEemT6hW/ct9YI/ecq5Uhex24E3dKeun4FAyfJ9wmq1gGt
-         A3T3aULjDaz749D9IFA1JSUWJ38xrH3BNN1fHrBAq1IYpZ2QoZtc1T9itihH5fqyZtoS
-         XjwYo6DE20d5IIUy7pLKWQocnu2QhM8Du2bRJFWh8XZl8kTt2GxwK6Etqjf7TJkNp2Ro
-         KfPOJ/6L3K4PMKg7+NKmzgJmCAPIDr/afLHZPwCicRwED6lb3UtnZoLQc1tylACvWigf
-         IyBA==
-X-Gm-Message-State: ACgBeo3QxiNMexX+c/bifNVCaH7FRjYTL3ZSpARU9O3kfHlDzTaSadua
-        7Eg6+DO6mF/aSkj7oAlBp+k=
-X-Google-Smtp-Source: AA6agR54VmiRToPlvxf8fTOSO/7A98y2N5Vw2TYBhfm2o3S2AAPztTp2dmUn8aavGTHbucRhwKMKmw==
-X-Received: by 2002:a17:907:970b:b0:732:f76a:97a2 with SMTP id jg11-20020a170907970b00b00732f76a97a2mr5083839ejc.396.1660381830180;
-        Sat, 13 Aug 2022 02:10:30 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id f25-20020a17090631d900b00730ad7c0d42sm1641832ejf.207.2022.08.13.02.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Aug 2022 02:10:29 -0700 (PDT)
-Date:   Sat, 13 Aug 2022 11:10:27 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v3 1/4] landlock: Support file truncation
-Message-ID: <Yvdqg4XzPrl9skiS@nuc>
-References: <20220804193746.9161-1-gnoack3000@gmail.com>
- <20220804193746.9161-2-gnoack3000@gmail.com>
- <a9c9124c-84a3-da5e-23f1-3eecf0b226ce@digikod.net>
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
+        bh=rXjZq7TyJRpGA36wuNWeax0N/DTCuezFM2I6n+kaOFc=;
+        b=pp7no9V8a9UMMD8q2Vng51OwKyaiIkqENsao/Vs+lC8HbEN0po5GHxNp22GjS7uZkg
+         88FkJGR5OjTvsBZOLZ5O/3NJ1s1OoXKE6CuJBnYKy4cSGCbGzoowPmrM0Zi8MwJrBN5Q
+         xTDPmPBTKDTZooz++l6az/38q9zjjLX7/ZYWbWhd3SbV+nXH1f1YVbxkJwOv4IOsxthP
+         oJBeAtLOjaSR02qpomDl9bBesm86yiqZ2VTb2+KCCmQ0O99lUEAGRzQfOfVWfRV7Jb3H
+         R/Rh27bES4aKoPSGwXWw9aT/5d/93s45QItdZAkGtzqEFIO4m09v0EY+T+IPDB9/FOwR
+         S29g==
+X-Gm-Message-State: ACgBeo2zxAFV3nrsKs8tdQxtJixJnjuSWh3nemBgrHirIklAKB1sPAYT
+        ShwrXHihcsOGYZJ6C+lPWOBD8zKHzfBcZ3y39IzwYw==
+X-Google-Smtp-Source: AA6agR6APTL3EkQhR9XXVJ4cdNRgW1zCMot4F0nMgyVJDj6msnWklnLNGrD42dX8QV/lT+YbFRlDfGnOgAuMQ+FfteY=
+X-Received: by 2002:a17:902:8683:b0:171:3114:7678 with SMTP id
+ g3-20020a170902868300b0017131147678mr7861379plo.172.1660384883745; Sat, 13
+ Aug 2022 03:01:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a9c9124c-84a3-da5e-23f1-3eecf0b226ce@digikod.net>
+References: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
+In-Reply-To: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Sat, 13 Aug 2022 12:01:12 +0200
+Message-ID: <CADYN=9JM1nnjC9LypHqrz7JJjbZLpm8rArDUy4zgYYrajErBnA@mail.gmail.com>
+Subject: Re: [PATCH] selftests/landlock: fix broken include of linux/landlock.h
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc:     Guillaume <guillaume.tucker@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Tim.Bird@sony.com, kernel@collabora.com,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 11, 2022 at 06:59:28PM +0200, Mickaël Salaün wrote:
+On Wed, 3 Aug 2022 at 22:14, Guillaume Tucker
+<guillaume.tucker@collabora.com> wrote:
 >
-> On 04/08/2022 21:37, Günther Noack wrote:
-> > Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
-> >
-> > This flag hooks into the path_truncate LSM hook and covers file
-> > truncation using truncate(2), ftruncate(2), open(2) with O_TRUNC, as
-> > well as creat().
-> >
-> > This change also increments the Landlock ABI version, updates
-> > corresponding selftests, and includes minor documentation changes to
-> > document the flag.
-> >
-> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > ---
-> >   Documentation/userspace-api/landlock.rst     |  6 ++++++
-> >   include/uapi/linux/landlock.h                | 17 ++++++++++++-----
-> >   security/landlock/fs.c                       |  9 ++++++++-
-> >   security/landlock/limits.h                   |  2 +-
-> >   security/landlock/syscalls.c                 |  2 +-
-> >   tools/testing/selftests/landlock/base_test.c |  2 +-
-> >   tools/testing/selftests/landlock/fs_test.c   |  7 ++++---
-> >   7 files changed, 33 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> > index b8ea59493964..d92e335380d4 100644
-> > --- a/Documentation/userspace-api/landlock.rst
-> > +++ b/Documentation/userspace-api/landlock.rst
-> > @@ -380,6 +380,12 @@ by the Documentation/admin-guide/cgroup-v1/memory.rst.
-> >   Previous limitations
-> >   ====================
-> > +File truncation (ABI < 3)
-> > +-------------------------
-> > +
-> > +File truncation could not be denied before the third Landlock ABI, so it is
-> > +always allowed when using a kernel that only supports the first or second ABI.
+> Revert part of the earlier changes to fix the kselftest build when
+> using a sub-directory from the top of the tree as this broke the
+> landlock test build as a side-effect when building with "make -C
+> tools/testing/selftests/landlock".
 >
-> I think this addition could make the documentation more consistent and
-> helpful:
->
-> Starting with the Landlock ABI version 3, it is now possible to securely
-> control truncation thanks to the new `LANDLOCK_ACCESS_FS_TRUNCATE`
-> access right.
+> Reported-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Fixes: a917dd94b832 ("selftests/landlock: drop deprecated headers depende=
+ncy")
+> Fixes: f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")
+> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
 
-Agreed, I added that sentence.
+Building with this patch doesn't work, it gives this output:
+make[3]: Entering directory
+'/home/anders/src/kernel/next/tools/testing/selftests/landlock'
+make[3]: Leaving directory
+'/home/anders/src/kernel/next/tools/testing/selftests/landlock'
+make[3]: *** No rule to make target
+'/home/anders/.cache/tuxmake/builds/78/build/kselftest/landlock/base_test',
+needed by 'all'.  Stop.
 
->
->
-> > +
-> >   File renaming and linking (ABI 1)
-> >   ---------------------------------
-> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> > index 23df4e0e8ace..1beb8289708d 100644
-> > --- a/include/uapi/linux/landlock.h
-> > +++ b/include/uapi/linux/landlock.h
-> > @@ -95,8 +95,15 @@ struct landlock_path_beneath_attr {
-> >    * A file can only receive these access rights:
-> >    *
-> >    * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
-> > - * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access.
-> > + * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note that
-> > + *   you might additionally need the LANDLOCK_ACCESS_FS_TRUNCATE right in order
->
-> Please use backquotes for code such as `LANDLOCK_ACCESS_FS_TRUNCATE`,
-> `O_TRUNC`…
+I'm building like this:
+tuxmake --runtime podman --target-arch x86_64 --toolchain gcc-12
+--kconfig defconfig kselftest
 
-Done.
+which translates into this make command:
+make --silent --keep-going --jobs=3D32
+O=3D/home/anders/.cache/tuxmake/builds/78/build
+INSTALL_PATH=3D/home/anders/.cache/tuxmake/builds/78/build/kselftest_instal=
+l
+ARCH=3Dx86_64 CROSS_COMPILE=3Dx86_64-linux-gnu- kselftest-install
 
->
->
-> > + *   to overwrite files with :manpage:`open(2)` using O_TRUNC or
-> > + *   :manpage:`creat(2)`.
-> >    * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
-> > + * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file through file truncation APIs
-> > + *   like :manpage:`truncate(2)`, :manpage:`ftruncate(2)`, or
-> > + *   :manpage:`open(2)` with O_TRUNC or :manpage:`creat(2)`. This access right
-> > + *   is available since the third version of the Landlock ABI.
-> >    *
-> >    * A directory can receive access rights related to files or directories.  The
-> >    * following access right is applied to the directory itself, and the
-> > @@ -139,10 +146,9 @@ struct landlock_path_beneath_attr {
-> >    *
-> >    *   It is currently not possible to restrict some file-related actions
-> >    *   accessible through these syscall families: :manpage:`chdir(2)`,
-> > - *   :manpage:`truncate(2)`, :manpage:`stat(2)`, :manpage:`flock(2)`,
-> > - *   :manpage:`chmod(2)`, :manpage:`chown(2)`, :manpage:`setxattr(2)`,
-> > - *   :manpage:`utime(2)`, :manpage:`ioctl(2)`, :manpage:`fcntl(2)`,
-> > - *   :manpage:`access(2)`.
-> > + *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
-> > + *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
-> > + *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
-> >    *   Future Landlock evolutions will enable to restrict them.
-> >    */
-> >   /* clang-format off */
+building without this patch works, see below:
 
---
+make[3]: Entering directory
+'/home/anders/src/kernel/next/tools/testing/selftests/landlock'
+x86_64-linux-gnu-gcc -Wall -O2 -isystem
+/home/anders/.cache/tuxmake/builds/77/build/usr/include    base_test.c
+ -o /home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/base_tes=
+t
+-lcap
+x86_64-linux-gnu-gcc -Wall -O2 -isystem
+/home/anders/.cache/tuxmake/builds/77/build/usr/include    fs_test.c
+-o /home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/fs_test
+-lcap
+x86_64-linux-gnu-gcc -Wall -O2 -isystem
+/home/anders/.cache/tuxmake/builds/77/build/usr/include
+ptrace_test.c  -o
+/home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/ptrace_test
+-lcap
+x86_64-linux-gnu-gcc -Wall -O2 -isystem
+/home/anders/.cache/tuxmake/builds/77/build/usr/include    true.c  -o
+/home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/true
+-static
+make[3]: Leaving directory
+'/home/anders/src/kernel/next/tools/testing/selftests/landlock'
+
+Cheers,
+Anders
+
+> ---
+>  tools/testing/selftests/landlock/Makefile | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/se=
+lftests/landlock/Makefile
+> index a6959df28eb0..02868ac3bc71 100644
+> --- a/tools/testing/selftests/landlock/Makefile
+> +++ b/tools/testing/selftests/landlock/Makefile
+> @@ -9,10 +9,13 @@ TEST_GEN_PROGS :=3D $(src_test:.c=3D)
+>  TEST_GEN_PROGS_EXTENDED :=3D true
+>
+>  OVERRIDE_TARGETS :=3D 1
+> +top_srcdir :=3D ../../../..
+>  include ../lib.mk
+>
+> +khdr_dir =3D $(top_srcdir)/usr/include
+> +
+>  $(OUTPUT)/true: true.c
+>         $(LINK.c) $< $(LDLIBS) -o $@ -static
+>
+> -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
+> -       $(LINK.c) $< $(LDLIBS) -o $@ -lcap
+> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_har=
+ness.h common.h
+> +       $(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
+> --
+> 2.30.2
+>
