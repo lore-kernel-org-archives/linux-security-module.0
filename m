@@ -2,104 +2,85 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F0CC28B2C
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Aug 2022 16:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 739B8C3F6B0
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Aug 2022 17:17:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232136AbiHOQqx (ORCPT
+        id S229711AbiHORRp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Aug 2022 12:46:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36602 "EHLO
+        Mon, 15 Aug 2022 13:17:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiHOQqY (ORCPT
+        with ESMTP id S229441AbiHORRo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Aug 2022 12:46:24 -0400
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9347DF78;
-        Mon, 15 Aug 2022 09:46:21 -0700 (PDT)
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1oNdE1-0003Ln-I4; Mon, 15 Aug 2022 18:46:01 +0200
-Received: from [85.1.206.226] (helo=linux-4.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1oNdE0-000T0a-SI; Mon, 15 Aug 2022 18:46:00 +0200
-Subject: Re: [PATCH v11 2/9] btf: Handle dynamic pointer parameter in kfuncs
-To:     Roberto Sassu <roberto.sassu@huawei.com>, ast@kernel.org,
-        andrii@kernel.org, martin.lau@linux.dev, song@kernel.org,
-        yhs@fb.com, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@google.com, haoluo@google.com, jolsa@kernel.org,
-        mykolal@fb.com, corbet@lwn.net, dhowells@redhat.com,
-        jarkko@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        shuah@kernel.org
-Cc:     bpf@vger.kernel.org, linux-doc@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Joanne Koong <joannelkoong@gmail.com>
-References: <20220812101902.2846182-1-roberto.sassu@huawei.com>
- <20220812101902.2846182-3-roberto.sassu@huawei.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <43277fc1-f03e-38a0-0d07-64892a67ac1d@iogearbox.net>
-Date:   Mon, 15 Aug 2022 18:45:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 15 Aug 2022 13:17:44 -0400
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D9A18B3D
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Aug 2022 10:17:43 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id p132so9218777oif.9
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Aug 2022 10:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc;
+        bh=iTqSFcKdBFWRcG51JwvSqUqajl7nbOchSE6cjtY60jg=;
+        b=VPokcfO/Zn58P+uPyP+d80HrKyQ7jUIFzXVlgLDYNHAOD4WqTbEoWTM7oNaHLHqrNL
+         bLm3dEEy1peXTF6kAfI6V3KmWLM9V4DvpaE2OkRW9sHzeoLypopzAPfNKgNKX8uLTnnk
+         uZ/1fsZDVNaeiD/OTShmrfLX5AX/OZXgcY4Sw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc;
+        bh=iTqSFcKdBFWRcG51JwvSqUqajl7nbOchSE6cjtY60jg=;
+        b=uMJwnE4qga1UgPsvjDpNGblNOTvFI8+x4RItLdHp9nrtp2+TUm0zdLAU4kuq3FA3PK
+         B0IGKFGHGRQ4e6R5TSJ/YlJvuHYNn6qdj3xQ+tBQDIRoR6n/Y6zTG6XlCUY/2HBu8y0l
+         W/0pzdm7ycM3leM16HxbpfDxgGkba3aPj8gjovfoPi6eSQPFpUNxoHcPPy7PNvOuCfXI
+         Hr5K7sHzDSDlqnE2hz7/lU9az3SbsXam7dhddhhwtU9Mq9DPcdiaJjgKwLR/ZPPACvln
+         3WfwEfAeC8qpE7jcKyhtMVaY3baC1t+tMmjwp7Q9OZAG8JEw2l+6sUScj3PA2P0POGo1
+         fysw==
+X-Gm-Message-State: ACgBeo1bEh+Rnm5zdOYBl7EUvqNMqEgUUHW7ZFaqNKfWKv62R1ormIRF
+        VvWpIY9Ou3QdniVDAZlHembP0w==
+X-Google-Smtp-Source: AA6agR5/eLFCnzSFObcfd6XyGoNsQ1b8dU8kb/ubZnHu5G5/wVMPb72Jx+yfPnA5mf5nhKDFxj2gJA==
+X-Received: by 2002:a05:6808:1ab4:b0:33a:1081:2498 with SMTP id bm52-20020a0568081ab400b0033a10812498mr10170733oib.103.1660583863188;
+        Mon, 15 Aug 2022 10:17:43 -0700 (PDT)
+Received: from [192.168.1.128] ([38.15.45.1])
+        by smtp.gmail.com with ESMTPSA id d63-20020aca3642000000b00339c8aab320sm1914684oia.3.2022.08.15.10.17.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Aug 2022 10:17:42 -0700 (PDT)
+Subject: Re: [PATCH] selftests/landlock: fix broken include of
+ linux/landlock.h
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>, Tim.Bird@sony.com,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
+ <f1fc4e6e-e2a6-3ec7-2d3b-215111a4b9ae@digikod.net>
+ <76a2ac43-6e3d-0b62-7c8c-eec5f247f8f8@collabora.com>
+ <3de9a64e-6f27-8f76-9626-6ee082d382ea@digikod.net>
+ <c0c65ade-1d2a-5466-2c12-8e016904817f@digikod.net>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <32f7befd-19be-19aa-6db6-7b1fd670166e@linuxfoundation.org>
+Date:   Mon, 15 Aug 2022 11:17:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20220812101902.2846182-3-roberto.sassu@huawei.com>
+In-Reply-To: <c0c65ade-1d2a-5466-2c12-8e016904817f@digikod.net>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.6/26628/Mon Aug 15 09:51:41 2022)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/12/22 12:18 PM, Roberto Sassu wrote:
-> Allow the bpf_dynptr_kern parameter to be specified in kfuncs. Also, ensure
-> that the dynamic pointer is valid and initialized.
+On 8/12/22 9:29 AM, Mickaël Salaün wrote:
+> Shuah, do you plan to send a pull request before merge window closes?
 > 
-> Cc: Joanne Koong <joannelkoong@gmail.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->   include/linux/bpf_verifier.h |  3 +++
->   kernel/bpf/btf.c             | 22 ++++++++++++++++++++++
->   kernel/bpf/verifier.c        |  4 ++--
->   3 files changed, 27 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
-> index 2e3bad8640dc..55876fbdbae2 100644
-> --- a/include/linux/bpf_verifier.h
-> +++ b/include/linux/bpf_verifier.h
-> @@ -560,6 +560,9 @@ int check_kfunc_mem_size_reg(struct bpf_verifier_env *env, struct bpf_reg_state
->   			     u32 regno);
->   int check_mem_reg(struct bpf_verifier_env *env, struct bpf_reg_state *reg,
->   		   u32 regno, u32 mem_size);
-> +bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env,
-> +			      struct bpf_reg_state *reg,
-> +			      enum bpf_arg_type arg_type);
->   
->   /* this lives here instead of in bpf.h because it needs to dereference tgt_prog */
->   static inline u64 bpf_trampoline_compute_key(const struct bpf_prog *tgt_prog,
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index e49b3b6d48ad..86e63f2ee5da 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -195,6 +195,10 @@
->   	     i < btf_type_vlen(struct_type);					\
->   	     i++, member++)
->   
-> +#define stringify_struct(x)			\
-> +	({ BUILD_BUG_ON(sizeof(struct x) < 0);	\
-> +	   __stringify(x); })
-> +
 
-I'd say lets move this to include/linux/btf.h with a comment explaining the BUILD_BUG_ON()
-which ensures the struct actually exits.
+I was hoping to do so and missed the window. Looks like more discussion
+happening on this change. I will get this in for the next rc
 
-If there's ever use outside of BTF, it could be relocated to include/linux/stringify.h.
-
->   DEFINE_IDR(btf_idr);
->   DEFINE_SPINLOCK(btf_idr_lock);
->   
+thanks,
+-- Shuah
