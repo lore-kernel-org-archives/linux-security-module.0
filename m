@@ -2,34 +2,34 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21628C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Aug 2022 23:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942F1C25B08
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Aug 2022 00:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231750AbiHOXRG (ORCPT
+        id S233554AbiHPAw1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Aug 2022 19:17:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48330 "EHLO
+        Mon, 15 Aug 2022 20:52:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353125AbiHOXP5 (ORCPT
+        with ESMTP id S1345504AbiHPAu4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Aug 2022 19:15:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C344146CED;
-        Mon, 15 Aug 2022 13:02:56 -0700 (PDT)
+        Mon, 15 Aug 2022 20:50:56 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCFAA199B2A;
+        Mon, 15 Aug 2022 13:46:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1449F612E4;
-        Mon, 15 Aug 2022 20:02:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0708C433C1;
-        Mon, 15 Aug 2022 20:02:54 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id E62B9CE12C3;
+        Mon, 15 Aug 2022 20:46:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EB81C433C1;
+        Mon, 15 Aug 2022 20:46:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1660593775;
+        s=korg; t=1660596411;
         bh=VHaLffJQoHaI+IOtGGNDfDZgg2sKNs5qPuw8gRU1Og8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J1JwuGdCa+ibvAmw02UbD58s1FCY22nDrZzh7I5wQi8wFYXc1m5JFaRz9oPXnZyEX
-         TVKTKq1lgQpUlspYS/D73eAzzPQam7Qo2hcW0BQHJvZ3q1wAFCeHqbol0O7h+aW24/
-         T/Qn3S8puWLcB4x+nGA4jCW1vx+SD4jeGMUpcDkM=
+        b=GtGLWgOW9FIRgUgUPm1+jviG+EZDWvBIho5/fW/fMws1nL+zPHWP3OPdL+PfS80V3
+         yrQPXEvpAT0p+3XOabZcE7kgCRfk5E/9VaXIDCCnkVrOnKJ1Uq/6q8v/I3FIHQbJKr
+         9thRezn4ozh0N/29GqL5q7zA+afB0+a0KvI65EKM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -41,12 +41,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Coiby Xu <coxu@redhat.com>, Heiko Carstens <hca@linux.ibm.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.18 1004/1095] kexec, KEYS, s390: Make use of built-in and secondary keyring for signature verification
-Date:   Mon, 15 Aug 2022 20:06:43 +0200
-Message-Id: <20220815180510.636878336@linuxfoundation.org>
+Subject: [PATCH 5.19 1071/1157] kexec, KEYS, s390: Make use of built-in and secondary keyring for signature verification
+Date:   Mon, 15 Aug 2022 20:07:07 +0200
+Message-Id: <20220815180522.963428530@linuxfoundation.org>
 X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220815180429.240518113@linuxfoundation.org>
-References: <20220815180429.240518113@linuxfoundation.org>
+In-Reply-To: <20220815180439.416659447@linuxfoundation.org>
+References: <20220815180439.416659447@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
