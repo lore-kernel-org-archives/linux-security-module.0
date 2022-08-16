@@ -2,95 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA7AC3F6B0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Aug 2022 22:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DA7C3F6B0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Aug 2022 22:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237864AbiHPWJI (ORCPT
+        id S237471AbiHPWMP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Aug 2022 18:09:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46656 "EHLO
+        Tue, 16 Aug 2022 18:12:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237889AbiHPWJA (ORCPT
+        with ESMTP id S237365AbiHPWMO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Aug 2022 18:09:00 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE81F2A406
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Aug 2022 15:08:53 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-10cf9f5b500so13216698fac.2
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Aug 2022 15:08:53 -0700 (PDT)
+        Tue, 16 Aug 2022 18:12:14 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 444348FD61
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Aug 2022 15:12:13 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-11c4d7d4683so52762fac.8
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Aug 2022 15:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=E/hBZXF6wYTu26pFY4qX7I0dsAzZyW0vnwBH1OJ0zAk=;
-        b=L/vWJjLhYBobflofse2vNZj4dU/r0PqzGFPmUNt7zecAlGUxSeNDuSyfkZgzdjUn4D
-         hfez87XLIrrZ349R8QNCXk8mBpfWnjtm27h8V1h9njXPJuNwzYUgx6gv+XeSDy1K6I/W
-         +/8F1L5mIvbpWQWNLTi3oMDHagsJpXfYyeUO9U+Q5ttSNGE+6kExasteYJXa5/d4sM29
-         +LZLji7S0pH5SUhiP9JYlfADgDRp8ZlGBwNXFQpiHHDKB9lkpLF03HF13/7fZnEy1zxU
-         6hdEAnwBbUByZrnpLARuwoikfgmazyYAwYM3XjkhtL89oiaM1q9/7OwKZdI+jfxP5ZDc
-         SK5w==
+        bh=bknMuEzY2g2ODMFx0pPstR6QEhnsKog5Pl0iH/Ldgz4=;
+        b=sL5dB1VPJNsbf7G8+raTZ4CNHBvpk7wuUoHen4F/fRTlul2K/o6MnEL0QELNEgsXV5
+         8uwAQx9hINB2uTWQ0G+WTB+PukHYNee/MzAqYyyV44+Yri8pGj61r+lHfamUK8p8w4X7
+         QRKqDPOPL9df5lxT34qEXLNreDeG9SXoOiwcQAPOeFr88+qXNgL64ohaZHIVEk+mgB5R
+         wnGXnCFP58BNzbyVX8OjR1IGJbgoEjD+wT7pAjEFqxbJu1di5xE14EIVzTnYMG1XM9Y9
+         6uf1djrUsKmdWrPsGSGSoKlADOPuJiThHSoMfwFLvak3qmxWc7ku1U1IrL0Q701vNeVo
+         jU+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=E/hBZXF6wYTu26pFY4qX7I0dsAzZyW0vnwBH1OJ0zAk=;
-        b=gj1Ayz8HZ4mw+lo0rrcqh5HVbDc1HBZaZdAQBcQsMJyKrX1ZcpgOuDm2dCbHRnvYde
-         iDaHnaO7brHgxP0GNHuscx+6RVlbp3EkFqStIhlbtNmQmAWagXW7V4Y46tRP6+1vjN1k
-         7BcAlERpdsoSKmoyRSuAyo4hqHz4PmeOEGvMo9wlu08GFwr/23e/VPgc2Co7NBouySYX
-         EPg8ktZd1dbqvgycr72XMQmRpS8bdqWXaLcTP/kl6peke6g8sWg4pnNCb7CQinRAqmxA
-         L+IHC5LWh1Ip73SBfVKu5Iy89EHIgNizmx58xEUqIQXKxAchs7Ldu57rkrNP4NkIGjhI
-         kgVg==
-X-Gm-Message-State: ACgBeo2kvl6TnDFi7O9Ygz45O4A92XzpHW0KOXV31gfC4C+8rPECOarI
-        MlO+NQapjiMn4oCF0sppKrn2b5IuY8/II2QdTYIB
-X-Google-Smtp-Source: AA6agR4yyMJcuxHtonk9hdgEbeHukpk7pcwFlSX0mmZTJRUOLasBZP8hA/8Y3sA/k5FXDsww+ToMULa3wkzmedquiBg=
-X-Received: by 2002:a05:6870:9588:b0:101:c003:bfe6 with SMTP id
- k8-20020a056870958800b00101c003bfe6mr296807oao.41.1660687732693; Tue, 16 Aug
- 2022 15:08:52 -0700 (PDT)
+        bh=bknMuEzY2g2ODMFx0pPstR6QEhnsKog5Pl0iH/Ldgz4=;
+        b=cOxnv5YRUfJV3PKE2zBYJzyHdiwsLeEQLq1MfhUe2u0sjZ974CXrhP1K0U3kCegMov
+         HOuu45QHlSNrl1X2oAr2XA59Sa8xhZcCS1GIq3cRiJ+R/TcMYiTwbu06VhBSv3IkkHTQ
+         iCoq5Lgtb3Zt2OPPXpt3DYq9qaJ3K+y36txbYPKfMOOmET8OgESvVTrd2gHVDH/1KU+j
+         MW4Duq5hws7vOxK4gN8nBVWcTxoqI9j9TbP18s9iBdZKJpVlB2Yi1z3kR0GpNTpT3MPV
+         9L8MAgZaSW5zYwV7OPXOFHtXt8HFM/WesBHtAXAoBv3WfRPE8B7fCNJQ7HirH4i+ZMDj
+         KK/Q==
+X-Gm-Message-State: ACgBeo3FYamNE5KgCEjnxiNeWYALPQMaxWKyPUBCHHD3rAPUyr6FGqZ1
+        1YmxRincQKBqnGHAIxbYkAdlhrFUUxsGLw8g5PFa
+X-Google-Smtp-Source: AA6agR4Kj8XNYB9B3lGnewDxsdQnXfT+Fb5iBt539vCMF1wUyb8ZJN1qBsC0HMD5LPLcd7Vjw7gmG8QhiI7dUCI9BGQ=
+X-Received: by 2002:a05:6870:a78d:b0:11c:437b:ec70 with SMTP id
+ x13-20020a056870a78d00b0011c437bec70mr320272oao.136.1660687932528; Tue, 16
+ Aug 2022 15:12:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220602072943.8095-1-ruc_gongyuanjun@163.com>
-In-Reply-To: <20220602072943.8095-1-ruc_gongyuanjun@163.com>
+References: <20220708093451.472870-1-omosnace@redhat.com>
+In-Reply-To: <20220708093451.472870-1-omosnace@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 16 Aug 2022 18:08:42 -0400
-Message-ID: <CAHC9VhSK8y1NmiFTw8QN8xFzyzSdkq0fzovHBRev=mdW3KZvEg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] security: avoid a leak in securityfs_remove()
-To:     Yuanjun Gong <ruc_gongyuanjun@163.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
+Date:   Tue, 16 Aug 2022 18:12:01 -0400
+Message-ID: <CAHC9VhSFUJ6J4_wt1SKAoLourNGVkxu0Tbd9NPDbYqjjrs-qoQ@mail.gmail.com>
+Subject: Re: [RFC PATCH RESEND] userfaultfd: open userfaultfds with O_RDONLY
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Robert O'Callahan" <roc@ocallahan.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 2, 2022 at 3:31 AM Yuanjun Gong <ruc_gongyuanjun@163.com> wrote:
+On Fri, Jul 8, 2022 at 5:35 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
 >
-> Delete the dentry in securityfs_remove() to make sure the
-> dentry is not used by another thread and live longer than
-> the call of securityfs_remove().
+> Since userfaultfd doesn't implement a write operation, it is more
+> appropriate to open it read-only.
 >
-> Signed-off-by: Yuanjun Gong <ruc_gongyuanjun@163.com>
+> When userfaultfds are opened read-write like it is now, and such fd is
+> passed from one process to another, SELinux will check both read and
+> write permissions for the target process, even though it can't actually
+> do any write operation on the fd later.
+>
+> Inspired by the following bug report, which has hit the SELinux scenario
+> described above:
+> https://bugzilla.redhat.com/show_bug.cgi?id=1974559
+>
+> Reported-by: Robert O'Callahan <roc@ocallahan.org>
+> Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 > ---
->  security/inode.c | 1 +
->  1 file changed, 1 insertion(+)
 >
-> diff --git a/security/inode.c b/security/inode.c
-> index 6c326939750d..606f390d21d2 100644
-> --- a/security/inode.c
-> +++ b/security/inode.c
-> @@ -306,6 +306,7 @@ void securityfs_remove(struct dentry *dentry)
->                         simple_rmdir(dir, dentry);
->                 else
->                         simple_unlink(dir, dentry);
-> +               d_delete(dentry);
->                 dput(dentry);
+> Resending as the last submission was ignored for over a year...
+>
+> https://lore.kernel.org/lkml/20210624152515.1844133-1-omosnace@redhat.com/T/
+>
+> I marked this as RFC, because I'm not sure if this has any unwanted side
+> effects. I only ran this patch through selinux-testsuite, which has a
+> simple userfaultfd subtest, and a reproducer from the Bugzilla report.
+>
+> Please tell me whether this makes sense and/or if it passes any
+> userfaultfd tests you guys might have.
+>
+>  fs/userfaultfd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Doesn't the dput() call take care of this?
+VFS folks, any objection to this patch?  It seems reasonable to me and
+I'd really prefer this to go in via the vfs tree, but I'm not above
+merging this via the lsm/next tree to get someone in vfs land to pay
+attention to this ...
 
-Do you have a reproducer where you can show that we are leaking dentries?
-
->         }
->         inode_unlock(dir);
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index e943370107d0..8ccf00be63e1 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -989,7 +989,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *new,
+>         int fd;
+>
+>         fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
+> -                       O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
+> +                       O_RDONLY | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
+>         if (fd < 0)
+>                 return fd;
+>
+> @@ -2090,7 +2090,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+>         mmgrab(ctx->mm);
+>
+>         fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
+> -                       O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+> +                       O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+>         if (fd < 0) {
+>                 mmdrop(ctx->mm);
+>                 kmem_cache_free(userfaultfd_ctx_cachep, ctx);
 > --
-> 2.17.1
+> 2.36.1
 
 -- 
 paul-moore.com
