@@ -2,123 +2,187 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942F1C25B08
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Aug 2022 00:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6915BC2BB41
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Aug 2022 06:39:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233554AbiHPAw1 (ORCPT
+        id S230123AbiHPGjd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Aug 2022 20:52:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36270 "EHLO
+        Tue, 16 Aug 2022 02:39:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345504AbiHPAu4 (ORCPT
+        with ESMTP id S229627AbiHPGjS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Aug 2022 20:50:56 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCFAA199B2A;
-        Mon, 15 Aug 2022 13:46:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id E62B9CE12C3;
-        Mon, 15 Aug 2022 20:46:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EB81C433C1;
-        Mon, 15 Aug 2022 20:46:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1660596411;
-        bh=VHaLffJQoHaI+IOtGGNDfDZgg2sKNs5qPuw8gRU1Og8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GtGLWgOW9FIRgUgUPm1+jviG+EZDWvBIho5/fW/fMws1nL+zPHWP3OPdL+PfS80V3
-         yrQPXEvpAT0p+3XOabZcE7kgCRfk5E/9VaXIDCCnkVrOnKJ1Uq/6q8v/I3FIHQbJKr
-         9thRezn4ozh0N/29GqL5q7zA+afB0+a0KvI65EKM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
-        kexec@lists.infradead.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Michal Suchanek <msuchanek@suse.de>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Baoquan He <bhe@redhat.com>,
-        Coiby Xu <coxu@redhat.com>, Heiko Carstens <hca@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.19 1071/1157] kexec, KEYS, s390: Make use of built-in and secondary keyring for signature verification
-Date:   Mon, 15 Aug 2022 20:07:07 +0200
-Message-Id: <20220815180522.963428530@linuxfoundation.org>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220815180439.416659447@linuxfoundation.org>
-References: <20220815180439.416659447@linuxfoundation.org>
-User-Agent: quilt/0.67
+        Tue, 16 Aug 2022 02:39:18 -0400
+Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEAF129F1B9
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Aug 2022 20:25:56 -0700 (PDT)
+Received: by mail-oo1-xc2c.google.com with SMTP id n16-20020a4a9550000000b0043568f1343bso1630409ooi.3
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Aug 2022 20:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=zaeaXOVhK8m3M+XNtVCsn3FcDPtm1Tez2CwtXwPcxOY=;
+        b=ARpEypITrGuMgsrdF/wN/8bNfpLSXuim/YQsP6UIexuLvx9eah8yn7l0kXMXTyjwRE
+         8qEhtjeKt2qs0E1Bh8Eo4E50vhNsHzDuxXjsy8Vj9b9wOEz7F0cKQq91DTLmhFa8ZmzR
+         ZSRerEin4ZzObLPGAcdjLG4Oct5E0rKGX6n6LyKNvFmuGYb+0/8nwNP9weHRw7JRtPG5
+         gDR5e0wMYm2WtchMcwKiu6iURzB2Z2tlaVfJsciS3HYKxa4MxLUHIx30a6b/OAROicQN
+         6sijuR8Y27JwEPCvlIQ3zLMZyP7xl11JHJDUrGgbcAyEL0jSsQP3GnvvVETSqzGeMEgX
+         tVgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=zaeaXOVhK8m3M+XNtVCsn3FcDPtm1Tez2CwtXwPcxOY=;
+        b=CutXw0Ee0mIERd799p60YmB930ixsFJYqlAhNy2kgovIkhfvlmcxaXAwfsdtI0S19p
+         ixFXW3nd1eE4ylgDAZTO3OA6f8uF/czuuYpDxwLaJvvvtljGzc1ADYuqGpQ8j59bO1gC
+         QbKJ2alNV5APh3lItrETWqD+7zD2oakq073+bU0dOHSpcJUxRrJv/gf4z5MurOSC9005
+         w3Uz1AYQuuv+gpURhXKGP/VQ5btcxxnS1lUgHFYtxQHfmaz9zss/ks/RghbegvnMVOtQ
+         rMhZfUvsyTkQspOo+/NChtQSFCit6cQmBb6AHN+B0cmYE8jlNQ4JOTyUkMQbCQrvvrGk
+         ieKg==
+X-Gm-Message-State: ACgBeo1Sn4CxW30DOrCngpSyTo2/ZVAJh+orLckG4/cfwFkoLrzh2r5+
+        BGRZX8zGpDCBdiZWK65FvQQ+O/IRQDaFDA/cLV9E
+X-Google-Smtp-Source: AA6agR5jcjvLLnXLLTG9WPjI04CMRso162GWkwQVn+kAtpYa5HfLpsgdVT8wApsA1aQLcKFgfc03rLsSBvXINeCUPls=
+X-Received: by 2002:a4a:1103:0:b0:435:4c6c:6f92 with SMTP id
+ 3-20020a4a1103000000b004354c6c6f92mr5750472ooc.26.1660620355452; Mon, 15 Aug
+ 2022 20:25:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk>
+ <CAFqZXNv+ahpN3Hdv54ixa4u-LKaqTtCyjtkpzKGbv7x4dzwc0Q@mail.gmail.com>
+In-Reply-To: <CAFqZXNv+ahpN3Hdv54ixa4u-LKaqTtCyjtkpzKGbv7x4dzwc0Q@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 15 Aug 2022 23:25:44 -0400
+Message-ID: <CAHC9VhTpqvFbjKG5FMKGRBRHavOUrsCSFgayh+BNgSrry8bWLg@mail.gmail.com>
+Subject: Re: [PATCH v3] nfs: Fix automount superblock LSM init problem,
+ preventing sb sharing
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        dwysocha@redhat.com,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Michal Suchanek <msuchanek@suse.de>
+On Thu, Aug 11, 2022 at 8:28 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Fri, Aug 5, 2022 at 3:36 PM David Howells <dhowells@redhat.com> wrote:
+> > When NFS superblocks are created by automounting, their LSM parameters
+> > aren't set in the fs_context struct prior to sget_fc() being called,
+> > leading to failure to match existing superblocks.
+> >
+> > Fix this by adding a new LSM hook to load fc->security for submount
+> > creation when alloc_fs_context() is creating the fs_context for it.
+> >
+> > However, this uncovers a further bug: nfs_get_root() initialises the
+> > superblock security manually by calling security_sb_set_mnt_opts() or
+> > security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
+> > security_sb_set_mnt_opts(), which can lead to SELinux, at least,
+> > complaining.
+> >
+> > Fix that by adding a flag to the fs_context that suppresses the
+> > security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
+> > when it sets the LSM context on the new superblock.
+> >
+> > The first bug leads to messages like the following appearing in dmesg:
+> >
+> >         NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
+> >
+> > Changes
+> > =======
+> > ver #2)
+> >  - Made LSM parameter extraction dependent on fc->purpose ==
+> >    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+> >
+> > ver #2)
+> >  - Added Smack support
+> >  - Made LSM parameter extraction dependent on reference != NULL.
+> >
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
+> > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
+> > cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+> > cc: Anna Schumaker <anna@kernel.org>
+> > cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > cc: Scott Mayhew <smayhew@redhat.com>
+> > cc: Jeff Layton <jlayton@kernel.org>
+> > cc: Paul Moore <paul@paul-moore.com>
+> > cc: Casey Schaufler <casey@schaufler-ca.com>
+> > cc: linux-nfs@vger.kernel.org
+> > cc: selinux@vger.kernel.org
+> > cc: linux-security-module@vger.kernel.org
+> > cc: linux-fsdevel@vger.kernel.org
+> > ---
+> >
+> >  fs/fs_context.c               |    4 +++
+> >  fs/nfs/getroot.c              |    1 +
+> >  fs/super.c                    |   10 ++++---
+> >  include/linux/fs_context.h    |    1 +
+> >  include/linux/lsm_hook_defs.h |    1 +
+> >  include/linux/lsm_hooks.h     |    6 +++-
+> >  include/linux/security.h      |    6 ++++
+> >  security/security.c           |    5 +++
+> >  security/selinux/hooks.c      |   29 +++++++++++++++++++
+> >  security/smack/smack_lsm.c    |   61 +++++++++++++++++++++++++++++++++++++++++
+> >  10 files changed, 119 insertions(+), 5 deletions(-)
+>
+> <snip>
+>
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 1bbd53321d13..ddeaff4f3bb1 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -2768,6 +2768,34 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
+> >                                    FILESYSTEM__UNMOUNT, NULL);
+> >  }
+> >
+> > +static int selinux_fs_context_init(struct fs_context *fc,
+> > +                                  struct dentry *reference)
+> > +{
+> > +       const struct superblock_security_struct *sbsec;
+> > +       const struct inode_security_struct *root_isec;
+> > +       struct selinux_mnt_opts *opts;
+> > +
+> > +       if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
+> > +               opts = kzalloc(sizeof(*opts), GFP_KERNEL);
+> > +               if (!opts)
+> > +                       return -ENOMEM;
+> > +
+> > +               root_isec = backing_inode_security(reference->d_sb->s_root);
+> > +               sbsec = selinux_superblock(reference->d_sb);
+> > +               if (sbsec->flags & FSCONTEXT_MNT)
+> > +                       opts->fscontext_sid     = sbsec->sid;
+> > +               if (sbsec->flags & CONTEXT_MNT)
+> > +                       opts->context_sid       = sbsec->mntpoint_sid;
+> > +               if (sbsec->flags & ROOTCONTEXT_MNT)
+> > +                       opts->rootcontext_sid   = root_isec->sid;
+>
+> I wonder if this part is correct... The rootcontext=... mount option
+> relates to the root inode of the mount where it is specified - i.e. in
+> case of NFS only to the toplevel inode of the initial mount. Setting
+> the same context on the root inode of submounts, which AFAIK are
+> supposed to be transparent to the user, doesn't seem correct to me -
+> i.e. it should just be left unset for the automatically created
+> submounts.
 
-[ Upstream commit 0828c4a39be57768b8788e8cbd0d84683ea757e5 ]
+Like Ondrej, I'm not going to say I'm very comfortable with some of
+the VFS corner cases, but this is an interesting case ... as far as I
+can tell, the submount has a superblock and is treated like a normal
+filesystem mount with the one exception that it is mounted
+automatically so that users might not be aware it is a separate mount.
 
-commit e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-adds support for KEXEC_SIG verification with keys from platform keyring
-but the built-in keys and secondary keyring are not used.
+I guess my question is this: for inodes inside the superblock, does
+their superblock pointer point to the submount's superblock, or the
+parent filesystem's superblock?
 
-Add support for the built-in keys and secondary keyring as x86 does.
-
-Fixes: e23a8020ce4e ("s390/kexec_file: Signature verification prototype")
-Cc: stable@vger.kernel.org
-Cc: Philipp Rudo <prudo@linux.ibm.com>
-Cc: kexec@lists.infradead.org
-Cc: keyrings@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-Acked-by: Baoquan He <bhe@redhat.com>
-Signed-off-by: Coiby Xu <coxu@redhat.com>
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/s390/kernel/machine_kexec_file.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
-index 8f43575a4dd3..fc6d5f58debe 100644
---- a/arch/s390/kernel/machine_kexec_file.c
-+++ b/arch/s390/kernel/machine_kexec_file.c
-@@ -31,6 +31,7 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
- 	const unsigned long marker_len = sizeof(MODULE_SIG_STRING) - 1;
- 	struct module_signature *ms;
- 	unsigned long sig_len;
-+	int ret;
- 
- 	/* Skip signature verification when not secure IPLed. */
- 	if (!ipl_secure_flag)
-@@ -65,11 +66,18 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
- 		return -EBADMSG;
- 	}
- 
--	return verify_pkcs7_signature(kernel, kernel_len,
--				      kernel + kernel_len, sig_len,
--				      VERIFY_USE_PLATFORM_KEYRING,
--				      VERIFYING_MODULE_SIGNATURE,
--				      NULL, NULL);
-+	ret = verify_pkcs7_signature(kernel, kernel_len,
-+				     kernel + kernel_len, sig_len,
-+				     VERIFY_USE_SECONDARY_KEYRING,
-+				     VERIFYING_MODULE_SIGNATURE,
-+				     NULL, NULL);
-+	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING))
-+		ret = verify_pkcs7_signature(kernel, kernel_len,
-+					     kernel + kernel_len, sig_len,
-+					     VERIFY_USE_PLATFORM_KEYRING,
-+					     VERIFYING_MODULE_SIGNATURE,
-+					     NULL, NULL);
-+	return ret;
- }
- #endif /* CONFIG_KEXEC_SIG */
- 
 -- 
-2.35.1
-
-
-
+paul-moore.com
