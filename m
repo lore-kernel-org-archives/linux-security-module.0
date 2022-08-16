@@ -2,92 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4933C25B0E
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Aug 2022 21:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA7AC3F6B0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Aug 2022 22:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237763AbiHPV7y (ORCPT
+        id S237864AbiHPWJI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Aug 2022 17:59:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58972 "EHLO
+        Tue, 16 Aug 2022 18:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237137AbiHPV7x (ORCPT
+        with ESMTP id S237889AbiHPWJA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Aug 2022 17:59:53 -0400
+        Tue, 16 Aug 2022 18:09:00 -0400
 Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E038E982
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Aug 2022 14:59:52 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-10ec41637b3so13186709fac.4
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Aug 2022 14:59:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE81F2A406
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Aug 2022 15:08:53 -0700 (PDT)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-10cf9f5b500so13216698fac.2
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Aug 2022 15:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=sdCVoX1d2nR5s+ye1eeCQD5gWGPAwlYI2xaf/18em+k=;
-        b=hO6UvexnEI7QgAflmltkaXxQku6tDO8f7iYmWs5Dn6I601Qw3q82+bprknapQpcazH
-         BnnRq+eMgWmmIDMEQChFFjpSm8eN5FBPJdISLgmNjlscw4HizxtCfxs3DShXaVtCbp0r
-         gT24JV/Aio+W/hi7BWiA9DRE+5ZEByvOIjj9CBiUDwae+1FkGuBTxGsV9tqGEeFM4nRe
-         s3s9w5ECI85qBQmsnDQKAnkilG6LoDZt+PsDIaTi5IWmSmcchrYQKJOgxiJUBJEhYcVP
-         r5I94OeiX8sfElXlCPAx3kY+FV1rTgzpTB2k2RxpeMznKiQ0t6EAbkgmT0gdEDhNLdtD
-         q1dQ==
+        bh=E/hBZXF6wYTu26pFY4qX7I0dsAzZyW0vnwBH1OJ0zAk=;
+        b=L/vWJjLhYBobflofse2vNZj4dU/r0PqzGFPmUNt7zecAlGUxSeNDuSyfkZgzdjUn4D
+         hfez87XLIrrZ349R8QNCXk8mBpfWnjtm27h8V1h9njXPJuNwzYUgx6gv+XeSDy1K6I/W
+         +/8F1L5mIvbpWQWNLTi3oMDHagsJpXfYyeUO9U+Q5ttSNGE+6kExasteYJXa5/d4sM29
+         +LZLji7S0pH5SUhiP9JYlfADgDRp8ZlGBwNXFQpiHHDKB9lkpLF03HF13/7fZnEy1zxU
+         6hdEAnwBbUByZrnpLARuwoikfgmazyYAwYM3XjkhtL89oiaM1q9/7OwKZdI+jfxP5ZDc
+         SK5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=sdCVoX1d2nR5s+ye1eeCQD5gWGPAwlYI2xaf/18em+k=;
-        b=W0Ck+P5S0stLBbmP8yp2XY0bD/GnZZ+ImmREzpP1abmY2seuzDRiwvGuwejEr5ge0Z
-         aa5UvkjD57y2ArHWIYVRKT72WXEJOGZi8hoGtsb1X1j1KMVtSUItDwD+DAgGR+DfVfN2
-         JauSPZYwQHcXE3IYYqpH60sxf8RZ2AjvRrks4gVwwBxqhHWsXH26BHcMdZ7BXOazzjWa
-         OJRsPli403t8tQKqgPRYYH5MgwkQwFJAgEuCl5UlQSlwqFnqd7kpT4tunBkY936+eXEQ
-         kb4yZ78T28VtddJTzluKbgVjKK5hVg9UEgEF0rVIGCfQznHe//VMnA/yzqNkaDfR2NKi
-         zjag==
-X-Gm-Message-State: ACgBeo0PoplQJxGMAtjwyOhga/gnRqwwx4i39Cl0j0DWe5+Eueg+eScu
-        mF9gtpWUrXgq5eDn1HmVohMDaen7b+aTjwk20UcKjkPmNjE8
-X-Google-Smtp-Source: AA6agR5VUmSWGEOtIJf0tK03lmL0MPi7VLCU9Pr8Zq6gAZ1YxXrlalyEf6N1T0Mj/LkfV2Qvf+yubk0HbU6bJceR6YQ=
+        bh=E/hBZXF6wYTu26pFY4qX7I0dsAzZyW0vnwBH1OJ0zAk=;
+        b=gj1Ayz8HZ4mw+lo0rrcqh5HVbDc1HBZaZdAQBcQsMJyKrX1ZcpgOuDm2dCbHRnvYde
+         iDaHnaO7brHgxP0GNHuscx+6RVlbp3EkFqStIhlbtNmQmAWagXW7V4Y46tRP6+1vjN1k
+         7BcAlERpdsoSKmoyRSuAyo4hqHz4PmeOEGvMo9wlu08GFwr/23e/VPgc2Co7NBouySYX
+         EPg8ktZd1dbqvgycr72XMQmRpS8bdqWXaLcTP/kl6peke6g8sWg4pnNCb7CQinRAqmxA
+         L+IHC5LWh1Ip73SBfVKu5Iy89EHIgNizmx58xEUqIQXKxAchs7Ldu57rkrNP4NkIGjhI
+         kgVg==
+X-Gm-Message-State: ACgBeo2kvl6TnDFi7O9Ygz45O4A92XzpHW0KOXV31gfC4C+8rPECOarI
+        MlO+NQapjiMn4oCF0sppKrn2b5IuY8/II2QdTYIB
+X-Google-Smtp-Source: AA6agR4yyMJcuxHtonk9hdgEbeHukpk7pcwFlSX0mmZTJRUOLasBZP8hA/8Y3sA/k5FXDsww+ToMULa3wkzmedquiBg=
 X-Received: by 2002:a05:6870:9588:b0:101:c003:bfe6 with SMTP id
- k8-20020a056870958800b00101c003bfe6mr278597oao.41.1660687191979; Tue, 16 Aug
- 2022 14:59:51 -0700 (PDT)
+ k8-20020a056870958800b00101c003bfe6mr296807oao.41.1660687732693; Tue, 16 Aug
+ 2022 15:08:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220725124123.12975-1-flaniel@linux.microsoft.com>
-In-Reply-To: <20220725124123.12975-1-flaniel@linux.microsoft.com>
+References: <20220602072943.8095-1-ruc_gongyuanjun@163.com>
+In-Reply-To: <20220602072943.8095-1-ruc_gongyuanjun@163.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 16 Aug 2022 17:59:41 -0400
-Message-ID: <CAHC9VhTmgMfzc+QY8kr+BYQyd_5nEis0Y632w4S2_PGudTRT7g@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 0/2] Add capabilities file to securityfs
-To:     Francis Laniel <flaniel@linux.microsoft.com>
-Cc:     linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:BPF [MISC]" <bpf@vger.kernel.org>
+Date:   Tue, 16 Aug 2022 18:08:42 -0400
+Message-ID: <CAHC9VhSK8y1NmiFTw8QN8xFzyzSdkq0fzovHBRev=mdW3KZvEg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] security: avoid a leak in securityfs_remove()
+To:     Yuanjun Gong <ruc_gongyuanjun@163.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 25, 2022 at 8:42 AM Francis Laniel
-<flaniel@linux.microsoft.com> wrote:
-> Hi.
+On Thu, Jun 2, 2022 at 3:31 AM Yuanjun Gong <ruc_gongyuanjun@163.com> wrote:
 >
-> First, I hope you are fine and the same for your relatives.
+> Delete the dentry in securityfs_remove() to make sure the
+> dentry is not used by another thread and live longer than
+> the call of securityfs_remove().
+>
+> Signed-off-by: Yuanjun Gong <ruc_gongyuanjun@163.com>
+> ---
+>  security/inode.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/security/inode.c b/security/inode.c
+> index 6c326939750d..606f390d21d2 100644
+> --- a/security/inode.c
+> +++ b/security/inode.c
+> @@ -306,6 +306,7 @@ void securityfs_remove(struct dentry *dentry)
+>                         simple_rmdir(dir, dentry);
+>                 else
+>                         simple_unlink(dir, dentry);
+> +               d_delete(dentry);
+>                 dput(dentry);
 
-Hi Francis :)
+Doesn't the dput() call take care of this?
 
-> A solution to this problem could be to add a way for the userspace to ask the
-> kernel about the capabilities it offers.
-> So, in this series, I added a new file to securityfs:
-> /sys/kernel/security/capabilities.
-> The goal of this file is to be used by "container world" software to know kernel
-> capabilities at run time instead of compile time.
+Do you have a reproducer where you can show that we are leaking dentries?
 
-...
-
-> The kernel already exposes the last capability number under:
-> /proc/sys/kernel/cap_last_cap
-
-I'm not clear on why this patchset is needed, why can't the
-application simply read from "cap_last_cap" to determine what
-capabilities the kernel supports?
+>         }
+>         inode_unlock(dir);
+> --
+> 2.17.1
 
 -- 
 paul-moore.com
