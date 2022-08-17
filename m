@@ -2,146 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F383C32771
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 16:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8141EC25B08
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 16:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237846AbiHQQXG (ORCPT
+        id S234196AbiHQQbk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Aug 2022 12:23:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45564 "EHLO
+        Wed, 17 Aug 2022 12:31:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237741AbiHQQXE (ORCPT
+        with ESMTP id S231582AbiHQQbk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Aug 2022 12:23:04 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D8FC9D8C1
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 09:23:01 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id bb16so15880409oib.11
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 09:23:01 -0700 (PDT)
+        Wed, 17 Aug 2022 12:31:40 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF2A1D4
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 09:31:38 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id y3so18211279eda.6
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 09:31:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc;
-        bh=UVFUNCqPRpisdlSVRU+tLvNHfgHjwvastlgvyU/I+ug=;
-        b=nhD+LomYohgAaMtQcxIoxV4+vU0oMCpwBU85S4CbJpWNUKtrOHMu96fL8IGGB9i7cw
-         FNxyZ6ErfmSrX8Yjx7DJa7BfR/bOMY7rG80bdYrOvc0TBQdWfsCyw5PjJYDICr6XKe+H
-         JK3MHzzpfJoiBFlNfEtLwxaJnHksXBBcOFgkYQyoUf3mhDxovH/WHeOyApy39dRcRbIQ
-         fcxTkUgqfab5tVzG1DNRoypYdqSxaxz4/7zjslkpqhcWYI3keTaRIl+SBo37PltiKNpL
-         NAd4uWTOTjI1QLYBuCHvcDwPay7mfA0nxGkY2Qg9BvzND3mU7WGHhnkXAU1YWGsIIF6T
-         KwRA==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc;
+        bh=/z+amWs5Y19nHNsrgD6uXVP7BrXdeNRmLAJE6tXV704=;
+        b=g1gQqRNCfIDKpBKCsQYDCzhmWiM1FcqXei0h6TaW5q9KPQfY4v/kAs+0ZMfjEU8sTD
+         +iq2FF938Z6195G+DGw8/P4PZQzJCmwONdOhc8k/oyEdiAde2ePP0yYtDcATwcs3VqAA
+         Bf7sZh7TZ2ooL7BrBmYDO5ja/Fk5h6/CRjUIviKfjhzT14XdL6Oa6WZmxuTIkdqYeXHU
+         rxD5T2oDYd061mxXM0qc332AKWYlwn6Rl/OFEsv53d/G78e6vYbnPF2WekdWCgDgC1nc
+         Pda4/Wj6S10WZYIsJZJwMeBtm4hq+HFf/NWCfiY4XZPceGUOXdO4xDESlAj9IcIVV2pD
+         Amkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
-        bh=UVFUNCqPRpisdlSVRU+tLvNHfgHjwvastlgvyU/I+ug=;
-        b=RpcWM/uMzYBcLVneOyyKV9cqa1xaTljgXzmSAM7jsXX1fzuCYCA2CbLkvClkcBtuDo
-         eOh0y0PFR8S5Dlr6JZRTczLzKfx/V049cnFVwwcTPI8f8oNgX11HN7HRwxj/17CetzuF
-         UGvPlguBB8j+w6FCkT+1AgmD9ihiTTuNYpwuajXqCIR7Ukr6PNarTu0RjKl+d3tYbsSJ
-         WbRuSYR2dghmJXevvjJi8VAYwhFQZ4DIcBYk5HHNUXxk/AnPAjBNYhlU5ZlzVKYkZi5C
-         BKlpEoJlVMRskh7Fek9lGuguNlmD6wtJEp92ZxXhtQbj8sx9RuI3pC4Ka9POfmV0yBKT
-         IUgg==
-X-Gm-Message-State: ACgBeo3misSLL6AZGFcvUiQXMlv3hS67BeXLtbVz14WPyprBP3R+G3bj
-        YDPNC8IX0NUlW7/jeXjvIlRQW7F7YjR9LOqR+LbG
-X-Google-Smtp-Source: AA6agR4q+35QdLDJNp6askIHnce/pTF3ccKGnAJyDAjR93UP09IwkfdsM9vuHIzqMk/HyB//otwciZ/io87A9c4W3cA=
-X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
- n9-20020a05680803a900b003434b14cccemr1872909oie.41.1660753380093; Wed, 17 Aug
- 2022 09:23:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220725124123.12975-1-flaniel@linux.microsoft.com>
- <CAHC9VhTmgMfzc+QY8kr+BYQyd_5nEis0Y632w4S2_PGudTRT7g@mail.gmail.com>
- <4420381.LvFx2qVVIh@pwmachine> <CAHC9VhSMeefG5W_uuTNQYmUUZ1xcuqArxYs5sL9KOzUO_skCZw@mail.gmail.com>
- <ab1bbd48-c48d-5f5a-f090-428ffd54c07e@schaufler-ca.com> <CAHC9VhTxYaLXFbS6JnpskOkADNbL8BA5614VuK3sDTHW6DE3uQ@mail.gmail.com>
- <20220817161924.GA20337@mail.hallyn.com>
-In-Reply-To: <20220817161924.GA20337@mail.hallyn.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 17 Aug 2022 12:22:49 -0400
-Message-ID: <CAHC9VhTUid5i8C+W93Zfc_bWMoo7DsvruJ_85Ty0wWsV7xbb4g@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 0/2] Add capabilities file to securityfs
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Francis Laniel <flaniel@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc;
+        bh=/z+amWs5Y19nHNsrgD6uXVP7BrXdeNRmLAJE6tXV704=;
+        b=4WGhGYzN/u23LThLvH2P0UP1vO2zJ0AvOj3YiF2HN1liNfYR6IGWw2PxRuo5LaW4Gg
+         BPqwreZp1xmqdnKmD9EaTcoz/K9cePVV1cwr1IKXYX2MBm993R9UwdpxXD7XpBQuMIfh
+         X1i3SKcaWx2+rhwMh/yFoOk+PMBkTzA03G3jjdBG1ZmtLDnukOuR/8ZpBOptcyWF1xSE
+         sGn+tGxQayvzhvegZ7V0e5Hjj2Lk2ZX7HEwdimqQurvUKLS2AGOPUXP1waEGMZXIGB2C
+         Hhj6jIlnxy3lY475P/Lotp41fyWb42wu47OfhQA+aKRnL3U5sOQeU051xOQDau83qXmt
+         lq9g==
+X-Gm-Message-State: ACgBeo2oDWrFjQ4hJR4RqcNARwJApYYlrsoNY8LRuaSHvir/SwLUJxao
+        gq2s6PwTU7KkUtWHdicU1Hc=
+X-Google-Smtp-Source: AA6agR4HsE72Xr6ALhwI6WQqm+kDihGD7B9sepp1wGrtl/l69TN314KgXpIdzZ2DhWMVpy51mpyXMA==
+X-Received: by 2002:a05:6402:2756:b0:443:4a6d:f05a with SMTP id z22-20020a056402275600b004434a6df05amr21985554edd.396.1660753897300;
+        Wed, 17 Aug 2022 09:31:37 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id 2-20020a170906210200b0073100dfa7b5sm7038901ejt.33.2022.08.17.09.31.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Aug 2022 09:31:36 -0700 (PDT)
+Date:   Wed, 17 Aug 2022 18:31:35 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org,
         James Morris <jmorris@namei.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:BPF [MISC]" <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v4 1/4] landlock: Support file truncation
+Message-ID: <Yv0X52lix7PrFtaK@nuc>
+References: <20220814192603.7387-1-gnoack3000@gmail.com>
+ <20220814192603.7387-2-gnoack3000@gmail.com>
+ <90883a01-4d32-c3d0-4334-563ba9a5a39d@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <90883a01-4d32-c3d0-4334-563ba9a5a39d@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 17, 2022 at 12:19 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> On Wed, Aug 17, 2022 at 12:10:25PM -0400, Paul Moore wrote:
-> > On Wed, Aug 17, 2022 at 11:50 AM Casey Schaufler <casey@schaufler-ca.co=
-m> wrote:
-> > > On 8/17/2022 7:52 AM, Paul Moore wrote:
-> > > > On Wed, Aug 17, 2022 at 7:53 AM Francis Laniel
-> > > > <flaniel@linux.microsoft.com> wrote:
-> > > >> Le mardi 16 ao=C3=BBt 2022, 23:59:41 CEST Paul Moore a =C3=A9crit =
-:
-> > > >>> On Mon, Jul 25, 2022 at 8:42 AM Francis Laniel
-> > > >>>
-> > > >>> <flaniel@linux.microsoft.com> wrote:
-> > > >>>> Hi.
-> > > >>>>
-> > > >>>> First, I hope you are fine and the same for your relatives.
-> > > >>> Hi Francis :)
-> > > >>>
-> > > >>>> A solution to this problem could be to add a way for the userspa=
-ce to ask
-> > > >>>> the kernel about the capabilities it offers.
-> > > >>>> So, in this series, I added a new file to securityfs:
-> > > >>>> /sys/kernel/security/capabilities.
-> > > >>>> The goal of this file is to be used by "container world" softwar=
-e to know
-> > > >>>> kernel capabilities at run time instead of compile time.
-> > > >>> ...
-> > > >>>
-> > > >>>> The kernel already exposes the last capability number under:
-> > > >>>> /proc/sys/kernel/cap_last_cap
-> > > >>> I'm not clear on why this patchset is needed, why can't the
-> > > >>> application simply read from "cap_last_cap" to determine what
-> > > >>> capabilities the kernel supports?
-> > > >> When you capabilities with, for example, docker, you will fill cap=
-abilities
-> > > >> like this:
-> > > >> docker run --rm --cap-add SYS_ADMIN debian:latest echo foo
-> > > >> As a consequence, the "echo foo" will be run with CAP_SYS_ADMIN se=
-t.
-> > > >>
-> > > >> Sadly, each time a new capability is added to the kernel, it means=
- "container
-> > > >> stack" software should add a new string corresponding to the numbe=
-r of the
-> > > >> capabilities [1].
-> > > > Thanks for clarifying things, I thought you were more concerned abo=
-ut
-> > > > detecting what capabilities the running kernel supported, I didn't
-> > > > realize it was getting a string literal for each supported capabili=
-ty.
-> > > > Unless there is a significant show of support for this
-> > >
-> > > I believe this could be a significant help in encouraging the use of
-> > > capabilities. An application that has to know the list of capabilitie=
-s
-> > > at compile time but is expected to run unmodified for decades isn't
-> > > going to be satisfied with cap_last_cap. The best it can do with that
-> > > is abort, not being able to ask an admin what to do in the presence o=
-f
-> > > a capability that wasn't around before because the name isn't known.
-> >
-> > An application isn't going to be able to deduce the semantic value of
-> > a capability based solely on a string value, an integer is just as
-> > meaningful in that regard.  What might be useful is if the application
+On Tue, Aug 16, 2022 at 09:20:06PM +0200, Mickaël Salaün wrote:
+> On 14/08/2022 21:26, Günther Noack wrote:
+> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> > index b8ea59493964..6648e59fabe7 100644
+> > --- a/Documentation/userspace-api/landlock.rst
+> > +++ b/Documentation/userspace-api/landlock.rst
+> > @@ -380,6 +380,16 @@ by the Documentation/admin-guide/cgroup-v1/memory.rst.
+> >   Previous limitations
+> >   ====================
+> > +File truncation (ABI < 3)
+> > +-------------------------
+> > +
+> > +File truncation could not be denied before the third Landlock ABI, so it is
+> > +always allowed when using a kernel that only supports the first or second ABI.
+> > +
+> > +Starting with the Landlock ABI version 3, it is now possible to securely
+> > +control truncation thanks to the new `LANDLOCK_ACCESS_FS_TRUNCATE` access
+> > +right.
+> > +
 >
-> Maybe it's important to point out that an integer value capability in
-> kernel will NEVER change its string value (or semantic meaning).
+> This should be in the forth patch, below the file renaming and linking
+> section.
+
+Good point, moved.
+
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index 23df4e0e8ace..a2fef267bf34 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -95,8 +95,15 @@ struct landlock_path_beneath_attr {
+> >    * A file can only receive these access rights:
+> >    *
+> >    * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
+> > - * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access.
+> > + * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note that
+> > + *   you might additionally need the `LANDLOCK_ACCESS_FS_TRUNCATE` right in
+> > + *   order to overwrite files with :manpage:`open(2)` using `O_TRUNC` or
+> > + *   :manpage:`creat(2)`.
+> >    * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
+> > + * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file through file truncation APIs
+> > + *   like :manpage:`truncate(2)`, :manpage:`ftruncate(2)`, or
 >
-> The libcap tools like capsh accept integer capabilities, other tools
-> probably should as well.  (see man 3 cap_from_text)
+> s/through file truncation APIs like/with/
 
-Seems like a reasonable thing to me, I would much prefer that than the
-approach in this patchset.
+Done.
 
---=20
-paul-moore.com
+>
+>
+> > + *   :manpage:`open(2)` with `O_TRUNC` or :manpage:`creat(2)`. This access right
+>
+> :manpage:`creat(2)`, or :manpage:`open(2)` using `O_TRUNC`.
+>
+> With only one "or".
+
+Done.
+
+Thanks for the attention to detail in the review!
+
+—Günther
+
+--
