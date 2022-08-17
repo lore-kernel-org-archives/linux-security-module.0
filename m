@@ -2,156 +2,249 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 460B6C25B08
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 16:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19573C25B08
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 16:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240950AbiHQQuB (ORCPT
+        id S241140AbiHQQuT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Aug 2022 12:50:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40858 "EHLO
+        Wed, 17 Aug 2022 12:50:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241160AbiHQQtu (ORCPT
+        with ESMTP id S241147AbiHQQty (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Aug 2022 12:49:50 -0400
-Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29CC14BA55
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 09:49:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1660754985; bh=Ny9gKY0wd/5ZfGgioSP7TsK+27gqEMxkOBVNAODpUC8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PVm7RwcUroWU78cMoAJNQvwYWonhla2/OPYto/Y7sGTaZd0v57YCckfNtMGsyKlOqn5jo/nLFbH0QgLZ+dCRhgB95V69TWjjqdCZGskoZWr5x3e2tGRqT5eqH/5GJdAoG9baXzZhhYx40kchDNAp5uLv4ooVsFrGranILyqD4gjDZxxVhWzXqM8oQWPZv/Oq75H4sOLtbyGsjVUJqidx5zlwtTH/2f3jTUetAJAQS8ZgOePjbAjOwIKPDyqY9kzFD7BwlDMw/zlfJ5R4ybjgVkqMCwwsv7Q65T+AfE4XtnLFbFccby7+ZDeT+jAhOYGzI9MWQOz6E0W6eLUJvPuCLg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1660754985; bh=nItPm8YWg465I0hPRwZl9/cWkmh+DRwj2wGVa5ZiSEW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WW1XusOYXJtoZhUKV+ccRD2mdq2lTNNlqm0QYkekGxvGuGtZHqSOMNqe63xftW/P8WLnPDJwwvESK1NPR7ZNeGDkn7RJGUQjzvhsWjBoPQRWtbUh/j2+CWp163piFRfrDL/Da+uxFcw4ULVrxSYtHXXs5WgFzTU8rUnEKHJzGPdEYbtLykjcd6H2PTGhNS4kvI1zRjmDBsFvoa08VIy2l2SV9rYLUmK+7l0LddREFMSwaQweTjdyBv5EkyuPRPl+YQ8xZenUNllag+cKi1hWH3tQKFVGKD3HFzPtNxJRwd6Nd+SWTjzVV32wjlzGXWByblJvsGkEsbDNxbDPzWeekg==
-X-YMail-OSG: nQyc35AVM1ljY_NZDq1WiI9xnOazY7sjROJ8UOVmXimny823KsFHkEAN8BnWT8E
- RdDggBn4ct_jw4vNUJ1Ur1DezOANqpTMamvP5ocTQwfbFYu2Igymui5X9M6FSPCJKuQ5uoAVnV2f
- vNN0K2qtUcwC4ofiRT8uTkMbc4cBJEwLL1Rj9gAIybANozNF.Vq2hOQ1VNkyVqxbUyiMc4i.Lfa_
- e0vsfqB2BB8jc3lUhP95NegnCGwznqLkjMcHFuthFU8eNOw7Gtcj3BZkXjE7r6u_.6BR7wi.R.Le
- Zw3VfjtwVLAcnGqeHC3YKrBkxxsnGmDK5PRuZRhhc5LbY_iuYdlkmus5F6Z6qOjZGZO9s3lpCr9Q
- nBfd2t8KpRFUa.GxiAkc80.ai7MF_8mNcqXwAUwojzzZuoPNFT4XK1CYMAfrviFx3zTDlWFoOcfc
- vpt.P8gXA60ql6QovZ3oM5KjfpYGtTeWKQHhcMU8UmMyUKlRYQ3LZ7YM0kI0ibljGY2Qs.3XNtxV
- 0V6_fV_PC3c0Ku8kD7nK7ag08BXr2QxyJHrtZLhiJ.8UdCfFC7D427cpVRMI0telU.CbZlZoLF.0
- BYjRbWnvaKY_ZgeDx.zxPbwDBHoou6ovhUGjeBYRi4BivzS5GrDMtwz4hN8VwLhH1tCu7_bUeoQK
- Z9UkT_1baRS1g7U6XNZzNnUyzDxLOKJgdIa_62CyfxOX9EvwomBCCQLk94wak3.QyYR50SqQy1i7
- FulHgHFKnoQ0ZqNZ8qHrvslW.nSlG6VeF6wUgb2FUq9vo4A7ILdJjvGm.AZFibgyY0Ox.BE5XWKU
- d83JTiVKa0P282A2Yd5GycKvOZMt72n0C3Vce9thMs1vVobCY4VH2QNdtIUDZS_JXEP3cd4OuQYD
- IT7mJZdcXHroUsKQ9G7UulZzBddKwkXhr8cgZ4ZygciosbZ51MWBB0mO61tmAK8gO3i8q58rlux1
- j8veunrU_.ljR4SDZFEVzXZ_EVATn42WxsqUW_hhBWvPLK0vBBy5RYmRAQMD8DBddIi8dlFHlU8f
- pA7K2Q6E.sDPrzWrINCazwRp05rcU2tZrrrYbK2Cscp5whBcsm0ZwG..IdGYJqptagw4QNmfwMwq
- 88NRo.wLglvJydBVo_qwLNOvBlAlk78MNvCa2z4naUTJMjVstq4UNlcZmqfgy5Wzf1y3tCSSpVbS
- jXCqNfhoD0Th146MGdSabheiXX1Bb..eNbJme6niEIdCdSkCOgG6nfRCxssHM1CSjePkAZXyS1Zh
- QufHzsbDuhyLrBeo9nu4YDLYLKxMQ34ART7b8Bqp9D2.wvqP27PT4fTVTeoNFSr3v9E86k6u7__X
- 7G5Rp.fF4GdtV_GP.WIjl0wOiWH2m8Gk7Hdm7udDrgSQd3mVn_BIbqyevYgZbwe5q1Dp5Sm5hbeX
- qq8xcr96Q1MAIsCbWy0r6kppgqku0OtqzkHagxGlZdyyxeupMRkYcLZZBYwbUD9rZqwO7hS0ASYL
- EKkyBSzQ6cqlXrs78IbEJbgf91HWuOERaHjd1dS6DjbugfDnQOxpMikidSSIOgqizxWYej0kCA7.
- y5IhgBN02UV21F5dVeLqOm2RrhFxTkjysw1IG_P7Q4wFzhx71KTUNRH74Khgq5nO61DUBOb_SEgD
- f5a2A4mUgvK9tkqC3kQ_kXhPtfq5hqBPbR6i14YmxybLmycK.bYiSPWYxMCej6Hwto4MkAbgImd5
- rVVnmZ73O4jrV0oMPx4WzLtw4tKZMK4jcTy9kFDj9Eb1hXl_4nLH_zzUkhWH.FnvxnIGSpCYX_Uc
- d1TwFyb4hjxwgE9EbWbJHcpHfkNJ7kFLBPUL.oZLMRkiiOSftzioQkeNqIon1v98NnkhRM_rk8nk
- FZoadhNMs4XYaIHnXXLmNWQgEJAx1DE03viw.OCUpa1Zu2fNzJw0rHNj3I7BID2Hs7myEvJ2Q3J_
- ipIGAbzC5d7Vyg71xDWZxQB8OUksKvyaJh6OT5NHIVtkpwn.5a4ES_3JSEhcIJ3CXdXVCYfZ27k4
- ikcOW_hg5AOsyxT9g4MI_7rjlOOhBQmNX4HLeW1PKoAdaPBbtFY34SmaqBNTDqYYzlVw9lX7oO1s
- 46KBwN1qdHTQ6iinlWCdU1s.KkymrcRpnKCMZk.69gSofX6MxSm1N5K.Z8awJEcVCR07dBhFngGK
- HlJf9FeaF2QWssoyZP5513O8osrkVW40b0eAnc1Um7ch1.DgldQ4NlwHOv4ghkPhF3U4CZ6vafRs
- tUC4mZWWQFEYTF4QrDZzybVCt44TiA4pvajBWoqa1uU9U5QwRqXh7R3uw8PhTS13RKRehD3E048p
- oz5UNlY64EiXS
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 17 Aug 2022 16:49:45 +0000
-Received: by hermes--production-bf1-7586675c46-7c7p2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 64aab401d4f89b4fef5c137bccf625b3;
-          Wed, 17 Aug 2022 16:49:44 +0000 (UTC)
-Message-ID: <664f29c3-77a6-2ed9-5c55-f181397b09a2@schaufler-ca.com>
-Date:   Wed, 17 Aug 2022 09:49:40 -0700
+        Wed, 17 Aug 2022 12:49:54 -0400
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 085747E329
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 09:49:51 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4M7DWx1mbZzMpp3C;
+        Wed, 17 Aug 2022 18:49:49 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4M7DWw5fxgzlqwwc;
+        Wed, 17 Aug 2022 18:49:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1660754989;
+        bh=nq1DdW2pNinPQGbPhawokMPbx8tQLJR7cigpQW/6b6o=;
+        h=Date:From:To:Cc:Subject:From;
+        b=TEmgI5+0rqKSnzHmE7BPW+0rAcWhBYoh27IoMb9ynzssj18Ug0HjD7db7SYSuPRg9
+         wGSBfBQ6Lm5J/ETZXm6TnayCpmMyU+LmYk0np7c8SBUtSPcQnDT0efmIUqgkt6cOfM
+         yP5iazGYIQf1WN0iZk9aUBXbmkzZnBvhQu3XsvA0=
+Message-ID: <441bd1cd-03fd-8e30-c370-3d0f0263d564@digikod.net>
+Date:   Wed, 17 Aug 2022 18:49:48 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [RFC PATCH v4 0/2] Add capabilities file to securityfs
+User-Agent: 
 Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Francis Laniel <flaniel@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:BPF [MISC]" <bpf@vger.kernel.org>,
-        casey@schaufler-ca.com
-References: <20220725124123.12975-1-flaniel@linux.microsoft.com>
- <CAHC9VhTmgMfzc+QY8kr+BYQyd_5nEis0Y632w4S2_PGudTRT7g@mail.gmail.com>
- <4420381.LvFx2qVVIh@pwmachine>
- <CAHC9VhSMeefG5W_uuTNQYmUUZ1xcuqArxYs5sL9KOzUO_skCZw@mail.gmail.com>
- <ab1bbd48-c48d-5f5a-f090-428ffd54c07e@schaufler-ca.com>
- <CAHC9VhTxYaLXFbS6JnpskOkADNbL8BA5614VuK3sDTHW6DE3uQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhTxYaLXFbS6JnpskOkADNbL8BA5614VuK3sDTHW6DE3uQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     landlock@lists.linux.dev
+Cc:     linux-security-module@vger.kernel.org,
+        oss-security@lists.openwall.com
+Subject: Landlock news #2
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.20560 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/17/2022 9:10 AM, Paul Moore wrote:
-> On Wed, Aug 17, 2022 at 11:50 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 8/17/2022 7:52 AM, Paul Moore wrote:
->>> On Wed, Aug 17, 2022 at 7:53 AM Francis Laniel
->>> <flaniel@linux.microsoft.com> wrote:
->>>> Le mardi 16 août 2022, 23:59:41 CEST Paul Moore a écrit :
->>>>> On Mon, Jul 25, 2022 at 8:42 AM Francis Laniel
->>>>>
->>>>> <flaniel@linux.microsoft.com> wrote:
->>>>>> Hi.
->>>>>>
->>>>>> First, I hope you are fine and the same for your relatives.
->>>>> Hi Francis :)
->>>>>
->>>>>> A solution to this problem could be to add a way for the userspace to ask
->>>>>> the kernel about the capabilities it offers.
->>>>>> So, in this series, I added a new file to securityfs:
->>>>>> /sys/kernel/security/capabilities.
->>>>>> The goal of this file is to be used by "container world" software to know
->>>>>> kernel capabilities at run time instead of compile time.
->>>>> ...
->>>>>
->>>>>> The kernel already exposes the last capability number under:
->>>>>> /proc/sys/kernel/cap_last_cap
->>>>> I'm not clear on why this patchset is needed, why can't the
->>>>> application simply read from "cap_last_cap" to determine what
->>>>> capabilities the kernel supports?
->>>> When you capabilities with, for example, docker, you will fill capabilities
->>>> like this:
->>>> docker run --rm --cap-add SYS_ADMIN debian:latest echo foo
->>>> As a consequence, the "echo foo" will be run with CAP_SYS_ADMIN set.
->>>>
->>>> Sadly, each time a new capability is added to the kernel, it means "container
->>>> stack" software should add a new string corresponding to the number of the
->>>> capabilities [1].
->>> Thanks for clarifying things, I thought you were more concerned about
->>> detecting what capabilities the running kernel supported, I didn't
->>> realize it was getting a string literal for each supported capability.
->>> Unless there is a significant show of support for this
->> I believe this could be a significant help in encouraging the use of
->> capabilities. An application that has to know the list of capabilities
->> at compile time but is expected to run unmodified for decades isn't
->> going to be satisfied with cap_last_cap. The best it can do with that
->> is abort, not being able to ask an admin what to do in the presence of
->> a capability that wasn't around before because the name isn't known.
-> An application isn't going to be able to deduce the semantic value of
-> a capability based solely on a string value,
+Hi,
 
-True, but it can ask someone what to do, and in that case a string is
-much better than a number:
+Here is the second Landlock newsletter! It's been a while and there is
+some news to catch up.
 
-  thwonkd: Unknown capability 42 - update thwonkd.conf policy section
-  thwonkd: Unknown capability butter_toast - update thwonkd.conf policy section
+Official website: https://landlock.io
+Previews newsletter:
+https://lore.kernel.org/landlock/2df4887a-1710-bba2-f49c-cd5b785bb565@digikod.net/
 
-The thwonkd configuration could be updated to use that capability correctly.
-Yes, you could look capability 42 up in the system header files, but only
-if they're installed and there's no guarantee that the header files match
-the running kernel. That said, I can't think of a case where this would be
-useful in real life except for systemd and chcap. I can't speak to the
-container manager proposed, as I don't see containers being deployed with
-finer granularity than "privileged" or "unprivileged".
+Kernel
+------
 
->  an integer is just as
-> meaningful in that regard.  What might be useful is if the application
-> simply accepts a set of capabilities from the user and then checks
-> those against the maximum supported by the kernel, but once again that
-> doesn't require a string value, it just requires the application
-> taking a set of integers and passing those into the kernel when a
-> capability set is required.  I still don't see how adding the
-> capability string names to the kernel is useful here.
->
+### Linux distributions
+
+Landlock is now supported by default in major Linux distributions:
+* Alpine Linux
+* Arch Linux
+* chromeOS (including for Linux 5.10)
+* Debian Sid
+* Fedora 35
+* Ubuntu 20.04 LTS
+
+### New features for Linux 5.19
+
+Linux 5.19 is now released, and it includes some Landlock changes:
+https://git.kernel.org/torvalds/c/cb44e4f061e1
+The main one being full renaming and linking support thanks to the new
+LANDLOCK_ACCESS_FS_REFER access right. This lift one major limitation
+that was blocking for more generic sandboxing (e.g., container
+runtimes).
+
+This comes with a second Landlock ABI version that should be checked to
+leverage Landlock in a best-effort way. See the updated documentation:
+https://docs.kernel.org/userspace-api/landlock.html
+If developers don't change their ruleset's handled access rights, a
+sandboxed application will not change. If they add the new
+LANDLOCK_ACCESS_FS_REFER right, then they should first check the ABI
+version to make sure it will work as expected:
+
+int abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
+if (abi < 2) {
+     ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
+}
+path_beneath_attr.allowed_access &= ruleset_attr.handled_access_fs;
+
+### Backports
+
+A too-restrictive filesystem control for a rare corner case was fixed
+and backported down to Linux 5.13:
+https://git.kernel.org/stable/c/8ba0005ff418
+The backports also include more tests to check ABI stability, and the
+maximum number of nested sandboxes is now down to 16:
+https://git.kernel.org/stable/c/75c542d6c6cc
+
+User space
+----------
+
+We are currently brainstorming about how to make libraries properly and
+easily handle compatibility for several kernel versions:
+https://lore.kernel.org/landlock/7290b021-c90f-76e9-7868-ed612595b411@digikod.net/
+
+### Go library
+
+As described by Günther Noack, go-landlock added support for Landlock
+ABI v2 and the LANDLOCK_ACCESS_FS_REFER flag. Usage example:
+
+err := landlock.V2.RestrictPaths(
+     landlock.RWDirs("/src", "/dest").WithRefer(),
+)
+
+See the documentation:
+https://pkg.go.dev/github.com/landlock-lsm/go-landlock/landlock
+
+### Rust library
+
+There is some work going on for the Rust library. There is new
+documentation, test coverage improvements, CI checks with different
+kernel versions, API improvements, and new helpers to make it easier for
+common use cases (while leveraging the strong type system). Usage
+example:
+
+let abi = ABI::V1;
+let status = Ruleset::new()
+     .handle_access(AccessFs::from_all(abi))?
+     .create()?
+     // Read-only access to /usr, /etc and /dev.
+     .add_rules(path_beneath_rules(&["/usr", "/etc", "/dev"], 
+AccessFs::from_read(abi)))?
+     // Read-write access to /home and /tmp.
+     .add_rules(path_beneath_rules(&["/home", "/tmp"], 
+AccessFs::from_all(abi)))?
+     .restrict_self()?;
+
+There is still some room for improvements with syntactic sugar, but the
+priority is to make the compatibility (with different kernel versions)
+flexible, easy to handle and future-proof:
+https://github.com/landlock-lsm/rust-landlock/pull/12
+
+We plan to release a new version in the coming weeks, but in the
+meantime, you can try the development branch which is much easier to use
+than the currently released version:
+https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#specifying-dependencies-from-git-repositories
+See the new documentation: https://landlock.io/rust-landlock/landlock/
+
+### New Landlock users
+
+New sandbox manager and library support:
+* A Pledge and Unveil implementation for Linux (with the Cosmopolitan
+   libc): https://justine.lol/pledge/
+* Minijail:
+ 
+https://source.chromium.org/chromiumos/chromiumos/codesearch/+/main:src/platform/minijail/landlock_util.h
+* exile.h (header-only sandboxing library):
+   https://github.com/quitesimpleorg/exile.h
+
+New open-source software using or working on supporting Landlock:
+* Game of Trees (version control system):
+ 
+https://git.gameoftrees.org/gitweb/?p=got-portable.git;a=blob;f=compat/landlock.c
+* Suricata (network IDS): https://github.com/OISF/suricata/pull/7697
+* Landlock Make (zero-configuration sandboxing for hermetic builds):
+   https://justine.lol/make/
+
+Please let me know if I missed other Landlock users.
+
+Conferences
+-----------
+
+I gave two talks about Landlock. One about the new Landlock features
+brought by Linux 5.19 and the other about practical example of how to
+sandbox an application.
+
+### Update on Landlock: Lifting the File Reparenting Limits and 
+Supporting Network Rules
+
+The Linux Security Summit North America talk is about the lifting of
+some Landlock limitations due to incremental development. One of the
+most annoying limitations, especially for generic containers, is the
+inability to change the parent directory of a file e.g., with rename(2)
+or link(2). In the first part, we explain what the related challenges
+were and how we can now use the new LANDLOCK_ACCESS_FS_REFER right to
+allow renaming and linking without risking bypassing the security
+policy. File system access control is required to protect data, but
+network access control is also very important. In the second part, we
+talk about the upcoming network access control support that will enable
+us to create simple app-centric or container firewalls.
+https://sched.co/11MXq
+https://youtu.be/MWjW-QwK_ZA
+
+### Sandboxing your application with Landlock, illustration with the 
+p7zip case
+
+The Pass the Salt talk quickly introduces the main Landlock properties,
+and we then explain how to sandbox your own application. We use p7zip, a
+C++ archive manager, as a practical example.
+https://cfp.pass-the-salt.org/pts2022/talk/BGQGZC/
+
+Unconstrained access and ongoing development
+--------------------------------------------
+
+One important thing to keep in mind about Landlock is that it is an
+incremental development, and it is not complete yet, but still useful
+(especially in combination with seccomp to deny some access types). See
+the Pledge implementation on Linux for such example. It should be noted
+that this also has limits: https://blog.gnoack.org/post/pledge-on-linux/
+
+One step in this journey is to control access to truncate operations.
+Günther Noack is implementing such a feature which should be merged
+soon:
+https://lore.kernel.org/all/20220814192603.7387-1-gnoack3000@gmail.com/
+
+Konstantin Meskhidze is working on the initial network implementation
+which will bring two new access rights (TCP_BIND and TCP_CONNECT):
+https://lore.kernel.org/all/20220621082313.3330667-1-konstantin.meskhidze@huawei.com/
+
+There are still some unanswered questions about the best approach to
+restrict UDP:
+https://lore.kernel.org/all/a5ef620d-0447-3d58-d9bd-1220b8411957@digikod.net/
+Feel free to reply to this thread.
+
+Roadmap
+-------
+
+And finally, an update on the Landlock kernel roadmap.
+
+Short term:
+* add audit features to ease debugging;
+* add minimal network access-control types;
+* add minimal process signaling access-control types;
+* improve kernel performance for the current features;
+
+Medium term:
+* extend filesystem access-control types to address the current
+   limitations;
+* add the ability to follow a deny listing approach, which is required
+   for some use cases.
+* extend network access-control types;
+
+Long term:
+* add the ability to create (file descriptor) capabilities compatible
+   with Capsicum.
+
+Regards,
+  Mickaël
