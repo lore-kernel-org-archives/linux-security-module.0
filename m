@@ -2,137 +2,137 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FB8C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 15:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43529C3F6B0
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 16:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232705AbiHQPuY (ORCPT
+        id S240149AbiHQQBz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Aug 2022 11:50:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58224 "EHLO
+        Wed, 17 Aug 2022 12:01:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237426AbiHQPuQ (ORCPT
+        with ESMTP id S237784AbiHQQBy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Aug 2022 11:50:16 -0400
-Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34D6D7644A
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 08:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1660751414; bh=IRd/YUZMbvM4XhlVg6o42f9hHAZIsjqYGMpOa3dXxVk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=oF5zb10aaP1gzIjNOsbA2ZobrmhWRcVXR52jScEig/cazzm4MVOFs/vMukgGLaaVdcLbMo46uemCCSshG14QmeGF8wXbCwE1HY35emWOw+UTuzFOcutaiD8/4l3dGeiwtZ2hMz2Bhq+vC6rsWEtaE5NrvJa57jZmWoik+hoCGM/UDIPDXOOXftkl+Nxg9zURMoWzUid7yha7vtO3k4rJkF5yzOiuYVVjL3AftnxnC9OxtUhdvc2ZBi2YgLceuXdjUkOnWjcuC1sDo/ScuwAnmKSQKBil/Ze+YcPvPCErOYeusvLWoovy+j4iHjQAkk+gs0HuFBzfRJzzkoMcVwAuiw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1660751414; bh=igRrhz0NWpxt+gQuvQt48Eltb/Lsb1etecmDShxEfHX=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=aviq2q+v7aqvEhATE/GtZSzv3IOUp9KYk9i3BaT4im6u4wfsM8AzyK4wkgxHZzsp1m0MUYitMC0yK84rC/K9gifzNPmOhslKxAtpd/yu6WfU1leo7V/p8mzgNkpOScH041UDpwAUhzCSBQi1jbcmHWiSqvB99H9ArxFV16kqYMoAwUiUMWvd9s3NFeW96BAEjBeoJhF+U7XWn4vIO5THyIkFhdZeugz6acvS2nlKeJhrEQ5fI5XaP3iMnwosJuQX8uh6gv2SJmlETjDZGOdotNAE92a8+UZbd+ifbBv7Sm0q7ET8vC/ouS9W+6/8gHV1d2bRFBamGzMIDPoF5SxQ8Q==
-X-YMail-OSG: gCz7YkkVM1n_AD5bbh.FxCfZoIfOVcr7DD.w80RsIMy3Otevr91fQDek.WDNwJM
- x9csdEFMSw7UjcJMBFaSufmsUH6atj6O1TnrB.xJsnRfwJ1wlUXkSciBNbxsuV0I3dxD0QihMtRQ
- m0_oTWWVB2YsETM0zDmUy.XOv8.LwcFi4cZ2zJi.zJpyBdVBRBiPS3hOgq6UFV1ibMKVlgxUK7e1
- a7U66WR4LRDUgdhEYNzlsd4lx2t8uF4cDQfzywTN..V10vH0H6gs5P3Sfq7DW9z9S_arACu7cEQ6
- VsPpuw7o5ifn43VK__7C0qPg6_QAuN9GhFYocQ8JChevrFVlkZghMGU8UNhflurQNKQ4IRcsxSE3
- 2cvB09qPAhVGX4ejKb5CnVOXDONc0TA5VzvU7Vc9auPlrp8e.52gKjdq.U5lUTFrf4TIgfvkoc3e
- udr4wK_6s4GIBtwG4Zmgw88dxw_0PE.4I2RHXTE1GIq1YP9KyH.yeeBZKmQqOlrawfdSvQ2aMvdt
- B_KZM_Q58bAE6x7TfEyoQCiLOfXHcbWLEFTadPnD_jvOKmOE72SWAUOM3cNFBqQtI22cqSiN3FSV
- cKUCAZhZiofwEnRGQ31Ca7b1qpR9Bm8iCmo77xCfdi6BuSeVHaXEyinJSgD0e5fE_YybUHRnt9_z
- qMA7jut8dHw_T7ELAbI08tZdoS22YEnlUktfxkHGRZ0qCxsSrSMp6ioHUv5vcyObTh9pj4yOdFkT
- DWGu8PEsQ2cOFx0PaYN8SbzerBcP2q9wQbZd5YBKAtyZ2lNFImYF_qL.HOPPPZ6mhONh5dGDbiWj
- IyuCRtsGBfMZf37r2QrBxnx3FVsjt3b_m_1GynU2HA8XfFoCWNaFfxN0jLq.kufy_Qa1BtXMko9r
- NNYc7pDyTb9q663QPjFEKdJQEK5TpgYQDDQQ8Yjc1kEmyZm.vXgdjzSAomXWTiNCQS4OqPVQuJob
- V7U3f61xoyN417ttvV8hhsxzNfTwinsWEw7X2DHc98Q8jrxn97EUNlpvfV648ODVrbbovbGORxZ3
- 3WGl5qASAiuvm4lfo6OA6gVhVSXXwsng5JoJA7qS.76mQLpxSOJesqPpasJ2TfEyYL0r3aX9t1o5
- xskFISh6vHo.mV9IlJCcb.C5qec7btIswEp4o4ou2dz68W7sb8M4TQ5EsPNQsQ16t9xC3ibEC9SV
- gBBEw.tqeZyFJ7ZEYiQKHgcIjCtnIOSMktq0dvVfph4NuM.d1Y16fGOlUgoU3UVju.jA3ZXsneQj
- XUUHNi6fGqW5BgGlzzbSzYK8.zaXb8x9FLkohcF.75uvkaSrpLsUXgeOskDKTc4sdqskbsjuLJAF
- vlOlKCJV7rhhjyuLapQnoF7qzyLZTiZsnzOSH8IHcOwyfIuZ7WFRW1_6dBR0zgp3a4w9J1EmCHPh
- BdUN3C6fb5Ds7lr7Y2nQoqeaq0mu6gYlEthSa858Nz7vmizGqB_DZ.F1vu9ennpjjkP2oDgd4j5n
- mLqi_HJYDBBzYxNhx8VgyY7qqjY8_5xi2mBrpXCjNGtx2Zdd07_pl1YEbdH127gAGd8aWt8J4nHG
- 45hH.U0KJg_Z9B0vuca7Xizr8HunWBnc.xrU93Kry9M5tssvALwziR0XGxRHpWOINI9cA9vMIbkM
- sPJ70VyIjO3qa7jgbPGE.PRQqdaJGc2bXByIFNS0tiS.y8zu5L6RzBMB.hS2tZ6.I8hSPMgkaY.O
- LB4NObiXTIgD4V5L0Lo4SB99CwDR2a6I4hkEm76f13LbpBxrXpysZJ6TbIDG.IBvqSbcdKoWJlkp
- pRJiGChPHRMVf.JO4cpb5Con1KBMavdrfALJ22g2wUfZfYuY02vFV9yokKA86UcJraW8vNZdvO3c
- X0Xg1Luk406pxqlgPGmyB0tpUKNbIarZG3NzdnK1xO6z6cRbeQPM3l22SkKK.yETtnOqjwscak15
- D11YufiykxTMbQ9HM1XwGNniCUam_QXolRqTqanFRqxUaKHdQvYEXETU1kmFnQ5_MLDkDHZIyhyC
- fqCIcTYMTVhalZX88hl2_xeB89PVXOfNvqDfIdmfZPifAk8EfAUtWUeYd3h9jES9nTm4NX3FLga1
- 5J9uzGB6PVFgPk6G0HY_HHxPZb1uaGL48zfqX_vamJFlHg8wBTVYnMLQ0RHpwJBTryVmv8gGJUgM
- Q.hyoT0k.EtYrXB1ejUPD4_yv1tCqlGYiF2N4tbQkTlOACxVmvOYEurkqLCsEAil8foD7GMZa6Bo
- QtYmJBedC_f11Ykso3Knwz7DRuayAIOrBmZANZZDpng06hghVWFev8Xefyn.68KzNwdjqZU12xl4
- 7y8QVU28NTNY.AOvEar6EjXpmhQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Wed, 17 Aug 2022 15:50:14 +0000
-Received: by hermes--production-bf1-7586675c46-7c7p2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 058d68e14750c70c30f0e5a1ea6d7644;
-          Wed, 17 Aug 2022 15:50:10 +0000 (UTC)
-Message-ID: <ab1bbd48-c48d-5f5a-f090-428ffd54c07e@schaufler-ca.com>
-Date:   Wed, 17 Aug 2022 08:49:56 -0700
+        Wed, 17 Aug 2022 12:01:54 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 237669DFAB
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 09:01:52 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id y10-20020a9d634a000000b006167f7ce0c5so9676929otk.0
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 09:01:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=QjyUDvJ7iwmc0ra7oOeyYvg1tNnn3D1w9sE1ADUUeFk=;
+        b=lsO3jJGAgKnlwg/EP5AW1QClcxpSPMzwfKK7ZrUVBas+QB1c4o/nIkJ+AtoVIsGNPo
+         /fxrgQX7Pudy3dL3OOnSrOSbKY0mSZs0xmGbkOhueAgqMf3dJKqFN22NM2YeRCFiGQWw
+         M0jpuI0ixf5xWd4DZtwDW5uiM6JQbdvyjw2AOwwGR9TXseNHTFlda4QkSXjShKW6wrne
+         Cb7XJ8nljWuGbx/7WMnM+eabP7WgNDuHh0h/vRbrPUDyCu9hxXAglP+bdMeOMqaODLuq
+         aFVmeTq3ET1DLeFdSLaaipA3MtYPBNSDM49uzLnn85Jz0RDE73xHlHXHFGb0zKQIPKau
+         2Dsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=QjyUDvJ7iwmc0ra7oOeyYvg1tNnn3D1w9sE1ADUUeFk=;
+        b=rVgHdzt7YOryLCLUH297oTI2eaC/7klswVKVfXbXdNJHfr5rwSG7moEpi3wFcpeD5C
+         6jh7ESnPyW+qjvunVq5guRoQdupaeZrBbIN9voDCfggyUntzODFH866MozAYPe9+Q9QX
+         0bnHbJtn2tWODKLqYRw5POXVFsnvmAguHkaCwNYelKMoaph5T+be+NdAZa8E6Ot55zDt
+         qo6+6+OgFr7PW+zUHAvN/gqDtsYXPFP5A/9YktH+d6Ni5SvciRBJBpVsAzQfeOzR/GoI
+         iXKFBoc3vnp/PjaWxr2tElCSxPME2rjkWExEL3W/LV5cHRR1fehkpm/611Ox/WANT3e2
+         DeFg==
+X-Gm-Message-State: ACgBeo0GoVbkTRrhJy3A0IDWvRcC6hhNiEYTTKVU6ckxblSR0uy0kcDb
+        OU273h9HiSmwPeHy+cBQTFfVsUvHCf4dFtJtIOA3
+X-Google-Smtp-Source: AA6agR6k8S5KHHDdNHN0nb6d+yqydtBrtcybaSqfpgfRVzpYW/c5se+RRaLyh9Xa8S++SmB0U64Bn2EXUWEKmWFNo9I=
+X-Received: by 2002:a05:6830:449e:b0:638:c72b:68ff with SMTP id
+ r30-20020a056830449e00b00638c72b68ffmr3536226otv.26.1660752110415; Wed, 17
+ Aug 2022 09:01:50 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [RFC PATCH v4 0/2] Add capabilities file to securityfs
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        Francis Laniel <flaniel@linux.microsoft.com>
-Cc:     linux-security-module@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:BPF [MISC]" <bpf@vger.kernel.org>,
-        casey@schaufler-ca.com
-References: <20220725124123.12975-1-flaniel@linux.microsoft.com>
- <CAHC9VhTmgMfzc+QY8kr+BYQyd_5nEis0Y632w4S2_PGudTRT7g@mail.gmail.com>
- <4420381.LvFx2qVVIh@pwmachine>
- <CAHC9VhSMeefG5W_uuTNQYmUUZ1xcuqArxYs5sL9KOzUO_skCZw@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhSMeefG5W_uuTNQYmUUZ1xcuqArxYs5sL9KOzUO_skCZw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.20531 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20220815162028.926858-1-fred@cloudflare.com> <CAHC9VhTuxxRfJg=Ax5z87Jz6tq1oVRcppB444dHM2gP-FZrkTQ@mail.gmail.com>
+ <8735dux60p.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <8735dux60p.fsf@email.froward.int.ebiederm.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 17 Aug 2022 12:01:39 -0400
+Message-ID: <CAHC9VhSHJNLS-KJ-Rz1R12PQbqACSksLYLbymF78d5hMkSGc-g@mail.gmail.com>
+Subject: Re: [PATCH v5 0/4] Introduce security_create_user_ns()
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-team@cloudflare.com, cgzones@googlemail.com,
+        karl@bigbadwolfsecurity.com, tixxdz@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/17/2022 7:52 AM, Paul Moore wrote:
-> On Wed, Aug 17, 2022 at 7:53 AM Francis Laniel
-> <flaniel@linux.microsoft.com> wrote:
->> Le mardi 16 août 2022, 23:59:41 CEST Paul Moore a écrit :
->>> On Mon, Jul 25, 2022 at 8:42 AM Francis Laniel
->>>
->>> <flaniel@linux.microsoft.com> wrote:
->>>> Hi.
->>>>
->>>> First, I hope you are fine and the same for your relatives.
->>> Hi Francis :)
->>>
->>>> A solution to this problem could be to add a way for the userspace to ask
->>>> the kernel about the capabilities it offers.
->>>> So, in this series, I added a new file to securityfs:
->>>> /sys/kernel/security/capabilities.
->>>> The goal of this file is to be used by "container world" software to know
->>>> kernel capabilities at run time instead of compile time.
->>> ...
->>>
->>>> The kernel already exposes the last capability number under:
->>>> /proc/sys/kernel/cap_last_cap
->>> I'm not clear on why this patchset is needed, why can't the
->>> application simply read from "cap_last_cap" to determine what
->>> capabilities the kernel supports?
->> When you capabilities with, for example, docker, you will fill capabilities
->> like this:
->> docker run --rm --cap-add SYS_ADMIN debian:latest echo foo
->> As a consequence, the "echo foo" will be run with CAP_SYS_ADMIN set.
->>
->> Sadly, each time a new capability is added to the kernel, it means "container
->> stack" software should add a new string corresponding to the number of the
->> capabilities [1].
-> Thanks for clarifying things, I thought you were more concerned about
-> detecting what capabilities the running kernel supported, I didn't
-> realize it was getting a string literal for each supported capability.
-> Unless there is a significant show of support for this
-
-I believe this could be a significant help in encouraging the use of
-capabilities. An application that has to know the list of capabilities
-at compile time but is expected to run unmodified for decades isn't
-going to be satisfied with cap_last_cap. The best it can do with that
-is abort, not being able to ask an admin what to do in the presence of
-a capability that wasn't around before because the name isn't known.
-
-On the other hand, it's possible that capabilities are a failure,
-and that any effort to make them easier to use is pointless.
-
->  - and I'm
-> guessing there isn't due to the lack of comments - I don't think this
-> is something we want to add to the kernel, especially since the kernel
-> doesn't really care about the capabilities' names, it's the number
-> that matters.
+On Wed, Aug 17, 2022 at 11:08 AM Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> > I just merged this into the lsm/next tree, thanks for seeing this
+> > through Frederick, and thank you to everyone who took the time to
+> > review the patches and add their tags.
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git next
 >
+> Paul, Frederick
+>
+> I repeat my NACK, in part because I am being ignored and in part
+> because the hook does not make technical sense.
+>
+> Linus I want you to know that this has been put in the lsm tree against
+> my explicit and clear objections.
+
+Eric, we are disagreeing with you, not ignoring you; that's an
+important distinction.  This is the fifth iteration of the patchset,
+or the sixth (?) if you could Frederick's earlier attempts using the
+credential hooks, and with each revision multiple people have tried to
+work with you to find a mutually agreeable solution to the use cases
+presented by Frederick and others.  In the end of the v4 discussion it
+was my opinion that you kept moving the goalposts in an effort to
+prevent any additional hooks/controls/etc. to the user namespace code
+which is why I made the decision to merge the code into the lsm/next
+branch against your wishes.  Multiple people have come out in support
+of this functionality, and you remain the only one opposed to the
+change; normally a maintainer's objection would be enough to block the
+change, but it is my opinion that Eric is acting in bad faith.
+
+At the end of the v4 patchset I suggested merging this into lsm/next
+so it could get a full -rc cycle in linux-next, assuming no issues
+were uncovered during testing I was planning to send it to Linus
+during the next merge window with commentary on the contentiousness of
+the patchset, including Eric's NACK.  I'm personally very disappointed
+that it has come to this, but I'm at a loss of how to work with you
+(Eric) to find a solution; this is the only path forward that I can
+see at this point.  Others have expressed their agreement with this
+approach, both on-list and privately.
+
+If anyone other than Eric or myself has a different view of the
+situation, *please* add your comments now.  I believe I've done a fair
+job of summarizing things, but everyone has a bias and I'm definitely
+no exception.
+
+Finally, I'm going to refrain from rehashing the same arguments over
+again in this revision of the patchset, instead I'll just provide
+links to the previous drafts in case anyone wants to spend an hour or
+two:
+
+Revision v1
+https://lore.kernel.org/linux-security-module/20220621233939.993579-1-fred@cloudflare.com/
+
+Revision v2
+https://lore.kernel.org/linux-security-module/20220707223228.1940249-1-fred@cloudflare.com/
+
+Revision v3
+https://lore.kernel.org/linux-security-module/20220721172808.585539-1-fred@cloudflare.com/
+
+Revision v4
+https://lore.kernel.org/linux-security-module/20220801180146.1157914-1-fred@cloudflare.com/
+
+--
+paul-moore.com
