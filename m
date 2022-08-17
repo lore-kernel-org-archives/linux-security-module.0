@@ -2,95 +2,203 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8AEC32773
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 20:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBB2C25B08
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 20:30:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241774AbiHQUOC (ORCPT
+        id S241931AbiHQUae (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Aug 2022 16:14:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38448 "EHLO
+        Wed, 17 Aug 2022 16:30:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241790AbiHQUNy (ORCPT
+        with ESMTP id S241546AbiHQUaR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Aug 2022 16:13:54 -0400
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F414831357
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 13:13:50 -0700 (PDT)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-10cf9f5b500so16390100fac.2
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 13:13:50 -0700 (PDT)
+        Wed, 17 Aug 2022 16:30:17 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2660EA98F0;
+        Wed, 17 Aug 2022 13:30:16 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id x21so18985152edd.3;
+        Wed, 17 Aug 2022 13:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=dJ8IG77j55H1PXNYWQwElNaeO+Yt2VRUDV15QZCsXTU=;
-        b=bXzMpAom+iNQA0BuCag9cq5VVwaAwq1Ie5YLMV9VknHPR6HV+V41GRRQhsgyxCdFj2
-         vW7D5Jdm2dZgMqcqQx17doKP/F1QeiYGYb+PeIEHi+jZDA2aT6BeitppO1VYgiTKRSf7
-         UeIOrqI1Ftl/L+D2VKVJdxbh8vhrklESto0K+faY18HH6XZ0kwJq+SgvP0dctWEzH7BC
-         pnMtIeUBPKffs7lEwvNq4BF6/+OeffJxqgCbFGX4FgZsJQtUV7oYu2Iq0bDZcrvnvYGe
-         2ZgkhhrTqiMJaYMsQzIa6kmQoBhDSfgh9IRtDQLM2j3L2R4UAwu4NMU3mOtf5eVnv/zt
-         r+kQ==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=NWZQgWpMUk3JjlrLhlAgM4oy2WL6sXDOG4C6y2iheNU=;
+        b=qRCTgsCC+kerWa/f082jGl/7mkEogEgsHQlxQiMNQSdnFeTDJdNMgUoUhjuOUYpQit
+         w0SyRDnlx+eM+QE6r4T70jztO6m4YhCG6Ezi278SvWrmswZIzrAwAWs2tS0yOaFusXZW
+         LH2lXbVZ8vb1LcERlLZ0MYcjDpS4gjBLCBuX5WFTKX+Pm1c+xkSWyzVu6viylYxWCZLf
+         L6B9V/aDc5NsC5/UUj0uU8BPix7WqdWiNEdtamlEUikIt8SEmxU9aqQj2GkNPV2QeoVG
+         bQI/2KUrdVjvqxgDSlw+CMQyCNYQpThNgkn0LtUagkTqua/VvEBteDtUgAq7D+g4yhG7
+         ugsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=dJ8IG77j55H1PXNYWQwElNaeO+Yt2VRUDV15QZCsXTU=;
-        b=E9KgBoUBeX1PW5c3hFlMegxqOvKykvzJ8AwrevBEz5LxUCf5JInPm3lcKegPoizk9x
-         HDLORHvG6J7glynMXP3hCjwmD3o2Ju1qvG3LVa/zgTPrhhkENUIcPhLa30yMO7MpanUd
-         PoEoehQLTgueR+AK7j12KkU/SdA5NkfqFyRWtRiTn4IqjfeAhn0fPVcPCRcId6inWYu7
-         T8KN5BEr9Lw/JvdBGFsKhuP7t/kIe5hNQVOWK6xkt0eQQKlWcwev1BSU6xQuu0tq7MpZ
-         hhwmk8cE/O+giUVoqNppmIPCjvb7X1AkWm2xye/z0JJ2tUgZCUjw9vVdWC+GO/ZFWvwa
-         bqxA==
-X-Gm-Message-State: ACgBeo0WDjncY0/q3ZwHbMJk6gZMjacpugQPtnr9PX2RuFv72SgBG8sG
-        arie9JOn/cvIgJu26Q/UVFipNocsqPXkkgvwYjaC
-X-Google-Smtp-Source: AA6agR6jouhnhpNv0eFAz246tMtgWuWICHG18FyQZvxKwfUdIoiyfcdd8MTuvYZD8yYZCFlduBkHpG31bg5ClvMFM8M=
-X-Received: by 2002:a05:6870:a78d:b0:11c:437b:ec70 with SMTP id
- x13-20020a056870a78d00b0011c437bec70mr2668075oao.136.1660767230327; Wed, 17
- Aug 2022 13:13:50 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=NWZQgWpMUk3JjlrLhlAgM4oy2WL6sXDOG4C6y2iheNU=;
+        b=ojPyKp93na9kVGKP86amI/7kF/3aL0ZwNaCc5LWKTwbTkhqAfyYZ+swnGTDG7rBL9q
+         2R5nFBl0+tNAMeaOX7BvQiZ/xHSzEe1i3yLHg54NI+JS3RMK84awB/jBYc2/jQK5DEwi
+         cwHM9nMXst04aGxgKsAf8on7kV28ZQJQ+5Zc20tU8M8XDfzdEWfURE+KlgeWVLgU5dFQ
+         wV+mt+qhG20YxuhRSOw7xdBN0I8yVs1MIe3mZErV+6WAjiQh/qgwKYUVWgJrAZlamAoq
+         dqUzoJ8PBWmC9AQvzeDOiV5X4gd7UvYv7ockCsprv+bst/oPZZvPtF7bGbh5IRM9gBDf
+         jatQ==
+X-Gm-Message-State: ACgBeo0152pxHchbbYU/Mk1fIs+k8otXpFBlhQzUf6/3rLdin21473tk
+        nHpKJc2TxGr1IfjiD0ny2etpuCu56/A=
+X-Google-Smtp-Source: AA6agR6BHP4ovKDM6lvjZIxhs6PWbHa6iNhVq6K45a48bdrTq7qfacfIt1J/t8Gz3s+S8O+zRyty7Q==
+X-Received: by 2002:a05:6402:3552:b0:43d:a57d:22e9 with SMTP id f18-20020a056402355200b0043da57d22e9mr24471668edd.119.1660768214668;
+        Wed, 17 Aug 2022 13:30:14 -0700 (PDT)
+Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id p7-20020a17090653c700b0073b0c2d420dsm512042ejo.217.2022.08.17.13.30.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Aug 2022 13:30:14 -0700 (PDT)
+From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH v5 0/4] landlock: truncate support
+Date:   Wed, 17 Aug 2022 22:30:02 +0200
+Message-Id: <20220817203006.21769-1-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-References: <20220815162028.926858-1-fred@cloudflare.com> <CAHC9VhTuxxRfJg=Ax5z87Jz6tq1oVRcppB444dHM2gP-FZrkTQ@mail.gmail.com>
- <8735dux60p.fsf@email.froward.int.ebiederm.org> <CAHC9VhSHJNLS-KJ-Rz1R12PQbqACSksLYLbymF78d5hMkSGc-g@mail.gmail.com>
- <871qte8wy3.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <871qte8wy3.fsf@email.froward.int.ebiederm.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 17 Aug 2022 16:13:39 -0400
-Message-ID: <CAHC9VhSU_sqMQwdoh0nAFdURqs_cVFbva8=otjcZUo8s+xyC9A@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] Introduce security_create_user_ns()
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
-        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-team@cloudflare.com, cgzones@googlemail.com,
-        karl@bigbadwolfsecurity.com, tixxdz@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 17, 2022 at 3:58 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Paul Moore <paul@paul-moore.com> writes:
->
-> > At the end of the v4 patchset I suggested merging this into lsm/next
-> > so it could get a full -rc cycle in linux-next, assuming no issues
-> > were uncovered during testing
->
-> What in the world can be uncovered in linux-next for code that has no in
-> tree users.
+The goal of these patches is to work towards a more complete coverage
+of file system operations that are restrictable with Landlock.
 
-The patchset provides both BPF LSM and SELinux implementations of the
-hooks along with a BPF LSM test under tools/testing/selftests/bpf/.
-If no one beats me to it, I plan to work on adding a test to the
-selinux-testsuite as soon as I'm done dealing with other urgent
-LSM/SELinux issues (io_uring CMD passthrough, SCTP problems, etc.); I
-run these tests multiple times a week (multiple times a day sometimes)
-against the -rcX kernels with the lsm/next, selinux/next, and
-audit/next branches applied on top.  I know others do similar things.
+The known set of currently unsupported file system operations in
+Landlock is described at [1]. Out of the operations listed there,
+truncate is the only one that modifies file contents, so these patches
+should make it possible to prevent the direct modification of file
+contents with Landlock.
 
--- 
-paul-moore.com
+The patch introduces the truncation restriction feature as an
+additional bit in the access_mask_t bitmap, in line with the existing
+supported operations.
+
+The truncation flag covers both the truncate(2) and ftruncate(2)
+families of syscalls, as well as open(2) with the O_TRUNC flag.
+This includes usages of creat() in the case where existing regular
+files are overwritten.
+
+Apart from Landlock, file truncation can also be restricted using
+seccomp-bpf, but it is more difficult to use (requires BPF, requires
+keeping up-to-date syscall lists) and it is not configurable by file
+hierarchy, as Landlock is. The simplicity and flexibility of the
+Landlock approach makes it worthwhile adding.
+
+While it's possible to use the "write file" and "truncate" rights
+independent of each other, it simplifies the mental model for
+userspace callers to always use them together.
+
+Specifically, the following behaviours might be surprising for users
+when using these independently:
+
+ * The commonly creat() syscall requires the truncate right when
+   overwriting existing files, as it is equivalent to open(2) with
+   O_TRUNC|O_CREAT|O_WRONLY.
+ * The "write file" right is not always required to truncate a file,
+   even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
+
+Nevertheless, keeping the two flags separate is the correct approach
+to guarantee backwards compatibility for existing Landlock users.
+
+These patches are based on version 6.0-rc1.
+
+Best regards,
+Günther
+
+[1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+
+Past discussions:
+V1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
+V2: https://lore.kernel.org/all/20220712211405.14705-1-gnoack3000@gmail.com/
+V3: https://lore.kernel.org/all/20220804193746.9161-1-gnoack3000@gmail.com/
+V4: https://lore.kernel.org/all/20220814192603.7387-1-gnoack3000@gmail.com/
+
+Changelog:
+
+V5:
+* Documentation
+  * Fix wording in userspace-api headers and in landlock.rst.
+  * Move the truncation limitation section one to the bottom.
+  * Move all .rst changes into the documentation commit.
+* selftests
+  * Remove _metadata argument from helpers where it became unnecessary.
+  * Open writable file descriptors at the top of both tests, before Landlock
+    is enabled, to exercise ftruncate() independently from open().
+  * Simplify test_ftruncate and decouple it from exercising open().
+  * test_creat(): Return errno on close() failure (it does not conflict).
+  * Fix /* comment style */
+  * Reorder blocks of EXPECT_EQ checks to be consistent within a test.
+  * Add missing |O_TRUNC to a check in one test.
+  * Put the truncate_unhandled test before the other.
+
+V4:
+ * Documentation
+   * Clarify wording and syntax as discussed in review.
+   * Use a less confusing error message in the example.
+ * selftests:
+   * Stop using ASSERT_EQ in test helpers, return EBADFD instead.
+     (This is an intentionally uncommon error code, so that the source
+     of the error is clear and the test can distinguish test setup
+     failures from failures in the actual system call under test.)
+ * samples/Documentation:
+   * Use additional clarifying comments in the kernel backwards
+     compatibility logic.
+
+V3:
+ * selftests:
+   * Explicitly test ftruncate with readonly file descriptors
+     (returns EINVAL).
+   * Extract test_ftruncate, test_truncate, test_creat helpers,
+     which simplified the previously mixed usage of EXPECT/ASSERT.
+   * Test creat() behaviour as part of the big truncation test.
+   * Stop testing the truncate64(2) and ftruncate64(2) syscalls.
+     This simplifies the tests a bit. The kernel implementations are the
+     same as for truncate(2) and ftruncate(2), so there is little benefit
+     from testing them exhaustively. (We aren't testing all open(2)
+     variants either.)
+ * samples/landlock/sandboxer.c:
+   * Use switch() to implement best effort mode.
+ * Documentation:
+   * Give more background on surprising truncation behaviour.
+   * Use switch() in the example too, to stay in-line with the sample tool.
+   * Small fixes in header file to address previous comments.
+* misc:
+  * Fix some typos and const usages.
+
+V2:
+ * Documentation: Mention the truncation flag where needed.
+ * Documentation: Point out connection between truncation and file writing.
+ * samples: Add file truncation to the landlock/sandboxer.c sample tool.
+ * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
+ * selftests: Exercise truncation syscalls when the truncate right
+   is not handled by Landlock.
+
+Günther Noack (4):
+  landlock: Support file truncation
+  selftests/landlock: Selftests for file truncation support
+  samples/landlock: Extend sample tool to support
+    LANDLOCK_ACCESS_FS_TRUNCATE
+  landlock: Document Landlock's file truncation support
+
+ Documentation/userspace-api/landlock.rst     |  52 +++-
+ include/uapi/linux/landlock.h                |  17 +-
+ samples/landlock/sandboxer.c                 |  23 +-
+ security/landlock/fs.c                       |   9 +-
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/syscalls.c                 |   2 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 257 ++++++++++++++++++-
+ 8 files changed, 336 insertions(+), 28 deletions(-)
+
+
+base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+--
+2.37.2
