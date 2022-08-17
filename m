@@ -2,119 +2,169 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C172C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 21:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7F5C32773
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 21:47:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241608AbiHQVYm (ORCPT
+        id S241792AbiHQVrg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Aug 2022 17:24:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38048 "EHLO
+        Wed, 17 Aug 2022 17:47:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233026AbiHQVYl (ORCPT
+        with ESMTP id S238919AbiHQVrf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Aug 2022 17:24:41 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A59E5AC4E;
-        Wed, 17 Aug 2022 14:24:39 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:40598)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oOQWj-00Efck-85; Wed, 17 Aug 2022 15:24:37 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:32940 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oOQWi-006mnP-7Y; Wed, 17 Aug 2022 15:24:36 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
-        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-team@cloudflare.com, cgzones@googlemail.com,
-        karl@bigbadwolfsecurity.com, tixxdz@gmail.com
-References: <20220815162028.926858-1-fred@cloudflare.com>
-        <CAHC9VhTuxxRfJg=Ax5z87Jz6tq1oVRcppB444dHM2gP-FZrkTQ@mail.gmail.com>
-        <8735dux60p.fsf@email.froward.int.ebiederm.org>
-        <CAHC9VhSHJNLS-KJ-Rz1R12PQbqACSksLYLbymF78d5hMkSGc-g@mail.gmail.com>
-        <871qte8wy3.fsf@email.froward.int.ebiederm.org>
-        <CAHC9VhSU_sqMQwdoh0nAFdURqs_cVFbva8=otjcZUo8s+xyC9A@mail.gmail.com>
-        <8735du7fnp.fsf@email.froward.int.ebiederm.org>
-        <CAHC9VhQuRNxzgVeNhDy=p5+RHz5+bTH6zFdU=UvvEhyH1e962A@mail.gmail.com>
-Date:   Wed, 17 Aug 2022 16:24:28 -0500
-In-Reply-To: <CAHC9VhQuRNxzgVeNhDy=p5+RHz5+bTH6zFdU=UvvEhyH1e962A@mail.gmail.com>
-        (Paul Moore's message of "Wed, 17 Aug 2022 17:09:07 -0400")
-Message-ID: <87tu6a4l83.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1oOQWi-006mnP-7Y;;;mid=<87tu6a4l83.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX1/L7Q+eLO/zhN6zCRTrP7mmcvX3T2bbYZI=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v5 0/4] Introduce security_create_user_ns()
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Wed, 17 Aug 2022 17:47:35 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 950BDAA4F1
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 14:47:33 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-32a115757b6so174606657b3.13
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Aug 2022 14:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc;
+        bh=ZccKepyy+mkkFUP/9kxuvptYUZUbOq684Zg6ooxPEl8=;
+        b=oAdGHMBIBRjGZoLLA6VlX+94im86xq9mmys56n9di740YtF0BsvAgpxpdRGW7ioWJ9
+         efJ4cZQsGoUWRIkGaAOqaRiwkNNqOkVw1OKvOeFHQbrACOK52MhHZO3la1555gKKAt6q
+         yzBKJj2rjhmFApIEejIm2MLfg+AxYxL4fHi6H4nfI4G8cz9U2Q7F5NT64EJuA3xiSmUQ
+         izE2YWr3delvoaf5cw2raoNjAS43v6W550GMyLNT4tJgveQY+FV8shQdQg+x6AkbgUYz
+         retvQtg8mO4CmiutKEyqBp6+JFE/pIyHLxykKY8G7w5n/QIKIuHSHSD28Cpx0Uu/lUD2
+         3H7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc;
+        bh=ZccKepyy+mkkFUP/9kxuvptYUZUbOq684Zg6ooxPEl8=;
+        b=wiOtt63/COtZ3CmS6aFxo0YyCRQaV2h7tWR8ASYUhsZ6yZ6YEe77qem6IFOXmJAgFG
+         31Sl56HJ+1u3dEGurbc6KlEKqAWlnc2KQaAbhciXQoN99HbCEe9s1NYJ3Nc9u+bh8ZsU
+         FT1KVp17j9ie5ZbEmaVKaP8Z8zE6hEK+/Dk5ru9Iv/73R4ZWtEq58OEMg51sZbf0VRam
+         pX56mQz42Kz2ea2UKk/mwYMARsaq7Y4ejJpQ1oQ3D75ijBWiy2apXjlYcZqdLlge/dpo
+         fb1QaUgmyMZQ/z/mAHgbtQbcc8NLzyRrTu1jRAuAHsotjwiofjYBEaIwA1YbYL+V7qXf
+         Cy4w==
+X-Gm-Message-State: ACgBeo12PsgpQu6ukjMjUsn3a1maYos/Hn3Bv9CZq40knhTyZxrmWPp4
+        +MOnM4Sg3+yk1Puz5a5+CGHFJ1OlAzMF+seCzZ/a
+X-Google-Smtp-Source: AA6agR41kshahHzOHokRZUKnpIW9g/i+LTC2cDfWo+NhTdS+UTJkI+SoWb4uW6VK9HAabIEYe6Ct3OITfI8JzSknsvQH
+X-Received: from ajr0.svl.corp.google.com ([2620:15c:2d4:203:2f41:f176:4bac:b729])
+ (user=axelrasmussen job=sendgmr) by 2002:a05:6902:722:b0:679:7ff8:1471 with
+ SMTP id l2-20020a056902072200b006797ff81471mr240843ybt.352.1660772852878;
+ Wed, 17 Aug 2022 14:47:32 -0700 (PDT)
+Date:   Wed, 17 Aug 2022 14:47:23 -0700
+Message-Id: <20220817214728.489904-1-axelrasmussen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.37.1.595.g718a3a8f04-goog
+Subject: [PATCH v6 0/5] userfaultfd: add /dev/userfaultfd for fine grained
+ access control
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, zhangyi <yi.zhang@huawei.com>
+Cc:     Axel Rasmussen <axelrasmussen@google.com>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Paul Moore <paul@paul-moore.com> writes:
+This series is based on torvalds/master.
 
-> On Wed, Aug 17, 2022 at 4:56 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->> Paul Moore <paul@paul-moore.com> writes:
->> > On Wed, Aug 17, 2022 at 3:58 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->> >> Paul Moore <paul@paul-moore.com> writes:
->> >>
->> >> > At the end of the v4 patchset I suggested merging this into lsm/next
->> >> > so it could get a full -rc cycle in linux-next, assuming no issues
->> >> > were uncovered during testing
->> >>
->> >> What in the world can be uncovered in linux-next for code that has no in
->> >> tree users.
->> >
->> > The patchset provides both BPF LSM and SELinux implementations of the
->> > hooks along with a BPF LSM test under tools/testing/selftests/bpf/.
->> > If no one beats me to it, I plan to work on adding a test to the
->> > selinux-testsuite as soon as I'm done dealing with other urgent
->> > LSM/SELinux issues (io_uring CMD passthrough, SCTP problems, etc.); I
->> > run these tests multiple times a week (multiple times a day sometimes)
->> > against the -rcX kernels with the lsm/next, selinux/next, and
->> > audit/next branches applied on top.  I know others do similar things.
->>
->> A layer of hooks that leaves all of the logic to userspace is not an
->> in-tree user for purposes of understanding the logic of the code.
->
-> The BPF LSM selftests which are part of this patchset live in-tree.
-> The SELinux hook implementation is completely in-tree with the
-> subject/verb/object relationship clearly described by the code itself.
-> After all, the selinux_userns_create() function consists of only two
-> lines, one of which is an assignment.  Yes, it is true that the
-> SELinux policy lives outside the kernel, but that is because there is
-> no singular SELinux policy for everyone.  From a practical
-> perspective, the SELinux policy is really just a configuration file
-> used to setup the kernel at runtime; it is not significantly different
-> than an iptables script, /etc/sysctl.conf, or any of the other myriad
-> of configuration files used to configure the kernel during boot.
+The series is split up like so:
+- Patch 1 is a simple fixup which we should take in any case (even by itself).
+- Patches 2-5 add the feature, configurable selftest support, and docs.
 
-I object to adding the new system configuration knob.
+Why not ...?
+============
 
-Especially when I don't see people explaining why such a knob is a good
-idea.  What is userspace going to do with this new feature that makes it
-worth maintaining in the kernel?
+- Why not /proc/[pid]/userfaultfd? Two main points (additional discussion [1]):
 
-That is always the conversation we have when adding new features, and
-that is exactly the conversation that has not happened here.
+    - /proc/[pid]/* files are all owned by the user/group of the process, and
+      they don't really support chmod/chown. So, without extending procfs it
+      doesn't solve the problem this series is trying to solve.
 
-Adding a layer of indirection should not exempt a new feature from
-needing to justify itself.
+    - The main argument *for* this was to support creating UFFDs for remote
+      processes. But, that use case clearly calls for CAP_SYS_PTRACE, so to
+      support this we could just use the UFFD syscall as-is.
 
-Eric
+- Why not use a syscall? Access to syscalls is generally controlled by
+  capabilities. We don't have a capability which is used for userfaultfd access
+  without also granting more / other permissions as well, and adding a new
+  capability was rejected [2].
+
+    - It's possible a LSM could be used to control access instead, but I have
+      some concerns. I don't think this approach would be as easy to use,
+      particularly if we were to try to solve this with something heavyweight
+      like SELinux. Maybe we could pursue adding a new LSM specifically for
+      this user case, but it may be too narrow of a case to justify that.
+
+Changelog
+=========
+
+v5->v6:
+  - Modified selftest to exit with KSFT_SKIP *only* when features are
+    unsupported, exiting with 1 in other error cases. [Mike]
+  - Improved wording in two spots in the documentation. [Mike]
+  - Picked up some Acked-by's.
+
+v4->v5:
+  - Call userfaultfd_syscall_allowed() directly in the syscall, so we don't
+    have to plumb a flag into new_userfaultfd(). [Nadav]
+  - Refactored run_vmtests.sh to loop over UFFD test mods. [Nadav]
+  - Reworded cover letter.
+  - Picked up some Acked-by's.
+
+v3->v4:
+  - Picked up an Acked-by on 5/5.
+  - Updated cover letter to cover "why not ...".
+  - Refactored userfaultfd_allowed() into userfaultfd_syscall_allowed(). [Peter]
+  - Removed obsolete comment from a previous version. [Peter]
+  - Refactored userfaultfd_open() in selftest. [Peter]
+  - Reworded admin-guide documentation. [Mike, Peter]
+  - Squashed 2 commits adding /dev/userfaultfd to selftest and making selftest
+    configurable. [Peter]
+  - Added "syscall" test modifier (the default behavior) to selftest. [Peter]
+
+v2->v3:
+  - Rebased onto linux-next/akpm-base, in order to be based on top of the
+    run_vmtests.sh refactor which was merged previously.
+  - Picked up some Reviewed-by's.
+  - Fixed ioctl definition (_IO instead of _IOWR), and stopped using
+    compat_ptr_ioctl since it is unneeded for ioctls which don't take a pointer.
+  - Removed the "handle_kernel_faults" bool, simplifying the code. The result is
+    logically equivalent, but simpler.
+  - Fixed userfaultfd selftest so it returns KSFT_SKIP appropriately.
+  - Reworded documentation per Shuah's feedback on v2.
+  - Improved example usage for userfaultfd selftest.
+
+v1->v2:
+  - Add documentation update.
+  - Test *both* userfaultfd(2) and /dev/userfaultfd via the selftest.
+
+[1]: https://patchwork.kernel.org/project/linux-mm/cover/20220719195628.3415852-1-axelrasmussen@google.com/
+[2]: https://lore.kernel.org/lkml/686276b9-4530-2045-6bd8-170e5943abe4@schaufler-ca.com/T/
+
+Axel Rasmussen (5):
+  selftests: vm: add hugetlb_shared userfaultfd test to run_vmtests.sh
+  userfaultfd: add /dev/userfaultfd for fine grained access control
+  userfaultfd: selftests: modify selftest to use /dev/userfaultfd
+  userfaultfd: update documentation to describe /dev/userfaultfd
+  selftests: vm: add /dev/userfaultfd test cases to run_vmtests.sh
+
+ Documentation/admin-guide/mm/userfaultfd.rst | 41 ++++++++++-
+ Documentation/admin-guide/sysctl/vm.rst      |  3 +
+ fs/userfaultfd.c                             | 73 ++++++++++++++-----
+ include/uapi/linux/userfaultfd.h             |  4 ++
+ tools/testing/selftests/vm/run_vmtests.sh    | 15 ++--
+ tools/testing/selftests/vm/userfaultfd.c     | 76 +++++++++++++++++---
+ 6 files changed, 178 insertions(+), 34 deletions(-)
+
+--
+2.37.1.595.g718a3a8f04-goog
 
