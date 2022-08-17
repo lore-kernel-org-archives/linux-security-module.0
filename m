@@ -2,183 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D92C32789
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 20:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E852DC32789
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Aug 2022 20:56:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242017AbiHQUai (ORCPT
+        id S242121AbiHQU4u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Aug 2022 16:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50432 "EHLO
+        Wed, 17 Aug 2022 16:56:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241972AbiHQUaZ (ORCPT
+        with ESMTP id S242057AbiHQU4r (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Aug 2022 16:30:25 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075D7A98EE;
-        Wed, 17 Aug 2022 13:30:24 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id fy5so26528119ejc.3;
-        Wed, 17 Aug 2022 13:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=svi6OaL8K/Etur8WtPrV1gQpFeKDk5ixCmOBfj3/KwI=;
-        b=SEUS8d73nsNEDLK86FJHBjhtZ9/PyBfTry+vq0sygqBkXlNbr0DbbbUGVZ6pJm3/Jv
-         5I9vkKnbkqXnn451MFHS0EkTb7ZA9XNgX5xJKANKOVZn6Zd+ctzl2nko50ClBAZwX88N
-         tP1YntgrJkAggwMKCsn7MySB+DpLCktCOM882IJt/UKb9FXrCvuVv224465u77z++x0O
-         Pm98a9Rj2QG1HEshlLFMU6Cs4rQjQkj8GJ7kDBqmmsmGjpr0o+2qvZfUiJYDuUaga5KE
-         oW39H8fQaCsU6kmGmlqzgO7vM8pCvUtdj/OplO3IvYZWuLkrQ4ug68kDh3/t028pqjhB
-         qmzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=svi6OaL8K/Etur8WtPrV1gQpFeKDk5ixCmOBfj3/KwI=;
-        b=M2yObFYXTk2kfKurUS3dYLvip8uhJdxW1LpzQwpMvpR6q+UvzHZlMvngaZ77YdVyKy
-         vu+60TojxEXciSTMcS1Sc7f3dIwBKiDXO1OMW8TUUffXzGyrIdx1mcSBaR0/gsLNRDlf
-         QZcPZ9S1pJa8RjrUWHW328wHCd+sOKUsU3xu2qODMeuDvbDkGn9dZC45sC9jP01caNwI
-         mab8Q4zKka62bJj8Ul8Cq5zC4FqLwq8ej+4aozMfsbYuK+MNPg2TO9alGgEyxVVCOx61
-         GtiWBn693s/T9snDaf0j6z8XDYPITMVAaYiwunQbWf2M1CuHrM3VyZA504OoySc1m2Ru
-         OzkA==
-X-Gm-Message-State: ACgBeo1s5+XZUPCr6LvfT8gvXcPGAYrzDvhgiz/zfbSmuL0cUFIVT7Vz
-        20GNlCwAPbGrwiJQoYf403gbBhH0v7o=
-X-Google-Smtp-Source: AA6agR6KmYqQn8GUUEIeYDEzEL5ToMsEGFleiUI4XBpIhcCN3zCRoda4tfRQaer7W0CtHVbw1Meofw==
-X-Received: by 2002:a17:907:2721:b0:731:2aeb:7940 with SMTP id d1-20020a170907272100b007312aeb7940mr18399588ejl.448.1660768222615;
-        Wed, 17 Aug 2022 13:30:22 -0700 (PDT)
-Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id p7-20020a17090653c700b0073b0c2d420dsm512042ejo.217.2022.08.17.13.30.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Aug 2022 13:30:22 -0700 (PDT)
-From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v5 4/4] landlock: Document Landlock's file truncation support
-Date:   Wed, 17 Aug 2022 22:30:06 +0200
-Message-Id: <20220817203006.21769-5-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220817203006.21769-1-gnoack3000@gmail.com>
-References: <20220817203006.21769-1-gnoack3000@gmail.com>
+        Wed, 17 Aug 2022 16:56:47 -0400
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EE86A99E9;
+        Wed, 17 Aug 2022 13:56:38 -0700 (PDT)
+Received: from in02.mta.xmission.com ([166.70.13.52]:43026)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oOQ5c-007tAA-3N; Wed, 17 Aug 2022 14:56:36 -0600
+Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:44962 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oOQ5b-006es9-5Q; Wed, 17 Aug 2022 14:56:35 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        shuah@kernel.org, brauner@kernel.org, casey@schaufler-ca.com,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-team@cloudflare.com, cgzones@googlemail.com,
+        karl@bigbadwolfsecurity.com, tixxdz@gmail.com
+References: <20220815162028.926858-1-fred@cloudflare.com>
+        <CAHC9VhTuxxRfJg=Ax5z87Jz6tq1oVRcppB444dHM2gP-FZrkTQ@mail.gmail.com>
+        <8735dux60p.fsf@email.froward.int.ebiederm.org>
+        <CAHC9VhSHJNLS-KJ-Rz1R12PQbqACSksLYLbymF78d5hMkSGc-g@mail.gmail.com>
+        <871qte8wy3.fsf@email.froward.int.ebiederm.org>
+        <CAHC9VhSU_sqMQwdoh0nAFdURqs_cVFbva8=otjcZUo8s+xyC9A@mail.gmail.com>
+Date:   Wed, 17 Aug 2022 15:56:26 -0500
+In-Reply-To: <CAHC9VhSU_sqMQwdoh0nAFdURqs_cVFbva8=otjcZUo8s+xyC9A@mail.gmail.com>
+        (Paul Moore's message of "Wed, 17 Aug 2022 16:13:39 -0400")
+Message-ID: <8735du7fnp.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1oOQ5b-006es9-5Q;;;mid=<8735du7fnp.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX1/Xn3ZKbDRXVpMvUTRIq5cONwBCXE13Nz4=
+X-SA-Exim-Connect-IP: 68.227.174.4
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v5 0/4] Introduce security_create_user_ns()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
+Paul Moore <paul@paul-moore.com> writes:
 
-Adapt the backwards compatibility example and discussion to remove the
-truncation flag where needed.
+> On Wed, Aug 17, 2022 at 3:58 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> Paul Moore <paul@paul-moore.com> writes:
+>>
+>> > At the end of the v4 patchset I suggested merging this into lsm/next
+>> > so it could get a full -rc cycle in linux-next, assuming no issues
+>> > were uncovered during testing
+>>
+>> What in the world can be uncovered in linux-next for code that has no in
+>> tree users.
+>
+> The patchset provides both BPF LSM and SELinux implementations of the
+> hooks along with a BPF LSM test under tools/testing/selftests/bpf/.
+> If no one beats me to it, I plan to work on adding a test to the
+> selinux-testsuite as soon as I'm done dealing with other urgent
+> LSM/SELinux issues (io_uring CMD passthrough, SCTP problems, etc.); I
+> run these tests multiple times a week (multiple times a day sometimes)
+> against the -rcX kernels with the lsm/next, selinux/next, and
+> audit/next branches applied on top.  I know others do similar things.
 
-Point out potential surprising behaviour related to truncate.
+A layer of hooks that leaves all of the logic to userspace is not an
+in-tree user for purposes of understanding the logic of the code.
 
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 52 ++++++++++++++++++++----
- 1 file changed, 45 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index b8ea59493964..5c10872cb795 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_FIFO |
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
--            LANDLOCK_ACCESS_FS_REFER,
-+            LANDLOCK_ACCESS_FS_REFER |
-+            LANDLOCK_ACCESS_FS_TRUNCATE,
-     };
- 
- Because we may not know on which kernel version an application will be
-@@ -69,16 +70,26 @@ should try to protect users as much as possible whatever the kernel they are
- using.  To avoid binary enforcement (i.e. either all security features or
- none), we can leverage a dedicated Landlock command to get the current version
- of the Landlock ABI and adapt the handled accesses.  Let's check if we should
--remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
--starting with the second version of the ABI.
-+remove the `LANDLOCK_ACCESS_FS_REFER` or `LANDLOCK_ACCESS_FS_TRUNCATE` access
-+rights, which are only supported starting with the second and third version of
-+the ABI.
- 
- .. code-block:: c
- 
-     int abi;
- 
-     abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
--    if (abi < 2) {
--        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-+    switch (abi) {
-+    case -1:
-+            perror("The running kernel does not enable to use Landlock");
-+            return 1;
-+    case 1:
-+            /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-+            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-+            __attribute__((fallthrough));
-+    case 2:
-+            /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-+            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-     }
- 
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -127,8 +138,8 @@ descriptor.
- 
- It may also be required to create rules following the same logic as explained
- for the ruleset creation, by filtering access rights according to the Landlock
--ABI version.  In this example, this is not required because
--`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
-+ABI version.  In this example, this is not required because all of the requested
-+``allowed_access`` rights are already available in ABI 1.
- 
- We now have a ruleset with one rule allowing read access to ``/usr`` while
- denying all other handled accesses for the filesystem.  The next step is to
-@@ -251,6 +262,24 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
- process, a sandboxed process should have a subset of the target process rules,
- which means the tracee must be in a sub-domain of the tracer.
- 
-+Truncating files
-+----------------
-+
-+The operations covered by `LANDLOCK_ACCESS_FS_WRITE_FILE` and
-+`LANDLOCK_ACCESS_FS_TRUNCATE` both change the contents of a file and sometimes
-+overlap in non-intuitive ways.  It is recommended to always specify both of
-+these together.
-+
-+A particularly surprising example is :manpage:`creat(2)`.  The name suggests
-+that this system call requires the rights to create and write files.  However,
-+it also requires the truncate right if an existing file under the same name is
-+already present.
-+
-+It should also be noted that truncating files does not require the
-+`LANDLOCK_ACCESS_FS_WRITE_FILE` right.  Apart from the :manpage:`truncate(2)`
-+system call, this can also be done through :manpage:`open(2)` with the flags
-+`O_RDONLY | O_TRUNC`.
-+
- Compatibility
- =============
- 
-@@ -397,6 +426,15 @@ Starting with the Landlock ABI version 2, it is now possible to securely
- control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER`
- access right.
- 
-+File truncation (ABI < 3)
-+-------------------------
-+
-+File truncation could not be denied before the third Landlock ABI, so it is
-+always allowed when using a kernel that only supports the first or second ABI.
-+
-+Starting with the Landlock ABI version 3, it is now possible to securely control
-+truncation thanks to the new `LANDLOCK_ACCESS_FS_TRUNCATE` access right.
-+
- .. _kernel_support:
- 
- Kernel support
--- 
-2.37.2
+The reason why I implemented user namespaces is so that all of linux's
+neat features could be exposed to non-root userspace processes, in
+a way that doesn't break suid root processes.
+
+
+The access control you are adding to user namespaces looks to take that
+away.  It looks to remove the whole point of user namespaces.
+
+
+So without any mention of how people intend to use this feature, without
+any code that uses this hook to implement semantics.  Without any talk
+about how this semantic change is reasonable.  I strenuously object.
+
+Eric
 
