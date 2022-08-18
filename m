@@ -2,184 +2,141 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E05C32774
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Aug 2022 16:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F126C32773
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Aug 2022 16:14:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245718AbiHRQGT (ORCPT
+        id S1344281AbiHRQOW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Aug 2022 12:06:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47790 "EHLO
+        Thu, 18 Aug 2022 12:14:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239750AbiHRQGS (ORCPT
+        with ESMTP id S1344262AbiHRQOV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Aug 2022 12:06:18 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66B4DBC801;
-        Thu, 18 Aug 2022 09:06:16 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4M7pcP6cZ2z9v7YZ;
-        Thu, 18 Aug 2022 23:25:41 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwAX5hHpWv5iycQwAA--.23244S4;
-        Thu, 18 Aug 2022 16:30:26 +0100 (CET)
-From:   roberto.sassu@huaweicloud.com
-To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
-        corbet@lwn.net, dhowells@redhat.com, jarkko@kernel.org,
-        rostedt@goodmis.org, mingo@redhat.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org
-Cc:     bpf@vger.kernel.org, linux-doc@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>,
-        Joanne Koong <joannelkoong@gmail.com>
-Subject: [PATCH v12 02/10] btf: Handle dynamic pointer parameter in kfuncs
-Date:   Thu, 18 Aug 2022 17:29:21 +0200
-Message-Id: <20220818152929.402605-3-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220818152929.402605-1-roberto.sassu@huaweicloud.com>
-References: <20220818152929.402605-1-roberto.sassu@huaweicloud.com>
+        Thu, 18 Aug 2022 12:14:21 -0400
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D804D4D7;
+        Thu, 18 Aug 2022 09:14:20 -0700 (PDT)
+Received: from [10.0.0.100] (cpe5896308f56e8-cm5896308f56e6.cpe.net.cable.rogers.com [99.255.30.7])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 104733F127;
+        Thu, 18 Aug 2022 16:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1660839256;
+        bh=YZZSkhT+TTALwtfUjy6aWTR//Rq9MQ2cQ72rzDjTaGo=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=eKZn0EnaLQ3LPA55KId1jrSyN9QJDFoGajfUjb4kCVLZw+GJfPoyEZk5YsBGY9MBs
+         BD5uhH5otcM+iD4WwVifrNr5NL1BUfcSMeQnhx/CHDs9NWQTtQwx1gGwhuoQTCfKMQ
+         uST4xRWXm8MKtsgcqv+2mfMMUaoVq3HafCDVAbqHwknm58OvYYcZd9zEcvuHOCriAW
+         5f5enAoNjxCzorVuGXsIE8HVJabgP9KqXKSRwJtYh0VtfpPArngeXisaJpK+yDOAEe
+         WaTsYv22CXUAmrDXOQbGO1R7EFcMRumQCCw3nOo7oiJ1DQDXooj3VDnRI/oZGvfm7y
+         iW9MAUvGRwJEw==
+Message-ID: <dc966283-d0b9-b411-0792-c8553b948c2e@canonical.com>
+Date:   Thu, 18 Aug 2022 09:14:13 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwAX5hHpWv5iycQwAA--.23244S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxWryfCFW5Kr48Wr17Jw4fXwb_yoWrCFWxpF
-        n3Cas7Zr4vyr4xuw17AF4UArW5K3W0qw12kFWrC34FkF17Xr1DXF1DKryrA3sYkrWkCw1x
-        Ar1jgrW5ua48CrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6r1j6r18M7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-        A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-        Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ew
-        Av7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY
-        6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7M4kE6xkIj40Ew7
-        xC0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-        6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2
-        Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-        Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJw
-        CI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU85ku7UU
-        UUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBF1jj34W2AAJsG
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [apparmor] Switching to iterate_shared
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     jfs-discussion@lists.sourceforge.net,
+        Hans de Goede <hdegoede@redhat.com>,
+        devel@lists.orangefs.org, apparmor@lists.ubuntu.com,
+        linux-unionfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        coda@cs.cmu.edu, linux-security-module@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Namjae Jeon <linkinjeon@kernel.org>, ocfs2-devel@oss.oracle.com
+References: <YvvBs+7YUcrzwV1a@ZenIV>
+ <CAHk-=wgkNwDikLfEkqLxCWR=pLi1rbPZ5eyE8FbfmXP2=r3qcw@mail.gmail.com>
+ <Yvvr447B+mqbZAoe@casper.infradead.org>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <Yvvr447B+mqbZAoe@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On 8/16/22 12:11, Matthew Wilcox wrote:
+> On Tue, Aug 16, 2022 at 11:58:36AM -0700, Linus Torvalds wrote:
+>> That said, our filldir code is still confusing as hell. And I would
+>> really like to see that "shared vs non-shared" iterator thing go away,
+>> with everybody using the shared one - and filesystems that can't deal
+>> with it using their own lock.
+>>
+>> But that's a completely independent wart in our complicated filldir saga.
+>>
+>> But if somebody were to look at that iterate-vs-iterate_shared, that
+>> would be lovely. A quick grep shows that we don't have *that* many of
+>> the non-shared cases left:
+>>
+>>        git grep '\.iterate\>.*='
+>>
+>> seems to imply that converting them to a "use my own load" wouldn't be
+>> _too_ bad.
+>>
+>> And some of them might actually be perfectly ok with the shared
+>> semantics (ie inode->i_rwsem held just for reading) and they just were
+>> never converted originally.
+> 
+> What's depressing is that some of these are newly added.  It'd be
+> great if we could attach something _like_ __deprecated to things
+> that checkpatch could pick up on.
+> 
+> fs/adfs/dir_f.c:        .iterate        = adfs_f_iterate,
+> fs/adfs/dir_fplus.c:    .iterate        = adfs_fplus_iterate,
+> 
+> ADFS is read-only, so must be safe?
+> 
+> fs/ceph/dir.c:  .iterate = ceph_readdir,
+> fs/ceph/dir.c:  .iterate = ceph_readdir,
+> 
+> At least CEPH has active maintainers, cc'd
+> 
+> fs/coda/dir.c:  .iterate        = coda_readdir,
+> 
+> Would anyone notice if we broke CODA?  Maintainers cc'd anyway.
+> 
+> fs/exfat/dir.c: .iterate        = exfat_iterate,
+> 
+> Exfat is a new addition, but has active maintainers.
+> 
+> fs/jfs/namei.c: .iterate        = jfs_readdir,
+> 
+> Maintainer cc'd
+> 
+> fs/ntfs/dir.c:  .iterate        = ntfs_readdir,         /* Read directory contents. */
+> 
+> Maybe we can get rid of ntfs soon.
+> 
+> fs/ocfs2/file.c:        .iterate        = ocfs2_readdir,
+> fs/ocfs2/file.c:        .iterate        = ocfs2_readdir,
+> 
+> maintainers cc'd
+> 
+> fs/orangefs/dir.c:      .iterate = orangefs_dir_iterate,
+> 
+> New; maintainer cc'd
+> 
+> fs/overlayfs/readdir.c: .iterate        = ovl_iterate,
+> 
+> Active maintainer, cc'd
+> 
+> fs/proc/base.c: .iterate        = proc_##LSM##_attr_dir_iterate, \
+> 
+> Hmm.  We need both SMACK and Apparmor to agree to this ... cc's added.
 
-Allow the bpf_dynptr_kern parameter to be specified in kfuncs. Also, ensure
-that the dynamic pointer is valid and initialized.
+This is fine for AppArmor
 
-To properly detect whether a parameter is of the desired type, introduce
-the stringify_struct() macro to compare the returned structure name with
-the desired name. In addition, protect against structure renames, by
-halting the build with BUILD_BUG_ON(), so that developers have to revisit
-the code.
 
-Cc: Joanne Koong <joannelkoong@gmail.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- include/linux/bpf_verifier.h |  3 +++
- include/linux/btf.h          |  9 +++++++++
- kernel/bpf/btf.c             | 18 ++++++++++++++++++
- kernel/bpf/verifier.c        |  4 ++--
- 4 files changed, 32 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
-index 2e3bad8640dc..55876fbdbae2 100644
---- a/include/linux/bpf_verifier.h
-+++ b/include/linux/bpf_verifier.h
-@@ -560,6 +560,9 @@ int check_kfunc_mem_size_reg(struct bpf_verifier_env *env, struct bpf_reg_state
- 			     u32 regno);
- int check_mem_reg(struct bpf_verifier_env *env, struct bpf_reg_state *reg,
- 		   u32 regno, u32 mem_size);
-+bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env,
-+			      struct bpf_reg_state *reg,
-+			      enum bpf_arg_type arg_type);
- 
- /* this lives here instead of in bpf.h because it needs to dereference tgt_prog */
- static inline u64 bpf_trampoline_compute_key(const struct bpf_prog *tgt_prog,
-diff --git a/include/linux/btf.h b/include/linux/btf.h
-index ad93c2d9cc1c..f546d368ac5d 100644
---- a/include/linux/btf.h
-+++ b/include/linux/btf.h
-@@ -52,6 +52,15 @@
- #define KF_SLEEPABLE    (1 << 5) /* kfunc may sleep */
- #define KF_DESTRUCTIVE  (1 << 6) /* kfunc performs destructive actions */
- 
-+/*
-+ * Return the name of the passed struct, if exists, or halt the build if for
-+ * example the structure gets renamed. In this way, developers have to revisit
-+ * the code using that structure name, and update it accordingly.
-+ */
-+#define stringify_struct(x)			\
-+	({ BUILD_BUG_ON(sizeof(struct x) < 0);	\
-+	   __stringify(x); })
-+
- struct btf;
- struct btf_member;
- struct btf_type;
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index e49b3b6d48ad..26cb548420af 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -6362,15 +6362,20 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
- 
- 			if (is_kfunc) {
- 				bool arg_mem_size = i + 1 < nargs && is_kfunc_arg_mem_size(btf, &args[i + 1], &regs[regno + 1]);
-+				bool arg_dynptr = btf_type_is_struct(ref_t) &&
-+						  !strcmp(ref_tname,
-+							  stringify_struct(bpf_dynptr_kern));
- 
- 				/* Permit pointer to mem, but only when argument
- 				 * type is pointer to scalar, or struct composed
- 				 * (recursively) of scalars.
- 				 * When arg_mem_size is true, the pointer can be
- 				 * void *.
-+				 * Also permit initialized dynamic pointers.
- 				 */
- 				if (!btf_type_is_scalar(ref_t) &&
- 				    !__btf_type_is_scalar_struct(log, btf, ref_t, 0) &&
-+				    !arg_dynptr &&
- 				    (arg_mem_size ? !btf_type_is_void(ref_t) : 1)) {
- 					bpf_log(log,
- 						"arg#%d pointer type %s %s must point to %sscalar, or struct with scalar\n",
-@@ -6378,6 +6383,19 @@ static int btf_check_func_arg_match(struct bpf_verifier_env *env,
- 					return -EINVAL;
- 				}
- 
-+				if (arg_dynptr) {
-+					if (!is_dynptr_reg_valid_init(env, reg,
-+							ARG_PTR_TO_DYNPTR)) {
-+						bpf_log(log,
-+							"arg#%d pointer type %s %s must be initialized\n",
-+							i, btf_type_str(ref_t),
-+							ref_tname);
-+						return -EINVAL;
-+					}
-+
-+					continue;
-+				}
-+
- 				/* Check for mem, len pair */
- 				if (arg_mem_size) {
- 					if (check_kfunc_mem_size_reg(env, &regs[regno + 1], regno + 1)) {
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 2c1f8069f7b7..aa834e7bb296 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -779,8 +779,8 @@ static bool is_dynptr_reg_valid_uninit(struct bpf_verifier_env *env, struct bpf_
- 	return true;
- }
- 
--static bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env, struct bpf_reg_state *reg,
--				     enum bpf_arg_type arg_type)
-+bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env, struct bpf_reg_state *reg,
-+			      enum bpf_arg_type arg_type)
- {
- 	struct bpf_func_state *state = func(env, reg);
- 	int spi = get_spi(reg->off);
--- 
-2.25.1
+> 
+> fs/vboxsf/dir.c:        .iterate = vboxsf_dir_iterate,
+> 
+> Also newly added.  Maintainer cc'd.
+> 
 
