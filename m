@@ -2,142 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC758C00140
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Aug 2022 11:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A68C28B2B
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Aug 2022 13:15:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237258AbiHRL0x (ORCPT
+        id S244971AbiHRNPF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Aug 2022 07:26:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59050 "EHLO
+        Thu, 18 Aug 2022 09:15:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231675AbiHRL0w (ORCPT
+        with ESMTP id S244924AbiHRNO6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Aug 2022 07:26:52 -0400
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 392FC5E55C
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Aug 2022 04:26:49 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4M7jJk3ZH9zMpwdY;
-        Thu, 18 Aug 2022 13:26:46 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4M7jJj3NDLzlqwsf;
-        Thu, 18 Aug 2022 13:26:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1660822006;
-        bh=rhb91i9KWKOzYZfR3oDwvTl9+4014LzoFCzFIQlEPYQ=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=qHoGsEq+z4Qqq0YjO6mUVv2I0jG1O0h0iwWg1x7S+bD+PdwF8q/YgB1e8Vovi7Sob
-         Aeu7VkX0+Q+wY4rro3EOcA3ShKq+Ohrvthj0LJAWz4cE8eooR2c/Gi5ZGN0+qkI6LI
-         WvfMDB3qjv9pwcPoaXVjTkuoH0Zghoj6uQahN/jI=
-Message-ID: <997489b1-12e1-5eb0-a531-efe6bf62bbc9@digikod.net>
-Date:   Thu, 18 Aug 2022 13:26:44 +0200
+        Thu, 18 Aug 2022 09:14:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68E80268
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Aug 2022 06:14:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1660828495;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=c6QQzktQOsLF5gvz1m1JMJhC3Jcc7lkjkkVix5pQvuU=;
+        b=iC/+tL0z+UURwzbNpOz4GNVOjV8ecZbG8F/RMAD7KkmZx1H7YYSD7wqw4eDErKVMhV2YPG
+        hxLb015HhfH6NtRy8kEZleYd1nD+/GTJ0yGDP5r91opqB8HFl9Uc6y3wpY7BsC2lVZJEsT
+        gDGkwybLwe4NDoFfO9UOHj1xzXdkDmA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-211-4KzSz-gKPE24pj2vCPoWYw-1; Thu, 18 Aug 2022 09:14:47 -0400
+X-MC-Unique: 4KzSz-gKPE24pj2vCPoWYw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4E58D1019C91;
+        Thu, 18 Aug 2022 13:14:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8524D9457F;
+        Thu, 18 Aug 2022 13:14:38 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHC9VhTpqvFbjKG5FMKGRBRHavOUrsCSFgayh+BNgSrry8bWLg@mail.gmail.com>
+References: <CAHC9VhTpqvFbjKG5FMKGRBRHavOUrsCSFgayh+BNgSrry8bWLg@mail.gmail.com> <165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk> <CAFqZXNv+ahpN3Hdv54ixa4u-LKaqTtCyjtkpzKGbv7x4dzwc0Q@mail.gmail.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     dhowells@redhat.com, Ondrej Mosnacek <omosnace@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        dwysocha@redhat.com,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] nfs: Fix automount superblock LSM init problem, preventing sb sharing
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-References: <20220814192603.7387-1-gnoack3000@gmail.com>
- <20220814192603.7387-3-gnoack3000@gmail.com>
- <6ed7d884-89cb-546f-db0a-1c16209f1c29@digikod.net> <Yv0ssfnx8BcUf0Lp@nuc>
- <Yv1C/bAD5b5fMgVg@nuc>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v4 2/4] selftests/landlock: Selftests for file truncation
- support
-In-Reply-To: <Yv1C/bAD5b5fMgVg@nuc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2026284.1660828477.1@warthog.procyon.org.uk>
+Date:   Thu, 18 Aug 2022 14:14:37 +0100
+Message-ID: <2026286.1660828477@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Paul Moore <paul@paul-moore.com> wrote:
 
-On 17/08/2022 21:35, Günther Noack wrote:
-> On Wed, Aug 17, 2022 at 08:00:17PM +0200, Günther Noack wrote:
->> On Tue, Aug 16, 2022 at 07:08:20PM +0200, Mickaël Salaün wrote:
->>> On 14/08/2022 21:26, Günther Noack wrote:
->>>> +/*
->>>> + * Opens the file and invokes ftruncate(2).
->>>> + *
->>>> + * Returns the errno of ftruncate if ftruncate() fails.
->>>> + * Returns EBADFD if open() or close() fail (should not happen).
->>>> + * Returns 0 if ftruncate(), open() and close() were successful.
->>>> + */
->>>> +static int test_ftruncate(struct __test_metadata *const _metadata,
->>>
->>> _metadata is no longer needed. Same for test_creat().
->>
->> Thanks, well spotted!
->>
->>>
->>>
->>>> +			  const char *const path, int flags)
->>>> +{
->>>> +	int res, err, fd;
->>>> +
->>>> +	fd = open(path, flags | O_CLOEXEC);
->>>> +	if (fd < 0)
->>>> +		return EBADFD;
->>>
->>> Instead of EBADFD, which is a valid open(2) error, you can use ENOSYS and
->>> add a comment explaining that we are not interested by this open(2) error
->>> code but only the ftruncate(2) one because we are sure opening such path is
->>> allowed or because open(2) is already tested before calls to
->>> test_ftruncate().
->>
->> Changed to ENOSYS and added a comment in the code and as function documentation.
->>
->> The explanation follows the reasoning that callers must guarantee that
->> open() and close() will work, in order to test ftruncate() correctly.
->> If open() or close() fail, we return ENOSYS.
->>
->> Technically EBADFD does not get returned by open(2) according to the
->> man page, but I changed it to ENOSYS anyway (EBADF and EBADFD are easy
->> to mix up).
-> 
-> The more I think about it, the more I feel that test_ftruncate() in its current
-> form was a mistake:
-> 
->    * In reality, we just care about the ftruncate() result, not about open().
->    * The tests became slightly confusing and asymmetric because some
->      places could call test_ftruncate() while others would call test_open()
->    * Trying open(..., O_RDONLY) + ftruncate() is also confusing in tests,
->      because that never works anyway (ftruncate() only works on writable fds)
-> 
-> So: I'm contemplating to use a different approach instead:
-> 
->    * Open a writable FD for each file *before enforcing Landlock*.
->    * *Then* enforce Landlock (now some of these files can't be opened any more)
->    * Then try ftruncate() with the previously opened file descriptor.
-> 
-> As a result,
-> 
->    * we have some new repetitive but simple code for opening file descriptors
->    * we remove the long version of test_ftruncate() with all its error case
->      complication and replace it with a trivial one that takes an already-opened
->      file descriptor.
-> 
-> This way, each block in the test now checks the following things:
-> 
->    * check truncate(file)
->    * check ftruncate(file_fd) <--- passing the FD!
->    * check open(file, O_RDONLY|O_TRUNC)
->    * check open(file, O_WRONLY|O_TRUNC)
-> 
-> It's now easy to see in the tests that the result from truncate() and
-> ftruncate() is always the same. The complication of worrying whether open()
-> works before ftruncate() is also gone (so no more special open() checks needed
-> before checking ftruncate()). I removed the testing of ftruncate() on read-only
-> file descriptors, because that is forbidden in the ftruncate() manpage anyway
-> and always returns EINVAL independent of Landlock.
-> 
-> I feel that this helps clarify the tests, even if it undoes some of your
-> comments about expecting open() to work before ftruncate().
-> 
-> Does that approach look reasonable to you?
-> 
-> I might just send you a patch version with that variant I think - this might be
-> clearer in code than in my textual description here. :)
+> I guess my question is this: for inodes inside the superblock, does
+> their superblock pointer point to the submount's superblock, or the
+> parent filesystem's superblock?
 
-The FD from the pre-landlocked state is the right approach, thanks!
+They have to point to the submount superblock.  Too many things would break, I
+think, if inode->i_sb pointed to the wrong place.  As far as the VFS is
+concerned, apart from the way it is mounted, it's a perfectly normal
+superblock.
+
+David
+
