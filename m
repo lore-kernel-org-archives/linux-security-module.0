@@ -2,170 +2,160 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B240C32774
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Aug 2022 15:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F07F1C32793
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Aug 2022 15:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245585AbiHRPL1 (ORCPT
+        id S1344386AbiHRPuz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Aug 2022 11:11:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47872 "EHLO
+        Thu, 18 Aug 2022 11:50:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245730AbiHRPLX (ORCPT
+        with ESMTP id S1344439AbiHRPue (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Aug 2022 11:11:23 -0400
-Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54963BE4E3
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Aug 2022 08:11:18 -0700 (PDT)
-Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-11ba6e79dd1so2077107fac.12
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Aug 2022 08:11:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=GANP9vLRwQ2YLUROnRwlZNpTwcMjsaJ3VgtSa/PtcQA=;
-        b=0qFr3gX8grFcH8xmET6oC1qTaE9YXfJGFQ2GhO7NEnI8UJe/rml2OLbEr4Jw1nQKgR
-         d12kPSjSQe3qNmXickEgFu68t4SIk6+fn1KvnQautrJRDdPKcPRfC9kt1hvPEgu+ijXD
-         7iHrt1dL8Pek8n+C/DBvnSz5bNp5udDpG9vzcJ4mjVl2uLAsjvPjxzZNC3uc1Sn9d8BN
-         jgZh1sTFXRnSeYNTo+wlZfynZ0xcbCj8IKq0w2RsVpncFi6U9vN4TxyRRKmoNsvJJQvH
-         8z5x3IrwifZWro1HnNJlG0tBICYV2T1LywfHD7Dw228ev4nd3JbJBYgF/S7hFYBg6Rd0
-         xVCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=GANP9vLRwQ2YLUROnRwlZNpTwcMjsaJ3VgtSa/PtcQA=;
-        b=b7q33ThxjV63YY0HP+wV5glBfTEGmOKI5ptqtax52LJFkcWNI0YEEh0dGZRLLgQWww
-         WxSQ2tMBU1i2pBYOCAeXXUTkuioPsasepBcatKdZKenAsVna4mCfuaTSZeUqXfG5TAn+
-         3VYjv/9YPdc+YUpvDmd6l115HB159K8HDa4UX8mR8R5+9+D9pQxM2+RslllFXD6zljiJ
-         deSAZPSoor5u6y5Yg3/QWgzFEKdLaQkpT+pI56kDVWNsiATwHtMJvzl+7FsrBujZCJho
-         qbEuI8wHzdAiyQ5kN+5kYzo5BUIKBAj0jqDsbhdGx7Ydbc/E97dKN0zBZMvy7YIOm2Jq
-         /iLQ==
-X-Gm-Message-State: ACgBeo12S2g+yFVAgtZFCjvWMno/VVYJ6JyqlniJR2WhOPVDpkOuo71i
-        9JmdinIFfpBnX08LGcvRKP/OPj4qC5jp5L7udvPr
-X-Google-Smtp-Source: AA6agR66YXOH5oppw7egFiDoyCC8ej5Sf5Kmv975mn8bSRsO6rpaEhSZQdqJw2zGnbq9Y7af7ZLG1mLeF4J63BZuPNo=
-X-Received: by 2002:a05:6870:a78d:b0:11c:437b:ec70 with SMTP id
- x13-20020a056870a78d00b0011c437bec70mr1643477oao.136.1660835477277; Thu, 18
- Aug 2022 08:11:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220815162028.926858-1-fred@cloudflare.com> <CAHC9VhTuxxRfJg=Ax5z87Jz6tq1oVRcppB444dHM2gP-FZrkTQ@mail.gmail.com>
- <8735dux60p.fsf@email.froward.int.ebiederm.org> <CAHC9VhSHJNLS-KJ-Rz1R12PQbqACSksLYLbymF78d5hMkSGc-g@mail.gmail.com>
- <871qte8wy3.fsf@email.froward.int.ebiederm.org> <CAHC9VhSU_sqMQwdoh0nAFdURqs_cVFbva8=otjcZUo8s+xyC9A@mail.gmail.com>
- <8735du7fnp.fsf@email.froward.int.ebiederm.org> <CAHC9VhQuRNxzgVeNhDy=p5+RHz5+bTH6zFdU=UvvEhyH1e962A@mail.gmail.com>
- <87tu6a4l83.fsf@email.froward.int.ebiederm.org> <20220818140521.GA1000@mail.hallyn.com>
-In-Reply-To: <20220818140521.GA1000@mail.hallyn.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 18 Aug 2022 11:11:06 -0400
-Message-ID: <CAHC9VhRqBxtV04ARQFPWpMf1aFZo0HP_HiJ+8VpXAT-zXF6UXw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] Introduce security_create_user_ns()
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
-        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        jmorris@namei.org, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
-        casey@schaufler-ca.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Thu, 18 Aug 2022 11:50:34 -0400
+X-Greylist: delayed 298 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 18 Aug 2022 08:50:31 PDT
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2452D647E9;
+        Thu, 18 Aug 2022 08:50:30 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4M7pj521R2z9v7Ys;
+        Thu, 18 Aug 2022 23:29:45 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwB3MhqAW_5ilLIyAA--.42520S4;
+        Thu, 18 Aug 2022 16:32:52 +0100 (CET)
+From:   roberto.sassu@huaweicloud.com
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        corbet@lwn.net, dhowells@redhat.com, jarkko@kernel.org,
+        rostedt@goodmis.org, mingo@redhat.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org
+Cc:     bpf@vger.kernel.org, linux-doc@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@cloudflare.com,
-        cgzones@googlemail.com, karl@bigbadwolfsecurity.com,
-        tixxdz@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v12 07/10] selftests/bpf: Compile kernel with everything as built-in
+Date:   Thu, 18 Aug 2022 17:29:26 +0200
+Message-Id: <20220818152929.402605-8-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220818152929.402605-1-roberto.sassu@huaweicloud.com>
+References: <20220818152929.402605-1-roberto.sassu@huaweicloud.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwB3MhqAW_5ilLIyAA--.42520S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF1fGry3urWDWw4fJrW5KFg_yoW5Xw45pw
+        n3A3y8JFWrtF1YyrW7CrWDGFZ5t3ZrXFW7G3W7Jr15uw18Jw4kJr18KFWUGrWDXa9rZr4r
+        AF97KF13AF1UJ37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6r1j6r18M7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
+        A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+        W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+        6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
+        WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkE
+        bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwAKzVCY07xG64
+        k0F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
+        xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrx
+        kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v2
+        6r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F
+        4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUwPEf
+        UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBF1jj34XKgABs9
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 18, 2022 at 10:05 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> On Wed, Aug 17, 2022 at 04:24:28PM -0500, Eric W. Biederman wrote:
-> > Paul Moore <paul@paul-moore.com> writes:
-> > > On Wed, Aug 17, 2022 at 4:56 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> > >> Paul Moore <paul@paul-moore.com> writes:
-> > >> > On Wed, Aug 17, 2022 at 3:58 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> > >> >> Paul Moore <paul@paul-moore.com> writes:
-> > >> >>
-> > >> >> > At the end of the v4 patchset I suggested merging this into lsm/next
-> > >> >> > so it could get a full -rc cycle in linux-next, assuming no issues
-> > >> >> > were uncovered during testing
-> > >> >>
-> > >> >> What in the world can be uncovered in linux-next for code that has no in
-> > >> >> tree users.
-> > >> >
-> > >> > The patchset provides both BPF LSM and SELinux implementations of the
-> > >> > hooks along with a BPF LSM test under tools/testing/selftests/bpf/.
-> > >> > If no one beats me to it, I plan to work on adding a test to the
-> > >> > selinux-testsuite as soon as I'm done dealing with other urgent
-> > >> > LSM/SELinux issues (io_uring CMD passthrough, SCTP problems, etc.); I
-> > >> > run these tests multiple times a week (multiple times a day sometimes)
-> > >> > against the -rcX kernels with the lsm/next, selinux/next, and
-> > >> > audit/next branches applied on top.  I know others do similar things.
-> > >>
-> > >> A layer of hooks that leaves all of the logic to userspace is not an
-> > >> in-tree user for purposes of understanding the logic of the code.
-> > >
-> > > The BPF LSM selftests which are part of this patchset live in-tree.
-> > > The SELinux hook implementation is completely in-tree with the
-> > > subject/verb/object relationship clearly described by the code itself.
-> > > After all, the selinux_userns_create() function consists of only two
-> > > lines, one of which is an assignment.  Yes, it is true that the
-> > > SELinux policy lives outside the kernel, but that is because there is
-> > > no singular SELinux policy for everyone.  From a practical
-> > > perspective, the SELinux policy is really just a configuration file
-> > > used to setup the kernel at runtime; it is not significantly different
-> > > than an iptables script, /etc/sysctl.conf, or any of the other myriad
-> > > of configuration files used to configure the kernel during boot.
-> >
-> > I object to adding the new system configuration knob.
->
-> I do strongly sympathize with Eric's points.  It will be very easy, once
-> user namespace creation has been further restricted in some distros, to
-> say "well see this stuff is silly" and go back to simply requiring root
-> to create all containers and namespaces, which is generally quite a bit
-> easier anywway.  And then, of course, give everyone root so they can
-> start containers.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-That's assuming a lot.  Many years have passed since namespaces were
-first introduced, and awareness of good security practices has
-improved, perhaps not as much as any of us would like, but to say that
-distros, system builders, and even users are the same as they were so
-many years ago is a bit of a stretch in my opinion.
+Since the eBPF CI does not support kernel modules, change the kernel config
+to compile everything as built-in.
 
-However, even ignoring that for a moment, do we really want to go to a
-place where we dictate how users compose and secure their systems?
-Linux "took over the world" because it offered a level of flexibility
-that wasn't really possible before, and it has flourished because it
-has kept that mentality.  The Linux Kernel can be shoehorned onto most
-hardware that you can get your hands on these days, with driver
-support for most anything you can think to plug into the system.  Do
-you want a single-user environment with no per-user separation?  We
-can do that.  Do you want a traditional DAC based system that leans
-heavy on ACLs and capabilities?  We can do that.  Do you want a
-container host that allows you to carve up the system with a high
-degree of granularity thanks to the different namespaces?  We can do
-that.  How about a system that leverages the LSM to enforce a least
-privilege ideal, even on the most privileged root user?  We can do
-that too.  This patchset is about giving distro, system builders, and
-users another choice in how they build their system.  We've seen both
-in this patchset and in previously failed attempts that there is a
-definite want from a user perspective for functionality such as this,
-and I think it's time we deliver it in the upstream kernel so they
-don't have to keep patching their own systems with out-of-tree
-patches.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ tools/testing/selftests/bpf/config        | 26 +++++++++++------------
+ tools/testing/selftests/bpf/config.x86_64 |  2 +-
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-> Eric and Paul, I wonder, will you - or some people you'd like to represent
-> you - be at plumbers in September?  Should there be a BOF session there?  (I
-> won't be there, but could join over video)  I think a brainstorming session
-> for solutions to the above problems would be good.
-
-Regardless of if Eric or I will be at LPC, it is doubtful that all of
-the people who have participated in this discussion will be able to
-attend, and I think it's important that the users who are asking for
-this patchset have a chance to be heard in each forum where this is
-discussed.  While conferences are definitely nice - I definitely
-missed them over the past couple of years - we can't use them as a
-crutch to help us reach a conclusion on this issue; we've debated much
-more difficult things over the mailing lists, I see no reason why this
-would be any different.
-
+diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
+index 3fc46f9cfb22..0fdd11e6b742 100644
+--- a/tools/testing/selftests/bpf/config
++++ b/tools/testing/selftests/bpf/config
+@@ -7,9 +7,9 @@ CONFIG_BPF_LSM=y
+ CONFIG_BPF_STREAM_PARSER=y
+ CONFIG_BPF_SYSCALL=y
+ CONFIG_CGROUP_BPF=y
+-CONFIG_CRYPTO_HMAC=m
+-CONFIG_CRYPTO_SHA256=m
+-CONFIG_CRYPTO_USER_API_HASH=m
++CONFIG_CRYPTO_HMAC=y
++CONFIG_CRYPTO_SHA256=y
++CONFIG_CRYPTO_USER_API_HASH=y
+ CONFIG_DYNAMIC_FTRACE=y
+ CONFIG_FPROBE=y
+ CONFIG_FTRACE_SYSCALLS=y
+@@ -24,30 +24,30 @@ CONFIG_IP_NF_FILTER=y
+ CONFIG_IP_NF_RAW=y
+ CONFIG_IP_NF_TARGET_SYNPROXY=y
+ CONFIG_IPV6=y
+-CONFIG_IPV6_FOU=m
+-CONFIG_IPV6_FOU_TUNNEL=m
++CONFIG_IPV6_FOU=y
++CONFIG_IPV6_FOU_TUNNEL=y
+ CONFIG_IPV6_GRE=y
+ CONFIG_IPV6_SEG6_BPF=y
+-CONFIG_IPV6_SIT=m
++CONFIG_IPV6_SIT=y
+ CONFIG_IPV6_TUNNEL=y
+ CONFIG_LIRC=y
+ CONFIG_LWTUNNEL=y
+ CONFIG_MPLS=y
+-CONFIG_MPLS_IPTUNNEL=m
+-CONFIG_MPLS_ROUTING=m
++CONFIG_MPLS_IPTUNNEL=y
++CONFIG_MPLS_ROUTING=y
+ CONFIG_MPTCP=y
+ CONFIG_NET_CLS_ACT=y
+ CONFIG_NET_CLS_BPF=y
+-CONFIG_NET_CLS_FLOWER=m
+-CONFIG_NET_FOU=m
++CONFIG_NET_CLS_FLOWER=y
++CONFIG_NET_FOU=y
+ CONFIG_NET_FOU_IP_TUNNELS=y
+ CONFIG_NET_IPGRE=y
+ CONFIG_NET_IPGRE_DEMUX=y
+ CONFIG_NET_IPIP=y
+-CONFIG_NET_MPLS_GSO=m
++CONFIG_NET_MPLS_GSO=y
+ CONFIG_NET_SCH_INGRESS=y
+ CONFIG_NET_SCHED=y
+-CONFIG_NETDEVSIM=m
++CONFIG_NETDEVSIM=y
+ CONFIG_NETFILTER=y
+ CONFIG_NETFILTER_SYNPROXY=y
+ CONFIG_NETFILTER_XT_CONNMARK=y
+@@ -60,7 +60,7 @@ CONFIG_NF_DEFRAG_IPV6=y
+ CONFIG_RC_CORE=y
+ CONFIG_SECURITY=y
+ CONFIG_SECURITYFS=y
+-CONFIG_TEST_BPF=m
++CONFIG_TEST_BPF=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_VXLAN=y
+ CONFIG_XDP_SOCKETS=y
+diff --git a/tools/testing/selftests/bpf/config.x86_64 b/tools/testing/selftests/bpf/config.x86_64
+index f0859a1d37ab..ce70c9509204 100644
+--- a/tools/testing/selftests/bpf/config.x86_64
++++ b/tools/testing/selftests/bpf/config.x86_64
+@@ -47,7 +47,7 @@ CONFIG_CPU_IDLE_GOV_LADDER=y
+ CONFIG_CPUSETS=y
+ CONFIG_CRC_T10DIF=y
+ CONFIG_CRYPTO_BLAKE2B=y
+-CONFIG_CRYPTO_DEV_VIRTIO=m
++CONFIG_CRYPTO_DEV_VIRTIO=y
+ CONFIG_CRYPTO_SEQIV=y
+ CONFIG_CRYPTO_XXHASH=y
+ CONFIG_DCB=y
 -- 
-paul-moore.com
+2.25.1
+
