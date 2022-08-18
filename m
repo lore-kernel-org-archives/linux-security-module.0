@@ -2,101 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0283C25B0E
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Aug 2022 06:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC758C00140
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Aug 2022 11:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243681AbiHRGc2 (ORCPT
+        id S237258AbiHRL0x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Aug 2022 02:32:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50596 "EHLO
+        Thu, 18 Aug 2022 07:26:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231552AbiHRGc1 (ORCPT
+        with ESMTP id S231675AbiHRL0w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Aug 2022 02:32:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A15CA3D7D;
-        Wed, 17 Aug 2022 23:32:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E076EB81FFF;
-        Thu, 18 Aug 2022 06:32:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A5FC433C1;
-        Thu, 18 Aug 2022 06:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1660804344;
-        bh=Kqr77NyLJGS64iGu/RtqfYqcdRHgst5RRJdReOBJ4MA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rE3Ul1r/xBzy8REQeOSMR5W9G3qtjDIFEqDZwzPjSHVs6/tM/sOEIKW1kULxas2S8
-         UfeAwG7e0k+L51z4LgM//64ayk4rwS8oP1bO/8jKUtlUAHfZxuXVAmaYXgC9Q+1xh1
-         uDRyYrP60BbBsqlTH9X1oxB4yGYRUh5a4g/3dg+4=
-Date:   Thu, 18 Aug 2022 08:32:22 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH v6 2/5] userfaultfd: add /dev/userfaultfd for fine
- grained access control
-Message-ID: <Yv3c9jYkyWfe2zMM@kroah.com>
-References: <20220817214728.489904-1-axelrasmussen@google.com>
- <20220817214728.489904-3-axelrasmussen@google.com>
- <Yv3bnouKb7242Ama@kroah.com>
+        Thu, 18 Aug 2022 07:26:52 -0400
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 392FC5E55C
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Aug 2022 04:26:49 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4M7jJk3ZH9zMpwdY;
+        Thu, 18 Aug 2022 13:26:46 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4M7jJj3NDLzlqwsf;
+        Thu, 18 Aug 2022 13:26:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1660822006;
+        bh=rhb91i9KWKOzYZfR3oDwvTl9+4014LzoFCzFIQlEPYQ=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=qHoGsEq+z4Qqq0YjO6mUVv2I0jG1O0h0iwWg1x7S+bD+PdwF8q/YgB1e8Vovi7Sob
+         Aeu7VkX0+Q+wY4rro3EOcA3ShKq+Ohrvthj0LJAWz4cE8eooR2c/Gi5ZGN0+qkI6LI
+         WvfMDB3qjv9pwcPoaXVjTkuoH0Zghoj6uQahN/jI=
+Message-ID: <997489b1-12e1-5eb0-a531-efe6bf62bbc9@digikod.net>
+Date:   Thu, 18 Aug 2022 13:26:44 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yv3bnouKb7242Ama@kroah.com>
+User-Agent: 
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+References: <20220814192603.7387-1-gnoack3000@gmail.com>
+ <20220814192603.7387-3-gnoack3000@gmail.com>
+ <6ed7d884-89cb-546f-db0a-1c16209f1c29@digikod.net> <Yv0ssfnx8BcUf0Lp@nuc>
+ <Yv1C/bAD5b5fMgVg@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v4 2/4] selftests/landlock: Selftests for file truncation
+ support
+In-Reply-To: <Yv1C/bAD5b5fMgVg@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 18, 2022 at 08:26:38AM +0200, Greg KH wrote:
-> On Wed, Aug 17, 2022 at 02:47:25PM -0700, Axel Rasmussen wrote:
-> > +static int userfaultfd_dev_open(struct inode *inode, struct file *file)
-> > +{
-> > +	return 0;
-> 
-> If your open does nothing, no need to list it here at all, right?
-> 
-> > +}
-> > +
-> > +static long userfaultfd_dev_ioctl(struct file *file, unsigned int cmd, unsigned long flags)
-> > +{
-> > +	if (cmd != USERFAULTFD_IOC_NEW)
-> > +		return -EINVAL;
-> > +
-> > +	return new_userfaultfd(flags);
-> > +}
-> > +
-> > +static const struct file_operations userfaultfd_dev_fops = {
-> > +	.open = userfaultfd_dev_open,
-> > +	.unlocked_ioctl = userfaultfd_dev_ioctl,
-> > +	.compat_ioctl = userfaultfd_dev_ioctl,
-> 
-> Why do you need to set compat_ioctl?  Shouldn't it just default to the
-> existing one?
-> 
-> And why is this a device node at all?  Shouldn't the syscall handle all
-> of this (to be honest, I didn't read anything but the misc code, sorry.)
 
-Ah, read the documentation now.  Seems you want to make it easier for
-people to get permissions on a system.  Doesn't seem wise, but hey, it's
-not my feature...
+On 17/08/2022 21:35, Günther Noack wrote:
+> On Wed, Aug 17, 2022 at 08:00:17PM +0200, Günther Noack wrote:
+>> On Tue, Aug 16, 2022 at 07:08:20PM +0200, Mickaël Salaün wrote:
+>>> On 14/08/2022 21:26, Günther Noack wrote:
+>>>> +/*
+>>>> + * Opens the file and invokes ftruncate(2).
+>>>> + *
+>>>> + * Returns the errno of ftruncate if ftruncate() fails.
+>>>> + * Returns EBADFD if open() or close() fail (should not happen).
+>>>> + * Returns 0 if ftruncate(), open() and close() were successful.
+>>>> + */
+>>>> +static int test_ftruncate(struct __test_metadata *const _metadata,
+>>>
+>>> _metadata is no longer needed. Same for test_creat().
+>>
+>> Thanks, well spotted!
+>>
+>>>
+>>>
+>>>> +			  const char *const path, int flags)
+>>>> +{
+>>>> +	int res, err, fd;
+>>>> +
+>>>> +	fd = open(path, flags | O_CLOEXEC);
+>>>> +	if (fd < 0)
+>>>> +		return EBADFD;
+>>>
+>>> Instead of EBADFD, which is a valid open(2) error, you can use ENOSYS and
+>>> add a comment explaining that we are not interested by this open(2) error
+>>> code but only the ftruncate(2) one because we are sure opening such path is
+>>> allowed or because open(2) is already tested before calls to
+>>> test_ftruncate().
+>>
+>> Changed to ENOSYS and added a comment in the code and as function documentation.
+>>
+>> The explanation follows the reasoning that callers must guarantee that
+>> open() and close() will work, in order to test ftruncate() correctly.
+>> If open() or close() fail, we return ENOSYS.
+>>
+>> Technically EBADFD does not get returned by open(2) according to the
+>> man page, but I changed it to ENOSYS anyway (EBADF and EBADFD are easy
+>> to mix up).
+> 
+> The more I think about it, the more I feel that test_ftruncate() in its current
+> form was a mistake:
+> 
+>    * In reality, we just care about the ftruncate() result, not about open().
+>    * The tests became slightly confusing and asymmetric because some
+>      places could call test_ftruncate() while others would call test_open()
+>    * Trying open(..., O_RDONLY) + ftruncate() is also confusing in tests,
+>      because that never works anyway (ftruncate() only works on writable fds)
+> 
+> So: I'm contemplating to use a different approach instead:
+> 
+>    * Open a writable FD for each file *before enforcing Landlock*.
+>    * *Then* enforce Landlock (now some of these files can't be opened any more)
+>    * Then try ftruncate() with the previously opened file descriptor.
+> 
+> As a result,
+> 
+>    * we have some new repetitive but simple code for opening file descriptors
+>    * we remove the long version of test_ftruncate() with all its error case
+>      complication and replace it with a trivial one that takes an already-opened
+>      file descriptor.
+> 
+> This way, each block in the test now checks the following things:
+> 
+>    * check truncate(file)
+>    * check ftruncate(file_fd) <--- passing the FD!
+>    * check open(file, O_RDONLY|O_TRUNC)
+>    * check open(file, O_WRONLY|O_TRUNC)
+> 
+> It's now easy to see in the tests that the result from truncate() and
+> ftruncate() is always the same. The complication of worrying whether open()
+> works before ftruncate() is also gone (so no more special open() checks needed
+> before checking ftruncate()). I removed the testing of ftruncate() on read-only
+> file descriptors, because that is forbidden in the ftruncate() manpage anyway
+> and always returns EINVAL independent of Landlock.
+> 
+> I feel that this helps clarify the tests, even if it undoes some of your
+> comments about expecting open() to work before ftruncate().
+> 
+> Does that approach look reasonable to you?
+> 
+> I might just send you a patch version with that variant I think - this might be
+> clearer in code than in my textual description here. :)
 
-thanks,
-
-greg k-h
+The FD from the pre-landlocked state is the right approach, thanks!
