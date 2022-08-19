@@ -2,92 +2,63 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B50C25B0E
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Aug 2022 05:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39C8C3F6B0
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Aug 2022 07:48:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346024AbiHSFYs (ORCPT
+        id S1347228AbiHSHsN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Aug 2022 01:24:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40554 "EHLO
+        Fri, 19 Aug 2022 03:48:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346025AbiHSFYn (ORCPT
+        with ESMTP id S1347222AbiHSHsH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Aug 2022 01:24:43 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3337D598E;
-        Thu, 18 Aug 2022 22:24:42 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id x21so4369750edd.3;
-        Thu, 18 Aug 2022 22:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc;
-        bh=xR2elTYWv0Zzv2c1Y+xBuQNNDUv6x050YIaLAIcv7mk=;
-        b=kDIyznJTIUMQDpgkng65TVs3ysH2Ap8U62FxMrOAtMy6fx8DEwEqtKpbq0d18/HpM5
-         RKNzEwqY8rkYzTinNPQZ1EprTtNQaNvBrpljxyT7pc00Fk9FT9fw4cwDZMFFcY68nCTp
-         XToD9c8W9iq60+PbQerdoVYGURhM+wA0lsFukqx6WfIbGy4dxwJZD29oxuNMPV4u48MZ
-         NGuJPtgM+Fh7fCwBjL528xwy7b2HnfxGJFv7F6mxjvIJDKWB2OvJIwd0bw4hxkwTR/Ki
-         6nIxA2bqKfQfobL0se5tRlhJvqAN22+saxk5dyiSED2AX93z8tJ8Ip9QZhXLeLhjhfsU
-         7F7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc;
-        bh=xR2elTYWv0Zzv2c1Y+xBuQNNDUv6x050YIaLAIcv7mk=;
-        b=GiggHnRkETru5GtbItKrweV69UPbge+gCjZX3nG+KYwujd1Kazxkv2lWTiLBnpPkxM
-         zm78g0A1v2g+0fUXNcLHe3GeYLCcEKtX6+UNwMvo7RE6U1kMvrcXH8x3of6iy0OKI+VN
-         qvZSaG0mQf4eTxXqgfQiT/BWGPCliIzTyGg0o1KYEGE2aMHOHvQ9SFZou0s1bnyyaUrL
-         bOYlKvDiPD9Jx4eFSayTJgWYFvCprPFR81oojMgP6hZkhbImWyL6puVcTuXK443wGtqS
-         hZc9QD4W40YNtk9z45wUeK7m4lzLXU9GZfZ2utRYxFlze924gNr+aZOLpWCXl6qZThkp
-         wzNg==
-X-Gm-Message-State: ACgBeo0eANtWWMlJXM2KBOGuifPIA/a+4GR6VA0U+G6XE8y2ZDnc5JTv
-        NfkbBEZ/Q1nUiaPGx6fMz0Y=
-X-Google-Smtp-Source: AA6agR67UVTNCb4Y0rPq1rIbu/3wWl3E10Npve36SEF0suEvj2HEBIG9lFUvIOxKHKrdpZD3ATAeug==
-X-Received: by 2002:aa7:cb87:0:b0:43b:e650:6036 with SMTP id r7-20020aa7cb87000000b0043be6506036mr4785812edt.350.1660886681133;
-        Thu, 18 Aug 2022 22:24:41 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id ev6-20020a17090729c600b007389c5a45f0sm1768514ejc.148.2022.08.18.22.24.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Aug 2022 22:24:40 -0700 (PDT)
-Date:   Fri, 19 Aug 2022 07:24:38 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v5 2/4] selftests/landlock: Selftests for file truncation
- support
-Message-ID: <Yv8elmJ4qfk8/Mw7@nuc>
-References: <20220817203006.21769-1-gnoack3000@gmail.com>
- <20220817203006.21769-3-gnoack3000@gmail.com>
- <e90aaa5d-d6c8-838a-db29-868a30fd8e37@digikod.net>
+        Fri, 19 Aug 2022 03:48:07 -0400
+Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960F4D8049
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Aug 2022 00:48:03 -0700 (PDT)
+Received: by mail.fadrush.pl (Postfix, from userid 1002)
+        id 3DFC52238C; Fri, 19 Aug 2022 07:47:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
+        t=1660895282; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
+        h=Date:From:To:Subject:From;
+        b=YeqFCzEKpP33xvoWcROi3UTBqWQO9mwAW0cKlo0kHtcpF5r6/CmFSoI4lk5Chyu+b
+         ooY6EC4BLwRtYdbssitdnIT24fo1W0LQs9ClmUjsjOuhBDLtVuIdDTCIZi9NYbJeXQ
+         g0XF4SohwXupHfrQS8sx6nA5Wf/X2M68kbHbxP5H8InWde+h3mVq0XX5FoBs7SkUVY
+         R/mWkwUuDrupxl/M4JjYVKzb7N1zd4z4X0D2NF40bSIlwBfcajopSlA9Kyri/BRfsO
+         7wmQbxdpwrNIlTunBlSQt0uihmufbvoE3TUASW8nv1QcUGhrKruabim7VEWANJts9K
+         k7o51DyNcB3iQ==
+Received: by mail.fadrush.pl for <linux-security-module@vger.kernel.org>; Fri, 19 Aug 2022 07:46:09 GMT
+Message-ID: <20220819064500-0.1.14.8ob1.0.mki1ju8jfr@fadrush.pl>
+Date:   Fri, 19 Aug 2022 07:46:09 GMT
+From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
+To:     <linux-security-module@vger.kernel.org>
+Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
+X-Mailer: mail.fadrush.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e90aaa5d-d6c8-838a-db29-868a30fd8e37@digikod.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 18, 2022 at 10:39:27PM +0200, Mickaël Salaün wrote:
-> On 17/08/2022 22:30, Günther Noack wrote:
-> > +/*
-> > + * Invokes creat(2) and returns its errno or 0.
-> > + * Closes the opened file descriptor on success.
-> > + */
-> > +static int test_creat(const char *const path, mode_t mode)
->
-> This "mode" argument is always 0600. If it's OK with you, I hard code this
-> mode and push this series to -next with some small cosmetic fixes.
+Dzie=C5=84 dobry,
 
-Yes, absolutely. Please do these fixes and push it to -next. :)
+kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
+proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
+stwa firmie stabilny rozw=C3=B3j.=20
 
-Thanks,
-—Günther
+Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
+a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
+nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
+po rozwoju firmy.
 
---
+Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
+nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
+adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
+j=C4=85 je innym.
+
+Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
+o=C5=9Bwiadczonego doradcy finansowego?
+
+
+Pozdrawiam
+Jakub Olejniczak
