@@ -2,63 +2,85 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F39C8C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Aug 2022 07:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB1CC28B2B
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Aug 2022 08:16:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347228AbiHSHsN (ORCPT
+        id S1346261AbiHSIQD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Aug 2022 03:48:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37360 "EHLO
+        Fri, 19 Aug 2022 04:16:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347222AbiHSHsH (ORCPT
+        with ESMTP id S1347763AbiHSIPj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Aug 2022 03:48:07 -0400
-Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960F4D8049
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Aug 2022 00:48:03 -0700 (PDT)
-Received: by mail.fadrush.pl (Postfix, from userid 1002)
-        id 3DFC52238C; Fri, 19 Aug 2022 07:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
-        t=1660895282; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
-        h=Date:From:To:Subject:From;
-        b=YeqFCzEKpP33xvoWcROi3UTBqWQO9mwAW0cKlo0kHtcpF5r6/CmFSoI4lk5Chyu+b
-         ooY6EC4BLwRtYdbssitdnIT24fo1W0LQs9ClmUjsjOuhBDLtVuIdDTCIZi9NYbJeXQ
-         g0XF4SohwXupHfrQS8sx6nA5Wf/X2M68kbHbxP5H8InWde+h3mVq0XX5FoBs7SkUVY
-         R/mWkwUuDrupxl/M4JjYVKzb7N1zd4z4X0D2NF40bSIlwBfcajopSlA9Kyri/BRfsO
-         7wmQbxdpwrNIlTunBlSQt0uihmufbvoE3TUASW8nv1QcUGhrKruabim7VEWANJts9K
-         k7o51DyNcB3iQ==
-Received: by mail.fadrush.pl for <linux-security-module@vger.kernel.org>; Fri, 19 Aug 2022 07:46:09 GMT
-Message-ID: <20220819064500-0.1.14.8ob1.0.mki1ju8jfr@fadrush.pl>
-Date:   Fri, 19 Aug 2022 07:46:09 GMT
-From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
-To:     <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
-X-Mailer: mail.fadrush.pl
+        Fri, 19 Aug 2022 04:15:39 -0400
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83605B4E89
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Aug 2022 01:15:27 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4M8F1T5qc4zMq2Z3;
+        Fri, 19 Aug 2022 10:15:25 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4M8F1S4Hq1zlq6NR;
+        Fri, 19 Aug 2022 10:15:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1660896925;
+        bh=9cHLMbZrKx0CV0cUk+EgC0BR5JzlIcjsThmSB4NqtdY=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=qtOVkKEdQWqB0IUutD2H6B5aL+ALKUw/jmzFZ2s3qGsGKHh6GtKSnD3bZt4AkvicH
+         85Zw0xJYZwVVIHDNyDilm+qDnCUrRU8N5F4mJv8EzXk4Xs/sWGTRslHnM8f1vdKcYy
+         sW+8t2x78UoYnA5VWQxUzob2o4OeN8i13CyrHLjI=
+Message-ID: <86b013ed-b809-f533-5764-60b22272dce9@digikod.net>
+Date:   Fri, 19 Aug 2022 10:15:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: 
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220817203006.21769-1-gnoack3000@gmail.com>
+ <20220817203006.21769-3-gnoack3000@gmail.com>
+ <e90aaa5d-d6c8-838a-db29-868a30fd8e37@digikod.net> <Yv8elmJ4qfk8/Mw7@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v5 2/4] selftests/landlock: Selftests for file truncation
+ support
+In-Reply-To: <Yv8elmJ4qfk8/Mw7@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dzie=C5=84 dobry,
+Ok, it should be in -next soon. Thanks for your contribution!
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
-proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
-stwa firmie stabilny rozw=C3=B3j.=20
+Would you like to write a syzkaller test to cover this new access right? 
+You only need to update the landlock_fs_accesses file with a call to 
+truncate() returning EACCES and check that it covers 
+hook_path_truncate(). You can take inspiration from this PR: 
+https://github.com/google/syzkaller/pull/3133
+Please CC me, I can help.
 
-Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
-a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
-nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
-po rozwoju firmy.
-
-Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
-nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
-adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
-j=C4=85 je innym.
-
-Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
-o=C5=9Bwiadczonego doradcy finansowego?
+Regards,
+  Mickaël
 
 
-Pozdrawiam
-Jakub Olejniczak
+On 19/08/2022 07:24, Günther Noack wrote:
+> On Thu, Aug 18, 2022 at 10:39:27PM +0200, Mickaël Salaün wrote:
+>> On 17/08/2022 22:30, Günther Noack wrote:
+>>> +/*
+>>> + * Invokes creat(2) and returns its errno or 0.
+>>> + * Closes the opened file descriptor on success.
+>>> + */
+>>> +static int test_creat(const char *const path, mode_t mode)
+>>
+>> This "mode" argument is always 0600. If it's OK with you, I hard code this
+>> mode and push this series to -next with some small cosmetic fixes.
+> 
+> Yes, absolutely. Please do these fixes and push it to -next. :)
+> 
+> Thanks,
+> —Günther
+> 
+> --
