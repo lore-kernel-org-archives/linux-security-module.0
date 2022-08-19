@@ -2,120 +2,180 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC6FC32771
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Aug 2022 20:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDE9C32771
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Aug 2022 21:10:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352055AbiHSUx6 (ORCPT
+        id S1352240AbiHSVKn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Aug 2022 16:53:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51426 "EHLO
+        Fri, 19 Aug 2022 17:10:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352060AbiHSUwg (ORCPT
+        with ESMTP id S1352230AbiHSVKm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Aug 2022 16:52:36 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A173110F682
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Aug 2022 13:52:23 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-32a115757b6so95217677b3.13
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Aug 2022 13:52:22 -0700 (PDT)
+        Fri, 19 Aug 2022 17:10:42 -0400
+Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 031AAE0952
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Aug 2022 14:10:41 -0700 (PDT)
+Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-11c9af8dd3eso6203026fac.10
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Aug 2022 14:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc;
-        bh=jnCzi2soCjCrdoYyE26okeRANWMjNTuMb/vBG8/63Ug=;
-        b=dIpcC3duR2F4UdEnpnHe2+B2ki05YIFseJ6XkifI1ovJCzemg2dHLOQR3Hcrc13yAL
-         Lpy72mYkw+OVc8KXup1+UJK4XLguOgG5HwNBjH22RGBbJMIcWlulfNwQfWuP3eCH1lzl
-         b6B/y6zPicu82sY/bgXGd+sZ7zR21n9PVfNhwwMc7sFL1dgEFNdgDl4r6Df+26JDnzoX
-         D/QTc2Uc0q9CmmICpeKvhxd1UkQnOMlXqy1sHiVX7JddGHfDA7XMLC1N6qy4z3fF6Ds0
-         wKDnL40gO8YfOaMBnPWMebrtf+ROzhZfFnwNXLkDKPFG0O28730Y0sG1orQLamNZ7Y7E
-         ZYzw==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=zmFxI4fcqG+VM79kjsw3Dz4TIlHari2uDbTRTdPXcuI=;
+        b=udeHnstv36JubtLuTYAHvkRsCYyIXRbm68kCEPPrsUYo2bOebLxId89dOQzU1S4+yC
+         XpvNE7bTxDppbvh1Z5i+8BYlB8NX6HNZYEJvnfvvYXkiekcmDZWw6abvSa/FsLIZd6rV
+         KWgXxB+7ZGLahThNN7JXqvYZvRw5WhE1dSDZ08Y+fjG8BT3axeRWbJhWMDnOo5KZX4Es
+         fbFNNM4tvzaBo1fSWTt2NMrB3RsRmi3l0+dnpt7huBR1sA4uPXywbPov39c0ADkwhkZV
+         +xH634tLJSLX2zUecJGjSIeKFE9d8es5JUd39EZksIMYU+tQXh/x5L/cYTEkw71aiPB5
+         3/xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc;
-        bh=jnCzi2soCjCrdoYyE26okeRANWMjNTuMb/vBG8/63Ug=;
-        b=M1oDSAk5lB+15u4dDZZa8oPTLLfzHUKng8GZCJLvW0kzZCPKvKX23FabzT3wOBVl0s
-         tfMo//cmifaTTx5mWmeGzaeJ/qrO7w9dZduOJXghdVpyE+O/rYZ6gpZOB3cSb4ueZsOG
-         j/eYFLqk3naTjRPfZHXwgTaQoJCuwInMQoXmQbfmn3oOJM6LCUhSCyz+KSLyINjNrhEc
-         zHNrwyZIiNUSxzuZzxSEiH+2eB72u59dHsJjOl7tgZf/GkjuX1zkVunttlu6ADFX+p4T
-         7/pBvj9N89SuBRnYruH1ogNKNtWOs66VHNCaq/UAJBb/LrFQ6WZa7yZRD3lmmfHflqYQ
-         sHTg==
-X-Gm-Message-State: ACgBeo2VHBS1I3PERLnA2fCnnbwBFWizrVrjEYOVInERqp/tEELofODY
-        4sJEw/gsE9NdUT793IW/ehsAozP/d55uzaKsRtby
-X-Google-Smtp-Source: AA6agR6tYdLSyLary3+Q5VuCsv3LcSs1JihCOYeNOoWw3HYFbFr1DaLds4QXVaepr+bVaJJ9uL2y6ztcYfkdMgBc8C6B
-X-Received: from ajr0.svl.corp.google.com ([2620:15c:2d4:203:baf:4c5:18b:2c4b])
- (user=axelrasmussen job=sendgmr) by 2002:a81:eb04:0:b0:329:94ef:3e68 with
- SMTP id n4-20020a81eb04000000b0032994ef3e68mr9476724ywm.309.1660942342250;
- Fri, 19 Aug 2022 13:52:22 -0700 (PDT)
-Date:   Fri, 19 Aug 2022 13:52:01 -0700
-In-Reply-To: <20220819205201.658693-1-axelrasmussen@google.com>
-Message-Id: <20220819205201.658693-6-axelrasmussen@google.com>
-Mime-Version: 1.0
-References: <20220819205201.658693-1-axelrasmussen@google.com>
-X-Mailer: git-send-email 2.37.1.595.g718a3a8f04-goog
-Subject: [PATCH v7 5/5] selftests: vm: add /dev/userfaultfd test cases to run_vmtests.sh
-From:   Axel Rasmussen <axelrasmussen@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, zhangyi <yi.zhang@huawei.com>
-Cc:     Axel Rasmussen <axelrasmussen@google.com>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=zmFxI4fcqG+VM79kjsw3Dz4TIlHari2uDbTRTdPXcuI=;
+        b=ka5PL+yXH7k0Cj+mrD1W+wATwsuyVyOML4UrPjBcRA/HjfTBCG+BrQC+ZMpSH3Pr/S
+         bFZp1vfxBMr9XkaX6snTxCVvYt2ax+/WV7qcCwa57dv3sVKhl2fpoI+Ik9mepD4jo+zX
+         +EpfmukDfbhTxLj9yi2J6af2XhVa8oNFZM0PYAPx9A4F4y+Wh1MqOHkeNmQjzrH26w75
+         EK4aE8OIp7Atw2qk3WbsJ2VGOlPpXIR4OLNSJaoRN07MljdpjTLTLzAdbzfec/mxiVQ/
+         j1C+lPU7bObwfyihtgFMG/Qz4PGkaW4r4uZAmhbHlC96/m7harbMA41k4Yiw3byMZEu6
+         3c0w==
+X-Gm-Message-State: ACgBeo0hsBy4MOLLWaIUQTGSL8zDWnwENXTW1W3RAsfS0HXGkrjBvU1k
+        Vj0DcL3rc9hth/JU/X1vGegA5eXiCb+6mi/LwrGG
+X-Google-Smtp-Source: AA6agR4yeIHW1ffPuIU0gnJHMWqUhUxYplMRWQFExgwSU8cLoP2mDo+70sMA6OpN/Lhm/rmY1PbO9kzIe7AIXsog2nY=
+X-Received: by 2002:a05:6870:a78d:b0:11c:437b:ec70 with SMTP id
+ x13-20020a056870a78d00b0011c437bec70mr4812540oao.136.1660943440240; Fri, 19
+ Aug 2022 14:10:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHC9VhTuxxRfJg=Ax5z87Jz6tq1oVRcppB444dHM2gP-FZrkTQ@mail.gmail.com>
+ <8735dux60p.fsf@email.froward.int.ebiederm.org> <CAHC9VhSHJNLS-KJ-Rz1R12PQbqACSksLYLbymF78d5hMkSGc-g@mail.gmail.com>
+ <871qte8wy3.fsf@email.froward.int.ebiederm.org> <CAHC9VhSU_sqMQwdoh0nAFdURqs_cVFbva8=otjcZUo8s+xyC9A@mail.gmail.com>
+ <8735du7fnp.fsf@email.froward.int.ebiederm.org> <CAHC9VhQuRNxzgVeNhDy=p5+RHz5+bTH6zFdU=UvvEhyH1e962A@mail.gmail.com>
+ <87tu6a4l83.fsf@email.froward.int.ebiederm.org> <20220818140521.GA1000@mail.hallyn.com>
+ <CAHC9VhRqBxtV04ARQFPWpMf1aFZo0HP_HiJ+8VpXAT-zXF6UXw@mail.gmail.com> <20220819144537.GA16552@mail.hallyn.com>
+In-Reply-To: <20220819144537.GA16552@mail.hallyn.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 19 Aug 2022 17:10:29 -0400
+Message-ID: <CAHC9VhSZ0aaa3k3704j8_9DJvSNRy-0jfXpy1ncs2Jmo8H0a7g@mail.gmail.com>
+Subject: Re: [PATCH v5 0/4] Introduce security_create_user_ns()
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
+        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        jmorris@namei.org, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
+        casey@schaufler-ca.com, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-team@cloudflare.com,
+        cgzones@googlemail.com, karl@bigbadwolfsecurity.com,
+        tixxdz@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This new mode was recently added to the userfaultfd selftest. We want to
-exercise both userfaultfd(2) as well as /dev/userfaultfd, so add both
-test cases to the script.
+On Fri, Aug 19, 2022 at 10:45 AM Serge E. Hallyn <serge@hallyn.com> wrote:
+> On Thu, Aug 18, 2022 at 11:11:06AM -0400, Paul Moore wrote:
+> > On Thu, Aug 18, 2022 at 10:05 AM Serge E. Hallyn <serge@hallyn.com> wrote:
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-Acked-by: Peter Xu <peterx@redhat.com>
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
----
- tools/testing/selftests/vm/run_vmtests.sh | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+...
 
-diff --git a/tools/testing/selftests/vm/run_vmtests.sh b/tools/testing/selftests/vm/run_vmtests.sh
-index b8e7f6f38d64..e780e76c26b8 100755
---- a/tools/testing/selftests/vm/run_vmtests.sh
-+++ b/tools/testing/selftests/vm/run_vmtests.sh
-@@ -120,13 +120,16 @@ run_test ./gup_test -a
- # Dump pages 0, 19, and 4096, using pin_user_pages:
- run_test ./gup_test -ct -F 0x1 0 19 0x1000
- 
--run_test ./userfaultfd anon 20 16
--# Hugetlb tests require source and destination huge pages. Pass in half the
--# size ($half_ufd_size_MB), which is used for *each*.
--run_test ./userfaultfd hugetlb "$half_ufd_size_MB" 32
--run_test ./userfaultfd hugetlb_shared "$half_ufd_size_MB" 32 "$mnt"/uffd-test
--rm -f "$mnt"/uffd-test
--run_test ./userfaultfd shmem 20 16
-+uffd_mods=("" ":dev")
-+for mod in "${uffd_mods[@]}"; do
-+	run_test ./userfaultfd anon${mod} 20 16
-+	# Hugetlb tests require source and destination huge pages. Pass in half
-+	# the size ($half_ufd_size_MB), which is used for *each*.
-+	run_test ./userfaultfd hugetlb${mod} "$half_ufd_size_MB" 32
-+	run_test ./userfaultfd hugetlb_shared${mod} "$half_ufd_size_MB" 32 "$mnt"/uffd-test
-+	rm -f "$mnt"/uffd-test
-+	run_test ./userfaultfd shmem${mod} 20 16
-+done
- 
- #cleanup
- umount "$mnt"
+> > > I do strongly sympathize with Eric's points.  It will be very easy, once
+> > > user namespace creation has been further restricted in some distros, to
+> > > say "well see this stuff is silly" and go back to simply requiring root
+> > > to create all containers and namespaces, which is generally quite a bit
+> > > easier anywway.  And then, of course, give everyone root so they can
+> > > start containers.
+> >
+> > That's assuming a lot.  Many years have passed since namespaces were
+> > first introduced, and awareness of good security practices has
+> > improved, perhaps not as much as any of us would like, but to say that
+> > distros, system builders, and even users are the same as they were so
+> > many years ago is a bit of a stretch in my opinion.
+>
+> Maybe.  But I do get a bit worried based on some of what I've been
+> reading in mailing lists lately.  Kernel dev definitely moves like
+> fashion - remember when every api should have its own filesystem?
+> That was not a different group of people.
+
+I'm not going to argue against the idea that kernel development is
+subject to fads, I just don't agree that adding a LSM control point
+for user namespace creation is going to be the end of user namespaces.
+
+> > However, even ignoring that for a moment, do we really want to go to a
+> > place where we dictate how users compose and secure their systems?
+> > Linux "took over the world" because it offered a level of flexibility
+> > that wasn't really possible before, and it has flourished because it
+> > has kept that mentality.  The Linux Kernel can be shoehorned onto most
+> > hardware that you can get your hands on these days, with driver
+> > support for most anything you can think to plug into the system.  Do
+> > you want a single-user environment with no per-user separation?  We
+> > can do that.  Do you want a traditional DAC based system that leans
+> > heavy on ACLs and capabilities?  We can do that.  Do you want a
+> > container host that allows you to carve up the system with a high
+> > degree of granularity thanks to the different namespaces?  We can do
+> > that.  How about a system that leverages the LSM to enforce a least
+> > privilege ideal, even on the most privileged root user?  We can do
+> > that too.  This patchset is about giving distro, system builders, and
+> > users another choice in how they build their system.  We've seen both
+>
+> Oh, you misunderstand.  Whereas I do feel there are important concerns in
+> Eric's objections, and whereas I don't feel this set sufficiently
+> addresses the problems that I see and outlined above, I do see value in
+> this set, and was not aiming to deter it.  We need better ways to
+> mitigate a certain clas sof 0-days without completely disallowing use of
+> user namespaces, and this may help.
+
+Ah, thanks for the explanation, I missed that (obviously) in your
+previous email.  If I'm perfectly honest, I suppose the protracted
+debate with Eric has also left me a little overly sensitive to any
+perceived arguments against this patchset.
+
+> > in this patchset and in previously failed attempts that there is a
+> > definite want from a user perspective for functionality such as this,
+> > and I think it's time we deliver it in the upstream kernel so they
+> > don't have to keep patching their own systems with out-of-tree
+> > patches.
+> >
+> > > Eric and Paul, I wonder, will you - or some people you'd like to represent
+> > > you - be at plumbers in September?  Should there be a BOF session there?  (I
+> > > won't be there, but could join over video)  I think a brainstorming session
+> > > for solutions to the above problems would be good.
+> >
+> > Regardless of if Eric or I will be at LPC, it is doubtful that all of
+> > the people who have participated in this discussion will be able to
+> > attend, and I think it's important that the users who are asking for
+> > this patchset have a chance to be heard in each forum where this is
+> > discussed.  While conferences are definitely nice - I definitely
+> > missed them over the past couple of years - we can't use them as a
+> > crutch to help us reach a conclusion on this issue; we've debated much
+>
+> No I wasn't thinking we would use LPC to decide on this patchset.  As far
+> as I can see, the patchset is merged.
+
+While I maintain that Frederick's patches are a good thing, I'm not
+going to consider them "merged" until I see them in Linus' tree or
+Linus decided to voice his support on the lists.  These patches do
+have Eric's NACK, and a maintainer's NACK isn't something to take
+lightly.  I certainly don't.
+
+>  I am hoping we can come up with
+> "something better" to address people's needs, make everyone happy, and
+> bring forth world peace.  Which would stack just fine with what's here
+> for defense in depth.
+>
+> You may well not be interested in further work, and that's fine.  I need
+> to set aside a few days to think on this.
+
+I'm happy to continue the discussion as long as it's constructive; I
+think we all are.  My gut feeling is that Frederick's approach falls
+closest to the sweet spot of "workable without being overly offensive"
+(*cough*), but if you've got an additional approach in mind, or an
+alternative approach that solves the same use case problems, I think
+we'd all love to hear about it.
+
 -- 
-2.37.1.595.g718a3a8f04-goog
-
+paul-moore.com
