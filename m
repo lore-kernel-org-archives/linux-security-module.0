@@ -2,165 +2,98 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0A1C25B08
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Aug 2022 18:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D49EC25B08
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Aug 2022 20:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229703AbiHTSL0 (ORCPT
+        id S234607AbiHTU0k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 Aug 2022 14:11:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48698 "EHLO
+        Sat, 20 Aug 2022 16:26:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiHTSL0 (ORCPT
+        with ESMTP id S230096AbiHTU0j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 Aug 2022 14:11:26 -0400
+        Sat, 20 Aug 2022 16:26:39 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56723FA11;
-        Sat, 20 Aug 2022 11:11:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5087B27CFA;
+        Sat, 20 Aug 2022 13:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=iFejAed+UMnGncLV0egPSQoz7oFNyDnBGzFlyTFey3U=; b=EsGZJ6fFqH43WC0HIidZeFWCD7
-        P1KD0a6wkuLtjzFQINdbVhgoaAOYEWlxiKBWUVgHw7mdQTiPT3z0hotx0gnt6PJfREjvSIpdxIgdt
-        64gWSZR1VkcHmRLLwY0JHhprs84OV7i3aoG4SXvgU3WSPYzwcIM5ztdwv+ZlBSreqYeIBvoEsLr4n
-        FDUDWUXxlsR0N76MgHOtyAoV7xVymhfWe4pEKdQFZ13BV4hIRd8LmNdM1Q/HJ7TzuCiAfVNWeVICQ
-        XVuUm2RR5KEpksTPT8Els0OyX+47sUE/kg5ZT3xBNc/43tlm3JoRZyFkDIK1CO9kCZBgPETIVrwzH
-        gGymeYpg==;
+        bh=hOCm0Hz0m+lBIrzxUnWimgMR+C8pTt4CRmgMxqnfSMk=; b=rA/t41D8U+EWZ5Iyx8G21VoU+y
+        yOz55s/LFZVbqHv1oFjOCBQYC+IFgKEW/inQcPNPyTdujwoNChRLLRy6DiDFjHl50rrFKxqsvmIuG
+        h6F+31mOgQUnQmTPARFXtlJaN9bda2yv/0G8oHeaBUbzxr+9akHextbRqdfeI9WGYHrczLD6SP79P
+        xXhNp/fVW6NdrL473WZj12d2KKNhKjMEFSe6GozMNJD413EMprHrdz29190Wun00sgd/V4uzg1zcJ
+        h7LCiyXA6D0beH30zLijOoo20BgK2Y0prwRDFeFTYgoZD2ipVtdZ1WM5w7fw9RNd+6iUvFlJrAniw
+        rTRhmbVg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oPSwN-006RTZ-22;
-        Sat, 20 Aug 2022 18:11:23 +0000
-Date:   Sat, 20 Aug 2022 19:11:23 +0100
+        id 1oPV3F-006TIA-SQ;
+        Sat, 20 Aug 2022 20:26:37 +0000
+Date:   Sat, 20 Aug 2022 21:26:37 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org
-Subject: Subject: [PATCH 01/11] ->getprocattr(): attribute name is const char
- *, TYVM...
-Message-ID: <YwEjy6vaFHEVPwlz@ZenIV>
-References: <YwEjnoTgi7K6iijN@ZenIV>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 2/2] tomoyo: struct path it might get from LSM callers won't
+ have NULL dentry or mnt
+Message-ID: <YwFDfYcRKIYEkr43@ZenIV>
+References: <YwFDLhioFG5Mlwws@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YwEjnoTgi7K6iijN@ZenIV>
+In-Reply-To: <YwFDLhioFG5Mlwws@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-cast of ->d_name.name to char * is completely wrong - nothing is
-allowed to modify its contents.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/proc/base.c                | 2 +-
- include/linux/lsm_hook_defs.h | 2 +-
- include/linux/security.h      | 4 ++--
- security/apparmor/lsm.c       | 2 +-
- security/security.c           | 4 ++--
- security/selinux/hooks.c      | 2 +-
- security/smack/smack_lsm.c    | 2 +-
- 7 files changed, 9 insertions(+), 9 deletions(-)
+ security/tomoyo/file.c     | 2 +-
+ security/tomoyo/realpath.c | 9 ++-------
+ 2 files changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 93f7e3d971e4..e347b8ce140c 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2728,7 +2728,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
- 		return -ESRCH;
+diff --git a/security/tomoyo/file.c b/security/tomoyo/file.c
+index 1e6077568fde..8f3b90b6e03d 100644
+--- a/security/tomoyo/file.c
++++ b/security/tomoyo/file.c
+@@ -717,7 +717,7 @@ int tomoyo_path_number_perm(const u8 type, const struct path *path,
+ 	int idx;
  
- 	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
--				      (char*)file->f_path.dentry->d_name.name,
-+				      file->f_path.dentry->d_name.name,
- 				      &p);
- 	put_task_struct(task);
- 	if (length > 0)
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 806448173033..03360d27bedf 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -253,7 +253,7 @@ LSM_HOOK(int, 0, sem_semop, struct kern_ipc_perm *perm, struct sembuf *sops,
- LSM_HOOK(int, 0, netlink_send, struct sock *sk, struct sk_buff *skb)
- LSM_HOOK(void, LSM_RET_VOID, d_instantiate, struct dentry *dentry,
- 	 struct inode *inode)
--LSM_HOOK(int, -EINVAL, getprocattr, struct task_struct *p, char *name,
-+LSM_HOOK(int, -EINVAL, getprocattr, struct task_struct *p, const char *name,
- 	 char **value)
- LSM_HOOK(int, -EINVAL, setprocattr, const char *name, void *value, size_t size)
- LSM_HOOK(int, 0, ismaclabel, const char *name)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1bc362cb413f..93488c01d9bd 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -461,7 +461,7 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
- int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
- 			unsigned nsops, int alter);
- void security_d_instantiate(struct dentry *dentry, struct inode *inode);
--int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+int security_getprocattr(struct task_struct *p, const char *lsm, const char *name,
- 			 char **value);
- int security_setprocattr(const char *lsm, const char *name, void *value,
- 			 size_t size);
-@@ -1301,7 +1301,7 @@ static inline void security_d_instantiate(struct dentry *dentry,
- { }
+ 	if (tomoyo_init_request_info(&r, NULL, tomoyo_pn2mac[type])
+-	    == TOMOYO_CONFIG_DISABLED || !path->dentry)
++	    == TOMOYO_CONFIG_DISABLED)
+ 		return 0;
+ 	idx = tomoyo_read_lock();
+ 	if (!tomoyo_get_realpath(&buf, path))
+diff --git a/security/tomoyo/realpath.c b/security/tomoyo/realpath.c
+index df4798980416..1c483ee7f93d 100644
+--- a/security/tomoyo/realpath.c
++++ b/security/tomoyo/realpath.c
+@@ -240,11 +240,8 @@ char *tomoyo_realpath_from_path(const struct path *path)
+ 	char *name = NULL;
+ 	unsigned int buf_len = PAGE_SIZE / 2;
+ 	struct dentry *dentry = path->dentry;
+-	struct super_block *sb;
++	struct super_block *sb = dentry->d_sb;
  
- static inline int security_getprocattr(struct task_struct *p, const char *lsm,
--				       char *name, char **value)
-+				       const char *name, char **value)
- {
- 	return -EINVAL;
- }
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index e29cade7b662..f56070270c69 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -614,7 +614,7 @@ static int apparmor_sb_pivotroot(const struct path *old_path,
- 	return error;
- }
- 
--static int apparmor_getprocattr(struct task_struct *task, char *name,
-+static int apparmor_getprocattr(struct task_struct *task, const char *name,
- 				char **value)
- {
- 	int error = -ENOENT;
-diff --git a/security/security.c b/security/security.c
-index 14d30fec8a00..d8227531e2fd 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2057,8 +2057,8 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
- }
- EXPORT_SYMBOL(security_d_instantiate);
- 
--int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
--				char **value)
-+int security_getprocattr(struct task_struct *p, const char *lsm,
-+			 const char *name, char **value)
- {
- 	struct security_hook_list *hp;
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 79573504783b..c8168d19fb96 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6327,7 +6327,7 @@ static void selinux_d_instantiate(struct dentry *dentry, struct inode *inode)
- }
- 
- static int selinux_getprocattr(struct task_struct *p,
--			       char *name, char **value)
-+			       const char *name, char **value)
- {
- 	const struct task_security_struct *__tsec;
- 	u32 sid;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 001831458fa2..434b348d8fcd 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3479,7 +3479,7 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
-  *
-  * Returns the length of the smack label or an error code
-  */
--static int smack_getprocattr(struct task_struct *p, char *name, char **value)
-+static int smack_getprocattr(struct task_struct *p, const char *name, char **value)
- {
- 	struct smack_known *skp = smk_of_task_struct_obj(p);
- 	char *cp;
+-	if (!dentry)
+-		return NULL;
+-	sb = dentry->d_sb;
+ 	while (1) {
+ 		char *pos;
+ 		struct inode *inode;
+@@ -264,10 +261,8 @@ char *tomoyo_realpath_from_path(const struct path *path)
+ 		inode = d_backing_inode(sb->s_root);
+ 		/*
+ 		 * Get local name for filesystems without rename() operation
+-		 * or dentry without vfsmount.
+ 		 */
+-		if (!path->mnt ||
+-		    (!inode->i_op->rename &&
++		if ((!inode->i_op->rename &&
+ 		     !(sb->s_type->fs_flags & FS_REQUIRES_DEV)))
+ 			pos = tomoyo_get_local_path(path->dentry, buf,
+ 						    buf_len - 1);
 -- 
 2.30.2
 
