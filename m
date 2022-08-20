@@ -2,95 +2,61 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A39DC25B08
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Aug 2022 09:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3826C25B08
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Aug 2022 18:10:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244490AbiHTJiR (ORCPT
+        id S229520AbiHTSKm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 Aug 2022 05:38:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34082 "EHLO
+        Sat, 20 Aug 2022 14:10:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231132AbiHTJiP (ORCPT
+        with ESMTP id S229470AbiHTSKl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 Aug 2022 05:38:15 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95FC0626F;
-        Sat, 20 Aug 2022 02:38:14 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id c39so8224078edf.0;
-        Sat, 20 Aug 2022 02:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc;
-        bh=MUA2Aecgy09+c0hu2ehsJ65Aw6U6m/BGLf6lup2uQPA=;
-        b=nfmG5vZl2xGSb5E8QdpY9QC+2r4ThjuXmQRHPagjx5q+d7uIaHhtndeVKj13pBRvFw
-         gp2CFMm1blO79s5zPpG9kZEDXIDPpRzEDUvFOgxaLyoR1vBW+7OeilN2g5HPZAdBd5Al
-         7ejT/eLAAjdlvFymXreU4LcsaojFE0dqVjgZeJfJXPXvCfEPMlyAnRC97RjmND1WrzVj
-         HLp1kSp3CfmmVPkXoUA36k3dTEZjRGacA+DFJ8HsQ3KS8RLzv2Sn0f+FB91rrl4cAnVf
-         rt5ag38ozxQ6GaHSE777HIaAebCEDo2lX8YtAGVvlXYLUOyFrWFf7blyv2hVWWqnvCh0
-         KNHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc;
-        bh=MUA2Aecgy09+c0hu2ehsJ65Aw6U6m/BGLf6lup2uQPA=;
-        b=I3sE33MwG4z2gpDWMORZA1ftLO3hAncpGkrPpLgj3TFRhsy7bhhrBC5vCSmsNq6zgG
-         fw1DHHlVZklGYKWeB0JAt4j66g9OijLq45IWr6O6auPP/5YhF1+BiOefqZrlnhBvLgrL
-         pG4Hf9QyJpcp9JdNBEEJeRSKMmPqUtRlt0kbmQIw0QGusJXoe94SFrUlltT4Z/eAubdS
-         Z79zuQAGKyrgGhEQemxOSPreHbA/Nv8G+UzsXASgPmlisu+w3O2jOW0ywYu6WurVhAT5
-         YXAliDjdw+BrnSc1ONmX+eOCUNen1Gkok6wLbidTj1yy1/lLHLmh2PRWSKLnGycrN692
-         2xQg==
-X-Gm-Message-State: ACgBeo3cNPV7MrfBFb7YLOUxIbldt3n22DHbHZnnAC3hBHsOyuZ5RAm1
-        HqT7AK2ugIK4KtYc6zhnx0E=
-X-Google-Smtp-Source: AA6agR4YG9DyBOI+iz3TLjyy9IL/Wu0H7NjKecjTrAWm0mn5T24UmzHqd1ID6Jgvh+iahJDl6okqIA==
-X-Received: by 2002:a05:6402:440c:b0:43a:1124:e56a with SMTP id y12-20020a056402440c00b0043a1124e56amr9225291eda.134.1660988293030;
-        Sat, 20 Aug 2022 02:38:13 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id pj27-20020a170906d79b00b007304924d07asm3480317ejb.172.2022.08.20.02.38.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Aug 2022 02:38:12 -0700 (PDT)
-Date:   Sat, 20 Aug 2022 11:38:10 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v5 2/4] selftests/landlock: Selftests for file truncation
- support
-Message-ID: <YwCrgigS9gZKLW0Z@nuc>
-References: <20220817203006.21769-1-gnoack3000@gmail.com>
- <20220817203006.21769-3-gnoack3000@gmail.com>
- <e90aaa5d-d6c8-838a-db29-868a30fd8e37@digikod.net>
- <Yv8elmJ4qfk8/Mw7@nuc>
- <86b013ed-b809-f533-5764-60b22272dce9@digikod.net>
- <2e7afd64-d36f-f81d-2ae4-1a99769e173c@digikod.net>
+        Sat, 20 Aug 2022 14:10:41 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CD363F338;
+        Sat, 20 Aug 2022 11:10:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=UCEL7pAe29ST7v5wLOwqf+kjBdiXLKyV4Iu1lfQptWU=; b=OcWSDB4nYGvNO+WR9QnNIG04jb
+        pHpYtVk37phwELYI5oghFtwW4GAwaAR57o9LAuxguhmIvQXfsVf2Utjd8qKfx3xNneV2XO+LFJJ4W
+        oa1slhPwyFPd7CniFRgY1JjuwO09ZSX5aG7QhaILFKhs362Qf3zn5KJ2yp+YFbAJ92OIEmfCE5mGS
+        JMT7cVmymMwBi13oFPQwM1IjXITTQT/1FP3fHgC8qmaxdzAGeTGv2HDznXW9aMiIg1PgoLFauoT+k
+        MPPvkU2ocUcaATZeyxjjNp+M4gR5s27OEszGbzBwxgTg0rsJAcgm1cmN9Qyf6bEmaLanZLTfRhR4b
+        +xpgHgfg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1oPSve-006RT5-Uf;
+        Sat, 20 Aug 2022 18:10:39 +0000
+Date:   Sat, 20 Aug 2022 19:10:38 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org
+Subject: [PATCHES] struct path constification
+Message-ID: <YwEjnoTgi7K6iijN@ZenIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2e7afd64-d36f-f81d-2ae4-1a99769e173c@digikod.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 19, 2022 at 10:36:15AM +0200, Mickaël Salaün wrote:
-> FYI, my -next branch is here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
->
-> Günther, let me know if everything is OK.
+	This is mostly whack-a-mole stuff - a bunch of places
+are passing struct path pointers around, without bothering
+to mark them const, even though they are not going to try
+and modify the contents of struct path.
 
-Thanks, looks good.
+	It's a bad practice, since there are invariants along
+the lines of "file->f_path stays unchanged open-to-release"
+and verifying those can get very unpleasant when you are
+forced to take detours down the long call chains that could've
+been avoided.
 
-Good idea to also fix the date in the documentation, I had overlooked that.
+	Patches in that pile are independent from each other
+and if anyone wants to grab some of them into subsystem's
+tree - just say so; I'll be happy to exclude those from the
+vfs.git branch if they go into another tree.
 
-
-> Konstantin, please rebase your work on it. It should mainly conflict with
-> changes related to the Landlock ABI version.
-
-+1, I believe we have both increased the ABI version to 3 in the two patch sets.
-
---
+	Currently they are in vfs.git#work.path; individual
+patches in followups.
