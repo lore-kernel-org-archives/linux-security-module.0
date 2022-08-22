@@ -2,180 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FE5C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 21:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA267C32792
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 21:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238048AbiHVVTD (ORCPT
+        id S238035AbiHVVVI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Aug 2022 17:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44314 "EHLO
+        Mon, 22 Aug 2022 17:21:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238000AbiHVVSz (ORCPT
+        with ESMTP id S238056AbiHVVVF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Aug 2022 17:18:55 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 853D91C917;
-        Mon, 22 Aug 2022 14:18:53 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id ce26so8020603ejb.11;
-        Mon, 22 Aug 2022 14:18:53 -0700 (PDT)
+        Mon, 22 Aug 2022 17:21:05 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC86D520A0
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:21:03 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id h27so8916295qkk.9
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:21:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc;
-        bh=hDBKv/8ETnnMAaccShR4P83NaWgmzGbvbXWVBFeEpZs=;
-        b=Agb6dLlefvQ0ywqpkO9npD7PMFEuELAonA9/uR/3ED/19kgFs48eCTwzWibSYdoYB3
-         DrDFaWXL/dEe6q9xW3acXvvfsXr/bTouRaWYsCZvNAH68cRm22CJn1JYJuXOugYALhpp
-         dG/Ff+2OpW/POnCZfTawOTpMN2t3hqtKfEIisml3Q35HWId9NYf9Fb9KZFxnoidiOwGk
-         m97IbqdVCKN3GuvqZZikN/droGeIoodQcg4Ak0WbZ8HU6Gm+anG0rfm4NCNNvUDf4t9h
-         AjxIfDOEFJ9LtFYH0k28wzowKEg4hxuQH7kOmpU6d67MZ0HFTy2i6+8pZF4oXnUM2AFD
-         Nnag==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:user-agent:message-id:date
+         :cc:to:from:subject:from:to:cc;
+        bh=5RQRl53BMMbcV3UBpkUvMw0kVRmuERrDcog8F29EXKk=;
+        b=XxTaY88L6YyDi4q4wmCk8eVhxMP+iLwiTQfB+DWrM8PTcGLBvO8N71ubEFVUt83vYA
+         wdnD/fZmhMHsA9CfRa30LDpuYjZBFBee5jEo0dzDLzzEvvtbBR8P9Btu6S9Njwn6lz9q
+         D5p7andXJ/eFjisCdzDEogdJKwtPCaGa425/HNYL6WAYn8VN/00nGGzBslxj6FN2XFUe
+         RL/93480d1VSeSt+2h/uOGO55rmFRfWs6Cah4Wzys7DoYbZ+2N0WLpHIs+LMiA/yddYU
+         40Hu9gdGDOMjJyTZm4sLwRZdlJ+jh/vXDMuYpQ26A1fELppD8lNBdIUPP8kKDUzyzMn2
+         D5lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc;
-        bh=hDBKv/8ETnnMAaccShR4P83NaWgmzGbvbXWVBFeEpZs=;
-        b=CA5V8/d30CUGsji1Uu+TEhydXUbKcPGJAucc8Vyr4MqQT4ljLHJ7jsnreeLsxXb/1i
-         sylSNvaorMN+bbVPp8lz7Qmum/k7lrpUrSjpstfc9iop7gKtLbm9LukrUQ4J6DaLqBKf
-         fAK36Iv17eacq9tiFNyL1wWlcOSEOO8jdBfiUc35RhAEYt//u0r+AbQlqxmZnMjLKVRu
-         iAmHoPaQNZbt7ITldetrs4F2DT/dtlev95KcqdyEzu1/z3UgipamWcfPuIk6WYgZllbW
-         nwCOPPVbGvebphJZZ6xCOIseydBpWdwA3aPKXCOgyjyiIGnMruBZA2n1ueNRMkI0Xtmp
-         9nhQ==
-X-Gm-Message-State: ACgBeo0XXugRZjymqjsi9Av6/Sf7n8RwqyWzaeHtMG1C22KE/RJOxaT5
-        Mw8mmAkIgMAnAJIB58kyxtY=
-X-Google-Smtp-Source: AA6agR4flPRskv4WzfFSo3rseB/ZFjSM0puxTqggg6Nj7vbqYDmEL65VVvD88GkBoLsO+Q0TEmHT8Q==
-X-Received: by 2002:a17:907:1b0e:b0:72f:9b43:b98c with SMTP id mp14-20020a1709071b0e00b0072f9b43b98cmr14059971ejc.710.1661203132032;
-        Mon, 22 Aug 2022 14:18:52 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id m26-20020a056402051a00b004464c3de6dasm280381edv.65.2022.08.22.14.18.51
+        h=content-transfer-encoding:mime-version:user-agent:message-id:date
+         :cc:to:from:subject:x-gm-message-state:from:to:cc;
+        bh=5RQRl53BMMbcV3UBpkUvMw0kVRmuERrDcog8F29EXKk=;
+        b=tEtADMGtsc7GOkX3zLwAJwoNK6BEw/+fvRd5yr1Xdc9D1NRrnfUGxuGUdee+0UOLcw
+         lPZILpylkEjNpLpG/kHdFW9WfAGuFlUnk+OdAe1hnXGl+0yD8uoqOc+Lawi9e9/0GhpZ
+         TMEWgpJYFV5qqoyxXjK3XPEq2sa6869pvHxh6t2P3nujvD9THwo5KoMxbk97X1ryV9jq
+         jBYY4VluEOsDvQdyo0n8hssxt4YZBixwJtXCmHAl1ehlkgwp7zCook9saGzcXYsVzT2M
+         6fY3JWswrc7XKM8AoITi9PmfCuQ1/54F8ALmfTi9bHnV7cOSv2Q+fgRWLDxoO/lQswkU
+         SH0A==
+X-Gm-Message-State: ACgBeo0DJPrz2zzgxuLzmsOcwwDzQdgRyVeH30p9RNQfFlWiZKzDe9Uz
+        6/qAceApIaoO/th3288Bbs5tBFuEilFn
+X-Google-Smtp-Source: AA6agR5HRvyFM8nlzlvFRus8PX8jMZnrW3P+rNROq/qiCc53eyykqUoFMwCw7xUqAQrocMjVabC3Ng==
+X-Received: by 2002:a37:cc5:0:b0:6bb:93e9:54f with SMTP id 188-20020a370cc5000000b006bb93e9054fmr13958588qkm.114.1661203262755;
+        Mon, 22 Aug 2022 14:21:02 -0700 (PDT)
+Received: from localhost (pool-96-237-52-46.bstnma.fios.verizon.net. [96.237.52.46])
+        by smtp.gmail.com with ESMTPSA id m1-20020a05620a290100b006b95f832aebsm11627625qkp.96.2022.08.22.14.21.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Aug 2022 14:18:51 -0700 (PDT)
-Date:   Mon, 22 Aug 2022 23:18:49 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Xiu Jianfeng <xiujianfeng@huawei.com>, mic@digikod.net,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        shuah@kernel.org, corbet@lwn.net,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH -next 0/5] landlock: add chmod and chown support
-Message-ID: <YwPyuX7oao6EqTvJ@nuc>
-References: <20220822114701.26975-1-xiujianfeng@huawei.com>
- <YwPWN/d15S24PuLS@nuc>
- <39df1a34-51dc-da55-ff1c-59cab896c8a0@schaufler-ca.com>
+        Mon, 22 Aug 2022 14:21:02 -0700 (PDT)
+Subject: [PATCH 0/3] LSM hooks for IORING_OP_URING_CMD
+From:   Paul Moore <paul@paul-moore.com>
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        io-uring@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Date:   Mon, 22 Aug 2022 17:21:01 -0400
+Message-ID: <166120321387.369593.7400426327771894334.stgit@olly>
+User-Agent: StGit/1.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <39df1a34-51dc-da55-ff1c-59cab896c8a0@schaufler-ca.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 22, 2022 at 12:35:18PM -0700, Casey Schaufler wrote:
-> On 8/22/2022 12:17 PM, Günther Noack wrote:
-> > Hi!
-> >
-> > Very exciting to see! Thank you for sending this! :)
-> >
-> > I'm just throwing in some comments based on the very similar truncate
-> > patch set, in the hope that it helps. (But obviously, Mickaël Salaün
-> > has the last word on this code.)
-> >
-> > Slightly higher level question: Should we start to group the
-> > functionality of multiple LSM hooks under one Landlock flag? (Will it
-> > be harder to change the LSM hook interface in the future if we
-> > continue to add one flag per hook? Or is this structure already
-> > exposed to userspace by other LSMs?)
->
-> I'm not a landlock expert. The question is nonsensical, yet somewhat
-> frightening nonetheless. Could you put just a touch more context into
-> what you're asking for?
+This patchset includes three patches: one to add a new LSM hook for
+the IORING_OP_URING_CMD operation, one to add the SELinux
+implementation for the new hook, and one to enable
+IORING_OP_URING_CMD for /dev/null.  The last patch, the /dev/null
+support, is obviously not critical but it makes testing so much
+easier and I believe is in keeping with the general motivation behind
+/dev/null.
 
-By "Landlock flags", I meant the integer that Landlock uses to
-represent the set of possible operations on a file hierarchy:
+Luis' patch has already been vetted by Jens and the io_uring folks,
+so the only new bits are the SELinux implementation and the trivial
+/dev/null implementation of IORING_OP_URING_CMD.  Assuming no one
+has any objections over the next few days, I'll plan on sending this
+up to Linus during the v6.0-rcX cycle.
 
-Landlock's file system access rights (access_mode_t on the kernel
-side) are defined with an integer with flags (LANDLOCK_ACCESS_FS_*)
-for different operations that one might do with files. They get used
-from userspace to control what is permitted on which parts of the file
-system. (Docs: https://docs.kernel.org/userspace-api/landlock.html)
+I believe Casey is also currently working on Smack support for the
+IORING_OP_URING_CMD hook, and as soon as he is ready I can add it
+to this patchset (or Casey can send it up himself).
 
-Currently most of the available Landlock flags map pretty closely to
-one of the file- and path-related LSM hooks. (See various hook
-implementations in security/landlock/fs.c)
+-Paul
 
-The file system operations that Landlock doesn't cover yet (as of
-kernel 5.19) are listed below, and there are potentially a few more
-that might be missing. I suspect/hope that there will be more patches
-in the style of the truncate/chmod/chown patches, which will add that
-coverage.
+---
 
-The question is basically:
-When these patches get added, how should the userspace-exposed
-Landlock file system access rights map to the LSM hooks for these
-upcoming Landlock features? Should each of the newly covered
-operations have its own flag, or is it better to group them?
+Luis Chamberlain (1):
+      lsm,io_uring: add LSM hooks for the new uring_cmd file op
 
-(It's well possible that the right answer is "one flag per feature",
-but I feel it still makes sense to ask this before all these patches
-get written?)
+Paul Moore (2):
+      selinux: implement the security_uring_cmd() LSM hook
+      /dev/null: add IORING_OP_URING_CMD support
 
-—Günther
 
-> > For example, some of the "missing" operations listed on the Landlock
-> > documentation could also be grouped roughly as:
-> >
-> > Modifying files:
-> >  - truncate
-> >
-> > Modifying file metadata:
-> >  - chmod
-> >  - chown
-> >  - setxattr
-> >  - utime
-> >
-> > Observing files (check presence and file metadata):
-> >  - access
-> >  - stat
-> >  - readlink, following links (can observe symlink presence)
-> >  - chdir (can observe dir presence and 'x' attribute)
-> >
-> > Ungrouped:
-> >  - flock
-> >  - ioctl
-> >  - fcntl
-> >
-> > Do you have opinions on this?
-> >
-> > —Günther
-> >
-> > On Mon, Aug 22, 2022 at 07:46:56PM +0800, Xiu Jianfeng wrote:
-> >> hi,
-> >>   this patchset adds chmod and chown support for landlock
-> >>
-> >> Xiu Jianfeng (5):
-> >>   landlock: expand access_mask_t to u32 type
-> >>   landlock: add chmod and chown support
-> >>   landlock/selftests: add selftests for chmod and chown
-> >>   landlock/samples: add chmod and chown support
-> >>   landlock: update chmod and chown support in document
-> >>
-> >>  Documentation/userspace-api/landlock.rst     |   8 +-
-> >>  include/uapi/linux/landlock.h                |   8 +-
-> >>  samples/landlock/sandboxer.c                 |  12 +-
-> >>  security/landlock/fs.c                       |  16 +-
-> >>  security/landlock/limits.h                   |   2 +-
-> >>  security/landlock/ruleset.h                  |   2 +-
-> >>  security/landlock/syscalls.c                 |   2 +-
-> >>  tools/testing/selftests/landlock/base_test.c |   2 +-
-> >>  tools/testing/selftests/landlock/fs_test.c   | 234 ++++++++++++++++++-
-> >>  9 files changed, 274 insertions(+), 12 deletions(-)
-> >>
-> >> --
-> >> 2.17.1
-> >>
-> > --
+ drivers/char/mem.c                  |  6 ++++++
+ include/linux/lsm_hook_defs.h       |  1 +
+ include/linux/lsm_hooks.h           |  3 +++
+ include/linux/security.h            |  5 +++++
+ io_uring/uring_cmd.c                |  5 +++++
+ security/security.c                 |  4 ++++
+ security/selinux/hooks.c            | 24 ++++++++++++++++++++++++
+ security/selinux/include/classmap.h |  2 +-
+ 8 files changed, 49 insertions(+), 1 deletion(-)
 
---
