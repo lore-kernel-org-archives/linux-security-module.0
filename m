@@ -2,112 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EAEEC28D13
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 22:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DD6C32792
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 23:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238478AbiHVWg4 (ORCPT
+        id S234365AbiHVXJb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Aug 2022 18:36:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52388 "EHLO
+        Mon, 22 Aug 2022 19:09:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238431AbiHVWg4 (ORCPT
+        with ESMTP id S233004AbiHVXJa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Aug 2022 18:36:56 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EBC5142C
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 15:36:54 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id c16-20020a17090aa61000b001fb3286d9f7so225292pjq.1
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 15:36:54 -0700 (PDT)
+        Mon, 22 Aug 2022 19:09:30 -0400
+Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF0D0240B4
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 16:09:29 -0700 (PDT)
+Received: by mail-ot1-x32b.google.com with SMTP id d18-20020a9d72d2000000b0063934f06268so1969969otk.0
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 16:09:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=U6f4POvMEJ4MqEhH1l1XcrUcGrKeoTJNzsuGYlXM760=;
-        b=V6bX+bfzYav2Uts4onaAr6hETwzzqGBdFgC+CbMkVmSGShCE+1MozbKUQdwywWeq8p
-         mmxXgoCC2SDNnIl85H2ASWchBI0HK9kFPgjX6TsV6ZYDPCRF4dfewHC3cNpchqo6qSKh
-         Pf1Ex/cEkoH6RWrc2HK3ImQNEq6zyiDjNZZz0fvt1TqswkPyMg6CPc+9YFHXUJZmgVbJ
-         RhyucVOCRSfhpS5880w+lyCqeWQpV3CHBomAZAfAIoIXKPhWjPMS9MWpIJTaBI41X9GJ
-         hTbn9T3Von21ZmlwPRfWWXxPF2Azl0k+ohsCvUSoHihOTFQSvzy0e4D8yvhjnKqxGIl0
-         HfoA==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=1TNSDsn5a6YjqytkykGHlEca8O4pUSy2rYwmIIw8EBY=;
+        b=tFrKHjzXEuwp616TFpLbx4Xu7i37aqHZStlsMUeBaIN0zpAaFKPx0ZEu3wWQ/iSC9Q
+         IcnHPoGDwFDP/UMw3S3W8BW2ycro4vn3Qgrx4+GePG12HVN3PYQZYJqxM19FWk1OxBqG
+         JbZC8uE1t/5NPXKDkkwzdMvao/O8ZgYbpO7pCFCX2Mh/7qg2Tbiz86R1nQAvjf03Mdjh
+         8spVC3mwqTbRqOSuw+/GEfWEbXohe1E3a5zKjSqSha3N8yZ5Rp465jJks/eo3K1BrR2m
+         KdG7Rzo08Y2aDsrHoSAqa6Mn+j92cuYZfWqp63dgEvU99tp+xQGZx6MWxrY5sAqjpWlS
+         NlPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=U6f4POvMEJ4MqEhH1l1XcrUcGrKeoTJNzsuGYlXM760=;
-        b=LmEF/WG0pMMb5M7cXl5gDzieq1zIql0bFNvPYaRBy9Qf9cZMPBoIwaBc1oI0xBWLfy
-         7tyWqDrcYZnwSBoDRTwd+2HhptC6nC4ZLdoK3hYaMAqoLv9pDLo30qtxWhApQ4AE5X7P
-         YzubUA6qaq3c0mB/ROigx6puPCVRRucVxRH60Ugb4BeQoIrEeyBncjfK9+KX7ShxefL+
-         7k8Xi6JkCpBfyVspg5FoDi+2DpN0tkfoh+nVeSzOsjtoVEUlVB/AYOVYFGbJuiImY62K
-         cct1p34Oe9jo4AyTUtaFFxxsgwl7fyn0gpwrXkNW4IKB7jmF7K2XGeWnNK9Cm/r9CTRY
-         4cWw==
-X-Gm-Message-State: ACgBeo0Z9nYUgz/DDvSRAh9Ln99hvBRhZAohSlLcBThmaz3KBTyu/TQG
-        69sr0kkAO35XHh59JGbd/P6D4uXlgEoJKA==
-X-Google-Smtp-Source: AA6agR5s33Ofmuy+6pq0uTHdQn/LzA2KiAjG+YfzMF8gLlREerg64KcrAHz9vT7LuMa0zdE7XDsEvQ==
-X-Received: by 2002:a17:902:d2c8:b0:172:f0a1:4d4d with SMTP id n8-20020a170902d2c800b00172f0a14d4dmr5276182plc.142.1661207814395;
-        Mon, 22 Aug 2022 15:36:54 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id x18-20020a170902ec9200b0016f1aa00abbsm5574545plg.195.2022.08.22.15.36.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Aug 2022 15:36:53 -0700 (PDT)
-Message-ID: <1e4dde67-4ac2-06b0-b927-ce4601ed9b30@kernel.dk>
-Date:   Mon, 22 Aug 2022 16:36:52 -0600
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=1TNSDsn5a6YjqytkykGHlEca8O4pUSy2rYwmIIw8EBY=;
+        b=zTswJvMcT3BMvryIJvLU5WhTf4YxoeSEE1mVfLSHIHpqpLSf/gMfMzgRTRHSnct4eO
+         rJ/b54O7nt2/aVqjh6hu1SrcO9mx13d3svHwo4rEOkjAgWuaK2o6HiRn+1Etp47OLLrF
+         b46LS6+I8M0vtX1B0feJXneViSjKD2vQQfdzqjbmcXXUgsER1Js4x0le6oxHzIJ4kMn6
+         S67Zl7E/IdiaMrhk8VBIxC6IfgU7evPXuDKQTVSUYRt/bEOHqbFlFu2Kzz3V+EXZVFRT
+         esaQsHuTGP59CeBb7gi2ueFu/WK5HFYB2eX9kuj9ym9QukmPXbsd8LHCibbFDe6AFVh9
+         u1TA==
+X-Gm-Message-State: ACgBeo3De14zv56xkeHCP77Ae6uO7KN94dGOqp7S8AXvocX8YLuSRUQo
+        CTJJzc2oUW7uDK5ZxbEFekRUhXR3l3zg7WiifIa8cyoRafea
+X-Google-Smtp-Source: AA6agR6YpVoTlJJBzL3/JcnAxD6NnhlOmeNP2E53wlQ7aUoRV3cH3BTsXiJtIxZuTCG84I4+/YB02pOSnuUVH7BDqyg=
+X-Received: by 2002:a9d:2de3:0:b0:638:e210:c9da with SMTP id
+ g90-20020a9d2de3000000b00638e210c9damr8439945otb.69.1661209769113; Mon, 22
+ Aug 2022 16:09:29 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
+References: <166120321387.369593.7400426327771894334.stgit@olly>
+ <166120327984.369593.8371751426301540450.stgit@olly> <1e4dde67-4ac2-06b0-b927-ce4601ed9b30@kernel.dk>
+In-Reply-To: <1e4dde67-4ac2-06b0-b927-ce4601ed9b30@kernel.dk>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 22 Aug 2022 19:09:18 -0400
+Message-ID: <CAHC9VhQbnN2om-Qt59ZNovEgRAcB=XvcR+AYK8HhLLrPmMjMLA@mail.gmail.com>
 Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
-To:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        io-uring@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Luis Chamberlain <mcgrof@kernel.org>
-References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120327984.369593.8371751426301540450.stgit@olly>
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <166120327984.369593.8371751426301540450.stgit@olly>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/22/22 3:21 PM, Paul Moore wrote:
-> This patch adds support for the io_uring command pass through, aka
-> IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
-> /dev/null functionality, the implementation is just a simple sink
-> where commands go to die, but it should be useful for developers who
-> need a simple IORING_OP_URING_CMD test device that doesn't require
-> any special hardware.
-> 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  drivers/char/mem.c |    6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> index 84ca98ed1dad..32a932a065a6 100644
-> --- a/drivers/char/mem.c
-> +++ b/drivers/char/mem.c
-> @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
->  	return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
->  }
->  
-> +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
-> +{
-> +	return 0;
-> +}
+On Mon, Aug 22, 2022 at 6:36 PM Jens Axboe <axboe@kernel.dk> wrote:
+> On 8/22/22 3:21 PM, Paul Moore wrote:
+> > This patch adds support for the io_uring command pass through, aka
+> > IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
+> > /dev/null functionality, the implementation is just a simple sink
+> > where commands go to die, but it should be useful for developers who
+> > need a simple IORING_OP_URING_CMD test device that doesn't require
+> > any special hardware.
+> >
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >  drivers/char/mem.c |    6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+> > index 84ca98ed1dad..32a932a065a6 100644
+> > --- a/drivers/char/mem.c
+> > +++ b/drivers/char/mem.c
+> > @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
+> >       return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
+> >  }
+> >
+> > +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
+> > +{
+> > +     return 0;
+> > +}
+>
+> This would be better as:
+>
+>         return IOU_OK;
+>
+> using the proper return values for the uring_cmd hook.
 
-This would be better as:
+The only problem I see with that is that IOU_OK is defined under
+io_uring/io_uring.h and not include/linux/io_uring.h so the #include
+macro is kinda ugly:
 
-	return IOU_OK;
+  #include "../../io_uring/io_uring.h"
 
-using the proper return values for the uring_cmd hook. With that:
+I'm not sure I want to submit that upstream looking like that.  Are
+you okay with leaving the return code as 0 for now and changing it at
+a later date?  I'm trying to keep this patchset relatively small since
+we are in the -rcX stage, but if you're okay with a simple cut-n-paste
+of the enum to linux/io_uring.h I can do that.
 
-Acked-by: Jens Axboe <axboe@kernel.dk>
+> With that:
+>
+> Acked-by: Jens Axboe <axboe@kernel.dk>
 
 -- 
-Jens Axboe
+paul-moore.com
