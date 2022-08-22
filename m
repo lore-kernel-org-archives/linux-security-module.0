@@ -2,62 +2,65 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA267C32792
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 21:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5710C32792
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 21:21:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238035AbiHVVVI (ORCPT
+        id S238034AbiHVVVO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Aug 2022 17:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47232 "EHLO
+        Mon, 22 Aug 2022 17:21:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238056AbiHVVVF (ORCPT
+        with ESMTP id S238141AbiHVVVL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Aug 2022 17:21:05 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC86D520A0
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:21:03 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id h27so8916295qkk.9
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:21:03 -0700 (PDT)
+        Mon, 22 Aug 2022 17:21:11 -0400
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B875852095
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:21:09 -0700 (PDT)
+Received: by mail-qk1-x72d.google.com with SMTP id n21so8929215qkk.3
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:21:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :cc:to:from:subject:from:to:cc;
-        bh=5RQRl53BMMbcV3UBpkUvMw0kVRmuERrDcog8F29EXKk=;
-        b=XxTaY88L6YyDi4q4wmCk8eVhxMP+iLwiTQfB+DWrM8PTcGLBvO8N71ubEFVUt83vYA
-         wdnD/fZmhMHsA9CfRa30LDpuYjZBFBee5jEo0dzDLzzEvvtbBR8P9Btu6S9Njwn6lz9q
-         D5p7andXJ/eFjisCdzDEogdJKwtPCaGa425/HNYL6WAYn8VN/00nGGzBslxj6FN2XFUe
-         RL/93480d1VSeSt+2h/uOGO55rmFRfWs6Cah4Wzys7DoYbZ+2N0WLpHIs+LMiA/yddYU
-         40Hu9gdGDOMjJyTZm4sLwRZdlJ+jh/vXDMuYpQ26A1fELppD8lNBdIUPP8kKDUzyzMn2
-         D5lw==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:date:cc:to:from:subject:from:to:cc;
+        bh=tBvBvoY7Kax3qLh+hCG+8GOl8mJNoIgfMsJnNPYNA+o=;
+        b=WxNfdds9Z31JwSLesJVUKuuFnOze2bcmZvqgp6FrbYYzhFiTS+zzBZh9YHAhrqHQNI
+         ajQq0VJ/Scjw+6DlFDICkSV0AhNQQUpU6SaUfdCw13SJh+bSKAnGXb+M1ojmSe00mqJ4
+         acD25E1LPop7+4/XSNZ7N6PVZvIKyn/8U7P1iyabrpgDcIgCxylxZDm4MvlCcsSYcAC2
+         lViqt2c89LeNLAbeXKcDbmunxyWg6WguaM8rEcur1zWRoYv70IqOx3x36Z4EGeh8YF+t
+         URmci5DMWxHqMWzGmLKuInKjrnYvkxX/SsGzysMz0UxBlg97yUH6J4S7038t2y1YbRUA
+         JYXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :cc:to:from:subject:x-gm-message-state:from:to:cc;
-        bh=5RQRl53BMMbcV3UBpkUvMw0kVRmuERrDcog8F29EXKk=;
-        b=tEtADMGtsc7GOkX3zLwAJwoNK6BEw/+fvRd5yr1Xdc9D1NRrnfUGxuGUdee+0UOLcw
-         lPZILpylkEjNpLpG/kHdFW9WfAGuFlUnk+OdAe1hnXGl+0yD8uoqOc+Lawi9e9/0GhpZ
-         TMEWgpJYFV5qqoyxXjK3XPEq2sa6869pvHxh6t2P3nujvD9THwo5KoMxbk97X1ryV9jq
-         jBYY4VluEOsDvQdyo0n8hssxt4YZBixwJtXCmHAl1ehlkgwp7zCook9saGzcXYsVzT2M
-         6fY3JWswrc7XKM8AoITi9PmfCuQ1/54F8ALmfTi9bHnV7cOSv2Q+fgRWLDxoO/lQswkU
-         SH0A==
-X-Gm-Message-State: ACgBeo0DJPrz2zzgxuLzmsOcwwDzQdgRyVeH30p9RNQfFlWiZKzDe9Uz
-        6/qAceApIaoO/th3288Bbs5tBFuEilFn
-X-Google-Smtp-Source: AA6agR5HRvyFM8nlzlvFRus8PX8jMZnrW3P+rNROq/qiCc53eyykqUoFMwCw7xUqAQrocMjVabC3Ng==
-X-Received: by 2002:a37:cc5:0:b0:6bb:93e9:54f with SMTP id 188-20020a370cc5000000b006bb93e9054fmr13958588qkm.114.1661203262755;
-        Mon, 22 Aug 2022 14:21:02 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:date:cc:to:from:subject:x-gm-message-state
+         :from:to:cc;
+        bh=tBvBvoY7Kax3qLh+hCG+8GOl8mJNoIgfMsJnNPYNA+o=;
+        b=GHPzstLGjZQ4uTPKJ9NDGzzdVK5EuKGEdPyPkrm3sZgSFyovHRS4jC5Uq5xMbJ136g
+         GNNrhVlGMxsqmYjRtWT9YqkEs08nmc1gSKtX/i0IHjRl1CJnLzJ1do7F6mDJlsO/+bF4
+         T3w2XiVZG3iEADUMrswttMCj7KeEaTZKj2rtjsxAVaSOLVOjC3bFF2/Sx8m9lBuB3iac
+         jO6XpcPk/WqA95UyeWKBpRj8hXkMisIeL1aS8+6DKdlTpW6l2gis4wJ1W7qvz8MG5ntb
+         e0yI+sHNRHZ+Ve91npwsY5l2v/vuAUY11jMBQyTrHnaN6tgLbFRsjIgv+VZN42+9f3kP
+         XJHA==
+X-Gm-Message-State: ACgBeo0MMQg1OGlFg2weIXd/9spVm/n5SH9ACkV5o4Zzcm6P0Yk05ETl
+        sO9WTMWdjXw91TAMbmHLff615emfHmyp
+X-Google-Smtp-Source: AA6agR6LFqis/vbXNQ9SBwbPQPKo79xErEry6IV+AxmlSucjhhdge/XotZYCjJYccJBlidk4Wsyu4Q==
+X-Received: by 2002:a05:620a:448f:b0:6b5:fdcc:fe74 with SMTP id x15-20020a05620a448f00b006b5fdccfe74mr13889545qkp.64.1661203268664;
+        Mon, 22 Aug 2022 14:21:08 -0700 (PDT)
 Received: from localhost (pool-96-237-52-46.bstnma.fios.verizon.net. [96.237.52.46])
-        by smtp.gmail.com with ESMTPSA id m1-20020a05620a290100b006b95f832aebsm11627625qkp.96.2022.08.22.14.21.02
+        by smtp.gmail.com with ESMTPSA id dt2-20020a05620a478200b006bb024c5021sm11980062qkb.25.2022.08.22.14.21.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Aug 2022 14:21:02 -0700 (PDT)
-Subject: [PATCH 0/3] LSM hooks for IORING_OP_URING_CMD
+        Mon, 22 Aug 2022 14:21:08 -0700 (PDT)
+Subject: [PATCH 1/3] lsm,io_uring: add LSM hooks for the new uring_cmd file op
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         io-uring@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Luis Chamberlain <mcgrof@kernel.org>
-Date:   Mon, 22 Aug 2022 17:21:01 -0400
-Message-ID: <166120321387.369593.7400426327771894334.stgit@olly>
+Date:   Mon, 22 Aug 2022 17:21:07 -0400
+Message-ID: <166120326788.369593.18304806499678048620.stgit@olly>
+In-Reply-To: <166120321387.369593.7400426327771894334.stgit@olly>
+References: <166120321387.369593.7400426327771894334.stgit@olly>
 User-Agent: StGit/1.5
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,43 +68,113 @@ Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patchset includes three patches: one to add a new LSM hook for
-the IORING_OP_URING_CMD operation, one to add the SELinux
-implementation for the new hook, and one to enable
-IORING_OP_URING_CMD for /dev/null.  The last patch, the /dev/null
-support, is obviously not critical but it makes testing so much
-easier and I believe is in keeping with the general motivation behind
-/dev/null.
+From: Luis Chamberlain <mcgrof@kernel.org>
 
-Luis' patch has already been vetted by Jens and the io_uring folks,
-so the only new bits are the SELinux implementation and the trivial
-/dev/null implementation of IORING_OP_URING_CMD.  Assuming no one
-has any objections over the next few days, I'll plan on sending this
-up to Linus during the v6.0-rcX cycle.
+io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+add infrastructure for uring-cmd"), this extended the struct
+file_operations to allow a new command which each subsystem can use
+to enable command passthrough. Add an LSM specific for the command
+passthrough which enables LSMs to inspect the command details.
 
-I believe Casey is also currently working on Smack support for the
-IORING_OP_URING_CMD hook, and as soon as he is ready I can add it
-to this patchset (or Casey can send it up himself).
+This was discussed long ago without no clear pointer for something
+conclusive, so this enables LSMs to at least reject this new file
+operation.
 
--Paul
+[0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
 
+Fixes: ee692a21e9bf ("fs,io_uring: add infrastructure for uring-cmd")
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Acked-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
+ include/linux/lsm_hook_defs.h |    1 +
+ include/linux/lsm_hooks.h     |    3 +++
+ include/linux/security.h      |    5 +++++
+ io_uring/uring_cmd.c          |    5 +++++
+ security/security.c           |    4 ++++
+ 5 files changed, 18 insertions(+)
 
-Luis Chamberlain (1):
-      lsm,io_uring: add LSM hooks for the new uring_cmd file op
-
-Paul Moore (2):
-      selinux: implement the security_uring_cmd() LSM hook
-      /dev/null: add IORING_OP_URING_CMD support
-
-
- drivers/char/mem.c                  |  6 ++++++
- include/linux/lsm_hook_defs.h       |  1 +
- include/linux/lsm_hooks.h           |  3 +++
- include/linux/security.h            |  5 +++++
- io_uring/uring_cmd.c                |  5 +++++
- security/security.c                 |  4 ++++
- security/selinux/hooks.c            | 24 ++++++++++++++++++++++++
- security/selinux/include/classmap.h |  2 +-
- 8 files changed, 49 insertions(+), 1 deletion(-)
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 806448173033..60fff133c0b1 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -407,4 +407,5 @@ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
+ #ifdef CONFIG_IO_URING
+ LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
+ LSM_HOOK(int, 0, uring_sqpoll, void)
++LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
+ #endif /* CONFIG_IO_URING */
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 84a0d7e02176..3aa6030302f5 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1582,6 +1582,9 @@
+  *      Check whether the current task is allowed to spawn a io_uring polling
+  *      thread (IORING_SETUP_SQPOLL).
+  *
++ * @uring_cmd:
++ *      Check whether the file_operations uring_cmd is allowed to run.
++ *
+  */
+ union security_list_options {
+ 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 1bc362cb413f..7bd0c490703d 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -2060,6 +2060,7 @@ static inline int security_perf_event_write(struct perf_event *event)
+ #ifdef CONFIG_SECURITY
+ extern int security_uring_override_creds(const struct cred *new);
+ extern int security_uring_sqpoll(void);
++extern int security_uring_cmd(struct io_uring_cmd *ioucmd);
+ #else
+ static inline int security_uring_override_creds(const struct cred *new)
+ {
+@@ -2069,6 +2070,10 @@ static inline int security_uring_sqpoll(void)
+ {
+ 	return 0;
+ }
++static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
++{
++	return 0;
++}
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_IO_URING */
+ 
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 8e0cc2d9205e..0f7ad956ddcb 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -3,6 +3,7 @@
+ #include <linux/errno.h>
+ #include <linux/file.h>
+ #include <linux/io_uring.h>
++#include <linux/security.h>
+ 
+ #include <uapi/linux/io_uring.h>
+ 
+@@ -88,6 +89,10 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (!req->file->f_op->uring_cmd)
+ 		return -EOPNOTSUPP;
+ 
++	ret = security_uring_cmd(ioucmd);
++	if (ret)
++		return ret;
++
+ 	if (ctx->flags & IORING_SETUP_SQE128)
+ 		issue_flags |= IO_URING_F_SQE128;
+ 	if (ctx->flags & IORING_SETUP_CQE32)
+diff --git a/security/security.c b/security/security.c
+index 14d30fec8a00..4b95de24bc8d 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2660,4 +2660,8 @@ int security_uring_sqpoll(void)
+ {
+ 	return call_int_hook(uring_sqpoll, 0);
+ }
++int security_uring_cmd(struct io_uring_cmd *ioucmd)
++{
++	return call_int_hook(uring_cmd, 0, ioucmd);
++}
+ #endif /* CONFIG_IO_URING */
 
