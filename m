@@ -2,138 +2,204 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EE3C28D13
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 23:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7E9C32792
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 23:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238676AbiHVXZr (ORCPT
+        id S238678AbiHVX0X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Aug 2022 19:25:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33554 "EHLO
+        Mon, 22 Aug 2022 19:26:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238667AbiHVXZq (ORCPT
+        with ESMTP id S238683AbiHVX0T (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Aug 2022 19:25:46 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 390EB558C6
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 16:25:45 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id m15so4408172pjj.3
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 16:25:45 -0700 (PDT)
+        Mon, 22 Aug 2022 19:26:19 -0400
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26C6F558C3
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 16:26:18 -0700 (PDT)
+Received: by mail-vk1-xa2a.google.com with SMTP id o14so2536166vkl.6
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 16:26:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=Gh1Oz9Hp1EIP/vEkDFpXrwyNYZdeHjPHmqPuWfBzxgo=;
-        b=GmLX52bILLwFGUaHgqI+KcujjbB/PXEdKx1EMxbBC20nWp8YnN0MsoXehq7gzeRDhT
-         K55UcfFR21FacL7QEJ0x4fQrAM9z/pqfHyH9LcYLUhdBOXUIJfI2Dq2W+UplJ06Ke3aF
-         atLmMJxbyNBwXiRqDGWrfDH3PgtiY/wch8SGcAcOHykANTvPKGVAnltWoQU0wJsIioQb
-         deH/j5i2ZqD0t1hfXdlhFuu7HsglqgOqeE2jDmhE02xXMH2uyes4j4W3dX0jPlPNgPAs
-         axI4+zhd9231AAVGyfMdjH3Z6mDbtir+IP/1OMGO/91SXVMI/6sl4M6T8qeHHrauiJUr
-         QpaA==
+        d=google.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc;
+        bh=T7of7RkdRgsLzkBFxI/wfi1fAKpxOWqYqUCU6ecRVHU=;
+        b=tB9TayyfOz4aMf9wsk2xzckOIKBu8iLQUpEoE9A6bOjBE2Rr8dfkzNc5b7dHIWJi3X
+         oJG0OpXDImoFNyYZ528cU71B4wAADrl6hgV5cdIVv12FQK8gHjIgk4S1wsWm3LBPg0xT
+         ZBiJeSjcZO3V4HjiN7x4lWbpZIyoYBhFYWDuQWHM/rnXahhPsebK0izQjuog1r1x3G17
+         wzAJdmLDzsMGy7kaHSi1/+kLiQEbGAJvjYDmCBKBCbe57hJDmGAa3eMWUIM1GLPygGUs
+         iiGBTyoEs98/IA25Tg5FyDs4lR4baKiJA/pCGE0deSPHWcgCcI7ucQWnG7rMV6F5ROsM
+         f3Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=Gh1Oz9Hp1EIP/vEkDFpXrwyNYZdeHjPHmqPuWfBzxgo=;
-        b=OovQebE3osl38TDZueroIddIFB0grgVG8CMPBx7gGirMXdSsEayNjlegBY2rrofzNe
-         Y6EHqW66s+vmDLbQSrwn1XNw0Ucud9o1Kkl0DV5RLeLF89Ao7xLQZDbP3lualD/1bNX3
-         +ezwRsyfb4w9e143hxszNxTEOBxvnjoMpKYBovD98cD04LmGM3uzeTlQ2vsmnvVn4Dw2
-         QEpTxBgPmUFy3LHnNKrP8IrO+06XzwNlrHQzqYDyaYVVyS5eBkQTVRPCNHkJ3PrKV/VZ
-         4DTihMjjwKtfabxjz1zRPQVCnfMxdVL8cz3j2F1XK1bv7XDnryjB3IN6b8YGNB89UHZ4
-         OSmg==
-X-Gm-Message-State: ACgBeo1BKygj3T8cOVxXk/UnTLqrYkkMpjh6asb8V5Eu7KnaNodF9Er5
-        ebZ9pn7RaKTtco5259DUidTi9w==
-X-Google-Smtp-Source: AA6agR4/VePDPEQK9n1GpktNm94uZbfCFu/nqXDjEdktsb+M/gRjvfX6v+772rbmQPhgs+KpAPY14w==
-X-Received: by 2002:a17:902:8502:b0:16c:c5c5:a198 with SMTP id bj2-20020a170902850200b0016cc5c5a198mr21808137plb.88.1661210744670;
-        Mon, 22 Aug 2022 16:25:44 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id rt12-20020a17090b508c00b001f334aa9170sm10581481pjb.48.2022.08.22.16.25.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Aug 2022 16:25:42 -0700 (PDT)
-Message-ID: <73022e0f-4913-2620-605d-ad86d8b73494@kernel.dk>
-Date:   Mon, 22 Aug 2022 17:25:41 -0600
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
+        bh=T7of7RkdRgsLzkBFxI/wfi1fAKpxOWqYqUCU6ecRVHU=;
+        b=GvEnHNiwvRGiUCcs4BThphiS+ZZ5tJon9qi844H2vVemPLuZ2ShDjsBumN9WfNrl3q
+         GlZosyj8XMxN/m8h8eYGRD0oxCt+gVoujFiEarG63qe/8OxjkC4UCwogICmjZ33YX+zd
+         aJDDazC2h3J56QyAXOR3jipS7cyPdUQlCfD1zOyd+DSDN840EolevWw+rbeawX8I+ZaF
+         45ZLrSgRUswTUbMh54JYenJsGFtUNBto901F1sfAyFEWwWCw+anLy9Mi8AtHLL6edy49
+         HVXqytqbScujCpIyu2X1U28kDvUWwiVIMGYKm5vBBWsYzvmEpwxJPbl6JqACBcJ3UoDR
+         XoSQ==
+X-Gm-Message-State: ACgBeo09T1ooOsl7ZB6LV6F2aksKKyBL4EvB0WypLd7O6kKpJBuqJpSf
+        HvXC6iIzsbM5u4ww61dPYJxdfSKYtRWaBuLBWnFeKQ==
+X-Google-Smtp-Source: AA6agR6EfyW0+feOavtNnH/B0ttYUFJumvWwSGEsN7cHE/piFv06LCKNP6BvHbzbo0/M1oDkH5Ux5LOprkJP0ibzojc=
+X-Received: by 2002:a1f:b254:0:b0:345:87e4:17fb with SMTP id
+ b81-20020a1fb254000000b0034587e417fbmr8537133vkf.25.1661210777126; Mon, 22
+ Aug 2022 16:26:17 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120327984.369593.8371751426301540450.stgit@olly>
- <1e4dde67-4ac2-06b0-b927-ce4601ed9b30@kernel.dk>
- <CAHC9VhQbnN2om-Qt59ZNovEgRAcB=XvcR+AYK8HhLLrPmMjMLA@mail.gmail.com>
- <1017959d-7ec0-4230-89db-b077067692d1@kernel.dk>
- <CAHC9VhQw5V_aH=y2vSX4=f6fofc01w32c5gfediubVU=LCVJng@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHC9VhQw5V_aH=y2vSX4=f6fofc01w32c5gfediubVU=LCVJng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220822165333.2600411-1-jeffxu@google.com>
+In-Reply-To: <20220822165333.2600411-1-jeffxu@google.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Mon, 22 Aug 2022 16:26:06 -0700
+Message-ID: <CABXOdTes7rXAfGfQ7kGVrZCbE1L4MDkc31sZhmc5PY+ndi8xYw@mail.gmail.com>
+Subject: Re: [PATCH v3] selftests/landlock: skip overlayfs test when kernel
+ not support it
+To:     Jeff Xu <jeffxu@google.com>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>,
+        Jeff Xu <jeffxu@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/22/22 5:19 PM, Paul Moore wrote:
-> On Mon, Aug 22, 2022 at 7:13 PM Jens Axboe <axboe@kernel.dk> wrote:
->> On 8/22/22 5:09 PM, Paul Moore wrote:
->>> On Mon, Aug 22, 2022 at 6:36 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>> On 8/22/22 3:21 PM, Paul Moore wrote:
->>>>> This patch adds support for the io_uring command pass through, aka
->>>>> IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
->>>>> /dev/null functionality, the implementation is just a simple sink
->>>>> where commands go to die, but it should be useful for developers who
->>>>> need a simple IORING_OP_URING_CMD test device that doesn't require
->>>>> any special hardware.
->>>>>
->>>>> Cc: Arnd Bergmann <arnd@arndb.de>
->>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>>>> ---
->>>>>  drivers/char/mem.c |    6 ++++++
->>>>>  1 file changed, 6 insertions(+)
->>>>>
->>>>> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
->>>>> index 84ca98ed1dad..32a932a065a6 100644
->>>>> --- a/drivers/char/mem.c
->>>>> +++ b/drivers/char/mem.c
->>>>> @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
->>>>>       return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
->>>>>  }
->>>>>
->>>>> +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
->>>>> +{
->>>>> +     return 0;
->>>>> +}
->>>>
->>>> This would be better as:
->>>>
->>>>         return IOU_OK;
->>>>
->>>> using the proper return values for the uring_cmd hook.
->>>
->>> The only problem I see with that is that IOU_OK is defined under
->>> io_uring/io_uring.h and not include/linux/io_uring.h so the #include
->>> macro is kinda ugly:
->>>
->>>   #include "../../io_uring/io_uring.h"
->>>
->>> I'm not sure I want to submit that upstream looking like that.  Are
->>> you okay with leaving the return code as 0 for now and changing it at
->>> a later date?  I'm trying to keep this patchset relatively small since
->>> we are in the -rcX stage, but if you're okay with a simple cut-n-paste
->>> of the enum to linux/io_uring.h I can do that.
->>
->> Ugh yes, that should move into the general domain. Yeah I'm fine with it
->> as it is, we can fix that up (and them nvme as well) at a later point.
-> 
-> Okay, sounds good, I'll leave it as-is.  Is it okay to still add your ACK?
+On Mon, Aug 22, 2022 at 9:53 AM <jeffxu@google.com> wrote:
+>
+> From: Jeff Xu <jeffxu@google.com>
+>
+> Overlayfs can be disabled in kernel config, causing related tests to fail=
+.
+> Add check for overlayfs=E2=80=99s supportability at runtime, so we can ca=
+ll SKIP()
+> when needed.
+>
+> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
 
-Yep, all things considered, for 6.0 I think that's the way to go.
+Couple of nits, otherwise
 
--- 
-Jens Axboe
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
+> ---
+>  tools/testing/selftests/landlock/fs_test.c | 56 ++++++++++++++++++++--
+>  1 file changed, 52 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/s=
+elftests/landlock/fs_test.c
+> index 21a2ce8fa739..0c283d50f222 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -11,6 +11,7 @@
+>  #include <fcntl.h>
+>  #include <linux/landlock.h>
+>  #include <sched.h>
+> +#include <stdio.h>
+>  #include <string.h>
+>  #include <sys/capability.h>
+>  #include <sys/mount.h>
+> @@ -62,6 +63,7 @@ static const char dir_s3d1[] =3D TMP_DIR "/s3d1";
+>  static const char dir_s3d2[] =3D TMP_DIR "/s3d1/s3d2";
+>  static const char dir_s3d3[] =3D TMP_DIR "/s3d1/s3d2/s3d3";
+>
+> +static const char proc_filesystems[] =3D "/proc/filesystems";
+>  /*
+>   * layout1 hierarchy:
+>   *
+> @@ -169,6 +171,43 @@ static int remove_path(const char *const path)
+>         return err;
+>  }
+>
+> +static bool fgrep(FILE *inf, const char *str)
+> +{
+> +       char line[32];
+> +       int slen =3D strlen(str);
+> +
+> +       while (!feof(inf)) {
+> +               if (!fgets(line, sizeof(line), inf))
+> +                       break;
+> +               if (strncmp(line, str, slen))
+> +                       continue;
+> +
+> +               return true;
+> +       }
+> +
+> +       return false;
+> +}
+> +
+> +static bool supports_overlayfs(void)
+> +{
+> +       bool ret =3D false;
+> +       FILE *inf =3D fopen(proc_filesystems, "r");
+> +
+> +       /*
+> +        * If fopen fails, return supported.
+> +        * This helps to detect missing file (shall not
+> +        * happen).
+> +        */
+> +       if (!inf)
+> +               return true;
+> +
+> +       ret =3D fgrep(inf, "nodev\toverlay\n");
+> +       fclose(inf);
+> +
+> +       return ret;
+> +}
+> +
+> +
+double empty line
 
+>  static void prepare_layout(struct __test_metadata *const _metadata)
+>  {
+>         disable_caps(_metadata);
+> @@ -3397,13 +3436,14 @@ static const char (*merge_sub_files[])[] =3D {
+>   *     =E2=94=94=E2=94=80=E2=94=80 work
+>   *         =E2=94=94=E2=94=80=E2=94=80 work
+>   */
+> -
+
+Unnecessary whitespace change
+
+>  /* clang-format off */
+>  FIXTURE(layout2_overlay) {};
+>  /* clang-format on */
+>
+>  FIXTURE_SETUP(layout2_overlay)
+>  {
+> +       int rc;
+> +
+>         prepare_layout(_metadata);
+>
+>         create_directory(_metadata, LOWER_BASE);
+> @@ -3431,11 +3471,19 @@ FIXTURE_SETUP(layout2_overlay)
+>         create_directory(_metadata, MERGE_DATA);
+>         set_cap(_metadata, CAP_SYS_ADMIN);
+>         set_cap(_metadata, CAP_DAC_OVERRIDE);
+> -       ASSERT_EQ(0, mount("overlay", MERGE_DATA, "overlay", 0,
+> -                          "lowerdir=3D" LOWER_DATA ",upperdir=3D" UPPER_=
+DATA
+> -                          ",workdir=3D" UPPER_WORK));
+> +
+> +       rc =3D mount("overlay", MERGE_DATA, "overlay", 0,
+> +                  "lowerdir=3D" LOWER_DATA ",upperdir=3D" UPPER_DATA
+> +                  ",workdir=3D" UPPER_WORK);
+>         clear_cap(_metadata, CAP_DAC_OVERRIDE);
+>         clear_cap(_metadata, CAP_SYS_ADMIN);
+> +
+> +       if (rc < 0) {
+> +               ASSERT_EQ(ENODEV, errno);
+> +               ASSERT_FALSE(supports_overlayfs());
+> +               SKIP(return, "overlayfs is not supported");
+> +       }
+> +
+Unnecessary empty line
+
+>  }
+>
+>  FIXTURE_TEARDOWN(layout2_overlay)
+>
+> base-commit: 50cd95ac46548429e5bba7ca75cc97d11a697947
+> --
+> 2.37.1.595.g718a3a8f04-goog
+>
