@@ -2,57 +2,67 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 202B3C00140
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Aug 2022 03:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80E2C28D13
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 11:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232706AbiHUDkO (ORCPT
+        id S233575AbiHVLvZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 Aug 2022 23:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38562 "EHLO
+        Mon, 22 Aug 2022 07:51:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232878AbiHUDkG (ORCPT
+        with ESMTP id S234858AbiHVLuO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 Aug 2022 23:40:06 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D181F62E;
-        Sat, 20 Aug 2022 20:40:05 -0700 (PDT)
-Received: from fsav113.sakura.ne.jp (fsav113.sakura.ne.jp [27.133.134.240])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 27L3e4lE023818;
-        Sun, 21 Aug 2022 12:40:04 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav113.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp);
- Sun, 21 Aug 2022 12:40:04 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 27L3e4Bn023814
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 21 Aug 2022 12:40:04 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e834e724-32bc-c990-af96-56af044b72b1@I-love.SAKURA.ne.jp>
-Date:   Sun, 21 Aug 2022 12:40:00 +0900
+        Mon, 22 Aug 2022 07:50:14 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FBA01145B;
+        Mon, 22 Aug 2022 04:50:12 -0700 (PDT)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MB9Yv2LcjzkWgq;
+        Mon, 22 Aug 2022 19:46:43 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.58) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 22 Aug 2022 19:50:11 +0800
+From:   Xiu Jianfeng <xiujianfeng@huawei.com>
+To:     <mic@digikod.net>, <paul@paul-moore.com>, <jmorris@namei.org>,
+        <serge@hallyn.com>, <shuah@kernel.org>, <corbet@lwn.net>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+Subject: [PATCH -next 0/5] landlock: add chmod and chown support
+Date:   Mon, 22 Aug 2022 19:46:56 +0800
+Message-ID: <20220822114701.26975-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 2/2] tomoyo: struct path it might get from LSM callers
- won't have NULL dentry or mnt
-Content-Language: en-US
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <YwFDLhioFG5Mlwws@ZenIV> <YwFDfYcRKIYEkr43@ZenIV>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <YwFDfYcRKIYEkr43@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.58]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022/08/21 5:26, Al Viro wrote:
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+hi,
+  this patchset adds chmod and chown support for landlock
 
-Thank you. You can send this change via your tree if you like.
+Xiu Jianfeng (5):
+  landlock: expand access_mask_t to u32 type
+  landlock: add chmod and chown support
+  landlock/selftests: add selftests for chmod and chown
+  landlock/samples: add chmod and chown support
+  landlock: update chmod and chown support in document
 
-Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+ Documentation/userspace-api/landlock.rst     |   8 +-
+ include/uapi/linux/landlock.h                |   8 +-
+ samples/landlock/sandboxer.c                 |  12 +-
+ security/landlock/fs.c                       |  16 +-
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/ruleset.h                  |   2 +-
+ security/landlock/syscalls.c                 |   2 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 234 ++++++++++++++++++-
+ 9 files changed, 274 insertions(+), 12 deletions(-)
+
+-- 
+2.17.1
 
