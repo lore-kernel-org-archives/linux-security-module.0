@@ -2,187 +2,196 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F404C32792
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 14:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422D0C32789
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 14:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234860AbiHVOAy (ORCPT
+        id S235358AbiHVOiN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Aug 2022 10:00:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47078 "EHLO
+        Mon, 22 Aug 2022 10:38:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235591AbiHVOAw (ORCPT
+        with ESMTP id S234942AbiHVOiM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Aug 2022 10:00:52 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D5A4371AE
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 07:00:50 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id g18so11109158pju.0
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 07:00:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc;
-        bh=kjJw1lixEQIrNLEOEvpfk899fKXlaGFwMiOH1KRB12M=;
-        b=sbS1HvywFSfEMOSLBpwixOVInNvRZMvLa/Kj6cjMDiERtJknENs/JEaFvkLTsox6lW
-         HD4cdPRvoxqqXTG5v+ldcmJu09E5vUo4y5L0I/ER8IAiD0ZOxI4Wo+c7YpbRruCkY90x
-         TKXI3k0gBBHXJPm3aepPOBUOKMJ4TwA9uWK4eIa18oC/p7cgWdEweLt7eo9ssLSs55Zp
-         rRYp8v+TiuKMipQB7gIvSf4UJogx6PjiN9ftTebRgwJBYh6jVgxg7D1cPaVMeW8UwbNo
-         vkF4NzQlk+Pg+7XmzLnG1rD36ZCLjlE4iQbIsU+DZTRn0G9PxCoMSpoo8sbxSdOJZ8T3
-         1S1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
-        bh=kjJw1lixEQIrNLEOEvpfk899fKXlaGFwMiOH1KRB12M=;
-        b=FXg239vTEOsotxdlm1btz1SdhIlQ1na3WjA6MEXnQ76pkp77jaiUDE93wfmbOhnlJJ
-         YcWgz9cxNtbpIxVT6LcrtPVLddO56aGX3f8ghUyk56cuioxw10jxaq65BLPS7lr49l0u
-         3y+MjBZjZCEGtH4E/2JPOmk8y+4zsM6xFEaRh8PbRxSzKMm0tZSRApMF3G8mL5wXzP5r
-         8EVKM1Osqoipqffyre5S8ozJAGzm5GAmI5T7c7hxS+5YQOtUF5+jzDDnUPuwv43vghxy
-         ycbE8BsJPTrfh/P9H8lSqjB00jYgh0eNjbtAho4Iw1Tx6xeogvLSGsCDuhV978riV2tQ
-         Iybg==
-X-Gm-Message-State: ACgBeo16+PCypRu4FxYkbvaOSHXw2uTZCTH9D74V50e2AFNEsoItQ164
-        09R2EaVKc0O37cL7KDkrcvfWZtiONi+04Tu3HdGOBQ==
-X-Google-Smtp-Source: AA6agR5FvMT6MZWvn7FQCgowa6/lGiwYVOR8wnvEisKJw3867tepZ75KayAqpGFx016KD7WcPU7jnVR//s8gg9qIrRs=
-X-Received: by 2002:a17:902:8683:b0:171:3114:7678 with SMTP id
- g3-20020a170902868300b0017131147678mr20494169plo.172.1661176849884; Mon, 22
- Aug 2022 07:00:49 -0700 (PDT)
+        Mon, 22 Aug 2022 10:38:12 -0400
+Received: from sonic309-26.consmr.mail.ne1.yahoo.com (sonic309-26.consmr.mail.ne1.yahoo.com [66.163.184.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCC832A258
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 07:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661179090; bh=WsipJuAml6UdlCPh/Xk6akfSdQq5jBRM6G0AqL1GFXI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=d9t7ePhuYUCWb407WFPhGB2Mq3aqORZKd36qOe8HEk1dCyBVOjxp2T+QomBhWZNiFhE0PD1dJfRBJ7Wz3/6Asv1ad3YxNO4wEdUgfa0+JYd+Yk1W88PPYJJnX3OkyPMf3vtMunaAu7xjOhy6inZ/ZrQVdpZLidaocbprdLBeWYLjUVyzfMj51UBB7MTU3yA7knVe3d6LBvdlmGWY6GyHjBgzS7YRvTWx4gKlf8lpl4nz518NdfE955gmKMkpMbUjcUmZi8CAJqzKJ5qYT79iJ3m7AivRjojmaisdQwp0v3gw6qCs1UwqMwPyv0lxzESkzTBxRw7B9UZO+ZRhdPl0sw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661179090; bh=VuTMeEXfA6SPOWlEQTJv6dBRuXm7vVlWF2kjQDuu86Q=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ITGN7eB2wxCLVW3oPB6R9I7VKN4TXrAUgvSBlFMOotox+aLTqAVbqDHUi321G9RKJqeJfEFenbsGQWa51T2Tg/eJIpOjDviVualcVJ4dU0lGuxU2ALOtvXsx7jJpZDYOfjFYcUReRAEFB5SYIu7q6+7XNiLgPtI/yLRCY4WLP5AktwZ7fOmr6e+Tc0wDicXzWbmbRoCgGlfX4TnSPss1PdnD54SzWbI9bPPCr7c5HDHCvgYfG7jMQI8EtqwFLhBbhOY9S3nx8SSBxHoXOBbGCr0DagUi1Ar6p90WAIkf3AlpyRoxJu2D3w5WM0GtBm8WVNIFmZ4iNwcvpIAX0Vtk/A==
+X-YMail-OSG: neKmUncVM1munL3YUrvFGYRCEzQRucneCm7CTfo0.hHJ3H58Zo8uohDrSEhb954
+ 16kMIoYgqNn5Hc0Qy2BryEnHvk_vpeHUz.dJ9a6zl3db_b39nsCYs9kD3Rp0jLIW9rfZSkEAj_sj
+ Ty23ftVps_WVNF04uBMSoqMAmWCuIzQci3c6Hrku0_s9PYxX_CewoiYgvqpWOCIR_4zVal3UqyKD
+ 8k4PewNi3rW3zaGBwomzN3AJBE9wJb3qqZZj4tHFpNMXzPitq9cnVuN_8nMCptl51Ig1_tPa5ofK
+ snZaCFv_8cn1R9Zicpxfiq4G3VhpKdeMRhSnxVCMwAYBY65GqgtO9wlAHa8kjaSzWZYpl7Z9FsXN
+ YRJXszYw8lSxe4_cK1W_RPBb4yqZYN7fUs7oR7IkMokXiMbGOCFE8uL9Qp7ysV5P4uSGFZ.4JRc_
+ fj0yrznGJw823IxEJQPAvxmJc3SfZjbNUn5w00ZbC9RLp_hZkl64SkDLtdVDgKez7.rhVKfPSsiT
+ G4Dm8HTxCp5PXo3S8DR2lq5fTKXnAN09ADliCGN5zKtBjVLuTTx5OLyaFF1zj2Me8WCd_TGBI1rY
+ qKs22rXvchahuBQ_fkZhIOhqFIH05gwkUDWrsJdQkvrb0s2ZvYFhRxhTiygRyQEpEDBspwYmZGXm
+ OENe2eubcBF8vZoa3LyXRJGoTok3OFG7P_tDyuUev5pQlaf41Sott566eo19WZ5Lbf3zY7.Qj_au
+ .TL1t5thOWKmpMFs.fLJsO7T2JlkiOLnsUxiWGrMOEojAqIo1FsTnUszt3WWdJNC2FYEXRaZ4mnE
+ 3TTnBV7ANcJuG8cc7TwC23k.3wbVK0auT2bwGff9HLd2FQIkRNZ8Or6L9cHdgrALaW84YHb.6ih1
+ .VEhWJ.Dv_K3CDA1iw5MmMgFIgi8N_arp8KByFMySrf6P6mqyOnJhkm2padOp6uxr2L0zMudUONu
+ 3cb2giyh427Hv.D2abTXjN5hHorG2_WIkA7yyW_XaesfDvVePOcWBxV5KIn9x7S1bPVuvBnvKgJJ
+ QZib1PDXRSQz.1jyRKazH6DmGweohlIspPgVXlzaJURmptuOnK70i6H2_1d2__4SiNhdYcjj2Zlf
+ gH.9W8n7_UHe1VrUcgngPw_NtLbhym0ivzhoIyfSF8UQ6JT2MoJKEdfX3RZdhUACv6JTKLmUr36S
+ fPHSQP03ii1fIX9hyI4HCfBlQT2ojz0g2SyAi.GinQgRe4xMp4EmIBClvxHqU3oNusW7B7UI0VIP
+ PUe0CwnYFPBiAjTmVP6S0QFBbNpmboKSatty6keoIAEPNnVuJh04Y5FZEBPyJA5QxGu1rhZThgEA
+ kHjNnGGbAHO0vOrjIYLk7ViFT8EuTNsuCwqCqymmI54UL.AB.rrPUp4IlWY5aEE5ln89ox3wS5s1
+ 4yCVPbgBWVTmeZOVoMlFOcetPIO_efBvz_lKyd_MIrlYdsYTaDSA3B_SO8mbL00KYHPORLBfMs_E
+ j0U6lRSqaZVwMStubcZ_H6ZZ5RQdIZmuOpSw7Q6kuhzFPKRUsqCbeSTcECroIl2twmlzjx113iZX
+ TeIBNz7Bb6hfc41HgAGw7K2K9fCh.q2VaJklaycx81YWM06iUuHgtUxk1uDhTWmiToGh8ro8VxXO
+ CqK0qOkpkpADs6ZSzMm1b3lbW9luoqdN56Of1sXMPmMOxOQhZ8kfWz25dIzprqAm7n5Ab4A_V0OH
+ xHGdYPHEBCoIkmWe7KM0dxOt7HJutYnovmCLIj_jfdjrH1J80hGT.0W0ogbnl8athDHlsgMde7QY
+ iiGYRVQ.vxHWvjKoIT9oxIFo7Okju0JieWVuA4c7CfRt.9Da_ergX9ZZfRRCTWlTPOGgpXQCR8k3
+ p_gel1NETIuMCn.j1AnFnC8c4P5caUZsHMlURJYbJhNdSFWsjxRLlgHCkz6pyFMA1n7bczfOkqUq
+ ggBA5nl.23D8JvjVXkJk9sD8IjVkUC39h8m07xXjzJ5UZAH1l97oe7Mjbnhw08MfU4_ZCAKMd_EV
+ 5lECS.D3KSsF0xtwedPQUKYAsbMisM.AgsjSpg0BoKooTyEBpURkVgjtepApZa8kUeOLbcNWCOHf
+ BKFTffJT.LGNqwsBbkAKVEogEGpoGT6RFBcyes.QSH66Xjr._GFGSlWnJCXftnmEhtoMhyfYXpa_
+ kzFs295Eobxh1jelMCywhEAGAa2wOqA__SCE_2R4B3PCnI8RwC5CaUDTqYBA_QB5W2n2JDAO4LJx
+ xv5b77gOcyXrifxUG460OaBgtNa8_pcZqnXEQAw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 22 Aug 2022 14:38:10 +0000
+Received: by hermes--production-ne1-6649c47445-ptfbb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 647d85add8f566901aeb89f00a3545b4;
+          Mon, 22 Aug 2022 14:38:05 +0000 (UTC)
+Message-ID: <80ac4695-e0bc-3ead-fa36-c705d7527866@schaufler-ca.com>
+Date:   Mon, 22 Aug 2022 07:38:04 -0700
 MIME-Version: 1.0
-References: <a459363217b1847c0f206a5dbdf181cb21cf3d0c.1659557290.git.guillaume.tucker@collabora.com>
- <CADYN=9JM1nnjC9LypHqrz7JJjbZLpm8rArDUy4zgYYrajErBnA@mail.gmail.com> <e4843a98-0bde-829c-f77a-56d45ba324d7@digikod.net>
-In-Reply-To: <e4843a98-0bde-829c-f77a-56d45ba324d7@digikod.net>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Mon, 22 Aug 2022 16:00:37 +0200
-Message-ID: <CADYN=9+CFEV9QpNbhi6gKqJr1V5Jc8Q5hGhCD_ESkRXP2X3gbQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests/landlock: fix broken include of linux/landlock.h
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     Guillaume Tucker <guillaume.tucker@collabora.com>,
-        Guillaume <guillaume.tucker@gmail.com>,
-        Shuah Khan <shuah@kernel.org>, Tim.Bird@sony.com,
-        kernel@collabora.com, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: Subject: [PATCH 01/11] ->getprocattr(): attribute name is const
+ char *, TYVM...
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, casey@schaufler-ca.com
+References: <YwEjnoTgi7K6iijN@ZenIV> <YwEjy6vaFHEVPwlz@ZenIV>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <YwEjy6vaFHEVPwlz@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20560 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 13 Aug 2022 at 14:31, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wr=
-ote:
+On 8/20/2022 11:11 AM, Al Viro wrote:
+> cast of ->d_name.name to char * is completely wrong - nothing is
+> allowed to modify its contents.
 >
->
-> On 13/08/2022 12:01, Anders Roxell wrote:
-> > On Wed, 3 Aug 2022 at 22:14, Guillaume Tucker
-> > <guillaume.tucker@collabora.com> wrote:
-> >>
-> >> Revert part of the earlier changes to fix the kselftest build when
-> >> using a sub-directory from the top of the tree as this broke the
-> >> landlock test build as a side-effect when building with "make -C
-> >> tools/testing/selftests/landlock".
-> >>
-> >> Reported-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> >> Fixes: a917dd94b832 ("selftests/landlock: drop deprecated headers depe=
-ndency")
-> >> Fixes: f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")
-> >> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> >
-> > Building with this patch doesn't work, it gives this output:
-> > make[3]: Entering directory
-> > '/home/anders/src/kernel/next/tools/testing/selftests/landlock'
-> > make[3]: Leaving directory
-> > '/home/anders/src/kernel/next/tools/testing/selftests/landlock'
-> > make[3]: *** No rule to make target
-> > '/home/anders/.cache/tuxmake/builds/78/build/kselftest/landlock/base_te=
-st',
-> > needed by 'all'.  Stop.
-> >
-> > I'm building like this:
-> > tuxmake --runtime podman --target-arch x86_64 --toolchain gcc-12
-> > --kconfig defconfig kselftest
-> >
-> > which translates into this make command:
-> > make --silent --keep-going --jobs=3D32
-> > O=3D/home/anders/.cache/tuxmake/builds/78/build
-> > INSTALL_PATH=3D/home/anders/.cache/tuxmake/builds/78/build/kselftest_in=
-stall
-> > ARCH=3Dx86_64 CROSS_COMPILE=3Dx86_64-linux-gnu- kselftest-install
->
-> This works well for me.
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Interesting
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-> Which commit is checkout?
+Thank you for the fix. Please feel free to submit this
+directly.
 
-I used the latest next tag, I tried to on todays tag as well
-next-20220822 and I see
-the same issue.
-building without 'O=3D...' I can build the landlock tests...
-
+> ---
+>  fs/proc/base.c                | 2 +-
+>  include/linux/lsm_hook_defs.h | 2 +-
+>  include/linux/security.h      | 4 ++--
+>  security/apparmor/lsm.c       | 2 +-
+>  security/security.c           | 4 ++--
+>  security/selinux/hooks.c      | 2 +-
+>  security/smack/smack_lsm.c    | 2 +-
+>  7 files changed, 9 insertions(+), 9 deletions(-)
 >
->
-> >
-> > building without this patch works, see below:
-> >
-> > make[3]: Entering directory
-> > '/home/anders/src/kernel/next/tools/testing/selftests/landlock'
-> > x86_64-linux-gnu-gcc -Wall -O2 -isystem
-> > /home/anders/.cache/tuxmake/builds/77/build/usr/include    base_test.c
-> >   -o /home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/bas=
-e_test
-> > -lcap
-> > x86_64-linux-gnu-gcc -Wall -O2 -isystem
-> > /home/anders/.cache/tuxmake/builds/77/build/usr/include    fs_test.c
-> > -o /home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/fs_te=
-st
-> > -lcap
-> > x86_64-linux-gnu-gcc -Wall -O2 -isystem
-> > /home/anders/.cache/tuxmake/builds/77/build/usr/include
-> > ptrace_test.c  -o
-> > /home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/ptrace_t=
-est
-> > -lcap
-> > x86_64-linux-gnu-gcc -Wall -O2 -isystem
-> > /home/anders/.cache/tuxmake/builds/77/build/usr/include    true.c  -o
-> > /home/anders/.cache/tuxmake/builds/77/build/kselftest/landlock/true
-> > -static
-> > make[3]: Leaving directory
-> > '/home/anders/src/kernel/next/tools/testing/selftests/landlock'
-> Does this work if you revert this patch, commit a917dd94b832
-> ("selftests/landlock: drop deprecated headers dependency") and commit
-> f2745dc0ba3d ("selftests: stop using KSFT_KHDR_INSTALL")?
->
-> This patch mainly revert commit a917dd94b832, so I don't see the issue.
->
->
-> >
-> > Cheers,
-> > Anders
-> >
-> >> ---
-> >>   tools/testing/selftests/landlock/Makefile | 7 +++++--
-> >>   1 file changed, 5 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing=
-/selftests/landlock/Makefile
-> >> index a6959df28eb0..02868ac3bc71 100644
-> >> --- a/tools/testing/selftests/landlock/Makefile
-> >> +++ b/tools/testing/selftests/landlock/Makefile
-> >> @@ -9,10 +9,13 @@ TEST_GEN_PROGS :=3D $(src_test:.c=3D)
-> >>   TEST_GEN_PROGS_EXTENDED :=3D true
-> >>
-> >>   OVERRIDE_TARGETS :=3D 1
-> >> +top_srcdir :=3D ../../../..
-> >>   include ../lib.mk
-> >>
-> >> +khdr_dir =3D $(top_srcdir)/usr/include
-> >> +
-> >>   $(OUTPUT)/true: true.c
-> >>          $(LINK.c) $< $(LDLIBS) -o $@ -static
-> >>
-> >> -$(OUTPUT)/%_test: %_test.c ../kselftest_harness.h common.h
-> >> -       $(LINK.c) $< $(LDLIBS) -o $@ -lcap
-> >> +$(OUTPUT)/%_test: %_test.c $(khdr_dir)/linux/landlock.h ../kselftest_=
-harness.h common.h
-> >> +       $(LINK.c) $< $(LDLIBS) -o $@ -lcap -I$(khdr_dir)
-> >> --
-> >> 2.30.2
-> >>
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 93f7e3d971e4..e347b8ce140c 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2728,7 +2728,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+>  		return -ESRCH;
+>  
+>  	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
+> -				      (char*)file->f_path.dentry->d_name.name,
+> +				      file->f_path.dentry->d_name.name,
+>  				      &p);
+>  	put_task_struct(task);
+>  	if (length > 0)
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 806448173033..03360d27bedf 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -253,7 +253,7 @@ LSM_HOOK(int, 0, sem_semop, struct kern_ipc_perm *perm, struct sembuf *sops,
+>  LSM_HOOK(int, 0, netlink_send, struct sock *sk, struct sk_buff *skb)
+>  LSM_HOOK(void, LSM_RET_VOID, d_instantiate, struct dentry *dentry,
+>  	 struct inode *inode)
+> -LSM_HOOK(int, -EINVAL, getprocattr, struct task_struct *p, char *name,
+> +LSM_HOOK(int, -EINVAL, getprocattr, struct task_struct *p, const char *name,
+>  	 char **value)
+>  LSM_HOOK(int, -EINVAL, setprocattr, const char *name, void *value, size_t size)
+>  LSM_HOOK(int, 0, ismaclabel, const char *name)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 1bc362cb413f..93488c01d9bd 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -461,7 +461,7 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
+>  int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
+>  			unsigned nsops, int alter);
+>  void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+> -int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
+> +int security_getprocattr(struct task_struct *p, const char *lsm, const char *name,
+>  			 char **value);
+>  int security_setprocattr(const char *lsm, const char *name, void *value,
+>  			 size_t size);
+> @@ -1301,7 +1301,7 @@ static inline void security_d_instantiate(struct dentry *dentry,
+>  { }
+>  
+>  static inline int security_getprocattr(struct task_struct *p, const char *lsm,
+> -				       char *name, char **value)
+> +				       const char *name, char **value)
+>  {
+>  	return -EINVAL;
+>  }
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index e29cade7b662..f56070270c69 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -614,7 +614,7 @@ static int apparmor_sb_pivotroot(const struct path *old_path,
+>  	return error;
+>  }
+>  
+> -static int apparmor_getprocattr(struct task_struct *task, char *name,
+> +static int apparmor_getprocattr(struct task_struct *task, const char *name,
+>  				char **value)
+>  {
+>  	int error = -ENOENT;
+> diff --git a/security/security.c b/security/security.c
+> index 14d30fec8a00..d8227531e2fd 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2057,8 +2057,8 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+>  }
+>  EXPORT_SYMBOL(security_d_instantiate);
+>  
+> -int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
+> -				char **value)
+> +int security_getprocattr(struct task_struct *p, const char *lsm,
+> +			 const char *name, char **value)
+>  {
+>  	struct security_hook_list *hp;
+>  
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 79573504783b..c8168d19fb96 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6327,7 +6327,7 @@ static void selinux_d_instantiate(struct dentry *dentry, struct inode *inode)
+>  }
+>  
+>  static int selinux_getprocattr(struct task_struct *p,
+> -			       char *name, char **value)
+> +			       const char *name, char **value)
+>  {
+>  	const struct task_security_struct *__tsec;
+>  	u32 sid;
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 001831458fa2..434b348d8fcd 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3479,7 +3479,7 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+>   *
+>   * Returns the length of the smack label or an error code
+>   */
+> -static int smack_getprocattr(struct task_struct *p, char *name, char **value)
+> +static int smack_getprocattr(struct task_struct *p, const char *name, char **value)
+>  {
+>  	struct smack_known *skp = smk_of_task_struct_obj(p);
+>  	char *cp;
