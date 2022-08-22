@@ -2,105 +2,90 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C307C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 21:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB2DC32792
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 21:17:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231887AbiHVVOT (ORCPT
+        id S237931AbiHVVRx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Aug 2022 17:14:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40050 "EHLO
+        Mon, 22 Aug 2022 17:17:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237957AbiHVVOS (ORCPT
+        with ESMTP id S237826AbiHVVRw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Aug 2022 17:14:18 -0400
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46E4A32AA8
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:14:17 -0700 (PDT)
-Received: by mail-qv1-xf2a.google.com with SMTP id m2so1553683qvq.11
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:14:17 -0700 (PDT)
+        Mon, 22 Aug 2022 17:17:52 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22E3052830
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:17:51 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-10cf9f5b500so14495294fac.2
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 14:17:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :cc:to:from:subject:from:to:cc;
-        bh=/q0nwJ3bwd102jW5hNeK0W5Y+IabNfyQyp4vndAiVuU=;
-        b=e7mi3hA/9lmUPcqxPTbADoCC8pT86ri6GA3t9cVCuQXQhfBwn6yK44Mj/rprBv+7GV
-         4oI0rkwJ4Lq/vP1Dnl+s7n2NLXiuTQ6dOqhAtgXAOhOxD6xAyq3DpVy60aaUWRDRwOUY
-         W8cWg79RBr9Vag6KNjRP/gHkIg4QsPVh/bqIy3lFvGgOzurygvLUF7UA1gF73eH/GqDA
-         i5bXgcP5S+vUjX0yyeXSLk98b7jhjPzjgcYZBfjtpvxf7FvtpNBTt9CvgAodyV/7XQbo
-         n2nXgpC3zq4A3IULamMAfRytYXZNRbBG1ygAwCRbCvxDtZp/BTTwgidJtvIArMQja+sx
-         AOvg==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=Frrl9mJt0hK/Oh0mjmqdtsrb5voW8zQOC0fq0VF7OIo=;
+        b=cr+o9UeF2H2+P3FSi1vd97hqNOWWjypNc761GnbjNwqrQ3dF9SUB7I7tVtW1ZQSSxr
+         xssqEneBTWcdbwzMgKxqshLle8kcyt9Guk8QL5omuUGJdVyj1S7RVQL8TGqF1+HufyvZ
+         elJ6cD1sLjz8Ca4gKqMVzZyrNL59CTemxqJSd9yBaz5JAt9J3oRYNwjj4GOV6lYmgSYy
+         jwfSvN3nMXLRmabDreifGBA1kLgufCpZiFmPpNKnDE/FtdLCEiPeNdgMT41sbNOKWkqb
+         xzQOdU8FH5cf2rZ+ywsNcS8sVTFYF9vG3tRvSl1SQsbiuW8wpM2u7f569943dQ1NVX67
+         6x0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :cc:to:from:subject:x-gm-message-state:from:to:cc;
-        bh=/q0nwJ3bwd102jW5hNeK0W5Y+IabNfyQyp4vndAiVuU=;
-        b=RDczwDZUVqExPEkr7UZ5HGPTrkWC5CtXzzb50YZDORweo1Hkct33Tyk0IIfVG/c2+p
-         07ok3NT0OiRDgiHdcc8YdJS+XY5J6IdauO74zgJifY6EIAFLyDXhN4HlZea+m07uUkmM
-         W1kzcquGS0Q7cF/yvVhRObFxvqd9mT9twg1zcLq7+xh0Of2Y6gurbY3hWgrpmDS87Qnb
-         k3uvgoKujF3dlQz0aTiNCmrksFEsMSCq7GuKAg1tpUKMUoPmnAYlGAlqslTZ9I3R62wg
-         6+JKTfLJiF+u8pbbIW7mo42N0XqO1HRAzGZ/+dIU9Pz/FQVvHi5KITvOYKf8OuE1n7kI
-         rYUg==
-X-Gm-Message-State: ACgBeo302Qk1XJYpRoMIcUuAnu1N9KZISahjEFiuIOUAsQLWTEBSHkWf
-        g/EYs3CY3zesZEGxc25PGjkiPBXK0Qxd
-X-Google-Smtp-Source: AA6agR5clwk558fyRJ2M0NL9frufphXmD/cgoQOiUrZkCZYHtPhhTObuqdoe7E23W0ptCPik/U+mhQ==
-X-Received: by 2002:a05:6214:4119:b0:474:877b:8bac with SMTP id kc25-20020a056214411900b00474877b8bacmr17088024qvb.1.1661202855975;
-        Mon, 22 Aug 2022 14:14:15 -0700 (PDT)
-Received: from localhost (pool-96-237-52-46.bstnma.fios.verizon.net. [96.237.52.46])
-        by smtp.gmail.com with ESMTPSA id b17-20020ac84f11000000b0031e9ab4e4cesm9488658qte.26.2022.08.22.14.14.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Aug 2022 14:14:15 -0700 (PDT)
-Subject: [PATCH 0/3] LSM hooks for IORING_OP_URING_CMD
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=Frrl9mJt0hK/Oh0mjmqdtsrb5voW8zQOC0fq0VF7OIo=;
+        b=pQkC7a7oP4DpdwCItrqvROxdP9yLFZCijkQHIOP6cW4yMks26oScwADNyaz8jBSxF3
+         Vp+lwqzr90VrlpCy1JvNoEw+2JUYXsGZjNsolxotPAFKcZH4sA6hp3iVtSNi2y3tgSb4
+         vHQCMWcrF3CblJtstZr5bF3cyXmHjONoYWEwEOd1P+P0BeFD7AVWxJfxIdx02HUOTJ0z
+         pRV8E9lupgvTrAbZLkv6QnO73SarMlTFWkfgjGEYrLvfCvAKkRRYc5tDgmf36Xp7ucyi
+         NI937CsF0/O2iUw5txjdg+imrisLa40aaQUlW2yuw3n7dkgIoLa45i81p4fHNdMwepe5
+         NEJg==
+X-Gm-Message-State: ACgBeo2tJdyFhaD1PPe61VZXl3Shf3l13JL8LysvjDrJ2aYtVfcE65e2
+        2FIrdz7jBqHwAfOBz+PtVusIdvc6h3t1mjThzaQriKEqkw==
+X-Google-Smtp-Source: AA6agR5LyvZUJEJMt3S64cdt1sfqUrKvz2C/Df/97gW/l5vrLeTnD4gOlSCGbrjs7JRJRWe/NeaRjwwgrwnPPWTCuSc=
+X-Received: by 2002:a05:6870:a78d:b0:11c:437b:ec70 with SMTP id
+ x13-20020a056870a78d00b0011c437bec70mr107716oao.136.1661203070177; Mon, 22
+ Aug 2022 14:17:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <166120234006.357028.9335354304390109167.stgit@olly>
+In-Reply-To: <166120234006.357028.9335354304390109167.stgit@olly>
 From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 22 Aug 2022 17:17:39 -0400
+Message-ID: <CAHC9VhSj_qFaftPzdznxaTdYp_=a_7kqNc8Hbdh0Bp7sSf2z=Q@mail.gmail.com>
+Subject: Re: [PATCH 0/3] LSM hooks for IORING_OP_URING_CMD
 To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         io-uring@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Mon, 22 Aug 2022 17:14:14 -0400
-Message-ID: <166120234006.357028.9335354304390109167.stgit@olly>
-User-Agent: StGit/1.5
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patchset includes three patches: one to add a new LSM hook for
-the IORING_OP_URING_CMD operation, one to add the SELinux
-implementation for the new hook, and one to enable
-IORING_OP_URING_CMD for /dev/null.  The last patch, the /dev/null
-support, is obviously not critical but it makes testing so much
-easier and I believe is in keeping with the general motivation behind
-/dev/null.
+On Mon, Aug 22, 2022 at 5:14 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> This patchset includes three patches: one to add a new LSM hook for
+> the IORING_OP_URING_CMD operation, one to add the SELinux
+> implementation for the new hook, and one to enable
+> IORING_OP_URING_CMD for /dev/null.  The last patch, the /dev/null
+> support, is obviously not critical but it makes testing so much
+> easier and I believe is in keeping with the general motivation behind
+> /dev/null.
+>
+> Luis' patch has already been vetted by Jens and the io_uring folks,
+> so the only new bits are the SELinux implementation and the trivial
+> /dev/null implementation of IORING_OP_URING_CMD.  Assuming no one
+> has any objections over the next few days, I'll plan on sending this
+> up to Linus during the v6.0-rcX cycle.
+>
+> I believe Casey is also currently working on Smack support for the
+> IORING_OP_URING_CMD hook, and as soon as he is ready I can add it
+> to this patchset (or Casey can send it up himself).
+>
+> -Paul
 
-Luis' patch has already been vetted by Jens and the io_uring folks,
-so the only new bits are the SELinux implementation and the trivial
-/dev/null implementation of IORING_OP_URING_CMD.  Assuming no one
-has any objections over the next few days, I'll plan on sending this
-up to Linus during the v6.0-rcX cycle.
+Forgive me, I spaced and hit send on this patchset posting a *second*
+too soon and didn't cancel it in time so the cover letter leaked out.
+A proper patchset posting will be coming in just another minute ...
 
-I believe Casey is also currently working on Smack support for the
-IORING_OP_URING_CMD hook, and as soon as he is ready I can add it
-to this patchset (or Casey can send it up himself).
-
--Paul
-
----
-
-Luis Chamberlain (1):
-      lsm,io_uring: add LSM hooks for the new uring_cmd file op
-
-Paul Moore (2):
-      /dev/null: add IORING_OP_URING_CMD support
-      selinux: implement the security_uring_cmd() LSM hook
-
-
- drivers/char/mem.c                  |  6 ++++++
- include/linux/lsm_hook_defs.h       |  1 +
- include/linux/lsm_hooks.h           |  3 +++
- include/linux/security.h            |  5 +++++
- io_uring/uring_cmd.c                |  5 +++++
- security/security.c                 |  4 ++++
- security/selinux/hooks.c            | 24 ++++++++++++++++++++++++
- security/selinux/include/classmap.h |  2 +-
- 8 files changed, 49 insertions(+), 1 deletion(-)
-
+-- 
+paul-moore.com
