@@ -2,204 +2,86 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A616C32772
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 12:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76594C3F6B0
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 13:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231915AbiHVM4Q (ORCPT
+        id S235420AbiHVNwK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Aug 2022 08:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33874 "EHLO
+        Mon, 22 Aug 2022 09:52:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbiHVM4P (ORCPT
+        with ESMTP id S235412AbiHVNwH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Aug 2022 08:56:15 -0400
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [IPv6:2001:1600:4:17::190e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05AB418359
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 05:56:12 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MBC621MgmzMq0t2;
-        Mon, 22 Aug 2022 14:56:10 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MBC606y77zlh8Ts;
-        Mon, 22 Aug 2022 14:56:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1661172970;
-        bh=NTgn+GUbi4XOqLkT2fQsXBCAJYtABmn0YdbNd0LIMnk=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=B1ES+nkloF5pU6m6tgkn4oMGGb4UTYVCZ4n81PTsWcFcya4dPImGnXFHrjRG6iKZQ
-         KMY3zuWoqbjMEYYQOXX1hEljnTMbw2yUKpECtoOYnV8eL9nzKVCKR+qZ4gkRG1TPlW
-         xbsgjBv0KhRACjt+dfQamI4uMEvjG1aBrvLfwJmM=
-Message-ID: <2728a73c-a3f9-d8f5-9264-9437d6eeda02@digikod.net>
-Date:   Mon, 22 Aug 2022 14:55:58 +0200
+        Mon, 22 Aug 2022 09:52:07 -0400
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 597E0357F3
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 06:52:03 -0700 (PDT)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-10cf9f5b500so12940534fac.2
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 06:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=m73J0a+SpVfFWhhFyKyas6A9QyGH23phPhrWwSIkcsg=;
+        b=0S3Vde4uVPpqrwPrSn1lB/BfHqxw7g0fVMQHKT61OyhdTOtVhgnuM8VKLapQrHBQ8X
+         suJr5xe8z6Ty7J9guCGdAbnnjuvcV6ZhU0CHTn61GfDgO9yA7ZtWzN4BcMCzHmvYPPud
+         ITtvX3vD7dU5cG6HOJZy6M/DVFJJhxNH42et5otOd1jDNZqHxLI0pUb/zQ2U7sB2lCtm
+         M53lNHSrkSUJQw+w8Ag58hDIep3lLqAu1+0RnN7xgnarAtGFkwG+Hc4ARIhC1yD/Qfq9
+         44u4uP2snLqRLedeJ3yaaWOnq8IdsqZsBJwHTaCUmqBXyt3NVeWSHUU3gptroo3ev4LS
+         ZOZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=m73J0a+SpVfFWhhFyKyas6A9QyGH23phPhrWwSIkcsg=;
+        b=OXPHBSZD7FTBK5OA0I0MZef3A+T05k7+oxkXMC3C3Q2kgVfUc+ZPzhHI9gqEU2uGr4
+         wQ8opIbffO3Kx+PGqwU0sA+P9I1rq/Mvy+haYST37KxW6mpNTn5r/ro3CNcS6R0TVge5
+         hcncOChwSiM08e7Ou3mmuRZAGlkiPXxsbfs5FzQX1Ygbllan9RcZt6HmL4ERuqh8hl8Y
+         buWmVsTFq1vJwO6KOqB4MWxMmZhG64WA+7TO2LtHWaPvdnDFumsIH7tkOIh36L5iBwsl
+         Bwvrdb3d8q6qzidnS41woGYFAn9oauwlyBr/0SB1IVMsOGF5zxhkPPGGzXo8DCphcaOd
+         +48g==
+X-Gm-Message-State: ACgBeo3++XIa6gVuESp3+2tMPyrAxzPhuNelk3PYDNgWfff4BTEYy7Nq
+        +LHxTAFhX9gSvbrkHv8LiCw/C9S3JnJdND0KpkFpcMXqqw==
+X-Google-Smtp-Source: AA6agR6MT2srz07bE02RPC0qNPY68niPs6ITLMH7RnLkt58V+xS6X/ZpYBYD8DSuWO6HkBAn6REe/BSbtpuhEQkhjOs=
+X-Received: by 2002:a05:6870:7092:b0:11d:83fe:9193 with SMTP id
+ v18-20020a056870709200b0011d83fe9193mr770914oae.41.1661176322392; Mon, 22 Aug
+ 2022 06:52:02 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-To:     jeffxu@google.com
-Cc:     jorgelo@chromium.org, keescook@chromium.org,
-        linux-security-module@vger.kernel.org, groeck@chromium.org,
-        Jeff Xu <jeffxu@chromium.org>
-References: <20220820004547.2135627-1-jeffxu@google.com>
-Content-Language: en-US
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH] selftests/landlock: skip overlayfs test when kernel not
- support it
-In-Reply-To: <20220820004547.2135627-1-jeffxu@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <YwEjnoTgi7K6iijN@ZenIV> <YwEjy6vaFHEVPwlz@ZenIV>
+In-Reply-To: <YwEjy6vaFHEVPwlz@ZenIV>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 22 Aug 2022 09:51:51 -0400
+Message-ID: <CAHC9VhQXbhdywdxrOmQ4J70zZo2EZBcrPsmJC0J7WWyb5Bskdg@mail.gmail.com>
+Subject: Re: Subject: [PATCH 01/11] ->getprocattr(): attribute name is const
+ char *, TYVM...
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 20/08/2022 02:45, jeffxu@google.com wrote:
-> From: Jeff Xu <jeffxu@google.com>
-> 
-> Overlayfs can be disabled in kernel config, causing related tests to fail.
-> Add check for overlayfs’s supportability at runtime, so we can call SKIP()
-> when needed.
-> 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+On Sat, Aug 20, 2022 at 2:12 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> cast of ->d_name.name to char * is completely wrong - nothing is
+> allowed to modify its contents.
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->   tools/testing/selftests/landlock/fs_test.c | 56 ++++++++++++++++++++--
->   1 file changed, 53 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index 21a2ce8fa739..f604165dbd21 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -11,6 +11,7 @@
->   #include <fcntl.h>
->   #include <linux/landlock.h>
->   #include <sched.h>
-> +#include <stdio.h>
->   #include <string.h>
->   #include <sys/capability.h>
->   #include <sys/mount.h>
-> @@ -3398,12 +3399,53 @@ static const char (*merge_sub_files[])[] = {
->    *         └── work
->    */
->   
-> +static char *fgrep(FILE *inf, const char *str)
+>  fs/proc/base.c                | 2 +-
+>  include/linux/lsm_hook_defs.h | 2 +-
+>  include/linux/security.h      | 4 ++--
+>  security/apparmor/lsm.c       | 2 +-
+>  security/security.c           | 4 ++--
+>  security/selinux/hooks.c      | 2 +-
+>  security/smack/smack_lsm.c    | 2 +-
+>  7 files changed, 9 insertions(+), 9 deletions(-)
 
-Please move these two helpers just before prepare_layout(). I plan to 
-use them for other filesystems.
+Thanks Al.  Based on your other email it sounds like you are going to
+send these up to Linus, which is fine by me, but if that changes let
+me know and I'll make sure this patch gets sent up.
 
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-> +{
-> +	char line[256];
-
-I guess we can safely set this array size to 32 for now.
-
-
-> +	int slen = strlen(str);
-> +
-> +	while (!feof(inf)) {
-> +		if (!fgets(line, 256, inf))
-
-Please use sizeof(line)
-
-> +			break;
-> +		if (strncmp(line, str, slen))
-> +			continue;
-> +
-> +		return strdup(line);
-
-No need to duplicate the string, just return a boolean.
-
-
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static bool check_overlayfs_support(void)
-
-Can be renamed to supports_overlayfs().
-
-
-> +{
-> +	FILE *inf = fopen("/proc/filesystems", "r");
-
-Just move the fopen() call at the end of variable declaration and add a 
-const.
-
-
-> +	char *res;
-> +	bool ret = false;
-> +
-> +	if (!inf)
-> +		return false;
-
-Let's assume that a failed attempt to open /proc/filesystems means the 
-filesystem is supported (default behavior). This can help detect such 
-missing file (which should not happen). You can add a comment to explain 
-the rational.
-
-
-> +
-> +	res = fgrep(inf, "nodev\toverlay\n");
-> +
-> +	if (res) {
-> +		ret = true;
-> +		free(res);
-> +	}
-> +
-> +	fclose(inf);
-> +
-> +	return ret;
-> +}
-> +
->   /* clang-format off */
->   FIXTURE(layout2_overlay) {};
->   /* clang-format on */
->   
->   FIXTURE_SETUP(layout2_overlay)
->   {
-> +	int rc;
-
-Let's stick to "ret".
-
-
-> +	bool support;
-
-s/support/is_supported/
-
-
-> +
->   	prepare_layout(_metadata);
->   
->   	create_directory(_metadata, LOWER_BASE);
-> @@ -3431,9 +3473,17 @@ FIXTURE_SETUP(layout2_overlay)
->   	create_directory(_metadata, MERGE_DATA);
->   	set_cap(_metadata, CAP_SYS_ADMIN);
->   	set_cap(_metadata, CAP_DAC_OVERRIDE);
-> -	ASSERT_EQ(0, mount("overlay", MERGE_DATA, "overlay", 0,
-> -			   "lowerdir=" LOWER_DATA ",upperdir=" UPPER_DATA
-> -			   ",workdir=" UPPER_WORK));
-> +
-> +	rc = mount("overlay", MERGE_DATA, "overlay", 0,
-> +			"lowerdir=" LOWER_DATA ",upperdir=" UPPER_DATA
-> +			",workdir=" UPPER_WORK);
-
-Please format with clang-format-14, otherwise I'll do it myself.
-
-
-> +	if (rc < 0) {
-
-Please check errno with ASSERT_EQ() to differentiate from a skippable 
-mount and an unexpected error. The next TH_LOG() would then not be needed.
-
-
-> +		TH_LOG("mount overlay failed: errorno=%s", strerror(errno));
-> +		support = check_overlayfs_support();
-> +		ASSERT_FALSE(support);
-
-ASSERT_FALSE(supports_overlayfs());
-
-> +		SKIP(return, "overlayfs is not supported");
-> +	}
-> +
-
-Please keep these clear_cap() calls just after the mount call.
-
->   	clear_cap(_metadata, CAP_DAC_OVERRIDE);
->   	clear_cap(_metadata, CAP_SYS_ADMIN);
->   }
+-- 
+paul-moore.com
