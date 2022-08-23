@@ -2,268 +2,98 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C72FC32774
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 17:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CE5C32789
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 18:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229944AbiHWRlC (ORCPT
+        id S232313AbiHWS2Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Aug 2022 13:41:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39184 "EHLO
+        Tue, 23 Aug 2022 14:28:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231796AbiHWRkQ (ORCPT
+        with ESMTP id S232382AbiHWS1g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Aug 2022 13:40:16 -0400
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36933A9271
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 08:28:59 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MBtRt0h2SzMpvCX;
-        Tue, 23 Aug 2022 17:28:58 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MBtRs3sz5zlh8TM;
-        Tue, 23 Aug 2022 17:28:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1661268538;
-        bh=C11hvi+jDWMIfnoPz0IN+IlHIJbXCfBBlG3mknhtybI=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=e4RYyNP7ZdvtYaB0RuuFK2R4crHiM28lgICamftRhC/C0XeeAI0lNL7tH6RPOcWhJ
-         cbFuayb2Rch2UbuetNq9Or7UhA7vexqoi43lFTQzFZo5eetAAq042KlFOi92acXoES
-         R3ttrDqShAfU4L+bXT3MwWMGE05c+TPnLPaDlYP4=
-Message-ID: <32d37192-8290-4e8d-32c6-f6992ec2f3ec@digikod.net>
-Date:   Tue, 23 Aug 2022 17:28:56 +0200
+        Tue, 23 Aug 2022 14:27:36 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9F18923E9
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 09:48:41 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id o204so9207840oia.12
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 09:48:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=SaVACCZwH8xQotDN92IFUrhdTD0EHmA54lklXB94n+E=;
+        b=1Ok/wOesKzu5P/GWM9TLt92fPx47XR2jb6Bs1/YwT6s+aE3yjQT8rK6fg3W4gaMZHY
+         mQo3ryfYq8vuTjmZQdmtbQFq/ztnDvKE2xVNpd1/ySE9vpgsf1lnEY4KGhMlMSPhRJOJ
+         bsyrvWXn/fvwz/FlSXYczk5JGhN5CyCqvnNKzhX1UajRcoKEjeA6nBMngjWuNoZtqMwf
+         pdHj0fbraSiaUe603p8b0m6b6TcOb+Jb+YN7pCuBwaR1frNMrBQDlHEQFhyGqw1QnLNu
+         VybTy0xxYsUD4eZ5h7uJMlN0EtP7nJ51xAsCHwyt9gQRPFURU9QW0Wm/l8SaS1N1LmZa
+         KBcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=SaVACCZwH8xQotDN92IFUrhdTD0EHmA54lklXB94n+E=;
+        b=T3rpeeK6obFNuMdIVqj7Vy7VAEfI277n9cBkyqSW+6w6FLEzKbohg1KQ57ho2dKAt1
+         m+lAnuT7x11Vop6ywKKrTPii3xFaE9KBGbm6tSo5azuSjq/iEJo34zW/wN5y5jXkfzY6
+         ryB42tyWcngmhTdJPHxLcj9wiarn1vGSCgyOrMoUUsPWI2buTntMU1XPkunkthbtfVtA
+         gcAYmnC0A1awQBcC3G4gl07mkUrIkEyguG0Htv3Niz1YPxW2ObB8MrLUzAoOZvHhGbVx
+         weyYGz1P4fHaQcmapx0gX0KgnGiz5kkc+frJNRnRpeucSdGPczt6RHW5EiYDwadYAgOk
+         BMRw==
+X-Gm-Message-State: ACgBeo028sfDOaA/HzV3P+3tYWkQHlIAdcffz3j2iKYD4y7rtgIMOWfm
+        Zr+ovKLawpRAv8XnO/a+EnjxDWcEH7C1nCR4kAs6
+X-Google-Smtp-Source: AA6agR5r+WBH3Du54udJhIAVwDMynlMf9eKtVs3NIk9gYWmdmJqIMsAFjS7fy70yrHHRQNjEDLIJRAmJIyXSoSfZ5wA=
+X-Received: by 2002:aca:b7d5:0:b0:343:c478:91c6 with SMTP id
+ h204-20020acab7d5000000b00343c47891c6mr1691234oif.136.1661273321128; Tue, 23
+ Aug 2022 09:48:41 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     jeffxu@google.com
-Cc:     jorgelo@chromium.org, keescook@chromium.org,
-        linux-security-module@vger.kernel.org, groeck@chromium.org,
-        Jeff Xu <jeffxu@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-References: <20220823010216.2653012-1-jeffxu@google.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v4] selftests/landlock: skip overlayfs test when kernel
- not support it
-In-Reply-To: <20220823010216.2653012-1-jeffxu@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <166120321387.369593.7400426327771894334.stgit@olly>
+ <166120326788.369593.18304806499678048620.stgit@olly> <YwR5fDR0Whp0W3sG@kroah.com>
+In-Reply-To: <YwR5fDR0Whp0W3sG@kroah.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 23 Aug 2022 12:48:30 -0400
+Message-ID: <CAHC9VhSkmJCXbKBOLDJjnap1+pYYnSVt2CzO3iQXmV7TZ+17SA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] lsm,io_uring: add LSM hooks for the new uring_cmd
+ file op
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This looks good overall. You'll find some nitpicking review below.
+On Tue, Aug 23, 2022 at 2:53 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Mon, Aug 22, 2022 at 05:21:07PM -0400, Paul Moore wrote:
+> > From: Luis Chamberlain <mcgrof@kernel.org>
+> >
+> > io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+> > add infrastructure for uring-cmd"), this extended the struct
+> > file_operations to allow a new command which each subsystem can use
+> > to enable command passthrough. Add an LSM specific for the command
+> > passthrough which enables LSMs to inspect the command details.
+> >
+> > This was discussed long ago without no clear pointer for something
+> > conclusive, so this enables LSMs to at least reject this new file
+> > operation.
+> >
+> > [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
+> >
+> > Fixes: ee692a21e9bf ("fs,io_uring: add infrastructure for uring-cmd")
+>
+> You are not "fixing" anything, you are adding new functionality.
+> Careful with using "Fixes:" for something like this, you will trigger
+> the bug-detection scripts and have to fend off stable bot emails for a
+> long time for stuff that should not be backported to stable trees.
 
-I found that there is an issue with the skipped test, and especially the 
-teardown parts:
+This patch, as well as the SELinux and (soon to come) Smack hook
+implementations, fix a LSM access control regression that occured when
+the IORING_OP_URING_CMD functionality was merged in v5.19.  You may
+disagree about this being a regression Greg, but there are at least
+three people with their name on this patch that believe it is
+important: Luis (patch author), Jens (io_uring maintainer), and myself
+(LSM, SELinux maintainer).
 
-> #  RUN           layout2_overlay.no_restriction ...
-> #      SKIP      overlayfs is not supported
-> # fs_test.c:3537:no_restriction:Expected 0 (0) == test_open(merge_fl1, O_RDONLY) (2)
-> # fs_test.c:3512:no_restriction:Expected 0 (0) == umount(MERGE_DATA) (-1)
-
-These messages seem OK…
-
-> # fs_test.c:3496:no_restriction:Expected 0 (0) == umount(LOWER_BASE) (-1)
-> # fs_test.c:3507:no_restriction:Expected 0 (0) == umount(UPPER_BASE) (-1)
-
-…but these two should not happen because the tmpfs should still be mounted.
-
-
-> #            OK  layout2_overlay.no_restriction
-> ok 58 # SKIP overlayfs is not supported
-> #  RUN           layout2_overlay.same_content_different_file ...
-> # fs_test.c:3512:no_restriction:Expected 0 (0) == umount(MERGE_DATA) (-1)
-
-These is some inconsistencies here too.
-
-> # fs_test.c:230:no_restriction:Expected 0 (0) == umount(TMP_DIR) (-1)
-> #      SKIP      overlayfs is not supported
-> # fs_test.c:3723:same_content_different_file:Expected 0 (0) == test_open(path_entry, O_RDWR) (2)
-> # fs_test.c:3496:same_content_different_file:Expected 0 (0) == umount(LOWER_BASE) (-1)
-> # fs_test.c:3498:same_content_different_file:Expected 0 (0) == remove_path(LOWER_BASE) (16)
-> # fs_test.c:3507:same_content_different_file:Expected 0 (0) == umount(UPPER_BASE) (-1)
-> # fs_test.c:3509:same_content_different_file:Expected 0 (0) == remove_path(UPPER_BASE) (16)
-> # fs_test.c:3512:same_content_different_file:Expected 0 (0) == umount(MERGE_DATA) (-1)
-> # fs_test.c:230:same_content_different_file:Expected 0 (0) == umount(TMP_DIR) (-1)
-> # fs_test.c:232:same_content_different_file:Expected 0 (0) == remove_path(TMP_DIR) (16)
-> # fs_test.c:3512:same_content_different_file:Expected 0 (0) == umount(MERGE_DATA) (-1)
-
-I guess this is because of the TEST_F_FORK() helper which doesn't handle 
-well the skipped with error tests, hence the parent test process trying 
-to execute the teardown and unmounting something which is not mounted it 
-its namespace, and the duplicated messages.
-
-This may be related to commit 63e6b2a42342 ("selftests/harness: Run 
-TEARDOWN for ASSERT failures").
-
-Can you fix TEST_F_FORK() for skipped tests please?
-
-We should merge TEST_F_FORK() within kselftest_harness.h with a follow 
-up patch though.
-
-
-On 23/08/2022 03:02, jeffxu@google.com wrote:
-> From: Jeff Xu <jeffxu@google.com>
-
-This is not consistent with your Signed-off-by email.
-
-> 
-> Overlayfs can be disabled in kernel config, causing related tests to fail.
-> Add check for overlayfs’s supportability at runtime, so we can call SKIP()
-> when needed.
-
-selftests/landlock: Skip overlayfs tests when not supported
-
-overlayfs can be disabled in the kernel configuration (which is the case
-for chromeOS), causing related tests to fail.  Skip such tests when an
-overlayfs mount operation failed because the running kernel doesn't
-support this file system.
-
-
-> 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> Reviewed-by: Guenter Roeck <groeck@chromium.org>
-> ---
->   tools/testing/selftests/landlock/fs_test.c | 53 ++++++++++++++++++++--
->   1 file changed, 50 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index 21a2ce8fa739..aaece185579d 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -11,6 +11,7 @@
->   #include <fcntl.h>
->   #include <linux/landlock.h>
->   #include <sched.h>
-> +#include <stdio.h>
->   #include <string.h>
->   #include <sys/capability.h>
->   #include <sys/mount.h>
-> @@ -62,6 +63,7 @@ static const char dir_s3d1[] = TMP_DIR "/s3d1";
->   static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
->   static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
->   
-> +static const char proc_filesystems[] = "/proc/filesystems";
-
-No need for this global variable, just use the string in the fopen() call.
-
-
->   /*
->    * layout1 hierarchy:
->    *
-> @@ -169,6 +171,42 @@ static int remove_path(const char *const path)
->   	return err;
->   }
->   
-> +static bool fgrep(FILE *inf, const char *str)
-
-const char *const str
-
-s/inf/file/
-
-
-> +{
-> +	char line[32];
-> +	int slen = strlen(str);
-
-s/slen/str_len/
-
-> +
-> +	while (!feof(inf)) {
-> +		if (!fgets(line, sizeof(line), inf))
-> +			break;
-> +		if (strncmp(line, str, slen))
-> +			continue;
-> +
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static bool supports_overlayfs(void)
-> +{
-> +	bool ret = false;
-
-No need to set it to "false" (which should be "true" BTW).
-
-
-> +	FILE *inf = fopen(proc_filesystems, "r");
-
-s/inf/filename/
-
-> +
-> +	/*
-> +	 * If fopen fails, return supported.
-> +	 * This helps to detect missing file (shall not
-> +	 * happen).
-
-"A failed attempt to open /proc/filesystems implies that the file
-system is supported (default behavior). This can help detect such
-unattended issue (which should not happen)."
-
-
-> +	 */
-> +	if (!inf)
-> +		return true;
-> +
-> +	ret = fgrep(inf, "nodev\toverlay\n");
-> +	fclose(inf);
-> +
-
-You can remove this newline.
-
-> +	return ret;
-> +}
-> +
->   static void prepare_layout(struct __test_metadata *const _metadata)
->   {
->   	disable_caps(_metadata);
-> @@ -3404,6 +3442,8 @@ FIXTURE(layout2_overlay) {};
->   
->   FIXTURE_SETUP(layout2_overlay)
->   {
-> +	int rc;
-
-s/rc/ret/
-
-int ret, err;
-
-> +
->   	prepare_layout(_metadata);
->   
->   	create_directory(_metadata, LOWER_BASE);
-> @@ -3431,11 +3471,18 @@ FIXTURE_SETUP(layout2_overlay)
->   	create_directory(_metadata, MERGE_DATA);
->   	set_cap(_metadata, CAP_SYS_ADMIN);
->   	set_cap(_metadata, CAP_DAC_OVERRIDE);
-> -	ASSERT_EQ(0, mount("overlay", MERGE_DATA, "overlay", 0,
-> -			   "lowerdir=" LOWER_DATA ",upperdir=" UPPER_DATA
-> -			   ",workdir=" UPPER_WORK));
-> +
-> +	rc = mount("overlay", MERGE_DATA, "overlay", 0,
-> +		   "lowerdir=" LOWER_DATA ",upperdir=" UPPER_DATA
-> +		   ",workdir=" UPPER_WORK);
-
-err = errno;
-
->   	clear_cap(_metadata, CAP_DAC_OVERRIDE);
->   	clear_cap(_metadata, CAP_SYS_ADMIN);
-> +
-> +	if (rc < 0) {
-
-if (ret == -1) {
-
-> +		ASSERT_EQ(ENODEV, errno);
-
-ASSERT_EQ(ENODEV, err);
-
-> +		ASSERT_FALSE(supports_overlayfs());
-> +		SKIP(return, "overlayfs is not supported");
-> +	}
-
-ASSERT_EQ(0, ret);
-
->   }
->   
->   FIXTURE_TEARDOWN(layout2_overlay)
-> 
-> base-commit: 50cd95ac46548429e5bba7ca75cc97d11a697947
+--
+paul-moore.com
