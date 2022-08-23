@@ -2,359 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D140BC32796
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 16:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED6BC38142
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 17:07:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245317AbiHWQkA (ORCPT
+        id S1343751AbiHWRHK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Aug 2022 12:40:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34256 "EHLO
+        Tue, 23 Aug 2022 13:07:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244915AbiHWQjZ (ORCPT
+        with ESMTP id S1343929AbiHWREE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Aug 2022 12:39:25 -0400
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E739033E00
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 07:41:42 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MBsPJ4YsRzMq0HF;
-        Tue, 23 Aug 2022 16:41:40 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MBsPJ2JW6zlh8Tk;
-        Tue, 23 Aug 2022 16:41:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1661265700;
-        bh=VrSklp/986tvOpkc92OuHVLjqoqDvWm+CaBM4hIsiDQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=gDS/7E34ZSyeSwAUuOPhgLgLrWU8TRUI5SwilXj8qIu4NkqP5MeXHVC/xOzbn61JF
-         qQmYS6F+5F79id7GI7ysQl3zAGlvWMmJJiXkWoMa/Iz/zHzDGXhs8j/ZkRK3/LNwl3
-         v7Co2MMmc/pPCTB80F1+kIHFTQwM3olntJWDY2Co=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v1] landlock: Fix file reparenting without explicit LANDLOCK_ACCESS_FS_REFER
-Date:   Tue, 23 Aug 2022 16:41:23 +0200
-Message-Id: <20220823144123.633721-1-mic@digikod.net>
+        Tue, 23 Aug 2022 13:04:04 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFF75150156
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 06:33:40 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id x19so10704237pfq.1
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 06:33:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=aCSXGk9NtNmglUVpbUQ1Rjs+YdBMM2XU3YePZpV6vnQ=;
+        b=jLH60+HfG5U8ezVkTAuijLoLylLR3TAnYTCNGkRSYaXVEB1RrgRj4cZ2E0d22eIC3K
+         92/vTy/0T5iBMTrT7lsqB+KGysInPkNuKKnjHNVnN6+Fb/H7y0iRIdwHNfeeLz3Xl+rr
+         vbJXmwYdB4hKN2MM558O7p4hjglh6k8FUBX/IvfdET1tE2p8/7Gjk6uk8p50aldySkK6
+         VKuhRIy4g+j6vcnnlPJekfl3u4zL2Ns0QVwlcmhJ/YILoBFCBwIF26bshgM72tRqOIqE
+         hxUvNXESs3HU0UWTjccyx+qgYb6k8iV9J0k3MTBakGTgT2uM7UT35Jqrf6wxOv/WeqLV
+         IZYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=aCSXGk9NtNmglUVpbUQ1Rjs+YdBMM2XU3YePZpV6vnQ=;
+        b=wxAM3YZqLyOEJ6u92j+g8mIL+4LkgXvLfuJ347cHKJ/Pn254hjrHi1E5hBTpdRA7XM
+         z5nf+03mvhRVt22lrFhKfyqbbJc7axNH6HMmbS+0OhAMErcdTKmpTrE/Yxhd+aL7Mg9h
+         eeBCJJ4VQk2GW1lcFBxmyUyZ/TCTmaENWTgR4v1yHPRxPIXg5oETxpCRSzS0/ZqkK/Ps
+         ewZmznOBDi2q/c8iu0LCYbYhrGe6AbDLYCzmJxgUkM/oHirJ8gZk1XUFbhVTdItUjpDL
+         /xyekq9bDvBtcgo+lPyuwUxpwPkjpONx+4W57l6hTVur8CnEDaTt25OP0/QbL6yN7Hah
+         eOdg==
+X-Gm-Message-State: ACgBeo3bcqS7Rqen5JmuPAn7wyO6vUv8wSg8xNHhPNK2RDDxkR0Fx2pJ
+        hbMhgu913c/syiimw8IXNb0yTw==
+X-Google-Smtp-Source: AA6agR6S6rfRj/zc3mfjlga4zrGt9A0T25FwyEPhGMSVV9ZoGj3YuGzKeEzbZSewB8Y4MIpq+O8cqA==
+X-Received: by 2002:a63:b07:0:b0:429:411a:ff51 with SMTP id 7-20020a630b07000000b00429411aff51mr20162901pgl.207.1661261620081;
+        Tue, 23 Aug 2022 06:33:40 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ei23-20020a17090ae55700b001f7a76d6f28sm9963727pjb.18.2022.08.23.06.33.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Aug 2022 06:33:39 -0700 (PDT)
+Message-ID: <d2a66100-6660-8f99-a100-0f3c4f80d0ac@kernel.dk>
+Date:   Tue, 23 Aug 2022 07:33:38 -0600
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
+Content-Language: en-US
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Luis Chamberlain <mcgrof@kernel.org>
+References: <166120321387.369593.7400426327771894334.stgit@olly>
+ <166120327984.369593.8371751426301540450.stgit@olly>
+ <YwR41qQs07dYVnqD@kroah.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <YwR41qQs07dYVnqD@kroah.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-With the introduction of LANDLOCK_ACCESS_FS_REFER, we added the first
-globally denied-by-default access right.  Indeed, this lifted an initial
-Landlock limitation to rename and link files, which was initially always
-denied when the source or the destination were different directories.
+On 8/23/22 12:51 AM, Greg Kroah-Hartman wrote:
+> On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
+>> This patch adds support for the io_uring command pass through, aka
+>> IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
+>> /dev/null functionality, the implementation is just a simple sink
+>> where commands go to die, but it should be useful for developers who
+>> need a simple IORING_OP_URING_CMD test device that doesn't require
+>> any special hardware.
+>>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>> ---
+>>  drivers/char/mem.c |    6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+>> index 84ca98ed1dad..32a932a065a6 100644
+>> --- a/drivers/char/mem.c
+>> +++ b/drivers/char/mem.c
+>> @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
+>>  	return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
+>>  }
+>>  
+>> +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
+>> +{
+>> +	return 0;
+> 
+> If a callback just returns 0, that implies it is not needed at all and
+> can be removed and then you are back at the original file before your
+> commit :)
 
-This led to an inconsistent backward compatibility behavior which was
-only taken into account if no domain layer were using the new
-LANDLOCK_ACCESS_FS_REFER right.  However, in a scenario where layers are
-using the first and the second Landlock ABI (i.e.
-LANDLOCK_ACCESS_FS_REFER or not), the access control behaves like if all
-domains were handling LANDLOCK_ACCESS_FS_REFER with their rules
-implicitely allowing such right.  Indeed, the not-handled access rights
-were allowed, which should not be the case for LANDLOCK_ACCESS_FS_REFER.
-It should be noted that this bug only allowed safe renames or links, but
-no privilege escalation because the LANDLOCK_ACCESS_FS_REFER properties
-were still enforced (e.g. only allowed to move a file according to all
-other access rights, and if it doesn't give more Landlock accesses).
+In theory you are correct, but the empty hook is needed so that
+submitting an io_uring cmd to the file type is attempted. If not it's
+just errored upfront.
 
-This change adds an ACCESS_INITIALLY_DENIED list of denied-by-default
-rights, which (only) contains LANDLOCK_ACCESS_FS_REFER.  All domains are
-treated as if they are also handling this list, but without modifying
-their fs_access_masks field, which enables correct domain audit.
+Paul, is it strictly needed to test the selinux uring cmd policy? If the
+operation would've been attempted but null doesn't support it, you'd get
+-1/EOPNOTSUPP - and supposedly you'd get EACCES/EPERM or something if
+it's filtered?
 
-A side effect is that the errno code returned by rename(2) or link(2)
-*may* be changed from EXDEV to EACCES according to the enforced
-restrictions.  Indeed, we now have the mechanic to identify if an access
-is denied because of a required right (e.g. LANDLOCK_ACCESS_FS_MAKE_REG,
-LANDLOCK_ACCESS_FS_REMOVE_FILE) or if it is denied because of missing
-LANDLOCK_ACCESS_FS_REFER rights.  This may result in different errno
-codes than for the initial Landlock version, but this approach is better
-for rename/link compatibility reasons, and it wasn't possible before
-(hence no backport to ABI v1).  The layout1.rename_file test reflects
-this change.
-
-Add the layout1.refer_denied_by_default* tests to check that the
-behavior of a ruleset not handling LANDLOCK_ACCESS_FS_REFER (ABI v1) is
-unchanged even if another layer handles LANDLOCK_ACCESS_FS_REFER (i.e.
-ABI v1 precedence).  Make sure rule's absolute access rights are correct
-by testing with and without a matching path.
-
-Extend layout1.inval tests to check that a denied-by-default access
-right is not necessarily part of a domain's handled access rights.
-
-Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER")
-Cc: Günther Noack <gnoack3000@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20220823144123.633721-1-mic@digikod.net
----
- security/landlock/fs.c                     |  28 +++--
- tools/testing/selftests/landlock/fs_test.c | 133 +++++++++++++++++++--
- 2 files changed, 143 insertions(+), 18 deletions(-)
-
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index ec5a6247cd3e..0cf484e89f68 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -149,6 +149,15 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
- 	LANDLOCK_ACCESS_FS_READ_FILE)
- /* clang-format on */
- 
-+/*
-+ * All access rights that are denied by default whether they are handled or not
-+ * by a ruleset/layer.
-+ */
-+/* clang-format off */
-+#define ACCESS_INITIALLY_DENIED ( \
-+	LANDLOCK_ACCESS_FS_REFER)
-+/* clang-format on */
-+
- /*
-  * @path: Should have been checked by get_path_from_fd().
-  */
-@@ -167,7 +176,9 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
- 		return -EINVAL;
- 
- 	/* Transforms relative access rights to absolute ones. */
--	access_rights |= LANDLOCK_MASK_ACCESS_FS & ~ruleset->fs_access_masks[0];
-+	access_rights |=
-+		LANDLOCK_MASK_ACCESS_FS &
-+		~(ruleset->fs_access_masks[0] | ACCESS_INITIALLY_DENIED);
- 	object = get_inode_object(d_backing_inode(path->dentry));
- 	if (IS_ERR(object))
- 		return PTR_ERR(object);
-@@ -277,7 +288,7 @@ static inline bool is_nouser_or_private(const struct dentry *dentry)
- static inline access_mask_t
- get_handled_accesses(const struct landlock_ruleset *const domain)
- {
--	access_mask_t access_dom = 0;
-+	access_mask_t access_dom = ACCESS_INITIALLY_DENIED;
- 	unsigned long access_bit;
- 
- 	for (access_bit = 0; access_bit < LANDLOCK_NUM_ACCESS_FS;
-@@ -316,8 +327,13 @@ init_layer_masks(const struct landlock_ruleset *const domain,
- 
- 		for_each_set_bit(access_bit, &access_req,
- 				 ARRAY_SIZE(*layer_masks)) {
--			if (domain->fs_access_masks[layer_level] &
--			    BIT_ULL(access_bit)) {
-+			/*
-+			 * Artificially handles all initially denied by default
-+			 * access rights.
-+			 */
-+			if (BIT_ULL(access_bit) &
-+			    (domain->fs_access_masks[layer_level] |
-+			     ACCESS_INITIALLY_DENIED)) {
- 				(*layer_masks)[access_bit] |=
- 					BIT_ULL(layer_level);
- 				handled_accesses |= BIT_ULL(access_bit);
-@@ -857,10 +873,6 @@ static int current_check_refer_path(struct dentry *const old_dentry,
- 					      NULL, NULL);
- 	}
- 
--	/* Backward compatibility: no reparenting support. */
--	if (!(get_handled_accesses(dom) & LANDLOCK_ACCESS_FS_REFER))
--		return -EXDEV;
--
- 	access_request_parent1 |= LANDLOCK_ACCESS_FS_REFER;
- 	access_request_parent2 |= LANDLOCK_ACCESS_FS_REFER;
- 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 21a2ce8fa739..2c134a9202a1 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -4,7 +4,7 @@
-  *
-  * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-  * Copyright © 2020 ANSSI
-- * Copyright © 2020-2021 Microsoft Corporation
-+ * Copyright © 2020-2022 Microsoft Corporation
-  */
- 
- #define _GNU_SOURCE
-@@ -371,6 +371,13 @@ TEST_F_FORK(layout1, inval)
- 	ASSERT_EQ(EINVAL, errno);
- 	path_beneath.allowed_access &= ~LANDLOCK_ACCESS_FS_EXECUTE;
- 
-+	/* Tests with denied-by-default access right. */
-+	path_beneath.allowed_access |= LANDLOCK_ACCESS_FS_REFER;
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-+					&path_beneath, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+	path_beneath.allowed_access &= ~LANDLOCK_ACCESS_FS_REFER;
-+
- 	/* Test with unknown (64-bits) value. */
- 	path_beneath.allowed_access |= (1ULL << 60);
- 	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-@@ -1867,10 +1874,10 @@ TEST_F_FORK(layout1, rename_file)
- 	 * to a different directory (which allows file removal).
- 	 */
- 	ASSERT_EQ(-1, rename(file1_s2d1, file1_s1d3));
--	ASSERT_EQ(EXDEV, errno);
-+	ASSERT_EQ(EACCES, errno);
- 	ASSERT_EQ(-1, renameat2(AT_FDCWD, file1_s2d1, AT_FDCWD, file1_s1d3,
- 				RENAME_EXCHANGE));
--	ASSERT_EQ(EXDEV, errno);
-+	ASSERT_EQ(EACCES, errno);
- 	ASSERT_EQ(-1, renameat2(AT_FDCWD, dir_s2d2, AT_FDCWD, file1_s1d3,
- 				RENAME_EXCHANGE));
- 	ASSERT_EQ(EXDEV, errno);
-@@ -1894,7 +1901,7 @@ TEST_F_FORK(layout1, rename_file)
- 	ASSERT_EQ(EXDEV, errno);
- 	ASSERT_EQ(0, unlink(file1_s1d3));
- 	ASSERT_EQ(-1, rename(file1_s2d1, file1_s1d3));
--	ASSERT_EQ(EXDEV, errno);
-+	ASSERT_EQ(EACCES, errno);
- 
- 	/* Exchanges and renames files with same parent. */
- 	ASSERT_EQ(0, renameat2(AT_FDCWD, file2_s2d3, AT_FDCWD, file1_s2d3,
-@@ -2014,6 +2021,107 @@ TEST_F_FORK(layout1, reparent_refer)
- 	ASSERT_EQ(0, rename(dir_s1d3, dir_s2d3));
- }
- 
-+/* Checks renames beneath dir_s1d1. */
-+static void refer_denied_by_default(struct __test_metadata *const _metadata,
-+				    const struct rule layer1_abi_v2[],
-+				    const struct rule layer2_abi_v1[])
-+{
-+	int ruleset_fd;
-+
-+	ASSERT_EQ(0, unlink(file1_s1d2));
-+
-+	/*
-+	 * First layer, which handles LANDLOCK_ACCESS_FS_REFER, can allow some
-+	 * different-parent renames and links.
-+	 */
-+	ruleset_fd = create_ruleset(_metadata, layer1_abi_v2[0].access,
-+				    layer1_abi_v2);
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	/* Checks that legitimate renames are allowed. */
-+	ASSERT_EQ(0, rename(file1_s1d1, file1_s1d2));
-+	ASSERT_EQ(0, rename(file1_s1d2, file1_s1d1));
-+	ASSERT_EQ(0, renameat2(AT_FDCWD, file2_s1d1, AT_FDCWD, file2_s1d2,
-+			       RENAME_EXCHANGE));
-+	ASSERT_EQ(0, renameat2(AT_FDCWD, file2_s1d2, AT_FDCWD, file2_s1d1,
-+			       RENAME_EXCHANGE));
-+
-+	/*
-+	 * Second layer, which does not handle LANDLOCK_ACCESS_FS_REFER, denies
-+	 * any different-parent renames and links, thus making the first layer
-+	 * null and void.
-+	 */
-+	ruleset_fd = create_ruleset(_metadata, layer2_abi_v1[0].access,
-+				    layer2_abi_v1);
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	/* Checks that all renames are now denied. */
-+	ASSERT_EQ(-1, rename(file1_s1d1, file1_s1d2));
-+	ASSERT_EQ(EXDEV, errno);
-+	ASSERT_EQ(-1, renameat2(AT_FDCWD, file2_s1d1, AT_FDCWD, file2_s1d2,
-+				RENAME_EXCHANGE));
-+	ASSERT_EQ(EXDEV, errno);
-+	ASSERT_EQ(-1, renameat2(AT_FDCWD, file2_s1d2, AT_FDCWD, file2_s1d1,
-+				RENAME_EXCHANGE));
-+	ASSERT_EQ(EXDEV, errno);
-+}
-+
-+/*
-+ * Tests precedence over renames: denied by default for different parent
-+ * directories, *with* a rule matching a parent directory, but not directly
-+ * denying access (with MAKE_REG nor REMOVE).
-+ */
-+TEST_F_FORK(layout1, refer_denied_by_default1)
-+{
-+	const struct rule layer1_abi_v2[] = {
-+		{
-+			.path = dir_s1d1,
-+			.access = LANDLOCK_ACCESS_FS_REFER,
-+		},
-+		{},
-+	};
-+	const struct rule layer2_abi_v1[] = {
-+		{
-+			/* Matches a parent directory. */
-+			.path = dir_s1d1,
-+			.access = LANDLOCK_ACCESS_FS_EXECUTE,
-+		},
-+		{},
-+	};
-+
-+	refer_denied_by_default(_metadata, layer1_abi_v2, layer2_abi_v1);
-+}
-+
-+/*
-+ * Tests precedence over renames: denied by default for different parent
-+ * directories, *without* a rule matching a parent directory, but not directly
-+ * denying access (with MAKE_REG nor REMOVE).
-+ */
-+TEST_F_FORK(layout1, refer_denied_by_default2)
-+{
-+	const struct rule layer1_abi_v2[] = {
-+		{
-+			.path = dir_s1d1,
-+			.access = LANDLOCK_ACCESS_FS_REFER,
-+		},
-+		{},
-+	};
-+	const struct rule layer2_abi_v1[] = {
-+		{
-+			/* Does not match a parent directory. */
-+			.path = dir_s2d1,
-+			.access = LANDLOCK_ACCESS_FS_EXECUTE,
-+		},
-+		{},
-+	};
-+
-+	refer_denied_by_default(_metadata, layer1_abi_v2, layer2_abi_v1);
-+}
-+
- TEST_F_FORK(layout1, reparent_link)
- {
- 	const struct rule layer1[] = {
-@@ -2336,11 +2444,12 @@ TEST_F_FORK(layout1, reparent_exdev_layers_rename1)
- 	ASSERT_EQ(EXDEV, errno);
- 
- 	/*
--	 * However, moving the file2_s1d3 file below dir_s2d3 is allowed
--	 * because it cannot inherit MAKE_REG nor MAKE_DIR rights (which are
--	 * dedicated to directories).
-+	 * Moving the file2_s1d3 file below dir_s2d3 is denied because the
-+	 * second layer does not handle REFER, which is always denied by
-+	 * default.
- 	 */
--	ASSERT_EQ(0, rename(file2_s1d3, file1_s2d3));
-+	ASSERT_EQ(-1, rename(file2_s1d3, file1_s2d3));
-+	ASSERT_EQ(EXDEV, errno);
- }
- 
- TEST_F_FORK(layout1, reparent_exdev_layers_rename2)
-@@ -2373,8 +2482,12 @@ TEST_F_FORK(layout1, reparent_exdev_layers_rename2)
- 	ASSERT_EQ(EACCES, errno);
- 	ASSERT_EQ(-1, rename(file1_s1d1, file1_s2d3));
- 	ASSERT_EQ(EXDEV, errno);
--	/* Modify layout! */
--	ASSERT_EQ(0, rename(file2_s1d2, file1_s2d3));
-+	/*
-+	 * Modifying the layout is now denied because the second layer does not
-+	 * handle REFER, which is always denied by default.
-+	 */
-+	ASSERT_EQ(-1, rename(file2_s1d2, file1_s2d3));
-+	ASSERT_EQ(EXDEV, errno);
- 
- 	/* Without REFER source, EACCES wins over EXDEV. */
- 	ASSERT_EQ(-1, rename(dir_s1d1, file1_s2d2));
-
-base-commit: 3d7cb6b04c3f3115719235cc6866b10326de34cd
 -- 
-2.37.2
-
+Jens Axboe
