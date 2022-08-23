@@ -2,130 +2,177 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8731C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Aug 2022 23:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F535C28D13
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 01:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238728AbiHVXiF (ORCPT
+        id S237917AbiHWBCj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Aug 2022 19:38:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41478 "EHLO
+        Mon, 22 Aug 2022 21:02:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238727AbiHVXiE (ORCPT
+        with ESMTP id S238679AbiHWBCg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Aug 2022 19:38:04 -0400
-Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D39C7564FD
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 16:38:02 -0700 (PDT)
-Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-11cab7d7e0fso13697399fac.6
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 16:38:02 -0700 (PDT)
+        Mon, 22 Aug 2022 21:02:36 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7585D57279
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 18:02:34 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-333f0d49585so212233947b3.9
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Aug 2022 18:02:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=I7R+VEDbO3foZ6yKN1RvxUlGUWMUqe+kxx9F62LzajE=;
-        b=wUiHZMryHOsnt+1mwbFzsumcA+zH0BVbOWQPuaxftVdFIYVHHPnnopFrM6s+f+tI/2
-         2+L+UPFyCoJr0aSOVO2SZmm3elEyk6kDuGpAXcsc3Jn4aAJn6EWwAQ21irctfgDXQoGi
-         AtIUMFtKTtLXZgDHSd+JP8rxnxU+qFpo9lgJ4EHYFf2M3KZSMu8116oAZrkeoIJkIOve
-         tB+WGRSWxppgzZx2da2kLVvVpxMNW1dVQBPUae31JUODx7QfDFR0qrm1dswWfS9tfxkx
-         sf6q8z79zEap/aa2kX2VG0hPhjdeyDh8ymTStyR6Qwhz9cXkwX6WU184GYFwMvw3xpH6
-         8STw==
+        d=google.com; s=20210112;
+        h=content-transfer-encoding:cc:to:from:subject:mime-version
+         :message-id:date:from:to:cc;
+        bh=Xs3bXQtTz2trm4xZb9ByuU+B5DQkHrgL3veNrfpYcZk=;
+        b=cxtc6jJIQe9E2+goyy6zwKPZ7IkjjS2YW+zzVbJT5MS0LKeuHrQCCEjcsGVgj+E9Wy
+         IcgmSiXaFvZlTIouoBM9LlMLdgugQmLanYlXv+ZjalIjNFRFZtbEeJgsm82z8SRFr1ky
+         7/uE181Xaj+he+BzwqOOHmUpP4yMWy7oUBEZvSjvilobOlYxNjoAlJrPyhaM/wpQznWf
+         p7kzoCxneIXDJLVfF4gs3GFt2+2OonCmwSuJRnodpr5K4UFNJIXrk28BI4DOogEjS2wt
+         pTUzaH7/EvVYg9gGcCipWOAZpWfq5WZuJods3oAqHSOxwAtapWJJKwC24JFs1ErDUumw
+         RrHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=I7R+VEDbO3foZ6yKN1RvxUlGUWMUqe+kxx9F62LzajE=;
-        b=4KIzdiLKgSPrOJxChpqYUnoq/h70C0B5woPZuO4pMWI1DSY/aiU0tbgQh+lkIOMRTU
-         xyJaZz0SK+CLmJqU/gPeLUgDeibIVuqEzcpGVcLmPCMlLBf+N2rZJvt90KYrVTDaClx7
-         pT+WW7KpB4Tf4xj07OysEUVo06ALWCOqyKMl/igVpimtBcwmi5cEZxVACKEEG4ZrEu9v
-         fhhi4qgztaxZVTGlX3M75l/1oa9pMLc7OmW0cErCWkrm017uw8uct/iWMCnVBvygCQSN
-         9IuRT2c55a7iNwzyRhvdF+CKf8CROiD8wN64GFdSnQqnqy8tovrAfuFBeGi4dhKfDcaj
-         ZgiQ==
-X-Gm-Message-State: ACgBeo1BEgQb0A42ZHW+uHZ4OOe/eYPJOdjiKfTwyMxg34WuirO84B8y
-        MIFaqPc9JPDZp/M8BJBYZHw0MytTBQZbP/lCyNfG
-X-Google-Smtp-Source: AA6agR57ZOJqsf2RI1gMF+ciEe763uY+u/5e99MRG9osFBjYQFQ7KXslo0CXF4PeKFh3is70TOYQtWbWNeIS3U9lAvU=
-X-Received: by 2002:a05:6870:a78d:b0:11c:437b:ec70 with SMTP id
- x13-20020a056870a78d00b0011c437bec70mr297717oao.136.1661211482201; Mon, 22
- Aug 2022 16:38:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120327984.369593.8371751426301540450.stgit@olly> <1e4dde67-4ac2-06b0-b927-ce4601ed9b30@kernel.dk>
- <CAHC9VhQbnN2om-Qt59ZNovEgRAcB=XvcR+AYK8HhLLrPmMjMLA@mail.gmail.com>
- <1017959d-7ec0-4230-89db-b077067692d1@kernel.dk> <CAHC9VhQw5V_aH=y2vSX4=f6fofc01w32c5gfediubVU=LCVJng@mail.gmail.com>
- <73022e0f-4913-2620-605d-ad86d8b73494@kernel.dk>
-In-Reply-To: <73022e0f-4913-2620-605d-ad86d8b73494@kernel.dk>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 22 Aug 2022 19:37:51 -0400
-Message-ID: <CAHC9VhSQwkYNdzKrkM6sMSj_fLFTpeNaAoRgpZrzfZizYti_ag@mail.gmail.com>
-Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>
+        h=content-transfer-encoding:cc:to:from:subject:mime-version
+         :message-id:date:x-gm-message-state:from:to:cc;
+        bh=Xs3bXQtTz2trm4xZb9ByuU+B5DQkHrgL3veNrfpYcZk=;
+        b=MorF0hWoOYmm6EhFE/e3FQKQCZAtv4QOonDk560XWhsgJfuEmE+LV0ZSX/AKQOuc0H
+         8iDf9M8KJTSl7DoHr/P41T+JP4LZyrABWfJtjgTt5l32gb1oKX72EPnHQT6YdjpDWw8U
+         dB0b/IR9ZDflz3UnU04tvRX1UCRP+oVqkWh5g81nozJGVd2vryxOe1gEBE6wfEOZ43kv
+         qy1PRcHp2gOAPc/qoPrEoys4j7jkDmTP26nrdv7iEq7JM2ECBQpQYzhkCPlg2pFYRKE1
+         pUuGuct7zJ4FYjtoG8/98uPM5reXtEiEEUNVXLQf3X3bp5cvQUUn5TJR+q8Yv7/r7xFk
+         yjrg==
+X-Gm-Message-State: ACgBeo0WSvMDg3NTxKkQymRrtMuHWk2zz0Heq8TPmCVKQrHB/MYZyM7M
+        uV29wD4bWe9tGRStj3nhnBIT+yHL2/Q=
+X-Google-Smtp-Source: AA6agR6e1molUtWxGuWskN0i70qVdzX/utzVP0TToUfcGXNUz+xubn5nB87XEd4PuE5gedO6bMkZ50bDseA=
+X-Received: from jeffxud.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:e37])
+ (user=jeffxu job=sendgmr) by 2002:a25:450:0:b0:695:8b65:ccd8 with SMTP id
+ 77-20020a250450000000b006958b65ccd8mr10815919ybe.67.1661216553615; Mon, 22
+ Aug 2022 18:02:33 -0700 (PDT)
+Date:   Tue, 23 Aug 2022 01:02:16 +0000
+Message-Id: <20220823010216.2653012-1-jeffxu@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.37.1.595.g718a3a8f04-goog
+Subject: [PATCH v4] selftests/landlock: skip overlayfs test when kernel not
+ support it
+From:   <jeffxu@google.com>
+To:     mic@digikod.net
+Cc:     jorgelo@chromium.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org, groeck@chromium.org,
+        Jeff Xu <jeffxu@google.com>, Jeff Xu <jeffxu@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 22, 2022 at 7:25 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 8/22/22 5:19 PM, Paul Moore wrote:
-> > On Mon, Aug 22, 2022 at 7:13 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >> On 8/22/22 5:09 PM, Paul Moore wrote:
-> >>> On Mon, Aug 22, 2022 at 6:36 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >>>> On 8/22/22 3:21 PM, Paul Moore wrote:
-> >>>>> This patch adds support for the io_uring command pass through, aka
-> >>>>> IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
-> >>>>> /dev/null functionality, the implementation is just a simple sink
-> >>>>> where commands go to die, but it should be useful for developers who
-> >>>>> need a simple IORING_OP_URING_CMD test device that doesn't require
-> >>>>> any special hardware.
-> >>>>>
-> >>>>> Cc: Arnd Bergmann <arnd@arndb.de>
-> >>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >>>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> >>>>> ---
-> >>>>>  drivers/char/mem.c |    6 ++++++
-> >>>>>  1 file changed, 6 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> >>>>> index 84ca98ed1dad..32a932a065a6 100644
-> >>>>> --- a/drivers/char/mem.c
-> >>>>> +++ b/drivers/char/mem.c
-> >>>>> @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
-> >>>>>       return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
-> >>>>>  }
-> >>>>>
-> >>>>> +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
-> >>>>> +{
-> >>>>> +     return 0;
-> >>>>> +}
-> >>>>
-> >>>> This would be better as:
-> >>>>
-> >>>>         return IOU_OK;
-> >>>>
-> >>>> using the proper return values for the uring_cmd hook.
-> >>>
-> >>> The only problem I see with that is that IOU_OK is defined under
-> >>> io_uring/io_uring.h and not include/linux/io_uring.h so the #include
-> >>> macro is kinda ugly:
-> >>>
-> >>>   #include "../../io_uring/io_uring.h"
-> >>>
-> >>> I'm not sure I want to submit that upstream looking like that.  Are
-> >>> you okay with leaving the return code as 0 for now and changing it at
-> >>> a later date?  I'm trying to keep this patchset relatively small since
-> >>> we are in the -rcX stage, but if you're okay with a simple cut-n-paste
-> >>> of the enum to linux/io_uring.h I can do that.
-> >>
-> >> Ugh yes, that should move into the general domain. Yeah I'm fine with it
-> >> as it is, we can fix that up (and them nvme as well) at a later point.
-> >
-> > Okay, sounds good, I'll leave it as-is.  Is it okay to still add your ACK?
->
-> Yep, all things considered, for 6.0 I think that's the way to go.
+From: Jeff Xu <jeffxu@google.com>
 
-Great, thanks.
+Overlayfs can be disabled in kernel config, causing related tests to fail.
+Add check for overlayfs=E2=80=99s supportability at runtime, so we can call=
+ SKIP()
+when needed.
 
--- 
-paul-moore.com
+Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+---
+ tools/testing/selftests/landlock/fs_test.c | 53 ++++++++++++++++++++--
+ 1 file changed, 50 insertions(+), 3 deletions(-)
+
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
+ftests/landlock/fs_test.c
+index 21a2ce8fa739..aaece185579d 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -11,6 +11,7 @@
+ #include <fcntl.h>
+ #include <linux/landlock.h>
+ #include <sched.h>
++#include <stdio.h>
+ #include <string.h>
+ #include <sys/capability.h>
+ #include <sys/mount.h>
+@@ -62,6 +63,7 @@ static const char dir_s3d1[] =3D TMP_DIR "/s3d1";
+ static const char dir_s3d2[] =3D TMP_DIR "/s3d1/s3d2";
+ static const char dir_s3d3[] =3D TMP_DIR "/s3d1/s3d2/s3d3";
+=20
++static const char proc_filesystems[] =3D "/proc/filesystems";
+ /*
+  * layout1 hierarchy:
+  *
+@@ -169,6 +171,42 @@ static int remove_path(const char *const path)
+ 	return err;
+ }
+=20
++static bool fgrep(FILE *inf, const char *str)
++{
++	char line[32];
++	int slen =3D strlen(str);
++
++	while (!feof(inf)) {
++		if (!fgets(line, sizeof(line), inf))
++			break;
++		if (strncmp(line, str, slen))
++			continue;
++
++		return true;
++	}
++
++	return false;
++}
++
++static bool supports_overlayfs(void)
++{
++	bool ret =3D false;
++	FILE *inf =3D fopen(proc_filesystems, "r");
++
++	/*
++	 * If fopen fails, return supported.
++	 * This helps to detect missing file (shall not
++	 * happen).
++	 */
++	if (!inf)
++		return true;
++
++	ret =3D fgrep(inf, "nodev\toverlay\n");
++	fclose(inf);
++
++	return ret;
++}
++
+ static void prepare_layout(struct __test_metadata *const _metadata)
+ {
+ 	disable_caps(_metadata);
+@@ -3404,6 +3442,8 @@ FIXTURE(layout2_overlay) {};
+=20
+ FIXTURE_SETUP(layout2_overlay)
+ {
++	int rc;
++
+ 	prepare_layout(_metadata);
+=20
+ 	create_directory(_metadata, LOWER_BASE);
+@@ -3431,11 +3471,18 @@ FIXTURE_SETUP(layout2_overlay)
+ 	create_directory(_metadata, MERGE_DATA);
+ 	set_cap(_metadata, CAP_SYS_ADMIN);
+ 	set_cap(_metadata, CAP_DAC_OVERRIDE);
+-	ASSERT_EQ(0, mount("overlay", MERGE_DATA, "overlay", 0,
+-			   "lowerdir=3D" LOWER_DATA ",upperdir=3D" UPPER_DATA
+-			   ",workdir=3D" UPPER_WORK));
++
++	rc =3D mount("overlay", MERGE_DATA, "overlay", 0,
++		   "lowerdir=3D" LOWER_DATA ",upperdir=3D" UPPER_DATA
++		   ",workdir=3D" UPPER_WORK);
+ 	clear_cap(_metadata, CAP_DAC_OVERRIDE);
+ 	clear_cap(_metadata, CAP_SYS_ADMIN);
++
++	if (rc < 0) {
++		ASSERT_EQ(ENODEV, errno);
++		ASSERT_FALSE(supports_overlayfs());
++		SKIP(return, "overlayfs is not supported");
++	}
+ }
+=20
+ FIXTURE_TEARDOWN(layout2_overlay)
+
+base-commit: 50cd95ac46548429e5bba7ca75cc97d11a697947
+--=20
+2.37.1.595.g718a3a8f04-goog
+
