@@ -2,292 +2,359 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0F2C3F6B0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 16:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D140BC32796
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 16:40:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243663AbiHWQ0R (ORCPT
+        id S245317AbiHWQkA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Aug 2022 12:26:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42182 "EHLO
+        Tue, 23 Aug 2022 12:40:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245182AbiHWQZu (ORCPT
+        with ESMTP id S244915AbiHWQjZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Aug 2022 12:25:50 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC3D4164B36;
-        Tue, 23 Aug 2022 05:50:32 -0700 (PDT)
-Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4MBps20q55z1N7K9;
-        Tue, 23 Aug 2022 20:47:02 +0800 (CST)
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 23 Aug 2022 20:50:30 +0800
-Subject: Re: [PATCH -next 2/5] landlock: add chmod and chown support
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-CC:     <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-        <shuah@kernel.org>, <corbet@lwn.net>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <20220822114701.26975-1-xiujianfeng@huawei.com>
- <20220822114701.26975-3-xiujianfeng@huawei.com> <YwPKG3G9PlStYPkz@nuc>
- <5873455f-fff9-618c-25b1-8b6a4ec94368@digikod.net>
-From:   xiujianfeng <xiujianfeng@huawei.com>
-Message-ID: <6d6edd60-5ed7-0f5d-d641-75e006c0e60e@huawei.com>
-Date:   Tue, 23 Aug 2022 20:50:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        Tue, 23 Aug 2022 12:39:25 -0400
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E739033E00
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 07:41:42 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MBsPJ4YsRzMq0HF;
+        Tue, 23 Aug 2022 16:41:40 +0200 (CEST)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MBsPJ2JW6zlh8Tk;
+        Tue, 23 Aug 2022 16:41:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1661265700;
+        bh=VrSklp/986tvOpkc92OuHVLjqoqDvWm+CaBM4hIsiDQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gDS/7E34ZSyeSwAUuOPhgLgLrWU8TRUI5SwilXj8qIu4NkqP5MeXHVC/xOzbn61JF
+         qQmYS6F+5F79id7GI7ysQl3zAGlvWMmJJiXkWoMa/Iz/zHzDGXhs8j/ZkRK3/LNwl3
+         v7Co2MMmc/pPCTB80F1+kIHFTQwM3olntJWDY2Co=
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v1] landlock: Fix file reparenting without explicit LANDLOCK_ACCESS_FS_REFER
+Date:   Tue, 23 Aug 2022 16:41:23 +0200
+Message-Id: <20220823144123.633721-1-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <5873455f-fff9-618c-25b1-8b6a4ec94368@digikod.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.110.112]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+With the introduction of LANDLOCK_ACCESS_FS_REFER, we added the first
+globally denied-by-default access right.  Indeed, this lifted an initial
+Landlock limitation to rename and link files, which was initially always
+denied when the source or the destination were different directories.
 
+This led to an inconsistent backward compatibility behavior which was
+only taken into account if no domain layer were using the new
+LANDLOCK_ACCESS_FS_REFER right.  However, in a scenario where layers are
+using the first and the second Landlock ABI (i.e.
+LANDLOCK_ACCESS_FS_REFER or not), the access control behaves like if all
+domains were handling LANDLOCK_ACCESS_FS_REFER with their rules
+implicitely allowing such right.  Indeed, the not-handled access rights
+were allowed, which should not be the case for LANDLOCK_ACCESS_FS_REFER.
+It should be noted that this bug only allowed safe renames or links, but
+no privilege escalation because the LANDLOCK_ACCESS_FS_REFER properties
+were still enforced (e.g. only allowed to move a file according to all
+other access rights, and if it doesn't give more Landlock accesses).
 
-在 2022/8/23 5:07, Mickaël Salaün 写道:
-> 
-> On 22/08/2022 20:25, Günther Noack wrote:
->> Hi!
->>
->> Thanks for sending this patch set! :)
->>
->> On Mon, Aug 22, 2022 at 07:46:58PM +0800, Xiu Jianfeng wrote:
->>> Add two flags LANDLOCK_ACCESS_FS_CHMOD and LANDLOCK_ACCESS_FS_CHOWN to
->>> support restriction to chmod(2) and chown(2) with landlock.
->>>
->>> Also change the landlock ABI version from 3 to 4.
->>>
->>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
->>> ---
->>>   include/uapi/linux/landlock.h                |  8 ++++++--
->>>   security/landlock/fs.c                       | 16 +++++++++++++++-
->>>   security/landlock/limits.h                   |  2 +-
->>>   security/landlock/syscalls.c                 |  2 +-
->>>   tools/testing/selftests/landlock/base_test.c |  2 +-
->>>   tools/testing/selftests/landlock/fs_test.c   |  6 ++++--
->>>   6 files changed, 28 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/include/uapi/linux/landlock.h 
->>> b/include/uapi/linux/landlock.h
->>> index 735b1fe8326e..5ce633c92722 100644
->>> --- a/include/uapi/linux/landlock.h
->>> +++ b/include/uapi/linux/landlock.h
->>> @@ -141,13 +141,15 @@ struct landlock_path_beneath_attr {
->>>    *   directory) parent.  Otherwise, such actions are denied with 
->>> errno set to
->>>    *   EACCES.  The EACCES errno prevails over EXDEV to let user space
->>>    *   efficiently deal with an unrecoverable error.
->>> + * - %LANDLOCK_ACCESS_FS_CHMOD: Change the file mode bits of a file.
->>> + * - %LANDLOCK_ACCESS_FS_CHOWN: Change the owner and/or group of a 
->>> file.
-> 
-> This section talk about "access rights that only apply to the content of 
-> a directory, not the directory itself", which is not correct (see 
-> LANDLOCK_ACCESS_FS_READ_DIR). I'd like these access rights to remain 
-> here but this kernel patch and the related tests need some changes.
-> 
-> What about a LANDLOCK_ACCESS_FS_CHGRP? I'm not sure if we need to 
-> differentiate these actions or not, but we need arguments to choose.
-> 
-> 
->>>    *
->>>    * .. warning::
->>>    *
->>>    *   It is currently not possible to restrict some file-related 
->>> actions
->>>    *   accessible through these syscall families: :manpage:`chdir(2)`,
->>> - *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
->>> - *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
->>> + *   :manpage:`stat(2)`, :manpage:`flock(2)`,
->>> + *   :manpage:`setxattr(2)`, :manpage:`utime(2)`,
->>
->> *formatting nit*
->> We could fill up the full line width here
->>
->>>    *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
->>>    *   Future Landlock evolutions will enable to restrict them.
->>>    */
->>> @@ -167,6 +169,8 @@ struct landlock_path_beneath_attr {
->>>   #define LANDLOCK_ACCESS_FS_MAKE_SYM            (1ULL << 12)
->>>   #define LANDLOCK_ACCESS_FS_REFER            (1ULL << 13)
->>>   #define LANDLOCK_ACCESS_FS_TRUNCATE            (1ULL << 14)
->>> +#define LANDLOCK_ACCESS_FS_CHMOD            (1ULL << 15)
->>> +#define LANDLOCK_ACCESS_FS_CHOWN            (1ULL << 16)
->>>   /* clang-format on */
->>>
->>>   #endif /* _UAPI_LINUX_LANDLOCK_H */
->>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
->>> index c57f581a9cd5..c25d5f89c8be 100644
->>> --- a/security/landlock/fs.c
->>> +++ b/security/landlock/fs.c
->>> @@ -147,7 +147,9 @@ static struct landlock_object 
->>> *get_inode_object(struct inode *const inode)
->>>       LANDLOCK_ACCESS_FS_EXECUTE | \
->>>       LANDLOCK_ACCESS_FS_WRITE_FILE | \
->>>       LANDLOCK_ACCESS_FS_READ_FILE | \
->>> -    LANDLOCK_ACCESS_FS_TRUNCATE)
->>> +    LANDLOCK_ACCESS_FS_TRUNCATE | \
->>> +    LANDLOCK_ACCESS_FS_CHMOD | \
->>> +    LANDLOCK_ACCESS_FS_CHOWN)
->>>   /* clang-format on */
->>>
->>>   /*
->>> @@ -1146,6 +1148,16 @@ static int hook_path_truncate(const struct 
->>> path *const path)
->>>       return current_check_access_path(path, 
->>> LANDLOCK_ACCESS_FS_TRUNCATE);
->>>   }
->>>
->>> +static int hook_path_chmod(const struct path *const dir, umode_t mode)
-> 
-> This is not a "dir" but a "path".
-> 
-> 
->>> +{
->>> +    return current_check_access_path(dir, LANDLOCK_ACCESS_FS_CHMOD);
->>> +}
->>> +
->>> +static int hook_path_chown(const struct path *const dir, kuid_t uid, 
->>> kgid_t gid)
-> 
-> Same here.
-> 
-> 
->>> +{
->>> +    return current_check_access_path(dir, LANDLOCK_ACCESS_FS_CHOWN);
->>> +}
->>
->> One implication of this approach is that the chown+chmod right on a
->> directory's contents are always going together with the same rights on
->> the directory itself.
->>
->> For example, if you grant chmod+chown access rights for "datadir/",
->> the command "chmod 0600 datadir/file1" will work, but so will the
->> command "chmod 0600 datadir". But the approach of checking just the
->> parent directory's rights is also inflexible if you think through the
->> kinds of rights you can grant with it. (It would also not be possible
->> to grant chmod+chown on individual files.)
-> 
-> Good point. For an initial chmod/chown/chgrp access right, I'd prefer to 
-> be able to set these access rights on a directory but only for its 
-> content, not the directory itself. I think it is much safer and should 
-> be enough for the majority of use cases, but let me know if I'm missing 
-> something. I'm not sure being able to change the root directory access 
-> rights may be a good idea anyway (even for containers). ;)
-> 
-> A path_beneath rule enables to identify a file hierarchy (i.e. the 
-> content of a directory), not to make modifications visible outside of 
-> the directory identifying the hierarchy (hence the "parent_fd" field), 
-> which would be the case with the current chmod/chown access rights.
-> 
-> 
->>
->> Do you have any thoughts on how to resolve this if this flexibility
->> might be needed?
->>
->> I wonder whether the right way to resolve this would be to give users
->> a way to make that distinction at the level of landlock_add_rule(),
->> with an API like this (note the additional flag):
->>
->>    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
->>                            &path_beneath, LANDLOCK_STRICTLY_BENEATH);
->>                                           ^^^^^^^^^^^^^^^^^^^^^^^^^
->>
->> Multiple calls of landlock_add_rule() on the same file are already
->> today joining the requested access rights, so it would be possible to
->> mix-and-match "strict beneath" with "beneath" rights on the same
->> directory, and it would work in the same way for other access rights
->> as well.
-> 
-> This kind of option is interesting. For now, some access rights are kind 
-> of "doubled" to enable to differentiate between a file and a directory 
-> (i.e. READ_DIR/READ_FILE, REMOVE_DIR/REMOVE_FILE, WRITE_FILE/MAKE_*) 
-> when it may be useful, but this is different.
-> 
-> I think this "strictly beneath" behavior should be the default, which is 
-> currently the case.
-> 
-> 
->>
->> To be clear: I'm proposing this approach not because I think it should
->> be part of this patch set, but because it would be good to have a way
->> forward if that kind of flexibility is needed in the future.
->>
->> Does that seem reasonable?
-> 
-> This is the kind of questions that made such access rights not 
-> appropriate for the initial version of Landlock. But we should talk 
-> about that now.
+This change adds an ACCESS_INITIALLY_DENIED list of denied-by-default
+rights, which (only) contains LANDLOCK_ACCESS_FS_REFER.  All domains are
+treated as if they are also handling this list, but without modifying
+their fs_access_masks field, which enables correct domain audit.
 
-Hi Günther and Mickaël,
+A side effect is that the errno code returned by rename(2) or link(2)
+*may* be changed from EXDEV to EACCES according to the enforced
+restrictions.  Indeed, we now have the mechanic to identify if an access
+is denied because of a required right (e.g. LANDLOCK_ACCESS_FS_MAKE_REG,
+LANDLOCK_ACCESS_FS_REMOVE_FILE) or if it is denied because of missing
+LANDLOCK_ACCESS_FS_REFER rights.  This may result in different errno
+codes than for the initial Landlock version, but this approach is better
+for rename/link compatibility reasons, and it wasn't possible before
+(hence no backport to ABI v1).  The layout1.rename_file test reflects
+this change.
 
-Thanks for your comments, so I think the conclusion here is that we have 
-to make sure that in this patchset chown/chmod access rights can be set 
-on a directory only for its content, not the directory itself, right? 
-any good idea about how to implement this? :)
+Add the layout1.refer_denied_by_default* tests to check that the
+behavior of a ruleset not handling LANDLOCK_ACCESS_FS_REFER (ABI v1) is
+unchanged even if another layer handles LANDLOCK_ACCESS_FS_REFER (i.e.
+ABI v1 precedence).  Make sure rule's absolute access rights are correct
+by testing with and without a matching path.
 
-> 
-> 
->>
->>> +
->>>   /* File hooks */
->>>
->>>   static inline access_mask_t get_file_access(const struct file 
->>> *const file)
->>> @@ -1199,6 +1211,8 @@ static struct security_hook_list 
->>> landlock_hooks[] __lsm_ro_after_init = {
->>>       LSM_HOOK_INIT(path_unlink, hook_path_unlink),
->>>       LSM_HOOK_INIT(path_rmdir, hook_path_rmdir),
->>>       LSM_HOOK_INIT(path_truncate, hook_path_truncate),
->>> +    LSM_HOOK_INIT(path_chmod, hook_path_chmod),
->>> +    LSM_HOOK_INIT(path_chown, hook_path_chown),
->>>
->>>       LSM_HOOK_INIT(file_open, hook_file_open),
->>>   };
->>> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
->>> index 82288f0e9e5e..08858da7fb4f 100644
->>> --- a/security/landlock/limits.h
->>> +++ b/security/landlock/limits.h
->>> @@ -18,7 +18,7 @@
->>>   #define LANDLOCK_MAX_NUM_LAYERS        16
->>>   #define LANDLOCK_MAX_NUM_RULES        U32_MAX
->>>
->>> -#define LANDLOCK_LAST_ACCESS_FS        LANDLOCK_ACCESS_FS_TRUNCATE
->>> +#define LANDLOCK_LAST_ACCESS_FS        LANDLOCK_ACCESS_FS_CHOWN
->>>   #define LANDLOCK_MASK_ACCESS_FS        ((LANDLOCK_LAST_ACCESS_FS << 
->>> 1) - 1)
->>>   #define LANDLOCK_NUM_ACCESS_FS        
->>> __const_hweight64(LANDLOCK_MASK_ACCESS_FS)
->>>
->>> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
->>> index f4d6fc7ed17f..469e0e11735c 100644
->>> --- a/security/landlock/syscalls.c
->>> +++ b/security/landlock/syscalls.c
->>> @@ -129,7 +129,7 @@ static const struct file_operations ruleset_fops = {
->>>       .write = fop_dummy_write,
->>>   };
->>>
->>> -#define LANDLOCK_ABI_VERSION 3
->>> +#define LANDLOCK_ABI_VERSION 4
->>
->> ABI version 3 has not made it into a stable kernel yet; I wonder
->> whether it wouldn't be easier to just bundle the truncate, chmod and
->> chown rights as part of ABI version 3 (assuming that the patches make
->> it into a stable release together)?
->>
->> Mickaël, do you have an opinion on this?
-> 
-> I'll make sure to only have one ABI version bump per kernel release, but 
-> it is OK to bump it for this patch series in case it is not ready for 
-> the next merge window. I'll change it if required when merging into my 
-> tree. It is easier to change the code to decrease the version, so please 
-> keep it as is. ;)
-> .
+Extend layout1.inval tests to check that a denied-by-default access
+right is not necessarily part of a domain's handled access rights.
+
+Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER")
+Cc: Günther Noack <gnoack3000@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20220823144123.633721-1-mic@digikod.net
+---
+ security/landlock/fs.c                     |  28 +++--
+ tools/testing/selftests/landlock/fs_test.c | 133 +++++++++++++++++++--
+ 2 files changed, 143 insertions(+), 18 deletions(-)
+
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index ec5a6247cd3e..0cf484e89f68 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -149,6 +149,15 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+ 	LANDLOCK_ACCESS_FS_READ_FILE)
+ /* clang-format on */
+ 
++/*
++ * All access rights that are denied by default whether they are handled or not
++ * by a ruleset/layer.
++ */
++/* clang-format off */
++#define ACCESS_INITIALLY_DENIED ( \
++	LANDLOCK_ACCESS_FS_REFER)
++/* clang-format on */
++
+ /*
+  * @path: Should have been checked by get_path_from_fd().
+  */
+@@ -167,7 +176,9 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+ 		return -EINVAL;
+ 
+ 	/* Transforms relative access rights to absolute ones. */
+-	access_rights |= LANDLOCK_MASK_ACCESS_FS & ~ruleset->fs_access_masks[0];
++	access_rights |=
++		LANDLOCK_MASK_ACCESS_FS &
++		~(ruleset->fs_access_masks[0] | ACCESS_INITIALLY_DENIED);
+ 	object = get_inode_object(d_backing_inode(path->dentry));
+ 	if (IS_ERR(object))
+ 		return PTR_ERR(object);
+@@ -277,7 +288,7 @@ static inline bool is_nouser_or_private(const struct dentry *dentry)
+ static inline access_mask_t
+ get_handled_accesses(const struct landlock_ruleset *const domain)
+ {
+-	access_mask_t access_dom = 0;
++	access_mask_t access_dom = ACCESS_INITIALLY_DENIED;
+ 	unsigned long access_bit;
+ 
+ 	for (access_bit = 0; access_bit < LANDLOCK_NUM_ACCESS_FS;
+@@ -316,8 +327,13 @@ init_layer_masks(const struct landlock_ruleset *const domain,
+ 
+ 		for_each_set_bit(access_bit, &access_req,
+ 				 ARRAY_SIZE(*layer_masks)) {
+-			if (domain->fs_access_masks[layer_level] &
+-			    BIT_ULL(access_bit)) {
++			/*
++			 * Artificially handles all initially denied by default
++			 * access rights.
++			 */
++			if (BIT_ULL(access_bit) &
++			    (domain->fs_access_masks[layer_level] |
++			     ACCESS_INITIALLY_DENIED)) {
+ 				(*layer_masks)[access_bit] |=
+ 					BIT_ULL(layer_level);
+ 				handled_accesses |= BIT_ULL(access_bit);
+@@ -857,10 +873,6 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 					      NULL, NULL);
+ 	}
+ 
+-	/* Backward compatibility: no reparenting support. */
+-	if (!(get_handled_accesses(dom) & LANDLOCK_ACCESS_FS_REFER))
+-		return -EXDEV;
+-
+ 	access_request_parent1 |= LANDLOCK_ACCESS_FS_REFER;
+ 	access_request_parent2 |= LANDLOCK_ACCESS_FS_REFER;
+ 
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 21a2ce8fa739..2c134a9202a1 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -4,7 +4,7 @@
+  *
+  * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
+  * Copyright © 2020 ANSSI
+- * Copyright © 2020-2021 Microsoft Corporation
++ * Copyright © 2020-2022 Microsoft Corporation
+  */
+ 
+ #define _GNU_SOURCE
+@@ -371,6 +371,13 @@ TEST_F_FORK(layout1, inval)
+ 	ASSERT_EQ(EINVAL, errno);
+ 	path_beneath.allowed_access &= ~LANDLOCK_ACCESS_FS_EXECUTE;
+ 
++	/* Tests with denied-by-default access right. */
++	path_beneath.allowed_access |= LANDLOCK_ACCESS_FS_REFER;
++	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
++					&path_beneath, 0));
++	ASSERT_EQ(EINVAL, errno);
++	path_beneath.allowed_access &= ~LANDLOCK_ACCESS_FS_REFER;
++
+ 	/* Test with unknown (64-bits) value. */
+ 	path_beneath.allowed_access |= (1ULL << 60);
+ 	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
+@@ -1867,10 +1874,10 @@ TEST_F_FORK(layout1, rename_file)
+ 	 * to a different directory (which allows file removal).
+ 	 */
+ 	ASSERT_EQ(-1, rename(file1_s2d1, file1_s1d3));
+-	ASSERT_EQ(EXDEV, errno);
++	ASSERT_EQ(EACCES, errno);
+ 	ASSERT_EQ(-1, renameat2(AT_FDCWD, file1_s2d1, AT_FDCWD, file1_s1d3,
+ 				RENAME_EXCHANGE));
+-	ASSERT_EQ(EXDEV, errno);
++	ASSERT_EQ(EACCES, errno);
+ 	ASSERT_EQ(-1, renameat2(AT_FDCWD, dir_s2d2, AT_FDCWD, file1_s1d3,
+ 				RENAME_EXCHANGE));
+ 	ASSERT_EQ(EXDEV, errno);
+@@ -1894,7 +1901,7 @@ TEST_F_FORK(layout1, rename_file)
+ 	ASSERT_EQ(EXDEV, errno);
+ 	ASSERT_EQ(0, unlink(file1_s1d3));
+ 	ASSERT_EQ(-1, rename(file1_s2d1, file1_s1d3));
+-	ASSERT_EQ(EXDEV, errno);
++	ASSERT_EQ(EACCES, errno);
+ 
+ 	/* Exchanges and renames files with same parent. */
+ 	ASSERT_EQ(0, renameat2(AT_FDCWD, file2_s2d3, AT_FDCWD, file1_s2d3,
+@@ -2014,6 +2021,107 @@ TEST_F_FORK(layout1, reparent_refer)
+ 	ASSERT_EQ(0, rename(dir_s1d3, dir_s2d3));
+ }
+ 
++/* Checks renames beneath dir_s1d1. */
++static void refer_denied_by_default(struct __test_metadata *const _metadata,
++				    const struct rule layer1_abi_v2[],
++				    const struct rule layer2_abi_v1[])
++{
++	int ruleset_fd;
++
++	ASSERT_EQ(0, unlink(file1_s1d2));
++
++	/*
++	 * First layer, which handles LANDLOCK_ACCESS_FS_REFER, can allow some
++	 * different-parent renames and links.
++	 */
++	ruleset_fd = create_ruleset(_metadata, layer1_abi_v2[0].access,
++				    layer1_abi_v2);
++	ASSERT_LE(0, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd);
++	ASSERT_EQ(0, close(ruleset_fd));
++
++	/* Checks that legitimate renames are allowed. */
++	ASSERT_EQ(0, rename(file1_s1d1, file1_s1d2));
++	ASSERT_EQ(0, rename(file1_s1d2, file1_s1d1));
++	ASSERT_EQ(0, renameat2(AT_FDCWD, file2_s1d1, AT_FDCWD, file2_s1d2,
++			       RENAME_EXCHANGE));
++	ASSERT_EQ(0, renameat2(AT_FDCWD, file2_s1d2, AT_FDCWD, file2_s1d1,
++			       RENAME_EXCHANGE));
++
++	/*
++	 * Second layer, which does not handle LANDLOCK_ACCESS_FS_REFER, denies
++	 * any different-parent renames and links, thus making the first layer
++	 * null and void.
++	 */
++	ruleset_fd = create_ruleset(_metadata, layer2_abi_v1[0].access,
++				    layer2_abi_v1);
++	ASSERT_LE(0, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd);
++	ASSERT_EQ(0, close(ruleset_fd));
++
++	/* Checks that all renames are now denied. */
++	ASSERT_EQ(-1, rename(file1_s1d1, file1_s1d2));
++	ASSERT_EQ(EXDEV, errno);
++	ASSERT_EQ(-1, renameat2(AT_FDCWD, file2_s1d1, AT_FDCWD, file2_s1d2,
++				RENAME_EXCHANGE));
++	ASSERT_EQ(EXDEV, errno);
++	ASSERT_EQ(-1, renameat2(AT_FDCWD, file2_s1d2, AT_FDCWD, file2_s1d1,
++				RENAME_EXCHANGE));
++	ASSERT_EQ(EXDEV, errno);
++}
++
++/*
++ * Tests precedence over renames: denied by default for different parent
++ * directories, *with* a rule matching a parent directory, but not directly
++ * denying access (with MAKE_REG nor REMOVE).
++ */
++TEST_F_FORK(layout1, refer_denied_by_default1)
++{
++	const struct rule layer1_abi_v2[] = {
++		{
++			.path = dir_s1d1,
++			.access = LANDLOCK_ACCESS_FS_REFER,
++		},
++		{},
++	};
++	const struct rule layer2_abi_v1[] = {
++		{
++			/* Matches a parent directory. */
++			.path = dir_s1d1,
++			.access = LANDLOCK_ACCESS_FS_EXECUTE,
++		},
++		{},
++	};
++
++	refer_denied_by_default(_metadata, layer1_abi_v2, layer2_abi_v1);
++}
++
++/*
++ * Tests precedence over renames: denied by default for different parent
++ * directories, *without* a rule matching a parent directory, but not directly
++ * denying access (with MAKE_REG nor REMOVE).
++ */
++TEST_F_FORK(layout1, refer_denied_by_default2)
++{
++	const struct rule layer1_abi_v2[] = {
++		{
++			.path = dir_s1d1,
++			.access = LANDLOCK_ACCESS_FS_REFER,
++		},
++		{},
++	};
++	const struct rule layer2_abi_v1[] = {
++		{
++			/* Does not match a parent directory. */
++			.path = dir_s2d1,
++			.access = LANDLOCK_ACCESS_FS_EXECUTE,
++		},
++		{},
++	};
++
++	refer_denied_by_default(_metadata, layer1_abi_v2, layer2_abi_v1);
++}
++
+ TEST_F_FORK(layout1, reparent_link)
+ {
+ 	const struct rule layer1[] = {
+@@ -2336,11 +2444,12 @@ TEST_F_FORK(layout1, reparent_exdev_layers_rename1)
+ 	ASSERT_EQ(EXDEV, errno);
+ 
+ 	/*
+-	 * However, moving the file2_s1d3 file below dir_s2d3 is allowed
+-	 * because it cannot inherit MAKE_REG nor MAKE_DIR rights (which are
+-	 * dedicated to directories).
++	 * Moving the file2_s1d3 file below dir_s2d3 is denied because the
++	 * second layer does not handle REFER, which is always denied by
++	 * default.
+ 	 */
+-	ASSERT_EQ(0, rename(file2_s1d3, file1_s2d3));
++	ASSERT_EQ(-1, rename(file2_s1d3, file1_s2d3));
++	ASSERT_EQ(EXDEV, errno);
+ }
+ 
+ TEST_F_FORK(layout1, reparent_exdev_layers_rename2)
+@@ -2373,8 +2482,12 @@ TEST_F_FORK(layout1, reparent_exdev_layers_rename2)
+ 	ASSERT_EQ(EACCES, errno);
+ 	ASSERT_EQ(-1, rename(file1_s1d1, file1_s2d3));
+ 	ASSERT_EQ(EXDEV, errno);
+-	/* Modify layout! */
+-	ASSERT_EQ(0, rename(file2_s1d2, file1_s2d3));
++	/*
++	 * Modifying the layout is now denied because the second layer does not
++	 * handle REFER, which is always denied by default.
++	 */
++	ASSERT_EQ(-1, rename(file2_s1d2, file1_s2d3));
++	ASSERT_EQ(EXDEV, errno);
+ 
+ 	/* Without REFER source, EACCES wins over EXDEV. */
+ 	ASSERT_EQ(-1, rename(dir_s1d1, file1_s2d2));
+
+base-commit: 3d7cb6b04c3f3115719235cc6866b10326de34cd
+-- 
+2.37.2
+
