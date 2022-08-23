@@ -2,119 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFE7C32796
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 18:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 654D0C32774
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 18:47:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232544AbiHWSjz (ORCPT
+        id S229819AbiHWSrN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Aug 2022 14:39:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54372 "EHLO
+        Tue, 23 Aug 2022 14:47:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbiHWSjd (ORCPT
+        with ESMTP id S229601AbiHWSqc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Aug 2022 14:39:33 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C09D1155A8
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 10:02:58 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id p187so9453868oia.9
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 10:02:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=5ra72b4qNtNT5/Y8jyxLZXNvJFrA5g4ZvUa/siW8nrc=;
-        b=Rg9KqkTbhDsx/lxgn3tH/StZ2ZUh0LEpW0faHIyP8g0kYJTa+Ywx9u/V2wYpJ1V3Al
-         KEWkjzcT+JDbL2nzQ3d/L4mTsRM89S9fXveF64lTbLHmCHITSXDz9soOhkQOUOfFjA7K
-         se4JbQU3WkjCJCmGwwKzO7Ay94mxODHVwPqmnIlL5s/9YoHgi3hHnxHxgJOhSahkUmjd
-         xvmte1qK3TXfAP4aVgf45E3/8/1/LChRhBrbBnnbU7XDbpTYNkX5dm74zHttr8K1T1lg
-         3qkdBJ5xnX48IJbFyzWlAmMj+7FIyjNWpVfvPSxKUmi2swMd9PxVysP/f7gVNUBUOCRZ
-         PzCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=5ra72b4qNtNT5/Y8jyxLZXNvJFrA5g4ZvUa/siW8nrc=;
-        b=RovMLTXvXIaPd6VAU+Hx4iYS8oHC3SL/ZnoAW7Hbb8BMZRpV60Q4GDHauvzzj6y8b/
-         HJtcAhuVRX0//BopOiEYsV8NHeFZZ5ECtPFymlx31acn2ACy62SgnX6NN8GR0mCZKfrC
-         nlRdcemJJiwaUhc2K/JsZo0ds+BIUoj+drcHChNFr9hBnKjFMeJGIJhcfNjjrqHgXIEA
-         mnTw0dM7Rjwr69/nONgQjBbknyPbhfGZ0hKiGqzCK9NWQyCqzTTY3dFm7V88OMQcqkdZ
-         O0zg1mbsEXc7fMFrg0N1LLd3Zzq/m49FqagTK0T7KbKT5KqVN349TCWiPAaHUUu+atRi
-         MKUQ==
-X-Gm-Message-State: ACgBeo3SIQgHRu7MBdPHSRMh1H5gL5szBKaqZsxfnnuxi2zcGcdqyBZv
-        zFjw2rHtjx9HEdPxVU/sQZlzQ4jAWPtyaeEv2LCT
-X-Google-Smtp-Source: AA6agR7t8bOik6TV8VoD43ntts3M9ydgQUxiv64BSr02QdRPvcxKN04bquZG9GJRFCRRtbxhCt2WNmN+BWaOEhhjlmA=
-X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
- n9-20020a05680803a900b003434b14cccemr1702207oie.41.1661274174127; Tue, 23 Aug
- 2022 10:02:54 -0700 (PDT)
+        Tue, 23 Aug 2022 14:46:32 -0400
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A92C16D9D9
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 10:10:55 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MBwjV0d9zzMpvs1;
+        Tue, 23 Aug 2022 19:10:54 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MBwjS5SGBzlh8TF;
+        Tue, 23 Aug 2022 19:10:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1661274654;
+        bh=ngBbph48Cc2OEBE2YRaI2w0GxYjvGMB00XD5rFqgT34=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=1vIMqY/6ru8pRh2onGMbx+M+qxNCH0xPAC8stGGto7p4q2CeBxlyW1mdEQdVrHWh2
+         2o/vaNUxQGjcOzf61M5VaWeSAyiGP9CDsgAWcG4m0f4DWlVl9tdBAEn8euJHSyPpsL
+         FCveDDc1bTzU8TM25gG3qgQLJrlXaEdWbJYu/wd0=
+Message-ID: <c369c45d-5aa8-3e39-c7d6-b08b165495fd@digikod.net>
+Date:   Tue, 23 Aug 2022 19:10:52 +0200
 MIME-Version: 1.0
-References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120327984.369593.8371751426301540450.stgit@olly> <YwR41qQs07dYVnqD@kroah.com>
- <d2a66100-6660-8f99-a100-0f3c4f80d0ac@kernel.dk>
-In-Reply-To: <d2a66100-6660-8f99-a100-0f3c4f80d0ac@kernel.dk>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 23 Aug 2022 13:02:43 -0400
-Message-ID: <CAHC9VhRiTDqL-EtUcJ9y8nzRPk2BAfGzWK97oe56Ld4KyZsmGg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     Xiu Jianfeng <xiujianfeng@huawei.com>, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org,
+        corbet@lwn.net, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20220822114701.26975-1-xiujianfeng@huawei.com>
+ <YwPWN/d15S24PuLS@nuc>
+ <39df1a34-51dc-da55-ff1c-59cab896c8a0@schaufler-ca.com>
+ <YwPyuX7oao6EqTvJ@nuc> <72ca592e-ff1b-120e-3d00-5c79aefbc247@digikod.net>
+ <b1d69dfa-6d93-2034-7854-e2bc4017d20e@schaufler-ca.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH -next 0/5] landlock: add chmod and chown support
+In-Reply-To: <b1d69dfa-6d93-2034-7854-e2bc4017d20e@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 23, 2022 at 9:33 AM Jens Axboe <axboe@kernel.dk> wrote:
-> On 8/23/22 12:51 AM, Greg Kroah-Hartman wrote:
-> > On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
-> >> This patch adds support for the io_uring command pass through, aka
-> >> IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
-> >> /dev/null functionality, the implementation is just a simple sink
-> >> where commands go to die, but it should be useful for developers who
-> >> need a simple IORING_OP_URING_CMD test device that doesn't require
-> >> any special hardware.
-> >>
-> >> Cc: Arnd Bergmann <arnd@arndb.de>
-> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> >> ---
-> >>  drivers/char/mem.c |    6 ++++++
-> >>  1 file changed, 6 insertions(+)
-> >>
-> >> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> >> index 84ca98ed1dad..32a932a065a6 100644
-> >> --- a/drivers/char/mem.c
-> >> +++ b/drivers/char/mem.c
-> >> @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
-> >>      return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
-> >>  }
-> >>
-> >> +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
-> >> +{
-> >> +    return 0;
-> >
-> > If a callback just returns 0, that implies it is not needed at all and
-> > can be removed and then you are back at the original file before your
-> > commit :)
->
-> In theory you are correct, but the empty hook is needed so that
-> submitting an io_uring cmd to the file type is attempted. If not it's
-> just errored upfront.
->
-> Paul, is it strictly needed to test the selinux uring cmd policy? If the
-> operation would've been attempted but null doesn't support it, you'd get
-> -1/EOPNOTSUPP - and supposedly you'd get EACCES/EPERM or something if
-> it's filtered?
 
-I haven't built a kernel without this patch to test, but yes, you are
-probably correct that it wouldn't be strictly necessary, but
-considering the extreme simplicity of this addition, what is the real
-harm here?  Wouldn't it be nice to have a rather simple
-IORING_OP_URING_CMD target?
+On 22/08/2022 23:53, Casey Schaufler wrote:
+> On 8/22/2022 2:21 PM, Mickaël Salaün wrote:
+>>
+>>
+>> On 22/08/2022 23:18, Günther Noack wrote:
+>>> On Mon, Aug 22, 2022 at 12:35:18PM -0700, Casey Schaufler wrote:
+>>>> On 8/22/2022 12:17 PM, Günther Noack wrote:
+>>>>> Hi!
+>>>>>
+>>>>> Very exciting to see! Thank you for sending this! :)
+>>>>>
+>>>>> I'm just throwing in some comments based on the very similar truncate
+>>>>> patch set, in the hope that it helps. (But obviously, Mickaël Salaün
+>>>>> has the last word on this code.)
+>>>>>
+>>>>> Slightly higher level question: Should we start to group the
+>>>>> functionality of multiple LSM hooks under one Landlock flag? (Will it
+>>>>> be harder to change the LSM hook interface in the future if we
+>>>>> continue to add one flag per hook? Or is this structure already
+>>>>> exposed to userspace by other LSMs?)
+>>>>
+>>>> I'm not a landlock expert. The question is nonsensical, yet somewhat
+>>>> frightening nonetheless. Could you put just a touch more context into
+>>>> what you're asking for?
+>>>
+>>> By "Landlock flags", I meant the integer that Landlock uses to
+>>> represent the set of possible operations on a file hierarchy:
+>>>
+>>> Landlock's file system access rights (access_mode_t on the kernel
+>>> side) are defined with an integer with flags (LANDLOCK_ACCESS_FS_*)
+>>> for different operations that one might do with files. They get used
+>>> from userspace to control what is permitted on which parts of the file
+>>> system. (Docs: https://docs.kernel.org/userspace-api/landlock.html)
+>>>
+>>> Currently most of the available Landlock flags map pretty closely to
+>>> one of the file- and path-related LSM hooks. (See various hook
+>>> implementations in security/landlock/fs.c)
+>>>
+>>> The file system operations that Landlock doesn't cover yet (as of
+>>> kernel 5.19) are listed below, and there are potentially a few more
+>>> that might be missing. I suspect/hope that there will be more patches
+>>> in the style of the truncate/chmod/chown patches, which will add that
+>>> coverage.
+>>>
+>>> The question is basically:
+>>> When these patches get added, how should the userspace-exposed
+>>> Landlock file system access rights map to the LSM hooks for these
+>>> upcoming Landlock features? Should each of the newly covered
+>>> operations have its own flag, or is it better to group them?
+>>>
+>>> (It's well possible that the right answer is "one flag per feature",
+>>> but I feel it still makes sense to ask this before all these patches
+>>> get written?)
+>>
+>> Landlock is not strictly tied to the current LSM hooks, but they fit
+>> well (because they are designed to be flexible enough to be use by
+>> multiple access control systems). In fact, Landlock already uses
+>> orthogonal access rights such as LANDLOCK_ACCESS_FS_REFER (using the
+>> path_link or path_rename hooks), LANDLOCK_ACCESS_FS_MAKE_* (using the
+>> path_mknod and path_mkdir hooks)…
+>>
+>> Anyway, the LSM framework is evolving, we can add new hooks and modify
+>> others (e.g. see the security_path_rename hook modification for
+>> FS_REFER) as long as mainline access control systems don't break and
+>> subsystem maintainers are OK with such changes. Like any kernel API,
+>> the LSM API is not stable, but this is not an issue for mainline code.
+>>
+>> Landlock's goal is to find the sweet spot between flexibility for
+>> different sandboxing use cases and an understandable/simple-enough
+>> access control system. The access rights should then be meaningful for
+>> users, which are already familiar with the UAPI/syscalls, hence the
+>> current Landlock access rights (which are not very original, and that
+>> is a good thing). This is why I'm wondering if it is worth it to
+>> differentiate between chmod and chgrp (and add a dedicated access
+>> right per action or only one for both).
+> 
+> The lesson from capabilities is that differentiating between chmod, chown and chgrp is
+> pointless, and CAP_DAC_CHMOD, CAP_DAC_CHOWN and CAP_DAC_CHGRP should have just been
+> CAP_DAC_OVERRIDE. On the other hand, those who argue that SELinux proves the value of
+> fine granularity would likely have you go with separate rights. What's important is
+> that you don't tie your rights too tightly to the underlying implementation. That has
+> the potential to expose details of how the code work that user-space has no business
+> basing decisions on.
 
-Also, just so we are clear, I didn't mark this patch with the
-stable/fixes tags because I don't believe this should go into -stable;
-while I believe it is a nice addition, it is definitely not critical.
+Indeed, for a sandboxing feature like Landlock, it may not be useful to 
+duplicate other access rights. From a user point of view, I think it 
+would make sense to split the file metadata modification into 
+potentially-security related or not. That would means three access rights:
+- modify user/informative metadata (e.g. dates, user.* xattr);
+- modify security-related metadata (e.g. chown, chmod, chgrp, any other 
+xattr);
+- read any metadata.
 
--- 
-paul-moore.com
+This require some LSM hook changes to handle paths instead of inodes 
+(e.g. security_inode_setattr, security_inode_setxattr…).
