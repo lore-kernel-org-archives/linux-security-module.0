@@ -2,75 +2,82 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83897C28D13
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 01:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D16C32796
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 06:51:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238722AbiHWBPI (ORCPT
+        id S240497AbiHWGvH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Aug 2022 21:15:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45454 "EHLO
+        Tue, 23 Aug 2022 02:51:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237907AbiHWBPH (ORCPT
+        with ESMTP id S240315AbiHWGvH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Aug 2022 21:15:07 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685CE54C9F;
-        Mon, 22 Aug 2022 18:15:05 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MBWPg2MPNzXdtL;
-        Tue, 23 Aug 2022 09:10:47 +0800 (CST)
-Received: from dggphis33418.huawei.com (10.244.148.83) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 23 Aug 2022 09:15:03 +0800
-From:   Gaosheng Cui <cuigaosheng1@huawei.com>
-To:     <john.johansen@canonical.com>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>, <cuigaosheng1@huawei.com>
-CC:     <apparmor@lists.ubuntu.com>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] apparmor: fix a memleak in multi_transaction_new()
-Date:   Tue, 23 Aug 2022 09:15:03 +0800
-Message-ID: <20220823011503.2757088-1-cuigaosheng1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 23 Aug 2022 02:51:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8348E32BA9;
+        Mon, 22 Aug 2022 23:51:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 225456135D;
+        Tue, 23 Aug 2022 06:51:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13661C433D6;
+        Tue, 23 Aug 2022 06:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1661237465;
+        bh=RohjBzJApuT97cn78xLjdi9BLBf29NTQ68MN5gRMoPc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VvlPfkBnDIO74MOkmopSXdIwTc3TJMgFx/nsUAYuwcrD6DwdYYSo1LtAnqBOuONWW
+         7+sy/aFW5brDM2CdRHMFu4/MF0/bezZ1lvIw+Ck4onLxFtAaoPySCxdNjIFSTKEJVw
+         9I4M9Q/B8gWVE4LfV+K9CKk++G8QqBIM37TzkaHY=
+Date:   Tue, 23 Aug 2022 08:51:02 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
+Message-ID: <YwR41qQs07dYVnqD@kroah.com>
+References: <166120321387.369593.7400426327771894334.stgit@olly>
+ <166120327984.369593.8371751426301540450.stgit@olly>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.244.148.83]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <166120327984.369593.8371751426301540450.stgit@olly>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In multi_transaction_new(), the variable t is not freed or passed out
-on the failure of copy_from_user(t->data, buf, size), which could lead
-to a memleak.
+On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
+> This patch adds support for the io_uring command pass through, aka
+> IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
+> /dev/null functionality, the implementation is just a simple sink
+> where commands go to die, but it should be useful for developers who
+> need a simple IORING_OP_URING_CMD test device that doesn't require
+> any special hardware.
+> 
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  drivers/char/mem.c |    6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+> index 84ca98ed1dad..32a932a065a6 100644
+> --- a/drivers/char/mem.c
+> +++ b/drivers/char/mem.c
+> @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
+>  	return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
+>  }
+>  
+> +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
+> +{
+> +	return 0;
 
-Fix this bug by adding a put_multi_transaction(t) in the error path.
+If a callback just returns 0, that implies it is not needed at all and
+can be removed and then you are back at the original file before your
+commit :)
 
-Fixes: 1dea3b41e84c5 ("apparmor: speed up transactional queries")
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
----
- security/apparmor/apparmorfs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+thanks,
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index d066ccc219e2..7160e7aa58b9 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -868,8 +868,10 @@ static struct multi_transaction *multi_transaction_new(struct file *file,
- 	if (!t)
- 		return ERR_PTR(-ENOMEM);
- 	kref_init(&t->count);
--	if (copy_from_user(t->data, buf, size))
-+	if (copy_from_user(t->data, buf, size)) {
-+		put_multi_transaction(t);
- 		return ERR_PTR(-EFAULT);
-+	}
- 
- 	return t;
- }
--- 
-2.25.1
-
+greg k-h
