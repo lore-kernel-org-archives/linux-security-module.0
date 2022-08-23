@@ -2,117 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED6BC38142
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 17:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF65C54F45
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Aug 2022 17:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343751AbiHWRHK (ORCPT
+        id S233936AbiHWR0X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Aug 2022 13:07:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36450 "EHLO
+        Tue, 23 Aug 2022 13:26:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343929AbiHWREE (ORCPT
+        with ESMTP id S234824AbiHWRZh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Aug 2022 13:04:04 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFF75150156
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 06:33:40 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id x19so10704237pfq.1
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Aug 2022 06:33:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=aCSXGk9NtNmglUVpbUQ1Rjs+YdBMM2XU3YePZpV6vnQ=;
-        b=jLH60+HfG5U8ezVkTAuijLoLylLR3TAnYTCNGkRSYaXVEB1RrgRj4cZ2E0d22eIC3K
-         92/vTy/0T5iBMTrT7lsqB+KGysInPkNuKKnjHNVnN6+Fb/H7y0iRIdwHNfeeLz3Xl+rr
-         vbJXmwYdB4hKN2MM558O7p4hjglh6k8FUBX/IvfdET1tE2p8/7Gjk6uk8p50aldySkK6
-         VKuhRIy4g+j6vcnnlPJekfl3u4zL2Ns0QVwlcmhJ/YILoBFCBwIF26bshgM72tRqOIqE
-         hxUvNXESs3HU0UWTjccyx+qgYb6k8iV9J0k3MTBakGTgT2uM7UT35Jqrf6wxOv/WeqLV
-         IZYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=aCSXGk9NtNmglUVpbUQ1Rjs+YdBMM2XU3YePZpV6vnQ=;
-        b=wxAM3YZqLyOEJ6u92j+g8mIL+4LkgXvLfuJ347cHKJ/Pn254hjrHi1E5hBTpdRA7XM
-         z5nf+03mvhRVt22lrFhKfyqbbJc7axNH6HMmbS+0OhAMErcdTKmpTrE/Yxhd+aL7Mg9h
-         eeBCJJ4VQk2GW1lcFBxmyUyZ/TCTmaENWTgR4v1yHPRxPIXg5oETxpCRSzS0/ZqkK/Ps
-         ewZmznOBDi2q/c8iu0LCYbYhrGe6AbDLYCzmJxgUkM/oHirJ8gZk1XUFbhVTdItUjpDL
-         /xyekq9bDvBtcgo+lPyuwUxpwPkjpONx+4W57l6hTVur8CnEDaTt25OP0/QbL6yN7Hah
-         eOdg==
-X-Gm-Message-State: ACgBeo3bcqS7Rqen5JmuPAn7wyO6vUv8wSg8xNHhPNK2RDDxkR0Fx2pJ
-        hbMhgu913c/syiimw8IXNb0yTw==
-X-Google-Smtp-Source: AA6agR6S6rfRj/zc3mfjlga4zrGt9A0T25FwyEPhGMSVV9ZoGj3YuGzKeEzbZSewB8Y4MIpq+O8cqA==
-X-Received: by 2002:a63:b07:0:b0:429:411a:ff51 with SMTP id 7-20020a630b07000000b00429411aff51mr20162901pgl.207.1661261620081;
-        Tue, 23 Aug 2022 06:33:40 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ei23-20020a17090ae55700b001f7a76d6f28sm9963727pjb.18.2022.08.23.06.33.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Aug 2022 06:33:39 -0700 (PDT)
-Message-ID: <d2a66100-6660-8f99-a100-0f3c4f80d0ac@kernel.dk>
-Date:   Tue, 23 Aug 2022 07:33:38 -0600
+        Tue, 23 Aug 2022 13:25:37 -0400
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D984B2D8A;
+        Tue, 23 Aug 2022 08:01:40 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4MBsm52syVz9v7P7;
+        Tue, 23 Aug 2022 22:57:57 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwBnIhqd6wRjjU5GAA--.52413S3;
+        Tue, 23 Aug 2022 16:01:12 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        corbet@lwn.net, dhowells@redhat.com, jarkko@kernel.org,
+        rostedt@goodmis.org, mingo@redhat.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org
+Cc:     bpf@vger.kernel.org, linux-doc@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v13 01/10] bpf: Allow kfuncs to be used in LSM programs
+Date:   Tue, 23 Aug 2022 17:00:26 +0200
+Message-Id: <20220823150035.711534-2-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220823150035.711534-1-roberto.sassu@huaweicloud.com>
+References: <20220823150035.711534-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
-Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120327984.369593.8371751426301540450.stgit@olly>
- <YwR41qQs07dYVnqD@kroah.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YwR41qQs07dYVnqD@kroah.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwBnIhqd6wRjjU5GAA--.52413S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruF15tF4kCFWUGF1kZFyxXwb_yoWfXrX_Cw
+        4jg3WxArn8CFWIqa10kF4Sqry7Ka45tFn5uwn8KrZ3Jwn8G3yDAw1F9Fy3tFykX3y8Xw43
+        tFn3CrZxtr17XjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbfkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_JrC_JFWl1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r18M2
+        8IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK
+        021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F
+        4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
+        JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
+        0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
+        JVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwI
+        xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+        Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7
+        IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK
+        8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+        0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFOJ5UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBF1jj347dwACsK
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/23/22 12:51 AM, Greg Kroah-Hartman wrote:
-> On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
->> This patch adds support for the io_uring command pass through, aka
->> IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
->> /dev/null functionality, the implementation is just a simple sink
->> where commands go to die, but it should be useful for developers who
->> need a simple IORING_OP_URING_CMD test device that doesn't require
->> any special hardware.
->>
->> Cc: Arnd Bergmann <arnd@arndb.de>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Signed-off-by: Paul Moore <paul@paul-moore.com>
->> ---
->>  drivers/char/mem.c |    6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
->> index 84ca98ed1dad..32a932a065a6 100644
->> --- a/drivers/char/mem.c
->> +++ b/drivers/char/mem.c
->> @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
->>  	return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
->>  }
->>  
->> +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
->> +{
->> +	return 0;
-> 
-> If a callback just returns 0, that implies it is not needed at all and
-> can be removed and then you are back at the original file before your
-> commit :)
+From: KP Singh <kpsingh@kernel.org>
 
-In theory you are correct, but the empty hook is needed so that
-submitting an io_uring cmd to the file type is attempted. If not it's
-just errored upfront.
+In preparation for the addition of new kfuncs, allow kfuncs defined in the
+tracing subsystem to be used in LSM programs by mapping the LSM program
+type to the TRACING hook.
 
-Paul, is it strictly needed to test the selinux uring cmd policy? If the
-operation would've been attempted but null doesn't support it, you'd get
--1/EOPNOTSUPP - and supposedly you'd get EACCES/EPERM or something if
-it's filtered?
+Signed-off-by: KP Singh <kpsingh@kernel.org>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ kernel/bpf/btf.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 903719b89238..e49b3b6d48ad 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -7243,6 +7243,7 @@ static int bpf_prog_type_to_kfunc_hook(enum bpf_prog_type prog_type)
+ 	case BPF_PROG_TYPE_STRUCT_OPS:
+ 		return BTF_KFUNC_HOOK_STRUCT_OPS;
+ 	case BPF_PROG_TYPE_TRACING:
++	case BPF_PROG_TYPE_LSM:
+ 		return BTF_KFUNC_HOOK_TRACING;
+ 	case BPF_PROG_TYPE_SYSCALL:
+ 		return BTF_KFUNC_HOOK_SYSCALL;
 -- 
-Jens Axboe
+2.25.1
+
