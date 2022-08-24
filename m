@@ -2,384 +2,244 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FD6C32793
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 10:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3A2C00140
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 11:45:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236382AbiHXKKC (ORCPT
+        id S235406AbiHXLpD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Aug 2022 06:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55378 "EHLO
+        Wed, 24 Aug 2022 07:45:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236229AbiHXKJ6 (ORCPT
+        with ESMTP id S233546AbiHXLpC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Aug 2022 06:09:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7BCEF
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 03:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1661335796;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=9QOwdYeOBfx7ZFTq7KjkkAX4NLgQEvP6gb19KNddtt0=;
-        b=jHWyVbZZ21ShvxNKIEkwd+CkFPXi78yhLd+HtmFJ965vM8hJhm/T6yIiOTCsBzfViutP66
-        rlG4q7hdbjsFptPCgu5gMHmTefEf6T97BWsuKCWhc2qlyZlIhKs6o2JFCOhEFwfG2TTDCZ
-        vvGva2QlZ5ZE33Q+rpbhksAXKF2q42s=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-175-ZTJR1ApbMnaBN5zLgP5wSQ-1; Wed, 24 Aug 2022 06:09:53 -0400
-X-MC-Unique: ZTJR1ApbMnaBN5zLgP5wSQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0652085A589;
-        Wed, 24 Aug 2022 10:09:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 16743492C3B;
-        Wed, 24 Aug 2022 10:09:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v4] vfs, security: Fix automount superblock LSM init problem,
- preventing NFS sb sharing
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-nfs@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
-        dhowells@redhat.com, linux-kernel@vger.kernel.org
-Date:   Wed, 24 Aug 2022 11:09:50 +0100
-Message-ID: <166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.5
+        Wed, 24 Aug 2022 07:45:02 -0400
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 318D04D819
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 04:44:57 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MCPQv52G4zMqBfr;
+        Wed, 24 Aug 2022 13:44:55 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MCPQt0Xxwzlh8TD;
+        Wed, 24 Aug 2022 13:44:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1661341495;
+        bh=1A9w6LBApFmHy8AyI91NBSquKjP8ISZPMKdkvU7c3qU=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=ELdnmWIYHEW0cpvK8yP+KBxoP+OZ3AsDLeVhLwbdZOuSJRUGKAh8nALszvrZcHiBI
+         y+IEb4AcfPcXHE3tmXwOTcBgbcwEqswwR581B1vKVoyvBlpRDEtnw+yenjdP8yC5Eu
+         EptJG+SP34k9or7OMx1YGjN5TzIKbeB090t+hNYs=
+Message-ID: <8cb3b7df-fb2f-3e3f-7805-4b14cf1bdf90@digikod.net>
+Date:   Wed, 24 Aug 2022 13:44:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+User-Agent: 
+Content-Language: en-US
+To:     xiujianfeng <xiujianfeng@huawei.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        shuah@kernel.org, corbet@lwn.net,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20220822114701.26975-1-xiujianfeng@huawei.com>
+ <20220822114701.26975-3-xiujianfeng@huawei.com> <YwPKG3G9PlStYPkz@nuc>
+ <5873455f-fff9-618c-25b1-8b6a4ec94368@digikod.net>
+ <6d6edd60-5ed7-0f5d-d641-75e006c0e60e@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH -next 2/5] landlock: add chmod and chown support
+In-Reply-To: <6d6edd60-5ed7-0f5d-d641-75e006c0e60e@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When NFS superblocks are created by automounting, their LSM parameters
-aren't set in the fs_context struct prior to sget_fc() being called,
-leading to failure to match existing superblocks.
 
-Fix this by adding a new LSM hook to load fc->security for submount
-creation when alloc_fs_context() is creating the fs_context for it.
+On 23/08/2022 14:50, xiujianfeng wrote:
+> 
+> 
+> 在 2022/8/23 5:07, Mickaël Salaün 写道:
+>>
+>> On 22/08/2022 20:25, Günther Noack wrote:
+>>> Hi!
+>>>
+>>> Thanks for sending this patch set! :)
+>>>
+>>> On Mon, Aug 22, 2022 at 07:46:58PM +0800, Xiu Jianfeng wrote:
+>>>> Add two flags LANDLOCK_ACCESS_FS_CHMOD and LANDLOCK_ACCESS_FS_CHOWN to
+>>>> support restriction to chmod(2) and chown(2) with landlock.
+>>>>
+>>>> Also change the landlock ABI version from 3 to 4.
+>>>>
+>>>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+>>>> ---
+>>>>    include/uapi/linux/landlock.h                |  8 ++++++--
+>>>>    security/landlock/fs.c                       | 16 +++++++++++++++-
+>>>>    security/landlock/limits.h                   |  2 +-
+>>>>    security/landlock/syscalls.c                 |  2 +-
+>>>>    tools/testing/selftests/landlock/base_test.c |  2 +-
+>>>>    tools/testing/selftests/landlock/fs_test.c   |  6 ++++--
+>>>>    6 files changed, 28 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/include/uapi/linux/landlock.h
+>>>> b/include/uapi/linux/landlock.h
+>>>> index 735b1fe8326e..5ce633c92722 100644
+>>>> --- a/include/uapi/linux/landlock.h
+>>>> +++ b/include/uapi/linux/landlock.h
+>>>> @@ -141,13 +141,15 @@ struct landlock_path_beneath_attr {
+>>>>     *   directory) parent.  Otherwise, such actions are denied with
+>>>> errno set to
+>>>>     *   EACCES.  The EACCES errno prevails over EXDEV to let user space
+>>>>     *   efficiently deal with an unrecoverable error.
+>>>> + * - %LANDLOCK_ACCESS_FS_CHMOD: Change the file mode bits of a file.
+>>>> + * - %LANDLOCK_ACCESS_FS_CHOWN: Change the owner and/or group of a
+>>>> file.
+>>
+>> This section talk about "access rights that only apply to the content of
+>> a directory, not the directory itself", which is not correct (see
+>> LANDLOCK_ACCESS_FS_READ_DIR). I'd like these access rights to remain
+>> here but this kernel patch and the related tests need some changes.
+>>
+>> What about a LANDLOCK_ACCESS_FS_CHGRP? I'm not sure if we need to
+>> differentiate these actions or not, but we need arguments to choose.
+>>
+>>
+>>>>     *
+>>>>     * .. warning::
+>>>>     *
+>>>>     *   It is currently not possible to restrict some file-related
+>>>> actions
+>>>>     *   accessible through these syscall families: :manpage:`chdir(2)`,
+>>>> - *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+>>>> - *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+>>>> + *   :manpage:`stat(2)`, :manpage:`flock(2)`,
+>>>> + *   :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+>>>
+>>> *formatting nit*
+>>> We could fill up the full line width here
+>>>
+>>>>     *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
+>>>>     *   Future Landlock evolutions will enable to restrict them.
+>>>>     */
+>>>> @@ -167,6 +169,8 @@ struct landlock_path_beneath_attr {
+>>>>    #define LANDLOCK_ACCESS_FS_MAKE_SYM            (1ULL << 12)
+>>>>    #define LANDLOCK_ACCESS_FS_REFER            (1ULL << 13)
+>>>>    #define LANDLOCK_ACCESS_FS_TRUNCATE            (1ULL << 14)
+>>>> +#define LANDLOCK_ACCESS_FS_CHMOD            (1ULL << 15)
+>>>> +#define LANDLOCK_ACCESS_FS_CHOWN            (1ULL << 16)
+>>>>    /* clang-format on */
+>>>>
+>>>>    #endif /* _UAPI_LINUX_LANDLOCK_H */
+>>>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+>>>> index c57f581a9cd5..c25d5f89c8be 100644
+>>>> --- a/security/landlock/fs.c
+>>>> +++ b/security/landlock/fs.c
+>>>> @@ -147,7 +147,9 @@ static struct landlock_object
+>>>> *get_inode_object(struct inode *const inode)
+>>>>        LANDLOCK_ACCESS_FS_EXECUTE | \
+>>>>        LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>>>>        LANDLOCK_ACCESS_FS_READ_FILE | \
+>>>> -    LANDLOCK_ACCESS_FS_TRUNCATE)
+>>>> +    LANDLOCK_ACCESS_FS_TRUNCATE | \
+>>>> +    LANDLOCK_ACCESS_FS_CHMOD | \
+>>>> +    LANDLOCK_ACCESS_FS_CHOWN)
+>>>>    /* clang-format on */
+>>>>
+>>>>    /*
+>>>> @@ -1146,6 +1148,16 @@ static int hook_path_truncate(const struct
+>>>> path *const path)
+>>>>        return current_check_access_path(path,
+>>>> LANDLOCK_ACCESS_FS_TRUNCATE);
+>>>>    }
+>>>>
+>>>> +static int hook_path_chmod(const struct path *const dir, umode_t mode)
+>>
+>> This is not a "dir" but a "path".
+>>
+>>
+>>>> +{
+>>>> +    return current_check_access_path(dir, LANDLOCK_ACCESS_FS_CHMOD);
+>>>> +}
+>>>> +
+>>>> +static int hook_path_chown(const struct path *const dir, kuid_t uid,
+>>>> kgid_t gid)
+>>
+>> Same here.
+>>
+>>
+>>>> +{
+>>>> +    return current_check_access_path(dir, LANDLOCK_ACCESS_FS_CHOWN);
+>>>> +}
+>>>
+>>> One implication of this approach is that the chown+chmod right on a
+>>> directory's contents are always going together with the same rights on
+>>> the directory itself.
+>>>
+>>> For example, if you grant chmod+chown access rights for "datadir/",
+>>> the command "chmod 0600 datadir/file1" will work, but so will the
+>>> command "chmod 0600 datadir". But the approach of checking just the
+>>> parent directory's rights is also inflexible if you think through the
+>>> kinds of rights you can grant with it. (It would also not be possible
+>>> to grant chmod+chown on individual files.)
+>>
+>> Good point. For an initial chmod/chown/chgrp access right, I'd prefer to
+>> be able to set these access rights on a directory but only for its
+>> content, not the directory itself. I think it is much safer and should
+>> be enough for the majority of use cases, but let me know if I'm missing
+>> something. I'm not sure being able to change the root directory access
+>> rights may be a good idea anyway (even for containers). ;)
+>>
+>> A path_beneath rule enables to identify a file hierarchy (i.e. the
+>> content of a directory), not to make modifications visible outside of
+>> the directory identifying the hierarchy (hence the "parent_fd" field),
+>> which would be the case with the current chmod/chown access rights.
+>>
+>>
+>>>
+>>> Do you have any thoughts on how to resolve this if this flexibility
+>>> might be needed?
+>>>
+>>> I wonder whether the right way to resolve this would be to give users
+>>> a way to make that distinction at the level of landlock_add_rule(),
+>>> with an API like this (note the additional flag):
+>>>
+>>>     err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
+>>>                             &path_beneath, LANDLOCK_STRICTLY_BENEATH);
+>>>                                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>
+>>> Multiple calls of landlock_add_rule() on the same file are already
+>>> today joining the requested access rights, so it would be possible to
+>>> mix-and-match "strict beneath" with "beneath" rights on the same
+>>> directory, and it would work in the same way for other access rights
+>>> as well.
+>>
+>> This kind of option is interesting. For now, some access rights are kind
+>> of "doubled" to enable to differentiate between a file and a directory
+>> (i.e. READ_DIR/READ_FILE, REMOVE_DIR/REMOVE_FILE, WRITE_FILE/MAKE_*)
+>> when it may be useful, but this is different.
+>>
+>> I think this "strictly beneath" behavior should be the default, which is
+>> currently the case.
+>>
+>>
+>>>
+>>> To be clear: I'm proposing this approach not because I think it should
+>>> be part of this patch set, but because it would be good to have a way
+>>> forward if that kind of flexibility is needed in the future.
+>>>
+>>> Does that seem reasonable?
+>>
+>> This is the kind of questions that made such access rights not
+>> appropriate for the initial version of Landlock. But we should talk
+>> about that now.
+> 
+> Hi Günther and Mickaël,
+> 
+> Thanks for your comments, so I think the conclusion here is that we have
+> to make sure that in this patchset chown/chmod access rights can be set
+> on a directory only for its content, not the directory itself, right?
+> any good idea about how to implement this? :)
 
-However, this uncovers a further bug: nfs_get_root() initialises the
-superblock security manually by calling security_sb_set_mnt_opts() or
-security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-complaining.
-
-Fix that by adding a flag to the fs_context that suppresses the
-security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
-when it sets the LSM context on the new superblock.
-
-The first bug leads to messages like the following appearing in dmesg:
-
-	NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
-
-Changes
-=======
-ver #4)
- - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or
-   Smack.
-
-ver #3)
- - Made LSM parameter extraction dependent on fc->purpose ==
-   FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
-
-ver #2)
- - Added Smack support
- - Made LSM parameter extraction dependent on reference != NULL.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-Tested-by: Jeff Layton <jlayton@kernel.org>
-cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-cc: Anna Schumaker <anna@kernel.org>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Scott Mayhew <smayhew@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Paul Moore <paul@paul-moore.com>
-cc: Casey Schaufler <casey@schaufler-ca.com>
-cc: linux-nfs@vger.kernel.org
-cc: selinux@vger.kernel.org
-cc: linux-security-module@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
----
-
- fs/fs_context.c               |    4 +++
- fs/nfs/getroot.c              |    1 +
- fs/super.c                    |   10 +++++---
- include/linux/fs_context.h    |    1 +
- include/linux/lsm_hook_defs.h |    1 +
- include/linux/lsm_hooks.h     |    6 ++++-
- include/linux/security.h      |    6 +++++
- security/security.c           |    5 ++++
- security/selinux/hooks.c      |   27 +++++++++++++++++++++
- security/smack/smack_lsm.c    |   54 +++++++++++++++++++++++++++++++++++++++++
- 10 files changed, 110 insertions(+), 5 deletions(-)
-
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 24ce12f0db32..22248b8a88a8 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -282,6 +282,10 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
- 		break;
- 	}
- 
-+	ret = security_fs_context_init(fc, reference);
-+	if (ret < 0)
-+		goto err_fc;
-+
- 	/* TODO: Make all filesystems support this unconditionally */
- 	init_fs_context = fc->fs_type->init_fs_context;
- 	if (!init_fs_context)
-diff --git a/fs/nfs/getroot.c b/fs/nfs/getroot.c
-index 11ff2b2e060f..651bffb0067e 100644
---- a/fs/nfs/getroot.c
-+++ b/fs/nfs/getroot.c
-@@ -144,6 +144,7 @@ int nfs_get_root(struct super_block *s, struct fs_context *fc)
- 	}
- 	if (error)
- 		goto error_splat_root;
-+	fc->lsm_set = true;
- 	if (server->caps & NFS_CAP_SECURITY_LABEL &&
- 		!(kflags_out & SECURITY_LSM_NATIVE_LABELS))
- 		server->caps &= ~NFS_CAP_SECURITY_LABEL;
-diff --git a/fs/super.c b/fs/super.c
-index 734ed584a946..94666c0c92a4 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1552,10 +1552,12 @@ int vfs_get_tree(struct fs_context *fc)
- 	smp_wmb();
- 	sb->s_flags |= SB_BORN;
- 
--	error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
--	if (unlikely(error)) {
--		fc_drop_locked(fc);
--		return error;
-+	if (!(fc->lsm_set)) {
-+		error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-+		if (unlikely(error)) {
-+			fc_drop_locked(fc);
-+			return error;
-+		}
- 	}
- 
- 	/*
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index 13fa6f3df8e4..3876dd96bb20 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -110,6 +110,7 @@ struct fs_context {
- 	bool			need_free:1;	/* Need to call ops->free() */
- 	bool			global:1;	/* Goes into &init_user_ns */
- 	bool			oldapi:1;	/* Coming from mount(2) */
-+	bool			lsm_set:1;	/* security_sb_set/clone_mnt_opts() already done */
- };
- 
- struct fs_context_operations {
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 806448173033..40ac14d772da 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, struct file *f
- LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
-+LSM_HOOK(int, 0, fs_context_init, struct fs_context *fc, struct dentry *reference)
- LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
- 	 struct fs_context *src_sc)
- LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc,
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 84a0d7e02176..aec42d6287b5 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -87,8 +87,12 @@
-  * Security hooks for mount using fs_context.
-  *	[See also Documentation/filesystems/mount_api.rst]
-  *
-+ * @fs_context_init:
-+ *	Initialise fc->security.  This is initialised to NULL by the caller.
-+ *	@fc indicates the new filesystem context.
-+ *	@dentry indicates a reference for submount/remount
-  * @fs_context_dup:
-- *	Allocate and attach a security structure to sc->security.  This pointer
-+ *	Allocate and attach a security structure to fc->security.  This pointer
-  *	is initialised to NULL by the caller.
-  *	@fc indicates the new filesystem context.
-  *	@src_fc indicates the original filesystem context.
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1bc362cb413f..e7dfe38df72d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -291,6 +291,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file);
- int security_bprm_check(struct linux_binprm *bprm);
- void security_bprm_committing_creds(struct linux_binprm *bprm);
- void security_bprm_committed_creds(struct linux_binprm *bprm);
-+int security_fs_context_init(struct fs_context *fc, struct dentry *reference);
- int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
- int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
- int security_sb_alloc(struct super_block *sb);
-@@ -622,6 +623,11 @@ static inline void security_bprm_committed_creds(struct linux_binprm *bprm)
- {
- }
- 
-+static inline int security_fs_context_init(struct fs_context *fc,
-+					   struct dentry *reference)
-+{
-+	return 0;
-+}
- static inline int security_fs_context_dup(struct fs_context *fc,
- 					  struct fs_context *src_fc)
- {
-diff --git a/security/security.c b/security/security.c
-index 14d30fec8a00..7b677087c4eb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -880,6 +880,11 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
- 	call_void_hook(bprm_committed_creds, bprm);
- }
- 
-+int security_fs_context_init(struct fs_context *fc, struct dentry *reference)
-+{
-+	return call_int_hook(fs_context_init, 0, fc, reference);
-+}
-+
- int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
- {
- 	return call_int_hook(fs_context_dup, 0, fc, src_fc);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 79573504783b..c09dcf6df2b6 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2765,6 +2765,32 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
- 				   FILESYSTEM__UNMOUNT, NULL);
- }
- 
-+static int selinux_fs_context_init(struct fs_context *fc,
-+				   struct dentry *reference)
-+{
-+	const struct superblock_security_struct *sbsec;
-+	const struct inode_security_struct *root_isec;
-+	struct selinux_mnt_opts *opts;
-+
-+	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-+		opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-+		if (!opts)
-+			return -ENOMEM;
-+
-+		root_isec = backing_inode_security(reference->d_sb->s_root);
-+		sbsec = selinux_superblock(reference->d_sb);
-+		if (sbsec->flags & FSCONTEXT_MNT)
-+			opts->fscontext_sid	= sbsec->sid;
-+		if (sbsec->flags & CONTEXT_MNT)
-+			opts->context_sid	= sbsec->mntpoint_sid;
-+		if (sbsec->flags & DEFCONTEXT_MNT)
-+			opts->defcontext_sid	= sbsec->def_sid;
-+		fc->security = opts;
-+	}
-+
-+	return 0;
-+}
-+
- static int selinux_fs_context_dup(struct fs_context *fc,
- 				  struct fs_context *src_fc)
- {
-@@ -7236,6 +7262,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	/*
- 	 * PUT "CLONING" (ACCESSING + ALLOCATING) HOOKS HERE
- 	 */
-+	LSM_HOOK_INIT(fs_context_init, selinux_fs_context_init),
- 	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
- 	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
- 	LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 001831458fa2..8665428481d3 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -612,6 +612,59 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
- 	return -EINVAL;
- }
- 
-+/**
-+ * smack_fs_context_init - Initialise security data for a filesystem context
-+ * @fc: The filesystem context.
-+ * @reference: Reference dentry (automount/reconfigure) or NULL
-+ *
-+ * Returns 0 on success or -ENOMEM on error.
-+ */
-+static int smack_fs_context_init(struct fs_context *fc,
-+				 struct dentry *reference)
-+{
-+	struct superblock_smack *sbsp;
-+	struct smack_mnt_opts *ctx;
-+	struct inode_smack *isp;
-+
-+	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+	fc->security = ctx;
-+
-+	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-+		sbsp = smack_superblock(reference->d_sb);
-+		isp = smack_inode(reference->d_sb->s_root->d_inode);
-+
-+		if (sbsp->smk_default) {
-+			ctx->fsdefault = kstrdup(sbsp->smk_default->smk_known, GFP_KERNEL);
-+			if (!ctx->fsdefault)
-+				return -ENOMEM;
-+		}
-+
-+		if (sbsp->smk_floor) {
-+			ctx->fsfloor = kstrdup(sbsp->smk_floor->smk_known, GFP_KERNEL);
-+			if (!ctx->fsfloor)
-+				return -ENOMEM;
-+		}
-+
-+		if (sbsp->smk_hat) {
-+			ctx->fshat = kstrdup(sbsp->smk_hat->smk_known, GFP_KERNEL);
-+			if (!ctx->fshat)
-+				return -ENOMEM;
-+		}
-+
-+		if (isp->smk_flags & SMK_INODE_TRANSMUTE) {
-+			if (sbsp->smk_root) {
-+				ctx->fstransmute = kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
-+				if (!ctx->fstransmute)
-+					return -ENOMEM;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * smack_fs_context_dup - Duplicate the security data on fs_context duplication
-  * @fc: The new filesystem context.
-@@ -4748,6 +4801,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
- 	LSM_HOOK_INIT(syslog, smack_syslog),
- 
-+	LSM_HOOK_INIT(fs_context_init, smack_fs_context_init),
- 	LSM_HOOK_INIT(fs_context_dup, smack_fs_context_dup),
- 	LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
- 
-
-
+In such hook code, you need to get the parent directory of the path 
+argument. This require to use and refactor the 
+check_access_path_dual/jump_up part in a dedicated helper (and take care 
+of all the corner cases).
