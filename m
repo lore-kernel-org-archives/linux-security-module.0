@@ -2,60 +2,59 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2DCC3F6B0
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 14:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80633C32796
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 14:07:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238973AbiHXOBP (ORCPT
+        id S238580AbiHXOHB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Aug 2022 10:01:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38458 "EHLO
+        Wed, 24 Aug 2022 10:07:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238932AbiHXOBB (ORCPT
+        with ESMTP id S239084AbiHXOGm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Aug 2022 10:01:01 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FF97883C2
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 07:00:56 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id z22-20020a056830129600b0063711f456ceso11848784otp.7
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 07:00:56 -0700 (PDT)
+        Wed, 24 Aug 2022 10:06:42 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6926D98377
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 07:06:40 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id w197so19712830oie.5
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 07:06:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=GvEowS2EBvbq9VPRlHSQopSA/WqPdS2i0F+uxDlmGjU=;
-        b=gAY4IAxElEgpBa+x9apxUjbCl+lGxNxRg6XyyZpOeKjrnbArjqF8CqEPO0VFuEDm2a
-         E4HQfbGQ7mndFQ8AdI+sbFsy2bvSPccu96OADLHEpJ6XAuYCaP4u0WmnzkUGDGMqnZDc
-         fp+BHBG17q5aGStyvIUn+A0BQnuHJXogmv2rYm7S51pQNOs6hget3p1Fj98UchKbYw9L
-         ZKJ5bx39sHz6QG0r5EXUJWOvHjSC4ZntB6YgihySFVyS6siDgDM4MOiae5x0la+NTuJc
-         8pG4otueF2WmPmepkBkV/hpeeX5kz+RHGEtBf1nSK6VH34gw65G6hzATjunjzhx+Np3Q
-         CrLA==
+        bh=vuqWnah213DNr5H1tn4ngrXQB2l3I0G5wL/BS1TfAHU=;
+        b=4CTpJ2CA2srjZiBgpJuzNh70tqshr8M8JZlh7r1vXXVe6IkKJhWj6f4e/oyuwHt9Cb
+         3ln3zssJi3/pDymbdZrNuaLokwogS6IeSaFCwh7v2xh9C6Pf6DYvpmhiPTReI6BytPaw
+         iA735qCdspKC9+CznKtPS/nrI1eN9pLMdI3UTMhQ4yXncb0O77D723FMO/Oxi4q0XTXM
+         luM2X2HyV3tuUM5yr2TJQopFdQXCDRMzhFsIPw5GsE405w7wWX59Cc9EJx6j3SxvQL4U
+         ckB3+eYS/hH7UYXu+LIzeBg5ohZDojQNDcmw1b9TFqJRo786YF8i4Scqd1QmijDO/R0y
+         AzJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=GvEowS2EBvbq9VPRlHSQopSA/WqPdS2i0F+uxDlmGjU=;
-        b=1osHBOCeAu4SVjdLIGgTkvsOrCx2L8Hcbpl8vPaxMCty1Zoaab0wxfYQnWDH9aiyBO
-         QKsM+wAfFGxdZe+F7+poV7GNhHMnNRBM5cSv65Wlp22Rcx8RPEzM1JoN/HWWVSESVanT
-         Zp9iFeeuAh1u7bszdnI9ArKTYq79r59Q6GOuMwNpwNcWGHW0f7/SH3pGrhtKnInNLo1x
-         OP2iEnYS9HpI6ZcHZM9bmDGRA5TNwNFjgk2jogX1JdcVL56mvmmbzhFP1ZzSHv/WuaBR
-         TkkEsGD2Ro/Nk1jI0uXTY7F+lNO19wTvjqmMDo6v0ONGuFGLNaawVt64Jfv+gZxDpvo8
-         j/vw==
-X-Gm-Message-State: ACgBeo37dD/GjaKa6BF35FZNhJcEnZ0OMrPJLstS+N5vXQ6D0jEw3TyX
-        Wncy5ehm3bQmldS4E+cqsy4AAATNoV2dhssh+OL8
-X-Google-Smtp-Source: AA6agR6rtq2//tF95faC3o2HMbcYUfu3MoZDPOrj9rwG3FBcm4aIM9IQ+a48RDONgXu720yClBtTDCTitpiMFHdVzAM=
-X-Received: by 2002:a9d:2de3:0:b0:638:e210:c9da with SMTP id
- g90-20020a9d2de3000000b00638e210c9damr10944491otb.69.1661349655908; Wed, 24
- Aug 2022 07:00:55 -0700 (PDT)
+        bh=vuqWnah213DNr5H1tn4ngrXQB2l3I0G5wL/BS1TfAHU=;
+        b=SkgACUfsswbvZoF4uQxEhx8SA0nJuZB4qqqZwqGuOouC0/VV9DqAHAGIAsUJwnW79w
+         0zFqzJd6Zr2ZFbhc4YwnrKKevzoEBD00XXOt/2568vkzTCydOtMpnaS1yiY9nMpMHrcJ
+         KG4x/ko+YtTM2oIV+Cqzq17LkH368dUa4naVlpCml7YGJzbN2IZLu7iUzmIK4BwHKaya
+         sP0SzxdlDxDmCJbhHfw9TmJq+AFgmKGIzyCEf/IGLyl3SAmtSyzoKKkP2gQ/A+HtsL3P
+         7MWYEa/0USqEJXEIU7T+bJACq44L9KgJlTQBxK9S/U9PyVH0SsCSy7Im4qKBkWnNEaci
+         dj2Q==
+X-Gm-Message-State: ACgBeo2/HB3Krxfm/zVAZmsgdqgTOYaUf1XTutvw+iVaQoraftR50b90
+        Co7KL+K1pN3kl/kTJRQz1PX4MeCqakl9qiZ8cDeP
+X-Google-Smtp-Source: AA6agR4kZuDhD9CQWEqCwv8GJP/H3Oi3rbFzJ9S9hgeov6GQmqTZiX0PeLxSUp3Vuw5SBnCLVZ9Lcjz5OyT5kUXOn0Q=
+X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
+ n9-20020a05680803a900b003434b14cccemr3332125oie.41.1661349999371; Wed, 24 Aug
+ 2022 07:06:39 -0700 (PDT)
 MIME-Version: 1.0
 References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120326788.369593.18304806499678048620.stgit@olly> <YwR5fDR0Whp0W3sG@kroah.com>
- <CAHC9VhSkmJCXbKBOLDJjnap1+pYYnSVt2CzO3iQXmV7TZ+17SA@mail.gmail.com> <YwXBMmdIJu3C5dPK@kroah.com>
-In-Reply-To: <YwXBMmdIJu3C5dPK@kroah.com>
+ <166120327984.369593.8371751426301540450.stgit@olly> <YwR5HBazPxWjcYci@kroah.com>
+ <CAHC9VhQOSr_CnLmy0pwgUETPh565951DdejQtgkfNk7=tj+BNA@mail.gmail.com> <YwXA6f6SmAxyMxzX@kroah.com>
+In-Reply-To: <YwXA6f6SmAxyMxzX@kroah.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 24 Aug 2022 10:00:44 -0400
-Message-ID: <CAHC9VhS3F-B848ZLvid9QFO4jT9B7T-vD7tmF7oVpf92b-53MA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] lsm,io_uring: add LSM hooks for the new uring_cmd
- file op
+Date:   Wed, 24 Aug 2022 10:06:28 -0400
+Message-ID: <CAHC9VhR4ePCaJunmFC+D0_7a7V_rCXQEubuF+V5SLOL2BhGGaA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
@@ -64,47 +63,45 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 24, 2022 at 2:12 AM Greg Kroah-Hartman
+On Wed, Aug 24, 2022 at 2:10 AM Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
-> On Tue, Aug 23, 2022 at 12:48:30PM -0400, Paul Moore wrote:
-> > On Tue, Aug 23, 2022 at 2:53 AM Greg Kroah-Hartman
+> On Tue, Aug 23, 2022 at 01:02:08PM -0400, Paul Moore wrote:
+> > On Tue, Aug 23, 2022 at 2:52 AM Greg Kroah-Hartman
 > > <gregkh@linuxfoundation.org> wrote:
-> > > On Mon, Aug 22, 2022 at 05:21:07PM -0400, Paul Moore wrote:
-> > > > From: Luis Chamberlain <mcgrof@kernel.org>
-> > > >
-> > > > io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
-> > > > add infrastructure for uring-cmd"), this extended the struct
-> > > > file_operations to allow a new command which each subsystem can use
-> > > > to enable command passthrough. Add an LSM specific for the command
-> > > > passthrough which enables LSMs to inspect the command details.
-> > > >
-> > > > This was discussed long ago without no clear pointer for something
-> > > > conclusive, so this enables LSMs to at least reject this new file
-> > > > operation.
-> > > >
-> > > > [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
-> > > >
-> > > > Fixes: ee692a21e9bf ("fs,io_uring: add infrastructure for uring-cmd")
+> > > On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
+> > > > This patch adds support for the io_uring command pass through, aka
+> > > > IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
+> > > > /dev/null functionality, the implementation is just a simple sink
+> > > > where commands go to die, but it should be useful for developers who
+> > > > need a simple IORING_OP_URING_CMD test device that doesn't require
+> > > > any special hardware.
 > > >
-> > > You are not "fixing" anything, you are adding new functionality.
-> > > Careful with using "Fixes:" for something like this, you will trigger
-> > > the bug-detection scripts and have to fend off stable bot emails for a
-> > > long time for stuff that should not be backported to stable trees.
+> > > Also, shouldn't you document this somewhere?
+> > >
+> > > At least in the code itself saying "this is here so that /dev/null works
+> > > as a io_uring sink" or something like that?  Otherwise it just looks
+> > > like it does nothing at all.
 > >
-> > This patch, as well as the SELinux and (soon to come) Smack hook
-> > implementations, fix a LSM access control regression that occured when
-> > the IORING_OP_URING_CMD functionality was merged in v5.19.  You may
-> > disagree about this being a regression Greg, but there are at least
-> > three people with their name on this patch that believe it is
-> > important: Luis (patch author), Jens (io_uring maintainer), and myself
-> > (LSM, SELinux maintainer).
+> > What about read_null() and write_null()?  I can definitely add a
+> > comment (there is no /dev/null documentation in the kernel source tree
+> > that I can see), but there is clearly precedence for /dev/null having
+> > "do nothing" file_operations functions.
 >
-> Ok, I'll let it be, but note that "Fixes:" tags do not mean that a patch
-> will ever get backported to a stable tree, so I guess we don't have to
-> worry about it :)
+> Yes, they should "do nothing".
 
-Ha!  Now that's the *proper* LSM dismissing GregKH comment this thread
-was missing :)
+Right, I don't think anyone was disputing that.  You were asking for a
+comment for the new function that effectively says "this function does
+nothing", which seems a little silly given the simplicity of the
+function, the name, and the context of it all.
+
+> write_null() does report that it
+> consumed everything, why doesn't this function have to also do that?
+
+Because a file write (file_operations->write) and a
+IORING_OP_URING_CMD (file_operations->uring_cmd) are fundamentally
+different operations; uring_cmd_null() returns 0, which is the success
+return code for this file op (not to mention a significant number of
+kernel functions that return an int).
 
 -- 
 paul-moore.com
