@@ -2,393 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D67C00140
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 08:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE86C00140
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 09:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235368AbiHXI1k (ORCPT
+        id S230293AbiHXJEK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Aug 2022 04:27:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38644 "EHLO
+        Wed, 24 Aug 2022 05:04:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235520AbiHXI1k (ORCPT
+        with ESMTP id S229790AbiHXJEJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Aug 2022 04:27:40 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B287D915D2;
-        Wed, 24 Aug 2022 01:27:38 -0700 (PDT)
-Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.54])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4MCJzB3kcDz1N7J0;
-        Wed, 24 Aug 2022 16:24:06 +0800 (CST)
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 24 Aug 2022 16:27:36 +0800
-Subject: Re: [PATCH -next 3/5] landlock/selftests: add selftests for chmod and
- chown
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-CC:     <mic@digikod.net>, <paul@paul-moore.com>, <jmorris@namei.org>,
-        <serge@hallyn.com>, <shuah@kernel.org>, <corbet@lwn.net>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <20220822114701.26975-1-xiujianfeng@huawei.com>
- <20220822114701.26975-4-xiujianfeng@huawei.com> <YwPQpz0lV5CVBVeK@nuc>
-From:   xiujianfeng <xiujianfeng@huawei.com>
-Message-ID: <27fc32a5-68cf-9963-5051-cd83e7368557@huawei.com>
-Date:   Wed, 24 Aug 2022 16:27:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        Wed, 24 Aug 2022 05:04:09 -0400
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58427DF66
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 02:04:07 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MCKsK0jPjzMqDZ1;
+        Wed, 24 Aug 2022 11:04:05 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MCKsJ0bbBzlh8T4;
+        Wed, 24 Aug 2022 11:04:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1661331845;
+        bh=IeIPbYZT0Wsx0jRyiVIjnoSX12DwUW5Y8G9DXsS0Ugg=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=M9ANuX0hCsPzIyVfVHYGwr4X7QcyNrqZGBv3rlQDg9AA46tEU9y5Zu5DEbBmdaw1r
+         bUu9m50XK9pmyqO7O0WLkLksqLdtwnBAzavt9SKCd5+6bFO3V4dQP/WTtV+jcjRsAe
+         zVUJ2SsFT2rEfyFUPaafevwhbCfG2Qht1c/gkn+Y=
+Message-ID: <818012cf-c404-ec58-6c21-87ebee6a2522@digikod.net>
+Date:   Wed, 24 Aug 2022 11:04:03 +0200
 MIME-Version: 1.0
-In-Reply-To: <YwPQpz0lV5CVBVeK@nuc>
-Content-Type: text/plain; charset="gbk"; format=flowed
+User-Agent: 
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+References: <20220823144123.633721-1-mic@digikod.net> <YwUzfXaUFrPtnSMJ@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v1] landlock: Fix file reparenting without explicit
+ LANDLOCK_ACCESS_FS_REFER
+In-Reply-To: <YwUzfXaUFrPtnSMJ@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.110.112]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi£¬
 
-Thanks for your review, all comments are helpfull, will do in v2.
+On 23/08/2022 22:07, GÃ¼nther Noack wrote:
+> On Tue, Aug 23, 2022 at 04:41:23PM +0200, MickaÃ«l SalaÃ¼n wrote:
+>> With the introduction of LANDLOCK_ACCESS_FS_REFER, we added the first
+>> globally denied-by-default access right.  Indeed, this lifted an initial
+>> Landlock limitation to rename and link files, which was initially always
+>> denied when the source or the destination were different directories.
+>>
+>> This led to an inconsistent backward compatibility behavior which was
+>> only taken into account if no domain layer were using the new
+>> LANDLOCK_ACCESS_FS_REFER right.  However, in a scenario where layers are
+>> using the first and the second Landlock ABI (i.e.
+>> LANDLOCK_ACCESS_FS_REFER or not), the access control behaves like if all
+>> domains were handling LANDLOCK_ACCESS_FS_REFER with their rules
+>> implicitely allowing such right.
 
-ÔÚ 2022/8/23 2:53, G¨¹nther Noack Ð´µÀ:
-> On Mon, Aug 22, 2022 at 07:46:59PM +0800, Xiu Jianfeng wrote:
->> Add the following simple testcases:
->> 1. chmod/fchmod: remove S_IWUSR and restore S_IWUSR with or without
->> restriction.
->> 2. chown/fchown: set original uid and gid with or without restriction,
->> because chown needs CAP_CHOWN and testcase framework don't have this
->> capability, setting original uid and gid is ok to cover landlock
->> function.
+"the access control behaves like if domains not handling 
+LANDLOCK_ACCESS_FS_REFER are in fact handling it and with their rules 
+implicitely allowing such right."
+
+Is this better?
+
+
+>>  Indeed, the not-handled access rights
+>> were allowed, which should not be the case for LANDLOCK_ACCESS_FS_REFER.
+>> It should be noted that this bug only allowed safe renames or links, but
+>> no privilege escalation because the LANDLOCK_ACCESS_FS_REFER properties
+>> were still enforced (e.g. only allowed to move a file according to all
+>> other access rights, and if it doesn't give more Landlock accesses).
+> 
+> I had trouble understanding this paragraph - but I tried it out and I believe
+> I understand what you mean; let me try to paraphrase to see whether we are on
+> the same page:
+> 
+> This is a bug where chaining an additional ruleset on top of another one can
+> increase the number of possible operations, rather than just reduce it.
+> 
+> Steps to reproduce:
+>   - Enforce ruleset 1 *without* handled_access_fs containing "refer"
+>   - Enforce ruleset 2 with handled_access_fs containing "refer"
+> 
+> Expected behaviour:
+>   - refer-operations (rename, link...) should not be permitted because
+>     ruleset 1 uses ABI v1 and refer-operations are always forbidden there.
+> 
+> Observed behaviour:
+>   - refer-operations (rename, link...) work as if LANDLOCK_ACCESS_FS_REFER had
+>     been handled in both rulesets and all rules within
+
+"All rules within the ruleset/layer not (theoritically) handling refer 
+operations". Layers handling refer-operations behave as expected and are 
+not affected by this bug.
+
+> 
+> Do I understand this correctly?
+
+Yes, except for the rules correctly handling refer operations.
+
+
+> 
+> 
+> I believe I can reproduce it with the Go sandboxing tool (go install
+> github.com/landlock-lsm/go-landlock/cmd/landlock-restrict@latest) like this:
+> 
+> Starting with these directory contents:
+> 
+>    $ find .
+>    .
+>    ./dst
+>    ./src
+>    ./src/hello
+> 
+> Then it is not possible to use refer (linking) with an ABIv1 ruleset (expected):
+> 
+>    $ $HOME/go/bin/landlock-restrict -1 -ro / -rw . -- \
+>      /bin/ln src/hello dst/hello
+>    /bin/ln: failed to create hard link 'dst/hello' => 'src/hello': Invalid cross-device link
+> 
+> But when chaining that ruleset with a ABIv2 ruleset, it suddenly does become
+> possible to do "refer" operations:
+> 
+>    $ $HOME/go/bin/landlock-restrict -1 -ro / -rw . -- \
+>      $HOME/go/bin/landlock-restrict -2 -ro / -rw +refer . -- \
+>      /bin/ln src/hello dst/hello
+>    $ find .
+>    .
+>    ./dst
+>    ./dst/hello
+>    ./src
+>    ./src/hello
+
+This is correct. In this case, the first landlock-restrict command 
+behaves as the second command when the second is executed (i.e. a new 
+refer-aware layer is added).
+
+
+> 
+> I need to still understand the underlying code better to reason about it,
+> but this is the issue that this patch is fixing, right?
+> 
+> â€”GÃ¼nther
+> 
+>> This change adds an ACCESS_INITIALLY_DENIED list of denied-by-default
+>> rights, which (only) contains LANDLOCK_ACCESS_FS_REFER.  All domains are
+>> treated as if they are also handling this list, but without modifying
+>> their fs_access_masks field, which enables correct domain audit.
 >>
->> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
->> ---
->>   tools/testing/selftests/landlock/fs_test.c | 228 +++++++++++++++++++++
->>   1 file changed, 228 insertions(+)
+>> A side effect is that the errno code returned by rename(2) or link(2)
+>> *may* be changed from EXDEV to EACCES according to the enforced
+>> restrictions.  Indeed, we now have the mechanic to identify if an access
+>> is denied because of a required right (e.g. LANDLOCK_ACCESS_FS_MAKE_REG,
+>> LANDLOCK_ACCESS_FS_REMOVE_FILE) or if it is denied because of missing
+>> LANDLOCK_ACCESS_FS_REFER rights.  This may result in different errno
+>> codes than for the initial Landlock version, but this approach is better
+>> for rename/link compatibility reasons, and it wasn't possible before
+>> (hence no backport to ABI v1).  The layout1.rename_file test reflects
+>> this change.
 >>
->> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
->> index 5b55b93b5570..f47b4ccd2b26 100644
->> --- a/tools/testing/selftests/landlock/fs_test.c
->> +++ b/tools/testing/selftests/landlock/fs_test.c
->> @@ -59,6 +59,9 @@ static const char file2_s2d3[] = TMP_DIR "/s2d1/s2d2/s2d3/f2";
+>> Add the layout1.refer_denied_by_default* tests to check that the
+>> behavior of a ruleset not handling LANDLOCK_ACCESS_FS_REFER (ABI v1) is
+>> unchanged even if another layer handles LANDLOCK_ACCESS_FS_REFER (i.e.
+>> ABI v1 precedence).  Make sure rule's absolute access rights are correct
+>> by testing with and without a matching path.
 >>
->>   static const char dir_s3d1[] = TMP_DIR "/s3d1";
->>   static const char file1_s3d1[] = TMP_DIR "/s3d1/f1";
->> +static const char file2_s3d1[] = TMP_DIR "/s3d1/f2";
->> +static const char file3_s3d1[] = TMP_DIR "/s3d1/f3";
->> +
->>   /* dir_s3d2 is a mount point. */
->>   static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
->>   static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
->> @@ -211,6 +214,8 @@ static void create_layout1(struct __test_metadata *const _metadata)
->>   	create_file(_metadata, file2_s2d3);
+>> Extend layout1.inval tests to check that a denied-by-default access
+>> right is not necessarily part of a domain's handled access rights.
 >>
->>   	create_file(_metadata, file1_s3d1);
->> +	create_file(_metadata, file2_s3d1);
->> +	create_file(_metadata, file3_s3d1);
->>   	create_directory(_metadata, dir_s3d2);
->>   	set_cap(_metadata, CAP_SYS_ADMIN);
->>   	ASSERT_EQ(0, mount("tmp", dir_s3d2, "tmpfs", 0, "size=4m,mode=700"));
->> @@ -234,6 +239,8 @@ static void remove_layout1(struct __test_metadata *const _metadata)
->>   	EXPECT_EQ(0, remove_path(file1_s2d1));
->>
->>   	EXPECT_EQ(0, remove_path(file1_s3d1));
->> +	EXPECT_EQ(0, remove_path(file2_s3d1));
->> +	EXPECT_EQ(0, remove_path(file3_s3d1));
->>   	EXPECT_EQ(0, remove_path(dir_s3d3));
->>   	set_cap(_metadata, CAP_SYS_ADMIN);
->>   	umount(dir_s3d2);
->> @@ -3272,6 +3279,227 @@ TEST_F_FORK(layout1, truncate)
->>   	EXPECT_EQ(0, test_creat(file_in_dir_w));
->>   }
->>
->> +static int test_chmod(const char *path)
-> 
-> Nitpicks:
->   - const char *const path
->   - short documentation? :)
-> 
->> +{
->> +	int ret;
->> +	struct stat st;
->> +	mode_t mode;
->> +
->> +	ret = stat(path, &st);
->> +	if (ret < 0)
->> +		return errno;
->> +	/* save original mode in order to restore */
->> +	mode = st.st_mode & 0777;
->> +	/* remove S_IWUSR */
->> +	ret = chmod(path, mode & ~0200);
->> +	if (ret < 0)
->> +		return errno;
->> +	ret = stat(path, &st);
->> +	if (ret < 0)
->> +		return errno;
->> +	/* check if still has S_IWUSR */
->> +	if (st.st_mode & 0200)
->> +		return -EFAULT;
->> +	/* restore the original mode */
->> +	ret = chmod(path, mode);
->> +	if (ret < 0)
->> +		return errno;
->> +	return 0;
->> +}
-> 
-> I would argue this can be simpler, with the following reasoning:
-> 
->   - Does the file have the right mode after chmod()?
-> 
->     I claim that fs_test should care only about the question of whether
->     EACCES is returned or not. If fs_test were to also check for the
->     side effects of these operations, it would eventually contain tests
->     for the full file system API, not just for Landlock. That seems out
->     of scope :)
-> 
->   - Undoing the chmod() operation
-> 
->     I'm not sure whether it's worth the effort to restore the exact
->     state before that function returns. As long as the flags suffice to
->     remove the test directory at the end, it probably doesn't matter
->     much what exact mode they have?
-> 
-> I think this could just be
-> 
->    if (chmod(path, mode) < 0)
->            return errno;
->    return 0
-> 
-> and it would be a bit simpler to understand :)
-> 
-> The same argument applies also to the other test_...() functions.
-> 
->> +static int test_fchmod(const char *path)
-> 
-> I initially took the same approach for test_ftruncate() but eventually
-> settled on using an approach where the file is open()ed before
-> restricting the thread with Landlock. This eliminates the potential
-> confusion where test_ftruncate() returns an error but the caller can't
-> distinguish whether the error is from open() or from ftruncate(). It
-> also makes fchmod testable even in scenarios where the file cannot be
-> opened because of missing Landlock rights.
->  >> +{
->> +	int ret, fd;
->> +	struct stat st;
->> +	mode_t mode;
->> +
->> +	ret = stat(path, &st);
->> +	if (ret < 0)
->> +		return errno;
->> +	/* save original mode in order to restore */
->> +	mode = st.st_mode & 0777;
->> +
->> +	fd = openat(AT_FDCWD, path, O_RDWR | O_CLOEXEC);
->> +	if (fd < 0)
->> +		return errno;
->> +	/* remove S_IWUSR */
->> +	ret = fchmod(fd, mode & ~0200);
->> +	if (ret < 0)
->> +		goto err;
->> +	ret = stat(path, &st);
->> +	if (ret < 0)
->> +		goto err;
->> +	/* check if still has S_IWUSR */
->> +	if (st.st_mode & 0200) {
->> +		ret = -1;
->> +		errno = -EFAULT;
->> +		goto err;
->> +	}
->> +	/* restore the original mode */
->> +	ret = fchmod(fd, mode);
->> +err:
->> +	if (close(fd) < 0)
->> +		return errno;
->> +	return ret ? errno : 0;
->> +}
-> 
->> +static int test_chown(const char *path)
->> +{
->> +	int ret;
->> +	struct stat st;
->> +
->> +	ret = stat(path, &st);
->> +	if (ret < 0)
->> +		return errno;
->> +	/*
->> +	 * chown needs CAP_CHOWN to modify uid and/or gid, however
->> +	 * there is no such capability when the testcases framework
->> +	 * setup, so just chown to original uid/gid, which can also
->> +	 * cover the function in landlock.
->> +	 */
->> +	ret = chown(path, st.st_uid, st.st_gid);
->> +	if (ret < 0)
->> +		return errno;
->> +	return 0;
->> +}
->> +
->> +static int test_fchown(const char *path)
->> +{
->> +	int ret, fd;
->> +	struct stat st;
->> +
->> +	ret = stat(path, &st);
->> +	if (ret < 0)
->> +		return errno;
->> +	fd = openat(AT_FDCWD, path, O_RDWR | O_CLOEXEC);
->> +	if (fd < 0)
->> +		return errno;
->> +	/*
->> +	 * fchown needs CAP_CHOWN to modify uid and/or gid, however
->> +	 * there is no such capability when the testcases framework
->> +	 * setup, so just fchown to original uid/gid, which can also
->> +	 * cover the function in landlock.
->> +	 */
->> +	ret = fchown(fd, st.st_uid, st.st_gid);
->> +	if (close(fd) < 0)
->> +		return errno;
->> +	return ret ? errno : 0;
->> +}
->> +
->> +TEST_F_FORK(layout1, unhandled_chmod)
->> +{
->> +	const struct rule rules[] = {
->> +		{
->> +			.path = file2_s3d1,
->> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
->> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
->> +		},
->> +		{
->> +			.path = file3_s3d1,
->> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
->> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
->> +		},
->> +		{},
->> +	};
->> +	const int ruleset_fd =
->> +		create_ruleset(_metadata, ACCESS_RW, rules);
->> +
->> +	ASSERT_LE(0, ruleset_fd);
->> +	enforce_ruleset(_metadata, ruleset_fd);
->> +	ASSERT_EQ(0, close(ruleset_fd));
->> +
->> +	ASSERT_EQ(0, test_chmod(file2_s3d1));
->> +	ASSERT_EQ(0, test_fchmod(file2_s3d1));
->> +	ASSERT_EQ(0, test_chmod(file3_s3d1));
->> +	ASSERT_EQ(0, test_chmod(dir_s3d1));
-> 
-> *optional* because the existing tests are already inconsistent about it >
-> These four ASSERT_EQ() calls are independent scenarios and could be
-> done with EXPECT_EQ(), which would be more in line with the approach
-> that this test framework takes. (Same for the other tests below)
-> 
-> Compare previous discussion at:
-> https://lore.kernel.org/all/Yvd3+fy+mDBop+YA@nuc/
-> 
->> +}
->> +
->> +TEST_F_FORK(layout1, chmod)
->> +{
->> +	const struct rule rules[] = {
->> +		{
->> +			.path = file2_s3d1,
->> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
->> +				  LANDLOCK_ACCESS_FS_WRITE_FILE |
->> +				  LANDLOCK_ACCESS_FS_CHMOD,
->> +		},
->> +		{
->> +			.path = file3_s3d1,
->> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
->> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
->> +		},
->> +		{},
->> +	};
->> +	const int ruleset_fd =
->> +		create_ruleset(_metadata, ACCESS_RW | LANDLOCK_ACCESS_FS_CHMOD, rules);
->> +
->> +	ASSERT_LE(0, ruleset_fd);
->> +	enforce_ruleset(_metadata, ruleset_fd);
->> +	ASSERT_EQ(0, close(ruleset_fd));
->> +
->> +	ASSERT_EQ(0, test_chmod(file2_s3d1));
->> +	ASSERT_EQ(0, test_fchmod(file2_s3d1));
->> +	ASSERT_EQ(EACCES, test_chmod(file3_s3d1));
->> +	ASSERT_EQ(EACCES, test_chmod(dir_s3d1));
->> +}
->> +
->> +TEST_F_FORK(layout1, no_chown)
-> 
-> "unhandled_chown" to be consistent with the other one above?
-> 
->> +{
->> +	const struct rule rules[] = {
->> +		{
->> +			.path = file2_s3d1,
->> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
->> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
->> +		},
->> +		{
->> +			.path = file3_s3d1,
->> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
->> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
->> +		},
->> +		{},
->> +	};
->> +	const int ruleset_fd =
->> +		create_ruleset(_metadata, ACCESS_RW, rules);
->> +
->> +	ASSERT_LE(0, ruleset_fd);
->> +	enforce_ruleset(_metadata, ruleset_fd);
->> +	ASSERT_EQ(0, close(ruleset_fd));
->> +
->> +	ASSERT_EQ(0, test_chown(file2_s3d1));
->> +	ASSERT_EQ(0, test_fchown(file2_s3d1));
->> +	ASSERT_EQ(0, test_chown(file3_s3d1));
->> +	ASSERT_EQ(0, test_chown(dir_s3d1));
->> +}
->> +
->> +TEST_F_FORK(layout1, chown)
->> +{
->> +	const struct rule rules[] = {
->> +		{
->> +			.path = file2_s3d1,
->> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
->> +				  LANDLOCK_ACCESS_FS_WRITE_FILE |
->> +				  LANDLOCK_ACCESS_FS_CHOWN,
-> 
-> It might be useful to also check a scenario where the chown right is
-> granted on a directory (and as a consequence, both the directory
-> itself as well as its contents can be chowned)?  (Same for chmod)
-> 
->> +		},
->> +		{
->> +			.path = file3_s3d1,
->> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
->> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
->> +		},
->> +		{},
->> +	};
->> +	const int ruleset_fd =
->> +		create_ruleset(_metadata, ACCESS_RW | LANDLOCK_ACCESS_FS_CHOWN, rules);
->> +
->> +	ASSERT_LE(0, ruleset_fd);
->> +	enforce_ruleset(_metadata, ruleset_fd);
->> +	ASSERT_EQ(0, close(ruleset_fd));
->> +
->> +	ASSERT_EQ(0, test_chown(file2_s3d1));
->> +	ASSERT_EQ(0, test_fchown(file2_s3d1));
->> +	ASSERT_EQ(EACCES, test_chown(file3_s3d1));
->> +	ASSERT_EQ(EACCES, test_chown(dir_s3d1));
->> +}
->> +
->>   /* clang-format off */
->>   FIXTURE(layout1_bind) {};
->>   /* clang-format on */
->> --
->> 2.17.1
->>
-> 
-> --
-> .
-> 
+>> Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER")
+>> Cc: GÃ¼nther Noack <gnoack3000@gmail.com>
+>> Cc: Paul Moore <paul@paul-moore.com>
+>> Signed-off-by: MickaÃ«l SalaÃ¼n <mic@digikod.net>
+>> Link: https://lore.kernel.org/r/20220823144123.633721-1-mic@digikod.net
