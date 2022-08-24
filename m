@@ -2,123 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0537DC38142
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 11:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2DCC3F6B0
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 14:01:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237137AbiHXL4z (ORCPT
+        id S238973AbiHXOBP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Aug 2022 07:56:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42916 "EHLO
+        Wed, 24 Aug 2022 10:01:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234085AbiHXL4x (ORCPT
+        with ESMTP id S238932AbiHXOBB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Aug 2022 07:56:53 -0400
-Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9102889906;
-        Wed, 24 Aug 2022 04:56:49 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id EE9B2580E11;
-        Wed, 24 Aug 2022 07:56:48 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 24 Aug 2022 07:56:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1661342208; x=
-        1661349408; bh=kuW/qG4JUmJmu4VzPx61uemjjFalqwyag3kx6XOqPOE=; b=o
-        pzymONiwjq65ETafTTr380XapsmSk8TEgFCze/PUAxebjOab59cPNdRbW5I2P5Gc
-        nPQKG4YPRvE++LJQ7/t27UluedPOuvs7txqtYryRE+szjSSAdEz19GlMLM1fa1p6
-        Lg/mfnoslm76AnTcRYz7PmDQ5au0tb4YrubBbqIOCcVqACJIEF1WwW2wzdBGfYTH
-        BXkh+6ZCAdLIsKeQVByEzhFgw3NWWTIOIlCMIEHIQH1MV5kOQRubdSY99Qj/x+wX
-        a6Z931m4w51+xL+9hCbzbx9OFA/lOBTWB6kJ5BgCfd1Y/F2Y8xHr7Dw72Drfi2s2
-        wPa7i8fGjQDU2jFbAkIUA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1661342208; x=1661349408; bh=kuW/qG4JUmJmu
-        4VzPx61uemjjFalqwyag3kx6XOqPOE=; b=BKd1EmuvOpNnAIpXPJJFjSIkFigeG
-        5WPP3Ibfqgn6f+nabolef24CZ62iA40nUXTpU69mHIajgRUJeaPdZKqeeRby1+7R
-        OImR1Cgp49wc6MKbmxueF2Z4rhcVmtBgvDlP/buckg88nSZoV8AGAqyo74MWqQWf
-        cL1vExQMPfwMqwL+3Wstn11DI/v16iRCvmxGkFPGKdv8aY0nVGLRVfm80jl6tV9K
-        qPyRmPnvGD414awHxysN3ma/36/3b0er2sKgT8h0nmLSufblmsK3v4OnfSTC95+6
-        BcUAijw6ggfn3y6AtnoNC1NJ9cKi4J9GoNmGp1ALRk7N50KuUdDpNfyuA==
-X-ME-Sender: <xms:_xEGY0_3uaGI0slJdDTlozWfU31KwX4m5ySru_WAamPhEnUYzqSV-A>
-    <xme:_xEGY8tiKbf9JBRjzog0znkRGzDefHS3WnHdFVEBCMKmsLdH9SQJ6b2uc62_Qe1xZ
-    cV2XmWuz87kQXoF2PE>
-X-ME-Received: <xmr:_xEGY6DK5T_2PH1z13eyzdjJ9YNA8GuZGlXSmB5eqnWH6GQ4xp9GjLffVaerb7T17LbiNi7_s13F35Zf7pRmNE5f4cKJTeCsrgM7>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdejuddggeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkrhhfgggtuggjfgesthdtredttderjeenucfhrhhomhepuegv
-    nhcuuehovggtkhgvlhcuoehmvgessggvnhgsohgvtghkvghlrdhnvghtqeenucggtffrrg
-    htthgvrhhnpeduteehgfefudfffeelfffhheejgfdvfffhledvueekudeuieegueejieff
-    vdeigeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmvgessggvnhgsohgvtghkvghlrdhnvght
-X-ME-Proxy: <xmx:_xEGY0dyRnm6I5p5ONdvswQuoH911Qcv4k4ImGelq3Uch2wdQt5f_w>
-    <xmx:_xEGY5M2YhW9IUMVZJ6XQ-y_7KCZgHrFbMNy0dM51kOr9oKnXhoY0w>
-    <xmx:_xEGY-nqQ6Kt_ul1NcmJNFISyhWSNz1xNbbNexnw5rJRg1E6x27NzA>
-    <xmx:ABIGYw_lH9x1hUhEBWjBASxkZJlyL74M8KEWiyffntejBaufUpUfTA>
-Feedback-ID: iffc1478b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Aug 2022 07:56:47 -0400 (EDT)
-Date:   Wed, 24 Aug 2022 07:56:46 -0400
-From:   Ben Boeckel <me@benboeckel.net>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, gwendal@chromium.org,
-        Eric Biggers <ebiggers@kernel.org>,
-        Matthew Garrett <mgarrett@aurora.tech>, jarkko@kernel.org,
-        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        Pavel Machek <pavel@ucw.cz>, apronin@chromium.org,
-        dlunev@google.com, rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        corbet@lwn.net, jejb@linux.ibm.com,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 04/10] security: keys: trusted: Allow storage of PCR
- values in creation data
-Message-ID: <YwYR/rzvrkvgZzBm@farprobe>
-Reply-To: list.lkml.keyrings@me.benboeckel.net
-References: <20220823222526.1524851-1-evgreen@chromium.org>
- <20220823152108.v2.4.I32591db064b6cdc91850d777f363c9d05c985b39@changeid>
+        Wed, 24 Aug 2022 10:01:01 -0400
+Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FF97883C2
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 07:00:56 -0700 (PDT)
+Received: by mail-ot1-x32a.google.com with SMTP id z22-20020a056830129600b0063711f456ceso11848784otp.7
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 07:00:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=GvEowS2EBvbq9VPRlHSQopSA/WqPdS2i0F+uxDlmGjU=;
+        b=gAY4IAxElEgpBa+x9apxUjbCl+lGxNxRg6XyyZpOeKjrnbArjqF8CqEPO0VFuEDm2a
+         E4HQfbGQ7mndFQ8AdI+sbFsy2bvSPccu96OADLHEpJ6XAuYCaP4u0WmnzkUGDGMqnZDc
+         fp+BHBG17q5aGStyvIUn+A0BQnuHJXogmv2rYm7S51pQNOs6hget3p1Fj98UchKbYw9L
+         ZKJ5bx39sHz6QG0r5EXUJWOvHjSC4ZntB6YgihySFVyS6siDgDM4MOiae5x0la+NTuJc
+         8pG4otueF2WmPmepkBkV/hpeeX5kz+RHGEtBf1nSK6VH34gw65G6hzATjunjzhx+Np3Q
+         CrLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=GvEowS2EBvbq9VPRlHSQopSA/WqPdS2i0F+uxDlmGjU=;
+        b=1osHBOCeAu4SVjdLIGgTkvsOrCx2L8Hcbpl8vPaxMCty1Zoaab0wxfYQnWDH9aiyBO
+         QKsM+wAfFGxdZe+F7+poV7GNhHMnNRBM5cSv65Wlp22Rcx8RPEzM1JoN/HWWVSESVanT
+         Zp9iFeeuAh1u7bszdnI9ArKTYq79r59Q6GOuMwNpwNcWGHW0f7/SH3pGrhtKnInNLo1x
+         OP2iEnYS9HpI6ZcHZM9bmDGRA5TNwNFjgk2jogX1JdcVL56mvmmbzhFP1ZzSHv/WuaBR
+         TkkEsGD2Ro/Nk1jI0uXTY7F+lNO19wTvjqmMDo6v0ONGuFGLNaawVt64Jfv+gZxDpvo8
+         j/vw==
+X-Gm-Message-State: ACgBeo37dD/GjaKa6BF35FZNhJcEnZ0OMrPJLstS+N5vXQ6D0jEw3TyX
+        Wncy5ehm3bQmldS4E+cqsy4AAATNoV2dhssh+OL8
+X-Google-Smtp-Source: AA6agR6rtq2//tF95faC3o2HMbcYUfu3MoZDPOrj9rwG3FBcm4aIM9IQ+a48RDONgXu720yClBtTDCTitpiMFHdVzAM=
+X-Received: by 2002:a9d:2de3:0:b0:638:e210:c9da with SMTP id
+ g90-20020a9d2de3000000b00638e210c9damr10944491otb.69.1661349655908; Wed, 24
+ Aug 2022 07:00:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220823152108.v2.4.I32591db064b6cdc91850d777f363c9d05c985b39@changeid>
-User-Agent: Mutt/2.2.6 (2022-06-05)
+References: <166120321387.369593.7400426327771894334.stgit@olly>
+ <166120326788.369593.18304806499678048620.stgit@olly> <YwR5fDR0Whp0W3sG@kroah.com>
+ <CAHC9VhSkmJCXbKBOLDJjnap1+pYYnSVt2CzO3iQXmV7TZ+17SA@mail.gmail.com> <YwXBMmdIJu3C5dPK@kroah.com>
+In-Reply-To: <YwXBMmdIJu3C5dPK@kroah.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 24 Aug 2022 10:00:44 -0400
+Message-ID: <CAHC9VhS3F-B848ZLvid9QFO4jT9B7T-vD7tmF7oVpf92b-53MA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] lsm,io_uring: add LSM hooks for the new uring_cmd
+ file op
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 23, 2022 at 15:25:20 -0700, Evan Green wrote:
-> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-> index 0bfb4c33974890..dc9e11bb4824da 100644
-> --- a/Documentation/security/keys/trusted-encrypted.rst
-> +++ b/Documentation/security/keys/trusted-encrypted.rst
-> @@ -199,6 +199,10 @@ Usage::
->         policyhandle= handle to an authorization policy session that defines the
->                       same policy and with the same hash algorithm as was used to
->                       seal the key.
-> +       creationpcrs= hex integer representing the set of PCR values to be
-> +                     included in the PCR creation data. The bit corresponding
-> +		     to each PCR should be 1 to be included, 0 to be ignored.
-> +		     TPM2 only.
+On Wed, Aug 24, 2022 at 2:12 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Tue, Aug 23, 2022 at 12:48:30PM -0400, Paul Moore wrote:
+> > On Tue, Aug 23, 2022 at 2:53 AM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > > On Mon, Aug 22, 2022 at 05:21:07PM -0400, Paul Moore wrote:
+> > > > From: Luis Chamberlain <mcgrof@kernel.org>
+> > > >
+> > > > io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+> > > > add infrastructure for uring-cmd"), this extended the struct
+> > > > file_operations to allow a new command which each subsystem can use
+> > > > to enable command passthrough. Add an LSM specific for the command
+> > > > passthrough which enables LSMs to inspect the command details.
+> > > >
+> > > > This was discussed long ago without no clear pointer for something
+> > > > conclusive, so this enables LSMs to at least reject this new file
+> > > > operation.
+> > > >
+> > > > [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
+> > > >
+> > > > Fixes: ee692a21e9bf ("fs,io_uring: add infrastructure for uring-cmd")
+> > >
+> > > You are not "fixing" anything, you are adding new functionality.
+> > > Careful with using "Fixes:" for something like this, you will trigger
+> > > the bug-detection scripts and have to fend off stable bot emails for a
+> > > long time for stuff that should not be backported to stable trees.
+> >
+> > This patch, as well as the SELinux and (soon to come) Smack hook
+> > implementations, fix a LSM access control regression that occured when
+> > the IORING_OP_URING_CMD functionality was merged in v5.19.  You may
+> > disagree about this being a regression Greg, but there are at least
+> > three people with their name on this patch that believe it is
+> > important: Luis (patch author), Jens (io_uring maintainer), and myself
+> > (LSM, SELinux maintainer).
+>
+> Ok, I'll let it be, but note that "Fixes:" tags do not mean that a patch
+> will ever get backported to a stable tree, so I guess we don't have to
+> worry about it :)
 
-There's inconsistent whitespace here. Given the context, I suspect the
-tabs should be expanded to spaces.
+Ha!  Now that's the *proper* LSM dismissing GregKH comment this thread
+was missing :)
 
-As for the docs themselves, this might preferrably mention how large
-this is supposed to be. It seems to be limited to 32bits by the code.
-What happens if fewer are provided? More? Will there always be at most
-32 PCR values? Also, how are the bits interpreted? I presume bit 0 is
-for PCR value 0?
-
-Thanks for including docs.
-
-Thanks,
-
---Ben
+-- 
+paul-moore.com
