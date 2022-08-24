@@ -2,106 +2,89 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80633C32796
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 14:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1BCC00140
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Aug 2022 17:10:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238580AbiHXOHB (ORCPT
+        id S239825AbiHXRKO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Aug 2022 10:07:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48208 "EHLO
+        Wed, 24 Aug 2022 13:10:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239084AbiHXOGm (ORCPT
+        with ESMTP id S238311AbiHXRKM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Aug 2022 10:06:42 -0400
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6926D98377
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 07:06:40 -0700 (PDT)
-Received: by mail-oi1-x234.google.com with SMTP id w197so19712830oie.5
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Aug 2022 07:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=vuqWnah213DNr5H1tn4ngrXQB2l3I0G5wL/BS1TfAHU=;
-        b=4CTpJ2CA2srjZiBgpJuzNh70tqshr8M8JZlh7r1vXXVe6IkKJhWj6f4e/oyuwHt9Cb
-         3ln3zssJi3/pDymbdZrNuaLokwogS6IeSaFCwh7v2xh9C6Pf6DYvpmhiPTReI6BytPaw
-         iA735qCdspKC9+CznKtPS/nrI1eN9pLMdI3UTMhQ4yXncb0O77D723FMO/Oxi4q0XTXM
-         luM2X2HyV3tuUM5yr2TJQopFdQXCDRMzhFsIPw5GsE405w7wWX59Cc9EJx6j3SxvQL4U
-         ckB3+eYS/hH7UYXu+LIzeBg5ohZDojQNDcmw1b9TFqJRo786YF8i4Scqd1QmijDO/R0y
-         AzJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=vuqWnah213DNr5H1tn4ngrXQB2l3I0G5wL/BS1TfAHU=;
-        b=SkgACUfsswbvZoF4uQxEhx8SA0nJuZB4qqqZwqGuOouC0/VV9DqAHAGIAsUJwnW79w
-         0zFqzJd6Zr2ZFbhc4YwnrKKevzoEBD00XXOt/2568vkzTCydOtMpnaS1yiY9nMpMHrcJ
-         KG4x/ko+YtTM2oIV+Cqzq17LkH368dUa4naVlpCml7YGJzbN2IZLu7iUzmIK4BwHKaya
-         sP0SzxdlDxDmCJbhHfw9TmJq+AFgmKGIzyCEf/IGLyl3SAmtSyzoKKkP2gQ/A+HtsL3P
-         7MWYEa/0USqEJXEIU7T+bJACq44L9KgJlTQBxK9S/U9PyVH0SsCSy7Im4qKBkWnNEaci
-         dj2Q==
-X-Gm-Message-State: ACgBeo2/HB3Krxfm/zVAZmsgdqgTOYaUf1XTutvw+iVaQoraftR50b90
-        Co7KL+K1pN3kl/kTJRQz1PX4MeCqakl9qiZ8cDeP
-X-Google-Smtp-Source: AA6agR4kZuDhD9CQWEqCwv8GJP/H3Oi3rbFzJ9S9hgeov6GQmqTZiX0PeLxSUp3Vuw5SBnCLVZ9Lcjz5OyT5kUXOn0Q=
-X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
- n9-20020a05680803a900b003434b14cccemr3332125oie.41.1661349999371; Wed, 24 Aug
- 2022 07:06:39 -0700 (PDT)
+        Wed, 24 Aug 2022 13:10:12 -0400
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D49481FD;
+        Wed, 24 Aug 2022 10:10:10 -0700 (PDT)
+Received: from [10.0.0.100] (cpe5896308f56e8-cm5896308f56e6.cpe.net.cable.rogers.com [99.255.30.7])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 3B56D3F04B;
+        Wed, 24 Aug 2022 17:10:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1661361008;
+        bh=tUvu8igyJ8SieKzyGBjoH9CdpCFj5M06wi08ejJhQtk=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=Xts7TuuryXoFLDS4GpHrw+LeRz7edXUpX+4dYUmPobUcQ+KJnICV0WlWUTmfjg9Pd
+         MPi0RNfOYAe9QXzE7eWT8pWjLNW2JuMRFcTTbmUt02DzbBGfl8KRVjxVP8ObSYvfNx
+         gsoBsXaGvoQF/Yk9yMYP4e2PZIrBd2ZCzR/PygfjgVWI5+zs8z7KEwhsCXD3h/zyFl
+         pvEdmX3t7jtBKYPGreXYoYX4bOwL12J/44sU7tv5ToeYLWw3DbuTRv6NC0aYrcOnT6
+         ppDSZuE6169ipImQTGbppm1g6TVf+1boo+4Wp5sUPK/kgO/AEqTQG3q+Yhlu2WfHp/
+         CiZVqqkCaUTiw==
+Message-ID: <90e259e4-6877-ee1e-ed6e-aa972f305126@canonical.com>
+Date:   Wed, 24 Aug 2022 10:10:05 -0700
 MIME-Version: 1.0
-References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120327984.369593.8371751426301540450.stgit@olly> <YwR5HBazPxWjcYci@kroah.com>
- <CAHC9VhQOSr_CnLmy0pwgUETPh565951DdejQtgkfNk7=tj+BNA@mail.gmail.com> <YwXA6f6SmAxyMxzX@kroah.com>
-In-Reply-To: <YwXA6f6SmAxyMxzX@kroah.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 24 Aug 2022 10:06:28 -0400
-Message-ID: <CAHC9VhR4ePCaJunmFC+D0_7a7V_rCXQEubuF+V5SLOL2BhGGaA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] apparmor: fix a memleak in multi_transaction_new()
+Content-Language: en-US
+To:     Gaosheng Cui <cuigaosheng1@huawei.com>, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220823011503.2757088-1-cuigaosheng1@huawei.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20220823011503.2757088-1-cuigaosheng1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 24, 2022 at 2:10 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Tue, Aug 23, 2022 at 01:02:08PM -0400, Paul Moore wrote:
-> > On Tue, Aug 23, 2022 at 2:52 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > > On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
-> > > > This patch adds support for the io_uring command pass through, aka
-> > > > IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
-> > > > /dev/null functionality, the implementation is just a simple sink
-> > > > where commands go to die, but it should be useful for developers who
-> > > > need a simple IORING_OP_URING_CMD test device that doesn't require
-> > > > any special hardware.
-> > >
-> > > Also, shouldn't you document this somewhere?
-> > >
-> > > At least in the code itself saying "this is here so that /dev/null works
-> > > as a io_uring sink" or something like that?  Otherwise it just looks
-> > > like it does nothing at all.
-> >
-> > What about read_null() and write_null()?  I can definitely add a
-> > comment (there is no /dev/null documentation in the kernel source tree
-> > that I can see), but there is clearly precedence for /dev/null having
-> > "do nothing" file_operations functions.
->
-> Yes, they should "do nothing".
+On 8/22/22 18:15, Gaosheng Cui wrote:
+> In multi_transaction_new(), the variable t is not freed or passed out
+> on the failure of copy_from_user(t->data, buf, size), which could lead
+> to a memleak.
+> 
+> Fix this bug by adding a put_multi_transaction(t) in the error path.
+> 
+> Fixes: 1dea3b41e84c5 ("apparmor: speed up transactional queries")
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
 
-Right, I don't think anyone was disputing that.  You were asking for a
-comment for the new function that effectively says "this function does
-nothing", which seems a little silly given the simplicity of the
-function, the name, and the context of it all.
+yep, thanks. I will pull this into apparmor-next
 
-> write_null() does report that it
-> consumed everything, why doesn't this function have to also do that?
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Because a file write (file_operations->write) and a
-IORING_OP_URING_CMD (file_operations->uring_cmd) are fundamentally
-different operations; uring_cmd_null() returns 0, which is the success
-return code for this file op (not to mention a significant number of
-kernel functions that return an int).
+> ---
+>   security/apparmor/apparmorfs.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index d066ccc219e2..7160e7aa58b9 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -868,8 +868,10 @@ static struct multi_transaction *multi_transaction_new(struct file *file,
+>   	if (!t)
+>   		return ERR_PTR(-ENOMEM);
+>   	kref_init(&t->count);
+> -	if (copy_from_user(t->data, buf, size))
+> +	if (copy_from_user(t->data, buf, size)) {
+> +		put_multi_transaction(t);
+>   		return ERR_PTR(-EFAULT);
+> +	}
+>   
+>   	return t;
+>   }
 
--- 
-paul-moore.com
