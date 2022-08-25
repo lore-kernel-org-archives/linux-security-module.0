@@ -2,158 +2,85 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FC3C04AA5
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Aug 2022 08:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E194DC28D13
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Aug 2022 09:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbiHYIXr (ORCPT
+        id S238280AbiHYJUO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Aug 2022 04:23:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49992 "EHLO
+        Thu, 25 Aug 2022 05:20:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232090AbiHYIXp (ORCPT
+        with ESMTP id S238498AbiHYJUI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Aug 2022 04:23:45 -0400
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAA7DA5984
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 01:23:42 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MCwwD5krpzMpyf6;
-        Thu, 25 Aug 2022 10:23:40 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MCwwD34Qwzlh8TW;
-        Thu, 25 Aug 2022 10:23:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1661415820;
-        bh=5Fw9bi+YQMIFuhusVZTR+LnPrytnMfmlaaT/CADLfJU=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=A7gMDVB1Z4X8BJ1UsYwOY7bAdtPUuQDRSWnro7DkiQqsdTzcT17uY2P8kgL4QqVsk
-         utabyI5OHHu/K6/+aBF/w8RHRjS7t3uEaRSJOgAcdDRWNtsfFzl6kWvNFLQ1zOArzg
-         zEq15RKL4ZvIEGv2I3GYxmLDSNJ0m6l7VR0i9gaw=
-Message-ID: <ccadad07-53a6-e86e-602b-1d5615a5f9e4@digikod.net>
-Date:   Thu, 25 Aug 2022 10:23:39 +0200
+        Thu, 25 Aug 2022 05:20:08 -0400
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5599D1EEF5;
+        Thu, 25 Aug 2022 02:20:01 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4MCy341C90z9xtnC;
+        Thu, 25 Aug 2022 17:14:40 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwCXZhKWPgdjPLJKAA--.36169S2;
+        Thu, 25 Aug 2022 10:19:31 +0100 (CET)
+Message-ID: <1b8fbdb220d1806e622c56e65bd283a5c3212fab.camel@huaweicloud.com>
+Subject: Re: [PATCH v13 00/10] bpf: Add kfuncs for PKCS#7 signature
+ verification
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        corbet@lwn.net, dhowells@redhat.com, jarkko@kernel.org,
+        rostedt@goodmis.org, mingo@redhat.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org
+Cc:     bpf@vger.kernel.org, linux-doc@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Thu, 25 Aug 2022 11:19:14 +0200
+In-Reply-To: <20220823150035.711534-1-roberto.sassu@huaweicloud.com>
+References: <20220823150035.711534-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     jeffxu@chromium.org
-Cc:     jorgelo@chromium.org, keescook@chromium.org,
-        linux-security-module@vger.kernel.org, groeck@chromium.org
-References: <20220824015852.32257-1-jeffxu@chromium.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [PATCH v5] selftests/landlock: Skip overlayfs tests not supported
-In-Reply-To: <20220824015852.32257-1-jeffxu@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwCXZhKWPgdjPLJKAA--.36169S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYU7kC6x804xWl14x267AKxVWrJVCq3wAF
+        c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+        0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
+        wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
+        xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+        FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+        0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
+        04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+        0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y
+        0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+        W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8
+        JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUU
+        UUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBF1jj35I-gAAsw
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-As discussed for the v4, the next version of this patch needs a 
-TEST_F_FORK() fix.
+On Tue, 2022-08-23 at 17:00 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> One of the desirable features in security is the ability to restrict
+> import
+> of data to a given system based on data authenticity. If data import
+> can be
+> restricted, it would be possible to enforce a system-wide policy
+> based on
+> the signing keys the system owner trusts.
 
-Please add a link to the previous patch (lore.kernel.org) for each new 
-version.
+Hi
 
+is there anything else I need to do, other than rebasing the patches to
+the latest eBPF code?
 
-On 24/08/2022 03:58, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
-> 
-> overlayfs can be disabled in the kernel configuration (which is the case
-> for chromeOS), causing related tests to fail.  Skip such tests when an
-> overlayfs mount operation failed because the running kernel doesn't
-> support this file system.
-> 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> Reviewed-by: Guenter Roeck <groeck@chromium.org>
-> ---
->   tools/testing/selftests/landlock/fs_test.c | 54 ++++++++++++++++++++--
->   1 file changed, 51 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index 21a2ce8fa739..645304d9fe98 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -11,6 +11,7 @@
->   #include <fcntl.h>
->   #include <linux/landlock.h>
->   #include <sched.h>
-> +#include <stdio.h>
->   #include <string.h>
->   #include <sys/capability.h>
->   #include <sys/mount.h>
-> @@ -169,6 +170,42 @@ static int remove_path(const char *const path)
->   	return err;
->   }
->   
-> +static bool fgrep(FILE *file, const char *str)
-> +{
-> +	char line[32];
-> +	int str_len = strlen(str);
-> +
-> +	while (!feof(file)) {
-> +		if (!fgets(line, sizeof(line), file))
-> +			break;
-> +		if (strncmp(line, str, str_len))
-> +			continue;
-> +
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static bool supports_overlayfs(void)
-> +{
-> +	bool ret;
-> +	FILE *file = fopen("/proc/filesystems", "r");
-> +
-> +	/*
-> +	 * A failed attempt to open /proc/filesystems
-> +	 * implies that the file system is supported (default
-> +	 * behavior). This can help detect such unattended issue
-> +	 * (which should not happen)."
-> +	 */
-> +	if (!file)
-> +		return true;
-> +
-> +	ret = fgrep(file, "nodev\toverlay\n");
-> +	fclose(file);
-> +	return ret;
-> +}
-> +
->   static void prepare_layout(struct __test_metadata *const _metadata)
->   {
->   	disable_caps(_metadata);
-> @@ -3404,6 +3441,8 @@ FIXTURE(layout2_overlay) {};
->   
->   FIXTURE_SETUP(layout2_overlay)
->   {
-> +	int ret, err;
-> +
->   	prepare_layout(_metadata);
->   
->   	create_directory(_metadata, LOWER_BASE);
-> @@ -3431,11 +3470,20 @@ FIXTURE_SETUP(layout2_overlay)
->   	create_directory(_metadata, MERGE_DATA);
->   	set_cap(_metadata, CAP_SYS_ADMIN);
->   	set_cap(_metadata, CAP_DAC_OVERRIDE);
-> -	ASSERT_EQ(0, mount("overlay", MERGE_DATA, "overlay", 0,
-> -			   "lowerdir=" LOWER_DATA ",upperdir=" UPPER_DATA
-> -			   ",workdir=" UPPER_WORK));
-> +
-> +	ret = mount("overlay", MERGE_DATA, "overlay", 0,
-> +		   "lowerdir=" LOWER_DATA ",upperdir=" UPPER_DATA
-> +		   ",workdir=" UPPER_WORK);
-> +	err = errno;
->   	clear_cap(_metadata, CAP_DAC_OVERRIDE);
->   	clear_cap(_metadata, CAP_SYS_ADMIN);
-> +
-> +	if (ret == -1) {
-> +		ASSERT_EQ(ENODEV, err);
-> +		ASSERT_FALSE(supports_overlayfs());
-> +		SKIP(return, "overlayfs is not supported");
-> +	}
-> +	ASSERT_EQ(0, ret);
->   }
->   
->   FIXTURE_TEARDOWN(layout2_overlay)
-> 
-> base-commit: 50cd95ac46548429e5bba7ca75cc97d11a697947
+Thanks
+
+Roberto
+
