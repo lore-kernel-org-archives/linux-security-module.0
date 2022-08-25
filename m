@@ -2,173 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7639ECAAD6
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Aug 2022 22:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AA9ECAAA2
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Aug 2022 22:12:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244183AbiHYWLM (ORCPT
+        id S244141AbiHYWMY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Aug 2022 18:11:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42080 "EHLO
+        Thu, 25 Aug 2022 18:12:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244289AbiHYWLJ (ORCPT
+        with ESMTP id S231648AbiHYWMW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Aug 2022 18:11:09 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 392675A3D6
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 15:11:04 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id r124so9438625oig.11
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 15:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=aL/AGV/8w/lD0tdUyUfzE8bvL9UFhy5bQRgnqnJx79U=;
-        b=A2e2m7ezoKBimHZ8/7VLP9dvWoH+EEf72LSF6b2eTN1goiRhAcaNEsH4aMIAdBMdDV
-         Sw/W7FpIPVqOMojVjC6ABvS48bY7IGsqTB01A6M4cCeZegPyYFUg8EvR7s2s2aFc3LfC
-         z98HdbmOEF6zR2mb4maMNOTJIQx37xA1hXWqy0Flnmpa2q0qc0mZ4IjJcJjpsZqyBmBD
-         rjFiFyzF51Ai9kLcPbBi7LM4LWruE51HRS6Gbc7TLQMhiWeLDnQON4DYd5MxrMEUZmvg
-         /tbF2C/V+pKnI850Af/7RerFaYyycqS4Iek09hpd2OxY6oJVEZTGKeKOi62YstibIH/C
-         kMRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=aL/AGV/8w/lD0tdUyUfzE8bvL9UFhy5bQRgnqnJx79U=;
-        b=V+dICkiq7ASMnSCkTVvVdWRtMFx/iX266cqw8cOey14vSlUC/df6mwCRRo3Jght+ye
-         +ijybLMJbWryo9DWIV8N834OO4GcpCyPl6CB92w6W79SffCYxvZ0Y8Svw6Bk+tGjOCA2
-         UIzgUEhMg3JkEpTN1LJpAUl915la1Ng363JxBXhqmqgzzA3uSmEWc29UhcQaH08pnzA4
-         58oPaKhgHmX7qO/88+MtdVi7nxD0Q3/ykCNhlbFoBU8XlnKNNmRiOIyO/rwYbX3KtlqL
-         wnBh28DWiW3/nSp1E3GDQXxfE/IJ4QC07MEwpjhRbD6397xHCAIlnVdUGYUP7QMYh5Di
-         RbTg==
-X-Gm-Message-State: ACgBeo2D1va+X+RUqjcTXfMd3PKT5s8+qTBmLqgQST09JlGyQ4/G8h91
-        I7XNszFB74WSkfDNUbeLQA/Zht7JmzgoQtyFDTRC
-X-Google-Smtp-Source: AA6agR7SFEI7mDvYGEHKi8Bu9KDrgCXC7VjP4nzg+lnkg6FGxIcsxnYfGpmklXE7YULxMoUHaKN27KPpfrqqlTcOa3s=
-X-Received: by 2002:aca:b7d5:0:b0:343:c478:91c6 with SMTP id
- h204-20020acab7d5000000b00343c47891c6mr444622oif.136.1661465463480; Thu, 25
- Aug 2022 15:11:03 -0700 (PDT)
+        Thu, 25 Aug 2022 18:12:22 -0400
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D02275CC
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 15:12:19 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MDHJK5hD0zMqFnt;
+        Fri, 26 Aug 2022 00:12:17 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MDHJJ5zsQzlh8TV;
+        Fri, 26 Aug 2022 00:12:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1661465537;
+        bh=BP6SZchf288ny4ezm1q/cXHQFPT7Ywjw75McWGaDmPI=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=S9gx9WYiLPcl2b1M+KfaqQXSZB/jhIxf3h8cXDp2QW0l115Zqf5eRmITP9jIzBgDg
+         T63snwXOZRRtLntj5/3xkuRShPXhLHdraiceMeKgbaKK1IWxTwWmAusp/y3pBI5KVE
+         NNKiXEDufhkhzCIUYaOx3jstBGKUcKWN2jBFQnts=
+Message-ID: <5e3ff465-2e11-aa3c-1b39-6cf1e6246132@digikod.net>
+Date:   Fri, 26 Aug 2022 00:12:16 +0200
 MIME-Version: 1.0
-References: <CAHC9VhTuxxRfJg=Ax5z87Jz6tq1oVRcppB444dHM2gP-FZrkTQ@mail.gmail.com>
- <8735dux60p.fsf@email.froward.int.ebiederm.org> <CAHC9VhSHJNLS-KJ-Rz1R12PQbqACSksLYLbymF78d5hMkSGc-g@mail.gmail.com>
- <871qte8wy3.fsf@email.froward.int.ebiederm.org> <CAHC9VhSU_sqMQwdoh0nAFdURqs_cVFbva8=otjcZUo8s+xyC9A@mail.gmail.com>
- <8735du7fnp.fsf@email.froward.int.ebiederm.org> <CAHC9VhQuRNxzgVeNhDy=p5+RHz5+bTH6zFdU=UvvEhyH1e962A@mail.gmail.com>
- <87tu6a4l83.fsf@email.froward.int.ebiederm.org> <20220818140521.GA1000@mail.hallyn.com>
- <CAHC9VhRqBxtV04ARQFPWpMf1aFZo0HP_HiJ+8VpXAT-zXF6UXw@mail.gmail.com>
- <20220819144537.GA16552@mail.hallyn.com> <CAHC9VhSZ0aaa3k3704j8_9DJvSNRy-0jfXpy1ncs2Jmo8H0a7g@mail.gmail.com>
- <875yigp4tp.fsf@email.froward.int.ebiederm.org> <CAHC9VhTN09ZabnQnsmbSjKgb8spx7_hkh4Z+mq5ArQmfPcVqAg@mail.gmail.com>
- <0D14C118-E644-4D7B-84C0-CA7752DC0605@fb.com>
-In-Reply-To: <0D14C118-E644-4D7B-84C0-CA7752DC0605@fb.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 25 Aug 2022 18:10:52 -0400
-Message-ID: <CAHC9VhS4ROEY6uBwJPaTKX_bLiDRCyFJ9_+_08gFP0VWF_s-bQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] Introduce security_create_user_ns()
-To:     Song Liu <songliubraving@fb.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Frederick Lawler <fred@cloudflare.com>,
-        KP Singh <kpsingh@kernel.org>,
-        "revest@chromium.org" <revest@chromium.org>,
-        "jackmanb@chromium.org" <jackmanb@chromium.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
-        Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
+User-Agent: 
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
         James Morris <jmorris@namei.org>,
-        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
-        "eparis@parisplace.org" <eparis@parisplace.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        "kernel-team@cloudflare.com" <kernel-team@cloudflare.com>,
-        "cgzones@googlemail.com" <cgzones@googlemail.com>,
-        "karl@bigbadwolfsecurity.com" <karl@bigbadwolfsecurity.com>,
-        "tixxdz@gmail.com" <tixxdz@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+References: <20220823144123.633721-1-mic@digikod.net> <YwUzfXaUFrPtnSMJ@nuc>
+ <818012cf-c404-ec58-6c21-87ebee6a2522@digikod.net>
+ <CAHC9VhSF7UkpVjwyn3W75UA+6h7S5+S=fs52F4ZUwMM_STH1PQ@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v1] landlock: Fix file reparenting without explicit
+ LANDLOCK_ACCESS_FS_REFER
+In-Reply-To: <CAHC9VhSF7UkpVjwyn3W75UA+6h7S5+S=fs52F4ZUwMM_STH1PQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 25, 2022 at 5:58 PM Song Liu <songliubraving@fb.com> wrote:
-> > On Aug 25, 2022, at 12:19 PM, Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Thu, Aug 25, 2022 at 2:15 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >> Paul Moore <paul@paul-moore.com> writes:
-> >>> On Fri, Aug 19, 2022 at 10:45 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> >>>> I am hoping we can come up with
-> >>>> "something better" to address people's needs, make everyone happy, and
-> >>>> bring forth world peace.  Which would stack just fine with what's here
-> >>>> for defense in depth.
-> >>>>
-> >>>> You may well not be interested in further work, and that's fine.  I need
-> >>>> to set aside a few days to think on this.
-> >>>
-> >>> I'm happy to continue the discussion as long as it's constructive; I
-> >>> think we all are.  My gut feeling is that Frederick's approach falls
-> >>> closest to the sweet spot of "workable without being overly offensive"
-> >>> (*cough*), but if you've got an additional approach in mind, or an
-> >>> alternative approach that solves the same use case problems, I think
-> >>> we'd all love to hear about it.
-> >>
-> >> I would love to actually hear the problems people are trying to solve so
-> >> that we can have a sensible conversation about the trade offs.
-> >
-> > Here are several taken from the previous threads, it's surely not a
-> > complete list, but it should give you a good idea:
-> >
-> > https://lore.kernel.org/linux-security-module/CAHC9VhQnPAsmjmKo-e84XDJ1wmaOFkTKPjjztsOa9Yrq+AeAQA@mail.gmail.com/
-> >
-> >> As best I can tell without more information people want to use
-> >> the creation of a user namespace as a signal that the code is
-> >> attempting an exploit.
-> >
-> > Some use cases are like that, there are several other use cases that
-> > go beyond this; see all of our previous discussions on this
-> > topic/patchset.  As has been mentioned before, there are use cases
-> > that require improved observability, access control, or both.
-> >
-> >> As such let me propose instead of returning an error code which will let
-> >> the exploit continue, have the security hook return a bool.  With true
-> >> meaning the code can continue and on false it will trigger using SIGSYS
-> >> to terminate the program like seccomp does.
-> >
-> > Having the kernel forcibly exit the process isn't something that most
-> > LSMs would likely want.  I suppose we could modify the hook/caller so
-> > that *if* an LSM wanted to return SIGSYS the system would kill the
-> > process, but I would want that to be something in addition to
-> > returning an error code like LSMs normally do (e.g. EACCES).
->
-> I am new to user_namespace and security work, so please pardon me if
-> anything below is very wrong.
->
-> IIUC, user_namespace is a tool that enables trusted userspace code to
-> control the behavior of untrusted (or less trusted) userspace code.
-> Failing create_user_ns() doesn't make the system more reliable.
-> Specifically, we call create_user_ns() via two paths: fork/clone and
-> unshare. For both paths, we need the userspace to use user_namespace,
-> and to honor failed create_user_ns().
->
-> On the other hand, I would echo that killing the process is not
-> practical in some use cases. Specifically, allowing the application to
-> run in a less secure environment for a short period of time might be
-> much better than killing it and taking down the whole service. Of
-> course, there are other cases that security is more important, and
-> taking down the whole service is the better choice.
->
-> I guess the ultimate solution is a way to enforce using user_namespace
-> in the kernel (if it ever makes sense...).
 
-The LSM framework, and the BPF and SELinux LSM implementations in this
-patchset, provide a mechanism to do just that: kernel enforced access
-controls using flexible security policies which can be tailored by the
-distro, solution provider, or end user to meet the specific needs of
-their use case.
+On 25/08/2022 22:16, Paul Moore wrote:
+> On Wed, Aug 24, 2022 at 5:04 AM Mickaël Salaün <mic@digikod.net> wrote:
+>> On 23/08/2022 22:07, Günther Noack wrote:
+>>> On Tue, Aug 23, 2022 at 04:41:23PM +0200, Mickaël Salaün wrote:
+>>>> With the introduction of LANDLOCK_ACCESS_FS_REFER, we added the first
+>>>> globally denied-by-default access right.  Indeed, this lifted an initial
+>>>> Landlock limitation to rename and link files, which was initially always
+>>>> denied when the source or the destination were different directories.
+>>>>
+>>>> This led to an inconsistent backward compatibility behavior which was
+>>>> only taken into account if no domain layer were using the new
+>>>> LANDLOCK_ACCESS_FS_REFER right.  However, in a scenario where layers are
+>>>> using the first and the second Landlock ABI (i.e.
+>>>> LANDLOCK_ACCESS_FS_REFER or not), the access control behaves like if all
+>>>> domains were handling LANDLOCK_ACCESS_FS_REFER with their rules
+>>>> implicitely allowing such right.
+>>
+>> "the access control behaves like if domains not handling
+>> LANDLOCK_ACCESS_FS_REFER are in fact handling it and with their rules
+>> implicitely allowing such right."
+>>
+>> Is this better?
+> 
+> I'm still looking at the actual code changes, but I had similar
+> problems as Günther while I was reading the description.  While the
+> new text above is different, I'm not sure it is significantly easier
+> to understand.  I might suggest adding a short example to the commit
+> description showing what happens now and what will change with this
+> patch; similar to what Günther did in his reply.
 
--- 
-paul-moore.com
+OK, what about these new paragraphs replacing the second one?
+
+This led to an inconsistent backward compatibility behavior which was
+only taken into account if no domain layer were using the new
+LANDLOCK_ACCESS_FS_REFER right. However, when restricting a thread with 
+a new ruleset handling LANDLOCK_ACCESS_FS_REFER, all inherited parent 
+ruleset/layers not explicitly handling LANDLOCK_ACCESS_FS_REFER would 
+behave as if they were handling this access right and with all their 
+rules allowing it. This means that renaming and linking files could 
+became allowed by these parent layers, but all the other required 
+accesses must also be granted: all layers must allow file removal or 
+creation, and renaming and linking operations must not lead to privilege 
+escalation according to the Landlock policy (see detailed explanation in 
+commit b91c3e4ea756).
+
+To say it another way, this bug may lifts the renaming and linking 
+limitations of the initial Landlock version, and a same ruleset can 
+restrict differently depending on previous or next enforced ruleset 
+(i.e. inconsistent behavior). The LANDLOCK_ACCESS_FS_REFER right cannot 
+give access to data not already allowed, but this doesn't follow the 
+contract of the first Landlock ABI. This fix puts back the limitation 
+for sandboxes that didn't opt-in for this additional right.
+
+For instance, if a first ruleset allows LANDLOCK_ACCESS_FS_MAKE_REG on 
+/dst and LANDLOCK_ACCESS_FS_REMOVE_FILE on /src, renaming /src/file to 
+/dst/file is denied. However, without this fix, stacking a new ruleset 
+which allows LANDLOCK_ACCESS_FS_REFER on / would now permit the 
+sandboxed thread to rename /src/file to /dst/file .
