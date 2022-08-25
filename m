@@ -2,160 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 327DFECAA27
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Aug 2022 19:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B575ECAAA1
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Aug 2022 20:16:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243629AbiHYTWK (ORCPT
+        id S241623AbiHYUQb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Aug 2022 15:22:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
+        Thu, 25 Aug 2022 16:16:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243152AbiHYTWG (ORCPT
+        with ESMTP id S240249AbiHYUQb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Aug 2022 15:22:06 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707A894110
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 12:22:03 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id v125so24512575oie.0
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 12:22:03 -0700 (PDT)
+        Thu, 25 Aug 2022 16:16:31 -0400
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35154E2F
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 13:16:30 -0700 (PDT)
+Received: by mail-oi1-x230.google.com with SMTP id u14so24676208oie.2
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 13:16:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=j11I9jJbBdP2EsV8zm8vGrZ8to2ALD+DZiEMfyWlhf4=;
-        b=KjzVxnhpw6QKMn5c7oLhZ2YXfy0o0q7ppQDDA/IUG9Tba1CyII5IegLq2jiOsTx6sf
-         9PktWYsvLhv6OduPZa78FKjas33U49IxO+UttcDOMAdp3MTlGJvDXLmU3ofAZEoFFqZT
-         pafvPKdLl3l0hKSE9VWBcm6msZs1UGsFX0W0WhRtsci35MLKycrvSxbg6GiEiXprLSDz
-         35gtzDXDspqbKE6U1rd+mL/P+1w92XWlGqtbdRRUw9gw3+q3FfhdBiDfZom+YIwlZBrE
-         iSIuTPlKIwHdWrtxWrdA/Tch392Qi6e4omMMHzm85TUdvnZFdOZSQACivsWz9KW0c6uk
-         JDjQ==
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc;
+        bh=ZgMztXruLTQO3eAHZM3AUoKaeW1NNMBMEA9g/nqS2+A=;
+        b=V+MSpLhvK8ssXGPdp14E3Ri6AchW6Y3VHw/jB6f5/AKqqQko7X8aNurUl4RLb72MsZ
+         okmh3UnwXBSORU/nhLDTx7QiRTGLyPLw//bVgebEcvivfKJFsLRKCZNB4Afg0odq6J9x
+         3pRFjQnMbyrG7xpNr5VLpPh3BLWrhghNX/84tHCpQRzy2JGXiOcJpdOmVVhUH141huwa
+         88IrqtZJZ01TgFaJdXmpBGGIsdtH5HI4fnQTTr63vh6cvnbzqkT4xmQ91cuxhBJEUfTy
+         UzPyqf4orx7HxhRsd9C8N4tNVViGr55f96T/lAw/mSSIE/JRrVMmHLvBXGQO6l7LBjAK
+         dsSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=j11I9jJbBdP2EsV8zm8vGrZ8to2ALD+DZiEMfyWlhf4=;
-        b=1g8lrFNmBrsyAh080co2pl3DOdJpPpIb+uxLYYaF4nTPKYEQhuyAv7oRcBxVAcD9jE
-         dPNu+ScvkLbz2Bp6RGJtP0/DRod6/Q85dHvKRQzZ6sjiBEFlTQ3Tx/VxNbx6XQQjnFxq
-         RGByxiDW242KlEe9RiOrhzAWdbu7XhxmGQQ+LkhY+zaeLg/oCy2wX5/LGu30YB4C6mVR
-         hejveIJhaeBPnj+up10ycNc6Te7UwpAIEdb6lz4npMjeJlRbORHFMB9wKXC8ZtJAqh4Z
-         8sAXcvrhTJIlPpt+ObzDTpgukgq4PGnSaQ/mF3huaTJ56ofH0cClLpEdcfLfH9F2r/KE
-         /wWQ==
-X-Gm-Message-State: ACgBeo28PAZHOqeYxRFjibckX2gVuGSS8y6I3SoweHT/21I9pnvEV7Lo
-        JnWJM/VVOnYnq7DCcosfGlRkMUV5zy9CE6zLtq3+
-X-Google-Smtp-Source: AA6agR5+NrNDgFeVEqQOH6xO8KzleveZvD24+0ma4hp6CR5I88pcrQbnickGgaR7sl54W0OczwK1VkCsRh+9Rsqv/HQ=
-X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
- n9-20020a05680803a900b003434b14cccemr243316oie.41.1661455322788; Thu, 25 Aug
- 2022 12:22:02 -0700 (PDT)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
+        bh=ZgMztXruLTQO3eAHZM3AUoKaeW1NNMBMEA9g/nqS2+A=;
+        b=RfFdQRLaqTKM+l9rJDF2I6PD6z7qVx2vG3lffxwlPHXgp6F4pDepucIJOcmxTiSBjC
+         am6sIbGerFokwwTtsj65r9aGzCC7aKOaVmLxC8q+xcbiQm2dHN9iGiSKc7Ok1UcFx3xr
+         3rA2rPWx64zTqyyQR+0g1NDjq5VZofegGni+Nmil/XaFHa8BmcRGm2IGnxkovkxA3mJK
+         Hn/6wDM9WqcD/3ysDwBxpmSQbXJcen2TJpMoyzzKKS6zzjLvCc04JMzfDWO/RxVYbgDl
+         +tdy2hgulUL2lWnS2n6+h4uVo1zKOUl/SpDDVnAYwFkbkIwkXyeZEdSKmUJrj7HOYVEN
+         JiGA==
+X-Gm-Message-State: ACgBeo15L0DIpOigg36C3vYKz4dsVoMqiKUTWQoUB/xu8gHgAEObuRXz
+        O+nShPnpC/PFz6dDZtslLfefK9HCE5Epa/6yF8zb
+X-Google-Smtp-Source: AA6agR78DIO4fW/hzdD/9maYcjYjTnNaSDTYqfBmdDvTRTsnC2UvFGSMNjsKpscEsGQiOyC568EFzpSmRfHv5SBhCcA=
+X-Received: by 2002:aca:b7d5:0:b0:343:c478:91c6 with SMTP id
+ h204-20020acab7d5000000b00343c47891c6mr287762oif.136.1661458589545; Thu, 25
+ Aug 2022 13:16:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220825001830.1911524-1-kuba@kernel.org>
-In-Reply-To: <20220825001830.1911524-1-kuba@kernel.org>
+References: <20220823144123.633721-1-mic@digikod.net> <YwUzfXaUFrPtnSMJ@nuc> <818012cf-c404-ec58-6c21-87ebee6a2522@digikod.net>
+In-Reply-To: <818012cf-c404-ec58-6c21-87ebee6a2522@digikod.net>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 25 Aug 2022 15:21:52 -0400
-Message-ID: <CAHC9VhSxesi0TSSvcQSr1kDhP3Vce4+O3w2diEExGEGnjGpmiw@mail.gmail.com>
-Subject: Re: [PATCH net-next] genetlink: start to validate reserved header bytes
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
-        pabeni@redhat.com, jiri@resnulli.us, johannes@sipsolutions.net,
-        linux-block@vger.kernel.org, osmocom-net-gprs@lists.osmocom.org,
-        linux-wpan@vger.kernel.org, wireguard@lists.zx2c4.com,
-        linux-wireless@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-pm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-cifs@vger.kernel.org, cluster-devel@redhat.com,
-        mptcp@lists.linux.dev, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dev@openvswitch.org,
-        linux-s390@vger.kernel.org, tipc-discussion@lists.sourceforge.net
+Date:   Thu, 25 Aug 2022 16:16:18 -0400
+Message-ID: <CAHC9VhSF7UkpVjwyn3W75UA+6h7S5+S=fs52F4ZUwMM_STH1PQ@mail.gmail.com>
+Subject: Re: [PATCH v1] landlock: Fix file reparenting without explicit LANDLOCK_ACCESS_FS_REFER
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 24, 2022 at 8:18 PM Jakub Kicinski <kuba@kernel.org> wrote:
+On Wed, Aug 24, 2022 at 5:04 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+> On 23/08/2022 22:07, G=C3=BCnther Noack wrote:
+> > On Tue, Aug 23, 2022 at 04:41:23PM +0200, Micka=C3=ABl Sala=C3=BCn wrot=
+e:
+> >> With the introduction of LANDLOCK_ACCESS_FS_REFER, we added the first
+> >> globally denied-by-default access right.  Indeed, this lifted an initi=
+al
+> >> Landlock limitation to rename and link files, which was initially alwa=
+ys
+> >> denied when the source or the destination were different directories.
+> >>
+> >> This led to an inconsistent backward compatibility behavior which was
+> >> only taken into account if no domain layer were using the new
+> >> LANDLOCK_ACCESS_FS_REFER right.  However, in a scenario where layers a=
+re
+> >> using the first and the second Landlock ABI (i.e.
+> >> LANDLOCK_ACCESS_FS_REFER or not), the access control behaves like if a=
+ll
+> >> domains were handling LANDLOCK_ACCESS_FS_REFER with their rules
+> >> implicitely allowing such right.
 >
-> We had historically not checked that genlmsghdr.reserved
-> is 0 on input which prevents us from using those precious
-> bytes in the future.
+> "the access control behaves like if domains not handling
+> LANDLOCK_ACCESS_FS_REFER are in fact handling it and with their rules
+> implicitely allowing such right."
 >
-> One use case would be to extend the cmd field, which is
-> currently just 8 bits wide and 256 is not a lot of commands
-> for some core families.
->
-> To make sure that new families do the right thing by default
-> put the onus of opting out of validation on existing families.
->
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> ---
-> CC: jiri@resnulli.us
-> CC: johannes@sipsolutions.net
-> CC: linux-block@vger.kernel.org
-> CC: osmocom-net-gprs@lists.osmocom.org
-> CC: linux-wpan@vger.kernel.org
-> CC: wireguard@lists.zx2c4.com
-> CC: linux-wireless@vger.kernel.org
-> CC: linux-scsi@vger.kernel.org
-> CC: target-devel@vger.kernel.org
-> CC: linux-pm@vger.kernel.org
-> CC: virtualization@lists.linux-foundation.org
-> CC: linux-cifs@vger.kernel.org
-> CC: cluster-devel@redhat.com
-> CC: mptcp@lists.linux.dev
-> CC: lvs-devel@vger.kernel.org
-> CC: netfilter-devel@vger.kernel.org
-> CC: linux-security-module@vger.kernel.org
-> CC: dev@openvswitch.org
-> CC: linux-s390@vger.kernel.org
-> CC: tipc-discussion@lists.sourceforge.net
-> ---
->  drivers/block/nbd.c                      | 1 +
->  drivers/net/gtp.c                        | 1 +
->  drivers/net/ieee802154/mac802154_hwsim.c | 1 +
->  drivers/net/macsec.c                     | 1 +
->  drivers/net/team/team.c                  | 1 +
->  drivers/net/wireguard/netlink.c          | 1 +
->  drivers/net/wireless/mac80211_hwsim.c    | 1 +
->  drivers/target/target_core_user.c        | 1 +
->  drivers/thermal/thermal_netlink.c        | 1 +
->  drivers/vdpa/vdpa.c                      | 1 +
->  fs/cifs/netlink.c                        | 1 +
->  fs/dlm/netlink.c                         | 1 +
->  fs/ksmbd/transport_ipc.c                 | 1 +
->  include/linux/genl_magic_func.h          | 1 +
->  include/net/genetlink.h                  | 3 +++
->  kernel/taskstats.c                       | 1 +
->  net/batman-adv/netlink.c                 | 1 +
->  net/core/devlink.c                       | 1 +
->  net/core/drop_monitor.c                  | 1 +
->  net/ethtool/netlink.c                    | 1 +
->  net/hsr/hsr_netlink.c                    | 1 +
->  net/ieee802154/netlink.c                 | 1 +
->  net/ieee802154/nl802154.c                | 1 +
->  net/ipv4/fou.c                           | 1 +
->  net/ipv4/tcp_metrics.c                   | 1 +
->  net/ipv6/ila/ila_main.c                  | 1 +
->  net/ipv6/ioam6.c                         | 1 +
->  net/ipv6/seg6.c                          | 1 +
->  net/l2tp/l2tp_netlink.c                  | 1 +
->  net/mptcp/pm_netlink.c                   | 1 +
->  net/ncsi/ncsi-netlink.c                  | 1 +
->  net/netfilter/ipvs/ip_vs_ctl.c           | 1 +
->  net/netlabel/netlabel_calipso.c          | 1 +
->  net/netlabel/netlabel_cipso_v4.c         | 1 +
->  net/netlabel/netlabel_mgmt.c             | 1 +
->  net/netlabel/netlabel_unlabeled.c        | 1 +
->  net/netlink/genetlink.c                  | 4 ++++
->  net/nfc/netlink.c                        | 1 +
->  net/openvswitch/conntrack.c              | 1 +
->  net/openvswitch/datapath.c               | 3 +++
->  net/openvswitch/meter.c                  | 1 +
->  net/psample/psample.c                    | 1 +
->  net/smc/smc_netlink.c                    | 3 ++-
->  net/smc/smc_pnet.c                       | 3 ++-
->  net/tipc/netlink.c                       | 1 +
->  net/tipc/netlink_compat.c                | 1 +
->  net/wireless/nl80211.c                   | 1 +
->  47 files changed, 56 insertions(+), 2 deletions(-)
+> Is this better?
 
-Acked-by: Paul Moore <paul@paul-moore.com> (NetLabel)
+I'm still looking at the actual code changes, but I had similar
+problems as G=C3=BCnther while I was reading the description.  While the
+new text above is different, I'm not sure it is significantly easier
+to understand.  I might suggest adding a short example to the commit
+description showing what happens now and what will change with this
+patch; similar to what G=C3=BCnther did in his reply.
 
--- 
+--=20
 paul-moore.com
