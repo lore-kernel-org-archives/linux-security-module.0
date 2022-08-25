@@ -2,128 +2,160 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E345DECAA25
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Aug 2022 19:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327DFECAA27
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Aug 2022 19:22:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243613AbiHYTTX (ORCPT
+        id S243629AbiHYTWK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Aug 2022 15:19:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56138 "EHLO
+        Thu, 25 Aug 2022 15:22:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241530AbiHYTTW (ORCPT
+        with ESMTP id S243152AbiHYTWG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Aug 2022 15:19:22 -0400
-Received: from mail-oa1-x33.google.com (mail-oa1-x33.google.com [IPv6:2001:4860:4864:20::33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C2BB2CE3
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 12:19:21 -0700 (PDT)
-Received: by mail-oa1-x33.google.com with SMTP id 586e51a60fabf-11c4d7d4683so26146913fac.8
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 12:19:21 -0700 (PDT)
+        Thu, 25 Aug 2022 15:22:06 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707A894110
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 12:22:03 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id v125so24512575oie.0
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Aug 2022 12:22:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=e8Gq1eg55USHCL83Reobt5ibzPL8cvMuV1NX5De9ZYY=;
-        b=O7VCw6m6DYZ9SRwwETgBSqa1zuOS859jqBgpBIVSG63HOg7KKdU/QyOTg3x2mMKLlZ
-         /sk+enC4j9MprDEgOepuTKPmBoZ+sG3JQUyandbIfwWBmTyew+NcfQNlQxrCLf562JLt
-         CBDBuBCbwtrJNQe3ltgbUG8+lxI+qESJLbZ0QjttHTgIelL4DCFUrpjqekdSpJmnnmqw
-         5+qWUz8Dkm4iat2Vs0aOfyU5R/QMPzUhEaDtsp239vjwfrvwNLroQmHWmjQKOUL6AgDf
-         0aK+BsUrax9MV0QeahftRbTrPT7WR2Q4AhsrTUIGzz3L/CutBwNsczdrnoWMGQfm8Wko
-         Shzw==
+        bh=j11I9jJbBdP2EsV8zm8vGrZ8to2ALD+DZiEMfyWlhf4=;
+        b=KjzVxnhpw6QKMn5c7oLhZ2YXfy0o0q7ppQDDA/IUG9Tba1CyII5IegLq2jiOsTx6sf
+         9PktWYsvLhv6OduPZa78FKjas33U49IxO+UttcDOMAdp3MTlGJvDXLmU3ofAZEoFFqZT
+         pafvPKdLl3l0hKSE9VWBcm6msZs1UGsFX0W0WhRtsci35MLKycrvSxbg6GiEiXprLSDz
+         35gtzDXDspqbKE6U1rd+mL/P+1w92XWlGqtbdRRUw9gw3+q3FfhdBiDfZom+YIwlZBrE
+         iSIuTPlKIwHdWrtxWrdA/Tch392Qi6e4omMMHzm85TUdvnZFdOZSQACivsWz9KW0c6uk
+         JDjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=e8Gq1eg55USHCL83Reobt5ibzPL8cvMuV1NX5De9ZYY=;
-        b=I260CMft0YiPQCmRdcWorEQROQ92B9ZDk9vJr7sbAKJ/bXv3HzYRk1Ci+G3qLHpOWd
-         HZ7e7E2ao6p0JwuWQEOpbo5MK9wrx4Vj/LvuPNVd14VOwzCJEdCjj5/XVHMkY1kYJDMy
-         r9w9JouQLtDXhdAxsB7Eeo3QygLYGW7FQYbd8OKKQBG0BDaBQrij9C31oPvf1rVKlh6f
-         l1szzlmar+TyZLgXCRyki7M9w989WUT1EHOYOwiDA6CR+vHh/Jk+wKDzyC7CEMsbatHl
-         j7P8NFZ6yPLaSJWxnsdSXFmjfpGo6RYTxYHGhFxfj6+HCZGYSazDzl8xKqt3hNl4n5JB
-         mciA==
-X-Gm-Message-State: ACgBeo0KeKs1PLVLJfPbFItsRrQKeemV/SsZnElQN6y2q6jTSuBjCisL
-        NWzgjMF24/Xh178noWAiZbmPWTNKYH2fcIbrKpM0
-X-Google-Smtp-Source: AA6agR6ZnOvsjUOSNSEGS0LaKYyBUDvqU+sEg8pLS8j9NOxMj3Auk1GEnVJgv+Dn6EqNkIafEGAYyEbTIhKpOvto32I=
-X-Received: by 2002:a05:6870:a78d:b0:11c:437b:ec70 with SMTP id
- x13-20020a056870a78d00b0011c437bec70mr257186oao.136.1661455160511; Thu, 25
- Aug 2022 12:19:20 -0700 (PDT)
+        bh=j11I9jJbBdP2EsV8zm8vGrZ8to2ALD+DZiEMfyWlhf4=;
+        b=1g8lrFNmBrsyAh080co2pl3DOdJpPpIb+uxLYYaF4nTPKYEQhuyAv7oRcBxVAcD9jE
+         dPNu+ScvkLbz2Bp6RGJtP0/DRod6/Q85dHvKRQzZ6sjiBEFlTQ3Tx/VxNbx6XQQjnFxq
+         RGByxiDW242KlEe9RiOrhzAWdbu7XhxmGQQ+LkhY+zaeLg/oCy2wX5/LGu30YB4C6mVR
+         hejveIJhaeBPnj+up10ycNc6Te7UwpAIEdb6lz4npMjeJlRbORHFMB9wKXC8ZtJAqh4Z
+         8sAXcvrhTJIlPpt+ObzDTpgukgq4PGnSaQ/mF3huaTJ56ofH0cClLpEdcfLfH9F2r/KE
+         /wWQ==
+X-Gm-Message-State: ACgBeo28PAZHOqeYxRFjibckX2gVuGSS8y6I3SoweHT/21I9pnvEV7Lo
+        JnWJM/VVOnYnq7DCcosfGlRkMUV5zy9CE6zLtq3+
+X-Google-Smtp-Source: AA6agR5+NrNDgFeVEqQOH6xO8KzleveZvD24+0ma4hp6CR5I88pcrQbnickGgaR7sl54W0OczwK1VkCsRh+9Rsqv/HQ=
+X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
+ n9-20020a05680803a900b003434b14cccemr243316oie.41.1661455322788; Thu, 25 Aug
+ 2022 12:22:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhTuxxRfJg=Ax5z87Jz6tq1oVRcppB444dHM2gP-FZrkTQ@mail.gmail.com>
- <8735dux60p.fsf@email.froward.int.ebiederm.org> <CAHC9VhSHJNLS-KJ-Rz1R12PQbqACSksLYLbymF78d5hMkSGc-g@mail.gmail.com>
- <871qte8wy3.fsf@email.froward.int.ebiederm.org> <CAHC9VhSU_sqMQwdoh0nAFdURqs_cVFbva8=otjcZUo8s+xyC9A@mail.gmail.com>
- <8735du7fnp.fsf@email.froward.int.ebiederm.org> <CAHC9VhQuRNxzgVeNhDy=p5+RHz5+bTH6zFdU=UvvEhyH1e962A@mail.gmail.com>
- <87tu6a4l83.fsf@email.froward.int.ebiederm.org> <20220818140521.GA1000@mail.hallyn.com>
- <CAHC9VhRqBxtV04ARQFPWpMf1aFZo0HP_HiJ+8VpXAT-zXF6UXw@mail.gmail.com>
- <20220819144537.GA16552@mail.hallyn.com> <CAHC9VhSZ0aaa3k3704j8_9DJvSNRy-0jfXpy1ncs2Jmo8H0a7g@mail.gmail.com>
- <875yigp4tp.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <875yigp4tp.fsf@email.froward.int.ebiederm.org>
+References: <20220825001830.1911524-1-kuba@kernel.org>
+In-Reply-To: <20220825001830.1911524-1-kuba@kernel.org>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 25 Aug 2022 15:19:09 -0400
-Message-ID: <CAHC9VhTN09ZabnQnsmbSjKgb8spx7_hkh4Z+mq5ArQmfPcVqAg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] Introduce security_create_user_ns()
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Frederick Lawler <fred@cloudflare.com>, kpsingh@kernel.org,
-        revest@chromium.org, jackmanb@chromium.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        jmorris@namei.org, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, shuah@kernel.org, brauner@kernel.org,
-        casey@schaufler-ca.com, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@cloudflare.com,
-        cgzones@googlemail.com, karl@bigbadwolfsecurity.com,
-        tixxdz@gmail.com
+Date:   Thu, 25 Aug 2022 15:21:52 -0400
+Message-ID: <CAHC9VhSxesi0TSSvcQSr1kDhP3Vce4+O3w2diEExGEGnjGpmiw@mail.gmail.com>
+Subject: Re: [PATCH net-next] genetlink: start to validate reserved header bytes
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
+        pabeni@redhat.com, jiri@resnulli.us, johannes@sipsolutions.net,
+        linux-block@vger.kernel.org, osmocom-net-gprs@lists.osmocom.org,
+        linux-wpan@vger.kernel.org, wireguard@lists.zx2c4.com,
+        linux-wireless@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-pm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-cifs@vger.kernel.org, cluster-devel@redhat.com,
+        mptcp@lists.linux.dev, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dev@openvswitch.org,
+        linux-s390@vger.kernel.org, tipc-discussion@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 25, 2022 at 2:15 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Paul Moore <paul@paul-moore.com> writes:
-> > On Fri, Aug 19, 2022 at 10:45 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> >>  I am hoping we can come up with
-> >> "something better" to address people's needs, make everyone happy, and
-> >> bring forth world peace.  Which would stack just fine with what's here
-> >> for defense in depth.
-> >>
-> >> You may well not be interested in further work, and that's fine.  I need
-> >> to set aside a few days to think on this.
-> >
-> > I'm happy to continue the discussion as long as it's constructive; I
-> > think we all are.  My gut feeling is that Frederick's approach falls
-> > closest to the sweet spot of "workable without being overly offensive"
-> > (*cough*), but if you've got an additional approach in mind, or an
-> > alternative approach that solves the same use case problems, I think
-> > we'd all love to hear about it.
+On Wed, Aug 24, 2022 at 8:18 PM Jakub Kicinski <kuba@kernel.org> wrote:
 >
-> I would love to actually hear the problems people are trying to solve so
-> that we can have a sensible conversation about the trade offs.
+> We had historically not checked that genlmsghdr.reserved
+> is 0 on input which prevents us from using those precious
+> bytes in the future.
+>
+> One use case would be to extend the cmd field, which is
+> currently just 8 bits wide and 256 is not a lot of commands
+> for some core families.
+>
+> To make sure that new families do the right thing by default
+> put the onus of opting out of validation on existing families.
+>
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> ---
+> CC: jiri@resnulli.us
+> CC: johannes@sipsolutions.net
+> CC: linux-block@vger.kernel.org
+> CC: osmocom-net-gprs@lists.osmocom.org
+> CC: linux-wpan@vger.kernel.org
+> CC: wireguard@lists.zx2c4.com
+> CC: linux-wireless@vger.kernel.org
+> CC: linux-scsi@vger.kernel.org
+> CC: target-devel@vger.kernel.org
+> CC: linux-pm@vger.kernel.org
+> CC: virtualization@lists.linux-foundation.org
+> CC: linux-cifs@vger.kernel.org
+> CC: cluster-devel@redhat.com
+> CC: mptcp@lists.linux.dev
+> CC: lvs-devel@vger.kernel.org
+> CC: netfilter-devel@vger.kernel.org
+> CC: linux-security-module@vger.kernel.org
+> CC: dev@openvswitch.org
+> CC: linux-s390@vger.kernel.org
+> CC: tipc-discussion@lists.sourceforge.net
+> ---
+>  drivers/block/nbd.c                      | 1 +
+>  drivers/net/gtp.c                        | 1 +
+>  drivers/net/ieee802154/mac802154_hwsim.c | 1 +
+>  drivers/net/macsec.c                     | 1 +
+>  drivers/net/team/team.c                  | 1 +
+>  drivers/net/wireguard/netlink.c          | 1 +
+>  drivers/net/wireless/mac80211_hwsim.c    | 1 +
+>  drivers/target/target_core_user.c        | 1 +
+>  drivers/thermal/thermal_netlink.c        | 1 +
+>  drivers/vdpa/vdpa.c                      | 1 +
+>  fs/cifs/netlink.c                        | 1 +
+>  fs/dlm/netlink.c                         | 1 +
+>  fs/ksmbd/transport_ipc.c                 | 1 +
+>  include/linux/genl_magic_func.h          | 1 +
+>  include/net/genetlink.h                  | 3 +++
+>  kernel/taskstats.c                       | 1 +
+>  net/batman-adv/netlink.c                 | 1 +
+>  net/core/devlink.c                       | 1 +
+>  net/core/drop_monitor.c                  | 1 +
+>  net/ethtool/netlink.c                    | 1 +
+>  net/hsr/hsr_netlink.c                    | 1 +
+>  net/ieee802154/netlink.c                 | 1 +
+>  net/ieee802154/nl802154.c                | 1 +
+>  net/ipv4/fou.c                           | 1 +
+>  net/ipv4/tcp_metrics.c                   | 1 +
+>  net/ipv6/ila/ila_main.c                  | 1 +
+>  net/ipv6/ioam6.c                         | 1 +
+>  net/ipv6/seg6.c                          | 1 +
+>  net/l2tp/l2tp_netlink.c                  | 1 +
+>  net/mptcp/pm_netlink.c                   | 1 +
+>  net/ncsi/ncsi-netlink.c                  | 1 +
+>  net/netfilter/ipvs/ip_vs_ctl.c           | 1 +
+>  net/netlabel/netlabel_calipso.c          | 1 +
+>  net/netlabel/netlabel_cipso_v4.c         | 1 +
+>  net/netlabel/netlabel_mgmt.c             | 1 +
+>  net/netlabel/netlabel_unlabeled.c        | 1 +
+>  net/netlink/genetlink.c                  | 4 ++++
+>  net/nfc/netlink.c                        | 1 +
+>  net/openvswitch/conntrack.c              | 1 +
+>  net/openvswitch/datapath.c               | 3 +++
+>  net/openvswitch/meter.c                  | 1 +
+>  net/psample/psample.c                    | 1 +
+>  net/smc/smc_netlink.c                    | 3 ++-
+>  net/smc/smc_pnet.c                       | 3 ++-
+>  net/tipc/netlink.c                       | 1 +
+>  net/tipc/netlink_compat.c                | 1 +
+>  net/wireless/nl80211.c                   | 1 +
+>  47 files changed, 56 insertions(+), 2 deletions(-)
 
-Here are several taken from the previous threads, it's surely not a
-complete list, but it should give you a good idea:
-
-https://lore.kernel.org/linux-security-module/CAHC9VhQnPAsmjmKo-e84XDJ1wmaOFkTKPjjztsOa9Yrq+AeAQA@mail.gmail.com/
-
-> As best I can tell without more information people want to use
-> the creation of a user namespace as a signal that the code is
-> attempting an exploit.
-
-Some use cases are like that, there are several other use cases that
-go beyond this; see all of our previous discussions on this
-topic/patchset.  As has been mentioned before, there are use cases
-that require improved observability, access control, or both.
-
-> As such let me propose instead of returning an error code which will let
-> the exploit continue, have the security hook return a bool.  With true
-> meaning the code can continue and on false it will trigger using SIGSYS
-> to terminate the program like seccomp does.
-
-Having the kernel forcibly exit the process isn't something that most
-LSMs would likely want.  I suppose we could modify the hook/caller so
-that *if* an LSM wanted to return SIGSYS the system would kill the
-process, but I would want that to be something in addition to
-returning an error code like LSMs normally do (e.g. EACCES).
+Acked-by: Paul Moore <paul@paul-moore.com> (NetLabel)
 
 -- 
 paul-moore.com
