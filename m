@@ -2,81 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237FBECAAD5
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Aug 2022 14:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE435ECAAD7
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Aug 2022 14:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbiHZOkL (ORCPT
+        id S1344541AbiHZOoD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Aug 2022 10:40:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47008 "EHLO
+        Fri, 26 Aug 2022 10:44:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiHZOkK (ORCPT
+        with ESMTP id S243916AbiHZOn5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Aug 2022 10:40:10 -0400
-Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E5DC357DD
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Aug 2022 07:40:08 -0700 (PDT)
-Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-11e86b7379dso1026873fac.10
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Aug 2022 07:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc;
-        bh=7guLPm3X5Q0eIlOwpatTFO5PrEcmfo8u/iXS0E0f4GA=;
-        b=62jCvxExkccJ0z9Nt3e3QApnehYgFwr8aPWqkHZ1tyNar1hDy4vwf9xVRQ/8PlqJIG
-         7gNXFO/4hum2hxAKfkEbKNNlUYuqQagYDURLatl7r2EmYc/1EMgOHh+TLbSl1rpOIAUS
-         Pjq/a7Z9lhvPFHf6afvj8jjOX222WVJsU3SnFTfDrXdxDA8yIMXm1I93IaU9mMrvh9cC
-         H7QjvvS3Bl5kGbQmDwc6PAFLq7V/o3MSwgi7PWE5LTTJtjusTazJUNUW0XyZrsRsNfUo
-         jIR3qI8W/w6v+WoT92B8zGZSkzMchrE8X84X8iENpSH027s+H0iUmbhR9K3rexIYyOcW
-         lUUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
-        bh=7guLPm3X5Q0eIlOwpatTFO5PrEcmfo8u/iXS0E0f4GA=;
-        b=efEmJKwtDnNOXiAD/hIc10wVGcbxO5fZqZ3pl/aJIK1YWwiNtHh+v3hnbZf0G6R+jr
-         XNrvTGTEpEo6UzhtP3ZnZJx3STe1Q7IhzPAd5D+M8VT1Ipin+lW8IAlvYyZ4dFELhuEy
-         NQ7rBee9iO5SyDk0VSe2A5BBYEPfFGsTcfCte8LjHGCwp/nuwPzvOewdKkWN/WgqnLB9
-         +S9PoEDcmyFI+YwH2sVJbUo7NcygjRI0K8CPL7i61CHJoK5/JILd3a8fYYGnmw8HvM8U
-         jr0yAE7nJl0mwam0qdynDdwoD0WhBHidT3caWJHdb9qo308Sww5AXPsGBBT3ON7Dkpoa
-         I1pg==
-X-Gm-Message-State: ACgBeo2u1wCwJbmQ2DTDLFdpYe2UrF+ZV77RUns3wdqv0Oe1yxopm3hJ
-        GOS5BDhuVXpn/SPpRmeA2S2vSw4z+v8Jj0awGH+/
-X-Google-Smtp-Source: AA6agR4ECHzoM+hQmIYoK2QVSXFx1jvLOI26+sl4NI2ZlkW0hDmF/aBGeeR7c+GFILahrxmzs9LYqtZTDyuv3Pf5tBI=
-X-Received: by 2002:a05:6870:7092:b0:11d:83fe:9193 with SMTP id
- v18-20020a056870709200b0011d83fe9193mr2039337oae.41.1661524807522; Fri, 26
- Aug 2022 07:40:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220823144123.633721-1-mic@digikod.net> <Ywf0okWNl4gRXTYL@nuc> <bd085c93-5814-e701-bdcb-54e9d5fbe8db@digikod.net>
-In-Reply-To: <bd085c93-5814-e701-bdcb-54e9d5fbe8db@digikod.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 26 Aug 2022 10:39:56 -0400
-Message-ID: <CAHC9VhQy9nf+v0hp3fVofPvf3vTsWWor-fexqXLi+42CKSK=gQ@mail.gmail.com>
-Subject: Re: [PATCH v1] landlock: Fix file reparenting without explicit LANDLOCK_ACCESS_FS_REFER
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+        Fri, 26 Aug 2022 10:43:57 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B421DD399F;
+        Fri, 26 Aug 2022 07:43:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7111AB83128;
+        Fri, 26 Aug 2022 14:43:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8578C433D6;
+        Fri, 26 Aug 2022 14:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661525034;
+        bh=JPZJww0LdQuFZEeGZp8ZP+3D6d0plXd37LSA7I8HWfA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=m9yTFBdzL1nv1ZlimA3HujtdlB051fDo7InetsnuqnrliWH6mwg4dS47izNjwTw7N
+         egKRpflIzkOkwJyh6Qn9blT+Wd6Dc47JWmKjnljpy+/Abr3LU9bTEehzI5IJ3F65cF
+         kZ5xLMXxrTFebR3sGJJCKpptQdhNB3ro5tnQQ1yqEWviCQYSgneCc6qnp9zAt+2Qy7
+         wHaXG5w7uz/q3/2XNR6F5MPjk0rjmJ7lRS10GhsHqzjirU0tN8xSAR0noFsOgcaH0J
+         uCUklpshhvkSnKWvALTuvSoFbuSE6kgt3BmuNZIduiOW/bGrznKCX1YOnECB/YPaUM
+         aHcW3qo6FShgA==
+Date:   Fri, 26 Aug 2022 17:43:46 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     roberto.sassu@huaweicloud.com, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Mykola Lysenko <mykolal@fb.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        David Howells <dhowells@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel =?iso-8859-1?Q?M=FCller?= <deso@posteo.net>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Joanne Koong <joannelkoong@gmail.com>
+Subject: Re: [PATCH v12 02/10] btf: Handle dynamic pointer parameter in kfuncs
+Message-ID: <YwjcItv0q8GdzPbb@kernel.org>
+References: <20220818152929.402605-1-roberto.sassu@huaweicloud.com>
+ <20220818152929.402605-3-roberto.sassu@huaweicloud.com>
+ <YwhSCE0H+JfUe4Ew@kernel.org>
+ <CAADnVQJbTzfe28ife1+vg+ByLfyLBTCoEZW_eg8TEw838JGaog@mail.gmail.com>
+ <YwheJqUDLOxL3iTi@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YwheJqUDLOxL3iTi@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 25, 2022 at 6:27 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
-> This patch fixes the (absolute) rule access rights, which now always
-> forbid LANDLOCK_ACCESS_FS_REFER except when it is explicitely allowed
-> when creating a rule. Making all domain handle LANDLOCK_ACCESS_FS_REFER
-> was may initial approach but there is two downsides:
-> - it makes the code more complex because we still want to check that a
-> rule allowing LANDLOCK_ACCESS_FS_REFER is legitimate according to the
-> ruleset's handled access rights (i.e. ABI v1 !=3D ABI v2);
-> - it would not allow to identify if the user created a ruleset
-> explicitely handling LANDLOCK_ACCESS_FS_REFER or not, which will be an
-> issue to audit Landlock (not really possible right now but soon ;) ).
+On Fri, Aug 26, 2022 at 08:46:14AM +0300, Jarkko Sakkinen wrote:
+> On Thu, Aug 25, 2022 at 10:16:14PM -0700, Alexei Starovoitov wrote:
+> > On Thu, Aug 25, 2022 at 9:54 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > > >
+> > > > -static bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env, struct bpf_reg_state *reg,
+> > > > -                                  enum bpf_arg_type arg_type)
+> > > > +bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env, struct bpf_reg_state *reg,
+> > > > +                           enum bpf_arg_type arg_type)
+> > > >  {
+> > > >       struct bpf_func_state *state = func(env, reg);
+> > > >       int spi = get_spi(reg->off);
+> > > > --
+> > > > 2.25.1
+> > > >
+> > >
+> > > Might be niticking but generally I'd consider splitting
+> > > exports as commits of their own.
+> > 
+> > -static bool
+> > +bool
+> > 
+> > into a separate commit?
+> > 
+> > I guess it makes sense for people whose salary depends on
+> > number of commits.
+> > We don't play these games.
+> 
+> What kind of argument is that anyway.
 
-I like this explanation much better!
+"Separate each *logical change* into a separate patch." [*]
 
---=20
-paul-moore.com
+To add, generally any user space visible space should be an
+isolated patch.
+
+Please, stop posting nonsense.
+
+[*] https://www.kernel.org/doc/html/v5.19/process/submitting-patches.html#separate-your-changes
+
+BR, Jarkko
