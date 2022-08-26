@@ -2,152 +2,148 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DD4ECAAA3
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Aug 2022 15:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBA8ECAAA3
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Aug 2022 16:15:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230322AbiHZPf7 (ORCPT
+        id S1344189AbiHZQPn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Aug 2022 11:35:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59930 "EHLO
+        Fri, 26 Aug 2022 12:15:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243036AbiHZPfw (ORCPT
+        with ESMTP id S235914AbiHZQP3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Aug 2022 11:35:52 -0400
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9263131ECD;
-        Fri, 26 Aug 2022 08:35:45 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4MDkMv6kHZz9xFm3;
-        Fri, 26 Aug 2022 23:31:55 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwAHJREl6AhjIoFPAA--.24624S2;
-        Fri, 26 Aug 2022 16:35:16 +0100 (CET)
-Message-ID: <bb4bdd90017d5772bdc31dfac93f2e86c6c61b82.camel@huaweicloud.com>
-Subject: Re: [PATCH v12 02/10] btf: Handle dynamic pointer parameter in
- kfuncs
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Mykola Lysenko <mykolal@fb.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        David Howells <dhowells@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel =?ISO-8859-1?Q?M=FCller?= <deso@posteo.net>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Joanne Koong <joannelkoong@gmail.com>
-Date:   Fri, 26 Aug 2022 17:34:57 +0200
-In-Reply-To: <YwjcItv0q8GdzPbb@kernel.org>
-References: <20220818152929.402605-1-roberto.sassu@huaweicloud.com>
-         <20220818152929.402605-3-roberto.sassu@huaweicloud.com>
-         <YwhSCE0H+JfUe4Ew@kernel.org>
-         <CAADnVQJbTzfe28ife1+vg+ByLfyLBTCoEZW_eg8TEw838JGaog@mail.gmail.com>
-         <YwheJqUDLOxL3iTi@kernel.org> <YwjcItv0q8GdzPbb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Fri, 26 Aug 2022 12:15:29 -0400
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E348DA720F
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Aug 2022 09:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661530525; bh=oUp8DX8jyJ7HHumQCC2ZFCAZqkPR5fu91FBV3FKlr7Y=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=naE3iXa9vF+v35nmk2nPgL/FrcRXNqr+4eZjIcIaCdjEuoKvM/txRjJGsCyQcjSf0+Hk7gicL39NE285exquIvalHdQNAlgihNXhX5xhEU8r0jp9L65gwaF0hql70JVjM5oV7M56VanD7Kf3U45gnWy16+GsuAp+4lTk1nOZ5nO3vvLO4SgfIgCJqfgXuP8sim5fFvU0+bjMjZDM6Ck8OdVagme4i8bKYhzjyAbfvMl17u+fD7YVSgzqTH7qsSET6upjkwfqEVJhtsznvvYsv2dazsFk7yS9E0eYJlOBYJNshgzu0xjisEOJWA3wsIVnP+Y79PSvTFXDKYTX2gsOVQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661530525; bh=YKOcybwvWVUatLJGcGZdorPvETOUYGiWFpwLQkfyGxA=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iMhu/G2+031ifGSM4b/WL0FyXb6i9/mcxdGm7FnwguM/mn4gghL2iEGpT6whNVrnOIgC4PMiZeWe8lzuxBziwjd78l3kuU0pVy/eK4upmpzDSED1tFmRygDG3hfY40oP2jCRLMcaX3gey6T314qRBizptSMElTdvAW/J9HIL1ZNFLinvhyXtj2554A+H2WF5/d1j4ld3P9daME69c4KMfA92Is4BmU7nqL8N608dtrPq03iZQbI6OeZurhKevmgIHe9IjkRGLAcl88ZcLCvDFPDAS91nJ+C88LU3dxdoVbLPZSPpMeIXVL4MFzGEjBxniVAPD+hf9eyoVXszKEHH+Q==
+X-YMail-OSG: AQDCg7oVM1kRB.WVprmnYYReIm11qDMoosm5PzoEfI6xgjcOLZgBSztVwTQjuvE
+ sX96FUl.WUVNt5H8VCkDrY3o7HI6vuU2wSKfXsWG15aVvinMh2hq7jEQSDIOUivl1tfqNwzM._9O
+ sI19lnMaCnTMcwhZTV7zFqQ_yZb5kRxcO8hB7H3._yBp_xi1hj8N2qSggvDYT.yar88KSt3sQy2n
+ vZ.XFca47vq_NVSnJR9YDU.kMx_0K4kh8FA8_mNix4ix3XNE8pPq9uoJfgi7D4w3gkwC6z2BAC96
+ 593IAf2M_.vz4nv_5n0Pg9QBhqFOg79bkEloAft1VaJjAEdxinJmS8G4tSJ6xc2QXL_B6d3ZAITH
+ g6aVK5YJE_kuE6x3ON_DV.XtL_8bPAFjb7h_.sMU7mH3kxipeHgikuC48urqMHkyt7u6ecf8G0O7
+ .TnU2MwuV653IZ07uvhDULhiFiWV25Rgbr9F_lQLIm4YUGrhnf_u9I4a26iss3X4JYuMq0il5OPm
+ TRi02dCRcXWxDIzqJ3bbXmd6yWb3W_FnZubshtTNgN1eT_isj5jHuBfGmsHIVkb12CYip41SzQDl
+ JOyht3bO6QdajbGrs3FlVfXLtvkt.fEz1GyPbkMIpq9zb1X29CRx1VchB7z1EYqcN9qCANczGhSp
+ LscEhcsxSPJxE46rV.oggbsJDSNStdp396HRpHkiZGEWEHU6A2u3S6DItbgjiNSl17gJ0BkvdApo
+ Mq1mGi9ZQ2nsNFSaP8RwrKDkKJEtqqLGQHHuxO1tZkPhYaVXm2Eia2LCQjQPh.heGlcnTTyXkppZ
+ P_3l5_52s8dEEwAT.KrsCpWNn0Vd5KcLOgz.4ty93HeGAAnKN3feLF0Oh9Ke8WBuxhzLqmxx7DgK
+ NLI5jpVaCuNx6jmuDr.jJ1ZqqNlM7ZKKJm17HnQcu.fBKGN_0COOnkJE31.Xu1BNtqx9dXnIswyr
+ ZWp5YtmUuAwOPsueAF9pAqwMEykIAj1odmqvazxrks9uNfMNU7Xh.gyuaG6TOxlqGN5TvLOu2qYi
+ aABny6V6owwfeNyOlnXPv4vkRZWHAt6UjWne0h5ngdJrspvWyKhSHo2bC4dm3zLNy8u6_BN.gqSy
+ 2u4g0XPPWeUtVl3hp8hgElr.Bbb2kgnBWe8btkfLNvpKb4MZv0g7tvr639l0.wp69g8VLTLsFjFk
+ 7VN8hPi9ylVcOaF6ZFSxkR9rmzeIikk9CzLY9fCDtcLk0M8_R_bO5EbaYyP5EqRMRi3.wD42LHed
+ hS9BOmiADcMej9RXHcI7dNlee5ASO4TCqRUm4fjyK2DfntZleZocngxczXElf8Dse.thKn4X0kEO
+ K8Tqetk4sbQp14rJIGaJ8eAkIqgDAQPXo5cQhQZo0urSaq5dBF2DqVDHomFKG6JPTCQH2BNd5FPH
+ 3jRHgCaumy.Em44oMARtzhRzSqpY1iHqwIyzj.iMFv8Hw5CRazJE15q3KsFT6iAUIJElog49OaxY
+ y3vvBTGnxwQJUXixgaTIAIuta57rZ6EYYbMdS_NhjaTcKDXuyqJ95cwCEiGxxT4yQT5G.AiedJJR
+ 7rzsxfFbLeWu.JXxGEc4aFaPHtRjjgETiQs.WbqWCHzqp1lhp6pNkB54TNpBA4Qz0xh6f1gUTY4h
+ CjNktjdTLiafbijw8ja.Y0brQ.L2V9DpLZJI_eGo2UvGySKepj9ioarYvV77mYsVxPmFpt_QjSTN
+ sIoOE74jfDThvuUAQfWAfAMdf6h87rpeXVC1MifafjSMNI_Ov6bgc3nY0qzh2rGKDtLDSpCctz5F
+ ewJnAL2lP5ST72u9qvfQS7vJRYzhTHwazY4DXF5A2et3eR5xKHa0eb5aB8PPhFxX9FrnEOP0XCPS
+ DyjW9Y8CbvH3hcmSw5HoifcCkIAxOoKamGDJoxOtIlU_IBOlM.2nNnldyyetG9GKZPCahbnFWU2H
+ 1srCcGGPa3mWsNwYAzfcO_aMw0fLf8wD1OqDKF6pnnK5TGG8GbH_iCpzZshXOAOjtGCLc4OEMt6q
+ 0l421iavcjfri5F19cYvWSuPIcftRGUZwzi47GZNTMmS_Xe7F_PGnbG7Lgyez_uZYbSmt9MYLSUm
+ 6ThbqCiQ3WZxl2zLbecqW_TDxmfOvx4cBANfv0jR9ZUBemJoANw6hp7fJaKC.7PUapsCY22mK_kc
+ a63VBOTB4hdggN7tVJ4bnL1NBP3xnPygxjYI.LL_4GpAYwC52AeHESSRD_KqubDpX7U5gDwN7XSL
+ Kvblr_Mljlo4VBsMT45DzTuLZ5tiD1e45GEej0H8LOhyLUrKgmQz6HT07wXreY23YAHRRAJBBdgB
+ .wCAYQB2Mwuk1xA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Fri, 26 Aug 2022 16:15:25 +0000
+Received: by hermes--production-ne1-6649c47445-5hpzl (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5a249b87b76be1c51e37b6c861164a31;
+          Fri, 26 Aug 2022 16:15:23 +0000 (UTC)
+Message-ID: <2d4958bd-dc67-8244-c688-eed4feb64ba8@schaufler-ca.com>
+Date:   Fri, 26 Aug 2022 09:15:22 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: SMACK LSM checks wrong object label during ingress network
+ traffic
+Content-Language: en-US
+To:     "Lontke, Michael" <Michael.Lontke@elektrobit.com>
+Cc:     "Ostertag, Martin" <Martin.Ostertag@elektrobit.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        =?UTF-8?Q?Wei=c3=9f=2c_Simone?= <Simone.Weiss@elektrobit.com>,
+        "Valleru, Yuvarajesh" <Yuvarajesh.Valleru@elektrobit.com>,
+        "Irgang, Thomas" <Thomas.Irgang@elektrobit.com>,
+        casey@schaufler-ca.com
+References: <0ff932aeb13400fcbb8b1ce346504e860cb031b9.camel@elektrobit.com>
+ <7fabf823-bdac-789a-09fb-325e60e79976@schaufler-ca.com>
+ <0e3266a5c93229b29c10a0a7b68232000453aabf.camel@elektrobit.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <0e3266a5c93229b29c10a0a7b68232000453aabf.camel@elektrobit.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwAHJREl6AhjIoFPAA--.24624S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KrWUCrW8JF18Xw17JF45Awb_yoW8ZFyDpa
-        ykAa9Fkr4UJr45CwnFqF4FyFnavr1Fqr1kury5J34FvFyqgrnFgFs2qw1Yka45Gr4kCF18
-        Xa10qry7X3W5AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-        AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBF1jj4JUwgAAsw
-X-CFilter-Loop: Reflected
+X-Mailer: WebService/1.1.20595 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2022-08-26 at 17:43 +0300, Jarkko Sakkinen wrote:
-> On Fri, Aug 26, 2022 at 08:46:14AM +0300, Jarkko Sakkinen wrote:
-> > On Thu, Aug 25, 2022 at 10:16:14PM -0700, Alexei Starovoitov wrote:
-> > > On Thu, Aug 25, 2022 at 9:54 PM Jarkko Sakkinen <
-> > > jarkko@kernel.org> wrote:
-> > > > > -static bool is_dynptr_reg_valid_init(struct bpf_verifier_env
-> > > > > *env, struct bpf_reg_state *reg,
-> > > > > -                                  enum bpf_arg_type
-> > > > > arg_type)
-> > > > > +bool is_dynptr_reg_valid_init(struct bpf_verifier_env *env,
-> > > > > struct bpf_reg_state *reg,
-> > > > > +                           enum bpf_arg_type arg_type)
-> > > > >  {
-> > > > >       struct bpf_func_state *state = func(env, reg);
-> > > > >       int spi = get_spi(reg->off);
-> > > > > --
-> > > > > 2.25.1
-> > > > > 
-> > > > 
-> > > > Might be niticking but generally I'd consider splitting
-> > > > exports as commits of their own.
-> > > 
-> > > -static bool
-> > > +bool
-> > > 
-> > > into a separate commit?
-> > > 
-> > > I guess it makes sense for people whose salary depends on
-> > > number of commits.
-> > > We don't play these games.
-> > 
-> > What kind of argument is that anyway.
-> 
-> "Separate each *logical change* into a separate patch." [*]
+On 8/26/2022 1:40 AM, Lontke, Michael wrote:
+> On Thu, 2022-08-25 at 08:59 -0700, Casey Schaufler wrote:
+>> On 8/25/2022 2:25 AM, Lontke, Michael wrote:
+>>> Hello Mr. Schaufler,
+>>>
+>>> we observed the following behavior of the SMACK LSM kernel feature.
+>>>
+>>> PROBLEM: SMACK LSM is checking the wrong label when receiving
+>>> network
+>>> packets during high system load.
+>>>
+>>> Full Descrpition of the Problem: During a test scenario involving
+>>> high
+>>> system load (cpu, memory and io) in combination with ingress tcp
+>>> network traffic, SMACK is checking wrong object labels leading to
+>>> denied access for valid scenarios.
+>>> In below test scenario the label 'stresstest' is only used for the
+>>> application 'stress' but appears in SMACK audit logs as object
+>>> together
+>>> with netlabels.
+>>>
+>>> This issue initially appeared on hardware with kernel version
+>>> 4.14.237
+>>> but was also being reproduced with qemu for kernel version 4.14.290
+>>> and
+>>> latest 6.0-rc2. The used rootfs was generated via buildroot version
+>>> 2022.08-rc1.
+>>>
+>>>
+>>> KEYWORDS: smack, networking
+>>>
+>>> KERNEL INFORMATION: Linux stable kernel
+>>>
+>>> KERNEL VERSION: 4.14.237, 4.14.290, 6.0-rc2
+>>>
+>>>
+>>> KERNEL CONFIG: smack related kernel configuration
+>>>
+>>> CONFIG_NETLABEL=y
+>>>
+>>> CONFIG_SECURITY_NETWORK=y
+>>>
+>>> CONFIG_SECURITY_SMACK=y
+>>>
+>>> CONFIG_DEFAULT_SECURITY_SMACK=y
+>>>
+>>> CONFIG_DEFAULT_SECURITY="smack"
+>> What is the value for CONFIG_SECURITY_SMACK_NETFILTER ?
+> # CONFIG_NETWORK_SECMARK is not set
+> therefore CONFIG_SECURITY_SMACK_NETFILTER is not set as well.
+>
+>> The implementation for IPv6 is much more robust for the
+>> netfilter enabled path.
+> You are stating that
+>
+> CONFIG_NETWORK_SECMARK=y
+> CONFIG_SECURITY_SMACK_NETFILTER=y
+>
+> and therefore using SMACK_IPV6_SECMARK_LABELING instead of
+> SMACK_IPV6_PORT_LABELING path in kernel code is more reliable?
 
-The logical change, as per the patch subject, is allowing the
-possibility of including eBPF dynamic pointers in a kfunc definition.
-It requires to call an existing function that was already defined
-elsewhere.
-
-Maybe I'm wrong, but I don't see only exporting a function definition
-to an include file as a logical change. To me, the changes in this
-patch are clearly connected. Or even better, they tell why the function
-definition has been exported, that would not appear if moving the
-function definition is a standalone patch.
-
-> 
-> To add, generally any user space visible space should be an
-> isolated patch.
-
-As far as I understood, definitions visible to user space should be in
-include/uapi.
-
-> 
-> Please, stop posting nonsense.
-
-If I may, saying this does not encourage people to try to submit their
-code. I feel it is a bit strong, and I kindly ask you to express your
-opinion in a more gentle way.
-
-Thanks
-
-Roberto
+Yes. The netfilter version is used in all known commercial deployments
+of Smack, and hence has gotten more attention. The port labeling code
+is a "clever hack". I hope to replace it with CALIPSO now that CALIPSO
+is supported by newlabel.
 
