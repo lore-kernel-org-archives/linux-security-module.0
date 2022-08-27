@@ -2,54 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF386C0502F
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Aug 2022 17:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676CBECAAD1
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Aug 2022 19:30:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229551AbiH0Rsg (ORCPT
+        id S231577AbiH0Ta6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Aug 2022 13:48:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59286 "EHLO
+        Sat, 27 Aug 2022 15:30:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiH0Rsf (ORCPT
+        with ESMTP id S231569AbiH0Ta4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Aug 2022 13:48:35 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE60576968;
-        Sat, 27 Aug 2022 10:48:30 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id bu22so4994930wrb.3;
-        Sat, 27 Aug 2022 10:48:30 -0700 (PDT)
+        Sat, 27 Aug 2022 15:30:56 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1472F111F;
+        Sat, 27 Aug 2022 12:30:54 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id u5so5497018wrt.11;
+        Sat, 27 Aug 2022 12:30:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=3Zdop84jkpxYAhBtGBx+oj5ymYpGJcLf+5H9LufTC0M=;
-        b=AK8F3RM9/QJfP3KjxtMiskPGED6xsI/cDUKKUXQODGIuzmu4vxIB3QdOWwK3/j6oX/
-         3Nsnau4jhoudQePWNp9NsBC06Lu16Y4RfYED3tLdT5Z8wVr/Q/klfibRCozdWC2ExSjg
-         hZjDEutI41cigh56vi2U3ybDYivkTckWageotDtX5Io4rEBzM9L33JIWRcK4pMiymKMR
-         GhwS4VxmHW8Sg/eFkjwOSNIMeungqd4fXl8lE4lFsHFkyfYqCD1IoeZ9RzKGL6y3RXf0
-         Tdi4U/Xlh1uPC/wX3if2+LToN68JVeVvZMyziwQjUKbrh45n/Gn830bx7uibzwEgGD+t
-         DdKA==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc;
+        bh=+9SLA5JMKgxjPbqJCOaB5bmEAWHKqypXN/iOxvc+ORg=;
+        b=gzKJ80lGpK/Rti0kU41lRUXkmog54v8HFKLyqCocjmgKIg91vKugXxX+wgfL+WWlcG
+         nsjJdnpogJ+bQmT5Y9jWJpetUSDxig05oy/AAZkcrZu6v/3wl1nLRu5qkeS57HGqrDr2
+         XbwkGHMObE3VCqsh0OnwAPa3kPKnX1edfCjhB0UPuNN2wpX1BVieH7oay+d1fz25PjDg
+         Mg5my9plD1EHCqeM47MI0X+6IIf025/DktAewF1VSpHZMLp8qFyIRLcxPglNOAb8bBr2
+         nMD4gte7fV9DeCYucyk43akuv/bQRmhi2E5/V4o8YKu30cSCxHGr0PRfyNrLs8JWfZ5a
+         QRMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=3Zdop84jkpxYAhBtGBx+oj5ymYpGJcLf+5H9LufTC0M=;
-        b=zi129EOgxV82f8XcON23KDvUtF/qkNyKeVLdzkqYU/bpMlUUsehIKMwLNehEy7eIVc
-         7NEJKl4y4IfcKCNz5S3uHW1ANHmHhdEUdPLV8HSMJHYsgtyuAs0JYP8/X9famAbMuAvf
-         OvL4sPxUsTM/lWznvGuCARPeXQ6VaRUoVDueXL19xt04JJvy1a/lLiWJUOmweIfoN0Cy
-         Qmnu6vM2Fnsk8yQ5WTLeZVcr1eTaaEymmSuuKwcWgV9mVhakiUo14RLW7QqPASxyxpW+
-         DIaA6UAuqVtvcIyAg3uOIw4CLiQwMO1EyZ6W52JNNnMRNlvXQx9Kunl+yfj/LqqtfQJa
-         2nRg==
-X-Gm-Message-State: ACgBeo3IwZEXTi/v2uKMvikbG7Wn4C/frtn92zJ3m4QzwSzFOfLKMFB3
-        Bo6Vl9QgfoRsqCwii9yqBss=
-X-Google-Smtp-Source: AA6agR76ClBGY0nAOJeIhs0qFBYcxd89IzO1xCQocK3uIM6tw7eD+jfRNoZniVP+OXHc7O3xI0+/3Q==
-X-Received: by 2002:a5d:4d0b:0:b0:226:d4d8:c3da with SMTP id z11-20020a5d4d0b000000b00226d4d8c3damr825384wrt.370.1661622508071;
-        Sat, 27 Aug 2022 10:48:28 -0700 (PDT)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc;
+        bh=+9SLA5JMKgxjPbqJCOaB5bmEAWHKqypXN/iOxvc+ORg=;
+        b=c4Hl941+BdWyYgaEKo/JMjE7W82W2afCAFHhHNikx6ZvGvACvIrciqNdk/tq2Zvu5u
+         v1rtJPD3kxQU+ud4wIdUqaK31u+zpSKEucPBt+CumH0x1bcNNbMQIUkA6LQOoLPgJLK0
+         PBwYPsXULXY/6YZdX60ks3hL69tr0IWp6cqCMk7aCe6YK6aPqaXjAfT51mposDxgdWQo
+         jRw8IlltnJrN74ffLECAAWL9RT9SwAG7LSBmtgnhHwieKgPuU6AL0o/dYz+6lj5j6+rA
+         Bd8OA0SuKuh85rY73L7AIN2M5rwMA3kNKMiD0gdOipg5OaceUHzoHsG80Whlm75JOsSm
+         bPAg==
+X-Gm-Message-State: ACgBeo0IG0AFuacOh6lK9UagOh7CBIO6Du5BM9/L5QORtWJDVi3WsyYf
+        7O9o6X+Tm+U7RpNoYLe8duA=
+X-Google-Smtp-Source: AA6agR4hNJ5F4uQOveSUjyE4Xn1TBP+Kdlu49Pr2FVti/SyPWcViYMUtgePF6ehyE1o36bAEtpH18Q==
+X-Received: by 2002:a5d:64ab:0:b0:225:5dc4:957 with SMTP id m11-20020a5d64ab000000b002255dc40957mr2886470wrp.271.1661628653358;
+        Sat, 27 Aug 2022 12:30:53 -0700 (PDT)
 Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id o8-20020a05600c4fc800b003a62400724bsm4392621wmq.0.2022.08.27.10.48.27
+        by smtp.gmail.com with ESMTPSA id u14-20020adfdd4e000000b0021f131de6aesm2954522wrm.34.2022.08.27.12.30.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Aug 2022 10:48:27 -0700 (PDT)
-Date:   Sat, 27 Aug 2022 19:48:25 +0200
+        Sat, 27 Aug 2022 12:30:52 -0700 (PDT)
+Date:   Sat, 27 Aug 2022 21:30:51 +0200
 From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
 To:     Xiu Jianfeng <xiujianfeng@huawei.com>
 Cc:     mic@digikod.net, paul@paul-moore.com, jmorris@namei.org,
@@ -57,327 +59,270 @@ Cc:     mic@digikod.net, paul@paul-moore.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-doc@vger.kernel.org
-Subject: Re: [PATCH -next v2 4/6] landlock/selftests: add selftests for chmod
- and chown
-Message-ID: <YwpY6UpznnHpweh+@nuc>
+Subject: Re: [PATCH -next v2 3/6] landlock: add chmod and chown support
+Message-ID: <Ywpw66EYRDTQIyTx@nuc>
 References: <20220827111215.131442-1-xiujianfeng@huawei.com>
- <20220827111215.131442-5-xiujianfeng@huawei.com>
+ <20220827111215.131442-4-xiujianfeng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220827111215.131442-5-xiujianfeng@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220827111215.131442-4-xiujianfeng@huawei.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Aug 27, 2022 at 07:12:13PM +0800, Xiu Jianfeng wrote:
-> The following APIs are tested with simple scenarios.
-> 1. chmod/fchmod/fchmodat;
-> 2. chmod/fchmod/lchown/fchownat;
+Hello!
+
+the mapping between Landlock rights to LSM hooks is now as follows in
+your patch set:
+
+* LANDLOCK_ACCESS_FS_CHMOD controls hook_path_chmod
+* LANDLOCK_ACCESS_FS_CHGRP controls hook_path_chown
+  (this hook can restrict both the chown(2) and chgrp(2) syscalls)
+
+Is this the desired mapping?
+
+The previous discussion I found on the topic was in
+
+[1] https://lore.kernel.org/all/5873455f-fff9-618c-25b1-8b6a4ec94368@digikod.net/
+[2] https://lore.kernel.org/all/b1d69dfa-6d93-2034-7854-e2bc4017d20e@schaufler-ca.com/
+[3] https://lore.kernel.org/all/c369c45d-5aa8-3e39-c7d6-b08b165495fd@digikod.net/
+
+In my understanding the main arguments were the ones in [2] and [3].
+
+There were no further responses to [3], so I was under the impression
+that we were gravitating towards an approach where the
+file-metadata-modification operations were grouped more coarsely?
+
+For example with the approach suggested in [3], which would be to
+group the operations coarsely into (a) one Landlock right for
+modifying file metadata that is used in security contexts, and (b) one
+Landlock right for modifying metadata that was used in non-security
+contexts. That would mean that there would be:
+
+(a) LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES to control the
+following operations:
+  * chmod(2)-variants through hook_path_chmod,
+  * chown(2)-variants and chgrp(2)-variants through hook_path_chown,
+  * setxattr(2)-variants and removexattr(2)-variants for extended
+    attributes that are not "user extended attributes" as described in
+    xattr(7) through hook_inode_setxattr and hook_inode_removexattr
+
+(b) LANDLOCK_ACCESS_FS_MODIFY_NON_SECURITY_ATTRIBUTES to control the
+following operations:
+  * utimes(2) and other operations for setting other non-security
+    sensitive attributes, probably through hook_inode_setattr(?)
+  * xattr modifications like above, but for the "user extended
+    attributes", though hook_inode_setxattr and hook_inode_removexattr
+
+In my mind, this would be a sensible grouping, and it would also help
+to decouple the userspace-exposed API from the underlying
+implementation, as Casey suggested to do in [2].
+
+Specifically for this patch set, if you want to use this grouping, you
+would only need to add one new Landlock right
+(LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES) as described above
+under (a) (and maybe we can find a shorter name for it... :))?
+
+Did I miss any operations here that would be necessary to restrict?
+
+Would that make sense to you? Xiu, what is your opinion on how this
+should be grouped? Do you have use cases in mind where a more
+fine-grained grouping would be required?
+
+—Günther
+
+P.S.: Regarding utimes: The hook_inode_setattr hook *also* gets called
+on a variety on attribute changes including file ownership, file size
+and file mode, so it might potentially interact with a bunch of other
+existing Landlock rights. Maybe that is not the right approach. In any
+case, it seems like it might require more thinking and it might be
+sensible to do that in a separate patch set IMHO.
+
+On Sat, Aug 27, 2022 at 07:12:12PM +0800, Xiu Jianfeng wrote:
+> Add two flags LANDLOCK_ACCESS_FS_CHMOD and LANDLOCK_ACCESS_FS_CHGRP to
+> support restriction to chmod(2) and chown(2) with landlock.
 >
-> The key point is that set these access rights on a directory but only for
-> its content, not the directory itself. this scenario is covered.
+> If these two access rights are set on a directory, they only take effect
+> for its context, not the directory itself.
+>
+> This patch also change the landlock ABI version from 3 to 4.
 >
 > Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 > ---
->  tools/testing/selftests/landlock/fs_test.c | 261 +++++++++++++++++++++
->  1 file changed, 261 insertions(+)
+>  include/uapi/linux/landlock.h                | 10 +++--
+>  security/landlock/fs.c                       | 43 +++++++++++++++++++-
+>  security/landlock/limits.h                   |  2 +-
+>  security/landlock/syscalls.c                 |  2 +-
+>  tools/testing/selftests/landlock/base_test.c |  2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |  6 ++-
+>  6 files changed, 56 insertions(+), 9 deletions(-)
 >
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index f513cd8d9d51..982cb824967c 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -3272,6 +3272,267 @@ TEST_F_FORK(layout1, truncate)
->  	EXPECT_EQ(0, test_creat(file_in_dir_w));
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 735b1fe8326e..07b73626ff20 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -141,14 +141,16 @@ struct landlock_path_beneath_attr {
+>   *   directory) parent.  Otherwise, such actions are denied with errno set to
+>   *   EACCES.  The EACCES errno prevails over EXDEV to let user space
+>   *   efficiently deal with an unrecoverable error.
+> + * - %LANDLOCK_ACCESS_FS_CHMOD: Change the file mode bits of a file.
+> + * - %LANDLOCK_ACCESS_FS_CHGRP: Change the owner and/or group of a file.
+>   *
+>   * .. warning::
+>   *
+>   *   It is currently not possible to restrict some file-related actions
+>   *   accessible through these syscall families: :manpage:`chdir(2)`,
+> - *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+> - *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+> - *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
+> + *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`setxattr(2)`,
+> + *   :manpage:`utime(2)`,:manpage:`ioctl(2)`, :manpage:`fcntl(2)`,
+> + *   :manpage:`access(2)`.
+>   *   Future Landlock evolutions will enable to restrict them.
+>   */
+>  /* clang-format off */
+> @@ -167,6 +169,8 @@ struct landlock_path_beneath_attr {
+>  #define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
+>  #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+>  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+> +#define LANDLOCK_ACCESS_FS_CHMOD			(1ULL << 15)
+> +#define LANDLOCK_ACCESS_FS_CHGRP			(1ULL << 16)
+>  /* clang-format on */
+>
+>  #endif /* _UAPI_LINUX_LANDLOCK_H */
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 4ef614a4ea22..6ac83d96ada7 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -185,7 +185,9 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+>  	LANDLOCK_ACCESS_FS_EXECUTE | \
+>  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> -	LANDLOCK_ACCESS_FS_TRUNCATE)
+> +	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> +	LANDLOCK_ACCESS_FS_CHMOD | \
+> +	LANDLOCK_ACCESS_FS_CHGRP)
+>  /* clang-format on */
+>
+>  /*
+> @@ -690,6 +692,31 @@ static inline int current_check_access_path(const struct path *const path,
+>  	return check_access_path(dom, path, access_request);
 >  }
 >
-> +/* Invokes chmod(2) and returns its errno or 0. */
-> +static int test_chmod(const char *const path, mode_t mode)
+> +static inline int
+> +current_check_access_path_context_only(const struct path *const path,
+> +				       const access_mask_t access_request)
 > +{
-> +	if (chmod(path, mode) < 0)
-> +		return errno;
-> +	return 0;
-> +}
-
-Nice, this is much simpler than in the last revision :)
-
+> +	const struct landlock_ruleset *const dom =
+> +		landlock_get_current_domain();
+> +	struct path eff_path;
+> +	int ret;
 > +
-> +/* Invokes fchmod(2) and returns its errno or 0. */
-> +static int test_fchmod(int fd, mode_t mode)
-> +{
-> +	if (fchmod(fd, mode) < 0)
-> +		return errno;
-> +	return 0;
-> +}
-> +
-> +/* Invokes fchmodat(2) and returns its errno or 0. */
-> +static int test_fchmodat(int dirfd, const char *path, mode_t mode, int flags)
-
-Nitpick: Some of these functions have path arguments declared as
-
-  const char *path
-
-and others as
-
-  const char *const path
-
--- would be nice to stay consistent.
-
-> +{
-> +	if (fchmodat(dirfd, path, mode, flags) < 0)
-> +		return errno;
-> +	return 0;
+> +	if (!dom)
+> +		return 0;
+> +	eff_path = *path;
+> +	/* if it's dir, check its visible parent. */
+> +	if (d_is_dir(eff_path.dentry)) {
+> +		path_get(&eff_path);
+> +		/* dont care if reaches the root or not. */
+> +		walk_to_visible_parent(&eff_path);
+> +		ret = current_check_access_path(&eff_path, access_request);
+> +		path_put(&eff_path);
+> +	} else {
+> +		ret = current_check_access_path(&eff_path, access_request);
+> +	}
+> +	return ret;
 > +}
 > +
-> +/* Invokes chown(2) and returns its errno or 0. */
-> +static int test_chown(const char *path, uid_t uid, gid_t gid)
+>  static inline access_mask_t get_mode_access(const umode_t mode)
+>  {
+>  	switch (mode & S_IFMT) {
+> @@ -1177,6 +1204,18 @@ static int hook_path_truncate(const struct path *const path)
+>  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+>  }
+>
+> +static int hook_path_chmod(const struct path *const path, umode_t mode)
 > +{
-> +	if (chown(path, uid, gid) < 0)
-> +		return errno;
-> +	return 0;
+> +	return current_check_access_path_context_only(path,
+> +					LANDLOCK_ACCESS_FS_CHMOD);
 > +}
 > +
-> +/* Invokes fchown(2) and returns its errno or 0. */
-> +static int test_fchown(int fd, uid_t uid, gid_t gid)
+> +static int hook_path_chown(const struct path *const path, kuid_t uid, kgid_t gid)
 > +{
-> +	if (fchown(fd, uid, gid) < 0)
-> +		return errno;
-> +	return 0;
+> +	return current_check_access_path_context_only(path,
+> +					LANDLOCK_ACCESS_FS_CHGRP);
 > +}
 > +
-> +/* Invokes lchown(2) and returns its errno or 0. */
-> +static int test_lchown(const char *path, uid_t uid, gid_t gid)
-> +{
-> +	if (lchown(path, uid, gid) < 0)
-> +		return errno;
-> +	return 0;
-> +}
-> +
-> +/* Invokes fchownat(2) and returns its errno or 0. */
-> +static int test_fchownat(int dirfd, const char *path,
-> +			 uid_t uid, gid_t gid, int flags)
-> +{
-> +	if (fchownat(dirfd, path, uid, gid, flags) < 0)
-> +		return errno;
-> +	return 0;
-> +}
-> +
-> +TEST_F_FORK(layout1, unhandled_chmod)
-> +{
-> +	int ruleset_fd, file1_fd;
-> +	const char *file1 = file1_s1d1;
-> +	const char *file2 = file2_s1d1;
-> +	const char *dir1 = dir_s1d1;
-
-I'd suggest to name these kinds of variables according to the rights
-that are granted on these files and directories, for example as as
-w_file and rw_file. (Then, when looking at the EXPECT_EQ checks below,
-you don't need to jump back up to the start of the test to remember
-which of the rights is being tested.)
-
-Nitpick: The same remark as above about the 'const' modifier applies
-here as well. The rest of the file uses "const char *const varname".
-
-> +	const struct rule rules[] = {
-> +		{
-> +			.path = file1,
-> +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
-> +		},
-> +		{
-> +			.path = file2,
-> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
-> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
-> +		},
-> +		{
-> +			.path = dir1,
-> +			.access = ACCESS_RW,
-> +		},
-> +		{},
-> +	};
-> +
-> +	ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
-> +	ASSERT_LE(0, ruleset_fd);
-> +	file1_fd = open(file1, O_WRONLY | O_CLOEXEC);
-> +	ASSERT_LE(0, file1_fd);
-> +
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	ASSERT_EQ(0, close(ruleset_fd));
-> +
-> +	EXPECT_EQ(0, test_chmod(file1, 0400));
-> +	EXPECT_EQ(0, test_fchmod(file1_fd, 0400));
-> +	EXPECT_EQ(0, test_fchmodat(AT_FDCWD, file1, 0400, 0));
-> +	EXPECT_EQ(0, test_chmod(file2, 0400));
-> +	EXPECT_EQ(0, test_chmod(dir1, 0700));
-> +	ASSERT_EQ(0, close(file1_fd));
-> +}
-> +
-> +TEST_F_FORK(layout1, chmod)
-> +{
-> +	int ruleset_fd, file1_fd;
-> +	const char *file1 = file1_s1d1;
-> +	const char *file2 = file2_s1d1;
-> +	const char *file3 = file1_s2d1;
-> +	const char *dir1 = dir_s1d1;
-> +	const char *dir2 = dir_s2d1;
-> +	const struct rule rules[] = {
-> +		{
-> +			.path = file1,
-> +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE |
-> +				  LANDLOCK_ACCESS_FS_CHMOD,
-> +		},
-> +		{
-> +			.path = file2,
-> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
-> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
-> +		},
-> +		{
-> +			.path = dir1,
-> +			.access = ACCESS_RW,
-> +		},
-> +		{
-> +			.path = dir2,
-> +			.access = ACCESS_RW | LANDLOCK_ACCESS_FS_CHMOD,
-> +		},
-> +		{},
-> +	};
-> +
-> +	ruleset_fd = create_ruleset(_metadata, ACCESS_RW | LANDLOCK_ACCESS_FS_CHMOD, rules);
-> +	ASSERT_LE(0, ruleset_fd);
-> +	file1_fd = open(file1, O_WRONLY | O_CLOEXEC);
-> +	ASSERT_LE(0, file1_fd);
-> +
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	ASSERT_EQ(0, close(ruleset_fd));
-> +
-> +	EXPECT_EQ(0, test_chmod(file1, 0400));
-> +	EXPECT_EQ(0, test_fchmod(file1_fd, 0400));
-> +	EXPECT_EQ(0, test_fchmodat(AT_FDCWD, file1, 0400, 0));
-> +	EXPECT_EQ(EACCES, test_chmod(file2, 0400));
-> +	EXPECT_EQ(EACCES, test_chmod(dir1, 0700));
-> +	/* set CHMOD right on dir will only affect its context not dir itself*/
-> +	EXPECT_EQ(0, test_chmod(file3, 0400));
-> +	EXPECT_EQ(0, test_fchmodat(AT_FDCWD, file3, 0400, 0));
-> +	EXPECT_EQ(EACCES, test_chmod(dir2, 0700));
-> +	EXPECT_EQ(EACCES, test_fchmodat(AT_FDCWD, dir2, 0700, 0));
-> +	ASSERT_EQ(0, close(file1_fd));
-> +}
-> +
-> +TEST_F_FORK(layout1, unhandled_chown)
-> +{
-> +	int ruleset_fd, file1_fd;
-> +	const char *file1 = file1_s1d1;
-> +	const char *file2 = file2_s1d1;
-> +	const char *dir1 = dir_s1d1;
-> +	const struct rule rules[] = {
-> +		{
-> +			.path = file1,
-> +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
-> +		},
-> +		{
-> +			.path = file2,
-> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
-> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
-> +		},
-> +		{
-> +			.path = dir1,
-> +			.access = ACCESS_RW,
-> +		},
-> +		{},
-> +	};
-> +	struct stat st;
-> +	uid_t uid;
-> +	gid_t gid;
-> +
-> +	ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
-> +	ASSERT_LE(0, ruleset_fd);
-> +	file1_fd = open(file1, O_WRONLY | O_CLOEXEC);
-> +	ASSERT_LE(0, file1_fd);
-> +	/*
-> +	 * there is no CAP_CHOWN when the testcases framework setup,
-> +	 * and we cannot assume the testcases are run as root, to make
-> +	 * sure {f}chown syscall won't fail, get the original uid/gid and
-> +	 * use them in test_{f}chown.
-> +	 */
-> +	ASSERT_EQ(0, stat(dir1, &st));
-> +	uid = st.st_uid;
-> +	gid = st.st_gid;
-> +
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	ASSERT_EQ(0, close(ruleset_fd));
-> +
-> +	EXPECT_EQ(0, test_chown(file1, uid, gid));
-> +	EXPECT_EQ(0, test_fchown(file1_fd, uid, gid));
-> +	EXPECT_EQ(0, test_lchown(file1, uid, gid));
-> +	EXPECT_EQ(0, test_fchownat(AT_FDCWD, file1, uid, gid, 0));
-> +	EXPECT_EQ(0, test_chown(file2, uid, gid));
-> +	EXPECT_EQ(0, test_chown(dir1, uid, gid));
-> +	ASSERT_EQ(0, close(file1_fd));
-> +}
-> +
-> +TEST_F_FORK(layout1, chown)
-> +{
-> +	int ruleset_fd, file1_fd;
-> +	const char *file1 = file1_s1d1;
-> +	const char *file2 = file2_s1d1;
-> +	const char *file3 = file1_s2d1;
-> +	const char *dir1 = dir_s1d1;
-> +	const char *dir2 = dir_s2d1;
-> +	const struct rule rules[] = {
-> +		{
-> +			.path = file1,
-> +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE |
-> +				  LANDLOCK_ACCESS_FS_CHGRP,
-> +		},
-> +		{
-> +			.path = file2,
-> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
-> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
-> +		},
-> +		{
-> +			.path = dir1,
-> +			.access = ACCESS_RW,
-> +		},
-> +		{
-> +			.path = dir2,
-> +			.access = ACCESS_RW | LANDLOCK_ACCESS_FS_CHGRP,
-> +		},
-> +		{},
-> +	};
-> +	struct stat st;
-> +	uid_t uid;
-> +	gid_t gid;
-> +
-> +	ruleset_fd = create_ruleset(_metadata, ACCESS_RW | LANDLOCK_ACCESS_FS_CHGRP, rules);
-> +	ASSERT_LE(0, ruleset_fd);
-> +	file1_fd = open(file1, O_WRONLY | O_CLOEXEC);
-> +	ASSERT_LE(0, file1_fd);
-> +	/*
-> +	 * there is no CAP_CHOWN when the testcases framework setup,
-> +	 * and we cannot assume the testcases are run as root, to make
-> +	 * sure {f}chown syscall won't fail, get the original uid/gid and
-> +	 * use them in test_{f}chown.
-> +	 */
-> +	ASSERT_EQ(0, stat(dir1, &st));
-> +	uid = st.st_uid;
-> +	gid = st.st_gid;
-> +
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	ASSERT_EQ(0, close(ruleset_fd));
-> +
-> +	EXPECT_EQ(0, test_chown(file1, uid, gid));
-> +	EXPECT_EQ(0, test_fchown(file1_fd, uid, gid));
-> +	EXPECT_EQ(0, test_lchown(file1, uid, gid));
-> +	EXPECT_EQ(0, test_fchownat(AT_FDCWD, file1, uid, gid, 0));
-> +	EXPECT_EQ(EACCES, test_chown(file2, uid, gid));
-> +	EXPECT_EQ(EACCES, test_chown(dir1, uid, gid));
-> +	/* set CHOWN right on dir will only affect its context not dir itself*/
-> +	EXPECT_EQ(0, test_chown(file3, uid, gid));
-> +	EXPECT_EQ(EACCES, test_chown(dir2, uid, gid));
-> +	ASSERT_EQ(0, close(file1_fd));
-> +}
-> +
->  /* clang-format off */
->  FIXTURE(layout1_bind) {};
->  /* clang-format on */
+>  /* File hooks */
+>
+>  static inline access_mask_t get_file_access(const struct file *const file)
+> @@ -1230,6 +1269,8 @@ static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
+>  	LSM_HOOK_INIT(path_unlink, hook_path_unlink),
+>  	LSM_HOOK_INIT(path_rmdir, hook_path_rmdir),
+>  	LSM_HOOK_INIT(path_truncate, hook_path_truncate),
+> +	LSM_HOOK_INIT(path_chmod, hook_path_chmod),
+> +	LSM_HOOK_INIT(path_chown, hook_path_chown),
+>
+>  	LSM_HOOK_INIT(file_open, hook_file_open),
+>  };
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 82288f0e9e5e..7cdd7d467d12 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -18,7 +18,7 @@
+>  #define LANDLOCK_MAX_NUM_LAYERS		16
+>  #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+>
+> -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_TRUNCATE
+> +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_CHGRP
+>  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index f4d6fc7ed17f..469e0e11735c 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -129,7 +129,7 @@ static const struct file_operations ruleset_fops = {
+>  	.write = fop_dummy_write,
+>  };
+>
+> -#define LANDLOCK_ABI_VERSION 3
+> +#define LANDLOCK_ABI_VERSION 4
+>
+>  /**
+>   * sys_landlock_create_ruleset - Create a new ruleset
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> index 72cdae277b02..9f00582f639c 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -75,7 +75,7 @@ TEST(abi_version)
+>  	const struct landlock_ruleset_attr ruleset_attr = {
+>  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+>  	};
+> -	ASSERT_EQ(3, landlock_create_ruleset(NULL, 0,
+> +	ASSERT_EQ(4, landlock_create_ruleset(NULL, 0,
+>  					     LANDLOCK_CREATE_RULESET_VERSION));
+>
+>  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index debe2d9ea6cf..f513cd8d9d51 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -404,9 +404,11 @@ TEST_F_FORK(layout1, inval)
+>  	LANDLOCK_ACCESS_FS_EXECUTE | \
+>  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> -	LANDLOCK_ACCESS_FS_TRUNCATE)
+> +	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> +	LANDLOCK_ACCESS_FS_CHMOD | \
+> +	LANDLOCK_ACCESS_FS_CHGRP)
+>
+> -#define ACCESS_LAST LANDLOCK_ACCESS_FS_TRUNCATE
+> +#define ACCESS_LAST LANDLOCK_ACCESS_FS_CHGRP
+>
+>  #define ACCESS_ALL ( \
+>  	ACCESS_FILE | \
 > --
 > 2.17.1
 >
