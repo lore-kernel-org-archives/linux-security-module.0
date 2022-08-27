@@ -2,133 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2743C0502C
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Aug 2022 16:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA25C0502C
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Aug 2022 17:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233900AbiH0Q6F (ORCPT
+        id S234023AbiH0R25 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Aug 2022 12:58:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50566 "EHLO
+        Sat, 27 Aug 2022 13:28:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233884AbiH0Q6D (ORCPT
+        with ESMTP id S231362AbiH0R24 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Aug 2022 12:58:03 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C0D59250;
-        Sat, 27 Aug 2022 09:58:01 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id b5so5242273wrr.5;
-        Sat, 27 Aug 2022 09:58:01 -0700 (PDT)
+        Sat, 27 Aug 2022 13:28:56 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 418F212750;
+        Sat, 27 Aug 2022 10:28:55 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id m16so5280597wru.9;
+        Sat, 27 Aug 2022 10:28:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc;
-        bh=R8/bF5KHLjTt9GLEnmNnJrfmlxn+HrK5JbBv33yEUFg=;
-        b=W4DsfOUo7kKFGo7dVPXf0A9z/bKIKPbGdjgVun0Q2pPxb+6oybEGLtuAk5nqHI8Uql
-         xTBMozGCA9RRFp4mcWnafvbNyeGx1Q92B142WdY3yImSz9TKkdl7O08y7irg/aLAubrm
-         lcfvbV8UIJ76iHZRoo557DhYHLf5YQxzIdUl+oWyL5xUk+zWp2aIcWvjwcIV208biuaW
-         QQVdQwaNRRkiUndjx7EB6rsyCMF92jmD/7nO2WtEA8wF4C31swCdsshyo1DLiI53VX3t
-         rzDGhqO1l8A4csN92AcBM0+dhs0/mxvH0HOumnGOCl1S2xQyRMU0ZhSVUw0SwTZAMrIW
-         EVAg==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=Tw8vsPyMRa3R3vyQxE6x05r7Ol1hC2beKW2wM170gK0=;
+        b=DARyLpI4clUVQFS6URnQ6v1XSzMgNHah89p4LoVnw5A5KRr3FWo+lCxXltmwmjAt+y
+         mY1I0LAXsx70cYVFwllmDDOVEUZM6FMtf1gwmB4Q14vFJQ1UmNDM6YaDt/kt4L/yqNiK
+         yNkmOLube3uLs6YAiWJe6TxVs2zVX3PavhUqC3uF2vLeABg6WU9GNtHrjkP1akggULwe
+         LiUfbLkKXlT7nq5EJnUEgjm0vRt8WxRNQreDw3+xbGGZbSfzEjSdw+npWt0iHMS+eLwC
+         OsEv64Misu2v71PaLPLcniXeuwhNztYz29JrCH1JxP5UF2Z37YhFCZ8160xkr7iFZry+
+         xUAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc;
-        bh=R8/bF5KHLjTt9GLEnmNnJrfmlxn+HrK5JbBv33yEUFg=;
-        b=vtqzz7lCaxM2zcXy1erSPyXtTQpspd7GAQo906mGepeI0T7WiFW4XGz2Z70azrl6Xp
-         8993V4YyBaVe/OcS4BWXbnVcdV/ZfIYZjXl+K4iRtstFomBeohwhjZfN6yqdZVwTA40L
-         dynzb6j5q0XWl6wTSukludSdNb8mXBPbpGLxNCwEsgmELsklUBO5c1owoCx2BXttSh6M
-         R8xgGOKkFCbIY56a+EyURftIM5H21h1n7exD2aFqHPTNS7giUtgFF7mdYnHq7i7QPLrW
-         o68gu+ONtID5O/UROMiAhs4iwV8xs/VUseo0yFWe3KlK2ZcCbiKMGknW1lVPSUwA1zlp
-         ZJeQ==
-X-Gm-Message-State: ACgBeo3U39nZKgAhLsY/BifUIzAlitAPmYegQyX98gxGIHFJx0Dwm158
-        AlNPsVtAxvWmEGGRw37uUOYMsIv6+iE=
-X-Google-Smtp-Source: AA6agR6UjKEFuzwxXRJQ8K7HktrS0FN9VJTqTixMwsekgRMuos7HeIk6TxzL0FmvmlvvYedZB016Kg==
-X-Received: by 2002:adf:e0c3:0:b0:226:d598:85ee with SMTP id m3-20020adfe0c3000000b00226d59885eemr405190wri.589.1661619479950;
-        Sat, 27 Aug 2022 09:57:59 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=Tw8vsPyMRa3R3vyQxE6x05r7Ol1hC2beKW2wM170gK0=;
+        b=g8PaYE/PJf61YnPjC2q/wkyGKiB2FuS/O7074CV9Z32RncA0L4s5LLc9udtInU5yIr
+         Searhq1lKeMJ/1FnthxpYwTj80oQzMBVYJ441Q+YfiMEeNiG3Yy3IZ9LOz/JIVB+Zg1y
+         lPhB4+zXnFCx/EBi2+VpPtMfMYl+yxUWIxLOuzzZ8wyrLVYGYuPzh5g2qfosCnVBlZWR
+         S41EUU53RBQdlwNbCtUqhw5rx+kulm/RCE60hIFCrcV94wOL/3aJes+BEfXcKnMlV/ap
+         Brc0m4Pe3rY+4LkfoJIxJfwpOSsuEUXF/mqRZg0rwaUyafudQ78su6yo7hGNBdQAjqwV
+         epWQ==
+X-Gm-Message-State: ACgBeo2kcmywXDrVCovBQCnuxZUQP4THrOCafL8kyn1qM1ofJE2bnmes
+        9HprjQ7SMfAw06CQ5lNAu6k=
+X-Google-Smtp-Source: AA6agR48v0VW6uxASmjaSFpX23fGT5NDeizRXy5KHmPfntmBadyasFjD38jgNRfYaDjMPdMq8m2ZgQ==
+X-Received: by 2002:a5d:6d88:0:b0:222:c8e2:f5fb with SMTP id l8-20020a5d6d88000000b00222c8e2f5fbmr2660041wrs.35.1661621333761;
+        Sat, 27 Aug 2022 10:28:53 -0700 (PDT)
 Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id x3-20020a05600c420300b003a5bd9448e5sm3111585wmh.28.2022.08.27.09.57.58
+        by smtp.gmail.com with ESMTPSA id d4-20020a056000114400b0021d6924b777sm2747160wrx.115.2022.08.27.10.28.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Aug 2022 09:57:59 -0700 (PDT)
-Date:   Sat, 27 Aug 2022 18:57:57 +0200
+        Sat, 27 Aug 2022 10:28:53 -0700 (PDT)
+Date:   Sat, 27 Aug 2022 19:28:51 +0200
 From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     xiujianfeng <xiujianfeng@huawei.com>
+To:     Xiu Jianfeng <xiujianfeng@huawei.com>
 Cc:     mic@digikod.net, paul@paul-moore.com, jmorris@namei.org,
         serge@hallyn.com, shuah@kernel.org, corbet@lwn.net,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-doc@vger.kernel.org
-Subject: Re: [PATCH -next 3/5] landlock/selftests: add selftests for chmod
- and chown
-Message-ID: <YwpNFWB9ELDLNLA1@nuc>
-References: <20220822114701.26975-1-xiujianfeng@huawei.com>
- <20220822114701.26975-4-xiujianfeng@huawei.com>
- <YwPYbY/HbHTOv7Ux@nuc>
- <64b93d8e-f2b0-31c8-0736-3194053de687@huawei.com>
+Subject: Re: [PATCH -next v2 6/6] landlock: update chmod and chown support in
+ document
+Message-ID: <YwpUU+DZKfD/lV/g@nuc>
+References: <20220827111215.131442-1-xiujianfeng@huawei.com>
+ <20220827111215.131442-7-xiujianfeng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <64b93d8e-f2b0-31c8-0736-3194053de687@huawei.com>
+In-Reply-To: <20220827111215.131442-7-xiujianfeng@huawei.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Aug 27, 2022 at 07:14:30PM +0800, xiujianfeng wrote:
-> Hi，
+On Sat, Aug 27, 2022 at 07:12:15PM +0800, Xiu Jianfeng wrote:
+> update LANDLOCK_ACCESS_FS_{CHMOD, CHGRP} support and add abi change
+> in the document.
 >
-> 在 2022/8/23 3:26, Günther Noack 写道:
-> > On Mon, Aug 22, 2022 at 07:46:59PM +0800, Xiu Jianfeng wrote:
-> > > +TEST_F_FORK(layout1, unhandled_chmod)
-> > > +{
-> > > +	const struct rule rules[] = {
-> > > +		{
-> > > +			.path = file2_s3d1,
-> > > +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
-> > > +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
-> > > +		},
-> > > +		{
-> > > +			.path = file3_s3d1,
-> > > +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
-> > > +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
-> > > +		},
-> > > +		{},
-> > > +	};
-> > > +	const int ruleset_fd =
-> > > +		create_ruleset(_metadata, ACCESS_RW, rules);
-> > > +
-> > > +	ASSERT_LE(0, ruleset_fd);
-> > > +	enforce_ruleset(_metadata, ruleset_fd);
-> > > +	ASSERT_EQ(0, close(ruleset_fd));
-> > > +
-> > > +	ASSERT_EQ(0, test_chmod(file2_s3d1));
-> > > +	ASSERT_EQ(0, test_fchmod(file2_s3d1));
-> > > +	ASSERT_EQ(0, test_chmod(file3_s3d1));
-> > > +	ASSERT_EQ(0, test_chmod(dir_s3d1));
-> > > +}
-> >
-> > I missed it in the previous mail:
-> >
-> > There are also the chown variants lchown() and fchownat(), as well as
-> > the chmod variant fchmodat(), which might be interesting to test,
-> > especially the symlink scenarios.
-> >
-> > fchmodat() has a AT_SYMLINK_NOFOLLOW flag which does the chmod
-> > equivalent to lchown().
-> >
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> ---
+>  Documentation/userspace-api/landlock.rst | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 >
-> man fchmodat shows as follows:
-> ...
-> AT_SYMLINK_NOFOLLOW
-> If pathname is a symbolic link, do not dereference it: instead operate on
-> the link itself. This flag is not currently implemented.
-> ...
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> index 2509c2fbf98f..0e97a7998fa1 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -61,7 +61,9 @@ the need to be explicit about the denied-by-default access rights.
+>              LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+>              LANDLOCK_ACCESS_FS_MAKE_SYM |
+>              LANDLOCK_ACCESS_FS_REFER |
+> -            LANDLOCK_ACCESS_FS_TRUNCATE,
+> +            LANDLOCK_ACCESS_FS_TRUNCATE |
+> +            LANDLOCK_ACCESS_FS_CHMOD |
+> +            LANDLOCK_ACCESS_FS_CHGRP
+>      };
 >
-> so I suppose this can not be test. Please correct me if I am wrong.
+>  Because we may not know on which kernel version an application will be
+> @@ -90,6 +92,11 @@ the ABI.
+>      case 2:
+>              /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
+>              ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+> +            __attribute__((fallthrough));
+> +    case 3:
+> +            /* Removes LANDLOCK_ACCESS_FS_{CHMOD, CHGRP} for ABI < 4 */
+> +            ruleset_attr.handled_access_fs &= ~(LANDLOCK_ACCESS_FS_CHMOD |
+> +                                                LANDLOCK_ACCESS_FS_CHGRP);
+>      }
+>
+>  This enables to create an inclusive ruleset that will contain our rules.
 
-Good point - I didn't realize that AT_SYMLINK_NOFOLLOW was not
-implemented for fchmodat. In that case, this only applies to lchown.
-
-—Günther
+There is a sentence just above this code example that neesd updating as well.
 
 --
