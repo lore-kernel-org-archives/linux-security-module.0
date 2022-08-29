@@ -2,203 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E82ECAAD2
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Aug 2022 15:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC97ECAAD5
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Aug 2022 16:01:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229583AbiH2PdV (ORCPT
+        id S229900AbiH2QBM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Aug 2022 11:33:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60250 "EHLO
+        Mon, 29 Aug 2022 12:01:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbiH2PdT (ORCPT
+        with ESMTP id S230176AbiH2QBK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Aug 2022 11:33:19 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8987E001;
-        Mon, 29 Aug 2022 08:33:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2D287B810E2;
-        Mon, 29 Aug 2022 15:33:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D37C433D7;
-        Mon, 29 Aug 2022 15:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661787194;
-        bh=jzNzgbkp8S7F5ShJoRQg4sI4IZkepolVYyaXxRiHuaU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ByRHXZZIPHw1GAtaglSfS40oiwbi3+y+Qo+KygaRYVKAAWamjVRSzpM0+P7rovGiV
-         W2dKwScf6KwNN7nKXRugLMCFD5/wZL8+FZHCOiM4wyFgkUlrxTr9XSWexM9LZ9nnTj
-         35ff9NAvlOEdAT6GycEsYNY9RV4kdgFVbkP9Ll6z1gPX1koy3JruNQFOWIU8LB8eo7
-         2FFQx9wTBfh2wWb4S/d8koZZyazHDPw2TRG36g+2Ckd5XNdf8mf0upqDTETfjFSWmc
-         2JUat1koBEYEk4LmBaJKAlI6K7KKDyGl92OI3/lwI8g4ZPPkwd9Y4zsnK3oDjTJF2u
-         gEhyxb0iFW/Bw==
-Date:   Mon, 29 Aug 2022 17:33:04 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Song Liu <songliubraving@fb.com>, Paul Moore <paul@paul-moore.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Frederick Lawler <fred@cloudflare.com>,
-        KP Singh <kpsingh@kernel.org>,
-        "revest@chromium.org" <revest@chromium.org>,
-        "jackmanb@chromium.org" <jackmanb@chromium.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
-        Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
-        "eparis@parisplace.org" <eparis@parisplace.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        "kernel-team@cloudflare.com" <kernel-team@cloudflare.com>,
-        "cgzones@googlemail.com" <cgzones@googlemail.com>,
-        "karl@bigbadwolfsecurity.com" <karl@bigbadwolfsecurity.com>,
-        "tixxdz@gmail.com" <tixxdz@gmail.com>
-Subject: Re: [PATCH v5 0/4] Introduce security_create_user_ns()
-Message-ID: <20220829153304.nvhakybpkj7erpuc@wittgenstein>
-References: <20220818140521.GA1000@mail.hallyn.com>
- <CAHC9VhRqBxtV04ARQFPWpMf1aFZo0HP_HiJ+8VpXAT-zXF6UXw@mail.gmail.com>
- <20220819144537.GA16552@mail.hallyn.com>
- <CAHC9VhSZ0aaa3k3704j8_9DJvSNRy-0jfXpy1ncs2Jmo8H0a7g@mail.gmail.com>
- <875yigp4tp.fsf@email.froward.int.ebiederm.org>
- <CAHC9VhTN09ZabnQnsmbSjKgb8spx7_hkh4Z+mq5ArQmfPcVqAg@mail.gmail.com>
- <0D14C118-E644-4D7B-84C0-CA7752DC0605@fb.com>
- <20220826152445.GB12466@mail.hallyn.com>
- <25C89E75-A900-42C7-A8E4-2800AA2E3387@fb.com>
- <20220826210039.GA15952@mail.hallyn.com>
+        Mon, 29 Aug 2022 12:01:10 -0400
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96BA74345
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Aug 2022 09:01:05 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MGZt73sLWzMqD9B;
+        Mon, 29 Aug 2022 18:01:03 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MGZt630S8zlh8V4;
+        Mon, 29 Aug 2022 18:01:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1661788863;
+        bh=UDehGM8zok+fb4aL9IKQsjADGXsUJoA7AfyxVK4RScI=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=UljJ9FrIJnA4nbsJvP/j21pbDxFUUDdLhmks9Cj0wPynT87BtPv5PPBr7AI+9BGzf
+         7ub5XvC/972M0toGVuazsbSfU7iaoDsgNJipkBR1ZcCsRNGWgn4GnJtlLR/7BlV2sC
+         QyyiRc3PRpqjk6W3cJQwufU2zHjI9yHG9YcbN/2A=
+Message-ID: <de4620d2-3268-b3cc-71dd-acbbd204435e@digikod.net>
+Date:   Mon, 29 Aug 2022 18:01:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220826210039.GA15952@mail.hallyn.com>
+User-Agent: 
+Content-Language: en-US
+To:     xiujianfeng <xiujianfeng@huawei.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        shuah@kernel.org, corbet@lwn.net,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20220827111215.131442-1-xiujianfeng@huawei.com>
+ <20220827111215.131442-4-xiujianfeng@huawei.com> <Ywpw66EYRDTQIyTx@nuc>
+ <de8834b6-0ff2-1a81-f2d3-af33103e9942@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH -next v2 3/6] landlock: add chmod and chown support
+In-Reply-To: <de8834b6-0ff2-1a81-f2d3-af33103e9942@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 26, 2022 at 04:00:39PM -0500, Serge Hallyn wrote:
-> On Fri, Aug 26, 2022 at 05:00:51PM +0000, Song Liu wrote:
-> > 
-> > 
-> > > On Aug 26, 2022, at 8:24 AM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > 
-> > > On Thu, Aug 25, 2022 at 09:58:46PM +0000, Song Liu wrote:
-> > >> 
-> > >> 
-> > >>> On Aug 25, 2022, at 12:19 PM, Paul Moore <paul@paul-moore.com> wrote:
-> > >>> 
-> > >>> On Thu, Aug 25, 2022 at 2:15 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> > >>>> Paul Moore <paul@paul-moore.com> writes:
-> > >>>>> On Fri, Aug 19, 2022 at 10:45 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > >>>>>> I am hoping we can come up with
-> > >>>>>> "something better" to address people's needs, make everyone happy, and
-> > >>>>>> bring forth world peace.  Which would stack just fine with what's here
-> > >>>>>> for defense in depth.
-> > >>>>>> 
-> > >>>>>> You may well not be interested in further work, and that's fine.  I need
-> > >>>>>> to set aside a few days to think on this.
-> > >>>>> 
-> > >>>>> I'm happy to continue the discussion as long as it's constructive; I
-> > >>>>> think we all are.  My gut feeling is that Frederick's approach falls
-> > >>>>> closest to the sweet spot of "workable without being overly offensive"
-> > >>>>> (*cough*), but if you've got an additional approach in mind, or an
-> > >>>>> alternative approach that solves the same use case problems, I think
-> > >>>>> we'd all love to hear about it.
-> > >>>> 
-> > >>>> I would love to actually hear the problems people are trying to solve so
-> > >>>> that we can have a sensible conversation about the trade offs.
-> > >>> 
-> > >>> Here are several taken from the previous threads, it's surely not a
-> > >>> complete list, but it should give you a good idea:
-> > >>> 
-> > >>> https://lore.kernel.org/linux-security-module/CAHC9VhQnPAsmjmKo-e84XDJ1wmaOFkTKPjjztsOa9Yrq+AeAQA@mail.gmail.com/
-> > >>> 
-> > >>>> As best I can tell without more information people want to use
-> > >>>> the creation of a user namespace as a signal that the code is
-> > >>>> attempting an exploit.
-> > >>> 
-> > >>> Some use cases are like that, there are several other use cases that
-> > >>> go beyond this; see all of our previous discussions on this
-> > >>> topic/patchset.  As has been mentioned before, there are use cases
-> > >>> that require improved observability, access control, or both.
-> > >>> 
-> > >>>> As such let me propose instead of returning an error code which will let
-> > >>>> the exploit continue, have the security hook return a bool.  With true
-> > >>>> meaning the code can continue and on false it will trigger using SIGSYS
-> > >>>> to terminate the program like seccomp does.
-> > >>> 
-> > >>> Having the kernel forcibly exit the process isn't something that most
-> > >>> LSMs would likely want.  I suppose we could modify the hook/caller so
-> > >>> that *if* an LSM wanted to return SIGSYS the system would kill the
-> > >>> process, but I would want that to be something in addition to
-> > >>> returning an error code like LSMs normally do (e.g. EACCES).
-> > >> 
-> > >> I am new to user_namespace and security work, so please pardon me if
-> > >> anything below is very wrong. 
-> > >> 
-> > >> IIUC, user_namespace is a tool that enables trusted userspace code to 
-> > >> control the behavior of untrusted (or less trusted) userspace code. 
-> > > 
-> > > No.  user namespaces are not a way for more trusted code to control the
-> > > behavior of less trusted code.
-> > 
-> > Hmm.. In this case, I think I really need to learn more. 
-> > 
-> > Thanks for pointing out my misunderstanding.
-> 
-> (I thought maybe Eric would chime in with a better explanation, but I'll
-> fill it in for now :)
-> 
-> One of the main goals of user namespaces is to allow unprivileged users
-> to do things like chroot and mount, which are very useful development
-> tools, without needing admin privileges.  So it's almost the opposite
-> of what you said: rather than to enable trusted userspace code to control
-> the behavior of less trusted code, it's to allow less privileged code to
-> do things which do not affect other users, without having to assume *more*
-> privilege.
-> 
-> To be precise, the goals were:
-> 
-> 1. uid mapping - allow two users to both "use uid 500" without conflicting
-> 2. provide (unprivileged) users privilege over their own resources
-> 3. absolutely no extra privilege over other resources
-> 4. be able to nest
-> 
-> While (3) was technically achieved, the problem we have is that
-> (2) provides unprivileged users the ability to exercise kernel code
-> which they previously could not.
 
-The consequence of the refusal to give users any way to control whether
-or not user namespaces are available to unprivileged users is that a
-non-significant number of distros still carry the same patch for about
-10 years now that adds an unprivileged_userns_clone sysctl to restrict
-them to privileged users. That includes current Debian and Archlinux btw.
+On 29/08/2022 03:17, xiujianfeng wrote:
+> 
+> Hi,
+> 
+> 在 2022/8/28 3:30, Günther Noack 写道:
+>> Hello!
+>>
+>> the mapping between Landlock rights to LSM hooks is now as follows in
+>> your patch set:
+>>
+>> * LANDLOCK_ACCESS_FS_CHMOD controls hook_path_chmod
+>> * LANDLOCK_ACCESS_FS_CHGRP controls hook_path_chown
+>>     (this hook can restrict both the chown(2) and chgrp(2) syscalls)
+>>
+>> Is this the desired mapping?
+>>
+>> The previous discussion I found on the topic was in
+>>
+>> [1] https://lore.kernel.org/all/5873455f-fff9-618c-25b1-8b6a4ec94368@digikod.net/
+>> [2] https://lore.kernel.org/all/b1d69dfa-6d93-2034-7854-e2bc4017d20e@schaufler-ca.com/
+>> [3] https://lore.kernel.org/all/c369c45d-5aa8-3e39-c7d6-b08b165495fd@digikod.net/
+>>
+>> In my understanding the main arguments were the ones in [2] and [3].
+>>
+>> There were no further responses to [3], so I was under the impression
+>> that we were gravitating towards an approach where the
+>> file-metadata-modification operations were grouped more coarsely?
+>>
+>> For example with the approach suggested in [3], which would be to
+>> group the operations coarsely into (a) one Landlock right for
+>> modifying file metadata that is used in security contexts, and (b) one
+>> Landlock right for modifying metadata that was used in non-security
+>> contexts. That would mean that there would be:
+>>
+>> (a) LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES to control the
+>> following operations:
+>>     * chmod(2)-variants through hook_path_chmod,
+>>     * chown(2)-variants and chgrp(2)-variants through hook_path_chown,
+>>     * setxattr(2)-variants and removexattr(2)-variants for extended
+>>       attributes that are not "user extended attributes" as described in
+>>       xattr(7) through hook_inode_setxattr and hook_inode_removexattr
+>>
+>> (b) LANDLOCK_ACCESS_FS_MODIFY_NON_SECURITY_ATTRIBUTES to control the
+>> following operations:
+>>     * utimes(2) and other operations for setting other non-security
+>>       sensitive attributes, probably through hook_inode_setattr(?)
+>>     * xattr modifications like above, but for the "user extended
+>>       attributes", though hook_inode_setxattr and hook_inode_removexattr
+>>
+>> In my mind, this would be a sensible grouping, and it would also help
+>> to decouple the userspace-exposed API from the underlying
+>> implementation, as Casey suggested to do in [2].
+>>
+>> Specifically for this patch set, if you want to use this grouping, you
+>> would only need to add one new Landlock right
+>> (LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES) as described above
+>> under (a) (and maybe we can find a shorter name for it... :))?
+>>
+>> Did I miss any operations here that would be necessary to restrict?
+>>
+>> Would that make sense to you? Xiu, what is your opinion on how this
+>> should be grouped? Do you have use cases in mind where a more
+>> fine-grained grouping would be required?
+> 
+> I apologize I may missed that discussion when I prepared v2:(
+> 
+> Yes, agreed, this grouping is more sensible and resonnable. so in this
+> patchset only one right will be added, and I suppose the first commit
+> which expand access_mask_t to u32 can be droped.
+> 
+>>
+>> —Günther
+>>
+>> P.S.: Regarding utimes: The hook_inode_setattr hook *also* gets called
+>> on a variety on attribute changes including file ownership, file size
+>> and file mode, so it might potentially interact with a bunch of other
+>> existing Landlock rights. Maybe that is not the right approach. In any
+>> case, it seems like it might require more thinking and it might be
+>> sensible to do that in a separate patch set IMHO.
+> 
+> Thanks for you reminder, that seems it's more complicated to support
+> utimes, so I think we'd better not support it in this patchset.
 
-The LSM hook is a simple way to allow administrators to control this and
-will allow user namespaces to be enabled in scenarios where they
-would otherwise not be accepted precisely because they are available to
-unprivileged users.
+The issue with this approach is that it makes it impossible to properly 
+group such access rights. Indeed, to avoid inconsistencies and much more 
+complexity, we cannot extend a Landlock access right once it is defined.
 
-I fully understand the motivation and usefulness in unprivileged
-scenarios but it's an unfounded fear that giving users the ability to
-control user namespace creation via an LSM hook will cause proliferation
-of setuid binaries (Ignoring for a moment that any fully unprivileged
-container with useful idmappings has to rely on the new{g,u}idmap setuid
-binaries to setup useful mappings anyway.) or decrease system safety let
-alone cause regressions (Which I don't think is an applicable term here
-at all.). Distros that have unprivileged user namespaces turned on by
-default are extremely unlikely to switch to an LSM profile that turns
-them off and distros that already turn them off will continue to turn
-them off whether or not that LSM hook is available.
+We also need to consider that file ownership and permissions have a 
+default (e.g. umask), which is also a way to set them. How to 
+consistently manage that? What if the application wants to protect its 
+files with chmod 0400?
 
-It's much more likely that workloads that want to minimize their attack
-surface while still getting the benefits of user namespaces for e.g.
-service isolation will feel comfortable enabling them for the first time
-since they can control them via an LSM profile.
+About the naming, I think we can start with:
+- LANDLOCK_ACCESS_FS_READ_METADATA (read any file/dir metadata);
+- LANDLOCK_ACCESS_FS_WRITE_SAFE_METADATA: change file times, user xattr;
+- LANDLOCK_ACCESS_FS_WRITE_UNSAFE_METADATA: interpreted by the kernel 
+(could change non-Landlock DAC or MAC, which could be considered as a 
+policy bypass; or other various xattr that might be interpreted by 
+filesystems), this should be denied most of the time.
