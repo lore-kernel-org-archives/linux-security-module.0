@@ -2,162 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC832C6FA81
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Aug 2022 17:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670D4ECAAD8
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Aug 2022 21:02:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231423AbiH2RHE (ORCPT
+        id S229730AbiH2VCq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Aug 2022 13:07:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43030 "EHLO
+        Mon, 29 Aug 2022 17:02:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231331AbiH2RFg (ORCPT
+        with ESMTP id S229711AbiH2VCn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Aug 2022 13:05:36 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99DB9C230;
-        Mon, 29 Aug 2022 10:04:36 -0700 (PDT)
-Received: from fraeml702-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4MGcGq0Xjgz688y7;
-        Tue, 30 Aug 2022 01:04:03 +0800 (CST)
-Received: from lhrpeml500004.china.huawei.com (7.191.163.9) by
- fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.31; Mon, 29 Aug 2022 19:04:34 +0200
-Received: from mscphis00759.huawei.com (10.123.66.134) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 29 Aug 2022 18:04:33 +0100
-From:   Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-To:     <mic@digikod.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-        <hukeping@huawei.com>, <anton.sirazetdinov@huawei.com>
-Subject: [PATCH v7 16/18] seltests/landlock: add invalid input data test
-Date:   Tue, 30 Aug 2022 01:03:59 +0800
-Message-ID: <20220829170401.834298-17-konstantin.meskhidze@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220829170401.834298-1-konstantin.meskhidze@huawei.com>
-References: <20220829170401.834298-1-konstantin.meskhidze@huawei.com>
+        Mon, 29 Aug 2022 17:02:43 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A3A6923F4
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Aug 2022 14:02:41 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id v26so2616027lfd.10
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Aug 2022 14:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc;
+        bh=Y0O6W1EIFYUAhWdC9TPBVXlgaxDiB7GTNtP+edapuQo=;
+        b=z1OikuueYS/w0Ms/g7l8XX6nantHAtBYuktlpYNed16wdBkvtNYhV/2T37j9OnvEGV
+         62aCxWPpRQ0M9/SHtnEOWLqp5cbpAMwuzazHYhP492gVBhJe6a10j2aO8dC88chrH4qL
+         2c6itrZ3HONN0732sHty7A8HNTLifQEHne3XXeFn1sP+mPq4HPC4W6rPeQyWpeu1D7fT
+         R470oPcWzvXdrerftAyvbtERdONXBDRAU7RgNu+FhLKoCgtkuBb4LVEOFeWSQi5IuS4O
+         ZojnVDCCxdj6VuamYqz65Cz+gnzt+Q249o+EohlopMTY79KHsxxlILesdw8wSrXyl5Cc
+         WI0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc;
+        bh=Y0O6W1EIFYUAhWdC9TPBVXlgaxDiB7GTNtP+edapuQo=;
+        b=2QjiWiG2dUKmy/lsNISYV6lS/FWG04cof0hrY1CRJ51D9JIR4B3CqJq+LlLk0pilnR
+         3EfDAmUTfdiY3Rl6IqQN6HcReg4AtwtNdwKUT+VAmSN6568iL3rSOH9F6dOlpD1mm5yO
+         FxURpF/ZiYWfn4xicJExrF4vjloaEZtHTNAsehT6rytDssQFuZ/KSoG+9LVKkNjsbNZT
+         s05C/mxpk7UYPIpbz7jjcNeSuMNiJ719QyP9El39sEmu2FOCrHLgz80TPk8Dhs+O68HB
+         YW0NQN3KQtow6Q1DB8PZ3/eCOopTkqmy8fxWc/PLd41sI4n4U6wb4/8+0GrFhvvx0coV
+         oifw==
+X-Gm-Message-State: ACgBeo1RsIWRsjwbwmP5RYNT3F9oBw4XOa5WoUnSIfEz6eE0Sg4+dHeT
+        CU0DKJupB/rnp6hPOvDtINMJn06Bg405RjhtWK0igeMbrPqM
+X-Google-Smtp-Source: AA6agR4AO1xvVTU52DvWOJGOcBJoURJDMNN0z6GXu4M3uNgUvRBfyu8JFpUs7A2QRuiTLLbJaIKbdwTImgBctS9F57g=
+X-Received: by 2002:a05:6512:b1c:b0:492:8835:1e4c with SMTP id
+ w28-20020a0565120b1c00b0049288351e4cmr6444944lfu.442.1661806959576; Mon, 29
+ Aug 2022 14:02:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.123.66.134]
-X-ClientProxiedBy: mscpeml100002.china.huawei.com (7.188.26.75) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 29 Aug 2022 17:02:28 -0400
+Message-ID: <CAHC9VhQu7vuXMqpTzdZp2+M4pBZXDdWs7FtWdEt_3abW-ArUDA@mail.gmail.com>
+Subject: [GIT PULL] LSM fixes for v6.0 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch adds rules with invalid user space supplied data:
-    - out of range ruleset attribute;
-    - unhandled allowed access;
-    - zero port value;
-    - zero access value;
+Linus,
 
-Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
----
+Four patches to add SELinux and Smack controls to the io_uring
+IORING_OP_URING_CMD.  Three of these patches are necessary as without
+them the IORING_OP_URING_CMD remains outside the purview of the LSMs
+(Luis' LSM patch, Casey's Smack patch, and my SELinux patch).  These
+patches have been discussed at length with the io_uring folks, and
+Jens has given his thumbs-up on the relevant patches (see the commit
+descriptions).  There is one patch that is not strictly necessary, but
+it makes testing much easier and is very trivial: the /dev/null
+IORING_OP_URING_CMD patch.  If you have a problem accepting the
+/dev/null patch in a rcX release, let me know and I'll remove it.
 
-Changes since v6:
-* Adds invalid ruleset attribute test.
+As of earlier today the tag merged cleanly with your tree, so there
+should be no surprises.  Please merge for v6.0.
 
-Changes since v5:
-* Formats code with clang-format-14.
+-Paul
 
-Changes since v4:
-* Refactors code with self->port variable.
-
-Changes since v3:
-* Adds inval test.
-
----
- tools/testing/selftests/landlock/net_test.c | 66 ++++++++++++++++++++-
- 1 file changed, 65 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index a93224d1521b..067ba45f58a5 100644
---- a/tools/testing/selftests/landlock/net_test.c
-+++ b/tools/testing/selftests/landlock/net_test.c
-@@ -26,9 +26,12 @@
-
- #define IP_ADDRESS "127.0.0.1"
-
--/* Number pending connections queue to be hold */
-+/* Number pending connections queue to be hold. */
- #define BACKLOG 10
-
-+/* Invalid attribute, out of landlock network access range. */
-+#define LANDLOCK_INVAL_ATTR 7
-+
- FIXTURE(socket)
- {
- 	uint port[MAX_SOCKET_NUM];
-@@ -719,4 +722,65 @@ TEST_F(socket, ruleset_expanding)
- 	/* Closes socket 1. */
- 	ASSERT_EQ(0, close(sockfd_1));
- }
-+
-+TEST_F(socket, inval)
-+{
-+	struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP
-+	};
-+	struct landlock_ruleset_attr ruleset_attr_inval = {
-+		.handled_access_net = LANDLOCK_INVAL_ATTR
-+	};
-+	struct landlock_net_service_attr net_service_1 = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
-+				  LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+		.port = self->port[0],
-+	};
-+	struct landlock_net_service_attr net_service_2 = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.port = 0,
-+	};
-+	struct landlock_net_service_attr net_service_3 = {
-+		.allowed_access = 0,
-+		.port = self->port[1],
-+	};
-+	struct landlock_net_service_attr net_service_4 = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.port = self->port[2],
-+	};
-+
-+	/* Checks invalid ruleset attribute. */
-+	const int ruleset_fd_inv = landlock_create_ruleset(
-+		&ruleset_attr_inval, sizeof(ruleset_attr_inval), 0);
-+	ASSERT_EQ(-1, ruleset_fd_inv);
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	/* Gets ruleset. */
-+	const int ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	/* Checks unhandled allowed_access. */
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+					&net_service_1, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	/* Checks zero port value. */
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+					&net_service_2, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	/* Checks zero access value. */
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+					&net_service_3, 0));
-+	ASSERT_EQ(ENOMSG, errno);
-+
-+	/* Adds with legitimate values. */
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-+				       &net_service_4, 0));
-+
-+	/* Enforces the ruleset. */
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+}
- TEST_HARNESS_MAIN
 --
-2.25.1
+The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
+ Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+   tags/lsm-pr-20220829
+
+for you to fetch changes up to dd9373402280cf4715fdc8fd5070f7d039e43511:
+
+ Smack: Provide read control for io_uring_cmd
+   (2022-08-26 14:56:35 -0400)
+
+----------------------------------------------------------------
+lsm/stable-6.0 PR 20220829
+
+----------------------------------------------------------------
+Casey Schaufler (1):
+     Smack: Provide read control for io_uring_cmd
+
+Luis Chamberlain (1):
+     lsm,io_uring: add LSM hooks for the new uring_cmd file op
+
+Paul Moore (2):
+     selinux: implement the security_uring_cmd() LSM hook
+     /dev/null: add IORING_OP_URING_CMD support
+
+drivers/char/mem.c                  |  6 ++++++
+include/linux/lsm_hook_defs.h       |  1 +
+include/linux/lsm_hooks.h           |  3 +++
+include/linux/security.h            |  5 +++++
+io_uring/uring_cmd.c                |  5 +++++
+security/security.c                 |  4 ++++
+security/selinux/hooks.c            | 24 ++++++++++++++++++++++
+security/selinux/include/classmap.h |  2 +-
+security/smack/smack_lsm.c          | 32 ++++++++++++++++++++++++++++++
+9 files changed, 81 insertions(+), 1 deletion(-)
+
+-- 
+paul-moore.com
