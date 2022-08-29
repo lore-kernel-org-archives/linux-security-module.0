@@ -2,106 +2,282 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAD2C54EE9
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Aug 2022 12:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF92ECAAD4
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Aug 2022 13:11:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230142AbiH2Mtl (ORCPT
+        id S229784AbiH2NL2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Aug 2022 08:49:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37384 "EHLO
+        Mon, 29 Aug 2022 09:11:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbiH2MsX (ORCPT
+        with ESMTP id S229552AbiH2NLJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Aug 2022 08:48:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AB829C87;
-        Mon, 29 Aug 2022 05:33:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 71332B80EF3;
-        Mon, 29 Aug 2022 12:33:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E524C433D7;
-        Mon, 29 Aug 2022 12:33:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661776423;
-        bh=BVx7YbyPMDfrYRtpBOz6+GKhJ46zqHQZiBFkpP2hkz4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W5uumRxhoH24u+dxOE5PNQTXrfWOPCpXPp+ngZXWVHgFu2b67Ylpp9CB+nRe/3YBf
-         TUBkgCelx4d2fAo4Q74WyvGM43PpeZdKktdwXbQkwCoceJlc+tZnov1wPtznqzGNMQ
-         xiKV9SnGt0gOlj3HQrgx3vlYItWCRrYAuAWcybqBVUWVlOjCwQJO5qSZq4s3x/CBg1
-         ENSSVnwg/ToTp8H1Zi9maNgrcPoU0qyOpvci5nodSdsRSpQ0w9bN2Y6AadQojgQmbo
-         8dkVhnGnS3YvvWz8hmHY87/o616yHrBMKbhd0juM0AFqRGVZxFOHhTHRw+tsOPYKFF
-         GXjqzfKRIEqdw==
-Date:   Mon, 29 Aug 2022 15:33:34 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
-        corbet@lwn.net, dhowells@redhat.com, rostedt@goodmis.org,
-        mingo@redhat.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, shuah@kernel.org, bpf@vger.kernel.org,
-        linux-doc@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v14 04/10] KEYS: Move KEY_LOOKUP_ to include/linux/key.h
- and add flags check function
-Message-ID: <YwyyHr0udrOIy7IX@kernel.org>
-References: <acae432697e854748d9a44c732ec8cab807d9d46.camel@huaweicloud.com>
- <20220826091228.1701185-1-roberto.sassu@huaweicloud.com>
- <6d85d7b1f0c2341698e88bad025bd6e0b34c7666.camel@huaweicloud.com>
- <YwroKjo7IkQDepp5@kernel.org>
- <YwrpL9b3NXtjnPru@kernel.org>
- <cead9f6ad77a66425324a880bd1df389fe258d40.camel@huaweicloud.com>
+        Mon, 29 Aug 2022 09:11:09 -0400
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ae])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F104A33379
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Aug 2022 06:10:32 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MGW516TZ3zMrn0t;
+        Mon, 29 Aug 2022 15:10:13 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MGW513Ttjzlh8TN;
+        Mon, 29 Aug 2022 15:10:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1661778613;
+        bh=+rv4+wg1hZWacpkN0Nxa2pPMiaAyuhGHyTIiCN2k9K0=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=BCFyVSWsPNNvp2U41XDQ2BGKkaspbjd8K25+nPLTl8Z8STnnhbIgU4PJDMuubWoXd
+         TbHkVxo5oUWrjAmWITCfLU+KwPesuGjaZmvWMen6K3vGPEsFuYE5FLSpJgFgka6YSn
+         QVG6EDJ4oaCuExRa1SZEPcf8ip+xC0ojKwM3zV6k=
+Message-ID: <f11b7754-b879-20be-0b22-94d94a68de71@digikod.net>
+Date:   Mon, 29 Aug 2022 15:10:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cead9f6ad77a66425324a880bd1df389fe258d40.camel@huaweicloud.com>
+User-Agent: 
+Content-Language: en-US
+To:     "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, anton.sirazetdinov@huawei.com
+References: <20220621082313.3330667-1-konstantin.meskhidze@huawei.com>
+ <4c57a0c2-e207-10d6-c73d-bcda66bf3963@digikod.net>
+ <6691d91f-c03b-30fa-2fa0-d062b3b234b9@digikod.net>
+ <86db9124-ea11-0fa5-9dff-61744b2f80b4@digikod.net>
+ <8eb6509f-8e79-d75c-08f4-80f52c0a26e7@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v6 00/17] Network support for Landlock
+In-Reply-To: <8eb6509f-8e79-d75c-08f4-80f52c0a26e7@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 29, 2022 at 09:25:05AM +0200, Roberto Sassu wrote:
-> On Sun, 2022-08-28 at 07:03 +0300, Jarkko Sakkinen wrote:
-> > On Sun, Aug 28, 2022 at 06:59:41AM +0300, Jarkko Sakkinen wrote:
-> > > On Fri, Aug 26, 2022 at 11:22:54AM +0200, Roberto Sassu wrote:
-> > > > On Fri, 2022-08-26 at 11:12 +0200, Roberto Sassu wrote:
-> > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > 
-> > > > > In preparation for the patch that introduces the
-> > > > > bpf_lookup_user_key() eBPF
-> > > > > kfunc, move KEY_LOOKUP_ definitions to include/linux/key.h, to
-> > > > > be
-> > > > > able to
-> > > > > validate the kfunc parameters.
-> > > > > 
-> > > > > Also, introduce key_lookup_flags_valid() to check if the caller
-> > > > > set
-> > > > > in the
-> > > > > argument only defined flags. Introduce it directly in
-> > > > > include/linux/key.h,
-> > > > > to reduce the risk that the check is not in sync with currently
-> > > > > defined
-> > > > > flags.
-> > > > > 
-> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > Reviewed-by: KP Singh <kpsingh@kernel.org>
-> > > > 
-> > > > Jarkko, could you please ack it if it is fine?
-> > > 
-> > > So, as said I'm not really confident that a function is
-> > > even needed in the first place. It's fine if there are
-> > > enough call sites to make it legit.
-> > 
-> > And *if* a named constant is enough, you could probably
-> > then just squash to the same patch that uses it, right?
+
+On 27/08/2022 15:30, Konstantin Meskhidze (A) wrote:
 > 
-> Yes, the constant seems better. Maybe, I would add in the same patch
-> that exports the lookup flags, since we have that.
+> 
+> 7/28/2022 4:17 PM, Mickaël Salaün пишет:
 
-Yeah, then it would be probably easier to review too
-since it is "in the context".
+[...]
 
-BR, Jarkko
+>> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+>> index 59229be378d6..669de66094ed 100644
+>> --- a/security/landlock/ruleset.h
+>> +++ b/security/landlock/ruleset.h
+>> @@ -19,8 +19,8 @@
+>>     #include "limits.h"
+>>     #include "object.h"
+>>     
+>> -// TODO: get back to u16 thanks to ruleset->net_access_mask
+>> -typedef u32 access_mask_t;
+>> +/* Rule access mask. */
+>> +typedef u16 access_mask_t;
+>>     /* Makes sure all filesystem access rights can be stored. */
+>>     static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+>>     /* Makes sure all network access rights can be stored. */
+>> @@ -28,6 +28,12 @@ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_NET);
+>>     /* Makes sure for_each_set_bit() and for_each_clear_bit() calls are OK. */
+>>     static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
+>>     
+>> +/* Ruleset access masks. */
+>> +typedef u16 access_masks_t;
+>> +/* Makes sure all ruleset access rights can be stored. */
+>> +static_assert(BITS_PER_TYPE(access_masks_t) >=
+>> +	      LANDLOCK_NUM_ACCESS_FS + LANDLOCK_NUM_ACCESS_NET);
+>> +
+>>     typedef u16 layer_mask_t;
+>>     /* Makes sure all layers can be checked. */
+>>     static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
+>> @@ -47,16 +53,33 @@ struct landlock_layer {
+>>     	access_mask_t access;
+>>     };
+>>     
+>> +/**
+>> + * union landlock_key - Key of a ruleset's red-black tree
+>> + */
+>>     union landlock_key {
+>>     	struct landlock_object *object;
+>>     	uintptr_t data;
+>>     };
+>>     
+>> +/**
+>> + * enum landlock_key_type - Type of &union landlock_key
+>> + */
+>>     enum landlock_key_type {
+>> +	/**
+>> +	 * @LANDLOCK_KEY_INODE: Type of &landlock_ruleset.root_inode's node
+>> +	 * keys.
+>> +	 */
+>>     	LANDLOCK_KEY_INODE = 1,
+>> +	/**
+>> +	 * @LANDLOCK_KEY_NET_PORT: Type of &landlock_ruleset.root_net_port's
+>> +	 * node keys.
+>> +	 */
+>>     	LANDLOCK_KEY_NET_PORT = 2,
+>>     };
+>>     
+>> +/**
+>> + * struct landlock_id - Unique rule identifier for a ruleset
+>> + */
+>>     struct landlock_id {
+>>     	union landlock_key key;
+>>     	const enum landlock_key_type type;
+>> @@ -113,15 +136,17 @@ struct landlock_hierarchy {
+>>      */
+>>     struct landlock_ruleset {
+>>     	/**
+>> -	 * @root: Root of a red-black tree containing &struct landlock_rule
+>> -	 * nodes.  Once a ruleset is tied to a process (i.e. as a domain), this
+>> -	 * tree is immutable until @usage reaches zero.
+>> +	 * @root_inode: Root of a red-black tree containing &struct
+>> +	 * landlock_rule nodes with inode object.  Once a ruleset is tied to a
+>> +	 * process (i.e. as a domain), this tree is immutable until @usage
+>> +	 * reaches zero.
+>>     	 */
+>>     	struct rb_root root_inode;
+>>     	/**
+>> -	 * @root_net_port: Root of a red-black tree containing object nodes
+>> -	 * for network port. Once a ruleset is tied to a process (i.e. as a domain),
+>> -	 * this tree is immutable until @usage reaches zero.
+>> +	 * @root_net_port: Root of a red-black tree containing &struct
+>> +	 * landlock_rule nodes with network port. Once a ruleset is tied to a
+>> +	 * process (i.e. as a domain), this tree is immutable until @usage
+>> +	 * reaches zero.
+>>     	 */
+>>     	struct rb_root root_net_port;
+>>     	/**
+>> @@ -162,32 +187,25 @@ struct landlock_ruleset {
+>>     			 */
+>>     			u32 num_layers;
+>>     			/**
+>> -			 * TODO: net_access_mask: Contains the subset of network
+>> -			 * actions that are restricted by a ruleset.
+>> -			 */
+>> -			access_mask_t net_access_mask;
+>> -			/**
+>> -			 * @access_masks: Contains the subset of filesystem
+>> -			 * actions that are restricted by a ruleset.  A domain
+>> -			 * saves all layers of merged rulesets in a stack
+>> -			 * (FAM), starting from the first layer to the last
+>> -			 * one.  These layers are used when merging rulesets,
+>> -			 * for user space backward compatibility (i.e.
+>> -			 * future-proof), and to properly handle merged
+>> +			 * @access_masks: Contains the subset of filesystem and
+>> +			 * network actions that are restricted by a ruleset.
+>> +			 * A domain saves all layers of merged rulesets in a
+>> +			 * stack (FAM), starting from the first layer to the
+>> +			 * last one.  These layers are used when merging
+>> +			 * rulesets, for user space backward compatibility
+>> +			 * (i.e. future-proof), and to properly handle merged
+>>     			 * rulesets without overlapping access rights.  These
+>>     			 * layers are set once and never changed for the
+>>     			 * lifetime of the ruleset.
+>>     			 */
+>> -			// TODO: rename (back) to fs_access_mask because layers
+>> -			// are only useful for file hierarchies.
+>> -			access_mask_t access_masks[];
+>> +			access_masks_t access_masks[];
+>>     		};
+>>     	};
+>>     };
+>>     
+>>     struct landlock_ruleset *
+>> -landlock_create_ruleset(const access_mask_t access_mask_fs,
+>> -			const access_mask_t access_mask_net);
+>> +landlock_create_ruleset(const access_mask_t fs_access_mask,
+>> +			const access_mask_t net_access_mask);
+>>     
+>>     void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
+>>     void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
+>> @@ -210,41 +228,7 @@ static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
+>>     		refcount_inc(&ruleset->usage);
+>>     }
+>>     
+>> -// TODO: These helpers should not be required thanks to the new ruleset->net_access_mask.
+>> -/* A helper function to set a filesystem mask. */
+>> -static inline void
+>> -landlock_set_fs_access_mask(struct landlock_ruleset *ruleset,
+>> -			    const access_mask_t access_mask_fs, u16 mask_level)
+>> -{
+>> -	ruleset->access_masks[mask_level] = access_mask_fs;
+>> -}
+>> -
+>> -/* A helper function to get a filesystem mask. */
+>> -static inline u32
+>> -landlock_get_fs_access_mask(const struct landlock_ruleset *ruleset,
+>> -			    u16 mask_level)
+>> -{
+>> -	return (ruleset->access_masks[mask_level] & LANDLOCK_MASK_ACCESS_FS);
+>> -}
+>> -
+>> -/* A helper function to set a network mask. */
+>> -static inline void
+>> -landlock_set_net_access_mask(struct landlock_ruleset *ruleset,
+>> -			     const access_mask_t access_mask_net,
+>> -			     u16 mask_level)
+>> -{
+>> -	ruleset->access_masks[mask_level] |=
+>> -		(access_mask_net << LANDLOCK_MASK_SHIFT_NET);
+>> -}
+>> -
+>> -/* A helper function to get a network mask. */
+>> -static inline u32
+>> -landlock_get_net_access_mask(const struct landlock_ruleset *ruleset,
+>> -			     u16 mask_level)
+>> -{
+>> -	return (ruleset->access_masks[mask_level] >> LANDLOCK_MASK_SHIFT_NET);
+>> -}
+>> -
+>> +// TODO: Remove if only relevant for fs.c
+>>     access_mask_t get_handled_accesses(const struct landlock_ruleset *const domain,
+>>     				   const u16 rule_type, const u16 num_access);
+>>     
+>> @@ -258,4 +242,50 @@ access_mask_t init_layer_masks(const struct landlock_ruleset *const domain,
+>>     			       layer_mask_t (*const layer_masks)[],
+>>     			       const enum landlock_key_type key_type);
+>>     
+>> +static inline void
+>> +landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
+>> +			    const access_mask_t fs_access_mask,
+>> +			    const u16 layer_level)
+>> +{
+>> +	access_mask_t fs_mask = fs_access_mask & LANDLOCK_MASK_ACCESS_FS;
+>> +
+>> +	/* Should already be checked in sys_landlock_create_ruleset(). */
+>> +	WARN_ON_ONCE(fs_access_mask != fs_mask);
+>> +	// TODO: Add tests to check "|=" and not "=" > Is it kunit test? If so, do you want to add this kind of tests in future
+> landlock versions?
+
+In this sixth patch series, landlock_set_fs_access_mask() was replacing 
+the content of access_masks[] whereas landlock_set_net_access_mask() was 
+ORing it. It didn't lead to a bug because landlock_set_fs_access_mask() 
+was called before landlock_set_net_access_mask(), but it was brittle.
+
+Anyway, it was a good reminder to add a test to check that filesystem 
+and network restrictions work well together. This can be added as a 
+basic filesystem test using a ruleset handling network restrictions but 
+no network rule (in fs_test.c), and as a basic network test using a 
+ruleset handling filesystem restrictions but no filestem rule (in 
+net_test.c).
+
+This could also be part of a kunit test in the future.
+
+
+>> +	ruleset->access_masks[layer_level] |=
+>> +		(fs_mask << LANDLOCK_SHIFT_ACCESS_FS);
+>> +}
+>> +
+>> +static inline void
+>> +landlock_add_net_access_mask(struct landlock_ruleset *const ruleset,
+>> +			     const access_mask_t net_access_mask,
+>> +			     const u16 layer_level)
+>> +{
+>> +	access_mask_t net_mask = net_access_mask & LANDLOCK_MASK_ACCESS_NET;
+>> +
+>> +	/* Should already be checked in sys_landlock_create_ruleset(). */
+>> +	WARN_ON_ONCE(net_access_mask != net_mask);
+>> +	// TODO: Add tests to check "|=" and not "="
+> The same above.
+> I'm going add invalid network attribute checking into TEST_F(socket,
+> inval) test in coming patch.
+
+Good
