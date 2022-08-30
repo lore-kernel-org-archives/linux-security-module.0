@@ -2,89 +2,82 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDE3ECAAD2
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Aug 2022 00:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA6DECAAD4
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Aug 2022 08:49:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbiH3AqT (ORCPT
+        id S231671AbiH3ItP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Aug 2022 20:46:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45922 "EHLO
+        Tue, 30 Aug 2022 04:49:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbiH3AqS (ORCPT
+        with ESMTP id S231650AbiH3ItO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Aug 2022 20:46:18 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7787D7E30C
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Aug 2022 17:46:15 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id y141so9813970pfb.7
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Aug 2022 17:46:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=vu7WwGg8hHjHQMxVBeejwIO9X7hwzWU+rYfumkNTH28=;
-        b=b6S3/gCKo9NnWhn25HJlEhO8WEl7M4A1s/ssomIGAzJE1FH4gXEurRRpcCR9M6R3Se
-         gcZNRDdvw/CyXRDSoZE8QCSDE3T2kQkYNrDeQnXJw4CgKfMwaTsJqzQ2oVOVNrZsD61p
-         dNilZgZ0MKd5EZdlmfh9+HiVlYYhnlFyJPFSo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=vu7WwGg8hHjHQMxVBeejwIO9X7hwzWU+rYfumkNTH28=;
-        b=dyryO8LSc7DxlD+ln3P/0QTdGSTcq5IilSy5gHe/qT3jE13/cnX7YzxCD2/lur9edQ
-         AUL9pUh1aNLdwz/gRvHH7gmVf57PeXJcyRr31QeF4bv+sgYf/obSikZgu2+NRh5Kam/q
-         10WOaa1YJxEEdWirrb28rw6u3zN31SBtXjdZzewbs+0Fme8jBAZN15JgR+mlbm3TUQ25
-         qE8cEbyrD6QoWsSM/+Muevry/fMbHZjH/rDMXMAemeJ5h28zdp7esHMxsxrT3PT8a8co
-         yHBd78c7bpgTwVSjTHfb/SRhvWwYLmGJwzhZ6wD0tAx1lThWLHJpGbj11mOaVYra1iTh
-         MZKg==
-X-Gm-Message-State: ACgBeo1BklrGlBJQ9oY25Gj1MpwCMOMmYt8S3lcih+dGiRIIXbur2IkF
-        nMgyJGkZchPHYvFW/O9evbyKEA==
-X-Google-Smtp-Source: AA6agR5uP241h5cUO36rE+CaGBwKIwp8ECEml29/w5Jc3feGDEcnJZOOebGr3TnXFvoWckC8FIXkmA==
-X-Received: by 2002:a63:5b61:0:b0:41d:3227:37b8 with SMTP id l33-20020a635b61000000b0041d322737b8mr15863985pgm.265.1661820375015;
-        Mon, 29 Aug 2022 17:46:15 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:49ac:6e1:90a2:a0e0])
-        by smtp.gmail.com with UTF8SMTPSA id o18-20020a170903009200b00172ff99d0afsm2331495pld.140.2022.08.29.17.46.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Aug 2022 17:46:14 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     Jae Hoon Kim <kimjae@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH] LoadPin: Fix Kconfig doc about format of file with verity digests
-Date:   Mon, 29 Aug 2022 17:46:10 -0700
-Message-Id: <20220829174557.1.I5d202d1344212a3800d9828f936df6511eb2d0d1@changeid>
-X-Mailer: git-send-email 2.37.2.672.g94769d06f0-goog
+        Tue, 30 Aug 2022 04:49:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1F3BA9C9
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Aug 2022 01:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1661849352;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rO4FZd8DM43FaK8mkRxXV5H/hvjL5yUM5ZIt/9HgsK0=;
+        b=WnrD/o1imgMkc2+8FAdRVvloi3pKO4IeJSuAJdfos2Qzu57XKlwjPZHlljIb7H+dyd6ua9
+        C1cN9IQLRoMBVwDYddMKzt/8OLrDFMeO41J15LyydfSHgE3Bf/2jVbWgNDVW+ZgXH/6JP9
+        tY/joutocg5fOlTQuF4+E7VgyH6iBtA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-455-VRXojYk8POGrzp5byeD5Jg-1; Tue, 30 Aug 2022 04:49:08 -0400
+X-MC-Unique: VRXojYk8POGrzp5byeD5Jg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C0F06380390A;
+        Tue, 30 Aug 2022 08:49:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D748FC15BB3;
+        Tue, 30 Aug 2022 08:49:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <c648aa7c-a49c-a7e2-6a05-d1dfe44b8fdb@schaufler-ca.com>
+References: <c648aa7c-a49c-a7e2-6a05-d1dfe44b8fdb@schaufler-ca.com> <166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk> <20220826082439.wdestxwkeccsyqtp@wittgenstein>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
+        viro@zeniv.linux.org.uk, Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, linux-nfs@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] vfs, security: Fix automount superblock LSM init problem, preventing NFS sb sharing
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1903708.1661849345.1@warthog.procyon.org.uk>
+Date:   Tue, 30 Aug 2022 09:49:05 +0100
+Message-ID: <1903709.1661849345@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The doc for CONFIG_SECURITY_LOADPIN_VERITY says that the file with verity
-digests must contain a comma separated list of digests. That was the case
-at some stage of the development, but was changed during the review
-process to one digest per line. Update the Kconfig doc accordingly.
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Reported-by: Jae Hoon Kim <kimjae@chromium.org>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
+> The authors of this version of the mount code failed to look
+> especially closely at how Smack maintains label names. Once a
+> label name is used in the kernel it is kept on a list forever.
+> All the copies of smk_known here and in the rest of the mount
+> infrastructure are unnecessary and wasteful. The entire set of
+> Smack hooks that deal with mounting need to be reworked to remove
+> that waste. It's on my list of Smack cleanups, but I'd be happy
+> if someone else wanted a go at it.
 
- security/loadpin/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I don't have time to overhaul Smack right now.  Should I drop the Smack part
+of the patch?
 
-diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
-index 70e7985b2561..994c1d9376e6 100644
---- a/security/loadpin/Kconfig
-+++ b/security/loadpin/Kconfig
-@@ -33,4 +33,4 @@ config SECURITY_LOADPIN_VERITY
- 	  on the LoadPin securityfs entry 'dm-verity'. The ioctl
- 	  expects a file descriptor of a file with verity digests as
- 	  parameter. The file must be located on the pinned root and
--	  contain a comma separated list of digests.
-+	  contain one digest per line.
--- 
-2.37.2.672.g94769d06f0-goog
+David
 
