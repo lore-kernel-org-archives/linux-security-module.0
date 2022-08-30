@@ -2,105 +2,182 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A959C0502C
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Aug 2022 13:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC320ECAAA1
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Aug 2022 14:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231355AbiH3NuY (ORCPT
+        id S229785AbiH3OG3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Aug 2022 09:50:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37214 "EHLO
+        Tue, 30 Aug 2022 10:06:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231304AbiH3NuD (ORCPT
+        with ESMTP id S229699AbiH3OG3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Aug 2022 09:50:03 -0400
-Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 124FA785A7
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Aug 2022 06:48:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661867280; bh=B5MGNwLw1R/K6iXbs2us17O4OX0icSuWFBTlB2a4F2M=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=O/uGPvRsEknq7kDFYpG4ZLOyXMCDSY7qYm+nYPE3v3Upx02++3uBgBlxQWiVHjFVRrz9Hffg15HIkUrBVzZLFMVR5o35Zws2Q3QQx96PDwPCKWnrggZyB2NtJEPIs1PkcFEiMiS7n98rcJrBolJ6296nrs1+Tm03aVxtTUHT27gjNfZk91VJGmURJp8vXFKxGwq1T816wJjhw4VEIG8TM+4B8Okdp6tArkTygvHbsL9Q2rK7lUIDYUpJ9NLktdQeOOdJNqkdbGxC+drUjQo4FKfp1UH/Z1V6sflOfg12yCW+kA8kHYx8U4vmd1wckLkesYiCpkoBuD2JMXNoRlLOjw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661867280; bh=T2ZoFCGq3etlFB6RfXACydBhjBS2Jt+rn+43SIxk0ZO=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=BhCfnFQWlJf6PUaSAAZ4s1eno1TYL7AjnbIhyHaPcHMpCsDJvoQT6e2e7/k+JB21kQdF3/Rm2zdOAcUXaDcPao9KG21sJWLm/2nJw0jemLNLwgg29eQW05IgGb7b7vLoK8AQLqKO4Bx0AhWsPLPtIBw2dy9Bor8/TdW3h2Eiom68L0CHig5URKOiBEzqK+tUJU76dMeypLwko7rnuEwZMUJiJjqSSwFsxxAxIv0ZgrPwMW2HO9cmTB953H+z79BDBD6POwIntBbkLm9JVp8Dp82l1FCaLICj88IzQQef1M7iF6EETxceEHbtV3iuIuK9JpiZjSO6fC6eBIZkCJo75Q==
-X-YMail-OSG: 7J2QYA0VM1nJ7OTEJ1KfWJ3fpjEAB6rZCW0PyoNiqg_7rtbOHDvEFsoG_KVljvQ
- FYgYoHDON.kTIyfxIrgRl9uMQ4INDiNV0hXGY_F_bQKm3fr2k5P03UztI6O4jNhDmo8d2.bvPxk7
- .WL_DV4zu_WyDb3k3fpwdvozzsH9NlPKANuREtgTP8UbriRoqL.uKYUFUGWG.W5RJa.T62URv6.u
- f2mKXcgZSP4MVaf4jgedwJ8.x48krFQLl2UQGPjqFq.ESzTi1aURtHXbkaTOboRXpI92iWW9ados
- yYw9h5M0S7hIiqbX43G8nGCS.QR35FuVsQlt4eWo5s0iMIG6HNzL8UuXZqPqNe4fdGqqn1zPvw_H
- SiA_b_dZUFHox1VXyhiR2xsqQ7YyIZ1ZMl.LkEyOZ5AxdyOuqRyby9NIBlRvH8dVZrbAuahTSWv0
- LtMgD8HGSPEhfO9zqVAGYpPji8jKqs1oj_Ri0WoHFWVsj52UNDZDdTM.oqZXUZd_g32Jk732ifVa
- rAdyrCUEQwXwKIZinTmQ6YBTYh7QJF9Ox3i08qaqaxeyvgNtYcQx2sLtEFKp8jUFgLN5zATprEiQ
- _FuFk6tWZK8qfnLPflr8ZAPSD3Xgr.KrdkRI_DrDuWWV6I6xZeqNybpSJVBZIO2yPSMXm9M5mkoF
- 5pYFjjqrnyQWX22k_HF7tXS_9RVIdzooJIikDFgOW67Aji.ya2KkFhc1Nun0vVMwcK4F_P40Yvpq
- ddDlRPaOQkoPla6IxcHtqqFQ5GblrkAqtJTqXJd7kNnRwK2EviJzsE37hUPVh3dsM1oE1IGG7gMz
- 09UoKwnjzz3zBAS.IGXpbhKqX6C75F95c1NskxWrf6Qm0N4JfYPLI4726ejPkSyUMrA3YsXhJDTi
- IYrJI_bgf8RZGUykuWMUCxjE9KPQ0Q0HrQYeqmHAYMTwycNWV8F8j2PRuL1Ox8yND0e0IM3VOZrn
- OLtjxRUcdFPVBcX4aLrQrpEr4vPGZ6tZTsAYADukMvx7RGkiRdCZ7iEosyzmDJS9vRfevXmBPn5r
- KsUza5OONtWNGA8Jt5DNtOZzthaaf4T3j6pN_cPT1v0XzOctZd5zyW2fjSHaY2IsUH0fxxdrrc1y
- bkVh2dG_x5bViiYzZR.LBl7ort5kuTUEX5WjiNnCeid9QlqLVoNU6H87sYMRjqdGnbMO0vNWSBJI
- qTIzNYFm9PgaPL_dUt9GBVK37foiTju5Rh1buDNhC.0Ufz0En2ByK4vWpmDg0STVupiGM5M6UYij
- BhXSHunir13cP3kDj0.lJpslwLdVX9VXDobvKD3RE0f9bBRechFp8kgQFV6yq7FKV32NDho9Ygtd
- kM8mVoitvMZF0xajvIA.h65w5L2yzs9Yd0_9Fm49kyjLqVO0xbdG7oAVONBBn9dlMSD5ApG0bDVZ
- OlBSDMXZLymVuKGfWif.TzRxbJnod8VbdVtUZwoOFeipGohgTIbg_gvFG.H4o5eDkYarxRHs6K2M
- gjguGdjyuLe4XtUUpE5oGiXb9pOvkV9O_M_1GuYf56Na3SiHk5WSQi2PeSlP6p83MxhoKrEjbT4v
- ddVtMF2AFBj8202KENjy2PhnTAZbawEYEsDNU8oldCGXluk8rTxCYD6SJMF92JLfZUI4TTik4K.J
- qM_jy5dvOg4YWL4S8ETsbkSoTyXzG4stNB5K4VEMC183Ez5tj70e6ktJAimwpjQ9Rg0Lchdjs6k0
- CBrZbm6oG7ttakJ7PnKVEeITfgdc3dBnTHlFYpj2vlcZ9U4lgVUipTl5oUNORfE3y.nIUSbb91z7
- U.LW0iRi.pFn4VlkJKz2LEEKe_YXypfvxUPMLPLRkkKD8HHxK9JyVSEwrhXstVl4VJj.HCQ8poi3
- acAttq82E4f2JXdBIbw2q.ntHRPGxnA0cXUwHTfxRUbdY6H85pR4HFxmZHXWFJf0Ng95shR6Jb8M
- okT6O68sQOa60EZDtPyjGvi21YBrBk6BZ3Z140mGElMW3sHhRRNoxy1wPoiKbSr97Hma2lR3P092
- X3v330zAoVLtH6H0qLMfOJbeH4TktlpLHWM7SeeH1Elgi72ThjR4yyGsoR_DgCKtqcbqFgCvkyYP
- dYy9010OcbI_nNlFj.pUYOTxJBfN5Ffd7IXjak91udh90DAbQRsHpeNY_TN5V5uRNbtQ7I1am7yV
- sEU6mX1Y8zl9_h7C5_lNnfrykgvdCw8O.gZryzERbdOw.HbJ6bAoJy3sLnyh8LfHWglLzYY1gCJk
- t.sKjz4_4vrunpcC0A_peaTm5X25y97ZNOkQ-
+        Tue, 30 Aug 2022 10:06:29 -0400
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A80F72D0
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Aug 2022 07:06:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661868387; bh=aOOGQAHxUbk4bldmywxVZcV0i2bnH7pOKH/JuyTrj4w=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ax4/OyU4AgzTKHw69vywBxULDe7g+C9RrnrWkhoJHi0A+0p3413bTxgb3hZ3z9WU5d1RFa3HEjm6UlOfk36sr3QJ974X5JgGtBbicM2B1cCTvkEG4GYK0cpPkpyfkQh81XKLifLMF5kKvPkpqGRP3gnvpm7qyNOxpHQIJXkw3Dkd7hN4UYqIVo0JOgIHcz5pjykSM/o234ocAvNuMmYit16QR2r3XXrO6w/KsuzGBPH4fhmlE9/Mi6YHegiz8tnWEK0lt+ulyd/do/gmnsqkH4aTMn3FcV9DoXMtTTNWs5WFFTxVTJPEIFnOtcd/4gvSZazrz4X774/VyDcpxaW4tw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661868387; bh=BXdJmfuV2i7Ran+e6ooR1PE33bSH1wV+eI4fsbkWepv=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=tK/vuvkyM8GcW/VQOvKAdilnRE+p9uExORaLpYhVLv7B5rHfRyR76prRSgh/6Wsf9tgtWoLhmW2Qi6PuIyG+zCmapOik596/QHHo3JNDqXLmKuljICRlEUrfSYaTdWu/0p4ILAfG3ZHg1lwCEG4aEmQi9VCtOd+lva3DQAjKtkBwJe9/KrNmH3B/n5MtrusRCLMBfG9NjnSmhxWrGMiVY5aIfn79DIxtabbJ/PAhxOxev+4fesPpQ2+6SVkUaqTKG/pNBtRCLUe3/xmh2kpgKtUEA0hvB2vedl5kIhaAjf3MIOAkkQBHZ4cxk2paSKIs8xID4/ktV2mn/1akjZ0DFg==
+X-YMail-OSG: 9fdVY5IVM1n5AshMiFlMVklg7D0MuB92kXw0w6ZwvNT67dRCmJvNL7H9eU6yH3f
+ SsmwVESkuCOdW7lhpFCeQr1C0lgVzn.USRJ1fZgmSvQrRwzE69Q1x5NTfyPu2dSQCDo6TjCVuU9F
+ f_7TqAwh4vZVrPn9C15SXUlu82avJDnPbwln6j5XHPQmlH5yXo3VIzaO1K7kkQp6Cl4vKy.MQV.w
+ wnESlyF2jMNCKIBQCb3gKR9rsyOk1vwlisAIQKmcbA9tedQEGRaMtLXtMjZCTnzdbfs5lONt1Afu
+ hnOCrdUTeXQ_q2uzDl103SzfqEvZiTqfLmWTVo97bKkKFihSXzEVEOg1Srpn2YubaEC52vBRIsDL
+ p06NSjCSfBw50aD4kl3O8FIyZZgwcUpsV9tuxKXBDNLzjr08zbWsesHQDam59UgR74e5a5ZiuRjT
+ gaM3zUJuzG6lnQsoO_OryoO1S0W95RrnQjzz3fZ5Chj0bpXwHaU.WsGIbxCMMLVBdP3Xx9okMNBd
+ 1acEdvohfyv0REx2rplIa4hYOiKJ04bu3.jcUddaJ64Wd0D93RwdZwmQ5QaJAfjIeOk4O3BcN3jq
+ sA823yRhsWAkfmN2T8KVf7KU.4MdeaTFULJIPxD83j6BaDjhOA1xF7n14xO6nBeWxZ8rvDnBltvs
+ AvGu7cP6QH1GxqWQS1RjhNFrJGYpEunO5GHE_4oMXhbEAhZ1XYWKHq0RzhYthscPZT4_AVKmBTXH
+ vwpze8lhytEGf3EpQ482RFI2YWifuD5ATNIf4PEbWFS0dqexqz8mQJf3JGfnCOWO3x1X5lowfq7O
+ mE4sPpm8IE2NZ4YnxxJLl_dG90ZeodIBLTSWTA9QT.vfAv2deACb8fqlOlpBug2gn0P02nT3v.aY
+ GAn8XtobCv5B1i_Hat9.8B4I1KBOf.e2Z_4KyX3rjMOKTWu9HqIMUFXNhrCUyH557HcdEIxO6cgL
+ Yxe8lwXHSQhaDVqhjWhvBRzVhNC4Czc.jFwg0JFw5n9Imw5LR.8oYobK85eFxJ19MqOL3UkYmDlp
+ EfUnAX7DnbSjPuNwhQPLuIiNBrETDpteYnthq.VlgVK2VArss6B4XHIs6CgLa9U_2aD8t1n7oalS
+ iklmqWTicsH8JnfUPRQKiEvKwln8AlT85W7ZIPbi_AKb.svCZQYTOPim89Ep8d3gyXpG1_hbUDr2
+ xRIjUBLM_JBtUNT53hcRbk_7uClYqkBAYzhnXlP6mNeufgqtISFKDJB0Hq5CVHxW2LeCk4o1q8GE
+ ybBu7dbvKoNFSoeM8iDaj3PgQ.nE2DTDwv33FJ6RCy42XVRR_mpOMKJGhx8G9VdHFq.WY38LEGTc
+ LoC1sjbbMoSCzToRcjHtnEIVMd3PPENzlAtXLyczRrB92HwRFiBhov4JRWlYQlGTayHsrurctNCG
+ _KFG_tlLnMDGQPOaojxyvfcaIJMW33rhBvxfuigoYQe.HIDPi5srnWxN2ypt2vrz.306CMg4QDAA
+ ZUFeJpDZ4M3zY4akU_4fQx1tB9HEoXZESApXCyKdjIrRS_K_y6pStyFN_kzJSX.UqqWIiPzRmrKT
+ WQABXdBWQjQnJDw81Be2wQaSDY3aYaPmWuxWS2s5CFPD9jfm_ig0zuMJzvR8dYBB7cEDq_L1Rt_Z
+ qAqJRzqyyQE.ZDAGx827I.ZkkHzvolv2aSHXL_S9Y.wXWyfmJbMU7WS_bNiGqj5IJc3vVTprWYm0
+ DrwtAolzglKnIQfQuDBLXCz9oUiRerzF5Uq0VywHQaIbQMJh94DlgZS_s7FNkb_Wbzl0C2AyREdI
+ bbrBGx9Axp5c4Jip7UOOENsWnUq2jnkwWd2ZaFVSFABq3kDAbGlMY3Fpn5vxpsJiruUZwRrp9SIx
+ FTQMS2JrfQ4EjMvjs_mmJyPFAs45uUVfIW9N9VSiw9PpAAPurs8NBFo.4qamS5vVld9clggFJt8S
+ t7Tg2CPXrRoNVBdahb0V9SdTwDmTwZa6Q0nUNPJaDqTDwM2Z8hHYPNllUYiDijU7pfQv6dFQ6M6V
+ kaV_H22OSNZQ3ydhzDAyxTix3OJuKRoA076pvWF1wzopZAjffSdeRxhB.sU.Foi06LWwbZqCjc2O
+ dogiXZpA4usH_.Ow5OMH11I_grKnTOtTpITAJOAF9CMuWrBzt578a1i6o0y_IP8eRt6Q4I0e9rkk
+ cApaLPOHBBcf.CPE3Dv5u1SomL6_2MwkMS3FGBx6sU_pynJ6zLAdIZlkg.RIZhFxMgsYxTXBMCQW
+ y2RHOXF5WRHQ8KPKy3qa1zTBNdtKX5vBYzQfBWhAf
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 30 Aug 2022 13:48:00 +0000
-Received: by hermes--production-bf1-7586675c46-klczj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9d7aea0643af7036c6f2938b0344572d;
-          Tue, 30 Aug 2022 13:47:56 +0000 (UTC)
-Message-ID: <89548338-f716-c110-0f85-3ef880bbd723@schaufler-ca.com>
-Date:   Tue, 30 Aug 2022 06:47:52 -0700
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Tue, 30 Aug 2022 14:06:27 +0000
+Received: by hermes--production-bf1-7586675c46-944ms (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d74148ae45693ef332212a9fff3116ff;
+          Tue, 30 Aug 2022 14:06:22 +0000 (UTC)
+Message-ID: <f6649421-a901-de54-ece6-ae107c0ff1cc@schaufler-ca.com>
+Date:   Tue, 30 Aug 2022 07:06:18 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.0
-Subject: Re: [PATCH v4] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
+Subject: Re: SMACK LSM checks wrong object label during ingress network
+ traffic
 Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, linux-nfs@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
-        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
-References: <c648aa7c-a49c-a7e2-6a05-d1dfe44b8fdb@schaufler-ca.com>
- <166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk>
- <20220826082439.wdestxwkeccsyqtp@wittgenstein>
- <1903709.1661849345@warthog.procyon.org.uk>
+To:     "Lontke, Michael" <Michael.Lontke@elektrobit.com>
+Cc:     "Ostertag, Martin" <Martin.Ostertag@elektrobit.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        =?UTF-8?Q?Wei=c3=9f=2c_Simone?= <Simone.Weiss@elektrobit.com>,
+        "Valleru, Yuvarajesh" <Yuvarajesh.Valleru@elektrobit.com>,
+        "Irgang, Thomas" <Thomas.Irgang@elektrobit.com>,
+        casey@schaufler-ca.com
+References: <0ff932aeb13400fcbb8b1ce346504e860cb031b9.camel@elektrobit.com>
+ <7fabf823-bdac-789a-09fb-325e60e79976@schaufler-ca.com>
+ <0e3266a5c93229b29c10a0a7b68232000453aabf.camel@elektrobit.com>
+ <2d4958bd-dc67-8244-c688-eed4feb64ba8@schaufler-ca.com>
+ <61f18d5513bdb68748e635470a41eb4e2dadb915.camel@elektrobit.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <1903709.1661849345@warthog.procyon.org.uk>
+In-Reply-To: <61f18d5513bdb68748e635470a41eb4e2dadb915.camel@elektrobit.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.20595 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/30/2022 1:49 AM, David Howells wrote:
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
+On 8/30/2022 2:30 AM, Lontke, Michael wrote:
+> On Fri, 2022-08-26 at 09:15 -0700, Casey Schaufler wrote:
+>> On 8/26/2022 1:40 AM, Lontke, Michael wrote:
+>>> On Thu, 2022-08-25 at 08:59 -0700, Casey Schaufler wrote:
+>>>> On 8/25/2022 2:25 AM, Lontke, Michael wrote:
+>>>>> Hello Mr. Schaufler,
+>>>>>
+>>>>> we observed the following behavior of the SMACK LSM kernel
+>>>>> feature.
+>>>>>
+>>>>> PROBLEM: SMACK LSM is checking the wrong label when receiving
+>>>>> network
+>>>>> packets during high system load.
+>>>>>
+>>>>> Full Descrpition of the Problem: During a test scenario
+>>>>> involving
+>>>>> high
+>>>>> system load (cpu, memory and io) in combination with ingress
+>>>>> tcp
+>>>>> network traffic, SMACK is checking wrong object labels leading
+>>>>> to
+>>>>> denied access for valid scenarios.
+>>>>> In below test scenario the label 'stresstest' is only used for
+>>>>> the
+>>>>> application 'stress' but appears in SMACK audit logs as object
+>>>>> together
+>>>>> with netlabels.
+>>>>>
+>>>>> This issue initially appeared on hardware with kernel version
+>>>>> 4.14.237
+>>>>> but was also being reproduced with qemu for kernel version
+>>>>> 4.14.290
+>>>>> and
+>>>>> latest 6.0-rc2. The used rootfs was generated via buildroot
+>>>>> version
+>>>>> 2022.08-rc1.
+>>>>>
+>>>>>
+>>>>> KEYWORDS: smack, networking
+>>>>>
+>>>>> KERNEL INFORMATION: Linux stable kernel
+>>>>>
+>>>>> KERNEL VERSION: 4.14.237, 4.14.290, 6.0-rc2
+>>>>>
+>>>>>
+>>>>> KERNEL CONFIG: smack related kernel configuration
+>>>>>
+>>>>> CONFIG_NETLABEL=y
+>>>>>
+>>>>> CONFIG_SECURITY_NETWORK=y
+>>>>>
+>>>>> CONFIG_SECURITY_SMACK=y
+>>>>>
+>>>>> CONFIG_DEFAULT_SECURITY_SMACK=y
+>>>>>
+>>>>> CONFIG_DEFAULT_SECURITY="smack"
+>>>> What is the value for CONFIG_SECURITY_SMACK_NETFILTER ?
+>>> # CONFIG_NETWORK_SECMARK is not set
+>>> therefore CONFIG_SECURITY_SMACK_NETFILTER is not set as well.
+>>>
+>>>> The implementation for IPv6 is much more robust for the
+>>>> netfilter enabled path.
+>>> You are stating that
+>>>
+>>> CONFIG_NETWORK_SECMARK=y
+>>> CONFIG_SECURITY_SMACK_NETFILTER=y
+>>>
+>>> and therefore using SMACK_IPV6_SECMARK_LABELING instead of
+>>> SMACK_IPV6_PORT_LABELING path in kernel code is more reliable?
+>> Yes. The netfilter version is used in all known commercial
+>> deployments
+>> of Smack, and hence has gotten more attention. The port labeling code
+>> is a "clever hack". I hope to replace it with CALIPSO now that
+>> CALIPSO
+>> is supported by newlabel.
+>>
+> Today I tested with your suggested configuration (secmark + netfilter).
+> Executing the same test case I run into almost the same issue:
 >
->> The authors of this version of the mount code failed to look
->> especially closely at how Smack maintains label names. Once a
->> label name is used in the kernel it is kept on a list forever.
->> All the copies of smk_known here and in the rest of the mount
->> infrastructure are unnecessary and wasteful. The entire set of
->> Smack hooks that deal with mounting need to be reworked to remove
->> that waste. It's on my list of Smack cleanups, but I'd be happy
->> if someone else wanted a go at it.
-> I don't have time to overhaul Smack right now.  Should I drop the Smack part
-> of the patch?
+> [  288.200206] audit: type=1400 audit(1661844069.376:742): lsm=SMACK
+> fn=smack_socket_sock_rcv_skb action=denied subject="net_host"
+> object="stresstest" requested=w pid=185 comm="stress" saddr=<host-ipv6-
+> addr> src=49812 daddr=<qemu-ipv6-addr> dest=42511 netif=ens3
+>
+> Instead of defining the netlabel via /sys/fs/smackfs/ip6hosts I added a
+> nehosttfilter rule to mark the package with secmark:
 
-No. I appreciate that you're including Smack as part of the effort.
-I would much rather have the code working as you have it than have
-to go in later and do it all from scratch. With luck I should be able
-to get someone with a considerably lower level of expertise to work
-on it.
+The netfilter rule is unnecessary if you set the host label. Smack will
+set the secmark based on the host label. The approach you've use should
+work just fine. Seeing that the problem occurs in both cases will help
+narrow down the possibilities. With the configuration and cases you
+provided I am able to reproduce the problem reliably. I am working on
+tracking down what I think is a lack of locking issue. Any more information
+you can provide could be most helpful.
 
-> David
+>
+> ip6tables -t mangle -A INPUT -p tcp --src <host-ipv6-addr> -j SECMARK
+> --selctx net_host
+>
