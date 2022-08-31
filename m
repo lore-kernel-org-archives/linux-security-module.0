@@ -2,123 +2,115 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D0BC0502A
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Aug 2022 20:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2152BECAAD5
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Aug 2022 02:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230236AbiH3UK4 (ORCPT
+        id S232054AbiHaCxi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Aug 2022 16:10:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60502 "EHLO
+        Tue, 30 Aug 2022 22:53:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230289AbiH3UKy (ORCPT
+        with ESMTP id S232024AbiHaCxf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Aug 2022 16:10:54 -0400
-Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0770345F5B
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Aug 2022 13:10:51 -0700 (PDT)
-Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-11edd61a9edso13405552fac.5
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Aug 2022 13:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=qJlLpOkELPi/QHoI5MOqP2NXG1iWQCH2fEv8e9Ssxoo=;
-        b=xxEodV7a1e7/J/CC+G/b+UaD2Ii0/Rn30BjWnLmnHXaqxBbJn27dTX5+BSX6y2T0VC
-         600IGhnHSDehtxBC5L8x9dLnBArvX53kytinB+b/jGnGVCVUS6T2E6Tc5ilPu6cFI71+
-         502VF3G+Bep6f5sAH+kr0v2hYHzzsysrsYYKAfmYJEK+0VAyw/bUPTe6WuaNI6F8Nue4
-         BVO8z6ThCYrr8+HaYvlCZ2FMVbZTODrKqx22p0S3vziQ0cbciSBGRpVvwLRB/mT45d8d
-         la+wIdrLeEcfxsMJNYYJlHi+yiXYFQqhpgwl7P4jtf7+CdlAuwpy+NQqrluhn0DiqfLi
-         EFww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=qJlLpOkELPi/QHoI5MOqP2NXG1iWQCH2fEv8e9Ssxoo=;
-        b=3ihZWKhWL48hqMckE2+njO20x5ryFjA9F0EtCKERiMqwB5LxVoxnjDgSXY13XcuXKa
-         +a7MzXqBj8ePpO5EJ5LGPuXy3cSq7b9d1At99aUkmMFjaodhwfqzJ8pPUPn5qUBz8TvW
-         4PjDD/DfLPp2VCt/gyxLjVd/J/4zxxmcODpPUyv5vHubS96K1Z+Mp28HFfNCtl5vJen0
-         YotT/AoIm9TdlupjnSQcOLsGm6aI3HHkly0hN3K/IeLcyf/O5ebhYIuBVivCGJ2LYm+V
-         SxcCuAL1c/nIwFdYxc6UV+K51C9tLXKwbU5/tjCROjphwhSW2rSQ/+2RFlA15tdDTb9G
-         EPmA==
-X-Gm-Message-State: ACgBeo2J5EQi+PJ9YyD6q/ubt442/oGZwzITtDrluXz7bJz/NsS5ePq7
-        u6a6rG/oWm5Qj1cfA0w1+N3puwqa61M37W0r+ugd
-X-Google-Smtp-Source: AA6agR7feW5/dLGJw4vAhaYoiUlA13S/ZyDm4jHFn05WI9FtjAPitCZNc7BF6TEeUYC8sgScaZjEpWOJ3swzuHG2cYU=
-X-Received: by 2002:a05:6870:a78d:b0:11c:437b:ec70 with SMTP id
- x13-20020a056870a78d00b0011c437bec70mr11313980oao.136.1661890250283; Tue, 30
- Aug 2022 13:10:50 -0700 (PDT)
+        Tue, 30 Aug 2022 22:53:35 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB32FB530D;
+        Tue, 30 Aug 2022 19:53:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 83E31B81E3D;
+        Wed, 31 Aug 2022 02:53:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F7FC433C1;
+        Wed, 31 Aug 2022 02:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661914412;
+        bh=LkRLEF8OBNLXUqwC/tgny7T8EZJ+8dFOYdrlED2oNmk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e9JMAM9M6pDXmIrlzWP3yUwWAa9zGZNJhRQ6/u6nv/liC61MlCinLTa4ZVbrv3jrM
+         RbXLm1xv53fQ0MAg2ibazpEAfsjBZfBwXcXuBG5y8FX3cVcF8jQQBCjTvnedwzJJ/e
+         hCu5uv63m0gd3IrGKxS6i9C9YfCoKbMQwvsygptGk8wqQUwCVcyve5IAwx2vjjCn7/
+         Hkxx/f2cevpHDKs2OQiCP+NffW6KFlzAy2DKE65GEwNK6xMxxVAKawGz4DF0qPeYJ+
+         aUv6NIGeGXNW1+svRKm5Tg3VkOADbqTaa2VR9Sh/5IQfT4dwlJVCufx11ZhbnV1+h3
+         w38Gdc8xFTPEQ==
+Date:   Wed, 31 Aug 2022 05:53:28 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        dhowells@redhat.com, rostedt@goodmis.org, mingo@redhat.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        shuah@kernel.org, bpf@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, memxor@gmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v14 05/12] KEYS: Move KEY_LOOKUP_ to include/linux/key.h
+ and set KEY_LOOKUP_FLAGS_ALL
+Message-ID: <Yw7NKJfhyJqIWUcx@kernel.org>
+References: <20220830161716.754078-1-roberto.sassu@huaweicloud.com>
+ <20220830161716.754078-6-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-References: <20220708093451.472870-1-omosnace@redhat.com> <CAHC9VhSFUJ6J4_wt1SKAoLourNGVkxu0Tbd9NPDbYqjjrs-qoQ@mail.gmail.com>
- <CAHC9VhRtLEg-xR5q33bVNOBi=54uJuix2QCZuCiKX2Qm6CaLzw@mail.gmail.com> <20220826084354.a2jrrvni6mf7zzyw@wittgenstein>
-In-Reply-To: <20220826084354.a2jrrvni6mf7zzyw@wittgenstein>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 30 Aug 2022 16:10:39 -0400
-Message-ID: <CAHC9VhR=+vVzx1-sKO=UxZyNG6J4-8q+WfxTmHPqxBFbs2-mtw@mail.gmail.com>
-Subject: Re: [RFC PATCH RESEND] userfaultfd: open userfaultfds with O_RDONLY
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Robert O'Callahan" <roc@ocallahan.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220830161716.754078-6-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 26, 2022 at 4:44 AM Christian Brauner <brauner@kernel.org> wrote:
-> On Fri, Aug 19, 2022 at 02:50:57PM -0400, Paul Moore wrote:
-> > On Tue, Aug 16, 2022 at 6:12 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Fri, Jul 8, 2022 at 5:35 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > >
-> > > > Since userfaultfd doesn't implement a write operation, it is more
-> > > > appropriate to open it read-only.
-> > > >
-> > > > When userfaultfds are opened read-write like it is now, and such fd is
-> > > > passed from one process to another, SELinux will check both read and
-> > > > write permissions for the target process, even though it can't actually
-> > > > do any write operation on the fd later.
-> > > >
-> > > > Inspired by the following bug report, which has hit the SELinux scenario
-> > > > described above:
-> > > > https://bugzilla.redhat.com/show_bug.cgi?id=1974559
-> > > >
-> > > > Reported-by: Robert O'Callahan <roc@ocallahan.org>
-> > > > Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
-> > > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > > ---
-> > > >
-> > > > Resending as the last submission was ignored for over a year...
-> > > >
-> > > > https://lore.kernel.org/lkml/20210624152515.1844133-1-omosnace@redhat.com/T/
-> > > >
-> > > > I marked this as RFC, because I'm not sure if this has any unwanted side
-> > > > effects. I only ran this patch through selinux-testsuite, which has a
-> > > > simple userfaultfd subtest, and a reproducer from the Bugzilla report.
-> > > >
-> > > > Please tell me whether this makes sense and/or if it passes any
-> > > > userfaultfd tests you guys might have.
-> > > >
-> > > >  fs/userfaultfd.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > VFS folks, any objection to this patch?  It seems reasonable to me and
-> > > I'd really prefer this to go in via the vfs tree, but I'm not above
-> > > merging this via the lsm/next tree to get someone in vfs land to pay
-> > > attention to this ...
-> >
-> > Okay, final warning, if I don't see any objections to this when I make
-> > my patch sweep next week I'm going to go ahead and merge this via the
-> > LSM tree.
->
-> Makes sense,
-> Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+On Tue, Aug 30, 2022 at 06:17:09PM +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> In preparation for the patch that introduces the bpf_lookup_user_key() eBPF
+> kfunc, move KEY_LOOKUP_ definitions to include/linux/key.h, to be able to
+> validate the kfunc parameters.
+> 
+> Also, define the new constant KEY_LOOKUP_FLAGS_ALL, to facilitate checking
+> whether a variable contains only defined flags.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: KP Singh <kpsingh@kernel.org>
+> ---
+>  include/linux/key.h      | 4 ++++
+>  security/keys/internal.h | 2 --
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/key.h b/include/linux/key.h
+> index 7febc4881363..e2a70e0fa89f 100644
+> --- a/include/linux/key.h
+> +++ b/include/linux/key.h
+> @@ -88,6 +88,10 @@ enum key_need_perm {
+>  	KEY_DEFER_PERM_CHECK,	/* Special: permission check is deferred */
+>  };
+>  
+> +#define KEY_LOOKUP_CREATE	0x01
+> +#define KEY_LOOKUP_PARTIAL	0x02
+> +#define KEY_LOOKUP_FLAGS_ALL	(KEY_LOOKUP_CREATE | KEY_LOOKUP_PARTIAL)
 
-Merged into lsm/next, thanks all.
+IMHO this could be just KEY_LOOKUP_ALL.
 
--- 
-paul-moore.com
+> +
+>  struct seq_file;
+>  struct user_struct;
+>  struct signal_struct;
+> diff --git a/security/keys/internal.h b/security/keys/internal.h
+> index 9b9cf3b6fcbb..3c1e7122076b 100644
+> --- a/security/keys/internal.h
+> +++ b/security/keys/internal.h
+> @@ -165,8 +165,6 @@ extern struct key *request_key_and_link(struct key_type *type,
+>  
+>  extern bool lookup_user_key_possessed(const struct key *key,
+>  				      const struct key_match_data *match_data);
+> -#define KEY_LOOKUP_CREATE	0x01
+> -#define KEY_LOOKUP_PARTIAL	0x02
+>  
+>  extern long join_session_keyring(const char *name);
+>  extern void key_change_session_keyring(struct callback_head *twork);
+> -- 
+> 2.25.1
+> 
+
+Other than that wfm.
+
+BR, Jarkko
