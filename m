@@ -2,143 +2,195 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9DCECAAD3
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Aug 2022 09:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC64ECAAD5
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Aug 2022 11:56:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231777AbiHaJYQ (ORCPT
+        id S230051AbiHaL4q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Aug 2022 05:24:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42894 "EHLO
+        Wed, 31 Aug 2022 07:56:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231604AbiHaJYL (ORCPT
+        with ESMTP id S229456AbiHaL4p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Aug 2022 05:24:11 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73BB057231;
-        Wed, 31 Aug 2022 02:24:08 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4MHdrw2BnPz9v7Ts;
-        Wed, 31 Aug 2022 17:18:40 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwA34JOPKA9jgTwQAA--.40239S2;
-        Wed, 31 Aug 2022 10:23:40 +0100 (CET)
-Message-ID: <cad9a20cadc074cf15dcd0d8eb63b43c98a2f13d.camel@huaweicloud.com>
-Subject: Re: [PATCH v14 05/12] KEYS: Move KEY_LOOKUP_ to include/linux/key.h
- and set KEY_LOOKUP_FLAGS_ALL
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
-        dhowells@redhat.com, rostedt@goodmis.org, mingo@redhat.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        shuah@kernel.org, bpf@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        deso@posteo.net, memxor@gmail.com,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 31 Aug 2022 11:23:25 +0200
-In-Reply-To: <Yw7o43Ivfo3jRwQg@kernel.org>
-References: <20220830161716.754078-1-roberto.sassu@huaweicloud.com>
-         <20220830161716.754078-6-roberto.sassu@huaweicloud.com>
-         <Yw7NKJfhyJqIWUcx@kernel.org> <Yw7o43Ivfo3jRwQg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Wed, 31 Aug 2022 07:56:45 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010E6AE9C3;
+        Wed, 31 Aug 2022 04:56:43 -0700 (PDT)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MHjHK1Z4jzlWTx;
+        Wed, 31 Aug 2022 19:53:17 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Wed, 31 Aug 2022 19:56:41 +0800
+Subject: Re: [PATCH -next v2 2/6] landlock: abstract walk_to_visible_parent()
+ helper
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+        <shuah@kernel.org>, <corbet@lwn.net>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <20220827111215.131442-1-xiujianfeng@huawei.com>
+ <20220827111215.131442-3-xiujianfeng@huawei.com>
+ <4f5adce6-50a6-ca2e-6146-71626d2af197@digikod.net>
+From:   xiujianfeng <xiujianfeng@huawei.com>
+Message-ID: <2e8ecf17-dee3-5e91-b03a-214604dec3fa@huawei.com>
+Date:   Wed, 31 Aug 2022 19:56:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwA34JOPKA9jgTwQAA--.40239S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4xGF1kWrWrAFWDZFy3XFb_yoW8Kr4DpF
-        yDGF1jkr1Utry3WwnFganIy3WxK39xtr12gr90gwnYqFsaqryxKr12gF15uF1F9rW7uw4I
-        vr42ganxuryDA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcV
-        CF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOlksDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBF1jj4J04wAAsg
+In-Reply-To: <4f5adce6-50a6-ca2e-6146-71626d2af197@digikod.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.112]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2022-08-31 at 07:51 +0300, Jarkko Sakkinen wrote:
-> On Wed, Aug 31, 2022 at 05:53:28AM +0300, Jarkko Sakkinen wrote:
-> > On Tue, Aug 30, 2022 at 06:17:09PM +0200, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > In preparation for the patch that introduces the
-> > > bpf_lookup_user_key() eBPF
-> > > kfunc, move KEY_LOOKUP_ definitions to include/linux/key.h, to be
-> > > able to
-> > > validate the kfunc parameters.
-> > > 
-> > > Also, define the new constant KEY_LOOKUP_FLAGS_ALL, to facilitate
-> > > checking
-> > > whether a variable contains only defined flags.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Reviewed-by: KP Singh <kpsingh@kernel.org>
-> > > ---
-> > >  include/linux/key.h      | 4 ++++
-> > >  security/keys/internal.h | 2 --
-> > >  2 files changed, 4 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/include/linux/key.h b/include/linux/key.h
-> > > index 7febc4881363..e2a70e0fa89f 100644
-> > > --- a/include/linux/key.h
-> > > +++ b/include/linux/key.h
-> > > @@ -88,6 +88,10 @@ enum key_need_perm {
-> > >  	KEY_DEFER_PERM_CHECK,	/* Special: permission check is deferred
-> > > */
-> > >  };
-> > >  
-> > > +#define KEY_LOOKUP_CREATE	0x01
-> > > +#define KEY_LOOKUP_PARTIAL	0x02
-> > > +#define KEY_LOOKUP_FLAGS_ALL	(KEY_LOOKUP_CREATE |
-> > > KEY_LOOKUP_PARTIAL)
-> > 
-> > IMHO this could be just KEY_LOOKUP_ALL.
-> > 
-> > > +
-> > >  struct seq_file;
-> > >  struct user_struct;
-> > >  struct signal_struct;
-> > > diff --git a/security/keys/internal.h b/security/keys/internal.h
-> > > index 9b9cf3b6fcbb..3c1e7122076b 100644
-> > > --- a/security/keys/internal.h
-> > > +++ b/security/keys/internal.h
-> > > @@ -165,8 +165,6 @@ extern struct key
-> > > *request_key_and_link(struct key_type *type,
-> > >  
-> > >  extern bool lookup_user_key_possessed(const struct key *key,
-> > >  				      const struct key_match_data
-> > > *match_data);
-> > > -#define KEY_LOOKUP_CREATE	0x01
-> > > -#define KEY_LOOKUP_PARTIAL	0x02
-> > >  
-> > >  extern long join_session_keyring(const char *name);
-> > >  extern void key_change_session_keyring(struct callback_head
-> > > *twork);
-> > > -- 
-> > > 2.25.1
-> > > 
-> > 
-> > Other than that wfm.
-> 
-> Roberto, with the change done above, just add my ack
-> to the next version:
-> 
-> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
+Hi,
 
-Perfect, thanks.
+在 2022/8/30 19:22, Mickaël Salaün 写道:
+> 
+> On 27/08/2022 13:12, Xiu Jianfeng wrote:
+>> This helper will be used in the next commit which supports chmod and
+>> chown access rights restriction.
+>>
+>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+>> ---
+>>   security/landlock/fs.c | 67 ++++++++++++++++++++++++++++++------------
+>>   1 file changed, 49 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+>> index c57f581a9cd5..4ef614a4ea22 100644
+>> --- a/security/landlock/fs.c
+>> +++ b/security/landlock/fs.c
+>> @@ -38,6 +38,44 @@
+>>   #include "ruleset.h"
+>>   #include "setup.h"
+>> +enum walk_result {
+>> +    WALK_CONTINUE,
+>> +    WALK_TO_REAL_ROOT,
+>> +    WALK_TO_DISCONN_ROOT,
+> 
+> Why did you created these results instead of the ones I proposed?
+> 
+> 
+>> +};
+>> +
+>> +/*
+>> + * walk to the visible parent, caller should call path_get()/path_put()
+>> + * before/after this helpler.
+>> + *
+>> + * Returns:
+>> + * - WALK_TO_REAL_ROOT if walk to the real root;
+>> + * - WALK_TO_DISCONN_ROOT if walk to disconnected root;
+>> + * - WALK_CONTINUE otherwise.
+>> + */
+>> +static enum walk_result walk_to_visible_parent(struct path *path)
+>> +{
+>> +    struct dentry *parent_dentry;
+>> +jump_up:
+>> +    if (path->dentry == path->mnt->mnt_root) {
+>> +        if (follow_up(path)) {
+>> +            /* Ignores hidden mount points. */
+>> +            goto jump_up;
+>> +        } else {
+>> +            /* Stop at the real root. */
+>> +            return WALK_TO_REAL_ROOT;
+>> +        }
+>> +    }
+>> +    /* Stops at disconnected root directories. */
+>> +    if (unlikely(IS_ROOT(path->dentry)))
+>> +        return WALK_TO_DISCONN_ROOT;
+>> +    parent_dentry = dget_parent(path->dentry);
+>> +    dput(path->dentry);
+>> +    path->dentry = parent_dentry;
+>> +
+>> +    return WALK_CONTINUE;
+>> +}
+>> +
+>>   /* Underlying object management */
+>>   static void release_inode(struct landlock_object *const object)
+>> @@ -539,8 +577,8 @@ static int check_access_path_dual(
+>>        * restriction.
+>>        */
+>>       while (true) {
+>> -        struct dentry *parent_dentry;
+>>           const struct landlock_rule *rule;
+>> +        enum walk_result wr;
+> 
+> Please make the names understandable. In this case this variable may not 
+> be needed anyway.
+> 
+> 
+>>           /*
+>>            * If at least all accesses allowed on the destination are
+>> @@ -588,20 +626,12 @@ static int check_access_path_dual(
+>>           if (allowed_parent1 && allowed_parent2)
+>>               break;
+>> -jump_up:
+>> -        if (walker_path.dentry == walker_path.mnt->mnt_root) {
+>> -            if (follow_up(&walker_path)) {
+>> -                /* Ignores hidden mount points. */
+>> -                goto jump_up;
+>> -            } else {
+>> -                /*
+>> -                 * Stops at the real root.  Denies access
+>> -                 * because not all layers have granted access.
+>> -                 */
+>> -                break;
+>> -            }
+>> -        }
+>> -        if (unlikely(IS_ROOT(walker_path.dentry))) {
+>> +        wr = walk_to_visible_parent(&walker_path);
+>> +        switch (wr) {
+>> +        case WALK_TO_REAL_ROOT:
+>> +            /* Stop at the real root. */
+>> +            goto out;
+>> +        case WALK_TO_DISCONN_ROOT:
+>>               /*
+>>                * Stops at disconnected root directories.  Only allows
+>>                * access to internal filesystems (e.g. nsfs, which is
+>> @@ -609,12 +639,13 @@ static int check_access_path_dual(
+>>                */
+>>               allowed_parent1 = allowed_parent2 =
+>>                   !!(walker_path.mnt->mnt_flags & MNT_INTERNAL);
+> 
+> Why not include this check in the helper? This is then not checked in 
+> patch 3 with current_check_access_path_context_only(), which is a bug.
 
-Roberto
+I get your point, after moving it to the helper, here should be:
 
+               while (true) {
+                    ...
+                    switch(walk_to_visible_parent(&walker_path)) {
+                    case WALK_CONTINUE:
+                       break;
+                    case WALK_ALLOWED:
+                       allowed_parent1 = allowed_parent2 = true;
+                       goto out;
+                    case WR_DENIED:
+                    default:
+                       allowed_parent1 = allowed_parent2 = false;
+                       goto out;
+                     }
+             }
+> 
+> 
+>> +            goto out;
+>> +        case WALK_CONTINUE:
+>> +        default:
+>>               break;
+>>           }
+>> -        parent_dentry = dget_parent(walker_path.dentry);
+>> -        dput(walker_path.dentry);
+>> -        walker_path.dentry = parent_dentry;
+>>       }
+
+>> +out:
+>>       path_put(&walker_path);
+>>       if (allowed_parent1 && allowed_parent2)
+> .
