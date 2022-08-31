@@ -2,38 +2,38 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF133C0502A
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Aug 2022 04:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552CEC0502C
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Aug 2022 06:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231355AbiHaEv4 (ORCPT
+        id S230235AbiHaG3P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Aug 2022 00:51:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56228 "EHLO
+        Wed, 31 Aug 2022 02:29:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiHaEvz (ORCPT
+        with ESMTP id S230230AbiHaG3M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Aug 2022 00:51:55 -0400
+        Wed, 31 Aug 2022 02:29:12 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E6CE65265;
-        Tue, 30 Aug 2022 21:51:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E77ABD142;
+        Tue, 30 Aug 2022 23:29:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 34275B81EB1;
-        Wed, 31 Aug 2022 04:51:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5224BC433C1;
-        Wed, 31 Aug 2022 04:51:51 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C6281B81F3F;
+        Wed, 31 Aug 2022 06:29:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B437C433D6;
+        Wed, 31 Aug 2022 06:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661921511;
-        bh=3hc0JiQ10+lioYj7fhQwiUGTwDaO7MDgbVhe9pyWLaA=;
+        s=k20201202; t=1661927347;
+        bh=Gc5Gyf6Ot/5jz68KN38QlvrXxUiCmwnGxXTq/AyIJ+g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UR7cD6W9m1J8yFW2lOpqHOsVUIwgyN143uYYSvlf96bK49+EOKJ4saqvkGzRuhwAK
-         HSvQiyMz14TIMQNp/MVmZbv6ImUtKy8j+wSvBul3m2pCyIpgGDXJ6LIS+soDbBecUK
-         X0ZOCdcZd/OzLv5LtaRnEKnM7sA3GrPgvMEebB2SS02a3y6OjMOYPLIJMi/VAPTDar
-         +Es4cCv7ovgM+qA0mFy8glTfkuPtELZ88/VK361HG3+erGIHdBgurm5UeESGZNPFxz
-         I+GfHNRkAYr7mTYXJaG1ahoAQGpxLmrnN6Md0U4m1W4JsGS9gsGOfIpW9t9qIzOzwG
-         VMRQqnv9Cp8Xw==
-Date:   Wed, 31 Aug 2022 07:51:47 +0300
+        b=JrcvEQ+SK2OhMPIpF+MLbnUy6rctYfRRAeLaeRc/32BPQWC6eYCyyH7sfYXggdqEM
+         CmsXlWj7FEe4wG6yWUQL7jbxW/VqezJwxT9tpZn8U1Rrn/KsE04/ohYIIYaptnAPRi
+         mYyyZsqR/X4OqL4P1X7Fh+jGG9s4xhXwLJ+HCPM9lu6Xz54hXs8vICFm+nbc/OXqq2
+         JYjcP3VCpnS1JkdSpNKnraTf4Xc0GbSkHx7kaJ5GzvRnKkyAtmNDwVRLdb6WYLl9Kr
+         U7OFCAK0q53whGjo1BrjglK0csNdphjYKkDruh7q6FZhOXF0mpHBxLxW32Zz1FPxmy
+         M1UDUSIGhm3Jg==
+Date:   Wed, 31 Aug 2022 09:29:02 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
 Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
@@ -49,76 +49,80 @@ Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
         Roberto Sassu <roberto.sassu@huawei.com>
 Subject: Re: [PATCH v14 05/12] KEYS: Move KEY_LOOKUP_ to include/linux/key.h
  and set KEY_LOOKUP_FLAGS_ALL
-Message-ID: <Yw7o43Ivfo3jRwQg@kernel.org>
+Message-ID: <Yw7/rvu/i/gToZEG@kernel.org>
 References: <20220830161716.754078-1-roberto.sassu@huaweicloud.com>
  <20220830161716.754078-6-roberto.sassu@huaweicloud.com>
  <Yw7NKJfhyJqIWUcx@kernel.org>
+ <Yw7o43Ivfo3jRwQg@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yw7NKJfhyJqIWUcx@kernel.org>
+In-Reply-To: <Yw7o43Ivfo3jRwQg@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 31, 2022 at 05:53:28AM +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 30, 2022 at 06:17:09PM +0200, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, Aug 31, 2022 at 07:51:47AM +0300, Jarkko Sakkinen wrote:
+> On Wed, Aug 31, 2022 at 05:53:28AM +0300, Jarkko Sakkinen wrote:
+> > On Tue, Aug 30, 2022 at 06:17:09PM +0200, Roberto Sassu wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > 
+> > > In preparation for the patch that introduces the bpf_lookup_user_key() eBPF
+> > > kfunc, move KEY_LOOKUP_ definitions to include/linux/key.h, to be able to
+> > > validate the kfunc parameters.
+> > > 
+> > > Also, define the new constant KEY_LOOKUP_FLAGS_ALL, to facilitate checking
+> > > whether a variable contains only defined flags.
+> > > 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Reviewed-by: KP Singh <kpsingh@kernel.org>
+> > > ---
+> > >  include/linux/key.h      | 4 ++++
+> > >  security/keys/internal.h | 2 --
+> > >  2 files changed, 4 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/include/linux/key.h b/include/linux/key.h
+> > > index 7febc4881363..e2a70e0fa89f 100644
+> > > --- a/include/linux/key.h
+> > > +++ b/include/linux/key.h
+> > > @@ -88,6 +88,10 @@ enum key_need_perm {
+> > >  	KEY_DEFER_PERM_CHECK,	/* Special: permission check is deferred */
+> > >  };
+> > >  
+> > > +#define KEY_LOOKUP_CREATE	0x01
+> > > +#define KEY_LOOKUP_PARTIAL	0x02
+> > > +#define KEY_LOOKUP_FLAGS_ALL	(KEY_LOOKUP_CREATE | KEY_LOOKUP_PARTIAL)
 > > 
-> > In preparation for the patch that introduces the bpf_lookup_user_key() eBPF
-> > kfunc, move KEY_LOOKUP_ definitions to include/linux/key.h, to be able to
-> > validate the kfunc parameters.
+> > IMHO this could be just KEY_LOOKUP_ALL.
 > > 
-> > Also, define the new constant KEY_LOOKUP_FLAGS_ALL, to facilitate checking
-> > whether a variable contains only defined flags.
+> > > +
+> > >  struct seq_file;
+> > >  struct user_struct;
+> > >  struct signal_struct;
+> > > diff --git a/security/keys/internal.h b/security/keys/internal.h
+> > > index 9b9cf3b6fcbb..3c1e7122076b 100644
+> > > --- a/security/keys/internal.h
+> > > +++ b/security/keys/internal.h
+> > > @@ -165,8 +165,6 @@ extern struct key *request_key_and_link(struct key_type *type,
+> > >  
+> > >  extern bool lookup_user_key_possessed(const struct key *key,
+> > >  				      const struct key_match_data *match_data);
+> > > -#define KEY_LOOKUP_CREATE	0x01
+> > > -#define KEY_LOOKUP_PARTIAL	0x02
+> > >  
+> > >  extern long join_session_keyring(const char *name);
+> > >  extern void key_change_session_keyring(struct callback_head *twork);
+> > > -- 
+> > > 2.25.1
+> > > 
 > > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Reviewed-by: KP Singh <kpsingh@kernel.org>
-> > ---
-> >  include/linux/key.h      | 4 ++++
-> >  security/keys/internal.h | 2 --
-> >  2 files changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/linux/key.h b/include/linux/key.h
-> > index 7febc4881363..e2a70e0fa89f 100644
-> > --- a/include/linux/key.h
-> > +++ b/include/linux/key.h
-> > @@ -88,6 +88,10 @@ enum key_need_perm {
-> >  	KEY_DEFER_PERM_CHECK,	/* Special: permission check is deferred */
-> >  };
-> >  
-> > +#define KEY_LOOKUP_CREATE	0x01
-> > +#define KEY_LOOKUP_PARTIAL	0x02
-> > +#define KEY_LOOKUP_FLAGS_ALL	(KEY_LOOKUP_CREATE | KEY_LOOKUP_PARTIAL)
+> > Other than that wfm.
 > 
-> IMHO this could be just KEY_LOOKUP_ALL.
+> Roberto, with the change done above, just add my ack
+> to the next version:
 > 
-> > +
-> >  struct seq_file;
-> >  struct user_struct;
-> >  struct signal_struct;
-> > diff --git a/security/keys/internal.h b/security/keys/internal.h
-> > index 9b9cf3b6fcbb..3c1e7122076b 100644
-> > --- a/security/keys/internal.h
-> > +++ b/security/keys/internal.h
-> > @@ -165,8 +165,6 @@ extern struct key *request_key_and_link(struct key_type *type,
-> >  
-> >  extern bool lookup_user_key_possessed(const struct key *key,
-> >  				      const struct key_match_data *match_data);
-> > -#define KEY_LOOKUP_CREATE	0x01
-> > -#define KEY_LOOKUP_PARTIAL	0x02
-> >  
-> >  extern long join_session_keyring(const char *name);
-> >  extern void key_change_session_keyring(struct callback_head *twork);
-> > -- 
-> > 2.25.1
-> > 
-> 
-> Other than that wfm.
+> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Roberto, with the change done above, just add my ack
-to the next version:
-
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+And it is fine also to pick this to the bpf tree with
+rest of the patch set (in the end).
 
 BR, Jarkko
-
