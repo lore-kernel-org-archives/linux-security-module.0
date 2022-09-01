@@ -2,164 +2,107 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC69ECAAD3
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Sep 2022 16:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5053CC64991
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Sep 2022 16:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233101AbiIAQ0c (ORCPT
+        id S234292AbiIAQqD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Sep 2022 12:26:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45618 "EHLO
+        Thu, 1 Sep 2022 12:46:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233509AbiIAQ0b (ORCPT
+        with ESMTP id S234202AbiIAQqB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Sep 2022 12:26:31 -0400
-Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FB0146D97
-        for <linux-security-module@vger.kernel.org>; Thu,  1 Sep 2022 09:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662049589; bh=k6tc313Bmyk1ZqlTbuQVAiGoc+b6bdtHzASCp4bH9rE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=L57f7gCP3tNOZV8OvZpoLYl75Gscd955bZiCQeAf8/z7daaKfOkqsgW+x3fNe53+7uV0Py3eIPF1CD/89SHedrotO7KKbsz6CAFRW6GZlZnXs48seffCP/o3G2nt8ZvxZ8GHWqEykrShchdRmhb9HhemfKNM87+MZDC8sLiMOuoyy1jlRC+g8JoEl1M8hwFrFXfYYVH8V+q+J/k9SIl6+0N0GGYjNKZnD3DJhzvj7Djs1L7PU3jPlAQpvRWrd89O9IwUmpHOTPXwH5beR3sP1u9e1hIMjTZ992kxmQTFyLHYXu3parHaS8W725yTUoDREGGtccvkewBTnaQOSj/Opg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662049589; bh=mPKQcRB4E8CLAP1qzjvAlxRLPyT32cYnMNF+Rbb5GPm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Za7RS/7UEFreDFdAnW8OvIWH+3oW+9j40dvgOcGC+Qq7yAFkmojy71kGQ1jYmJfDSAZnFC4ITiQFlj5E8SgprRTpkcI1729dm/la9Xx05mnsk3CvhalYD5ya0/u7Ey5gFZsVI9XRQOgtH5qoQqQdgUIISU6fWrvvzsV/hGZvEq0vhbW2yqprN05eJX1F7RZnJBKy5Q1SYwCKPV49z3leJMITEeHMQX0/+auZcI2OGYZEMd+wqWYo/iHVdwatvvJrcrnEaR2hmdrDMRexDtNvJXyUQJKhIbwJBgOhseX6l4xih2JVtgL9DCJrgNIQiX7/bKISjaZQoZdXL0qg5pGoeg==
-X-YMail-OSG: YCNv37oVM1nxRp0UiopusIfmqRcnDp.VSQorkG.1NJlfUlEGAiXzjcq4cpu3K9X
- alub5QVsiEgNONjkfu0uG6nBmg6Lu7wYpl7Smkgn2avOGTLpPELdRs93nVJa8pwUMZ5X5UsJ5QO1
- 4MBdvvYHChOVrWaZEdECX3Ztvy8XrwG5xCBrwviaXmU4n5ersrDK6LD_MTgRmb2JuudL02PPfMEJ
- TGr5Za2S2SUA2hSQWZlR2Fi7SfcNTPS0m3iOJD33h.LoMtCQ_16mNCcdpaYgcoxUW7RNJIiv9nCi
- X8_vwvfk8d_K6BCAiQS8E8t78eqxPKYyLns3zCv0Zh3aSryDE8BEI5GF9wgur3mwAPM223pvfnCK
- 7OCuzWGcULKk.dTmELldeR5LEkH47NiIi7EJB0R26Xg4CIbaO118ChQnFFvi3qV.4TBmP1BcmIDP
- 8kd2ot6op9S27X0JBIpUpIEuJCaJLR7XL3Dj3xwnthj1Exkw3MOJshu4hRkZYbXwsVtPLox1h15q
- j94DOi3M2G25YKmai6szQbsKuybFXMYnzheF7Q99WBtdmxMGTMQhe7YgqakN5GM6MseeoqZKTClF
- v91nQ9lNsQtVfmr04vfSuKVPJtWy9miJFSiCf8LWIptMPssF3dSHXVFjzFS.slM6_ts3AcGkc8UJ
- K7MuOWQs.XSIA96.TYE0tFxMFvcB6PbGEaQkj18OulniYjSAYv4w2uJn79TRWb_GXPkeSezu3lvC
- cX3RSVIXWibipbAOq1eAN5j4DOoqP_OtFvzHIVuVyPa0NMun35hi0bJ8rtQfXyTrguC8gLQX0gAO
- Dicmy6W.ykr7ltEAwOnXMHnk5vA1wiciIgVOpcDm4bRMClzBL9Q.1SRokRe1bgs9etOwSswb5Uiv
- APFhzdAo2dU05qvTi0z7cA7sbGChpHXbBRMESzWWrFzbnlNyJINuafpnVvEN6LED80oac3y92e2n
- kTX9oTnJAKiqGRbridEdV.YYSBFY1_CWGpkJ5Z1P9eEQZNhQqt6l0yWJhnt6lbt1aJGZdnw5AVoC
- veeu2bNqVv0XXfOLtXXF97uDnHgIuWcmbcZmvrpZgSEpgMpjIxv8pUWXExZC79DiJ9DfrlSDKDZn
- rDxfH.5tw4WLCCy7RELLVLP6cndyNA_cuyRgaW3HZREvqoYDsNgK_IVFbenpqkK2l0fjnDdmn3go
- VtRJTuhDOGUmEw0H0VbV0gr.VS18y0jHsm88.NZuseZ5jH2_C4DxPYnSxgauAZX0Yg9oOZoefcRG
- HK5fcHmreY.lFK8r4sv13Ij469r8OvDdt_oe1ZlSanwxFID5vZ4gjBhFafcQ78XtHLdlojteNr.v
- yHdBownEvKcljViZCOzBbFqOsCpfThWyMGYVCokEbWZBS723IvSma8NtUkDYb2kS6.305x_0ZGWE
- ZgcpjWb9C_olUv7d3JmkaC6LYDQPVkchUZlo.arf7b1DTX0F5ukMbQHEUnTcqWTUgoxsitCizfDd
- cIrCmmCzS25sfHIFqzPzmNi6ErabJhk_UWybP.mQq6ZNPfHcYZL3DRJMdWmo.n1G7iWM5FZCSWWD
- 6wPbUDFdq0SvmbeEWSJBMU6m2Sb7Cf5ifQwwgQboDQmbfLP9zIWNun9tmamFFXBV_JpKeeoIDMcy
- .DfTX088qAUXMlBsUjBN5FGTVkuM3goVcAKKkL50YvSxnvx2UAdqmj6s3mVSEQZCemqK7LlZLYCQ
- 3tqu.GPQpyLytZdukflh2VmAWVpg2.nmuFZq59Jw4Zv8GYWGIRh3RLTvz1vTCjlMJjTpbCDY8JfX
- krrpu8xZGe98OdytID8al9vWmqc8KzcLYWY6yD8P.s4dH7G6Ll9hQgzRaFvpqiVt0A_.cJ47Mwmh
- X_pcEpliMhFLpW0HToQ_wkakkz0FXk2FwYUFKPh.YiO9ZwEdj5M8PFJSdwjnmkNmutgwc1gF50XZ
- 1eeuaHpZALiMc3EGxZPP4zhVNntBYlLCqwGwW4mVQ8FU2AGN.i7j3BxVIuGTLnlD8VcEFi_jCeD6
- 29SeNInsSPHGNKv6r012g3dsGRr6WDsxHClsyibxcJfPZGrOWfBLVx2EEx7C9WvnO51wPzWRBcJW
- 8ahR52CKhoW3mrmFiJu9RtjFoO51ejGP.CE1LXNsiBLRRjy3_cvyy3S6i3Yo8qJ5MMpXDJ6XAYpA
- HiUDrM.9mCtn1.mqZmssdchiLF4MGtJo5UhPwfMPTveru.IHtHa.q7CPEVgEwrw7e_t1YqIRTIzA
- BZE0uZMLztYFxaOsSavptV7sapZVLvWId
+        Thu, 1 Sep 2022 12:46:01 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92D7674E1F
+        for <linux-security-module@vger.kernel.org>; Thu,  1 Sep 2022 09:45:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662050757; bh=9nHeOjx+oUd5y0MsJP7DNJNKQadTmJll50lk9O3Na9I=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=JZ9gg8a6GLDaMpgGyH9Z7Ag2ocklEAHN4JBqo2PPUyKHYpJo9fvvXLaMnau0hOiasTvxeR3n/PUVoipGK3g+4IQUZJeyHHd164pVpeJGhkP62PEOX+xyX+eFPrwNzYRnJ+J8o+Nfau+PtO4KS1ZBQ0hasGZsjFyg4H4Yz6ZrXzpp3bignVuhJF+DGVLlfuEMWVMNWK7OzCj8nDFMN+mfBsuUz480bCMs0AE6FIOQ4YWdzoJWEqTkrmehbxty5h9gqMV3oUkmakzPMzf9qj2Lc9CA2CsxBj6P7iSSNH6O6WCn7buvvkoExOdlQSI2Zx8KRyntE1QDqBw4+SaHfaY8FA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662050757; bh=/3CobprxR6K2uzLbcm3nw2s8yew+lDyi/NfpgYNRyBH=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=DhBtPfin884uXXme9XcFbk/SYkP8bovzL6rTsK/9M9WbCAfca8T5PLavQW6k41wdNN+DwP1cF2Untr5pnfbdzV+1BvJEHUyqzqHhLGS89Ng1AvJB2PfxtwgFCN+0UeNiipd2AqL5OBjviTzjurPl0rAMz5YNeH1h274TTuZB/hRek53xZ1Wsc7+uEAV7ZUHVCxMueU6SrNTKVvCjF5J+a+1cbsGW19dNESGBQNdhcnGy98MEWTZ25TK/lyRBRPe0BgIfCMxxJPGtKq1roVPiqU5X3NIrjK+JChBL+1yQGkAyEaR0k0ZH061WZlcFQTPQ58bx1ONtucooNHmJFKSsEw==
+X-YMail-OSG: lgTRNzIVM1kiPmOFxRpQD_pm63nB3UTKqnImFapRXW3mVCD2WiLQqHTwT3qh9Il
+ Y_nOA9WqFX_fL9IwkxETq3CKksuPvBt.o9gzjc.g3X_oGYq5gNtNruRykZtM6Prd1HS54wz_1UoN
+ ZG1ECjTMJZAEzpfZAsPYnt.PR5b76OIEY8hi7lTs9dI4f1XBGEf025vC8vuR.D2Zz2DEtpAtrQo7
+ 7xzIbuUH2YyUgkwqwatiKF5oOG0Kn7UPwttmmHxInXRjmb.PSuZbS928H4JD3tXHy.WUOspTiJjp
+ 7tjSWZQlWNE8wULBpNba5nKlKjhqSnWbduziuN__iwK4VtJ9vGq3mFbb6C7qZyBulZ_BcrUCJEja
+ VC7jA3YT2WP8yicZXd2bKMvpVKzm6Wypv1vi.VaDxCVL2Pmey5m1pdvikv.B3MwEN2deV5FOdjJ2
+ OKiFE_TmGRWMNhsIIA.cH3Z9yWCHpIbBm.FZva8W5ripRn1qTzhs9..nmhDBbgI_a6GlmIwGFDdP
+ 200OKLL3ElMiJkDAIZCPgbPTI84zn2WiR6odYUP0lRQXmFT4Vu69z8E8x.rnoz4cUVD1bZck7b3I
+ aOaP2b3UQU.wK0UxYE5y8r5lcB9NKTtOlqwNHIf.Z_UP5PNu684d7wzSqStqc.2GxkpVHkTdtDDZ
+ QzXlMQQnSejiSYyEkA0KqLAE59TXdjFIis9MvgtSxhuMufSPHw650wojlwA_gUydJ2xBYB5XWpZ7
+ XD9KtKvG8DKXOjO_b0cGL_Y0IrCUIrR0dXVYtPIYuFdMx2_rKjfglR4PL_X9ntZFPFarFHplVRpV
+ TTd4drTL3AmkEWUQX_wLaTMyNPmNyFjUy6Ig8nJK4TtjXbTFh97rkdPzxFl73IuozSfidPH2DPR2
+ 9KmXAqQ5jmSZ6an6iva_2p0.fOK4.m2BWRPeEC5qK2zoDKTA306dM6CxaY.OMXyPWQz_6InhnQkJ
+ ZXiih4OfyVTq22gV3tK.kqGRif602JCfd73zuFfsSc_D7ehfas9mZPK5tcuAbrdQ0uvQWOWJKhFm
+ TlMOyj4ehZaeKJwrX6r2GsR4rBDlJTLXwmQFFifhL7FsbfoqQNhYIa3pbkrgnwwQBCngCd3hLaf8
+ zmri9JG6yys4UgQlb3mrwMSsxhWr_ncnKnErjF7hYGBejWWl57QU8LV19hHcChtM9TNGwjNqFC0Y
+ GKfMUWmun2_oG3R8nBnCPBZSuEpxHE8oRUNldc_oxVEwCcg8bdFwsw_DAnWqRl8xGbesKCCM2pcW
+ iBbxXVeR9LLu5yx9zeT7Kurm5.pb.oKmTKxF9MJ36s0IUny5VtGuEeYiwNLENic43izNVGsmod5K
+ wVQucGqb0Pm15Ng.FBaGmDL.UHYy6YLuLGfnLFwKevc6rr3fiSHHr0AQyGa8r_liRdJvqL3Va8mq
+ CJ2_7TsTAbLO8Am9tKmWzo5.qDZQAQ9hvZXbEDZudZ97h1Ro2dOpqRZAmjODuimROLayIHfGZ9Wg
+ VnuKBPXTl3fXdr5X1xmy.dI.XuTiqvLKmnyW4ba6ny8FnQIBUoWI7fRyoSCOTIVDE.9fdziEV41a
+ QOY9u4qJFa3SWVagJaPtZDOyZammP0KoEPEi0SrWZUceoGH46Rij2dhtelLNdzV6Zbzg56kIm82Q
+ ncn9uqQEYS2tNITf6uqWWmaBSWnM_wjd9Xg6n4WfiVz7ysE8W_sPTR_gfy64flZHR_F1aaZxvWET
+ AuIuL_NjDcB0xaZO3UyxGA.vezoFXbhdlGl.6ZOAdW0yIjWd3EDWQB8aXRVvMOq8sJhhh9c9B_yM
+ u_xhaJV5l615logpm.5SqkhC9zAuK77eh6LCzksQQTIjSoklRUT9DB.fJ5gBDQk4j4Xym1wmmClU
+ B0hYpCcV1_voJC1Wop5OIp43zr5Mm1XosJ1hFg4amZbV0W5t6JJKWBgkCUDfTP8skm8_51QnjXQE
+ 8QCpQpaPddXZc9Hfx8m.Q2.0P8pQO3u91godK_vr.qiMeUI6vOOFqYeRaZOrA95JD_x.rtD0s3k_
+ U9bhsQCX.VTmzIKrKjFVPjpHagPm35StglXeP4vUMxWor_i5bKk0hKX9DMxYt9eTcoMp9NY191I4
+ qO7YchoVzYO0EveRwEy_EiXlBwGVUm0JacfVd0AN.7sbKiIdVyEoPxaYenupG2AMP5OWBL1GwFlD
+ QKlQbRQF_pU.Lm6yfw_EVlJA9UnwBZay9m9Hmi0jRXSi.tx8VkPtsNWOYXrpPSjqW4OGcV5zWnqY
+ ibo2F3s3HdQXix1bjFw4D.3ubhLeT7Nv6pKeZCcPxPJYH
 X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Thu, 1 Sep 2022 16:26:29 +0000
-Received: by hermes--production-ne1-544744cc75-m5z2t (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1f4bc832a5e7cd51b2b456107d2f5574;
-          Thu, 01 Sep 2022 16:26:27 +0000 (UTC)
-Message-ID: <634fd39d-2ab3-3505-03df-bbb9c18f4c20@schaufler-ca.com>
-Date:   Thu, 1 Sep 2022 09:26:25 -0700
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 1 Sep 2022 16:45:57 +0000
+Received: by hermes--production-ne1-544744cc75-fkh7w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 562a760a3854b598b8eb46b4e9c8ee91;
+          Thu, 01 Sep 2022 16:45:53 +0000 (UTC)
+Message-ID: <d955d8b5-ca2e-c040-9415-772fa5a71bc7@schaufler-ca.com>
+Date:   Thu, 1 Sep 2022 09:45:51 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.0
-Subject: Re: SMACK LSM checks wrong object label during ingress network
- traffic
+Subject: Re: [RFC PATCH 1/2] fs/xattr: add *at family syscalls
 Content-Language: en-US
-To:     "Lontke, Michael" <Michael.Lontke@elektrobit.com>
-Cc:     "Ostertag, Martin" <Martin.Ostertag@elektrobit.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        =?UTF-8?Q?Wei=c3=9f=2c_Simone?= <Simone.Weiss@elektrobit.com>,
-        "Valleru, Yuvarajesh" <Yuvarajesh.Valleru@elektrobit.com>,
-        "Irgang, Thomas" <Thomas.Irgang@elektrobit.com>,
-        casey@schaufler-ca.com
-References: <0ff932aeb13400fcbb8b1ce346504e860cb031b9.camel@elektrobit.com>
- <7fabf823-bdac-789a-09fb-325e60e79976@schaufler-ca.com>
- <0e3266a5c93229b29c10a0a7b68232000453aabf.camel@elektrobit.com>
- <2d4958bd-dc67-8244-c688-eed4feb64ba8@schaufler-ca.com>
- <61f18d5513bdb68748e635470a41eb4e2dadb915.camel@elektrobit.com>
- <f6649421-a901-de54-ece6-ae107c0ff1cc@schaufler-ca.com>
- <6324997ce4fc092c5020a4add075257f9c5f6442.camel@elektrobit.com>
- <dabd5646-4afb-5df5-ea4f-3d4c7dc7a43f@schaufler-ca.com>
- <bcc11e5fe5a15017d12e396436c778f0f6d3b0ec.camel@elektrobit.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>
+Cc:     selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+References: <20220830152858.14866-1-cgzones@googlemail.com>
+ <20220830152858.14866-2-cgzones@googlemail.com> <Yw/eEufm/QpKg5Pq@ZenIV>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <bcc11e5fe5a15017d12e396436c778f0f6d3b0ec.camel@elektrobit.com>
+In-Reply-To: <Yw/eEufm/QpKg5Pq@ZenIV>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Mailer: WebService/1.1.20595 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/1/2022 1:40 AM, Lontke, Michael wrote:
-> ...
-> Thank you for your feedback. If your tests are successful you can add
->
-> Signed-off-by: Michael Lontke <michael.lontke@elektrobit.com>
-> Co-authored-by: Martin Ostertag <martin.ostertag@elektrobit.com>
->
-> to the patch.
+On 8/31/2022 3:17 PM, Al Viro wrote:
+> [linux-arch Cc'd for ABI-related stuff]
 
-Everything looks fine. I have added the patch to
-
-	https://github.com/cschaufler/smack-next#next
-
-for inclusion in the v6.1 Linux kernel. Thank you.
+The LSM list <linux-security-module@vger.kernel.org> should be on
+this thread as SELinux isn't the only security module that uses xattrs
+extensively.
 
 >
->>> From: Lontke Michael <michael.lontke@elektrobit.com>
->>> Date: Wed, 31 Aug 2022 14:03:26 +0200
->>> Subject: [PATCH] SMACK: Add sk_clone_security LSM hook
->>>
->>> Using smk_of_current() during sk_alloc_security hook leads in rare
->>> cases
->>> to a faulty initialization of the security context of the created
->>> socket.
->>>
->>> By adding the LSM hook sk_clone_security to SMACK this
->>> initialization
->>> fault is corrected by copying the security context of the old
->>> socket
->>> pointer to the newly cloned one.
->>> ---
->>>  security/smack/smack_lsm.c | 16 ++++++++++++++++
->>>  1 file changed, 16 insertions(+)
->>>
->>> diff --git a/security/smack/smack_lsm.c
->>> b/security/smack/smack_lsm.c
->>> index 286171a16ed2..8eb47396376f 100644
->>> --- a/security/smack/smack_lsm.c
->>> +++ b/security/smack/smack_lsm.c
->>> @@ -2348,6 +2348,21 @@ static void smack_sk_free_security(struct
->>> sock
->>> *sk)
->>>       kfree(sk->sk_security);
->>>  }
->>>
->>> +/**
->>> + * smack_sk_clone_security - Copy security context
->>> + * @sk: the old socket
->>> + * @newsk: the new socket
->>> + *
->>> + * Copy the security context of the old socket pointer to the
->>> cloned
->>> + */
->>> +static void smack_sk_clone_security(const struct sock *sk, struct
->>> sock
->>> *newsk)
->>> +{
->>> +     struct socket_smack *ssp_old = sk->sk_security;
->>> +     struct socket_smack *ssp_new = newsk->sk_security;
->>> +
->>> +     *ssp_new = *ssp_old;
->>> +}
->>> +
->>>  /**
->>>  * smack_ipv4host_label - check host based restrictions
->>>  * @sip: the object end
->>> @@ -4710,6 +4725,7 @@ static struct security_hook_list
->>> smack_hooks[]
->>> __lsm_ro_after_init = {
->>>       LSM_HOOK_INIT(socket_getpeersec_dgram,
->>> smack_socket_getpeersec_dgram),
->>>       LSM_HOOK_INIT(sk_alloc_security, smack_sk_alloc_security),
->>>       LSM_HOOK_INIT(sk_free_security, smack_sk_free_security),
->>> +     LSM_HOOK_INIT(sk_clone_security, smack_sk_clone_security),
->>>       LSM_HOOK_INIT(sock_graft, smack_sock_graft),
->>>       LSM_HOOK_INIT(inet_conn_request, smack_inet_conn_request),
->>>       LSM_HOOK_INIT(inet_csk_clone, smack_inet_csk_clone),
+> On Tue, Aug 30, 2022 at 05:28:39PM +0200, Christian Göttsche wrote:
+>> Add the four syscalls setxattrat(), getxattrat(), listxattrat() and
+>> removexattrat() to enable extended attribute operations via file
+>> descriptors.  This can be used from userspace to avoid race conditions,
+>> especially on security related extended attributes, like SELinux labels
+>> ("security.selinux") via setfiles(8).
+>>
+>> Use the do_{name}at() pattern from fs/open.c.
+>> Use a single flag parameter for extended attribute flags (currently
+>> XATTR_CREATE and XATTR_REPLACE) and *at() flags to not exceed six
+>> syscall arguments in setxattrat().
+> 	I've no problems with the patchset aside of the flags part;
+> however, note that XATTR_CREATE and XATTR_REPLACE are actually exposed
+> to the network - the values are passed to nfsd by clients.
+> See nfsd4_decode_setxattr() and
+>         BUILD_BUG_ON(XATTR_CREATE != SETXATTR4_CREATE);
+> 	BUILD_BUG_ON(XATTR_REPLACE != SETXATTR4_REPLACE);
+> in encode_setxattr() on the client side.
+>
+> 	Makes me really nervous about constraints like that.  Sure,
+> AT_... flags you are using are in the second octet and these are in
+> the lowest one, but...
