@@ -2,70 +2,70 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A93ECAAD1
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Sep 2022 15:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90887C64991
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Sep 2022 15:27:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234597AbiIAP1B (ORCPT
+        id S234432AbiIAP1N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Sep 2022 11:27:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36646 "EHLO
+        Thu, 1 Sep 2022 11:27:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234519AbiIAP0n (ORCPT
+        with ESMTP id S234425AbiIAP0o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Sep 2022 11:26:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAA5A753A0
-        for <linux-security-module@vger.kernel.org>; Thu,  1 Sep 2022 08:26:38 -0700 (PDT)
+        Thu, 1 Sep 2022 11:26:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF483754B4
+        for <linux-security-module@vger.kernel.org>; Thu,  1 Sep 2022 08:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1662045997;
+        s=mimecast20190719; t=1662045998;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=xXJ3eu32792Tz+PNWkqX8ynt0TaLdrtHwSsiZCTO97I=;
-        b=RmxIBtrPWjPSI8LfMmWUb1CPTSpIYsbVHse8GE5xBhCcKVuUAKGmNiWnq8kzgjf8KQ+Tbq
-        cZfyaGgnZ8D/koONr9zGvuMajS1pVzwKg5KNGXU9P5nVnX3ijKMNwWnAcoGjh4BUXOBRLp
-        +Ne9g4L73sLBETtH235QgxspfRaWz6M=
+        bh=V7YMU843VlzNWC/pPcXDFCFCDg71epze0+Cwzb9ajlw=;
+        b=VIqNkVQZ52wOkl1kY51qiYdHd2hN5AA4QZAXrs8eZKSwFiF/GV7NYSuZt8xrblSRVv7+TI
+        YH7uSIGo1etXkpPvhq7SyHzIwAckct9bWfO+V6KUYMBVNV6dyK26cW3iWFjKEsU7O5ZPhp
+        L2HJL+x/qjogo7vOjgxRKG1dvZOBDGc=
 Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
  [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-632-MzH78ZovMZSy3ldZFkZq8g-1; Thu, 01 Sep 2022 11:26:36 -0400
-X-MC-Unique: MzH78ZovMZSy3ldZFkZq8g-1
-Received: by mail-ej1-f70.google.com with SMTP id ga33-20020a1709070c2100b0074084f48b12so6941625ejc.7
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Sep 2022 08:26:36 -0700 (PDT)
+ us-mta-341-b0jSb0xnMeCFrKLU2Nv07A-1; Thu, 01 Sep 2022 11:26:37 -0400
+X-MC-Unique: b0jSb0xnMeCFrKLU2Nv07A-1
+Received: by mail-ej1-f70.google.com with SMTP id he38-20020a1709073da600b0073d98728570so7094470ejc.11
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Sep 2022 08:26:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=xXJ3eu32792Tz+PNWkqX8ynt0TaLdrtHwSsiZCTO97I=;
-        b=ybw3GaBmuB63JHmJfJaotSohpV2h6MbNxwM7z+0zWPWIDrPsDmzkyvxJjYDOtRdwor
-         NAvEbrX3mLwsFhJ8TSua5/bzzO/9tV/wi9Cj878crT4gnFjKNgC/9jMCdYR9Oxun6rLo
-         xPrcdyTtp5x+XrrL3uYc0G6OOAb25VGAfKyLN2DfbBbd6Ru77IPXO/2BGVc4lSGOZ3/I
-         VOy+qnpOjf54/qNo72wFkCG03RWtvXNIkTHRA4hrDZgBpZJxIkf6oD/B7Oeq3jrvZgZq
-         2q57HheSZRK5zxSyB/EnQi4yyS+xUN5SS/X1lgg6uzI+crHTKxJnx3i034L4qkYTumy7
-         Berg==
-X-Gm-Message-State: ACgBeo0XppcJScRhouiEc+JDKQN9SCwOby6EYyKPVJL2opU7WSLoJZaw
-        rZk/F09kWH4OaTSFEw/eWIvVnzObVbZG3Anwa0mfSKYn6UeGDqy01zsX2gbDZchiMyUncm/j11B
-        VLbNii4cM4UlTJtATqttNnn8rEik93H/y4Yvj
-X-Received: by 2002:a17:906:845c:b0:730:bbf1:196a with SMTP id e28-20020a170906845c00b00730bbf1196amr24608317ejy.13.1662045995426;
-        Thu, 01 Sep 2022 08:26:35 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR5FRde2+0Kq+Aw/cF6maS0iAuZMFCEh7wb5iWZ1StV35X9kMHScj7jMEScvxLEBUmONF9VBmg==
-X-Received: by 2002:a17:906:845c:b0:730:bbf1:196a with SMTP id e28-20020a170906845c00b00730bbf1196amr24608307ejy.13.1662045995247;
-        Thu, 01 Sep 2022 08:26:35 -0700 (PDT)
+        bh=V7YMU843VlzNWC/pPcXDFCFCDg71epze0+Cwzb9ajlw=;
+        b=xSOEwQ2vQ4G8Ldrmegt6YJKGQlfDba+y7eE/vOdA41sGg1Z66M+WNQXQy9JK8qXc+0
+         MKgkwgPSYPjwJSuGrhf5wq8S/qRPXcYa0sburnL5TLOuZoB8gGYYlcTs4BDto4V2p7Cg
+         aw3Pp7NK2NcI4AoDL5QYTRGcrLJIPjSMuLzepg6T3NFyI9TAIW0lFbJfRFIVA8PkPXws
+         Hwj9dBzJg9wl2AudA0mSOS5z+VyWdrNhzgOO1JRIcdmmktGsJvcZWgZK8YSO6Zx+bT9G
+         kMSH+OjJwJZvK2gFzeQY39waS81Rd/8TU+Rekx2BAClyBxNScISPR9ZIMQ4OeNxDJ1hy
+         zSJQ==
+X-Gm-Message-State: ACgBeo3VslXy4bWG7Nq9BVZlghGqi5pLcYwSKE/So14X8lv8NokNBFJS
+        4PVchrvB1UYDe5OL0373GEh3NmIwYX5MgLiVNumMRL+94gSXkh5fK0G7rsBbdtefxufT2uuGG/i
+        AnN2jdmmy818MryiJIJAQCWJDduqwPVx0CR0L
+X-Received: by 2002:a05:6402:2791:b0:448:763c:666f with SMTP id b17-20020a056402279100b00448763c666fmr16544843ede.36.1662045996600;
+        Thu, 01 Sep 2022 08:26:36 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR6IWwgCT5rUYou5fGNheuAznqzf2ytt4UDRtNcZDjDbVuQbEp4YWjiAyIYJGVUT6zs409BVUA==
+X-Received: by 2002:a05:6402:2791:b0:448:763c:666f with SMTP id b17-20020a056402279100b00448763c666fmr16544831ede.36.1662045996400;
+        Thu, 01 Sep 2022 08:26:36 -0700 (PDT)
 Received: from localhost.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id o23-20020a170906775700b00730bfe6adc4sm8646031ejn.37.2022.09.01.08.26.34
+        by smtp.gmail.com with ESMTPSA id o23-20020a170906775700b00730bfe6adc4sm8646031ejn.37.2022.09.01.08.26.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Sep 2022 08:26:34 -0700 (PDT)
+        Thu, 01 Sep 2022 08:26:35 -0700 (PDT)
 From:   Ondrej Mosnacek <omosnace@redhat.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
         Martin Pitt <mpitt@redhat.com>
-Subject: [PATCH 1/2] fs: convert simple_xattrs to RCU list
-Date:   Thu,  1 Sep 2022 17:26:31 +0200
-Message-Id: <20220901152632.970018-2-omosnace@redhat.com>
+Subject: [PATCH 2/2] fs: don't call capable() prematurely in simple_xattr_list()
+Date:   Thu,  1 Sep 2022 17:26:32 +0200
+Message-Id: <20220901152632.970018-3-omosnace@redhat.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220901152632.970018-1-omosnace@redhat.com>
 References: <20220901152632.970018-1-omosnace@redhat.com>
@@ -77,133 +77,65 @@ Content-Type: text/plain; charset="US-ASCII"; x-default=true
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the RCU list mechanism instead of a simple lock to access/modify
-simple_xattrs. The performance benefit is probably negligible, but it
-will help avoid lock nesting concerns for an upcoming patch.
+Calling capable() pre-emptively causes a problem for SELinux, which will
+normally log a denial whenever capable() is called and the task's
+SELinux context doesn't have the corresponding capability permission
+allowed.
 
+With the current implementation of simple_xattr_list(), any time a
+process without CAP_SYS_ADMIN calls listxattr(2) or similar on a
+filesystem that uses this function, a denial is logged even if there are
+no trusted.* xattrs on the inode in question. In such situation, policy
+writers are forced to chose one of the following options:
+
+1. Grant CAP_SYS_ADMIN to the given SELinux domain even though it
+   doesn't really need it. (Not good for security.)
+2. Add a rule to the policy that will silence CAP_SYS_ADMIN denials for
+   the given domain without actually granting it. (Not good, because now
+   denials that make actual difference may be hidden, making
+   troubleshooting harder.)
+3. Do nothing and let the denials appear. (Not good, because the audit
+   spam could obscure actual important denials.)
+
+To avoid this misery, only call capable() when an actual trusted.* xattr
+is encountered. This is somewhat less optimal, since capable() will now
+be called once per each trusted.* xattr, but that's pretty unlikely to
+matter in practice.
+
+Even after this fix any process listing xattrs on an inode that has one
+or more trusted.* ones may trigger an "irrelevant" denial if it doesn't
+actually care about the trusted.* xattrs, but such cases should be rare
+and thus silencing the denial in such cases would not be as big of a
+deal.
+
+Fixes: b09e0fa4b4ea ("tmpfs: implement generic xattr support")
+Reported-by: Martin Pitt <mpitt@redhat.com>
 Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
- fs/xattr.c            | 36 ++++++++++++++++++++++--------------
- include/linux/xattr.h |  1 +
- 2 files changed, 23 insertions(+), 14 deletions(-)
+ fs/xattr.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/xattr.c b/fs/xattr.c
-index a1f4998bc6be..fad2344f1168 100644
+index fad2344f1168..84a459ac779a 100644
 --- a/fs/xattr.c
 +++ b/fs/xattr.c
-@@ -22,6 +22,8 @@
- #include <linux/audit.h>
- #include <linux/vmalloc.h>
- #include <linux/posix_acl_xattr.h>
-+#include <linux/rculist.h>
-+#include <linux/rcupdate.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -1030,8 +1032,8 @@ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
- 	struct simple_xattr *xattr;
- 	int ret = -ENODATA;
- 
--	spin_lock(&xattrs->lock);
--	list_for_each_entry(xattr, &xattrs->head, list) {
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(xattr, &xattrs->head, list) {
- 		if (strcmp(name, xattr->name))
- 			continue;
- 
-@@ -1044,10 +1046,18 @@ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
- 		}
- 		break;
- 	}
--	spin_unlock(&xattrs->lock);
-+	rcu_read_unlock();
- 	return ret;
- }
- 
-+static void simple_xattr_free_rcu(struct rcu_head *rcu)
-+{
-+	struct simple_xattr *xattr = container_of(rcu, struct simple_xattr, rcu);
-+
-+	kfree(xattr->name);
-+	kvfree(xattr);
-+}
-+
- /**
-  * simple_xattr_set - xattr SET operation for in-memory/pseudo filesystems
-  * @xattrs: target simple_xattr list
-@@ -1094,11 +1104,11 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
- 				xattr = new_xattr;
- 				err = -EEXIST;
- 			} else if (new_xattr) {
--				list_replace(&xattr->list, &new_xattr->list);
-+				list_replace_rcu(&xattr->list, &new_xattr->list);
- 				if (removed_size)
- 					*removed_size = xattr->size;
- 			} else {
--				list_del(&xattr->list);
-+				list_del_rcu(&xattr->list);
- 				if (removed_size)
- 					*removed_size = xattr->size;
- 			}
-@@ -1109,15 +1119,13 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
- 		xattr = new_xattr;
- 		err = -ENODATA;
- 	} else {
--		list_add(&new_xattr->list, &xattrs->head);
-+		list_add_rcu(&new_xattr->list, &xattrs->head);
- 		xattr = NULL;
- 	}
- out:
- 	spin_unlock(&xattrs->lock);
--	if (xattr) {
--		kfree(xattr->name);
--		kvfree(xattr);
--	}
-+	if (xattr)
-+		call_rcu(&xattr->rcu, simple_xattr_free_rcu);
- 	return err;
- 
- }
-@@ -1169,8 +1177,8 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
- 	}
- #endif
- 
--	spin_lock(&xattrs->lock);
--	list_for_each_entry(xattr, &xattrs->head, list) {
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(xattr, &xattrs->head, list) {
- 		/* skip "trusted." attributes for unprivileged callers */
- 		if (!trusted && xattr_is_trusted(xattr->name))
- 			continue;
-@@ -1179,7 +1187,7 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
- 		if (err)
- 			break;
- 	}
--	spin_unlock(&xattrs->lock);
-+	rcu_read_unlock();
- 
- 	return err ? err : size - remaining_size;
- }
-@@ -1191,6 +1199,6 @@ void simple_xattr_list_add(struct simple_xattrs *xattrs,
- 			   struct simple_xattr *new_xattr)
+@@ -1155,7 +1155,6 @@ static int xattr_list_one(char **buffer, ssize_t *remaining_size,
+ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 			  char *buffer, size_t size)
  {
- 	spin_lock(&xattrs->lock);
--	list_add(&new_xattr->list, &xattrs->head);
-+	list_add_rcu(&new_xattr->list, &xattrs->head);
- 	spin_unlock(&xattrs->lock);
- }
-diff --git a/include/linux/xattr.h b/include/linux/xattr.h
-index 979a9d3e5bfb..3236c469aaac 100644
---- a/include/linux/xattr.h
-+++ b/include/linux/xattr.h
-@@ -86,6 +86,7 @@ struct simple_xattrs {
+-	bool trusted = capable(CAP_SYS_ADMIN);
+ 	struct simple_xattr *xattr;
+ 	ssize_t remaining_size = size;
+ 	int err = 0;
+@@ -1180,7 +1179,7 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(xattr, &xattrs->head, list) {
+ 		/* skip "trusted." attributes for unprivileged callers */
+-		if (!trusted && xattr_is_trusted(xattr->name))
++		if (xattr_is_trusted(xattr->name) && !capable(CAP_SYS_ADMIN))
+ 			continue;
  
- struct simple_xattr {
- 	struct list_head list;
-+	struct rcu_head rcu;
- 	char *name;
- 	size_t size;
- 	char value[];
+ 		err = xattr_list_one(&buffer, &remaining_size, xattr->name);
 -- 
 2.37.2
 
