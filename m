@@ -2,101 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E5AECAAD4
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Aug 2022 21:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D274ECAAD2
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Sep 2022 05:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229992AbiHaVP3 (ORCPT
+        id S230136AbiIAFEf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Aug 2022 17:15:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37024 "EHLO
+        Thu, 1 Sep 2022 01:04:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229977AbiHaVP2 (ORCPT
+        with ESMTP id S229746AbiIAFEe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Aug 2022 17:15:28 -0400
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D1044542;
-        Wed, 31 Aug 2022 14:15:26 -0700 (PDT)
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1oTV3R-0006Xz-3c; Wed, 31 Aug 2022 23:15:21 +0200
-Received: from [85.1.206.226] (helo=linux-4.home)
-        by sslproxy04.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1oTV3Q-000Ph0-Rr; Wed, 31 Aug 2022 23:15:20 +0200
-Subject: Re: [RFC PATCH v2] bpf: use bpf_capable() instead of CAP_SYS_ADMIN
- for blinding decision
-To:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Yauheni Kaliuta <ykaliuta@redhat.com>
-Cc:     bpf@vger.kernel.org, andrii@kernel.org,
-        alexei.starovoitov@gmail.com, jbenc@redhat.com,
-        linux-security-module@vger.kernel.org
-References: <20220831090655.156434-1-ykaliuta@redhat.com>
- <20220831152414.171484-1-ykaliuta@redhat.com>
- <20220831185039.GA20800@mail.hallyn.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <4df80c14-d744-efc6-c043-c70c4c4ab541@iogearbox.net>
-Date:   Wed, 31 Aug 2022 23:15:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 1 Sep 2022 01:04:34 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C881157F5;
+        Wed, 31 Aug 2022 22:04:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=9MgdM/4E/TOLmi5ouDu792LxVmllOqtYXJ7y3pATFgQ=; b=pSZCdMPw4gdcTYtt1r9bP+HAlK
+        gU+1IgMTmybd7HuQhOOMEkC6JigND3VXY7zlyLDvXJiSMswIBSVrQGt9s9NROjx8QZ18YBGuVNUv8
+        kdfGLL2VqDpbs77GqAQNt7PSgOP9rD2VAH610+zip0lIuDWyGW0WwOQETLLEaCaw529fi3UKzjQs5
+        s7/sJZoF5/ns40rXGoptnnJMNQ+8/A/9oGgnzn6dtYiI3rdntD6yqwUyebhsjcXKwRU3GNw7UGe0y
+        3Ti/O5aDOvsVO9na6UmeQnRUMSTrlibkrj+p1hRpypHQonh4ix9Bc8plfJl5W1Qrv0/sw8sOXzfFq
+        tf+YRkkA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1oTcNI-00Ar6I-Sm;
+        Thu, 01 Sep 2022 05:04:21 +0000
+Date:   Thu, 1 Sep 2022 06:04:20 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-nfs@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+Message-ID: <YxA9VJuQpQSgGnhB@ZenIV>
+References: <166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20220831185039.GA20800@mail.hallyn.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.6/26644/Wed Aug 31 09:53:02 2022)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/31/22 8:50 PM, Serge E. Hallyn wrote:
-> On Wed, Aug 31, 2022 at 06:24:14PM +0300, Yauheni Kaliuta wrote:
->> The capability check can cause SELinux denial.
->>
->> For example, in ptp4l, setsockopt() with the SO_ATTACH_FILTER option
->> raises sk_attach_filter() to run a bpf program. SELinux hooks into
->> capable() calls and performs an additional check if the task's
->> SELinux domain has permission to "use" the given capability. ptp4l_t
->> already has CAP_BPF granted by SELinux, so if the function used
->> bpf_capable() as most BPF code does, there would be no change needed
->> in selinux-policy.
-> 
-> The selinux mentions probably aren't really necessary.  The more
-> concise way to say it is that bpf_jit_blinding_enabled() should
-> be permitted with CAP_BPF, that full CAP_SYS_ADMIN is not needed.
-> (Assuming that that is the case)
-> 
->> Signed-off-by: Yauheni Kaliuta <ykaliuta@redhat.com>
->> ---
->>
->> v2: put the reasoning in the commit message
->>
->> ---
->>   include/linux/filter.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/include/linux/filter.h b/include/linux/filter.h
->> index a5f21dc3c432..3de96b1a736b 100644
->> --- a/include/linux/filter.h
->> +++ b/include/linux/filter.h
->> @@ -1100,7 +1100,7 @@ static inline bool bpf_jit_blinding_enabled(struct bpf_prog *prog)
->>   		return false;
->>   	if (!bpf_jit_harden)
->>   		return false;
->> -	if (bpf_jit_harden == 1 && capable(CAP_SYS_ADMIN))
->> +	if (bpf_jit_harden == 1 && bpf_capable())
+On Wed, Aug 24, 2022 at 11:09:50AM +0100, David Howells wrote:
 
-I think lowering this requirement is fine here. These days given unpriv eBPF is
-disabled by default, I see the main users for constant blinding coming from unpriv
-in particular via cBPF -> eBPF migration (e.g. old-style socket filters).
+What's the reason for difference between selinux and smack instances of
+context_init?  The former allocates only on submount, the latter -
+unconditionally...
 
->>   		return false;
->>   
->>   	return true;
+> +static int selinux_fs_context_init(struct fs_context *fc,
+> +				   struct dentry *reference)
+> +{
+> +	const struct superblock_security_struct *sbsec;
+> +	const struct inode_security_struct *root_isec;
+> +	struct selinux_mnt_opts *opts;
+> +
+> +	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
+> +		opts = kzalloc(sizeof(*opts), GFP_KERNEL);
+> +		if (!opts)
+> +			return -ENOMEM;
+> +
+> +		root_isec = backing_inode_security(reference->d_sb->s_root);
+> +		sbsec = selinux_superblock(reference->d_sb);
+> +		if (sbsec->flags & FSCONTEXT_MNT)
+> +			opts->fscontext_sid	= sbsec->sid;
+> +		if (sbsec->flags & CONTEXT_MNT)
+> +			opts->context_sid	= sbsec->mntpoint_sid;
+> +		if (sbsec->flags & DEFCONTEXT_MNT)
+> +			opts->defcontext_sid	= sbsec->def_sid;
+> +		fc->security = opts;
+> +	}
+> +
+> +	return 0;
+> +}
 
-Please also update Documentation/admin-guide/sysctl/net.rst to clarify cap details.
-
-Thanks,
-Daniel
+> +/**
+> + * smack_fs_context_init - Initialise security data for a filesystem context
+> + * @fc: The filesystem context.
+> + * @reference: Reference dentry (automount/reconfigure) or NULL
+> + *
+> + * Returns 0 on success or -ENOMEM on error.
+> + */
+> +static int smack_fs_context_init(struct fs_context *fc,
+> +				 struct dentry *reference)
+> +{
+> +	struct superblock_smack *sbsp;
+> +	struct smack_mnt_opts *ctx;
+> +	struct inode_smack *isp;
+> +
+> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +	fc->security = ctx;
+> +
+> +	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
+> +		sbsp = smack_superblock(reference->d_sb);
+> +		isp = smack_inode(reference->d_sb->s_root->d_inode);
