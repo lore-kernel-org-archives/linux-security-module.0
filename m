@@ -2,109 +2,290 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D274ECAAD2
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Sep 2022 05:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE3CC64991
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Sep 2022 06:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbiIAFEf (ORCPT
+        id S233298AbiIAG6X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Sep 2022 01:04:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33128 "EHLO
+        Thu, 1 Sep 2022 02:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbiIAFEe (ORCPT
+        with ESMTP id S233038AbiIAG6V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Sep 2022 01:04:34 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C881157F5;
-        Wed, 31 Aug 2022 22:04:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9MgdM/4E/TOLmi5ouDu792LxVmllOqtYXJ7y3pATFgQ=; b=pSZCdMPw4gdcTYtt1r9bP+HAlK
-        gU+1IgMTmybd7HuQhOOMEkC6JigND3VXY7zlyLDvXJiSMswIBSVrQGt9s9NROjx8QZ18YBGuVNUv8
-        kdfGLL2VqDpbs77GqAQNt7PSgOP9rD2VAH610+zip0lIuDWyGW0WwOQETLLEaCaw529fi3UKzjQs5
-        s7/sJZoF5/ns40rXGoptnnJMNQ+8/A/9oGgnzn6dtYiI3rdntD6yqwUyebhsjcXKwRU3GNw7UGe0y
-        3Ti/O5aDOvsVO9na6UmeQnRUMSTrlibkrj+p1hRpypHQonh4ix9Bc8plfJl5W1Qrv0/sw8sOXzfFq
-        tf+YRkkA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oTcNI-00Ar6I-Sm;
-        Thu, 01 Sep 2022 05:04:21 +0000
-Date:   Thu, 1 Sep 2022 06:04:20 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-nfs@vger.kernel.org, selinux@vger.kernel.org,
+        Thu, 1 Sep 2022 02:58:21 -0400
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FC7AD11E5;
+        Wed, 31 Aug 2022 23:58:18 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4MJBZ93wPyz9v7Hg;
+        Thu,  1 Sep 2022 14:52:49 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwA3s13fVxBjZcATAA--.7637S2;
+        Thu, 01 Sep 2022 07:57:48 +0100 (CET)
+Message-ID: <2b2242f8d09378fbec49d4f7e29960d5e50d0a68.camel@huaweicloud.com>
+Subject: Re: [PATCH v15 12/12] selftests/bpf: Add tests for dynamic pointers
+ parameters in kfuncs
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        dhowells@redhat.com, jarkko@kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, shuah@kernel.org
+Cc:     bpf@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-Message-ID: <YxA9VJuQpQSgGnhB@ZenIV>
-References: <166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk>
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, memxor@gmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Thu, 01 Sep 2022 08:57:30 +0200
+In-Reply-To: <20220831165445.1071641-13-roberto.sassu@huaweicloud.com>
+References: <20220831165445.1071641-1-roberto.sassu@huaweicloud.com>
+         <20220831165445.1071641-13-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwA3s13fVxBjZcATAA--.7637S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3AF4kCF18Zr4UJrWUKr1kAFb_yoWxGF13pa
+        yrGFy29rWIq3W7Wr13XF4IvF4fKr48Zr1akrZFq34xAr1DXryxWF48Kr45Jwn5K395Xw45
+        Zw1Sgr4rCr4Uta7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBF1jj3589gAEsF
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 24, 2022 at 11:09:50AM +0100, David Howells wrote:
+On Wed, 2022-08-31 at 18:54 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Add tests to ensure that only supported dynamic pointer types are
+> accepted,
+> that the passed argument is actually a dynamic pointer, and that the
+> passed
+> argument is a pointer to the stack.
 
-What's the reason for difference between selinux and smack instances of
-context_init?  The former allocates only on submount, the latter -
-unconditionally...
+Sorry, forgot to add this test to the deny list of s390.
 
-> +static int selinux_fs_context_init(struct fs_context *fc,
-> +				   struct dentry *reference)
+I also rebased to the latest commit.
+
+Let me know if I should resend.
+
+Thanks
+
+Roberto
+
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  .../bpf/prog_tests/kfunc_dynptr_param.c       | 102
+> ++++++++++++++++++
+>  .../bpf/progs/test_kfunc_dynptr_param.c       |  57 ++++++++++
+>  2 files changed, 159 insertions(+)
+>  create mode 100644
+> tools/testing/selftests/bpf/prog_tests/kfunc_dynptr_param.c
+>  create mode 100644
+> tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> 
+> diff --git
+> a/tools/testing/selftests/bpf/prog_tests/kfunc_dynptr_param.c
+> b/tools/testing/selftests/bpf/prog_tests/kfunc_dynptr_param.c
+> new file mode 100644
+> index 000000000000..732897faf36b
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/prog_tests/kfunc_dynptr_param.c
+> @@ -0,0 +1,102 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2022 Facebook
+> + * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
+> + *
+> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+> + */
+> +
+> +#include <test_progs.h>
+> +#include "test_kfunc_dynptr_param.skel.h"
+> +
+> +static size_t log_buf_sz = 1048576; /* 1 MB */
+> +static char obj_log_buf[1048576];
+> +
+> +static struct {
+> +	const char *prog_name;
+> +	const char *expected_err_msg;
+> +} kfunc_dynptr_tests[] = {
+> +	{"dynptr_type_not_supp",
+> +	 "arg#0 pointer type STRUCT bpf_dynptr_kern points to
+> unsupported dynamic pointer type"},
+> +	{"not_valid_dynptr",
+> +	 "arg#0 pointer type STRUCT bpf_dynptr_kern must be valid and
+> initialized"},
+> +	{"not_ptr_to_stack", "arg#0 pointer type STRUCT bpf_dynptr_kern
+> not to stack"},
+> +};
+> +
+> +static bool kfunc_not_supported;
+> +
+> +static int libbpf_print_cb(enum libbpf_print_level level, const char
+> *fmt,
+> +			   va_list args)
 > +{
-> +	const struct superblock_security_struct *sbsec;
-> +	const struct inode_security_struct *root_isec;
-> +	struct selinux_mnt_opts *opts;
+> +	if (strcmp(fmt, "libbpf: extern (func ksym) '%s': not found in
+> kernel or module BTFs\n"))
+> +		return 0;
 > +
-> +	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-> +		opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-> +		if (!opts)
-> +			return -ENOMEM;
+> +	if (strcmp(va_arg(args, char *), "bpf_verify_pkcs7_signature"))
+> +		return 0;
 > +
-> +		root_isec = backing_inode_security(reference->d_sb->s_root);
-> +		sbsec = selinux_superblock(reference->d_sb);
-> +		if (sbsec->flags & FSCONTEXT_MNT)
-> +			opts->fscontext_sid	= sbsec->sid;
-> +		if (sbsec->flags & CONTEXT_MNT)
-> +			opts->context_sid	= sbsec->mntpoint_sid;
-> +		if (sbsec->flags & DEFCONTEXT_MNT)
-> +			opts->defcontext_sid	= sbsec->def_sid;
-> +		fc->security = opts;
-> +	}
-> +
+> +	kfunc_not_supported = true;
 > +	return 0;
 > +}
-
-> +/**
-> + * smack_fs_context_init - Initialise security data for a filesystem context
-> + * @fc: The filesystem context.
-> + * @reference: Reference dentry (automount/reconfigure) or NULL
-> + *
-> + * Returns 0 on success or -ENOMEM on error.
-> + */
-> +static int smack_fs_context_init(struct fs_context *fc,
-> +				 struct dentry *reference)
+> +
+> +static void verify_fail(const char *prog_name, const char
+> *expected_err_msg)
 > +{
-> +	struct superblock_smack *sbsp;
-> +	struct smack_mnt_opts *ctx;
-> +	struct inode_smack *isp;
+> +	struct test_kfunc_dynptr_param *skel;
+> +	LIBBPF_OPTS(bpf_object_open_opts, opts);
+> +	libbpf_print_fn_t old_print_cb;
+> +	struct bpf_program *prog;
+> +	int err;
 > +
-> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +	fc->security = ctx;
+> +	opts.kernel_log_buf = obj_log_buf;
+> +	opts.kernel_log_size = log_buf_sz;
+> +	opts.kernel_log_level = 1;
 > +
-> +	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-> +		sbsp = smack_superblock(reference->d_sb);
-> +		isp = smack_inode(reference->d_sb->s_root->d_inode);
+> +	skel = test_kfunc_dynptr_param__open_opts(&opts);
+> +	if (!ASSERT_OK_PTR(skel, "test_kfunc_dynptr_param__open_opts"))
+> +		goto cleanup;
+> +
+> +	prog = bpf_object__find_program_by_name(skel->obj, prog_name);
+> +	if (!ASSERT_OK_PTR(prog, "bpf_object__find_program_by_name"))
+> +		goto cleanup;
+> +
+> +	bpf_program__set_autoload(prog, true);
+> +
+> +	bpf_map__set_max_entries(skel->maps.ringbuf, getpagesize());
+> +
+> +	kfunc_not_supported = false;
+> +
+> +	old_print_cb = libbpf_set_print(libbpf_print_cb);
+> +	err = test_kfunc_dynptr_param__load(skel);
+> +	libbpf_set_print(old_print_cb);
+> +
+> +	if (err < 0 && kfunc_not_supported) {
+> +		fprintf(stderr,
+> +		  "%s:SKIP:bpf_verify_pkcs7_signature() kfunc not
+> supported\n",
+> +		  __func__);
+> +		test__skip();
+> +		goto cleanup;
+> +	}
+> +
+> +	if (!ASSERT_ERR(err, "unexpected load success"))
+> +		goto cleanup;
+> +
+> +	if (!ASSERT_OK_PTR(strstr(obj_log_buf, expected_err_msg),
+> "expected_err_msg")) {
+> +		fprintf(stderr, "Expected err_msg: %s\n",
+> expected_err_msg);
+> +		fprintf(stderr, "Verifier output: %s\n", obj_log_buf);
+> +	}
+> +
+> +cleanup:
+> +	test_kfunc_dynptr_param__destroy(skel);
+> +}
+> +
+> +void test_kfunc_dynptr_param(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(kfunc_dynptr_tests); i++) {
+> +		if
+> (!test__start_subtest(kfunc_dynptr_tests[i].prog_name))
+> +			continue;
+> +
+> +		verify_fail(kfunc_dynptr_tests[i].prog_name,
+> +			    kfunc_dynptr_tests[i].expected_err_msg);
+> +	}
+> +}
+> diff --git
+> a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> new file mode 100644
+> index 000000000000..2f09f91a1576
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> @@ -0,0 +1,57 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
+> + *
+> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+> + */
+> +
+> +#include "vmlinux.h"
+> +#include <errno.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +
+> +struct bpf_dynptr {
+> +	__u64 :64;
+> +	__u64 :64;
+> +} __attribute__((aligned(8)));
+> +
+> +extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
+> +				      struct bpf_dynptr *sig_ptr,
+> +				      struct bpf_key *trusted_keyring)
+> __ksym;
+> +
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_RINGBUF);
+> +} ringbuf SEC(".maps");
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +SEC("?lsm.s/bpf")
+> +int BPF_PROG(dynptr_type_not_supp, int cmd, union bpf_attr *attr,
+> +	     unsigned int size)
+> +{
+> +	char write_data[64] = "hello there, world!!";
+> +	struct bpf_dynptr ptr;
+> +
+> +	bpf_ringbuf_reserve_dynptr(&ringbuf, sizeof(write_data), 0,
+> &ptr);
+> +
+> +	return bpf_verify_pkcs7_signature(&ptr, &ptr, NULL);
+> +}
+> +
+> +SEC("?lsm.s/bpf")
+> +int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr,
+> unsigned int size)
+> +{
+> +	unsigned long val;
+> +
+> +	return bpf_verify_pkcs7_signature((struct bpf_dynptr *)&val,
+> +					  (struct bpf_dynptr *)&val,
+> NULL);
+> +}
+> +
+> +SEC("?lsm.s/bpf")
+> +int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr,
+> unsigned int size)
+> +{
+> +	unsigned long val;
+> +
+> +	return bpf_verify_pkcs7_signature((struct bpf_dynptr *)val,
+> +					  (struct bpf_dynptr *)val,
+> NULL);
+> +}
+
