@@ -2,86 +2,148 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F32C38145
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Sep 2022 14:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C343FECAAD5
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Sep 2022 16:34:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236724AbiIBOoQ (ORCPT
+        id S234764AbiIBQeZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Sep 2022 10:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44184 "EHLO
+        Fri, 2 Sep 2022 12:34:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236333AbiIBOns (ORCPT
+        with ESMTP id S230257AbiIBQeY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Sep 2022 10:43:48 -0400
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc08])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF39754649
-        for <linux-security-module@vger.kernel.org>; Fri,  2 Sep 2022 07:04:58 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MK05G58gxzMprrk;
-        Fri,  2 Sep 2022 16:04:02 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MK05G3jFtzlh8lB;
-        Fri,  2 Sep 2022 16:04:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1662127442;
-        bh=DKeH0QBhZBlZkVXCcVJahDvxYW92XszACrnYqFmxnYI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=EfJsWgTdzJFSh17SfLFoir/JpoLnCCHypKF5q5vYRUWLag1uuwBUDqyzwmBKlvKbU
-         7WhguAmFg22688d5doyLVZAVTCIiZS9O/OvLuSmWVRZ5f5PYkT7e0KieoYF2L2a0Fy
-         Bq6k8krMNSE2EA6IRZLaxMxyARdmWodzwwcqAlHM=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Fri, 2 Sep 2022 12:34:24 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE601E3423;
+        Fri,  2 Sep 2022 09:34:23 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id w2so3479971edc.0;
+        Fri, 02 Sep 2022 09:34:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date;
+        bh=O449YcYH9q7gH2mEno9n2yuVujMbIs6p2uSiFJh8cBA=;
+        b=I/0/Y8UpKxG7/PflS2defFFih4V+2+5MYyJjUnUaEi7ktxFmKRbyEEw4/M1jzkcdgj
+         bfIYPnTHE+rin85If6TnRetsHOMiGt+aCOR73ICmRBV1FKGCmAxmuCNPlRRb6GTMkv+S
+         qgOcVdSTNCLqF8w+PyqndpEed8g7Ak1SfmeJh7bv+qN+2Uia+/cu4r7/TffD6qqzPCwh
+         SDL7cItq5zGywBSoLKJBCP2L94ho2uGYmpHYntSMV4ck22Wx0ZH6A0giEwnpBhRcNRFI
+         zN51zhacMrw3KeWNhR00otvCMP7gTS/d7ihDuzQdHYcAJXYjWZSH0xB9HHe5RutcitZk
+         edHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=O449YcYH9q7gH2mEno9n2yuVujMbIs6p2uSiFJh8cBA=;
+        b=2s+mIfS+YKMrShnfcKscslVBvjxOP0lLhJRL40TgvULONzhmm4o6+8Rtqz3nZzRUb1
+         hO0se00Jq5Hk+G5rSZjSvIZ3cU+RlNx6pwfvr5G6NRXtM+eJCe+y3RJEYTbDElwax2Mv
+         eBmg5Vu9IXLAxrYihc6Jt39DMMnwlLFGja1qBZEMkS7/h3S5NZ4UhG5DVuT8gVLbz5GC
+         6dq43XwVjuXJtksoUEklWA6Y9/g19Otglat4YJVurPK5XxT0DSCapNanyubAx3Z3Dxvg
+         oPG+KFI35xa9eqrcmikKX2DktUvCFFE9iuh/swQ3yoAjjp45otrEvpVmj4FCEk8Rwhfa
+         ybvg==
+X-Gm-Message-State: ACgBeo1wm6wiE2cytPFpLcVgYX3zplegmVzUywm5jORF7Pi+dZOmc6D9
+        9mF6ZA0RA+b/IyCinAqinHWk0duneyk=
+X-Google-Smtp-Source: AA6agR7HoetLg0XJNSpGggTo/ASU4vtsmY65pB9Rmn54FZQdKh0s2ceRYpB0FdspkTf8Duuo1hbrJQ==
+X-Received: by 2002:aa7:c3c2:0:b0:447:7d68:7187 with SMTP id l2-20020aa7c3c2000000b004477d687187mr33072826edr.400.1662136462094;
+        Fri, 02 Sep 2022 09:34:22 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id kv8-20020a17090778c800b00741b368a448sm1437943ejc.203.2022.09.02.09.34.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Sep 2022 09:34:21 -0700 (PDT)
+Date:   Fri, 2 Sep 2022 18:34:19 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
         Paul Moore <paul@paul-moore.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: [GIT PULL] Landlock fix for v6.0
-Date:   Fri,  2 Sep 2022 16:04:00 +0200
-Message-Id: <20220902140400.1617323-1-mic@digikod.net>
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [PATCH v5 0/4] landlock: truncate support
+Message-ID: <YxIwi9uss1CbKWia@nuc>
+References: <20220817203006.21769-1-gnoack3000@gmail.com>
+ <b336dcfc-7d28-dea9-54de-0b8e4b725c1c@digikod.net>
+ <YxGVgfcXwEa+5ZYn@nuc>
+ <YxGfxo87drkAjWGf@nuc>
+ <68c65a52-4fa1-d2fb-f571-878f9f4658ba@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <68c65a52-4fa1-d2fb-f571-878f9f4658ba@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Fri, Sep 02, 2022 at 10:40:57AM +0200, Mickaël Salaün wrote:
+> On 02/09/2022 08:16, Günther Noack wrote:
+> > On Fri, Sep 02, 2022 at 07:32:49AM +0200, Günther Noack wrote:
+> > > On Thu, Sep 01, 2022 at 07:10:38PM +0200, Mickaël Salaün wrote:
+> > > > Hmm, I think there is an issue with this series. Landlock only enforces
+> > > > restrictions at open time or when dealing with user-supplied file paths
+> > > > (relative or absolute).
+> > >
+> > > Argh, ok. That sounds like a desirable property, although it would
+> > > mean reworking the patch set.
+> > >
+> > > > The use of the path_truncate hook in this series
+> > > > doesn't distinguish between file descriptor from before the current sandbox
+> > > > or from after being sandboxed. For instance, if a file descriptor is
+> > > > received through a unix socket, it is assumed that this is legitimate and no
+> > > > Landlock restriction apply on it, which is not the case with this series
+> > > > anymore. It is the same for files opened before the process sandbox itself.
+> > > >
+> > > > To be able to follow the current semantic, I think we should control the
+> > > > truncate access at open time (or when dealing with a user-supplied path) but
+> > > > not on any file descriptor as it is currently done.
+> > >
+> > > OK - so let me try to make a constructive proposal. We have previously
+> > > identified a few operations where a truncation happens, and I would
+> > > propose that the following Landlock rights should be needed for these:
+> > >
+> > > * truncate() (operating on char *path): Require LL_ACCESS_FS_TRUNCATE
+> > > * ftruncate() (operating on fd): No Landlock rights required
+> > > * open() for reading with O_TRUNC: Require LL_ACCESS_FS_TRUNCATE
+> > > * open() for writing with O_TRUNC: Require LL_ACCESS_FS_WRITE_FILE
+> >
+> > Thinking about it again, another alternative would be to require
+> > TRUNCATE as well when opening a file for writing - it would be
+> > logical, because the resulting FD can be truncated. It would also
+> > require people to provide the truncate right in order to open files
+> > for writing, but this may be the logical thing to do.
+>
+> Another alternative would be to keep the current semantic but ignore file
+> descriptors from not-sandboxed processes. This could be possible by
+> following the current file->f_mode logic but using the Landlock's
+> file->f_security instead to store if the file descriptor was opened in a
+> context allowing it to be truncated: file opened outside of a landlocked
+> process, or in a sandbox allowing LANDLOCK_ACCESS_FS_TRUNCATE on the related
+> path.
 
-This change fixes a mis-handling of the LANDLOCK_ACCESS_FS_REFER right
-when multiple rulesets/domains are stacked. The expected behaviour was
-that an additional ruleset can only restrict the set of permitted
-operations, but in this particular case, it was potentially possible to
-re-gain the LANDLOCK_ACCESS_FS_REFER right.
+I'm not convinced that it'll be worth distinguishing between a FD
+opened for writing and a FD opened for writing+truncation. And whether
+the FD is open for writing is already tracked by default and
+ftruncate() checks that.
 
-Please pull this Landlock fix for v6.0-rc4 .  These changes merged
-cleanly with your tree, and have been successfully tested in the latest
-linux-next releases for a week.  This should be backported to v5.19 .
+I'm having a hard time constructing a scenario where write() should be
+permitted on an FD but ftruncate() should be forbidden. It seems that
+write() is the more dangerous operation of the two, with more
+potential to modify a file to one's liking, whereas the modifications
+possible through TRUNCATE are relatively benign?
 
-Regards,
- MickaÃ«l
+The opposite scenario (where ftruncate() is permitted and write() is
+forbidden) simply can't exist because an FD must already be writable
+in order to use ftruncate(). (see man page)
+
+Additionally, if we recall previous discussions on the truncate patch
+sets, there is the very commonly used creat() syscall (a.k.a. open()
+with O_CREAT|O_WRONLY|O_TRUNC), which anyway requires the Landlock
+truncate right in many cases. So I still think you can't actually use
+LANDLOCK_ACCESS_FS_FILE_WRITE without also providing the
+LANDLOCK_ACCESS_FS_TRUNCATE right?
+
+In conclusion, I'd be in favor of not tracking the truncate right
+separately as a property of an open file descriptor. Does that
+rationale sound reasonable?
 
 --
-The following changes since commit 3d7cb6b04c3f3115719235cc6866b10326de34cd:
-
-  Linux 5.19 (2022-07-31 14:03:01 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.0-rc4
-
-for you to fetch changes up to 55e55920bbe3ccf516022c51f5527e7d026b8f1d:
-
-  landlock: Fix file reparenting without explicit LANDLOCK_ACCESS_FS_REFER (2022-09-02 15:29:08 +0200)
-
-----------------------------------------------------------------
-Landlock fix for v6.0-rc4
-
-----------------------------------------------------------------
-MickaÃ«l SalaÃ¼n (1):
-      landlock: Fix file reparenting without explicit LANDLOCK_ACCESS_FS_REFER
-
- security/landlock/fs.c                     |  48 ++++-----
- tools/testing/selftests/landlock/fs_test.c | 155 +++++++++++++++++++++++++++--
- 2 files changed, 170 insertions(+), 33 deletions(-)
