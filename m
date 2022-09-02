@@ -2,148 +2,199 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C343FECAAD5
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Sep 2022 16:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1B0C6FA86
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Sep 2022 21:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234764AbiIBQeZ (ORCPT
+        id S231132AbiIBVas (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Sep 2022 12:34:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55138 "EHLO
+        Fri, 2 Sep 2022 17:30:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230257AbiIBQeY (ORCPT
+        with ESMTP id S231130AbiIBVak (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Sep 2022 12:34:24 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE601E3423;
-        Fri,  2 Sep 2022 09:34:23 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id w2so3479971edc.0;
-        Fri, 02 Sep 2022 09:34:23 -0700 (PDT)
+        Fri, 2 Sep 2022 17:30:40 -0400
+Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A707EA8A3
+        for <linux-security-module@vger.kernel.org>; Fri,  2 Sep 2022 14:30:39 -0700 (PDT)
+Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-11f0fa892aeso7887642fac.7
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Sep 2022 14:30:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date;
-        bh=O449YcYH9q7gH2mEno9n2yuVujMbIs6p2uSiFJh8cBA=;
-        b=I/0/Y8UpKxG7/PflS2defFFih4V+2+5MYyJjUnUaEi7ktxFmKRbyEEw4/M1jzkcdgj
-         bfIYPnTHE+rin85If6TnRetsHOMiGt+aCOR73ICmRBV1FKGCmAxmuCNPlRRb6GTMkv+S
-         qgOcVdSTNCLqF8w+PyqndpEed8g7Ak1SfmeJh7bv+qN+2Uia+/cu4r7/TffD6qqzPCwh
-         SDL7cItq5zGywBSoLKJBCP2L94ho2uGYmpHYntSMV4ck22Wx0ZH6A0giEwnpBhRcNRFI
-         zN51zhacMrw3KeWNhR00otvCMP7gTS/d7ihDuzQdHYcAJXYjWZSH0xB9HHe5RutcitZk
-         edHw==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=wpvqLTbY51ingQhStK6KRkMK43oBsyhc78pHfJrs+Z0=;
+        b=MRL7lsYjVNrBYlSv0ESbPmtcweds79pvuHaiTSwFLQl0QzbYVarYPMcjmSUfkW6dLh
+         Gl3ezhNVmRMmeOWcWFC1W3yl+/c2dpMHUmBYrboGIWsRoo2zYwiiATOnMqNN7hwif443
+         c3BizoXtyZd2nwp8cWaWiDQe1rVfFBGedzkifRNxlIEsKALDqZ4MvckLPVvGqSrJ6Yv6
+         Nm+kb79jWVu00dKPBs6E4m0DtQAoHFpvkatO8oMGSZaPGzUw8AmHob7aLgoGxUnqrh9y
+         kuqUxdrajxtHErGM1KehC2Kkzv63/vg5y4k6Ba/p9t4JbXTKTS1pFv1Fx5/N+qvruVMW
+         mqzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=O449YcYH9q7gH2mEno9n2yuVujMbIs6p2uSiFJh8cBA=;
-        b=2s+mIfS+YKMrShnfcKscslVBvjxOP0lLhJRL40TgvULONzhmm4o6+8Rtqz3nZzRUb1
-         hO0se00Jq5Hk+G5rSZjSvIZ3cU+RlNx6pwfvr5G6NRXtM+eJCe+y3RJEYTbDElwax2Mv
-         eBmg5Vu9IXLAxrYihc6Jt39DMMnwlLFGja1qBZEMkS7/h3S5NZ4UhG5DVuT8gVLbz5GC
-         6dq43XwVjuXJtksoUEklWA6Y9/g19Otglat4YJVurPK5XxT0DSCapNanyubAx3Z3Dxvg
-         oPG+KFI35xa9eqrcmikKX2DktUvCFFE9iuh/swQ3yoAjjp45otrEvpVmj4FCEk8Rwhfa
-         ybvg==
-X-Gm-Message-State: ACgBeo1wm6wiE2cytPFpLcVgYX3zplegmVzUywm5jORF7Pi+dZOmc6D9
-        9mF6ZA0RA+b/IyCinAqinHWk0duneyk=
-X-Google-Smtp-Source: AA6agR7HoetLg0XJNSpGggTo/ASU4vtsmY65pB9Rmn54FZQdKh0s2ceRYpB0FdspkTf8Duuo1hbrJQ==
-X-Received: by 2002:aa7:c3c2:0:b0:447:7d68:7187 with SMTP id l2-20020aa7c3c2000000b004477d687187mr33072826edr.400.1662136462094;
-        Fri, 02 Sep 2022 09:34:22 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id kv8-20020a17090778c800b00741b368a448sm1437943ejc.203.2022.09.02.09.34.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Sep 2022 09:34:21 -0700 (PDT)
-Date:   Fri, 2 Sep 2022 18:34:19 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v5 0/4] landlock: truncate support
-Message-ID: <YxIwi9uss1CbKWia@nuc>
-References: <20220817203006.21769-1-gnoack3000@gmail.com>
- <b336dcfc-7d28-dea9-54de-0b8e4b725c1c@digikod.net>
- <YxGVgfcXwEa+5ZYn@nuc>
- <YxGfxo87drkAjWGf@nuc>
- <68c65a52-4fa1-d2fb-f571-878f9f4658ba@digikod.net>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=wpvqLTbY51ingQhStK6KRkMK43oBsyhc78pHfJrs+Z0=;
+        b=kgWGdoOAp3ZuuWSferPqMcujcafWJ8/Bn62mDiMPz4fv1nyE2JOfXS4I6XNgGJAco+
+         Gxud2pacNhGwe6ZoN3K5F96mrs+QBd9Je0QWyowqDJucBomgEX+xdnzi0gm7Gtm3k2y3
+         aMirdnCK5EnpofCr3Y/k/PGohSHMHk2syuOHMRrbAA9BcyRppjytVPtvkooHOa/C4Mpa
+         fT2wmbjBpXURcAdOQx/6CCEtVJRAPuUG91PMd4fGkmP6/kQxNQzddl6xYaPyWcN53DF1
+         xsduX7sD4ZsQmIN8ha8LjH0WUk19HEEMufE7q2bPFnc6Nf53CsSUIvKWJnYwuxH/tZeN
+         RVvg==
+X-Gm-Message-State: ACgBeo0wUh4/p8/QZmQ35CRKuINlS1U647Qf+X30bNw86en4tLuWFApU
+        wJmqfT+XX9NDVw802zWX7zPEuz8U2gnjmGvkqjV8
+X-Google-Smtp-Source: AA6agR7Wc70UT4e7fFlX/GCll60DV/uWbZKPPaNIbnSSDFl+1w075BMpSWZet2WlOX7jwymG6jPcBsAyq0P9AZyFgGs=
+X-Received: by 2002:a05:6870:f2a1:b0:122:3d83:b14d with SMTP id
+ u33-20020a056870f2a100b001223d83b14dmr3370674oap.136.1662154238464; Fri, 02
+ Sep 2022 14:30:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <68c65a52-4fa1-d2fb-f571-878f9f4658ba@digikod.net>
+References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
+ <791e13b5-bebd-12fc-53de-e9a86df23836@schaufler-ca.com> <CAHC9VhSF8hWg=7tbFiCrizNF61vpwJcU3793LcStiu-anW4i1g@mail.gmail.com>
+In-Reply-To: <CAHC9VhSF8hWg=7tbFiCrizNF61vpwJcU3793LcStiu-anW4i1g@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 2 Sep 2022 17:30:27 -0400
+Message-ID: <CAHC9VhTDGwO789t59EyOV0SwnwGrdyBhRiuJpoY7cB4MSe02BQ@mail.gmail.com>
+Subject: Re: LSM stacking in next for 6.1?
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
+        John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
+        SElinux list <selinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 02, 2022 at 10:40:57AM +0200, Mickaël Salaün wrote:
-> On 02/09/2022 08:16, Günther Noack wrote:
-> > On Fri, Sep 02, 2022 at 07:32:49AM +0200, Günther Noack wrote:
-> > > On Thu, Sep 01, 2022 at 07:10:38PM +0200, Mickaël Salaün wrote:
-> > > > Hmm, I think there is an issue with this series. Landlock only enforces
-> > > > restrictions at open time or when dealing with user-supplied file paths
-> > > > (relative or absolute).
-> > >
-> > > Argh, ok. That sounds like a desirable property, although it would
-> > > mean reworking the patch set.
-> > >
-> > > > The use of the path_truncate hook in this series
-> > > > doesn't distinguish between file descriptor from before the current sandbox
-> > > > or from after being sandboxed. For instance, if a file descriptor is
-> > > > received through a unix socket, it is assumed that this is legitimate and no
-> > > > Landlock restriction apply on it, which is not the case with this series
-> > > > anymore. It is the same for files opened before the process sandbox itself.
-> > > >
-> > > > To be able to follow the current semantic, I think we should control the
-> > > > truncate access at open time (or when dealing with a user-supplied path) but
-> > > > not on any file descriptor as it is currently done.
-> > >
-> > > OK - so let me try to make a constructive proposal. We have previously
-> > > identified a few operations where a truncation happens, and I would
-> > > propose that the following Landlock rights should be needed for these:
-> > >
-> > > * truncate() (operating on char *path): Require LL_ACCESS_FS_TRUNCATE
-> > > * ftruncate() (operating on fd): No Landlock rights required
-> > > * open() for reading with O_TRUNC: Require LL_ACCESS_FS_TRUNCATE
-> > > * open() for writing with O_TRUNC: Require LL_ACCESS_FS_WRITE_FILE
-> >
-> > Thinking about it again, another alternative would be to require
-> > TRUNCATE as well when opening a file for writing - it would be
-> > logical, because the resulting FD can be truncated. It would also
-> > require people to provide the truncate right in order to open files
-> > for writing, but this may be the logical thing to do.
+On Tue, Aug 2, 2022 at 8:56 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Tue, Aug 2, 2022 at 8:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > I would like very much to get v38 or v39 of the LSM stacking for Apparmor
+> > patch set in the LSM next branch for 6.1. The audit changes have polished
+> > up nicely and I believe that all comments on the integrity code have been
+> > addressed. The interface_lsm mechanism has been beaten to a frothy peak.
+> > There are serious binder changes, but I think they address issues beyond
+> > the needs of stacking. Changes outside these areas are pretty well limited
+> > to LSM interface improvements.
 >
-> Another alternative would be to keep the current semantic but ignore file
-> descriptors from not-sandboxed processes. This could be possible by
-> following the current file->f_mode logic but using the Landlock's
-> file->f_security instead to store if the file descriptor was opened in a
-> context allowing it to be truncated: file opened outside of a landlocked
-> process, or in a sandbox allowing LANDLOCK_ACCESS_FS_TRUNCATE on the related
-> path.
+> The LSM stacking patches are near the very top of my list to review
+> once the merge window clears, the io_uring fixes are in (bug fix), and
+> SCTP is somewhat sane again (bug fix).  I'm hopeful that the io_uring
+> and SCTP stuff can be finished up in the next week or two.
+>
+> Since I'm the designated first stuckee now for the stacking stuff I
+> want to go back through everything with fresh eyes, which probably
+> isn't a bad idea since it has been a while since I looked at the full
+> patchset from bottom to top.  I can tell you that I've never been
+> really excited about the /proc changes, and believe it or not I've
+> been thinking about those a fair amount since James asked me to start
+> maintaining the LSM.  I don't want to get into any detail until I've
+> had a chance to look over everything again, but just a heads-up that
+> I'm not too excited about those bits.
 
-I'm not convinced that it'll be worth distinguishing between a FD
-opened for writing and a FD opened for writing+truncation. And whether
-the FD is open for writing is already tracked by default and
-ftruncate() checks that.
+As I mentioned above, I don't really like the stuff that one has to do
+to support LSM stacking on the existing /proc interfaces, the
+"label1\0label2\labelN\0" hack is probably the best (only?) option we
+have for retrofitting multiple LSMs into those interfaces and I think
+we can all agree it's not a great API.  Considering that applications
+that wish to become simultaneous multi-LSM aware are going to need
+modification anyway, let's take a step back and see if we can do this
+with a more sensible API.
 
-I'm having a hard time constructing a scenario where write() should be
-permitted on an FD but ftruncate() should be forbidden. It seems that
-write() is the more dangerous operation of the two, with more
-potential to modify a file to one's liking, whereas the modifications
-possible through TRUNCATE are relatively benign?
+I think it's time to think about a proper set of LSM syscalls.  We
+have avoided this in the past for several reasons, but over the past
+couple of decades the LSMs have established themselves as a core part
+of Linux with many (all?) major Linux distributions shipping and
+supporting at least one LSM; I think we can justify a handful of well
+designed syscalls, and with Landlock we have some precedence too.
+While I realize syscalls are not the only kernel/userspace API option,
+but given the popularity of namespaces I believe a syscall based
+kernel/userspace LSM API has a number of advantages over the other
+options, e.g. procfs/sysfs, netlink, etc.
 
-The opposite scenario (where ftruncate() is permitted and write() is
-forbidden) simply can't exist because an FD must already be writable
-in order to use ftruncate(). (see man page)
+Further, I think we can add the new syscall API separately from the
+LSM stacking changes as they do have standalone value.  This would
+help reduce the size and complexity of the stacking patchset, which I
+believe would be a very good thing.  Introducing the syscall API
+sooner would also allow any applications wanting to make use of the
+crazy new stacked-LSM world a head start as they could be modified
+while the kernel patches were making their way through the
+review/update/merge/release process.
 
-Additionally, if we recall previous discussions on the truncate patch
-sets, there is the very commonly used creat() syscall (a.k.a. open()
-with O_CREAT|O_WRONLY|O_TRUNC), which anyway requires the Landlock
-truncate right in many cases. So I still think you can't actually use
-LANDLOCK_ACCESS_FS_FILE_WRITE without also providing the
-LANDLOCK_ACCESS_FS_TRUNCATE right?
+Thoughts?
 
-In conclusion, I'd be in favor of not tracking the truncate right
-separately as a property of an open file descriptor. Does that
-rationale sound reasonable?
+To help make things a bit more concrete, I put together a quick
+strawman this afternoon to get the discussion started.  I'm definitely
+not a syscall stylist so please consider this more as an idea and
+discussion starter at this point; if we agree there is value in going
+this direction I can put together a proper patchset to introduce the
+new API ...
 
---
+/* LSM_ID_XXX values 32 and below are reserved for future use */
+#define LSM_ID_SELINUX 33
+#define LSM_ID_SMACK 34
+#define LSM_ID_TOMOYO 35
+#define LSM_ID_IMA 36
+#define LSM_ID_APPARMOR 37
+#define LSM_ID_YAMA 38
+#define LSM_ID_LOADPIN 39
+#define LSM_ID_SAFESETID 40
+#define LSM_ID_LOCKDOWN 41
+#define LSM_ID_BPF 42
+#define LSM_ID_LANDLOCK 43
+
+/**
+ * struct lsm_mod - LSM module information
+ * @id: the LSM id number, see LSM_ID_XXX
+ * @flags: LSM specific flags, zero if unused
+ */
+struct lsm_mod {
+  unsigned int id;
+  unsigned int flags;
+};
+
+/**
+ * struct lsm_ctx - LSM context
+ * @id: the LSM id number, see LSM_ID_XXX
+ * @flags: LSM specific flags, zero if unused
+ * @ctx_str: the LSM context string
+ */
+struct lsm_ctx {
+  unsigned in id;
+  unsigned int flags;
+  char *ctx_str;
+};
+
+/**
+ * lsm_enabled - Return information on the enabled LSMs
+ * @lsm: individual LSM definitions
+ * @count: the number of @lsm elements, updated on return
+ * @flags: reserved for future use, must be zero
+ *
+ * Return information on the different LSMs enabled in the kernel.
+ * On success, this function returns a positive number representing
+ * the number of @lsm array elements, which may be zero if none are
+ * enabled.  If the size of @lsm is insufficient, -E2BIG is returned
+ * and the number of enabled LSMs is returned via @count.  In all
+ * other failure cases, a negative value indicating the error is
+ * returned.
+ */
+int lsm_enabled(struct lsm_mod *lsm, size_t *count,
+  unsigned int flags);
+
+/**
+ * lsm_current_ctx - Return current tasks's LSM context
+ * @ctx: the LSM contexts
+ * @count: the number of @ctx elements, updated on return
+ * @flags: reserved for future use, must be zero
+ *
+ * Returns the calling task's LSM contexts.  On success this
+ * function returns a positive number representing the number of
+ * @ctx array elements, which may be zero if there are no LSM
+ * contexts assigned to the caller.  If the size of @ctx is
+ * insufficient, -E2BIG is returned and the required number @ctx
+ * elements is returned via @count.  In all other failure cases, a
+ * negative value indicating the error is returned.
+ */
+int lsm_current_ctx(struct lsm_ctx *ctx, size_t *count,
+  unsigned int flags);
+
+-- 
+paul-moore.com
