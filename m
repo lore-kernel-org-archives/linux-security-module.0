@@ -2,228 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A90A1C38145
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Sep 2022 01:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6783CC6FA81
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Sep 2022 03:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234618AbiIBBfV (ORCPT
+        id S235209AbiIBD1u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Sep 2022 21:35:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56422 "EHLO
+        Thu, 1 Sep 2022 23:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229602AbiIBBfU (ORCPT
+        with ESMTP id S235175AbiIBD1g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Sep 2022 21:35:20 -0400
-Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A7A7961A
-        for <linux-security-module@vger.kernel.org>; Thu,  1 Sep 2022 18:35:17 -0700 (PDT)
-Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-11e9a7135easo1525648fac.6
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Sep 2022 18:35:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date;
-        bh=jaxWGJ05CBTEiLoS2e5Z8hP+DMaic01fqmwKk8izU3g=;
-        b=h5I+k6VaPc5GzBADRDdOvKSE2BN/u0CZzDMYc2h1MvhVbI4di49XeiqMecNvb8QZRK
-         Dv8pmy8NJRG4WP5/K4V9zqWH9YgGoxf0eDP8H/qYp86Z+kMYrMTLFHEmDFg9yG4bIWII
-         773RnoY2lFhZht/gTaivJNiZHFrSA+F3eJcH7Ehf4YHAketIrlqIHxJN4aDspWtO/EJT
-         LtEvD1UfXPRh4XjMwuwHzSjnz7O9PBs6k9PVPTIcGp4I3rWFuUn8jjgqaB6CPuqwudMT
-         BVQf/WVzIe2mPk+19DZbVyCWbPUFzGshifztGbye9GDxIlnelNJmD2Isvctzca83lFJy
-         0sVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=jaxWGJ05CBTEiLoS2e5Z8hP+DMaic01fqmwKk8izU3g=;
-        b=pvyiLvOeNIKmpHfYGBoYaM/HLSCwY/aEAOEjjG5eplwKCJn+nlHUg8gjeUkhZSamL/
-         urt1NUoOtDCBCLyDatRZLNypM+9CdfrAPvLAH5Bd1ececOgrEhjJvgec0H5rOpw7OgDr
-         qtwG2rWcOuPlwDmbZgj0V0TeUcVd8TALVC8soPwMOUVDyZKGJOngtBbDhVkC2a+HUSgd
-         ZubDvtg1W0ruDXC4flj6gacc5zkIVrWm3AwrzUZd24qz3ZrIthwIprrTHWEtlPMXNY8r
-         uE6clkN0x6cuFVmcPqG2hd39FEqUAwdS8VtIMFh8un2w3aFHPE66+AbnSMyImdecKnOC
-         LtiQ==
-X-Gm-Message-State: ACgBeo2QTX8j3Aa9nbq2HzxXl/VDoeowqk5JLX5EiGK1Ksk4gPh5coND
-        UdCWySZXmnr8/YMH9/tk6VxBWKFGOh687QQn+rw0
-X-Google-Smtp-Source: AA6agR7xp8nLVThqF8nuicqqq1i6x82AyEKWYamSX7ZhZ6EZ3Owp1CnkutuH/9dz6/ZDbyylNnlwaN7TkDxevTyZjGI=
-X-Received: by 2002:a05:6808:bd1:b0:345:da59:d3ae with SMTP id
- o17-20020a0568080bd100b00345da59d3aemr956860oik.136.1662082516553; Thu, 01
- Sep 2022 18:35:16 -0700 (PDT)
+        Thu, 1 Sep 2022 23:27:36 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 874E2A0622;
+        Thu,  1 Sep 2022 20:27:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E5636B829B7;
+        Fri,  2 Sep 2022 03:27:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1416CC433C1;
+        Fri,  2 Sep 2022 03:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662089252;
+        bh=qSAS0T0MuBmaWeT8uG5lNnET4yd1Q33sgQdS6DbDcJo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qvnk9aGn58J554jGx93rrg65XFeihTphkgWxYKbWYj+w8dYmNgGUwSWflA4AdmhUg
+         AbVqcYUucbQnz/XNnCf9toUpbL1FvSoz5iThdvfUBVbT9xcgJ7y930xmQ81edGrzb0
+         TP/dJuUwCZxQ3SgFlCQSOFNt8bP5c4mjOkrAp9p5u5iZsq3hcIeIjziNHJ1a8PY3SX
+         g64TdCOTQ43CVy3z1fs/wpko3HvbEZC/wUG8rZ+GiiC958/B7ga4p01wl+tPNWovoR
+         EaDg0ltOoemE0r+kTJdaEGn4BFVQ9Bd6d766ultH2RxUxLLnALCVt273hjYLNJ78eQ
+         gRXrdlGXfJXmA==
+Date:   Fri, 2 Sep 2022 06:27:27 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Mykola Lysenko <mykolal@fb.com>,
+        David Howells <dhowells@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel =?iso-8859-1?Q?M=FCller?= <deso@posteo.net>,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v14 05/12] KEYS: Move KEY_LOOKUP_ to include/linux/key.h
+ and set KEY_LOOKUP_FLAGS_ALL
+Message-ID: <YxF4H9MTDj+PnJ+V@kernel.org>
+References: <20220830161716.754078-1-roberto.sassu@huaweicloud.com>
+ <20220830161716.754078-6-roberto.sassu@huaweicloud.com>
+ <Yw7NKJfhyJqIWUcx@kernel.org>
+ <Yw7o43Ivfo3jRwQg@kernel.org>
+ <cad9a20cadc074cf15dcd0d8eb63b43c98a2f13d.camel@huaweicloud.com>
+ <CAADnVQLCyts0JZ7_=rTp8vP67ET4PjVsZ0Cis0XKUpeCdC13LA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20220502160030.131168-8-cgzones@googlemail.com>
- <20220615152623.311223-1-cgzones@googlemail.com> <20220615152623.311223-8-cgzones@googlemail.com>
- <CAHC9VhS8ASN+BB7adi=uoAj=LeNhiD4LEidbMc=_bcD3UTqabg@mail.gmail.com>
-In-Reply-To: <CAHC9VhS8ASN+BB7adi=uoAj=LeNhiD4LEidbMc=_bcD3UTqabg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 1 Sep 2022 21:35:05 -0400
-Message-ID: <CAHC9VhTRALdnO2JteNzt2j+4FK6DkKWMZ3q-dVPYVJ9_fvPBfw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] capability: add any wrapper to test for multiple
- caps with exactly one audit message
-To:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc:     selinux@vger.kernel.org, Serge Hallyn <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAADnVQLCyts0JZ7_=rTp8vP67ET4PjVsZ0Cis0XKUpeCdC13LA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 1, 2022 at 8:56 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Wed, Jun 15, 2022 at 11:27 AM Christian G=C3=B6ttsche
-> <cgzones@googlemail.com> wrote:
-> >
-> > Add the interfaces `capable_any()` and `ns_capable_any()` as an
-> > alternative to multiple `capable()`/`ns_capable()` calls, like
-> > `capable_any(CAP_SYS_NICE, CAP_SYS_ADMIN)` instead of
-> > `capable(CAP_SYS_NICE) || capable(CAP_SYS_ADMIN)`.
-> >
-> > `capable_any()`/`ns_capable_any()` will in particular generate exactly
-> > one audit message, either for the left most capability in effect or, if
-> > the task has none, the first one.
-> >
-> > This is especially helpful with regard to SELinux, where each audit
-> > message about a not allowed capability will create an AVC denial.
-> > Using this function with the least invasive capability as left most
-> > argument (e.g. CAP_SYS_NICE before CAP_SYS_ADMIN) enables policy writer=
-s
-> > to only allow the least invasive one and SELinux domains pass this chec=
-k
-> > with only capability:sys_nice or capability:sys_admin allowed without
-> > any AVC denial message.
-> >
-> > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> >
-> > ---
-> > v3:
-> >    - rename to capable_any()
-> >    - fix typo in function documentation
-> >    - add ns_capable_any()
-> > v2:
-> >    avoid varargs and fix to two capabilities; capable_or3() can be adde=
-d
-> >    later if needed
-> > ---
-> >  include/linux/capability.h | 10 +++++++
-> >  kernel/capability.c        | 53 ++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 63 insertions(+)
->
-> ...
->
-> > diff --git a/kernel/capability.c b/kernel/capability.c
-> > index 765194f5d678..ab9b889c3f4d 100644
-> > --- a/kernel/capability.c
-> > +++ b/kernel/capability.c
-> > @@ -435,6 +435,59 @@ bool ns_capable_setid(struct user_namespace *ns, i=
-nt cap)
-> >  }
-> >  EXPORT_SYMBOL(ns_capable_setid);
-> >
-> > +/**
-> > + * ns_capable_any - Determine if the current task has one of two super=
-ior capabilities in effect
-> > + * @ns:  The usernamespace we want the capability in
-> > + * @cap1: The capabilities to be tested for first
-> > + * @cap2: The capabilities to be tested for secondly
-> > + *
-> > + * Return true if the current task has at least one of the two given s=
-uperior
-> > + * capabilities currently available for use, false if not.
-> > + *
-> > + * In contrast to or'ing capable() this call will create exactly one a=
-udit
-> > + * message, either for @cap1, if it is granted or both are not permitt=
-ed,
-> > + * or @cap2, if it is granted while the other one is not.
-> > + *
-> > + * The capabilities should be ordered from least to most invasive, i.e=
-. CAP_SYS_ADMIN last.
-> > + *
-> > + * This sets PF_SUPERPRIV on the task if the capability is available o=
-n the
-> > + * assumption that it's about to be used.
-> > + */
-> > +bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2)
-> > +{
-> > +       if (ns_capable_noaudit(ns, cap1))
-> > +               return ns_capable(ns, cap1);
-> > +
-> > +       if (ns_capable_noaudit(ns, cap2))
-> > +               return ns_capable(ns, cap2);
-> > +
-> > +       return ns_capable(ns, cap1);
->
-> I'm slightly concerned that some people are going to be upset about
-> making an additional call into the capabilities code with this
-> function.  I think we need to be a bit more clever here to take out
-> some of the extra work.
->
-> I wonder if we create a new capability function, call it
-> ns_capable_audittrue(...) or something like that, that only generates
-> an audit record if the current task has the requested capability ...
+On Wed, Aug 31, 2022 at 08:33:38AM -0700, Alexei Starovoitov wrote:
+> On Wed, Aug 31, 2022 at 2:24 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > > > >
+> > > > > +#define KEY_LOOKUP_CREATE        0x01
+> > > > > +#define KEY_LOOKUP_PARTIAL       0x02
+> > > > > +#define KEY_LOOKUP_FLAGS_ALL     (KEY_LOOKUP_CREATE |
+> > > > > KEY_LOOKUP_PARTIAL)
+> > > >
+> > > > IMHO this could be just KEY_LOOKUP_ALL.
+> 
+> Since this is supposed to be kernel internal flags
+> please make them enum, so that bpf progs can auto-adjust
+> (with the help of CORE) to changes in this enum.
+> With #define there is no way for bpf prog to know
+> when #define changed in the future kernels.
 
-To be clear, when I mean by generating an audit record when true is
-that the LSMs implementing the security_capable() hook would only call
-their audit related code when the capability requirement was met, in
-many cases that will *not* likely generate an audit record, but you
-get the basic idea I hope.  For SELinux this would likely mean
-modifying cred_has_capability() something like this ...
+Isn't enum also Rust compatibility requirement, or do I remember
+incorrectly? Anyway, good suggestion.
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 03bca97c8b29..c1b7f0582d16 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -1581,6 +1581,7 @@ static int cred_has_capability(const struct cred *cre=
-d,
-       u16 sclass;
-       u32 sid =3D cred_sid(cred);
-       u32 av =3D CAP_TO_MASK(cap);
-+       bool audit;
-       int rc;
-
-       ad.type =3D LSM_AUDIT_DATA_CAP;
-@@ -1601,7 +1602,10 @@ static int cred_has_capability(const struct cred *cr=
-ed,
-
-       rc =3D avc_has_perm_noaudit(&selinux_state,
-                                 sid, sid, sclass, av, 0, &avd);
--       if (!(opts & CAP_OPT_NOAUDIT)) {
-+       audit =3D !(opts & CAP_OPT_NOAUDIT);
-+       if (opts & CAP_OPT_AUDITTRUE)
-+               audit =3D !rc;
-+       if (audit) {
-               int rc2 =3D avc_audit(&selinux_state,
-                                   sid, sid, sclass, av, &avd, rc, &ad);
-               if (rc2)
-
-[There is likely a cleaner patch than the above, this was just mean as
-a demonstration]
-
-> ... if
-> the current task does not have the requested capability no audit
-> record is generated.  With this new function I think we could rewrite
-> ns_capable_any(...) like this:
->
->   bool ns_capable_any(ns, cap1, cap2)
->   {
->     if (ns_capable_audittrue(ns, cap1))
->       return true;
->     if (ns_capable_audittrue(ns, cap2))
->       return true;
->     return ns_capable(ns, cap1);
->   }
->
-> ... we would still have an extra capability check in the failure case,
-> but that's an error case anyway and not likely to draw much concern.
->
-> Of course this would require some additional work, meaning a new
-> CAP_OPT_XXX flag (CAP_OPT_AUDITTRUE?), and updates to the individual
-> LSMs.  However, the good news here is that it appears only SELinux and
-> AppArmor would need modification (the others don't care about
-> capabilities or audit) and in each case the modification to support
-> the new CAP_OPT_AUDITTRUE flag look pretty simple.
->
-> Thoughts?
->
-> > +}
-> > +EXPORT_SYMBOL(ns_capable_any);
-
---=20
-paul-moore.com
+BR, Jarkko
