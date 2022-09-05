@@ -2,27 +2,27 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5A8C6FA86
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Sep 2022 07:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488C2C6FA8E
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Sep 2022 07:58:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237187AbiIEH6s (ORCPT
+        id S237235AbiIEH6u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Sep 2022 03:58:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35004 "EHLO
+        Mon, 5 Sep 2022 03:58:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237164AbiIEH6m (ORCPT
+        with ESMTP id S237186AbiIEH6n (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Sep 2022 03:58:42 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58E4846DA6;
-        Mon,  5 Sep 2022 00:58:40 -0700 (PDT)
+        Mon, 5 Sep 2022 03:58:43 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22038474E1;
+        Mon,  5 Sep 2022 00:58:41 -0700 (PDT)
 Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.56])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4MLglw59lFz1P6gV;
-        Mon,  5 Sep 2022 15:54:52 +0800 (CST)
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MLgmC547JzmV5d;
+        Mon,  5 Sep 2022 15:55:07 +0800 (CST)
 Received: from cgs.huawei.com (10.244.148.83) by
  kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 5 Sep 2022 15:58:37 +0800
+ 15.1.2375.24; Mon, 5 Sep 2022 15:58:39 +0800
 From:   Gaosheng Cui <cuigaosheng1@huawei.com>
 To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
         <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
@@ -30,10 +30,12 @@ To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next 0/4] Use DECLARE_FLEX_ARRAY() helper for ima
-Date:   Mon, 5 Sep 2022 15:58:33 +0800
-Message-ID: <20220905075837.1083216-1-cuigaosheng1@huawei.com>
+Subject: [PATCH -next 3/4] ima: Use DECLARE_FLEX_ARRAY() helper in ima_policy
+Date:   Mon, 5 Sep 2022 15:58:36 +0800
+Message-ID: <20220905075837.1083216-4-cuigaosheng1@huawei.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220905075837.1083216-1-cuigaosheng1@huawei.com>
+References: <20220905075837.1083216-1-cuigaosheng1@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -44,23 +46,35 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This series contains a few cleanup patches, to replace fake flexible-array
-declarations with DECLARE_FLEX_ARRAY() helper for ima. Thanks!
+Zero-length arrays are deprecated and we are moving towards adopting
+C99 flexible-array members instead. So, replace zero-length array
+declaration with the new DECLARE_FLEX_ARRAY() helper macro in struct
+ima_rule_opt_list.
 
-Link: https://github.com/KSPP/linux/issues/193
+This helper allows for a flexible-array member in a union.
 
-Gaosheng Cui (4):
-  ima: Use DECLARE_FLEX_ARRAY() helper in ima_modsig
-  ima: Use DECLARE_FLEX_ARRAY() helper in ima_template_entry
-  ima: Use DECLARE_FLEX_ARRAY() helper in ima_policy
-  integrity: Use DECLARE_FLEX_ARRAY() helper in integrity.h
-
- security/integrity/ima/ima.h        | 2 +-
- security/integrity/ima/ima_modsig.c | 2 +-
+Link: KSPP#21
+Link: KSPP#193
+Link: KSPP#197
+Link: https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+---
  security/integrity/ima/ima_policy.c | 2 +-
- security/integrity/integrity.h      | 6 +++---
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index a8802b8da946..a93e8d0fd90f 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -68,7 +68,7 @@ enum policy_rule_list { IMA_DEFAULT_POLICY = 1, IMA_CUSTOM_POLICY };
+ 
+ struct ima_rule_opt_list {
+ 	size_t count;
+-	char *items[];
++	DECLARE_FLEX_ARRAY(char *, items);
+ };
+ 
+ struct ima_rule_entry {
 -- 
 2.25.1
 
