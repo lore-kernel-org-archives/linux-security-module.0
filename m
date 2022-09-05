@@ -2,79 +2,82 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F550C6FA91
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Sep 2022 07:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8746EC6FA86
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Sep 2022 08:45:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237238AbiIEH6v (ORCPT
+        id S235407AbiIEIpz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Sep 2022 03:58:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35062 "EHLO
+        Mon, 5 Sep 2022 04:45:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237183AbiIEH6n (ORCPT
+        with ESMTP id S236812AbiIEIpy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Sep 2022 03:58:43 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E0A26ACA;
-        Mon,  5 Sep 2022 00:58:41 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MLglx12QZzkWJl;
-        Mon,  5 Sep 2022 15:54:53 +0800 (CST)
-Received: from cgs.huawei.com (10.244.148.83) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 5 Sep 2022 15:58:38 +0800
-From:   Gaosheng Cui <cuigaosheng1@huawei.com>
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-        <cuigaosheng1@huawei.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next 2/4] ima: Use DECLARE_FLEX_ARRAY() helper in ima_template_entry
-Date:   Mon, 5 Sep 2022 15:58:35 +0800
-Message-ID: <20220905075837.1083216-3-cuigaosheng1@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220905075837.1083216-1-cuigaosheng1@huawei.com>
-References: <20220905075837.1083216-1-cuigaosheng1@huawei.com>
+        Mon, 5 Sep 2022 04:45:54 -0400
+Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B024330D;
+        Mon,  5 Sep 2022 01:45:51 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R521e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0VOP0IXE_1662367547;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0VOP0IXE_1662367547)
+          by smtp.aliyun-inc.com;
+          Mon, 05 Sep 2022 16:45:48 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     zohar@linux.ibm.com
+Cc:     dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] security: Fix some kernel-doc comments
+Date:   Mon,  5 Sep 2022 16:45:46 +0800
+Message-Id: <20220905084546.21692-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.244.148.83]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Zero-length arrays are deprecated and we are moving towards adopting
-C99 flexible-array members instead. So, replace zero-length array
-declaration with the new DECLARE_FLEX_ARRAY() helper macro in struct
-ima_template_entry.
+Fix some kernel-doc comments:
+1.Remove the description of @inode in evm_read_protected_xattrs();
+2.Add the description of @iint in integrity_status();
+3.Add the description of @mnt_userns and @attr in evm_inode_setattr().
 
-This helper allows for a flexible-array member in a union.
-
-Link: KSPP#21
-Link: KSPP#193
-Link: KSPP#197
-Link: https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=2054
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 ---
- security/integrity/ima/ima.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/integrity/evm/evm_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index be965a8715e4..15687e79944b 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -100,7 +100,7 @@ struct ima_template_entry {
- 	struct tpm_digest *digests;
- 	struct ima_template_desc *template_desc; /* template descriptor */
- 	u32 template_data_len;
--	struct ima_field_data template_data[];	/* template related data */
-+	DECLARE_FLEX_ARRAY(struct ima_field_data, template_data); /* template related data */
- };
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 23d484e05e6f..2172fe46e907 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -318,7 +318,6 @@ int evm_protected_xattr_if_enabled(const char *req_xattr_name)
+ /**
+  * evm_read_protected_xattrs - read EVM protected xattr names, lengths, values
+  * @dentry: dentry of the read xattrs
+- * @inode: inode of the read xattrs
+  * @buffer: buffer xattr names, lengths or values are copied to
+  * @buffer_size: size of buffer
+  * @type: n: names, l: lengths, v: values
+@@ -390,6 +389,7 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+  * @xattr_name: requested xattr
+  * @xattr_value: requested xattr value
+  * @xattr_value_len: requested xattr value length
++ * @iint: integrity data associated with an inode
+  *
+  * Calculate the HMAC for the given dentry and verify it against the stored
+  * security.evm xattr. For performance, use the xattr value and length
+@@ -776,7 +776,9 @@ static int evm_attr_change(struct user_namespace *mnt_userns,
  
- struct ima_queue_entry {
+ /**
+  * evm_inode_setattr - prevent updating an invalid EVM extended attribute
++ * @mnt_userns: user namespace of the idmapped mount
+  * @dentry: pointer to the affected dentry
++ * @attr: new inode attributes
+  *
+  * Permit update of file attributes when files have a valid EVM signature,
+  * except in the case of them having an immutable portable signature.
 -- 
-2.25.1
+2.20.1.7.g153144c
 
