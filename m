@@ -2,126 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E23EECAAD5
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 18:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5DBECAAA1
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 21:03:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229655AbiIFSpn (ORCPT
+        id S229672AbiIFVDo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Sep 2022 14:45:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54326 "EHLO
+        Tue, 6 Sep 2022 17:03:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiIFSpl (ORCPT
+        with ESMTP id S231134AbiIFVDj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Sep 2022 14:45:41 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BDC872873;
-        Tue,  6 Sep 2022 11:45:40 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id l14so1840520eja.7;
-        Tue, 06 Sep 2022 11:45:40 -0700 (PDT)
+        Tue, 6 Sep 2022 17:03:39 -0400
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56E38A8968
+        for <linux-security-module@vger.kernel.org>; Tue,  6 Sep 2022 14:03:38 -0700 (PDT)
+Received: by mail-qk1-x732.google.com with SMTP id i9so3210533qka.0
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Sep 2022 14:03:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=HXIZTxgstp/ZG/oRasmhftNTYtNhQYTVNhwATRK01KA=;
-        b=hso5o++/iG3WRGqeXqsqlTQG4ASV62xJHp+fXx6Mo5Dj1U7EnT5tcbEfg9QrccgK/R
-         tnQv5lph3g5cU66MBB5hqlTwvZMB2d6SR9PZhlHnJuaCVyHDbfh+kPRp1piNBszvmaH+
-         iodyQdSbiPG6Yh2sL/zLpLHSrCoKfahUPUddoiAFnt2Wx5Eg27ht6xTB1sM8zgTv2Ns4
-         vmxmJAMVSkB/Xv788V6U5A4Q0mJhGVb6z09wE126tOirCZGg0U+LCSiMaM5rcTkGh0KM
-         JLCss/3rpU5dxEq5E1FltyKECYuiiVuFr2smlNleBgB0soZUBy/qKRfbrmN2dXoDaWHE
-         kwRw==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:user-agent:message-id:date
+         :cc:to:from:subject:from:to:cc:subject:date;
+        bh=1ZF2gBte2ipeQA8Nz2cQsa200sgcemuonfZmgozIZZM=;
+        b=yk51w2T4BRIcBBAWAPby7+3MCpByr9ruRWFz+U9gdzJtoAdw4AYLszfduuEczK5g7i
+         lSD+QLKZS/oy7ScTFtysmSQaZuqLoTkQsoXcwPUo3vI1+kQJ48G7czydeFPopt73KkSv
+         Q9l/7+K0ZVCFQAXNjinFgGR6ouHc6BlDFBR3vG6yHVxZonWTvHhhJxZHUq6uUIhnAdVD
+         v6wAwSTCwiX5lHUsNkVKqkss6RktNOtsGX69psm6+wOIAs/zxAgQsQLK1gbITolCYLgv
+         sxc2w2/gVTtJflUhoRu73KoO2SStodHER1erB9n7x09Ul3f15wL72IwCRDmmkVC3BBca
+         bzMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=HXIZTxgstp/ZG/oRasmhftNTYtNhQYTVNhwATRK01KA=;
-        b=rf28j5elNEJUPYnvqg6HiiUbC2ThlwHRORJ57TJoE1IAyy8eBZWK6Fzuh5OijS9dIT
-         PO3XcFQT4IPujM6GdWLbRWYMWCAlbbONq1aaRn1RljSunZVS80AeV1g0yu8L0memVEPs
-         R7AfqNdWgzDw4uNbcSWe0wdPKAr0NeopM1HtFjm39WA620rXJOHFh/P0+og/DqK41Qgq
-         r3P9DPBjaEDZ9hw+xQI4IiNqwKzEpj6pu67hG9Y/q5x1GvMSuVoSo6dmVs/q1SHMRGXG
-         /5YwKz6eJbvn7d0gVaVsvE9R+7ndMo10IGIENKjK0AmNowSc1Y9oJaZKW5nLsjyx16ZS
-         vsFQ==
-X-Gm-Message-State: ACgBeo08XGmeOj2gO45/O+aaoktbrUhhiNt5Voizw70uc92rLehW/WHl
-        htov2qFhPoj9i6JGN1T8e1KzY0ieGmfUAA+/rWc=
-X-Google-Smtp-Source: AA6agR4F+9Ti9v8fFFnmPvQrhjZYULAf1awN9JWkYZiJxqfPg4ByBnj54CpE5wTOzCEUch0G8xs2kRSTxhaKwuoYWS4=
-X-Received: by 2002:a17:906:58d1:b0:76d:af13:5ae3 with SMTP id
- e17-20020a17090658d100b0076daf135ae3mr6734331ejs.708.1662489938725; Tue, 06
- Sep 2022 11:45:38 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:user-agent:message-id:date
+         :cc:to:from:subject:x-gm-message-state:from:to:cc:subject:date;
+        bh=1ZF2gBte2ipeQA8Nz2cQsa200sgcemuonfZmgozIZZM=;
+        b=k1XbvK3jGUMucIXqN7PECQcxMZanMNuVa93Hdm42VxtiSp24ZOc9bSKflCeQpHdIoq
+         GSKViYj4u3OgxKBrXdOp3m05KHHZfm9K+KAem9SZhEDezoT9X5Ka3CJqbEOBK6jmOztl
+         ZtWrOlWd7RgUKJQbX/FIQV3A/MywXvVGJs62zkG6sUDe0Mp7URAlYjVN2TaS1tm+ATwl
+         DYKVsDcBy2wFDyebiyR3OLhnhyH8+/NqaWZyVfWljI4Ggm4MgMjXUegZqzobb3jFIdGP
+         tpYnkRWUbMKF7F3qVbEaJt/UXX3n1xa7D70fuunhOKdTPguoIgUe170ezkrtyfg59er8
+         euUQ==
+X-Gm-Message-State: ACgBeo28+KJY4Ps7O5fDojqPtpF/MPvd6ADP+gP0fgnUTPQULz3bVjXM
+        89PXueWxIkXxufr8DFMW9Bd9
+X-Google-Smtp-Source: AA6agR5XvnXVCx8oY0f/PuqU/VsPB0iKEEOT3DdCjIG9Vm1xsN3kH+duMuMM/w+AzFh/TZq6gXsCQQ==
+X-Received: by 2002:ae9:df41:0:b0:6bc:3e7b:1ec8 with SMTP id t62-20020ae9df41000000b006bc3e7b1ec8mr429418qkf.499.1662498217344;
+        Tue, 06 Sep 2022 14:03:37 -0700 (PDT)
+Received: from localhost (pool-108-26-161-203.bstnma.fios.verizon.net. [108.26.161.203])
+        by smtp.gmail.com with ESMTPSA id y8-20020a05620a44c800b006c479acd82fsm10046140qkp.7.2022.09.06.14.03.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Sep 2022 14:03:36 -0700 (PDT)
+Subject: [v5.19.y PATCH 0/3] Backport the io_uring/LSM CMD passthrough
+ controls
+From:   Paul Moore <paul@paul-moore.com>
+To:     stable@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, Luis Chamberlain <mcgrof@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+Date:   Tue, 06 Sep 2022 17:03:36 -0400
+Message-ID: <166249766105.409408.12118839467847524983.stgit@olly>
+User-Agent: StGit/1.5
 MIME-Version: 1.0
-References: <20220905143318.1592015-1-roberto.sassu@huaweicloud.com>
- <20220905143318.1592015-7-roberto.sassu@huaweicloud.com> <CAP01T74HKXuf9Aig4v3zsL1rwQAGRpUtTiaN2djWsMiJmaqF_A@mail.gmail.com>
- <663480e6bdfd9809c9e367bfc8df95d7a1323723.camel@huaweicloud.com>
-In-Reply-To: <663480e6bdfd9809c9e367bfc8df95d7a1323723.camel@huaweicloud.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Tue, 6 Sep 2022 11:45:27 -0700
-Message-ID: <CAADnVQLT9nSEqprcX_hmTeAYGVA9cWupVEfvhnyPuzWwrGKHcQ@mail.gmail.com>
-Subject: Re: [PATCH v16 06/12] bpf: Add bpf_lookup_*_key() and bpf_key_put() kfuncs
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Mykola Lysenko <mykolal@fb.com>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Daniel_M=C3=BCller?= <deso@posteo.net>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 6, 2022 at 1:01 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> > > +struct bpf_key *bpf_lookup_user_key(u32 serial, u64 flags)
-> > > +{
-> > > +       key_ref_t key_ref;
-> > > +       struct bpf_key *bkey;
-> > > +
-> > > +       if (flags & ~KEY_LOOKUP_ALL)
-> > > +               return NULL;
-> > > +
-> > > +       /*
-> > > +        * Permission check is deferred until the key is used, as
-> > > the
-> > > +        * intent of the caller is unknown here.
-> > > +        */
-> > > +       key_ref = lookup_user_key(serial, flags,
-> > > KEY_DEFER_PERM_CHECK);
-> > > +       if (IS_ERR(key_ref))
-> > > +               return NULL;
-> > > +
-> > > +       bkey = kmalloc(sizeof(*bkey), GFP_ATOMIC);
-> >
-> > Since this function (due to lookup_user_key) is sleepable, do we
-> > really need GFP_ATOMIC here?
->
-> Daniel suggested it for bpf_lookup_system_key(), so that the kfunc does
-> not have to be sleepable.
+The stable patch merging tools failed to automatically merge the
+io_uring/LSM CMD passthrough controls into the stable v5.19.y branch,
+so I'm doing the backport manually and submitting them directly to
+stable for the next v5.19.y release.  The backport is necessary due
+to the reorg/decomposition of the io_uring code in io_uring/ during
+the v5.19->v6.0 merge window.  Other than the differences in the
+filenames under io_uring, the code changes are pretty much the same.
 
-Hold on. It has to be sleepable. Just take a look
-at what lookup_user_key is doing inside.
+I've done some basic sanity testing this afternoon with these
+patches and everything looks good to me.
 
-> For symmetry, I did the same to
-> bpf_lookup_user_key(). Will switch back to GFP_KERNEL.
->
-> Thanks
->
-> Roberto
->
+If you would prefer to pull these directly from a git tree instead
+of email, they are available via the LSM tree on the stable-5.19
+branch, using the lsm-pr-20220906 tag.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+        lsm-pr-20220906
+
+---
+
+Paul Moore (3):
+      lsm,io_uring: add LSM hooks for the new uring_cmd file op
+      selinux: implement the security_uring_cmd() LSM hook
+      Smack: Provide read control for io_uring_cmd
+
+
+ include/linux/lsm_hook_defs.h       |  1 +
+ include/linux/lsm_hooks.h           |  3 +++
+ include/linux/security.h            |  5 +++++
+ io_uring/io_uring.c                 |  4 ++++
+ security/security.c                 |  4 ++++
+ security/selinux/hooks.c            | 24 ++++++++++++++++++++++
+ security/selinux/include/classmap.h |  2 +-
+ security/smack/smack_lsm.c          | 32 +++++++++++++++++++++++++++++
+ 8 files changed, 74 insertions(+), 1 deletion(-)
