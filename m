@@ -2,167 +2,376 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC164C6FA83
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 08:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6BB9ECAAA1
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 08:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238687AbiIFII1 (ORCPT
+        id S238230AbiIFIJG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Sep 2022 04:08:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48512 "EHLO
+        Tue, 6 Sep 2022 04:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238465AbiIFII0 (ORCPT
+        with ESMTP id S239037AbiIFIIu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Sep 2022 04:08:26 -0400
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC02652E7E;
-        Tue,  6 Sep 2022 01:08:24 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4MMHwJ5hqLz9xqvl;
-        Tue,  6 Sep 2022 16:04:16 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDnYl3P_xZj3EYnAA--.22559S2;
-        Tue, 06 Sep 2022 09:07:55 +0100 (CET)
-Message-ID: <3d32decb1fda80e261d9ed08decfdca45614c4af.camel@huaweicloud.com>
-Subject: Re: [PATCH v16 07/12] bpf: Add bpf_verify_pkcs7_signature() kfunc
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>, joannelkoong@gmail.com
-Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
-        dhowells@redhat.com, jarkko@kernel.org, rostedt@goodmis.org,
-        mingo@redhat.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, shuah@kernel.org, bpf@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 06 Sep 2022 10:07:41 +0200
-In-Reply-To: <CAP01T77F-A7igW+vp5RhzcqzRJymO6YRvNR2cfsh+2fKNy56YA@mail.gmail.com>
-References: <20220905143318.1592015-1-roberto.sassu@huaweicloud.com>
-         <20220905143318.1592015-8-roberto.sassu@huaweicloud.com>
-         <CAP01T77F-A7igW+vp5RhzcqzRJymO6YRvNR2cfsh+2fKNy56YA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Tue, 6 Sep 2022 04:08:50 -0400
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E92B5A2DB
+        for <linux-security-module@vger.kernel.org>; Tue,  6 Sep 2022 01:08:48 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MMJ1V7499zMpvC1;
+        Tue,  6 Sep 2022 10:08:46 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MMJ1V1jCdzMppMk;
+        Tue,  6 Sep 2022 10:08:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1662451726;
+        bh=SV2HdLdmR7X33EKl1Bu74hIg/BGfH+6BscyQdmft/V8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=rrdmWGSrdMwgGRTyDjU0BO4dshIxuSS6T/WxzlKFstSOq7OzX4wpnQt3kL/U5uobV
+         X83wnaeOoQr9ZcOGBuGrpdHVHIfTFxh3zMc6z+671S1VPHLbxVyLDcLn+O9p+8C7CE
+         Nqm7h12bcQ7NUdXQiz9Bj13x/5DAyRh8rCZ84H+g=
+Message-ID: <9cf95acb-14a0-0900-c5af-c910de80e289@digikod.net>
+Date:   Tue, 6 Sep 2022 10:08:45 +0200
 MIME-Version: 1.0
+User-Agent: 
+Subject: Re: [PATCH v7 08/18] landlock: add network rules support
+Content-Language: en-US
+To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+        hukeping@huawei.com, anton.sirazetdinov@huawei.com
+References: <20220829170401.834298-1-konstantin.meskhidze@huawei.com>
+ <20220829170401.834298-9-konstantin.meskhidze@huawei.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20220829170401.834298-9-konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwDnYl3P_xZj3EYnAA--.22559S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw1rWF4fWw17ZrWftry7Jrb_yoW5ZF1DpF
-        W8KF4Y9ry8JF12yF13Za1fua4Sk3yvqw17W3sxt3s3ZrnY9r1xuF18tF45W3sYkry8try2
-        vFyIqrya9wn8Za7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
-        rVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
-        IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
-        0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
-        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAI
-        cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0x
-        vE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
-        87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUbHa0PUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj4KmiQAAse
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-09-06 at 04:57 +0200, Kumar Kartikeya Dwivedi wrote:
-> On Mon, 5 Sept 2022 at 16:35, Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Add the bpf_verify_pkcs7_signature() kfunc, to give eBPF security
-> > modules
-> > the ability to check the validity of a signature against supplied
-> > data, by
-> > using user-provided or system-provided keys as trust anchor.
-> > 
-> > The new kfunc makes it possible to enforce mandatory policies, as
-> > eBPF
-> > programs might be allowed to make security decisions only based on
-> > data
-> > sources the system administrator approves.
-> > 
-> > The caller should provide the data to be verified and the signature
-> > as eBPF
-> > dynamic pointers (to minimize the number of parameters) and a
-> > bpf_key
-> > structure containing a reference to the keyring with keys trusted
-> > for
-> > signature verification, obtained from bpf_lookup_user_key() or
-> > bpf_lookup_system_key().
-> > 
-> > For bpf_key structures obtained from the former lookup function,
-> > bpf_verify_pkcs7_signature() completes the permission check
-> > deferred by
-> > that function by calling key_validate(). key_task_permission() is
-> > already
-> > called by the PKCS#7 code.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Acked-by: KP Singh <kpsingh@kernel.org>
-> > ---
-> >  kernel/trace/bpf_trace.c | 45
-> > ++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 45 insertions(+)
-> > 
-> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > index 7a7023704ac2..8e2c026b0a58 100644
-> > --- a/kernel/trace/bpf_trace.c
-> > +++ b/kernel/trace/bpf_trace.c
-> > @@ -1294,12 +1294,57 @@ void bpf_key_put(struct bpf_key *bkey)
-> >         kfree(bkey);
-> >  }
-> > 
-> > +#ifdef CONFIG_SYSTEM_DATA_VERIFICATION
-> > +/**
-> > + * bpf_verify_pkcs7_signature - verify a PKCS#7 signature
-> > + * @data_ptr: data to verify
-> > + * @sig_ptr: signature of the data
-> > + * @trusted_keyring: keyring with keys trusted for signature
-> > verification
-> > + *
-> > + * Verify the PKCS#7 signature *sig_ptr* against the supplied
-> > *data_ptr*
-> > + * with keys in a keyring referenced by *trusted_keyring*.
-> > + *
-> > + * Return: 0 on success, a negative value on error.
-> > + */
-> > +int bpf_verify_pkcs7_signature(struct bpf_dynptr_kern *data_ptr,
-> > +                              struct bpf_dynptr_kern *sig_ptr,
-> > +                              struct bpf_key *trusted_keyring)
-> > +{
-> > +       int ret;
-> > +
-> > +       if (trusted_keyring->has_ref) {
-> > +               /*
-> > +                * Do the permission check deferred in
-> > bpf_lookup_user_key().
-> > +                * See bpf_lookup_user_key() for more details.
-> > +                *
-> > +                * A call to key_task_permission() here would be
-> > redundant, as
-> > +                * it is already done by keyring_search() called by
-> > +                * find_asymmetric_key().
-> > +                */
-> > +               ret = key_validate(trusted_keyring->key);
-> > +               if (ret < 0)
-> > +                       return ret;
-> > +       }
-> > +
-> > +       return verify_pkcs7_signature(data_ptr->data,
-> > +                                     bpf_dynptr_get_size(data_ptr)
-> > ,
-> > +                                     sig_ptr->data,
-> > +                                     bpf_dynptr_get_size(sig_ptr),
+
+On 29/08/2022 19:03, Konstantin Meskhidze wrote:
+> This commit adds network rules support in internal landlock functions
+> (presented in ruleset.c) and landlock_create_ruleset syscall.
 > 
-> MIssing check for data_ptr->data == NULL before making this call?
-> Same
-> for sig_ptr.
+> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
+> 
+> Changes since v6:
+> * Renames landlock_set_net_access_mask() to landlock_add_net_access_mask()
+>    because it OR values.
+> * Makes landlock_add_net_access_mask() more resilient incorrect values.
+> * Refactors landlock_get_net_access_mask().
+> * Renames LANDLOCK_MASK_SHIFT_NET to LANDLOCK_SHIFT_ACCESS_NET and use
+>    LANDLOCK_NUM_ACCESS_FS as value.
+> * Updates access_masks_t to u32 to support network access actions.
+> * Refactors landlock internal functions to support network actions with
+>    landlock_key/key_type/id types.
+> 
+> Changes since v5:
+> * Gets rid of partial revert from landlock_add_rule
+> syscall.
+> * Formats code with clang-format-14.
+> 
+> Changes since v4:
+> * Refactors landlock_create_ruleset() - splits ruleset and
+> masks checks.
+> * Refactors landlock_create_ruleset() and landlock mask
+> setters/getters to support two rule types.
+> * Refactors landlock_add_rule syscall add_rule_path_beneath
+> function by factoring out get_ruleset_from_fd() and
+> landlock_put_ruleset().
+> 
+> Changes since v3:
+> * Splits commit.
+> * Adds network rule support for internal landlock functions.
+> * Adds set_mask and get_mask for network.
+> * Adds rb_root root_net_port.
+> 
+> ---
+>   security/landlock/limits.h   |  6 +++++-
+>   security/landlock/ruleset.c  | 38 +++++++++++++++++++++++++++++----
+>   security/landlock/ruleset.h  | 41 ++++++++++++++++++++++++++++++++++--
+>   security/landlock/syscalls.c |  8 ++++++-
+>   4 files changed, 85 insertions(+), 8 deletions(-)
+> 
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index bafb3b8dc677..8a1a6463c64e 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -23,6 +23,10 @@
+>   #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>   #define LANDLOCK_SHIFT_ACCESS_FS	0
+> 
+> -/* clang-format on */
+> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_TCP
+> +#define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+> +#define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+> +#define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
+> 
+> +/* clang-format on */
+>   #endif /* _SECURITY_LANDLOCK_LIMITS_H */
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index 84fcd8eb30d4..442f212039df 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -36,6 +36,7 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>   	refcount_set(&new_ruleset->usage, 1);
+>   	mutex_init(&new_ruleset->lock);
+>   	new_ruleset->root_inode = RB_ROOT;
+> +	new_ruleset->root_net_port = RB_ROOT;
+>   	new_ruleset->num_layers = num_layers;
+>   	/*
+>   	 * hierarchy = NULL
+> @@ -46,16 +47,21 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>   }
+> 
+>   struct landlock_ruleset *
+> -landlock_create_ruleset(const access_mask_t fs_access_mask)
+> +landlock_create_ruleset(const access_mask_t fs_access_mask,
+> +			const access_mask_t net_access_mask)
+>   {
+>   	struct landlock_ruleset *new_ruleset;
+> 
+>   	/* Informs about useless ruleset. */
+> -	if (!fs_access_mask)
+> +	if (!fs_access_mask && !net_access_mask)
+>   		return ERR_PTR(-ENOMSG);
+>   	new_ruleset = create_ruleset(1);
+> -	if (!IS_ERR(new_ruleset))
+> +	if (IS_ERR(new_ruleset))
+> +		return new_ruleset;
+> +	if (fs_access_mask)
+>   		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
+> +	if (net_access_mask)
+> +		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
+>   	return new_ruleset;
+>   }
+> 
+> @@ -73,6 +79,8 @@ static inline bool is_object_pointer(const enum landlock_key_type key_type)
+>   	switch (key_type) {
+>   	case LANDLOCK_KEY_INODE:
+>   		return true;
+> +	case LANDLOCK_KEY_NET_PORT:
+> +		return false;
+>   	}
+>   	WARN_ON_ONCE(1);
+>   	return false;
+> @@ -126,6 +134,9 @@ static inline struct rb_root *get_root(struct landlock_ruleset *const ruleset,
+>   	case LANDLOCK_KEY_INODE:
+>   		root = &ruleset->root_inode;
+>   		break;
+> +	case LANDLOCK_KEY_NET_PORT:
+> +		root = &ruleset->root_net_port;
+> +		break;
+>   	}
+>   	if (WARN_ON_ONCE(!root))
+>   		return ERR_PTR(-EINVAL);
+> @@ -154,7 +165,9 @@ static void build_check_ruleset(void)
+>   	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
+>   	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
+>   	BUILD_BUG_ON(access_masks <
+> -		     (LANDLOCK_MASK_ACCESS_FS << LANDLOCK_SHIFT_ACCESS_FS));
+> +		     (LANDLOCK_MASK_ACCESS_FS << LANDLOCK_SHIFT_ACCESS_FS) +
+> +			     (LANDLOCK_MASK_ACCESS_NET
+> +			      << LANDLOCK_SHIFT_ACCESS_NET));
+>   }
+> 
+>   /**
+> @@ -367,6 +380,11 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+>   	if (err)
+>   		goto out_unlock;
+> 
+> +	/* Merges the @src network port tree. */
+> +	err = merge_tree(dst, src, LANDLOCK_KEY_NET_PORT);
+> +	if (err)
+> +		goto out_unlock;
+> +
+>   out_unlock:
+>   	mutex_unlock(&src->lock);
+>   	mutex_unlock(&dst->lock);
+> @@ -419,6 +437,11 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
+>   	if (err)
+>   		goto out_unlock;
+> 
+> +	/* Copies the @parent network port tree. */
+> +	err = inherit_tree(parent, child, LANDLOCK_KEY_NET_PORT);
+> +	if (err)
+> +		goto out_unlock;
+> +
+>   	if (WARN_ON_ONCE(child->num_layers <= parent->num_layers)) {
+>   		err = -EINVAL;
+>   		goto out_unlock;
+> @@ -451,6 +474,9 @@ static void free_ruleset(struct landlock_ruleset *const ruleset)
+>   	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root_inode,
+>   					     node)
+>   		free_rule(freeme, LANDLOCK_KEY_INODE);
+> +	rbtree_postorder_for_each_entry_safe(freeme, next,
+> +					     &ruleset->root_net_port, node)
+> +		free_rule(freeme, LANDLOCK_KEY_NET_PORT);
+>   	put_hierarchy(ruleset->hierarchy);
+>   	kfree(ruleset);
+>   }
+> @@ -640,6 +666,10 @@ access_mask_t init_layer_masks(const struct landlock_ruleset *const domain,
+>   		get_access_mask = landlock_get_fs_access_mask;
+>   		num_access = LANDLOCK_NUM_ACCESS_FS;
+>   		break;
+> +	case LANDLOCK_KEY_NET_PORT:
+> +		get_access_mask = landlock_get_net_access_mask;
+> +		num_access = LANDLOCK_NUM_ACCESS_NET;
+> +		break;
+>   	default:
+>   		WARN_ON_ONCE(1);
+>   		return 0;
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index 2083855bf42d..d456ee90b648 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -26,7 +26,7 @@ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+>   static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
+> 
+>   /* Ruleset access masks. */
+> -typedef u16 access_masks_t;
+> +typedef u32 access_masks_t;
+>   /* Makes sure all ruleset access rights can be stored. */
+>   static_assert(BITS_PER_TYPE(access_masks_t) >= LANDLOCK_NUM_ACCESS_FS);
 
-Patch 3 requires the dynptrs to be initialized. Isn't enough?
+There is some fixes missing from my patch.
 
-Thanks
 
-Roberto
+> 
+> @@ -66,6 +66,11 @@ enum landlock_key_type {
+>   	 * keys.
+>   	 */
+>   	LANDLOCK_KEY_INODE = 1,
 
+
+#if IS_ENABLED(CONFIG_INET)
+
+> +	/**
+> +	 * @LANDLOCK_KEY_NET_PORT: Type of &landlock_ruleset.root_net_port's
+> +	 * node keys.
+> +	 */
+> +	LANDLOCK_KEY_NET_PORT = 2,
+
+#endif /* IS_ENABLED(CONFIG_INET) */
+
+And then all use of LANDLOCK_KEY_NET_PORT should be surrounded by the 
+same check (but not directly in the net.c file).
+
+
+>   };
+> 
+>   /**
+> @@ -133,6 +138,12 @@ struct landlock_ruleset {
+>   	 * reaches zero.
+>   	 */
+>   	struct rb_root root_inode;
+
+#if IS_ENABLED(CONFIG_INET)
+
+> +	/**
+> +	 * @root_net_port: Root of a red-black tree containing object nodes
+> +	 * for network port. Once a ruleset is tied to a process (i.e. as a domain),
+> +	 * this tree is immutable until @usage reaches zero.
+> +	 */
+
+There is some fixes missing from my patch. Please explain everything 
+that you didn't take.
+
+
+> +	struct rb_root root_net_port;
+
+
+#endif /* IS_ENABLED(CONFIG_INET) */
+
+And then all use of root_net_port should be surrounded by the same check.
+
+I think it should be OK to keep all other remaining network references 
+though (e.g. access_masks and the ).
+
+
+>   	/**
+>   	 * @hierarchy: Enables hierarchy identification even when a parent
+>   	 * domain vanishes.  This is needed for the ptrace protection.
+> @@ -188,7 +199,8 @@ struct landlock_ruleset {
+>   };
+> 
+>   struct landlock_ruleset *
+> -landlock_create_ruleset(const access_mask_t access_mask);
+> +landlock_create_ruleset(const access_mask_t access_mask_fs,
+> +			const access_mask_t access_mask_net);
+> 
+>   void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
+>   void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
+> @@ -226,6 +238,21 @@ landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
+>   		(fs_mask << LANDLOCK_SHIFT_ACCESS_FS);
+>   }
+> 
+> +/* A helper function to set a network mask. */
+
+I already said that this comment is useless, and I removed it in my 
+patch. Please take a closer look at reviews.
+
+
+> +static inline void
+> +landlock_add_net_access_mask(struct landlock_ruleset *const ruleset,
+> +			     const access_mask_t net_access_mask,
+> +			     const u16 layer_level)
+> +{
+> +	access_mask_t net_mask = net_access_mask & LANDLOCK_MASK_ACCESS_NET;
+> +
+> +	/* Should already be checked in sys_landlock_create_ruleset(). */
+> +	WARN_ON_ONCE(net_access_mask != net_mask);
+> +	// TODO: Add tests to check "|=" and not "="
+> +	ruleset->access_masks[layer_level] |=
+> +		(net_mask << LANDLOCK_SHIFT_ACCESS_NET);
+> +}
+> +
+>   /* A helper function to get a filesystem mask. */
+>   static inline access_mask_t
+>   landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
+> @@ -236,6 +263,16 @@ landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
+>   	       LANDLOCK_MASK_ACCESS_FS;
+>   }
+> 
+> +/* A helper function to get a network mask. */
+> +static inline access_mask_t
+> +landlock_get_net_access_mask(const struct landlock_ruleset *const ruleset,
+> +			     const u16 layer_level)
+> +{
+> +	return (ruleset->access_masks[layer_level] >>
+> +		LANDLOCK_SHIFT_ACCESS_NET) &
+> +	       LANDLOCK_MASK_ACCESS_NET;
+> +}
+> +
+
+This hunk doesn't match my patch.
+
+
+>   bool unmask_layers(const struct landlock_rule *const rule,
+>   		   const access_mask_t access_request,
+>   		   layer_mask_t (*const layer_masks)[],
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index ffd5805eddd9..641155f6f6f8 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -189,8 +189,14 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+>   	    LANDLOCK_MASK_ACCESS_FS)
+>   		return -EINVAL;
+> 
+> +	/* Checks network content (and 32-bits cast). */
+> +	if ((ruleset_attr.handled_access_net | LANDLOCK_MASK_ACCESS_NET) !=
+> +	    LANDLOCK_MASK_ACCESS_NET)
+> +		return -EINVAL;
+> +
+>   	/* Checks arguments and transforms to kernel struct. */
+> -	ruleset = landlock_create_ruleset(ruleset_attr.handled_access_fs);
+> +	ruleset = landlock_create_ruleset(ruleset_attr.handled_access_fs,
+> +					  ruleset_attr.handled_access_net);
+>   	if (IS_ERR(ruleset))
+>   		return PTR_ERR(ruleset);
+> 
+> --
+> 2.25.1
+> 
