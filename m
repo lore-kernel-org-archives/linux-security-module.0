@@ -2,287 +2,167 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15819ECAAA1
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 08:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC164C6FA83
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 08:08:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233570AbiIFIHr (ORCPT
+        id S238687AbiIFII1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Sep 2022 04:07:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47976 "EHLO
+        Tue, 6 Sep 2022 04:08:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbiIFIHq (ORCPT
+        with ESMTP id S238465AbiIFII0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Sep 2022 04:07:46 -0400
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E61524330E
-        for <linux-security-module@vger.kernel.org>; Tue,  6 Sep 2022 01:07:44 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MMJ0H0VPFzMqj7F;
-        Tue,  6 Sep 2022 10:07:43 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MMJ0G34bbz14N;
-        Tue,  6 Sep 2022 10:07:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1662451663;
-        bh=xeEK5HMoF1L0Ly/rMbGWswVtm2ZNbvOfvJi+G4TibCE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=kF+Z/ihyc2m09pLpJXh01JWwS5A/PDo9CkYG6XfqxQ/o/k7pLMw6KC1X2MbWuNiof
-         P/VH9uxanq5npoKWN62DEhmktzHkrYtK6PsCKyTJUitUBqD9GC76gCGyqUOOjME7Sy
-         mt0jrOA8Bbw3ITjF4ZukfCo3fNnyY5dNmlUjKCtY=
-Message-ID: <e7f8bc8d-0dc4-ce28-80bc-447b2219c70d@digikod.net>
-Date:   Tue, 6 Sep 2022 10:07:41 +0200
+        Tue, 6 Sep 2022 04:08:26 -0400
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC02652E7E;
+        Tue,  6 Sep 2022 01:08:24 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4MMHwJ5hqLz9xqvl;
+        Tue,  6 Sep 2022 16:04:16 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwDnYl3P_xZj3EYnAA--.22559S2;
+        Tue, 06 Sep 2022 09:07:55 +0100 (CET)
+Message-ID: <3d32decb1fda80e261d9ed08decfdca45614c4af.camel@huaweicloud.com>
+Subject: Re: [PATCH v16 07/12] bpf: Add bpf_verify_pkcs7_signature() kfunc
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>, joannelkoong@gmail.com
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        dhowells@redhat.com, jarkko@kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, shuah@kernel.org, bpf@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Tue, 06 Sep 2022 10:07:41 +0200
+In-Reply-To: <CAP01T77F-A7igW+vp5RhzcqzRJymO6YRvNR2cfsh+2fKNy56YA@mail.gmail.com>
+References: <20220905143318.1592015-1-roberto.sassu@huaweicloud.com>
+         <20220905143318.1592015-8-roberto.sassu@huaweicloud.com>
+         <CAP01T77F-A7igW+vp5RhzcqzRJymO6YRvNR2cfsh+2fKNy56YA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v7 05/18] landlock: refactor helper functions
-Content-Language: en-US
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        hukeping@huawei.com, anton.sirazetdinov@huawei.com
-References: <20220829170401.834298-1-konstantin.meskhidze@huawei.com>
- <20220829170401.834298-6-konstantin.meskhidze@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20220829170401.834298-6-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwDnYl3P_xZj3EYnAA--.22559S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw1rWF4fWw17ZrWftry7Jrb_yoW5ZF1DpF
+        W8KF4Y9ry8JF12yF13Za1fua4Sk3yvqw17W3sxt3s3ZrnY9r1xuF18tF45W3sYkry8try2
+        vFyIqrya9wn8Za7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+        0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
+        rVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
+        IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
+        0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
+        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAI
+        cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0x
+        vE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
+        87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUbHa0PUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj4KmiQAAse
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-You can improve the subject with: "landlock: Refactor unmask_layers() 
-and init_layer_masks()"
+On Tue, 2022-09-06 at 04:57 +0200, Kumar Kartikeya Dwivedi wrote:
+> On Mon, 5 Sept 2022 at 16:35, Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > Add the bpf_verify_pkcs7_signature() kfunc, to give eBPF security
+> > modules
+> > the ability to check the validity of a signature against supplied
+> > data, by
+> > using user-provided or system-provided keys as trust anchor.
+> > 
+> > The new kfunc makes it possible to enforce mandatory policies, as
+> > eBPF
+> > programs might be allowed to make security decisions only based on
+> > data
+> > sources the system administrator approves.
+> > 
+> > The caller should provide the data to be verified and the signature
+> > as eBPF
+> > dynamic pointers (to minimize the number of parameters) and a
+> > bpf_key
+> > structure containing a reference to the keyring with keys trusted
+> > for
+> > signature verification, obtained from bpf_lookup_user_key() or
+> > bpf_lookup_system_key().
+> > 
+> > For bpf_key structures obtained from the former lookup function,
+> > bpf_verify_pkcs7_signature() completes the permission check
+> > deferred by
+> > that function by calling key_validate(). key_task_permission() is
+> > already
+> > called by the PKCS#7 code.
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Acked-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  kernel/trace/bpf_trace.c | 45
+> > ++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 45 insertions(+)
+> > 
+> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> > index 7a7023704ac2..8e2c026b0a58 100644
+> > --- a/kernel/trace/bpf_trace.c
+> > +++ b/kernel/trace/bpf_trace.c
+> > @@ -1294,12 +1294,57 @@ void bpf_key_put(struct bpf_key *bkey)
+> >         kfree(bkey);
+> >  }
+> > 
+> > +#ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+> > +/**
+> > + * bpf_verify_pkcs7_signature - verify a PKCS#7 signature
+> > + * @data_ptr: data to verify
+> > + * @sig_ptr: signature of the data
+> > + * @trusted_keyring: keyring with keys trusted for signature
+> > verification
+> > + *
+> > + * Verify the PKCS#7 signature *sig_ptr* against the supplied
+> > *data_ptr*
+> > + * with keys in a keyring referenced by *trusted_keyring*.
+> > + *
+> > + * Return: 0 on success, a negative value on error.
+> > + */
+> > +int bpf_verify_pkcs7_signature(struct bpf_dynptr_kern *data_ptr,
+> > +                              struct bpf_dynptr_kern *sig_ptr,
+> > +                              struct bpf_key *trusted_keyring)
+> > +{
+> > +       int ret;
+> > +
+> > +       if (trusted_keyring->has_ref) {
+> > +               /*
+> > +                * Do the permission check deferred in
+> > bpf_lookup_user_key().
+> > +                * See bpf_lookup_user_key() for more details.
+> > +                *
+> > +                * A call to key_task_permission() here would be
+> > redundant, as
+> > +                * it is already done by keyring_search() called by
+> > +                * find_asymmetric_key().
+> > +                */
+> > +               ret = key_validate(trusted_keyring->key);
+> > +               if (ret < 0)
+> > +                       return ret;
+> > +       }
+> > +
+> > +       return verify_pkcs7_signature(data_ptr->data,
+> > +                                     bpf_dynptr_get_size(data_ptr)
+> > ,
+> > +                                     sig_ptr->data,
+> > +                                     bpf_dynptr_get_size(sig_ptr),
+> 
+> MIssing check for data_ptr->data == NULL before making this call?
+> Same
+> for sig_ptr.
 
-On 29/08/2022 19:03, Konstantin Meskhidze wrote:
-> Adds new key_type argument to init_layer_masks() helper functions.
-> This modification supports implementing new rule types in the next
-> Landlock versions.
-> 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Patch 3 requires the dynptrs to be initialized. Isn't enough?
 
-As for patch 2/18, you can append:
-Co-developed-by: Mickaël Salaün <mic@digikod.net>
+Thanks
 
+Roberto
 
-> ---
-> 
-> Changes since v6:
-> * Removes masks_size attribute from init_layer_masks().
-> * Refactors init_layer_masks() with new landlock_key_type.
-> 
-> Changes since v5:
-> * Splits commit.
-> * Formats code with clang-format-14.
-> 
-> Changes since v4:
-> * Refactors init_layer_masks(), get_handled_accesses()
-> and unmask_layers() functions to support multiple rule types.
-> * Refactors landlock_get_fs_access_mask() function with
-> LANDLOCK_MASK_ACCESS_FS mask.
-> 
-> Changes since v3:
-> * Splits commit.
-> * Refactors landlock_unmask_layers functions.
-> 
-> ---
->   security/landlock/fs.c      | 33 +++++++++++++++++-----------
->   security/landlock/ruleset.c | 44 +++++++++++++++++++++++++++----------
->   security/landlock/ruleset.h | 11 +++++-----
->   3 files changed, 58 insertions(+), 30 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index b03d6153f628..a4d9aea539cd 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -439,16 +439,20 @@ static int check_access_path_dual(
->   	if (unlikely(dentry_child1)) {
->   		unmask_layers(find_rule(domain, dentry_child1),
->   			      init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
-> -					       &_layer_masks_child1),
-> -			      &_layer_masks_child1);
-> +					       &_layer_masks_child1,
-> +					       LANDLOCK_KEY_INODE),
-> +			      &_layer_masks_child1,
-> +			      ARRAY_SIZE(_layer_masks_child1));
->   		layer_masks_child1 = &_layer_masks_child1;
->   		child1_is_directory = d_is_dir(dentry_child1);
->   	}
->   	if (unlikely(dentry_child2)) {
->   		unmask_layers(find_rule(domain, dentry_child2),
->   			      init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
-> -					       &_layer_masks_child2),
-> -			      &_layer_masks_child2);
-> +					       &_layer_masks_child2,
-> +					       LANDLOCK_KEY_INODE),
-> +			      &_layer_masks_child2,
-> +			      ARRAY_SIZE(_layer_masks_child2));
->   		layer_masks_child2 = &_layer_masks_child2;
->   		child2_is_directory = d_is_dir(dentry_child2);
->   	}
-> @@ -500,15 +504,16 @@ static int check_access_path_dual(
->   		}
-> 
->   		rule = find_rule(domain, walker_path.dentry);
-> -		allowed_parent1 = unmask_layers(rule, access_masked_parent1,
-> -						layer_masks_parent1);
-> -		allowed_parent2 = unmask_layers(rule, access_masked_parent2,
-> -						layer_masks_parent2);
-> +		allowed_parent1 = unmask_layers(
-> +			rule, access_masked_parent1, layer_masks_parent1,
-> +			ARRAY_SIZE(*layer_masks_parent1));
-> +		allowed_parent2 = unmask_layers(
-> +			rule, access_masked_parent2, layer_masks_parent2,
-> +			ARRAY_SIZE(*layer_masks_parent2));
-> 
->   		/* Stops when a rule from each layer grants access. */
->   		if (allowed_parent1 && allowed_parent2)
->   			break;
-> -
->   jump_up:
->   		if (walker_path.dentry == walker_path.mnt->mnt_root) {
->   			if (follow_up(&walker_path)) {
-> @@ -564,7 +569,8 @@ static inline int check_access_path(const struct landlock_ruleset *const domain,
->   {
->   	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
-> 
-> -	access_request = init_layer_masks(domain, access_request, &layer_masks);
-> +	access_request = init_layer_masks(domain, access_request, &layer_masks,
-> +					  LANDLOCK_KEY_INODE);
->   	return check_access_path_dual(domain, path, access_request,
->   				      &layer_masks, NULL, 0, NULL, NULL);
->   }
-> @@ -648,7 +654,7 @@ static bool collect_domain_accesses(
->   		return true;
-> 
->   	access_dom = init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
-> -				      layer_masks_dom);
-> +				      layer_masks_dom, LANDLOCK_KEY_INODE);
-> 
->   	dget(dir);
->   	while (true) {
-> @@ -656,7 +662,8 @@ static bool collect_domain_accesses(
-> 
->   		/* Gets all layers allowing all domain accesses. */
->   		if (unmask_layers(find_rule(domain, dir), access_dom,
-> -				  layer_masks_dom)) {
-> +				  layer_masks_dom,
-> +				  ARRAY_SIZE(*layer_masks_dom))) {
->   			/*
->   			 * Stops when all handled accesses are allowed by at
->   			 * least one rule in each layer.
-> @@ -772,7 +779,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->   		 */
->   		access_request_parent1 = init_layer_masks(
->   			dom, access_request_parent1 | access_request_parent2,
-> -			&layer_masks_parent1);
-> +			&layer_masks_parent1, LANDLOCK_KEY_INODE);
->   		return check_access_path_dual(dom, new_dir,
->   					      access_request_parent1,
->   					      &layer_masks_parent1, NULL, 0,
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index 671a95e2a345..84fcd8eb30d4 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -574,7 +574,8 @@ landlock_find_rule(const struct landlock_ruleset *const ruleset,
->    */
-
-You missed another hunk from my patch… Please do a diff with it.
-
-
->   bool unmask_layers(const struct landlock_rule *const rule,
->   		   const access_mask_t access_request,
-> -		   layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> +		   layer_mask_t (*const layer_masks)[],
-> +		   const size_t masks_array_size)
->   {
->   	size_t layer_level;
-> 
-> @@ -606,8 +607,7 @@ bool unmask_layers(const struct landlock_rule *const rule,
->   		 * requested access.
->   		 */
->   		is_empty = true;
-> -		for_each_set_bit(access_bit, &access_req,
-> -				 ARRAY_SIZE(*layer_masks)) {
-> +		for_each_set_bit(access_bit, &access_req, masks_array_size) {
->   			if (layer->access & BIT_ULL(access_bit))
->   				(*layer_masks)[access_bit] &= ~layer_bit;
->   			is_empty = is_empty && !(*layer_masks)[access_bit];
-> @@ -618,15 +618,36 @@ bool unmask_layers(const struct landlock_rule *const rule,
->   	return false;
->   }
-> 
-> -access_mask_t
-> -init_layer_masks(const struct landlock_ruleset *const domain,
-> -		 const access_mask_t access_request,
-> -		 layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> +typedef access_mask_t
-> +get_access_mask_t(const struct landlock_ruleset *const ruleset,
-> +		  const u16 layer_level);
-> +
-> +/*
-> + * @layer_masks must contain LANDLOCK_NUM_ACCESS_FS or LANDLOCK_NUM_ACCESS_NET
-> + * elements according to @key_type.
-> + */
-> +access_mask_t init_layer_masks(const struct landlock_ruleset *const domain,
-> +			       const access_mask_t access_request,
-> +			       layer_mask_t (*const layer_masks)[],
-> +			       const enum landlock_key_type key_type)
->   {
->   	access_mask_t handled_accesses = 0;
-> -	size_t layer_level;
-> +	size_t layer_level, num_access;
-> +	get_access_mask_t *get_access_mask;
-> +
-> +	switch (key_type) {
-> +	case LANDLOCK_KEY_INODE:
-> +		get_access_mask = landlock_get_fs_access_mask;
-> +		num_access = LANDLOCK_NUM_ACCESS_FS;
-> +		break;
-> +	default:
-> +		WARN_ON_ONCE(1);
-> +		return 0;
-> +	}
-> +
-> +	memset(layer_masks, 0,
-> +	       array_size(sizeof((*layer_masks)[0]), num_access));
-> 
-> -	memset(layer_masks, 0, sizeof(*layer_masks));
->   	/* An empty access request can happen because of O_WRONLY | O_RDWR. */
->   	if (!access_request)
->   		return 0;
-> @@ -636,9 +657,8 @@ init_layer_masks(const struct landlock_ruleset *const domain,
->   		const unsigned long access_req = access_request;
->   		unsigned long access_bit;
-> 
-> -		for_each_set_bit(access_bit, &access_req,
-> -				 ARRAY_SIZE(*layer_masks)) {
-> -			if (landlock_get_fs_access_mask(domain, layer_level) &
-> +		for_each_set_bit(access_bit, &access_req, num_access) {
-> +			if (get_access_mask(domain, layer_level) &
->   			    BIT_ULL(access_bit)) {
->   				(*layer_masks)[access_bit] |=
->   					BIT_ULL(layer_level);
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index d7d9b987829c..2083855bf42d 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -238,11 +238,12 @@ landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
-> 
->   bool unmask_layers(const struct landlock_rule *const rule,
->   		   const access_mask_t access_request,
-> -		   layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]);
-> +		   layer_mask_t (*const layer_masks)[],
-> +		   const size_t masks_array_size);
-> 
-> -access_mask_t
-> -init_layer_masks(const struct landlock_ruleset *const domain,
-> -		 const access_mask_t access_request,
-> -		 layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]);
-> +access_mask_t init_layer_masks(const struct landlock_ruleset *const domain,
-> +			       const access_mask_t access_request,
-> +			       layer_mask_t (*const layer_masks)[],
-> +			       const enum landlock_key_type key_type);
-> 
->   #endif /* _SECURITY_LANDLOCK_RULESET_H */
-> --
-> 2.25.1
-> 
