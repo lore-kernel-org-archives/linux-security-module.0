@@ -2,335 +2,322 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CF4C38145
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 08:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA1DC6FA83
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 08:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238632AbiIFIMv (ORCPT
+        id S239236AbiIFIcB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Sep 2022 04:12:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57230 "EHLO
+        Tue, 6 Sep 2022 04:32:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233771AbiIFIMu (ORCPT
+        with ESMTP id S238870AbiIFIbl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Sep 2022 04:12:50 -0400
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB6D5BE10
-        for <linux-security-module@vger.kernel.org>; Tue,  6 Sep 2022 01:12:44 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MMJ635JZ9zMqgQ5;
-        Tue,  6 Sep 2022 10:12:43 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MMJ6306Yhz14H;
-        Tue,  6 Sep 2022 10:12:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1662451963;
-        bh=pmxt+u8PmGzhJuW9PWgilsU34G4dqMO1c6pxICr20r0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=xJR4rMyGykr3b2WdiNLqE1OyqZgycHEzmX6hQ3TOiryxWlUcYR2Nu+pe/9K438Cy2
-         1pXWi2SIFJ3nTv4lFfm/IgldV0qmRCCK5GAj9UwfKLmsRmeieO1CSKWHIWfHLZKavL
-         CELx4xsqLLU9OHiuvwf376EsKwSbzxNRfZZvH/8g=
-Message-ID: <9f354862-2bc3-39ea-92fd-53803d9bbc21@digikod.net>
-Date:   Tue, 6 Sep 2022 10:12:42 +0200
+        Tue, 6 Sep 2022 04:31:41 -0400
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 943E777562;
+        Tue,  6 Sep 2022 01:31:06 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4MMJQT3HlTz9xtV6;
+        Tue,  6 Sep 2022 16:26:57 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwAnH5MeBRdj+U8nAA--.38178S2;
+        Tue, 06 Sep 2022 09:30:36 +0100 (CET)
+Message-ID: <c723f4fd42163e0a701c94e3002127170c5590aa.camel@huaweicloud.com>
+Subject: Re: [PATCH v16 12/12] selftests/bpf: Add tests for dynamic pointers
+ parameters in kfuncs
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        dhowells@redhat.com, jarkko@kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, shuah@kernel.org, bpf@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Tue, 06 Sep 2022 10:30:19 +0200
+In-Reply-To: <CAP01T750hFZbHdRTzSSeWpc95Omp2-PLmOojhMohFGJD=yrTzg@mail.gmail.com>
+References: <20220905143318.1592015-1-roberto.sassu@huaweicloud.com>
+         <20220905143318.1592015-13-roberto.sassu@huaweicloud.com>
+         <CAP01T750hFZbHdRTzSSeWpc95Omp2-PLmOojhMohFGJD=yrTzg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v7 18/18] landlock: Document Landlock's network support
-To:     Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc:     willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-        hukeping@huawei.com, anton.sirazetdinov@huawei.com
-References: <20220829170401.834298-1-konstantin.meskhidze@huawei.com>
- <20220829170401.834298-19-konstantin.meskhidze@huawei.com>
-Content-Language: en-US
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20220829170401.834298-19-konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwAnH5MeBRdj+U8nAA--.38178S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ar4rKF1rWw47Cr17Gw47CFg_yoW3Wr15pa
+        y8GFyj9rWIqF1fJr13XFsruF4ftr48Zr12krZxta4xAr1qvr93uF18KrW3Wwn5K395Ww4Y
+        v34Sqrs3uw4UJa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+        AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+        aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj4Km7QAAs6
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 29/08/2022 19:04, Konstantin Meskhidze wrote:
-> Describe network access rules for TCP sockets.
-> Add network access example in the tutorial.
-> Point out AF_UNSPEC socket family behaviour.
-> Point out UDP sockets issues.
-> Add kernel configuration support for network.
+On Tue, 2022-09-06 at 05:15 +0200, Kumar Kartikeya Dwivedi wrote:
+> On Mon, 5 Sept 2022 at 16:36, Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > Add tests to ensure that only supported dynamic pointer types are
+> > accepted,
+> > that the passed argument is actually a dynamic pointer, and that
+> > the passed
+> > argument is a pointer to the stack.
+> > 
+> > The tests are currently in the deny list for s390x (JIT does not
+> > support
+> > calling kernel function).
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  tools/testing/selftests/bpf/DENYLIST.s390x    |   1 +
+> >  .../bpf/prog_tests/kfunc_dynptr_param.c       | 103
+> > ++++++++++++++++++
+> >  .../bpf/progs/test_kfunc_dynptr_param.c       |  57 ++++++++++
+> >  3 files changed, 161 insertions(+)
+> >  create mode 100644
+> > tools/testing/selftests/bpf/prog_tests/kfunc_dynptr_param.c
+> >  create mode 100644
+> > tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> > 
+> > diff --git a/tools/testing/selftests/bpf/DENYLIST.s390x
+> > b/tools/testing/selftests/bpf/DENYLIST.s390x
+> > index 4e305baa5277..9a6dc3671c65 100644
+> > --- a/tools/testing/selftests/bpf/DENYLIST.s390x
+> > +++ b/tools/testing/selftests/bpf/DENYLIST.s390x
+> > @@ -71,3 +71,4 @@ cgroup_hierarchical_stats                # JIT
+> > does not support calling kernel f
+> >  htab_update                              # failed to attach:
+> > ERROR: strerror_r(-
+> > 524)=22                                (trampoline)
+> >  lookup_key                               # JIT does not support
+> > calling kernel function                                (kfunc)
+> >  verify_pkcs7_sig                         # JIT does not support
+> > calling kernel function                                (kfunc)
+> > +kfunc_dynptr_param                       # JIT does not support
+> > calling kernel function                                (kfunc)
+> > diff --git
+> > a/tools/testing/selftests/bpf/prog_tests/kfunc_dynptr_param.c
+> > b/tools/testing/selftests/bpf/prog_tests/kfunc_dynptr_param.c
+> > new file mode 100644
+> > index 000000000000..ea655a5c9d8b
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/prog_tests/kfunc_dynptr_param.c
+> > @@ -0,0 +1,103 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +/*
+> > + * Copyright (c) 2022 Facebook
+> > + * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
+> > + *
+> > + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+> > + */
+> > +
+> > +#include <test_progs.h>
+> > +#include "test_kfunc_dynptr_param.skel.h"
+> > +
+> > +static size_t log_buf_sz = 1048576; /* 1 MB */
+> > +static char obj_log_buf[1048576];
+> > +
+> > +static struct {
+> > +       const char *prog_name;
+> > +       const char *expected_err_msg;
+> > +} kfunc_dynptr_tests[] = {
+> > +       {"dynptr_type_not_supp",
+> > +        "arg#0 pointer type STRUCT bpf_dynptr_kern points to
+> > unsupported dynamic pointer type"},
+> > +       {"not_valid_dynptr",
+> > +        "arg#0 pointer type STRUCT bpf_dynptr_kern must be valid
+> > and initialized"},
+> > +       {"not_ptr_to_stack", "arg#0 pointer type STRUCT
+> > bpf_dynptr_kern not to stack"},
+> > +};
+> > +
+> > +static bool kfunc_not_supported;
+> > +
+> > +static int libbpf_print_cb(enum libbpf_print_level level, const
+> > char *fmt,
+> > +                          va_list args)
+> > +{
+> > +       if (strcmp(fmt, "libbpf: extern (func ksym) '%s': not found
+> > in kernel or module BTFs\n"))
+> > +               return 0;
+> > +
+> > +       if (strcmp(va_arg(args, char *),
+> > "bpf_verify_pkcs7_signature"))
+> > +               return 0;
+> > +
+> > +       kfunc_not_supported = true;
+> > +       return 0;
+> > +}
+> > +
+> > +static void verify_fail(const char *prog_name, const char
+> > *expected_err_msg)
+> > +{
+> > +       struct test_kfunc_dynptr_param *skel;
+> > +       LIBBPF_OPTS(bpf_object_open_opts, opts);
+> > +       libbpf_print_fn_t old_print_cb;
+> > +       struct bpf_program *prog;
+> > +       int err;
+> > +
+> > +       opts.kernel_log_buf = obj_log_buf;
+> > +       opts.kernel_log_size = log_buf_sz;
+> > +       opts.kernel_log_level = 1;
+> > +
+> > +       skel = test_kfunc_dynptr_param__open_opts(&opts);
+> > +       if (!ASSERT_OK_PTR(skel,
+> > "test_kfunc_dynptr_param__open_opts"))
+> > +               goto cleanup;
+> > +
+> > +       prog = bpf_object__find_program_by_name(skel->obj,
+> > prog_name);
+> > +       if (!ASSERT_OK_PTR(prog,
+> > "bpf_object__find_program_by_name"))
+> > +               goto cleanup;
+> > +
+> > +       bpf_program__set_autoload(prog, true);
+> > +
+> > +       bpf_map__set_max_entries(skel->maps.ringbuf,
+> > getpagesize());
+> > +
+> > +       kfunc_not_supported = false;
+> > +
+> > +       old_print_cb = libbpf_set_print(libbpf_print_cb);
+> > +       err = test_kfunc_dynptr_param__load(skel);
+> > +       libbpf_set_print(old_print_cb);
+> > +
+> > +       if (err < 0 && kfunc_not_supported) {
+> > +               fprintf(stderr,
+> > +                 "%s:SKIP:bpf_verify_pkcs7_signature() kfunc not
+> > supported\n",
+> > +                 __func__);
+> > +               test__skip();
+> > +               goto cleanup;
+> > +       }
+> > +
+> > +       if (!ASSERT_ERR(err, "unexpected load success"))
+> > +               goto cleanup;
+> > +
+> > +       if (!ASSERT_OK_PTR(strstr(obj_log_buf, expected_err_msg),
+> > "expected_err_msg")) {
+> > +               fprintf(stderr, "Expected err_msg: %s\n",
+> > expected_err_msg);
+> > +               fprintf(stderr, "Verifier output: %s\n",
+> > obj_log_buf);
+> > +       }
+> > +
+> > +cleanup:
+> > +       test_kfunc_dynptr_param__destroy(skel);
+> > +}
+> > +
+> > +void test_kfunc_dynptr_param(void)
+> > +{
+> > +       int i;
+> > +
+> > +       for (i = 0; i < ARRAY_SIZE(kfunc_dynptr_tests); i++) {
+> > +               if
+> > (!test__start_subtest(kfunc_dynptr_tests[i].prog_name))
+> > +                       continue;
+> > +
+> > +               verify_fail(kfunc_dynptr_tests[i].prog_name,
+> > +                           kfunc_dynptr_tests[i].expected_err_msg)
+> > ;
+> > +       }
+> > +}
+> > diff --git
+> > a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> > b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> > new file mode 100644
+> > index 000000000000..2f09f91a1576
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> > @@ -0,0 +1,57 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +/*
+> > + * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
+> > + *
+> > + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+> > + */
+> > +
+> > +#include "vmlinux.h"
+> > +#include <errno.h>
+> > +#include <bpf/bpf_helpers.h>
+> > +#include <bpf/bpf_tracing.h>
+> > +
+> > +struct bpf_dynptr {
+> > +       __u64 :64;
+> > +       __u64 :64;
+> > +} __attribute__((aligned(8)));
+> > +
+> > +extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
+> > +                                     struct bpf_dynptr *sig_ptr,
+> > +                                     struct bpf_key
+> > *trusted_keyring) __ksym;
+> > +
+> > +struct {
+> > +       __uint(type, BPF_MAP_TYPE_RINGBUF);
+> > +} ringbuf SEC(".maps");
+> > +
+> > +char _license[] SEC("license") = "GPL";
+> > +
+> > +SEC("?lsm.s/bpf")
+> > +int BPF_PROG(dynptr_type_not_supp, int cmd, union bpf_attr *attr,
+> > +            unsigned int size)
+> > +{
+> > +       char write_data[64] = "hello there, world!!";
+> > +       struct bpf_dynptr ptr;
+> > +
+> > +       bpf_ringbuf_reserve_dynptr(&ringbuf, sizeof(write_data), 0,
+> > &ptr);
+> > +
+> > +       return bpf_verify_pkcs7_signature(&ptr, &ptr, NULL);
+> > +}
+> > +
+> > +SEC("?lsm.s/bpf")
+> > +int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr,
+> > unsigned int size)
+> > +{
+> > +       unsigned long val;
+> > +
+> > +       return bpf_verify_pkcs7_signature((struct bpf_dynptr
+> > *)&val,
+> > +                                         (struct bpf_dynptr
+> > *)&val, NULL);
+> > +}
+> > +
+> > +SEC("?lsm.s/bpf")
+> > +int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr,
+> > unsigned int size)
+> > +{
+> > +       unsigned long val;
+> > +
+> > +       return bpf_verify_pkcs7_signature((struct bpf_dynptr *)val,
+> > +                                         (struct bpf_dynptr *)val,
+> > NULL);
 > 
-> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> ---
-> 
-> Changes since v6:
-> * Adds network support documentaion.
-> 
-> ---
->   Documentation/userspace-api/landlock.rst | 84 +++++++++++++++++++-----
->   1 file changed, 66 insertions(+), 18 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 2509c2fbf98f..4b099d1b5a9d 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -11,10 +11,10 @@ Landlock: unprivileged access control
->   :Date: August 2022
-> 
->   The goal of Landlock is to enable to restrict ambient rights (e.g. global
-> -filesystem access) for a set of processes.  Because Landlock is a stackable
-> -LSM, it makes possible to create safe security sandboxes as new security layers
-> -in addition to the existing system-wide access-controls. This kind of sandbox
-> -is expected to help mitigate the security impact of bugs or
-> +filesystem or network access) for a set of processes.  Because Landlock
-> +is a stackable LSM, it makes possible to create safe security sandboxes as new
-> +security layers in addition to the existing system-wide access-controls. This
-> +kind of sandbox is expected to help mitigate the security impact of bugs or
->   unexpected/malicious behaviors in user space applications.  Landlock empowers
->   any process, including unprivileged ones, to securely restrict themselves.
-> 
-> @@ -30,18 +30,20 @@ Landlock rules
-> 
->   A Landlock rule describes an action on an object.  An object is currently a
->   file hierarchy, and the related filesystem actions are defined with `access
-> -rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
-> -the thread enforcing it, and its future children.
-> +rights`_.  Since ABI version 3 a port "object" appears with related network actions
+> Please also include a test where you cause the dynptr to be set to
+> NULL, e.g. by passing invalid stuff to ringbuf_reserve_dynptr, and
+> then try to pass it to bpf_verify_pkc7_signature.
 
-Version 3 is wrong here, it should be version 4. Please fix everywhere 
-else too.
+Uhm, bpf_ringbuf_reserve_dynptr() is expecting a valid map. How else I
+can achieve it?
 
-Why do you quote "object"?
+Thanks
 
-Let's use object (e.g. for filesystem/inode) or data (e.g. for TCP port).
+Roberto
 
-
-> +for TCP4/TCP6 sockets families.  A set of rules is aggregated in a ruleset, which
-
-TCP4/TCP6 would not make sense for users, please be explicit, and in 
-this case "TCP" is enough.
-
-BTW, IP4 and IP6 don't exist, they should be replaced *everywhere* with 
-IPv4 and IPv6.
-
-
-> +can then restrict the thread enforcing it, and its future children.
-> 
->   Defining and enforcing a security policy
->   ----------------------------------------
-> 
->   We first need to define the ruleset that will contain our rules.  For this
->   example, the ruleset will contain rules that only allow read actions, but write
-> -actions will be denied.  The ruleset then needs to handle both of these kind of
-> +actions will be denied. The ruleset then needs to handle both of these kind of
->   actions.  This is required for backward and forward compatibility (i.e. the
->   kernel and user space may not know each other's supported restrictions), hence
-> -the need to be explicit about the denied-by-default access rights.
-> +the need to be explicit about the denied-by-default access rights.  Also ruleset
-> +will have network rules for specific ports, so it should handle network actions.
-> 
->   .. code-block:: c
-> 
-> @@ -62,6 +64,9 @@ the need to be explicit about the denied-by-default access rights.
->               LANDLOCK_ACCESS_FS_MAKE_SYM |
->               LANDLOCK_ACCESS_FS_REFER |
->               LANDLOCK_ACCESS_FS_TRUNCATE,
-> +        .handled_access_net =
-> +            LANDLOCK_ACCESS_NET_BIND_TCP |
-> +            LANDLOCK_ACCESS_NET_CONNECT_TCP,
->       };
-> 
->   Because we may not know on which kernel version an application will be
-> @@ -70,9 +75,9 @@ should try to protect users as much as possible whatever the kernel they are
->   using.  To avoid binary enforcement (i.e. either all security features or
->   none), we can leverage a dedicated Landlock command to get the current version
->   of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> -remove the `LANDLOCK_ACCESS_FS_REFER` or `LANDLOCK_ACCESS_FS_TRUNCATE` access
-> -rights, which are only supported starting with the second and third version of
-> -the ABI.
-> +remove the `LANDLOCK_ACCESS_FS_REFER` or `LANDLOCK_ACCESS_FS_TRUNCATE` or
-> +network access rights, which are only supported starting with the second and
-> +third version of the ABI.
-> 
->   .. code-block:: c
-> 
-> @@ -87,9 +92,13 @@ the ABI.
->               /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
->               ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
->               __attribute__((fallthrough));
-> +            /* Removes network support for ABI < 2 */
-> +            ruleset_attr.handled_access_net = 0;
-
-This is not correct.
-
-
->       case 2:
->               /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
->               ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-> +            /* Removes network support for ABI < 3 */
-> +            ruleset_attr.handled_access_net = 0;
-
-This part should be for the fourth version.
-
-
->       }
-> 
->   This enables to create an inclusive ruleset that will contain our rules.
-> @@ -129,6 +138,24 @@ descriptor.
->       }
->       err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
->                               &path_beneath, 0);
-> +
-> +It may also be required to create rules following the same logic as explained
-> +for the ruleset creation, by filtering access rights according to the Landlock
-> +ABI version.  In this example, this is not required because all of the requested
-> +`allowed_access` rights are already available in ABI 1.
-
-This paragraph should not be moved. Furthermore, this hunk remove error 
-handling…
-
-
-> +
-> +For network part we can add number of rules containing a port number and actions
-> +that a process is allowed to do for certian ports.
-> +
-> +.. code-block:: c
-> +
-> +    struct landlock_net_service_attr net_service = {
-> +        .allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-> +        .port = 8080,
-> +    };
-> +
-> +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_SERVICE,
-> +                            &net_service, 0);
->       close(path_beneath.parent_fd);
->       if (err) {
->           perror("Failed to update ruleset");
-> @@ -136,13 +163,9 @@ descriptor.
->           return 1;
->       }
-> 
-> -It may also be required to create rules following the same logic as explained
-> -for the ruleset creation, by filtering access rights according to the Landlock
-> -ABI version.  In this example, this is not required because all of the requested
-> -`allowed_access` rights are already available in ABI 1.
-> -
-
-Please add similar standalone code + explanation sections for network here.
-
-
->   We now have a ruleset with one rule allowing read access to ``/usr`` while
-> -denying all other handled accesses for the filesystem.  The next step is to
-> +denying all other handled accesses for the filesystem.  The ruleset also contains
-> +a rule allowing to bind current proccess to the port 8080.  The next step is to
->   restrict the current thread from gaining more privileges (e.g. thanks to a SUID
->   binary).
-> 
-> @@ -280,6 +303,13 @@ It should also be noted that truncating files does not require the
->   system call, this can also be done through :manpage:`open(2)` with the flags
->   `O_RDONLY | O_TRUNC`.
-> 
-> +AF_UNSPEC socket family
-> +-----------------------
-> +
-> +Sockets of AF_UNSPEC family types are treated as AF_INET(TCP4) socket for bind()
-> +hook.  But connect() hook is not allowed by Landlock for AF_UNSPEC sockets. This
-
-Users don't know what is a hook. Such kernel internals are not required 
-to explain things.
-
-
-> +logic prevents from disconnecting already connected sockets.
-> +
->   Compatibility
->   =============
-> 
-> @@ -339,7 +369,7 @@ Access rights
->   -------------
-> 
->   .. kernel-doc:: include/uapi/linux/landlock.h
-> -    :identifiers: fs_access
-> +    :identifiers: fs_access net_access
-> 
->   Creating a new ruleset
->   ----------------------
-> @@ -358,6 +388,7 @@ Extending a ruleset
-> 
->   .. kernel-doc:: include/uapi/linux/landlock.h
->       :identifiers: landlock_rule_type landlock_path_beneath_attr
-> +                  landlock_net_service_attr
-> 
->   Enforcing a ruleset
->   -------------------
-> @@ -406,6 +437,13 @@ Memory usage
->   Kernel memory allocated to create rulesets is accounted and can be restricted
->   by the Documentation/admin-guide/cgroup-v1/memory.rst.
-> 
-> +UDP sockets restricting
-> +-----------------------
-
-I don't think this section is needed. There is a lot of missing access 
-types for now and it is not useful to list them all. The "Current 
-limitations" section lists limitations about the currently implemented 
-access types (e.g. filesystem, TCP).
-
-
-> +
-> +Current network part supports to restrict just TCP sockets type. UPD sockets sandboxing
-
-typo: UDP
-
-> +adds additional issues due to unconnected nature of the protocol. UDP sockets support
-> +might come in future Landlock versions.
-> +
->   Previous limitations
->   ====================
-> 
-> @@ -435,6 +473,13 @@ always allowed when using a kernel that only supports the first or second ABI.
->   Starting with the Landlock ABI version 3, it is now possible to securely control
->   truncation thanks to the new `LANDLOCK_ACCESS_FS_TRUNCATE` access right.
-> 
-> +Network support (ABI < 3)
-
-ABI < 4
-
-> +-------------------------
-> +
-> +Starting with the Landlock ABI version 3, it is now possible to restrict TCP
-> +sockets bind() and connect() syscalls for specific ports allowing processes
-> +to establish secure connections.
-
-Try to avoid talking about syscall directly but highlight actions 
-instead. Using Landlock doesn't create "secure connections", 
-unfortunately. ;)
-
-
-> +
->   .. _kernel_support:
-> 
->   Kernel support
-> @@ -453,6 +498,9 @@ still enable it by adding ``lsm=landlock,[...]`` to
->   Documentation/admin-guide/kernel-parameters.rst thanks to the bootloader
->   configuration.
-> 
-> +To support Landlock's network part, the kernel must be configured with `CONFIG_NET=y`
-> +and `CONFIG_INET=y` options.
-
-Might be better:
-To be able to explicitly allow TCP operations (e.g., adding a network 
-rule with `LANDLOCK_ACCESS_NET_TCP_BIND`), the kernel must support TCP 
-(`CONFIG_INET=y`). Otherwise, sys_landlock_add_rule() returns an 
-`EAFNOSUPPORT` error, which can safely be ignored because this kind of 
-TCP operation is already not possible.
-
-
-> For TCP6 family sockets `CONFIG_IPV6=y` must be switched on.
-
-This is not required because if IPv6 is not supported there is nothing 
-to do for IPv6 sockets.
-
-
-> +
->   Questions and answers
->   =====================
-> 
-> --
-> 2.25.1
-> 
