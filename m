@@ -2,76 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A344C6FA86
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 16:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E23EECAAD5
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Sep 2022 18:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234545AbiIFQbl (ORCPT
+        id S229655AbiIFSpn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Sep 2022 12:31:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57754 "EHLO
+        Tue, 6 Sep 2022 14:45:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234291AbiIFQbQ (ORCPT
+        with ESMTP id S229459AbiIFSpl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Sep 2022 12:31:16 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E061AD83;
-        Tue,  6 Sep 2022 09:03:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 108E5B81604;
-        Tue,  6 Sep 2022 16:03:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D7F5C433D6;
-        Tue,  6 Sep 2022 16:02:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662480178;
-        bh=FMYRZ0ogLlueEYXP4JG30FH8Q9HpHmij/Ejx+UQ4AXo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=T+EmDN+BtZcLf/du1cxdlgshB6cr0YWlKAyXAUEFy8L+zlIEQ6D+QrX3W3a688eGL
-         2sV8BNCO0pODeH4IaisrhIotHxY2Dcwt6CAbjXclw/AzIINPrp3trfNrKoIawHMYbh
-         oUEE195garRlFPZ6oMGgQT2IgtTRn3Z1BaIynTpM+dNZ/aXH9mrfAlJjygn/jHnke/
-         gWZtq95BCvzK4CjTnkjLOnG2c6qRD66WCyyAJUgXLeiA4iTijVLOZlUtTQ6X+wkPN5
-         lRshuExOWRzEKmk+vPmqMbsjhFNvJFyLfYnz/PQaFYFULAXPbCMupLdmn85Kq9MqSv
-         U82YgXH0FjC8A==
-Message-ID: <93ff2f6d8c49091c0aa8a008695da5150c096be3.camel@kernel.org>
-Subject: Re: [PATCH v5] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-nfs@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 06 Sep 2022 12:02:55 -0400
-In-Reply-To: <3349244.1662480110@warthog.procyon.org.uk>
-References: <7a154687f8be9d7a2365ae4a93f2b7f734002904.camel@kernel.org>
-         <217595.1662033775@warthog.procyon.org.uk>
-         <3349244.1662480110@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Tue, 6 Sep 2022 14:45:41 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BDC872873;
+        Tue,  6 Sep 2022 11:45:40 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id l14so1840520eja.7;
+        Tue, 06 Sep 2022 11:45:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=HXIZTxgstp/ZG/oRasmhftNTYtNhQYTVNhwATRK01KA=;
+        b=hso5o++/iG3WRGqeXqsqlTQG4ASV62xJHp+fXx6Mo5Dj1U7EnT5tcbEfg9QrccgK/R
+         tnQv5lph3g5cU66MBB5hqlTwvZMB2d6SR9PZhlHnJuaCVyHDbfh+kPRp1piNBszvmaH+
+         iodyQdSbiPG6Yh2sL/zLpLHSrCoKfahUPUddoiAFnt2Wx5Eg27ht6xTB1sM8zgTv2Ns4
+         vmxmJAMVSkB/Xv788V6U5A4Q0mJhGVb6z09wE126tOirCZGg0U+LCSiMaM5rcTkGh0KM
+         JLCss/3rpU5dxEq5E1FltyKECYuiiVuFr2smlNleBgB0soZUBy/qKRfbrmN2dXoDaWHE
+         kwRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=HXIZTxgstp/ZG/oRasmhftNTYtNhQYTVNhwATRK01KA=;
+        b=rf28j5elNEJUPYnvqg6HiiUbC2ThlwHRORJ57TJoE1IAyy8eBZWK6Fzuh5OijS9dIT
+         PO3XcFQT4IPujM6GdWLbRWYMWCAlbbONq1aaRn1RljSunZVS80AeV1g0yu8L0memVEPs
+         R7AfqNdWgzDw4uNbcSWe0wdPKAr0NeopM1HtFjm39WA620rXJOHFh/P0+og/DqK41Qgq
+         r3P9DPBjaEDZ9hw+xQI4IiNqwKzEpj6pu67hG9Y/q5x1GvMSuVoSo6dmVs/q1SHMRGXG
+         /5YwKz6eJbvn7d0gVaVsvE9R+7ndMo10IGIENKjK0AmNowSc1Y9oJaZKW5nLsjyx16ZS
+         vsFQ==
+X-Gm-Message-State: ACgBeo08XGmeOj2gO45/O+aaoktbrUhhiNt5Voizw70uc92rLehW/WHl
+        htov2qFhPoj9i6JGN1T8e1KzY0ieGmfUAA+/rWc=
+X-Google-Smtp-Source: AA6agR4F+9Ti9v8fFFnmPvQrhjZYULAf1awN9JWkYZiJxqfPg4ByBnj54CpE5wTOzCEUch0G8xs2kRSTxhaKwuoYWS4=
+X-Received: by 2002:a17:906:58d1:b0:76d:af13:5ae3 with SMTP id
+ e17-20020a17090658d100b0076daf135ae3mr6734331ejs.708.1662489938725; Tue, 06
+ Sep 2022 11:45:38 -0700 (PDT)
 MIME-Version: 1.0
+References: <20220905143318.1592015-1-roberto.sassu@huaweicloud.com>
+ <20220905143318.1592015-7-roberto.sassu@huaweicloud.com> <CAP01T74HKXuf9Aig4v3zsL1rwQAGRpUtTiaN2djWsMiJmaqF_A@mail.gmail.com>
+ <663480e6bdfd9809c9e367bfc8df95d7a1323723.camel@huaweicloud.com>
+In-Reply-To: <663480e6bdfd9809c9e367bfc8df95d7a1323723.camel@huaweicloud.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Tue, 6 Sep 2022 11:45:27 -0700
+Message-ID: <CAADnVQLT9nSEqprcX_hmTeAYGVA9cWupVEfvhnyPuzWwrGKHcQ@mail.gmail.com>
+Subject: Re: [PATCH v16 06/12] bpf: Add bpf_lookup_*_key() and bpf_key_put() kfuncs
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Mykola Lysenko <mykolal@fb.com>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Daniel_M=C3=BCller?= <deso@posteo.net>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-09-06 at 17:01 +0100, David Howells wrote:
-> Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> > If this or the other allocations below fail, do you need to free the
-> > prior ones here? Or do they automagically get cleaned up somehow?
->=20
-> Once the fs_context is allocated, it will always get cleaned up with
-> put_fs_context(), which will dispose of the partially constructed
-> smack_mnt_opts struct.
->=20
+On Tue, Sep 6, 2022 at 1:01 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> > > +struct bpf_key *bpf_lookup_user_key(u32 serial, u64 flags)
+> > > +{
+> > > +       key_ref_t key_ref;
+> > > +       struct bpf_key *bkey;
+> > > +
+> > > +       if (flags & ~KEY_LOOKUP_ALL)
+> > > +               return NULL;
+> > > +
+> > > +       /*
+> > > +        * Permission check is deferred until the key is used, as
+> > > the
+> > > +        * intent of the caller is unknown here.
+> > > +        */
+> > > +       key_ref = lookup_user_key(serial, flags,
+> > > KEY_DEFER_PERM_CHECK);
+> > > +       if (IS_ERR(key_ref))
+> > > +               return NULL;
+> > > +
+> > > +       bkey = kmalloc(sizeof(*bkey), GFP_ATOMIC);
+> >
+> > Since this function (due to lookup_user_key) is sleepable, do we
+> > really need GFP_ATOMIC here?
+>
+> Daniel suggested it for bpf_lookup_system_key(), so that the kfunc does
+> not have to be sleepable.
 
+Hold on. It has to be sleepable. Just take a look
+at what lookup_user_key is doing inside.
 
-Ok! In that case, you can add:
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> For symmetry, I did the same to
+> bpf_lookup_user_key(). Will switch back to GFP_KERNEL.
+>
+> Thanks
+>
+> Roberto
+>
