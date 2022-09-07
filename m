@@ -2,76 +2,211 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1D4C54EE9
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 12:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDB0C6FA8B
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 12:20:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229966AbiIGMMw (ORCPT
+        id S230183AbiIGMUs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Sep 2022 08:12:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45520 "EHLO
+        Wed, 7 Sep 2022 08:20:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbiIGMMu (ORCPT
+        with ESMTP id S229517AbiIGMUn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Sep 2022 08:12:50 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4B4D59C1E8;
-        Wed,  7 Sep 2022 05:12:39 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF6721042;
-        Wed,  7 Sep 2022 05:12:45 -0700 (PDT)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B04E3F7B4;
-        Wed,  7 Sep 2022 05:12:38 -0700 (PDT)
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-To:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>
-Subject: [PATCH] security/keys: Remove inconsistent __user annotation
-Date:   Wed,  7 Sep 2022 13:12:30 +0100
-Message-Id: <20220907121230.21252-1-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.37.3
+        Wed, 7 Sep 2022 08:20:43 -0400
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2142BA99E5;
+        Wed,  7 Sep 2022 05:20:38 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4MN1RD4lVdz9xs5w;
+        Wed,  7 Sep 2022 20:15:04 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwBn411qjBhjxRcsAA--.26101S2;
+        Wed, 07 Sep 2022 13:20:09 +0100 (CET)
+Message-ID: <879ed2183ffd0147ca86bb355c03be5dbe19392d.camel@huaweicloud.com>
+Subject: Re: [PATCH v16 07/12] bpf: Add bpf_verify_pkcs7_signature() kfunc
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc:     joannelkoong@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, martin.lau@linux.dev, song@kernel.org,
+        yhs@fb.com, john.fastabend@gmail.com, kpsingh@kernel.org,
+        sdf@google.com, haoluo@google.com, jolsa@kernel.org,
+        mykolal@fb.com, dhowells@redhat.com, jarkko@kernel.org,
+        rostedt@goodmis.org, mingo@redhat.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org,
+        bpf@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 07 Sep 2022 14:19:51 +0200
+In-Reply-To: <CAP01T76csO9pdL=KLU4s7M__GnEifmKEB0pb7genw3UN8tA=FQ@mail.gmail.com>
+References: <20220905143318.1592015-1-roberto.sassu@huaweicloud.com>
+         <20220905143318.1592015-8-roberto.sassu@huaweicloud.com>
+         <CAP01T77F-A7igW+vp5RhzcqzRJymO6YRvNR2cfsh+2fKNy56YA@mail.gmail.com>
+         <3d32decb1fda80e261d9ed08decfdca45614c4af.camel@huaweicloud.com>
+         <CAP01T76csO9pdL=KLU4s7M__GnEifmKEB0pb7genw3UN8tA=FQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwBn411qjBhjxRcsAA--.26101S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw1xZry7Zw4kAr4fur15Arb_yoWrur48pF
+        W8KF4YkrWkJr12yrnFqa1fZF9akrW0qw17W3sxt343ArnYvr17CF18tF4UuF9Ykr18Gryj
+        vry0qFy3uw15AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+        AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj4K2DgAAsG
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The declaration of keyring_read does not match the definition
-(security/keys/keyring.c). In this case the definition is correct
-because it matches what defined in "struct key_type::read"
-(linux/key-type.h).
+On Wed, 2022-09-07 at 04:28 +0200, Kumar Kartikeya Dwivedi wrote:
+> On Tue, 6 Sept 2022 at 10:08, Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > On Tue, 2022-09-06 at 04:57 +0200, Kumar Kartikeya Dwivedi wrote:
+> > > On Mon, 5 Sept 2022 at 16:35, Roberto Sassu
+> > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > 
+> > > > Add the bpf_verify_pkcs7_signature() kfunc, to give eBPF
+> > > > security
+> > > > modules
+> > > > the ability to check the validity of a signature against
+> > > > supplied
+> > > > data, by
+> > > > using user-provided or system-provided keys as trust anchor.
+> > > > 
+> > > > The new kfunc makes it possible to enforce mandatory policies,
+> > > > as
+> > > > eBPF
+> > > > programs might be allowed to make security decisions only based
+> > > > on
+> > > > data
+> > > > sources the system administrator approves.
+> > > > 
+> > > > The caller should provide the data to be verified and the
+> > > > signature
+> > > > as eBPF
+> > > > dynamic pointers (to minimize the number of parameters) and a
+> > > > bpf_key
+> > > > structure containing a reference to the keyring with keys
+> > > > trusted
+> > > > for
+> > > > signature verification, obtained from bpf_lookup_user_key() or
+> > > > bpf_lookup_system_key().
+> > > > 
+> > > > For bpf_key structures obtained from the former lookup
+> > > > function,
+> > > > bpf_verify_pkcs7_signature() completes the permission check
+> > > > deferred by
+> > > > that function by calling key_validate(). key_task_permission()
+> > > > is
+> > > > already
+> > > > called by the PKCS#7 code.
+> > > > 
+> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > Acked-by: KP Singh <kpsingh@kernel.org>
+> > > > ---
+> > > >  kernel/trace/bpf_trace.c | 45
+> > > > ++++++++++++++++++++++++++++++++++++++++
+> > > >  1 file changed, 45 insertions(+)
+> > > > 
+> > > > diff --git a/kernel/trace/bpf_trace.c
+> > > > b/kernel/trace/bpf_trace.c
+> > > > index 7a7023704ac2..8e2c026b0a58 100644
+> > > > --- a/kernel/trace/bpf_trace.c
+> > > > +++ b/kernel/trace/bpf_trace.c
+> > > > @@ -1294,12 +1294,57 @@ void bpf_key_put(struct bpf_key *bkey)
+> > > >         kfree(bkey);
+> > > >  }
+> > > > 
+> > > > +#ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+> > > > +/**
+> > > > + * bpf_verify_pkcs7_signature - verify a PKCS#7 signature
+> > > > + * @data_ptr: data to verify
+> > > > + * @sig_ptr: signature of the data
+> > > > + * @trusted_keyring: keyring with keys trusted for signature
+> > > > verification
+> > > > + *
+> > > > + * Verify the PKCS#7 signature *sig_ptr* against the supplied
+> > > > *data_ptr*
+> > > > + * with keys in a keyring referenced by *trusted_keyring*.
+> > > > + *
+> > > > + * Return: 0 on success, a negative value on error.
+> > > > + */
+> > > > +int bpf_verify_pkcs7_signature(struct bpf_dynptr_kern
+> > > > *data_ptr,
+> > > > +                              struct bpf_dynptr_kern *sig_ptr,
+> > > > +                              struct bpf_key *trusted_keyring)
+> > > > +{
+> > > > +       int ret;
+> > > > +
+> > > > +       if (trusted_keyring->has_ref) {
+> > > > +               /*
+> > > > +                * Do the permission check deferred in
+> > > > bpf_lookup_user_key().
+> > > > +                * See bpf_lookup_user_key() for more details.
+> > > > +                *
+> > > > +                * A call to key_task_permission() here would
+> > > > be
+> > > > redundant, as
+> > > > +                * it is already done by keyring_search()
+> > > > called by
+> > > > +                * find_asymmetric_key().
+> > > > +                */
+> > > > +               ret = key_validate(trusted_keyring->key);
+> > > > +               if (ret < 0)
+> > > > +                       return ret;
+> > > > +       }
+> > > > +
+> > > > +       return verify_pkcs7_signature(data_ptr->data,
+> > > > +                                     bpf_dynptr_get_size(data_
+> > > > ptr)
+> > > > ,
+> > > > +                                     sig_ptr->data,
+> > > > +                                     bpf_dynptr_get_size(sig_p
+> > > > tr),
+> > > 
+> > > MIssing check for data_ptr->data == NULL before making this call?
+> > > Same
+> > > for sig_ptr.
+> > 
+> > Patch 3 requires the dynptrs to be initialized. Isn't enough?
+> > 
+> 
+> No, it seems even initialized dynptr can be NULL at runtime. Look at
+> both ringbuf_submit_dynptr and ringbuf_discard_dynptr.
+> The verifier won't know after ringbuf_reserve_dynptr whether it set
+> it
+> to NULL or some valid pointer.
+> 
+> dynptr_init is basically that stack slot is now STACK_DYNPTR, it says
+> nothing more about the dynptr.
+> 
+> As far as testing this goes, you can pass invalid parameters to
+> ringbuf_reserve_dynptr to have it set to NULL, then make sure your
+> helper returns an error at runtime for it.
 
-Fix the declaration removing the inconsistent __user annotation.
+I see, thanks.
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
-Note: This issue was discovered during the porting of the linux kernel
-on Morello [1].
+I did a quick test. Pass 1 as flags argument to bpf_dynptr_from_mem()
+(not supported), and see how bpf_verify_pkcs7_signature() handles it.
 
-[1] https://git.morello-project.org/morello/kernel/linux
+Everything seems good, the ASN1 parser called by pkcs7_parse_message()
+correctly handles zero length.
 
- security/keys/keyring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So, I will add just this test, right?
 
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 5e6a90760753..4448758f643a 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -79,7 +79,7 @@ static void keyring_revoke(struct key *keyring);
- static void keyring_destroy(struct key *keyring);
- static void keyring_describe(const struct key *keyring, struct seq_file *m);
- static long keyring_read(const struct key *keyring,
--			 char __user *buffer, size_t buflen);
-+			 char *buffer, size_t buflen);
- 
- struct key_type key_type_keyring = {
- 	.name		= "keyring",
--- 
-2.37.3
+Thanks
+
+Roberto
 
