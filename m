@@ -2,173 +2,203 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43761C54EE9
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 17:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E179EC38145
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 17:08:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229902AbiIGREr (ORCPT
+        id S230155AbiIGRI4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Sep 2022 13:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34916 "EHLO
+        Wed, 7 Sep 2022 13:08:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbiIGREo (ORCPT
+        with ESMTP id S230173AbiIGRIy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Sep 2022 13:04:44 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43C1018B10
-        for <linux-security-module@vger.kernel.org>; Wed,  7 Sep 2022 10:04:41 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-1280590722dso4121270fac.1
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Sep 2022 10:04:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=Ro6O+2s9xjG7/14chisnyJusofpe1P/Z+6Ni1HfLglw=;
-        b=SFFia7VrpSfHHqK4+wrGcNeHGpCjolBliKK6r1h6XIGRo5GSXMMhxGqrAZd7h/1Z8I
-         fZPHWdG3DVGVcrZh+RMzotY75nbYwZF3yvul2CYa8AlFvlyUYoinzuFbkei+E22aaGaF
-         hAcyyxG/Z+aKkT3k0U/r3XrRUCZZbGhXiEzNA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=Ro6O+2s9xjG7/14chisnyJusofpe1P/Z+6Ni1HfLglw=;
-        b=AQsJHZOvzSLA7EDmt5KcFT0TnWMO8J+DQaIaiKX0y5D2lfM4z4tdgy9Ht4Bnbfl6qM
-         weUPr2F0u1YJABLPpa85ouggfi0rz7GNyqRckg+i5HoQpXkn31vpF/CFWukqgfVajjHE
-         gW05cVWQ+n9mzt8oyRXSPNact3hc8iwIsV9TNcFAKv/GV0miLmKgghalXEnMY+D6Lhme
-         8qGDr6xJnx1lnZ0xKx7jOPuIQ7Ow79e8KI8PgVuaESSjPzmxTH/SzCp321CatYldWvtJ
-         Gu2YM5yOYaQpujPusbZbHz9qxvAK7wSptuD+lhl5YERBG8fyV/IRd30010iDWeJTWFRY
-         xvbw==
-X-Gm-Message-State: ACgBeo0OycQBK+T5Ff4ZBe24ER2hVog1rybzFLYS37YkZ6Z9+Y2/MmH0
-        +NSK0BNvvxD+NbskArDh/aExvJ2wDxRm9A==
-X-Google-Smtp-Source: AA6agR4BTqhzfhmntev1TMQlh6XxO4TE3dVbb1mzt/Mj1gk2TySu+gAHYG7svb1dSrniJW4bndt2Hw==
-X-Received: by 2002:a05:6808:130e:b0:345:5de2:1095 with SMTP id y14-20020a056808130e00b003455de21095mr12088767oiv.130.1662570281150;
-        Wed, 07 Sep 2022 10:04:41 -0700 (PDT)
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com. [209.85.160.41])
-        by smtp.gmail.com with ESMTPSA id w15-20020a056870a2cf00b001273c4097a4sm5029716oak.17.2022.09.07.10.04.40
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Sep 2022 10:04:40 -0700 (PDT)
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-127f5411b9cso6247400fac.4
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Sep 2022 10:04:40 -0700 (PDT)
-X-Received: by 2002:a05:6870:b28c:b0:127:ad43:573e with SMTP id
- c12-20020a056870b28c00b00127ad43573emr2505114oao.174.1662570269627; Wed, 07
- Sep 2022 10:04:29 -0700 (PDT)
+        Wed, 7 Sep 2022 13:08:54 -0400
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B043DBCC19
+        for <linux-security-module@vger.kernel.org>; Wed,  7 Sep 2022 10:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662570531; bh=p8geViBUQgHjxbBHxKlAJZFl5Oyzo+TzWHwV80+ZUww=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=DCO6C6J87t+PWQGTweFDAaf7KPlzsHn4b5axIfJa3JNEYBdj2KypuKcP+OoLiLzPt2mSq6xgMtEYCscIgJBAX0kDFFh/ZodOa8GQ3oQ/2GwtUYbqVa/bOgP4SbV9jsez9L10HNrzvfhMuLdkHNh391l0PuwN1bpkUzFyhIQMpvZOyRAg0iZlLwYTxYyVHfQ7xhADbyVn0Md3kUcg/E47d66707bEAiBoFPwQ6fvuUH3HpP8WS+OBOtXF5mVlATWbPh4i+gp3RmXifrGmjN1E1/U5gVftzrz7XrzhFNdoJY/IVsm5LS0Wt0tGCbzMIRWzxEtiznL62kPCyjFyorvKrg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662570531; bh=7fN3aWzuke5nB7jWccihJrftpFOac5foJ/ex7Yf6k8s=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=s9X6H410i4cEpubTs0i7FXEA9Bwy6i3GMNTsqBg+I8CQn8dHJt5otkY/e1o6feX6gfDIVmU3ri5oGZLuZl3mYEIGsIKlxLApA3L/TZNZ0P97TJIRJ6xti8gNFslu3h19m4kQQxAiN5vUVQa6SXQuyJsE7OaeA5W2XnjTOLM7RgOeyqv0FjsPDKrZrNWYWTCRhCWHzJlrIJ1s3AzkXAUrZy1PyQA2lDJvammz7SZUx5pYm9dfDMEO0oHaPh/oaHS/Jy+Wk1I2XlY/rgRnj9eSMBFWWsnQAcGbcazAgeGWI8oUF+5RpLQRgp6GoqVobJIZsU6N9G5zyKQLbOPz0xwSTQ==
+X-YMail-OSG: zxMqVv0VM1lpWQV5ETzV1KvhhB3EJV31fSsjR2PaKUrqtyhHhn0LJVwGV8HWtV2
+ tSqJsJ.PPUswqcuBqOTHBtvlSv1.gdBGEVuBvwB_uCBl1UCsSi.hQn_YMYSvTHsvW46Ubvrl2ZsZ
+ cNf.dvBG.HmOMxeLSDBgaPY7WNYvpujW3KSSDS8pW24zXA6rldlfF1BiRLvFCwH4sWg3U5_UOR.u
+ e45X2zzaduYsQZPwc4vSq0PIfOhYgbKIEbTymF7TOX8ztO.YI5vumPImh6I7n3dg7YYGevvXoros
+ E4A4So9k5IhaMkT8fkS5rZLeOju1OQunSDObEu5nw2_P5fMH.vbZ699tPlu_UD2cRQbu5ymUWrWG
+ Sjoz_il9nRUDvSHd4SnKfp83PN63sz60wNVzg_s1ysxEPV565_8pcG35OQpD975UDKpuI_oGd_nk
+ hbzxXrAgGbIo.i8l3cJg0idwdwI_laFBsAdZhAmNAEYCClOWs9GShpv74jsMCoLjCoo9RK6UMivS
+ bw6nAy53APBdT6V62Wc6XqaeU3Q64K_TGG7cUsTB.mX0OmP4OUwEQbo_NygLwadZEamF7V7X7u0d
+ jTHa9bXhpixMTHutvGPksDNaebkOdjq0zTvkk7sl4PCBSK0wfmZQgVfrwa9rqI2ToA9TCanHkKOq
+ d5SrQ1VteHqY.G03gRiAjh4O35wQnsf1vXjqX8B9JC2rceeWhdV.OOgNs5h1GdlqOVRaHTL9hwxs
+ QY.KneZfZstBbBZT1.6cgeVsRn3PpfY15nfCv18SOdszxzSuL4xpGpo6UG7BdA0fkCNBCD__IFjy
+ I8om521im4Jq4wQOU.yMcZ0Pnv7rorceJ1iJDt0weWpNyX_u6vTkvPWvWKqGoq.I5IPezHCPpA3K
+ 4SD2Gd6ZHRuFPku5JODKn0hRm3TbSmYUXnpET3WoGYuO1UGY35CZYcpvC1xqFNptPvJhxJHLQPAs
+ q4.hTjQY7Wxq.tsx83vZ5CS2e2JAYkE.KiJbhoJugorDCZZbpatOM5R2bromoK4WIBC9boeAn_3f
+ iE2M8qm7y7jZJDmFCLXORIs94iRdHTwuC6ra1OWIQGsXYc4q7qujdBGOtMBt3EBgRkzIaETlBlCH
+ nR3URzddmcqUo7MB.dhK.5hnWky8ktKq6_UDo.YGjq4JeksMZPGYkMfAsE22KDTgX8mgxvgVzPsE
+ NNnhQ0p.Q79mPM23fkkUQ1RN3OJlxxwUVlzFEYgWbcMuPuyWklvs9vITMouC_MAPMsbRtNlZY9wZ
+ HDS1wRoNTQr__Q.fikItWtz3npxlIDjJyWfop9_vP84265VxkrdfnO4tw05HB.YxT82HdBXZr2Ip
+ AxWGTPtm3go0FoeJzBjOTdrV._SQJwZ_3DgS.hwhdLSrFzw1ZXHzgsWajgV9o9XXDQetHhgTiZfA
+ qNDu5duRAHedp6hinkvAy4BXQ8NZhCjX4ovNm5VzBhW.vcOO9VGpkX8Lqe2l8L_F2LsiRPxkrUha
+ y2KeR0BJOL6xEVDTKfhfBWLj3NVgYm9vtcxI24jTTmdSv4gKgFnjvYixWWLz_nLlvTw1orP.HJ1L
+ ebdPOYwRAg7eJWgbqS8J925KmJ0UmO1uIJc7PaAkblJlqb7TXKOvcneIo5AdzjIl.kWKto6.OwUx
+ kGaOdCWb9lJynlc2Wm3Au2BjYqYMrUcL1hJw7.DoN_any6l8dzvtmXzKr1893xj45ndvO5eBYMBb
+ V.kS3tBY1jOgZmmjWJusK.jcnGGeHKadGDIsGxp7.J44bklhomPQew718_4YOTO4rDBsdYn.PiZl
+ dLxdKegMWc.FF5frsMvLex826hZ.iWWXWc.Op_nWNw6w2aZKsJypSIN._z3MlPdDfX8DO3LsntSl
+ x31gOIgT0NfknQCUC99OhcS4nJhbIP8GRiXAK0k7Z3LB6wue3KJFZN4b9Ie9.D.9WwI8aDcY3ZRh
+ gBKGnNqAroJfnMqW6jiissFclq5bt.LxW9AKuZGXRO9lie6m.QXbd8EDekbmOoWulYF9vgQe1oyk
+ s6CfZvebiTND3eRTDY8BFFcQXvNlSgPcaHDbTMOV5sLKKFqcKGtobfJ8Skv2VvSfq3YeBz1U2F3p
+ BFICFSHh7Vl55.8xaFExiUvlHyaZMG9FFuYBJxsRrWSxP0_DcZBm6aArcaXsUY2FiibfIz2GjTKy
+ xnEAlRrpzCn.YdjYt9R77HUYraNEFU9pT6GpH1kEIy.hnexcf5mrUZ27AdmjrGaFjJIp2uzfvWlz
+ IppTbvmqqrkiVGoXmXH3SgbbMEAPXaLvEYevKQdFRL04bO41j4X9o2h7GkTNFxj_hyRC.HjgoKoY
+ wWybjwZX6BVgQdw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 7 Sep 2022 17:08:51 +0000
+Received: by hermes--production-ne1-544744cc75-sp4gl (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID dc460f6a045a6e44cd8e2f061fe81bfa;
+          Wed, 07 Sep 2022 17:08:48 +0000 (UTC)
+Message-ID: <9c89b121-8dbd-dfa8-e427-8b90d1333e36@schaufler-ca.com>
+Date:   Wed, 7 Sep 2022 10:08:47 -0700
 MIME-Version: 1.0
-References: <20220823222526.1524851-1-evgreen@chromium.org> <e74a2c48-fd30-aa4c-9ab6-eafe652f7878@amd.com>
-In-Reply-To: <e74a2c48-fd30-aa4c-9ab6-eafe652f7878@amd.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 7 Sep 2022 10:03:53 -0700
-X-Gmail-Original-Message-ID: <CAE=gft6gjqhviovxQDY=qrBiKQH1RBkCd_f+pnNw4Tz=M0ewBg@mail.gmail.com>
-Message-ID: <CAE=gft6gjqhviovxQDY=qrBiKQH1RBkCd_f+pnNw4Tz=M0ewBg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] Encrypted Hibernation
-To:     "Limonciello, Mario" <mario.limonciello@amd.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Matthew Garrett <mgarrett@aurora.tech>,
-        Jarkko Sakkinen <jarkko@kernel.org>, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        apronin@chromium.org, Daniil Lunev <dlunev@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Hao Wu <hao.wu@rubrik.com>, James Morris <jmorris@namei.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Len Brown <len.brown@intel.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
-        keyrings@vger.kernel.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: LSM stacking in next for 6.1?
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
+        John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
+        SElinux list <selinux@vger.kernel.org>, casey@schaufler-ca.com
+References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
+ <791e13b5-bebd-12fc-53de-e9a86df23836@schaufler-ca.com>
+ <CAHC9VhSF8hWg=7tbFiCrizNF61vpwJcU3793LcStiu-anW4i1g@mail.gmail.com>
+ <CAHC9VhTDGwO789t59EyOV0SwnwGrdyBhRiuJpoY7cB4MSe02BQ@mail.gmail.com>
+ <e2b6ae44-1037-666f-5012-6abd4d46c0b7@schaufler-ca.com>
+ <CAHC9VhQ+UcJw4G=VHNE8wMa+EBG-UcoZ7ox0vNqLHoSKAd9XZQ@mail.gmail.com>
+ <9f79faa7-0d6a-c023-4561-15a261d4c60d@schaufler-ca.com>
+ <CAHC9VhQBHNmYf3vMSFrcw_=a=LaqoxVLqFirbMfSZeHqL5fxWQ@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhQBHNmYf3vMSFrcw_=a=LaqoxVLqFirbMfSZeHqL5fxWQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 31, 2022 at 11:35 AM Limonciello, Mario
-<mario.limonciello@amd.com> wrote:
->
-> On 8/23/2022 17:25, Evan Green wrote:
-> > We are exploring enabling hibernation in some new scenarios. However,
-> > our security team has a few requirements, listed below:
-> > 1. The hibernate image must be encrypted with protection derived from
-> >     both the platform (eg TPM) and user authentication data (eg
-> >     password).
-> > 2. Hibernation must not be a vector by which a malicious userspace can
-> >     escalate to the kernel.
-> >
-> > Requirement #1 can be achieved solely with uswsusp, however requirement
-> > 2 necessitates mechanisms in the kernel to guarantee integrity of the
-> > hibernate image. The kernel needs a way to authenticate that it generated
-> > the hibernate image being loaded, and that the image has not been tampered
-> > with. Adding support for in-kernel AEAD encryption with a TPM-sealed key
-> > allows us to achieve both requirements with a single computation pass.
-> >
-> > Matthew Garrett published a series [1] that aligns closely with this
-> > goal. His series utilized the fact that PCR23 is a resettable PCR that
-> > can be blocked from access by usermode. The TPM can create a sealed key
-> > tied to PCR23 in two ways. First, the TPM can attest to the value of
-> > PCR23 when the key was created, which the kernel can use on resume to
-> > verify that the kernel must have created the key (since it is the only
-> > one capable of modifying PCR23). It can also create a policy that enforces
-> > PCR23 be set to a specific value as a condition of unsealing the key,
-> > preventing usermode from unsealing the key by talking directly to the
-> > TPM.
-> >
-> > This series adopts that primitive as a foundation, tweaking and building
-> > on it a bit. Where Matthew's series used the TPM-backed key to encrypt a
-> > hash of the image, this series uses the key directly as a gcm(aes)
-> > encryption key, which the kernel uses to encrypt and decrypt the
-> > hibernate image in chunks of 16 pages. This provides both encryption and
-> > integrity, which turns out to be a noticeable performance improvement over
-> > separate passes for encryption and hashing.
-> >
-> > The series also introduces the concept of mixing user key material into
-> > the encryption key. This allows usermode to introduce key material
-> > based on unspecified external authentication data (in our case derived
-> > from something like the user password or PIN), without requiring
-> > usermode to do a separate encryption pass.
-> >
-> > Matthew also documented issues his series had [2] related to generating
-> > fake images by booting alternate kernels without the PCR23 limiting.
-> > With access to PCR23 on the same machine, usermode can create fake
-> > hibernate images that are indistinguishable to the new kernel from
-> > genuine ones. His post outlines a solution that involves adding more
-> > PCRs into the creation data and policy, with some gyrations to make this
-> > work well on a standard PC.
-> >
-> > Our approach would be similar: on our machines PCR 0 indicates whether
-> > the system is booted in secure/verified mode or developer mode. By
-> > adding PCR0 to the policy, we can reject hibernate images made in
-> > developer mode while in verified mode (or vice versa).
-> >
-> > Additionally, mixing in the user authentication data limits both
-> > data exfiltration attacks (eg a stolen laptop) and forged hibernation
-> > image attacks to attackers that already know the authentication data (eg
-> > user's password). This, combined with our relatively sealed userspace
-> > (dm-verity on the rootfs), and some judicious clearing of the hibernate
-> > image (such as across an OS update) further reduce the risk of an online
-> > attack. The remaining attack space of a forgery from someone with
-> > physical access to the device and knowledge of the authentication data
-> > is out of scope for us, given that flipping to developer mode or
-> > reflashing RO firmware trivially achieves the same thing.
-> >
-> > A couple of patches still need to be written on top of this series. The
-> > generalized functionality to OR in additional PCRs via Kconfig (like PCR
-> > 0 or 5) still needs to be added. We'll also need a patch that disallows
-> > unencrypted forms of resume from hibernation, to fully close the door
-> > to malicious userspace. However, I wanted to get this series out first
-> > and get reactions from upstream before continuing to add to it.
->
-> Something else to think about in this series is what happens with
-> `hibernation_available` in kernel/power/hibernate.c.  Currently if the
-> system is locked down hibernate is disabled, but I would think that
-> with a setup like that described here that should no longer be necessary.
->
+On 9/7/2022 8:13 AM, Paul Moore wrote:
+> On Tue, Sep 6, 2022 at 8:31 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/6/2022 4:24 PM, Paul Moore wrote:
+>>> On Fri, Sep 2, 2022 at 7:14 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> On 9/2/2022 2:30 PM, Paul Moore wrote:
+>>>>> On Tue, Aug 2, 2022 at 8:56 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>>>> On Tue, Aug 2, 2022 at 8:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>>>> I would like very much to get v38 or v39 of the LSM stacking for Apparmor
+>>>>>>> patch set in the LSM next branch for 6.1. The audit changes have polished
+>>>>>>> up nicely and I believe that all comments on the integrity code have been
+>>>>>>> addressed. The interface_lsm mechanism has been beaten to a frothy peak.
+>>>>>>> There are serious binder changes, but I think they address issues beyond
+>>>>>>> the needs of stacking. Changes outside these areas are pretty well limited
+>>>>>>> to LSM interface improvements.
+>>>>>> The LSM stacking patches are near the very top of my list to review
+>>>>>> once the merge window clears, the io_uring fixes are in (bug fix), and
+>>>>>> SCTP is somewhat sane again (bug fix).  I'm hopeful that the io_uring
+>>>>>> and SCTP stuff can be finished up in the next week or two.
+>>>>>>
+>>>>>> Since I'm the designated first stuckee now for the stacking stuff I
+>>>>>> want to go back through everything with fresh eyes, which probably
+>>>>>> isn't a bad idea since it has been a while since I looked at the full
+>>>>>> patchset from bottom to top.  I can tell you that I've never been
+>>>>>> really excited about the /proc changes, and believe it or not I've
+>>>>>> been thinking about those a fair amount since James asked me to start
+>>>>>> maintaining the LSM.  I don't want to get into any detail until I've
+>>>>>> had a chance to look over everything again, but just a heads-up that
+>>>>>> I'm not too excited about those bits.
+>>>>> As I mentioned above, I don't really like the stuff that one has to do
+>>>>> to support LSM stacking on the existing /proc interfaces, the
+>>>>> "label1\0label2\labelN\0" hack is probably the best (only?) option we
+>>>>> have for retrofitting multiple LSMs into those interfaces and I think
+>>>>> we can all agree it's not a great API.  Considering that applications
+>>>>> that wish to become simultaneous multi-LSM aware are going to need
+>>>>> modification anyway, let's take a step back and see if we can do this
+>>>>> with a more sensible API.
+>>>> This is a compound problem. Some applications, including systemd and dbus,
+>>>> will require modification to completely support multiple concurrent LSMs
+>>>> in the long term. This will certainly be the case should someone be wild
+>>>> and crazy enough to use Smack and SELinux together. Even with the (Smack or
+>>>> SELinux) and AppArmor case the ps(1) command should be educated about the
+>>>> possibility of multiple "current" values. However, in a container world,
+>>>> where an Android container can run on an Ubuntu system, the presence of
+>>>> AppArmor on the base system is completely uninteresting to the SELinux
+>>>> aware applications in the container. This is a real use case.
+>>> If you are running AppArmor on the host system and SELinux in a
+>>> container you are likely going to have some *very* bizarre behavior as
+>>> the SELinux policy you load in the container will apply to the entire
+>>> system, including processes which started *before* the SELinux policy
+>>> was loaded.  While I understand the point you are trying to make, I
+>>> don't believe the example you chose is going to work without a lot of
+>>> other changes.
+>> I don't use it myself, but I know it's frighteningly popular.
+> All right, I'm going to call your bluff here - who are these people
+> running AppArmor on the host and SELinux in a container?  What policy
+> are they using, it's surely not an unmodified Fedora/RHEL or upstream
+> refpol policy?  Do they run in enforcing mode without massive
+> permissions granted to kernel_t (I'm guessing all of the host
+> applications would appear as kernel_t)?  How do you handle multiple
+> SELinux containers?
 
-Correct, I think that would be a reasonable followup to this series.
+Beats me. All that SELinux policy stuff is over my head. ;)
 
--Evan
+Seriously, once they got the stacking patches applied they thanked
+me for the help and disappeared until they decided to update the
+kernel version and asked for help with the next round of patches.
+They told me what they wanted to do, which was to run Android in
+a container, but how they accomplished it was a set of details they
+didn't share. I assume that you are right that they had to do
+horrible things to either AppArmor or SELinux policy, or maybe both.
+I also assume they wanted this as an environment to develop Android
+applications, and may not have cared much about actual enforcement.
+But they are happy users.
+
+> I'm aware of *one* use case where SELinux is run in a container and
+> that required a number of careful constraints on the use case and a
+> good deal of hacking to enable.  I'm sure there are definitely people
+> that *want* this, especially in the context of Ubuntu, but I really
+> doubt this is in widespread use today.
+
+What I know is that there is a community out there using it. I think
+you're right that the way they're using it would be displeasing to
+most of us.
+
+
+>>>>> I think it's time to think about a proper set of LSM syscalls.
+>>>> At the very least we need a liblsm that preforms a number of useful
+>>>> functions, like identifying what security modules are available,
+>>>> validating "contexts", fetching "contexts" from files and processes
+>>>> and that sort of thing. Whether it is built on syscalls or /proc and
+>>>> getxattr() is a matter of debate and taste.
+>>> Why is it a forgone conclusion that a library would be necessary for
+>>> basic operations?  If the kernel/userspace API is sane to begin with
+>>> we could probably either significantly reduce or eliminate the need
+>>> for additional libraries.
+>> I'm using my experience with the "hideous" context format
+>> ( "apparmor\0unconfined\0smack\0User\0" ) as a guide. Creating
+>> a "sane" API for returning multiple lsm/context pairs is going
+>> to be tricky. No one wants to require iterative calls to get a
+>> collection of values for example. I've spent the past few years
+>> trying to pound out APIs that are somewhat sane. I don't want to
+>> spend another few years repeating the process for kernel APIs.
+> See my earlier comment to John.  I care a lot about getting things
+> right, and very little about how long it takes.  I'm sympathetic about
+> the time and difficulty involved, but I see that as no reason to merge
+> a not-good design.
+>
+>>>> The addition of multiple subject labels to audit would be the same regardless
+>>>> of /proc or syscall interfaces.
+>>> Yes, that's why I didn't bring up audit as it doesn't weigh on this
+>>> decision.  If you really want to include audit for some reason, I'll
+>>> simply remind you that I pushed back hard on overloading the existing
+>>> subj/obj fields with a multiplexed label format, asking for individual
+>>> subj/obj fields for each LSM.
+>> Just pointing out that the stacking patches aren't that complicated.
+> Ha!  Let's just agree to disagree on that point :)
+
+OK, they're a teeny bit extensive. 
+
