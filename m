@@ -2,112 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5AD2C6FA86
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 15:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FB2C54EE9
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 16:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbiIGPne (ORCPT
+        id S230378AbiIGQFY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Sep 2022 11:43:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41684 "EHLO
+        Wed, 7 Sep 2022 12:05:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbiIGPnc (ORCPT
+        with ESMTP id S229604AbiIGQFE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Sep 2022 11:43:32 -0400
-Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8662AB14CA
-        for <linux-security-module@vger.kernel.org>; Wed,  7 Sep 2022 08:43:30 -0700 (PDT)
-Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-1278a61bd57so18453947fac.7
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Sep 2022 08:43:30 -0700 (PDT)
+        Wed, 7 Sep 2022 12:05:04 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5DDDBCCF6;
+        Wed,  7 Sep 2022 09:03:28 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id l6so7793906ilk.13;
+        Wed, 07 Sep 2022 09:03:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=ts8sD/IHVRi9k1jlgev4IpnFvduczDySAkqNIh9sCNA=;
-        b=ZFzHmP4gyBWljJarZlRpu44+Pdi+JKXqO/0pufgx2cv1qQeVP7usq2OgS/NkxEm1ll
-         glxywrekpB3t22xSgkeC2+74lMc0DvIjfsghlhRqrUpKFjNZ/WvnPdUt5W4f6kUFOxqG
-         O3CRZ5x0hNwfl4ZNqQsRURuOEUDrHZ4CGeFQYUCVUYUgYI+c58K5Vi4+4xLWdGg/h2On
-         JgKQ6nlp4x5DIq/rMfAnjKLJvUZkQSSKUaLg27XJc2cW0RJQzj6n6IA3Da4N6aZM1lVL
-         PMX4EmHIseF9Z7eC8jiD6w3FTljr0Xfmk5IK8emS2Wmt8WSrIJkS+dRM0vWvs8W3G65o
-         8gKw==
+        bh=lt1bpJM6pHMY/em4ZNsqZVuYS7ky1YDSS0Zv0T/sQCI=;
+        b=jFrMQnAJyokhbea+zJXMZUcpgYdRpW6ftt5X8yDsUmyx2A4f77acUmlMItitO1FogO
+         p0bEzPpuqSiuwlKsN8tybJJDylxM59F++Xmxy4P5f+e6/5m4LATaktIUyoghbJvS/faC
+         CDzGmAW/QicbE8j6KYbsmSE/J19AMses1La/f2fg44SktusCjr2xneuPqsjpMAfBYCHn
+         UPS3zWSx7vbgypW+5wJGwA5biGU+ZHb3LlbUMkkmWNyZuckczS+nu1IFmU/tfN0xIuBc
+         7vbypb3c16FPIyTdjo2byYrd5Ce7ap9CY+J4YhWRm52GoiEDxedVnkj+Cfx53cDUSmrj
+         CPoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=ts8sD/IHVRi9k1jlgev4IpnFvduczDySAkqNIh9sCNA=;
-        b=T2fuHOyk7SiyH38Gf9KZybPq0f/2nYviyUfzMw+TK0dyytCe8dDZYx0ISW6DVTX6l0
-         cSG/CY1syOnepIbkLkVDcGwYvwKeKlGubHM/t0hiP6gEdPfxvE9KinUm0OqN0Zp7j+GC
-         4Bp1uOBSTumYcmVHe5KlHiU2GwTfPdfbnCH7vwwjikOLJ2E7fY51yhzRBgyC5R8xWcn/
-         zqnvtot1UOb5l9Bge/DUiAtQ+IKZ3sjWO+WBZ0AUpBH9idcucAClJnIBvsGb6s/yKJQw
-         2z7oMp/HbSK+hrdv4606NQp26AJuzOsKnMS29oUCBoAJBlwlLM5xZysdWUP84pCdeNq3
-         mLAg==
-X-Gm-Message-State: ACgBeo2MXtClaYsN8y0eQfsznnGFq2qgpYNMDgurVTpPEvHpcmrnrLJr
-        nnHxDya4+LUZ04+APlrbVhk/Qcp0IOYycMetoncy
-X-Google-Smtp-Source: AA6agR6CsNX5pCAqd4MaFpekC59h+BsiSmuZ8ycl+hLYfqJYWrzqBDDG02upFEfnosFFzJPjemisB1neBKzVTee58aY=
-X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
- n9-20020a05680803a900b003434b14cccemr12565813oie.41.1662565407848; Wed, 07
- Sep 2022 08:43:27 -0700 (PDT)
+        bh=lt1bpJM6pHMY/em4ZNsqZVuYS7ky1YDSS0Zv0T/sQCI=;
+        b=ze3Uc7zSJMaPjpVWvF1ztWN3mPjlJO61CQcR8BRJFtNNlhnAQtmIwo0phdrZCDxVtn
+         LiS4aTiGt9tyM7YL8gVaKhD8QP8IdK1EYdh5WtkWaZh3v3EcS1tnMNCWCZmUN8gJXu5C
+         Wn25edvZdPa6QkErAB3ctgO8KskxcYsWH8tamQl7BOUF32xXuYKzpiGCVbh9w8lz16fy
+         B1aQfQITjb4S9VKOXhlvTmumfsLao4vk+rfFm+7jnT+qvE4wNb5z8jCU3LfMeBFoXIza
+         jBxeJ2VH/00qa7nkCy2YbKwayzB+4F7vdzIQKj69R8d2o76BS5r2YjsQRwf7AdNfZXnZ
+         b2Dg==
+X-Gm-Message-State: ACgBeo1Z2lQomAOkdqp/Uqxp8PGSCWRDaMtjOLtJVj6OZ1xJk815Ycd0
+        OLWteix1QeUpVx3OdqUJ73FGvlqouVHQNc42U0Q=
+X-Google-Smtp-Source: AA6agR5D0yaJMaMJfVkyP7yo0j3n7J4Q2NxUTHD4GglycqC1kGl3Kap+m8RkpO7wuD2gzZZFsAnPWsgP2IfD+vK5xbs=
+X-Received: by 2002:a05:6e02:1489:b0:2f1:a985:853 with SMTP id
+ n9-20020a056e02148900b002f1a9850853mr2320169ilk.68.1662566607972; Wed, 07 Sep
+ 2022 09:03:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220907121230.21252-1-vincenzo.frascino@arm.com> <f1cefdb9-363a-c938-f02a-851173431610@infradead.org>
-In-Reply-To: <f1cefdb9-363a-c938-f02a-851173431610@infradead.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 7 Sep 2022 11:43:17 -0400
-Message-ID: <CAHC9VhQytyFMvq-M0YrqzKxJDyj58KKG0XDjBfTV02sYCzeALQ@mail.gmail.com>
-Subject: Re: [PATCH] security/keys: Remove inconsistent __user annotation
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>
+References: <CAP01T74L7C+F7oiBx3fL9SahdvU-9rHpQ=GaLTj0XAfeOKaXrA@mail.gmail.com>
+ <20220907145939.489784-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20220907145939.489784-1-roberto.sassu@huaweicloud.com>
+From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date:   Wed, 7 Sep 2022 18:02:51 +0200
+Message-ID: <CAP01T77rgLz-ApBoXfegLCmensukK59-9=jh2CmuWsC0VVMzWw@mail.gmail.com>
+Subject: Re: [PATCH v17 12/12] selftests/bpf: Add tests for dynamic pointers
+ parameters in kfuncs
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, deso@posteo.net, dhowells@redhat.com,
+        haoluo@google.com, jarkko@kernel.org, jmorris@namei.org,
+        john.fastabend@gmail.com, jolsa@kernel.org,
+        keyrings@vger.kernel.org, kpsingh@kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, martin.lau@linux.dev,
+        mingo@redhat.com, mykolal@fb.com, paul@paul-moore.com,
+        roberto.sassu@huawei.com, rostedt@goodmis.org, sdf@google.com,
+        serge@hallyn.com, shuah@kernel.org, song@kernel.org, yhs@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 7, 2022 at 10:06 AM Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 9/7/22 05:12, Vincenzo Frascino wrote:
-> > The declaration of keyring_read does not match the definition
-> > (security/keys/keyring.c). In this case the definition is correct
-> > because it matches what defined in "struct key_type::read"
-> > (linux/key-type.h).
-> >
-> > Fix the declaration removing the inconsistent __user annotation.
-> >
-> > Cc: David Howells <dhowells@redhat.com>
-> > Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: James Morris <jmorris@namei.org>
-> > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> > ---
-> > Note: This issue was discovered during the porting of the linux kernel
-> > on Morello [1].
-> >
-> > [1] https://git.morello-project.org/morello/kernel/linux
+On Wed, 7 Sept 2022 at 17:00, Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
 >
-> FTR, I have sent this same patch 3 times.
-> Good luck.
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> Add tests to ensure that only supported dynamic pointer types are accepted,
+> that the passed argument is actually a dynamic pointer, that the passed
+> argument is a pointer to the stack, and that bpf_verify_pkcs7_signature()
+> correctly handles dynamic pointers with data set to NULL.
+>
+> The tests are currently in the deny list for s390x (JIT does not support
+> calling kernel function).
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
 
-David or Jarkko, this patch is both trivial and obviously correct,
-please merge this into the keys tree for the next merge window else
-I'll take it via the LSM tree.
+Just a minor nit: you could probably use invalid flags value other
+than 1, since most likely the next valid flag value will be 1, which
+will require changing this again. LGTM otherwise.
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
-
-> >  security/keys/keyring.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> > index 5e6a90760753..4448758f643a 100644
-> > --- a/security/keys/keyring.c
-> > +++ b/security/keys/keyring.c
-> > @@ -79,7 +79,7 @@ static void keyring_revoke(struct key *keyring);
-> >  static void keyring_destroy(struct key *keyring);
-> >  static void keyring_describe(const struct key *keyring, struct seq_file *m);
-> >  static long keyring_read(const struct key *keyring,
-> > -                      char __user *buffer, size_t buflen);
-> > +                      char *buffer, size_t buflen);
-> >
-> >  struct key_type key_type_keyring = {
-> >       .name           = "keyring",
-
--- 
-paul-moore.com
+Acked-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
