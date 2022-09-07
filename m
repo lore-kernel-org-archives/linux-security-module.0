@@ -2,141 +2,188 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 334B6C38145
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 01:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDB6C38145
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 02:28:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229485AbiIGBsW (ORCPT
+        id S229746AbiIGC2o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Sep 2022 21:48:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42334 "EHLO
+        Tue, 6 Sep 2022 22:28:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbiIGBsV (ORCPT
+        with ESMTP id S229788AbiIGC2k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Sep 2022 21:48:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921D0832E3;
-        Tue,  6 Sep 2022 18:48:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 27B52616EB;
-        Wed,  7 Sep 2022 01:48:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8543C433D6;
-        Wed,  7 Sep 2022 01:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662515299;
-        bh=t0Bxth8FdzneHjCPM3qPz7rrGj6ZZLOPNu/D055k2Rk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dkqwzy2EekUlmtvtOnaFGKlnP2G8hjNUGqKmPiR9Tb7NOu1cFbmZiq9olQIcpd35V
-         1CqL8B5Hf7u3LGeQvRtb9ducJkSz2MZeZYQ6snuLRcpiFCwrdTXBW69rWXuJrqBK98
-         McJ+1pJSQS2iVsMTtXubIxBsG0xIEIfquBbV+6EeK4wj4+36zq5r0U2zA0AwB21Dco
-         mqHKC5QisDCEI9RLc4VWRrlwBmbh8CyZIOwu4a4q7ARNwqSgvQwd/3SAguIUHKD2xI
-         nTSNlYOkCvznpWefQgKFhzTTUGiJt/Sdx6BsKvWlxN7GYKWU8LJrDdjfoEcH0aQMqx
-         M3QxFrjQceFpg==
-From:   guoren@kernel.org
-To:     tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
-        Conor.Dooley@microchip.com, xianting.tian@linux.alibaba.com,
-        daolu@rivosinc.com, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Guo Ren <guoren@linux.alibaba.com>, Guo Ren <guoren@kernel.org>
-Subject: [RFC PATCH] generic_entry: Add stackleak support
-Date:   Tue,  6 Sep 2022 21:48:09 -0400
-Message-Id: <20220907014809.919979-1-guoren@kernel.org>
-X-Mailer: git-send-email 2.36.1
+        Tue, 6 Sep 2022 22:28:40 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE00C90802;
+        Tue,  6 Sep 2022 19:28:37 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id v15so6914913iln.6;
+        Tue, 06 Sep 2022 19:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=6adJ3vFxu7LJgVGtWumUtBEFtalw2Gru7dwbkWzIto0=;
+        b=Qzes80q1nY3NMTB/u4RR9qRposPgyIWEglwe9n8azaRLBgllpg11dzioo6lHb3SSWP
+         F8YNlr0AikuyTVa9O819Rg/M6iTu9c/OQHv7W/Exf6W01JPK4XmoD9TQyTC7yVCUcu7c
+         r0LjwIYwgVN17yVpDkSVGtd7JNkZ0CkGakzS2ReCWF9HcBOH+OYnUz0Banqdk1xtbdli
+         cUfd795MsTkTiz+16Iue5opV8OSPgxuE8n5PMh8OqSG3vaB56THP6jTBQLrDz/J+3gE2
+         nTn+DPorWFSDFWslz3xDaVFZvbY8ywySWMEr8HOD5EZ+osXBfLJ3z3WInBtlcq95+uJB
+         k1Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=6adJ3vFxu7LJgVGtWumUtBEFtalw2Gru7dwbkWzIto0=;
+        b=54uhIh1vA1d3RPyxLLCyv16p6V1n97QMEdPljj8Qz/4FAyiyHdfjuOrpwX/jgLFxA9
+         7DAcbsjHQ1QcG65dK+FfCDaowOMIwIw3Q+82UNEv1dcKTYlDUOWmpys00tI1624jgd63
+         u7ZU/eUjx2RkcCX8jXzrVF3Zr7OTXgvw0ZC5Jvb4Ph+GZKKONCCGEvQsWZACGRZyI/9x
+         CAg9WdUWWR56hzKL6IrJXn3HcH3QmhlWjpjx1pOXwoqXPW6potlXQzo8n2TP0Jvjy7nC
+         olBadDkdE6lubi42v9G7s4kG4PdkqrDZNdLp9lpKb59bako5OZDO4EmMRIaPVK5pgTbC
+         QOqw==
+X-Gm-Message-State: ACgBeo2kzyibkUDF12/pujOqs1ZvPRHM6KmJREQy2bq3Y2cVqMhw02Pd
+        H6WWaebkQyASx4X5s6pMekueKMGvu0WRRRTNB2Q=
+X-Google-Smtp-Source: AA6agR5GHMpNuon9uP5D/DsqmVpozOs1KIkPUdiWqptV+F5uPCHPCS2OpvNCpBPI6O64E6+NF/6Y+LZVPqKdfFOe1CM=
+X-Received: by 2002:a05:6e02:190a:b0:2ee:9e75:ae4b with SMTP id
+ w10-20020a056e02190a00b002ee9e75ae4bmr738115ilu.219.1662517717158; Tue, 06
+ Sep 2022 19:28:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220905143318.1592015-1-roberto.sassu@huaweicloud.com>
+ <20220905143318.1592015-8-roberto.sassu@huaweicloud.com> <CAP01T77F-A7igW+vp5RhzcqzRJymO6YRvNR2cfsh+2fKNy56YA@mail.gmail.com>
+ <3d32decb1fda80e261d9ed08decfdca45614c4af.camel@huaweicloud.com>
+In-Reply-To: <3d32decb1fda80e261d9ed08decfdca45614c4af.camel@huaweicloud.com>
+From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date:   Wed, 7 Sep 2022 04:28:00 +0200
+Message-ID: <CAP01T76csO9pdL=KLU4s7M__GnEifmKEB0pb7genw3UN8tA=FQ@mail.gmail.com>
+Subject: Re: [PATCH v16 07/12] bpf: Add bpf_verify_pkcs7_signature() kfunc
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     joannelkoong@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, martin.lau@linux.dev, song@kernel.org,
+        yhs@fb.com, john.fastabend@gmail.com, kpsingh@kernel.org,
+        sdf@google.com, haoluo@google.com, jolsa@kernel.org,
+        mykolal@fb.com, dhowells@redhat.com, jarkko@kernel.org,
+        rostedt@goodmis.org, mingo@redhat.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, shuah@kernel.org,
+        bpf@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Guo Ren <guoren@linux.alibaba.com>
+On Tue, 6 Sept 2022 at 10:08, Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> On Tue, 2022-09-06 at 04:57 +0200, Kumar Kartikeya Dwivedi wrote:
+> > On Mon, 5 Sept 2022 at 16:35, Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >
+> > > Add the bpf_verify_pkcs7_signature() kfunc, to give eBPF security
+> > > modules
+> > > the ability to check the validity of a signature against supplied
+> > > data, by
+> > > using user-provided or system-provided keys as trust anchor.
+> > >
+> > > The new kfunc makes it possible to enforce mandatory policies, as
+> > > eBPF
+> > > programs might be allowed to make security decisions only based on
+> > > data
+> > > sources the system administrator approves.
+> > >
+> > > The caller should provide the data to be verified and the signature
+> > > as eBPF
+> > > dynamic pointers (to minimize the number of parameters) and a
+> > > bpf_key
+> > > structure containing a reference to the keyring with keys trusted
+> > > for
+> > > signature verification, obtained from bpf_lookup_user_key() or
+> > > bpf_lookup_system_key().
+> > >
+> > > For bpf_key structures obtained from the former lookup function,
+> > > bpf_verify_pkcs7_signature() completes the permission check
+> > > deferred by
+> > > that function by calling key_validate(). key_task_permission() is
+> > > already
+> > > called by the PKCS#7 code.
+> > >
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Acked-by: KP Singh <kpsingh@kernel.org>
+> > > ---
+> > >  kernel/trace/bpf_trace.c | 45
+> > > ++++++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 45 insertions(+)
+> > >
+> > > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> > > index 7a7023704ac2..8e2c026b0a58 100644
+> > > --- a/kernel/trace/bpf_trace.c
+> > > +++ b/kernel/trace/bpf_trace.c
+> > > @@ -1294,12 +1294,57 @@ void bpf_key_put(struct bpf_key *bkey)
+> > >         kfree(bkey);
+> > >  }
+> > >
+> > > +#ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+> > > +/**
+> > > + * bpf_verify_pkcs7_signature - verify a PKCS#7 signature
+> > > + * @data_ptr: data to verify
+> > > + * @sig_ptr: signature of the data
+> > > + * @trusted_keyring: keyring with keys trusted for signature
+> > > verification
+> > > + *
+> > > + * Verify the PKCS#7 signature *sig_ptr* against the supplied
+> > > *data_ptr*
+> > > + * with keys in a keyring referenced by *trusted_keyring*.
+> > > + *
+> > > + * Return: 0 on success, a negative value on error.
+> > > + */
+> > > +int bpf_verify_pkcs7_signature(struct bpf_dynptr_kern *data_ptr,
+> > > +                              struct bpf_dynptr_kern *sig_ptr,
+> > > +                              struct bpf_key *trusted_keyring)
+> > > +{
+> > > +       int ret;
+> > > +
+> > > +       if (trusted_keyring->has_ref) {
+> > > +               /*
+> > > +                * Do the permission check deferred in
+> > > bpf_lookup_user_key().
+> > > +                * See bpf_lookup_user_key() for more details.
+> > > +                *
+> > > +                * A call to key_task_permission() here would be
+> > > redundant, as
+> > > +                * it is already done by keyring_search() called by
+> > > +                * find_asymmetric_key().
+> > > +                */
+> > > +               ret = key_validate(trusted_keyring->key);
+> > > +               if (ret < 0)
+> > > +                       return ret;
+> > > +       }
+> > > +
+> > > +       return verify_pkcs7_signature(data_ptr->data,
+> > > +                                     bpf_dynptr_get_size(data_ptr)
+> > > ,
+> > > +                                     sig_ptr->data,
+> > > +                                     bpf_dynptr_get_size(sig_ptr),
+> >
+> > MIssing check for data_ptr->data == NULL before making this call?
+> > Same
+> > for sig_ptr.
+>
+> Patch 3 requires the dynptrs to be initialized. Isn't enough?
+>
 
-Make generic_entry supports basic STACKLEAK, and no arch custom
-code is needed.
+No, it seems even initialized dynptr can be NULL at runtime. Look at
+both ringbuf_submit_dynptr and ringbuf_discard_dynptr.
+The verifier won't know after ringbuf_reserve_dynptr whether it set it
+to NULL or some valid pointer.
 
-Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
-Signed-off-by: Guo Ren <guoren@kernel.org>
----
- drivers/firmware/efi/libstub/Makefile | 4 +++-
- include/linux/stackleak.h             | 3 +++
- kernel/entry/common.c                 | 5 +++++
- security/Kconfig.hardening            | 2 +-
- 4 files changed, 12 insertions(+), 2 deletions(-)
+dynptr_init is basically that stack slot is now STACK_DYNPTR, it says
+nothing more about the dynptr.
 
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index d0537573501e..bb6ad37a9690 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -19,7 +19,7 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ \
- # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
- # disable the stackleak plugin
- cflags-$(CONFIG_ARM64)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
--				   -fpie $(DISABLE_STACKLEAK_PLUGIN) \
-+				   -fpie \
- 				   $(call cc-option,-mbranch-protection=none)
- cflags-$(CONFIG_ARM)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
- 				   -fno-builtin -fpic \
-@@ -27,6 +27,8 @@ cflags-$(CONFIG_ARM)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
- cflags-$(CONFIG_RISCV)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
- 				   -fpic
- 
-+cflags-$(CONFIG_GCC_PLUGIN_STACKLEAK) += $(DISABLE_STACKLEAK_PLUGIN)
-+
- cflags-$(CONFIG_EFI_GENERIC_STUB) += -I$(srctree)/scripts/dtc/libfdt
- 
- KBUILD_CFLAGS			:= $(cflags-y) -Os -DDISABLE_BRANCH_PROFILING \
-diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
-index c36e7a3b45e7..9890802a5868 100644
---- a/include/linux/stackleak.h
-+++ b/include/linux/stackleak.h
-@@ -76,8 +76,11 @@ static inline void stackleak_task_init(struct task_struct *t)
- # endif
- }
- 
-+void noinstr stackleak_erase(void);
-+
- #else /* !CONFIG_GCC_PLUGIN_STACKLEAK */
- static inline void stackleak_task_init(struct task_struct *t) { }
-+static inline void stackleak_erase(void) {}
- #endif
- 
- #endif
-diff --git a/kernel/entry/common.c b/kernel/entry/common.c
-index 063068a9ea9b..6acb1d6a1396 100644
---- a/kernel/entry/common.c
-+++ b/kernel/entry/common.c
-@@ -8,6 +8,7 @@
- #include <linux/livepatch.h>
- #include <linux/audit.h>
- #include <linux/tick.h>
-+#include <linux/stackleak.h>
- 
- #include "common.h"
- 
-@@ -194,6 +195,10 @@ static void exit_to_user_mode_prepare(struct pt_regs *regs)
- 
- 	lockdep_assert_irqs_disabled();
- 
-+#ifndef CONFIG_HAVE_ARCH_STACKLEAK
-+	stackleak_erase();
-+#endif
-+
- 	/* Flush pending rcuog wakeup before the last need_resched() check */
- 	tick_nohz_user_enter_prepare();
- 
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index bd2aabb2c60f..3329482beb8d 100644
---- a/security/Kconfig.hardening
-+++ b/security/Kconfig.hardening
-@@ -152,7 +152,7 @@ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
- config GCC_PLUGIN_STACKLEAK
- 	bool "Poison kernel stack before returning from syscalls"
- 	depends on GCC_PLUGINS
--	depends on HAVE_ARCH_STACKLEAK
-+	depends on HAVE_ARCH_STACKLEAK || GENERIC_ENTRY
- 	help
- 	  This option makes the kernel erase the kernel stack before
- 	  returning from system calls. This has the effect of leaving
--- 
-2.36.1
+As far as testing this goes, you can pass invalid parameters to
+ringbuf_reserve_dynptr to have it set to NULL, then make sure your
+helper returns an error at runtime for it.
 
+> Thanks
+>
+> Roberto
+>
