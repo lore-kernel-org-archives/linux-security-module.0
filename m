@@ -2,143 +2,141 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF65ECAAA1
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 01:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334B6C38145
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 01:48:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229490AbiIGBSV (ORCPT
+        id S229485AbiIGBsW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Sep 2022 21:18:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32814 "EHLO
+        Tue, 6 Sep 2022 21:48:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbiIGBSU (ORCPT
+        with ESMTP id S229463AbiIGBsV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Sep 2022 21:18:20 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DBFD86070
-        for <linux-security-module@vger.kernel.org>; Tue,  6 Sep 2022 18:18:17 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id b21so76118plz.7
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Sep 2022 18:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=M21ssd+SCSSsGeh27JWFSofpx9BWcRpnZarG7AT/Oog=;
-        b=KIp7sG710pR+n2lsiIIsKkJbaVjzrITBiMhGQFivaAzcpPBgTP91QkTJBvPLwVVvYK
-         80W5WL97zPXhfm+AVq+PNCg6UvQCpg07CANHcX/eN0Uy5SzJW81AB/RMeq30HnAsQotU
-         GDD/anS4eAQvEBJ+BXMo5D7dv6umuSzac9DNU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=M21ssd+SCSSsGeh27JWFSofpx9BWcRpnZarG7AT/Oog=;
-        b=L13DjYGCsv7RR6EekCyJLbAUrr7sxDkXKr/lpHblZCQM7k/ffDLUD4HfvNjxRv7dms
-         bfrFGcvDFfSJO0x/lfL9Hn1gQuBcREb4G2F+AWC9GCZqsXjkgrTcX0kRX1NpvleDUb0w
-         +Wsk/0gBOo6mLaSZ4Wn7GD4LauhaWB+JQhgGYauqt3biXz1FuyG29Arr1Nqd/PrsAR1s
-         AtTZ8E8am0NpJ5xKJwOKZrWLc1IRcft7y+Xp0jnMGSbYwrd6i6dPcr/Vs2AjDmsKuGj+
-         1M46c0UlxA/VZE+hR3PeWrkULiMbicViG1/Z+2KQ7t00xXlVt1+77+sBVKy2znPHtsal
-         /ONg==
-X-Gm-Message-State: ACgBeo392YsgpxU52T16xOiD95JMpXRZxpt6A2JqlbIilSfwXfAwzIDy
-        xYS10rEIi3xzLqBsvRydvJYkMw==
-X-Google-Smtp-Source: AA6agR67U5AZIaBfuvGuyZMN0SCDmBt4kBb19CNC0XD8eDVqoMBDP73Ihp3hsT/46KNNwQ/a9j6Weg==
-X-Received: by 2002:a17:90b:3e81:b0:1fd:8357:cbc8 with SMTP id rj1-20020a17090b3e8100b001fd8357cbc8mr1327020pjb.48.1662513497037;
-        Tue, 06 Sep 2022 18:18:17 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:acea:5f9a:4de:10c7])
-        by smtp.gmail.com with UTF8SMTPSA id d13-20020a170902654d00b0017689960d10sm8321906pln.156.2022.09.06.18.18.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Sep 2022 18:18:16 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        Sarthak Kukreti <sarthakkukreti@chromium.org>,
+        Tue, 6 Sep 2022 21:48:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921D0832E3;
+        Tue,  6 Sep 2022 18:48:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 27B52616EB;
+        Wed,  7 Sep 2022 01:48:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8543C433D6;
+        Wed,  7 Sep 2022 01:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662515299;
+        bh=t0Bxth8FdzneHjCPM3qPz7rrGj6ZZLOPNu/D055k2Rk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dkqwzy2EekUlmtvtOnaFGKlnP2G8hjNUGqKmPiR9Tb7NOu1cFbmZiq9olQIcpd35V
+         1CqL8B5Hf7u3LGeQvRtb9ducJkSz2MZeZYQ6snuLRcpiFCwrdTXBW69rWXuJrqBK98
+         McJ+1pJSQS2iVsMTtXubIxBsG0xIEIfquBbV+6EeK4wj4+36zq5r0U2zA0AwB21Dco
+         mqHKC5QisDCEI9RLc4VWRrlwBmbh8CyZIOwu4a4q7ARNwqSgvQwd/3SAguIUHKD2xI
+         nTSNlYOkCvznpWefQgKFhzTTUGiJt/Sdx6BsKvWlxN7GYKWU8LJrDdjfoEcH0aQMqx
+         M3QxFrjQceFpg==
+From:   guoren@kernel.org
+To:     tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
+        Conor.Dooley@microchip.com, xianting.tian@linux.alibaba.com,
+        daolu@rivosinc.com, arnd@arndb.de
+Cc:     linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH] LoadPin: Require file with verity root digests to have a header
-Date:   Tue,  6 Sep 2022 18:18:12 -0700
-Message-Id: <20220906181725.1.I3f51d1bb0014e5a5951be4ad3c5ad7c7ca1dfc32@changeid>
-X-Mailer: git-send-email 2.37.2.789.g6183377224-goog
+        Guo Ren <guoren@linux.alibaba.com>, Guo Ren <guoren@kernel.org>
+Subject: [RFC PATCH] generic_entry: Add stackleak support
+Date:   Tue,  6 Sep 2022 21:48:09 -0400
+Message-Id: <20220907014809.919979-1-guoren@kernel.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-LoadPin expects the file with trusted verity root digests to be
-an ASCII file with one digest (hex value) per line. A pinned
-root could contain files that meet these format requirements,
-even though the hex values don't represent trusted root
-digests.
+From: Guo Ren <guoren@linux.alibaba.com>
 
-Add a new requirement to the file format which consists in
-the first line containing a fixed string. This prevents
-attackers from feeding files with an otherwise valid format
-to LoadPin.
+Make generic_entry supports basic STACKLEAK, and no arch custom
+code is needed.
 
-Suggested-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+Signed-off-by: Guo Ren <guoren@kernel.org>
 ---
-It could be argued that this change breaks existing users
-of the LoadPin verity feature. The risk of this actually
-happening seems very low given that the feature only
-landed in v6.0, which hasn't been released yet.
+ drivers/firmware/efi/libstub/Makefile | 4 +++-
+ include/linux/stackleak.h             | 3 +++
+ kernel/entry/common.c                 | 5 +++++
+ security/Kconfig.hardening            | 2 +-
+ 4 files changed, 12 insertions(+), 2 deletions(-)
 
- security/loadpin/Kconfig   |  7 ++++++-
- security/loadpin/loadpin.c | 16 +++++++++++++++-
- 2 files changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
-index 994c1d9376e6..6724eaba3d36 100644
---- a/security/loadpin/Kconfig
-+++ b/security/loadpin/Kconfig
-@@ -33,4 +33,9 @@ config SECURITY_LOADPIN_VERITY
- 	  on the LoadPin securityfs entry 'dm-verity'. The ioctl
- 	  expects a file descriptor of a file with verity digests as
- 	  parameter. The file must be located on the pinned root and
--	  contain one digest per line.
-+	  start with the line:
-+
-+	  # LOADPIN_TRUSTED_VERITY_ROOT_DIGESTS
-+
-+	  This is followed by the verity digests, with one digest per
-+	  line.
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index 44521582dcba..de41621f4998 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -21,6 +21,8 @@
- #include <linux/dm-verity-loadpin.h>
- #include <uapi/linux/loadpin.h>
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index d0537573501e..bb6ad37a9690 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -19,7 +19,7 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ \
+ # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+ # disable the stackleak plugin
+ cflags-$(CONFIG_ARM64)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+-				   -fpie $(DISABLE_STACKLEAK_PLUGIN) \
++				   -fpie \
+ 				   $(call cc-option,-mbranch-protection=none)
+ cflags-$(CONFIG_ARM)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+ 				   -fno-builtin -fpic \
+@@ -27,6 +27,8 @@ cflags-$(CONFIG_ARM)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+ cflags-$(CONFIG_RISCV)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+ 				   -fpic
  
-+#define VERITY_DIGEST_FILE_HEADER "# LOADPIN_TRUSTED_VERITY_ROOT_DIGESTS"
++cflags-$(CONFIG_GCC_PLUGIN_STACKLEAK) += $(DISABLE_STACKLEAK_PLUGIN)
 +
- static void report_load(const char *origin, struct file *file, char *operation)
- {
- 	char *cmdline, *pathname;
-@@ -292,9 +294,21 @@ static int read_trusted_verity_root_digests(unsigned int fd)
+ cflags-$(CONFIG_EFI_GENERIC_STUB) += -I$(srctree)/scripts/dtc/libfdt
  
- 	p = strim(data);
- 	while ((d = strsep(&p, "\n")) != NULL) {
--		int len = strlen(d);
-+		int len;
- 		struct dm_verity_loadpin_trusted_root_digest *trd;
+ KBUILD_CFLAGS			:= $(cflags-y) -Os -DDISABLE_BRANCH_PROFILING \
+diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
+index c36e7a3b45e7..9890802a5868 100644
+--- a/include/linux/stackleak.h
++++ b/include/linux/stackleak.h
+@@ -76,8 +76,11 @@ static inline void stackleak_task_init(struct task_struct *t)
+ # endif
+ }
  
-+		if (d == data) {
-+			/* first line, validate header */
-+			if (strcmp(d, VERITY_DIGEST_FILE_HEADER)) {
-+				rc = -EPROTO;
-+				goto err;
-+			}
++void noinstr stackleak_erase(void);
 +
-+			continue;
-+		}
+ #else /* !CONFIG_GCC_PLUGIN_STACKLEAK */
+ static inline void stackleak_task_init(struct task_struct *t) { }
++static inline void stackleak_erase(void) {}
+ #endif
+ 
+ #endif
+diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+index 063068a9ea9b..6acb1d6a1396 100644
+--- a/kernel/entry/common.c
++++ b/kernel/entry/common.c
+@@ -8,6 +8,7 @@
+ #include <linux/livepatch.h>
+ #include <linux/audit.h>
+ #include <linux/tick.h>
++#include <linux/stackleak.h>
+ 
+ #include "common.h"
+ 
+@@ -194,6 +195,10 @@ static void exit_to_user_mode_prepare(struct pt_regs *regs)
+ 
+ 	lockdep_assert_irqs_disabled();
+ 
++#ifndef CONFIG_HAVE_ARCH_STACKLEAK
++	stackleak_erase();
++#endif
 +
-+		len = strlen(d);
-+
- 		if (len % 2) {
- 			rc = -EPROTO;
- 			goto err;
+ 	/* Flush pending rcuog wakeup before the last need_resched() check */
+ 	tick_nohz_user_enter_prepare();
+ 
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index bd2aabb2c60f..3329482beb8d 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -152,7 +152,7 @@ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+ config GCC_PLUGIN_STACKLEAK
+ 	bool "Poison kernel stack before returning from syscalls"
+ 	depends on GCC_PLUGINS
+-	depends on HAVE_ARCH_STACKLEAK
++	depends on HAVE_ARCH_STACKLEAK || GENERIC_ENTRY
+ 	help
+ 	  This option makes the kernel erase the kernel stack before
+ 	  returning from system calls. This has the effect of leaving
 -- 
-2.37.2.789.g6183377224-goog
+2.36.1
 
