@@ -2,199 +2,113 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B4DC6FA89
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 08:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C5FECAAD3
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 08:11:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbiIGIDs (ORCPT
+        id S230126AbiIGILW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Sep 2022 04:03:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49092 "EHLO
+        Wed, 7 Sep 2022 04:11:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230311AbiIGIDV (ORCPT
+        with ESMTP id S229658AbiIGILO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Sep 2022 04:03:21 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76802AA35F;
-        Wed,  7 Sep 2022 01:03:12 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4MMvk82kTkz9xHvd;
-        Wed,  7 Sep 2022 15:57:36 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwBnEJQZUBhjW0srAA--.12213S2;
-        Wed, 07 Sep 2022 09:02:48 +0100 (CET)
-Message-ID: <02309cfbc1ce47f7de6be8addc2caa315b1fee1b.camel@huaweicloud.com>
-Subject: Re: [PATCH 1/7] bpf: Add missing fd modes check for map iterators
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hou Tao <houtao1@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable <stable@vger.kernel.org>, fengc@google.com,
-        linux-security-module@vger.kernel.org
-Date:   Wed, 07 Sep 2022 10:02:30 +0200
-In-Reply-To: <CAADnVQ+o8zyi_Z+XqCQynmvj04AtEtF9AoOTSeyUx9dvKTXOqg@mail.gmail.com>
-References: <20220906170301.256206-1-roberto.sassu@huaweicloud.com>
-         <20220906170301.256206-2-roberto.sassu@huaweicloud.com>
-         <CAADnVQ+o8zyi_Z+XqCQynmvj04AtEtF9AoOTSeyUx9dvKTXOqg@mail.gmail.com>
+        Wed, 7 Sep 2022 04:11:14 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648B082757
+        for <linux-security-module@vger.kernel.org>; Wed,  7 Sep 2022 01:11:12 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1oVq8u-0003JH-A5; Wed, 07 Sep 2022 10:10:40 +0200
+Received: from localhost ([127.0.0.1])
+        by ptx.hi.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1oVq8p-0008M0-VS; Wed, 07 Sep 2022 10:10:36 +0200
+Message-ID: <843e1f1cbed67ce558e20d1e56a82dfe27732028.camel@pengutronix.de>
+Subject: Re: [EXT] Re: [RFC PATCH HBK: 0/8] HW BOUND KEY as TRUSTED KEY
+From:   Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>
+Reply-To: jlu@pengutronix.de
+To:     Pankaj Gupta <pankaj.gupta@nxp.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     "a.fatoum@pengutronix.de" <a.fatoum@pengutronix.de>,
+        "Jason@zx2c4.com" <Jason@zx2c4.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
+        "david@sigma-star.at" <david@sigma-star.at>,
+        "michael@walle.cc" <michael@walle.cc>,
+        "john.ernberg@actia.se" <john.ernberg@actia.se>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "j.luebbe@pengutronix.de" <j.luebbe@pengutronix.de>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Sahil Malhotra <sahil.malhotra@nxp.com>,
+        Kshitiz Varshney <kshitiz.varshney@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Varun Sethi <V.Sethi@nxp.com>
+Date:   Wed, 07 Sep 2022 10:10:34 +0200
+In-Reply-To: <DU2PR04MB86303DE3507B6FF37BD5B6A595419@DU2PR04MB8630.eurprd04.prod.outlook.com>
+References: <20220906065157.10662-1-pankaj.gupta@nxp.com>
+         <YxcLqepquOuOOjvq@kernel.org>
+         <DU2PR04MB86303DE3507B6FF37BD5B6A595419@DU2PR04MB8630.eurprd04.prod.outlook.com>
+Organization: Pengutronix
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwBnEJQZUBhjW0srAA--.12213S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF1rCrW8ZF45GF4xKry8Krg_yoWrCFyDpr
-        W3t3W2k3Z2yF1xCrn2qan7WFyfAFW3Kw47Xrn8JryxC3s8Wrn2kr4Y93W3uF9ruF17tr1a
-        qr4qv3s3A3WDAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj4KycgACs8
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: jlu@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2022-09-06 at 11:21 -0700, Alexei Starovoitov wrote:
-> On Tue, Sep 6, 2022 at 10:04 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Commit 6e71b04a82248 ("bpf: Add file mode configuration into bpf
-> > maps")
-> > added the BPF_F_RDONLY and BPF_F_WRONLY flags, to let user space
-> > specify
-> > whether it will just read or modify a map.
-> > 
-> > Map access control is done in two steps. First, when user space
-> > wants to
-> > obtain a map fd, it provides to the kernel the eBPF-defined flags,
-> > which
-> > are converted into open flags and passed to the security_bpf_map()
-> > security
-> > hook for evaluation by LSMs.
-> > 
-> > Second, if user space successfully obtained an fd, it passes that
-> > fd to the
-> > kernel when it requests a map operation (e.g. lookup or update).
-> > The kernel
-> > first checks if the fd has the modes required to perform the
-> > requested
-> > operation and, if yes, continues the execution and returns the
-> > result to
-> > user space.
-> > 
-> > While the fd modes check was added for map_*_elem() functions, it
-> > is
-> > currently missing for map iterators, added more recently with
-> > commit
-> > a5cbe05a6673 ("bpf: Implement bpf iterator for map elements"). A
-> > map
-> > iterator executes a chosen eBPF program for each key/value pair of
-> > a map
-> > and allows that program to read and/or modify them.
-> > 
-> > Whether a map iterator allows only read or also write depends on
-> > whether
-> > the MEM_RDONLY flag in the ctx_arg_info member of the bpf_iter_reg
-> > structure is set. Also, write needs to be supported at verifier
-> > level (for
-> > example, it is currently not supported for sock maps).
-> > 
-> > Since map iterators obtain a map from a user space fd with
-> > bpf_map_get_with_uref(), add the new req_modes parameter to that
-> > function,
-> > so that map iterators can provide the required fd modes to access a
-> > map. If
-> > the user space fd doesn't include the required modes,
-> > bpf_map_get_with_uref() returns with an error, and the map iterator
-> > will
-> > not be created.
-> > 
-> > If a map iterator marks both the key and value as read-only, it
-> > calls
-> > bpf_map_get_with_uref() with FMODE_CAN_READ as value for req_modes.
-> > If it
-> > also allows write access to either the key or the value, it calls
-> > that
-> > function with FMODE_CAN_READ | FMODE_CAN_WRITE as value for
-> > req_modes,
-> > regardless of whether or not the write is supported by the verifier
-> > (the
-> > write is intentionally allowed).
-> > 
-> > bpf_fd_probe_obj() does not require any fd mode, as the fd is only
-> > used for
-> > the purpose of finding the eBPF object type, for pinning the object
-> > to the
-> > bpffs filesystem.
-> > 
-> > Finally, it is worth to mention that the fd modes check was not
-> > added for
-> > the cgroup iterator, although it registers an attach_target method
-> > like the
-> > other iterators. The reason is that the fd is not the only way for
-> > user
-> > space to reference a cgroup object (also by ID and by path). For
-> > the
-> > protection to be effective, all reference methods need to be
-> > evaluated
-> > consistently. This work is deferred to a separate patch.
+On Wed, 2022-09-07 at 07:22 +0000, Pankaj Gupta wrote:
+> Even if somehow the key is retrieved from the keyring, the retrieved key 
+> would be an encrypted key.
+> This encrypted key can only be decrypted by Hardware, which generated it.
 > 
-> I think the current behavior is fine.
-> File permissions don't apply at iterator level or prog level.
+> Hence, the retrieved key is unusable outside of the hardware.
 
-+ Chenbo, linux-security-module
+NXP's CAAM unit (i.e. on i.MX6) supports several modes of sealed/encrypted keys.
+The (un)sealing process uses a key that is normally derived from a per-device
+key in eFUSES. One aspect of these modes is whether the plaintext key material
+is accessible to the kernel or not.
 
-Well, if you write a security module to prevent writes on a map, and
-user space is able to do it anyway with an iterator, what is the
-purpose of the security module then?
+Ahmad's patch set added support for a mode where the CAAM is used to seal
+plaintext known to the kernel to a "blob" (in CAAM terminology) on export to
+userspace and the reverse on import. This mode allows the kernel to use the
+plaintext for dm-crypt, to encrypt other keyrings and similar.
 
-> fmode_can_read/write are for syscall commands only.
-> To be fair we've added them to lookup/delete commands
-> and it was more of a pain to maintain and no confirmed good use.
+The CAAM has another sealing mode, where it will not allow writing of the
+plaintext key to memory. Instead, it is kept in one of the CAAM-internal key
+registers. There, it can be used for cryptographic operations (i.e. AES). This
+way, the plaintext key is protected even from the kernel. The kernel could keep
+a copy of in sealed form, so it can reload the CAAM's key register when needed.
 
-I think a good use would be requesting the right permission for the
-type of operation that needs to be performed, e.g. read-only permission
-when you have a read-like operation like a lookup or dump.
 
-By always requesting read-write permission, for all operations,
-security modules won't be able to distinguish which operation has to be
-denied to satisfy the policy.
+Pankaj, is that the mode you intend to support with this series?
 
-One example of that is that, when there is a security module preventing
-writes on maps (will be that uncommon?), bpftool is not able to show
-the full list of maps because it asks for read-write permission for
-getting the map info.
+Could you describe the high-level use-cases this would be need for, compared to
+the existing mode where plaintext keys are accessible to the kernel? In which
+cases would you use each mode?
 
-Freezing the map is not a solution, if you want to allow certain
-subjects to continuously update the protected map at run-time.
-
-Roberto
+Regards,
+Jan
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
