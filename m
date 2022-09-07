@@ -2,102 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A5EC38145
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 00:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF65ECAAA1
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 01:18:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229491AbiIGAuu (ORCPT
+        id S229490AbiIGBSV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Sep 2022 20:50:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53408 "EHLO
+        Tue, 6 Sep 2022 21:18:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229620AbiIGAul (ORCPT
+        with ESMTP id S229463AbiIGBSU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Sep 2022 20:50:41 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A34779A78;
-        Tue,  6 Sep 2022 17:50:39 -0700 (PDT)
-Received: from [192.168.192.83] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 1D6A640977;
-        Wed,  7 Sep 2022 00:50:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1662511837;
-        bh=wDg5eQyO0EVJiuTOe+8WDODJWHFdNWnd7uyyWVes5o0=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=pjrtdwN3YEFvSojW5JT7uDmtONmUJRsWTlSsi+MzLCObRe/9OwSI70NMNepE1wEfo
-         KDqxreOzvmY6IV9dE27SDfGxdlugBQ5azwQg13BFuEJSDCXe8v5aVzkH5NUBUKisEL
-         /a7hRtPlirXhHl/PFBjMz7RQyFzm1h0ms/TrwojoF2KPeXe25MMQjbiTXe27V0TmKo
-         BHJJCHYpAF2Nm6YnetFIuFLy/1+x7IPKZR7tDV771UwTVPOpqec9HuTXwXaJtT5Jsu
-         yV2SuEsVvAE7EmfXcqZM4UhdYKEpm/n9P9RAkOWBlcWFIIQpXTeBjt+72QWmqqC6os
-         IUugTa/G31LEA==
-Message-ID: <a1ad1791-2f1a-a005-b1d0-5f807c8fa727@canonical.com>
-Date:   Tue, 6 Sep 2022 17:50:33 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: LSM stacking in next for 6.1?
-Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Tue, 6 Sep 2022 21:18:20 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DBFD86070
+        for <linux-security-module@vger.kernel.org>; Tue,  6 Sep 2022 18:18:17 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id b21so76118plz.7
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Sep 2022 18:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=M21ssd+SCSSsGeh27JWFSofpx9BWcRpnZarG7AT/Oog=;
+        b=KIp7sG710pR+n2lsiIIsKkJbaVjzrITBiMhGQFivaAzcpPBgTP91QkTJBvPLwVVvYK
+         80W5WL97zPXhfm+AVq+PNCg6UvQCpg07CANHcX/eN0Uy5SzJW81AB/RMeq30HnAsQotU
+         GDD/anS4eAQvEBJ+BXMo5D7dv6umuSzac9DNU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=M21ssd+SCSSsGeh27JWFSofpx9BWcRpnZarG7AT/Oog=;
+        b=L13DjYGCsv7RR6EekCyJLbAUrr7sxDkXKr/lpHblZCQM7k/ffDLUD4HfvNjxRv7dms
+         bfrFGcvDFfSJO0x/lfL9Hn1gQuBcREb4G2F+AWC9GCZqsXjkgrTcX0kRX1NpvleDUb0w
+         +Wsk/0gBOo6mLaSZ4Wn7GD4LauhaWB+JQhgGYauqt3biXz1FuyG29Arr1Nqd/PrsAR1s
+         AtTZ8E8am0NpJ5xKJwOKZrWLc1IRcft7y+Xp0jnMGSbYwrd6i6dPcr/Vs2AjDmsKuGj+
+         1M46c0UlxA/VZE+hR3PeWrkULiMbicViG1/Z+2KQ7t00xXlVt1+77+sBVKy2znPHtsal
+         /ONg==
+X-Gm-Message-State: ACgBeo392YsgpxU52T16xOiD95JMpXRZxpt6A2JqlbIilSfwXfAwzIDy
+        xYS10rEIi3xzLqBsvRydvJYkMw==
+X-Google-Smtp-Source: AA6agR67U5AZIaBfuvGuyZMN0SCDmBt4kBb19CNC0XD8eDVqoMBDP73Ihp3hsT/46KNNwQ/a9j6Weg==
+X-Received: by 2002:a17:90b:3e81:b0:1fd:8357:cbc8 with SMTP id rj1-20020a17090b3e8100b001fd8357cbc8mr1327020pjb.48.1662513497037;
+        Tue, 06 Sep 2022 18:18:17 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:acea:5f9a:4de:10c7])
+        by smtp.gmail.com with UTF8SMTPSA id d13-20020a170902654d00b0017689960d10sm8321906pln.156.2022.09.06.18.18.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Sep 2022 18:18:16 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org,
+        Sarthak Kukreti <sarthakkukreti@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        Matthias Kaehlcke <mka@chromium.org>,
         Paul Moore <paul@paul-moore.com>
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
-        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
-        SElinux list <selinux@vger.kernel.org>
-References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
- <791e13b5-bebd-12fc-53de-e9a86df23836@schaufler-ca.com>
- <CAHC9VhSF8hWg=7tbFiCrizNF61vpwJcU3793LcStiu-anW4i1g@mail.gmail.com>
- <CAHC9VhTDGwO789t59EyOV0SwnwGrdyBhRiuJpoY7cB4MSe02BQ@mail.gmail.com>
- <e2b6ae44-1037-666f-5012-6abd4d46c0b7@schaufler-ca.com>
- <CAHC9VhQ+UcJw4G=VHNE8wMa+EBG-UcoZ7ox0vNqLHoSKAd9XZQ@mail.gmail.com>
- <269014c6-5ce6-3322-5208-004cb1b40792@canonical.com>
- <282b66ae-ac7c-533d-75dc-4973fe440fea@schaufler-ca.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <282b66ae-ac7c-533d-75dc-4973fe440fea@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] LoadPin: Require file with verity root digests to have a header
+Date:   Tue,  6 Sep 2022 18:18:12 -0700
+Message-Id: <20220906181725.1.I3f51d1bb0014e5a5951be4ad3c5ad7c7ca1dfc32@changeid>
+X-Mailer: git-send-email 2.37.2.789.g6183377224-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/6/22 17:39, Casey Schaufler wrote:
-> On 9/6/2022 5:10 PM, John Johansen wrote:
->> sorry I am wayyyy behind on this, so starting from here
->>
->> On 9/6/22 16:24, Paul Moore wrote:
->>> I can't currently in good conscience defend the kernel/userspace
->>> combined label interfaces as "good", especially when we have a very
->>> rare opportunity to do better.
->>>
->>
->> so I am going to grab and hold onto
->>>>> Further, I think we can add the new syscall API separately from the
->>>>> LSM stacking changes as they do have standalone value.
->>>>
->>
->> what I think Paul is saying is we can move the LSM stacking patches
->> forward by removing the combined label interface.
-> 
-> Do you mean /proc/self/attr/interface_lsm? /proc/.../attr/context?
+LoadPin expects the file with trusted verity root digests to be
+an ASCII file with one digest (hex value) per line. A pinned
+root could contain files that meet these format requirements,
+even though the hex values don't represent trusted root
+digests.
 
-/proc/.../attr/context is the combined label interface.
+Add a new requirement to the file format which consists in
+the first line containing a fixed string. This prevents
+attackers from feeding files with an otherwise valid format
+to LoadPin.
 
-/proc/self/attr/interface_lsm is an interesting question. Its not
-a combined label interface, instead it is a new interface that allows
-controlling of which LSM the task get to see on the old
-/proc/.../attr/* interface.
+Suggested-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+It could be argued that this change breaks existing users
+of the LoadPin verity feature. The risk of this actually
+happening seems very low given that the feature only
+landed in v6.0, which hasn't been released yet.
 
-Loosing it would hurt (its a useful tool and is currently necessary
-for the SElinux host + AppArmor in container use case) but I think
-if that is cost to move forward dropping it at least for now would
-be worth it.
+ security/loadpin/Kconfig   |  7 ++++++-
+ security/loadpin/loadpin.c | 16 +++++++++++++++-
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
-
-
->> They won't be as
->> useful but it would be a huge step forward, and the next step could
->> be the syscall API.
-> 
+diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
+index 994c1d9376e6..6724eaba3d36 100644
+--- a/security/loadpin/Kconfig
++++ b/security/loadpin/Kconfig
+@@ -33,4 +33,9 @@ config SECURITY_LOADPIN_VERITY
+ 	  on the LoadPin securityfs entry 'dm-verity'. The ioctl
+ 	  expects a file descriptor of a file with verity digests as
+ 	  parameter. The file must be located on the pinned root and
+-	  contain one digest per line.
++	  start with the line:
++
++	  # LOADPIN_TRUSTED_VERITY_ROOT_DIGESTS
++
++	  This is followed by the verity digests, with one digest per
++	  line.
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index 44521582dcba..de41621f4998 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -21,6 +21,8 @@
+ #include <linux/dm-verity-loadpin.h>
+ #include <uapi/linux/loadpin.h>
+ 
++#define VERITY_DIGEST_FILE_HEADER "# LOADPIN_TRUSTED_VERITY_ROOT_DIGESTS"
++
+ static void report_load(const char *origin, struct file *file, char *operation)
+ {
+ 	char *cmdline, *pathname;
+@@ -292,9 +294,21 @@ static int read_trusted_verity_root_digests(unsigned int fd)
+ 
+ 	p = strim(data);
+ 	while ((d = strsep(&p, "\n")) != NULL) {
+-		int len = strlen(d);
++		int len;
+ 		struct dm_verity_loadpin_trusted_root_digest *trd;
+ 
++		if (d == data) {
++			/* first line, validate header */
++			if (strcmp(d, VERITY_DIGEST_FILE_HEADER)) {
++				rc = -EPROTO;
++				goto err;
++			}
++
++			continue;
++		}
++
++		len = strlen(d);
++
+ 		if (len % 2) {
+ 			rc = -EPROTO;
+ 			goto err;
+-- 
+2.37.2.789.g6183377224-goog
 
