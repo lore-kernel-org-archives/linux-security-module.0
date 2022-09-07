@@ -2,215 +2,220 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 729EDC6FA8B
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 16:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA2FC6FA8A
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Sep 2022 16:42:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbiIGQFh (ORCPT
+        id S230411AbiIGQmV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Sep 2022 12:05:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51998 "EHLO
+        Wed, 7 Sep 2022 12:42:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230153AbiIGQEZ (ORCPT
+        with ESMTP id S230385AbiIGQmP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Sep 2022 12:04:25 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD349BC82C;
-        Wed,  7 Sep 2022 09:02:46 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id e18so20421821edj.3;
-        Wed, 07 Sep 2022 09:02:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=W50vIl8H8okzCAHaiXlJ50UVDkF7Y2icaSoN501LXVk=;
-        b=cSXmBeIU8YEd8KpkA8OIVFcCNyIWOpvxJZ3Z76jqeM1Nfr4CcOUHyr8tnCbWvR/Dd3
-         a+xIS7mQheRBmXzC3OdoGzFj55wYZgGBbG2U68jKwSZMMHE2S3ucY6qgN9hIVp9V3FXA
-         +LjPEjt3YYVTeX7BBNsiwSK2MVLv8QPtTad7Vmwb8R5pwGTDGhzzeWMZFZz76uXc516m
-         My1hyOyYiocDp1zCbWRWNhuqssIcspna7958G/dDtEbmGMHOZOleNsGnpq73KIblz4jP
-         jcsv52FTlrUZ+Kby6kQkkl7xZ0nqxFZs6XI0Mp20FDB37grdSGlo/nJFAMTSzjlf8LuF
-         Zxgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=W50vIl8H8okzCAHaiXlJ50UVDkF7Y2icaSoN501LXVk=;
-        b=6hYd0tKmEwqNAKHwIbYLX7oYD/cyDkii4ihDWduNCbRibpHTiEJYGwWZwTGz6CcrUK
-         0/bL0nheOb8jd226ZNneFs16KiYuhRiayBEBEaqgx2bf60fhqDWWe3FByAFiGtJia+0E
-         fk8mS1tbSd2FcmN/ZXdwDRJvCut5VppPjw9bFUIKqnG93ignRDA+dIB2Wur9ONdtszXr
-         nXZO/fddyBXbVt0Oe3t6IrmI41tJT/KFWBljMB44pyDRC080hyHfgBEPddR71MM0gHax
-         8AMWt5qtADxmEYU7+uaSk9IMzYC/uPZXHLOsPif8HJu+5Cli4lytr4KZ+vl58jdvg63R
-         aKjg==
-X-Gm-Message-State: ACgBeo1tcMckz4d/UDLD9DuxSX7iS1tyRDDiBo1i920tSM4UlZ2K1nb1
-        zZ3JuT79hiE2Zm+n2a8wDnBU2RMvMgmnriw6efY=
-X-Google-Smtp-Source: AA6agR627hvEYVrK8cONsjNB6SibCo3kdbrD3+RR1gZlPRM5T5pob6+UKUFsFL+3lVkDMtaz8cWkWFUer8OM7q5tXH4=
-X-Received: by 2002:a05:6402:28cb:b0:43b:c6d7:ef92 with SMTP id
- ef11-20020a05640228cb00b0043bc6d7ef92mr3720169edb.333.1662566558177; Wed, 07
- Sep 2022 09:02:38 -0700 (PDT)
+        Wed, 7 Sep 2022 12:42:15 -0400
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E179286705
+        for <linux-security-module@vger.kernel.org>; Wed,  7 Sep 2022 09:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662568924; bh=9dnxKbxzS08mlPE2816z4GziaI1cowYJON3zywBCxWA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ISQiQNoB4OtnIcOpHqJMDwcPB+7vmqsiEuYu59db2tSUH3guO8Q5T+mI0yoTeKT7qd6F9j+qMhlLV6lbiKDFEcARA8bafrR0j3KwvEtnMeZ2JtHKiT4cJd117xCo9ywdV1gfgqBHaSLaXdZTRF9tLn0a4wlSNAlPCvRlGyq69MCyxePV7MF/vVSQ2S11t4iaHYmdeRT+eEw6YXqrE+nJIIOlNxhMrlbIh6eoj6bIhBcu/wuAcJYUnRSjIzZ43K6kV1SbTzeLRKkIYxzyHybrg98+tOt34uKRRUE7/guQeFOmMHGCAGDHnxjqhkN/tBWxs0bXvmu7amwc95fXbx4oEQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662568924; bh=mzkqDfVU294SuDn9y0ZpCDhDzYricprzJ5ALZobgACG=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=L/rGk6YPPrXH2YEcTZZ0otBwXALuCCD8lwoaGcdyeWCPB5vFDEjTC6KSqhoGbvILlD+ubryGqrKAog9KmIYmWm4pPB9meMXnM/Frio8/fdjKzMrsR1qzjbz4a6W7Wi9V4SG3mIGHlGBxwKLN6VJDn8i3qwEqOGFHaOEwdYlDa4fwjmsFOVhdq8Das218VUZE+gzl7gV/j5jMcqNdBJCXLgIrfN1kF385ZThk3uG6pUG6HmeZ090FrMi/ipRJPViC0k9zgvhsSWUuFhJRSAbAd726kkVs3rJdMB3V18JNOCAw9Sa5ZiQUEFdzhqX4j1pV0yDPU5cKUeKQ/VoaGda1vw==
+X-YMail-OSG: Htj_gYsVM1kkaoDyjL_Yo4Wd9tOT5GMZf0Zx7rfJ5GcimR_jHe0XHplowYga46z
+ FU52cMLNCiEyvX5dDA47JmmQGSECmKJf_Z66x15e7gxxTIzICXBkxAeMZmWfDPGzhpyLYQ3wa981
+ ULf2bcySUK6WMcOAmQqsU9EhBoEFeITDsY1.sCMMCZjlyxTsgdkIBbKIYq74JYbrKsrrJPwkQ55x
+ 974X6XK1du1KfmgaUHJXSfC7dj.jg_iiKZyjrgfCb1WFJXAX.QpvBOLeBg9qmeAxKPi_tjKaQoz6
+ xe0jLNZFfw1PAhq3ORFU9FPNlRiDy0YKLCDSLLCEUrc1zbKYmH44aveHCkZahdaiwa1fuZ79Juu3
+ PCXNKud0v7WTeR4hW5W2QL95DCI2cYm2H9N0EzLoz.pou5_CCkGko38Kw.MuphXZG9iGUt9BJnpa
+ HIa2eauIH7_ebJPCM3ThCShysNMpBjx1zHL5L9YtZEFss3usyQfZFz8jlCzw7F5tNOe5cyiUlCq0
+ dZk_X8fy.vIuWmZUBb261NUkvHqaPSq94l3DsKKf2Obe06PAW1u3YgvK7fD9OSs7U8IqlHX8WiQF
+ 0GzVsECA3.e4chzsK8AwyRZb58FMeTmCQnnkhmP5JKh9xb1VAKa9OVCfpznV4qiTpql_zUienjj1
+ tgmI9nGt8S8zz.qdIzDJzKpQfAm86apuNr0lz6SVs3UqUj_fVtLBlxVDFTAPpO9ANSGR8kMtTAAo
+ RVnWD7jRFyD4W2LBX1nj0yUOUDks8nA1K.XXEelZiNdR3Y6WtObkA_Pc7VLuAjN6mxDTArcPMAns
+ W21z4gxvtuMvOfzKL7Wz.QkBeyJRHu6qcGgEh2BdgT2tGvoZhyc.taKCdcdoz1J4mdBAMWcncaDE
+ sVPhm8V5DWXzosjGC4h4zeagg2CNOx3jQZgjeyDD9uvHpI9hmgdr2DopVCiXQsSktZI1sLkX9SBA
+ _2PXneK_9B49W.uCqlb4n19AXwrD9Mm6pOMnJLD2pAdbXW6qBAXkXftyA..XeI.ynjLI4oZEt9CK
+ 0TWFwByefe7iBpHrTkjdJikdFxR9gcwdLifP.q35yc7gOa8RvXL_YRyWwH2ELdTd__z2QjnMBxB5
+ M.FAGs6jMdYUeU0uKTv22F6P7EWrgl2u_0t_Vd1QLbOz1X6osnudT9nNkL9UqaPTrGouLfOJ7J05
+ ykFW8O1cFYpKcWvZC_upD55.Fw4_xiyvvoF1Gpr8LP.aHI3opIdFnI2VHTQ1HbHxQbS5i1Xu.DcL
+ 0PvgZM0374Cwx_wVBnz0VxAOhk0PHCbKVVrN_CoOCfZYG2HSlrKGFdmu_3gQsdYJByWvMh2O9Uo0
+ tY8CMI57MysOP9gh7JMhL32HLf0JagOeLYkHbO5dhtr163Jg1mdBfN1EX4DwF7K8QtyMl4WkjFwQ
+ LkA6qaXJQ68ClWZvIny8xoUJyksOE4imdUsNttSUfcCf996JrGd6w.LKa1FkML9yFPnaNl.nxUGw
+ mliEckTMV_5nMsomKrTd3gOtYBmnadcs3DqpzxqglWL15w3r8trqfs8lgMt42X92_gQW9Oby2zYi
+ nia3B2u9BRwEdLmoGrcEtJq4KCRBKmyk0VVfKAteSB2D0bJ4jw0ffcPvrgdmWWn2q31qWlWfmGnl
+ ZqNHNNEiJiOwAVJb7bpMomGaZ0bAaIOjVcUKb2zETXHpPiX7SQUU8pvjAHUpsNoTRCaajcO3QEi.
+ VniKWH_hKSXNpnTc8gQxyaiGSNWckwC0vCG9rbsrP6Mo8nCNJHEsqwNtE.4wwjYTHpqQo41Ch7XA
+ eStm4JKLzHWCx.p.MDfgrBOL34NNK8TOwy3q1nSRkoFkTwf0TC0VZ4WU7LT24O3iFnt9ZK.r.uwD
+ r8LYzRvA4OSqP0eO2Bpz0Mb3Ou0mrqkO2f3Bg3jV4Ha5JUIcr7q4m_OYgxXSd5yxBREHm8ML6xj8
+ N457pl7LizkQ_E9KlIoBcRLbEzd8YUHtdwOfJLUhqvlyqQD9Dbq.R64CuleqtWlc51wiSf1HCUbY
+ ydOANod0GUmIRQWPxGj6mH6efAYhoRddkyh_2thyLFljf7_OZJ0iSe86d0Z8P1wXgaPeWE4EpP0j
+ BhgwJ1EUv1HI8PwhIr_mmXy2adHMqixj2Du66Mf.xMYoyh210qOQLxZ.zH9o_eeMBVd6pEVte9_v
+ X2XJnuBC0.jQNZEgcV2VeO_S0MtbMSwg03.RYc65NLxdi.DcGGfNYYNVN87wm5WVzb5y8jboLdvS
+ NP2EkdHA2UDX6u8vVgL2cMdSI_uXEA5G1vdpTfuI-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 7 Sep 2022 16:42:04 +0000
+Received: by hermes--production-ne1-544744cc75-w2cfm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f816f2cd4eac9e781c0624ddecbf8e5b;
+          Wed, 07 Sep 2022 16:41:59 +0000 (UTC)
+Message-ID: <1958a0d3-c4fb-0661-b516-93f8955cdb95@schaufler-ca.com>
+Date:   Wed, 7 Sep 2022 09:41:58 -0700
 MIME-Version: 1.0
-References: <20220906170301.256206-1-roberto.sassu@huaweicloud.com>
- <20220906170301.256206-2-roberto.sassu@huaweicloud.com> <CAADnVQ+o8zyi_Z+XqCQynmvj04AtEtF9AoOTSeyUx9dvKTXOqg@mail.gmail.com>
- <02309cfbc1ce47f7de6be8addc2caa315b1fee1b.camel@huaweicloud.com>
-In-Reply-To: <02309cfbc1ce47f7de6be8addc2caa315b1fee1b.camel@huaweicloud.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Wed, 7 Sep 2022 09:02:26 -0700
-Message-ID: <CAADnVQ+cEM5Sb7d9yPA72Mp2zimx7VZ5Si3SPVdAZgsdFGpP1Q@mail.gmail.com>
-Subject: Re: [PATCH 1/7] bpf: Add missing fd modes check for map iterators
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hou Tao <houtao1@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable <stable@vger.kernel.org>, Chenbo Feng <fengc@google.com>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: LSM stacking in next for 6.1?
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
+        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
+        SElinux list <selinux@vger.kernel.org>, casey@schaufler-ca.com
+References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
+ <791e13b5-bebd-12fc-53de-e9a86df23836@schaufler-ca.com>
+ <CAHC9VhSF8hWg=7tbFiCrizNF61vpwJcU3793LcStiu-anW4i1g@mail.gmail.com>
+ <CAHC9VhTDGwO789t59EyOV0SwnwGrdyBhRiuJpoY7cB4MSe02BQ@mail.gmail.com>
+ <e2b6ae44-1037-666f-5012-6abd4d46c0b7@schaufler-ca.com>
+ <CAHC9VhQ+UcJw4G=VHNE8wMa+EBG-UcoZ7ox0vNqLHoSKAd9XZQ@mail.gmail.com>
+ <269014c6-5ce6-3322-5208-004cb1b40792@canonical.com>
+ <CAHC9VhRrOgDMO9fo632tSL7vCMAy1_x3smaAok-nWdMAUFB8xQ@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhRrOgDMO9fo632tSL7vCMAy1_x3smaAok-nWdMAUFB8xQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 7, 2022 at 1:03 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
+On 9/7/2022 7:41 AM, Paul Moore wrote:
+> On Tue, Sep 6, 2022 at 8:10 PM John Johansen
+> <john.johansen@canonical.com> wrote:
+>> On 9/6/22 16:24, Paul Moore wrote:
+>>> On Fri, Sep 2, 2022 at 7:14 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> On 9/2/2022 2:30 PM, Paul Moore wrote:
+>>>>> On Tue, Aug 2, 2022 at 8:56 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>>>> On Tue, Aug 2, 2022 at 8:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> ..
 >
-> On Tue, 2022-09-06 at 11:21 -0700, Alexei Starovoitov wrote:
-> > On Tue, Sep 6, 2022 at 10:04 AM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >
-> > > Commit 6e71b04a82248 ("bpf: Add file mode configuration into bpf
-> > > maps")
-> > > added the BPF_F_RDONLY and BPF_F_WRONLY flags, to let user space
-> > > specify
-> > > whether it will just read or modify a map.
-> > >
-> > > Map access control is done in two steps. First, when user space
-> > > wants to
-> > > obtain a map fd, it provides to the kernel the eBPF-defined flags,
-> > > which
-> > > are converted into open flags and passed to the security_bpf_map()
-> > > security
-> > > hook for evaluation by LSMs.
-> > >
-> > > Second, if user space successfully obtained an fd, it passes that
-> > > fd to the
-> > > kernel when it requests a map operation (e.g. lookup or update).
-> > > The kernel
-> > > first checks if the fd has the modes required to perform the
-> > > requested
-> > > operation and, if yes, continues the execution and returns the
-> > > result to
-> > > user space.
-> > >
-> > > While the fd modes check was added for map_*_elem() functions, it
-> > > is
-> > > currently missing for map iterators, added more recently with
-> > > commit
-> > > a5cbe05a6673 ("bpf: Implement bpf iterator for map elements"). A
-> > > map
-> > > iterator executes a chosen eBPF program for each key/value pair of
-> > > a map
-> > > and allows that program to read and/or modify them.
-> > >
-> > > Whether a map iterator allows only read or also write depends on
-> > > whether
-> > > the MEM_RDONLY flag in the ctx_arg_info member of the bpf_iter_reg
-> > > structure is set. Also, write needs to be supported at verifier
-> > > level (for
-> > > example, it is currently not supported for sock maps).
-> > >
-> > > Since map iterators obtain a map from a user space fd with
-> > > bpf_map_get_with_uref(), add the new req_modes parameter to that
-> > > function,
-> > > so that map iterators can provide the required fd modes to access a
-> > > map. If
-> > > the user space fd doesn't include the required modes,
-> > > bpf_map_get_with_uref() returns with an error, and the map iterator
-> > > will
-> > > not be created.
-> > >
-> > > If a map iterator marks both the key and value as read-only, it
-> > > calls
-> > > bpf_map_get_with_uref() with FMODE_CAN_READ as value for req_modes.
-> > > If it
-> > > also allows write access to either the key or the value, it calls
-> > > that
-> > > function with FMODE_CAN_READ | FMODE_CAN_WRITE as value for
-> > > req_modes,
-> > > regardless of whether or not the write is supported by the verifier
-> > > (the
-> > > write is intentionally allowed).
-> > >
-> > > bpf_fd_probe_obj() does not require any fd mode, as the fd is only
-> > > used for
-> > > the purpose of finding the eBPF object type, for pinning the object
-> > > to the
-> > > bpffs filesystem.
-> > >
-> > > Finally, it is worth to mention that the fd modes check was not
-> > > added for
-> > > the cgroup iterator, although it registers an attach_target method
-> > > like the
-> > > other iterators. The reason is that the fd is not the only way for
-> > > user
-> > > space to reference a cgroup object (also by ID and by path). For
-> > > the
-> > > protection to be effective, all reference methods need to be
-> > > evaluated
-> > > consistently. This work is deferred to a separate patch.
-> >
-> > I think the current behavior is fine.
-> > File permissions don't apply at iterator level or prog level.
->
-> + Chenbo, linux-security-module
->
-> Well, if you write a security module to prevent writes on a map, and
-> user space is able to do it anyway with an iterator, what is the
-> purpose of the security module then?
+>>> If you are running AppArmor on the host system and SELinux in a
+>>> container you are likely going to have some *very* bizarre behavior as
+>>> the SELinux policy you load in the container will apply to the entire
+>>> system, including processes which started *before* the SELinux policy
+>>> was loaded.  While I understand the point you are trying to make, I
+>>> don't believe the example you chose is going to work without a lot of
+>>> other changes.
+>> correct but the reverse does work ...
+> Sure, that doesn't surprise me, but that isn't the example Casey brought up.
 
-sounds like a broken "security module" and nothing else.
+I said that I'm not sure how they go about doing Android on Ubuntu.
+I brought it up because I've seen it.
 
-> > fmode_can_read/write are for syscall commands only.
-> > To be fair we've added them to lookup/delete commands
-> > and it was more of a pain to maintain and no confirmed good use.
->
-> I think a good use would be requesting the right permission for the
-> type of operation that needs to be performed, e.g. read-only permission
-> when you have a read-like operation like a lookup or dump.
->
-> By always requesting read-write permission, for all operations,
-> security modules won't be able to distinguish which operation has to be
-> denied to satisfy the policy.
->
-> One example of that is that, when there is a security module preventing
-> writes on maps (will be that uncommon?),
 
-lsm that prevents writes into bpf maps? That's a convoluted design.
-You can try to implement such an lsm, but expect lots of challenges.
-
-> bpftool is not able to show
-> the full list of maps because it asks for read-write permission for
-> getting the map info.
-
-completely orthogonal issue.
-
-> Freezing the map is not a solution, if you want to allow certain
-> subjects to continuously update the protected map at run-time.
+>>>>> I think it's time to think about a proper set of LSM syscalls.
+>>>> At the very least we need a liblsm that preforms a number of useful
+>>>> functions, like identifying what security modules are available,
+>>>> validating "contexts", fetching "contexts" from files and processes
+>>>> and that sort of thing. Whether it is built on syscalls or /proc and
+>>>> getxattr() is a matter of debate and taste.
+>>> Why is it a forgone conclusion that a library would be necessary for
+>>> basic operations?  If the kernel/userspace API is sane to begin with
+>>> we could probably either significantly reduce or eliminate the need
+>>> for additional libraries.  I really want us to attempt to come up with
+>>> a decent kernel/userspace API to begin with as opposed to using the
+>>> excuse of a userspace library to hide API sins that never should have
+>>> been committed.
+>> I don't think its a foregone conclusion, its just that it has been
+>> discussed several times, and all the interfaces have been nasty and
+>> prebaked userspace code would be really nice to have.
+>>
+>> There are other reasons to use a lib as well. Libs can help apps
+>> pickup fixes/changes automatically.
+> Fair point.
 >
-> Roberto
->
+>>> The LSM stacking work presents us with a unique opportunity to
+>>> modify/update/whatever the LSM kernel/userspace API, I don't want to
+>>> see us squander this chance on a hack.
+>> I do wish we had a better API from the beginning. I just hope it isn't
+>> going to take another 10 years to get the API portion done.
+> This really should surprise no one at this point, but I care very
+> little about how long something might take, or how difficult it might
+> be if it is something we are going to have to live with
+> <dramatic_voice>forever</dramatic_voice>.
+
+Fair point.
+
+>   I'm sympathetic that this
+> work has been going on for some time, but that is no reason to push
+> through a bad design; look at the ACKs/reviews on the combined-label
+> patches vs the others in the series, that's a pretty good indication
+> that no one is really excited about that design.
+
+The kernel developers aren't the consumers of these APIs. There
+has been considerable feedback from system application developers
+on the interfaces. This included dbus and systemd. Kernel developers
+aren't interested in these APIs because they don't care one way or
+the other. That, and as you are painfully aware, some of them are
+really busy on their own projects.
+
+Am I really happy with the "hideous" format? Yeah, because it makes
+the end user happy. Am I happy with interface_lsm? Other than the
+name, which was the result of feedback, yes, because it in the
+simplest way to accomplish the goal.
+
+I am curious about what you think is "bad" about the current design.
+The interfaces aren't exciting. They don't need to be.
+
+>>>> The /proc interfaces interface_lsm and context are really pretty simple.
+>>> They are now, they are also a bit of a mess with legacy constraints
+>>> and they only get more complicated and messy with the LSM stacking
+>>> patches.  It is my opinion that a syscall-based API is cleaner and
+>>> easier for applications to use.
+>> potentially if we can get one
+> Let me try and remove some ambiguity from that - I'm not going to
+> merge any combined-label APIs.
+
+Why? A combined-label API is what the application developers asked for.
+
+>   I'm not sold on the syscall-based API,
+> I'm open to other ideas, but it needs to support distinct per-LSM
+> labels that allow applications to identify which LSMs are active and
+> which labels belong to each.
+
+??????? This is exactly what I've provided.
+
+	"apparmor\0unconfined\0smack\0User\0"
+
+You know exactly what LSMs are providing data and what that data is.
+How could it be clearer or cleaner?
+
+>   In addition, I do not want any changes
+> to the existing procfs APIs as I want there to be zero chance we will
+> break existing applications;
+
+Are you saying that interface_lsm changes the /proc/.../attr/current API?
+That API is already dependent on the active security module. You may get
+an AppArmor, SELinux or Smack context from that API. It's been thus for a
+long time. Creating the smack and apparmor subdirectories was done to help
+make this cleaner. But those are new APIs. The existing applications either
+allow for a variety of security modules (e.g. ps(1)) or need to check for
+a particular one (e.g. id(1), which doesn't need to and would be better if
+it didn't, but what the hay). If they don't they are flawed and should be
+repaired.
+
+>  if existing applications need to be made
+> aware of a simul-multi-LSM world then they would need to change to the
+> new API, whatever that may be.
+
+Agreed. That's why the proposed APIs have been discussed with many
+of those application communities.
+
+>>>>> Further, I think we can add the new syscall API separately from the
+>>>>> LSM stacking changes as they do have standalone value.
+>> what I think Paul is saying is we can move the LSM stacking patches
+>> forward by removing the combined label interface. They won't be as
+>> useful but it would be a huge step forward, and the next step could
+>> be the syscall API.
+> Whatever new LSM API we decide on, I want to see that developed and
+> merged first.  It obviously must be designed to support multiple,
+> simultaneously active LSMs.
+
+That's what I've been proposing all along. You don't like the APIs.
+What don't you like about them? I believe they address the objections
+you've raised. I know that I can be real obtuse from time to time,
+but I don't see how they fail to meet your requirements.
+
