@@ -2,103 +2,197 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE7FC54EE9
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 14:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0018FC38145
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 15:17:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbiIHOsG (ORCPT
+        id S231517AbiIHPRe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Sep 2022 10:48:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53400 "EHLO
+        Thu, 8 Sep 2022 11:17:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232078AbiIHOsF (ORCPT
+        with ESMTP id S229789AbiIHPRd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Sep 2022 10:48:05 -0400
-Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A123C91D3F
-        for <linux-security-module@vger.kernel.org>; Thu,  8 Sep 2022 07:48:04 -0700 (PDT)
-Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-127d10b4f19so19185379fac.9
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Sep 2022 07:48:04 -0700 (PDT)
+        Thu, 8 Sep 2022 11:17:33 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DAA740571;
+        Thu,  8 Sep 2022 08:17:32 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id go34so3790453ejc.2;
+        Thu, 08 Sep 2022 08:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=lSCvYP5GkkFE/+kNRE5IPPJh8HdX91H33mYQbcBG7nU=;
-        b=rIfhIX0oxp8JbmMS4OUarcv8cscy7ucPnQm8yTkAfZJBh3oyZkiP/ojKWEian62UT6
-         HEk9DUU58mM5qYqh7H2UM043goBFPweEN+9FsGxypThYP3zF0+wGoTArpWOMkJUBxibo
-         EPsZ34a6P4+xPNZOiKId3m5W5DFOBDSlu8PcU9TyVZNa5QyiFiNAWkNX+0HIR3i7Do7G
-         0ScaL6lYh3aX7p2XuSo7uImOJsGeJ8EO3Kn0juPjJmLN/VNMZIUAQ+4aAqhTNiivGrKy
-         uEVG0iklAS4L/cKeZoLfdZe89/I205eCjSaCdBigSFvSwf/rtEX7BenIEraWUN8c7HAR
-         bTyg==
+        bh=dvC/u7qJ5dN4X47tbsTGAuz++QpERj+4FDleSIpBEMg=;
+        b=R0hVOMicuPDSnoQmcmYiJB3LFWFfOFwjBgRBuwuOEWI5JTxT51Lu0OjLr++Gxw/lzs
+         Tvik3ezKxyKAnzDTCdQqFNmpHVznLaNacrF9ZuvJc9pBhz0lrAdZi1n+3xp/ijThvgp8
+         VOwRWcRDrlK9c+JFS1o8ONZvPVH7bR5r3/0ESeh6jy2zLWd7yU9MbottgDeiLnCTWQUN
+         tzuE0V5OqQhzozQQSsV16et/mkj7icGxA9KjWbtIM5r6eFzdxL2e+f9jqf4Nw1JWc8Gp
+         zzjf6KnNbCgGJ8j2doSbs7qY9udYo9nEXzEMNqBxnxO5iPN9tehMBETqPTDu68UbIvgn
+         qldw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=lSCvYP5GkkFE/+kNRE5IPPJh8HdX91H33mYQbcBG7nU=;
-        b=wMuJjDEXXNdiz/MFVo7W1GoNohX3Ugkl13s8ptKN6dljya36OLjb/XE7EdL6elCVDu
-         EcQS+nAVGz2nyZDwrApc/zrb7cSU8drxl8gvN264Zo/60ZRI6L6WXQ1dLDFu32XWeVwG
-         qeBbFjjjDlS4PJ/Mln651sENg8H6L2322QqaqyTlcGChn5Wml65Xtro3iK+NkoWmqie5
-         UZCF+jwEdio2oMpgamdpGNmojmDiKQkYqJBcJAU1ncwau3lZnEZKr+vb7n20LH9D3wcq
-         lCDlqJHuxPEfq1uS91IaS/vEFXWLp0BoCjnkET0yeRBqSoL57DOajmhii7UPB6+aNh1c
-         ISMQ==
-X-Gm-Message-State: ACgBeo276xQsQHZhMApTFWQaC3B0iUUF/+gR4C/savPZtQDeCqyosmYQ
-        q6HLhOh/qxoYlOLakX85uyOhRBVoI/OQEr8JBPcu
-X-Google-Smtp-Source: AA6agR5HGQfp8RzkswEJIrC2RMiCNEMYt1x7RD0oqKtb6IO9/u4zY/regFUnz296PCkGhAsrIkEp+U9cTrPuPeK20yw=
-X-Received: by 2002:a05:6871:796:b0:11e:b92e:731e with SMTP id
- o22-20020a056871079600b0011eb92e731emr2158188oap.41.1662648483823; Thu, 08
- Sep 2022 07:48:03 -0700 (PDT)
+        bh=dvC/u7qJ5dN4X47tbsTGAuz++QpERj+4FDleSIpBEMg=;
+        b=bCVLOJe+uWFWhqRYSGlMsFWddY0ccOuslSZ8SxdL5L4VKGycPyhjMCScLRhrL0wnfH
+         RsYzRQaebJgmm78Cg/YaAN4h7x05qFflvpl/48d9F+9zdZvvCyQq7TL4x9K/CZjvJyKp
+         MBqif/DNTnyFdBHskvp2mk1B8zH0UkInMhxX7ly6sfwJuQkpGto1JBRRvrIjiFf3x+97
+         o5C8f42lClJCCLQaBHcMn+tBo5h3qGNYa5g+kVTJEFlKNVY8QQcOH4CmslmqXyG5fWq1
+         vvyGtTkV49j8EDzzYtl4fiB78Cu5BoqX0p4ICS6c4nbSy8sIiz0tWrTpps/jPlbQ+W6X
+         NDEg==
+X-Gm-Message-State: ACgBeo2kHgehmbKYlK/bn9FOqYfXQFkMOZxRq42BTwPpoWaewC3p1ZtZ
+        i4+mAZFTL3LeSGmr2QXgeLi+SG2lq4CZ77J0pa8=
+X-Google-Smtp-Source: AA6agR6lkwvnPcInorNKbMkhlPy/kqMnwSqf9ilS5C3PIU+zXOi3rmnC/1PYHJgUShzGaAZn2JBWrMwTREu95J9WrlE=
+X-Received: by 2002:a17:907:a04f:b0:772:da0b:e2f1 with SMTP id
+ gz15-20020a170907a04f00b00772da0be2f1mr3625960ejc.327.1662650250524; Thu, 08
+ Sep 2022 08:17:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220907121230.21252-1-vincenzo.frascino@arm.com>
- <f1cefdb9-363a-c938-f02a-851173431610@infradead.org> <CAHC9VhQytyFMvq-M0YrqzKxJDyj58KKG0XDjBfTV02sYCzeALQ@mail.gmail.com>
- <Yxl614jNUYvYywUc@kernel.org>
-In-Reply-To: <Yxl614jNUYvYywUc@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 8 Sep 2022 10:47:53 -0400
-Message-ID: <CAHC9VhTHGX8160x8BC5cLQPQmn8QDyng6+FvsM4X=ca47CbWBQ@mail.gmail.com>
-Subject: Re: [PATCH] security/keys: Remove inconsistent __user annotation
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>
+References: <20220906170301.256206-1-roberto.sassu@huaweicloud.com>
+ <20220906170301.256206-2-roberto.sassu@huaweicloud.com> <CAADnVQ+o8zyi_Z+XqCQynmvj04AtEtF9AoOTSeyUx9dvKTXOqg@mail.gmail.com>
+ <02309cfbc1ce47f7de6be8addc2caa315b1fee1b.camel@huaweicloud.com>
+ <CAADnVQ+cEM5Sb7d9yPA72Mp2zimx7VZ5Si3SPVdAZgsdFGpP1Q@mail.gmail.com> <8d7a713e500b5e3fce93e4c5c7b8841eb6dd28e4.camel@huaweicloud.com>
+In-Reply-To: <8d7a713e500b5e3fce93e4c5c7b8841eb6dd28e4.camel@huaweicloud.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Thu, 8 Sep 2022 08:17:19 -0700
+Message-ID: <CAADnVQL7murY8G4SG5sF3855ETBpmrv0S-dueR8Rht4ucm6WwQ@mail.gmail.com>
+Subject: Re: [PATCH 1/7] bpf: Add missing fd modes check for map iterators
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        bpf <bpf@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hou Tao <houtao1@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        stable <stable@vger.kernel.org>, Chenbo Feng <fengc@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 8, 2022 at 1:17 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> On Wed, Sep 07, 2022 at 11:43:17AM -0400, Paul Moore wrote:
-> > On Wed, Sep 7, 2022 at 10:06 AM Randy Dunlap <rdunlap@infradead.org> wrote:
-> > > On 9/7/22 05:12, Vincenzo Frascino wrote:
-> > > > The declaration of keyring_read does not match the definition
-> > > > (security/keys/keyring.c). In this case the definition is correct
-> > > > because it matches what defined in "struct key_type::read"
-> > > > (linux/key-type.h).
-> > > >
-> > > > Fix the declaration removing the inconsistent __user annotation.
-> > > >
-> > > > Cc: David Howells <dhowells@redhat.com>
-> > > > Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> > > > Cc: Paul Moore <paul@paul-moore.com>
-> > > > Cc: James Morris <jmorris@namei.org>
-> > > > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> > > > ---
-> > > > Note: This issue was discovered during the porting of the linux kernel
-> > > > on Morello [1].
-> > > >
-> > > > [1] https://git.morello-project.org/morello/kernel/linux
-> > >
-> > > FTR, I have sent this same patch 3 times.
-> > > Good luck.
-> >
-> > David or Jarkko, this patch is both trivial and obviously correct,
-> > please merge this into the keys tree for the next merge window else
-> > I'll take it via the LSM tree.
-> >
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
+On Thu, Sep 8, 2022 at 6:59 AM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
 >
-> I picked it to my tree.
+> On Wed, 2022-09-07 at 09:02 -0700, Alexei Starovoitov wrote:
+> >
+>
+> [...]
+>
+> > > Well, if you write a security module to prevent writes on a map,
+> > > and
+> > > user space is able to do it anyway with an iterator, what is the
+> > > purpose of the security module then?
+> >
+> > sounds like a broken "security module" and nothing else.
+>
+> Ok, if a custom security module does not convince you, let me make a
+> small example with SELinux.
+>
+> I created a small map iterator that sets every value of a map to 5:
+>
+> SEC("iter/bpf_map_elem")
+> int write_bpf_hash_map(struct bpf_iter__bpf_map_elem *ctx)
+> {
+>         u32 *key = ctx->key;
+>         u8 *val = ctx->value;
+>
+>         if (key == NULL || val == NULL)
+>                 return 0;
+>
+>         *val = 5;
+>         return 0;
+> }
+>
+> I create and pin a map:
+>
+> # bpftool map create /sys/fs/bpf/map type array key 4 value 1 entries 1
+> name test
+>
+> Initially, the content of the map looks like:
+>
+> # bpftool map dump pinned /sys/fs/bpf/map
+> key: 00 00 00 00  value: 00
+> Found 1 element
+>
+> I then created a new SELinux type bpftool_test_t, which has only read
+> permission on maps:
+>
+> # sesearch -A -s bpftool_test_t -t unconfined_t -c bpf
+> allow bpftool_test_t unconfined_t:bpf map_read;
+>
+> So, what I expect is that this type is not able to write to the map.
+>
+> Indeed, the current bpftool is not able to do it:
+>
+> # strace -f -etrace=bpf runcon -t bpftool_test_t bpftool iter pin
+> writer.o /sys/fs/bpf/iter map pinned /sys/fs/bpf/map
+> bpf(BPF_OBJ_GET, {pathname="/sys/fs/bpf/map", bpf_fd=0, file_flags=0},
+> 144) = -1 EACCES (Permission denied)
+> Error: bpf obj get (/sys/fs/bpf): Permission denied
+>
+> This happens because the current bpftool requests to access the map
+> with read-write permission, and SELinux denies it:
+>
+> # cat /var/log/audit/audit.log|audit2allow
+>
+>
+> #============= bpftool_test_t ==============
+> allow bpftool_test_t unconfined_t:bpf map_write;
+>
+>
+> The command failed, and the content of the map is still:
+>
+> # bpftool map dump pinned /sys/fs/bpf/map
+> key: 00 00 00 00  value: 00
+> Found 1 element
+>
+>
+> Now, what I will do is to use a slightly modified version of bpftool
+> which requests read-only access to the map instead:
+>
+> # strace -f -etrace=bpf runcon -t bpftool_test_t ./bpftool iter pin
+> writer.o /sys/fs/bpf/iter map pinned /sys/fs/bpf/map
+> bpf(BPF_OBJ_GET, {pathname="/sys/fs/bpf/map", bpf_fd=0,
+> file_flags=BPF_F_RDONLY}, 16) = 3
+> libbpf: elf: skipping unrecognized data section(5) .eh_frame
+> libbpf: elf: skipping relo section(6) .rel.eh_frame for section(5)
+> .eh_frame
+>
+> ...
+>
+> bpf(BPF_LINK_CREATE, {link_create={prog_fd=4, target_fd=0,
+> attach_type=BPF_TRACE_ITER, flags=0}, ...}, 48) = 5
+> bpf(BPF_OBJ_PIN, {pathname="/sys/fs/bpf/iter", bpf_fd=5, file_flags=0},
+> 16) = 0
+>
+> That worked, because SELinux grants read-only permission to
+> bpftool_test_t. However, the map iterator does not check how the fd was
+> obtained, and thus allows the iterator to be created.
+>
+> At this point, we have write access, despite not having the right to do
+> it:
 
-Thanks Jarkko.
-
--- 
-paul-moore.com
+That is a wrong assumption to begin with.
+Having an fd to a bpf object (map, link, prog) allows access.
+read/write sort-of applicable to maps, but not so much
+to progs, links.
+That file based read/write flag is only for user processes.
+bpf progs always had separate flags for that.
+See BPF_F_RDONLY vs BPF_F_RDONLY_PROG.
+One doesn't imply the other.
