@@ -2,134 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02982C6FA86
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 19:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0FFC54EE9
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 20:09:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229926AbiIHT7u (ORCPT
+        id S229490AbiIHUJV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Sep 2022 15:59:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44430 "EHLO
+        Thu, 8 Sep 2022 16:09:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230001AbiIHT65 (ORCPT
+        with ESMTP id S229486AbiIHUJU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Sep 2022 15:58:57 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D64A8114A45;
-        Thu,  8 Sep 2022 12:58:18 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id b17so14642883wrq.3;
-        Thu, 08 Sep 2022 12:58:18 -0700 (PDT)
+        Thu, 8 Sep 2022 16:09:20 -0400
+Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35DF41017E8
+        for <linux-security-module@vger.kernel.org>; Thu,  8 Sep 2022 13:09:18 -0700 (PDT)
+Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-1280590722dso13908656fac.1
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Sep 2022 13:09:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=98FGazg/gj0QUvoyFacHOBPUOa+vPrLf+ppcBewd70Y=;
-        b=agSYvr++xJOiDpjl0/QYv419PaTU4e8lsz6BSiq2FbIw+NGXc/aXm5EjmOEFzWn2EX
-         XRfl+LeipulpMrRoJjTtU7Y7KxlHcEikOjc5dvIAWdpyF1GUk0XiYvwvJVdPipvCgxJo
-         VO83f3pzy4Dl3c27t2JLwbyi9kTi2tk/WwqaFDBCwUWDXywyMQqaW2Bu36gQhekylFLA
-         ZKLHkrguwTbKWpxy77idC4uo0KRQ0kwb/DiQ7hZofTy/Hpz5MvXGQhTyDZ78D2cNz6jX
-         +uy8aKsoGqwmQxzpuZEE4NyQBcyFKDRWcHRr/wSDBaQp0/rf9R2vpqzdqm5EZB7m0+E/
-         RIkQ==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=szzH6V0BbcIyW/LN6sXrwvHzpvjLGqgZKN0b69l/Scw=;
+        b=m1C72J0J86sNTQWwrYwDy6Bo9GpjHYOIAgNzFvbqRR2+PzdDfGHpwN2vhM91wYnL3R
+         P5fEzev4bWq4COchzdOkkDHg+P6x6QpNAHYFAkEKUgjYysLjkKodABxytNx49ws88800
+         Jtpz+QoukKFE3aeLTj52CujGWGQJnzwKXwH2ou3CDSsPpZDI2609s3WktA6y8V9YmAon
+         eN5hPJWcLVAOPqFpkdOvja01JEW/vmTbFn+1uL2L9b51DiaasEXdPp0f2pdmfcPrgHmu
+         HDvFODCLDcGDNPphTlRKqhhU/Ol7Ed6ZmVXrIWQPt8p7OkqH52gwOOIbZpzklFWi5ret
+         VGUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=98FGazg/gj0QUvoyFacHOBPUOa+vPrLf+ppcBewd70Y=;
-        b=tn+x4e8FE7ntuYnmkxKgoSOwn9UEn3q8IMleVmD5OnpZosbLu8SF8PWxjDDf9FNZiJ
-         0WhlDRXA705xvsXzcLbZFvdz9wKRvuY1mLdV2rIxM3fwsV1Ce8L/4fKXOpijrdd3pHAu
-         Ao9i1b0rxkLyk69PMlZYdPviaLxqWCkOqSuKG2+WbtxVwc25brSqiUvYxDhzfc61SYb+
-         oPS2oAlnXytF+OVhe4tfzqMF48MqNXOyAekgsq8OIlsAJh8VhphLEYVd12NecKDVcBzj
-         JNzqnmciLWY+OQ8Tx3aeUC/w4MEsLAM++SzoU3ZS+vo+tRqkcj+z6xMzHx0NJM/e/6AA
-         zJbQ==
-X-Gm-Message-State: ACgBeo0Rm0q7XmHs+jcFH5Zt9dYpHhI8kNUt5eNmZOW3IC+bT6dFaATP
-        u92WSFFLrFAQ83fStqI5aPA+QXLQAO4=
-X-Google-Smtp-Source: AA6agR6Xek2Lo64utNaRTTAMQV4Y4Zegpo+snrGEbR8RXCIOodiTx3y8Q1ija8OWoUWcU1iCiODNJg==
-X-Received: by 2002:a5d:6f14:0:b0:228:e3c6:fa2 with SMTP id ay20-20020a5d6f14000000b00228e3c60fa2mr5652663wrb.516.1662667094140;
-        Thu, 08 Sep 2022 12:58:14 -0700 (PDT)
-Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id a22-20020a05600c2d5600b003a541d893desm3360682wmg.38.2022.09.08.12.58.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Sep 2022 12:58:13 -0700 (PDT)
-From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        bh=szzH6V0BbcIyW/LN6sXrwvHzpvjLGqgZKN0b69l/Scw=;
+        b=qOnt5fjdB2dXsmqYMF+3IqDzG94m2fM9tZukVK+F9WPso1pzeOsbueo0DSuT95tRzL
+         MJEGc73PIJQU87gg6UIWK85qUN1Gya+m7ygx8R9g5LOUA8KhMeCbNzV7evMiewLKcUtp
+         KKcB5vF3rouaG4y3VkuqdlnSolWcVwaYXVRIa9J6JaRORY0zi58bRFoUHjCsqDRZzJMm
+         xO5zIcz2aIwouMMBMx/1P1qxiRmTncJNphoQAwXNivKlFQDbctelxXjFyGc0dHrjR4Xc
+         +iGV5PFvBMvmpeStca8LubeT1wqDbrot8FDQlf9wfpHcYKFSrXaDg1Zg5ZN/koJJGZD7
+         Yz7Q==
+X-Gm-Message-State: ACgBeo2qTH4ILnRzVxXVkzp2HSrEAmQGfURySowygtYFkqks9H4eD2tT
+        fUnVGXOWQPWejI31OaouJwsl5GmLrxGeg28GwACB
+X-Google-Smtp-Source: AA6agR5cUaupCfrXTem8xPb3qa/PvsDumKXP4uBIPQCGq9k7077D3Z+NjdMMKMHy2FcnNvE36C+qJOImFB1NaEeUYPs=
+X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
+ n9-20020a05680803a900b003434b14cccemr2267780oie.41.1662667757355; Thu, 08 Sep
+ 2022 13:09:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220908195805.128252-1-gnoack3000@gmail.com> <20220908195805.128252-2-gnoack3000@gmail.com>
+In-Reply-To: <20220908195805.128252-2-gnoack3000@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 8 Sep 2022 16:09:06 -0400
+Message-ID: <CAHC9VhSmjF1sYoP-Z8vj+O4=NPQMdw+L4=iFZtDbHzJg7ey6vA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/5] security: create file_truncate hook from
+ path_truncate hook
+To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
         James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v6 4/5] samples/landlock: Extend sample tool to support LANDLOCK_ACCESS_FS_TRUNCATE
-Date:   Thu,  8 Sep 2022 21:58:04 +0200
-Message-Id: <20220908195805.128252-5-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20220908195805.128252-1-gnoack3000@gmail.com>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Update the sandboxer sample to restrict truncate actions. This is
-automatically enabled by default if the running kernel supports
-LANDLOCK_ACCESS_FS_TRUNCATE, expect for the paths listed in the
-LL_FS_RW environment variable.
+On Thu, Sep 8, 2022 at 3:58 PM G=C3=BCnther Noack <gnoack3000@gmail.com> wr=
+ote:
+>
+> Like path_truncate, the file_truncate hook also restricts file
+> truncation, but is called in the cases where truncation is attempted
+> on an already-opened file.
+>
+> This is required in a subsequent commit to handle ftruncate()
+> operations differently to truncate() operations.
+>
+> Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
+> ---
+>  fs/namei.c                    |  6 +++---
+>  fs/open.c                     |  4 ++--
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/security.h      |  6 ++++++
+>  security/apparmor/lsm.c       |  6 ++++++
+>  security/security.c           |  5 +++++
+>  security/tomoyo/tomoyo.c      | 13 +++++++++++++
+>  7 files changed, 36 insertions(+), 5 deletions(-)
 
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- samples/landlock/sandboxer.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+We need to get John and Tetsuo's ACKs on this patch, but in addition
+to that I have two small comments (below).
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index 3e404e51ec64..771b6b10d519 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -76,7 +76,8 @@ static int parse_path(char *env_path, const char ***const path_list)
- #define ACCESS_FILE ( \
- 	LANDLOCK_ACCESS_FS_EXECUTE | \
- 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
--	LANDLOCK_ACCESS_FS_READ_FILE)
-+	LANDLOCK_ACCESS_FS_READ_FILE | \
-+	LANDLOCK_ACCESS_FS_TRUNCATE)
- 
- /* clang-format on */
- 
-@@ -160,10 +161,8 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
- 	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
- 	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
- 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
--	LANDLOCK_ACCESS_FS_REFER)
--
--#define ACCESS_ABI_2 ( \
--	LANDLOCK_ACCESS_FS_REFER)
-+	LANDLOCK_ACCESS_FS_REFER | \
-+	LANDLOCK_ACCESS_FS_TRUNCATE)
- 
- /* clang-format on */
- 
-@@ -226,11 +225,17 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		return 1;
- 	}
- 	/* Best-effort security. */
--	if (abi < 2) {
--		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
--		access_fs_ro &= ~ACCESS_ABI_2;
--		access_fs_rw &= ~ACCESS_ABI_2;
-+	switch (abi) {
-+	case 1:
-+		/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-+		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-+		__attribute__((fallthrough));
-+	case 2:
-+		/* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-+		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
- 	}
-+	access_fs_ro &= ruleset_attr.handled_access_fs;
-+	access_fs_rw &= ruleset_attr.handled_access_fs;
- 
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
--- 
-2.37.3
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 53b4bc094db2..52105873d1f8 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -53,8 +53,8 @@
+>   * The new code replaces the old recursive symlink resolution with
+>   * an iterative one (in case of non-nested symlink chains).  It does
+>   * this with calls to <fs>_follow_link().
+> - * As a side effect, dir_namei(), _namei() and follow_link() are now
+> - * replaced with a single function lookup_dentry() that can handle all
+> + * As a side effect, dir_namei(), _namei() and follow_link() are now
+> + * replaced with a single function lookup_dentry() that can handle all
 
+Since this patch(set) is likely to go in via the Landlock tree, it is
+very important to keep changes outside of security/landlock to a bare
+minimum of what is required both to reduce merge conflicts and
+highlight the significant changes.  This change doesn't appear
+necessary ... and I'm having a hard time spotting the difference in
+the lines.
+
+> diff --git a/fs/open.c b/fs/open.c
+> index 8a813fa5ca56..0831433e493a 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1271,7 +1271,7 @@ struct file *filp_open(const char *filename, int fl=
+ags, umode_t mode)
+>  {
+>         struct filename *name =3D getname_kernel(filename);
+>         struct file *file =3D ERR_CAST(name);
+> -
+> +
+
+See my comment above about unnecessary changes.
+
+--=20
+paul-moore.com
