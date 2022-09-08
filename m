@@ -2,160 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F06B3C54EE9
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 21:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F90C38145
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 22:02:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbiIHV3B (ORCPT
+        id S229451AbiIHWCw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Sep 2022 17:29:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59334 "EHLO
+        Thu, 8 Sep 2022 18:02:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230110AbiIHV3B (ORCPT
+        with ESMTP id S229449AbiIHWCg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Sep 2022 17:29:01 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB74B12BF8F;
-        Thu,  8 Sep 2022 14:28:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 76227B8227A;
-        Thu,  8 Sep 2022 21:28:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 951ABC433D7;
-        Thu,  8 Sep 2022 21:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662672537;
-        bh=8BG00Ui0XCYKmIGrfXTiU+9vJX4lfArhOhJGZy81nAw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ne6b6Bi+ax2OxGCTCqWVLYvwea/UgfMwu9qEYjWK3rATdAKmP+JemQ3Ozp+gNzKL9
-         50uV+j/rsb9v3q6vCUqQqU4gEBfftEPkNiyNQXX95pRRu/VKMPe/MFc0nrkUE6yU4b
-         4yXLX2M7o6z02icKsTbtt+Jh0VSl/kegXKQTNa3mBIqzny/fmNOc4yrnTYB8PpmYA6
-         CjDEfKPFGIM97ylUaKsFUjCv5R0snL7VKKdY3UJGYVRhSmB2S3ygzne6RZsBrfhR10
-         +4TKezFw0OGyzgF35+uiZnm4N2HH1lhZ33HK1b3A8YkM4L/9fCGRdRrNbemm+y0Ryc
-         JwLQUjUcHPunw==
-Message-ID: <ecdcccf000dc5a38a08ccabbe72b5bab6b53a62f.camel@kernel.org>
-Subject: Re: Does NFS support Linux Capabilities
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Chuck Lever III <chuck.lever@oracle.com>
-Cc:     battery dude <jyf007@gmail.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Date:   Thu, 08 Sep 2022 17:28:55 -0400
-In-Reply-To: <9DD9783E-0360-4EC0-B14A-A50B5176859D@oracle.com>
-References: <CAMBbDaF2Ni0gMRKNeFTQwgAOPPYy7RLXYwDJyZ1edq=tfATFzw@mail.gmail.com>
-         <1D8F1768-D42A-4775-9B0E-B507D5F9E51E@oracle.com>
-         <2b75d8b1b259f5d8db19edba4b8bbd8111be54f4.camel@kernel.org>
-         <9DD9783E-0360-4EC0-B14A-A50B5176859D@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Thu, 8 Sep 2022 18:02:36 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 205B3B15;
+        Thu,  8 Sep 2022 15:02:35 -0700 (PDT)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 288Lhjvq002046;
+        Thu, 8 Sep 2022 22:02:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=PY33xXugMpJrxaOfLtDoKIpmmKkUXM1FA6wgweiD9z8=;
+ b=rn4kWPRg+UTz8Kl47uLenQ34cqMnrIoCLtr9K9QNF+Y5lohghgSf5Ky3E6DKrtLXO5l6
+ L2lR38/OvjTfnNyNF5d3miJfp8fjj1TnhOnkoEabFMJUsA+kEeFrFPqg48e8ILMcCIgK
+ TciToMV+1Ukrit45EIXj8hmYiBIn1rIgeykfsN+oA99gpaRUvPxbkm28SWDDrJk5adTl
+ D6xxni0+h52UzcYksmd9Rgx3bZSDSy5behv94taei+DzrKdNh70HXGVOXeAMokXKKnxS
+ IH9e9qgcmpcZaQ6TkHEd37YjGMmneZ6sEUYQdEp9CBNYPb4wZZPUUXoRCmfcqSmIF4oQ MQ== 
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jfrjb8dbm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Sep 2022 22:02:25 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 288Locc6032133;
+        Thu, 8 Sep 2022 22:02:24 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma03dal.us.ibm.com with ESMTP id 3jbxjakmvy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Sep 2022 22:02:24 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 288M2NIv30343552
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 8 Sep 2022 22:02:23 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DAC628059;
+        Thu,  8 Sep 2022 22:02:23 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 38E5928058;
+        Thu,  8 Sep 2022 22:02:23 +0000 (GMT)
+Received: from localhost (unknown [9.41.178.242])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  8 Sep 2022 22:02:23 +0000 (GMT)
+From:   Nathan Lynch <nathanl@linux.ibm.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Subject: [PATCH] lockdown: ratelimit denial messages
+Date:   Thu,  8 Sep 2022 17:02:22 -0500
+Message-Id: <20220908220222.267255-1-nathanl@linux.ibm.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Q3v9Rph-wyIMIc2GsPuy45gHr07uejIA
+X-Proofpoint-ORIG-GUID: Q3v9Rph-wyIMIc2GsPuy45gHr07uejIA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-08_12,2022-09-08_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ lowpriorityscore=0 bulkscore=0 phishscore=0 mlxscore=0 mlxlogscore=811
+ priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2207270000
+ definitions=main-2209080076
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2022-09-08 at 21:17 +0000, Chuck Lever III wrote:
->=20
-> > On Sep 8, 2022, at 5:03 PM, Jeff Layton <jlayton@kernel.org> wrote:
-> >=20
-> > On Thu, 2022-09-08 at 20:24 +0000, Chuck Lever III wrote:
-> > > [ This question comes up on occasion, so I've added a few interested
-> > >  parties to the Cc: list ]
-> > >=20
-> > > > On Sep 8, 2022, at 8:27 AM, battery dude <jyf007@gmail.com> wrote:
-> > > >=20
-> > > > According to https://access.redhat.com/solutions/2117321 this artic=
-le,
-> > > > I want to ask, how to make NFS support the penetration of Linux
-> > > > Capabilities
-> > >=20
-> > > That link is access-limited, so I was able to view only the top
-> > > few paragraphs of it. Not very open, Red Hat.
-> > >=20
-> > > TL;DR: I looked into this while trying to figure out how to enable
-> > > IMA on NFS files. It's difficult for many reasons.
-> > >=20
-> > >=20
-> > > A few of these reasons include:
-> > >=20
-> > > The NFS protocol is a standard, and is implemented on a wide variety
-> > > of OS platforms. Each OS implements its own flavor of capabilities.
-> > > There's no way to translate amongst the variations to ensure
-> > > interoperation. On Linux, capabilities(7) says:
-> > >=20
-> > > > No standards govern capabilities, but the Linux capability implemen=
-tation is based on the withdrawn POSIX.1e draft standard; see =E2=9F=A8http=
-s://archive.org/details/posix_1003.1e-990310=E2=9F=A9.
-> > >=20
-> > > I'm not sure how closely other implementations come to implementing
-> > > POSIX.1e, but there are enough differences that interoperability
-> > > could be a nightmare. Anything Linux has done differently than
-> > > POSIX.1e would be encumbered by GPL, making it nearly impossible to
-> > > standardize those differences. (Let alone the possible problems
-> > > trying to cite a withdrawn POSIX standard in an Internet RFC!)
-> > >=20
-> > > The NFSv4 WG could invent our own capabilities scheme, just as was
-> > > done with NFSv4 ACLs. I'm not sure everyone would agree that effort
-> > > was 100% successful.
-> > >=20
-> > >=20
-> > > Currently, an NFS server bases its access control choices on the
-> > > RPC user that makes each request. We'd have to figure out a way to
-> > > enable NFS clients and servers to communicate more than just user
-> > > identity to enable access control via capabilities.
-> > >=20
-> > > When sending an NFS request, a client would have to provide a set
-> > > of capabilities to the server so the server can make appropriate
-> > > access control choices for that request.
-> > >=20
-> > > The server would have to report the updated capset when a client
-> > > accesses and executes a file with capabilities, and the server
-> > > would have to trust that its clients all respect those capsets
-> > > correctly.
-> > >=20
-> > >=20
-> > > Because capabilities are security-related, setting and retrieving
-> > > capabilities should be done only over networks that ensure
-> > > integrity of communication. So, protection via RPC-with-TLS or
-> > > RPCSEC GSS with an integrity service ought to be a requirement
-> > > both for setting and updating capabilities and for transmitting
-> > > any protected file content. We have implementations, but there
-> > > is always an option of not deploying this kind of protection
-> > > when NFS is actually in use, making capabilities just a bit of
-> > > security theater in those cases.
-> > >=20
-> > >=20
-> > > Given these enormous challenges, who would be willing to pay for
-> > > standardization and implementation? I'm not saying it can't or
-> > > shouldn't be done, just that it would be a mighty heavy lift.
-> > > But maybe other folks on the Cc: list have ideas that could
-> > > make this easier than I believe it to be.
-> > >=20
-> > >=20
-> >=20
-> > I'm not disputing anything you wrote above, and I clearly haven't
-> > thought through the security implications, but I wonder if we could
-> > piggyback this info onto security label support somehow? That already
-> > requires a (semi-opaque) per-inode attribute, which is mostly what's
-> > required for file capabilities.
->=20
-> That was the starting idea for accessing IMA metadata on NFS until
-> we discovered that NFSv4 security labels are intended to enable only
-> a single label per file. Capabilities are often present with SELinux
-> labels.
->=20
-> It would work for a proof of concept, though.
->=20
+User space can flood the log with lockdown denial messages:
 
-Yeah, that why I was saying "piggyback".
+[  662.555584] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+[  662.563237] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+[  662.571134] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+[  662.578668] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+[  662.586021] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+[  662.593398] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
 
-You'd need a combined SELinux+capabilities label (potentially with other
-stuff in it as well). When you got one from the server, you'd have to
-extract each piece and put in the right places in the inode.
+Ratelimiting these shouldn't meaningfully degrade the quality of the
+information logged.
 
-But, like I said...I haven't thought through the implications here at
-all (and am not looking for a project at the moment). ;)
---=20
-Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+---
+ security/lockdown/lockdown.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 87cbdc64d272..a79b985e917e 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -63,7 +63,7 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
+ 
+ 	if (kernel_locked_down >= what) {
+ 		if (lockdown_reasons[what])
+-			pr_notice("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
++			pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
+ 				  current->comm, lockdown_reasons[what]);
+ 		return -EPERM;
+ 	}
+-- 
+2.37.1
+
