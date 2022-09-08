@@ -2,86 +2,157 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE8AC38145
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 20:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184B4C38145
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 20:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229785AbiIHUbb (ORCPT
+        id S229788AbiIHUub (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Sep 2022 16:31:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45924 "EHLO
+        Thu, 8 Sep 2022 16:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbiIHUb3 (ORCPT
+        with ESMTP id S229480AbiIHUua (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Sep 2022 16:31:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ABA45F7D9
-        for <linux-security-module@vger.kernel.org>; Thu,  8 Sep 2022 13:31:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1662669088;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=W8xW/PUmCF7EBejEjlfKNcmSxgxp+ng+o6KaVNQoPyk=;
-        b=SCyMqskUyeEDWG5oXrogmD84IXcTu4KlIOGwLiWqw2M0qdPKKLzIy4lZY+eJ4P4JX9DlgU
-        d9ZEVM767L71OjlZYFAG0jJn0F3366SVnYzWTbVHx5r8dDjEjPAp6cny36Zxoz7btAgJD9
-        yl+niKeQsvCBK+tFn8OhFpnJXiQT59Y=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-76-ZBRNITwkPmiBGip5fai_bQ-1; Thu, 08 Sep 2022 16:31:25 -0400
-X-MC-Unique: ZBRNITwkPmiBGip5fai_bQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6011529DD9B4;
-        Thu,  8 Sep 2022 20:31:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB1842166B26;
-        Thu,  8 Sep 2022 20:31:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAFX2JfmoovJHUBRy6U=yKJt_pAEF0tLadSK+CFqabPcatXe6EQ@mail.gmail.com>
-References: <CAFX2JfmoovJHUBRy6U=yKJt_pAEF0tLadSK+CFqabPcatXe6EQ@mail.gmail.com> <166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk>
-To:     Anna Schumaker <anna@kernel.org>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] vfs, security: Fix automount superblock LSM init problem, preventing NFS sb sharing
+        Thu, 8 Sep 2022 16:50:30 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4CF0B0B18;
+        Thu,  8 Sep 2022 13:50:28 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id l14so17397247eja.7;
+        Thu, 08 Sep 2022 13:50:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date;
+        bh=nhuHvzNlc2TwxMhhsYaDQXiPo9fazG9+H8G6SCSTy2k=;
+        b=LxQC+BbtpvQJM7kNytDxCv2d5woStEJnTZMz+oCVZmcjtuHNoYqUlZUO5aetkRXU0N
+         P2ZVEiJz3lA47q7AqGI+OvqzALao8yYwrSM5lGBRmrykyopVQv1WPW5ZDqMfPSJUrKYJ
+         O9yPYoRlB4utNIWWOrUDuquHCBTMdSTo7MXWe5KjxsqxgBd/8i085arQkDo77d8/GD4X
+         ehL4efFLOspcwDccu7+ITmCszDo3DZP0XZ3M038c0FO7wmWbxfKCQQCXmhyBL7WgvrBU
+         EI43o3I11ciR6hEzXWNdmfFom0redx97Aq3UZitNSWtSenIu0bYqjTLKtL2qcUTAB/+7
+         IiwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=nhuHvzNlc2TwxMhhsYaDQXiPo9fazG9+H8G6SCSTy2k=;
+        b=koi+UHz+Cu0NgZQC2GhmWYUCgcjyp3s4PF3a/mf+SgSp+sZd7lErSFMVKFwOzaIoLR
+         g8jDaLYd4SzZDKgmGoQs4K4+EwC4f5TG6hU8HC2S54jRD9mZhaT9Xdjk4/Ks4oBf5bjG
+         ExvkqddGiP520zO0d470/pGggT0hubC6VpApv5/1UMHIUJ0mel3+2qkAa0fuVVE7mb4v
+         aoOUXA2o0soWQp5KfMKumqpWPXOngHZZwQJDQsSlB+Wd0sekxgZJWDWpI2CTPwG6Pymm
+         L1A+6/WipOPIHyXbd9JpXEcbgvh0KvKGexN/GHiJbkVkh+SnqkiCxlV+vkOdMHQ9YRe0
+         /oMg==
+X-Gm-Message-State: ACgBeo3XRW3EOMKWf6rLKg5aYdPieZhzpgxLlx5iOX/e/s7Kl10Bt1o+
+        ght1hg7TlJIYieNs8m5Vwek=
+X-Google-Smtp-Source: AA6agR6DFz/WhqhwtdRUQkU7icsDIcxNT2P0FmKy0c3aSwpuOFJBLzbwPbnQclONzX+s+tQk+1tw4g==
+X-Received: by 2002:a17:907:72cf:b0:741:48db:d304 with SMTP id du15-20020a17090772cf00b0074148dbd304mr7296016ejc.391.1662670227254;
+        Thu, 08 Sep 2022 13:50:27 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id e9-20020a170906314900b0072f4f4dc038sm1670685eje.42.2022.09.08.13.50.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Sep 2022 13:50:26 -0700 (PDT)
+Date:   Thu, 8 Sep 2022 22:50:24 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: Re: [PATCH v6 1/5] security: create file_truncate hook from
+ path_truncate hook
+Message-ID: <YxpVkKqrZhjh5Pn8@nuc>
+References: <20220908195805.128252-1-gnoack3000@gmail.com>
+ <20220908195805.128252-2-gnoack3000@gmail.com>
+ <CAHC9VhSmjF1sYoP-Z8vj+O4=NPQMdw+L4=iFZtDbHzJg7ey6vA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3658627.1662669081.1@warthog.procyon.org.uk>
-Date:   Thu, 08 Sep 2022 21:31:21 +0100
-Message-ID: <3658630.1662669081@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSmjF1sYoP-Z8vj+O4=NPQMdw+L4=iFZtDbHzJg7ey6vA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Anna Schumaker <anna@kernel.org> wrote:
+On Thu, Sep 08, 2022 at 04:09:06PM -0400, Paul Moore wrote:
+> On Thu, Sep 8, 2022 at 3:58 PM Günther Noack <gnoack3000@gmail.com> wrote:
+> >
+> > Like path_truncate, the file_truncate hook also restricts file
+> > truncation, but is called in the cases where truncation is attempted
+> > on an already-opened file.
+> >
+> > This is required in a subsequent commit to handle ftruncate()
+> > operations differently to truncate() operations.
+> >
+> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > ---
+> >  fs/namei.c                    |  6 +++---
+> >  fs/open.c                     |  4 ++--
+> >  include/linux/lsm_hook_defs.h |  1 +
+> >  include/linux/security.h      |  6 ++++++
+> >  security/apparmor/lsm.c       |  6 ++++++
+> >  security/security.c           |  5 +++++
+> >  security/tomoyo/tomoyo.c      | 13 +++++++++++++
+> >  7 files changed, 36 insertions(+), 5 deletions(-)
+>
+> We need to get John and Tetsuo's ACKs on this patch, but in addition
+> to that I have two small comments (below).
 
-> > +       fc->lsm_set = true;
-> 
-> I was wondering if there is any way to have security_sb_set_mnt_opts()
-> or security_sb_clone_mnt_opts() set this value automatically?  A quick
-> "git-grep" for security_sb_set_mnt_opts() shows that it's also called
-> by btrfs at some point, so having this done automatically feels less
-> fragile to me than requiring individual filesystems to set it
-> manually.
++CC: John Johansen and Tetsuo Handa -- this change is splitting up the
+path_truncate LSM hook into a path_truncate and file_truncate variant,
+one operating on the path as before, and one operating on a struct
+file*. As a result, AppArmor and TOMOYO need to implement the
+file-based hook as well and treat it the same as before by looking at
+the file's ->f_path. Does this change seem reasonable to you?
 
-Hmmm... I wonder if cifs and afs should be calling
-security_sb_clone_mnt_opts() also.
 
-David
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 53b4bc094db2..52105873d1f8 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -53,8 +53,8 @@
+> >   * The new code replaces the old recursive symlink resolution with
+> >   * an iterative one (in case of non-nested symlink chains).  It does
+> >   * this with calls to <fs>_follow_link().
+> > - * As a side effect, dir_namei(), _namei() and follow_link() are now
+> > - * replaced with a single function lookup_dentry() that can handle all
+> > + * As a side effect, dir_namei(), _namei() and follow_link() are now
+> > + * replaced with a single function lookup_dentry() that can handle all
+>
+> Since this patch(set) is likely to go in via the Landlock tree, it is
+> very important to keep changes outside of security/landlock to a bare
+> minimum of what is required both to reduce merge conflicts and
+> highlight the significant changes.  This change doesn't appear
+> necessary ... and I'm having a hard time spotting the difference in
+> the lines.
 
+Thanks for pointing this out, I fully agree!
+
+Both edits that you flagged were unintentional, I should have double
+checked this patch better. I'll address them in the next version.
+
+(You can't see the difference here because my editor trimmed trailing
+whitespace on save (*facepalm*) - I turned this off now.)
+
+
+> > diff --git a/fs/open.c b/fs/open.c
+> > index 8a813fa5ca56..0831433e493a 100644
+> > --- a/fs/open.c
+> > +++ b/fs/open.c
+> > @@ -1271,7 +1271,7 @@ struct file *filp_open(const char *filename, int flags, umode_t mode)
+> >  {
+> >         struct filename *name = getname_kernel(filename);
+> >         struct file *file = ERR_CAST(name);
+> > -
+> > +
+>
+> See my comment above about unnecessary changes.
+
+Same here, I'm fixing that for the next version.
+
+Thanks for the review,
+Günther
+
+--
