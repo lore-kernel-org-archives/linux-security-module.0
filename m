@@ -2,197 +2,121 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0018FC38145
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 15:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFD2C38145
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Sep 2022 15:19:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231517AbiIHPRe (ORCPT
+        id S229869AbiIHPTC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Sep 2022 11:17:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
+        Thu, 8 Sep 2022 11:19:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229789AbiIHPRd (ORCPT
+        with ESMTP id S229716AbiIHPTC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Sep 2022 11:17:33 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DAA740571;
-        Thu,  8 Sep 2022 08:17:32 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id go34so3790453ejc.2;
-        Thu, 08 Sep 2022 08:17:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=dvC/u7qJ5dN4X47tbsTGAuz++QpERj+4FDleSIpBEMg=;
-        b=R0hVOMicuPDSnoQmcmYiJB3LFWFfOFwjBgRBuwuOEWI5JTxT51Lu0OjLr++Gxw/lzs
-         Tvik3ezKxyKAnzDTCdQqFNmpHVznLaNacrF9ZuvJc9pBhz0lrAdZi1n+3xp/ijThvgp8
-         VOwRWcRDrlK9c+JFS1o8ONZvPVH7bR5r3/0ESeh6jy2zLWd7yU9MbottgDeiLnCTWQUN
-         tzuE0V5OqQhzozQQSsV16et/mkj7icGxA9KjWbtIM5r6eFzdxL2e+f9jqf4Nw1JWc8Gp
-         zzjf6KnNbCgGJ8j2doSbs7qY9udYo9nEXzEMNqBxnxO5iPN9tehMBETqPTDu68UbIvgn
-         qldw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=dvC/u7qJ5dN4X47tbsTGAuz++QpERj+4FDleSIpBEMg=;
-        b=bCVLOJe+uWFWhqRYSGlMsFWddY0ccOuslSZ8SxdL5L4VKGycPyhjMCScLRhrL0wnfH
-         RsYzRQaebJgmm78Cg/YaAN4h7x05qFflvpl/48d9F+9zdZvvCyQq7TL4x9K/CZjvJyKp
-         MBqif/DNTnyFdBHskvp2mk1B8zH0UkInMhxX7ly6sfwJuQkpGto1JBRRvrIjiFf3x+97
-         o5C8f42lClJCCLQaBHcMn+tBo5h3qGNYa5g+kVTJEFlKNVY8QQcOH4CmslmqXyG5fWq1
-         vvyGtTkV49j8EDzzYtl4fiB78Cu5BoqX0p4ICS6c4nbSy8sIiz0tWrTpps/jPlbQ+W6X
-         NDEg==
-X-Gm-Message-State: ACgBeo2kHgehmbKYlK/bn9FOqYfXQFkMOZxRq42BTwPpoWaewC3p1ZtZ
-        i4+mAZFTL3LeSGmr2QXgeLi+SG2lq4CZ77J0pa8=
-X-Google-Smtp-Source: AA6agR6lkwvnPcInorNKbMkhlPy/kqMnwSqf9ilS5C3PIU+zXOi3rmnC/1PYHJgUShzGaAZn2JBWrMwTREu95J9WrlE=
-X-Received: by 2002:a17:907:a04f:b0:772:da0b:e2f1 with SMTP id
- gz15-20020a170907a04f00b00772da0be2f1mr3625960ejc.327.1662650250524; Thu, 08
- Sep 2022 08:17:30 -0700 (PDT)
+        Thu, 8 Sep 2022 11:19:02 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED7DB774B
+        for <linux-security-module@vger.kernel.org>; Thu,  8 Sep 2022 08:19:00 -0700 (PDT)
+Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 288FIxPP039482;
+        Fri, 9 Sep 2022 00:18:59 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
+ Fri, 09 Sep 2022 00:18:59 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 288FIwG7039479
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 9 Sep 2022 00:18:58 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <8ac2731c-a1db-df7b-3690-dac2b371e431@I-love.SAKURA.ne.jp>
+Date:   Fri, 9 Sep 2022 00:18:52 +0900
 MIME-Version: 1.0
-References: <20220906170301.256206-1-roberto.sassu@huaweicloud.com>
- <20220906170301.256206-2-roberto.sassu@huaweicloud.com> <CAADnVQ+o8zyi_Z+XqCQynmvj04AtEtF9AoOTSeyUx9dvKTXOqg@mail.gmail.com>
- <02309cfbc1ce47f7de6be8addc2caa315b1fee1b.camel@huaweicloud.com>
- <CAADnVQ+cEM5Sb7d9yPA72Mp2zimx7VZ5Si3SPVdAZgsdFGpP1Q@mail.gmail.com> <8d7a713e500b5e3fce93e4c5c7b8841eb6dd28e4.camel@huaweicloud.com>
-In-Reply-To: <8d7a713e500b5e3fce93e4c5c7b8841eb6dd28e4.camel@huaweicloud.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Thu, 8 Sep 2022 08:17:19 -0700
-Message-ID: <CAADnVQL7murY8G4SG5sF3855ETBpmrv0S-dueR8Rht4ucm6WwQ@mail.gmail.com>
-Subject: Re: [PATCH 1/7] bpf: Add missing fd modes check for map iterators
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hou Tao <houtao1@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        stable <stable@vger.kernel.org>, Chenbo Feng <fengc@google.com>,
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Subject: Re: LSM stacking in next for 6.1?
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        paul Moore <paul@paul-moore.com>,
         LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     James Morris <jmorris@namei.org>, linux-audit@redhat.com,
+        John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
+        SElinux list <selinux@vger.kernel.org>
+References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
+ <791e13b5-bebd-12fc-53de-e9a86df23836@schaufler-ca.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <791e13b5-bebd-12fc-53de-e9a86df23836@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 8, 2022 at 6:59 AM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> On Wed, 2022-09-07 at 09:02 -0700, Alexei Starovoitov wrote:
-> >
->
-> [...]
->
-> > > Well, if you write a security module to prevent writes on a map,
-> > > and
-> > > user space is able to do it anyway with an iterator, what is the
-> > > purpose of the security module then?
-> >
-> > sounds like a broken "security module" and nothing else.
->
-> Ok, if a custom security module does not convince you, let me make a
-> small example with SELinux.
->
-> I created a small map iterator that sets every value of a map to 5:
->
-> SEC("iter/bpf_map_elem")
-> int write_bpf_hash_map(struct bpf_iter__bpf_map_elem *ctx)
-> {
->         u32 *key = ctx->key;
->         u8 *val = ctx->value;
->
->         if (key == NULL || val == NULL)
->                 return 0;
->
->         *val = 5;
->         return 0;
-> }
->
-> I create and pin a map:
->
-> # bpftool map create /sys/fs/bpf/map type array key 4 value 1 entries 1
-> name test
->
-> Initially, the content of the map looks like:
->
-> # bpftool map dump pinned /sys/fs/bpf/map
-> key: 00 00 00 00  value: 00
-> Found 1 element
->
-> I then created a new SELinux type bpftool_test_t, which has only read
-> permission on maps:
->
-> # sesearch -A -s bpftool_test_t -t unconfined_t -c bpf
-> allow bpftool_test_t unconfined_t:bpf map_read;
->
-> So, what I expect is that this type is not able to write to the map.
->
-> Indeed, the current bpftool is not able to do it:
->
-> # strace -f -etrace=bpf runcon -t bpftool_test_t bpftool iter pin
-> writer.o /sys/fs/bpf/iter map pinned /sys/fs/bpf/map
-> bpf(BPF_OBJ_GET, {pathname="/sys/fs/bpf/map", bpf_fd=0, file_flags=0},
-> 144) = -1 EACCES (Permission denied)
-> Error: bpf obj get (/sys/fs/bpf): Permission denied
->
-> This happens because the current bpftool requests to access the map
-> with read-write permission, and SELinux denies it:
->
-> # cat /var/log/audit/audit.log|audit2allow
->
->
-> #============= bpftool_test_t ==============
-> allow bpftool_test_t unconfined_t:bpf map_write;
->
->
-> The command failed, and the content of the map is still:
->
-> # bpftool map dump pinned /sys/fs/bpf/map
-> key: 00 00 00 00  value: 00
-> Found 1 element
->
->
-> Now, what I will do is to use a slightly modified version of bpftool
-> which requests read-only access to the map instead:
->
-> # strace -f -etrace=bpf runcon -t bpftool_test_t ./bpftool iter pin
-> writer.o /sys/fs/bpf/iter map pinned /sys/fs/bpf/map
-> bpf(BPF_OBJ_GET, {pathname="/sys/fs/bpf/map", bpf_fd=0,
-> file_flags=BPF_F_RDONLY}, 16) = 3
-> libbpf: elf: skipping unrecognized data section(5) .eh_frame
-> libbpf: elf: skipping relo section(6) .rel.eh_frame for section(5)
-> .eh_frame
->
-> ...
->
-> bpf(BPF_LINK_CREATE, {link_create={prog_fd=4, target_fd=0,
-> attach_type=BPF_TRACE_ITER, flags=0}, ...}, 48) = 5
-> bpf(BPF_OBJ_PIN, {pathname="/sys/fs/bpf/iter", bpf_fd=5, file_flags=0},
-> 16) = 0
->
-> That worked, because SELinux grants read-only permission to
-> bpftool_test_t. However, the map iterator does not check how the fd was
-> obtained, and thus allows the iterator to be created.
->
-> At this point, we have write access, despite not having the right to do
-> it:
+On 2022/08/03 9:01, Casey Schaufler wrote:
+> I would like very much to get v38 or v39 of the LSM stacking for Apparmor
+> patch set in the LSM next branch for 6.1. The audit changes have polished
+> up nicely and I believe that all comments on the integrity code have been
+> addressed. The interface_lsm mechanism has been beaten to a frothy peak.
+> There are serious binder changes, but I think they address issues beyond
+> the needs of stacking. Changes outside these areas are pretty well limited
+> to LSM interface improvements.
+> 
 
-That is a wrong assumption to begin with.
-Having an fd to a bpf object (map, link, prog) allows access.
-read/write sort-of applicable to maps, but not so much
-to progs, links.
-That file based read/write flag is only for user processes.
-bpf progs always had separate flags for that.
-See BPF_F_RDONLY vs BPF_F_RDONLY_PROG.
-One doesn't imply the other.
+After ((SELinux xor Smack) and AppArmor) is made possible in next for 6.1, what
+comes next? Are you planning to make (SELinux and Smack and AppArmor) possible?
+
+My concern is, when loadable LSM modules becomes legal, for I'm refraining from
+again proposing CaitSith until LSM stacking completes.
+
+Linus Torvalds said
+
+  You security people are insane. I'm tired of this "only my version is correct" crap.
+
+at https://lkml.kernel.org/r/alpine.LFD.0.999.0710010803280.3579@woody.linux-foundation.org .
+
+Many modules
+
+    SimpleFlow （ 2016/04/21 https://lwn.net/Articles/684825/ ）
+    HardChroot （ 2016/07/29 https://lwn.net/Articles/695984/ ）
+    Checmate （ 2016/08/04 https://lwn.net/Articles/696344/ ）
+    LandLock （ 2016/08/25 https://lwn.net/Articles/698226/ ）
+    PTAGS （ 2016/09/29 https://lwn.net/Articles/702639/ ）
+    CaitSith （ 2016/10/21 https://lwn.net/Articles/704262/ ）
+    SafeName （ 2016/05/03 https://lwn.net/Articles/686021/ ）
+    WhiteEgret （ 2017/05/30 https://lwn.net/Articles/724192/ ）
+    shebang （ 2017/06/09 https://lwn.net/Articles/725285/ ）
+    S.A.R.A. （ 2017/06/13 https://lwn.net/Articles/725230/ ）
+
+are proposed 5 or 6 years ago, but mostly became silent...
+
+I still need byte-code analysis for finding the hook and code for making the hook
+writable in AKARI/CaitSith due to lack of EXPORT_SYMBOL_GPL(security_add_hooks).
+I wonder when I can stop questions like https://osdn.net/projects/tomoyo/lists/archive/users-en/2022-September/000740.html
+caused by https://patchwork.kernel.org/project/linux-security-module/patch/alpine.LRH.2.20.1702131631490.8914@namei.org/ .
+
+Last 10 years, my involvement with Linux kernel is "fixing bugs" rather than
+"developing security mechanisms". Changes what I found in the past 10 years are:
+
+  As far as I'm aware, more than 99% of systems still disable SELinux. People use RHEL,
+  but the reason to choose RHEL is not because RHEL supports SELinux. The only thing
+  changed is that the way to disable SELinux changed from SELINUX=disabled in
+  /etc/selinux/config to selinux=0 on kernel command line options.
+
+  Instead, Ubuntu users are increasing, but the reason people choose Ubuntu is not because
+  Ubuntu supports AppArmor. Maybe because easy to use container environment. Maybe because
+  available as Windows Subsystem for Linux.
+
+  However, in many cases, it seems that whether the OS is Windows or Linux no longer
+  matters. Programs are written using frameworks/languages which developers hardly care
+  about Windows API or Linux syscall. LSM significantly focuses on syscalls, but the
+  trend might no longer be trying to solve in the LSM layer...
+
+Also, Linux servers started using AntiVirus software. Enterprise AntiVirus software uses
+loadable kernel module that rewrites system call table rather than using LSM interface.
+It seems that people prefer out-of-the-box security over fine grained access control rule
+based security. In other words, it seems that allowlist based LSM modules are too
+difficult for normal users. Maybe it is better for normal users to develop and use
+single-function LSMs than try to utilize ((SELinux xor Smack) and AppArmor)... But
+still loadable LSM modules are not legally available...
+
