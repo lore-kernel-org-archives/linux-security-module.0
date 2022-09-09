@@ -2,194 +2,382 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DD2ECAAD3
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Sep 2022 11:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A860C6FA86
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Sep 2022 12:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230220AbiIILdX (ORCPT
+        id S229962AbiIIMIu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Sep 2022 07:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58408 "EHLO
+        Fri, 9 Sep 2022 08:08:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229631AbiIILdW (ORCPT
+        with ESMTP id S230490AbiIIMIi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Sep 2022 07:33:22 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D328E13B57E
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Sep 2022 04:33:20 -0700 (PDT)
-Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 289BWvna016068;
-        Fri, 9 Sep 2022 20:32:57 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
- Fri, 09 Sep 2022 20:32:57 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 289BWv38016063
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 9 Sep 2022 20:32:57 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <854c05ad-888e-b882-bb97-65f4ca289bc6@I-love.SAKURA.ne.jp>
-Date:   Fri, 9 Sep 2022 20:32:56 +0900
+        Fri, 9 Sep 2022 08:08:38 -0400
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D97B3134627;
+        Fri,  9 Sep 2022 05:08:32 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4MPF4H0LqZz9v7N9;
+        Fri,  9 Sep 2022 20:02:55 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwC3rpKVLBtj1uszAA--.31607S2;
+        Fri, 09 Sep 2022 13:08:02 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+        haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+        dhowells@redhat.com, jarkko@kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, shuah@kernel.org
+Cc:     bpf@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        deso@posteo.net, memxor@gmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v17 00/12] bpf: Add kfuncs for PKCS#7 signature verification
+Date:   Fri,  9 Sep 2022 14:07:24 +0200
+Message-Id: <20220909120736.1027040-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Subject: Re: LSM stacking in next for 6.1?
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, linux-audit@redhat.com,
-        John Johansen <john.johansen@canonical.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keescook@chromium.org,
-        SElinux list <selinux@vger.kernel.org>
-References: <791e13b5-bebd-12fc-53de-e9a86df23836.ref@schaufler-ca.com>
- <791e13b5-bebd-12fc-53de-e9a86df23836@schaufler-ca.com>
- <8ac2731c-a1db-df7b-3690-dac2b371e431@I-love.SAKURA.ne.jp>
- <CAHC9VhQGnEcoYeGpwbbXbMrG1dOvJ=2ohd4zPYoqBJK9p1mSjQ@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhQGnEcoYeGpwbbXbMrG1dOvJ=2ohd4zPYoqBJK9p1mSjQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwC3rpKVLBtj1uszAA--.31607S2
+X-Coremail-Antispam: 1UD129KBjvAXoW3uFyxtFy3uryUKFW5Gw1xZrb_yoW8XFWkZo
+        WfWw4fWay5Kr17ArnrCF1xCFy8uw1Ik34DArsIvr15WFnFgrWUCFyDua1xXr4qgan5WFyj
+        ga45C34DZFZrXFnxn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+        AaLaJ3UjIYCTnIWjp_UUUY17kC6x804xWl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK
+        8VAvwI8IcIk0rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+        AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF
+        7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+        0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28I
+        cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
+        IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI
+        42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42
+        IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
+        87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAKBF1jj4LqRgAAsQ
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2022/09/09 3:52, Paul Moore wrote:
-> At least one of those, Landlock, has been merged upstream and is now
-> available in modern released Linux Kernels.  As far as the other LSMs
-> are concerned, I don't recall there ever being significant interest
-> among other developers or users to warrant their inclusion upstream.
-> If the authors believe that has changed, or is simply not true, they
-> are always welcome to post their patches again for discussion, review,
-> and potential upstreaming.  However, I will caution that it is
-> becoming increasingly difficult for people to find time to review
-> potential new LSMs so it may a while to attract sufficient comments
-> and feedback.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Inclusion into upstream is far from the goal.
+One of the desirable features in security is the ability to restrict import
+of data to a given system based on data authenticity. If data import can be
+restricted, it would be possible to enforce a system-wide policy based on
+the signing keys the system owner trusts.
 
-> As has been discussed before, this isn't so much an issue with the
-> __ro_after_init change, it's really more of an issue of running
-> out-of-tree kernel code on pre-built distribution kernels, with
-> "pre-built" being the most important part.  It is my understanding
-> that if the user/developer built their own patched kernel this would
-> not likely be an issue as the out-of-tree LSM could be patched into
-> the kernel source.
+This feature is widely used in the kernel. For example, if the restriction
+is enabled, kernel modules can be plugged in only if they are signed with a
+key whose public part is in the primary or secondary keyring.
 
-There always is LSM module which is not enabled in pre-built distribution kernels.
-https://bugzilla.redhat.com/show_bug.cgi?id=542986
+For eBPF, it can be useful as well. For example, it might be useful to
+authenticate data an eBPF program makes security decisions on.
 
-Even if source code is already available in distribution kernels, as long as
-distribution refuses to include into pre-built distribution kernels, it is no
-different from the out-of-tree LSM.
+After a discussion in the eBPF mailing list, it was decided that the stated
+goal should be accomplished by introducing four new kfuncs:
+bpf_lookup_user_key() and bpf_lookup_system_key(), for retrieving a keyring
+with keys trusted for signature verification, respectively from its serial
+and from a pre-determined ID; bpf_key_put(), to release the reference
+obtained with the former two kfuncs, bpf_verify_pkcs7_signature(), for
+verifying PKCS#7 signatures.
 
-The user/developer has to rebuild the whole distribution kernels is an unacceptable
-barrier.
+Other than the key serial, bpf_lookup_user_key() also accepts key lookup
+flags, that influence the behavior of the lookup. bpf_lookup_system_key()
+accepts pre-determined IDs defined in include/linux/verification.h.
 
->                     The problem comes when the user/developer wants to
-> dynamically load their out-of-tree LSM into a pre-built distribution
-> kernel, presumably to preserve a level of distribution support.
+bpf_key_put() accepts the new bpf_key structure, introduced to tell whether
+the other structure member, a key pointer, is valid or not. The reason is
+that verify_pkcs7_signature() also accepts invalid pointers, set with the
+pre-determined ID, to select a system-defined keyring. key_put() must be
+called only for valid key pointers.
 
-Not only for preserving the level of distribution support. But also for
-allowing immediate updates whenever distribution kernels are updated, and
-allowing out of kernel modules (e.g. from AntiVirus, hardware vendors) to be
-loaded into pre-built distribution kernels (instead of user/developer rebuilt
-distribution kernels).
+Since the two key lookup functions allocate memory and one increments a key
+reference count, they must be used in conjunction with bpf_key_put(). The
+latter must be called only if the lookup functions returned a non-NULL
+pointer. The verifier denies the execution of eBPF programs that don't
+respect this rule.
 
-> Unfortunately, to the best of my knowledge, none of the major
-> enterprise Linux distributions will provide support for arbitrary
-> third-party kernel modules (it may work, but if something fails the
-> user is on their own to triage and resolve).
+The two key lookup functions should be used in alternative, depending on
+the use case. While bpf_lookup_user_key() provides great flexibility, it
+seems suboptimal in terms of security guarantees, as even if the eBPF
+program is assumed to be trusted, the serial used to obtain the key pointer
+might come from untrusted user space not choosing one that the system
+administrator approves to enforce a mandatory policy.
 
-I know it, especially Red Hat is strict regarding that. Red Hat does not provide
-support for rebuilt kernels even with zero changes (e.g. same kernel source code,
-same kernel configuration).
+bpf_lookup_system_key() instead provides much stronger guarantees,
+especially if the pre-determined ID is not passed by user space but is
+hardcoded in the eBPF program, and that program is signed. In this case,
+bpf_verify_pkcs7_signature() will always perform signature verification
+with a key that the system administrator approves, i.e. the primary,
+secondary or platform keyring.
 
-Some hardware vendors provide support for their device drivers when used with
-RHEL kernel but does not provide support when used with CentOS kernel (not
-CentOS Stream), despite there is effectively no difference. Being able to
-continue using pre-built distribution kernels is a fatal requirement for users.
+Nevertheless, key permission checks need to be done accurately. Since
+bpf_lookup_user_key() cannot determine how a key will be used by other
+kfuncs, it has to defer the permission check to the actual kfunc using the
+key. It does it by calling lookup_user_key() with KEY_DEFER_PERM_CHECK as
+needed permission. Later, bpf_verify_pkcs7_signature(), if called,
+completes the permission check by calling key_validate(). It does not need
+to call key_task_permission() with permission KEY_NEED_SEARCH, as it is
+already done elsewhere by the key subsystem. Future kfuncs using the
+bpf_key structure need to implement the proper checks as well.
 
-> 
-> Beyond the support issue, there are likely to be other problems as
-> well since the kernel interfaces, including the LSM hooks themselves,
-> are not guaranteed to be stable across kernel releases.
+Finally, the last kfunc, bpf_verify_pkcs7_signature(), accepts the data and
+signature to verify as eBPF dynamic pointers, to minimize the number of
+kfunc parameters, and the keyring with keys for signature verification as a
+bpf_key structure, returned by one of the two key lookup functions.
 
-That's not a big problem. Loadable LSM modules will be updated as the kernel
-interfaces change.
+bpf_lookup_user_key() and bpf_verify_pkcs7_signature() can be called only
+from sleepable programs, because of memory allocation and crypto
+operations. For example, the lsm.s/bpf attach point is suitable,
+fexit/array_map_update_elem is not.
 
-But the combination of "the kernel interfaces does not legally allow loadable LSM modules"
-and "distributors do not enable LSMs already available in upstream kernels" and "it is
-becoming increasingly difficult for people to find time to review potential new LSMs" and
-"it is difficult for users/developers to continue rebuilding distributor kernels only for
-enabling LSMs" indicates there is no space for LSMs which are not enabled in pre-built
-distribution kernels to survive; it is tantamount to a death sentence.
-Legally allowing loadable LSM modules is an answer to current situation.
+The correctness of implementation of the new kfuncs and of their usage is
+checked with the introduced tests.
 
+The patch set includes a patch from another author (dependency) for sake of
+completeness. It is organized as follows.
 
+Patch 1 from KP Singh allows kfuncs to be used by LSM programs. Patch 2
+splits is_dynptr_reg_valid_init() and introduces is_dynptr_type_expected(),
+to know more precisely the cause of a negative result of a dynamic pointer
+check. Patch 3 allows dynamic pointers to be used as kfunc parameters.
+Patch 4 exports bpf_dynptr_get_size(), to obtain the real size of data
+carried by a dynamic pointer. Patch 5 makes available for new eBPF kfuncs
+and programs some key-related definitions. Patch 6 introduces the
+bpf_lookup_*_key() and bpf_key_put() kfuncs. Patch 7 introduces the
+bpf_verify_pkcs7_signature() kfunc. Patch 8 changes the testing kernel
+configuration to compile everything as built-in. Finally, patches 9-12
+introduce the tests.
 
-> 
->> Last 10 years, my involvement with Linux kernel is "fixing bugs" rather than
->> "developing security mechanisms". Changes what I found in the past 10 years are:
->>
->>   As far as I'm aware, more than 99% of systems still disable SELinux.
-> 
-> I would challenge you to support that claim with data.
+Changelog
 
-Unfortunately, that's an impossible request for me. I worked at a support center
-for three years, and I found (from e.g. sosreport) that no system enabled SELinux.
-Since I already left the support center, I'm no longer in a position who can
-collect statistic data.
+v16:
+ - Remove comments in include/linux/key.h for KEY_LOOKUP_*
+ - Change kmalloc() flag from GFP_ATOMIC to GFP_KERNEL in
+   bpf_lookup_user_key(), as the kfunc needs anyway to be sleepable
+   (suggested by Kumar)
+ - Test passing a dynamic pointer with NULL data to
+   bpf_verify_pkcs7_signature() (suggested by Kumar)
 
->                                                         Granted, we
-> are coming from very different LSM backgrounds, but I find that number
-> very suspect.  It has been several years since I last looked, but I
-> believe the latest published Android numbers would give some support
-> to the idea that more than 1% of SELinux based systems are running in
-> enforcing (or permissive) mode.  Significantly more.
+v15:
+ - Add kfunc_dynptr_param test to deny list for s390x
 
-In know-how manuals developed by the support center, disabling SELinux is the
-first action after installation, and people using the support center follow it.
-(I personally feel that using SELinux with targeted policy is possible. But
-they hate troubles caused by unwanted functionality. And they can't afford
-keeping SELinux enabled because nobody can adjust policy for their servers.
-If troubles caused by SELinux happen, even I won't be able to provide support
-because I'm not in a position to understand and manage the details/usage of
-their servers.)
+v14:
+ - Explain that is_dynptr_type_expected() will be useful also for BTF
+   (suggested by Joanne)
+ - Rename KEY_LOOKUP_FLAGS_ALL to KEY_LOOKUP_ALL (suggested by Jarkko)
+ - Swap declaration of spi and dynptr_type in is_dynptr_type_expected()
+   (suggested by Joanne)
+ - Reimplement kfunc dynptr tests with a regular eBPF program instead of
+   executing them with test_verifier (suggested by Joanne)
+ - Make key lookup flags as enum so that they are automatically exported
+   through BTF (suggested by Alexei)
+ 
+v13:
+ - Split is_dynptr_reg_valid_init() and introduce is_dynptr_type_expected()
+   to see if the dynamic pointer type passed as argument to a kfunc is
+   supported (suggested by Kumar)
+ - Add forward declaration of struct key in include/linux/bpf.h (suggested
+   by Song)
+ - Declare mask for key lookup flags, remove key_lookup_flags_check()
+   (suggested by Jarkko and KP)
+ - Allow only certain dynamic pointer types (currently, local) to be passed
+   as argument to kfuncs (suggested by Kumar)
+ - For each dynamic pointer parameter in kfunc, additionally check if the
+   passed pointer is to the stack (suggested by Kumar)
+ - Split the validity/initialization and dynamic pointer type check also in
+   the verifier, and adjust the expected error message in the test (a test
+   for an unexpected dynptr type passed to a helper cannot be added due to
+   missing suitable helpers, but this case has been tested manually)
+ - Add verifier tests to check the dynamic pointers passed as argument to
+   kfuncs (suggested by Kumar)
 
-You might wonder how they are protecting their servers without SELinux.
-It is a mystery.
+v12:
+ - Put lookup_key and verify_pkcs7_sig tests in deny list for s390x (JIT
+   does not support calling kernel function)
 
-But I if recall the days at the support center, I seldom saw servers which
-directly face the Internet. Maybe they are using security appliance for servers
-facing the Internet, and using RHEL for servers in already secured environment.
+v11:
+ - Move stringify_struct() macro to include/linux/btf.h (suggested by
+   Daniel)
+ - Change kernel configuration options in
+   tools/testing/selftests/bpf/config* from =m to =y
 
-Then, the need to enable SELinux remains still low sounds realistic.
-For example, telnet and ftp are used even nowadays in some systems.
-https://bugzilla.redhat.com/show_bug.cgi?id=1853102
-https://bugzilla.redhat.com/show_bug.cgi?id=1914536
+v10:
+ - Introduce key_lookup_flags_check() and system_keyring_id_check() inline
+   functions to check parameters (suggested by KP)
+ - Fix descriptions and comment of key-related kfuncs (suggested by KP)
+ - Register kfunc set only once (suggested by Alexei)
+ - Move needed kernel options to the architecture-independent configuration
+   for testing
 
-But again, I'm not in a position for collecting statistic data.
+v9:
+ - Drop patch to introduce KF_SLEEPABLE kfunc flag (already merged)
+ - Rename valid_ptr member of bpf_key to has_ref (suggested by Daniel)
+ - Check dynamic pointers in kfunc definition with bpf_dynptr_kern struct
+   definition instead of string, to detect structure renames (suggested by
+   Daniel)
+ - Explicitly say that we permit initialized dynamic pointers in kfunc
+   definition (suggested by Daniel)
+ - Remove noinline __weak from kfuncs definition (reported by Daniel)
+ - Simplify key lookup flags check in bpf_lookup_user_key() (suggested by
+   Daniel)
+ - Explain the reason for deferring key permission check (suggested by
+   Daniel)
+ - Allocate memory with GFP_ATOMIC in bpf_lookup_system_key(), and remove
+   KF_SLEEPABLE kfunc flag from kfunc declaration (suggested by Daniel)
+ - Define only one kfunc set and remove the loop for registration
+   (suggested by Alexei)
 
-> 
->>   People use RHEL,
->>   but the reason to choose RHEL is not because RHEL supports SELinux.
-> 
-> Once again, if you are going to make strong claims such as this,
-> please provide data.  I know of several RHEL users that are only able
-> to run SELinux based systems as it is the only LSM which meets their
-> security requirements.
+v8:
+ - Define the new bpf_key structure to carry the key pointer and whether
+   that pointer is valid or not (suggested by Daniel)
+ - Drop patch to mark a kfunc parameter with the __maybe_null suffix
+ - Improve documentation of kfuncs
+ - Introduce bpf_lookup_system_key() to obtain a key pointer suitable for
+   verify_pkcs7_signature() (suggested by Daniel)
+ - Use the new kfunc registration API
+ - Drop patch to test the __maybe_null suffix
+ - Add tests for bpf_lookup_system_key()
 
-Sure, there are systems where SELinux is the only choice.
-But surely there are systems where SELinux is not the only choice.
+v7:
+ - Add support for using dynamic and NULL pointers in kfunc (suggested by
+   Alexei)
+ - Add new kfunc-related tests
 
-> I would caution against confusing the security policy driven access
-> controls provided by many in-tree LSMs with out-of-tree antivirus
-> software.  They have different goals, different use cases, and
-> different user groups (markets).
+v6:
+ - Switch back to key lookup helpers + signature verification (until v5),
+   and defer permission check from bpf_lookup_user_key() to
+   bpf_verify_pkcs7_signature()
+ - Add additional key lookup test to illustrate the usage of the
+   KEY_LOOKUP_CREATE flag and validate the flags (suggested by Daniel)
+ - Make description of flags of bpf_lookup_user_key() more user-friendly
+   (suggested by Daniel)
+ - Fix validation of flags parameter in bpf_lookup_user_key() (reported by
+   Daniel)
+ - Rename bpf_verify_pkcs7_signature() keyring-related parameters to
+   user_keyring and system_keyring to make their purpose more clear
+ - Accept keyring-related parameters of bpf_verify_pkcs7_signature() as
+   alternatives (suggested by KP)
+ - Replace unsigned long type with u64 in helper declaration (suggested by
+   Daniel)
+ - Extend the bpf_verify_pkcs7_signature() test by calling the helper
+   without data, by ensuring that the helper enforces the keyring-related
+   parameters as alternatives, by ensuring that the helper rejects
+   inaccessible and expired keyrings, and by checking all system keyrings
+ - Move bpf_lookup_user_key() and bpf_key_put() usage tests to
+   ref_tracking.c (suggested by John)
+ - Call bpf_lookup_user_key() and bpf_key_put() only in sleepable programs
 
-But due to the above-mentioned death sentence, we currently can't allow
-users/developers to use different LSMs which have different goals,
-different use cases, and different user groups (markets). Very bad...
+v5:
+ - Move KEY_LOOKUP_ to include/linux/key.h
+   for validation of bpf_verify_pkcs7_signature() parameter
+ - Remove bpf_lookup_user_key() and bpf_key_put() helpers, and the
+   corresponding tests
+ - Replace struct key parameter of bpf_verify_pkcs7_signature() with the
+   keyring serial and lookup flags
+ - Call lookup_user_key() and key_put() in bpf_verify_pkcs7_signature()
+   code, to ensure that the retrieved key is used according to the
+   permission requested at lookup time
+ - Clarified keyring precedence in the description of
+   bpf_verify_pkcs7_signature() (suggested by John)
+ - Remove newline in the second argument of ASSERT_
+ - Fix helper prototype regular expression in bpf_doc.py
+
+v4:
+ - Remove bpf_request_key_by_id(), don't return an invalid pointer that
+   other helpers can use
+ - Pass the keyring ID (without ULONG_MAX, suggested by Alexei) to
+   bpf_verify_pkcs7_signature()
+ - Introduce bpf_lookup_user_key() and bpf_key_put() helpers (suggested by
+   Alexei)
+ - Add lookup_key_norelease test, to ensure that the verifier blocks eBPF
+   programs which don't decrement the key reference count
+ - Parse raw PKCS#7 signature instead of module-style signature in the
+   verify_pkcs7_signature test (suggested by Alexei)
+ - Parse kernel module in user space and pass raw PKCS#7 signature to the
+   eBPF program for signature verification
+
+v3:
+ - Rename bpf_verify_signature() back to bpf_verify_pkcs7_signature() to
+   avoid managing different parameters for each signature verification
+   function in one helper (suggested by Daniel)
+ - Use dynamic pointers and export bpf_dynptr_get_size() (suggested by
+   Alexei)
+ - Introduce bpf_request_key_by_id() to give more flexibility to the caller
+   of bpf_verify_pkcs7_signature() to retrieve the appropriate keyring
+   (suggested by Alexei)
+ - Fix test by reordering the gcc command line, always compile sign-file
+ - Improve helper support check mechanism in the test
+
+v2:
+ - Rename bpf_verify_pkcs7_signature() to a more generic
+   bpf_verify_signature() and pass the signature type (suggested by KP)
+ - Move the helper and prototype declaration under #ifdef so that user
+   space can probe for support for the helper (suggested by Daniel)
+ - Describe better the keyring types (suggested by Daniel)
+ - Include linux/bpf.h instead of vmlinux.h to avoid implicit or
+   redeclaration
+ - Make the test selfcontained (suggested by Alexei)
+
+v1:
+ - Don't define new map flag but introduce simple wrapper of
+   verify_pkcs7_signature() (suggested by Alexei and KP)
+
+KP Singh (1):
+  bpf: Allow kfuncs to be used in LSM programs
+
+Roberto Sassu (11):
+  bpf: Move dynptr type check to is_dynptr_type_expected()
+  btf: Allow dynamic pointer parameters in kfuncs
+  bpf: Export bpf_dynptr_get_size()
+  KEYS: Move KEY_LOOKUP_ to include/linux/key.h and define
+    KEY_LOOKUP_ALL
+  bpf: Add bpf_lookup_*_key() and bpf_key_put() kfuncs
+  bpf: Add bpf_verify_pkcs7_signature() kfunc
+  selftests/bpf: Compile kernel with everything as built-in
+  selftests/bpf: Add verifier tests for bpf_lookup_*_key() and
+    bpf_key_put()
+  selftests/bpf: Add additional tests for bpf_lookup_*_key()
+  selftests/bpf: Add test for bpf_verify_pkcs7_signature() kfunc
+  selftests/bpf: Add tests for dynamic pointers parameters in kfuncs
+
+ include/linux/bpf.h                           |   9 +
+ include/linux/bpf_verifier.h                  |   5 +
+ include/linux/btf.h                           |   9 +
+ include/linux/key.h                           |   6 +
+ include/linux/verification.h                  |   8 +
+ kernel/bpf/btf.c                              |  34 ++
+ kernel/bpf/helpers.c                          |   2 +-
+ kernel/bpf/verifier.c                         |  35 +-
+ kernel/trace/bpf_trace.c                      | 180 ++++++++
+ security/keys/internal.h                      |   2 -
+ tools/testing/selftests/bpf/DENYLIST.s390x    |   3 +
+ tools/testing/selftests/bpf/Makefile          |  14 +-
+ tools/testing/selftests/bpf/config            |  32 +-
+ tools/testing/selftests/bpf/config.x86_64     |   7 +-
+ .../testing/selftests/bpf/prog_tests/dynptr.c |   2 +-
+ .../bpf/prog_tests/kfunc_dynptr_param.c       | 164 +++++++
+ .../selftests/bpf/prog_tests/lookup_key.c     | 112 +++++
+ .../bpf/prog_tests/verify_pkcs7_sig.c         | 399 ++++++++++++++++++
+ .../bpf/progs/test_kfunc_dynptr_param.c       |  99 +++++
+ .../selftests/bpf/progs/test_lookup_key.c     |  46 ++
+ .../bpf/progs/test_verify_pkcs7_sig.c         | 100 +++++
+ tools/testing/selftests/bpf/test_verifier.c   |   3 +-
+ .../selftests/bpf/verifier/ref_tracking.c     | 139 ++++++
+ .../testing/selftests/bpf/verify_sig_setup.sh | 104 +++++
+ 24 files changed, 1479 insertions(+), 35 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/kfunc_dynptr_param.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/lookup_key.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_lookup_key.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+ create mode 100755 tools/testing/selftests/bpf/verify_sig_setup.sh
+
+-- 
+2.25.1
 
