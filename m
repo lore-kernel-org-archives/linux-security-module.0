@@ -2,198 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BC7ECAAD3
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Sep 2022 13:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886B3ECAAD3
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Sep 2022 14:08:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231989AbiIINwQ (ORCPT
+        id S232141AbiIIOIM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Sep 2022 09:52:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34758 "EHLO
+        Fri, 9 Sep 2022 10:08:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231895AbiIINvr (ORCPT
+        with ESMTP id S230445AbiIIOHf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Sep 2022 09:51:47 -0400
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB1C085ABB
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Sep 2022 06:51:38 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MPHTh1lsHzMqdjs;
-        Fri,  9 Sep 2022 15:51:36 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MPHTg4wjlzx3;
-        Fri,  9 Sep 2022 15:51:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1662731496;
-        bh=RZPqhRYxUUKvQKUDFVTOjXCFDzQYPDY+U1MkKG6TJQ0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=YuYydORXn7JmVLy6Im+XtTjua+fvKLZZmXMiA/SKWXlGX8/XulXxXFv28EcwgX3Uk
-         ogb0sOI3+0VOvQh/UAU+gx1X1D7wAcvSWLw6+P8arCrbRmDRk5F2CRpD/GQwCftORs
-         7M8D7CFMb0nWYAjcfQ+rSANg80fBkB0ZuA/URjrw=
-Message-ID: <2f9c6131-3140-9c47-cf95-f7fa3cf759ee@digikod.net>
-Date:   Fri, 9 Sep 2022 15:51:35 +0200
+        Fri, 9 Sep 2022 10:07:35 -0400
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B961103065
+        for <linux-security-module@vger.kernel.org>; Fri,  9 Sep 2022 07:05:42 -0700 (PDT)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-127f5411b9cso4150958fac.4
+        for <linux-security-module@vger.kernel.org>; Fri, 09 Sep 2022 07:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=I6ADPzEiooQjq05+LtdvGJfr2nP2w0nBmCIYS00kkYc=;
+        b=kUgpmFBISpZIoFjqAY4L2SPWwEpbSIUzkb62MRHQ2x64jn9IBodtg7iSYSCxQkZoaj
+         xA5Xnpzd6TrRT7DBmBJAhaTM0vcLKJ8IlKpD/PJq1qT4YniqkUm0nU4NWnH8Iq/fe2NI
+         Y0rstic3BlGoJphrtBmAUeBwfH50iabgOVFlNU49j+BnToMuYiXuzXxN4HDAOMsT4Vj9
+         7ZLeq38bqo/1Yx1QVFCZpyXNm2Rj2YGb+ZuW+/gz0r4uDxazaYExHCjXH48NPDJJzYTr
+         17teuZV5PvfIa6//QADbabH+fbrAbj7wnpfCXQRwRFD7s7RjPSxLZHbCLf2DBkswR9Uu
+         yzOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=I6ADPzEiooQjq05+LtdvGJfr2nP2w0nBmCIYS00kkYc=;
+        b=7w1VkXNtiAfsMxcRI7ydOCAwIlZH3x/h7GmcnmAa4GSDpP2bjZtmzwrrABfnwkeiSN
+         QOztNem/IotRI6ZsK9WyXpCq7p8XhVqddOvRDrw3+BI2RtU9VQkmG3TNcN1SO1D4G3Qd
+         pZNdmXbgCu/iiB5bHyv5g2g8AgbhaVzg0ihP/HPNSwSy9BnJVVZ7s8Wd19qx564RIxpv
+         T2UkrJyOTDF6xhqjSCt5Xs2mg7MbEDFZKP8c84bX5Aj71EFpaW56kjvubqYtZazSFzmj
+         Jp1oypqj7rS2tvwc9D8cGEC1IXcm2BpbJQbIMqWtxuR2T15sqwqpoix4/L3QeHNuLaBU
+         cm+A==
+X-Gm-Message-State: ACgBeo3oppNPsifJZ7r7H9GsWJzz/qflqlYjKMnDAM70qwbaDzfU2r/V
+        H/K3Swgno5k7w/vG+baCGzTrgw8cQiLbnFkUBeDJ5Ohi/g==
+X-Google-Smtp-Source: AA6agR53AZ40atMarXdqAH5ACA3XpzH6OGafmmoN3e93leai1NOximUNW9oVLsBDAl8qK85HlaUVw0Z7WKHbR8hIXxw=
+X-Received: by 2002:a05:6870:5808:b0:128:afd5:491f with SMTP id
+ r8-20020a056870580800b00128afd5491fmr5130175oap.136.1662732341451; Fri, 09
+ Sep 2022 07:05:41 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v6 5/5] landlock: Document Landlock's file truncation
- support
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-6-gnoack3000@gmail.com>
-Content-Language: en-US
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20220908195805.128252-6-gnoack3000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220908220222.267255-1-nathanl@linux.ibm.com>
+In-Reply-To: <20220908220222.267255-1-nathanl@linux.ibm.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 9 Sep 2022 10:05:30 -0400
+Message-ID: <CAHC9VhSWmgRxH_5yVfg=ujni_qpWd33NkXS9wKa+1n4fNMtZwA@mail.gmail.com>
+Subject: Re: [PATCH] lockdown: ratelimit denial messages
+To:     Nathan Lynch <nathanl@linux.ibm.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmorris@namei.org, serge@hallyn.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 08/09/2022 21:58, Günther Noack wrote:
-> Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
-> 
-> Adapt the backwards compatibility example and discussion to remove the
-> truncation flag where needed.
-> 
-> Point out potential surprising behaviour related to truncate.
-> 
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+On Thu, Sep 8, 2022 at 6:02 PM Nathan Lynch <nathanl@linux.ibm.com> wrote:
+>
+> User space can flood the log with lockdown denial messages:
+>
+> [  662.555584] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+> [  662.563237] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+> [  662.571134] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+> [  662.578668] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+> [  662.586021] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+> [  662.593398] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
+>
+> Ratelimiting these shouldn't meaningfully degrade the quality of the
+> information logged.
+>
+> Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
 > ---
->   Documentation/userspace-api/landlock.rst | 62 +++++++++++++++++++++---
->   1 file changed, 54 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index b8ea59493964..57802fd1e09b 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -8,7 +8,7 @@ Landlock: unprivileged access control
->   =====================================
->   
->   :Author: Mickaël Salaün
-> -:Date: May 2022
-> +:Date: September 2022
->   
->   The goal of Landlock is to enable to restrict ambient rights (e.g. global
->   filesystem access) for a set of processes.  Because Landlock is a stackable
-> @@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
->               LANDLOCK_ACCESS_FS_MAKE_FIFO |
->               LANDLOCK_ACCESS_FS_MAKE_BLOCK |
->               LANDLOCK_ACCESS_FS_MAKE_SYM |
-> -            LANDLOCK_ACCESS_FS_REFER,
-> +            LANDLOCK_ACCESS_FS_REFER |
-> +            LANDLOCK_ACCESS_FS_TRUNCATE,
->       };
->   
->   Because we may not know on which kernel version an application will be
-> @@ -69,16 +70,26 @@ should try to protect users as much as possible whatever the kernel they are
->   using.  To avoid binary enforcement (i.e. either all security features or
->   none), we can leverage a dedicated Landlock command to get the current version
->   of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> -remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
-> -starting with the second version of the ABI.
-> +remove the `LANDLOCK_ACCESS_FS_REFER` or `LANDLOCK_ACCESS_FS_TRUNCATE` access
-> +rights, which are only supported starting with the second and third version of
-> +the ABI.
->   
->   .. code-block:: c
->   
->       int abi;
->   
->       abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-> -    if (abi < 2) {
-> -        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-> +    switch (abi) {
-> +    case -1:
-> +            perror("The running kernel does not enable to use Landlock");
-> +            return 1;
-> +    case 1:
-> +            /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-> +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-> +            __attribute__((fallthrough));
-> +    case 2:
-> +            /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-> +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
->       }
->   
->   This enables to create an inclusive ruleset that will contain our rules.
-> @@ -127,8 +138,8 @@ descriptor.
->   
->   It may also be required to create rules following the same logic as explained
->   for the ruleset creation, by filtering access rights according to the Landlock
-> -ABI version.  In this example, this is not required because
-> -`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
-> +ABI version.  In this example, this is not required because all of the requested
-> +``allowed_access`` rights are already available in ABI 1.
+>  security/lockdown/lockdown.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This fix is correct, but it should not be part of this series. FYI, I 
-have a patch almost ready to fix some documentation style issues. Please 
-remove this hunk for the next series. I'll deal with the merge conflicts 
-if any.
+This seems reasonable.  While the last visible lockdown message to the
+console might be incorrect/old, I think it would give the user a good
+indication that lockdown is being hit and hopefully preserve the start
+of the denial storm.  It is also worth noting that this does introduce
+a spinlock to this code path, but since it is only an issue on error I
+doubt it will have any significant impact.
 
+I'll leave this until next week to give people a chance to
+comment/object, but if there are no further comments I'll plan on
+merging this into lsm/next.
 
->   
->   We now have a ruleset with one rule allowing read access to ``/usr`` while
->   denying all other handled accesses for the filesystem.  The next step is to
-> @@ -251,6 +262,32 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
->   process, a sandboxed process should have a subset of the target process rules,
->   which means the tracee must be in a sub-domain of the tracer.
->   
-> +Truncating files
-> +----------------
-> +
-> +The operations covered by `LANDLOCK_ACCESS_FS_WRITE_FILE` and
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index 87cbdc64d272..a79b985e917e 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -63,7 +63,7 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
+>
+>         if (kernel_locked_down >= what) {
+>                 if (lockdown_reasons[what])
+> -                       pr_notice("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
+> +                       pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
+>                                   current->comm, lockdown_reasons[what]);
+>                 return -EPERM;
+>         }
+> --
+> 2.37.1
 
-I investigated and in fact we should use double backquotes almost 
-everywhere because it render the same as when using "%" in header files. 
-Please change this for the next series. I'll do the same on the patch I 
-just talk about.
-
-
-> +`LANDLOCK_ACCESS_FS_TRUNCATE` both change the contents of a file and sometimes
-> +overlap in non-intuitive ways.  It is recommended to always specify both of
-> +these together.
-> +
-> +A particularly surprising example is :manpage:`creat(2)`.  The name suggests
-> +that this system call requires the rights to create and write files.  However,
-> +it also requires the truncate right if an existing file under the same name is
-> +already present.
-> +
-> +It should also be noted that truncating files does not require the
-> +`LANDLOCK_ACCESS_FS_WRITE_FILE` right.  Apart from the :manpage:`truncate(2)`
-> +system call, this can also be done through :manpage:`open(2)` with the flags
-> +`O_RDONLY | O_TRUNC`.
-> +
-> +When opening a file, the availability of the `LANDLOCK_ACCESS_FS_TRUNCATE` right
-> +is associated with the newly created file descriptor and will be used for
-> +subsequent truncation attempts using :manpage:`ftruncate(2)`.  It is possible to
-> +have multiple open file descriptors for the same file, where one grants the
-> +right to truncate the file and the other does not.  It is also possible to pass
-> +such file descriptors between processes, keeping their Landlock properties, even
-> +when these processes don't have an enforced Landlock ruleset.
-
-Good addition. Please do not use contractions ("don't").
-
-
-> +
->   Compatibility
->   =============
->   
-> @@ -397,6 +434,15 @@ Starting with the Landlock ABI version 2, it is now possible to securely
->   control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER`
->   access right.
->   
-> +File truncation (ABI < 3)
-> +-------------------------
-> +
-> +File truncation could not be denied before the third Landlock ABI, so it is
-> +always allowed when using a kernel that only supports the first or second ABI.
-> +
-> +Starting with the Landlock ABI version 3, it is now possible to securely control
-> +truncation thanks to the new `LANDLOCK_ACCESS_FS_TRUNCATE` access right.
-> +
->   .. _kernel_support:
->   
->   Kernel support
+-- 
+paul-moore.com
