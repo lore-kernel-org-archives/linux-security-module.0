@@ -2,109 +2,283 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886B3ECAAD3
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Sep 2022 14:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D0CC6FA82
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Sep 2022 14:53:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232141AbiIIOIM (ORCPT
+        id S231462AbiIIOx4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Sep 2022 10:08:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52112 "EHLO
+        Fri, 9 Sep 2022 10:53:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230445AbiIIOHf (ORCPT
+        with ESMTP id S231703AbiIIOxy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Sep 2022 10:07:35 -0400
-Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B961103065
-        for <linux-security-module@vger.kernel.org>; Fri,  9 Sep 2022 07:05:42 -0700 (PDT)
-Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-127f5411b9cso4150958fac.4
-        for <linux-security-module@vger.kernel.org>; Fri, 09 Sep 2022 07:05:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=I6ADPzEiooQjq05+LtdvGJfr2nP2w0nBmCIYS00kkYc=;
-        b=kUgpmFBISpZIoFjqAY4L2SPWwEpbSIUzkb62MRHQ2x64jn9IBodtg7iSYSCxQkZoaj
-         xA5Xnpzd6TrRT7DBmBJAhaTM0vcLKJ8IlKpD/PJq1qT4YniqkUm0nU4NWnH8Iq/fe2NI
-         Y0rstic3BlGoJphrtBmAUeBwfH50iabgOVFlNU49j+BnToMuYiXuzXxN4HDAOMsT4Vj9
-         7ZLeq38bqo/1Yx1QVFCZpyXNm2Rj2YGb+ZuW+/gz0r4uDxazaYExHCjXH48NPDJJzYTr
-         17teuZV5PvfIa6//QADbabH+fbrAbj7wnpfCXQRwRFD7s7RjPSxLZHbCLf2DBkswR9Uu
-         yzOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=I6ADPzEiooQjq05+LtdvGJfr2nP2w0nBmCIYS00kkYc=;
-        b=7w1VkXNtiAfsMxcRI7ydOCAwIlZH3x/h7GmcnmAa4GSDpP2bjZtmzwrrABfnwkeiSN
-         QOztNem/IotRI6ZsK9WyXpCq7p8XhVqddOvRDrw3+BI2RtU9VQkmG3TNcN1SO1D4G3Qd
-         pZNdmXbgCu/iiB5bHyv5g2g8AgbhaVzg0ihP/HPNSwSy9BnJVVZ7s8Wd19qx564RIxpv
-         T2UkrJyOTDF6xhqjSCt5Xs2mg7MbEDFZKP8c84bX5Aj71EFpaW56kjvubqYtZazSFzmj
-         Jp1oypqj7rS2tvwc9D8cGEC1IXcm2BpbJQbIMqWtxuR2T15sqwqpoix4/L3QeHNuLaBU
-         cm+A==
-X-Gm-Message-State: ACgBeo3oppNPsifJZ7r7H9GsWJzz/qflqlYjKMnDAM70qwbaDzfU2r/V
-        H/K3Swgno5k7w/vG+baCGzTrgw8cQiLbnFkUBeDJ5Ohi/g==
-X-Google-Smtp-Source: AA6agR53AZ40atMarXdqAH5ACA3XpzH6OGafmmoN3e93leai1NOximUNW9oVLsBDAl8qK85HlaUVw0Z7WKHbR8hIXxw=
-X-Received: by 2002:a05:6870:5808:b0:128:afd5:491f with SMTP id
- r8-20020a056870580800b00128afd5491fmr5130175oap.136.1662732341451; Fri, 09
- Sep 2022 07:05:41 -0700 (PDT)
+        Fri, 9 Sep 2022 10:53:54 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEDBD1332AE;
+        Fri,  9 Sep 2022 07:53:52 -0700 (PDT)
+Received: from fraeml701-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4MPJrB6nRSz67lnC;
+        Fri,  9 Sep 2022 22:52:42 +0800 (CST)
+Received: from lhrpeml500004.china.huawei.com (7.191.163.9) by
+ fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.31; Fri, 9 Sep 2022 16:53:49 +0200
+Received: from [10.122.132.241] (10.122.132.241) by
+ lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Fri, 9 Sep 2022 15:53:49 +0100
+Message-ID: <72db3ee6-06ee-0af8-06c6-ac16200bb83f@huawei.com>
+Date:   Fri, 9 Sep 2022 17:53:48 +0300
 MIME-Version: 1.0
-References: <20220908220222.267255-1-nathanl@linux.ibm.com>
-In-Reply-To: <20220908220222.267255-1-nathanl@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 9 Sep 2022 10:05:30 -0400
-Message-ID: <CAHC9VhSWmgRxH_5yVfg=ujni_qpWd33NkXS9wKa+1n4fNMtZwA@mail.gmail.com>
-Subject: Re: [PATCH] lockdown: ratelimit denial messages
-To:     Nathan Lynch <nathanl@linux.ibm.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmorris@namei.org, serge@hallyn.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v7 03/18] landlock: refactor merge/inherit_ruleset
+ functions
+Content-Language: ru
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <anton.sirazetdinov@huawei.com>
+References: <20220829170401.834298-1-konstantin.meskhidze@huawei.com>
+ <20220829170401.834298-4-konstantin.meskhidze@huawei.com>
+ <6839cc81-fa34-cda9-91d3-89f63750795c@digikod.net>
+From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
+In-Reply-To: <6839cc81-fa34-cda9-91d3-89f63750795c@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.122.132.241]
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500004.china.huawei.com (7.191.163.9)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 8, 2022 at 6:02 PM Nathan Lynch <nathanl@linux.ibm.com> wrote:
->
-> User space can flood the log with lockdown denial messages:
->
-> [  662.555584] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
-> [  662.563237] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
-> [  662.571134] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
-> [  662.578668] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
-> [  662.586021] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
-> [  662.593398] Lockdown: bash: debugfs access is restricted; see man kernel_lockdown.7
->
-> Ratelimiting these shouldn't meaningfully degrade the quality of the
-> information logged.
->
-> Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
-> ---
->  security/lockdown/lockdown.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This seems reasonable.  While the last visible lockdown message to the
-console might be incorrect/old, I think it would give the user a good
-indication that lockdown is being hit and hopefully preserve the start
-of the denial storm.  It is also worth noting that this does introduce
-a spinlock to this code path, but since it is only an issue on error I
-doubt it will have any significant impact.
 
-I'll leave this until next week to give people a chance to
-comment/object, but if there are no further comments I'll plan on
-merging this into lsm/next.
+9/6/2022 11:07 AM, Mickaël Salaün пишет:
+> 
+> On 29/08/2022 19:03, Konstantin Meskhidze wrote:
+>> Refactors merge_ruleset() and inherit_ruleset() functions to support
+>> new rule types. This patch adds merge_tree() and inherit_tree()
+>> helpers. Each has key_type argument to choose a particular rb_tree
+>> structure in a ruleset.
+>> 
+>> Signed-off-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+>> ---
+>> 
+>> Changes since v6:
+>> * Refactors merge_ruleset() and inherit_ruleset() functions to support
+>>    new rule types.
+>> * Renames tree_merge() to merge_tree() (and reorder arguments), and
+>>    tree_copy() to inherit_tree().
+>> 
+>> Changes since v5:
+>> * Refactors some logic errors.
+>> * Formats code with clang-format-14.
+>> 
+>> Changes since v4:
+>> * None
+>> 
+>> ---
+>>   security/landlock/ruleset.c | 108 +++++++++++++++++++++++-------------
+>>   1 file changed, 69 insertions(+), 39 deletions(-)
+>> 
+>> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+>> index 41de17d1869e..3a5ef356aaa3 100644
+>> --- a/security/landlock/ruleset.c
+>> +++ b/security/landlock/ruleset.c
+>> @@ -302,36 +302,18 @@ static void put_hierarchy(struct landlock_hierarchy *hierarchy)
+>>   	}
+>>   }
+>> 
+>> -static int merge_ruleset(struct landlock_ruleset *const dst,
+>> -			 struct landlock_ruleset *const src)
+>> +static int merge_tree(struct landlock_ruleset *const dst,
+>> +		      struct landlock_ruleset *const src,
+>> +		      const enum landlock_key_type key_type)
+>>   {
+>>   	struct landlock_rule *walker_rule, *next_rule;
+>>   	struct rb_root *src_root;
+>>   	int err = 0;
+>> 
+>> -	might_sleep();
+>> -	/* Should already be checked by landlock_merge_ruleset() */
+>> -	if (WARN_ON_ONCE(!src))
+>> -		return 0;
+>> -	/* Only merge into a domain. */
+>> -	if (WARN_ON_ONCE(!dst || !dst->hierarchy))
+>> -		return -EINVAL;
+>> -
+>> -	src_root = get_root(src, LANDLOCK_KEY_INODE);
+> 
+> This hunk is a bit misleading, but please add a might_sleep() call here
+> because of the insert_rule() call, and some lock asserts:
+> 
+> might_sleep();
+> lockdep_assert_held(&dst->lock);
+> lockdep_assert_held(&src->lock);
 
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index 87cbdc64d272..a79b985e917e 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -63,7 +63,7 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
->
->         if (kernel_locked_down >= what) {
->                 if (lockdown_reasons[what])
-> -                       pr_notice("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
-> +                       pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
->                                   current->comm, lockdown_reasons[what]);
->                 return -EPERM;
->         }
-> --
-> 2.37.1
+   it was moved into merge_ruleset() function,
+   please check below.
 
--- 
-paul-moore.com
+> 
+> 
+>> +	src_root = get_root(src, key_type);
+>>   	if (IS_ERR(src_root))
+>>   		return PTR_ERR(src_root);
+>> 
+>> -	/* Locks @dst first because we are its only owner. */
+>> -	mutex_lock(&dst->lock);
+>> -	mutex_lock_nested(&src->lock, SINGLE_DEPTH_NESTING);
+>> -
+>> -	/* Stacks the new layer. */
+>> -	if (WARN_ON_ONCE(src->num_layers != 1 || dst->num_layers < 1)) {
+>> -		err = -EINVAL;
+>> -		goto out_unlock;
+>> -	}
+>> -	dst->access_masks[dst->num_layers - 1] = src->access_masks[0];
+>> -
+>>   	/* Merges the @src tree. */
+>>   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule, src_root,
+>>   					     node) {
+>> @@ -340,7 +322,7 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+>>   		} };
+>>   		const struct landlock_id id = {
+>>   			.key = walker_rule->key,
+>> -			.type = LANDLOCK_KEY_INODE,
+>> +			.type = key_type,
+>>   		};
+>> 
+>>   		if (WARN_ON_ONCE(walker_rule->num_layers != 1))
+>> @@ -351,8 +333,39 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+>> 
+>>   		err = insert_rule(dst, id, &layers, ARRAY_SIZE(layers));
+>>   		if (err)
+>> -			goto out_unlock;
+>> +			return err;
+>> +	}
+>> +	return err;
+>> +}
+>> +
+>> +static int merge_ruleset(struct landlock_ruleset *const dst,
+>> +			 struct landlock_ruleset *const src)
+>> +{
+>> +	int err = 0;
+>> +
+>> +	might_sleep();
+>> +	/* Should already be checked by landlock_merge_ruleset() */
+>> +	if (WARN_ON_ONCE(!src))
+>> +		return 0;
+>> +	/* Only merge into a domain. */
+>> +	if (WARN_ON_ONCE(!dst || !dst->hierarchy))
+>> +		return -EINVAL;
+>> +
+>> +	/* Locks @dst first because we are its only owner. */
+>> +	mutex_lock(&dst->lock);
+>> +	mutex_lock_nested(&src->lock, SINGLE_DEPTH_NESTING);
+>> +
+>> +	/* Stacks the new layer. */
+>> +	if (WARN_ON_ONCE(src->num_layers != 1 || dst->num_layers < 1)) {
+>> +		err = -EINVAL;
+>> +		goto out_unlock;
+>>   	}
+>> +	dst->access_masks[dst->num_layers - 1] = src->access_masks[0];
+>> +
+>> +	/* Merges the @src inode tree. */
+>> +	err = merge_tree(dst, src, LANDLOCK_KEY_INODE);
+>> +	if (err)
+>> +		goto out_unlock;
+>> 
+>>   out_unlock:
+>>   	mutex_unlock(&src->lock);
+>> @@ -360,43 +373,60 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
+>>   	return err;
+>>   }
+>> 
+>> -static int inherit_ruleset(struct landlock_ruleset *const parent,
+>> -			   struct landlock_ruleset *const child)
+>> +static int inherit_tree(struct landlock_ruleset *const parent,
+>> +			struct landlock_ruleset *const child,
+>> +			const enum landlock_key_type key_type)
+>>   {
+>>   	struct landlock_rule *walker_rule, *next_rule;
+>>   	struct rb_root *parent_root;
+>>   	int err = 0;
+>> 
+>> -	might_sleep();
+>> -	if (!parent)
+>> -		return 0;
+>> -
+>> -	parent_root = get_root(parent, LANDLOCK_KEY_INODE);
+> 
+> This hunk is a bit misleading, but please add a might_sleep() call here
+> because of the insert_rule() call, and some lock asserts:
+> 
+> might_sleep();
+> lockdep_assert_held(&parent->lock);
+> lockdep_assert_held(&child->lock);
+> 
+   it was moved into inherit_ruleset() function,
+   please check below.
+> 
+>> +	parent_root = get_root(parent, key_type);
+>>   	if (IS_ERR(parent_root))
+>>   		return PTR_ERR(parent_root);
+>> 
+>> -	/* Locks @child first because we are its only owner. */
+>> -	mutex_lock(&child->lock);
+>> -	mutex_lock_nested(&parent->lock, SINGLE_DEPTH_NESTING);
+>> -
+>> -	/* Copies the @parent tree. */
+>> +	/* Copies the @parent inode or network tree. */
+>>   	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
+>>   					     parent_root, node) {
+>>   		const struct landlock_id id = {
+>>   			.key = walker_rule->key,
+>> -			.type = LANDLOCK_KEY_INODE,
+>> +			.type = key_type,
+>>   		};
+>> +
+>>   		err = insert_rule(child, id, &walker_rule->layers,
+>>   				  walker_rule->num_layers);
+>>   		if (err)
+>> -			goto out_unlock;
+>> +			return err;
+>>   	}
+>> +	return err;
+>> +}
+>> +
+>> +static int inherit_ruleset(struct landlock_ruleset *const parent,
+>> +			   struct landlock_ruleset *const child)
+>> +{
+>> +	int err = 0;
+>> +
+>> +	might_sleep();
+>> +	if (!parent)
+>> +		return 0;
+>> +
+>> +	/* Locks @child first because we are its only owner. */
+>> +	mutex_lock(&child->lock);
+>> +	mutex_lock_nested(&parent->lock, SINGLE_DEPTH_NESTING);
+>> +
+>> +	/* Copies the @parent inode tree. */
+>> +	err = inherit_tree(parent, child, LANDLOCK_KEY_INODE);
+>> +	if (err)
+>> +		goto out_unlock;
+>> 
+>>   	if (WARN_ON_ONCE(child->num_layers <= parent->num_layers)) {
+>>   		err = -EINVAL;
+>>   		goto out_unlock;
+>>   	}
+>> -	/* Copies the parent layer stack and leaves a space for the new layer. */
+>> +	/*
+>> +	 * Copies the parent layer stack and leaves a space
+>> +	 * for the new layer.
+>> +	 */
+>>   	memcpy(child->access_masks, parent->access_masks,
+>>   	       flex_array_size(parent, access_masks, parent->num_layers));
+>> 
+>> --
+>> 2.25.1
+>> 
+> .
