@@ -2,23 +2,23 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BB1C6FA83
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Sep 2022 01:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C09D1ECAAD5
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Sep 2022 01:19:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229892AbiIIBTF (ORCPT
+        id S229495AbiIIBTF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Thu, 8 Sep 2022 21:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36282 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbiIIBTD (ORCPT
+        with ESMTP id S229819AbiIIBTE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Sep 2022 21:19:03 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE15B1098F6;
-        Thu,  8 Sep 2022 18:19:01 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MNyhs1SJZzlVrj;
-        Fri,  9 Sep 2022 09:15:09 +0800 (CST)
+        Thu, 8 Sep 2022 21:19:04 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551D5109D15;
+        Thu,  8 Sep 2022 18:19:02 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.53])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4MNyl370HfzHnVm;
+        Fri,  9 Sep 2022 09:17:03 +0800 (CST)
 Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
  (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 9 Sep
@@ -28,10 +28,12 @@ To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
         <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>
-Subject: [PATCH v4 0/2] ima: Handle -ESTALE returned by ima_filter_rule_match()
-Date:   Fri, 9 Sep 2022 09:15:14 +0800
-Message-ID: <20220909011516.55957-1-guozihua@huawei.com>
+Subject: [PATCH v4 2/2] ima: Handle -ESTALE returned by ima_filter_rule_match()
+Date:   Fri, 9 Sep 2022 09:15:16 +0800
+Message-ID: <20220909011516.55957-3-guozihua@huawei.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220909011516.55957-1-guozihua@huawei.com>
+References: <20220909011516.55957-1-guozihua@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.67.175.31]
@@ -41,30 +43,80 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA happens to measure extra files if LSM based rules are specified and
-the corresponding LSM is updating its policy.
+IMA relies on the blocking LSM policy notifier callback to update the
+LSM based IMA policy rules.
 
-The root cause is explained in the second patch.
+When SELinux update its policies, IMA would be notified and starts
+updating all its lsm rules one-by-one. During this time, -ESTALE would
+be returned by ima_filter_rule_match() if it is called with a LSM rule
+that has not yet been updated. In ima_match_rules(), -ESTALE is not
+handled, and the LSM rule is considered a match, causing extra files
+to be measured by IMA.
 
-GUO Zihua (2):
-  ima: Simplify ima_lsm_copy_rule
-  ima: Handle -ESTALE returned by ima_filter_rule_match()
+Fix it by re-initializing a temporary rule if -ESTALE is returned by
+ima_filter_rule_match(). The origin rule in the rule list would be
+updated by the LSM policy notifier callback.
 
- security/integrity/ima/ima_policy.c | 38 +++++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 10 deletions(-)
-
+Fixes: b16942455193 ("ima: use the lsm policy update notifier")
+Signed-off-by: GUO Zihua <guozihua@huawei.com>
 ---
+ security/integrity/ima/ima_policy.c | 28 +++++++++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
 
-v4:
-  Use a tempory rule instead of updating the rule in place. To do that,
-also update ima_lsm_copy_rule so we can make use of it.
-
-v3:
-  Update current rule instead of just retrying, as suggested by Mimi
-
-v2:
-  Fixes message errors pointed out by Mimi
-
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8040215c0252..cb672df9b888 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -545,6 +545,8 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+ 			    const char *func_data)
+ {
+ 	int i;
++	bool result = false;
++	bool rule_reinitialized = false;
+ 
+ 	if ((rule->flags & IMA_FUNC) &&
+ 	    (rule->func != func && func != POST_SETATTR))
+@@ -612,6 +614,8 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+ 			else
+ 				return false;
+ 		}
++
++retry:
+ 		switch (i) {
+ 		case LSM_OBJ_USER:
+ 		case LSM_OBJ_ROLE:
+@@ -631,10 +635,28 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+ 		default:
+ 			break;
+ 		}
+-		if (!rc)
+-			return false;
++
++		if (rc == -ESTALE) {
++			rule = ima_lsm_copy_rule(rule);
++			if (rule) {
++				rule_reinitialized = true;
++				goto retry;
++			}
++		}
++		if (!rc) {
++			result = false;
++			goto out;
++		}
+ 	}
+-	return true;
++	result = true;
++
++out:
++	if (rule_reinitialized) {
++		for (i = 0; i < MAX_LSM_RULES; i++)
++			ima_filter_rule_free(rule->lsm[i].rule);
++		kfree(rule);
++	}
++	return result;
+ }
+ 
+ /*
 -- 
 2.17.1
 
