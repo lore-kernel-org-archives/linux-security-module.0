@@ -2,192 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6320C6FA89
-	for <linux-security-module@archiver.kernel.org>; Sun, 11 Sep 2022 11:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1964EECAAD3
+	for <linux-security-module@archiver.kernel.org>; Sun, 11 Sep 2022 14:59:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230269AbiIKLlF (ORCPT
+        id S229655AbiIKO7j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 11 Sep 2022 07:41:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33352 "EHLO
+        Sun, 11 Sep 2022 10:59:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230407AbiIKLlE (ORCPT
+        with ESMTP id S229540AbiIKO7g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 11 Sep 2022 07:41:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A33B3386B7
-        for <linux-security-module@vger.kernel.org>; Sun, 11 Sep 2022 04:41:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 413BC60FDD
-        for <linux-security-module@vger.kernel.org>; Sun, 11 Sep 2022 11:41:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4E2C433B5
-        for <linux-security-module@vger.kernel.org>; Sun, 11 Sep 2022 11:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662896460;
-        bh=mfC/DzcLdVbiyBOdkdFzHVkQuK8qpwvJhFQkQNsjoBc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dO9a1bCjZWZa+j3+YvkaHc7afn0eZ9xJRUUkbpjJwNa/BYKyox7+5L8Yifx9OJPm9
-         xMLqBGhuNZ+T31UE2LZrDlYWarc+dQCNZSHWZad6WxBTvSBYyYtZ0RK3f7KOeCDUSW
-         dlg5T4Shm1GiDFVY9tJY12iLzzPf/o0ThJBjK5PE7R2kMOvLxGDCHCs9IXsF5pjzNQ
-         P/R2OdrYWxNWCDC/URJu5xhtP/D2zLgnoV4xggnx8yVQeLADKs052ntgWzXyw6BZag
-         g+I0CSxGWEleFvbhU93i0yzauY4cAUAveQQI95Y0peM1f0q0ClLTAFlZ+YDCD5WhLk
-         PbF8/UPo+gLQQ==
-Received: by mail-lf1-f52.google.com with SMTP id bt10so10467047lfb.1
-        for <linux-security-module@vger.kernel.org>; Sun, 11 Sep 2022 04:41:00 -0700 (PDT)
-X-Gm-Message-State: ACgBeo0dCpC0INzin/A6n8r8Uq+sCGC9+MfDwhiJZpwr+mvl+NZpRgDa
-        XSvHx2I6ZiPoDfC4odXr+YsI0qhcH2Ts3+ahc9HB1g==
-X-Google-Smtp-Source: AA6agR7gs0xxqnhzhdmlHMESnGLHahKK3mbikc37UgqaUcsvF6ftFAuRZVzQ4u53rO5Up2H7UPABpxSJ5Mh/VrkiE8c=
-X-Received: by 2002:aa7:cd14:0:b0:44e:2335:fb90 with SMTP id
- b20-20020aa7cd14000000b0044e2335fb90mr18029880edw.152.1662896448217; Sun, 11
- Sep 2022 04:40:48 -0700 (PDT)
+        Sun, 11 Sep 2022 10:59:36 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39BE02DC2;
+        Sun, 11 Sep 2022 07:59:35 -0700 (PDT)
+Received: from letrec.thunk.org ([185.122.133.20])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 28BExOjt020167
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 11 Sep 2022 10:59:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1662908368; bh=hJPv6652ahb8MzC7fon360LOpHJzm2WnHUULBpAhCsc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=ThyXbfr1ATcEaJinbd0Uqg13ruenlZfVebuM/ldJZzA44E2aHRatcfrYgqFfu4vSv
+         px5j5djDgx4wf6WevzLHpeqPret3cjWwhQmYwfvDKbF760CuzvQyFVKf51TR3TlAVr
+         GzKvpQlgSF+xGl7b9m/QyK+oc9nXsmMPYrp6RraTRWNhBSOfhx54YOLGLNEskwdv3H
+         ZlL5KLgdO/YnZtHdDxVRpyaHTh/F7XUN9fGrqsQD0ZjvaJ9/MD9FMvrBET76IYq+sG
+         10UpHnWdXMRtoDP6yC93KXs3qItAHtc6N4FSu0UrMs7pV1V8cGKWeeThfJOg0JTDb0
+         NLnpmE9QuQSXQ==
+Received: by letrec.thunk.org (Postfix, from userid 15806)
+        id 64D338C0D1A; Sun, 11 Sep 2022 06:00:41 -0400 (EDT)
+Date:   Sun, 11 Sep 2022 06:00:41 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Chuck Lever III <chuck.lever@oracle.com>,
+        battery dude <jyf007@gmail.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
+Subject: Re: Does NFS support Linux Capabilities
+Message-ID: <Yx2xyW5n0ECZX9bJ@mit.edu>
+References: <CAMBbDaF2Ni0gMRKNeFTQwgAOPPYy7RLXYwDJyZ1edq=tfATFzw@mail.gmail.com>
+ <1D8F1768-D42A-4775-9B0E-B507D5F9E51E@oracle.com>
+ <YxsGIoFlKkpQdSDY@mit.edu>
+ <8865e109-3ec6-f848-8014-9fe58e3876f4@schaufler-ca.com>
 MIME-Version: 1.0
-References: <20220909120736.1027040-1-roberto.sassu@huaweicloud.com> <20220909120736.1027040-8-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20220909120736.1027040-8-roberto.sassu@huaweicloud.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Sun, 11 Sep 2022 13:40:37 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6xSk_DHO+3JoCYpGrXjFkk9v-LOSWW0=0KLwAj1Gc0SA@mail.gmail.com>
-Message-ID: <CACYkzJ6xSk_DHO+3JoCYpGrXjFkk9v-LOSWW0=0KLwAj1Gc0SA@mail.gmail.com>
-Subject: Re: [PATCH v17 07/12] bpf: Add bpf_verify_pkcs7_signature() kfunc
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, sdf@google.com, haoluo@google.com,
-        jolsa@kernel.org, mykolal@fb.com, dhowells@redhat.com,
-        jarkko@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        shuah@kernel.org, bpf@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        deso@posteo.net, memxor@gmail.com,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8865e109-3ec6-f848-8014-9fe58e3876f4@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 9, 2022 at 2:09 PM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> Add the bpf_verify_pkcs7_signature() kfunc, to give eBPF security modules
-> the ability to check the validity of a signature against supplied data, by
-> using user-provided or system-provided keys as trust anchor.
->
-> The new kfunc makes it possible to enforce mandatory policies, as eBPF
-> programs might be allowed to make security decisions only based on data
-> sources the system administrator approves.
->
-> The caller should provide the data to be verified and the signature as eBPF
-> dynamic pointers (to minimize the number of parameters) and a bpf_key
-> structure containing a reference to the keyring with keys trusted for
-> signature verification, obtained from bpf_lookup_user_key() or
-> bpf_lookup_system_key().
->
-> For bpf_key structures obtained from the former lookup function,
-> bpf_verify_pkcs7_signature() completes the permission check deferred by
-> that function by calling key_validate(). key_task_permission() is already
-> called by the PKCS#7 code.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Acked-by: KP Singh <kpsingh@kernel.org>
-> ---
->  kernel/trace/bpf_trace.c | 45 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
->
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index ab183dbaa8d1..9df53c40cffd 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -1294,12 +1294,57 @@ void bpf_key_put(struct bpf_key *bkey)
->         kfree(bkey);
->  }
->
-> +#ifdef CONFIG_SYSTEM_DATA_VERIFICATION
-> +/**
-> + * bpf_verify_pkcs7_signature - verify a PKCS#7 signature
-> + * @data_ptr: data to verify
-> + * @sig_ptr: signature of the data
-> + * @trusted_keyring: keyring with keys trusted for signature verification
-> + *
-> + * Verify the PKCS#7 signature *sig_ptr* against the supplied *data_ptr*
-> + * with keys in a keyring referenced by *trusted_keyring*.
-> + *
-> + * Return: 0 on success, a negative value on error.
-> + */
-> +int bpf_verify_pkcs7_signature(struct bpf_dynptr_kern *data_ptr,
-> +                              struct bpf_dynptr_kern *sig_ptr,
-> +                              struct bpf_key *trusted_keyring)
-> +{
-> +       int ret;
-> +
-> +       if (trusted_keyring->has_ref) {
-> +               /*
-> +                * Do the permission check deferred in bpf_lookup_user_key().
-> +                * See bpf_lookup_user_key() for more details.
-> +                *
-> +                * A call to key_task_permission() here would be redundant, as
-> +                * it is already done by keyring_search() called by
-> +                * find_asymmetric_key().
-> +                */
-> +               ret = key_validate(trusted_keyring->key);
-> +               if (ret < 0)
-> +                       return ret;
-> +       }
-> +
-> +       return verify_pkcs7_signature(data_ptr->data,
-> +                                     bpf_dynptr_get_size(data_ptr),
-> +                                     sig_ptr->data,
-> +                                     bpf_dynptr_get_size(sig_ptr),
-> +                                     trusted_keyring->key,
-> +                                     VERIFYING_UNSPECIFIED_SIGNATURE, NULL,
-> +                                     NULL);
-> +}
+On Fri, Sep 09, 2022 at 08:59:41AM -0700, Casey Schaufler wrote:
+> 
+> Data General's UNIX system supported in excess of 330 capabilities.
+> Linux is currently using 40. Linux has deviated substantially from
+> the Withdrawn Draft, especially in the handling of effective capabilities.
+> I believe that you could support POSIX capabilities or Linux capabilities,
+> but an attempt to support both is impractical.
 
-This seems to work if the data that needs to be verified
-and the signature is allocated onto the map.
+Yeah, good point, I had forgotten about how we (Linux) ended up
+diverging from POSIX 1.e when we changed how effective capabilities
+were calculated.
 
-For BPF program signing, the signature will be void * pointer (and length)
-in a struct in the kernel
+> Supporting any given UNIX implementation is possible, but once you
+> get past the POSIX defined capabilities into the vendor specific
+> ones interoperability ain't gonna happen.
 
-+++ b/include/uapi/linux/bpf.h
-@@ -1383,6 +1383,8 @@ union bpf_attr {
-                __aligned_u64   fd_array;       /* array of FDs */
-                __aligned_u64   core_relos;
-                __u32           core_relo_rec_size; /* sizeof(struct
-bpf_core_relo) */
-+               __aligned_u64   signature;
-+               __u32           signature_size;
-        };
+And from an NFS perspective, if we had (for example) a Trusted Solaris
+trying to emulate Linux binaries over NFS with capabilities masks, I
+suspect trying to map Linux's Capabilities onto Trusted Solaris's
+implementation of POSIX 1.e would be the least of Oracle's technical
+challenges.  :-)
 
-Something like this in the bpf_prog_aux struct which is passed to
-security_bpf_prog_alloc.
+> > .. and this is why the C2 by '92 initiative was doomed to failure,
+> > and why Posix.1e never completed the standardization process.  :-)
+> 
+> The POSIX.1e effort wasn't completed because vendors lost interest
+> in the standards process and because they lost interest in the
+> evaluated security process.
 
-Now creating a dynptr to use with this kfunc does not work:
+It was my sense was that the reason why they lost interested in the
+evaluated security process was simply that the business case didn't
+make any sense.  That is, the $$$ they might get from US Government
+sales was probability not worth the opportunity cost of the engineers
+tasked to work on Trusted {AIX,DG,HPUX,Solaris}.  Heck, I'm not sure
+the revenue would balance out the _costs_, let alone the opportunity
+costs...
 
-   bpf_dynptr_from_mem(aux->signature, aux->signature_size, 0, &sig_ptr);
+> Granularity was always a bone of contention in the working group.
+> What's sad is that granularity wasn't the driving force behind capabilities.
+> The important point was to separate privilege from UID 0. In the end
+> I think we'd have been better off with one capability, CAP_PRIVILEGED,
+> defined in the specification and a note saying that beyond that you were
+> on your own.
 
-So one has to copy kernel data into a map and then create dynptrs.
-Would you be able to update
-the dynptr logic to handle this case too? (follow up is okay too).
+Well, hey, we almost have that already, sort of --- CAP_SYS_ADMIN ==
+"root", for almost all intents and purposes.  :-)
 
-- KP
-
-
-> +#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
-> +
->  __diag_pop();
->
->  BTF_SET8_START(key_sig_kfunc_set)
->  BTF_ID_FLAGS(func, bpf_lookup_user_key, KF_ACQUIRE | KF_RET_NULL | KF_SLEEPABLE)
->  BTF_ID_FLAGS(func, bpf_lookup_system_key, KF_ACQUIRE | KF_RET_NULL)
->  BTF_ID_FLAGS(func, bpf_key_put, KF_RELEASE)
-> +#ifdef CONFIG_SYSTEM_DATA_VERIFICATION
-> +BTF_ID_FLAGS(func, bpf_verify_pkcs7_signature, KF_SLEEPABLE)
-> +#endif
->  BTF_SET8_END(key_sig_kfunc_set)
->
->  static const struct btf_kfunc_id_set bpf_key_sig_kfunc_set = {
-> --
-> 2.25.1
->
+						- Ted
